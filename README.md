@@ -55,7 +55,7 @@ A sleek, minimal, and thoughtfully crafted setup for Wayland using **Quickshell*
 | Text Disabled        | `#6B718A`   | Dimmed blue-gray                |
 | Accent Primary       | `#A8AEFF`   | Light enchanted lavender        |
 | Accent Secondary     | `#9EA0FF`   | Softer lavender hue             |
-| Accent Tertiary      | `#8EABFF`   | Warm golden glow (from lantern) |
+| Accent Tertiary      | `#8EABFF`   | Warm golden glow                |
 | Error                | `#FF6B81`   | Soft rose red                   |
 | Warning              | `#FFBB66`   | Candlelight amber-orange        |
 | Highlight            | `#E3C2FF`   | Bright magical lavender         |
