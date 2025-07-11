@@ -33,7 +33,7 @@ A sleek, minimal, and thoughtfully crafted setup for Wayland using **Quickshell*
 - **Notifications:** Non-intrusive alerts styled to blend naturally.
 - **Control Panel:** Centralized system controls for quick adjustments.
 - **Connectivity:** Easy management of WiFi and Bluetooth devices.
-- **Power Profiles:** Quick toggles for performance and battery modes.
+- **Power Profiles:** Quick toggles for CPU performance.
 - **Lockscreen:** Secure and visually consistent lock experience.
 - **Tray & Workspaces:** Efficient workspace switching and tray icons.
 - **Applauncher:** Stylized Applauncher to fit into the setup.
