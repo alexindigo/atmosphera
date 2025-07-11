@@ -43,51 +43,27 @@ A sleek, minimal, and thoughtfully crafted setup for Wayland using **Quickshell*
 <details>
 <summary><strong>Theme Colors</strong></summary>
 
-| Color Role | Color | Description |
+| Color Role           | Color       | Description                |
 | -------------------- | ----------- | -------------------------- |
-| Background Primary | `#0C0D11` | Deep indigo-black |
-| Background Secondary | `#151720` | Slightly lifted dark |
-| Background Tertiary | `#1D202B` | Soft contrast surface |
-| Surface | `#1A1C26` | Material-like base layer |
-| Surface Variant | `#2A2D3A` | Lightly elevated |
-| Text Primary | `#CACEE2` | Gentle off-white |
-| Text Secondary | `#B7BBD0` | Muted lavender-blue |
-| Text Disabled | `#6B718A` | Dimmed blue-gray |
-| Accent Primary | `#A8AEFF` | Light enchanted lavender |
-| Accent Secondary | `#9EA0FF` | Softer lavender hue |
-| Accent Tertiary | `#8EABFF` | Warm golden glow |
-| Error | `#FF6B81` | Soft rose red |
-| Warning | `#FFBB66` | Candlelight amber-orange |
-| Highlight | `#E3C2FF` | Bright magical lavender |
-| Ripple Effect | `#F3DEFF` | Gentle soft splash |
-| On Accent | `#1A1A1A` | Text on accent background |
-| Outline | `#44485A` | Subtle bluish-gray line |
-| Shadow | `#000000B3` | Standard soft black shadow |
-| Overlay | `#11121ACC` | Deep bluish overlay |
-=======
-| Color Role | Color | Description |
-| -------------------- | ----------- | ------------------------------- |
-| Background Primary | `#0C0D11` | Deep indigo-black |
-| Background Secondary | `#151720` | Slightly lifted dark |
-| Background Tertiary | `#1D202B` | Soft contrast surface |
-| Surface | `#1A1C26` | Material-like base layer |
-| Surface Variant | `#2A2D3A` | Lightly elevated |
-| Text Primary | `#CACEE2` | Gentle off-white |
-| Text Secondary | `#B7BBD0` | Muted lavender-blue |
-| Text Disabled | `#6B718A` | Dimmed blue-gray |
-| Accent Primary | `#A8AEFF` | Light enchanted lavender |
-| Accent Secondary | `#9EA0FF` | Softer lavender hue |
-| Accent Tertiary | `#8EABFF` | Warm golden glow |
-| Error | `#FF6B81` | Soft rose red |
-| Warning | `#FFBB66` | Candlelight amber-orange |
-| Highlight | `#E3C2FF` | Bright magical lavender |
-| Ripple Effect | `#F3DEFF` | Gentle soft splash |
-| On Accent | `#1A1A1A` | Text on accent background |
-| Outline | `#44485A` | Subtle bluish-gray line |
-| Shadow | `#000000B3` | Standard soft black shadow |
-| Overlay | `#11121ACC` | Deep bluish overlay |
-
-> > > > > > > ec73b950532336e25046b41a50c56d4d6d6d5ee8
+| Background Primary   | `#0C0D11`   | Deep indigo-black          |
+| Background Secondary | `#151720`   | Slightly lifted dark       |
+| Background Tertiary  | `#1D202B`   | Soft contrast surface      |
+| Surface              | `#1A1C26`   | Material-like base layer   |
+| Surface Variant      | `#2A2D3A`   | Lightly elevated           |
+| Text Primary         | `#CACEE2`   | Gentle off-white           |
+| Text Secondary       | `#B7BBD0`   | Muted lavender-blue        |
+| Text Disabled        | `#6B718A`   | Dimmed blue-gray           |
+| Accent Primary       | `#A8AEFF`   | Light enchanted lavender   |
+| Accent Secondary     | `#9EA0FF`   | Softer lavender hue        |
+| Accent Tertiary      | `#8EABFF`   | Warm golden glow           |
+| Error                | `#FF6B81`   | Soft rose red              |
+| Warning              | `#FFBB66`   | Candlelight amber-orange   |
+| Highlight            | `#E3C2FF`   | Bright magical lavender    |
+| Ripple Effect        | `#F3DEFF`   | Gentle soft splash         |
+| On Accent            | `#1A1A1A`   | Text on accent background  |
+| Outline              | `#44485A`   | Subtle bluish-gray line    |
+| Shadow               | `#000000B3` | Standard soft black shadow |
+| Overlay              | `#11121ACC` | Deep bluish overlay        |
 
 </details>
 
