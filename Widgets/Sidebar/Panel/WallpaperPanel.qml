@@ -24,7 +24,6 @@ PanelWindow {
         command: ["ls", Settings.wallpaperFolder !== undefined ? Settings.wallpaperFolder : ""]
         stdout: StdioCollector {
             onStreamFinished: {
-                // Split by newlines and filter out empty lines
                 wallpaperPanelModal.wallpapers = this.text.split("\n").filter(function(x){return x.length > 0})
             }
         }

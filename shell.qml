@@ -32,6 +32,7 @@ Scope {
     NotificationServer {
         id: notificationServer
         onNotification: function(notification) {
+            console.log("Notification received:", notification.appName);
             notification.tracked = true;
             notificationPopup.addNotification(notification);
         }

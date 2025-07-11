@@ -17,7 +17,7 @@ Rectangle {
     property real currentPosition: 0
     property int selectedPlayerIndex: 0
 
-    // Get all available players
+    // Returns available MPRIS players
     function getAvailablePlayers() {
         if (!Mpris.players || !Mpris.players.values) {
             return []
@@ -36,7 +36,7 @@ Rectangle {
         return controllablePlayers
     }
 
-    // Find the active player
+    // Returns active player or first available
     function findActivePlayer() {
         let availablePlayers = getAvailablePlayers()
         if (availablePlayers.length === 0) {
@@ -52,7 +52,7 @@ Rectangle {
         }
     }
 
-    // Update current player
+    // Updates currentPlayer and currentPosition
     function updateCurrentPlayer() {
         let newPlayer = findActivePlayer()
         if (newPlayer !== currentPlayer) {
@@ -61,7 +61,7 @@ Rectangle {
         }
     }
 
-    // Timer to update progress bar position
+    // Updates progress bar every second
     Timer {
         id: positionTimer
         interval: 1000
@@ -74,7 +74,7 @@ Rectangle {
         }
     }
 
-    // Monitor for player changes
+    // Reacts to player list changes
     Connections {
         target: Mpris.players
         function onValuesChanged() {
@@ -92,7 +92,7 @@ Rectangle {
         color: Theme.surface
         radius: 18
 
-        // No music player available state
+        // Show fallback UI if no player is available
         Item {
             width: parent.width
             height: parent.height
@@ -120,25 +120,25 @@ Rectangle {
             }
         }
 
-        // Music player content
+        // Main player UI
         ColumnLayout {
             anchors.fill: parent
             anchors.margins: 18
             spacing: 12
             visible: currentPlayer
 
-            // Album artwork and track info row
+            // Album art and spectrum
             RowLayout {
                 spacing: 12
                 Layout.fillWidth: true
 
-                // Album artwork with circular spectrum visualizer, aligned left
+                // Album art with spectrum
                 Item {
                     id: albumArtContainer
                     width: 96; height: 96 // enough for spectrum and art (will adjust if needed)
                     Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
 
-                    // Circular spectrum visualizer behind album art
+                    // Spectrum visualizer
                     CircularSpectrum {
                         id: spectrum
                         anchors.centerIn: parent
@@ -150,7 +150,7 @@ Rectangle {
                         z: 0
                     }
 
-                    // Album art in the center
+                    // Album art image
                     Rectangle {
                         id: albumArtwork
                         width: 60; height: 60
@@ -186,7 +186,7 @@ Rectangle {
                             }
                         }
 
-                        // Fallback music icon
+                        // Fallback icon
                         Text {
                             anchors.centerIn: parent
                             text: "album"
@@ -198,7 +198,7 @@ Rectangle {
                     }
                 }
 
-                // Track info
+                // Track metadata
                 ColumnLayout {
                     Layout.fillWidth: true
                     spacing: 4

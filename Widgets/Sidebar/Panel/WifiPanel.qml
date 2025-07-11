@@ -18,7 +18,7 @@ Item {
     }
 
     function signalIcon(signal) {
-        if (signal >= 80) return "network_wifi";
+        if (signal >= 80) return "network_wifi_4_bar";
         if (signal >= 60) return "network_wifi_3_bar";
         if (signal >= 40) return "network_wifi_2_bar";
         if (signal >= 20) return "network_wifi_1_bar";
@@ -69,7 +69,7 @@ Item {
         property string connectStatusSsid: ""
         property string connectError: ""
         property string connectSecurity: ""
-        property var pendingConnect: null // store connect params for after delete
+        property var pendingConnect: null
         property string detectedInterface: ""
         property var connectionsToDelete: []
 
@@ -112,7 +112,7 @@ Item {
         }
     }
 
-    // Disconnect, then delete the profile. This chain is triggered by clicking the row.
+    // Disconnect, delete profile, refresh
     Process {
         id: disconnectProfileProcess
         property string connectionName: ""
@@ -120,7 +120,6 @@ Item {
         command: ["nmcli", "connection", "down", "id", connectionName]
         onRunningChanged: {
             if (!running) {
-                // After disconnect, delete the profile
                 deleteProfileProcess.connectionName = connectionName;
                 deleteProfileProcess.running = true;
             }
@@ -164,6 +163,7 @@ Item {
         }
     }
 
+    // Handles connecting to a Wi-Fi network, with or without password
     Process {
         id: connectProcess
         property string ssid: ""
@@ -202,6 +202,7 @@ Item {
         }
     }
 
+    // Finds the correct Wi-Fi interface for connection
     Process {
         id: getInterfaceProcess
         running: false
@@ -235,6 +236,7 @@ Item {
         }
     }
 
+    // Adds a new Wi-Fi connection profile
     Process {
         id: addConnectionProcess
         property string ifname: ""
@@ -267,6 +269,7 @@ Item {
         }
     }
 
+    // Brings up the new connection profile and finalizes connection state
     Process {
         id: upConnectionProcess
         property string profileName: ""

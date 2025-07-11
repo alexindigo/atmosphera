@@ -30,8 +30,6 @@ PanelWindow {
             slideAnim.from = width;
             slideAnim.to = 0;
             slideAnim.running = true;
-            
-            // Start system monitoring when sidebar becomes visible
             if (systemMonitor) systemMonitor.startMonitoring();
             if (weather) weather.startWeatherFetch();
             if (systemWidget) systemWidget.panelVisible = true;
@@ -57,8 +55,7 @@ PanelWindow {
         onStopped: {
             if (panelPopup.slideOffset === panelPopup.width) {
                 panelPopup.visible = false;
-                
-                // Stop system monitoring when sidebar becomes hidden
+                // Stop monitoring and background tasks when hidden
                 if (systemMonitor) systemMonitor.stopMonitoring();
                 if (weather) weather.stopWeatherFetch();
                 if (systemWidget) systemWidget.panelVisible = false;

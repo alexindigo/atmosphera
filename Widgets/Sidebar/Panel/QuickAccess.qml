@@ -167,14 +167,13 @@ Rectangle {
 
     // Timer to check if recording is active
     Timer {
-        interval: 2000 // Check every 2 seconds
+        interval: 2000
         repeat: true
         running: panelVisible
         onTriggered: checkRecordingStatus()
     }
 
     function checkRecordingStatus() {
-        // Simple check - if we're recording but no process, reset state
         if (isRecording) {
             checkRecordingProcess.running = true
         }
@@ -186,8 +185,6 @@ Rectangle {
         command: ["pgrep", "-f", "gpu-screen-recorder.*portal"]
         onExited: function(exitCode, exitStatus) {
             var isActuallyRecording = exitCode === 0
-            
-            // If we think we're recording but process isn't running, reset state
             if (isRecording && !isActuallyRecording) {
                 recordingStateMismatch(isActuallyRecording)
             }

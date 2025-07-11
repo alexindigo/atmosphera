@@ -26,19 +26,19 @@ Rectangle {
             anchors.margins: 18
             spacing: 12
 
-            // User Info Row
+            // User info row
             RowLayout {
                 Layout.fillWidth: true
                 spacing: 12
 
-                // Profile Image
+                // Profile image
                 Rectangle {
                     width: 48
                     height: 48
                     radius: 24
                     color: Theme.accentPrimary
 
-                    // Border overlay
+                    // Border
                     Rectangle {
                         anchors.fill: parent
                         color: "transparent"
@@ -82,7 +82,7 @@ Rectangle {
                     }
                 }
 
-                // User Info
+                // User info text
                 ColumnLayout {
                     spacing: 4
                     Layout.fillWidth: true
@@ -101,12 +101,12 @@ Rectangle {
                     }
                 }
 
-                // Spacer to push button to the right
+                // Spacer
                 Item {
                     Layout.fillWidth: true
                 }
 
-                // System Menu Button - positioned all the way to the right
+                // System menu button
                 Rectangle {
                     id: systemButton
                     width: 32
@@ -137,7 +137,7 @@ Rectangle {
         }
     }
 
-    // System Menu Popup - positioned below the button
+    // System menu popup
     Rectangle {
         id: systemMenu
         width: 160
@@ -149,7 +149,7 @@ Rectangle {
         visible: false
         z: 9999
         
-        // Position relative to the system button using absolute positioning
+        // Position below system button
         x: systemButton.x + systemButton.width - width + 12
         y: systemButton.y + systemButton.height + 32
 
@@ -158,7 +158,7 @@ Rectangle {
             anchors.margins: 8
             spacing: 4
 
-            // Lock Button
+            // Lock button
             Rectangle {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 36
@@ -196,7 +196,7 @@ Rectangle {
                 }
             }
 
-            // Reboot Button
+            // Reboot button
             Rectangle {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 36
@@ -234,7 +234,7 @@ Rectangle {
                 }
             }
 
-            // Logout Button
+            // Logout button
             Rectangle {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 36
@@ -272,7 +272,7 @@ Rectangle {
                 }
             }
 
-            // Shutdown Button
+            // Shutdown button
             Rectangle {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 36
@@ -356,8 +356,6 @@ Rectangle {
     }
 
     Component.onCompleted: {
-        // Don't update system info immediately - wait for panel to be visible
-        // updateSystemInfo() will be called when panelVisible becomes true
         uptimeProcess.running = true
     }
 

@@ -16,7 +16,6 @@ Rectangle {
     property real diskUsage: 0
     property bool isVisible: false
 
-    // Timers to control when processes run
     Timer {
         id: cpuTimer
         interval: 2000

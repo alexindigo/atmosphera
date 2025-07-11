@@ -26,17 +26,22 @@ PanelWindow {
         visible = true;
         shouldBeVisible = true;
         searchField.forceActiveFocus()
+        root.selectedIndex = 0;
+        root.appModel = DesktopEntries.applications.values;
+        root.updateFilter();
     }
 
     function hidePanel() {
         shouldBeVisible = false;
+        searchField.text = "";
+        root.selectedIndex = 0;
     }
 
     Rectangle {
         id: root
         width: 400
         height: 640
-        x: (parent.width - width) / 2 // Horizontally centered
+        x: (parent.width - width) / 2
         color: Theme.backgroundPrimary
         bottomLeftRadius: 28
         bottomRightRadius: 28
@@ -44,8 +49,8 @@ PanelWindow {
         property var appModel: DesktopEntries.applications.values
         property var filteredApps: []
         property int selectedIndex: 0
-        property int targetY: (parent.height - height) / 2 // Centered vertically
-        y: appLauncherPanel.shouldBeVisible ? targetY : -height // Slide from above
+        property int targetY: (parent.height - height) / 2
+        y: appLauncherPanel.shouldBeVisible ? targetY : -height
         Behavior on y {
             NumberAnimation { duration: 300; easing.type: Easing.OutCubic }
         }
@@ -59,13 +64,10 @@ PanelWindow {
             }
         }
         function isMathExpression(str) {
-            // Allow numbers, operators, parentheses, decimal points, spaces
             return /^[-+*/().0-9\s]+$/.test(str);
         }
         function safeEval(expr) {
-            // Only allow safe math expressions
             try {
-                // eslint-disable-next-line no-eval
                 return Function('return (' + expr + ')')();
             } catch (e) {
                 return undefined;
@@ -99,7 +101,7 @@ PanelWindow {
                 results = results.concat(fuzzyResults.map(function(r) { return r.obj; }));
             }
             root.filteredApps = results;
-            root.selectedIndex = 0; // reset selection
+            root.selectedIndex = 0;
         }
         function selectNext() {
             if (filteredApps.length > 0)
@@ -131,6 +133,7 @@ PanelWindow {
                     console.warn("Cannot launch app:", modelData.name, "missing execString or exec", modelData);
             }
             appLauncherPanel.hidePanel();
+            searchField.text = "";
         }
         Component.onCompleted: updateFilter()
         ColumnLayout {
@@ -192,6 +195,8 @@ PanelWindow {
                         leftPadding: 0
                         rightPadding: 0
                         font.bold: true
+                        Component.onCompleted: contentItem.cursorColor = Theme.textPrimary
+                        onActiveFocusChanged: contentItem.cursorColor = Theme.textPrimary
 
                         Keys.onDownPressed: root.selectNext()
                         Keys.onUpPressed: root.selectPrev()
@@ -220,7 +225,7 @@ PanelWindow {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     height: parent.innerPadding
-                    visible: false // for layout only
+                    visible: false
                 }
                 ListView {
                     id: appList

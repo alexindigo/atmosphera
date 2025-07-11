@@ -59,12 +59,12 @@ Rectangle {
                 spacing: 12
                 Layout.fillWidth: true
 
-                // Weather icon and basic info
+                // Weather icon and basic info section
                 RowLayout {
                     spacing: 12
                     Layout.preferredWidth: 140
 
-                    // Material Symbol icon
+                    // Weather icon
                     Text {
                         id: weatherIcon
                         text: weatherData && weatherData.current_weather ? materialSymbolForCode(weatherData.current_weather.weathercode) : "cloud"
@@ -116,7 +116,7 @@ Rectangle {
                 Layout.bottomMargin: 2
             }
 
-            // 5-day forecast row (smaller)
+            // 5-day forecast row
             RowLayout {
                 spacing: 12
                 Layout.fillWidth: true
@@ -129,7 +129,7 @@ Rectangle {
                         spacing: 2
                         Layout.alignment: Qt.AlignHCenter
                         Text {
-                            // Day name (e.g., Mon)
+                            // Day of the week (e.g., Mon)
                             text: Qt.formatDateTime(new Date(weatherData.daily.time[index]), "ddd")
                             font.pixelSize: 12
                             color: Theme.textSecondary
@@ -157,7 +157,7 @@ Rectangle {
                 }
             }
 
-            // Error message (if any)
+            // Error message
             Text {
                 text: errorString
                 color: Theme.error
@@ -169,9 +169,8 @@ Rectangle {
         }
     }
 
-    // Weather code to Material Symbol ligature
+    // Weather code to Material Symbol ligature mapping
     function materialSymbolForCode(code) {
-        // Open-Meteo WMO code mapping
         if (code === 0) return "sunny"; // Clear
         if (code === 1 || code === 2) return "partly_cloudy_day"; // Mainly clear/partly cloudy
         if (code === 3) return "cloud"; // Overcast
