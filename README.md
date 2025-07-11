@@ -43,7 +43,6 @@ A sleek, minimal, and thoughtfully crafted setup for Wayland using **Quickshell*
 <details>
 <summary><strong>Theme Colors</strong></summary>
 
-<<<<<<< HEAD
 | Color Role | Color | Description |
 | -------------------- | ----------- | -------------------------- |
 | Background Primary | `#0C0D11` | Deep indigo-black |
