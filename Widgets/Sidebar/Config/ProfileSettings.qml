@@ -7,12 +7,14 @@ import qs.Settings
 Rectangle {
     id: profileSettingsCard
     Layout.fillWidth: true
-    Layout.preferredHeight: 140
+    Layout.preferredHeight: 200
     color: Theme.surface
     radius: 18
     border.color: "transparent"
     border.width: 0
     Layout.bottomMargin: 16
+    property bool showActiveWindowIcon: false
+    signal showAWIconChanged(bool showActiveWindowIcon)
 
     ColumnLayout {
         anchors.fill: parent
@@ -27,14 +29,13 @@ Rectangle {
             Text {
                 text: "person"
                 font.family: "Material Symbols Outlined"
-                font.pixelSize: Theme.fontSizeBody
+                font.pixelSize: 20
                 color: Theme.accentPrimary
             }
 
             Text {
                 text: "Profile Image"
-                font.family: Theme.fontFamily
-                font.pixelSize: Theme.fontSizeBody
+                font.pixelSize: 16
                 font.bold: true
                 color: Theme.textPrimary
                 Layout.fillWidth: true
@@ -83,7 +84,7 @@ Rectangle {
                     anchors.centerIn: parent
                     text: "person"
                     font.family: "Material Symbols Outlined"
-                    font.pixelSize: Theme.fontSizeBody
+                    font.pixelSize: 18
                     color: Theme.accentPrimary
                     visible: Settings.profileImage === ""
                 }
@@ -92,7 +93,7 @@ Rectangle {
             // Text input styled exactly like weather city
             Rectangle {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 40
+                Layout.preferredHeight: 36
                 radius: 8
                 color: Theme.surfaceVariant
                 border.color: profileImageInput.activeFocus ? Theme.accentPrimary : Theme.outline
@@ -100,17 +101,10 @@ Rectangle {
 
                 TextInput {
                     id: profileImageInput
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.top: parent.top
-                    anchors.bottom: parent.bottom
-                    anchors.leftMargin: 12
-                    anchors.rightMargin: 12
-                    anchors.topMargin: 6
-                    anchors.bottomMargin: 6
+                    anchors.fill: parent
+                    anchors.margins: 12
                     text: Settings.profileImage
-                    font.family: Theme.fontFamily
-                    font.pixelSize: Theme.fontSizeSmall
+                    font.pixelSize: 13
                     color: Theme.textPrimary
                     verticalAlignment: TextInput.AlignVCenter
                     clip: true
@@ -132,6 +126,58 @@ Rectangle {
             }
         }
 
+
+        // Show Active Window Icon Setting
+        RowLayout {
+            spacing: 8
+            Layout.fillWidth: true
+
+            Text {
+                text: "Show Active Window Icon"
+                font.pixelSize: 13
+                font.bold: true
+                color: Theme.textPrimary
+            }
+
+            Item {
+                Layout.fillWidth: true
+            }
+
+            // Custom Material 3 Switch
+            Rectangle {
+                id: customSwitch
+                width: 52
+                height: 32
+                radius: 16
+                color: Theme.accentPrimary
+                border.color: Theme.accentPrimary
+                border.width: 2
+                
+                Rectangle {
+                    id: thumb
+                    width: 28
+                    height: 28
+                    radius: 14
+                    color: Theme.surface
+                    border.color: Theme.outline
+                    border.width: 1
+                    y: 2
+                    x: showActiveWindowIcon ? customSwitch.width - width - 2 : 2
+                    
+                    Behavior on x {
+                        NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
+                    }
+                }
+                
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        showAWIconChanged(!showActiveWindowIcon)
+                    }
+                }
+            }
+        }
+
         // Video Path Input Row
         RowLayout {
             spacing: 8
@@ -139,15 +185,14 @@ Rectangle {
 
             Text {
                 text: "Video Path"
-                font.family: Theme.fontFamily
-                font.pixelSize: Theme.fontSizeSmall
+                font.pixelSize: 14
                 color: Theme.textPrimary
                 Layout.alignment: Qt.AlignVCenter
             }
 
             Rectangle {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 40
+                Layout.preferredHeight: 36
                 radius: 8
                 color: Theme.surfaceVariant
                 border.color: videoPathInput.activeFocus ? Theme.accentPrimary : Theme.outline
@@ -155,17 +200,10 @@ Rectangle {
 
                 TextInput {
                     id: videoPathInput
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.top: parent.top
-                    anchors.bottom: parent.bottom
-                    anchors.leftMargin: 12
-                    anchors.rightMargin: 12
-                    anchors.topMargin: 6
-                    anchors.bottomMargin: 6
+                    anchors.fill: parent
+                    anchors.margins: 12
                     text: Settings.videoPath !== undefined ? Settings.videoPath : ""
-                    font.family: Theme.fontFamily
-                    font.pixelSize: Theme.fontSizeSmall
+                    font.pixelSize: 13
                     color: Theme.textPrimary
                     verticalAlignment: TextInput.AlignVCenter
                     clip: true
