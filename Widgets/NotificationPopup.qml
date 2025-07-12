@@ -157,7 +157,7 @@ PanelWindow {
                             text: model.appName ? model.appName.charAt(0).toUpperCase() : "?"
                             font.pixelSize: 18
                             font.bold: true
-                            color: Theme.textPrimary
+                            color: Theme.backgroundPrimary
                         }
                     }
 

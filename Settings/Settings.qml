@@ -18,15 +18,13 @@ QtObject {
     }
 
     function loadSettings() {
-        let wc = settings.value("weatherCity", "Dinslaken");
-        weatherCity = (wc !== undefined && wc !== null) ? wc : "Dinslaken";
-        let pi = settings.value("profileImage", "https://cdn.discordapp.com/avatars/158005126638993408/de403f05fd7f74bb17e01a9b066a30fa?size=64");
-        profileImage = (pi !== undefined && pi !== null) ? pi : "https://cdn.discordapp.com/avatars/158005126638993408/de403f05fd7f74bb17e01a9b066a30fa?size=64";
+        weatherCity = settings.value("weatherCity", weatherCity)
+        profileImage = settings.value("profileImage", profileImage)
         let tempUnit = settings.value("weatherTempUnit", "celsius")
         useFahrenheit = (tempUnit === "fahrenheit")
-        wallpaperFolder = settings.value("wallpaperFolder", "/home/lysec/nixos/assets/wallpapers")
-        currentWallpaper = settings.value("currentWallpaper", "")
-        videoPath = settings.value("videoPath", "/home/lysec/Videos")
+        wallpaperFolder = settings.value("wallpaperFolder", wallpaperFolder)
+        currentWallpaper = settings.value("currentWallpaper", currentWallpaper)
+        videoPath = settings.value("videoPath", videoPath)
         console.log("Loaded profileImage:", profileImage)
     }
 
