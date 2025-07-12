@@ -22,7 +22,7 @@ PanelWindow {
     // Animation properties
     property real slideOffset: width
     property bool isAnimating: false
-    
+
     function showAt() {
         if (!visible) {
             visible = true;
@@ -90,6 +90,9 @@ PanelWindow {
     }
 
     property alias settingsModal: settingsModal
+    property alias wallpaperPanelModal: wallpaperPanelModal
+    property alias wifiPanelModal: wifiPanel.panel
+    property alias bluetoothPanelModal: bluetoothPanel.panel
     SettingsModal {
         id: settingsModal
     }
@@ -193,7 +196,7 @@ PanelWindow {
                                 anchors.fill: parent
                                 hoverEnabled: true
                                 cursorShape: Qt.PointingHandCursor
-                                onClicked: wifiPanelModal.showAt()
+                                onClicked: wifiPanel.showAt()
                             }
                         }
                         
@@ -223,7 +226,7 @@ PanelWindow {
                                 anchors.fill: parent
                                 hoverEnabled: true
                                 cursorShape: Qt.PointingHandCursor
-                                onClicked: bluetoothPanelModal.showAt()
+                                onClicked: bluetoothPanel.showAt()
                             }
                         }
                     }
@@ -232,11 +235,11 @@ PanelWindow {
 
             // Hidden panel components for modal functionality
             WifiPanel {
-                id: wifiPanelModal
+                id: wifiPanel
                 visible: false
             }
             BluetoothPanel {
-                id: bluetoothPanelModal
+                id: bluetoothPanel
                 visible: false
             }
 

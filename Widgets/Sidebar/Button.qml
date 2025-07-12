@@ -26,8 +26,14 @@ Item {
                 if (sidebarPopup.settingsModal && sidebarPopup.settingsModal.visible) {
                     sidebarPopup.settingsModal.visible = false;
                 }
-                if (sidebarPopup.wallpaperManagerModal && sidebarPopup.wallpaperManagerModal.visible) {
-                    sidebarPopup.wallpaperManagerModal.visible = false;
+                if (sidebarPopup.wallpaperPanelModal && sidebarPopup.wallpaperPanelModal.visible) {
+                    sidebarPopup.wallpaperPanelModal.visible = false;
+                }
+                if (sidebarPopup.wifiPanelModal && sidebarPopup.wifiPanelModal.visible) {
+                    sidebarPopup.wifiPanelModal.visible = false;
+                }
+                if (sidebarPopup.bluetoothPanelModal && sidebarPopup.bluetoothPanelModal.visible) {
+                    sidebarPopup.bluetoothPanelModal.visible = false;
                 }
                 sidebarPopup.hidePopup();
             } else {
