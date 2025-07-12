@@ -75,10 +75,7 @@ PanelWindow {
         }
         function updateFilter() {
             var query = searchField.text ? searchField.text.toLowerCase() : "";
-            // Sort apps alphabetically by name (case-insensitive)
-            var apps = root.appModel.slice().sort(function(a, b) {
-                return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
-            });
+            var apps = root.appModel.slice();
             var results = [];
             // Calculator mode: starts with '='
             if (query.startsWith("=")) {
@@ -96,16 +93,13 @@ PanelWindow {
                     }
                 }
             }
-            // Normal app search
             if (!query || query.startsWith("=")) {
-                results = results.concat(apps);
+                results = results.concat(apps.sort(function(a, b) {
+                    return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+                }));
             } else {
                 var fuzzyResults = Fuzzysort.go(query, apps, { keys: ["name", "comment", "genericName"] });
-                // Sort fuzzy results alphabetically by name as well
-                var sortedFuzzy = fuzzyResults.map(function(r) { return r.obj; }).sort(function(a, b) {
-                    return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
-                });
-                results = results.concat(sortedFuzzy);
+                results = results.concat(fuzzyResults.map(function(r) { return r.obj; }));
             }
             root.filteredApps = results;
             root.selectedIndex = 0;
@@ -118,10 +112,13 @@ PanelWindow {
             if (filteredApps.length > 0)
                 selectedIndex = Math.max(selectedIndex - 1, 0);
         }
+
         function activateSelected() {
             if (filteredApps.length === 0)
                 return;
+
             var modelData = filteredApps[selectedIndex];
+
             if (modelData.isCalculator) {
                 Qt.callLater(function() {
                     Quickshell.clipboardText = String(modelData.result);
@@ -131,18 +128,22 @@ PanelWindow {
                         `${modelData.expr} = ${modelData.result} (copied to clipboard)`
                     ]);
                 });
-            } else if (modelData.execString) {
-                Quickshell.execDetached(["sh", "-c", modelData.execString]);
-            } else if (modelData.exec) {
-                Quickshell.execDetached(["sh", "-c", modelData.exec]);
+            } else if (modelData.execute) {
+                modelData.execute();
             } else {
-                if (!modelData.isCalculator)
-                    console.warn("Cannot launch app:", modelData.name, "missing execString or exec", modelData);
+                var execCmd = modelData.execString || modelData.exec || "";
+                if (execCmd) {
+                    execCmd = execCmd.replace(/\s?%[fFuUdDnNiCkvm]/g, '');
+                    Quickshell.execDetached(["sh", "-c", execCmd.trim()]);
+                }
             }
+
             appLauncherPanel.hidePanel();
             searchField.text = "";
         }
+        
         Component.onCompleted: updateFilter()
+
         ColumnLayout {
             anchors.left: parent.left
             anchors.right: parent.right
@@ -157,6 +158,7 @@ PanelWindow {
                 color: Theme.outline
                 opacity: 0.10
             }
+
             // Search Bar
             Rectangle {
                 id: searchBar
@@ -215,18 +217,17 @@ PanelWindow {
                 Behavior on border.color { ColorAnimation { duration: 120 } }
                 Behavior on border.width { NumberAnimation { duration: 120 } }
             }
+
             // App List Card
             Rectangle {
                 color: Theme.surface
                 radius: 20
-                //border.color: Theme.outline
-                //border.width: 1
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 clip: true
                 anchors.margins: 0
                 property int innerPadding: 16
-                // Add an Item for padding
+
                 Item {
                     anchors.top: parent.top
                     anchors.left: parent.left
@@ -234,6 +235,7 @@ PanelWindow {
                     height: parent.innerPadding
                     visible: false
                 }
+
                 ListView {
                     id: appList
                     anchors.fill: parent
@@ -247,6 +249,7 @@ PanelWindow {
                         height: 48
                         property bool hovered: mouseArea.containsMouse
                         property bool isSelected: index === root.selectedIndex
+
                         Rectangle {
                             anchors.fill: parent
                             color: hovered || isSelected ? Theme.accentPrimary : "transparent"
@@ -257,6 +260,7 @@ PanelWindow {
                             Behavior on border.color { ColorAnimation { duration: 120 } }
                             Behavior on border.width { NumberAnimation { duration: 120 } }
                         }
+
                         RowLayout {
                             anchors.fill: parent
                             anchors.leftMargin: 10
@@ -284,6 +288,7 @@ PanelWindow {
                                     color: Theme.accentPrimary
                                 }
                             }
+
                             ColumnLayout {
                                 Layout.fillWidth: true
                                 spacing: 1
@@ -306,6 +311,7 @@ PanelWindow {
                                     Layout.fillWidth: true
                                 }
                             }
+
                             Item { Layout.fillWidth: true }
                             Text {
                                 text: modelData.isCalculator ? "content_copy" : "chevron_right"
@@ -315,12 +321,14 @@ PanelWindow {
                                 verticalAlignment: Text.AlignVCenter
                             }
                         }
+
                         Rectangle {
                             id: ripple
                             anchors.fill: parent
                             color: Theme.onAccent
                             opacity: 0.0
                         }
+
                         MouseArea {
                             id: mouseArea
                             anchors.fill: parent
@@ -328,12 +336,13 @@ PanelWindow {
                             onClicked: {
                                 ripple.opacity = 0.18
                                 rippleNumberAnimation.start()
-                                root.selectedIndex = index // update selection on click
+                                root.selectedIndex = index
                                 root.activateSelected()
                             }
                             onPressed: ripple.opacity = 0.18
                             onReleased: ripple.opacity = 0.0
                         }
+
                         NumberAnimation {
                             id: rippleNumberAnimation
                             target: ripple
@@ -341,7 +350,7 @@ PanelWindow {
                             to: 0.0
                             duration: 320
                         }
-                        // Divider (except last item)
+
                         Rectangle {
                             anchors.left: parent.left
                             anchors.right: parent.right
