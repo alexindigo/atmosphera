@@ -157,17 +157,9 @@ PanelWindow {
                 radius: 22
                 height: 48
                 Layout.fillWidth: true
-                //border.color: searchField.activeFocus ? Theme.accentPrimary : Theme.outline
-                //border.width: searchField.activeFocus ? 2.5 : 1.5
-                layer.enabled: searchField.activeFocus
-                layer.effect: DropShadow {
-                    color: Theme.accentPrimary
-                    radius: 12
-                    samples: 16
-                    verticalOffset: 0
-                    horizontalOffset: 0
-                    opacity: 0.10
-                }
+                border.color: searchField.activeFocus ? Theme.accentPrimary : Theme.outline
+                border.width: 2
+
                 RowLayout {
                     anchors.fill: parent
                     spacing: 10

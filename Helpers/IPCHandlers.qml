@@ -2,6 +2,7 @@ import Quickshell.Io
 
 IpcHandler {
     property var appLauncherPanel
+    property var lockScreen
 
     target: "globalIPC"
 
@@ -17,5 +18,14 @@ IpcHandler {
             console.log("[IPC] Applauncher show() called");
             appLauncherPanel.showAt();
         }
+    }
+
+    function toggleLock(): void {
+        if (!lockScreen) {
+            console.warn("LockScreenIpcHandler: lockScreen not set!");
+            return;
+        }
+        console.log("[IPC] LockScreen lock() called");
+        lockScreen.locked = true;
     }
 }

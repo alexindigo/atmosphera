@@ -118,10 +118,16 @@ To make the weather widget, wallpaper manager and record button work you will ha
 <details>
 <summary><strong>Keybinds</strong></summary>
 
-### Open Applauncher:
+### Toggle Applauncher:
 
 ```
  qs ipc call globalIPC toggleLauncher
+```
+
+### Toggle Lockscreen:
+
+```
+qs ipc call globalIPC toggleLock
 ```
 
 You can keybind it however you want in your niri setup.

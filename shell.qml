@@ -29,6 +29,10 @@ Scope {
         visible: false
     }
 
+    LockScreen {
+        id: lockScreen
+    }
+
     NotificationServer {
         id: notificationServer
         onNotification: function(notification) {
@@ -54,5 +58,6 @@ Scope {
 
     IPCHandlers {
         appLauncherPanel: appLauncherPanel
+        lockScreen: lockScreen
     }
 }
