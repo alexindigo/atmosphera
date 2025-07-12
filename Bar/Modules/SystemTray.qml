@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import Quickshell
 import Quickshell.Services.SystemTray
+import Quickshell.Widgets
 
 Row {
     property var bar
@@ -41,16 +42,13 @@ Row {
                 }
             }
             
-            Image {
+            IconImage {
                 id: trayIcon
                 anchors.centerIn: parent
                 width: 18
                 height: 18
-                sourceSize.width: 18
-                sourceSize.height: 18
                 smooth: false      // Memory savings
                 asynchronous: true
-                cache: false
                 source: {
                     let icon = modelData?.icon || "";
                     if (!icon) return "";

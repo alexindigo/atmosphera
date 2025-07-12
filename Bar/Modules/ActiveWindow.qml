@@ -3,6 +3,7 @@ import Quickshell
 import qs.Components
 import qs.Settings
 import Quickshell.Wayland
+import Quickshell.Widgets
 
 Item {
     id: activeWindowWrapper
@@ -59,10 +60,10 @@ Item {
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
 
-        Image {
+        IconImage {
             id: icon
-            width: 10
-            height: 10
+            width: 12
+            height: 12
             anchors.left: parent.left
             anchors.leftMargin: 6
             anchors.verticalCenter: parent.verticalCenter
