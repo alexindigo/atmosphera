@@ -158,7 +158,7 @@ PanelWindow {
                             font.family: Theme.fontFamily
                             font.pixelSize: Theme.fontSizeBody
                             font.bold: true
-                            color: Theme.textPrimary
+                            color: Theme.backgroundPrimary
                         }
                     }
 
