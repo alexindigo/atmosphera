@@ -73,7 +73,7 @@ Item {
 
         Text {
             id: activeWindowTitle
-            text: panel.displayedWindowTitle && panel.displayedWindowTitle.length > 60 ? panel.displayedWindowTitle.substring(0, 60) + "..." : panel.displayedWindowTitle
+            text: ToplevelManager.activeToplevel?.title && ToplevelManager.activeToplevel.title.length > 60 ? ToplevelManager.activeToplevel.title.substring(0, 60) + "..." : ToplevelManager.activeToplevel.title
             font.pixelSize: 12
             color: Theme.textSecondary
             elide: Text.ElideRight
@@ -107,4 +107,3 @@ Item {
         offsetY: 0
     }
 }
-
