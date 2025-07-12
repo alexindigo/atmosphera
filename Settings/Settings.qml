@@ -9,7 +9,7 @@ QtObject {
     property string wallpaperFolder: "/home/lysec/nixos/assets/wallpapers" // Default path, make persistent
     property string currentWallpaper: ""
     property string videoPath: "~/Videos/" // Default path, make persistent
-
+    property bool showActiveWindowIcon
     // Settings persistence
     property var settings: Qt.createQmlObject('import QtCore; Settings { category: "Quickshell" }', this, "settings")
 
@@ -18,15 +18,14 @@ QtObject {
     }
 
     function loadSettings() {
-        let wc = settings.value("weatherCity", "Dinslaken");
-        weatherCity = (wc !== undefined && wc !== null) ? wc : "Dinslaken";
-        let pi = settings.value("profileImage", "https://cdn.discordapp.com/avatars/158005126638993408/de403f05fd7f74bb17e01a9b066a30fa?size=64");
-        profileImage = (pi !== undefined && pi !== null) ? pi : "https://cdn.discordapp.com/avatars/158005126638993408/de403f05fd7f74bb17e01a9b066a30fa?size=64";
+        weatherCity = settings.value("weatherCity", weatherCity)
+        profileImage = settings.value("profileImage", profileImage)
         let tempUnit = settings.value("weatherTempUnit", "celsius")
         useFahrenheit = (tempUnit === "fahrenheit")
-        wallpaperFolder = settings.value("wallpaperFolder", "/home/lysec/nixos/assets/wallpapers")
-        currentWallpaper = settings.value("currentWallpaper", "")
-        videoPath = settings.value("videoPath", "/home/lysec/Videos")
+        wallpaperFolder = settings.value("wallpaperFolder", wallpaperFolder)
+        currentWallpaper = settings.value("currentWallpaper", currentWallpaper)
+        videoPath = settings.value("videoPath", videoPath)
+        showActiveWindowIcon = settings.value("showActiveWindowIcon", showActiveWindowIcon)
         console.log("Loaded profileImage:", profileImage)
     }
 
@@ -37,6 +36,7 @@ QtObject {
         settings.setValue("wallpaperFolder", wallpaperFolder)
         settings.setValue("currentWallpaper", currentWallpaper)
         settings.setValue("videoPath", videoPath)
+        settings.setValue("showActiveWindowIcon", showActiveWindowIcon)
         settings.sync()
         console.log("Saving profileImage:", profileImage)
     }

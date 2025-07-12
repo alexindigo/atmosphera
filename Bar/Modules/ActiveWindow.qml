@@ -2,67 +2,108 @@ import QtQuick
 import Quickshell
 import qs.Components
 import qs.Settings
+import Quickshell.Wayland
 
 Item {
-                    id: activeWindowWrapper
-                    width: parent.width
-                    property int fullHeight: activeWindowTitleContainer.height
+    id: activeWindowWrapper
+    width: parent.width
+    property int fullHeight: activeWindowTitleContainer.height
 
-                    y: panel.activeWindowVisible ? barBackground.height : barBackground.height - fullHeight
-                    height: panel.activeWindowVisible ? fullHeight : 1
-                    opacity: panel.activeWindowVisible ? 1 : 0
-                    clip: true
+    y: panel.activeWindowVisible ? barBackground.height : barBackground.height - fullHeight
+    height: panel.activeWindowVisible ? fullHeight : 1
+    opacity: panel.activeWindowVisible ? 1 : 0
+    clip: true
 
-                    Behavior on height { NumberAnimation { duration: 300; easing.type: Easing.OutQuad } }
-                    Behavior on y { NumberAnimation { duration: 300; easing.type: Easing.OutQuad } }
-                    Behavior on opacity { NumberAnimation { duration: 250 } }
+    function getIcon() {
+        var icon = Quickshell.iconPath(ToplevelManager.activeToplevel.appId.toLowerCase(), true);
+        if (!icon) {
+            icon = Quickshell.iconPath(ToplevelManager.activeToplevel.appId, true);
+        }
+        if (!icon) {
+            icon = Quickshell.iconPath(ToplevelManager.activeToplevel.title, true);
+        }
+        if (!icon) {
+            icon = Quickshell.iconPath(ToplevelManager.activeToplevel.title.toLowerCase(), "application-x-executable");
+        }
 
-                    Rectangle {
-                        id: activeWindowTitleContainer
-                        color: Theme.backgroundPrimary
-                        bottomLeftRadius: Math.max(0, width / 2)
-                        bottomRightRadius: Math.max(0, width / 2)
+        return icon;
+    }
 
-                        width: Math.min(barBackground.width - 200, activeWindowTitle.implicitWidth + 24)
-                        height: activeWindowTitle.implicitHeight + 12
+    Behavior on height {
+        NumberAnimation {
+            duration: 300
+            easing.type: Easing.OutQuad
+        }
+    }
+    Behavior on y {
+        NumberAnimation {
+            duration: 300
+            easing.type: Easing.OutQuad
+        }
+    }
+    Behavior on opacity {
+        NumberAnimation {
+            duration: 250
+        }
+    }
 
-                        anchors.top: parent.top
-                        anchors.horizontalCenter: parent.horizontalCenter
+    Rectangle {
+        id: activeWindowTitleContainer
+        color: Theme.backgroundPrimary
+        bottomLeftRadius: Math.max(0, width / 2)
+        bottomRightRadius: Math.max(0, width / 2)
 
-                        Text {
-                            id: activeWindowTitle
-                            text: panel.displayedWindowTitle && panel.displayedWindowTitle.length > 60
-                                ? panel.displayedWindowTitle.substring(0, 60) + "..."
-                                : panel.displayedWindowTitle
-                            font.family: Theme.fontFamily
-                            font.pixelSize: Theme.fontSizeCaption
-                            color: Theme.textSecondary
-                            elide: Text.ElideRight
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                            anchors.fill: parent
-                            anchors.margins: 6
-                            maximumLineCount: 1
-                        }
-                    }
+        width: Math.min(barBackground.width - 200, activeWindowTitle.implicitWidth + (Settings.showActiveWindowIcon ? 28 : 22))
+        height: activeWindowTitle.implicitHeight + 12
 
-                    Corners {
-                        id: activeCornerRight
-                        position: "bottomleft"
-                        size: 1.1
-                        fillColor: Theme.backgroundPrimary
-                        offsetX: activeWindowTitleContainer.x + activeWindowTitleContainer.width - 33
-                        offsetY: 0
-                        anchors.top: activeWindowTitleContainer.top
-                    }
+        anchors.top: parent.top
+        anchors.horizontalCenter: parent.horizontalCenter
 
-                    Corners {
-                        id: activeCornerLeft
-                        position: "bottomright"
-                        size: 1.1
-                        fillColor: Theme.backgroundPrimary
-                        anchors.top: activeWindowTitleContainer.top
-                        x: activeWindowTitleContainer.x + 33 - width
-                        offsetY: 0
-                    }
-                }
+        Image {
+            id: icon
+            width: 10
+            height: 10
+            anchors.left: parent.left
+            anchors.leftMargin: 6
+            anchors.verticalCenter: parent.verticalCenter
+            source: ToplevelManager.activeToplevel ? getIcon() : ""
+            visible: Settings.showActiveWindowIcon
+        }
+
+        Text {
+            id: activeWindowTitle
+            text: panel.displayedWindowTitle && panel.displayedWindowTitle.length > 60 ? panel.displayedWindowTitle.substring(0, 60) + "..." : panel.displayedWindowTitle
+            font.pixelSize: 12
+            color: Theme.textSecondary
+            elide: Text.ElideRight
+            anchors.right: parent.right
+            anchors.rightMargin: 6
+            horizontalAlignment: Settings.showActiveWindowIcon ? Text.AlignRight : Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            anchors.fill: parent
+
+            maximumLineCount: 1
+        }
+    }
+
+    Corners {
+        id: activeCornerRight
+        position: "bottomleft"
+        size: 1.1
+        fillColor: Theme.backgroundPrimary
+        offsetX: activeWindowTitleContainer.x + activeWindowTitleContainer.width - 33
+        offsetY: 0
+        anchors.top: activeWindowTitleContainer.top
+    }
+
+    Corners {
+        id: activeCornerLeft
+        position: "bottomright"
+        size: 1.1
+        fillColor: Theme.backgroundPrimary
+        anchors.top: activeWindowTitleContainer.top
+        x: activeWindowTitleContainer.x + 33 - width
+        offsetY: 0
+    }
+}
+

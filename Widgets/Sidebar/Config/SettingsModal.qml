@@ -20,12 +20,12 @@ PanelWindow {
     //border.width: 1
     WlrLayershell.keyboardFocus: visible ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
 
-
     // Local properties for editing (not saved until apply)
     property string tempWeatherCity: (Settings.weatherCity !== undefined && Settings.weatherCity !== null) ? Settings.weatherCity : ""
     property bool tempUseFahrenheit: Settings.useFahrenheit
     property string tempProfileImage: (Settings.profileImage !== undefined && Settings.profileImage !== null) ? Settings.profileImage : ""
     property string tempWallpaperFolder: (Settings.wallpaperFolder !== undefined && Settings.wallpaperFolder !== null) ? Settings.wallpaperFolder : ""
+    property bool tempShowActiveWindowIcon: Settings.showActiveWindowIcon
 
     Rectangle {
         anchors.fill: parent
@@ -55,7 +55,6 @@ PanelWindow {
                     }
                     Text {
                         text: "Settings"
-                        font.family: Theme.fontFamily
                         font.pixelSize: 26
                         font.bold: true
                         color: Theme.textPrimary
@@ -117,21 +116,32 @@ PanelWindow {
                             WeatherSettings {
                                 weatherCity: (typeof tempWeatherCity !== 'undefined' && tempWeatherCity !== null) ? tempWeatherCity : ""
                                 useFahrenheit: tempUseFahrenheit
-                                onCityChanged: function(city) { tempWeatherCity = city }
-                                onTemperatureUnitChanged: function(useFahrenheit) { tempUseFahrenheit = useFahrenheit }
+                                onCityChanged: function (city) {
+                                    tempWeatherCity = city;
+                                }
+                                onTemperatureUnitChanged: function (useFahrenheit) {
+                                    tempUseFahrenheit = useFahrenheit;
+                                }
                             }
                         }
                         CollapsibleCategory {
                             title: "System"
                             expanded: false
-                            ProfileSettings { }
+                            ProfileSettings {
+                                showActiveWindowIcon: tempShowActiveWindowIcon
+                                onShowAWIconChanged: function (showActiveWindowIcon) {
+                                    tempShowActiveWindowIcon = showActiveWindowIcon;
+                                }
+                            }
                         }
                         CollapsibleCategory {
                             title: "Wallpaper"
                             expanded: false
                             WallpaperSettings {
                                 wallpaperFolder: (typeof tempWallpaperFolder !== 'undefined' && tempWallpaperFolder !== null) ? tempWallpaperFolder : ""
-                                onWallpaperFolderEdited: function(folder) { tempWallpaperFolder = folder }
+                                onWallpaperFolderEdited: function (folder) {
+                                    tempWallpaperFolder = folder;
+                                }
                             }
                         }
                     }
@@ -150,7 +160,6 @@ PanelWindow {
                 Text {
                     anchors.centerIn: parent
                     text: "Apply Changes"
-                    font.family: Theme.fontFamily
                     font.pixelSize: 17
                     font.bold: true
                     color: applyButtonArea.containsMouse ? Theme.onAccent : Theme.onAccent
@@ -160,15 +169,16 @@ PanelWindow {
                     anchors.fill: parent
                     hoverEnabled: true
                     onClicked: {
-                        Settings.weatherCity = (typeof tempWeatherCity !== 'undefined' && tempWeatherCity !== null) ? tempWeatherCity : ""
-                        Settings.useFahrenheit = tempUseFahrenheit
-                        Settings.profileImage = (typeof tempProfileImage !== 'undefined' && tempProfileImage !== null) ? tempProfileImage : ""
-                        Settings.wallpaperFolder = (typeof tempWallpaperFolder !== 'undefined' && tempWallpaperFolder !== null) ? tempWallpaperFolder : ""
-                        Settings.saveSettings()
+                        Settings.weatherCity = (typeof tempWeatherCity !== 'undefined' && tempWeatherCity !== null) ? tempWeatherCity : "";
+                        Settings.useFahrenheit = tempUseFahrenheit;
+                        Settings.profileImage = (typeof tempProfileImage !== 'undefined' && tempProfileImage !== null) ? tempProfileImage : "";
+                        Settings.wallpaperFolder = (typeof tempWallpaperFolder !== 'undefined' && tempWallpaperFolder !== null) ? tempWallpaperFolder : "";
+                        Settings.showActiveWindowIcon = tempShowActiveWindowIcon;
+                        Settings.saveSettings();
                         if (typeof weather !== 'undefined' && weather) {
-                            weather.fetchCityWeather()
+                            weather.fetchCityWeather();
                         }
-                        settingsModal.closeSettings()
+                        settingsModal.closeSettings();
                     }
                 }
             }
@@ -177,19 +187,21 @@ PanelWindow {
 
     // Function to open the modal and initialize temp values
     function openSettings() {
-        tempWeatherCity = (Settings.weatherCity !== undefined && Settings.weatherCity !== null) ? Settings.weatherCity : ""
-        tempUseFahrenheit = Settings.useFahrenheit
-        tempProfileImage = (Settings.profileImage !== undefined && Settings.profileImage !== null) ? Settings.profileImage : ""
-        tempWallpaperFolder = (Settings.wallpaperFolder !== undefined && Settings.wallpaperFolder !== null) ? Settings.wallpaperFolder : ""
-        if (tempWallpaperFolder === undefined || tempWallpaperFolder === null) tempWallpaperFolder = ""
-        visible = true
+        tempWeatherCity = (Settings.weatherCity !== undefined && Settings.weatherCity !== null) ? Settings.weatherCity : "";
+        tempUseFahrenheit = Settings.useFahrenheit;
+        tempShowActiveWindowIcon = Settings.showActiveWindowIcon;
+        tempProfileImage = (Settings.profileImage !== undefined && Settings.profileImage !== null) ? Settings.profileImage : "";
+        tempWallpaperFolder = (Settings.wallpaperFolder !== undefined && Settings.wallpaperFolder !== null) ? Settings.wallpaperFolder : "";
+        if (tempWallpaperFolder === undefined || tempWallpaperFolder === null)
+            tempWallpaperFolder = "";
+        visible = true;
         // Force focus on the text input after a short delay
-        focusTimer.start()
+        focusTimer.start();
     }
 
     // Function to close the modal and release focus
     function closeSettings() {
-        visible = false
+        visible = false;
     }
 
     Timer {
@@ -197,16 +209,17 @@ PanelWindow {
         interval: 100
         repeat: false
         onTriggered: {
-            if (visible) {
-                // Focus will be handled by the individual components
-            }
+            if (visible)
+            // Focus will be handled by the individual components
+            {}
         }
     }
 
     // Release focus when modal becomes invisible
     onVisibleChanged: {
-        if (!visible) {
-            // Focus will be handled by the individual components
-        }
+        if (!visible)
+        // Focus will be handled by the individual components
+        {}
     }
-} 
+}
+
