@@ -105,7 +105,7 @@ Rectangle {
                 Text {
                     text: "music_note"
                     font.family: "Material Symbols Outlined"
-                    font.pixelSize: 48
+                    font.pixelSize: Theme.fontSizeHeader
                     color: Qt.rgba(Theme.textPrimary.r, Theme.textPrimary.g, Theme.textPrimary.b, 0.3)
                     Layout.alignment: Qt.AlignHCenter
                 }
@@ -113,8 +113,8 @@ Rectangle {
                 Text {
                     text: getAvailablePlayers().length > 0 ? "No controllable player selected" : "No music player detected"
                     color: Qt.rgba(Theme.textPrimary.r, Theme.textPrimary.g, Theme.textPrimary.b, 0.6)
-                    font.family: "Roboto"
-                    font.pixelSize: 14
+                    font.family: Theme.fontFamily
+                    font.pixelSize: Theme.fontSizeSmall
                     Layout.alignment: Qt.AlignHCenter
                 }
             }
@@ -191,7 +191,7 @@ Rectangle {
                             anchors.centerIn: parent
                             text: "album"
                             font.family: "Material Symbols Outlined"
-                            font.pixelSize: 20
+                            font.pixelSize: Theme.fontSizeBody
                             color: Qt.rgba(Theme.textPrimary.r, Theme.textPrimary.g, Theme.textPrimary.b, 0.4)
                             visible: !albumArt.visible
                         }
@@ -206,8 +206,8 @@ Rectangle {
                     Text {
                         text: currentPlayer ? (currentPlayer.trackTitle || "Unknown Track") : ""
                         color: Theme.textPrimary
-                        font.family: "Roboto"
-                        font.pixelSize: 14
+                        font.family: Theme.fontFamily
+                        font.pixelSize: Theme.fontSizeSmall
                         font.bold: true
                         elide: Text.ElideRight
                         wrapMode: Text.Wrap
@@ -218,8 +218,8 @@ Rectangle {
                     Text {
                         text: currentPlayer ? (currentPlayer.trackArtist || "Unknown Artist") : ""
                         color: Qt.rgba(Theme.textPrimary.r, Theme.textPrimary.g, Theme.textPrimary.b, 0.8)
-                        font.family: "Roboto"
-                        font.pixelSize: 12
+                        font.family: Theme.fontFamily
+                        font.pixelSize: Theme.fontSizeCaption
                         elide: Text.ElideRight
                         Layout.fillWidth: true
                     }
@@ -227,8 +227,8 @@ Rectangle {
                     Text {
                         text: currentPlayer ? (currentPlayer.trackAlbum || "Unknown Album") : ""
                         color: Qt.rgba(Theme.textPrimary.r, Theme.textPrimary.g, Theme.textPrimary.b, 0.6)
-                        font.family: "Roboto"
-                        font.pixelSize: 10
+                        font.family: Theme.fontFamily
+                        font.pixelSize: Theme.fontSizeCaption
                         elide: Text.ElideRight
                         Layout.fillWidth: true
                     }
@@ -334,7 +334,7 @@ Rectangle {
                         anchors.centerIn: parent
                         text: "skip_previous"
                         font.family: "Material Symbols Outlined"
-                        font.pixelSize: 12
+                        font.pixelSize: Theme.fontSizeCaption
                         color: previousButton.enabled ? Theme.accentPrimary : Qt.rgba(Theme.textPrimary.r, Theme.textPrimary.g, Theme.textPrimary.b, 0.3)
                     }
                 }
@@ -368,7 +368,7 @@ Rectangle {
                         anchors.centerIn: parent
                         text: currentPlayer && currentPlayer.isPlaying ? "pause" : "play_arrow"
                         font.family: "Material Symbols Outlined"
-                        font.pixelSize: 16
+                        font.pixelSize: Theme.fontSizeBody
                         color: playButton.enabled ? Theme.accentPrimary : Qt.rgba(Theme.textPrimary.r, Theme.textPrimary.g, Theme.textPrimary.b, 0.3)
                     }
                 }
@@ -394,7 +394,7 @@ Rectangle {
                         anchors.centerIn: parent
                         text: "skip_next"
                         font.family: "Material Symbols Outlined"
-                        font.pixelSize: 12
+                        font.pixelSize: Theme.fontSizeCaption
                         color: nextButton.enabled ? Theme.accentPrimary : Qt.rgba(Theme.textPrimary.r, Theme.textPrimary.g, Theme.textPrimary.b, 0.3)
                     }
                 }

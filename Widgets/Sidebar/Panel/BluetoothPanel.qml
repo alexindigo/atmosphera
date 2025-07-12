@@ -111,6 +111,7 @@ Item {
                     }
                     Text {
                         text: "Bluetooth"
+                        font.family: Theme.fontFamily
                         font.pixelSize: 26
                         font.bold: true
                         color: Theme.textPrimary
@@ -225,6 +226,7 @@ Item {
                                         Text {
                                             Layout.fillWidth: true
                                             text: modelData.name || "Unknown Device"
+                                            font.family: Theme.fontFamily
                                             color: modelData.connected ? Theme.accentPrimary : Theme.textPrimary
                                             font.pixelSize: 14
                                             elide: Text.ElideRight
@@ -232,12 +234,14 @@ Item {
                                         Text {
                                             Layout.fillWidth: true
                                             text: modelData.address
+                                            font.family: Theme.fontFamily
                                             color: modelData.connected ? Theme.accentPrimary : Theme.textSecondary
                                             font.pixelSize: 11
                                             elide: Text.ElideRight
                                         }
                                         Text {
                                             text: "Paired: " + modelData.paired + " | Trusted: " + modelData.trusted
+                                            font.family: Theme.fontFamily
                                             font.pixelSize: 10
                                             color: Theme.textSecondary
                                             visible: true

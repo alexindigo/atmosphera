@@ -35,13 +35,14 @@ Rectangle {
             Text {
                 text: "settings"
                 font.family: "Material Symbols Outlined"
-                font.pixelSize: 28
+                font.pixelSize: Theme.fontSizeHeader
                 color: Settings.Theme.accentPrimary
             }
 
             Text {
                 text: "Settings"
-                font.pixelSize: 22
+                font.family: Settings.Theme.fontFamily
+                font.pixelSize: Theme.fontSizeHeader
                 font.bold: true
                 color: Settings.Theme.textPrimary
                 Layout.fillWidth: true
@@ -59,7 +60,7 @@ Rectangle {
                     anchors.centerIn: parent
                     text: "close"
                     font.family: "Material Symbols Outlined"
-                    font.pixelSize: 18
+                    font.pixelSize: Theme.fontSizeBody
                     color: closeButtonArea.containsMouse ? Settings.Theme.onAccent : Settings.Theme.accentPrimary
                 }
 
@@ -92,13 +93,14 @@ Rectangle {
                     Text {
                         text: "wb_sunny"
                         font.family: "Material Symbols Outlined"
-                        font.pixelSize: 20
+                        font.pixelSize: Theme.fontSizeBody
                         color: Settings.Theme.accentPrimary
                     }
 
                     Text {
                         text: "Weather Settings"
-                        font.pixelSize: 16
+                        font.family: Settings.Theme.fontFamily
+                        font.pixelSize: Theme.fontSizeBody
                         font.bold: true
                         color: Settings.Theme.textPrimary
                         Layout.fillWidth: true
@@ -112,14 +114,15 @@ Rectangle {
 
                     Text {
                         text: "City"
-                        font.pixelSize: 13
+                        font.family: Settings.Theme.fontFamily
+                        font.pixelSize: Theme.fontSizeSmall
                         font.bold: true
                         color: Settings.Theme.textPrimary
                     }
 
                     Rectangle {
                         Layout.fillWidth: true
-                        Layout.preferredHeight: 36
+                        Layout.preferredHeight: 40
                         radius: 8
                         color: Settings.Theme.surfaceVariant
                         border.color: cityInput.activeFocus ? Settings.Theme.accentPrimary : Settings.Theme.outline
@@ -127,10 +130,17 @@ Rectangle {
 
                         TextInput {
                             id: cityInput
-                            anchors.fill: parent
-                            anchors.margins: 12
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.top: parent.top
+                            anchors.bottom: parent.bottom
+                            anchors.leftMargin: 12
+                            anchors.rightMargin: 12
+                            anchors.topMargin: 6
+                            anchors.bottomMargin: 6
                             text: tempWeatherCity
-                            font.pixelSize: 13
+                            font.family: Settings.Theme.fontFamily
+                            font.pixelSize: Theme.fontSizeSmall
                             color: Settings.Theme.textPrimary
                             verticalAlignment: TextInput.AlignVCenter
                             clip: true
@@ -160,7 +170,8 @@ Rectangle {
 
                     Text {
                         text: "Temperature Unit"
-                        font.pixelSize: 13
+                        font.family: Settings.Theme.fontFamily
+                        font.pixelSize: Theme.fontSizeSmall
                         font.bold: true
                         color: Settings.Theme.textPrimary
                     }
@@ -193,7 +204,8 @@ Rectangle {
                             Text {
                                 anchors.centerIn: parent
                                 text: tempUseFahrenheit ? "°F" : "°C"
-                                font.pixelSize: 12
+                                font.family: Settings.Theme.fontFamily
+                                font.pixelSize: Theme.fontSizeCaption
                                 font.bold: true
                                 color: Settings.Theme.textPrimary
                             }
@@ -240,17 +252,18 @@ Rectangle {
                     Text {
                         text: "person"
                         font.family: "Material Symbols Outlined"
-                        font.pixelSize: 20
+                        font.pixelSize: Theme.fontSizeBody
                         color: Settings.Theme.accentPrimary
                     }
 
-                    Text {
-                        text: "Profile Image"
-                        font.pixelSize: 16
-                        font.bold: true
-                        color: Settings.Theme.textPrimary
-                        Layout.fillWidth: true
-                    }
+                                            Text {
+                            text: "Profile Image"
+                            font.family: Settings.Theme.fontFamily
+                            font.pixelSize: Theme.fontSizeBody
+                            font.bold: true
+                            color: Settings.Theme.textPrimary
+                            Layout.fillWidth: true
+                        }
                 }
 
                 // Profile Image Input Row
@@ -292,7 +305,7 @@ Rectangle {
                             anchors.centerIn: parent
                             text: "person"
                             font.family: "Material Symbols Outlined"
-                            font.pixelSize: 18
+                            font.pixelSize: Theme.fontSizeBody
                             color: Settings.Theme.accentPrimary
                             visible: tempProfileImage === ""
                         }
@@ -301,7 +314,7 @@ Rectangle {
                     // Text input styled exactly like weather city
                     Rectangle {
                         Layout.fillWidth: true
-                        Layout.preferredHeight: 36
+                        Layout.preferredHeight: 40
                         radius: 8
                         color: Settings.Theme.surfaceVariant
                         border.color: profileImageInput.activeFocus ? Settings.Theme.accentPrimary : Settings.Theme.outline
@@ -309,10 +322,17 @@ Rectangle {
 
                         TextInput {
                             id: profileImageInput
-                            anchors.fill: parent
-                            anchors.margins: 12
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.top: parent.top
+                            anchors.bottom: parent.bottom
+                            anchors.leftMargin: 12
+                            anchors.rightMargin: 12
+                            anchors.topMargin: 6
+                            anchors.bottomMargin: 6
                             text: tempProfileImage
-                            font.pixelSize: 13
+                            font.family: Settings.Theme.fontFamily
+                            font.pixelSize: Theme.fontSizeSmall
                             color: Settings.Theme.textPrimary
                             verticalAlignment: TextInput.AlignVCenter
                             clip: true
@@ -354,12 +374,13 @@ Rectangle {
                     Text {
                         text: "image"
                         font.family: "Material Symbols Outlined"
-                        font.pixelSize: 20
+                        font.pixelSize: Theme.fontSizeBody
                         color: Settings.Theme.accentPrimary
                     }
                     Text {
                         text: "Wallpaper Folder"
-                        font.pixelSize: 16
+                        font.family: Settings.Theme.fontFamily
+                        font.pixelSize: Theme.fontSizeBody
                         font.bold: true
                         color: Settings.Theme.textPrimary
                         Layout.fillWidth: true
@@ -369,7 +390,7 @@ Rectangle {
                 // Folder Path Input
                 Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 36
+                    Layout.preferredHeight: 40
                     radius: 8
                     color: Settings.Theme.surfaceVariant
                     border.color: wallpaperFolderInput.activeFocus ? Settings.Theme.accentPrimary : Settings.Theme.outline
@@ -377,10 +398,17 @@ Rectangle {
 
                     TextInput {
                         id: wallpaperFolderInput
-                        anchors.fill: parent
-                        anchors.margins: 12
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.top: parent.top
+                        anchors.bottom: parent.bottom
+                        anchors.leftMargin: 12
+                        anchors.rightMargin: 12
+                        anchors.topMargin: 6
+                        anchors.bottomMargin: 6
                         text: tempWallpaperFolder
-                        font.pixelSize: 13
+                        font.family: Settings.Theme.fontFamily
+                        font.pixelSize: Theme.fontSizeSmall
                         color: Settings.Theme.textPrimary
                         verticalAlignment: TextInput.AlignVCenter
                         clip: true
@@ -415,7 +443,8 @@ Rectangle {
             Text {
                 anchors.centerIn: parent
                 text: "Apply Changes"
-                font.pixelSize: 15
+                font.family: Settings.Theme.fontFamily
+                font.pixelSize: Theme.fontSizeSmall
                 font.bold: true
                 color: applyButtonArea.containsMouse ? Settings.Theme.onAccent : Settings.Theme.onAccent
             }

@@ -44,12 +44,13 @@ PanelWindow {
                 Text {
                     text: "image"
                     font.family: "Material Symbols Outlined"
-                    font.pixelSize: 32
+                    font.pixelSize: Theme.fontSizeHeader
                     color: Theme.accentPrimary
                 }
                 Text {
                     text: "Wallpapers"
-                    font.pixelSize: 26
+                    font.family: Theme.fontFamily
+                    font.pixelSize: Theme.fontSizeHeader
                     font.bold: true
                     color: Theme.textPrimary
                     Layout.fillWidth: true
@@ -63,7 +64,7 @@ PanelWindow {
                         anchors.centerIn: parent
                         text: "close"
                         font.family: closeButtonArea.containsMouse ? "Material Symbols Rounded" : "Material Symbols Outlined"
-                        font.pixelSize: 20
+                        font.pixelSize: Theme.fontSizeBody
                         color: closeButtonArea.containsMouse ? Theme.onAccent : Theme.accentPrimary
                     }
                     MouseArea {

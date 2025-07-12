@@ -37,4 +37,12 @@ QtObject {
     // Shadows & Overlays
     readonly property color shadow: "#000000B3"              // Standard soft black shadow
     readonly property color overlay: "#11121ACC"             // Deep bluish overlay
+
+    // Font Properties
+    readonly property string fontFamily: "Roboto"         // Family for all text
+    
+    readonly property int fontSizeHeader: 32              // Headers and titles
+    readonly property int fontSizeBody: 16                // Body text and general content
+    readonly property int fontSizeSmall: 14               // Small text like clock, labels
+    readonly property int fontSizeCaption: 12             // Captions and fine print
 }

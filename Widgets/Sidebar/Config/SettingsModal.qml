@@ -55,6 +55,7 @@ PanelWindow {
                     }
                     Text {
                         text: "Settings"
+                        font.family: Theme.fontFamily
                         font.pixelSize: 26
                         font.bold: true
                         color: Theme.textPrimary
@@ -149,6 +150,7 @@ PanelWindow {
                 Text {
                     anchors.centerIn: parent
                     text: "Apply Changes"
+                    font.family: Theme.fontFamily
                     font.pixelSize: 17
                     font.bold: true
                     color: applyButtonArea.containsMouse ? Theme.onAccent : Theme.onAccent

@@ -96,6 +96,7 @@ Rectangle {
         anchors.centerIn: parent
         text: circularProgressBar.text
         font.pixelSize: textSize
+        font.family: Theme.fontFamily
         font.bold: true
         color: textColor
         visible: showText

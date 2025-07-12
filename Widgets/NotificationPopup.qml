@@ -155,9 +155,10 @@ PanelWindow {
                             anchors.centerIn: parent
                             visible: !iconImage.visible
                             text: model.appName ? model.appName.charAt(0).toUpperCase() : "?"
-                            font.pixelSize: 18
+                            font.family: Theme.fontFamily
+                            font.pixelSize: Theme.fontSizeBody
                             font.bold: true
-                            color: Theme.backgroundPrimary
+                            color: Theme.textPrimary
                         }
                     }
 
@@ -169,15 +170,17 @@ PanelWindow {
                             text: model.appName
                             width: parent.width
                             color: Theme.textPrimary
+                            font.family: Theme.fontFamily
                             font.bold: true
-                            font.pixelSize: 14
+                            font.pixelSize: Theme.fontSizeSmall
                             elide: Text.ElideRight
                         }
                         Text {
                             text: model.summary
                             width: parent.width
                             color: "#eeeeee"
-                            font.pixelSize: 13
+                            font.family: Theme.fontFamily
+                            font.pixelSize: Theme.fontSizeSmall
                             wrapMode: Text.Wrap
                             visible: text !== ""
                         }
@@ -185,7 +188,8 @@ PanelWindow {
                             text: model.body
                             width: parent.width
                             color: "#cccccc"
-                            font.pixelSize: 12
+                            font.family: Theme.fontFamily
+                            font.pixelSize: Theme.fontSizeCaption
                             wrapMode: Text.Wrap
                             visible: text !== ""
                         }

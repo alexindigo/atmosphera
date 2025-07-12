@@ -20,12 +20,13 @@ IpcHandler {
         }
     }
 
+    // Toggle LockScreen
     function toggleLock(): void {
         if (!lockScreen) {
             console.warn("LockScreenIpcHandler: lockScreen not set!");
             return;
         }
-        console.log("[IPC] LockScreen lock() called");
+        console.log("[IPC] LockScreen show() called");
         lockScreen.locked = true;
     }
 }

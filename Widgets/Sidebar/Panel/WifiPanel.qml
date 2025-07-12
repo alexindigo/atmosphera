@@ -18,7 +18,7 @@ Item {
     }
 
     function signalIcon(signal) {
-        if (signal >= 80) return "network_wifi_4_bar";
+        if (signal >= 80) return "network_wifi";
         if (signal >= 60) return "network_wifi_3_bar";
         if (signal >= 40) return "network_wifi_2_bar";
         if (signal >= 20) return "network_wifi_1_bar";

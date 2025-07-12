@@ -56,6 +56,7 @@ Rectangle {
 
                     Text {
                         text: "Settings"
+                        font.family: Settings.Theme.fontFamily
                         font.pixelSize: 14
                         font.bold: true
                         color: settingsButtonArea.containsMouse ? Settings.Theme.onAccent : Settings.Theme.textPrimary
@@ -98,6 +99,7 @@ Rectangle {
 
                     Text {
                         text: isRecording ? "End" : "Record"
+                        font.family: Settings.Theme.fontFamily
                         font.pixelSize: 14
                         font.bold: true
                         color: isRecording || recorderButtonArea.containsMouse ? Settings.Theme.onAccent : Settings.Theme.textPrimary
@@ -143,6 +145,7 @@ Rectangle {
 
                     Text {
                         text: "Wallpaper"
+                        font.family: Settings.Theme.fontFamily
                         font.pixelSize: 14
                         font.bold: true
                         color: wallpaperButtonArea.containsMouse ? Settings.Theme.onAccent : Settings.Theme.textPrimary

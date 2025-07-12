@@ -89,6 +89,7 @@ Rectangle {
 
                     Text {
                         text: Quickshell.env("USER")
+                        font.family: Theme.fontFamily
                         font.pixelSize: 16
                         font.bold: true
                         color: Theme.textPrimary
@@ -96,6 +97,7 @@ Rectangle {
 
                     Text {
                         text: "System Uptime: " + uptimeText
+                        font.family: Theme.fontFamily
                         font.pixelSize: 12
                         color: Theme.textSecondary
                     }
@@ -179,6 +181,7 @@ Rectangle {
 
                     Text {
                         text: "Lock Screen"
+                        font.family: Theme.fontFamily
                         font.pixelSize: 14
                         color: lockButtonArea.containsMouse ? Theme.onAccent : Theme.textPrimary
                         Layout.fillWidth: true
@@ -217,6 +220,7 @@ Rectangle {
 
                     Text {
                         text: "Reboot"
+                        font.family: Theme.fontFamily
                         font.pixelSize: 14
                         color: rebootButtonArea.containsMouse ? Theme.onAccent : Theme.textPrimary
                         Layout.fillWidth: true

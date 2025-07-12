@@ -36,6 +36,7 @@ Rectangle {
 
             Text {
                 text: "Weather Settings"
+                font.family: Theme.fontFamily
                 font.pixelSize: 16
                 font.bold: true
                 color: Theme.textPrimary
@@ -50,6 +51,7 @@ Rectangle {
 
             Text {
                 text: "City"
+                font.family: Theme.fontFamily
                 font.pixelSize: 13
                 font.bold: true
                 color: Theme.textPrimary
@@ -57,7 +59,7 @@ Rectangle {
 
             Rectangle {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 36
+                Layout.preferredHeight: 40
                 radius: 8
                 color: Theme.surfaceVariant
                 border.color: cityInput.activeFocus ? Theme.accentPrimary : Theme.outline
@@ -65,9 +67,16 @@ Rectangle {
 
                 TextInput {
                     id: cityInput
-                    anchors.fill: parent
-                    anchors.margins: 12
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    anchors.leftMargin: 12
+                    anchors.rightMargin: 12
+                    anchors.topMargin: 6
+                    anchors.bottomMargin: 6
                     text: weatherCity
+                    font.family: Theme.fontFamily
                     font.pixelSize: 13
                     color: Theme.textPrimary
                     verticalAlignment: TextInput.AlignVCenter
@@ -98,6 +107,7 @@ Rectangle {
 
             Text {
                 text: "Temperature Unit"
+                font.family: Theme.fontFamily
                 font.pixelSize: 13
                 font.bold: true
                 color: Theme.textPrimary
@@ -130,7 +140,8 @@ Rectangle {
                     
                     Text {
                         anchors.centerIn: parent
-                        text: useFahrenheit ? "°F" : "°C"
+                        text: useFahrenheit ? "\u00b0F" : "\u00b0C"
+                        font.family: Theme.fontFamily
                         font.pixelSize: 12
                         font.bold: true
                         color: Theme.textPrimary

@@ -81,12 +81,14 @@ Rectangle {
                             spacing: 4
                             Text {
                                 text: city
+                                font.family: Theme.fontFamily
                                 font.pixelSize: 14
                                 font.bold: true
                                 color: Theme.textPrimary
                             }
                             Text {
                                 text: weatherData && weatherData.timezone_abbreviation ? `(${weatherData.timezone_abbreviation})` : ""
+                                font.family: Theme.fontFamily
                                 font.pixelSize: 10
                                 color: Theme.textSecondary
                                 leftPadding: 2
@@ -94,6 +96,7 @@ Rectangle {
                         }
                         Text {
                             text: weatherData && weatherData.current_weather ? ((Settings.useFahrenheit !== undefined ? Settings.useFahrenheit : false) ? `${Math.round(weatherData.current_weather.temperature * 9/5 + 32)}°F` : `${Math.round(weatherData.current_weather.temperature)}°C`) : ((Settings.useFahrenheit !== undefined ? Settings.useFahrenheit : false) ? "--°F" : "--°C")
+                            font.family: Theme.fontFamily
                             font.pixelSize: 24
                             font.bold: true
                             color: Theme.textPrimary
@@ -131,6 +134,7 @@ Rectangle {
                         Text {
                             // Day of the week (e.g., Mon)
                             text: Qt.formatDateTime(new Date(weatherData.daily.time[index]), "ddd")
+                            font.family: Theme.fontFamily
                             font.pixelSize: 12
                             color: Theme.textSecondary
                             horizontalAlignment: Text.AlignHCenter
@@ -148,6 +152,7 @@ Rectangle {
                         Text {
                             // High/low temp
                             text: weatherData && weatherData.daily ? ((Settings.useFahrenheit !== undefined ? Settings.useFahrenheit : false) ? `${Math.round(weatherData.daily.temperature_2m_max[index] * 9/5 + 32)}° / ${Math.round(weatherData.daily.temperature_2m_min[index] * 9/5 + 32)}°` : `${Math.round(weatherData.daily.temperature_2m_max[index])}° / ${Math.round(weatherData.daily.temperature_2m_min[index])}°`) : ((Settings.useFahrenheit !== undefined ? Settings.useFahrenheit : false) ? "--° / --°" : "--° / --°")
+                            font.family: Theme.fontFamily
                             font.pixelSize: 12
                             color: Theme.textPrimary
                             horizontalAlignment: Text.AlignHCenter
@@ -162,6 +167,7 @@ Rectangle {
                 text: errorString
                 color: Theme.error
                 visible: errorString !== ""
+                font.family: Theme.fontFamily
                 font.pixelSize: 10
                 horizontalAlignment: Text.AlignHCenter
                 Layout.alignment: Qt.AlignHCenter

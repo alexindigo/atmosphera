@@ -34,7 +34,8 @@ Item {
                             text: panel.displayedWindowTitle && panel.displayedWindowTitle.length > 60
                                 ? panel.displayedWindowTitle.substring(0, 60) + "..."
                                 : panel.displayedWindowTitle
-                            font.pixelSize: 12
+                            font.family: Theme.fontFamily
+                            font.pixelSize: Theme.fontSizeCaption
                             color: Theme.textSecondary
                             elide: Text.ElideRight
                             horizontalAlignment: Text.AlignHCenter

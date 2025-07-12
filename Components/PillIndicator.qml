@@ -45,7 +45,8 @@ Item {
             id: textItem
             anchors.centerIn: parent
             text: revealPill.text
-            font.pixelSize: 14
+            font.pixelSize: Theme.fontSizeSmall
+            font.family: Theme.fontFamily
             font.weight: Font.Bold
             color: textColor
             visible: showPill // Hide text when pill is collapsed
@@ -78,7 +79,7 @@ Item {
         Text {
             anchors.centerIn: parent
             font.family: showPill ? "Material Symbols Rounded" : "Material Symbols Outlined"
-            font.pixelSize: 14
+            font.pixelSize: Theme.fontSizeSmall
             text: revealPill.icon
             color: showPill ? iconTextColor : textColor
         }

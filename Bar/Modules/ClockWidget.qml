@@ -9,9 +9,9 @@ Rectangle {
     Text {
         id: textItem
         text: Time.time
-        font.family: "Roboto"
+        font.family: Theme.fontFamily
         font.weight: Font.Bold
-        font.pixelSize: 14
+        font.pixelSize: Theme.fontSizeSmall
         color: Theme.textPrimary
         anchors.centerIn: parent
     }

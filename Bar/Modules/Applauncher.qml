@@ -75,7 +75,10 @@ PanelWindow {
         }
         function updateFilter() {
             var query = searchField.text ? searchField.text.toLowerCase() : "";
-            var apps = root.appModel;
+            // Sort apps alphabetically by name (case-insensitive)
+            var apps = root.appModel.slice().sort(function(a, b) {
+                return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+            });
             var results = [];
             // Calculator mode: starts with '='
             if (query.startsWith("=")) {
@@ -98,7 +101,11 @@ PanelWindow {
                 results = results.concat(apps);
             } else {
                 var fuzzyResults = Fuzzysort.go(query, apps, { keys: ["name", "comment", "genericName"] });
-                results = results.concat(fuzzyResults.map(function(r) { return r.obj; }));
+                // Sort fuzzy results alphabetically by name as well
+                var sortedFuzzy = fuzzyResults.map(function(r) { return r.obj; }).sort(function(a, b) {
+                    return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+                });
+                results = results.concat(sortedFuzzy);
             }
             root.filteredApps = results;
             root.selectedIndex = 0;
@@ -158,18 +165,22 @@ PanelWindow {
                 height: 48
                 Layout.fillWidth: true
                 border.color: searchField.activeFocus ? Theme.accentPrimary : Theme.outline
-                border.width: 2
+                border.width: searchField.activeFocus ? 2 : 1
 
                 RowLayout {
-                    anchors.fill: parent
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.leftMargin: 14
+                    anchors.rightMargin: 14
                     spacing: 10
-                    anchors.margins: 14
                     Text {
                         text: "search"
                         font.family: "Material Symbols Outlined"
-                        font.pixelSize: 22
+                        font.pixelSize: Theme.fontSizeHeader
                         color: searchField.activeFocus ? Theme.accentPrimary : Theme.textSecondary
                         verticalAlignment: Text.AlignVCenter
+                        Layout.alignment: Qt.AlignVCenter
                     }
                     TextField {
                         id: searchField
@@ -177,15 +188,19 @@ PanelWindow {
                         color: Theme.textPrimary
                         placeholderTextColor: Theme.textSecondary
                         background: null
-                        font.pixelSize: 17
+                        font.family: Theme.fontFamily
+                        font.pixelSize: Theme.fontSizeBody
                         Layout.fillWidth: true
+                        Layout.alignment: Qt.AlignVCenter
                         onTextChanged: root.updateFilter()
                         selectedTextColor: Theme.onAccent
                         selectionColor: Theme.accentPrimary
-                        padding: 2
+                        padding: 0
                         verticalAlignment: TextInput.AlignVCenter
                         leftPadding: 0
                         rightPadding: 0
+                        topPadding: 0
+                        bottomPadding: 0
                         font.bold: true
                         Component.onCompleted: contentItem.cursorColor = Theme.textPrimary
                         onActiveFocusChanged: contentItem.cursorColor = Theme.textPrimary
@@ -265,7 +280,7 @@ PanelWindow {
                                     visible: !modelData.isCalculator && !parent.iconLoaded
                                     text: "broken_image"
                                     font.family: "Material Symbols Outlined"
-                                    font.pixelSize: 22
+                                    font.pixelSize: Theme.fontSizeHeader
                                     color: Theme.accentPrimary
                                 }
                             }
@@ -275,7 +290,8 @@ PanelWindow {
                                 Text {
                                     text: modelData.name
                                     color: hovered || isSelected ? Theme.onAccent : Theme.textPrimary
-                                    font.pixelSize: 14
+                                    font.family: Theme.fontFamily
+                                    font.pixelSize: Theme.fontSizeSmall
                                     font.bold: hovered || isSelected
                                     verticalAlignment: Text.AlignVCenter
                                     elide: Text.ElideRight
@@ -284,7 +300,8 @@ PanelWindow {
                                 Text {
                                     text: modelData.isCalculator ? (modelData.expr + " = " + modelData.result) : (modelData.comment || modelData.genericName || "")
                                     color: hovered || isSelected ? Theme.onAccent : Theme.textSecondary
-                                    font.pixelSize: 11
+                                    font.family: Theme.fontFamily
+                                    font.pixelSize: Theme.fontSizeCaption
                                     elide: Text.ElideRight
                                     Layout.fillWidth: true
                                 }
@@ -293,7 +310,7 @@ PanelWindow {
                             Text {
                                 text: modelData.isCalculator ? "content_copy" : "chevron_right"
                                 font.family: "Material Symbols Outlined"
-                                font.pixelSize: 16
+                                font.pixelSize: Theme.fontSizeBody
                                 color: hovered || isSelected ? Theme.onAccent : Theme.textSecondary
                                 verticalAlignment: Text.AlignVCenter
                             }

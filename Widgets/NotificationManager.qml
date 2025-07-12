@@ -75,8 +75,9 @@ PanelWindow {
                         text: modelData.appName
                         width: parent.width
                         color: "white"
+                        font.family: Theme.fontFamily
                         font.bold: true
-                        font.pixelSize: 14
+                        font.pixelSize: Theme.fontSizeSmall
                         elide: Text.ElideRight
                     }
 
@@ -84,7 +85,8 @@ PanelWindow {
                         text: modelData.summary
                         width: parent.width
                         color: "#eeeeee"
-                        font.pixelSize: 13
+                        font.family: Theme.fontFamily
+                        font.pixelSize: Theme.fontSizeSmall
                         wrapMode: Text.Wrap
                         visible: text !== ""
                     }
@@ -93,7 +95,8 @@ PanelWindow {
                         text: modelData.body
                         width: parent.width
                         color: "#cccccc"
-                        font.pixelSize: 12
+                        font.family: Theme.fontFamily
+                        font.pixelSize: Theme.fontSizeCaption
                         wrapMode: Text.Wrap
                         visible: text !== ""
                     }

@@ -27,13 +27,14 @@ Rectangle {
             Text {
                 text: "person"
                 font.family: "Material Symbols Outlined"
-                font.pixelSize: 20
+                font.pixelSize: Theme.fontSizeBody
                 color: Theme.accentPrimary
             }
 
             Text {
                 text: "Profile Image"
-                font.pixelSize: 16
+                font.family: Theme.fontFamily
+                font.pixelSize: Theme.fontSizeBody
                 font.bold: true
                 color: Theme.textPrimary
                 Layout.fillWidth: true
@@ -82,7 +83,7 @@ Rectangle {
                     anchors.centerIn: parent
                     text: "person"
                     font.family: "Material Symbols Outlined"
-                    font.pixelSize: 18
+                    font.pixelSize: Theme.fontSizeBody
                     color: Theme.accentPrimary
                     visible: Settings.profileImage === ""
                 }
@@ -91,7 +92,7 @@ Rectangle {
             // Text input styled exactly like weather city
             Rectangle {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 36
+                Layout.preferredHeight: 40
                 radius: 8
                 color: Theme.surfaceVariant
                 border.color: profileImageInput.activeFocus ? Theme.accentPrimary : Theme.outline
@@ -99,10 +100,17 @@ Rectangle {
 
                 TextInput {
                     id: profileImageInput
-                    anchors.fill: parent
-                    anchors.margins: 12
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    anchors.leftMargin: 12
+                    anchors.rightMargin: 12
+                    anchors.topMargin: 6
+                    anchors.bottomMargin: 6
                     text: Settings.profileImage
-                    font.pixelSize: 13
+                    font.family: Theme.fontFamily
+                    font.pixelSize: Theme.fontSizeSmall
                     color: Theme.textPrimary
                     verticalAlignment: TextInput.AlignVCenter
                     clip: true
@@ -131,14 +139,15 @@ Rectangle {
 
             Text {
                 text: "Video Path"
-                font.pixelSize: 14
+                font.family: Theme.fontFamily
+                font.pixelSize: Theme.fontSizeSmall
                 color: Theme.textPrimary
                 Layout.alignment: Qt.AlignVCenter
             }
 
             Rectangle {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 36
+                Layout.preferredHeight: 40
                 radius: 8
                 color: Theme.surfaceVariant
                 border.color: videoPathInput.activeFocus ? Theme.accentPrimary : Theme.outline
@@ -146,10 +155,17 @@ Rectangle {
 
                 TextInput {
                     id: videoPathInput
-                    anchors.fill: parent
-                    anchors.margins: 12
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    anchors.leftMargin: 12
+                    anchors.rightMargin: 12
+                    anchors.topMargin: 6
+                    anchors.bottomMargin: 6
                     text: Settings.videoPath !== undefined ? Settings.videoPath : ""
-                    font.pixelSize: 13
+                    font.family: Theme.fontFamily
+                    font.pixelSize: Theme.fontSizeSmall
                     color: Theme.textPrimary
                     verticalAlignment: TextInput.AlignVCenter
                     clip: true

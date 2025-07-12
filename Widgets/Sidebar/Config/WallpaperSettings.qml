@@ -31,6 +31,7 @@ Rectangle {
             }
             Text {
                 text: "Wallpaper Folder"
+                font.family: Theme.fontFamily
                 font.pixelSize: 16
                 font.bold: true
                 color: Theme.textPrimary
@@ -41,16 +42,23 @@ Rectangle {
         // Folder Path Input
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: 36
+            Layout.preferredHeight: 40
             radius: 8
             color: Theme.surfaceVariant
             border.color: folderInput.activeFocus ? Theme.accentPrimary : Theme.outline
             border.width: 1
             TextInput {
                 id: folderInput
-                anchors.fill: parent
-                anchors.margins: 12
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                anchors.leftMargin: 12
+                anchors.rightMargin: 12
+                anchors.topMargin: 6
+                anchors.bottomMargin: 6
                 text: wallpaperFolder
+                font.family: Theme.fontFamily
                 font.pixelSize: 13
                 color: Theme.textPrimary
                 verticalAlignment: TextInput.AlignVCenter

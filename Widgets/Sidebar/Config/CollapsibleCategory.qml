@@ -21,7 +21,8 @@ ColumnLayout {
             spacing: 8
             Text {
                 id: headerText
-                font.pixelSize: 16
+                font.family: Theme.fontFamily
+                font.pixelSize: Theme.fontSizeBody
                 font.bold: true
                 color: Theme.textPrimary
             }
@@ -33,7 +34,7 @@ ColumnLayout {
                     anchors.centerIn: parent
                     text: expanded ? "expand_less" : "expand_more"
                     font.family: "Material Symbols Outlined"
-                    font.pixelSize: 20
+                    font.pixelSize: Theme.fontSizeBody
                     color: Theme.accentPrimary
                 }
             }

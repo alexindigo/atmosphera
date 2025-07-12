@@ -104,7 +104,8 @@ PopupWindow {
                         Layout.fillWidth: true
                         color: (modelData?.enabled ?? true) ? Theme.textPrimary : Theme.textDisabled
                         text: modelData?.text ?? ""
-                        font.pixelSize: 13
+                        font.family: Theme.fontFamily
+                        font.pixelSize: Theme.fontSizeSmall
                         verticalAlignment: Text.AlignVCenter
                         elide: Text.ElideRight
                     }
