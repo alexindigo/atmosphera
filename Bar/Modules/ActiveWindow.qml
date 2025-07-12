@@ -69,6 +69,7 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             source: ToplevelManager.activeToplevel ? getIcon() : ""
             visible: Settings.showActiveWindowIcon
+            anchors.verticalCenterOffset: -3
         }
 
         Text {
@@ -77,12 +78,14 @@ Item {
             font.pixelSize: 12
             color: Theme.textSecondary
             elide: Text.ElideRight
+            anchors.left: icon.right
+            anchors.leftMargin: Settings.showActiveWindowIcon ? 4 : 6
             anchors.right: parent.right
             anchors.rightMargin: 6
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: -3
             horizontalAlignment: Settings.showActiveWindowIcon ? Text.AlignRight : Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
-            anchors.fill: parent
-
             maximumLineCount: 1
         }
     }
@@ -92,8 +95,8 @@ Item {
         position: "bottomleft"
         size: 1.1
         fillColor: Theme.backgroundPrimary
-        offsetX: activeWindowTitleContainer.x + activeWindowTitleContainer.width - 33
-        offsetY: 0
+        offsetX: activeWindowTitleContainer.x + activeWindowTitleContainer.width - 34
+        offsetY: -1
         anchors.top: activeWindowTitleContainer.top
     }
 
@@ -103,7 +106,8 @@ Item {
         size: 1.1
         fillColor: Theme.backgroundPrimary
         anchors.top: activeWindowTitleContainer.top
-        x: activeWindowTitleContainer.x + 33 - width
-        offsetY: 0
+        x: activeWindowTitleContainer.x + 34 - width
+        offsetY: -1
     }
 }
+
