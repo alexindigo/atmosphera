@@ -17,8 +17,8 @@
   "error": "{{ color5 | darken(0.1) }}",
   "warning": "{{ color5 | lighten(0.1) }}",
   
-  "highlight": "{{ color6 | lighten(0.2) }}",
-  "rippleEffect": "{{ color6 | lighten(0.2) }}",
+  "highlight": "{{ color4 | lighten(0.4) }}",
+  "rippleEffect": "{{ color4 | lighten(0.1) }}",
   
   "onAccent": "{{ background }}",
   "outline": "{{ background | lighten(0.3) }}",
