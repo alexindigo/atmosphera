@@ -6,13 +6,29 @@ import qs.Settings
 Rectangle {
     id: wallpaperSettingsCard
     Layout.fillWidth: true
-    Layout.preferredHeight: 100
+    Layout.preferredHeight: 680
     color: Theme.surface
     radius: 18
 
     // Property for binding
     property string wallpaperFolder: ""
     signal wallpaperFolderEdited(string folder)
+    property bool useSWWW: false
+    signal useSWWWChangedUpdated(bool useSWWW)
+    property bool randomWallpaper: false
+    signal randomWallpaperChangedUpdated(bool randomWallpaper)
+    property bool useWallpaperTheme: false
+    signal useWallpaperThemeChangedUpdated(bool useWallpaperTheme)
+    property int wallpaperInterval: 300
+    signal wallpaperIntervalChangedUpdated(int wallpaperInterval)
+    property string wallpaperResize: "crop"
+    signal wallpaperResizeChangedUpdated(string resize)
+    property int transitionFps: 60
+    signal transitionFpsChangedUpdated(int fps)
+    property string transitionType: "random"
+    signal transitionTypeChangedUpdated(string type)
+    property real transitionDuration: 1.1
+    signal transitionDurationChangedUpdated(real duration)
 
     ColumnLayout {
         anchors.fill: parent
@@ -72,6 +88,562 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: folderInput.forceActiveFocus()
+                }
+            }
+        }
+
+        // Use SWWW Setting
+        RowLayout {
+            spacing: 8
+            Layout.fillWidth: true
+            Layout.topMargin: 8
+
+            Text {
+                text: "Use SWWW"
+                font.pixelSize: 13
+                font.bold: true
+                color: Theme.textPrimary
+            }
+
+            Item {
+                Layout.fillWidth: true
+            }
+
+            // Custom Material 3 Switch
+            Rectangle {
+                id: swwwSwitch
+                width: 52
+                height: 32
+                radius: 16
+                color: useSWWW ? Theme.accentPrimary : Theme.surfaceVariant
+                border.color: useSWWW ? Theme.accentPrimary : Theme.outline
+                border.width: 2
+                
+                Rectangle {
+                    id: swwwThumb
+                    width: 28
+                    height: 28
+                    radius: 14
+                    color: Theme.surface
+                    border.color: Theme.outline
+                    border.width: 1
+                    y: 2
+                    x: useSWWW ? swwwSwitch.width - width - 2 : 2
+                    
+                    Behavior on x {
+                        NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
+                    }
+                }
+                
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        useSWWWChangedUpdated(!useSWWW)
+                    }
+                }
+            }
+        }
+
+        // Random Wallpaper Setting
+        RowLayout {
+            spacing: 8
+            Layout.fillWidth: true
+            Layout.topMargin: 8
+
+            Text {
+                text: "Random Wallpaper"
+                font.pixelSize: 13
+                font.bold: true
+                color: Theme.textPrimary
+            }
+
+            Item {
+                Layout.fillWidth: true
+            }
+
+            // Custom Material 3 Switch
+            Rectangle {
+                id: randomWallpaperSwitch
+                width: 52
+                height: 32
+                radius: 16
+                color: randomWallpaper ? Theme.accentPrimary : Theme.surfaceVariant
+                border.color: randomWallpaper ? Theme.accentPrimary : Theme.outline
+                border.width: 2
+                
+                Rectangle {
+                    id: randomWallpaperThumb
+                    width: 28
+                    height: 28
+                    radius: 14
+                    color: Theme.surface
+                    border.color: Theme.outline
+                    border.width: 1
+                    y: 2
+                    x: randomWallpaper ? randomWallpaperSwitch.width - width - 2 : 2
+                    
+                    Behavior on x {
+                        NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
+                    }
+                }
+                
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        randomWallpaperChangedUpdated(!randomWallpaper)
+                    }
+                }
+            }
+        }
+
+        // Use Wallpaper Theme Setting
+        RowLayout {
+            spacing: 8
+            Layout.fillWidth: true
+            Layout.topMargin: 8
+
+            Text {
+                text: "Use Wallpaper Theme"
+                font.pixelSize: 13
+                font.bold: true
+                color: Theme.textPrimary
+            }
+
+            Item {
+                Layout.fillWidth: true
+            }
+
+            // Custom Material 3 Switch
+            Rectangle {
+                id: wallpaperThemeSwitch
+                width: 52
+                height: 32
+                radius: 16
+                color: useWallpaperTheme ? Theme.accentPrimary : Theme.surfaceVariant
+                border.color: useWallpaperTheme ? Theme.accentPrimary : Theme.outline
+                border.width: 2
+                
+                Rectangle {
+                    id: wallpaperThemeThumb
+                    width: 28
+                    height: 28
+                    radius: 14
+                    color: Theme.surface
+                    border.color: Theme.outline
+                    border.width: 1
+                    y: 2
+                    x: useWallpaperTheme ? wallpaperThemeSwitch.width - width - 2 : 2
+                    
+                    Behavior on x {
+                        NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
+                    }
+                }
+                
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        useWallpaperThemeChangedUpdated(!useWallpaperTheme)
+                    }
+                }
+            }
+        }
+
+        // Wallpaper Interval Setting
+        ColumnLayout {
+            spacing: 12
+            Layout.fillWidth: true
+            Layout.topMargin: 8
+
+            RowLayout {
+                Layout.fillWidth: true
+                Text {
+                    text: "Wallpaper Interval (seconds)"
+                    font.pixelSize: 13
+                    font.bold: true
+                    color: Theme.textPrimary
+                }
+                
+                Item {
+                    Layout.fillWidth: true
+                }
+                
+                Text {
+                    text: wallpaperInterval
+                    font.pixelSize: 13
+                    color: Theme.textPrimary
+                }
+            }
+            
+            Slider {
+                id: intervalSlider
+                Layout.fillWidth: true
+                from: 10
+                to: 900
+                stepSize: 10
+                value: wallpaperInterval
+                snapMode: Slider.SnapAlways
+                
+                background: Rectangle {
+                    x: intervalSlider.leftPadding
+                    y: intervalSlider.topPadding + intervalSlider.availableHeight / 2 - height / 2
+                    implicitWidth: 200
+                    implicitHeight: 4
+                    width: intervalSlider.availableWidth
+                    height: implicitHeight
+                    radius: 2
+                    color: Theme.surfaceVariant
+                    
+                    Rectangle {
+                        width: intervalSlider.visualPosition * parent.width
+                        height: parent.height
+                        color: Theme.accentPrimary
+                        radius: 2
+                    }
+                }
+                
+                handle: Rectangle {
+                    x: intervalSlider.leftPadding + intervalSlider.visualPosition * (intervalSlider.availableWidth - width)
+                    y: intervalSlider.topPadding + intervalSlider.availableHeight / 2 - height / 2
+                    implicitWidth: 20
+                    implicitHeight: 20
+                    radius: 10
+                    color: intervalSlider.pressed ? Theme.surfaceVariant : Theme.surface
+                    border.color: Theme.accentPrimary
+                    border.width: 2
+                }
+
+                onMoved: {
+                    wallpaperIntervalChangedUpdated(Math.round(value))
+                }
+            }
+        }
+        
+        // Resize Mode Setting
+        ColumnLayout {
+            spacing: 12
+            Layout.fillWidth: true
+            Layout.topMargin: 16
+
+            Text {
+                text: "Resize Mode"
+                font.pixelSize: 13
+                font.bold: true
+                color: Theme.textPrimary
+            }
+            
+            ComboBox {
+                id: resizeComboBox
+                Layout.fillWidth: true
+                Layout.preferredHeight: 40
+                model: ["no", "crop", "fit", "stretch"]
+                currentIndex: model.indexOf(wallpaperResize)
+                
+                background: Rectangle {
+                    implicitWidth: 120
+                    implicitHeight: 40
+                    color: Theme.surfaceVariant
+                    border.color: resizeComboBox.activeFocus ? Theme.accentPrimary : Theme.outline
+                    border.width: 1
+                    radius: 8
+                }
+                
+                contentItem: Text {
+                    leftPadding: 12
+                    rightPadding: resizeComboBox.indicator.width + resizeComboBox.spacing
+                    text: resizeComboBox.displayText
+                    font.family: Theme.fontFamily
+                    font.pixelSize: 13
+                    color: Theme.textPrimary
+                    verticalAlignment: Text.AlignVCenter
+                    elide: Text.ElideRight
+                }
+                
+                indicator: Text {
+                    x: resizeComboBox.width - width - 12
+                    y: resizeComboBox.topPadding + (resizeComboBox.availableHeight - height) / 2
+                    text: "arrow_drop_down"
+                    font.family: "Material Symbols Outlined"
+                    font.pixelSize: 24
+                    color: Theme.textPrimary
+                }
+                
+                popup: Popup {
+                    y: resizeComboBox.height
+                    width: resizeComboBox.width
+                    implicitHeight: contentItem.implicitHeight
+                    padding: 1
+                    
+                    contentItem: ListView {
+                        clip: true
+                        implicitHeight: contentHeight
+                        model: resizeComboBox.popup.visible ? resizeComboBox.delegateModel : null
+                        currentIndex: resizeComboBox.highlightedIndex
+                        
+                        ScrollIndicator.vertical: ScrollIndicator { }
+                    }
+                    
+                    background: Rectangle {
+                        color: Theme.surfaceVariant
+                        border.color: Theme.outline
+                        border.width: 1
+                        radius: 8
+                    }
+                }
+                
+                delegate: ItemDelegate {
+                    width: resizeComboBox.width
+                    contentItem: Text {
+                        text: modelData
+                        font.family: Theme.fontFamily
+                        font.pixelSize: 13
+                        color: Theme.textPrimary
+                        verticalAlignment: Text.AlignVCenter
+                        elide: Text.ElideRight
+                    }
+                    highlighted: resizeComboBox.highlightedIndex === index
+                    
+                    background: Rectangle {
+                        color: highlighted ? Theme.accentPrimary.toString().replace(/#/, "#1A") : "transparent"
+                    }
+                }
+                
+                onActivated: {
+                    wallpaperResizeChangedUpdated(model[index])
+                }
+            }
+        }
+        
+        // Transition Type Setting
+        ColumnLayout {
+            spacing: 12
+            Layout.fillWidth: true
+            Layout.topMargin: 16
+
+            Text {
+                text: "Transition Type"
+                font.pixelSize: 13
+                font.bold: true
+                color: Theme.textPrimary
+            }
+            
+            ComboBox {
+                id: transitionTypeComboBox
+                Layout.fillWidth: true
+                Layout.preferredHeight: 40
+                model: ["none", "simple", "fade", "left", "right", "top", "bottom", "wipe", "wave", "grow", "center", "any", "outer", "random"]
+                currentIndex: model.indexOf(transitionType)
+                
+                background: Rectangle {
+                    implicitWidth: 120
+                    implicitHeight: 40
+                    color: Theme.surfaceVariant
+                    border.color: transitionTypeComboBox.activeFocus ? Theme.accentPrimary : Theme.outline
+                    border.width: 1
+                    radius: 8
+                }
+                
+                contentItem: Text {
+                    leftPadding: 12
+                    rightPadding: transitionTypeComboBox.indicator.width + transitionTypeComboBox.spacing
+                    text: transitionTypeComboBox.displayText
+                    font.family: Theme.fontFamily
+                    font.pixelSize: 13
+                    color: Theme.textPrimary
+                    verticalAlignment: Text.AlignVCenter
+                    elide: Text.ElideRight
+                }
+                
+                indicator: Text {
+                    x: transitionTypeComboBox.width - width - 12
+                    y: transitionTypeComboBox.topPadding + (transitionTypeComboBox.availableHeight - height) / 2
+                    text: "arrow_drop_down"
+                    font.family: "Material Symbols Outlined"
+                    font.pixelSize: 24
+                    color: Theme.textPrimary
+                }
+                
+                popup: Popup {
+                    y: transitionTypeComboBox.height
+                    width: transitionTypeComboBox.width
+                    implicitHeight: contentItem.implicitHeight
+                    padding: 1
+                    
+                    contentItem: ListView {
+                        clip: true
+                        implicitHeight: contentHeight
+                        model: transitionTypeComboBox.popup.visible ? transitionTypeComboBox.delegateModel : null
+                        currentIndex: transitionTypeComboBox.highlightedIndex
+                        
+                        ScrollIndicator.vertical: ScrollIndicator { }
+                    }
+                    
+                    background: Rectangle {
+                        color: Theme.surfaceVariant
+                        border.color: Theme.outline
+                        border.width: 1
+                        radius: 8
+                    }
+                }
+                
+                delegate: ItemDelegate {
+                    width: transitionTypeComboBox.width
+                    contentItem: Text {
+                        text: modelData
+                        font.family: Theme.fontFamily
+                        font.pixelSize: 13
+                        color: Theme.textPrimary
+                        verticalAlignment: Text.AlignVCenter
+                        elide: Text.ElideRight
+                    }
+                    highlighted: transitionTypeComboBox.highlightedIndex === index
+                    
+                    background: Rectangle {
+                        color: highlighted ? Theme.accentPrimary.toString().replace(/#/, "#1A") : "transparent"
+                    }
+                }
+                
+                onActivated: {
+                    transitionTypeChangedUpdated(model[index])
+                }
+            }
+        }
+        
+        // Transition FPS Setting
+        ColumnLayout {
+            spacing: 12
+            Layout.fillWidth: true
+            Layout.topMargin: 16
+
+            RowLayout {
+                Layout.fillWidth: true
+                Text {
+                    text: "Transition FPS"
+                    font.pixelSize: 13
+                    font.bold: true
+                    color: Theme.textPrimary
+                }
+                
+                Item {
+                    Layout.fillWidth: true
+                }
+                
+                Text {
+                    text: transitionFps
+                    font.pixelSize: 13
+                    color: Theme.textPrimary
+                }
+            }
+            
+            Slider {
+                id: fpsSlider
+                Layout.fillWidth: true
+                from: 30
+                to: 500
+                stepSize: 5
+                value: transitionFps
+                snapMode: Slider.SnapAlways
+                
+                background: Rectangle {
+                    x: fpsSlider.leftPadding
+                    y: fpsSlider.topPadding + fpsSlider.availableHeight / 2 - height / 2
+                    implicitWidth: 200
+                    implicitHeight: 4
+                    width: fpsSlider.availableWidth
+                    height: implicitHeight
+                    radius: 2
+                    color: Theme.surfaceVariant
+                    
+                    Rectangle {
+                        width: fpsSlider.visualPosition * parent.width
+                        height: parent.height
+                        color: Theme.accentPrimary
+                        radius: 2
+                    }
+                }
+                
+                handle: Rectangle {
+                    x: fpsSlider.leftPadding + fpsSlider.visualPosition * (fpsSlider.availableWidth - width)
+                    y: fpsSlider.topPadding + fpsSlider.availableHeight / 2 - height / 2
+                    implicitWidth: 20
+                    implicitHeight: 20
+                    radius: 10
+                    color: fpsSlider.pressed ? Theme.surfaceVariant : Theme.surface
+                    border.color: Theme.accentPrimary
+                    border.width: 2
+                }
+
+                onMoved: {
+                    transitionFpsChangedUpdated(Math.round(value))
+                }
+            }
+        }
+        
+        // Transition Duration Setting
+        ColumnLayout {
+            spacing: 12
+            Layout.fillWidth: true
+            Layout.topMargin: 16
+
+            RowLayout {
+                Layout.fillWidth: true
+                Text {
+                    text: "Transition Duration (seconds)"
+                    font.pixelSize: 13
+                    font.bold: true
+                    color: Theme.textPrimary
+                }
+                
+                Item {
+                    Layout.fillWidth: true
+                }
+                
+                Text {
+                    text: transitionDuration.toFixed(3)
+                    font.pixelSize: 13
+                    color: Theme.textPrimary
+                }
+            }
+            
+            Slider {
+                id: durationSlider
+                Layout.fillWidth: true
+                from: 0.250
+                to: 10.0
+                stepSize: 0.050
+                value: transitionDuration
+                snapMode: Slider.SnapAlways
+                
+                background: Rectangle {
+                    x: durationSlider.leftPadding
+                    y: durationSlider.topPadding + durationSlider.availableHeight / 2 - height / 2
+                    implicitWidth: 200
+                    implicitHeight: 4
+                    width: durationSlider.availableWidth
+                    height: implicitHeight
+                    radius: 2
+                    color: Theme.surfaceVariant
+                    
+                    Rectangle {
+                        width: durationSlider.visualPosition * parent.width
+                        height: parent.height
+                        color: Theme.accentPrimary
+                        radius: 2
+                    }
+                }
+                
+                handle: Rectangle {
+                    x: durationSlider.leftPadding + durationSlider.visualPosition * (durationSlider.availableWidth - width)
+                    y: durationSlider.topPadding + durationSlider.availableHeight / 2 - height / 2
+                    implicitWidth: 20
+                    implicitHeight: 20
+                    radius: 10
+                    color: durationSlider.pressed ? Theme.surfaceVariant : Theme.surface
+                    border.color: Theme.accentPrimary
+                    border.width: 2
+                }
+
+                onMoved: {
+                    transitionDurationChangedUpdated(value)
                 }
             }
         }

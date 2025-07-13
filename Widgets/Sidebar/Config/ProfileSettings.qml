@@ -114,7 +114,6 @@ Rectangle {
                     inputMethodHints: Qt.ImhNone
                     onTextChanged: {
                         Settings.profileImage = text
-                        Settings.saveSettings()
                     }
                     MouseArea {
                         anchors.fill: parent
@@ -212,7 +211,6 @@ Rectangle {
                     inputMethodHints: Qt.ImhUrlCharactersOnly
                     onTextChanged: {
                         Settings.videoPath = text
-                        Settings.saveSettings()
                     }
                     MouseArea {
                         anchors.fill: parent

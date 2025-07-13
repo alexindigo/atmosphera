@@ -4,6 +4,7 @@ import QtQuick.Controls 2.15
 import Quickshell
 import Quickshell.Io
 import qs.Settings
+import qs.Services
 
 PanelWindow {
     id: wallpaperPanelModal
@@ -17,15 +18,11 @@ PanelWindow {
     margins.top: -24
 
     property var wallpapers: []
-
-    Process {
-        id: listWallpapersProcess
-        running: visible
-        command: ["ls", Settings.wallpaperFolder !== undefined ? Settings.wallpaperFolder : ""]
-        stdout: StdioCollector {
-            onStreamFinished: {
-                wallpaperPanelModal.wallpapers = this.text.split("\n").filter(function(x){return x.length > 0})
-            }
+    
+    Connections {
+        target: WallpaperManager
+        function onWallpaperListChanged() {
+            wallpapers = WallpaperManager.wallpaperList
         }
     }
 
@@ -118,16 +115,16 @@ PanelWindow {
                                 anchors.margins: 4
                                 color: Qt.darker(Theme.backgroundPrimary, 1.1)
                                 radius: 12
-                                border.color: Settings.currentWallpaper === (Settings.wallpaperFolder !== undefined ? Settings.wallpaperFolder : "") + "/" + modelData ? Theme.accentPrimary : Theme.outline
-                                border.width: Settings.currentWallpaper === (Settings.wallpaperFolder !== undefined ? Settings.wallpaperFolder : "") + "/" + modelData ? 3 : 1
+                                border.color: Settings.currentWallpaper === modelData ? Theme.accentPrimary : Theme.outline
+                                border.width: Settings.currentWallpaper === modelData ? 3 : 1
                                 Image {
                                     id: wallpaperImage
                                     anchors.fill: parent
                                     anchors.margins: 4
-                                    source: (Settings.wallpaperFolder !== undefined ? Settings.wallpaperFolder : "") + "/" + modelData
+                                    source: modelData
                                     fillMode: Image.PreserveAspectCrop
                                     asynchronous: true
-                                    cache: false
+                                    cache: true
                                     sourceSize.width: Math.min(width, 150)
                                     sourceSize.height: Math.min(height, 90)
                                 }
@@ -135,9 +132,7 @@ PanelWindow {
                                     anchors.fill: parent
                                     hoverEnabled: true
                                     onClicked: {
-                                        var selectedPath = (Settings.wallpaperFolder !== undefined ? Settings.wallpaperFolder : "") + "/" + modelData;
-                                        Settings.currentWallpaper = selectedPath;
-                                        Settings.saveSettings();
+                                        WallpaperManager.changeWallpaper(modelData);
                                     }
                                 }
                             }

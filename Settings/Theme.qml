@@ -1,48 +1,100 @@
 // Theme.qml
 pragma Singleton
 import QtQuick
+import Quickshell
+import Quickshell.Io
 
-QtObject {
+Singleton {
+    id: root
+    
+    // FileView to load theme data from JSON file
+    FileView {
+        id: themeFile
+        path: Quickshell.configDir + "/Settings/Theme.json"
+        watchChanges: true
+        onFileChanged: reload()
+        onAdapterUpdated: writeAdapter()
+        
+        JsonAdapter {
+            id: themeData
+            
+            // Backgrounds
+            property string backgroundPrimary: "#0C0D11"
+            property string backgroundSecondary: "#151720"
+            property string backgroundTertiary: "#1D202B"
+            
+            // Surfaces & Elevation
+            property string surface: "#1A1C26"
+            property string surfaceVariant: "#2A2D3A"
+            
+            // Text Colors
+            property string textPrimary: "#CACEE2"
+            property string textSecondary: "#B7BBD0"
+            property string textDisabled: "#6B718A"
+            
+            // Accent Colors
+            property string accentPrimary: "#A8AEFF"
+            property string accentSecondary: "#9EA0FF"
+            property string accentTertiary: "#8EABFF"
+            
+            // Error/Warning
+            property string error: "#FF6B81"
+            property string warning: "#FFBB66"
+            
+            // Highlights & Focus
+            property string highlight: "#E3C2FF"
+            property string rippleEffect: "#F3DEFF"
+            
+            // Additional Theme Properties
+            property string onAccent: "#1A1A1A"
+            property string outline: "#44485A"
+            
+            // Shadows & Overlays
+            property string shadow: "#000000B3"
+            property string overlay: "#11121ACC"
+        }
+    }
+    
     // Backgrounds
-    readonly property color backgroundPrimary: "#0C0D11"     // Deep indigo-black
-    readonly property color backgroundSecondary: "#151720"   // Slightly lifted dark
-    readonly property color backgroundTertiary: "#1D202B"    // Soft contrast surface
+    property color backgroundPrimary: themeData.backgroundPrimary
+    property color backgroundSecondary: themeData.backgroundSecondary
+    property color backgroundTertiary: themeData.backgroundTertiary
 
     // Surfaces & Elevation
-    readonly property color surface: "#1A1C26"               // Material-like base layer
-    readonly property color surfaceVariant: "#2A2D3A"        // Lightly elevated
+    property color surface: themeData.surface
+    property color surfaceVariant: themeData.surfaceVariant
 
     // Text Colors
-    readonly property color textPrimary: "#CACEE2"           // Gentle off-white
-    readonly property color textSecondary: "#B7BBD0"         // Muted lavender-blue
-    readonly property color textDisabled: "#6B718A"          // Dimmed blue-gray
+    property color textPrimary: themeData.textPrimary
+    property color textSecondary: themeData.textSecondary
+    property color textDisabled: themeData.textDisabled
 
-    // Accent Colors (lavender-gold theme)
-    readonly property color accentPrimary: "#A8AEFF"         // Light enchanted lavender
-    readonly property color accentSecondary: "#9EA0FF"       // Softer lavender hue
-    readonly property color accentTertiary: "#8EABFF"        // Warm golden glow (from lantern)
+    // Accent Colors
+    property color accentPrimary: themeData.accentPrimary
+    property color accentSecondary: themeData.accentSecondary
+    property color accentTertiary: themeData.accentTertiary
 
     // Error/Warning
-    readonly property color error: "#FF6B81"                 // Soft rose red
-    readonly property color warning: "#FFBB66"               // Candlelight amber-orange
+    property color error: themeData.error
+    property color warning: themeData.warning
 
     // Highlights & Focus
-    readonly property color highlight: "#E3C2FF"             // Bright magical lavender
-    readonly property color rippleEffect: "#F3DEFF"          // Gentle soft splash
+    property color highlight: themeData.highlight
+    property color rippleEffect: themeData.rippleEffect
 
     // Additional Theme Properties
-    readonly property color onAccent: "#1A1A1A"              // Text on accent background
-    readonly property color outline: "#44485A"               // Subtle bluish-gray line
+    property color onAccent: themeData.onAccent
+    property color outline: themeData.outline
 
     // Shadows & Overlays
-    readonly property color shadow: "#000000B3"              // Standard soft black shadow
-    readonly property color overlay: "#11121ACC"             // Deep bluish overlay
+    property color shadow: themeData.shadow
+    property color overlay: themeData.overlay
 
     // Font Properties
-    readonly property string fontFamily: "Roboto"         // Family for all text
-    
-    readonly property int fontSizeHeader: 32              // Headers and titles
-    readonly property int fontSizeBody: 16                // Body text and general content
-    readonly property int fontSizeSmall: 14               // Small text like clock, labels
-    readonly property int fontSizeCaption: 12             // Captions and fine print
+    property string fontFamily: "Roboto"         // Family for all text
+
+    property int fontSizeHeader: 32              // Headers and titles
+    property int fontSizeBody: 16                // Body text and general content
+    property int fontSizeSmall: 14               // Small text like clock, labels
+    property int fontSizeCaption: 12             // Captions and fine print
 }

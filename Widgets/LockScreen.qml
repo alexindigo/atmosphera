@@ -8,7 +8,7 @@ import Quickshell
 import Quickshell.Services.Pam
 import Quickshell.Io
 import qs.Settings
-import qs.Helpers
+import qs.Services
 import "../Helpers/Weather.js" as WeatherHelper
 
 WlSessionLock {
@@ -127,7 +127,7 @@ WlSessionLock {
             id: lockBgImage
             anchors.fill: parent
             fillMode: Image.PreserveAspectCrop
-            source: Settings.currentWallpaper !== "" ? Settings.currentWallpaper : "/home/lysec/nixos/assets/wallpapers/lantern.png"
+            source: WallpaperManager.currentWallpaper !== "" ? WallpaperManager.currentWallpaper : ""
             cache: true
             smooth: true
             sourceSize.width: 2560

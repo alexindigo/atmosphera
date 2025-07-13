@@ -232,7 +232,7 @@ Rectangle {
                     anchors.fill: parent
                     hoverEnabled: true
                     onClicked: {
-                        Processes.reboot()
+                        reboot()
                         systemMenu.visible = false
                     }
                 }
@@ -270,7 +270,7 @@ Rectangle {
                     anchors.fill: parent
                     hoverEnabled: true
                     onClicked: {
-                        Processes.logout()
+                        logout()
                         systemMenu.visible = false
                     }
                 }
@@ -308,7 +308,7 @@ Rectangle {
                     anchors.fill: parent
                     hoverEnabled: true
                     onClicked: {
-                        Processes.shutdown()
+                        shutdown()
                         systemMenu.visible = false
                     }
                 }
@@ -340,6 +340,32 @@ Rectangle {
                 uptimeProcess.running = false
             }
         }
+    }
+
+    Process {
+        id: shutdownProcess
+        command: ["shutdown", "-h", "now"]
+        running: false
+    }
+    Process {
+        id: rebootProcess
+        command: ["reboot"]
+        running: false
+    }
+    Process {
+        id: logoutProcess
+        command: ["niri", "msg", "action", "quit", "--skip-confirmation"]
+        running: false
+    }
+
+    function shutdown() {
+        shutdownProcess.running = true
+    }
+    function reboot() {
+        rebootProcess.running = true
+    }
+    function logout() {
+        logoutProcess.running = true
     }
 
     property bool panelVisible: false

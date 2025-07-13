@@ -67,14 +67,14 @@ Item {
             anchors.left: parent.left
             anchors.leftMargin: 6
             anchors.verticalCenter: parent.verticalCenter
-            source: ToplevelManager.activeToplevel ? getIcon() : ""
+            source: ToplevelManager?.activeToplevel ? getIcon() : ""
             visible: Settings.showActiveWindowIcon
             anchors.verticalCenterOffset: -3
         }
 
         Text {
             id: activeWindowTitle
-            text: ToplevelManager.activeToplevel?.title && ToplevelManager.activeToplevel.title.length > 60 ? ToplevelManager.activeToplevel.title.substring(0, 60) + "..." : ToplevelManager.activeToplevel.title
+            text: ToplevelManager?.activeToplevel?.title && ToplevelManager?.activeToplevel?.title.length > 60 ? ToplevelManager?.activeToplevel?.title.substring(0, 60) + "..." : ToplevelManager?.activeToplevel?.title || ""
             font.pixelSize: 12
             color: Theme.textSecondary
             elide: Text.ElideRight

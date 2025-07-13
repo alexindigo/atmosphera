@@ -16,7 +16,7 @@ Scope {
     property alias appLauncherPanel: appLauncherPanel
 
     Component.onCompleted: {
-        Quickshell.shell = root
+        Quickshell.shell = root;
     }
 
     Bar {
@@ -35,7 +35,7 @@ Scope {
 
     NotificationServer {
         id: notificationServer
-        onNotification: function(notification) {
+        onNotification: function (notification) {
             console.log("Notification received:", notification.appName);
             notification.tracked = true;
             notificationPopup.addNotification(notification);
@@ -48,9 +48,7 @@ Scope {
     }
 
     property var defaultAudioSink: Pipewire.defaultAudioSink
-    property int volume: defaultAudioSink && defaultAudioSink.audio
-        ? Math.round(defaultAudioSink.audio.volume * 100)
-        : 0
+    property int volume: defaultAudioSink && defaultAudioSink.audio ? Math.round(defaultAudioSink.audio.volume * 100) : 0
 
     PwObjectTracker {
         objects: [Pipewire.defaultAudioSink]
@@ -59,5 +57,17 @@ Scope {
     IPCHandlers {
         appLauncherPanel: appLauncherPanel
         lockScreen: lockScreen
+    }
+
+    Connections {
+        function onReloadCompleted() {
+            Quickshell.inhibitReloadPopup();
+        }
+
+        function onReloadFailed() {
+            Quickshell.inhibitReloadPopup();
+        }
+
+        target: Quickshell
     }
 }

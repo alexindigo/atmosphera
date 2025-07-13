@@ -4,6 +4,7 @@ import QtQuick.Controls 2.15
 import Quickshell
 import Quickshell.Wayland
 import qs.Settings
+import qs.Services
 
 PanelWindow {
     id: settingsModal
@@ -26,6 +27,14 @@ PanelWindow {
     property string tempProfileImage: (Settings.profileImage !== undefined && Settings.profileImage !== null) ? Settings.profileImage : ""
     property string tempWallpaperFolder: (Settings.wallpaperFolder !== undefined && Settings.wallpaperFolder !== null) ? Settings.wallpaperFolder : ""
     property bool tempShowActiveWindowIcon: Settings.showActiveWindowIcon
+    property bool tempUseSWWW: Settings.useSWWW
+    property bool tempRandomWallpaper: Settings.randomWallpaper
+    property bool tempUseWallpaperTheme: Settings.useWallpaperTheme
+    property int tempWallpaperInterval: Settings.wallpaperInterval
+    property string tempWallpaperResize: Settings.wallpaperResize
+    property int tempTransitionFps: Settings.transitionFps
+    property string tempTransitionType: Settings.transitionType
+    property real tempTransitionDuration: Settings.transitionDuration
 
     Rectangle {
         anchors.fill: parent
@@ -138,9 +147,42 @@ PanelWindow {
                             title: "Wallpaper"
                             expanded: false
                             WallpaperSettings {
+                                id: wallpaperSettings
                                 wallpaperFolder: (typeof tempWallpaperFolder !== 'undefined' && tempWallpaperFolder !== null) ? tempWallpaperFolder : ""
+                                useSWWW: tempUseSWWW
+                                randomWallpaper: tempRandomWallpaper
+                                useWallpaperTheme: tempUseWallpaperTheme
+                                wallpaperInterval: tempWallpaperInterval
+                                wallpaperResize: tempWallpaperResize
+                                transitionFps: tempTransitionFps
+                                transitionType: tempTransitionType
+                                transitionDuration: tempTransitionDuration
                                 onWallpaperFolderEdited: function (folder) {
                                     tempWallpaperFolder = folder;
+                                }
+                                onUseSWWWChangedUpdated: function(useSWWW) {
+                                    tempUseSWWW = useSWWW;
+                                }
+                                onRandomWallpaperChangedUpdated: function(randomWallpaper) {
+                                    tempRandomWallpaper = randomWallpaper;
+                                }
+                                onUseWallpaperThemeChangedUpdated: function(useWallpaperTheme) {
+                                    tempUseWallpaperTheme = useWallpaperTheme;
+                                }
+                                onWallpaperIntervalChangedUpdated: function(wallpaperInterval) {
+                                    tempWallpaperInterval = wallpaperInterval;
+                                }
+                                onWallpaperResizeChangedUpdated: function(resize) {
+                                    tempWallpaperResize = resize;
+                                }
+                                onTransitionFpsChangedUpdated: function(fps) {
+                                    tempTransitionFps = fps;
+                                }
+                                onTransitionTypeChangedUpdated: function(type) {
+                                    tempTransitionType = type;
+                                }
+                                onTransitionDurationChangedUpdated: function(duration) {
+                                    tempTransitionDuration = duration;
                                 }
                             }
                         }
@@ -174,6 +216,14 @@ PanelWindow {
                         Settings.profileImage = (typeof tempProfileImage !== 'undefined' && tempProfileImage !== null) ? tempProfileImage : "";
                         Settings.wallpaperFolder = (typeof tempWallpaperFolder !== 'undefined' && tempWallpaperFolder !== null) ? tempWallpaperFolder : "";
                         Settings.showActiveWindowIcon = tempShowActiveWindowIcon;
+                        Settings.useSWWW = tempUseSWWW;
+                        Settings.randomWallpaper = tempRandomWallpaper;
+                        Settings.useWallpaperTheme = tempUseWallpaperTheme;
+                        Settings.wallpaperInterval = tempWallpaperInterval;
+                        Settings.wallpaperResize = tempWallpaperResize;
+                        Settings.transitionFps = tempTransitionFps;
+                        Settings.transitionType = tempTransitionType;
+                        Settings.transitionDuration = tempTransitionDuration;
                         Settings.saveSettings();
                         if (typeof weather !== 'undefined' && weather) {
                             weather.fetchCityWeather();
@@ -194,6 +244,17 @@ PanelWindow {
         tempWallpaperFolder = (Settings.wallpaperFolder !== undefined && Settings.wallpaperFolder !== null) ? Settings.wallpaperFolder : "";
         if (tempWallpaperFolder === undefined || tempWallpaperFolder === null)
             tempWallpaperFolder = "";
+        
+        // Initialize wallpaper settings
+        tempUseSWWW = Settings.useSWWW;
+        tempRandomWallpaper = Settings.randomWallpaper;
+        tempUseWallpaperTheme = Settings.useWallpaperTheme;
+        tempWallpaperInterval = Settings.wallpaperInterval;
+        tempWallpaperResize = Settings.wallpaperResize;
+        tempTransitionFps = Settings.transitionFps;
+        tempTransitionType = Settings.transitionType;
+        tempTransitionDuration = Settings.transitionDuration;
+        
         visible = true;
         // Force focus on the text input after a short delay
         focusTimer.start();

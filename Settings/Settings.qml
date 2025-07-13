@@ -1,20 +1,34 @@
 pragma Singleton
 import QtQuick
 import QtCore
+import qs.Services
 
 QtObject {
-    property string weatherCity: "Dinslaken"
-    property string profileImage: "https://cdn.discordapp.com/avatars/158005126638993408/de403f05fd7f74bb17e01a9b066a30fa?size=64"
-    property bool useFahrenheit
-    property string wallpaperFolder: "/home/lysec/nixos/assets/wallpapers" // Default path, make persistent
-    property string currentWallpaper: ""
-    property string videoPath: "~/Videos/" // Default path, make persistent
-    property bool showActiveWindowIcon
-    // Settings persistence
-    property var settings: Qt.createQmlObject('import QtCore; Settings { category: "Quickshell" }', this, "settings")
-
     Component.onCompleted: {
+        Qt.application.name = "quickshell"
+        Qt.application.organization = "quisckshell"
+        Qt.application.domain = "quickshell.app"
         loadSettings()
+    }
+    property string weatherCity: "Dinslaken"
+    property string profileImage: "/home/user/.face"
+    property bool useFahrenheit
+    property string wallpaperFolder: "/usr/share/wallpapers"
+    property string currentWallpaper: ""
+    property string videoPath: "~/Videos/"
+    property bool showActiveWindowIcon: false
+    property bool useSWWW: false
+    property bool randomWallpaper: false
+    property bool useWallpaperTheme: false
+    property int wallpaperInterval: 300
+    property string wallpaperResize: "crop"
+    property int transitionFps: 60
+    property string transitionType: "random"
+    property real transitionDuration: 1.1
+
+    // Settings persistence
+    property var settings: Settings {
+        category: "quickshell"
     }
 
     function loadSettings() {
@@ -25,8 +39,19 @@ QtObject {
         wallpaperFolder = settings.value("wallpaperFolder", wallpaperFolder)
         currentWallpaper = settings.value("currentWallpaper", currentWallpaper)
         videoPath = settings.value("videoPath", videoPath)
-        showActiveWindowIcon = settings.value("showActiveWindowIcon", showActiveWindowIcon)
-        console.log("Loaded profileImage:", profileImage)
+        let showActiveWindowIconFlag = settings.value("showActiveWindowIconFlag", "false")
+        showActiveWindowIcon = showActiveWindowIconFlag === "true"
+        let useSWWWFlag = settings.value("useSWWWFlag", "false")
+        useSWWW = useSWWWFlag === "true"
+        let randomWallpaperFlag = settings.value("randomWallpaperFlag", "false")
+        randomWallpaper = randomWallpaperFlag === "true"
+        let useWallpaperThemeFlag = settings.value("useWallpaperThemeFlag", "false")
+        useWallpaperTheme = useWallpaperThemeFlag === "true"
+        wallpaperInterval = settings.value("wallpaperInterval", wallpaperInterval)
+        wallpaperResize = settings.value("wallpaperResize", wallpaperResize)
+        transitionFps = settings.value("transitionFps", transitionFps)
+        transitionType = settings.value("transitionType", transitionType)
+        transitionDuration = settings.value("transitionDuration", transitionDuration)
     }
 
     function saveSettings() {
@@ -36,13 +61,23 @@ QtObject {
         settings.setValue("wallpaperFolder", wallpaperFolder)
         settings.setValue("currentWallpaper", currentWallpaper)
         settings.setValue("videoPath", videoPath)
-        settings.setValue("showActiveWindowIcon", showActiveWindowIcon)
+        settings.setValue("showActiveWindowIconFlag", showActiveWindowIcon ? "true" : "false")
+        settings.setValue("useSWWWFlag", useSWWW ? "true" : "false")
+        settings.setValue("randomWallpaperFlag", randomWallpaper ? "true" : "false")
+        settings.setValue("useWallpaperThemeFlag", useWallpaperTheme ? "true" : "false")
+        settings.setValue("wallpaperInterval", wallpaperInterval)
+        settings.setValue("wallpaperResize", wallpaperResize)
+        settings.setValue("transitionFps", transitionFps)
+        settings.setValue("transitionType", transitionType)
+        settings.setValue("transitionDuration", transitionDuration)
         settings.sync()
-        console.log("Saving profileImage:", profileImage)
     }
 
     // Property change handlers to auto-save (all commented out for explicit save only)
     // onWeatherCityChanged: saveSettings()
     // onProfileImageChanged: saveSettings()
     // onUseFahrenheitChanged: saveSettings()
+    onRandomWallpaperChanged: WallpaperManager.toggleRandomWallpaper()
+    onWallpaperIntervalChanged: WallpaperManager.restartRandomWallpaperTimer()
+    onWallpaperFolderChanged: WallpaperManager.loadWallpapers()
 } 
