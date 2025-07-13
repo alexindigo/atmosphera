@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
 import Quickshell
 import Quickshell.Io
+import Quickshell.Widgets
 import qs.Settings
 import qs.Services
 
@@ -18,11 +19,11 @@ PanelWindow {
     margins.top: -24
 
     property var wallpapers: []
-    
+
     Connections {
         target: WallpaperManager
         function onWallpaperListChanged() {
-            wallpapers = WallpaperManager.wallpaperList
+            wallpapers = WallpaperManager.wallpaperList;
         }
     }
 
@@ -53,7 +54,9 @@ PanelWindow {
                     Layout.fillWidth: true
                 }
                 Rectangle {
-                    width: 36; height: 36; radius: 18
+                    width: 36
+                    height: 36
+                    radius: 18
                     color: closeButtonArea.containsMouse ? Theme.accentPrimary : "transparent"
                     border.color: Theme.accentPrimary
                     border.width: 1
@@ -109,30 +112,30 @@ PanelWindow {
                         delegate: Item {
                             width: wallpaperGrid.cellWidth - 8
                             height: wallpaperGrid.cellHeight - 8
-                            Rectangle {
-                                id: wallpaperItem
+                            MouseArea {
                                 anchors.fill: parent
-                                anchors.margins: 4
-                                color: Qt.darker(Theme.backgroundPrimary, 1.1)
-                                radius: 12
-                                border.color: Settings.currentWallpaper === modelData ? Theme.accentPrimary : Theme.outline
-                                border.width: Settings.currentWallpaper === modelData ? 3 : 1
-                                Image {
-                                    id: wallpaperImage
+                                hoverEnabled: true
+                                onClicked: {
+                                    WallpaperManager.changeWallpaper(modelData);
+                                }
+
+                                ClippingWrapperRectangle {
+                                    id: wallpaperItem
                                     anchors.fill: parent
                                     anchors.margins: 4
-                                    source: modelData
-                                    fillMode: Image.PreserveAspectCrop
-                                    asynchronous: true
-                                    cache: true
-                                    sourceSize.width: Math.min(width, 150)
-                                    sourceSize.height: Math.min(height, 90)
-                                }
-                                MouseArea {
-                                    anchors.fill: parent
-                                    hoverEnabled: true
-                                    onClicked: {
-                                        WallpaperManager.changeWallpaper(modelData);
+                                    color: Qt.darker(Theme.backgroundPrimary, 1.1)
+                                    radius: 12
+                                    border.color: Settings.currentWallpaper === modelData ? Theme.accentPrimary : Theme.outline
+                                    border.width: Settings.currentWallpaper === modelData ? 3 : 1
+                                    Image {
+                                        id: wallpaperImage
+                                        anchors.fill: parent
+                                        source: modelData
+                                        fillMode: Image.PreserveAspectCrop
+                                        asynchronous: true
+                                        cache: true
+                                        sourceSize.width: Math.min(width, 150)
+                                        sourceSize.height: Math.min(height, 90)
                                     }
                                 }
                             }
@@ -142,4 +145,4 @@ PanelWindow {
             }
         }
     }
-} 
+}

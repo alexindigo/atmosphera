@@ -26,6 +26,9 @@ Item {
             if (ToplevelManager.activeToplevel?.appId) {
                 activeWindowWrapper.shouldShow = true
                 visibilityTimer.restart()
+            } else {
+                activeWindowWrapper.shouldShow = false
+                visibilityTimer.stop()
             }
         }
     }

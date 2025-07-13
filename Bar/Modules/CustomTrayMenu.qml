@@ -89,10 +89,12 @@ PopupWindow {
             }
 
             Rectangle {
+                id: bg
                 anchors.fill: parent
                 color: mouseArea.containsMouse ? Theme.highlight : "transparent"
                 radius: 6
                 visible: !(modelData?.isSeparator ?? false)
+                property color hoverTextColor: mouseArea.containsMouse ? Theme.onAccent : Theme.textPrimary
 
                 RowLayout {
                     anchors.fill: parent
@@ -102,7 +104,7 @@ PopupWindow {
 
                     Text {
                         Layout.fillWidth: true
-                        color: (modelData?.enabled ?? true) ? Theme.textPrimary : Theme.textDisabled
+                        color: (modelData?.enabled ?? true) ? bg.hoverTextColor : Theme.textDisabled
                         text: modelData?.text ?? ""
                         font.family: Theme.fontFamily
                         font.pixelSize: Theme.fontSizeSmall

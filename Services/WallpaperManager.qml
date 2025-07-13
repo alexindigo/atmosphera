@@ -19,6 +19,8 @@ Singleton {
     property var wallpaperList: []
     property string currentWallpaper: Settings.currentWallpaper
     property bool scanning: false
+    property string transitionType: Settings.transitionType
+    property var randomChoices: ["fade", "left", "right", "top", "bottom", "wipe", "wave", "grow", "center", "any", "outer"]
 
     function loadWallpapers() {
         scanning = true;
@@ -40,6 +42,11 @@ Singleton {
             Settings.saveSettings();
         }
         if (Settings.useSWWW) {
+            if (Settings.transitionType === "random") {
+                transitionType = randomChoices[Math.floor(Math.random() * randomChoices.length)];
+            } else {
+                transitionType = Settings.transitionType;
+            }
             changeWallpaperProcess.running = true;
         }
         generateTheme();
@@ -106,7 +113,7 @@ Singleton {
 
     Process {
         id: changeWallpaperProcess
-        command: ["swww", "img", "--resize", Settings.wallpaperResize, "--transition-fps", Settings.transitionFps.toString(), "--transition-type", Settings.transitionType, "--transition-duration", Settings.transitionDuration.toString(), currentWallpaper]
+        command: ["swww", "img", "--resize", Settings.wallpaperResize, "--transition-fps", Settings.transitionFps.toString(), "--transition-type", transitionType, "--transition-duration", Settings.transitionDuration.toString(), currentWallpaper]
         running: false
     }
     
