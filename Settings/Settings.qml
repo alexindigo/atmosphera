@@ -9,7 +9,6 @@ QtObject {
     Component.onCompleted: {
         Qt.application.name = "quickshell"
         Qt.application.organization = "quickshell"
-        console.log(Qt.application.organization)
         Qt.application.domain = "quickshell.app"
         loadSettings()
     }
