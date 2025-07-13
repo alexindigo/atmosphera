@@ -9,10 +9,30 @@ Item {
     id: activeWindowWrapper
     width: parent.width
     property int fullHeight: activeWindowTitleContainer.height
+    property bool shouldShow: false
+    
+    Timer {
+        id: visibilityTimer
+        interval: 4000
+        running: false
+        onTriggered: {
+            activeWindowWrapper.shouldShow = false
+        }
+    }
+    
+    Connections {
+        target: ToplevelManager
+        function onActiveToplevelChanged() {
+            if (ToplevelManager.activeToplevel?.appId) {
+                activeWindowWrapper.shouldShow = true
+                visibilityTimer.restart()
+            }
+        }
+    }
 
-    y: panel.activeWindowVisible ? barBackground.height : barBackground.height - fullHeight
-    height: panel.activeWindowVisible ? fullHeight : 1
-    opacity: panel.activeWindowVisible ? 1 : 0
+    y: shouldShow ? barBackground.height : barBackground.height - fullHeight
+    height: shouldShow ? fullHeight : 1
+    opacity: shouldShow ? 1 : 0
     clip: true
 
     function getIcon() {
