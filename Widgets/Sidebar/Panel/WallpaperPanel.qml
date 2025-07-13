@@ -23,7 +23,15 @@ PanelWindow {
     Connections {
         target: WallpaperManager
         function onWallpaperListChanged() {
-            wallpapers = WallpaperManager.wallpaperList;
+            wallpapers = WallpaperManager.wallpaperList
+        }
+    }
+
+    onVisibleChanged: {
+        if (wallpaperPanelModal.visible) {
+            wallpapers = WallpaperManager.wallpaperList
+        } else {
+            wallpapers = []
         }
     }
 
@@ -104,7 +112,7 @@ PanelWindow {
                         cellWidth: Math.max(120, (scrollView.width / 3) - 12)
                         cellHeight: cellWidth * 0.6
                         model: wallpapers
-                        cacheBuffer: 0
+                        cacheBuffer: 32
                         leftMargin: 8
                         rightMargin: 8
                         topMargin: 8
@@ -112,30 +120,29 @@ PanelWindow {
                         delegate: Item {
                             width: wallpaperGrid.cellWidth - 8
                             height: wallpaperGrid.cellHeight - 8
-                            MouseArea {
+                            ClippingRectangle {
+                                id: wallpaperItem
                                 anchors.fill: parent
-                                hoverEnabled: true
-                                onClicked: {
-                                    WallpaperManager.changeWallpaper(modelData);
-                                }
-
-                                ClippingWrapperRectangle {
-                                    id: wallpaperItem
+                                anchors.margins: 4
+                                color: Qt.darker(Theme.backgroundPrimary, 1.1)
+                                radius: 12
+                                border.color: Settings.currentWallpaper === modelData ? Theme.accentPrimary : Theme.outline
+                                border.width: Settings.currentWallpaper === modelData ? 3 : 1
+                                Image {
+                                    id: wallpaperImage
                                     anchors.fill: parent
-                                    anchors.margins: 4
-                                    color: Qt.darker(Theme.backgroundPrimary, 1.1)
-                                    radius: 12
-                                    border.color: Settings.currentWallpaper === modelData ? Theme.accentPrimary : Theme.outline
-                                    border.width: Settings.currentWallpaper === modelData ? 3 : 1
-                                    Image {
-                                        id: wallpaperImage
-                                        anchors.fill: parent
-                                        source: modelData
-                                        fillMode: Image.PreserveAspectCrop
-                                        asynchronous: true
-                                        cache: true
-                                        sourceSize.width: Math.min(width, 150)
-                                        sourceSize.height: Math.min(height, 90)
+                                    source: modelData
+                                    fillMode: Image.PreserveAspectCrop
+                                    asynchronous: true
+                                    cache: true
+                                    sourceSize.width: Math.min(width, 150)
+                                    sourceSize.height: Math.min(height, 90)
+                                }
+                                MouseArea {
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    onClicked: {
+                                        WallpaperManager.changeWallpaper(modelData);
                                     }
                                 }
                             }
