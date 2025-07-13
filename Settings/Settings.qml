@@ -1,17 +1,20 @@
 pragma Singleton
 import QtQuick
 import QtCore
+import Quickshell
 import qs.Services
 
 QtObject {
+
     Component.onCompleted: {
         Qt.application.name = "quickshell"
-        Qt.application.organization = "quisckshell"
+        Qt.application.organization = "quickshell"
+        console.log(Qt.application.organization)
         Qt.application.domain = "quickshell.app"
         loadSettings()
     }
     property string weatherCity: "Dinslaken"
-    property string profileImage: "/home/user/.face"
+    property string profileImage: "/home/" + Quickshell.env("USER") + "/.face"
     property bool useFahrenheit
     property string wallpaperFolder: "/usr/share/wallpapers"
     property string currentWallpaper: ""
