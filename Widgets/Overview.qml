@@ -2,12 +2,13 @@ import QtQuick
 import Quickshell
 import Quickshell.Wayland
 import Qt5Compat.GraphicalEffects
-import qs.Helpers
+import qs.Services
 import qs.Settings
 
 ShellRoot {
-    property string wallpaperSource: Settings.currentWallpaper !== "" ? Settings.currentWallpaper : "/home/lysec/nixos/assets/wallpapers/lantern.png"
+    property string wallpaperSource: WallpaperManager.currentWallpaper !== "" && !Settings.useSWWW ? WallpaperManager.currentWallpaper : ""
     PanelWindow {
+        visible: wallpaperSource !== ""
         anchors {
             top: true
             bottom: true
@@ -25,10 +26,11 @@ ShellRoot {
             source: wallpaperSource
             cache: true
             smooth: true
-            visible: true // Show the original for FastBlur input
+            visible: wallpaperSource !== "" // Show the original for FastBlur input
         }
         FastBlur {
             anchors.fill: parent
+            visible: wallpaperSource !== ""
             source: bgImage
             radius: 24 // Adjust blur strength as needed
             transparentBorder: true

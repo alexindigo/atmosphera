@@ -1,12 +1,13 @@
 import QtQuick
 import Quickshell
 import Quickshell.Wayland
-import qs.Helpers
+import qs.Services
 import qs.Settings
 
 ShellRoot {
-    property string wallpaperSource: Settings.currentWallpaper !== "" ? Settings.currentWallpaper : "/home/lysec/nixos/assets/wallpapers/lantern.png"
+    property string wallpaperSource: WallpaperManager.currentWallpaper !== "" && !Settings.useSWWW ? WallpaperManager.currentWallpaper : ""
     PanelWindow {
+        visible: wallpaperSource !== ""
         anchors {
             bottom: true
             top: true
@@ -24,6 +25,7 @@ ShellRoot {
             anchors.fill: parent
             fillMode: Image.PreserveAspectCrop
             source: wallpaperSource
+            visible: wallpaperSource !== ""
             cache: true
             smooth: true
         }
