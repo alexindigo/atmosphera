@@ -2,6 +2,18 @@
 
 **_quiet by design_**
 
+<p align="center">
+  <a href="https://github.com/Ly-sec/Noctalia/commits">
+    <img src="https://img.shields.io/github/last-commit/Ly-sec/Noctalia?style=for-the-badge&labelColor=0C0D11&color=A8AEFF" alt="Last commit" />
+  </a>
+  <a href="https://github.com/Ly-sec/Noctalia/stargazers">
+    <img src="https://img.shields.io/github/stars/Ly-sec/Noctalia?style=for-the-badge&labelColor=0C0D11&color=A8AEFF" alt="GitHub stars" />
+  </a>
+  <a href="https://github.com/Ly-sec/Noctalia/graphs/contributors">
+    <img src="https://img.shields.io/github/contributors/Ly-sec/Noctalia?style=for-the-badge&labelColor=0C0D11&color=A8AEFF" alt="GitHub contributors" />
+  </a>
+</p>
+
 A sleek, minimal, and thoughtfully crafted setup for Wayland using **Quickshell**. This setup includes a status bar, notification system, control panel, wifi & bluetooth support, power profiles, lockscreen, tray, workspaces, and more — all styled with a warm lavender palette.
 
 ## Preview
@@ -140,8 +152,10 @@ You can keybind it however you want in your niri setup.
 
 You will need to install a few things to get everything working:
 
+- `qt6-5compat` for some graphical effects
 - `cava` so the audio visualizer works
 - `gpu-screen-recorder` so that the record button works
+- `xdg-desktop-portal-gnome` or any other xdg-desktop-portal
 - `material-symbols-git` so the icons properly show up
 
 ---
@@ -149,6 +163,12 @@ You will need to install a few things to get everything working:
 ## Known issues
 
 Currently the brightness indicator is very opiniated (using ddcutil with a script to log current brightness). This will be fixed **asap**!
+
+---
+
+## 💜 Credits
+
+Huge thanks to [**@ferrreo**](https://github.com/ferrreo) for all the changes they did and all the cool features they added!
 
 ---
 
