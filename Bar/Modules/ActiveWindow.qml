@@ -30,9 +30,9 @@ Item {
         }
     }
 
-    y: shouldShow && !!ToplevelManager.activeToplevel?.appId ? barBackground.height : barBackground.height - fullHeight
-    height: shouldShow && !!ToplevelManager.activeToplevel?.appId ? fullHeight : 1
-    opacity: shouldShow && !!ToplevelManager.activeToplevel?.appId ? 1 : 0
+    y: shouldShow ? barBackground.height : barBackground.height - fullHeight
+    height: shouldShow ? fullHeight : 1
+    opacity: shouldShow ? 1 : 0
     clip: true
 
     function getIcon() {
