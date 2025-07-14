@@ -129,9 +129,7 @@ WlSessionLock {
             fillMode: Image.PreserveAspectCrop
             source: WallpaperManager.currentWallpaper !== "" ? WallpaperManager.currentWallpaper : ""
             cache: true
-            smooth: true
-            sourceSize.width: 2560
-            sourceSize.height: 1440
+            smooth: false
             visible: true // Show the original for FastBlur input
         }
         FastBlur {
@@ -208,7 +206,7 @@ WlSessionLock {
                 height: 50
                 radius: 25
                 color: Theme.surface
-                opacity: 0.3
+                opacity: passwordInput.activeFocus ? 0.8 : 0.3
                 border.color: passwordInput.activeFocus ? Theme.accentPrimary : Theme.outline
                 border.width: 2
 
@@ -244,6 +242,10 @@ WlSessionLock {
                             lock.unlockAttempt()
                         }
                     }
+
+                    Component.onCompleted: {
+                        forceActiveFocus()
+                    }
                 }
             }
 
@@ -268,15 +270,16 @@ WlSessionLock {
                 width: 120
                 height: 44
                 radius: 22
-                color: unlockButtonArea.containsMouse ? Theme.accentPrimary : "transparent"
+                opacity: unlockButtonArea.containsMouse ? 0.8 : 0.5
+                color: unlockButtonArea.containsMouse ? Theme.accentPrimary : Theme.surface
                 border.color: Theme.accentPrimary
                 border.width: 2
-                opacity: lock.authenticating ? 0.5 : 0.8
                 enabled: !lock.authenticating
 
                 Text {
+                    id: unlockButtonText
                     anchors.centerIn: parent
-                    text: lock.authenticating ? "Authenticating..." : "Unlock"
+                    text: lock.authenticating ? "..." : "Unlock"
                     font.family: Theme.fontFamily
                     font.pixelSize: 16
                     font.bold: true
@@ -292,6 +295,10 @@ WlSessionLock {
                             lock.unlockAttempt()
                         }
                     }
+                }
+
+                Behavior on opacity {
+                    NumberAnimation { duration: 200 }
                 }
             }
         }

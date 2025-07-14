@@ -2,8 +2,10 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 import Quickshell
+import Qt5Compat.GraphicalEffects 
 import Quickshell.Services.SystemTray
 import Quickshell.Widgets
+import qs.Settings
 
 Row {
     property var bar
@@ -42,33 +44,44 @@ Row {
                 }
             }
             
-            IconImage {
-                id: trayIcon
+            Rectangle {
                 anchors.centerIn: parent
-                width: 18
-                height: 18
-                smooth: false      // Memory savings
-                asynchronous: true
-                source: {
-                    let icon = modelData?.icon || "";
-                    if (!icon) return "";
-                    // Process icon path
-                    if (icon.includes("?path=")) {
-                        const [name, path] = icon.split("?path=");
-                        const fileName = name.substring(name.lastIndexOf("/") + 1);
-                        return `file://${path}/${fileName}`;
+                width: 16
+                height: 16
+                radius: 6
+                color: "transparent"
+                clip: true
+
+                IconImage {
+                    id: trayIcon
+                    anchors.centerIn: parent
+                    width: 16
+                    height: 16
+                    smooth: false
+                    asynchronous: true
+                    backer.fillMode: Image.PreserveAspectFit
+                    source: {
+                        let icon = modelData?.icon || "";
+                        if (!icon) return "";
+                        // Process icon path
+                        if (icon.includes("?path=")) {
+                            const [name, path] = icon.split("?path=");
+                            const fileName = name.substring(name.lastIndexOf("/") + 1);
+                            return `file://${path}/${fileName}`;
+                        }
+                        return icon;
                     }
-                    return icon;
-                }
-                opacity: status === Image.Ready ? 1 : 0
-                Behavior on opacity {
-                    NumberAnimation {
-                        duration: 300
-                        easing.type: Easing.OutCubic
+                    opacity: status === Image.Ready ? 1 : 0
+
+                    Behavior on opacity {
+                        NumberAnimation {
+                            duration: 300
+                            easing.type: Easing.OutCubic
+                        }
                     }
-                }
-                Component.onCompleted: {
-                    // console.log("Tray icon for", modelData?.id, ":", modelData?.icon)
+                    Component.onCompleted: {
+                        
+                    }
                 }
             }
             
