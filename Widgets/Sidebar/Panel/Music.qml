@@ -406,5 +406,6 @@ Rectangle {
     Cava {
         id: cava
         count: 64
+        running: currentPlayer && currentPlayer.isPlaying
     }
 } 
