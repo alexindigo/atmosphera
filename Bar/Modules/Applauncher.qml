@@ -21,7 +21,7 @@ PanelWindow {
     property bool shouldBeVisible: false
 
     anchors.top: true
-    margins.top: parent.height
+    margins.top: 36
 
     function showAt() {
         visible = true;
