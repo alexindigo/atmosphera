@@ -28,31 +28,36 @@ WlSessionLock {
 
     // On component completed, fetch weather data
     Component.onCompleted: {
-        fetchWeatherData()
+        fetchWeatherData();
     }
 
     // Weather fetching function
     function fetchWeatherData() {
-        WeatherHelper.fetchCityWeather(weatherCity,
-            function(result) {
-                weatherData = result.weather;
-                weatherError = "";
-            },
-            function(err) {
-                weatherError = err;
-            }
-        );
+        WeatherHelper.fetchCityWeather(weatherCity, function (result) {
+            weatherData = result.weather;
+            weatherError = "";
+        }, function (err) {
+            weatherError = err;
+        });
     }
 
     function materialSymbolForCode(code) {
-        if (code === 0) return "sunny";
-        if (code === 1 || code === 2) return "partly_cloudy_day";
-        if (code === 3) return "cloud";
-        if (code >= 45 && code <= 48) return "foggy";
-        if (code >= 51 && code <= 67) return "rainy";
-        if (code >= 71 && code <= 77) return "weather_snowy";
-        if (code >= 80 && code <= 82) return "rainy";
-        if (code >= 95 && code <= 99) return "thunderstorm";
+        if (code === 0)
+            return "sunny";
+        if (code === 1 || code === 2)
+            return "partly_cloudy_day";
+        if (code === 3)
+            return "cloud";
+        if (code >= 45 && code <= 48)
+            return "foggy";
+        if (code >= 51 && code <= 67)
+            return "rainy";
+        if (code >= 71 && code <= 77)
+            return "weather_snowy";
+        if (code >= 80 && code <= 82)
+            return "rainy";
+        if (code >= 95 && code <= 99)
+            return "thunderstorm";
         return "cloud";
     }
 
@@ -72,12 +77,12 @@ WlSessionLock {
         console.log("Starting PAM authentication...");
         lock.authenticating = true;
         lock.errorMessage = "";
-        
-        console.log("[LockScreen] About to create PAM context with userName:", Quickshell.env("USER"))
+
+        console.log("[LockScreen] About to create PAM context with userName:", Quickshell.env("USER"));
         var pam = Qt.createQmlObject('import Quickshell.Services.Pam; PamContext { config: "login"; user: "' + Quickshell.env("USER") + '" }', lock);
         console.log("PamContext created", pam);
-        
-        pam.onCompleted.connect(function(result) {
+
+        pam.onCompleted.connect(function (result) {
             console.log("PAM completed with result:", result);
             lock.authenticating = false;
             if (result === PamResult.Success) {
@@ -92,30 +97,30 @@ WlSessionLock {
             }
             pam.destroy();
         });
-        
-        pam.onError.connect(function(error) {
+
+        pam.onError.connect(function (error) {
             console.log("PAM error:", error);
             lock.authenticating = false;
             lock.errorMessage = pam.message || "Authentication error.";
             lock.password = "";
             pam.destroy();
         });
-        
-        pam.onPamMessage.connect(function() {
+
+        pam.onPamMessage.connect(function () {
             console.log("PAM message:", pam.message, "isError:", pam.messageIsError);
             if (pam.messageIsError) {
                 lock.errorMessage = pam.message;
             }
         });
-        
-        pam.onResponseRequiredChanged.connect(function() {
+
+        pam.onResponseRequiredChanged.connect(function () {
             console.log("PAM response required:", pam.responseRequired);
             if (pam.responseRequired && lock.authenticating) {
                 console.log("Responding to PAM with password");
                 pam.respond(lock.password);
             }
         });
-        
+
         var started = pam.start();
         console.log("PAM start result:", started);
     }
@@ -151,7 +156,7 @@ WlSessionLock {
                 height: 80
                 radius: 40
                 color: Theme.accentPrimary
-                
+
                 Image {
                     id: avatarImage
                     anchors.fill: parent
@@ -222,10 +227,10 @@ WlSessionLock {
                     echoMode: TextInput.Password
                     passwordCharacter: "●"
                     passwordMaskDelay: 0
-                    
+
                     text: lock.password
                     onTextChanged: lock.password = text
-                    
+
                     // Placeholder text
                     Text {
                         anchors.centerIn: parent
@@ -237,30 +242,36 @@ WlSessionLock {
                     }
 
                     // Handle Enter key
-                    Keys.onPressed: function(event) {
+                    Keys.onPressed: function (event) {
                         if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-                            lock.unlockAttempt()
+                            lock.unlockAttempt();
                         }
                     }
 
                     Component.onCompleted: {
-                        forceActiveFocus()
+                        forceActiveFocus();
                     }
                 }
             }
 
             // Error message
-            Text {
+            Rectangle {
+                id: errorMessageRect
                 Layout.alignment: Qt.AlignHCenter
-                text: lock.errorMessage
-                color: Theme.error
-                font.family: Theme.fontFamily
-                font.pixelSize: 14
+                width: parent.width * 0.8
+                height: 44
+                color: Theme.overlay
+                radius: 22
                 visible: lock.errorMessage !== ""
-                opacity: lock.errorMessage !== "" ? 1 : 0
                 
-                Behavior on opacity {
-                    NumberAnimation { duration: 200 }
+                Text {
+                    anchors.centerIn: parent
+                    text: lock.errorMessage
+                    color: Theme.error
+                    font.family: Theme.fontFamily
+                    font.pixelSize: 14
+                    opacity: 1
+                    visible: lock.errorMessage !== ""
                 }
             }
 
@@ -292,13 +303,15 @@ WlSessionLock {
                     hoverEnabled: true
                     onClicked: {
                         if (!lock.authenticating) {
-                            lock.unlockAttempt()
+                            lock.unlockAttempt();
                         }
                     }
                 }
 
                 Behavior on opacity {
-                    NumberAnimation { duration: 200 }
+                    NumberAnimation {
+                        duration: 200
+                    }
                 }
             }
         }
@@ -344,7 +357,7 @@ WlSessionLock {
                     verticalAlignment: Text.AlignVCenter
                 }
                 Text {
-                    text: weatherData && weatherData.current_weather ? (Settings.useFahrenheit ? `${Math.round(weatherData.current_weather.temperature * 9/5 + 32)}°F` : `${Math.round(weatherData.current_weather.temperature)}°C`) : (Settings.useFahrenheit ? "--°F" : "--°C")
+                    text: weatherData && weatherData.current_weather ? (Settings.useFahrenheit ? `${Math.round(weatherData.current_weather.temperature * 9 / 5 + 32)}°F` : `${Math.round(weatherData.current_weather.temperature)}°C`) : (Settings.useFahrenheit ? "--°F" : "--°C")
                     font.family: Theme.fontFamily
                     font.pixelSize: 18
                     color: Theme.textSecondary
@@ -369,8 +382,8 @@ WlSessionLock {
             running: true
             repeat: true
             onTriggered: {
-                timeText.text = Qt.formatDateTime(new Date(), "HH:mm")
-                dateText.text = Qt.formatDateTime(new Date(), "dddd, MMMM d")
+                timeText.text = Qt.formatDateTime(new Date(), "HH:mm");
+                dateText.text = Qt.formatDateTime(new Date(), "dddd, MMMM d");
             }
         }
 
@@ -380,7 +393,7 @@ WlSessionLock {
             running: true
             repeat: true
             onTriggered: {
-                fetchWeatherData()
+                fetchWeatherData();
             }
         }
 
@@ -392,7 +405,9 @@ WlSessionLock {
             spacing: 12
             // Shutdown
             Rectangle {
-                width: 48; height: 48; radius: 24
+                width: 48
+                height: 48
+                radius: 24
                 color: shutdownArea.containsMouse ? Theme.error : "transparent"
                 border.color: Theme.error
                 border.width: 1
@@ -401,7 +416,7 @@ WlSessionLock {
                     anchors.fill: parent
                     hoverEnabled: true
                     onClicked: {
-                        Qt.createQmlObject('import Quickshell.Io; Process { command: ["shutdown", "-h", "now"]; running: true }', lock)
+                        Qt.createQmlObject('import Quickshell.Io; Process { command: ["shutdown", "-h", "now"]; running: true }', lock);
                     }
                 }
                 Text {
@@ -414,7 +429,9 @@ WlSessionLock {
             }
             // Reboot
             Rectangle {
-                width: 48; height: 48; radius: 24
+                width: 48
+                height: 48
+                radius: 24
                 color: rebootArea.containsMouse ? Theme.accentPrimary : "transparent"
                 border.color: Theme.accentPrimary
                 border.width: 1
@@ -423,7 +440,7 @@ WlSessionLock {
                     anchors.fill: parent
                     hoverEnabled: true
                     onClicked: {
-                        Qt.createQmlObject('import Quickshell.Io; Process { command: ["reboot"]; running: true }', lock)
+                        Qt.createQmlObject('import Quickshell.Io; Process { command: ["reboot"]; running: true }', lock);
                     }
                 }
                 Text {
@@ -436,7 +453,9 @@ WlSessionLock {
             }
             // Logout
             Rectangle {
-                width: 48; height: 48; radius: 24
+                width: 48
+                height: 48
+                radius: 24
                 color: logoutArea.containsMouse ? Theme.accentSecondary : "transparent"
                 border.color: Theme.accentSecondary
                 border.width: 1
@@ -445,7 +464,7 @@ WlSessionLock {
                     anchors.fill: parent
                     hoverEnabled: true
                     onClicked: {
-                        Qt.createQmlObject('import Quickshell.Io; Process { command: ["loginctl", "terminate-user", "' + Quickshell.env("USER") + '"]; running: true }', lock)
+                        Qt.createQmlObject('import Quickshell.Io; Process { command: ["loginctl", "terminate-user", "' + Quickshell.env("USER") + '"]; running: true }', lock);
                     }
                 }
                 Text {
@@ -458,4 +477,4 @@ WlSessionLock {
             }
         }
     }
-} 
+}

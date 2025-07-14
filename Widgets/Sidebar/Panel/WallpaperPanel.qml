@@ -10,7 +10,7 @@ import qs.Services
 PanelWindow {
     id: wallpaperPanelModal
     implicitWidth: 480
-    implicitHeight: 720
+    implicitHeight: 800
     visible: false
     color: "transparent"
     anchors.top: true

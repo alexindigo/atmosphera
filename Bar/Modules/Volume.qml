@@ -47,13 +47,13 @@ Item {
         hoverEnabled: true
         acceptedButtons: Qt.NoButton // Accept wheel events only
         propagateComposedEvents: true
-        onWheel: {
+        onWheel:(wheel) => {
             if (!shell) return;
             let step = 5;
             if (wheel.angleDelta.y > 0) {
-                shell.volume = Math.min(100, shell.volume + step);
+                shell.updateVolume(Math.min(100, shell.volume + step));
             } else if (wheel.angleDelta.y < 0) {
-                shell.volume = Math.max(0, shell.volume - step);
+                shell.updateVolume(Math.max(0, shell.volume - step));
             }
         }
     }

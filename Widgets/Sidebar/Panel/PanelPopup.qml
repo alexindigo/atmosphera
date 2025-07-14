@@ -10,7 +10,7 @@ import qs.Components
 PanelWindow {
     id: panelPopup
     implicitWidth: 500
-    implicitHeight: 750
+    implicitHeight: 800
     visible: false
     color: "transparent"
     screen: modelData
@@ -30,7 +30,6 @@ PanelWindow {
             slideAnim.from = width;
             slideAnim.to = 0;
             slideAnim.running = true;
-            if (systemMonitor) systemMonitor.startMonitoring();
             if (weather) weather.startWeatherFetch();
             if (systemWidget) systemWidget.panelVisible = true;
             if (quickAccessWidget) quickAccessWidget.panelVisible = true;
@@ -56,7 +55,6 @@ PanelWindow {
             if (panelPopup.slideOffset === panelPopup.width) {
                 panelPopup.visible = false;
                 // Stop monitoring and background tasks when hidden
-                if (systemMonitor) systemMonitor.stopMonitoring();
                 if (weather) weather.stopWeatherFetch();
                 if (systemWidget) systemWidget.panelVisible = false;
                 if (quickAccessWidget) quickAccessWidget.panelVisible = false;

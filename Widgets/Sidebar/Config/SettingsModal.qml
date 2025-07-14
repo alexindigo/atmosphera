@@ -9,7 +9,7 @@ import qs.Services
 PanelWindow {
     id: settingsModal
     implicitWidth: 480
-    implicitHeight: 720
+    implicitHeight: 800
     visible: false
     color: "transparent"
     anchors.top: true
@@ -35,6 +35,8 @@ PanelWindow {
     property int tempTransitionFps: Settings.transitionFps
     property string tempTransitionType: Settings.transitionType
     property real tempTransitionDuration: Settings.transitionDuration
+    property bool tempShowSystemInfoInBar: Settings.showSystemInfoInBar
+    property bool tempShowMediaInBar: Settings.showMediaInBar
 
     Rectangle {
         anchors.fill: parent
@@ -141,6 +143,14 @@ PanelWindow {
                                 onShowAWIconChanged: function (showActiveWindowIcon) {
                                     tempShowActiveWindowIcon = showActiveWindowIcon;
                                 }
+                                showSystemInfoInBar: tempShowSystemInfoInBar
+                                onShowSystemInfoChanged: function (showSystemInfoInBar) {
+                                    tempShowSystemInfoInBar = showSystemInfoInBar;
+                                }
+                                showMediaInBar: tempShowMediaInBar
+                                onShowMediaChanged: function (showMediaInBar) {
+                                    tempShowMediaInBar = showMediaInBar;
+                                }
                             }
                         }
                         CollapsibleCategory {
@@ -224,6 +234,8 @@ PanelWindow {
                         Settings.transitionFps = tempTransitionFps;
                         Settings.transitionType = tempTransitionType;
                         Settings.transitionDuration = tempTransitionDuration;
+                        Settings.showSystemInfoInBar = tempShowSystemInfoInBar;
+                        Settings.showMediaInBar = tempShowMediaInBar;
                         Settings.saveSettings();
                         if (typeof weather !== 'undefined' && weather) {
                             weather.fetchCityWeather();

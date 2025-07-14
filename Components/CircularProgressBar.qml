@@ -12,7 +12,8 @@ Rectangle {
     property color progressColor: Theme.accentPrimary
     property int strokeWidth: 6
     property bool showText: true
-    property string text: Math.round(progress * 100) + "%"
+    property string units: "%"
+    property string text: Math.round(progress * 100) + units
     property int textSize: 10
     property color textColor: Theme.textPrimary
     

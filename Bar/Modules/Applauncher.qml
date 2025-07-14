@@ -153,13 +153,6 @@ PanelWindow {
             anchors.margins: 32
             spacing: 18
 
-            Rectangle {
-                Layout.fillWidth: true
-                height: 1.5
-                color: Theme.outline
-                opacity: 0.10
-            }
-
             // Search Bar
             Rectangle {
                 id: searchBar
@@ -372,7 +365,7 @@ PanelWindow {
         size: 1.1
         fillColor: Theme.backgroundPrimary
         anchors.top:  root.top
-        offsetX: 397
+        offsetX: 396
         offsetY: 0
     }
 
@@ -382,7 +375,7 @@ PanelWindow {
         size: 1.1
         fillColor: Theme.backgroundPrimary
         anchors.top:  root.top
-        offsetX: -397
+        offsetX: -396
         offsetY: 0
     }
 }
