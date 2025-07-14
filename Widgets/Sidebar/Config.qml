@@ -10,7 +10,7 @@ import qs.Settings
 Rectangle {
     id: settingsModal
     anchors.centerIn: parent
-    color: Settings.Theme.backgroundPrimary
+    color: Theme.backgroundPrimary
     radius: 20
     visible: false
     z: 100
@@ -36,15 +36,15 @@ Rectangle {
                 text: "settings"
                 font.family: "Material Symbols Outlined"
                 font.pixelSize: Theme.fontSizeHeader
-                color: Settings.Theme.accentPrimary
+                color: Theme.accentPrimary
             }
 
             Text {
                 text: "Settings"
-                font.family: Settings.Theme.fontFamily
+                font.family: Theme.fontFamily
                 font.pixelSize: Theme.fontSizeHeader
                 font.bold: true
-                color: Settings.Theme.textPrimary
+                color: Theme.textPrimary
                 Layout.fillWidth: true
             }
 
@@ -52,8 +52,8 @@ Rectangle {
                 width: 36
                 height: 36
                 radius: 18
-                color: closeButtonArea.containsMouse ? Settings.Theme.accentPrimary : "transparent"
-                border.color: Settings.Theme.accentPrimary
+                color: closeButtonArea.containsMouse ? Theme.accentPrimary : "transparent"
+                border.color: Theme.accentPrimary
                 border.width: 1
 
                 Text {
@@ -61,7 +61,7 @@ Rectangle {
                     text: "close"
                     font.family: "Material Symbols Outlined"
                     font.pixelSize: Theme.fontSizeBody
-                    color: closeButtonArea.containsMouse ? Settings.Theme.onAccent : Settings.Theme.accentPrimary
+                    color: closeButtonArea.containsMouse ? Theme.onAccent : Theme.accentPrimary
                 }
 
                 MouseArea {
@@ -77,7 +77,7 @@ Rectangle {
         Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: 180
-            color: Settings.Theme.surface
+            color: Theme.surface
             radius: 18
 
             ColumnLayout {
@@ -94,15 +94,15 @@ Rectangle {
                         text: "wb_sunny"
                         font.family: "Material Symbols Outlined"
                         font.pixelSize: Theme.fontSizeBody
-                        color: Settings.Theme.accentPrimary
+                        color: Theme.accentPrimary
                     }
 
                     Text {
                         text: "Weather Settings"
-                        font.family: Settings.Theme.fontFamily
+                        font.family: Theme.fontFamily
                         font.pixelSize: Theme.fontSizeBody
                         font.bold: true
-                        color: Settings.Theme.textPrimary
+                        color: Theme.textPrimary
                         Layout.fillWidth: true
                     }
                 }
@@ -114,18 +114,18 @@ Rectangle {
 
                     Text {
                         text: "City"
-                        font.family: Settings.Theme.fontFamily
+                        font.family: Theme.fontFamily
                         font.pixelSize: Theme.fontSizeSmall
                         font.bold: true
-                        color: Settings.Theme.textPrimary
+                        color: Theme.textPrimary
                     }
 
                     Rectangle {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 40
                         radius: 8
-                        color: Settings.Theme.surfaceVariant
-                        border.color: cityInput.activeFocus ? Settings.Theme.accentPrimary : Settings.Theme.outline
+                        color: Theme.surfaceVariant
+                        border.color: cityInput.activeFocus ? Theme.accentPrimary : Theme.outline
                         border.width: 1
 
                         TextInput {
@@ -139,9 +139,9 @@ Rectangle {
                             anchors.topMargin: 6
                             anchors.bottomMargin: 6
                             text: tempWeatherCity
-                            font.family: Settings.Theme.fontFamily
+                            font.family: Theme.fontFamily
                             font.pixelSize: Theme.fontSizeSmall
-                            color: Settings.Theme.textPrimary
+                            color: Theme.textPrimary
                             verticalAlignment: TextInput.AlignVCenter
                             clip: true
                             focus: true
@@ -170,10 +170,10 @@ Rectangle {
 
                     Text {
                         text: "Temperature Unit"
-                        font.family: Settings.Theme.fontFamily
+                        font.family: Theme.fontFamily
                         font.pixelSize: Theme.fontSizeSmall
                         font.bold: true
-                        color: Settings.Theme.textPrimary
+                        color: Theme.textPrimary
                     }
 
                     Item {
@@ -186,8 +186,8 @@ Rectangle {
                         width: 52
                         height: 32
                         radius: 16
-                        color: Settings.Theme.accentPrimary
-                        border.color: Settings.Theme.accentPrimary
+                        color: Theme.accentPrimary
+                        border.color: Theme.accentPrimary
                         border.width: 2
                         
                         Rectangle {
@@ -195,8 +195,8 @@ Rectangle {
                             width: 28
                             height: 28
                             radius: 14
-                            color: Settings.Theme.surface
-                            border.color: Settings.Theme.outline
+                            color: Theme.surface
+                            border.color: Theme.outline
                             border.width: 1
                             y: 2
                             x: tempUseFahrenheit ? customSwitch.width - width - 2 : 2
@@ -204,10 +204,10 @@ Rectangle {
                             Text {
                                 anchors.centerIn: parent
                                 text: tempUseFahrenheit ? "°F" : "°C"
-                                font.family: Settings.Theme.fontFamily
+                                font.family: Theme.fontFamily
                                 font.pixelSize: Theme.fontSizeCaption
                                 font.bold: true
-                                color: Settings.Theme.textPrimary
+                                color: Theme.textPrimary
                             }
                             
                             Behavior on x {
@@ -230,7 +230,7 @@ Rectangle {
         Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: 140
-            color: Settings.Theme.surface
+            color: Theme.surface
             radius: 18
             anchors.left: parent.left
             anchors.right: parent.right
@@ -253,15 +253,15 @@ Rectangle {
                         text: "person"
                         font.family: "Material Symbols Outlined"
                         font.pixelSize: Theme.fontSizeBody
-                        color: Settings.Theme.accentPrimary
+                        color: Theme.accentPrimary
                     }
 
                                             Text {
                             text: "Profile Image"
-                            font.family: Settings.Theme.fontFamily
+                            font.family: Theme.fontFamily
                             font.pixelSize: Theme.fontSizeBody
                             font.bold: true
-                            color: Settings.Theme.textPrimary
+                            color: Theme.textPrimary
                             Layout.fillWidth: true
                         }
                 }
@@ -275,8 +275,8 @@ Rectangle {
                         width: 36
                         height: 36
                         radius: 18
-                        color: Settings.Theme.surfaceVariant
-                        border.color: profileImageInput.activeFocus ? Settings.Theme.accentPrimary : Settings.Theme.outline
+                        color: Theme.surfaceVariant
+                        border.color: profileImageInput.activeFocus ? Theme.accentPrimary : Theme.outline
                         border.width: 1
 
                         Image {
@@ -306,7 +306,7 @@ Rectangle {
                             text: "person"
                             font.family: "Material Symbols Outlined"
                             font.pixelSize: Theme.fontSizeBody
-                            color: Settings.Theme.accentPrimary
+                            color: Theme.accentPrimary
                             visible: tempProfileImage === ""
                         }
                     }
@@ -316,8 +316,8 @@ Rectangle {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 40
                         radius: 8
-                        color: Settings.Theme.surfaceVariant
-                        border.color: profileImageInput.activeFocus ? Settings.Theme.accentPrimary : Settings.Theme.outline
+                        color: Theme.surfaceVariant
+                        border.color: profileImageInput.activeFocus ? Theme.accentPrimary : Theme.outline
                         border.width: 1
 
                         TextInput {
@@ -331,9 +331,9 @@ Rectangle {
                             anchors.topMargin: 6
                             anchors.bottomMargin: 6
                             text: tempProfileImage
-                            font.family: Settings.Theme.fontFamily
+                            font.family: Theme.fontFamily
                             font.pixelSize: Theme.fontSizeSmall
-                            color: Settings.Theme.textPrimary
+                            color: Theme.textPrimary
                             verticalAlignment: TextInput.AlignVCenter
                             clip: true
                             focus: true
@@ -359,7 +359,7 @@ Rectangle {
         Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: 100
-            color: Settings.Theme.surface
+            color: Theme.surface
             radius: 18
 
             ColumnLayout {
@@ -375,14 +375,14 @@ Rectangle {
                         text: "image"
                         font.family: "Material Symbols Outlined"
                         font.pixelSize: Theme.fontSizeBody
-                        color: Settings.Theme.accentPrimary
+                        color: Theme.accentPrimary
                     }
                     Text {
                         text: "Wallpaper Folder"
-                        font.family: Settings.Theme.fontFamily
+                        font.family: Theme.fontFamily
                         font.pixelSize: Theme.fontSizeBody
                         font.bold: true
-                        color: Settings.Theme.textPrimary
+                        color: Theme.textPrimary
                         Layout.fillWidth: true
                     }
                 }
@@ -392,8 +392,8 @@ Rectangle {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 40
                     radius: 8
-                    color: Settings.Theme.surfaceVariant
-                    border.color: wallpaperFolderInput.activeFocus ? Settings.Theme.accentPrimary : Settings.Theme.outline
+                    color: Theme.surfaceVariant
+                    border.color: wallpaperFolderInput.activeFocus ? Theme.accentPrimary : Theme.outline
                     border.width: 1
 
                     TextInput {
@@ -407,9 +407,9 @@ Rectangle {
                         anchors.topMargin: 6
                         anchors.bottomMargin: 6
                         text: tempWallpaperFolder
-                        font.family: Settings.Theme.fontFamily
+                        font.family: Theme.fontFamily
                         font.pixelSize: Theme.fontSizeSmall
-                        color: Settings.Theme.textPrimary
+                        color: Theme.textPrimary
                         verticalAlignment: TextInput.AlignVCenter
                         clip: true
                         selectByMouse: true
@@ -435,7 +435,7 @@ Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: 44
             radius: 12
-            color: applyButtonArea.containsMouse ? Settings.Theme.accentPrimary : Settings.Theme.accentPrimary
+            color: applyButtonArea.containsMouse ? Theme.accentPrimary : Theme.accentPrimary
             border.color: "transparent"
             border.width: 0
             opacity: 1.0
@@ -443,10 +443,10 @@ Rectangle {
             Text {
                 anchors.centerIn: parent
                 text: "Apply Changes"
-                font.family: Settings.Theme.fontFamily
+                font.family: Theme.fontFamily
                 font.pixelSize: Theme.fontSizeSmall
                 font.bold: true
-                color: applyButtonArea.containsMouse ? Settings.Theme.onAccent : Settings.Theme.onAccent
+                color: applyButtonArea.containsMouse ? Theme.onAccent : Theme.onAccent
             }
 
             MouseArea {

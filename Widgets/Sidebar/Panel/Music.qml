@@ -2,89 +2,15 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import Qt5Compat.GraphicalEffects
-import Quickshell.Services.Mpris
 import qs.Settings
 import qs.Components
-import QtQuick
+import qs.Services
 
 Rectangle {
     id: musicCard
     width: 360
-    height: 200
+    height: 250
     color: "transparent"
-
-    property var currentPlayer: null
-    property real currentPosition: 0
-    property int selectedPlayerIndex: 0
-
-    // Returns available MPRIS players
-    function getAvailablePlayers() {
-        if (!Mpris.players || !Mpris.players.values) {
-            return []
-        }
-        
-        let allPlayers = Mpris.players.values
-        let controllablePlayers = []
-        
-        for (let i = 0; i < allPlayers.length; i++) {
-            let player = allPlayers[i]
-            if (player && player.canControl) {
-                controllablePlayers.push(player)
-            }
-        }
-        
-        return controllablePlayers
-    }
-
-    // Returns active player or first available
-    function findActivePlayer() {
-        let availablePlayers = getAvailablePlayers()
-        if (availablePlayers.length === 0) {
-            return null
-        }
-        
-        // Use selected player if valid, otherwise use first available
-        if (selectedPlayerIndex < availablePlayers.length) {
-            return availablePlayers[selectedPlayerIndex]
-        } else {
-            selectedPlayerIndex = 0
-            return availablePlayers[0]
-        }
-    }
-
-    // Updates currentPlayer and currentPosition
-    function updateCurrentPlayer() {
-        let newPlayer = findActivePlayer()
-        if (newPlayer !== currentPlayer) {
-            currentPlayer = newPlayer
-            currentPosition = currentPlayer ? currentPlayer.position : 0
-        }
-    }
-
-    // Updates progress bar every second
-    Timer {
-        id: positionTimer
-        interval: 1000
-        running: currentPlayer && currentPlayer.isPlaying && currentPlayer.length > 0
-        repeat: true
-        onTriggered: {
-            if (currentPlayer && currentPlayer.isPlaying) {
-                currentPosition = currentPlayer.position
-            }
-        }
-    }
-
-    // Reacts to player list changes
-    Connections {
-        target: Mpris.players
-        function onValuesChanged() {
-            updateCurrentPlayer()
-        }
-    }
-
-    Component.onCompleted: {
-        updateCurrentPlayer()
-    }
 
     Rectangle {
         id: card
@@ -96,7 +22,7 @@ Rectangle {
         Item {
             width: parent.width
             height: parent.height
-            visible: !currentPlayer
+            visible: !MusicManager.currentPlayer
 
             ColumnLayout {
                 anchors.centerIn: parent
@@ -111,7 +37,7 @@ Rectangle {
                 }
 
                 Text {
-                    text: getAvailablePlayers().length > 0 ? "No controllable player selected" : "No music player detected"
+                    text: MusicManager.hasPlayer ? "No controllable player selected" : "No music player detected"
                     color: Qt.rgba(Theme.textPrimary.r, Theme.textPrimary.g, Theme.textPrimary.b, 0.6)
                     font.family: Theme.fontFamily
                     font.pixelSize: Theme.fontSizeSmall
@@ -141,6 +67,7 @@ Rectangle {
                     // Spectrum visualizer
                     CircularSpectrum {
                         id: spectrum
+                        values: MusicManager.cavaValues
                         anchors.centerIn: parent
                         innerRadius: 30 // just outside 60x60 album art
                         outerRadius: 48 // how far bars extend
@@ -170,7 +97,7 @@ Rectangle {
                             asynchronous: true
                             sourceSize.width: 60
                             sourceSize.height: 60
-                            source: currentPlayer ? (currentPlayer.trackArtUrl || "") : ""
+                            source: MusicManager.trackArtUrl
                             visible: source.toString() !== ""
 
                             // Rounded corners using layer
@@ -204,7 +131,7 @@ Rectangle {
                     spacing: 4
 
                     Text {
-                        text: currentPlayer ? (currentPlayer.trackTitle || "Unknown Track") : ""
+                        text: MusicManager.trackTitle
                         color: Theme.textPrimary
                         font.family: Theme.fontFamily
                         font.pixelSize: Theme.fontSizeSmall
@@ -216,7 +143,7 @@ Rectangle {
                     }
 
                     Text {
-                        text: currentPlayer ? (currentPlayer.trackArtist || "Unknown Artist") : ""
+                        text: MusicManager.trackArtist
                         color: Qt.rgba(Theme.textPrimary.r, Theme.textPrimary.g, Theme.textPrimary.b, 0.8)
                         font.family: Theme.fontFamily
                         font.pixelSize: Theme.fontSizeCaption
@@ -225,7 +152,7 @@ Rectangle {
                     }
 
                     Text {
-                        text: currentPlayer ? (currentPlayer.trackAlbum || "Unknown Album") : ""
+                        text: MusicManager.trackAlbum
                         color: Qt.rgba(Theme.textPrimary.r, Theme.textPrimary.g, Theme.textPrimary.b, 0.6)
                         font.family: Theme.fontFamily
                         font.pixelSize: Theme.fontSizeCaption
@@ -244,8 +171,8 @@ Rectangle {
                 color: Qt.rgba(Theme.textPrimary.r, Theme.textPrimary.g, Theme.textPrimary.b, 0.15)
                 Layout.fillWidth: true
 
-                property real progressRatio: currentPlayer && currentPlayer.length > 0 ? 
-                                           (currentPosition / currentPlayer.length) : 0
+                property real progressRatio: MusicManager.trackLength > 0 ? 
+                                           (MusicManager.currentPosition / MusicManager.trackLength) : 0
 
                 Rectangle {
                     id: progressFill
@@ -272,7 +199,7 @@ Rectangle {
                     x: Math.max(0, Math.min(parent.width - width, progressFill.width - width/2))
                     anchors.verticalCenter: parent.verticalCenter
 
-                    visible: currentPlayer && currentPlayer.length > 0
+                    visible: MusicManager.trackLength > 0
                     scale: progressMouseArea.containsMouse || progressMouseArea.pressed ? 1.2 : 1.0
 
                     Behavior on scale {
@@ -285,23 +212,17 @@ Rectangle {
                     id: progressMouseArea
                     anchors.fill: parent
                     hoverEnabled: true
-                    enabled: currentPlayer && currentPlayer.length > 0 && currentPlayer.canSeek
+                    enabled: MusicManager.trackLength > 0 && MusicManager.canSeek
 
                     onClicked: function(mouse) {
-                        if (currentPlayer && currentPlayer.length > 0) {
-                            let ratio = mouse.x / width
-                            let seekPosition = ratio * currentPlayer.length
-                            currentPlayer.position = seekPosition
-                            currentPosition = seekPosition
-                        }
+                        let ratio = mouse.x / width
+                        MusicManager.seekByRatio(ratio)
                     }
 
                     onPositionChanged: function(mouse) {
-                        if (pressed && currentPlayer && currentPlayer.length > 0) {
+                        if (pressed) {
                             let ratio = Math.max(0, Math.min(1, mouse.x / width))
-                            let seekPosition = ratio * currentPlayer.length
-                            currentPlayer.position = seekPosition
-                            currentPosition = seekPosition
+                            MusicManager.seekByRatio(ratio)
                         }
                     }
                 }
@@ -326,8 +247,8 @@ Rectangle {
                         id: previousButton
                         anchors.fill: parent
                         hoverEnabled: true
-                        enabled: currentPlayer && currentPlayer.canGoPrevious
-                        onClicked: if (currentPlayer) currentPlayer.previous()
+                        enabled: MusicManager.canGoPrevious
+                        onClicked: MusicManager.previous()
                     }
 
                     Text {
@@ -352,21 +273,13 @@ Rectangle {
                         id: playButton
                         anchors.fill: parent
                         hoverEnabled: true
-                        enabled: currentPlayer && (currentPlayer.canPlay || currentPlayer.canPause)
-                        onClicked: {
-                            if (currentPlayer) {
-                                if (currentPlayer.isPlaying) {
-                                    currentPlayer.pause()
-                                } else {
-                                    currentPlayer.play()
-                                }
-                            }
-                        }
+                        enabled: MusicManager.canPlay || MusicManager.canPause
+                        onClicked: MusicManager.playPause()
                     }
 
                     Text {
                         anchors.centerIn: parent
-                        text: currentPlayer && currentPlayer.isPlaying ? "pause" : "play_arrow"
+                        text: MusicManager.isPlaying ? "pause" : "play_arrow"
                         font.family: "Material Symbols Outlined"
                         font.pixelSize: Theme.fontSizeBody
                         color: playButton.enabled ? Theme.accentPrimary : Qt.rgba(Theme.textPrimary.r, Theme.textPrimary.g, Theme.textPrimary.b, 0.3)
@@ -386,8 +299,8 @@ Rectangle {
                         id: nextButton
                         anchors.fill: parent
                         hoverEnabled: true
-                        enabled: currentPlayer && currentPlayer.canGoNext
-                        onClicked: if (currentPlayer) currentPlayer.next()
+                        enabled: MusicManager.canGoNext
+                        onClicked: MusicManager.next()
                     }
 
                     Text {
@@ -400,11 +313,5 @@ Rectangle {
                 }
             }
         }
-    }
-
-    // Audio Visualizer (Cava)
-    Cava {
-        id: cava
-        count: 64
     }
 } 

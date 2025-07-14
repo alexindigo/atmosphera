@@ -2,11 +2,13 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.Components
+import qs.Services
 
 Scope {
 	id: root
 	property int count: 32
 	property int noiseReduction: 60
+	property bool cavaRunning: false
 	property string channels: "mono" // or stereo
 	property string monoOption: "average" // or left or right
 	property var config: ({
@@ -21,15 +23,11 @@ Scope {
 	})
 	property var values: Array(count).fill(0) // 0 <= value <= 1
 
-	onConfigChanged: {
-		process.running = false
-		process.running = true
-	}
-
 	Process {
 		property int index: 0
 		id: process
 		stdinEnabled: true
+		running: MusicManager.isPlaying
 		command: ["cava", "-p", "/dev/stdin"]
 		onExited: { stdinEnabled = true; index = 0 }
 		onStarted: {

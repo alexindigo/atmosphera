@@ -14,7 +14,7 @@ QtObject {
     }
     property string weatherCity: "Dinslaken"
     property string profileImage: "/home/" + Quickshell.env("USER") + "/.face"
-    property bool useFahrenheit
+    property bool useFahrenheit: false
     property string wallpaperFolder: "/usr/share/wallpapers"
     property string currentWallpaper: ""
     property string videoPath: "~/Videos/"
@@ -22,6 +22,8 @@ QtObject {
     property bool useSWWW: false
     property bool randomWallpaper: false
     property bool useWallpaperTheme: false
+    property bool showSystemInfoInBar: true
+    property bool showMediaInBar: false
     property int wallpaperInterval: 300
     property string wallpaperResize: "crop"
     property int transitionFps: 60
@@ -43,6 +45,10 @@ QtObject {
         videoPath = settings.value("videoPath", videoPath)
         let showActiveWindowIconFlag = settings.value("showActiveWindowIconFlag", "false")
         showActiveWindowIcon = showActiveWindowIconFlag === "true"
+        let showSystemInfoInBarFlag = settings.value("showSystemInfoInBarFlag", "true")
+        showSystemInfoInBar = showSystemInfoInBarFlag === "true"
+        let showMediaInBarFlag = settings.value("showMediaInBarFlag", "true")
+        showMediaInBar = showMediaInBarFlag === "true"
         let useSWWWFlag = settings.value("useSWWWFlag", "false")
         useSWWW = useSWWWFlag === "true"
         let randomWallpaperFlag = settings.value("randomWallpaperFlag", "false")
@@ -54,6 +60,7 @@ QtObject {
         transitionFps = settings.value("transitionFps", transitionFps)
         transitionType = settings.value("transitionType", transitionType)
         transitionDuration = settings.value("transitionDuration", transitionDuration)
+        
         WallpaperManager.setCurrentWallpaper(currentWallpaper, true);
     }
 
@@ -65,6 +72,8 @@ QtObject {
         settings.setValue("currentWallpaper", currentWallpaper)
         settings.setValue("videoPath", videoPath)
         settings.setValue("showActiveWindowIconFlag", showActiveWindowIcon ? "true" : "false")
+        settings.setValue("showSystemInfoInBarFlag", showSystemInfoInBar ? "true" : "false")
+        settings.setValue("showMediaInBarFlag", showMediaInBar ? "true" : "false")
         settings.setValue("useSWWWFlag", useSWWW ? "true" : "false")
         settings.setValue("randomWallpaperFlag", randomWallpaper ? "true" : "false")
         settings.setValue("useWallpaperThemeFlag", useWallpaperTheme ? "true" : "false")

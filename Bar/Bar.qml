@@ -82,6 +82,22 @@ Scope {
                         anchors.left: parent.left
                     }
 
+                    Row {
+                        id: leftWidgetsRow
+                        anchors.verticalCenter: barBackground.verticalCenter
+                        anchors.left: barBackground.left
+                        anchors.leftMargin: 18
+                        spacing: 12
+
+                        SystemInfo {
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                        
+                        Media {
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                    }
+
                     ActiveWindow {}
 
                     Workspace {

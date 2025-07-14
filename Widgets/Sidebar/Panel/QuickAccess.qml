@@ -4,7 +4,7 @@ import QtQuick.Controls
 import Qt5Compat.GraphicalEffects
 import Quickshell
 import Quickshell.Io
-import "root:/Settings" as Settings
+import qs.Settings
 
 Rectangle {
     id: quickAccessWidget
@@ -24,7 +24,7 @@ Rectangle {
     Rectangle {
         id: card
         anchors.fill: parent
-        color: Settings.Theme.surface
+        color: Theme.surface
         radius: 18
 
         RowLayout {
@@ -38,8 +38,8 @@ Rectangle {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 44
                 radius: 12
-                color: settingsButtonArea.containsMouse ? Settings.Theme.accentPrimary : "transparent"
-                border.color: Settings.Theme.accentPrimary
+                color: settingsButtonArea.containsMouse ? Theme.accentPrimary : "transparent"
+                border.color: Theme.accentPrimary
                 border.width: 1
 
                 RowLayout {
@@ -51,15 +51,15 @@ Rectangle {
                         text: "settings"
                         font.family: settingsButtonArea.containsMouse ? "Material Symbols Rounded" : "Material Symbols Outlined"
                         font.pixelSize: 16
-                        color: settingsButtonArea.containsMouse ? Settings.Theme.onAccent : Settings.Theme.accentPrimary
+                        color: settingsButtonArea.containsMouse ? Theme.onAccent : Theme.accentPrimary
                     }
 
                     Text {
                         text: "Settings"
-                        font.family: Settings.Theme.fontFamily
+                        font.family: Theme.fontFamily
                         font.pixelSize: 14
                         font.bold: true
-                        color: settingsButtonArea.containsMouse ? Settings.Theme.onAccent : Settings.Theme.textPrimary
+                        color: settingsButtonArea.containsMouse ? Theme.onAccent : Theme.textPrimary
                         Layout.fillWidth: true
                     }
                 }
@@ -80,9 +80,9 @@ Rectangle {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 44
                 radius: 12
-                color: isRecording ? Settings.Theme.accentPrimary : 
-                       (recorderButtonArea.containsMouse ? Settings.Theme.accentPrimary : "transparent")
-                border.color: Settings.Theme.accentPrimary
+                color: isRecording ? Theme.accentPrimary : 
+                       (recorderButtonArea.containsMouse ? Theme.accentPrimary : "transparent")
+                border.color: Theme.accentPrimary
                 border.width: 1
 
                 RowLayout {
@@ -94,15 +94,15 @@ Rectangle {
                         text: isRecording ? "radio_button_checked" : "radio_button_unchecked"
                         font.family: (isRecording || recorderButtonArea.containsMouse) ? "Material Symbols Rounded" : "Material Symbols Outlined"
                         font.pixelSize: 16
-                        color: isRecording || recorderButtonArea.containsMouse ? Settings.Theme.onAccent : Settings.Theme.accentPrimary
+                        color: isRecording || recorderButtonArea.containsMouse ? Theme.onAccent : Theme.accentPrimary
                     }
 
                     Text {
                         text: isRecording ? "End" : "Record"
-                        font.family: Settings.Theme.fontFamily
+                        font.family: Theme.fontFamily
                         font.pixelSize: 14
                         font.bold: true
-                        color: isRecording || recorderButtonArea.containsMouse ? Settings.Theme.onAccent : Settings.Theme.textPrimary
+                        color: isRecording || recorderButtonArea.containsMouse ? Theme.onAccent : Theme.textPrimary
                         Layout.fillWidth: true
                     }
                 }
@@ -127,8 +127,8 @@ Rectangle {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 44
                 radius: 12
-                color: wallpaperButtonArea.containsMouse ? Settings.Theme.accentPrimary : "transparent"
-                border.color: Settings.Theme.accentPrimary
+                color: wallpaperButtonArea.containsMouse ? Theme.accentPrimary : "transparent"
+                border.color: Theme.accentPrimary
                 border.width: 1
 
                 RowLayout {
@@ -140,15 +140,15 @@ Rectangle {
                         text: "image"
                         font.family: "Material Symbols Outlined"
                         font.pixelSize: 16
-                        color: wallpaperButtonArea.containsMouse ? Settings.Theme.onAccent : Settings.Theme.accentPrimary
+                        color: wallpaperButtonArea.containsMouse ? Theme.onAccent : Theme.accentPrimary
                     }
 
                     Text {
                         text: "Wallpaper"
-                        font.family: Settings.Theme.fontFamily
+                        font.family: Theme.fontFamily
                         font.pixelSize: 14
                         font.bold: true
-                        color: wallpaperButtonArea.containsMouse ? Settings.Theme.onAccent : Settings.Theme.textPrimary
+                        color: wallpaperButtonArea.containsMouse ? Theme.onAccent : Theme.textPrimary
                         Layout.fillWidth: true
                     }
                 }

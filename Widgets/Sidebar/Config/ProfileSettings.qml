@@ -7,7 +7,7 @@ import qs.Settings
 Rectangle {
     id: profileSettingsCard
     Layout.fillWidth: true
-    Layout.preferredHeight: 200
+    Layout.preferredHeight: 300
     color: Theme.surface
     radius: 18
     border.color: "transparent"
@@ -15,6 +15,10 @@ Rectangle {
     Layout.bottomMargin: 16
     property bool showActiveWindowIcon: false
     signal showAWIconChanged(bool showActiveWindowIcon)
+    property bool showSystemInfoInBar: true
+    signal showSystemInfoChanged(bool showSystemInfoInBar)
+    property bool showMediaInBar: false
+    signal showMediaChanged(bool showMediaInBar)
 
     ColumnLayout {
         anchors.fill: parent
@@ -125,7 +129,6 @@ Rectangle {
             }
         }
 
-
         // Show Active Window Icon Setting
         RowLayout {
             spacing: 8
@@ -148,8 +151,8 @@ Rectangle {
                 width: 52
                 height: 32
                 radius: 16
-                color: Theme.accentPrimary
-                border.color: Theme.accentPrimary
+                color: showActiveWindowIcon ? Theme.accentPrimary : Theme.surfaceVariant
+                border.color: showActiveWindowIcon ? Theme.accentPrimary : Theme.outline
                 border.width: 2
                 
                 Rectangle {
@@ -177,6 +180,110 @@ Rectangle {
             }
         }
 
+        // Show System Info In Bar Setting
+        RowLayout {
+            spacing: 8
+            Layout.fillWidth: true
+
+            Text {
+                text: "Show System Info In Bar"
+                font.pixelSize: 13
+                font.bold: true
+                color: Theme.textPrimary
+                Layout.alignment: Qt.AlignVCenter
+            }
+
+            Item {
+                Layout.fillWidth: true
+            }
+
+            // Custom Material 3 Switch
+            Rectangle {
+                id: customSwitch2
+                width: 52
+                height: 32
+                radius: 16
+                color: showSystemInfoInBar ? Theme.accentPrimary : Theme.surfaceVariant
+                border.color: showSystemInfoInBar ? Theme.accentPrimary : Theme.outline
+                border.width: 2
+                
+                Rectangle {
+                    id: thumb2
+                    width: 28
+                    height: 28
+                    radius: 14
+                    color: Theme.surface
+                    border.color: Theme.outline
+                    border.width: 1
+                    y: 2
+                    x: showSystemInfoInBar ? customSwitch2.width - width - 2 : 2
+                    
+                    Behavior on x {
+                        NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
+                    }
+                }
+                
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        showSystemInfoChanged(!showSystemInfoInBar)
+                    }
+                }
+            }
+        }
+
+        // Show Media In Bar Setting
+        RowLayout {
+            spacing: 8
+            Layout.fillWidth: true
+
+            Text {
+                text: "Show Media In Bar"
+                font.pixelSize: 13
+                font.bold: true
+                color: Theme.textPrimary
+                Layout.alignment: Qt.AlignVCenter
+            }
+
+            Item {
+                Layout.fillWidth: true
+            }
+
+            // Custom Material 3 Switch
+            Rectangle {
+                id: customSwitch3
+                width: 52
+                height: 32
+                radius: 16
+                color: showMediaInBar ? Theme.accentPrimary : Theme.surfaceVariant
+                border.color: showMediaInBar ? Theme.accentPrimary : Theme.outline
+                border.width: 2
+                
+                Rectangle {
+                    id: thumb3
+                    width: 28
+                    height: 28
+                    radius: 14
+                    color: Theme.surface
+                    border.color: Theme.outline
+                    border.width: 1
+                    y: 2
+                    x: showMediaInBar ? customSwitch3.width - width - 2 : 2
+                    
+                    Behavior on x {
+                        NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
+                    }
+                }
+                
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        showMediaChanged(!showMediaInBar)
+                    }
+                }
+            }
+        }
+
         // Video Path Input Row
         RowLayout {
             spacing: 8
@@ -184,7 +291,8 @@ Rectangle {
 
             Text {
                 text: "Video Path"
-                font.pixelSize: 14
+                font.pixelSize: 13
+                font.bold: true
                 color: Theme.textPrimary
                 Layout.alignment: Qt.AlignVCenter
             }

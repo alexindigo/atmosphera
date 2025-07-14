@@ -6,6 +6,10 @@ import Quickshell.Io
 
 Singleton {
     id: root
+
+    function applyOpacity(color, opacity) {
+        return color.replace("#", "#" + opacity);
+    }
     
     // FileView to load theme data from JSON file
     FileView {
@@ -50,8 +54,8 @@ Singleton {
             property string outline: "#44485A"
             
             // Shadows & Overlays
-            property string shadow: "#000000B3"
-            property string overlay: "#11121ACC"
+            property string shadow: "#000000"
+            property string overlay: "#11121A"
         }
     }
     
@@ -87,8 +91,8 @@ Singleton {
     property color outline: themeData.outline
 
     // Shadows & Overlays
-    property color shadow: themeData.shadow
-    property color overlay: themeData.overlay
+    property color shadow: applyOpacity(themeData.shadow, "B3")
+    property color overlay: applyOpacity(themeData.overlay, "66")
 
     // Font Properties
     property string fontFamily: "Roboto"         // Family for all text
@@ -98,3 +102,4 @@ Singleton {
     property int fontSizeSmall: 14               // Small text like clock, labels
     property int fontSizeCaption: 12             // Captions and fine print
 }
+

@@ -14,8 +14,8 @@
   "accentSecondary": "{{ color4 | lighten(0.2) }}",
   "accentTertiary": "{{ color4 | darken(0.2) }}",
   
-  "error": "{{ color5 | darken(0.1) }}",
-  "warning": "{{ color5 | lighten(0.1) }}",
+  "error": "{{ color5 | lighten(0.1) }}",
+  "warning": "{{ color5 | lighten(0.3) }}",
   
   "highlight": "{{ color4 | lighten(0.4) }}",
   "rippleEffect": "{{ color4 | lighten(0.1) }}",
@@ -23,6 +23,6 @@
   "onAccent": "{{ background }}",
   "outline": "{{ background | lighten(0.3) }}",
   
-  "shadow": "{{ background }}B3",
-  "overlay": "{{ background }}CC"
+  "shadow": "{{ background }}",
+  "overlay": "{{ background }}"
 }
