@@ -24,12 +24,14 @@ Item {
     }
 
     Connections {
-        target: shell && shell.defaultAudioSink && shell.defaultAudioSink.audio ? shell.defaultAudioSink.audio : null
-        onVolumeChanged: {
-            volume = Math.round(shell.defaultAudioSink.audio.volume * 100);
-            pillIndicator.text = volume + "%";
-            pillIndicator.icon = volume === 0 ? "volume_off" : (volume < 30 ? "volume_down" : "volume_up");
-            pillIndicator.show();
+        target: shell ?? null
+        function onVolumeChanged() {
+            if (shell && shell.volume !== volume) {
+                volume = shell.volume
+                pillIndicator.text = volume + "%"
+                pillIndicator.icon = volume === 0 ? "volume_off" : (volume < 30 ? "volume_down" : "volume_up")
+                pillIndicator.show()
+            }
         }
     }
 
@@ -46,15 +48,13 @@ Item {
         acceptedButtons: Qt.NoButton // Accept wheel events only
         propagateComposedEvents: true
         onWheel: {
-            if (!shell || !shell.defaultAudioSink || !shell.defaultAudioSink.audio) return;
-            let step = 0.05; // 5% as float
-            let newVolume = shell.defaultAudioSink.audio.volume;
+            if (!shell) return;
+            let step = 5;
             if (wheel.angleDelta.y > 0) {
-                newVolume = Math.min(1, newVolume + step);
+                shell.volume = Math.min(100, shell.volume + step);
             } else if (wheel.angleDelta.y < 0) {
-                newVolume = Math.max(0, newVolume - step);
+                shell.volume = Math.max(0, shell.volume - step);
             }
-            shell.defaultAudioSink.audio.volume = newVolume;
         }
     }
 }
