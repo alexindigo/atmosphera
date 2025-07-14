@@ -8,7 +8,6 @@ Scope {
 	id: root
 	property int count: 32
 	property int noiseReduction: 60
-	property bool cavaRunning: false
 	property string channels: "mono" // or stereo
 	property string monoOption: "average" // or left or right
 	property var config: ({
