@@ -7,7 +7,7 @@ import qs.Settings
 Rectangle {
     id: profileSettingsCard
     Layout.fillWidth: true
-    Layout.preferredHeight: 300
+    Layout.preferredHeight: 340
     color: Theme.surface
     radius: 18
     border.color: "transparent"
@@ -19,6 +19,8 @@ Rectangle {
     signal showSystemInfoChanged(bool showSystemInfoInBar)
     property bool showMediaInBar: false
     signal showMediaChanged(bool showMediaInBar)
+    property string visualizerType: Settings.visualizerType
+    signal visualizerTypeUpdated(string type)
 
     ColumnLayout {
         anchors.fill: parent
@@ -279,6 +281,88 @@ Rectangle {
                     anchors.fill: parent
                     onClicked: {
                         showMediaChanged(!showMediaInBar)
+                    }
+                }
+            }
+        }
+
+        // Visualizer Type Selection
+        RowLayout {
+            spacing: 8
+            Layout.fillWidth: true
+
+            Text {
+                text: "Visualizer Type"
+                font.pixelSize: 13
+                font.bold: true
+                color: Theme.textPrimary
+                Layout.alignment: Qt.AlignVCenter
+            }
+
+            Item {
+                Layout.fillWidth: true
+            }
+
+            // Dropdown for visualizer type
+            Rectangle {
+                width: 120
+                height: 36
+                radius: 8
+                color: Theme.surfaceVariant
+                border.color: Theme.outline
+                border.width: 1
+
+                Text {
+                    id: visualizerTypeText
+                    anchors.left: parent.left
+                    anchors.leftMargin: 12
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: visualizerType === "fire" ? "Fire" : 
+                          visualizerType === "diamond" ? "Diamond" : 
+                          visualizerType === "radial" ? "Radial" : "Radial"
+                    font.pixelSize: 13
+                    color: Theme.textPrimary
+                }
+
+                Text {
+                    text: "arrow_drop_down"
+                    font.family: "Material Symbols Outlined"
+                    font.pixelSize: 20
+                    color: Theme.textPrimary
+                    anchors.right: parent.right
+                    anchors.rightMargin: 8
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        visualizerTypeMenu.open()
+                    }
+                }
+
+                Menu {
+                    id: visualizerTypeMenu
+                    width: 120
+                    y: parent.height
+
+                    MenuItem {
+                        text: "Fire"
+                        onTriggered: {
+                            visualizerTypeUpdated("fire")
+                        }
+                    }
+                    MenuItem {
+                        text: "Diamond"
+                        onTriggered: {
+                            visualizerTypeUpdated("diamond")
+                        }
+                    }
+                    MenuItem {
+                        text: "Radial"
+                        onTriggered: {
+                            visualizerTypeUpdated("radial")
+                        }
                     }
                 }
             }
