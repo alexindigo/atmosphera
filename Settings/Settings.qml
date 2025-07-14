@@ -29,6 +29,7 @@ QtObject {
     property int transitionFps: 60
     property string transitionType: "random"
     property real transitionDuration: 1.1
+    property string visualizerType: "radial" // Options: "fire", "diamond", "radial"
 
     // Settings persistence
     property var settings: Settings {
@@ -60,6 +61,7 @@ QtObject {
         transitionFps = settings.value("transitionFps", transitionFps)
         transitionType = settings.value("transitionType", transitionType)
         transitionDuration = settings.value("transitionDuration", transitionDuration)
+        visualizerType = settings.value("visualizerType", visualizerType)
         
         WallpaperManager.setCurrentWallpaper(currentWallpaper, true);
     }
@@ -82,6 +84,7 @@ QtObject {
         settings.setValue("transitionFps", transitionFps)
         settings.setValue("transitionType", transitionType)
         settings.setValue("transitionDuration", transitionDuration)
+        settings.setValue("visualizerType", visualizerType)
         settings.sync()
     }
 

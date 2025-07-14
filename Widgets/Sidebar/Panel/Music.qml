@@ -51,7 +51,7 @@ Rectangle {
             anchors.fill: parent
             anchors.margins: 18
             spacing: 12
-            visible: currentPlayer
+            visible: !!MusicManager.currentPlayer
 
             // Album art and spectrum
             RowLayout {

@@ -37,6 +37,7 @@ PanelWindow {
     property real tempTransitionDuration: Settings.transitionDuration
     property bool tempShowSystemInfoInBar: Settings.showSystemInfoInBar
     property bool tempShowMediaInBar: Settings.showMediaInBar
+    property string tempVisualizerType: Settings.visualizerType
 
     Rectangle {
         anchors.fill: parent
@@ -151,6 +152,10 @@ PanelWindow {
                                 onShowMediaChanged: function (showMediaInBar) {
                                     tempShowMediaInBar = showMediaInBar;
                                 }
+                                visualizerType: tempVisualizerType
+                                onVisualizerTypeUpdated: function (type) {
+                                    tempVisualizerType = type;
+                                }
                             }
                         }
                         CollapsibleCategory {
@@ -236,6 +241,7 @@ PanelWindow {
                         Settings.transitionDuration = tempTransitionDuration;
                         Settings.showSystemInfoInBar = tempShowSystemInfoInBar;
                         Settings.showMediaInBar = tempShowMediaInBar;
+                        Settings.visualizerType = tempVisualizerType;
                         Settings.saveSettings();
                         if (typeof weather !== 'undefined' && weather) {
                             weather.fetchCityWeather();
@@ -266,6 +272,9 @@ PanelWindow {
         tempTransitionFps = Settings.transitionFps;
         tempTransitionType = Settings.transitionType;
         tempTransitionDuration = Settings.transitionDuration;
+        tempShowSystemInfoInBar = Settings.showSystemInfoInBar;
+        tempShowMediaInBar = Settings.showMediaInBar;
+        tempVisualizerType = Settings.visualizerType;
         
         visible = true;
         // Force focus on the text input after a short delay

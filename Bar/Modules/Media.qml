@@ -9,7 +9,7 @@ import qs.Components
 Item {
     id: mediaControl
     width: visible ? mediaRow.width : 0
-    height: 32
+    height: 36
     visible: Settings.showMediaInBar && MusicManager.currentPlayer
 
     RowLayout {

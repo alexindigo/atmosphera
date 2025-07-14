@@ -1,5 +1,6 @@
 import QtQuick
 import qs.Components
+import qs.Settings
 
 Item {
     id: root
@@ -9,9 +10,14 @@ Item {
     property color strokeColor: "#fff"
     property int strokeWidth: 0
     property var values: []
+    property int usableOuter: 48
 
-    width: outerRadius * 2
-    height: outerRadius * 2
+    width: usableOuter * 2
+    height: usableOuter * 2
+
+    onOuterRadiusChanged: () => {
+        usableOuter = Settings.visualizerType === "fire" ? outerRadius * 0.85 : outerRadius;
+    }
 
     Repeater {
         model: root.values.length
@@ -19,23 +25,33 @@ Item {
             property real value: root.values[index]
             property real angle: (index / root.values.length) * 360
             width: Math.max(2, (root.innerRadius * 2 * Math.PI) / root.values.length - 4)
-            height: value * (root.outerRadius - root.innerRadius)
+            height: Settings.visualizerType === "diamond" ? value * 2 * (usableOuter - root.innerRadius) : value * (usableOuter - root.innerRadius)
             radius: width / 2
             color: root.fillColor
             border.color: root.strokeColor
             border.width: root.strokeWidth
             antialiasing: true
 
-            x: root.width / 2 + (root.innerRadius) * Math.cos(Math.PI/2 + 2 * Math.PI * index / root.values.length) - width / 2
-            y: root.height / 2 - (root.innerRadius) * Math.sin(Math.PI/2 + 2 * Math.PI * index / root.values.length) - height
+            x: Settings.visualizerType === "radial" ? root.width / 2 - width / 2 : root.width / 2 + root.innerRadius * Math.cos(Math.PI / 2 + 2 * Math.PI * index / root.values.length) - width / 2
 
-            transform: Rotation {
-                origin.x: width / 2
-                origin.y: height
-                angle: -angle
+            y: Settings.visualizerType === "radial" ? root.height / 2 - height : Settings.visualizerType === "diamond" ? root.height / 2 - root.innerRadius * Math.sin(Math.PI / 2 + 2 * Math.PI * index / root.values.length) - height / 2 : root.height / 2 - root.innerRadius * Math.sin(Math.PI / 2 + 2 * Math.PI * index / root.values.length) - height
+            transform: [
+                Rotation {
+                    origin.x: width / 2
+                    origin.y: Settings.visualizerType === "diamond" ? height / 2 : height
+                    angle: Settings.visualizerType === "radial" ? (index / root.values.length) * 360 : Settings.visualizerType === "fire" ? 0 : (index / root.values.length) * 360 - 90
+                },
+                Translate {
+                    x: Settings.visualizerType === "radial" ? root.innerRadius * Math.cos(2 * Math.PI * index / root.values.length) : 0
+                    y: Settings.visualizerType === "radial" ? root.innerRadius * Math.sin(2 * Math.PI * index / root.values.length) : 0
+                }
+            ]
+
+            Behavior on height {
+                SmoothedAnimation {
+                    duration: 120
+                }
             }
-
-            Behavior on height { SmoothedAnimation { duration: 120 } }
         }
     }
-} 
+}

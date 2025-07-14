@@ -20,6 +20,7 @@ Scope {
 			mono_option: monoOption,
 		}
 	})
+	
 	property var values: Array(count).fill(0) // 0 <= value <= 1
 
 	Process {
@@ -28,7 +29,7 @@ Scope {
 		stdinEnabled: true
 		running: MusicManager.isPlaying
 		command: ["cava", "-p", "/dev/stdin"]
-		onExited: { stdinEnabled = true; index = 0 }
+		onExited: { stdinEnabled = true; index = 0; values = []; }
 		onStarted: {
 			const iniParts = []
 			for (const k in config) {
@@ -55,9 +56,6 @@ Scope {
 					newValues[i + process.index] = Math.min(data.charCodeAt(i), 128) / 128
 				}
 				process.index += data.length
-				if (newValues.length !== values.length) {
-					console.log("length!", values.length, newValues.length)
-				}
 				values = newValues
 			}
 		}
