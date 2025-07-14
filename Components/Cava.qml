@@ -20,7 +20,6 @@ Scope {
 		}
 	})
 	property var values: Array(count).fill(0) // 0 <= value <= 1
-	property bool running: true // Controls whether cava is active
 
 	onConfigChanged: {
 		process.running = false
@@ -32,7 +31,6 @@ Scope {
 		id: process
 		stdinEnabled: true
 		command: ["cava", "-p", "/dev/stdin"]
-		running: root.running // Bind process running to the new property
 		onExited: { stdinEnabled = true; index = 0 }
 		onStarted: {
 			const iniParts = []
