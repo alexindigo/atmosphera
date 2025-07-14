@@ -15,12 +15,13 @@ PanelWindow {
     implicitHeight: 640
     color: "transparent"
     visible: false
+    WlrLayershell.exclusionMode: ExclusionMode.Ignore
     WlrLayershell.keyboardFocus: visible ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
     screen: (typeof modelData !== 'undefined' ? modelData : null)
     property bool shouldBeVisible: false
 
     anchors.top: true
-    margins.top: -26
+    margins.top: 36
 
     function showAt() {
         visible = true;

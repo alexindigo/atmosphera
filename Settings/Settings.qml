@@ -54,6 +54,7 @@ QtObject {
         transitionFps = settings.value("transitionFps", transitionFps)
         transitionType = settings.value("transitionType", transitionType)
         transitionDuration = settings.value("transitionDuration", transitionDuration)
+        WallpaperManager.setCurrentWallpaper(currentWallpaper, true);
     }
 
     function saveSettings() {

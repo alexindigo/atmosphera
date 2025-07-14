@@ -100,19 +100,18 @@ Scope {
                         Brightness {
                             id: widgetsBrightness
                             anchors.verticalCenter: parent.verticalCenter
-                            anchors.verticalCenterOffset: 1
                         }
 
                         Volume {
                             id: widgetsVolume
                             shell: rootScope.shell
                             anchors.verticalCenter: parent.verticalCenter
-                            anchors.verticalCenterOffset: 1
                         }
 
                         SystemTray {
                             id: systemTrayModule
                             shell: rootScope.shell
+                            anchors.verticalCenter: parent.verticalCenter
                             bar: panel
                             trayMenu: externalTrayMenu
                         }
@@ -123,7 +122,6 @@ Scope {
 
                         ClockWidget {
                             anchors.verticalCenter: parent.verticalCenter
-                            anchors.verticalCenterOffset: 1
                         }
 
                         PanelPopup {
@@ -133,7 +131,6 @@ Scope {
                         Button {
                             barBackground: barBackground
                             anchors.verticalCenter: parent.verticalCenter
-                            anchors.verticalCenterOffset: 1
                             screen: modelData
                             sidebarPopup: sidebarPopup
                         }
