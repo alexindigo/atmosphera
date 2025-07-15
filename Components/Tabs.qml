@@ -38,7 +38,7 @@ Item {
                 // Icon
                 Text {
                     text: modelData.icon
-                    font.family: "Material Icons"
+                    font.family: "Material Symbols Outlined"
                     font.pixelSize: 22
                     color: index === root.currentIndex
                         ? (Theme ? Theme.accentPrimary : "#7C3AED")
