@@ -5,6 +5,7 @@ import Quickshell
 import Quickshell.Wayland
 import qs.Settings
 import qs.Services
+import qs.Components
 
 PanelWindow {
     id: settingsModal
@@ -102,6 +103,17 @@ PanelWindow {
                 }
             }
 
+            // Tabs bar (moved here)
+            Tabs {
+                id: settingsTabs
+                Layout.fillWidth: true
+                tabsModel: [
+                    { icon: "cloud", label: "Weather" },
+                    { icon: "settings", label: "System" },
+                    { icon: "wallpaper", label: "Wallpaper" }
+                ]
+            }
+
             // Scrollable settings area
             Rectangle {
                 Layout.fillWidth: true
@@ -109,96 +121,112 @@ PanelWindow {
                 color: "transparent"
                 border.width: 0
                 radius: 20
+
                 Flickable {
                     id: flick
                     anchors.fill: parent
                     contentWidth: width
-                    contentHeight: column.implicitHeight
+                    contentHeight: tabContentLoader.item ? tabContentLoader.item.implicitHeight : 0
                     clip: true
-                    interactive: true
-                    boundsBehavior: Flickable.StopAtBounds
+
+                    Loader {
+                        id: tabContentLoader
+                        anchors.top: parent.top
+                        width: parent.width
+                        sourceComponent: settingsTabs.currentIndex === 0 ? weatherTab : settingsTabs.currentIndex === 1 ? systemTab : wallpaperTab
+                    }
+                }
+
+                Component {
+                    id: weatherTab
                     ColumnLayout {
-                        id: column
-                        width: flick.width
-                        spacing: 24
-                        // CollapsibleCategory sections here
-                        CollapsibleCategory {
-                            title: "Weather"
-                            expanded: false
-                            WeatherSettings {
-                                weatherCity: (typeof tempWeatherCity !== 'undefined' && tempWeatherCity !== null) ? tempWeatherCity : ""
-                                useFahrenheit: tempUseFahrenheit
-                                onCityChanged: function (city) {
-                                    tempWeatherCity = city;
-                                }
-                                onTemperatureUnitChanged: function (useFahrenheit) {
-                                    tempUseFahrenheit = useFahrenheit;
-                                }
+                        anchors.fill: parent
+                        WeatherSettings {
+                            Layout.fillWidth: true
+                            Layout.alignment: Qt.AlignTop
+                            anchors.margins: 16
+                            weatherCity: (typeof tempWeatherCity !== 'undefined' && tempWeatherCity !== null) ? tempWeatherCity : ""
+                            useFahrenheit: tempUseFahrenheit
+                            onCityChanged: function (city) {
+                                tempWeatherCity = city;
+                            }
+                            onTemperatureUnitChanged: function (useFahrenheit) {
+                                tempUseFahrenheit = useFahrenheit;
                             }
                         }
-                        CollapsibleCategory {
-                            title: "System"
-                            expanded: false
-                            ProfileSettings {
-                                showActiveWindowIcon: tempShowActiveWindowIcon
-                                onShowAWIconChanged: function (showActiveWindowIcon) {
-                                    tempShowActiveWindowIcon = showActiveWindowIcon;
-                                }
-                                showSystemInfoInBar: tempShowSystemInfoInBar
-                                onShowSystemInfoChanged: function (showSystemInfoInBar) {
-                                    tempShowSystemInfoInBar = showSystemInfoInBar;
-                                }
-                                showMediaInBar: tempShowMediaInBar
-                                onShowMediaChanged: function (showMediaInBar) {
-                                    tempShowMediaInBar = showMediaInBar;
-                                }
-                                visualizerType: tempVisualizerType
-                                onVisualizerTypeUpdated: function (type) {
-                                    tempVisualizerType = type;
-                                }
+                    }
+                }
+                Component {
+                    id: systemTab
+                    ColumnLayout {
+                        anchors.fill: parent
+                        ProfileSettings {
+                            Layout.fillWidth: true
+                            Layout.alignment: Qt.AlignTop
+                            anchors.margins: 16
+                            showActiveWindowIcon: tempShowActiveWindowIcon
+                            onShowAWIconChanged: function (showActiveWindowIcon) {
+                                tempShowActiveWindowIcon = showActiveWindowIcon;
+                            }
+                            showSystemInfoInBar: tempShowSystemInfoInBar
+                            onShowSystemInfoChanged: function (showSystemInfoInBar) {
+                                tempShowSystemInfoInBar = showSystemInfoInBar;
+                            }
+                            showMediaInBar: tempShowMediaInBar
+                            onShowMediaChanged: function (showMediaInBar) {
+                                tempShowMediaInBar = showMediaInBar;
+                            }
+                            visualizerType: tempVisualizerType
+                            onVisualizerTypeUpdated: function (type) {
+                                tempVisualizerType = type;
                             }
                         }
-                        CollapsibleCategory {
-                            title: "Wallpaper"
-                            expanded: false
-                            WallpaperSettings {
-                                id: wallpaperSettings
-                                wallpaperFolder: (typeof tempWallpaperFolder !== 'undefined' && tempWallpaperFolder !== null) ? tempWallpaperFolder : ""
-                                useSWWW: tempUseSWWW
-                                randomWallpaper: tempRandomWallpaper
-                                useWallpaperTheme: tempUseWallpaperTheme
-                                wallpaperInterval: tempWallpaperInterval
-                                wallpaperResize: tempWallpaperResize
-                                transitionFps: tempTransitionFps
-                                transitionType: tempTransitionType
-                                transitionDuration: tempTransitionDuration
-                                onWallpaperFolderEdited: function (folder) {
-                                    tempWallpaperFolder = folder;
-                                }
-                                onUseSWWWChangedUpdated: function(useSWWW) {
-                                    tempUseSWWW = useSWWW;
-                                }
-                                onRandomWallpaperChangedUpdated: function(randomWallpaper) {
-                                    tempRandomWallpaper = randomWallpaper;
-                                }
-                                onUseWallpaperThemeChangedUpdated: function(useWallpaperTheme) {
-                                    tempUseWallpaperTheme = useWallpaperTheme;
-                                }
-                                onWallpaperIntervalChangedUpdated: function(wallpaperInterval) {
-                                    tempWallpaperInterval = wallpaperInterval;
-                                }
-                                onWallpaperResizeChangedUpdated: function(resize) {
-                                    tempWallpaperResize = resize;
-                                }
-                                onTransitionFpsChangedUpdated: function(fps) {
-                                    tempTransitionFps = fps;
-                                }
-                                onTransitionTypeChangedUpdated: function(type) {
-                                    tempTransitionType = type;
-                                }
-                                onTransitionDurationChangedUpdated: function(duration) {
-                                    tempTransitionDuration = duration;
-                                }
+                    }
+                }
+                Component {
+                    id: wallpaperTab
+                    ColumnLayout {
+                        anchors.fill: parent
+                        WallpaperSettings {
+                            id: wallpaperSettings
+                            Layout.fillWidth: true
+                            Layout.alignment: Qt.AlignTop
+                            anchors.margins: 16
+                            wallpaperFolder: (typeof tempWallpaperFolder !== 'undefined' && tempWallpaperFolder !== null) ? tempWallpaperFolder : ""
+                            useSWWW: tempUseSWWW
+                            randomWallpaper: tempRandomWallpaper
+                            useWallpaperTheme: tempUseWallpaperTheme
+                            wallpaperInterval: tempWallpaperInterval
+                            wallpaperResize: tempWallpaperResize
+                            transitionFps: tempTransitionFps
+                            transitionType: tempTransitionType
+                            transitionDuration: tempTransitionDuration
+                            onWallpaperFolderEdited: function (folder) {
+                                tempWallpaperFolder = folder;
+                            }
+                            onUseSWWWChangedUpdated: function(useSWWW) {
+                                tempUseSWWW = useSWWW;
+                            }
+                            onRandomWallpaperChangedUpdated: function(randomWallpaper) {
+                                tempRandomWallpaper = randomWallpaper;
+                            }
+                            onUseWallpaperThemeChangedUpdated: function(useWallpaperTheme) {
+                                tempUseWallpaperTheme = useWallpaperTheme;
+                            }
+                            onWallpaperIntervalChangedUpdated: function(wallpaperInterval) {
+                                tempWallpaperInterval = wallpaperInterval;
+                            }
+                            onWallpaperResizeChangedUpdated: function(resize) {
+                                tempWallpaperResize = resize;
+                            }
+                            onTransitionFpsChangedUpdated: function(fps) {
+                                tempTransitionFps = fps;
+                            }
+                            onTransitionTypeChangedUpdated: function(type) {
+                                tempTransitionType = type;
+                            }
+                            onTransitionDurationChangedUpdated: function(duration) {
+                                tempTransitionDuration = duration;
                             }
                         }
                     }
