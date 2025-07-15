@@ -8,10 +8,10 @@ import Quickshell.Io
 Singleton {
     id: root
 
-    property list<var> workspaces: []
-    property int focusedWorkspaceIndex: 0
-    property list<var> windows: []
-    property int focusedWindowIndex: 0
+    property var workspaces: []
+    property var windows: []
+    property var outputs: []
+    property int focusedWindowIndex: -1
     property bool inOverview: false
 
     // Reactive property for focused window title
@@ -25,61 +25,167 @@ Singleton {
             focusedWindowTitle = "(No active window)";
         }
     }
-
     // Call updateFocusedWindowTitle on changes
     onWindowsChanged: updateFocusedWindowTitle()
     onFocusedWindowIndexChanged: updateFocusedWindowTitle()
+    
+    Component.onCompleted: {
+        eventStream.running = true;
+        outputsProcess.running = true;
+    }
+    
+    Process {
+        id: outputsProcess
+        running: false
+        command: ["niri", "msg", "--json", "outputs"]
+        
+        stdout: SplitParser {
+            onRead: function(line) {
+                try {
+                    const outputsData = JSON.parse(line);
+                    const outputsList = [];
+                    
+                    // Process each output
+                    for (const [connector, data] of Object.entries(outputsData)) {
+                        const logical = data.logical || {};
+                        outputsList.push({
+                            connector: connector,
+                            name: data.name || connector,
+                            make: data.make || "",
+                            model: data.model || "",
+                            x: logical.x || 0,
+                            y: logical.y || 0,
+                            width: logical.width || 1920,
+                            height: logical.height || 1080,
+                            scale: logical.scale || 1.0,
+                            transform: logical.transform || "Normal"
+                        });
+                    }
+                    
+                    // Sort outputs by position (left to right, top to bottom)
+                    outputsList.sort((a, b) => {
+                        if (a.x !== b.x) return a.x - b.x;
+                        return a.y - b.y;
+                    });
+                    
+                    root.outputs = outputsList;
+                } catch (e) {
+                    console.error("Failed to parse outputs:", e, line);
+                }
+            }
+        }
+    }
 
     Process {
-        command: ["niri", "msg", "-j", "event-stream"]
-        running: true
+        id: eventStream        
+        running: false
+        command: ["niri", "msg", "--json", "event-stream"]
 
         stdout: SplitParser {
             onRead: data => {
-                const event = JSON.parse(data.trim());
-
-                if (event.WorkspacesChanged) {
-                    root.workspaces = [...event.WorkspacesChanged.workspaces].sort((a, b) => a.idx - b.idx);
-                    root.focusedWorkspaceIndex = root.workspaces.findIndex(w => w.is_focused);
-                    if (root.focusedWorkspaceIndex < 0) {
-                        root.focusedWorkspaceIndex = 0;
-                    }
-                } else if (event.WorkspaceActivated) {
-                    root.focusedWorkspaceIndex = root.workspaces.findIndex(w => w.id === event.WorkspaceActivated.id);
-                    if (root.focusedWorkspaceIndex < 0) {
-                        root.focusedWorkspaceIndex = 0;
-                    }
-                } else if (event.WindowsChanged) {
-                    root.windows = [...event.WindowsChanged.windows].sort((a, b) => a.id - b.id);
-                    //const window = event.WindowOpenedOrChanged.window;
-//                    const index = root.windows.findIndex(w => w.id === window.id);
-                    // if (index >= 0) {
-                    //     root.windows[index] = window;
-                    // } else {
-                    //     root.windows.push(window);
-                    //     root.windows = [...root.windows].sort((a, b) => a.id - b.id);
-                    //     if (window.is_focused) {
-                    //         root.focusedWindowIndex = root.windows.findIndex(w => w.id === window.id);
-                    //         if (root.focusedWindowIndex < 0) {
-                    //             root.focusedWindowIndex = 0;
-                    //         }
-                    //     }
-                    // }
-                } else if (event.WindowClosed) {
-                    root.windows = [...root.windows.filter(w => w.id !== event.WindowClosed.id)];
-                } else if (event.WindowFocusChanged) {
-                    if (event.WindowFocusChanged.id) {
-                        root.focusedWindowIndex = root.windows.findIndex(w => w.id === event.WindowFocusChanged.id);
-                        if (root.focusedWindowIndex < 0) {
-                            root.focusedWindowIndex = 0;
+                try {
+                    const event = JSON.parse(data.trim());
+                    
+                    // Handle different event types
+                    if (event.WorkspacesChanged) {
+                        try {
+                            const workspacesData = event.WorkspacesChanged.workspaces;
+                            const workspacesList = [];
+                            
+                            // Process each workspace
+                            for (const ws of workspacesData) {
+                                workspacesList.push({
+                                    id: ws.id,
+                                    idx: ws.idx,
+                                    name: ws.name || "",
+                                    output: ws.output || "",
+                                    isFocused: ws.is_focused === true,
+                                    isActive: ws.is_active === true,
+                                    isUrgent: ws.is_urgent === true,
+                                    activeWindowId: ws.active_window_id
+                                });
+                            }
+                            
+                            // Sort workspaces by output name and then by ID
+                            workspacesList.sort((a, b) => {
+                                if (a.output !== b.output) {
+                                    return a.output.localeCompare(b.output);
+                                }
+                                return a.id - b.id;
+                            });
+                            
+                            root.workspaces = workspacesList;
+                        } catch (e) {
+                            console.error("Error parsing workspaces event:", e);
                         }
-                        const focusedWin = root.windows[root.focusedWindowIndex];
-                                    "title:", focusedWin ? `"${focusedWin.title}"` : "<none>";
-                    } else {
-                        root.focusedWindowIndex = -1;
+                    } else if (event.WindowsChanged) {
+                        try {
+                            const windowsData = event.WindowsChanged.windows;
+                            const windowsList = [];
+                            
+                            // Process each window
+                            for (const win of windowsData) {
+                                windowsList.push({
+                                    id: win.id,
+                                    title: win.title || "",
+                                    appId: win.app_id || "",
+                                    workspaceId: win.workspace_id || null,
+                                    isFocused: win.is_focused === true
+                                });
+                            }
+                            
+                            // Sort windows by ID
+                            windowsList.sort((a, b) => a.id - b.id);
+                            
+                            root.windows = windowsList;
+                            
+                            // Find focused window index
+                            for (let i = 0; i < windowsList.length; i++) {
+                                if (windowsList[i].isFocused) {
+                                    root.focusedWindowIndex = i;
+                                    break;
+                                }
+                            }
+                        } catch (e) {
+                            console.error("Error parsing windows event:", e);
+                        }
+                    } else if (event.WorkspaceActivated) {
+                        try {
+                            const focusedId = parseInt(event.WorkspaceActivated.id);
+                            
+                            // Update isFocused flag on all workspaces
+                            for (let i = 0; i < root.workspaces.length; i++) {
+                                // Set isFocused to true only for the activated workspace
+                                root.workspaces[i].isFocused = (root.workspaces[i].id === focusedId);
+                            }
+                            
+                            root.workspacesChanged();
+                        } catch (e) {
+                            console.error("Error parsing workspace activation event:", e);
+                        }
+                    } else if (event.WindowFocusChanged) {
+                        try {
+                            const focusedId = event.WindowFocusChanged.id;
+                            if (focusedId) {
+                                root.focusedWindowIndex = root.windows.findIndex(w => w.id === focusedId);
+                                if (root.focusedWindowIndex < 0) {
+                                    root.focusedWindowIndex = 0;
+                                }
+                            } else {
+                                root.focusedWindowIndex = -1;
+                            }
+                        } catch (e) {
+                            console.error("Error parsing window focus event:", e);
+                        }
+                    } else if (event.OverviewOpenedOrClosed) {
+                        try {
+                            root.inOverview = event.OverviewOpenedOrClosed.is_open === true;
+                        } catch (e) {
+                            console.error("Error parsing overview state:", e);
+                        }
                     }
-                } else if (event.OverviewOpenedOrClosed) {
-                    root.inOverview = event.OverviewOpenedOrClosed.is_open;
+                } catch (e) {
+                    console.error("Error parsing event stream:", e, data);
                 }
             }
         }
