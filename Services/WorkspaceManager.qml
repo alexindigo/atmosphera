@@ -128,49 +128,6 @@ Singleton {
             });
         }
         
-        const tempArray = [];
-        for (let i = 0; i < workspaces.count; i++) {
-            tempArray.push({
-                id: workspaces.get(i).id,
-                idx: workspaces.get(i).idx,
-                name: workspaces.get(i).name,
-                output: workspaces.get(i).output,
-                isActive: workspaces.get(i).isActive,
-                isFocused: workspaces.get(i).isFocused,
-                isUrgent: workspaces.get(i).isUrgent
-            });
-        }
-        
-        const outputPositions = {};
-        if (isNiri && Niri.outputs) {
-            for (let i = 0; i < Niri.outputs.length; i++) {
-                const output = Niri.outputs[i];
-                outputPositions[output.connector] = output.x;
-            }
-        }
-        
-        tempArray.sort((a, b) => {
-            if (a.output !== b.output) {
-                if (isNiri && Niri.outputs && Niri.outputs.length > 0) {
-                    const outputA = Niri.outputs.find(o => o.connector === a.output);
-                    const outputB = Niri.outputs.find(o => o.connector === b.output);
-                    
-                    if (outputA && outputB) {
-                        return outputA.x - outputB.x;
-                    }
-                }
-                
-                return a.output.localeCompare(b.output);
-            }
-            
-            return a.id - b.id;
-        });
-        
-        workspaces.clear();
-        for (let i = 0; i < tempArray.length; i++) {
-            const ws = tempArray[i];
-            workspaces.append(ws);
-        }
         workspacesChanged();
     }
 
