@@ -16,7 +16,7 @@ PanelWindow {
     anchors.top: true
     anchors.right: true
     margins.right: 0
-    margins.top: -24
+    margins.top: 0
     //z: 100
     //border.color: Theme.outline
     //border.width: 1
