@@ -64,6 +64,7 @@ Item {
                     localWorkspaces.append(ws);
                 }
             }
+
             workspaceRepeater.model = localWorkspaces;
             updateWorkspaceFocus();
         }
@@ -176,9 +177,6 @@ Item {
                     scale: model.isFocused ? 1.0 : 0.9
                     z: 0
 
-                    ToolTip.visible: pillMouseArea.containsMouse
-                    ToolTip.text: `${model.output}:${model.idx} (ID: ${model.id})`
-                    ToolTip.delay: 500
                     MouseArea {
                         id: pillMouseArea
                         anchors.fill: parent
