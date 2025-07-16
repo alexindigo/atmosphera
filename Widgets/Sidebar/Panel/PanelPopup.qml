@@ -157,7 +157,7 @@ PanelWindow {
 
                 // Network card containing Wifi and Bluetooth
                 Rectangle {
-                    Layout.preferredHeight: 70
+                    Layout.preferredHeight: 80
                     Layout.preferredWidth: 140
                     Layout.fillWidth: false
                     color: Theme.surface
