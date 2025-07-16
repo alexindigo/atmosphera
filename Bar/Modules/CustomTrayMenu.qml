@@ -18,8 +18,8 @@ PopupWindow {
     property real anchorY
 
     anchor.item: anchorItem ? anchorItem : null
-    anchor.rect.x: anchorX + 10
-    anchor.rect.y: anchorY
+    anchor.rect.x: anchorX
+    anchor.rect.y: anchorY - 4
 
     function showAt(item, x, y) {
         if (!item) {

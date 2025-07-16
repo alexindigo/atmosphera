@@ -31,7 +31,7 @@ Window {
         if (!targetItem) return;
         var pos = targetItem.mapToGlobal(0, targetItem.height);
         x = pos.x - width / 2 + targetItem.width / 2;
-        y = pos.y + 8;
+        y = pos.y + 12;
         visible = true;
         console.log("StyledTooltip _showNow called");
         console.log("StyledTooltip Theme.textPrimary:", Theme.textPrimary);
