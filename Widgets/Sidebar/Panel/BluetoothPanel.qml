@@ -79,7 +79,7 @@ Item {
         anchors.top: true
         anchors.right: true
         margins.right: 0
-        margins.top: -24
+        margins.top: 0
         WlrLayershell.keyboardFocus: visible ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
 
         onVisibleChanged: {

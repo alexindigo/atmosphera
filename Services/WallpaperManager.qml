@@ -30,9 +30,7 @@ Singleton {
     }
 
     function changeWallpaper(path) {
-        if (!Settings.randomWallpaper) {
-            setCurrentWallpaper(path);
-        }
+        setCurrentWallpaper(path);
     }
 
     function setCurrentWallpaper(path, isInitial) {

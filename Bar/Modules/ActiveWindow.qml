@@ -13,7 +13,7 @@ PanelWindow {
     anchors.left: true
     anchors.right: true
     margins.top: barHeight
-    visible: activeWindowWrapper.shouldShow
+    visible: !activeWindowWrapper.finallyHidden
     implicitHeight: activeWindowTitleContainer.height
     implicitWidth: activeWindowTitleContainer.x
     property int barHeight: 36
@@ -39,13 +39,24 @@ PanelWindow {
         width: parent.width
         property int fullHeight: activeWindowTitleContainer.height
         property bool shouldShow: false
+        property bool finallyHidden: false
 
         Timer {
             id: visibilityTimer
-            interval: 4000
+            interval: 1200
             running: false
             onTriggered: {
                 activeWindowWrapper.shouldShow = false;
+                hideTimer.restart();
+            }
+        }
+
+        Timer {
+            id: hideTimer
+            interval: 300
+            running: false
+            onTriggered: {
+                activeWindowWrapper.finallyHidden = true;
             }
         }
 
@@ -54,9 +65,11 @@ PanelWindow {
             function onActiveToplevelChanged() {
                 if (ToplevelManager.activeToplevel?.appId) {
                     activeWindowWrapper.shouldShow = true;
+                    activeWindowWrapper.finallyHidden = false;
                     visibilityTimer.restart();
                 } else {
                     activeWindowWrapper.shouldShow = false;
+                    hideTimer.restart();
                     visibilityTimer.stop();
                 }
             }
@@ -66,8 +79,6 @@ PanelWindow {
         height: shouldShow ? fullHeight : 1
         opacity: shouldShow ? 1 : 0
         clip: true
-
-
 
         Behavior on height {
             NumberAnimation {

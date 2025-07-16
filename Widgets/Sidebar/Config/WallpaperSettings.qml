@@ -7,6 +7,7 @@ Rectangle {
     id: wallpaperSettingsCard
     Layout.fillWidth: true
     Layout.preferredHeight: 680
+    Layout.topMargin: 12
     color: Theme.surface
     radius: 18
 
