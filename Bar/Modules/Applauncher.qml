@@ -297,10 +297,13 @@ PanelWindow {
                                     Layout.fillWidth: true
                                 }
                                 Text {
-                                    text: modelData.isCalculator ? (modelData.expr + " = " + modelData.result) : (modelData.comment || modelData.genericName || "")
+                                    text: modelData.isCalculator ? (modelData.expr + " = " + modelData.result)
+                                        : (modelData.comment || modelData.genericName || "No description available")
                                     color: hovered || isSelected ? Theme.onAccent : Theme.textSecondary
                                     font.family: Theme.fontFamily
                                     font.pixelSize: Theme.fontSizeCaption
+                                    font.italic: !(modelData.comment || modelData.genericName)
+                                    opacity: (modelData.comment || modelData.genericName) ? 1.0 : 0.6
                                     elide: Text.ElideRight
                                     Layout.fillWidth: true
                                 }
