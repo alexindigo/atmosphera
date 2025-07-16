@@ -18,7 +18,7 @@ PopupWindow {
     property real anchorY
 
     anchor.item: anchorItem ? anchorItem : null
-    anchor.rect.x: anchorX
+    anchor.rect.x: anchorX + 10
     anchor.rect.y: anchorY
 
     function showAt(item, x, y) {
@@ -51,10 +51,10 @@ PopupWindow {
     Rectangle {
         id: bg
         anchors.fill: parent
-        color: Theme.backgroundPrimary
-        border.color: Theme.accentPrimary
-        border.width: 2
-        radius: 20
+        color: Theme.backgroundElevated || "#222"
+        border.color: Theme.border || "#444"
+        border.width: 1
+        radius: 12
         z: 0
     }
 
@@ -76,15 +76,15 @@ PopupWindow {
             required property var modelData
 
             width: listView.width
-            height: (modelData?.isSeparator) ? 8 : 28
+            height: (modelData?.isSeparator) ? 8 : 32
             color: "transparent"
-            radius: 6
+            radius: 12
 
             Rectangle {
                 anchors.centerIn: parent
                 width: parent.width - 20
                 height: 1
-                color: Qt.darker(Theme.backgroundPrimary, 1.4)
+                color: Qt.darker(Theme.backgroundElevated || "#222", 1.4)
                 visible: modelData?.isSeparator ?? false
             }
 
@@ -92,14 +92,14 @@ PopupWindow {
                 id: bg
                 anchors.fill: parent
                 color: mouseArea.containsMouse ? Theme.highlight : "transparent"
-                radius: 6
+                radius: 12
                 visible: !(modelData?.isSeparator ?? false)
                 property color hoverTextColor: mouseArea.containsMouse ? Theme.onAccent : Theme.textPrimary
 
                 RowLayout {
                     anchors.fill: parent
-                    anchors.leftMargin: 10
-                    anchors.rightMargin: 10
+                    anchors.leftMargin: 12
+                    anchors.rightMargin: 12
                     spacing: 8
 
                     Text {

@@ -40,6 +40,19 @@ Item {
         iconCircleColor: Theme.accentPrimary
         iconTextColor: Theme.backgroundPrimary
         textColor: Theme.textPrimary
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            onEntered: brightnessTooltip.tooltipVisible = true
+            onExited: brightnessTooltip.tooltipVisible = false
+        }
+        StyledTooltip {
+            id: brightnessTooltip
+            text: "Brightness: " + brightness + "%"
+            tooltipVisible: false
+            targetItem: pill
+            delay: 200
+        }
     }
 
     Component.onCompleted: {

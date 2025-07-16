@@ -6,7 +6,7 @@ import qs.Settings
 PanelWindow {
     id: window
     implicitWidth: 350
-    implicitHeight: notificationColumn.implicitHeight + 60
+    implicitHeight: notificationColumn.implicitHeight
     color: "transparent"
     visible: notificationModel.count > 0
     screen: Quickshell.primaryScreen !== undefined ? Quickshell.primaryScreen : null
@@ -16,7 +16,7 @@ PanelWindow {
 
     anchors.top: true
     anchors.right: true
-    margins.top: barVisible ? -20 : 10
+    margins.top: 6
     margins.right: 6
 
     ListModel {

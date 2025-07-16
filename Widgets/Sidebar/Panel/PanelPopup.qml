@@ -16,7 +16,7 @@ PanelWindow {
     screen: modelData
     anchors.top: true
     anchors.right: true
-    margins.top: -24
+    margins.top: 0
     WlrLayershell.keyboardFocus: (settingsModal.visible && mouseArea.containsMouse) ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
     
     // Animation properties

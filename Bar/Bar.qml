@@ -176,7 +176,7 @@ Scope {
                         id: bottomLeftCorner
                         position: "topleft"
                         size: 1.3
-                        fillColor: (Theme.backgroundPrimary !== undefined && Theme.backgroundPrimary !== null) ? Theme.backgroundPrimary : "#222"
+                        fillColor: "#00FFFF"
                         offsetX: -39
                         offsetY: 0
                         anchors.top: parent.top
@@ -198,7 +198,7 @@ Scope {
                         id: bottomRightCorner
                         position: "topright"
                         size: 1.3
-                        fillColor: (Theme.backgroundPrimary !== undefined && Theme.backgroundPrimary !== null) ? Theme.backgroundPrimary : "#222"
+                        fillColor: "#00FFFF"//(Theme.backgroundPrimary !== undefined && Theme.backgroundPrimary !== null) ? Theme.backgroundPrimary : "#222"
                         offsetX: 39
                         offsetY: 0
                         anchors.top: parent.top

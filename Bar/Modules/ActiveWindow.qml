@@ -15,6 +15,7 @@ PanelWindow {
     margins.top: barHeight
     visible: activeWindowWrapper.shouldShow
     implicitHeight: activeWindowTitleContainer.height
+    implicitWidth: activeWindowTitleContainer.x
     property int barHeight: 36
     color: "transparent"
 

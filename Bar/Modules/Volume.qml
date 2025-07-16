@@ -21,6 +21,13 @@ Item {
         iconCircleColor: Theme.accentPrimary
         iconTextColor: Theme.backgroundPrimary
         textColor: Theme.textPrimary
+        StyledTooltip {
+            id: volumeTooltip
+            text: "Volume: " + volume + "%\nScroll up/down to change volume"
+            tooltipVisible: false
+            targetItem: pillIndicator
+            delay: 200
+        }
     }
 
     Connections {
@@ -47,6 +54,8 @@ Item {
         hoverEnabled: true
         acceptedButtons: Qt.NoButton // Accept wheel events only
         propagateComposedEvents: true
+        onEntered: volumeTooltip.tooltipVisible = true
+        onExited: volumeTooltip.tooltipVisible = false
         onWheel:(wheel) => {
             if (!shell) return;
             let step = 5;
