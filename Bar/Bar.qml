@@ -32,46 +32,12 @@ Scope {
                     id: panel
                     screen: modelData
                     color: "transparent"
-                    implicitHeight: barBackground.height + 24
+                    implicitHeight: barBackground.height
                     anchors.top: true
                     anchors.left: true
                     anchors.right: true
 
                     visible: true
-
-                    property string lastFocusedWindowTitle: ""
-                    property bool activeWindowVisible: false
-                    property string displayedWindowTitle: ""
-
-                    onLastFocusedWindowTitleChanged: {
-                        displayedWindowTitle = (lastFocusedWindowTitle === "(No active window)") ? "" : lastFocusedWindowTitle
-                    }
-
-                    Timer {
-                        id: hideTimer
-                        interval: 4000
-                        repeat: false
-                        onTriggered: panel.activeWindowVisible = false
-                    }
-
-                    Connections {
-                        target: Niri
-                        function onFocusedWindowTitleChanged() {
-                            var newTitle = Niri.focusedWindowTitle
-
-                            if (newTitle !== panel.lastFocusedWindowTitle) {
-                                panel.lastFocusedWindowTitle = newTitle
-
-                                if (newTitle === "(No active window)") {
-                                    panel.activeWindowVisible = false
-                                    hideTimer.stop()
-                                } else {
-                                    panel.activeWindowVisible = true
-                                    hideTimer.restart()
-                                }
-                            }
-                        }
-                    }
 
                     Rectangle {
                         id: barBackground
@@ -98,7 +64,9 @@ Scope {
                         }
                     }
 
-                    ActiveWindow {}
+                    ActiveWindow {
+                        screen: modelData
+                    }
 
                     Workspace {
                         id: workspace
@@ -153,6 +121,25 @@ Scope {
                         }
                     }
 
+
+
+                    Background {}
+                    Overview {}
+                }
+
+                PanelWindow {
+                    id: topCornerPanel
+                    anchors.top: true
+                    anchors.left: true
+                    anchors.right: true
+                    color: "transparent"
+                    screen: modelData
+                    margins.top: 36
+                    WlrLayershell.exclusionMode: ExclusionMode.Ignore
+                    visible: true
+
+                    implicitHeight: 24
+
                     Corners {
                         id: topleftCorner
                         position: "bottomleft"
@@ -160,7 +147,7 @@ Scope {
                         fillColor: (Theme.backgroundPrimary !== undefined && Theme.backgroundPrimary !== null) ? Theme.backgroundPrimary : "#222"
                         offsetX: -39
                         offsetY: 0
-                        anchors.top: barBackground.bottom
+                        anchors.top: parent.top
                     }
 
                     Corners {
@@ -170,14 +157,56 @@ Scope {
                         fillColor: (Theme.backgroundPrimary !== undefined && Theme.backgroundPrimary !== null) ? Theme.backgroundPrimary : "#222"
                         offsetX: 39
                         offsetY: 0
-                        anchors.top: barBackground.bottom
+                        anchors.top: parent.top
                     }
+                }
 
-                    Background {}
-                    Overview {}
+                PanelWindow {
+                    id: bottomLeftPanel
+                    anchors.bottom: true
+                    anchors.left: true
+                    color: "transparent"
+                    screen: modelData
+                    WlrLayershell.exclusionMode: ExclusionMode.Ignore
+                    visible: true
+
+                    implicitHeight: 24
+
+                    Corners {
+                        id: bottomLeftCorner
+                        position: "topleft"
+                        size: 1.3
+                        fillColor: (Theme.backgroundPrimary !== undefined && Theme.backgroundPrimary !== null) ? Theme.backgroundPrimary : "#222"
+                        offsetX: -39
+                        offsetY: 0
+                        anchors.top: parent.top
+                    }
+                }
+
+                PanelWindow {
+                    id: bottomRightCornerPanel
+                    anchors.bottom: true
+                    anchors.right: true
+                    color: "transparent"
+                    screen: modelData
+                    WlrLayershell.exclusionMode: ExclusionMode.Ignore
+                    visible: true
+
+                    implicitHeight: 24
+
+                    Corners {
+                        id: bottomRightCorner
+                        position: "topright"
+                        size: 1.3
+                        fillColor: (Theme.backgroundPrimary !== undefined && Theme.backgroundPrimary !== null) ? Theme.backgroundPrimary : "#222"
+                        offsetX: 39
+                        offsetY: 0
+                        anchors.top: parent.top
+                    }
                 }
             }
         }
+
     }
 
     // This alias exposes the visual bar's visibility to the outside world
