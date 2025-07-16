@@ -136,7 +136,7 @@ Row {
             
             StyledTooltip {
                 id: trayTooltip
-                text: modelData.name || modelData.id || "Tray Item"
+                text: modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item"
                 tooltipVisible: false
                 targetItem: trayIcon
                 delay: 200

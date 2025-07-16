@@ -114,8 +114,8 @@ Rectangle {
                     width: 32
                     height: 32
                     radius: 16
-                    color: systemButtonArea.containsMouse || systemButtonArea.pressed ? Theme.accentPrimary : "transparent"
-                    border.color: Theme.accentPrimary
+                    color: systemButtonArea.containsMouse || systemButtonArea.pressed ? Theme.error : "transparent"
+                    border.color: Theme.error
                     border.width: 1
 
                     Text {
@@ -123,7 +123,7 @@ Rectangle {
                         text: "power_settings_new"
                         font.family: "Material Symbols Outlined"
                         font.pixelSize: 16
-                        color: systemButtonArea.containsMouse || systemButtonArea.pressed ? Theme.backgroundPrimary : Theme.accentPrimary
+                        color: systemButtonArea.containsMouse || systemButtonArea.pressed ? Theme.backgroundPrimary : Theme.error
                     }
 
                     MouseArea {

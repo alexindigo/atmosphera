@@ -92,7 +92,7 @@ PopupWindow {
                 id: bg
                 anchors.fill: parent
                 color: mouseArea.containsMouse ? Theme.highlight : "transparent"
-                radius: 12
+                radius: 8
                 visible: !(modelData?.isSeparator ?? false)
                 property color hoverTextColor: mouseArea.containsMouse ? Theme.onAccent : Theme.textPrimary
 
