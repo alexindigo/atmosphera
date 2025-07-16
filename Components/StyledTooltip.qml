@@ -33,6 +33,8 @@ Window {
         x = pos.x - width / 2 + targetItem.width / 2;
         y = pos.y + 8;
         visible = true;
+        console.log("StyledTooltip _showNow called");
+        console.log("StyledTooltip Theme.textPrimary:", Theme.textPrimary);
     }
     function _hideNow() {
         visible = false;
