@@ -270,7 +270,7 @@ PanelWindow {
                                     smooth: true
                                     cache: false
                                     asynchronous: true
-                                    source: modelData.isCalculator ? "qrc:/icons/calculate.svg" : Quickshell.iconPath(modelData.icon, "")
+                                    source: modelData.isCalculator ? "qrc:/icons/calculate.svg" : Quickshell.iconPath(modelData.icon, "application-x-executable")
                                     visible: modelData.isCalculator || parent.iconLoaded
                                 }
                                 Text {
