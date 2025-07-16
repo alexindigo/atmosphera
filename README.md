@@ -120,6 +120,14 @@ qs
 
 (If you want to autostart it, just add it to your niri configuration.)
 
+It is recommended to set the following in your Niri configuration (hyprland equivalent):
+
+```
+window-rule {
+    geometry-corner-radius 20
+    clip-to-geometry true
+}
+```
 ### Settings:
 
 To make the weather widget, wallpaper manager and record button work you will have to open up the settings menu in to right panel (top right button to open panel) and edit said things accordingly.

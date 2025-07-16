@@ -9,6 +9,7 @@ Rectangle {
     Layout.fillWidth: true
     Layout.preferredHeight: 340
     color: Theme.surface
+    Layout.topMargin: 12
     radius: 18
     border.color: "transparent"
     border.width: 0

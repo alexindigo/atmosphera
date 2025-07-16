@@ -7,6 +7,7 @@ Rectangle {
     id: weatherSettingsCard
     Layout.fillWidth: true
     Layout.preferredHeight: 180
+    Layout.topMargin: 12
     color: Theme.surface
     radius: 18
 
