@@ -9,6 +9,7 @@ import qs.Settings
 import qs.Services
 import qs.Components
 import qs.Widgets
+import qs.Widgets.Notification
 import qs.Widgets.Sidebar
 import qs.Widgets.Sidebar.Panel
 import qs.Helpers
@@ -81,6 +82,42 @@ Scope {
                         anchors.right: barBackground.right
                         anchors.rightMargin: 18
                         spacing: 12
+
+                        Item {
+                            id: notificationBellButton
+                            width: 22
+                            height: 22
+                            anchors.verticalCenter: parent.verticalCenter
+                            z: 1
+
+                            Rectangle {
+                                id: bellBg
+                                width: 22
+                                height: 22
+                                radius: 11
+                                color: mouseAreaBell.containsMouse ? Theme.accentPrimary : "transparent"
+                                visible: mouseAreaBell.containsMouse
+                                anchors.centerIn: parent
+                            }
+                            Text {
+                                anchors.centerIn: parent
+                                text: "notifications"
+                                font.family: mouseAreaBell.containsMouse ? "Material Symbols Rounded" : "Material Symbols Outlined"
+                                font.pixelSize: 16
+                                color: mouseAreaBell.containsMouse ? Theme.backgroundPrimary : Theme.textPrimary
+                            }
+                            MouseArea {
+                                id: mouseAreaBell
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: notificationHistoryWin.visible = !notificationHistoryWin.visible
+                            }
+                        }
+                        
+                        NotificationHistory {
+                            id: notificationHistoryWin
+                        }
 
                         Brightness {
                             id: widgetsBrightness

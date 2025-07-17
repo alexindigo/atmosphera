@@ -7,6 +7,7 @@ import QtCore
 import qs.Bar
 import qs.Bar.Modules
 import qs.Widgets
+import qs.Widgets.Notification
 import qs.Settings
 import qs.Helpers
 
