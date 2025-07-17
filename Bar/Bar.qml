@@ -82,11 +82,6 @@ Scope {
                         anchors.rightMargin: 18
                         spacing: 12
 
-                        NotificationHistory {
-                            id: notificationHistoryWin
-                            anchors.verticalCenter: parent.verticalCenter
-                        }
-
                         Brightness {
                             id: widgetsBrightness
                             anchors.verticalCenter: parent.verticalCenter
