@@ -15,6 +15,7 @@ Scope {
     id: root
 
     property alias appLauncherPanel: appLauncherPanel
+    property var notificationHistoryWin: notificationHistoryWin
 
     function updateVolume(vol) {
         volume = vol;
@@ -30,6 +31,7 @@ Scope {
     Bar {
         id: bar
         shell: root
+        property var notificationHistoryWin: notificationHistoryWin
     }
 
     Applauncher {
@@ -47,12 +49,26 @@ Scope {
             console.log("Notification received:", notification.appName);
             notification.tracked = true;
             notificationPopup.addNotification(notification);
+            if (notificationHistoryWin) {
+                notificationHistoryWin.addToHistory({
+                    id: notification.id,
+                    appName: notification.appName || "Notification",
+                    summary: notification.summary || "",
+                    body: notification.body || "",
+                    timestamp: Date.now()
+                });
+            }
         }
     }
 
     NotificationPopup {
         id: notificationPopup
         barVisible: bar.visible
+    }
+
+    // Notification History Window
+    NotificationHistory {
+        id: notificationHistoryWin
     }
 
     property var defaultAudioSink: Pipewire.defaultAudioSink

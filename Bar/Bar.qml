@@ -9,11 +9,11 @@ import qs.Settings
 import qs.Services
 import qs.Components
 import qs.Widgets
-import qs.Widgets.Notification
 import qs.Widgets.Sidebar
 import qs.Widgets.Sidebar.Panel
 import qs.Helpers
 import QtQuick.Controls
+import qs.Widgets.Notification
 
 Scope {
     id: rootScope
@@ -83,40 +83,9 @@ Scope {
                         anchors.rightMargin: 18
                         spacing: 12
 
-                        Item {
-                            id: notificationBellButton
-                            width: 22
-                            height: 22
-                            anchors.verticalCenter: parent.verticalCenter
-                            z: 1
-
-                            Rectangle {
-                                id: bellBg
-                                width: 22
-                                height: 22
-                                radius: 11
-                                color: mouseAreaBell.containsMouse ? Theme.accentPrimary : "transparent"
-                                visible: mouseAreaBell.containsMouse
-                                anchors.centerIn: parent
-                            }
-                            Text {
-                                anchors.centerIn: parent
-                                text: "notifications"
-                                font.family: mouseAreaBell.containsMouse ? "Material Symbols Rounded" : "Material Symbols Outlined"
-                                font.pixelSize: 16
-                                color: mouseAreaBell.containsMouse ? Theme.backgroundPrimary : Theme.textPrimary
-                            }
-                            MouseArea {
-                                id: mouseAreaBell
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: notificationHistoryWin.visible = !notificationHistoryWin.visible
-                            }
-                        }
-                        
                         NotificationHistory {
                             id: notificationHistoryWin
+                            anchors.verticalCenter: parent.verticalCenter
                         }
 
                         Brightness {
@@ -158,28 +127,25 @@ Scope {
                         }
                     }
 
-
-
                     Background {}
                     Overview {}
                 }
 
                 PanelWindow {
-                    id: topLeftPanel
+                    id: topCornerPanel
                     anchors.top: true
                     anchors.left: true
+                    anchors.right: true
                     color: "transparent"
                     screen: modelData
                     margins.top: 36
                     WlrLayershell.exclusionMode: ExclusionMode.Ignore
                     visible: true
-                    WlrLayershell.layer: WlrLayer.Background
-                    aboveWindows: false
-                    WlrLayershell.namespace: "swww-daemon"
+
                     implicitHeight: 24
 
                     Corners {
-                        id: topLeftCorner
+                        id: topleftCorner
                         position: "bottomleft"
                         size: 1.3
                         fillColor: (Theme.backgroundPrimary !== undefined && Theme.backgroundPrimary !== null) ? Theme.backgroundPrimary : "#222"
@@ -187,25 +153,9 @@ Scope {
                         offsetY: 0
                         anchors.top: parent.top
                     }
-                }
-                
-                PanelWindow {
-                    id: topRightPanel
-                    anchors.top: true
-                    anchors.right: true
-                    color: "transparent"
-                    screen: modelData
-                    margins.top: 36
-                    WlrLayershell.exclusionMode: ExclusionMode.Ignore
-                    visible: true
-                    WlrLayershell.layer: WlrLayer.Background
-                    aboveWindows: false
-                    WlrLayershell.namespace: "swww-daemon"
-
-                    implicitHeight: 24
 
                     Corners {
-                        id: topRightCorner
+                        id: toprightCorner
                         position: "bottomright"
                         size: 1.3
                         fillColor: (Theme.backgroundPrimary !== undefined && Theme.backgroundPrimary !== null) ? Theme.backgroundPrimary : "#222"
@@ -223,9 +173,6 @@ Scope {
                     screen: modelData
                     WlrLayershell.exclusionMode: ExclusionMode.Ignore
                     visible: true
-                    WlrLayershell.layer: WlrLayer.Background
-                    aboveWindows: false
-                    WlrLayershell.namespace: "swww-daemon"
 
                     implicitHeight: 24
 
@@ -241,17 +188,14 @@ Scope {
                 }
 
                 PanelWindow {
-                    id: bottomRightPanel
+                    id: bottomRightCornerPanel
                     anchors.bottom: true
                     anchors.right: true
                     color: "transparent"
                     screen: modelData
                     WlrLayershell.exclusionMode: ExclusionMode.Ignore
                     visible: true
-                    WlrLayershell.layer: WlrLayer.Background
-                    aboveWindows: false
-                    WlrLayershell.namespace: "swww-daemon"
-                    
+
                     implicitHeight: 24
 
                     Corners {
@@ -263,6 +207,10 @@ Scope {
                         offsetY: 0
                         anchors.top: parent.top
                     }
+                }
+
+                Loader {
+                    id: tabViewerLoader
                 }
             }
         }

@@ -89,7 +89,7 @@ Singleton {
                     id: i,
                     idx: ws.id,
                     name: ws.name || "",
-                    output: ws.monitor?.name || "",
+                    output: ws.monitor.name || "",
                     isActive: ws.active === true,
                     isFocused: ws.focused === true,
                     isUrgent: ws.urgent === true

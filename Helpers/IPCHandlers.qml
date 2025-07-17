@@ -3,6 +3,7 @@ import Quickshell.Io
 IpcHandler {
     property var appLauncherPanel
     property var lockScreen
+    property var tabViewer
 
     target: "globalIPC"
 
