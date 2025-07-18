@@ -298,11 +298,11 @@ PanelWithOverlay {
                     isRecording: sidebarPopupRect.isRecording
 
                     onRecordingRequested: {
-                        startRecording();
+                        sidebarPopupRect.startRecording();
                     }
 
                     onStopRecordingRequested: {
-                        stopRecording();
+                        sidebarPopupRect.stopRecording();
                     }
 
                     onRecordingStateMismatch: function (actualState) {
@@ -323,10 +323,8 @@ PanelWithOverlay {
 
         // Recording properties
         property bool isRecording: false
-        property var recordingProcess: null
-        property var recordingPid: null
 
-        // Start screen recording
+        // Start screen recording using Quickshell.execDetached
         function startRecording() {
             var currentDate = new Date();
             var hours = String(currentDate.getHours()).padStart(2, '0');
@@ -336,51 +334,34 @@ PanelWithOverlay {
             var year = currentDate.getFullYear();
 
             var filename = hours + "-" + minutes + "-" + day + "-" + month + "-" + year + ".mp4";
-            var outputPath = Settings.settings.videoPath + filename;
+            var videoPath = Settings.settings.videoPath;
+            if (videoPath && !videoPath.endsWith("/")) {
+                videoPath += "/";
+            }
+            var outputPath = videoPath + filename;
             var command = "gpu-screen-recorder -w portal -f 60 -a default_output -o " + outputPath;
-            var qmlString = 'import Quickshell.Io; Process { command: ["sh", "-c", "' + command + '"]; running: true }';
-
-            recordingProcess = Qt.createQmlObject(qmlString, sidebarPopup);
+            Quickshell.execDetached(["sh", "-c", command]);
             isRecording = true;
             quickAccessWidget.isRecording = true;
         }
 
-        // Stop recording with cleanup
+        // Stop recording using Quickshell.execDetached
         function stopRecording() {
-            if (recordingProcess && isRecording) {
-                var stopQmlString = 'import Quickshell.Io; Process { command: ["sh", "-c", "pkill -SIGINT -f \'gpu-screen-recorder.*portal\'"]; running: true; onExited: function() { destroy() } }';
-
-                var stopProcess = Qt.createQmlObject(stopQmlString, sidebarPopup);
-
-                var cleanupTimer = Qt.createQmlObject('import QtQuick; Timer { interval: 3000; running: true; repeat: false }', sidebarPopup);
-                cleanupTimer.triggered.connect(function () {
-                    if (recordingProcess) {
-                        recordingProcess.running = false;
-                        recordingProcess.destroy();
-                        recordingProcess = null;
-                    }
-
-                    var forceKillQml = 'import Quickshell.Io; Process { command: ["sh", "-c", "pkill -9 -f \'gpu-screen-recorder.*portal\' 2>/dev/null || true"]; running: true; onExited: function() { destroy() } }';
-                    var forceKillProcess = Qt.createQmlObject(forceKillQml, sidebarPopup);
-
-                    cleanupTimer.destroy();
-                });
-            }
-
+            Quickshell.execDetached(["sh", "-c", "pkill -SIGINT -f 'gpu-screen-recorder.*portal'"]);
+            // Optionally, force kill after a delay
+            var cleanupTimer = Qt.createQmlObject('import QtQuick; Timer { interval: 3000; running: true; repeat: false }', sidebarPopupRect);
+            cleanupTimer.triggered.connect(function () {
+                Quickshell.execDetached(["sh", "-c", "pkill -9 -f 'gpu-screen-recorder.*portal' 2>/dev/null || true"]);
+                cleanupTimer.destroy();
+            });
             isRecording = false;
             quickAccessWidget.isRecording = false;
-            recordingPid = null;
         }
 
         // Clean up processes on destruction
         Component.onDestruction: {
             if (isRecording) {
                 stopRecording();
-            }
-            if (recordingProcess) {
-                recordingProcess.running = false;
-                recordingProcess.destroy();
-                recordingProcess = null;
             }
         }
 
