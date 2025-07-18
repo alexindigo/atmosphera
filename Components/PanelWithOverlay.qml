@@ -5,7 +5,7 @@ import qs.Settings
 
 PanelWindow {
     id: outerPanel
-    property bool showOverlay: true
+    property bool showOverlay: Settings.settings.dimPanels
     property int topMargin: 36
     property color overlayColor: showOverlay ? Theme.overlay : "transparent"
     

@@ -307,6 +307,60 @@ Rectangle {
             }
         }
 
+        // Dim Windows Setting
+        RowLayout {
+            spacing: 8
+            Layout.fillWidth: true
+            Layout.topMargin: 8
+
+            Text {
+                text: "Dim Desktop"
+                font.family: Theme.fontFamily
+                font.pixelSize: 13
+                font.bold: true
+                color: Theme.textPrimary
+            }
+
+            Item {
+                Layout.fillWidth: true
+            }
+
+            // Custom Material 3 Switch
+            Rectangle {
+                id: dimWindowsSwitch
+                width: 52
+                height: 32
+                radius: 16
+                color: Settings.settings.dimPanels ? Theme.accentPrimary : Theme.surfaceVariant
+                border.color: Settings.settings.dimPanels ? Theme.accentPrimary : Theme.outline
+                border.width: 2
+
+                Rectangle {
+                    id: dimWindowsThumb
+                    width: 28
+                    height: 28
+                    radius: 14
+                    color: Theme.surface
+                    border.color: Theme.outline
+                    border.width: 1
+                    y: 2
+                    x: Settings.settings.dimPanels ? dimWindowsSwitch.width - width - 2 : 2
+
+                    Behavior on x {
+                        NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
+                    }
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        Settings.settings.dimPanels = !Settings.settings.dimPanels
+                    }
+                }
+            }
+        }
+
         // Visualizer Type Selection
         ColumnLayout {
             spacing: 8

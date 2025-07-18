@@ -56,6 +56,7 @@ Singleton {
             property string visualizerType: "radial"
             property bool reverseDayMonth: false
             property bool use12HourClock: false
+            property bool dimPanels: true
         }
     }
 
