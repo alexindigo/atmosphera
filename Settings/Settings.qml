@@ -54,6 +54,8 @@ Singleton {
             property string transitionType: "random"
             property real transitionDuration: 1.1
             property string visualizerType: "radial"
+            property bool reverseDayMonth: false
+            property bool use12HourClock: false
         }
     }
 

@@ -20,6 +20,7 @@ Item {
         id: mouseArea
         anchors.fill: parent
         hoverEnabled: true
+        cursorShape: Qt.PointingHandCursor
         onClicked: {
             if (sidebarPopup.visible) {
                 sidebarPopup.hidePopup();

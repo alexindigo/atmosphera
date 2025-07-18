@@ -67,6 +67,7 @@ Rectangle {
                 MouseArea {
                     id: settingsButtonArea
                     anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
                     onClicked: {
                         settingsRequested()
@@ -110,6 +111,7 @@ Rectangle {
                 MouseArea {
                     id: recorderButtonArea
                     anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
                     onClicked: {
                         if (isRecording) {
@@ -156,6 +158,7 @@ Rectangle {
                 MouseArea {
                     id: wallpaperButtonArea
                     anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
                     onClicked: {
                         wallpaperRequested()

@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.Settings
+import qs.Components
 
 Item {
     id: root
@@ -25,6 +26,16 @@ Item {
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
             onClicked: notificationHistoryWin.visible = !notificationHistoryWin.visible
+            onEntered: notificationTooltip.tooltipVisible = true
+            onExited: notificationTooltip.tooltipVisible = false
         }
+    }
+
+    StyledTooltip {
+        id: notificationTooltip
+        text: "Notification History"
+        tooltipVisible: false
+        targetItem: bell
+        delay: 200
     }
 }

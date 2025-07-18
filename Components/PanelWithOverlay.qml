@@ -22,7 +22,6 @@ PanelWindow {
     color: visible ? overlayColor : "transparent"
     visible: false
     WlrLayershell.exclusionMode: ExclusionMode.Ignore
-    WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
     screen: (typeof modelData !== 'undefined' ? modelData : null)
     anchors.top: true
     anchors.left: true
