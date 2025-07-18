@@ -10,7 +10,7 @@ import "../../Helpers/Fuzzysort.js" as Fuzzysort
 
 PanelWithOverlay {
     id: appLauncherPanel
-
+    WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
     function showAt() {
         appLauncherPanelRect.showAt();
     }
@@ -377,6 +377,7 @@ PanelWithOverlay {
                                     root.selectedIndex = index;
                                     root.activateSelected();
                                 }
+                                cursorShape: Qt.PointingHandCursor
                                 onPressed: ripple.opacity = 0.18
                                 onReleased: ripple.opacity = 0.0
                             }

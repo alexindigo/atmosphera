@@ -56,6 +56,7 @@ Item {
         propagateComposedEvents: true
         onEntered: volumeTooltip.tooltipVisible = true
         onExited: volumeTooltip.tooltipVisible = false
+        cursorShape: Qt.PointingHandCursor
         onWheel:(wheel) => {
             if (!shell) return;
             let step = 5;

@@ -7,6 +7,7 @@ import Quickshell.Io
 import qs.Settings
 import qs.Widgets
 import qs.Helpers
+import qs.Components
 
 Rectangle {
     id: systemWidget
@@ -129,200 +130,208 @@ Rectangle {
                     MouseArea {
                         id: systemButtonArea
                         anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
                         hoverEnabled: true
                         onClicked: {
-                            systemMenu.visible = !systemMenu.visible
+                            systemMenu.visible = !systemMenu.visible;
                         }
+                    }
+                    StyledTooltip {
+                        id: systemTooltip
+                        text: "System"
+                        targetItem: systemButton
+                        tooltipVisible: systemButtonArea.containsMouse
                     }
                 }
             }
         }
     }
 
-    // System menu popup
-    Rectangle {
+    PanelWithOverlay {
         id: systemMenu
-        width: 160
-        height: 180
-        color: Theme.surface
-        radius: 8
-        border.color: Theme.outline
-        border.width: 1
-        visible: false
-        z: 9999
-        
-        // Position below system button
-        x: systemButton.x + systemButton.width - width + 12
-        y: systemButton.y + systemButton.height + 32
+        anchors.top: systemButton.bottom
+        anchors.right: systemButton.right
+        // System menu popup
+        Rectangle {
 
-        ColumnLayout {
-            anchors.fill: parent
-            anchors.margins: 8
-            spacing: 4
+            width: 160
+            height: 180
+            color: Theme.surface
+            radius: 8
+            border.color: Theme.outline
+            border.width: 1
+            visible: true
+            z: 9999
+            anchors.top: parent.top
+            anchors.right: parent.right
 
-            // Lock button
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 36
-                radius: 6
-                color: lockButtonArea.containsMouse ? Theme.accentPrimary : "transparent"
+            // Position below system button
+            anchors.rightMargin: 32
+            anchors.topMargin: systemButton.y + systemButton.height + 48
 
-                RowLayout {
-                    anchors.fill: parent
-                    anchors.margins: 12
-                    spacing: 8
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: 8
+                spacing: 4
 
-                    Text {
-                        text: "lock_outline"
-                        font.family: "Material Symbols Outlined"
-                        font.pixelSize: 16
-                        color: lockButtonArea.containsMouse ? Theme.onAccent : Theme.textPrimary
+                // Lock button
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 36
+                    radius: 6
+                    color: lockButtonArea.containsMouse ? Theme.accentPrimary : "transparent"
+
+                    RowLayout {
+                        anchors.fill: parent
+                        anchors.margins: 12
+                        spacing: 8
+
+                        Text {
+                            text: "lock_outline"
+                            font.family: "Material Symbols Outlined"
+                            font.pixelSize: 16
+                            color: lockButtonArea.containsMouse ? Theme.onAccent : Theme.textPrimary
+                        }
+
+                        Text {
+                            text: "Lock Screen"
+                            font.family: Theme.fontFamily
+                            font.pixelSize: 14
+                            color: lockButtonArea.containsMouse ? Theme.onAccent : Theme.textPrimary
+                            Layout.fillWidth: true
+                        }
                     }
 
-                    Text {
-                        text: "Lock Screen"
-                        font.family: Theme.fontFamily
-                        font.pixelSize: 14
-                        color: lockButtonArea.containsMouse ? Theme.onAccent : Theme.textPrimary
-                        Layout.fillWidth: true
+                    MouseArea {
+                        id: lockButtonArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            lockScreen.locked = true;
+                            systemMenu.visible = false;
+                        }
                     }
                 }
 
-                MouseArea {
-                    id: lockButtonArea
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    onClicked: {
-                        lockScreen.locked = true;
-                        systemMenu.visible = false;
+                // Reboot button
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 36
+                    radius: 6
+                    color: rebootButtonArea.containsMouse ? Theme.accentPrimary : "transparent"
+
+                    RowLayout {
+                        anchors.fill: parent
+                        anchors.margins: 12
+                        spacing: 8
+
+                        Text {
+                            text: "refresh"
+                            font.family: "Material Symbols Outlined"
+                            font.pixelSize: 16
+                            color: rebootButtonArea.containsMouse ? Theme.onAccent : Theme.textPrimary
+                        }
+
+                        Text {
+                            text: "Reboot"
+                            font.family: Theme.fontFamily
+                            font.pixelSize: 14
+                            color: rebootButtonArea.containsMouse ? Theme.onAccent : Theme.textPrimary
+                            Layout.fillWidth: true
+                        }
+                    }
+
+                    MouseArea {
+                        id: rebootButtonArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            reboot();
+                            systemMenu.visible = false;
+                        }
+                    }
+                }
+
+                // Logout button
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 36
+                    radius: 6
+                    color: logoutButtonArea.containsMouse ? Theme.accentPrimary : "transparent"
+
+                    RowLayout {
+                        anchors.fill: parent
+                        anchors.margins: 12
+                        spacing: 8
+
+                        Text {
+                            text: "exit_to_app"
+                            font.family: "Material Symbols Outlined"
+                            font.pixelSize: 16
+                            color: logoutButtonArea.containsMouse ? Theme.onAccent : Theme.textPrimary
+                        }
+
+                        Text {
+                            text: "Logout"
+                            font.pixelSize: 14
+                            color: logoutButtonArea.containsMouse ? Theme.onAccent : Theme.textPrimary
+                            Layout.fillWidth: true
+                        }
+                    }
+
+                    MouseArea {
+                        id: logoutButtonArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            logout();
+                            systemMenu.visible = false;
+                        }
+                    }
+                }
+
+                // Shutdown button
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 36
+                    radius: 6
+                    color: shutdownButtonArea.containsMouse ? Theme.accentPrimary : "transparent"
+
+                    RowLayout {
+                        anchors.fill: parent
+                        anchors.margins: 12
+                        spacing: 8
+
+                        Text {
+                            text: "power_settings_new"
+                            font.family: "Material Symbols Outlined"
+                            font.pixelSize: 16
+                            color: shutdownButtonArea.containsMouse ? Theme.onAccent : Theme.textPrimary
+                        }
+
+                        Text {
+                            text: "Shutdown"
+                            font.pixelSize: 14
+                            color: shutdownButtonArea.containsMouse ? Theme.onAccent : Theme.textPrimary
+                            Layout.fillWidth: true
+                        }
+                    }
+
+                    MouseArea {
+                        id: shutdownButtonArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            shutdown();
+                            systemMenu.visible = false;
+                        }
                     }
                 }
             }
-
-            // Reboot button
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 36
-                radius: 6
-                color: rebootButtonArea.containsMouse ? Theme.accentPrimary : "transparent"
-
-                RowLayout {
-                    anchors.fill: parent
-                    anchors.margins: 12
-                    spacing: 8
-
-                    Text {
-                        text: "refresh"
-                        font.family: "Material Symbols Outlined"
-                        font.pixelSize: 16
-                        color: rebootButtonArea.containsMouse ? Theme.onAccent : Theme.textPrimary
-                    }
-
-                    Text {
-                        text: "Reboot"
-                        font.family: Theme.fontFamily
-                        font.pixelSize: 14
-                        color: rebootButtonArea.containsMouse ? Theme.onAccent : Theme.textPrimary
-                        Layout.fillWidth: true
-                    }
-                }
-
-                MouseArea {
-                    id: rebootButtonArea
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    onClicked: {
-                        reboot()
-                        systemMenu.visible = false
-                    }
-                }
-            }
-
-            // Logout button
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 36
-                radius: 6
-                color: logoutButtonArea.containsMouse ? Theme.accentPrimary : "transparent"
-
-                RowLayout {
-                    anchors.fill: parent
-                    anchors.margins: 12
-                    spacing: 8
-
-                    Text {
-                        text: "exit_to_app"
-                        font.family: "Material Symbols Outlined"
-                        font.pixelSize: 16
-                        color: logoutButtonArea.containsMouse ? Theme.onAccent : Theme.textPrimary
-                    }
-
-                    Text {
-                        text: "Logout"
-                        font.pixelSize: 14
-                        color: logoutButtonArea.containsMouse ? Theme.onAccent : Theme.textPrimary
-                        Layout.fillWidth: true
-                    }
-                }
-
-                MouseArea {
-                    id: logoutButtonArea
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    onClicked: {
-                        logout()
-                        systemMenu.visible = false
-                    }
-                }
-            }
-
-            // Shutdown button
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 36
-                radius: 6
-                color: shutdownButtonArea.containsMouse ? Theme.accentPrimary : "transparent"
-
-                RowLayout {
-                    anchors.fill: parent
-                    anchors.margins: 12
-                    spacing: 8
-
-                    Text {
-                        text: "power_settings_new"
-                        font.family: "Material Symbols Outlined"
-                        font.pixelSize: 16
-                        color: shutdownButtonArea.containsMouse ? Theme.onAccent : Theme.textPrimary
-                    }
-
-                    Text {
-                        text: "Shutdown"
-                        font.pixelSize: 14
-                        color: shutdownButtonArea.containsMouse ? Theme.onAccent : Theme.textPrimary
-                        Layout.fillWidth: true
-                    }
-                }
-
-                MouseArea {
-                    id: shutdownButtonArea
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    onClicked: {
-                        shutdown()
-                        systemMenu.visible = false
-                    }
-                }
-            }
-
-
-        }
-
-        // Close menu when clicking outside
-        MouseArea {
-            anchors.fill: parent
-            enabled: systemMenu.visible
-            onClicked: systemMenu.visible = false
-            z: -1 // Put this behind other elements
         }
     }
 
@@ -336,8 +345,8 @@ Rectangle {
         running: false
         stdout: StdioCollector {
             onStreamFinished: {
-                uptimeText = this.text.trim()
-                uptimeProcess.running = false
+                uptimeText = this.text.trim();
+                uptimeProcess.running = false;
             }
         }
     }
@@ -359,13 +368,13 @@ Rectangle {
     }
 
     function shutdown() {
-        shutdownProcess.running = true
+        shutdownProcess.running = true;
     }
     function reboot() {
-        rebootProcess.running = true
+        rebootProcess.running = true;
     }
     function logout() {
-        logoutProcess.running = true
+        logoutProcess.running = true;
     }
 
     property bool panelVisible: false
@@ -373,7 +382,7 @@ Rectangle {
     // Trigger initial update when panel becomes visible
     onPanelVisibleChanged: {
         if (panelVisible) {
-            updateSystemInfo()
+            updateSystemInfo();
         }
     }
 
@@ -386,15 +395,15 @@ Rectangle {
     }
 
     Component.onCompleted: {
-        uptimeProcess.running = true
+        uptimeProcess.running = true;
     }
 
     function updateSystemInfo() {
-        uptimeProcess.running = true
+        uptimeProcess.running = true;
     }
 
     // Add lockscreen instance (hidden by default)
     LockScreen {
         id: lockScreen
     }
-} 
+}

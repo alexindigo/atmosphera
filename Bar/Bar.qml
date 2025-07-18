@@ -111,6 +111,7 @@ Scope {
                         }
 
                         ClockWidget {
+                            screen: modelData
                             anchors.verticalCenter: parent.verticalCenter
                         }
 

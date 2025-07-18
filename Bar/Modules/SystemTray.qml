@@ -90,6 +90,7 @@ Row {
                 id: trayMouseArea
                 anchors.fill: parent
                 hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
                 acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
                 onClicked: (mouse) => {
                     if (!modelData) return;

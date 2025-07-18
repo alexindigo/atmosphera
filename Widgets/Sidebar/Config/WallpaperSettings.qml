@@ -79,6 +79,7 @@ Rectangle {
                     }
                     MouseArea {
                         anchors.fill: parent
+                        cursorShape: Qt.IBeamCursor
                         onClicked: folderInput.forceActiveFocus()
                     }
                 }
@@ -133,6 +134,7 @@ Rectangle {
 
                 MouseArea {
                     anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
                     onClicked: {
                         Settings.settings.useSWWW = !Settings.settings.useSWWW;
                     }
@@ -188,6 +190,7 @@ Rectangle {
 
                 MouseArea {
                     anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
                     onClicked: {
                         Settings.settings.randomWallpaper = !Settings.settings.randomWallpaper;
                     }
@@ -243,6 +246,7 @@ Rectangle {
 
                 MouseArea {
                     anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
                     onClicked: {
                         Settings.settings.useWallpaperTheme = !Settings.settings.useWallpaperTheme;
                     }

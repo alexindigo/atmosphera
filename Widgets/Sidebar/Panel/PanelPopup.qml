@@ -144,12 +144,6 @@ PanelWithOverlay {
                 }
             }
 
-            MouseArea {
-                id: mouseArea
-                anchors.fill: parent
-                hoverEnabled: true
-            }
-
             ColumnLayout {
                 anchors.fill: parent
                 anchors.margins: 20
@@ -235,6 +229,12 @@ PanelWithOverlay {
                                     cursorShape: Qt.PointingHandCursor
                                     onClicked: wifiPanel.showAt()
                                 }
+
+                                StyledTooltip {
+                                    text: "Wifi"
+                                    targetItem: wifiButtonArea
+                                    tooltipVisible: wifiButtonArea.containsMouse
+                                }
                             }
 
                             // Bluetooth button
@@ -263,6 +263,12 @@ PanelWithOverlay {
                                     hoverEnabled: true
                                     cursorShape: Qt.PointingHandCursor
                                     onClicked: bluetoothPanel.showAt()
+                                }
+
+                                StyledTooltip {
+                                    text: "Bluetooth"
+                                    targetItem: bluetoothButtonArea
+                                    tooltipVisible: bluetoothButtonArea.containsMouse
                                 }
                             }
                         }

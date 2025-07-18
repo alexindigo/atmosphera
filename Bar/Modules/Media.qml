@@ -104,6 +104,7 @@ Item {
                 MouseArea {
                     id: playButton
                     anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
                     enabled: MusicManager.canPlay || MusicManager.canPause
                     onClicked: MusicManager.playPause()

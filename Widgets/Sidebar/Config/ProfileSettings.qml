@@ -133,6 +133,7 @@ Rectangle {
                         }
                         MouseArea {
                             anchors.fill: parent
+                            cursorShape: Qt.IBeamCursor
                             onClicked: {
                                 profileImageInput.forceActiveFocus()
                             }
@@ -188,6 +189,7 @@ Rectangle {
 
                 MouseArea {
                     anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
                     onClicked: {
                         Settings.settings.showActiveWindowIcon = !Settings.settings.showActiveWindowIcon
                     }
@@ -242,6 +244,7 @@ Rectangle {
 
                 MouseArea {
                     anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
                     onClicked: {
                         Settings.settings.showSystemInfoInBar = !Settings.settings.showSystemInfoInBar
                     }
@@ -296,6 +299,7 @@ Rectangle {
 
                 MouseArea {
                     anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
                     onClicked: {
                         Settings.settings.showMediaInBar = !Settings.settings.showMediaInBar
                     }
@@ -445,6 +449,7 @@ Rectangle {
                     }
                     MouseArea {
                         anchors.fill: parent
+                        cursorShape: Qt.IBeamCursor
                         onClicked: videoPathInput.forceActiveFocus()
                     }
                 }

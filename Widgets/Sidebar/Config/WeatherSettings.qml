@@ -5,7 +5,7 @@ import qs.Settings
 Rectangle {
     id: weatherSettingsCard
     Layout.fillWidth: true
-    Layout.preferredHeight: 180
+    Layout.preferredHeight: 320
     color: Theme.surface
     radius: 18
 
@@ -79,13 +79,14 @@ Rectangle {
                     inputMethodHints: Qt.ImhNone
 
                     onTextChanged: {
-                        Settings.settings.weatherCity = text
+                        Settings.settings.weatherCity = text;
                     }
 
                     MouseArea {
                         anchors.fill: parent
+                        cursorShape: Qt.IBeamCursor
                         onClicked: {
-                            cityInput.forceActiveFocus()
+                            cityInput.forceActiveFocus();
                         }
                     }
                 }
@@ -118,7 +119,7 @@ Rectangle {
                 color: Theme.accentPrimary
                 border.color: Theme.accentPrimary
                 border.width: 2
-                
+
                 Rectangle {
                     id: thumb
                     width: 28
@@ -129,7 +130,7 @@ Rectangle {
                     border.width: 1
                     y: 2
                     x: Settings.settings.useFahrenheit ? customSwitch.width - width - 2 : 2
-                    
+
                     Text {
                         anchors.centerIn: parent
                         text: Settings.settings.useFahrenheit ? "\u00b0F" : "\u00b0C"
@@ -138,19 +139,137 @@ Rectangle {
                         font.bold: true
                         color: Theme.textPrimary
                     }
-                    
+
                     Behavior on x {
-                        NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
+                        NumberAnimation {
+                            duration: 200
+                            easing.type: Easing.OutCubic
+                        }
                     }
                 }
-                
+
                 MouseArea {
                     anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        Settings.settings.useFahrenheit = !Settings.settings.useFahrenheit
+                        Settings.settings.useFahrenheit = !Settings.settings.useFahrenheit;
                     }
                 }
             }
+
+        
         }
+
+            // Random Wallpaper Setting
+            RowLayout {
+                spacing: 8
+                Layout.fillWidth: true
+                Layout.topMargin: 8
+
+                Text {
+                    text: "Use 12 Hour Clock"
+                    font.pixelSize: 13
+                    font.bold: true
+                    color: Theme.textPrimary
+                }
+
+                Item {
+                    Layout.fillWidth: true
+                }
+
+                // Custom Material 3 Switch
+                Rectangle {
+                    id: use12HourClockSwitch
+                    width: 52
+                    height: 32
+                    radius: 16
+                    color: Settings.settings.use12HourClock ? Theme.accentPrimary : Theme.surfaceVariant
+                    border.color: Settings.settings.use12HourClock ? Theme.accentPrimary : Theme.outline
+                    border.width: 2
+
+                    Rectangle {
+                        id: randomWallpaperThumb
+                        width: 28
+                        height: 28
+                        radius: 14
+                        color: Theme.surface
+                        border.color: Theme.outline
+                        border.width: 1
+                        y: 2
+                        x: Settings.settings.use12HourClock ? use12HourClockSwitch.width - width - 2 : 2
+
+                        Behavior on x {
+                            NumberAnimation {
+                                duration: 200
+                                easing.type: Easing.OutCubic
+                            }
+                        }
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            Settings.settings.use12HourClock = !Settings.settings.use12HourClock;
+                        }
+                    }
+                }
+            }
+
+            // Reverse Day Month Setting
+            RowLayout {
+                spacing: 8
+                Layout.fillWidth: true
+                Layout.topMargin: 8
+
+                Text {
+                    text: "US Style Date"
+                    font.pixelSize: 13
+                    font.bold: true
+                    color: Theme.textPrimary
+                }
+
+                Item {
+                    Layout.fillWidth: true
+                }
+
+                // Custom Material 3 Switch
+                Rectangle {
+                    id: reverseDayMonthSwitch
+                    width: 52
+                    height: 32
+                    radius: 16
+                    color: Settings.settings.reverseDayMonth ? Theme.accentPrimary : Theme.surfaceVariant
+                    border.color: Settings.settings.reverseDayMonth ? Theme.accentPrimary : Theme.outline
+                    border.width: 2
+
+                    Rectangle {
+                        id: reverseDayMonthThumb
+                        width: 28
+                        height: 28
+                        radius: 14
+                        color: Theme.surface
+                        border.color: Theme.outline
+                        border.width: 1
+                        y: 2
+                        x: Settings.settings.reverseDayMonth ? reverseDayMonthSwitch.width - width - 2 : 2
+
+                        Behavior on x {
+                            NumberAnimation {
+                                duration: 200
+                                easing.type: Easing.OutCubic
+                            }
+                        }
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            Settings.settings.reverseDayMonth = !Settings.settings.reverseDayMonth;
+                        }
+                    }
+                }
+            }
     }
-} 
+}
