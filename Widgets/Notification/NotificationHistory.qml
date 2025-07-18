@@ -15,7 +15,7 @@ PanelWithOverlay {
         id: notificationHistoryWinRect
         implicitWidth: 400
         property int maxPopupHeight: 800
-        property int minPopupHeight: 230
+        property int minPopupHeight: 210
         property int contentHeight: headerRow.height + historyList.contentHeight + 56
         implicitHeight: Math.max(Math.min(contentHeight, maxPopupHeight), minPopupHeight)
         visible: parent.visible
@@ -271,10 +271,7 @@ PanelWithOverlay {
                         Column {
                             anchors.fill: parent
                             spacing: 0
-                            Item {
-                                id: topSpacer
-                                height: (parent.height - historyList.height) / 2
-                            }
+
                             ListView {
                                 id: historyList
                                 width: parent.width
