@@ -12,10 +12,11 @@ PanelWindow {
     anchors.top: true
     anchors.left: true
     anchors.right: true
+    focusable: false
     margins.top: barHeight
     visible: !activeWindowWrapper.finallyHidden
     implicitHeight: activeWindowTitleContainer.height
-    implicitWidth: activeWindowTitleContainer.x
+    implicitWidth: 0
     property int barHeight: 36
     color: "transparent"
 
@@ -104,7 +105,7 @@ PanelWindow {
             bottomLeftRadius: Math.max(0, width / 2)
             bottomRightRadius: Math.max(0, width / 2)
 
-            width: Math.min(barBackground.width - 200, activeWindowTitle.implicitWidth + (Settings.showActiveWindowIcon ? 28 : 22))
+            width: Math.min(barBackground.width - 200, activeWindowTitle.implicitWidth + (Settings.settings.showActiveWindowIcon ? 28 : 22))
             height: activeWindowTitle.implicitHeight + 12
 
             anchors.top: parent.top
@@ -118,7 +119,7 @@ PanelWindow {
                 anchors.leftMargin: 6
                 anchors.verticalCenter: parent.verticalCenter
                 source: ToplevelManager?.activeToplevel ? getIcon() : ""
-                visible: Settings.showActiveWindowIcon
+                visible: Settings.settings.showActiveWindowIcon
                 anchors.verticalCenterOffset: -3
             }
 
@@ -129,12 +130,12 @@ PanelWindow {
                 color: Theme.textSecondary
                 elide: Text.ElideRight
                 anchors.left: icon.right
-                anchors.leftMargin: Settings.showActiveWindowIcon ? 4 : 6
+                anchors.leftMargin: Settings.settings.showActiveWindowIcon ? 4 : 6
                 anchors.right: parent.right
                 anchors.rightMargin: 6
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.verticalCenterOffset: -3
-                horizontalAlignment: Settings.showActiveWindowIcon ? Text.AlignRight : Text.AlignHCenter
+                horizontalAlignment: Settings.settings.showActiveWindowIcon ? Text.AlignRight : Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 maximumLineCount: 1
             }

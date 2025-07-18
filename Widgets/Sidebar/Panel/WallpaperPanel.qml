@@ -1,6 +1,6 @@
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import QtQuick.Controls 2.15
+import QtQuick 
+import QtQuick.Layouts
+import QtQuick.Controls
 import Quickshell
 import Quickshell.Io
 import Quickshell.Widgets
@@ -126,8 +126,8 @@ PanelWindow {
                                 anchors.margins: 4
                                 color: Qt.darker(Theme.backgroundPrimary, 1.1)
                                 radius: 12
-                                border.color: Settings.currentWallpaper === modelData ? Theme.accentPrimary : Theme.outline
-                                border.width: Settings.currentWallpaper === modelData ? 3 : 1
+                                border.color: Settings.settings.currentWallpaper === modelData ? Theme.accentPrimary : Theme.outline
+                                border.width: Settings.settings.currentWallpaper === modelData ? 3 : 1
                                 Image {
                                     id: wallpaperImage
                                     anchors.fill: parent

@@ -53,7 +53,7 @@ Rectangle {
                         source: Image {
                             id: avatarImage
                             anchors.fill: parent
-                            source: Settings.profileImage !== undefined ? Settings.profileImage : ""
+                            source: Settings.settings.profileImage !== undefined ? Settings.settings.profileImage : ""
                             fillMode: Image.PreserveAspectCrop
                             asynchronous: true
                             cache: false
@@ -66,7 +66,7 @@ Rectangle {
                             radius: 22
                             visible: false
                         }
-                        visible: Settings.profileImage !== undefined && Settings.profileImage !== ""
+                        visible: Settings.settings.profileImage !== undefined && Settings.settings.profileImage !== ""
                         z: 1
                     }
 
@@ -77,7 +77,7 @@ Rectangle {
                         font.family: "Material Symbols Outlined"
                         font.pixelSize: 24
                         color: Theme.onAccent
-                        visible: Settings.profileImage === undefined || Settings.profileImage === ""
+                        visible: Settings.settings.profileImage === undefined || Settings.settings.profileImage === ""
                         z: 0
                     }
                 }

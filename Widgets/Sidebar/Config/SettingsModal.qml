@@ -1,6 +1,6 @@
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import QtQuick.Controls 2.15
+import QtQuick 
+import QtQuick.Layouts
+import QtQuick.Controls
 import Quickshell
 import Quickshell.Wayland
 import qs.Settings
@@ -20,25 +20,7 @@ PanelWindow {
     //z: 100
     //border.color: Theme.outline
     //border.width: 1
-    WlrLayershell.keyboardFocus: visible ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
-
-    // Local properties for editing (not saved until apply)
-    property string tempWeatherCity: (Settings.weatherCity !== undefined && Settings.weatherCity !== null) ? Settings.weatherCity : ""
-    property bool tempUseFahrenheit: Settings.useFahrenheit
-    property string tempProfileImage: (Settings.profileImage !== undefined && Settings.profileImage !== null) ? Settings.profileImage : ""
-    property string tempWallpaperFolder: (Settings.wallpaperFolder !== undefined && Settings.wallpaperFolder !== null) ? Settings.wallpaperFolder : ""
-    property bool tempShowActiveWindowIcon: Settings.showActiveWindowIcon
-    property bool tempUseSWWW: Settings.useSWWW
-    property bool tempRandomWallpaper: Settings.randomWallpaper
-    property bool tempUseWallpaperTheme: Settings.useWallpaperTheme
-    property int tempWallpaperInterval: Settings.wallpaperInterval
-    property string tempWallpaperResize: Settings.wallpaperResize
-    property int tempTransitionFps: Settings.transitionFps
-    property string tempTransitionType: Settings.transitionType
-    property real tempTransitionDuration: Settings.transitionDuration
-    property bool tempShowSystemInfoInBar: Settings.showSystemInfoInBar
-    property bool tempShowMediaInBar: Settings.showMediaInBar
-    property string tempVisualizerType: Settings.visualizerType
+    WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
 
     Rectangle {
         anchors.fill: parent
@@ -49,12 +31,17 @@ PanelWindow {
         z: 0
 
         ColumnLayout {
+            id: content
             anchors.fill: parent
-            anchors.margins: 32
+            anchors.leftMargin: 32
+            anchors.rightMargin: 32
+            anchors.topMargin: 32
+            
             spacing: 24
 
             // Header
             ColumnLayout {
+                id: header
                 Layout.fillWidth: true
                 spacing: 4
                 RowLayout {
@@ -117,7 +104,7 @@ PanelWindow {
             // Scrollable settings area
             Rectangle {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 520
+                Layout.preferredHeight: content.height - settingsTabs.height - header.height - 128
                 color: "transparent"
                 border.width: 0
                 radius: 20
@@ -145,14 +132,6 @@ PanelWindow {
                             Layout.fillWidth: true
                             Layout.alignment: Qt.AlignTop
                             anchors.margins: 16
-                            weatherCity: (typeof tempWeatherCity !== 'undefined' && tempWeatherCity !== null) ? tempWeatherCity : ""
-                            useFahrenheit: tempUseFahrenheit
-                            onCityChanged: function (city) {
-                                tempWeatherCity = city;
-                            }
-                            onTemperatureUnitChanged: function (useFahrenheit) {
-                                tempUseFahrenheit = useFahrenheit;
-                            }
                         }
                     }
                 }
@@ -164,22 +143,6 @@ PanelWindow {
                             Layout.fillWidth: true
                             Layout.alignment: Qt.AlignTop
                             anchors.margins: 16
-                            showActiveWindowIcon: tempShowActiveWindowIcon
-                            onShowAWIconChanged: function (showActiveWindowIcon) {
-                                tempShowActiveWindowIcon = showActiveWindowIcon;
-                            }
-                            showSystemInfoInBar: tempShowSystemInfoInBar
-                            onShowSystemInfoChanged: function (showSystemInfoInBar) {
-                                tempShowSystemInfoInBar = showSystemInfoInBar;
-                            }
-                            showMediaInBar: tempShowMediaInBar
-                            onShowMediaChanged: function (showMediaInBar) {
-                                tempShowMediaInBar = showMediaInBar;
-                            }
-                            visualizerType: tempVisualizerType
-                            onVisualizerTypeUpdated: function (type) {
-                                tempVisualizerType = type;
-                            }
                         }
                     }
                 }
@@ -192,89 +155,7 @@ PanelWindow {
                             Layout.fillWidth: true
                             Layout.alignment: Qt.AlignTop
                             anchors.margins: 16
-                            wallpaperFolder: (typeof tempWallpaperFolder !== 'undefined' && tempWallpaperFolder !== null) ? tempWallpaperFolder : ""
-                            useSWWW: tempUseSWWW
-                            randomWallpaper: tempRandomWallpaper
-                            useWallpaperTheme: tempUseWallpaperTheme
-                            wallpaperInterval: tempWallpaperInterval
-                            wallpaperResize: tempWallpaperResize
-                            transitionFps: tempTransitionFps
-                            transitionType: tempTransitionType
-                            transitionDuration: tempTransitionDuration
-                            onWallpaperFolderEdited: function (folder) {
-                                tempWallpaperFolder = folder;
-                            }
-                            onUseSWWWChangedUpdated: function(useSWWW) {
-                                tempUseSWWW = useSWWW;
-                            }
-                            onRandomWallpaperChangedUpdated: function(randomWallpaper) {
-                                tempRandomWallpaper = randomWallpaper;
-                            }
-                            onUseWallpaperThemeChangedUpdated: function(useWallpaperTheme) {
-                                tempUseWallpaperTheme = useWallpaperTheme;
-                            }
-                            onWallpaperIntervalChangedUpdated: function(wallpaperInterval) {
-                                tempWallpaperInterval = wallpaperInterval;
-                            }
-                            onWallpaperResizeChangedUpdated: function(resize) {
-                                tempWallpaperResize = resize;
-                            }
-                            onTransitionFpsChangedUpdated: function(fps) {
-                                tempTransitionFps = fps;
-                            }
-                            onTransitionTypeChangedUpdated: function(type) {
-                                tempTransitionType = type;
-                            }
-                            onTransitionDurationChangedUpdated: function(duration) {
-                                tempTransitionDuration = duration;
-                            }
                         }
-                    }
-                }
-            }
-
-            // Apply Button
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 52
-                radius: 16
-                color: applyButtonArea.containsMouse ? Theme.accentPrimary : Theme.accentPrimary
-                border.color: "transparent"
-                border.width: 0
-                opacity: 1.0
-                Text {
-                    anchors.centerIn: parent
-                    text: "Apply Changes"
-                    font.pixelSize: 17
-                    font.bold: true
-                    color: applyButtonArea.containsMouse ? Theme.onAccent : Theme.onAccent
-                }
-                MouseArea {
-                    id: applyButtonArea
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    onClicked: {
-                        Settings.weatherCity = (typeof tempWeatherCity !== 'undefined' && tempWeatherCity !== null) ? tempWeatherCity : "";
-                        Settings.useFahrenheit = tempUseFahrenheit;
-                        Settings.profileImage = (typeof tempProfileImage !== 'undefined' && tempProfileImage !== null) ? tempProfileImage : "";
-                        Settings.wallpaperFolder = (typeof tempWallpaperFolder !== 'undefined' && tempWallpaperFolder !== null) ? tempWallpaperFolder : "";
-                        Settings.showActiveWindowIcon = tempShowActiveWindowIcon;
-                        Settings.useSWWW = tempUseSWWW;
-                        Settings.randomWallpaper = tempRandomWallpaper;
-                        Settings.useWallpaperTheme = tempUseWallpaperTheme;
-                        Settings.wallpaperInterval = tempWallpaperInterval;
-                        Settings.wallpaperResize = tempWallpaperResize;
-                        Settings.transitionFps = tempTransitionFps;
-                        Settings.transitionType = tempTransitionType;
-                        Settings.transitionDuration = tempTransitionDuration;
-                        Settings.showSystemInfoInBar = tempShowSystemInfoInBar;
-                        Settings.showMediaInBar = tempShowMediaInBar;
-                        Settings.visualizerType = tempVisualizerType;
-                        Settings.saveSettings();
-                        if (typeof weather !== 'undefined' && weather) {
-                            weather.fetchCityWeather();
-                        }
-                        settingsModal.closeSettings();
                     }
                 }
             }
@@ -282,28 +163,7 @@ PanelWindow {
     }
 
     // Function to open the modal and initialize temp values
-    function openSettings() {
-        tempWeatherCity = (Settings.weatherCity !== undefined && Settings.weatherCity !== null) ? Settings.weatherCity : "";
-        tempUseFahrenheit = Settings.useFahrenheit;
-        tempShowActiveWindowIcon = Settings.showActiveWindowIcon;
-        tempProfileImage = (Settings.profileImage !== undefined && Settings.profileImage !== null) ? Settings.profileImage : "";
-        tempWallpaperFolder = (Settings.wallpaperFolder !== undefined && Settings.wallpaperFolder !== null) ? Settings.wallpaperFolder : "";
-        if (tempWallpaperFolder === undefined || tempWallpaperFolder === null)
-            tempWallpaperFolder = "";
-        
-        // Initialize wallpaper settings
-        tempUseSWWW = Settings.useSWWW;
-        tempRandomWallpaper = Settings.randomWallpaper;
-        tempUseWallpaperTheme = Settings.useWallpaperTheme;
-        tempWallpaperInterval = Settings.wallpaperInterval;
-        tempWallpaperResize = Settings.wallpaperResize;
-        tempTransitionFps = Settings.transitionFps;
-        tempTransitionType = Settings.transitionType;
-        tempTransitionDuration = Settings.transitionDuration;
-        tempShowSystemInfoInBar = Settings.showSystemInfoInBar;
-        tempShowMediaInBar = Settings.showMediaInBar;
-        tempVisualizerType = Settings.visualizerType;
-        
+    function openSettings() {        
         visible = true;
         // Force focus on the text input after a short delay
         focusTimer.start();

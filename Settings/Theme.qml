@@ -3,6 +3,7 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import qs.Settings
 
 Singleton {
     id: root
@@ -14,11 +15,16 @@ Singleton {
     // FileView to load theme data from JSON file
     FileView {
         id: themeFile
-        path: Quickshell.configDir + "/Settings/Theme.json"
+        path: Settings.settingsDir + "Theme.json"
         watchChanges: true
         onFileChanged: reload()
         onAdapterUpdated: writeAdapter()
-        
+        onLoadFailed: function(error) {
+            if (error.includes("No such file")) {
+                themeData = {}
+                writeAdapter()
+            }
+        }
         JsonAdapter {
             id: themeData
             

@@ -6,7 +6,7 @@ import qs.Services
 Row {
     id: layout
     spacing: 10
-    visible: Settings.showSystemInfoInBar
+    visible: Settings.settings.showSystemInfoInBar
 
     Row {
         id: cpuUsageLayout

@@ -1,6 +1,6 @@
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import QtQuick.Controls 2.15
+import QtQuick 
+import QtQuick.Layouts
+import QtQuick.Controls
 import qs.Settings
 import "../../../Helpers/Weather.js" as WeatherHelper
 
@@ -11,7 +11,7 @@ Rectangle {
     color: "transparent"
     anchors.horizontalCenterOffset: -2
 
-    property string city: Settings.weatherCity !== undefined ? Settings.weatherCity : ""
+    property string city: Settings.settings.weatherCity !== undefined ? Settings.settings.weatherCity : ""
     property var weatherData: null
     property string errorString: ""
     property bool isVisible: false
@@ -95,7 +95,7 @@ Rectangle {
                             }
                         }
                         Text {
-                            text: weatherData && weatherData.current_weather ? ((Settings.useFahrenheit !== undefined ? Settings.useFahrenheit : false) ? `${Math.round(weatherData.current_weather.temperature * 9/5 + 32)}°F` : `${Math.round(weatherData.current_weather.temperature)}°C`) : ((Settings.useFahrenheit !== undefined ? Settings.useFahrenheit : false) ? "--°F" : "--°C")
+                            text: weatherData && weatherData.current_weather ? ((Settings.settings.useFahrenheit !== undefined ? Settings.settings.useFahrenheit : false) ? `${Math.round(weatherData.current_weather.temperature * 9/5 + 32)}°F` : `${Math.round(weatherData.current_weather.temperature)}°C`) : ((Settings.settings.useFahrenheit !== undefined ? Settings.settings.useFahrenheit : false) ? "--°F" : "--°C")
                             font.family: Theme.fontFamily
                             font.pixelSize: 24
                             font.bold: true
@@ -151,7 +151,7 @@ Rectangle {
                         }
                         Text {
                             // High/low temp
-                            text: weatherData && weatherData.daily ? ((Settings.useFahrenheit !== undefined ? Settings.useFahrenheit : false) ? `${Math.round(weatherData.daily.temperature_2m_max[index] * 9/5 + 32)}° / ${Math.round(weatherData.daily.temperature_2m_min[index] * 9/5 + 32)}°` : `${Math.round(weatherData.daily.temperature_2m_max[index])}° / ${Math.round(weatherData.daily.temperature_2m_min[index])}°`) : ((Settings.useFahrenheit !== undefined ? Settings.useFahrenheit : false) ? "--° / --°" : "--° / --°")
+                            text: weatherData && weatherData.daily ? ((Settings.settings.useFahrenheit !== undefined ? Settings.settings.useFahrenheit : false) ? `${Math.round(weatherData.daily.temperature_2m_max[index] * 9/5 + 32)}° / ${Math.round(weatherData.daily.temperature_2m_min[index] * 9/5 + 32)}°` : `${Math.round(weatherData.daily.temperature_2m_max[index])}° / ${Math.round(weatherData.daily.temperature_2m_min[index])}°`) : ((Settings.settings.useFahrenheit !== undefined ? Settings.settings.useFahrenheit : false) ? "--° / --°" : "--° / --°")
                             font.family: Theme.fontFamily
                             font.pixelSize: 12
                             color: Theme.textPrimary

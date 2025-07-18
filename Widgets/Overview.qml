@@ -6,7 +6,7 @@ import qs.Services
 import qs.Settings
 
 ShellRoot {
-    property string wallpaperSource: WallpaperManager.currentWallpaper !== "" && !Settings.useSWWW ? WallpaperManager.currentWallpaper : ""
+    property string wallpaperSource: WallpaperManager.currentWallpaper !== "" && !Settings.settings.useSWWW ? WallpaperManager.currentWallpaper : ""
     PanelWindow {
         visible: wallpaperSource !== ""
         anchors {

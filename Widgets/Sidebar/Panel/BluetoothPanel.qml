@@ -1,6 +1,6 @@
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import QtQuick.Controls 2.15
+import QtQuick 
+import QtQuick.Layouts
+import QtQuick.Controls
 import Quickshell.Wayland
 import Quickshell
 import Quickshell.Bluetooth
@@ -80,7 +80,7 @@ Item {
         anchors.right: true
         margins.right: 0
         margins.top: 0
-        WlrLayershell.keyboardFocus: visible ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
+        WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
 
         onVisibleChanged: {
             if (!visible && Bluetooth.defaultAdapter && Bluetooth.defaultAdapter.discovering)

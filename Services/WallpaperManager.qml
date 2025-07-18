@@ -15,18 +15,18 @@ Singleton {
             toggleRandomWallpaper();
         }
     }
-    property string wallpaperDirectory: Settings.wallpaperFolder
+    property string wallpaperDirectory: Settings.settings.wallpaperFolder
     property var wallpaperList: []
-    property string currentWallpaper: Settings.currentWallpaper
+    property string currentWallpaper: Settings.settings.currentWallpaper
     property bool scanning: false
-    property string transitionType: Settings.transitionType
+    property string transitionType: Settings.settings.transitionType
     property var randomChoices: ["fade", "left", "right", "top", "bottom", "wipe", "wave", "grow", "center", "any", "outer"]
 
     function loadWallpapers() {
         scanning = true;
         wallpaperList = [];
         folderModel.folder = "";
-        folderModel.folder = "file://" + (Settings.wallpaperFolder !== undefined ? Settings.wallpaperFolder : "");
+        folderModel.folder = "file://" + (Settings.settings.wallpaperFolder !== undefined ? Settings.settings.wallpaperFolder : "");
     }
 
     function changeWallpaper(path) {
@@ -36,14 +36,13 @@ Singleton {
     function setCurrentWallpaper(path, isInitial) {
         currentWallpaper = path;
         if (!isInitial) {
-            Settings.currentWallpaper = path;
-            Settings.saveSettings();
+            Settings.settings.currentWallpaper = path;
         }
-        if (Settings.useSWWW) {
-            if (Settings.transitionType === "random") {
+        if (Settings.settings.useSWWW) {
+            if (Settings.settings.transitionType === "random") {
                 transitionType = randomChoices[Math.floor(Math.random() * randomChoices.length)];
             } else {
-                transitionType = Settings.transitionType;
+                transitionType = Settings.settings.transitionType;
             }
             changeWallpaperProcess.running = true;
         }
@@ -60,31 +59,30 @@ Singleton {
     }
 
     function toggleRandomWallpaper() {
-        if (Settings.randomWallpaper && !randomWallpaperTimer.running) {
+        if (Settings.settings.randomWallpaper && !randomWallpaperTimer.running) {
             randomWallpaperTimer.start();
             setRandomWallpaper();
-        } else if (!Settings.randomWallpaper && randomWallpaperTimer.running) {
+        } else if (!Settings.settings.randomWallpaper && randomWallpaperTimer.running) {
             randomWallpaperTimer.stop();
         }
     }
     
     function restartRandomWallpaperTimer() {
-        if (Settings.randomWallpaper) {
+        if (Settings.settings.randomWallpaper) {
             randomWallpaperTimer.stop();
             randomWallpaperTimer.start();
-            setRandomWallpaper();
         }
     }
 
     function generateTheme() {
-        if (Settings.useWallpaperTheme) {
+        if (Settings.settings.useWallpaperTheme) {
             generateThemeProcess.running = true;
         }
     }
 
     Timer {
         id: randomWallpaperTimer
-        interval: Settings.wallpaperInterval * 1000
+        interval: Settings.settings.wallpaperInterval * 1000
         running: false
         repeat: true
         onTriggered: setRandomWallpaper()
@@ -100,7 +98,7 @@ Singleton {
             if (status === FolderListModel.Ready) {
                 var files = [];
                 for (var i = 0; i < count; i++) {
-                    var fileph = (Settings.wallpaperFolder !== undefined ? Settings.wallpaperFolder : "") + "/" + get(i, "fileName");
+                    var fileph = (Settings.settings.wallpaperFolder !== undefined ? Settings.settings.wallpaperFolder : "") + "/" + get(i, "fileName");
                     files.push(fileph);
                 }
                 wallpaperList = files;
@@ -111,7 +109,7 @@ Singleton {
 
     Process {
         id: changeWallpaperProcess
-        command: ["swww", "img", "--resize", Settings.wallpaperResize, "--transition-fps", Settings.transitionFps.toString(), "--transition-type", transitionType, "--transition-duration", Settings.transitionDuration.toString(), currentWallpaper]
+        command: ["swww", "img", "--resize", Settings.settings.wallpaperResize, "--transition-fps", Settings.settings.transitionFps.toString(), "--transition-type", transitionType, "--transition-duration", Settings.settings.transitionDuration.toString(), currentWallpaper]
         running: false
     }
     

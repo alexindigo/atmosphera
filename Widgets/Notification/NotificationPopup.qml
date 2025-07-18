@@ -111,11 +111,7 @@ PanelWindow {
                         border.width: 1.5
 
                         // Get all possible icon sources from notification
-                        property var iconSources: [
-                            rawNotification?.image || "",
-                            rawNotification?.appIcon || "",
-                            rawNotification?.icon || ""
-                        ]
+                        property var iconSources: [rawNotification?.image || "", rawNotification?.appIcon || "", rawNotification?.icon || ""]
 
                         // Try to load notification icon
                         Image {
@@ -131,7 +127,8 @@ PanelWindow {
                             source: {
                                 for (var i = 0; i < iconBackground.iconSources.length; i++) {
                                     var icon = iconBackground.iconSources[i];
-                                    if (!icon) continue;
+                                    if (!icon)
+                                        continue;
 
                                     if (icon.includes("?path=")) {
                                         const [name, path] = icon.split("?path=");
@@ -202,7 +199,8 @@ PanelWindow {
                     repeat: false
                     onTriggered: {
                         dismissAnimation.start();
-                        if (rawNotification) rawNotification.expire();
+                        if (rawNotification)
+                            rawNotification.expire();
                     }
                 }
 
@@ -210,28 +208,63 @@ PanelWindow {
                     anchors.fill: parent
                     onClicked: {
                         dismissAnimation.start();
-                        if (rawNotification) rawNotification.dismiss();
+                        if (rawNotification)
+                            rawNotification.dismiss();
                     }
                 }
 
                 ParallelAnimation {
                     id: dismissAnimation
-                    NumberAnimation { target: notificationDelegate; property: "opacity"; to: 0; duration: 150 }
-                    NumberAnimation { target: notificationDelegate; property: "height"; to: 0; duration: 150 }
-                    NumberAnimation { target: notificationDelegate; property: "x"; to: width; duration: 150; easing.type: Easing.InQuad }
+                    NumberAnimation {
+                        target: notificationDelegate
+                        property: "opacity"
+                        to: 0
+                        duration: 150
+                    }
+                    NumberAnimation {
+                        target: notificationDelegate
+                        property: "height"
+                        to: 0
+                        duration: 150
+                    }
+                    NumberAnimation {
+                        target: notificationDelegate
+                        property: "x"
+                        to: width
+                        duration: 150
+                        easing.type: Easing.InQuad
+                    }
                     onFinished: {
-                        var idx = notificationRepeater.indexOf(notificationDelegate);
-                        if (idx !== -1) {
-                            notificationModel.remove(idx);
+                        for (let i = 0; i < notificationModel.count; i++) {
+                            if (notificationModel.get(i).id === notificationDelegate.id) {
+                                notificationModel.remove(i);
+                                break;
+                            }
                         }
                     }
                 }
 
                 ParallelAnimation {
                     id: appearAnimation
-                    NumberAnimation { target: notificationDelegate; property: "opacity"; to: 1; duration: 150 }
-                    NumberAnimation { target: notificationDelegate; property: "height"; to: contentRow.height + 20; duration: 150 }
-                    NumberAnimation { target: notificationDelegate; property: "x"; to: 0; duration: 150; easing.type: Easing.OutQuad }
+                    NumberAnimation {
+                        target: notificationDelegate
+                        property: "opacity"
+                        to: 1
+                        duration: 150
+                    }
+                    NumberAnimation {
+                        target: notificationDelegate
+                        property: "height"
+                        to: contentRow.height + 20
+                        duration: 150
+                    }
+                    NumberAnimation {
+                        target: notificationDelegate
+                        property: "x"
+                        to: 0
+                        duration: 150
+                        easing.type: Easing.OutQuad
+                    }
                 }
 
                 Component.onCompleted: {
@@ -240,18 +273,21 @@ PanelWindow {
                         height = 0;
                         x = width;
                         appearAnimation.start();
-                        var idx = notificationRepeater.indexOf(notificationDelegate);
-                        if (idx !== -1) {
-                            var oldItem = notificationModel.get(idx);
-                            notificationModel.set(idx, {
-                                id: oldItem.id,
-                                appName: oldItem.appName,
-                                summary: oldItem.summary,
-                                body: oldItem.body,
-                                rawNotification: oldItem.rawNotification,
-                                appeared: true,
-                                dismissed: oldItem.dismissed
-                            });
+                        for (let i = 0; i < notificationModel.count; i++) {
+                            if (notificationModel.get(i).id === notificationDelegate.id) {
+                                var oldItem = notificationModel.get(i);
+                                notificationModel.set(i, {
+                                    id: oldItem.id,
+                                    appName: oldItem.appName,
+                                    summary: oldItem.summary,
+                                    body: oldItem.body,
+                                    rawNotification: oldItem.rawNotification,
+                                    appeared: true,
+                                    read: oldItem.read,
+                                    dismissed: oldItem.dismissed
+                                });
+                                break;
+                            }
                         }
                     }
                 }
@@ -263,7 +299,7 @@ PanelWindow {
         target: Quickshell
         function onScreensChanged() {
             if (window.screen) {
-                x = window.screen.width - width - 20
+                x = window.screen.width - width - 20;
             }
         }
     }
