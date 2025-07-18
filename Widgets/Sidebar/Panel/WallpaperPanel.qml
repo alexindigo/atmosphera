@@ -4,6 +4,7 @@ import QtQuick.Controls
 import Quickshell
 import Quickshell.Io
 import Quickshell.Widgets
+import Quickshell.Wayland
 import qs.Settings
 import qs.Services
 
@@ -17,6 +18,7 @@ PanelWindow {
     anchors.right: true
     margins.right: 0
     margins.top: 0
+    WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
 
     property var wallpapers: []
 
