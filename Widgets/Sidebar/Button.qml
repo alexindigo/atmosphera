@@ -22,19 +22,6 @@ Item {
         hoverEnabled: true
         onClicked: {
             if (sidebarPopup.visible) {
-                // Close all modals if open
-                if (sidebarPopup.settingsModal && sidebarPopup.settingsModal.visible) {
-                    sidebarPopup.settingsModal.visible = false;
-                }
-                if (sidebarPopup.wallpaperPanelModal && sidebarPopup.wallpaperPanelModal.visible) {
-                    sidebarPopup.wallpaperPanelModal.visible = false;
-                }
-                if (sidebarPopup.wifiPanelModal && sidebarPopup.wifiPanelModal.visible) {
-                    sidebarPopup.wifiPanelModal.visible = false;
-                }
-                if (sidebarPopup.bluetoothPanelModal && sidebarPopup.bluetoothPanelModal.visible) {
-                    sidebarPopup.bluetoothPanelModal.visible = false;
-                }
                 sidebarPopup.hidePopup();
             } else {
                 sidebarPopup.showAt();

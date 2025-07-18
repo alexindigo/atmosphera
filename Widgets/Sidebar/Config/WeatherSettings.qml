@@ -1,22 +1,13 @@
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Layouts
 import qs.Settings
 
 Rectangle {
     id: weatherSettingsCard
     Layout.fillWidth: true
     Layout.preferredHeight: 180
-    Layout.topMargin: 12
     color: Theme.surface
     radius: 18
-
-    // Properties for binding
-    property string weatherCity: ""
-    property bool useFahrenheit: false
-
-    signal cityChanged(string city)
-    signal temperatureUnitChanged(bool useFahrenheit)
 
     ColumnLayout {
         anchors.fill: parent
@@ -76,7 +67,7 @@ Rectangle {
                     anchors.rightMargin: 12
                     anchors.topMargin: 6
                     anchors.bottomMargin: 6
-                    text: weatherCity
+                    text: Settings.settings.weatherCity
                     font.family: Theme.fontFamily
                     font.pixelSize: 13
                     color: Theme.textPrimary
@@ -88,7 +79,7 @@ Rectangle {
                     inputMethodHints: Qt.ImhNone
 
                     onTextChanged: {
-                        cityChanged(text)
+                        Settings.settings.weatherCity = text
                     }
 
                     MouseArea {
@@ -137,11 +128,11 @@ Rectangle {
                     border.color: Theme.outline
                     border.width: 1
                     y: 2
-                    x: useFahrenheit ? customSwitch.width - width - 2 : 2
+                    x: Settings.settings.useFahrenheit ? customSwitch.width - width - 2 : 2
                     
                     Text {
                         anchors.centerIn: parent
-                        text: useFahrenheit ? "\u00b0F" : "\u00b0C"
+                        text: Settings.settings.useFahrenheit ? "\u00b0F" : "\u00b0C"
                         font.family: Theme.fontFamily
                         font.pixelSize: 12
                         font.bold: true
@@ -156,7 +147,7 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        temperatureUnitChanged(!useFahrenheit)
+                        Settings.settings.useFahrenheit = !Settings.settings.useFahrenheit
                     }
                 }
             }

@@ -1,6 +1,6 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtQuick 
+import QtQuick.Controls
+import QtQuick.Layouts
 import Qt5Compat.GraphicalEffects
 import qs.Settings
 import qs.Services
@@ -10,7 +10,7 @@ Item {
     id: mediaControl
     width: visible ? mediaRow.width : 0
     height: 36
-    visible: Settings.showMediaInBar && MusicManager.currentPlayer
+    visible: Settings.settings.showMediaInBar && MusicManager.currentPlayer
 
     RowLayout {
         id: mediaRow

@@ -1,56 +1,30 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick
 import Quickshell
 import Quickshell.Io
-import qs.Components
 import qs.Settings
-import QtQuick.Layouts 1.15
+import QtQuick.Layouts
+import qs.Components
 
-Item {
-    id: root
-    property string configDir: Quickshell.configDir
-    property string historyFilePath: configDir + "/notification_history.json"
-    property bool hasUnread: notificationHistoryWin.hasUnread && !notificationHistoryWin.visible
-    function addToHistory(notification) { notificationHistoryWin.addToHistory(notification) }
-    width: 22; height: 22
-
-    // Bell icon/button
-    Item {
-        id: bell
-        width: 22; height: 22
-        Text {
-            anchors.centerIn: parent
-            text: root.hasUnread ? "notifications_unread" : "notifications"
-            font.family: mouseAreaBell.containsMouse ? "Material Symbols Rounded" : "Material Symbols Outlined"
-            font.pixelSize: 16
-            font.weight: root.hasUnread ? Font.Bold : Font.Normal
-            color: mouseAreaBell.containsMouse ? Theme.accentPrimary : (root.hasUnread ? Theme.accentPrimary : Theme.textDisabled)
-        }
-        MouseArea {
-            id: mouseAreaBell
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
-            onClicked: notificationHistoryWin.visible = !notificationHistoryWin.visible
-        }
-    }
-
-    // The popup window
-    PanelWindow {
-        id: notificationHistoryWin
-        width: 400
-        property int maxPopupHeight: 500
+// The popup window
+PanelWithOverlay {
+    id: notificationHistoryWin
+    property string historyFilePath: Settings.settingsDir + "notification_history.json"
+    property bool hasUnread: notificationHistoryWinRect.hasUnread && !notificationHistoryWinRect.visible
+    function addToHistory(notification) { notificationHistoryWinRect.addToHistory(notification) }
+    Rectangle {
+        id: notificationHistoryWinRect
+        implicitWidth: 400
+        property int maxPopupHeight: 800
         property int minPopupHeight: 230
         property int contentHeight: headerRow.height + historyList.contentHeight + 56
-        height: Math.max(Math.min(contentHeight, maxPopupHeight), minPopupHeight)
-        color: "transparent"
-        visible: false
-        screen: Quickshell.primaryScreen
-        focusable: true
-        anchors.top: true
-        anchors.right: true
-        margins.top: 4
-        margins.right: 4
+        implicitHeight: Math.max(Math.min(contentHeight, maxPopupHeight), minPopupHeight)
+        visible: parent.visible
+        anchors.top: parent.top
+        anchors.right: parent.right
+        anchors.topMargin: 4
+        anchors.rightMargin: 4
+        color: Theme.backgroundPrimary
+        radius: 20
 
         property int maxHistory: 100
         property bool hasUnread: false
@@ -62,25 +36,24 @@ Item {
 
         FileView {
             id: historyFileView
-            path: root.historyFilePath
+            path: notificationHistoryWin.historyFilePath
             blockLoading: true
             printErrors: true
             watchChanges: true
-            
+
             JsonAdapter {
                 id: historyAdapter
                 property var notifications: []
             }
 
             onFileChanged: historyFileView.reload()
-            onLoaded: notificationHistoryWin.loadHistory()
-            onLoadFailed: function(error) {
-                if (error.includes("No such file")) {
-                    historyAdapter.notifications = []
-                    writeAdapter()
-                }
+            onLoaded: notificationHistoryWinRect.loadHistory()
+            onLoadFailed: function (error) {
+                historyAdapter.notifications = [];
+                historyFileView.writeAdapter();
             }
-            Component.onCompleted: if (path) reload()
+            Component.onCompleted: if (path)
+                reload()
         }
 
         function updateHasUnread() {
@@ -99,16 +72,18 @@ Item {
 
         function loadHistory() {
             if (historyAdapter.notifications) {
-                historyModel.clear()
-                const notifications = historyAdapter.notifications
-                const count = Math.min(notifications.length, maxHistory)
+                historyModel.clear();
+                const notifications = historyAdapter.notifications;
+                const count = Math.min(notifications.length, maxHistory);
                 for (let i = 0; i < count; i++) {
-                    let n = notifications[i]
+                    let n = notifications[i];
                     if (typeof n === 'object' && n !== null) {
-                        if (n.read === undefined) n.read = false;
+                        if (n.read === undefined)
+                            n.read = false;
                         // Mark as read if window is open
-                        if (visible) n.read = true;
-                        historyModel.append(n)
+                        if (notificationHistoryWinRect.visible)
+                            n.read = true;
+                        historyModel.append(n);
                     }
                 }
                 updateHasUnread();
@@ -116,10 +91,10 @@ Item {
         }
 
         function saveHistory() {
-            const historyArray = []
-            const count = Math.min(historyModel.count, maxHistory)
+            const historyArray = [];
+            const count = Math.min(historyModel.count, maxHistory);
             for (let i = 0; i < count; ++i) {
-                let obj = historyModel.get(i)
+                let obj = historyModel.get(i);
                 if (typeof obj === 'object' && obj !== null) {
                     historyArray.push({
                         id: obj.id,
@@ -128,51 +103,55 @@ Item {
                         body: obj.body,
                         timestamp: obj.timestamp,
                         read: obj.read === undefined ? false : obj.read
-                    })
+                    });
                 }
             }
-            historyAdapter.notifications = historyArray
-            Qt.callLater(function() {
-                historyFileView.writeAdapter()
-            })
+            historyAdapter.notifications = historyArray;
+            Qt.callLater(function () {
+                historyFileView.writeAdapter();
+            });
             updateHasUnread();
         }
 
         function addToHistory(notification) {
-            if (!notification.id) notification.id = Date.now()
-            if (!notification.timestamp) notification.timestamp = new Date().toISOString()
-            
+            if (!notification.id)
+                notification.id = Date.now();
+            if (!notification.timestamp)
+                notification.timestamp = new Date().toISOString();
+
             // Mark as read if window is open
-            notification.read = visible
-            
+            notification.read = visible;
+
             // Remove duplicate by id
             for (let i = 0; i < historyModel.count; ++i) {
                 if (historyModel.get(i).id === notification.id) {
-                    historyModel.remove(i)
-                    break
+                    historyModel.remove(i);
+                    break;
                 }
             }
-            
-            historyModel.insert(0, notification)
-            
-            if (historyModel.count > maxHistory) historyModel.remove(maxHistory)
-            saveHistory()
+
+            historyModel.insert(0, notification);
+
+            if (historyModel.count > maxHistory)
+                historyModel.remove(maxHistory);
+            saveHistory();
         }
 
         function clearHistory() {
-            historyModel.clear()
-            historyAdapter.notifications = []
-            historyFileView.writeAdapter()
+            historyModel.clear();
+            historyAdapter.notifications = [];
+            historyFileView.writeAdapter();
         }
 
         function formatTimestamp(ts) {
-            if (!ts) return "";
+            if (!ts)
+                return "";
             var date = typeof ts === "number" ? new Date(ts) : new Date(Date.parse(ts));
             var y = date.getFullYear();
-            var m = (date.getMonth()+1).toString().padStart(2,'0');
-            var d = date.getDate().toString().padStart(2,'0');
-            var h = date.getHours().toString().padStart(2,'0');
-            var min = date.getMinutes().toString().padStart(2,'0');
+            var m = (date.getMonth() + 1).toString().padStart(2, '0');
+            var d = date.getDate().toString().padStart(2, '0');
+            var h = date.getHours().toString().padStart(2, '0');
+            var min = date.getMinutes().toString().padStart(2, '0');
             return `${y}-${m}-${d} ${h}:${min}`;
         }
 
@@ -186,13 +165,14 @@ Item {
                         changed = true;
                     }
                 }
-                if (changed) saveHistory();
+                if (changed)
+                    saveHistory();
             }
         }
 
         Rectangle {
-            width: notificationHistoryWin.width
-            height: notificationHistoryWin.height
+            width: notificationHistoryWinRect.width
+            height: notificationHistoryWinRect.height
             anchors.fill: parent
             color: Theme.backgroundPrimary
             radius: 20
@@ -205,10 +185,12 @@ Item {
                 RowLayout {
                     id: headerRow
                     spacing: 4
-                    anchors.top: parent.top
                     anchors.topMargin: 4
                     anchors.left: parent.left
                     anchors.right: parent.right
+                    Layout.fillHeight: true
+                    Layout.alignment: Qt.AlignVCenter
+                    Layout.preferredHeight: 52
                     anchors.leftMargin: 16
                     anchors.rightMargin: 16
                     Text {
@@ -218,7 +200,9 @@ Item {
                         color: Theme.textPrimary
                         Layout.alignment: Qt.AlignVCenter
                     }
-                    Item { Layout.fillWidth: true }
+                    Item {
+                        Layout.fillWidth: true
+                    }
                     Rectangle {
                         id: clearAllButton
                         width: 90
@@ -251,7 +235,7 @@ Item {
                             anchors.fill: parent
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: notificationHistoryWin.clearHistory()
+                            onClicked: notificationHistoryWinRect.clearHistory()
                         }
                     }
                 }
@@ -264,11 +248,10 @@ Item {
                 }
 
                 Rectangle {
-                    anchors.top: parent.top
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.topMargin: 56
-                    anchors.bottom: parent.bottom
+                    height: notificationHistoryWinRect.height - 56 - 12
                     color: Theme.surfaceVariant
                     radius: 20
 
@@ -288,7 +271,10 @@ Item {
                         Column {
                             anchors.fill: parent
                             spacing: 0
-                            Item { id: topSpacer; height: (parent.height - historyList.height) / 2 }
+                            Item {
+                                id: topSpacer
+                                height: (parent.height - historyList.height) / 2
+                            }
                             ListView {
                                 id: historyList
                                 width: parent.width
@@ -315,7 +301,7 @@ Item {
                                             anchors.margins: 14
                                             spacing: 6
                                             RowLayout {
-                                                id: headerRow
+                                                id: headerRow2
                                                 spacing: 8
                                                 Rectangle {
                                                     id: iconBackground
@@ -349,14 +335,16 @@ Item {
                                                     }
                                                     Text {
                                                         visible: !model.isPlaceholder
-                                                        text: model.timestamp ? notificationHistoryWin.formatTimestamp(model.timestamp) : ""
+                                                        text: model.timestamp ? notificationHistoryWinRect.formatTimestamp(model.timestamp) : ""
                                                         color: Theme.textDisabled
                                                         font.family: Theme.fontFamily
                                                         font.pixelSize: Theme.fontSizeCaption
                                                         verticalAlignment: Text.AlignVCenter
                                                     }
                                                 }
-                                                Item { Layout.fillWidth: true }
+                                                Item {
+                                                    Layout.fillWidth: true
+                                                }
                                             }
                                             Text {
                                                 text: model.summary || (model.isPlaceholder ? "You're all caught up!" : "")
@@ -382,7 +370,11 @@ Item {
                     }
                 }
 
-                Rectangle { width: 1; height: 24; color: "transparent" }
+                Rectangle {
+                    width: 1
+                    height: 24
+                    color: "transparent"
+                }
 
                 ListModel {
                     id: placeholderModel

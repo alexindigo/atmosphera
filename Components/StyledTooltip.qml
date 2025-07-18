@@ -1,5 +1,4 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick 
 import QtQuick.Window 2.15
 import qs.Settings
 
@@ -12,8 +11,9 @@ Window {
     flags: Qt.ToolTip | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
     color: "transparent"
     visible: false
-    minimumWidth: Math.max(minimumWidth, tooltipText.implicitWidth + 24)
-    minimumHeight: Math.max(minimumHeight, tooltipText.implicitHeight + 16)
+
+    minimumWidth: tooltipText.implicitWidth + 24
+    minimumHeight: tooltipText.implicitHeight + 16
     property var _timerObj: null
     onTooltipVisibleChanged: {
         if (tooltipVisible) {
@@ -33,26 +33,32 @@ Window {
         x = pos.x - width / 2 + targetItem.width / 2;
         y = pos.y + 12;
         visible = true;
-        console.log("StyledTooltip _showNow called");
-        console.log("StyledTooltip Theme.textPrimary:", Theme.textPrimary);
     }
     function _hideNow() {
         visible = false;
         if (_timerObj) { _timerObj.destroy(); _timerObj = null; }
     }
     Connections {
-        target: targetItem
-        onXChanged: if (tooltipWindow.visible) tooltipWindow._showNow()
-        onYChanged: if (tooltipWindow.visible) tooltipWindow._showNow()
-        onWidthChanged: if (tooltipWindow.visible) tooltipWindow._showNow()
-        onHeightChanged: if (tooltipWindow.visible) tooltipWindow._showNow()
+        target: tooltipWindow.targetItem
+        function onXChanged() {
+            if (tooltipWindow.visible) tooltipWindow._showNow()
+        }
+        function onYChanged() {
+            if (tooltipWindow.visible) tooltipWindow._showNow()
+        }
+        function onWidthChanged() {
+            if (tooltipWindow.visible) tooltipWindow._showNow()
+        }
+        function onHeightChanged() {
+            if (tooltipWindow.visible) tooltipWindow._showNow()
+        }
     }
-    Component.onCompleted: console.log("Tooltip window loaded")
+
     Rectangle {
         anchors.fill: parent
         radius: 6
         color: "#222"
-        border.color: Theme.border || "#444"
+        border.color: Theme.backgroundTertiary || "#444"
         border.width: 1
         opacity: 0.97
         z: 1

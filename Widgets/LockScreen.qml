@@ -18,7 +18,7 @@ WlSessionLock {
     property bool authenticating: false
     property string password: ""
     property bool pamAvailable: typeof PamContext !== "undefined"
-    property string weatherCity: Settings.weatherCity
+    property string weatherCity: Settings.settings.weatherCity
     property var weatherData: null
     property string weatherError: ""
     property string weatherInfo: ""
@@ -161,7 +161,7 @@ WlSessionLock {
                     id: avatarImage
                     anchors.fill: parent
                     anchors.margins: 4
-                    source: Settings.profileImage
+                    source: Settings.settings.profileImage
                     fillMode: Image.PreserveAspectCrop
                     visible: false // Only show the masked version
                     asynchronous: true
@@ -175,7 +175,7 @@ WlSessionLock {
                         radius: avatarImage.width / 2
                         visible: false
                     }
-                    visible: Settings.profileImage !== ""
+                    visible: Settings.settings.profileImage !== ""
                 }
                 // Fallback icon
                 Text {
@@ -184,7 +184,7 @@ WlSessionLock {
                     font.family: "Material Symbols Outlined"
                     font.pixelSize: 32
                     color: Theme.onAccent
-                    visible: Settings.profileImage === ""
+                    visible: Settings.settings.profileImage === ""
                 }
                 // Glow effect
                 layer.enabled: true
@@ -357,7 +357,7 @@ WlSessionLock {
                     verticalAlignment: Text.AlignVCenter
                 }
                 Text {
-                    text: weatherData && weatherData.current_weather ? (Settings.useFahrenheit ? `${Math.round(weatherData.current_weather.temperature * 9 / 5 + 32)}°F` : `${Math.round(weatherData.current_weather.temperature)}°C`) : (Settings.useFahrenheit ? "--°F" : "--°C")
+                    text: weatherData && weatherData.current_weather ? (Settings.settings.useFahrenheit ? `${Math.round(weatherData.current_weather.temperature * 9 / 5 + 32)}°F` : `${Math.round(weatherData.current_weather.temperature)}°C`) : (Settings.settings.useFahrenheit ? "--°F" : "--°C")
                     font.family: Theme.fontFamily
                     font.pixelSize: 18
                     color: Theme.textSecondary

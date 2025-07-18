@@ -1,35 +1,15 @@
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import QtQuick.Controls 2.15
+import QtQuick 
+import QtQuick.Layouts
+import QtQuick.Controls
 import qs.Settings
 
 Rectangle {
     id: wallpaperSettingsCard
     Layout.fillWidth: true
     Layout.preferredHeight: 680
-    Layout.topMargin: 12
     color: Theme.surface
     radius: 18
 
-    // Property for binding
-    property string wallpaperFolder: ""
-    signal wallpaperFolderEdited(string folder)
-    property bool useSWWW: false
-    signal useSWWWChangedUpdated(bool useSWWW)
-    property bool randomWallpaper: false
-    signal randomWallpaperChangedUpdated(bool randomWallpaper)
-    property bool useWallpaperTheme: false
-    signal useWallpaperThemeChangedUpdated(bool useWallpaperTheme)
-    property int wallpaperInterval: 300
-    signal wallpaperIntervalChangedUpdated(int wallpaperInterval)
-    property string wallpaperResize: "crop"
-    signal wallpaperResizeChangedUpdated(string resize)
-    property int transitionFps: 60
-    signal transitionFpsChangedUpdated(int fps)
-    property string transitionType: "random"
-    signal transitionTypeChangedUpdated(string type)
-    property real transitionDuration: 1.1
-    signal transitionDurationChangedUpdated(real duration)
 
     ColumnLayout {
         anchors.fill: parent
@@ -74,7 +54,7 @@ Rectangle {
                 anchors.rightMargin: 12
                 anchors.topMargin: 6
                 anchors.bottomMargin: 6
-                text: wallpaperFolder
+                text: Settings.settings.wallpaperFolder
                 font.family: Theme.fontFamily
                 font.pixelSize: 13
                 color: Theme.textPrimary
@@ -84,7 +64,7 @@ Rectangle {
                 activeFocusOnTab: true
                 inputMethodHints: Qt.ImhUrlCharactersOnly
                 onTextChanged: {
-                    wallpaperFolderEdited(text)
+                    Settings.settings.wallpaperFolder = text
                 }
                 MouseArea {
                     anchors.fill: parent
@@ -116,8 +96,8 @@ Rectangle {
                 width: 52
                 height: 32
                 radius: 16
-                color: useSWWW ? Theme.accentPrimary : Theme.surfaceVariant
-                border.color: useSWWW ? Theme.accentPrimary : Theme.outline
+                color: Settings.settings.useSWWW ? Theme.accentPrimary : Theme.surfaceVariant
+                border.color: Settings.settings.useSWWW ? Theme.accentPrimary : Theme.outline
                 border.width: 2
                 
                 Rectangle {
@@ -129,7 +109,7 @@ Rectangle {
                     border.color: Theme.outline
                     border.width: 1
                     y: 2
-                    x: useSWWW ? swwwSwitch.width - width - 2 : 2
+                    x: Settings.settings.useSWWW ? swwwSwitch.width - width - 2 : 2
                     
                     Behavior on x {
                         NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
@@ -139,7 +119,7 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        useSWWWChangedUpdated(!useSWWW)
+                        Settings.settings.useSWWW = !Settings.settings.useSWWW
                     }
                 }
             }
@@ -168,8 +148,8 @@ Rectangle {
                 width: 52
                 height: 32
                 radius: 16
-                color: randomWallpaper ? Theme.accentPrimary : Theme.surfaceVariant
-                border.color: randomWallpaper ? Theme.accentPrimary : Theme.outline
+                color: Settings.settings.randomWallpaper ? Theme.accentPrimary : Theme.surfaceVariant
+                border.color: Settings.settings.randomWallpaper ? Theme.accentPrimary : Theme.outline
                 border.width: 2
                 
                 Rectangle {
@@ -181,7 +161,7 @@ Rectangle {
                     border.color: Theme.outline
                     border.width: 1
                     y: 2
-                    x: randomWallpaper ? randomWallpaperSwitch.width - width - 2 : 2
+                    x: Settings.settings.randomWallpaper ? randomWallpaperSwitch.width - width - 2 : 2
                     
                     Behavior on x {
                         NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
@@ -191,7 +171,7 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        randomWallpaperChangedUpdated(!randomWallpaper)
+                        Settings.settings.randomWallpaper = !Settings.settings.randomWallpaper
                     }
                 }
             }
@@ -220,8 +200,8 @@ Rectangle {
                 width: 52
                 height: 32
                 radius: 16
-                color: useWallpaperTheme ? Theme.accentPrimary : Theme.surfaceVariant
-                border.color: useWallpaperTheme ? Theme.accentPrimary : Theme.outline
+                color: Settings.settings.useWallpaperTheme ? Theme.accentPrimary : Theme.surfaceVariant
+                border.color: Settings.settings.useWallpaperTheme ? Theme.accentPrimary : Theme.outline
                 border.width: 2
                 
                 Rectangle {
@@ -233,7 +213,7 @@ Rectangle {
                     border.color: Theme.outline
                     border.width: 1
                     y: 2
-                    x: useWallpaperTheme ? wallpaperThemeSwitch.width - width - 2 : 2
+                    x: Settings.settings.useWallpaperTheme ? wallpaperThemeSwitch.width - width - 2 : 2
                     
                     Behavior on x {
                         NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
@@ -243,7 +223,7 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        useWallpaperThemeChangedUpdated(!useWallpaperTheme)
+                        Settings.settings.useWallpaperTheme = !Settings.settings.useWallpaperTheme
                     }
                 }
             }
@@ -269,7 +249,7 @@ Rectangle {
                 }
                 
                 Text {
-                    text: wallpaperInterval
+                    text: Settings.settings.wallpaperInterval
                     font.pixelSize: 13
                     color: Theme.textPrimary
                 }
@@ -281,7 +261,7 @@ Rectangle {
                 from: 10
                 to: 900
                 stepSize: 10
-                value: wallpaperInterval
+                value: Settings.settings.wallpaperInterval
                 snapMode: Slider.SnapAlways
                 
                 background: Rectangle {
@@ -314,7 +294,7 @@ Rectangle {
                 }
 
                 onMoved: {
-                    wallpaperIntervalChangedUpdated(Math.round(value))
+                    Settings.settings.wallpaperInterval = Math.round(value)
                 }
             }
         }
@@ -337,7 +317,7 @@ Rectangle {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 40
                 model: ["no", "crop", "fit", "stretch"]
-                currentIndex: model.indexOf(wallpaperResize)
+                currentIndex: model.indexOf(Settings.settings.wallpaperResize)
                 
                 background: Rectangle {
                     implicitWidth: 120
@@ -409,7 +389,7 @@ Rectangle {
                 }
                 
                 onActivated: {
-                    wallpaperResizeChangedUpdated(model[index])
+                    Settings.settings.wallpaperResize = model[index]
                 }
             }
         }
@@ -432,7 +412,7 @@ Rectangle {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 40
                 model: ["none", "simple", "fade", "left", "right", "top", "bottom", "wipe", "wave", "grow", "center", "any", "outer", "random"]
-                currentIndex: model.indexOf(transitionType)
+                currentIndex: model.indexOf(Settings.settings.transitionType)
                 
                 background: Rectangle {
                     implicitWidth: 120
@@ -504,7 +484,7 @@ Rectangle {
                 }
                 
                 onActivated: {
-                    transitionTypeChangedUpdated(model[index])
+                    Settings.settings.transitionType = model[index]
                 }
             }
         }
@@ -529,7 +509,7 @@ Rectangle {
                 }
                 
                 Text {
-                    text: transitionFps
+                    text: Settings.settings.transitionFps
                     font.pixelSize: 13
                     color: Theme.textPrimary
                 }
@@ -541,7 +521,7 @@ Rectangle {
                 from: 30
                 to: 500
                 stepSize: 5
-                value: transitionFps
+                value: Settings.settings.transitionFps
                 snapMode: Slider.SnapAlways
                 
                 background: Rectangle {
@@ -574,7 +554,7 @@ Rectangle {
                 }
 
                 onMoved: {
-                    transitionFpsChangedUpdated(Math.round(value))
+                    Settings.settings.transitionFps = Math.round(value)
                 }
             }
         }
@@ -599,7 +579,7 @@ Rectangle {
                 }
                 
                 Text {
-                    text: transitionDuration.toFixed(3)
+                    text: Settings.settings.transitionDuration.toFixed(3)
                     font.pixelSize: 13
                     color: Theme.textPrimary
                 }
@@ -611,7 +591,7 @@ Rectangle {
                 from: 0.250
                 to: 10.0
                 stepSize: 0.050
-                value: transitionDuration
+                value: Settings.settings.transitionDuration
                 snapMode: Slider.SnapAlways
                 
                 background: Rectangle {
@@ -644,7 +624,7 @@ Rectangle {
                 }
 
                 onMoved: {
-                    transitionDurationChangedUpdated(value)
+                    Settings.settings.transitionDuration = value
                 }
             }
         }

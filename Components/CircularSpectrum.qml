@@ -16,7 +16,7 @@ Item {
     height: usableOuter * 2
 
     onOuterRadiusChanged: () => {
-        usableOuter = Settings.visualizerType === "fire" ? outerRadius * 0.85 : outerRadius;
+        usableOuter = Settings.settings.visualizerType === "fire" ? outerRadius * 0.85 : outerRadius;
     }
 
     Repeater {
@@ -25,25 +25,25 @@ Item {
             property real value: root.values[index]
             property real angle: (index / root.values.length) * 360
             width: Math.max(2, (root.innerRadius * 2 * Math.PI) / root.values.length - 4)
-            height: Settings.visualizerType === "diamond" ? value * 2 * (usableOuter - root.innerRadius) : value * (usableOuter - root.innerRadius)
+            height: Settings.settings.visualizerType === "diamond" ? value * 2 * (usableOuter - root.innerRadius) : value * (usableOuter - root.innerRadius)
             radius: width / 2
             color: root.fillColor
             border.color: root.strokeColor
             border.width: root.strokeWidth
             antialiasing: true
 
-            x: Settings.visualizerType === "radial" ? root.width / 2 - width / 2 : root.width / 2 + root.innerRadius * Math.cos(Math.PI / 2 + 2 * Math.PI * index / root.values.length) - width / 2
+            x: Settings.settings.visualizerType === "radial" ? root.width / 2 - width / 2 : root.width / 2 + root.innerRadius * Math.cos(Math.PI / 2 + 2 * Math.PI * index / root.values.length) - width / 2
 
-            y: Settings.visualizerType === "radial" ? root.height / 2 - height : Settings.visualizerType === "diamond" ? root.height / 2 - root.innerRadius * Math.sin(Math.PI / 2 + 2 * Math.PI * index / root.values.length) - height / 2 : root.height / 2 - root.innerRadius * Math.sin(Math.PI / 2 + 2 * Math.PI * index / root.values.length) - height
+            y: Settings.settings.visualizerType === "radial" ? root.height / 2 - height : Settings.settings.visualizerType === "diamond" ? root.height / 2 - root.innerRadius * Math.sin(Math.PI / 2 + 2 * Math.PI * index / root.values.length) - height / 2 : root.height / 2 - root.innerRadius * Math.sin(Math.PI / 2 + 2 * Math.PI * index / root.values.length) - height
             transform: [
                 Rotation {
                     origin.x: width / 2
-                    origin.y: Settings.visualizerType === "diamond" ? height / 2 : height
-                    angle: Settings.visualizerType === "radial" ? (index / root.values.length) * 360 : Settings.visualizerType === "fire" ? 0 : (index / root.values.length) * 360 - 90
+                    origin.y: Settings.settings.visualizerType === "diamond" ? height / 2 : height
+                    angle: Settings.settings.visualizerType === "radial" ? (index / root.values.length) * 360 : Settings.settings.visualizerType === "fire" ? 0 : (index / root.values.length) * 360 - 90
                 },
                 Translate {
-                    x: Settings.visualizerType === "radial" ? root.innerRadius * Math.cos(2 * Math.PI * index / root.values.length) : 0
-                    y: Settings.visualizerType === "radial" ? root.innerRadius * Math.sin(2 * Math.PI * index / root.values.length) : 0
+                    x: Settings.settings.visualizerType === "radial" ? root.innerRadius * Math.cos(2 * Math.PI * index / root.values.length) : 0
+                    y: Settings.settings.visualizerType === "radial" ? root.innerRadius * Math.sin(2 * Math.PI * index / root.values.length) : 0
                 }
             ]
 

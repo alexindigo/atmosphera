@@ -1,6 +1,6 @@
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import QtQuick.Controls 2.15
+import QtQuick 
+import QtQuick.Layouts
+import QtQuick.Controls
 import Qt5Compat.GraphicalEffects
 import qs.Settings
 
@@ -9,19 +9,10 @@ Rectangle {
     Layout.fillWidth: true
     Layout.preferredHeight: 340
     color: Theme.surface
-    Layout.topMargin: 12
     radius: 18
     border.color: "transparent"
     border.width: 0
     Layout.bottomMargin: 16
-    property bool showActiveWindowIcon: false
-    signal showAWIconChanged(bool showActiveWindowIcon)
-    property bool showSystemInfoInBar: true
-    signal showSystemInfoChanged(bool showSystemInfoInBar)
-    property bool showMediaInBar: false
-    signal showMediaChanged(bool showMediaInBar)
-    property string visualizerType: Settings.visualizerType
-    signal visualizerTypeUpdated(string type)
 
     ColumnLayout {
         anchors.fill: parent
@@ -66,7 +57,7 @@ Rectangle {
                     id: avatarImage
                     anchors.fill: parent
                     anchors.margins: 2
-                    source: Settings.profileImage
+                    source: Settings.settings.profileImage
                     fillMode: Image.PreserveAspectCrop
                     visible: false
                     asynchronous: true
@@ -83,7 +74,7 @@ Rectangle {
                         radius: avatarImage.width / 2
                         visible: false
                     }
-                    visible: Settings.profileImage !== ""
+                    visible: Settings.settings.profileImage !== ""
                 }
 
                 // Fallback icon
@@ -93,7 +84,7 @@ Rectangle {
                     font.family: "Material Symbols Outlined"
                     font.pixelSize: 18
                     color: Theme.accentPrimary
-                    visible: Settings.profileImage === ""
+                    visible: Settings.settings.profileImage === ""
                 }
             }
 
@@ -110,7 +101,7 @@ Rectangle {
                     id: profileImageInput
                     anchors.fill: parent
                     anchors.margins: 12
-                    text: Settings.profileImage
+                    text: Settings.settings.profileImage
                     font.pixelSize: 13
                     color: Theme.textPrimary
                     verticalAlignment: TextInput.AlignVCenter
@@ -120,7 +111,7 @@ Rectangle {
                     activeFocusOnTab: true
                     inputMethodHints: Qt.ImhNone
                     onTextChanged: {
-                        Settings.profileImage = text
+                        Settings.settings.profileImage = text
                     }
                     MouseArea {
                         anchors.fill: parent
@@ -154,8 +145,8 @@ Rectangle {
                 width: 52
                 height: 32
                 radius: 16
-                color: showActiveWindowIcon ? Theme.accentPrimary : Theme.surfaceVariant
-                border.color: showActiveWindowIcon ? Theme.accentPrimary : Theme.outline
+                color: Settings.settings.showActiveWindowIcon ? Theme.accentPrimary : Theme.surfaceVariant
+                border.color: Settings.settings.showActiveWindowIcon ? Theme.accentPrimary : Theme.outline
                 border.width: 2
                 
                 Rectangle {
@@ -167,7 +158,7 @@ Rectangle {
                     border.color: Theme.outline
                     border.width: 1
                     y: 2
-                    x: showActiveWindowIcon ? customSwitch.width - width - 2 : 2
+                    x: Settings.settings.showActiveWindowIcon ? customSwitch.width - width - 2 : 2
                     
                     Behavior on x {
                         NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
@@ -177,7 +168,7 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        showAWIconChanged(!showActiveWindowIcon)
+                        Settings.settings.showActiveWindowIcon = !Settings.settings.showActiveWindowIcon
                     }
                 }
             }
@@ -206,8 +197,8 @@ Rectangle {
                 width: 52
                 height: 32
                 radius: 16
-                color: showSystemInfoInBar ? Theme.accentPrimary : Theme.surfaceVariant
-                border.color: showSystemInfoInBar ? Theme.accentPrimary : Theme.outline
+                color: Settings.settings.showSystemInfoInBar ? Theme.accentPrimary : Theme.surfaceVariant
+                border.color: Settings.settings.showSystemInfoInBar ? Theme.accentPrimary : Theme.outline
                 border.width: 2
                 
                 Rectangle {
@@ -219,7 +210,7 @@ Rectangle {
                     border.color: Theme.outline
                     border.width: 1
                     y: 2
-                    x: showSystemInfoInBar ? customSwitch2.width - width - 2 : 2
+                    x: Settings.settings.showSystemInfoInBar ? customSwitch2.width - width - 2 : 2
                     
                     Behavior on x {
                         NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
@@ -229,7 +220,7 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        showSystemInfoChanged(!showSystemInfoInBar)
+                        Settings.settings.showSystemInfoInBar = !Settings.settings.showSystemInfoInBar
                     }
                 }
             }
@@ -258,8 +249,8 @@ Rectangle {
                 width: 52
                 height: 32
                 radius: 16
-                color: showMediaInBar ? Theme.accentPrimary : Theme.surfaceVariant
-                border.color: showMediaInBar ? Theme.accentPrimary : Theme.outline
+                color: Settings.settings.showMediaInBar ? Theme.accentPrimary : Theme.surfaceVariant
+                border.color: Settings.settings.showMediaInBar ? Theme.accentPrimary : Theme.outline
                 border.width: 2
                 
                 Rectangle {
@@ -271,7 +262,7 @@ Rectangle {
                     border.color: Theme.outline
                     border.width: 1
                     y: 2
-                    x: showMediaInBar ? customSwitch3.width - width - 2 : 2
+                    x: Settings.settings.showMediaInBar ? customSwitch3.width - width - 2 : 2
                     
                     Behavior on x {
                         NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
@@ -281,7 +272,7 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        showMediaChanged(!showMediaInBar)
+                        Settings.settings.showMediaInBar = !Settings.settings.showMediaInBar
                     }
                 }
             }
@@ -318,9 +309,9 @@ Rectangle {
                     anchors.left: parent.left
                     anchors.leftMargin: 12
                     anchors.verticalCenter: parent.verticalCenter
-                    text: visualizerType === "fire" ? "Fire" : 
-                          visualizerType === "diamond" ? "Diamond" : 
-                          visualizerType === "radial" ? "Radial" : "Radial"
+                    text: Settings.settings.visualizerType === "fire" ? "Fire" : 
+                          Settings.settings.visualizerType === "diamond" ? "Diamond" : 
+                          Settings.settings.visualizerType === "radial" ? "Radial" : "Radial"
                     font.pixelSize: 13
                     color: Theme.textPrimary
                 }
@@ -350,19 +341,19 @@ Rectangle {
                     MenuItem {
                         text: "Fire"
                         onTriggered: {
-                            visualizerTypeUpdated("fire")
+                            Settings.settings.visualizerType = "fire"
                         }
                     }
                     MenuItem {
                         text: "Diamond"
                         onTriggered: {
-                            visualizerTypeUpdated("diamond")
+                            Settings.settings.visualizerType = "diamond"
                         }
                     }
                     MenuItem {
                         text: "Radial"
                         onTriggered: {
-                            visualizerTypeUpdated("radial")
+                            Settings.settings.visualizerType = "radial"
                         }
                     }
                 }
@@ -394,7 +385,7 @@ Rectangle {
                     id: videoPathInput
                     anchors.fill: parent
                     anchors.margins: 12
-                    text: Settings.videoPath !== undefined ? Settings.videoPath : ""
+                    text: Settings.settings.videoPath !== undefined ? Settings.settings.videoPath : ""
                     font.pixelSize: 13
                     color: Theme.textPrimary
                     verticalAlignment: TextInput.AlignVCenter
@@ -403,7 +394,7 @@ Rectangle {
                     activeFocusOnTab: true
                     inputMethodHints: Qt.ImhUrlCharactersOnly
                     onTextChanged: {
-                        Settings.videoPath = text
+                        Settings.settings.videoPath = text
                     }
                     MouseArea {
                         anchors.fill: parent
