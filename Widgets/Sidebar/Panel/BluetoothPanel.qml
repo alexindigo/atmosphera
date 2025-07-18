@@ -80,7 +80,7 @@ Item {
         anchors.right: true
         margins.right: 0
         margins.top: 0
-        WlrLayershell.keyboardFocus: visible ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
+        WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
 
         onVisibleChanged: {
             if (!visible && Bluetooth.defaultAdapter && Bluetooth.defaultAdapter.discovering)

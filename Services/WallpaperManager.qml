@@ -71,7 +71,6 @@ Singleton {
         if (Settings.settings.randomWallpaper) {
             randomWallpaperTimer.stop();
             randomWallpaperTimer.start();
-            setRandomWallpaper();
         }
     }
 

@@ -20,7 +20,7 @@ PanelWindow {
     //z: 100
     //border.color: Theme.outline
     //border.width: 1
-    WlrLayershell.keyboardFocus: visible ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
+    WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
 
     Rectangle {
         anchors.fill: parent
@@ -31,12 +31,17 @@ PanelWindow {
         z: 0
 
         ColumnLayout {
+            id: content
             anchors.fill: parent
-            anchors.margins: 32
+            anchors.leftMargin: 32
+            anchors.rightMargin: 32
+            anchors.topMargin: 32
+            
             spacing: 24
 
             // Header
             ColumnLayout {
+                id: header
                 Layout.fillWidth: true
                 spacing: 4
                 RowLayout {
@@ -99,7 +104,7 @@ PanelWindow {
             // Scrollable settings area
             Rectangle {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 520
+                Layout.preferredHeight: content.height - settingsTabs.height - header.height - 128
                 color: "transparent"
                 border.width: 0
                 radius: 20
