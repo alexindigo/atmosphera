@@ -5,6 +5,7 @@ import Quickshell
 import qs.Components
 import qs.Settings
 import Quickshell.Wayland
+import "root:/Helpers/Holidays.js" as Holidays
 
 PanelWithOverlay {
     id: calendarOverlay
@@ -87,16 +88,57 @@ PanelWithOverlay {
                 month: Time.date.getMonth()
                 year: Time.date.getFullYear()
 
+                property var holidays: []
+
+                // Fetch holidays when calendar is opened or month/year changes
+                function updateHolidays() {
+                    Holidays.getHolidaysForMonth(calendar.year, calendar.month, function(holidays) {
+                        calendar.holidays = holidays;
+                    });
+                }
+                onMonthChanged: updateHolidays()
+                onYearChanged: updateHolidays()
+                Component.onCompleted: updateHolidays()
+                // Optionally, update when the panel becomes visible
+                Connections {
+                    target: calendarOverlay
+                    function onVisibleChanged() {
+                        if (calendarOverlay.visible) {
+                            calendar.month = Time.date.getMonth();
+                            calendar.year = Time.date.getFullYear();
+                            calendar.updateHolidays();
+                        }
+                    }
+                }
+
                 delegate: Rectangle {
                     width: 32
                     height: 32
                     radius: 8
+                    property var holidayInfo: calendar.holidays.filter(function(h) {
+                        var d = new Date(h.date);
+                        return d.getDate() === model.day && d.getMonth() === model.month && d.getFullYear() === model.year;
+                    })
+                    property bool isHoliday: holidayInfo.length > 0
                     color: {
                         if (model.today)
                             return Theme.accentPrimary;
                         if (mouseArea2.containsMouse)
                             return Theme.backgroundTertiary;
                         return "transparent";
+                    }
+
+                    // Holiday dot indicator
+                    Rectangle {
+                        visible: isHoliday
+                        width: 4; height: 4
+                        radius: 4
+                        color: Theme.accentTertiary
+                        anchors.top: parent.top
+                        anchors.right: parent.right
+                        anchors.topMargin: 4
+                        anchors.rightMargin: 4
+                        z: 2
                     }
 
                     Text {
@@ -113,12 +155,30 @@ PanelWithOverlay {
                         id: mouseArea2
                         anchors.fill: parent
                         hoverEnabled: true
+                        onEntered: {
+                            if (isHoliday) {
+                                holidayTooltip.text = holidayInfo.map(function(h) {
+                                    return h.localName + (h.name !== h.localName ? " (" + h.name + ")" : "") + (h.global ? " [Global]" : "");
+                                }).join(", ");
+                                holidayTooltip.targetItem = parent;
+                                holidayTooltip.tooltipVisible = true;
+                            }
+                        }
+                        onExited: holidayTooltip.tooltipVisible = false
                     }
 
                     Behavior on color {
                         ColorAnimation {
                             duration: 150
                         }
+                    }
+
+                    StyledTooltip {
+                        id: holidayTooltip
+                        text: ""
+                        tooltipVisible: false
+                        targetItem: undefined
+                        delay: 100
                     }
                 }
             }

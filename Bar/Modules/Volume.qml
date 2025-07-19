@@ -14,7 +14,7 @@ Item {
 
     PillIndicator {
         id: pillIndicator
-        icon: volume === 0 ? "volume_off" : (volume < 30 ? "volume_down" : "volume_up")
+        icon: shell && shell.defaultAudioSink && shell.defaultAudioSink.audio && shell.defaultAudioSink.audio.muted ? "volume_off" : (volume === 0 ? "volume_off" : (volume < 30 ? "volume_down" : "volume_up"))
         text: volume + "%"
 
         pillColor: Theme.surfaceVariant
@@ -36,7 +36,7 @@ Item {
             if (shell && shell.volume !== volume) {
                 volume = shell.volume
                 pillIndicator.text = volume + "%"
-                pillIndicator.icon = volume === 0 ? "volume_off" : (volume < 30 ? "volume_down" : "volume_up")
+                pillIndicator.icon = shell && shell.defaultAudioSink && shell.defaultAudioSink.audio && shell.defaultAudioSink.audio.muted ? "volume_off" : (volume === 0 ? "volume_off" : (volume < 30 ? "volume_down" : "volume_up"))
                 pillIndicator.show()
             }
         }
