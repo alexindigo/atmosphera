@@ -94,4 +94,18 @@ Scope {
 
         target: Quickshell
     }
+
+    Timer {
+        id: reloadTimer
+        interval: 500 // ms
+        repeat: false
+        onTriggered: Quickshell.reload(true)
+    }
+
+    Connections {
+        target: Quickshell
+        function onScreensChanged() {
+            reloadTimer.restart();
+        }
+    }
 }
