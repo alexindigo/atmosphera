@@ -84,7 +84,7 @@ Item {
 
     AudioDeviceSelector {
         id: ioSelector
-        onClosed: ioSelector.dismiss()
+        onPanelClosed: ioSelector.dismiss()
     }
 
     property bool containsMouse: false

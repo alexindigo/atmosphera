@@ -277,7 +277,6 @@ PanelWithOverlay {
     Component.onDestruction: {
     }
     onVisibleChanged: {
-        if (visible) {
-        }
+        if (!visible) panelClosed();
     }
 }
