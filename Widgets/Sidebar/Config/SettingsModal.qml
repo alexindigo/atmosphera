@@ -187,9 +187,13 @@ PanelWindow {
 
     // Release focus when modal becomes invisible
     onVisibleChanged: {
-        if (!visible)
-        // Focus will be handled by the individual components
-        {}
+        if (!visible) {
+            // Focus will be handled by the individual components
+            // Also trigger weather update if possible
+            if (typeof weather !== 'undefined' && weather !== null && weather.fetchCityWeather) {
+                weather.fetchCityWeather();
+            }
+        }
     }
 }
 
