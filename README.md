@@ -35,7 +35,7 @@ A sleek, minimal, and thoughtfully crafted setup for Wayland using **Quickshell*
 ---
 
 > ⚠️ **Note:**  
-> This setup currently requires **Niri** as your compositor, mainly due to its custom workspace indicator integration. However if you want, you can just adapt the Workspace.qml to your own compositor.
+> This setup currently only supports **Niri** and **Hyprland** (for the most part), mostly due to the workspace integration. For anything else you will have to add your own workspace logic.
 
 ---
 
