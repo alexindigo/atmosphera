@@ -5,7 +5,7 @@ import Quickshell
 import qs.Components
 import qs.Settings
 import Quickshell.Wayland
-import "root:/Helpers/Holidays.js" as Holidays
+import "../../Helpers/Holidays.js" as Holidays
 
 PanelWithOverlay {
     id: calendarOverlay
