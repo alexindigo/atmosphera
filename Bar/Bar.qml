@@ -87,6 +87,11 @@ Scope {
                             anchors.verticalCenter: parent.verticalCenter
                         }
 
+                        Battery {
+                            id: widgetsBattery
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+
                         Brightness {
                             id: widgetsBrightness
                             anchors.verticalCenter: parent.verticalCenter

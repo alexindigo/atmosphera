@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell
 import qs.Settings
 import qs.Components
+import qs.Bar.Modules
 
 Item {
     id: volumeDisplay
@@ -24,9 +25,22 @@ Item {
         StyledTooltip {
             id: volumeTooltip
             text: "Volume: " + volume + "%\nScroll up/down to change volume"
-            tooltipVisible: false
+            tooltipVisible: !ioSelector.visible && volumeDisplay.containsMouse
             targetItem: pillIndicator
             delay: 200
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            onClicked: {
+                if (ioSelector.visible) {
+                    ioSelector.dismiss();
+                } else {
+                    ioSelector.show();
+                }
+            }
         }
     }
 
@@ -54,8 +68,8 @@ Item {
         hoverEnabled: true
         acceptedButtons: Qt.NoButton // Accept wheel events only
         propagateComposedEvents: true
-        onEntered: volumeTooltip.tooltipVisible = true
-        onExited: volumeTooltip.tooltipVisible = false
+        onEntered: volumeDisplay.containsMouse = true
+        onExited: volumeDisplay.containsMouse = false
         cursorShape: Qt.PointingHandCursor
         onWheel:(wheel) => {
             if (!shell) return;
@@ -67,4 +81,11 @@ Item {
             }
         }
     }
+
+    AudioDeviceSelector {
+        id: ioSelector
+        onClosed: ioSelector.dismiss()
+    }
+
+    property bool containsMouse: false
 }

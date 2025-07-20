@@ -177,7 +177,7 @@ PanelWithOverlay {
                         id: holidayTooltip
                         text: ""
                         tooltipVisible: false
-                        targetItem: undefined
+                        targetItem: null
                         delay: 100
                     }
                 }
