@@ -1,6 +1,4 @@
 var _countryCode = null;
-var _regionCode = null;
-var _regionName = null;
 var _holidaysCache = {};
 
 function getCountryCode(callback) {
@@ -9,13 +7,11 @@ function getCountryCode(callback) {
         return;
     }
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "https://nominatim.openstreetmap.org/search?city="+ Settings.settings.weatherCity+"&country=&format=json&addressdetails=1&extratags=1", true);
+    xhr.open("GET", "http://ip-api.com/json/", true);
     xhr.onreadystatechange = function() {
         if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
             var response = JSON.parse(xhr.responseText);
-            _countryCode = response?.[0]?.address?.country_code ?? "US";
-            _regionCode = response?.[0]?.address?.["ISO3166-2-lvl4"] ?? "";
-            _regionName = response?.[0]?.address?.state ?? "";
+            _countryCode = response.countryCode;
             callback(_countryCode);
         }
     }
@@ -34,43 +30,17 @@ function getHolidays(year, countryCode, callback) {
     xhr.onreadystatechange = function() {
         if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
             var holidays = JSON.parse(xhr.responseText);
-            var augmentedHolidays = filterHolidaysByRegion(holidays);
-            _holidaysCache[cacheKey] = augmentedHolidays;
-            callback(augmentedHolidays);
+            _holidaysCache[cacheKey] = holidays;
+            callback(holidays);
         }
     }
     xhr.send();
 }
 
-function filterHolidaysByRegion(holidays) {
-    if (!_regionCode) {
-        return holidays;
-    }
-    const retHolidays = [];
-    holidays.forEach(function(holiday) {
-        if (holiday.counties?.length > 0) {
-            let found = false;
-            holiday.counties.forEach(function(county) {
-                if (county.toLowerCase() === _regionCode.toLowerCase()) {
-                    found = true;
-                }
-            });
-            if (found) {
-                var regionText = " (" + _regionName + ")";
-                holiday.name = holiday.name + regionText;
-                holiday.localName = holiday.localName + regionText;
-                retHolidays.push(holiday);
-            }
-        } else {
-            retHolidays.push(holiday);
-        }
-    });
-    return retHolidays;
-}
-
 function getHolidaysForMonth(year, month, callback) {
     getCountryCode(function(countryCode) {
         getHolidays(year, countryCode, function(holidays) {
+            // 0-based months (0=Jan, 11=Dec)
             var filtered = holidays.filter(function(h) {
                 var date = new Date(h.date);
                 return date.getFullYear() === year && date.getMonth() === month;
