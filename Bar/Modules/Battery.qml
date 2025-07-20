@@ -6,10 +6,9 @@ import qs.Components
 
 Item {
     id: batteryWidget
-    
     property var battery: UPower.displayDevice
     property bool isReady: battery && battery.ready && battery.isLaptopBattery && battery.isPresent
-    property real percent: isReady ? (battery.percentage * 100) : 0
+    property real percent: isReady ? battery.percentage : 0
     property bool charging: isReady ? battery.state === UPowerDeviceState.Charging : false
     property bool show: isReady && percent > 0
 
@@ -25,7 +24,7 @@ Item {
         return "battery_alert";
     }
 
-    visible: isReady && battery.isLaptopBattery
+    visible: show
     width: 22
     height: 36
 
@@ -79,4 +78,4 @@ Item {
         targetItem: batteryWidget
         delay: 200
     }
-}
+} 

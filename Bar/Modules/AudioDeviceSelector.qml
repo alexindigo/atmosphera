@@ -7,7 +7,7 @@ import qs.Settings
 
 PanelWithOverlay {
     id: ioSelector
-    signal panelClosed()
+    signal closed()
     property int tabIndex: 0
     property Item anchorItem: null
 
