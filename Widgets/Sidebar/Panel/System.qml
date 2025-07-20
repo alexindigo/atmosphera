@@ -60,11 +60,6 @@ Rectangle {
                             cache: false
                             sourceSize.width: 44
                             sourceSize.height: 44
-                            onStatusChanged: {
-                                if (status === Image.Error) {
-                                    avatarImage.visible = false;
-                                }
-                            }
                         }
                         maskSource: Rectangle {
                             width: 44
