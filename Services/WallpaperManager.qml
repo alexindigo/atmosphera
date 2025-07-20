@@ -116,7 +116,7 @@ Singleton {
     Process {
         id: generateThemeProcess
         command: ["wallust", "run", currentWallpaper, "-u", "-k", "-d", "Templates"]
-        workingDirectory: Quickshell.configDir
+        workingDirectory: Quickshell.shellDir
         running: false
     }
 }
