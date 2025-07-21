@@ -16,6 +16,7 @@ Scope {
 
     property alias appLauncherPanel: appLauncherPanel
     property var notificationHistoryWin: notificationHistoryWin
+    property bool pendingReload: false
 
     function updateVolume(vol) {
         volume = vol;
@@ -41,6 +42,12 @@ Scope {
 
     LockScreen {
         id: lockScreen
+        onLockedChanged: {
+            if (!locked && root.pendingReload) {
+                reloadTimer.restart();
+                root.pendingReload = false;
+            }
+        }
     }
 
     NotificationServer {
@@ -105,7 +112,11 @@ Scope {
     Connections {
         target: Quickshell
         function onScreensChanged() {
-            reloadTimer.restart();
+            if (lockScreen.locked) {
+                pendingReload = true;
+            } else {
+                reloadTimer.restart();
+            }
         }
     }
 }
