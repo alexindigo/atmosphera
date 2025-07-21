@@ -106,6 +106,14 @@ _Move content to ~/.config/quickshell_
 cd Noctalia && mv * ~/.config/quickshell/
 ```
 
+### _niri only_
+
+Add this to your `layout` section:
+
+`background-color "transparent"`
+
+That is to make swww work properly.
+
 </details>
 </br>
 
@@ -128,6 +136,7 @@ window-rule {
     clip-to-geometry true
 }
 ```
+
 ### Settings:
 
 To make the weather widget, wallpaper manager and record button work you will have to open up the settings menu in to right panel (top right button to open panel) and edit said things accordingly.
@@ -168,8 +177,7 @@ You will need to install a few things to get everything working:
 - `swww` to add fancy wallpaper animations (optional)
 - `wallust` to theme the setup based on wallpaper (optional)
 
-zigstat is bundled - source can be found [here](https://git.pika-os.com/wm-packages/pikabar/src/branch/main/src/zigstat).
----
+## zigstat is bundled - source can be found [here](https://git.pika-os.com/wm-packages/pikabar/src/branch/main/src/zigstat).
 
 ## Known issues
 
