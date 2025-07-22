@@ -226,7 +226,9 @@ PanelWithOverlay {
 
     function sinkNodes() {
         let nodes = Pipewire.nodes && Pipewire.nodes.values
-            ? Pipewire.nodes.values.filter(function(n) { return n.isSink && n.audio })
+            ? Pipewire.nodes.values.filter(function(n) {
+                return n.isSink && n.audio && n.isStream === false;
+            })
             : [];
         if (Pipewire.defaultAudioSink) {
             nodes = nodes.slice().sort(function(a, b) {
@@ -239,7 +241,9 @@ PanelWithOverlay {
     }
     function sourceNodes() {
         let nodes = Pipewire.nodes && Pipewire.nodes.values
-            ? Pipewire.nodes.values.filter(function(n) { return !n.isSink && n.audio })
+            ? Pipewire.nodes.values.filter(function(n) {
+                return !n.isSink && n.audio && n.isStream === false;
+            })
             : [];
         if (Pipewire.defaultAudioSource) {
             nodes = nodes.slice().sort(function(a, b) {
