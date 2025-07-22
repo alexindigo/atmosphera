@@ -177,11 +177,11 @@ You will need to install a few things to get everything working:
 - `swww` to add fancy wallpaper animations (optional)
 - `wallust` to theme the setup based on wallpaper (optional)
 
-## zigstat is bundled - source can be found [here](https://git.pika-os.com/wm-packages/pikabar/src/branch/main/src/zigstat).
+## zigstat and zigbrightnesss is bundled - source can be found [here](https://git.pika-os.com/wm-packages/pikabar/src/t).
 
 ## Known issues
 
-Currently the brightness indicator is very opiniated (using ddcutil with a script to log current brightness). This will be fixed **asap**!
+It is perfect now
 
 ---
 
