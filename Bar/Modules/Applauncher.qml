@@ -173,116 +173,69 @@ PanelWithOverlay {
                 anchors.margins: 32
                 spacing: 18
 
-                // Search Bar Row
-                RowLayout {
-                    spacing: 12
+                // Search Bar
+                Rectangle {
+                    id: searchBar
+                    color: Theme.surfaceVariant
+                    radius: 22
+                    height: 48
                     Layout.fillWidth: true
+                    border.color: searchField.activeFocus ? Theme.accentPrimary : Theme.outline
+                    border.width: searchField.activeFocus ? 2 : 1
 
-                    // Search Bar
-                    Rectangle {
-                        id: searchBar
-                        color: Theme.surfaceVariant
-                        radius: 22
-                        height: 48
-                        Layout.fillWidth: true
-                        Layout.preferredWidth: 320  // Made the search bar narrower
-                        border.color: searchField.activeFocus ? Theme.accentPrimary : Theme.outline
-                        border.width: searchField.activeFocus ? 2 : 1
-
-                        RowLayout {
-                            anchors.left: parent.left
-                            anchors.right: parent.right
-                            anchors.verticalCenter: parent.verticalCenter
-                            anchors.leftMargin: 14
-                            anchors.rightMargin: 14
-                            spacing: 10
-                            Text {
-                                text: "search"
-                                font.family: "Material Symbols Outlined"
-                                font.pixelSize: Theme.fontSizeHeader
-                                color: searchField.activeFocus ? Theme.accentPrimary : Theme.textSecondary
-                                verticalAlignment: Text.AlignVCenter
-                                Layout.alignment: Qt.AlignVCenter
-                            }
-                            TextField {
-                                id: searchField
-                                placeholderText: "Search apps..."
-                                color: Theme.textPrimary
-                                placeholderTextColor: Theme.textSecondary
-                                background: null
-                                font.family: Theme.fontFamily
-                                font.pixelSize: Theme.fontSizeBody
-                                Layout.fillWidth: true
-                                Layout.alignment: Qt.AlignVCenter
-                                onTextChanged: root.updateFilter()
-                                selectedTextColor: Theme.onAccent
-                                selectionColor: Theme.accentPrimary
-                                padding: 0
-                                verticalAlignment: TextInput.AlignVCenter
-                                leftPadding: 0
-                                rightPadding: 0
-                                topPadding: 0
-                                bottomPadding: 0
-                                font.bold: true
-                                Component.onCompleted: contentItem.cursorColor = Theme.textPrimary
-                                onActiveFocusChanged: contentItem.cursorColor = Theme.textPrimary
-
-                                Keys.onDownPressed: root.selectNext()
-                                Keys.onUpPressed: root.selectPrev()
-                                Keys.onEnterPressed: root.activateSelected()
-                                Keys.onReturnPressed: root.activateSelected()
-                                Keys.onEscapePressed: appLauncherPanel.hidePanel()
-                            }
-                        }
-                        Behavior on border.color {
-                            ColorAnimation {
-                                duration: 120
-                            }
-                        }
-                        Behavior on border.width {
-                            NumberAnimation {
-                                duration: 120
-                            }
-                        }
-                    }
-
-                    // Added rectangle with onClick
-                    Rectangle {
-                        id: actionButton
-                        width: 48
-                        height: 48
-                        radius: 20
-                        color: mouseArea.containsPress ? Theme.accentPrimary : Theme.surfaceVariant
-                        border.color: mouseArea.containsMouse ? Theme.accentPrimary : Theme.outline
-                        border.width: 2
-
+                    RowLayout {
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.leftMargin: 14
+                        anchors.rightMargin: 14
+                        spacing: 10
                         Text {
-                            text: "refresh"
+                            text: "search"
                             font.family: "Material Symbols Outlined"
                             font.pixelSize: Theme.fontSizeHeader
-                            color: mouseArea.containsMouse ? Theme.accentPrimary : Theme.textPrimary
-                            anchors.centerIn: parent
+                            color: searchField.activeFocus ? Theme.accentPrimary : Theme.textSecondary
+                            verticalAlignment: Text.AlignVCenter
+                            Layout.alignment: Qt.AlignVCenter
                         }
+                        TextField {
+                            id: searchField
+                            placeholderText: "Search apps..."
+                            color: Theme.textPrimary
+                            placeholderTextColor: Theme.textSecondary
+                            background: null
+                            font.family: Theme.fontFamily
+                            font.pixelSize: Theme.fontSizeBody
+                            Layout.fillWidth: true
+                            Layout.alignment: Qt.AlignVCenter
+                            onTextChanged: root.updateFilter()
+                            selectedTextColor: Theme.onAccent
+                            selectionColor: Theme.accentPrimary
+                            padding: 0
+                            verticalAlignment: TextInput.AlignVCenter
+                            leftPadding: 0
+                            rightPadding: 0
+                            topPadding: 0
+                            bottomPadding: 0
+                            font.bold: true
+                            Component.onCompleted: contentItem.cursorColor = Theme.textPrimary
+                            onActiveFocusChanged: contentItem.cursorColor = Theme.textPrimary
 
-                        MouseArea {
-                            id: mouseArea
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            onClicked: {
-                                Quickshell.reload(true);
-                            }
-                            cursorShape: Qt.PointingHandCursor
+                            Keys.onDownPressed: root.selectNext()
+                            Keys.onUpPressed: root.selectPrev()
+                            Keys.onEnterPressed: root.activateSelected()
+                            Keys.onReturnPressed: root.activateSelected()
+                            Keys.onEscapePressed: appLauncherPanel.hidePanel()
                         }
-
-                        Behavior on color {
-                            ColorAnimation {
-                                duration: 120
-                            }
+                    }
+                    Behavior on border.color {
+                        ColorAnimation {
+                            duration: 120
                         }
-                        Behavior on border.color {
-                            ColorAnimation {
-                                duration: 120
-                            }
+                    }
+                    Behavior on border.width {
+                        NumberAnimation {
+                            duration: 120
                         }
                     }
                 }
