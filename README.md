@@ -181,7 +181,8 @@ You will need to install a few things to get everything working:
 
 ## Known issues
 
-WiFi connections aren't being remembered.
+It is perfect now
+
 ---
 
 ## 💜 Credits
