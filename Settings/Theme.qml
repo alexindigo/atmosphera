@@ -102,10 +102,14 @@ Singleton {
 
     // Font Properties
     property string fontFamily: "Roboto"         // Family for all text
-
-    property int fontSizeHeader: 32              // Headers and titles
-    property int fontSizeBody: 16                // Body text and general content
-    property int fontSizeSmall: 14               // Small text like clock, labels
-    property int fontSizeCaption: 12             // Captions and fine print
+    
+    // Font size multiplier - adjust this in Settings.json to scale all fonts
+    property real fontSizeMultiplier: Settings.settings.fontSizeMultiplier || 1.0
+    
+    // Base font sizes (multiplied by fontSizeMultiplier)
+    property int fontSizeHeader: Math.round(32 * fontSizeMultiplier)     // Headers and titles
+    property int fontSizeBody: Math.round(16 * fontSizeMultiplier)       // Body text and general content
+    property int fontSizeSmall: Math.round(14 * fontSizeMultiplier)      // Small text like clock, labels
+    property int fontSizeCaption: Math.round(12 * fontSizeMultiplier)    // Captions and fine print
 }
 
