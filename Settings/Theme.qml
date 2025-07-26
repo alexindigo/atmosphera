@@ -15,7 +15,7 @@ Singleton {
     // FileView to load theme data from JSON file
     FileView {
         id: themeFile
-        path: Settings.settingsDir + "Theme.json"
+        path: Settings.themeFile
         watchChanges: true
         onFileChanged: reload()
         onAdapterUpdated: writeAdapter()

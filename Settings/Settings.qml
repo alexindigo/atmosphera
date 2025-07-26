@@ -8,7 +8,8 @@ Singleton {
 
     property string shellName: "Noctalia"
     property string settingsDir: (Quickshell.env("XDG_CONFIG_HOME") || Quickshell.env("HOME") + "/.config") + "/" + shellName + "/"
-    property string settingsFile: settingsDir + "Settings.json"
+    property string settingsFile: Quickshell.env("NOCTALIA_SETTINGS_FILE") || (settingsDir + "Settings.json")
+    property string themeFile: Quickshell.env("NOCTALIA_THEME_FILE") || (settingsDir + "Theme.json")
     property var settings: settingAdapter
 
     Item {
