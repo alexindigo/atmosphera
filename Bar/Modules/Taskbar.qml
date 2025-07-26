@@ -11,12 +11,12 @@ Item {
     width: runningAppsRow.width
     height: Settings.settings.taskbarIconSize
 
-    function getAppIcon(toplevel) {
+    function getAppIcon(toplevel: Toplevel): string {
         if (!toplevel)
             return "";
 
         // Try different icon resolution strategies
-        var icon = Quickshell.iconPath(toplevel.appId?.toLowerCase(), true);
+        let icon = Quickshell.iconPath(toplevel.appId?.toLowerCase(), true);
         if (!icon) {
             icon = Quickshell.iconPath(toplevel.appId, true);
         }
@@ -29,7 +29,6 @@ Item {
         if (!icon) {
             icon = Quickshell.iconPath("application-x-executable", true);
         }
-        console.log(icon)
 
         return icon || "";
     }

@@ -161,6 +161,12 @@ qs ipc call globalIPC toggleLock
 
 You can keybind it however you want in your niri setup.
 
+
+### Toggle Fullscreen:
+
+```
+qs ipc call globalIPC toggleFullscreen
+```
 </details>
 
 ---
