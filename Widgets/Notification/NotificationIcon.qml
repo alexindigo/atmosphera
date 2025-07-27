@@ -7,12 +7,20 @@ import qs.Components
 Item {
     id: root
     width: 22; height: 22
+    property bool isSilence: false
+
+    // Process for executing CLI commands
+    Process {
+        id: rightClickProcess
+        command: ["qs","ipc", "call", "globalIPC", "toggleNotificationPopup"]
+    }
 
     // Bell icon/button
     Item {
         id: bell
         width: 22; height: 22
         Text {
+            id: bellText
             anchors.centerIn: parent
             text: notificationHistoryWin.hasUnread ? "notifications_unread" : "notifications"
             font.family: mouseAreaBell.containsMouse ? "Material Symbols Rounded" : "Material Symbols Outlined"
@@ -25,7 +33,20 @@ Item {
             anchors.fill: parent
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
-            onClicked: notificationHistoryWin.visible = !notificationHistoryWin.visible
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
+            onClicked: function(mouse): void {
+                if (mouse.button === Qt.RightButton) {
+                    root.isSilence = !root.isSilence;
+                    rightClickProcess.running = true;
+                    bellText.text = root.isSilence ? "notifications_off" : "notifications"
+                }
+
+                if (mouse.button === Qt.LeftButton){
+                     notificationHistoryWin.visible = !notificationHistoryWin.visible
+                     return;
+                }
+
+            }
             onEntered: notificationTooltip.tooltipVisible = true
             onExited: notificationTooltip.tooltipVisible = false
         }
