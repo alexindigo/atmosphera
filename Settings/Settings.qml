@@ -28,7 +28,9 @@ Singleton {
             reload()
         }
         onLoaded: function() {
-            WallpaperManager.setCurrentWallpaper(settings.currentWallpaper, true);
+            Qt.callLater(function () {
+                WallpaperManager.setCurrentWallpaper(settings.currentWallpaper, true);
+            })
         }
         onLoadFailed: function(error) {
             settingAdapter = {}
