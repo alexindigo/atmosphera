@@ -71,6 +71,7 @@ Scope {
                     appName: notification.appName || "Notification",
                     summary: notification.summary || "",
                     body: notification.body || "",
+                    urgency: notification.urgency,
                     timestamp: Date.now()
                 });
             }

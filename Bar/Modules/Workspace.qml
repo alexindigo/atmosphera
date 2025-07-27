@@ -168,11 +168,17 @@ Item {
                     color: {
                         if (model.isFocused)
                             return Theme.accentPrimary;
-                        if (model.isActive)
-                            return Theme.accentPrimary.lighter(130);
                         if (model.isUrgent)
                             return Theme.error;
-                        return Qt.lighter(Theme.surfaceVariant, 1.6);
+                        if (model.isActive)
+                            return Theme.accentSecondary;
+                        if (model.isOccupied)
+                            return Qt.darker(Theme.accentSecondary, 1.5);
+
+                        if (model.isUrgent)
+                            return Theme.error;
+
+                        return Theme.surfaceVariant.lighter(1.5);
                     }
                     scale: model.isFocused ? 1.0 : 0.9
                     z: 0
@@ -182,7 +188,7 @@ Item {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
-                            WorkspaceManager.switchToWorkspace(model.idx);
+                            WorkspaceManager.switchToWorkspace(model.id);
                         }
                         z: 20
                         hoverEnabled: true

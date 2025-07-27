@@ -11,6 +11,23 @@ import "../../Helpers/Fuzzysort.js" as Fuzzysort
 PanelWithOverlay {
     id: appLauncherPanel
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
+    
+    function isPinned(app) {
+        return app && app.execString && Settings.settings.pinnedExecs.indexOf(app.execString) !== -1;
+    }
+    function togglePin(app) {
+        if (!app || !app.execString) return;
+        var arr = Settings.settings.pinnedExecs ? Settings.settings.pinnedExecs.slice() : [];
+        var idx = arr.indexOf(app.execString);
+        if (idx === -1) {
+            arr.push(app.execString);
+        } else {
+            arr.splice(idx, 1);
+        }
+        Settings.settings.pinnedExecs = arr;
+        root.updateFilter();
+    }
+    
     function showAt() {
         appLauncherPanelRect.showAt();
     }
@@ -126,7 +143,22 @@ PanelWithOverlay {
                         return r.obj;
                     }));
                 }
-                root.filteredApps = results;
+                // Pinning logic: split into pinned and unpinned
+                var pinned = [];
+                var unpinned = [];
+                for (var i = 0; i < results.length; ++i) {
+                    var app = results[i];
+                    if (app.execString && Settings.settings.pinnedExecs.indexOf(app.execString) !== -1) {
+                        pinned.push(app);
+                    } else {
+                        unpinned.push(app);
+                    }
+                }
+                // Sort pinned alphabetically
+                pinned.sort(function(a, b) {
+                    return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+                });
+                root.filteredApps = pinned.concat(unpinned);
                 root.selectedIndex = 0;
             }
             function selectNext() {
@@ -143,12 +175,15 @@ PanelWithOverlay {
                     return;
 
                 var modelData = filteredApps[selectedIndex];
+                const termEmu = Quickshell.env("TERMINAL") || Quickshell.env("TERM_PROGRAM") || "";
 
                 if (modelData.isCalculator) {
                     Qt.callLater(function () {
                         Quickshell.clipboardText = String(modelData.result);
                         Quickshell.execDetached(["notify-send", "Calculator Result", `${modelData.expr} = ${modelData.result} (copied to clipboard)`]);
                     });
+                } else if (modelData.runInTerminal && termEmu){
+                    Quickshell.execDetached([termEmu, "-e", modelData.execString.trim()]);
                 } else if (modelData.execute) {
                     modelData.execute();
                 } else {
@@ -273,10 +308,14 @@ PanelWithOverlay {
 
                             Rectangle {
                                 anchors.fill: parent
-                                color: hovered || isSelected ? Theme.accentPrimary : "transparent"
+                                color: (hovered || isSelected)
+                                    ? Theme.accentPrimary
+                                    : (appLauncherPanel.isPinned(modelData) ? Theme.surfaceVariant : "transparent")
                                 radius: 12
-                                border.color: hovered || isSelected ? Theme.accentPrimary : "transparent"
-                                border.width: hovered || isSelected ? 2 : 0
+                                border.color: appLauncherPanel.isPinned(modelData)
+                                    ? "transparent"
+                                    : (hovered || isSelected ? Theme.accentPrimary : "transparent")
+                                border.width: appLauncherPanel.isPinned(modelData) ? 0 : (hovered || isSelected ? 2 : 0)
                                 Behavior on color {
                                     ColorAnimation {
                                         duration: 120
@@ -328,7 +367,7 @@ PanelWithOverlay {
                                     spacing: 1
                                     Text {
                                         text: modelData.name
-                                        color: hovered || isSelected ? Theme.onAccent : Theme.textPrimary
+                                        color: (hovered || isSelected) ? Theme.onAccent : (appLauncherPanel.isPinned(modelData) ? Theme.textPrimary : Theme.textPrimary)
                                         font.family: Theme.fontFamily
                                         font.pixelSize: Theme.fontSizeSmall
                                         font.bold: hovered || isSelected
@@ -338,7 +377,7 @@ PanelWithOverlay {
                                     }
                                     Text {
                                         text: modelData.isCalculator ? (modelData.expr + " = " + modelData.result) : (modelData.comment || modelData.genericName || "No description available")
-                                        color: hovered || isSelected ? Theme.onAccent : Theme.textSecondary
+                                        color: (hovered || isSelected) ? Theme.onAccent : (appLauncherPanel.isPinned(modelData) ? Theme.textSecondary : Theme.textSecondary)
                                         font.family: Theme.fontFamily
                                         font.pixelSize: Theme.fontSizeCaption
                                         font.italic: !(modelData.comment || modelData.genericName)
@@ -355,9 +394,14 @@ PanelWithOverlay {
                                     text: modelData.isCalculator ? "content_copy" : "chevron_right"
                                     font.family: "Material Symbols Outlined"
                                     font.pixelSize: Theme.fontSizeBody
-                                    color: hovered || isSelected ? Theme.onAccent : Theme.textSecondary
+                                    color: (hovered || isSelected)
+                                        ? Theme.onAccent
+                                        : (appLauncherPanel.isPinned(modelData) ? Theme.textPrimary : Theme.textSecondary)
                                     verticalAlignment: Text.AlignVCenter
+                                    Layout.rightMargin: 8 // Add margin to separate from star
                                 }
+                                // Add a spacing item between chevron and star
+                                Item { width: 8; height: 1 }
                             }
 
                             Rectangle {
@@ -371,7 +415,14 @@ PanelWithOverlay {
                                 id: mouseArea
                                 anchors.fill: parent
                                 hoverEnabled: true
+                                acceptedButtons: Qt.LeftButton | Qt.RightButton
                                 onClicked: {
+                                    // Prevent app launch if click is inside pinArea
+                                    if (pinArea.containsMouse) return;
+                                    if (mouse.button === Qt.RightButton) {
+                                        appLauncherPanel.togglePin(modelData);
+                                        return;
+                                    }
                                     ripple.opacity = 0.18;
                                     rippleNumberAnimation.start();
                                     root.selectedIndex = index;
@@ -397,6 +448,37 @@ PanelWithOverlay {
                                 height: 1
                                 color: Theme.outline
                                 opacity: index === appList.count - 1 ? 0 : 0.10
+                            }
+                            // Pin/Unpin button (move to last child for stacking)
+                            Item {
+                                id: pinArea
+                                width: 28; height: 28
+                                z: 100 // Ensure above everything else
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                MouseArea {
+                                    anchors.fill: parent
+                                    preventStealing: true
+                                    z: 100
+                                    hoverEnabled: true
+                                    cursorShape: Qt.PointingHandCursor
+                                    acceptedButtons: Qt.LeftButton | Qt.RightButton
+                                    propagateComposedEvents: false
+                                    onClicked: {
+                                        appLauncherPanel.togglePin(modelData);
+                                        event.accepted = true;
+                                    }
+                                }
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "star"
+                                    font.family: "Material Symbols Outlined"
+                                    font.pixelSize: Theme.fontSizeSmall
+                                    color: (parent.MouseArea.containsMouse || hovered || isSelected)
+                                        ? Theme.onAccent
+                                        : (appLauncherPanel.isPinned(modelData) ? Theme.textPrimary : Theme.textDisabled)
+                                    verticalAlignment: Text.AlignVCenter
+                                }
                             }
                         }
                     }

@@ -112,4 +112,3 @@ Singleton {
     property int fontSizeSmall: Math.round(14 * fontSizeMultiplier)      // Small text like clock, labels
     property int fontSizeCaption: Math.round(12 * fontSizeMultiplier)    // Captions and fine print
 }
-
