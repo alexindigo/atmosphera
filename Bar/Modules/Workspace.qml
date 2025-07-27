@@ -173,7 +173,8 @@ Item {
                         if (model.isActive)
                             return Theme.accentSecondary;
                         if (model.isOccupied)
-                            return Theme.accentSecondary;
+                            return Qt.darker(Theme.accentSecondary, 1.5);
+
                         if (model.isUrgent)
                             return Theme.error;
 

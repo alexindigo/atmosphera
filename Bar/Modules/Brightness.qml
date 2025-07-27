@@ -16,7 +16,6 @@ Item {
 
     width: pill.width
     height: pill.height
-    visible: brightness >= 0
     
     Process {
         id: getBrightnessProcess
