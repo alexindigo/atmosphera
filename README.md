@@ -153,6 +153,12 @@ To make the weather widget, wallpaper manager and record button work you will ha
  qs ipc call globalIPC toggleLauncher
 ```
 
+### Toggle Lockscreen:
+
+```
+ qs ipc call globalIPC toggleLock
+```
+
 ### Toggle Notification Popup:
 
 ```
