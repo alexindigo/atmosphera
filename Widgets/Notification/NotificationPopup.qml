@@ -8,11 +8,12 @@ PanelWindow {
     implicitWidth: 350
     implicitHeight: notificationColumn.implicitHeight
     color: "transparent"
-    visible: notificationModel.count > 0
+    visible: notificationsVisible && notificationModel.count > 0
     screen: Quickshell.primaryScreen !== undefined ? Quickshell.primaryScreen : null
     focusable: false
 
     property bool barVisible: true
+    property bool notificationsVisible: true
 
     anchors.top: true
     anchors.right: true
@@ -25,6 +26,12 @@ PanelWindow {
 
     property int maxVisible: 5
     property int spacing: 5
+
+    function togglePopup(): void {
+        console.log("[NotificationPopup] Current state: " + notificationsVisible);
+        notificationsVisible = !notificationsVisible;
+        console.log("[NotificationPopup] New state: " + notificationsVisible);
+    }
 
     function addNotification(notification) {
         notificationModel.insert(0, {

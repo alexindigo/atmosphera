@@ -62,7 +62,9 @@ Scope {
         onNotification: function (notification) {
             console.log("Notification received:", notification.appName);
             notification.tracked = true;
-            notificationPopup.addNotification(notification);
+            if (notificationPopup.notificationsVisible) {
+                notificationPopup.addNotification(notification);
+            }
             if (notificationHistoryWin) {
                 notificationHistoryWin.addToHistory({
                     id: notification.id,
@@ -96,6 +98,7 @@ Scope {
         appLauncherPanel: appLauncherPanel
         lockScreen: lockScreen
         idleInhibitor: idleInhibitor
+        notificationPopup: notificationPopup
     }
 
     Connections {
