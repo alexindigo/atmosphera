@@ -11,6 +11,9 @@ import qs.Widgets.Notification
 import qs.Settings
 import qs.Helpers
 
+import "./Helpers/IdleInhibitor.qml"
+import "./Helpers/IPCHandlers.qml"
+
 Scope {
     id: root
 
@@ -48,6 +51,10 @@ Scope {
                 root.pendingReload = false;
             }
         }
+    }
+
+    IdleInhibitor {
+        id: idleInhibitor
     }
 
     NotificationServer {
@@ -88,6 +95,7 @@ Scope {
     IPCHandlers {
         appLauncherPanel: appLauncherPanel
         lockScreen: lockScreen
+        idleInhibitor: idleInhibitor
     }
 
     Connections {
