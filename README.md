@@ -153,14 +153,17 @@ To make the weather widget, wallpaper manager and record button work you will ha
  qs ipc call globalIPC toggleLauncher
 ```
 
-### Toggle Lockscreen:
+### Toggle Notification Popup:
 
 ```
-qs ipc call globalIPC toggleLock
+qs ipc call globalIPC toggleNotificationPopup
 ```
 
-You can keybind it however you want in your niri setup.
+### Toggle Idle Inhibitor:
 
+```
+qs ipc call globalIPC toggleIdleInhibitor
+```
 
 ### Toggle Fullscreen:
 
