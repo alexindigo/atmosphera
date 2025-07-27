@@ -63,6 +63,10 @@ Scope {
                         Media {
                             anchors.verticalCenter: parent.verticalCenter
                         }
+
+                        Taskbar {
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
                     }
 
                     ActiveWindow {

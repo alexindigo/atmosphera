@@ -61,17 +61,17 @@ Item {
         id: batteryTooltip
         text: {
             let lines = [];
-            if (isReady) {
-                lines.push(charging ? "Charging" : "Discharging");
-                lines.push(Math.round(percent) + "%");
-                if (battery.changeRate !== undefined)
-                    lines.push("Rate: " + battery.changeRate.toFixed(2) + " W");
-                if (battery.timeToEmpty > 0)
-                    lines.push("Time left: " + Math.floor(battery.timeToEmpty / 60) + " min");
-                if (battery.timeToFull > 0)
-                    lines.push("Time to full: " + Math.floor(battery.timeToFull / 60) + " min");
-                if (battery.healthPercentage !== undefined)
-                    lines.push("Health: " + Math.round(battery.healthPercentage) + "%");
+            if (batteryWidget.isReady) {
+                lines.push(batteryWidget.charging ? "Charging" : "Discharging");
+                lines.push(Math.round(batteryWidget.percent) + "%");
+                if (batteryWidget.battery.changeRate !== undefined)
+                    lines.push("Rate: " + batteryWidget.battery.changeRate.toFixed(2) + " W");
+                if (batteryWidget.battery.timeToEmpty > 0)
+                    lines.push("Time left: " + Math.floor(batteryWidget.battery.timeToEmpty / 60) + " min");
+                if (batteryWidget.battery.timeToFull > 0)
+                    lines.push("Time to full: " + Math.floor(batteryWidget.battery.timeToFull / 60) + " min");
+                if (batteryWidget.battery.healthPercentage !== undefined)
+                    lines.push("Health: " + Math.round(batteryWidget.battery.healthPercentage) + "%");
             }
             return lines.join("\n");
         }

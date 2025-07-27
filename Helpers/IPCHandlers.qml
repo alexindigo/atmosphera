@@ -1,10 +1,24 @@
 import Quickshell.Io
 
+import "./IdleInhibitor.qml"
+
 IpcHandler {
     property var appLauncherPanel
     property var lockScreen
+    property IdleInhibitor idleInhibitor
+    property var notificationPopup
 
     target: "globalIPC"
+
+    function toggleIdleInhibitor(): void {
+        idleInhibitor.toggle()
+    }
+
+
+    function toggleNotificationPopup(): void {
+        console.log("[IPC] NotificationPopup toggle() called")
+        notificationPopup.togglePopup();
+    }
 
     // Toggle Applauncher visibility
     function toggleLauncher(): void {

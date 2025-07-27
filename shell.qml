@@ -11,6 +11,9 @@ import qs.Widgets.Notification
 import qs.Settings
 import qs.Helpers
 
+import "./Helpers/IdleInhibitor.qml"
+import "./Helpers/IPCHandlers.qml"
+
 Scope {
     id: root
 
@@ -50,12 +53,18 @@ Scope {
         }
     }
 
+    IdleInhibitor {
+        id: idleInhibitor
+    }
+
     NotificationServer {
         id: notificationServer
         onNotification: function (notification) {
             console.log("Notification received:", notification.appName);
             notification.tracked = true;
-            notificationPopup.addNotification(notification);
+            if (notificationPopup.notificationsVisible) {
+                notificationPopup.addNotification(notification);
+            }
             if (notificationHistoryWin) {
                 notificationHistoryWin.addToHistory({
                     id: notification.id,
@@ -89,6 +98,8 @@ Scope {
     IPCHandlers {
         appLauncherPanel: appLauncherPanel
         lockScreen: lockScreen
+        idleInhibitor: idleInhibitor
+        notificationPopup: notificationPopup
     }
 
     Connections {
