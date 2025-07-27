@@ -9,6 +9,7 @@ import Quickshell.Services.Pam
 import Quickshell.Io
 import qs.Settings
 import qs.Services
+import qs.Components
 import "../Helpers/Weather.js" as WeatherHelper
 
 WlSessionLock {
@@ -316,63 +317,99 @@ WlSessionLock {
             }
         }
 
-        // Top-center info panel (clock + weather)
-        ColumnLayout {
+        Corners {
+            id: topRightCorner
+            position: "bottomleft"
+            size: 1.3
+            fillColor: (Theme.backgroundPrimary !== undefined && Theme.backgroundPrimary !== null) ? Theme.backgroundPrimary : "#222"
+            offsetX: screen.width / 2 + 31
+            offsetY: 0
             anchors.top: parent.top
+            //anchors.horizontalCenter: parent.horizontalCenter
+            visible: Settings.settings.showCorners
+            z: 50
+        }
+
+        Corners {
+            id: topLeftCorner
+            position: "bottomright"
+            size: 1.3
+            fillColor: (Theme.backgroundPrimary !== undefined && Theme.backgroundPrimary !== null) ? Theme.backgroundPrimary : "#222"
+            offsetX: - Screen.width / 2 - 31
+            offsetY: 0
+            anchors.top: parent.top
+            //anchors.horizontalCenter: parent.horizontalCenter
+            visible: Settings.settings.showCorners
+            z: 51
+        }
+        
+        Rectangle {
+            width: infoColumn.width + 16
+            height: infoColumn.height
+            color: (Theme.backgroundPrimary !== undefined && Theme.backgroundPrimary !== null) ? Theme.backgroundPrimary : "#222"
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.topMargin: 40
-            spacing: 8
-            // Clock
-            Text {
-                id: timeText
-                text: Qt.formatDateTime(new Date(), "HH:mm")
-                font.family: Theme.fontFamily
-                font.pixelSize: 48
-                font.bold: true
-                color: Theme.textPrimary
-                horizontalAlignment: Text.AlignHCenter
-                Layout.alignment: Qt.AlignHCenter
-            }
-            Text {
-                id: dateText
-                text: Qt.formatDateTime(new Date(), "dddd, MMMM d")
-                font.family: Theme.fontFamily
-                font.pixelSize: 16
-                color: Theme.textSecondary
-                opacity: 0.8
-                horizontalAlignment: Text.AlignHCenter
-                Layout.alignment: Qt.AlignHCenter
-            }
-            // Weather info (centered, no city)
-            RowLayout {
-                spacing: 6
-                Layout.alignment: Qt.AlignHCenter
+            bottomLeftRadius: 20
+            bottomRightRadius: 20
+            
+            // Top-center info panel (clock + weather)
+            ColumnLayout {
+                id: infoColumn
+                anchors.top: parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
-                visible: weatherData && weatherData.current_weather
+                anchors.topMargin: 0
+                spacing: 8
+                // Clock
                 Text {
-                    text: weatherData && weatherData.current_weather ? materialSymbolForCode(weatherData.current_weather.weathercode) : "cloud"
-                    font.family: "Material Symbols Outlined"
-                    font.pixelSize: 28
-                    color: Theme.accentPrimary
-                    verticalAlignment: Text.AlignVCenter
-                }
-                Text {
-                    text: weatherData && weatherData.current_weather ? (Settings.settings.useFahrenheit ? `${Math.round(weatherData.current_weather.temperature * 9 / 5 + 32)}°F` : `${Math.round(weatherData.current_weather.temperature)}°C`) : (Settings.settings.useFahrenheit ? "--°F" : "--°C")
+                    id: timeText
+                    text: Qt.formatDateTime(new Date(), "HH:mm")
                     font.family: Theme.fontFamily
-                    font.pixelSize: 18
-                    color: Theme.textSecondary
-                    verticalAlignment: Text.AlignVCenter
+                    font.pixelSize: 48
+                    font.bold: true
+                    color: Theme.textPrimary
+                    horizontalAlignment: Text.AlignHCenter
+                    Layout.alignment: Qt.AlignHCenter
                 }
-            }
-            // Weather error
-            Text {
-                text: weatherError
-                color: Theme.error
-                visible: weatherError !== ""
-                font.family: Theme.fontFamily
-                font.pixelSize: 10
-                horizontalAlignment: Text.AlignHCenter
-                Layout.alignment: Qt.AlignHCenter
+                Text {
+                    id: dateText
+                    text: Qt.formatDateTime(new Date(), "dddd, MMMM d")
+                    font.family: Theme.fontFamily
+                    font.pixelSize: 16
+                    color: Theme.textSecondary
+                    opacity: 0.8
+                    horizontalAlignment: Text.AlignHCenter
+                    Layout.alignment: Qt.AlignHCenter
+                }
+                // Weather info (centered, no city)
+                RowLayout {
+                    spacing: 6
+                    Layout.alignment: Qt.AlignHCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    visible: weatherData && weatherData.current_weather
+                    Text {
+                        text: weatherData && weatherData.current_weather ? materialSymbolForCode(weatherData.current_weather.weathercode) : "cloud"
+                        font.family: "Material Symbols Outlined"
+                        font.pixelSize: 28
+                        color: Theme.accentPrimary
+                        verticalAlignment: Text.AlignVCenter
+                    }
+                    Text {
+                        text: weatherData && weatherData.current_weather ? (Settings.settings.useFahrenheit ? `${Math.round(weatherData.current_weather.temperature * 9 / 5 + 32)}°F` : `${Math.round(weatherData.current_weather.temperature)}°C`) : (Settings.settings.useFahrenheit ? "--°F" : "--°C")
+                        font.family: Theme.fontFamily
+                        font.pixelSize: 18
+                        color: Theme.textSecondary
+                        verticalAlignment: Text.AlignVCenter
+                    }
+                }
+                // Weather error
+                Text {
+                    text: weatherError
+                    color: Theme.error
+                    visible: weatherError !== ""
+                    font.family: Theme.fontFamily
+                    font.pixelSize: 10
+                    horizontalAlignment: Text.AlignHCenter
+                    Layout.alignment: Qt.AlignHCenter
+                }
             }
         }
 
