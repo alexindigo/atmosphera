@@ -20,8 +20,8 @@ Singleton {
         onFileChanged: reload()
         onAdapterUpdated: writeAdapter()
         onLoadFailed: function(error) {
-            if (error.includes("No such file")) {
-                themeData = {}
+            if (error.toString().includes("No such file") || error === 2) {
+                // File doesn't exist, create it with default values
                 writeAdapter()
             }
         }
