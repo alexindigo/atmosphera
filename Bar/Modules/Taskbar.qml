@@ -10,6 +10,7 @@ Item {
     id: taskbar
     width: runningAppsRow.width
     height: Settings.settings.taskbarIconSize
+    visible: Settings.settings.showTaskbar
 
     // Attach custom tooltip
     StyledTooltip {
