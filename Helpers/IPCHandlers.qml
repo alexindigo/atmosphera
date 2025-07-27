@@ -1,27 +1,10 @@
 import Quickshell.Io
-import Quickshell.Wayland
 
 IpcHandler {
     property var appLauncherPanel
     property var lockScreen
 
     target: "globalIPC"
-
-    // Toggle Fullscreen
-    function toggleFullscreen(): void {
-        console.log("[IPC] toggleFullscreen() called")
-        if (ToplevelManager.activeToplevel) {
-            if (ToplevelManager.activeToplevel.fullscreen) {
-                // Exit fullscreen
-                ToplevelManager.activeToplevel.fullscreen = false;
-            } else {
-                // Enter fullscreen
-                ToplevelManager.activeToplevel.fullscreen = true;
-            }
-        } else {
-            console.warn("[IPC] No active toplevel window to toggle fullscreen");
-        }
-    }
 
     // Toggle Applauncher visibility
     function toggleLauncher(): void {
