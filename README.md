@@ -164,12 +164,6 @@ qs ipc call globalIPC toggleNotificationPopup
 ```
 qs ipc call globalIPC toggleIdleInhibitor
 ```
-
-### Toggle Fullscreen:
-
-```
-qs ipc call globalIPC toggleFullscreen
-```
 </details>
 
 ---
