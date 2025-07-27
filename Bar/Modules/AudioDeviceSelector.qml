@@ -89,21 +89,25 @@ PanelWithOverlay {
                                 ColumnLayout {
                                     Layout.fillWidth: true
                                     spacing: 1
+                                    Layout.maximumWidth: sinkList.width - 120 // Reserve space for the Set button
                                     Text {
                                         text: modelData.nickname || modelData.description || modelData.name
                                         font.bold: true
                                         font.pixelSize: 12
                                         color: (Pipewire.defaultAudioSink && Pipewire.defaultAudioSink.id === modelData.id) ? Theme.accentPrimary : Theme.textPrimary
                                         elide: Text.ElideRight
+                                        maximumLineCount: 1
+                                        Layout.fillWidth: true
                                     }
                                     Text {
                                         text: modelData.description !== modelData.nickname ? modelData.description : ""
                                         font.pixelSize: 10
                                         color: Theme.textSecondary
                                         elide: Text.ElideRight
+                                        maximumLineCount: 1
+                                        Layout.fillWidth: true
                                     }
                                 }
-                                Item { Layout.fillWidth: true }
                                 Rectangle {
                                     visible: Pipewire.preferredDefaultAudioSink !== modelData
                                     width: 60; height: 20
@@ -173,21 +177,25 @@ PanelWithOverlay {
                                 ColumnLayout {
                                     Layout.fillWidth: true
                                     spacing: 1
+                                    Layout.maximumWidth: sourceList.width - 120 // Reserve space for the Set button
                                     Text {
                                         text: modelData.nickname || modelData.description || modelData.name
                                         font.bold: true
                                         font.pixelSize: 12
                                         color: (Pipewire.defaultAudioSource && Pipewire.defaultAudioSource.id === modelData.id) ? Theme.accentPrimary : Theme.textPrimary
                                         elide: Text.ElideRight
+                                        maximumLineCount: 1
+                                        Layout.fillWidth: true
                                     }
                                     Text {
                                         text: modelData.description !== modelData.nickname ? modelData.description : ""
                                         font.pixelSize: 10
                                         color: Theme.textSecondary
                                         elide: Text.ElideRight
+                                        maximumLineCount: 1
+                                        Layout.fillWidth: true
                                     }
                                 }
-                                Item { Layout.fillWidth: true }
                                 Rectangle {
                                     visible: Pipewire.preferredDefaultAudioSource !== modelData
                                     width: 60; height: 20

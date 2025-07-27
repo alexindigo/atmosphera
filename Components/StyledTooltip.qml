@@ -56,7 +56,7 @@ Window {
 
     Rectangle {
         anchors.fill: parent
-        radius: 6
+        radius: 20
         color: Theme.backgroundTertiary || "#222"
         border.color: Theme.outline || "#444"
         border.width: 1

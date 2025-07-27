@@ -48,6 +48,7 @@ Singleton {
             property bool showActiveWindowIcon: false
             property bool showSystemInfoInBar: false
             property bool showCorners: true
+            property bool showTaskbar: true
             property bool showMediaInBar: false
             property bool useSWWW: false
             property bool randomWallpaper: false

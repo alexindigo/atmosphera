@@ -24,7 +24,7 @@ Item {
         textColor: Theme.textPrimary
         StyledTooltip {
             id: volumeTooltip
-            text: "Volume: " + volume + "%\nScroll up/down to change volume"
+            text: "Volume: " + volume + "%\nScroll up/down to change volume.\nLeft click to open the input/output selection."
             tooltipVisible: !ioSelector.visible && volumeDisplay.containsMouse
             targetItem: pillIndicator
             delay: 200
