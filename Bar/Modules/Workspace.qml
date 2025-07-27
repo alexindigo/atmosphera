@@ -188,7 +188,7 @@ Item {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
-                            WorkspaceManager.switchToWorkspace(model.id);
+                            WorkspaceManager.switchToWorkspace(model.idx);
                         }
                         z: 20
                         hoverEnabled: true
