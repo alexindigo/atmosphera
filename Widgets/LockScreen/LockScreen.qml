@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 import QtQuick.Effects
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 import Quickshell.Wayland
 import Quickshell
 import Quickshell.Services.Pam
@@ -146,6 +146,7 @@ WlSessionLock {
             blurEnabled: true
             blur: 0.48   // controls blur strength (0 to 1)
             blurMax: 128 // max blur radius in pixels
+            // transparentBorder: true
         }
 
         ColumnLayout {
@@ -169,8 +170,9 @@ WlSessionLock {
                     visible: false
                     asynchronous: true
                 }
-                OpacityMask {
+                MultiEffect {
                     anchors.fill: avatarImage
+                    maskEnabled: true
                     source: avatarImage
                     maskSource: Rectangle {
                         width: avatarImage.width
@@ -189,10 +191,11 @@ WlSessionLock {
                     visible: Settings.settings.profileImage === ""
                 }
                 layer.enabled: true
-                layer.effect: Glow {
-                    color: Theme.accentPrimary
-                    radius: 8
-                    samples: 16
+                layer.effect: MultiEffect {
+                    shadowEnabled: true
+                    shadowColor: Theme.accentPrimary
+                    // radius: 8
+                    // samples: 16
                 }
             }
 
