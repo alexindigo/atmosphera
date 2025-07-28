@@ -1,7 +1,7 @@
-import QtQuick 
+import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 import qs.Settings
 import qs.Components
 import qs.Services
@@ -61,7 +61,8 @@ Rectangle {
                 // Album art with spectrum
                 Item {
                     id: albumArtContainer
-                    width: 96; height: 96 // enough for spectrum and art (will adjust if needed)
+                    width: 96
+                    height: 96 // enough for spectrum and art (will adjust if needed)
                     Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
 
                     // Spectrum visualizer
@@ -80,7 +81,8 @@ Rectangle {
                     // Album art image
                     Rectangle {
                         id: albumArtwork
-                        width: 60; height: 60
+                        width: 60
+                        height: 60
                         anchors.centerIn: parent
                         radius: 30 // circle
                         color: Qt.darker(Theme.surface, 1.1)
@@ -103,14 +105,23 @@ Rectangle {
 
                             // Rounded corners using layer
                             layer.enabled: true
-                            layer.effect: OpacityMask {
-                                cached: true
-                                maskSource: Rectangle {
-                                    width: albumArt.width
-                                    height: albumArt.height
-                                    radius: albumArt.width / 2 // circle
-                                    visible: false
-                                }
+                            layer.effect: MultiEffect {
+                                maskEnabled: true
+                                maskSource: mask
+                            }
+                        }
+
+                        Item {
+                            id: mask
+
+                            anchors.fill: albumArt
+                            layer.enabled: true
+                            visible: false
+
+                            Rectangle {
+                                width: albumArt.width
+                                height: albumArt.height
+                                radius: albumArt.width / 2 // circle
                             }
                         }
 
@@ -172,8 +183,7 @@ Rectangle {
                 color: Qt.rgba(Theme.textPrimary.r, Theme.textPrimary.g, Theme.textPrimary.b, 0.15)
                 Layout.fillWidth: true
 
-                property real progressRatio: Math.min(1, MusicManager.trackLength > 0 ? 
-                                           (MusicManager.currentPosition / MusicManager.trackLength) : 0)
+                property real progressRatio: Math.min(1, MusicManager.trackLength > 0 ? (MusicManager.currentPosition / MusicManager.trackLength) : 0)
 
                 Rectangle {
                     id: progressFill
@@ -183,7 +193,9 @@ Rectangle {
                     color: Theme.accentPrimary
 
                     Behavior on width {
-                        NumberAnimation { duration: 200 }
+                        NumberAnimation {
+                            duration: 200
+                        }
                     }
                 }
 
@@ -197,14 +209,16 @@ Rectangle {
                     border.color: Qt.lighter(Theme.accentPrimary, 1.3)
                     border.width: 1
 
-                    x: Math.max(0, Math.min(parent.width - width, progressFill.width - width/2))
+                    x: Math.max(0, Math.min(parent.width - width, progressFill.width - width / 2))
                     anchors.verticalCenter: parent.verticalCenter
 
                     visible: MusicManager.trackLength > 0
                     scale: progressMouseArea.containsMouse || progressMouseArea.pressed ? 1.2 : 1.0
 
                     Behavior on scale {
-                        NumberAnimation { duration: 150 }
+                        NumberAnimation {
+                            duration: 150
+                        }
                     }
                 }
 
@@ -216,15 +230,15 @@ Rectangle {
                     cursorShape: Qt.PointingHandCursor
                     enabled: MusicManager.trackLength > 0 && MusicManager.canSeek
 
-                    onClicked: function(mouse) {
-                        let ratio = mouse.x / width
-                        MusicManager.seekByRatio(ratio)
+                    onClicked: function (mouse) {
+                        let ratio = mouse.x / width;
+                        MusicManager.seekByRatio(ratio);
                     }
 
-                    onPositionChanged: function(mouse) {
+                    onPositionChanged: function (mouse) {
                         if (pressed) {
-                            let ratio = Math.max(0, Math.min(1, mouse.x / width))
-                            MusicManager.seekByRatio(ratio)
+                            let ratio = Math.max(0, Math.min(1, mouse.x / width));
+                            MusicManager.seekByRatio(ratio);
                         }
                     }
                 }
@@ -319,4 +333,4 @@ Rectangle {
             }
         }
     }
-} 
+}

@@ -1,8 +1,8 @@
 import QtQuick
-import Qt5Compat.GraphicalEffects
 import Quickshell
 import Quickshell.Widgets
 import qs.Settings
+import QtQuick.Effects
 
 Item {
     anchors.fill: parent
@@ -17,16 +17,25 @@ Item {
         backer.fillMode: Image.PreserveAspectCrop
     }
 
-    OpacityMask {
+    MultiEffect {
         anchors.fill: avatarImage
         source: avatarImage
-        maskSource: Rectangle {
-            width: avatarImage.width
-            height: avatarImage.height
-            radius: avatarImage.width / 2
-            visible: false
-        }
+        maskEnabled: true
+        maskSource: mask
         visible: Settings.settings.profileImage !== ""
+    }
+
+    Item {
+        id: mask
+
+        anchors.fill: avatarImage
+        layer.enabled: true
+        visible: false
+
+        Rectangle {
+            anchors.fill: avatarImage
+            radius: avatarImage.width / 2
+        }
     }
 
     // Fallback icon
@@ -40,4 +49,3 @@ Item {
         z: 0
     }
 }
-

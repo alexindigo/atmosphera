@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Effects
 import QtQuick.Controls
-import Qt5Compat.GraphicalEffects
 import Quickshell.Widgets
 import qs.Components
 import qs.Settings
@@ -91,7 +91,7 @@ Rectangle {
                         activeFocusOnTab: true
                         inputMethodHints: Qt.ImhUrlCharactersOnly
                         onTextChanged: {
-                            Settings.settings.profileImage = text
+                            Settings.settings.profileImage = text;
                         }
                         MouseArea {
                             anchors.fill: parent
@@ -152,7 +152,7 @@ Rectangle {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        Settings.settings.showActiveWindowIcon = !Settings.settings.showActiveWindowIcon
+                        Settings.settings.showActiveWindowIcon = !Settings.settings.showActiveWindowIcon;
                     }
                 }
             }
@@ -207,7 +207,7 @@ Rectangle {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        Settings.settings.showSystemInfoInBar = !Settings.settings.showSystemInfoInBar
+                        Settings.settings.showSystemInfoInBar = !Settings.settings.showSystemInfoInBar;
                     }
                 }
             }
@@ -262,7 +262,7 @@ Rectangle {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        Settings.settings.showCorners = !Settings.settings.showCorners
+                        Settings.settings.showCorners = !Settings.settings.showCorners;
                     }
                 }
             }
@@ -317,7 +317,7 @@ Rectangle {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        Settings.settings.showTaskbar = !Settings.settings.showTaskbar
+                        Settings.settings.showTaskbar = !Settings.settings.showTaskbar;
                     }
                 }
             }
@@ -372,7 +372,7 @@ Rectangle {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        Settings.settings.showDock = !Settings.settings.showDock
+                        Settings.settings.showDock = !Settings.settings.showDock;
                     }
                 }
             }
@@ -427,7 +427,7 @@ Rectangle {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        Settings.settings.showMediaInBar = !Settings.settings.showMediaInBar
+                        Settings.settings.showMediaInBar = !Settings.settings.showMediaInBar;
                     }
                 }
             }
@@ -482,7 +482,7 @@ Rectangle {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        Settings.settings.dimPanels = !Settings.settings.dimPanels
+                        Settings.settings.dimPanels = !Settings.settings.dimPanels;
                     }
                 }
             }
@@ -621,7 +621,7 @@ Rectangle {
                     activeFocusOnTab: true
                     inputMethodHints: Qt.ImhUrlCharactersOnly
                     onTextChanged: {
-                        Settings.settings.videoPath = text
+                        Settings.settings.videoPath = text;
                     }
                     MouseArea {
                         anchors.fill: parent
