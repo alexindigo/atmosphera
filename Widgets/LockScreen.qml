@@ -322,7 +322,7 @@ WlSessionLock {
             position: "bottomleft"
             size: 1.3
             fillColor: (Theme.backgroundPrimary !== undefined && Theme.backgroundPrimary !== null) ? Theme.backgroundPrimary : "#222"
-            offsetX: screen.width / 2 + 31
+            offsetX: screen.width / 2 + 30
             offsetY: 0
             anchors.top: parent.top
             //anchors.horizontalCenter: parent.horizontalCenter
@@ -335,7 +335,7 @@ WlSessionLock {
             position: "bottomright"
             size: 1.3
             fillColor: (Theme.backgroundPrimary !== undefined && Theme.backgroundPrimary !== null) ? Theme.backgroundPrimary : "#222"
-            offsetX: - Screen.width / 2 - 31
+            offsetX: - Screen.width / 2 - 30
             offsetY: 0
             anchors.top: parent.top
             //anchors.horizontalCenter: parent.horizontalCenter

@@ -373,6 +373,7 @@ PanelWithOverlay {
             anchors.top: mainRectangle.top
             offsetX: -447 + sidebarPopupRect.slideOffset
             offsetY: 0
+            visible: Settings.settings.showCorners
 
             Behavior on offsetX {
                 enabled: !sidebarPopupRect.isAnimating
@@ -390,6 +391,7 @@ PanelWithOverlay {
             fillColor: Theme.backgroundPrimary
             offsetX: 33 + sidebarPopupRect.slideOffset
             offsetY: 46
+            visible: Settings.settings.showCorners
 
             Behavior on offsetX {
                 enabled: !sidebarPopupRect.isAnimating

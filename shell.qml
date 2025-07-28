@@ -21,10 +21,17 @@ Scope {
     property var notificationHistoryWin: notificationHistoryWin
     property bool pendingReload: false
 
+    // Helper function to round value to nearest step
+    function roundToStep(value, step) {
+        return Math.round(value / step) * step;
+    }
+
     function updateVolume(vol) {
-        volume = vol;
+        var clamped = Math.max(0, Math.min(100, vol));
+        var stepped = roundToStep(clamped, 5);
+        volume = stepped;
         if (defaultAudioSink && defaultAudioSink.audio) {
-            defaultAudioSink.audio.volume = vol / 100;
+            defaultAudioSink.audio.volume = stepped / 100;
         }
     }
 
@@ -83,7 +90,6 @@ Scope {
         barVisible: bar.visible
     }
 
-    // Notification History Window
     NotificationHistory {
         id: notificationHistoryWin
     }
