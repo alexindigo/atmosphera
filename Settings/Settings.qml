@@ -65,6 +65,8 @@ Singleton {
             property real fontSizeMultiplier: 1.0  // Font size multiplier (1.0 = normal, 1.2 = 20% larger, 0.8 = 20% smaller)
             property int taskbarIconSize: 24  // Taskbar icon button size in pixels (default: 32, smaller: 24, larger: 40)
             property var pinnedExecs: [] // Added for AppLauncher pinned apps
+            property string zigbrightnessPath: Quickshell.shellDir + "/Programs/zigbrightness"  // Path to zigbrightness utility
+            property string zigstatPath: Quickshell.shellDir + "/Programs/zigstat"  // Path to zigstat utility
         }
     }
 
