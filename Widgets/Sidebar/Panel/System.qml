@@ -214,6 +214,45 @@ Rectangle {
                     }
                 }
 
+                // Suspend button
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 36
+                    radius: 6
+                    color: suspendButtonArea.containsMouse ? Theme.accentPrimary : "transparent"
+
+                    RowLayout {
+                        anchors.fill: parent
+                        anchors.margins: 12
+                        spacing: 8
+
+                        Text {
+                            text: "bedtime"
+                            font.family: "Material Symbols Outlined"
+                            font.pixelSize: 16
+                            color: suspendButtonArea.containsMouse ? Theme.onAccent : Theme.textPrimary
+                        }
+
+                        Text {
+                            text: "Suspend"
+                            font.pixelSize: 14
+                            color: suspendButtonArea.containsMouse ? Theme.onAccent : Theme.textPrimary
+                            Layout.fillWidth: true
+                        }
+                    }
+
+                    MouseArea {
+                        id: suspendButtonArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            suspend();
+                            systemMenu.visible = false;
+                        }
+                    }
+                }
+
                 // Reboot button
                 Rectangle {
                     Layout.fillWidth: true
@@ -366,7 +405,15 @@ Rectangle {
         command: ["niri", "msg", "action", "quit", "--skip-confirmation"]
         running: false
     }
+    Process {
+        id: suspendProcess
+        command: ["systemctl", "suspend"]
+        running: false
+    }
 
+    function suspend() {
+        suspendProcess.running = true;
+    }
     function shutdown() {
         shutdownProcess.running = true;
     }
