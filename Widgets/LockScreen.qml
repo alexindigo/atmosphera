@@ -141,9 +141,16 @@ WlSessionLock {
         FastBlur {
             anchors.fill: parent
             source: lockBgImage
-            radius: 48 // Adjust blur strength as needed
+            radius: 22 // Adjust blur strength as needed
             transparentBorder: true
         }
+        Rectangle {
+                anchors.fill: parent
+                color: Qt.rgba(
+                    Theme.backgroundPrimary.r,
+                    Theme.backgroundPrimary.g,
+                    Theme.backgroundPrimary.b, 0.6)
+            }
         // Main content container (moved up, Rectangle removed)
         ColumnLayout {
             anchors.centerIn: parent
