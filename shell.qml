@@ -29,7 +29,6 @@ Scope {
     function updateVolume(vol) {
         var clamped = Math.max(0, Math.min(100, vol));
         var stepped = roundToStep(clamped, 5);
-        volume = stepped;
         if (defaultAudioSink && defaultAudioSink.audio) {
             defaultAudioSink.audio.volume = stepped / 100;
         }
