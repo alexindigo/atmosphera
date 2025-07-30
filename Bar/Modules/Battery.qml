@@ -16,6 +16,19 @@ Item {
     // Choose icon based on charge and charging state
     function batteryIcon() {
         if (!show) return "";
+        
+        // Show charging icons with lightning when charging
+        if (charging) {
+            if (percent >= 95) return "battery_charging_full";
+            if (percent >= 80) return "battery_charging_80";
+            if (percent >= 60) return "battery_charging_60";
+            if (percent >= 50) return "battery_charging_50";
+            if (percent >= 30) return "battery_charging_30";
+            if (percent >= 20) return "battery_charging_20";
+            return "battery_charging_20"; // Use charging_20 for very low battery
+        }
+        
+        // Regular battery icons when not charging
         if (percent >= 95) return "battery_full";
         if (percent >= 80) return "battery_80";
         if (percent >= 60) return "battery_60";
