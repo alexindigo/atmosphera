@@ -27,9 +27,12 @@ WlSessionLock {
     property double currentTemp: 0
     locked: false
 
-    // On component completed, fetch weather data
+    // On component completed, request to fetch weather data, with a little delay.
+    // Without this delay the city name is not loaded yet.
     Component.onCompleted: {
-        fetchWeatherData();
+        Qt.callLater(function () {
+            fetchWeatherData();
+        })
     }
 
     // Weather fetching function
@@ -351,8 +354,8 @@ WlSessionLock {
         }
         
         Rectangle {
-            width: infoColumn.width + 16
-            height: infoColumn.height
+            width: infoColumn.width + 32
+            height: infoColumn.height + 8
             color: (Theme.backgroundPrimary !== undefined && Theme.backgroundPrimary !== null) ? Theme.backgroundPrimary : "#222"
             anchors.horizontalCenter: parent.horizontalCenter
             bottomLeftRadius: 20
