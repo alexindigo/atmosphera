@@ -90,14 +90,12 @@ Item {
         property string connectSecurity: ""
         property var pendingConnect: null
         property string detectedInterface: ""
-        property var connectionsToDelete: []
 
         function profileNameForSsid(ssid) {
             return "quickshell-" + ssid.replace(/[^a-zA-Z0-9]/g, "_");
         }
-        function disconnectAndDeleteNetwork(ssid) {
+        function disconnectNetwork(ssid) {
             var profileName = wifiLogic.profileNameForSsid(ssid);
-            console.log('WifiPanel: disconnectAndDeleteNetwork called for SSID', ssid, 'profile', profileName);
             disconnectProfileProcess.connectionName = profileName;
             disconnectProfileProcess.running = true;
         }
@@ -129,6 +127,9 @@ Item {
                 wifiLogic.pendingConnect = null;
             }
         }
+        function isSecured(security) {
+            return security && security.trim() !== "" && security.trim() !== "--";
+        }
     }
 
     // Disconnect, delete profile, refresh
@@ -139,18 +140,6 @@ Item {
         command: ["nmcli", "connection", "down", "id", connectionName]
         onRunningChanged: {
             if (!running) {
-                deleteProfileProcess.connectionName = connectionName;
-                deleteProfileProcess.running = true;
-            }
-        }
-    }
-    Process {
-        id: deleteProfileProcess
-        property string connectionName: ""
-        running: false
-        command: ["nmcli", "connection", "delete", "id", connectionName]
-        onRunningChanged: {
-            if (!running) {
                 wifiLogic.refreshNetworks();
             }
         }
@@ -159,24 +148,43 @@ Item {
     Process {
         id: listConnectionsProcess
         running: false
-        command: ["nmcli", "-t", "-f", "NAME,SSID", "connection", "show"]
+        command: ["nmcli", "-t", "-f", "NAME", "connection", "show"]
         stdout: StdioCollector {
             onStreamFinished: {
                 var params = wifiLogic.pendingConnect;
                 var lines = text.split("\n");
-                var toDelete = [];
+                var expectedProfile = wifiLogic.profileNameForSsid(params.ssid);
+                var foundProfile = null;
                 for (var i = 0; i < lines.length; ++i) {
-                    var parts = lines[i].split(":");
-                    if (parts.length === 2 && parts[1] === params.ssid) {
-                        toDelete.push(parts[0]);
+                    if (lines[i] === expectedProfile) {
+                        foundProfile = lines[i];
+                        break;
                     }
                 }
-                wifiLogic.connectionsToDelete = toDelete;
-                if (toDelete.length > 0) {
-                    deleteProfileProcess.connectionName = toDelete[0];
-                    deleteProfileProcess.running = true;
+                if (foundProfile) {
+                    // Profile exists, just bring it up (no password prompt)
+                    upConnectionProcess.profileName = foundProfile;
+                    upConnectionProcess.running = true;
                 } else {
-                    wifiLogic.doConnect();
+                    // No profile: check if secured
+                    if (wifiLogic.isSecured(params.security)) {
+                        if (params.password && params.password.length > 0) {
+                            // Password provided, proceed to connect
+                            wifiLogic.doConnect();
+                        } else {
+                            // No password yet, prompt for it
+                            wifiLogic.passwordPromptSsid = params.ssid;
+                            wifiLogic.passwordInput = "";
+                            wifiLogic.showPasswordPrompt = true;
+                            wifiLogic.connectStatus = "";
+                            wifiLogic.connectStatusSsid = "";
+                            wifiLogic.connectError = "";
+                            wifiLogic.connectSecurity = params.security;
+                        }
+                    } else {
+                        // Open, connect directly
+                        wifiLogic.doConnect();
+                    }
                 }
             }
         }
@@ -565,17 +573,9 @@ Item {
                                             hoverEnabled: true
                                             onClicked: {
                                                 if (modelData.connected) {
-                                                    wifiLogic.disconnectAndDeleteNetwork(modelData.ssid);
-                                                } else if (modelData.security && modelData.security !== "--") {
-                                                    wifiLogic.passwordPromptSsid = modelData.ssid;
-                                                    wifiLogic.passwordInput = "";
-                                                    wifiLogic.showPasswordPrompt = true;
-                                                    wifiLogic.connectStatus = "";
-                                                    wifiLogic.connectStatusSsid = "";
-                                                    wifiLogic.connectError = "";
-                                                    wifiLogic.connectSecurity = modelData.security;
+                                                    wifiLogic.disconnectNetwork(modelData.ssid);
                                                 } else {
-                                                    wifiLogic.connectNetwork(modelData.ssid, modelData.security)
+                                                    wifiLogic.connectNetwork(modelData.ssid, modelData.security);
                                                 }
                                             }
                                         }
