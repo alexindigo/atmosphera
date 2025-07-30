@@ -23,7 +23,7 @@ Singleton {
     Process {
         id: zigstatProcess
         running: true
-        command: [Settings.settings.zigstatPath, updateInterval]
+        command: [Quickshell.shellDir + "/Programs/zigstat", updateInterval]
         stdout: SplitParser {
             onRead: function (line) {
                 try {

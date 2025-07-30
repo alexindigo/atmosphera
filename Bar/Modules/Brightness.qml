@@ -19,7 +19,7 @@ Item {
     
     Process {
         id: getBrightnessProcess
-        command: [Settings.settings.zigbrightnessPath, "get", monitorName]
+        command: [Quickshell.shellDir + "/Programs/zigbrightness", "get", monitorName]
         
         stdout: StdioCollector {
             onStreamFinished: {
@@ -47,7 +47,7 @@ Item {
     Process {
         id: setBrightnessProcess
         property int targetValue: -1
-        command: [Settings.settings.zigbrightnessPath, "set", monitorName, targetValue.toString()]
+        command: [Quickshell.shellDir + "/Programs/zigbrightness", "set", monitorName, targetValue.toString()]
         
         stdout: StdioCollector {
             onStreamFinished: {
