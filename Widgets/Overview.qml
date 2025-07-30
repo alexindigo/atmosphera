@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Effects
 import Quickshell
 import Quickshell.Wayland
 import Qt5Compat.GraphicalEffects
@@ -35,19 +36,20 @@ ShellRoot {
                 smooth: true
                 visible: wallpaperSource !== "" // Show the original for FastBlur input
             }
-            FastBlur {
+            MultiEffect {
+                id: overviewBgBlur
                 anchors.fill: parent
-                visible: wallpaperSource !== ""
                 source: bgImage
-                radius: 18 // Adjust blur strength as needed
-                transparentBorder: true
+                blurEnabled: true
+                blur: 0.48   // controls blur strength (0 to 1)
+                blurMax: 128 // max blur radius in pixels
             }
             Rectangle {
                 anchors.fill: parent
                 color: Qt.rgba(
                     Theme.backgroundPrimary.r,
                     Theme.backgroundPrimary.g,
-                    Theme.backgroundPrimary.b, 0.6)
+                    Theme.backgroundPrimary.b, 0.5)
             }
         }
     }
