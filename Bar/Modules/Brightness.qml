@@ -21,19 +21,24 @@ Item {
     Process {
         id: getBrightnessProcess
         command: [Quickshell.shellDir + "/Programs/zigbrightness", "get", monitorName]
-        
+
         stdout: StdioCollector {
             onStreamFinished: {
                 const output = this.text.trim()
                 const val = parseInt(output)
-                
-                if (!isNaN(val) && val >= 0 && val !== previousBrightness) {
+                if (isNaN(val)) return
+
+                if (val < 0) {
+                    brightnessDisplay.visible = false
+                }
+                else if (val >= 0 && val !== previousBrightness) {
+                    brightnessDisplay.visible = true
                     previousBrightness = brightness
                     brightness = val
                     pill.text = brightness + "%"
 
                     if (firstChange) {
-                        firstChange = false;
+                        firstChange = false
                     }
                     else {
                         pill.show()
