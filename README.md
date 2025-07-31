@@ -208,6 +208,14 @@ Contributions are welcome! Feel free to open issues or submit pull requests.
 
 ---
 
+#### Donation
+
+---
+While I actually didn't want to accept donations, more and more people are asking to donate so... I don't know, if you really feel like donating then I obviously highly appreciate it but **PLEASE** never feel forced to donate or anything. It won't change how I work on Noctalia, it's a project that I work on for fun in the end.
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/R6R01IX85B)
+---
+
 ## License
 
 This project is licensed under the terms of the [MIT License](./LICENSE).
