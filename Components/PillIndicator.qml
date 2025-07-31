@@ -15,7 +15,7 @@ Item {
     property int pillHeight: 22
     property int iconSize: 22
     property int pillPaddingHorizontal: 14
-    property bool autoHide: true
+    property bool autoHide: false
 
     // Internal state
     property bool showPill: false

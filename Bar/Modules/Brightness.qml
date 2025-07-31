@@ -13,6 +13,7 @@ Item {
     property bool isSettingBrightness: false
     property bool hasPendingSet: false
     property int pendingSetValue: -1
+    property bool firstChange: true 
 
     width: pill.width
     height: pill.height
@@ -30,7 +31,13 @@ Item {
                     previousBrightness = brightness
                     brightness = val
                     pill.text = brightness + "%"
-                    pill.show()
+
+                    if (firstChange) {
+                        firstChange = false;
+                    }
+                    else {
+                        pill.show()
+                    }
                 }
             }
         }
@@ -94,14 +101,19 @@ Item {
         iconCircleColor: Theme.accentPrimary
         iconTextColor: Theme.backgroundPrimary
         textColor: Theme.textPrimary
+        
         MouseArea {
             anchors.fill: parent
             hoverEnabled: true
             onEntered: {
                 getBrightness()
                 brightnessTooltip.tooltipVisible = true
+                pill.show()
             }
-            onExited: brightnessTooltip.tooltipVisible = false
+            onExited: {
+                brightnessTooltip.tooltipVisible = false
+                pill.hide()
+            }
             
             onWheel: function(wheel) {
                 const delta = wheel.angleDelta.y > 0 ? 5 : -5
@@ -114,14 +126,11 @@ Item {
             text: "Brightness: " + brightness + "%"
             tooltipVisible: false
             targetItem: pill
-            delay: 200
+            delay: 1500
         }
     }
 
     Component.onCompleted: {
         getBrightness()
-        if (brightness >= 0) {
-            pill.show()
-        }
     }
 }

@@ -40,7 +40,6 @@ Item {
         pillColor: Theme.surfaceVariant
         iconCircleColor: Theme.accentPrimary
         textColor: charging ? Theme.accentPrimary : Theme.textPrimary
-        autoHide: false
         MouseArea {
             anchors.fill: parent
             hoverEnabled: true
@@ -74,21 +73,6 @@ Item {
             tooltipVisible: false
             targetItem: pill
             delay: 1500
-        }
-    }
-
-    Timer {
-        id: hideTimer
-        interval: 2000
-        running: true
-        onTriggered: {
-            pill.hide();
-        }
-    }
-
-    Component.onCompleted: {
-        if (isReady && battery.isLaptopBattery) {
-            pill.show();
         }
     }
 }
