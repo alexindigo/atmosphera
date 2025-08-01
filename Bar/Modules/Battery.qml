@@ -8,10 +8,15 @@ import qs.Settings
 Item {
     id: batteryWidget
 
+    // Test mode
+    property bool testMode: false
+    property int testPercent: 49
+    property bool testCharging: true
+
     property var battery: UPower.displayDevice
-    property bool isReady: battery && battery.ready && battery.isLaptopBattery && battery.isPresent
-    property real percent: isReady ? (battery.percentage * 100) : 0
-    property bool charging: isReady ? battery.state === UPowerDeviceState.Charging : false
+    property bool isReady: testMode ? true : (battery && battery.ready && battery.isLaptopBattery && battery.isPresent)
+    property real percent: testMode ? testPercent : (isReady ? (battery.percentage * 100) : 0)
+    property bool charging: testMode ? testCharging : (isReady ? battery.state === UPowerDeviceState.Charging : false)
     property bool show: isReady && percent > 0
 
     // Choose icon based on charge and charging state
@@ -25,26 +30,40 @@ Item {
         if (percent >= 95)
            return "battery_android_full";
 
-        var step = Math.round(percent / (100 / 6));        
-        return "battery_android_" + step
+        // Hardcoded battery symbols
+        if (percent >= 85)
+            return "battery_android_6";
+        if (percent >= 70)
+            return "battery_android_5";
+        if (percent >= 55)
+            return "battery_android_4";
+        if (percent >= 40)
+            return "battery_android_3";
+        if (percent >= 25)
+            return "battery_android_2";
+        if (percent >= 10)
+            return "battery_android_1";
+        if (percent >= 0)
+            return "battery_android_0";
     }
 
-    visible: isReady && battery.isLaptopBattery
+    visible: testMode || (isReady && battery.isLaptopBattery)
     width: pill.width
     height: pill.height
 
     PillIndicator {
         id: pill
-        icon: batteryIcon()
+        icon: batteryWidget.batteryIcon()
         text: Math.round(batteryWidget.percent) + "%"
         pillColor: Theme.surfaceVariant
         iconCircleColor: Theme.accentPrimary
+        iconTextColor: Theme.backgroundPrimary
         textColor: charging ? Theme.accentPrimary : Theme.textPrimary
         MouseArea {
             anchors.fill: parent
             hoverEnabled: true
             onEntered: {
-                pill.show();
+                pill.showDelayed();
                 batteryTooltip.tooltipVisible = true;
             }
             onExited: {

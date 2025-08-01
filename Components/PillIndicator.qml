@@ -180,5 +180,30 @@ Item {
         if (showPill) {
             hideAnim.start();
         }
+        // Stop the show timer if it's running
+        showTimer.stop();
+    }
+
+    function showDelayed() {
+        if (!showPill) {
+            shouldAnimateHide = autoHide;
+            // Add a 500ms delay before showing
+            showTimer.start();
+        } else {
+            // Reset hide timer if already shown
+            hideAnim.stop();
+            delayedHideAnim.restart();
+        }
+    }
+
+    // Timer for delayed show
+    Timer {
+        id: showTimer
+        interval: 500  // 500ms delay
+        onTriggered: {
+            if (!showPill) {
+                showAnim.start();
+            }
+        }
     }
 }

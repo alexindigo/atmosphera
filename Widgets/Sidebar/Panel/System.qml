@@ -7,6 +7,7 @@ import Quickshell.Io
 import qs.Settings
 import qs.Widgets
 import qs.Helpers
+import qs.Services
 import qs.Components
 
 Rectangle {

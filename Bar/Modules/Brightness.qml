@@ -106,14 +106,13 @@ Item {
         iconCircleColor: Theme.accentPrimary
         iconTextColor: Theme.backgroundPrimary
         textColor: Theme.textPrimary
-        
         MouseArea {
             anchors.fill: parent
             hoverEnabled: true
             onEntered: {
                 getBrightness()
                 brightnessTooltip.tooltipVisible = true
-                pill.show()
+                pill.showDelayed()
             }
             onExited: {
                 brightnessTooltip.tooltipVisible = false

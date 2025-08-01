@@ -7,7 +7,7 @@ import qs.Settings
 Rectangle {
     id: profileSettingsCard
     Layout.fillWidth: true
-    Layout.preferredHeight: 580
+    Layout.preferredHeight: 650
     color: Theme.surface
     radius: 18
 

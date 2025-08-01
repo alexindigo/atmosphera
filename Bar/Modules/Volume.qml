@@ -77,32 +77,32 @@ Item {
         }
     }
 
-    MouseArea {
-        anchors.fill: parent
-        hoverEnabled: true
-        acceptedButtons: Qt.NoButton
-        propagateComposedEvents: true
-        onEntered: {
-            volumeDisplay.containsMouse = true
-            pillIndicator.autoHide = false;
-            pillIndicator.show()
-        }
-        onExited: {
-            volumeDisplay.containsMouse = false
-            pillIndicator.autoHide = true;
-            pillIndicator.hide()
-        }
-        cursorShape: Qt.PointingHandCursor
-        onWheel: (wheel) => {
-            if (!shell) return;
-            let step = 5;
-            if (wheel.angleDelta.y > 0) {
-                shell.updateVolume(Math.min(100, shell.volume + step));
-            } else if (wheel.angleDelta.y < 0) {
-                shell.updateVolume(Math.max(0, shell.volume - step));
+            MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            acceptedButtons: Qt.NoButton
+            propagateComposedEvents: true
+            onEntered: {
+                volumeDisplay.containsMouse = true
+                pillIndicator.autoHide = false;
+                pillIndicator.showDelayed()
+            }
+            onExited: {
+                volumeDisplay.containsMouse = false
+                pillIndicator.autoHide = true;
+                pillIndicator.hide()
+            }
+            cursorShape: Qt.PointingHandCursor
+            onWheel: (wheel) => {
+                if (!shell) return;
+                let step = 5;
+                if (wheel.angleDelta.y > 0) {
+                    shell.updateVolume(Math.min(100, shell.volume + step));
+                } else if (wheel.angleDelta.y < 0) {
+                    shell.updateVolume(Math.max(0, shell.volume - step));
+                }
             }
         }
-    }
 
     AudioDeviceSelector {
         id: ioSelector
