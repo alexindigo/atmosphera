@@ -12,6 +12,7 @@ Item {
     property color textColor: Theme.textPrimary
     property color iconCircleColor: Theme.accentPrimary
     property color iconTextColor: Theme.backgroundPrimary
+    property color collapsedIconColor: Theme.textPrimary
     property int pillHeight: 22
     property int iconSize: 22
     property int pillPaddingHorizontal: 14
@@ -33,7 +34,7 @@ Item {
 
     Rectangle {
         id: pill
-        width: showPill ? maxPillWidth : 1  // Never 0 width
+        width: showPill ? maxPillWidth : 1
         height: pillHeight
         x: (iconCircle.x + iconCircle.width / 2) - width
         opacity: showPill ? 1 : 0
@@ -50,7 +51,7 @@ Item {
             font.family: Theme.fontFamily
             font.weight: Font.Bold
             color: textColor
-            visible: showPill // Hide text when pill is collapsed
+            visible: showPill
         }
 
         Behavior on width {
@@ -69,7 +70,6 @@ Item {
         }
     }
 
-    // Icon circle
     Rectangle {
         id: iconCircle
         width: iconSize
@@ -91,18 +91,17 @@ Item {
             font.family: showPill ? "Material Symbols Rounded" : "Material Symbols Outlined"
             font.pixelSize: Theme.fontSizeSmall
             text: revealPill.icon
-            color: showPill ? iconTextColor : textColor
+            color: showPill ? iconTextColor : collapsedIconColor
         }
     }
 
-    // Show animation
     ParallelAnimation {
         id: showAnim
         running: false
         NumberAnimation {
             target: pill
             property: "width"
-            from: 1  // Start from 1 instead of 0
+            from: 1
             to: maxPillWidth
             duration: 250
             easing.type: Easing.OutCubic
@@ -124,7 +123,6 @@ Item {
         }
     }
 
-    // Delayed auto-hide
     SequentialAnimation {
         id: delayedHideAnim
         running: false
@@ -137,7 +135,6 @@ Item {
         }
     }
 
-    // Hide animation
     ParallelAnimation {
         id: hideAnim
         running: false
@@ -145,7 +142,7 @@ Item {
             target: pill
             property: "width"
             from: maxPillWidth
-            to: 1  // End at 1 instead of 0
+            to: 1
             duration: 250
             easing.type: Easing.InCubic
         }
@@ -164,13 +161,11 @@ Item {
         }
     }
 
-    // Exposed functions
     function show() {
         if (!showPill) {
             shouldAnimateHide = autoHide;
             showAnim.start();
         } else {
-            // Reset hide timer if already shown
             hideAnim.stop();
             delayedHideAnim.restart();
         }
@@ -180,26 +175,22 @@ Item {
         if (showPill) {
             hideAnim.start();
         }
-        // Stop the show timer if it's running
         showTimer.stop();
     }
 
     function showDelayed() {
         if (!showPill) {
             shouldAnimateHide = autoHide;
-            // Add a 500ms delay before showing
             showTimer.start();
         } else {
-            // Reset hide timer if already shown
             hideAnim.stop();
             delayedHideAnim.restart();
         }
     }
 
-    // Timer for delayed show
     Timer {
         id: showTimer
-        interval: 500  // 500ms delay
+        interval: 500
         onTriggered: {
             if (!showPill) {
                 showAnim.start();

@@ -13,6 +13,24 @@ Item {
     width: pillIndicator.width
     height: pillIndicator.height
 
+    function getVolumeColor() {
+        if (volume <= 100) return Theme.accentPrimary;
+        // Calculate interpolation factor (0 at 100%, 1 at 200%)
+        var factor = (volume - 100) / 100;
+        // Blend between accent and warning colors
+        return Qt.rgba(
+            Theme.accentPrimary.r + (Theme.warning.r - Theme.accentPrimary.r) * factor,
+            Theme.accentPrimary.g + (Theme.warning.g - Theme.accentPrimary.g) * factor,
+            Theme.accentPrimary.b + (Theme.warning.b - Theme.accentPrimary.b) * factor,
+            1
+        );
+    }
+
+    function getIconColor() {
+        if (volume <= 100) return Theme.textPrimary;
+        return getVolumeColor(); // Only use warning blend when >100%
+    }
+
     PillIndicator {
         id: pillIndicator
         icon: shell && shell.defaultAudioSink && shell.defaultAudioSink.audio && shell.defaultAudioSink.audio.muted
@@ -21,9 +39,10 @@ Item {
         text: volume + "%"
 
         pillColor: Theme.surfaceVariant
-        iconCircleColor: Theme.accentPrimary
+        iconCircleColor: getVolumeColor()
         iconTextColor: Theme.backgroundPrimary
         textColor: Theme.textPrimary
+        collapsedIconColor: getIconColor()
         autoHide: true
 
         StyledTooltip {
@@ -52,7 +71,7 @@ Item {
         target: shell ?? null
         function onVolumeChanged() {
             if (shell) {
-                const clampedVolume = Math.max(0, Math.min(100, shell.volume));
+                const clampedVolume = Math.max(0, Math.min(200, shell.volume));
                 if (clampedVolume !== volume) {
                     volume = clampedVolume;
                     pillIndicator.text = volume + "%";
@@ -73,36 +92,36 @@ Item {
 
     Component.onCompleted: {
         if (shell && shell.volume !== undefined) {
-            volume = Math.max(0, Math.min(100, shell.volume));
+            volume = Math.max(0, Math.min(200, shell.volume));
         }
     }
 
-            MouseArea {
-            anchors.fill: parent
-            hoverEnabled: true
-            acceptedButtons: Qt.NoButton
-            propagateComposedEvents: true
-            onEntered: {
-                volumeDisplay.containsMouse = true
-                pillIndicator.autoHide = false;
-                pillIndicator.showDelayed()
-            }
-            onExited: {
-                volumeDisplay.containsMouse = false
-                pillIndicator.autoHide = true;
-                pillIndicator.hide()
-            }
-            cursorShape: Qt.PointingHandCursor
-            onWheel: (wheel) => {
-                if (!shell) return;
-                let step = 5;
-                if (wheel.angleDelta.y > 0) {
-                    shell.updateVolume(Math.min(100, shell.volume + step));
-                } else if (wheel.angleDelta.y < 0) {
-                    shell.updateVolume(Math.max(0, shell.volume - step));
-                }
+    MouseArea {
+        anchors.fill: parent
+        hoverEnabled: true
+        acceptedButtons: Qt.NoButton
+        propagateComposedEvents: true
+        onEntered: {
+            volumeDisplay.containsMouse = true
+            pillIndicator.autoHide = false;
+            pillIndicator.showDelayed()
+        }
+        onExited: {
+            volumeDisplay.containsMouse = false
+            pillIndicator.autoHide = true;
+            pillIndicator.hide()
+        }
+        cursorShape: Qt.PointingHandCursor
+        onWheel: (wheel) => {
+            if (!shell) return;
+            let step = 5;
+            if (wheel.angleDelta.y > 0) {
+                shell.updateVolume(Math.min(200, shell.volume + step));
+            } else if (wheel.angleDelta.y < 0) {
+                shell.updateVolume(Math.max(0, shell.volume - step));
             }
         }
+    }
 
     AudioDeviceSelector {
         id: ioSelector
