@@ -34,42 +34,40 @@ Item {
         }
         stdout: StdioCollector {
             onStreamFinished: {
-                var lines = text.split("\n");
-                var nets = [];
-                var seen = {};
-                for (var i = 0; i < lines.length; ++i) {
-                    var line = lines[i].trim();
+                const lines = text.split("\n");
+                const networksMap = {};
+
+                for (let i = 0; i < lines.length; ++i) {
+                    const line = lines[i].trim();
                     if (!line) continue;
-                    var parts = line.split(":");
-                    var ssid = parts[0];
-                    var security = parts[1];
-                    var signal = parseInt(parts[2]);
-                    var inUse = parts[3] === "*";
+
+                    const parts = line.split(":");
+                    if (parts.length < 4) {
+                        console.warn("Malformed nmcli output line:", line);
+                        continue;
+                    }
+
+                    const ssid = parts[0];
+                    const security = parts[1];
+                    const signal = parseInt(parts[2]);
+                    const inUse = parts[3] === "*";
+
                     if (ssid) {
-                        if (!seen[ssid]) {
-                            // First time seeing this SSID
-                            nets.push({ ssid: ssid, security: security, signal: signal, connected: inUse });
-                            seen[ssid] = true;
+                        if (!networksMap[ssid]) {
+                            networksMap[ssid] = { ssid: ssid, security: security, signal: signal, connected: inUse };
                         } else {
-                            // SSID already exists, update if this entry has better signal or is connected
-                            for (var j = 0; j < nets.length; ++j) {
-                                if (nets[j].ssid === ssid) {
-                                    // Update connection status if this entry is connected
-                                    if (inUse) {
-                                        nets[j].connected = true;
-                                    }
-                                    // Update signal if this entry has better signal
-                                    if (signal > nets[j].signal) {
-                                        nets[j].signal = signal;
-                                        nets[j].security = security;
-                                    }
-                                    break;
-                                }
+                            const existingNet = networksMap[ssid];
+                            if (inUse) {
+                                existingNet.connected = true;
+                            }
+                            if (signal > existingNet.signal) {
+                                existingNet.signal = signal;
+                                existingNet.security = security;
                             }
                         }
                     }
                 }
-                wifiLogic.networks = nets;
+                wifiLogic.networks = Object.values(networksMap);
             }
         }
     }
@@ -115,17 +113,17 @@ Item {
             listConnectionsProcess.running = true;
         }
         function doConnect() {
-            var params = wifiLogic.pendingConnect;
+            const params = wifiLogic.pendingConnect;
             wifiLogic.connectingSsid = params.ssid;
             if (params.security && params.security !== "--") {
                 getInterfaceProcess.running = true;
-            } else {
-                connectProcess.security = params.security;
-                connectProcess.ssid = params.ssid;
-                connectProcess.password = params.password;
-                connectProcess.running = true;
-                wifiLogic.pendingConnect = null;
+                return;
             }
+            connectProcess.security = params.security;
+            connectProcess.ssid = params.ssid;
+            connectProcess.password = params.password;
+            connectProcess.running = true;
+            wifiLogic.pendingConnect = null;
         }
         function isSecured(security) {
             return security && security.trim() !== "" && security.trim() !== "--";
@@ -400,8 +398,13 @@ Item {
                         color: Theme.textPrimary
                         Layout.fillWidth: true
                     }
+                    Item { Layout.fillWidth: true }
+                    IconButton {
+                        icon: "refresh"
+                        onClicked: wifiLogic.refreshNetworks()
+                    }
                     Rectangle {
-                        width: 36; height: 36; radius: 18
+                        implicitWidth: 36; implicitHeight: 36; radius: 18
                         color: closeButtonArea.containsMouse ? Theme.accentPrimary : "transparent"
                         border.color: Theme.accentPrimary
                         border.width: 1
