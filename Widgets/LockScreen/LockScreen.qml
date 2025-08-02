@@ -7,10 +7,11 @@ import Quickshell.Wayland
 import Quickshell
 import Quickshell.Services.Pam
 import Quickshell.Io
+import qs.Components
 import qs.Settings
 import qs.Services
-import qs.Components
-import "../Helpers/Weather.js" as WeatherHelper
+import qs.Widgets.LockScreen
+import "../../Helpers/Weather.js" as WeatherHelper
 
 WlSessionLock {
     id: lock
@@ -315,7 +316,7 @@ WlSessionLock {
             position: "bottomleft"
             size: 1.3
             fillColor: (Theme.backgroundPrimary !== undefined && Theme.backgroundPrimary !== null) ? Theme.backgroundPrimary : "#222"
-            offsetX: screen.width / 2 + 30
+            offsetX: screen.width / 2 + 38
             offsetY: 0
             anchors.top: parent.top
             visible: Settings.settings.showCorners
@@ -327,7 +328,7 @@ WlSessionLock {
             position: "bottomright"
             size: 1.3
             fillColor: (Theme.backgroundPrimary !== undefined && Theme.backgroundPrimary !== null) ? Theme.backgroundPrimary : "#222"
-            offsetX: - Screen.width / 2 - 30
+            offsetX: - Screen.width / 2 - 38
             offsetY: 0
             anchors.top: parent.top
             visible: Settings.settings.showCorners
@@ -335,7 +336,7 @@ WlSessionLock {
         }
 
         Rectangle {
-            width: infoColumn.width + 32
+            width: infoColumn.width + 16
             height: infoColumn.height + 8
             color: (Theme.backgroundPrimary !== undefined && Theme.backgroundPrimary !== null) ? Theme.backgroundPrimary : "#222"
             anchors.horizontalCenter: parent.horizontalCenter
@@ -347,6 +348,7 @@ WlSessionLock {
                 anchors.top: parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.topMargin: 0
+                anchors.bottomMargin: 0
                 spacing: 8
 
                 Text {
@@ -402,6 +404,7 @@ WlSessionLock {
                     horizontalAlignment: Text.AlignHCenter
                     Layout.alignment: Qt.AlignHCenter
                 }
+
             }
         }
 
@@ -423,6 +426,17 @@ WlSessionLock {
                 fetchWeatherData();
             }
         }
+
+        ColumnLayout {
+            anchors.left: parent.left
+            anchors.bottom: parent.bottom
+            anchors.margins: 32
+            spacing: 12             
+
+            BatteryCharge {
+            }
+        }
+
 
         ColumnLayout {
             anchors.right: parent.right
