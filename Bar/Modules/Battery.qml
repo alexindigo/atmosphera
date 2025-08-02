@@ -73,6 +73,7 @@ Item {
         }
         StyledTooltip {
             id: batteryTooltip
+            positionAbove: false
             text: {
                 let lines = [];
                 if (batteryWidget.isReady) {

@@ -8,6 +8,10 @@ Window {
     property bool tooltipVisible: false
     property Item targetItem: null
     property int delay: 300
+
+    // New property to control positioning: true => above, false => below
+    property bool positionAbove: true
+
     flags: Qt.ToolTip | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
     color: "transparent"
     visible: false
@@ -15,11 +19,14 @@ Window {
     minimumWidth: tooltipText.implicitWidth + 24
     minimumHeight: tooltipText.implicitHeight + 16
     property var _timerObj: null
+
     onTooltipVisibleChanged: {
         if (tooltipVisible) {
             if (delay > 0) {
                 if (_timerObj) { _timerObj.destroy(); _timerObj = null; }
-                _timerObj = Qt.createQmlObject('import QtQuick 2.0; Timer { interval: ' + delay + '; running: true; repeat: false; onTriggered: tooltipWindow._showNow() }', tooltipWindow);
+                _timerObj = Qt.createQmlObject(
+                    'import QtQuick 2.0; Timer { interval: ' + delay + '; running: true; repeat: false; onTriggered: tooltipWindow._showNow() }',
+                    tooltipWindow);
             } else {
                 _showNow();
             }
@@ -27,30 +34,42 @@ Window {
             _hideNow();
         }
     }
+
     function _showNow() {
         if (!targetItem) return;
-        var pos = targetItem.mapToGlobal(0, targetItem.height);
-        x = pos.x - width / 2 + targetItem.width / 2;
-        y = pos.y + 12;
+
+        if (positionAbove) {
+            // Position tooltip above the target item
+            var pos = targetItem.mapToGlobal(0, 0);
+            x = pos.x - width / 2 + targetItem.width / 2;
+            y = pos.y - height - 12; // 12 px margin above
+        } else {
+            // Position tooltip below the target item
+            var pos = targetItem.mapToGlobal(0, targetItem.height);
+            x = pos.x - width / 2 + targetItem.width / 2;
+            y = pos.y + 12; // 12 px margin below
+        }
         visible = true;
     }
+
     function _hideNow() {
         visible = false;
         if (_timerObj) { _timerObj.destroy(); _timerObj = null; }
     }
+
     Connections {
         target: tooltipWindow.targetItem
         function onXChanged() {
-            if (tooltipWindow.visible) tooltipWindow._showNow()
+            if (tooltipWindow.visible) tooltipWindow._showNow();
         }
         function onYChanged() {
-            if (tooltipWindow.visible) tooltipWindow._showNow()
+            if (tooltipWindow.visible) tooltipWindow._showNow();
         }
         function onWidthChanged() {
-            if (tooltipWindow.visible) tooltipWindow._showNow()
+            if (tooltipWindow.visible) tooltipWindow._showNow();
         }
         function onHeightChanged() {
-            if (tooltipWindow.visible) tooltipWindow._showNow()
+            if (tooltipWindow.visible) tooltipWindow._showNow();
         }
     }
 
@@ -63,6 +82,7 @@ Window {
         opacity: 0.97
         z: 1
     }
+
     Text {
         id: tooltipText
         text: tooltipWindow.text
@@ -76,15 +96,16 @@ Window {
         padding: 8
         z: 2
     }
+
     MouseArea {
         anchors.fill: parent
         hoverEnabled: true
         onExited: tooltipWindow.tooltipVisible = false
         cursorShape: Qt.ArrowCursor
     }
+
     onTextChanged: {
         width = Math.max(minimumWidth, tooltipText.implicitWidth + 24);
         height = Math.max(minimumHeight, tooltipText.implicitHeight + 16);
     }
-
-} 
+}

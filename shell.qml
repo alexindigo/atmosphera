@@ -53,6 +53,10 @@ Scope {
         property var notificationHistoryWin: notificationHistoryWin
     }
 
+    Dock {
+        id: dock
+    }
+
     Applauncher {
         id: appLauncherPanel
         visible: false

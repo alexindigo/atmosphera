@@ -7,7 +7,7 @@ import qs.Settings
 Rectangle {
     id: profileSettingsCard
     Layout.fillWidth: true
-    Layout.preferredHeight: 650
+    Layout.preferredHeight: 690
     color: Theme.surface
     radius: 18
 
@@ -348,6 +348,61 @@ Rectangle {
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
                         Settings.settings.showTaskbar = !Settings.settings.showTaskbar
+                    }
+                }
+            }
+        }
+
+        // Show Dock Setting
+        RowLayout {
+            spacing: 8
+            Layout.fillWidth: true
+            Layout.topMargin: 8
+
+            Text {
+                text: "Show Dock"
+                font.pixelSize: 13
+                font.bold: true
+                color: Theme.textPrimary
+            }
+
+            Item {
+                Layout.fillWidth: true
+            }
+
+            Rectangle {
+                id: dockSwitch
+                width: 52
+                height: 32
+                radius: 16
+                color: Settings.settings.showDock ? Theme.accentPrimary : Theme.surfaceVariant
+                border.color: Settings.settings.showDock ? Theme.accentPrimary : Theme.outline
+                border.width: 2
+
+                Rectangle {
+                    id: dockThumb
+                    width: 28
+                    height: 28
+                    radius: 14
+                    color: Theme.surface
+                    border.color: Theme.outline
+                    border.width: 1
+                    y: 2
+                    x: Settings.settings.showDock ? taskbarSwitch.width - width - 2 : 2
+
+                    Behavior on x {
+                        NumberAnimation {
+                            duration: 200
+                            easing.type: Easing.OutCubic
+                        }
+                    }
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        Settings.settings.showDock = !Settings.settings.showDock
                     }
                 }
             }

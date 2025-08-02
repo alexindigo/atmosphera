@@ -55,6 +55,7 @@ Item {
     StyledTooltip {
         id: notificationTooltip
         text: "Notification History"
+        positionAbove: false
         tooltipVisible: false
         targetItem: bell
         delay: 200
