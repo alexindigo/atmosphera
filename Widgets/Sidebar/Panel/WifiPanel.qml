@@ -120,7 +120,7 @@ Item {
                         }
                     }
                 }
-                wifiLogic.networks = Object.values(networksMap);
+                wifiLogic.networks = networksMap;
                 scanProcess.existingNetwork = {};
                 refreshIndicator.running = false;
                 refreshIndicator.visible = false;
@@ -182,13 +182,7 @@ Item {
             wifiLogic.connectingSsid = params.ssid;
 
             // Find the target network in our networks data
-            let targetNetwork = null;
-            for (let i = 0; i < wifiLogic.networks.length; ++i) {
-                if (wifiLogic.networks[i].ssid === params.ssid) {
-                    targetNetwork = wifiLogic.networks[i];
-                    break;
-                }
-            }
+            const targetNetwork = wifiLogic.networks[params.ssid];
 
             // Check if profile already exists using existing field
             if (targetNetwork && targetNetwork.existing) {
@@ -220,7 +214,7 @@ Item {
         id: disconnectProfileProcess
         property string connectionName: ""
         running: false
-        command: ["nmcli", "connection", "down", "id", connectionName]
+        command: ["nmcli", "connection", "down", connectionName]
         onRunningChanged: {
             if (!running) {
                 wifiLogic.refreshNetworks();
@@ -527,7 +521,7 @@ Item {
                             anchors.fill: parent
                             spacing: 4
                             boundsBehavior: Flickable.StopAtBounds
-                            model: wifiLogic.networks
+                            model: Object.values(wifiLogic.networks)
                             delegate: Item {
                                 id: networkEntry
 
