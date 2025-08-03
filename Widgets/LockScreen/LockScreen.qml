@@ -2,11 +2,10 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 import QtQuick.Effects
-import Qt5Compat.GraphicalEffects
 import Quickshell
+import Quickshell.Wayland
 import Quickshell.Services.Pam
 import Quickshell.Io
-import Quickshell.Wayland
 import Quickshell.Widgets
 import qs.Components
 import qs.Settings
@@ -33,7 +32,7 @@ WlSessionLock {
     Component.onCompleted: {
         Qt.callLater(function () {
             fetchWeatherData();
-        })
+        });
     }
 
     function fetchWeatherData() {
@@ -147,6 +146,7 @@ WlSessionLock {
             blurEnabled: true
             blur: 0.48   // controls blur strength (0 to 1)
             blurMax: 128 // max blur radius in pixels
+            // transparentBorder: true
         }
 
         ColumnLayout {
@@ -164,10 +164,11 @@ WlSessionLock {
                 Avatar {}
 
                 layer.enabled: true
-                layer.effect: Glow {
-                    color: Theme.accentPrimary
-                    radius: 8
-                    samples: 16
+                layer.effect: MultiEffect {
+                    shadowEnabled: true
+                    shadowColor: Theme.accentPrimary
+                    // radius: 8
+                    // samples: 16
                 }
             }
 
@@ -303,7 +304,7 @@ WlSessionLock {
             position: "bottomright"
             size: 1.3
             fillColor: (Theme.backgroundPrimary !== undefined && Theme.backgroundPrimary !== null) ? Theme.backgroundPrimary : "#222"
-            offsetX: - Screen.width / 2 - 38
+            offsetX: -Screen.width / 2 - 38
             offsetY: 0
             anchors.top: parent.top
             visible: Settings.settings.showCorners
@@ -379,7 +380,6 @@ WlSessionLock {
                     horizontalAlignment: Text.AlignHCenter
                     Layout.alignment: Qt.AlignHCenter
                 }
-
             }
         }
 
@@ -406,12 +406,10 @@ WlSessionLock {
             anchors.left: parent.left
             anchors.bottom: parent.bottom
             anchors.margins: 32
-            spacing: 12             
+            spacing: 12
 
-            BatteryCharge {
-            }
+            BatteryCharge {}
         }
-
 
         ColumnLayout {
             anchors.right: parent.right

@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 import Quickshell
 import Quickshell.Io
 import Quickshell.Widgets
@@ -380,7 +380,7 @@ Rectangle {
         running: false
     }
 
-        Process {
+    Process {
         id: logoutProcessNiri
         command: ["niri", "msg", "action", "quit", "--skip-confirmation"]
         running: false
@@ -420,7 +420,6 @@ Rectangle {
     function reboot() {
         rebootProcess.running = true;
     }
-
 
     property bool panelVisible: false
 
