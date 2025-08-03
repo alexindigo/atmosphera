@@ -151,16 +151,15 @@ Item {
         function replaceQuickshell(ssid: string): string {
             const newName = ssid.replace("quickshell-", "");
             
-            if (!ssid.startsWith("quickshell-")){
+            if (!ssid.startsWith("quickshell-")) {
                 return newName;
             }
 
-            if (newName in wifiLogic.networks){
+            if (wifiLogic.networks && newName in wifiLogic.networks) {
                 console.log(`Quickshell ${newName} already exists, deleting old profile`)
                 deleteProfileProcess.connName = ssid;
                 deleteProfileProcess.running = true;
             }
-
 
             console.log(`Changing from ${ssid} to ${newName}`)
             renameConnectionProcess.oldName = ssid;
@@ -256,15 +255,20 @@ Item {
 
         stdout: StdioCollector {
             onStreamFinished: {
-                console.log("Renamed connection '" + renameConnectionProcess.oldName + "' to '" + renameConnectionProcess.newName + "'");
+                console.log("Successfully renamed connection '" + 
+                        renameConnectionProcess.oldName + "' to '" + 
+                        renameConnectionProcess.newName + "'");
             }
         }
         stderr: StdioCollector {
             onStreamFinished: {
-                console.error("Error renaming connection '" + renameConnectionProcess.oldName + "':", text);
+                if (text.trim() !== "" && !text.toLowerCase().includes("warning")) {
+                    console.error("Error renaming connection:", text);
+                }
             }
         }
     }
+
 
 
     // Process to rename a connection
