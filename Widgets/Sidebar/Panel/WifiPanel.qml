@@ -198,6 +198,12 @@ Item {
         property string password: ""
         property string security: ""
         running: false
+        onStarted: {
+            refreshIndicator.running = true;
+        }
+        onExited: (exitCode, exitStatus) => {
+            refreshIndicator.running = false;
+        }
         command: {
             if (password) {
                 return ["nmcli", "device", "wifi", "connect", ssid, "password", password]
