@@ -70,8 +70,8 @@ Rectangle {
                         visible: false
                         asynchronous: true
                         cache: false
-                        sourceSize.width: 64
-                        sourceSize.height: 64
+                        smooth: true
+                        mipmap: true
                     }
                     
                     OpacityMask {

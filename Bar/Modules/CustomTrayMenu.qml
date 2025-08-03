@@ -115,6 +115,8 @@ PopupWindow {
                     Image {
                         Layout.preferredWidth: 16
                         Layout.preferredHeight: 16
+                        smooth: true
+                        mipmap: true
                         source: modelData?.icon ?? ""
                         visible: (modelData?.icon ?? "") !== ""
                         fillMode: Image.PreserveAspectFit

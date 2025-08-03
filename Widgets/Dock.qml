@@ -155,6 +155,7 @@ PanelWindow {
                             anchors.centerIn: parent
                             source: taskbar.getAppIcon(modelData)
                             smooth: true
+                            mipmap: true
                             visible: source.toString() !== ""
                         }
 

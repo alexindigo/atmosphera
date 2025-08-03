@@ -60,8 +60,8 @@ Rectangle {
                             fillMode: Image.PreserveAspectCrop
                             asynchronous: true
                             cache: false
-                            sourceSize.width: 44
-                            sourceSize.height: 44
+                            smooth: true
+                            mipmap: true
                         }
                         maskSource: Rectangle {
                             width: 44

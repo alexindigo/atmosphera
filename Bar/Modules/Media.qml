@@ -54,6 +54,7 @@ Item {
                     anchors.margins: 1
                     fillMode: Image.PreserveAspectCrop
                     smooth: true
+                    mipmap: true
                     cache: false
                     asynchronous: true
                     sourceSize.width: 24

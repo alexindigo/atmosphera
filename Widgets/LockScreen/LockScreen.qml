@@ -135,7 +135,8 @@ WlSessionLock {
             fillMode: Image.PreserveAspectCrop
             source: WallpaperManager.currentWallpaper !== "" ? WallpaperManager.currentWallpaper : ""
             cache: true
-            smooth: false
+            smooth: true
+            mipmap: false
             visible: true // source for MultiEffect
         }
 
@@ -168,6 +169,8 @@ WlSessionLock {
                     fillMode: Image.PreserveAspectCrop
                     visible: false
                     asynchronous: true
+                    mipmap: true
+                    smooth: true
                 }
                 OpacityMask {
                     anchors.fill: avatarImage

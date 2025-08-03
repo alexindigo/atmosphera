@@ -75,6 +75,7 @@ Item {
                     anchors.centerIn: parent
                     source: getAppIcon(modelData)
                     smooth: true
+                    mipmap: true
                     visible: source.toString() !== ""
                 }
 

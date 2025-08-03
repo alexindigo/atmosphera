@@ -130,6 +130,7 @@ PanelWindow {
                             anchors.margins: 4
                             fillMode: Image.PreserveAspectFit
                             smooth: true
+                            mipmap: true
                             cache: false
                             asynchronous: true
                             sourceSize.width: 36

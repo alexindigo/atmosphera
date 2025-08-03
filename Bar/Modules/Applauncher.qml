@@ -347,6 +347,7 @@ PanelWithOverlay {
                                         anchors.fill: parent
                                         fillMode: Image.PreserveAspectFit
                                         smooth: true
+                                        mipmap: true
                                         cache: false
                                         asynchronous: true
                                         source: modelData.isCalculator ? "qrc:/icons/calculate.svg" : Quickshell.iconPath(modelData.icon, "application-x-executable")
