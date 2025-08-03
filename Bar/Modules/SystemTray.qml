@@ -113,7 +113,6 @@ Row {
                         modelData.secondaryActivate && modelData.secondaryActivate()
                     } else if (mouse.button === Qt.RightButton) {
                         trayTooltip.tooltipVisible = false
-                        console.log("Right click on", modelData.id, "hasMenu:", modelData.hasMenu, "menu:", modelData.menu)
                         // If menu is already visible, close it
                         if (trayMenu && trayMenu.visible) {
                             trayMenu.hideMenu()
