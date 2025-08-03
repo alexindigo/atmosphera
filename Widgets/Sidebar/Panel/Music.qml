@@ -1,7 +1,7 @@
 import QtQuick 
 import QtQuick.Controls
 import QtQuick.Layouts
-import QtQuick.Effects
+import Qt5Compat.GraphicalEffects
 import qs.Settings
 import qs.Components
 import qs.Services
@@ -102,8 +102,8 @@ Rectangle {
 
                             // Rounded corners using layer
                             layer.enabled: true
-                            layer.effect: MultiEffect {
-                                maskEnabled: true
+                            layer.effect: OpacityMask {
+                                cached: true
                                 maskSource: Rectangle {
                                     width: albumArt.width
                                     height: albumArt.height

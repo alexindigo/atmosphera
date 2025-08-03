@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Effects
 import QtQuick.Controls
+import Qt5Compat.GraphicalEffects
 import qs.Settings
 
 Rectangle {
@@ -74,8 +74,7 @@ Rectangle {
                         sourceSize.height: 64
                     }
                     
-                    MultiEffect {
-                        maskEnabled: true
+                    OpacityMask {
                         anchors.fill: avatarImage
                         source: avatarImage
                         maskSource: Rectangle {

@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Effects
 import Quickshell
 import Quickshell.Wayland
+import Qt5Compat.GraphicalEffects
 import qs.Services
 import qs.Settings
 
