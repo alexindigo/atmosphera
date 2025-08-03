@@ -56,7 +56,7 @@ Item {
                         continue;
                     }
 
-                    const ssid = parts[0];
+                    const ssid = wifiLogic.replaceQuickshell(parts[0]);
                     const type = parts[1];
 
                     if (ssid) {
@@ -120,6 +120,8 @@ Item {
                         }
                     }
                 }
+
+                
                 wifiLogic.networks = networksMap;
                 scanProcess.existingNetwork = {};
                 refreshIndicator.running = false;
@@ -130,7 +132,7 @@ Item {
 
     QtObject {
         id: wifiLogic
-        property var networks: []
+        property var networks: {}
         property var anchorItem: null
         property real anchorX
         property real anchorY
@@ -145,6 +147,28 @@ Item {
         property var pendingConnect: null
         property string detectedInterface: ""
         property string actionPanelSsid: ""
+
+        function replaceQuickshell(ssid: string): string {
+            const newName = ssid.replace("quickshell-", "");
+            
+            if (!ssid.startsWith("quickshell-")){
+                return newName;
+            }
+
+            if (newName in wifiLogic.networks){
+                console.log(`Quickshell ${newName} already exists, deleting old profile`)
+                deleteProfileProcess.connName = ssid;
+                deleteProfileProcess.running = true;
+            }
+
+
+            console.log(`Changing from ${ssid} to ${newName}`)
+            renameConnectionProcess.oldName = ssid;
+            renameConnectionProcess.newName = newName;
+            renameConnectionProcess.running = true;
+
+            return newName;
+        }
 
         function disconnectNetwork(ssid) {
             const profileName = ssid;
@@ -222,6 +246,47 @@ Item {
         }
     }
 
+    // Process to rename a connection
+    Process {
+        id: renameConnectionProcess
+        running: false
+        property string oldName: ""
+        property string newName: ""
+        command: ["nmcli", "connection", "modify", oldName, "connection.id", newName]
+
+        stdout: StdioCollector {
+            onStreamFinished: {
+                console.log("Renamed connection '" + renameConnectionProcess.oldName + "' to '" + renameConnectionProcess.newName + "'");
+            }
+        }
+        stderr: StdioCollector {
+            onStreamFinished: {
+                console.error("Error renaming connection '" + renameConnectionProcess.oldName + "':", text);
+            }
+        }
+    }
+
+
+    // Process to rename a connection
+    Process {
+        id: deleteProfileProcess
+        running: false
+        property string connName: ""
+        command: ["nmcli", "connection", "delete", `'${connName}'`]
+
+        stdout: StdioCollector {
+            onStreamFinished: {
+                console.log("Deleted connection '" + deleteProfileProcess.connName + "'");
+            }
+        }
+        stderr: StdioCollector {
+            onStreamFinished: {
+                console.error("Error deleting connection '" + deleteProfileProcess.connName + "':", text);
+            }
+        }
+    }
+
+
     // Handles connecting to a Wi-Fi network, with or without password
     Process {
         id: connectProcess
@@ -237,9 +302,9 @@ Item {
         }
         command: {
             if (password) {
-                return ["nmcli", "device", "wifi", "connect", ssid, "password", password];
+                return ["nmcli", "device", "wifi", "connect", `'${ssid}'`, "password", password];
             } else {
-                return ["nmcli", "device", "wifi", "connect", ssid];
+                return ["nmcli", "device", "wifi", "connect", `'${ssid}'`];
             }
         }
         stdout: StdioCollector {
