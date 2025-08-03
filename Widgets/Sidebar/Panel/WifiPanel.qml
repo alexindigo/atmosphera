@@ -17,6 +17,10 @@ Item {
         wifiLogic.refreshNetworks();
     }
 
+    Component.onCompleted: {
+        existingNetwork.running = true;
+    }
+
     function signalIcon(signal) {
         if (signal >= 80) return "network_wifi";
         if (signal >= 60) return "network_wifi_3_bar";
@@ -26,15 +30,47 @@ Item {
     }
 
     Process {
+        id: existingNetwork
+        running: false
+        command: ["nmcli", "-t", "-f", "NAME,TYPE", "connection", "show"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const lines = text.split("\n");
+                const networksMap = {};
+
+                refreshIndicator.running = true;
+                refreshIndicator.visible = true;
+
+                for (let i = 0; i < lines.length; ++i) {
+                    const line = lines[i].trim();
+                    if (!line) continue;
+
+                    const parts = line.split(":");
+                    if (parts.length < 2) {
+                        console.warn("Malformed nmcli output line:", line);
+                        continue;
+                    }
+
+                    const ssid = parts[0];
+                    const type = parts[1];
+
+                    if (ssid) {
+                        networksMap[ssid] = { ssid: ssid, type: type };
+                    }
+                }
+                scanProcess.existingNetwork = networksMap;
+                scanProcess.running = true;
+            }
+        }
+    }
+
+    Process {
         id: scanProcess
         running: false
         command: ["nmcli", "-t", "-f", "SSID,SECURITY,SIGNAL,IN-USE", "device", "wifi", "list"]
-        onRunningChanged: {
-            console.log("scanProcess.running changed: " + running);
-            // if (!running) {
-            //     console.log("scanProcess finished.");
-            // }
-        }
+
+        property var existingNetwork
+        
         stdout: StdioCollector {
             onStreamFinished: {
                 const lines = text.split("\n");
@@ -49,7 +85,6 @@ Item {
                         console.warn("Malformed nmcli output line:", line);
                         continue;
                     }
-
                     const ssid = parts[0];
                     const security = parts[1];
                     const signal = parseInt(parts[2]);
@@ -57,7 +92,7 @@ Item {
 
                     if (ssid) {
                         if (!networksMap[ssid]) {
-                            networksMap[ssid] = { ssid: ssid, security: security, signal: signal, connected: inUse };
+                            networksMap[ssid] = { ssid: ssid, security: security, signal: signal, connected: inUse, existing: ssid in scanProcess.existingNetwork };
                         } else {
                             const existingNet = networksMap[ssid];
                             if (inUse) {
@@ -71,6 +106,9 @@ Item {
                     }
                 }
                 wifiLogic.networks = Object.values(networksMap);
+                console.log(JSON.stringify(wifiLogic.networks));
+                refreshIndicator.running = false;
+                refreshIndicator.visible = false;
             }
         }
     }
@@ -91,17 +129,15 @@ Item {
         property string connectSecurity: ""
         property var pendingConnect: null
         property string detectedInterface: ""
+        property string actionPanelSsid: ""
 
-        function profileNameForSsid(ssid) {
-            return "quickshell-" + ssid.replace(/[^a-zA-Z0-9]/g, "_");
-        }
         function disconnectNetwork(ssid) {
-            var profileName = wifiLogic.profileNameForSsid(ssid);
+            const profileName = ssid;
             disconnectProfileProcess.connectionName = profileName;
             disconnectProfileProcess.running = true;
         }
         function refreshNetworks() {
-            scanProcess.running = true;
+            existingNetwork.running = true;
         }
         function showAt() {
             wifiPanelModal.visible = true;
@@ -109,15 +145,37 @@ Item {
         }
         function connectNetwork(ssid, security) {
             wifiLogic.pendingConnect = {ssid: ssid, security: security, password: ""};
-            listConnectionsProcess.running = true;
+            wifiLogic.doConnect();
         }
         function submitPassword() {
             wifiLogic.pendingConnect = {ssid: wifiLogic.passwordPromptSsid, security: wifiLogic.connectSecurity, password: wifiLogic.passwordInput};
-            listConnectionsProcess.running = true;
+            wifiLogic.doConnect();
         }
         function doConnect() {
             const params = wifiLogic.pendingConnect;
+            if (!params) return;
+            
             wifiLogic.connectingSsid = params.ssid;
+            
+            // Find the target network in our networks data
+            let targetNetwork = null;
+            for (let i = 0; i < wifiLogic.networks.length; ++i) {
+                if (wifiLogic.networks[i].ssid === params.ssid) {
+                    targetNetwork = wifiLogic.networks[i];
+                    break;
+                }
+            }
+            
+            // Check if profile already exists using existing field
+            if (targetNetwork && targetNetwork.existing) {
+                // Profile exists, just bring it up (no password prompt)
+                upConnectionProcess.profileName = params.ssid;
+                upConnectionProcess.running = true;
+                wifiLogic.pendingConnect = null;
+                return;
+            }
+            
+            // No existing profile, proceed with normal connection flow
             if (params.security && params.security !== "--") {
                 getInterfaceProcess.running = true;
                 return;
@@ -146,50 +204,7 @@ Item {
         }
     }
 
-    Process {
-        id: listConnectionsProcess
-        running: false
-        command: ["nmcli", "-t", "-f", "NAME", "connection", "show"]
-        stdout: StdioCollector {
-            onStreamFinished: {
-                var params = wifiLogic.pendingConnect;
-                var lines = text.split("\n");
-                var expectedProfile = wifiLogic.profileNameForSsid(params.ssid);
-                var foundProfile = null;
-                for (var i = 0; i < lines.length; ++i) {
-                    if (lines[i] === expectedProfile) {
-                        foundProfile = lines[i];
-                        break;
-                    }
-                }
-                if (foundProfile) {
-                    // Profile exists, just bring it up (no password prompt)
-                    upConnectionProcess.profileName = foundProfile;
-                    upConnectionProcess.running = true;
-                } else {
-                    // No profile: check if secured
-                    if (wifiLogic.isSecured(params.security)) {
-                        if (params.password && params.password.length > 0) {
-                            // Password provided, proceed to connect
-                            wifiLogic.doConnect();
-                        } else {
-                            // No password yet, prompt for it
-                            wifiLogic.passwordPromptSsid = params.ssid;
-                            wifiLogic.passwordInput = "";
-                            wifiLogic.showPasswordPrompt = true;
-                            wifiLogic.connectStatus = "";
-                            wifiLogic.connectStatusSsid = "";
-                            wifiLogic.connectError = "";
-                            wifiLogic.connectSecurity = params.security;
-                        }
-                    } else {
-                        // Open, connect directly
-                        wifiLogic.doConnect();
-                    }
-                }
-            }
-        }
-    }
+
 
     // Handles connecting to a Wi-Fi network, with or without password
     Process {
@@ -256,7 +271,7 @@ Item {
                     addConnectionProcess.ifname = wifiLogic.detectedInterface;
                     addConnectionProcess.ssid = params.ssid;
                     addConnectionProcess.password = params.password;
-                    addConnectionProcess.profileName = wifiLogic.profileNameForSsid(params.ssid);
+                    addConnectionProcess.profileName = params.ssid;
                     addConnectionProcess.security = params.security;
                     addConnectionProcess.running = true;
                 } else {
@@ -413,8 +428,8 @@ Item {
                         Layout.preferredWidth: 24
                         Layout.preferredHeight: 24
                         Layout.alignment: Qt.AlignVCenter
-                        visible: scanProcess.running
-                        running: scanProcess.running
+                        visible: false
+                        running: false
                         color: Theme.accentPrimary // Assuming Spinner supports color property
                         size: 22 // Based on the existing Spinner usage
                     }
@@ -490,8 +505,13 @@ Item {
                             model: wifiLogic.networks
                             delegate: Item {
                                 id: networkEntry
+
+                                required property var modelData
+                                property var signalIcon: wifiPanel.signalIcon
+
                                 width: parent.width
-                                height: modelData.ssid === wifiLogic.passwordPromptSsid && wifiLogic.showPasswordPrompt ? 102 : 42
+                                height: (modelData.ssid === wifiLogic.passwordPromptSsid && wifiLogic.showPasswordPrompt ? 102 : 42) + 
+                                       (modelData.ssid === wifiLogic.actionPanelSsid ? 60 : 0)
                                 ColumnLayout {
                                     anchors.fill: parent
                                     spacing: 0
@@ -596,10 +616,11 @@ Item {
                                             anchors.fill: parent
                                             hoverEnabled: true
                                             onClicked: {
-                                                if (modelData.connected) {
-                                                    wifiLogic.disconnectNetwork(modelData.ssid);
+                                                // Toggle the action panel for this network
+                                                if (wifiLogic.actionPanelSsid === modelData.ssid) {
+                                                    wifiLogic.actionPanelSsid = ""; // Close if already open
                                                 } else {
-                                                    wifiLogic.connectNetwork(modelData.ssid, modelData.security);
+                                                    wifiLogic.actionPanelSsid = modelData.ssid; // Open for this network
                                                 }
                                             }
                                         }
@@ -610,8 +631,9 @@ Item {
                                         Layout.preferredHeight: 60
                                         radius: 8
                                         color: "transparent"
-                                        anchors.leftMargin: 32
-                                        anchors.rightMargin: 32
+                                        Layout.alignment: Qt.AlignLeft
+                                        Layout.leftMargin: 32
+                                        Layout.rightMargin: 32
                                         z: 2
                                         RowLayout {
                                             anchors.fill: parent
@@ -651,8 +673,8 @@ Item {
                                                 }
                                             }
                                             Rectangle {
-                                                width: 80
-                                                height: 36
+                                                Layout.preferredWidth: 80
+                                                Layout.preferredHeight: 36
                                                 radius: 18
                                                 color: Theme.accentPrimary
                                                 border.color: Theme.accentPrimary
@@ -673,6 +695,102 @@ Item {
                                                     color: Theme.backgroundPrimary
                                                     font.pixelSize: 14
                                                     font.bold: true
+                                                }
+                                            }
+                                        }
+                                    }
+                                    // Action panel for network connection controls
+                                    Rectangle {
+                                        visible: modelData.ssid === wifiLogic.actionPanelSsid
+                                        Layout.fillWidth: true
+                                        Layout.preferredHeight: 60
+                                        radius: 8
+                                        color: "transparent"
+                                        Layout.alignment: Qt.AlignLeft
+                                        Layout.leftMargin: 32
+                                        Layout.rightMargin: 32
+                                        z: 2
+                                        RowLayout {
+                                            anchors.fill: parent
+                                            anchors.margins: 12
+                                            spacing: 10
+                                            // Password field for new secured networks
+                                            Item {
+                                                Layout.fillWidth: true
+                                                Layout.preferredHeight: 36
+                                                visible: wifiLogic.isSecured(modelData.security) && !modelData.connected && !modelData.existing
+                                                Rectangle {
+                                                    anchors.fill: parent
+                                                    radius: 8
+                                                    color: "transparent"
+                                                    border.color: actionPanelPasswordField.activeFocus ? Theme.accentPrimary : Theme.outline
+                                                    border.width: 1
+                                                    TextInput {
+                                                        id: actionPanelPasswordField
+                                                        anchors.fill: parent
+                                                        anchors.margins: 12
+                                                        font.pixelSize: 13
+                                                        color: Theme.textPrimary
+                                                        verticalAlignment: TextInput.AlignVCenter
+                                                        clip: true
+                                                        selectByMouse: true
+                                                        activeFocusOnTab: true
+                                                        inputMethodHints: Qt.ImhNone
+                                                        echoMode: TextInput.Password
+                                                        onAccepted: {
+                                                            // Connect with the entered password
+                                                            wifiLogic.pendingConnect = {ssid: modelData.ssid, security: modelData.security, password: text};
+                                                            wifiLogic.doConnect();
+                                                            
+                                                            wifiLogic.actionPanelSsid = ""; // Close the panel
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            // Connect/Disconnect button
+                                            Rectangle {
+                                                Layout.preferredWidth: 80
+                                                Layout.preferredHeight: 36
+                                                radius: 18
+                                                color: modelData.connected ? Theme.error : Theme.accentPrimary
+                                                border.color: modelData.connected ? Theme.error : Theme.accentPrimary
+                                                border.width: 0
+                                                opacity: 1.0
+                                                Behavior on color { ColorAnimation { duration: 100 } }
+                                                MouseArea {
+                                                    anchors.fill: parent
+                                                    onClicked: {
+                                                        if (modelData.connected) {
+                                                            // Disconnect from network
+                                                            wifiLogic.disconnectNetwork(modelData.ssid);
+                                                        } else {
+                                                            // For secured networks, check if we need password
+                                                            if (wifiLogic.isSecured(modelData.security) && !modelData.existing) {
+                                                                // If password field is visible and has content, use it
+                                                                if (actionPanelPasswordField.text.length > 0) {
+                                                                    wifiLogic.pendingConnect = {ssid: modelData.ssid, security: modelData.security, password: actionPanelPasswordField.text};
+                                                                    wifiLogic.doConnect();
+                                                                }
+                                                                // For new networks without password entered, we might want to show an error or handle differently
+                                                                // For now, we'll just close the panel
+                                                            } else {
+                                                                // Connect to open network
+                                                                wifiLogic.connectNetwork(modelData.ssid, modelData.security);
+                                                            }
+                                                        }
+                                                        wifiLogic.actionPanelSsid = ""; // Close the panel
+                                                    }
+                                                    cursorShape: Qt.PointingHandCursor
+                                                    hoverEnabled: true
+                                                    onEntered: parent.color = modelData.connected ? Qt.darker(Theme.error, 1.1) : Qt.darker(Theme.accentPrimary, 1.1)
+                                                    onExited: parent.color = modelData.connected ? Theme.error : Theme.accentPrimary
+                                                }
+                                                Text {
+                                                    anchors.centerIn: parent
+                                                    text: modelData.connected ? "wifi_off" : "check"
+                                                    font.family: "Material Symbols Outlined"
+                                                    font.pixelSize: 20
+                                                    color: Theme.backgroundPrimary
                                                 }
                                             }
                                         }
