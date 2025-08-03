@@ -74,8 +74,6 @@ Item {
                     height: Math.max(12, Settings.settings.taskbarIconSize * 0.625)
                     anchors.centerIn: parent
                     source: getAppIcon(modelData)
-                    smooth: true
-                    mipmap: true
                     visible: source.toString() !== ""
                 }
 

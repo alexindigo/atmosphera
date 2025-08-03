@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import Quickshell
+import Quickshell.Widgets
 import qs.Settings
 
 PanelWindow {
@@ -124,17 +125,12 @@ PanelWindow {
                         property var iconSources: [rawNotification?.image || "", rawNotification?.appIcon || "", rawNotification?.icon || ""]
 
                         // Try to load notification icon
-                        Image {
+                        IconImage {
                             id: iconImage
                             anchors.fill: parent
                             anchors.margins: 4
-                            fillMode: Image.PreserveAspectFit
-                            smooth: true
-                            mipmap: true
-                            cache: false
                             asynchronous: true
-                            sourceSize.width: 36
-                            sourceSize.height: 36
+                            backer.fillMode: Image.PreserveAspectFit
                             source: {
                                 for (var i = 0; i < iconBackground.iconSources.length; i++) {
                                     var icon = iconBackground.iconSources[i];
