@@ -34,7 +34,7 @@ Item {
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
             acceptedButtons: Qt.LeftButton | Qt.RightButton
-            onClicked: function(mouse): void {
+            onClicked: function(mouse) {
                 if (mouse.button === Qt.RightButton) {
                     root.isSilence = !root.isSilence;
                     rightClickProcess.running = true;
