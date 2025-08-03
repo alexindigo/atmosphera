@@ -3,6 +3,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
+import Quickshell.Widgets
 import qs.Settings
 
 PopupWindow {
@@ -112,12 +113,12 @@ PopupWindow {
                         elide: Text.ElideRight
                     }
 
-                    Image {
+                    IconImage {
                         Layout.preferredWidth: 16
                         Layout.preferredHeight: 16
                         source: modelData?.icon ?? ""
                         visible: (modelData?.icon ?? "") !== ""
-                        fillMode: Image.PreserveAspectFit
+                        backer.fillMode: Image.PreserveAspectFit
                     }
                 }
 

@@ -137,8 +137,11 @@ PanelWindow {
                                     fillMode: Image.PreserveAspectCrop
                                     asynchronous: true
                                     cache: true
-                                    sourceSize.width: Math.min(width, 150)
-                                    sourceSize.height: Math.min(height, 90)
+                                    smooth: true
+                                    mipmap: true
+                                    // Limit memory usage
+                                    sourceSize.width: 480
+                                    sourceSize.height: 270
                                 }
                                 MouseArea {
                                     anchors.fill: parent

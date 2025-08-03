@@ -2,6 +2,8 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 import Qt5Compat.GraphicalEffects
+import Quickshell.Widgets
+import qs.Components
 import qs.Settings
 
 Rectangle {
@@ -61,39 +63,7 @@ Rectangle {
                     border.color: profileImageInput.activeFocus ? Theme.accentPrimary : Theme.outline
                     border.width: 1
 
-                    Image {
-                        id: avatarImage
-                        anchors.fill: parent
-                        anchors.margins: 2
-                        source: Settings.settings.profileImage
-                        fillMode: Image.PreserveAspectCrop
-                        visible: false
-                        asynchronous: true
-                        cache: false
-                        sourceSize.width: 64
-                        sourceSize.height: 64
-                    }
-                    
-                    OpacityMask {
-                        anchors.fill: avatarImage
-                        source: avatarImage
-                        maskSource: Rectangle {
-                            width: avatarImage.width
-                            height: avatarImage.height
-                            radius: avatarImage.width / 2
-                            visible: false
-                        }
-                        visible: Settings.settings.profileImage !== ""
-                    }
-
-                    Text {
-                        anchors.centerIn: parent
-                        text: "person"
-                        font.family: "Material Symbols Outlined"
-                        font.pixelSize: 20
-                        color: Theme.accentPrimary
-                        visible: Settings.settings.profileImage === ""
-                    }
+                    Avatar {}
                 }
 
                 Rectangle {

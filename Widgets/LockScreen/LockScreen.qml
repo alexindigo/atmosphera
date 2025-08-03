@@ -3,10 +3,11 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import QtQuick.Effects
 import Qt5Compat.GraphicalEffects
-import Quickshell.Wayland
 import Quickshell
 import Quickshell.Services.Pam
 import Quickshell.Io
+import Quickshell.Wayland
+import Quickshell.Widgets
 import qs.Components
 import qs.Settings
 import qs.Services
@@ -135,8 +136,8 @@ WlSessionLock {
             fillMode: Image.PreserveAspectCrop
             source: WallpaperManager.currentWallpaper !== "" ? WallpaperManager.currentWallpaper : ""
             cache: true
-            smooth: false
-            visible: true // source for MultiEffect
+            smooth: true
+            mipmap: false
         }
 
         MultiEffect {
@@ -160,34 +161,8 @@ WlSessionLock {
                 radius: 40
                 color: Theme.accentPrimary
 
-                Image {
-                    id: avatarImage
-                    anchors.fill: parent
-                    anchors.margins: 4
-                    source: Settings.settings.profileImage
-                    fillMode: Image.PreserveAspectCrop
-                    visible: false
-                    asynchronous: true
-                }
-                OpacityMask {
-                    anchors.fill: avatarImage
-                    source: avatarImage
-                    maskSource: Rectangle {
-                        width: avatarImage.width
-                        height: avatarImage.height
-                        radius: avatarImage.width / 2
-                        visible: false
-                    }
-                    visible: Settings.settings.profileImage !== ""
-                }
-                Text {
-                    anchors.centerIn: parent
-                    text: "person"
-                    font.family: "Material Symbols Outlined"
-                    font.pixelSize: 32
-                    color: Theme.onAccent
-                    visible: Settings.settings.profileImage === ""
-                }
+                Avatar {}
+
                 layer.enabled: true
                 layer.effect: Glow {
                     color: Theme.accentPrimary
@@ -336,7 +311,7 @@ WlSessionLock {
         }
 
         Rectangle {
-            width: infoColumn.width + 16
+            width: infoColumn.width + 32
             height: infoColumn.height + 8
             color: (Theme.backgroundPrimary !== undefined && Theme.backgroundPrimary !== null) ? Theme.backgroundPrimary : "#222"
             anchors.horizontalCenter: parent.horizontalCenter
