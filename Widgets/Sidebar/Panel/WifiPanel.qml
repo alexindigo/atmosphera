@@ -30,7 +30,10 @@ Item {
         running: false
         command: ["nmcli", "-t", "-f", "SSID,SECURITY,SIGNAL,IN-USE", "device", "wifi", "list"]
         onRunningChanged: {
-            // Removed debug log
+            console.log("scanProcess.running changed: " + running);
+            // if (!running) {
+            //     console.log("scanProcess finished.");
+            // }
         }
         stdout: StdioCollector {
             onStreamFinished: {
@@ -399,10 +402,22 @@ Item {
                         Layout.fillWidth: true
                     }
                     Item { Layout.fillWidth: true }
+                    Spinner {
+                        id: refreshIndicator
+                        Layout.preferredWidth: 24
+                        Layout.preferredHeight: 24
+                        Layout.alignment: Qt.AlignVCenter
+                        visible: scanProcess.running
+                        running: scanProcess.running
+                        color: Theme.accentPrimary // Assuming Spinner supports color property
+                        size: 22 // Based on the existing Spinner usage
+                    }
                     IconButton {
+                        id: refreshButton
                         icon: "refresh"
                         onClicked: wifiLogic.refreshNetworks()
                     }
+
                     Rectangle {
                         implicitWidth: 36; implicitHeight: 36; radius: 18
                         color: closeButtonArea.containsMouse ? Theme.accentPrimary : "transparent"
@@ -557,18 +572,18 @@ Item {
                                                 verticalAlignment: Text.AlignVCenter
                                                 Layout.alignment: Qt.AlignVCenter
                                             }
-                                                                                                Item {
-                                                        Layout.alignment: Qt.AlignVCenter
-                                                        Layout.preferredHeight: 22
-                                                        Layout.preferredWidth: 22
-                                                        Spinner {
-                                                            visible: wifiLogic.connectingSsid === modelData.ssid
-                                                            running: wifiLogic.connectingSsid === modelData.ssid
-                                                            color: Theme.accentPrimary
-                                                            anchors.centerIn: parent
-                                                            size: 22
-                                                        }
-                                                    }
+                                            Item {
+                                                Layout.alignment: Qt.AlignVCenter
+                                                Layout.preferredHeight: 22
+                                                Layout.preferredWidth: 22
+                                                Spinner {
+                                                    visible: wifiLogic.connectingSsid === modelData.ssid
+                                                    running: wifiLogic.connectingSsid === modelData.ssid
+                                                    color: Theme.accentPrimary
+                                                    anchors.centerIn: parent
+                                                    size: 22
+                                                }
+                                            }
                                         }
                                         MouseArea {
                                             id: networkMouseArea
