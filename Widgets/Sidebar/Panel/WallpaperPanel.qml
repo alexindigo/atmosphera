@@ -139,6 +139,9 @@ PanelWindow {
                                     cache: true
                                     smooth: true
                                     mipmap: true
+                                    // Limit memory usage
+                                    sourceSize.width: 480
+                                    sourceSize.height: 270
                                 }
                                 MouseArea {
                                     anchors.fill: parent
