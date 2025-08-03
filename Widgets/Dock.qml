@@ -154,7 +154,6 @@ PanelWindow {
                             height: Math.max(20, Settings.settings.taskbarIconSize * 0.75)
                             anchors.centerIn: parent
                             source: taskbar.getAppIcon(modelData)
-                            smooth: true
                             visible: source.toString() !== ""
                         }
 

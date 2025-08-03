@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Qt5Compat.GraphicalEffects
+import Quickshell.Widgets
 import qs.Settings
 import qs.Services
 import qs.Components
@@ -54,10 +55,9 @@ Item {
                     anchors.margins: 1
                     fillMode: Image.PreserveAspectCrop
                     smooth: true
+                    mipmap: true
                     cache: false
                     asynchronous: true
-                    sourceSize.width: 24
-                    sourceSize.height: 24
                     source: MusicManager.trackArtUrl
                     visible: source.toString() !== ""
 

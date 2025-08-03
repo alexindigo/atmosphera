@@ -3,9 +3,11 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
+import Quickshell.Wayland
+import Quickshell.Widgets
 import qs.Components
 import qs.Settings
-import Quickshell.Wayland
+
 import "../../Helpers/Fuzzysort.js" as Fuzzysort
 
 PanelWithOverlay {
@@ -342,12 +344,9 @@ PanelWithOverlay {
                                     width: 28
                                     height: 28
                                     property bool iconLoaded: !modelData.isCalculator && iconImg.status === Image.Ready && iconImg.source !== "" && iconImg.status !== Image.Error
-                                    Image {
+                                    IconImage {
                                         id: iconImg
                                         anchors.fill: parent
-                                        fillMode: Image.PreserveAspectFit
-                                        smooth: true
-                                        cache: false
                                         asynchronous: true
                                         source: modelData.isCalculator ? "qrc:/icons/calculate.svg" : Quickshell.iconPath(modelData.icon, "application-x-executable")
                                         visible: modelData.isCalculator || parent.iconLoaded

@@ -1,9 +1,9 @@
 import QtQuick
 import Quickshell
-import qs.Components
-import qs.Settings
 import Quickshell.Wayland
 import Quickshell.Widgets
+import qs.Components
+import qs.Settings
 
 PanelWindow {
     id: activeWindowPanel
@@ -121,6 +121,7 @@ PanelWindow {
                 source: ToplevelManager?.activeToplevel ? getIcon() : ""
                 visible: Settings.settings.showActiveWindowIcon
                 anchors.verticalCenterOffset: -3
+
             }
 
             Text {

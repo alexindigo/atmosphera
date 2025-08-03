@@ -34,6 +34,7 @@ ShellRoot {
                 source: wallpaperSource
                 cache: true
                 smooth: true
+                mipmap: false
                 visible: wallpaperSource !== "" // Show the original for FastBlur input
             }
             MultiEffect {
