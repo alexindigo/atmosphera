@@ -136,9 +136,12 @@ PanelWindow {
                                     source: modelData
                                     fillMode: Image.PreserveAspectCrop
                                     asynchronous: true
-                                    cache: true
+                                    cache: false
                                     smooth: true
                                     mipmap: true
+                                    // Limit memory usage
+                                    sourceSize.width: 480
+                                    sourceSize.height: 270
                                 }
                                 MouseArea {
                                     anchors.fill: parent
