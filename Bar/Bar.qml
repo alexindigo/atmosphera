@@ -4,7 +4,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
-import QtQuick.Effects
+import Qt5Compat.GraphicalEffects
 import qs.Bar.Modules
 import qs.Settings
 import qs.Services

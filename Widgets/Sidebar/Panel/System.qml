@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
-import QtQuick.Effects
+import Qt5Compat.GraphicalEffects
 import Quickshell
 import Quickshell.Io
 import qs.Settings
@@ -51,8 +51,7 @@ Rectangle {
                         z: 2
                     }
 
-                    MultiEffect {
-                        maskEnabled:true
+                    OpacityMask {
                         anchors.fill: parent
                         source: Image {
                             id: avatarImage
