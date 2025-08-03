@@ -110,6 +110,7 @@ Scope {
 
                         Brightness {
                             id: widgetsBrightness
+                            screen: modelData
                             anchors.verticalCenter: parent.verticalCenter
                         }
 

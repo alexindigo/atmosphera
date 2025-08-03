@@ -91,7 +91,7 @@ Singleton {
 
     FolderListModel {
         id: folderModel
-        nameFilters: ["*.jpg", "*.jpeg", "*.png", "*.gif", "*.pnm", "*.bmp"]
+        nameFilters: Settings.settings.useSWWW ? ["*.avif", "*.jpg", "*.jpeg", "*.png", "*.gif", "*.pnm", "*.tga", "*.tiff", "*.webp", "*.bmp", "*.farbfeld"] : ["*.jpg", "*.jpeg", "*.png", "*.gif", "*.pnm", "*.bmp"]
         showDirs: false
         sortField: FolderListModel.Name
         onStatusChanged: {
