@@ -106,7 +106,7 @@ Item {
                     }
                 }
                 wifiLogic.networks = Object.values(networksMap);
-                console.log(JSON.stringify(wifiLogic.networks));
+                scanProcess.existingNetwork = null;
                 refreshIndicator.running = false;
                 refreshIndicator.visible = false;
             }
