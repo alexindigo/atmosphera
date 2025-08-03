@@ -140,8 +140,8 @@ PanelWindow {
                                     smooth: true
                                     mipmap: true
                                     // Limit memory usage
-                                    sourceSize.width: 480
-                                    sourceSize.height: 270
+                                    sourceSize.width: Math.min(width, 480)
+                                    sourceSize.height: Math.min(height, 270)
                                 }
                                 MouseArea {
                                     anchors.fill: parent
