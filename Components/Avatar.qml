@@ -6,20 +6,17 @@ import QtQuick.Effects
 
 Item {
     anchors.fill: parent
+    anchors.margins: 2
 
-    anchors.leftMargin: 2
-    anchors.rightMargin: 2
-    anchors.topMargin: 2
-    anchors.bottomMargin: 2
-
-    IconImage {
+    Image {
         id: avatarImage
         anchors.fill: parent
-        anchors.margins: 2
         source: "file://" + Settings.settings.profileImage
         visible: false
+        mipmap: true
+        smooth: true
         asynchronous: true
-        backer.fillMode: Image.PreserveAspectCrop
+        fillMode: Image.PreserveAspectCrop
     }
 
     MultiEffect {
