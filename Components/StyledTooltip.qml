@@ -16,8 +16,8 @@ Window {
     color: "transparent"
     visible: false
 
-    minimumWidth: tooltipText.implicitWidth + 24
-    minimumHeight: tooltipText.implicitHeight + 16
+    minimumWidth: Math.max(50, tooltipText.implicitWidth + 24)
+    minimumHeight: Math.max(50, tooltipText.implicitHeight + 16)
     property var _timerObj: null
 
     onTooltipVisibleChanged: {
