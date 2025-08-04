@@ -40,7 +40,7 @@ PanelWindow {
     Rectangle {
         anchors.fill: parent
         color: Theme.backgroundPrimary
-        radius: 24
+        radius: 20
         ColumnLayout {
             anchors.fill: parent
             anchors.margins: 32

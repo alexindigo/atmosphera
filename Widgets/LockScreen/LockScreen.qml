@@ -240,7 +240,7 @@ WlSessionLock {
                 width: parent.width * 0.8
                 height: 44
                 color: Theme.overlay
-                radius: 22
+                radius: 20
                 visible: lock.errorMessage !== ""
 
                 Text {
@@ -258,7 +258,7 @@ WlSessionLock {
                 Layout.alignment: Qt.AlignHCenter
                 width: 120
                 height: 44
-                radius: 22
+                radius: 20
                 opacity: unlockButtonArea.containsMouse ? 0.8 : 0.5
                 color: unlockButtonArea.containsMouse ? Theme.accentPrimary : Theme.surface
                 border.color: Theme.accentPrimary

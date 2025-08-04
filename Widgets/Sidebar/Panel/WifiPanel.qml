@@ -482,7 +482,7 @@ Item {
         Rectangle {
             anchors.fill: parent
             color: Theme.backgroundPrimary
-            radius: 24
+            radius: 20
             ColumnLayout {
                 anchors.fill: parent
                 anchors.margins: 32
@@ -590,7 +590,7 @@ Item {
                             anchors.fill: parent
                             spacing: 4
                             boundsBehavior: Flickable.StopAtBounds
-                            model: Object.values(wifiLogic.networks)
+                            model: wifiLogic.networks ? Object.values(wifiLogic.networks) : null
                             delegate: Item {
                                 id: networkEntry
 

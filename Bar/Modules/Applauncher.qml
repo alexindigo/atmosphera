@@ -214,7 +214,7 @@ PanelWithOverlay {
                 Rectangle {
                     id: searchBar
                     color: Theme.surfaceVariant
-                    radius: 22
+                    radius: 20
                     height: 48
                     Layout.fillWidth: true
                     border.color: searchField.activeFocus ? Theme.accentPrimary : Theme.outline
