@@ -130,12 +130,21 @@ Singleton {
     Timer {
         id: positionTimer
         interval: 1000
-        running: currentPlayer && currentPlayer.isPlaying && currentPlayer.length > 0
+        running: currentPlayer && currentPlayer.isPlaying && currentPlayer.length > 0 && currentPlayer.playbackState === MprisPlaybackState.Playing
         repeat: true
         onTriggered: {
-            if (currentPlayer && currentPlayer.isPlaying) {
+            if (currentPlayer && currentPlayer.isPlaying && currentPlayer.playbackState === MprisPlaybackState.Playing) {
                 currentPosition = currentPlayer.position
+            } else {
+                running = false
             }
+        }
+    }
+
+    // Reset position when player state changes
+    onCurrentPlayerChanged: {
+        if (!currentPlayer || !currentPlayer.isPlaying || currentPlayer.playbackState !== MprisPlaybackState.Playing) {
+            currentPosition = 0
         }
     }
 
