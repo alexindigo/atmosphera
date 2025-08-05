@@ -12,6 +12,12 @@
   <a href="https://github.com/Ly-sec/Noctalia/graphs/contributors">
     <img src="https://img.shields.io/github/contributors/Ly-sec/Noctalia?style=for-the-badge&labelColor=0C0D11&color=A8AEFF" alt="GitHub contributors" />
   </a>
+  <a href="https://discord.gg/7JFFYWzWRn">
+    <img src="https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&labelColor=0C0D11&color=A8AEFF&logo=discord&logoColor=white" alt="Discord" />
+  </a>
+
+
+
 </p>
 
 A sleek, minimal, and thoughtfully crafted setup for Wayland using **Quickshell**. This setup includes a status bar, notification system, control panel, wifi & bluetooth support, power profiles, lockscreen, tray, workspaces, and more — all styled with a warm lavender palette.
