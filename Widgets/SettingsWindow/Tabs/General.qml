@@ -107,15 +107,11 @@ ColumnLayout {
         }
     }
 
-    Item {
-        Layout.fillWidth: true
-        Layout.preferredHeight: 16
-    }
-
 
     ColumnLayout {
         spacing: 4
         Layout.fillWidth: true
+        Layout.topMargin: 58
 
         Text {
             text: "User Interface"

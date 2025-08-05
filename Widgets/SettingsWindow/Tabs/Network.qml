@@ -101,7 +101,7 @@ ColumnLayout {
     ColumnLayout {
         spacing: 16
         Layout.fillWidth: true
-        Layout.topMargin: 16
+        Layout.topMargin: 58
 
         Text {
             text: "Bluetooth"

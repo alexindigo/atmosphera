@@ -6,7 +6,7 @@ IpcHandler {
     property var appLauncherPanel
     property var lockScreen
     property IdleInhibitor idleInhibitor
-    property var notificationPopupVariants
+    property var notificationPopup
 
     target: "globalIPC"
 
@@ -17,18 +17,11 @@ IpcHandler {
 
     function toggleNotificationPopup(): void {
         console.log("[IPC] NotificationPopup toggle() called")
-    
-        if (notificationPopupVariants) {
-            for (let i = 0; i < notificationPopupVariants.count; i++) {
-                let popup = notificationPopupVariants.objectAt(i);
-                if (popup) {
-                    popup.togglePopup();
-                }
-            }
-        }
+        // Use the global toggle function from the notification manager
+        notificationPopup.togglePopup();
     }
 
-
+    // Toggle Applauncher visibility
     function toggleLauncher(): void {
         if (!appLauncherPanel) {
             console.warn("AppLauncherIpcHandler: appLauncherPanel not set!");
@@ -42,7 +35,7 @@ IpcHandler {
         }
     }
 
-
+    // Toggle LockScreen
     function toggleLock(): void {
         if (!lockScreen) {
             console.warn("LockScreenIpcHandler: lockScreen not set!");

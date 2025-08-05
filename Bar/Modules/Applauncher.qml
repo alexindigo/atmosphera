@@ -296,9 +296,9 @@ PanelWithOverlay {
                     const searchTerm = query.slice(5).trim();
                     
                     clipboardHistory.forEach(function(clip, index) {
-                                                    let searchContent = clip.type === 'image' ? 
-                                clip.mimeType : 
-                                clip.content || clip;  // Support both new object format and old string format
+                        let searchContent = clip.type === 'image' ? 
+                            clip.mimeType : 
+                            clip.content || clip;  // Support both new object format and old string format
                             
                         if (!searchTerm || searchContent.toLowerCase().includes(searchTerm)) {
                             let entry;

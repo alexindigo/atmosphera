@@ -22,17 +22,18 @@ Scope {
     property var notificationHistoryWin: notificationHistoryWin
     property bool pendingReload: false
 
-    // Round volume to nearest 5% increment for consistent control
+    // Helper function to round value to nearest step
     function roundToStep(value, step) {
         return Math.round(value / step) * step;
     }
 
-    // Current audio volume (0-100), synced with system
+    // Volume property reflecting current audio volume in 0-100
+    // Will be kept in sync dynamically below
     property int volume: (defaultAudioSink && defaultAudioSink.audio && !defaultAudioSink.audio.muted)
                         ? Math.round(defaultAudioSink.audio.volume * 100)
                         : 0
 
-    // Update volume with 5-step increments and apply to audio sink
+    // Function to update volume with clamping, stepping, and applying to audio sink
     function updateVolume(vol) {
         var clamped = Math.max(0, Math.min(100, vol));
         var stepped = roundToStep(clamped, 5);
@@ -52,13 +53,8 @@ Scope {
         property var notificationHistoryWin: notificationHistoryWin
     }
 
-    // Create dock for each monitor (respects dockMonitors setting)
-    Variants {
-        model: Quickshell.screens
-
-        Dock {
-            property var modelData
-        }
+    Dock {
+        id: dock
     }
 
     Applauncher {
@@ -83,17 +79,16 @@ Scope {
     NotificationServer {
         id: notificationServer
         onNotification: function (notification) {
-            console.log("Notification received:", notification.appName);
             notification.tracked = true;
-            
-            // Distribute notification to all visible notification popups
-            for (let i = 0; i < notificationPopupVariants.count; i++) {
-                let popup = notificationPopupVariants.objectAt(i);
-                if (popup && popup.notificationsVisible) {
-                    popup.addNotification(notification);
+            if (notificationPopup.notificationsVisible) {
+                // Add notification to all popup instances
+                for (let i = 0; i < notificationPopup.children.length; i++) {
+                    let child = notificationPopup.children[i];
+                    if (child.addNotification) {
+                        child.addNotification(notification);
+                    }
                 }
             }
-            
             if (notificationHistoryWin) {
                 notificationHistoryWin.addToHistory({
                     id: notification.id,
@@ -107,19 +102,8 @@ Scope {
         }
     }
 
-    // Create notification popups for each selected monitor
-    Variants {
-        id: notificationPopupVariants
-        model: Quickshell.screens
-
-        NotificationPopup {
-            property var modelData
-            barVisible: bar.visible
-            screen: modelData
-            visible: notificationsVisible && notificationModel.count > 0 && 
-                    (Settings.settings.notificationMonitors.includes(modelData.name) ||
-                     (Settings.settings.notificationMonitors.length === 0)) // Show on all if none selected
-        }
+    NotificationPopup {
+        id: notificationPopup
     }
 
     NotificationHistory {
@@ -137,7 +121,7 @@ Scope {
         appLauncherPanel: appLauncherPanel
         lockScreen: lockScreen
         idleInhibitor: idleInhibitor
-        notificationPopupVariants: notificationPopupVariants
+        notificationPopup: notificationPopup
     }
 
     Connections {
@@ -154,12 +138,11 @@ Scope {
 
     Timer {
         id: reloadTimer
-        interval: 500
+        interval: 500 // ms
         repeat: false
         onTriggered: Quickshell.reload(true)
     }
 
-    // Handle screen configuration changes (delay reload if locked)
     Connections {
         target: Quickshell
         function onScreensChanged() {

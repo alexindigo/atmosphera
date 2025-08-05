@@ -81,7 +81,7 @@ Singleton {
             // Monitor/Display Settings
             property var barMonitors: [] // Array of monitor names to show the bar on
             property var dockMonitors: [] // Array of monitor names to show the dock on
-            property var notificationMonitors: [] // Array of monitor names to show notifications on
+            property var notificationMonitors: [] // Array of monitor names to show notifications on, "*" means all monitors
         }
     }
 
@@ -90,5 +90,7 @@ Singleton {
         function onRandomWallpaperChanged() { WallpaperManager.toggleRandomWallpaper() }
         function onWallpaperIntervalChanged() { WallpaperManager.restartRandomWallpaperTimer() }
         function onWallpaperFolderChanged() { WallpaperManager.loadWallpapers() }
+        function onNotificationMonitorsChanged() { 
+        }
     }
 }

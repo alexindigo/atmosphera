@@ -172,7 +172,7 @@ ColumnLayout {
     ColumnLayout {
         spacing: 4
         Layout.fillWidth: true
-        Layout.topMargin: 16
+        Layout.topMargin: 58
 
         Text {
             text: "Weather"

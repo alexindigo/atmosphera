@@ -13,6 +13,17 @@ ColumnLayout {
 
     // Get list of available monitors/screens
     property var monitors: Quickshell.screens || []
+    
+    // Sorted monitors by name
+    property var sortedMonitors: {
+        let sorted = [...monitors];
+        sorted.sort((a, b) => {
+            let nameA = a.name || "Unknown";
+            let nameB = b.name || "Unknown";
+            return nameA.localeCompare(nameB);
+        });
+        return sorted;
+    }
 
     Item {
         Layout.fillWidth: true
@@ -68,7 +79,7 @@ ColumnLayout {
                 spacing: 8
 
                 Repeater {
-                    model: root.monitors
+                    model: root.sortedMonitors
                     delegate: Rectangle {
                         id: barCheckbox
                         property bool isChecked: false
@@ -171,7 +182,7 @@ ColumnLayout {
                 spacing: 8
 
                 Repeater {
-                    model: root.monitors
+                    model: root.sortedMonitors
                     delegate: Rectangle {
                         id: dockCheckbox
                         property bool isChecked: false
@@ -277,7 +288,7 @@ ColumnLayout {
                 spacing: 8
 
                 Repeater {
-                    model: root.monitors
+                    model: root.sortedMonitors
                     delegate: Rectangle {
                         id: notificationCheckbox
                         property bool isChecked: false

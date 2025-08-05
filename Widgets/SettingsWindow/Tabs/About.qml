@@ -255,7 +255,7 @@ Item {
             font.pixelSize: 14
             color: Theme.textSecondary
             Layout.alignment: Qt.AlignCenter
-            Layout.topMargin: 16
+            Layout.topMargin: 24
         }
 
 
