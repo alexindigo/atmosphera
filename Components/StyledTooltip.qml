@@ -16,8 +16,6 @@ Window {
     color: "transparent"
     visible: false
 
-    minimumWidth: Math.max(50, tooltipText.implicitWidth + 24)
-    minimumHeight: Math.max(50, tooltipText.implicitHeight + 16)
     property var _timerObj: null
 
     onTooltipVisibleChanged: {
@@ -36,6 +34,9 @@ Window {
     }
 
     function _showNow() {
+        width = Math.max(50, tooltipText.implicitWidth + 24)
+        height = Math.max(50, tooltipText.implicitHeight + 16)
+
         if (!targetItem) return;
 
         if (positionAbove) {

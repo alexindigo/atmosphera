@@ -8,6 +8,10 @@ Row {
     spacing: 10
     visible: Settings.settings.showSystemInfoInBar
 
+    // The width calculation below is required to ensure our row width is an integer.
+    // If omitted the next component to the right might get blurry (Taskbar icons).
+    width: Math.floor(cpuUsageLayout.width + cpuTempLayout.width + memoryUsageLayout.width + (2 * 10))
+
     Row {
         id: cpuUsageLayout
         spacing: 6

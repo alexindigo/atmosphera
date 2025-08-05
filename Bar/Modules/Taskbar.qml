@@ -15,6 +15,7 @@ Item {
     // Attach custom tooltip
     StyledTooltip {
         id: styledTooltip
+        positionAbove: false
     }
 
     function getAppIcon(toplevel: Toplevel): string {
@@ -94,7 +95,8 @@ Item {
                     cursorShape: Qt.PointingHandCursor
 
                     onEntered: {
-                        styledTooltip.text = appTitle || appId;
+                        var text = appTitle || appId;
+                        styledTooltip.text = text.length > 60 ? text.substring(0, 60) + "..." : text;
                         styledTooltip.targetItem = appButton;
                         styledTooltip.tooltipVisible = true;
                     }
