@@ -203,7 +203,7 @@ It is perfect now
 
 ## 💜 Credits
 
-Huge thanks to [**@ferrreo**](https://github.com/ferrreo) for all the changes they did and all the cool features they added!
+Huge thanks to [**@ferrreo**](https://github.com/ferrreo) and [**@quadbyte**](https://github.com/quadbyte)for all the changes they did and all the cool features they added!
 
 ---
 
