@@ -35,7 +35,7 @@ PanelWithOverlay {
         anchors.top: parent.top
         anchors.right: parent.right
 
-        // Animation properties
+    
         property real slideOffset: width
         property bool isAnimating: false
 
@@ -59,15 +59,15 @@ PanelWithOverlay {
             if (sidebarPopupRect.settingsModal && sidebarPopupRect.settingsModal.visible) {
                 sidebarPopupRect.settingsModal.visible = false;
             }
-            if (sidebarPopupRect.wallpaperPanelModal && sidebarPopupRect.wallpaperPanelModal.visible) {
-                sidebarPopupRect.wallpaperPanelModal.visible = false;
+            if (wallpaperPanel && wallpaperPanel.visible) {
+                wallpaperPanel.visible = false;
             }
-                if (sidebarPopupRect.wifiPanelModal && sidebarPopupRect.wifiPanelModal.visible) {
-                    sidebarPopupRect.wifiPanelModal.visible = false;
-                }
-                if (sidebarPopupRect.bluetoothPanelModal && sidebarPopupRect.bluetoothPanelModal.visible) {
-                    sidebarPopupRect.bluetoothPanelModal.visible = false;
-                }
+            if (sidebarPopupRect.wifiPanelModal && sidebarPopupRect.wifiPanelModal.visible) {
+                sidebarPopupRect.wifiPanelModal.visible = false;
+            }
+            if (sidebarPopupRect.bluetoothPanelModal && sidebarPopupRect.bluetoothPanelModal.visible) {
+                sidebarPopupRect.bluetoothPanelModal.visible = false;
+            }
             if (sidebarPopup.visible) {
                 slideAnim.from = 0;
                 slideAnim.to = width;
@@ -85,7 +85,7 @@ PanelWithOverlay {
             onStopped: {
                 if (sidebarPopupRect.slideOffset === sidebarPopupRect.width) {
                     sidebarPopup.visible = false;
-                    // Stop monitoring and background tasks when hidden
+            
                     if (weather)
                         weather.stopWeatherFetch();
                     if (systemWidget)
@@ -125,7 +125,6 @@ PanelWithOverlay {
         }
 
         property alias settingsModal: settingsModal
-        property alias wallpaperPanelModal: wallpaperPanelModal
         property alias wifiPanelModal: wifiPanel.panel
         property alias bluetoothPanelModal: bluetoothPanel.panel
         SettingsModal {
@@ -314,7 +313,7 @@ PanelWithOverlay {
                         settingsModal.visible = true;
                     }
                     onWallpaperRequested: {
-                        wallpaperPanelModal.visible = true;
+                        wallpaperPanel.visible =  true;
                     }
                 }
             }
@@ -339,7 +338,15 @@ PanelWithOverlay {
                 videoPath += "/";
             }
             var outputPath = videoPath + filename;
-            var command = "gpu-screen-recorder -w portal -f 60 -a default_output -o " + outputPath;
+            var command = "gpu-screen-recorder -w portal" +
+                " -f " + Settings.settings.recordingFrameRate +
+                " -a default_output" +
+                " -k " + Settings.settings.recordingCodec +
+                " -ac " + Settings.settings.audioCodec +
+                " -q " + Settings.settings.recordingQuality +
+                " -cursor " + (Settings.settings.showCursor ? "yes" : "no") +
+                " -cr " + Settings.settings.colorRange +
+                " -o " + outputPath;
             Quickshell.execDetached(["sh", "-c", command]);
             isRecording = true;
             quickAccessWidget.isRecording = true;
@@ -403,15 +410,13 @@ PanelWithOverlay {
         }
 
         WallpaperPanel {
-            id: wallpaperPanelModal
-            visible: false
+            id: wallpaperPanel
             Component.onCompleted: {
                 if (parent) {
-                    wallpaperPanelModal.anchors.top = parent.top;
-                    wallpaperPanelModal.anchors.right = parent.right;
+                    anchors.top = parent.top;
+                    anchors.right = parent.right;
                 }
             }
-            // Add a close button inside WallpaperPanel.qml for user to close the modal
         }
     }
 }

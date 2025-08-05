@@ -4,7 +4,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 import qs.Bar.Modules
 import qs.Settings
 import qs.Services
@@ -15,6 +15,7 @@ import qs.Widgets.Sidebar
 import qs.Widgets.Sidebar.Panel
 import qs.Widgets.Notification
 
+// Main bar component - creates panels on selected monitors with widgets and corners
 Scope {
     id: rootScope
     property var shell
@@ -38,7 +39,8 @@ Scope {
                     anchors.left: true
                     anchors.right: true
 
-                    visible: true
+                    visible: Settings.settings.barMonitors.includes(modelData.name) ||
+                            (Settings.settings.barMonitors.length === 0)
 
                     Rectangle {
                         id: barBackground
@@ -103,6 +105,14 @@ Scope {
                             anchors.verticalCenter: parent.verticalCenter
                         }
 
+                        Wifi {
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+
+                        Bluetooth {
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+
                         Battery {
                             id: widgetsBattery
                             anchors.verticalCenter: parent.verticalCenter
@@ -110,6 +120,7 @@ Scope {
 
                         Brightness {
                             id: widgetsBrightness
+                            screen: modelData
                             anchors.verticalCenter: parent.verticalCenter
                         }
 
@@ -121,6 +132,10 @@ Scope {
 
                         ClockWidget {
                             screen: modelData
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+
+                        SettingsButton {
                             anchors.verticalCenter: parent.verticalCenter
                         }
 
@@ -149,7 +164,8 @@ Scope {
                     screen: modelData
                     margins.top: 36
                     WlrLayershell.exclusionMode: ExclusionMode.Ignore
-                    visible: true
+                    visible: Settings.settings.barMonitors.includes(modelData.name) ||
+                            (Settings.settings.barMonitors.length === 0)
                     WlrLayershell.layer: WlrLayer.Background
                     aboveWindows: false
                     WlrLayershell.namespace: "swww-daemon"
@@ -175,7 +191,8 @@ Scope {
                     screen: modelData
                     margins.top: 36
                     WlrLayershell.exclusionMode: ExclusionMode.Ignore
-                    visible: true
+                    visible: Settings.settings.barMonitors.includes(modelData.name) ||
+                            (Settings.settings.barMonitors.length === 0)
                     WlrLayershell.layer: WlrLayer.Background
                     aboveWindows: false
                     WlrLayershell.namespace: "swww-daemon"
@@ -201,7 +218,8 @@ Scope {
                     color: "transparent"
                     screen: modelData
                     WlrLayershell.exclusionMode: ExclusionMode.Ignore
-                    visible: true
+                    visible: Settings.settings.barMonitors.includes(modelData.name) ||
+                            (Settings.settings.barMonitors.length === 0)
                     WlrLayershell.layer: WlrLayer.Background
                     aboveWindows: false
                     WlrLayershell.namespace: "swww-daemon"
@@ -227,7 +245,8 @@ Scope {
                     color: "transparent"
                     screen: modelData
                     WlrLayershell.exclusionMode: ExclusionMode.Ignore
-                    visible: true
+                    visible: Settings.settings.barMonitors.includes(modelData.name) ||
+                            (Settings.settings.barMonitors.length === 0)
                     WlrLayershell.layer: WlrLayer.Background
                     aboveWindows: false
                     WlrLayershell.namespace: "swww-daemon"
@@ -249,6 +268,6 @@ Scope {
         }
     }
 
-    // This alias exposes the visual bar's visibility to the outside world
+
     property alias visible: barRootItem.visible
 }

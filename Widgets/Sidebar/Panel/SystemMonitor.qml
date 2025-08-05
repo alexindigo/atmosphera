@@ -12,6 +12,7 @@ Rectangle {
     height: 250
     color: "transparent"
 
+    // Track visibility state for panel integration
     property bool isVisible: false
 
     Rectangle {
@@ -26,7 +27,8 @@ Rectangle {
             spacing: 12
             Layout.alignment: Qt.AlignVCenter
 
-            // CPU Usage
+    
+            // CPU usage indicator with circular progress bar
             Item {
                 width: 50; height: 50
                 CircularProgressBar {
@@ -55,7 +57,8 @@ Rectangle {
                 }
             }
 
-            // Cpu Temp
+    
+            // CPU temperature indicator with circular progress bar
             Item {
                 width: 50; height: 50
                 CircularProgressBar {
@@ -85,7 +88,8 @@ Rectangle {
                 }
             }
 
-            // Memory Usage
+    
+            // Memory usage indicator with circular progress bar
             Item {
                 width: 50; height: 50
                 CircularProgressBar {
@@ -114,7 +118,8 @@ Rectangle {
                 }
             }
 
-            // Disk Usage
+    
+            // Disk usage indicator with circular progress bar
             Item {
                 width: 50; height: 50
                 CircularProgressBar {

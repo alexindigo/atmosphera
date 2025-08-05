@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import Quickshell
+import Quickshell.Widgets
 import qs.Settings
 
 PanelWindow {
@@ -9,7 +10,7 @@ PanelWindow {
     implicitHeight: notificationColumn.implicitHeight
     color: "transparent"
     visible: notificationsVisible && notificationModel.count > 0
-    screen: Quickshell.primaryScreen !== undefined ? Quickshell.primaryScreen : null
+    screen: (typeof modelData !== 'undefined' ? modelData : Quickshell.primaryScreen)
     focusable: false
 
     property bool barVisible: true
@@ -114,38 +115,37 @@ PanelWindow {
                         id: iconBackground
                         width: 36
                         height: 36
-                        radius: width / 2   // Circular
+                        radius: width / 2
                         color: Theme.accentPrimary
                         anchors.verticalCenter: parent.verticalCenter
                         border.color: Qt.darker(Theme.accentPrimary, 1.2)
                         border.width: 1.5
 
-                        // Get all possible icon sources from notification
+                        // Priority order for notification icons: image > appIcon > icon
                         property var iconSources: [rawNotification?.image || "", rawNotification?.appIcon || "", rawNotification?.icon || ""]
 
-                        // Try to load notification icon
-                        Image {
+                        // Load notification icon with fallback handling
+                        IconImage {
                             id: iconImage
                             anchors.fill: parent
                             anchors.margins: 4
-                            fillMode: Image.PreserveAspectFit
-                            smooth: true
-                            cache: false
                             asynchronous: true
-                            sourceSize.width: 36
-                            sourceSize.height: 36
+                            backer.fillMode: Image.PreserveAspectFit
                             source: {
+                                // Try each icon source in priority order
                                 for (var i = 0; i < iconBackground.iconSources.length; i++) {
                                     var icon = iconBackground.iconSources[i];
                                     if (!icon)
                                         continue;
 
+                                    // Handle special path format from some notifications
                                     if (icon.includes("?path=")) {
                                         const [name, path] = icon.split("?path=");
                                         const fileName = name.substring(name.lastIndexOf("/") + 1);
                                         return `file://${path}/${fileName}`;
                                     }
 
+                                    // Handle absolute file paths
                                     if (icon.startsWith('/')) {
                                         return "file://" + icon;
                                     }
@@ -157,7 +157,7 @@ PanelWindow {
                             visible: status === Image.Ready && source.toString() !== ""
                         }
 
-                        // Fallback to first letter of app name
+                        // Fallback: show first letter of app name when no icon available
                         Text {
                             anchors.centerIn: parent
                             visible: !iconImage.visible

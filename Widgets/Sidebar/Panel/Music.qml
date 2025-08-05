@@ -1,7 +1,7 @@
-import QtQuick 
+import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 import qs.Settings
 import qs.Components
 import qs.Services
@@ -53,24 +53,108 @@ Rectangle {
             spacing: 12
             visible: !!MusicManager.currentPlayer
 
-            // Album art and spectrum
+            // Player selector
+            ComboBox {
+                id: playerSelector
+                Layout.fillWidth: true
+                Layout.preferredHeight: 40
+                visible: MusicManager.getAvailablePlayers().length > 1
+                model: MusicManager.getAvailablePlayers()
+                textRole: "identity"
+                currentIndex: MusicManager.selectedPlayerIndex
+
+                background: Rectangle {
+                    implicitWidth: 120
+                    implicitHeight: 40
+                    color: Theme.surfaceVariant
+                    border.color: playerSelector.activeFocus ? Theme.accentPrimary : Theme.outline
+                    border.width: 1
+                    radius: 16
+                }
+
+                contentItem: Text {
+                    leftPadding: 12
+                    rightPadding: playerSelector.indicator.width + playerSelector.spacing
+                    text: playerSelector.displayText
+                    font.pixelSize: 13
+                    color: Theme.textPrimary
+                    verticalAlignment: Text.AlignVCenter
+                    elide: Text.ElideRight
+                }
+
+                indicator: Text {
+                    x: playerSelector.width - width - 12
+                    y: playerSelector.topPadding + (playerSelector.availableHeight - height) / 2
+                    text: "arrow_drop_down"
+                    font.family: "Material Symbols Outlined"
+                    font.pixelSize: 24
+                    color: Theme.textPrimary
+                }
+
+                popup: Popup {
+                    y: playerSelector.height
+                    width: playerSelector.width
+                    implicitHeight: contentItem.implicitHeight
+                    padding: 1
+
+                    contentItem: ListView {
+                        clip: true
+                        implicitHeight: contentHeight
+                        model: playerSelector.popup.visible ? playerSelector.delegateModel : null
+                        currentIndex: playerSelector.highlightedIndex
+
+                        ScrollIndicator.vertical: ScrollIndicator {}
+                    }
+
+                    background: Rectangle {
+                        color: Theme.surfaceVariant
+                        border.color: Theme.outline
+                        border.width: 1
+                        radius: 16
+                    }
+                }
+
+                delegate: ItemDelegate {
+                    width: playerSelector.width
+                    contentItem: Text {
+                        text: modelData.identity
+                        font.pixelSize: 13
+                        color: Theme.textPrimary
+                        verticalAlignment: Text.AlignVCenter
+                        elide: Text.ElideRight
+                    }
+                    highlighted: playerSelector.highlightedIndex === index
+
+                    background: Rectangle {
+                        color: highlighted ? Theme.accentPrimary.toString().replace(/#/, "#1A") : "transparent"
+                    }
+                }
+
+                onActivated: {
+                    MusicManager.selectedPlayerIndex = index;
+                    MusicManager.updateCurrentPlayer();
+                }
+            }
+
+            // Album art with spectrum visualizer
             RowLayout {
                 spacing: 12
                 Layout.fillWidth: true
 
-                // Album art with spectrum
+                // Album art container with circular spectrum overlay
                 Item {
                     id: albumArtContainer
-                    width: 96; height: 96 // enough for spectrum and art (will adjust if needed)
+                    width: 96
+                    height: 96 // enough for spectrum and art (will adjust if needed)
                     Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
 
-                    // Spectrum visualizer
+                    // Circular spectrum visualizer around album art
                     CircularSpectrum {
                         id: spectrum
                         values: MusicManager.cavaValues
                         anchors.centerIn: parent
-                        innerRadius: 30 // just outside 60x60 album art
-                        outerRadius: 48 // how far bars extend
+                        innerRadius: 30 // Position just outside 60x60 album art
+                        outerRadius: 48 // Extend bars outward from album art
                         fillColor: Theme.accentPrimary
                         strokeColor: Theme.accentPrimary
                         strokeWidth: 0
@@ -80,7 +164,8 @@ Rectangle {
                     // Album art image
                     Rectangle {
                         id: albumArtwork
-                        width: 60; height: 60
+                        width: 60
+                        height: 60
                         anchors.centerIn: parent
                         radius: 30 // circle
                         color: Qt.darker(Theme.surface, 1.1)
@@ -93,6 +178,7 @@ Rectangle {
                             anchors.margins: 2
                             fillMode: Image.PreserveAspectCrop
                             smooth: true
+                            mipmap: true
                             cache: false
                             asynchronous: true
                             sourceSize.width: 60
@@ -100,20 +186,29 @@ Rectangle {
                             source: MusicManager.trackArtUrl
                             visible: source.toString() !== ""
 
-                            // Rounded corners using layer
+                        // Apply circular mask for rounded corners
                             layer.enabled: true
-                            layer.effect: OpacityMask {
-                                cached: true
-                                maskSource: Rectangle {
-                                    width: albumArt.width
-                                    height: albumArt.height
-                                    radius: albumArt.width / 2 // circle
-                                    visible: false
-                                }
+                            layer.effect: MultiEffect {
+                                maskEnabled: true
+                                maskSource: mask
                             }
                         }
 
-                        // Fallback icon
+                        Item {
+                            id: mask
+
+                            anchors.fill: albumArt
+                            layer.enabled: true
+                            visible: false
+
+                            Rectangle {
+                                width: albumArt.width
+                                height: albumArt.height
+                                radius: albumArt.width / 2 // circle
+                            }
+                        }
+
+                        // Fallback icon when no album art available
                         Text {
                             anchors.centerIn: parent
                             text: "album"
@@ -171,8 +266,12 @@ Rectangle {
                 color: Qt.rgba(Theme.textPrimary.r, Theme.textPrimary.g, Theme.textPrimary.b, 0.15)
                 Layout.fillWidth: true
 
-                property real progressRatio: Math.min(1, MusicManager.trackLength > 0 ? 
-                                           (MusicManager.currentPosition / MusicManager.trackLength) : 0)
+                property real progressRatio: {
+                    if (!MusicManager.currentPlayer || !MusicManager.isPlaying || MusicManager.trackLength <= 0) {
+                        return 0;
+                    }
+                    return Math.min(1, MusicManager.currentPosition / MusicManager.trackLength);
+                }
 
                 Rectangle {
                     id: progressFill
@@ -182,7 +281,9 @@ Rectangle {
                     color: Theme.accentPrimary
 
                     Behavior on width {
-                        NumberAnimation { duration: 200 }
+                        NumberAnimation {
+                            duration: 200
+                        }
                     }
                 }
 
@@ -196,14 +297,16 @@ Rectangle {
                     border.color: Qt.lighter(Theme.accentPrimary, 1.3)
                     border.width: 1
 
-                    x: Math.max(0, Math.min(parent.width - width, progressFill.width - width/2))
+                    x: Math.max(0, Math.min(parent.width - width, progressFill.width - width / 2))
                     anchors.verticalCenter: parent.verticalCenter
 
                     visible: MusicManager.trackLength > 0
                     scale: progressMouseArea.containsMouse || progressMouseArea.pressed ? 1.2 : 1.0
 
                     Behavior on scale {
-                        NumberAnimation { duration: 150 }
+                        NumberAnimation {
+                            duration: 150
+                        }
                     }
                 }
 
@@ -215,15 +318,15 @@ Rectangle {
                     cursorShape: Qt.PointingHandCursor
                     enabled: MusicManager.trackLength > 0 && MusicManager.canSeek
 
-                    onClicked: function(mouse) {
-                        let ratio = mouse.x / width
-                        MusicManager.seekByRatio(ratio)
+                    onClicked: function (mouse) {
+                        let ratio = mouse.x / width;
+                        MusicManager.seekByRatio(ratio);
                     }
 
-                    onPositionChanged: function(mouse) {
+                    onPositionChanged: function (mouse) {
                         if (pressed) {
-                            let ratio = Math.max(0, Math.min(1, mouse.x / width))
-                            MusicManager.seekByRatio(ratio)
+                            let ratio = Math.max(0, Math.min(1, mouse.x / width));
+                            MusicManager.seekByRatio(ratio);
                         }
                     }
                 }
@@ -318,4 +421,4 @@ Rectangle {
             }
         }
     }
-} 
+}

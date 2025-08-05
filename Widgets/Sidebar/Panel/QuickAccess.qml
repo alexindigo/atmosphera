@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 import Quickshell
 import Quickshell.Io
 import qs.Settings
@@ -32,7 +32,7 @@ Rectangle {
             anchors.margins: 18
             spacing: 12
 
-            // Settings Button
+    
             Rectangle {
                 id: settingsButton
                 Layout.fillWidth: true
@@ -75,7 +75,7 @@ Rectangle {
                 }
             }
 
-            // Screen Recorder Button
+    
             Rectangle {
                 id: recorderButton
                 Layout.fillWidth: true
@@ -123,7 +123,7 @@ Rectangle {
                 }
             }
 
-            // Wallpaper Button
+    
             Rectangle {
                 id: wallpaperButton
                 Layout.fillWidth: true
@@ -168,10 +168,10 @@ Rectangle {
         }
     }
 
-    // Properties
+
     property bool panelVisible: false
 
-    // Timer to check if recording is active
+
     Timer {
         interval: 2000
         repeat: true
@@ -185,7 +185,7 @@ Rectangle {
         }
     }
 
-    // Process to check if gpu-screen-recorder is running
+
     Process {
         id: checkRecordingProcess
         command: ["pgrep", "-f", "gpu-screen-recorder.*portal"]

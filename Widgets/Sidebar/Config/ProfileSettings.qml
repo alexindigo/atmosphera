@@ -1,13 +1,15 @@
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Effects
 import QtQuick.Controls
-import Qt5Compat.GraphicalEffects
+import Quickshell.Widgets
+import qs.Components
 import qs.Settings
 
 Rectangle {
     id: profileSettingsCard
     Layout.fillWidth: true
-    Layout.preferredHeight: 650
+    Layout.preferredHeight: 690
     color: Theme.surface
     radius: 18
 
@@ -53,47 +55,23 @@ Rectangle {
                 spacing: 8
                 Layout.fillWidth: true
 
+                // Profile image
                 Rectangle {
-                    width: 40
-                    height: 40
-                    radius: 20
-                    color: Theme.surfaceVariant
-                    border.color: profileImageInput.activeFocus ? Theme.accentPrimary : Theme.outline
-                    border.width: 1
+                    width: 48
+                    height: 48
+                    radius: 24
 
-                    Image {
-                        id: avatarImage
+                    // Border
+                    Rectangle {
                         anchors.fill: parent
-                        anchors.margins: 2
-                        source: Settings.settings.profileImage
-                        fillMode: Image.PreserveAspectCrop
-                        visible: false
-                        asynchronous: true
-                        cache: false
-                        sourceSize.width: 64
-                        sourceSize.height: 64
-                    }
-                    
-                    OpacityMask {
-                        anchors.fill: avatarImage
-                        source: avatarImage
-                        maskSource: Rectangle {
-                            width: avatarImage.width
-                            height: avatarImage.height
-                            radius: avatarImage.width / 2
-                            visible: false
-                        }
-                        visible: Settings.settings.profileImage !== ""
+                        color: "transparent"
+                        radius: 24
+                        border.color: profileImageInput.activeFocus ? Theme.accentPrimary : Theme.outline
+                        border.width: 2
+                        z: 2
                     }
 
-                    Text {
-                        anchors.centerIn: parent
-                        text: "person"
-                        font.family: "Material Symbols Outlined"
-                        font.pixelSize: 20
-                        color: Theme.accentPrimary
-                        visible: Settings.settings.profileImage === ""
-                    }
+                    Avatar {}
                 }
 
                 Rectangle {
@@ -121,7 +99,7 @@ Rectangle {
                         activeFocusOnTab: true
                         inputMethodHints: Qt.ImhUrlCharactersOnly
                         onTextChanged: {
-                            Settings.settings.profileImage = text
+                            Settings.settings.profileImage = text;
                         }
                         MouseArea {
                             anchors.fill: parent
@@ -182,7 +160,7 @@ Rectangle {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        Settings.settings.showActiveWindowIcon = !Settings.settings.showActiveWindowIcon
+                        Settings.settings.showActiveWindowIcon = !Settings.settings.showActiveWindowIcon;
                     }
                 }
             }
@@ -237,7 +215,7 @@ Rectangle {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        Settings.settings.showSystemInfoInBar = !Settings.settings.showSystemInfoInBar
+                        Settings.settings.showSystemInfoInBar = !Settings.settings.showSystemInfoInBar;
                     }
                 }
             }
@@ -292,7 +270,7 @@ Rectangle {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        Settings.settings.showCorners = !Settings.settings.showCorners
+                        Settings.settings.showCorners = !Settings.settings.showCorners;
                     }
                 }
             }
@@ -347,7 +325,62 @@ Rectangle {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        Settings.settings.showTaskbar = !Settings.settings.showTaskbar
+                        Settings.settings.showTaskbar = !Settings.settings.showTaskbar;
+                    }
+                }
+            }
+        }
+
+        // Show Dock Setting
+        RowLayout {
+            spacing: 8
+            Layout.fillWidth: true
+            Layout.topMargin: 8
+
+            Text {
+                text: "Show Dock"
+                font.pixelSize: 13
+                font.bold: true
+                color: Theme.textPrimary
+            }
+
+            Item {
+                Layout.fillWidth: true
+            }
+
+            Rectangle {
+                id: dockSwitch
+                width: 52
+                height: 32
+                radius: 16
+                color: Settings.settings.showDock ? Theme.accentPrimary : Theme.surfaceVariant
+                border.color: Settings.settings.showDock ? Theme.accentPrimary : Theme.outline
+                border.width: 2
+
+                Rectangle {
+                    id: dockThumb
+                    width: 28
+                    height: 28
+                    radius: 14
+                    color: Theme.surface
+                    border.color: Theme.outline
+                    border.width: 1
+                    y: 2
+                    x: Settings.settings.showDock ? taskbarSwitch.width - width - 2 : 2
+
+                    Behavior on x {
+                        NumberAnimation {
+                            duration: 200
+                            easing.type: Easing.OutCubic
+                        }
+                    }
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        Settings.settings.showDock = !Settings.settings.showDock;
                     }
                 }
             }
@@ -402,7 +435,7 @@ Rectangle {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        Settings.settings.showMediaInBar = !Settings.settings.showMediaInBar
+                        Settings.settings.showMediaInBar = !Settings.settings.showMediaInBar;
                     }
                 }
             }
@@ -457,7 +490,7 @@ Rectangle {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        Settings.settings.dimPanels = !Settings.settings.dimPanels
+                        Settings.settings.dimPanels = !Settings.settings.dimPanels;
                     }
                 }
             }
@@ -596,7 +629,7 @@ Rectangle {
                     activeFocusOnTab: true
                     inputMethodHints: Qt.ImhUrlCharactersOnly
                     onTextChanged: {
-                        Settings.settings.videoPath = text
+                        Settings.settings.videoPath = text;
                     }
                     MouseArea {
                         anchors.fill: parent

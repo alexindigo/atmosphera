@@ -14,7 +14,7 @@ Rectangle {
         anchors.margins: 18
         spacing: 12
 
-        // Weather Settings Header
+    
         RowLayout {
             Layout.fillWidth: true
             spacing: 12
@@ -36,7 +36,7 @@ Rectangle {
             }
         }
 
-        // Weather City Setting
+
         ColumnLayout {
             spacing: 8
             Layout.fillWidth: true
@@ -93,7 +93,7 @@ Rectangle {
             }
         }
 
-        // Temperature Unit Setting
+
         RowLayout {
             spacing: 12
             Layout.fillWidth: true
@@ -160,7 +160,7 @@ Rectangle {
         
         }
 
-            // Random Wallpaper Setting
+    
             RowLayout {
                 spacing: 8
                 Layout.fillWidth: true
@@ -216,7 +216,7 @@ Rectangle {
                 }
             }
 
-            // Reverse Day Month Setting
+    
             RowLayout {
                 spacing: 8
                 Layout.fillWidth: true

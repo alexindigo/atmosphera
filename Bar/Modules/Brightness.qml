@@ -128,6 +128,7 @@ Item {
         StyledTooltip {
             id: brightnessTooltip
             text: "Brightness: " + brightness + "%"
+            positionAbove: false
             tooltipVisible: false
             targetItem: pill
             delay: 1500

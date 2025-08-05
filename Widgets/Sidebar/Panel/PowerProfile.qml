@@ -17,7 +17,7 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         spacing: 20
 
-        // Performance
+
         Rectangle {
             width: 36; height: 36
             radius: 18
@@ -63,7 +63,7 @@ Rectangle {
             }
         }
 
-        // Balanced
+
         Rectangle {
             width: 36; height: 36
             radius: 18
@@ -109,7 +109,7 @@ Rectangle {
             }
         }
 
-        // Power Saver
+
         Rectangle {
             width: 36; height: 36
             radius: 18

@@ -22,7 +22,7 @@ PanelWindow {
     Rectangle {
         anchors.fill: parent
         color: Theme.backgroundPrimary
-        radius: 24
+        radius: 20
         z: 0
 
         ColumnLayout {
@@ -31,7 +31,6 @@ PanelWindow {
             anchors.leftMargin: 32
             anchors.rightMargin: 32
             anchors.topMargin: 32
-            
             spacing: 24
 
             // Header
@@ -85,14 +84,14 @@ PanelWindow {
                 }
             }
 
-            // Tabs bar (moved here)
+            // Tabs bar (reordered)
             Tabs {
                 id: settingsTabs
                 Layout.fillWidth: true
                 tabsModel: [
-                    { icon: "cloud", label: "Weather" },
                     { icon: "settings", label: "System" },
-                    { icon: "wallpaper", label: "Wallpaper" }
+                    { icon: "wallpaper", label: "Wallpaper" },
+                    { icon: "cloud", label: "Weather" }
                 ]
             }
 
@@ -115,7 +114,32 @@ PanelWindow {
                         id: tabContentLoader
                         anchors.top: parent.top
                         width: parent.width
-                        sourceComponent: settingsTabs.currentIndex === 0 ? weatherTab : settingsTabs.currentIndex === 1 ? systemTab : wallpaperTab
+                        sourceComponent: settingsTabs.currentIndex === 0 ? systemTab : settingsTabs.currentIndex === 1 ? wallpaperTab : weatherTab
+                    }
+                }
+
+                Component {
+                    id: systemTab
+                    ColumnLayout {
+                        anchors.fill: parent
+                        ProfileSettings {
+                            Layout.fillWidth: true
+                            Layout.alignment: Qt.AlignTop
+                            anchors.margins: 16
+                        }
+                    }
+                }
+
+                Component {
+                    id: wallpaperTab
+                    ColumnLayout {
+                        anchors.fill: parent
+                        WallpaperSettings {
+                            id: wallpaperSettings
+                            Layout.fillWidth: true
+                            Layout.alignment: Qt.AlignTop
+                            anchors.margins: 16
+                        }
                     }
                 }
 
@@ -130,29 +154,6 @@ PanelWindow {
                         }
                     }
                 }
-                Component {
-                    id: systemTab
-                    ColumnLayout {
-                        anchors.fill: parent
-                        ProfileSettings {
-                            Layout.fillWidth: true
-                            Layout.alignment: Qt.AlignTop
-                            anchors.margins: 16
-                        }
-                    }
-                }
-                Component {
-                    id: wallpaperTab
-                    ColumnLayout {
-                        anchors.fill: parent
-                        WallpaperSettings {
-                            id: wallpaperSettings
-                            Layout.fillWidth: true
-                            Layout.alignment: Qt.AlignTop
-                            anchors.margins: 16
-                        }
-                    }
-                }
             }
         }
     }
@@ -160,7 +161,6 @@ PanelWindow {
     // Function to open the modal and initialize temp values
     function openSettings() {        
         visible = true;
-        // Force focus on the text input after a short delay
         focusTimer.start();
     }
 
@@ -174,20 +174,16 @@ PanelWindow {
         interval: 100
         repeat: false
         onTriggered: {
-            if (visible)
-            // Focus will be handled by the individual components
-            {}
-        }
-    }
-
-    // Release focus when modal becomes invisible
-    onVisibleChanged: {
-        if (!visible) {
-            // Focus will be handled by the individual components
-            if (typeof weather !== 'undefined' && weather !== null && weather.fetchCityWeather) {
-                weather.fetchCityWeather();
+            if (visible) {
+                // Focus logic can go here if needed
             }
         }
     }
-}
 
+    // Refresh weather data when hidden
+    onVisibleChanged: {
+        if (!visible && typeof weather !== 'undefined' && weather !== null && weather.fetchCityWeather) {
+            weather.fetchCityWeather();
+        }
+    }
+}

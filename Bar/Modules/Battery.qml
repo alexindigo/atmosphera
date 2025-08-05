@@ -4,6 +4,7 @@ import Quickshell.Services.UPower
 import QtQuick.Layouts
 import qs.Components
 import qs.Settings
+import "../../Helpers/Time.js" as Time
 
 Item {
     id: batteryWidget
@@ -73,19 +74,40 @@ Item {
         }
         StyledTooltip {
             id: batteryTooltip
+            positionAbove: false
             text: {
                 let lines = [];
-                if (batteryWidget.isReady) {
+                if (!batteryWidget.isReady) {
+                    return "";
+                }
+
+                if (batteryWidget.battery.timeToEmpty > 0) {
+                    lines.push("Time left: " + Time.formatVagueHumanReadableTime(batteryWidget.battery.timeToEmpty));
+                }
+
+                if (batteryWidget.battery.timeToFull > 0) {
+                    lines.push("Time until full: " + Time.formatVagueHumanReadableTime(batteryWidget.battery.timeToFull));
+                }
+
+                if (batteryWidget.battery.changeRate !== undefined) {
+                    const rate = batteryWidget.battery.changeRate;
+                    if (rate > 0) {
+                        lines.push(batteryWidget.charging ? "Charging rate: " + rate.toFixed(2) + " W" : "Discharging rate: " + rate.toFixed(2) + " W");
+                    }
+                    else if (rate < 0) {
+                        lines.push("Discharging rate: " + Math.abs(rate).toFixed(2) + " W");
+                    }
+                    else {
+                        lines.push("Estimating...");
+                    }
+                }
+                else {
                     lines.push(batteryWidget.charging ? "Charging" : "Discharging");
-                    lines.push(Math.round(batteryWidget.percent) + "%");
-                    if (batteryWidget.battery.changeRate !== undefined)
-                        lines.push("Rate: " + batteryWidget.battery.changeRate.toFixed(2) + " W");
-                    if (batteryWidget.battery.timeToEmpty > 0)
-                        lines.push("Time left: " + Math.floor(batteryWidget.battery.timeToEmpty / 60) + " min");
-                    if (batteryWidget.battery.timeToFull > 0)
-                        lines.push("Time to full: " + Math.floor(batteryWidget.battery.timeToFull / 60) + " min");
-                    if (batteryWidget.battery.healthPercentage !== undefined)
-                        lines.push("Health: " + Math.round(batteryWidget.battery.healthPercentage) + "%");
+                }
+
+
+                if (batteryWidget.battery.healthPercentage !== undefined && batteryWidget.battery.healthPercentage > 0) {
+                    lines.push("Health: " + Math.round(batteryWidget.battery.healthPercentage) + "%");
                 }
                 return lines.join("\n");
             }

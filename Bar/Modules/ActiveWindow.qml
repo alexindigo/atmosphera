@@ -1,9 +1,9 @@
 import QtQuick
 import Quickshell
-import qs.Components
-import qs.Settings
 import Quickshell.Wayland
 import Quickshell.Widgets
+import qs.Components
+import qs.Settings
 
 PanelWindow {
     id: activeWindowPanel
@@ -14,7 +14,7 @@ PanelWindow {
     anchors.right: true
     focusable: false
     margins.top: barHeight
-    visible: !activeWindowWrapper.finallyHidden
+    visible: Settings.settings.showActiveWindow && !activeWindowWrapper.finallyHidden 
     implicitHeight: activeWindowTitleContainer.height
     implicitWidth: 0
     property int barHeight: 36
@@ -121,6 +121,7 @@ PanelWindow {
                 source: ToplevelManager?.activeToplevel ? getIcon() : ""
                 visible: Settings.settings.showActiveWindowIcon
                 anchors.verticalCenterOffset: -3
+
             }
 
             Text {

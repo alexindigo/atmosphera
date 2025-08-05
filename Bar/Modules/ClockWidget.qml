@@ -41,6 +41,7 @@ Rectangle {
     StyledTooltip {
         id: dateTooltip
         text: Time.dateString
+        positionAbove: false
         tooltipVisible: showTooltip && !calendar.visible
         targetItem: clockWidget
         delay: 200

@@ -1,9 +1,10 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 import Quickshell
 import Quickshell.Io
+import Quickshell.Widgets
 import qs.Settings
 import qs.Widgets
 import qs.Widgets.LockScreen
@@ -29,19 +30,19 @@ Rectangle {
             anchors.margins: 18
             spacing: 12
 
-            // User info row
+    
             RowLayout {
                 Layout.fillWidth: true
                 spacing: 12
 
-                // Profile image
+    
                 Rectangle {
                     width: 48
                     height: 48
                     radius: 24
                     color: Theme.accentPrimary
 
-                    // Border
+        
                     Rectangle {
                         anchors.fill: parent
                         color: "transparent"
@@ -51,41 +52,10 @@ Rectangle {
                         z: 2
                     }
 
-                    OpacityMask {
-                        anchors.fill: parent
-                        source: Image {
-                            id: avatarImage
-                            anchors.fill: parent
-                            source: Settings.settings.profileImage !== undefined ? Settings.settings.profileImage : ""
-                            fillMode: Image.PreserveAspectCrop
-                            asynchronous: true
-                            cache: false
-                            sourceSize.width: 44
-                            sourceSize.height: 44
-                        }
-                        maskSource: Rectangle {
-                            width: 44
-                            height: 44
-                            radius: 22
-                            visible: false
-                        }
-                        visible: Settings.settings.profileImage !== undefined && Settings.settings.profileImage !== ""
-                        z: 1
-                    }
-
-                    // Fallback icon
-                    Text {
-                        anchors.centerIn: parent
-                        text: "person"
-                        font.family: "Material Symbols Outlined"
-                        font.pixelSize: 24
-                        color: Theme.onAccent
-                        visible: Settings.settings.profileImage === undefined || Settings.settings.profileImage === ""
-                        z: 0
-                    }
+                    Avatar {}
                 }
 
-                // User info text
+    
                 ColumnLayout {
                     spacing: 4
                     Layout.fillWidth: true
@@ -106,12 +76,12 @@ Rectangle {
                     }
                 }
 
-                // Spacer
+        
                 Item {
                     Layout.fillWidth: true
                 }
 
-                // System menu button
+        
                 Rectangle {
                     id: systemButton
                     width: 32
@@ -153,7 +123,7 @@ Rectangle {
         id: systemMenu
         anchors.top: systemButton.bottom
         anchors.right: systemButton.right
-        // System menu popup
+
         Rectangle {
 
             width: 160
@@ -167,7 +137,7 @@ Rectangle {
             anchors.top: parent.top
             anchors.right: parent.right
 
-            // Position below system button
+
             anchors.rightMargin: 32
             anchors.topMargin: systemButton.y + systemButton.height + 48
 
@@ -176,7 +146,7 @@ Rectangle {
                 anchors.margins: 8
                 spacing: 4
 
-                // Lock button
+    
                 Rectangle {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 36
@@ -216,7 +186,7 @@ Rectangle {
                     }
                 }
 
-                // Suspend button
+    
                 Rectangle {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 36
@@ -255,7 +225,7 @@ Rectangle {
                     }
                 }
 
-                // Reboot button
+    
                 Rectangle {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 36
@@ -295,7 +265,7 @@ Rectangle {
                     }
                 }
 
-                // Logout button
+    
                 Rectangle {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 36
@@ -334,7 +304,7 @@ Rectangle {
                     }
                 }
 
-                // Shutdown button
+    
                 Rectangle {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 36
@@ -376,10 +346,10 @@ Rectangle {
         }
     }
 
-    // Properties
+
     property string uptimeText: "--:--"
 
-    // Process to get uptime
+
     Process {
         id: uptimeProcess
         command: ["sh", "-c", "uptime | awk -F 'up ' '{print $2}' | awk -F ',' '{print $1}' | xargs"]
@@ -410,7 +380,7 @@ Rectangle {
         running: false
     }
 
-        Process {
+    Process {
         id: logoutProcessNiri
         command: ["niri", "msg", "action", "quit", "--skip-confirmation"]
         running: false
@@ -422,13 +392,19 @@ Rectangle {
         running: false
     }
 
+    Process {
+        id: logoutProcess
+        command: ["loginctl", "terminate-user", Quickshell.env("USER")]
+        running: false
+    }
+
     function logout() {
         if (WorkspaceManager.isNiri) {
             logoutProcessNiri.running = true;
         } else if (WorkspaceManager.isHyprland) {
             logoutProcessHyprland.running = true;
         } else {
-            // fallback or error
+
             console.warn("No supported compositor detected for logout");
         }
     }
@@ -445,19 +421,18 @@ Rectangle {
         rebootProcess.running = true;
     }
 
-
     property bool panelVisible: false
 
-    // Trigger initial update when panel becomes visible
+    
     onPanelVisibleChanged: {
         if (panelVisible) {
             updateSystemInfo();
         }
     }
 
-    // Timer to update uptime - only runs when panel is visible
+    
     Timer {
-        interval: 60000 // Update every minute
+        interval: 60000
         repeat: true
         running: panelVisible
         onTriggered: updateSystemInfo()
@@ -471,7 +446,7 @@ Rectangle {
         uptimeProcess.running = true;
     }
 
-    // Add lockscreen instance (hidden by default)
+    
     LockScreen {
         id: lockScreen
     }

@@ -12,7 +12,7 @@ Item {
     id: root
     property alias panel: bluetoothPanelModal
 
-    // For showing error/status messages
+
     property string statusMessage: ""
     property bool statusPopupVisible: false
 
@@ -90,7 +90,7 @@ Item {
         Rectangle {
             anchors.fill: parent
             color: Theme.backgroundPrimary
-            radius: 24
+            radius: 20
 
             ColumnLayout {
                 anchors.fill: parent
@@ -145,7 +145,7 @@ Item {
                     opacity: 0.12
                 }
 
-                // Content area (centered, in a card)
+        
                 Rectangle {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 640

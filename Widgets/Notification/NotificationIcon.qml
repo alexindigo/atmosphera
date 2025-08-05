@@ -9,13 +9,13 @@ Item {
     width: 22; height: 22
     property bool isSilence: false
 
-    // Process for executing CLI commands
+
     Process {
         id: rightClickProcess
         command: ["qs","ipc", "call", "globalIPC", "toggleNotificationPopup"]
     }
 
-    // Bell icon/button
+
     Item {
         id: bell
         width: 22; height: 22
@@ -34,7 +34,7 @@ Item {
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
             acceptedButtons: Qt.LeftButton | Qt.RightButton
-            onClicked: function(mouse): void {
+            onClicked: function(mouse) {
                 if (mouse.button === Qt.RightButton) {
                     root.isSilence = !root.isSilence;
                     rightClickProcess.running = true;
@@ -55,6 +55,7 @@ Item {
     StyledTooltip {
         id: notificationTooltip
         text: "Notification History"
+        positionAbove: false
         tooltipVisible: false
         targetItem: bell
         delay: 200

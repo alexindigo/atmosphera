@@ -5,7 +5,7 @@ import qs.Settings
 import QtQuick.Layouts
 import qs.Components
 
-// The popup window
+
 PanelWithOverlay {
     id: notificationHistoryWin
     property string historyFilePath: Settings.settingsDir + "notification_history.json"

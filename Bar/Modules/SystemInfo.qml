@@ -8,6 +8,8 @@ Row {
     spacing: 10
     visible: Settings.settings.showSystemInfoInBar
 
+    width: Math.floor(cpuUsageLayout.width + cpuTempLayout.width + memoryUsageLayout.width + (2 * 10))
+
     Row {
         id: cpuUsageLayout
         spacing: 6

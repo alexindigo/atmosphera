@@ -45,6 +45,7 @@ Singleton {
             property string wallpaperFolder: "/usr/share/wallpapers"
             property string currentWallpaper: ""
             property string videoPath: "~/Videos/"
+            property bool showActiveWindow: true
             property bool showActiveWindowIcon: false
             property bool showSystemInfoInBar: false
             property bool showCorners: true
@@ -65,6 +66,22 @@ Singleton {
             property real fontSizeMultiplier: 1.0  // Font size multiplier (1.0 = normal, 1.2 = 20% larger, 0.8 = 20% smaller)
             property int taskbarIconSize: 24  // Taskbar icon button size in pixels (default: 32, smaller: 24, larger: 40)
             property var pinnedExecs: [] // Added for AppLauncher pinned apps
+
+            property bool showDock: true
+            property bool dockExclusive: false
+            property bool wifiEnabled: false
+            property bool bluetoothEnabled: false
+            property int recordingFrameRate: 60
+            property string recordingQuality: "very_high"
+            property string recordingCodec: "h264"
+            property string audioCodec: "opus"
+            property bool showCursor: true
+            property string colorRange: "limited"
+            
+            // Monitor/Display Settings
+            property var barMonitors: [] // Array of monitor names to show the bar on
+            property var dockMonitors: [] // Array of monitor names to show the dock on
+            property var notificationMonitors: [] // Array of monitor names to show notifications on
         }
     }
 

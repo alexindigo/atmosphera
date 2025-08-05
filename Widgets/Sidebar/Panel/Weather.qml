@@ -54,17 +54,17 @@ Rectangle {
             anchors.margins: 18
             spacing: 12
 
-            // Current weather row
+    
             RowLayout {
                 spacing: 12
                 Layout.fillWidth: true
 
-                // Weather icon and basic info section
+
                 RowLayout {
                     spacing: 12
                     Layout.preferredWidth: 140
 
-                    // Weather icon
+
                     Text {
                         id: weatherIcon
                         text: weatherData && weatherData.current_weather ? materialSymbolForCode(weatherData.current_weather.weathercode) : "cloud"
@@ -103,13 +103,13 @@ Rectangle {
                         }
                     }
                 }
-                // Spacer to push content to the right
+    
                 Item {
                     Layout.fillWidth: true
                 }
             }
 
-            // Separator line
+
             Rectangle {
                 width: parent.width
                 height: 1
@@ -119,7 +119,7 @@ Rectangle {
                 Layout.bottomMargin: 2
             }
 
-            // 5-day forecast row
+
             RowLayout {
                 spacing: 12
                 Layout.fillWidth: true
@@ -132,7 +132,7 @@ Rectangle {
                         spacing: 2
                         Layout.alignment: Qt.AlignHCenter
                         Text {
-                            // Day of the week (e.g., Mon)
+            
                             text: Qt.formatDateTime(new Date(weatherData.daily.time[index]), "ddd")
                             font.family: Theme.fontFamily
                             font.pixelSize: 12
@@ -141,7 +141,7 @@ Rectangle {
                             Layout.alignment: Qt.AlignHCenter
                         }
                         Text {
-                            // Material Symbol icon
+                
                             text: materialSymbolForCode(weatherData.daily.weathercode[index])
                             font.family: "Material Symbols Outlined"
                             font.pixelSize: 22
@@ -150,7 +150,7 @@ Rectangle {
                             Layout.alignment: Qt.AlignHCenter
                         }
                         Text {
-                            // High/low temp
+                
                             text: weatherData && weatherData.daily ? ((Settings.settings.useFahrenheit !== undefined ? Settings.settings.useFahrenheit : false) ? `${Math.round(weatherData.daily.temperature_2m_max[index] * 9/5 + 32)}° / ${Math.round(weatherData.daily.temperature_2m_min[index] * 9/5 + 32)}°` : `${Math.round(weatherData.daily.temperature_2m_max[index])}° / ${Math.round(weatherData.daily.temperature_2m_min[index])}°`) : ((Settings.settings.useFahrenheit !== undefined ? Settings.settings.useFahrenheit : false) ? "--° / --°" : "--° / --°")
                             font.family: Theme.fontFamily
                             font.pixelSize: 12
@@ -162,7 +162,7 @@ Rectangle {
                 }
             }
 
-            // Error message
+    
             Text {
                 text: errorString
                 color: Theme.error
@@ -175,16 +175,16 @@ Rectangle {
         }
     }
 
-    // Weather code to Material Symbol ligature mapping
+    
     function materialSymbolForCode(code) {
-        if (code === 0) return "sunny"; // Clear
-        if (code === 1 || code === 2) return "partly_cloudy_day"; // Mainly clear/partly cloudy
-        if (code === 3) return "cloud"; // Overcast
-        if (code >= 45 && code <= 48) return "foggy"; // Fog
-        if (code >= 51 && code <= 67) return "rainy"; // Drizzle
-        if (code >= 71 && code <= 77) return "weather_snowy"; // Snow
-        if (code >= 80 && code <= 82) return "rainy"; // Rain showers
-        if (code >= 95 && code <= 99) return "thunderstorm"; // Thunderstorm
+        if (code === 0) return "sunny";
+        if (code === 1 || code === 2) return "partly_cloudy_day";
+        if (code === 3) return "cloud";
+        if (code >= 45 && code <= 48) return "foggy";
+        if (code >= 51 && code <= 67) return "rainy";
+        if (code >= 71 && code <= 77) return "weather_snowy";
+        if (code >= 80 && code <= 82) return "rainy";
+        if (code >= 95 && code <= 99) return "thunderstorm";
         return "cloud";
     }
     function weatherDescriptionForCode(code) {
