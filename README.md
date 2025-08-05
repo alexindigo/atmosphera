@@ -184,7 +184,6 @@ qs ipc call globalIPC toggleIdleInhibitor
 
 You will need to install a few things to get everything working:
 
-- `qt6-5compat` for some graphical effects
 - `cava` so the audio visualizer works
 - `gpu-screen-recorder` so that the record button works
 - `xdg-desktop-portal-gnome` or any other xdg-desktop-portal
