@@ -89,7 +89,7 @@ Rectangle {
                         anchors.rightMargin: 12
                         anchors.topMargin: 6
                         anchors.bottomMargin: 6
-                        text: Settings.settings.profileImage
+                        text: Settings.settings.profileImage !== undefined ? Settings.settings.profileImage : ""
                         font.family: Theme.fontFamily
                         font.pixelSize: 13
                         color: Theme.textPrimary

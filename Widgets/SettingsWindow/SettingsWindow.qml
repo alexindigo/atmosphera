@@ -6,12 +6,15 @@ import QtQuick.Layouts
 import QtQuick.Effects
 import qs.Settings
 import qs.Widgets.SettingsWindow.Tabs
+import qs.Widgets.SettingsWindow.Tabs.Components
 
 PanelWindow {
     id: panelMain
     implicitHeight: screen.height / 2
     implicitWidth: screen.width / 2
     color: "transparent"
+
+    property int activeTabIndex: 0
 
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
 
@@ -56,6 +59,10 @@ PanelWindow {
         Display {}
     }
 
+    Component {
+        id: wallpaperSettings
+        Wallpaper {}
+    }
 
     Rectangle {
         id: background
@@ -80,7 +87,7 @@ PanelWindow {
 
     Rectangle {
         id: settings
-        color: Theme.backgroundTertiary
+        color: Theme.backgroundPrimary
         anchors {
             left: tabs.right
             top: parent.top
@@ -110,13 +117,50 @@ PanelWindow {
     
                 Text {
                     id: tabName
-                    text: "General"
+                    text: wallpaperSelector.visible ? "Select Wallpaper" : (activeTabIndex === 0 ? "General" : 
+                         activeTabIndex === 1 ? "Bar" : 
+                         activeTabIndex === 2 ? "Time & Weather" : 
+                         activeTabIndex === 3 ? "Recording" : 
+                         activeTabIndex === 4 ? "Network" : 
+                         activeTabIndex === 5 ? "Display" : 
+                         activeTabIndex === 6 ? "Wallpaper" : 
+                         activeTabIndex === 7 ? "Misc" : 
+                         activeTabIndex === 8 ? "About" : "General")
                     font.pixelSize: 18
                     font.bold: true
                     color: Theme.textPrimary
                     Layout.fillWidth: true
                 }
 
+                // Wallpaper Selection Button (only visible on Wallpaper tab)
+                Rectangle {
+                    width: 32
+                    height: 32
+                    radius: 16
+                    color: wallpaperButtonArea.containsMouse ? Theme.accentPrimary : "transparent"
+                    border.color: Theme.accentPrimary
+                    border.width: 1
+                    visible: activeTabIndex === 6 // Wallpaper tab index
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: "image"
+                        font.family: wallpaperButtonArea.containsMouse ? "Material Symbols Rounded" : "Material Symbols Outlined"
+                        font.pixelSize: 18
+                        color: wallpaperButtonArea.containsMouse ? Theme.onAccent : Theme.accentPrimary
+                    }
+
+                    MouseArea {
+                        id: wallpaperButtonArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            // Show the wallpaper selector
+                            wallpaperSelector.show();
+                        }
+                    }
+                }
 
                 Rectangle {
                     width: 32
@@ -199,6 +243,12 @@ PanelWindow {
                     }
                 }
             }
+
+            // Wallpaper Selector Component
+            WallpaperSelector {
+                id: wallpaperSelector
+                anchors.fill: parent
+            }
         }
     }
 
@@ -217,6 +267,7 @@ PanelWindow {
             width: parent.width
             spacing: 0
             topPadding: 8
+            bottomPadding: 8
 
             Repeater {
                 id: repeater
@@ -227,140 +278,123 @@ PanelWindow {
                     { icon: "photo_camera", text: "Recording" },
                     { icon: "wifi", text: "Network" },
                     { icon: "monitor", text: "Display" },
+                    { icon: "wallpaper", text: "Wallpaper" },
                     { icon: "settings_suggest", text: "Misc" },
                     { icon: "info", text: "About" }
                 ]
 
-                delegate: Column {
+                delegate: Rectangle {
                     width: tabs.width
-                    height: 40
+                    height: 48
+                    color: "transparent"
 
-                    Item {
-                        width: parent.width
-                        height: 39
+                    RowLayout {
+                        anchors.fill: parent
+                        spacing: 8
 
-                        RowLayout {
-                            anchors.fill: parent
-                            spacing: 8
-
-                
-                            Rectangle {
-                                id: activeIndicator
-                                Layout.leftMargin: 8
-                                Layout.preferredWidth: 3
-                                Layout.preferredHeight: 24
-                                Layout.alignment: Qt.AlignVCenter
-                                radius: 2
-                                color: Theme.accentPrimary
-                                opacity: index === 0 ? 1 : 0
-                                Behavior on opacity { NumberAnimation { duration: 200 } }
-                            }
-
-                
-                            Label {
-                                id: icon
-                                text: modelData.icon
-                                font.family: "Material Symbols Outlined"
-                                font.pixelSize: 24
-                                color: index === 0 ? Theme.accentPrimary : Theme.textPrimary
-                                opacity: index === 0 ? 1 : 0.8
-                                Layout.leftMargin: 20
-                                Layout.preferredWidth: 24
-                                Layout.preferredHeight: 24
-                                Layout.alignment: Qt.AlignVCenter
-                                horizontalAlignment: Text.AlignHCenter
-                                verticalAlignment: Text.AlignVCenter
-                            }
-
-                
-                            Label {
-                                id: label
-                                text: modelData.text
-                                font.pixelSize: 12
-                                color: index === 0 ? Theme.accentPrimary : Theme.textSecondary
-                                font.weight: index === 0 ? Font.DemiBold : Font.Normal
-                                Layout.fillWidth: true
-                                Layout.preferredHeight: 24
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
-                                Layout.leftMargin: 4
-                                Layout.rightMargin: 16
-                                verticalAlignment: Text.AlignVCenter
-                            }
+                        Rectangle {
+                            id: activeIndicator
+                            Layout.leftMargin: 8
+                            Layout.preferredWidth: 3
+                            Layout.preferredHeight: 24
+                            Layout.alignment: Qt.AlignVCenter
+                            radius: 2
+                            color: Theme.accentPrimary
+                            opacity: index === activeTabIndex ? 1 : 0
+                            Behavior on opacity { NumberAnimation { duration: 200 } }
                         }
 
-                        MouseArea {
-                            anchors.fill: parent
-                            hoverEnabled: true
-                                onClicked: {
-                        
-                                    const newComponent = {
-                                        0: generalSettings,
-                                        1: barSettings,
-                                        2: timeWeatherSettings,
-                                        3: recordingSettings,
-                                        4: networkSettings,
-                                        5: displaySettings,
-                                        6: miscSettings,
-                                        7: aboutSettings
-                                    }[index];
-
-                        
-                                    const tabNames = [
-                                        "General",
-                                        "Bar",
-                                        "Time & Weather", 
-                                        "Recording",
-                                        "Network",
-                                        "Display",
-                                        "Misc",
-                                        "About"
-                                    ];
-                                    tabName.text = tabNames[index];
-
-                        
-                                    if (settingsLoader.opacity === 1) {
-                            
-                                        settingsLoader2.sourceComponent = newComponent;
-                                        settingsLoader.opacity = 0;
-                                        settingsLoader2.opacity = 1;
-                                    } else {
-                            
-                                        settingsLoader.sourceComponent = newComponent;
-                                        settingsLoader2.opacity = 0;
-                                        settingsLoader.opacity = 1;
-                                    }
-
-                        
-                                    for (let i = 0; i < repeater.count; i++) {
-                                        let item = repeater.itemAt(i);
-                                        if (item) {
-                                
-                                            let containerItem = item.children[0];
-                                
-                                            let rowLayout = containerItem.children[0];
-                                
-                                            let indicator = rowLayout.children[0];
-                                            let icon = rowLayout.children[1];
-                                            let label = rowLayout.children[2];
-                                            
-                                            indicator.opacity = i === index ? 1 : 0;
-                                            icon.color = i === index ? Theme.accentPrimary : Theme.textPrimary;
-                                            icon.opacity = i === index ? 1 : 0.8;
-                                            label.color = i === index ? Theme.accentPrimary : Theme.textSecondary;
-                                            label.font.weight = i === index ? Font.Bold : Font.Normal;
-                                        }
-                                    }
-                                }
-                            }
+                        Label {
+                            id: icon
+                            text: modelData.icon
+                            font.family: "Material Symbols Outlined"
+                            font.pixelSize: 24
+                            color: index === activeTabIndex ? Theme.accentPrimary : Theme.textPrimary
+                            opacity: index === activeTabIndex ? 1 : 0.8
+                            Layout.leftMargin: 20
+                            Layout.preferredWidth: 24
+                            Layout.preferredHeight: 24
+                            Layout.alignment: Qt.AlignVCenter
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
                         }
 
+                        Label {
+                            id: label
+                            text: modelData.text
+                            font.pixelSize: 16
+                            color: index === activeTabIndex ? Theme.accentPrimary : 
+                                   (tabMouseArea.containsMouse ? Theme.accentPrimary : Theme.textSecondary)
+                            font.weight: index === activeTabIndex ? Font.DemiBold : 
+                                       (tabMouseArea.containsMouse ? Font.DemiBold : Font.Normal)
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 24
+                            Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+                            Layout.leftMargin: 4
+                            Layout.rightMargin: 16
+                            verticalAlignment: Text.AlignVCenter
+                        }
+                    }
+
+                    MouseArea {
+                        id: tabMouseArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            activeTabIndex = index;
                 
+                            const newComponent = {
+                                0: generalSettings,
+                                1: barSettings,
+                                2: timeWeatherSettings,
+                                3: recordingSettings,
+                                4: networkSettings,
+                                5: displaySettings,
+                                6: wallpaperSettings,
+                                7: miscSettings,
+                                8: aboutSettings
+                            }[index];
+
+                
+                            const tabNames = [
+                                "General",
+                                "Bar",
+                                "Time & Weather", 
+                                "Recording",
+                                "Network",
+                                "Display",
+                                "Wallpaper",
+                                "Misc",
+                                "About"
+                            ];
+                            tabName.text = tabNames[index];
+
+                
+                            if (settingsLoader.opacity === 1) {
+                    
+                                settingsLoader2.sourceComponent = newComponent;
+                                settingsLoader.opacity = 0;
+                                settingsLoader2.opacity = 1;
+                            } else {
+                    
+                                settingsLoader.sourceComponent = newComponent;
+                                settingsLoader2.opacity = 0;
+                                settingsLoader.opacity = 1;
+                            }
+
+                
+                            // Tab colors and indicators are now handled by property bindings
+                        }
+                    }
+
                     Rectangle {
                         width: parent.width
                         height: 1
                         color: Theme.outline
                         opacity: 0.6
                         visible: index < (repeater.count - 1)
+                        anchors.bottom: parent.bottom
                     }
                 }
             }

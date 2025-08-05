@@ -120,7 +120,7 @@ Item {
                 Column {
                     id: notificationColumn
                     anchors.right: parent.right
-                    spacing: window.spacing
+                    spacing: panelWindow.spacing
                     width: parent.width
                     clip: false
 

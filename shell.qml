@@ -53,8 +53,13 @@ Scope {
         property var notificationHistoryWin: notificationHistoryWin
     }
 
-    Dock {
-        id: dock
+    Variants {
+        model: Quickshell.screens
+        
+        Dock {
+            id: dock
+            property var modelData
+        }
     }
 
     Applauncher {

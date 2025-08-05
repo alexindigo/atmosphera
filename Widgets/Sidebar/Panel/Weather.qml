@@ -16,6 +16,16 @@ Rectangle {
     property string errorString: ""
     property bool isVisible: false
 
+    // Auto-refetch weather when city changes
+    Connections {
+        target: Settings.settings
+        function onWeatherCityChanged() {
+            if (isVisible && city !== "") {
+                fetchCityWeather()
+            }
+        }
+    }
+
     Component.onCompleted: {
         if (isVisible) {
             fetchCityWeather()
