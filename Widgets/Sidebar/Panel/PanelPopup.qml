@@ -428,39 +428,44 @@ PanelWithOverlay {
             }
         }
 
-        Corners {
-            id: sidebarCornerLeft
-            position: "bottomright"
-            size: 1.1
-            fillColor: Theme.backgroundPrimary
-            anchors.top: mainRectangle.top
-            offsetX: -447 + sidebarPopupRect.slideOffset
-            offsetY: 0
-            visible: Settings.settings.showCorners
+        Loader {
+            active: Settings.settings.showCorners
+            anchors.fill: parent
+            sourceComponent: Item {
+                Corners {
+                    id: sidebarCornerLeft
+                    position: "bottomright"
+                    size: 1.1
+                    fillColor: Theme.backgroundPrimary
+                    anchors.top: parent.top
+                    offsetX: -447 + sidebarPopupRect.slideOffset
+                    offsetY: 0
 
-            Behavior on offsetX {
-                enabled: !sidebarPopupRect.isAnimating
-                NumberAnimation {
-                    duration: 300
-                    easing.type: Easing.OutCubic
+                    Behavior on offsetX {
+                        enabled: !sidebarPopupRect.isAnimating
+                        NumberAnimation {
+                            duration: 300
+                            easing.type: Easing.OutCubic
+                        }
+                    }
                 }
-            }
-        }
 
-        Corners {
-            id: sidebarCornerBottom
-            position: "bottomright"
-            size: 1.1
-            fillColor: Theme.backgroundPrimary
-            offsetX: 33 + sidebarPopupRect.slideOffset
-            offsetY: 46
-            visible: Settings.settings.showCorners
+                Corners {
+                    id: sidebarCornerBottom
+                    position: "bottomright"
+                    size: 1.1
+                    fillColor: Theme.backgroundPrimary
+                    anchors.bottom: sidebarPopupRect.bottom
+                    offsetX: 33 + sidebarPopupRect.slideOffset
+                    offsetY: 46
 
-            Behavior on offsetX {
-                enabled: !sidebarPopupRect.isAnimating
-                NumberAnimation {
-                    duration: 300
-                    easing.type: Easing.OutCubic
+                    Behavior on offsetX {
+                        enabled: !sidebarPopupRect.isAnimating
+                        NumberAnimation {
+                            duration: 300
+                            easing.type: Easing.OutCubic
+                        }
+                    }
                 }
             }
         }
