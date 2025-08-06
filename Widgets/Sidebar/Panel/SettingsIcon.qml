@@ -20,6 +20,9 @@ PanelWindow {
     margins.top: 0
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
 
+    // Signal to request weather refresh
+    signal weatherRefreshRequested()
+
     // Property to track the settings window instance
     property var settingsWindow: null
 
@@ -33,6 +36,8 @@ PanelWindow {
                 // Handle window closure
                 settingsWindow.visibleChanged.connect(function() {
                     if (settingsWindow && !settingsWindow.visible) {
+                        // Trigger weather refresh when settings close
+                        weatherRefreshRequested();
                         var windowToDestroy = settingsWindow;
                         settingsWindow = null;
                         windowToDestroy.destroy();
@@ -72,10 +77,4 @@ PanelWindow {
         }
     }
 
-    // Refresh weather data when hidden
-    onVisibleChanged: {
-        if (!visible && typeof weather !== 'undefined' && weather !== null && weather.fetchCityWeather) {
-            weather.fetchCityWeather();
-        }
-    }
 }

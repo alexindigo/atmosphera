@@ -9,6 +9,7 @@ import qs.Bar.Modules
 import qs.Widgets
 import qs.Widgets.LockScreen
 import qs.Widgets.Notification
+import qs.Widgets.SettingsWindow
 import qs.Settings
 import qs.Helpers
 
@@ -19,8 +20,17 @@ Scope {
     id: root
 
     property alias appLauncherPanel: appLauncherPanel
-    property var notificationHistoryWin: notificationHistoryWin
+    property var notificationHistoryWin: notificationHistoryLoader.active ? notificationHistoryLoader.item : null
+    property var settingsWindow: null
     property bool pendingReload: false
+    
+    // Function to load notification history
+    function loadNotificationHistory() {
+        if (!notificationHistoryLoader.active) {
+            notificationHistoryLoader.loading = true;
+        }
+        return notificationHistoryLoader;
+    }
 
     // Helper function to round value to nearest step
     function roundToStep(value, step) {
@@ -50,7 +60,7 @@ Scope {
     Bar {
         id: bar
         shell: root
-        property var notificationHistoryWin: notificationHistoryWin
+        property var notificationHistoryWin: notificationHistoryLoader.active ? notificationHistoryLoader.item : null
     }
 
     Variants {
@@ -61,6 +71,9 @@ Scope {
             property var modelData
         }
     }
+
+    Background {}
+    Overview {}
 
     Applauncher {
         id: appLauncherPanel
@@ -94,8 +107,8 @@ Scope {
                     }
                 }
             }
-            if (notificationHistoryWin) {
-                notificationHistoryWin.addToHistory({
+            if (notificationHistoryLoader.active && notificationHistoryLoader.item) {
+                notificationHistoryLoader.item.addToHistory({
                     id: notification.id,
                     appName: notification.appName || "Notification",
                     summary: notification.summary || "",
@@ -111,8 +124,33 @@ Scope {
         id: notificationPopup
     }
 
-    NotificationHistory {
-        id: notificationHistoryWin
+    // LazyLoader for NotificationHistory - only load when needed
+    LazyLoader {
+        id: notificationHistoryLoader
+        loading: false
+        component: NotificationHistory {}
+    }
+
+    // Centralized LazyLoader for SettingsWindow - prevents crashes on multiple opens
+    LazyLoader {
+        id: settingsWindowLoader
+        loading: false
+        component: SettingsWindow {
+            Component.onCompleted: {
+                root.settingsWindow = this;
+            }
+        }
+    }
+
+    // Function to safely show/hide settings window
+    function toggleSettingsWindow() {
+        if (!settingsWindowLoader.active) {
+            settingsWindowLoader.loading = true;
+        }
+        
+        if (settingsWindowLoader.item) {
+            settingsWindowLoader.item.visible = !settingsWindowLoader.item.visible;
+        }
     }
 
     // Reference to the default audio sink from Pipewire

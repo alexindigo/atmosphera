@@ -15,13 +15,17 @@ Rectangle {
     property var weatherData: null
     property string errorString: ""
     property bool isVisible: false
+    property int lastFetchTime: 0
+    property bool isLoading: false
 
     // Auto-refetch weather when city changes
     Connections {
         target: Settings.settings
         function onWeatherCityChanged() {
             if (isVisible && city !== "") {
-                fetchCityWeather()
+                // Force refresh when city changes
+                lastFetchTime = 0;
+                fetchCityWeather();
             }
         }
     }
@@ -33,20 +37,42 @@ Rectangle {
     }
 
     function fetchCityWeather() {
+        if (!city || city.trim() === "") {
+            errorString = "No city configured";
+            return;
+        }
+        
+        // Check if we should fetch new data (avoid fetching too frequently)
+        var currentTime = Date.now();
+        var timeSinceLastFetch = currentTime - lastFetchTime;
+        
+        // Only skip if we have recent data AND lastFetchTime is not 0 (initial state)
+        if (lastFetchTime > 0 && timeSinceLastFetch < 60000) { // 1 minute
+            return; // Skip if last fetch was less than 1 minute ago
+        }
+        
+        isLoading = true;
+        errorString = "";
+        
         WeatherHelper.fetchCityWeather(city,
             function(result) {
                 weatherData = result.weather;
+                lastFetchTime = currentTime;
                 errorString = "";
+                isLoading = false;
             },
             function(err) {
                 errorString = err;
+                isLoading = false;
             }
         );
     }
 
     function startWeatherFetch() {
         isVisible = true
-        fetchCityWeather()
+        // Force refresh when panel opens, regardless of time check
+        lastFetchTime = 0;
+        fetchCityWeather();
     }
 
     function stopWeatherFetch() {
@@ -77,12 +103,21 @@ Rectangle {
 
                     Text {
                         id: weatherIcon
-                        text: weatherData && weatherData.current_weather ? materialSymbolForCode(weatherData.current_weather.weathercode) : "cloud"
+                        text: isLoading ? "sync" : (weatherData && weatherData.current_weather ? materialSymbolForCode(weatherData.current_weather.weathercode) : "cloud")
                         font.family: "Material Symbols Outlined"
                         font.pixelSize: 28
                         verticalAlignment: Text.AlignVCenter
-                        color: Theme.accentPrimary
+                        color: isLoading ? Theme.accentPrimary : Theme.accentPrimary
                         Layout.alignment: Qt.AlignVCenter
+                        
+                        // Add rotation animation for loading state
+                        RotationAnimation on rotation {
+                            running: isLoading
+                            from: 0
+                            to: 360
+                            duration: 1000
+                            loops: Animation.Infinite
+                        }
                     }
 
                     ColumnLayout {

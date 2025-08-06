@@ -102,6 +102,7 @@ Scope {
                         }
 
                         NotificationIcon {
+                            shell: rootScope.shell
                             anchors.verticalCenter: parent.verticalCenter
                         }
 
@@ -135,12 +136,9 @@ Scope {
                             anchors.verticalCenter: parent.verticalCenter
                         }
 
-                        SettingsButton {
-                            anchors.verticalCenter: parent.verticalCenter
-                        }
-
                         PanelPopup {
                             id: sidebarPopup
+                            shell: rootScope.shell
                         }
 
                         Button {
@@ -151,8 +149,7 @@ Scope {
                         }
                     }
 
-                    Background {}
-                    Overview {}
+
                 }
 
                 PanelWindow {

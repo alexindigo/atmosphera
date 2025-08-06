@@ -10,14 +10,32 @@ import qs.Widgets.SettingsWindow.Tabs.Components
 
 PanelWindow {
     id: panelMain
-    implicitHeight: screen.height / 2
-    implicitWidth: screen.width / 2
+    implicitHeight: Quickshell.screens.length > 0 ? Quickshell.screens[0].height / 2 : 400
+    implicitWidth: Quickshell.screens.length > 0 ? Quickshell.screens[0].width / 2 : 600
     color: "transparent"
 
     property int activeTabIndex: 0
 
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
 
+    // Add safety checks for component loading
+    Component.onCompleted: {
+        // Ensure we start with a valid tab
+        if (activeTabIndex < 0 || activeTabIndex > 8) {
+            activeTabIndex = 0;
+        }
+    }
+
+    // Cleanup when window is hidden
+    onVisibleChanged: {
+        if (!visible) {
+            // Reset to default tab when hiding to prevent state issues
+            activeTabIndex = 0;
+            if (tabName) {
+                tabName.text = "General";
+            }
+        }
+    }
 
     Component {
         id: generalSettings
@@ -84,7 +102,6 @@ PanelWindow {
         }
     }
 
-
     Rectangle {
         id: settings
         color: Theme.backgroundPrimary
@@ -97,7 +114,6 @@ PanelWindow {
         }
         topRightRadius: 20
         bottomRightRadius: 20
-
 
         Rectangle {
             id: headerArea
@@ -114,7 +130,6 @@ PanelWindow {
                 anchors.fill: parent
                 spacing: 12
 
-    
                 Text {
                     id: tabName
                     text: wallpaperSelector.visible ? "Select Wallpaper" : (activeTabIndex === 0 ? "General" : 
@@ -189,7 +204,6 @@ PanelWindow {
             }
         }
 
-
         Rectangle {
             anchors {
                 top: headerArea.bottom
@@ -213,35 +227,11 @@ PanelWindow {
                 topMargin: 32
             }
 
-    
+            // Simplified single loader approach
             Loader {
                 id: settingsLoader
                 anchors.fill: parent
                 sourceComponent: generalSettings
-                opacity: 1
-                visible: opacity > 0
-
-                Behavior on opacity {
-                    NumberAnimation {
-                        duration: 150
-                        easing.type: Easing.InOutQuad
-                    }
-                }
-            }
-
-    
-            Loader {
-                id: settingsLoader2
-                anchors.fill: parent
-                opacity: 0
-                visible: opacity > 0
-
-                Behavior on opacity {
-                    NumberAnimation {
-                        duration: 150
-                        easing.type: Easing.InOutQuad
-                    }
-                }
             }
 
             // Wallpaper Selector Component
@@ -252,11 +242,10 @@ PanelWindow {
         }
     }
 
-    
     Rectangle {
         id: tabs
         color: Theme.surface
-        width: screen.width / 9
+        width: Quickshell.screens.length > 0 ? Quickshell.screens[0].width / 9 : 100
         height: panelMain.height
         topLeftRadius: 20
         bottomLeftRadius: 20
@@ -356,7 +345,6 @@ PanelWindow {
                                 8: aboutSettings
                             }[index];
 
-                
                             const tabNames = [
                                 "General",
                                 "Bar",
@@ -370,21 +358,10 @@ PanelWindow {
                             ];
                             tabName.text = tabNames[index];
 
-                
-                            if (settingsLoader.opacity === 1) {
-                    
-                                settingsLoader2.sourceComponent = newComponent;
-                                settingsLoader.opacity = 0;
-                                settingsLoader2.opacity = 1;
-                            } else {
-                    
+                            // Simple component switching
+                            if (newComponent) {
                                 settingsLoader.sourceComponent = newComponent;
-                                settingsLoader2.opacity = 0;
-                                settingsLoader.opacity = 1;
                             }
-
-                
-                            // Tab colors and indicators are now handled by property bindings
                         }
                     }
 

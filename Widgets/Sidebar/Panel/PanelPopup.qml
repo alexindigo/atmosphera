@@ -4,11 +4,22 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 import qs.Settings
-import qs.Widgets.Sidebar.Config
+import qs.Widgets.SettingsWindow
 import qs.Components
 
 PanelWithOverlay {
     id: sidebarPopup
+    property var shell: null
+
+    // Trigger initial weather loading when component is completed
+    Component.onCompleted: {
+        // Load initial weather data after a short delay to ensure all components are ready
+        Qt.callLater(function() {
+            if (weather && weather.fetchCityWeather) {
+                weather.fetchCityWeather();
+            }
+        });
+    }
 
     function showAt() {
         sidebarPopupRect.showAt();
@@ -56,17 +67,17 @@ PanelWithOverlay {
         }
 
         function hidePopup() {
-            if (sidebarPopupRect.settingsModal && sidebarPopupRect.settingsModal.visible) {
-                sidebarPopupRect.settingsModal.visible = false;
+            if (shell && shell.settingsWindow && shell.settingsWindow.visible) {
+                shell.settingsWindow.visible = false;
             }
-            if (wallpaperPanel && wallpaperPanel.visible) {
-                wallpaperPanel.visible = false;
+            if (wallpaperPanelLoader.active && wallpaperPanelLoader.item && wallpaperPanelLoader.item.visible) {
+                wallpaperPanelLoader.item.visible = false;
             }
-            if (sidebarPopupRect.wifiPanelModal && sidebarPopupRect.wifiPanelModal.visible) {
-                sidebarPopupRect.wifiPanelModal.visible = false;
+            if (wifiPanelLoader.active && wifiPanelLoader.item && wifiPanelLoader.item.visible) {
+                wifiPanelLoader.item.visible = false;
             }
-            if (sidebarPopupRect.bluetoothPanelModal && sidebarPopupRect.bluetoothPanelModal.visible) {
-                sidebarPopupRect.bluetoothPanelModal.visible = false;
+            if (bluetoothPanelLoader.active && bluetoothPanelLoader.item && bluetoothPanelLoader.item.visible) {
+                bluetoothPanelLoader.item.visible = false;
             }
             if (sidebarPopup.visible) {
                 slideAnim.from = 0;
@@ -124,11 +135,44 @@ PanelWithOverlay {
             }
         }
 
-        property alias settingsModal: settingsModal
-        property alias wifiPanelModal: wifiPanel.panel
-        property alias bluetoothPanelModal: bluetoothPanel.panel
-        SettingsModal {
+        // Access the shell's SettingsWindow instead of creating a new one
+
+        // LazyLoader for WifiPanel
+        LazyLoader {
+            id: wifiPanelLoader
+            loading: false
+            component: WifiPanel {}
+        }
+
+        // LazyLoader for BluetoothPanel
+        LazyLoader {
+            id: bluetoothPanelLoader
+            loading: false
+            component: BluetoothPanel {}
+        }
+
+        // LazyLoader for WallpaperPanel
+        LazyLoader {
+            id: wallpaperPanelLoader
+            loading: false
+            component: WallpaperPanel {
+                Component.onCompleted: {
+                    if (parent) {
+                        anchors.top = parent.top;
+                        anchors.right = parent.right;
+                    }
+                }
+            }
+        }
+
+        // SettingsIcon component
+        SettingsIcon {
             id: settingsModal
+            onWeatherRefreshRequested: {
+                if (weather && weather.fetchCityWeather) {
+                    weather.fetchCityWeather();
+                }
+            }
         }
 
         Item {
@@ -226,7 +270,14 @@ PanelWithOverlay {
                                     anchors.fill: parent
                                     hoverEnabled: true
                                     cursorShape: Qt.PointingHandCursor
-                                    onClicked: wifiPanel.showAt()
+                                    onClicked: {
+                                        if (!wifiPanelLoader.active) {
+                                            wifiPanelLoader.loading = true;
+                                        }
+                                        if (wifiPanelLoader.item) {
+                                            wifiPanelLoader.item.showAt();
+                                        }
+                                    }
                                 }
 
                                 StyledTooltip {
@@ -261,7 +312,14 @@ PanelWithOverlay {
                                     anchors.fill: parent
                                     hoverEnabled: true
                                     cursorShape: Qt.PointingHandCursor
-                                    onClicked: bluetoothPanel.showAt()
+                                    onClicked: {
+                                        if (!bluetoothPanelLoader.active) {
+                                            bluetoothPanelLoader.loading = true;
+                                        }
+                                        if (bluetoothPanelLoader.item) {
+                                            bluetoothPanelLoader.item.showAt();
+                                        }
+                                    }
                                 }
 
                                 StyledTooltip {
@@ -272,16 +330,6 @@ PanelWithOverlay {
                             }
                         }
                     }
-                }
-
-                // Hidden panel components for modal functionality
-                WifiPanel {
-                    id: wifiPanel
-                    visible: false
-                }
-                BluetoothPanel {
-                    id: bluetoothPanel
-                    visible: false
                 }
 
                 Item {
@@ -310,10 +358,18 @@ PanelWithOverlay {
                     }
 
                     onSettingsRequested: {
-                        settingsModal.visible = true;
+                        // Use the SettingsModal's openSettings function
+                        if (typeof settingsModal !== 'undefined' && settingsModal && settingsModal.openSettings) {
+                            settingsModal.openSettings();
+                        }
                     }
                     onWallpaperRequested: {
-                        wallpaperPanel.visible =  true;
+                        if (!wallpaperPanelLoader.active) {
+                            wallpaperPanelLoader.loading = true;
+                        }
+                        if (wallpaperPanelLoader.item) {
+                            wallpaperPanelLoader.item.visible = true;
+                        }
                     }
                 }
             }
@@ -405,16 +461,6 @@ PanelWithOverlay {
                 NumberAnimation {
                     duration: 300
                     easing.type: Easing.OutCubic
-                }
-            }
-        }
-
-        WallpaperPanel {
-            id: wallpaperPanel
-            Component.onCompleted: {
-                if (parent) {
-                    anchors.top = parent.top;
-                    anchors.right = parent.right;
                 }
             }
         }
