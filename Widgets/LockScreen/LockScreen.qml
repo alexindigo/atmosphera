@@ -294,28 +294,33 @@ WlSessionLock {
             }
         }
 
-        Corners {
-            id: topRightCorner
-            position: "bottomleft"
-            size: 1.3
-            fillColor: (Theme.backgroundPrimary !== undefined && Theme.backgroundPrimary !== null) ? Theme.backgroundPrimary : "#222"
-            offsetX: screen.width / 2 + 38
-            offsetY: 0
-            anchors.top: parent.top
-            visible: Settings.settings.showCorners
-            z: 50
-        }
+        Loader {
+            active: Settings.settings.showCorners
+            anchors.fill: parent
 
-        Corners {
-            id: topLeftCorner
-            position: "bottomright"
-            size: 1.3
-            fillColor: (Theme.backgroundPrimary !== undefined && Theme.backgroundPrimary !== null) ? Theme.backgroundPrimary : "#222"
-            offsetX: -Screen.width / 2 - 38
-            offsetY: 0
-            anchors.top: parent.top
-            visible: Settings.settings.showCorners
-            z: 51
+            sourceComponent: Item {
+                Corners {
+                    id: topRightCorner
+                    position: "bottomleft"
+                    size: 1.3
+                    fillColor: (Theme.backgroundPrimary !== undefined && Theme.backgroundPrimary !== null) ? Theme.backgroundPrimary : "#222"
+                    offsetX: screen.width / 2 + 53
+                    offsetY: 0
+                    anchors.top: parent.top
+                    z: 50
+                }
+
+                Corners {
+                    id: topLeftCorner
+                    position: "bottomright"
+                    size: 1.3
+                    fillColor: (Theme.backgroundPrimary !== undefined && Theme.backgroundPrimary !== null) ? Theme.backgroundPrimary : "#222"
+                    offsetX: -Screen.width / 2 - 53
+                    offsetY: 0
+                    anchors.top: parent.top
+                    z: 51
+                }
+            }
         }
 
         Rectangle {

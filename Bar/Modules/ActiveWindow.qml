@@ -20,20 +20,20 @@ PanelWindow {
     property int barHeight: 36
     color: "transparent"
 
-            function getIcon() {
-            var icon = Quickshell.iconPath(ToplevelManager.activeToplevel.appId.toLowerCase(), true);
-            if (!icon) {
-                icon = Quickshell.iconPath(ToplevelManager.activeToplevel.appId, true);
-            }
-            if (!icon) {
-                icon = Quickshell.iconPath(ToplevelManager.activeToplevel.title, true);
-            }
-            if (!icon) {
-                icon = Quickshell.iconPath(ToplevelManager.activeToplevel.title.toLowerCase(), "application-x-executable");
-            }
-
-            return icon;
+    function getIcon() {
+        var icon = Quickshell.iconPath(ToplevelManager.activeToplevel.appId.toLowerCase(), true);
+        if (!icon) {
+            icon = Quickshell.iconPath(ToplevelManager.activeToplevel.appId, true);
         }
+        if (!icon) {
+            icon = Quickshell.iconPath(ToplevelManager.activeToplevel.title, true);
+        }
+        if (!icon) {
+            icon = Quickshell.iconPath(ToplevelManager.activeToplevel.title.toLowerCase(), "application-x-executable");
+        }
+
+        return icon;
+    }
 
     Item {
         id: activeWindowWrapper
@@ -139,26 +139,33 @@ PanelWindow {
                 verticalAlignment: Text.AlignVCenter
                 maximumLineCount: 1
             }
+
+            Loader {
+                active: true
+                anchors.top: parent.top
+                sourceComponent: Item {
+                    Corners {
+                        id: activeCornerRight
+                        position: "bottomleft"
+                        size: 1.1
+                        fillColor: Theme.backgroundPrimary
+                        anchors.top: parent.top
+                        offsetX: activeWindowTitleContainer.width - 34
+                        offsetY: -1
+                    }
+
+                    Corners {
+                        id: activeCornerLeft
+                        position: "bottomright"
+                        size: 1.1
+                        fillColor: Theme.backgroundPrimary
+                        anchors.top: parent.top
+                        offsetX: 34
+                        offsetY: -1
+                    }
+                }
+            }
         }
 
-        Corners {
-            id: activeCornerRight
-            position: "bottomleft"
-            size: 1.1
-            fillColor: Theme.backgroundPrimary
-            offsetX: activeWindowTitleContainer.x + activeWindowTitleContainer.width - 34
-            offsetY: -1
-            anchors.top: activeWindowTitleContainer.top
-        }
-
-        Corners {
-            id: activeCornerLeft
-            position: "bottomright"
-            size: 1.1
-            fillColor: Theme.backgroundPrimary
-            anchors.top: activeWindowTitleContainer.top
-            x: activeWindowTitleContainer.x + 34 - width
-            offsetY: -1
-        }
     }
 }

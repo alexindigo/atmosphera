@@ -57,6 +57,9 @@ Scope {
         Quickshell.shell = root;
     }
 
+    Background {}
+    Overview {}
+
     Bar {
         id: bar
         shell: root
@@ -71,9 +74,6 @@ Scope {
             property var modelData
         }
     }
-
-    Background {}
-    Overview {}
 
     Applauncher {
         id: appLauncherPanel
