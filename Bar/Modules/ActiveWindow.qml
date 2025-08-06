@@ -141,7 +141,7 @@ PanelWindow {
             }
 
             Loader {
-                active: true
+                active: Settings.settings.showCorners
                 anchors.top: parent.top
                 sourceComponent: Item {
                     Corners {
