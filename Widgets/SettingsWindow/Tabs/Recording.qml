@@ -36,7 +36,7 @@ ColumnLayout {
 
         Text {
             text: "Screen Recording"
-            font.pixelSize: 16
+            font.pixelSize: 18
             font.bold: true
             color: Theme.textPrimary
             Layout.bottomMargin: 8

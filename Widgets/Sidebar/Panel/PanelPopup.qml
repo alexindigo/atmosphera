@@ -70,9 +70,7 @@ PanelWithOverlay {
             if (shell && shell.settingsWindow && shell.settingsWindow.visible) {
                 shell.settingsWindow.visible = false;
             }
-            if (wallpaperPanelLoader.active && wallpaperPanelLoader.item && wallpaperPanelLoader.item.visible) {
-                wallpaperPanelLoader.item.visible = false;
-            }
+
             if (wifiPanelLoader.active && wifiPanelLoader.item && wifiPanelLoader.item.visible) {
                 wifiPanelLoader.item.visible = false;
             }
@@ -151,19 +149,7 @@ PanelWithOverlay {
             component: BluetoothPanel {}
         }
 
-        // LazyLoader for WallpaperPanel
-        LazyLoader {
-            id: wallpaperPanelLoader
-            loading: false
-            component: WallpaperPanel {
-                Component.onCompleted: {
-                    if (parent) {
-                        anchors.top = parent.top;
-                        anchors.right = parent.right;
-                    }
-                }
-            }
-        }
+
 
         // SettingsIcon component
         SettingsIcon {
@@ -174,6 +160,8 @@ PanelWithOverlay {
                 }
             }
         }
+
+
 
         Item {
             anchors.fill: mainRectangle
@@ -363,12 +351,11 @@ PanelWithOverlay {
                             settingsModal.openSettings();
                         }
                     }
-                    onWallpaperRequested: {
-                        if (!wallpaperPanelLoader.active) {
-                            wallpaperPanelLoader.loading = true;
-                        }
-                        if (wallpaperPanelLoader.item) {
-                            wallpaperPanelLoader.item.visible = true;
+
+                    onWallpaperSelectorRequested: {
+                        // Use the SettingsModal's openSettings function with wallpaper tab (index 6)
+                        if (typeof settingsModal !== 'undefined' && settingsModal && settingsModal.openSettings) {
+                            settingsModal.openSettings(6); // 6 is the wallpaper tab index
                         }
                     }
                 }

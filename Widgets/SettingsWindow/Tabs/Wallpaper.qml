@@ -36,13 +36,13 @@ ColumnLayout {
                 spacing: 4
                 Layout.fillWidth: true
 
-                Text {
-                    text: "Wallpaper"
-                    font.pixelSize: 16
-                    font.bold: true
-                    color: Theme.textPrimary
-                    Layout.bottomMargin: 8
-                }
+                                         Text {
+            text: "Wallpaper"
+            font.pixelSize: 18
+            font.bold: true
+            color: Theme.textPrimary
+            Layout.bottomMargin: 8
+        }
 
 
 
@@ -131,7 +131,7 @@ ColumnLayout {
 
         Text {
             text: "Automation"
-            font.pixelSize: 16
+            font.pixelSize: 18
             font.bold: true
             color: Theme.textPrimary
             Layout.bottomMargin: 8
@@ -364,7 +364,7 @@ ColumnLayout {
 
         Text {
             text: "SWWW"
-            font.pixelSize: 16
+            font.pixelSize: 18
             font.bold: true
             color: Theme.textPrimary
             Layout.bottomMargin: 8

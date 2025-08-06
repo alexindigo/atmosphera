@@ -23,7 +23,7 @@ ColumnLayout {
 
         Text {
             text: "Time"
-            font.pixelSize: 16
+            font.pixelSize: 18
             font.bold: true
             color: Theme.textPrimary
             Layout.bottomMargin: 8
@@ -176,7 +176,7 @@ ColumnLayout {
 
         Text {
             text: "Weather"
-            font.pixelSize: 16
+            font.pixelSize: 18
             font.bold: true
             color: Theme.textPrimary
             Layout.bottomMargin: 8

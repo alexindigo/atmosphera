@@ -22,7 +22,7 @@ ColumnLayout {
 
         Text {
             text: "Wi-Fi"
-            font.pixelSize: 16
+            font.pixelSize: 18
             font.bold: true
             color: Theme.textPrimary
         }
@@ -105,7 +105,7 @@ ColumnLayout {
 
         Text {
             text: "Bluetooth"
-            font.pixelSize: 16
+            font.pixelSize: 18
             font.bold: true
             color: Theme.textPrimary
         }

@@ -20,6 +20,7 @@ Rectangle {
     signal recordingStateMismatch(bool actualState)
     signal settingsRequested()
     signal wallpaperRequested()
+    signal wallpaperSelectorRequested()
 
     Rectangle {
         id: card
@@ -161,7 +162,7 @@ Rectangle {
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
                     onClicked: {
-                        wallpaperRequested()
+                        wallpaperSelectorRequested()
                     }
                 }
             }

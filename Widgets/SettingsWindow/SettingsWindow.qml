@@ -7,16 +7,73 @@ import QtQuick.Effects
 import qs.Settings
 import qs.Widgets.SettingsWindow.Tabs
 import qs.Widgets.SettingsWindow.Tabs.Components
+import qs.Components
 
-PanelWindow {
+PanelWithOverlay {
     id: panelMain
-    implicitHeight: Quickshell.screens.length > 0 ? Quickshell.screens[0].height / 2 : 400
-    implicitWidth: Quickshell.screens.length > 0 ? Quickshell.screens[0].width / 2 : 600
-    color: "transparent"
-
+    
     property int activeTabIndex: 0
 
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
+
+    // Function to show wallpaper selector
+    function showWallpaperSelector() {
+        if (wallpaperSelector) {
+            wallpaperSelector.show();
+        }
+    }
+
+    // Function to show settings window
+    function showSettings() {
+        show();
+    }
+    
+
+    
+
+
+        // Handle activeTabIndex changes
+    onActiveTabIndexChanged: {
+        if (activeTabIndex >= 0 && activeTabIndex <= 8) {
+            loadComponentForTab(activeTabIndex);
+        }
+    }
+
+    // Function to load component for a specific tab
+    function loadComponentForTab(tabIndex) {
+        const componentMap = {
+            0: generalSettings,
+            1: barSettings,
+            2: timeWeatherSettings,
+            3: recordingSettings,
+            4: networkSettings,
+            5: displaySettings,
+            6: wallpaperSettings,
+            7: miscSettings,
+            8: aboutSettings
+        };
+        
+        const tabNames = [
+            "General",
+            "Bar",
+            "Time & Weather", 
+            "Recording",
+            "Network",
+            "Display",
+            "Wallpaper",
+            "Misc",
+            "About"
+        ];
+        
+        if (componentMap[tabIndex]) {
+            settingsLoader.sourceComponent = componentMap[tabIndex];
+            if (tabName) {
+                tabName.text = tabNames[tabIndex];
+            }
+            
+
+        }
+    }
 
     // Add safety checks for component loading
     Component.onCompleted: {
@@ -83,37 +140,47 @@ PanelWindow {
     }
 
     Rectangle {
-        id: background
-        color: Theme.backgroundPrimary
-        anchors.fill: parent
-        radius: 20
-        border.color: Theme.outline
-        border.width: 1
+        id: settingsWindowRect
+        implicitWidth: Quickshell.screens.length > 0 ? Quickshell.screens[0].width / 2 : 600
+        implicitHeight: Quickshell.screens.length > 0 ? Quickshell.screens[0].height / 2 : 400
+        visible: parent.visible
+        color: "transparent"
+        
+        // Center the settings window on screen
+        anchors.centerIn: parent
 
-        MultiEffect {
-            source: background
-            anchors.fill: background
-            shadowEnabled: true
-            shadowColor: Theme.shadow
-            shadowOpacity: 0.3
-            shadowHorizontalOffset: 0
-            shadowVerticalOffset: 2
-            shadowBlur: 12
-        }
-    }
+        Rectangle {
+            id: background
+            color: Theme.backgroundPrimary
+            anchors.fill: parent
+            radius: 20
+            border.color: Theme.outline
+            border.width: 1
 
-    Rectangle {
-        id: settings
-        color: Theme.backgroundPrimary
-        anchors {
-            left: tabs.right
-            top: parent.top
-            bottom: parent.bottom
-            right: parent.right
-            margins: 12
+            MultiEffect {
+                source: background
+                anchors.fill: background
+                shadowEnabled: true
+                shadowColor: Theme.shadow
+                shadowOpacity: 0.3
+                shadowHorizontalOffset: 0
+                shadowVerticalOffset: 2
+                shadowBlur: 12
+            }
         }
-        topRightRadius: 20
-        bottomRightRadius: 20
+
+        Rectangle {
+            id: settings
+            color: Theme.backgroundPrimary
+            anchors {
+                left: tabs.right
+                top: parent.top
+                bottom: parent.bottom
+                right: parent.right
+                margins: 12
+            }
+            topRightRadius: 20
+            bottomRightRadius: 20
 
         Rectangle {
             id: headerArea
@@ -149,7 +216,7 @@ PanelWindow {
 
                 // Wallpaper Selection Button (only visible on Wallpaper tab)
                 Rectangle {
-                    width: 32
+                    width: 160
                     height: 32
                     radius: 16
                     color: wallpaperButtonArea.containsMouse ? Theme.accentPrimary : "transparent"
@@ -157,12 +224,25 @@ PanelWindow {
                     border.width: 1
                     visible: activeTabIndex === 6 // Wallpaper tab index
 
-                    Text {
+                    Row {
                         anchors.centerIn: parent
-                        text: "image"
-                        font.family: wallpaperButtonArea.containsMouse ? "Material Symbols Rounded" : "Material Symbols Outlined"
-                        font.pixelSize: 18
-                        color: wallpaperButtonArea.containsMouse ? Theme.onAccent : Theme.accentPrimary
+                        spacing: 6
+
+                        Text {
+                            text: "image"
+                            font.family: wallpaperButtonArea.containsMouse ? "Material Symbols Rounded" : "Material Symbols Outlined"
+                            font.pixelSize: 16
+                            color: wallpaperButtonArea.containsMouse ? Theme.onAccent : Theme.accentPrimary
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+
+                        Text {
+                            text: "Select Wallpaper"
+                            font.pixelSize: 13
+                            font.bold: true
+                            color: wallpaperButtonArea.containsMouse ? Theme.onAccent : Theme.accentPrimary
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
                     }
 
                     MouseArea {
@@ -198,7 +278,7 @@ PanelWindow {
                         anchors.fill: parent
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
-                        onClicked: panelMain.visible = false
+                        onClicked: panelMain.dismiss()
                     }
                 }
             }
@@ -242,15 +322,15 @@ PanelWindow {
         }
     }
 
-    Rectangle {
-        id: tabs
-        color: Theme.surface
-        width: Quickshell.screens.length > 0 ? Quickshell.screens[0].width / 9 : 100
-        height: panelMain.height
-        topLeftRadius: 20
-        bottomLeftRadius: 20
-        border.color: Theme.outline
-        border.width: 1
+        Rectangle {
+            id: tabs
+            color: Theme.surface
+            width: Quickshell.screens.length > 0 ? Quickshell.screens[0].width / 9 : 100
+            height: settingsWindowRect.height
+            topLeftRadius: 20
+            bottomLeftRadius: 20
+            border.color: Theme.outline
+            border.width: 1
 
         Column {
             width: parent.width
@@ -332,36 +412,7 @@ PanelWindow {
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
                             activeTabIndex = index;
-                
-                            const newComponent = {
-                                0: generalSettings,
-                                1: barSettings,
-                                2: timeWeatherSettings,
-                                3: recordingSettings,
-                                4: networkSettings,
-                                5: displaySettings,
-                                6: wallpaperSettings,
-                                7: miscSettings,
-                                8: aboutSettings
-                            }[index];
-
-                            const tabNames = [
-                                "General",
-                                "Bar",
-                                "Time & Weather", 
-                                "Recording",
-                                "Network",
-                                "Display",
-                                "Wallpaper",
-                                "Misc",
-                                "About"
-                            ];
-                            tabName.text = tabNames[index];
-
-                            // Simple component switching
-                            if (newComponent) {
-                                settingsLoader.sourceComponent = newComponent;
-                            }
+                            loadComponentForTab(index);
                         }
                     }
 
@@ -376,5 +427,6 @@ PanelWindow {
                 }
             }
         }
+    }
     }
 }

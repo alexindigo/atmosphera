@@ -12,6 +12,13 @@ Item {
     // Get list of available monitors/screens
     property var monitors: Quickshell.screens || []
     
+    Component.onCompleted: {
+        console.log("[NotificationPopup] Initialized with", monitors.length, "monitors");
+        for (let i = 0; i < monitors.length; i++) {
+            console.log("[NotificationPopup] Monitor", i, ":", monitors[i].name);
+        }
+    }
+    
     // Global visibility state for all notification popups
     property bool notificationsVisible: true
     
@@ -19,6 +26,17 @@ Item {
         console.log("[NotificationManager] Current state: " + notificationsVisible);
         notificationsVisible = !notificationsVisible;
         console.log("[NotificationManager] New state: " + notificationsVisible);
+    }
+    
+    function addNotification(notification): void {
+        console.log("[NotificationPopup] Adding notification to popup manager");
+        // Add notification to all monitor popups
+        for (let i = 0; i < children.length; i++) {
+            let child = children[i];
+            if (child.addNotification) {
+                child.addNotification(notification);
+            }
+        }
     }
 
     // Create a notification popup for each monitor
@@ -50,8 +68,12 @@ Item {
                 property bool shouldShowOnThisMonitor: {
                     let notificationMonitors = Settings.settings.notificationMonitors || [];
                     let currentScreenName = modelData ? modelData.name : "";
-                    return notificationMonitors.includes("*") || 
+                    // Show notifications on all monitors if notificationMonitors is empty or contains "*"
+                    let shouldShow = notificationMonitors.length === 0 || 
+                           notificationMonitors.includes("*") || 
                            notificationMonitors.includes(currentScreenName);
+                    console.log("[NotificationPopup] Monitor", currentScreenName, "should show:", shouldShow, "monitors:", JSON.stringify(notificationMonitors));
+                    return shouldShow;
                 }
 
                 // Watch for changes in notification monitors setting
@@ -75,6 +97,7 @@ Item {
                 property int spacing: 5
 
                 function addNotification(notification) {
+                    console.log("[NotificationPopup] Adding notification to monitor popup:", notification.appName);
                     notificationModel.insert(0, {
                         id: notification.id,
                         appName: notification.appName || "Notification",

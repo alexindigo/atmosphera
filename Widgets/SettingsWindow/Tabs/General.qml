@@ -22,7 +22,7 @@ ColumnLayout {
 
         Text {
             text: "Profile"
-            font.pixelSize: 16
+            font.pixelSize: 18
             font.bold: true
             color: Theme.textPrimary
             Layout.bottomMargin: 8
@@ -115,7 +115,7 @@ ColumnLayout {
 
         Text {
             text: "User Interface"
-            font.pixelSize: 16
+            font.pixelSize: 18
             font.bold: true
             color: Theme.textPrimary
             Layout.bottomMargin: 8

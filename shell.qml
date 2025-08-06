@@ -97,15 +97,11 @@ Scope {
     NotificationServer {
         id: notificationServer
         onNotification: function (notification) {
+            console.log("[Notification] Received notification:", notification.appName, "-", notification.summary);
             notification.tracked = true;
             if (notificationPopup.notificationsVisible) {
-                // Add notification to all popup instances
-                for (let i = 0; i < notificationPopup.children.length; i++) {
-                    let child = notificationPopup.children[i];
-                    if (child.addNotification) {
-                        child.addNotification(notification);
-                    }
-                }
+                // Add notification to the popup manager
+                notificationPopup.addNotification(notification);
             }
             if (notificationHistoryLoader.active && notificationHistoryLoader.item) {
                 notificationHistoryLoader.item.addToHistory({
