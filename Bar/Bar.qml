@@ -148,8 +148,6 @@ Scope {
                             sidebarPopup: sidebarPopup
                         }
                     }
-
-
                 }
 
                 PanelWindow {
