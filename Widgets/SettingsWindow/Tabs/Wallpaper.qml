@@ -1,20 +1,20 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import qs.Settings
 import qs.Components
 import qs.Services
+import qs.Settings
 
 ColumnLayout {
     id: root
+
     spacing: 0
     anchors.fill: parent
     anchors.margins: 0
 
-
-
     ScrollView {
         id: scrollView
+
         Layout.fillWidth: true
         Layout.fillHeight: true
         padding: 0
@@ -36,15 +36,13 @@ ColumnLayout {
                 spacing: 4
                 Layout.fillWidth: true
 
-                                         Text {
-            text: "Wallpaper"
-            font.pixelSize: 18
-            font.bold: true
-            color: Theme.textPrimary
-            Layout.bottomMargin: 8
-        }
-
-
+                Text {
+                    text: "Wallpaper"
+                    font.pixelSize: 18
+                    font.bold: true
+                    color: Theme.textPrimary
+                    Layout.bottomMargin: 8
+                }
 
                 // Wallpaper Settings Category
                 ColumnLayout {
@@ -93,6 +91,7 @@ ColumnLayout {
 
                                 TextInput {
                                     id: folderInput
+
                                     anchors.fill: parent
                                     anchors.leftMargin: 12
                                     anchors.rightMargin: 12
@@ -117,25 +116,38 @@ ColumnLayout {
                                     cursorShape: Qt.IBeamCursor
                                     onClicked: folderInput.forceActiveFocus()
                                 }
+
                             }
+
                         }
+
                     }
+                }
 
-    }
+                Rectangle {
+                    Layout.topMargin: 26
+                    Layout.bottomMargin: 18
+                    anchors {
+                        top: headerArea.bottom
+                        left: parent.left
+                        right: parent.right
+                    }
+                    height: 1
+                    color: Theme.outline
+                    opacity: 0.3
+                }
 
-    
-    ColumnLayout {
-        spacing: 4
-        Layout.fillWidth: true
-        Layout.topMargin: 58
+                ColumnLayout {
+                    spacing: 4
+                    Layout.fillWidth: true
 
-        Text {
-            text: "Automation"
-            font.pixelSize: 18
-            font.bold: true
-            color: Theme.textPrimary
-            Layout.bottomMargin: 8
-        }
+                    Text {
+                        text: "Automation"
+                        font.pixelSize: 18
+                        font.bold: true
+                        color: Theme.textPrimary
+                        Layout.bottomMargin: 8
+                    }
 
                     // Random Wallpaper
                     ColumnLayout {
@@ -165,10 +177,12 @@ ColumnLayout {
                                     wrapMode: Text.WordWrap
                                     Layout.fillWidth: true
                                 }
+
                             }
 
                             Rectangle {
                                 id: randomWallpaperSwitch
+
                                 width: 52
                                 height: 32
                                 radius: 16
@@ -178,6 +192,7 @@ ColumnLayout {
 
                                 Rectangle {
                                     id: randomWallpaperThumb
+
                                     width: 28
                                     height: 28
                                     radius: 14
@@ -192,7 +207,9 @@ ColumnLayout {
                                             duration: 200
                                             easing.type: Easing.OutCubic
                                         }
+
                                     }
+
                                 }
 
                                 MouseArea {
@@ -202,8 +219,11 @@ ColumnLayout {
                                         Settings.settings.randomWallpaper = !Settings.settings.randomWallpaper;
                                     }
                                 }
+
                             }
+
                         }
+
                     }
 
                     // Use Wallpaper Theme
@@ -234,10 +254,12 @@ ColumnLayout {
                                     wrapMode: Text.WordWrap
                                     Layout.fillWidth: true
                                 }
+
                             }
 
                             Rectangle {
                                 id: wallpaperThemeSwitch
+
                                 width: 52
                                 height: 32
                                 radius: 16
@@ -247,6 +269,7 @@ ColumnLayout {
 
                                 Rectangle {
                                     id: wallpaperThemeThumb
+
                                     width: 28
                                     height: 28
                                     radius: 14
@@ -261,7 +284,9 @@ ColumnLayout {
                                             duration: 200
                                             easing.type: Easing.OutCubic
                                         }
+
                                     }
+
                                 }
 
                                 MouseArea {
@@ -271,8 +296,11 @@ ColumnLayout {
                                         Settings.settings.useWallpaperTheme = !Settings.settings.useWallpaperTheme;
                                     }
                                 }
+
                             }
+
                         }
+
                     }
 
                     // Wallpaper Interval
@@ -308,10 +336,12 @@ ColumnLayout {
                             Item {
                                 Layout.fillWidth: true
                             }
+
                         }
 
                         Slider {
                             id: intervalSlider
+
                             Layout.fillWidth: true
                             from: 10
                             to: 900
@@ -338,6 +368,7 @@ ColumnLayout {
                                     color: Theme.accentPrimary
                                     radius: 2
                                 }
+
                             }
 
                             handle: Rectangle {
@@ -350,94 +381,116 @@ ColumnLayout {
                                 border.color: Theme.accentPrimary
                                 border.width: 2
                             }
+
                         }
+
                     }
+
                 }
 
-    }
+            }
 
-    
-    ColumnLayout {
-        spacing: 4
-        Layout.fillWidth: true
-        Layout.topMargin: 58
+            Rectangle {
+                Layout.topMargin: 26
+                Layout.bottomMargin: 18
+                anchors {
+                    top: headerArea.bottom
+                    left: parent.left
+                    right: parent.right
+                }
+                height: 1
+                color: Theme.outline
+                opacity: 0.3
+            }
 
-        Text {
-            text: "SWWW"
-            font.pixelSize: 18
-            font.bold: true
-            color: Theme.textPrimary
-            Layout.bottomMargin: 8
-        }
+            ColumnLayout {
+                spacing: 4
+                Layout.fillWidth: true
 
-                    // Use SWWW
-                    ColumnLayout {
+                Text {
+                    text: "SWWW"
+                    font.pixelSize: 18
+                    font.bold: true
+                    color: Theme.textPrimary
+                    Layout.bottomMargin: 8
+                }
+
+                // Use SWWW
+                ColumnLayout {
+                    spacing: 8
+                    Layout.fillWidth: true
+                    Layout.topMargin: 8
+
+                    RowLayout {
                         spacing: 8
                         Layout.fillWidth: true
-                        Layout.topMargin: 8
 
-                        RowLayout {
-                            spacing: 8
+                        ColumnLayout {
+                            spacing: 4
                             Layout.fillWidth: true
 
-                            ColumnLayout {
-                                spacing: 4
-                                Layout.fillWidth: true
-
-                                Text {
-                                    text: "Use SWWW"
-                                    font.pixelSize: 13
-                                    font.bold: true
-                                    color: Theme.textPrimary
-                                }
-
-                                Text {
-                                    text: "Use SWWW daemon for advanced wallpaper management"
-                                    font.pixelSize: 12
-                                    color: Theme.textSecondary
-                                    wrapMode: Text.WordWrap
-                                    Layout.fillWidth: true
-                                }
+                            Text {
+                                text: "Use SWWW"
+                                font.pixelSize: 13
+                                font.bold: true
+                                color: Theme.textPrimary
                             }
+
+                            Text {
+                                text: "Use SWWW daemon for advanced wallpaper management"
+                                font.pixelSize: 12
+                                color: Theme.textSecondary
+                                wrapMode: Text.WordWrap
+                                Layout.fillWidth: true
+                            }
+
+                        }
+
+                        Rectangle {
+                            id: swwwSwitch
+
+                            width: 52
+                            height: 32
+                            radius: 16
+                            color: Settings.settings.useSWWW ? Theme.accentPrimary : Theme.surfaceVariant
+                            border.color: Settings.settings.useSWWW ? Theme.accentPrimary : Theme.outline
+                            border.width: 2
 
                             Rectangle {
-                                id: swwwSwitch
-                                width: 52
-                                height: 32
-                                radius: 16
-                                color: Settings.settings.useSWWW ? Theme.accentPrimary : Theme.surfaceVariant
-                                border.color: Settings.settings.useSWWW ? Theme.accentPrimary : Theme.outline
-                                border.width: 2
+                                id: swwwThumb
 
-                                Rectangle {
-                                    id: swwwThumb
-                                    width: 28
-                                    height: 28
-                                    radius: 14
-                                    color: Theme.surface
-                                    border.color: Theme.outline
-                                    border.width: 1
-                                    y: 2
-                                    x: Settings.settings.useSWWW ? swwwSwitch.width - width - 2 : 2
+                                width: 28
+                                height: 28
+                                radius: 14
+                                color: Theme.surface
+                                border.color: Theme.outline
+                                border.width: 1
+                                y: 2
+                                x: Settings.settings.useSWWW ? swwwSwitch.width - width - 2 : 2
 
-                                    Behavior on x {
-                                        NumberAnimation {
-                                            duration: 200
-                                            easing.type: Easing.OutCubic
-                                        }
+                                Behavior on x {
+                                    NumberAnimation {
+                                        duration: 200
+                                        easing.type: Easing.OutCubic
                                     }
+
                                 }
 
-                                MouseArea {
-                                    anchors.fill: parent
-                                    cursorShape: Qt.PointingHandCursor
-                                    onClicked: {
-                                        Settings.settings.useSWWW = !Settings.settings.useSWWW;
-                                    }
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    Settings.settings.useSWWW = !Settings.settings.useSWWW;
                                 }
                             }
+
                         }
+
                     }
+
+                }
 
                 // SWWW Settings (only visible when useSWWW is enabled)
                 ColumnLayout {
@@ -476,6 +529,7 @@ ColumnLayout {
 
                             ComboBox {
                                 id: resizeComboBox
+
                                 anchors.fill: parent
                                 anchors.leftMargin: 12
                                 anchors.rightMargin: 12
@@ -511,7 +565,9 @@ ColumnLayout {
                                         model: resizeComboBox.popup.visible ? resizeComboBox.delegateModel : null
                                         currentIndex: resizeComboBox.highlightedIndex
 
-                                        ScrollIndicator.vertical: ScrollIndicator { }
+                                        ScrollIndicator.vertical: ScrollIndicator {
+                                        }
+
                                     }
 
                                     background: Rectangle {
@@ -520,10 +576,13 @@ ColumnLayout {
                                         border.width: 1
                                         radius: 8
                                     }
+
                                 }
 
                                 delegate: ItemDelegate {
                                     width: resizeComboBox.width
+                                    highlighted: resizeComboBox.highlightedIndex === index
+
                                     contentItem: Text {
                                         text: modelData
                                         color: Theme.textPrimary
@@ -531,13 +590,17 @@ ColumnLayout {
                                         verticalAlignment: Text.AlignVCenter
                                         horizontalAlignment: Text.AlignLeft
                                     }
-                                    highlighted: resizeComboBox.highlightedIndex === index
+
                                     background: Rectangle {
                                         color: parent.highlighted ? Theme.accentPrimary : "transparent"
                                     }
+
                                 }
+
                             }
+
                         }
+
                     }
 
                     // Transition Type
@@ -571,6 +634,7 @@ ColumnLayout {
 
                             ComboBox {
                                 id: transitionTypeComboBox
+
                                 anchors.fill: parent
                                 anchors.leftMargin: 12
                                 anchors.rightMargin: 12
@@ -606,7 +670,9 @@ ColumnLayout {
                                         model: transitionTypeComboBox.popup.visible ? transitionTypeComboBox.delegateModel : null
                                         currentIndex: transitionTypeComboBox.highlightedIndex
 
-                                        ScrollIndicator.vertical: ScrollIndicator { }
+                                        ScrollIndicator.vertical: ScrollIndicator {
+                                        }
+
                                     }
 
                                     background: Rectangle {
@@ -615,10 +681,13 @@ ColumnLayout {
                                         border.width: 1
                                         radius: 8
                                     }
+
                                 }
 
                                 delegate: ItemDelegate {
                                     width: transitionTypeComboBox.width
+                                    highlighted: transitionTypeComboBox.highlightedIndex === index
+
                                     contentItem: Text {
                                         text: modelData
                                         color: Theme.textPrimary
@@ -626,13 +695,17 @@ ColumnLayout {
                                         verticalAlignment: Text.AlignVCenter
                                         horizontalAlignment: Text.AlignLeft
                                     }
-                                    highlighted: transitionTypeComboBox.highlightedIndex === index
+
                                     background: Rectangle {
                                         color: parent.highlighted ? Theme.accentPrimary : "transparent"
                                     }
+
                                 }
+
                             }
+
                         }
+
                     }
 
                     // Transition FPS
@@ -668,10 +741,12 @@ ColumnLayout {
                             Item {
                                 Layout.fillWidth: true
                             }
+
                         }
 
                         Slider {
                             id: fpsSlider
+
                             Layout.fillWidth: true
                             from: 30
                             to: 500
@@ -698,6 +773,7 @@ ColumnLayout {
                                     color: Theme.accentPrimary
                                     radius: 2
                                 }
+
                             }
 
                             handle: Rectangle {
@@ -710,7 +786,9 @@ ColumnLayout {
                                 border.color: Theme.accentPrimary
                                 border.width: 2
                             }
+
                         }
+
                     }
 
                     // Transition Duration
@@ -746,10 +824,12 @@ ColumnLayout {
                             Item {
                                 Layout.fillWidth: true
                             }
+
                         }
 
                         Slider {
                             id: durationSlider
+
                             Layout.fillWidth: true
                             from: 0.25
                             to: 10
@@ -776,6 +856,7 @@ ColumnLayout {
                                     color: Theme.accentPrimary
                                     radius: 2
                                 }
+
                             }
 
                             handle: Rectangle {
@@ -788,15 +869,22 @@ ColumnLayout {
                                 border.color: Theme.accentPrimary
                                 border.width: 2
                             }
+
                         }
+
                     }
+
                 }
+
             }
+
         }
+
     }
 
     Item {
         Layout.fillWidth: true
         Layout.fillHeight: true
     }
+
 }

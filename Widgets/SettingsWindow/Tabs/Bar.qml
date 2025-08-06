@@ -21,7 +21,7 @@ ColumnLayout {
         Layout.fillWidth: true
 
         Text {
-            text: "Bar Elements"
+            text: "Elements"
             font.pixelSize: 18
             font.bold: true
             color: Theme.textPrimary

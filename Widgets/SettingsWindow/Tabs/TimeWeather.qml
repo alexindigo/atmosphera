@@ -168,11 +168,23 @@ ColumnLayout {
         }
     }
 
+    Rectangle {
+        Layout.topMargin: 26
+        Layout.bottomMargin: 18
+        anchors {
+            top: headerArea.bottom
+            left: parent.left
+            right: parent.right
+        }
+        height: 1
+        color: Theme.outline
+        opacity: 0.3
+    }
+
     
     ColumnLayout {
         spacing: 4
         Layout.fillWidth: true
-        Layout.topMargin: 58
 
         Text {
             text: "Weather"

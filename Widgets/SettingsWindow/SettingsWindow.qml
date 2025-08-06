@@ -57,7 +57,7 @@ PanelWithOverlay {
             "General",
             "Bar",
             "Time & Weather", 
-            "Recording",
+            "Screen Recorder",
             "Network",
             "Display",
             "Wallpaper",
@@ -202,7 +202,7 @@ PanelWithOverlay {
                     text: wallpaperSelector.visible ? "Select Wallpaper" : (activeTabIndex === 0 ? "General" : 
                          activeTabIndex === 1 ? "Bar" : 
                          activeTabIndex === 2 ? "Time & Weather" : 
-                         activeTabIndex === 3 ? "Recording" : 
+                         activeTabIndex === 3 ? "Screen Recorder" : 
                          activeTabIndex === 4 ? "Network" : 
                          activeTabIndex === 5 ? "Display" : 
                          activeTabIndex === 6 ? "Wallpaper" : 
@@ -303,7 +303,7 @@ PanelWithOverlay {
                 left: parent.left
                 right: parent.right
                 bottom: parent.bottom
-                margins: 24
+                margins: 16
                 topMargin: 32
             }
 
@@ -344,7 +344,7 @@ PanelWithOverlay {
                     { icon: "tune", text: "General" },
                     { icon: "space_dashboard", text: "Bar" },
                     { icon: "schedule", text: "Time & Weather" },
-                    { icon: "photo_camera", text: "Recording" },
+                    { icon: "photo_camera", text: "Screen Recorder" },
                     { icon: "wifi", text: "Network" },
                     { icon: "monitor", text: "Display" },
                     { icon: "wallpaper", text: "Wallpaper" },
