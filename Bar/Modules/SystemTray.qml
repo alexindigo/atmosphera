@@ -23,27 +23,11 @@ Row {
         delegate: Item {
             width: 24 * Theme.uiScale
             height: 24 * Theme.uiScale
-            // Hide Spotify icon, or adjust to your liking
-            visible: modelData && modelData.id !== "spotify"
+
+            visible: modelData
             property bool isHovered: trayMouseArea.containsMouse
 
-            // Hover scale animation
-            scale: isHovered ? 1.15 : 1.0
-            Behavior on scale {
-                NumberAnimation {
-                    duration: 150
-                    easing.type: Easing.OutCubic
-                }
-            }
-
-            // Subtle rotation on hover
-            rotation: isHovered ? 5 : 0
-            Behavior on rotation {
-                NumberAnimation {
-                    duration: 200
-                    easing.type: Easing.OutCubic
-                }
-            }
+            // No animations - static display
 
             Rectangle {
                 anchors.centerIn: parent
@@ -74,13 +58,6 @@ Row {
                         return icon;
                     }
                     opacity: status === Image.Ready ? 1 : 0
-
-                    Behavior on opacity {
-                        NumberAnimation {
-                            duration: 300
-                            easing.type: Easing.OutCubic
-                        }
-                    }
                     Component.onCompleted: {}
                 }
             }

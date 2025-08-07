@@ -165,7 +165,7 @@ Item {
 
                             x: appeared ? 0 : width
                             opacity: dismissed ? 0 : 1
-                            height: dismissed ? 0 : contentRow.height + 20
+                            height: dismissed ? 0 : Math.max(contentRow.height, 60) + 20
 
                             Row {
                                 id: contentRow
@@ -328,7 +328,7 @@ Item {
                                 NumberAnimation {
                                     target: notificationDelegate
                                     property: "height"
-                                    to: contentRow.height + 20
+                                    to: Math.max(contentRow.height, 60) + 20
                                     duration: 150
                                 }
                                 NumberAnimation {
@@ -345,7 +345,14 @@ Item {
                                     opacity = 0;
                                     height = 0;
                                     x = width;
-                                    appearAnimation.start();
+                                    // Small delay to ensure contentRow has proper height
+                                    Timer {
+                                        interval: 10
+                                        repeat: false
+                                        onTriggered: {
+                                            appearAnimation.start();
+                                        }
+                                    }
                                     for (let i = 0; i < notificationModel.count; i++) {
                                         if (notificationModel.get(i).id === notificationDelegate.id) {
                                             var oldItem = notificationModel.get(i);
