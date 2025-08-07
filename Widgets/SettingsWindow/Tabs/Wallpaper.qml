@@ -142,157 +142,23 @@ ColumnLayout {
                 }
 
                 // Random Wallpaper
-                ColumnLayout {
-                    spacing: 8
-                    Layout.fillWidth: true
-                    Layout.topMargin: 8
-
-                    RowLayout {
-                        spacing: 8
-                        Layout.fillWidth: true
-
-                        ColumnLayout {
-                            spacing: 4
-                            Layout.fillWidth: true
-
-                            Text {
-                                text: "Random Wallpaper"
-                                font.pixelSize: 13
-                                font.bold: true
-                                color: Theme.textPrimary
-                            }
-
-                            Text {
-                                text: "Automatically select random wallpapers from the folder"
-                                font.pixelSize: 12
-                                color: Theme.textSecondary
-                                wrapMode: Text.WordWrap
-                                Layout.fillWidth: true
-                            }
-
-                        }
-
-                        Rectangle {
-                            id: randomWallpaperSwitch
-
-                            width: 52
-                            height: 32
-                            radius: 16
-                            color: Settings.settings.randomWallpaper ? Theme.accentPrimary : Theme.surfaceVariant
-                            border.color: Settings.settings.randomWallpaper ? Theme.accentPrimary : Theme.outline
-                            border.width: 2
-
-                            Rectangle {
-                                id: randomWallpaperThumb
-
-                                width: 28
-                                height: 28
-                                radius: 14
-                                color: Theme.surface
-                                border.color: Theme.outline
-                                border.width: 1
-                                y: 2
-                                x: Settings.settings.randomWallpaper ? randomWallpaperSwitch.width - width - 2 : 2
-
-                                Behavior on x {
-                                    NumberAnimation {
-                                        duration: 200
-                                        easing.type: Easing.OutCubic
-                                    }
-
-                                }
-
-                            }
-
-                            MouseArea {
-                                anchors.fill: parent
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    Settings.settings.randomWallpaper = !Settings.settings.randomWallpaper;
-                                }
-                            }
-
-                        }
-
+                ToggleOption {
+                    label: "Random Wallpaper"
+                    description: "Automatically select random wallpapers from the folder"
+                    value: Settings.settings.randomWallpaper
+                    onToggled: function() {
+                        Settings.settings.randomWallpaper = !Settings.settings.randomWallpaper;
                     }
-
                 }
 
                 // Use Wallpaper Theme
-                ColumnLayout {
-                    spacing: 8
-                    Layout.fillWidth: true
-                    Layout.topMargin: 8
-
-                    RowLayout {
-                        spacing: 8
-                        Layout.fillWidth: true
-
-                        ColumnLayout {
-                            spacing: 4
-                            Layout.fillWidth: true
-
-                            Text {
-                                text: "Use Wallpaper Theme"
-                                font.pixelSize: 13
-                                font.bold: true
-                                color: Theme.textPrimary
-                            }
-
-                            Text {
-                                text: "Automatically adjust theme colors based on wallpaper"
-                                font.pixelSize: 12
-                                color: Theme.textSecondary
-                                wrapMode: Text.WordWrap
-                                Layout.fillWidth: true
-                            }
-
-                        }
-
-                        Rectangle {
-                            id: wallpaperThemeSwitch
-
-                            width: 52
-                            height: 32
-                            radius: 16
-                            color: Settings.settings.useWallpaperTheme ? Theme.accentPrimary : Theme.surfaceVariant
-                            border.color: Settings.settings.useWallpaperTheme ? Theme.accentPrimary : Theme.outline
-                            border.width: 2
-
-                            Rectangle {
-                                id: wallpaperThemeThumb
-
-                                width: 28
-                                height: 28
-                                radius: 14
-                                color: Theme.surface
-                                border.color: Theme.outline
-                                border.width: 1
-                                y: 2
-                                x: Settings.settings.useWallpaperTheme ? wallpaperThemeSwitch.width - width - 2 : 2
-
-                                Behavior on x {
-                                    NumberAnimation {
-                                        duration: 200
-                                        easing.type: Easing.OutCubic
-                                    }
-
-                                }
-
-                            }
-
-                            MouseArea {
-                                anchors.fill: parent
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    Settings.settings.useWallpaperTheme = !Settings.settings.useWallpaperTheme;
-                                }
-                            }
-
-                        }
-
+                ToggleOption {
+                    label: "Use Wallpaper Theme"
+                    description: "Automatically adjust theme colors based on wallpaper"
+                    value: Settings.settings.useWallpaperTheme
+                    onToggled: function() {
+                        Settings.settings.useWallpaperTheme = !Settings.settings.useWallpaperTheme;
                     }
-
                 }
 
                 // Wallpaper Interval
@@ -402,80 +268,13 @@ ColumnLayout {
                 }
 
                 // Use SWWW
-                ColumnLayout {
-                    spacing: 8
-                    Layout.fillWidth: true
-                    Layout.topMargin: 8
-
-                    RowLayout {
-                        spacing: 8
-                        Layout.fillWidth: true
-
-                        ColumnLayout {
-                            spacing: 4
-                            Layout.fillWidth: true
-
-                            Text {
-                                text: "Use SWWW"
-                                font.pixelSize: 13
-                                font.bold: true
-                                color: Theme.textPrimary
-                            }
-
-                            Text {
-                                text: "Use SWWW daemon for advanced wallpaper management"
-                                font.pixelSize: 12
-                                color: Theme.textSecondary
-                                wrapMode: Text.WordWrap
-                                Layout.fillWidth: true
-                            }
-
-                        }
-
-                        Rectangle {
-                            id: swwwSwitch
-
-                            width: 52
-                            height: 32
-                            radius: 16
-                            color: Settings.settings.useSWWW ? Theme.accentPrimary : Theme.surfaceVariant
-                            border.color: Settings.settings.useSWWW ? Theme.accentPrimary : Theme.outline
-                            border.width: 2
-
-                            Rectangle {
-                                id: swwwThumb
-
-                                width: 28
-                                height: 28
-                                radius: 14
-                                color: Theme.surface
-                                border.color: Theme.outline
-                                border.width: 1
-                                y: 2
-                                x: Settings.settings.useSWWW ? swwwSwitch.width - width - 2 : 2
-
-                                Behavior on x {
-                                    NumberAnimation {
-                                        duration: 200
-                                        easing.type: Easing.OutCubic
-                                    }
-
-                                }
-
-                            }
-
-                            MouseArea {
-                                anchors.fill: parent
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    Settings.settings.useSWWW = !Settings.settings.useSWWW;
-                                }
-                            }
-
-                        }
-
+                ToggleOption {
+                    label: "Use SWWW"
+                    description: "Use SWWW daemon for advanced wallpaper management"
+                    value: Settings.settings.useSWWW
+                    onToggled: function() {
+                        Settings.settings.useSWWW = !Settings.settings.useSWWW;
                     }
-
                 }
 
                 // SWWW Settings (only visible when useSWWW is enabled)
