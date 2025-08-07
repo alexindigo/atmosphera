@@ -1,12 +1,21 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Effects
 import QtQuick.Layouts
-import qs.Settings
 import qs.Components
 import qs.Services
+import qs.Settings
 
 Rectangle {
     id: wallpaperOverlay
+
+    // Function to show the overlay and load wallpapers
+    function show() {
+        // Ensure wallpapers are loaded
+        WallpaperManager.loadWallpapers();
+        wallpaperOverlay.visible = true;
+    }
+
     anchors.fill: parent
     color: Theme.backgroundPrimary
     visible: false
@@ -22,10 +31,11 @@ Rectangle {
 
     // Content area that stops event propagation
     MouseArea {
+        // Stop event propagation
+
         anchors.fill: parent
         anchors.margins: 24
         onClicked: {
-            // Stop event propagation
         }
 
         ColumnLayout {
@@ -46,6 +56,7 @@ Rectangle {
 
                     GridView {
                         id: wallpaperGrid
+
                         anchors.fill: parent
                         cellWidth: Math.max(120, (parent.width / 3) - 12)
                         cellHeight: cellWidth * 0.6
@@ -62,8 +73,9 @@ Rectangle {
 
                             Rectangle {
                                 id: wallpaperItem
+
                                 anchors.fill: parent
-                                anchors.margins: 4
+                                anchors.margins: 3
                                 color: Theme.surface
                                 radius: 12
                                 border.color: Settings.settings.currentWallpaper === modelData ? Theme.accentPrimary : Theme.outline
@@ -71,25 +83,49 @@ Rectangle {
 
                                 Image {
                                     id: wallpaperImage
+
                                     anchors.fill: parent
-                                    anchors.margins: 4
+                                    anchors.margins: 2
                                     source: modelData
                                     fillMode: Image.PreserveAspectCrop
                                     asynchronous: true
                                     cache: true
                                     smooth: true
                                     mipmap: true
-
                                     sourceSize.width: Math.min(width, 480)
                                     sourceSize.height: Math.min(height, 270)
+                                    opacity: (wallpaperImage.status == Image.Ready) ? 1 : 0
+                                    // Apply circular mask for rounded corners
+                                    layer.enabled: true
 
-                                    opacity: (wallpaperImage.status == Image.Ready) ? 1.0 : 0.0
                                     Behavior on opacity {
                                         NumberAnimation {
                                             duration: 300
                                             easing.type: Easing.OutCubic
                                         }
+
                                     }
+
+                                    layer.effect: MultiEffect {
+                                        maskEnabled: true
+                                        maskSource: mask
+                                    }
+
+                                }
+
+                                Item {
+                                    id: mask
+
+                                    anchors.fill: wallpaperImage
+                                    layer.enabled: true
+                                    visible: false
+
+                                    Rectangle {
+                                        width: wallpaperImage.width
+                                        height: wallpaperImage.height
+                                        radius: 12
+                                    }
+
                                 }
 
                                 MouseArea {
@@ -101,18 +137,19 @@ Rectangle {
                                         wallpaperOverlay.visible = false;
                                     }
                                 }
+
                             }
+
                         }
+
                     }
+
                 }
+
             }
+
         }
+
     }
 
-    // Function to show the overlay and load wallpapers
-    function show() {
-        // Ensure wallpapers are loaded
-        WallpaperManager.loadWallpapers();
-        wallpaperOverlay.visible = true;
-    }
-} 
+}
