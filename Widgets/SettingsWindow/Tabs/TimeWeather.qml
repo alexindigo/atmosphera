@@ -1,12 +1,13 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import qs.Settings
 import qs.Components
+import qs.Settings
 import qs.Widgets.SettingsWindow.Tabs.Components
 
 ColumnLayout {
     id: root
+
     spacing: 0
     anchors.fill: parent
     anchors.margins: 0
@@ -15,7 +16,6 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.preferredHeight: 0
     }
-
 
     ColumnLayout {
         spacing: 4
@@ -28,7 +28,6 @@ ColumnLayout {
             color: Theme.textPrimary
             Layout.bottomMargin: 8
         }
-
 
         ColumnLayout {
             spacing: 8
@@ -57,10 +56,12 @@ ColumnLayout {
                         wrapMode: Text.WordWrap
                         Layout.fillWidth: true
                     }
+
                 }
 
                 Rectangle {
                     id: use12HourClockSwitch
+
                     width: 52
                     height: 32
                     radius: 16
@@ -70,6 +71,7 @@ ColumnLayout {
 
                     Rectangle {
                         id: use12HourClockThumb
+
                         width: 28
                         height: 28
                         radius: 14
@@ -84,7 +86,9 @@ ColumnLayout {
                                 duration: 200
                                 easing.type: Easing.OutCubic
                             }
+
                         }
+
                     }
 
                     MouseArea {
@@ -94,10 +98,12 @@ ColumnLayout {
                             Settings.settings.use12HourClock = !Settings.settings.use12HourClock;
                         }
                     }
-                }
-            }
-        }
 
+                }
+
+            }
+
+        }
 
         ColumnLayout {
             spacing: 8
@@ -126,10 +132,12 @@ ColumnLayout {
                         wrapMode: Text.WordWrap
                         Layout.fillWidth: true
                     }
+
                 }
 
                 Rectangle {
                     id: reverseDayMonthSwitch
+
                     width: 52
                     height: 32
                     radius: 16
@@ -139,6 +147,7 @@ ColumnLayout {
 
                     Rectangle {
                         id: reverseDayMonthThumb
+
                         width: 28
                         height: 28
                         radius: 14
@@ -153,7 +162,9 @@ ColumnLayout {
                                 duration: 200
                                 easing.type: Easing.OutCubic
                             }
+
                         }
+
                     }
 
                     MouseArea {
@@ -163,25 +174,24 @@ ColumnLayout {
                             Settings.settings.reverseDayMonth = !Settings.settings.reverseDayMonth;
                         }
                     }
+
                 }
+
             }
+
         }
+
     }
 
     Rectangle {
+        Layout.fillWidth: true
         Layout.topMargin: 26
         Layout.bottomMargin: 18
-        anchors {
-            top: headerArea.bottom
-            left: parent.left
-            right: parent.right
-        }
         height: 1
         color: Theme.outline
         opacity: 0.3
     }
 
-    
     ColumnLayout {
         spacing: 4
         Layout.fillWidth: true
@@ -193,7 +203,6 @@ ColumnLayout {
             color: Theme.textPrimary
             Layout.bottomMargin: 8
         }
-
 
         ColumnLayout {
             spacing: 8
@@ -223,6 +232,7 @@ ColumnLayout {
 
                 TextInput {
                     id: cityInput
+
                     anchors.fill: parent
                     anchors.leftMargin: 12
                     anchors.rightMargin: 12
@@ -237,7 +247,6 @@ ColumnLayout {
                     selectByMouse: true
                     activeFocusOnTab: true
                     inputMethodHints: Qt.ImhNone
-
                     onTextChanged: {
                         Settings.settings.weatherCity = text;
                     }
@@ -249,10 +258,12 @@ ColumnLayout {
                             cityInput.forceActiveFocus();
                         }
                     }
-                }
-            }
-        }
 
+                }
+
+            }
+
+        }
 
         ColumnLayout {
             spacing: 8
@@ -281,15 +292,21 @@ ColumnLayout {
                         wrapMode: Text.WordWrap
                         Layout.fillWidth: true
                     }
+
                 }
 
-                UnitSelector {}
+                UnitSelector {
+                }
+
             }
+
         }
+
     }
 
     Item {
         Layout.fillWidth: true
         Layout.fillHeight: true
     }
+
 }

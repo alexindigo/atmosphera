@@ -122,266 +122,263 @@ ColumnLayout {
                         }
 
                     }
+
                 }
 
-                Rectangle {
-                    Layout.topMargin: 26
-                    Layout.bottomMargin: 18
-                    anchors {
-                        top: headerArea.bottom
-                        left: parent.left
-                        right: parent.right
-                    }
-                    height: 1
-                    color: Theme.outline
-                    opacity: 0.3
+            }
+
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.topMargin: 26
+                Layout.bottomMargin: 18
+                height: 1
+                color: Theme.outline
+                opacity: 0.3
+            }
+
+            ColumnLayout {
+                spacing: 4
+                Layout.fillWidth: true
+
+                Text {
+                    text: "Automation"
+                    font.pixelSize: 18
+                    font.bold: true
+                    color: Theme.textPrimary
+                    Layout.bottomMargin: 8
                 }
 
+                // Random Wallpaper
                 ColumnLayout {
-                    spacing: 4
+                    spacing: 8
                     Layout.fillWidth: true
+                    Layout.topMargin: 8
 
-                    Text {
-                        text: "Automation"
-                        font.pixelSize: 18
-                        font.bold: true
-                        color: Theme.textPrimary
-                        Layout.bottomMargin: 8
-                    }
-
-                    // Random Wallpaper
-                    ColumnLayout {
+                    RowLayout {
                         spacing: 8
                         Layout.fillWidth: true
-                        Layout.topMargin: 8
 
-                        RowLayout {
-                            spacing: 8
-                            Layout.fillWidth: true
-
-                            ColumnLayout {
-                                spacing: 4
-                                Layout.fillWidth: true
-
-                                Text {
-                                    text: "Random Wallpaper"
-                                    font.pixelSize: 13
-                                    font.bold: true
-                                    color: Theme.textPrimary
-                                }
-
-                                Text {
-                                    text: "Automatically select random wallpapers from the folder"
-                                    font.pixelSize: 12
-                                    color: Theme.textSecondary
-                                    wrapMode: Text.WordWrap
-                                    Layout.fillWidth: true
-                                }
-
-                            }
-
-                            Rectangle {
-                                id: randomWallpaperSwitch
-
-                                width: 52
-                                height: 32
-                                radius: 16
-                                color: Settings.settings.randomWallpaper ? Theme.accentPrimary : Theme.surfaceVariant
-                                border.color: Settings.settings.randomWallpaper ? Theme.accentPrimary : Theme.outline
-                                border.width: 2
-
-                                Rectangle {
-                                    id: randomWallpaperThumb
-
-                                    width: 28
-                                    height: 28
-                                    radius: 14
-                                    color: Theme.surface
-                                    border.color: Theme.outline
-                                    border.width: 1
-                                    y: 2
-                                    x: Settings.settings.randomWallpaper ? randomWallpaperSwitch.width - width - 2 : 2
-
-                                    Behavior on x {
-                                        NumberAnimation {
-                                            duration: 200
-                                            easing.type: Easing.OutCubic
-                                        }
-
-                                    }
-
-                                }
-
-                                MouseArea {
-                                    anchors.fill: parent
-                                    cursorShape: Qt.PointingHandCursor
-                                    onClicked: {
-                                        Settings.settings.randomWallpaper = !Settings.settings.randomWallpaper;
-                                    }
-                                }
-
-                            }
-
-                        }
-
-                    }
-
-                    // Use Wallpaper Theme
-                    ColumnLayout {
-                        spacing: 8
-                        Layout.fillWidth: true
-                        Layout.topMargin: 8
-
-                        RowLayout {
-                            spacing: 8
-                            Layout.fillWidth: true
-
-                            ColumnLayout {
-                                spacing: 4
-                                Layout.fillWidth: true
-
-                                Text {
-                                    text: "Use Wallpaper Theme"
-                                    font.pixelSize: 13
-                                    font.bold: true
-                                    color: Theme.textPrimary
-                                }
-
-                                Text {
-                                    text: "Automatically adjust theme colors based on wallpaper"
-                                    font.pixelSize: 12
-                                    color: Theme.textSecondary
-                                    wrapMode: Text.WordWrap
-                                    Layout.fillWidth: true
-                                }
-
-                            }
-
-                            Rectangle {
-                                id: wallpaperThemeSwitch
-
-                                width: 52
-                                height: 32
-                                radius: 16
-                                color: Settings.settings.useWallpaperTheme ? Theme.accentPrimary : Theme.surfaceVariant
-                                border.color: Settings.settings.useWallpaperTheme ? Theme.accentPrimary : Theme.outline
-                                border.width: 2
-
-                                Rectangle {
-                                    id: wallpaperThemeThumb
-
-                                    width: 28
-                                    height: 28
-                                    radius: 14
-                                    color: Theme.surface
-                                    border.color: Theme.outline
-                                    border.width: 1
-                                    y: 2
-                                    x: Settings.settings.useWallpaperTheme ? wallpaperThemeSwitch.width - width - 2 : 2
-
-                                    Behavior on x {
-                                        NumberAnimation {
-                                            duration: 200
-                                            easing.type: Easing.OutCubic
-                                        }
-
-                                    }
-
-                                }
-
-                                MouseArea {
-                                    anchors.fill: parent
-                                    cursorShape: Qt.PointingHandCursor
-                                    onClicked: {
-                                        Settings.settings.useWallpaperTheme = !Settings.settings.useWallpaperTheme;
-                                    }
-                                }
-
-                            }
-
-                        }
-
-                    }
-
-                    // Wallpaper Interval
-                    ColumnLayout {
-                        spacing: 8
-                        Layout.fillWidth: true
-                        Layout.topMargin: 8
-
-                        Text {
-                            text: "Wallpaper Interval"
-                            font.pixelSize: 13
-                            font.bold: true
-                            color: Theme.textPrimary
-                        }
-
-                        Text {
-                            text: "How often to change wallpapers automatically (in seconds)"
-                            font.pixelSize: 12
-                            color: Theme.textSecondary
-                            wrapMode: Text.WordWrap
-                            Layout.fillWidth: true
-                        }
-
-                        RowLayout {
+                        ColumnLayout {
+                            spacing: 4
                             Layout.fillWidth: true
 
                             Text {
-                                text: Settings.settings.wallpaperInterval + " seconds"
+                                text: "Random Wallpaper"
                                 font.pixelSize: 13
+                                font.bold: true
                                 color: Theme.textPrimary
                             }
 
-                            Item {
+                            Text {
+                                text: "Automatically select random wallpapers from the folder"
+                                font.pixelSize: 12
+                                color: Theme.textSecondary
+                                wrapMode: Text.WordWrap
                                 Layout.fillWidth: true
                             }
 
                         }
 
-                        Slider {
-                            id: intervalSlider
+                        Rectangle {
+                            id: randomWallpaperSwitch
 
-                            Layout.fillWidth: true
-                            from: 10
-                            to: 900
-                            stepSize: 10
-                            value: Settings.settings.wallpaperInterval
-                            snapMode: Slider.SnapAlways
-                            onMoved: {
-                                Settings.settings.wallpaperInterval = Math.round(value);
-                            }
+                            width: 52
+                            height: 32
+                            radius: 16
+                            color: Settings.settings.randomWallpaper ? Theme.accentPrimary : Theme.surfaceVariant
+                            border.color: Settings.settings.randomWallpaper ? Theme.accentPrimary : Theme.outline
+                            border.width: 2
 
-                            background: Rectangle {
-                                x: intervalSlider.leftPadding
-                                y: intervalSlider.topPadding + intervalSlider.availableHeight / 2 - height / 2
-                                implicitWidth: 200
-                                implicitHeight: 4
-                                width: intervalSlider.availableWidth
-                                height: implicitHeight
-                                radius: 2
-                                color: Theme.surfaceVariant
+                            Rectangle {
+                                id: randomWallpaperThumb
 
-                                Rectangle {
-                                    width: intervalSlider.visualPosition * parent.width
-                                    height: parent.height
-                                    color: Theme.accentPrimary
-                                    radius: 2
+                                width: 28
+                                height: 28
+                                radius: 14
+                                color: Theme.surface
+                                border.color: Theme.outline
+                                border.width: 1
+                                y: 2
+                                x: Settings.settings.randomWallpaper ? randomWallpaperSwitch.width - width - 2 : 2
+
+                                Behavior on x {
+                                    NumberAnimation {
+                                        duration: 200
+                                        easing.type: Easing.OutCubic
+                                    }
+
                                 }
 
                             }
 
-                            handle: Rectangle {
-                                x: intervalSlider.leftPadding + intervalSlider.visualPosition * (intervalSlider.availableWidth - width)
-                                y: intervalSlider.topPadding + intervalSlider.availableHeight / 2 - height / 2
-                                implicitWidth: 20
-                                implicitHeight: 20
-                                radius: 10
-                                color: intervalSlider.pressed ? Theme.surfaceVariant : Theme.surface
-                                border.color: Theme.accentPrimary
-                                border.width: 2
+                            MouseArea {
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    Settings.settings.randomWallpaper = !Settings.settings.randomWallpaper;
+                                }
                             }
 
+                        }
+
+                    }
+
+                }
+
+                // Use Wallpaper Theme
+                ColumnLayout {
+                    spacing: 8
+                    Layout.fillWidth: true
+                    Layout.topMargin: 8
+
+                    RowLayout {
+                        spacing: 8
+                        Layout.fillWidth: true
+
+                        ColumnLayout {
+                            spacing: 4
+                            Layout.fillWidth: true
+
+                            Text {
+                                text: "Use Wallpaper Theme"
+                                font.pixelSize: 13
+                                font.bold: true
+                                color: Theme.textPrimary
+                            }
+
+                            Text {
+                                text: "Automatically adjust theme colors based on wallpaper"
+                                font.pixelSize: 12
+                                color: Theme.textSecondary
+                                wrapMode: Text.WordWrap
+                                Layout.fillWidth: true
+                            }
+
+                        }
+
+                        Rectangle {
+                            id: wallpaperThemeSwitch
+
+                            width: 52
+                            height: 32
+                            radius: 16
+                            color: Settings.settings.useWallpaperTheme ? Theme.accentPrimary : Theme.surfaceVariant
+                            border.color: Settings.settings.useWallpaperTheme ? Theme.accentPrimary : Theme.outline
+                            border.width: 2
+
+                            Rectangle {
+                                id: wallpaperThemeThumb
+
+                                width: 28
+                                height: 28
+                                radius: 14
+                                color: Theme.surface
+                                border.color: Theme.outline
+                                border.width: 1
+                                y: 2
+                                x: Settings.settings.useWallpaperTheme ? wallpaperThemeSwitch.width - width - 2 : 2
+
+                                Behavior on x {
+                                    NumberAnimation {
+                                        duration: 200
+                                        easing.type: Easing.OutCubic
+                                    }
+
+                                }
+
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    Settings.settings.useWallpaperTheme = !Settings.settings.useWallpaperTheme;
+                                }
+                            }
+
+                        }
+
+                    }
+
+                }
+
+                // Wallpaper Interval
+                ColumnLayout {
+                    spacing: 8
+                    Layout.fillWidth: true
+                    Layout.topMargin: 8
+
+                    Text {
+                        text: "Wallpaper Interval"
+                        font.pixelSize: 13
+                        font.bold: true
+                        color: Theme.textPrimary
+                    }
+
+                    Text {
+                        text: "How often to change wallpapers automatically (in seconds)"
+                        font.pixelSize: 12
+                        color: Theme.textSecondary
+                        wrapMode: Text.WordWrap
+                        Layout.fillWidth: true
+                    }
+
+                    RowLayout {
+                        Layout.fillWidth: true
+
+                        Text {
+                            text: Settings.settings.wallpaperInterval + " seconds"
+                            font.pixelSize: 13
+                            color: Theme.textPrimary
+                        }
+
+                        Item {
+                            Layout.fillWidth: true
+                        }
+
+                    }
+
+                    Slider {
+                        id: intervalSlider
+
+                        Layout.fillWidth: true
+                        from: 10
+                        to: 900
+                        stepSize: 10
+                        value: Settings.settings.wallpaperInterval
+                        snapMode: Slider.SnapAlways
+                        onMoved: {
+                            Settings.settings.wallpaperInterval = Math.round(value);
+                        }
+
+                        background: Rectangle {
+                            x: intervalSlider.leftPadding
+                            y: intervalSlider.topPadding + intervalSlider.availableHeight / 2 - height / 2
+                            implicitWidth: 200
+                            implicitHeight: 4
+                            width: intervalSlider.availableWidth
+                            height: implicitHeight
+                            radius: 2
+                            color: Theme.surfaceVariant
+
+                            Rectangle {
+                                width: intervalSlider.visualPosition * parent.width
+                                height: parent.height
+                                color: Theme.accentPrimary
+                                radius: 2
+                            }
+
+                        }
+
+                        handle: Rectangle {
+                            x: intervalSlider.leftPadding + intervalSlider.visualPosition * (intervalSlider.availableWidth - width)
+                            y: intervalSlider.topPadding + intervalSlider.availableHeight / 2 - height / 2
+                            implicitWidth: 20
+                            implicitHeight: 20
+                            radius: 10
+                            color: intervalSlider.pressed ? Theme.surfaceVariant : Theme.surface
+                            border.color: Theme.accentPrimary
+                            border.width: 2
                         }
 
                     }
@@ -391,13 +388,9 @@ ColumnLayout {
             }
 
             Rectangle {
+                Layout.fillWidth: true
                 Layout.topMargin: 26
                 Layout.bottomMargin: 18
-                anchors {
-                    top: headerArea.bottom
-                    left: parent.left
-                    right: parent.right
-                }
                 height: 1
                 color: Theme.outline
                 opacity: 0.3

@@ -1,11 +1,12 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import qs.Settings
 import qs.Components
+import qs.Settings
 
 ColumnLayout {
     id: root
+
     spacing: 0
     anchors.fill: parent
     anchors.margins: 0
@@ -14,7 +15,6 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.preferredHeight: 0
     }
-
 
     ColumnLayout {
         spacing: 4
@@ -27,7 +27,6 @@ ColumnLayout {
             color: Theme.textPrimary
             Layout.bottomMargin: 8
         }
-
 
         ColumnLayout {
             spacing: 2
@@ -67,7 +66,9 @@ ColumnLayout {
                         z: 2
                     }
 
-                    Avatar {}
+                    Avatar {
+                    }
+
                 }
 
                 Rectangle {
@@ -80,6 +81,7 @@ ColumnLayout {
 
                     TextInput {
                         id: profileImageInput
+
                         anchors.fill: parent
                         anchors.leftMargin: 12
                         anchors.rightMargin: 12
@@ -96,25 +98,27 @@ ColumnLayout {
                         onTextChanged: {
                             Settings.settings.profileImage = text;
                         }
+
                         MouseArea {
                             anchors.fill: parent
                             cursorShape: Qt.IBeamCursor
                             onClicked: profileImageInput.forceActiveFocus()
                         }
+
                     }
+
                 }
+
             }
+
         }
+
     }
 
     Rectangle {
+        Layout.fillWidth: true
         Layout.topMargin: 26
         Layout.bottomMargin: 18
-        anchors {
-            top: headerArea.bottom
-            left: parent.left
-            right: parent.right
-        }
         height: 1
         color: Theme.outline
         opacity: 0.3
@@ -124,7 +128,6 @@ ColumnLayout {
         spacing: 4
         Layout.fillWidth: true
 
-
         Text {
             text: "User Interface"
             font.pixelSize: 18
@@ -132,7 +135,6 @@ ColumnLayout {
             color: Theme.textPrimary
             Layout.bottomMargin: 8
         }
-
 
         ColumnLayout {
             spacing: 4
@@ -160,10 +162,12 @@ ColumnLayout {
                         wrapMode: Text.WordWrap
                         Layout.fillWidth: true
                     }
+
                 }
 
                 Rectangle {
                     id: cornersSwitch
+
                     width: 52
                     height: 32
                     radius: 16
@@ -173,6 +177,7 @@ ColumnLayout {
 
                     Rectangle {
                         id: cornersThumb
+
                         width: 28
                         height: 28
                         radius: 14
@@ -187,7 +192,9 @@ ColumnLayout {
                                 duration: 200
                                 easing.type: Easing.OutCubic
                             }
+
                         }
+
                     }
 
                     MouseArea {
@@ -197,10 +204,12 @@ ColumnLayout {
                             Settings.settings.showCorners = !Settings.settings.showCorners;
                         }
                     }
-                }
-            }
-        }
 
+                }
+
+            }
+
+        }
 
         ColumnLayout {
             spacing: 8
@@ -229,10 +238,12 @@ ColumnLayout {
                         wrapMode: Text.WordWrap
                         Layout.fillWidth: true
                     }
+
                 }
 
                 Rectangle {
                     id: dockSwitch
+
                     width: 52
                     height: 32
                     radius: 16
@@ -242,6 +253,7 @@ ColumnLayout {
 
                     Rectangle {
                         id: dockThumb
+
                         width: 28
                         height: 28
                         radius: 14
@@ -256,7 +268,9 @@ ColumnLayout {
                                 duration: 200
                                 easing.type: Easing.OutCubic
                             }
+
                         }
+
                     }
 
                     MouseArea {
@@ -266,10 +280,12 @@ ColumnLayout {
                             Settings.settings.showDock = !Settings.settings.showDock;
                         }
                     }
-                }
-            }
-        }
 
+                }
+
+            }
+
+        }
 
         ColumnLayout {
             spacing: 8
@@ -298,10 +314,12 @@ ColumnLayout {
                         wrapMode: Text.WordWrap
                         Layout.fillWidth: true
                     }
+
                 }
 
                 Rectangle {
                     id: dimSwitch
+
                     width: 52
                     height: 32
                     radius: 16
@@ -311,6 +329,7 @@ ColumnLayout {
 
                     Rectangle {
                         id: dimThumb
+
                         width: 28
                         height: 28
                         radius: 14
@@ -325,7 +344,9 @@ ColumnLayout {
                                 duration: 200
                                 easing.type: Easing.OutCubic
                             }
+
                         }
+
                     }
 
                     MouseArea {
@@ -335,13 +356,18 @@ ColumnLayout {
                             Settings.settings.dimPanels = !Settings.settings.dimPanels;
                         }
                     }
+
                 }
+
             }
+
         }
+
     }
 
     Item {
         Layout.fillWidth: true
         Layout.fillHeight: true
     }
+
 }
