@@ -2,60 +2,58 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
-import qs.Settings
 import qs.Components
+import qs.Settings
 
-ScrollView {
+ColumnLayout {
+    id: root
+
+    // Get list of available monitors/screens
+    property var monitors: Quickshell.screens || []
+
+    // Sorted monitors by name
+    property var sortedMonitors: {
+        let sorted = [...monitors];
+        sorted.sort((a, b) => {
+            let nameA = a.name || "Unknown";
+            let nameB = b.name || "Unknown";
+            return nameA.localeCompare(nameB);
+        });
+        return sorted;
+    }
+
+    spacing: 0
     anchors.fill: parent
-    padding: 0
-    rightPadding: 12
-    clip: true
-    ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-    ScrollBar.vertical.policy: ScrollBar.AsNeeded
-    
-    ColumnLayout {
-        id: root
-        width: parent.availableWidth
-        spacing: 0
-        anchors.top: parent.top
-        anchors.margins: 0
+    anchors.margins: 0
 
-        // Get list of available monitors/screens
-        property var monitors: Quickshell.screens || []
-        
-        // Sorted monitors by name
-        property var sortedMonitors: {
-            let sorted = [...monitors];
-            sorted.sort((a, b) => {
-                let nameA = a.name || "Unknown";
-                let nameB = b.name || "Unknown";
-                return nameA.localeCompare(nameB);
-            });
-            return sorted;
-        }
+    ScrollView {
+        id: scrollView
 
-        Item {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 0
-        }
-
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        padding: 16
+        rightPadding: 12
+        clip: true
+        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+        ScrollBar.vertical.policy: ScrollBar.AsNeeded
 
         ColumnLayout {
-            spacing: 12
-            Layout.fillWidth: true
+            width: scrollView.availableWidth
+            spacing: 0
 
             Text {
                 text: "Monitor Selection"
                 font.pixelSize: 18 * Theme.uiScale
                 font.bold: true
                 color: Theme.textPrimary
-                Layout.bottomMargin: 8
+                Layout.bottomMargin: 16 * Theme.uiScale
             }
-
 
             ColumnLayout {
                 spacing: 8
                 Layout.fillWidth: true
+                Layout.topMargin: 8
+                Layout.bottomMargin: 8
 
                 RowLayout {
                     spacing: 8
@@ -159,6 +157,7 @@ ScrollView {
                 spacing: 8
                 Layout.fillWidth: true
                 Layout.topMargin: 8
+                Layout.bottomMargin: 8
 
                 RowLayout {
                     spacing: 8
@@ -265,6 +264,7 @@ ScrollView {
                 spacing: 8
                 Layout.fillWidth: true
                 Layout.topMargin: 8
+                Layout.bottomMargin: 8
 
                 RowLayout {
                     spacing: 8
@@ -365,11 +365,9 @@ ScrollView {
                     }
                 }
             }
+
         }
 
-        Item {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-        }
     }
+
 }
