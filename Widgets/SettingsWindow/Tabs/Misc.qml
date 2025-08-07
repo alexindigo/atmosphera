@@ -1,42 +1,38 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import qs.Settings
 import qs.Components
+import qs.Settings
 
-ScrollView {
+ColumnLayout {
+    id: root
+
+    spacing: 0
     anchors.fill: parent
-    padding: 0
-    rightPadding: 12
-    clip: true
-    ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-    ScrollBar.vertical.policy: ScrollBar.AsNeeded
-    
-    ColumnLayout {
-        id: root
-        width: parent.availableWidth
-        spacing: 0
-        anchors.top: parent.top
-        anchors.margins: 0
+    anchors.margins: 0
 
-        Item {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 0
-        }
+    ScrollView {
+        id: scrollView
 
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        padding: 16
+        rightPadding: 12
+        clip: true
+        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+        ScrollBar.vertical.policy: ScrollBar.AsNeeded
 
         ColumnLayout {
-            spacing: 4
-            Layout.fillWidth: true
+            width: scrollView.availableWidth
+            spacing: 0
 
             Text {
                 text: "Media"
                 font.pixelSize: 18 * Theme.uiScale
                 font.bold: true
                 color: Theme.textPrimary
-                Layout.bottomMargin: 8
+                Layout.bottomMargin: 16 * Theme.uiScale
             }
-
 
             ColumnLayout {
                 spacing: 8
@@ -60,10 +56,14 @@ ScrollView {
 
                 ComboBox {
                     id: visualizerTypeComboBox
+
                     Layout.fillWidth: true
                     Layout.preferredHeight: 40
                     model: ["radial", "fire", "diamond"]
                     currentIndex: model.indexOf(Settings.settings.visualizerType)
+                    onActivated: {
+                        Settings.settings.visualizerType = model[index];
+                    }
 
                     background: Rectangle {
                         implicitWidth: 120
@@ -97,7 +97,7 @@ ScrollView {
                         y: visualizerTypeComboBox.height
                         width: visualizerTypeComboBox.width
                         implicitHeight: contentItem.implicitHeight
-                        padding: 1
+                        padding: 8
 
                         contentItem: ListView {
                             clip: true
@@ -105,7 +105,9 @@ ScrollView {
                             model: visualizerTypeComboBox.popup.visible ? visualizerTypeComboBox.delegateModel : null
                             currentIndex: visualizerTypeComboBox.highlightedIndex
 
-                            ScrollIndicator.vertical: ScrollIndicator {}
+                            ScrollIndicator.vertical: ScrollIndicator {
+                            }
+
                         }
 
                         background: Rectangle {
@@ -114,10 +116,13 @@ ScrollView {
                             border.width: 1
                             radius: 16
                         }
+
                     }
 
                     delegate: ItemDelegate {
                         width: visualizerTypeComboBox.width
+                        highlighted: visualizerTypeComboBox.highlightedIndex === index
+
                         contentItem: Text {
                             text: modelData.charAt(0).toUpperCase() + modelData.slice(1)
                             font.pixelSize: 13
@@ -125,23 +130,19 @@ ScrollView {
                             verticalAlignment: Text.AlignVCenter
                             elide: Text.ElideRight
                         }
-                        highlighted: visualizerTypeComboBox.highlightedIndex === index
 
                         background: Rectangle {
                             color: highlighted ? Theme.accentPrimary.toString().replace(/#/, "#1A") : "transparent"
                         }
+
                     }
 
-                    onActivated: {
-                        Settings.settings.visualizerType = model[index];
-                    }
                 }
+
             }
+
         }
 
-        Item {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-        }
     }
+
 }
