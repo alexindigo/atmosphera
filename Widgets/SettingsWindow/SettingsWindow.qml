@@ -341,8 +341,6 @@ PanelWithOverlay {
                     // Wallpaper Selector Component
                     WallpaperSelector {
                         id: wallpaperSelector
-
-                        anchors.fill: parent
                     }
 
                 }
@@ -441,6 +439,7 @@ PanelWithOverlay {
                                     Layout.alignment: Qt.AlignVCenter
                                     horizontalAlignment: Text.AlignHCenter
                                     verticalAlignment: Text.AlignVCenter
+                                    font.variableAxes: { "wght": (Font.Normal + Font.Bold) / 2.0 }
                                 }
 
                                 Label {

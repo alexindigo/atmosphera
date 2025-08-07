@@ -24,8 +24,6 @@ ScrollView {
             Layout.preferredHeight: 0
         }
 
-
-
         ColumnLayout {
             spacing: 4 * Theme.uiScale
             Layout.fillWidth: true

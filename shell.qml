@@ -213,18 +213,4 @@ Scope {
             }
         }
     }
-
-    Rectangle {
-        width: 200 * Theme.uiScale
-        height: 40 * Theme.uiScale
-        color: "#333"
-        anchors.top: parent.top
-        anchors.left: parent.left
-        Text {
-            text: "UI Scale Demo"
-            anchors.centerIn: parent
-            font.pixelSize: 16 * Theme.uiScale
-            color: "white"
-        }
-    }
 }
