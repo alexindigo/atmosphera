@@ -69,8 +69,9 @@ ColumnLayout {
                 description: "Turn Bluetooth radio on or off"
                 value: Settings.settings.bluetoothEnabled
                 onToggled: function() {
+                                            Settings.settings.bluetoothEnabled = !Settings.settings.bluetoothEnabled;
                     if (Bluetooth.defaultAdapter) {
-                        Settings.settings.bluetoothEnabled = !Settings.settings.bluetoothEnabled;
+
                         Bluetooth.defaultAdapter.enabled = Settings.settings.bluetoothEnabled;
                         if (Bluetooth.defaultAdapter.enabled)
                             Bluetooth.defaultAdapter.discovering = true;
