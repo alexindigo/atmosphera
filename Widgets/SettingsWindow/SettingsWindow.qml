@@ -155,6 +155,11 @@ PanelWithOverlay {
         // Center the settings window on screen
         anchors.centerIn: parent
 
+        // Prevent closing when clicking in the panel bg
+        MouseArea {
+            anchors.fill: parent
+        }
+
         Rectangle {
             id: background
 

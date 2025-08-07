@@ -3,23 +3,14 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
+import qs.Components
 import qs.Settings
 import qs.Widgets.SettingsWindow
-import qs.Components
 
 PanelWithOverlay {
     id: sidebarPopup
-    property var shell: null
 
-    // Trigger initial weather loading when component is completed
-    Component.onCompleted: {
-        // Load initial weather data after a short delay to ensure all components are ready
-        Qt.callLater(function() {
-            if (weather && weather.fetchCityWeather) {
-                weather.fetchCityWeather();
-            }
-        });
-    }
+    property var shell: null
 
     function showAt() {
         sidebarPopupRect.showAt();
@@ -37,18 +28,27 @@ PanelWithOverlay {
         sidebarPopupRect.hidePopup();
     }
 
-    Rectangle {
-        id: sidebarPopupRect
-        implicitWidth: 500
-        implicitHeight: 800
-        visible: parent.visible
-        color: "transparent"
-        anchors.top: parent.top
-        anchors.right: parent.right
+    // Trigger initial weather loading when component is completed
+    Component.onCompleted: {
+        // Load initial weather data after a short delay to ensure all components are ready
+        Qt.callLater(function() {
+            if (weather && weather.fetchCityWeather)
+                weather.fetchCityWeather();
 
-    
+        });
+    }
+
+    Rectangle {
+        // Access the shell's SettingsWindow instead of creating a new one
+
+        id: sidebarPopupRect
+
         property real slideOffset: width
         property bool isAnimating: false
+        property int leftPadding: 20
+        property int bottomPadding: 20
+        // Recording properties
+        property bool isRecording: false
 
         function showAt() {
             if (!sidebarPopup.visible) {
@@ -59,24 +59,26 @@ PanelWithOverlay {
                 slideAnim.running = true;
                 if (weather)
                     weather.startWeatherFetch();
+
                 if (systemWidget)
                     systemWidget.panelVisible = true;
+
                 if (quickAccessWidget)
                     quickAccessWidget.panelVisible = true;
+
             }
         }
 
         function hidePopup() {
-            if (shell && shell.settingsWindow && shell.settingsWindow.visible) {
+            if (shell && shell.settingsWindow && shell.settingsWindow.visible)
                 shell.settingsWindow.visible = false;
-            }
 
-            if (wifiPanelLoader.active && wifiPanelLoader.item && wifiPanelLoader.item.visible) {
+            if (wifiPanelLoader.active && wifiPanelLoader.item && wifiPanelLoader.item.visible)
                 wifiPanelLoader.item.visible = false;
-            }
-            if (bluetoothPanelLoader.active && bluetoothPanelLoader.item && bluetoothPanelLoader.item.visible) {
+
+            if (bluetoothPanelLoader.active && bluetoothPanelLoader.item && bluetoothPanelLoader.item.visible)
                 bluetoothPanelLoader.item.visible = false;
-            }
+
             if (sidebarPopup.visible) {
                 slideAnim.from = 0;
                 slideAnim.to = width;
@@ -84,37 +86,87 @@ PanelWithOverlay {
             }
         }
 
+        // Start screen recording using Quickshell.execDetached
+        function startRecording() {
+            var currentDate = new Date();
+            var hours = String(currentDate.getHours()).padStart(2, '0');
+            var minutes = String(currentDate.getMinutes()).padStart(2, '0');
+            var day = String(currentDate.getDate()).padStart(2, '0');
+            var month = String(currentDate.getMonth() + 1).padStart(2, '0');
+            var year = currentDate.getFullYear();
+            var filename = hours + "-" + minutes + "-" + day + "-" + month + "-" + year + ".mp4";
+            var videoPath = Settings.settings.videoPath;
+            if (videoPath && !videoPath.endsWith("/"))
+                videoPath += "/";
+
+            var outputPath = videoPath + filename;
+            var command = "gpu-screen-recorder -w portal" + " -f " + Settings.settings.recordingFrameRate + " -a default_output" + " -k " + Settings.settings.recordingCodec + " -ac " + Settings.settings.audioCodec + " -q " + Settings.settings.recordingQuality + " -cursor " + (Settings.settings.showCursor ? "yes" : "no") + " -cr " + Settings.settings.colorRange + " -o " + outputPath;
+            Quickshell.execDetached(["sh", "-c", command]);
+            isRecording = true;
+            quickAccessWidget.isRecording = true;
+        }
+
+        // Stop recording using Quickshell.execDetached
+        function stopRecording() {
+            Quickshell.execDetached(["sh", "-c", "pkill -SIGINT -f 'gpu-screen-recorder.*portal'"]);
+            // Optionally, force kill after a delay
+            var cleanupTimer = Qt.createQmlObject('import QtQuick; Timer { interval: 3000; running: true; repeat: false }', sidebarPopupRect);
+            cleanupTimer.triggered.connect(function() {
+                Quickshell.execDetached(["sh", "-c", "pkill -9 -f 'gpu-screen-recorder.*portal' 2>/dev/null || true"]);
+                cleanupTimer.destroy();
+            });
+            isRecording = false;
+            quickAccessWidget.isRecording = false;
+        }
+
+        implicitWidth: 500
+        implicitHeight: 800
+        visible: parent.visible
+        color: "transparent"
+        anchors.top: parent.top
+        anchors.right: parent.right
+        // Clean up processes on destruction
+        Component.onDestruction: {
+            if (isRecording)
+                stopRecording();
+
+        }
+
+        // Prevent closing when clicking in the panel bg
+        MouseArea {
+            anchors.fill: parent
+        }
+
         NumberAnimation {
             id: slideAnim
+
             target: sidebarPopupRect
             property: "slideOffset"
             duration: 300
             easing.type: Easing.OutCubic
-
             onStopped: {
                 if (sidebarPopupRect.slideOffset === sidebarPopupRect.width) {
                     sidebarPopup.visible = false;
-            
                     if (weather)
                         weather.stopWeatherFetch();
+
                     if (systemWidget)
                         systemWidget.panelVisible = false;
+
                     if (quickAccessWidget)
                         quickAccessWidget.panelVisible = false;
+
                 }
                 sidebarPopupRect.isAnimating = false;
             }
-
             onStarted: {
                 sidebarPopupRect.isAnimating = true;
             }
         }
 
-        property int leftPadding: 20
-        property int bottomPadding: 20
-
         Rectangle {
             id: mainRectangle
+
             width: sidebarPopupRect.width - sidebarPopupRect.leftPadding
             height: sidebarPopupRect.height - sidebarPopupRect.bottomPadding
             anchors.top: sidebarPopupRect.top
@@ -126,68 +178,69 @@ PanelWithOverlay {
 
             Behavior on x {
                 enabled: !sidebarPopupRect.isAnimating
+
                 NumberAnimation {
                     duration: 300
                     easing.type: Easing.OutCubic
                 }
-            }
-        }
 
-        // Access the shell's SettingsWindow instead of creating a new one
+            }
+
+        }
 
         // LazyLoader for WifiPanel
         LazyLoader {
             id: wifiPanelLoader
+
             loading: false
-            component: WifiPanel {}
+
+            component: WifiPanel {
+            }
+
         }
 
         // LazyLoader for BluetoothPanel
         LazyLoader {
             id: bluetoothPanelLoader
+
             loading: false
-            component: BluetoothPanel {}
+
+            component: BluetoothPanel {
+            }
+
         }
-
-
 
         // SettingsIcon component
         SettingsIcon {
             id: settingsModal
+
             onWeatherRefreshRequested: {
-                if (weather && weather.fetchCityWeather) {
+                if (weather && weather.fetchCityWeather)
                     weather.fetchCityWeather();
-                }
+
             }
         }
-
-
 
         Item {
             anchors.fill: mainRectangle
             x: sidebarPopupRect.slideOffset
-
-            Behavior on x {
-                enabled: !sidebarPopupRect.isAnimating
-                NumberAnimation {
-                    duration: 300
-                    easing.type: Easing.OutCubic
-                }
-            }
+            Keys.onEscapePressed: sidebarPopupRect.hidePopup()
 
             ColumnLayout {
                 anchors.fill: parent
                 anchors.margins: 20
                 spacing: 16
 
-                System {
+                PowerMenu {
                     id: systemWidget
+
                     Layout.alignment: Qt.AlignHCenter
                     z: 3
                 }
 
                 Weather {
                     id: weather
+
                     Layout.alignment: Qt.AlignHCenter
                     z: 2
                 }
@@ -204,8 +257,10 @@ PanelWithOverlay {
 
                     SystemMonitor {
                         id: systemMonitor
+
                         z: 2
                     }
+
                 }
 
                 // Power profile, Wifi and Bluetooth row
@@ -236,6 +291,7 @@ PanelWithOverlay {
                             // Wifi button
                             Rectangle {
                                 id: wifiButton
+
                                 width: 36
                                 height: 36
                                 radius: 18
@@ -255,16 +311,17 @@ PanelWithOverlay {
 
                                 MouseArea {
                                     id: wifiButtonArea
+
                                     anchors.fill: parent
                                     hoverEnabled: true
                                     cursorShape: Qt.PointingHandCursor
                                     onClicked: {
-                                        if (!wifiPanelLoader.active) {
+                                        if (!wifiPanelLoader.active)
                                             wifiPanelLoader.loading = true;
-                                        }
-                                        if (wifiPanelLoader.item) {
+
+                                        if (wifiPanelLoader.item)
                                             wifiPanelLoader.item.showAt();
-                                        }
+
                                     }
                                 }
 
@@ -273,11 +330,13 @@ PanelWithOverlay {
                                     targetItem: wifiButtonArea
                                     tooltipVisible: wifiButtonArea.containsMouse
                                 }
+
                             }
 
                             // Bluetooth button
                             Rectangle {
                                 id: bluetoothButton
+
                                 width: 36
                                 height: 36
                                 radius: 18
@@ -297,16 +356,17 @@ PanelWithOverlay {
 
                                 MouseArea {
                                     id: bluetoothButtonArea
+
                                     anchors.fill: parent
                                     hoverEnabled: true
                                     cursorShape: Qt.PointingHandCursor
                                     onClicked: {
-                                        if (!bluetoothPanelLoader.active) {
+                                        if (!bluetoothPanelLoader.active)
                                             bluetoothPanelLoader.loading = true;
-                                        }
-                                        if (bluetoothPanelLoader.item) {
+
+                                        if (bluetoothPanelLoader.item)
                                             bluetoothPanelLoader.item.showAt();
-                                        }
+
                                     }
                                 }
 
@@ -315,9 +375,13 @@ PanelWithOverlay {
                                     targetItem: bluetoothButtonArea
                                     tooltipVisible: bluetoothButtonArea.containsMouse
                                 }
+
                             }
+
                         }
+
                     }
+
                 }
 
                 Item {
@@ -326,101 +390,60 @@ PanelWithOverlay {
 
                 // QuickAccess widget
                 QuickAccess {
+                    // 6 is the wallpaper tab index
+
                     id: quickAccessWidget
+
                     Layout.alignment: Qt.AlignHCenter
                     Layout.topMargin: -16
                     z: 2
                     isRecording: sidebarPopupRect.isRecording
-
                     onRecordingRequested: {
                         sidebarPopupRect.startRecording();
                     }
-
                     onStopRecordingRequested: {
                         sidebarPopupRect.stopRecording();
                     }
-
-                    onRecordingStateMismatch: function (actualState) {
+                    onRecordingStateMismatch: function(actualState) {
                         isRecording = actualState;
                         quickAccessWidget.isRecording = actualState;
                     }
-
                     onSettingsRequested: {
                         // Use the SettingsModal's openSettings function
-                        if (typeof settingsModal !== 'undefined' && settingsModal && settingsModal.openSettings) {
+                        if (typeof settingsModal !== 'undefined' && settingsModal && settingsModal.openSettings)
                             settingsModal.openSettings();
-                        }
-                    }
 
+                    }
                     onWallpaperSelectorRequested: {
                         // Use the SettingsModal's openSettings function with wallpaper tab (index 6)
-                        if (typeof settingsModal !== 'undefined' && settingsModal && settingsModal.openSettings) {
-                            settingsModal.openSettings(6); // 6 is the wallpaper tab index
-                        }
+                        if (typeof settingsModal !== 'undefined' && settingsModal && settingsModal.openSettings)
+                            settingsModal.openSettings(6);
+
                     }
                 }
+
             }
-            Keys.onEscapePressed: sidebarPopupRect.hidePopup()
-        }
 
-        // Recording properties
-        property bool isRecording: false
+            Behavior on x {
+                enabled: !sidebarPopupRect.isAnimating
 
-        // Start screen recording using Quickshell.execDetached
-        function startRecording() {
-            var currentDate = new Date();
-            var hours = String(currentDate.getHours()).padStart(2, '0');
-            var minutes = String(currentDate.getMinutes()).padStart(2, '0');
-            var day = String(currentDate.getDate()).padStart(2, '0');
-            var month = String(currentDate.getMonth() + 1).padStart(2, '0');
-            var year = currentDate.getFullYear();
+                NumberAnimation {
+                    duration: 300
+                    easing.type: Easing.OutCubic
+                }
 
-            var filename = hours + "-" + minutes + "-" + day + "-" + month + "-" + year + ".mp4";
-            var videoPath = Settings.settings.videoPath;
-            if (videoPath && !videoPath.endsWith("/")) {
-                videoPath += "/";
             }
-            var outputPath = videoPath + filename;
-            var command = "gpu-screen-recorder -w portal" +
-                " -f " + Settings.settings.recordingFrameRate +
-                " -a default_output" +
-                " -k " + Settings.settings.recordingCodec +
-                " -ac " + Settings.settings.audioCodec +
-                " -q " + Settings.settings.recordingQuality +
-                " -cursor " + (Settings.settings.showCursor ? "yes" : "no") +
-                " -cr " + Settings.settings.colorRange +
-                " -o " + outputPath;
-            Quickshell.execDetached(["sh", "-c", command]);
-            isRecording = true;
-            quickAccessWidget.isRecording = true;
-        }
 
-        // Stop recording using Quickshell.execDetached
-        function stopRecording() {
-            Quickshell.execDetached(["sh", "-c", "pkill -SIGINT -f 'gpu-screen-recorder.*portal'"]);
-            // Optionally, force kill after a delay
-            var cleanupTimer = Qt.createQmlObject('import QtQuick; Timer { interval: 3000; running: true; repeat: false }', sidebarPopupRect);
-            cleanupTimer.triggered.connect(function () {
-                Quickshell.execDetached(["sh", "-c", "pkill -9 -f 'gpu-screen-recorder.*portal' 2>/dev/null || true"]);
-                cleanupTimer.destroy();
-            });
-            isRecording = false;
-            quickAccessWidget.isRecording = false;
-        }
-
-        // Clean up processes on destruction
-        Component.onDestruction: {
-            if (isRecording) {
-                stopRecording();
-            }
         }
 
         Loader {
             active: Settings.settings.showCorners
             anchors.fill: parent
+
             sourceComponent: Item {
                 Corners {
                     id: sidebarCornerLeft
+
                     position: "bottomright"
                     size: 1.1
                     fillColor: Theme.backgroundPrimary
@@ -430,15 +453,19 @@ PanelWithOverlay {
 
                     Behavior on offsetX {
                         enabled: !sidebarPopupRect.isAnimating
+
                         NumberAnimation {
                             duration: 300
                             easing.type: Easing.OutCubic
                         }
+
                     }
+
                 }
 
                 Corners {
                     id: sidebarCornerBottom
+
                     position: "bottomright"
                     size: 1.1
                     fillColor: Theme.backgroundPrimary
@@ -448,13 +475,20 @@ PanelWithOverlay {
 
                     Behavior on offsetX {
                         enabled: !sidebarPopupRect.isAnimating
+
                         NumberAnimation {
                             duration: 300
                             easing.type: Easing.OutCubic
                         }
+
                     }
+
                 }
+
             }
+
         }
+
     }
+
 }
