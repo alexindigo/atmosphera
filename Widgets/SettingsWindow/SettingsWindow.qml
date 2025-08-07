@@ -350,7 +350,7 @@ PanelWithOverlay {
             id: tabs
 
             color: Theme.surface
-            width: Quickshell.screens.length > 0 ? Quickshell.screens[0].width / 9 : 100
+            width: parent.width * 0.2
             height: settingsWindowRect.height
             topLeftRadius: 20
             bottomLeftRadius: 20
