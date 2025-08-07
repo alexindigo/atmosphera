@@ -57,8 +57,7 @@ Shape {
     x: _isLeft ? offsetX : (parent ? parent.width - width + offsetX : 0)
     y: _isTop ? offsetY : (parent ? parent.height - height + offsetY : 0)
     
-    // Optimized rendering settings - reduced quality for better performance
-    preferredRendererType: Shape.GeometryRenderer  // Use simpler renderer
+    preferredRendererType: Shape.CurveRenderer  // Use GPU-based renderer
     layer.enabled: false  // Disable layer rendering to save memory
     antialiasing: true    // Use standard antialiasing instead of MSAA
 
