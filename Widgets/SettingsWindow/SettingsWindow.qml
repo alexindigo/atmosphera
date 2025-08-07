@@ -148,8 +148,8 @@ PanelWithOverlay {
     Rectangle {
         id: settingsWindowRect
 
-        implicitWidth: Quickshell.screens.length > 0 ? Quickshell.screens[0].width / 2 : 600
-        implicitHeight: Quickshell.screens.length > 0 ? Quickshell.screens[0].height / 2 : 400
+        implicitWidth: Quickshell.screens.length > 0 ? Quickshell.screens[0].width * 2 / 3 : 600
+        implicitHeight: Quickshell.screens.length > 0 ? Quickshell.screens[0].height *  2 / 3 : 400
         visible: parent.visible
         color: "transparent"
         // Center the settings window on screen
