@@ -187,9 +187,12 @@ Scope {
         function onScreensChanged() {
             if (lockScreen.locked) {
                 pendingReload = true;
-            } else {
+            } /*else {
                 reloadTimer.restart();
-            }
+            } */
+            // ^commented out for now to fix QS crash on monitor wake.
+            // if it reintroduces the notification bug (https://github.com/Ly-sec/Noctalia/issues/32)...
+            // we need to find a different fix
         }
     }
 
@@ -211,6 +214,20 @@ Scope {
                     console.log("Audio unmuted, volume restored to:", volume);
                 }
             }
+        }
+    }
+
+    Rectangle {
+        width: 200 * Theme.uiScale
+        height: 40 * Theme.uiScale
+        color: "#333"
+        anchors.top: parent.top
+        anchors.left: parent.left
+        Text {
+            text: "UI Scale Demo"
+            anchors.centerIn: parent
+            font.pixelSize: 16 * Theme.uiScale
+            color: "white"
         }
     }
 }
