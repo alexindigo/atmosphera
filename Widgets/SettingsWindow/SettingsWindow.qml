@@ -100,7 +100,7 @@ PanelWithOverlay {
     Component {
         id: recordingSettings
 
-        Recording {
+        ScreenRecorder {
         }
 
     }

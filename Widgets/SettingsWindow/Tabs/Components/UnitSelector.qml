@@ -1,8 +1,9 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import qs.Settings
 import qs.Components
+import qs.Settings
+
 
 Rectangle {
     id: root
@@ -14,7 +15,6 @@ Rectangle {
     border.width: 1 * Theme.uiScale
 
     property bool useFahrenheit: Settings.settings.useFahrenheit
-
     
     Rectangle {
         id: slider

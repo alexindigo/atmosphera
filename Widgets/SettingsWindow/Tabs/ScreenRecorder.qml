@@ -16,7 +16,7 @@ ColumnLayout {
 
         Layout.fillWidth: true
         Layout.fillHeight: true
-        padding: 0
+        padding: 16
         rightPadding: 12
         clip: true
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
@@ -687,6 +687,7 @@ ColumnLayout {
                     spacing: 8
                     Layout.fillWidth: true
                     Layout.topMargin: 8
+                    Layout.bottomMargin: 16
 
                     Text {
                         text: "Color Range"
@@ -789,82 +790,14 @@ ColumnLayout {
 
                 }
 
-                ColumnLayout {
-                    spacing: 8
-                    Layout.fillWidth: true
-                    Layout.topMargin: 8
-
-                    RowLayout {
-                        spacing: 8
-                        Layout.fillWidth: true
-
-                        ColumnLayout {
-                            spacing: 4
-                            Layout.fillWidth: true
-
-                            Text {
-                                text: "Show Cursor"
-                                font.pixelSize: 13 * Theme.uiScale
-                                font.bold: true
-                                color: Theme.textPrimary
-                            }
-
-                            Text {
-                                text: "Record mouse cursor in the video"
-                                font.pixelSize: 12 * Theme.uiScale
-                                color: Theme.textSecondary
-                                wrapMode: Text.WordWrap
-                                Layout.fillWidth: true
-                            }
-
-                        }
-
-                        Rectangle {
-                            id: cursorSwitch
-
-                            width: 52
-                            height: 32
-                            radius: 16
-                            color: Settings.settings.showCursor ? Theme.accentPrimary : Theme.surfaceVariant
-                            border.color: Settings.settings.showCursor ? Theme.accentPrimary : Theme.outline
-                            border.width: 2
-
-                            Rectangle {
-                                id: cursorThumb
-
-                                width: 28
-                                height: 28
-                                radius: 14
-                                color: Theme.surface
-                                border.color: Theme.outline
-                                border.width: 1
-                                y: 2
-                                x: Settings.settings.showCursor ? cursorSwitch.width - width - 2 : 2
-
-                                Behavior on x {
-                                    NumberAnimation {
-                                        duration: 200
-                                        easing.type: Easing.OutCubic
-                                    }
-
-                                }
-
-                            }
-
-                            MouseArea {
-                                anchors.fill: parent
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    Settings.settings.showCursor = !Settings.settings.showCursor;
-                                }
-                            }
-
-                        }
-
+                ToggleOption {
+                    label: "Show Cursor"
+                    description: "Record mouse cursor in the video"
+                    value: Settings.settings.showCursor
+                    onToggled: function() {
+                        Settings.settings.showCursor = !Settings.settings.showCursor;
                     }
-
                 }
-
             }
 
             Item {
