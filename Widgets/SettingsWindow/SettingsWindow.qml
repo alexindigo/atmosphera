@@ -473,6 +473,10 @@ PanelWithOverlay {
                                 hoverEnabled: true
                                 cursorShape: Qt.PointingHandCursor
                                 onClicked: {
+                                    // Close WallpaperSelector if it's open
+                                    if (wallpaperSelector.visible) {
+                                        wallpaperSelector.hide();
+                                    }
                                     activeTabIndex = index;
                                     loadComponentForTab(index);
                                 }
