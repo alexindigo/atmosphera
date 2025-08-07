@@ -40,8 +40,10 @@ PanelWithOverlay {
 
     Rectangle {
         // Access the shell's SettingsWindow instead of creating a new one
-
         id: sidebarPopupRect
+
+        // Necessary for the scaling to work on smaller screens
+        width: 530
 
         property real slideOffset: width
         property bool isAnimating: false
@@ -50,21 +52,10 @@ PanelWithOverlay {
         // Recording properties
         property bool isRecording: false
 
-        Process {
-            id: checkRecordingProcess
-            command: ["pgrep", "-f", "gpu-screen-recorder.*portal"]
-            onExited: function(exitCode, exitStatus) {
-                var isActuallyRecording = exitCode === 0
-                if (isRecording && !isActuallyRecording) {
-                    isRecording = isActuallyRecording
-                }
-            }
-        }
-
         function checkRecordingStatus() {
-            if (isRecording) {
-                checkRecordingProcess.running = true
-            }
+            if (isRecording)
+                checkRecordingProcess.running = true;
+
         }
 
         function showAt() {
@@ -79,14 +70,13 @@ PanelWithOverlay {
 
                 if (systemWidget)
                     systemWidget.panelVisible = true;
+
             }
         }
 
         function hidePopup() {
             if (shell && shell.settingsWindow && shell.settingsWindow.visible)
                 shell.settingsWindow.visible = false;
-
-
 
             if (sidebarPopup.visible) {
                 slideAnim.from = 0;
@@ -139,6 +129,18 @@ PanelWithOverlay {
 
         }
 
+        Process {
+            id: checkRecordingProcess
+
+            command: ["pgrep", "-f", "gpu-screen-recorder.*portal"]
+            onExited: function(exitCode, exitStatus) {
+                var isActuallyRecording = exitCode === 0;
+                if (isRecording && !isActuallyRecording)
+                    isRecording = isActuallyRecording;
+
+            }
+        }
+
         // Prevent closing when clicking in the panel bg
         MouseArea {
             anchors.fill: parent
@@ -159,6 +161,7 @@ PanelWithOverlay {
 
                     if (systemWidget)
                         systemWidget.panelVisible = false;
+
                 }
                 sidebarPopupRect.isAnimating = false;
             }
@@ -170,28 +173,42 @@ PanelWithOverlay {
         Rectangle {
             id: mainRectangle
 
+            color: "transparent"
+            anchors.top: sidebarPopupRect.top
             width: sidebarPopupRect.width - sidebarPopupRect.leftPadding
             height: sidebarPopupRect.height - sidebarPopupRect.bottomPadding
-            anchors.top: sidebarPopupRect.top
             x: sidebarPopupRect.leftPadding + sidebarPopupRect.slideOffset
             y: 0
-            color: Theme.backgroundPrimary
-            bottomLeftRadius: 20 * Theme.scale(Screen)
             z: 0
 
-            Behavior on x {
-                enabled: !sidebarPopupRect.isAnimating
+            Rectangle {
+                color: Theme.backgroundPrimary
+                anchors.fill: parent
+                bottomLeftRadius: 20 * Theme.scale(Screen)
+                border.color: Theme.outline || "#444"
+                border.width: 1
 
-                NumberAnimation {
-                    duration: 300
-                    easing.type: Easing.OutCubic
+                anchors {
+                    fill: parent
+                    leftMargin: 0
+                    rightMargin: -1
+                    topMargin: -1
+                    bottomMargin: 0
+                }
+
+                Behavior on x {
+                    enabled: !sidebarPopupRect.isAnimating
+
+                    NumberAnimation {
+                        duration: 300
+                        easing.type: Easing.OutCubic
+                    }
+
                 }
 
             }
 
         }
-
-
 
         // SettingsIcon component
         SettingsIcon {
@@ -212,25 +229,26 @@ PanelWithOverlay {
             ColumnLayout {
                 anchors.fill: parent
                 anchors.margins: 20 * Theme.scale(Screen)
-                spacing: 4 * Theme.scale(Screen)
+                spacing: 8 * Theme.scale(Screen)
 
                 System {
                     id: systemWidget
-                    settingsModal: settingsModal
 
+                    settingsModal: settingsModal
                     Layout.alignment: Qt.AlignHCenter
                     z: 3
                 }
 
                 Weather {
                     id: weather
+
                     Layout.alignment: Qt.AlignHCenter
                     z: 2
                 }
 
                 // Music and System Monitor row
                 RowLayout {
-                    spacing: 12 * Theme.scale(Screen)
+                    spacing: 8 * Theme.scale(Screen)
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignHCenter
 
@@ -240,6 +258,7 @@ PanelWithOverlay {
 
                     SystemMonitor {
                         id: systemMonitor
+
                         z: 2
                     }
 
@@ -279,8 +298,7 @@ PanelWithOverlay {
                                 radius: 18 * Theme.scale(Screen)
                                 border.color: Theme.accentPrimary
                                 border.width: 1 * Theme.scale(Screen)
-                                color: sidebarPopupRect.isRecording ? Theme.accentPrimary : 
-                                       (recordButtonArea.containsMouse ? Theme.accentPrimary : "transparent")
+                                color: sidebarPopupRect.isRecording ? Theme.accentPrimary : (recordButtonArea.containsMouse ? Theme.accentPrimary : "transparent")
 
                                 Text {
                                     anchors.centerIn: parent
@@ -366,8 +384,6 @@ PanelWithOverlay {
 
                 }
 
-
-
             }
 
             Behavior on x {
@@ -382,7 +398,6 @@ PanelWithOverlay {
 
         }
 
-        
     }
 
 }

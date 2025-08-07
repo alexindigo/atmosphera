@@ -17,11 +17,11 @@ Singleton {
     // Automatic scaling based on screen width
     function scale(currentScreen) {
         if (currentScreen !== undefined) {
-            var rawRatio = currentScreen.width / designScreenWidth
+            var rawRatio = currentScreen.width / designScreenWidth;
             // Apply dampening to reduce scaling for higher resolutions
-            return Math.min(2.0, 1.0 + (rawRatio - 1.0) * scalingDampening)
+            return Math.min(2.0, 1.0 + (rawRatio - 1.0) * scalingDampening);
         }
-        return 1.0
+        return 1.0;
     }
 
     function applyOpacity(color, opacity) {
