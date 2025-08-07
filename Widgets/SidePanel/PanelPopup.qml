@@ -79,10 +79,6 @@ PanelWithOverlay {
 
                 if (systemWidget)
                     systemWidget.panelVisible = true;
-
-                if (quickAccessWidget)
-                    quickAccessWidget.panelVisible = true;
-
             }
         }
 
@@ -116,7 +112,6 @@ PanelWithOverlay {
             var command = "gpu-screen-recorder -w portal" + " -f " + Settings.settings.recordingFrameRate + " -a default_output" + " -k " + Settings.settings.recordingCodec + " -ac " + Settings.settings.audioCodec + " -q " + Settings.settings.recordingQuality + " -cursor " + (Settings.settings.showCursor ? "yes" : "no") + " -cr " + Settings.settings.colorRange + " -o " + outputPath;
             Quickshell.execDetached(["sh", "-c", command]);
             isRecording = true;
-            quickAccessWidget.isRecording = true;
         }
 
         // Stop recording using Quickshell.execDetached
@@ -129,7 +124,6 @@ PanelWithOverlay {
                 cleanupTimer.destroy();
             });
             isRecording = false;
-            quickAccessWidget.isRecording = false;
         }
 
         implicitWidth: 500 * Theme.uiScale
@@ -165,10 +159,6 @@ PanelWithOverlay {
 
                     if (systemWidget)
                         systemWidget.panelVisible = false;
-
-                    if (quickAccessWidget)
-                        quickAccessWidget.panelVisible = false;
-
                 }
                 sidebarPopupRect.isAnimating = false;
             }
