@@ -382,59 +382,7 @@ PanelWithOverlay {
 
         }
 
-        Loader {
-            active: Settings.settings.showCorners
-            anchors.fill: parent
-
-            sourceComponent: Item {
-                Corners {
-                    id: sidebarCornerLeft
-
-                    position: "bottomright"
-                    size: 1.1
-                    fillColor: Theme.backgroundPrimary
-                    anchors.top: parent.top
-                    offsetX: -464 + sidebarPopupRect.slideOffset
-                    offsetY: 0
-
-                    Behavior on offsetX {
-                        enabled: !sidebarPopupRect.isAnimating
-
-                        NumberAnimation {
-                            duration: 300
-                            easing.type: Easing.OutCubic
-                        }
-
-                    }
-
-                }
-
-                Corners {
-                    id: sidebarCornerBottom
-
-                    position: "bottomright"
-                    size: 1.1
-                    fillColor: Theme.backgroundPrimary
-                    anchors.bottom: sidebarPopupRect.bottom
-                    offsetX: 33 + sidebarPopupRect.slideOffset
-                    offsetY: 46
-
-                    Behavior on offsetX {
-                        enabled: !sidebarPopupRect.isAnimating
-
-                        NumberAnimation {
-                            duration: 300
-                            easing.type: Easing.OutCubic
-                        }
-
-                    }
-
-                }
-
-            }
-
-        }
-
+        
     }
 
 }

@@ -294,35 +294,6 @@ WlSessionLock {
             }
         }
 
-        Loader {
-            active: Settings.settings.showCorners
-            anchors.fill: parent
-
-            sourceComponent: Item {
-                Corners {
-                    id: topRightCorner
-                    position: "bottomleft"
-                    size: 1.3
-                    fillColor: (Theme.backgroundPrimary !== undefined && Theme.backgroundPrimary !== null) ? Theme.backgroundPrimary : "#222"
-                    offsetX: screen.width / 2 + 53
-                    offsetY: 0
-                    anchors.top: parent.top
-                    z: 50
-                }
-
-                Corners {
-                    id: topLeftCorner
-                    position: "bottomright"
-                    size: 1.3
-                    fillColor: (Theme.backgroundPrimary !== undefined && Theme.backgroundPrimary !== null) ? Theme.backgroundPrimary : "#222"
-                    offsetX: -Screen.width / 2 - 53
-                    offsetY: 0
-                    anchors.top: parent.top
-                    z: 51
-                }
-            }
-        }
-
         Rectangle {
             width: infoColumn.width + 32 * Theme.scale(Screen)
             height: infoColumn.height + 8 * Theme.scale(Screen)

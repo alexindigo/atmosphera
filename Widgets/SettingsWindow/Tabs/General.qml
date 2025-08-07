@@ -134,7 +134,7 @@ ColumnLayout {
 
             ToggleOption {
                 label: "Show Corners"
-                description: "Display rounded corners"
+                description: "Display rounded corners on the edge of the screen"
                 value: Settings.settings.showCorners
                 onToggled: function() {
                     Settings.settings.showCorners = !Settings.settings.showCorners;

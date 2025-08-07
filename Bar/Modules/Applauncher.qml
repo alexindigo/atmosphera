@@ -830,34 +830,6 @@ PanelWithOverlay {
                     }
                 }
             }
-
-            Loader {
-                active: Settings.settings.showCorners
-                anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.right: parent.right
-                sourceComponent: Item {
-                    Corners {
-                        id: launcherCornerRight
-                        position: "bottomleft"
-                        size: 1.1
-                        fillColor: Theme.backgroundPrimary
-                        anchors.top: parent.top
-                        offsetX: 427
-                        offsetY: 0
-                    }
-
-                    Corners {
-                        id: launcherCornerLeft
-                        position: "bottomright"
-                        size: 1.1
-                        fillColor: Theme.backgroundPrimary
-                        anchors.top: parent.top
-                        offsetX: -427
-                        offsetY: 0
-                    }
-                }
-            }
         }
     }
 }

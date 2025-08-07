@@ -140,31 +140,6 @@ PanelWindow {
                 maximumLineCount: 1
             }
 
-            Loader {
-                active: Settings.settings.showCorners
-                anchors.top: parent.top
-                sourceComponent: Item {
-                    Corners {
-                        id: activeCornerRight
-                        position: "bottomleft"
-                        size: 1.1
-                        fillColor: Theme.backgroundPrimary
-                        anchors.top: parent.top
-                        offsetX: activeWindowTitleContainer.width - 34
-                        offsetY: -1
-                    }
-
-                    Corners {
-                        id: activeCornerLeft
-                        position: "bottomright"
-                        size: 1.1
-                        fillColor: Theme.backgroundPrimary
-                        anchors.top: parent.top
-                        offsetX: 34
-                        offsetY: -1
-                    }
-                }
-            }
         }
 
     }

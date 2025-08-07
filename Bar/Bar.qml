@@ -182,7 +182,7 @@ Scope {
                             aboveWindows: false
                             implicitHeight: 24
 
-                            Corners {
+                            Corner {
                                 id: topLeftCorner
 
                                 position: "bottomleft"
@@ -209,7 +209,7 @@ Scope {
                             aboveWindows: false
                             implicitHeight: 24
 
-                            Corners {
+                            Corner {
                                 id: topRightCorner
 
                                 position: "bottomright"
@@ -235,7 +235,7 @@ Scope {
                             aboveWindows: false
                             implicitHeight: 24
 
-                            Corners {
+                            Corner {
                                 id: bottomLeftCorner
 
                                 position: "topleft"
@@ -261,7 +261,7 @@ Scope {
                             aboveWindows: false
                             implicitHeight: 24
 
-                            Corners {
+                            Corner{
                                 id: bottomRightCorner
 
                                 position: "topright"
