@@ -350,7 +350,7 @@ PanelWithOverlay {
             id: tabs
 
             color: Theme.surface
-            width: parent.width * 0.2
+            width: parent.width * 0.25
             height: settingsWindowRect.height
             topLeftRadius: 20
             bottomLeftRadius: 20
