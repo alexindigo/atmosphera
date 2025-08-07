@@ -7,7 +7,7 @@ import Quickshell.Io
 import qs.Components
 import qs.Settings
 
-Item {
+ColumnLayout {
     id: root
 
     property string latestVersion: "Unknown"
@@ -43,6 +43,10 @@ Item {
             githubDataFile.writeAdapter();
         });
     }
+
+    spacing: 0
+    anchors.fill: parent
+    anchors.margins: 0
 
     Process {
         id: currentVersionProcess
@@ -148,31 +152,35 @@ Item {
     }
 
     ScrollView {
-        anchors.fill: parent
-        padding: 0
+        id: scrollView
+
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        padding: 16
         rightPadding: 12
         clip: true
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         ScrollBar.vertical.policy: ScrollBar.AsNeeded
 
         ColumnLayout {
-            id: mainLayout
-
-            width: parent.availableWidth
-            anchors.top: parent.top
-            spacing: 8
-
-            Item {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 16
-            }
+            width: scrollView.availableWidth
+            spacing: 0
 
             Text {
-                text: "Noctalia"
+                text: "Noctalia: quiet by design"
                 font.pixelSize: 24 * Theme.uiScale
                 font.bold: true
                 color: Theme.textPrimary
                 Layout.alignment: Qt.AlignCenter
+                Layout.bottomMargin: 8 * Theme.uiScale
+            }
+
+            Text {
+                text: "It may just be another quickshell setup but it won't get in your way."
+                font.pixelSize: 14 * Theme.uiScale
+                color: Theme.textSecondary
+                Layout.alignment: Qt.AlignCenter
+                Layout.bottomMargin: 16 * Theme.uiScale
             }
 
             GridLayout {
@@ -273,14 +281,7 @@ Item {
 
             }
 
-            Text {
-                text: "Description something something <.< I hate writing text..."
-                font.pixelSize: 14 * Theme.uiScale
-                color: Theme.textSecondary
-                Layout.alignment: Qt.AlignCenter
-                Layout.topMargin: 24
-            }
-
+            // Separator
             Rectangle {
                 Layout.fillWidth: true
                 Layout.topMargin: 26
@@ -292,8 +293,10 @@ Item {
 
             ColumnLayout {
                 Layout.fillWidth: true
+                Layout.fillHeight: true
                 Layout.leftMargin: 32
                 Layout.rightMargin: 32
+                Layout.alignment: Qt.AlignCenter
                 spacing: 16
 
                 RowLayout {
@@ -315,124 +318,114 @@ Item {
 
                 }
 
-                ScrollView {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 300
-                    clip: true
+                GridView {
+                    id: contributorsGrid
 
-                    Item {
-                        anchors.fill: parent
+                    Layout.leftMargin: 32
+                    Layout.rightMargin: 32
+                    Layout.alignment: Qt.AlignCenter
+                    width: 200 * 3
+                    height: 300
+                    cellWidth: 200
+                    cellHeight: 100
+                    model: root.contributors
 
-                        GridView {
-                            id: contributorsGrid
+                    delegate: Rectangle {
+                        width: contributorsGrid.cellWidth - 8
+                        height: contributorsGrid.cellHeight - 4
+                        radius: 20
+                        color: contributorArea.containsMouse ? Theme.highlight : "transparent"
 
-                            anchors.centerIn: parent
-                            width: Math.min(parent.width, Math.ceil(root.contributors.length / 3) * 200)
-                            height: parent.height
-                            cellWidth: 200
-                            cellHeight: 100
-                            model: root.contributors
+                        RowLayout {
+                            anchors.fill: parent
+                            anchors.margins: 8
+                            spacing: 12
 
-                            delegate: Rectangle {
-                                width: contributorsGrid.cellWidth - 4
-                                height: contributorsGrid.cellHeight - 10
-                                radius: 20
-                                color: contributorArea.containsMouse ? Theme.highlight : "transparent"
+                            Item {
+                                Layout.alignment: Qt.AlignVCenter
+                                Layout.preferredWidth: 40
+                                Layout.preferredHeight: 40
 
-                                RowLayout {
+                                Image {
+                                    id: avatarImage
+
                                     anchors.fill: parent
-                                    anchors.margins: 8
-                                    spacing: 12
+                                    source: modelData.avatar_url || ""
+                                    sourceSize: Qt.size(80, 80)
+                                    visible: false
+                                    mipmap: true
+                                    smooth: true
+                                    asynchronous: true
+                                    fillMode: Image.PreserveAspectCrop
+                                    cache: true
+                                }
 
-                                    Item {
-                                        Layout.alignment: Qt.AlignVCenter
-                                        Layout.preferredWidth: 40
-                                        Layout.preferredHeight: 40
+                                MultiEffect {
+                                    anchors.fill: parent
+                                    source: avatarImage
+                                    maskEnabled: true
+                                    maskSource: mask
+                                }
 
-                                        Image {
-                                            id: avatarImage
+                                Item {
+                                    id: mask
 
-                                            anchors.fill: parent
-                                            source: modelData.avatar_url || ""
-                                            sourceSize: Qt.size(80, 80)
-                                            visible: false
-                                            mipmap: true
-                                            smooth: true
-                                            asynchronous: true
-                                            fillMode: Image.PreserveAspectCrop
-                                            cache: true
-                                        }
+                                    anchors.fill: parent
+                                    layer.enabled: true
+                                    visible: false
 
-                                        MultiEffect {
-                                            anchors.fill: parent
-                                            source: avatarImage
-                                            maskEnabled: true
-                                            maskSource: mask
-                                        }
-
-                                        Item {
-                                            id: mask
-
-                                            anchors.fill: parent
-                                            layer.enabled: true
-                                            visible: false
-
-                                            Rectangle {
-                                                anchors.fill: parent
-                                                radius: avatarImage.width / 2
-                                            }
-
-                                        }
-
-                                        Text {
-                                            anchors.centerIn: parent
-                                            text: "person"
-                                            font.family: "Material Symbols Outlined"
-                                            font.pixelSize: 24 * Theme.uiScale
-                                            color: contributorArea.containsMouse ? Theme.backgroundPrimary : Theme.textPrimary
-                                            visible: !avatarImage.source || avatarImage.status !== Image.Ready
-                                        }
-
-                                    }
-
-                                    ColumnLayout {
-                                        spacing: 4
-                                        Layout.alignment: Qt.AlignVCenter
-                                        Layout.fillWidth: true
-
-                                        Text {
-                                            text: modelData.login || "Unknown"
-                                            font.pixelSize: 13 * Theme.uiScale
-                                            color: contributorArea.containsMouse ? Theme.backgroundPrimary : Theme.textPrimary
-                                            elide: Text.ElideRight
-                                            Layout.fillWidth: true
-                                        }
-
-                                        Text {
-                                            text: (modelData.contributions || 0) + " commits"
-                                            font.pixelSize: 11 * Theme.uiScale
-                                            color: contributorArea.containsMouse ? Theme.backgroundPrimary : Theme.textSecondary
-                                        }
-
+                                    Rectangle {
+                                        anchors.fill: parent
+                                        radius: avatarImage.width / 2
                                     }
 
                                 }
 
-                                MouseArea {
-                                    id: contributorArea
-
-                                    anchors.fill: parent
-                                    hoverEnabled: true
-                                    cursorShape: Qt.PointingHandCursor
-                                    onClicked: {
-                                        if (modelData.html_url)
-                                            Quickshell.execDetached(["xdg-open", modelData.html_url]);
-
-                                    }
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "person"
+                                    font.family: "Material Symbols Outlined"
+                                    font.pixelSize: 24 * Theme.uiScale
+                                    color: contributorArea.containsMouse ? Theme.backgroundPrimary : Theme.textPrimary
+                                    visible: !avatarImage.source || avatarImage.status !== Image.Ready
                                 }
 
                             }
 
+                            ColumnLayout {
+                                spacing: 4
+                                Layout.alignment: Qt.AlignVCenter
+                                Layout.fillWidth: true
+
+                                Text {
+                                    text: modelData.login || "Unknown"
+                                    font.pixelSize: 13 * Theme.uiScale
+                                    color: contributorArea.containsMouse ? Theme.backgroundPrimary : Theme.textPrimary
+                                    elide: Text.ElideRight
+                                    Layout.fillWidth: true
+                                }
+
+                                Text {
+                                    text: (modelData.contributions || 0) + " commits"
+                                    font.pixelSize: 11 * Theme.uiScale
+                                    color: contributorArea.containsMouse ? Theme.backgroundPrimary : Theme.textSecondary
+                                }
+
+                            }
+
+                        }
+
+                        MouseArea {
+                            id: contributorArea
+
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                if (modelData.html_url)
+                                    Quickshell.execDetached(["xdg-open", modelData.html_url]);
+
+                            }
                         }
 
                     }
