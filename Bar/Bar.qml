@@ -12,8 +12,8 @@ import qs.Services
 import qs.Settings
 import qs.Widgets
 import qs.Widgets.Notification
-import qs.Widgets.Sidebar
-import qs.Widgets.Sidebar.Panel
+import qs.Widgets.SidePanel
+
 
 // Main bar component - creates panels on selected monitors with widgets and corners
 Scope {

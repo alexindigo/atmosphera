@@ -1,7 +1,6 @@
 import QtQuick
 import Quickshell
 import qs.Settings
-import qs.Widgets.Sidebar.Panel
 
 Item {
     id: buttonRoot

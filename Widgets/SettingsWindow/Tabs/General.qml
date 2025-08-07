@@ -156,7 +156,7 @@ ColumnLayout {
                     }
 
                     Text {
-                        text: "Display rounded corners on screen edges"
+                        text: "Display rounded corners"
                         font.pixelSize: 12
                         color: Theme.textSecondary
                         wrapMode: Text.WordWrap

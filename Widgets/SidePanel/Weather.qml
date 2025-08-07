@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 import qs.Settings
-import "../../../Helpers/Weather.js" as WeatherHelper
+import "../../Helpers/Weather.js" as WeatherHelper
 
 Rectangle {
     id: weatherRoot
