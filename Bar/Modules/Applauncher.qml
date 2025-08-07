@@ -210,6 +210,11 @@ PanelWithOverlay {
             root.selectedIndex = 0;
         }
 
+        // Prevent closing when clicking in the panel bg
+        MouseArea {
+            anchors.fill: parent
+        }
+
         Rectangle {
             id: root
             width: 460
