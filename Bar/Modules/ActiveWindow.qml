@@ -7,6 +7,10 @@ import qs.Settings
 
 PanelWindow {
     id: activeWindowPanel
+
+    // Lower case "screen" from modelData
+    property int barHeight: 36 * Theme.scale(screen)
+
     screen: (typeof modelData !== 'undefined' ? modelData : null)
     WlrLayershell.exclusionMode: ExclusionMode.Ignore
     anchors.top: true
@@ -17,7 +21,6 @@ PanelWindow {
     visible: Settings.settings.showActiveWindow && !activeWindowWrapper.finallyHidden 
     implicitHeight: activeWindowTitleContainer.height
     implicitWidth: 0
-    property int barHeight: 36 * Theme.scale(Screen)
     color: "transparent"
 
     function getIcon() {
@@ -44,7 +47,7 @@ PanelWindow {
 
         Timer {
             id: visibilityTimer
-            interval: 1200
+            interval: 1500
             running: false
             onTriggered: {
                 activeWindowWrapper.shouldShow = false;
@@ -111,11 +114,11 @@ PanelWindow {
             anchors.horizontalCenter: parent.horizontalCenter
 
             Rectangle {
-            id: innerRect
+                id: innerRect
 
                 bottomLeftRadius: Math.max(0, width / 2)
                 bottomRightRadius: Math.max(0, width / 2)
-                color: Theme.backgroundSecondary
+                color: Theme.backgroundPrimary
                 anchors {
                     fill: parent
                     leftMargin: 0
