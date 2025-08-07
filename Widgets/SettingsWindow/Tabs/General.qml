@@ -132,7 +132,7 @@ ColumnLayout {
                 Layout.bottomMargin: 16 * Theme.uiScale
             }
 
-            Toggle {
+            ToggleOption {
                 label: "Show Corners"
                 description: "Display rounded corners"
                 value: Settings.settings.showCorners
@@ -141,16 +141,16 @@ ColumnLayout {
                 }
             }
 
-            Toggle {
+            ToggleOption {
                 label: "Show Dock"
                 description: "Display a dock at the bottom of the screen for quick access to applications"
-                value: Settings.settings.showDock 
+                value: Settings.settings.showDock
                 onToggled: function() {
-                    Settings.settings.showDock  = !Settings.settings.showDock;
+                    Settings.settings.showDock = !Settings.settings.showDock;
                 }
             }
 
-            Toggle {
+            ToggleOption {
                 label: "Dim Desktop"
                 description: "Dim the desktop when panels or menus are open"
                 value: Settings.settings.dimPanels
@@ -158,9 +158,9 @@ ColumnLayout {
                     Settings.settings.dimPanels = !Settings.settings.dimPanels;
                 }
             }
-        }
 
         }
 
     }
 
+}

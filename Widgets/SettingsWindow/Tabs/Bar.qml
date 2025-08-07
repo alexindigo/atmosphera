@@ -1,390 +1,86 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import qs.Settings
 import qs.Components
+import qs.Settings
 
-ScrollView {
+ColumnLayout {
+    id: root
+
+    spacing: 0
     anchors.fill: parent
-    padding: 0
-    rightPadding: 12
-    clip: true
-    ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-    ScrollBar.vertical.policy: ScrollBar.AsNeeded
-    
-    ColumnLayout {
-        id: root
-        width: parent.availableWidth
-        spacing: 0
+    anchors.margins: 0
+
+    ScrollView {
+        id: scrollView
+
         Layout.fillWidth: true
         Layout.fillHeight: true
-
-        Item {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 0
-        }
-
+        padding: 16
+        rightPadding: 12
+        clip: true
+        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+        ScrollBar.vertical.policy: ScrollBar.AsNeeded
 
         ColumnLayout {
-            spacing: 4
-            Layout.fillWidth: true
+            width: scrollView.availableWidth
+            spacing: 0
 
             Text {
                 text: "Elements"
                 font.pixelSize: 18 * Theme.uiScale
                 font.bold: true
                 color: Theme.textPrimary
-                Layout.bottomMargin: 8
+                Layout.bottomMargin: 16 * Theme.uiScale
             }
 
-
-            ColumnLayout {
-                spacing: 8
-                Layout.fillWidth: true
-
-                RowLayout {
-                    spacing: 8
-                    Layout.fillWidth: true
-
-                    ColumnLayout {
-                        spacing: 4
-                        Layout.fillWidth: true
-
-                        Text {
-                            text: "Show Active Window Icon"
-                            font.pixelSize: 13 * Theme.uiScale
-                            font.bold: true
-                            color: Theme.textPrimary
-                        }
-
-                        Text {
-                            text: "Display the icon of the currently focused window in the bar"
-                            font.pixelSize: 12 * Theme.uiScale
-                            color: Theme.textSecondary
-                            wrapMode: Text.WordWrap
-                            Layout.fillWidth: true
-                        }
-                    }
-
-                    Rectangle {
-                        id: activeWindowIconSwitch
-                        width: 52
-                        height: 32
-                        radius: 16
-                        color: Settings.settings.showActiveWindowIcon ? Theme.accentPrimary : Theme.surfaceVariant
-                        border.color: Settings.settings.showActiveWindowIcon ? Theme.accentPrimary : Theme.outline
-                        border.width: 2
-
-                        Rectangle {
-                            id: activeWindowIconThumb
-                            width: 28
-                            height: 28
-                            radius: 14
-                            color: Theme.surface
-                            border.color: Theme.outline
-                            border.width: 1
-                            y: 2
-                            x: Settings.settings.showActiveWindowIcon ? activeWindowIconSwitch.width - width - 2 : 2
-
-                            Behavior on x {
-                                NumberAnimation {
-                                    duration: 200
-                                    easing.type: Easing.OutCubic
-                                }
-                            }
-                        }
-
-                        MouseArea {
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                Settings.settings.showActiveWindowIcon = !Settings.settings.showActiveWindowIcon;
-                            }
-                        }
-                    }
+            ToggleOption {
+                label: "Show Active Window"
+                description: "Display the title of the currently focused window below the bar"
+                value: Settings.settings.showActiveWindow
+                onToggled: function() {
+                    Settings.settings.showActiveWindow = !Settings.settings.showActiveWindow;
                 }
             }
 
-
-            ColumnLayout {
-                spacing: 8
-                Layout.fillWidth: true
-                Layout.topMargin: 8
-
-                RowLayout {
-                    spacing: 8
-                    Layout.fillWidth: true
-
-                    ColumnLayout {
-                        spacing: 4
-                        Layout.fillWidth: true
-
-                        Text {
-                            text: "Show Active Window"
-                            font.pixelSize: 13 * Theme.uiScale
-                            font.bold: true
-                            color: Theme.textPrimary
-                        }
-
-                        Text {
-                            text: "Display the title of the currently focused window below the bar"
-                            font.pixelSize: 12 * Theme.uiScale
-                            color: Theme.textSecondary
-                            wrapMode: Text.WordWrap
-                            Layout.fillWidth: true
-                        }
-                    }
-
-                    Rectangle {
-                        id: activeWindowSwitch
-                        width: 52
-                        height: 32
-                        radius: 16
-                        color: Settings.settings.showActiveWindow ? Theme.accentPrimary : Theme.surfaceVariant
-                        border.color: Settings.settings.showActiveWindow ? Theme.accentPrimary : Theme.outline
-                        border.width: 2
-
-                        Rectangle {
-                            id: activeWindowThumb
-                            width: 28
-                            height: 28
-                            radius: 14
-                            color: Theme.surface
-                            border.color: Theme.outline
-                            border.width: 1
-                            y: 2
-                            x: Settings.settings.showActiveWindow ? activeWindowSwitch.width - width - 2 : 2
-
-                            Behavior on x {
-                                NumberAnimation {
-                                    duration: 200
-                                    easing.type: Easing.OutCubic
-                                }
-                            }
-                        }
-
-                        MouseArea {
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                Settings.settings.showActiveWindow = !Settings.settings.showActiveWindow;
-                            }
-                        }
-                    }
+            ToggleOption {
+                label: "Show Active Window Icon"
+                description: "Display the icon of the currently focused window"
+                value: Settings.settings.showActiveWindowIcon
+                onToggled: function() {
+                    Settings.settings.showActiveWindowIcon = !Settings.settings.showActiveWindowIcon;
                 }
             }
 
-
-            ColumnLayout {
-                spacing: 8
-                Layout.fillWidth: true
-                Layout.topMargin: 8
-
-                RowLayout {
-                    spacing: 8
-                    Layout.fillWidth: true
-
-                    ColumnLayout {
-                        spacing: 4
-                        Layout.fillWidth: true
-
-                        Text {
-                            text: "Show System Info"
-                            font.pixelSize: 13 * Theme.uiScale
-                            font.bold: true
-                            color: Theme.textPrimary
-                        }
-
-                        Text {
-                            text: "Display system information (CPU, RAM, etc.) in the bar"
-                            font.pixelSize: 12 * Theme.uiScale
-                            color: Theme.textSecondary
-                            wrapMode: Text.WordWrap
-                            Layout.fillWidth: true
-                        }
-                    }
-
-                    Rectangle {
-                        id: systemInfoSwitch
-                        width: 52
-                        height: 32
-                        radius: 16
-                        color: Settings.settings.showSystemInfoInBar ? Theme.accentPrimary : Theme.surfaceVariant
-                        border.color: Settings.settings.showSystemInfoInBar ? Theme.accentPrimary : Theme.outline
-                        border.width: 2
-
-                        Rectangle {
-                            id: systemInfoThumb
-                            width: 28
-                            height: 28
-                            radius: 14
-                            color: Theme.surface
-                            border.color: Theme.outline
-                            border.width: 1
-                            y: 2
-                            x: Settings.settings.showSystemInfoInBar ? systemInfoSwitch.width - width - 2 : 2
-
-                            Behavior on x {
-                                NumberAnimation {
-                                    duration: 200
-                                    easing.type: Easing.OutCubic
-                                }
-                            }
-                        }
-
-                        MouseArea {
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                Settings.settings.showSystemInfoInBar = !Settings.settings.showSystemInfoInBar;
-                            }
-                        }
-                    }
+            ToggleOption {
+                label: "Show System Info"
+                description: "Display system information (CPU, RAM, Temperature)"
+                value: Settings.settings.showSystemInfoInBar
+                onToggled: function() {
+                    Settings.settings.showSystemInfoInBar = !Settings.settings.showSystemInfoInBar;
                 }
             }
 
-
-            ColumnLayout {
-                spacing: 8
-                Layout.fillWidth: true
-                Layout.topMargin: 8
-
-                RowLayout {
-                    spacing: 8
-                    Layout.fillWidth: true
-
-                    ColumnLayout {
-                        spacing: 4
-                        Layout.fillWidth: true
-
-                        Text {
-                            text: "Show Taskbar"
-                            font.pixelSize: 13 * Theme.uiScale
-                            font.bold: true
-                            color: Theme.textPrimary
-                        }
-
-                        Text {
-                            text: "Display a taskbar showing currently open windows"
-                            font.pixelSize: 12 * Theme.uiScale
-                            color: Theme.textSecondary
-                            wrapMode: Text.WordWrap
-                            Layout.fillWidth: true
-                        }
-                    }
-
-                    Rectangle {
-                        id: taskbarSwitch
-                        width: 52
-                        height: 32
-                        radius: 16
-                        color: Settings.settings.showTaskbar ? Theme.accentPrimary : Theme.surfaceVariant
-                        border.color: Settings.settings.showTaskbar ? Theme.accentPrimary : Theme.outline
-                        border.width: 2
-
-                        Rectangle {
-                            id: taskbarThumb
-                            width: 28
-                            height: 28
-                            radius: 14
-                            color: Theme.surface
-                            border.color: Theme.outline
-                            border.width: 1
-                            y: 2
-                            x: Settings.settings.showTaskbar ? taskbarSwitch.width - width - 2 : 2
-
-                            Behavior on x {
-                                NumberAnimation {
-                                    duration: 200
-                                    easing.type: Easing.OutCubic
-                                }
-                            }
-                        }
-
-                        MouseArea {
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                Settings.settings.showTaskbar = !Settings.settings.showTaskbar;
-                            }
-                        }
-                    }
+            ToggleOption {
+                label: "Show Taskbar"
+                description: "Display a taskbar showing currently open windows"
+                value: Settings.settings.showTaskbar
+                onToggled: function() {
+                    Settings.settings.showTaskbar = !Settings.settings.showTaskbar;
                 }
             }
 
-
-            ColumnLayout {
-                spacing: 8
-                Layout.fillWidth: true
-                Layout.topMargin: 8
-
-                RowLayout {
-                    spacing: 8
-                    Layout.fillWidth: true
-
-                    ColumnLayout {
-                        spacing: 4
-                        Layout.fillWidth: true
-
-                        Text {
-                            text: "Show Media"
-                            font.pixelSize: 13 * Theme.uiScale
-                            font.bold: true
-                            color: Theme.textPrimary
-                        }
-
-                        Text {
-                            text: "Display media controls and information in the bar"
-                            font.pixelSize: 12 * Theme.uiScale
-                            color: Theme.textSecondary
-                            wrapMode: Text.WordWrap
-                            Layout.fillWidth: true
-                        }
-                    }
-
-                    Rectangle {
-                        id: mediaSwitch
-                        width: 52
-                        height: 32
-                        radius: 16
-                        color: Settings.settings.showMediaInBar ? Theme.accentPrimary : Theme.surfaceVariant
-                        border.color: Settings.settings.showMediaInBar ? Theme.accentPrimary : Theme.outline
-                        border.width: 2
-
-                        Rectangle {
-                            id: mediaThumb
-                            width: 28
-                            height: 28
-                            radius: 14
-                            color: Theme.surface
-                            border.color: Theme.outline
-                            border.width: 1
-                            y: 2
-                            x: Settings.settings.showMediaInBar ? mediaSwitch.width - width - 2 : 2
-
-                            Behavior on x {
-                                NumberAnimation {
-                                    duration: 200
-                                    easing.type: Easing.OutCubic
-                                }
-                            }
-                        }
-
-                        MouseArea {
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                Settings.settings.showMediaInBar = !Settings.settings.showMediaInBar;
-                            }
-                        }
-                    }
+            ToggleOption {
+                label: "Show Media"
+                description: "Display media controls and information"
+                value: Settings.settings.showMediaInBar
+                onToggled: function() {
+                    Settings.settings.showMediaInBar = !Settings.settings.showMediaInBar;
                 }
             }
+
         }
 
-        Item {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-        }
     }
+
 }
