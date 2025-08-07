@@ -514,9 +514,4 @@ Rectangle {
         running: panelVisible
         onTriggered: updateSystemInfo()
     }
-
-    LockScreen {
-        id: lockScreen
-    }
-
 }
