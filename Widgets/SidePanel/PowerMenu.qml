@@ -19,12 +19,6 @@ Rectangle {
     property bool panelVisible: false
     property var settingsModal: null
 
-    Process {
-        id: logoutProcess
-        command: ["loginctl", "terminate-user", Quickshell.env("USER")]
-        running: false
-    }
-
     function logout() {
         if (WorkspaceManager.isNiri)
             logoutProcessNiri.running = true;
@@ -152,6 +146,7 @@ Rectangle {
                         onClicked: {
                             if (typeof settingsModal !== 'undefined' && settingsModal && settingsModal.openSettings)
                                 settingsModal.openSettings();
+
                         }
                     }
 
