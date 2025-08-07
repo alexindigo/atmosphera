@@ -301,8 +301,10 @@ PanelWithOverlay {
                                     onClicked: {
                                         if (sidebarPopupRect.isRecording) {
                                             sidebarPopupRect.stopRecording();
+                                            sidebarPopup.dismiss();
                                         } else {
                                             sidebarPopupRect.startRecording();
+                                            sidebarPopup.dismiss();
                                         }
                                     }
                                 }
@@ -343,8 +345,10 @@ PanelWithOverlay {
                                     hoverEnabled: true
                                     cursorShape: Qt.PointingHandCursor
                                     onClicked: {
-                                        if (typeof settingsModal !== 'undefined' && settingsModal && settingsModal.openSettings)
+                                        if (typeof settingsModal !== 'undefined' && settingsModal && settingsModal.openSettings) {
                                             settingsModal.openSettings(6);
+                                            sidebarPopup.dismiss();
+                                        }
                                     }
                                 }
 

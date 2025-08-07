@@ -57,6 +57,7 @@ PanelWindow {
                     }
                 });
             }
+            sidebarPopup.dismiss();
         } else if (settingsWindow.visible) {
             // Close and destroy window
             var windowToDestroy = settingsWindow;
