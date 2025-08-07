@@ -340,19 +340,22 @@ Item {
                                 }
                             }
 
+                            Timer {
+                                id: appearTimer
+                                interval: 10
+                                repeat: false
+                                onTriggered: {
+                                    appearAnimation.start();
+                                }
+                            }
+
                             Component.onCompleted: {
                                 if (!appeared) {
                                     opacity = 0;
                                     height = 0;
                                     x = width;
                                     // Small delay to ensure contentRow has proper height
-                                    Timer {
-                                        interval: 10
-                                        repeat: false
-                                        onTriggered: {
-                                            appearAnimation.start();
-                                        }
-                                    }
+                                    appearTimer.start();
                                     for (let i = 0; i < notificationModel.count; i++) {
                                         if (notificationModel.get(i).id === notificationDelegate.id) {
                                             var oldItem = notificationModel.get(i);
