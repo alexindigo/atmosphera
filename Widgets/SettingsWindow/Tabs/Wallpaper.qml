@@ -19,7 +19,7 @@ ScrollView {
 
             Layout.fillWidth: true
             Layout.fillHeight: true
-            padding: 0
+            padding: 16
             rightPadding: 12
             clip: true
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
