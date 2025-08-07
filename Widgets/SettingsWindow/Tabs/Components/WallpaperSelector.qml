@@ -150,7 +150,6 @@ Rectangle {
                                     cursorShape: Qt.PointingHandCursor
                                     onClicked: {
                                         WallpaperManager.changeWallpaper(modelData);
-                                        wallpaperOverlay.hide();
                                     }
                                 }
 
