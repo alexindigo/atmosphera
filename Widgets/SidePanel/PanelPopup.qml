@@ -214,7 +214,7 @@ PanelWithOverlay {
                 anchors.margins: 20 * Theme.scale(Screen)
                 spacing: 4 * Theme.scale(Screen)
 
-                PowerMenu {
+                System {
                     id: systemWidget
                     settingsModal: settingsModal
 
