@@ -101,46 +101,62 @@ PanelWindow {
 
         Rectangle {
             id: activeWindowTitleContainer
-            color: Theme.backgroundPrimary
-            bottomLeftRadius: Math.max(0, width / 2)
-            bottomRightRadius: Math.max(0, width / 2)
+            color: "transparent"
 
-            width: Math.min(barBackground.width - 200, activeWindowTitle.implicitWidth + (Settings.settings.showActiveWindowIcon ? 28 : 22))
+
+            width: Math.min(barBackground.width - 200, activeWindowTitle.implicitWidth + (Settings.settings.showActiveWindowIcon ? 28 : 22)) + 16
             height: activeWindowTitle.implicitHeight + 12
 
             anchors.top: parent.top
             anchors.horizontalCenter: parent.horizontalCenter
 
-            IconImage {
-                id: icon
-                width: 12
-                height: 12
-                anchors.left: parent.left
-                anchors.leftMargin: 6
-                anchors.verticalCenter: parent.verticalCenter
-                source: ToplevelManager?.activeToplevel ? getIcon() : ""
-                visible: Settings.settings.showActiveWindowIcon
-                anchors.verticalCenterOffset: -3
+            Rectangle {
+            id: innerRect
 
+                bottomLeftRadius: Math.max(0, width / 2)
+                bottomRightRadius: Math.max(0, width / 2)
+                color: Theme.backgroundSecondary
+                anchors {
+                    fill: parent
+                    leftMargin: 0
+                    rightMargin: 0
+                    topMargin: -1
+                    bottomMargin: 0
+                }
+            
+
+                border.color: Theme.outline || "#444";
+                border.width: 1;
+
+                IconImage {
+                    id: icon
+                    width: 12
+                    height: 12
+                    anchors.left: parent.left
+                    anchors.leftMargin: 14
+                    anchors.verticalCenter: parent.verticalCenter
+                    source: ToplevelManager?.activeToplevel ? getIcon() : ""
+                    visible: Settings.settings.showActiveWindowIcon
+                    anchors.verticalCenterOffset: -3
+
+                }
+
+                Text {
+                    id: activeWindowTitle
+                    text: ToplevelManager?.activeToplevel?.title && ToplevelManager?.activeToplevel?.title.length > 60 ? ToplevelManager?.activeToplevel?.title.substring(0, 60) + "..." : ToplevelManager?.activeToplevel?.title || ""
+                    font.pixelSize: 12 * Theme.scale(Screen)
+                    color: Theme.textSecondary
+                    anchors.left: icon.right
+                    anchors.leftMargin: Settings.settings.showActiveWindowIcon ? 4 : 6
+                    anchors.right: parent.right
+                    anchors.rightMargin: 14
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenterOffset: -3
+                    horizontalAlignment: Settings.settings.showActiveWindowIcon ? Text.AlignRight : Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    maximumLineCount: 1
+                }
             }
-
-            Text {
-                id: activeWindowTitle
-                text: ToplevelManager?.activeToplevel?.title && ToplevelManager?.activeToplevel?.title.length > 60 ? ToplevelManager?.activeToplevel?.title.substring(0, 60) + "..." : ToplevelManager?.activeToplevel?.title || ""
-                font.pixelSize: 12 * Theme.scale(Screen)
-                color: Theme.textSecondary
-                anchors.left: icon.right
-                anchors.leftMargin: Settings.settings.showActiveWindowIcon ? 4 : 6
-                anchors.right: parent.right
-                anchors.rightMargin: 6
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: -3
-                horizontalAlignment: Settings.settings.showActiveWindowIcon ? Text.AlignRight : Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-                maximumLineCount: 1
-            }
-
         }
-
     }
 }
