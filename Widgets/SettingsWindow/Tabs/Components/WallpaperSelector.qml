@@ -16,9 +16,6 @@ Rectangle {
         wallpaperOverlay.visible = true;
     }
 
-    Layout.fillWidth: true
-    Layout.fillHeight: true
-
     color: Theme.backgroundPrimary
     visible: false
     z: 1000

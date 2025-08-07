@@ -13,9 +13,6 @@ import qs.Widgets.SettingsWindow
 import qs.Settings
 import qs.Helpers
 
-import "./Helpers/IdleInhibitor.qml"
-import "./Helpers/IPCHandlers.qml"
-
 Scope {
     id: root
 

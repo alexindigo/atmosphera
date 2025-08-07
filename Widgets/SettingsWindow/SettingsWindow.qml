@@ -317,7 +317,7 @@ PanelWithOverlay {
 
                 }
 
-                ColumnLayout {
+                Item {
                     id: settingsContainer
 
                     anchors {
@@ -332,15 +332,15 @@ PanelWithOverlay {
                     Loader {
                         id: settingsLoader
 
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
+                        anchors.fill: parent
                         sourceComponent: generalSettings
                         active: true
                     }
 
-                    // Wallpaper Selector Component
+                    // Wallpaper Selector Component - positioned as overlay
                     WallpaperSelector {
                         id: wallpaperSelector
+                        anchors.fill: parent
                     }
 
                 }
