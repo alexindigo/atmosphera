@@ -294,7 +294,14 @@ PanelWithOverlay {
                                 anchors.fill: parent
                                 hoverEnabled: true
                                 cursorShape: Qt.PointingHandCursor
-                                onClicked: panelMain.dismiss()
+                                onClicked: {
+                                    // If wallpaper selector is open, close it instead of the settings window
+                                    if (wallpaperSelector.visible) {
+                                        wallpaperSelector.hide();
+                                    } else {
+                                        panelMain.dismiss();
+                                    }
+                                }
                             }
 
                         }

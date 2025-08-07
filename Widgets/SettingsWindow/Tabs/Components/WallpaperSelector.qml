@@ -8,23 +8,38 @@ import qs.Settings
 
 Rectangle {
     id: wallpaperOverlay
+    focus: true
 
     // Function to show the overlay and load wallpapers
     function show() {
         // Ensure wallpapers are loaded
         WallpaperManager.loadWallpapers();
         wallpaperOverlay.visible = true;
+        wallpaperOverlay.forceActiveFocus();
+    }
+
+    // Function to hide the overlay
+    function hide() {
+        wallpaperOverlay.visible = false;
     }
 
     color: Theme.backgroundPrimary
     visible: false
     z: 1000
 
+    // Handle escape key to close
+    Keys.onPressed: function(event) {
+        if (event.key === Qt.Key_Escape) {
+            wallpaperOverlay.hide();
+            event.accepted = true;
+        }
+    }
+
     // Click outside to close
     MouseArea {
         anchors.fill: parent
         onClicked: {
-            wallpaperOverlay.visible = false;
+            wallpaperOverlay.hide();
         }
     }
 
@@ -40,6 +55,8 @@ Rectangle {
         ColumnLayout {
             anchors.fill: parent
             spacing: 0
+
+
 
             // Wallpaper Grid
             Item {
@@ -133,7 +150,7 @@ Rectangle {
                                     cursorShape: Qt.PointingHandCursor
                                     onClicked: {
                                         WallpaperManager.changeWallpaper(modelData);
-                                        wallpaperOverlay.visible = false;
+                                        wallpaperOverlay.hide();
                                     }
                                 }
 
