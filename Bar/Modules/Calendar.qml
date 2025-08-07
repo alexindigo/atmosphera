@@ -52,7 +52,7 @@ PanelWithOverlay {
                     text: calendar.title
                     color: Theme.textPrimary
                     opacity: 0.7
-                    font.pixelSize: 13
+                    font.pixelSize: 13 * Theme.uiScale
                     font.family: Theme.fontFamily
                     font.bold: true
                 }
@@ -78,7 +78,7 @@ PanelWithOverlay {
                     text: shortName
                     color: Theme.textPrimary
                     opacity: 0.8
-                    font.pixelSize: 13
+                    font.pixelSize: 13 * Theme.uiScale
                     font.family: Theme.fontFamily
                     font.bold: true
                     horizontalAlignment: Text.AlignHCenter
@@ -161,7 +161,7 @@ PanelWithOverlay {
                         text: model.day
                         color: model.today ? Theme.onAccent : Theme.textPrimary
                         opacity: model.month === calendar.month ? (mouseArea2.containsMouse ? 1 : 0.7) : 0.3
-                        font.pixelSize: 13
+                        font.pixelSize: 13 * Theme.uiScale
                         font.family: Theme.fontFamily
                         font.bold: model.today ? true : false
                     }

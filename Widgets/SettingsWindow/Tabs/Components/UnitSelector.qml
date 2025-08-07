@@ -6,21 +6,21 @@ import qs.Components
 
 Rectangle {
     id: root
-    width: 64
-    height: 32
-    radius: 16
+    width: 64 * Theme.uiScale
+    height: 32 * Theme.uiScale
+    radius: 16 * Theme.uiScale
     color: Theme.surfaceVariant
     border.color: Theme.outline
-    border.width: 1
+    border.width: 1 * Theme.uiScale
 
     property bool useFahrenheit: Settings.settings.useFahrenheit
 
     
     Rectangle {
         id: slider
-        width: parent.width / 2 - 4
-        height: parent.height - 4
-        radius: 14
+        width: parent.width / 2 - 4 * Theme.uiScale
+        height: parent.height - 4 * Theme.uiScale
+        radius: 14 * Theme.uiScale
         color: Theme.accentPrimary
         x: 2 + (useFahrenheit ? parent.width / 2 : 0)
         y: 2
@@ -46,7 +46,7 @@ Rectangle {
             Text {
                 anchors.centerIn: parent
                 text: "°C"
-                font.pixelSize: 13
+                font.pixelSize: 13 * Theme.uiScale
                 font.bold: !useFahrenheit
                 color: !useFahrenheit ? Theme.onAccent : Theme.textPrimary
                 
@@ -74,7 +74,7 @@ Rectangle {
             Text {
                 anchors.centerIn: parent
                 text: "°F"
-                font.pixelSize: 13
+                font.pixelSize: 13 * Theme.uiScale
                 font.bold: useFahrenheit
                 color: useFahrenheit ? Theme.onAccent : Theme.textPrimary
                 

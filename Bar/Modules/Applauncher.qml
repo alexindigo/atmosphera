@@ -532,7 +532,7 @@ PanelWithOverlay {
                             Text {
                                 text: "search"
                                 font.family: "Material Symbols Outlined"
-                                font.pixelSize: Theme.fontSizeHeader
+                                font.pixelSize: Theme.fontSizeHeader * Theme.uiScale
                                 color: searchField.activeFocus ? Theme.accentPrimary : Theme.textSecondary
                                 verticalAlignment: Text.AlignVCenter
                                 Layout.alignment: Qt.AlignVCenter
@@ -545,7 +545,7 @@ PanelWithOverlay {
                                 placeholderTextColor: Theme.textSecondary
                                 background: null
                                 font.family: Theme.fontFamily
-                                font.pixelSize: Theme.fontSizeBody
+                                font.pixelSize: Theme.fontSizeBody * Theme.uiScale
                                 Layout.fillWidth: true
                                 Layout.alignment: Qt.AlignVCenter
                                 onTextChanged: root.updateFilter()
@@ -689,7 +689,7 @@ PanelWithOverlay {
                                             visible: !modelData.isCalculator && !modelData.isClipboard && !modelData.isCommand && !parent.iconLoaded && modelData.type !== 'image'
                                             text: "broken_image"
                                             font.family: "Material Symbols Outlined"
-                                            font.pixelSize: Theme.fontSizeHeader
+                                            font.pixelSize: Theme.fontSizeHeader * Theme.uiScale
                                             color: Theme.accentPrimary
                                         }
                                     }
@@ -702,7 +702,7 @@ PanelWithOverlay {
                                             text: modelData.name
                                             color: (hovered || isSelected) ? Theme.onAccent : (appLauncherPanel.isPinned(modelData) ? Theme.textPrimary : Theme.textPrimary)
                                             font.family: Theme.fontFamily
-                                            font.pixelSize: Theme.fontSizeSmall
+                                            font.pixelSize: Theme.fontSizeSmall * Theme.uiScale
                                             font.bold: hovered || isSelected
                                             verticalAlignment: Text.AlignVCenter
                                             elide: Text.ElideRight
@@ -716,7 +716,7 @@ PanelWithOverlay {
                                                   (modelData.comment || modelData.genericName || "No description available")
                                             color: (hovered || isSelected) ? Theme.onAccent : (appLauncherPanel.isPinned(modelData) ? Theme.textSecondary : Theme.textSecondary)
                                             font.family: Theme.fontFamily
-                                            font.pixelSize: Theme.fontSizeCaption
+                                            font.pixelSize: Theme.fontSizeCaption * Theme.uiScale
                                             font.italic: !(modelData.comment || modelData.genericName)
                                             opacity: modelData.isClipboard ? 0.8 : modelData.isCommand ? 0.9 : ((modelData.comment || modelData.genericName) ? 1.0 : 0.6)
                                             elide: Text.ElideRight
@@ -734,7 +734,7 @@ PanelWithOverlay {
                                     Text {
                                         text: modelData.isCalculator ? "content_copy" : "chevron_right"
                                         font.family: "Material Symbols Outlined"
-                                        font.pixelSize: Theme.fontSizeBody
+                                        font.pixelSize: Theme.fontSizeBody * Theme.uiScale
                                         color: (hovered || isSelected)
                                             ? Theme.onAccent
                                             : (appLauncherPanel.isPinned(modelData) ? Theme.textPrimary : Theme.textSecondary)
@@ -818,7 +818,7 @@ PanelWithOverlay {
                                         anchors.centerIn: parent
                                         text: "star"
                                         font.family: "Material Symbols Outlined"
-                                        font.pixelSize: Theme.fontSizeSmall
+                                        font.pixelSize: Theme.fontSizeSmall * Theme.uiScale
                                         color: (parent.MouseArea.containsMouse || hovered || isSelected)
                                             ? Theme.onAccent
                                             : (appLauncherPanel.isPinned(modelData) ? Theme.textPrimary : Theme.textDisabled)

@@ -51,7 +51,7 @@ Item {
                 return connected ? network.signalIcon(parent.currentSignal) : "wifi_off"
             }
             font.family: mouseAreaWifi.containsMouse ? "Material Symbols Rounded" : "Material Symbols Outlined"
-            font.pixelSize: 16
+            font.pixelSize: 16 * Theme.uiScale
             color: mouseAreaWifi.containsMouse ? Theme.accentPrimary : Theme.textPrimary
         }
 
@@ -120,13 +120,13 @@ Item {
                         Text {
                             text: "wifi"
                             font.family: "Material Symbols Outlined"
-                            font.pixelSize: 24
+                            font.pixelSize: 24 * Theme.uiScale
                             color: Theme.accentPrimary
                         }
 
                         Text {
                             text: "WiFi Networks"
-                            font.pixelSize: 18
+                            font.pixelSize: 18 * Theme.uiScale
                             font.bold: true
                             color: Theme.textPrimary
                             Layout.fillWidth: true
@@ -183,7 +183,7 @@ Item {
                                         Text {
                                             text: network.signalIcon(modelData.signal)
                                             font.family: "Material Symbols Outlined"
-                                            font.pixelSize: 18
+                                            font.pixelSize: 18 * Theme.uiScale
                                             color: networkMouseArea.containsMouse ? Theme.backgroundPrimary : (modelData.connected ? Theme.accentPrimary : Theme.textSecondary)
                                         }
 
@@ -194,7 +194,7 @@ Item {
                                             Text {
                                                 text: modelData.ssid || "Unknown Network"
                                                 color: networkMouseArea.containsMouse ? Theme.backgroundPrimary : (modelData.connected ? Theme.accentPrimary : Theme.textPrimary)
-                                                font.pixelSize: 14
+                                                font.pixelSize: 14 * Theme.uiScale
                                                 elide: Text.ElideRight
                                                 Layout.fillWidth: true
                                             }
@@ -202,7 +202,7 @@ Item {
                                             Text {
                                                 text: modelData.security && modelData.security !== "--" ? modelData.security : "Open"
                                                 color: networkMouseArea.containsMouse ? Theme.backgroundPrimary : (modelData.connected ? Theme.accentPrimary : Theme.textSecondary)
-                                                font.pixelSize: 11
+                                                font.pixelSize: 11 * Theme.uiScale
                                                 elide: Text.ElideRight
                                                 Layout.fillWidth: true
                                             }
@@ -211,7 +211,7 @@ Item {
                                                 visible: network.connectStatusSsid === modelData.ssid && network.connectStatus === "error" && network.connectError.length > 0
                                                 text: network.connectError
                                                 color: Theme.error
-                                                font.pixelSize: 11
+                                                font.pixelSize: 11 * Theme.uiScale
                                                 elide: Text.ElideRight
                                                 Layout.fillWidth: true
                                             }
@@ -234,7 +234,7 @@ Item {
                                                 visible: network.connectStatus === "success" && !network.connectingSsid
                                                 text: "check_circle"
                                                 font.family: "Material Symbols Outlined"
-                                                font.pixelSize: 18
+                                                font.pixelSize: 18 * Theme.uiScale
                                                 color: "#43a047"
                                                 anchors.centerIn: parent
                                             }
@@ -243,7 +243,7 @@ Item {
                                                 visible: network.connectStatus === "error" && !network.connectingSsid
                                                 text: "error"
                                                 font.family: "Material Symbols Outlined"
-                                                font.pixelSize: 18
+                                                font.pixelSize: 18 * Theme.uiScale
                                                 color: Theme.error
                                                 anchors.centerIn: parent
                                             }
@@ -253,7 +253,7 @@ Item {
                                             visible: modelData.connected
                                             text: "connected"
                                             color: networkMouseArea.containsMouse ? Theme.backgroundPrimary : Theme.accentPrimary
-                                            font.pixelSize: 11
+                                            font.pixelSize: 11 * Theme.uiScale
                                         }
                                     }
 
@@ -309,7 +309,7 @@ Item {
                                                     anchors.fill: parent
                                                     anchors.margins: 12
                                                     text: passwordInput
-                                                    font.pixelSize: 13
+                                                    font.pixelSize: 13 * Theme.uiScale
                                                     color: Theme.textPrimary
                                                     verticalAlignment: TextInput.AlignVCenter
                                                     clip: true
@@ -364,7 +364,7 @@ Item {
                                                 anchors.centerIn: parent
                                                 text: "Connect"
                                                 color: Theme.backgroundPrimary
-                                                font.pixelSize: 14
+                                                font.pixelSize: 14 * Theme.uiScale
                                                 font.bold: true
                                             }
                                         }

@@ -33,8 +33,8 @@ Window {
     }
 
     function _showNow() {
-        width = Math.max(50, tooltipText.implicitWidth + 24)
-        height = Math.max(50, tooltipText.implicitHeight + 16)
+        width = Math.max(50 * Theme.uiScale, tooltipText.implicitWidth + 24 * Theme.uiScale)
+        height = Math.max(50 * Theme.uiScale, tooltipText.implicitHeight + 16 * Theme.uiScale)
 
         if (!targetItem) return;
 
@@ -75,10 +75,10 @@ Window {
 
     Rectangle {
         anchors.fill: parent
-        radius: 20
+        radius: 20 * Theme.uiScale
         color: Theme.backgroundTertiary || "#222"
         border.color: Theme.outline || "#444"
-        border.width: 1
+        border.width: 1 * Theme.uiScale
         opacity: 0.97
         z: 1
     }
@@ -88,7 +88,7 @@ Window {
         text: tooltipWindow.text
         color: Theme.textPrimary
         font.family: Theme.fontFamily
-        font.pixelSize: Theme.fontSizeSmall
+        font.pixelSize: Theme.fontSizeSmall * Theme.uiScale
         anchors.centerIn: parent
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
@@ -105,7 +105,7 @@ Window {
     }
 
     onTextChanged: {
-        width = Math.max(minimumWidth, tooltipText.implicitWidth + 24);
-        height = Math.max(minimumHeight, tooltipText.implicitHeight + 16);
+        width = Math.max(minimumWidth * Theme.uiScale, tooltipText.implicitWidth + 24 * Theme.uiScale);
+        height = Math.max(minimumHeight * Theme.uiScale, tooltipText.implicitHeight + 16 * Theme.uiScale);
     }
 }

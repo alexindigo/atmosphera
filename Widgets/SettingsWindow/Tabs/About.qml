@@ -147,14 +147,18 @@ Item {
 
     }
 
-    Item {
+    ScrollView {
         anchors.fill: parent
+        padding: 0
+        rightPadding: 12
+        clip: true
+        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+        ScrollBar.vertical.policy: ScrollBar.AsNeeded
 
         ColumnLayout {
             id: mainLayout
 
-            anchors.left: parent.left
-            anchors.right: parent.right
+            width: parent.availableWidth
             anchors.top: parent.top
             spacing: 8
 
@@ -165,7 +169,7 @@ Item {
 
             Text {
                 text: "Noctalia"
-                font.pixelSize: 24
+                font.pixelSize: 24 * Theme.uiScale
                 font.bold: true
                 color: Theme.textPrimary
                 Layout.alignment: Qt.AlignCenter
@@ -179,28 +183,28 @@ Item {
 
                 Text {
                     text: "Latest Version:"
-                    font.pixelSize: 16
+                    font.pixelSize: 16 * Theme.uiScale
                     color: Theme.textSecondary
                     Layout.alignment: Qt.AlignRight
                 }
 
                 Text {
                     text: root.latestVersion
-                    font.pixelSize: 16
+                    font.pixelSize: 16 * Theme.uiScale
                     color: Theme.textPrimary
                     font.bold: true
                 }
 
                 Text {
                     text: "Installed Version:"
-                    font.pixelSize: 16
+                    font.pixelSize: 16 * Theme.uiScale
                     color: Theme.textSecondary
                     Layout.alignment: Qt.AlignRight
                 }
 
                 Text {
                     text: root.currentVersion
-                    font.pixelSize: 16
+                    font.pixelSize: 16 * Theme.uiScale
                     color: Theme.textPrimary
                     font.bold: true
                 }
@@ -242,7 +246,7 @@ Item {
                     Text {
                         text: "system_update"
                         font.family: "Material Symbols Outlined"
-                        font.pixelSize: 18
+                        font.pixelSize: 18 * Theme.uiScale
                         color: updateArea.containsMouse ? Theme.backgroundPrimary : Theme.accentPrimary
                     }
 
@@ -250,7 +254,7 @@ Item {
                         id: updateText
 
                         text: "Download latest release"
-                        font.pixelSize: 14
+                        font.pixelSize: 14 * Theme.uiScale
                         color: updateArea.containsMouse ? Theme.backgroundPrimary : Theme.accentPrimary
                     }
 
@@ -271,7 +275,7 @@ Item {
 
             Text {
                 text: "Description something something <.< I hate writing text..."
-                font.pixelSize: 14
+                font.pixelSize: 14 * Theme.uiScale
                 color: Theme.textSecondary
                 Layout.alignment: Qt.AlignCenter
                 Layout.topMargin: 24
@@ -298,14 +302,14 @@ Item {
 
                     Text {
                         text: "Contributors"
-                        font.pixelSize: 18
+                        font.pixelSize: 18 * Theme.uiScale
                         font.bold: true
                         color: Theme.textPrimary
                     }
 
                     Text {
                         text: "(" + root.contributors.length + ")"
-                        font.pixelSize: 14
+                        font.pixelSize: 14 * Theme.uiScale
                         color: Theme.textSecondary
                     }
 
@@ -384,7 +388,7 @@ Item {
                                             anchors.centerIn: parent
                                             text: "person"
                                             font.family: "Material Symbols Outlined"
-                                            font.pixelSize: 24
+                                            font.pixelSize: 24 * Theme.uiScale
                                             color: contributorArea.containsMouse ? Theme.backgroundPrimary : Theme.textPrimary
                                             visible: !avatarImage.source || avatarImage.status !== Image.Ready
                                         }
@@ -398,7 +402,7 @@ Item {
 
                                         Text {
                                             text: modelData.login || "Unknown"
-                                            font.pixelSize: 13
+                                            font.pixelSize: 13 * Theme.uiScale
                                             color: contributorArea.containsMouse ? Theme.backgroundPrimary : Theme.textPrimary
                                             elide: Text.ElideRight
                                             Layout.fillWidth: true
@@ -406,7 +410,7 @@ Item {
 
                                         Text {
                                             text: (modelData.contributions || 0) + " commits"
-                                            font.pixelSize: 11
+                                            font.pixelSize: 11 * Theme.uiScale
                                             color: contributorArea.containsMouse ? Theme.backgroundPrimary : Theme.textSecondary
                                         }
 

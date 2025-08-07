@@ -8,8 +8,8 @@ import qs.Settings
 
 Rectangle {
     id: systemMonitor
-    width: 70
-    height: 250
+    width: 70 * Theme.uiScale
+    height: 250 * Theme.uiScale
     color: "transparent"
 
     // Track visibility state for panel integration
@@ -19,26 +19,26 @@ Rectangle {
         id: card
         anchors.fill: parent
         color: Theme.surface
-        radius: 18
+        radius: 18 * Theme.uiScale
 
         ColumnLayout {
             anchors.fill: parent
-            anchors.margins: 8
-            spacing: 12
+            anchors.margins: 8 * Theme.uiScale
+            spacing: 12 * Theme.uiScale
             Layout.alignment: Qt.AlignVCenter
 
     
             // CPU usage indicator with circular progress bar
             Item {
-                width: 50; height: 50
+                width: 50 * Theme.uiScale; height: 50 * Theme.uiScale
                 CircularProgressBar {
                     id: cpuBar
                     progress: Sysinfo.cpuUsage / 100
-                    size: 50
-                    strokeWidth: 4
+                    size: 50 * Theme.uiScale
+                    strokeWidth: 4 * Theme.uiScale
                     hasNotch: true
                     notchIcon: "speed"
-                    notchIconSize: 14
+                    notchIconSize: 14 * Theme.uiScale
                     Layout.alignment: Qt.AlignHCenter
                 }
                 MouseArea {
@@ -60,16 +60,16 @@ Rectangle {
     
             // CPU temperature indicator with circular progress bar
             Item {
-                width: 50; height: 50
+                width: 50 * Theme.uiScale; height: 50 * Theme.uiScale
                 CircularProgressBar {
                     id: tempBar
                     progress: Sysinfo.cpuTemp / 100
-                    size: 50
-                    strokeWidth: 4
+                    size: 50 * Theme.uiScale
+                    strokeWidth: 4 * Theme.uiScale
                     hasNotch: true
                     units: "°C"
                     notchIcon: "thermometer"
-                    notchIconSize: 14
+                    notchIconSize: 14 * Theme.uiScale
                     Layout.alignment: Qt.AlignHCenter
                 }
                 MouseArea {
@@ -91,15 +91,15 @@ Rectangle {
     
             // Memory usage indicator with circular progress bar
             Item {
-                width: 50; height: 50
+                width: 50 * Theme.uiScale; height: 50 * Theme.uiScale
                 CircularProgressBar {
                     id: memBar
                     progress: Sysinfo.memoryUsagePer / 100
-                    size: 50
-                    strokeWidth: 4
+                    size: 50 * Theme.uiScale
+                    strokeWidth: 4 * Theme.uiScale
                     hasNotch: true
                     notchIcon: "memory"
-                    notchIconSize: 14
+                    notchIconSize: 14 * Theme.uiScale
                     Layout.alignment: Qt.AlignHCenter
                 }
                 MouseArea {
@@ -121,15 +121,15 @@ Rectangle {
     
             // Disk usage indicator with circular progress bar
             Item {
-                width: 50; height: 50
+                width: 50 * Theme.uiScale; height: 50 * Theme.uiScale
                 CircularProgressBar {
                     id: diskBar
                     progress: Sysinfo.diskUsage / 100
-                    size: 50
-                    strokeWidth: 4
+                    size: 50 * Theme.uiScale
+                    strokeWidth: 4 * Theme.uiScale
                     hasNotch: true
                     notchIcon: "storage"
-                    notchIconSize: 14
+                    notchIconSize: 14 * Theme.uiScale
                     Layout.alignment: Qt.AlignHCenter
                 }
                 MouseArea {

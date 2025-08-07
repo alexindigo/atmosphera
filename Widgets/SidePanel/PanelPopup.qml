@@ -45,10 +45,27 @@ PanelWithOverlay {
 
         property real slideOffset: width
         property bool isAnimating: false
-        property int leftPadding: 20
-        property int bottomPadding: 20
+        property int leftPadding: 20 * Theme.uiScale
+        property int bottomPadding: 20 * Theme.uiScale
         // Recording properties
         property bool isRecording: false
+
+        Process {
+            id: checkRecordingProcess
+            command: ["pgrep", "-f", "gpu-screen-recorder.*portal"]
+            onExited: function(exitCode, exitStatus) {
+                var isActuallyRecording = exitCode === 0
+                if (isRecording && !isActuallyRecording) {
+                    isRecording = isActuallyRecording
+                }
+            }
+        }
+
+        function checkRecordingStatus() {
+            if (isRecording) {
+                checkRecordingProcess.running = true
+            }
+        }
 
         function showAt() {
             if (!sidebarPopup.visible) {
@@ -73,11 +90,7 @@ PanelWithOverlay {
             if (shell && shell.settingsWindow && shell.settingsWindow.visible)
                 shell.settingsWindow.visible = false;
 
-            if (wifiPanelLoader.active && wifiPanelLoader.item && wifiPanelLoader.item.visible)
-                wifiPanelLoader.item.visible = false;
 
-            if (bluetoothPanelLoader.active && bluetoothPanelLoader.item && bluetoothPanelLoader.item.visible)
-                bluetoothPanelLoader.item.visible = false;
 
             if (sidebarPopup.visible) {
                 slideAnim.from = 0;
@@ -119,8 +132,8 @@ PanelWithOverlay {
             quickAccessWidget.isRecording = false;
         }
 
-        implicitWidth: 500
-        implicitHeight: 800
+        implicitWidth: 500 * Theme.uiScale
+        implicitHeight: 700 * Theme.uiScale
         visible: parent.visible
         color: "transparent"
         anchors.top: parent.top
@@ -173,7 +186,7 @@ PanelWithOverlay {
             x: sidebarPopupRect.leftPadding + sidebarPopupRect.slideOffset
             y: 0
             color: Theme.backgroundPrimary
-            bottomLeftRadius: 20
+            bottomLeftRadius: 20 * Theme.uiScale
             z: 0
 
             Behavior on x {
@@ -188,27 +201,7 @@ PanelWithOverlay {
 
         }
 
-        // LazyLoader for WifiPanel
-        LazyLoader {
-            id: wifiPanelLoader
 
-            loading: false
-
-            component: WifiPanel {
-            }
-
-        }
-
-        // LazyLoader for BluetoothPanel
-        LazyLoader {
-            id: bluetoothPanelLoader
-
-            loading: false
-
-            component: BluetoothPanel {
-            }
-
-        }
 
         // SettingsIcon component
         SettingsIcon {
@@ -228,11 +221,12 @@ PanelWithOverlay {
 
             ColumnLayout {
                 anchors.fill: parent
-                anchors.margins: 20
-                spacing: 16
+                anchors.margins: 20 * Theme.uiScale
+                spacing: 4 * Theme.uiScale
 
                 PowerMenu {
                     id: systemWidget
+                    settingsModal: settingsModal
 
                     Layout.alignment: Qt.AlignHCenter
                     z: 3
@@ -240,14 +234,13 @@ PanelWithOverlay {
 
                 Weather {
                     id: weather
-
                     Layout.alignment: Qt.AlignHCenter
                     z: 2
                 }
 
                 // Music and System Monitor row
                 RowLayout {
-                    spacing: 12
+                    spacing: 12 * Theme.uiScale
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignHCenter
 
@@ -257,123 +250,118 @@ PanelWithOverlay {
 
                     SystemMonitor {
                         id: systemMonitor
-
                         z: 2
                     }
 
                 }
 
-                // Power profile, Wifi and Bluetooth row
+                // Power profile, Record and Wallpaper row
                 RowLayout {
-                    Layout.alignment: Qt.AlignLeft
-                    Layout.preferredHeight: 80
-                    spacing: 16
+                    Layout.alignment: Qt.AlignVCenter
+                    spacing: 10 * Theme.uiScale
+                    Layout.preferredHeight: 80 * Theme.uiScale
                     z: 3
 
                     PowerProfile {
-                        Layout.alignment: Qt.AlignLeft
-                        Layout.preferredHeight: 80
+                        Layout.alignment: Qt.AlignVCenter
+                        Layout.preferredHeight: 80 * Theme.uiScale
                     }
 
-                    // Network card containing Wifi and Bluetooth
+                    // Record and Wallpaper card
                     Rectangle {
-                        Layout.preferredHeight: 80
-                        Layout.preferredWidth: 140
+                        Layout.preferredHeight: 80 * Theme.uiScale
+                        Layout.preferredWidth: 140 * Theme.uiScale
                         Layout.fillWidth: false
                         color: Theme.surface
-                        radius: 18
+                        radius: 18 * Theme.uiScale
 
                         Row {
                             anchors.horizontalCenter: parent.horizontalCenter
                             anchors.verticalCenter: parent.verticalCenter
-                            spacing: 20
+                            spacing: 20 * Theme.uiScale
 
-                            // Wifi button
+                            // Record button
                             Rectangle {
-                                id: wifiButton
+                                id: recordButton
 
-                                width: 36
-                                height: 36
-                                radius: 18
+                                width: 36 * Theme.uiScale
+                                height: 36 * Theme.uiScale
+                                radius: 18 * Theme.uiScale
                                 border.color: Theme.accentPrimary
-                                border.width: 1
-                                color: wifiButtonArea.containsMouse ? Theme.accentPrimary : "transparent"
+                                border.width: 1 * Theme.uiScale
+                                color: sidebarPopupRect.isRecording ? Theme.accentPrimary : 
+                                       (recordButtonArea.containsMouse ? Theme.accentPrimary : "transparent")
 
                                 Text {
                                     anchors.centerIn: parent
-                                    text: "wifi"
+                                    text: "photo_camera"
                                     font.family: "Material Symbols Outlined"
-                                    font.pixelSize: 22
-                                    color: wifiButtonArea.containsMouse ? Theme.backgroundPrimary : Theme.accentPrimary
+                                    font.pixelSize: 22 * Theme.uiScale
+                                    color: sidebarPopupRect.isRecording || recordButtonArea.containsMouse ? Theme.backgroundPrimary : Theme.accentPrimary
                                     verticalAlignment: Text.AlignVCenter
                                     horizontalAlignment: Text.AlignHCenter
                                 }
 
                                 MouseArea {
-                                    id: wifiButtonArea
+                                    id: recordButtonArea
 
                                     anchors.fill: parent
                                     hoverEnabled: true
                                     cursorShape: Qt.PointingHandCursor
                                     onClicked: {
-                                        if (!wifiPanelLoader.active)
-                                            wifiPanelLoader.loading = true;
-
-                                        if (wifiPanelLoader.item)
-                                            wifiPanelLoader.item.showAt();
-
+                                        if (sidebarPopupRect.isRecording) {
+                                            sidebarPopupRect.stopRecording();
+                                        } else {
+                                            sidebarPopupRect.startRecording();
+                                        }
                                     }
                                 }
 
                                 StyledTooltip {
-                                    text: "Wifi"
-                                    targetItem: wifiButtonArea
-                                    tooltipVisible: wifiButtonArea.containsMouse
+                                    text: sidebarPopupRect.isRecording ? "Stop Recording" : "Start Recording"
+                                    targetItem: recordButtonArea
+                                    tooltipVisible: recordButtonArea.containsMouse
                                 }
 
                             }
 
-                            // Bluetooth button
+                            // Wallpaper button
                             Rectangle {
-                                id: bluetoothButton
+                                id: wallpaperButton
 
-                                width: 36
-                                height: 36
-                                radius: 18
+                                width: 36 * Theme.uiScale
+                                height: 36 * Theme.uiScale
+                                radius: 18 * Theme.uiScale
                                 border.color: Theme.accentPrimary
-                                border.width: 1
-                                color: bluetoothButtonArea.containsMouse ? Theme.accentPrimary : "transparent"
+                                border.width: 1 * Theme.uiScale
+                                color: wallpaperButtonArea.containsMouse ? Theme.accentPrimary : "transparent"
 
                                 Text {
                                     anchors.centerIn: parent
-                                    text: "bluetooth"
+                                    text: "image"
                                     font.family: "Material Symbols Outlined"
-                                    font.pixelSize: 22
-                                    color: bluetoothButtonArea.containsMouse ? Theme.backgroundPrimary : Theme.accentPrimary
+                                    font.pixelSize: 22 * Theme.uiScale
+                                    color: wallpaperButtonArea.containsMouse ? Theme.backgroundPrimary : Theme.accentPrimary
                                     verticalAlignment: Text.AlignVCenter
                                     horizontalAlignment: Text.AlignHCenter
                                 }
 
                                 MouseArea {
-                                    id: bluetoothButtonArea
+                                    id: wallpaperButtonArea
 
                                     anchors.fill: parent
                                     hoverEnabled: true
                                     cursorShape: Qt.PointingHandCursor
                                     onClicked: {
-                                        if (!bluetoothPanelLoader.active)
-                                            bluetoothPanelLoader.loading = true;
-
-                                        if (bluetoothPanelLoader.item)
-                                            bluetoothPanelLoader.item.showAt();
-
+                                        if (typeof settingsModal !== 'undefined' && settingsModal && settingsModal.openSettings)
+                                            settingsModal.openSettings(6);
                                     }
                                 }
 
                                 StyledTooltip {
-                                    text: "Bluetooth"
-                                    targetItem: bluetoothButtonArea
-                                    tooltipVisible: bluetoothButtonArea.containsMouse
+                                    text: "Wallpaper"
+                                    targetItem: wallpaperButtonArea
+                                    tooltipVisible: wallpaperButtonArea.containsMouse
                                 }
 
                             }
@@ -384,43 +372,7 @@ PanelWithOverlay {
 
                 }
 
-                Item {
-                    Layout.fillHeight: true
-                }
 
-                // QuickAccess widget
-                QuickAccess {
-                    // 6 is the wallpaper tab index
-
-                    id: quickAccessWidget
-
-                    Layout.alignment: Qt.AlignHCenter
-                    Layout.topMargin: -16
-                    z: 2
-                    isRecording: sidebarPopupRect.isRecording
-                    onRecordingRequested: {
-                        sidebarPopupRect.startRecording();
-                    }
-                    onStopRecordingRequested: {
-                        sidebarPopupRect.stopRecording();
-                    }
-                    onRecordingStateMismatch: function(actualState) {
-                        isRecording = actualState;
-                        quickAccessWidget.isRecording = actualState;
-                    }
-                    onSettingsRequested: {
-                        // Use the SettingsModal's openSettings function
-                        if (typeof settingsModal !== 'undefined' && settingsModal && settingsModal.openSettings)
-                            settingsModal.openSettings();
-
-                    }
-                    onWallpaperSelectorRequested: {
-                        // Use the SettingsModal's openSettings function with wallpaper tab (index 6)
-                        if (typeof settingsModal !== 'undefined' && settingsModal && settingsModal.openSettings)
-                            settingsModal.openSettings(6);
-
-                    }
-                }
 
             }
 
@@ -448,7 +400,7 @@ PanelWithOverlay {
                     size: 1.1
                     fillColor: Theme.backgroundPrimary
                     anchors.top: parent.top
-                    offsetX: -447 + sidebarPopupRect.slideOffset
+                    offsetX: -464 + sidebarPopupRect.slideOffset
                     offsetY: 0
 
                     Behavior on offsetX {

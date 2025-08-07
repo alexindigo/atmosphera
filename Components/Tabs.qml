@@ -17,8 +17,8 @@ Item {
             model: root.tabsModel
             delegate: Rectangle {
                 id: tabWrapper
-                implicitHeight: tab.height
-                implicitWidth: 56
+                implicitHeight: tab.height * Theme.uiScale
+                implicitWidth: 56 * Theme.uiScale
                 color: "transparent"
 
                 property bool hovered: false
@@ -48,7 +48,7 @@ Item {
                     Text {
                         text: modelData.icon
                         font.family: "Material Symbols Outlined"
-                        font.pixelSize: 22
+                        font.pixelSize: 22 * Theme.uiScale
                         color: index === root.currentIndex ? (Theme ? Theme.accentPrimary : "#7C3AED") : tabWrapper.hovered ? (Theme ? Theme.accentPrimary : "#7C3AED") : (Theme ? Theme.textSecondary : "#444")
                         Layout.alignment: Qt.AlignCenter
                     }
@@ -56,7 +56,7 @@ Item {
                     // Label
                     Text {
                         text: modelData.label
-                        font.pixelSize: 12
+                        font.pixelSize: 12 * Theme.uiScale
                         font.bold: index === root.currentIndex
                         color: index === root.currentIndex ? (Theme ? Theme.accentPrimary : "#7C3AED") : tabWrapper.hovered ? (Theme ? Theme.accentPrimary : "#7C3AED") : (Theme ? Theme.textSecondary : "#444")
                         Layout.alignment: Qt.AlignCenter
@@ -64,9 +64,9 @@ Item {
 
                     // Underline for active tab
                     Rectangle {
-                        width: 24
-                        height: 2
-                        radius: 1
+                        width: 24 * Theme.uiScale
+                        height: 2 * Theme.uiScale
+                        radius: 1 * Theme.uiScale
                         color: index === root.currentIndex ? (Theme ? Theme.accentPrimary : "#7C3AED") : "transparent"
                         Layout.alignment: Qt.AlignCenter
                     }

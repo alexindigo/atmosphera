@@ -21,8 +21,8 @@ Row {
     Repeater {
         model: systemTray.items
         delegate: Item {
-            width: 24
-            height: 24
+            width: 24 * Theme.uiScale
+            height: 24 * Theme.uiScale
             // Hide Spotify icon, or adjust to your liking
             visible: modelData && modelData.id !== "spotify"
             property bool isHovered: trayMouseArea.containsMouse
@@ -47,17 +47,17 @@ Row {
 
             Rectangle {
                 anchors.centerIn: parent
-                width: 16
-                height: 16
-                radius: 6
+                width: 16 * Theme.uiScale
+                height: 16 * Theme.uiScale
+                radius: 6 * Theme.uiScale
                 color: "transparent"
                 clip: true
 
                 IconImage {
                     id: trayIcon
                     anchors.centerIn: parent
-                    width: 16
-                    height: 16
+                    width: 16 * Theme.uiScale
+                    height: 16 * Theme.uiScale
                     smooth: false
                     asynchronous: true
                     backer.fillMode: Image.PreserveAspectFit
@@ -122,7 +122,7 @@ Row {
                         if (modelData.hasMenu && modelData.menu && trayMenu) {
                             // Anchor the menu to the tray icon item (parent) and position it below the icon
                             const menuX = (width / 2) - (trayMenu.width / 2);
-                            const menuY = height + 20;
+                            const menuY = height + 20 * Theme.uiScale;
                             trayMenu.menu = modelData.menu;
                             trayMenu.showAt(parent, menuX, menuY);
                         } else

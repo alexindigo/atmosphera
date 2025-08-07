@@ -7,22 +7,22 @@ import qs.Components
 
 Rectangle {
     id: card
-    width: 200
-    height: 70
+    width: 200 * Theme.uiScale
+    height: 70 * Theme.uiScale
     color: Theme.surface
-    radius: 18
+    radius: 18 * Theme.uiScale
 
     Row {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        spacing: 20
+        spacing: 20 * Theme.uiScale
 
 
         Rectangle {
-            width: 36; height: 36
-            radius: 18
+            width: 36 * Theme.uiScale; height: 36 * Theme.uiScale
+            radius: 18 * Theme.uiScale
             border.color: Theme.accentPrimary
-            border.width: 1
+            border.width: 1 * Theme.uiScale
             color: (typeof PowerProfiles !== 'undefined' && PowerProfiles.profile === PowerProfile.Performance)
                 ? Theme.accentPrimary
                 : (perfMouseArea.containsMouse ? Theme.accentPrimary : "transparent")
@@ -33,7 +33,7 @@ Rectangle {
                 anchors.centerIn: parent
                 text: "speed"
                 font.family: "Material Symbols Outlined"
-                font.pixelSize: 22
+                font.pixelSize: 22 * Theme.uiScale
                 color: (typeof PowerProfiles !== 'undefined' && PowerProfiles.profile === PowerProfile.Performance) || perfMouseArea.containsMouse
                     ? Theme.backgroundPrimary
                     : Theme.accentPrimary
@@ -65,10 +65,10 @@ Rectangle {
 
 
         Rectangle {
-            width: 36; height: 36
-            radius: 18
+            width: 36 * Theme.uiScale; height: 36 * Theme.uiScale
+            radius: 18 * Theme.uiScale
             border.color: Theme.accentPrimary
-            border.width: 1
+            border.width: 1 * Theme.uiScale
             color: (typeof PowerProfiles !== 'undefined' && PowerProfiles.profile === PowerProfile.Balanced)
                 ? Theme.accentPrimary
                 : (balMouseArea.containsMouse ? Theme.accentPrimary : "transparent")
@@ -79,7 +79,7 @@ Rectangle {
                 anchors.centerIn: parent
                 text: "balance"
                 font.family: "Material Symbols Outlined"
-                font.pixelSize: 22
+                font.pixelSize: 22 * Theme.uiScale
                 color: (typeof PowerProfiles !== 'undefined' && PowerProfiles.profile === PowerProfile.Balanced) || balMouseArea.containsMouse
                     ? Theme.backgroundPrimary
                     : Theme.accentPrimary
@@ -111,10 +111,10 @@ Rectangle {
 
 
         Rectangle {
-            width: 36; height: 36
-            radius: 18
+            width: 36 * Theme.uiScale; height: 36 * Theme.uiScale
+            radius: 18 * Theme.uiScale
             border.color: Theme.accentPrimary
-            border.width: 1
+            border.width: 1 * Theme.uiScale
             color: (typeof PowerProfiles !== 'undefined' && PowerProfiles.profile === PowerProfile.PowerSaver)
                 ? Theme.accentPrimary
                 : (saveMouseArea.containsMouse ? Theme.accentPrimary : "transparent")
@@ -125,7 +125,7 @@ Rectangle {
                 anchors.centerIn: parent
                 text: "eco"
                 font.family: "Material Symbols Outlined"
-                font.pixelSize: 22
+                font.pixelSize: 22 * Theme.uiScale
                 color: (typeof PowerProfiles !== 'undefined' && PowerProfiles.profile === PowerProfile.PowerSaver) || saveMouseArea.containsMouse
                     ? Theme.backgroundPrimary
                     : Theme.accentPrimary

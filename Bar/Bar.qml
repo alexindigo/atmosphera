@@ -48,7 +48,7 @@ Scope {
                         id: barBackground
 
                         width: parent.width
-                        height: 36
+                        height: 36 * Theme.uiScale
                         color: Theme.backgroundPrimary
                         anchors.top: parent.top
                         anchors.left: parent.left
@@ -59,8 +59,8 @@ Scope {
 
                         anchors.verticalCenter: barBackground.verticalCenter
                         anchors.left: barBackground.left
-                        anchors.leftMargin: 18
-                        spacing: 12
+                        anchors.leftMargin: 18 * Theme.uiScale
+                        spacing: 12 * Theme.uiScale
 
                         SystemInfo {
                             anchors.verticalCenter: parent.verticalCenter
@@ -93,8 +93,8 @@ Scope {
 
                         anchors.verticalCenter: barBackground.verticalCenter
                         anchors.right: barBackground.right
-                        anchors.rightMargin: 18
-                        spacing: 12
+                        anchors.rightMargin: 18 * Theme.uiScale
+                        spacing: 12 * Theme.uiScale
 
                         SystemTray {
                             id: systemTrayModule

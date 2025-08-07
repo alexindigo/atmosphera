@@ -45,7 +45,7 @@ Item {
                 }
             }
             font.family: mouseAreaBluetooth.containsMouse ? "Material Symbols Rounded" : "Material Symbols Outlined"
-            font.pixelSize: 16
+            font.pixelSize: 16 * Theme.uiScale
             color: mouseAreaBluetooth.containsMouse ? Theme.accentPrimary : Theme.textPrimary
         }
 
@@ -125,13 +125,13 @@ Item {
                         Text {
                             text: "bluetooth"
                             font.family: "Material Symbols Outlined"
-                            font.pixelSize: 24
+                            font.pixelSize: 24 * Theme.uiScale
                             color: Theme.accentPrimary
                         }
 
                         Text {
                             text: "Bluetooth Devices"
-                            font.pixelSize: 18
+                            font.pixelSize: 18 * Theme.uiScale
                             font.bold: true
                             color: Theme.textPrimary
                             Layout.fillWidth: true
@@ -180,7 +180,7 @@ Item {
                                     Text {
                                         text: modelData.connected ? "bluetooth" : "bluetooth_disabled"
                                         font.family: "Material Symbols Outlined"
-                                        font.pixelSize: 18
+                                        font.pixelSize: 18 * Theme.uiScale
                                         color: deviceMouseArea.containsMouse ? Theme.backgroundPrimary : (modelData.connected ? Theme.accentPrimary : Theme.textSecondary)
                                     }
 
@@ -199,7 +199,7 @@ Item {
                                                 return deviceName;
                                             }
                                             color: deviceMouseArea.containsMouse ? Theme.backgroundPrimary : (modelData.connected ? Theme.accentPrimary : Theme.textPrimary)
-                                            font.pixelSize: 14
+                                            font.pixelSize: 14 * Theme.uiScale
                                             elide: Text.ElideRight
                                             Layout.fillWidth: true
                                         }
@@ -217,7 +217,7 @@ Item {
                                                 }
                                             }
                                             color: deviceMouseArea.containsMouse ? Theme.backgroundPrimary : (modelData.connected ? Theme.accentPrimary : Theme.textSecondary)
-                                            font.pixelSize: 11
+                                            font.pixelSize: 11 * Theme.uiScale
                                             elide: Text.ElideRight
                                             Layout.fillWidth: true
                                         }
@@ -265,7 +265,7 @@ Item {
 
                         Text {
                             text: "Scanning for devices..."
-                            font.pixelSize: 12
+                            font.pixelSize: 12 * Theme.uiScale
                             color: Theme.textSecondary
                         }
 

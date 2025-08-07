@@ -6,8 +6,8 @@ import "../../Helpers/Weather.js" as WeatherHelper
 
 Rectangle {
     id: weatherRoot
-    width: 440
-    height: 180
+    width: 440 * Theme.uiScale
+    height: 180 * Theme.uiScale
     color: "transparent"
     anchors.horizontalCenterOffset: -2
 
@@ -83,29 +83,29 @@ Rectangle {
         id: card
         anchors.fill: parent
         color: Theme.surface
-        radius: 18
+        radius: 18 * Theme.uiScale
 
         ColumnLayout {
             anchors.fill: parent
-            anchors.margins: 18
-            spacing: 12
+            anchors.margins: 18 * Theme.uiScale
+            spacing: 12 * Theme.uiScale
 
     
             RowLayout {
-                spacing: 12
+                spacing: 12 * Theme.uiScale
                 Layout.fillWidth: true
 
 
                 RowLayout {
-                    spacing: 12
-                    Layout.preferredWidth: 140
+                    spacing: 12 * Theme.uiScale
+                    Layout.preferredWidth: 140 * Theme.uiScale
 
 
                     Text {
                         id: weatherIcon
                         text: isLoading ? "sync" : (weatherData && weatherData.current_weather ? materialSymbolForCode(weatherData.current_weather.weathercode) : "cloud")
                         font.family: "Material Symbols Outlined"
-                        font.pixelSize: 28
+                        font.pixelSize: 28 * Theme.uiScale
                         verticalAlignment: Text.AlignVCenter
                         color: isLoading ? Theme.accentPrimary : Theme.accentPrimary
                         Layout.alignment: Qt.AlignVCenter
@@ -121,28 +121,28 @@ Rectangle {
                     }
 
                     ColumnLayout {
-                        spacing: 2
+                        spacing: 2 * Theme.uiScale
                         RowLayout {
-                            spacing: 4
+                            spacing: 4 * Theme.uiScale
                             Text {
                                 text: city
                                 font.family: Theme.fontFamily
-                                font.pixelSize: 14
+                                font.pixelSize: 14 * Theme.uiScale
                                 font.bold: true
                                 color: Theme.textPrimary
                             }
                             Text {
                                 text: weatherData && weatherData.timezone_abbreviation ? `(${weatherData.timezone_abbreviation})` : ""
                                 font.family: Theme.fontFamily
-                                font.pixelSize: 10
+                                font.pixelSize: 10 * Theme.uiScale
                                 color: Theme.textSecondary
-                                leftPadding: 2
+                                leftPadding: 2 * Theme.uiScale
                             }
                         }
                         Text {
                             text: weatherData && weatherData.current_weather ? ((Settings.settings.useFahrenheit !== undefined ? Settings.settings.useFahrenheit : false) ? `${Math.round(weatherData.current_weather.temperature * 9/5 + 32)}°F` : `${Math.round(weatherData.current_weather.temperature)}°C`) : ((Settings.settings.useFahrenheit !== undefined ? Settings.settings.useFahrenheit : false) ? "--°F" : "--°C")
                             font.family: Theme.fontFamily
-                            font.pixelSize: 24
+                            font.pixelSize: 24 * Theme.uiScale
                             font.bold: true
                             color: Theme.textPrimary
                         }
@@ -157,16 +157,16 @@ Rectangle {
 
             Rectangle {
                 width: parent.width
-                height: 1
+                height: 1 * Theme.uiScale
                 color: Qt.rgba(Theme.textSecondary.g, Theme.textSecondary.g, Theme.textSecondary.b, 0.12)
                 Layout.fillWidth: true
-                Layout.topMargin: 2
-                Layout.bottomMargin: 2
+                Layout.topMargin: 2 * Theme.uiScale
+                Layout.bottomMargin: 2 * Theme.uiScale
             }
 
 
             RowLayout {
-                spacing: 12
+                spacing: 12 * Theme.uiScale
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignHCenter
                 visible: weatherData && weatherData.daily && weatherData.daily.time
@@ -174,13 +174,13 @@ Rectangle {
                 Repeater {
                     model: weatherData && weatherData.daily && weatherData.daily.time ? 5 : 0
                     delegate: ColumnLayout {
-                        spacing: 2
+                        spacing: 2 * Theme.uiScale
                         Layout.alignment: Qt.AlignHCenter
                         Text {
             
                             text: Qt.formatDateTime(new Date(weatherData.daily.time[index]), "ddd")
                             font.family: Theme.fontFamily
-                            font.pixelSize: 12
+                            font.pixelSize: 12 * Theme.uiScale
                             color: Theme.textSecondary
                             horizontalAlignment: Text.AlignHCenter
                             Layout.alignment: Qt.AlignHCenter
@@ -189,7 +189,7 @@ Rectangle {
                 
                             text: materialSymbolForCode(weatherData.daily.weathercode[index])
                             font.family: "Material Symbols Outlined"
-                            font.pixelSize: 22
+                            font.pixelSize: 22 * Theme.uiScale
                             color: Theme.accentPrimary
                             horizontalAlignment: Text.AlignHCenter
                             Layout.alignment: Qt.AlignHCenter
@@ -198,7 +198,7 @@ Rectangle {
                 
                             text: weatherData && weatherData.daily ? ((Settings.settings.useFahrenheit !== undefined ? Settings.settings.useFahrenheit : false) ? `${Math.round(weatherData.daily.temperature_2m_max[index] * 9/5 + 32)}° / ${Math.round(weatherData.daily.temperature_2m_min[index] * 9/5 + 32)}°` : `${Math.round(weatherData.daily.temperature_2m_max[index])}° / ${Math.round(weatherData.daily.temperature_2m_min[index])}°`) : ((Settings.settings.useFahrenheit !== undefined ? Settings.settings.useFahrenheit : false) ? "--° / --°" : "--° / --°")
                             font.family: Theme.fontFamily
-                            font.pixelSize: 12
+                            font.pixelSize: 12 * Theme.uiScale
                             color: Theme.textPrimary
                             horizontalAlignment: Text.AlignHCenter
                             Layout.alignment: Qt.AlignHCenter
@@ -213,7 +213,7 @@ Rectangle {
                 color: Theme.error
                 visible: errorString !== ""
                 font.family: Theme.fontFamily
-                font.pixelSize: 10
+                font.pixelSize: 10 * Theme.uiScale
                 horizontalAlignment: Text.AlignHCenter
                 Layout.alignment: Qt.AlignHCenter
             }
