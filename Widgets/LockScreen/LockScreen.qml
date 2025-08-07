@@ -152,21 +152,21 @@ WlSessionLock {
         ColumnLayout {
             anchors.centerIn: parent
             spacing: 30
-            width: Math.min(parent.width * 0.8, 400 * Theme.uiScale)
+            width: Math.min(parent.width * 0.8, 400 * Theme.scale(Screen))
 
             Rectangle {
                 Layout.alignment: Qt.AlignHCenter
-                width: 80 * Theme.uiScale
-                height: 80 * Theme.uiScale
-                radius: 40 * Theme.uiScale
+                width: 80 * Theme.scale(Screen)
+                height: 80 * Theme.scale(Screen)
+                radius: 40 * Theme.scale(Screen)
                 color: Theme.accentPrimary
 
                 Rectangle {
                     anchors.fill: parent
                     color: "transparent"
-                    radius: 40 * Theme.uiScale
+                    radius: 40 * Theme.scale(Screen)
                     border.color: Theme.accentPrimary
-                    border.width: 3 * Theme.uiScale
+                    border.width: 3 * Theme.scale(Screen)
                     z: 2
                 }
 
@@ -183,28 +183,28 @@ WlSessionLock {
                 Layout.alignment: Qt.AlignHCenter
                 text: Quickshell.env("USER")
                 font.family: Theme.fontFamily
-                font.pixelSize: 24 * Theme.uiScale
+                font.pixelSize: 24 * Theme.scale(Screen)
                 font.weight: Font.Medium
                 color: Theme.textPrimary
             }
 
             Rectangle {
                 Layout.fillWidth: true
-                height: 50 * Theme.uiScale
-                radius: 25 * Theme.uiScale
+                height: 50 * Theme.scale(Screen)
+                radius: 25 * Theme.scale(Screen)
                 color: Theme.surface
                 opacity: passwordInput.activeFocus ? 0.8 : 0.3
                 border.color: passwordInput.activeFocus ? Theme.accentPrimary : Theme.outline
-                border.width: 2 * Theme.uiScale
+                border.width: 2 * Theme.scale(Screen)
 
                 TextInput {
                     id: passwordInput
                     anchors.fill: parent
-                    anchors.margins: 15 * Theme.uiScale
+                    anchors.margins: 15 * Theme.scale(Screen)
                     verticalAlignment: TextInput.AlignVCenter
                     horizontalAlignment: TextInput.AlignHCenter
                     font.family: Theme.fontFamily
-                    font.pixelSize: 16 * Theme.uiScale
+                    font.pixelSize: 16 * Theme.scale(Screen)
                     color: Theme.textPrimary
                     echoMode: TextInput.Password
                     passwordCharacter: "●"
@@ -218,7 +218,7 @@ WlSessionLock {
                         text: "Enter password..."
                         color: Theme.textSecondary
                         font.family: Theme.fontFamily
-                        font.pixelSize: 16 * Theme.uiScale
+                        font.pixelSize: 16 * Theme.scale(Screen)
                         visible: !passwordInput.text && !passwordInput.activeFocus
                     }
 
@@ -238,9 +238,9 @@ WlSessionLock {
                 id: errorMessageRect
                 Layout.alignment: Qt.AlignHCenter
                 width: parent.width * 0.8
-                height: 44 * Theme.uiScale
+                height: 44 * Theme.scale(Screen)
                 color: Theme.overlay
-                radius: 20 * Theme.uiScale
+                radius: 20 * Theme.scale(Screen)
                 visible: lock.errorMessage !== ""
 
                 Text {
@@ -248,7 +248,7 @@ WlSessionLock {
                     text: lock.errorMessage
                     color: Theme.error
                     font.family: Theme.fontFamily
-                    font.pixelSize: 14 * Theme.uiScale
+                    font.pixelSize: 14 * Theme.scale(Screen)
                     opacity: 1
                     visible: lock.errorMessage !== ""
                 }
@@ -256,13 +256,13 @@ WlSessionLock {
 
             Rectangle {
                 Layout.alignment: Qt.AlignHCenter
-                width: 120 * Theme.uiScale
-                height: 44 * Theme.uiScale
-                radius: 20 * Theme.uiScale
+                width: 120 * Theme.scale(Screen)
+                height: 44 * Theme.scale(Screen)
+                radius: 20 * Theme.scale(Screen)
                 opacity: unlockButtonArea.containsMouse ? 0.8 : 0.5
                 color: unlockButtonArea.containsMouse ? Theme.accentPrimary : Theme.surface
                 border.color: Theme.accentPrimary
-                border.width: 2 * Theme.uiScale
+                border.width: 2 * Theme.scale(Screen)
                 enabled: !lock.authenticating
 
                 Text {
@@ -270,7 +270,7 @@ WlSessionLock {
                     anchors.centerIn: parent
                     text: lock.authenticating ? "..." : "Unlock"
                     font.family: Theme.fontFamily
-                    font.pixelSize: 16 * Theme.uiScale
+                    font.pixelSize: 16 * Theme.scale(Screen)
                     font.bold: true
                     color: unlockButtonArea.containsMouse ? Theme.onAccent : Theme.accentPrimary
                 }
@@ -324,12 +324,12 @@ WlSessionLock {
         }
 
         Rectangle {
-            width: infoColumn.width + 32 * Theme.uiScale
-            height: infoColumn.height + 8 * Theme.uiScale
+            width: infoColumn.width + 32 * Theme.scale(Screen)
+            height: infoColumn.height + 8 * Theme.scale(Screen)
             color: (Theme.backgroundPrimary !== undefined && Theme.backgroundPrimary !== null) ? Theme.backgroundPrimary : "#222"
             anchors.horizontalCenter: parent.horizontalCenter
-            bottomLeftRadius: 20 * Theme.uiScale
-            bottomRightRadius: 20 * Theme.uiScale
+            bottomLeftRadius: 20 * Theme.scale(Screen)
+            bottomRightRadius: 20 * Theme.scale(Screen)
 
             ColumnLayout {
                 id: infoColumn
@@ -343,7 +343,7 @@ WlSessionLock {
                     id: timeText
                     text: Qt.formatDateTime(new Date(), "HH:mm")
                     font.family: Theme.fontFamily
-                    font.pixelSize: 48 * Theme.uiScale
+                    font.pixelSize: 48 * Theme.scale(Screen)
                     font.bold: true
                     color: Theme.textPrimary
                     horizontalAlignment: Text.AlignHCenter
@@ -353,7 +353,7 @@ WlSessionLock {
                     id: dateText
                     text: Qt.formatDateTime(new Date(), "dddd, MMMM d")
                     font.family: Theme.fontFamily
-                    font.pixelSize: 16 * Theme.uiScale
+                    font.pixelSize: 16 * Theme.scale(Screen)
                     color: Theme.textSecondary
                     opacity: 0.8
                     horizontalAlignment: Text.AlignHCenter
@@ -369,7 +369,7 @@ WlSessionLock {
                     Text {
                         text: weatherData && weatherData.current_weather ? materialSymbolForCode(weatherData.current_weather.weathercode) : "cloud"
                         font.family: "Material Symbols Outlined"
-                        font.pixelSize: 28 * Theme.uiScale
+                        font.pixelSize: 28 * Theme.scale(Screen)
                         color: Theme.accentPrimary
                         verticalAlignment: Text.AlignVCenter
                     }
@@ -377,7 +377,7 @@ WlSessionLock {
                     Text {
                         text: weatherData && weatherData.current_weather ? ((Settings.settings.useFahrenheit !== undefined ? Settings.settings.useFahrenheit : false) ? `${Math.round(weatherData.current_weather.temperature * 9 / 5 + 32)}°F` : `${Math.round(weatherData.current_weather.temperature)}°C`) : ((Settings.settings.useFahrenheit !== undefined ? Settings.settings.useFahrenheit : false) ? "--°F" : "--°C")
                         font.family: Theme.fontFamily
-                        font.pixelSize: 18 * Theme.uiScale
+                        font.pixelSize: 18 * Theme.scale(Screen)
                         color: Theme.textSecondary
                         verticalAlignment: Text.AlignVCenter
                     }
@@ -388,7 +388,7 @@ WlSessionLock {
                     color: Theme.error
                     visible: weatherError !== ""
                     font.family: Theme.fontFamily
-                    font.pixelSize: 10 * Theme.uiScale
+                    font.pixelSize: 10 * Theme.scale(Screen)
                     horizontalAlignment: Text.AlignHCenter
                     Layout.alignment: Qt.AlignHCenter
                 }
@@ -430,12 +430,12 @@ WlSessionLock {
             spacing: 12
 
             Rectangle {
-                width: 48 * Theme.uiScale
-                height: 48 * Theme.uiScale
-                radius: 24 * Theme.uiScale
+                width: 48 * Theme.scale(Screen)
+                height: 48 * Theme.scale(Screen)
+                radius: 24 * Theme.scale(Screen)
                 color: shutdownArea.containsMouse ? Theme.error : "transparent"
                 border.color: Theme.error
-                border.width: 1 * Theme.uiScale
+                border.width: 1 * Theme.scale(Screen)
 
                 MouseArea {
                     id: shutdownArea
@@ -450,18 +450,18 @@ WlSessionLock {
                     anchors.centerIn: parent
                     text: "power_settings_new"
                     font.family: "Material Symbols Outlined"
-                    font.pixelSize: 24 * Theme.uiScale
+                    font.pixelSize: 24 * Theme.scale(Screen)
                     color: shutdownArea.containsMouse ? Theme.onAccent : Theme.error
                 }
             }
 
             Rectangle {
-                width: 48 * Theme.uiScale
-                height: 48 * Theme.uiScale
-                radius: 24 * Theme.uiScale
+                width: 48 * Theme.scale(Screen)
+                height: 48 * Theme.scale(Screen)
+                radius: 24 * Theme.scale(Screen)
                 color: rebootArea.containsMouse ? Theme.accentPrimary : "transparent"
                 border.color: Theme.accentPrimary
-                border.width: 1 * Theme.uiScale
+                border.width: 1 * Theme.scale(Screen)
 
                 MouseArea {
                     id: rebootArea
@@ -476,18 +476,18 @@ WlSessionLock {
                     anchors.centerIn: parent
                     text: "refresh"
                     font.family: "Material Symbols Outlined"
-                    font.pixelSize: 24 * Theme.uiScale
+                    font.pixelSize: 24 * Theme.scale(Screen)
                     color: rebootArea.containsMouse ? Theme.onAccent : Theme.accentPrimary
                 }
             }
 
             Rectangle {
-                width: 48 * Theme.uiScale
-                height: 48 * Theme.uiScale
-                radius: 24 * Theme.uiScale
+                width: 48 * Theme.scale(Screen)
+                height: 48 * Theme.scale(Screen)
+                radius: 24 * Theme.scale(Screen)
                 color: logoutArea.containsMouse ? Theme.accentSecondary : "transparent"
                 border.color: Theme.accentSecondary
-                border.width: 1 * Theme.uiScale
+                border.width: 1 * Theme.scale(Screen)
 
                 MouseArea {
                     id: logoutArea
@@ -502,7 +502,7 @@ WlSessionLock {
                     anchors.centerIn: parent
                     text: "exit_to_app"
                     font.family: "Material Symbols Outlined"
-                    font.pixelSize: 24 * Theme.uiScale
+                    font.pixelSize: 24 * Theme.scale(Screen)
                     color: logoutArea.containsMouse ? Theme.onAccent : Theme.accentSecondary
                 }
             }

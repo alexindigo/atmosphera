@@ -45,8 +45,8 @@ PanelWithOverlay {
 
         property real slideOffset: width
         property bool isAnimating: false
-        property int leftPadding: 20 * Theme.uiScale
-        property int bottomPadding: 20 * Theme.uiScale
+        property int leftPadding: 20 * Theme.scale(Screen)
+        property int bottomPadding: 20 * Theme.scale(Screen)
         // Recording properties
         property bool isRecording: false
 
@@ -126,8 +126,8 @@ PanelWithOverlay {
             isRecording = false;
         }
 
-        implicitWidth: 500 * Theme.uiScale
-        implicitHeight: 700 * Theme.uiScale
+        implicitWidth: 500 * Theme.scale(Screen)
+        implicitHeight: 700 * Theme.scale(Screen)
         visible: parent.visible
         color: "transparent"
         anchors.top: parent.top
@@ -176,7 +176,7 @@ PanelWithOverlay {
             x: sidebarPopupRect.leftPadding + sidebarPopupRect.slideOffset
             y: 0
             color: Theme.backgroundPrimary
-            bottomLeftRadius: 20 * Theme.uiScale
+            bottomLeftRadius: 20 * Theme.scale(Screen)
             z: 0
 
             Behavior on x {
@@ -211,8 +211,8 @@ PanelWithOverlay {
 
             ColumnLayout {
                 anchors.fill: parent
-                anchors.margins: 20 * Theme.uiScale
-                spacing: 4 * Theme.uiScale
+                anchors.margins: 20 * Theme.scale(Screen)
+                spacing: 4 * Theme.scale(Screen)
 
                 PowerMenu {
                     id: systemWidget
@@ -230,7 +230,7 @@ PanelWithOverlay {
 
                 // Music and System Monitor row
                 RowLayout {
-                    spacing: 12 * Theme.uiScale
+                    spacing: 12 * Theme.scale(Screen)
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignHCenter
 
@@ -248,37 +248,37 @@ PanelWithOverlay {
                 // Power profile, Record and Wallpaper row
                 RowLayout {
                     Layout.alignment: Qt.AlignVCenter
-                    spacing: 10 * Theme.uiScale
-                    Layout.preferredHeight: 80 * Theme.uiScale
+                    spacing: 10 * Theme.scale(Screen)
+                    Layout.preferredHeight: 80 * Theme.scale(Screen)
                     z: 3
 
                     PowerProfile {
                         Layout.alignment: Qt.AlignVCenter
-                        Layout.preferredHeight: 80 * Theme.uiScale
+                        Layout.preferredHeight: 80 * Theme.scale(Screen)
                     }
 
                     // Record and Wallpaper card
                     Rectangle {
-                        Layout.preferredHeight: 80 * Theme.uiScale
-                        Layout.preferredWidth: 140 * Theme.uiScale
+                        Layout.preferredHeight: 80 * Theme.scale(Screen)
+                        Layout.preferredWidth: 140 * Theme.scale(Screen)
                         Layout.fillWidth: false
                         color: Theme.surface
-                        radius: 18 * Theme.uiScale
+                        radius: 18 * Theme.scale(Screen)
 
                         Row {
                             anchors.horizontalCenter: parent.horizontalCenter
                             anchors.verticalCenter: parent.verticalCenter
-                            spacing: 20 * Theme.uiScale
+                            spacing: 20 * Theme.scale(Screen)
 
                             // Record button
                             Rectangle {
                                 id: recordButton
 
-                                width: 36 * Theme.uiScale
-                                height: 36 * Theme.uiScale
-                                radius: 18 * Theme.uiScale
+                                width: 36 * Theme.scale(Screen)
+                                height: 36 * Theme.scale(Screen)
+                                radius: 18 * Theme.scale(Screen)
                                 border.color: Theme.accentPrimary
-                                border.width: 1 * Theme.uiScale
+                                border.width: 1 * Theme.scale(Screen)
                                 color: sidebarPopupRect.isRecording ? Theme.accentPrimary : 
                                        (recordButtonArea.containsMouse ? Theme.accentPrimary : "transparent")
 
@@ -286,7 +286,7 @@ PanelWithOverlay {
                                     anchors.centerIn: parent
                                     text: "photo_camera"
                                     font.family: "Material Symbols Outlined"
-                                    font.pixelSize: 22 * Theme.uiScale
+                                    font.pixelSize: 22 * Theme.scale(Screen)
                                     color: sidebarPopupRect.isRecording || recordButtonArea.containsMouse ? Theme.backgroundPrimary : Theme.accentPrimary
                                     verticalAlignment: Text.AlignVCenter
                                     horizontalAlignment: Text.AlignHCenter
@@ -321,18 +321,18 @@ PanelWithOverlay {
                             Rectangle {
                                 id: wallpaperButton
 
-                                width: 36 * Theme.uiScale
-                                height: 36 * Theme.uiScale
-                                radius: 18 * Theme.uiScale
+                                width: 36 * Theme.scale(Screen)
+                                height: 36 * Theme.scale(Screen)
+                                radius: 18 * Theme.scale(Screen)
                                 border.color: Theme.accentPrimary
-                                border.width: 1 * Theme.uiScale
+                                border.width: 1 * Theme.scale(Screen)
                                 color: wallpaperButtonArea.containsMouse ? Theme.accentPrimary : "transparent"
 
                                 Text {
                                     anchors.centerIn: parent
                                     text: "image"
                                     font.family: "Material Symbols Outlined"
-                                    font.pixelSize: 22 * Theme.uiScale
+                                    font.pixelSize: 22 * Theme.scale(Screen)
                                     color: wallpaperButtonArea.containsMouse ? Theme.backgroundPrimary : Theme.accentPrimary
                                     verticalAlignment: Text.AlignVCenter
                                     horizontalAlignment: Text.AlignHCenter

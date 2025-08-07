@@ -15,10 +15,9 @@ Singleton {
     readonly property real scalingDampening: 0.2
     
     // Automatic scaling based on screen width
-    function screenWidthRatio() {
-        // Get the primary screen width
-        if (Quickshell.screens && Quickshell.screens.length > 0) {
-            var rawRatio = Quickshell.screens[0].width / designScreenWidth
+    function scale(currentScreen) {
+        if (currentScreen !== undefined) {
+            var rawRatio = currentScreen.width / designScreenWidth
             // Apply dampening to reduce scaling for higher resolutions
             return Math.min(2.0, 1.0 + (rawRatio - 1.0) * scalingDampening)
         }
@@ -117,9 +116,6 @@ Singleton {
     property color shadow: applyOpacity(themeData.shadow, "B3")
     property color overlay: applyOpacity(themeData.overlay, "66")
 
-    // Global UI scale factor - automatically calculated based on screen width
-    property real uiScale: screenWidthRatio()
-    
     // Font Properties
     property string fontFamily: "Roboto"         // Family for all text
     

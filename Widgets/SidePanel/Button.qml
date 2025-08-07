@@ -44,7 +44,7 @@ Item {
         id: iconText
         text: "dashboard"
         font.family: isActive ? "Material Symbols Rounded" : "Material Symbols Outlined"
-        font.pixelSize: 16 * Theme.uiScale
+        font.pixelSize: 16 * Theme.scale(Screen)
         color: sidebarPopup.visible ? Theme.accentPrimary : Theme.textPrimary
         anchors.centerIn: parent
         z: 1

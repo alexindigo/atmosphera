@@ -7,20 +7,20 @@ import qs.Settings
 
 Rectangle {
     id: root
-    width: 64 * Theme.uiScale
-    height: 32 * Theme.uiScale
-    radius: 16 * Theme.uiScale
+    width: 64 * Theme.scale(Screen)
+    height: 32 * Theme.scale(Screen)
+    radius: 16 * Theme.scale(Screen)
     color: Theme.surfaceVariant
     border.color: Theme.outline
-    border.width: 1 * Theme.uiScale
+    border.width: 1 * Theme.scale(Screen)
 
     property bool useFahrenheit: Settings.settings.useFahrenheit
     
     Rectangle {
         id: slider
-        width: parent.width / 2 - 4 * Theme.uiScale
-        height: parent.height - 4 * Theme.uiScale
-        radius: 14 * Theme.uiScale
+        width: parent.width / 2 - 4 * Theme.scale(Screen)
+        height: parent.height - 4 * Theme.scale(Screen)
+        radius: 14 * Theme.scale(Screen)
         color: Theme.accentPrimary
         x: 2 + (useFahrenheit ? parent.width / 2 : 0)
         y: 2
@@ -46,7 +46,7 @@ Rectangle {
             Text {
                 anchors.centerIn: parent
                 text: "°C"
-                font.pixelSize: 13 * Theme.uiScale
+                font.pixelSize: 13 * Theme.scale(Screen)
                 font.bold: !useFahrenheit
                 color: !useFahrenheit ? Theme.onAccent : Theme.textPrimary
                 
@@ -74,7 +74,7 @@ Rectangle {
             Text {
                 anchors.centerIn: parent
                 text: "°F"
-                font.pixelSize: 13 * Theme.uiScale
+                font.pixelSize: 13 * Theme.scale(Screen)
                 font.bold: useFahrenheit
                 color: useFahrenheit ? Theme.onAccent : Theme.textPrimary
                 

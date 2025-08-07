@@ -302,7 +302,7 @@ PanelWindow {
                             anchors.verticalCenter: parent.verticalCenter
                             text: "close"
                             font.family: "Material Symbols Outlined"
-                            font.pixelSize: 14 * Theme.uiScale
+                            font.pixelSize: 14 * Theme.scale(Screen)
                             color: Theme.textPrimary
                         }
 
@@ -310,7 +310,7 @@ PanelWindow {
                             anchors.verticalCenter: parent.verticalCenter
                             text: "Close"
                             font.family: Theme.fontFamily
-                            font.pixelSize: 14 * Theme.uiScale
+                            font.pixelSize: 14 * Theme.scale(Screen)
                             color: Theme.textPrimary
                         }
                     }

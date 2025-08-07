@@ -43,10 +43,10 @@ ColumnLayout {
 
             Text {
                 text: "Monitor Selection"
-                font.pixelSize: 18 * Theme.uiScale
+                font.pixelSize: 18 * Theme.scale(Screen)
                 font.bold: true
                 color: Theme.textPrimary
-                Layout.bottomMargin: 16 * Theme.uiScale
+                Layout.bottomMargin: 16 * Theme.scale(Screen)
             }
 
             ColumnLayout {
@@ -65,14 +65,14 @@ ColumnLayout {
 
                         Text {
                             text: "Bar Monitors"
-                            font.pixelSize: 13 * Theme.uiScale
+                            font.pixelSize: 13 * Theme.scale(Screen)
                             font.bold: true
                             color: Theme.textPrimary
                         }
 
                         Text {
                             text: "Select which monitors to display the top panel/bar on"
-                            font.pixelSize: 12 * Theme.uiScale
+                            font.pixelSize: 12 * Theme.scale(Screen)
                             color: Theme.textSecondary
                             wrapMode: Text.WordWrap
                             Layout.fillWidth: true
@@ -112,14 +112,14 @@ ColumnLayout {
                                 Text {
                                     text: barCheckbox.isChecked ? "check" : ""
                                     font.family: "Material Symbols Outlined"
-                                    font.pixelSize: 14 * Theme.uiScale
+                                    font.pixelSize: 14 * Theme.scale(Screen)
                                     color: barCheckbox.isChecked ? Theme.onAccent : Theme.textSecondary
                                     visible: barCheckbox.isChecked
                                 }
 
                                 Text {
                                     text: modelData.name || "Unknown"
-                                    font.pixelSize: 12 * Theme.uiScale
+                                    font.pixelSize: 12 * Theme.scale(Screen)
                                     color: barCheckbox.isChecked ? Theme.onAccent : Theme.textPrimary
                                 }
                             }
@@ -169,14 +169,14 @@ ColumnLayout {
 
                         Text {
                             text: "Dock Monitors"
-                            font.pixelSize: 13 * Theme.uiScale
+                            font.pixelSize: 13 * Theme.scale(Screen)
                             font.bold: true
                             color: Theme.textPrimary
                         }
 
                         Text {
                             text: "Select which monitors to display the application dock on"
-                            font.pixelSize: 12 * Theme.uiScale
+                            font.pixelSize: 12 * Theme.scale(Screen)
                             color: Theme.textSecondary
                             wrapMode: Text.WordWrap
                             Layout.fillWidth: true
@@ -216,14 +216,14 @@ ColumnLayout {
                                 Text {
                                     text: dockCheckbox.isChecked ? "check" : ""
                                     font.family: "Material Symbols Outlined"
-                                    font.pixelSize: 14 * Theme.uiScale
+                                    font.pixelSize: 14 * Theme.scale(Screen)
                                     color: dockCheckbox.isChecked ? Theme.onAccent : Theme.textSecondary
                                     visible: dockCheckbox.isChecked
                                 }
 
                                 Text {
                                     text: modelData.name || "Unknown"
-                                    font.pixelSize: 12 * Theme.uiScale
+                                    font.pixelSize: 12 * Theme.scale(Screen)
                                     color: dockCheckbox.isChecked ? Theme.onAccent : Theme.textPrimary
                                 }
                             }
@@ -276,14 +276,14 @@ ColumnLayout {
 
                         Text {
                             text: "Notification Monitors"
-                            font.pixelSize: 13 * Theme.uiScale
+                            font.pixelSize: 13 * Theme.scale(Screen)
                             font.bold: true
                             color: Theme.textPrimary
                         }
 
                         Text {
                             text: "Select which monitors to display system notifications on"
-                            font.pixelSize: 12 * Theme.uiScale
+                            font.pixelSize: 12 * Theme.scale(Screen)
                             color: Theme.textSecondary
                             wrapMode: Text.WordWrap
                             Layout.fillWidth: true
@@ -323,14 +323,14 @@ ColumnLayout {
                                 Text {
                                     text: notificationCheckbox.isChecked ? "check" : ""
                                     font.family: "Material Symbols Outlined"
-                                    font.pixelSize: 14 * Theme.uiScale
+                                    font.pixelSize: 14 * Theme.scale(Screen)
                                     color: notificationCheckbox.isChecked ? Theme.onAccent : Theme.textSecondary
                                     visible: notificationCheckbox.isChecked
                                 }
 
                                 Text {
                                     text: modelData.name || "Unknown"
-                                    font.pixelSize: 12 * Theme.uiScale
+                                    font.pixelSize: 12 * Theme.scale(Screen)
                                     color: notificationCheckbox.isChecked ? Theme.onAccent : Theme.textPrimary
                                 }
                             }

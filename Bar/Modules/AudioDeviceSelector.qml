@@ -155,7 +155,7 @@ PanelWithOverlay {
                                 Text {
                                     text: "volume_up"
                                     font.family: "Material Symbols Outlined"
-                                    font.pixelSize: 16 * Theme.uiScale
+                                    font.pixelSize: 16 * Theme.scale(Screen)
                                     color: (Pipewire.defaultAudioSink && Pipewire.defaultAudioSink.id === modelData.id) ? Theme.accentPrimary : Theme.textPrimary
                                     Layout.alignment: Qt.AlignVCenter
                                 }
@@ -168,7 +168,7 @@ PanelWithOverlay {
                                     Text {
                                         text: modelData.nickname || modelData.description || modelData.name
                                         font.bold: true
-                                        font.pixelSize: 12 * Theme.uiScale
+                                        font.pixelSize: 12 * Theme.scale(Screen)
                                         color: (Pipewire.defaultAudioSink && Pipewire.defaultAudioSink.id === modelData.id) ? Theme.accentPrimary : Theme.textPrimary
                                         elide: Text.ElideRight
                                         maximumLineCount: 1
@@ -177,7 +177,7 @@ PanelWithOverlay {
 
                                     Text {
                                         text: modelData.description !== modelData.nickname ? modelData.description : ""
-                                        font.pixelSize: 10 * Theme.uiScale
+                                        font.pixelSize: 10 * Theme.scale(Screen)
                                         color: Theme.textSecondary
                                         elide: Text.ElideRight
                                         maximumLineCount: 1
@@ -200,7 +200,7 @@ PanelWithOverlay {
                                         anchors.centerIn: parent
                                         text: "Set"
                                         color: Theme.onAccent
-                                        font.pixelSize: 10 * Theme.uiScale
+                                        font.pixelSize: 10 * Theme.scale(Screen)
                                         font.bold: true
                                     }
 
@@ -216,7 +216,7 @@ PanelWithOverlay {
                                     text: "(Current)"
                                     visible: Pipewire.defaultAudioSink && Pipewire.defaultAudioSink.id === modelData.id
                                     color: Theme.accentPrimary
-                                    font.pixelSize: 10 * Theme.uiScale
+                                    font.pixelSize: 10 * Theme.scale(Screen)
                                     Layout.alignment: Qt.AlignVCenter
                                 }
 
@@ -267,7 +267,7 @@ PanelWithOverlay {
                                 Text {
                                     text: "mic"
                                     font.family: "Material Symbols Outlined"
-                                    font.pixelSize: 16 * Theme.uiScale
+                                    font.pixelSize: 16 * Theme.scale(Screen)
                                     color: (Pipewire.defaultAudioSource && Pipewire.defaultAudioSource.id === modelData.id) ? Theme.accentPrimary : Theme.textPrimary
                                     Layout.alignment: Qt.AlignVCenter
                                 }
@@ -280,7 +280,7 @@ PanelWithOverlay {
                                     Text {
                                         text: modelData.nickname || modelData.description || modelData.name
                                         font.bold: true
-                                        font.pixelSize: 12 * Theme.uiScale
+                                        font.pixelSize: 12 * Theme.scale(Screen)
                                         color: (Pipewire.defaultAudioSource && Pipewire.defaultAudioSource.id === modelData.id) ? Theme.accentPrimary : Theme.textPrimary
                                         elide: Text.ElideRight
                                         maximumLineCount: 1
@@ -289,7 +289,7 @@ PanelWithOverlay {
 
                                     Text {
                                         text: modelData.description !== modelData.nickname ? modelData.description : ""
-                                        font.pixelSize: 10 * Theme.uiScale
+                                        font.pixelSize: 10 * Theme.scale(Screen)
                                         color: Theme.textSecondary
                                         elide: Text.ElideRight
                                         maximumLineCount: 1
@@ -312,7 +312,7 @@ PanelWithOverlay {
                                         anchors.centerIn: parent
                                         text: "Set"
                                         color: Theme.onAccent
-                                        font.pixelSize: 10 * Theme.uiScale
+                                        font.pixelSize: 10 * Theme.scale(Screen)
                                         font.bold: true
                                     }
 
@@ -328,7 +328,7 @@ PanelWithOverlay {
                                     text: "(Current)"
                                     visible: Pipewire.defaultAudioSource && Pipewire.defaultAudioSource.id === modelData.id
                                     color: Theme.accentPrimary
-                                    font.pixelSize: 10 * Theme.uiScale
+                                    font.pixelSize: 10 * Theme.scale(Screen)
                                     Layout.alignment: Qt.AlignVCenter
                                 }
 

@@ -17,7 +17,7 @@ Row {
         Text {
             id: cpuUsageIcon
             font.family: "Material Symbols Outlined"
-            font.pixelSize: Theme.fontSizeBody * Theme.uiScale
+            font.pixelSize: Theme.fontSizeBody * Theme.scale(Screen)
             text: "speed"
             verticalAlignment: Text.AlignVCenter
             anchors.verticalCenter: parent.verticalCenter
@@ -27,7 +27,7 @@ Row {
         Text {
             id: cpuUsageText
             font.family: Theme.fontFamily
-            font.pixelSize: Theme.fontSizeSmall * Theme.uiScale
+            font.pixelSize: Theme.fontSizeSmall * Theme.scale(Screen)
             color: Theme.textPrimary
             text: Sysinfo.cpuUsageStr
             anchors.verticalCenter: parent.verticalCenter
@@ -41,7 +41,7 @@ Row {
         spacing: 3
         Text {
             font.family: "Material Symbols Outlined"
-            font.pixelSize: Theme.fontSizeBody * Theme.uiScale
+            font.pixelSize: Theme.fontSizeBody * Theme.scale(Screen)
             text: "thermometer"
             verticalAlignment: Text.AlignVCenter
             anchors.verticalCenter: parent.verticalCenter
@@ -50,7 +50,7 @@ Row {
 
         Text {
             font.family: Theme.fontFamily
-            font.pixelSize: Theme.fontSizeSmall * Theme.uiScale
+            font.pixelSize: Theme.fontSizeSmall * Theme.scale(Screen)
             color: Theme.textPrimary
             text: Sysinfo.cpuTempStr
             anchors.verticalCenter: parent.verticalCenter
@@ -64,7 +64,7 @@ Row {
         spacing: 3
         Text {
             font.family: "Material Symbols Outlined"
-            font.pixelSize: Theme.fontSizeBody * Theme.uiScale
+            font.pixelSize: Theme.fontSizeBody * Theme.scale(Screen)
             text: "memory"
             color: Theme.accentPrimary
             verticalAlignment: Text.AlignVCenter
@@ -73,7 +73,7 @@ Row {
 
         Text {
             font.family: Theme.fontFamily
-            font.pixelSize: Theme.fontSizeSmall * Theme.uiScale
+            font.pixelSize: Theme.fontSizeSmall * Theme.scale(Screen)
             color: Theme.textPrimary
             text: Sysinfo.memoryUsageStr
             anchors.verticalCenter: parent.verticalCenter

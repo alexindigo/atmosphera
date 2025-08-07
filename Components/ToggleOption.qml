@@ -19,19 +19,19 @@ ColumnLayout {
         Layout.fillWidth: true
 
         ColumnLayout {
-            spacing: 4 * Theme.uiScale
+            spacing: 4 * Theme.scale(Screen)
             Layout.fillWidth: true
 
             Text {
                 text: label
-                font.pixelSize: 13 * Theme.uiScale
+                font.pixelSize: 13 * Theme.scale(Screen)
                 font.bold: true
                 color: Theme.textPrimary
             }
 
             Text {
                 text: description
-                font.pixelSize: 12 * Theme.uiScale
+                font.pixelSize: 12 * Theme.scale(Screen)
                 color: Theme.textSecondary
                 wrapMode: Text.WordWrap
                 Layout.fillWidth: true
@@ -42,20 +42,20 @@ ColumnLayout {
         Rectangle {
             id: switcher
 
-            width: 52 * Theme.uiScale
-            height: 32 * Theme.uiScale
-            radius: 16 * Theme.uiScale
+            width: 52 * Theme.scale(Screen)
+            height: 32 * Theme.scale(Screen)
+            radius: 16 * Theme.scale(Screen)
             color: value ? Theme.accentPrimary : Theme.surfaceVariant
             border.color: value ? Theme.accentPrimary : Theme.outline
-            border.width: 2 * Theme.uiScale
+            border.width: 2 * Theme.scale(Screen)
 
             Rectangle {
-                width: 28 * Theme.uiScale
-                height: 28 * Theme.uiScale
-                radius: 14 * Theme.uiScale
+                width: 28 * Theme.scale(Screen)
+                height: 28 * Theme.scale(Screen)
+                radius: 14 * Theme.scale(Screen)
                 color: Theme.surface
                 border.color: Theme.outline
-                border.width: 1 * Theme.uiScale
+                border.width: 1 * Theme.scale(Screen)
                 y: 2
                 x: value ? switcher.width - width - 2 : 2
 
@@ -82,7 +82,7 @@ ColumnLayout {
     }
 
     Rectangle {
-        height: 8 * Theme.uiScale
+        height: 8 * Theme.scale(Screen)
     }
 
 }

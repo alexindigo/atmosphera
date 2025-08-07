@@ -40,7 +40,7 @@ Item {
         return total;
     }
 
-    height: 36 * Theme.uiScale
+    height: 36 * Theme.scale(Screen)
 
     Component.onCompleted: {
         localWorkspaces.clear();
@@ -115,14 +115,14 @@ Item {
 
     Rectangle {
         id: workspaceBackground
-        width: parent.width - 15 * Theme.uiScale
-        height: 26 * Theme.uiScale
+        width: parent.width - 15 * Theme.scale(Screen)
+        height: 26 * Theme.scale(Screen)
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        radius: 12 * Theme.uiScale
+        radius: 12 * Theme.scale(Screen)
         color: Theme.surfaceVariant
         border.color: Qt.rgba(Theme.textPrimary.r, Theme.textPrimary.g, Theme.textPrimary.b, 0.1)
-        border.width: 1 * Theme.uiScale
+        border.width: 1 * Theme.scale(Screen)
         layer.enabled: true
         layer.effect: MultiEffect {
             shadowColor: "black"
@@ -145,7 +145,7 @@ Item {
             model: localWorkspaces
             Item {
                 id: workspacePillContainer
-                height: 12 * Theme.uiScale
+                height: 12 * Theme.scale(Screen)
                 width: {
                     if (model.isFocused)
                         return 44;
@@ -245,12 +245,12 @@ Item {
                 Rectangle {
                     id: pillBurst
                     anchors.centerIn: workspacePillContainer
-                    width: workspacePillContainer.width + 18 * root.masterProgress * Theme.uiScale
-                    height: workspacePillContainer.height + 18 * root.masterProgress * Theme.uiScale
+                    width: workspacePillContainer.width + 18 * root.masterProgress * Theme.scale(Screen)
+                    height: workspacePillContainer.height + 18 * root.masterProgress * Theme.scale(Screen)
                     radius: width / 2
                     color: "transparent"
                     border.color: root.effectColor
-                    border.width: (2 + 6 * (1.0 - root.masterProgress)) * Theme.uiScale
+                    border.width: (2 + 6 * (1.0 - root.masterProgress)) * Theme.scale(Screen)
                     opacity: root.effectsActive && model.isFocused ? (1.0 - root.masterProgress) * 0.7 : 0
                     visible: root.effectsActive && model.isFocused
                     z: 1

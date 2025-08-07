@@ -30,10 +30,10 @@ ColumnLayout {
 
             Text {
                 text: "Wi-Fi"
-                font.pixelSize: 18 * Theme.uiScale
+                font.pixelSize: 18 * Theme.scale(Screen)
                 font.bold: true
                 color: Theme.textPrimary
-                Layout.bottomMargin: 16 * Theme.uiScale
+                Layout.bottomMargin: 16 * Theme.scale(Screen)
             }
 
             ToggleOption {
@@ -58,10 +58,10 @@ ColumnLayout {
 
             Text {
                 text: "Bluetooth"
-                font.pixelSize: 18 * Theme.uiScale
+                font.pixelSize: 18 * Theme.scale(Screen)
                 font.bold: true
                 color: Theme.textPrimary
-                Layout.bottomMargin: 16 * Theme.uiScale
+                Layout.bottomMargin: 16 * Theme.scale(Screen)
             }
 
             ToggleOption {

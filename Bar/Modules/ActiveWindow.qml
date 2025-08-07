@@ -17,7 +17,7 @@ PanelWindow {
     visible: Settings.settings.showActiveWindow && !activeWindowWrapper.finallyHidden 
     implicitHeight: activeWindowTitleContainer.height
     implicitWidth: 0
-    property int barHeight: 36 * Theme.uiScale
+    property int barHeight: 36 * Theme.scale(Screen)
     color: "transparent"
 
     function getIcon() {
@@ -127,7 +127,7 @@ PanelWindow {
             Text {
                 id: activeWindowTitle
                 text: ToplevelManager?.activeToplevel?.title && ToplevelManager?.activeToplevel?.title.length > 60 ? ToplevelManager?.activeToplevel?.title.substring(0, 60) + "..." : ToplevelManager?.activeToplevel?.title || ""
-                font.pixelSize: 12 * Theme.uiScale
+                font.pixelSize: 12 * Theme.scale(Screen)
                 color: Theme.textSecondary
                 anchors.left: icon.right
                 anchors.leftMargin: Settings.settings.showActiveWindowIcon ? 4 : 6

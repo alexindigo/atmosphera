@@ -42,7 +42,7 @@ Item {
                 }
             }
             font.family: mouseAreaBell.containsMouse ? "Material Symbols Rounded" : "Material Symbols Outlined"
-            font.pixelSize: 16 * Theme.uiScale
+            font.pixelSize: 16 * Theme.scale(Screen)
             font.weight: {
                 if (shell && shell.notificationHistoryWin && shell.notificationHistoryWin.hasUnread) {
                     return Font.Bold;

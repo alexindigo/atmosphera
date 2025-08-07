@@ -10,8 +10,8 @@ import qs.Components
 
 PanelWindow {
     id: settingsModal
-    implicitWidth: 480 * Theme.uiScale
-    implicitHeight: 780 * Theme.uiScale
+    implicitWidth: 480 * Theme.scale(Screen)
+    implicitHeight: 780 * Theme.scale(Screen)
     visible: false
     color: "transparent"
     anchors.top: true

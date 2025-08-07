@@ -44,8 +44,8 @@ Rectangle {
         uptimeProcess.running = true;
     }
 
-    width: 440 * Theme.uiScale
-    height: 80 * Theme.uiScale
+    width: 440 * Theme.scale(Screen)
+    height: 80 * Theme.scale(Screen)
     color: "transparent"
     anchors.horizontalCenterOffset: -2
     onPanelVisibleChanged: {
@@ -62,29 +62,29 @@ Rectangle {
 
         anchors.fill: parent
         color: Theme.surface
-        radius: 18 * Theme.uiScale
+        radius: 18 * Theme.scale(Screen)
 
         ColumnLayout {
             anchors.fill: parent
-            anchors.margins: 18 * Theme.uiScale
-            spacing: 12 * Theme.uiScale
+            anchors.margins: 18 * Theme.scale(Screen)
+            spacing: 12 * Theme.scale(Screen)
 
             RowLayout {
                 Layout.fillWidth: true
-                spacing: 12 * Theme.uiScale
+                spacing: 12 * Theme.scale(Screen)
 
                 Rectangle {
-                    width: 48 * Theme.uiScale
-                    height: 48 * Theme.uiScale
-                    radius: 24 * Theme.uiScale
+                    width: 48 * Theme.scale(Screen)
+                    height: 48 * Theme.scale(Screen)
+                    radius: 24 * Theme.scale(Screen)
                     color: Theme.accentPrimary
 
                     Rectangle {
                         anchors.fill: parent
                         color: "transparent"
-                        radius: 24 * Theme.uiScale
+                        radius: 24 * Theme.scale(Screen)
                         border.color: Theme.accentPrimary
-                        border.width: 2 * Theme.uiScale
+                        border.width: 2 * Theme.scale(Screen)
                         z: 2
                     }
 
@@ -94,13 +94,13 @@ Rectangle {
                 }
 
                 ColumnLayout {
-                    spacing: 4 * Theme.uiScale
+                    spacing: 4 * Theme.scale(Screen)
                     Layout.fillWidth: true
 
                     Text {
                         text: Quickshell.env("USER")
                         font.family: Theme.fontFamily
-                        font.pixelSize: 16 * Theme.uiScale
+                        font.pixelSize: 16 * Theme.scale(Screen)
                         font.bold: true
                         color: Theme.textPrimary
                     }
@@ -108,7 +108,7 @@ Rectangle {
                     Text {
                         text: "System Uptime: " + uptimeText
                         font.family: Theme.fontFamily
-                        font.pixelSize: 12 * Theme.uiScale
+                        font.pixelSize: 12 * Theme.scale(Screen)
                         color: Theme.textSecondary
                     }
 
@@ -121,19 +121,19 @@ Rectangle {
                 Rectangle {
                     id: settingsButton
 
-                    width: 32 * Theme.uiScale
-                    height: 32 * Theme.uiScale
-                    radius: 16 * Theme.uiScale
+                    width: 32 * Theme.scale(Screen)
+                    height: 32 * Theme.scale(Screen)
+                    radius: 16 * Theme.scale(Screen)
                     color: settingsButtonArea.containsMouse || settingsButtonArea.pressed ? Theme.accentPrimary : "transparent"
                     border.color: Theme.accentPrimary
-                    border.width: 1 * Theme.uiScale
+                    border.width: 1 * Theme.scale(Screen)
 
                     Text {
                         anchors.centerIn: parent
                         anchors.horizontalCenterOffset: -1
                         text: "settings"
                         font.family: "Material Symbols Outlined"
-                        font.pixelSize: 16 * Theme.uiScale
+                        font.pixelSize: 16 * Theme.scale(Screen)
                         color: settingsButtonArea.containsMouse || settingsButtonArea.pressed ? Theme.backgroundPrimary : Theme.accentPrimary
                     }
 
@@ -162,18 +162,18 @@ Rectangle {
                 Rectangle {
                     id: systemButton
 
-                    width: 32 * Theme.uiScale
-                    height: 32 * Theme.uiScale
-                    radius: 16 * Theme.uiScale
+                    width: 32 * Theme.scale(Screen)
+                    height: 32 * Theme.scale(Screen)
+                    radius: 16 * Theme.scale(Screen)
                     color: systemButtonArea.containsMouse || systemButtonArea.pressed ? Theme.accentPrimary : "transparent"
                     border.color: Theme.accentPrimary
-                    border.width: 1 * Theme.uiScale
+                    border.width: 1 * Theme.scale(Screen)
 
                     Text {
                         anchors.centerIn: parent
                         text: "power_settings_new"
                         font.family: "Material Symbols Outlined"
-                        font.pixelSize: 16 * Theme.uiScale
+                        font.pixelSize: 16 * Theme.scale(Screen)
                         color: systemButtonArea.containsMouse || systemButtonArea.pressed ? Theme.backgroundPrimary : Theme.accentPrimary
                     }
 
@@ -211,18 +211,18 @@ Rectangle {
         anchors.right: systemButton.right
 
         Rectangle {
-            width: 160 * Theme.uiScale
-            height: 220 * Theme.uiScale
+            width: 160 * Theme.scale(Screen)
+            height: 220 * Theme.scale(Screen)
             color: Theme.surface
-            radius: 8 * Theme.uiScale
+            radius: 8 * Theme.scale(Screen)
             border.color: Theme.outline
-            border.width: 1 * Theme.uiScale
+            border.width: 1 * Theme.scale(Screen)
             visible: true
             z: 9999
             anchors.top: parent.top
             anchors.right: parent.right
-            anchors.rightMargin: 32 * Theme.uiScale
-            anchors.topMargin: systemButton.y + systemButton.height + 48 * Theme.uiScale
+            anchors.rightMargin: 32 * Theme.scale(Screen)
+            anchors.topMargin: systemButton.y + systemButton.height + 48 * Theme.scale(Screen)
 
             // Prevent closing when clicking in the panel bg
             MouseArea {
@@ -231,31 +231,31 @@ Rectangle {
 
             ColumnLayout {
                 anchors.fill: parent
-                anchors.margins: 8 * Theme.uiScale
-                spacing: 4 * Theme.uiScale
+                anchors.margins: 8 * Theme.scale(Screen)
+                spacing: 4 * Theme.scale(Screen)
 
                 Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 36 * Theme.uiScale
-                    radius: 6 * Theme.uiScale
+                    Layout.preferredHeight: 36 * Theme.scale(Screen)
+                    radius: 6 * Theme.scale(Screen)
                     color: lockButtonArea.containsMouse ? Theme.accentPrimary : "transparent"
 
                     RowLayout {
                         anchors.fill: parent
-                        anchors.margins: 12 * Theme.uiScale
-                        spacing: 8 * Theme.uiScale
+                        anchors.margins: 12 * Theme.scale(Screen)
+                        spacing: 8 * Theme.scale(Screen)
 
                         Text {
                             text: "lock_outline"
                             font.family: "Material Symbols Outlined"
-                            font.pixelSize: 16 * Theme.uiScale
+                            font.pixelSize: 16 * Theme.scale(Screen)
                             color: lockButtonArea.containsMouse ? Theme.onAccent : Theme.textPrimary
                         }
 
                         Text {
                             text: "Lock Screen"
                             font.family: Theme.fontFamily
-                            font.pixelSize: 14 * Theme.uiScale
+                            font.pixelSize: 14 * Theme.scale(Screen)
                             color: lockButtonArea.containsMouse ? Theme.onAccent : Theme.textPrimary
                             Layout.fillWidth: true
                         }
@@ -278,25 +278,25 @@ Rectangle {
 
                 Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 36 * Theme.uiScale
-                    radius: 6 * Theme.uiScale
+                    Layout.preferredHeight: 36 * Theme.scale(Screen)
+                    radius: 6 * Theme.scale(Screen)
                     color: suspendButtonArea.containsMouse ? Theme.accentPrimary : "transparent"
 
                     RowLayout {
                         anchors.fill: parent
-                        anchors.margins: 12 * Theme.uiScale
-                        spacing: 8 * Theme.uiScale
+                        anchors.margins: 12 * Theme.scale(Screen)
+                        spacing: 8 * Theme.scale(Screen)
 
                         Text {
                             text: "bedtime"
                             font.family: "Material Symbols Outlined"
-                            font.pixelSize: 16 * Theme.uiScale
+                            font.pixelSize: 16 * Theme.scale(Screen)
                             color: suspendButtonArea.containsMouse ? Theme.onAccent : Theme.textPrimary
                         }
 
                         Text {
                             text: "Suspend"
-                            font.pixelSize: 14 * Theme.uiScale
+                            font.pixelSize: 14 * Theme.scale(Screen)
                             color: suspendButtonArea.containsMouse ? Theme.onAccent : Theme.textPrimary
                             Layout.fillWidth: true
                         }
@@ -319,26 +319,26 @@ Rectangle {
 
                 Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 36 * Theme.uiScale
-                    radius: 6 * Theme.uiScale
+                    Layout.preferredHeight: 36 * Theme.scale(Screen)
+                    radius: 6 * Theme.scale(Screen)
                     color: rebootButtonArea.containsMouse ? Theme.accentPrimary : "transparent"
 
                     RowLayout {
                         anchors.fill: parent
-                        anchors.margins: 12 * Theme.uiScale
-                        spacing: 8 * Theme.uiScale
+                        anchors.margins: 12 * Theme.scale(Screen)
+                        spacing: 8 * Theme.scale(Screen)
 
                         Text {
                             text: "refresh"
                             font.family: "Material Symbols Outlined"
-                            font.pixelSize: 16 * Theme.uiScale
+                            font.pixelSize: 16 * Theme.scale(Screen)
                             color: rebootButtonArea.containsMouse ? Theme.onAccent : Theme.textPrimary
                         }
 
                         Text {
                             text: "Reboot"
                             font.family: Theme.fontFamily
-                            font.pixelSize: 14 * Theme.uiScale
+                            font.pixelSize: 14 * Theme.scale(Screen)
                             color: rebootButtonArea.containsMouse ? Theme.onAccent : Theme.textPrimary
                             Layout.fillWidth: true
                         }
@@ -361,25 +361,25 @@ Rectangle {
 
                 Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 36 * Theme.uiScale
-                    radius: 6 * Theme.uiScale
+                    Layout.preferredHeight: 36 * Theme.scale(Screen)
+                    radius: 6 * Theme.scale(Screen)
                     color: logoutButtonArea.containsMouse ? Theme.accentPrimary : "transparent"
 
                     RowLayout {
                         anchors.fill: parent
-                        anchors.margins: 12 * Theme.uiScale
-                        spacing: 8 * Theme.uiScale
+                        anchors.margins: 12 * Theme.scale(Screen)
+                        spacing: 8 * Theme.scale(Screen)
 
                         Text {
                             text: "exit_to_app"
                             font.family: "Material Symbols Outlined"
-                            font.pixelSize: 16 * Theme.uiScale
+                            font.pixelSize: 16 * Theme.scale(Screen)
                             color: logoutButtonArea.containsMouse ? Theme.onAccent : Theme.textPrimary
                         }
 
                         Text {
                             text: "Logout"
-                            font.pixelSize: 14 * Theme.uiScale
+                            font.pixelSize: 14 * Theme.scale(Screen)
                             color: logoutButtonArea.containsMouse ? Theme.onAccent : Theme.textPrimary
                             Layout.fillWidth: true
                         }
@@ -402,25 +402,25 @@ Rectangle {
 
                 Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 36 * Theme.uiScale
-                    radius: 6 * Theme.uiScale
+                    Layout.preferredHeight: 36 * Theme.scale(Screen)
+                    radius: 6 * Theme.scale(Screen)
                     color: shutdownButtonArea.containsMouse ? Theme.accentPrimary : "transparent"
 
                     RowLayout {
                         anchors.fill: parent
-                        anchors.margins: 12 * Theme.uiScale
-                        spacing: 8 * Theme.uiScale
+                        anchors.margins: 12 * Theme.scale(Screen)
+                        spacing: 8 * Theme.scale(Screen)
 
                         Text {
                             text: "power_settings_new"
                             font.family: "Material Symbols Outlined"
-                            font.pixelSize: 16 * Theme.uiScale
+                            font.pixelSize: 16 * Theme.scale(Screen)
                             color: shutdownButtonArea.containsMouse ? Theme.onAccent : Theme.textPrimary
                         }
 
                         Text {
                             text: "Shutdown"
-                            font.pixelSize: 14 * Theme.uiScale
+                            font.pixelSize: 14 * Theme.scale(Screen)
                             color: shutdownButtonArea.containsMouse ? Theme.onAccent : Theme.textPrimary
                             Layout.fillWidth: true
                         }
