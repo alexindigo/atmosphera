@@ -37,7 +37,7 @@ ColumnLayout {
                 Layout.fillWidth: true
 
                 Text {
-                    text: "Wallpaper"
+                    text: "Wallpaper Settings"
                     font.pixelSize: 18
                     font.bold: true
                     color: Theme.textPrimary
@@ -48,14 +48,7 @@ ColumnLayout {
                 ColumnLayout {
                     spacing: 8
                     Layout.fillWidth: true
-                    Layout.topMargin: 16
-
-                    Text {
-                        text: "Wallpaper Settings"
-                        font.pixelSize: 13
-                        font.bold: true
-                        color: Theme.textPrimary
-                    }
+                    Layout.topMargin: 8
 
                     // Wallpaper Folder
                     ColumnLayout {

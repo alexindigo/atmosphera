@@ -32,7 +32,7 @@ ColumnLayout {
 
 
     ColumnLayout {
-        spacing: 4
+        spacing: 12
         Layout.fillWidth: true
 
         Text {

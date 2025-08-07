@@ -3,18 +3,16 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Bluetooth
-import qs.Settings
 import qs.Components
+import qs.Settings
 
 ColumnLayout {
     id: root
+
     spacing: 24
-
     Component.onCompleted: {
-    
-        Quickshell.execDetached(["nmcli", "-t", "-f", "WIFI", "radio"])
+        Quickshell.execDetached(["nmcli", "-t", "-f", "WIFI", "radio"]);
     }
-
 
     ColumnLayout {
         spacing: 16
@@ -53,20 +51,24 @@ ColumnLayout {
                         wrapMode: Text.WordWrap
                         Layout.fillWidth: true
                     }
+
                 }
 
                 Rectangle {
                     id: wifiSwitch
+
+                    property bool checked: Settings.settings.wifiEnabled
+
                     width: 52
                     height: 32
                     radius: 16
-                    property bool checked: Settings.settings.wifiEnabled
                     color: checked ? Theme.accentPrimary : Theme.surfaceVariant
                     border.color: checked ? Theme.accentPrimary : Theme.outline
                     border.width: 2
 
                     Rectangle {
                         id: wifiThumb
+
                         width: 28
                         height: 28
                         radius: 14
@@ -81,30 +83,36 @@ ColumnLayout {
                                 duration: 200
                                 easing.type: Easing.OutCubic
                             }
+
                         }
+
                     }
 
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
-                            Settings.settings.wifiEnabled = !Settings.settings.wifiEnabled
-                            Quickshell.execDetached(["nmcli", "radio", "wifi", Settings.settings.wifiEnabled ? "on" : "off"])
+                            Settings.settings.wifiEnabled = !Settings.settings.wifiEnabled;
+                            Quickshell.execDetached(["nmcli", "radio", "wifi", Settings.settings.wifiEnabled ? "on" : "off"]);
                         }
                     }
+
                 }
+
             }
+
         }
+
     }
 
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.topMargin: 26
-                Layout.bottomMargin: 18
-                height: 1
-                color: Theme.outline
-                opacity: 0.3
-            }
+    Rectangle {
+        Layout.fillWidth: true
+        Layout.topMargin: 26
+        Layout.bottomMargin: 0
+        height: 1
+        color: Theme.outline
+        opacity: 0.3
+    }
 
     ColumnLayout {
         spacing: 16
@@ -143,20 +151,24 @@ ColumnLayout {
                         wrapMode: Text.WordWrap
                         Layout.fillWidth: true
                     }
+
                 }
 
                 Rectangle {
                     id: bluetoothSwitch
+
+                    property bool checked: Settings.settings.bluetoothEnabled
+
                     width: 52
                     height: 32
                     radius: 16
-                    property bool checked: Settings.settings.bluetoothEnabled
                     color: checked ? Theme.accentPrimary : Theme.surfaceVariant
                     border.color: checked ? Theme.accentPrimary : Theme.outline
                     border.width: 2
 
                     Rectangle {
                         id: bluetoothThumb
+
                         width: 28
                         height: 28
                         radius: 14
@@ -171,7 +183,9 @@ ColumnLayout {
                                 duration: 200
                                 easing.type: Easing.OutCubic
                             }
+
                         }
+
                     }
 
                     MouseArea {
@@ -179,22 +193,26 @@ ColumnLayout {
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
                             if (Bluetooth.defaultAdapter) {
-                                Settings.settings.bluetoothEnabled = !Settings.settings.bluetoothEnabled
-                                Bluetooth.defaultAdapter.enabled = Settings.settings.bluetoothEnabled
-                                if (Bluetooth.defaultAdapter.enabled) {
-                                    Bluetooth.defaultAdapter.discovering = true
-                                }
+                                Settings.settings.bluetoothEnabled = !Settings.settings.bluetoothEnabled;
+                                Bluetooth.defaultAdapter.enabled = Settings.settings.bluetoothEnabled;
+                                if (Bluetooth.defaultAdapter.enabled)
+                                    Bluetooth.defaultAdapter.discovering = true;
+
                             }
                         }
                     }
-                }
-            }
-        }
-    }
 
+                }
+
+            }
+
+        }
+
+    }
 
     Item {
         Layout.fillWidth: true
         Layout.fillHeight: true
     }
+
 }
