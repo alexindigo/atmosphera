@@ -130,11 +130,12 @@ Rectangle {
 
                     Text {
                         anchors.centerIn: parent
-                        anchors.horizontalCenterOffset: -1
+                        anchors.horizontalCenterOffset: -0.5 * Theme.scale(Screen)
                         text: "settings"
                         font.family: "Material Symbols Outlined"
                         font.pixelSize: 16 * Theme.scale(Screen)
                         color: settingsButtonArea.containsMouse || settingsButtonArea.pressed ? Theme.backgroundPrimary : Theme.accentPrimary
+                        font.variableAxes: { "wght": (Font.Normal + Font.Bold) / 2.0 }
                     }
 
                     MouseArea {
@@ -172,10 +173,12 @@ Rectangle {
 
                     Text {
                         anchors.centerIn: parent
+                        anchors.horizontalCenterOffset: -0.5 * Theme.scale(Screen)
                         text: "power_settings_new"
                         font.family: "Material Symbols Outlined"
                         font.pixelSize: 16 * Theme.scale(Screen)
                         color: systemButtonArea.containsMouse || systemButtonArea.pressed ? Theme.backgroundPrimary : Theme.accentPrimary
+                        font.variableAxes: { "wght": (Font.Normal + Font.Bold) / 2.0 }
                     }
 
                     MouseArea {
