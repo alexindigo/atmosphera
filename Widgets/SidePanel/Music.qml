@@ -14,7 +14,7 @@ Rectangle {
         id: card
         anchors.fill: parent
         color: Theme.surface
-        radius: 18
+        radius: 18 * Theme.scale(Screen)
 
         // Show fallback UI if no player is available
         Item {
@@ -67,7 +67,7 @@ Rectangle {
                     color: Theme.surfaceVariant
                     border.color: playerSelector.activeFocus ? Theme.accentPrimary : Theme.outline
                     border.width: 1 * Theme.scale(screen)
-                    radius: 16
+                    radius: 16 * Theme.scale(Screen)
                 }
 
                 contentItem: Text {
@@ -165,7 +165,7 @@ Rectangle {
                         width: 60 * Theme.scale(screen)
                         height: 60 * Theme.scale(screen)
                         anchors.centerIn: parent
-                        radius: 30 // circle
+                        radius: width * 0.5
                         color: Qt.darker(Theme.surface, 1.1)
                         border.color: Qt.rgba(Theme.accentPrimary.r, Theme.accentPrimary.g, Theme.accentPrimary.b, 0.3)
                         border.width: 1 * Theme.scale(screen)
@@ -290,7 +290,7 @@ Rectangle {
                     id: progressHandle
                     width: 12 * Theme.scale(screen)
                     height: 12 * Theme.scale(screen)
-                    radius: 6
+                    radius: width * 0.5
                     color: Theme.accentPrimary
                     border.color: Qt.lighter(Theme.accentPrimary, 1.3)
                     border.width: 1 * Theme.scale(screen)
@@ -340,7 +340,7 @@ Rectangle {
                 Rectangle {
                     width: 28 * Theme.scale(screen)
                     height: 28 * Theme.scale(screen)
-                    radius: 14
+                    radius: width * 0.5
                     color: previousButton.containsMouse ? Qt.rgba(Theme.accentPrimary.r, Theme.accentPrimary.g, Theme.accentPrimary.b, 0.2) : Qt.darker(Theme.surface, 1.1)
                     border.color: Qt.rgba(Theme.accentPrimary.r, Theme.accentPrimary.g, Theme.accentPrimary.b, 0.3)
                     border.width: 1 * Theme.scale(screen)
@@ -367,7 +367,7 @@ Rectangle {
                 Rectangle {
                     width: 36 * Theme.scale(screen)
                     height: 36 * Theme.scale(screen)
-                    radius: 18
+                    radius: width * 0.5
                     color: playButton.containsMouse ? Qt.rgba(Theme.accentPrimary.r, Theme.accentPrimary.g, Theme.accentPrimary.b, 0.2) : Qt.darker(Theme.surface, 1.1)
                     border.color: Theme.accentPrimary
                     border.width: 2 * Theme.scale(screen)
@@ -394,7 +394,7 @@ Rectangle {
                 Rectangle {
                     width: 28 * Theme.scale(screen)
                     height: 28 * Theme.scale(screen)
-                    radius: 14
+                    radius: width * 0.5
                     color: nextButton.containsMouse ? Qt.rgba(Theme.accentPrimary.r, Theme.accentPrimary.g, Theme.accentPrimary.b, 0.2) : Qt.darker(Theme.surface, 1.1)
                     border.color: Qt.rgba(Theme.accentPrimary.r, Theme.accentPrimary.g, Theme.accentPrimary.b, 0.3)
                     border.width: 1 * Theme.scale(screen)

@@ -8,7 +8,7 @@ import qs.Components
 Rectangle {
     id: card
     color: Theme.surface
-    radius: 16
+    radius: 18 * Theme.scale(Screen)
 
     Row {
         anchors.horizontalCenter: parent.horizontalCenter
@@ -18,7 +18,7 @@ Rectangle {
 
         Rectangle {
             width: 36 * Theme.scale(screen); height: 36 * Theme.scale(screen)
-            radius: 16
+            radius: width * 0.5
             border.color: Theme.accentPrimary
             border.width: 1 * Theme.scale(screen)
             color: (typeof PowerProfiles !== 'undefined' && PowerProfiles.profile === PowerProfile.Performance)
@@ -64,7 +64,7 @@ Rectangle {
 
         Rectangle {
             width: 36 * Theme.scale(screen); height: 36 * Theme.scale(screen)
-            radius: 18
+            radius: width * 0.5
             border.color: Theme.accentPrimary
             border.width: 1 * Theme.scale(screen)
             color: (typeof PowerProfiles !== 'undefined' && PowerProfiles.profile === PowerProfile.Balanced)
@@ -110,7 +110,7 @@ Rectangle {
 
         Rectangle {
             width: 36 * Theme.scale(screen); height: 36 * Theme.scale(screen)
-            radius: 18
+            radius: width * 0.5
             border.color: Theme.accentPrimary
             border.width: 1 * Theme.scale(screen)
             color: (typeof PowerProfiles !== 'undefined' && PowerProfiles.profile === PowerProfile.PowerSaver)

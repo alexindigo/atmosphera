@@ -17,7 +17,7 @@ Rectangle {
         id: card
         anchors.fill: parent
         color: Theme.surface
-        radius: 18
+        radius: 18 * Theme.scale(Screen)
 
         ColumnLayout {
             anchors.fill: parent
@@ -28,7 +28,8 @@ Rectangle {
     
             // CPU usage indicator with circular progress bar
             Item {
-                width: 50 * Theme.scale(screen); height: 50 * Theme.scale(screen)
+                width: 50 * Theme.scale(screen)
+                height: 50 * Theme.scale(screen)
                 CircularProgressBar {
                     id: cpuBar
                     progress: Sysinfo.cpuUsage / 100

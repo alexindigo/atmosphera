@@ -82,7 +82,7 @@ Rectangle {
                     Rectangle {
                         anchors.fill: parent
                         color: "transparent"
-                        radius: 24 * Theme.scale(Screen)
+                        radius: width * 0.5
                         border.color: Theme.accentPrimary
                         border.width: 2 * Theme.scale(Screen)
                         z: 2
@@ -123,7 +123,7 @@ Rectangle {
  
                     width: 32 * Theme.scale(Screen)
                     height: 32 * Theme.scale(Screen)
-                    radius: 16 * Theme.scale(Screen)
+                    radius: width * 0.5
                     color: settingsButtonArea.containsMouse || settingsButtonArea.pressed ? Theme.accentPrimary : "transparent"
                     border.color: Theme.accentPrimary
                     border.width: 1 * Theme.scale(Screen)
@@ -166,7 +166,7 @@ Rectangle {
  
                     width: 32 * Theme.scale(Screen)
                     height: 32 * Theme.scale(Screen)
-                    radius: width / 2
+                    radius: width * 0.5
                     color: systemButtonArea.containsMouse || systemButtonArea.pressed ? Theme.accentPrimary : "transparent"
                     border.color: Theme.accentPrimary
                     border.width: 1 * Theme.scale(Screen)
