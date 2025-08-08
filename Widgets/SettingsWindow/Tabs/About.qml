@@ -168,19 +168,19 @@ ColumnLayout {
 
             Text {
                 text: "Noctalia: quiet by design"
-                font.pixelSize: 24 * Theme.scale(Screen)
+                font.pixelSize: 24 * Theme.scale(screen)
                 font.bold: true
                 color: Theme.textPrimary
                 Layout.alignment: Qt.AlignCenter
-                Layout.bottomMargin: 8 * Theme.scale(Screen)
+                Layout.bottomMargin: 8 * Theme.scale(screen)
             }
 
             Text {
                 text: "It may just be another quickshell setup but it won't get in your way."
-                font.pixelSize: 14 * Theme.scale(Screen)
+                font.pixelSize: 14 * Theme.scale(screen)
                 color: Theme.textSecondary
                 Layout.alignment: Qt.AlignCenter
-                Layout.bottomMargin: 16 * Theme.scale(Screen)
+                Layout.bottomMargin: 16 * Theme.scale(screen)
             }
 
             GridLayout {
@@ -191,28 +191,28 @@ ColumnLayout {
 
                 Text {
                     text: "Latest Version:"
-                    font.pixelSize: 16 * Theme.scale(Screen)
+                    font.pixelSize: 16 * Theme.scale(screen)
                     color: Theme.textSecondary
                     Layout.alignment: Qt.AlignRight
                 }
 
                 Text {
                     text: root.latestVersion
-                    font.pixelSize: 16 * Theme.scale(Screen)
+                    font.pixelSize: 16 * Theme.scale(screen)
                     color: Theme.textPrimary
                     font.bold: true
                 }
 
                 Text {
                     text: "Installed Version:"
-                    font.pixelSize: 16 * Theme.scale(Screen)
+                    font.pixelSize: 16 * Theme.scale(screen)
                     color: Theme.textSecondary
                     Layout.alignment: Qt.AlignRight
                 }
 
                 Text {
                     text: root.currentVersion
-                    font.pixelSize: 16 * Theme.scale(Screen)
+                    font.pixelSize: 16 * Theme.scale(screen)
                     color: Theme.textPrimary
                     font.bold: true
                 }
@@ -254,7 +254,7 @@ ColumnLayout {
                     Text {
                         text: "system_update"
                         font.family: "Material Symbols Outlined"
-                        font.pixelSize: 18 * Theme.scale(Screen)
+                        font.pixelSize: 18 * Theme.scale(screen)
                         color: updateArea.containsMouse ? Theme.backgroundPrimary : Theme.accentPrimary
                     }
 
@@ -262,7 +262,7 @@ ColumnLayout {
                         id: updateText
 
                         text: "Download latest release"
-                        font.pixelSize: 14 * Theme.scale(Screen)
+                        font.pixelSize: 14 * Theme.scale(screen)
                         color: updateArea.containsMouse ? Theme.backgroundPrimary : Theme.accentPrimary
                     }
 
@@ -305,14 +305,14 @@ ColumnLayout {
 
                     Text {
                         text: "Contributors"
-                        font.pixelSize: 18 * Theme.scale(Screen)
+                        font.pixelSize: 18 * Theme.scale(screen)
                         font.bold: true
                         color: Theme.textPrimary
                     }
 
                     Text {
                         text: "(" + root.contributors.length + ")"
-                        font.pixelSize: 14 * Theme.scale(Screen)
+                        font.pixelSize: 14 * Theme.scale(screen)
                         color: Theme.textSecondary
                     }
 
@@ -385,7 +385,7 @@ ColumnLayout {
                                     anchors.centerIn: parent
                                     text: "person"
                                     font.family: "Material Symbols Outlined"
-                                    font.pixelSize: 24 * Theme.scale(Screen)
+                                    font.pixelSize: 24 * Theme.scale(screen)
                                     color: contributorArea.containsMouse ? Theme.backgroundPrimary : Theme.textPrimary
                                     visible: !avatarImage.source || avatarImage.status !== Image.Ready
                                 }
@@ -399,7 +399,7 @@ ColumnLayout {
 
                                 Text {
                                     text: modelData.login || "Unknown"
-                                    font.pixelSize: 13 * Theme.scale(Screen)
+                                    font.pixelSize: 13 * Theme.scale(screen)
                                     color: contributorArea.containsMouse ? Theme.backgroundPrimary : Theme.textPrimary
                                     elide: Text.ElideRight
                                     Layout.fillWidth: true
@@ -407,7 +407,7 @@ ColumnLayout {
 
                                 Text {
                                     text: (modelData.contributions || 0) + " commits"
-                                    font.pixelSize: 11 * Theme.scale(Screen)
+                                    font.pixelSize: 11 * Theme.scale(screen)
                                     color: contributorArea.containsMouse ? Theme.backgroundPrimary : Theme.textSecondary
                                 }
 

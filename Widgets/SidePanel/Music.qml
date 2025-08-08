@@ -8,15 +8,13 @@ import qs.Services
 
 Rectangle {
     id: musicCard
-    width: 360 * Theme.scale(Screen)
-    height: 250 * Theme.scale(Screen)
     color: "transparent"
 
     Rectangle {
         id: card
         anchors.fill: parent
         color: Theme.surface
-        radius: 18 * Theme.scale(Screen)
+        radius: 18
 
         // Show fallback UI if no player is available
         Item {
@@ -26,12 +24,12 @@ Rectangle {
 
             ColumnLayout {
                 anchors.centerIn: parent
-                spacing: 16 * Theme.scale(Screen)
+                spacing: 16 * Theme.scale(screen)
 
                 Text {
                     text: "music_note"
                     font.family: "Material Symbols Outlined"
-                    font.pixelSize: Theme.fontSizeHeader * Theme.scale(Screen)
+                    font.pixelSize: Theme.fontSizeHeader * Theme.scale(screen)
                     color: Qt.rgba(Theme.textPrimary.r, Theme.textPrimary.g, Theme.textPrimary.b, 0.3)
                     Layout.alignment: Qt.AlignHCenter
                 }
@@ -40,7 +38,7 @@ Rectangle {
                     text: MusicManager.hasPlayer ? "No controllable player selected" : "No music player detected"
                     color: Qt.rgba(Theme.textPrimary.r, Theme.textPrimary.g, Theme.textPrimary.b, 0.6)
                     font.family: Theme.fontFamily
-                    font.pixelSize: Theme.fontSizeSmall * Theme.scale(Screen)
+                    font.pixelSize: Theme.fontSizeSmall * Theme.scale(screen)
                     Layout.alignment: Qt.AlignHCenter
                 }
             }
@@ -49,45 +47,45 @@ Rectangle {
         // Main player UI
         ColumnLayout {
             anchors.fill: parent
-            anchors.margins: 18 * Theme.scale(Screen)
-            spacing: 12 * Theme.scale(Screen)
+            anchors.margins: 18 * Theme.scale(screen)
+            spacing: 12 * Theme.scale(screen)
             visible: !!MusicManager.currentPlayer
 
             // Player selector
             ComboBox {
                 id: playerSelector
                 Layout.fillWidth: true
-                Layout.preferredHeight: 40 * Theme.scale(Screen)
+                Layout.preferredHeight: 40 * Theme.scale(screen)
                 visible: MusicManager.getAvailablePlayers().length > 1
                 model: MusicManager.getAvailablePlayers()
                 textRole: "identity"
                 currentIndex: MusicManager.selectedPlayerIndex
 
                 background: Rectangle {
-                    implicitWidth: 120 * Theme.scale(Screen)
-                    implicitHeight: 40 * Theme.scale(Screen)
+                    implicitWidth: 120 * Theme.scale(screen)
+                    implicitHeight: 40 * Theme.scale(screen)
                     color: Theme.surfaceVariant
                     border.color: playerSelector.activeFocus ? Theme.accentPrimary : Theme.outline
-                    border.width: 1 * Theme.scale(Screen)
-                    radius: 16 * Theme.scale(Screen)
+                    border.width: 1 * Theme.scale(screen)
+                    radius: 16
                 }
 
                 contentItem: Text {
-                    leftPadding: 12 * Theme.scale(Screen)
+                    leftPadding: 12 * Theme.scale(screen)
                     rightPadding: playerSelector.indicator.width + playerSelector.spacing
                     text: playerSelector.displayText
-                    font.pixelSize: 13 * Theme.scale(Screen)
+                    font.pixelSize: 13 * Theme.scale(screen)
                     color: Theme.textPrimary
                     verticalAlignment: Text.AlignVCenter
                     elide: Text.ElideRight
                 }
 
                 indicator: Text {
-                    x: playerSelector.width - width - 12 * Theme.scale(Screen)
+                    x: playerSelector.width - width - 12 * Theme.scale(screen)
                     y: playerSelector.topPadding + (playerSelector.availableHeight - height) / 2
                     text: "arrow_drop_down"
                     font.family: "Material Symbols Outlined"
-                    font.pixelSize: 24 * Theme.scale(Screen)
+                    font.pixelSize: 24 * Theme.scale(screen)
                     color: Theme.textPrimary
                 }
 
@@ -95,7 +93,7 @@ Rectangle {
                     y: playerSelector.height
                     width: playerSelector.width
                     implicitHeight: contentItem.implicitHeight
-                    padding: 1 * Theme.scale(Screen)
+                    padding: 1 * Theme.scale(screen)
 
                     contentItem: ListView {
                         clip: true
@@ -109,8 +107,8 @@ Rectangle {
                     background: Rectangle {
                         color: Theme.surfaceVariant
                         border.color: Theme.outline
-                        border.width: 1 * Theme.scale(Screen)
-                        radius: 16 * Theme.scale(Screen)
+                        border.width: 1 * Theme.scale(screen)
+                        radius: 16
                     }
                 }
 
@@ -118,7 +116,7 @@ Rectangle {
                     width: playerSelector.width
                     contentItem: Text {
                         text: modelData.identity
-                        font.pixelSize: 13 * Theme.scale(Screen)
+                        font.pixelSize: 13 * Theme.scale(screen)
                         color: Theme.textPrimary
                         verticalAlignment: Text.AlignVCenter
                         elide: Text.ElideRight
@@ -138,14 +136,14 @@ Rectangle {
 
             // Album art with spectrum visualizer
             RowLayout {
-                spacing: 12 * Theme.scale(Screen)
+                spacing: 12 * Theme.scale(screen)
                 Layout.fillWidth: true
 
                 // Album art container with circular spectrum overlay
                 Item {
                     id: albumArtContainer
-                    width: 96 * Theme.scale(Screen)
-                    height: 96 * Theme.scale(Screen) // enough for spectrum and art (will adjust if needed)
+                    width: 96 * Theme.scale(screen)
+                    height: 96 * Theme.scale(screen) // enough for spectrum and art (will adjust if needed)
                     Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
 
                     // Circular spectrum visualizer around album art
@@ -153,36 +151,36 @@ Rectangle {
                         id: spectrum
                         values: MusicManager.cavaValues
                         anchors.centerIn: parent
-                        innerRadius: 30 * Theme.scale(Screen) // Position just outside 60x60 album art
-                        outerRadius: 48 * Theme.scale(Screen) // Extend bars outward from album art
+                        innerRadius: 30 * Theme.scale(screen) // Position just outside 60x60 album art
+                        outerRadius: 48 * Theme.scale(screen) // Extend bars outward from album art
                         fillColor: Theme.accentPrimary
                         strokeColor: Theme.accentPrimary
-                        strokeWidth: 0 * Theme.scale(Screen)
+                        strokeWidth: 0 * Theme.scale(screen)
                         z: 0
                     }
 
                     // Album art image
                     Rectangle {
                         id: albumArtwork
-                        width: 60 * Theme.scale(Screen)
-                        height: 60 * Theme.scale(Screen)
+                        width: 60 * Theme.scale(screen)
+                        height: 60 * Theme.scale(screen)
                         anchors.centerIn: parent
-                        radius: 30 * Theme.scale(Screen) // circle
+                        radius: 30 // circle
                         color: Qt.darker(Theme.surface, 1.1)
                         border.color: Qt.rgba(Theme.accentPrimary.r, Theme.accentPrimary.g, Theme.accentPrimary.b, 0.3)
-                        border.width: 1 * Theme.scale(Screen)
+                        border.width: 1 * Theme.scale(screen)
 
                         Image {
                             id: albumArt
                             anchors.fill: parent
-                            anchors.margins: 2 * Theme.scale(Screen)
+                            anchors.margins: 2 * Theme.scale(screen)
                             fillMode: Image.PreserveAspectCrop
                             smooth: true
                             mipmap: true
                             cache: false
                             asynchronous: true
-                            sourceSize.width: 60 * Theme.scale(Screen)
-                            sourceSize.height: 60 * Theme.scale(Screen)
+                            sourceSize.width: 60 * Theme.scale(screen)
+                            sourceSize.height: 60 * Theme.scale(screen)
                             source: MusicManager.trackArtUrl
                             visible: source.toString() !== ""
 
@@ -213,7 +211,7 @@ Rectangle {
                             anchors.centerIn: parent
                             text: "album"
                             font.family: "Material Symbols Outlined"
-                            font.pixelSize: Theme.fontSizeBody * Theme.scale(Screen)
+                            font.pixelSize: Theme.fontSizeBody * Theme.scale(screen)
                             color: Qt.rgba(Theme.textPrimary.r, Theme.textPrimary.g, Theme.textPrimary.b, 0.4)
                             visible: !albumArt.visible
                         }
@@ -223,13 +221,13 @@ Rectangle {
                 // Track metadata
                 ColumnLayout {
                     Layout.fillWidth: true
-                    spacing: 4 * Theme.scale(Screen)
+                    spacing: 4 * Theme.scale(screen)
 
                     Text {
                         text: MusicManager.trackTitle
                         color: Theme.textPrimary
                         font.family: Theme.fontFamily
-                        font.pixelSize: Theme.fontSizeSmall * Theme.scale(Screen)
+                        font.pixelSize: Theme.fontSizeSmall * Theme.scale(screen)
                         font.bold: true
                         elide: Text.ElideRight
                         wrapMode: Text.Wrap
@@ -241,7 +239,7 @@ Rectangle {
                         text: MusicManager.trackArtist
                         color: Qt.rgba(Theme.textPrimary.r, Theme.textPrimary.g, Theme.textPrimary.b, 0.8)
                         font.family: Theme.fontFamily
-                        font.pixelSize: Theme.fontSizeCaption * Theme.scale(Screen)
+                        font.pixelSize: Theme.fontSizeCaption * Theme.scale(screen)
                         elide: Text.ElideRight
                         Layout.fillWidth: true
                     }
@@ -250,7 +248,7 @@ Rectangle {
                         text: MusicManager.trackAlbum
                         color: Qt.rgba(Theme.textPrimary.r, Theme.textPrimary.g, Theme.textPrimary.b, 0.6)
                         font.family: Theme.fontFamily
-                        font.pixelSize: Theme.fontSizeCaption * Theme.scale(Screen)
+                        font.pixelSize: Theme.fontSizeCaption * Theme.scale(screen)
                         elide: Text.ElideRight
                         Layout.fillWidth: true
                     }
@@ -261,8 +259,8 @@ Rectangle {
             Rectangle {
                 id: progressBarBackground
                 width: parent.width
-                height: 6 * Theme.scale(Screen)
-                radius: 3 * Theme.scale(Screen)
+                height: 6 * Theme.scale(screen)
+                radius: 3
                 color: Qt.rgba(Theme.textPrimary.r, Theme.textPrimary.g, Theme.textPrimary.b, 0.15)
                 Layout.fillWidth: true
 
@@ -290,12 +288,12 @@ Rectangle {
                 // Interactive progress handle
                 Rectangle {
                     id: progressHandle
-                    width: 12 * Theme.scale(Screen)
-                    height: 12 * Theme.scale(Screen)
-                    radius: 6 * Theme.scale(Screen)
+                    width: 12 * Theme.scale(screen)
+                    height: 12 * Theme.scale(screen)
+                    radius: 6
                     color: Theme.accentPrimary
                     border.color: Qt.lighter(Theme.accentPrimary, 1.3)
-                    border.width: 1 * Theme.scale(Screen)
+                    border.width: 1 * Theme.scale(screen)
 
                     x: Math.max(0, Math.min(parent.width - width, progressFill.width - width / 2))
                     anchors.verticalCenter: parent.verticalCenter
@@ -334,18 +332,18 @@ Rectangle {
 
             // Media controls
             RowLayout {
-                spacing: 4 * Theme.scale(Screen)
+                spacing: 4 * Theme.scale(screen)
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignHCenter
 
                 // Previous button
                 Rectangle {
-                    width: 28 * Theme.scale(Screen)
-                    height: 28 * Theme.scale(Screen)
-                    radius: 14 * Theme.scale(Screen)
+                    width: 28 * Theme.scale(screen)
+                    height: 28 * Theme.scale(screen)
+                    radius: 14
                     color: previousButton.containsMouse ? Qt.rgba(Theme.accentPrimary.r, Theme.accentPrimary.g, Theme.accentPrimary.b, 0.2) : Qt.darker(Theme.surface, 1.1)
                     border.color: Qt.rgba(Theme.accentPrimary.r, Theme.accentPrimary.g, Theme.accentPrimary.b, 0.3)
-                    border.width: 1 * Theme.scale(Screen)
+                    border.width: 1 * Theme.scale(screen)
 
                     MouseArea {
                         id: previousButton
@@ -360,19 +358,19 @@ Rectangle {
                         anchors.centerIn: parent
                         text: "skip_previous"
                         font.family: "Material Symbols Outlined"
-                        font.pixelSize: Theme.fontSizeCaption * Theme.scale(Screen)
+                        font.pixelSize: Theme.fontSizeCaption * Theme.scale(screen)
                         color: previousButton.enabled ? Theme.accentPrimary : Qt.rgba(Theme.textPrimary.r, Theme.textPrimary.g, Theme.textPrimary.b, 0.3)
                     }
                 }
 
                 // Play/Pause button
                 Rectangle {
-                    width: 36 * Theme.scale(Screen)
-                    height: 36 * Theme.scale(Screen)
-                    radius: 18 * Theme.scale(Screen)
+                    width: 36 * Theme.scale(screen)
+                    height: 36 * Theme.scale(screen)
+                    radius: 18
                     color: playButton.containsMouse ? Qt.rgba(Theme.accentPrimary.r, Theme.accentPrimary.g, Theme.accentPrimary.b, 0.2) : Qt.darker(Theme.surface, 1.1)
                     border.color: Theme.accentPrimary
-                    border.width: 2 * Theme.scale(Screen)
+                    border.width: 2 * Theme.scale(screen)
 
                     MouseArea {
                         id: playButton
@@ -387,19 +385,19 @@ Rectangle {
                         anchors.centerIn: parent
                         text: MusicManager.isPlaying ? "pause" : "play_arrow"
                         font.family: "Material Symbols Outlined"
-                        font.pixelSize: Theme.fontSizeBody * Theme.scale(Screen)
+                        font.pixelSize: Theme.fontSizeBody * Theme.scale(screen)
                         color: playButton.enabled ? Theme.accentPrimary : Qt.rgba(Theme.textPrimary.r, Theme.textPrimary.g, Theme.textPrimary.b, 0.3)
                     }
                 }
 
                 // Next button
                 Rectangle {
-                    width: 28 * Theme.scale(Screen)
-                    height: 28 * Theme.scale(Screen)
-                    radius: 14 * Theme.scale(Screen)
+                    width: 28 * Theme.scale(screen)
+                    height: 28 * Theme.scale(screen)
+                    radius: 14
                     color: nextButton.containsMouse ? Qt.rgba(Theme.accentPrimary.r, Theme.accentPrimary.g, Theme.accentPrimary.b, 0.2) : Qt.darker(Theme.surface, 1.1)
                     border.color: Qt.rgba(Theme.accentPrimary.r, Theme.accentPrimary.g, Theme.accentPrimary.b, 0.3)
-                    border.width: 1 * Theme.scale(Screen)
+                    border.width: 1 * Theme.scale(screen)
 
                     MouseArea {
                         id: nextButton
@@ -414,7 +412,7 @@ Rectangle {
                         anchors.centerIn: parent
                         text: "skip_next"
                         font.family: "Material Symbols Outlined"
-                        font.pixelSize: Theme.fontSizeCaption * Theme.scale(Screen)
+                        font.pixelSize: Theme.fontSizeCaption * Theme.scale(screen)
                         color: nextButton.enabled ? Theme.accentPrimary : Qt.rgba(Theme.textPrimary.r, Theme.textPrimary.g, Theme.textPrimary.b, 0.3)
                     }
                 }

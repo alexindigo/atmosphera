@@ -43,7 +43,7 @@ Item {
                 width: 20 * Theme.scale(Screen)
                 height: 20 * Theme.scale(Screen)
                 anchors.centerIn: parent
-                radius: 12 * Theme.scale(Screen) // circle
+                radius: 12 // circle
                 color: Qt.darker(Theme.surface, 1.1)
                 border.color: Qt.rgba(Theme.accentPrimary.r, Theme.accentPrimary.g, Theme.accentPrimary.b, 0.3)
                 border.width: 1

@@ -74,7 +74,7 @@ Rectangle {
                         id: wallpaperGrid
 
                         anchors.fill: parent
-                        cellWidth: Math.max(120 * Theme.scale(Screen), (parent.width / 3) - 12 * Theme.scale(Screen))
+                        cellWidth: Math.max(120 * Theme.scale(screen), (parent.width / 3) - 12 * Theme.scale(screen))
                         cellHeight: cellWidth * 0.6
                         model: WallpaperManager.wallpaperList
                         cacheBuffer: 64
@@ -84,8 +84,8 @@ Rectangle {
                         bottomMargin: 8
 
                         delegate: Item {
-                            width: wallpaperGrid.cellWidth - 8 * Theme.scale(Screen)
-                            height: wallpaperGrid.cellHeight - 8 * Theme.scale(Screen)
+                            width: wallpaperGrid.cellWidth - 8 * Theme.scale(screen)
+                            height: wallpaperGrid.cellHeight - 8 * Theme.scale(screen)
 
                             Rectangle {
                                 id: wallpaperItem
@@ -93,9 +93,9 @@ Rectangle {
                                 anchors.fill: parent
                                 anchors.margins: 3
                                 color: Theme.surface
-                                radius: 12 * Theme.scale(Screen)
+                                radius: 12
                                 border.color: Settings.settings.currentWallpaper === modelData ? Theme.accentPrimary : Theme.outline
-                                border.width: 2 * Theme.scale(Screen)
+                                border.width: 2 * Theme.scale(screen)
 
                                 Image {
                                     id: wallpaperImage
@@ -108,8 +108,8 @@ Rectangle {
                                     cache: true
                                     smooth: true
                                     mipmap: true
-                                    sourceSize.width: Math.min(width, 480 * Theme.scale(Screen))
-                                    sourceSize.height: Math.min(height, 270 * Theme.scale(Screen))
+                                    sourceSize.width: Math.min(width, 480 * Theme.scale(screen))
+                                    sourceSize.height: Math.min(height, 270 * Theme.scale(screen))
                                     opacity: (wallpaperImage.status == Image.Ready) ? 1 : 0
                                     // Apply circular mask for rounded corners
                                     layer.enabled: true
@@ -139,7 +139,7 @@ Rectangle {
                                     Rectangle {
                                         width: wallpaperImage.width
                                         height: wallpaperImage.height
-                                        radius: 12 * Theme.scale(Screen)
+                                        radius: 12
                                     }
 
                                 }

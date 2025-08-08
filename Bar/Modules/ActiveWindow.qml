@@ -128,7 +128,7 @@ PanelWindow {
             Text {
                 id: activeWindowTitle
                 text: ToplevelManager?.activeToplevel?.title && ToplevelManager?.activeToplevel?.title.length > 60 ? ToplevelManager?.activeToplevel?.title.substring(0, 60) + "..." : ToplevelManager?.activeToplevel?.title || ""
-                font.pixelSize: 12 * Theme.scale(Screen)
+                font.pixelSize: 12 * Theme.scale(screen)
                 color: Theme.textSecondary
                 anchors.left: icon.right
                 anchors.leftMargin: Settings.settings.showActiveWindowIcon ? 4 : 6

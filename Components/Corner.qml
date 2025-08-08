@@ -6,11 +6,11 @@ Shape {
     id: root
     
     property string position: "topleft"  // Corner position: topleft/topright/bottomleft/bottomright
-    property real size: 1.0 * Theme.scale(Screen)              // Scale multiplier for entire corner
+    property real size: 1.0 * Theme.scale(screen)              // Scale multiplier for entire corner
     property int concaveWidth: 100 * size
     property int concaveHeight: 60 * size
-    property int offsetX: -20 * Theme.scale(Screen)
-    property int offsetY: -20 * Theme.scale(Screen)
+    property int offsetX: -20 * Theme.scale(screen)
+    property int offsetY: -20 * Theme.scale(screen)
     property color fillColor: Theme.accentPrimary
     property int arcRadius: 20 * size
 

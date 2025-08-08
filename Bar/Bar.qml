@@ -47,19 +47,20 @@ Scope {
                         id: barBackground
 
                         width: parent.width
-                        height: 36 * Theme.scale(Screen)
+                        height: 36 * Theme.scale(panel.screen)
                         color: Theme.backgroundPrimary
                         anchors.top: parent.top
                         anchors.left: parent.left
                     }
+
 
                     Row {
                         id: leftWidgetsRow
 
                         anchors.verticalCenter: barBackground.verticalCenter
                         anchors.left: barBackground.left
-                        anchors.leftMargin: 18 * Theme.scale(Screen)
-                        spacing: 12 * Theme.scale(Screen)
+                        anchors.leftMargin: 18 * Theme.scale(panel.screen)
+                        spacing: 12 * Theme.scale(panel.screen)
 
                         SystemInfo {
                             anchors.verticalCenter: parent.verticalCenter
@@ -92,8 +93,8 @@ Scope {
 
                         anchors.verticalCenter: barBackground.verticalCenter
                         anchors.right: barBackground.right
-                        anchors.rightMargin: 18 * Theme.scale(Screen)
-                        spacing: 12 * Theme.scale(Screen)
+                        anchors.rightMargin: 18 * Theme.scale(panel.screen)
+                        spacing: 12 * Theme.scale(panel.screen)
 
                         SystemTray {
                             id: systemTrayModule

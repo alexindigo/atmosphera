@@ -29,10 +29,10 @@ ColumnLayout {
 
             Text {
                 text: "Time"
-                font.pixelSize: 18 * Theme.scale(Screen)
+                font.pixelSize: 18 * Theme.scale(screen)
                 font.bold: true
                 color: Theme.textPrimary
-                Layout.bottomMargin: 16 * Theme.scale(Screen)
+                Layout.bottomMargin: 16 * Theme.scale(screen)
             }
 
             ToggleOption {
@@ -64,27 +64,27 @@ ColumnLayout {
 
             Text {
                 text: "Weather"
-                font.pixelSize: 18 * Theme.scale(Screen)
+                font.pixelSize: 18 * Theme.scale(screen)
                 font.bold: true
                 color: Theme.textPrimary
-                Layout.bottomMargin: 16 * Theme.scale(Screen)
+                Layout.bottomMargin: 16 * Theme.scale(screen)
             }
 
             ColumnLayout {
                 spacing: 8
                 Layout.fillWidth: true
-                Layout.bottomMargin: 8 * Theme.scale(Screen)
+                Layout.bottomMargin: 8 * Theme.scale(screen)
 
                 Text {
                     text: "City"
-                    font.pixelSize: 13 * Theme.scale(Screen)
+                    font.pixelSize: 13 * Theme.scale(screen)
                     font.bold: true
                     color: Theme.textPrimary
                 }
 
                 Text {
                     text: "Your city name for weather information"
-                    font.pixelSize: 12 * Theme.scale(Screen)
+                    font.pixelSize: 12 * Theme.scale(screen)
                     color: Theme.textSecondary
                     Layout.fillWidth: true
                 }
@@ -106,7 +106,7 @@ ColumnLayout {
                         anchors.topMargin: 6
                         anchors.bottomMargin: 6
                         text: Settings.settings.weatherCity
-                        font.pixelSize: 13 * Theme.scale(Screen)
+                        font.pixelSize: 13 * Theme.scale(screen)
                         color: Theme.textPrimary
                         verticalAlignment: TextInput.AlignVCenter
                         clip: true
@@ -147,14 +147,14 @@ ColumnLayout {
 
                         Text {
                             text: "Temperature Unit"
-                            font.pixelSize: 13 * Theme.scale(Screen)
+                            font.pixelSize: 13 * Theme.scale(screen)
                             font.bold: true
                             color: Theme.textPrimary
                         }
 
                         Text {
                             text: "Choose between Celsius and Fahrenheit"
-                            font.pixelSize: 12 * Theme.scale(Screen)
+                            font.pixelSize: 12 * Theme.scale(screen)
                             color: Theme.textSecondary
                             wrapMode: Text.WordWrap
                             Layout.fillWidth: true

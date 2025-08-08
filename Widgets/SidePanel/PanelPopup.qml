@@ -44,8 +44,8 @@ PanelWithOverlay {
 
         property real slideOffset: width
         property bool isAnimating: false
-        property int leftPadding: 20 * Theme.scale(Screen)
-        property int bottomPadding: 20 * Theme.scale(Screen)
+        property int leftPadding: 20 * Theme.scale(screen)
+        property int bottomPadding: 20 * Theme.scale(screen)
         // Recording properties
         property bool isRecording: false
 
@@ -113,10 +113,8 @@ PanelWithOverlay {
             isRecording = false;
         }
 
-        // Necessary for the scaling to work on smaller screens
-        width: 526
-        implicitWidth: 500 * Theme.scale(Screen)
-        implicitHeight: 700 * Theme.scale(Screen)
+        width: 480 * Theme.scale(screen)
+        height: 660 * Theme.scale(screen)
         visible: parent.visible
         color: "transparent"
         anchors.top: parent.top
@@ -172,15 +170,13 @@ PanelWithOverlay {
         Rectangle {
             id: mainRectangle
 
-            anchors.top: sidebarPopupRect.top
+            // anchors.top: sidebarPopupRect.top
             width: sidebarPopupRect.width - sidebarPopupRect.leftPadding
             height: sidebarPopupRect.height - sidebarPopupRect.bottomPadding
             x: sidebarPopupRect.leftPadding + sidebarPopupRect.slideOffset
-            y: 0
-            z: 0
             color: Theme.backgroundPrimary
-            anchors.fill: parent
-            bottomLeftRadius: 20 * Theme.scale(Screen)
+            // anchors.fill: parent
+            bottomLeftRadius: 20
 
             Behavior on x {
                 enabled: !sidebarPopupRect.isAnimating
@@ -212,83 +208,84 @@ PanelWithOverlay {
 
             ColumnLayout {
                 anchors.fill: parent
-                anchors.margins: 20 * Theme.scale(Screen)
-                spacing: 8 * Theme.scale(Screen)
+                spacing: 8 * Theme.scale(screen)
 
                 System {
                     id: systemWidget
 
+                    width: 420 * Theme.scale(screen)
+                    height: 80 * Theme.scale(screen)
                     settingsModal: settingsModal
                     Layout.alignment: Qt.AlignHCenter
-                    z: 3
                 }
 
                 Weather {
                     id: weather
 
+                    width: 420 * Theme.scale(screen)
+                    height: 180 * Theme.scale(screen)
                     Layout.alignment: Qt.AlignHCenter
-                    z: 2
                 }
 
                 // Music and System Monitor row
                 RowLayout {
-                    spacing: 8 * Theme.scale(Screen)
+                    spacing: 8 * Theme.scale(screen)
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignHCenter
 
                     Music {
-                        z: 2
+                        width: 332 * Theme.scale(screen)
+                        height: 250 * Theme.scale(screen)
                     }
 
                     SystemMonitor {
-                        id: systemMonitor
-
-                        z: 2
+                        width: 80 * Theme.scale(screen)
+                        height: 250 * Theme.scale(screen)
                     }
 
                 }
 
-                // Power profile, Record and Wallpaper row
                 RowLayout {
-                    Layout.alignment: Qt.AlignVCenter
-                    spacing: 10 * Theme.scale(Screen)
-                    Layout.preferredHeight: 80 * Theme.scale(Screen)
-                    z: 3
+                    spacing: 8 * Theme.scale(screen)
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignHCenter
 
                     PowerProfile {
+                        width: 206 * Theme.scale(screen)
+                        height: 70 * Theme.scale(screen)
                         Layout.alignment: Qt.AlignVCenter
-                        Layout.preferredHeight: 80 * Theme.scale(Screen)
                     }
 
                     // Record and Wallpaper card
                     Rectangle {
-                        Layout.preferredHeight: 80 * Theme.scale(Screen)
-                        Layout.preferredWidth: 140 * Theme.scale(Screen)
-                        Layout.fillWidth: false
+                        width: 206 * Theme.scale(screen)
+                        height: 70 * Theme.scale(screen)
+                        Layout.alignment: Qt.AlignVCenter
+
                         color: Theme.surface
-                        radius: 18 * Theme.scale(Screen)
+                        radius: 16
 
                         Row {
                             anchors.horizontalCenter: parent.horizontalCenter
                             anchors.verticalCenter: parent.verticalCenter
-                            spacing: 20 * Theme.scale(Screen)
+                            spacing: 20 * Theme.scale(screen)
 
                             // Record button
                             Rectangle {
                                 id: recordButton
 
-                                width: 36 * Theme.scale(Screen)
-                                height: 36 * Theme.scale(Screen)
-                                radius: 18 * Theme.scale(Screen)
+                                width: 36 * Theme.scale(screen)
+                                height: 36 * Theme.scale(screen)
+                                radius: 18
                                 border.color: Theme.accentPrimary
-                                border.width: 1 * Theme.scale(Screen)
+                                border.width: 1 * Theme.scale(screen)
                                 color: sidebarPopupRect.isRecording ? Theme.accentPrimary : (recordButtonArea.containsMouse ? Theme.accentPrimary : "transparent")
 
                                 Text {
                                     anchors.centerIn: parent
                                     text: "photo_camera"
                                     font.family: "Material Symbols Outlined"
-                                    font.pixelSize: 22 * Theme.scale(Screen)
+                                    font.pixelSize: 22 * Theme.scale(screen)
                                     color: sidebarPopupRect.isRecording || recordButtonArea.containsMouse ? Theme.backgroundPrimary : Theme.accentPrimary
                                     verticalAlignment: Text.AlignVCenter
                                     horizontalAlignment: Text.AlignHCenter
@@ -323,18 +320,18 @@ PanelWithOverlay {
                             Rectangle {
                                 id: wallpaperButton
 
-                                width: 36 * Theme.scale(Screen)
-                                height: 36 * Theme.scale(Screen)
-                                radius: 18 * Theme.scale(Screen)
+                                width: 36 * Theme.scale(screen)
+                                height: 36 * Theme.scale(screen)
+                                radius: 18
                                 border.color: Theme.accentPrimary
-                                border.width: 1 * Theme.scale(Screen)
+                                border.width: 1 * Theme.scale(screen)
                                 color: wallpaperButtonArea.containsMouse ? Theme.accentPrimary : "transparent"
 
                                 Text {
                                     anchors.centerIn: parent
                                     text: "image"
                                     font.family: "Material Symbols Outlined"
-                                    font.pixelSize: 22 * Theme.scale(Screen)
+                                    font.pixelSize: 22 * Theme.scale(screen)
                                     color: wallpaperButtonArea.containsMouse ? Theme.backgroundPrimary : Theme.accentPrimary
                                     verticalAlignment: Text.AlignVCenter
                                     horizontalAlignment: Text.AlignHCenter
@@ -366,6 +363,11 @@ PanelWithOverlay {
 
                     }
 
+                }
+
+                Rectangle {
+                    height: 8 * Theme.scale(screen)
+                    color: "transparent"
                 }
 
             }

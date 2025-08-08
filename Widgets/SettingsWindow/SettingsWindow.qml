@@ -148,8 +148,8 @@ PanelWithOverlay {
     Rectangle {
         id: settingsWindowRect
 
-        implicitWidth: Quickshell.screens.length > 0 ? Math.min(Quickshell.screens[0].width * 2 / 3, 1200) * Theme.scale(Screen) : 600 * Theme.scale(Screen)
-        implicitHeight: Quickshell.screens.length > 0 ? Math.min(Quickshell.screens[0].height * 2 / 3, 800) * Theme.scale(Screen) : 400 * Theme.scale(Screen)
+        implicitWidth: Quickshell.screens.length > 0 ? Math.min(Quickshell.screens[0].width * 2 / 3, 1200) * Theme.scale(screen) : 600 * Theme.scale(screen)
+        implicitHeight: Quickshell.screens.length > 0 ? Math.min(Quickshell.screens[0].height * 2 / 3, 800) * Theme.scale(screen) : 400 * Theme.scale(screen)
         visible: parent.visible
         color: "transparent"
         // Center the settings window on screen
@@ -166,9 +166,9 @@ PanelWithOverlay {
 
             color: Theme.backgroundPrimary
             anchors.fill: parent
-            radius: 20 * Theme.scale(Screen)
+            radius: 18
             border.color: Theme.outline
-            border.width: 1 * Theme.scale(Screen)
+            border.width: 1 * Theme.scale(screen)
 
             MultiEffect {
                 source: background
@@ -188,8 +188,8 @@ PanelWithOverlay {
             clip: true
 
             color: Theme.backgroundPrimary
-            topRightRadius: 20 * Theme.scale(Screen)
-            bottomRightRadius: 20 * Theme.scale(Screen)
+            topRightRadius: 20 * Theme.scale(screen)
+            bottomRightRadius: 20 * Theme.scale(screen)
 
             anchors {
                 left: tabs.right
@@ -202,7 +202,7 @@ PanelWithOverlay {
                 Rectangle {
                     id: headerArea
 
-                    height: 48 * Theme.scale(Screen)
+                    height: 48 * Theme.scale(screen)
                     color: "transparent"
 
                     anchors {
@@ -214,13 +214,13 @@ PanelWithOverlay {
 
                     RowLayout {
                         anchors.fill: parent
-                        spacing: 12 * Theme.scale(Screen)
+                        spacing: 12 * Theme.scale(screen)
 
                         Text {
                             id: tabName
 
                             text: wallpaperSelector.visible ? "Select Wallpaper" : (activeTabIndex === 0 ? "General" : activeTabIndex === 1 ? "Bar" : activeTabIndex === 2 ? "Time & Weather" : activeTabIndex === 3 ? "Screen Recorder" : activeTabIndex === 4 ? "Network" : activeTabIndex === 5 ? "Display" : activeTabIndex === 6 ? "Wallpaper" : activeTabIndex === 7 ? "Misc" : activeTabIndex === 8 ? "About" : "General")
-                            font.pixelSize: 18 * Theme.scale(Screen)
+                            font.pixelSize: 18 * Theme.scale(screen)
                             font.bold: true
                             color: Theme.textPrimary
                             Layout.fillWidth: true
@@ -228,29 +228,29 @@ PanelWithOverlay {
 
                         // Wallpaper Selection Button (only visible on Wallpaper tab)
                         Rectangle {
-                            width: 160 * Theme.scale(Screen)
-                            height: 32 * Theme.scale(Screen)
-                            radius: 16 * Theme.scale(Screen)
+                            width: 160 * Theme.scale(screen)
+                            height: 32 * Theme.scale(screen)
+                            radius: 16
                             color: wallpaperButtonArea.containsMouse ? Theme.accentPrimary : "transparent"
                             border.color: Theme.accentPrimary
-                            border.width: 1 * Theme.scale(Screen)
+                            border.width: 1 * Theme.scale(screen)
                             visible: activeTabIndex === 6 // Wallpaper tab index
 
                             Row {
                                 anchors.centerIn: parent
-                                spacing: 6 * Theme.scale(Screen)
+                                spacing: 6 * Theme.scale(screen)
 
                                 Text {
                                     text: "image"
                                     font.family: wallpaperButtonArea.containsMouse ? "Material Symbols Rounded" : "Material Symbols Outlined"
-                                    font.pixelSize: 16 * Theme.scale(Screen)
+                                    font.pixelSize: 16 * Theme.scale(screen)
                                     color: wallpaperButtonArea.containsMouse ? Theme.onAccent : Theme.accentPrimary
                                     anchors.verticalCenter: parent.verticalCenter
                                 }
 
                                 Text {
                                     text: "Select Wallpaper"
-                                    font.pixelSize: 13 * Theme.scale(Screen)
+                                    font.pixelSize: 13 * Theme.scale(screen)
                                     font.bold: true
                                     color: wallpaperButtonArea.containsMouse ? Theme.onAccent : Theme.accentPrimary
                                     anchors.verticalCenter: parent.verticalCenter
@@ -273,18 +273,18 @@ PanelWithOverlay {
                         }
 
                         Rectangle {
-                            width: 32 * Theme.scale(Screen)
-                            height: 32 * Theme.scale(Screen)
-                            radius: 16 * Theme.scale(Screen)
+                            width: 32 * Theme.scale(screen)
+                            height: 32 * Theme.scale(screen)
+                            radius: 16
                             color: closeButtonArea.containsMouse ? Theme.accentPrimary : "transparent"
                             border.color: Theme.accentPrimary
-                            border.width: 1 * Theme.scale(Screen)
+                            border.width: 1 * Theme.scale(screen)
 
                             Text {
                                 anchors.centerIn: parent
                                 text: "close"
                                 font.family: closeButtonArea.containsMouse ? "Material Symbols Rounded" : "Material Symbols Outlined"
-                                font.pixelSize: 18 * Theme.scale(Screen)
+                                font.pixelSize: 18 * Theme.scale(screen)
                                 color: closeButtonArea.containsMouse ? Theme.onAccent : Theme.accentPrimary
                             }
 
@@ -311,7 +311,7 @@ PanelWithOverlay {
                 }
 
                 Rectangle {
-                    height: 1 * Theme.scale(Screen)
+                    height: 1 * Theme.scale(screen)
                     color: Theme.outline
                     opacity: 0.3
 
@@ -360,16 +360,16 @@ PanelWithOverlay {
                 color: Theme.surface
                 width: parent.width * 0.25
                 height: settingsWindowRect.height
-                topLeftRadius: 20 * Theme.scale(Screen)
-                bottomLeftRadius: 20 * Theme.scale(Screen)
+                topLeftRadius: 20 * Theme.scale(screen)
+                bottomLeftRadius: 20 * Theme.scale(screen)
                 border.color: Theme.outline
-                border.width: 1 * Theme.scale(Screen)
+                border.width: 1 * Theme.scale(screen)
 
                 Column {
                     width: parent.width
-                    spacing: 0 * Theme.scale(Screen)
-                    topPadding: 8 * Theme.scale(Screen)
-                    bottomPadding: 8 * Theme.scale(Screen)
+                    spacing: 0 * Theme.scale(screen)
+                    topPadding: 8 * Theme.scale(screen)
+                    bottomPadding: 8 * Theme.scale(screen)
 
                     Repeater {
                         id: repeater
@@ -405,21 +405,21 @@ PanelWithOverlay {
 
                         delegate: Rectangle {
                             width: tabs.width
-                            height: 48 * Theme.scale(Screen)
+                            height: 48 * Theme.scale(screen)
                             color: "transparent"
 
                             RowLayout {
                                 anchors.fill: parent
-                                spacing: 8 * Theme.scale(Screen)
+                                spacing: 8 * Theme.scale(screen)
 
                                 Rectangle {
                                     id: activeIndicator
 
-                                    Layout.leftMargin: 8 * Theme.scale(Screen)
-                                    Layout.preferredWidth: 3 * Theme.scale(Screen)
-                                    Layout.preferredHeight: 24 * Theme.scale(Screen)
+                                    Layout.leftMargin: 8 * Theme.scale(screen)
+                                    Layout.preferredWidth: 3 * Theme.scale(screen)
+                                    Layout.preferredHeight: 24 * Theme.scale(screen)
                                     Layout.alignment: Qt.AlignVCenter
-                                    radius: 2 * Theme.scale(Screen)
+                                    radius: 2
                                     color: Theme.accentPrimary
                                     opacity: index === activeTabIndex ? 1 : 0
 
@@ -437,12 +437,12 @@ PanelWithOverlay {
 
                                     text: modelData.icon
                                     font.family: "Material Symbols Outlined"
-                                    font.pixelSize: 24 * Theme.scale(Screen)
+                                    font.pixelSize: 24 * Theme.scale(screen)
                                     color: index === activeTabIndex ? Theme.accentPrimary : Theme.textPrimary
                                     opacity: index === activeTabIndex ? 1 : 0.8
-                                    Layout.leftMargin: 20 * Theme.scale(Screen)
-                                    Layout.preferredWidth: 24 * Theme.scale(Screen)
-                                    Layout.preferredHeight: 24 * Theme.scale(Screen)
+                                    Layout.leftMargin: 20 * Theme.scale(screen)
+                                    Layout.preferredWidth: 24 * Theme.scale(screen)
+                                    Layout.preferredHeight: 24 * Theme.scale(screen)
                                     Layout.alignment: Qt.AlignVCenter
                                     horizontalAlignment: Text.AlignHCenter
                                     verticalAlignment: Text.AlignVCenter
@@ -453,14 +453,14 @@ PanelWithOverlay {
                                     id: label
 
                                     text: modelData.text
-                                    font.pixelSize: 16 * Theme.scale(Screen)
+                                    font.pixelSize: 16 * Theme.scale(screen)
                                     color: index === activeTabIndex ? Theme.accentPrimary : (tabMouseArea.containsMouse ? Theme.accentPrimary : Theme.textSecondary)
                                     font.weight: index === activeTabIndex ? Font.DemiBold : (tabMouseArea.containsMouse ? Font.DemiBold : Font.Normal)
                                     Layout.fillWidth: true
-                                    Layout.preferredHeight: 24 * Theme.scale(Screen)
+                                    Layout.preferredHeight: 24 * Theme.scale(screen)
                                     Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
-                                    Layout.leftMargin: 4 * Theme.scale(Screen)
-                                    Layout.rightMargin: 16 * Theme.scale(Screen)
+                                    Layout.leftMargin: 4 * Theme.scale(screen)
+                                    Layout.rightMargin: 16 * Theme.scale(screen)
                                     verticalAlignment: Text.AlignVCenter
                                 }
 
@@ -484,7 +484,7 @@ PanelWithOverlay {
 
                             Rectangle {
                                 width: parent.width
-                                height: 1 * Theme.scale(Screen)
+                                height: 1 * Theme.scale(screen)
                                 color: Theme.outline
                                 opacity: 0.6
                                 visible: index < (repeater.count - 1)

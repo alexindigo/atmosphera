@@ -34,7 +34,7 @@ ColumnLayout {
             ColumnLayout {
                 // Text {
                 //     text: "Screen Recording"
-                //     font.pixelSize: 18 * Theme.scale(Screen)
+                //     font.pixelSize: 18 * Theme.scale(screen)
                 //     font.bold: true
                 //     color: Theme.textPrimary
                 //     Layout.bottomMargin: 8
@@ -49,14 +49,14 @@ ColumnLayout {
 
                     Text {
                         text: "Output Directory"
-                        font.pixelSize: 13 * Theme.scale(Screen)
+                        font.pixelSize: 13 * Theme.scale(screen)
                         font.bold: true
                         color: Theme.textPrimary
                     }
 
                     Text {
                         text: "Directory where screen recordings will be saved"
-                        font.pixelSize: 12 * Theme.scale(Screen)
+                        font.pixelSize: 12 * Theme.scale(screen)
                         color: Theme.textSecondary
                         Layout.bottomMargin: 4
                     }
@@ -78,7 +78,7 @@ ColumnLayout {
                             anchors.topMargin: 6
                             anchors.bottomMargin: 6
                             text: Settings.settings.videoPath !== undefined ? Settings.settings.videoPath : ""
-                            font.pixelSize: 13 * Theme.scale(Screen)
+                            font.pixelSize: 13 * Theme.scale(screen)
                             color: Theme.textPrimary
                             verticalAlignment: TextInput.AlignVCenter
                             clip: true
@@ -108,14 +108,14 @@ ColumnLayout {
 
                     Text {
                         text: "Frame Rate"
-                        font.pixelSize: 13 * Theme.scale(Screen)
+                        font.pixelSize: 13 * Theme.scale(screen)
                         font.bold: true
                         color: Theme.textPrimary
                     }
 
                     Text {
                         text: "Target frame rate for screen recordings (default: 60)"
-                        font.pixelSize: 12 * Theme.scale(Screen)
+                        font.pixelSize: 12 * Theme.scale(screen)
                         color: Theme.textSecondary
                         Layout.bottomMargin: 4
                     }
@@ -144,7 +144,7 @@ ColumnLayout {
 
                         contentItem: TextInput {
                             text: frameRateSpinBox.textFromValue(frameRateSpinBox.value, frameRateSpinBox.locale)
-                            font.pixelSize: 13 * Theme.scale(Screen)
+                            font.pixelSize: 13 * Theme.scale(screen)
                             color: Theme.textPrimary
                             selectionColor: Theme.accentPrimary
                             selectedTextColor: Theme.onAccent
@@ -183,7 +183,7 @@ ColumnLayout {
                             Text {
                                 text: "add"
                                 font.family: "Material Symbols Outlined"
-                                font.pixelSize: 20 * Theme.scale(Screen)
+                                font.pixelSize: 20 * Theme.scale(screen)
                                 color: Theme.textPrimary
                                 anchors.centerIn: parent
                             }
@@ -200,7 +200,7 @@ ColumnLayout {
                             Text {
                                 text: "remove"
                                 font.family: "Material Symbols Outlined"
-                                font.pixelSize: 20 * Theme.scale(Screen)
+                                font.pixelSize: 20 * Theme.scale(screen)
                                 color: Theme.textPrimary
                                 anchors.centerIn: parent
                             }
@@ -218,14 +218,14 @@ ColumnLayout {
 
                     Text {
                         text: "Audio Source"
-                        font.pixelSize: 13 * Theme.scale(Screen)
+                        font.pixelSize: 13 * Theme.scale(screen)
                         font.bold: true
                         color: Theme.textPrimary
                     }
 
                     Text {
                         text: "Audio source to capture during recording"
-                        font.pixelSize: 12 * Theme.scale(Screen)
+                        font.pixelSize: 12 * Theme.scale(screen)
                         color: Theme.textSecondary
                         Layout.bottomMargin: 4
                     }
@@ -265,7 +265,7 @@ ColumnLayout {
                                     return audioSourceComboBox.currentText;
                                 }
                             }
-                            font.pixelSize: 13 * Theme.scale(Screen)
+                            font.pixelSize: 13 * Theme.scale(screen)
                             color: Theme.textPrimary
                             verticalAlignment: Text.AlignVCenter
                             elide: Text.ElideRight
@@ -276,7 +276,7 @@ ColumnLayout {
                             y: audioSourceComboBox.topPadding + (audioSourceComboBox.availableHeight - height) / 2
                             text: "arrow_drop_down"
                             font.family: "Material Symbols Outlined"
-                            font.pixelSize: 24 * Theme.scale(Screen)
+                            font.pixelSize: 24 * Theme.scale(screen)
                             color: Theme.textPrimary
                         }
 
@@ -323,7 +323,7 @@ ColumnLayout {
                                         return modelData;
                                     }
                                 }
-                                font.pixelSize: 13 * Theme.scale(Screen)
+                                font.pixelSize: 13 * Theme.scale(screen)
                                 color: Theme.textPrimary
                                 verticalAlignment: Text.AlignVCenter
                                 elide: Text.ElideRight
@@ -346,14 +346,14 @@ ColumnLayout {
 
                     Text {
                         text: "Video Quality"
-                        font.pixelSize: 13 * Theme.scale(Screen)
+                        font.pixelSize: 13 * Theme.scale(screen)
                         font.bold: true
                         color: Theme.textPrimary
                     }
 
                     Text {
                         text: "Higher quality results in larger file sizes"
-                        font.pixelSize: 12 * Theme.scale(Screen)
+                        font.pixelSize: 12 * Theme.scale(screen)
                         color: Theme.textSecondary
                         Layout.bottomMargin: 4
                     }
@@ -395,7 +395,7 @@ ColumnLayout {
                                     return qualityComboBox.currentText;
                                 }
                             }
-                            font.pixelSize: 13 * Theme.scale(Screen)
+                            font.pixelSize: 13 * Theme.scale(screen)
                             color: Theme.textPrimary
                             verticalAlignment: Text.AlignVCenter
                             elide: Text.ElideRight
@@ -406,7 +406,7 @@ ColumnLayout {
                             y: qualityComboBox.topPadding + (qualityComboBox.availableHeight - height) / 2
                             text: "arrow_drop_down"
                             font.family: "Material Symbols Outlined"
-                            font.pixelSize: 24 * Theme.scale(Screen)
+                            font.pixelSize: 24 * Theme.scale(screen)
                             color: Theme.textPrimary
                         }
 
@@ -455,7 +455,7 @@ ColumnLayout {
                                         return modelData;
                                     }
                                 }
-                                font.pixelSize: 13 * Theme.scale(Screen)
+                                font.pixelSize: 13 * Theme.scale(screen)
                                 color: Theme.textPrimary
                                 verticalAlignment: Text.AlignVCenter
                                 elide: Text.ElideRight
@@ -478,14 +478,14 @@ ColumnLayout {
 
                     Text {
                         text: "Video Codec"
-                        font.pixelSize: 13 * Theme.scale(Screen)
+                        font.pixelSize: 13 * Theme.scale(screen)
                         font.bold: true
                         color: Theme.textPrimary
                     }
 
                     Text {
                         text: "Different codecs offer different compression and compatibility"
-                        font.pixelSize: 12 * Theme.scale(Screen)
+                        font.pixelSize: 12 * Theme.scale(screen)
                         color: Theme.textSecondary
                         Layout.bottomMargin: 4
                     }
@@ -514,7 +514,7 @@ ColumnLayout {
                             leftPadding: 12
                             rightPadding: codecComboBox.indicator.width + codecComboBox.spacing
                             text: codecComboBox.currentText.toUpperCase()
-                            font.pixelSize: 13 * Theme.scale(Screen)
+                            font.pixelSize: 13 * Theme.scale(screen)
                             color: Theme.textPrimary
                             verticalAlignment: Text.AlignVCenter
                             elide: Text.ElideRight
@@ -525,7 +525,7 @@ ColumnLayout {
                             y: codecComboBox.topPadding + (codecComboBox.availableHeight - height) / 2
                             text: "arrow_drop_down"
                             font.family: "Material Symbols Outlined"
-                            font.pixelSize: 24 * Theme.scale(Screen)
+                            font.pixelSize: 24 * Theme.scale(screen)
                             color: Theme.textPrimary
                         }
 
@@ -561,7 +561,7 @@ ColumnLayout {
 
                             contentItem: Text {
                                 text: modelData.toUpperCase()
-                                font.pixelSize: 13 * Theme.scale(Screen)
+                                font.pixelSize: 13 * Theme.scale(screen)
                                 color: Theme.textPrimary
                                 verticalAlignment: Text.AlignVCenter
                                 elide: Text.ElideRight
@@ -584,14 +584,14 @@ ColumnLayout {
 
                     Text {
                         text: "Audio Codec"
-                        font.pixelSize: 13 * Theme.scale(Screen)
+                        font.pixelSize: 13 * Theme.scale(screen)
                         font.bold: true
                         color: Theme.textPrimary
                     }
 
                     Text {
                         text: "Opus is recommended for best performance and smallest audio size"
-                        font.pixelSize: 12 * Theme.scale(Screen)
+                        font.pixelSize: 12 * Theme.scale(screen)
                         color: Theme.textSecondary
                         Layout.bottomMargin: 4
                     }
@@ -620,7 +620,7 @@ ColumnLayout {
                             leftPadding: 12
                             rightPadding: audioCodecComboBox.indicator.width + audioCodecComboBox.spacing
                             text: audioCodecComboBox.currentText.toUpperCase()
-                            font.pixelSize: 13 * Theme.scale(Screen)
+                            font.pixelSize: 13 * Theme.scale(screen)
                             color: Theme.textPrimary
                             verticalAlignment: Text.AlignVCenter
                             elide: Text.ElideRight
@@ -631,7 +631,7 @@ ColumnLayout {
                             y: audioCodecComboBox.topPadding + (audioCodecComboBox.availableHeight - height) / 2
                             text: "arrow_drop_down"
                             font.family: "Material Symbols Outlined"
-                            font.pixelSize: 24 * Theme.scale(Screen)
+                            font.pixelSize: 24 * Theme.scale(screen)
                             color: Theme.textPrimary
                         }
 
@@ -667,7 +667,7 @@ ColumnLayout {
 
                             contentItem: Text {
                                 text: modelData.toUpperCase()
-                                font.pixelSize: 13 * Theme.scale(Screen)
+                                font.pixelSize: 13 * Theme.scale(screen)
                                 color: Theme.textPrimary
                                 verticalAlignment: Text.AlignVCenter
                                 elide: Text.ElideRight
@@ -691,14 +691,14 @@ ColumnLayout {
 
                     Text {
                         text: "Color Range"
-                        font.pixelSize: 13 * Theme.scale(Screen)
+                        font.pixelSize: 13 * Theme.scale(screen)
                         font.bold: true
                         color: Theme.textPrimary
                     }
 
                     Text {
                         text: "Limited is recommended for better compatibility"
-                        font.pixelSize: 12 * Theme.scale(Screen)
+                        font.pixelSize: 12 * Theme.scale(screen)
                         color: Theme.textSecondary
                         Layout.bottomMargin: 4
                     }
@@ -727,7 +727,7 @@ ColumnLayout {
                             leftPadding: 12
                             rightPadding: colorRangeComboBox.indicator.width + colorRangeComboBox.spacing
                             text: colorRangeComboBox.currentText.charAt(0).toUpperCase() + colorRangeComboBox.currentText.slice(1)
-                            font.pixelSize: 13 * Theme.scale(Screen)
+                            font.pixelSize: 13 * Theme.scale(screen)
                             color: Theme.textPrimary
                             verticalAlignment: Text.AlignVCenter
                             elide: Text.ElideRight
@@ -738,7 +738,7 @@ ColumnLayout {
                             y: colorRangeComboBox.topPadding + (colorRangeComboBox.availableHeight - height) / 2
                             text: "arrow_drop_down"
                             font.family: "Material Symbols Outlined"
-                            font.pixelSize: 24 * Theme.scale(Screen)
+                            font.pixelSize: 24 * Theme.scale(screen)
                             color: Theme.textPrimary
                         }
 
@@ -774,7 +774,7 @@ ColumnLayout {
 
                             contentItem: Text {
                                 text: modelData.charAt(0).toUpperCase() + modelData.slice(1)
-                                font.pixelSize: 13 * Theme.scale(Screen)
+                                font.pixelSize: 13 * Theme.scale(screen)
                                 color: Theme.textPrimary
                                 verticalAlignment: Text.AlignVCenter
                                 elide: Text.ElideRight

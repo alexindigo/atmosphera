@@ -58,7 +58,7 @@ Item {
         Text {
             text: batteryIcon()
             font.family: "Material Symbols Outlined"
-            font.pixelSize: 28 * Theme.scale(Screen)
+            font.pixelSize: 28 * Theme.scale(screen)
             color: charging ? Theme.accentPrimary : Theme.textSecondary
             verticalAlignment: Text.AlignVBottom
         }
@@ -66,7 +66,7 @@ Item {
         Text {
             text: Math.round(percent) + "%"
             font.family: Theme.fontFamily
-            font.pixelSize: 18 * Theme.scale(Screen)
+            font.pixelSize: 18 * Theme.scale(screen)
             color: Theme.textSecondary
             verticalAlignment: Text.AlignVBottom
         }

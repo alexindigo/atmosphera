@@ -28,23 +28,23 @@ ColumnLayout {
 
             Text {
                 text: "Profile"
-                font.pixelSize: 18 * Theme.scale(Screen)
+                font.pixelSize: 18 * Theme.scale(screen)
                 font.bold: true
                 color: Theme.textPrimary
-                Layout.bottomMargin: 16 * Theme.scale(Screen)
+                Layout.bottomMargin: 16 * Theme.scale(screen)
             }
 
             Text {
                 text: "Profile Image"
-                font.pixelSize: 13 * Theme.scale(Screen)
+                font.pixelSize: 13 * Theme.scale(screen)
                 font.bold: true
                 color: Theme.textPrimary
-                Layout.bottomMargin: 4 * Theme.scale(Screen)
+                Layout.bottomMargin: 4 * Theme.scale(screen)
             }
 
             Text {
                 text: "Your profile picture displayed in various places throughout the shell"
-                font.pixelSize: 12 * Theme.scale(Screen)
+                font.pixelSize: 12 * Theme.scale(screen)
                 color: Theme.textSecondary
                 wrapMode: Text.WordWrap
                 Layout.fillWidth: true
@@ -52,20 +52,20 @@ ColumnLayout {
             }
 
             RowLayout {
-                spacing: 8 * Theme.scale(Screen)
+                spacing: 8 * Theme.scale(screen)
                 Layout.fillWidth: true
 
                 Rectangle {
-                    width: 48 * Theme.scale(Screen)
-                    height: 48 * Theme.scale(Screen)
-                    radius: 24 * Theme.scale(Screen)
+                    width: 48 * Theme.scale(screen)
+                    height: 48 * Theme.scale(screen)
+                    radius: 24
 
                     Rectangle {
                         anchors.fill: parent
                         color: "transparent"
-                        radius: 24 * Theme.scale(Screen)
+                        radius: 24
                         border.color: profileImageInput.activeFocus ? Theme.accentPrimary : Theme.outline
-                        border.width: 2 * Theme.scale(Screen)
+                        border.width: 2 * Theme.scale(screen)
                         z: 2
                     }
 
@@ -76,22 +76,22 @@ ColumnLayout {
 
                 Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 40 * Theme.scale(Screen)
-                    radius: 16 * Theme.scale(Screen)
+                    Layout.preferredHeight: 40 * Theme.scale(screen)
+                    radius: 16
                     color: Theme.surfaceVariant
                     border.color: profileImageInput.activeFocus ? Theme.accentPrimary : Theme.outline
-                    border.width: 1 * Theme.scale(Screen)
+                    border.width: 1 * Theme.scale(screen)
 
                     TextInput {
                         id: profileImageInput
 
                         anchors.fill: parent
-                        anchors.leftMargin: 12 * Theme.scale(Screen)
-                        anchors.rightMargin: 12 * Theme.scale(Screen)
-                        anchors.topMargin: 6 * Theme.scale(Screen)
-                        anchors.bottomMargin: 6 * Theme.scale(Screen)
+                        anchors.leftMargin: 12 * Theme.scale(screen)
+                        anchors.rightMargin: 12 * Theme.scale(screen)
+                        anchors.topMargin: 6 * Theme.scale(screen)
+                        anchors.bottomMargin: 6 * Theme.scale(screen)
                         text: Settings.settings.profileImage
-                        font.pixelSize: 13 * Theme.scale(Screen)
+                        font.pixelSize: 13 * Theme.scale(screen)
                         color: Theme.textPrimary
                         verticalAlignment: TextInput.AlignVCenter
                         clip: true
@@ -117,19 +117,19 @@ ColumnLayout {
             // Separator
             Rectangle {
                 Layout.fillWidth: true
-                Layout.topMargin: 26 * Theme.scale(Screen)
-                Layout.bottomMargin: 18 * Theme.scale(Screen)
-                height: 1 * Theme.scale(Screen)
+                Layout.topMargin: 26 * Theme.scale(screen)
+                Layout.bottomMargin: 18 * Theme.scale(screen)
+                height: 1 * Theme.scale(screen)
                 color: Theme.outline
                 opacity: 0.3
             }
 
             Text {
                 text: "User Interface"
-                font.pixelSize: 18 * Theme.scale(Screen)
+                font.pixelSize: 18 * Theme.scale(screen)
                 font.bold: true
                 color: Theme.textPrimary
-                Layout.bottomMargin: 16 * Theme.scale(Screen)
+                Layout.bottomMargin: 16 * Theme.scale(screen)
             }
 
             ToggleOption {

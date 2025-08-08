@@ -28,10 +28,10 @@ ColumnLayout {
 
             Text {
                 text: "Elements"
-                font.pixelSize: 18 * Theme.scale(Screen)
+                font.pixelSize: 18 * Theme.scale(screen)
                 font.bold: true
                 color: Theme.textPrimary
-                Layout.bottomMargin: 16 * Theme.scale(Screen)
+                Layout.bottomMargin: 16 * Theme.scale(screen)
             }
 
             ToggleOption {

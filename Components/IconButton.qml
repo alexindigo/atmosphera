@@ -19,7 +19,7 @@ MouseArea {
 
     Rectangle {
         anchors.fill: parent
-        radius: 8 * Theme.scale(Screen)
+        radius: 8
         color: root.hovering ? Theme.accentPrimary : "transparent"
     }
     Text {
@@ -27,7 +27,7 @@ MouseArea {
         anchors.centerIn: parent
         text: root.icon
         font.family: "Material Symbols Outlined"
-        font.pixelSize: 24 * Theme.scale(Screen)
+        font.pixelSize: 24 * Theme.scale(screen)
         color: root.hovering ? Theme.onAccent : Theme.textPrimary
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter

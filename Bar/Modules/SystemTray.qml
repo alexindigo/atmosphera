@@ -33,7 +33,7 @@ Row {
                 anchors.centerIn: parent
                 width: 16 * Theme.scale(Screen)
                 height: 16 * Theme.scale(Screen)
-                radius: 6 * Theme.scale(Screen)
+                radius: 6
                 color: "transparent"
                 clip: true
 

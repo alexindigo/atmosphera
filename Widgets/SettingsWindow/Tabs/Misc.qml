@@ -28,10 +28,10 @@ ColumnLayout {
 
             Text {
                 text: "Media"
-                font.pixelSize: 18 * Theme.scale(Screen)
+                font.pixelSize: 18 * Theme.scale(screen)
                 font.bold: true
                 color: Theme.textPrimary
-                Layout.bottomMargin: 16 * Theme.scale(Screen)
+                Layout.bottomMargin: 16 * Theme.scale(screen)
             }
 
             ColumnLayout {
@@ -40,14 +40,14 @@ ColumnLayout {
 
                 Text {
                     text: "Visualizer Type"
-                    font.pixelSize: 13 * Theme.scale(Screen)
+                    font.pixelSize: 13 * Theme.scale(screen)
                     font.bold: true
                     color: Theme.textPrimary
                 }
 
                 Text {
                     text: "Choose the style of the audio visualizer"
-                    font.pixelSize: 12 * Theme.scale(Screen)
+                    font.pixelSize: 12 * Theme.scale(screen)
                     color: Theme.textSecondary
                     wrapMode: Text.WordWrap
                     Layout.fillWidth: true

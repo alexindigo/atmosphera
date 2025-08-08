@@ -21,7 +21,7 @@ Item {
             anchors.centerIn: parent
             text: "settings"
             font.family: "Material Symbols Outlined"
-            font.pixelSize: 16 * Theme.scale(Screen)
+            font.pixelSize: 16 * Theme.scale(screen)
             color: mouseArea.containsMouse ? Theme.accentPrimary : Theme.textPrimary
         }
 

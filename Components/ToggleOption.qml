@@ -19,19 +19,19 @@ ColumnLayout {
         Layout.fillWidth: true
 
         ColumnLayout {
-            spacing: 4 * Theme.scale(Screen)
+            spacing: 4 * Theme.scale(screen)
             Layout.fillWidth: true
 
             Text {
                 text: label
-                font.pixelSize: 13 * Theme.scale(Screen)
+                font.pixelSize: 13 * Theme.scale(screen)
                 font.bold: true
                 color: Theme.textPrimary
             }
 
             Text {
                 text: description
-                font.pixelSize: 12 * Theme.scale(Screen)
+                font.pixelSize: 12 * Theme.scale(screen)
                 color: Theme.textSecondary
                 wrapMode: Text.WordWrap
                 Layout.fillWidth: true
@@ -42,20 +42,20 @@ ColumnLayout {
         Rectangle {
             id: switcher
 
-            width: 52 * Theme.scale(Screen)
-            height: 32 * Theme.scale(Screen)
-            radius: 16 * Theme.scale(Screen)
+            width: 52 * Theme.scale(screen)
+            height: 32 * Theme.scale(screen)
+            radius: 16
             color: value ? Theme.accentPrimary : Theme.surfaceVariant
             border.color: value ? Theme.accentPrimary : Theme.outline
-            border.width: 2 * Theme.scale(Screen)
+            border.width: 2 * Theme.scale(screen)
 
             Rectangle {
-                width: 28 * Theme.scale(Screen)
-                height: 28 * Theme.scale(Screen)
-                radius: 14 * Theme.scale(Screen)
+                width: 28 * Theme.scale(screen)
+                height: 28 * Theme.scale(screen)
+                radius: 14
                 color: Theme.surface
                 border.color: Theme.outline
-                border.width: 1 * Theme.scale(Screen)
+                border.width: 1 * Theme.scale(screen)
                 y: 2
                 x: value ? switcher.width - width - 2 : 2
 
@@ -82,7 +82,7 @@ ColumnLayout {
     }
 
     Rectangle {
-        height: 8 * Theme.scale(Screen)
+        height: 8 * Theme.scale(screen)
     }
 
 }
