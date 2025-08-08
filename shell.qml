@@ -16,7 +16,6 @@ import qs.Helpers
 Scope {
     id: root
 
-    property alias appLauncherPanel: appLauncherPanel
     property var notificationHistoryWin: notificationHistoryLoader.active ? notificationHistoryLoader.item : null
     property var settingsWindow: null
     property bool pendingReload: false
@@ -59,17 +58,7 @@ Scope {
 
     Bar {
         id: bar
-        shell: root
         property var notificationHistoryWin: notificationHistoryLoader.active ? notificationHistoryLoader.item : null
-    }
-
-    Variants {
-        model: Quickshell.screens
-        
-        Dock {
-            id: dock
-            property var modelData
-        }
     }
 
     Dock {
