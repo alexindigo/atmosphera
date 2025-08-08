@@ -175,7 +175,7 @@ Scope {
                             anchors.left: true
                             color: "transparent"
                             screen: modelData
-                            margins.top: 36
+                            margins.top: 36 * Theme.scale(screen) - 1
                             WlrLayershell.exclusionMode: ExclusionMode.Ignore
                             WlrLayershell.layer: WlrLayer.Top
                             WlrLayershell.namespace: "swww-daemon"
@@ -202,7 +202,7 @@ Scope {
                             anchors.right: true
                             color: "transparent"
                             screen: modelData
-                            margins.top: 36
+                            margins.top: 36 * Theme.scale(screen) - 1
                             WlrLayershell.exclusionMode: ExclusionMode.Ignore
                             WlrLayershell.layer: WlrLayer.Top
                             WlrLayershell.namespace: "swww-daemon"
