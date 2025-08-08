@@ -13,23 +13,22 @@ Singleton {
     
     // Automatic scaling based on screen width
     function scale(currentScreen) {
-        return 1.0;
-        // // // Per-monitor override from settings
-        // // try {
-        // //     const overrides = Settings.settings.monitorScaleOverrides || {};
-        // //     if (currentScreen && currentScreen.name && overrides[currentScreen.name] !== undefined) {
-        // //         console.log(overrides[currentScreen.name]);
-        // //         return overrides[currentScreen.name];
-        // //     }
-        // // } catch (e) {
-        // //     // ignore
-        // // }
+        return 1.0
+        // Per-monitor override from settings
+        try {
+            const overrides = Settings.settings.monitorScaleOverrides || {};
+            if (currentScreen && currentScreen.name && overrides[currentScreen.name] !== undefined) {
+                return overrides[currentScreen.name];
+            }
+        } catch (e) {
+            // ignore
+        }
         // if (currentScreen && currentScreen.width != 0) {
         //     var ratio = currentScreen.width / designScreenWidth;
         //     // Limit the final scale range between [0.8...2]
         //     return Math.max(0.8, Math.min(2.0, ratio));
         // }
-        // return 1.0;
+        return 1.0;
     }
 
     function applyOpacity(color, opacity) {
