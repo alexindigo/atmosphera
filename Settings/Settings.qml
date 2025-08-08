@@ -82,6 +82,7 @@ Singleton {
             property var barMonitors: [] // Array of monitor names to show the bar on
             property var dockMonitors: [] // Array of monitor names to show the dock on
             property var notificationMonitors: [] // Array of monitor names to show notifications on, "*" means all monitors
+            property var monitorScaleOverrides: {} // Map of monitor name -> scale override (e.g., 0.8..2.0). When set, Theme.scale() returns this value
         }
     }
 

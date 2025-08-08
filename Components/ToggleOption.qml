@@ -7,6 +7,8 @@ import qs.Settings
 ColumnLayout {
     id: root
 
+    property var screen
+
     property string label: ""
     property string description: ""
     property bool value: false
