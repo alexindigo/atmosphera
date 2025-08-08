@@ -14,12 +14,10 @@ import qs.Widgets
 import qs.Widgets.Notification
 import qs.Widgets.SidePanel
 
-
 // Main bar component - creates panels on selected monitors with widgets and corners
 Scope {
     id: rootScope
 
-    property var shell
     property alias visible: barRootItem.visible
 
     Item {
@@ -52,7 +50,18 @@ Scope {
                         color: Theme.backgroundPrimary
                         anchors.top: parent.top
                         anchors.left: parent.left
+
+                        Rectangle {
+                            anchors.bottom: parent.bottom
+                            width: parent.width
+                            height: 1
+                            color: "transparent"
+                            border.color: Theme.outline || "#444"
+                            border.width: 1
+                        }
                     }
+
+    
 
                     Row {
                         id: leftWidgetsRow
@@ -261,7 +270,7 @@ Scope {
                             aboveWindows: false
                             implicitHeight: 24
 
-                            Corner{
+                            Corner {
                                 id: bottomRightCorner
 
                                 position: "topright"
