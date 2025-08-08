@@ -174,8 +174,8 @@ PanelWithOverlay {
             width: sidebarPopupRect.width - sidebarPopupRect.leftPadding
             height: sidebarPopupRect.height - sidebarPopupRect.bottomPadding
             x: sidebarPopupRect.leftPadding + sidebarPopupRect.slideOffset
+            y: 0
             color: Theme.backgroundPrimary
-            // anchors.fill: parent
             bottomLeftRadius: 20
 
             Behavior on x {
