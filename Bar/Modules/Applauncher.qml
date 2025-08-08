@@ -68,9 +68,14 @@ PanelWithOverlay {
                     };
                     
     
-                    // Always create a new image entry, even if identical to an existing one
-                    clipboardHistory = [entry].concat(clipboardHistory).slice(0, 20);
-                    root.updateFilter();
+                    const exists = clipboardHistory.find(item => 
+                        item.type === 'image' && item.data === entry.data
+                    );
+
+                    if (!exists) {
+                        clipboardHistory = [entry, ...clipboardHistory].slice(0, 20);
+                        root.updateFilter();
+                    }
                 }
             }
             
@@ -98,19 +103,29 @@ PanelWithOverlay {
                     };
 
     
-                    var newHistory = clipboardHistory.map(item => {
-                        if (typeof item === 'string') {
-                            return {
-                                type: 'text',
-                                content: item,
-                                timestamp: 0
-                            };
+                    const exists = clipboardHistory.find(item => {
+                        if (item.type === 'text') {
+                            return item.content === content;
                         }
-                        return item;
+        
+                        return item === content;
                     });
 
-                    // Always add a new text entry, even if content matches an existing entry
-                    clipboardHistory = [entry].concat(newHistory).slice(0, 20);
+                    if (!exists) {
+        
+                        const newHistory = clipboardHistory.map(item => {
+                            if (typeof item === 'string') {
+                                return {
+                                    type: 'text',
+                                    content: item,
+                                    timestamp: new Date().getTime()
+                                };
+                            }
+                            return item;
+                        });
+                        
+                        clipboardHistory = [entry, ...newHistory].slice(0, 20);
+                    }
                 }
             } else {
 
@@ -772,7 +787,7 @@ PanelWithOverlay {
                                     anchors.left: parent.left
                                     anchors.right: parent.right
                                     anchors.bottom: parent.bottom
-                                    height: Math.max(1, 1 * Theme.scale(screen))
+                                    height: 1
                                     color: Theme.outline
                                     opacity: index === appList.count - 1 ? 0 : 0.10
                                 }
