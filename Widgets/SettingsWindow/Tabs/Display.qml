@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import Quickshell
 import qs.Components
 import qs.Settings
+import qs.Components
 
 ColumnLayout {
     id: root
@@ -415,6 +416,38 @@ ColumnLayout {
                                         monitorCard.notifChecked = false;
                                     }
                                     Settings.settings.notificationMonitors = monitors;
+                                }
+                            }
+
+                            // Scale slider
+                            ColumnLayout {
+                                Layout.fillWidth: true
+                                spacing: 4 * Theme.scale(screen)
+                                Text { text: "Scale"; color: Theme.textSecondary; font.pixelSize: 10 * Theme.scale(screen) }
+                                RowLayout {
+                                    Layout.fillWidth: true
+                                    spacing: 8 * Theme.scale(screen)
+                                    // Value read from settings override, default to Theme.scale(modelData)
+                                    property real currentValue: (Settings.settings.monitorScaleOverrides && Settings.settings.monitorScaleOverrides[monitorCard.monitorName] !== undefined) ? Settings.settings.monitorScaleOverrides[monitorCard.monitorName] : Theme.scale(modelData)
+                                    // Reusable slider component (exact style from Wallpaper.qml)
+                                    ThemedSlider {
+                                        id: scaleSlider
+                                        Layout.fillWidth: true
+                                        screen: modelData
+                                        from: 0.8
+                                        to: 2.0
+                                        stepSize: 0.05
+                                        snapAlways: true
+                                        value: parent.currentValue
+                                        onValueChanged: {
+                                            let overrides = Settings.settings.monitorScaleOverrides || {};
+                                            overrides = Object.assign({}, overrides);
+                                            overrides[monitorCard.monitorName] = value;
+                                            Settings.settings.monitorScaleOverrides = overrides;
+                                            parent.currentValue = value;
+                                        }
+                                    }
+                                    Text { text: parent.currentValue.toFixed(2); font.pixelSize: 12 * Theme.scale(screen); color: Theme.textPrimary; width: 36 }
                                 }
                             }
                         }

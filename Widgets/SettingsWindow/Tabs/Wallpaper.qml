@@ -197,49 +197,17 @@ ColumnLayout {
 
                     }
 
-                    Slider {
+                    ThemedSlider {
                         id: intervalSlider
-
                         Layout.fillWidth: true
                         from: 10
                         to: 900
                         stepSize: 10
                         value: Settings.settings.wallpaperInterval
-                        snapMode: Slider.SnapAlways
+                        snapAlways: true
                         onMoved: {
                             Settings.settings.wallpaperInterval = Math.round(value);
                         }
-
-                        background: Rectangle {
-                            x: intervalSlider.leftPadding
-                            y: intervalSlider.topPadding + intervalSlider.availableHeight / 2 - height / 2
-                            implicitWidth: 200
-                            implicitHeight: 4
-                            width: intervalSlider.availableWidth
-                            height: implicitHeight
-                            radius: 2
-                            color: Theme.surfaceVariant
-
-                            Rectangle {
-                                width: intervalSlider.visualPosition * parent.width
-                                height: parent.height
-                                color: Theme.accentPrimary
-                                radius: 2
-                            }
-
-                        }
-
-                        handle: Rectangle {
-                            x: intervalSlider.leftPadding + intervalSlider.visualPosition * (intervalSlider.availableWidth - width)
-                            y: intervalSlider.topPadding + intervalSlider.availableHeight / 2 - height / 2
-                            implicitWidth: 20
-                            implicitHeight: 20
-                            radius: 10
-                            color: intervalSlider.pressed ? Theme.surfaceVariant : Theme.surface
-                            border.color: Theme.accentPrimary
-                            border.width: 2
-                        }
-
                     }
 
                 }
@@ -529,49 +497,17 @@ ColumnLayout {
 
                         }
 
-                        Slider {
+                        ThemedSlider {
                             id: fpsSlider
-
                             Layout.fillWidth: true
                             from: 30
                             to: 500
                             stepSize: 5
                             value: Settings.settings.transitionFps
-                            snapMode: Slider.SnapAlways
+                            snapAlways: true
                             onMoved: {
                                 Settings.settings.transitionFps = Math.round(value);
                             }
-
-                            background: Rectangle {
-                                x: fpsSlider.leftPadding
-                                y: fpsSlider.topPadding + fpsSlider.availableHeight / 2 - height / 2
-                                implicitWidth: 200
-                                implicitHeight: 4
-                                width: fpsSlider.availableWidth
-                                height: implicitHeight
-                                radius: 2
-                                color: Theme.surfaceVariant
-
-                                Rectangle {
-                                    width: fpsSlider.visualPosition * parent.width
-                                    height: parent.height
-                                    color: Theme.accentPrimary
-                                    radius: 2
-                                }
-
-                            }
-
-                            handle: Rectangle {
-                                x: fpsSlider.leftPadding + fpsSlider.visualPosition * (fpsSlider.availableWidth - width)
-                                y: fpsSlider.topPadding + fpsSlider.availableHeight / 2 - height / 2
-                                implicitWidth: 20
-                                implicitHeight: 20
-                                radius: 10
-                                color: fpsSlider.pressed ? Theme.surfaceVariant : Theme.surface
-                                border.color: Theme.accentPrimary
-                                border.width: 2
-                            }
-
                         }
 
                     }
@@ -612,49 +548,17 @@ ColumnLayout {
 
                         }
 
-                        Slider {
+                        ThemedSlider {
                             id: durationSlider
-
                             Layout.fillWidth: true
                             from: 0.25
                             to: 10
                             stepSize: 0.05
                             value: Settings.settings.transitionDuration
-                            snapMode: Slider.SnapAlways
+                            snapAlways: true
                             onMoved: {
                                 Settings.settings.transitionDuration = value;
                             }
-
-                            background: Rectangle {
-                                x: durationSlider.leftPadding
-                                y: durationSlider.topPadding + durationSlider.availableHeight / 2 - height / 2
-                                implicitWidth: 200
-                                implicitHeight: 4
-                                width: durationSlider.availableWidth
-                                height: implicitHeight
-                                radius: 2
-                                color: Theme.surfaceVariant
-
-                                Rectangle {
-                                    width: durationSlider.visualPosition * parent.width
-                                    height: parent.height
-                                    color: Theme.accentPrimary
-                                    radius: 2
-                                }
-
-                            }
-
-                            handle: Rectangle {
-                                x: durationSlider.leftPadding + durationSlider.visualPosition * (durationSlider.availableWidth - width)
-                                y: durationSlider.topPadding + durationSlider.availableHeight / 2 - height / 2
-                                implicitWidth: 20
-                                implicitHeight: 20
-                                radius: 10
-                                color: durationSlider.pressed ? Theme.surfaceVariant : Theme.surface
-                                border.color: Theme.accentPrimary
-                                border.width: 2
-                            }
-
                         }
 
                     }
