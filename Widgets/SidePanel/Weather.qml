@@ -154,7 +154,7 @@ Rectangle {
 
             Rectangle {
                 width: parent.width
-                height: 1 * Theme.scale(screen)
+                height: 1 // Don't scale divider
                 color: Qt.rgba(Theme.textSecondary.g, Theme.textSecondary.g, Theme.textSecondary.b, 0.12)
                 Layout.fillWidth: true
                 Layout.topMargin: 2 * Theme.scale(screen)

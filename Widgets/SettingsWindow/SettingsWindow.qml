@@ -311,7 +311,7 @@ PanelWithOverlay {
                 }
 
                 Rectangle {
-                    height: 1 * Theme.scale(screen)
+                    height: 1 // Don't scale divider
                     color: Theme.outline
                     opacity: 0.3
 
@@ -484,7 +484,7 @@ PanelWithOverlay {
 
                             Rectangle {
                                 width: parent.width
-                                height: 1 * Theme.scale(screen)
+                                height: 1 // Don't scale divider
                                 color: Theme.outline
                                 opacity: 0.6
                                 visible: index < (repeater.count - 1)

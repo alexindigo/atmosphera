@@ -119,7 +119,7 @@ ColumnLayout {
                 Layout.fillWidth: true
                 Layout.topMargin: 26 * Theme.scale(screen)
                 Layout.bottomMargin: 18 * Theme.scale(screen)
-                height: 1 * Theme.scale(screen)
+                height: 1 // Don't scale divider
                 color: Theme.outline
                 opacity: 0.3
             }
