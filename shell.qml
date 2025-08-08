@@ -58,6 +58,7 @@ Scope {
 
     Bar {
         id: bar
+        shell: root
         property var notificationHistoryWin: notificationHistoryLoader.active ? notificationHistoryLoader.item : null
     }
 

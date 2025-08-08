@@ -18,6 +18,7 @@ import qs.Widgets.SidePanel
 Scope {
     id: rootScope
 
+    property var shell
     property alias visible: barRootItem.visible
 
     Item {
