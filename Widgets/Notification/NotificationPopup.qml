@@ -12,12 +12,12 @@ Item {
     // Get list of available monitors/screens
     property var monitors: Quickshell.screens || []
     
-    Component.onCompleted: {
-        console.log("[NotificationPopup] Initialized with", monitors.length, "monitors");
-        for (let i = 0; i < monitors.length; i++) {
-            console.log("[NotificationPopup] Monitor", i, ":", monitors[i].name);
-        }
-    }
+    // Component.onCompleted: {
+    //     console.log("[NotificationPopup] Initialized with", monitors.length, "monitors");
+    //     for (let i = 0; i < monitors.length; i++) {
+    //         console.log("[NotificationPopup] Monitor", i, ":", monitors[i].name);
+    //     }
+    // }
     
     // Global visibility state for all notification popups
     property bool notificationsVisible: true
@@ -72,7 +72,7 @@ Item {
                     let shouldShow = notificationMonitors.length === 0 || 
                            notificationMonitors.includes("*") || 
                            notificationMonitors.includes(currentScreenName);
-                    console.log("[NotificationPopup] Monitor", currentScreenName, "should show:", shouldShow, "monitors:", JSON.stringify(notificationMonitors));
+                    // console.log("[NotificationPopup] Monitor", currentScreenName, "should show:", shouldShow, "monitors:", JSON.stringify(notificationMonitors));
                     return shouldShow;
                 }
 
