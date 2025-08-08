@@ -26,6 +26,19 @@ ColumnLayout {
     anchors.fill: parent
     anchors.margins: 0
 
+    function orientationToString(o) {
+        // Map common Qt orientations; fallback to string
+        if (o === Qt.LandscapeOrientation) return "Landscape";
+        if (o === Qt.PortraitOrientation) return "Portrait";
+        if (o === Qt.InvertedLandscapeOrientation) return "Inverted Landscape";
+        if (o === Qt.InvertedPortraitOrientation) return "Inverted Portrait";
+        try {
+            return String(o);
+        } catch (e) {
+            return "Unknown";
+        }
+    }
+
     ScrollView {
         id: scrollView
 
@@ -49,11 +62,21 @@ ColumnLayout {
                 Layout.bottomMargin: 16 * Theme.scale(screen)
             }
 
+            Text {
+                text: "Configure the Bar, Dock and Notifications for each monitor. Details below help differentiate similar displays."
+                font.pixelSize: 12 * Theme.scale(screen)
+                color: Theme.textSecondary
+                wrapMode: Text.WordWrap
+                Layout.fillWidth: true
+                Layout.bottomMargin: 12 * Theme.scale(screen)
+            }
+
             ColumnLayout {
                 spacing: 8
                 Layout.fillWidth: true
                 Layout.topMargin: 8
                 Layout.bottomMargin: 8
+                visible: false
 
                 RowLayout {
                     spacing: 8
@@ -158,6 +181,7 @@ ColumnLayout {
                 Layout.fillWidth: true
                 Layout.topMargin: 8
                 Layout.bottomMargin: 8
+                visible: false
 
                 RowLayout {
                     spacing: 8
@@ -265,8 +289,140 @@ ColumnLayout {
                 Layout.fillWidth: true
                 Layout.topMargin: 8
                 Layout.bottomMargin: 8
+                visible: true
+            // New per-monitor layout
+            ColumnLayout {
+                id: perMonitorLayout
+                spacing: 12 * Theme.scale(screen)
+                Layout.fillWidth: true
 
+                Repeater {
+                    model: root.sortedMonitors
+                    delegate: Rectangle {
+                        id: monitorCard
+                        // Stable local state per monitor to avoid binding glitches
+                        property string monitorName: modelData.name || ""
+                        property bool barChecked: (Settings.settings.barMonitors || []).includes(monitorName)
+                        property bool dockChecked: (Settings.settings.dockMonitors || []).includes(monitorName)
+                        property bool notifChecked: (Settings.settings.notificationMonitors || []).includes(monitorName)
+                        Layout.fillWidth: true
+                        radius: 12 * Theme.scale(screen)
+                        color: Theme.surface
+                        border.color: Theme.outline
+                        border.width: 1
+                        implicitHeight: contentCol.implicitHeight + 24 * Theme.scale(screen)
+
+                        ColumnLayout {
+                            id: contentCol
+                            anchors.fill: parent
+                            anchors.margins: 12 * Theme.scale(screen)
+                            spacing: 8 * Theme.scale(screen)
+
+                            // Monitor title
+                            Text {
+                                text: modelData.name || "Unknown"
+                                font.pixelSize: 16 * Theme.scale(screen)
+                                font.bold: true
+                                color: Theme.accentPrimary
+                            }
+
+                            // Details laid out as four columns: Model, Position, Resolution, Orientation
+                            GridLayout {
+                                columns: 4
+                                columnSpacing: 16 * Theme.scale(screen)
+                                rowSpacing: 2 * Theme.scale(screen)
+
+                                // Model
+                                ColumnLayout {
+                                    spacing: 2 * Theme.scale(screen)
+                                    Text { text: "Model"; color: Theme.textSecondary; font.pixelSize: 10 * Theme.scale(screen) }
+                                    Text { text: modelData.model || "-"; color: Theme.textPrimary; font.pixelSize: 12 * Theme.scale(screen) }
+                                }
+
+                                // Position
+                                ColumnLayout {
+                                    spacing: 2 * Theme.scale(screen)
+                                    Text { text: "Position"; color: Theme.textSecondary; font.pixelSize: 10 * Theme.scale(screen) }
+                                    Text { text: `(${(modelData.x || 0)}, ${(modelData.y || 0)})`; color: Theme.textPrimary; font.pixelSize: 12 * Theme.scale(screen) }
+                                }
+
+                                // Resolution
+                                ColumnLayout {
+                                    spacing: 2 * Theme.scale(screen)
+                                    Text { text: "Resolution"; color: Theme.textSecondary; font.pixelSize: 10 * Theme.scale(screen) }
+                                    Text { text: `${(modelData.width || 0)}x${(modelData.height || 0)}`; color: Theme.textPrimary; font.pixelSize: 12 * Theme.scale(screen) }
+                                }
+
+                                // Orientation
+                                ColumnLayout {
+                                    spacing: 2 * Theme.scale(screen)
+                                    Text { text: "Orientation"; color: Theme.textSecondary; font.pixelSize: 10 * Theme.scale(screen) }
+                                    Text { text: orientationToString(modelData.orientation); color: Theme.textPrimary; font.pixelSize: 12 * Theme.scale(screen) }
+                                }
+                            }
+
+                            // Bar toggle
+                            ToggleOption {
+                                label: "Bar"
+                                description: "Display the top bar on this monitor"
+                                value: monitorCard.barChecked
+                                onToggled: function() {
+                                    let monitors = Settings.settings.barMonitors || [];
+                                    monitors = [...monitors];
+                                    if (!monitorCard.barChecked) {
+                                        if (!monitors.includes(monitorCard.monitorName)) monitors.push(monitorCard.monitorName);
+                                        monitorCard.barChecked = true;
+                                    } else {
+                                        monitors = monitors.filter(name => name !== monitorCard.monitorName);
+                                        monitorCard.barChecked = false;
+                                    }
+                                    Settings.settings.barMonitors = monitors;
+                                }
+                            }
+
+                            // Dock toggle
+                            ToggleOption {
+                                label: "Dock"
+                                description: "Display the dock on this monitor"
+                                value: monitorCard.dockChecked
+                                onToggled: function() {
+                                    let monitors = Settings.settings.dockMonitors || [];
+                                    monitors = [...monitors];
+                                    if (!monitorCard.dockChecked) {
+                                        if (!monitors.includes(monitorCard.monitorName)) monitors.push(monitorCard.monitorName);
+                                        monitorCard.dockChecked = true;
+                                    } else {
+                                        monitors = monitors.filter(name => name !== monitorCard.monitorName);
+                                        monitorCard.dockChecked = false;
+                                    }
+                                    Settings.settings.dockMonitors = monitors;
+                                }
+                            }
+
+                            // Notification toggle
+                            ToggleOption {
+                                label: "Notifications"
+                                description: "Display notifications on this monitor"
+                                value: monitorCard.notifChecked
+                                onToggled: function() {
+                                    let monitors = Settings.settings.notificationMonitors || [];
+                                    monitors = [...monitors];
+                                    if (!monitorCard.notifChecked) {
+                                        if (!monitors.includes(monitorCard.monitorName)) monitors.push(monitorCard.monitorName);
+                                        monitorCard.notifChecked = true;
+                                    } else {
+                                        monitors = monitors.filter(name => name !== monitorCard.monitorName);
+                                        monitorCard.notifChecked = false;
+                                    }
+                                    Settings.settings.notificationMonitors = monitors;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
                 RowLayout {
+                    visible: false
                     spacing: 8
                     Layout.fillWidth: true
 
@@ -293,6 +449,7 @@ ColumnLayout {
 
 
                 Flow {
+                    visible: false
                     Layout.fillWidth: true
                     spacing: 8
 
