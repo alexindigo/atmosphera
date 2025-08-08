@@ -439,12 +439,14 @@ ColumnLayout {
                                         stepSize: 0.05
                                         snapAlways: true
                                         value: parent.currentValue
-                                        onValueChanged: {
-                                            let overrides = Settings.settings.monitorScaleOverrides || {};
-                                            overrides = Object.assign({}, overrides);
-                                            overrides[monitorCard.monitorName] = value;
-                                            Settings.settings.monitorScaleOverrides = overrides;
-                                            parent.currentValue = value;
+                                        onMoved: {
+                                            if (isFinite(value)) {
+                                                let overrides = Settings.settings.monitorScaleOverrides || {};
+                                                overrides = Object.assign({}, overrides);
+                                                overrides[monitorCard.monitorName] = value;
+                                                Settings.settings.monitorScaleOverrides = overrides;
+                                                parent.currentValue = value;
+                                            }
                                         }
                                     }
                                     Text { text: parent.currentValue.toFixed(2); font.pixelSize: 12 * Theme.scale(screen); color: Theme.textPrimary; width: 36 }
