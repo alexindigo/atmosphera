@@ -42,9 +42,6 @@ PanelWithOverlay {
         // Access the shell's SettingsWindow instead of creating a new one
         id: sidebarPopupRect
 
-        // Necessary for the scaling to work on smaller screens
-        width: 530
-
         property real slideOffset: width
         property bool isAnimating: false
         property int leftPadding: 20 * Theme.scale(Screen)
@@ -116,6 +113,8 @@ PanelWithOverlay {
             isRecording = false;
         }
 
+        // Necessary for the scaling to work on smaller screens
+        width: 526
         implicitWidth: 500 * Theme.scale(Screen)
         implicitHeight: 700 * Theme.scale(Screen)
         visible: parent.visible
@@ -173,37 +172,22 @@ PanelWithOverlay {
         Rectangle {
             id: mainRectangle
 
-            color: "transparent"
             anchors.top: sidebarPopupRect.top
             width: sidebarPopupRect.width - sidebarPopupRect.leftPadding
             height: sidebarPopupRect.height - sidebarPopupRect.bottomPadding
             x: sidebarPopupRect.leftPadding + sidebarPopupRect.slideOffset
             y: 0
             z: 0
+            color: Theme.backgroundPrimary
+            anchors.fill: parent
+            bottomLeftRadius: 20 * Theme.scale(Screen)
 
-            Rectangle {
-                color: Theme.backgroundPrimary
-                anchors.fill: parent
-                bottomLeftRadius: 20 * Theme.scale(Screen)
-                border.color: Theme.outline || "#444"
-                border.width: 1
+            Behavior on x {
+                enabled: !sidebarPopupRect.isAnimating
 
-                anchors {
-                    fill: parent
-                    leftMargin: 0
-                    rightMargin: -1
-                    topMargin: -1
-                    bottomMargin: 0
-                }
-
-                Behavior on x {
-                    enabled: !sidebarPopupRect.isAnimating
-
-                    NumberAnimation {
-                        duration: 300
-                        easing.type: Easing.OutCubic
-                    }
-
+                NumberAnimation {
+                    duration: 300
+                    easing.type: Easing.OutCubic
                 }
 
             }

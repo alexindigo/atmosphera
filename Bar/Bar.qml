@@ -51,18 +51,7 @@ Scope {
                         color: Theme.backgroundPrimary
                         anchors.top: parent.top
                         anchors.left: parent.left
-
-                        Rectangle {
-                            anchors.bottom: parent.bottom
-                            width: parent.width
-                            height: 1
-                            color: "transparent"
-                            border.color: Theme.outline || "#444"
-                            border.width: 1
-                        }
                     }
-
-    
 
                     Row {
                         id: leftWidgetsRow
