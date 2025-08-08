@@ -200,6 +200,7 @@ ColumnLayout {
                     ThemedSlider {
                         id: intervalSlider
                         Layout.fillWidth: true
+                        cutoutColor: Theme.backgroundPrimary
                         from: 10
                         to: 900
                         stepSize: 10
@@ -500,6 +501,7 @@ ColumnLayout {
                         ThemedSlider {
                             id: fpsSlider
                             Layout.fillWidth: true
+                            cutoutColor: Theme.backgroundPrimary
                             from: 30
                             to: 500
                             stepSize: 5
@@ -551,6 +553,7 @@ ColumnLayout {
                         ThemedSlider {
                             id: durationSlider
                             Layout.fillWidth: true
+                            cutoutColor: Theme.backgroundPrimary
                             from: 0.25
                             to: 10
                             stepSize: 0.05
