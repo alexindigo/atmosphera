@@ -1,4 +1,4 @@
-import QtQuick 
+import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell.Widgets
@@ -38,7 +38,7 @@ Item {
             }
 
             // Album art image
-            Rectangle {
+            ClippingRectangle {
                 id: albumArtwork
                 width: 20 * Theme.scale(Screen)
                 height: 20 * Theme.scale(Screen)
@@ -60,18 +60,6 @@ Item {
                     asynchronous: true
                     source: MusicManager.trackArtUrl
                     visible: source.toString() !== ""
-
-                    // Rounded corners using layer
-                    layer.enabled: true
-                    layer.effect: MultiEffect {
-                        maskEnabled: true
-                        maskSource: Rectangle {
-                            width: albumArt.width
-                            height: albumArt.height
-                            radius: albumArt.width / 2 // circle
-                            visible: false
-                        }
-                    }
                 }
 
                 // Fallback icon
