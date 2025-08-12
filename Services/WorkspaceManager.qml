@@ -33,7 +33,7 @@ Singleton {
             } catch (e) {
                 console.log("Hyprland not available:", e);
             }
-            
+
             if (typeof Niri !== "undefined") {
                 console.log("Detected Niri service");
                 isHyprland = false;
@@ -41,7 +41,7 @@ Singleton {
                 initNiri();
                 return;
             }
-            
+
             console.log("No supported compositor detected");
         } catch (e) {
             console.error("Error detecting compositor:", e);
@@ -83,18 +83,21 @@ Singleton {
 
     function updateHyprlandWorkspaces() {
         workspaces.clear();
-        try {            
+        try {
             for (let i = 0; i < hlWorkspaces.length; i++) {
                 const ws = hlWorkspaces[i];
-                workspaces.append({
-                    id: i,
-                    idx: ws.id,
-                    name: ws.name || "",
-                    output: ws.monitor?.name || "",
-                    isActive: ws.active === true,
-                    isFocused: ws.focused === true,
-                    isUrgent: ws.urgent === true
-                });
+                // Only append workspaces with id >= 1
+                if (ws.id >= 1) {
+                    workspaces.append({
+                        id: i,
+                        idx: ws.id,
+                        name: ws.name || "",
+                        output: ws.monitor?.name || "",
+                        isActive: ws.active === true,
+                        isFocused: ws.focused === true,
+                        isUrgent: ws.urgent === true
+                    });
+                }
             }
             workspacesChanged();
         } catch (e) {
@@ -108,7 +111,7 @@ Singleton {
 
     Connections {
         target: Niri
-        function onWorkspacesChanged() { 
+        function onWorkspacesChanged() {
             updateNiriWorkspaces();
         }
     }
@@ -129,11 +132,11 @@ Singleton {
                 isOccupied: ws.isOccupied === true,
             });
         }
-        
+
         workspacesChanged();
     }
 
-    function switchToWorkspace(workspaceId) {    
+    function switchToWorkspace(workspaceId) {
         if (isHyprland) {
             try {
                 Hyprland.dispatch(`workspace ${workspaceId}`);
