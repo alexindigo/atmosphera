@@ -109,6 +109,7 @@ ColumnLayout {
               NText {
                 text: Math.floor(AudioService.volume * 100) + "%"
                 Layout.alignment: Qt.AlignVCenter
+                Layout.leftMargin: Style.marginSmall * scaling
                 color: Color.mOnSurface
               }
             }
@@ -121,7 +122,7 @@ ColumnLayout {
             Layout.topMargin: Style.marginMedium * scaling
 
             NToggle {
-              label: "Mute AudioService"
+              label: "Mute Audio Output"
               description: "Mute or unmute the default audio output"
               checked: AudioService.muted
               onToggled: checked => {

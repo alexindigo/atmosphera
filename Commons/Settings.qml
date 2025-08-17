@@ -88,6 +88,7 @@ Singleton {
         property string avatarImage: defaultAvatar
         property bool dimDesktop: true
         property bool showScreenCorners: false
+        property real radiusRatio: 1.0
       }
 
       // location
