@@ -550,7 +550,7 @@ WlSessionLock {
                     height: 20 * scaling
                     color: Color.mPrimary
                     visible: passwordInput.activeFocus
-                    Layout.leftMargin: asterisksText.width + Style.marginTiniest * scaling
+                    Layout.leftMargin: -Style.marginSmall * scaling
                     Layout.alignment: Qt.AlignVCenter
 
                     SequentialAnimation on opacity {
@@ -694,7 +694,7 @@ WlSessionLock {
         width: 64 * scaling
         height: 64 * scaling
         radius: Style.radiusLarge * scaling
-        color: Qt.rgba(Color.mError.r, Color.mError.g, Color.mError.b, shutdownArea.containsMouse ? 0.9 : 0.2)
+        color: shutdownArea.containsMouse ? Color.applyOpacity(Color.mError, "DD") : Color.applyOpacity(Color.mError, "22")
         border.color: Color.mError
         border.width: Math.max(1, Style.borderMedium * scaling)
 
@@ -705,8 +705,6 @@ WlSessionLock {
           height: parent.height + 10 * scaling
           radius: width * 0.5
           color: Color.transparent
-          border.color: Qt.rgba(Color.mError.r, Color.mError.g, Color.mError.b, 0.3)
-          border.width: Math.max(1, Style.borderMedium * scaling)
           opacity: shutdownArea.containsMouse ? 1 : 0
           z: -1
 
@@ -750,7 +748,7 @@ WlSessionLock {
         width: 64 * scaling
         height: 64 * scaling
         radius: Style.radiusLarge * scaling
-        color: Qt.rgba(Color.mPrimary.r, Color.mPrimary.g, Color.mPrimary.b, rebootArea.containsMouse ? 0.9 : 0.2)
+        color: rebootArea.containsMouse ? Color.applyOpacity(Color.mPrimary, "DD") : Color.applyOpacity(Color.mPrimary, "22")
         border.color: Color.mPrimary
         border.width: Math.max(1, Style.borderMedium * scaling)
 
@@ -761,14 +759,12 @@ WlSessionLock {
           height: parent.height + 10 * scaling
           radius: width * 0.5
           color: Color.transparent
-          border.color: Qt.rgba(Color.mPrimary.r, Color.mPrimary.g, Color.mPrimary.b, 0.3)
-          border.width: Math.max(1, Style.borderMedium * scaling)
           opacity: rebootArea.containsMouse ? 1 : 0
           z: -1
 
           Behavior on opacity {
             NumberAnimation {
-              duration: Style.animationFast
+              duration: Style.animationMedium
               easing.type: Easing.OutCubic
             }
           }
@@ -793,7 +789,7 @@ WlSessionLock {
 
         Behavior on color {
           ColorAnimation {
-            duration: Style.animationFast
+            duration: Style.animationMedium
             easing.type: Easing.OutCubic
           }
         }
@@ -805,7 +801,7 @@ WlSessionLock {
         width: 64 * scaling
         height: 64 * scaling
         radius: Style.radiusLarge * scaling
-        color: Qt.rgba(Color.mSecondary.r, Color.mSecondary.g, Color.mSecondary.b, logoutArea.containsMouse ? 0.9 : 0.2)
+        color: logoutArea.containsMouse ? Color.applyOpacity(Color.mSecondary, "DD") : Color.applyOpacity(Color.mSecondary, "22")
         border.color: Color.mSecondary
         border.width: Math.max(1, Style.borderMedium * scaling)
 
@@ -816,14 +812,12 @@ WlSessionLock {
           height: parent.height + 10 * scaling
           radius: width * 0.5
           color: Color.transparent
-          border.color: Qt.rgba(Color.mSecondary.r, Color.mSecondary.g, Color.mSecondary.b, 0.3)
-          border.width: Math.max(1, Style.borderMedium * scaling)
           opacity: logoutArea.containsMouse ? 1 : 0
           z: -1
 
           Behavior on opacity {
             NumberAnimation {
-              duration: Style.animationFast
+              duration: Style.animationMedium
               easing.type: Easing.OutCubic
             }
           }
@@ -855,6 +849,7 @@ WlSessionLock {
           }
         }
         scale: logoutArea.containsMouse ? 1.1 : 1.0
+
       }
     }
 
