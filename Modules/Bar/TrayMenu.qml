@@ -126,7 +126,7 @@ PopupWindow {
             id: text
             Layout.fillWidth: true
             color: (modelData?.enabled
-                    ?? true) ? (mouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface) : Color.textDisabled
+                    ?? true) ? (mouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface) : Color.applyOpacity(Color.mOnSurface, 64)
             text: modelData?.text ?? ""
             font.pointSize: Style.fontSizeSmall * scaling
             verticalAlignment: Text.AlignVCenter
@@ -361,7 +361,7 @@ PopupWindow {
               NText {
                 id: subText
                 Layout.fillWidth: true
-                color: (modelData?.enabled ?? true) ? bg.hoverTextColor : Color.textDisabled
+                color: (modelData?.enabled ?? true) ? bg.hoverTextColor : Color.applyOpacity(Color.mOnSurface, 64)
                 text: modelData?.text ?? ""
                 font.pointSize: Style.fontSizeSmall * scaling
                 verticalAlignment: Text.AlignVCenter
