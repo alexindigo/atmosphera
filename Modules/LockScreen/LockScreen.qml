@@ -551,9 +551,8 @@ WlSessionLock {
                     height: 20 * scaling
                     color: Color.mPrimary
                     visible: passwordInput.activeFocus
-                    anchors.left: asterisksText.right
-                    anchors.leftMargin: Style.marginTiniest * scaling
-                    anchors.verticalCenter: asterisksText.verticalCenter
+                    Layout.leftMargin: asterisksText.width + Style.marginTiniest * scaling
+                    Layout.alignment: Qt.AlignVCenter
 
                     SequentialAnimation on opacity {
                       loops: Animation.Infinite
@@ -619,7 +618,7 @@ WlSessionLock {
                     onClicked: lock.unlockAttempt()
 
                     SequentialAnimation on scale {
-                      running: containsMouse
+                      running: executeButtonArea.containsMouse
                       NumberAnimation {
                         to: 1.05
                         duration: Style.animationFast
@@ -628,7 +627,7 @@ WlSessionLock {
                     }
 
                     SequentialAnimation on scale {
-                      running: !containsMouse
+                      running: !executeButtonArea.containsMouse
                       NumberAnimation {
                         to: 1.0
                         duration: Style.animationFast
