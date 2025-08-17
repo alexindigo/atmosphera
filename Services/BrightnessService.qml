@@ -1,7 +1,5 @@
 pragma Singleton
 
-pragma ComponentBehavior
-
 import QtQuick
 import Quickshell
 import Quickshell.Io
