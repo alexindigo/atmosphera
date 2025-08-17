@@ -126,7 +126,7 @@ PopupWindow {
             id: text
             Layout.fillWidth: true
             color: (modelData?.enabled
-                    ?? true) ? (mouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface) : Color.textDisabled
+                    ?? true) ? (mouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface) : Color.mOnSurfaceVariant
             text: modelData?.text ?? ""
             font.pointSize: Style.fontSizeSmall * scaling
             verticalAlignment: Text.AlignVCenter
@@ -148,7 +148,7 @@ PopupWindow {
             font.pointSize: Style.fontSizeSmall * scaling
             verticalAlignment: Text.AlignVCenter
             visible: modelData?.hasChildren ?? false
-            color: Color.mOnSurface
+            color: (modelData?.enabled ?? true) ? (mouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface) : Color.mOnSurfaceVariant
           }
         }
 
@@ -350,7 +350,6 @@ PopupWindow {
             color: mouseArea.containsMouse ? Color.mTertiary : Color.transparent
             radius: Style.radiusSmall * scaling
             visible: !(modelData?.isSeparator ?? false)
-            property color hoverTextColor: mouseArea.containsMouse ? Color.mOnSurface : Color.mOnSurface
 
             RowLayout {
               anchors.fill: parent
@@ -361,7 +360,7 @@ PopupWindow {
               NText {
                 id: subText
                 Layout.fillWidth: true
-                color: (modelData?.enabled ?? true) ? bg.hoverTextColor : Color.textDisabled
+                color: (modelData?.enabled ?? true) ? (mouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface) : Color.mOnSurfaceVariant
                 text: modelData?.text ?? ""
                 font.pointSize: Style.fontSizeSmall * scaling
                 verticalAlignment: Text.AlignVCenter
@@ -383,6 +382,7 @@ PopupWindow {
                 font.pointSize: Style.fontSizeSmall * scaling
                 verticalAlignment: Text.AlignVCenter
                 visible: modelData?.hasChildren ?? false
+                color: (modelData?.enabled ?? true) ? (mouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface) : Color.mOnSurfaceVariant
               }
             }
 
