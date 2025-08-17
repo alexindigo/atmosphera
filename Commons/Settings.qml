@@ -17,6 +17,7 @@ Singleton {
                                                                          "HOME") + "/.config") + "/" + shellName + "/"
   property string cacheDir: Quickshell.env("NOCTALIA_CACHE_DIR") || (Quickshell.env("XDG_CACHE_HOME") || Quickshell.env(
                                                                        "HOME") + "/.cache") + "/" + shellName + "/"
+  property string cacheDirImages: cacheDir + "images/"
 
   property string settingsFile: Quickshell.env("NOCTALIA_SETTINGS_FILE") || (configDir + "settings.json")
 
@@ -37,6 +38,7 @@ Singleton {
       // ensure settings dir exists
       Quickshell.execDetached(["mkdir", "-p", configDir])
       Quickshell.execDetached(["mkdir", "-p", cacheDir])
+      Quickshell.execDetached(["mkdir", "-p", cacheDirImages])
     }
   }
 
