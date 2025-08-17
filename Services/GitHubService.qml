@@ -11,8 +11,8 @@ Singleton {
 
   property string githubDataFile: Quickshell.env("NOCTALIA_GITHUB_FILE") || (Settings.cacheDir + "github.json")
   property int githubUpdateFrequency: 60 * 60 // 1 hour expressed in seconds
-  property var data: adapter // Used to access via GitHubService.data.xxx.yyy
   property bool isFetchingData: false
+  property alias data: adapter // Used to access via GitHubService.data.xxx.yyy
 
   // Public properties for easy access
   property string latestVersion: "Unknown"

@@ -11,8 +11,8 @@ Singleton {
 
   property string locationFile: Quickshell.env("NOCTALIA_WEATHER_FILE") || (Settings.cacheDir + "location.json")
   property int weatherUpdateFrequency: 30 * 60 // 30 minutes expressed in seconds
-  property var data: adapter // Used to access via LocationService.data.xxx
   property bool isFetchingWeather: false
+  property alias data: adapter // Used to access via LocationService.data.xxx
 
   FileView {
     path: locationFile

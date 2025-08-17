@@ -24,7 +24,7 @@ Singleton {
   property string defaultAvatar: Quickshell.env("HOME") + "/.face"
 
   // Used to access via Settings.data.xxx.yyy
-  property var data: adapter
+  property alias data: adapter
 
   // Flag to prevent unnecessary wallpaper calls during reloads
   property bool isInitialLoad: true
