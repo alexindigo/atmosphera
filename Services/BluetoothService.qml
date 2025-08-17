@@ -102,6 +102,8 @@ Singleton {
       return
     }
 
+    Logger.log("Bluetooth", "refreshDevices")
+
     // Remove duplicate check since we already did it above
     const connected = []
     const paired = []
