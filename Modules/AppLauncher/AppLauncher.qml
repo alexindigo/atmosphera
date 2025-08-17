@@ -288,26 +288,31 @@ NLoader {
                                         1,
                                         searchInput.activeFocus ? Style.borderMedium * scaling : Style.borderThin * scaling)
 
-                        Row {
+                        Item {
                           anchors.fill: parent
                           anchors.margins: Style.marginMedium * scaling
-                          spacing: Style.marginSmall * scaling
 
                           Text {
+                            id: searchIcon
                             text: "search"
                             font.family: "Material Symbols Outlined"
                             font.pointSize: Style.fontSizeLarger * scaling
                             color: searchInput.activeFocus ? Color.mPrimary : Color.mOnSurface
+                            anchors.left: parent.left
+                            anchors.verticalCenter: parent.verticalCenter
                           }
 
                           TextField {
                             id: searchInput
-                            placeholderText: "Search applications..."
+                            placeholderText: searchText === "" ? "Search applications... (use > to view commands)" : "Search applications..."
                             color: Color.mOnSurface
-                            placeholderTextColor: Color.mOnSurface
+                            placeholderTextColor: Color.mOnSurfaceVariant
                             background: null
                             font.pointSize: Style.fontSizeLarge * scaling
-                            Layout.fillWidth: true
+                            anchors.left: searchIcon.right
+                            anchors.leftMargin: Style.marginSmall * scaling
+                            anchors.right: parent.right
+                            anchors.verticalCenter: parent.verticalCenter
                             onTextChanged: {
                               searchText = text
                               selectedIndex = 0 // Reset selection when search changes
@@ -473,7 +478,7 @@ NLoader {
                                   text: modelData.name || "Unknown"
                                   font.pointSize: Style.fontSizeLarge * scaling
                                   font.weight: Font.Bold
-                                  color: Color.mOnSurface
+                                  color: (appCardArea.containsMouse || isSelected) ? Color.mOnPrimary : Color.mOnSurface
                                   elide: Text.ElideRight
                                   Layout.fillWidth: true
                                 }
@@ -481,7 +486,7 @@ NLoader {
                                 NText {
                                   text: modelData.isCalculator ? (modelData.expr + " = " + modelData.result) : modelData.isClipboard ? modelData.content : modelData.isCommand ? modelData.content : (modelData.genericName || modelData.comment || "")
                                   font.pointSize: Style.fontSizeMedium * scaling
-                                  color: (appCardArea.containsMouse || isSelected) ? Color.mOnSurface : Color.mOnSurface
+                                  color: (appCardArea.containsMouse || isSelected) ? Color.mOnPrimary : Color.mOnSurface
                                   elide: Text.ElideRight
                                   Layout.fillWidth: true
                                   visible: text !== ""
