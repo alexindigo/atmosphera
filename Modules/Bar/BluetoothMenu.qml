@@ -71,7 +71,7 @@ NLoader {
         radius: Style.radiusLarge * scaling
         border.color: Color.mOutlineVariant
         border.width: Math.max(1, Style.borderThin * scaling)
-        width: 400 * scaling
+        width: 380 * scaling
         height: 500 * scaling
         anchors.top: parent.top
         anchors.right: parent.right
@@ -159,203 +159,242 @@ NLoader {
 
           NDivider {}
 
-          // Available devices
-          Column {
-            id: column
+          ScrollView {
+            id: scrollView
 
-            width: parent.width
-            spacing: Style.marginMedium * scaling
-            visible: BluetoothService.adapter && BluetoothService.adapter.enabled
-            
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            clip: true
+            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+            ScrollBar.vertical.policy: ScrollBar.AsNeeded
 
-            RowLayout {
+            // Available devices
+            Column {
+              id: column
+
               width: parent.width
               spacing: Style.marginMedium * scaling
+              visible: BluetoothService.adapter && BluetoothService.adapter.enabled
 
-              NText {
-                text: "Available Devices"
-                font.pointSize: Style.fontSizeLarge * scaling
-                color: Color.mOnSurface
-                font.weight: Style.fontWeightMedium
-                anchors.verticalCenter: parent.verticalCenter
-              }
-            }
-
-            Repeater {
-              model: {
-                if (!BluetoothService.adapter || !BluetoothService.adapter.discovering || !Bluetooth.devices)
-                  return []
-
-                var filtered = Bluetooth.devices.values.filter(dev => {
-                                                                 return dev && !dev.paired && !dev.pairing
-                                                                 && !dev.blocked && (dev.signalStrength === undefined
-                                                                                     || dev.signalStrength > 0)
-                                                               })
-                return BluetoothService.sortDevices(filtered)
-              }
-
-              Rectangle {
-                property bool canConnect: BluetoothService.canConnect(modelData)
-                property bool isBusy: BluetoothService.isDeviceBusy(modelData)
-
+              RowLayout {
                 width: parent.width
-                height: 70
-                radius: Style.radiusMedium * scaling
-                color: {
-                  if (availableDeviceArea.containsMouse && !isBusy)
-                    return Qt.rgba(Color.mPrimary.r, Color.mPrimary.g, Color.mPrimary.b, 0.08)
+                spacing: Style.marginMedium * scaling
 
-                  if (modelData.pairing || modelData.state === BluetoothDeviceState.Connecting)
-                    return Qt.rgba(Color.mError.r, Color.mError.g, Color.mError.b, 0.12)
-
-                  if (modelData.blocked)
-                    return Color.mError
-
-                  return Color.mSurfaceVariant
+                NText {
+                  text: "Available Devices"
+                  font.pointSize: Style.fontSizeLarge * scaling
+                  color: Color.mOnSurface
+                  font.weight: Style.fontWeightMedium
                 }
-                border.color: {
-                  if (modelData.pairing)
-                    return Color.mError
+              }
 
-                  if (modelData.blocked)
-                    return Color.mError
+              Repeater {
+                model: {
+                  if (!BluetoothService.adapter || !BluetoothService.adapter.discovering || !Bluetooth.devices)
+                    return []
 
-                  return Color.mOutline
-                }
-                border.width: 1
-
-                Row {
-                  anchors.left: parent.left
-                  anchors.leftMargin: Style.marginMedium * scaling
-                  anchors.verticalCenter: parent.verticalCenter
-                  spacing: Style.marginSmall * scaling
-
-                  NText {
-                    text: BluetoothService.getDeviceIcon(modelData)
-                    font.family: "Material Symbols Outlined"
-                    font.pointSize: Style.fontSizeXL * scaling
-                    color: {
-                      if (modelData.pairing)
-                        return Color.mError
-
-                      if (modelData.blocked)
-                        return Color.mError
-
-                      return Color.mOnSurface
-                    }
-                    anchors.verticalCenter: parent.verticalCenter
-                  }
-
-                  Column {
-                    spacing: 2
-                    anchors.verticalCenter: parent.verticalCenter
-
-                    NText {
-                      text: modelData.name || modelData.deviceName
-                      font.pointSize: Style.fonttSizeMedium * scaling
-                      color: {
-                        if (modelData.pairing)
-                          return Color.mError
-
-                        if (modelData.blocked)
-                          return Color.mError
-
-                        return Color.mOnSurface
-                      }
-                      font.weight: modelData.pairing ? Style.fontWeightMedium : Font.Normal
-                    }
-
-                    Row {
-                      spacing: Style.marginTiny * scaling
-
-                      Row {
-                        spacing: Style.marginSmall * spacing
-
-                        NText {
-                          text: {
-                            if (modelData.pairing)
-                              return "Pairing..."
-
-                            if (modelData.blocked)
-                              return "Blocked"
-
-                            return BluetoothService.getSignalStrength(modelData)
-                          }
-                          font.pointSize: Style.fontSizeSmall * scaling
-                          color: {
-                            if (modelData.pairing)
-                              return Color.mError
-
-                            if (modelData.blocked)
-                              return Theme.error
-
-                            return Qt.rgba(Color.mOnSurface.r, Color.mOnSurface.g, Color.mOnSurface.b, 0.7)
-                          }
-                        }
-
-                        NText {
-                          text: BluetoothService.getSignalIcon(modelData)
-                          font.family: "Material Symbols Outlined"
-                          font.pointSize: Style.fontSizeSmall * scaling
-                          color: Qt.rgba(Color.mOnSurface.r, Color.mOnSurface.g, Color.mOnSurface.b, 0.7)
-                          visible: modelData.signalStrength !== undefined && modelData.signalStrength > 0
-                                   && !modelData.pairing && !modelData.blocked
-                        }
-
-                        NText {
-                          text: (modelData.signalStrength !== undefined
-                                 && modelData.signalStrength > 0) ? modelData.signalStrength + "%" : ""
-                          font.pointSize: Style.fontSizeSmall * scaling
-                          color: Qt.rgba(Color.mOnSurface.r, Color.mOnSurface.g, Color.mOnSurface.b, 0.5)
-                          visible: modelData.signalStrength !== undefined && modelData.signalStrength > 0
-                                   && !modelData.pairing && !modelData.blocked
-                        }
-                      }
-                    }
-                  }
+                  var filtered = Bluetooth.devices.values.filter(dev => {
+                                                                   return dev && !dev.paired && !dev.pairing
+                                                                   && !dev.blocked && (dev.signalStrength === undefined
+                                                                                       || dev.signalStrength > 0)
+                                                                 })
+                  return BluetoothService.sortDevices(filtered)
                 }
 
                 Rectangle {
-                  width: 80
-                  height: 28
+                  property bool canConnect: BluetoothService.canConnect(modelData)
+                  property bool isBusy: BluetoothService.isDeviceBusy(modelData)
+
+                  width: parent.width
+                  height: 70
                   radius: Style.radiusMedium * scaling
-                  anchors.right: parent.right
-                  anchors.rightMargin: Style.marginMedium * scaling
-                  anchors.verticalCenter: parent.verticalCenter
-                  visible: modelData.state !== BluetoothDeviceState.Connecting
                   color: {
-                    if (!canConnect && !isBusy)
-                      return Qt.rgba(Theme.surfaceVariant.r, Theme.surfaceVariant.g, Theme.surfaceVariant.b, 0.3)
+                    if (availableDeviceArea.containsMouse && !isBusy)
+                      return Color.mTertiary
 
-                    if (actionButtonArea.containsMouse && !isBusy)
-                      return Qt.rgba(Color.mPrimary.r, Color.mPrimary.g, Color.mPrimary.b, 0.12)
+                    if (modelData.pairing || modelData.state === BluetoothDeviceState.Connecting)
+                      return Color.mPrimary
 
-                    return "transparent"
+                    if (modelData.blocked)
+                      return Color.mError
+
+                    return Color.mSurfaceVariant
                   }
-                  border.color: canConnect || isBusy ? Color.mPrimary : Qt.rgba(Theme.outline.r, Theme.outline.g,
-                                                                                Theme.outline.b, 0.2)
-                  border.width: 1
-                  opacity: canConnect || isBusy ? 1 : 0.5
+                  border.color: Color.mOutline
+                  border.width: Math.max(1, Style.borderThin * scaling)
 
-                  NText {
-                    anchors.centerIn: parent
-                    text: {
-                      if (modelData.pairing)
-                        return "Pairing..."
+                  Row {
+                    anchors.left: parent.left
+                    anchors.leftMargin: Style.marginMedium * scaling
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: Style.marginSmall * scaling
 
-                      if (modelData.blocked)
-                        return "Blocked"
+                    // One device BT icon
+                    NText {
+                      text: BluetoothService.getDeviceIcon(modelData)
+                      font.family: "Material Symbols Outlined"
+                      font.pointSize: Style.fontSizeXL * scaling
+                      color: {
+                        if (availableDeviceArea.containsMouse)
+                          return Color.mOnTertiary
 
-                      return "Connect"
+                        if (modelData.pairing || modelData.state === BluetoothDeviceState.Connecting)
+                          return Color.mOnPrimary
+
+                        if (modelData.blocked)
+                          return Color.mOnError
+
+                        return Color.mOnSurface
+                      }
+                      anchors.verticalCenter: parent.verticalCenter
                     }
-                    font.pointSize: Style.fontSizeSmall * scaling
-                    color: canConnect || isBusy ? Color.mPrimary : Qt.rgba(Color.mOnSurface.r, Color.mOnSurface.g,
-                                                                           Color.mOnSurface.b, 0.5)
-                    font.weight: Style.fontWeightMedium
+
+                    Column {
+                      spacing: Style.marginTiniest * scaling
+                      anchors.verticalCenter: parent.verticalCenter
+
+                      // One device name
+                      NText {
+                        text: modelData.name || modelData.deviceName
+                        font.pointSize: Style.fonttSizeMedium * scaling
+                        elide: Text.ElideRight
+                        color: {
+                          if (availableDeviceArea.containsMouse)
+                            return Color.mOnTertiary
+
+                          if (modelData.pairing || modelData.state === BluetoothDeviceState.Connecting)
+                            return Color.mOnPrimary
+
+                          if (modelData.blocked)
+                            return Color.mOnError
+
+                          return Color.mOnSurface
+                        }
+                        font.weight: Style.fontWeightMedium
+                      }
+
+                      Row {
+                        spacing: Style.marginTiny * scaling
+
+                        Row {
+                          spacing: Style.marginSmall * spacing
+
+                          // One device signal strength - "Unknown" when not connected
+                          NText {
+                            text: {
+                              if (modelData.pairing)
+                                return "Pairing..."
+
+                              if (modelData.blocked)
+                                return "Blocked"
+
+                              return BluetoothService.getSignalStrength(modelData)
+                            }
+                            font.pointSize: Style.fontSizeSmall * scaling
+                            color: {
+                              if (availableDeviceArea.containsMouse)
+                                return Color.mOnTertiary
+
+                              if (modelData.pairing || modelData.state === BluetoothDeviceState.Connecting)
+                                return Color.mOnPrimary
+
+                              if (modelData.blocked)
+                                return Color.mOnError
+
+                              return Color.mOnSurface
+                            }
+                          }
+
+                          NText {
+                            text: BluetoothService.getSignalIcon(modelData)
+                            font.family: "Material Symbols Outlined"
+                            font.pointSize: Style.fontSizeSmall * scaling
+                            color: {
+                              if (availableDeviceArea.containsMouse)
+                                return Color.mOnTertiary
+
+                              if (modelData.pairing || modelData.state === BluetoothDeviceState.Connecting)
+                                return Color.mOnPrimary
+
+                              if (modelData.blocked)
+                                return Color.mOnError
+
+                              return Color.mOnSurface
+                            }
+                            visible: modelData.signalStrength !== undefined && modelData.signalStrength > 0
+                                     && !modelData.pairing && !modelData.blocked
+                          }
+
+                          NText {
+                            text: (modelData.signalStrength !== undefined
+                                   && modelData.signalStrength > 0) ? modelData.signalStrength + "%" : ""
+                            font.pointSize: Style.fontSizeSmall * scaling
+                            color: {
+                              if (availableDeviceArea.containsMouse)
+                                return Color.mOnTertiary
+
+                              if (modelData.pairing || modelData.state === BluetoothDeviceState.Connecting)
+                                return Color.mOnPrimary
+
+                              if (modelData.blocked)
+                                return Color.mOnError
+
+                              return Color.mOnSurface
+                            }
+                            visible: modelData.signalStrength !== undefined && modelData.signalStrength > 0
+                                     && !modelData.pairing && !modelData.blocked
+                          }
+                        }
+                      }
+                    }
+                  }
+
+                  Rectangle {
+                    width: 80 * scaling
+                    height: 28 * scaling
+                    radius: Style.radiusMedium * scaling
+                    anchors.right: parent.right
+                    anchors.rightMargin: Style.marginMedium * scaling
+                    anchors.verticalCenter: parent.verticalCenter
+                    visible: modelData.state !== BluetoothDeviceState.Connecting
+                    color: Color.transparent
+
+                    border.color: {
+                      if (availableDeviceArea.containsMouse) {
+                        return Color.mOnTertiary
+                      } else {
+                        return Color.mPrimary
+                      }
+                    }
+                    border.width: Math.max(1, Style.borderThin * scaling)
+                    opacity: canConnect || isBusy ? 1 : 0.5
+
+                    // On device connect button
+                    NText {
+                      anchors.centerIn: parent
+                      text: {
+                        if (modelData.pairing)
+                          return "Pairing..."
+
+                        if (modelData.blocked)
+                          return "Blocked"
+
+                        return "Connect"
+                      }
+                      font.pointSize: Style.fontSizeSmall * scaling
+                      font.weight: Style.fontWeightMedium
+                      color: {
+                        if (availableDeviceArea.containsMouse) {
+                          return Color.mOnTertiary
+                        } else {
+                          return Color.mPrimary
+                        }
+                      }
+                    }
                   }
 
                   MouseArea {
-                    id: actionButtonArea
+                    id: availableDeviceArea
 
                     anchors.fill: parent
                     hoverEnabled: true
@@ -368,102 +407,88 @@ NLoader {
                     }
                   }
                 }
-
-                MouseArea {
-                  id: availableDeviceArea
-
-                  anchors.fill: parent
-                  anchors.rightMargin: 90
-                  hoverEnabled: true
-                  cursorShape: canConnect && !isBusy ? Qt.PointingHandCursor : (isBusy ? Qt.BusyCursor : Qt.ArrowCursor)
-                  enabled: canConnect && !isBusy
-                  onClicked: {
-                    if (modelData)
-                      BluetoothService.connectDeviceWithTrust(modelData)
-                  }
-                }
-              }
-            }
-
-            Column {
-              width: parent.width
-              spacing: Style.marginMedium * scaling
-              visible: {
-                if (!BluetoothService.adapter || !BluetoothService.adapter.discovering || !Bluetooth.devices)
-                  return false
-
-                var availableCount = Bluetooth.devices.values.filter(dev => {
-                                                                       return dev && !dev.paired && !dev.pairing
-                                                                       && !dev.blocked
-                                                                       && (dev.signalStrength === undefined
-                                                                           || dev.signalStrength > 0)
-                                                                     }).length
-                return availableCount === 0
               }
 
-              Row {
-                anchors.horizontalCenter: parent.horizontalCenter
+              // Fallback if nothing available
+              Column {
+                width: parent.width
                 spacing: Style.marginMedium * scaling
+                visible: {
+                  if (!BluetoothService.adapter || !BluetoothService.adapter.discovering || !Bluetooth.devices)
+                    return false
 
-                NText {
-                  text: "sync"
-                  font.family: "Material Symbols Outlined"
-                  font.pointSize: 32 * scaling
-                  color: Color.mPrimary
-                  anchors.verticalCenter: parent.verticalCenter
+                  var availableCount = Bluetooth.devices.values.filter(dev => {
+                                                                         return dev && !dev.paired && !dev.pairing
+                                                                         && !dev.blocked
+                                                                         && (dev.signalStrength === undefined
+                                                                             || dev.signalStrength > 0)
+                                                                       }).length
+                  return availableCount === 0
+                }
 
-                  RotationAnimation on rotation {
-                    running: true
-                    loops: Animation.Infinite
-                    from: 0
-                    to: 360
-                    duration: 2000
+                Row {
+                  anchors.horizontalCenter: parent.horizontalCenter
+                  spacing: Style.marginMedium * scaling
+
+                  NText {
+                    text: "sync"
+                    font.family: "Material Symbols Outlined"
+                    font.pointSize: Style.fontSizeXLL * 1.5 * scaling
+                    color: Color.mPrimary
+                    anchors.verticalCenter: parent.verticalCenter
+
+                    RotationAnimation on rotation {
+                      running: true
+                      loops: Animation.Infinite
+                      from: 0
+                      to: 360
+                      duration: 2000
+                    }
+                  }
+
+                  NText {
+                    text: "Scanning for devices..."
+                    font.pointSize: Style.fontSizeLarge * scaling
+                    color: Color.mOnSurface
+                    font.weight: Style.fontWeightMedium
+                    anchors.verticalCenter: parent.verticalCenter
                   }
                 }
 
                 NText {
-                  text: "Scanning for devices..."
-                  font.pointSize: Style.fontSizeLarge * scaling
-                  color: Color.mOnSurface
-                  font.weight: Style.fontWeightMedium
-                  anchors.verticalCenter: parent.verticalCenter
+                  text: "Make sure your device is in pairing mode"
+                  font.pointSize: Style.fontSizeMedium * scaling
+                  color: Color.mOnSurfaceVariant
+                  anchors.horizontalCenter: parent.horizontalCenter
                 }
               }
 
               NText {
-                text: "Make sure your device is in pairing mode"
+                text: "No devices found. Put your device in pairing mode and click Start Scanning."
                 font.pointSize: Style.fontSizeMedium * scaling
-                color: Qt.rgba(Color.mOnSurface.r, Color.mOnSurface.g, Color.mOnSurface.b, 0.7)
-                anchors.horizontalCenter: parent.horizontalCenter
-              }
-            }
+                color: Color.mOnSurfaceVariant
+                visible: {
+                  if (!BluetoothService.adapter || !Bluetooth.devices)
+                    return true
 
-            NText {
-              text: "No devices found. Put your device in pairing mode and click Start Scanning."
-              font.pointSize: Style.fontSizeMedium * scaling
-              color: Qt.rgba(Color.mOnSurface.r, Color.mOnSurface.g, Color.mOnSurface.b, 0.7)
-              visible: {
-                if (!BluetoothService.adapter || !Bluetooth.devices)
-                  return true
-
-                var availableCount = Bluetooth.devices.values.filter(dev => {
-                                                                       return dev && !dev.paired && !dev.pairing
-                                                                       && !dev.blocked
-                                                                       && (dev.signalStrength === undefined
-                                                                           || dev.signalStrength > 0)
-                                                                     }).length
-                return availableCount === 0 && !BluetoothService.adapter.discovering
+                  var availableCount = Bluetooth.devices.values.filter(dev => {
+                                                                         return dev && !dev.paired && !dev.pairing
+                                                                         && !dev.blocked
+                                                                         && (dev.signalStrength === undefined
+                                                                             || dev.signalStrength > 0)
+                                                                       }).length
+                  return availableCount === 0 && !BluetoothService.adapter.discovering
+                }
+                wrapMode: Text.WordWrap
+                width: parent.width
+                horizontalAlignment: Text.AlignHCenter
               }
-              wrapMode: Text.WordWrap
-              width: parent.width
-              horizontalAlignment: Text.AlignHCenter
             }
           }
-
-            // This item takes up all the remaining vertical space.
-            Item {
-                Layout.fillHeight: true
-            }
+          // This item takes up all the remaining vertical space.
+          Item {
+            Layout.fillHeight: true
+          }
         }
       }
     }
