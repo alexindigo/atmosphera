@@ -44,10 +44,9 @@ Row {
         spacing: Style.marginTiny * scaling
 
         // Window icon
-        NText {
+        NIcon {
           id: windowIcon
           text: MediaService.isPlaying ? "pause" : "play_arrow"
-          font.family: "Material Symbols Outlined"
           font.pointSize: Style.fontSizeLarge * scaling
           verticalAlignment: Text.AlignVCenter
           anchors.verticalCenter: parent.verticalCenter

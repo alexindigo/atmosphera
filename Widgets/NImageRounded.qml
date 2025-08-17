@@ -61,10 +61,9 @@ Rectangle {
   }
 
   // Fallback icon
-  NText {
+  NIcon {
     anchors.centerIn: parent
     text: fallbackIcon
-    font.family: "Material Symbols Outlined"
     font.pointSize: Style.fontSizeXL * scaling
     visible: fallbackIcon !== undefined && fallbackIcon !== "" && (imagePath === undefined || imagePath === "")
     z: 0

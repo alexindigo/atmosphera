@@ -401,9 +401,8 @@ WlSessionLock {
                     spacing: Style.marginSmall * scaling
                     visible: batteryIndicator.batteryVisible
 
-                    Text {
+                    NIcon {
                       text: batteryIndicator.getIcon()
-                      font.family: "Material Symbols Outlined"
                       font.pointSize: Style.fontSizeMedium
                       color: batteryIndicator.charging ? Color.mPrimary : Color.mOnSurface
                     }
@@ -731,12 +730,11 @@ WlSessionLock {
           }
         }
 
-        Text {
-          anchors.centerIn: parent
+        NIcon {
           text: "power_settings_new"
-          font.family: "Material Symbols Outlined"
           font.pointSize: Style.fontSizeXXL * scaling
           color: shutdownArea.containsMouse ? Color.mOnPrimary : Color.mError
+          anchors.centerIn: parent
         }
 
         Behavior on color {
@@ -787,12 +785,11 @@ WlSessionLock {
           }
         }
 
-        Text {
-          anchors.centerIn: parent
+        NIcon {
           text: "refresh"
-          font.family: "Material Symbols Outlined"
           font.pointSize: Style.fontSizeXXL * scaling
           color: rebootArea.containsMouse ? Color.mOnPrimary : Color.mPrimary
+          anchors.centerIn: parent
         }
 
         Behavior on color {
@@ -845,12 +842,11 @@ WlSessionLock {
           }
         }
 
-        Text {
-          anchors.centerIn: parent
+        NIcon {
           text: "exit_to_app"
-          font.family: "Material Symbols Outlined"
           font.pointSize: Style.fontSizeXXL * scaling
           color: logoutArea.containsMouse ? Color.mOnPrimary : Color.mSecondary
+          anchors.centerIn: parent
         }
 
         Behavior on color {

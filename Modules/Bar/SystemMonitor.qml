@@ -17,12 +17,9 @@ Row {
     id: cpuUsageLayout
     spacing: Style.marginTiny * scaling
 
-    NText {
+    NIcon {
       id: cpuUsageIcon
       text: "speed"
-      font.family: "Material Symbols Outlined"
-      font.pointSize: Style.fontSizeLarge * scaling
-      verticalAlignment: Text.AlignVCenter
       anchors.verticalCenter: parent.verticalCenter
     }
 
@@ -42,12 +39,8 @@ Row {
     id: cpuTempLayout
     spacing: Style.marginTiny * scaling
 
-    NText {
+    NIcon {
       text: "thermometer"
-      font.family: "Material Symbols Outlined"
-      font.pointSize: Style.fontSizeLarge * scaling
-
-      verticalAlignment: Text.AlignVCenter
       anchors.verticalCenter: parent.verticalCenter
     }
 
@@ -66,11 +59,8 @@ Row {
     id: memoryUsageLayout
     spacing: Style.marginTiny * scaling
 
-    NText {
+    NIcon {
       text: "memory"
-      font.family: "Material Symbols Outlined"
-      font.pointSize: Style.fontSizeLarge * scaling
-      verticalAlignment: Text.AlignVCenter
       anchors.verticalCenter: parent.verticalCenter
     }
 

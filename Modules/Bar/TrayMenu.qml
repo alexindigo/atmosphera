@@ -126,7 +126,8 @@ PopupWindow {
             id: text
             Layout.fillWidth: true
             color: (modelData?.enabled
-                    ?? true) ? (mouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface) : Color.applyOpacity(Color.mOnSurface, 64)
+                    ?? true) ? (mouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface) : Color.applyOpacity(
+                                 Color.mOnSurface, 64)
             text: modelData?.text ?? ""
             font.pointSize: Style.fontSizeSmall * scaling
             verticalAlignment: Text.AlignVCenter
@@ -142,9 +143,8 @@ PopupWindow {
           }
 
           // Chevron right for optional submenu
-          Text {
+          NIcon {
             text: modelData?.hasChildren ? "menu" : ""
-            font.family: "Material Symbols Outlined"
             font.pointSize: Style.fontSizeSmall * scaling
             verticalAlignment: Text.AlignVCenter
             visible: modelData?.hasChildren ?? false
@@ -377,9 +377,8 @@ PopupWindow {
               }
 
               // TBC a Square UTF-8?
-              NText {
+              NIcon {
                 text: modelData?.hasChildren ? "\uE5CC" : ""
-                font.family: "Material Symbols Outlined"
                 font.pointSize: Style.fontSizeSmall * scaling
                 verticalAlignment: Text.AlignVCenter
                 visible: modelData?.hasChildren ?? false

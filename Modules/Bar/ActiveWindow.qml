@@ -75,10 +75,9 @@ Row {
         spacing: Style.marginTiny * scaling
 
         // Window icon
-        NText {
+        NIcon {
           id: windowIcon
           text: "dialogs"
-          font.family: "Material Symbols Outlined"
           font.pointSize: Style.fontSizeLarge * scaling
           verticalAlignment: Text.AlignVCenter
           anchors.verticalCenter: parent.verticalCenter

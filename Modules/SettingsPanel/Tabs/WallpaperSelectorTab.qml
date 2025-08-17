@@ -168,12 +168,11 @@ Item {
                 border.width: Math.max(1, Style.borderThin * scaling)
                 visible: isSelected
 
-                NText {
-                  anchors.centerIn: parent
+                NIcon {
                   text: "check"
-                  font.family: "Material Symbols Outlined"
                   font.pointSize: Style.fontSizeSmall * scaling
                   color: Color.mOnPrimary
+                  anchors.centerIn: parent
                 }
               }
 
@@ -216,9 +215,8 @@ Item {
               anchors.centerIn: parent
               spacing: Style.marginMedium * scaling
 
-              NText {
+              NIcon {
                 text: "folder_open"
-                font.family: "Material Symbols Outlined"
                 font.pointSize: Style.fontSizeLarge * scaling
                 color: Color.mOnSurface
                 Layout.alignment: Qt.AlignHCenter

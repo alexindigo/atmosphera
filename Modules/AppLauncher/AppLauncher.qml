@@ -292,10 +292,9 @@ NLoader {
                           anchors.fill: parent
                           anchors.margins: Style.marginMedium * scaling
 
-                          Text {
+                          NIcon {
                             id: searchIcon
                             text: "search"
-                            font.family: "Material Symbols Outlined"
                             font.pointSize: Style.fontSizeLarger * scaling
                             color: searchInput.activeFocus ? Color.mPrimary : Color.mOnSurface
                             anchors.left: parent.left
