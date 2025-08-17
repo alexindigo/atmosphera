@@ -1,0 +1,38 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create release archive
+        run: |
+          mkdir -p ../noctalia-release
+          # Copy all files except .git and .github
+          rsync -av --exclude='.git' --exclude='.github' ./ ../noctalia-release/
+          cd ..
+          tar -czf noctalia-${{ github.ref_name }}.tar.gz noctalia-release/
+          cp noctalia-${{ github.ref_name }}.tar.gz noctalia-latest.tar.gz
+          mv *.tar.gz ${{ github.workspace }}/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            noctalia-${{ github.ref_name }}.tar.gz
+            noctalia-latest.tar.gz
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

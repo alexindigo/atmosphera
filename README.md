@@ -90,7 +90,7 @@ A sleek, minimal, and thoughtfully crafted desktop shell for Wayland using **Qui
 yay -S quickshell-git
 
 # Download and install Noctalia
-mkdir -p ~/.config/quickshell && curl -sL https://github.com/Ly-sec/Noctalia/releases/latest/download/noctalia-latest.tar.gz | tar -xz --strip-components=1 -C ~/.config/quickshell/
+mkdir -p ~/.config/quickshell && curl -sL https://github.com/noctalia-dev/noctalia-shell/releases/latest/download/noctalia-shell-latest.tar.gz | tar -xz --strip-components=1 -C ~/.config/quickshell/
 ```
 
 ### Usage
