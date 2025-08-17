@@ -11,7 +11,6 @@ import qs.Services
 import qs.Widgets
 
 import "../../Helpers/FuzzySort.js" as Fuzzysort
-import "../../Helpers/MathHelper.js" as MathHelper
 
 NLoader {
   id: appLauncher
@@ -188,26 +187,54 @@ NLoader {
         // Handle calculator
         if (query.startsWith(">calc")) {
           var expr = searchText.slice(5).trim()
-          if (expr && isMathExpression(expr)) {
-            var value = safeEval(expr)
-            if (value !== null && value !== undefined && value !== "") {
-              var formattedResult = MathHelper.MathHelper.formatResult(value)
+          if (expr && expr !== "") {
+            try {
+              // Simple evaluation - only allow basic math operations
+              var sanitizedExpr = expr.replace(/[^0-9+\-*/().\s]/g, '')
+              var result = eval(sanitizedExpr)
+              
+              if (isFinite(result) && !isNaN(result)) {
+                var displayResult = Number.isInteger(result) ? result.toString() : result.toFixed(6).replace(/\.?0+$/, '')
+                results.push({
+                  "isCalculator": true,
+                  "name": `${expr} = ${displayResult}`,
+                  "result": result,
+                  "expr": expr,
+                  "icon": "calculate",
+                  "execute": function () {
+                    Quickshell.clipboardText = displayResult
+                    copyText(displayResult)
+                    Quickshell.execDetached(["notify-send", "Calculator", `${expr} = ${displayResult} (copied to clipboard)`])
+                  }
+                })
+              } else {
+                results.push({
+                  "isCalculator": true,
+                  "name": "Invalid expression",
+                  "content": "Please enter a valid mathematical expression",
+                  "icon": "calculate",
+                  "execute": function () {}
+                })
+              }
+            } catch (error) {
               results.push({
-                             "isCalculator": true,
-                             "name": `Calculator: ${expr} = ${formattedResult}`,
-                             "result": value,
-                             "expr": expr,
-                             "icon": "calculate",
-                             "execute": function () {
-                               Quickshell.clipboardText = String(formattedResult)
-                               clipboardTextCopyProcess.copyText(String(formattedResult))
-                               Quickshell.execDetached(
-                                     ["notify-send", "Calculator Result", `${expr} = ${formattedResult} (copied to clipboard)`])
-                             }
-                           })
+                "isCalculator": true,
+                "name": "Invalid expression",
+                "content": "Please enter a valid mathematical expression",
+                "icon": "calculate",
+                "execute": function () {}
+              })
             }
+          } else {
+            // Show placeholder when just ">calc" is entered
+            results.push({
+              "isCalculator": true,
+              "name": "Calculator",
+              "content": "Enter a mathematical expression (e.g., 5+5, 2*3, 10/2)",
+              "icon": "calculate",
+              "execute": function () {}
+            })
           }
-
           return results
         }
 
@@ -240,14 +267,7 @@ NLoader {
         updateClipboardHistory()
       }
 
-      function isMathExpression(str) {
-        // Allow more characters for enhanced math functions
-        return /^[-+*/().0-9\s\w]+$/.test(str)
-      }
 
-                  function safeEval(expr) {
-                    return MathHelper.MathHelper.evaluate(expr)
-                  }
 
                   // Main content container
                   Rectangle {
