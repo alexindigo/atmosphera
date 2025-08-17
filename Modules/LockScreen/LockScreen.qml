@@ -606,7 +606,7 @@ WlSessionLock {
                   Text {
                     anchors.centerIn: parent
                     text: lock.authenticating ? "EXECUTING" : "EXECUTE"
-                    color: executeButtonArea.containsMouse ? Color.onAccent : Color.mPrimary
+                    color: executeButtonArea.containsMouse ? Color.mOnPrimary : Color.mPrimary
                     font.family: "DejaVu Sans Mono"
                     font.pointSize: Style.fontSizeMedium
                     font.weight: Font.Bold
@@ -736,7 +736,7 @@ WlSessionLock {
           text: "power_settings_new"
           font.family: "Material Symbols Outlined"
           font.pointSize: Style.fontSizeXXL * scaling
-          color: shutdownArea.containsMouse ? Color.onAccent : Color.mError
+          color: shutdownArea.containsMouse ? Color.mOnPrimary : Color.mError
         }
 
         Behavior on color {
@@ -792,7 +792,7 @@ WlSessionLock {
           text: "refresh"
           font.family: "Material Symbols Outlined"
           font.pointSize: Style.fontSizeXXL * scaling
-          color: rebootArea.containsMouse ? Color.onAccent : Color.mPrimary
+          color: rebootArea.containsMouse ? Color.mOnPrimary : Color.mPrimary
         }
 
         Behavior on color {
@@ -850,7 +850,7 @@ WlSessionLock {
           text: "exit_to_app"
           font.family: "Material Symbols Outlined"
           font.pointSize: Style.fontSizeXXL * scaling
-          color: logoutArea.containsMouse ? Color.onAccent : Color.mSecondary
+          color: logoutArea.containsMouse ? Color.mOnPrimary : Color.mSecondary
         }
 
         Behavior on color {
