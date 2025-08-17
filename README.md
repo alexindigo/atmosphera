@@ -121,9 +121,9 @@ qs ipc call lockScreen toggle
 
 ### Configuration
 
-Access settings through the side panel (top right button) to configure weather, wallpapers, screen recording, audio, network, and theme options.
-Configuration is usually stored in ~/.config/noctalia
-If you upgrade from v1, you can delete the old configuration folder at ~/.config/Noctalia (with capital N)
+Access settings through the side panel (top right button) to configure weather, wallpapers, screen recording, audio, network, and theme options.  
+Configuration is usually stored in ~/.config/noctalia  
+If you upgrade from v1, you can delete the old configuration folder at ~/.config/Noctalia (with capital N)  
 
 ### Application Launcher
 
