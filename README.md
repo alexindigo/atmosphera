@@ -1,26 +1,27 @@
+<p align="center">
+  <img src="https://noctalia.dev/assets/noctalia-logo.png" alt="Noctalia Logo" width="124"/>
+</p>
+
 # Noctalia
 
 **_quiet by design_**
 
 <p align="center">
-  <a href="https://github.com/Ly-sec/Noctalia/commits">
-    <img src="https://img.shields.io/github/last-commit/Ly-sec/Noctalia?style=for-the-badge&labelColor=0C0D11&color=A8AEFF" alt="Last commit" />
+  <a href="https://github.com/noctalia-dev/noctalia-shell/commits">
+    <img src="https://img.shields.io/github/last-commit/noctalia-dev/noctalia-shell?style=for-the-badge&labelColor=0C0D11&color=A8AEFF" alt="Last commit" />
   </a>
-  <a href="https://github.com/Ly-sec/Noctalia/stargazers">
-    <img src="https://img.shields.io/github/stars/Ly-sec/Noctalia?style=for-the-badge&labelColor=0C0D11&color=A8AEFF" alt="GitHub stars" />
+  <a href="https://github.com/noctalia-dev/noctalia-shell/stargazers">
+    <img src="https://img.shields.io/github/stars/noctalia-dev/noctalia-shell?style=for-the-badge&labelColor=0C0D11&color=A8AEFF" alt="GitHub stars" />
   </a>
-  <a href="https://github.com/Ly-sec/Noctalia/graphs/contributors">
-    <img src="https://img.shields.io/github/contributors/Ly-sec/Noctalia?style=for-the-badge&labelColor=0C0D11&color=A8AEFF" alt="GitHub contributors" />
+  <a href="https://github.com/noctalia-dev/noctalia-shell/graphs/contributors">
+    <img src="https://img.shields.io/github/contributors/noctalia-dev/noctalia-shell?style=for-the-badge&labelColor=0C0D11&color=A8AEFF" alt="GitHub contributors" />
   </a>
-  <a href="https://discord.noctalia.dev">
+  <a href="https://discord.gg/7JFFYWzWRn">
     <img src="https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&labelColor=0C0D11&color=A8AEFF&logo=discord&logoColor=white" alt="Discord" />
   </a>
-
-
-
 </p>
 
-A sleek, minimal, and thoughtfully crafted setup for Wayland using **Quickshell**. This setup includes a status bar, notification system, control panel, wifi & bluetooth support, power profiles, lockscreen, tray, workspaces, and more — all styled with a warm lavender palette.
+A sleek, minimal, and thoughtfully crafted desktop shell for Wayland using **Quickshell**. Features a modern modular architecture with a status bar, notification system, control panel, comprehensive system integration, and more — all styled with a warm lavender palette and Material Design 3 principles.
 
 ## Preview
 
@@ -41,20 +42,90 @@ A sleek, minimal, and thoughtfully crafted setup for Wayland using **Quickshell*
 ---
 
 > ⚠️ **Note:**  
-> This setup currently only supports **Niri** and **Hyprland** (for the most part), mostly due to the workspace integration. For anything else you will have to add your own workspace logic.
+> This shell currently supports **Niri** and **Hyprland** compositors. For other compositors, you will need to implement custom workspace logic in the CompositorService.
 
 ---
 
 ## Features
 
-- **Status Bar:** Modular and informative with smooth animations.
-- **Notifications:** Non-intrusive alerts styled to blend naturally.
-- **Control Panel:** Centralized system controls for quick adjustments.
-- **Connectivity:** Easy management of WiFi and Bluetooth devices.
-- **Power Profiles:** Quick toggles for CPU performance.
-- **Lockscreen:** Secure and visually consistent lock experience.
-- **Tray & Workspaces:** Efficient workspace switching and tray icons.
-- **Applauncher:** Stylized Applauncher to fit into the setup.
+- **Status Bar:** Modular bar with workspace indicators, system monitors, clock, and quick access controls
+- **Workspace Management:** Dynamic workspace switching with visual indicators and active window tracking
+- **Notifications:** Rich notification system with history panel
+- **Application Launcher:** Stylized launcher with favorites, recent apps, and special commands (calc, clipboard)
+- **Side Panel:** Quick access panel with media controls, weather, power profiles, and system utilities
+- **Settings Panel:** Comprehensive configuration interface for all shell components and preferences
+- **Lock Screen:** Secure lock experience with PAM authentication, time display, and animated background
+- **Audio Integration:** Volume controls, media playback, and audio visualizer (cava-based)
+- **Connectivity:** WiFi and Bluetooth management with device pairing and network status
+- **Power Management:** Battery monitoring, brightness control, and power profile switching
+- **System Monitoring:** CPU, memory, and network usage monitoring with visual indicators
+- **Tray System:** Application tray with menu support and system integration
+- **Background Management:** Wallpaper management with effects and dynamic theming support
+
+---
+
+## Dependencies
+
+### Required
+
+- `quickshell-git` - Core shell framework
+- `material-symbols-git` - Icon font for UI elements
+- `xdg-desktop-portal-gnome` - Desktop integration (or alternative portal)
+
+### Optional
+
+- `swww` - Wallpaper animations and effects
+- `matugen` - Material You color scheme generation
+- `cava` - Audio visualizer component
+- `gpu-screen-recorder` - Screen recording functionality
+
+---
+
+## Quick Start
+
+### Installation
+
+```bash
+# Install Quickshell
+yay -S quickshell-git
+
+# Download and install Noctalia
+mkdir -p ~/.config/quickshell && curl -sL https://github.com/noctalia-dev/noctalia-shell/releases/latest/download/noctalia-shell-latest.tar.gz | tar -xz --strip-components=1 -C ~/.config/quickshell/
+```
+
+### Usage
+
+```bash
+# Start the shell
+qs
+
+# Toggle launcher
+qs ipc call appLauncher toggle
+
+# Toggle lock screen
+qs ipc call lockScreen toggle
+```
+
+### Keybinds
+
+| Action | Command |
+|--------|---------|
+| Toggle Application Launcher | `qs ipc call appLauncher toggle` |
+| Toggle Lock Screen | `qs ipc call lockScreen toggle` |
+| Toggle Notification History | `qs ipc call notifications toggleHistory` |
+| Toggle Settings Panel | `qs ipc call settings toggle` |
+| Increase Brightness | `qs ipc call brightness increase` |
+| Decrease Brightness | `qs ipc call brightness decrease` |
+
+### Configuration
+
+Access settings through the side panel (top right button) to configure weather, wallpapers, screen recording, audio, network, and theme options.
+
+### Application Launcher
+
+The launcher supports special commands for enhanced functionality:
+- `>calc` - Simple mathematical calculations
+- `>clip` - Clipboard history management
 
 ---
 
@@ -63,167 +134,108 @@ A sleek, minimal, and thoughtfully crafted setup for Wayland using **Quickshell*
 
 | Color Role           | Color       | Description                |
 | -------------------- | ----------- | -------------------------- |
-| Background Primary   | `#0C0D11`   | Deep indigo-black          |
-| Background Secondary | `#151720`   | Slightly lifted dark       |
-| Background Tertiary  | `#1D202B`   | Soft contrast surface      |
-| Surface              | `#1A1C26`   | Material-like base layer   |
-| Surface Variant      | `#2A2D3A`   | Lightly elevated           |
-| Text Primary         | `#CACEE2`   | Gentle off-white           |
-| Text Secondary       | `#B7BBD0`   | Muted lavender-blue        |
-| Text Disabled        | `#6B718A`   | Dimmed blue-gray           |
-| Accent Primary       | `#A8AEFF`   | Light enchanted lavender   |
-| Accent Secondary     | `#9EA0FF`   | Softer lavender hue        |
-| Accent Tertiary      | `#8EABFF`   | Warm golden glow           |
-| Error                | `#FF6B81`   | Soft rose red              |
-| Warning              | `#FFBB66`   | Candlelight amber-orange   |
-| Highlight            | `#E3C2FF`   | Bright magical lavender    |
-| Ripple Effect        | `#F3DEFF`   | Gentle soft splash         |
-| On Accent            | `#1A1A1A`   | Text on accent background  |
-| Outline              | `#44485A`   | Subtle bluish-gray line    |
-| Shadow               | `#000000B3` | Standard soft black shadow |
-| Overlay              | `#11121ACC` | Deep bluish overlay        |
+| Primary              | `#c7a1d8`   | Soft lavender purple       |
+| On Primary           | `#1a151f`   | Dark text on primary       |
+| Secondary            | `#a984c4`   | Muted lavender             |
+| On Secondary         | `#f3edf7`   | Light text on secondary    |
+| Tertiary             | `#e0b7c9`   | Warm pink-lavender         |
+| On Tertiary          | `#20161f`   | Dark text on tertiary      |
+| Surface              | `#1c1822`   | Dark purple-tinted surface |
+| On Surface           | `#e9e4f0`   | Light text on surface      |
+| Surface Variant      | `#262130`   | Elevated surface variant   |
+| On Surface Variant   | `#a79ab0`   | Muted text on surface variant |
+| Error                | `#e9899d`   | Soft rose red              |
+| On Error             | `#1e1418`   | Dark text on error         |
+| Outline              | `#4d445a`   | Purple-tinted outline      |
+| Outline Variant      | `#342c42`   | Variant outline color      |
+| Shadow               | `#120f18`   | Deep purple-tinted shadow  |
 
 </details>
 
 ---
 
-## Installation & Usage
+## Advanced Configuration
 
-<details>
-<summary><strong>Installation</strong></summary>
+### Niri Configuration
 
-Install quickshell:
-
-```
-yay -S quickshell-git
-```
-
-or use any other way of installing quickshell-git (flake, paru etc).
-
-_Download and install the latest release:_
+Add this to your `layout` section for proper swww integration:
 
 ```
-mkdir -p ~/.config/quickshell && curl -sL https://github.com/Ly-sec/Noctalia/releases/latest/download/noctalia-latest.tar.gz | tar -xz --strip-components=1 -C ~/.config/quickshell/
+background-color "transparent"
 ```
 
-Or download manually from [releases](https://github.com/Ly-sec/Noctalia/releases) and extract:
+### Recommended Compositor Settings
 
-```
-mkdir -p ~/.config/quickshell && tar -xzf noctalia-*.tar.gz --strip-components=1 -C ~/.config/quickshell/
-```
-
-### _niri only_
-
-Add this to your `layout` section:
-
-`background-color "transparent"`
-
-That is to make swww work properly.
-
-</details>
-</br>
-
-<details>
-<summary><strong>Usage</strong></summary>
-
-### Start quickshell:
-
-```
-qs
-```
-
-(If you want to autostart it, just add it to your niri configuration.)
-
-It is recommended to set the following in your Niri configuration (hyprland equivalent):
+For Niri:
 
 ```
 window-rule {
     geometry-corner-radius 20
     clip-to-geometry true
 }
+
+layer-rule {
+    match namespace="^swww-daemon$"
+    place-within-backdrop true
+}
+
+layer-rule {
+    match namespace="^quickshell-wallpaper$"
+}
+
+layer-rule {
+    match namespace="^quickshell-overview$"
+    place-within-backdrop true
+}
 ```
-
-### Settings:
-
-To make the weather widget, wallpaper manager and record button work you will have to open up the settings menu in to right panel (top right button to open panel) and edit said things accordingly.
-
-### Launcher:
-
-The launcher supports special commands for math calculation and clipboard history.
-Once the launcher open you can invoke those special command by typing ">"
-* \>calc : lets you do simple math
-* \>clip : shows clipboard history
-
-</details>
-
-</br>
-<details>
-<summary><strong>Keybinds</strong></summary>
-
-### Toggle Applauncher:
-
-```
- qs ipc call globalIPC toggleLauncher
-```
-
-### Toggle Lockscreen:
-
-```
- qs ipc call globalIPC toggleLock
-```
-
-### Toggle Notification Popup:
-
-```
-qs ipc call globalIPC toggleNotificationPopup
-```
-
-### Toggle Idle Inhibitor:
-
-```
-qs ipc call globalIPC toggleIdleInhibitor
-```
-</details>
 
 ---
 
-## Dependencies
 
-You will need to install a few things to get everything working:
+## Development
 
-- `cava` so the audio visualizer works
-- `gpu-screen-recorder` so that the record button works
-- `xdg-desktop-portal-gnome` or any other xdg-desktop-portal (for `gpu-screen-recorder`)
-- `material-symbols-git` so the icons properly show up
-- `swww` to add fancy wallpaper animations (optional)
-- `wallust` to theme the setup based on wallpaper (optional)
+### Project Structure
 
-## zigstat and zigbrightness
+```
+Noctalia/
+├── shell.qml              # Main shell entry point
+├── Modules/               # UI components
+│   ├── Bar/              # Status bar components
+│   ├── Dock/             # Application launcher
+│   ├── SidePanel/        # Quick access panel
+│   ├── SettingsPanel/    # Configuration interface
+│   └── ...
+├── Services/             # Backend services
+│   ├── CompositorService.qml
+│   ├── WorkspacesService.qml
+│   ├── AudioService.qml
+│   └── ...
+├── Widgets/              # Reusable UI components
+├── Commons/              # Shared utilities
+├── Assets/               # Static assets
+└── Bin/                  # Utility scripts
+```
 
-The zigstat and zigbrightness utilities are automatically built from source during release creation. Source code can be found [here](https://git.pika-os.com/wm-packages/pikabar/src/branch/main/src).
+### Contributing
 
-## Known issues
+1. Follow the existing code style and patterns
+2. Use the modular architecture for new features
+3. Implement proper error handling and logging
+4. Test with both Hyprland and Niri compositors (if applicable)
 
-It is perfect now
+Contributions are welcome! Don't worry about being perfect - every contribution helps! Whether it's fixing a small bug, adding a new feature, or improving documentation, we welcome all contributions. Feel free to open an issue to discuss ideas or ask questions before diving in. For feature requests and ideas, you can also use our discussions page.
 
 ---
 
 ## 💜 Credits
 
-Huge thanks to [**@ferrreo**](https://github.com/ferrreo) and [**@quadbyte**](https://github.com/quadbyte) for all the changes they did and all the cool features they added!
-
----
-
-## Contributing
-
-Contributions are welcome! Feel free to open issues or submit pull requests.
+Huge thanks to [**@ferrreo**](https://github.com/ferrreo) and [**@quadbyte**](https://github.com/quadbyte) for their contributions and the cool features they added!
 
 ---
 
 #### Donation
 
----
-While I actually didn't want to accept donations, more and more people are asking to donate so... I don't know, if you really feel like donating then I obviously highly appreciate it but **PLEASE** never feel forced to donate or anything. It won't change how I work on Noctalia, it's a project that I work on for fun in the end.
+While I actually didn't want to accept donations, more and more people are asking to donate so... I don't know, if you really feel like donating then I obviously highly appreciate it but **PLEASE** never feel forced to donate or anything. It won't change how we work on Noctalia, it's a project that we work on for fun in the end.
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/R6R01IX85B)
 
