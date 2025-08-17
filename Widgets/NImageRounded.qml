@@ -64,7 +64,7 @@ Rectangle {
     text: fallbackIcon
     font.family: "Material Symbols Outlined"
     font.pointSize: Style.fontSizeXL * scaling
-    visible: fallbackIcon !== undefined && fallbackIcon !== "" && (source === undefined || source === "")
+    visible: fallbackIcon !== undefined && fallbackIcon !== "" && (imagePath === undefined || imagePath === "")
     z: 0
   }
 }
