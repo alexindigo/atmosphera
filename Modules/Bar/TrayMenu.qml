@@ -116,7 +116,7 @@ PopupWindow {
               return 8 * scaling
             } else {
               // Calculate based on text content
-              const textHeight = text.contentHeight || (Style.fontSizeSmall * scaling * 1.2)
+              const textHeight = text.contentHeight || (Style.fontSizeReduced * scaling * 1.2)
               return Math.max(32 * scaling, textHeight + 8)
             }
           }
@@ -149,7 +149,7 @@ PopupWindow {
                         ?? true) ? (mouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface) : Color.applyOpacity(
                                      Color.mOnSurface, 64)
                 text: modelData?.text ?? ""
-                font.pointSize: Style.fontSizeSmall * scaling
+                font.pointSize: Style.fontSizeReduced * scaling
                 verticalAlignment: Text.AlignVCenter
                 elide: Text.ElideRight
               }
@@ -164,7 +164,7 @@ PopupWindow {
 
               NIcon {
                 text: modelData?.hasChildren ? "menu" : ""
-                font.pointSize: Style.fontSizeSmall * scaling
+                font.pointSize: Style.fontSizeReduced * scaling
                 verticalAlignment: Text.AlignVCenter
                 visible: modelData?.hasChildren ?? false
                 color: Color.mOnSurface

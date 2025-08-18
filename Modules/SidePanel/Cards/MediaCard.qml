@@ -129,7 +129,7 @@ NBox {
           width: playerSelector.width
           contentItem: NText {
             text: modelData.identity
-            font.pointSize: Style.fontSizeSmall * scaling
+            font.pointSize: Style.fontSizeReduced * scaling
             color: highlighted ? Color.mSurface : Color.mOnSurface
             verticalAlignment: Text.AlignVCenter
             elide: Text.ElideRight
