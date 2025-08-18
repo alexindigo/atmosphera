@@ -14,23 +14,12 @@ import qs.Widgets
 
 NLoader {
   id: lockScreen
-  // External API
-  property bool locked: false
-  // Internal loader control; keep content alive briefly after unlocking
-  property bool _isLoadedInternal: false
-  // Only load when explicitly requested (locked) or while waiting to safely unload
-  isLoaded: _isLoadedInternal
-  onLockedChanged: {
-    if (locked) {
-      _isLoadedInternal = true
-    }
-  }
   // Allow a small grace period after unlocking so the compositor releases the lock surfaces
   Timer {
     id: unloadAfterUnlockTimer
     interval: 250
     repeat: false
-    onTriggered: lockScreen._isLoadedInternal = false
+    onTriggered: lockScreen.isLoaded = false
   }
   function scheduleUnloadAfterUnlock() {
     unloadAfterUnlockTimer.start()
@@ -38,9 +27,8 @@ NLoader {
   content: Component {
     WlSessionLock {
       id: lock
-      // Keep inner lock state in sync with wrapper
-      locked: lockScreen.locked
-      onLockedChanged: lockScreen.locked = locked
+      // Tie session lock to loader visibility
+      locked: lockScreen.isLoaded
 
   // Lockscreen is a different beast, needs a capital 'S' in 'Screen' to get the current screen
   readonly property real scaling: ScalingService.scale(Screen)
@@ -82,7 +70,6 @@ NLoader {
         Logger.log("LockScreen", "Authentication successful, unlocking")
         // First release the Wayland session lock, then unload after a short delay
         lock.locked = false
-        lockScreen.locked = false
         lockScreen.scheduleUnloadAfterUnlock()
         lock.password = ""
         lock.errorMessage = ""

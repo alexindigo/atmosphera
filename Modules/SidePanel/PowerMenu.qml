@@ -99,7 +99,7 @@ NPanel {
           onClicked: {
             Logger.log("PowerMenu", "Lock screen requested")
             // Lock the screen
-            lockScreen.locked = true
+            lockScreen.isLoaded = true
             powerMenu.visible = false
           }
         }
