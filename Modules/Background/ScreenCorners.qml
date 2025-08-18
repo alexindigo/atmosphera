@@ -19,8 +19,9 @@ NLoader {
       readonly property real scaling: ScalingService.scale(screen)
       screen: modelData
 
-      // Visible ring color
-      property color ringColor: Color.mSurface
+      // Visible color
+      property color ringColor: Qt.rgba(Color.mSurface, Color.mSurface.g, Color.mSurface.b,
+                                        Settings.data.bar.backgroundOpacity)
       // The amount subtracted from full size for the inner cutout
       // Inner size = full size - borderWidth (per axis)
       property int borderWidth: Style.borderMedium
