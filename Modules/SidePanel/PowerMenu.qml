@@ -83,7 +83,6 @@ NPanel {
             Text {
               text: "Lock Screen"
               color: lockButtonArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface
-              font.pointSize: Style.fontSizeReduced * scaling
               verticalAlignment: Text.AlignVCenter
               anchors.verticalCenter: parent.verticalCenter
               anchors.verticalCenterOffset: 1 * scaling
@@ -138,7 +137,6 @@ NPanel {
             Text {
               text: "Suspend"
               color: suspendButtonArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface
-              font.pointSize: Style.fontSizeReduced * scaling
               verticalAlignment: Text.AlignVCenter
               anchors.verticalCenter: parent.verticalCenter
               anchors.verticalCenterOffset: 1 * scaling
@@ -191,7 +189,6 @@ NPanel {
             Text {
               text: "Reboot"
               color: rebootButtonArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface
-              font.pointSize: Style.fontSizeReduced * scaling
               verticalAlignment: Text.AlignVCenter
               anchors.verticalCenter: parent.verticalCenter
               anchors.verticalCenterOffset: 1 * scaling
@@ -244,7 +241,6 @@ NPanel {
             Text {
               text: "Logout"
               color: logoutButtonArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface
-              font.pointSize: Style.fontSizeReduced * scaling
               verticalAlignment: Text.AlignVCenter
               anchors.verticalCenter: parent.verticalCenter
               anchors.verticalCenterOffset: 1 * scaling
@@ -297,7 +293,6 @@ NPanel {
             Text {
               text: "Shutdown"
               color: shutdownButtonArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface
-              font.pointSize: Style.fontSizeReduced * scaling
               verticalAlignment: Text.AlignVCenter
               anchors.verticalCenter: parent.verticalCenter
               anchors.verticalCenterOffset: 1 * scaling
