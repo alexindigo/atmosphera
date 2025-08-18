@@ -28,13 +28,13 @@ A sleek, minimal, and thoughtfully crafted desktop shell for Wayland using **Qui
 <details>
 <summary>Click to expand preview images</summary>
 
-![Main](https://i.imgur.com/5mOIGD2.jpeg)  
+![SidePanel](https://noctalia.dev/assets/SidePanel.png)  
 </br>
 
-![Control Panel](https://i.imgur.com/fJmCV6m.jpeg)  
+![SettingsPanel](https://noctalia.dev/assets/SettingsPanel.png)  
 </br>
 
-![Applauncher](https://i.imgur.com/9OPV30q.jpeg)
+![Applauncher](https://noctalia.dev/assets/AppLauncher.png)
 
 </details>
 <br>
