@@ -92,7 +92,7 @@ PopupWindow {
   Flickable {
     id: flickable
     anchors.fill: parent
-    anchors.margins: Style.marginMedium * scaling
+    anchors.margins: Style.marginSmall * scaling
     contentHeight: columnLayout.implicitHeight
     interactive: true
     clip: true
