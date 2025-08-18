@@ -7,7 +7,7 @@ import qs.Services
 import qs.Widgets
 
 Item {
-  property real scaling: 1
+  readonly property real scaling: ScalingService.scale(screen)
   readonly property string tabIcon: "monitor"
   readonly property string tabLabel: "Display"
   readonly property int tabIndex: 5
@@ -72,7 +72,7 @@ Item {
 
               NText {
                 text: (modelData.name || "Unknown")
-                font.pointSize: Style.fontSizeL * scaling
+                font.pointSize: Style.fontSizeXL * scaling
                 font.weight: Style.fontWeightBold
                 color: Color.mSecondary
               }
@@ -80,7 +80,7 @@ Item {
               NText {
                 text: `Resolution: ${modelData.width}x${modelData.height} - Position: (${modelData.x}, ${modelData.y})`
                 font.pointSize: Style.fontSizeXS * scaling
-                color: Color.mOnSurface
+                color: Color.mOnSurfaceVariant
               }
 
               ColumnLayout {
@@ -127,11 +127,66 @@ Item {
                                }
                              }
                 }
+
+                ColumnLayout {
+                  spacing: Style.marginL * scaling
+
+                  RowLayout {
+                    ColumnLayout {
+                      spacing: Style.marginXXS * scaling
+                      Layout.fillWidth: true
+                      NText {
+                        text: "Scaling"
+                        font.pointSize: Style.fontSizeM * scaling
+                        font.weight: Style.fontWeightBold
+                        color: Color.mOnSurface
+                      }
+                      NText {
+                        text: `Controls the scaling on this monitor.`
+                        font.pointSize: Style.fontSizeS * scaling
+                        color: Color.mOnSurfaceVariant
+                        wrapMode: Text.WordWrap
+                        Layout.fillWidth: true
+                      }
+                    }
+                    NText {
+                      text: `${Math.round(ScalingService.scaleByName(modelData.name) * 100)}%`
+                      Layout.alignment: Qt.AlignVCenter
+                    }
+                  }
+
+                  RowLayout {
+                    spacing: Style.marginS * scaling
+                    NSlider {
+                      id: scaleSlider
+                      from: 0.6
+                      to: 1.8
+                      stepSize: 0.01
+                      value: ScalingService.scaleByName(modelData.name)
+                      onPressedChanged: {
+                        var data = Settings.data.monitorsScaling || {}
+                        data[modelData.name] = value
+                        Settings.data.monitorsScaling = data
+                      }
+                      Layout.fillWidth: true
+                    }
+
+                    NIconButton {
+                      icon: "refresh"
+                      tooltipText: "Reset Scaling"
+                      fontPointSize: Style.fontSizeL * scaling
+                      onClicked: {
+                        var data = Settings.data.monitorsScaling || {}
+                        data[modelData.name] = 1.0
+                        Settings.data.monitorsScaling = data
+                      }
+                    }
+                  }
+                }
               }
             }
           }
         }
-
         Item {
           Layout.fillHeight: true
         }

@@ -185,7 +185,11 @@ Singleton {
 
       ui: JsonObject {
         property string fontFamily: "Roboto" // Family for all text
-        property list<string> monitorsScale: []
+      }
+
+      // Scaling (not stored as JsonObject)
+      property var monitorsScaling: {
+
       }
 
       // brightness
