@@ -156,7 +156,7 @@ Item {
               Rectangle {
                 anchors.fill: parent
                 color: Color.transparent
-                border.color: isSelected ? Color.mPrimary : Color.mOutline
+                border.color: isSelected ? Color.mPrimary : Color.mSurface
                 border.width: Math.max(1, Style.borderL * scaling)
               }
 
@@ -165,8 +165,8 @@ Item {
                 anchors.top: parent.top
                 anchors.right: parent.right
                 anchors.margins: Style.marginXS * scaling
-                width: 20 * scaling
-                height: 20 * scaling
+                width: 28 * scaling
+                height: 28 * scaling
                 radius: width / 2
                 color: Color.mPrimary
                 border.color: Color.mOutline
@@ -175,7 +175,8 @@ Item {
 
                 NIcon {
                   text: "check"
-                  font.pointSize: Style.fontSizeXS * scaling
+                  font.pointSize: Style.fontSizeM * scaling
+                  font.weight: Style.fontWeightBold
                   color: Color.mOnPrimary
                   anchors.centerIn: parent
                 }

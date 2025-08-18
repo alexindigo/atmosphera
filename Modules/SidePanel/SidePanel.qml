@@ -83,7 +83,7 @@ NLoader {
         id: panelBackground
         color: Color.mSurface
         radius: Style.radiusL * scaling
-        border.color: Color.mOutlineVariant
+        border.color: Color.mOutline
         border.width: Math.max(1, Style.borderS * scaling)
         layer.enabled: true
         width: 460 * scaling

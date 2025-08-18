@@ -202,7 +202,7 @@ NLoader {
         id: bgRect
         color: Color.mSurface
         radius: Style.radiusL * scaling
-        border.color: Color.mOutlineVariant
+        border.color: Color.mOutline
         border.width: Math.max(1, Style.borderS * scaling)
         layer.enabled: true
         width: Math.max(screen.width * 0.5, 1280) * scaling
@@ -249,7 +249,7 @@ NLoader {
             Layout.preferredWidth: Style.sliderWidth * 1.3 * scaling
             Layout.fillHeight: true
             color: Color.mSurfaceVariant
-            border.color: Color.mOutlineVariant
+            border.color: Color.mOutline
             border.width: Math.max(1, Style.borderS * scaling)
             radius: Style.radiusM * scaling
 
@@ -311,7 +311,7 @@ NLoader {
             Layout.fillHeight: true
             radius: Style.radiusM * scaling
             color: Color.mSurfaceVariant
-            border.color: Color.mOutlineVariant
+            border.color: Color.mOutline
             border.width: Math.max(1, Style.borderS * scaling)
             clip: true
 

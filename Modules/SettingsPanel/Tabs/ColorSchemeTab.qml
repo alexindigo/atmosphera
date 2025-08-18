@@ -109,8 +109,8 @@ ColumnLayout {
 
         // Use Matugen
         NToggle {
-          label: "Use Matugen"
-          description: "Automatically generate colors based on your active wallpaper using Matugen."
+          label: "Enable Matugen"
+          description: "Automatically generate colors based on your active wallpaper."
           checked: Settings.data.colorSchemes.useWallpaperColors
           onToggled: checked => {
                        Settings.data.colorSchemes.useWallpaperColors = checked
@@ -123,7 +123,7 @@ ColumnLayout {
         // Dark Mode Toggle (affects both Matugen and predefined schemes that provide variants)
         NToggle {
           label: "Dark Mode"
-          description: Settings.data.colorSchemes.useWallpaperColors ? "Generate dark theme colors when using Matugen. Disable for light theme." : "If the selected predefined scheme has light/dark variants, this chooses which one."
+          description: Settings.data.colorSchemes.useWallpaperColors ? "Generate dark theme colors when using Matugen." : "Use a dark variant if available."
           checked: Settings.data.colorSchemes.darkMode
           enabled: true
           onToggled: checked => {

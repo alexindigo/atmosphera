@@ -106,8 +106,7 @@ Singleton {
       property color mOnSurface: "#000000"
       property color mSurfaceVariant: "#cccccc"
       property color mOnSurfaceVariant: "#333333"
-      property color mOutline: "#666666"
-      property color mOutlineVariant: "#444444"
+      property color mOutline: "#444444"
       property color mShadow: "#000000"
     }
   }
@@ -129,7 +128,6 @@ Singleton {
     out.mSurfaceVariant = pick(obj, "mSurfaceVariant", "surfaceVariant", out.mSurfaceVariant)
     out.mOnSurfaceVariant = pick(obj, "mOnSurfaceVariant", "onSurfaceVariant", out.mOnSurfaceVariant)
     out.mOutline = pick(obj, "mOutline", "outline", out.mOutline)
-    out.mOutlineVariant = pick(obj, "mOutlineVariant", "outlineVariant", out.mOutlineVariant)
     out.mShadow = pick(obj, "mShadow", "shadow", out.mShadow)
     colorsWriter.writeAdapter()
   }

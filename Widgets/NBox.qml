@@ -13,7 +13,7 @@ Rectangle {
 
   color: Color.mSurfaceVariant
   radius: Style.radiusM * scaling
-  border.color: Color.mOutlineVariant
+  border.color: Color.mOutline
   border.width: Math.max(1, Style.borderS * scaling)
   clip: true
 }
