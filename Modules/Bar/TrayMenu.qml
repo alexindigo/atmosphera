@@ -127,6 +127,7 @@ PopupWindow {
           NDivider {
             anchors.centerIn: parent
             width: parent.width - (Style.marginM * scaling * 2)
+            color: Color.mPrimary
             visible: modelData?.isSeparator ?? false
           }
 
@@ -146,8 +147,8 @@ PopupWindow {
                 id: text
                 Layout.fillWidth: true
                 color: (modelData?.enabled
-                        ?? true) ? (mouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface) : Color.mOutline
-                text: modelData?.text ?? ""
+                        ?? true) ? (mouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface) : Color.mOnSurfaceVariant
+                text: modelData?.text !== "" ? modelData?.text : "..."
                 font.pointSize: Style.fontSizeS * scaling
                 verticalAlignment: Text.AlignVCenter
                 wrapMode: Text.WordWrap

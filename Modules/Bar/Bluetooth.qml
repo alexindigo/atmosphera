@@ -14,7 +14,7 @@ NIconButton {
   sizeMultiplier: 0.8
   visible: bluetoothEnabled
 
-    colorBg: Color.mSurfaceVariant
+  colorBg: Color.mSurfaceVariant
   colorFg: Color.mOnSurface
   colorBorder: Color.transparent
   colorBorderHover: Color.transparent
