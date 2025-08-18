@@ -109,7 +109,7 @@ ColumnLayout {
         // Use Matugen
         NToggle {
           label: "Use Matugen"
-          description: "Automatically generate colors based on your active wallpaper using Matugen"
+          description: "Automatically generate colors based on your active wallpaper using Matugen."
           checked: Settings.data.colorSchemes.useWallpaperColors
           onToggled: checked => {
                        Settings.data.colorSchemes.useWallpaperColors = checked
@@ -136,6 +136,19 @@ ColumnLayout {
                          ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme)
                          // Force refresh of previews
                          var tmp = schemeColorsCache; schemeColorsCache = {}; schemeColorsCache = tmp
+                       }
+                     }
+        }
+
+        // GTK/QT theming
+        NToggle {
+          label: "Theme external apps (GTK & Qt)"
+          description: "Writes GTK (gtk.css) and Qt (qt6ct) themes based on your colors."
+          checked: Settings.data.colorSchemes.themeApps
+          onToggled: checked => {
+                       Settings.data.colorSchemes.themeApps = checked
+                       if (Settings.data.colorSchemes.useWallpaperColors) {
+                         ColorSchemeService.changedWallpaper()
                        }
                      }
         }

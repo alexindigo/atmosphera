@@ -44,7 +44,7 @@ ColumnLayout {
 
         NToggle {
           label: "WiFi Enabled"
-          description: "Enable WiFi connectivity"
+          description: "Enable WiFi connectivity."
           checked: Settings.data.network.wifiEnabled
           onToggled: checked => {
                        Settings.data.network.wifiEnabled = checked
@@ -54,7 +54,7 @@ ColumnLayout {
 
         NToggle {
           label: "Bluetooth Enabled"
-          description: "Enable Bluetooth connectivity"
+          description: "Enable Bluetooth connectivity."
           checked: Settings.data.network.bluetoothEnabled
           onToggled: checked => {
                        Settings.data.network.bluetoothEnabled = checked

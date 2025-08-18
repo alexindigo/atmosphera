@@ -42,7 +42,7 @@ ColumnLayout {
 
         NToggle {
           label: "Show Active Window"
-          description: "Display the title of the currently focused window on the left side of the bar"
+          description: "Display the title of the currently focused window on the left side of the bar."
           checked: Settings.data.bar.showActiveWindow
           onToggled: checked => {
                        Settings.data.bar.showActiveWindow = checked
@@ -51,7 +51,7 @@ ColumnLayout {
 
         NToggle {
           label: "Show System Info"
-          description: "Display system statistics (CPU, RAM, Temperature)"
+          description: "Display system statistics (CPU, RAM, Temperature)."
           checked: Settings.data.bar.showSystemInfo
           onToggled: checked => {
                        Settings.data.bar.showSystemInfo = checked
@@ -60,7 +60,7 @@ ColumnLayout {
 
         NToggle {
           label: "Show Media"
-          description: "Display media controls and information"
+          description: "Display media controls and information."
           checked: Settings.data.bar.showMedia
           onToggled: checked => {
                        Settings.data.bar.showMedia = checked
@@ -69,7 +69,7 @@ ColumnLayout {
 
         NToggle {
           label: "Show Notifications History"
-          description: "Display a shortcut to the notifications history"
+          description: "Display a shortcut to the notifications history."
           checked: Settings.data.bar.showNotificationsHistory
           onToggled: checked => {
                        Settings.data.bar.showNotificationsHistory = checked
@@ -78,7 +78,7 @@ ColumnLayout {
 
         NToggle {
           label: "Show Applications Tray"
-          description: "Display the applications tray"
+          description: "Display the applications tray."
           checked: Settings.data.bar.showTray
           onToggled: checked => {
                        Settings.data.bar.showTray = checked

@@ -55,7 +55,7 @@ Item {
 
           NToggle {
             label: "Show Brightness Icon"
-            description: "Display the brightness control icon in the top bar"
+            description: "Display the brightness control icon in the top bar."
             checked: Settings.data.bar.showBrightness
             onToggled: checked => {
                          Settings.data.bar.showBrightness = checked
@@ -82,7 +82,7 @@ Item {
           }
 
           NText {
-            text: "Adjust the step size for brightness changes (scroll wheel, keyboard shortcuts)"
+            text: "Adjust the step size for brightness changes (scroll wheel, keyboard shortcuts)."
             font.pointSize: Style.fontSizeSmall * scaling
             color: Color.mOnSurfaceVariant
             wrapMode: Text.WordWrap
@@ -135,7 +135,7 @@ Item {
           }
 
           NText {
-            text: "Current brightness levels for all detected monitors"
+            text: "Current brightness levels for all detected monitors."
             font.pointSize: Style.fontSizeSmall * scaling
             color: Color.mOnSurfaceVariant
             wrapMode: Text.WordWrap

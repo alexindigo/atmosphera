@@ -54,7 +54,7 @@ ColumnLayout {
 
             NTextInput {
               label: "Wallpaper Directory"
-              description: "Path to your wallpaper directory"
+              description: "Path to your wallpaper directory."
               text: Settings.data.wallpaper.directory
               Layout.fillWidth: true
               onEditingFinished: {
@@ -86,7 +86,7 @@ ColumnLayout {
         // Random Wallpaper
         NToggle {
           label: "Random Wallpaper"
-          description: "Automatically select random wallpapers from the folder"
+          description: "Automatically select random wallpapers from the folder."
           checked: Settings.data.wallpaper.isRandom
           onToggled: checked => {
                        Settings.data.wallpaper.isRandom = checked
@@ -106,7 +106,7 @@ ColumnLayout {
               }
 
               NText {
-                text: "How often to change wallpapers automatically (in seconds)"
+                text: "How often to change wallpapers automatically (in seconds)."
                 font.pointSize: Style.fontSizeSmall * scaling
                 color: Color.mOnSurface
                 wrapMode: Text.WordWrap
@@ -156,7 +156,7 @@ ColumnLayout {
         // Use SWWW
         NToggle {
           label: "Use SWWW"
-          description: "Use SWWW daemon for advanced wallpaper management"
+          description: "Use SWWW daemon for advanced wallpaper management."
           checked: Settings.data.wallpaper.swww.enabled
           onToggled: checked => {
                        Settings.data.wallpaper.swww.enabled = checked
@@ -173,7 +173,7 @@ ColumnLayout {
           // Resize Mode
           NComboBox {
             label: "Resize Mode"
-            description: "How SWWW should resize wallpapers to fit the screen"
+            description: "How SWWW should resize wallpapers to fit the screen."
             model: ListModel {
               ListElement {
                 key: "no"
@@ -201,7 +201,7 @@ ColumnLayout {
           // Transition Type
           NComboBox {
             label: "Transition Type"
-            description: "Animation type when switching between wallpapers"
+            description: "Animation type when switching between wallpapers."
             model: ListModel {
               ListElement {
                 key: "none"
@@ -279,7 +279,7 @@ ColumnLayout {
                 }
 
                 NText {
-                  text: "Frames per second for transition animations"
+                  text: "Frames per second for transition animations."
                   font.pointSize: Style.fontSizeSmall * scaling
                   color: Color.mOnSurface
                   wrapMode: Text.WordWrap
@@ -318,7 +318,7 @@ ColumnLayout {
                 }
 
                 NText {
-                  text: "Duration of transition animations in seconds"
+                  text: "Duration of transition animations in seconds."
                   font.pointSize: Style.fontSizeSmall * scaling
                   color: Color.mOnSurface
                   wrapMode: Text.WordWrap

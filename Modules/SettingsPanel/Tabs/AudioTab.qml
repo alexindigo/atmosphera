@@ -73,7 +73,7 @@ ColumnLayout {
               }
 
               NText {
-                text: "System-wide volume level"
+                text: "System-wide volume level."
                 font.pointSize: Style.fontSizeSmall * scaling
                 color: Color.mOnSurface
                 wrapMode: Text.WordWrap
@@ -123,7 +123,7 @@ ColumnLayout {
 
             NToggle {
               label: "Mute Audio Output"
-              description: "Mute or unmute the default audio output"
+              description: "Mute or unmute the default audio output."
               checked: AudioService.muted
               onToggled: checked => {
                            if (AudioService.sink && AudioService.sink.audio) {
@@ -172,7 +172,7 @@ ColumnLayout {
             }
 
             NText {
-              text: "Select the desired audio output device"
+              text: "Select the desired audio output device."
               font.pointSize: Style.fontSizeSmall * scaling
               color: Color.mOnSurface
               wrapMode: Text.WordWrap
@@ -211,7 +211,7 @@ ColumnLayout {
           }
 
           NText {
-            text: "Select desired audio input device"
+            text: "Select desired audio input device."
             font.pointSize: Style.fontSizeSmall * scaling
             color: Color.mOnSurface
             wrapMode: Text.WordWrap

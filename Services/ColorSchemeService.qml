@@ -135,7 +135,12 @@ Singleton {
   Process {
     id: generateColorsProcess
     command: {
-      var cmd = ["matugen", "image", WallpaperService.currentWallpaper, "--config", Quickshell.shellDir + "/Assets/Matugen/matugen.toml"]
+      // Choose config based on external theming toggles
+      var cfg = Quickshell.shellDir + "/Assets/Matugen/matugen.toml"
+      if (!Settings.data.colorSchemes.themeApps) {
+        cfg = Quickshell.shellDir + "/Assets/Matugen/matugen.base.toml"
+      }
+      var cmd = ["matugen", "image", WallpaperService.currentWallpaper, "--config", cfg]
       if (!Settings.data.colorSchemes.darkMode) {
         cmd.push("--mode", "light")
       } else {
