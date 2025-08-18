@@ -15,7 +15,7 @@ PopupWindow {
   property bool isSubMenu: false
   property bool isHovered: rootMouseArea.containsMouse
 
-  implicitWidth: Style.baseWidgetSize * 5.625 * scaling
+  implicitWidth: 200 * scaling
 
   // Use the content height of the Flickable for implicit height
   implicitHeight: Math.min(Screen.height * 0.9, flickable.contentHeight + (Style.marginMedium * 2 * scaling))
@@ -117,7 +117,7 @@ PopupWindow {
             } else {
               // Calculate based on text content
               const textHeight = text.contentHeight || (Style.fontSizeReduced * scaling * 1.2)
-              return Math.max(32 * scaling, textHeight + 8)
+              return Math.max(28 * scaling, textHeight + (Style.marginSmall * 2 * scaling))
             }
           }
 
@@ -146,12 +146,11 @@ PopupWindow {
                 id: text
                 Layout.fillWidth: true
                 color: (modelData?.enabled
-                        ?? true) ? (mouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface) : Color.applyOpacity(
-                                     Color.mOnSurface, 64)
+                        ?? true) ? (mouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface) : Color.mOutline
                 text: modelData?.text ?? ""
                 font.pointSize: Style.fontSizeReduced * scaling
                 verticalAlignment: Text.AlignVCenter
-                elide: Text.ElideRight
+                wrapMode: Text.WordWrap
               }
 
               Image {
