@@ -38,12 +38,8 @@ Row {
     }
   }
 
-  function getFocusedWindow() {
-    return CompositorService.getFocusedWindow()
-  }
-
   function getTitle() {
-    const focusedWindow = getFocusedWindow()
+    const focusedWindow = CompositorService.getFocusedWindow()
     return focusedWindow ? (focusedWindow.title || focusedWindow.appId || "") : ""
   }
 
@@ -58,7 +54,7 @@ Row {
   Rectangle {
     // Let the Rectangle size itself based on its content (the Row)
     width: row.width + Style.marginMedium * scaling * 2
-    height: row.height + Style.marginSmall * scaling
+    height: row.height
     color: Color.mSurfaceVariant
     radius: Style.radiusSmall * scaling
     anchors.verticalCenter: parent.verticalCenter

@@ -694,7 +694,8 @@ WlSessionLock {
         width: 64 * scaling
         height: 64 * scaling
         radius: Style.radiusLarge * scaling
-        color: shutdownArea.containsMouse ? Color.applyOpacity(Color.mError, "DD") : Color.applyOpacity(Color.mError, "22")
+        color: shutdownArea.containsMouse ? Color.applyOpacity(Color.mError,
+                                                               "DD") : Color.applyOpacity(Color.mError, "22")
         border.color: Color.mError
         border.width: Math.max(1, Style.borderMedium * scaling)
 
@@ -748,7 +749,8 @@ WlSessionLock {
         width: 64 * scaling
         height: 64 * scaling
         radius: Style.radiusLarge * scaling
-        color: rebootArea.containsMouse ? Color.applyOpacity(Color.mPrimary, "DD") : Color.applyOpacity(Color.mPrimary, "22")
+        color: rebootArea.containsMouse ? Color.applyOpacity(Color.mPrimary,
+                                                             "DD") : Color.applyOpacity(Color.mPrimary, "22")
         border.color: Color.mPrimary
         border.width: Math.max(1, Style.borderMedium * scaling)
 
@@ -801,7 +803,8 @@ WlSessionLock {
         width: 64 * scaling
         height: 64 * scaling
         radius: Style.radiusLarge * scaling
-        color: logoutArea.containsMouse ? Color.applyOpacity(Color.mSecondary, "DD") : Color.applyOpacity(Color.mSecondary, "22")
+        color: logoutArea.containsMouse ? Color.applyOpacity(Color.mSecondary,
+                                                             "DD") : Color.applyOpacity(Color.mSecondary, "22")
         border.color: Color.mSecondary
         border.width: Math.max(1, Style.borderMedium * scaling)
 
@@ -849,7 +852,6 @@ WlSessionLock {
           }
         }
         scale: logoutArea.containsMouse ? 1.1 : 1.0
-
       }
     }
 
