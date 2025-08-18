@@ -20,7 +20,7 @@ NLoader {
       screen: modelData
 
       // Visible color
-      property color ringColor: Qt.rgba(Color.mSurface, Color.mSurface.g, Color.mSurface.b,
+      property color ringColor: Qt.rgba(Color.mSurface.r, Color.mSurface.g, Color.mSurface.b,
                                         Settings.data.bar.backgroundOpacity)
       // The amount subtracted from full size for the inner cutout
       // Inner size = full size - borderWidth (per axis)
