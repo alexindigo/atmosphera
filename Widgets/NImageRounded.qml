@@ -18,7 +18,7 @@ Rectangle {
 
   color: Color.transparent
   radius: scaledRadius
-  anchors.margins: Style.marginTiniest * scaling
+  anchors.margins: Style.marginXXS * scaling
 
   // Border
   Rectangle {
@@ -64,7 +64,7 @@ Rectangle {
   NIcon {
     anchors.centerIn: parent
     text: fallbackIcon
-    font.pointSize: Style.fontSizeXL * scaling
+    font.pointSize: Style.fontSizeXXL * scaling
     visible: fallbackIcon !== undefined && fallbackIcon !== "" && (imagePath === undefined || imagePath === "")
     z: 0
   }

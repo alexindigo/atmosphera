@@ -89,7 +89,7 @@ ColumnLayout {
 
     Layout.fillWidth: true
     Layout.fillHeight: true
-    padding: Style.marginMedium * scaling
+    padding: Style.marginM * scaling
     clip: true
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
     ScrollBar.vertical.policy: ScrollBar.AsNeeded
@@ -104,7 +104,7 @@ ColumnLayout {
       }
 
       ColumnLayout {
-        spacing: Style.marginLarge * scaling
+        spacing: Style.marginL * scaling
         Layout.fillWidth: true
 
         // Use Matugen
@@ -156,17 +156,17 @@ ColumnLayout {
 
         NDivider {
           Layout.fillWidth: true
-          Layout.topMargin: Style.marginLarge * scaling
-          Layout.bottomMargin: Style.marginLarge * scaling
+          Layout.topMargin: Style.marginL * scaling
+          Layout.bottomMargin: Style.marginL * scaling
         }
 
         ColumnLayout {
-          spacing: Style.marginTiniest * scaling
+          spacing: Style.marginXXS * scaling
           Layout.fillWidth: true
 
           NText {
             text: "Predefined Color Schemes"
-            font.pointSize: Style.fontSizeLarge * scaling
+            font.pointSize: Style.fontSizeL * scaling
             font.weight: Style.fontWeightBold
             color: Color.mOnSurface
             Layout.fillWidth: true
@@ -174,7 +174,7 @@ ColumnLayout {
 
           NText {
             text: "These color schemes only apply when 'Use Matugen' is disabled. When enabled, Matugen will generate colors based on your wallpaper instead. You can toggle between light and dark themes when using Matugen."
-            font.pointSize: Style.fontSizeSmall * scaling
+            font.pointSize: Style.fontSizeXS * scaling
             color: Color.mOnSurface
             Layout.fillWidth: true
             wrapMode: Text.WordWrap
@@ -182,15 +182,15 @@ ColumnLayout {
         }
 
         ColumnLayout {
-          spacing: Style.marginTiny * scaling
+          spacing: Style.marginXS * scaling
           Layout.fillWidth: true
-          Layout.topMargin: Style.marginLarge * scaling
+          Layout.topMargin: Style.marginL * scaling
 
           // Color Schemes Grid
           GridLayout {
             columns: 4
-            rowSpacing: Style.marginLarge * scaling
-            columnSpacing: Style.marginLarge * scaling
+            rowSpacing: Style.marginL * scaling
+            columnSpacing: Style.marginL * scaling
             Layout.fillWidth: true
 
             Repeater {
@@ -203,9 +203,9 @@ ColumnLayout {
 
                 Layout.fillWidth: true
                 Layout.preferredHeight: 120 * scaling
-                radius: Style.radiusMedium * scaling
+                radius: Style.radiusM * scaling
                 color: getSchemeColor(modelData, "mSurface")
-                border.width: Math.max(1, Style.borderThick * scaling)
+                border.width: Math.max(1, Style.borderL * scaling)
                 border.color: Settings.data.colorSchemes.predefinedScheme === modelData ? Color.mPrimary : Color.mOutline
                 scale: root.cardScaleLow
 
@@ -234,7 +234,7 @@ ColumnLayout {
                 ColumnLayout {
                   anchors.fill: parent
                   anchors.margins: Style.marginXL * scaling
-                  spacing: Style.marginSmall * scaling
+                  spacing: Style.marginS * scaling
 
                   // Scheme name
                   NText {
@@ -243,7 +243,7 @@ ColumnLayout {
                       var chunks = schemePath.replace(".json", "").split("/")
                       return chunks[chunks.length - 1]
                     }
-                    font.pointSize: Style.fontSizeMedium * scaling
+                    font.pointSize: Style.fontSizeM * scaling
                     font.weight: Style.fontWeightBold
                     color: getSchemeColor(modelData, "mOnSurface")
                     Layout.fillWidth: true
@@ -253,7 +253,7 @@ ColumnLayout {
 
                   // Color swatches
                   RowLayout {
-                    spacing: Style.marginSmall * scaling
+                    spacing: Style.marginS * scaling
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignHCenter
 
@@ -296,7 +296,7 @@ ColumnLayout {
                   visible: Settings.data.colorSchemes.predefinedScheme === schemePath
                   anchors.right: parent.right
                   anchors.top: parent.top
-                  anchors.margins: Style.marginSmall * scaling
+                  anchors.margins: Style.marginS * scaling
                   width: 24 * scaling
                   height: 24 * scaling
                   radius: width * 0.5
@@ -305,7 +305,7 @@ ColumnLayout {
                   NText {
                     anchors.centerIn: parent
                     text: "✓"
-                    font.pointSize: Style.fontSizeSmall * scaling
+                    font.pointSize: Style.fontSizeXS * scaling
                     font.weight: Style.fontWeightBold
                     color: Color.mOnPrimary
                   }

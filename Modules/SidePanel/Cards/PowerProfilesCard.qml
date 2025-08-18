@@ -11,7 +11,7 @@ import qs.Widgets
 NBox {
   Layout.fillWidth: true
   Layout.preferredWidth: 1
-  implicitHeight: powerRow.implicitHeight + Style.marginMedium * 2 * scaling
+  implicitHeight: powerRow.implicitHeight + Style.marginM * 2 * scaling
 
   // PowerProfiles service
   property var powerProfiles: PowerProfiles
@@ -20,7 +20,7 @@ NBox {
   RowLayout {
     id: powerRow
     anchors.fill: parent
-    anchors.margins: Style.marginSmall * scaling
+    anchors.margins: Style.marginS * scaling
     spacing: sidePanel.cardSpacing
     Item {
       Layout.fillWidth: true

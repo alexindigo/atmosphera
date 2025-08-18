@@ -18,7 +18,7 @@ PopupWindow {
   implicitWidth: 200 * scaling
 
   // Use the content height of the Flickable for implicit height
-  implicitHeight: Math.min(Screen.height * 0.9, flickable.contentHeight + (Style.marginMedium * 2 * scaling))
+  implicitHeight: Math.min(Screen.height * 0.9, flickable.contentHeight + (Style.marginM * 2 * scaling))
   visible: false
   color: Color.transparent
   anchor.item: anchorItem
@@ -85,14 +85,14 @@ PopupWindow {
     anchors.fill: parent
     color: Color.mSurface
     border.color: Color.mOutline
-    border.width: Math.max(1, Style.borderThin * scaling)
-    radius: Style.radiusMedium * scaling
+    border.width: Math.max(1, Style.borderS * scaling)
+    radius: Style.radiusM * scaling
   }
 
   Flickable {
     id: flickable
     anchors.fill: parent
-    anchors.margins: Style.marginSmall * scaling
+    anchors.margins: Style.marginS * scaling
     contentHeight: columnLayout.implicitHeight
     interactive: true
     clip: true
@@ -116,8 +116,8 @@ PopupWindow {
               return 8 * scaling
             } else {
               // Calculate based on text content
-              const textHeight = text.contentHeight || (Style.fontSizeReduced * scaling * 1.2)
-              return Math.max(28 * scaling, textHeight + (Style.marginSmall * 2 * scaling))
+              const textHeight = text.contentHeight || (Style.fontSizeS * scaling * 1.2)
+              return Math.max(28 * scaling, textHeight + (Style.marginS * 2 * scaling))
             }
           }
 
@@ -126,21 +126,21 @@ PopupWindow {
 
           NDivider {
             anchors.centerIn: parent
-            width: parent.width - (Style.marginMedium * scaling * 2)
+            width: parent.width - (Style.marginM * scaling * 2)
             visible: modelData?.isSeparator ?? false
           }
 
           Rectangle {
             anchors.fill: parent
             color: mouseArea.containsMouse ? Color.mTertiary : Color.transparent
-            radius: Style.radiusSmall * scaling
+            radius: Style.radiusS * scaling
             visible: !(modelData?.isSeparator ?? false)
 
             RowLayout {
               anchors.fill: parent
-              anchors.leftMargin: Style.marginMedium * scaling
-              anchors.rightMargin: Style.marginMedium * scaling
-              spacing: Style.marginSmall * scaling
+              anchors.leftMargin: Style.marginM * scaling
+              anchors.rightMargin: Style.marginM * scaling
+              spacing: Style.marginS * scaling
 
               NText {
                 id: text
@@ -148,14 +148,14 @@ PopupWindow {
                 color: (modelData?.enabled
                         ?? true) ? (mouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface) : Color.mOutline
                 text: modelData?.text ?? ""
-                font.pointSize: Style.fontSizeReduced * scaling
+                font.pointSize: Style.fontSizeS * scaling
                 verticalAlignment: Text.AlignVCenter
                 wrapMode: Text.WordWrap
               }
 
               Image {
-                Layout.preferredWidth: Style.marginLarge * scaling
-                Layout.preferredHeight: Style.marginLarge * scaling
+                Layout.preferredWidth: Style.marginL * scaling
+                Layout.preferredHeight: Style.marginL * scaling
                 source: modelData?.icon ?? ""
                 visible: (modelData?.icon ?? "") !== ""
                 fillMode: Image.PreserveAspectFit
@@ -163,7 +163,7 @@ PopupWindow {
 
               NIcon {
                 text: modelData?.hasChildren ? "menu" : ""
-                font.pointSize: Style.fontSizeReduced * scaling
+                font.pointSize: Style.fontSizeS * scaling
                 verticalAlignment: Text.AlignVCenter
                 visible: modelData?.hasChildren ?? false
                 color: Color.mOnSurface

@@ -68,9 +68,9 @@ NLoader {
       Rectangle {
         id: bgRect
         color: Color.mSurfaceVariant
-        radius: Style.radiusMedium * scaling
+        radius: Style.radiusM * scaling
         border.color: Color.mOutlineVariant
-        border.width: Math.max(1, Style.borderThin * scaling)
+        border.width: Math.max(1, Style.borderS * scaling)
         width: 500 * scaling
         height: 900 * scaling
         anchors.centerIn: parent
@@ -115,18 +115,18 @@ NLoader {
           NText {
             text: "DemoPanel"
             color: Color.mPrimary
-            font.pointSize: Style.fontSizeXL * scaling
+            font.pointSize: Style.fontSizeXXL * scaling
             font.weight: Style.fontWeightBold
             Layout.alignment: Qt.AlignHCenter
           }
 
           ColumnLayout {
 
-            spacing: Style.marginMedium * scaling
+            spacing: Style.marginM * scaling
 
             // NSlider
             ColumnLayout {
-              spacing: Style.marginLarge * scaling
+              spacing: Style.marginL * scaling
               NText {
                 text: "Scaling"
                 color: Color.mSecondary
@@ -137,7 +137,7 @@ NLoader {
                 Layout.alignment: Qt.AlignVCenter
               }
               RowLayout {
-                spacing: Style.marginSmall * scaling
+                spacing: Style.marginS * scaling
                 NSlider {
                   id: scaleSlider
                   from: 0.6
@@ -156,7 +156,7 @@ NLoader {
                 NIconButton {
                   icon: "refresh"
                   tooltipText: "Reset Scaling"
-                  fontPointSize: Style.fontSizeLarge * scaling
+                  fontPointSize: Style.fontSizeL * scaling
                   onClicked: {
                     ScalingService.overrideEnabled = false
                     ScalingService.overrideScale = 1.0
@@ -170,7 +170,7 @@ NLoader {
 
             // NIconButton
             ColumnLayout {
-              spacing: Style.marginLarge * scaling
+              spacing: Style.marginL * scaling
               NText {
                 text: "NIconButton"
                 color: Color.mSecondary
@@ -181,7 +181,7 @@ NLoader {
                 id: myIconButton
                 icon: "celebration"
                 tooltipText: "A nice tooltip"
-                fontPointSize: Style.fontSizeLarge * scaling
+                fontPointSize: Style.fontSizeL * scaling
               }
 
               NDivider {
@@ -191,7 +191,7 @@ NLoader {
 
             // NToggle
             ColumnLayout {
-              spacing: Style.marginMedium * scaling
+              spacing: Style.marginM * scaling
               NText {
                 text: "NToggle"
                 color: Color.mSecondary
@@ -213,7 +213,7 @@ NLoader {
 
             // NComboBox
             ColumnLayout {
-              spacing: Style.marginMedium * scaling
+              spacing: Style.marginM * scaling
               NText {
                 text: "NComboBox"
                 color: Color.mSecondary
@@ -266,7 +266,7 @@ NLoader {
 
             // NTextInput
             ColumnLayout {
-              spacing: Style.marginMedium * scaling
+              spacing: Style.marginM * scaling
               NText {
                 text: "NTextInput"
                 color: Color.mSecondary
@@ -289,7 +289,7 @@ NLoader {
 
             // NBusyIndicator
             ColumnLayout {
-              spacing: Style.marginMedium * scaling
+              spacing: Style.marginM * scaling
               NText {
                 text: "NBusyIndicator"
                 color: Color.mSecondary

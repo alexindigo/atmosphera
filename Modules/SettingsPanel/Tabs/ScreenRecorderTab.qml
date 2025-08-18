@@ -15,7 +15,7 @@ ColumnLayout {
 
     Layout.fillWidth: true
     Layout.fillHeight: true
-    padding: Style.marginMedium * scaling
+    padding: Style.marginM * scaling
     clip: true
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
     ScrollBar.vertical.policy: ScrollBar.AsNeeded
@@ -30,22 +30,22 @@ ColumnLayout {
       }
 
       ColumnLayout {
-        spacing: Style.marginTiny * scaling
+        spacing: Style.marginXS * scaling
         Layout.fillWidth: true
 
         NText {
           text: "Recording"
-          font.pointSize: Style.fontSizeXL * scaling
+          font.pointSize: Style.fontSizeXXL * scaling
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface
-          Layout.bottomMargin: Style.marginSmall * scaling
+          Layout.bottomMargin: Style.marginS * scaling
         }
 
         // Output Directory
         ColumnLayout {
-          spacing: Style.marginSmall * scaling
+          spacing: Style.marginS * scaling
           Layout.fillWidth: true
-          Layout.topMargin: Style.marginSmall * scaling
+          Layout.topMargin: Style.marginS * scaling
 
           NTextInput {
             label: "Output Directory"
@@ -58,9 +58,9 @@ ColumnLayout {
           }
 
           ColumnLayout {
-            spacing: Style.marginSmall * scaling
+            spacing: Style.marginS * scaling
             Layout.fillWidth: true
-            Layout.topMargin: Style.marginMedium * scaling
+            Layout.topMargin: Style.marginM * scaling
             // Show Cursor
             NToggle {
               label: "Show Cursor"
@@ -75,21 +75,21 @@ ColumnLayout {
 
         NDivider {
           Layout.fillWidth: true
-          Layout.topMargin: Style.marginLarge * 2 * scaling
-          Layout.bottomMargin: Style.marginLarge * scaling
+          Layout.topMargin: Style.marginL * 2 * scaling
+          Layout.bottomMargin: Style.marginL * scaling
         }
 
         // Video Settings
         ColumnLayout {
-          spacing: Style.marginLarge * scaling
+          spacing: Style.marginL * scaling
           Layout.fillWidth: true
 
           NText {
             text: "Video Settings"
-            font.pointSize: Style.fontSizeXL * scaling
+            font.pointSize: Style.fontSizeXXL * scaling
             font.weight: Style.fontWeightBold
             color: Color.mOnSurface
-            Layout.bottomMargin: Style.marginSmall * scaling
+            Layout.bottomMargin: Style.marginS * scaling
           }
 
           // Frame Rate
@@ -203,21 +203,21 @@ ColumnLayout {
 
         NDivider {
           Layout.fillWidth: true
-          Layout.topMargin: Style.marginLarge * 2 * scaling
-          Layout.bottomMargin: Style.marginLarge * scaling
+          Layout.topMargin: Style.marginL * 2 * scaling
+          Layout.bottomMargin: Style.marginL * scaling
         }
 
         // Audio Settings
         ColumnLayout {
-          spacing: Style.marginLarge * scaling
+          spacing: Style.marginL * scaling
           Layout.fillWidth: true
 
           NText {
             text: "Audio Settings"
-            font.pointSize: Style.fontSizeXL * scaling
+            font.pointSize: Style.fontSizeXXL * scaling
             font.weight: Style.fontWeightBold
             color: Color.mOnSurface
-            Layout.bottomMargin: Style.marginSmall * scaling
+            Layout.bottomMargin: Style.marginS * scaling
           }
 
           // Audio Source

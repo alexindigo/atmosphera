@@ -24,7 +24,7 @@ NLoader {
                                         Settings.data.bar.backgroundOpacity)
       // The amount subtracted from full size for the inner cutout
       // Inner size = full size - borderWidth (per axis)
-      property int borderWidth: Style.borderMedium
+      property int borderWidth: Style.borderM
       // Rounded radius for the inner cutout
       property int innerRadius: 20
 

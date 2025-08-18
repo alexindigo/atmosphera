@@ -7,34 +7,34 @@ import qs.Widgets
 Row {
   id: root
   anchors.verticalCenter: parent.verticalCenter
-  spacing: Style.marginSmall * scaling
+  spacing: Style.marginS * scaling
   visible: (Settings.data.bar.showSystemInfo)
 
   Rectangle {
     // Let the Rectangle size itself based on its content (the Row)
-    width: row.width + Style.marginMedium * scaling * 2
+    width: row.width + Style.marginM * scaling * 2
 
     height: Math.round(Style.barHeight * 0.75 * scaling)
-    radius: Math.round(Style.radiusMedium * scaling)
+    radius: Math.round(Style.radiusM * scaling)
     color: Color.mSurfaceVariant
     border.color: Color.mOutline
-    border.width: Math.max(1, Math.round(Style.borderThin * scaling))
+    border.width: Math.max(1, Math.round(Style.borderS * scaling))
 
     anchors.verticalCenter: parent.verticalCenter
 
     Item {
       id: mainContainer
       anchors.fill: parent
-      anchors.leftMargin: Style.marginSmall * scaling
-      anchors.rightMargin: Style.marginSmall * scaling
+      anchors.leftMargin: Style.marginS * scaling
+      anchors.rightMargin: Style.marginS * scaling
 
       Row {
         id: row
         anchors.verticalCenter: parent.verticalCenter
-        spacing: Style.marginSmall * scaling
+        spacing: Style.marginS * scaling
         Row {
           id: cpuUsageLayout
-          spacing: Style.marginTiny * scaling
+          spacing: Style.marginXS * scaling
 
           NIcon {
             id: cpuUsageIcon
@@ -45,7 +45,7 @@ Row {
           NText {
             id: cpuUsageText
             text: `${SystemStatService.cpuUsage}%`
-            font.pointSize: Style.fontSizeReduced * scaling
+            font.pointSize: Style.fontSizeS * scaling
             font.weight: Style.fontWeightMedium
             anchors.verticalCenter: parent.verticalCenter
             verticalAlignment: Text.AlignVCenter
@@ -57,7 +57,7 @@ Row {
         Row {
           id: cpuTempLayout
           // spacing is thin here to compensate for the vertical thermometer icon
-          spacing: Style.marginTiniest * scaling
+          spacing: Style.marginXXS * scaling
 
           NIcon {
             text: "thermometer"
@@ -66,7 +66,7 @@ Row {
 
           NText {
             text: `${SystemStatService.cpuTemp}°C`
-            font.pointSize: Style.fontSizeReduced * scaling
+            font.pointSize: Style.fontSizeS * scaling
             font.weight: Style.fontWeightMedium
             anchors.verticalCenter: parent.verticalCenter
             verticalAlignment: Text.AlignVCenter
@@ -77,7 +77,7 @@ Row {
         // Memory Usage Component
         Row {
           id: memoryUsageLayout
-          spacing: Style.marginTiny * scaling
+          spacing: Style.marginXS * scaling
 
           NIcon {
             text: "memory"
@@ -86,7 +86,7 @@ Row {
 
           NText {
             text: `${SystemStatService.memoryUsageGb}G`
-            font.pointSize: Style.fontSizeReduced * scaling
+            font.pointSize: Style.fontSizeS * scaling
             font.weight: Style.fontWeightMedium
             anchors.verticalCenter: parent.verticalCenter
             verticalAlignment: Text.AlignVCenter

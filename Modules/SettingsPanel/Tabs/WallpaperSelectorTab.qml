@@ -24,14 +24,14 @@ Item {
     ColumnLayout {
       width: parent.width
       ColumnLayout {
-        spacing: Style.marginLarge * scaling
-        Layout.margins: Style.marginLarge * scaling
+        spacing: Style.marginL * scaling
+        Layout.margins: Style.marginL * scaling
         Layout.fillWidth: true
 
         // Current wallpaper display
         NText {
           text: "Current Wallpaper"
-          font.pointSize: Style.fontSizeXL * scaling
+          font.pointSize: Style.fontSizeXXL * scaling
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface
         }
@@ -39,28 +39,28 @@ Item {
         Rectangle {
           Layout.fillWidth: true
           Layout.preferredHeight: 120 * scaling
-          radius: Style.radiusMedium * scaling
+          radius: Style.radiusM * scaling
           color: Color.mSurface
           border.color: Color.mOutline
-          border.width: Math.max(1, Style.borderThin * scaling)
+          border.width: Math.max(1, Style.borderS * scaling)
           clip: true
 
           NImageRounded {
             id: currentWallpaperImage
             anchors.fill: parent
-            anchors.margins: Style.marginSmall * scaling
+            anchors.margins: Style.marginS * scaling
             imagePath: WallpaperService.currentWallpaper
             fallbackIcon: "image"
             borderColor: Color.mOutline
-            borderWidth: Math.max(1, Style.borderThin * scaling)
-            imageRadius: Style.radiusMedium * scaling
+            borderWidth: Math.max(1, Style.borderS * scaling)
+            imageRadius: Style.radiusM * scaling
           }
         }
 
         NDivider {
           Layout.fillWidth: true
-          Layout.topMargin: Style.marginLarge * scaling
-          Layout.bottomMargin: Style.marginLarge * scaling
+          Layout.topMargin: Style.marginL * scaling
+          Layout.bottomMargin: Style.marginL * scaling
         }
 
         RowLayout {
@@ -72,7 +72,7 @@ Item {
             // Wallpaper grid
             NText {
               text: "Wallpaper Selector"
-              font.pointSize: Style.fontSizeXL * scaling
+              font.pointSize: Style.fontSizeXXL * scaling
               font.weight: Style.fontWeightBold
               color: Color.mOnSurface
             }
@@ -88,7 +88,7 @@ Item {
               text: Settings.data.wallpaper.swww.enabled ? "Wallpapers will change with " + Settings.data.wallpaper.swww.transitionType
                                                            + " transition." : "Wallpapers will change instantly."
               color: Color.mOnSurface
-              font.pointSize: Style.fontSizeSmall * scaling
+              font.pointSize: Style.fontSizeXS * scaling
               visible: Settings.data.wallpaper.swww.enabled
             }
           }
@@ -123,15 +123,15 @@ Item {
 
             property int columns: 5
             property int itemSize: Math.floor(
-                                     (width - leftMargin - rightMargin - (4 * Style.marginSmall * scaling)) / columns)
+                                     (width - leftMargin - rightMargin - (4 * Style.marginS * scaling)) / columns)
 
             cellWidth: Math.floor((width - leftMargin - rightMargin) / columns)
-            cellHeight: Math.floor(itemSize * 0.67) + Style.marginSmall * scaling
+            cellHeight: Math.floor(itemSize * 0.67) + Style.marginS * scaling
 
-            leftMargin: Style.marginSmall * scaling
-            rightMargin: Style.marginSmall * scaling
-            topMargin: Style.marginSmall * scaling
-            bottomMargin: Style.marginSmall * scaling
+            leftMargin: Style.marginS * scaling
+            rightMargin: Style.marginS * scaling
+            topMargin: Style.marginS * scaling
+            bottomMargin: Style.marginS * scaling
 
             delegate: Rectangle {
               id: wallpaperItem
@@ -157,25 +157,25 @@ Item {
                 anchors.fill: parent
                 color: Color.transparent
                 border.color: isSelected ? Color.mPrimary : Color.mOutline
-                border.width: Math.max(1, Style.borderThick * scaling)
+                border.width: Math.max(1, Style.borderL * scaling)
               }
 
               // Selection tick-mark
               Rectangle {
                 anchors.top: parent.top
                 anchors.right: parent.right
-                anchors.margins: Style.marginTiny * scaling
+                anchors.margins: Style.marginXS * scaling
                 width: 20 * scaling
                 height: 20 * scaling
                 radius: width / 2
                 color: Color.mPrimary
                 border.color: Color.mOutline
-                border.width: Math.max(1, Style.borderThin * scaling)
+                border.width: Math.max(1, Style.borderS * scaling)
                 visible: isSelected
 
                 NIcon {
                   text: "check"
-                  font.pointSize: Style.fontSizeSmall * scaling
+                  font.pointSize: Style.fontSizeXS * scaling
                   color: Color.mOnPrimary
                   anchors.centerIn: parent
                 }
@@ -211,18 +211,18 @@ Item {
           Rectangle {
             anchors.fill: parent
             color: Color.mSurface
-            radius: Style.radiusMedium * scaling
+            radius: Style.radiusM * scaling
             border.color: Color.mOutline
-            border.width: Math.max(1, Style.borderThin * scaling)
+            border.width: Math.max(1, Style.borderS * scaling)
             visible: WallpaperService.wallpaperList.length === 0 && !WallpaperService.scanning
 
             ColumnLayout {
               anchors.centerIn: parent
-              spacing: Style.marginMedium * scaling
+              spacing: Style.marginM * scaling
 
               NIcon {
                 text: "folder_open"
-                font.pointSize: Style.fontSizeLarge * scaling
+                font.pointSize: Style.fontSizeL * scaling
                 color: Color.mOnSurface
                 Layout.alignment: Qt.AlignHCenter
               }

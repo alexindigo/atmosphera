@@ -31,7 +31,7 @@ Item {
   // Exposed width logic
   readonly property int pillHeight: Style.baseWidgetSize * sizeMultiplier * scaling
   readonly property int iconSize: Style.baseWidgetSize * sizeMultiplier * scaling
-  readonly property int pillPaddingHorizontal: Style.marginMedium * scaling
+  readonly property int pillPaddingHorizontal: Style.marginM * scaling
   readonly property int pillOverlap: iconSize * 0.5
   readonly property int maxPillWidth: Math.max(1, textItem.implicitWidth + pillPaddingHorizontal * 2 + pillOverlap)
 
@@ -53,7 +53,7 @@ Item {
       id: textItem
       anchors.centerIn: parent
       text: root.text
-      font.pointSize: Style.fontSizeSmall * scaling
+      font.pointSize: Style.fontSizeXS * scaling
       font.weight: Style.fontWeightBold
       color: textColor
       visible: showPill
@@ -93,7 +93,7 @@ Item {
 
     NIcon {
       text: root.icon
-      font.pointSize: Style.fontSizeMedium * scaling
+      font.pointSize: Style.fontSizeM * scaling
       color: showPill ? iconTextColor : collapsedIconColor
       anchors.centerIn: parent
     }

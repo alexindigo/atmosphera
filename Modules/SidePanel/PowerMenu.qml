@@ -25,9 +25,9 @@ NPanel {
   Rectangle {
     width: 160 * scaling
     height: 220 * scaling
-    radius: Style.radiusMedium * scaling
+    radius: Style.radiusM * scaling
     border.color: Color.mOutline
-    border.width: Math.max(1, Style.borderThin * scaling)
+    border.width: Math.max(1, Style.borderS * scaling)
     color: Color.mSurface
 
     visible: true
@@ -35,7 +35,7 @@ NPanel {
 
     anchors.top: parent.top
     anchors.right: parent.right
-    anchors.rightMargin: Style.marginLarge * scaling
+    anchors.rightMargin: Style.marginL * scaling
     anchors.topMargin: 86 * scaling
 
     // Prevent closing when clicking in the panel bg
@@ -48,27 +48,27 @@ NPanel {
 
     ColumnLayout {
       anchors.fill: parent
-      anchors.margins: Style.marginSmall * scaling
-      spacing: Style.marginTiny * scaling
+      anchors.margins: Style.marginS * scaling
+      spacing: Style.marginXS * scaling
 
       // --------------
       // Lock
       Rectangle {
         Layout.fillWidth: true
         Layout.preferredHeight: Style.barHeight * scaling
-        radius: Style.radiusSmall * scaling
+        radius: Style.radiusS * scaling
         color: lockButtonArea.containsMouse ? Color.mTertiary : Color.transparent
 
         Item {
           anchors.left: parent.left
           anchors.right: parent.right
           anchors.verticalCenter: parent.verticalCenter
-          anchors.leftMargin: Style.marginMedium * scaling
-          anchors.rightMargin: Style.marginMedium * scaling
+          anchors.leftMargin: Style.marginM * scaling
+          anchors.rightMargin: Style.marginM * scaling
 
           Row {
             id: lockRow
-            spacing: Style.marginSmall * scaling
+            spacing: Style.marginS * scaling
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
@@ -110,19 +110,19 @@ NPanel {
       Rectangle {
         Layout.fillWidth: true
         Layout.preferredHeight: Style.barHeight * scaling
-        radius: Style.radiusSmall * scaling
+        radius: Style.radiusS * scaling
         color: suspendButtonArea.containsMouse ? Color.mTertiary : Color.transparent
 
         Item {
           anchors.left: parent.left
           anchors.right: parent.right
           anchors.verticalCenter: parent.verticalCenter
-          anchors.leftMargin: Style.marginMedium * scaling
-          anchors.rightMargin: Style.marginMedium * scaling
+          anchors.leftMargin: Style.marginM * scaling
+          anchors.rightMargin: Style.marginM * scaling
 
           Row {
             id: suspendRow
-            spacing: Style.marginSmall * scaling
+            spacing: Style.marginS * scaling
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
@@ -162,19 +162,19 @@ NPanel {
       Rectangle {
         Layout.fillWidth: true
         Layout.preferredHeight: Style.barHeight * scaling
-        radius: Style.radiusSmall * scaling
+        radius: Style.radiusS * scaling
         color: rebootButtonArea.containsMouse ? Color.mTertiary : Color.transparent
 
         Item {
           anchors.left: parent.left
           anchors.right: parent.right
           anchors.verticalCenter: parent.verticalCenter
-          anchors.leftMargin: Style.marginMedium * scaling
-          anchors.rightMargin: Style.marginMedium * scaling
+          anchors.leftMargin: Style.marginM * scaling
+          anchors.rightMargin: Style.marginM * scaling
 
           Row {
             id: rebootRow
-            spacing: Style.marginSmall * scaling
+            spacing: Style.marginS * scaling
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
@@ -214,19 +214,19 @@ NPanel {
       Rectangle {
         Layout.fillWidth: true
         Layout.preferredHeight: Style.barHeight * scaling
-        radius: Style.radiusSmall * scaling
+        radius: Style.radiusS * scaling
         color: logoutButtonArea.containsMouse ? Color.mTertiary : Color.transparent
 
         Item {
           anchors.left: parent.left
           anchors.right: parent.right
           anchors.verticalCenter: parent.verticalCenter
-          anchors.leftMargin: Style.marginMedium * scaling
-          anchors.rightMargin: Style.marginMedium * scaling
+          anchors.leftMargin: Style.marginM * scaling
+          anchors.rightMargin: Style.marginM * scaling
 
           Row {
             id: logoutRow
-            spacing: Style.marginSmall * scaling
+            spacing: Style.marginS * scaling
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
@@ -266,19 +266,19 @@ NPanel {
       Rectangle {
         Layout.fillWidth: true
         Layout.preferredHeight: Style.barHeight * scaling
-        radius: Style.radiusSmall * scaling
+        radius: Style.radiusS * scaling
         color: shutdownButtonArea.containsMouse ? Color.mTertiary : Color.transparent
 
         Item {
           anchors.left: parent.left
           anchors.right: parent.right
           anchors.verticalCenter: parent.verticalCenter
-          anchors.leftMargin: Style.marginMedium * scaling
-          anchors.rightMargin: Style.marginMedium * scaling
+          anchors.leftMargin: Style.marginM * scaling
+          anchors.rightMargin: Style.marginM * scaling
 
           Row {
             id: shutdownRow
-            spacing: Style.marginSmall * scaling
+            spacing: Style.marginS * scaling
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter

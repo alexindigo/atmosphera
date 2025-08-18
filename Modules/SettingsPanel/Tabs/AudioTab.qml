@@ -26,7 +26,7 @@ ColumnLayout {
 
     Layout.fillWidth: true
     Layout.fillHeight: true
-    padding: Style.marginMedium * scaling
+    padding: Style.marginM * scaling
     clip: true
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
     ScrollBar.vertical.policy: ScrollBar.AsNeeded
@@ -41,30 +41,30 @@ ColumnLayout {
       }
 
       ColumnLayout {
-        spacing: Style.marginTiny * scaling
+        spacing: Style.marginXS * scaling
         Layout.fillWidth: true
 
         NText {
           text: "Audio"
-          font.pointSize: Style.fontSizeXL * scaling
+          font.pointSize: Style.fontSizeXXL * scaling
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface
-          Layout.bottomMargin: Style.marginSmall * scaling
+          Layout.bottomMargin: Style.marginS * scaling
         }
 
         // Volume Controls
         ColumnLayout {
-          spacing: Style.marginSmall * scaling
+          spacing: Style.marginS * scaling
           Layout.fillWidth: true
-          Layout.topMargin: Style.marginSmall * scaling
+          Layout.topMargin: Style.marginS * scaling
 
           // Master Volume
           ColumnLayout {
-            spacing: Style.marginSmall * scaling
+            spacing: Style.marginS * scaling
             Layout.fillWidth: true
 
             ColumnLayout {
-              spacing: Style.marginTiniest * scaling
+              spacing: Style.marginXXS * scaling
 
               NText {
                 text: "Master Volume"
@@ -74,7 +74,7 @@ ColumnLayout {
 
               NText {
                 text: "System-wide volume level."
-                font.pointSize: Style.fontSizeSmall * scaling
+                font.pointSize: Style.fontSizeXS * scaling
                 color: Color.mOnSurface
                 wrapMode: Text.WordWrap
                 Layout.fillWidth: true
@@ -109,7 +109,7 @@ ColumnLayout {
               NText {
                 text: Math.floor(AudioService.volume * 100) + "%"
                 Layout.alignment: Qt.AlignVCenter
-                Layout.leftMargin: Style.marginSmall * scaling
+                Layout.leftMargin: Style.marginS * scaling
                 color: Color.mOnSurface
               }
             }
@@ -117,9 +117,9 @@ ColumnLayout {
 
           // Mute Toggle
           ColumnLayout {
-            spacing: Style.marginSmall * scaling
+            spacing: Style.marginS * scaling
             Layout.fillWidth: true
-            Layout.topMargin: Style.marginMedium * scaling
+            Layout.topMargin: Style.marginM * scaling
 
             NToggle {
               label: "Mute Audio Output"
@@ -136,21 +136,21 @@ ColumnLayout {
 
         NDivider {
           Layout.fillWidth: true
-          Layout.topMargin: Style.marginLarge * 2 * scaling
-          Layout.bottomMargin: Style.marginLarge * scaling
+          Layout.topMargin: Style.marginL * 2 * scaling
+          Layout.bottomMargin: Style.marginL * scaling
         }
 
         // AudioService Devices
         ColumnLayout {
-          spacing: Style.marginLarge * scaling
+          spacing: Style.marginL * scaling
           Layout.fillWidth: true
 
           NText {
             text: "Audio Devices"
-            font.pointSize: Style.fontSizeXL * scaling
+            font.pointSize: Style.fontSizeXXL * scaling
             font.weight: Style.fontWeightBold
             color: Color.mOnSurface
-            Layout.bottomMargin: Style.marginSmall * scaling
+            Layout.bottomMargin: Style.marginS * scaling
           }
 
           // -------------------------------
@@ -160,20 +160,20 @@ ColumnLayout {
           }
 
           ColumnLayout {
-            spacing: Style.marginTiniest * scaling
+            spacing: Style.marginXXS * scaling
             Layout.fillWidth: true
-            Layout.bottomMargin: Style.marginLarge * scaling
+            Layout.bottomMargin: Style.marginL * scaling
 
             NText {
               text: "Output Device"
-              font.pointSize: Style.fontSizeMedium * scaling
+              font.pointSize: Style.fontSizeM * scaling
               font.weight: Style.fontWeightBold
               color: Color.mOnSurface
             }
 
             NText {
               text: "Select the desired audio output device."
-              font.pointSize: Style.fontSizeSmall * scaling
+              font.pointSize: Style.fontSizeXS * scaling
               color: Color.mOnSurface
               wrapMode: Text.WordWrap
               Layout.fillWidth: true
@@ -199,20 +199,20 @@ ColumnLayout {
         }
 
         ColumnLayout {
-          spacing: Style.marginTiniest * scaling
+          spacing: Style.marginXXS * scaling
           Layout.fillWidth: true
-          Layout.bottomMargin: Style.marginLarge * scaling
+          Layout.bottomMargin: Style.marginL * scaling
 
           NText {
             text: "Input Device"
-            font.pointSize: Style.fontSizeMedium * scaling
+            font.pointSize: Style.fontSizeM * scaling
             font.weight: Style.fontWeightBold
             color: Color.mOnSurface
           }
 
           NText {
             text: "Select desired audio input device."
-            font.pointSize: Style.fontSizeSmall * scaling
+            font.pointSize: Style.fontSizeXS * scaling
             color: Color.mOnSurface
             wrapMode: Text.WordWrap
             Layout.fillWidth: true
@@ -234,21 +234,21 @@ ColumnLayout {
       // Divider
       NDivider {
         Layout.fillWidth: true
-        Layout.topMargin: Style.marginLarge * scaling
-        Layout.bottomMargin: Style.marginMedium * scaling
+        Layout.topMargin: Style.marginL * scaling
+        Layout.bottomMargin: Style.marginM * scaling
       }
 
       // AudioService Visualizer Category
       ColumnLayout {
-        spacing: Style.marginSmall * scaling
+        spacing: Style.marginS * scaling
         Layout.fillWidth: true
 
         NText {
           text: "Audio Visualizer"
-          font.pointSize: Style.fontSizeXL * scaling
+          font.pointSize: Style.fontSizeXXL * scaling
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface
-          Layout.bottomMargin: Style.marginSmall * scaling
+          Layout.bottomMargin: Style.marginS * scaling
         }
 
         // AudioService Visualizer section

@@ -15,7 +15,7 @@ ColumnLayout {
 
     Layout.fillWidth: true
     Layout.fillHeight: true
-    padding: Style.marginMedium * scaling
+    padding: Style.marginM * scaling
     clip: true
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
     ScrollBar.vertical.policy: ScrollBar.AsNeeded
@@ -30,26 +30,26 @@ ColumnLayout {
       }
 
       ColumnLayout {
-        spacing: Style.marginLarge * scaling
+        spacing: Style.marginL * scaling
         Layout.fillWidth: true
 
         NText {
           text: "Directory"
-          font.pointSize: Style.fontSizeXL * scaling
+          font.pointSize: Style.fontSizeXXL * scaling
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface
-          Layout.bottomMargin: Style.marginSmall * scaling
+          Layout.bottomMargin: Style.marginS * scaling
         }
 
         // Wallpaper Settings Category
         ColumnLayout {
-          spacing: Style.marginSmall * scaling
+          spacing: Style.marginS * scaling
           Layout.fillWidth: true
-          Layout.topMargin: Style.marginSmall * scaling
+          Layout.topMargin: Style.marginS * scaling
 
           // Wallpaper Folder
           ColumnLayout {
-            spacing: Style.marginSmall * scaling
+            spacing: Style.marginS * scaling
             Layout.fillWidth: true
 
             NTextInput {
@@ -67,20 +67,20 @@ ColumnLayout {
 
       NDivider {
         Layout.fillWidth: true
-        Layout.topMargin: Style.marginLarge * 2 * scaling
-        Layout.bottomMargin: Style.marginLarge * scaling
+        Layout.topMargin: Style.marginL * 2 * scaling
+        Layout.bottomMargin: Style.marginL * scaling
       }
 
       ColumnLayout {
-        spacing: Style.marginLarge * scaling
+        spacing: Style.marginL * scaling
         Layout.fillWidth: true
 
         NText {
           text: "Automation"
-          font.pointSize: Style.fontSizeXL * scaling
+          font.pointSize: Style.fontSizeXXL * scaling
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface
-          Layout.bottomMargin: Style.marginSmall * scaling
+          Layout.bottomMargin: Style.marginS * scaling
         }
 
         // Random Wallpaper
@@ -107,7 +107,7 @@ ColumnLayout {
 
               NText {
                 text: "How often to change wallpapers automatically (in seconds)."
-                font.pointSize: Style.fontSizeSmall * scaling
+                font.pointSize: Style.fontSizeXS * scaling
                 color: Color.mOnSurface
                 wrapMode: Text.WordWrap
                 Layout.fillWidth: true
@@ -135,22 +135,22 @@ ColumnLayout {
 
       NDivider {
         Layout.fillWidth: true
-        Layout.topMargin: Style.marginLarge * 2 * scaling
-        Layout.bottomMargin: Style.marginLarge * scaling
+        Layout.topMargin: Style.marginL * 2 * scaling
+        Layout.bottomMargin: Style.marginL * scaling
       }
 
       // -------------------------------
       // SWWW
       ColumnLayout {
-        spacing: Style.marginLarge * scaling
+        spacing: Style.marginL * scaling
         Layout.fillWidth: true
 
         NText {
           text: "SWWW"
-          font.pointSize: Style.fontSizeXL * scaling
+          font.pointSize: Style.fontSizeXXL * scaling
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface
-          Layout.bottomMargin: Style.marginSmall * scaling
+          Layout.bottomMargin: Style.marginS * scaling
         }
 
         // Use SWWW
@@ -165,9 +165,9 @@ ColumnLayout {
 
         // SWWW Settings (only visible when useSWWW is enabled)
         ColumnLayout {
-          spacing: Style.marginSmall * scaling
+          spacing: Style.marginS * scaling
           Layout.fillWidth: true
-          Layout.topMargin: Style.marginSmall * scaling
+          Layout.topMargin: Style.marginS * scaling
           visible: Settings.data.wallpaper.swww.enabled
 
           // Resize Mode
@@ -280,7 +280,7 @@ ColumnLayout {
 
                 NText {
                   text: "Frames per second for transition animations."
-                  font.pointSize: Style.fontSizeSmall * scaling
+                  font.pointSize: Style.fontSizeXS * scaling
                   color: Color.mOnSurface
                   wrapMode: Text.WordWrap
                   Layout.fillWidth: true
@@ -319,7 +319,7 @@ ColumnLayout {
 
                 NText {
                   text: "Duration of transition animations in seconds."
-                  font.pointSize: Style.fontSizeSmall * scaling
+                  font.pointSize: Style.fontSizeXS * scaling
                   color: Color.mOnSurface
                   wrapMode: Text.WordWrap
                   Layout.fillWidth: true

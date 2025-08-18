@@ -17,7 +17,7 @@ ColumnLayout {
 
     Layout.fillWidth: true
     Layout.fillHeight: true
-    padding: Style.marginMedium * scaling
+    padding: Style.marginM * scaling
     clip: true
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
     ScrollBar.vertical.policy: ScrollBar.AsNeeded
@@ -32,12 +32,12 @@ ColumnLayout {
       }
 
       ColumnLayout {
-        spacing: Style.marginLarge * scaling
+        spacing: Style.marginL * scaling
         Layout.fillWidth: true
 
         NText {
           text: "Interfaces"
-          font.pointSize: Style.fontSizeXL * scaling
+          font.pointSize: Style.fontSizeXXL * scaling
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface
         }

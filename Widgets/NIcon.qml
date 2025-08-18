@@ -5,7 +5,7 @@ import qs.Widgets
 Text {
   text: "question_mark"
   font.family: "Material Symbols Rounded"
-  font.pointSize: Style.fontSizeLarge * scaling
+  font.pointSize: Style.fontSizeL * scaling
   font.variableAxes: {
     "wght"// slightly bold to ensure all lines looks good
     : (Font.Normal + Font.Bold) / 2.5

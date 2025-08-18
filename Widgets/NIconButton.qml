@@ -16,7 +16,7 @@ Rectangle {
   property bool showFilled: false
   property bool enabled: true
   property bool hovering: false
-  property real fontPointSize: Style.fontSizeMedium
+  property real fontPointSize: Style.fontSizeM
 
   signal entered
   signal exited
@@ -28,7 +28,7 @@ Rectangle {
   color: (root.hovering || showFilled) ? Color.mPrimary : Color.transparent
   radius: width * 0.5
   border.color: showBorder ? Color.mPrimary : Color.transparent
-  border.width: Math.max(1, Style.borderThin * scaling)
+  border.width: Math.max(1, Style.borderS * scaling)
 
   NIcon {
     anchors.centerIn: parent

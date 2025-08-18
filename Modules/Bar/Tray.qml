@@ -19,7 +19,7 @@ Item {
   Row {
     id: tray
 
-    spacing: Style.marginSmall * scaling
+    spacing: Style.marginS * scaling
     Layout.alignment: Qt.AlignVCenter
 
     Repeater {
@@ -33,8 +33,8 @@ Item {
         IconImage {
           id: trayIcon
           anchors.centerIn: parent
-          width: Style.marginLarge * scaling
-          height: Style.marginLarge * scaling
+          width: Style.marginL * scaling
+          height: Style.marginL * scaling
           smooth: false
           asynchronous: true
           backer.fillMode: Image.PreserveAspectFit

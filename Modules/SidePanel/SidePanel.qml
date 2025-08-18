@@ -34,7 +34,7 @@ NLoader {
       id: sidePanel
 
       // Single source of truth for spacing between cards (both axes)
-      property real cardSpacing: Style.marginLarge * scaling
+      property real cardSpacing: Style.marginL * scaling
       // X coordinate from the bar to align this panel under
       property real anchorX: root.anchorX
       // Ensure this panel attaches to the intended screen
@@ -82,19 +82,19 @@ NLoader {
       Rectangle {
         id: panelBackground
         color: Color.mSurface
-        radius: Style.radiusLarge * scaling
+        radius: Style.radiusL * scaling
         border.color: Color.mOutlineVariant
-        border.width: Math.max(1, Style.borderThin * scaling)
+        border.width: Math.max(1, Style.borderS * scaling)
         layer.enabled: true
         width: 460 * scaling
         property real innerMargin: sidePanel.cardSpacing
         // Height scales to content plus vertical padding
         height: content.implicitHeight + innerMargin * 2
         // Place the panel just below the bar (overlay content starts below bar due to topMargin)
-        y: Style.marginSmall * scaling
+        y: Style.marginS * scaling
         // Center horizontally under the anchorX, clamped to the screen bounds
-        x: Math.max(Style.marginSmall * scaling, Math.min(parent.width - width - Style.marginSmall * scaling,
-                                                          Math.round(anchorX - width / 2)))
+        x: Math.max(Style.marginS * scaling, Math.min(parent.width - width - Style.marginS * scaling,
+                                                      Math.round(anchorX - width / 2)))
 
         // Animation properties
         property real scaleValue: 0.8

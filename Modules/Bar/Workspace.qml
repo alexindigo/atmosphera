@@ -114,13 +114,13 @@ Item {
 
   Rectangle {
     id: workspaceBackground
-    width: parent.width - Style.marginSmall * scaling * 2
+    width: parent.width - Style.marginS * scaling * 2
 
     height: Math.round(Style.barHeight * 0.75 * scaling)
-    radius: Math.round(Style.radiusMedium * scaling)
+    radius: Math.round(Style.radiusM * scaling)
     color: Color.mSurfaceVariant
     border.color: Color.mOutline
-    border.width: Math.max(1, Math.round(Style.borderThin * scaling))
+    border.width: Math.max(1, Math.round(Style.borderS * scaling))
 
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.verticalCenter: parent.verticalCenter

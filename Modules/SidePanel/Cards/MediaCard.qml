@@ -16,21 +16,21 @@ NBox {
 
   // Let content dictate the height (no hardcoded height here)
   // Height can be overridden by parent layout (SidePanel binds it to stats card)
-  //implicitHeight: content.implicitHeight + Style.marginLarge * 2 * scaling
+  //implicitHeight: content.implicitHeight + Style.marginL * 2 * scaling
   // Component.onCompleted: {
   //   Logger.logMediaService.trackArtUrl)
   // }
   ColumnLayout {
     anchors.fill: parent
     Layout.fillHeight: true
-    anchors.margins: Style.marginLarge * scaling
+    anchors.margins: Style.marginL * scaling
 
     // Fallback
     ColumnLayout {
       id: fallback
 
       visible: !main.visible
-      spacing: Style.marginSmall * scaling
+      spacing: Style.marginS * scaling
 
       Item {
         Layout.fillWidth: true
@@ -39,7 +39,7 @@ NBox {
 
       NIcon {
         text: "album"
-        font.pointSize: Style.fontSizeXXL * 2.5 * scaling
+        font.pointSize: Style.fontSizeXXXL * 2.5 * scaling
         color: Color.mPrimary
         Layout.alignment: Qt.AlignHCenter
       }
@@ -59,7 +59,7 @@ NBox {
       id: main
 
       visible: MediaService.currentPlayer && MediaService.canPlay
-      spacing: Style.marginMedium * scaling
+      spacing: Style.marginM * scaling
 
       // Player selector
       ComboBox {
@@ -77,16 +77,16 @@ NBox {
           // implicitHeight: 30 * scaling
           color: Color.transparent
           border.color: playerSelector.activeFocus ? Color.mTertiary : Color.mOutline
-          border.width: Math.max(1, Style.borderThin * scaling)
-          radius: Style.radiusMedium * scaling
+          border.width: Math.max(1, Style.borderS * scaling)
+          radius: Style.radiusM * scaling
         }
 
         contentItem: NText {
           visible: false
-          leftPadding: Style.marginMedium * scaling
+          leftPadding: Style.marginM * scaling
           rightPadding: playerSelector.indicator.width + playerSelector.spacing
           text: playerSelector.displayText
-          font.pointSize: Style.fontSizeSmall * scaling
+          font.pointSize: Style.fontSizeXS * scaling
           color: Color.mOnSurface
           verticalAlignment: Text.AlignVCenter
           elide: Text.ElideRight
@@ -96,7 +96,7 @@ NBox {
           x: playerSelector.width - width
           y: playerSelector.topPadding + (playerSelector.availableHeight - height) / 2
           text: "arrow_drop_down"
-          font.pointSize: Style.fontSizeXL * scaling
+          font.pointSize: Style.fontSizeXXL * scaling
           color: Color.mOnSurface
           horizontalAlignment: Text.AlignRight
         }
@@ -106,8 +106,8 @@ NBox {
           x: playerSelector.width * 0.5
           y: playerSelector.height * 0.75
           width: playerSelector.width * 0.5
-          implicitHeight: Math.min(160 * scaling, contentItem.implicitHeight + Style.marginMedium * scaling)
-          padding: Style.marginSmall * scaling
+          implicitHeight: Math.min(160 * scaling, contentItem.implicitHeight + Style.marginM * scaling)
+          padding: Style.marginS * scaling
 
           contentItem: ListView {
             clip: true
@@ -120,8 +120,8 @@ NBox {
           background: Rectangle {
             color: Color.mSurface
             border.color: Color.mOutline
-            border.width: Math.max(1, Style.borderThin * scaling)
-            radius: Style.radiusTiny * scaling
+            border.width: Math.max(1, Style.borderS * scaling)
+            radius: Style.radiusXS * scaling
           }
         }
 
@@ -129,7 +129,7 @@ NBox {
           width: playerSelector.width
           contentItem: NText {
             text: modelData.identity
-            font.pointSize: Style.fontSizeReduced * scaling
+            font.pointSize: Style.fontSizeS * scaling
             color: highlighted ? Color.mSurface : Color.mOnSurface
             verticalAlignment: Text.AlignVCenter
             elide: Text.ElideRight
@@ -137,9 +137,9 @@ NBox {
           highlighted: playerSelector.highlightedIndex === index
 
           background: Rectangle {
-            width: popup.width - Style.marginSmall * scaling * 2
+            width: popup.width - Style.marginS * scaling * 2
             color: highlighted ? Color.mTertiary : Color.transparent
-            radius: Style.radiusTiny * scaling
+            radius: Style.radiusXS * scaling
           }
         }
 
@@ -150,7 +150,7 @@ NBox {
       }
 
       RowLayout {
-        spacing: Style.marginMedium * scaling
+        spacing: Style.marginM * scaling
 
         // -------------------------
         // Rounded thumbnail image
@@ -161,7 +161,7 @@ NBox {
           radius: width * 0.5
           color: trackArt.visible ? Color.mPrimary : Color.transparent
           border.color: trackArt.visible ? Color.mOutline : Color.transparent
-          border.width: Math.max(1, Style.borderThin * scaling)
+          border.width: Math.max(1, Style.borderS * scaling)
           clip: true
 
           NImageRounded {
@@ -169,11 +169,11 @@ NBox {
             visible: MediaService.trackArtUrl.toString() !== ""
 
             anchors.fill: parent
-            anchors.margins: Style.marginTiny * scaling
+            anchors.margins: Style.marginXS * scaling
             imagePath: MediaService.trackArtUrl
             fallbackIcon: "music_note"
             borderColor: Color.mOutline
-            borderWidth: Math.max(1, Style.borderThin * scaling)
+            borderWidth: Math.max(1, Style.borderS * scaling)
             imageRadius: width * 0.5
           }
 
@@ -181,7 +181,7 @@ NBox {
           NIcon {
             text: "album"
             color: Color.mPrimary
-            font.pointSize: Style.fontSizeLarge * 12 * scaling
+            font.pointSize: Style.fontSizeL * 12 * scaling
             visible: !trackArt.visible
             anchors.centerIn: parent
           }
@@ -191,12 +191,12 @@ NBox {
         // Track metadata
         ColumnLayout {
           Layout.fillWidth: true
-          spacing: Style.marginTiny * scaling
+          spacing: Style.marginXS * scaling
 
           NText {
             visible: MediaService.trackTitle !== ""
             text: MediaService.trackTitle
-            font.pointSize: Style.fontSizeMedium * scaling
+            font.pointSize: Style.fontSizeM * scaling
             font.weight: Style.fontWeightBold
             elide: Text.ElideRight
             wrapMode: Text.Wrap
@@ -208,7 +208,7 @@ NBox {
             visible: MediaService.trackArtist !== ""
             text: MediaService.trackArtist
             color: Color.mOnSurface
-            font.pointSize: Style.fontSizeSmall * scaling
+            font.pointSize: Style.fontSizeXS * scaling
             elide: Text.ElideRight
             Layout.fillWidth: true
           }
@@ -217,7 +217,7 @@ NBox {
             visible: MediaService.trackAlbum !== ""
             text: MediaService.trackAlbum
             color: Color.mOnSurface
-            font.pointSize: Style.fontSizeSmall * scaling
+            font.pointSize: Style.fontSizeXS * scaling
             elide: Text.ElideRight
             Layout.fillWidth: true
           }
@@ -231,7 +231,7 @@ NBox {
         visible: (MediaService.currentPlayer && MediaService.trackLength > 0)
         width: parent.width
         height: 4 * scaling
-        radius: Style.radiusSmall * scaling
+        radius: Style.radiusS * scaling
         color: Color.mSurface
         Layout.fillWidth: true
 
@@ -265,7 +265,7 @@ NBox {
           radius: width * 0.5
           color: Color.mPrimary
           border.color: Color.mOutline
-          border.width: Math.max(1 * Style.borderMedium * scaling)
+          border.width: Math.max(1 * Style.borderM * scaling)
           x: Math.max(0, Math.min(parent.width - width, progressFill.width - width / 2))
           anchors.verticalCenter: parent.verticalCenter
           scale: progressMouseArea.containsMouse || progressMouseArea.pressed ? 1.2 : 1.0
@@ -302,7 +302,7 @@ NBox {
       // -------------------------
       // Media controls
       RowLayout {
-        spacing: Style.marginMedium * scaling
+        spacing: Style.marginM * scaling
         Layout.fillWidth: true
         Layout.alignment: Qt.AlignHCenter
 

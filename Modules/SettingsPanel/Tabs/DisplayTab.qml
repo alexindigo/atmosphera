@@ -37,13 +37,13 @@ Item {
     ColumnLayout {
       width: parent.width
       ColumnLayout {
-        spacing: Style.marginLarge * scaling
-        Layout.margins: Style.marginLarge * scaling
+        spacing: Style.marginL * scaling
+        Layout.margins: Style.marginL * scaling
         Layout.fillWidth: true
 
         NText {
           text: "Per‑monitor configuration"
-          font.pointSize: Style.fontSizeXL * scaling
+          font.pointSize: Style.fontSizeXXL * scaling
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface
         }
@@ -58,33 +58,33 @@ Item {
           model: Quickshell.screens || []
           delegate: Rectangle {
             Layout.fillWidth: true
-            radius: Style.radiusMedium * scaling
+            radius: Style.radiusM * scaling
             color: Color.mSurface
             border.color: Color.mOutline
-            border.width: Math.max(1, Style.borderThin * scaling)
+            border.width: Math.max(1, Style.borderS * scaling)
             implicitHeight: contentCol.implicitHeight + Style.marginXL * 2 * scaling
 
             ColumnLayout {
               id: contentCol
               anchors.fill: parent
-              anchors.margins: Style.marginLarge * scaling
-              spacing: Style.marginTiniest * scaling
+              anchors.margins: Style.marginL * scaling
+              spacing: Style.marginXXS * scaling
 
               NText {
                 text: (modelData.name || "Unknown")
-                font.pointSize: Style.fontSizeLarge * scaling
+                font.pointSize: Style.fontSizeL * scaling
                 font.weight: Style.fontWeightBold
                 color: Color.mSecondary
               }
 
               NText {
                 text: `Resolution: ${modelData.width}x${modelData.height} - Position: (${modelData.x}, ${modelData.y})`
-                font.pointSize: Style.fontSizeSmall * scaling
+                font.pointSize: Style.fontSizeXS * scaling
                 color: Color.mOnSurface
               }
 
               ColumnLayout {
-                spacing: Style.marginLarge * scaling
+                spacing: Style.marginL * scaling
 
                 NToggle {
                   label: "Bar"

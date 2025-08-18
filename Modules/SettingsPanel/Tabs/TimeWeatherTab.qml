@@ -15,7 +15,7 @@ ColumnLayout {
 
     Layout.fillWidth: true
     Layout.fillHeight: true
-    padding: Style.marginMedium * scaling
+    padding: Style.marginM * scaling
     clip: true
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
     ScrollBar.vertical.policy: ScrollBar.AsNeeded
@@ -30,22 +30,22 @@ ColumnLayout {
       }
 
       ColumnLayout {
-        spacing: Style.marginTiny * scaling
+        spacing: Style.marginXS * scaling
         Layout.fillWidth: true
 
         NText {
           text: "Location"
-          font.pointSize: Style.fontSizeXL * scaling
+          font.pointSize: Style.fontSizeXXL * scaling
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface
-          Layout.bottomMargin: Style.marginSmall * scaling
+          Layout.bottomMargin: Style.marginS * scaling
         }
 
         // Location section
         ColumnLayout {
-          spacing: Style.marginMedium * scaling
+          spacing: Style.marginM * scaling
           Layout.fillWidth: true
-          Layout.topMargin: Style.marginSmall * scaling
+          Layout.topMargin: Style.marginS * scaling
 
           NTextInput {
             label: "Location name"
@@ -62,21 +62,21 @@ ColumnLayout {
 
         NDivider {
           Layout.fillWidth: true
-          Layout.topMargin: Style.marginLarge * 2 * scaling
-          Layout.bottomMargin: Style.marginLarge * scaling
+          Layout.topMargin: Style.marginL * 2 * scaling
+          Layout.bottomMargin: Style.marginL * scaling
         }
 
         // Time section
         ColumnLayout {
-          spacing: Style.marginLarge * scaling
+          spacing: Style.marginL * scaling
           Layout.fillWidth: true
 
           NText {
             text: "Time Format"
-            font.pointSize: Style.fontSizeXL * scaling
+            font.pointSize: Style.fontSizeXXL * scaling
             font.weight: Style.fontWeightBold
             color: Color.mOnSurface
-            Layout.bottomMargin: Style.marginSmall * scaling
+            Layout.bottomMargin: Style.marginS * scaling
           }
 
           NToggle {
@@ -109,21 +109,21 @@ ColumnLayout {
 
         NDivider {
           Layout.fillWidth: true
-          Layout.topMargin: Style.marginLarge * 2 * scaling
-          Layout.bottomMargin: Style.marginLarge * scaling
+          Layout.topMargin: Style.marginL * 2 * scaling
+          Layout.bottomMargin: Style.marginL * scaling
         }
 
         // Weather section
         ColumnLayout {
-          spacing: Style.marginMedium * scaling
+          spacing: Style.marginM * scaling
           Layout.fillWidth: true
 
           NText {
             text: "Weather"
-            font.pointSize: Style.fontSizeXL * scaling
+            font.pointSize: Style.fontSizeXXL * scaling
             font.weight: Style.fontWeightBold
             color: Color.mOnSurface
-            Layout.bottomMargin: Style.marginSmall * scaling
+            Layout.bottomMargin: Style.marginS * scaling
           }
 
           NToggle {

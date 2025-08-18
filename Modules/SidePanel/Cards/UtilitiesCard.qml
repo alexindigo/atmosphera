@@ -11,11 +11,11 @@ import qs.Widgets
 NBox {
   Layout.fillWidth: true
   Layout.preferredWidth: 1
-  implicitHeight: utilRow.implicitHeight + Style.marginMedium * 2 * scaling
+  implicitHeight: utilRow.implicitHeight + Style.marginM * 2 * scaling
   RowLayout {
     id: utilRow
     anchors.fill: parent
-    anchors.margins: Style.marginSmall * scaling
+    anchors.margins: Style.marginS * scaling
     spacing: sidePanel.cardSpacing
     Item {
       Layout.fillWidth: true

@@ -37,8 +37,8 @@ Window {
 
   function _showNow() {
     // Compute new size everytime we show the tooltip
-    width = Math.max(50 * scaling, tooltipText.implicitWidth + Style.marginLarge * 2 * scaling)
-    height = Math.max(40 * scaling, tooltipText.implicitHeight + Style.marginMedium * 2 * scaling)
+    width = Math.max(50 * scaling, tooltipText.implicitWidth + Style.marginL * 2 * scaling)
+    height = Math.max(40 * scaling, tooltipText.implicitHeight + Style.marginM * 2 * scaling)
 
     if (!target) {
       return
@@ -134,10 +134,10 @@ Window {
   Rectangle {
     id: tooltipRect
     anchors.fill: parent
-    radius: Style.radiusMedium * scaling
+    radius: Style.radiusM * scaling
     color: Color.mSurface
     border.color: Color.mOutline
-    border.width: Math.max(1, Style.borderThin * scaling)
+    border.width: Math.max(1, Style.borderS * scaling)
     z: 1
 
     // Animation properties
@@ -166,7 +166,7 @@ Window {
       id: tooltipText
       anchors.centerIn: parent
       text: root.text
-      font.pointSize: Style.fontSizeMedium * scaling
+      font.pointSize: Style.fontSizeM * scaling
       horizontalAlignment: Text.AlignHCenter
       verticalAlignment: Text.AlignVCenter
       wrapMode: Text.Wrap

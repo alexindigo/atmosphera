@@ -15,7 +15,7 @@ ColumnLayout {
 
     Layout.fillWidth: true
     Layout.fillHeight: true
-    padding: Style.marginMedium * scaling
+    padding: Style.marginM * scaling
     clip: true
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
     ScrollBar.vertical.policy: ScrollBar.AsNeeded
@@ -30,12 +30,12 @@ ColumnLayout {
       }
 
       ColumnLayout {
-        spacing: Style.marginLarge * scaling
+        spacing: Style.marginL * scaling
         Layout.fillWidth: true
 
         NText {
           text: "Components"
-          font.pointSize: Style.fontSizeXL * scaling
+          font.pointSize: Style.fontSizeXXL * scaling
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface
         }
@@ -86,19 +86,19 @@ ColumnLayout {
         }
 
         ColumnLayout {
-          spacing: Style.marginTiniest * scaling
+          spacing: Style.marginXXS * scaling
           Layout.fillWidth: true
 
           NText {
             text: "Background Opacity"
-            font.pointSize: Style.fontSizeLarge * scaling
+            font.pointSize: Style.fontSizeL * scaling
             font.weight: Style.fontWeightBold
             color: Color.mOnSurface
           }
 
           NText {
             text: "Adjust the background opacity of the bar"
-            font.pointSize: Style.fontSizeSmall * scaling
+            font.pointSize: Style.fontSizeXS * scaling
             color: Color.mOnSurfaceVariant
             wrapMode: Text.WordWrap
             Layout.fillWidth: true
@@ -118,7 +118,7 @@ ColumnLayout {
             NText {
               text: Math.floor(Settings.data.bar.backgroundOpacity * 100) + "%"
               Layout.alignment: Qt.AlignVCenter
-              Layout.leftMargin: Style.marginSmall * scaling
+              Layout.leftMargin: Style.marginS * scaling
               color: Color.mOnSurface
             }
           }
