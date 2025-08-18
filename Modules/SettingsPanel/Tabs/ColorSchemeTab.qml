@@ -11,21 +11,26 @@ ColumnLayout {
 
   spacing: 0
 
-  // Helper function to get color from scheme file
+  // Helper function to get color from scheme file (supports dark/light variants)
   function getSchemeColor(schemePath, colorKey) {
     // Extract scheme name from path
     var schemeName = schemePath.split("/").pop().replace(".json", "")
 
     // Try to get from cached data first
-    if (schemeColorsCache[schemeName] && schemeColorsCache[schemeName][colorKey]) {
-      return schemeColorsCache[schemeName][colorKey]
+    if (schemeColorsCache[schemeName]) {
+      var entry = schemeColorsCache[schemeName]
+      var variant = entry
+      if (entry.dark || entry.light) {
+        variant = Settings.data.colorSchemes.darkMode ? (entry.dark || entry.light) : (entry.light || entry.dark)
+      }
+      if (variant && variant[colorKey]) return variant[colorKey]
     }
 
     // Return a default color if not cached yet
     return "#000000"
   }
 
-  // Cache for scheme colors
+  // Cache for scheme JSON (can be flat or {dark, light})
   property var schemeColorsCache: ({})
 
   // Scale properties for card animations
@@ -34,33 +39,9 @@ ColumnLayout {
 
   // This function is called by the FileView Repeater when a scheme file is loaded
   function schemeLoaded(schemeName, jsonData) {
-    var colors = {}
-
-    // Extract colors from JSON data
-    if (jsonData && typeof jsonData === 'object') {
-      colors.mPrimary = jsonData.mPrimary || jsonData.primary || "#000000"
-      colors.mSecondary = jsonData.mSecondary || jsonData.secondary || "#000000"
-      colors.mTertiary = jsonData.mTertiary || jsonData.tertiary || "#000000"
-      colors.mError = jsonData.mError || jsonData.error || "#ff0000"
-      colors.mSurface = jsonData.mSurface || jsonData.surface || "#ffffff"
-      colors.mOnSurface = jsonData.mOnSurface || jsonData.onSurface || "#000000"
-      colors.mOutline = jsonData.mOutline || jsonData.outline || "#666666"
-    } else {
-      // Default colors on failure
-      colors = {
-        "mPrimary": "#000000",
-        "mSecondary": "#000000",
-        "mTertiary": "#000000",
-        "mError": "#ff0000",
-        "mSurface": "#ffffff",
-        "mOnSurface": "#000000",
-        "mOutline": "#666666"
-      }
-    }
-
-    // Update the cache. This must be done by re-assigning the whole object to trigger updates.
+    var value = jsonData || {}
     var newCache = schemeColorsCache
-    newCache[schemeName] = colors
+    newCache[schemeName] = value
     schemeColorsCache = newCache
   }
 
@@ -138,16 +119,23 @@ ColumnLayout {
                      }
         }
 
-        // Dark Mode Toggle
+        // Dark Mode Toggle (affects both Matugen and predefined schemes that provide variants)
         NToggle {
           label: "Dark Mode"
-          description: "Generate dark theme colors when using Matugen. Disable for light theme."
+          description: Settings.data.colorSchemes.useWallpaperColors
+                         ? "Generate dark theme colors when using Matugen. Disable for light theme."
+                         : "If the selected predefined scheme has light/dark variants, this chooses which one."
           checked: Settings.data.colorSchemes.darkMode
-          enabled: Settings.data.colorSchemes.useWallpaperColors
+          enabled: true
           onToggled: checked => {
                        Settings.data.colorSchemes.darkMode = checked
                        if (Settings.data.colorSchemes.useWallpaperColors) {
                          ColorSchemeService.changedWallpaper()
+                       } else if (Settings.data.colorSchemes.predefinedScheme) {
+                         // Re-apply current scheme to pick the right variant
+                         ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme)
+                         // Force refresh of previews
+                         var tmp = schemeColorsCache; schemeColorsCache = {}; schemeColorsCache = tmp
                        }
                      }
         }
