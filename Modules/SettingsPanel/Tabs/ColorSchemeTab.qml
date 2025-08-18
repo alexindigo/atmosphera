@@ -23,7 +23,8 @@ ColumnLayout {
       if (entry.dark || entry.light) {
         variant = Settings.data.colorSchemes.darkMode ? (entry.dark || entry.light) : (entry.light || entry.dark)
       }
-      if (variant && variant[colorKey]) return variant[colorKey]
+      if (variant && variant[colorKey])
+        return variant[colorKey]
     }
 
     // Return a default color if not cached yet
@@ -122,9 +123,7 @@ ColumnLayout {
         // Dark Mode Toggle (affects both Matugen and predefined schemes that provide variants)
         NToggle {
           label: "Dark Mode"
-          description: Settings.data.colorSchemes.useWallpaperColors
-                         ? "Generate dark theme colors when using Matugen. Disable for light theme."
-                         : "If the selected predefined scheme has light/dark variants, this chooses which one."
+          description: Settings.data.colorSchemes.useWallpaperColors ? "Generate dark theme colors when using Matugen. Disable for light theme." : "If the selected predefined scheme has light/dark variants, this chooses which one."
           checked: Settings.data.colorSchemes.darkMode
           enabled: true
           onToggled: checked => {
@@ -135,7 +134,9 @@ ColumnLayout {
                          // Re-apply current scheme to pick the right variant
                          ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme)
                          // Force refresh of previews
-                         var tmp = schemeColorsCache; schemeColorsCache = {}; schemeColorsCache = tmp
+                         var tmp = schemeColorsCache
+                         schemeColorsCache = {}
+                         schemeColorsCache = tmp
                        }
                      }
         }

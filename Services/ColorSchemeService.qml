@@ -113,7 +113,9 @@ Singleton {
   }
 
   function writeColorsToDisk(obj) {
-    function pick(o, a, b, fallback) { return (o && (o[a] || o[b])) || fallback }
+    function pick(o, a, b, fallback) {
+      return (o && (o[a] || o[b])) || fallback
+    }
     out.mPrimary = pick(obj, "mPrimary", "primary", out.mPrimary)
     out.mOnPrimary = pick(obj, "mOnPrimary", "onPrimary", out.mOnPrimary)
     out.mSecondary = pick(obj, "mSecondary", "secondary", out.mSecondary)
