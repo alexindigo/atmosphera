@@ -54,7 +54,7 @@ ColumnLayout {
             placeholderText: "Enter the location name"
             Layout.fillWidth: true
             onEditingFinished: {
-              Settings.data.location.name = text
+              Settings.data.location.name = text.trim()
               LocationService.resetWeather()
             }
           }

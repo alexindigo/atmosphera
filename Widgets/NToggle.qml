@@ -32,8 +32,8 @@ RowLayout {
 
     NText {
       text: description
-      font.pointSize: Style.fontSizeXS * scaling
-      color: Color.mOnSurface
+      font.pointSize: Style.fontSizeS * scaling
+      color: Color.mOnSurfaceVariant
       wrapMode: Text.WordWrap
       Layout.fillWidth: true
     }
