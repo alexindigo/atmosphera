@@ -14,6 +14,11 @@ NIconButton {
   sizeMultiplier: 0.8
   visible: bluetoothEnabled
 
+    colorBg: Color.mSurfaceVariant
+  colorFg: Color.mOnSurface
+  colorBorder: Color.transparent
+  colorBorderHover: Color.transparent
+
   icon: {
     // Show different icons based on connection status
     if (BluetoothService.pairedDevices.length > 0) {
