@@ -114,14 +114,16 @@ Item {
 
   Rectangle {
     id: workspaceBackground
-    width: parent.width - Math.round(15 * scaling)
-    height: Math.round(26 * scaling)
+    width: parent.width - Style.marginSmall * scaling * 2
+
+    height: Math.round(Style.barHeight * 0.75 * scaling)
+    radius: Math.round(Style.radiusMedium * scaling)
+    color: Color.mSurfaceVariant
+    border.color: Color.mOutline
+    border.width: Math.max(1, Math.round(Style.borderThin * scaling))
+
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.verticalCenter: parent.verticalCenter
-    radius: Math.round(12 * scaling)
-    color: Color.mSurfaceVariant
-    border.color: Color.mOutlineVariant
-    border.width: Math.max(1, Math.round(1 * scaling))
     layer.enabled: true
     layer.effect: MultiEffect {
       shadowColor: Color.mShadow

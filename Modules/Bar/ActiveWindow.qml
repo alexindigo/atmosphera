@@ -54,9 +54,12 @@ Row {
   Rectangle {
     // Let the Rectangle size itself based on its content (the Row)
     width: row.width + Style.marginMedium * scaling * 2
-    height: row.height
+    height: Math.round(Style.barHeight * 0.75 * scaling)
+    radius: Math.round(Style.radiusMedium * scaling)
     color: Color.mSurfaceVariant
-    radius: Style.radiusSmall * scaling
+    border.color: Color.mOutline
+    border.width: Math.max(1, Math.round(Style.borderThin * scaling))
+
     anchors.verticalCenter: parent.verticalCenter
 
     Item {
