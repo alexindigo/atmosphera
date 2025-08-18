@@ -39,7 +39,7 @@ Variants {
         id: bar
 
         anchors.fill: parent
-        color: Color.mSurface
+        color: Qt.rgba(Color.mSurface,Color.mSurface.g,Color.mSurface.b,Settings.data.bar.backgroundOpacity)
         layer.enabled: true
       }
 
