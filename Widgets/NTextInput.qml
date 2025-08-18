@@ -25,19 +25,9 @@ Item {
     spacing: Style.marginXXS * scaling
     Layout.fillWidth: true
 
-    NText {
-      text: label
-      font.pointSize: Style.fontSizeM * scaling
-      font.weight: Style.fontWeightBold
-      color: Color.mOnSurface
-    }
-
-    NText {
-      text: description
-      font.pointSize: Style.fontSizeXS * scaling
-      color: Color.mOnSurface
-      wrapMode: Text.WordWrap
-      Layout.fillWidth: true
+    NLabel {
+      label: root.label
+      description: root.description
     }
 
     // Container

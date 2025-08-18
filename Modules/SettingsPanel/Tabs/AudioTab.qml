@@ -63,23 +63,11 @@ ColumnLayout {
             spacing: Style.marginS * scaling
             Layout.fillWidth: true
 
-            ColumnLayout {
-              spacing: Style.marginXXS * scaling
-
-              NText {
-                text: "Master Volume"
-                font.weight: Style.fontWeightBold
-                color: Color.mOnSurface
-              }
-
-              NText {
-                text: "System-wide volume level."
-                font.pointSize: Style.fontSizeXS * scaling
-                color: Color.mOnSurface
-                wrapMode: Text.WordWrap
-                Layout.fillWidth: true
-              }
+            NLabel {
+              label: "Master Volume"
+              description: "System-wide volume level."
             }
+
             RowLayout {
               // Pipewire seems a bit finicky, if we spam too many volume changes it breaks easily
               // Probably because they have some quick fades in and out to avoid clipping
@@ -160,23 +148,13 @@ ColumnLayout {
           }
 
           ColumnLayout {
-            spacing: Style.marginXXS * scaling
+            spacing: Style.marginXS * scaling
             Layout.fillWidth: true
             Layout.bottomMargin: Style.marginL * scaling
 
-            NText {
-              text: "Output Device"
-              font.pointSize: Style.fontSizeM * scaling
-              font.weight: Style.fontWeightBold
-              color: Color.mOnSurface
-            }
-
-            NText {
-              text: "Select the desired audio output device."
-              font.pointSize: Style.fontSizeXS * scaling
-              color: Color.mOnSurface
-              wrapMode: Text.WordWrap
-              Layout.fillWidth: true
+            NLabel {
+              label: "Output Device"
+              description: "Select the desired audio output device."
             }
 
             Repeater {
@@ -199,23 +177,13 @@ ColumnLayout {
         }
 
         ColumnLayout {
-          spacing: Style.marginXXS * scaling
+          spacing: Style.marginXS * scaling
           Layout.fillWidth: true
           Layout.bottomMargin: Style.marginL * scaling
 
-          NText {
-            text: "Input Device"
-            font.pointSize: Style.fontSizeM * scaling
-            font.weight: Style.fontWeightBold
-            color: Color.mOnSurface
-          }
-
-          NText {
-            text: "Select desired audio input device."
-            font.pointSize: Style.fontSizeXS * scaling
-            color: Color.mOnSurface
-            wrapMode: Text.WordWrap
-            Layout.fillWidth: true
+          NLabel {
+            label: "Input Device"
+            description: "Select the desired audio input device."
           }
 
           Repeater {

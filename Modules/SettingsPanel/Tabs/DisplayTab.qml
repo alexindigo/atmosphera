@@ -136,13 +136,13 @@ Item {
                       spacing: Style.marginXXS * scaling
                       Layout.fillWidth: true
                       NText {
-                        text: "Scaling"
+                        text: "Scale"
                         font.pointSize: Style.fontSizeM * scaling
                         font.weight: Style.fontWeightBold
                         color: Color.mOnSurface
                       }
                       NText {
-                        text: `Controls the scaling on this monitor.`
+                        text: "Scale the user interface on this monitor."
                         font.pointSize: Style.fontSizeS * scaling
                         color: Color.mOnSurfaceVariant
                         wrapMode: Text.WordWrap

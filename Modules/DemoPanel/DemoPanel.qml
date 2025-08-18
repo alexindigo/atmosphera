@@ -14,6 +14,8 @@ NLoader {
     NPanel {
       id: demoPanel
 
+      property real sliderValue: 1.0
+
       // Override hide function to animate first
       function hide() {
         // Start hide animation
@@ -128,38 +130,33 @@ NLoader {
             ColumnLayout {
               spacing: Style.marginL * scaling
               NText {
-                text: "Scaling"
+                text: "NSlider"
                 color: Color.mSecondary
                 font.weight: Style.fontWeightBold
               }
               NText {
-                text: `${Math.round(ScalingService.overrideScale * 100)}%`
+                text: `${Math.round(sliderValue * 100)}%`
                 Layout.alignment: Qt.AlignVCenter
               }
               RowLayout {
                 spacing: Style.marginS * scaling
                 NSlider {
                   id: scaleSlider
-                  from: 0.6
-                  to: 1.8
+                  from: 1.0
+                  to: 2.0
                   stepSize: 0.01
-                  value: ScalingService.overrideScale
-                  implicitWidth: bgRect.width * 0.75
-                  onMoved: {
-
-                  }
+                  value: sliderValue
                   onPressedChanged: {
-                    ScalingService.overrideScale = value
-                    ScalingService.overrideEnabled = true
+                    sliderValue = value
                   }
+                  Layout.fillWidth: true
                 }
                 NIconButton {
                   icon: "refresh"
                   tooltipText: "Reset Scaling"
                   fontPointSize: Style.fontSizeL * scaling
                   onClicked: {
-                    ScalingService.overrideEnabled = false
-                    ScalingService.overrideScale = 1.0
+                    sliderValue = 1.0
                   }
                 }
               }
