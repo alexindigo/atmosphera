@@ -10,7 +10,7 @@ NPill {
   id: root
 
   // Test mode
-  property bool testMode: true
+  property bool testMode: false
   property int testPercent: 49
   property bool testCharging: false
 
