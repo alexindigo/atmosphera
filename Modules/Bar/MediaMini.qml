@@ -63,7 +63,7 @@ Row {
                                                                                 150 * scaling)
           text: getTitle()
           font.pointSize: Style.fontSizeReduced * scaling
-          font.weight: Style.fontWeightBold
+          font.weight: Style.fontWeightMedium
           elide: Text.ElideRight
           anchors.verticalCenter: parent.verticalCenter
           verticalAlignment: Text.AlignVCenter

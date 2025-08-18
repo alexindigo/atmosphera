@@ -23,9 +23,10 @@ Singleton {
   property real fontSizeXL: 18
   property real fontSizeXXL: 24
 
-  // Font weight / Unsure if we keep em?
+  // Font weight
   property int fontWeightRegular: 400
   property int fontWeightMedium: 500
+  property int fontWeightSemiBold: 600
   property int fontWeightBold: 700
 
   // Radii

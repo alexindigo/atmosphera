@@ -28,7 +28,7 @@ Row {
       Row {
         id: row
         anchors.verticalCenter: parent.verticalCenter
-        spacing: Style.marginTiny * scaling
+        spacing: Style.marginSmall * scaling
         Row {
           id: cpuUsageLayout
           spacing: Style.marginTiny * scaling
@@ -43,7 +43,7 @@ Row {
             id: cpuUsageText
             text: `${SystemStatService.cpuUsage}%`
             font.pointSize: Style.fontSizeReduced * scaling
-            font.weight: Style.fontWeightBold
+            font.weight: Style.fontWeightMedium
             anchors.verticalCenter: parent.verticalCenter
             verticalAlignment: Text.AlignVCenter
             color: Color.mPrimary
@@ -53,7 +53,8 @@ Row {
         // CPU Temperature Component
         Row {
           id: cpuTempLayout
-          spacing: Style.marginTiny * scaling
+          // spacing is thin here to compensate for the vertical thermometer icon
+          spacing: Style.marginTiniest * scaling 
 
           NIcon {
             text: "thermometer"
@@ -63,7 +64,7 @@ Row {
           NText {
             text: `${SystemStatService.cpuTemp}°C`
             font.pointSize: Style.fontSizeReduced * scaling
-            font.weight: Style.fontWeightBold
+            font.weight: Style.fontWeightMedium
             anchors.verticalCenter: parent.verticalCenter
             verticalAlignment: Text.AlignVCenter
             color: Color.mPrimary
@@ -83,7 +84,7 @@ Row {
           NText {
             text: `${SystemStatService.memoryUsageGb}G`
             font.pointSize: Style.fontSizeReduced * scaling
-            font.weight: Style.fontWeightBold
+            font.weight: Style.fontWeightMedium
             anchors.verticalCenter: parent.verticalCenter
             verticalAlignment: Text.AlignVCenter
             color: Color.mPrimary
