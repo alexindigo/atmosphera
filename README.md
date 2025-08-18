@@ -79,7 +79,7 @@ A sleek, minimal, and thoughtfully crafted desktop shell for Wayland using **Qui
 - `cava` - Audio visualizer component
 - `gpu-screen-recorder` - Screen recording functionality
 - `brightnessctl` - For internal/laptop monitor brightness
-- `ddcutil` - For desktop monitor brightness
+- `ddcutil` - For desktop monitor brightness (might introduce some system instability with certain monitors)
 
 ---
 
@@ -229,6 +229,12 @@ Noctalia/
 5. Test with both Hyprland and Niri compositors (if applicable)
 
 Contributions are welcome! Don't worry about being perfect - every contribution helps! Whether it's fixing a small bug, adding a new feature, or improving documentation, we welcome all contributions. Feel free to open an issue to discuss ideas or ask questions before diving in. For feature requests and ideas, you can also use our discussions page.
+
+---
+
+## Acknowledgment
+
+Special thanks to the creators of [**Caelestia**](https://github.com/caelestia-dots/shell) and [**DankMaterialShell**](https://github.com/AvengeMedia/DankMaterialShell) for their inspirational designs and clever implementation techniques.
 
 ---
 
