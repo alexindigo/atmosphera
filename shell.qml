@@ -1,3 +1,10 @@
+/*
+ * Noctalia – made by https://github.com/noctalia-dev
+ * Licensed under the MIT License.
+ * Forks and modifications are allowed under the MIT License,
+ * but proper credit must be given to the original author.
+*/
+
 // Disable reload popup add this as a new row:  //pragma Env QS_NO_RELOAD_POPUP=1
 import QtQuick
 import Quickshell
