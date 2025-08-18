@@ -84,6 +84,45 @@ ColumnLayout {
                        Settings.data.bar.showTray = checked
                      }
         }
+
+        ColumnLayout {
+          spacing: Style.marginTiniest * scaling
+          Layout.fillWidth: true
+
+          NText {
+            text: "Background Opacity"
+            font.pointSize: Style.fontSizeLarge * scaling
+            font.weight: Style.fontWeightBold
+            color: Color.mOnSurface
+          }
+
+          NText {
+            text: "Adjust the background opacity of the bar"
+            font.pointSize: Style.fontSizeSmall * scaling
+            color: Color.mOnSurfaceVariant
+            wrapMode: Text.WordWrap
+            Layout.fillWidth: true
+          }
+
+          RowLayout {
+            NSlider {
+              Layout.fillWidth: true
+              from: 0
+              to: 1
+              stepSize: 0.01
+              value: Settings.data.bar.backgroundOpacity
+              onMoved: Settings.data.bar.backgroundOpacity = value
+              cutoutColor: Color.mSurface
+            }
+
+            NText {
+              text: Math.floor(Settings.data.bar.backgroundOpacity * 100) + "%"
+              Layout.alignment: Qt.AlignVCenter
+              Layout.leftMargin: Style.marginSmall * scaling
+              color: Color.mOnSurface
+            }
+          }
+        }
       }
     }
   }
