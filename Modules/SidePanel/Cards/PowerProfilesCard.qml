@@ -31,8 +31,8 @@ NBox {
       tooltipText: "Set Performance Power Profile"
       enabled: hasPP
       opacity: enabled ? Style.opacityFull : Style.opacityMedium
-      showFilled: enabled && powerProfiles.profile === PowerProfile.Performance
-      showBorder: !enabled || powerProfiles.profile !== PowerProfile.Performance
+      colorBg: (enabled && powerProfiles.profile === PowerProfile.Performance) ? Color.mPrimary : Color.mSurfaceVariant
+      colorFg: (enabled && powerProfiles.profile === PowerProfile.Performance) ? Color.mOnPrimary : Color.mPrimary
       onClicked: {
         if (enabled) {
           powerProfiles.profile = PowerProfile.Performance
@@ -45,8 +45,8 @@ NBox {
       tooltipText: "Set Balanced Power Profile"
       enabled: hasPP
       opacity: enabled ? Style.opacityFull : Style.opacityMedium
-      showFilled: enabled && powerProfiles.profile === PowerProfile.Balanced
-      showBorder: !enabled || powerProfiles.profile !== PowerProfile.Balanced
+      colorBg: (enabled && powerProfiles.profile === PowerProfile.Balanced) ? Color.mPrimary : Color.mSurfaceVariant
+      colorFg: (enabled && powerProfiles.profile === PowerProfile.Balanced) ? Color.mOnPrimary : Color.mPrimary
       onClicked: {
         if (enabled) {
           powerProfiles.profile = PowerProfile.Balanced
@@ -59,8 +59,8 @@ NBox {
       tooltipText: "Set Eco Power Profile"
       enabled: hasPP
       opacity: enabled ? Style.opacityFull : Style.opacityMedium
-      showFilled: enabled && powerProfiles.profile === PowerProfile.PowerSaver
-      showBorder: !enabled || powerProfiles.profile !== PowerProfile.PowerSaver
+      colorBg: (enabled && powerProfiles.profile === PowerProfile.PowerSaver) ? Color.mPrimary : Color.mSurfaceVariant
+      colorFg: (enabled && powerProfiles.profile === PowerProfile.PowerSaver) ? Color.mOnPrimary : Color.mPrimary
       onClicked: {
         if (enabled) {
           powerProfiles.profile = PowerProfile.PowerSaver

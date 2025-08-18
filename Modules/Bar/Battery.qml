@@ -10,7 +10,7 @@ NPill {
   id: root
 
   // Test mode
-  property bool testMode: false
+  property bool testMode: true
   property int testPercent: 49
   property bool testCharging: false
 
@@ -52,9 +52,6 @@ NPill {
 
   icon: root.batteryIcon()
   text: Math.round(root.percent) + "%"
-  pillColor: Color.mSurfaceVariant
-  iconCircleColor: Color.mPrimary
-  iconTextColor: Color.mSurface
   textColor: charging ? Color.mPrimary : Color.mOnSurface
   tooltipText: {
     let lines = []

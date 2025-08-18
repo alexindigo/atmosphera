@@ -28,7 +28,7 @@ Row {
     // Let the Rectangle size itself based on its content (the Row)
     width: row.width + Style.marginM * scaling * 2
 
-    height: Math.round(Style.barHeight * 0.75 * scaling)
+    height: Math.round(Style.capsuleHeight * scaling)
     radius: Math.round(Style.radiusM * scaling)
     color: Color.mSurfaceVariant
     border.color: Color.mOutline

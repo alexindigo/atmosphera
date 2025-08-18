@@ -9,18 +9,24 @@ import qs.Commons
 import qs.Services
 import qs.Widgets
 
-Item {
+Rectangle {
   readonly property real itemSize: 24 * scaling
 
   visible: Settings.data.bar.showTray
-  width: tray.width
-  height: itemSize
+  width: tray.width + Style.marginM * scaling * 2
+
+  height: Math.round(Style.capsuleHeight * scaling)
+  radius: Math.round(Style.radiusM * scaling)
+  color: Color.mSurfaceVariant
+
+  Layout.alignment: Qt.AlignVCenter
 
   Row {
     id: tray
 
+    anchors.verticalCenter: parent.verticalCenter
+    anchors.horizontalCenter: parent.horizontalCenter
     spacing: Style.marginS * scaling
-    Layout.alignment: Qt.AlignVCenter
 
     Repeater {
       id: repeater

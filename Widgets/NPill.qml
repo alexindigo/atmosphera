@@ -80,7 +80,7 @@ Item {
     width: iconSize
     height: iconSize
     radius: width * 0.5
-    color: showPill ? iconCircleColor : Color.transparent
+    color: showPill ? iconCircleColor : Color.mSurfaceVariant
     anchors.verticalCenter: parent.verticalCenter
     anchors.right: parent.right
 
@@ -94,7 +94,7 @@ Item {
     NIcon {
       text: root.icon
       font.pointSize: Style.fontSizeM * scaling
-      color: showPill ? iconTextColor : collapsedIconColor
+      color: showPill ? iconTextColor : Color.mOnSurface
       anchors.centerIn: parent
     }
   }

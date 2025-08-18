@@ -6,9 +6,10 @@ import Quickshell.Io
 import qs.Commons
 import qs.Services
 
+
 /*
-  Although Noctalia is not strictly a Material Design project, it supports both a predefined
-  color scheme and dynamic color generation from the wallpaper (using Matugen).
+  Noctalia is not strictly a Material Design project, it supports both some predefined
+  color schemes and dynamic color generation from the wallpaper (using Matugen).
 
   We ultimately decided to use a restricted set of colors that follows the
   Material Design 3 naming convention.
@@ -16,7 +17,6 @@ import qs.Services
   NOTE: All color names are prefixed with 'm' (e.g., mPrimary) to prevent QML from
   misinterpreting them as signals (e.g., the 'onPrimary' property name).
 */
-
 Singleton {
   id: root
 
@@ -88,7 +88,7 @@ Singleton {
 
     property color mSecondary: customColorsData.mSecondary
     property color mOnSecondary: customColorsData.mOnSecondary
-    
+
     property color mTertiary: customColorsData.mTertiary
     property color mOnTertiary: customColorsData.mOnTertiary
 
@@ -97,7 +97,7 @@ Singleton {
 
     property color mSurface: customColorsData.mSurface
     property color mOnSurface: customColorsData.mOnSurface
-    
+
     property color mSurfaceVariant: customColorsData.mSurfaceVariant
     property color mOnSurfaceVariant: customColorsData.mOnSurfaceVariant
 

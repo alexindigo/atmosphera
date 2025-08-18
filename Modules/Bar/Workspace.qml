@@ -116,11 +116,9 @@ Item {
     id: workspaceBackground
     width: parent.width - Style.marginS * scaling * 2
 
-    height: Math.round(Style.barHeight * 0.75 * scaling)
+    height: Math.round(Style.capsuleHeight * scaling)
     radius: Math.round(Style.radiusM * scaling)
     color: Color.mSurfaceVariant
-    border.color: Color.mOutline
-    border.width: Math.max(1, Math.round(Style.borderS * scaling))
 
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.verticalCenter: parent.verticalCenter

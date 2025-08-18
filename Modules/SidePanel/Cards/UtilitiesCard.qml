@@ -24,7 +24,8 @@ NBox {
     NIconButton {
       icon: "videocam"
       tooltipText: ScreenRecorderService.isRecording ? "Stop Screen Recording" : "Start Screen Recording"
-      showFilled: ScreenRecorderService.isRecording
+      colorBg: ScreenRecorderService.isRecording ? Color.mPrimary : Color.mSurfaceVariant
+      colorFg: ScreenRecorderService.isRecording ? Color.mOnPrimary : Color.mPrimary
       onClicked: {
         ScreenRecorderService.toggleRecording()
       }

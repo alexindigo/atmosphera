@@ -13,6 +13,9 @@ NPanel {
   id: powerMenu
   visible: false
 
+  property var entriesCount: 5
+  property var entryHeight: Style.baseWidgetSize * scaling
+
   // Anchors will be set by the parent component
   function show() {
     visible = true
@@ -24,7 +27,7 @@ NPanel {
 
   Rectangle {
     width: 160 * scaling
-    height: 220 * scaling
+    height: (entryHeight * entriesCount) + (Style.marginS * entriesCount * scaling)
     radius: Style.radiusM * scaling
     border.color: Color.mOutline
     border.width: Math.max(1, Style.borderS * scaling)
@@ -55,7 +58,7 @@ NPanel {
       // Lock
       Rectangle {
         Layout.fillWidth: true
-        Layout.preferredHeight: Style.barHeight * scaling
+        Layout.preferredHeight: entryHeight
         radius: Style.radiusS * scaling
         color: lockButtonArea.containsMouse ? Color.mTertiary : Color.transparent
 
@@ -80,9 +83,10 @@ NPanel {
               anchors.verticalCenterOffset: 1 * scaling
             }
 
-            Text {
+            NText {
               text: "Lock Screen"
               color: lockButtonArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface
+              font.pointSize: Style.fontSizeS * scaling
               verticalAlignment: Text.AlignVCenter
               anchors.verticalCenter: parent.verticalCenter
               anchors.verticalCenterOffset: 1 * scaling
@@ -109,7 +113,7 @@ NPanel {
       // Suspend
       Rectangle {
         Layout.fillWidth: true
-        Layout.preferredHeight: Style.barHeight * scaling
+        Layout.preferredHeight: entryHeight
         radius: Style.radiusS * scaling
         color: suspendButtonArea.containsMouse ? Color.mTertiary : Color.transparent
 
@@ -134,9 +138,10 @@ NPanel {
               anchors.verticalCenterOffset: 1 * scaling
             }
 
-            Text {
+            NText {
               text: "Suspend"
               color: suspendButtonArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface
+              font.pointSize: Style.fontSizeS * scaling
               verticalAlignment: Text.AlignVCenter
               anchors.verticalCenter: parent.verticalCenter
               anchors.verticalCenterOffset: 1 * scaling
@@ -161,7 +166,7 @@ NPanel {
       // Reboot
       Rectangle {
         Layout.fillWidth: true
-        Layout.preferredHeight: Style.barHeight * scaling
+        Layout.preferredHeight: entryHeight
         radius: Style.radiusS * scaling
         color: rebootButtonArea.containsMouse ? Color.mTertiary : Color.transparent
 
@@ -186,9 +191,10 @@ NPanel {
               anchors.verticalCenterOffset: 1 * scaling
             }
 
-            Text {
+            NText {
               text: "Reboot"
               color: rebootButtonArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface
+              font.pointSize: Style.fontSizeS * scaling
               verticalAlignment: Text.AlignVCenter
               anchors.verticalCenter: parent.verticalCenter
               anchors.verticalCenterOffset: 1 * scaling
@@ -213,7 +219,7 @@ NPanel {
       // Logout
       Rectangle {
         Layout.fillWidth: true
-        Layout.preferredHeight: Style.barHeight * scaling
+        Layout.preferredHeight: entryHeight
         radius: Style.radiusS * scaling
         color: logoutButtonArea.containsMouse ? Color.mTertiary : Color.transparent
 
@@ -238,9 +244,10 @@ NPanel {
               anchors.verticalCenterOffset: 1 * scaling
             }
 
-            Text {
+            NText {
               text: "Logout"
               color: logoutButtonArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface
+              font.pointSize: Style.fontSizeS * scaling
               verticalAlignment: Text.AlignVCenter
               anchors.verticalCenter: parent.verticalCenter
               anchors.verticalCenterOffset: 1 * scaling
@@ -265,7 +272,7 @@ NPanel {
       // Shutdown
       Rectangle {
         Layout.fillWidth: true
-        Layout.preferredHeight: Style.barHeight * scaling
+        Layout.preferredHeight: entryHeight
         radius: Style.radiusS * scaling
         color: shutdownButtonArea.containsMouse ? Color.mTertiary : Color.transparent
 
@@ -290,9 +297,10 @@ NPanel {
               anchors.verticalCenterOffset: 1 * scaling
             }
 
-            Text {
+            NText {
               text: "Shutdown"
               color: shutdownButtonArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface
+              font.pointSize: Style.fontSizeS * scaling
               verticalAlignment: Text.AlignVCenter
               anchors.verticalCenter: parent.verticalCenter
               anchors.verticalCenterOffset: 1 * scaling

@@ -12,11 +12,16 @@ Rectangle {
   property real size: Style.baseWidgetSize * sizeMultiplier * scaling
   property string icon
   property string tooltipText
-  property bool showBorder: true
-  property bool showFilled: false
   property bool enabled: true
   property bool hovering: false
   property real fontPointSize: Style.fontSizeM
+
+  property color colorBg: Color.mSurfaceVariant
+  property color colorFg: Color.mPrimary
+  property color colorBgHover: Color.mPrimary
+  property color colorFgHover: Color.mOnPrimary
+  property color colorBorder: Color.mOutline
+  property color colorBorderHover: Color.mOutline
 
   signal entered
   signal exited
@@ -25,9 +30,9 @@ Rectangle {
   implicitWidth: size
   implicitHeight: size
 
-  color: (root.hovering || showFilled) ? Color.mPrimary : Color.transparent
+  color: root.hovering ? colorBgHover : colorBg
   radius: width * 0.5
-  border.color: showBorder ? Color.mPrimary : Color.transparent
+  border.color: root.hovering ? colorBorderHover : colorBorder
   border.width: Math.max(1, Style.borderS * scaling)
 
   NIcon {
@@ -37,7 +42,7 @@ Rectangle {
     anchors.verticalCenterOffset: 0
     text: root.icon
     font.pointSize: root.fontPointSize * scaling
-    color: (root.hovering || showFilled) ? Color.mOnPrimary : showBorder ? Color.mPrimary : Color.mOnSurface
+    color: root.hovering ? colorFgHover : colorFg
     horizontalAlignment: Text.AlignHCenter
     verticalAlignment: Text.AlignVCenter
     opacity: root.enabled ? Style.opacityFull : Style.opacityMedium

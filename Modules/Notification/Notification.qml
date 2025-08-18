@@ -187,7 +187,6 @@ Variants {
             icon: "close"
             tooltipText: "Close"
             sizeMultiplier: 0.8
-            showBorder: false
             anchors.top: parent.top
             anchors.right: parent.right
             anchors.margins: Style.marginS * scaling

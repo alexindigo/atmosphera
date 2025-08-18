@@ -61,6 +61,7 @@ Singleton {
 
   // Dimensions
   property int barHeight: 36
+  property int capsuleHeight: (barHeight * 0.73)
   property int baseWidgetSize: 32
   property int sliderWidth: 200
 

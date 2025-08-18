@@ -12,7 +12,6 @@ NIconButton {
 
   readonly property bool bluetoothEnabled: Settings.data.network.bluetoothEnabled
   sizeMultiplier: 0.8
-  showBorder: false
   visible: bluetoothEnabled
 
   icon: {
