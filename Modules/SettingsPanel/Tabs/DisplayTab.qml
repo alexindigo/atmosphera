@@ -88,7 +88,7 @@ Item {
 
                 NToggle {
                   label: "Bar"
-                  description: "Enable the top bar on this monitor"
+                  description: "Enable the top bar on this monitor."
                   checked: (Settings.data.bar.monitors || []).indexOf(modelData.name) !== -1
                   onToggled: checked => {
                                if (checked) {
@@ -101,7 +101,7 @@ Item {
 
                 NToggle {
                   label: "Notifications"
-                  description: "Enable notifications on this monitor"
+                  description: "Enable notifications on this monitor."
                   checked: (Settings.data.notifications.monitors || []).indexOf(modelData.name) !== -1
                   onToggled: checked => {
                                if (checked) {
@@ -116,7 +116,7 @@ Item {
 
                 NToggle {
                   label: "Dock"
-                  description: "Enable the dock on this monitor"
+                  description: "Enable the dock on this monitor."
                   checked: (Settings.data.dock.monitors || []).indexOf(modelData.name) !== -1
                   onToggled: checked => {
                                if (checked) {

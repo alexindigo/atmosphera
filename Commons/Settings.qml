@@ -200,6 +200,8 @@ Singleton {
         property bool useWallpaperColors: false
         property string predefinedScheme: ""
         property bool darkMode: true
+        // External app theming (GTK & Qt)
+        property bool themeApps: true
       }
     }
   }

@@ -78,7 +78,7 @@ Item {
             }
 
             NText {
-              text: "Click on a wallpaper to set it as your current wallpaper"
+              text: "Click on a wallpaper to set it as your current wallpaper."
               color: Color.mOnSurface
               wrapMode: Text.WordWrap
               Layout.fillWidth: true
@@ -86,7 +86,7 @@ Item {
 
             NText {
               text: Settings.data.wallpaper.swww.enabled ? "Wallpapers will change with " + Settings.data.wallpaper.swww.transitionType
-                                                           + " transition" : "Wallpapers will change instantly"
+                                                           + " transition." : "Wallpapers will change instantly."
               color: Color.mOnSurface
               font.pointSize: Style.fontSizeSmall * scaling
               visible: Settings.data.wallpaper.swww.enabled
@@ -235,7 +235,7 @@ Item {
               }
 
               NText {
-                text: "Make sure your wallpaper directory is configured and contains image files"
+                text: "Make sure your wallpaper directory is configured and contains image files."
                 color: Color.mOnSurface
                 wrapMode: Text.WordWrap
                 horizontalAlignment: Text.AlignHCenter

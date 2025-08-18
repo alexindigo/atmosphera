@@ -62,7 +62,7 @@ ColumnLayout {
 
             NTextInput {
               label: "Profile Picture"
-              description: "Your profile picture displayed in various places throughout the shell"
+              description: "Your profile picture displayed in various places throughout the shell."
               text: Settings.data.general.avatarImage
               placeholderText: "/home/user/.face"
               Layout.fillWidth: true
@@ -94,7 +94,7 @@ ColumnLayout {
 
         NToggle {
           label: "Show Corners"
-          description: "Display rounded corners on the edge of the screen"
+          description: "Display rounded corners on the edge of the screen."
           checked: Settings.data.general.showScreenCorners
           onToggled: checked => {
                        Settings.data.general.showScreenCorners = checked
@@ -103,7 +103,7 @@ ColumnLayout {
 
         NToggle {
           label: "Dim Desktop"
-          description: "Dim the desktop when panels or menus are open"
+          description: "Dim the desktop when panels or menus are open."
           checked: Settings.data.general.dimDesktop
           onToggled: checked => {
                        Settings.data.general.dimDesktop = checked
@@ -112,7 +112,7 @@ ColumnLayout {
 
         NToggle {
           label: "Auto-hide Dock"
-          description: "Automatically hide the dock when not in use"
+          description: "Automatically hide the dock when not in use."
           checked: Settings.data.dock.autoHide
           onToggled: checked => {
                        Settings.data.dock.autoHide = checked

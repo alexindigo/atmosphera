@@ -49,7 +49,7 @@ ColumnLayout {
 
           NTextInput {
             label: "Output Directory"
-            description: "Directory where screen recordings will be saved"
+            description: "Directory where screen recordings will be saved."
             placeholderText: "/home/xxx/Videos"
             text: Settings.data.screenRecorder.directory
             onEditingFinished: {
@@ -64,7 +64,7 @@ ColumnLayout {
             // Show Cursor
             NToggle {
               label: "Show Cursor"
-              description: "Record mouse cursor in the video"
+              description: "Record mouse cursor in the video."
               checked: Settings.data.screenRecorder.showCursor
               onToggled: checked => {
                            Settings.data.screenRecorder.showCursor = checked
@@ -95,7 +95,7 @@ ColumnLayout {
           // Frame Rate
           NComboBox {
             label: "Frame Rate"
-            description: "Target frame rate for screen recordings (default: 60)"
+            description: "Target frame rate for screen recordings (default: 60)."
             model: ListModel {
               ListElement {
                 key: "30"
@@ -123,7 +123,7 @@ ColumnLayout {
           // Video Quality
           NComboBox {
             label: "Video Quality"
-            description: "Higher quality results in larger file sizes"
+            description: "Higher quality results in larger file sizes."
             model: ListModel {
               ListElement {
                 key: "medium"
@@ -151,7 +151,7 @@ ColumnLayout {
           // Video Codec
           NComboBox {
             label: "Video Codec"
-            description: "Different codecs offer different compression and compatibility"
+            description: "Different codecs offer different compression and compatibility."
             model: ListModel {
               ListElement {
                 key: "h264"
@@ -183,7 +183,7 @@ ColumnLayout {
           // Color Range
           NComboBox {
             label: "Color Range"
-            description: "Limited is recommended for better compatibility"
+            description: "Limited is recommended for better compatibility."
             model: ListModel {
               ListElement {
                 key: "limited"
@@ -223,7 +223,7 @@ ColumnLayout {
           // Audio Source
           NComboBox {
             label: "Audio Source"
-            description: "Audio source to capture during recording"
+            description: "Audio source to capture during recording."
             model: ListModel {
               ListElement {
                 key: "default_output"
@@ -247,7 +247,7 @@ ColumnLayout {
           // Audio Codec
           NComboBox {
             label: "Audio Codec"
-            description: "Opus is recommended for best performance and smallest audio size"
+            description: "Opus is recommended for best performance and smallest audio size."
             model: ListModel {
               ListElement {
                 key: "opus"

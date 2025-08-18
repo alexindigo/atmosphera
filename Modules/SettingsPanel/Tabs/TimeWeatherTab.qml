@@ -49,7 +49,7 @@ ColumnLayout {
 
           NTextInput {
             label: "Location name"
-            description: "Choose a known location near you"
+            description: "Choose a known location near you."
             text: Settings.data.location.name
             placeholderText: "Enter the location name"
             Layout.fillWidth: true
@@ -81,7 +81,7 @@ ColumnLayout {
 
           NToggle {
             label: "Use 12-Hour Clock"
-            description: "Display time in 12-hour format (AM/PM) instead of 24-hour"
+            description: "Display time in 12-hour format (AM/PM) instead of 24-hour."
             checked: Settings.data.location.use12HourClock
             onToggled: checked => {
                          Settings.data.location.use12HourClock = checked
@@ -90,7 +90,7 @@ ColumnLayout {
 
           NToggle {
             label: "Reverse Day/Month"
-            description: "Display date as DD/MM instead of MM/DD"
+            description: "Display date as DD/MM instead of MM/DD."
             checked: Settings.data.location.reverseDayMonth
             onToggled: checked => {
                          Settings.data.location.reverseDayMonth = checked
@@ -99,7 +99,7 @@ ColumnLayout {
 
           NToggle {
             label: "Show Date with Clock"
-            description: "Display date alongside time (e.g., 18:12 - Sat, 23 Aug)"
+            description: "Display date alongside time (e.g., 18:12 - Sat, 23 Aug)."
             checked: Settings.data.location.showDateWithClock
             onToggled: checked => {
                          Settings.data.location.showDateWithClock = checked
@@ -128,7 +128,7 @@ ColumnLayout {
 
           NToggle {
             label: "Use Fahrenheit"
-            description: "Display temperature in Fahrenheit instead of Celsius"
+            description: "Display temperature in Fahrenheit instead of Celsius."
             checked: Settings.data.location.useFahrenheit
             onToggled: checked => {
                          Settings.data.location.useFahrenheit = checked
