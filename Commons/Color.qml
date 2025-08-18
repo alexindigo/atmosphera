@@ -30,6 +30,7 @@ Singleton {
   property color mOnSurface: customColors.mOnSurface
   property color mSurfaceVariant: customColors.mSurfaceVariant
   property color mOnSurfaceVariant: customColors.mOnSurfaceVariant
+  property color mSurfaceContainer: customColors.mSurfaceContainer
   property color mOutline: customColors.mOutline
   property color mOutlineVariant: customColors.mOutlineVariant
   property color mShadow: customColors.mShadow
