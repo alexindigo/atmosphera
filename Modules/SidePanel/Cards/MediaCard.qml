@@ -340,7 +340,20 @@ NBox {
         width: 300 * scaling
         height: 80 * scaling
         values: CavaService.values
-        fillColor: Color.mOnSurface
+        fillColor: Color.mPrimary
+        Layout.alignment: Qt.AlignHCenter
+      }
+    }
+
+    Loader {
+      active: Settings.data.audio.visualizerType == "wave"
+      Layout.alignment: Qt.AlignHCenter
+
+      sourceComponent: WaveSpectrum {
+        width: 300 * scaling
+        height: 80 * scaling
+        values: CavaService.values
+        fillColor: Color.mPrimary
         Layout.alignment: Qt.AlignHCenter
       }
     }

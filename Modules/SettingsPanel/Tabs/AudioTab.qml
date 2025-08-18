@@ -265,6 +265,10 @@ ColumnLayout {
               key: "linear"
               name: "Linear"
             }
+            ListElement {
+              key: "wave"
+              name: "Wave"
+            }
           }
           currentKey: Settings.data.audio.visualizerType
           onSelected: function (key) {

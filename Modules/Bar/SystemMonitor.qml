@@ -54,7 +54,7 @@ Row {
         Row {
           id: cpuTempLayout
           // spacing is thin here to compensate for the vertical thermometer icon
-          spacing: Style.marginTiniest * scaling 
+          spacing: Style.marginTiniest * scaling
 
           NIcon {
             text: "thermometer"
@@ -93,8 +93,7 @@ Row {
       }
     }
   }
-}
-// Row {
+}// Row {
 //   id: layout
 //   anchors.verticalCenter: parent.verticalCenter
 //   spacing: Style.marginSmall * scaling

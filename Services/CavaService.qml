@@ -9,7 +9,7 @@ Singleton {
   id: root
 
   property var values: Array(barsCount).fill(0)
-  property int barsCount: 20
+  property int barsCount: 32
 
   property var config: ({
                           "general": {
