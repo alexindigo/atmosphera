@@ -70,6 +70,13 @@ NLoader {
       property var desktopEntries: DesktopEntries.applications.values
       property string searchText: ""
       property int selectedIndex: 0
+
+      // Refresh clipboard when user starts typing clipboard commands
+      onSearchTextChanged: {
+        if (searchText.startsWith(">clip")) {
+          ClipboardService.refresh()
+        }
+      }
       property var filteredEntries: {
         Logger.log("AppLauncher", "Total desktop entries:", desktopEntries ? desktopEntries.length : 0)
         if (!desktopEntries || desktopEntries.length === 0) {
@@ -96,7 +103,7 @@ NLoader {
                          "isCommand": true,
                          "name": ">calc",
                          "content": "Calculator - evaluate mathematical expressions",
-                         "icon": "calculate",
+                         "icon": "tag",
                          "execute": function () {
                            searchText = ">calc "
                            searchInput.cursorPosition = searchText.length
@@ -119,9 +126,6 @@ NLoader {
 
         // Handle clipboard history
         if (query.startsWith(">clip")) {
-          if (!ClipboardService.initialized) {
-            ClipboardService.refresh()
-          }
           const searchTerm = query.slice(5).trim()
 
           ClipboardService.history.forEach(function (clip, index) {
@@ -184,6 +188,38 @@ NLoader {
           return results
         }
 
+        // Handle direct math expressions after ">"
+        if (query.startsWith(">") && query.length > 1 && !query.startsWith(">clip") && !query.startsWith(">calc")) {
+          var mathExpr = query.slice(1).trim()
+          // Check if it looks like a math expression (contains numbers and math operators)
+          if (mathExpr && /[0-9+\-*/().]/.test(mathExpr)) {
+            try {
+              var sanitizedExpr = mathExpr.replace(/[^0-9+\-*/().\s]/g, '')
+              var result = eval(sanitizedExpr)
+              
+              if (isFinite(result) && !isNaN(result)) {
+                var displayResult = Number.isInteger(result) ? result.toString() : result.toFixed(6).replace(/\.?0+$/, '')
+                results.push({
+                               "isCalculator": true,
+                               "name": `${mathExpr} = ${displayResult}`,
+                               "result": result,
+                               "expr": mathExpr,
+                               "icon": "tag",
+                               "execute": function () {
+                                 Quickshell.clipboardText = displayResult
+                                 copyText(displayResult)
+                                 Quickshell.execDetached(
+                                       ["notify-send", "Calculator", `${mathExpr} = ${displayResult} (copied to clipboard)`])
+                               }
+                             })
+                return results
+              }
+            } catch (error) {
+              // If math evaluation fails, fall through to regular search
+            }
+          }
+        }
+
         // Handle calculator
         if (query.startsWith(">calc")) {
           var expr = searchText.slice(5).trim()
@@ -201,7 +237,7 @@ NLoader {
                                "name": `${expr} = ${displayResult}`,
                                "result": result,
                                "expr": expr,
-                               "icon": "calculate",
+                               "icon": "tag",
                                "execute": function () {
                                  Quickshell.clipboardText = displayResult
                                  copyText(displayResult)
@@ -214,7 +250,7 @@ NLoader {
                                "isCalculator": true,
                                "name": "Invalid expression",
                                "content": "Please enter a valid mathematical expression",
-                               "icon": "calculate",
+                               "icon": "tag",
                                "execute": function () {}
                              })
               }
@@ -223,7 +259,7 @@ NLoader {
                              "isCalculator": true,
                              "name": "Invalid expression",
                              "content": "Please enter a valid mathematical expression",
-                             "icon": "calculate",
+                             "icon": "tag",
                              "execute": function () {}
                            })
             }
@@ -233,7 +269,7 @@ NLoader {
                            "isCalculator": true,
                            "name": "Calculator",
                            "content": "Enter a mathematical expression (e.g., 5+5, 2*3, 10/2)",
-                           "icon": "calculate",
+                           "icon": "tag",
                            "execute": function () {}
                          })
           }
@@ -449,7 +485,7 @@ NLoader {
                       anchors.fill: parent
                       anchors.margins: Style.marginXS * scaling
                       asynchronous: true
-                      source: modelData.isCalculator ? "calculate" : modelData.isClipboard ? (modelData.type === 'image' ? "" : "content_paste") : modelData.isCommand ? modelData.icon : (modelData.icon ? Quickshell.iconPath(modelData.icon, "application-x-executable") : "")
+                      source: modelData.isCalculator ? "" : modelData.isClipboard ? "" : modelData.isCommand ? modelData.icon : (modelData.icon ? Quickshell.iconPath(modelData.icon, "application-x-executable") : "")
                       visible: (modelData.isCalculator || modelData.isClipboard || modelData.isCommand
                                 || parent.iconLoaded) && modelData.type !== 'image'
                     }
