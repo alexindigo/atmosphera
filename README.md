@@ -21,16 +21,15 @@
   </a>
 </p>
 
-A sleek, minimal, and thoughtfully crafted desktop shell for Wayland using **Quickshell**. Features a modern modular architecture with a status bar, notification system, control panel, comprehensive system integration, and more — all styled with a warm lavender palette.
+A sleek, minimal, and thoughtfully crafted desktop shell for Wayland using **Quickshell**. Features a modern modular architecture with a status bar, notification system, control panel, comprehensive system integration, and more — all styled with a warm lavender palette, or your favorite color scheme!
 
 ## Preview
 
-![Applauncher](https://noctalia.dev/assets/AppLauncher.png)
+![Applauncher](https://noctalia.dev/assets/screenshots/AppLauncher.png)
 
-![SettingsPanel](https://noctalia.dev/assets/SettingsPanel.png)  
+![SettingsPanel](https://noctalia.dev/assets/screenshots/SettingsPanel.png)  
 
-Support for Dark or Light color schemes.  
-![SidePanel](https://noctalia.dev/assets/SidePanel.png)  
+![SidePanel](https://noctalia.dev/assets/screenshots/LightMode.png)  
 
 ---
 
@@ -41,20 +40,21 @@ Support for Dark or Light color schemes.
 
 ## Features
 
-- **Status Bar:** Modular bar with workspace indicators, system monitors, clock, and quick access controls
-- **Workspace Management:** Dynamic workspace switching with visual indicators and active window tracking
-- **Notifications:** Rich notification system with history panel
-- **Application Launcher:** Stylized launcher with favorites, recent apps, and special commands (calc, clipboard)
-- **Side Panel:** Quick access panel with media controls, weather, power profiles, and system utilities
-- **Settings Panel:** Comprehensive configuration interface for all shell components and preferences
-- **Lock Screen:** Secure lock experience with PAM authentication, time display, and animated background
-- **Audio Integration:** Volume controls, media playback, and audio visualizer (cava-based)
-- **Connectivity:** WiFi and Bluetooth management with device pairing and network status
-- **Power Management:** Battery monitoring, brightness control, and power profile switching
-- **System Monitoring:** CPU, memory, and network usage monitoring with visual indicators
-- **Tray System:** Application tray with menu support and system integration
-- **Background Management:** Wallpaper management with effects and dynamic theming support
-
+- **Status Bar:** Modular bar with workspace indicators, system monitors, clock, and quick access controls.
+- **Workspace Management:** Dynamic workspace switching with visual indicators and active window tracking.
+- **Notifications:** Rich notification system with history panel.
+- **Application Launcher:** Stylized launcher with favorites, recent apps, and special commands (calc, clipboard).
+- **Side Panel:** Quick access panel with media controls, weather, power profiles, and system utilities.
+- **Settings Panel:** Comprehensive configuration interface for all shell components and preferences.
+- **Lock Screen:** Secure lock experience with PAM authentication, time display, and animated background.
+- **Audio Integration:** Volume controls, media playback, and audio visualizer (cava-based).
+- **Connectivity:** WiFi and Bluetooth management with device pairing and network status.
+- **Power Management:** Battery monitoring, brightness control, and power profile switching.
+- **System Monitoring:** CPU, memory, and network usage monitoring with visual indicators.
+- **Tray System:** Application tray with menu support and system integration.
+- **Background Management:** Wallpaper management with effects and dynamic theming support.
+- **Color Schemes:** Catppuccin, Dracula, Gruvbox, Noctalia, Nord, Rosépine, Solarized, Tokyo night or generated from your wallpaper. 
+- **Scaling:** Per monitor scaling for maximum control.
 ---
 
 ## Dependencies
