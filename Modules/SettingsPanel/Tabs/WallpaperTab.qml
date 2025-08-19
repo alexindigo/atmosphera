@@ -153,7 +153,7 @@ ColumnLayout {
                          swwwCheck.running = true
                        } else {
                          Settings.data.wallpaper.swww.enabled = false
-                         ToastService.showNotice("SWWW:\nDisabled")
+                         ToastService.showNotice("SWWW", "Disabled")
                        }
                      }
         }
@@ -354,10 +354,10 @@ ColumnLayout {
         // SWWW exists, enable it
         Settings.data.wallpaper.swww.enabled = true
         WallpaperService.startSWWWDaemon()
-        ToastService.showNotice("SWWW:\nEnabled!")
-      } else {
-        // SWWW not found
-        ToastService.showWarning("SWWW:\nNot installed!")
+                    ToastService.showNotice("SWWW", "Enabled!")
+          } else {
+            // SWWW not found
+            ToastService.showWarning("SWWW", "Not installed!")
       }
     }
     

@@ -8,7 +8,8 @@ import qs.Widgets
 Item {
   id: root
   
-  property string message: ""
+  property string label: ""
+  property string description: ""
   property string type: "notice" // "notice", "warning"
   property int duration: 5000 // Auto-hide after 5 seconds, 0 = no auto-hide
   property bool persistent: false // If true, requires manual dismiss
@@ -129,15 +130,33 @@ Item {
         Layout.alignment: Qt.AlignVCenter
       }
       
-      // Message text
-      NText {
-        id: messageText
-        text: root.message
-        color: Color.mOnSurface
-        font.pointSize: Style.fontSize * scaling
-        wrapMode: Text.WordWrap
+      // Label and description
+      Column {
+        id: textColumn
+        spacing: Style.marginXXS * scaling
         Layout.fillWidth: true
         Layout.alignment: Qt.AlignVCenter
+        
+        NText {
+          id: labelText
+          text: root.label
+          color: Color.mOnSurface
+          font.pointSize: Style.fontSize * scaling
+          font.weight: Style.fontWeightBold
+          wrapMode: Text.WordWrap
+          width: parent.width
+          visible: text.length > 0
+        }
+        
+        NText {
+          id: descriptionText
+          text: root.description
+          color: Color.mOnSurface
+          font.pointSize: Style.fontSize * scaling
+          wrapMode: Text.WordWrap
+          width: parent.width
+          visible: text.length > 0
+        }
       }
       
       // Close button (only if persistent or manual dismiss needed)

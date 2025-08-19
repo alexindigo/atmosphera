@@ -152,7 +152,7 @@ ColumnLayout {
                          matugenCheck.running = true
                        } else {
                          Settings.data.colorSchemes.useWallpaperColors = false
-                         ToastService.showNotice("Matugen:\nDisabled")
+                         ToastService.showNotice("Matugen", "Disabled")
                        }
                      }
         }
@@ -352,10 +352,10 @@ ColumnLayout {
         // Matugen exists, enable it
         Settings.data.colorSchemes.useWallpaperColors = true
         ColorSchemeService.changedWallpaper()
-        ToastService.showNotice("Matugen:\nEnabled!")
-      } else {
-        // Matugen not found
-        ToastService.showWarning("Matugen:\nNot installed!")
+                    ToastService.showNotice("Matugen", "Enabled!")
+          } else {
+            // Matugen not found
+            ToastService.showWarning("Matugen", "Not installed!")
       }
     }
     

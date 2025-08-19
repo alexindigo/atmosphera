@@ -15,12 +15,12 @@ QtObject {
   property var currentToast: null
   
   // Methods to show different types of messages
-  function showNotice(message, persistent = false, duration = 3000) {
-    showToast(message, "notice", persistent, duration)
+  function showNotice(label, description = "", persistent = false, duration = 3000) {
+    showToast(label, description, "notice", persistent, duration)
   }
   
-  function showWarning(message, persistent = false, duration = 4000) {
-    showToast(message, "warning", persistent, duration)
+  function showWarning(label, description = "", persistent = false, duration = 4000) {
+    showToast(label, description, "warning", persistent, duration)
   }
   
   // Utility function to check if a command exists and show appropriate toast
@@ -139,9 +139,10 @@ QtObject {
   }
   
   // Generic method to show a toast
-  function showToast(message, type = "notice", persistent = false, duration = 3000) {
+  function showToast(label, description = "", type = "notice", persistent = false, duration = 3000) {
     var toastData = {
-      message: message,
+      label: label,
+      description: description,
       type: type,
       persistent: persistent,
       duration: duration,
@@ -177,7 +178,8 @@ QtObject {
 
     
     // Configure and show toast
-    currentToast.message = toastData.message
+    currentToast.label = toastData.label
+    currentToast.description = toastData.description
     currentToast.type = toastData.type
     currentToast.persistent = toastData.persistent
     currentToast.duration = toastData.duration
