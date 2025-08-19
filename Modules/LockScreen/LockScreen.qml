@@ -30,8 +30,9 @@ NLoader {
       // Tie session lock to loader visibility
       locked: lockScreen.isLoaded
 
-      // Lockscreen is a different beast, needs a capital 'S' in 'Screen' to get the current screen
-      readonly property real scaling: ScalingService.scale(Screen)
+      // Lockscreen is a different beast, needs a capital 'S' in 'Screen' to access the current screen
+      // Also we use a different scaling algorithm based on the resolution, as the design is full screen
+      readonly property real scaling: ScalingService.dynamicScale(Screen)
 
       property string errorMessage: ""
       property bool authenticating: false
@@ -239,9 +240,9 @@ NLoader {
                 id: timeText
                 text: Qt.formatDateTime(new Date(), "HH:mm")
                 font.family: "Inter"
-                font.pointSize: Style.fontSizeXXXL * 6
+                font.pointSize: Style.fontSizeXXXL * 6 * scaling
                 font.weight: Font.Bold
-                font.letterSpacing: -2
+                font.letterSpacing: -2 * scaling
                 color: Color.mOnSurface
                 horizontalAlignment: Text.AlignHCenter
 
@@ -264,7 +265,7 @@ NLoader {
                 id: dateText
                 text: Qt.formatDateTime(new Date(), "dddd, MMMM d")
                 font.family: "Inter"
-                font.pointSize: Style.fontSizeXXL
+                font.pointSize: Style.fontSizeXXL * scaling
                 font.weight: Font.Light
                 color: Color.mOnSurface
                 horizontalAlignment: Text.AlignHCenter
@@ -407,7 +408,7 @@ NLoader {
                         text: "SECURE TERMINAL"
                         color: Color.mOnSurface
                         font.family: "DejaVu Sans Mono"
-                        font.pointSize: Style.fontSizeL
+                        font.pointSize: Style.fontSizeL * scaling
                         font.weight: Font.Bold
                         Layout.fillWidth: true
                       }
@@ -419,7 +420,7 @@ NLoader {
 
                         NIcon {
                           text: batteryIndicator.getIcon()
-                          font.pointSize: Style.fontSizeM
+                          font.pointSize: Style.fontSizeM * scaling
                           color: batteryIndicator.charging ? Color.mPrimary : Color.mOnSurface
                         }
 
@@ -427,7 +428,7 @@ NLoader {
                           text: Math.round(batteryIndicator.percent) + "%"
                           color: Color.mOnSurface
                           font.family: "DejaVu Sans Mono"
-                          font.pointSize: Style.fontSizeM
+                          font.pointSize: Style.fontSizeM * scaling
                           font.weight: Font.Bold
                         }
                       }
@@ -453,7 +454,7 @@ NLoader {
                         text: "root@noctalia:~$"
                         color: Color.mPrimary
                         font.family: "DejaVu Sans Mono"
-                        font.pointSize: Style.fontSizeL
+                        font.pointSize: Style.fontSizeL * scaling
                         font.weight: Font.Bold
                       }
 
@@ -462,7 +463,7 @@ NLoader {
                         text: ""
                         color: Color.mOnSurface
                         font.family: "DejaVu Sans Mono"
-                        font.pointSize: Style.fontSizeL
+                        font.pointSize: Style.fontSizeL * scaling
                         property int currentIndex: 0
                         property string fullText: "Welcome back, " + Quickshell.env("USER") + "!"
 
@@ -491,7 +492,7 @@ NLoader {
                         text: "root@noctalia:~$"
                         color: Color.mPrimary
                         font.family: "DejaVu Sans Mono"
-                        font.pointSize: Style.fontSizeL
+                        font.pointSize: Style.fontSizeL * scaling
                         font.weight: Font.Bold
                       }
 
@@ -499,7 +500,7 @@ NLoader {
                         text: "sudo unlock-session"
                         color: Color.mOnSurface
                         font.family: "DejaVu Sans Mono"
-                        font.pointSize: Style.fontSizeL
+                        font.pointSize: Style.fontSizeL * scaling
                       }
 
                       // Integrated password input (invisible, just for functionality)
@@ -509,7 +510,7 @@ NLoader {
                         height: 0
                         visible: false
                         font.family: "DejaVu Sans Mono"
-                        font.pointSize: Style.fontSizeL
+                        font.pointSize: Style.fontSizeL * scaling
                         color: Color.mOnSurface
                         echoMode: TextInput.Password
                         passwordCharacter: "*"
@@ -539,7 +540,7 @@ NLoader {
                         text: "*".repeat(passwordInput.text.length)
                         color: Color.mOnSurface
                         font.family: "DejaVu Sans Mono"
-                        font.pointSize: Style.fontSizeL
+                        font.pointSize: Style.fontSizeL * scaling
                         visible: passwordInput.activeFocus
 
                         // Typing effect animation
@@ -588,7 +589,7 @@ NLoader {
                       text: lock.authenticating ? "Authenticating..." : (lock.errorMessage !== "" ? "Authentication failed." : "")
                       color: lock.authenticating ? Color.mPrimary : (lock.errorMessage !== "" ? Color.mError : Color.transparent)
                       font.family: "DejaVu Sans Mono"
-                      font.pointSize: Style.fontSizeL
+                      font.pointSize: Style.fontSizeL * scaling
                       Layout.fillWidth: true
 
                       SequentialAnimation on opacity {
@@ -622,7 +623,7 @@ NLoader {
                         text: lock.authenticating ? "EXECUTING" : "EXECUTE"
                         color: executeButtonArea.containsMouse ? Color.mOnPrimary : Color.mPrimary
                         font.family: "DejaVu Sans Mono"
-                        font.pointSize: Style.fontSizeM
+                        font.pointSize: Style.fontSizeM * scaling
                         font.weight: Font.Bold
                       }
 
