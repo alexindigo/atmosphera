@@ -82,16 +82,19 @@ Singleton {
       reload()
     }
     onLoaded: function () {
-      Logger.log("Settings", "OnLoaded")
       Qt.callLater(function () {
-        // Only set wallpaper on initial load, not on reloads
-        if (isInitialLoad && adapter.wallpaper.current !== "") {
-          Logger.log("Settings", "Set current wallpaper", adapter.wallpaper.current)
-          WallpaperService.setCurrentWallpaper(adapter.wallpaper.current, true)
-        }
+        if (isInitialLoad) {
+          Logger.log("Settings", "OnLoaded")
+          // Only set wallpaper on initial load, not on reloads
+          if (adapter.wallpaper.current !== "") { 
+            Logger.log("Settings", "Set current wallpaper", adapter.wallpaper.current)
+            WallpaperService.setCurrentWallpaper(adapter.wallpaper.current, true)
+          }
 
-        // Validate monitor configurations - if none of the configured monitors exist, clear the lists
-        validateMonitorConfigurations()
+          // Validate monitor configurations, only once
+          // if none of the configured monitors exist, clear the lists
+            validateMonitorConfigurations()
+        }
 
         isInitialLoad = false
       })
