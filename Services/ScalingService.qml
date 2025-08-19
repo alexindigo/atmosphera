@@ -20,7 +20,7 @@ Singleton {
         }
       }
     } catch (e) {
-      Logger.warn(e)
+      //Logger.warn(e)
     }
 
     return 1.0
