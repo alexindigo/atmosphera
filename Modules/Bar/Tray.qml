@@ -12,7 +12,7 @@ import qs.Widgets
 Rectangle {
   readonly property real itemSize: 24 * scaling
 
-  visible: Settings.data.bar.showTray && SystemTray.items.length > 0
+  visible: Settings.data.bar.showTray && (SystemTray.items.values.length > 0)
   width: tray.width + Style.marginM * scaling * 2
 
   height: Math.round(Style.capsuleHeight * scaling)
