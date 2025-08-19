@@ -233,7 +233,7 @@ ColumnLayout {
               key: "linear"
               name: "Linear"
             }
-                        ListElement {
+            ListElement {
               key: "mirrored"
               name: "Mirrored"
             }
@@ -241,7 +241,6 @@ ColumnLayout {
               key: "wave"
               name: "Wave"
             }
-
           }
           currentKey: Settings.data.audio.visualizerType
           onSelected: function (key) {

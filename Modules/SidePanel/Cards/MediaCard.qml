@@ -370,10 +370,5 @@ NBox {
         Layout.alignment: Qt.AlignHCenter
       }
     }
-
-
-
-
-    
   }
 }

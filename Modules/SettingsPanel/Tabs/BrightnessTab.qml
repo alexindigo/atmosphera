@@ -94,7 +94,7 @@ Item {
 
           NLabel {
             label: "Monitors Brightness Control"
-description: "Current brightness levels for all detected monitors."
+            description: "Current brightness levels for all detected monitors."
           }
 
           // Single monitor display using the same data source as the bar icon
