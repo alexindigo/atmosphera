@@ -16,19 +16,19 @@
         "mShadow": "#282A36"
     },
     "light": {
-        "mPrimary": "#bd93f9",
+        "mPrimary": "#8332f4",
         "mOnPrimary": "#ffffff",
-        "mSecondary": "#ff79c6",
+        "mSecondary": "#ff1399",
         "mOnSecondary": "#ffffff",
-        "mTertiary": "#8be9fd",
+        "mTertiary": "#0398b9",
         "mOnTertiary": "#ffffff",
         "mError": "#FF5555",
-        "mOnError": "#ffffff",
+        "mOnError": "#282A36",
         "mSurface": "#f8f8f2",
         "mOnSurface": "#282a36",
         "mSurfaceVariant": "#e6e6ea",
         "mOnSurfaceVariant": "#44475a",
-        "mOutline": "#d6d8e0",
-        "mShadow": "#00000026"
+        "mOutline": "#cacad3",
+        "mShadow": "#d6d8e0"
     }
 }
