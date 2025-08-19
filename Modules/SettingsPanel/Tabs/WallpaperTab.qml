@@ -348,19 +348,19 @@ ColumnLayout {
     id: swwwCheck
     command: ["which", "swww"]
     running: false
-    
-    onExited: function(exitCode) {
+
+    onExited: function (exitCode) {
       if (exitCode === 0) {
         // SWWW exists, enable it
         Settings.data.wallpaper.swww.enabled = true
         WallpaperService.startSWWWDaemon()
-                    ToastService.showNotice("SWWW", "Enabled!")
-          } else {
-            // SWWW not found
-            ToastService.showWarning("SWWW", "Not installed!")
+        ToastService.showNotice("SWWW", "Enabled!")
+      } else {
+        // SWWW not found
+        ToastService.showWarning("SWWW", "Not installed!")
       }
     }
-    
+
     stdout: StdioCollector {}
     stderr: StdioCollector {}
   }

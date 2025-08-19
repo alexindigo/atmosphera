@@ -20,6 +20,7 @@ Singleton {
         }
       }
     } catch (e) {
+
       //Logger.warn(e)
     }
 

@@ -24,18 +24,18 @@ Variants {
       left: true
       right: true
     }
-    
+
     // Set margins based on bar position
     margins.top: Settings.data.bar.position === "top" ? (Style.barHeight + Style.marginS) * scaling : 0
     margins.bottom: Settings.data.bar.position === "bottom" ? (Style.barHeight + Style.marginS) * scaling : 0
-    
+
     // Small height when hidden, appropriate height when visible
     implicitHeight: toast.visible ? toast.height + Style.marginS * scaling : 1
 
     // Transparent background
     color: Color.transparent
-    
-    // High layer to appear above other panels  
+
+    // High layer to appear above other panels
     //WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
     exclusionMode: PanelWindow.ExclusionMode.Ignore
@@ -43,19 +43,17 @@ Variants {
     NToast {
       id: toast
       scaling: root.scaling
-      
+
       // Simple positioning - margins already account for bar
       targetY: Style.marginS * scaling
-      
+
       // Hidden position based on bar location
-      hiddenY: Settings.data.bar.position === "top"
-               ? -toast.height - 20
-               : toast.height + 20
-      
+      hiddenY: Settings.data.bar.position === "top" ? -toast.height - 20 : toast.height + 20
+
       Component.onCompleted: {
         // Register this toast with the service
         ToastService.currentToast = toast
-        
+
         // Connect dismissal signal
         toast.dismissed.connect(ToastService.onToastDismissed)
       }

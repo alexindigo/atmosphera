@@ -147,7 +147,7 @@ Singleton {
       console.warn("BluetoothService: No adapter available")
       return
     }
-    
+
     adapter.enabled = enabled
   }
 }

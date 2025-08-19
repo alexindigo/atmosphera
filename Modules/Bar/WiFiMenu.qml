@@ -91,10 +91,10 @@ NLoader {
         anchors {
           right: parent.right
           rightMargin: Style.marginXS * scaling
-                  top: Settings.data.bar.position === "top" ? parent.top : undefined
-        bottom: Settings.data.bar.position === "bottom" ? parent.bottom : undefined
-        topMargin: Settings.data.bar.position === "top" ? Style.marginXS * scaling : undefined
-        bottomMargin: Settings.data.bar.position === "bottom" ? Style.barHeight * scaling + Style.marginXS * scaling : undefined
+          top: Settings.data.bar.position === "top" ? parent.top : undefined
+          bottom: Settings.data.bar.position === "bottom" ? parent.bottom : undefined
+          topMargin: Settings.data.bar.position === "top" ? Style.marginXS * scaling : undefined
+          bottomMargin: Settings.data.bar.position === "bottom" ? Style.barHeight * scaling + Style.marginXS * scaling : undefined
         }
 
         // Animation properties
