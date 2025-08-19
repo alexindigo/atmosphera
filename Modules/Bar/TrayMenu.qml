@@ -15,7 +15,7 @@ PopupWindow {
   property bool isSubMenu: false
   property bool isHovered: rootMouseArea.containsMouse
 
-  implicitWidth: 200 * scaling
+  implicitWidth: 180 * scaling
 
   // Use the content height of the Flickable for implicit height
   implicitHeight: Math.min(Screen.height * 0.9, flickable.contentHeight + (Style.marginM * 2 * scaling))
@@ -127,7 +127,6 @@ PopupWindow {
           NDivider {
             anchors.centerIn: parent
             width: parent.width - (Style.marginM * scaling * 2)
-            color: Color.mPrimary
             visible: modelData?.isSeparator ?? false
           }
 
