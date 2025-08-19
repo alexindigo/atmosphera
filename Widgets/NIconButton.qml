@@ -51,7 +51,7 @@ Rectangle {
   NTooltip {
     id: tooltip
     target: root
-    positionAbove: false
+    positionAbove: Settings.data.bar.barPosition === "bottom"
     text: root.tooltipText
   }
 

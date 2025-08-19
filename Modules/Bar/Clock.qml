@@ -20,6 +20,7 @@ Rectangle {
       id: tooltip
       text: Time.dateString
       target: clock
+      positionAbove: Settings.data.bar.barPosition === "bottom"
     }
 
     onEntered: {

@@ -74,6 +74,7 @@ Singleton {
       property JsonObject bar
 
       bar: JsonObject {
+        property string barPosition: "top"  // Possible values: "top", "bottom", "left", "right"
         property bool showActiveWindow: true
         property bool showSystemInfo: false
         property bool showMedia: false

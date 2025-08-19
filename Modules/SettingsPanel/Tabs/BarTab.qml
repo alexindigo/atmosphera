@@ -40,6 +40,44 @@ ColumnLayout {
           color: Color.mOnSurface
         }
 
+        ColumnLayout {
+          spacing: Style.marginXXS * scaling
+          Layout.fillWidth: true
+
+          NText {
+            text: "Bar Position"
+            font.pointSize: Style.fontSizeL * scaling
+            font.weight: Style.fontWeightBold
+            color: Color.mOnSurface
+          }
+
+          NText {
+            text: "Choose where to place the bar on the screen"
+            font.pointSize: Style.fontSizeXS * scaling
+            color: Color.mOnSurfaceVariant
+            wrapMode: Text.WordWrap
+            Layout.fillWidth: true
+          }
+
+          NComboBox {
+            Layout.fillWidth: true
+            model: ListModel {
+              ListElement {
+                key: "top"
+                name: "Top"
+              }
+              ListElement {
+                key: "bottom"
+                name: "Bottom"
+              }
+            }
+            currentKey: Settings.data.bar.barPosition
+            onSelected: function (key) {
+              Settings.data.bar.barPosition = key
+            }
+          }
+        }
+
         NToggle {
           label: "Show Active Window"
           description: "Display the title of the currently focused window on the left side of the bar."

@@ -168,7 +168,7 @@ Item {
 
   NTooltip {
     id: tooltip
-    positionAbove: false
+    positionAbove: Settings.data.bar.barPosition === "bottom"
     target: pill
     delay: Style.tooltipDelayLong
     text: root.tooltipText

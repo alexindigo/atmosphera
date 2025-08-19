@@ -90,8 +90,12 @@ NLoader {
         property real innerMargin: sidePanel.cardSpacing
         // Height scales to content plus vertical padding
         height: content.implicitHeight + innerMargin * 2
-        // Place the panel just below the bar (overlay content starts below bar due to topMargin)
-        y: Style.marginS * scaling
+        // Place the panel relative to the bar based on its position
+        y: Settings.data.bar.barPosition === "top" ? Style.marginS * scaling : undefined
+        anchors {
+          bottom: Settings.data.bar.barPosition === "bottom" ? parent.bottom : undefined
+          bottomMargin: Settings.data.bar.barPosition === "bottom" ? Style.barHeight * scaling + Style.marginS * scaling : undefined
+        }
         // Center horizontally under the anchorX, clamped to the screen bounds
         x: Math.max(Style.marginS * scaling, Math.min(parent.width - width - Style.marginS * scaling,
                                                       Math.round(anchorX - width / 2)))

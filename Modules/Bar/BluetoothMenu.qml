@@ -73,10 +73,14 @@ NLoader {
         border.width: Math.max(1, Style.borderS * scaling)
         width: 380 * scaling
         height: 500 * scaling
-        anchors.top: parent.top
-        anchors.right: parent.right
-        anchors.topMargin: Style.marginXS * scaling
-        anchors.rightMargin: Style.marginXS * scaling
+        anchors {
+          right: parent.right
+          rightMargin: Style.marginXS * scaling
+          top: Settings.data.bar.barPosition === "top" ? parent.top : undefined
+          bottom: Settings.data.bar.barPosition === "bottom" ? parent.bottom : undefined
+          topMargin: Settings.data.bar.barPosition === "top" ? Style.marginXS * scaling : undefined
+          bottomMargin: Settings.data.bar.barPosition === "bottom" ? Style.barHeight * scaling + Style.marginXS * scaling : undefined
+        }
 
         // Animation properties
         property real scaleValue: 0.8
