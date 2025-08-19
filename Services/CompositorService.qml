@@ -28,6 +28,18 @@ Singleton {
   signal overviewStateChanged
   signal windowListChanged
 
+  // Throttle timer to prevent too frequent window updates
+  Timer {
+    id: windowUpdateTimer
+    interval: 100 // 100ms debounce
+    repeat: false
+    onTriggered: {
+      if (isHyprland) {
+        updateHyprlandWindows()
+      }
+    }
+  }
+
   // Compositor detection
   Component.onCompleted: {
     detectCompositor()
@@ -52,7 +64,8 @@ Singleton {
     enabled: isHyprland && Hyprland && Hyprland.toplevels
     function onValuesChanged() {
       try {
-        updateHyprlandWindows()
+        // Use throttled update to prevent rapid-fire updates causing crashes
+        windowUpdateTimer.restart()
         windowListChanged()
       } catch (e) {
         Logger.error("Compositor", "Error in toplevels valuesChanged:", e)
@@ -65,10 +78,12 @@ Singleton {
     enabled: isHyprland && Hyprland
     function onRawEvent(event) {
       try {
+        // Only update workspaces on raw events, not windows (too frequent)
         updateHyprlandWorkspaces()
         workspaceChanged()
-        updateHyprlandWindows()
-        windowListChanged()
+        // Remove automatic window updates on raw events to prevent crashes
+        // updateHyprlandWindows()
+        // windowListChanged()
       } catch (e) {
         Logger.error("Compositor", "Error in rawEvent:", e)
       }
@@ -107,8 +122,26 @@ Singleton {
   // Hyprland integration
   function initHyprland() {
     try {
-      Hyprland.refreshWorkspaces()
-      Hyprland.refreshToplevels()
+      Logger.log("Compositor", "Starting Hyprland initialization...")
+      
+      // Add safety checks before calling refresh functions
+      if (!Hyprland) {
+        throw new Error("Hyprland object is null")
+      }
+      
+      if (typeof Hyprland.refreshWorkspaces === 'function') {
+        Hyprland.refreshWorkspaces()
+      } else {
+        Logger.warn("Compositor", "Hyprland.refreshWorkspaces not available")
+      }
+      
+      if (typeof Hyprland.refreshToplevels === 'function') {
+        Hyprland.refreshToplevels()
+      } else {
+        Logger.warn("Compositor", "Hyprland.refreshToplevels not available")
+      }
+      
+      // Update with safety checks
       updateHyprlandWorkspaces()
       updateHyprlandWindows()
       setupHyprlandConnections()
@@ -117,6 +150,7 @@ Singleton {
       Logger.error("Compositor", "Error initializing Hyprland:", e)
       compositorType = "unknown"
       isHyprland = false
+      isNiri = false
     }
   }
 
@@ -485,8 +519,12 @@ Singleton {
 
   // Get focused window
   function getFocusedWindow() {
-    if (focusedWindowIndex >= 0 && focusedWindowIndex < windows.length) {
-      return windows[focusedWindowIndex]
+    try {
+      if (focusedWindowIndex >= 0 && focusedWindowIndex < windows.length && windows) {
+        return windows[focusedWindowIndex]
+      }
+    } catch (e) {
+      Logger.error("Compositor", "Error getting focused window:", e)
     }
     return null
   }
