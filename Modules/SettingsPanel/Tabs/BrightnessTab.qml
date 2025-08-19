@@ -34,39 +34,14 @@ Item {
           color: Color.mOnSurface
         }
 
-        NText {
-          text: "Configure brightness controls and monitor settings."
-          font.pointSize: Style.fontSize * scaling
-          color: Color.mOnSurfaceVariant
-        }
-
         // Bar Visibility Section
-        ColumnLayout {
-          spacing: Style.marginS * scaling
-          Layout.fillWidth: true
-          Layout.topMargin: Style.marginL * scaling
-
-          NText {
-            text: "Bar Integration"
-            font.pointSize: Style.fontSizeL * scaling
-            font.weight: Style.fontWeightBold
-            color: Color.mOnSurface
-          }
-
-          NToggle {
-            label: "Show Brightness Icon"
-            description: "Display the brightness control icon in the top bar."
-            checked: Settings.data.bar.showBrightness
-            onToggled: checked => {
-                         Settings.data.bar.showBrightness = checked
-                       }
-          }
-        }
-
-        NDivider {
-          Layout.fillWidth: true
-          Layout.topMargin: Style.marginL * scaling
-          Layout.bottomMargin: Style.marginL * scaling
+        NToggle {
+          label: "Show Bar Icon"
+          description: "Display the brightness control icon in the bar."
+          checked: Settings.data.bar.showBrightness
+          onToggled: checked => {
+                       Settings.data.bar.showBrightness = checked
+                     }
         }
 
         // Brightness Step Section
@@ -74,19 +49,9 @@ Item {
           spacing: Style.marginS * scaling
           Layout.fillWidth: true
 
-          NText {
-            text: "Brightness Step Size"
-            font.pointSize: Style.fontSizeL * scaling
-            font.weight: Style.fontWeightBold
-            color: Color.mOnSurface
-          }
-
-          NText {
-            text: "Adjust the step size for brightness changes (scroll wheel, keyboard shortcuts)."
-            font.pointSize: Style.fontSizeXS * scaling
-            color: Color.mOnSurfaceVariant
-            wrapMode: Text.WordWrap
-            Layout.fillWidth: true
+          NLabel {
+            label: "Brightness Step Size"
+            description: "Adjust the step size for brightness changes (scroll wheel, keyboard shortcuts)."
           }
 
           RowLayout {
@@ -127,19 +92,9 @@ Item {
           spacing: Style.marginS * scaling
           Layout.fillWidth: true
 
-          NText {
-            text: "Monitor Brightness Overview"
-            font.pointSize: Style.fontSizeL * scaling
-            font.weight: Style.fontWeightBold
-            color: Color.mOnSurface
-          }
-
-          NText {
-            text: "Current brightness levels for all detected monitors."
-            font.pointSize: Style.fontSizeXS * scaling
-            color: Color.mOnSurfaceVariant
-            wrapMode: Text.WordWrap
-            Layout.fillWidth: true
+          NLabel {
+            label: "Monitors Brightness Control"
+description: "Current brightness levels for all detected monitors."
           }
 
           // Single monitor display using the same data source as the bar icon

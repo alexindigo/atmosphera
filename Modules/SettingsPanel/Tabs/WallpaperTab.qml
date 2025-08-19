@@ -96,22 +96,10 @@ ColumnLayout {
         // Interval
         ColumnLayout {
           RowLayout {
-            Layout.fillWidth: true
-
-            ColumnLayout {
-              NText {
-                text: "Wallpaper Interval"
-                font.weight: Style.fontWeightBold
-                color: Color.mOnSurface
-              }
-
-              NText {
-                text: "How often to change wallpapers automatically (in seconds)."
-                font.pointSize: Style.fontSizeXS * scaling
-                color: Color.mOnSurface
-                wrapMode: Text.WordWrap
-                Layout.fillWidth: true
-              }
+            NLabel {
+              label: "Wallpaper Interval"
+              description: "How often to change wallpapers automatically (in seconds)."
+              Layout.fillWidth: true
             }
 
             NText {

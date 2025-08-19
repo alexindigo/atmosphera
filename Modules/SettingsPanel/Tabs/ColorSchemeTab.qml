@@ -107,19 +107,6 @@ ColumnLayout {
         spacing: Style.marginL * scaling
         Layout.fillWidth: true
 
-        // Use Matugen
-        NToggle {
-          label: "Enable Matugen"
-          description: "Automatically generate colors based on your active wallpaper."
-          checked: Settings.data.colorSchemes.useWallpaperColors
-          onToggled: checked => {
-                       Settings.data.colorSchemes.useWallpaperColors = checked
-                       if (Settings.data.colorSchemes.useWallpaperColors) {
-                         ColorSchemeService.changedWallpaper()
-                       }
-                     }
-        }
-
         // Dark Mode Toggle (affects both Matugen and predefined schemes that provide variants)
         NToggle {
           label: "Dark Mode"
@@ -148,6 +135,19 @@ ColumnLayout {
           checked: Settings.data.colorSchemes.themeApps
           onToggled: checked => {
                        Settings.data.colorSchemes.themeApps = checked
+                       if (Settings.data.colorSchemes.useWallpaperColors) {
+                         ColorSchemeService.changedWallpaper()
+                       }
+                     }
+        }
+
+        // Use Matugen
+        NToggle {
+          label: "Enable Matugen"
+          description: "Automatically generate colors based on your active wallpaper."
+          checked: Settings.data.colorSchemes.useWallpaperColors
+          onToggled: checked => {
+                       Settings.data.colorSchemes.useWallpaperColors = checked
                        if (Settings.data.colorSchemes.useWallpaperColors) {
                          ColorSchemeService.changedWallpaper()
                        }

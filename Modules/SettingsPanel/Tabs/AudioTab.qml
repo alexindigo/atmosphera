@@ -45,7 +45,7 @@ ColumnLayout {
         Layout.fillWidth: true
 
         NText {
-          text: "Audio"
+          text: "Audio Output Volume"
           font.pointSize: Style.fontSizeXXL * scaling
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface

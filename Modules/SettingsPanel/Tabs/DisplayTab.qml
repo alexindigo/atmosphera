@@ -88,7 +88,7 @@ Item {
 
                 NToggle {
                   label: "Bar"
-                  description: "Enable the top bar on this monitor."
+                  description: "Enable the bar on this monitor."
                   checked: (Settings.data.bar.monitors || []).indexOf(modelData.name) !== -1
                   onToggled: checked => {
                                if (checked) {

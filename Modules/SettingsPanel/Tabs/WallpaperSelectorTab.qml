@@ -38,21 +38,16 @@ Item {
 
         Rectangle {
           Layout.fillWidth: true
-          Layout.preferredHeight: 120 * scaling
+          Layout.preferredHeight: 140 * scaling
           radius: Style.radiusM * scaling
-          color: Color.mSurface
-          border.color: Color.mOutline
-          border.width: Math.max(1, Style.borderS * scaling)
-          clip: true
+          color: Color.mPrimary
 
           NImageRounded {
             id: currentWallpaperImage
             anchors.fill: parent
-            anchors.margins: Style.marginS * scaling
+            anchors.margins: Style.marginXS * scaling
             imagePath: WallpaperService.currentWallpaper
             fallbackIcon: "image"
-            borderColor: Color.mOutline
-            borderWidth: Math.max(1, Style.borderS * scaling)
             imageRadius: Style.radiusM * scaling
           }
         }

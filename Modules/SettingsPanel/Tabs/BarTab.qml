@@ -34,7 +34,7 @@ ColumnLayout {
         Layout.fillWidth: true
 
         NText {
-          text: "Components"
+          text: "Bar Components"
           font.pointSize: Style.fontSizeXXL * scaling
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface

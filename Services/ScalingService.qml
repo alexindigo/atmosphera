@@ -6,7 +6,6 @@ import qs.Commons
 Singleton {
   id: root
 
-  // Automatic, orientation-agnostic scaling
   function scale(aScreen) {
     return scaleByName(aScreen.name)
   }

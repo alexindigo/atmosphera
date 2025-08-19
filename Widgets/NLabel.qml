@@ -14,6 +14,7 @@ ColumnLayout {
     font.pointSize: Style.fontSizeM * scaling
     font.weight: Style.fontWeightBold
     color: Color.mOnSurface
+    visible: label !== ""
   }
 
   NText {
@@ -21,5 +22,7 @@ ColumnLayout {
     font.pointSize: Style.fontSizeS * scaling
     color: Color.mOnSurfaceVariant
     wrapMode: Text.WordWrap
+    visible: description !== ""
+    Layout.fillWidth: true
   }
 }
