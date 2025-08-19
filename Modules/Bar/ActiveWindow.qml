@@ -29,27 +29,18 @@ Row {
   Connections {
     target: CompositorService
     function onActiveWindowChanged() {
-      try {
-        // Check if window actually changed
-        if (CompositorService.focusedWindowIndex !== lastWindowIndex) {
-          lastWindowIndex = CompositorService.focusedWindowIndex
-          showingFullTitle = true
-          fullTitleTimer.restart()
-        }
-      } catch (e) {
-        console.error("ActiveWindow: Error in activeWindowChanged:", e)
+      // Check if window actually changed
+      if (CompositorService.focusedWindowIndex !== lastWindowIndex) {
+        lastWindowIndex = CompositorService.focusedWindowIndex
+        showingFullTitle = true
+        fullTitleTimer.restart()
       }
     }
   }
 
   function getTitle() {
-    try {
-      const focusedWindow = CompositorService.getFocusedWindow()
-      return focusedWindow ? (focusedWindow.title || focusedWindow.appId || "") : ""
-    } catch (e) {
-      console.error("ActiveWindow: Error getting title:", e)
-      return ""
-    }
+    const focusedWindow = CompositorService.getFocusedWindow()
+    return focusedWindow ? (focusedWindow.title || focusedWindow.appId || "") : ""
   }
 
   //  A hidden text element to safely measure the full title width

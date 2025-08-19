@@ -28,18 +28,6 @@ Singleton {
   signal overviewStateChanged
   signal windowListChanged
 
-  // Throttle timer to prevent too frequent window updates
-  Timer {
-    id: windowUpdateTimer
-    interval: 100 // 100ms debounce
-    repeat: false
-    onTriggered: {
-      if (isHyprland) {
-        updateHyprlandWindows()
-      }
-    }
-  }
-
   // Compositor detection
   Component.onCompleted: {
     detectCompositor()
@@ -48,52 +36,37 @@ Singleton {
   // Hyprland connections
   Connections {
     target: Hyprland.workspaces
-    enabled: isHyprland && Hyprland && Hyprland.workspaces
+    enabled: isHyprland
     function onValuesChanged() {
-      try {
-        updateHyprlandWorkspaces()
-        workspaceChanged()
-      } catch (e) {
-        Logger.error("Compositor", "Error in workspaces valuesChanged:", e)
-      }
+      updateHyprlandWorkspaces()
+      workspaceChanged()
     }
   }
 
   Connections {
     target: Hyprland.toplevels
-    enabled: isHyprland && Hyprland && Hyprland.toplevels
+    enabled: isHyprland
     function onValuesChanged() {
-      try {
-        // Use throttled update to prevent rapid-fire updates causing crashes
-        windowUpdateTimer.restart()
-        windowListChanged()
-      } catch (e) {
-        Logger.error("Compositor", "Error in toplevels valuesChanged:", e)
-      }
+      updateHyprlandWindows()
+      windowListChanged()
     }
   }
 
   Connections {
     target: Hyprland
-    enabled: isHyprland && Hyprland
+    enabled: isHyprland
     function onRawEvent(event) {
-      try {
-        // Only update workspaces on raw events, not windows (too frequent)
-        updateHyprlandWorkspaces()
-        workspaceChanged()
-        // Remove automatic window updates on raw events to prevent crashes
-        // updateHyprlandWindows()
-        // windowListChanged()
-      } catch (e) {
-        Logger.error("Compositor", "Error in rawEvent:", e)
-      }
+      updateHyprlandWorkspaces()
+      workspaceChanged()
+      updateHyprlandWindows()
+      windowListChanged()
     }
   }
 
   function detectCompositor() {
     try {
-      // Try Hyprland first - add extra safety checks
-      if (Hyprland && Hyprland.eventSocketPath) {
+      // Try Hyprland first
+      if (Hyprland.eventSocketPath) {
         compositorType = "hyprland"
         isHyprland = true
         isNiri = false
@@ -101,7 +74,7 @@ Singleton {
         return
       }
     } catch (e) {
-      Logger.warn("Compositor", "Hyprland detection failed:", e)
+
       // Hyprland not available
     }
 
@@ -122,26 +95,8 @@ Singleton {
   // Hyprland integration
   function initHyprland() {
     try {
-      Logger.log("Compositor", "Starting Hyprland initialization...")
-      
-      // Add safety checks before calling refresh functions
-      if (!Hyprland) {
-        throw new Error("Hyprland object is null")
-      }
-      
-      if (typeof Hyprland.refreshWorkspaces === 'function') {
-        Hyprland.refreshWorkspaces()
-      } else {
-        Logger.warn("Compositor", "Hyprland.refreshWorkspaces not available")
-      }
-      
-      if (typeof Hyprland.refreshToplevels === 'function') {
-        Hyprland.refreshToplevels()
-      } else {
-        Logger.warn("Compositor", "Hyprland.refreshToplevels not available")
-      }
-      
-      // Update with safety checks
+      Hyprland.refreshWorkspaces()
+      Hyprland.refreshToplevels()
       updateHyprlandWorkspaces()
       updateHyprlandWindows()
       setupHyprlandConnections()
@@ -150,7 +105,6 @@ Singleton {
       Logger.error("Compositor", "Error initializing Hyprland:", e)
       compositorType = "unknown"
       isHyprland = false
-      isNiri = false
     }
   }
 
@@ -163,31 +117,16 @@ Singleton {
 
     workspaces.clear()
     try {
-      // Add null checks for Hyprland objects
-      if (!Hyprland || !Hyprland.workspaces || !Hyprland.workspaces.values) {
-        Logger.warn("Compositor", "Hyprland workspaces not available")
-        return
-      }
-
       const hlWorkspaces = Hyprland.workspaces.values
       for (var i = 0; i < hlWorkspaces.length; i++) {
         const ws = hlWorkspaces[i]
-        
-        // Add null checks for workspace properties
-        if (!ws) {
-          continue
-        }
-
         // Only append workspaces with id >= 1
         if (ws.id >= 1) {
-          // Safe property access with proper null checks
-          const monitorName = ws.monitor && ws.monitor.name ? ws.monitor.name : ""
-          
           workspaces.append({
                               "id": i,
                               "idx": ws.id,
                               "name": ws.name || "",
-                              "output": monitorName,
+                              "output": ws.monitor?.name || "",
                               "isActive": ws.active === true,
                               "isFocused": ws.focused === true,
                               "isUrgent": ws.urgent === true
@@ -204,43 +143,17 @@ Singleton {
       return
 
     try {
-      // Add null checks for Hyprland objects
-      if (!Hyprland || !Hyprland.toplevels || !Hyprland.toplevels.values) {
-        Logger.warn("Compositor", "Hyprland toplevels not available")
-        return
-      }
-
       const hlToplevels = Hyprland.toplevels.values
       const windowsList = []
 
       for (var i = 0; i < hlToplevels.length; i++) {
         const toplevel = hlToplevels[i]
-        
-        // Add null checks for toplevel properties
-        if (!toplevel) {
-          continue
-        }
-
-        // Safe property access with proper null checks
-        const workspaceId = toplevel.workspace && toplevel.workspace.id !== undefined ? toplevel.workspace.id : null
-        
-        // Extra safety for activeToplevel access - this is often the source of crashes
-        let isFocused = false
-        try {
-          if (Hyprland && Hyprland.activeToplevel && toplevel.address) {
-            isFocused = Hyprland.activeToplevel.address === toplevel.address
-          }
-        } catch (e) {
-          // activeToplevel access failed, default to false
-          isFocused = false
-        }
-
         windowsList.push({
                            "id": toplevel.address || "",
                            "title": toplevel.title || "",
                            "appId": toplevel.class || toplevel.initialClass || "",
-                           "workspaceId": workspaceId,
-                           "isFocused": isFocused
+                           "workspaceId": toplevel.workspace?.id || null,
+                           "isFocused": toplevel.activated === true
                          })
       }
 
@@ -259,10 +172,6 @@ Singleton {
       activeWindowChanged()
     } catch (e) {
       Logger.error("Compositor", "Error updating Hyprland windows:", e)
-      // Reset to safe state on error
-      windows = []
-      focusedWindowIndex = -1
-      updateFocusedWindowTitle()
     }
   }
 
@@ -519,12 +428,8 @@ Singleton {
 
   // Get focused window
   function getFocusedWindow() {
-    try {
-      if (focusedWindowIndex >= 0 && focusedWindowIndex < windows.length && windows) {
-        return windows[focusedWindowIndex]
-      }
-    } catch (e) {
-      Logger.error("Compositor", "Error getting focused window:", e)
+    if (focusedWindowIndex >= 0 && focusedWindowIndex < windows.length) {
+      return windows[focusedWindowIndex]
     }
     return null
   }
