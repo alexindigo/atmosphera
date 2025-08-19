@@ -32,9 +32,12 @@ Variants {
                           || (Settings.data.notifications.monitors.length === 0))
                          && (NotificationService.notificationModel.count > 0) : false
 
-    anchors.top: true
+    // Position based on bar location
+    anchors.top: Settings.data.bar.position === "top"
+    anchors.bottom: Settings.data.bar.position === "bottom"
     anchors.right: true
-    margins.top: (Style.barHeight + Style.marginM) * scaling
+    margins.top: Settings.data.bar.position === "top" ? (Style.barHeight + Style.marginM) * scaling : 0
+    margins.bottom: Settings.data.bar.position === "bottom" ? (Style.barHeight + Style.marginM) * scaling : 0
     margins.right: Style.marginM * scaling
     implicitWidth: 360 * scaling
     implicitHeight: Math.min(notificationStack.implicitHeight, (NotificationService.maxVisible * 120) * scaling)
@@ -57,7 +60,9 @@ Variants {
     // Main notification container
     Column {
       id: notificationStack
-      anchors.top: parent.top
+      // Position based on bar location
+      anchors.top: Settings.data.bar.position === "top" ? parent.top : undefined
+      anchors.bottom: Settings.data.bar.position === "bottom" ? parent.bottom : undefined
       anchors.right: parent.right
       spacing: Style.marginS * scaling
       width: 360 * scaling

@@ -17,15 +17,20 @@ Variants {
     readonly property real scaling: ScalingService.scale(screen)
     screen: modelData
 
-    // Position at top, centered horizontally
+    // Position based on bar location, like Notification popup does
     anchors {
-      top: true
+      top: Settings.data.bar.position === "top"
+      bottom: Settings.data.bar.position === "bottom"
       left: true
       right: true
     }
     
+    // Set margins based on bar position
+    margins.top: Settings.data.bar.position === "top" ? (Style.barHeight + Style.marginS) * scaling : 0
+    margins.bottom: Settings.data.bar.position === "bottom" ? (Style.barHeight + Style.marginS) * scaling : 0
+    
     // Small height when hidden, appropriate height when visible
-    implicitHeight: toast.visible ? toast.height + Style.barHeight * scaling + Style.marginS * scaling : 1
+    implicitHeight: toast.visible ? toast.height + Style.marginS * scaling : 1
 
     // Transparent background
     color: Color.transparent
@@ -39,8 +44,13 @@ Variants {
       id: toast
       scaling: root.scaling
       
-      // Position just below where the bar would be
-      targetY: Style.barHeight * scaling + Style.marginS * scaling
+      // Simple positioning - margins already account for bar
+      targetY: Style.marginS * scaling
+      
+      // Hidden position based on bar location
+      hiddenY: Settings.data.bar.position === "top"
+               ? -toast.height - 20
+               : toast.height + 20
       
       Component.onCompleted: {
         // Register this toast with the service
