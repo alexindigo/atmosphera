@@ -169,6 +169,8 @@ Item {
   NTooltip {
     id: tooltip
     positionAbove: Settings.data.bar.barPosition === "bottom"
+    positionLeft: Settings.data.bar.barPosition === "right"
+    positionRight: Settings.data.bar.barPosition === "left"
     target: pill
     delay: Style.tooltipDelayLong
     text: root.tooltipText
