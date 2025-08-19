@@ -15,7 +15,9 @@ PopupWindow {
   property bool isSubMenu: false
   property bool isHovered: rootMouseArea.containsMouse
 
-  implicitWidth: 180 * scaling
+  readonly property int menuWidth: 180
+
+  implicitWidth: menuWidth * scaling
 
   // Use the content height of the Flickable for implicit height
   implicitHeight: Math.min(Screen.height * 0.9, flickable.contentHeight + (Style.marginM * 2 * scaling))
@@ -44,7 +46,7 @@ PopupWindow {
     visible = true
     forceActiveFocus()
 
-    // Force update after showing. This should now be more reliable.
+    // Force update after showing.
     Qt.callLater(() => {
                    root.anchor.updateAnchor()
                  })
@@ -204,11 +206,16 @@ PopupWindow {
                     entry.subMenu.destroy()
                   }
 
+                  // Need a slight overlap so that menu don't close when moving the mouse to a submenu
+                  const submenuWidth = menuWidth * scaling // Assuming a similar width as the parent
+                  const overlap = 4 * scaling // A small overlap to bridge the mouse path
+
+                  // Check if there's enough space on the right
                   const globalPos = entry.mapToGlobal(0, 0)
-                  const submenuWidth = Style.baseWidgetSize * 5.625 * scaling
-                  const gap = 12 * scaling
                   const openLeft = (globalPos.x + entry.width + submenuWidth > Screen.width)
-                  const anchorX = openLeft ? -submenuWidth - gap : entry.width + gap
+
+                  // Position with overlap
+                  const anchorX = openLeft ? -submenuWidth + overlap : entry.width - overlap
 
                   // Create submenu
                   entry.subMenu = Qt.createComponent("TrayMenu.qml").createObject(root, {
