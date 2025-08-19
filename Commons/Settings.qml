@@ -32,17 +32,17 @@ Singleton {
 
   // Needed to only have one NPanel loaded at a time. <--- VERY BROKEN
   //property var openPanel: null
-  
+
   // Function to validate monitor configurations
   function validateMonitorConfigurations() {
     var availableScreenNames = []
     for (var i = 0; i < Quickshell.screens.length; i++) {
       availableScreenNames.push(Quickshell.screens[i].name)
     }
-    
+
     Logger.log("Settings", "Available monitors: [" + availableScreenNames.join(", ") + "]")
     Logger.log("Settings", "Configured bar monitors: [" + adapter.bar.monitors.join(", ") + "]")
-    
+
     // Check bar monitors
     if (adapter.bar.monitors.length > 0) {
       var hasValidBarMonitor = false
@@ -53,7 +53,8 @@ Singleton {
         }
       }
       if (!hasValidBarMonitor) {
-        Logger.log("Settings", "No configured bar monitors found on system, clearing bar monitor list to show on all screens")
+        Logger.log("Settings",
+                   "No configured bar monitors found on system, clearing bar monitor list to show on all screens")
         adapter.bar.monitors = []
       } else {
         Logger.log("Settings", "Found valid bar monitors, keeping configuration")
@@ -88,10 +89,10 @@ Singleton {
           Logger.log("Settings", "Set current wallpaper", adapter.wallpaper.current)
           WallpaperService.setCurrentWallpaper(adapter.wallpaper.current, true)
         }
-        
+
         // Validate monitor configurations - if none of the configured monitors exist, clear the lists
         validateMonitorConfigurations()
-        
+
         isInitialLoad = false
       })
     }
@@ -108,7 +109,7 @@ Singleton {
       property JsonObject bar
 
       bar: JsonObject {
-        property string barPosition: "top"  // Possible values: "top", "bottom", "left", "right"
+        property string barPosition: "top" // Possible values: "top", "bottom", "left", "right"
         property bool showActiveWindow: true
         property bool showSystemInfo: false
         property bool showMedia: false
@@ -222,7 +223,7 @@ Singleton {
         property string fontFamily: "Roboto" // Family for all text
       }
 
-      // Scaling (not stored as JsonObject)
+      // Scaling (not stored inside JsonObject, or it crashes)
       property var monitorsScaling: {
 
       }

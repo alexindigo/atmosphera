@@ -43,12 +43,10 @@ NLoader {
       }
 
       margins {
-        top: (Settings.data.bar.monitors.includes(modelData.name)
-              || (Settings.data.bar.monitors.length === 0)) && Settings.data.bar.barPosition === "top" 
-              ? Math.floor(Style.barHeight * scaling) : 0
-        bottom: (Settings.data.bar.monitors.includes(modelData.name)
-              || (Settings.data.bar.monitors.length === 0)) && Settings.data.bar.barPosition === "bottom" 
-              ? Math.floor(Style.barHeight * scaling) : 0
+        top: (Settings.data.bar.monitors.includes(modelData.name) || (Settings.data.bar.monitors.length === 0))
+             && Settings.data.bar.barPosition === "top" ? Math.floor(Style.barHeight * scaling) : 0
+        bottom: (Settings.data.bar.monitors.includes(modelData.name) || (Settings.data.bar.monitors.length === 0))
+                && Settings.data.bar.barPosition === "bottom" ? Math.floor(Style.barHeight * scaling) : 0
       }
 
       // Source we want to show only as a ring
