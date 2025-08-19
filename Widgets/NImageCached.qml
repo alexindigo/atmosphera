@@ -4,6 +4,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.Commons
+import "../Helpers/sha256.js" as Crypto
 
 Image {
   id: root
@@ -20,8 +21,8 @@ Image {
   smooth: true
   onImagePathChanged: {
     if (imagePath) {
-      hashProcess.command = ["sha256sum", imagePath]
-      hashProcess.running = true
+      imageHash = Crypto.sha256(imagePath)
+      Logger.log("NImageCached", imagePath, imageHash)
     } else {
       source = ""
       imageHash = ""
@@ -45,15 +46,6 @@ Image {
       grabToImage(res => {
                     return res.saveToFile(grabPath)
                   })
-    }
-  }
-
-  Process {
-    id: hashProcess
-    stdout: StdioCollector {
-      onStreamFinished: {
-        root.imageHash = text.split(" ")[0]
-      }
     }
   }
 }

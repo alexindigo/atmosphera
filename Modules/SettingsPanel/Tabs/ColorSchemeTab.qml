@@ -346,19 +346,19 @@ ColumnLayout {
     id: matugenCheck
     command: ["which", "matugen"]
     running: false
-    
-    onExited: function(exitCode) {
+
+    onExited: function (exitCode) {
       if (exitCode === 0) {
         // Matugen exists, enable it
         Settings.data.colorSchemes.useWallpaperColors = true
         ColorSchemeService.changedWallpaper()
-                    ToastService.showNotice("Matugen", "Enabled!")
-          } else {
-            // Matugen not found
-            ToastService.showWarning("Matugen", "Not installed!")
+        ToastService.showNotice("Matugen", "Enabled!")
+      } else {
+        // Matugen not found
+        ToastService.showWarning("Matugen", "Not installed!")
       }
     }
-    
+
     stdout: StdioCollector {}
     stderr: StdioCollector {}
   }

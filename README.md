@@ -25,19 +25,12 @@ A sleek, minimal, and thoughtfully crafted desktop shell for Wayland using **Qui
 
 ## Preview
 
-<details>
-<summary>Click to expand preview images</summary>
-
-![SidePanel](https://noctalia.dev/assets/SidePanel.png)  
-</br>
-
-![SettingsPanel](https://noctalia.dev/assets/SettingsPanel.png)  
-</br>
-
 ![Applauncher](https://noctalia.dev/assets/AppLauncher.png)
 
-</details>
-<br>
+![SettingsPanel](https://noctalia.dev/assets/SettingsPanel.png)  
+
+Support for Dark or Light color schemes.  
+![SidePanel](https://noctalia.dev/assets/SidePanel.png)  
 
 ---
 
@@ -71,7 +64,6 @@ A sleek, minimal, and thoughtfully crafted desktop shell for Wayland using **Qui
 - `quickshell-git` - Core shell framework
 - `ttf-material-symbols-variable-git` - Icon font for UI elements
 - `xdg-desktop-portal-gnome` - Desktop integration (or alternative portal)
-- `sha256sum` - To generate checksums for wallpaper caching
 
 
 ### Optional
@@ -94,7 +86,7 @@ A sleek, minimal, and thoughtfully crafted desktop shell for Wayland using **Qui
 yay -S quickshell-git
 
 # Download and install Noctalia
-mkdir -p ~/.config/quickshell && curl -sL https://github.com/noctalia-dev/noctalia-shell/releases/latest/download/noctalia-shell-latest.tar.gz | tar -xz --strip-components=1 -C ~/.config/quickshell/
+mkdir -p ~/.config/quickshell && curl -sL https://github.com/noctalia-dev/noctalia-shell/archive/refs/heads/main.tar.gz | tar -xz --strip-components=1 -C ~/.config/quickshell
 ```
 
 ### Usage
@@ -153,7 +145,6 @@ The launcher supports special commands for enhanced functionality:
 | Error                | `#e9899d`   | Soft rose red              |
 | On Error             | `#1e1418`   | Dark text on error         |
 | Outline              | `#4d445a`   | Purple-tinted outline      |
-| Outline Variant      | `#342c42`   | Variant outline color      |
 | Shadow               | `#120f18`   | Deep purple-tinted shadow  |
 
 </details>
@@ -234,15 +225,15 @@ Contributions are welcome! Don't worry about being perfect - every contribution 
 
 ---
 
-## Acknowledgment
+## 💜 Credits
 
-Special thanks to the creators of [**Caelestia**](https://github.com/caelestia-dots/shell) and [**DankMaterialShell**](https://github.com/AvengeMedia/DankMaterialShell) for their inspirational designs and clever implementation techniques.
+A heartfelt thank you to our incredible community of [**contributors**](https://github.com/noctalia-dev/noctalia-shell/graphs/contributors). We are immensely grateful for your dedicated participation and the constructive feedback you've provided, which continue to shape and improve our project for everyone.
 
 ---
 
-## 💜 Credits
+## Acknowledgment
 
-Huge thanks to [**@ferrreo**](https://github.com/ferrreo) and [**@quadbyte**](https://github.com/quadbyte) for their contributions and the cool features they added!
+Special thanks to the creators of [**Caelestia**](https://github.com/caelestia-dots/shell) and [**DankMaterialShell**](https://github.com/AvengeMedia/DankMaterialShell) for their inspirational designs and clever implementation techniques.
 
 ---
 
@@ -251,10 +242,6 @@ Huge thanks to [**@ferrreo**](https://github.com/ferrreo) and [**@quadbyte**](ht
 While I actually didn't want to accept donations, more and more people are asking to donate so... I don't know, if you really feel like donating then I obviously highly appreciate it but **PLEASE** never feel forced to donate or anything. It won't change how we work on Noctalia, it's a project that we work on for fun in the end.
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/R6R01IX85B)
-
----
-
-#### Special Thanks
 
 Thank you to everyone who supports me and this project 💜!
 * Gohma

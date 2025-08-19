@@ -145,7 +145,7 @@ Singleton {
     try {
       const hlToplevels = Hyprland.toplevels.values
       const windowsList = []
-      
+
       for (var i = 0; i < hlToplevels.length; i++) {
         const toplevel = hlToplevels[i]
         windowsList.push({
@@ -158,7 +158,7 @@ Singleton {
       }
 
       windows = windowsList
-      
+
       // Update focused window index
       focusedWindowIndex = -1
       for (var j = 0; j < windowsList.length; j++) {
@@ -167,7 +167,7 @@ Singleton {
           break
         }
       }
-      
+
       updateFocusedWindowTitle()
       activeWindowChanged()
     } catch (e) {
