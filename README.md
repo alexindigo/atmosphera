@@ -21,7 +21,7 @@
   </a>
 </p>
 
-A sleek, minimal, and thoughtfully crafted desktop shell for Wayland using **Quickshell**. Features a modern modular architecture with a status bar, notification system, control panel, comprehensive system integration, and more — all styled with a warm lavender palette and Material Design 3 principles.
+A sleek, minimal, and thoughtfully crafted desktop shell for Wayland using **Quickshell**. Features a modern modular architecture with a status bar, notification system, control panel, comprehensive system integration, and more — all styled with a warm lavender palette.
 
 ## Preview
 
