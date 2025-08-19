@@ -25,19 +25,12 @@ A sleek, minimal, and thoughtfully crafted desktop shell for Wayland using **Qui
 
 ## Preview
 
-<details>
-<summary>Click to expand preview images</summary>
-
-![SidePanel](https://noctalia.dev/assets/SidePanel.png)  
-</br>
-
-![SettingsPanel](https://noctalia.dev/assets/SettingsPanel.png)  
-</br>
-
 ![Applauncher](https://noctalia.dev/assets/AppLauncher.png)
 
-</details>
-<br>
+![SettingsPanel](https://noctalia.dev/assets/SettingsPanel.png)  
+
+Support for Dark or Light color schemes.  
+![SidePanel](https://noctalia.dev/assets/SidePanel.png)  
 
 ---
 
