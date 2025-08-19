@@ -69,8 +69,10 @@ A sleek, minimal, and thoughtfully crafted desktop shell for Wayland using **Qui
 ### Required
 
 - `quickshell-git` - Core shell framework
-- `material-symbols-git` - Icon font for UI elements
+- `ttf-material-symbols-variable-git` - Icon font for UI elements
 - `xdg-desktop-portal-gnome` - Desktop integration (or alternative portal)
+- `sha256sum` - To generate checksums for wallpaper caching
+
 
 ### Optional
 
