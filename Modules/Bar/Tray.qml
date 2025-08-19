@@ -119,7 +119,7 @@ Rectangle {
           id: trayTooltip
           target: trayIcon
           text: modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item"
-          positionAbove: Settings.data.bar.barPosition === "bottom"
+          positionAbove: Settings.data.bar.position === "bottom"
         }
       }
     }

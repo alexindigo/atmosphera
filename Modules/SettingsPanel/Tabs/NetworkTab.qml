@@ -49,6 +49,11 @@ ColumnLayout {
           onToggled: checked => {
                        Settings.data.network.wifiEnabled = checked
                        NetworkService.setWifiEnabled(checked)
+                       if (checked) {
+                         ToastService.showNotice("WiFi:\nEnabled")
+                       } else {
+                         ToastService.showNotice("WiFi:\nDisabled")
+                       }
                      }
         }
 
@@ -59,6 +64,11 @@ ColumnLayout {
           onToggled: checked => {
                        Settings.data.network.bluetoothEnabled = checked
                        BluetoothService.setBluetoothEnabled(checked)
+                       if (checked) {
+                         ToastService.showNotice("Bluetooth:\nEnabled")
+                       } else {
+                         ToastService.showNotice("Bluetooth:\nDisabled")
+                       }
                      }
         }
       }

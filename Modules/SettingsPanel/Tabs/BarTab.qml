@@ -71,9 +71,9 @@ ColumnLayout {
                 name: "Bottom"
               }
             }
-            currentKey: Settings.data.bar.barPosition
+            currentKey: Settings.data.bar.position
             onSelected: function (key) {
-              Settings.data.bar.barPosition = key
+              Settings.data.bar.position = key
             }
           }
         }

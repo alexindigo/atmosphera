@@ -91,10 +91,10 @@ NLoader {
         // Height scales to content plus vertical padding
         height: content.implicitHeight + innerMargin * 2
         // Place the panel relative to the bar based on its position
-        y: Settings.data.bar.barPosition === "top" ? Style.marginS * scaling : undefined
+        y: Settings.data.bar.position === "top" ? Style.marginS * scaling : undefined
         anchors {
-          bottom: Settings.data.bar.barPosition === "bottom" ? parent.bottom : undefined
-          bottomMargin: Settings.data.bar.barPosition === "bottom" ? Style.barHeight * scaling + Style.marginS * scaling : undefined
+          bottom: Settings.data.bar.position === "bottom" ? parent.bottom : undefined
+          bottomMargin: Settings.data.bar.position === "bottom" ? Style.barHeight * scaling + Style.marginS * scaling : undefined
         }
         // Center horizontally under the anchorX, clamped to the screen bounds
         x: Math.max(Style.marginS * scaling, Math.min(parent.width - width - Style.marginS * scaling,

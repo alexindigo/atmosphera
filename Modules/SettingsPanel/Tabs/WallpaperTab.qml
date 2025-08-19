@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import Quickshell.Io
 import qs.Commons
 import qs.Services
 import qs.Widgets
@@ -147,7 +148,13 @@ ColumnLayout {
           description: "Use SWWW daemon for advanced wallpaper management."
           checked: Settings.data.wallpaper.swww.enabled
           onToggled: checked => {
-                       Settings.data.wallpaper.swww.enabled = checked
+                       if (checked) {
+                         // Check if swww is installed
+                         swwwCheck.running = true
+                       } else {
+                         Settings.data.wallpaper.swww.enabled = false
+                         ToastService.showNotice("SWWW:\nDisabled")
+                       }
                      }
         }
 
@@ -334,5 +341,27 @@ ColumnLayout {
         }
       }
     }
+  }
+
+  // Process to check if swww is installed
+  Process {
+    id: swwwCheck
+    command: ["which", "swww"]
+    running: false
+    
+    onExited: function(exitCode) {
+      if (exitCode === 0) {
+        // SWWW exists, enable it
+        Settings.data.wallpaper.swww.enabled = true
+        WallpaperService.startSWWWDaemon()
+        ToastService.showNotice("SWWW:\nEnabled!")
+      } else {
+        // SWWW not found
+        ToastService.showWarning("SWWW:\nNot installed!")
+      }
+    }
+    
+    stdout: StdioCollector {}
+    stderr: StdioCollector {}
   }
 }

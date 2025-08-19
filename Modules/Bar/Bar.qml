@@ -25,8 +25,8 @@ Variants {
                           || (Settings.data.bar.monitors.length === 0)) : false
 
     anchors {
-      top: Settings.data.bar.barPosition === "top"
-      bottom: Settings.data.bar.barPosition === "bottom"
+      top: Settings.data.bar.position === "top"
+      bottom: Settings.data.bar.position === "bottom"
       left: true
       right: true
     }

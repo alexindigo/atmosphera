@@ -1,10 +1,10 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import Quickshell.Io
 import qs.Commons
 import qs.Services
 import qs.Widgets
-import Quickshell.Io
 
 ColumnLayout {
   id: root
@@ -147,9 +147,12 @@ ColumnLayout {
           description: "Automatically generate colors based on your active wallpaper."
           checked: Settings.data.colorSchemes.useWallpaperColors
           onToggled: checked => {
-                       Settings.data.colorSchemes.useWallpaperColors = checked
-                       if (Settings.data.colorSchemes.useWallpaperColors) {
-                         ColorSchemeService.changedWallpaper()
+                       if (checked) {
+                         // Check if matugen is installed
+                         matugenCheck.running = true
+                       } else {
+                         Settings.data.colorSchemes.useWallpaperColors = false
+                         ToastService.showNotice("Matugen:\nDisabled")
                        }
                      }
         }
@@ -336,5 +339,27 @@ ColumnLayout {
         }
       }
     }
+  }
+
+  // Simple process to check if matugen exists
+  Process {
+    id: matugenCheck
+    command: ["which", "matugen"]
+    running: false
+    
+    onExited: function(exitCode) {
+      if (exitCode === 0) {
+        // Matugen exists, enable it
+        Settings.data.colorSchemes.useWallpaperColors = true
+        ColorSchemeService.changedWallpaper()
+        ToastService.showNotice("Matugen:\nEnabled!")
+      } else {
+        // Matugen not found
+        ToastService.showWarning("Matugen:\nNot installed!")
+      }
+    }
+    
+    stdout: StdioCollector {}
+    stderr: StdioCollector {}
   }
 }
