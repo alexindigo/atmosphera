@@ -346,6 +346,19 @@ NBox {
     }
 
     Loader {
+      active: Settings.data.audio.visualizerType == "mirrored"
+      Layout.alignment: Qt.AlignHCenter
+
+      sourceComponent: MirroredSpectrum {
+        width: 300 * scaling
+        height: 80 * scaling
+        values: CavaService.values
+        fillColor: Color.mPrimary
+        Layout.alignment: Qt.AlignHCenter
+      }
+    }
+
+    Loader {
       active: Settings.data.audio.visualizerType == "wave"
       Layout.alignment: Qt.AlignHCenter
 
@@ -357,5 +370,10 @@ NBox {
         Layout.alignment: Qt.AlignHCenter
       }
     }
+
+
+
+
+    
   }
 }
