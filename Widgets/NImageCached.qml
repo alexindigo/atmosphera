@@ -4,7 +4,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.Commons
-import "../Helpers/sha256.js" as Crypto
+import "../Helpers/sha256.js" as Checksum
 
 Image {
   id: root
@@ -21,8 +21,8 @@ Image {
   smooth: true
   onImagePathChanged: {
     if (imagePath) {
-      imageHash = Crypto.sha256(imagePath)
-      Logger.log("NImageCached", imagePath, imageHash)
+      imageHash = Checksum.sha256(imagePath)
+      // Logger.log("NImageCached", imagePath, imageHash)
     } else {
       source = ""
       imageHash = ""
@@ -32,7 +32,6 @@ Image {
     if (imageHash && cachePath) {
       // Try to load the cached version, failure will be detected below in onStatusChanged
       source = cachePath
-      //Logger.Log(imagePath, cachePath)
     }
   }
   onStatusChanged: {
