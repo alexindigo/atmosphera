@@ -229,6 +229,9 @@ Singleton {
         
         // Legacy compatibility
         property string fontFamily: fontDefault // Keep for backward compatibility
+        
+        // Idle inhibitor state
+        property bool idleInhibitorEnabled: false
       }
 
       // Scaling (not stored inside JsonObject, or it crashes)

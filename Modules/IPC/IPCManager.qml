@@ -27,7 +27,8 @@ Item {
   IpcHandler {
     target: "idleInhibitor"
 
-    function toggle() {// TODO
+    function toggle() {
+      return IdleInhibitorService.manualToggle()
     }
   }
 
