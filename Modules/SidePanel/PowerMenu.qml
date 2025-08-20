@@ -10,45 +10,23 @@ import qs.Services
 import qs.Widgets
 import qs.Modules.LockScreen
 
-PanelWindow {
+
+
+NPanel {
   id: root
-  readonly property real scaling: ScalingService.scale(screen)
 
+  panelWidth: 500 * scaling
+  panelHeight: 300 * scaling
+  panelAnchorCentered: true
   
-  anchors.top: true
-  anchors.left: true
-  anchors.right: true
-  anchors.bottom: true
-  visible: false
-  color: "#3300FF00"
-  screen: screen
 
-  onVisibleChanged: {
-    if (visible) {
-      console.log("Oh Yeah")
-      // Focus the menu rectangle instead of root
-      menuRect.forceActiveFocus()
-    }
-  }
+  property var entriesCount: 5
+  property var entryHeight: Style.baseWidgetSize * scaling
 
-  function open() {
-    visible = true
-  }
+  panelContent: Rectangle {
+    color: Color.transparent
 
-  function close() {
-    visible = false
-  }
-
-  // // Clicking outside of the rectangle to close
-  // MouseArea {
-  //   anchors.fill: parent
-  //   onClicked: root.close()
-  //   // Prevent this MouseArea from interfering with child elements
-  //   propagateComposedEvents: true
-  //   z: -1  // Put it behind the menu
-  // }
-
-  // ----------------------------------
+    // ----------------------------------
   // System functions
   function logout() {
     CompositorService.logout()
@@ -89,34 +67,6 @@ PanelWindow {
     command: ["loginctl", "terminate-user", Quickshell.env("USER")]
     running: false
   }
-
-  property var entriesCount: 5
-  property var entryHeight: Style.baseWidgetSize * scaling
-
-  Rectangle {
-    id: menuRect
-    width: 160 * scaling
-    height: (entryHeight * entriesCount) + (Style.marginS * entriesCount * scaling)
-    radius: Style.radiusM * scaling
-    border.color: Color.mOutline
-    border.width: Math.max(1, Style.borderS * scaling)
-    color: Color.mSurface
-    visible: true
-    z: 9999
-    
-    // Add focus properties
-    focus: true
-    activeFocusOnTab: true
-
-    anchors.top: parent.top
-    anchors.right: parent.right
-    anchors.rightMargin: Style.marginL * scaling
-    anchors.topMargin: 86 * scaling
-
-    Component.onCompleted: {
-      console.log("oncompleted")
-      forceActiveFocus()
-    }
 
     ColumnLayout {
       anchors.fill: parent
@@ -172,9 +122,8 @@ PanelWindow {
           acceptedButtons: Qt.LeftButton
           
           onClicked: {
-            Logger.log("PowerMenu", "Lock screen requested")
-            // // Lock the screen
-            // lockScreen.isLoaded = true
+            // Lock the screen
+            lockScreen.isLoaded = true
             root.close()
           }
         }
