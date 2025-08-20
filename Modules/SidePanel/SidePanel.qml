@@ -14,9 +14,6 @@ NPanel {
   rHeight: 700 * scaling
   rAnchorRight: true
 
-  // rectX: Math.max(Style.marginS * scaling, Math.min(parent.width - width - Style.marginS * scaling,
-  //                                                   Math.round(anchorX - width / 2)))
-  // rectY: Settings.data.bar.position === "top" ? Style.marginS * scaling : undefined
   panelContent: Item {
     id: content
 
