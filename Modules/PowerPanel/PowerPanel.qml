@@ -12,12 +12,12 @@ import qs.Widgets
 NPanel {
   id: root
 
-  panelWidth: 420 * scaling
-  panelHeight: 370 * scaling
+  panelWidth: 440 * scaling
+  panelHeight: 380 * scaling
   panelAnchorCentered: true
 
   // Timer properties
-  property int timerDuration: 5000 // 5 seconds
+  property int timerDuration: 9000 // 9 seconds
   property string pendingAction: ""
   property bool timerActive: false
   property int timeRemaining: 0
@@ -34,7 +34,7 @@ NPanel {
       executeAction(action)
       return
     }
-    
+
     pendingAction = action
     timeRemaining = timerDuration
     timerActive = true
@@ -51,50 +51,31 @@ NPanel {
   function executeAction(action) {
     // Stop timer but don't reset other properties yet
     countdownTimer.stop()
-    
-    switch(action) {
-      case "lock":
-        // Access lockScreen directly like IPCManager does
-        if (!lockScreen.isLoaded) {
-          lockScreen.isLoaded = true
-        }
-        break
-      case "suspend":
-        suspendProcess.running = true
-        break
-      case "reboot":
-        rebootProcess.running = true
-        break
-      case "logout":
-        CompositorService.logout()
-        break
-      case "shutdown":
-        shutdownProcess.running = true
-        break
+
+    switch (action) {
+    case "lock":
+      // Access lockScreen directly like IPCManager does
+      if (!lockScreen.isLoaded) {
+        lockScreen.isLoaded = true
+      }
+      break
+    case "suspend":
+      CompositorService.suspend()
+      break
+    case "reboot":
+      CompositorService.reboot()
+      break
+    case "logout":
+      CompositorService.logout()
+      break
+    case "shutdown":
+      CompositorService.shutdown()
+      break
     }
-    
+
     // Reset timer state and close panel
     cancelTimer()
     root.close()
-  }
-
-  // System processes
-  Process {
-    id: shutdownProcess
-    command: ["shutdown", "-h", "now"]
-    running: false
-  }
-
-  Process {
-    id: rebootProcess
-    command: ["reboot"]
-    running: false
-  }
-
-  Process {
-    id: suspendProcess
-    command: ["systemctl", "suspend"]
-    running: false
   }
 
   // Countdown timer
@@ -127,18 +108,21 @@ NPanel {
         Layout.preferredHeight: Style.baseWidgetSize * 0.8 * scaling
 
         NText {
-          text: timerActive ? `${pendingAction.charAt(0).toUpperCase() + pendingAction.slice(1)} in ${Math.ceil(timeRemaining / 1000)}s` : "Power Options"
+          text: timerActive ? `${pendingAction.charAt(0).toUpperCase() + pendingAction.slice(1)} in ${Math.ceil(
+                                timeRemaining / 1000)} seconds...` : "Power Options"
           font.weight: Style.fontWeightBold
-          font.pointSize: Style.fontSizeM * scaling
+          font.pointSize: Style.fontSizeL * scaling
           color: timerActive ? Color.mPrimary : Color.mOnSurface
           Layout.alignment: Qt.AlignVCenter
           verticalAlignment: Text.AlignVCenter
         }
 
-        Item { Layout.fillWidth: true }
+        Item {
+          Layout.fillWidth: true
+        }
 
         NIconButton {
-          icon: timerActive ? "block" : "close"
+          icon: timerActive ? "back_hand" : "close"
           tooltipText: timerActive ? "Cancel Timer" : "Close"
           Layout.alignment: Qt.AlignVCenter
           colorBg: timerActive ? Color.applyOpacity(Color.mError, "20") : Color.transparent
@@ -154,8 +138,6 @@ NPanel {
         }
       }
 
-
-
       // Power options
       ColumnLayout {
         Layout.fillWidth: true
@@ -165,7 +147,7 @@ NPanel {
         PowerButton {
           Layout.fillWidth: true
           icon: "lock_outline"
-          title: "Lock Screen"
+          title: "Lock"
           subtitle: "Lock your session"
           onClicked: startTimer("lock")
           pending: timerActive && pendingAction === "lock"
@@ -212,41 +194,43 @@ NPanel {
           isShutdown: true
         }
       }
-
-
     }
   }
 
   // Custom power button component
   component PowerButton: Rectangle {
     id: buttonRoot
-    
+
     property string icon: ""
     property string title: ""
     property string subtitle: ""
     property bool pending: false
     property bool isShutdown: false
-    
-    signal clicked()
 
-    height: Style.baseWidgetSize * 1.5 * scaling
+    signal clicked
+
+    height: Style.baseWidgetSize * 1.6 * scaling
     radius: Style.radiusS * scaling
     color: {
-      if (pending) return Color.applyOpacity(Color.mPrimary, "20")
-      if (mouseArea.containsMouse) return Color.mSurfaceVariant
+      if (pending)
+        return Color.applyOpacity(Color.mPrimary, "20")
+      if (mouseArea.containsMouse)
+        return Color.mTertiary
       return Color.transparent
     }
-    
-    border.width: pending ? 2 * scaling : (mouseArea.containsMouse ? 1 * scaling : 0)
+
+    border.width: pending ? Math.max(Style.borderM * scaling) : 0
     border.color: pending ? Color.mPrimary : Color.mOutline
 
     Behavior on color {
-      ColorAnimation { duration: 150 }
+      ColorAnimation {
+        duration: Style.animationFast
+      }
     }
 
     Item {
       anchors.fill: parent
-      anchors.margins: Style.marginM * scaling
+      anchors.margins: Style.marginL * scaling
 
       // Icon on the left
       NIcon {
@@ -255,18 +239,24 @@ NPanel {
         anchors.verticalCenter: parent.verticalCenter
         text: buttonRoot.icon
         color: {
-          if (buttonRoot.pending) return Color.mPrimary
-          if (buttonRoot.isShutdown && mouseArea.containsMouse) return Color.mError
-          if (mouseArea.containsMouse) return Color.mPrimary
+
+          if (buttonRoot.pending)
+            return Color.mPrimary
+          if (buttonRoot.isShutdown && !mouseArea.containsMouse)
+            return Color.mError
+          if (mouseArea.containsMouse)
+            return Color.mOnTertiary
           return Color.mOnSurface
         }
-        font.pointSize: Style.fontSizeL * scaling
+        font.pointSize: Style.fontSizeXXXL * scaling
         width: Style.baseWidgetSize * 0.6 * scaling
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
-        
+
         Behavior on color {
-          ColorAnimation { duration: 150 }
+          ColorAnimation {
+            duration: Style.animationFast
+          }
         }
       }
 
@@ -275,23 +265,28 @@ NPanel {
         anchors.left: iconElement.right
         anchors.right: pendingIndicator.visible ? pendingIndicator.left : parent.right
         anchors.verticalCenter: parent.verticalCenter
-        anchors.leftMargin: Style.marginM * scaling
+        anchors.leftMargin: Style.marginXL * scaling
         anchors.rightMargin: pendingIndicator.visible ? Style.marginM * scaling : 0
-        spacing: 2 * scaling
+        spacing: 0
 
         NText {
           text: buttonRoot.title
           font.weight: Style.fontWeightMedium
-          font.pointSize: Style.fontSizeS * scaling
+          font.pointSize: Style.fontSizeM * scaling
           color: {
-            if (buttonRoot.pending) return Color.mPrimary
-            if (buttonRoot.isShutdown && mouseArea.containsMouse) return Color.mError
-            if (mouseArea.containsMouse) return Color.mPrimary
+            if (buttonRoot.pending)
+              return Color.mPrimary
+            if (buttonRoot.isShutdown && !mouseArea.containsMouse)
+              return Color.mError
+            if (mouseArea.containsMouse)
+              return Color.mOnTertiary
             return Color.mOnSurface
           }
-          
+
           Behavior on color {
-            ColorAnimation { duration: 150 }
+            ColorAnimation {
+              duration: Style.animationFast
+            }
           }
         }
 
@@ -304,10 +299,15 @@ NPanel {
           }
           font.pointSize: Style.fontSizeXS * scaling
           color: {
-            if (buttonRoot.pending) return Color.mPrimary
+            if (buttonRoot.pending)
+              return Color.mPrimary
+            if (buttonRoot.isShutdown && !mouseArea.containsMouse)
+              return Color.mError
+            if (mouseArea.containsMouse)
+              return Color.mOnTertiary
             return Color.mOnSurfaceVariant
           }
-          opacity: 0.8
+          opacity: Style.opacityHeavy
           wrapMode: Text.WordWrap
         }
       }
@@ -319,28 +319,26 @@ NPanel {
         anchors.verticalCenter: parent.verticalCenter
         width: 24 * scaling
         height: 24 * scaling
-        radius: 12 * scaling
+        radius: width * 0.5
         color: Color.mPrimary
         visible: buttonRoot.pending
-        
+
         NText {
           anchors.centerIn: parent
           text: Math.ceil(timeRemaining / 1000)
-          font.pointSize: Style.fontSizeXS * scaling
+          font.pointSize: Style.fontSizeS * scaling
           font.weight: Style.fontWeightBold
           color: Color.mOnPrimary
         }
       }
     }
 
-
-
     MouseArea {
       id: mouseArea
       anchors.fill: parent
       hoverEnabled: true
       cursorShape: Qt.PointingHandCursor
-      
+
       onClicked: buttonRoot.clicked()
     }
   }
