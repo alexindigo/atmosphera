@@ -7,6 +7,8 @@ import qs.Services
 PanelWindow {
   id: root
 
+  WlrLayershell.namespace: "noctalia-panel"
+
   readonly property real scaling: ScalingService.scale(screen)
 
   property bool showOverlay: Settings.data.general.dimDesktop
