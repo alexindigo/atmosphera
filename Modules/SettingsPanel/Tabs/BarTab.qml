@@ -88,6 +88,15 @@ ColumnLayout {
         }
 
         NToggle {
+          label: "Show App Icon Next To Active Window"
+          description: "Display the app icon next to the title of the currently focused window."
+          checked: Settings.data.bar.showActiveWindowIcon
+          onToggled: checked => {
+                       Settings.data.bar.showActiveWindowIcon = checked
+                     }
+        }
+
+        NToggle {
           label: "Show System Info"
           description: "Display system statistics (CPU, RAM, Temperature)."
           checked: Settings.data.bar.showSystemInfo

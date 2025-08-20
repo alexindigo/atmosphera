@@ -86,7 +86,7 @@ Row {
             width: Style.fontSizeL * scaling * 1.2
             height: Style.fontSizeL * scaling * 1.2
             anchors.verticalCenter: parent.verticalCenter
-            visible: getTitle() !== ""
+            visible: getTitle() !== "" && Settings.data.bar.showActiveWindowIcon
 
             IconImage {
                 id: windowIcon
