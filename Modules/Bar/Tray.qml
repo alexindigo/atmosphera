@@ -129,7 +129,6 @@ Rectangle {
   // Wrapped in NPanel so we can detect click outside of the menu to close the TrayMenu
   NPanel {
     id: trayPanel
-    showOverlay: false // no colors overlay even if activated in settings
 
     // Override hide function to animate first
     function hide() {

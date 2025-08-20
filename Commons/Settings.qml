@@ -30,9 +30,6 @@ Singleton {
   // Flag to prevent unnecessary wallpaper calls during reloads
   property bool isInitialLoad: true
 
-  // Needed to only have one NPanel loaded at a time. <--- VERY BROKEN
-  //property var openPanel: null
-
   // Function to validate monitor configurations
   function validateMonitorConfigurations() {
     var availableScreenNames = []
@@ -86,14 +83,14 @@ Singleton {
         if (isInitialLoad) {
           Logger.log("Settings", "OnLoaded")
           // Only set wallpaper on initial load, not on reloads
-          if (adapter.wallpaper.current !== "") { 
+          if (adapter.wallpaper.current !== "") {
             Logger.log("Settings", "Set current wallpaper", adapter.wallpaper.current)
             WallpaperService.setCurrentWallpaper(adapter.wallpaper.current, true)
           }
 
           // Validate monitor configurations, only once
           // if none of the configured monitors exist, clear the lists
-            validateMonitorConfigurations()
+          validateMonitorConfigurations()
         }
 
         isInitialLoad = false
@@ -128,7 +125,7 @@ Singleton {
 
       general: JsonObject {
         property string avatarImage: defaultAvatar
-        property bool dimDesktop: true
+        property bool dimDesktop: false
         property bool showScreenCorners: false
         property real radiusRatio: 1.0
       }

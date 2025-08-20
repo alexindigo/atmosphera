@@ -9,6 +9,9 @@ import qs.Widgets
 
 // Utilities: record & wallpaper
 NBox {
+
+  property real spacing: 0
+
   Layout.fillWidth: true
   Layout.preferredWidth: 1
   implicitHeight: utilRow.implicitHeight + Style.marginM * 2 * scaling
@@ -16,7 +19,7 @@ NBox {
     id: utilRow
     anchors.fill: parent
     anchors.margins: Style.marginS * scaling
-    spacing: sidePanel.cardSpacing
+    spacing: spacing
     Item {
       Layout.fillWidth: true
     }
@@ -37,7 +40,7 @@ NBox {
       tooltipText: "Open Wallpaper Selector"
       onClicked: {
         settingsPanel.requestedTab = SettingsPanel.Tab.WallpaperSelector
-        settingsPanel.isLoaded = true
+        settingsPanel.open(screen)
       }
     }
 

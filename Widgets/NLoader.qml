@@ -3,7 +3,7 @@ import QtQuick
 // Example usage:
 // NLoader {
 //   content: Component {
-//     NPanel {
+//     YourComponent {
 Loader {
   id: loader
 
@@ -17,9 +17,6 @@ Loader {
   asynchronous: true
   sourceComponent: content
 
-  // onLoaded: {
-  //   Logger.log("NLoader", "OnLoaded:", item.toString());
-  // }
   onActiveChanged: {
     if (active && item && item.show) {
       item.show()

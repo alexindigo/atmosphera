@@ -61,7 +61,7 @@ NBox {
         tooltipText: "Open Settings"
         onClicked: {
           settingsPanel.requestedTab = SettingsPanel.Tab.General
-          settingsPanel.isLoaded = !settingsPanel.isLoaded
+          settingsPanel.open(screen)
         }
       }
 
@@ -78,8 +78,9 @@ NBox {
 
   PowerMenu {
     id: powerMenu
-    anchors.top: powerButton.bottom
-    anchors.right: powerButton.right
+    // TBC
+    // anchors.top: powerButton.bottom
+    // anchors.right: powerButton.right
   }
 
   // ----------------------------------
