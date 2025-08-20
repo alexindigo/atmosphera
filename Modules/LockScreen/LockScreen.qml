@@ -14,14 +14,24 @@ import qs.Widgets
 
 NLoader {
   id: lockScreen
+  
+  // Log state changes to help debug lock screen issues
+  onIsLoadedChanged: {
+    Logger.log("LockScreen", "State changed - isLoaded:", isLoaded)
+  }
+  
   // Allow a small grace period after unlocking so the compositor releases the lock surfaces
   Timer {
     id: unloadAfterUnlockTimer
     interval: 250
     repeat: false
-    onTriggered: lockScreen.isLoaded = false
+    onTriggered: {
+      Logger.log("LockScreen", "Unload timer triggered - setting isLoaded to false")
+      lockScreen.isLoaded = false
+    }
   }
   function scheduleUnloadAfterUnlock() {
+    Logger.log("LockScreen", "Scheduling unload after unlock")
     unloadAfterUnlockTimer.start()
   }
   content: Component {
@@ -233,13 +243,13 @@ NLoader {
 
             // Time display - Large and prominent with pulse animation
             Column {
-              spacing: Style.marginS * scaling
+              spacing: Style.marginXS * scaling
               Layout.alignment: Qt.AlignHCenter
 
-              Text {
+              NText {
                 id: timeText
                 text: Qt.formatDateTime(new Date(), "HH:mm")
-                font.family: "Inter"
+                font.family: Settings.data.ui.fontBillboard
                 font.pointSize: Style.fontSizeXXXL * 6 * scaling
                 font.weight: Font.Bold
                 font.letterSpacing: -2 * scaling
@@ -261,10 +271,10 @@ NLoader {
                 }
               }
 
-              Text {
+              NText {
                 id: dateText
                 text: Qt.formatDateTime(new Date(), "dddd, MMMM d")
-                font.family: "Inter"
+                font.family: Settings.data.ui.fontBillboard
                 font.pointSize: Style.fontSizeXXL * scaling
                 font.weight: Font.Light
                 color: Color.mOnSurface
@@ -404,10 +414,10 @@ NLoader {
                       anchors.margins: Style.marginM * scaling
                       spacing: Style.marginM * scaling
 
-                      Text {
+                      NText {
                         text: "SECURE TERMINAL"
                         color: Color.mOnSurface
-                        font.family: "DejaVu Sans Mono"
+                        font.family: Settings.data.ui.fontFixed
                         font.pointSize: Style.fontSizeL * scaling
                         font.weight: Font.Bold
                         Layout.fillWidth: true
@@ -424,10 +434,10 @@ NLoader {
                           color: batteryIndicator.charging ? Color.mPrimary : Color.mOnSurface
                         }
 
-                        Text {
+                        NText {
                           text: Math.round(batteryIndicator.percent) + "%"
                           color: Color.mOnSurface
-                          font.family: "DejaVu Sans Mono"
+                          font.family: Settings.data.ui.fontFixed
                           font.pointSize: Style.fontSizeM * scaling
                           font.weight: Font.Bold
                         }
@@ -450,19 +460,19 @@ NLoader {
                       Layout.fillWidth: true
                       spacing: Style.marginM * scaling
 
-                      Text {
+                      NText {
                         text: "root@noctalia:~$"
                         color: Color.mPrimary
-                        font.family: "DejaVu Sans Mono"
+                        font.family: Settings.data.ui.fontFixed
                         font.pointSize: Style.fontSizeL * scaling
                         font.weight: Font.Bold
                       }
 
-                      Text {
+                      NText {
                         id: welcomeText
                         text: ""
                         color: Color.mOnSurface
-                        font.family: "DejaVu Sans Mono"
+                        font.family: Settings.data.ui.fontFixed
                         font.pointSize: Style.fontSizeL * scaling
                         property int currentIndex: 0
                         property string fullText: "Welcome back, " + Quickshell.env("USER") + "!"
@@ -488,18 +498,18 @@ NLoader {
                       Layout.fillWidth: true
                       spacing: Style.marginM * scaling
 
-                      Text {
+                      NText {
                         text: "root@noctalia:~$"
                         color: Color.mPrimary
-                        font.family: "DejaVu Sans Mono"
+                        font.family: Settings.data.ui.fontFixed
                         font.pointSize: Style.fontSizeL * scaling
                         font.weight: Font.Bold
                       }
 
-                      Text {
+                      NText {
                         text: "sudo unlock-session"
                         color: Color.mOnSurface
-                        font.family: "DejaVu Sans Mono"
+                        font.family: Settings.data.ui.fontFixed
                         font.pointSize: Style.fontSizeL * scaling
                       }
 
@@ -509,7 +519,7 @@ NLoader {
                         width: 0
                         height: 0
                         visible: false
-                        font.family: "DejaVu Sans Mono"
+                        font.family: Settings.data.ui.fontFixed
                         font.pointSize: Style.fontSizeL * scaling
                         color: Color.mOnSurface
                         echoMode: TextInput.Password
@@ -535,11 +545,11 @@ NLoader {
                       }
 
                       // Visual password display with integrated cursor
-                      Text {
+                      NText {
                         id: asterisksText
                         text: "*".repeat(passwordInput.text.length)
                         color: Color.mOnSurface
-                        font.family: "DejaVu Sans Mono"
+                        font.family: Settings.data.ui.fontFixed
                         font.pointSize: Style.fontSizeL * scaling
                         visible: passwordInput.activeFocus
 
@@ -585,7 +595,7 @@ NLoader {
                     }
 
                     // Status messages
-                    Text {
+                    NText {
                       text: lock.authenticating ? "Authenticating..." : (lock.errorMessage !== "" ? "Authentication failed." : "")
                       color: lock.authenticating ? Color.mPrimary : (lock.errorMessage !== "" ? Color.mError : Color.transparent)
                       font.family: "DejaVu Sans Mono"
@@ -618,11 +628,11 @@ NLoader {
                       Layout.alignment: Qt.AlignRight
                       Layout.bottomMargin: -12 * scaling
 
-                      Text {
+                      NText {
                         anchors.centerIn: parent
                         text: lock.authenticating ? "EXECUTING" : "EXECUTE"
                         color: executeButtonArea.containsMouse ? Color.mOnPrimary : Color.mPrimary
-                        font.family: "DejaVu Sans Mono"
+                        font.family: Settings.data.ui.fontFixed
                         font.pointSize: Style.fontSizeM * scaling
                         font.weight: Font.Bold
                       }
