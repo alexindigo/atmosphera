@@ -19,7 +19,7 @@ Singleton {
   Component.onCompleted: {
     Logger.log("IdleInhibitor", "Service started")
     detectStrategy()
-    
+
     // Restore previous state from settings
     if (Settings.data.ui.idleInhibitorEnabled) {
       addInhibitor("manual", "Restored from previous session")
@@ -37,18 +37,20 @@ Singleton {
         Logger.log("IdleInhibitor", "Using systemd-inhibit strategy")
         return
       } catch (e) {
+
         // systemd-inhibit not found, try Wayland tools
       }
-      
+
       try {
         var waylandResult = Quickshell.execDetached(["which", "wayhibitor"])
         strategy = "wayland"
         Logger.log("IdleInhibitor", "Using wayhibitor strategy")
         return
       } catch (e) {
+
         // wayhibitor not found
       }
-      
+
       Logger.warn("IdleInhibitor", "No suitable inhibitor found - will try systemd as fallback")
       strategy = "systemd" // Fallback to systemd even if not detected
     }
@@ -84,9 +86,10 @@ Singleton {
   // Update the actual system inhibition
   function updateInhibition(newReason = reason) {
     const shouldInhibit = activeInhibitors.length > 0
-    
+
     if (shouldInhibit === isInhibited) {
-      return // No change needed
+      return
+      // No change needed
     }
 
     if (shouldInhibit) {
@@ -99,7 +102,7 @@ Singleton {
   // Start system inhibition
   function startInhibition(newReason) {
     reason = newReason
-    
+
     if (strategy === "systemd") {
       startSystemdInhibition()
     } else if (strategy === "wayland") {
@@ -108,32 +111,28 @@ Singleton {
       Logger.warn("IdleInhibitor", "No inhibition strategy available")
       return
     }
-    
+
     isInhibited = true
     Logger.log("IdleInhibitor", "Started inhibition:", reason)
   }
 
   // Stop system inhibition
   function stopInhibition() {
-    if (!isInhibited) return
-    
+    if (!isInhibited)
+      return
+
     if (inhibitorProcess.running) {
       inhibitorProcess.signal(15) // SIGTERM
     }
-    
+
     isInhibited = false
     Logger.log("IdleInhibitor", "Stopped inhibition")
   }
 
   // Systemd inhibition using systemd-inhibit
   function startSystemdInhibition() {
-    inhibitorProcess.command = [
-      "systemd-inhibit",
-      "--what=idle:sleep:handle-lid-switch",
-      "--why=" + reason,
-      "--mode=block",
-      "sleep", "infinity"
-    ]
+    inhibitorProcess.command = ["systemd-inhibit", "--what=idle:sleep:handle-lid-switch", "--why="
+                                + reason, "--mode=block", "sleep", "infinity"]
     inhibitorProcess.running = true
   }
 
@@ -147,15 +146,15 @@ Singleton {
   Process {
     id: inhibitorProcess
     running: false
-    
-    onExited: function(exitCode, exitStatus) {
+
+    onExited: function (exitCode, exitStatus) {
       if (isInhibited) {
         Logger.warn("IdleInhibitor", "Inhibitor process exited unexpectedly:", exitCode)
         isInhibited = false
       }
     }
-    
-    onStarted: function() {
+
+    onStarted: function () {
       Logger.log("IdleInhibitor", "Inhibitor process started successfully")
     }
   }

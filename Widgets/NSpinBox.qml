@@ -20,7 +20,7 @@ RowLayout {
   property bool enabled: true
   property bool hovering: false
   property int baseSize: Style.baseWidgetSize
-  
+
   // Convenience properties for common naming
   property alias minimum: spinBox.from
   property alias maximum: spinBox.to
@@ -55,10 +55,10 @@ RowLayout {
   // Value
   Rectangle {
     id: spinBoxContainer
-    
-    implicitWidth: 100 * scaling  // Wider for better proportions
-    implicitHeight: (root.baseSize - 4) * scaling  // Slightly shorter than toggle
-    radius: height * 0.5  // Fully rounded like toggle
+
+    implicitWidth: 100 * scaling // Wider for better proportions
+    implicitHeight: (root.baseSize - 4) * scaling // Slightly shorter than toggle
+    radius: height * 0.5 // Fully rounded like toggle
     color: Color.mSurfaceVariant
     border.color: root.hovering ? Color.mPrimary : Color.mOutline
     border.width: 1
@@ -83,7 +83,7 @@ RowLayout {
         root.hovering = false
         root.exited()
       }
-      onWheel: function(wheel) {
+      onWheel: function (wheel) {
         if (wheel.angleDelta.y > 0 && spinBox.value < spinBox.to) {
           spinBox.increase()
         } else if (wheel.angleDelta.y < 0 && spinBox.value > spinBox.from) {
@@ -95,29 +95,29 @@ RowLayout {
     // Decrease button (left)
     Rectangle {
       id: decreaseButton
-      width: parent.height * 0.8  // Make it circular
+      width: parent.height * 0.8 // Make it circular
       height: parent.height * 0.8
       anchors.verticalCenter: parent.verticalCenter
       anchors.left: parent.left
       anchors.leftMargin: parent.height * 0.1
-      radius: width * 0.5  // Perfect circle
+      radius: width * 0.5 // Perfect circle
       color: decreaseArea.containsMouse ? Color.mPrimary : "transparent"
       opacity: root.enabled && spinBox.value > spinBox.from ? 1.0 : 0.3
-      
+
       Behavior on color {
         ColorAnimation {
           duration: Style.animationFast
           easing.type: Easing.InOutCubic
         }
       }
-      
+
       NIcon {
         anchors.centerIn: parent
         text: "remove"
         font.pointSize: Style.fontSizeS * scaling
         color: decreaseArea.containsMouse ? Color.mOnPrimary : Color.mPrimary
       }
-      
+
       MouseArea {
         id: decreaseArea
         anchors.fill: parent
@@ -127,33 +127,33 @@ RowLayout {
         onClicked: spinBox.decrease()
       }
     }
-    
+
     // Increase button (right)
     Rectangle {
       id: increaseButton
-      width: parent.height * 0.8  // Make it circular
+      width: parent.height * 0.8 // Make it circular
       height: parent.height * 0.8
       anchors.verticalCenter: parent.verticalCenter
       anchors.right: parent.right
       anchors.rightMargin: parent.height * 0.1
-      radius: width * 0.5  // Perfect circle
+      radius: width * 0.5 // Perfect circle
       color: increaseArea.containsMouse ? Color.mPrimary : "transparent"
       opacity: root.enabled && spinBox.value < spinBox.to ? 1.0 : 0.3
-      
+
       Behavior on color {
         ColorAnimation {
           duration: Style.animationFast
           easing.type: Easing.InOutCubic
         }
       }
-      
+
       NIcon {
         anchors.centerIn: parent
         text: "add"
         font.pointSize: Style.fontSizeS * scaling
         color: increaseArea.containsMouse ? Color.mOnPrimary : Color.mPrimary
       }
-      
+
       MouseArea {
         id: increaseArea
         anchors.fill: parent
@@ -163,7 +163,7 @@ RowLayout {
         onClicked: spinBox.increase()
       }
     }
-    
+
     // Center value display
     SpinBox {
       id: spinBox
@@ -172,23 +172,23 @@ RowLayout {
       anchors.verticalCenter: parent.verticalCenter
       anchors.margins: 4 * scaling
       height: parent.height
-      
+
       background: Item {}
       up.indicator: Item {}
       down.indicator: Item {}
-      
+
       font.pointSize: Style.fontSizeM * scaling
       font.family: Settings.data.ui.fontDefault
-      
+
       from: 0
       to: 100
       stepSize: 1
-      editable: false  // Only use buttons/scroll
+      editable: false // Only use buttons/scroll
       enabled: root.enabled
-      
+
       contentItem: Item {
         anchors.fill: parent
-        
+
         NText {
           anchors.centerIn: parent
           text: root.prefix + spinBox.value + root.suffix

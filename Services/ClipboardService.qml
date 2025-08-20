@@ -101,15 +101,16 @@ Singleton {
           if (!exists) {
             // Normalize existing history and add the new image
             const normalizedHistory = root.history.map(item => {
-              if (typeof item === 'string') {
-                return {
-                  "type": 'text',
-                  "content": item,
-                  "timestamp": new Date().getTime() - 1000 // Make it slightly older
-                }
-              }
-              return item
-            })
+                                                         if (typeof item === 'string') {
+                                                           return {
+                                                             "type": 'text',
+                                                             "content": item,
+                                                             "timestamp": new Date().getTime(
+                                                                            ) - 1000 // Make it slightly older
+                                                           }
+                                                         }
+                                                         return item
+                                                       })
             root.history = [entry, ...normalizedHistory].slice(0, maxHistory)
             saveHistory()
           }
@@ -133,7 +134,7 @@ Singleton {
 
     onExited: (exitCode, exitStatus) => {
       textProcess.isLoading = false
-      
+
       if (exitCode === 0) {
         const content = String(stdout.text).trim()
         if (content && content.length > 0) {
@@ -154,15 +155,16 @@ Singleton {
           if (!exists) {
             // Normalize existing history entries
             const normalizedHistory = root.history.map(item => {
-                                                        if (typeof item === 'string') {
-                                                          return {
-                                                            "type": 'text',
-                                                            "content": item,
-                                                            "timestamp": new Date().getTime() - 1000 // Make it slightly older
-                                                          }
-                                                        }
-                                                        return item
-                                                      })
+                                                         if (typeof item === 'string') {
+                                                           return {
+                                                             "type": 'text',
+                                                             "content": item,
+                                                             "timestamp": new Date().getTime(
+                                                                            ) - 1000 // Make it slightly older
+                                                           }
+                                                         }
+                                                         return item
+                                                       })
 
             root.history = [entry, ...normalizedHistory].slice(0, maxHistory)
             saveHistory()
@@ -204,7 +206,7 @@ Singleton {
     try {
       // Ensure we don't exceed the maximum history limit
       const limitedHistory = root.history.slice(0, maxHistory)
-      
+
       historyAdapter.history = limitedHistory
       historyAdapter.timestamp = Time.timestamp
 

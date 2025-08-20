@@ -58,8 +58,9 @@ QtObject {
         "type": 'text',
         "timestamp": clip.timestamp,
         "index": index,
-        "textData": textContent, // Store the text data for the execute function
-        "execute": function () {
+        "textData": textContent,
+        "execute"// Store the text data for the execute function
+        : function () {
           const text = this.textData || clip.content || clip
           Quickshell.clipboardText = String(text)
           copyText(String(text))
@@ -77,8 +78,7 @@ QtObject {
       "name": "No clipboard history",
       "content": "No matching clipboard entries found",
       "icon": "content_paste_off",
-      "execute": function () {
-        // Do nothing for empty state
+      "execute": function () {// Do nothing for empty state
       }
     }
   }
@@ -122,8 +122,7 @@ QtObject {
       "name": ">clip",
       "content": "Clipboard history - browse and restore clipboard items",
       "icon": "content_paste",
-      "execute": function () {
-        // This should be handled by the parent component
+      "execute": function () {// This should be handled by the parent component
       }
     }
   }

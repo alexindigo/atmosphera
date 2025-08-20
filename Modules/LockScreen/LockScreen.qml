@@ -14,12 +14,12 @@ import qs.Widgets
 
 NLoader {
   id: lockScreen
-  
+
   // Log state changes to help debug lock screen issues
   onIsLoadedChanged: {
     Logger.log("LockScreen", "State changed - isLoaded:", isLoaded)
   }
-  
+
   // Allow a small grace period after unlocking so the compositor releases the lock surfaces
   Timer {
     id: unloadAfterUnlockTimer

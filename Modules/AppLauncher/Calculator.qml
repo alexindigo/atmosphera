@@ -34,20 +34,15 @@ QtObject {
       } else {
         // Fallback to basic evaluation
         console.log("AdvancedMath not available, using basic eval")
-        
+
         // Basic preprocessing for common functions
-        var processed = expression.trim()
-          .replace(/\bpi\b/gi, Math.PI)
-          .replace(/\be\b/gi, Math.E)
-          .replace(/\bsqrt\s*\(/g, 'Math.sqrt(')
-          .replace(/\bsin\s*\(/g, 'Math.sin(')
-          .replace(/\bcos\s*\(/g, 'Math.cos(')
-          .replace(/\btan\s*\(/g, 'Math.tan(')
-          .replace(/\blog\s*\(/g, 'Math.log10(')
-          .replace(/\bln\s*\(/g, 'Math.log(')
-          .replace(/\bexp\s*\(/g, 'Math.exp(')
-          .replace(/\bpow\s*\(/g, 'Math.pow(')
-          .replace(/\babs\s*\(/g, 'Math.abs(')
+        var processed = expression.trim(
+              ).replace(/\bpi\b/gi,
+                        Math.PI).replace(/\be\b/gi,
+                                         Math.E).replace(/\bsqrt\s*\(/g,
+                                                         'Math.sqrt(').replace(/\bsin\s*\(/g,
+                                                                               'Math.sin(').replace(/\bcos\s*\(/g,
+                                                                                                    'Math.cos(').replace(/\btan\s*\(/g, 'Math.tan(').replace(/\blog\s*\(/g, 'Math.log10(').replace(/\bln\s*\(/g, 'Math.log(').replace(/\bexp\s*\(/g, 'Math.exp(').replace(/\bpow\s*\(/g, 'Math.pow(').replace(/\babs\s*\(/g, 'Math.abs(')
 
         // Sanitize and evaluate
         if (!/^[0-9+\-*/().\s\w,]+$/.test(processed)) {
@@ -90,15 +85,13 @@ QtObject {
         "name": "Invalid expression",
         "content": evaluation.error,
         "icon": "error",
-        "execute": function () {
-          // Do nothing for invalid expressions
+        "execute": function () {// Do nothing for invalid expressions
         }
       }
     }
 
-    const displayName = searchContext === "calc" 
-      ? `${expression} = ${evaluation.displayResult}`
-      : `${expression} = ${evaluation.displayResult}`
+    const displayName = searchContext
+                      === "calc" ? `${expression} = ${evaluation.displayResult}` : `${expression} = ${evaluation.displayResult}`
 
     return {
       "isCalculator": true,
@@ -110,12 +103,10 @@ QtObject {
       "execute": function () {
         Quickshell.clipboardText = evaluation.displayResult
         // Also copy using shell command for better compatibility
-        Quickshell.execDetached(["sh", "-lc", `printf %s ${evaluation.displayResult} | wl-copy -t text/plain;charset=utf-8`])
-        Quickshell.execDetached([
-          "notify-send", 
-          "Calculator", 
-          `${expression} = ${evaluation.displayResult} (copied to clipboard)`
-        ])
+        Quickshell.execDetached(
+              ["sh", "-lc", `printf %s ${evaluation.displayResult} | wl-copy -t text/plain;charset=utf-8`])
+        Quickshell.execDetached(
+              ["notify-send", "Calculator", `${expression} = ${evaluation.displayResult} (copied to clipboard)`])
       }
     }
   }
@@ -127,8 +118,7 @@ QtObject {
       "name": "Calculator",
       "content": "Try: sqrt(16), sin(1), cos(0), pi*2, exp(1), pow(2,8), abs(-5)",
       "icon": "calculate",
-      "execute": function () {
-        // Do nothing for placeholder
+      "execute": function () {// Do nothing for placeholder
       }
     }
   }
@@ -149,7 +139,7 @@ QtObject {
       // Handle direct math expressions after ">"
       const mathExpr = query.slice(1).trim()
       const evaluation = evaluate(mathExpr)
-      
+
       if (evaluation.isValid) {
         results.push(createEntry(mathExpr, "direct"))
       }
