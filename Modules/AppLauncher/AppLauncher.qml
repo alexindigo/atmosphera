@@ -369,7 +369,7 @@ NLoader {
                       visible: !parent.iconLoaded
                     }
 
-                    Text {
+                    NText {
                       anchors.centerIn: parent
                       visible: !parent.iconLoaded && !(modelData.isCalculator || modelData.isClipboard
                                                        || modelData.isCommand)

@@ -92,6 +92,45 @@ ColumnLayout {
           Layout.bottomMargin: Style.marginS * scaling
         }
 
+        // Font configuration section
+        ColumnLayout {
+          spacing: Style.marginS * scaling
+          Layout.fillWidth: true
+
+          NTextInput {
+            label: "Default Font"
+            description: "Main font used throughout the interface."
+            text: Settings.data.ui.fontDefault
+            placeholderText: "Roboto"
+            Layout.fillWidth: true
+            onEditingFinished: {
+              Settings.data.ui.fontDefault = text
+            }
+          }
+
+          NTextInput {
+            label: "Fixed Width Font"
+            description: "Monospace font used for terminal and code display."
+            text: Settings.data.ui.fontFixed
+            placeholderText: "DejaVu Sans Mono"
+            Layout.fillWidth: true
+            onEditingFinished: {
+              Settings.data.ui.fontFixed = text
+            }
+          }
+
+          NTextInput {
+            label: "Billboard Font"
+            description: "Large font used for clocks and prominent displays."
+            text: Settings.data.ui.fontBillboard
+            placeholderText: "Inter"
+            Layout.fillWidth: true
+            onEditingFinished: {
+              Settings.data.ui.fontBillboard = text
+            }
+          }
+        }
+
         NToggle {
           label: "Show Corners"
           description: "Display rounded corners on the edge of the screen."

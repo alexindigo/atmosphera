@@ -223,7 +223,12 @@ Singleton {
       property JsonObject ui
 
       ui: JsonObject {
-        property string fontFamily: "Roboto" // Family for all text
+        property string fontDefault: "Roboto" // Default font for all text
+        property string fontFixed: "DejaVu Sans Mono" // Fixed width font for terminal
+        property string fontBillboard: "Inter" // Large bold font for clocks and prominent displays
+        
+        // Legacy compatibility
+        property string fontFamily: fontDefault // Keep for backward compatibility
       }
 
       // Scaling (not stored inside JsonObject, or it crashes)
