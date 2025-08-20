@@ -65,6 +65,10 @@ ShellRoot {
     id: lockScreen
   }
 
+  PowerMenu {
+    id: powerMenu
+  }
+
   ToastManager {}
 
   IPCManager {}

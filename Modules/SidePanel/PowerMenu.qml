@@ -12,6 +12,9 @@ import qs.Modules.LockScreen
 
 PanelWindow {
   id: root
+  readonly property real scaling: ScalingService.scale(screen)
+
+  
   anchors.top: true
   anchors.left: true
   anchors.right: true
@@ -21,13 +24,12 @@ PanelWindow {
   screen: screen
 
   onVisibleChanged: {
-    
-      if (visible) {
-        console.log("Oh Yeah")
-        Qt.callLater(() => forceActiveFocus())
-        
-      }
+    if (visible) {
+      console.log("Oh Yeah")
+      // Focus the menu rectangle instead of root
+      menuRect.forceActiveFocus()
     }
+  }
 
   function open() {
     visible = true
@@ -37,11 +39,14 @@ PanelWindow {
     visible = false
   }
 
-  // Clicking outside of the rectangle to close
-  MouseArea {
-    anchors.fill: parent
-    onClicked: root.close()
-  }
+  // // Clicking outside of the rectangle to close
+  // MouseArea {
+  //   anchors.fill: parent
+  //   onClicked: root.close()
+  //   // Prevent this MouseArea from interfering with child elements
+  //   propagateComposedEvents: true
+  //   z: -1  // Put it behind the menu
+  // }
 
   // ----------------------------------
   // System functions
@@ -63,28 +68,24 @@ PanelWindow {
 
   Process {
     id: shutdownProcess
-
     command: ["shutdown", "-h", "now"]
     running: false
   }
 
   Process {
     id: rebootProcess
-
     command: ["reboot"]
     running: false
   }
 
   Process {
     id: suspendProcess
-
     command: ["systemctl", "suspend"]
     running: false
   }
 
   Process {
     id: logoutProcess
-
     command: ["loginctl", "terminate-user", Quickshell.env("USER")]
     running: false
   }
@@ -92,27 +93,30 @@ PanelWindow {
   property var entriesCount: 5
   property var entryHeight: Style.baseWidgetSize * scaling
 
-
   Rectangle {
+    id: menuRect
     width: 160 * scaling
     height: (entryHeight * entriesCount) + (Style.marginS * entriesCount * scaling)
     radius: Style.radiusM * scaling
     border.color: Color.mOutline
     border.width: Math.max(1, Style.borderS * scaling)
     color: Color.mSurface
-
     visible: true
     z: 9999
+    
+    // Add focus properties
+    focus: true
+    activeFocusOnTab: true
 
     anchors.top: parent.top
     anchors.right: parent.right
     anchors.rightMargin: Style.marginL * scaling
     anchors.topMargin: 86 * scaling
 
-                    Component.onCompleted: {
-                      console.log("oncompleted")
-                          Qt.callLater(() => forceActiveFocus())
-                        }
+    Component.onCompleted: {
+      console.log("oncompleted")
+      forceActiveFocus()
+    }
 
     ColumnLayout {
       anchors.fill: parent
@@ -161,15 +165,17 @@ PanelWindow {
 
         MouseArea {
           id: lockButtonArea
-
           anchors.fill: parent
           hoverEnabled: true
           cursorShape: Qt.PointingHandCursor
+          // Add acceptedButtons to ensure proper click handling
+          acceptedButtons: Qt.LeftButton
+          
           onClicked: {
             Logger.log("PowerMenu", "Lock screen requested")
             // // Lock the screen
             // lockScreen.isLoaded = true
-            // root.close()
+            root.close()
           }
         }
       }
@@ -216,10 +222,11 @@ PanelWindow {
 
         MouseArea {
           id: suspendButtonArea
-
           anchors.fill: parent
           hoverEnabled: true
           cursorShape: Qt.PointingHandCursor
+          acceptedButtons: Qt.LeftButton
+          
           onClicked: {
             suspend()
             root.close()
@@ -269,10 +276,11 @@ PanelWindow {
 
         MouseArea {
           id: rebootButtonArea
-
           anchors.fill: parent
           hoverEnabled: true
           cursorShape: Qt.PointingHandCursor
+          acceptedButtons: Qt.LeftButton
+          
           onClicked: {
             reboot()
             root.close()
@@ -322,10 +330,11 @@ PanelWindow {
 
         MouseArea {
           id: logoutButtonArea
-
           anchors.fill: parent
           hoverEnabled: true
           cursorShape: Qt.PointingHandCursor
+          acceptedButtons: Qt.LeftButton
+          
           onClicked: {
             logout()
             root.close()
@@ -375,10 +384,11 @@ PanelWindow {
 
         MouseArea {
           id: shutdownButtonArea
-
           anchors.fill: parent
           hoverEnabled: true
           cursorShape: Qt.PointingHandCursor
+          acceptedButtons: Qt.LeftButton
+          
           onClicked: {
             shutdown()
             root.close()

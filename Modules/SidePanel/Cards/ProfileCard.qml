@@ -71,14 +71,22 @@ NBox {
         tooltipText: "Power Menu"
         onClicked: {
           powerMenu.open(screen)
+          sidePanel.close()
+        }
+      }
+
+      NIconButton {
+        id: closeButton
+        icon: "close"
+        tooltipText: "Close Side Panel"
+        onClicked: {
+          sidePanel.close()
         }
       }
     }
   }
 
-  PowerMenu {
-    id: powerMenu
-  }
+
 
   // ----------------------------------
   // Uptime
