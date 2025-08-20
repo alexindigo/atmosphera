@@ -12,15 +12,12 @@ import qs.Widgets
 
 import "../../Helpers/FuzzySort.js" as Fuzzysort
 
-NLoader {
-  id: appLauncher
-  isLoaded: false
-  
-  content: Component {
     NPanel {
-      id: appLauncherPanel
+      id: root
+        panelWidth: Math.min(700 * scaling, screen?.width * 0.75)
+        panelHeight: Math.min(550 * scaling, screen?.height * 0.8)
+        panelAnchorCentered: true
 
-      WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
 
       // Import modular components
       Calculator {
@@ -158,7 +155,7 @@ NLoader {
           } else {
             modelData.execute()
           }
-          appLauncherPanel.hide()
+          root.close()
         }
       }
 
@@ -174,14 +171,7 @@ NLoader {
       }
 
       // Main content container
-      Rectangle {
-        anchors.centerIn: parent
-        width: Math.min(700 * scaling, parent.width * 0.75)
-        height: Math.min(550 * scaling, parent.height * 0.8)
-        radius: Style.radiusL * scaling
-        color: Color.mSurface
-        border.color: Color.mOutline
-        border.width: Style.borderS * scaling
+      panelContent: Rectangle {
 
         // Subtle gradient background
         gradient: Gradient {
@@ -262,7 +252,7 @@ NLoader {
                 Keys.onUpPressed: selectPrev()
                 Keys.onEnterPressed: activateSelected()
                 Keys.onReturnPressed: activateSelected()
-                Keys.onEscapePressed: appLauncherPanel.hide()
+                Keys.onEscapePressed: root.close()
               }
             }
 
@@ -453,5 +443,3 @@ NLoader {
         }
       }
     }
-  }
-}

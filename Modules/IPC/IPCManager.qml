@@ -1,4 +1,5 @@
 import QtQuick
+import Quickshell
 import Quickshell.Io
 import qs.Services
 
@@ -9,7 +10,7 @@ Item {
     target: "settings"
 
     function toggle() {
-      settingsPanel.isLoaded = !settingsPanel.isLoaded
+      settingsPanel.toggle(Quickshell.screens[0])
     }
   }
 
@@ -17,7 +18,7 @@ Item {
     target: "notifications"
 
     function toggleHistory() {
-      notificationHistoryPanel.isLoaded = !notificationHistoryPanel.isLoaded
+      notificationHistoryPanel.toggle(Quickshell.screens[0])
     }
 
     function toggleDoNotDisturb() {// TODO
@@ -36,7 +37,7 @@ Item {
     target: "appLauncher"
 
     function toggle() {
-      appLauncherPanel.isLoaded = !appLauncherPanel.isLoaded
+      appLauncherPanel.toggle(Quickshell.screens[0])
     }
   }
 

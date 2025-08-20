@@ -134,6 +134,10 @@ Rectangle {
 
     function open() {
       visible = true
+
+      // Register into the panel service
+      // so this will autoclose if we open another panel
+      PanelService.registerOpen(trayPanel)
     }
 
     function close() {
