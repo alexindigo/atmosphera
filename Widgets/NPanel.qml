@@ -31,8 +31,6 @@ Loader {
   signal opened
   signal closed
 
-
-
   // -----------------------------------------
   function toggle(aScreen) {
     if (!active || isClosing) {
@@ -96,7 +94,6 @@ Loader {
       color: (root.active && !root.isClosing && Settings.data.general.dimDesktop) ? Color.applyOpacity(
                                                                                       Color.mShadow,
                                                                                       "BB") : Color.transparent
-      
 
       WlrLayershell.exclusionMode: ExclusionMode.Ignore
       WlrLayershell.namespace: "noctalia-panel"
