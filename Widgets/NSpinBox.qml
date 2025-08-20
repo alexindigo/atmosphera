@@ -52,7 +52,7 @@ RowLayout {
     }
   }
 
-  // Simple value display with subtle controls
+  // Value
   Rectangle {
     id: spinBoxContainer
     
