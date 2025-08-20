@@ -217,6 +217,7 @@ Singleton {
 
       audio: JsonObject {
         property string visualizerType: "linear"
+        property int volumeStep: 5
       }
 
       // ui
