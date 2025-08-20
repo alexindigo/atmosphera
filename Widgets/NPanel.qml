@@ -97,6 +97,7 @@ Loader {
 
       WlrLayershell.exclusionMode: ExclusionMode.Ignore
       WlrLayershell.namespace: "noctalia-panel"
+      WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
 
       Behavior on color {
         ColorAnimation {
