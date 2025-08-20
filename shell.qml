@@ -17,7 +17,6 @@ import qs.Modules.AppLauncher
 import qs.Modules.Background
 import qs.Modules.Bar
 import qs.Modules.Calendar
-import qs.Modules.DemoPanel
 import qs.Modules.Dock
 import qs.Modules.IPC
 import qs.Modules.LockScreen
@@ -39,10 +38,6 @@ ShellRoot {
 
   AppLauncher {
     id: appLauncherPanel
-  }
-
-  DemoPanel {
-    id: demoPanel
   }
 
   SidePanel {
