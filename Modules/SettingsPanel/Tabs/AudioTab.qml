@@ -212,7 +212,7 @@ ColumnLayout {
         Layout.fillWidth: true
 
         NText {
-          text: "Bar Miniplayer"
+          text: "Bar Media Player"
           font.pointSize: Style.fontSizeXXL * scaling
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface
@@ -221,7 +221,7 @@ ColumnLayout {
 
         // Miniplayer section
         NToggle {
-            label: "Show Album Art In Miniplayer"
+            label: "Show Album Art In Bar Media Player"
             description: "Show the album art of the currently playing song next to the title."
             checked: Settings.data.audio.showMiniplayerAlbumArt
             onToggled: checked => {
@@ -230,7 +230,7 @@ ColumnLayout {
         }
         
         NToggle {
-            label: "Show Audio Visualizer In Miniplayer"
+            label: "Show Audio Visualizer In Bar Media Player"
             description: "Shows an audio visualizer in the background of the miniplayer."
             checked: Settings.data.audio.showMiniplayerCava
             onToggled: checked => {
