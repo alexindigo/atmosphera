@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # A Bash script to monitor system stats and output them in JSON format.
 # This script is a conversion of ZigStat
