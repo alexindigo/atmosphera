@@ -11,9 +11,9 @@ import qs.Widgets
 NPanel {
   id: root
 
-  rWidth: 380 * scaling
-  rHeight: 500 * scaling
-  rAnchorRight: true
+  panelWidth: 380 * scaling
+  panelHeight: 500 * scaling
+  panelAnchorRight: true
 
   panelContent: Rectangle {
     color: Color.transparent

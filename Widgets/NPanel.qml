@@ -14,11 +14,11 @@ Loader {
   property ShellScreen screen
 
   property Component panelContent: null
-  property int rWidth: 1500
-  property int rHeight: 400
-  property bool rAnchorCentered: false
-  property bool rAnchorLeft: false
-  property bool rAnchorRight: false
+  property int panelWidth: 1500
+  property int panelHeight: 400
+  property bool panelAnchorCentered: false
+  property bool panelAnchorLeft: false
+  property bool panelAnchorRight: false
 
   // Animation properties
   readonly property real originalScale: 0.7
@@ -125,21 +125,22 @@ Loader {
         border.color: Color.mOutline
         border.width: Math.max(1, Style.borderS * scaling)
         layer.enabled: true
-        width: rWidth
-        height: rHeight
+        width: panelWidth
+        height: panelHeight
 
         anchors {
-          centerIn: rAnchorCentered ? parent : null
-          left: !rAnchorCentered && rAnchorLeft ? parent.left : parent.center
-          right: !rAnchorCentered && rAnchorRight ? parent.right : parent.center
-          top: !rAnchorCentered && (Settings.data.bar.position === "top") ? parent.top : undefined
-          bottom: !rAnchorCentered && (Settings.data.bar.position === "bottom") ? parent.bottom : undefined
+          centerIn: panelAnchorCentered ? parent : null
+          left: !panelAnchorCentered && panelAnchorLeft ? parent.left : parent.center
+          right: !panelAnchorCentered && panelAnchorRight ? parent.right : parent.center
+          top: !panelAnchorCentered && (Settings.data.bar.position === "top") ? parent.top : undefined
+          bottom: !panelAnchorCentered && (Settings.data.bar.position === "bottom") ? parent.bottom : undefined
 
           // margins
-          topMargin: !rAnchorCentered && (Settings.data.bar.position === "top") ? Style.marginS * scaling : undefined
-          bottomMargin: !rAnchorCentered
+          topMargin: !panelAnchorCentered
+                     && (Settings.data.bar.position === "top") ? Style.marginS * scaling : undefined
+          bottomMargin: !panelAnchorCentered
                         && (Settings.data.bar.position === "bottom") ? Style.marginS * scaling : undefined
-          rightMargin: !rAnchorCentered && rAnchorRight ? Style.marginS * scaling : undefined
+          rightMargin: !panelAnchorCentered && panelAnchorRight ? Style.marginS * scaling : undefined
         }
 
         scale: root.scaleValue

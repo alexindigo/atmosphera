@@ -11,9 +11,9 @@ import qs.Widgets
 NPanel {
   id: root
 
-  rWidth: Math.max(screen?.width * 0.5, 1280) * scaling
-  rHeight: Math.max(screen?.height * 0.5, 720) * scaling
-  rAnchorCentered: true
+  panelWidth: Math.max(screen?.width * 0.5, 1280) * scaling
+  panelHeight: Math.max(screen?.height * 0.5, 720) * scaling
+  panelAnchorCentered: true
 
   // Tabs enumeration, order is NOT relevant
   enum Tab {

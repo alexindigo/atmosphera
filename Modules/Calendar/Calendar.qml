@@ -10,9 +10,9 @@ import qs.Widgets
 NPanel {
   id: root
 
-  rWidth: 340 * scaling
-  rHeight: 320 * scaling
-  rAnchorRight: true
+  panelWidth: 340 * scaling
+  panelHeight: 320 * scaling
+  panelAnchorRight: true
 
   // Main Column
   panelContent: ColumnLayout {

@@ -10,9 +10,9 @@ import qs.Widgets
 NPanel {
   id: root
 
-  rWidth: 340 * scaling
-  rHeight: 500 * scaling
-  rAnchorRight: true
+  panelWidth: 380 * scaling
+  panelHeight: 500 * scaling
+  panelAnchorRight: true
 
   property string passwordPromptSsid: ""
   property string passwordInput: ""

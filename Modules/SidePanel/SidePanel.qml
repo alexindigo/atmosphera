@@ -10,9 +10,9 @@ import qs.Widgets
 NPanel {
   id: panel
 
-  rWidth: 460 * scaling
-  rHeight: 700 * scaling
-  rAnchorRight: true
+  panelWidth: 460 * scaling
+  panelHeight: 700 * scaling
+  panelAnchorRight: true
 
   panelContent: Item {
     id: content
