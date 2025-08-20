@@ -36,7 +36,7 @@ NBox {
 
     // Idle Inhibitor
     NIconButton {
-      icon: IdleInhibitorService.isInhibited ? "coffee" : "bedtime"
+      icon: "coffee"
       tooltipText: IdleInhibitorService.isInhibited ? "Disable Keep Awake" : "Enable Keep Awake"
       colorBg: IdleInhibitorService.isInhibited ? Color.mPrimary : Color.mSurfaceVariant
       colorFg: IdleInhibitorService.isInhibited ? Color.mOnPrimary : Color.mPrimary
