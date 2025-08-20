@@ -238,14 +238,15 @@ NPanel {
             bottomPadding: 0
             font.bold: true
             Component.onCompleted: {
-              contentItem.cursorColor = Color.mOnSurface
-              contentItem.verticalAlignment = TextInput.AlignVCenter
+            
+              // contentItem.cursorColor = Color.mOnSurface
+              // contentItem.verticalAlignment = TextInput.AlignVCenter
               // Focus the search bar by default
               Qt.callLater(() => {
                              searchInput.forceActiveFocus()
                            })
             }
-            onActiveFocusChanged: contentItem.cursorColor = Color.mOnSurface
+            //onActiveFocusChanged: contentItem.cursorColor = Color.mOnSurface
 
             Keys.onDownPressed: selectNext()
             Keys.onUpPressed: selectPrev()
