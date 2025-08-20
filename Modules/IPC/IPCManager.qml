@@ -44,7 +44,11 @@ Item {
     target: "lockScreen"
 
     function toggle() {
-      lockScreen.isLoaded = !lockScreen.isLoaded
+      // Only lock if not already locked (prevents the red screen issue)
+      // Note: No unlock via IPC for security reasons
+      if (!lockScreen.isLoaded) {
+        lockScreen.isLoaded = true
+      }
     }
   }
 
