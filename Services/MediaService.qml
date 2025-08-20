@@ -13,11 +13,6 @@ Singleton {
   property real currentPosition: 0
   property int selectedPlayerIndex: 0
   property bool isPlaying: currentPlayer ? currentPlayer.isPlaying : false
-  
-  // Auto-inhibit idle when media is playing
-  onIsPlayingChanged: {
-    IdleInhibitorService.inhibitForMedia(isPlaying)
-  }
   property string trackTitle: currentPlayer ? (currentPlayer.trackTitle || "") : ""
   property string trackArtist: currentPlayer ? (currentPlayer.trackArtist || "") : ""
   property string trackAlbum: currentPlayer ? (currentPlayer.trackAlbum || "") : ""

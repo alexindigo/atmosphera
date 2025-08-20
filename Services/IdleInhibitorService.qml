@@ -160,31 +160,6 @@ Singleton {
     }
   }
 
-  // Convenience functions for common use cases
-  function inhibitForMedia(active = true) {
-    if (active) {
-      addInhibitor("media", "Media playback active")
-    } else {
-      removeInhibitor("media")
-    }
-  }
-
-  function inhibitForPresentation(active = true) {
-    if (active) {
-      addInhibitor("presentation", "Presentation mode")
-    } else {
-      removeInhibitor("presentation")
-    }
-  }
-
-  function inhibitForFullscreen(active = true) {
-    if (active) {
-      addInhibitor("fullscreen", "Fullscreen application")
-    } else {
-      removeInhibitor("fullscreen")
-    }
-  }
-
   // Manual toggle for user control
   function manualToggle() {
     if (activeInhibitors.includes("manual")) {
