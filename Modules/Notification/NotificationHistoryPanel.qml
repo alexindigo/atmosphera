@@ -20,16 +20,6 @@ NPanel {
     id: notificationRect
     color: Color.transparent
 
-    // color: Color.mSurface
-    // radius: Style.radiusL * scaling
-    // border.color: Color.mOutline
-    // border.width: Math.max(1, Style.borderS * scaling)
-
-    // anchors.top: parent.top
-    // anchors.right: parent.right
-    // anchors.topMargin: Style.marginXS * scaling
-    // anchors.rightMargin: Style.marginXS * scaling
-    // clip: true
     ColumnLayout {
       anchors.fill: parent
       anchors.margins: Style.marginL * scaling
@@ -184,7 +174,6 @@ NPanel {
             anchors.fill: parent
             anchors.rightMargin: Style.marginL * 3 * scaling
             hoverEnabled: true
-            // Remove the onClicked handler since we now have a dedicated delete button
           }
         }
 
