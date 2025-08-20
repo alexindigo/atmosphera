@@ -22,6 +22,7 @@ import qs.Modules.IPC
 import qs.Modules.LockScreen
 import qs.Modules.Notification
 import qs.Modules.SettingsPanel
+import qs.Modules.PowerPanel
 import qs.Modules.SidePanel
 import qs.Modules.Toast
 
@@ -65,8 +66,8 @@ ShellRoot {
     id: lockScreen
   }
 
-  PowerMenu {
-    id: powerMenu
+  PowerPanel {
+    id: powerPanel
   }
 
   ToastManager {}

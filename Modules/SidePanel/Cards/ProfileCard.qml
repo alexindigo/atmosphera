@@ -70,7 +70,7 @@ NBox {
         icon: "power_settings_new"
         tooltipText: "Power Menu"
         onClicked: {
-          powerMenu.open(screen)
+          powerPanel.open(screen)
           sidePanel.close()
         }
       }
