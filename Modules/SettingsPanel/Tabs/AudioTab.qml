@@ -238,7 +238,7 @@ ColumnLayout {
             }
         }
       }
-    }
+    
 
       // Divider
       NDivider {

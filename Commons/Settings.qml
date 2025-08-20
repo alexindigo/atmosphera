@@ -214,7 +214,7 @@ Singleton {
 
       audio: JsonObject {
         property bool showMiniplayerAlbumArt: false
-        property bool showMiniplayerAlbumArt: false
+        property bool showMiniplayerCava: false
         property string visualizerType: "linear"
       }
 
