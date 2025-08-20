@@ -70,7 +70,7 @@ NBox {
         icon: "power_settings_new"
         tooltipText: "Power Menu"
         onClicked: {
-          powerMenu.show()
+          powerMenu.open(screen)
         }
       }
     }
@@ -78,9 +78,6 @@ NBox {
 
   PowerMenu {
     id: powerMenu
-    // TBC
-    // anchors.top: powerButton.bottom
-    // anchors.right: powerButton.right
   }
 
   // ----------------------------------

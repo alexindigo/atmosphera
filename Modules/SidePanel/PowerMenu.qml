@@ -4,26 +4,94 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
 import Quickshell.Widgets
+import Quickshell.Wayland
 import qs.Commons
 import qs.Services
 import qs.Widgets
 import qs.Modules.LockScreen
 
-NPanel {
-  id: powerMenu
+PanelWindow {
+  id: root
+  anchors.top: true
+  anchors.left: true
+  anchors.right: true
+  anchors.bottom: true
   visible: false
+  color: "#3300FF00"
+  screen: screen
+
+  onVisibleChanged: {
+    
+      if (visible) {
+        console.log("Oh Yeah")
+        Qt.callLater(() => forceActiveFocus())
+        
+      }
+    }
+
+  function open() {
+    visible = true
+  }
+
+  function close() {
+    visible = false
+  }
+
+  // Clicking outside of the rectangle to close
+  MouseArea {
+    anchors.fill: parent
+    onClicked: root.close()
+  }
+
+  // ----------------------------------
+  // System functions
+  function logout() {
+    CompositorService.logout()
+  }
+
+  function suspend() {
+    suspendProcess.running = true
+  }
+
+  function shutdown() {
+    shutdownProcess.running = true
+  }
+
+  function reboot() {
+    rebootProcess.running = true
+  }
+
+  Process {
+    id: shutdownProcess
+
+    command: ["shutdown", "-h", "now"]
+    running: false
+  }
+
+  Process {
+    id: rebootProcess
+
+    command: ["reboot"]
+    running: false
+  }
+
+  Process {
+    id: suspendProcess
+
+    command: ["systemctl", "suspend"]
+    running: false
+  }
+
+  Process {
+    id: logoutProcess
+
+    command: ["loginctl", "terminate-user", Quickshell.env("USER")]
+    running: false
+  }
 
   property var entriesCount: 5
   property var entryHeight: Style.baseWidgetSize * scaling
 
-  // Anchors will be set by the parent component
-  function show() {
-    visible = true
-  }
-
-  function hide() {
-    visible = false
-  }
 
   Rectangle {
     width: 160 * scaling
@@ -41,13 +109,10 @@ NPanel {
     anchors.rightMargin: Style.marginL * scaling
     anchors.topMargin: 86 * scaling
 
-    // Prevent closing when clicking in the panel bg
-    MouseArea {
-      anchors.fill: parent
-      onClicked: {
-
-      }
-    }
+                    Component.onCompleted: {
+                      console.log("oncompleted")
+                          Qt.callLater(() => forceActiveFocus())
+                        }
 
     ColumnLayout {
       anchors.fill: parent
@@ -102,9 +167,9 @@ NPanel {
           cursorShape: Qt.PointingHandCursor
           onClicked: {
             Logger.log("PowerMenu", "Lock screen requested")
-            // Lock the screen
-            lockScreen.isLoaded = true
-            powerMenu.visible = false
+            // // Lock the screen
+            // lockScreen.isLoaded = true
+            // root.close()
           }
         }
       }
@@ -157,7 +222,7 @@ NPanel {
           cursorShape: Qt.PointingHandCursor
           onClicked: {
             suspend()
-            powerMenu.visible = false
+            root.close()
           }
         }
       }
@@ -210,7 +275,7 @@ NPanel {
           cursorShape: Qt.PointingHandCursor
           onClicked: {
             reboot()
-            powerMenu.visible = false
+            root.close()
           }
         }
       }
@@ -263,7 +328,7 @@ NPanel {
           cursorShape: Qt.PointingHandCursor
           onClicked: {
             logout()
-            powerMenu.visible = false
+            root.close()
           }
         }
       }
@@ -316,61 +381,10 @@ NPanel {
           cursorShape: Qt.PointingHandCursor
           onClicked: {
             shutdown()
-            powerMenu.visible = false
+            root.close()
           }
         }
       }
     }
-  }
-
-  // ----------------------------------
-  // System functions
-  function logout() {
-    CompositorService.logout()
-  }
-
-  function suspend() {
-    suspendProcess.running = true
-  }
-
-  function shutdown() {
-    shutdownProcess.running = true
-  }
-
-  function reboot() {
-    rebootProcess.running = true
-  }
-
-  Process {
-    id: shutdownProcess
-
-    command: ["shutdown", "-h", "now"]
-    running: false
-  }
-
-  Process {
-    id: rebootProcess
-
-    command: ["reboot"]
-    running: false
-  }
-
-  Process {
-    id: suspendProcess
-
-    command: ["systemctl", "suspend"]
-    running: false
-  }
-
-  Process {
-    id: logoutProcess
-
-    command: ["loginctl", "terminate-user", Quickshell.env("USER")]
-    running: false
-  }
-
-  // LockScreen instance
-  LockScreen {
-    id: lockScreen
   }
 }
