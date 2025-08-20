@@ -15,30 +15,125 @@ import "../../Helpers/FuzzySort.js" as Fuzzysort
 NLoader {
   id: appLauncher
   isLoaded: false
-  // Clipboard state is persisted in Services/ClipboardService.qml
+  
   content: Component {
     NPanel {
       id: appLauncherPanel
 
       WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
 
-      // No local timer/processes; use persistent Clipboard service
-
-      // Removed local clipboard processes; handled by Clipboard service
-
-      // Copy helpers via simple exec; avoid keeping processes alive locally
-      function copyImageBase64(mime, base64) {
-        Quickshell.execDetached(["sh", "-lc", `printf %s ${base64} | base64 -d | wl-copy -t '${mime}'`])
+      // Import modular components
+      Calculator {
+        id: calculator
       }
 
-      function copyText(text) {
-        Quickshell.execDetached(["sh", "-lc", `printf %s ${text} | wl-copy -t text/plain;charset=utf-8`])
+      ClipboardHistory {
+        id: clipboardHistory
       }
 
-      function updateClipboardHistory() {
-        ClipboardService.refresh()
+      // Properties
+      property var desktopEntries: DesktopEntries.applications.values
+      property string searchText: ""
+      property int selectedIndex: 0
+
+      // Refresh clipboard when user starts typing clipboard commands
+      onSearchTextChanged: {
+        if (searchText.startsWith(">clip")) {
+          clipboardHistory.refresh()
+        }
       }
 
+      // Main filtering logic
+      property var filteredEntries: {
+        Logger.log("AppLauncher", "Total desktop entries:", desktopEntries ? desktopEntries.length : 0)
+        if (!desktopEntries || desktopEntries.length === 0) {
+          Logger.log("AppLauncher", "No desktop entries available")
+          return []
+        }
+
+        // Filter out entries that shouldn't be displayed
+        var visibleEntries = desktopEntries.filter(entry => {
+                                                     if (!entry || entry.noDisplay) {
+                                                       return false
+                                                     }
+                                                     return true
+                                                   })
+
+        Logger.log("AppLauncher", "Visible entries:", visibleEntries.length)
+
+        var query = searchText ? searchText.toLowerCase() : ""
+        var results = []
+
+        // Handle special commands
+        if (query === ">") {
+          results.push({
+                         "isCommand": true,
+                         "name": ">calc",
+                         "content": "Calculator - evaluate mathematical expressions",
+                         "icon": "calculate",
+                         "execute": executeCalcCommand
+                       })
+
+          results.push({
+                         "isCommand": true,
+                         "name": ">clip",
+                         "content": "Clipboard history - browse and restore clipboard items",
+                         "icon": "content_paste",
+                         "execute": executeClipCommand
+                       })
+
+          return results
+        }
+
+        // Handle clipboard history
+        if (query.startsWith(">clip")) {
+          return clipboardHistory.processQuery(query)
+        }
+
+        // Handle calculator
+        if (query.startsWith(">calc")) {
+          return calculator.processQuery(query, "calc")
+        }
+
+        // Handle direct math expressions after ">"
+        if (query.startsWith(">") && query.length > 1 && !query.startsWith(">clip") && !query.startsWith(">calc")) {
+          const mathResults = calculator.processQuery(query, "direct")
+          if (mathResults.length > 0) {
+            return mathResults
+          }
+          // If math evaluation fails, fall through to regular search
+        }
+
+        // Regular app search
+        if (!query) {
+          results = results.concat(visibleEntries.sort(function (a, b) {
+            return a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+          }))
+        } else {
+          var fuzzyResults = Fuzzysort.go(query, visibleEntries, {
+                                            "keys": ["name", "comment", "genericName"]
+                                          })
+          results = results.concat(fuzzyResults.map(function (r) {
+            return r.obj
+          }))
+        }
+
+        Logger.log("AppLauncher", "Filtered entries:", results.length)
+        return results
+      }
+
+      // Command execution functions
+      function executeCalcCommand() {
+        searchText = ">calc "
+        searchInput.cursorPosition = searchText.length
+      }
+
+      function executeClipCommand() {
+        searchText = ">clip "
+        searchInput.cursorPosition = searchText.length
+      }
+
+      // Navigation functions
       function selectNext() {
         if (filteredEntries.length > 0) {
           selectedIndex = Math.min(selectedIndex + 1, filteredEntries.length - 1)
@@ -67,233 +162,6 @@ NLoader {
         }
       }
 
-      property var desktopEntries: DesktopEntries.applications.values
-      property string searchText: ""
-      property int selectedIndex: 0
-
-      // Refresh clipboard when user starts typing clipboard commands
-      onSearchTextChanged: {
-        if (searchText.startsWith(">clip")) {
-          ClipboardService.refresh()
-        }
-      }
-      property var filteredEntries: {
-        Logger.log("AppLauncher", "Total desktop entries:", desktopEntries ? desktopEntries.length : 0)
-        if (!desktopEntries || desktopEntries.length === 0) {
-          Logger.log("AppLauncher", "No desktop entries available")
-          return []
-        }
-
-        // Filter out entries that shouldn't be displayed
-        var visibleEntries = desktopEntries.filter(entry => {
-                                                     if (!entry || entry.noDisplay) {
-                                                       return false
-                                                     }
-                                                     return true
-                                                   })
-
-        Logger.log("AppLauncher", "Visible entries:", visibleEntries.length)
-
-        var query = searchText ? searchText.toLowerCase() : ""
-        var results = []
-
-        // Handle special commands
-        if (query === ">") {
-          results.push({
-                         "isCommand": true,
-                         "name": ">calc",
-                         "content": "Calculator - evaluate mathematical expressions",
-                         "icon": "tag",
-                         "execute": function () {
-                           searchText = ">calc "
-                           searchInput.cursorPosition = searchText.length
-                         }
-                       })
-
-          results.push({
-                         "isCommand": true,
-                         "name": ">clip",
-                         "content": "Clipboard history - browse and restore clipboard items",
-                         "icon": "content_paste",
-                         "execute": function () {
-                           searchText = ">clip "
-                           searchInput.cursorPosition = searchText.length
-                         }
-                       })
-
-          return results
-        }
-
-        // Handle clipboard history
-        if (query.startsWith(">clip")) {
-          const searchTerm = query.slice(5).trim()
-
-          ClipboardService.history.forEach(function (clip, index) {
-            let searchContent = clip.type === 'image' ? clip.mimeType : clip.content || clip
-
-            if (!searchTerm || searchContent.toLowerCase().includes(searchTerm)) {
-              let entry
-              if (clip.type === 'image') {
-                entry = {
-                  "isClipboard": true,
-                  "name": "Image from " + new Date(clip.timestamp).toLocaleTimeString(),
-                  "content": "Image: " + clip.mimeType,
-                  "icon": "image",
-                  "type": 'image',
-                  "data": clip.data,
-                  "execute": function () {
-                    const base64Data = clip.data.split(',')[1]
-                    copyImageBase64(clip.mimeType, base64Data)
-                    Quickshell.execDetached(["notify-send", "Clipboard", "Image copied: " + clip.mimeType])
-                  }
-                }
-              } else {
-                const textContent = clip.content || clip
-                let displayContent = textContent
-                let previewContent = ""
-
-                displayContent = displayContent.replace(/\s+/g, ' ').trim()
-
-                if (displayContent.length > 50) {
-                  previewContent = displayContent
-                  displayContent = displayContent.split('\n')[0].substring(0, 50) + "..."
-                }
-
-                entry = {
-                  "isClipboard": true,
-                  "name": displayContent,
-                  "content": previewContent || textContent,
-                  "icon": "content_paste",
-                  "execute": function () {
-                    Quickshell.clipboardText = String(textContent)
-                    copyText(String(textContent))
-                    var preview = (textContent.length > 50) ? textContent.slice(0, 50) + "…" : textContent
-                    Quickshell.execDetached(["notify-send", "Clipboard", "Text copied: " + preview])
-                  }
-                }
-              }
-              results.push(entry)
-            }
-          })
-
-          if (results.length === 0) {
-            results.push({
-                           "isClipboard": true,
-                           "name": "No clipboard history",
-                           "content": "No matching clipboard entries found",
-                           "icon": "content_paste_off"
-                         })
-          }
-
-          return results
-        }
-
-        // Handle direct math expressions after ">"
-        if (query.startsWith(">") && query.length > 1 && !query.startsWith(">clip") && !query.startsWith(">calc")) {
-          var mathExpr = query.slice(1).trim()
-          // Check if it looks like a math expression (contains numbers and math operators)
-          if (mathExpr && /[0-9+\-*/().]/.test(mathExpr)) {
-            try {
-              var sanitizedExpr = mathExpr.replace(/[^0-9+\-*/().\s]/g, '')
-              var result = eval(sanitizedExpr)
-              
-              if (isFinite(result) && !isNaN(result)) {
-                var displayResult = Number.isInteger(result) ? result.toString() : result.toFixed(6).replace(/\.?0+$/, '')
-                results.push({
-                               "isCalculator": true,
-                               "name": `${mathExpr} = ${displayResult}`,
-                               "result": result,
-                               "expr": mathExpr,
-                               "icon": "tag",
-                               "execute": function () {
-                                 Quickshell.clipboardText = displayResult
-                                 copyText(displayResult)
-                                 Quickshell.execDetached(
-                                       ["notify-send", "Calculator", `${mathExpr} = ${displayResult} (copied to clipboard)`])
-                               }
-                             })
-                return results
-              }
-            } catch (error) {
-              // If math evaluation fails, fall through to regular search
-            }
-          }
-        }
-
-        // Handle calculator
-        if (query.startsWith(">calc")) {
-          var expr = searchText.slice(5).trim()
-          if (expr && expr !== "") {
-            try {
-              // Simple evaluation - only allow basic math operations
-              var sanitizedExpr = expr.replace(/[^0-9+\-*/().\s]/g, '')
-              var result = eval(sanitizedExpr)
-
-              if (isFinite(result) && !isNaN(result)) {
-                var displayResult = Number.isInteger(result) ? result.toString() : result.toFixed(6).replace(/\.?0+$/,
-                                                                                                             '')
-                results.push({
-                               "isCalculator": true,
-                               "name": `${expr} = ${displayResult}`,
-                               "result": result,
-                               "expr": expr,
-                               "icon": "tag",
-                               "execute": function () {
-                                 Quickshell.clipboardText = displayResult
-                                 copyText(displayResult)
-                                 Quickshell.execDetached(
-                                       ["notify-send", "Calculator", `${expr} = ${displayResult} (copied to clipboard)`])
-                               }
-                             })
-              } else {
-                results.push({
-                               "isCalculator": true,
-                               "name": "Invalid expression",
-                               "content": "Please enter a valid mathematical expression",
-                               "icon": "tag",
-                               "execute": function () {}
-                             })
-              }
-            } catch (error) {
-              results.push({
-                             "isCalculator": true,
-                             "name": "Invalid expression",
-                             "content": "Please enter a valid mathematical expression",
-                             "icon": "tag",
-                             "execute": function () {}
-                           })
-            }
-          } else {
-            // Show placeholder when just ">calc" is entered
-            results.push({
-                           "isCalculator": true,
-                           "name": "Calculator",
-                           "content": "Enter a mathematical expression (e.g., 5+5, 2*3, 10/2)",
-                           "icon": "tag",
-                           "execute": function () {}
-                         })
-          }
-          return results
-        }
-
-        // Regular app search
-        if (!query) {
-          results = results.concat(visibleEntries.sort(function (a, b) {
-            return a.name.toLowerCase().localeCompare(b.name.toLowerCase())
-          }))
-        } else {
-          var fuzzyResults = Fuzzysort.go(query, visibleEntries, {
-                                            "keys": ["name", "comment", "genericName"]
-                                          })
-          results = results.concat(fuzzyResults.map(function (r) {
-            return r.obj
-          }))
-        }
-
-        Logger.log("AppLauncher", "Filtered entries:", results.length)
-        return results
-      }
-
       Component.onCompleted: {
         Logger.log("AppLauncher", "Component completed")
         Logger.log("AppLauncher", "DesktopEntries available:", typeof DesktopEntries !== 'undefined')
@@ -302,7 +170,7 @@ NLoader {
                      DesktopEntries.entries ? DesktopEntries.entries.length : 'undefined')
         }
         // Start clipboard refresh immediately on open
-        updateClipboardHistory()
+        clipboardHistory.refresh()
       }
 
       // Main content container
@@ -368,7 +236,8 @@ NLoader {
                 anchors.verticalCenter: parent.verticalCenter
                 onTextChanged: {
                   searchText = text
-                  selectedIndex = 0 // Reset selection when search changes
+                  // Defer selectedIndex reset to avoid binding loops
+                  Qt.callLater(() => selectedIndex = 0)
                 }
                 selectedTextColor: Color.mOnSurface
                 selectionColor: Color.mPrimary
