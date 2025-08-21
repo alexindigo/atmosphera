@@ -12,12 +12,13 @@ import qs.Commons
 import qs.Services
 import qs.Widgets
 
-NLoader {
+Loader {
   id: lockScreen
+  active: false
 
   // Log state changes to help debug lock screen issues
-  onIsLoadedChanged: {
-    Logger.log("LockScreen", "State changed - isLoaded:", isLoaded)
+  onActiveChanged: {
+    Logger.log("LockScreen", "State changed:", active)
   }
 
   // Allow a small grace period after unlocking so the compositor releases the lock surfaces
@@ -26,23 +27,28 @@ NLoader {
     interval: 250
     repeat: false
     onTriggered: {
-      Logger.log("LockScreen", "Unload timer triggered - setting isLoaded to false")
-      lockScreen.isLoaded = false
+      Logger.log("LockScreen", "Unload timer triggered - deactivating")
+      lockScreen.active = false
     }
   }
   function scheduleUnloadAfterUnlock() {
     Logger.log("LockScreen", "Scheduling unload after unlock")
     unloadAfterUnlockTimer.start()
   }
-  content: Component {
+  sourceComponent: Component {
     WlSessionLock {
       id: lock
+
       // Tie session lock to loader visibility
-      locked: lockScreen.isLoaded
+      locked: lockScreen.active
 
       // Lockscreen is a different beast, needs a capital 'S' in 'Screen' to access the current screen
       // Also we use a different scaling algorithm based on the resolution, as the design is full screen
-      readonly property real scaling: ScalingService.dynamicScale(Screen)
+      readonly property real scaling: {
+        var tt = ScalingService.dynamicScale(Screen)
+        console.log(tt)
+        return tt
+      }
 
       property string errorMessage: ""
       property bool authenticating: false

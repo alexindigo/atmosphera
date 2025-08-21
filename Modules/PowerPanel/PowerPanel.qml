@@ -55,8 +55,8 @@ NPanel {
     switch (action) {
     case "lock":
       // Access lockScreen directly like IPCManager does
-      if (!lockScreen.isLoaded) {
-        lockScreen.isLoaded = true
+      if (!lockScreen.active) {
+        lockScreen.active = true
       }
       break
     case "suspend":

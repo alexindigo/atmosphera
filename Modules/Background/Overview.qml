@@ -6,7 +6,7 @@ import qs.Commons
 import qs.Services
 import qs.Widgets
 
-NLoader {
+Loader {
   active: CompositorService.isNiri
 
   Component.onCompleted: {
