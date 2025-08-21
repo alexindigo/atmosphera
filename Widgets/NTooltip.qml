@@ -29,6 +29,11 @@ Window {
     }
   }
 
+  onTextChanged: {
+    // Compute new dimensions everytime the text changes
+    _updateDimensions()
+  }
+
   function show() {
     isVisible = true
   }
@@ -37,10 +42,16 @@ Window {
     timerShow.running = false
   }
 
-  function _showNow() {
+  function _updateDimensions() {
     // Compute new size everytime we show the tooltip
     width = Math.max(50 * scaling, tooltipText.implicitWidth + Style.marginL * 2 * scaling)
     height = Math.max(40 * scaling, tooltipText.implicitHeight + Style.marginM * 2 * scaling)
+  }
+
+
+  function _showNow() {
+    // Compute new dimensions everytime we show the tooltip
+    _updateDimensions()
 
     if (!target) {
       return
