@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env -S bash
 
 # Uses: https://github.com/jesperhh/qmlfmt
 # Can be installed from AUR "qmlfmt-git"
