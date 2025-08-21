@@ -132,6 +132,15 @@ ColumnLayout {
                      }
         }
 
+        NToggle {
+          label: "Always show battery percentage"
+          description: "Show battery percentage at all times (otherwise only when charging or low)."
+          checked: Settings.data.bar.alwaysShowBatteryPercentage
+          onToggled: checked => {
+                       Settings.data.bar.alwaysShowBatteryPercentage = checked
+                     }
+        }
+
         ColumnLayout {
           spacing: Style.marginXXS * scaling
           Layout.fillWidth: true

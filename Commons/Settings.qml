@@ -127,6 +127,7 @@ Singleton {
         property bool showBrightness: true
         property bool showNotificationsHistory: true
         property bool showTray: true
+        property bool alwaysShowBatteryPercentage: false
         property real backgroundOpacity: 1.0
         property list<string> monitors: []
       }
