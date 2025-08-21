@@ -49,13 +49,7 @@ Row {
     if (!focusedWindow || !focusedWindow.appId)
       return ""
 
-    // DesktopEntries.byId may return null for unknown apps; guard accordingly
-    if (typeof DesktopEntries === 'undefined' || !DesktopEntries.byId)
-      return ""
-    const entry = DesktopEntries.byId(focusedWindow.appId)
-    const iconName = entry && entry.icon ? entry.icon : ""
-    const iconPath = iconName ? Quickshell.iconPath(iconName) : ""
-    return iconPath || ""
+    return Icons.iconForAppId(focusedWindow.appId)
   }
 
   //  A hidden text element to safely measure the full title width

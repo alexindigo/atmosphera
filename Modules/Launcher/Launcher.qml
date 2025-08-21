@@ -418,7 +418,7 @@ NPanel {
                   anchors.fill: parent
                   anchors.margins: Style.marginXS * scaling
                   asynchronous: true
-                  source: modelData.isCalculator ? "" : modelData.isClipboard ? "" : modelData.isCommand ? modelData.icon : (modelData.icon ? Quickshell.iconPath(modelData.icon, "application-x-executable") : "")
+                  source: modelData.isCalculator ? "" : modelData.isClipboard ? "" : modelData.isCommand ? modelData.icon : Icons.iconFromName(modelData.icon, "application-x-executable")
                   visible: (modelData.isCalculator || modelData.isClipboard || modelData.isCommand || parent.iconLoaded)
                            && modelData.type !== 'image'
                 }

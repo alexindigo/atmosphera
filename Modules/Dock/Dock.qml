@@ -159,8 +159,7 @@ Loader {
             function getAppIcon(toplevel: Toplevel): string {
               if (!toplevel)
                 return ""
-              let icon = Quickshell.iconPath(DesktopEntries.byId(toplevel.appId?.toLowerCase()).icon)
-              return icon || Quickshell.iconPath("application-x-executable", true)
+              return Icons.iconForAppId(toplevel.appId?.toLowerCase())
             }
 
             Row {
