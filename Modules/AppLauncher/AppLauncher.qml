@@ -18,6 +18,12 @@ NPanel {
   panelHeight: Math.min(550 * scaling, screen?.height * 0.8)
   panelAnchorCentered: true
 
+  onOpened: {
+    // Reset state when panel opens to avoid sticky modes
+    searchText = ""
+    selectedIndex = 0
+  }
+
   // Import modular components
   Calculator {
     id: calculator
@@ -25,6 +31,15 @@ NPanel {
 
   ClipboardHistory {
     id: clipboardHistory
+  }
+
+  // Poll cliphist while in clipboard mode to keep entries fresh
+  Timer {
+    id: clipRefreshTimer
+    interval: 2000
+    repeat: true
+    running: searchText.startsWith(">clip")
+    onTriggered: clipboardHistory.refresh()
   }
 
   // Properties
@@ -41,9 +56,16 @@ NPanel {
 
   // Main filtering logic
   property var filteredEntries: {
-    Logger.log("AppLauncher", "Total desktop entries:", desktopEntries ? desktopEntries.length : 0)
+    // Explicit dependency so changes to items/decoded images retrigger this binding
+    const _clipItems = CliphistService.items
+    const _clipRev = CliphistService.revision
+
+    var query = searchText ? searchText.toLowerCase() : ""
+    if (query.startsWith(">clip")) {
+      return clipboardHistory.processQuery(query, _clipItems)
+    }
+
     if (!desktopEntries || desktopEntries.length === 0) {
-      Logger.log("AppLauncher", "No desktop entries available")
       return []
     }
 
@@ -55,9 +77,6 @@ NPanel {
                                                  return true
                                                })
 
-    Logger.log("AppLauncher", "Visible entries:", visibleEntries.length)
-
-    var query = searchText ? searchText.toLowerCase() : ""
     var results = []
 
     // Handle special commands
@@ -79,11 +98,6 @@ NPanel {
                    })
 
       return results
-    }
-
-    // Handle clipboard history
-    if (query.startsWith(">clip")) {
-      return clipboardHistory.processQuery(query)
     }
 
     // Handle calculator
@@ -114,18 +128,19 @@ NPanel {
       }))
     }
 
-    Logger.log("AppLauncher", "Filtered entries:", results.length)
     return results
   }
 
   // Command execution functions
   function executeCalcCommand() {
     searchText = ">calc "
+    searchInput.text = searchText
     searchInput.cursorPosition = searchText.length
   }
 
   function executeClipCommand() {
     searchText = ">clip "
+    searchInput.text = searchText
     searchInput.cursorPosition = searchText.length
   }
 
@@ -143,12 +158,18 @@ NPanel {
   }
 
   function selectNextPage() {
-    if (filteredEntries.length > 0)
-      selectedIndex = Math.min(selectedIndex + 10, filteredEntries.length - 1)
+    if (filteredEntries.length > 0) {
+      const delegateHeight = 65 * scaling + (Style.marginXXS * scaling)
+      const page = Math.max(1, Math.floor(appsList.height / delegateHeight))
+      selectedIndex = Math.min(selectedIndex + page, filteredEntries.length - 1)
+    }
   }
   function selectPrevPage() {
-    if (filteredEntries.length > 0)
-      selectedIndex = Math.max(selectedIndex - 10, 0)
+    if (filteredEntries.length > 0) {
+      const delegateHeight = 65 * scaling + (Style.marginXXS * scaling)
+      const page = Math.max(1, Math.floor(appsList.height / delegateHeight))
+      selectedIndex = Math.max(selectedIndex - page, 0)
+    }
   }
 
   function activateSelected() {
@@ -259,19 +280,33 @@ NPanel {
             Keys.onEscapePressed: root.close()
             Keys.onPressed: event => {
                               if (event.key === Qt.Key_PageDown) {
+                                appsList.cancelFlick()
                                 root.selectNextPage()
                                 event.accepted = true
                               } else if (event.key === Qt.Key_PageUp) {
+                                appsList.cancelFlick()
                                 root.selectPrevPage()
+                                event.accepted = true
+                              } else if (event.key === Qt.Key_Home) {
+                                appsList.cancelFlick()
+                                selectedIndex = 0
+                                event.accepted = true
+                              } else if (event.key === Qt.Key_End) {
+                                appsList.cancelFlick()
+                                if (filteredEntries.length > 0) {
+                                  selectedIndex = filteredEntries.length - 1
+                                }
                                 event.accepted = true
                               }
                               if (event.modifiers & Qt.ControlModifier) {
                                 switch (event.key) {
                                   case Qt.Key_J:
+                                  appsList.cancelFlick()
                                   root.selectNext()
                                   event.accepted = true
                                   break
                                   case Qt.Key_K:
+                                  appsList.cancelFlick()
                                   root.selectPrev()
                                   event.accepted = true
                                   break
@@ -295,21 +330,26 @@ NPanel {
       }
 
       // Applications list
-      ScrollView {
+      ListView {
+        id: appsList
         Layout.fillWidth: true
         Layout.fillHeight: true
         clip: true
-        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-        ScrollBar.vertical.policy: ScrollBar.AsNeeded
+        spacing: Style.marginXXS * scaling
+        model: filteredEntries
+        currentIndex: selectedIndex
+        boundsBehavior: Flickable.StopAtBounds
+        maximumFlickVelocity: 2500
+        flickDeceleration: 2000
+        onCurrentIndexChanged: {
+          cancelFlick()
+          if (currentIndex >= 0) {
+            positionViewAtIndex(currentIndex, ListView.Contain)
+          }
+        }
+        ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }
 
-        ListView {
-          id: appsList
-          anchors.fill: parent
-          spacing: Style.marginXXS * scaling
-          model: filteredEntries
-          currentIndex: selectedIndex
-
-          delegate: Rectangle {
+        delegate: Rectangle {
             width: appsList.width - Style.marginS * scaling
             height: 65 * scaling
             radius: Style.radiusM * scaling
@@ -341,7 +381,7 @@ NPanel {
               anchors.margins: Style.marginM * scaling
               spacing: Style.marginM * scaling
 
-              // App icon with background
+              // App/clipboard icon with background
               Rectangle {
                 Layout.preferredWidth: Style.baseWidgetSize * 1.25 * scaling
                 Layout.preferredHeight: Style.baseWidgetSize * 1.25 * scaling
@@ -350,15 +390,15 @@ NPanel {
                 property bool iconLoaded: (modelData.isCalculator || modelData.isClipboard || modelData.isCommand)
                                           || (iconImg.status === Image.Ready && iconImg.source !== ""
                                               && iconImg.status !== Image.Error && iconImg.source !== "")
-                visible: !searchText.startsWith(">calc") // Hide icon when in calculator mode
+                visible: !searchText.startsWith(">calc")
 
-                // Clipboard image display
+                // Clipboard image display (pull from cache)
                 Image {
                   id: clipboardImage
                   anchors.fill: parent
                   anchors.margins: Style.marginXS * scaling
                   visible: modelData.type === 'image'
-                  source: modelData.data || ""
+                  source: modelData.type === 'image' ? (CliphistService.imageDataById[modelData.id] || "") : ""
                   fillMode: Image.PreserveAspectCrop
                   asynchronous: true
                   cache: true
@@ -374,7 +414,6 @@ NPanel {
                            && modelData.type !== 'image'
                 }
 
-                // Fallback icon container
                 Rectangle {
                   anchors.fill: parent
                   anchors.margins: Style.marginXS * scaling
@@ -386,19 +425,14 @@ NPanel {
 
                 NText {
                   anchors.centerIn: parent
-                  visible: !parent.iconLoaded && !(modelData.isCalculator || modelData.isClipboard
-                                                   || modelData.isCommand)
+                  visible: !parent.iconLoaded && !(modelData.isCalculator || modelData.isClipboard || modelData.isCommand)
                   text: modelData.name ? modelData.name.charAt(0).toUpperCase() : "?"
                   font.pointSize: Style.fontSizeXXL * scaling
                   font.weight: Style.fontWeightBold
                   color: Color.mPrimary
                 }
 
-                Behavior on color {
-                  ColorAnimation {
-                    duration: Style.animationFast
-                  }
-                }
+                Behavior on color { ColorAnimation { duration: Style.animationFast } }
               }
 
               // App info
@@ -437,7 +471,6 @@ NPanel {
                 activateSelected()
               }
             }
-          }
         }
       }
 

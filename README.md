@@ -68,6 +68,7 @@ A sleek, minimal, and thoughtfully crafted desktop shell for Wayland using **Qui
 
 ### Optional
 
+- `cliphist` - For clipboard history support
 - `swww` - Wallpaper animations and effects
 - `matugen` - Material You color scheme generation
 - `cava` - Audio visualizer component
@@ -85,8 +86,8 @@ A sleek, minimal, and thoughtfully crafted desktop shell for Wayland using **Qui
 # Install Quickshell
 yay -S quickshell-git
 
-# Download and install Noctalia
-mkdir -p ~/.config/quickshell && curl -sL https://github.com/noctalia-dev/noctalia-shell/archive/refs/heads/main.tar.gz | tar -xz --strip-components=1 -C ~/.config/quickshell
+# Download and install Noctalia (latest release)
+mkdir -p ~/.config/quickshell && curl -sL https://github.com/noctalia-dev/noctalia-shell/releases/latest/download/noctalia-latest.tar.gz | tar -xz --strip-components=1 -C ~/.config/quickshell
 ```
 
 ### Usage
@@ -215,11 +216,10 @@ Noctalia/
 
 ### Contributing
 
-1. All Pull requests should be based on the "dev" branch
-2. Follow the existing code style and patterns
-3. Use the modular architecture for new features
-4. Implement proper error handling and logging
-5. Test with both Hyprland and Niri compositors (if applicable)
+1. Follow the existing code style and patterns
+2. Use the modular architecture for new features
+3. Implement proper error handling and logging
+4. Test with both Hyprland and Niri compositors (if applicable)
 
 Contributions are welcome! Don't worry about being perfect - every contribution helps! Whether it's fixing a small bug, adding a new feature, or improving documentation, we welcome all contributions. Feel free to open an issue to discuss ideas or ask questions before diving in. For feature requests and ideas, you can also use our discussions page.
 

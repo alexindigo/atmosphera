@@ -6,108 +6,87 @@ import qs.Services
 QtObject {
   id: clipboardHistory
 
-  // Copy helpers for different content types
-  function copyImageBase64(mime, base64) {
-    Quickshell.execDetached(["sh", "-lc", `printf %s ${base64} | base64 -d | wl-copy -t '${mime}'`])
+  function parseImageMeta(preview) {
+    const re = /\[\[\s*binary data\s+([\d\.]+\s*(?:KiB|MiB|GiB|B))\s+(\w+)\s+(\d+)x(\d+)\s*\]\]/i
+    const m = (preview || "").match(re)
+    if (!m) return null
+    return { size: m[1], fmt: (m[2] || "").toUpperCase(), w: Number(m[3]), h: Number(m[4]) }
   }
 
-  function copyText(text) {
-    // Use printf with proper quoting to handle special characters
-    Quickshell.execDetached(["sh", "-c", `printf '%s' ${JSON.stringify(text)} | wl-copy -t text/plain`])
+  function formatTextPreview(preview) {
+    const normalized = (preview || "").replace(/\s+/g, ' ').trim()
+    const lines = normalized.split(/\n+/)
+    const title = (lines[0] || "Text").slice(0, 60)
+    let subtitle = ""
+    if (lines.length > 1) {
+      subtitle = lines[1].slice(0, 80)
+    } else {
+      subtitle = `${normalized.length} chars`
+    }
+    return { title, subtitle }
   }
 
-  // Create clipboard entry for display
-  function createClipboardEntry(clip, index) {
-    if (clip.type === 'image') {
+  function createClipboardEntry(item) {
+    if (item.isImage) {
+      const meta = parseImageMeta(item.preview)
+      const title = meta ? `Image ${meta.w}×${meta.h}` : "Image"
+      const subtitle = meta ? `${meta.size} · ${meta.fmt}` : (item.preview || "")
       return {
         "isClipboard": true,
-        "name": "Image from " + new Date(clip.timestamp).toLocaleTimeString(),
-        "content": "Image: " + clip.mimeType,
+        "name": title,
+        "content": subtitle,
         "icon": "image",
         "type": 'image',
-        "data": clip.data,
-        "timestamp": clip.timestamp,
-        "index": index,
-        "execute": function () {
-          const dataParts = clip.data.split(',')
-          const base64Data = dataParts.length > 1 ? dataParts[1] : clip.data
-          copyImageBase64(clip.mimeType, base64Data)
-          Quickshell.execDetached(["notify-send", "Clipboard", "Image copied: " + clip.mimeType])
-        }
+        "id": item.id,
+        "mime": item.mime
       }
     } else {
-      // Handle text content
-      const textContent = clip.content || clip
-      let displayContent = textContent
-      let previewContent = ""
-
-      // Normalize whitespace for display
-      displayContent = displayContent.replace(/\s+/g, ' ').trim()
-
-      // Create preview for long content
-      if (displayContent.length > 50) {
-        previewContent = displayContent
-        displayContent = displayContent.split('\n')[0].substring(0, 50) + "..."
-      }
-
+      const parts = formatTextPreview(item.preview)
       return {
         "isClipboard": true,
-        "name": displayContent,
-        "content": previewContent || textContent,
+        "name": parts.title,
+        "content": parts.subtitle,
         "icon": "content_paste",
         "type": 'text',
-        "timestamp": clip.timestamp,
-        "index": index,
-        "textData": textContent,
-        "execute"// Store the text data for the execute function
-        : function () {
-          const text = this.textData || clip.content || clip
-          Quickshell.clipboardText = String(text)
-          copyText(String(text))
-          var preview = (text.length > 50) ? text.slice(0, 50) + "…" : text
-          Quickshell.execDetached(["notify-send", "Clipboard", "Text copied: " + preview])
-        }
+        "id": item.id
       }
     }
   }
 
-  // Create empty state entry
   function createEmptyEntry() {
     return {
       "isClipboard": true,
       "name": "No clipboard history",
       "content": "No matching clipboard entries found",
       "icon": "content_paste_off",
-      "execute": function () {// Do nothing for empty state
-      }
+      "execute": function () {}
     }
   }
 
-  // Process clipboard queries
-  function processQuery(query) {
+  function processQuery(query, items) {
     const results = []
-
     if (!query.startsWith(">clip")) {
       return results
     }
 
-    // Extract search term after ">clip "
-    const searchTerm = query.slice(5).trim()
+    const searchTerm = query.slice(5).trim().toLowerCase()
 
-    // Note: Clipboard refresh should be handled externally to avoid binding loops
+    // Dependency hook without side effects
+    const _rev = CliphistService.revision
+    const source = items || CliphistService.items
 
-    // Process each clipboard item
-    ClipboardService.history.forEach(function (clip, index) {
-      let searchContent = clip.type === 'image' ? clip.mimeType : clip.content || clip
-
-      // Apply search filter if provided
-      if (!searchTerm || searchContent.toLowerCase().includes(searchTerm.toLowerCase())) {
-        const entry = createClipboardEntry(clip, index)
+    source.forEach(function (item) {
+      const hay = (item.preview || "").toLowerCase()
+      if (!searchTerm || hay.indexOf(searchTerm) !== -1) {
+        const entry = createClipboardEntry(item)
+        // Attach execute at this level to avoid duplicating functions
+        entry.execute = function () {
+          CliphistService.copyToClipboard(item.id)
+        }
         results.push(entry)
       }
     })
 
-    // Show empty state if no results
     if (results.length === 0) {
       results.push(createEmptyEntry())
     }
@@ -115,43 +94,11 @@ QtObject {
     return results
   }
 
-  // Create command entry for clipboard mode (deprecated - use direct creation in parent)
-  function createCommandEntry() {
-    return {
-      "isCommand": true,
-      "name": ">clip",
-      "content": "Clipboard history - browse and restore clipboard items",
-      "icon": "content_paste",
-      "execute": function () {// This should be handled by the parent component
-      }
-    }
-  }
-
-  // Utility function to refresh clipboard
   function refresh() {
-    ClipboardService.refresh()
+    CliphistService.list(100)
   }
 
-  // Get clipboard history count
-  function getHistoryCount() {
-    return ClipboardService.history ? ClipboardService.history.length : 0
-  }
-
-  // Get formatted timestamp for display
-  function formatTimestamp(timestamp) {
-    return new Date(timestamp).toLocaleTimeString()
-  }
-
-  // Get clipboard entry by index
-  function getEntryByIndex(index) {
-    if (ClipboardService.history && index >= 0 && index < ClipboardService.history.length) {
-      return ClipboardService.history[index]
-    }
-    return null
-  }
-
-  // Clear all clipboard history
   function clearAll() {
-    ClipboardService.clearHistory()
+    CliphistService.wipeAll()
   }
 }
