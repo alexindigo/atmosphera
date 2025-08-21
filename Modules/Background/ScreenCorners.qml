@@ -6,10 +6,10 @@ import qs.Commons
 import qs.Services
 import qs.Widgets
 
-NLoader {
-  isLoaded: Settings.data.general.showScreenCorners
+Loader {
+  active: Settings.data.general.showScreenCorners
 
-  content: Variants {
+  sourceComponent: Variants {
     model: Quickshell.screens
 
     PanelWindow {
