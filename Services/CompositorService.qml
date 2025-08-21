@@ -48,6 +48,8 @@ Singleton {
     enabled: isHyprland
     function onValuesChanged() {
       updateHyprlandWindows()
+      // Keep workspace occupancy up to date when windows change
+      updateHyprlandWorkspaces()
       windowListChanged()
     }
   }
@@ -118,6 +120,19 @@ Singleton {
     workspaces.clear()
     try {
       const hlWorkspaces = Hyprland.workspaces.values
+      // Determine occupied workspace ids from current toplevels
+      const occupiedIds = {}
+      try {
+        const hlToplevels = Hyprland.toplevels.values
+        for (var t = 0; t < hlToplevels.length; t++) {
+          const tws = hlToplevels[t].workspace?.id
+          if (tws !== undefined && tws !== null) {
+            occupiedIds[tws] = true
+          }
+        }
+      } catch (e2) {
+        // ignore occupancy errors; fall back to false
+      }
       for (var i = 0; i < hlWorkspaces.length; i++) {
         const ws = hlWorkspaces[i]
         // Only append workspaces with id >= 1
@@ -129,7 +144,8 @@ Singleton {
                               "output": ws.monitor?.name || "",
                               "isActive": ws.active === true,
                               "isFocused": ws.focused === true,
-                              "isUrgent": ws.urgent === true
+                              "isUrgent": ws.urgent === true,
+                              "isOccupied": occupiedIds[ws.id] === true
                             })
         }
       }
