@@ -11,9 +11,7 @@ Loader {
 
   Component.onCompleted: {
     if (CompositorService.isNiri) {
-      Logger.log("Overview", "Loading Overview component (Niri detected)")
-    } else {
-      Logger.log("Overview", "Skipping Overview component (Niri not detected)")
+      Logger.log("Overview", "Loading Overview component for Niri")
     }
   }
 
