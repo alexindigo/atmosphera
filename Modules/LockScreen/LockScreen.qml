@@ -257,7 +257,7 @@ Loader {
                 text: Qt.formatDateTime(new Date(), "HH:mm")
                 font.family: Settings.data.ui.fontBillboard
                 font.pointSize: Style.fontSizeXXXL * 6 * scaling
-                font.weight: Font.Bold
+                font.weight: Style.fontWeightBold
                 font.letterSpacing: -2 * scaling
                 color: Color.mOnSurface
                 horizontalAlignment: Text.AlignHCenter
@@ -425,7 +425,7 @@ Loader {
                         color: Color.mOnSurface
                         font.family: Settings.data.ui.fontFixed
                         font.pointSize: Style.fontSizeL * scaling
-                        font.weight: Font.Bold
+                        font.weight: Style.fontWeightBold
                         Layout.fillWidth: true
                       }
 
@@ -445,7 +445,7 @@ Loader {
                           color: Color.mOnSurface
                           font.family: Settings.data.ui.fontFixed
                           font.pointSize: Style.fontSizeM * scaling
-                          font.weight: Font.Bold
+                          font.weight: Style.fontWeightBold
                         }
                       }
                     }
@@ -471,7 +471,7 @@ Loader {
                         color: Color.mPrimary
                         font.family: Settings.data.ui.fontFixed
                         font.pointSize: Style.fontSizeL * scaling
-                        font.weight: Font.Bold
+                        font.weight: Style.fontWeightBold
                       }
 
                       NText {
@@ -509,7 +509,7 @@ Loader {
                         color: Color.mPrimary
                         font.family: Settings.data.ui.fontFixed
                         font.pointSize: Style.fontSizeL * scaling
-                        font.weight: Font.Bold
+                        font.weight: Style.fontWeightBold
                       }
 
                       NText {
@@ -640,7 +640,7 @@ Loader {
                         color: executeButtonArea.containsMouse ? Color.mOnPrimary : Color.mPrimary
                         font.family: Settings.data.ui.fontFixed
                         font.pointSize: Style.fontSizeM * scaling
-                        font.weight: Font.Bold
+                        font.weight: Style.fontWeightBold
                       }
 
                       MouseArea {

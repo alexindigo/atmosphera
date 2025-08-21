@@ -38,7 +38,7 @@ NPanel {
         NText {
           text: "Notification History"
           font.pointSize: Style.fontSizeL * scaling
-          font.bold: true
+          font.weight: Style.fontWeightBold
           color: Color.mOnSurface
           Layout.fillWidth: true
         }
@@ -131,7 +131,7 @@ NPanel {
                 text: (summary || "No summary").substring(0, 100)
                 font.pointSize: Style.fontSizeM * scaling
                 font.weight: Font.Medium
-                color: notificationMouseArea.containsMouse ? Color.mSurface : Color.mOnSurface
+                color: notificationMouseArea.containsMouse ? Color.mSurface : Color.mPrimary
                 wrapMode: Text.Wrap
                 width: parent.width - 60
                 maximumLineCount: 2

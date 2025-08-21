@@ -80,7 +80,7 @@ ColumnLayout {
 
         NToggle {
           label: "Show Active Window"
-          description: "Display the title of the currently focused window on the left side of the bar."
+          description: "Display the title of the currently focused window."
           checked: Settings.data.bar.showActiveWindow
           onToggled: checked => {
                        Settings.data.bar.showActiveWindow = checked
@@ -88,7 +88,7 @@ ColumnLayout {
         }
 
         NToggle {
-          label: "Show App Icon Next To Active Window"
+          label: "Show Active Window's Icon"
           description: "Display the app icon next to the title of the currently focused window."
           checked: Settings.data.bar.showActiveWindowIcon
           onToggled: checked => {

@@ -236,7 +236,6 @@ NPanel {
             rightPadding: 0
             topPadding: 0
             bottomPadding: 0
-            font.bold: true
             Component.onCompleted: {
               // Focus the search bar by default
               Qt.callLater(() => {
@@ -360,7 +359,7 @@ NPanel {
                                                    || modelData.isCommand)
                   text: modelData.name ? modelData.name.charAt(0).toUpperCase() : "?"
                   font.pointSize: Style.fontSizeXXL * scaling
-                  font.weight: Font.Bold
+                  font.weight: Style.fontWeightBold
                   color: Color.mPrimary
                 }
 
@@ -379,7 +378,7 @@ NPanel {
                 NText {
                   text: modelData.name || "Unknown"
                   font.pointSize: Style.fontSizeL * scaling
-                  font.weight: Font.Bold
+                  font.weight: Style.fontWeightBold
                   color: (appCardArea.containsMouse || isSelected) ? Color.mOnPrimary : Color.mOnSurface
                   elide: Text.ElideRight
                   Layout.fillWidth: true

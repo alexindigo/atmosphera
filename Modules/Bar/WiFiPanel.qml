@@ -43,7 +43,7 @@ NPanel {
         NText {
           text: "WiFi"
           font.pointSize: Style.fontSizeL * scaling
-          font.bold: true
+          font.weight: Style.fontWeightBold
           color: Color.mOnSurface
           Layout.fillWidth: true
         }
