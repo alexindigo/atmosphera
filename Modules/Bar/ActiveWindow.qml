@@ -43,14 +43,14 @@ Row {
     const focusedWindow = CompositorService.getFocusedWindow()
     return focusedWindow ? (focusedWindow.title || focusedWindow.appId || "") : ""
   }
-  
-  function getAppIcon() {
-    const focusedWindow = CompositorService.getFocusedWindow();
-    if (!focusedWindow || !focusedWindow.appId)
-      return "";
 
-    let icon = Quickshell.iconPath(DesktopEntries.byId(focusedWindow.appId).icon);
-    return icon || "";
+  function getAppIcon() {
+    const focusedWindow = CompositorService.getFocusedWindow()
+    if (!focusedWindow || !focusedWindow.appId)
+      return ""
+
+    let icon = Quickshell.iconPath(DesktopEntries.byId(focusedWindow.appId).icon)
+    return icon || ""
   }
 
   //  A hidden text element to safely measure the full title width
@@ -83,19 +83,19 @@ Row {
 
         // Window icon
         Item {
-            width: Style.fontSizeL * scaling * 1.2
-            height: Style.fontSizeL * scaling * 1.2
-            anchors.verticalCenter: parent.verticalCenter
-            visible: getTitle() !== "" && Settings.data.bar.showActiveWindowIcon
+          width: Style.fontSizeL * scaling * 1.2
+          height: Style.fontSizeL * scaling * 1.2
+          anchors.verticalCenter: parent.verticalCenter
+          visible: getTitle() !== "" && Settings.data.bar.showActiveWindowIcon
 
-            IconImage {
-                id: windowIcon
-                anchors.fill: parent
-                source: getAppIcon()
-                asynchronous: true
-                smooth: true
-                visible: source !== ""
-            }
+          IconImage {
+            id: windowIcon
+            anchors.fill: parent
+            source: getAppIcon()
+            asynchronous: true
+            smooth: true
+            visible: source !== ""
+          }
         }
 
         NText {

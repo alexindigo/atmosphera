@@ -44,7 +44,8 @@ Row {
       Loader {
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
-        active: Settings.data.audio.showMiniplayerCava && Settings.data.audio.visualizerType == "linear" && MediaService.isPlaying
+        active: Settings.data.audio.showMiniplayerCava && Settings.data.audio.visualizerType == "linear"
+                && MediaService.isPlaying
         z: 0
 
         sourceComponent: LinearSpectrum {
@@ -58,7 +59,8 @@ Row {
         Loader {
           anchors.verticalCenter: parent.verticalCenter
           anchors.horizontalCenter: parent.horizontalCenter
-          active: Settings.data.audio.showMiniplayerCava && Settings.data.audio.visualizerType == "mirrored" && MediaService.isPlaying
+          active: Settings.data.audio.showMiniplayerCava && Settings.data.audio.visualizerType == "mirrored"
+                  && MediaService.isPlaying
           z: 0
 
           sourceComponent: MirroredSpectrum {
@@ -73,7 +75,8 @@ Row {
         Loader {
           anchors.verticalCenter: parent.verticalCenter
           anchors.horizontalCenter: parent.horizontalCenter
-          active: Settings.data.audio.showMiniplayerCava && Settings.data.audio.visualizerType == "wave" && MediaService.isPlaying
+          active: Settings.data.audio.showMiniplayerCava && Settings.data.audio.visualizerType == "wave"
+                  && MediaService.isPlaying
           z: 0
 
           sourceComponent: WaveSpectrum {
@@ -90,53 +93,53 @@ Row {
         id: row
         anchors.verticalCenter: parent.verticalCenter
         spacing: Style.marginXS * scaling
-        z: 1  // Above the visualizer
+        z: 1 // Above the visualizer
 
         NIcon {
-            id: windowIcon
-            text: MediaService.isPlaying ? "pause" : "play_arrow"
-            font.pointSize: Style.fontSizeL * scaling
-            verticalAlignment: Text.AlignVCenter
-            anchors.verticalCenter: parent.verticalCenter
-            visible: !Settings.data.audio.showMiniplayerAlbumArt && getTitle() !== "" && !trackArt.visible
+          id: windowIcon
+          text: MediaService.isPlaying ? "pause" : "play_arrow"
+          font.pointSize: Style.fontSizeL * scaling
+          verticalAlignment: Text.AlignVCenter
+          anchors.verticalCenter: parent.verticalCenter
+          visible: !Settings.data.audio.showMiniplayerAlbumArt && getTitle() !== "" && !trackArt.visible
         }
 
         Column {
-            anchors.verticalCenter: parent.verticalCenter
-            visible: Settings.data.audio.showMiniplayerAlbumArt
+          anchors.verticalCenter: parent.verticalCenter
+          visible: Settings.data.audio.showMiniplayerAlbumArt
 
-            Rectangle {
-                width: 16 * scaling
-                height: 16  * scaling
-                radius: width * 0.5
-                color: Color.transparent
-                antialiasing: true
-                clip: true
+          Rectangle {
+            width: 16 * scaling
+            height: 16 * scaling
+            radius: width * 0.5
+            color: Color.transparent
+            antialiasing: true
+            clip: true
 
-                NImageRounded {
-                    id: trackArt
-                    visible: MediaService.trackArtUrl.toString() !== ""
-                    anchors.fill: parent
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: scaling
-                    imagePath: MediaService.trackArtUrl
-                    fallbackIcon: MediaService.isPlaying ? "pause" : "play_arrow"
-                    borderWidth: 0
-                    border.color: Color.transparent
-                    imageRadius: width
-                    antialiasing: true
-                }
-
-                // Fallback icon when no album art available
-                NIcon {
-                    id: windowIconFallback
-                    text: MediaService.isPlaying ? "pause" : "play_arrow"
-                    font.pointSize: Style.fontSizeL * scaling
-                    verticalAlignment: Text.AlignVCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    visible: getTitle() !== "" && !trackArt.visible
-                }
+            NImageRounded {
+              id: trackArt
+              visible: MediaService.trackArtUrl.toString() !== ""
+              anchors.fill: parent
+              anchors.verticalCenter: parent.verticalCenter
+              anchors.margins: scaling
+              imagePath: MediaService.trackArtUrl
+              fallbackIcon: MediaService.isPlaying ? "pause" : "play_arrow"
+              borderWidth: 0
+              border.color: Color.transparent
+              imageRadius: width
+              antialiasing: true
             }
+
+            // Fallback icon when no album art available
+            NIcon {
+              id: windowIconFallback
+              text: MediaService.isPlaying ? "pause" : "play_arrow"
+              font.pointSize: Style.fontSizeL * scaling
+              verticalAlignment: Text.AlignVCenter
+              anchors.verticalCenter: parent.verticalCenter
+              visible: getTitle() !== "" && !trackArt.visible
+            }
+          }
         }
 
         NText {
