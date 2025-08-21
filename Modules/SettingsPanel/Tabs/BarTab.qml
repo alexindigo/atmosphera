@@ -72,7 +72,7 @@ ColumnLayout {
               }
             }
             currentKey: Settings.data.bar.position
-            onSelected: function (key) {
+            onSelected: key => {
               Settings.data.bar.position = key
             }
           }
