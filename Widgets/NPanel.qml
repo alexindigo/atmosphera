@@ -117,7 +117,7 @@ Loader {
         sequences: ["Escape"]
         enabled: root.active && !root.isClosing
         onActivated: root.close()
-        context: Shortcut.WindowShortcut
+        context: Qt.WindowShortcut
       }
 
       // Clicking outside of the rectangle to close
@@ -158,8 +158,6 @@ Loader {
         Component.onCompleted: {
           root.scaleValue = 1.0
           root.opacityValue = 1.0
-          // Ensure the panel window becomes the active window so window-scoped shortcuts work (Esc)
-          Qt.callLater(() => panelWindow.forceActiveFocus())
         }
 
         // Prevent closing when clicking in the panel bg
