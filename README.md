@@ -64,6 +64,7 @@ Features a modern modular architecture with a status bar, notification system, c
 ### Required
 
 - `quickshell-git` - Core shell framework
+- `ttf-roboto` - The default font used for most of the UI
 - `ttf-material-symbols-variable-git` - Icon font for UI elements
 - `xdg-desktop-portal-gnome` - Desktop integration (or alternative portal)
 
