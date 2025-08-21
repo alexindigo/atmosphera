@@ -37,7 +37,7 @@ Singleton {
   Process {
     id: process
     stdinEnabled: true
-    running: (Settings.data.audio.visualizerType !== "none") && PanelService.sidePanel.isLoaded
+    running: (Settings.data.audio.visualizerType !== "none") && PanelService.sidePanel.active
     command: ["cava", "-p", "/dev/stdin"]
     onExited: {
       stdinEnabled = true

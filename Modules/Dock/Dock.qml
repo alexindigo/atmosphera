@@ -9,9 +9,9 @@ import qs.Commons
 import qs.Services
 import qs.Widgets
 
-NLoader {
-  isLoaded: (Settings.data.dock.monitors.length > 0)
-  content: Component {
+Loader {
+  active: (Settings.data.dock.monitors.length > 0)
+  sourceComponent: Component {
     Variants {
       model: Quickshell.screens
 
