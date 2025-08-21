@@ -224,12 +224,12 @@ ColumnLayout {
       NDivider {
         Layout.fillWidth: true
         Layout.topMargin: Style.marginL * scaling
-        Layout.bottomMargin: Style.marginM * scaling
+        Layout.bottomMargin: Style.marginXL * scaling
       }
 
-      // AudioService Visualizer Category
+      // Bar Mini Media player
       ColumnLayout {
-        spacing: Style.marginS * scaling
+        spacing: Style.marginL * scaling
         Layout.fillWidth: true
 
         NText {
@@ -263,8 +263,8 @@ ColumnLayout {
       // Divider
       NDivider {
         Layout.fillWidth: true
-        Layout.topMargin: Style.marginL * scaling
-        Layout.bottomMargin: Style.marginM * scaling
+        Layout.topMargin: Style.marginXL * scaling
+        Layout.bottomMargin: Style.marginXL * scaling
       }
 
       // AudioService Visualizer Category

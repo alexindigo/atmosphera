@@ -76,8 +76,8 @@ ColumnLayout {
 
       NDivider {
         Layout.fillWidth: true
-        Layout.topMargin: Style.marginL * 2 * scaling
-        Layout.bottomMargin: Style.marginL * scaling
+        Layout.topMargin: Style.marginXL * scaling
+        Layout.bottomMargin: Style.marginXL * scaling
       }
 
       ColumnLayout {
@@ -160,7 +160,7 @@ ColumnLayout {
 
         NDivider {
           Layout.fillWidth: true
-          Layout.topMargin: Style.marginL * 2 * scaling
+          Layout.topMargin: Style.marginXL * scaling
           Layout.bottomMargin: Style.marginL * scaling
         }
 
