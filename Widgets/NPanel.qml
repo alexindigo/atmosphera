@@ -112,6 +112,14 @@ Loader {
       margins.top: Settings.data.bar.position === "top" ? Style.barHeight * scaling : 0
       margins.bottom: Settings.data.bar.position === "bottom" ? Style.barHeight * scaling : 0
 
+      // Close any panel with Esc without requiring focus
+      Shortcut {
+        sequences: ["Escape"]
+        enabled: root.active && !root.isClosing
+        onActivated: root.close()
+        context: Shortcut.WindowShortcut
+      }
+
       // Clicking outside of the rectangle to close
       MouseArea {
         anchors.fill: parent
@@ -150,6 +158,8 @@ Loader {
         Component.onCompleted: {
           root.scaleValue = 1.0
           root.opacityValue = 1.0
+          // Ensure the panel window becomes the active window so window-scoped shortcuts work (Esc)
+          Qt.callLater(() => panelWindow.forceActiveFocus())
         }
 
         // Prevent closing when clicking in the panel bg
