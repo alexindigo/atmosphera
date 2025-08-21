@@ -334,7 +334,7 @@ Loader {
                   anchors.centerIn: parent
                   width: 100 * scaling
                   height: 100 * scaling
-                  imagePath: Quickshell.env("HOME") + "/.face"
+                  imagePath: Settings.data.general.avatarImage
                   fallbackIcon: "person"
                   imageRadius: width * 0.5
                 }
