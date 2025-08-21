@@ -12,6 +12,7 @@ Singleton {
   // Public API
   property var items: [] // [{id, preview, mime, isImage}]
   property bool loading: false
+  property bool enabled: Settings.data.appLauncher.enableClipboardHistory
 
   // Optional automatic watchers to feed cliphist DB
   property bool autoWatch: true
@@ -30,14 +31,26 @@ Singleton {
   property string _b64CurrentMime: ""
   property string _b64CurrentId: ""
 
-  // Start watchers when the singleton loads
-  Component.onCompleted: startWatchers()
+  // Start/stop watchers when enabled changes
+  Component.onCompleted: {
+    if (root.enabled) startWatchers()
+  }
+  onEnabledChanged: {
+    if (root.enabled) {
+      startWatchers()
+    } else {
+      stopWatchers()
+      loading = false
+      // Optional: clear items to avoid stale UI
+      items = []
+    }
+  }
 
   // Fallback: periodically refresh list so UI updates even if not in clip mode
   Timer {
     interval: 5000
     repeat: true
-    running: true
+    running: root.enabled
     onTriggered: list()
   }
 
@@ -134,7 +147,7 @@ Singleton {
   }
 
   function startWatchers() {
-    if (!autoWatch || watchersStarted) return
+    if (!root.enabled || !autoWatch || watchersStarted) return
     watchersStarted = true
     // Start text watcher
     watchText.command = ["wl-paste", "--type", "text", "--watch", "cliphist", "store"]
@@ -144,7 +157,15 @@ Singleton {
     watchImage.running = true
   }
 
+  function stopWatchers() {
+    if (!watchersStarted) return
+    watchText.running = false
+    watchImage.running = false
+    watchersStarted = false
+  }
+
   function list(maxPreviewWidth) {
+    if (!root.enabled) { return }
     if (listProc.running) return
     loading = true
     const width = maxPreviewWidth || 100
