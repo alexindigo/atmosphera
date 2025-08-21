@@ -8,6 +8,9 @@ Singleton {
   // A ref. to the sidePanel, so it's accessible from other services
   property var sidePanel: null
 
+  // A ref. to the lockScreen, so it's accessible from other services
+  property var lockScreen: null
+
   // Currently opened panel
   property var openedPanel: null
 

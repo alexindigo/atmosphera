@@ -38,7 +38,8 @@ Singleton {
     id: process
     stdinEnabled: true
     running: (Settings.data.audio.visualizerType !== "none") && (PanelService.sidePanel.active
-                                                                 || Settings.data.audio.showMiniplayerCava)
+                                                                 || Settings.data.audio.showMiniplayerCava
+                                                                 || (PanelService.lockScreen && PanelService.lockScreen.active))
     command: ["cava", "-p", "/dev/stdin"]
     onExited: {
       stdinEnabled = true

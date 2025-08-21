@@ -78,6 +78,9 @@ ShellRoot {
     // Save a ref. to our sidePanel so we can access it from services
     PanelService.sidePanel = sidePanel
 
+    // Save a ref. to our lockScreen so we can access it from services
+    PanelService.lockScreen = lockScreen
+
     // Ensure our singleton is created as soon as possible so we start fetching weather asap
     LocationService.init()
   }

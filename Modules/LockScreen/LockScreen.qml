@@ -11,6 +11,7 @@ import Quickshell.Widgets
 import qs.Commons
 import qs.Services
 import qs.Widgets
+import qs.Modules.Audio
 
 Loader {
   id: lockScreen
@@ -294,7 +295,7 @@ Loader {
               spacing: Style.marginM * scaling
               Layout.alignment: Qt.AlignHCenter
 
-              // Animated avatar with glow effect
+              // Animated avatar with glow effect or audio visualizer
               Rectangle {
                 width: 120 * scaling
                 height: 120 * scaling
@@ -304,7 +305,140 @@ Loader {
                 border.width: Math.max(1, Style.borderL * scaling)
                 anchors.horizontalCenter: parent.horizontalCenter
 
-                // Glow effect
+                                // Circular audio visualizer when music is playing
+                Loader {
+                  active: MediaService.isPlaying && Settings.data.audio.visualizerType == "linear"
+                  anchors.centerIn: parent
+                  width: 160 * scaling
+                  height: 160 * scaling
+
+                  sourceComponent: Item {
+                    Repeater {
+                      model: CavaService.values.length
+
+                      Rectangle {
+                        property real linearAngle: (index / CavaService.values.length) * 2 * Math.PI
+                        property real linearRadius: 70 * scaling
+                        property real linearBarLength: Math.max(2, CavaService.values[index] * 30 * scaling)
+                        property real linearBarWidth: 3 * scaling
+
+                        width: linearBarWidth
+                        height: linearBarLength
+                        color: Color.mPrimary
+                        radius: linearBarWidth * 0.5
+
+                        x: parent.width * 0.5 + Math.cos(linearAngle) * linearRadius - width * 0.5
+                        y: parent.height * 0.5 + Math.sin(linearAngle) * linearRadius - height * 0.5
+
+                        transform: Rotation {
+                          origin.x: linearBarWidth * 0.5
+                          origin.y: linearBarLength * 0.5
+                          angle: (linearAngle * 180 / Math.PI) + 90
+                        }
+                      }
+                    }
+                  }
+                }
+
+                Loader {
+                  active: MediaService.isPlaying && Settings.data.audio.visualizerType == "mirrored"
+                  anchors.centerIn: parent
+                  width: 160 * scaling
+                  height: 160 * scaling
+
+                  sourceComponent: Item {
+                    Repeater {
+                      model: CavaService.values.length * 2
+
+                      Rectangle {
+                        property int mirroredValueIndex: index < CavaService.values.length ? index : (CavaService.values.length * 2 - 1 - index)
+                        property real mirroredAngle: (index / (CavaService.values.length * 2)) * 2 * Math.PI
+                        property real mirroredRadius: 70 * scaling
+                        property real mirroredBarLength: Math.max(2, CavaService.values[mirroredValueIndex] * 30 * scaling)
+                        property real mirroredBarWidth: 3 * scaling
+
+                        width: mirroredBarWidth
+                        height: mirroredBarLength
+                        color: Color.mPrimary
+                        radius: mirroredBarWidth * 0.5
+
+                        x: parent.width * 0.5 + Math.cos(mirroredAngle) * mirroredRadius - width * 0.5
+                        y: parent.height * 0.5 + Math.sin(mirroredAngle) * mirroredRadius - height * 0.5
+
+                        transform: Rotation {
+                          origin.x: mirroredBarWidth * 0.5
+                          origin.y: mirroredBarLength * 0.5
+                          angle: (mirroredAngle * 180 / Math.PI) + 90
+                        }
+                      }
+                    }
+                  }
+                }
+
+                Loader {
+                  active: MediaService.isPlaying && Settings.data.audio.visualizerType == "wave"
+                  anchors.centerIn: parent
+                  width: 160 * scaling
+                  height: 160 * scaling
+
+                  sourceComponent: Item {
+                    Canvas {
+                      id: waveCanvas
+                      anchors.fill: parent
+                      antialiasing: true
+
+                      onPaint: {
+                        var ctx = getContext("2d")
+                        ctx.reset()
+
+                        if (CavaService.values.length === 0) {
+                          return
+                        }
+
+                        ctx.strokeStyle = Color.mPrimary
+                        ctx.lineWidth = 2 * scaling
+                        ctx.lineCap = "round"
+
+                        var centerX = width * 0.5
+                        var centerY = height * 0.5
+                        var baseRadius = 60 * scaling
+                        var maxAmplitude = 20 * scaling
+
+                        ctx.beginPath()
+
+                        for (var i = 0; i <= CavaService.values.length; i++) {
+                          var index = i % CavaService.values.length
+                          var angle = (i / CavaService.values.length) * 2 * Math.PI
+                          var amplitude = CavaService.values[index] * maxAmplitude
+                          var radius = baseRadius + amplitude
+
+                          var x = centerX + Math.cos(angle) * radius
+                          var y = centerY + Math.sin(angle) * radius
+
+                          if (i === 0) {
+                            ctx.moveTo(x, y)
+                          } else {
+                            ctx.lineTo(x, y)
+                          }
+                        }
+
+                        ctx.closePath()
+                        ctx.stroke()
+                      }
+                    }
+
+                    Timer {
+                      interval: 16 // ~60 FPS
+                      running: true
+                      repeat: true
+                      onTriggered: {
+                        waveCanvas.requestPaint()
+                      }
+                    }
+                  }
+                }
+
+                // Glow effect when no music is playing
                 Rectangle {
                   anchors.centerIn: parent
                   width: parent.width + 24 * scaling
@@ -314,6 +448,7 @@ Loader {
                   border.color: Qt.rgba(Color.mPrimary.r, Color.mPrimary.g, Color.mPrimary.b, 0.3)
                   border.width: Math.max(1, Style.borderM * scaling)
                   z: -1
+                  visible: !MediaService.isPlaying
 
                   SequentialAnimation on scale {
                     loops: Animation.Infinite
