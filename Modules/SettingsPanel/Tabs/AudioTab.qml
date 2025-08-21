@@ -219,6 +219,47 @@ ColumnLayout {
           }
         }
       }
+      
+      // Divider
+      NDivider {
+        Layout.fillWidth: true
+        Layout.topMargin: Style.marginL * scaling
+        Layout.bottomMargin: Style.marginM * scaling
+      }
+
+      // AudioService Visualizer Category
+      ColumnLayout {
+        spacing: Style.marginS * scaling
+        Layout.fillWidth: true
+
+        NText {
+          text: "Bar Media Player"
+          font.pointSize: Style.fontSizeXXL * scaling
+          font.weight: Style.fontWeightBold
+          color: Color.mOnSurface
+          Layout.bottomMargin: Style.marginS * scaling
+        }
+
+        // Miniplayer section
+        NToggle {
+            label: "Show Album Art In Bar Media Player"
+            description: "Show the album art of the currently playing song next to the title."
+            checked: Settings.data.audio.showMiniplayerAlbumArt
+            onToggled: checked => {
+                Settings.data.audio.showMiniplayerAlbumArt = checked
+            }
+        }
+        
+        NToggle {
+            label: "Show Audio Visualizer In Bar Media Player"
+            description: "Shows an audio visualizer in the background of the miniplayer."
+            checked: Settings.data.audio.showMiniplayerCava
+            onToggled: checked => {
+                Settings.data.audio.showMiniplayerCava = checked
+            }
+        }
+      }
+    
 
       // Divider
       NDivider {

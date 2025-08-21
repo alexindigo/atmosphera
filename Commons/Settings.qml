@@ -213,6 +213,8 @@ Singleton {
       property JsonObject audio
 
       audio: JsonObject {
+        property bool showMiniplayerAlbumArt: false
+        property bool showMiniplayerCava: false
         property string visualizerType: "linear"
         property int volumeStep: 5
       }
