@@ -142,6 +142,15 @@ NPanel {
     }
   }
 
+  function selectNextPage() {
+    if (filteredEntries.length > 0)
+      selectedIndex = Math.min(selectedIndex + 10, filteredEntries.length - 1)
+  }
+  function selectPrevPage() {
+    if (filteredEntries.length > 0)
+      selectedIndex = Math.max(selectedIndex - 10, 0)
+  }
+
   function activateSelected() {
     if (filteredEntries.length === 0)
       return
@@ -239,6 +248,7 @@ NPanel {
             Component.onCompleted: {
               // Focus the search bar by default
               Qt.callLater(() => {
+                             selectedIndex = 0
                              searchInput.forceActiveFocus()
                            })
             }
@@ -247,6 +257,27 @@ NPanel {
             Keys.onEnterPressed: activateSelected()
             Keys.onReturnPressed: activateSelected()
             Keys.onEscapePressed: root.close()
+            Keys.onPressed: event => {
+                              if (event.key === Qt.Key_PageDown) {
+                                root.selectNextPage()
+                                event.accepted = true
+                              } else if (event.key === Qt.Key_PageUp) {
+                                root.selectPrevPage()
+                                event.accepted = true
+                              }
+                              if (event.modifiers & Qt.ControlModifier) {
+                                switch (event.key) {
+                                  case Qt.Key_J:
+                                  root.selectNext()
+                                  event.accepted = true
+                                  break
+                                  case Qt.Key_K:
+                                  root.selectPrev()
+                                  event.accepted = true
+                                  break
+                                }
+                              }
+                            }
           }
         }
 
