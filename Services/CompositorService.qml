@@ -396,6 +396,25 @@ Singleton {
     }
   }
 
+  // Get current workspace
+  function getCurrentWorkspace() {
+    for (var i = 0; i < workspaces.count; i++) {
+      const ws = workspaces.get(i)
+      if (ws.isFocused) {
+        return ws
+      }
+    }
+    return null
+  }
+
+  // Get focused window
+  function getFocusedWindow() {
+    if (focusedWindowIndex >= 0 && focusedWindowIndex < windows.length) {
+      return windows[focusedWindowIndex]
+    }
+    return null
+  }
+
   // Generic logout/shutdown commands
   function logout() {
     if (isHyprland) {
@@ -415,22 +434,15 @@ Singleton {
     }
   }
 
-  // Get current workspace
-  function getCurrentWorkspace() {
-    for (var i = 0; i < workspaces.count; i++) {
-      const ws = workspaces.get(i)
-      if (ws.isFocused) {
-        return ws
-      }
-    }
-    return null
+  function shutdown() {
+    Quickshell.execDetached(["shutdown", "-h", "now"])
   }
 
-  // Get focused window
-  function getFocusedWindow() {
-    if (focusedWindowIndex >= 0 && focusedWindowIndex < windows.length) {
-      return windows[focusedWindowIndex]
-    }
-    return null
+  function reboot() {
+    Quickshell.execDetached(["reboot"])
+  }
+
+  function suspend() {
+    Quickshell.execDetached(["systemctl", "suspend"])
   }
 }

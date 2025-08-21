@@ -120,6 +120,27 @@ ColumnLayout {
                          }
             }
           }
+
+          // Volume Step Size
+          ColumnLayout {
+            spacing: Style.marginS * scaling
+            Layout.fillWidth: true
+            Layout.topMargin: Style.marginM * scaling
+
+            NSpinBox {
+              Layout.fillWidth: true
+              label: "Volume Step Size"
+              description: "Adjust the step size for volume changes (scroll wheel, keyboard shortcuts)."
+              minimum: 1
+              maximum: 25
+              value: Settings.data.audio.volumeStep
+              stepSize: 1
+              suffix: "%"
+              onValueChanged: {
+                Settings.data.audio.volumeStep = value
+              }
+            }
+          }
         }
 
         NDivider {

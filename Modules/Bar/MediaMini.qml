@@ -32,8 +32,6 @@ Row {
     height: Math.round(Style.capsuleHeight * scaling)
     radius: Math.round(Style.radiusM * scaling)
     color: Color.mSurfaceVariant
-    border.color: Color.mOutline
-    border.width: Math.max(1, Math.round(Style.borderS * scaling))
 
     anchors.verticalCenter: parent.verticalCenter
 

@@ -70,7 +70,7 @@ Item {
 
     onClicked: {
       settingsPanel.requestedTab = SettingsPanel.Tab.Brightness
-      settingsPanel.isLoaded = true
+      settingsPanel.open(screen)
     }
   }
 }
