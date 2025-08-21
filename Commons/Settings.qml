@@ -70,11 +70,21 @@ Singleton {
     }
   }
 
+  // Don't write settings to disk immediately
+  // This avoid excessive IO when a variable changes rapidly (ex: sliders)
+  Timer {
+    id: saveTimer
+    running: false
+    interval: 1000
+    onTriggered: settingsFileView.writeAdapter()
+  }
+
   FileView {
+    id: settingsFileView
     path: settingsFile
     watchChanges: true
     onFileChanged: reload()
-    onAdapterUpdated: writeAdapter()
+    onAdapterUpdated: saveTimer.start()
     Component.onCompleted: function () {
       reload()
     }
