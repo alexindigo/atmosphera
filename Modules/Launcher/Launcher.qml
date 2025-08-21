@@ -16,7 +16,13 @@ NPanel {
   id: root
   panelWidth: Math.min(700 * scaling, screen?.width * 0.75)
   panelHeight: Math.min(550 * scaling, screen?.height * 0.8)
-  panelAnchorCentered: true
+  // Positioning derives from Settings.data.bar.position for vertical (top/bottom)
+  // and from Settings.data.appLauncher.position for horizontal vs center.
+  // Options: center, top_left, top_right, bottom_left, bottom_right
+  readonly property string launcherPosition: Settings.data.appLauncher.position
+  panelAnchorCentered: launcherPosition === "center"
+  panelAnchorLeft: launcherPosition !== "center" && (launcherPosition.endsWith("_left"))
+  panelAnchorRight: launcherPosition !== "center" && (launcherPosition.endsWith("_right"))
 
   onOpened: {
     // Reset state when panel opens to avoid sticky modes
@@ -38,7 +44,7 @@ NPanel {
     id: clipRefreshTimer
     interval: 2000
     repeat: true
-    running: searchText.startsWith(">clip")
+    running: Settings.data.appLauncher.enableClipboardHistory && searchText.startsWith(">clip")
     onTriggered: clipboardHistory.refresh()
   }
 
@@ -49,7 +55,7 @@ NPanel {
 
   // Refresh clipboard when user starts typing clipboard commands
   onSearchTextChanged: {
-    if (searchText.startsWith(">clip")) {
+    if (Settings.data.appLauncher.enableClipboardHistory && searchText.startsWith(">clip")) {
       clipboardHistory.refresh()
     }
   }
@@ -57,11 +63,11 @@ NPanel {
   // Main filtering logic
   property var filteredEntries: {
     // Explicit dependency so changes to items/decoded images retrigger this binding
-    const _clipItems = CliphistService.items
-    const _clipRev = CliphistService.revision
+    const _clipItems = Settings.data.appLauncher.enableClipboardHistory ? CliphistService.items : []
+    const _clipRev = Settings.data.appLauncher.enableClipboardHistory ? CliphistService.revision : 0
 
     var query = searchText ? searchText.toLowerCase() : ""
-    if (query.startsWith(">clip")) {
+    if (Settings.data.appLauncher.enableClipboardHistory && query.startsWith(">clip")) {
       return clipboardHistory.processQuery(query, _clipItems)
     }
 
@@ -88,14 +94,15 @@ NPanel {
                      "icon": "calculate",
                      "execute": executeCalcCommand
                    })
-
-      results.push({
-                     "isCommand": true,
-                     "name": ">clip",
-                     "content": "Clipboard history - browse and restore clipboard items",
-                     "icon": "content_paste",
-                     "execute": executeClipCommand
-                   })
+      if (Settings.data.appLauncher.enableClipboardHistory) {
+        results.push({
+                       "isCommand": true,
+                       "name": ">clip",
+                       "content": "Clipboard history - browse and restore clipboard items",
+                       "icon": "content_paste",
+                       "execute": executeClipCommand
+                     })
+      }
 
       return results
     }
@@ -106,7 +113,7 @@ NPanel {
     }
 
     // Handle direct math expressions after ">"
-    if (query.startsWith(">") && query.length > 1 && !query.startsWith(">clip") && !query.startsWith(">calc")) {
+    if (query.startsWith(">") && query.length > 1 && (!Settings.data.appLauncher.enableClipboardHistory || !query.startsWith(">clip")) && !query.startsWith(">calc")) {
       const mathResults = calculator.processQuery(query, "direct")
       if (mathResults.length > 0) {
         return mathResults
@@ -189,14 +196,16 @@ NPanel {
   }
 
   Component.onCompleted: {
-    Logger.log("AppLauncher", "Component completed")
-    Logger.log("AppLauncher", "DesktopEntries available:", typeof DesktopEntries !== 'undefined')
+    Logger.log("Launcher", "Component completed")
+    Logger.log("Launcher", "DesktopEntries available:", typeof DesktopEntries !== 'undefined')
     if (typeof DesktopEntries !== 'undefined') {
-      Logger.log("AppLauncher", "DesktopEntries.entries:",
+      Logger.log("Launcher", "DesktopEntries.entries:",
                  DesktopEntries.entries ? DesktopEntries.entries.length : 'undefined')
     }
-    // Start clipboard refresh immediately on open
-    clipboardHistory.refresh()
+    // Start clipboard refresh immediately on open if enabled
+    if (Settings.data.appLauncher.enableClipboardHistory) {
+      clipboardHistory.refresh()
+    }
   }
 
   // Main content container
@@ -486,12 +495,7 @@ NPanel {
 
       // Results count
       NText {
-        text: searchText.startsWith(
-                ">clip") ? `${filteredEntries.length} clipboard item${filteredEntries.length
-                           !== 1 ? 's' : ''}` : searchText.startsWith(
-                                     ">calc") ? `${filteredEntries.length} result${filteredEntries.length
-                                                !== 1 ? 's' : ''}` : `${filteredEntries.length} application${filteredEntries.length
-                                                        !== 1 ? 's' : ''}`
+        text: searchText.startsWith(">clip") ? (Settings.data.appLauncher.enableClipboardHistory ? `${filteredEntries.length} clipboard item${filteredEntries.length !== 1 ? 's' : ''}` : `Clipboard history is disabled`) : searchText.startsWith(">calc") ? `${filteredEntries.length} result${filteredEntries.length !== 1 ? 's' : ''}` : `${filteredEntries.length} application${filteredEntries.length !== 1 ? 's' : ''}`
         font.pointSize: Style.fontSizeXS * scaling
         color: Color.mOnSurface
         horizontalAlignment: Text.AlignHCenter

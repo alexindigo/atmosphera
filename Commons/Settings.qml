@@ -194,6 +194,10 @@ Singleton {
       property JsonObject appLauncher
 
       appLauncher: JsonObject {
+        // When disabled, Launcher hides clipboard command and ignores cliphist
+        property bool enableClipboardHistory: true
+        // Position: center, top_left, top_right, bottom_left, bottom_right
+        property string position: "center"
         property list<string> pinnedExecs: []
       }
 

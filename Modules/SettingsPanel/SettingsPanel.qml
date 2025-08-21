@@ -20,6 +20,7 @@ NPanel {
     About,
     AudioService,
     Bar,
+    Launcher,
     Brightness,
     ColorScheme,
     Display,
@@ -37,6 +38,10 @@ NPanel {
   Component {
     id: generalTab
     Tabs.GeneralTab {}
+  }
+  Component {
+    id: launcherTab
+    Tabs.LauncherTab {}
   }
   Component {
     id: barTab
@@ -94,6 +99,11 @@ NPanel {
       "label": "Bar",
       "icon": "web_asset",
       "source": barTab
+    }, {
+      "id": SettingsPanel.Tab.Launcher,
+      "label": "Launcher",
+      "icon": "apps",
+      "source": launcherTab
     }, {
       "id": SettingsPanel.Tab.AudioService,
       "label": "Audio",

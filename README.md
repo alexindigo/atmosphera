@@ -25,7 +25,7 @@ A sleek, minimal, and thoughtfully crafted desktop shell for Wayland using **Qui
 
 ## Preview
 
-![Applauncher](https://noctalia.dev/assets/screenshots/AppLauncher.png)
+![Launcher](https://noctalia.dev/assets/screenshots/Launcher.png)
 
 ![SettingsPanel](https://noctalia.dev/assets/screenshots/SettingsPanel.png)  
 

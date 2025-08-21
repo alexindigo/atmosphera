@@ -13,7 +13,7 @@ import Quickshell.Io
 import Quickshell.Services.Pipewire
 import Quickshell.Widgets
 import qs.Commons
-import qs.Modules.AppLauncher
+import qs.Modules.Launcher
 import qs.Modules.Background
 import qs.Modules.Bar
 import qs.Modules.Calendar
@@ -38,7 +38,7 @@ ShellRoot {
   Bar {}
   Dock {}
 
-  AppLauncher {
+  Launcher {
     id: appLauncherPanel
   }
 
