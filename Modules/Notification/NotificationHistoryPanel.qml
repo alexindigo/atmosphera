@@ -108,7 +108,7 @@ NPanel {
         visible: NotificationService.historyModel.count > 0
 
         delegate: Rectangle {
-          width: notificationList ? (notificationList.width - 20) : 380 * scaling
+          width: notificationList ? notificationList.width : 380 * scaling
           height: Math.max(80, notificationContent.height + 30)
           radius: Style.radiusM * scaling
           color: notificationMouseArea.containsMouse ? Color.mPrimary : Color.mSurfaceVariant
@@ -177,12 +177,7 @@ NPanel {
           }
         }
 
-        ScrollBar.vertical: ScrollBar {
-          active: true
-          anchors.right: parent.right
-          anchors.top: parent.top
-          anchors.bottom: parent.bottom
-        }
+
       }
     }
   }
