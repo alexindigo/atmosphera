@@ -16,12 +16,14 @@
   <a href="https://github.com/noctalia-dev/noctalia-shell/graphs/contributors">
     <img src="https://img.shields.io/github/contributors/noctalia-dev/noctalia-shell?style=for-the-badge&labelColor=0C0D11&color=A8AEFF" alt="GitHub contributors" />
   </a>
-  <a href="https://discord.gg/7JFFYWzWRn">
+  <a href="https://discord.noctalia.dev">
     <img src="https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&labelColor=0C0D11&color=A8AEFF&logo=discord&logoColor=white" alt="Discord" />
   </a>
 </p>
 
-A sleek, minimal, and thoughtfully crafted desktop shell for Wayland using **Quickshell**. Features a modern modular architecture with a status bar, notification system, control panel, comprehensive system integration, and more — all styled with a warm lavender palette, or your favorite color scheme!
+A sleek and minimal desktop shell thoughtfully crafted for Wayland, built with Quickshell.
+
+Features a modern modular architecture with a status bar, notification system, control panel, comprehensive system integration, and more — all styled with a warm lavender palette, or your favorite color scheme!
 
 ## Preview
 
