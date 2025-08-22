@@ -33,13 +33,6 @@ ColumnLayout {
         spacing: Style.marginL * scaling
         Layout.fillWidth: true
 
-        NText {
-          text: "General Settings"
-          font.pointSize: Style.fontSizeXXL * scaling
-          font.weight: Style.fontWeightBold
-          color: Color.mOnSurface
-        }
-
         // Profile section
         ColumnLayout {
           spacing: Style.marginS * scaling

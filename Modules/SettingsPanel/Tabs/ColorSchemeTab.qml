@@ -107,12 +107,12 @@ ColumnLayout {
         spacing: Style.marginL * scaling
         Layout.fillWidth: true
 
-        NText {
-          text: "Colors Settings"
-          font.pointSize: Style.fontSizeXXL * scaling
-          font.weight: Style.fontWeightBold
-          color: Color.mOnSurface
-        }
+        // NText {
+        //   text: "Colors Settings"
+        //   font.pointSize: Style.fontSizeXXL * scaling
+        //   font.weight: Style.fontWeightBold
+        //   color: Color.mOnSurface
+        // }
 
         // Dark Mode Toggle (affects both Matugen and predefined schemes that provide variants)
         NToggle {

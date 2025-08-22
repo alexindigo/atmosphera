@@ -34,7 +34,7 @@ ColumnLayout {
         Layout.fillWidth: true
 
         NText {
-          text: "Launcher"
+          text: "Launcer Options"
           font.pointSize: Style.fontSizeXXL * scaling
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface
@@ -56,7 +56,7 @@ ColumnLayout {
         }
 
         NText {
-          text: "Launcher Position"
+          text: "Launcer Anchoring"
           font.pointSize: Style.fontSizeXXL * scaling
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface

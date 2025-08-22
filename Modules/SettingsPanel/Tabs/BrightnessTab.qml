@@ -33,13 +33,6 @@ ColumnLayout {
         spacing: Style.marginL * scaling
         Layout.fillWidth: true
 
-        NText {
-          text: "Brightness Settings"
-          font.pointSize: Style.fontSizeXXL * scaling
-          font.weight: Style.fontWeightBold
-          color: Color.mOnSurface
-        }
-
         // Bar Visibility Section
         NToggle {
           label: "Show Bar Icon"

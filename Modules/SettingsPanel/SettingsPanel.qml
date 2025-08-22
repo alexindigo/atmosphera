@@ -265,7 +265,7 @@ NPanel {
             // Tab label on the main right side
             NText {
               text: root.tabsModel[currentTabIndex].label
-              font.pointSize: Style.fontSizeL * scaling
+              font.pointSize: Style.fontSizeXL * scaling
               font.weight: Style.fontWeightBold
               color: Color.mPrimary
               Layout.fillWidth: true

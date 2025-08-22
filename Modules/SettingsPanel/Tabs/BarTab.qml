@@ -33,13 +33,6 @@ ColumnLayout {
         spacing: Style.marginL * scaling
         Layout.fillWidth: true
 
-        NText {
-          text: "Bar Components"
-          font.pointSize: Style.fontSizeXXL * scaling
-          font.weight: Style.fontWeightBold
-          color: Color.mOnSurface
-        }
-
         ColumnLayout {
           spacing: Style.marginXXS * scaling
           Layout.fillWidth: true
