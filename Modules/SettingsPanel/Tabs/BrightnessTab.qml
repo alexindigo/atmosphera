@@ -6,25 +6,31 @@ import qs.Commons
 import qs.Services
 import qs.Widgets
 
-Item {
-  property real scaling: 1
+ColumnLayout {
+  id: root
+  spacing: 0
+
   readonly property string tabIcon: "brightness_6"
   readonly property string tabLabel: "Brightness"
-  Layout.fillWidth: true
-  Layout.fillHeight: true
 
   ScrollView {
-    anchors.fill: parent
+    id: scrollView
+    Layout.fillWidth: true
+    Layout.fillHeight: true
+    padding: Style.marginM * scaling
     clip: true
+
+    ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
     ScrollBar.vertical.policy: ScrollBar.AsNeeded
-    ScrollBar.horizontal.policy: ScrollBar.AsNeeded
-    contentWidth: parent.width
 
     ColumnLayout {
-      width: parent.width
+      width: scrollView.availableWidth
+      spacing: 0
+
       ColumnLayout {
+
+        width: scrollView.availableWidth
         spacing: Style.marginL * scaling
-        Layout.margins: Style.marginL * scaling
         Layout.fillWidth: true
 
         NText {
