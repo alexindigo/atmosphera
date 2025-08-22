@@ -21,6 +21,7 @@ NIconButton {
   colorBorderHover: Color.transparent
 
   icon: {
+    if (NetworkService.ethernet) return "lan"
     let connected = false
     let signalStrength = 0
     for (const net in NetworkService.networks) {
@@ -30,7 +31,7 @@ NIconButton {
         break
       }
     }
-    return connected ? NetworkService.signalIcon(signalStrength) : "wifi"
+    return connected ? NetworkService.signalIcon(signalStrength) : "wifi_find"
   }
   tooltipText: "WiFi Networks"
   onClicked: {
