@@ -225,7 +225,7 @@ NPanel {
         Layout.bottomMargin: Style.marginM * scaling
         radius: Style.radiusM * scaling
         color: Color.mSurface
-        border.color: searchInput.activeFocus ? Color.mTertiary : Color.mOutline
+        border.color: searchInput.activeFocus ? Color.mSecondary : Color.mOutline
         border.width: Math.max(1, searchInput.activeFocus ? Style.borderM * scaling : Style.borderS * scaling)
 
         Item {
@@ -355,7 +355,7 @@ NPanel {
           height: 65 * scaling
           radius: Style.radiusM * scaling
           property bool isSelected: index === selectedIndex
-          color: (appCardArea.containsMouse || isSelected) ? Color.mTertiary : Color.mSurface
+          color: (appCardArea.containsMouse || isSelected) ? Color.mSecondary : Color.mSurface
 
           Behavior on color {
             ColorAnimation {

@@ -47,6 +47,7 @@ NPanel {
     id: barTab
     Tabs.BarTab {}
   }
+
   Component {
     id: audioTab
     Tabs.AudioTab {}

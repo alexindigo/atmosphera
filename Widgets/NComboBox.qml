@@ -16,6 +16,7 @@ ColumnLayout {
 
   }
   property string currentKey: ''
+  property string placeholder: ""
 
   signal selected(string key)
 
@@ -50,7 +51,7 @@ ColumnLayout {
       implicitWidth: Style.baseWidgetSize * 3.75 * scaling
       implicitHeight: preferredHeight
       color: Color.mSurface
-      border.color: combo.activeFocus ? Color.mTertiary : Color.mOutline
+      border.color: combo.activeFocus ? Color.mSecondary : Color.mOutline
       border.width: Math.max(1, Style.borderS * scaling)
       radius: Style.radiusM * scaling
     }
@@ -61,8 +62,10 @@ ColumnLayout {
       font.pointSize: Style.fontSizeM * scaling
       verticalAlignment: Text.AlignVCenter
       elide: Text.ElideRight
-      text: (combo.currentIndex >= 0 && combo.currentIndex < root.model.count) ? root.model.get(
-                                                                                   combo.currentIndex).name : ""
+      color: (combo.currentIndex >= 0
+              && combo.currentIndex < root.model.count) ? Color.mOnSurface : Color.mOnSurfaceVariant
+      text: (combo.currentIndex >= 0
+             && combo.currentIndex < root.model.count) ? root.model.get(combo.currentIndex).name : root.placeholder
     }
 
     indicator: NIcon {
@@ -112,7 +115,7 @@ ColumnLayout {
 
           background: Rectangle {
             width: combo.width - Style.marginM * scaling * 3
-            color: highlighted ? Color.mTertiary : Color.transparent
+            color: highlighted ? Color.mSecondary : Color.transparent
             radius: Style.radiusS * scaling
           }
         }
