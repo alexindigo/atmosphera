@@ -11,7 +11,7 @@ Row {
   id: root
   anchors.verticalCenter: parent.verticalCenter
   spacing: Style.marginS * scaling
-  visible: (Settings.data.bar.showActiveWindow && getTitle() !== "")
+  visible: getTitle() !== ""
 
   property bool showingFullTitle: false
   property int lastWindowIndex: -1

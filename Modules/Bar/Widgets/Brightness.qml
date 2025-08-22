@@ -10,7 +10,7 @@ Item {
 
   width: pill.width
   height: pill.height
-  visible: Settings.data.bar.showBrightness && firstBrightnessReceived && getMonitor() !== null
+  visible: getMonitor() !== null
 
   // Used to avoid opening the pill on Quickshell startup
   property bool firstBrightnessReceived: false
