@@ -73,4 +73,12 @@ Item {
       BrightnessService.decreaseBrightness()
     }
   }
+
+  IpcHandler {
+    target: "powerMenu"
+
+    function toggle() {
+      powerPanel.toggle(Quickshell.screens[0])
+    }
+  }
 }
