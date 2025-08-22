@@ -199,7 +199,7 @@ ColumnLayout {
                     height: 32 * scaling
                     radius: width * 0.5
                     color: Color.mPrimary
-                    border.color: Color.mPrimaryContainer
+                    border.color: Color.mPrimary
                     border.width: 2 * scaling
 
                     NIcon {
@@ -336,7 +336,7 @@ ColumnLayout {
                     height: 32 * scaling
                     radius: width * 0.5
                     color: Color.mPrimary
-                    border.color: Color.mPrimaryContainer
+                    border.color: Color.mPrimary
                     border.width: 2 * scaling
 
                     NIcon {
@@ -473,7 +473,7 @@ ColumnLayout {
                     height: 32 * scaling
                     radius: width * 0.5
                     color: Color.mPrimary
-                    border.color: Color.mPrimaryContainer
+                    border.color: Color.mPrimary
                     border.width: 2 * scaling
 
                     NIcon {
@@ -612,8 +612,9 @@ ColumnLayout {
       border.width: Math.max(1, Style.borderS * scaling)
 
       ColumnLayout {
-        anchors.fill: parent
-        anchors.margins: Style.marginL * scaling
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        Layout.margins: Style.marginL * scaling
         spacing: Style.marginM * scaling
 
         NText {

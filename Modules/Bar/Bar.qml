@@ -137,13 +137,16 @@ Variants {
         return null
       }
       
+      console.log(`Attempting to load widget: ${widgetName}.qml`)
+      
       // Try to load the widget directly from file
       const component = Qt.createComponent(`../Bar/Widgets/${widgetName}.qml`)
       if (component.status === Component.Ready) {
+        console.log(`Successfully created component for: ${widgetName}.qml`)
         return component
       }
       
-      console.warn(`Failed to load widget: ${widgetName}.qml`)
+      console.warn(`Failed to load widget: ${widgetName}.qml, status:`, component.status, "error:", component.errorString())
       return null
     }
 

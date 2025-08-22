@@ -9,10 +9,14 @@ import qs.Commons
 import qs.Services
 import qs.Widgets
 
+
+
 Rectangle {
   readonly property real itemSize: 24 * scaling
 
   visible: Settings.data.bar.showTray && (SystemTray.items.values.length > 0)
+  
+
   width: tray.width + Style.marginM * scaling * 2
 
   height: Math.round(Style.capsuleHeight * scaling)
@@ -95,14 +99,14 @@ Rectangle {
                            return
                          }
 
-                         if (modelData.hasMenu && modelData.menu && trayMenu) {
+                         if (modelData.hasMenu && modelData.menu && trayMenu.item) {
                            trayPanel.open()
 
                            // Anchor the menu to the tray icon item (parent) and position it below the icon
-                           const menuX = (width / 2) - (trayMenu.width / 2)
+                           const menuX = (width / 2) - (trayMenu.item.width / 2)
                            const menuY = (Style.barHeight * scaling)
-                           trayMenu.menu = modelData.menu
-                           trayMenu.showAt(parent, menuX, menuY)
+                           trayMenu.item.menu = modelData.menu
+                           trayMenu.item.showAt(parent, menuX, menuY)
                          } else {
                            Logger.log("Tray", "No menu available for", modelData.id, "or trayMenu not set")
                          }
@@ -142,7 +146,7 @@ Rectangle {
 
     function close() {
       visible = false
-      trayMenu.hideMenu()
+      trayMenu.item.hideMenu()
     }
 
     // Clicking outside of the rectangle to close
@@ -151,8 +155,9 @@ Rectangle {
       onClicked: trayPanel.close()
     }
 
-    TrayMenu {
+    Loader {
       id: trayMenu
+      source: "TrayMenu.qml"
     }
   }
 }
