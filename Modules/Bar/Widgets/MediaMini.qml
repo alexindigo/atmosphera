@@ -11,7 +11,8 @@ Row {
   id: root
   anchors.verticalCenter: parent.verticalCenter
   spacing: Style.marginS * scaling
-  visible: Settings.data.bar.showMedia && (MediaService.canPlay || MediaService.canPause)
+  visible: MediaService.currentPlayer !== null
+  width: MediaService.currentPlayer !== null ? implicitWidth : 0
 
   function getTitle() {
     return MediaService.trackTitle + (MediaService.trackArtist !== "" ? ` - ${MediaService.trackArtist}` : "")

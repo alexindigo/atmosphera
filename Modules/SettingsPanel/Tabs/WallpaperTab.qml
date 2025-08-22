@@ -34,6 +34,14 @@ ColumnLayout {
         spacing: Style.marginL * scaling
         Layout.fillWidth: true
 
+        NText {
+          text: "Directory"
+          font.pointSize: Style.fontSizeXXL * scaling
+          font.weight: Style.fontWeightBold
+          color: Color.mOnSurface
+          Layout.bottomMargin: Style.marginS * scaling
+        }
+
         // Wallpaper Settings Category
         ColumnLayout {
           spacing: Style.marginS * scaling

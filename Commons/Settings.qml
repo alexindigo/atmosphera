@@ -120,16 +120,20 @@ Singleton {
 
       bar: JsonObject {
         property string position: "top" // Possible values: "top", "bottom"
-        property bool showActiveWindow: true
         property bool showActiveWindowIcon: true
-        property bool showSystemInfo: false
-        property bool showMedia: false
-        property bool showBrightness: true
-        property bool showNotificationsHistory: true
-        property bool showTray: true
+
         property bool alwaysShowBatteryPercentage: false
         property real backgroundOpacity: 1.0
         property list<string> monitors: []
+
+        // Widget configuration for modular bar system
+        property JsonObject widgets
+
+        widgets: JsonObject {
+          property list<string> left: ["SystemMonitor", "ActiveWindow", "MediaMini"]
+          property list<string> center: ["Workspace"]
+          property list<string> right: ["ScreenRecorderIndicator", "Tray", "NotificationHistory", "WiFi", "Bluetooth", "Battery", "Volume", "Brightness", "Clock", "SidePanelToggle"]
+        }
       }
 
       // general

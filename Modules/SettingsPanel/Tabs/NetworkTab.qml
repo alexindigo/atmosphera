@@ -34,6 +34,13 @@ ColumnLayout {
         spacing: Style.marginL * scaling
         Layout.fillWidth: true
 
+        NText {
+          text: "Interfaces"
+          font.pointSize: Style.fontSizeXXL * scaling
+          font.weight: Style.fontWeightBold
+          color: Color.mOnSurface
+        }
+
         NToggle {
           label: "WiFi Enabled"
           description: "Enable WiFi connectivity."
