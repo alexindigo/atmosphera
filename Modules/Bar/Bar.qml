@@ -47,7 +47,7 @@ Variants {
         layer.enabled: true
       }
 
-      // Left
+      // Left Section - Dynamic Widgets
       Row {
         id: leftSection
 
@@ -57,14 +57,25 @@ Variants {
         anchors.verticalCenter: parent.verticalCenter
         spacing: Style.marginS * scaling
 
-        SystemMonitor {}
-
-        ActiveWindow {}
-
-        MediaMini {}
+        Repeater {
+          model: Settings.data.bar.widgets.left
+          delegate: Loader {
+            id: widgetLoader
+            sourceComponent: getWidgetComponent(modelData)
+            active: true
+            anchors.verticalCenter: parent.verticalCenter
+            onStatusChanged: {
+              if (status === Loader.Error) {
+                console.warn(`Failed to load widget: ${modelData}`)
+              } else if (status === Loader.Ready) {
+                console.log(`Successfully loaded widget: ${modelData}`)
+              }
+            }
+          }
+        }
       }
 
-      // Center
+      // Center Section - Dynamic Widgets
       Row {
         id: centerSection
 
@@ -73,10 +84,25 @@ Variants {
         anchors.verticalCenter: parent.verticalCenter
         spacing: Style.marginS * scaling
 
-        Workspace {}
+        Repeater {
+          model: Settings.data.bar.widgets.center
+          delegate: Loader {
+            id: widgetLoader
+            sourceComponent: getWidgetComponent(modelData)
+            active: true
+            anchors.verticalCenter: parent.verticalCenter
+            onStatusChanged: {
+              if (status === Loader.Error) {
+                console.warn(`Failed to load widget: ${modelData}`)
+              } else if (status === Loader.Ready) {
+                console.log(`Successfully loaded widget: ${modelData}`)
+              }
+            }
+          }
+        }
       }
 
-      // Right
+      // Right Section - Dynamic Widgets
       Row {
         id: rightSection
 
@@ -86,44 +112,43 @@ Variants {
         anchors.verticalCenter: bar.verticalCenter
         spacing: Style.marginS * scaling
 
-        ScreenRecorderIndicator {
-          anchors.verticalCenter: parent.verticalCenter
+        Repeater {
+          model: Settings.data.bar.widgets.right
+          delegate: Loader {
+            id: widgetLoader
+            sourceComponent: getWidgetComponent(modelData)
+            active: true
+            anchors.verticalCenter: parent.verticalCenter
+            onStatusChanged: {
+              if (status === Loader.Error) {
+                console.warn(`Failed to load widget: ${modelData}`)
+              } else if (status === Loader.Ready) {
+                console.log(`Successfully loaded widget: ${modelData}`)
+              }
+            }
+          }
         }
-
-        Tray {
-          anchors.verticalCenter: parent.verticalCenter
-        }
-
-        NotificationHistory {
-          anchors.verticalCenter: parent.verticalCenter
-        }
-
-        WiFi {
-          anchors.verticalCenter: parent.verticalCenter
-        }
-
-        Bluetooth {
-          anchors.verticalCenter: parent.verticalCenter
-        }
-
-        Battery {
-          anchors.verticalCenter: parent.verticalCenter
-        }
-
-        Volume {
-          anchors.verticalCenter: parent.verticalCenter
-        }
-
-        Brightness {
-          anchors.verticalCenter: parent.verticalCenter
-        }
-
-        Clock {
-          anchors.verticalCenter: parent.verticalCenter
-        }
-
-        SidePanelToggle {}
       }
     }
+
+    // Auto-discover widget components
+    function getWidgetComponent(widgetName) {
+      if (!widgetName || widgetName.trim() === "") {
+        return null
+      }
+      
+      // Try to load the widget directly from file
+      const component = Qt.createComponent(`../Bar/Widgets/${widgetName}.qml`)
+      if (component.status === Component.Ready) {
+        return component
+      }
+      
+      console.warn(`Failed to load widget: ${widgetName}.qml`)
+      return null
+    }
+
+
+
+
   }
 }

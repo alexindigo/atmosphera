@@ -199,7 +199,7 @@ ColumnLayout {
             width: contributorsGrid.cellWidth - Style.marginL * scaling
             height: contributorsGrid.cellHeight - Style.marginXS * scaling
             radius: Style.radiusL * scaling
-            color: contributorArea.containsMouse ? Color.mSecondary : Color.transparent
+            color: contributorArea.containsMouse ? Color.mTertiary : Color.transparent
 
             RowLayout {
               anchors.fill: parent
@@ -217,7 +217,7 @@ ColumnLayout {
                   anchors.margins: Style.marginXS * scaling
                   fallbackIcon: "person"
                   borderColor: Color.mPrimary
-                  borderWidth: Math.max(1, Style.borderL * scaling)
+                  borderWidth: Math.max(1, Style.borderM * scaling)
                   imageRadius: width * 0.5
                 }
               }

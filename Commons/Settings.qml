@@ -130,6 +130,15 @@ Singleton {
         property bool alwaysShowBatteryPercentage: false
         property real backgroundOpacity: 1.0
         property list<string> monitors: []
+
+        // Widget configuration for modular bar system
+        property JsonObject widgets
+        
+        widgets: JsonObject {
+          property list<string> left: ["SystemMonitor", "ActiveWindow", "MediaMini"]
+          property list<string> center: ["Workspace"]
+          property list<string> right: ["ScreenRecorderIndicator", "Tray", "NotificationHistory", "WiFi", "Bluetooth", "Battery", "Volume", "Brightness", "Clock", "SidePanelToggle"]
+        }
       }
 
       // general

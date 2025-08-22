@@ -10,10 +10,7 @@ import qs.Widgets
 NIconButton {
   id: root
 
-  readonly property bool wifiEnabled: Settings.data.network.wifiEnabled
-
   sizeMultiplier: 0.8
-  visible: wifiEnabled
 
   colorBg: Color.mSurfaceVariant
   colorFg: Color.mOnSurface

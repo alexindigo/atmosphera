@@ -10,9 +10,7 @@ import qs.Widgets
 NIconButton {
   id: root
 
-  readonly property bool bluetoothEnabled: Settings.data.network.bluetoothEnabled
   sizeMultiplier: 0.8
-  visible: bluetoothEnabled
 
   colorBg: Color.mSurfaceVariant
   colorFg: Color.mOnSurface
