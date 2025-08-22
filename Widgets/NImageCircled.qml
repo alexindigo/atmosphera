@@ -45,7 +45,7 @@ Rectangle {
       }
 
       property real imageOpacity: root.opacity
-      fragmentShader: "file:Shaders/qsb/circled_image.frag.qsb"
+      fragmentShader: Qt.resolvedUrl("../Shaders/qsb/circled_image.frag.qsb")
       supportsAtlasTextures: false
       blending: true
     }
