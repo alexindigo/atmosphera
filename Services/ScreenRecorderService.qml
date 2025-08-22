@@ -30,8 +30,18 @@ Singleton {
       videoDir += "/"
     }
     outputPath = videoDir + filename
-    var command = `gpu-screen-recorder -w ${settings.videoSource} -f ${settings.frameRate} -ac ${settings.audioCodec} -k ${settings.videoCodec} -a ${settings.audioSource} -q ${settings.quality} -cursor ${settings.showCursor ? "yes" : "no"} -cr ${settings.colorRange} -o ${outputPath}`
-
+    var command = `
+    _gpuscreenrecorder_flatpak_installed() {
+        flatpak list --app | grep -q "com.dec05eba.gpu_screen_recorder"
+    }
+    if command -v gpu-screen-recorder >/dev/null 2>&1; then
+        gpu-screen-recorder -w ${settings.videoSource} -f ${settings.frameRate} -ac ${settings.audioCodec} -k ${settings.videoCodec} -a ${settings.audioSource} -q ${settings.quality} -cursor ${settings.showCursor ? "yes" : "no"} -cr ${settings.colorRange} -o ${outputPath}
+    elif command -v flatpak >/dev/null 2>&1 && _gpuscreenrecorder_flatpak_installed; then
+        flatpak run --command=gpu-screen-recorder --file-forwarding com.dec05eba.gpu_screen_recorder -w ${settings.videoSource} -f ${settings.frameRate} -ac ${settings.audioCodec} -k ${settings.videoCodec} -a ${settings.audioSource} -q ${settings.quality} -cursor ${settings.showCursor ? "yes" : "no"} -cr ${settings.colorRange} -o ${outputPath}
+    else
+       	notify-send "gpu-screen-recorder not installed!" -u critical
+    fi`;
+    
     //Logger.log("ScreenRecorder", command)
     Quickshell.execDetached(["sh", "-c", command])
     Logger.log("ScreenRecorder", "Started recording")
