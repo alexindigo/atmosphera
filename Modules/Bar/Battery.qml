@@ -77,7 +77,8 @@ NPill {
     if (root.battery.changeRate !== undefined) {
       const rate = root.battery.changeRate
       if (rate > 0) {
-        lines.push(root.charging ? "Charging rate: " + rate.toFixed(2) + " W" : "Discharging rate: " + rate.toFixed(2) + " W")
+        lines.push(root.charging ? "Charging rate: " + rate.toFixed(2) + " W" : "Discharging rate: " + rate.toFixed(
+                                     2) + " W")
       } else if (rate < 0) {
         lines.push("Discharging rate: " + Math.abs(rate).toFixed(2) + " W")
       } else {

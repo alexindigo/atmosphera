@@ -22,7 +22,8 @@ Item {
   function getIcon() {
     var monitor = getMonitor()
     var brightness = monitor ? monitor.brightness : 0
-    return brightness <= 0 ? "brightness_1" : brightness < 0.33 ? "brightness_low" : brightness < 0.66 ? "brightness_medium" : "brightness_high"
+    return brightness <= 0 ? "brightness_1" : brightness < 0.33 ? "brightness_low" : brightness
+                                                                  < 0.66 ? "brightness_medium" : "brightness_high"
   }
 
   // Connection used to open the pill when brightness changes
@@ -64,13 +65,16 @@ Item {
     }
     tooltipText: {
       var monitor = getMonitor()
-      if (!monitor) return ""
-      return "Brightness: " + Math.round(monitor.brightness * 100) + "%\nMethod: " + monitor.method + "\nLeft click for advanced settings.\nScroll up/down to change brightness."
+      if (!monitor)
+        return ""
+      return "Brightness: " + Math.round(monitor.brightness * 100) + "%\nMethod: " + monitor.method
+          + "\nLeft click for advanced settings.\nScroll up/down to change brightness."
     }
 
     onWheel: function (angle) {
       var monitor = getMonitor()
-      if (!monitor) return
+      if (!monitor)
+        return
       if (angle > 0) {
         monitor.increaseBrightness()
       } else if (angle < 0) {

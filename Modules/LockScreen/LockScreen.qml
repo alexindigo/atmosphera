@@ -305,7 +305,7 @@ Loader {
                 border.width: Math.max(1, Style.borderL * scaling)
                 anchors.horizontalCenter: parent.horizontalCenter
 
-                                // Circular audio visualizer when music is playing
+                // Circular audio visualizer when music is playing
                 Loader {
                   active: MediaService.isPlaying && Settings.data.audio.visualizerType == "linear"
                   anchors.centerIn: parent
@@ -351,10 +351,12 @@ Loader {
                       model: CavaService.values.length * 2
 
                       Rectangle {
-                        property int mirroredValueIndex: index < CavaService.values.length ? index : (CavaService.values.length * 2 - 1 - index)
+                        property int mirroredValueIndex: index < CavaService.values.length ? index : (CavaService.values.length
+                                                                                                      * 2 - 1 - index)
                         property real mirroredAngle: (index / (CavaService.values.length * 2)) * 2 * Math.PI
                         property real mirroredRadius: 70 * scaling
-                        property real mirroredBarLength: Math.max(2, CavaService.values[mirroredValueIndex] * 30 * scaling)
+                        property real mirroredBarLength: Math.max(2,
+                                                                  CavaService.values[mirroredValueIndex] * 30 * scaling)
                         property real mirroredBarWidth: 3 * scaling
 
                         width: mirroredBarWidth

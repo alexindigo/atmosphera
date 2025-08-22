@@ -189,8 +189,8 @@ ColumnLayout {
             }
             currentKey: Settings.data.wallpaper.swww.resizeMethod
             onSelected: key => {
-              Settings.data.wallpaper.swww.resizeMethod = key
-            }
+                          Settings.data.wallpaper.swww.resizeMethod = key
+                        }
           }
 
           // Transition Type
@@ -257,8 +257,8 @@ ColumnLayout {
             }
             currentKey: Settings.data.wallpaper.swww.transitionType
             onSelected: key => {
-              Settings.data.wallpaper.swww.transitionType = key
-            }
+                          Settings.data.wallpaper.swww.transitionType = key
+                        }
           }
 
           // Transition FPS

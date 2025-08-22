@@ -108,8 +108,8 @@ ColumnLayout {
             }
             currentKey: Settings.data.screenRecorder.videoSource
             onSelected: key => {
-             Settings.data.screenRecorder.videoSource = key
-            }
+                          Settings.data.screenRecorder.videoSource = key
+                        }
           }
 
           // Frame Rate
@@ -136,8 +136,8 @@ ColumnLayout {
             }
             currentKey: Settings.data.screenRecorder.frameRate
             onSelected: key => {
-              Settings.data.screenRecorder.frameRate = key
-            }
+                          Settings.data.screenRecorder.frameRate = key
+                        }
           }
 
           // Video Quality
@@ -164,8 +164,8 @@ ColumnLayout {
             }
             currentKey: Settings.data.screenRecorder.quality
             onSelected: key => {
-              Settings.data.screenRecorder.quality = key
-            }
+                          Settings.data.screenRecorder.quality = key
+                        }
           }
 
           // Video Codec
@@ -196,8 +196,8 @@ ColumnLayout {
             }
             currentKey: Settings.data.screenRecorder.videoCodec
             onSelected: key => {
-              Settings.data.screenRecorder.videoCodec = key
-            }
+                          Settings.data.screenRecorder.videoCodec = key
+                        }
           }
 
           // Color Range
@@ -216,8 +216,8 @@ ColumnLayout {
             }
             currentKey: Settings.data.screenRecorder.colorRange
             onSelected: key => {
-              Settings.data.screenRecorder.colorRange = key
-            }
+                          Settings.data.screenRecorder.colorRange = key
+                        }
           }
         }
 
@@ -260,8 +260,8 @@ ColumnLayout {
             }
             currentKey: Settings.data.screenRecorder.audioSource
             onSelected: key => {
-              Settings.data.screenRecorder.audioSource = key
-            }
+                          Settings.data.screenRecorder.audioSource = key
+                        }
           }
 
           // Audio Codec
@@ -280,8 +280,8 @@ ColumnLayout {
             }
             currentKey: Settings.data.screenRecorder.audioCodec
             onSelected: key => {
-              Settings.data.screenRecorder.audioCodec = key
-            }
+                          Settings.data.screenRecorder.audioCodec = key
+                        }
           }
         }
       }

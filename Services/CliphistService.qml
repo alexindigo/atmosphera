@@ -34,7 +34,8 @@ Singleton {
 
   // Start/stop watchers when enabled changes
   Component.onCompleted: {
-    if (root.active) startWatchers()
+    if (root.active)
+    startWatchers()
   }
   onActiveChanged: {
     if (root.active) {
@@ -64,30 +65,40 @@ Singleton {
       const lines = out.split('\n').filter(l => l.length > 0)
       // cliphist list default format: "<id> <preview>" or "<id>\t<preview>"
       const parsed = lines.map(l => {
-        let id = ""
-        let preview = ""
-        const m = l.match(/^(\d+)\s+(.+)$/)
-        if (m) {
-          id = m[1]
-          preview = m[2]
-        } else {
-          const tab = l.indexOf('\t')
-          id = tab > -1 ? l.slice(0, tab) : l
-          preview = tab > -1 ? l.slice(tab + 1) : ""
-        }
-        const lower = preview.toLowerCase()
-        const isImage = lower.startsWith("[image]") || lower.includes(" binary data ")
-        // Best-effort mime guess from preview
-        var mime = "text/plain"
-        if (isImage) {
-          if (lower.includes(" png")) mime = "image/png"
-          else if (lower.includes(" jpg") || lower.includes(" jpeg")) mime = "image/jpeg"
-          else if (lower.includes(" webp")) mime = "image/webp"
-          else if (lower.includes(" gif")) mime = "image/gif"
-          else mime = "image/*"
-        }
-        return { id, preview, isImage, mime }
-      })
+                                 let id = ""
+                                 let preview = ""
+                                 const m = l.match(/^(\d+)\s+(.+)$/)
+                                 if (m) {
+                                   id = m[1]
+                                   preview = m[2]
+                                 } else {
+                                   const tab = l.indexOf('\t')
+                                   id = tab > -1 ? l.slice(0, tab) : l
+                                   preview = tab > -1 ? l.slice(tab + 1) : ""
+                                 }
+                                 const lower = preview.toLowerCase()
+                                 const isImage = lower.startsWith("[image]") || lower.includes(" binary data ")
+                                 // Best-effort mime guess from preview
+                                 var mime = "text/plain"
+                                 if (isImage) {
+                                   if (lower.includes(" png"))
+                                   mime = "image/png"
+                                   else if (lower.includes(" jpg") || lower.includes(" jpeg"))
+                                   mime = "image/jpeg"
+                                   else if (lower.includes(" webp"))
+                                   mime = "image/webp"
+                                   else if (lower.includes(" gif"))
+                                   mime = "image/gif"
+                                   else
+                                   mime = "image/*"
+                                 }
+                                 return {
+                                   "id": id,
+                                   "preview": preview,
+                                   "isImage": isImage,
+                                   "mime": mime
+                                 }
+                               })
       items = parsed
       loading = false
     }
@@ -99,7 +110,11 @@ Singleton {
     onExited: (exitCode, exitStatus) => {
       const out = String(stdout.text)
       if (root._decodeCallback) {
-        try { root._decodeCallback(out) } finally { root._decodeCallback = null }
+        try {
+          root._decodeCallback(out)
+        } finally {
+          root._decodeCallback = null
+        }
       }
     }
   }
@@ -117,7 +132,11 @@ Singleton {
       const b64 = String(stdout.text).trim()
       if (root._b64CurrentCb) {
         const url = `data:${root._b64CurrentMime};base64,${b64}`
-        try { root._b64CurrentCb(url) } finally { /* noop */ }
+        try {
+          root._b64CurrentCb(url)
+        } finally {
+
+          /* noop */ }
       }
       if (root._b64CurrentId !== "") {
         root.imageDataById[root._b64CurrentId] = `data:${root._b64CurrentMime};base64,${b64}`
@@ -136,19 +155,26 @@ Singleton {
     stdout: StdioCollector {}
     onExited: (exitCode, exitStatus) => {
       // Auto-restart if watcher dies
-      if (root.autoWatch) Qt.callLater(() => { running = true })
+      if (root.autoWatch)
+      Qt.callLater(() => {
+                     running = true
+                   })
     }
   }
   Process {
     id: watchImage
     stdout: StdioCollector {}
     onExited: (exitCode, exitStatus) => {
-      if (root.autoWatch) Qt.callLater(() => { running = true })
+      if (root.autoWatch)
+      Qt.callLater(() => {
+                     running = true
+                   })
     }
   }
 
   function startWatchers() {
-    if (!root.active || !autoWatch || watchersStarted) return
+    if (!root.active || !autoWatch || watchersStarted)
+      return
     watchersStarted = true
     // Start text watcher
     watchText.command = ["wl-paste", "--type", "text", "--watch", "cliphist", "store"]
@@ -159,15 +185,19 @@ Singleton {
   }
 
   function stopWatchers() {
-    if (!watchersStarted) return
+    if (!watchersStarted)
+      return
     watchText.running = false
     watchImage.running = false
     watchersStarted = false
   }
 
   function list(maxPreviewWidth) {
-    if (!root.active) { return }
-    if (listProc.running) return
+    if (!root.active) {
+      return
+    }
+    if (listProc.running)
+      return
     loading = true
     const width = maxPreviewWidth || 100
     listProc.command = ["cliphist", "list", "-preview-width", String(width)]
@@ -183,18 +213,24 @@ Singleton {
   function decodeToDataUrl(id, mime, cb) {
     // If cached, return immediately
     if (root.imageDataById[id]) {
-      if (cb) cb(root.imageDataById[id])
+      if (cb)
+        cb(root.imageDataById[id])
       return
     }
     // Queue request; ensures single process handles sequentially
-    root._b64Queue.push({ id, mime: mime || "image/*", cb })
+    root._b64Queue.push({
+                          "id": id,
+                          "mime": mime || "image/*",
+                          "cb": cb
+                        })
     if (!decodeB64Proc.running && root._b64CurrentCb === null) {
       _startNextB64()
     }
   }
 
   function _startNextB64() {
-    if (root._b64Queue.length === 0) return
+    if (root._b64Queue.length === 0)
+      return
     const job = root._b64Queue.shift()
     root._b64CurrentCb = job.cb
     root._b64CurrentMime = job.mime
@@ -219,5 +255,3 @@ Singleton {
     Qt.callLater(() => list())
   }
 }
-
-

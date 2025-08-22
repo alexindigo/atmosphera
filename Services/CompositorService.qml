@@ -131,6 +131,7 @@ Singleton {
           }
         }
       } catch (e2) {
+
         // ignore occupancy errors; fall back to false
       }
       for (var i = 0; i < hlWorkspaces.length; i++) {
@@ -284,10 +285,10 @@ Singleton {
           } else if (event.WindowOpenedOrChanged) {
             try {
               const windowData = event.WindowOpenedOrChanged.window
-              
+
               // Find if this window already exists
               const existingIndex = windows.findIndex(w => w.id === windowData.id)
-              
+
               const newWindow = {
                 "id": windowData.id,
                 "title": windowData.title || "",
@@ -295,7 +296,7 @@ Singleton {
                 "workspaceId": windowData.workspace_id || null,
                 "isFocused": windowData.is_focused === true
               }
-              
+
               if (existingIndex >= 0) {
                 // Update existing window
                 windows[existingIndex] = newWindow
@@ -304,14 +305,14 @@ Singleton {
                 windows.push(newWindow)
                 windows.sort((a, b) => a.id - b.id)
               }
-              
+
               // Update focused window index if this window is focused
               if (newWindow.isFocused) {
                 focusedWindowIndex = windows.findIndex(w => w.id === windowData.id)
                 updateFocusedWindowTitle()
                 activeWindowChanged()
               }
-              
+
               windowListChanged()
             } catch (e) {
               Logger.error("Compositor", "Error parsing WindowOpenedOrChanged event:", e)
@@ -319,7 +320,7 @@ Singleton {
           } else if (event.WindowClosed) {
             try {
               const windowId = event.WindowClosed.id
-              
+
               // Remove the window from the list
               const windowIndex = windows.findIndex(w => w.id === windowId)
               if (windowIndex >= 0) {
@@ -329,15 +330,15 @@ Singleton {
                   updateFocusedWindowTitle()
                   activeWindowChanged()
                 }
-                
+
                 // Remove the window
                 windows.splice(windowIndex, 1)
-                
+
                 // Adjust focused window index if needed
                 if (focusedWindowIndex > windowIndex) {
                   focusedWindowIndex--
                 }
-                
+
                 windowListChanged()
               }
             } catch (e) {

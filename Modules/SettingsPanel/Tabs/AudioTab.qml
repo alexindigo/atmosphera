@@ -305,8 +305,8 @@ ColumnLayout {
           }
           currentKey: Settings.data.audio.visualizerType
           onSelected: key => {
-            Settings.data.audio.visualizerType = key
-          }
+                        Settings.data.audio.visualizerType = key
+                      }
         }
       }
     }

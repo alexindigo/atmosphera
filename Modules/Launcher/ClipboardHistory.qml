@@ -9,8 +9,14 @@ QtObject {
   function parseImageMeta(preview) {
     const re = /\[\[\s*binary data\s+([\d\.]+\s*(?:KiB|MiB|GiB|B))\s+(\w+)\s+(\d+)x(\d+)\s*\]\]/i
     const m = (preview || "").match(re)
-    if (!m) return null
-    return { size: m[1], fmt: (m[2] || "").toUpperCase(), w: Number(m[3]), h: Number(m[4]) }
+    if (!m)
+      return null
+    return {
+      "size": m[1],
+      "fmt": (m[2] || "").toUpperCase(),
+      "w": Number(m[3]),
+      "h": Number(m[4])
+    }
   }
 
   function formatTextPreview(preview) {
@@ -23,7 +29,10 @@ QtObject {
     } else {
       subtitle = `${normalized.length} chars`
     }
-    return { title, subtitle }
+    return {
+      "title": title,
+      "subtitle": subtitle
+    }
   }
 
   function createClipboardEntry(item) {

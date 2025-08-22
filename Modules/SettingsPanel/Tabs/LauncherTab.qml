@@ -49,7 +49,11 @@ ColumnLayout {
                      }
         }
 
-        NDivider { Layout.fillWidth: true; Layout.topMargin: Style.marginL * scaling; Layout.bottomMargin: Style.marginS * scaling }
+        NDivider {
+          Layout.fillWidth: true
+          Layout.topMargin: Style.marginL * scaling
+          Layout.bottomMargin: Style.marginS * scaling
+        }
 
         NText {
           text: "Launcher Position"
@@ -65,21 +69,33 @@ ColumnLayout {
           description: "Choose where the Launcher panel appears."
           Layout.fillWidth: true
           model: ListModel {
-            ListElement { key: "center"; name: "Center (default)" }
-            ListElement { key: "top_left"; name: "Top Left" }
-            ListElement { key: "top_right"; name: "Top Right" }
-            ListElement { key: "bottom_left"; name: "Bottom Left" }
-            ListElement { key: "bottom_right"; name: "Bottom Right" }
+            ListElement {
+              key: "center"
+              name: "Center (default)"
+            }
+            ListElement {
+              key: "top_left"
+              name: "Top Left"
+            }
+            ListElement {
+              key: "top_right"
+              name: "Top Right"
+            }
+            ListElement {
+              key: "bottom_left"
+              name: "Bottom Left"
+            }
+            ListElement {
+              key: "bottom_right"
+              name: "Bottom Right"
+            }
           }
           currentKey: Settings.data.appLauncher.position
-          onSelected: function(key) {
+          onSelected: function (key) {
             Settings.data.appLauncher.position = key
           }
         }
-
       }
     }
   }
 }
-
-

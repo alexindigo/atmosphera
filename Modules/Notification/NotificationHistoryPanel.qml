@@ -176,8 +176,6 @@ NPanel {
             hoverEnabled: true
           }
         }
-
-
       }
     }
   }
