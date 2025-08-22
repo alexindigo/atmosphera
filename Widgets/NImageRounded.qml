@@ -20,6 +20,51 @@ Rectangle {
   radius: scaledRadius
   anchors.margins: Style.marginXXS * scaling
 
+  Rectangle {
+    color: Color.transparent
+    anchors.fill: parent
+    anchors.margins: borderWidth
+
+    Image {
+      id: img
+      anchors.fill: parent
+      source: imagePath
+      visible: false
+      mipmap: true
+      smooth: true
+      asynchronous: true
+      fillMode: Image.PreserveAspectCrop
+    }
+
+    MultiEffect {
+      anchors.fill: parent
+      source: img
+      maskEnabled: true
+      maskSource: mask
+      visible: imagePath !== ""
+    }
+
+    Item {
+      id: mask
+      anchors.fill: parent
+      layer.enabled: true
+      visible: false
+      Rectangle {
+        anchors.fill: parent
+        radius: scaledRadius
+      }
+    }
+
+    // Fallback icon
+    NIcon {
+      anchors.centerIn: parent
+      text: fallbackIcon
+      font.pointSize: Style.fontSizeXXL * scaling
+      visible: fallbackIcon !== undefined && fallbackIcon !== "" && (imagePath === undefined || imagePath === "")
+      z: 0
+    }
+  }
+
   // Border
   Rectangle {
     anchors.fill: parent
@@ -28,44 +73,5 @@ Rectangle {
     border.color: parent.borderColor
     border.width: parent.borderWidth
     z: 10
-  }
-
-  Image {
-    id: img
-    anchors.fill: parent
-    source: imagePath
-    visible: false
-    mipmap: true
-    smooth: true
-    asynchronous: true
-    fillMode: Image.PreserveAspectCrop
-  }
-
-  MultiEffect {
-    anchors.fill: parent
-    source: img
-    maskEnabled: true
-    maskSource: mask
-    visible: imagePath !== ""
-  }
-
-  Item {
-    id: mask
-    anchors.fill: parent
-    layer.enabled: true
-    visible: false
-    Rectangle {
-      anchors.fill: parent
-      radius: scaledRadius
-    }
-  }
-
-  // Fallback icon
-  NIcon {
-    anchors.centerIn: parent
-    text: fallbackIcon
-    font.pointSize: Style.fontSizeXXL * scaling
-    visible: fallbackIcon !== undefined && fallbackIcon !== "" && (imagePath === undefined || imagePath === "")
-    z: 0
   }
 }
