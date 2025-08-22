@@ -40,11 +40,11 @@ NIconButton {
   function changeProfile() {
       if (!hasPP) return;
       if (powerProfiles.profile === PowerProfile.Performance)
-        powerProfiles.profile = PowerProfile.Balanced
-      else if (powerProfiles.profile === PowerProfile.Balanced)
         powerProfiles.profile = PowerProfile.PowerSaver
-      else if (powerProfiles.profile === PowerProfile.PowerSaver)
+      else if (powerProfiles.profile === PowerProfile.Balanced)
         powerProfiles.profile = PowerProfile.Performance
+      else if (powerProfiles.profile === PowerProfile.PowerSaver)
+        powerProfiles.profile = PowerProfile.Balanced
   }
 
   icon: root.profileIcon()
