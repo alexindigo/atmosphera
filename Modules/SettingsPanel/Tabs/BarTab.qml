@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import Qt.labs.folderlistmodel
 import qs.Commons
 import qs.Services
 import qs.Widgets
@@ -584,23 +585,110 @@ ColumnLayout {
     }
   }
 
-  // Widget list for adding widgets
+  // Dynamic widget discovery using FolderListModel
+  FolderListModel {
+    id: widgetFolderModel
+    folder: Qt.resolvedUrl("../../Bar/Widgets/")
+    nameFilters: ["*.qml"]
+    showDirs: false
+    showFiles: true
+  }
+  
   ListModel {
     id: availableWidgets
-    ListElement { key: "SystemMonitor"; name: "SystemMonitor" }
-    ListElement { key: "ActiveWindow"; name: "ActiveWindow" }
-    ListElement { key: "MediaMini"; name: "MediaMini" }
-    ListElement { key: "Workspace"; name: "Workspace" }
-    ListElement { key: "ScreenRecorderIndicator"; name: "ScreenRecorderIndicator" }
-    ListElement { key: "Tray"; name: "Tray" }
-    ListElement { key: "NotificationHistory"; name: "NotificationHistory" }
-    ListElement { key: "WiFi"; name: "WiFi" }
-    ListElement { key: "Bluetooth"; name: "Bluetooth" }
-    ListElement { key: "Battery"; name: "Battery" }
-    ListElement { key: "Volume"; name: "Volume" }
-    ListElement { key: "Brightness"; name: "Brightness" }
-    ListElement { key: "Clock"; name: "Clock" }
-    ListElement { key: "SidePanelToggle"; name: "SidePanelToggle" }
+  }
+  
+  Component.onCompleted: {
+    discoverWidgets()
+  }
+  
+  // Automatically discover available widgets from the Widgets directory
+  function discoverWidgets() {
+    console.log("Discovering widgets...")
+    console.log("FolderListModel count:", widgetFolderModel.count)
+    console.log("FolderListModel folder:", widgetFolderModel.folder)
+    
+    availableWidgets.clear()
+    
+    // Process each .qml file found in the directory
+    for (let i = 0; i < widgetFolderModel.count; i++) {
+      const fileName = widgetFolderModel.get(i, "fileName")
+      console.log("Found file:", fileName)
+      const widgetName = fileName.replace('.qml', '')
+      
+      // Skip TrayMenu as it's not a standalone widget
+      if (widgetName !== 'TrayMenu') {
+        console.log("Adding widget:", widgetName)
+        availableWidgets.append({
+          key: widgetName,
+          name: widgetName,
+          icon: getDefaultIcon(widgetName)
+        })
+      }
+    }
+    
+    console.log("Total widgets added:", availableWidgets.count)
+    
+    // If FolderListModel didn't find anything, use fallback
+    if (availableWidgets.count === 0) {
+      console.log("FolderListModel failed, using fallback list")
+      const fallbackWidgets = [
+        "ActiveWindow", "Battery", "Bluetooth", "Brightness", "Clock", 
+        "MediaMini", "NotificationHistory", "ScreenRecorderIndicator", 
+        "SidePanelToggle", "SystemMonitor", "Tray", "Volume", "WiFi", "Workspace"
+      ]
+      
+      fallbackWidgets.forEach(widgetName => {
+        availableWidgets.append({
+          key: widgetName,
+          name: widgetName,
+          icon: getDefaultIcon(widgetName)
+        })
+      })
+    }
+    
+    // Sort alphabetically by name
+    sortWidgets()
+  }
+  
+  // Sort widgets alphabetically
+  function sortWidgets() {
+    const widgets = []
+    for (let i = 0; i < availableWidgets.count; i++) {
+      widgets.push({
+        key: availableWidgets.get(i).key,
+        name: availableWidgets.get(i).name,
+        icon: availableWidgets.get(i).icon
+      })
+    }
+    
+    widgets.sort((a, b) => a.name.localeCompare(b.name))
+    
+    availableWidgets.clear()
+    widgets.forEach(widget => {
+      availableWidgets.append(widget)
+    })
+  }
+  
+  // Get default icon for widget (can be overridden in widget files)
+  function getDefaultIcon(widgetName) {
+    const iconMap = {
+      "ActiveWindow": "web_asset",
+      "Battery": "battery_full",
+      "Bluetooth": "bluetooth",
+      "Brightness": "brightness_6",
+      "Clock": "schedule",
+      "MediaMini": "music_note",
+      "NotificationHistory": "notifications",
+      "ScreenRecorderIndicator": "videocam",
+      "SidePanelToggle": "widgets",
+      "SystemMonitor": "memory",
+      "Tray": "apps",
+      "Volume": "volume_up",
+      "WiFi": "wifi",
+      "Workspace": "dashboard"
+    }
+    return iconMap[widgetName] || "widgets"
   }
 
 
