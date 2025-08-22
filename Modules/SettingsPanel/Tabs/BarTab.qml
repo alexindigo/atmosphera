@@ -166,15 +166,15 @@ ColumnLayout {
               Layout.fillWidth: true
               Layout.minimumHeight: {
                 var widgetCount = Settings.data.bar.widgets.left.length
-                if (widgetCount === 0) return 120 * scaling
+                if (widgetCount === 0) return 140 * scaling
                 
                 var availableWidth = scrollView.availableWidth - (Style.marginM * scaling * 2) // Card margins
                 var avgWidgetWidth = 150 * scaling // Estimated widget width including spacing
                 var widgetsPerRow = Math.max(1, Math.floor(availableWidth / avgWidgetWidth))
                 var rows = Math.ceil(widgetCount / widgetsPerRow)
                 
-                // Header (40) + spacing (16) + (rows * widget height) + (rows-1 * spacing) + bottom margin (16)
-                return (40 + 16 + (rows * 48) + ((rows - 1) * Style.marginS) + 16) * scaling
+                // Header (50) + spacing (20) + (rows * widget height) + (rows-1 * spacing) + bottom margin (20)
+                return (50 + 20 + (rows * 48) + ((rows - 1) * Style.marginS) + 20) * scaling
               }
 
               ColumnLayout {
@@ -194,28 +194,14 @@ ColumnLayout {
 
                   Item { Layout.fillWidth: true }
 
-                  Rectangle {
-                    width: 32 * scaling
-                    height: 32 * scaling
-                    radius: width * 0.5
-                    color: Color.mPrimary
-                    border.color: Color.mPrimary
-                    border.width: 2 * scaling
-
-                    NIcon {
-                      anchors.centerIn: parent
-                      text: "add"
-                      color: Color.mOnPrimary
-                      font.pointSize: Style.fontSizeM * scaling
-                    }
-
-                    MouseArea {
-                      anchors.fill: parent
-                      hoverEnabled: true
-                      cursorShape: Qt.PointingHandCursor
-                      onClicked: {
-                        addWidgetDialog.show("left")
-                      }
+                  NComboBox {
+                    width: 120 * scaling
+                    model: availableWidgets
+                    label: ""
+                    description: ""
+                    placeholder: "Add widget to left section"
+                    onSelected: key => {
+                      addWidgetToSection(key, "left")
                     }
                   }
                 }
@@ -224,7 +210,7 @@ ColumnLayout {
                   id: leftWidgetsFlow
                   Layout.fillWidth: true
                   Layout.fillHeight: true
-                  Layout.minimumHeight: 52 * scaling
+                  Layout.minimumHeight: 65 * scaling
                   spacing: Style.marginS * scaling
                   flow: Flow.LeftToRight
 
@@ -303,15 +289,15 @@ ColumnLayout {
               Layout.fillWidth: true
               Layout.minimumHeight: {
                 var widgetCount = Settings.data.bar.widgets.center.length
-                if (widgetCount === 0) return 120 * scaling
+                if (widgetCount === 0) return 140 * scaling
                 
                 var availableWidth = scrollView.availableWidth - (Style.marginM * scaling * 2) // Card margins
                 var avgWidgetWidth = 150 * scaling // Estimated widget width including spacing
                 var widgetsPerRow = Math.max(1, Math.floor(availableWidth / avgWidgetWidth))
                 var rows = Math.ceil(widgetCount / widgetsPerRow)
                 
-                // Header (40) + spacing (16) + (rows * widget height) + (rows-1 * spacing) + bottom margin (16)
-                return (40 + 16 + (rows * 48) + ((rows - 1) * Style.marginS) + 16) * scaling
+                // Header (50) + spacing (20) + (rows * widget height) + (rows-1 * spacing) + bottom margin (20)
+                return (50 + 20 + (rows * 48) + ((rows - 1) * Style.marginS) + 20) * scaling
               }
 
               ColumnLayout {
@@ -331,28 +317,14 @@ ColumnLayout {
 
                   Item { Layout.fillWidth: true }
 
-                  Rectangle {
-                    width: 32 * scaling
-                    height: 32 * scaling
-                    radius: width * 0.5
-                    color: Color.mPrimary
-                    border.color: Color.mPrimary
-                    border.width: 2 * scaling
-
-                    NIcon {
-                      anchors.centerIn: parent
-                      text: "add"
-                      color: Color.mOnPrimary
-                      font.pointSize: Style.fontSizeM * scaling
-                    }
-
-                    MouseArea {
-                      anchors.fill: parent
-                      hoverEnabled: true
-                      cursorShape: Qt.PointingHandCursor
-                      onClicked: {
-                        addWidgetDialog.show("center")
-                      }
+                  NComboBox {
+                    width: 120 * scaling
+                    model: availableWidgets
+                    label: ""
+                    description: ""
+                    placeholder: "Add widget to center section"
+                    onSelected: key => {
+                      addWidgetToSection(key, "center")
                     }
                   }
                 }
@@ -361,7 +333,7 @@ ColumnLayout {
                   id: centerWidgetsFlow
                   Layout.fillWidth: true
                   Layout.fillHeight: true
-                  Layout.minimumHeight: 52 * scaling
+                  Layout.minimumHeight: 65 * scaling
                   spacing: Style.marginS * scaling
                   flow: Flow.LeftToRight
 
@@ -440,15 +412,15 @@ ColumnLayout {
               Layout.fillWidth: true
               Layout.minimumHeight: {
                 var widgetCount = Settings.data.bar.widgets.right.length
-                if (widgetCount === 0) return 120 * scaling
+                if (widgetCount === 0) return 140 * scaling
                 
                 var availableWidth = scrollView.availableWidth - (Style.marginM * scaling * 2) // Card margins
                 var avgWidgetWidth = 150 * scaling // Estimated widget width including spacing
                 var widgetsPerRow = Math.max(1, Math.floor(availableWidth / avgWidgetWidth))
                 var rows = Math.ceil(widgetCount / widgetsPerRow)
                 
-                // Header (40) + spacing (16) + (rows * widget height) + (rows-1 * spacing) + bottom margin (16)
-                return (40 + 16 + (rows * 48) + ((rows - 1) * Style.marginS) + 16) * scaling
+                // Header (50) + spacing (20) + (rows * widget height) + (rows-1 * spacing) + bottom margin (20)
+                return (50 + 20 + (rows * 48) + ((rows - 1) * Style.marginS) + 20) * scaling
               }
 
               ColumnLayout {
@@ -468,28 +440,14 @@ ColumnLayout {
 
                   Item { Layout.fillWidth: true }
 
-                  Rectangle {
-                    width: 32 * scaling
-                    height: 32 * scaling
-                    radius: width * 0.5
-                    color: Color.mPrimary
-                    border.color: Color.mPrimary
-                    border.width: 2 * scaling
-
-                    NIcon {
-                      anchors.centerIn: parent
-                      text: "add"
-                      color: Color.mOnPrimary
-                      font.pointSize: Style.fontSizeM * scaling
-                    }
-
-                    MouseArea {
-                      anchors.fill: parent
-                      hoverEnabled: true
-                      cursorShape: Qt.PointingHandCursor
-                      onClicked: {
-                        addWidgetDialog.show("right")
-                      }
+                  NComboBox {
+                    width: 120 * scaling
+                    model: availableWidgets
+                    label: ""
+                    description: ""
+                    placeholder: "Add widget to right section"
+                    onSelected: key => {
+                      addWidgetToSection(key, "right")
                     }
                   }
                 }
@@ -498,7 +456,7 @@ ColumnLayout {
                   id: rightWidgetsFlow
                   Layout.fillWidth: true
                   Layout.fillHeight: true
-                  Layout.minimumHeight: 52 * scaling
+                  Layout.minimumHeight: 65 * scaling
                   spacing: Style.marginS * scaling
                   flow: Flow.LeftToRight
 
@@ -577,144 +535,7 @@ ColumnLayout {
     }
   }
 
-  // Add Widget Dialog
-  Rectangle {
-    id: addWidgetDialog
-    anchors.fill: parent
-    color: Color.applyOpacity(Color.mShadow, "80")
-    visible: false
-    z: 1000
 
-    property string targetSection: ""
-
-    function show(section) {
-      targetSection = section
-      visible = true
-    }
-
-    function hide() {
-      visible = false
-      targetSection = ""
-    }
-
-    MouseArea {
-      anchors.fill: parent
-      onClicked: addWidgetDialog.hide()
-    }
-
-    Rectangle {
-      anchors.centerIn: parent
-      width: 400 * scaling
-      height: 500 * scaling
-      radius: Style.radiusL * scaling
-      color: Color.mSurface
-      border.color: Color.mOutline
-      border.width: Math.max(1, Style.borderS * scaling)
-
-      ColumnLayout {
-        Layout.fillWidth: true
-        Layout.fillHeight: true
-        Layout.margins: Style.marginL * scaling
-        spacing: Style.marginM * scaling
-
-        NText {
-          text: "Add Widget to " + (addWidgetDialog.targetSection === "left" ? "Left" : 
-                                   addWidgetDialog.targetSection === "center" ? "Center" : "Right") + " Section"
-          font.pointSize: Style.fontSizeL * scaling
-          font.weight: Style.fontWeightBold
-          color: Color.mOnSurface
-          Layout.fillWidth: true
-        }
-
-        ListView {
-          Layout.fillWidth: true
-          Layout.fillHeight: true
-          clip: true
-          spacing: Style.marginXS * scaling
-
-          model: ListModel {
-            ListElement { name: "SystemMonitor"; icon: "memory"; description: "System statistics" }
-            ListElement { name: "ActiveWindow"; icon: "web_asset"; description: "Active window title" }
-            ListElement { name: "MediaMini"; icon: "music_note"; description: "Media controls" }
-            ListElement { name: "Workspace"; icon: "dashboard"; description: "Workspace switcher" }
-            ListElement { name: "ScreenRecorderIndicator"; icon: "videocam"; description: "Recording indicator" }
-            ListElement { name: "Tray"; icon: "apps"; description: "System tray" }
-            ListElement { name: "NotificationHistory"; icon: "notifications"; description: "Notification history" }
-            ListElement { name: "WiFi"; icon: "wifi"; description: "WiFi status" }
-            ListElement { name: "Bluetooth"; icon: "bluetooth"; description: "Bluetooth status" }
-            ListElement { name: "Battery"; icon: "battery_full"; description: "Battery status" }
-            ListElement { name: "Volume"; icon: "volume_up"; description: "Volume control" }
-            ListElement { name: "Brightness"; icon: "brightness_6"; description: "Brightness control" }
-            ListElement { name: "Clock"; icon: "schedule"; description: "Clock" }
-            ListElement { name: "SidePanelToggle"; icon: "widgets"; description: "Side panel toggle" }
-          }
-
-          delegate: Rectangle {
-            width: ListView.view.width
-            height: 48 * scaling
-            radius: Style.radiusS * scaling
-            color: mouseArea.containsMouse ? Color.mTertiary : Color.mSurfaceVariant
-            border.color: Color.mOutline
-            border.width: Math.max(1, Style.borderS * scaling)
-
-            RowLayout {
-              anchors.fill: parent
-              anchors.margins: Style.marginS * scaling
-              spacing: Style.marginS * scaling
-
-              NIcon {
-                text: model.icon
-                color: Color.mOnSurface
-                font.pointSize: Style.fontSizeM * scaling
-              }
-
-              ColumnLayout {
-                Layout.fillWidth: true
-                spacing: 0
-
-                NText {
-                  text: model.name
-                  font.pointSize: Style.fontSizeS * scaling
-                  font.weight: Style.fontWeightBold
-                  color: Color.mOnSurface
-                }
-
-                NText {
-                  text: model.description
-                  font.pointSize: Style.fontSizeXS * scaling
-                  color: Color.mOnSurfaceVariant
-                }
-              }
-            }
-
-            MouseArea {
-              id: mouseArea
-              anchors.fill: parent
-              hoverEnabled: true
-              cursorShape: Qt.PointingHandCursor
-              onClicked: {
-                addWidgetToSection(model.name, addWidgetDialog.targetSection)
-                addWidgetDialog.hide()
-              }
-            }
-          }
-        }
-
-        RowLayout {
-          Layout.fillWidth: true
-
-          Item { Layout.fillWidth: true }
-
-          NIconButton {
-            icon: "close"
-            size: 20 * scaling
-            color: Color.mOnSurface
-            onClicked: addWidgetDialog.hide()
-          }
-        }
-      }
-    }
-  }
 
   // Helper functions
   function addWidgetToSection(widgetName, section) {
@@ -760,6 +581,48 @@ ColumnLayout {
       
       // Assign the new array
       Settings.data.bar.widgets[section] = newArray
+    }
+  }
+
+  // Widget list for adding widgets
+  ListModel {
+    id: availableWidgets
+    ListElement { key: "SystemMonitor"; name: "SystemMonitor" }
+    ListElement { key: "ActiveWindow"; name: "ActiveWindow" }
+    ListElement { key: "MediaMini"; name: "MediaMini" }
+    ListElement { key: "Workspace"; name: "Workspace" }
+    ListElement { key: "ScreenRecorderIndicator"; name: "ScreenRecorderIndicator" }
+    ListElement { key: "Tray"; name: "Tray" }
+    ListElement { key: "NotificationHistory"; name: "NotificationHistory" }
+    ListElement { key: "WiFi"; name: "WiFi" }
+    ListElement { key: "Bluetooth"; name: "Bluetooth" }
+    ListElement { key: "Battery"; name: "Battery" }
+    ListElement { key: "Volume"; name: "Volume" }
+    ListElement { key: "Brightness"; name: "Brightness" }
+    ListElement { key: "Clock"; name: "Clock" }
+    ListElement { key: "SidePanelToggle"; name: "SidePanelToggle" }
+  }
+
+
+
+  // Helper function to get widget icons
+  function getWidgetIcon(widgetKey) {
+    switch(widgetKey) {
+      case "SystemMonitor": return "memory"
+      case "ActiveWindow": return "web_asset"
+      case "MediaMini": return "music_note"
+      case "Workspace": return "dashboard"
+      case "ScreenRecorderIndicator": return "videocam"
+      case "Tray": return "apps"
+      case "NotificationHistory": return "notifications"
+      case "WiFi": return "wifi"
+      case "Bluetooth": return "bluetooth"
+      case "Battery": return "battery_full"
+      case "Volume": return "volume_up"
+      case "Brightness": return "brightness_6"
+      case "Clock": return "schedule"
+      case "SidePanelToggle": return "widgets"
+      default: return "widgets"
     }
   }
 }

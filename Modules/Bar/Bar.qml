@@ -23,6 +23,10 @@ Variants {
     implicitHeight: Style.barHeight * scaling
     color: Color.transparent
 
+    Component.onCompleted: {
+      logWidgetLoadingSummary()
+    }
+
     // If no bar activated in settings, then show them all
     visible: modelData ? (Settings.data.bar.monitors.includes(modelData.name)
                           || (Settings.data.bar.monitors.length === 0)) : false
@@ -66,9 +70,10 @@ Variants {
             anchors.verticalCenter: parent.verticalCenter
             onStatusChanged: {
               if (status === Loader.Error) {
-                console.warn(`Failed to load widget: ${modelData}`)
+                Logger.error("Bar", `Failed to load ${modelData} widget`)
+                onWidgetFailed()
               } else if (status === Loader.Ready) {
-                console.log(`Successfully loaded widget: ${modelData}`)
+                onWidgetLoaded()
               }
             }
           }
@@ -93,9 +98,10 @@ Variants {
             anchors.verticalCenter: parent.verticalCenter
             onStatusChanged: {
               if (status === Loader.Error) {
-                console.warn(`Failed to load widget: ${modelData}`)
+                Logger.error("Bar", `Failed to load ${modelData} widget`)
+                onWidgetFailed()
               } else if (status === Loader.Ready) {
-                console.log(`Successfully loaded widget: ${modelData}`)
+                onWidgetLoaded()
               }
             }
           }
@@ -121,9 +127,10 @@ Variants {
             anchors.verticalCenter: parent.verticalCenter
             onStatusChanged: {
               if (status === Loader.Error) {
-                console.warn(`Failed to load widget: ${modelData}`)
+                Logger.error("Bar", `Failed to load ${modelData} widget`)
+                onWidgetFailed()
               } else if (status === Loader.Ready) {
-                console.log(`Successfully loaded widget: ${modelData}`)
+                onWidgetLoaded()
               }
             }
           }
@@ -137,17 +144,54 @@ Variants {
         return null
       }
       
-      console.log(`Attempting to load widget: ${widgetName}.qml`)
+      const widgetPath = `../Bar/Widgets/${widgetName}.qml`
+      Logger.log("Bar", `Attempting to load widget from: ${widgetPath}`)
       
       // Try to load the widget directly from file
-      const component = Qt.createComponent(`../Bar/Widgets/${widgetName}.qml`)
+      const component = Qt.createComponent(widgetPath)
       if (component.status === Component.Ready) {
-        console.log(`Successfully created component for: ${widgetName}.qml`)
+        Logger.log("Bar", `Successfully created component for: ${widgetName}.qml`)
         return component
       }
       
-      console.warn(`Failed to load widget: ${widgetName}.qml, status:`, component.status, "error:", component.errorString())
+      Logger.error("Bar", `Failed to load ${widgetName}.qml widget, status: ${component.status}, error: ${component.errorString()}`)
       return null
+    }
+
+    // Track widget loading status
+    property int totalWidgets: 0
+    property int loadedWidgets: 0
+    property int failedWidgets: 0
+
+    // Log widget loading summary
+    function logWidgetLoadingSummary() {
+      const allWidgets = [
+        ...Settings.data.bar.widgets.left,
+        ...Settings.data.bar.widgets.center,
+        ...Settings.data.bar.widgets.right
+      ]
+      
+      totalWidgets = allWidgets.length
+      loadedWidgets = 0
+      failedWidgets = 0
+      
+      if (totalWidgets > 0) {
+        Logger.log("Bar", `Attempting to load ${totalWidgets} widgets`)
+      }
+    }
+
+    function onWidgetLoaded() {
+      loadedWidgets++
+      if (loadedWidgets + failedWidgets === totalWidgets) {
+        Logger.log("Bar", `Loaded ${loadedWidgets}/${totalWidgets} widgets`)
+      }
+    }
+
+    function onWidgetFailed() {
+      failedWidgets++
+      if (loadedWidgets + failedWidgets === totalWidgets) {
+        Logger.log("Bar", `Loaded ${loadedWidgets}/${totalWidgets} widgets`)
+      }
     }
 
 
