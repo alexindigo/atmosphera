@@ -236,6 +236,7 @@ Singleton {
         property bool showMiniplayerCava: false
         property string visualizerType: "linear"
         property int volumeStep: 5
+        property int cavaFrameRate: 60
       }
 
       // ui

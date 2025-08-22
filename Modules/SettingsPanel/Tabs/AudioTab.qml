@@ -308,6 +308,45 @@ ColumnLayout {
                         Settings.data.audio.visualizerType = key
                       }
         }
+        
+        NComboBox {
+          label: "Frame Rate"
+          description: "Target frame rate for audio visualizer. (default: 60)"
+          model: ListModel {
+            ListElement {
+              key: "30"
+              name: "30 FPS"
+            }
+            ListElement {
+              key: "60"
+              name: "60 FPS"
+            }
+            ListElement {
+              key: "100"
+              name: "100 FPS"
+            }
+            ListElement {
+              key: "120"
+              name: "120 FPS"
+            }
+            ListElement {
+              key: "144"
+              name: "144 FPS"
+            }
+            ListElement {
+              key: "165"
+              name: "165 FPS"
+            }
+            ListElement {
+              key: "240"
+              name: "240 FPS"
+            }
+          }
+          currentKey: Settings.data.audio.cavaFrameRate
+          onSelected: key => {
+                Settings.data.audio.cavaFrameRate = key
+            }
+        }
       }
     }
   }
