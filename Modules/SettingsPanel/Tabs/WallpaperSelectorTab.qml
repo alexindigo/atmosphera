@@ -31,7 +31,7 @@ Item {
         // Current wallpaper display
         NText {
           text: "Current Wallpaper"
-          font.pointSize: Style.fontSizeL * scaling
+          font.pointSize: Style.fontSizeXXL * scaling
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface
         }

@@ -16,6 +16,7 @@ ColumnLayout {
 
   }
   property string currentKey: ''
+  property string placeholder: ""
 
   signal selected(string key)
 
@@ -61,8 +62,10 @@ ColumnLayout {
       font.pointSize: Style.fontSizeM * scaling
       verticalAlignment: Text.AlignVCenter
       elide: Text.ElideRight
-      text: (combo.currentIndex >= 0 && combo.currentIndex < root.model.count) ? root.model.get(
-                                                                                   combo.currentIndex).name : ""
+      color: (combo.currentIndex >= 0
+              && combo.currentIndex < root.model.count) ? Color.mOnSurface : Color.mOnSurfaceVariant
+      text: (combo.currentIndex >= 0
+             && combo.currentIndex < root.model.count) ? root.model.get(combo.currentIndex).name : root.placeholder
     }
 
     indicator: NIcon {

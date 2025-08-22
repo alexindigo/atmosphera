@@ -33,6 +33,14 @@ ColumnLayout {
         spacing: Style.marginXS * scaling
         Layout.fillWidth: true
 
+        NText {
+          text: "Recordings"
+          font.pointSize: Style.fontSizeXXL * scaling
+          font.weight: Style.fontWeightBold
+          color: Color.mOnSurface
+          Layout.bottomMargin: Style.marginS * scaling
+        }
+
         // Output Directory
         ColumnLayout {
           spacing: Style.marginS * scaling

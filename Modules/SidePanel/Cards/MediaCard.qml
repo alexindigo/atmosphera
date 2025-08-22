@@ -164,7 +164,7 @@ NBox {
           border.width: Math.max(1, Style.borderS * scaling)
           clip: true
 
-          NImageRounded {
+          NImageCircled {
             id: trackArt
             visible: MediaService.trackArtUrl.toString() !== ""
 
@@ -174,7 +174,6 @@ NBox {
             fallbackIcon: "music_note"
             borderColor: Color.mOutline
             borderWidth: Math.max(1, Style.borderS * scaling)
-            imageRadius: width * 0.5
           }
 
           // Fallback icon when no album art available
