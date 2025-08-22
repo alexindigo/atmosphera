@@ -33,7 +33,10 @@ Singleton {
     try {
       if (typeof DesktopEntries === 'undefined' || !DesktopEntries.byId)
         return iconFromName(fallback, fallback)
-      const entry = DesktopEntries.byId(appId)
+     
+      const entry = (DesktopEntries.byId) ?
+        DesktopEntries.heuristicLookup(appId) :
+        DesktopEntries.byId(appId)
       const name = entry && entry.icon ? entry.icon : ""
       return iconFromName(name || fallback, fallback)
     } catch (e) {
