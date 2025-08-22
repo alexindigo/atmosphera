@@ -111,7 +111,7 @@ NPanel {
           width: notificationList ? notificationList.width : 380 * scaling
           height: Math.max(80, notificationContent.height + 30)
           radius: Style.radiusM * scaling
-          color: notificationMouseArea.containsMouse ? Color.mTertiary : Color.mSurfaceVariant
+          color: notificationMouseArea.containsMouse ? Color.mSecondary : Color.mSurfaceVariant
 
           RowLayout {
             anchors {

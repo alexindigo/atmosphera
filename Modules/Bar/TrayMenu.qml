@@ -134,7 +134,7 @@ PopupWindow {
 
           Rectangle {
             anchors.fill: parent
-            color: mouseArea.containsMouse ? Color.mTertiary : Color.transparent
+            color: mouseArea.containsMouse ? Color.mSecondary : Color.transparent
             radius: Style.radiusS * scaling
             visible: !(modelData?.isSeparator ?? false)
 

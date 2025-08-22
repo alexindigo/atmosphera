@@ -90,6 +90,7 @@ Singleton {
     id: colorsWriter
     path: colorsJsonFilePath
     onSaved: {
+
       // Logger.log("ColorScheme", "Colors saved")
     }
     JsonAdapter {

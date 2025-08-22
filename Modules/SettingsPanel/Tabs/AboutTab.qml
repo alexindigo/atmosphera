@@ -199,7 +199,7 @@ ColumnLayout {
             width: contributorsGrid.cellWidth - Style.marginL * scaling
             height: contributorsGrid.cellHeight - Style.marginXS * scaling
             radius: Style.radiusL * scaling
-            color: contributorArea.containsMouse ? Color.mTertiary : Color.transparent
+            color: contributorArea.containsMouse ? Color.mSecondary : Color.transparent
 
             RowLayout {
               anchors.fill: parent

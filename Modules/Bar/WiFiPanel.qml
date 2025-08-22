@@ -147,7 +147,7 @@ NPanel {
                 Layout.fillWidth: true
                 Layout.preferredHeight: Style.baseWidgetSize * 1.5 * scaling
                 radius: Style.radiusS * scaling
-                color: modelData.connected ? Color.mPrimary : (networkMouseArea.containsMouse ? Color.mTertiary : Color.transparent)
+                color: modelData.connected ? Color.mPrimary : (networkMouseArea.containsMouse ? Color.mSecondary : Color.transparent)
 
                 RowLayout {
                   anchors.fill: parent

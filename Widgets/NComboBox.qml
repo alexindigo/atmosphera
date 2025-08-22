@@ -50,7 +50,7 @@ ColumnLayout {
       implicitWidth: Style.baseWidgetSize * 3.75 * scaling
       implicitHeight: preferredHeight
       color: Color.mSurface
-      border.color: combo.activeFocus ? Color.mTertiary : Color.mOutline
+      border.color: combo.activeFocus ? Color.mSecondary : Color.mOutline
       border.width: Math.max(1, Style.borderS * scaling)
       radius: Style.radiusM * scaling
     }
@@ -112,7 +112,7 @@ ColumnLayout {
 
           background: Rectangle {
             width: combo.width - Style.marginM * scaling * 3
-            color: highlighted ? Color.mTertiary : Color.transparent
+            color: highlighted ? Color.mSecondary : Color.transparent
             radius: Style.radiusS * scaling
           }
         }

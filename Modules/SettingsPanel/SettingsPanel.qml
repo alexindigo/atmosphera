@@ -202,7 +202,7 @@ NPanel {
               width: parent.width
               height: 32 * scaling
               radius: Style.radiusS * scaling
-              color: selected ? Color.mPrimary : (tabItem.hovering ? Color.mTertiary : Color.transparent)
+              color: selected ? Color.mPrimary : (tabItem.hovering ? Color.mSecondary : Color.transparent)
               readonly property bool selected: index === currentTabIndex
               property bool hovering: false
               property color tabTextColor: selected ? Color.mOnPrimary : (tabItem.hovering ? Color.mOnTertiary : Color.mOnSurface)

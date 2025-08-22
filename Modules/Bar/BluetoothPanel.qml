@@ -118,7 +118,7 @@ NPanel {
               radius: Style.radiusM * scaling
               color: {
                 if (availableDeviceArea.containsMouse && !isBusy)
-                  return Color.mTertiary
+                  return Color.mSecondary
 
                 if (modelData.pairing || modelData.state === BluetoothDeviceState.Connecting)
                   return Color.mPrimary

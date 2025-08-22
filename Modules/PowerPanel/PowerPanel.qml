@@ -215,7 +215,7 @@ NPanel {
       if (pending)
         return Color.applyOpacity(Color.mPrimary, "20")
       if (mouseArea.containsMouse)
-        return Color.mTertiary
+        return Color.mSecondary
       return Color.transparent
     }
 

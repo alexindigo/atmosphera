@@ -46,7 +46,7 @@ Item {
         anchors.fill: parent
         radius: frame.radius
         color: Color.transparent
-        border.color: input.activeFocus ? Color.mTertiary : Color.transparent
+        border.color: input.activeFocus ? Color.mSecondary : Color.transparent
         border.width: input.activeFocus ? Math.max(1, Style.borderS * scaling) : 0
       }
 
