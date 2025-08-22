@@ -11,7 +11,7 @@ NIconButton {
 
   property var powerProfiles: PowerProfiles
   readonly property bool hasPP: powerProfiles.hasPerformanceProfile
-  
+
   sizeMultiplier: 0.8
   visible: hasPP
 
@@ -25,26 +25,27 @@ NIconButton {
     if (powerProfiles.profile === PowerProfile.PowerSaver)
       return "eco"
   }
-  
+
   function profileName() {
-      if (!hasPP)
-        return "Unknown"
-      if (powerProfiles.profile === PowerProfile.Performance)
-        return "Performance"
-      if (powerProfiles.profile === PowerProfile.Balanced)
-        return "Balanced"
-      if (powerProfiles.profile === PowerProfile.PowerSaver)
-        return "Power Saver"
+    if (!hasPP)
+      return "Unknown"
+    if (powerProfiles.profile === PowerProfile.Performance)
+      return "Performance"
+    if (powerProfiles.profile === PowerProfile.Balanced)
+      return "Balanced"
+    if (powerProfiles.profile === PowerProfile.PowerSaver)
+      return "Power Saver"
   }
-  
+
   function changeProfile() {
-      if (!hasPP) return;
-      if (powerProfiles.profile === PowerProfile.Performance)
-        powerProfiles.profile = PowerProfile.PowerSaver
-      else if (powerProfiles.profile === PowerProfile.Balanced)
-        powerProfiles.profile = PowerProfile.Performance
-      else if (powerProfiles.profile === PowerProfile.PowerSaver)
-        powerProfiles.profile = PowerProfile.Balanced
+    if (!hasPP)
+      return
+    if (powerProfiles.profile === PowerProfile.Performance)
+      powerProfiles.profile = PowerProfile.PowerSaver
+    else if (powerProfiles.profile === PowerProfile.Balanced)
+      powerProfiles.profile = PowerProfile.Performance
+    else if (powerProfiles.profile === PowerProfile.PowerSaver)
+      powerProfiles.profile = PowerProfile.Balanced
   }
 
   icon: root.profileIcon()

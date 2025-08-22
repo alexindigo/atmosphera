@@ -33,7 +33,6 @@ ColumnLayout {
         spacing: Style.marginL * scaling
         Layout.fillWidth: true
 
-
         ColumnLayout {
           spacing: Style.marginXXS * scaling
           Layout.fillWidth: true
@@ -72,7 +71,7 @@ ColumnLayout {
           }
         }
 
-                ColumnLayout {
+        ColumnLayout {
           spacing: Style.marginXXS * scaling
           Layout.fillWidth: true
 
@@ -111,7 +110,6 @@ ColumnLayout {
           }
         }
 
-
         NToggle {
           label: "Show Active Window's Icon"
           description: "Display the app icon next to the title of the currently focused window."
@@ -129,7 +127,6 @@ ColumnLayout {
                        Settings.data.bar.alwaysShowBatteryPercentage = checked
                      }
         }
-
 
         NDivider {
           Layout.fillWidth: true

@@ -58,23 +58,24 @@ NCard {
         description: ""
         placeholder: "Add widget to " + sectionName.toLowerCase() + " section"
         onSelected: key => {
-                      comboBox.selectedKey = key
+                      comboBox.currentKey = key
                     }
+        Layout.alignment: Qt.AlignVCenter
       }
 
       NIconButton {
         icon: "add"
-        size: 24 * scaling
+
         colorBg: Color.mPrimary
         colorFg: Color.mOnPrimary
-        colorBgHover: Color.mPrimaryContainer
-        colorFgHover: Color.mOnPrimaryContainer
+        colorBgHover: Color.mSecondary
+        colorFgHover: Color.mOnSecondary
         enabled: comboBox.selectedKey !== ""
         Layout.alignment: Qt.AlignVCenter
         onClicked: {
-          if (comboBox.selectedKey !== "") {
-            addWidget(comboBox.selectedKey, sectionName.toLowerCase())
-            comboBox.reset()
+          if (comboBox.currentKey !== "") {
+            addWidget(comboBox.currentKey, sectionName.toLowerCase())
+            comboBox.currentKey = ""
           }
         }
       }

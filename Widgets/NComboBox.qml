@@ -15,7 +15,7 @@ ColumnLayout {
   property ListModel model: {
 
   }
-  property string currentKey: ''
+  property string currentKey: ""
   property string placeholder: ""
 
   signal selected(string key)
