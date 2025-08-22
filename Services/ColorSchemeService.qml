@@ -18,8 +18,6 @@ Singleton {
   property bool scanning: false
   property string schemesDirectory: Quickshell.shellDir + "/Assets/ColorScheme"
   property string colorsJsonFilePath: Settings.configDir + "colors.json"
-  // Internal: remember last path if needed
-  property string pendingApplyPath: ""
 
   function loadColorSchemes() {
     Logger.log("ColorScheme", "Load ColorScheme")
@@ -31,12 +29,9 @@ Singleton {
   }
 
   function applyScheme(filePath) {
-    // Read the scheme JSON and write the effective variant to colors.json
-    pendingApplyPath = filePath
     // Force reload by bouncing the path
     schemeReader.path = ""
     schemeReader.path = filePath
-    Logger.log("ColorScheme", "Applied color scheme:", filePath)
   }
 
   function changedWallpaper() {
@@ -83,6 +78,7 @@ Singleton {
           }
         }
         writeColorsToDisk(variant)
+        Logger.log("ColorScheme", "Applied color scheme:", path)
       } catch (e) {
         Logger.error("ColorScheme", "Failed to parse scheme JSON:", e)
       }
@@ -93,6 +89,9 @@ Singleton {
   FileView {
     id: colorsWriter
     path: colorsJsonFilePath
+    onSaved: {
+      Logger.log("ColorScheme", "Colors saved")
+    }
     JsonAdapter {
       id: out
       property color mPrimary: "#000000"
@@ -130,6 +129,7 @@ Singleton {
     out.mOnSurfaceVariant = pick(obj, "mOnSurfaceVariant", "onSurfaceVariant", out.mOnSurfaceVariant)
     out.mOutline = pick(obj, "mOutline", "outline", out.mOutline)
     out.mShadow = pick(obj, "mShadow", "shadow", out.mShadow)
+
     colorsWriter.writeAdapter()
   }
 
