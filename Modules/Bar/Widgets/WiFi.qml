@@ -27,7 +27,8 @@ NIconButton {
 
   icon: {
     try {
-      if (NetworkService.ethernet) return "lan"
+      if (NetworkService.ethernet)
+        return "lan"
       let connected = false
       let signalStrength = 0
       for (const net in NetworkService.networks) {

@@ -417,7 +417,7 @@ Singleton {
       }
     }
   }
-  
+
   property Process checkEthernet: Process {
     id: checkEthernet
     running: false
