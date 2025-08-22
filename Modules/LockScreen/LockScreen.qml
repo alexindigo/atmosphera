@@ -465,13 +465,12 @@ Loader {
                   }
                 }
 
-                NImageRounded {
+                NImageCircled {
                   anchors.centerIn: parent
                   width: 100 * scaling
                   height: 100 * scaling
                   imagePath: Settings.data.general.avatarImage
                   fallbackIcon: "person"
-                  imageRadius: width * 0.5
                 }
 
                 // Hover animation

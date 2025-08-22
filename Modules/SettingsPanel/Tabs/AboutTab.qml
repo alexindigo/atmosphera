@@ -211,14 +211,13 @@ ColumnLayout {
                 Layout.preferredWidth: Style.baseWidgetSize * 2 * scaling
                 Layout.preferredHeight: Style.baseWidgetSize * 2 * scaling
 
-                NImageRounded {
+                NImageCircled {
                   imagePath: modelData.avatar_url || ""
                   anchors.fill: parent
                   anchors.margins: Style.marginXS * scaling
                   fallbackIcon: "person"
                   borderColor: Color.mPrimary
-                  borderWidth: Math.max(1, Style.borderL * scaling)
-                  imageRadius: width * 0.5
+                  borderWidth: Math.max(1, Style.borderM * scaling)
                 }
               }
 

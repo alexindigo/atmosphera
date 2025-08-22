@@ -47,7 +47,7 @@ Variants {
         layer.enabled: true
       }
 
-      // Left
+      // Left Section - Dynamic Widgets
       Row {
         id: leftSection
 
@@ -57,14 +57,25 @@ Variants {
         anchors.verticalCenter: parent.verticalCenter
         spacing: Style.marginS * scaling
 
-        SystemMonitor {}
-
-        ActiveWindow {}
-
-        MediaMini {}
+        Repeater {
+          model: Settings.data.bar.widgets.left
+          delegate: Loader {
+            id: leftWidgetLoader
+            sourceComponent: widgetLoader.getWidgetComponent(modelData)
+            active: true
+            anchors.verticalCenter: parent.verticalCenter
+            onStatusChanged: {
+              if (status === Loader.Error) {
+                widgetLoader.onWidgetFailed(modelData, "Loader error")
+              } else if (status === Loader.Ready) {
+                widgetLoader.onWidgetLoaded(modelData)
+              }
+            }
+          }
+        }
       }
 
-      // Center
+      // Center Section - Dynamic Widgets
       Row {
         id: centerSection
 
@@ -73,10 +84,25 @@ Variants {
         anchors.verticalCenter: parent.verticalCenter
         spacing: Style.marginS * scaling
 
-        Workspace {}
+        Repeater {
+          model: Settings.data.bar.widgets.center
+          delegate: Loader {
+            id: centerWidgetLoader
+            sourceComponent: widgetLoader.getWidgetComponent(modelData)
+            active: true
+            anchors.verticalCenter: parent.verticalCenter
+            onStatusChanged: {
+              if (status === Loader.Error) {
+                widgetLoader.onWidgetFailed(modelData, "Loader error")
+              } else if (status === Loader.Ready) {
+                widgetLoader.onWidgetLoaded(modelData)
+              }
+            }
+          }
+        }
       }
 
-      // Right
+      // Right Section - Dynamic Widgets
       Row {
         id: rightSection
 
@@ -86,44 +112,38 @@ Variants {
         anchors.verticalCenter: bar.verticalCenter
         spacing: Style.marginS * scaling
 
-        ScreenRecorderIndicator {
-          anchors.verticalCenter: parent.verticalCenter
+        Repeater {
+          model: Settings.data.bar.widgets.right
+          delegate: Loader {
+            id: rightWidgetLoader
+            sourceComponent: widgetLoader.getWidgetComponent(modelData)
+            active: true
+            anchors.verticalCenter: parent.verticalCenter
+            onStatusChanged: {
+              if (status === Loader.Error) {
+                widgetLoader.onWidgetFailed(modelData, "Loader error")
+              } else if (status === Loader.Ready) {
+                widgetLoader.onWidgetLoaded(modelData)
+              }
+            }
+          }
         }
-
-        Tray {
-          anchors.verticalCenter: parent.verticalCenter
-        }
-
-        NotificationHistory {
-          anchors.verticalCenter: parent.verticalCenter
-        }
-
-        WiFi {
-          anchors.verticalCenter: parent.verticalCenter
-        }
-
-        Bluetooth {
-          anchors.verticalCenter: parent.verticalCenter
-        }
-
-        Battery {
-          anchors.verticalCenter: parent.verticalCenter
-        }
-
-        Volume {
-          anchors.verticalCenter: parent.verticalCenter
-        }
-
-        Brightness {
-          anchors.verticalCenter: parent.verticalCenter
-        }
-
-        Clock {
-          anchors.verticalCenter: parent.verticalCenter
-        }
-
-        SidePanelToggle {}
       }
+    }
+
+    // Widget loader instance
+    WidgetLoader {
+      id: widgetLoader
+
+      onWidgetFailed: function (widgetName, error) {
+        Logger.error("Bar", `Widget failed: ${widgetName} - ${error}`)
+      }
+    }
+
+    // Initialize widget loading tracking
+    Component.onCompleted: {
+      const allWidgets = [...Settings.data.bar.widgets.left, ...Settings.data.bar.widgets.center, ...Settings.data.bar.widgets.right]
+      widgetLoader.initializeLoading(allWidgets)
     }
   }
 }

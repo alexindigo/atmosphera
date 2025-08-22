@@ -163,28 +163,22 @@ ColumnLayout {
           Layout.bottomMargin: Style.marginL * scaling
         }
 
-        NText {
-          text: "Predefined Color Schemes"
-          font.pointSize: Style.fontSizeXXL * scaling
-          font.weight: Style.fontWeightBold
-          color: Color.mOnSurface
-        }
-
         ColumnLayout {
           spacing: Style.marginXXS * scaling
           Layout.fillWidth: true
 
-          // NText {
-          //   text: "Predefined Color Schemes"
-          //   font.pointSize: Style.fontSizeL * scaling
-          //   font.weight: Style.fontWeightBold
-          //   color: Color.mOnSurface
-          //   Layout.fillWidth: true
-          // }
+          NText {
+            text: "Predefined Color Schemes"
+            font.pointSize: Style.fontSizeL * scaling
+            font.weight: Style.fontWeightBold
+            color: Color.mOnSurface
+            Layout.fillWidth: true
+          }
+
           NText {
             text: "These color schemes only apply when 'Use Matugen' is disabled. When enabled, Matugen will generate colors based on your wallpaper instead. You can toggle between light and dark themes when using Matugen."
             font.pointSize: Style.fontSizeXS * scaling
-            color: Color.mOnSurfaceVariant
+            color: Color.mOnSurface
             Layout.fillWidth: true
             wrapMode: Text.WordWrap
           }

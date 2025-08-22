@@ -33,6 +33,13 @@ ColumnLayout {
         spacing: Style.marginL * scaling
         Layout.fillWidth: true
 
+        NText {
+          text: "General Settings"
+          font.pointSize: Style.fontSizeXXL * scaling
+          font.weight: Style.fontWeightBold
+          color: Color.mOnSurface
+        }
+
         // Profile section
         ColumnLayout {
           spacing: Style.marginS * scaling
@@ -44,13 +51,13 @@ ColumnLayout {
             spacing: Style.marginL * scaling
 
             // Avatar preview
-            NImageRounded {
+            NImageCircled {
               width: 64 * scaling
               height: 64 * scaling
               imagePath: Settings.data.general.avatarImage
               fallbackIcon: "person"
               borderColor: Color.mPrimary
-              borderWidth: Math.max(1, Style.borderM)
+              borderWidth: Math.max(1, Style.borderM * scaling)
             }
 
             NTextInput {
