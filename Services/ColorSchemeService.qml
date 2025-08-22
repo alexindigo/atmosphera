@@ -78,7 +78,7 @@ Singleton {
           }
         }
         writeColorsToDisk(variant)
-        Logger.log("ColorScheme", "Applied color scheme:", path)
+        Logger.log("ColorScheme", "Applying color scheme:", path)
       } catch (e) {
         Logger.error("ColorScheme", "Failed to parse scheme JSON:", e)
       }
@@ -90,7 +90,7 @@ Singleton {
     id: colorsWriter
     path: colorsJsonFilePath
     onSaved: {
-      Logger.log("ColorScheme", "Colors saved")
+      // Logger.log("ColorScheme", "Colors saved")
     }
     JsonAdapter {
       id: out
@@ -130,6 +130,9 @@ Singleton {
     out.mOutline = pick(obj, "mOutline", "outline", out.mOutline)
     out.mShadow = pick(obj, "mShadow", "shadow", out.mShadow)
 
+    // Force a rewrite by updating the path
+    colorsWriter.path = ""
+    colorsWriter.path = colorsJsonFilePath
     colorsWriter.writeAdapter()
   }
 
