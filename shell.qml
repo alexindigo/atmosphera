@@ -16,6 +16,7 @@ import qs.Commons
 import qs.Modules.Launcher
 import qs.Modules.Background
 import qs.Modules.Bar
+import qs.Modules.BluetoothPanel
 import qs.Modules.Calendar
 import qs.Modules.Dock
 import qs.Modules.IPC
@@ -25,7 +26,7 @@ import qs.Modules.SettingsPanel
 import qs.Modules.PowerPanel
 import qs.Modules.SidePanel
 import qs.Modules.Toast
-
+import qs.Modules.WiFiPanel
 import qs.Services
 import qs.Widgets
 
@@ -68,6 +69,14 @@ ShellRoot {
 
   PowerPanel {
     id: powerPanel
+  }
+
+  WiFiPanel {
+    id: wifiPanel
+  }
+
+  BluetoothPanel {
+    id: bluetoothPanel
   }
 
   ToastManager {}

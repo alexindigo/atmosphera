@@ -32,31 +32,4 @@ NIconButton {
   onClicked: {
     bluetoothPanel.toggle(screen)
   }
-
-  Loader {
-    id: bluetoothPanel
-    source: "BluetoothPanel.qml"
-    active: false
-    
-    property var pendingToggleScreen: null
-    
-    onStatusChanged: {
-      if (status === Loader.Ready && item && pendingToggleScreen !== null) {
-        item.toggle(pendingToggleScreen)
-        pendingToggleScreen = null
-      }
-    }
-    
-    function toggle(screen) {
-      // Load the panel if it's not already loaded
-      if (!active) {
-        active = true
-        pendingToggleScreen = screen
-      } else if (status === Loader.Ready && item) {
-        item.toggle(screen)
-      } else {
-        pendingToggleScreen = screen
-      }
-    }
-  }
 }
