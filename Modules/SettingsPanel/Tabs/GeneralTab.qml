@@ -44,13 +44,13 @@ ColumnLayout {
             spacing: Style.marginL * scaling
 
             // Avatar preview
-            NImageRounded {
+            NImageCircled {
               width: 64 * scaling
               height: 64 * scaling
               imagePath: Settings.data.general.avatarImage
               fallbackIcon: "person"
               borderColor: Color.mPrimary
-              borderWidth: Math.max(1, Style.borderM)
+              borderWidth: Math.max(1, Style.borderM * scaling)
             }
 
             NTextInput {

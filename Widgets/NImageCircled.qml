@@ -12,12 +12,9 @@ Rectangle {
   property string fallbackIcon: ""
   property color borderColor: Color.transparent
   property real borderWidth: 0
-  property real imageRadius: width * 0.5
-
-  property real scaledRadius: imageRadius * Settings.data.general.radiusRatio
 
   color: Color.transparent
-  radius: scaledRadius
+  radius: parent.width * 0.5
   anchors.margins: Style.marginXXS * scaling
 
   Rectangle {
@@ -47,23 +44,10 @@ Rectangle {
         format: ShaderEffectSource.RGBA
       }
 
-      // Use custom property names to avoid conflicts with final properties
-      property real itemWidth: root.width
-      property real itemHeight: root.height
-      property real cornerRadius: root.radius
       property real imageOpacity: root.opacity
-      fragmentShader: "file:Shaders/qsb/rounded_image.frag.qsb"
-
-      // Qt6 specific properties - ensure proper blending
+      fragmentShader: "file:Shaders/qsb/circled_image.frag.qsb"
       supportsAtlasTextures: false
       blending: true
-      // Make sure the background is transparent
-      Rectangle {
-        id: background
-        anchors.fill: parent
-        color: "transparent"
-        z: -1
-      }
     }
 
     // Fallback icon
@@ -76,7 +60,7 @@ Rectangle {
     }
   }
 
-  // Border
+  //Border
   Rectangle {
     anchors.fill: parent
     radius: parent.radius
