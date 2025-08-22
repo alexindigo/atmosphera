@@ -19,16 +19,17 @@ QtObject {
     if (!widgetName || widgetName.trim() === "") {
       return null
     }
-    
+
     const widgetPath = `../Modules/Bar/Widgets/${widgetName}.qml`
-    
+
     // Try to load the widget directly from file
     const component = Qt.createComponent(widgetPath)
     if (component.status === Component.Ready) {
       return component
     }
-    
-    const errorMsg = `Failed to load ${widgetName}.qml widget, status: ${component.status}, error: ${component.errorString()}`
+
+    const errorMsg = `Failed to load ${widgetName}.qml widget, status: ${component.status}, error: ${component.errorString(
+                     )}`
     Logger.error("WidgetLoader", errorMsg)
     return null
   }
@@ -44,7 +45,7 @@ QtObject {
   function onWidgetLoaded(widgetName) {
     loadedWidgets++
     widgetLoaded(widgetName)
-    
+
     if (loadedWidgets + failedWidgets === totalWidgets) {
       Logger.log("WidgetLoader", `Loaded ${loadedWidgets} widgets`)
       loadingComplete(totalWidgets, loadedWidgets, failedWidgets)
@@ -55,7 +56,7 @@ QtObject {
   function onWidgetFailed(widgetName, error) {
     failedWidgets++
     widgetFailed(widgetName, error)
-    
+
     if (loadedWidgets + failedWidgets === totalWidgets) {
       loadingComplete(totalWidgets, loadedWidgets, failedWidgets)
     }
@@ -64,28 +65,24 @@ QtObject {
   // This is where you should add your Modules/Bar/Widgets/
   // so it gets registered in the BarTab
   function discoverAvailableWidgets() {
-    const widgetFiles = [
-      "ActiveWindow", "Battery", "Bluetooth", "Brightness", "Clock", 
-      "MediaMini", "NotificationHistory", "ScreenRecorderIndicator", 
-      "SidePanelToggle", "SystemMonitor", "Tray", "Volume", "WiFi", "Workspace"
-    ]
-    
+    const widgetFiles = ["ActiveWindow", "Battery", "Bluetooth", "Brightness", "Clock", "MediaMini", "NotificationHistory", "ScreenRecorderIndicator", "SidePanelToggle", "SystemMonitor", "Tray", "Volume", "WiFi", "Workspace"]
+
     const availableWidgets = []
-    
+
     widgetFiles.forEach(widgetName => {
-      // Test if the widget can be loaded
-      const component = getWidgetComponent(widgetName)
-      if (component) {
-        availableWidgets.push({
-          key: widgetName,
-          name: widgetName
-        })
-      }
-    })
-    
+                          // Test if the widget can be loaded
+                          const component = getWidgetComponent(widgetName)
+                          if (component) {
+                            availableWidgets.push({
+                                                    "key": widgetName,
+                                                    "name": widgetName
+                                                  })
+                          }
+                        })
+
     // Sort alphabetically
     availableWidgets.sort((a, b) => a.name.localeCompare(b.name))
-    
+
     return availableWidgets
   }
 }

@@ -37,8 +37,6 @@ ColumnLayout {
     return -1
   }
 
-
-
   ComboBox {
     id: combo
     Layout.fillWidth: true
@@ -64,9 +62,10 @@ ColumnLayout {
       font.pointSize: Style.fontSizeM * scaling
       verticalAlignment: Text.AlignVCenter
       elide: Text.ElideRight
-      color: (combo.currentIndex >= 0 && combo.currentIndex < root.model.count) ? Color.mOnSurface : Color.mOnSurfaceVariant
-      text: (combo.currentIndex >= 0 && combo.currentIndex < root.model.count) ? root.model.get(
-                                                                                   combo.currentIndex).name : root.placeholder
+      color: (combo.currentIndex >= 0
+              && combo.currentIndex < root.model.count) ? Color.mOnSurface : Color.mOnSurfaceVariant
+      text: (combo.currentIndex >= 0
+             && combo.currentIndex < root.model.count) ? root.model.get(combo.currentIndex).name : root.placeholder
     }
 
     indicator: NIcon {

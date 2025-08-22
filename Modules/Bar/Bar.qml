@@ -23,8 +23,6 @@ Variants {
     implicitHeight: Style.barHeight * scaling
     color: Color.transparent
 
-
-
     // If no bar activated in settings, then show them all
     visible: modelData ? (Settings.data.bar.monitors.includes(modelData.name)
                           || (Settings.data.bar.monitors.length === 0)) : false
@@ -136,24 +134,16 @@ Variants {
     // Widget loader instance
     WidgetLoader {
       id: widgetLoader
-      
-      onWidgetFailed: function(widgetName, error) {
+
+      onWidgetFailed: function (widgetName, error) {
         Logger.error("Bar", `Widget failed: ${widgetName} - ${error}`)
       }
     }
 
     // Initialize widget loading tracking
     Component.onCompleted: {
-      const allWidgets = [
-        ...Settings.data.bar.widgets.left,
-        ...Settings.data.bar.widgets.center,
-        ...Settings.data.bar.widgets.right
-      ]
+      const allWidgets = [...Settings.data.bar.widgets.left, ...Settings.data.bar.widgets.center, ...Settings.data.bar.widgets.right]
       widgetLoader.initializeLoading(allWidgets)
     }
-
-
-
-
   }
 }

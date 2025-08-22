@@ -166,13 +166,14 @@ ColumnLayout {
               Layout.fillWidth: true
               Layout.minimumHeight: {
                 var widgetCount = Settings.data.bar.widgets.left.length
-                if (widgetCount === 0) return 140 * scaling
-                
+                if (widgetCount === 0)
+                  return 140 * scaling
+
                 var availableWidth = scrollView.availableWidth - (Style.marginM * scaling * 2) // Card margins
                 var avgWidgetWidth = 150 * scaling // Estimated widget width including spacing
                 var widgetsPerRow = Math.max(1, Math.floor(availableWidth / avgWidgetWidth))
                 var rows = Math.ceil(widgetCount / widgetsPerRow)
-                
+
                 // Header (50) + spacing (20) + (rows * widget height) + (rows-1 * spacing) + bottom margin (20)
                 return (50 + 20 + (rows * 48) + ((rows - 1) * Style.marginS) + 20) * scaling
               }
@@ -192,7 +193,9 @@ ColumnLayout {
                     color: Color.mOnSurface
                   }
 
-                  Item { Layout.fillWidth: true }
+                  Item {
+                    Layout.fillWidth: true
+                  }
 
                   NComboBox {
                     id: leftComboBox
@@ -202,8 +205,8 @@ ColumnLayout {
                     description: ""
                     placeholder: "Add widget to left section"
                     onSelected: key => {
-                      addWidgetToSection(key, "left")
-                    }
+                                  addWidgetToSection(key, "left")
+                                }
                   }
                 }
 
@@ -290,13 +293,14 @@ ColumnLayout {
               Layout.fillWidth: true
               Layout.minimumHeight: {
                 var widgetCount = Settings.data.bar.widgets.center.length
-                if (widgetCount === 0) return 140 * scaling
-                
+                if (widgetCount === 0)
+                  return 140 * scaling
+
                 var availableWidth = scrollView.availableWidth - (Style.marginM * scaling * 2) // Card margins
                 var avgWidgetWidth = 150 * scaling // Estimated widget width including spacing
                 var widgetsPerRow = Math.max(1, Math.floor(availableWidth / avgWidgetWidth))
                 var rows = Math.ceil(widgetCount / widgetsPerRow)
-                
+
                 // Header (50) + spacing (20) + (rows * widget height) + (rows-1 * spacing) + bottom margin (20)
                 return (50 + 20 + (rows * 48) + ((rows - 1) * Style.marginS) + 20) * scaling
               }
@@ -316,7 +320,9 @@ ColumnLayout {
                     color: Color.mOnSurface
                   }
 
-                  Item { Layout.fillWidth: true }
+                  Item {
+                    Layout.fillWidth: true
+                  }
 
                   NComboBox {
                     id: centerComboBox
@@ -326,9 +332,9 @@ ColumnLayout {
                     description: ""
                     placeholder: "Add widget to center section"
                     onSelected: key => {
-                      addWidgetToSection(key, "center")
-                      reset() // Reset selection
-                    }
+                                  addWidgetToSection(key, "center")
+                                  reset() // Reset selection
+                                }
                   }
                 }
 
@@ -415,13 +421,14 @@ ColumnLayout {
               Layout.fillWidth: true
               Layout.minimumHeight: {
                 var widgetCount = Settings.data.bar.widgets.right.length
-                if (widgetCount === 0) return 140 * scaling
-                
+                if (widgetCount === 0)
+                  return 140 * scaling
+
                 var availableWidth = scrollView.availableWidth - (Style.marginM * scaling * 2) // Card margins
                 var avgWidgetWidth = 150 * scaling // Estimated widget width including spacing
                 var widgetsPerRow = Math.max(1, Math.floor(availableWidth / avgWidgetWidth))
                 var rows = Math.ceil(widgetCount / widgetsPerRow)
-                
+
                 // Header (50) + spacing (20) + (rows * widget height) + (rows-1 * spacing) + bottom margin (20)
                 return (50 + 20 + (rows * 48) + ((rows - 1) * Style.marginS) + 20) * scaling
               }
@@ -441,7 +448,9 @@ ColumnLayout {
                     color: Color.mOnSurface
                   }
 
-                  Item { Layout.fillWidth: true }
+                  Item {
+                    Layout.fillWidth: true
+                  }
 
                   NComboBox {
                     id: rightComboBox
@@ -451,9 +460,9 @@ ColumnLayout {
                     description: ""
                     placeholder: "Add widget to right section"
                     onSelected: key => {
-                      addWidgetToSection(key, "right")
-                      reset() // Reset selection
-                    }
+                                  addWidgetToSection(key, "right")
+                                  reset() // Reset selection
+                                }
                   }
                 }
 
@@ -540,8 +549,6 @@ ColumnLayout {
     }
   }
 
-
-
   // Helper functions
   function addWidgetToSection(widgetName, section) {
     console.log("Adding widget", widgetName, "to section", section)
@@ -551,7 +558,7 @@ ColumnLayout {
       var newArray = sectionArray.slice()
       newArray.push(widgetName)
       console.log("Widget added. New array:", JSON.stringify(newArray))
-      
+
       // Assign the new array
       Settings.data.bar.widgets[section] = newArray
     }
@@ -565,7 +572,7 @@ ColumnLayout {
       var newArray = sectionArray.slice()
       newArray.splice(index, 1)
       console.log("Widget removed. New array:", JSON.stringify(newArray))
-      
+
       // Assign the new array
       Settings.data.bar.widgets[section] = newArray
     }
@@ -574,16 +581,16 @@ ColumnLayout {
   function reorderWidgetInSection(section, fromIndex, toIndex) {
     console.log("Reordering widget in section", section, "from", fromIndex, "to", toIndex)
     var sectionArray = Settings.data.bar.widgets[section]
-    if (sectionArray && fromIndex >= 0 && fromIndex < sectionArray.length && 
-        toIndex >= 0 && toIndex < sectionArray.length) {
-      
+    if (sectionArray && fromIndex >= 0 && fromIndex < sectionArray.length && toIndex >= 0
+        && toIndex < sectionArray.length) {
+
       // Create a new array to avoid modifying the original
       var newArray = sectionArray.slice()
       var item = newArray[fromIndex]
       newArray.splice(fromIndex, 1)
       newArray.splice(toIndex, 0, item)
       console.log("Widget reordered. New array:", JSON.stringify(newArray))
-      
+
       // Assign the new array
       Settings.data.bar.widgets[section] = newArray
     }
@@ -593,28 +600,25 @@ ColumnLayout {
   WidgetLoader {
     id: widgetLoader
   }
-  
+
   ListModel {
     id: availableWidgets
   }
-  
+
   Component.onCompleted: {
     discoverWidgets()
   }
-  
+
   // Automatically discover available widgets using WidgetLoader
   function discoverWidgets() {
     availableWidgets.clear()
-    
+
     // Use WidgetLoader to discover available widgets
     const discoveredWidgets = widgetLoader.discoverAvailableWidgets()
-    
+
     // Add discovered widgets to the ListModel
     discoveredWidgets.forEach(widget => {
-      availableWidgets.append(widget)
-    })
-    
-
+                                availableWidgets.append(widget)
+                              })
   }
-
 }

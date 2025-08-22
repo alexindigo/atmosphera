@@ -133,7 +133,7 @@ Singleton {
 
         // Widget configuration for modular bar system
         property JsonObject widgets
-        
+
         widgets: JsonObject {
           property list<string> left: ["SystemMonitor", "ActiveWindow", "MediaMini"]
           property list<string> center: ["Workspace"]
