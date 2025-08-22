@@ -41,6 +41,7 @@ Rectangle {
       source: img
       maskEnabled: true
       maskSource: mask
+      maskSpreadAtMax: 0.75
       visible: imagePath !== ""
     }
 

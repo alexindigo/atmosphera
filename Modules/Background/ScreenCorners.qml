@@ -144,6 +144,7 @@ Loader {
         maskEnabled: true
         maskSource: maskTexture
         maskInverted: false
+        maskSpreadAtMax: 0.75
       }
 
       mask: Region {}
