@@ -7,6 +7,7 @@ import qs.Commons
 import qs.Services
 import qs.Widgets
 
+
 Row {
   id: root
   anchors.verticalCenter: parent.verticalCenter
@@ -62,6 +63,7 @@ Row {
 
   Rectangle {
     // Let the Rectangle size itself based on its content (the Row)
+    visible: root.visible
     width: row.width + Style.marginM * scaling * 2
     height: Math.round(Style.capsuleHeight * scaling)
     radius: Math.round(Style.radiusM * scaling)
