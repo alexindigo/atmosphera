@@ -23,7 +23,7 @@ Loader {
         screen: modelData
 
         // Auto-hide properties - make reactive to settings changes
-        property bool autoHide: Settings.data.dock.autoHide
+        property bool autoHide: Settings.data.dock.autoHide || (Settings.data.bar.position === "bottom")
         property bool hidden: autoHide
         property int hideDelay: 500
         property int showDelay: 100
