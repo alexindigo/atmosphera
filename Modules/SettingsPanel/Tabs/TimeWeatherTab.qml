@@ -33,6 +33,14 @@ ColumnLayout {
         spacing: Style.marginXS * scaling
         Layout.fillWidth: true
 
+        NText {
+          text: "Location"
+          font.pointSize: Style.fontSizeXXL * scaling
+          font.weight: Style.fontWeightBold
+          color: Color.mOnSurface
+          Layout.bottomMargin: Style.marginS * scaling
+        }
+
         // Location section
         ColumnLayout {
           spacing: Style.marginM * scaling

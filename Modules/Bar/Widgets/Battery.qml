@@ -22,8 +22,6 @@ NPill {
 
   // Choose icon based on charge and charging state
   function batteryIcon() {
-    if (!show)
-      return ""
 
     if (charging)
       return "battery_android_bolt"
