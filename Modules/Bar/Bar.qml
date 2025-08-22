@@ -23,9 +23,7 @@ Variants {
     implicitHeight: Style.barHeight * scaling
     color: Color.transparent
 
-    Component.onCompleted: {
-      logWidgetLoadingSummary()
-    }
+
 
     // If no bar activated in settings, then show them all
     visible: modelData ? (Settings.data.bar.monitors.includes(modelData.name)
@@ -64,16 +62,15 @@ Variants {
         Repeater {
           model: Settings.data.bar.widgets.left
           delegate: Loader {
-            id: widgetLoader
-            sourceComponent: getWidgetComponent(modelData)
+            id: leftWidgetLoader
+            sourceComponent: widgetLoader.getWidgetComponent(modelData)
             active: true
             anchors.verticalCenter: parent.verticalCenter
             onStatusChanged: {
               if (status === Loader.Error) {
-                Logger.error("Bar", `Failed to load ${modelData} widget`)
-                onWidgetFailed()
+                widgetLoader.onWidgetFailed(modelData, "Loader error")
               } else if (status === Loader.Ready) {
-                onWidgetLoaded()
+                widgetLoader.onWidgetLoaded(modelData)
               }
             }
           }
@@ -92,16 +89,15 @@ Variants {
         Repeater {
           model: Settings.data.bar.widgets.center
           delegate: Loader {
-            id: widgetLoader
-            sourceComponent: getWidgetComponent(modelData)
+            id: centerWidgetLoader
+            sourceComponent: widgetLoader.getWidgetComponent(modelData)
             active: true
             anchors.verticalCenter: parent.verticalCenter
             onStatusChanged: {
               if (status === Loader.Error) {
-                Logger.error("Bar", `Failed to load ${modelData} widget`)
-                onWidgetFailed()
+                widgetLoader.onWidgetFailed(modelData, "Loader error")
               } else if (status === Loader.Ready) {
-                onWidgetLoaded()
+                widgetLoader.onWidgetLoaded(modelData)
               }
             }
           }
@@ -121,16 +117,15 @@ Variants {
         Repeater {
           model: Settings.data.bar.widgets.right
           delegate: Loader {
-            id: widgetLoader
-            sourceComponent: getWidgetComponent(modelData)
+            id: rightWidgetLoader
+            sourceComponent: widgetLoader.getWidgetComponent(modelData)
             active: true
             anchors.verticalCenter: parent.verticalCenter
             onStatusChanged: {
               if (status === Loader.Error) {
-                Logger.error("Bar", `Failed to load ${modelData} widget`)
-                onWidgetFailed()
+                widgetLoader.onWidgetFailed(modelData, "Loader error")
               } else if (status === Loader.Ready) {
-                onWidgetLoaded()
+                widgetLoader.onWidgetLoaded(modelData)
               }
             }
           }
@@ -138,60 +133,31 @@ Variants {
       }
     }
 
-    // Auto-discover widget components
-    function getWidgetComponent(widgetName) {
-      if (!widgetName || widgetName.trim() === "") {
-        return null
+    // Widget loader instance
+    WidgetLoader {
+      id: widgetLoader
+      
+      onWidgetLoaded: function(widgetName) {
+        Logger.log("Bar", `Widget loaded: ${widgetName}`)
       }
       
-      const widgetPath = `../Bar/Widgets/${widgetName}.qml`
-      Logger.log("Bar", `Attempting to load widget from: ${widgetPath}`)
-      
-      // Try to load the widget directly from file
-      const component = Qt.createComponent(widgetPath)
-      if (component.status === Component.Ready) {
-        Logger.log("Bar", `Successfully created component for: ${widgetName}.qml`)
-        return component
+      onWidgetFailed: function(widgetName, error) {
+        Logger.error("Bar", `Widget failed: ${widgetName} - ${error}`)
       }
       
-      Logger.error("Bar", `Failed to load ${widgetName}.qml widget, status: ${component.status}, error: ${component.errorString()}`)
-      return null
+      onLoadingComplete: function(total, loaded, failed) {
+        Logger.log("Bar", `Widget loading complete: ${loaded}/${total} loaded, ${failed} failed`)
+      }
     }
 
-    // Track widget loading status
-    property int totalWidgets: 0
-    property int loadedWidgets: 0
-    property int failedWidgets: 0
-
-    // Log widget loading summary
-    function logWidgetLoadingSummary() {
+    // Initialize widget loading tracking
+    Component.onCompleted: {
       const allWidgets = [
         ...Settings.data.bar.widgets.left,
         ...Settings.data.bar.widgets.center,
         ...Settings.data.bar.widgets.right
       ]
-      
-      totalWidgets = allWidgets.length
-      loadedWidgets = 0
-      failedWidgets = 0
-      
-      if (totalWidgets > 0) {
-        Logger.log("Bar", `Attempting to load ${totalWidgets} widgets`)
-      }
-    }
-
-    function onWidgetLoaded() {
-      loadedWidgets++
-      if (loadedWidgets + failedWidgets === totalWidgets) {
-        Logger.log("Bar", `Loaded ${loadedWidgets}/${totalWidgets} widgets`)
-      }
-    }
-
-    function onWidgetFailed() {
-      failedWidgets++
-      if (loadedWidgets + failedWidgets === totalWidgets) {
-        Logger.log("Bar", `Loaded ${loadedWidgets}/${totalWidgets} widgets`)
-      }
+      widgetLoader.initializeLoading(allWidgets)
     }
 
 
