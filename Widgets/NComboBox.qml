@@ -8,7 +8,7 @@ import qs.Widgets
 ColumnLayout {
   id: root
 
-  readonly property real preferredHeight: Style.baseWidgetSize * 1.25 * scaling
+  readonly property real preferredHeight: Style.baseWidgetSize * 1.35 * scaling
 
   property string label: ""
   property string description: ""
@@ -39,7 +39,8 @@ ColumnLayout {
 
   ComboBox {
     id: combo
-    Layout.fillWidth: true
+
+    Layout.preferredWidth: 320 * scaling
     Layout.preferredHeight: height
     model: model
     currentIndex: findIndexByKey(currentKey)
@@ -126,6 +127,14 @@ ColumnLayout {
         border.color: Color.mOutline
         border.width: Math.max(1, Style.borderS * scaling)
         radius: Style.radiusM * scaling
+      }
+    }
+
+    // Update the currentIndex if the currentKey is changed externalyu
+    Connections {
+      target: root
+      function onCurrentKeyChanged() {
+        combo.currentIndex = root.findIndexByKey(currentKey)
       }
     }
   }

@@ -141,9 +141,10 @@ ColumnLayout {
 
           NText {
             text: "Widgets Positioning"
-            font.pointSize: Style.fontSizeL * scaling
+            font.pointSize: Style.fontSizeXXL * scaling
             font.weight: Style.fontWeightBold
             color: Color.mOnSurface
+            Layout.bottomMargin: Style.marginS * scaling
           }
 
           NText {

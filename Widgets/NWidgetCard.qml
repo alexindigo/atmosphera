@@ -4,7 +4,7 @@ import QtQuick.Layouts
 import qs.Commons
 import qs.Widgets
 
-NCard {
+NBox {
   id: root
 
   property string sectionName: ""
@@ -16,6 +16,7 @@ NCard {
   signal removeWidget(string section, int index)
   signal reorderWidget(string section, int fromIndex, int toIndex)
 
+  color: Color.mSurface
   Layout.fillWidth: true
   Layout.minimumHeight: {
     var widgetCount = widgetModel.length
@@ -30,6 +31,25 @@ NCard {
     return (50 + 20 + (rows * 48) + ((rows - 1) * Style.marginS) + 20) * scaling
   }
 
+  // Generate widget color from name checksum
+  function getWidgetColor(name) {
+    const totalSum = name.split('').reduce((acc, character) => {
+                                             return acc + character.charCodeAt(0)
+                                           }, 0)
+    switch (totalSum % 5) {
+    case 0:
+      return Color.mPrimary
+    case 1:
+      return Color.mSecondary
+    case 2:
+      return Color.mTertiary
+    case 3:
+      return Color.mError
+    case 4:
+      return Color.mOnSurface
+    }
+  }
+
   ColumnLayout {
     anchors.fill: parent
     anchors.margins: Style.marginM * scaling
@@ -42,21 +62,19 @@ NCard {
         text: sectionName + " Section"
         font.pointSize: Style.fontSizeL * scaling
         font.weight: Style.fontWeightBold
-        color: Color.mOnSurface
+        color: Color.mSecondary
         Layout.alignment: Qt.AlignVCenter
       }
 
       Item {
         Layout.fillWidth: true
       }
-
       NComboBox {
         id: comboBox
-        width: 120 * scaling
         model: availableWidgets
         label: ""
         description: ""
-        placeholder: "Add widget to " + sectionName.toLowerCase() + " section"
+        placeholder: "Add widget to the " + sectionName.toLowerCase() + " section..."
         onSelected: key => {
                       comboBox.currentKey = key
                     }
@@ -75,7 +93,7 @@ NCard {
         onClicked: {
           if (comboBox.currentKey !== "") {
             addWidget(comboBox.currentKey, sectionName.toLowerCase())
-            comboBox.currentKey = ""
+            comboBox.currentKey = "battery"
           }
         }
       }
@@ -92,9 +110,9 @@ NCard {
         model: widgetModel
         delegate: Rectangle {
           width: widgetContent.implicitWidth + 16 * scaling
-          height: 48 * scaling
-          radius: Style.radiusS * scaling
-          color: Color.mPrimary
+          height: 40 * scaling
+          radius: Style.radiusL * scaling
+          color: root.getWidgetColor(modelData)
           border.color: Color.mOutline
           border.width: Math.max(1, Style.borderS * scaling)
 
@@ -106,7 +124,8 @@ NCard {
             NIconButton {
               icon: "chevron_left"
               size: 20 * scaling
-              colorBg: Color.applyOpacity(Color.mOnPrimary, "20")
+              colorBorder: Color.applyOpacity(Color.mOutline, "40")
+              colorBg: Color.mOnSurface
               colorFg: Color.mOnPrimary
               colorBgHover: Color.applyOpacity(Color.mOnPrimary, "40")
               colorFgHover: Color.mOnPrimary
@@ -128,7 +147,8 @@ NCard {
             NIconButton {
               icon: "chevron_right"
               size: 20 * scaling
-              colorBg: Color.applyOpacity(Color.mOnPrimary, "20")
+              colorBorder: Color.applyOpacity(Color.mOutline, "40")
+              colorBg: Color.mOnSurface
               colorFg: Color.mOnPrimary
               colorBgHover: Color.applyOpacity(Color.mOnPrimary, "40")
               colorFgHover: Color.mOnPrimary
@@ -143,7 +163,8 @@ NCard {
             NIconButton {
               icon: "close"
               size: 20 * scaling
-              colorBg: Color.applyOpacity(Color.mOnPrimary, "20")
+              colorBorder: Color.applyOpacity(Color.mOutline, "40")
+              colorBg: Color.mOnSurface
               colorFg: Color.mOnPrimary
               colorBgHover: Color.applyOpacity(Color.mOnPrimary, "40")
               colorFgHover: Color.mOnPrimary
