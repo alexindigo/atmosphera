@@ -75,7 +75,7 @@ Item {
   }
 
   IpcHandler {
-    target: "powerMenu"
+    target: "powerPanel"
 
     function toggle() {
       powerPanel.toggle(Quickshell.screens[0])
