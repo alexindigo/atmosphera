@@ -14,7 +14,7 @@ Singleton {
   property var config: ({
                           "general": {
                             "bars": barsCount,
-                            "framerate": Settings.data.audio.cavaFps,
+                            "framerate": Settings.data.audio.cavaFrameRate,
                             "autosens": 1,
                             "sensitivity": 100,
                             "lower_cutoff_freq": 50,

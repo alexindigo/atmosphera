@@ -309,37 +309,39 @@ ColumnLayout {
                       }
         }
         
-        NText {
-          text: "Audio Visualizer FPS"
-          font.pointSize: Style.fontSizeM * scaling
-          font.weight: Style.fontWeightBold
-          color: Color.mOnSurface
-        }
-        
-        ColumnLayout {
-          spacing: Style.marginS * scaling
-          Layout.fillWidth: true
-          Layout.topMargin: Style.marginM * scaling
-          
-          RowLayout {
-            NSlider {
-              Layout.fillWidth: true
-              from: 0
-              to: 360
-              value: Settings.data.audio.cavaFps
-              stepSize: 1
-              onMoved: {
-                Settings.data.audio.cavaFps = value
-              }
+        NComboBox {
+          label: "Frame Rate"
+          description: "Target frame rate for audio visualizer. (default: 60)"
+          model: ListModel {
+            ListElement {
+              key: "30"
+              name: "30 FPS"
             }
-            
-            NText {
-              text: Settings.data.audio.cavaFps + " FPS"
-              Layout.alignment: Qt.AlignVCenter
-              Layout.leftMargin: Style.marginS * scaling
-              color: Color.mOnSurface
+            ListElement {
+              key: "60"
+              name: "60 FPS"
+            }
+            ListElement {
+              key: "120"
+              name: "120 FPS"
+            }
+            ListElement {
+              key: "144"
+              name: "144 FPS"
+            }
+            ListElement {
+              key: "165"
+              name: "165 FPS"
+            }
+            ListElement {
+              key: "240"
+              name: "240 FPS"
             }
           }
+          currentKey: Settings.data.audio.cavaFrameRate
+          onSelected: key => {
+                Settings.data.audio.cavaFrameRate = key
+            }
         }
       }
     }
