@@ -137,16 +137,8 @@ Variants {
     WidgetLoader {
       id: widgetLoader
       
-      onWidgetLoaded: function(widgetName) {
-        Logger.log("Bar", `Widget loaded: ${widgetName}`)
-      }
-      
       onWidgetFailed: function(widgetName, error) {
         Logger.error("Bar", `Widget failed: ${widgetName} - ${error}`)
-      }
-      
-      onLoadingComplete: function(total, loaded, failed) {
-        Logger.log("Bar", `Widget loading complete: ${loaded}/${total} loaded, ${failed} failed`)
       }
     }
 

@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import Qt.labs.folderlistmodel
 import qs.Commons
 import qs.Services
 import qs.Widgets
@@ -196,6 +195,7 @@ ColumnLayout {
                   Item { Layout.fillWidth: true }
 
                   NComboBox {
+                    id: leftComboBox
                     width: 120 * scaling
                     model: availableWidgets
                     label: ""
@@ -319,6 +319,7 @@ ColumnLayout {
                   Item { Layout.fillWidth: true }
 
                   NComboBox {
+                    id: centerComboBox
                     width: 120 * scaling
                     model: availableWidgets
                     label: ""
@@ -326,6 +327,7 @@ ColumnLayout {
                     placeholder: "Add widget to center section"
                     onSelected: key => {
                       addWidgetToSection(key, "center")
+                      reset() // Reset selection
                     }
                   }
                 }
@@ -442,6 +444,7 @@ ColumnLayout {
                   Item { Layout.fillWidth: true }
 
                   NComboBox {
+                    id: rightComboBox
                     width: 120 * scaling
                     model: availableWidgets
                     label: ""
@@ -449,6 +452,7 @@ ColumnLayout {
                     placeholder: "Add widget to right section"
                     onSelected: key => {
                       addWidgetToSection(key, "right")
+                      reset() // Reset selection
                     }
                   }
                 }
@@ -585,13 +589,9 @@ ColumnLayout {
     }
   }
 
-  // Dynamic widget discovery using FolderListModel
-  FolderListModel {
-    id: widgetFolderModel
-    folder: Qt.resolvedUrl("../../Bar/Widgets/")
-    nameFilters: ["*.qml"]
-    showDirs: false
-    showFiles: true
+  // Widget loader for discovering available widgets
+  WidgetLoader {
+    id: widgetLoader
   }
   
   ListModel {
@@ -602,115 +602,19 @@ ColumnLayout {
     discoverWidgets()
   }
   
-  // Automatically discover available widgets from the Widgets directory
+  // Automatically discover available widgets using WidgetLoader
   function discoverWidgets() {
-    console.log("Discovering widgets...")
-    console.log("FolderListModel count:", widgetFolderModel.count)
-    console.log("FolderListModel folder:", widgetFolderModel.folder)
-    
     availableWidgets.clear()
     
-    // Process each .qml file found in the directory
-    for (let i = 0; i < widgetFolderModel.count; i++) {
-      const fileName = widgetFolderModel.get(i, "fileName")
-      console.log("Found file:", fileName)
-      const widgetName = fileName.replace('.qml', '')
-      
-      // Skip TrayMenu as it's not a standalone widget
-      if (widgetName !== 'TrayMenu') {
-        console.log("Adding widget:", widgetName)
-        availableWidgets.append({
-          key: widgetName,
-          name: widgetName,
-          icon: getDefaultIcon(widgetName)
-        })
-      }
-    }
+    // Use WidgetLoader to discover available widgets
+    const discoveredWidgets = widgetLoader.discoverAvailableWidgets()
     
-    console.log("Total widgets added:", availableWidgets.count)
-    
-    // If FolderListModel didn't find anything, use fallback
-    if (availableWidgets.count === 0) {
-      console.log("FolderListModel failed, using fallback list")
-      const fallbackWidgets = [
-        "ActiveWindow", "Battery", "Bluetooth", "Brightness", "Clock", 
-        "MediaMini", "NotificationHistory", "ScreenRecorderIndicator", 
-        "SidePanelToggle", "SystemMonitor", "Tray", "Volume", "WiFi", "Workspace"
-      ]
-      
-      fallbackWidgets.forEach(widgetName => {
-        availableWidgets.append({
-          key: widgetName,
-          name: widgetName,
-          icon: getDefaultIcon(widgetName)
-        })
-      })
-    }
-    
-    // Sort alphabetically by name
-    sortWidgets()
-  }
-  
-  // Sort widgets alphabetically
-  function sortWidgets() {
-    const widgets = []
-    for (let i = 0; i < availableWidgets.count; i++) {
-      widgets.push({
-        key: availableWidgets.get(i).key,
-        name: availableWidgets.get(i).name,
-        icon: availableWidgets.get(i).icon
-      })
-    }
-    
-    widgets.sort((a, b) => a.name.localeCompare(b.name))
-    
-    availableWidgets.clear()
-    widgets.forEach(widget => {
+    // Add discovered widgets to the ListModel
+    discoveredWidgets.forEach(widget => {
       availableWidgets.append(widget)
     })
-  }
-  
-  // Get default icon for widget (can be overridden in widget files)
-  function getDefaultIcon(widgetName) {
-    const iconMap = {
-      "ActiveWindow": "web_asset",
-      "Battery": "battery_full",
-      "Bluetooth": "bluetooth",
-      "Brightness": "brightness_6",
-      "Clock": "schedule",
-      "MediaMini": "music_note",
-      "NotificationHistory": "notifications",
-      "ScreenRecorderIndicator": "videocam",
-      "SidePanelToggle": "widgets",
-      "SystemMonitor": "memory",
-      "Tray": "apps",
-      "Volume": "volume_up",
-      "WiFi": "wifi",
-      "Workspace": "dashboard"
-    }
-    return iconMap[widgetName] || "widgets"
+    
+
   }
 
-
-
-  // Helper function to get widget icons
-  function getWidgetIcon(widgetKey) {
-    switch(widgetKey) {
-      case "SystemMonitor": return "memory"
-      case "ActiveWindow": return "web_asset"
-      case "MediaMini": return "music_note"
-      case "Workspace": return "dashboard"
-      case "ScreenRecorderIndicator": return "videocam"
-      case "Tray": return "apps"
-      case "NotificationHistory": return "notifications"
-      case "WiFi": return "wifi"
-      case "Bluetooth": return "bluetooth"
-      case "Battery": return "battery_full"
-      case "Volume": return "volume_up"
-      case "Brightness": return "brightness_6"
-      case "Clock": return "schedule"
-      case "SidePanelToggle": return "widgets"
-      default: return "widgets"
-    }
-  }
 }

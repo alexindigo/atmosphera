@@ -21,12 +21,10 @@ QtObject {
     }
     
     const widgetPath = `../Modules/Bar/Widgets/${widgetName}.qml`
-    Logger.log("WidgetLoader", `Attempting to load widget from: ${widgetPath}`)
     
     // Try to load the widget directly from file
     const component = Qt.createComponent(widgetPath)
     if (component.status === Component.Ready) {
-      Logger.log("WidgetLoader", `Successfully created component for: ${widgetName}.qml`)
       return component
     }
     
@@ -40,10 +38,6 @@ QtObject {
     totalWidgets = widgetList.length
     loadedWidgets = 0
     failedWidgets = 0
-    
-    if (totalWidgets > 0) {
-      Logger.log("WidgetLoader", `Attempting to load ${totalWidgets} widgets`)
-    }
   }
 
   // Track widget loading success
@@ -52,7 +46,7 @@ QtObject {
     widgetLoaded(widgetName)
     
     if (loadedWidgets + failedWidgets === totalWidgets) {
-      Logger.log("WidgetLoader", `Loaded ${loadedWidgets}/${totalWidgets} widgets`)
+      Logger.log("WidgetLoader", `Loaded ${loadedWidgets} widgets`)
       loadingComplete(totalWidgets, loadedWidgets, failedWidgets)
     }
   }
@@ -63,8 +57,35 @@ QtObject {
     widgetFailed(widgetName, error)
     
     if (loadedWidgets + failedWidgets === totalWidgets) {
-      Logger.log("WidgetLoader", `Loaded ${loadedWidgets}/${totalWidgets} widgets`)
       loadingComplete(totalWidgets, loadedWidgets, failedWidgets)
     }
+  }
+
+  // This is where you should add your Modules/Bar/Widgets/
+  // so it gets registered in the BarTab
+  function discoverAvailableWidgets() {
+    const widgetFiles = [
+      "ActiveWindow", "Battery", "Bluetooth", "Brightness", "Clock", 
+      "MediaMini", "NotificationHistory", "ScreenRecorderIndicator", 
+      "SidePanelToggle", "SystemMonitor", "Tray", "Volume", "WiFi", "Workspace"
+    ]
+    
+    const availableWidgets = []
+    
+    widgetFiles.forEach(widgetName => {
+      // Test if the widget can be loaded
+      const component = getWidgetComponent(widgetName)
+      if (component) {
+        availableWidgets.push({
+          key: widgetName,
+          name: widgetName
+        })
+      }
+    })
+    
+    // Sort alphabetically
+    availableWidgets.sort((a, b) => a.name.localeCompare(b.name))
+    
+    return availableWidgets
   }
 }
