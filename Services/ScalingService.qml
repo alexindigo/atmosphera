@@ -43,8 +43,11 @@ Singleton {
   readonly property int designScreenHeight: 1440
 
   function dynamicScale(aScreen) {
-    var ratioW = aScreen.width / designScreenWidth
-    var ratioH = aScreen.height / designScreenHeight
-    return Math.min(ratioW, ratioH)
+    if (aScreen != null) {
+      var ratioW = aScreen.width / designScreenWidth
+      var ratioH = aScreen.height / designScreenHeight
+      return Math.min(ratioW, ratioH)
+    }
+    return 1.0
   }
 }

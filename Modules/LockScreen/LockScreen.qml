@@ -43,14 +43,6 @@ Loader {
       // Tie session lock to loader visibility
       locked: lockScreen.active
 
-      // Lockscreen is a different beast, needs a capital 'S' in 'Screen' to access the current screen
-      // Also we use a different scaling algorithm based on the resolution, as the design is full screen
-      readonly property real scaling: {
-        var tt = ScalingService.dynamicScale(Screen)
-        console.log(tt)
-        return tt
-      }
-
       property string errorMessage: ""
       property bool authenticating: false
       property string password: ""
@@ -127,6 +119,11 @@ Loader {
 
       WlSessionLockSurface {
         // Battery indicator component
+
+        // WlSessionLockSurface provides a screen variable for the current screen.
+        // Also we use a different scaling algorithm based on the resolution, as the design is full screen.
+        readonly property real scaling: ScalingService.dynamicScale(screen)
+
         Item {
           id: batteryIndicator
 
@@ -500,266 +497,267 @@ Loader {
             height: 280 * scaling
             anchors.centerIn: parent
 
-            ColumnLayout {
-              anchors.centerIn: parent
-              spacing: 20 * scaling
+            // Futuristic Terminal-Style Input
+            Item {
               width: parent.width
+              height: 280 * scaling
+              Layout.fillWidth: true
 
-              // Futuristic Terminal-Style Input
-              Item {
-                width: parent.width
-                height: 280 * scaling
-                Layout.fillWidth: true
+              // Terminal background with scanlines
+              Rectangle {
+                id: terminalBackground
+                anchors.fill: parent
+                radius: Style.radiusM * scaling
+                color: Color.applyOpacity(Color.mSurface, "E6")
+                border.color: Color.mPrimary
+                border.width: Math.max(1, Style.borderM * scaling)
 
-                // Terminal background with scanlines
-                Rectangle {
-                  id: terminalBackground
-                  anchors.fill: parent
-                  radius: Style.radiusM * scaling
-                  color: Color.applyOpacity(Color.mSurface, "E6")
-                  border.color: Color.mPrimary
-                  border.width: Math.max(1, Style.borderM * scaling)
-
-                  // Scanline effect
-                  Repeater {
-                    model: 20
-                    Rectangle {
-                      width: parent.width
-                      height: 1
-                      color: Color.applyOpacity(Color.mPrimary, "1A")
-                      y: index * 10
-                      opacity: Style.opacityMedium
-
-                      SequentialAnimation on opacity {
-                        loops: Animation.Infinite
-                        NumberAnimation {
-                          to: 0.6
-                          duration: 2000 + Math.random() * 1000
-                        }
-                        NumberAnimation {
-                          to: 0.1
-                          duration: 2000 + Math.random() * 1000
-                        }
-                      }
-                    }
-                  }
-
-                  // Terminal header
+                // Scanline effect
+                Repeater {
+                  model: 20
                   Rectangle {
                     width: parent.width
-                    height: 40 * scaling
-                    color: Color.applyOpacity(Color.mPrimary, "33")
-                    topLeftRadius: Style.radiusS * scaling
-                    topRightRadius: Style.radiusS * scaling
+                    height: 1
+                    color: Color.applyOpacity(Color.mPrimary, "1A")
+                    y: index * 10 * scaling
+                    opacity: Style.opacityMedium
 
-                    RowLayout {
-                      anchors.fill: parent
-                      anchors.margins: Style.marginM * scaling
-                      spacing: Style.marginM * scaling
+                    SequentialAnimation on opacity {
+                      loops: Animation.Infinite
+                      NumberAnimation {
+                        to: 0.6
+                        duration: 2000 + Math.random() * 1000
+                      }
+                      NumberAnimation {
+                        to: 0.1
+                        duration: 2000 + Math.random() * 1000
+                      }
+                    }
+                  }
+                }
 
-                      NText {
-                        text: "SECURE TERMINAL"
-                        color: Color.mOnSurface
-                        font.family: Settings.data.ui.fontFixed
-                        font.pointSize: Style.fontSizeL * scaling
-                        font.weight: Style.fontWeightBold
-                        Layout.fillWidth: true
+                // Terminal header
+                Rectangle {
+                  width: parent.width
+                  height: 40 * scaling
+                  color: Color.applyOpacity(Color.mPrimary, "33")
+                  topLeftRadius: Style.radiusS * scaling
+                  topRightRadius: Style.radiusS * scaling
+
+                  RowLayout {
+                    anchors.fill: parent
+                    anchors.topMargin: Style.marginM * scaling
+                    anchors.bottomMargin: Style.marginM * scaling
+                    anchors.leftMargin: Style.marginL * scaling
+                    anchors.rightMargin: Style.marginL * scaling
+                    spacing: Style.marginM * scaling
+
+                    NText {
+                      text: "SECURE TERMINAL"
+                      color: Color.mOnSurface
+                      font.family: Settings.data.ui.fontFixed
+                      font.pointSize: Style.fontSizeL * scaling
+                      font.weight: Style.fontWeightBold
+                      Layout.fillWidth: true
+                    }
+
+                    // Battery indicator
+                    Row {
+                      spacing: Style.marginS * scaling
+                      visible: batteryIndicator.batteryVisible
+
+                      NIcon {
+                        text: batteryIndicator.getIcon()
+                        font.pointSize: Style.fontSizeM * scaling
+                        color: batteryIndicator.charging ? Color.mPrimary : Color.mOnSurface
                       }
 
-                      // Battery indicator
-                      Row {
-                        spacing: Style.marginS * scaling
-                        visible: batteryIndicator.batteryVisible
+                      NText {
+                        text: Math.round(batteryIndicator.percent) + "%"
+                        color: Color.mOnSurface
+                        font.family: Settings.data.ui.fontFixed
+                        font.pointSize: Style.fontSizeM * scaling
+                        font.weight: Style.fontWeightBold
+                      }
+                    }
+                  }
+                }
 
-                        NIcon {
-                          text: batteryIndicator.getIcon()
-                          font.pointSize: Style.fontSizeM * scaling
-                          color: batteryIndicator.charging ? Color.mPrimary : Color.mOnSurface
-                        }
+                // Terminal content area
+                ColumnLayout {
+                  anchors.top: parent.top
+                  anchors.left: parent.left
+                  anchors.right: parent.right
+                  anchors.bottom: parent.bottom
+                  anchors.margins: Style.marginL * scaling
+                  anchors.topMargin: 70 * scaling
+                  spacing: Style.marginM * scaling
 
-                        NText {
-                          text: Math.round(batteryIndicator.percent) + "%"
-                          color: Color.mOnSurface
-                          font.family: Settings.data.ui.fontFixed
-                          font.pointSize: Style.fontSizeM * scaling
-                          font.weight: Style.fontWeightBold
+                  // Welcome back typing effect
+                  RowLayout {
+                    Layout.fillWidth: true
+                    spacing: Style.marginM * scaling
+
+                    NText {
+                      text: "root@noctalia:~$"
+                      color: Color.mPrimary
+                      font.family: Settings.data.ui.fontFixed
+                      font.pointSize: Style.fontSizeL * scaling
+                      font.weight: Style.fontWeightBold
+                    }
+
+                    NText {
+                      id: welcomeText
+                      text: ""
+                      color: Color.mOnSurface
+                      font.family: Settings.data.ui.fontFixed
+                      font.pointSize: Style.fontSizeL * scaling
+                      property int currentIndex: 0
+                      property string fullText: "Welcome back, " + Quickshell.env("USER") + "!"
+
+                      Timer {
+                        interval: Style.animationFast
+                        running: true
+                        repeat: true
+                        onTriggered: {
+                          if (parent.currentIndex < parent.fullText.length) {
+                            parent.text = parent.fullText.substring(0, parent.currentIndex + 1)
+                            parent.currentIndex++
+                          } else {
+                            running = false
+                          }
                         }
                       }
                     }
                   }
 
-                  // Terminal content area
-                  ColumnLayout {
-                    anchors.top: parent.top
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.bottom: parent.bottom
-                    anchors.topMargin: 70 * scaling
-                    anchors.margins: Style.marginM * scaling
+                  // Command line with integrated password input
+                  RowLayout {
+                    Layout.fillWidth: true
                     spacing: Style.marginM * scaling
 
-                    // Welcome back typing effect
-                    RowLayout {
-                      Layout.fillWidth: true
-                      spacing: Style.marginM * scaling
-
-                      NText {
-                        text: "root@noctalia:~$"
-                        color: Color.mPrimary
-                        font.family: Settings.data.ui.fontFixed
-                        font.pointSize: Style.fontSizeL * scaling
-                        font.weight: Style.fontWeightBold
-                      }
-
-                      NText {
-                        id: welcomeText
-                        text: ""
-                        color: Color.mOnSurface
-                        font.family: Settings.data.ui.fontFixed
-                        font.pointSize: Style.fontSizeL * scaling
-                        property int currentIndex: 0
-                        property string fullText: "Welcome back, " + Quickshell.env("USER") + "!"
-
-                        Timer {
-                          interval: Style.animationFast
-                          running: true
-                          repeat: true
-                          onTriggered: {
-                            if (parent.currentIndex < parent.fullText.length) {
-                              parent.text = parent.fullText.substring(0, parent.currentIndex + 1)
-                              parent.currentIndex++
-                            } else {
-                              running = false
-                            }
-                          }
-                        }
-                      }
-                    }
-
-                    // Command line with integrated password input
-                    RowLayout {
-                      Layout.fillWidth: true
-                      spacing: Style.marginM * scaling
-
-                      NText {
-                        text: "root@noctalia:~$"
-                        color: Color.mPrimary
-                        font.family: Settings.data.ui.fontFixed
-                        font.pointSize: Style.fontSizeL * scaling
-                        font.weight: Style.fontWeightBold
-                      }
-
-                      NText {
-                        text: "sudo unlock-session"
-                        color: Color.mOnSurface
-                        font.family: Settings.data.ui.fontFixed
-                        font.pointSize: Style.fontSizeL * scaling
-                      }
-
-                      // Integrated password input (invisible, just for functionality)
-                      TextInput {
-                        id: passwordInput
-                        width: 0
-                        height: 0
-                        visible: false
-                        font.family: Settings.data.ui.fontFixed
-                        font.pointSize: Style.fontSizeL * scaling
-                        color: Color.mOnSurface
-                        echoMode: TextInput.Password
-                        passwordCharacter: "*"
-                        passwordMaskDelay: 0
-
-                        text: lock.password
-                        onTextChanged: {
-                          lock.password = text
-                          // Terminal typing sound effect (visual)
-                          typingEffect.start()
-                        }
-
-                        Keys.onPressed: function (event) {
-                          if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-                            lock.unlockAttempt()
-                          }
-                        }
-
-                        Component.onCompleted: {
-                          forceActiveFocus()
-                        }
-                      }
-
-                      // Visual password display with integrated cursor
-                      NText {
-                        id: asterisksText
-                        text: "*".repeat(passwordInput.text.length)
-                        color: Color.mOnSurface
-                        font.family: Settings.data.ui.fontFixed
-                        font.pointSize: Style.fontSizeL * scaling
-                        visible: passwordInput.activeFocus
-
-                        // Typing effect animation
-                        SequentialAnimation {
-                          id: typingEffect
-                          NumberAnimation {
-                            target: passwordInput
-                            property: "scale"
-                            to: 1.01
-                            duration: 50
-                          }
-                          NumberAnimation {
-                            target: passwordInput
-                            property: "scale"
-                            to: 1.0
-                            duration: 50
-                          }
-                        }
-                      }
-
-                      // Blinking cursor positioned right after the asterisks
-                      Rectangle {
-                        width: 8 * scaling
-                        height: 20 * scaling
-                        color: Color.mPrimary
-                        visible: passwordInput.activeFocus
-                        Layout.leftMargin: -Style.marginS * scaling
-                        Layout.alignment: Qt.AlignVCenter
-
-                        SequentialAnimation on opacity {
-                          loops: Animation.Infinite
-                          NumberAnimation {
-                            to: 1.0
-                            duration: 500
-                          }
-                          NumberAnimation {
-                            to: 0.0
-                            duration: 500
-                          }
-                        }
-                      }
-                    }
-
-                    // Status messages
                     NText {
-                      text: lock.authenticating ? "Authenticating..." : (lock.errorMessage !== "" ? "Authentication failed." : "")
-                      color: lock.authenticating ? Color.mPrimary : (lock.errorMessage !== "" ? Color.mError : Color.transparent)
-                      font.family: "DejaVu Sans Mono"
+                      text: "root@noctalia:~$"
+                      color: Color.mPrimary
+                      font.family: Settings.data.ui.fontFixed
                       font.pointSize: Style.fontSizeL * scaling
-                      Layout.fillWidth: true
+                      font.weight: Style.fontWeightBold
+                    }
+
+                    NText {
+                      text: "sudo unlock-session"
+                      color: Color.mOnSurface
+                      font.family: Settings.data.ui.fontFixed
+                      font.pointSize: Style.fontSizeL * scaling
+                    }
+
+                    // Integrated password input (invisible, just for functionality)
+                    TextInput {
+                      id: passwordInput
+                      width: 0
+                      height: 0
+                      visible: false
+                      font.family: Settings.data.ui.fontFixed
+                      font.pointSize: Style.fontSizeL * scaling
+                      color: Color.mOnSurface
+                      echoMode: TextInput.Password
+                      passwordCharacter: "*"
+                      passwordMaskDelay: 0
+
+                      text: lock.password
+                      onTextChanged: {
+                        lock.password = text
+                        // Terminal typing sound effect (visual)
+                        typingEffect.start()
+                      }
+
+                      Keys.onPressed: function (event) {
+                        if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+                          lock.unlockAttempt()
+                        }
+                      }
+
+                      Component.onCompleted: {
+                        forceActiveFocus()
+                      }
+                    }
+
+                    // Visual password display with integrated cursor
+                    NText {
+                      id: asterisksText
+                      text: "*".repeat(passwordInput.text.length)
+                      color: Color.mOnSurface
+                      font.family: Settings.data.ui.fontFixed
+                      font.pointSize: Style.fontSizeL * scaling
+                      visible: passwordInput.activeFocus
+
+                      // Typing effect animation
+                      SequentialAnimation {
+                        id: typingEffect
+                        NumberAnimation {
+                          target: passwordInput
+                          property: "scale"
+                          to: 1.01
+                          duration: 50
+                        }
+                        NumberAnimation {
+                          target: passwordInput
+                          property: "scale"
+                          to: 1.0
+                          duration: 50
+                        }
+                      }
+                    }
+
+                    // Blinking cursor positioned right after the asterisks
+                    Rectangle {
+                      width: 8 * scaling
+                      height: 20 * scaling
+                      color: Color.mPrimary
+                      visible: passwordInput.activeFocus
+                      Layout.leftMargin: -Style.marginS * scaling
+                      Layout.alignment: Qt.AlignVCenter
 
                       SequentialAnimation on opacity {
-                        running: lock.authenticating
                         loops: Animation.Infinite
                         NumberAnimation {
                           to: 1.0
-                          duration: 800
+                          duration: 500
                         }
                         NumberAnimation {
-                          to: 0.5
-                          duration: 800
+                          to: 0.0
+                          duration: 500
                         }
                       }
                     }
+                  }
 
-                    // Execute button
+                  // Status messages
+                  NText {
+                    text: lock.authenticating ? "Authenticating..." : (lock.errorMessage !== "" ? "Authentication failed." : "")
+                    color: lock.authenticating ? Color.mPrimary : (lock.errorMessage !== "" ? Color.mError : Color.transparent)
+                    font.family: "DejaVu Sans Mono"
+                    font.pointSize: Style.fontSizeL * scaling
+                    Layout.fillWidth: true
+
+                    SequentialAnimation on opacity {
+                      running: lock.authenticating
+                      loops: Animation.Infinite
+                      NumberAnimation {
+                        to: 1.0
+                        duration: 800
+                      }
+                      NumberAnimation {
+                        to: 0.5
+                        duration: 800
+                      }
+                    }
+                  }
+
+                  // Execute button
+                  Row {
+                    Layout.alignment: Qt.AlignRight
+                    Layout.bottomMargin: -10 * scaling
                     Rectangle {
                       width: 120 * scaling
                       height: 40 * scaling
@@ -768,8 +766,6 @@ Loader {
                       border.color: Color.mPrimary
                       border.width: Math.max(1, Style.borderS * scaling)
                       enabled: !lock.authenticating
-                      Layout.alignment: Qt.AlignRight
-                      Layout.bottomMargin: -12 * scaling
 
                       NText {
                         anchors.centerIn: parent
@@ -822,28 +818,28 @@ Loader {
                       }
                     }
                   }
+                }
 
-                  // Terminal glow effect
-                  Rectangle {
-                    anchors.fill: parent
-                    radius: parent.radius
-                    color: Color.transparent
-                    border.color: Color.applyOpacity(Color.mPrimary, "4D")
-                    border.width: Math.max(1, Style.borderS * scaling)
-                    z: -1
+                // Terminal glow effect
+                Rectangle {
+                  anchors.fill: parent
+                  radius: parent.radius
+                  color: Color.transparent
+                  border.color: Color.applyOpacity(Color.mPrimary, "4D")
+                  border.width: Math.max(1, Style.borderS * scaling)
+                  z: -1
 
-                    SequentialAnimation on opacity {
-                      loops: Animation.Infinite
-                      NumberAnimation {
-                        to: 0.6
-                        duration: 2000
-                        easing.type: Easing.InOutQuad
-                      }
-                      NumberAnimation {
-                        to: 0.2
-                        duration: 2000
-                        easing.type: Easing.InOutQuad
-                      }
+                  SequentialAnimation on opacity {
+                    loops: Animation.Infinite
+                    NumberAnimation {
+                      to: 0.6
+                      duration: 2000
+                      easing.type: Easing.InOutQuad
+                    }
+                    NumberAnimation {
+                      to: 0.2
+                      duration: 2000
+                      easing.type: Easing.InOutQuad
                     }
                   }
                 }
