@@ -308,6 +308,39 @@ ColumnLayout {
                         Settings.data.audio.visualizerType = key
                       }
         }
+        
+        NText {
+          text: "Audio Visualizer FPS"
+          font.pointSize: Style.fontSizeM * scaling
+          font.weight: Style.fontWeightBold
+          color: Color.mOnSurface
+        }
+        
+        ColumnLayout {
+          spacing: Style.marginS * scaling
+          Layout.fillWidth: true
+          Layout.topMargin: Style.marginM * scaling
+          
+          RowLayout {
+            NSlider {
+              Layout.fillWidth: true
+              from: 0
+              to: 360
+              value: Settings.data.audio.cavaFps
+              stepSize: 1
+              onMoved: {
+                Settings.data.audio.cavaFps = value
+              }
+            }
+            
+            NText {
+              text: Settings.data.audio.cavaFps + " FPS"
+              Layout.alignment: Qt.AlignVCenter
+              Layout.leftMargin: Style.marginS * scaling
+              color: Color.mOnSurface
+            }
+          }
+        }
       }
     }
   }
