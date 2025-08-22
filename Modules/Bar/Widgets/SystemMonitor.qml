@@ -8,7 +8,6 @@ Row {
   id: root
   anchors.verticalCenter: parent.verticalCenter
   spacing: Style.marginS * scaling
-  visible: (Settings.data.bar.showSystemInfo)
 
   Rectangle {
     // Let the Rectangle size itself based on its content (the Row)
