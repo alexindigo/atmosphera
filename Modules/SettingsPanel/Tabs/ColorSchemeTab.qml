@@ -218,6 +218,8 @@ ColumnLayout {
                   onClicked: {
                     // Disable useWallpaperColors when picking a predefined color scheme
                     Settings.data.colorSchemes.useWallpaperColors = false
+                    Logger.log("ColorSchemeTab", "Disabled matugen setting")
+
                     Settings.data.colorSchemes.predefinedScheme = schemePath
                     ColorSchemeService.applyScheme(schemePath)
                   }

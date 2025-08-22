@@ -36,6 +36,7 @@ Singleton {
     // Force reload by bouncing the path
     schemeReader.path = ""
     schemeReader.path = filePath
+    Logger.log("ColorScheme", "Applied color scheme:", filePath)
   }
 
   function changedWallpaper() {
