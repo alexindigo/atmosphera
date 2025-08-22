@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://noctalia.dev/assets/noctalia-logo.png" alt="Noctalia Logo" width="124"/>
+  <img src="https://asssets.noctalia.dev/noctalia-logo.png" alt="Noctalia Logo" width="124" />
 </p>
 
 # Noctalia
@@ -27,11 +27,11 @@ Features a modern modular architecture with a status bar, notification system, c
 
 ## Preview
 
-![Launcher](https://noctalia.dev/assets/screenshots/Launcher.png)
+![Launcher](https://assets.noctalia.dev/screenshots/launcher.png)
 
-![SettingsPanel](https://noctalia.dev/assets/screenshots/SettingsPanel.png)  
+![SettingsPanel](https://assets.noctalia.dev/screenshots/settings-panel.png)  
 
-![SidePanel](https://noctalia.dev/assets/screenshots/LightMode.png)  
+![SidePanel](https://assets.noctalia.dev/screenshots/light-mode.png)  
 
 ---
 
@@ -65,7 +65,7 @@ Features a modern modular architecture with a status bar, notification system, c
 
 - `quickshell-git` - Core shell framework
 - `ttf-roboto` - The default font used for most of the UI
-- `inter-font` - The default font used for Headers (like the time Time in LockScreen)
+- `inter-font` - The default font used for Headers (ex: clock on the LockScreen)
 - `ttf-material-symbols-variable-git` - Icon font for UI elements
 - `xdg-desktop-portal-gnome` - Desktop integration (or alternative portal)
 
