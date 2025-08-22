@@ -33,12 +33,6 @@ ColumnLayout {
         spacing: Style.marginL * scaling
         Layout.fillWidth: true
 
-        NText {
-          text: "Bar & Widgets"
-          font.pointSize: Style.fontSizeXXL * scaling
-          font.weight: Style.fontWeightBold
-          color: Color.mOnSurface
-        }
 
         ColumnLayout {
           spacing: Style.marginXXS * scaling
@@ -78,25 +72,7 @@ ColumnLayout {
           }
         }
 
-        NToggle {
-          label: "Show Active Window's Icon"
-          description: "Display the app icon next to the title of the currently focused window."
-          checked: Settings.data.bar.showActiveWindowIcon
-          onToggled: checked => {
-                       Settings.data.bar.showActiveWindowIcon = checked
-                     }
-        }
-
-        NToggle {
-          label: "Show Battery Percentage"
-          description: "Show battery percentage at all times."
-          checked: Settings.data.bar.alwaysShowBatteryPercentage
-          onToggled: checked => {
-                       Settings.data.bar.alwaysShowBatteryPercentage = checked
-                     }
-        }
-
-        ColumnLayout {
+                ColumnLayout {
           spacing: Style.marginXXS * scaling
           Layout.fillWidth: true
 
@@ -135,20 +111,46 @@ ColumnLayout {
           }
         }
 
-        // Widget Management Section
+
+        NToggle {
+          label: "Show Active Window's Icon"
+          description: "Display the app icon next to the title of the currently focused window."
+          checked: Settings.data.bar.showActiveWindowIcon
+          onToggled: checked => {
+                       Settings.data.bar.showActiveWindowIcon = checked
+                     }
+        }
+
+        NToggle {
+          label: "Show Battery Percentage"
+          description: "Show battery percentage at all times."
+          checked: Settings.data.bar.alwaysShowBatteryPercentage
+          onToggled: checked => {
+                       Settings.data.bar.alwaysShowBatteryPercentage = checked
+                     }
+        }
+
+
+        NDivider {
+          Layout.fillWidth: true
+          Layout.topMargin: Style.marginL * scaling
+          Layout.bottomMargin: Style.marginL * scaling
+        }
+
+        // Widgets Management Section
         ColumnLayout {
           spacing: Style.marginXXS * scaling
           Layout.fillWidth: true
 
           NText {
-            text: "Widget Management"
+            text: "Widgets Positioning"
             font.pointSize: Style.fontSizeL * scaling
             font.weight: Style.fontWeightBold
             color: Color.mOnSurface
           }
 
           NText {
-            text: "Configure which widgets appear in each section of the bar. Use the arrow buttons to reorder widgets, or the add/remove buttons to manage them."
+            text: "Add, remove, or reorder widgets in each section of the bar using the control buttons."
             font.pointSize: Style.fontSizeXS * scaling
             color: Color.mOnSurfaceVariant
             wrapMode: Text.WordWrap
@@ -159,6 +161,7 @@ ColumnLayout {
           ColumnLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
+            Layout.topMargin: Style.marginM * scaling
             spacing: Style.marginM * scaling
 
             // Left Section
