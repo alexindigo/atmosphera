@@ -28,7 +28,7 @@ NBox {
     anchors.margins: Style.marginM * scaling
     spacing: Style.marginM * scaling
 
-    NImageRounded {
+    NImageCircled {
       width: Style.baseWidgetSize * 1.25 * scaling
       height: Style.baseWidgetSize * 1.25 * scaling
       imagePath: Settings.data.general.avatarImage
