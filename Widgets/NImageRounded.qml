@@ -33,6 +33,7 @@ Rectangle {
       mipmap: true
       smooth: true
       asynchronous: true
+      antialiasing: true
       fillMode: Image.PreserveAspectCrop
     }
 
@@ -53,6 +54,7 @@ Rectangle {
       Rectangle {
         anchors.fill: parent
         radius: scaledRadius
+        antialiasing: true
       }
     }
 
@@ -73,6 +75,7 @@ Rectangle {
     color: Color.transparent
     border.color: parent.borderColor
     border.width: parent.borderWidth
+    antialiasing: true
     z: 10
   }
 }
