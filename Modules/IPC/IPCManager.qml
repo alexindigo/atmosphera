@@ -33,11 +33,20 @@ Item {
     }
   }
 
+  // For backward compatibility, should be removed soon(tmc)
   IpcHandler {
     target: "appLauncher"
 
     function toggle() {
-      appLauncherPanel.toggle(Quickshell.screens[0])
+      launcherPanel.toggle(Quickshell.screens[0])
+    }
+  }
+
+  IpcHandler {
+    target: "launcher"
+
+    function toggle() {
+      launcherPanel.toggle(Quickshell.screens[0])
     }
   }
 

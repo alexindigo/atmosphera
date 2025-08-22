@@ -11,9 +11,11 @@ Singleton {
     try {
       if (iconName && typeof Quickshell !== 'undefined' && Quickshell.iconPath) {
         const p = Quickshell.iconPath(iconName, fallback)
-        if (p && p !== "") return p
+        if (p && p !== "")
+          return p
       }
     } catch (e) {
+
       // ignore and fall back
     }
     try {
@@ -26,7 +28,8 @@ Singleton {
   // Resolve icon path for a DesktopEntries appId - safe on missing entries
   function iconForAppId(appId, fallbackName) {
     const fallback = fallbackName || "application-x-executable"
-    if (!appId) return iconFromName(fallback, fallback)
+    if (!appId)
+      return iconFromName(fallback, fallback)
     try {
       if (typeof DesktopEntries === 'undefined' || !DesktopEntries.byId)
         return iconFromName(fallback, fallback)
@@ -38,5 +41,3 @@ Singleton {
     }
   }
 }
-
-

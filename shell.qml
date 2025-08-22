@@ -39,7 +39,7 @@ ShellRoot {
   Dock {}
 
   Launcher {
-    id: appLauncherPanel
+    id: launcherPanel
   }
 
   SidePanel {
