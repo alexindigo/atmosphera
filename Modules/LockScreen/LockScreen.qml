@@ -163,6 +163,13 @@ Loader {
           }
         }
 
+        // Keyboard layout indicator component
+        Item {
+          id: keyboardLayout
+
+          property string currentLayout: (typeof KeyboardLayoutService !== 'undefined' && KeyboardLayoutService.currentLayout) ? KeyboardLayoutService.currentLayout : "Unknown"
+        }
+
         // Wallpaper image
         Image {
           id: lockBgImage
@@ -578,6 +585,25 @@ Loader {
                         font.family: Settings.data.ui.fontFixed
                         font.pointSize: Style.fontSizeM * scaling
                         font.weight: Style.fontWeightBold
+                      }
+                    }
+
+                    // Keyboard layout indicator
+                    Row {
+                      spacing: Style.marginS * scaling
+
+                      NText {
+                        text: keyboardLayout.currentLayout
+                        color: Color.mOnSurface
+                        font.family: Settings.data.ui.fontFixed
+                        font.pointSize: Style.fontSizeM * scaling
+                        font.weight: Style.fontWeightBold
+                      }
+
+                      NIcon {
+                        text: "keyboard_alt"
+                        font.pointSize: Style.fontSizeM * scaling
+                        color: Color.mOnSurface
                       }
                     }
                   }
