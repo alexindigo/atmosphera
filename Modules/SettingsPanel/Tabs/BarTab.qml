@@ -128,17 +128,6 @@ ColumnLayout {
                      }
         }
         
-        NToggle {
-          visible: ArchUpdaterService.isArchBased
-          label: "Show Arch Updater"
-          description: "Show the Arch Linux updates widget."
-          checked: Settings.data.bar.showArchUpdater
-          onToggled: checked => {
-                       Settings.data.bar.showArchUpdater = checked
-                     }
-        }
-        
-
         NDivider {
           Layout.fillWidth: true
           Layout.topMargin: Style.marginL * scaling
