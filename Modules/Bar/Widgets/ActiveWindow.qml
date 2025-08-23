@@ -27,7 +27,7 @@ Row {
     }
   }
 
-  // Update text when window changes
+  // Update text when window changes or title changes
   Connections {
     target: CompositorService
     function onActiveWindowChanged() {
@@ -38,11 +38,22 @@ Row {
         fullTitleTimer.restart()
       }
     }
+    
+    function onWindowTitleChanged() {
+      // Direct response to title changes
+      if (CompositorService.focusedWindowIndex === lastWindowIndex) {
+        // Same window, title changed - show full title briefly
+        showingFullTitle = true
+        fullTitleTimer.restart()
+      }
+    }
   }
 
   function getTitle() {
-    const focusedWindow = CompositorService.getFocusedWindow()
-    return focusedWindow ? (focusedWindow.title || focusedWindow.appId || "") : ""
+    // Use the service's focusedWindowTitle property which is updated immediately
+    // when WindowOpenedOrChanged events are received
+    return CompositorService.focusedWindowTitle !== "(No active window)" ? 
+           CompositorService.focusedWindowTitle : ""
   }
 
   function getAppIcon() {

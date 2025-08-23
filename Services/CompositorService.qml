@@ -27,6 +27,7 @@ Singleton {
   signal activeWindowChanged
   signal overviewStateChanged
   signal windowListChanged
+  signal windowTitleChanged
 
   // Compositor detection
   Component.onCompleted: {
@@ -297,6 +298,8 @@ Singleton {
                 "isFocused": windowData.is_focused === true
               }
 
+
+
               if (existingIndex >= 0) {
                 // Update existing window
                 windows[existingIndex] = newWindow
@@ -309,6 +312,11 @@ Singleton {
               // Update focused window index if this window is focused
               if (newWindow.isFocused) {
                 focusedWindowIndex = windows.findIndex(w => w.id === windowData.id)
+                updateFocusedWindowTitle()
+                activeWindowChanged()
+              } else if (existingIndex >= 0 && existingIndex === focusedWindowIndex) {
+                // If this is the currently focused window (but not newly focused), 
+                // still update the title in case it changed
                 updateFocusedWindowTitle()
                 activeWindowChanged()
               }
@@ -449,10 +457,16 @@ Singleton {
   }
 
   function updateFocusedWindowTitle() {
+    const oldTitle = focusedWindowTitle
     if (focusedWindowIndex >= 0 && focusedWindowIndex < windows.length) {
       focusedWindowTitle = windows[focusedWindowIndex].title || "(Unnamed window)"
     } else {
       focusedWindowTitle = "(No active window)"
+    }
+    
+    // Emit signal if title actually changed
+    if (oldTitle !== focusedWindowTitle) {
+      windowTitleChanged()
     }
   }
 
