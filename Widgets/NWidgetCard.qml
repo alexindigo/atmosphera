@@ -99,7 +99,9 @@ NBox {
       }
     }
 
+    // Drag and Drop Widget Area
     Flow {
+      id: widgetFlow
       Layout.fillWidth: true
       Layout.fillHeight: true
       Layout.minimumHeight: 65 * scaling
@@ -109,6 +111,10 @@ NBox {
       Repeater {
         model: widgetModel
         delegate: Rectangle {
+          id: widgetItem
+          required property int index
+          required property string modelData
+          
           width: widgetContent.implicitWidth + 16 * scaling
           height: 40 * scaling
           radius: Style.radiusL * scaling
@@ -116,48 +122,36 @@ NBox {
           border.color: Color.mOutline
           border.width: Math.max(1, Style.borderS * scaling)
 
+          // Drag properties
+          Drag.keys: ["widget"]
+          Drag.active: mouseArea.drag.active
+          Drag.hotSpot.x: width / 2
+          Drag.hotSpot.y: height / 2
+          
+          // Store the widget index for drag operations
+          property int widgetIndex: index
+
+          // Visual feedback during drag
+          states: State {
+            when: mouseArea.drag.active
+            PropertyChanges {
+              target: widgetItem
+              scale: 1.1
+              opacity: 0.9
+              z: 1000
+            }
+          }
+
           RowLayout {
             id: widgetContent
             anchors.centerIn: parent
             spacing: Style.marginXS * scaling
-
-            NIconButton {
-              icon: "chevron_left"
-              size: 20 * scaling
-              colorBorder: Color.applyOpacity(Color.mOutline, "40")
-              colorBg: Color.mOnSurface
-              colorFg: Color.mOnPrimary
-              colorBgHover: Color.applyOpacity(Color.mOnPrimary, "40")
-              colorFgHover: Color.mOnPrimary
-              enabled: index > 0
-              onClicked: {
-                if (index > 0) {
-                  reorderWidget(sectionName.toLowerCase(), index, index - 1)
-                }
-              }
-            }
 
             NText {
               text: modelData
               font.pointSize: Style.fontSizeS * scaling
               color: Color.mOnPrimary
               horizontalAlignment: Text.AlignHCenter
-            }
-
-            NIconButton {
-              icon: "chevron_right"
-              size: 20 * scaling
-              colorBorder: Color.applyOpacity(Color.mOutline, "40")
-              colorBg: Color.mOnSurface
-              colorFg: Color.mOnPrimary
-              colorBgHover: Color.applyOpacity(Color.mOnPrimary, "40")
-              colorFgHover: Color.mOnPrimary
-              enabled: index < widgetModel.length - 1
-              onClicked: {
-                if (index < widgetModel.length - 1) {
-                  reorderWidget(sectionName.toLowerCase(), index, index + 1)
-                }
-              }
             }
 
             NIconButton {
@@ -172,6 +166,136 @@ NBox {
                 removeWidget(sectionName.toLowerCase(), index)
               }
             }
+          }
+
+          // Mouse area for drag and drop
+          MouseArea {
+            id: mouseArea
+            anchors.fill: parent
+            drag.target: parent
+            
+            onPressed: {
+              Logger.log("NWidgetCard", `Started dragging widget: ${modelData} at index ${index}`)
+              // Bring to front when starting drag
+              widgetItem.z = 1000
+            }
+            
+            onReleased: {
+              Logger.log("NWidgetCard", `Released widget: ${modelData} at index ${index}`)
+              // Reset z-index when drag ends
+              widgetItem.z = 0
+              
+              // Get the global mouse position
+              const globalDropX = mouseArea.mouseX + widgetItem.x + widgetFlow.x
+              const globalDropY = mouseArea.mouseY + widgetItem.y + widgetFlow.y
+              
+              // Find which widget the drop position is closest to
+              let targetIndex = -1
+              let minDistance = Infinity
+              
+              for (let i = 0; i < widgetModel.length; i++) {
+                if (i !== index) {
+                  // Get the position of other widgets
+                  const otherWidget = widgetFlow.children[i]
+                  if (otherWidget && otherWidget.widgetIndex !== undefined) {
+                    // Calculate the center of the other widget
+                    const otherCenterX = otherWidget.x + otherWidget.width / 2 + widgetFlow.x
+                    const otherCenterY = otherWidget.y + otherWidget.height / 2 + widgetFlow.y
+                    
+                    // Calculate distance to the center of this widget
+                    const distance = Math.sqrt(
+                      Math.pow(globalDropX - otherCenterX, 2) + 
+                      Math.pow(globalDropY - otherCenterY, 2)
+                    )
+                    
+                    if (distance < minDistance) {
+                      minDistance = distance
+                      targetIndex = otherWidget.widgetIndex
+                    }
+                  }
+                }
+              }
+              
+              // Only reorder if we found a valid target and it's different from current position
+              if (targetIndex !== -1 && targetIndex !== index) {
+                const fromIndex = index
+                const toIndex = targetIndex
+                Logger.log("NWidgetCard", `Dropped widget from index ${fromIndex} to position ${toIndex} (distance: ${minDistance.toFixed(2)})`)
+                reorderWidget(sectionName.toLowerCase(), fromIndex, toIndex)
+              } else {
+                Logger.log("NWidgetCard", `No valid drop target found for widget at index ${index}`)
+              }
+            }
+          }
+        }
+      }
+    }
+
+         // Drop zone at the beginning (positioned absolutely)
+     DropArea {
+       id: startDropZone
+       width: 40 * scaling
+       height: 40 * scaling
+       x: widgetFlow.x
+       y: widgetFlow.y + (widgetFlow.height - height) / 2
+       keys: ["widget"]
+       z: 1001 // Above the Flow
+      
+             Rectangle {
+         anchors.fill: parent
+         color: startDropZone.containsDrag ? Color.applyOpacity(Color.mPrimary, "20") : Color.transparent
+         border.color: startDropZone.containsDrag ? Color.mPrimary : Color.transparent
+         border.width: startDropZone.containsDrag ? 2 : 0
+         radius: Style.radiusS * scaling
+       }
+      
+      onEntered: function(drag) {
+        Logger.log("NWidgetCard", "Entered start drop zone")
+      }
+      
+      onDropped: function(drop) {
+        Logger.log("NWidgetCard", "Dropped on start zone")
+        if (drop.source && drop.source.widgetIndex !== undefined) {
+          const fromIndex = drop.source.widgetIndex
+          const toIndex = 0 // Insert at the beginning
+          if (fromIndex !== toIndex) {
+            Logger.log("NWidgetCard", `Dropped widget from index ${fromIndex} to beginning`)
+            reorderWidget(sectionName.toLowerCase(), fromIndex, toIndex)
+          }
+        }
+      }
+    }
+
+         // Drop zone at the end (positioned absolutely)
+     DropArea {
+       id: endDropZone
+       width: 40 * scaling
+       height: 40 * scaling
+       x: widgetFlow.x + widgetFlow.width - width
+       y: widgetFlow.y + (widgetFlow.height - height) / 2
+       keys: ["widget"]
+       z: 1001 // Above the Flow
+      
+             Rectangle {
+         anchors.fill: parent
+         color: endDropZone.containsDrag ? Color.applyOpacity(Color.mPrimary, "20") : Color.transparent
+         border.color: endDropZone.containsDrag ? Color.mPrimary : Color.transparent
+         border.width: endDropZone.containsDrag ? 2 : 0
+         radius: Style.radiusS * scaling
+       }
+      
+      onEntered: function(drag) {
+        Logger.log("NWidgetCard", "Entered end drop zone")
+      }
+      
+      onDropped: function(drop) {
+        Logger.log("NWidgetCard", "Dropped on end zone")
+        if (drop.source && drop.source.widgetIndex !== undefined) {
+          const fromIndex = drop.source.widgetIndex
+          const toIndex = widgetModel.length // Insert at the end
+          if (fromIndex !== toIndex) {
+            Logger.log("NWidgetCard", `Dropped widget from index ${fromIndex} to end`)
+            reorderWidget(sectionName.toLowerCase(), fromIndex, toIndex)
           }
         }
       }

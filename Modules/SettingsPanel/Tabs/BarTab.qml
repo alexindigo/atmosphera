@@ -148,7 +148,7 @@ ColumnLayout {
           }
 
           NText {
-            text: "Add, remove, or reorder widgets in each section of the bar using the control buttons."
+            text: "Drag and drop widgets to reorder them within each section, or use the add/remove buttons to manage widgets."
             font.pointSize: Style.fontSizeXS * scaling
             color: Color.mOnSurfaceVariant
             wrapMode: Text.WordWrap
