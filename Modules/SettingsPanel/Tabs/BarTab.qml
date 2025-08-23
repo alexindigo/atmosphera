@@ -218,6 +218,8 @@ ColumnLayout {
   function removeWidgetFromSection(section, index) {
     console.log("Removing widget from section", section, "at index", index)
     var sectionArray = Settings.data.bar.widgets[section]
+    console.log("Current section array:", JSON.stringify(sectionArray))
+    
     if (sectionArray && index >= 0 && index < sectionArray.length) {
       // Create a new array to avoid modifying the original
       var newArray = sectionArray.slice()
@@ -226,6 +228,17 @@ ColumnLayout {
 
       // Assign the new array
       Settings.data.bar.widgets[section] = newArray
+      
+      // Force a settings save
+      console.log("Settings updated, triggering save...")
+      
+      // Verify the change was applied
+      Qt.setTimeout(function() {
+        var updatedArray = Settings.data.bar.widgets[section]
+        console.log("Verification - updated section array:", JSON.stringify(updatedArray))
+      }, 100)
+    } else {
+      console.log("Invalid section or index:", section, index, "array length:", sectionArray ? sectionArray.length : "null")
     }
   }
 

@@ -175,6 +175,19 @@ NBox {
             drag.target: parent
             
             onPressed: {
+              // Check if the click is on the close button area
+              const closeButtonX = widgetContent.x + widgetContent.width - 20 * scaling
+              const closeButtonY = widgetContent.y
+              const closeButtonWidth = 20 * scaling
+              const closeButtonHeight = 20 * scaling
+              
+              if (mouseX >= closeButtonX && mouseX <= closeButtonX + closeButtonWidth &&
+                  mouseY >= closeButtonY && mouseY <= closeButtonY + closeButtonHeight) {
+                // Click is on the close button, don't start drag
+                mouse.accepted = false
+                return
+              }
+              
               Logger.log("NWidgetCard", `Started dragging widget: ${modelData} at index ${index}`)
               // Bring to front when starting drag
               widgetItem.z = 1000
