@@ -4,7 +4,6 @@ import qs.Widgets
 
 NIconButton {
     id: root
-    visible: Settings.data.bar.showArchUpdater && ArchUpdaterService.isArchBased
     sizeMultiplier: 0.8
 
     colorBg: Color.mSurfaceVariant
@@ -15,6 +14,8 @@ NIconButton {
     icon: !ArchUpdaterService.ready ? "block" : (ArchUpdaterService.busy ? "sync" : (ArchUpdaterService.updatePackages.length > 0 ? "system_update" : "task_alt"))
 
     tooltipText: {
+        if (!ArchUpdaterService.isArchBased)
+            return "Arch users already ran 'sudo pacman -Syu' for breakfast.";
         if (!ArchUpdaterService.checkupdatesAvailable)
             return "Please install pacman-contrib to use this feature.";
         if (ArchUpdaterService.busy)

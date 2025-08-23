@@ -123,7 +123,6 @@ Singleton {
         property bool showActiveWindowIcon: true
         property bool alwaysShowBatteryPercentage: false
         property real backgroundOpacity: 1.0
-        property bool showArchUpdater: true
         property list<string> monitors: []
 
         // Widget configuration for modular bar system
