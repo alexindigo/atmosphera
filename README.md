@@ -249,7 +249,7 @@ While I actually didn't want to accept donations, more and more people are askin
 
 Thank you to everyone who supports me and this project 💜!
 * Gohma
-* [PikaOS](https://pika-os.com/)
+* <a href="https://pika-os.com/" target="_blank">PikaOS</a>
 
 ---
 
