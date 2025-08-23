@@ -311,14 +311,18 @@ Singleton {
 
               // Update focused window index if this window is focused
               if (newWindow.isFocused) {
+                const oldFocusedIndex = focusedWindowIndex
                 focusedWindowIndex = windows.findIndex(w => w.id === windowData.id)
                 updateFocusedWindowTitle()
-                activeWindowChanged()
+                
+                // Only emit activeWindowChanged if the focused window actually changed
+                if (oldFocusedIndex !== focusedWindowIndex) {
+                  activeWindowChanged()
+                }
               } else if (existingIndex >= 0 && existingIndex === focusedWindowIndex) {
                 // If this is the currently focused window (but not newly focused), 
-                // still update the title in case it changed
+                // still update the title in case it changed, but don't emit activeWindowChanged
                 updateFocusedWindowTitle()
-                activeWindowChanged()
               }
 
               windowListChanged()

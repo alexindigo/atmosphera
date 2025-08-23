@@ -27,22 +27,13 @@ Row {
     }
   }
 
-  // Update text when window changes or title changes
+  // Update text when window changes
   Connections {
     target: CompositorService
     function onActiveWindowChanged() {
       // Check if window actually changed
       if (CompositorService.focusedWindowIndex !== lastWindowIndex) {
         lastWindowIndex = CompositorService.focusedWindowIndex
-        showingFullTitle = true
-        fullTitleTimer.restart()
-      }
-    }
-    
-    function onWindowTitleChanged() {
-      // Direct response to title changes
-      if (CompositorService.focusedWindowIndex === lastWindowIndex) {
-        // Same window, title changed - show full title briefly
         showingFullTitle = true
         fullTitleTimer.restart()
       }
