@@ -127,7 +127,7 @@ ColumnLayout {
                        Settings.data.bar.alwaysShowBatteryPercentage = checked
                      }
         }
-        
+
         NDivider {
           Layout.fillWidth: true
           Layout.topMargin: Style.marginL * scaling
