@@ -33,12 +33,16 @@ Item {
     }
   }
 
-  // For backward compatibility, should be removed soon(tmc)
   IpcHandler {
     target: "appLauncher"
 
     function toggle() {
       launcherPanel.toggle(Quickshell.screens[0])
+    }
+
+    function clipboard() {
+      launcherPanel.toggle(Quickshell.screens[0])
+      launcherPanel.searchText = ">clip "
     }
   }
 
@@ -81,4 +85,6 @@ Item {
       powerPanel.toggle(Quickshell.screens[0])
     }
   }
+
+
 }
