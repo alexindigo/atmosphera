@@ -48,6 +48,16 @@ NPanel {
     }
   }
 
+  onClosed: {
+    // Reset search bar when launcher is closed
+    searchText = ""
+    selectedIndex = 0
+    if (searchInput) {
+      searchInput.text = ""
+      searchInput.cursorPosition = 0
+    }
+  }
+
   // Import modular components
   Calculator {
     id: calculator
