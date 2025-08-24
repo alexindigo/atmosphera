@@ -65,9 +65,12 @@ Variants {
             sourceComponent: widgetLoader.getWidgetComponent(modelData)
             active: true
             visible: {
-              if (modelData === "WiFi" && !Settings.data.network.wifiEnabled) return false
-              if (modelData === "Bluetooth" && !Settings.data.network.bluetoothEnabled) return false
-              if (modelData === "Battery" && !shouldShowBattery()) return false
+              if (modelData === "WiFi" && !Settings.data.network.wifiEnabled)
+                return false
+              if (modelData === "Bluetooth" && !Settings.data.network.bluetoothEnabled)
+                return false
+              if (modelData === "Battery" && !shouldShowBattery())
+                return false
               return true
             }
             anchors.verticalCenter: parent.verticalCenter
@@ -98,9 +101,12 @@ Variants {
             sourceComponent: widgetLoader.getWidgetComponent(modelData)
             active: true
             visible: {
-              if (modelData === "WiFi" && !Settings.data.network.wifiEnabled) return false
-              if (modelData === "Bluetooth" && !Settings.data.network.bluetoothEnabled) return false
-              if (modelData === "Battery" && !shouldShowBattery()) return false
+              if (modelData === "WiFi" && !Settings.data.network.wifiEnabled)
+                return false
+              if (modelData === "Bluetooth" && !Settings.data.network.bluetoothEnabled)
+                return false
+              if (modelData === "Battery" && !shouldShowBattery())
+                return false
               return true
             }
             anchors.verticalCenter: parent.verticalCenter
@@ -132,8 +138,10 @@ Variants {
             sourceComponent: widgetLoader.getWidgetComponent(modelData)
             active: true
             visible: {
-              if (modelData === "WiFi" && !Settings.data.network.wifiEnabled) return false
-              if (modelData === "Bluetooth" && !Settings.data.network.bluetoothEnabled) return false
+              if (modelData === "WiFi" && !Settings.data.network.wifiEnabled)
+                return false
+              if (modelData === "Bluetooth" && !Settings.data.network.bluetoothEnabled)
+                return false
               return true
             }
             anchors.verticalCenter: parent.verticalCenter

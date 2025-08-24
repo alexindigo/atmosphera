@@ -25,10 +25,9 @@ Item {
     tooltipText: "Keyboard Layout: " + currentLayout
 
     onClicked: {
+
       // You could open keyboard settings here if needed
       // For now, just show the current layout
     }
   }
-
-
 }
