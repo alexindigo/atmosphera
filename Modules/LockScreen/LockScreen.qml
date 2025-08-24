@@ -48,6 +48,8 @@ Loader {
       property string password: ""
       property bool pamAvailable: typeof PamContext !== "undefined"
 
+
+
       function unlockAttempt() {
         Logger.log("LockScreen", "Unlock attempt started")
 
@@ -626,7 +628,7 @@ Loader {
                     spacing: Style.marginM * scaling
 
                     NText {
-                      text: "root@noctalia:~$"
+                      text: Quickshell.env("USER") + "@noctalia:~$"
                       color: Color.mPrimary
                       font.family: Settings.data.ui.fontFixed
                       font.pointSize: Style.fontSizeL * scaling
@@ -664,7 +666,7 @@ Loader {
                     spacing: Style.marginM * scaling
 
                     NText {
-                      text: "root@noctalia:~$"
+                      text: Quickshell.env("USER") + "@noctalia:~$"
                       color: Color.mPrimary
                       font.family: Settings.data.ui.fontFixed
                       font.pointSize: Style.fontSizeL * scaling
