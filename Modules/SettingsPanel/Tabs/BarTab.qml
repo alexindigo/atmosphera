@@ -216,10 +216,10 @@ ColumnLayout {
   }
 
   function removeWidgetFromSection(section, index) {
-   // Logger.log("BarTab", "Removing widget from section", section, "at index", index)
+    // Logger.log("BarTab", "Removing widget from section", section, "at index", index)
     var sectionArray = Settings.data.bar.widgets[section]
-    //Logger.log("BarTab", "Current section array:", JSON.stringify(sectionArray))
 
+    //Logger.log("BarTab", "Current section array:", JSON.stringify(sectionArray))
     if (sectionArray && index >= 0 && index < sectionArray.length) {
       // Create a new array to avoid modifying the original
       var newArray = sectionArray.slice()
@@ -238,6 +238,7 @@ ColumnLayout {
         //Logger.log("BarTab", "Verification - updated section array:", JSON.stringify(updatedArray))
       }, 100)
     } else {
+
       //Logger.log("BarTab", "Invalid section or index:", section, index, "array length:",
       //            sectionArray ? sectionArray.length : "null")
     }
