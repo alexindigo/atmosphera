@@ -167,7 +167,8 @@ Loader {
         Item {
           id: keyboardLayout
 
-          property string currentLayout: (typeof KeyboardLayoutService !== 'undefined' && KeyboardLayoutService.currentLayout) ? KeyboardLayoutService.currentLayout : "Unknown"
+          property string currentLayout: (typeof KeyboardLayoutService !== 'undefined'
+                                          && KeyboardLayoutService.currentLayout) ? KeyboardLayoutService.currentLayout : "Unknown"
         }
 
         // Wallpaper image

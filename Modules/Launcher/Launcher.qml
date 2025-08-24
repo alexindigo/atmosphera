@@ -26,7 +26,7 @@ NPanel {
 
   // Properties
   property string searchText: ""
-  
+
   // Add function to set search text programmatically
   function setSearchText(text) {
     searchText = text

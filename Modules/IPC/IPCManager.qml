@@ -5,31 +5,30 @@ import qs.Services
 
 Item {
   id: root
-  
+
   IpcHandler {
     target: "settings"
     function toggle() {
       settingsPanel.toggle(Quickshell.screens[0])
     }
   }
-  
+
   IpcHandler {
     target: "notifications"
     function toggleHistory() {
       notificationHistoryPanel.toggle(Quickshell.screens[0])
     }
-    function toggleDoNotDisturb() {
-      // TODO
+    function toggleDoNotDisturb() {// TODO
     }
   }
-  
+
   IpcHandler {
     target: "idleInhibitor"
     function toggle() {
       return IdleInhibitorService.manualToggle()
     }
   }
-  
+
   IpcHandler {
     target: "appLauncher"
     function toggle() {
@@ -39,18 +38,18 @@ Item {
       launcherPanel.toggle(Quickshell.screens[0])
       // Use the setSearchText function to set clipboard mode
       Qt.callLater(() => {
-        launcherPanel.setSearchText(">clip ")
-      })
+                     launcherPanel.setSearchText(">clip ")
+                   })
     }
     function calculator() {
       launcherPanel.toggle(Quickshell.screens[0])
       // Use the setSearchText function to set calculator mode
       Qt.callLater(() => {
-        launcherPanel.setSearchText(">calc ")
-      })
+                     launcherPanel.setSearchText(">calc ")
+                   })
     }
   }
-  
+
   IpcHandler {
     target: "launcher"
     function toggle() {
@@ -60,18 +59,18 @@ Item {
       launcherPanel.toggle(Quickshell.screens[0])
       // Use the setSearchText function to set clipboard mode
       Qt.callLater(() => {
-        launcherPanel.setSearchText(">clip ")
-      })
+                     launcherPanel.setSearchText(">clip ")
+                   })
     }
     function calculator() {
       launcherPanel.toggle(Quickshell.screens[0])
       // Use the setSearchText function to set calculator mode
       Qt.callLater(() => {
-        launcherPanel.setSearchText(">calc ")
-      })
+                     launcherPanel.setSearchText(">calc ")
+                   })
     }
   }
-  
+
   IpcHandler {
     target: "lockScreen"
     function toggle() {
@@ -82,7 +81,7 @@ Item {
       }
     }
   }
-  
+
   IpcHandler {
     target: "brightness"
     function increase() {
@@ -92,7 +91,7 @@ Item {
       BrightnessService.decreaseBrightness()
     }
   }
-  
+
   IpcHandler {
     target: "powerPanel"
     function toggle() {
