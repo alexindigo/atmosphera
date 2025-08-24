@@ -199,6 +199,7 @@ NPanel {
           enabled: !ArchUpdaterService.updateInProgress
           onClicked: {
             ArchUpdaterService.runUpdate()
+            root.close()
           }
           colorBg: ArchUpdaterService.updateInProgress ? Color.mSurfaceVariant : Color.mPrimary
           colorFg: ArchUpdaterService.updateInProgress ? Color.mOnSurfaceVariant : Color.mOnPrimary
@@ -213,6 +214,7 @@ NPanel {
           onClicked: {
             if (ArchUpdaterService.selectedPackagesCount > 0) {
               ArchUpdaterService.runSelectiveUpdate()
+              root.close()
             }
           }
           colorBg: ArchUpdaterService.updateInProgress ? Color.mSurfaceVariant : (ArchUpdaterService.selectedPackagesCount
