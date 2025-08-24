@@ -100,8 +100,27 @@ mkdir -p ~/.config/quickshell && curl -sL https://github.com/noctalia-dev/noctal
 # Start the shell
 qs
 
-# Toggle launcher
-qs ipc call appLauncher toggle
+# Launcher
+qs ipc call launcher toggle
+
+# Clipboard History
+qs ipc call launcher clipboard
+
+# Calculator
+qs ipc call launcher calculator
+
+# Brightness
+qs ipc call brightness increase
+qs ipc call brightness decrease
+
+# Power Panel
+qs ipc call powerPanel toggle
+
+# Idle Inhibitor
+qs ipc call idleInhibitor toggle
+
+# Settings Window
+qs ipc call settings toggle
 
 # Toggle lock screen
 qs ipc call lockScreen toggle

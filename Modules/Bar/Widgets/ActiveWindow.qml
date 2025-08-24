@@ -7,7 +7,6 @@ import qs.Commons
 import qs.Services
 import qs.Widgets
 
-
 Row {
   id: root
   anchors.verticalCenter: parent.verticalCenter
@@ -43,8 +42,7 @@ Row {
   function getTitle() {
     // Use the service's focusedWindowTitle property which is updated immediately
     // when WindowOpenedOrChanged events are received
-    return CompositorService.focusedWindowTitle !== "(No active window)" ? 
-           CompositorService.focusedWindowTitle : ""
+    return CompositorService.focusedWindowTitle !== "(No active window)" ? CompositorService.focusedWindowTitle : ""
   }
 
   function getAppIcon() {

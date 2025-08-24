@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
+import Quickshell.Services.UPower
 import qs.Commons
 import qs.Services
 import qs.Widgets
@@ -63,6 +64,15 @@ Variants {
             id: leftWidgetLoader
             sourceComponent: widgetLoader.getWidgetComponent(modelData)
             active: true
+            visible: {
+              if (modelData === "WiFi" && !Settings.data.network.wifiEnabled)
+                return false
+              if (modelData === "Bluetooth" && !Settings.data.network.bluetoothEnabled)
+                return false
+              if (modelData === "Battery" && !shouldShowBattery())
+                return false
+              return true
+            }
             anchors.verticalCenter: parent.verticalCenter
             onStatusChanged: {
               if (status === Loader.Error) {
@@ -90,6 +100,15 @@ Variants {
             id: centerWidgetLoader
             sourceComponent: widgetLoader.getWidgetComponent(modelData)
             active: true
+            visible: {
+              if (modelData === "WiFi" && !Settings.data.network.wifiEnabled)
+                return false
+              if (modelData === "Bluetooth" && !Settings.data.network.bluetoothEnabled)
+                return false
+              if (modelData === "Battery" && !shouldShowBattery())
+                return false
+              return true
+            }
             anchors.verticalCenter: parent.verticalCenter
             onStatusChanged: {
               if (status === Loader.Error) {
@@ -118,6 +137,13 @@ Variants {
             id: rightWidgetLoader
             sourceComponent: widgetLoader.getWidgetComponent(modelData)
             active: true
+            visible: {
+              if (modelData === "WiFi" && !Settings.data.network.wifiEnabled)
+                return false
+              if (modelData === "Bluetooth" && !Settings.data.network.bluetoothEnabled)
+                return false
+              return true
+            }
             anchors.verticalCenter: parent.verticalCenter
             onStatusChanged: {
               if (status === Loader.Error) {
@@ -129,6 +155,13 @@ Variants {
           }
         }
       }
+    }
+
+    // Helper function to check if battery widget should be visible (same logic as Battery.qml)
+    function shouldShowBattery() {
+      // For now, always show battery widget and let it handle its own visibility
+      // The Battery widget has its own testMode and visibility logic
+      return true
     }
 
     // Widget loader instance
