@@ -12,8 +12,8 @@ Singleton {
   property var messageQueue: []
   property bool isShowingToast: false
 
-  // Reference to the current toast instance (set by ToastManager)
-  property var currentToast: null
+  // Reference to all toast instances (set by ToastManager)
+  property var allToasts: []
 
   // Properties for command checking
   property var commandCheckCallback: null
@@ -176,7 +176,7 @@ Singleton {
 
   // Process the message queue
   function processQueue() {
-    if (messageQueue.length === 0 || !currentToast) {
+    if (messageQueue.length === 0 || allToasts.length === 0) {
       isShowingToast = false
       return
     }
@@ -189,24 +189,37 @@ Singleton {
     var toastData = messageQueue.shift()
     isShowingToast = true
 
-    // Configure and show toast
-    currentToast.label = toastData.label
-    currentToast.description = toastData.description
-    currentToast.type = toastData.type
-    currentToast.persistent = toastData.persistent
-    currentToast.duration = toastData.duration
-    currentToast.show()
+    // Configure and show toast on all screens
+    for (var i = 0; i < allToasts.length; i++) {
+      var toast = allToasts[i]
+      toast.label = toastData.label
+      toast.description = toastData.description
+      toast.type = toastData.type
+      toast.persistent = toastData.persistent
+      toast.duration = toastData.duration
+      toast.show()
+    }
   }
 
   // Called when a toast is dismissed
   function onToastDismissed() {
+    // Check if all toasts are dismissed
+    var allDismissed = true
+    for (var i = 0; i < allToasts.length; i++) {
+      if (allToasts[i].visible) {
+        allDismissed = false
+        break
+      }
+    }
+    
+    if (allDismissed) {
+      isShowingToast = false
 
-    isShowingToast = false
-
-    // Small delay before showing next toast
-    Qt.callLater(function () {
-      processQueue()
-    })
+      // Small delay before showing next toast
+      Qt.callLater(function () {
+        processQueue()
+      })
+    }
   }
 
   // Clear all pending messages
@@ -217,8 +230,10 @@ Singleton {
 
   // Hide current toast
   function hideCurrentToast() {
-    if (currentToast && isShowingToast) {
-      currentToast.hide()
+    if (isShowingToast) {
+      for (var i = 0; i < allToasts.length; i++) {
+        allToasts[i].hide()
+      }
     }
   }
 

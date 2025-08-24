@@ -52,7 +52,7 @@ Variants {
 
       Component.onCompleted: {
         // Register this toast with the service
-        ToastService.currentToast = toast
+        ToastService.allToasts.push(toast)
 
         // Connect dismissal signal
         toast.dismissed.connect(ToastService.onToastDismissed)
