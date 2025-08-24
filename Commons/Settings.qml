@@ -129,7 +129,7 @@ Singleton {
         widgets: JsonObject {
           property list<string> left: ["SystemMonitor", "ActiveWindow", "MediaMini"]
           property list<string> center: ["Workspace"]
-          property list<string> right: ["ScreenRecorderIndicator", "Tray", "NotificationHistory", "WiFi", "Bluetooth", "Battery", "Volume", "Brightness", "Clock", "SidePanelToggle"]
+          property list<string> right: ["ScreenRecorderIndicator", "Tray", "ArchUpdater", "NotificationHistory", "WiFi", "Bluetooth", "Battery", "Volume", "Brightness", "Clock", "SidePanelToggle"]
         }
       }
 
