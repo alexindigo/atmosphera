@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Services.Pam
+import qs.Commons
 
 Scope {
   id: root
@@ -37,7 +38,7 @@ Scope {
     errorMessage = ""
     showFailure = false
 
-    console.log("Starting PAM authentication for user:", pam.user)
+    Logger.log("LockContext", "Starting PAM authentication for user:", pam.user)
     pam.start()
   }
 
@@ -47,42 +48,43 @@ Scope {
     user: Quickshell.env("USER")
 
     onPamMessage: {
-      console.log("PAM message:", message, "isError:", messageIsError, "responseRequired:", responseRequired)
+      Logger.log("LockContext", "PAM message:", message, "isError:", messageIsError, "responseRequired:",
+                 responseRequired)
 
       if (messageIsError) {
         errorMessage = message
       }
 
       if (responseRequired) {
-        console.log("Responding to PAM with password")
+        Logger.log("LockContext", "Responding to PAM with password")
         respond(root.currentText)
       }
     }
 
     onResponseRequiredChanged: {
-      console.log("Response required changed:", responseRequired)
+      Logger.log("LockContext", "Response required changed:", responseRequired)
       if (responseRequired && root.unlockInProgress) {
-        console.log("Automatically responding to PAM")
+        Logger.log("LockContext", "Automatically responding to PAM")
         respond(root.currentText)
       }
     }
 
-    onCompleted: {
-      console.log("PAM completed with result:", result)
-      if (result === PamResult.Success) {
-        console.log("Authentication successful")
-        root.unlocked()
-      } else {
-        console.log("Authentication failed")
-        errorMessage = "Authentication failed"
-        showFailure = true
-        root.failed()
-      }
-      root.unlockInProgress = false
-    }
+    onCompleted: result => {
+                   Logger.log("LockContext", "PAM completed with result:", result)
+                   if (result === PamResult.Success) {
+                     Logger.log("LockContext", "Authentication successful")
+                     root.unlocked()
+                   } else {
+                     Logger.log("LockContext", "Authentication failed")
+                     errorMessage = "Authentication failed"
+                     showFailure = true
+                     root.failed()
+                   }
+                   root.unlockInProgress = false
+                 }
 
     onError: {
-      console.log("PAM error:", error, "message:", message)
+      Logger.log("LockContext", "PAM error:", error, "message:", message)
       errorMessage = message || "Authentication error"
       showFailure = true
       root.unlockInProgress = false
