@@ -48,6 +48,22 @@ Loader {
       property string password: ""
       property bool pamAvailable: typeof PamContext !== "undefined"
 
+      // Process components for system commands
+      Process {
+        id: shutdownProcess
+        command: ["shutdown", "-h", "now"]
+      }
+
+      Process {
+        id: rebootProcess
+        command: ["reboot"]
+      }
+
+      Process {
+        id: logoutProcess
+        command: ["loginctl", "terminate-user", Quickshell.env("USER")]
+      }
+
       function unlockAttempt() {
         Logger.log("LockScreen", "Unlock attempt started")
 
@@ -916,8 +932,7 @@ Loader {
               hoverEnabled: true
               cursorShape: Qt.PointingHandCursor
               onClicked: {
-                Qt.createQmlObject(
-                      'import Quickshell.Io; Process { command: ["shutdown", "-h", "now"]; running: true }', lock)
+                shutdownProcess.running = true
               }
             }
 
@@ -971,7 +986,7 @@ Loader {
               hoverEnabled: true
               cursorShape: Qt.PointingHandCursor
               onClicked: {
-                Qt.createQmlObject('import Quickshell.Io; Process { command: ["reboot"]; running: true }', lock)
+                rebootProcess.running = true
               }
             }
 
@@ -1025,9 +1040,7 @@ Loader {
               hoverEnabled: true
               cursorShape: Qt.PointingHandCursor
               onClicked: {
-                Qt.createQmlObject(
-                      'import Quickshell.Io; Process { command: ["loginctl", "terminate-user", "' + Quickshell.env(
-                        "USER") + '"]; running: true }', lock)
+                logoutProcess.running = true
               }
             }
 
