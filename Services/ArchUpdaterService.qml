@@ -2,7 +2,6 @@ pragma Singleton
 import Quickshell
 import QtQuick
 import Quickshell.Io
-import qs.Commons
 
 Singleton {
     id: updateService
@@ -54,13 +53,6 @@ Singleton {
         Quickshell.execDetached(["notify-send", "-a", app, "-i", icon, String(title || ""), String(body || "")]);
     }
 
-    function startUpdateProcess(cmd) {
-        pkgProc.command = cmd;
-        pkgProc.running = true;
-        killTimer.interval = lastWasFull ? 60 * 1000 : minuteMs;
-        killTimer.restart();
-    }
-
     function doPoll(forceFull = false) {
         if (busy)
             return;
@@ -91,61 +83,38 @@ Singleton {
 
     Process {
         id: pkgProc
-        onExited: function (exitCode, exitStatus) {
+        onExited: function () {
+            var exitCode = arguments[0];
             killTimer.stop();
             if (exitCode !== 0 && exitCode !== 2) {
                 updateService.failureCount++;
-                Logger.warn("UpdateService", `checkupdates failed (code: ${exitCode}, status: ${exitStatus})`);
+                console.warn("[UpdateService] checkupdates failed (code:", exitCode, ")");
                 if (updateService.failureCount >= updateService.failureThreshold) {
                     updateService.notify(qsTr("Update check failed"), qsTr(`Exit code: ${exitCode} (failed ${updateService.failureCount} times)`));
                     updateService.failureCount = 0;
                 }
                 updateService.updatePackages = [];
+                return;
             }
+
+            updateService.failureCount = 0;
+            const parsed = updateService._parseUpdateOutput(out.text);
+            updateService.updatePackages = parsed.pkgs;
+
+            if (updateService.lastWasFull) {
+                updateService.lastSync = Date.now();
+            }
+
+            cache.cachedUpdatePackagesJson = JSON.stringify(updateService._clonePackageList(updateService.updatePackages));
+            cache.cachedLastSync = updateService.lastSync;
+            updateService._summarizeAndNotify();
         }
 
         stdout: StdioCollector {
             id: out
-            onStreamFinished: {
-                if (!pkgProc.running || updateService.busy)
-                    return;
-                killTimer.stop();
-
-                const parsed = updateService._parseUpdateOutput(out.text);
-                updateService.updatePackages = parsed.pkgs;
-
-                if (updateService.lastWasFull) {
-                    updateService.lastSync = Date.now();
-                }
-
-                cache.cachedUpdatePackagesJson = JSON.stringify(updateService._clonePackageList(updateService.updatePackages));
-                cache.cachedLastSync = updateService.lastSync;
-                updateService._summarizeAndNotify(parsed.pkgs, updateService.updates);
-            }
-        }
-        stderr: StdioCollector {
-            id: err
-            onStreamFinished: {
-                const stderrText = (err.text || "").trim();
-                if (stderrText) {
-                    Logger.warn("UpdateService", "stderr:", stderrText);
-                    updateService.failureCount++;
-                    updateService._notifyOnFailureThreshold(stderrText);
-                } else {
-                    updateService.failureCount = 0;
-                }
-            }
         }
     }
 
-    function _notifyOnFailureThreshold(body) {
-        if (failureCount >= failureThreshold) {
-            notify(qsTr("Update check failed"), String(body || ""));
-            failureCount = 0;
-            return true;
-        }
-        return false;
-    }
 
     function _clonePackageList(list) {
         const src = Array.isArray(list) ? list : [];
@@ -206,17 +175,9 @@ Singleton {
         repeat: false
         onTriggered: {
             if (pkgProc.running) {
-                Logger.error("UpdateService", "Update check killed (timeout)");
+                console.error("[UpdateService] Update check killed (timeout)");
                 updateService.notify(qsTr("Update check killed"), qsTr("Process took too long"));
             }
         }
-    }
-
-    onUpdatePackagesChanged: {
-        cache.cachedUpdatePackagesJson = JSON.stringify(_clonePackageList(updatePackages));
-    }
-
-    onLastSyncChanged: {
-        cache.cachedLastSync = lastSync;
     }
 }
