@@ -101,10 +101,13 @@ mkdir -p ~/.config/quickshell && curl -sL https://github.com/noctalia-dev/noctal
 qs
 
 # Launcher
-qs ipc call appLauncher toggle
+qs ipc call launcher toggle
 
 # Clipboard History
-qs ipc call appLauncher clipboard
+qs ipc call launcher clipboard
+
+# Calculator
+qs ipc call launcher calculator
 
 # Brightness
 qs ipc call brightness increase

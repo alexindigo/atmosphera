@@ -24,10 +24,28 @@ NPanel {
   panelAnchorLeft: launcherPosition !== "center" && (launcherPosition.endsWith("_left"))
   panelAnchorRight: launcherPosition !== "center" && (launcherPosition.endsWith("_right"))
 
+  // Properties
+  property string searchText: ""
+  
+  // Add function to set search text programmatically
+  function setSearchText(text) {
+    searchText = text
+    if (searchInput) {
+      searchInput.text = text
+      searchInput.cursorPosition = text.length
+      searchInput.forceActiveFocus()
+    }
+  }
+
   onOpened: {
     // Reset state when panel opens to avoid sticky modes
-    searchText = ""
-    selectedIndex = 0
+    if (searchText === "") {
+      searchText = ""
+      selectedIndex = 0
+    }
+    if (searchInput) {
+      searchInput.forceActiveFocus()
+    }
   }
 
   // Import modular components
@@ -50,7 +68,6 @@ NPanel {
 
   // Properties
   property var desktopEntries: DesktopEntries.applications.values
-  property string searchText: ""
   property int selectedIndex: 0
 
   // Refresh clipboard when user starts typing clipboard commands
@@ -141,15 +158,11 @@ NPanel {
 
   // Command execution functions
   function executeCalcCommand() {
-    searchText = ">calc "
-    searchInput.text = searchText
-    searchInput.cursorPosition = searchText.length
+    setSearchText(">calc ")
   }
 
   function executeClipCommand() {
-    searchText = ">clip "
-    searchInput.text = searchText
-    searchInput.cursorPosition = searchText.length
+    setSearchText(">clip ")
   }
 
   // Navigation functions
@@ -252,8 +265,12 @@ NPanel {
             anchors.leftMargin: Style.marginS * scaling
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
+            text: searchText
             onTextChanged: {
-              searchText = text
+              // Update the parent searchText property
+              if (searchText !== text) {
+                searchText = text
+              }
               // Defer selectedIndex reset to avoid binding loops
               Qt.callLater(() => selectedIndex = 0)
             }
