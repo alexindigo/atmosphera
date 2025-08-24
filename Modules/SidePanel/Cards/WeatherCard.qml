@@ -90,7 +90,10 @@ NBox {
           Layout.alignment: Qt.AlignHCenter
           spacing: Style.marginS * scaling
           NText {
-            text: Qt.formatDateTime(new Date(LocationService.data.weather.daily.time[index]), "ddd")
+            text: {
+              var weatherDate = new Date(LocationService.data.weather.daily.time[index].replace(/-/g, "/"))
+              return Qt.formatDateTime(weatherDate, "ddd")
+            }
             color: Color.mOnSurface
           }
           NIcon {

@@ -109,8 +109,8 @@ Singleton {
 
   // --------------------------------
   function _geocodeLocation(locationName, callback, errorCallback) {
-    Logger.log("Location", "Geocoding from api.open-meteo.com")
-    var geoUrl = "https://geocoding-api.open-meteo.com/v1/search?name=" + encodeURIComponent(
+    Logger.log("Location", "Geocoding location name")
+    var geoUrl = "https://assets.noctalia.dev/geocode.php?city=" + encodeURIComponent(
           locationName) + "&language=en&format=json"
     var xhr = new XMLHttpRequest()
     xhr.onreadystatechange = function () {
@@ -119,8 +119,8 @@ Singleton {
           try {
             var geoData = JSON.parse(xhr.responseText)
             // Logger.logJSON.stringify(geoData))
-            if (geoData.results && geoData.results.length > 0) {
-              callback(geoData.results[0].latitude, geoData.results[0].longitude)
+            if (geoData.lat != null) {
+              callback(geoData.lat, geoData.lng)
             } else {
               errorCallback("Location", "could not resolve location name")
             }
