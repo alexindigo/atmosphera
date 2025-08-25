@@ -8,21 +8,57 @@ import qs.Widgets
 
 Item {
   id: root
-
   property ShellScreen screen
   property real scaling: ScalingService.scale(screen)
-
   implicitWidth: pill.width
   implicitHeight: pill.height
 
+  // Track if we've already notified to avoid spam
+  property bool hasNotifiedLowBattery: false
+
+  // Helper to evaluate and possibly notify
+  function maybeNotify(percent, charging) {
+    const p = Math.round(percent)
+    if (!charging && p <= 15 && !root.hasNotifiedLowBattery) {
+      Quickshell.execDetached(
+            ["notify-send", "-u", "critical", "-i", "battery-caution", "Low Battery", `Battery is at ${p}%. Please connect charger.`])
+      root.hasNotifiedLowBattery = true
+    }
+    if (p > 20 || charging) {
+      root.hasNotifiedLowBattery = false
+    }
+  }
+
+  // Watch for battery changes
+  Connections {
+    target: UPower.displayDevice
+    function onPercentageChanged() {
+      let battery = UPower.displayDevice
+      let isReady = battery && battery.ready && battery.isLaptopBattery && battery.isPresent
+      let percent = isReady ? (battery.percentage * 100) : 0
+      let charging = isReady ? battery.state === UPowerDeviceState.Charging : false
+
+      root.maybeNotify(percent, charging)
+    }
+
+    function onStateChanged() {
+      let battery = UPower.displayDevice
+      let isReady = battery && battery.ready && battery.isLaptopBattery && battery.isPresent
+      let charging = isReady ? battery.state === UPowerDeviceState.Charging : false
+
+      // Reset notification flag when charging starts
+      if (charging) {
+        root.hasNotifiedLowBattery = false
+      }
+    }
+  }
+
   NPill {
     id: pill
-
     // Test mode
     property bool testMode: false
-    property int testPercent: 49
+    property int testPercent: 20
     property bool testCharging: false
-
     property var battery: UPower.displayDevice
     property bool isReady: testMode ? true : (battery && battery.ready && battery.isLaptopBattery && battery.isPresent)
     property real percent: testMode ? testPercent : (isReady ? (battery.percentage * 100) : 0)
@@ -30,16 +66,12 @@ Item {
 
     // Choose icon based on charge and charging state
     function batteryIcon() {
-
       if (!isReady || !battery.isLaptopBattery)
         return "battery_android_alert"
-
       if (charging)
         return "battery_android_bolt"
-
       if (percent >= 95)
         return "battery_android_full"
-
       // Hardcoded battery symbols
       if (percent >= 85)
         return "battery_android_6"
@@ -60,28 +92,26 @@ Item {
     icon: batteryIcon()
     text: (isReady && battery.isLaptopBattery) ? Math.round(percent) + "%" : "-"
     textColor: charging ? Color.mPrimary : Color.mOnSurface
-    forceOpen: isReady && battery.isLaptopBattery && Settings.data.bar.alwaysShowBatteryPercentage
-    disableOpen: (!isReady || !battery.isLaptopBattery)
+    iconCircleColor: Color.mPrimary
+    collapsedIconColor: Color.mOnSurface
+    autoHide: false
+    forceOpen: isReady && (testMode || battery.isLaptopBattery) && Settings.data.bar.alwaysShowBatteryPercentage
+    disableOpen: (!isReady || (!testMode && !battery.isLaptopBattery))
     tooltipText: {
       let lines = []
-
       if (testMode) {
         lines.push("Time Left: " + Time.formatVagueHumanReadableDuration(12345))
         return lines.join("\n")
       }
-
       if (!isReady || !battery.isLaptopBattery) {
         return "No Battery Detected"
       }
-
       if (battery.timeToEmpty > 0) {
         lines.push("Time Left: " + Time.formatVagueHumanReadableDuration(battery.timeToEmpty))
       }
-
       if (battery.timeToFull > 0) {
         lines.push("Time Until Full: " + Time.formatVagueHumanReadableDuration(battery.timeToFull))
       }
-
       if (battery.changeRate !== undefined) {
         const rate = battery.changeRate
         if (rate > 0) {
@@ -95,7 +125,6 @@ Item {
       } else {
         lines.push(charging ? "Charging" : "Discharging")
       }
-
       if (battery.healthPercentage !== undefined && battery.healthPercentage > 0) {
         lines.push("Health: " + Math.round(battery.healthPercentage) + "%")
       }
