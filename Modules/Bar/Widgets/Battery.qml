@@ -19,12 +19,14 @@ Item {
   // Helper to evaluate and possibly notify
   function maybeNotify(percent, charging) {
     const p = Math.round(percent)
-    if (!charging && p <= 15 && !root.hasNotifiedLowBattery) {
+    // Only notify exactly at 15%, not at 0% or any other percentage
+    if (!charging && p === 15 && !root.hasNotifiedLowBattery) {
       Quickshell.execDetached(
             ["notify-send", "-u", "critical", "-i", "battery-caution", "Low Battery", `Battery is at ${p}%. Please connect charger.`])
       root.hasNotifiedLowBattery = true
     }
-    if (p > 20 || charging) {
+    // Reset when charging starts or when battery recovers above 20%
+    if (charging || p > 20) {
       root.hasNotifiedLowBattery = false
     }
   }
