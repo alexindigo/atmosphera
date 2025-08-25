@@ -14,8 +14,8 @@ Item {
   // Used to avoid opening the pill on Quickshell startup
   property bool firstBrightnessReceived: false
 
-  width: pill.width
-  height: pill.height
+  implicitWidth: pill.width
+  implicitHeight: pill.height
   visible: getMonitor() !== null
 
   function getMonitor() {
