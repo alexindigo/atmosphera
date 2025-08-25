@@ -1,8 +1,9 @@
-/*pragma Singleton
+pragma Singleton
 
-import Quickshell
 import QtQuick
+import Quickshell
 import Quickshell.Io
+import qs.Commons
 
 Singleton {
   id: updateService
@@ -15,20 +16,23 @@ Singleton {
   property int selectedPackagesCount: 0
   property bool updateInProgress: false
 
+  // Initial check
+  Component.onCompleted: doPoll()
+
   // Process for checking updates
   Process {
     id: checkupdatesProcess
     command: ["checkupdates"]
     onExited: function (exitCode) {
       if (exitCode !== 0 && exitCode !== 2) {
-        console.warn("[UpdateService] checkupdates failed (code:", exitCode, ")")
+        Logger.warn("ArchUpdater", "checkupdates failed (code:", exitCode, ")")
         updatePackages = []
-        return
       }
     }
     stdout: StdioCollector {
       onStreamFinished: {
         parseCheckupdatesOutput(text)
+        Logger.log("ArchUpdater", "found", updatePackages.length, "upgradable package(s)")
       }
     }
   }
@@ -150,8 +154,4 @@ Singleton {
     running: true
     onTriggered: doPoll()
   }
-
-  // Initial check
-  Component.onCompleted: doPoll()
 }
-*/
