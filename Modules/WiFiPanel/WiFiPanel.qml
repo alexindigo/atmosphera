@@ -46,6 +46,7 @@ NPanel {
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface
           Layout.fillWidth: true
+          Layout.leftMargin: Style.marginS * scaling
         }
 
         NIconButton {
@@ -69,6 +70,16 @@ NPanel {
       }
 
       NDivider {
+        Layout.fillWidth: true
+      }
+
+      // Show errors at the very top
+      NText {
+        visible: NetworkService.connectStatus === "error" && NetworkService.connectError.length > 0
+        text: NetworkService.connectError
+        color: Color.mError
+        font.pointSize: Style.fontSizeXS * scaling
+        wrapMode: Text.Wrap
         Layout.fillWidth: true
       }
 
@@ -127,69 +138,65 @@ NPanel {
 
         // Network list
         ListView {
-          id: networkList
           anchors.fill: parent
           visible: Settings.data.network.wifiEnabled && !NetworkService.isLoading
           model: Object.values(NetworkService.networks)
-          spacing: Style.marginM * scaling
+          spacing: Style.marginS * scaling
           clip: true
 
           delegate: Item {
             width: parent ? parent.width : 0
             height: modelData.ssid === passwordPromptSsid
-                    && showPasswordPrompt ? 108 * scaling : Style.baseWidgetSize * 1.5 * scaling
+                    && showPasswordPrompt ? 130 * scaling : Style.baseWidgetSize * 1.75 * scaling
 
             ColumnLayout {
               anchors.fill: parent
               spacing: 0
 
               Rectangle {
+                id: rect
                 Layout.fillWidth: true
-                Layout.preferredHeight: Style.baseWidgetSize * 1.5 * scaling
+                Layout.fillHeight: true
                 radius: Style.radiusS * scaling
-                color: modelData.connected ? Color.mPrimary : (networkMouseArea.containsMouse ? Color.mTertiary : Color.transparent)
+                color: networkMouseArea.containsMouse ? Color.mTertiary : Color.transparent
+                border.color: modelData.connected ? Color.mPrimary : Color.transparent
+                border.width: Math.max(1, Style.borderM * scaling)
 
                 RowLayout {
-                  anchors.fill: parent
-                  anchors.margins: Style.marginS * scaling
+                  anchors {
+                    fill: parent
+                    leftMargin: Style.marginL * scaling
+                    rightMargin: Style.marginL * scaling
+                  }
                   spacing: Style.marginS * scaling
 
                   NIcon {
                     text: NetworkService.signalIcon(modelData.signal)
                     font.pointSize: Style.fontSizeXXL * scaling
-                    color: modelData.connected ? Color.mSurface : (networkMouseArea.containsMouse ? Color.mSurface : Color.mOnSurface)
+                    color: networkMouseArea.containsMouse ? Color.mSurface : Color.mOnSurface
                   }
 
                   ColumnLayout {
                     Layout.fillWidth: true
-                    spacing: Style.marginXS * scaling
+                    Layout.alignment: Qt.AlignVCenter
+                    spacing: 0
 
                     // SSID
                     NText {
+                      Layout.fillWidth: true
                       text: modelData.ssid || "Unknown Network"
                       font.pointSize: Style.fontSizeNormal * scaling
                       elide: Text.ElideRight
-                      Layout.fillWidth: true
-                      color: modelData.connected ? Color.mSurface : (networkMouseArea.containsMouse ? Color.mSurface : Color.mOnSurface)
+                      color: networkMouseArea.containsMouse ? Color.mSurface : Color.mOnSurface
                     }
 
                     // Security Protocol
                     NText {
                       text: modelData.security && modelData.security !== "--" ? modelData.security : "Open"
-                      font.pointSize: Style.fontSizeXS * scaling
+                      font.pointSize: Style.fontSizeXXS * scaling
                       elide: Text.ElideRight
                       Layout.fillWidth: true
-                      color: modelData.connected ? Color.mSurface : (networkMouseArea.containsMouse ? Color.mSurface : Color.mOnSurface)
-                    }
-
-                    NText {
-                      visible: NetworkService.connectStatusSsid === modelData.ssid
-                               && NetworkService.connectStatus === "error" && NetworkService.connectError.length > 0
-                      text: NetworkService.connectError
-                      color: Color.mError
-                      font.pointSize: Style.fontSizeXS * scaling
-                      elide: Text.ElideRight
-                      Layout.fillWidth: true
+                      color: networkMouseArea.containsMouse ? Color.mSurface : Color.mOnSurface
                     }
                   }
 
@@ -203,17 +210,25 @@ NPanel {
                     NBusyIndicator {
                       visible: NetworkService.connectingSsid === modelData.ssid
                       running: NetworkService.connectingSsid === modelData.ssid
-                      color: Color.mPrimary
+                      color: networkMouseArea.containsMouse ? Color.mSurface : Color.mOnSurface
                       anchors.centerIn: parent
                       size: Style.baseWidgetSize * 0.7 * scaling
                     }
                   }
 
-                  NText {
+                  RowLayout {
                     visible: modelData.connected
-                    text: "connected"
-                    font.pointSize: Style.fontSizeXS * scaling
-                    color: modelData.connected ? Color.mSurface : (networkMouseArea.containsMouse ? Color.mSurface : Color.mOnSurface)
+                    NText {
+                      text: "Connected"
+                      font.pointSize: Style.fontSizeXS * scaling
+                      color: networkMouseArea.containsMouse ? Color.mSurface : Color.mOnSurface
+                      Layout.alignment: Qt.AlignVCenter
+                    }
+                    NIcon {
+                      text: "check"
+                      font.pointSize: Style.fontSizeXXL * scaling
+                      color: networkMouseArea.containsMouse ? Color.mSurface : Color.mOnSurface
+                    }
                   }
                 }
 
@@ -224,6 +239,7 @@ NPanel {
                   onClicked: {
                     if (modelData.connected) {
                       NetworkService.disconnectNetwork(modelData.ssid)
+                      showPasswordPrompt = false
                     } else if (NetworkService.isSecured(modelData.security) && !modelData.existing) {
                       passwordPromptSsid = modelData.ssid
                       showPasswordPrompt = true
@@ -240,11 +256,11 @@ NPanel {
 
               // Password prompt section
               Rectangle {
-                id: passwordPromptSection
+                visible: modelData.ssid === passwordPromptSsid && showPasswordPrompt
                 Layout.fillWidth: true
                 Layout.preferredHeight: modelData.ssid === passwordPromptSsid && showPasswordPrompt ? 60 : 0
                 Layout.margins: Style.marginS * scaling
-                visible: modelData.ssid === passwordPromptSsid && showPasswordPrompt
+
                 color: Color.mSurfaceVariant
                 radius: Style.radiusS * scaling
 
@@ -280,8 +296,10 @@ NPanel {
                         echoMode: TextInput.Password
                         onTextChanged: passwordInput = text
                         onAccepted: {
-                          NetworkService.submitPassword(passwordPromptSsid, passwordInput)
-                          showPasswordPrompt = false
+                          if (passwordInput !== "") {
+                            NetworkService.submitPassword(passwordPromptSsid, passwordInput)
+                            showPasswordPrompt = false
+                          }
                         }
 
                         MouseArea {
@@ -315,13 +333,22 @@ NPanel {
                     MouseArea {
                       anchors.fill: parent
                       onClicked: {
-                        NetworkService.submitPassword(passwordPromptSsid, passwordInput)
-                        showPasswordPrompt = false
+                        if (passwordInput !== "") {
+                          NetworkService.submitPassword(passwordPromptSsid, passwordInput)
+                          showPasswordPrompt = false
+                        }
                       }
                       cursorShape: Qt.PointingHandCursor
                       hoverEnabled: true
                       onEntered: parent.color = Qt.darker(Color.mPrimary, 1.1)
                       onExited: parent.color = Color.mPrimary
+                    }
+                  }
+
+                  NIconButton {
+                    icon: "close"
+                    onClicked: {
+                      showPasswordPrompt = false
                     }
                   }
                 }
