@@ -1,4 +1,4 @@
-pragma Singleton
+/*pragma Singleton
 
 import Quickshell
 import QtQuick
@@ -154,3 +154,4 @@ Singleton {
   // Initial check
   Component.onCompleted: doPoll()
 }
+*/

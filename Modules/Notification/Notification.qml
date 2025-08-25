@@ -202,6 +202,39 @@ Variants {
               maximumLineCount: 5
               elide: Text.ElideRight
             }
+
+            // Notification actions
+            RowLayout {
+              visible: model.actions && model.actions.length > 0
+              spacing: Style.marginXS * scaling
+              Layout.fillWidth: true
+              Layout.topMargin: Style.marginS * scaling
+
+              Repeater {
+                model: model.actions || []
+                delegate: NPill {
+                  text: modelData.text || modelData.identifier || "Action"
+                  icon: modelData.identifier || ""
+                  tooltipText: modelData.text || modelData.identifier || "Action"
+                  sizeMultiplier: 0.7
+                  Layout.fillWidth: true
+                  forceOpen: true
+                  
+                  // Style action buttons differently
+                  pillColor: Color.mPrimary
+                  textColor: Color.mOnPrimary
+                  iconCircleColor: Color.mPrimary
+                  iconTextColor: Color.mOnPrimary
+                  
+                  onClicked: {
+                    // Invoke the notification action
+                    modelData.invoke()
+                    // Animate out the notification after action
+                    animateOut()
+                  }
+                }
+              }
+            }
           }
 
           NIconButton {
