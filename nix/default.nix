@@ -4,29 +4,23 @@
   stdenv,
   makeWrapper,
   makeFontsConf,
-  fish,
   ddcutil,
   brightnessctl,
   cava,
   networkmanager,
-  lm_sensors,
   wl-clipboard,
-  libqalculate,
-  inotify-tools,
+  libnotify,
   bluez,
   bash,
-  hyprland,
   coreutils,
   findutils,
   file,
   material-symbols,
-  roboto-serif,
-  roboto-slab,
-  roboto-mono,
-  roboto-flex,
+  roboto,
   inter-nerdfont,
   matugen,
   cliphist,
+  swww,
   gpu-screen-recorder,
   gcc,
   qt6,
@@ -36,34 +30,28 @@
 }: let
   runtimeDeps =
     [
-      fish
-      ddcutil
+      bash
+      bluez
       brightnessctl
       cava
-      networkmanager
-      lm_sensors
-      wl-clipboard
-      libqalculate
-      matugen
       cliphist
-      gpu-screen-recorder
-      inotify-tools
-      bluez
-      bash
-      hyprland
       coreutils
-      findutils
+      ddcutil
       file
+      findutils
+      gpu-screen-recorder
+      libnotify
+      matugen
+      networkmanager
+      swww
+      wl-clipboard
     ]
     ++ extraRuntimeDeps;
 
   fontconfig = makeFontsConf {
     fontDirectories = [
       material-symbols
-      roboto-serif
-      roboto-slab
-      roboto-mono
-      roboto-flex
+      roboto
       inter-nerdfont
     ];
   };
