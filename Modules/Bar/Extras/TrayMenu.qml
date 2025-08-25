@@ -20,7 +20,7 @@ PopupWindow {
   implicitWidth: menuWidth * scaling
 
   // Use the content height of the Flickable for implicit height
-  implicitHeight: Math.min(Screen.height * 0.9, flickable.contentHeight + (Style.marginM * 2 * scaling))
+  implicitHeight: Math.min(Screen.height * 0.9, flickable.contentHeight + (Style.marginS * 2 * scaling))
   visible: false
   color: Color.transparent
   anchor.item: anchorItem

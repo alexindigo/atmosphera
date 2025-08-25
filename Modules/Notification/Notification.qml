@@ -41,7 +41,7 @@ Variants {
     margins.right: Style.marginM * scaling
     implicitWidth: 360 * scaling
     implicitHeight: Math.min(notificationStack.implicitHeight, (NotificationService.maxVisible * 120) * scaling)
-    WlrLayershell.layer: WlrLayer.Overlay
+    //WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.exclusionMode: ExclusionMode.Ignore
 
     // Connect to animation signal from service
@@ -202,6 +202,8 @@ Variants {
               maximumLineCount: 5
               elide: Text.ElideRight
             }
+
+            // Actions removed
           }
 
           NIconButton {

@@ -13,19 +13,9 @@ NPanel {
   panelHeight: 500 * scaling
   panelAnchorRight: true
 
-  // Auto-refresh when service updates
-  Connections {
-    target: ArchUpdaterService
-    function onUpdatePackagesChanged() {
-      // Force UI update when packages change
-      if (root.visible) {
-        // Small delay to ensure data is fully updated
-        Qt.callLater(() => {
-                       // Force a UI update by triggering a property change
-                       ArchUpdaterService.updatePackages = ArchUpdaterService.updatePackages
-                     }, 100)
-      }
-    }
+  // When the panel opens
+  onOpened: {
+    ArchUpdaterService.doPoll()
   }
 
   panelContent: Rectangle {

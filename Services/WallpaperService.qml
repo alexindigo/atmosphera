@@ -29,8 +29,7 @@ Singleton {
     Logger.log("Wallpapers", "Listing wallpapers")
     scanning = true
     wallpaperList = []
-    // Unsetting, then setting the folder will re-trigger the parsing!
-    folderModel.folder = ""
+    // Set the folder directly to avoid model reset issues
     folderModel.folder = "file://" + (Settings.data.wallpaper.directory !== undefined ? Settings.data.wallpaper.directory : "")
   }
 

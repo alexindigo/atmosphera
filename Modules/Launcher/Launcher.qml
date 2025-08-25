@@ -275,7 +275,7 @@ NPanel {
               }
               // Defer selectedIndex reset to avoid binding loops
               Qt.callLater(() => selectedIndex = 0)
-              
+
               // Reset cursor position if needed
               if (shouldResetCursor && text === "") {
                 cursorPosition = 0

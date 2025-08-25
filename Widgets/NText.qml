@@ -10,4 +10,7 @@ Text {
   font.pointSize: Style.fontSizeM * scaling
   font.weight: Style.fontWeightMedium
   color: Color.mOnSurface
+  renderType: Text.QtRendering
+  font.hintingPreference: Font.PreferNoHinting
+  font.kerning: true
 }

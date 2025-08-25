@@ -13,6 +13,7 @@ Singleton {
     */
 
   // Font size
+  property real fontSizeXXS: 8
   property real fontSizeXS: 9
   property real fontSizeS: 10
   property real fontSizeM: 11
