@@ -27,7 +27,7 @@ Item {
     })
   }
 
-      ScrollView {
+  ScrollView {
     anchors.fill: parent
     clip: true
     ScrollBar.vertical.policy: ScrollBar.AsNeeded
@@ -37,7 +37,7 @@ Item {
     ColumnLayout {
       id: contentColumn
       width: Math.max(parent.width, 300) // Minimum reasonable width without scaling
-      
+
       ColumnLayout {
         spacing: Style.marginL * scaling
         Layout.margins: Style.marginL * scaling
@@ -147,12 +147,12 @@ Item {
 
                   RowLayout {
                     Layout.fillWidth: true
-                    
+
                     ColumnLayout {
                       spacing: Style.marginXXS * scaling
                       Layout.fillWidth: true
                       Layout.minimumWidth: 0
-                      
+
                       NText {
                         text: "Scale"
                         font.pointSize: Style.fontSizeM * scaling
@@ -167,7 +167,7 @@ Item {
                         Layout.fillWidth: true
                       }
                     }
-                    
+
                     NText {
                       text: `${Math.round(ScalingService.scaleByName(modelData.name) * 100)}%`
                       Layout.alignment: Qt.AlignVCenter
@@ -179,7 +179,7 @@ Item {
                     spacing: Style.marginS * scaling
                     Layout.fillWidth: true
                     Layout.minimumWidth: 0
-                    
+
                     NSlider {
                       id: scaleSlider
                       from: 0.6

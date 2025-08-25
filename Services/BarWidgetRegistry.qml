@@ -10,8 +10,8 @@ Singleton {
   // Widget registry object mapping widget names to components
   property var widgets: ({
                            "ActiveWindow": activeWindowComponent,
-                          //  "ArchUpdater": archUpdaterComponent,
-                           "Battery": batteryComponent,
+                           "Battery"//  "ArchUpdater": archUpdaterComponent,
+                           : batteryComponent,
                            "Bluetooth": bluetoothComponent,
                            "Brightness": brightnessComponent,
                            "Clock": clockComponent,
