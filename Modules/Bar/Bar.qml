@@ -61,13 +61,10 @@ Variants {
 
         Repeater {
           model: Settings.data.bar.widgets.left
-          delegate: Loader {
-            active: true
-            sourceComponent: NWidgetLoader {
-              widgetName: modelData
-              widgetProps: {
-                "screen": screen
-              }
+          delegate: NWidgetLoader {
+            widgetName: modelData
+            widgetProps: {
+              "screen": screen
             }
             anchors.verticalCenter: parent.verticalCenter
           }
@@ -86,13 +83,10 @@ Variants {
 
         Repeater {
           model: Settings.data.bar.widgets.center
-          delegate: Loader {
-            active: true
-            sourceComponent: NWidgetLoader {
-              widgetName: modelData
-              widgetProps: {
-                "screen": screen
-              }
+          delegate: NWidgetLoader {
+            widgetName: modelData
+            widgetProps: {
+              "screen": screen
             }
             anchors.verticalCenter: parent.verticalCenter
           }
@@ -112,13 +106,10 @@ Variants {
 
         Repeater {
           model: Settings.data.bar.widgets.right
-          delegate: Loader {
-            active: true
-            sourceComponent: NWidgetLoader {
-              widgetName: modelData
-              widgetProps: {
-                "screen": screen
-              }
+          delegate: NWidgetLoader {
+            widgetName: modelData
+            widgetProps: {
+              "screen": screen
             }
             anchors.verticalCenter: parent.verticalCenter
           }
