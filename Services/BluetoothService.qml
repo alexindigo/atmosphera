@@ -144,7 +144,7 @@ Singleton {
 
   function setBluetoothEnabled(enabled) {
     if (!adapter) {
-      console.warn("BluetoothService: No adapter available")
+      Logger.warn("Bluetooth", "No adapter available")
       return
     }
 

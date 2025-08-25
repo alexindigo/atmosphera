@@ -32,8 +32,6 @@ Loader {
   signal closed
 
   Component.onCompleted: {
-    // console.log("Oh Yeah")
-    // console.log(objectName)
     PanelService.registerPanel(root)
   }
 
