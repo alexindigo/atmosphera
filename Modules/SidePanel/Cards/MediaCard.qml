@@ -160,8 +160,6 @@ NBox {
           height: 90 * scaling
           radius: width * 0.5
           color: trackArt.visible ? Color.mPrimary : Color.transparent
-          border.color: trackArt.visible ? Color.mOutline : Color.transparent
-          border.width: Math.max(1, Style.borderS * scaling)
           clip: true
 
           NImageCircled {

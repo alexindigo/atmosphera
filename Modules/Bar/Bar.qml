@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
+import Quickshell.Services.UPower
 import qs.Commons
 import qs.Services
 import qs.Widgets
@@ -47,6 +48,7 @@ Variants {
         layer.enabled: true
       }
 
+      // ------------------------------
       // Left Section - Dynamic Widgets
       Row {
         id: leftSection
@@ -60,21 +62,19 @@ Variants {
         Repeater {
           model: Settings.data.bar.widgets.left
           delegate: Loader {
-            id: leftWidgetLoader
-            sourceComponent: widgetLoader.getWidgetComponent(modelData)
             active: true
-            anchors.verticalCenter: parent.verticalCenter
-            onStatusChanged: {
-              if (status === Loader.Error) {
-                widgetLoader.onWidgetFailed(modelData, "Loader error")
-              } else if (status === Loader.Ready) {
-                widgetLoader.onWidgetLoaded(modelData)
+            sourceComponent: NWidgetLoader {
+              widgetName: modelData
+              widgetProps: {
+                "screen": screen
               }
             }
+            anchors.verticalCenter: parent.verticalCenter
           }
         }
       }
 
+      // ------------------------------
       // Center Section - Dynamic Widgets
       Row {
         id: centerSection
@@ -87,21 +87,19 @@ Variants {
         Repeater {
           model: Settings.data.bar.widgets.center
           delegate: Loader {
-            id: centerWidgetLoader
-            sourceComponent: widgetLoader.getWidgetComponent(modelData)
             active: true
-            anchors.verticalCenter: parent.verticalCenter
-            onStatusChanged: {
-              if (status === Loader.Error) {
-                widgetLoader.onWidgetFailed(modelData, "Loader error")
-              } else if (status === Loader.Ready) {
-                widgetLoader.onWidgetLoaded(modelData)
+            sourceComponent: NWidgetLoader {
+              widgetName: modelData
+              widgetProps: {
+                "screen": screen
               }
             }
+            anchors.verticalCenter: parent.verticalCenter
           }
         }
       }
 
+      // ------------------------------
       // Right Section - Dynamic Widgets
       Row {
         id: rightSection
@@ -115,35 +113,17 @@ Variants {
         Repeater {
           model: Settings.data.bar.widgets.right
           delegate: Loader {
-            id: rightWidgetLoader
-            sourceComponent: widgetLoader.getWidgetComponent(modelData)
             active: true
-            anchors.verticalCenter: parent.verticalCenter
-            onStatusChanged: {
-              if (status === Loader.Error) {
-                widgetLoader.onWidgetFailed(modelData, "Loader error")
-              } else if (status === Loader.Ready) {
-                widgetLoader.onWidgetLoaded(modelData)
+            sourceComponent: NWidgetLoader {
+              widgetName: modelData
+              widgetProps: {
+                "screen": screen
               }
             }
+            anchors.verticalCenter: parent.verticalCenter
           }
         }
       }
-    }
-
-    // Widget loader instance
-    WidgetLoader {
-      id: widgetLoader
-
-      onWidgetFailed: function (widgetName, error) {
-        Logger.error("Bar", `Widget failed: ${widgetName} - ${error}`)
-      }
-    }
-
-    // Initialize widget loading tracking
-    Component.onCompleted: {
-      const allWidgets = [...Settings.data.bar.widgets.left, ...Settings.data.bar.widgets.center, ...Settings.data.bar.widgets.right]
-      widgetLoader.initializeLoading(allWidgets)
     }
   }
 }

@@ -9,17 +9,20 @@ import qs.Widgets
 
 Row {
   id: root
+
+  property ShellScreen screen
+  property real scaling: ScalingService.scale(screen)
+  property bool showingFullTitle: false
+  property int lastWindowIndex: -1
+
   anchors.verticalCenter: parent.verticalCenter
   spacing: Style.marginS * scaling
   visible: getTitle() !== ""
 
-  property bool showingFullTitle: false
-  property int lastWindowIndex: -1
-
   // Timer to hide full title after window switch
   Timer {
     id: fullTitleTimer
-    interval: Style.animationSlow * 4 // Show full title for 2 seconds
+    interval: 2000
     repeat: false
     onTriggered: {
       showingFullTitle = false
@@ -40,8 +43,9 @@ Row {
   }
 
   function getTitle() {
-    const focusedWindow = CompositorService.getFocusedWindow()
-    return focusedWindow ? (focusedWindow.title || focusedWindow.appId || "") : ""
+    // Use the service's focusedWindowTitle property which is updated immediately
+    // when WindowOpenedOrChanged events are received
+    return CompositorService.focusedWindowTitle !== "(No active window)" ? CompositorService.focusedWindowTitle : ""
   }
 
   function getAppIcon() {
@@ -62,6 +66,7 @@ Row {
 
   Rectangle {
     // Let the Rectangle size itself based on its content (the Row)
+    visible: root.visible
     width: row.width + Style.marginM * scaling * 2
     height: Math.round(Style.capsuleHeight * scaling)
     radius: Math.round(Style.radiusM * scaling)
@@ -100,10 +105,10 @@ Row {
         NText {
           id: titleText
 
-          // If hovered or just switched window, show up to 300 pixels
+          // If hovered or just switched window, show up to 400 pixels
           // If not hovered show up to 150 pixels
           width: (showingFullTitle || mouseArea.containsMouse) ? Math.min(fullTitleMetrics.contentWidth,
-                                                                          300 * scaling) : Math.min(
+                                                                          400 * scaling) : Math.min(
                                                                    fullTitleMetrics.contentWidth, 150 * scaling)
           text: getTitle()
           font.pointSize: Style.fontSizeS * scaling

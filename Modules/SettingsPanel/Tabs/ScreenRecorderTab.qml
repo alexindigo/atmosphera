@@ -126,8 +126,20 @@ ColumnLayout {
                 name: "60 FPS"
               }
               ListElement {
+                key: "100"
+                name: "100 FPS"
+              }
+              ListElement {
                 key: "120"
                 name: "120 FPS"
+              }
+              ListElement {
+                key: "144"
+                name: "144 FPS"
+              }
+              ListElement {
+                key: "165"
+                name: "165 FPS"
               }
               ListElement {
                 key: "240"

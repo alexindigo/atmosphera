@@ -33,7 +33,6 @@ ColumnLayout {
         spacing: Style.marginL * scaling
         Layout.fillWidth: true
 
-
         ColumnLayout {
           spacing: Style.marginXXS * scaling
           Layout.fillWidth: true
@@ -72,7 +71,7 @@ ColumnLayout {
           }
         }
 
-                ColumnLayout {
+        ColumnLayout {
           spacing: Style.marginXXS * scaling
           Layout.fillWidth: true
 
@@ -111,7 +110,6 @@ ColumnLayout {
           }
         }
 
-
         NToggle {
           label: "Show Active Window's Icon"
           description: "Display the app icon next to the title of the currently focused window."
@@ -130,7 +128,6 @@ ColumnLayout {
                      }
         }
 
-
         NDivider {
           Layout.fillWidth: true
           Layout.topMargin: Style.marginL * scaling
@@ -144,13 +141,14 @@ ColumnLayout {
 
           NText {
             text: "Widgets Positioning"
-            font.pointSize: Style.fontSizeL * scaling
+            font.pointSize: Style.fontSizeXXL * scaling
             font.weight: Style.fontWeightBold
             color: Color.mOnSurface
+            Layout.bottomMargin: Style.marginS * scaling
           }
 
           NText {
-            text: "Add, remove, or reorder widgets in each section of the bar using the control buttons."
+            text: "Drag and drop widgets to reorder them within each section, or use the add/remove buttons to manage widgets."
             font.pointSize: Style.fontSizeXS * scaling
             color: Color.mOnSurfaceVariant
             wrapMode: Text.WordWrap
@@ -165,7 +163,7 @@ ColumnLayout {
             spacing: Style.marginM * scaling
 
             // Left Section
-            NWidgetCard {
+            NSectionEditor {
               sectionName: "Left"
               widgetModel: Settings.data.bar.widgets.left
               availableWidgets: availableWidgets
@@ -176,7 +174,7 @@ ColumnLayout {
             }
 
             // Center Section
-            NWidgetCard {
+            NSectionEditor {
               sectionName: "Center"
               widgetModel: Settings.data.bar.widgets.center
               availableWidgets: availableWidgets
@@ -187,7 +185,7 @@ ColumnLayout {
             }
 
             // Right Section
-            NWidgetCard {
+            NSectionEditor {
               sectionName: "Right"
               widgetModel: Settings.data.bar.widgets.right
               availableWidgets: availableWidgets
@@ -204,13 +202,13 @@ ColumnLayout {
 
   // Helper functions
   function addWidgetToSection(widgetName, section) {
-    console.log("Adding widget", widgetName, "to section", section)
+    //Logger.log("BarTab", "Adding widget", widgetName, "to section", section)
     var sectionArray = Settings.data.bar.widgets[section]
     if (sectionArray) {
       // Create a new array to avoid modifying the original
       var newArray = sectionArray.slice()
       newArray.push(widgetName)
-      console.log("Widget added. New array:", JSON.stringify(newArray))
+      //Logger.log("BarTab", "Widget added. New array:", JSON.stringify(newArray))
 
       // Assign the new array
       Settings.data.bar.widgets[section] = newArray
@@ -218,21 +216,27 @@ ColumnLayout {
   }
 
   function removeWidgetFromSection(section, index) {
-    console.log("Removing widget from section", section, "at index", index)
+    // Logger.log("BarTab", "Removing widget from section", section, "at index", index)
     var sectionArray = Settings.data.bar.widgets[section]
+
+    //Logger.log("BarTab", "Current section array:", JSON.stringify(sectionArray))
     if (sectionArray && index >= 0 && index < sectionArray.length) {
       // Create a new array to avoid modifying the original
       var newArray = sectionArray.slice()
       newArray.splice(index, 1)
-      console.log("Widget removed. New array:", JSON.stringify(newArray))
+      //Logger.log("BarTab", "Widget removed. New array:", JSON.stringify(newArray))
 
       // Assign the new array
       Settings.data.bar.widgets[section] = newArray
+    } else {
+
+      //Logger.log("BarTab", "Invalid section or index:", section, index, "array length:",
+      //            sectionArray ? sectionArray.length : "null")
     }
   }
 
   function reorderWidgetInSection(section, fromIndex, toIndex) {
-    console.log("Reordering widget in section", section, "from", fromIndex, "to", toIndex)
+    //Logger.log("BarTab", "Reordering widget in section", section, "from", fromIndex, "to", toIndex)
     var sectionArray = Settings.data.bar.widgets[section]
     if (sectionArray && fromIndex >= 0 && fromIndex < sectionArray.length && toIndex >= 0
         && toIndex < sectionArray.length) {
@@ -242,36 +246,26 @@ ColumnLayout {
       var item = newArray[fromIndex]
       newArray.splice(fromIndex, 1)
       newArray.splice(toIndex, 0, item)
-      console.log("Widget reordered. New array:", JSON.stringify(newArray))
+      Logger.log("BarTab", "Widget reordered. New array:", JSON.stringify(newArray))
 
       // Assign the new array
       Settings.data.bar.widgets[section] = newArray
     }
   }
 
-  // Widget loader for discovering available widgets
-  WidgetLoader {
-    id: widgetLoader
-  }
-
+  // Base list model for all combo boxes
   ListModel {
     id: availableWidgets
   }
 
   Component.onCompleted: {
-    discoverWidgets()
-  }
-
-  // Automatically discover available widgets using WidgetLoader
-  function discoverWidgets() {
+    // Fill out availableWidgets ListModel
     availableWidgets.clear()
-
-    // Use WidgetLoader to discover available widgets
-    const discoveredWidgets = widgetLoader.discoverAvailableWidgets()
-
-    // Add discovered widgets to the ListModel
-    discoveredWidgets.forEach(widget => {
-                                availableWidgets.append(widget)
-                              })
+    BarWidgetRegistry.getAvailableWidgets().forEach(entry => {
+                                                      availableWidgets.append({
+                                                                                "key": entry,
+                                                                                "name": entry
+                                                                              })
+                                                    })
   }
 }

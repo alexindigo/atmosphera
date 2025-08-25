@@ -1,9 +1,10 @@
+pragma Singleton
+
 import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.Commons
 import qs.Services
-pragma Singleton
 
 Singleton {
   id: root
@@ -116,9 +117,7 @@ Singleton {
       id: adapter
 
       // bar
-      property JsonObject bar
-
-      bar: JsonObject {
+      property JsonObject bar: JsonObject {
         property string position: "top" // Possible values: "top", "bottom"
         property bool showActiveWindowIcon: true
         property bool alwaysShowBatteryPercentage: false
@@ -130,14 +129,12 @@ Singleton {
         widgets: JsonObject {
           property list<string> left: ["SystemMonitor", "ActiveWindow", "MediaMini"]
           property list<string> center: ["Workspace"]
-          property list<string> right: ["ScreenRecorderIndicator", "Tray", "NotificationHistory", "WiFi", "Bluetooth", "Battery", "Volume", "Brightness", "Clock", "SidePanelToggle"]
+          property list<string> right: ["ScreenRecorderIndicator", "Tray", "ArchUpdater", "NotificationHistory", "WiFi", "Bluetooth", "Battery", "Volume", "Brightness", "Clock", "SidePanelToggle"]
         }
       }
 
       // general
-      property JsonObject general
-
-      general: JsonObject {
+      property JsonObject general: JsonObject {
         property string avatarImage: defaultAvatar
         property bool dimDesktop: false
         property bool showScreenCorners: false
@@ -145,9 +142,7 @@ Singleton {
       }
 
       // location
-      property JsonObject location
-
-      location: JsonObject {
+      property JsonObject location: JsonObject {
         property string name: "Tokyo"
         property bool useFahrenheit: false
         property bool reverseDayMonth: false
@@ -156,9 +151,7 @@ Singleton {
       }
 
       // screen recorder
-      property JsonObject screenRecorder
-
-      screenRecorder: JsonObject {
+      property JsonObject screenRecorder: JsonObject {
         property string directory: "~/Videos"
         property int frameRate: 60
         property string audioCodec: "opus"
@@ -171,9 +164,7 @@ Singleton {
       }
 
       // wallpaper
-      property JsonObject wallpaper
-
-      wallpaper: JsonObject {
+      property JsonObject wallpaper: JsonObject {
         property string directory: "/usr/share/wallpapers"
         property string current: ""
         property bool isRandom: false
@@ -194,9 +185,7 @@ Singleton {
       }
 
       // applauncher
-      property JsonObject appLauncher
-
-      appLauncher: JsonObject {
+      property JsonObject appLauncher: JsonObject {
         // When disabled, Launcher hides clipboard command and ignores cliphist
         property bool enableClipboardHistory: true
         // Position: center, top_left, top_right, bottom_left, bottom_right
@@ -205,43 +194,34 @@ Singleton {
       }
 
       // dock
-      property JsonObject dock
-
-      dock: JsonObject {
+      property JsonObject dock: JsonObject {
         property bool autoHide: false
         property bool exclusive: false
         property list<string> monitors: []
       }
 
       // network
-      property JsonObject network
-
-      network: JsonObject {
+      property JsonObject network: JsonObject {
         property bool wifiEnabled: true
         property bool bluetoothEnabled: true
       }
 
       // notifications
-      property JsonObject notifications
-
-      notifications: JsonObject {
+      property JsonObject notifications: JsonObject {
         property list<string> monitors: []
       }
 
       // audio
-      property JsonObject audio
-
-      audio: JsonObject {
+      property JsonObject audio: JsonObject {
         property bool showMiniplayerAlbumArt: false
         property bool showMiniplayerCava: false
         property string visualizerType: "linear"
         property int volumeStep: 5
+        property int cavaFrameRate: 60
       }
 
       // ui
-      property JsonObject ui
-
-      ui: JsonObject {
+      property JsonObject ui: JsonObject {
         property string fontDefault: "Roboto" // Default font for all text
         property string fontFixed: "DejaVu Sans Mono" // Fixed width font for terminal
         property string fontBillboard: "Inter" // Large bold font for clocks and prominent displays
@@ -259,15 +239,11 @@ Singleton {
       }
 
       // brightness
-      property JsonObject brightness
-
-      brightness: JsonObject {
+      property JsonObject brightness: JsonObject {
         property int brightnessStep: 5
       }
 
-      property JsonObject colorSchemes
-
-      colorSchemes: JsonObject {
+      property JsonObject colorSchemes: JsonObject {
         property bool useWallpaperColors: false
         property string predefinedScheme: ""
         property bool darkMode: true

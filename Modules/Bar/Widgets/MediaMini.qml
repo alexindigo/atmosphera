@@ -9,10 +9,14 @@ import qs.Widgets
 
 Row {
   id: root
+
+  property ShellScreen screen
+  property real scaling: ScalingService.scale(screen)
+
   anchors.verticalCenter: parent.verticalCenter
   spacing: Style.marginS * scaling
-  visible: MediaService.currentPlayer !== null
-  width: MediaService.currentPlayer !== null ? implicitWidth : 0
+  visible: MediaService.currentPlayer !== null && MediaService.canPlay
+  width: MediaService.currentPlayer !== null && MediaService.canPlay ? implicitWidth : 0
 
   function getTitle() {
     return MediaService.trackTitle + (MediaService.trackArtist !== "" ? ` - ${MediaService.trackArtist}` : "")
@@ -144,7 +148,7 @@ Row {
         NText {
           id: titleText
 
-          // If hovered or just switched window, show up to 300 pixels
+          // If hovered or just switched window, show up to 400 pixels
           // If not hovered show up to 150 pixels
           width: (mouseArea.containsMouse) ? Math.min(fullTitleMetrics.contentWidth,
                                                       400 * scaling) : Math.min(fullTitleMetrics.contentWidth,

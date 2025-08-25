@@ -19,7 +19,7 @@ Singleton {
   property ListModel workspaces: ListModel {}
   property var windows: []
   property int focusedWindowIndex: -1
-  property string focusedWindowTitle: "(No active window)"
+  property string focusedWindowTitle: "n/a"
   property bool inOverview: false
 
   // Generic events
@@ -27,6 +27,7 @@ Singleton {
   signal activeWindowChanged
   signal overviewStateChanged
   signal windowListChanged
+  signal windowTitleChanged
 
   // Compositor detection
   Component.onCompleted: {
@@ -308,9 +309,18 @@ Singleton {
 
               // Update focused window index if this window is focused
               if (newWindow.isFocused) {
+                const oldFocusedIndex = focusedWindowIndex
                 focusedWindowIndex = windows.findIndex(w => w.id === windowData.id)
                 updateFocusedWindowTitle()
-                activeWindowChanged()
+
+                // Only emit activeWindowChanged if the focused window actually changed
+                if (oldFocusedIndex !== focusedWindowIndex) {
+                  activeWindowChanged()
+                }
+              } else if (existingIndex >= 0 && existingIndex === focusedWindowIndex) {
+                // If this is the currently focused window (but not newly focused),
+                // still update the title in case it changed, but don't emit activeWindowChanged
+                updateFocusedWindowTitle()
               }
 
               windowListChanged()
@@ -449,10 +459,16 @@ Singleton {
   }
 
   function updateFocusedWindowTitle() {
+    const oldTitle = focusedWindowTitle
     if (focusedWindowIndex >= 0 && focusedWindowIndex < windows.length) {
       focusedWindowTitle = windows[focusedWindowIndex].title || "(Unnamed window)"
     } else {
       focusedWindowTitle = "(No active window)"
+    }
+
+    // Emit signal if title actually changed
+    if (oldTitle !== focusedWindowTitle) {
+      windowTitleChanged()
     }
   }
 

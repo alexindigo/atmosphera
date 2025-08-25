@@ -27,6 +27,7 @@ import qs.Modules.PowerPanel
 import qs.Modules.SidePanel
 import qs.Modules.Toast
 import qs.Modules.WiFiPanel
+import qs.Modules.ArchUpdaterPanel
 import qs.Services
 import qs.Widgets
 
@@ -39,55 +40,67 @@ ShellRoot {
   Bar {}
   Dock {}
 
-  Launcher {
-    id: launcherPanel
-  }
-
-  SidePanel {
-    id: sidePanel
-  }
-
-  Calendar {
-    id: calendarPanel
-  }
-
-  SettingsPanel {
-    id: settingsPanel
-  }
-
   Notification {
     id: notification
-  }
-
-  NotificationHistoryPanel {
-    id: notificationHistoryPanel
   }
 
   LockScreen {
     id: lockScreen
   }
 
-  PowerPanel {
-    id: powerPanel
-  }
-
-  WiFiPanel {
-    id: wifiPanel
-  }
-
-  BluetoothPanel {
-    id: bluetoothPanel
-  }
-
   ToastManager {}
 
   IPCManager {}
 
-  Component.onCompleted: {
-    // Save a ref. to our sidePanel so we can access it from services
-    PanelService.sidePanel = sidePanel
+  // ------------------------------
+  // All the panels
+  Launcher {
+    id: launcherPanel
+    objectName: "launcherPanel"
+  }
 
-    // Save a ref. to our lockScreen so we can access it from services
+  SidePanel {
+    id: sidePanel
+    objectName: "sidePanel"
+  }
+
+  Calendar {
+    id: calendarPanel
+    objectName: "calendarPanel"
+  }
+
+  SettingsPanel {
+    id: settingsPanel
+    objectName: "settingsPanel"
+  }
+
+  NotificationHistoryPanel {
+    id: notificationHistoryPanel
+    objectName: "notificationHistoryPanel"
+  }
+
+  PowerPanel {
+    id: powerPanel
+    objectName: "powerPanel"
+  }
+
+  WiFiPanel {
+    id: wifiPanel
+    objectName: "wifiPanel"
+  }
+
+  BluetoothPanel {
+    id: bluetoothPanel
+    objectName: "bluetoothPanel"
+  }
+
+  ArchUpdaterPanel {
+    id: archUpdaterPanel
+    objectName: "archUpdaterPanel"
+  }
+
+  Component.onCompleted: {
+    // Save a ref. to our lockScreen so we can access it  easily
     PanelService.lockScreen = lockScreen
 
     // Ensure our singleton is created as soon as possible so we start fetching weather asap
