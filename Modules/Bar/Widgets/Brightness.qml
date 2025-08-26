@@ -86,6 +86,7 @@ Item {
     }
 
     onClicked: {
+      var settingsPanel = PanelService.getPanel("settingsPanel")
       settingsPanel.requestedTab = SettingsPanel.Tab.Brightness
       settingsPanel.open(screen)
     }
