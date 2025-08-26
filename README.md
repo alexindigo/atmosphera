@@ -102,24 +102,46 @@ mkdir -p ~/.config/quickshell && curl -sL https://github.com/noctalia-dev/noctal
 nix run github:noctalia-dev/noctalia-shell
 ```
 
-
-
-##### For flakes
+<details>
+<summary><strong>For flakes</strong></summary>
 
 ```nix
 {
+  description = "Example Nix flake with Noctalia + Quickshell";
+
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+
     noctalia = {
       url = "github:noctalia-dev/noctalia-shell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
     quickshell = {
       url = "github:outfoxxed/quickshell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+  };
 
-  }
+  outputs = { self, nixpkgs, noctalia, quickshell, ... }:
+  let
+    system = "x86_64-linux";
+    pkgs = import nixpkgs { inherit system; };
+  in {
+    nixosConfigurations.my-host = nixpkgs.lib.nixosSystem {
+      system = system;
+      modules = [
+        ./configuration.nix
+        # Add noctalia to system packages
+        ({ pkgs, ... }: {
+          environment.systemPackages = [
+            noctalia.packages.${system}.default
+            quickshell.packages.${system}.default
+          ];
+        })
+      ];
+    };
+  };
 }
 ```
 
