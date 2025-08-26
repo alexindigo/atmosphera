@@ -161,18 +161,6 @@ Item {
 
           Loader {
             anchors.centerIn: parent
-            anchors.verticalCenterOffset: {
-              if (model.isFocused)
-                return 0
-              if (model.name && model.name.length > 0)
-                return 1 * scaling
-              return 0
-            }
-            anchors.horizontalCenterOffset: {
-              if (model.name && model.name.length > 0)
-                return 0.5 * scaling
-              return 0
-            }
             active: Settings.data.bar.showWorkspacesNames
             sourceComponent: Component {
               Text {
@@ -185,9 +173,7 @@ Item {
                 }
                 font.pointSize: model.isFocused ? Style.fontSizeXS * scaling : Style.fontSizeXXS * scaling
                 font.capitalization: Font.AllUppercase
-                //font.family: Settings.data.ui.fontFixed
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
+                font.family: Settings.data.ui.fontFixed
                 wrapMode: Text.Wrap
                 color: {
                   if (model.isFocused)
