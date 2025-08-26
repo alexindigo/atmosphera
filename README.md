@@ -79,7 +79,10 @@ Features a modern modular architecture with a status bar, notification system, c
 - `swww` - Wallpaper animations and effects
 - `matugen` - Material You color scheme generation
 - `cava` - Audio visualizer component
-If you want to use the ArchUpdater Widget, make sure you have any polkit agent installed.
+
+> There are 2 more optional dependencies.  
+> Any `polkit agent` to be able to use the ArchUpdater widget.   
+> And also any `xdg-desktop-portal` to be able to use the "Portal" option from the screenRecorder. 
 
 ---
 
