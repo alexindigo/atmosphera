@@ -156,14 +156,17 @@ Item {
         width: root.calculatedWsWidth(model)
 
         Rectangle {
-          id: workspacePill
+          id: pill
           anchors.fill: parent
 
           Loader {
-            anchors.centerIn: parent
             active: Settings.data.bar.showWorkspacesNames
             sourceComponent: Component {
               Text {
+                // Center horizontally
+                x: (pill.width - width) / 2
+                // Center vertically accounting for font metrics
+                y: (pill.height - height) / 2 + (height - contentHeight) / 2
                 text: {
                   if (model.name && model.name.length > 0) {
                     return model.name.substring(0, 2)
