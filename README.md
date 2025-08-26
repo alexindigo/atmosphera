@@ -148,6 +148,9 @@ nix run github:noctalia-dev/noctalia-shell
 
 ### Usage
 
+<details>
+<summary> With the binary </summary>
+
 | Action                      | Command                                   |
 | --------------------------- | ----------------------------------------- |
 | Start the Shell             | `noctalia-shell`                                      |
@@ -162,6 +165,31 @@ nix run github:noctalia-dev/noctalia-shell
 | Toggle Settings Window      | `noctalia-shell ipc call settings toggle`             |
 | Toggle Lock Screen          | `noctalia-shell ipc call lockScreen toggle`           |
 | Toggle Notification History | `noctalia-shell ipc call notifications toggleHistory` |
+
+</details>
+
+
+<details>
+<summary> Without the binary </summary>
+
+| Action                      | Command                                   |
+| --------------------------- | ----------------------------------------- |
+| Start the Shell             | `qs`                                      |
+| Toggle Application Launcher | `qs ipc call launcher toggle`             |
+| Toggle Side Panel           | `qs ipc call sidePanel toggle`            |
+| Open Clipboard History      | `qs ipc call launcher clipboard`          |
+| Open Calculator             | `qs ipc call launcher calculator`         |
+| Increase Brightness         | `qs ipc call brightness increase`         |
+| Decrease Brightness         | `qs ipc call brightness decrease`         |
+| Toggle Power Panel          | `qs ipc call powerPanel toggle`           |
+| Toggle Idle Inhibitor       | `qs ipc call idleInhibitor toggle`        |
+| Toggle Settings Window      | `qs ipc call settings toggle`             |
+| Toggle Lock Screen          | `qs ipc call lockScreen toggle`           |
+| Toggle Notification History | `qs ipc call notifications toggleHistory` |
+
+</details>
+
+
 ### Configuration
 
 Access settings through the side panel (top right button) to configure weather, wallpapers, screen recording, audio, network, and theme options.  
