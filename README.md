@@ -144,6 +144,7 @@ nix run github:noctalia-dev/noctalia-shell
   };
 }
 ```
+</details>
 
 ### Usage
 
