@@ -19,6 +19,9 @@ Loader {
   property bool panelAnchorCentered: false
   property bool panelAnchorLeft: false
   property bool panelAnchorRight: false
+  property bool panelAnchorBottomCentered: false
+  property bool panelAnchorTopCentered: false
+  property color panelBackgroundColor: Color.mSurface
 
   // Animation properties
   readonly property real originalScale: 0.7
@@ -132,7 +135,7 @@ Loader {
 
       Rectangle {
         id: panelBackground
-        color: Color.mSurface
+        color: panelBackgroundColor
         radius: Style.radiusL * scaling
         border.color: Color.mOutline
         border.width: Math.max(1, Style.borderS * scaling)
@@ -141,18 +144,33 @@ Loader {
         height: panelHeight
 
         anchors {
-          centerIn: panelAnchorCentered ? parent : null
-          left: !panelAnchorCentered && panelAnchorLeft ? parent.left : parent.center
-          right: !panelAnchorCentered && panelAnchorRight ? parent.right : parent.center
-          top: !panelAnchorCentered && (Settings.data.bar.position === "top") ? parent.top : undefined
-          bottom: !panelAnchorCentered && (Settings.data.bar.position === "bottom") ? parent.bottom : undefined
+          // Top/bottom centered modes
+          horizontalCenter: (panelAnchorTopCentered || panelAnchorBottomCentered) ? parent.horizontalCenter : undefined
+          top: panelAnchorTopCentered ? parent.top : (!panelAnchorTopCentered && !panelAnchorBottomCentered
+                                                      && !panelAnchorCentered
+                                                      && (Settings.data.bar.position === "top") ? parent.top : undefined)
+          bottom: panelAnchorBottomCentered ? parent.bottom : ((!panelAnchorBottomCentered && !panelAnchorCentered
+                                                                && (Settings.data.bar.position === "bottom")) ? parent.bottom : undefined)
+
+          // Fully centered mode
+          centerIn: (!panelAnchorTopCentered && !panelAnchorBottomCentered && panelAnchorCentered) ? parent : null
+
+          // Side-anchored modes
+          left: (!panelAnchorTopCentered && !panelAnchorBottomCentered && !panelAnchorCentered
+                 && panelAnchorLeft) ? parent.left : parent.center
+          right: (!panelAnchorTopCentered && !panelAnchorBottomCentered && !panelAnchorCentered
+                  && panelAnchorRight) ? parent.right : parent.center
 
           // margins
-          topMargin: !panelAnchorCentered
-                     && (Settings.data.bar.position === "top") ? Style.marginS * scaling : undefined
-          bottomMargin: !panelAnchorCentered
-                        && (Settings.data.bar.position === "bottom") ? Style.marginS * scaling : undefined
-          rightMargin: !panelAnchorCentered && panelAnchorRight ? Style.marginS * scaling : undefined
+          topMargin: panelAnchorTopCentered ? Style.marginS * scaling : (!panelAnchorBottomCentered
+                                                                         && !panelAnchorCentered
+                                                                         && (Settings.data.bar.position
+                                                                             === "top")) ? Style.marginS * scaling : undefined
+          bottomMargin: panelAnchorBottomCentered ? Style.marginS * scaling : (!panelAnchorCentered
+                                                                               && (Settings.data.bar.position
+                                                                                   === "bottom") ? Style.marginS * scaling : undefined)
+          rightMargin: (!panelAnchorTopCentered && !panelAnchorBottomCentered && !panelAnchorCentered
+                        && panelAnchorRight) ? Style.marginS * scaling : undefined
         }
 
         scale: root.scaleValue
