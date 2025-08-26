@@ -87,12 +87,19 @@ If you want to use the ArchUpdater Widget, make sure you have any polkit agent i
 
 ### Installation
 
+#### For Arch
 ```bash
 # Install Quickshell
 yay -S quickshell-git
-
 # Download and install Noctalia (latest release)
 mkdir -p ~/.config/quickshell && curl -sL https://github.com/noctalia-dev/noctalia-shell/releases/latest/download/noctalia-latest.tar.gz | tar -xz --strip-components=1 -C ~/.config/quickshell
+```
+
+
+#### For Nix
+
+```bash
+nix run github:noctalia-dev/noctalia-shell
 ```
 
 ### Usage
