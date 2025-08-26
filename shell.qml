@@ -40,7 +40,6 @@ ShellRoot {
   ScreenCorners {}
   Bar {}
   Dock {}
-  NightLight {}
 
   Notification {
     id: notification
@@ -51,6 +50,8 @@ ShellRoot {
   }
 
   ToastOverlay {}
+
+  NightLightOverlay {}
 
   IPCManager {}
 

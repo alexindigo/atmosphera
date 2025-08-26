@@ -11,23 +11,20 @@ Variants {
     required property ShellScreen modelData
     readonly property real scaling: ScalingService.scale(modelData)
 
-    active: NightLightService.enabled
+    active: NightLightService.isActive
 
     sourceComponent: PanelWindow {
-      id: nightlightWindow
-
       screen: modelData
-      visible: NightLightService.isActive
       color: Color.transparent
-
-      mask: Region {}
-
       anchors {
         top: true
         bottom: true
         left: true
         right: true
       }
+
+      // Ensure a full click through
+      mask: Region {}
 
       WlrLayershell.layer: WlrLayershell.Overlay
       WlrLayershell.exclusionMode: ExclusionMode.Ignore
@@ -37,28 +34,12 @@ Variants {
       Rectangle {
         anchors.fill: parent
         color: NightLightService.overlayColor
-      }
 
-      // Safe connection that checks if the window still exists
-      Connections {
-        target: NightLightService
-        function onIsActiveChanged() {
-          if (nightlightWindow && typeof nightlightWindow.visible !== 'undefined') {
-            nightlightWindow.visible = NightLightService.isActive
+        Behavior on color {
+          ColorAnimation {
+            duration: Style.animationSlow
           }
         }
-      }
-
-      // Cleanup when component is being destroyed
-      Component.onDestruction: {
-        Logger.log("NightLight", "PanelWindow being destroyed")
-      }
-    }
-
-    // Safe state changes
-    onActiveChanged: {
-      if (!active) {
-        Logger.log("NightLight", "Loader deactivating for screen:", modelData.name)
       }
     }
   }

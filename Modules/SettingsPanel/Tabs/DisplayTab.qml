@@ -249,7 +249,7 @@ Item {
         NToggle {
           label: "Enable Night Light"
           description: "Apply a warm color filter to reduce blue light emission."
-          checked: NightLightService.enabled
+          checked: Settings.data.nightLight.enabled
           onToggled: checked => {
                        Settings.data.nightLight.enabled = checked
                      }
@@ -258,62 +258,50 @@ Item {
         NToggle {
           label: "Auto Schedule"
           description: "Automatically enable night light based on time schedule."
-          checked: NightLightService.autoSchedule
-          enabled: NightLightService.enabled
-          onToggled: checked => {
-                       NightLightService.setAutoSchedule(checked)
-                     }
+          checked: Settings.data.nightLight.autoSchedule
+          enabled: Settings.data.nightLight.enabled
+          onToggled: checked => Settings.data.nightLight.autoSchedule = checked
         }
 
-        // Warmth settings
-        NText {
-          text: "Warmth"
-          font.pointSize: Style.fontSizeM * scaling
-          font.weight: Style.fontWeightBold
-          color: Color.mOnSurface
-          enabled: NightLightService.enabled
-        }
+        // Intensity settings
+        ColumnLayout {
+          spacing: Style.marginXS * scaling
 
-        NText {
-          text: "Higher values create warmer (more orange) light, lower values create cooler (more blue) light."
-          font.pointSize: Style.fontSizeS * scaling
-          color: Color.mOnSurfaceVariant
-          wrapMode: Text.WordWrap
-          Layout.fillWidth: true
-          enabled: NightLightService.enabled
+          NText {
+            text: "Intensity"
+            font.pointSize: Style.fontSizeM * scaling
+            font.weight: Style.fontWeightBold
+            color: Color.mOnSurface
+            enabled: Settings.data.nightLight.enabled
+          }
+
+          NText {
+            text: "Higher values create warmer (more orange) light, lower values create cooler (more blue) light."
+            font.pointSize: Style.fontSizeS * scaling
+            color: Color.mOnSurfaceVariant
+            wrapMode: Text.WordWrap
+            Layout.fillWidth: true
+            enabled: Settings.data.nightLight.enabled
+          }
         }
 
         RowLayout {
           spacing: Style.marginS * scaling
           Layout.fillWidth: true
-          enabled: NightLightService.enabled
+          enabled: Settings.data.nightLight.enabled
 
           NSlider {
-            id: warmthSlider
             from: 0
-            to: 10
-            stepSize: 1
-            value: Math.round(NightLightService.warmth * 10)
-            onPressedChanged: {
-              if (!pressed) {
-                NightLightService.setWarmth(value / 10)
-              }
-            }
+            to: 1
+            stepSize: 0.01
+            value: Settings.data.nightLight.intensity
+            onMoved: Settings.data.nightLight.intensity = value
             Layout.fillWidth: true
             Layout.minimumWidth: 150 * scaling
           }
 
-          Connections {
-            target: NightLightService
-            function onWarmthChanged() {
-              if (!warmthSlider.pressed) {
-                warmthSlider.value = Math.round(NightLightService.warmth * 10)
-              }
-            }
-          }
-
           NText {
-            text: `${warmthSlider.value}`
+            text: `${Math.round(Settings.data.nightLight.intensity * 100)}%`
             Layout.alignment: Qt.AlignVCenter
             Layout.minimumWidth: 60 * scaling
             horizontalAlignment: Text.AlignRight
@@ -321,55 +309,55 @@ Item {
         }
 
         // Schedule settings
-        NText {
-          text: "Schedule"
-          font.pointSize: Style.fontSizeM * scaling
-          font.weight: Style.fontWeightBold
-          color: Color.mOnSurface
-          enabled: NightLightService.enabled
-        }
+        ColumnLayout {
+          spacing: Style.marginXS * scaling
 
-        RowLayout {
-          spacing: Style.marginL * scaling
-          Layout.fillWidth: true
-          enabled: NightLightService.enabled
-
-          ColumnLayout {
-            spacing: Style.marginXXS * scaling
-            Layout.fillWidth: true
-
-            NText {
-              text: "Start Time"
-              font.pointSize: Style.fontSizeS * scaling
-              color: Color.mOnSurfaceVariant
-            }
-
-            NComboBox {
-              model: timeOptions
-              currentKey: NightLightService.startTime
-              placeholder: "Select time"
-              onSelected: function (key) {
-                NightLightService.setSchedule(key, NightLightService.stopTime)
-              }
-            }
+          NText {
+            text: "Schedule"
+            font.pointSize: Style.fontSizeM * scaling
+            font.weight: Style.fontWeightBold
+            color: Color.mOnSurface
+            enabled: Settings.data.nightLight.enabled
           }
 
-          ColumnLayout {
-            spacing: Style.marginXXS * scaling
+          RowLayout {
+            spacing: Style.marginL * scaling
             Layout.fillWidth: true
+            enabled: Settings.data.nightLight.enabled
 
-            NText {
-              text: "Stop Time"
-              font.pointSize: Style.fontSizeS * scaling
-              color: Color.mOnSurfaceVariant
+            ColumnLayout {
+              spacing: Style.marginXXS * scaling
+              Layout.fillWidth: true
+
+              NText {
+                text: "Start Time"
+                font.pointSize: Style.fontSizeS * scaling
+                color: Color.mOnSurfaceVariant
+              }
+
+              NComboBox {
+                model: timeOptions
+                currentKey: Settings.data.nightLight.startTime
+                placeholder: "Select start time"
+                onSelected: key => Settings.data.nightLight.startTime = key
+              }
             }
 
-            NComboBox {
-              model: timeOptions
-              currentKey: NightLightService.stopTime
-              placeholder: "Select time"
-              onSelected: function (key) {
-                NightLightService.setSchedule(NightLightService.startTime, key)
+            ColumnLayout {
+              spacing: Style.marginXXS * scaling
+              Layout.fillWidth: true
+
+              NText {
+                text: "Stop Time"
+                font.pointSize: Style.fontSizeS * scaling
+                color: Color.mOnSurfaceVariant
+              }
+
+              NComboBox {
+                model: timeOptions
+                currentKey: Settings.data.nightLight.stopTime
+                placeholder: "Select stop time"
+                onSelected: key => Settings.data.nightLight.stopTime = key
               }
             }
           }
