@@ -17,7 +17,7 @@ Variants {
     required property ShellScreen modelData
     readonly property real scaling: ScalingService.scale(modelData)
 
-    active: modelData ? Settings.data.dock.monitors.includes(modelData.name) : false
+    active: Settings.isLoaded && modelData ? Settings.data.dock.monitors.includes(modelData.name) : false
 
     sourceComponent: PanelWindow {
       id: dockWindow

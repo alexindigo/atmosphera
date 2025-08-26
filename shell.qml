@@ -48,7 +48,7 @@ ShellRoot {
     id: lockScreen
   }
 
-  ToastManager {}
+  ToastOverlay {}
 
   IPCManager {}
 

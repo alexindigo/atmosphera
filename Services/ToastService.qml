@@ -12,7 +12,7 @@ Singleton {
   property var messageQueue: []
   property bool isShowingToast: false
 
-  // Reference to all toast instances (set by ToastManager)
+  // Reference to all toast instances (set by ToastOverlay)
   property var allToasts: []
 
   // Properties for command checking
@@ -197,6 +197,7 @@ Singleton {
       toast.type = toastData.type
       toast.persistent = toastData.persistent
       toast.duration = toastData.duration
+
       toast.show()
     }
   }
@@ -235,9 +236,5 @@ Singleton {
         allToasts[i].hide()
       }
     }
-  }
-
-  Component.onCompleted: {
-
   }
 }

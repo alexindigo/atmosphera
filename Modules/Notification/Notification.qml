@@ -25,9 +25,10 @@ Variants {
     property var removingNotifications: ({})
 
     // If no notification display activated in settings, then show them all
-    active: modelData ? (Settings.data.notifications.monitors.includes(modelData.name)
-                         || (Settings.data.notifications.monitors.length === 0))
-                        && (NotificationService.notificationModel.count > 0) : false
+    active: Settings.isLoaded && modelData ? (Settings.data.notifications.monitors.includes(modelData.name)
+                                              || (Settings.data.notifications.monitors.length === 0)) : false
+
+    visible: (NotificationService.notificationModel.count > 0)
 
     sourceComponent: PanelWindow {
       screen: modelData
