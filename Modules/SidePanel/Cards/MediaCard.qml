@@ -51,6 +51,7 @@ NBox {
 
       Item {
         Layout.fillWidth: true
+        Layout.fillHeight: true
       }
     }
 
@@ -330,7 +331,7 @@ NBox {
     }
 
     Loader {
-      active: Settings.data.audio.visualizerType == "linear"
+      active: Settings.data.audio.visualizerType == "linear" && MediaService.isPlaying && MediaService.trackLength > 0
       Layout.alignment: Qt.AlignHCenter
 
       sourceComponent: LinearSpectrum {
@@ -343,7 +344,7 @@ NBox {
     }
 
     Loader {
-      active: Settings.data.audio.visualizerType == "mirrored"
+      active: Settings.data.audio.visualizerType == "mirrored" && MediaService.isPlaying && MediaService.trackLength > 0
       Layout.alignment: Qt.AlignHCenter
 
       sourceComponent: MirroredSpectrum {
@@ -356,7 +357,7 @@ NBox {
     }
 
     Loader {
-      active: Settings.data.audio.visualizerType == "wave"
+      active: Settings.data.audio.visualizerType == "wave" && MediaService.isPlaying && MediaService.trackLength > 0
       Layout.alignment: Qt.AlignHCenter
 
       sourceComponent: WaveSpectrum {

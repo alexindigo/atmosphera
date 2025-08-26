@@ -50,7 +50,7 @@ Row {
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
         active: Settings.data.audio.showMiniplayerCava && Settings.data.audio.visualizerType == "linear"
-                && MediaService.isPlaying
+                && MediaService.isPlaying && MediaService.trackLength > 0
         z: 0
 
         sourceComponent: LinearSpectrum {
@@ -65,7 +65,7 @@ Row {
           anchors.verticalCenter: parent.verticalCenter
           anchors.horizontalCenter: parent.horizontalCenter
           active: Settings.data.audio.showMiniplayerCava && Settings.data.audio.visualizerType == "mirrored"
-                  && MediaService.isPlaying
+                  && MediaService.isPlaying && MediaService.trackLength > 0
           z: 0
 
           sourceComponent: MirroredSpectrum {
@@ -81,7 +81,7 @@ Row {
           anchors.verticalCenter: parent.verticalCenter
           anchors.horizontalCenter: parent.horizontalCenter
           active: Settings.data.audio.showMiniplayerCava && Settings.data.audio.visualizerType == "wave"
-                  && MediaService.isPlaying
+                  && MediaService.isPlaying && MediaService.trackLength > 0
           z: 0
 
           sourceComponent: WaveSpectrum {

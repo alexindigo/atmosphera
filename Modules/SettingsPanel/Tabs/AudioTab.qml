@@ -227,6 +227,134 @@ ColumnLayout {
         Layout.bottomMargin: Style.marginXL * scaling
       }
 
+      // MPRIS Player Preferences
+      ColumnLayout {
+        spacing: Style.marginL * scaling
+        Layout.fillWidth: true
+
+        NText {
+          text: "MPRIS Player Preferences"
+          font.pointSize: Style.fontSizeXXL * scaling
+          font.weight: Style.fontWeightBold
+          color: Color.mOnSurface
+          Layout.bottomMargin: Style.marginS * scaling
+        }
+
+        // Preferred player (persistent)
+        NTextInput {
+          label: "Preferred Player"
+          description: "Substring to match MPRIS player (identity/bus/desktop)."
+          placeholderText: "e.g. spotify, vlc, mpv"
+          text: Settings.data.audio.preferredPlayer
+          onTextChanged: {
+            Settings.data.audio.preferredPlayer = text
+            MediaService.updateCurrentPlayer()
+          }
+        }
+
+        // Blacklist editor
+        ColumnLayout {
+          spacing: Style.marginS * scaling
+          Layout.fillWidth: true
+
+          RowLayout {
+            spacing: Style.marginS * scaling
+            Layout.fillWidth: true
+
+            NTextInput {
+              id: blacklistInput
+              Layout.fillWidth: true
+              Layout.alignment: Qt.AlignTop
+              label: "Blacklist player"
+              description: "Substring, e.g. plex, shim, mpv"
+              placeholderText: "type substring and press +"
+            }
+
+            // Button aligned to the center of the actual input field
+            NIconButton {
+              icon: "add"
+              Layout.alignment: Qt.AlignBottom
+              Layout.bottomMargin: blacklistInput.description ? Style.marginS * scaling : 0
+              onClicked: {
+                const val = (blacklistInput.text || "").trim()
+                if (val !== "") {
+                  const arr = (Settings.data.audio.mprisBlacklist || [])
+                  if (!arr.find(x => String(x).toLowerCase() === val.toLowerCase())) {
+                    Settings.data.audio.mprisBlacklist = [...arr, val]
+                    blacklistInput.text = ""
+                    MediaService.updateCurrentPlayer()
+                  }
+                }
+              }
+            }
+          }
+
+          // Current blacklist entries
+          Flow {
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.marginS * scaling
+            spacing: Style.marginS * scaling
+
+            Repeater {
+              model: Settings.data.audio.mprisBlacklist
+              delegate: Rectangle {
+                required property string modelData
+                // Padding around the inner row
+                property real pad: Style.marginS * scaling
+                // Visuals
+                color: Color.applyOpacity(Color.mOnSurface, "20")
+                border.color: Color.applyOpacity(Color.mOnSurface, "50")
+                border.width: Math.max(1, Style.borderS * scaling)
+
+                // Content
+                RowLayout {
+                  id: chipRow
+                  spacing: Style.marginXS * scaling
+                  anchors.fill: parent
+                  anchors.margins: pad
+
+                  NText {
+                    text: modelData
+                    color: Color.mOnSurface
+                    font.pointSize: Style.fontSizeS * scaling
+                    Layout.alignment: Qt.AlignVCenter
+                    Layout.leftMargin: Style.marginS * scaling
+                  }
+
+                  NIconButton {
+                    icon: "close"
+                    sizeRatio: 0.8
+                    Layout.alignment: Qt.AlignVCenter
+                    Layout.rightMargin: Style.marginXS * scaling
+                    onClicked: {
+                      const arr = (Settings.data.audio.mprisBlacklist || [])
+                      const idx = arr.findIndex(x => String(x) === modelData)
+                      if (idx >= 0) {
+                        arr.splice(idx, 1)
+                        Settings.data.audio.mprisBlacklist = arr
+                        MediaService.updateCurrentPlayer()
+                      }
+                    }
+                  }
+                }
+
+                // Intrinsic size derived from inner row + padding
+                implicitWidth: chipRow.implicitWidth + pad * 2
+                implicitHeight: Math.max(chipRow.implicitHeight + pad * 2, Style.baseWidgetSize * 0.8 * scaling)
+                radius: Style.radiusM * scaling
+              }
+            }
+          }
+        }
+      }
+
+      // Divider
+      NDivider {
+        Layout.fillWidth: true
+        Layout.topMargin: Style.marginXL * scaling
+        Layout.bottomMargin: Style.marginXL * scaling
+      }
+
       // Bar Mini Media player
       ColumnLayout {
         spacing: Style.marginL * scaling

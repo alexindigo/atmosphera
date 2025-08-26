@@ -218,6 +218,9 @@ Singleton {
         property string visualizerType: "linear"
         property int volumeStep: 5
         property int cavaFrameRate: 60
+        // MPRIS controls
+        property list<string> mprisBlacklist: []
+        property string preferredPlayer: ""
       }
 
       // ui

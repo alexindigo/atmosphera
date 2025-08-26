@@ -12,7 +12,7 @@ Singleton {
   property var currentPlayer: null
   property real currentPosition: 0
   property int selectedPlayerIndex: 0
-  property bool isPlaying: currentPlayer ? currentPlayer.isPlaying : false
+  property bool isPlaying: currentPlayer ? (currentPlayer.playbackState === MprisPlaybackState.Playing || currentPlayer.isPlaying) : false
   property string trackTitle: currentPlayer ? (currentPlayer.trackTitle || "") : ""
   property string trackArtist: currentPlayer ? (currentPlayer.trackArtist || "") : ""
   property string trackAlbum: currentPlayer ? (currentPlayer.trackAlbum || "") : ""
@@ -37,11 +37,24 @@ Singleton {
     let allPlayers = Mpris.players.values
     let controllablePlayers = []
 
+    // Apply blacklist and controllable filter
+    const blacklist = (Settings.data.audio && Settings.data.audio.mprisBlacklist) ? Settings.data.audio.mprisBlacklist : []
     for (var i = 0; i < allPlayers.length; i++) {
       let player = allPlayers[i]
-      if (player && player.canControl) {
+      if (!player)
+        continue
+      const identity = String(player.identity || "")
+      const busName = String(player.busName || "")
+      const desktop = String(player.desktopEntry || "")
+      const idKey = identity.toLowerCase()
+      const match = blacklist.find(b => {
+        const s = String(b || "").toLowerCase()
+        return s && (idKey.includes(s) || busName.toLowerCase().includes(s) || desktop.toLowerCase().includes(s))
+      })
+      if (match)
+        continue
+      if (player.canControl)
         controllablePlayers.push(player)
-      }
     }
 
     return controllablePlayers
@@ -52,6 +65,22 @@ Singleton {
     if (availablePlayers.length === 0) {
       Logger.log("Media", "No active player found")
       return null
+    }
+
+    // Preferred player logic (preferred > fallback)
+    const preferred = (Settings.data.audio.preferredPlayer || "")
+    if (preferred !== "") {
+      for (var i = 0; i < availablePlayers.length; i++) {
+        const p = availablePlayers[i]
+        const identity = String(p.identity || "").toLowerCase()
+        const busName = String(p.busName || "").toLowerCase()
+        const desktop = String(p.desktopEntry || "").toLowerCase()
+        const pref = preferred.toLowerCase()
+        if (identity.includes(pref) || busName.includes(pref) || desktop.includes(pref)) {
+          selectedPlayerIndex = i
+          return p
+        }
+      }
     }
 
     if (selectedPlayerIndex < availablePlayers.length) {
