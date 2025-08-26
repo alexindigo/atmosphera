@@ -102,6 +102,22 @@ mkdir -p ~/.config/quickshell && curl -sL https://github.com/noctalia-dev/noctal
 nix run github:noctalia-dev/noctalia-shell
 ```
 
+
+
+##### For flakes
+
+```nix
+{
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    noctalia = {
+      url = "github:noctalia-dev/noctalia-shell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    }    
+  }
+}
+```
+
 ### Usage
 
 ```bash
