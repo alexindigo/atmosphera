@@ -34,16 +34,6 @@ Item {
           color: Color.mOnSurface
         }
 
-        // Bar Visibility Section
-        NToggle {
-          label: "Show Bar Icon"
-          description: "Display the brightness control icon in the bar."
-          checked: Settings.data.bar.showBrightness
-          onToggled: checked => {
-                       Settings.data.bar.showBrightness = checked
-                     }
-        }
-
         // Brightness Step Section
         ColumnLayout {
           spacing: Style.marginS * scaling
