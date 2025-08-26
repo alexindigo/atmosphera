@@ -148,7 +148,6 @@ nix run github:noctalia-dev/noctalia-shell
 
 ### Usage
 
-```bash
 | Action                      | Command                                   |
 | --------------------------- | ----------------------------------------- |
 | Start the Shell             | `qs`                                      |
