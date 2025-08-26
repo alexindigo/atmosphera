@@ -21,6 +21,7 @@ import qs.Modules.Calendar
 import qs.Modules.Dock
 import qs.Modules.IPC
 import qs.Modules.LockScreen
+import qs.Modules.NightLight
 import qs.Modules.Notification
 import qs.Modules.SettingsPanel
 import qs.Modules.PowerPanel
@@ -39,6 +40,7 @@ ShellRoot {
   ScreenCorners {}
   Bar {}
   Dock {}
+  NightLight {}
 
   Notification {
     id: notification
