@@ -50,7 +50,7 @@ NPanel {
         NIconButton {
           icon: "close"
           tooltipText: "Close"
-          sizeMultiplier: 0.8
+          sizeRatio: 0.8
           onClicked: root.close()
         }
       }

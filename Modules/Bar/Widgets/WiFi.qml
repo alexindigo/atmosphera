@@ -15,7 +15,7 @@ NIconButton {
 
   visible: Settings.data.network.wifiEnabled
 
-  sizeMultiplier: 0.8
+  sizeRatio: 0.8
 
   Component.onCompleted: {
     Logger.log("WiFi", "Widget component completed")

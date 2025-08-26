@@ -14,7 +14,7 @@ Item {
   property color iconCircleColor: Color.mPrimary
   property color iconTextColor: Color.mSurface
   property color collapsedIconColor: Color.mOnSurface
-  property real sizeMultiplier: 0.8
+  property real sizeRatio: 0.8
   property bool autoHide: false
   property bool forceOpen: false
   property bool disableOpen: false
@@ -34,8 +34,8 @@ Item {
   property bool shouldAnimateHide: false
 
   // Exposed width logic
-  readonly property int pillHeight: Style.baseWidgetSize * sizeMultiplier * scaling
-  readonly property int iconSize: Style.baseWidgetSize * sizeMultiplier * scaling
+  readonly property int pillHeight: Style.baseWidgetSize * sizeRatio * scaling
+  readonly property int iconSize: Style.baseWidgetSize * sizeRatio * scaling
   readonly property int pillPaddingHorizontal: Style.marginM * scaling
   readonly property int pillOverlap: iconSize * 0.5
   readonly property int maxPillWidth: Math.max(1, textItem.implicitWidth + pillPaddingHorizontal * 2 + pillOverlap)

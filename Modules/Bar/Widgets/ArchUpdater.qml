@@ -12,7 +12,7 @@ NIconButton {
   property ShellScreen screen
   property real scaling: ScalingService.scale(screen)
 
-  sizeMultiplier: 0.8
+  sizeRatio: 0.8
   colorBg: Color.mSurfaceVariant
   colorFg: Color.mOnSurface
   colorBorder: Color.transparent

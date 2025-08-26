@@ -14,7 +14,7 @@ NIconButton {
   property real scaling: ScalingService.scale(screen)
 
   visible: Settings.data.network.bluetoothEnabled
-  sizeMultiplier: 0.8
+  sizeRatio: 0.8
   colorBg: Color.mSurfaceVariant
   colorFg: Color.mOnSurface
   colorBorder: Color.transparent

@@ -11,7 +11,7 @@ NIconButton {
 
   icon: "widgets"
   tooltipText: "Open Side Panel"
-  sizeMultiplier: 0.8
+  sizeRatio: 0.8
 
   colorBg: Color.mSurfaceVariant
   colorFg: Color.mOnSurface

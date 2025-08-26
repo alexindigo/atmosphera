@@ -46,14 +46,14 @@ NPanel {
         NIconButton {
           icon: "delete"
           tooltipText: "Clear History"
-          sizeMultiplier: 0.8
+          sizeRatio: 0.8
           onClicked: NotificationService.clearHistory()
         }
 
         NIconButton {
           icon: "close"
           tooltipText: "Close"
-          sizeMultiplier: 0.8
+          sizeRatio: 0.8
           onClicked: {
             root.close()
           }
@@ -159,7 +159,7 @@ NPanel {
             NIconButton {
               icon: "delete"
               tooltipText: "Delete Notification"
-              sizeMultiplier: 0.7
+              sizeRatio: 0.7
 
               onClicked: {
                 Logger.log("NotificationHistory", "Removing notification:", summary)

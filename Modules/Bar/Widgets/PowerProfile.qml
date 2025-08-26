@@ -14,7 +14,7 @@ NIconButton {
   property var powerProfiles: PowerProfiles
   readonly property bool hasPP: powerProfiles.hasPerformanceProfile
 
-  sizeMultiplier: 0.8
+  sizeRatio: 0.8
   visible: hasPP
 
   function profileIcon() {

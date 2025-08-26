@@ -177,7 +177,7 @@ Item {
         color: Color.mOnSurface
 
         fontPointSize: Style.fontSize * scaling
-        sizeMultiplier: 0.8
+        sizeRatio: 0.8
         Layout.alignment: Qt.AlignTop
 
         onClicked: hide()

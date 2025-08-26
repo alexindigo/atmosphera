@@ -52,7 +52,7 @@ NPanel {
         NIconButton {
           icon: "refresh"
           tooltipText: "Refresh Networks"
-          sizeMultiplier: 0.8
+          sizeRatio: 0.8
           enabled: Settings.data.network.wifiEnabled && !NetworkService.isLoading
           onClicked: {
             NetworkService.refreshNetworks()
@@ -62,7 +62,7 @@ NPanel {
         NIconButton {
           icon: "close"
           tooltipText: "Close"
-          sizeMultiplier: 0.8
+          sizeRatio: 0.8
           onClicked: {
             root.close()
           }

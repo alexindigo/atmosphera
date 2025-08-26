@@ -8,8 +8,9 @@ Rectangle {
   id: root
 
   // Multiplier to control how large the button container is relative to Style.baseWidgetSize
-  property real sizeMultiplier: 1.0
-  property real size: Style.baseWidgetSize * sizeMultiplier * scaling
+  property real sizeRatio: 1.0
+  readonly property real size: Style.baseWidgetSize * sizeRatio * scaling
+
   property string icon
   property string tooltipText
   property bool enabled: true
@@ -26,6 +27,9 @@ Rectangle {
   signal entered
   signal exited
   signal clicked
+
+
+
 
   implicitWidth: size
   implicitHeight: size

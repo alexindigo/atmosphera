@@ -157,7 +157,7 @@ NBox {
 
             NIconButton {
               icon: "close"
-              size: 20 * scaling
+              sizeRatio: 0.6
               colorBorder: Color.applyOpacity(Color.mOutline, "40")
               colorBg: Color.mOnSurface
               colorFg: Color.mOnPrimary
