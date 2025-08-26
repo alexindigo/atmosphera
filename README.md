@@ -87,29 +87,52 @@ If you want to use the ArchUpdater Widget, make sure you have any polkit agent i
 
 ### Installation
 
-#### For Arch
+#### Arch Linux
+
+<details>
+<summary><strong>AUR</strong></summary>
+
+You can install Noctalia from the [AUR](https://aur.archlinux.org/packages/noctalia-shell). This method will install the shell system-wide.
+
+```bash
+paru -S noctalia-shell
+```
+
+**Note:** When installed from the AUR, you must use the `-c noctalia-shell` flag to run the shell and any IPC commands. For example, to start the shell, run `qs -c noctalia-shell`. See the [Usage](#usage) section for more details.
+
+</details>
+
+<details>
+<summary><strong>Manual Installation</strong></summary>
+
+This method installs the shell to your local user configuration.
+
 ```bash
 # Install Quickshell
-yay -S quickshell-git
+paru -S quickshell-git
 # Download and install Noctalia (latest release)
 mkdir -p ~/.config/quickshell && curl -sL https://github.com/noctalia-dev/noctalia-shell/releases/latest/download/noctalia-latest.tar.gz | tar -xz --strip-components=1 -C ~/.config/quickshell
 ```
 
+</details>
 
-#### For Nix
+#### Nix
 
+<details>
+<summary><strong>Nix Installation</strong></summary>
+
+You can run Noctalia directly using the `nix run` command:
 ```bash
 nix run github:noctalia-dev/noctalia-shell
 ```
 
-<details>
-<summary><strong>For flakes</strong></summary>
+Alternatively, you can add it to your NixOS configuration or flake:
 
-**Step 1**: Add quickshell and noctalia flakes
-
+**Step 1**: Add Quickshell and Noctalia flakes to your `flake.nix`:
 ```nix
-
 {
+  description = "Example Nix flake with Noctalia + Quickshell";
+
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
@@ -138,11 +161,8 @@ nix run github:noctalia-dev/noctalia-shell
 }
 ```
 
-and in `configuration.nix`
-
+**Step 2**: Add the packages to your `configuration.nix`:
 ```nix
-
-# your configuration.nix
 {
   environment.systemPackages = with pkgs; [
     noctalia.packages.${system}.default
@@ -150,7 +170,6 @@ and in `configuration.nix`
   ];
 }
 ```
-
 
 </details>
 
@@ -178,7 +197,9 @@ and in `configuration.nix`
 
 
 <details>
-<summary> Without the binary </summary>
+<summary> Without the binary (Manual or AUR install) </summary>
+
+The following commands apply to a manual installation. If you installed Noctalia via the AUR package, you must add the `-c noctalia-shell` flag to each command (e.g., `qs -c noctalia-shell ipc call launcher toggle`).
 
 | Action                      | Command                                   |
 | --------------------------- | ----------------------------------------- |
