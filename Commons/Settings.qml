@@ -261,7 +261,7 @@ Singleton {
       // night light
       property JsonObject nightLight: JsonObject {
         property bool enabled: false
-        property real warmth: 0.0
+        property real warmth: 0.1
         property real intensity: 0.8
         property string startTime: "20:00"
         property string stopTime: "07:00"

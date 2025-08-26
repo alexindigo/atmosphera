@@ -20,7 +20,7 @@ Singleton {
 
   // Computed properties
   property color overlayColor: enabled ? calculateOverlayColor() : "transparent"
-  property bool isActive: enabled && (autoSchedule ? isWithinSchedule() : true)
+  property bool isActive: enabled && warmth > 0 && (autoSchedule ? isWithinSchedule() : true)
 
   Component.onCompleted: {
     Logger.log("NightLight", "Service started")
