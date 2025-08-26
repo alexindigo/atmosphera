@@ -122,7 +122,7 @@ Singleton {
         property bool showActiveWindowIcon: true
         property bool alwaysShowBatteryPercentage: false
         property real backgroundOpacity: 1.0
-        property bool showWorkspaceNames: false
+        property bool showWorkspacesNames: false
         property list<string> monitors: []
 
         // Widget configuration for modular bar system

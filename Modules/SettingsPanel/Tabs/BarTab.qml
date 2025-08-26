@@ -121,19 +121,19 @@ ColumnLayout {
 
         NToggle {
           label: "Show Battery Percentage"
-          description: "Show battery percentage at all times."
+          description: "Display battery percentage at all times."
           checked: Settings.data.bar.alwaysShowBatteryPercentage
           onToggled: checked => {
                        Settings.data.bar.alwaysShowBatteryPercentage = checked
                      }
         }
-        
+
         NToggle {
-          label: "Show Workspace Names"
-          description: "Show the workspace names on the workspace indicators"
-          checked: Settings.data.bar.showWorkspaceNames
+          label: "Show Workspaces Names"
+          description: "Display the workspace name in the workspace indicator"
+          checked: Settings.data.bar.showWorkspacesNames
           onToggled: checked => {
-                       Settings.data.bar.showWorkspaceNames = checked
+                       Settings.data.bar.showWorkspacesNames = checked
                      }
         }
 

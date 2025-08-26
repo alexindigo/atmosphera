@@ -27,21 +27,25 @@ Item {
 
   signal workspaceChanged(int workspaceId, color accentColor)
 
-  implicitHeight: Math.round(36 * scaling)
+  implicitHeight: Math.round(Style.barHeight * scaling)
   implicitWidth: {
     let total = 0
     for (var i = 0; i < localWorkspaces.count; i++) {
       const ws = localWorkspaces.get(i)
-      if (ws.isFocused)
-        total += Math.round(44 * scaling)
-      else if (ws.isActive)
-        total += Math.round(28 * scaling)
-      else
-        total += Math.round(16 * scaling)
+      total += calculatedWsWidth(ws)
     }
     total += Math.max(localWorkspaces.count - 1, 0) * spacingBetweenPills
     total += horizontalPadding * 2
     return total
+  }
+
+  function calculatedWsWidth(ws) {
+    if (ws.isFocused)
+      return Math.round(44 * scaling)
+    else if (ws.isActive)
+      return Math.round(28 * scaling)
+    else
+      return Math.round(20 * scaling)
   }
 
   Component.onCompleted: {
@@ -148,15 +152,8 @@ Item {
       model: localWorkspaces
       Item {
         id: workspacePillContainer
-        height: Math.round(12 * scaling)
-        width: {
-          if (model.isFocused)
-            return Math.round(44 * scaling)
-          else if (model.isActive)
-            return Math.round(28 * scaling)
-          else
-            return Math.round(16 * scaling)
-        }
+        height: Math.round(18 * scaling)
+        width: root.calculatedWsWidth(model)
 
         Rectangle {
           id: workspacePill
@@ -164,25 +161,31 @@ Item {
 
           Loader {
             anchors.centerIn: parent
-            active: Settings.data.bar.showWorkspaceNames 
+            active: Settings.data.bar.showWorkspacesNames
             sourceComponent: Component {
               Text {
-                text: model.name.substring(0,2)
+                text: model.name.substring(0, 2)
                 font.pointSize: Style.fontSizeXS * scaling
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 wrapMode: Text.Wrap
+                color: {
+                  if (model.isFocused)
+                    return Color.mOnPrimary
+                  if (model.isUrgent)
+                    return Color.mOnError
+                  if (model.isActive || model.isOccupied)
+                    return Color.mOnSecondary
+                  if (model.isUrgent)
+                    return Color.mOnError
+
+                  return Color.mOnSurface
+                }
               }
             }
           }
 
-          radius: {
-            if (model.isFocused)
-              return Math.round(12 * scaling)
-            else
-              // half of focused height (if you want to animate this too)
-              return Math.round(6 * scaling)
-          }
+          radius: width * 0.5
           color: {
             if (model.isFocused)
               return Color.mPrimary
