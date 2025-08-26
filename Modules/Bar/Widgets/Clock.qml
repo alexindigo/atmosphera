@@ -38,7 +38,7 @@ Rectangle {
     }
     onClicked: {
       tooltip.hide()
-      PanelService.getPanel("calendarPanel")?.toggle(screen)
+      PanelService.getPanel("calendarPanel")?.toggle(screen, this)
     }
   }
 }

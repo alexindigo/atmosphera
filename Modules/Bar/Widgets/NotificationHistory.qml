@@ -20,5 +20,5 @@ NIconButton {
   colorFg: Color.mOnSurface
   colorBorder: Color.transparent
   colorBorderHover: Color.transparent
-  onClicked: PanelService.getPanel("notificationHistoryPanel")?.toggle(screen)
+  onClicked: PanelService.getPanel("notificationHistoryPanel")?.toggle(screen, this)
 }

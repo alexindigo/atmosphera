@@ -66,7 +66,7 @@ NIconButton {
 
     if (ArchUpdaterService.updatePackages.length > 0) {
       // Show confirmation dialog for updates
-      PanelService.getPanel("archUpdaterPanel").toggle(screen)
+      PanelService.getPanel("archUpdaterPanel").toggle(screen, this)
     } else {
       // Just refresh if no updates available
       ArchUpdaterService.doPoll()

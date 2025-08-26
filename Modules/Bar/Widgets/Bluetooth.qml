@@ -31,5 +31,5 @@ NIconButton {
     }
   }
   tooltipText: "Bluetooth Devices"
-  onClicked: PanelService.getPanel("bluetoothPanel")?.toggle(screen)
+  onClicked: PanelService.getPanel("bluetoothPanel")?.toggle(screen, this)
 }
