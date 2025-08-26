@@ -87,59 +87,108 @@ If you want to use the ArchUpdater Widget, make sure you have any polkit agent i
 
 ### Installation
 
+#### For Arch
 ```bash
 # Install Quickshell
 yay -S quickshell-git
-
 # Download and install Noctalia (latest release)
 mkdir -p ~/.config/quickshell && curl -sL https://github.com/noctalia-dev/noctalia-shell/releases/latest/download/noctalia-latest.tar.gz | tar -xz --strip-components=1 -C ~/.config/quickshell
 ```
 
-### Usage
+
+#### For Nix
 
 ```bash
-# Start the shell
-qs
-
-# Launcher
-qs ipc call launcher toggle
-
-# SidePanel
-qs ipc call sidePanel toggle
-
-# Clipboard History
-qs ipc call launcher clipboard
-
-# Calculator
-qs ipc call launcher calculator
-
-# Brightness
-qs ipc call brightness increase
-qs ipc call brightness decrease
-
-# Power Panel
-qs ipc call powerPanel toggle
-
-# Idle Inhibitor
-qs ipc call idleInhibitor toggle
-
-# Settings Window
-qs ipc call settings toggle
-
-# Toggle lock screen
-qs ipc call lockScreen toggle
+nix run github:noctalia-dev/noctalia-shell
 ```
 
-### Keybinds
+<details>
+<summary><strong>For flakes</strong></summary>
 
-| Action | Command |
-|--------|---------|
-| Toggle Application Launcher | `qs ipc call appLauncher toggle` |
-| Toggle Lock Screen | `qs ipc call lockScreen toggle` |
+```nix
+{
+  description = "Example Nix flake with Noctalia + Quickshell";
+
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+
+    noctalia = {
+      url = "github:noctalia-dev/noctalia-shell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    quickshell = {
+      url = "github:outfoxxed/quickshell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
+
+  outputs = { self, nixpkgs, noctalia, quickshell, ... }:
+  let
+    system = "x86_64-linux";
+    pkgs = import nixpkgs { inherit system; };
+  in {
+    nixosConfigurations.my-host = nixpkgs.lib.nixosSystem {
+      system = system;
+      modules = [
+        ./configuration.nix
+        # Add noctalia to system packages
+        ({ pkgs, ... }: {
+          environment.systemPackages = [
+            noctalia.packages.${system}.default
+            quickshell.packages.${system}.default
+          ];
+        })
+      ];
+    };
+  };
+}
+```
+</details>
+
+### Usage
+
+<details>
+<summary> With the binary </summary>
+
+| Action                      | Command                                   |
+| --------------------------- | ----------------------------------------- |
+| Start the Shell             | `noctalia-shell`                                      |
+| Toggle Application Launcher | `noctalia-shell ipc call launcher toggle`             |
+| Toggle Side Panel           | `noctalia-shell ipc call sidePanel toggle`            |
+| Open Clipboard History      | `noctalia-shell ipc call launcher clipboard`          |
+| Open Calculator             | `noctalia-shell ipc call launcher calculator`         |
+| Increase Brightness         | `noctalia-shell ipc call brightness increase`         |
+| Decrease Brightness         | `noctalia-shell ipc call brightness decrease`         |
+| Toggle Power Panel          | `noctalia-shell ipc call powerPanel toggle`           |
+| Toggle Idle Inhibitor       | `noctalia-shell ipc call idleInhibitor toggle`        |
+| Toggle Settings Window      | `noctalia-shell ipc call settings toggle`             |
+| Toggle Lock Screen          | `noctalia-shell ipc call lockScreen toggle`           |
+| Toggle Notification History | `noctalia-shell ipc call notifications toggleHistory` |
+
+</details>
+
+
+<details>
+<summary> Without the binary </summary>
+
+| Action                      | Command                                   |
+| --------------------------- | ----------------------------------------- |
+| Start the Shell             | `qs`                                      |
+| Toggle Application Launcher | `qs ipc call launcher toggle`             |
+| Toggle Side Panel           | `qs ipc call sidePanel toggle`            |
+| Open Clipboard History      | `qs ipc call launcher clipboard`          |
+| Open Calculator             | `qs ipc call launcher calculator`         |
+| Increase Brightness         | `qs ipc call brightness increase`         |
+| Decrease Brightness         | `qs ipc call brightness decrease`         |
+| Toggle Power Panel          | `qs ipc call powerPanel toggle`           |
+| Toggle Idle Inhibitor       | `qs ipc call idleInhibitor toggle`        |
+| Toggle Settings Window      | `qs ipc call settings toggle`             |
+| Toggle Lock Screen          | `qs ipc call lockScreen toggle`           |
 | Toggle Notification History | `qs ipc call notifications toggleHistory` |
-| Toggle Settings Panel | `qs ipc call settings toggle` |
-| Increase Brightness | `qs ipc call brightness increase` |
-| Decrease Brightness | `qs ipc call brightness decrease` |
+
+</details>
+
 
 ### Configuration
 

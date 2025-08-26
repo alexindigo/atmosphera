@@ -2,6 +2,7 @@ pragma Singleton
 
 import QtQuick
 import Quickshell
+import qs.Services
 
 Singleton {
   id: icons
@@ -39,6 +40,15 @@ Singleton {
       return iconFromName(name || fallback, fallback)
     } catch (e) {
       return iconFromName(fallback, fallback)
+    }
+  }
+
+  // Distro logo helper (absolute path or empty string)
+  function distroLogoPath() {
+    try {
+      return (typeof OSInfo !== 'undefined' && OSInfo.distroIconPath) ? OSInfo.distroIconPath : ""
+    } catch (e) {
+      return ""
     }
   }
 }
