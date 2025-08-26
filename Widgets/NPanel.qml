@@ -194,17 +194,13 @@ Loader {
         property int calculatedY: {
           if (panelAnchorVerticalCenter) {
             return (panelWindow.height - panelHeight) / 2
-          }
-          else if (panelAnchorBottom) {
+          } else if (panelAnchorBottom) {
             return panelWindow.height - panelHeight - (Style.marginS * scaling)
-          }
-          else if (panelAnchorTop) {
+          } else if (panelAnchorTop) {
             return (Style.marginS * scaling)
-          }
-          else if (panelAnchorBottom) {
+          } else if (panelAnchorBottom) {
             panelWindow.height - panelHeight - (Style.marginS * scaling)
-          }
-          else if (!barAtBottom) {
+          } else if (!barAtBottom) {
             // Below the top bar
             return Style.marginS * scaling
           } else {

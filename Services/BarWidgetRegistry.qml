@@ -17,6 +17,7 @@ Singleton {
                            "Clock": clockComponent,
                            "KeyboardLayout": keyboardLayoutComponent,
                            "MediaMini": mediaMiniComponent,
+                           "NightLight": nightLightComponent,
                            "NotificationHistory": notificationHistoryComponent,
                            "PowerProfile": powerProfileComponent,
                            "ScreenRecorderIndicator": screenRecorderIndicatorComponent,
@@ -52,6 +53,9 @@ Singleton {
   }
   property Component mediaMiniComponent: Component {
     MediaMini {}
+  }
+  property Component nightLightComponent: Component {
+    NightLight {}
   }
   property Component notificationHistoryComponent: Component {
     NotificationHistory {}

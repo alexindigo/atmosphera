@@ -49,8 +49,6 @@ NPanel {
       searchText = ""
       selectedIndex = 0
     }
-
-
   }
 
   onClosed: {

@@ -105,10 +105,11 @@ nix run github:noctalia-dev/noctalia-shell
 <details>
 <summary><strong>For flakes</strong></summary>
 
-```nix
-{
-  description = "Example Nix flake with Noctalia + Quickshell";
+**Step 1**: Add quickshell and noctalia flakes
 
+```nix
+
+{
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
@@ -129,21 +130,29 @@ nix run github:noctalia-dev/noctalia-shell
     pkgs = import nixpkgs { inherit system; };
   in {
     nixosConfigurations.my-host = nixpkgs.lib.nixosSystem {
-      system = system;
       modules = [
         ./configuration.nix
-        # Add noctalia to system packages
-        ({ pkgs, ... }: {
           environment.systemPackages = [
-            noctalia.packages.${system}.default
-            quickshell.packages.${system}.default
           ];
-        })
       ];
     };
   };
+}```
+
+and in `configuration.nix`
+
+```nix
+
+# your configuration.nix
+{
+  environment.systemPackages = with pkgs; [
+    noctalia.packages.${system}.default
+    quickshell.packages.${system}.default
+  ];
 }
 ```
+
+
 </details>
 
 ### Usage

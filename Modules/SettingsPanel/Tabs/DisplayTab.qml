@@ -14,6 +14,24 @@ Item {
   Layout.fillWidth: true
   Layout.fillHeight: true
 
+  // Time dropdown options (00:00 .. 23:30)
+  ListModel {
+    id: timeOptions
+  }
+  Component.onCompleted: {
+    for (var h = 0; h < 24; h++) {
+      for (var m = 0; m < 60; m += 30) {
+        var hh = ("0" + h).slice(-2)
+        var mm = ("0" + m).slice(-2)
+        var key = hh + ":" + mm
+        timeOptions.append({
+                             "key": key,
+                             "name": key
+                           })
+      }
+    }
+  }
+
   // Helper functions to update arrays immutably
   function addMonitor(list, name) {
     const arr = (list || []).slice()
@@ -209,6 +227,154 @@ Item {
             }
           }
         }
+
+        // Night Light Section
+        NText {
+          text: "Night Light"
+          font.pointSize: Style.fontSizeXXL * scaling
+          font.weight: Style.fontWeightBold
+          color: Color.mOnSurface
+          Layout.topMargin: Style.marginXL * scaling
+        }
+
+        NText {
+          text: "Reduce blue light emission to help you sleep better and reduce eye strain."
+          font.pointSize: Style.fontSize * scaling
+          color: Color.mOnSurfaceVariant
+          wrapMode: Text.WordWrap
+          Layout.fillWidth: true
+          Layout.preferredWidth: parent.width - (Style.marginL * 2 * scaling)
+        }
+
+        NToggle {
+          label: "Enable Night Light"
+          description: "Apply a warm color filter to reduce blue light emission."
+          checked: NightLightService.enabled
+          onToggled: checked => {
+                       Settings.data.nightLight.enabled = checked
+                     }
+        }
+
+        NToggle {
+          label: "Auto Schedule"
+          description: "Automatically enable night light based on time schedule."
+          checked: NightLightService.autoSchedule
+          enabled: NightLightService.enabled
+          onToggled: checked => {
+                       NightLightService.setAutoSchedule(checked)
+                     }
+        }
+
+        // Warmth settings
+        NText {
+          text: "Warmth"
+          font.pointSize: Style.fontSizeM * scaling
+          font.weight: Style.fontWeightBold
+          color: Color.mOnSurface
+          enabled: NightLightService.enabled
+        }
+
+        NText {
+          text: "Higher values create warmer (more orange) light, lower values create cooler (more blue) light."
+          font.pointSize: Style.fontSizeS * scaling
+          color: Color.mOnSurfaceVariant
+          wrapMode: Text.WordWrap
+          Layout.fillWidth: true
+          enabled: NightLightService.enabled
+        }
+
+        RowLayout {
+          spacing: Style.marginS * scaling
+          Layout.fillWidth: true
+          enabled: NightLightService.enabled
+
+          NSlider {
+            id: warmthSlider
+            from: 0
+            to: 10
+            stepSize: 1
+            value: Math.round(NightLightService.warmth * 10)
+            onPressedChanged: {
+              if (!pressed) {
+                NightLightService.setWarmth(value / 10)
+              }
+            }
+            Layout.fillWidth: true
+            Layout.minimumWidth: 150 * scaling
+          }
+
+          Connections {
+            target: NightLightService
+            function onWarmthChanged() {
+              if (!warmthSlider.pressed) {
+                warmthSlider.value = Math.round(NightLightService.warmth * 10)
+              }
+            }
+          }
+
+          NText {
+            text: `${warmthSlider.value}`
+            Layout.alignment: Qt.AlignVCenter
+            Layout.minimumWidth: 60 * scaling
+            horizontalAlignment: Text.AlignRight
+          }
+        }
+
+        // Schedule settings
+        NText {
+          text: "Schedule"
+          font.pointSize: Style.fontSizeM * scaling
+          font.weight: Style.fontWeightBold
+          color: Color.mOnSurface
+          enabled: NightLightService.enabled
+        }
+
+        RowLayout {
+          spacing: Style.marginL * scaling
+          Layout.fillWidth: true
+          enabled: NightLightService.enabled
+
+          ColumnLayout {
+            spacing: Style.marginXXS * scaling
+            Layout.fillWidth: true
+
+            NText {
+              text: "Start Time"
+              font.pointSize: Style.fontSizeS * scaling
+              color: Color.mOnSurfaceVariant
+            }
+
+            NComboBox {
+              model: timeOptions
+              currentKey: NightLightService.startTime
+              placeholder: "Select time"
+              onSelected: function (key) {
+                NightLightService.setSchedule(key, NightLightService.stopTime)
+              }
+            }
+          }
+
+          ColumnLayout {
+            spacing: Style.marginXXS * scaling
+            Layout.fillWidth: true
+
+            NText {
+              text: "Stop Time"
+              font.pointSize: Style.fontSizeS * scaling
+              color: Color.mOnSurfaceVariant
+            }
+
+            NComboBox {
+              model: timeOptions
+              currentKey: NightLightService.stopTime
+              placeholder: "Select time"
+              onSelected: function (key) {
+                NightLightService.setSchedule(NightLightService.startTime, key)
+              }
+            }
+          }
+        }
+
         Item {
           Layout.fillHeight: true
         }

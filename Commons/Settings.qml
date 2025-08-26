@@ -129,7 +129,7 @@ Singleton {
         widgets: JsonObject {
           property list<string> left: ["SystemMonitor", "ActiveWindow", "MediaMini"]
           property list<string> center: ["Workspace"]
-          property list<string> right: ["ScreenRecorderIndicator", "Tray", "NotificationHistory", "WiFi", "Bluetooth", "Battery", "Volume", "Brightness", "Clock", "SidePanelToggle"]
+          property list<string> right: ["ScreenRecorderIndicator", "Tray", "NotificationHistory", "WiFi", "Bluetooth", "Battery", "Volume", "Brightness", "NightLight", "Clock", "SidePanelToggle"]
         }
       }
 
@@ -255,6 +255,16 @@ Singleton {
         property bool darkMode: true
         // External app theming (GTK & Qt)
         property bool themeApps: false
+      }
+
+      // night light
+      property JsonObject nightLight: JsonObject {
+        property bool enabled: false
+        property real warmth: 0.0
+        property real intensity: 0.8
+        property string startTime: "20:00"
+        property string stopTime: "07:00"
+        property bool autoSchedule: false
       }
     }
   }
