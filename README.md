@@ -149,49 +149,20 @@ nix run github:noctalia-dev/noctalia-shell
 ### Usage
 
 ```bash
-# Start the shell
-qs
-
-# Launcher
-qs ipc call launcher toggle
-
-# SidePanel
-qs ipc call sidePanel toggle
-
-# Clipboard History
-qs ipc call launcher clipboard
-
-# Calculator
-qs ipc call launcher calculator
-
-# Brightness
-qs ipc call brightness increase
-qs ipc call brightness decrease
-
-# Power Panel
-qs ipc call powerPanel toggle
-
-# Idle Inhibitor
-qs ipc call idleInhibitor toggle
-
-# Settings Window
-qs ipc call settings toggle
-
-# Toggle lock screen
-qs ipc call lockScreen toggle
-```
-
-### Keybinds
-
-| Action | Command |
-|--------|---------|
-| Toggle Application Launcher | `qs ipc call appLauncher toggle` |
-| Toggle Lock Screen | `qs ipc call lockScreen toggle` |
+| Action                      | Command                                   |
+| --------------------------- | ----------------------------------------- |
+| Start the Shell             | `qs`                                      |
+| Toggle Application Launcher | `qs ipc call launcher toggle`             |
+| Toggle Side Panel           | `qs ipc call sidePanel toggle`            |
+| Open Clipboard History      | `qs ipc call launcher clipboard`          |
+| Open Calculator             | `qs ipc call launcher calculator`         |
+| Increase Brightness         | `qs ipc call brightness increase`         |
+| Decrease Brightness         | `qs ipc call brightness decrease`         |
+| Toggle Power Panel          | `qs ipc call powerPanel toggle`           |
+| Toggle Idle Inhibitor       | `qs ipc call idleInhibitor toggle`        |
+| Toggle Settings Window      | `qs ipc call settings toggle`             |
+| Toggle Lock Screen          | `qs ipc call lockScreen toggle`           |
 | Toggle Notification History | `qs ipc call notifications toggleHistory` |
-| Toggle Settings Panel | `qs ipc call settings toggle` |
-| Increase Brightness | `qs ipc call brightness increase` |
-| Decrease Brightness | `qs ipc call brightness decrease` |
-
 ### Configuration
 
 Access settings through the side panel (top right button) to configure weather, wallpapers, screen recording, audio, network, and theme options.  
