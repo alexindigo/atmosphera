@@ -137,7 +137,8 @@ nix run github:noctalia-dev/noctalia-shell
       ];
     };
   };
-}```
+}
+```
 
 and in `configuration.nix`
 
