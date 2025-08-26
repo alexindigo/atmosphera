@@ -18,7 +18,7 @@ Item {
     id: loader
 
     anchors.fill: parent
-    active: enabled && widgetName !== ""
+    active: Settings.isLoaded && enabled && widgetName !== ""
     sourceComponent: {
       if (!active) {
         return null
@@ -35,6 +35,7 @@ Item {
           }
         }
       }
+      Logger.log("NWidgetLoader", "Loaded", widgetName, "on screen", item.screen.name)
     }
   }
 

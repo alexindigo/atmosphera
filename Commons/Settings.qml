@@ -28,8 +28,7 @@ Singleton {
   // Used to access via Settings.data.xxx.yyy
   property alias data: adapter
 
-  // Flag to prevent unnecessary wallpaper calls during reloads
-  property bool isInitialLoad: true
+  property bool isLoaded: false
 
   // Function to validate monitor configurations
   function validateMonitorConfigurations() {
@@ -91,9 +90,10 @@ Singleton {
     }
     onLoaded: function () {
       Qt.callLater(function () {
-        if (isInitialLoad) {
-          Logger.log("Settings", "OnLoaded")
-          // Only set wallpaper on initial load, not on reloads
+        // Some stuff like wallpaper setup and settings validation should just be executed once on startup
+        // And not on every reload
+        if (!isLoaded) {
+          Logger.log("Settings", "JSON completed loading")
           if (adapter.wallpaper.current !== "") {
             Logger.log("Settings", "Set current wallpaper", adapter.wallpaper.current)
             WallpaperService.setCurrentWallpaper(adapter.wallpaper.current, true)
@@ -102,9 +102,9 @@ Singleton {
           // Validate monitor configurations, only once
           // if none of the configured monitors exist, clear the lists
           validateMonitorConfigurations()
-        }
 
-        isInitialLoad = false
+          isLoaded = true
+        }
       })
     }
     onLoadFailed: function (error) {

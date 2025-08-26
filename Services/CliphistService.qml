@@ -13,7 +13,7 @@ Singleton {
   property var items: [] // [{id, preview, mime, isImage}]
   property bool loading: false
   // Active only when feature is enabled and settings have finished initial load
-  property bool active: Settings.data.appLauncher.enableClipboardHistory && !Settings.isInitialLoad
+  property bool active: Settings.data.appLauncher.enableClipboardHistory && Settings.isLoaded
 
   // Optional automatic watchers to feed cliphist DB
   property bool autoWatch: true
