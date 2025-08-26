@@ -103,7 +103,10 @@ Item {
       font.pointSize: Style.fontSizeM * scaling
       // When forced shown, use pill text color; otherwise accent color when hovered
       color: forceOpen ? textColor : (showPill ? iconTextColor : Color.mOnSurface)
-      anchors.centerIn: parent
+      // Center horizontally
+      x: (iconCircle.width - width) / 2
+      // Center vertically accounting for font metrics
+      y: (iconCircle.height - height) / 2 + (height - contentHeight) / 2
     }
   }
 

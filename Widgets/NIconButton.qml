@@ -37,16 +37,14 @@ Rectangle {
   border.width: Math.max(1, Style.borderS * scaling)
 
   NIcon {
-    anchors.centerIn: parent
-    // Little hack to keep things centered at high scaling
-    anchors.horizontalCenterOffset: -1 * (scaling - 1.0)
-    anchors.verticalCenterOffset: 0
     text: root.icon
     font.pointSize: root.fontPointSize * scaling
     color: root.hovering ? colorFgHover : colorFg
-    horizontalAlignment: Text.AlignHCenter
-    verticalAlignment: Text.AlignVCenter
     opacity: root.enabled ? Style.opacityFull : Style.opacityMedium
+    // Center horizontally
+    x: (root.width - width) / 2
+    // Center vertically accounting for font metrics
+    y: (root.height - height) / 2 + (height - contentHeight) / 2
   }
 
   NTooltip {
