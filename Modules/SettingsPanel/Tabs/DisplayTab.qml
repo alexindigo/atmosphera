@@ -32,11 +32,11 @@ Item {
     clip: true
     ScrollBar.vertical.policy: ScrollBar.AsNeeded
     ScrollBar.horizontal.policy: ScrollBar.AsNeeded
-    contentWidth: parent.width
+    contentWidth: Math.max(parent.width, 600 * scaling)
 
     ColumnLayout {
       id: contentColumn
-      width: Math.max(parent.width, 300) // Minimum reasonable width without scaling
+      width: Math.max(parent.width, 600 * scaling)
 
       ColumnLayout {
         spacing: Style.marginL * scaling
@@ -54,14 +54,16 @@ Item {
           text: "By default, bars and notifications are shown on all displays. Select one or more below to narrow your view."
           font.pointSize: Style.fontSize * scaling
           color: Color.mOnSurfaceVariant
+          wrapMode: Text.WordWrap
+          Layout.fillWidth: true
+          Layout.preferredWidth: parent.width - (Style.marginL * 2 * scaling)
         }
 
         Repeater {
           model: Quickshell.screens || []
           delegate: Rectangle {
             Layout.fillWidth: true
-            // Remove the scaling-based minimum width that causes issues at low scaling
-            // Layout.minimumWidth: 400 * scaling
+            Layout.minimumWidth: 550 * scaling
             radius: Style.radiusM * scaling
             color: Color.mSurface
             border.color: Color.mOutline
@@ -73,7 +75,6 @@ Item {
               anchors.fill: parent
               anchors.margins: Style.marginL * scaling
               spacing: Style.marginXXS * scaling
-              Layout.minimumWidth: 0
 
               NText {
                 text: (modelData.name || "Unknown")
@@ -86,16 +87,16 @@ Item {
                 text: `Resolution: ${modelData.width}x${modelData.height} - Position: (${modelData.x}, ${modelData.y})`
                 font.pointSize: Style.fontSizeXS * scaling
                 color: Color.mOnSurfaceVariant
+                wrapMode: Text.WordWrap
+                Layout.fillWidth: true
               }
 
               ColumnLayout {
                 spacing: Style.marginL * scaling
-                Layout.minimumWidth: 0
                 Layout.fillWidth: true
 
                 NToggle {
                   Layout.fillWidth: true
-                  Layout.minimumWidth: 0
                   label: "Bar"
                   description: "Enable the bar on this monitor."
                   checked: (Settings.data.bar.monitors || []).indexOf(modelData.name) !== -1
@@ -110,7 +111,6 @@ Item {
 
                 NToggle {
                   Layout.fillWidth: true
-                  Layout.minimumWidth: 0
                   label: "Notifications"
                   description: "Enable notifications on this monitor."
                   checked: (Settings.data.notifications.monitors || []).indexOf(modelData.name) !== -1
@@ -127,7 +127,6 @@ Item {
 
                 NToggle {
                   Layout.fillWidth: true
-                  Layout.minimumWidth: 0
                   label: "Dock"
                   description: "Enable the dock on this monitor."
                   checked: (Settings.data.dock.monitors || []).indexOf(modelData.name) !== -1
@@ -142,16 +141,16 @@ Item {
                 }
 
                 ColumnLayout {
-                  spacing: Style.marginL * scaling
+                  spacing: Style.marginS * scaling
                   Layout.fillWidth: true
 
                   RowLayout {
                     Layout.fillWidth: true
+                    spacing: Style.marginL * scaling
 
                     ColumnLayout {
                       spacing: Style.marginXXS * scaling
                       Layout.fillWidth: true
-                      Layout.minimumWidth: 0
 
                       NText {
                         text: "Scale"
@@ -171,18 +170,18 @@ Item {
                     NText {
                       text: `${Math.round(ScalingService.scaleByName(modelData.name) * 100)}%`
                       Layout.alignment: Qt.AlignVCenter
-                      Layout.minimumWidth: implicitWidth
+                      Layout.minimumWidth: 50 * scaling
+                      horizontalAlignment: Text.AlignRight
                     }
                   }
 
                   RowLayout {
                     spacing: Style.marginS * scaling
                     Layout.fillWidth: true
-                    Layout.minimumWidth: 0
 
                     NSlider {
                       id: scaleSlider
-                      from: 0.6
+                      from: 0.7
                       to: 1.8
                       stepSize: 0.01
                       value: ScalingService.scaleByName(modelData.name)
@@ -192,15 +191,12 @@ Item {
                         Settings.data.monitorsScaling = data
                       }
                       Layout.fillWidth: true
-                      Layout.minimumWidth: 50 // Ensure minimum slider width
+                      Layout.minimumWidth: 150 * scaling
                     }
 
                     NIconButton {
                       icon: "refresh"
                       tooltipText: "Reset Scaling"
-                      fontPointSize: Style.fontSizeL * scaling
-                      Layout.preferredWidth: implicitWidth
-                      Layout.minimumWidth: implicitWidth
                       onClicked: {
                         var data = Settings.data.monitorsScaling || {}
                         data[modelData.name] = 1.0
