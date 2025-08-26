@@ -12,7 +12,7 @@ import qs.Widgets
 Variants {
   model: Quickshell.screens
 
-  Loader {
+  delegate: Loader {
 
     required property ShellScreen modelData
     readonly property real scaling: ScalingService.scale(modelData)

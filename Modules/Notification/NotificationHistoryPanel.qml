@@ -77,19 +77,19 @@ NPanel {
           NIcon {
             text: "notifications_off"
             font.pointSize: Style.fontSizeXXXL * scaling
-            color: Color.mOnSurfaceVariant
+            color: Color.mOnSurface
             Layout.alignment: Qt.AlignHCenter
           }
 
           NText {
             text: "No notifications"
             font.pointSize: Style.fontSizeL * scaling
-            color: Color.mOnSurfaceVariant
+            color: Color.mOnSurface
             Layout.alignment: Qt.AlignHCenter
           }
 
           NText {
-            text: "Notifications will appear here when you receive them"
+            text: "Your notifications will show up here as they arrive."
             font.pointSize: Style.fontSizeNormal * scaling
             color: Color.mOnSurfaceVariant
             Layout.alignment: Qt.AlignHCenter
