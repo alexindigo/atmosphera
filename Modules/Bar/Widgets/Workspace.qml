@@ -161,11 +161,11 @@ Item {
 
           Loader {
             anchors.centerIn: parent
-            active: true
+            active: Settings.data.bar.showWorkspacesNames
             sourceComponent: Component {
               Text {
                 text: {
-                  if (Settings.data.bar.showWorkspacesNames && model.name && model.name.length > 0) {
+                  if (model.name && model.name.length > 0) {
                     return model.name.substring(0, 2).toUpperCase()
                   } else {
                     return model.idx.toString()
