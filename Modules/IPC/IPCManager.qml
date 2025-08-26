@@ -7,6 +7,13 @@ Item {
   id: root
 
   IpcHandler {
+    target: "screenRecorder"
+    function toggle() {
+      ScreenRecorderService.toggleRecording()
+    }
+  }
+
+  IpcHandler {
     target: "settings"
     function toggle() {
       settingsPanel.toggle(Quickshell.screens[0])

@@ -139,6 +139,8 @@ Singleton {
         property bool dimDesktop: false
         property bool showScreenCorners: false
         property real radiusRatio: 1.0
+        // Replace sidepanel toggle with distro logo (shown in bar and/or side panel)
+        property bool useDistroLogoForSidepanel: false
       }
 
       // location
