@@ -132,8 +132,6 @@ nix run github:noctalia-dev/noctalia-shell
     nixosConfigurations.my-host = nixpkgs.lib.nixosSystem {
       modules = [
         ./configuration.nix
-          environment.systemPackages = [
-          ];
       ];
     };
   };
