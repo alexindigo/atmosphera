@@ -62,6 +62,6 @@
           }
       );
 
-      defaultPackage = eachSystem (system: self.packages.${system}.default);
+            defaultPackage = eachSystem (system: self.packages.${system});
     };
 }
