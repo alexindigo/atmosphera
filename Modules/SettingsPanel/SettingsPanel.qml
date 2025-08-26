@@ -13,7 +13,8 @@ NPanel {
 
   panelWidth: Math.max(screen?.width * 0.5, 1280) * scaling
   panelHeight: Math.max(screen?.height * 0.5, 720) * scaling
-  panelAnchorCentered: true
+  panelAnchorHorizontalCenter: true
+  panelAnchorVerticalCenter: true
 
   // Tabs enumeration, order is NOT relevant
   enum Tab {

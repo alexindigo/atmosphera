@@ -14,7 +14,8 @@ NPanel {
 
   panelWidth: 440 * scaling
   panelHeight: 380 * scaling
-  panelAnchorCentered: true
+  panelAnchorHorizontalCenter: true
+  panelAnchorVerticalCenter: true
 
   // Timer properties
   property int timerDuration: 9000 // 9 seconds

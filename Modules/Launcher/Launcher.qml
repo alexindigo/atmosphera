@@ -18,11 +18,19 @@ NPanel {
   panelHeight: Math.min(550 * scaling, screen?.height * 0.8)
   // Positioning derives from Settings.data.bar.position for vertical (top/bottom)
   // and from Settings.data.appLauncher.position for horizontal vs center.
-  // Options: center, top_left, top_right, bottom_left, bottom_right
+  // Options: center, top_left, top_right, bottom_left, bottom_right, bottom_center, top_center
   readonly property string launcherPosition: Settings.data.appLauncher.position
-  panelAnchorCentered: launcherPosition === "center"
+
+  panelAnchorHorizontalCenter: launcherPosition === "center" || (launcherPosition.endsWith("_center"))
+  panelAnchorVerticalCenter: launcherPosition === "center"
   panelAnchorLeft: launcherPosition !== "center" && (launcherPosition.endsWith("_left"))
   panelAnchorRight: launcherPosition !== "center" && (launcherPosition.endsWith("_right"))
+  panelAnchorBottom: launcherPosition.startsWith("bottom_")
+  panelAnchorTop: launcherPosition.startsWith("top_")
+
+  // Background opacity following bar's approach
+  panelBackgroundColor: Qt.rgba(Color.mSurface.r, Color.mSurface.g, Color.mSurface.b,
+                                Settings.data.appLauncher.backgroundOpacity)
 
   // Properties
   property string searchText: ""
@@ -41,6 +49,8 @@ NPanel {
       searchText = ""
       selectedIndex = 0
     }
+
+
   }
 
   onClosed: {

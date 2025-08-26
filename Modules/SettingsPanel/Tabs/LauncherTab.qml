@@ -89,10 +89,52 @@ ColumnLayout {
               key: "bottom_right"
               name: "Bottom Right"
             }
+            ListElement {
+              key: "bottom_center"
+              name: "Bottom Center"
+            }
+            ListElement {
+              key: "top_center"
+              name: "Top Center"
+            }
           }
           currentKey: Settings.data.appLauncher.position
           onSelected: function (key) {
             Settings.data.appLauncher.position = key
+          }
+        }
+
+        NDivider {
+          Layout.fillWidth: true
+          Layout.topMargin: Style.marginL * scaling
+          Layout.bottomMargin: Style.marginS * scaling
+        }
+
+        NText {
+          text: "Launcher Background"
+          font.pointSize: Style.fontSizeXXL * scaling
+          font.weight: Style.fontWeightBold
+          color: Color.mOnSurface
+          Layout.bottomMargin: Style.marginS * scaling
+        }
+
+        RowLayout {
+          NSlider {
+            id: launcherBgOpacity
+            Layout.fillWidth: true
+            from: 0.0
+            to: 1.0
+            stepSize: 0.01
+            value: Settings.data.appLauncher.backgroundOpacity
+            onMoved: Settings.data.appLauncher.backgroundOpacity = value
+            cutoutColor: Color.mSurface
+          }
+
+          NText {
+            text: Math.floor(Settings.data.appLauncher.backgroundOpacity * 100) + "%"
+            Layout.alignment: Qt.AlignVCenter
+            Layout.leftMargin: Style.marginS * scaling
+            color: Color.mOnSurface
           }
         }
       }

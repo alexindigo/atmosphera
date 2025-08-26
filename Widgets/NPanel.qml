@@ -16,7 +16,12 @@ Loader {
   property Component panelContent: null
   property int panelWidth: 1500
   property int panelHeight: 400
-  property bool panelAnchorCentered: false
+  property color panelBackgroundColor: Color.mSurface
+
+  property bool panelAnchorHorizontalCenter: false
+  property bool panelAnchorVerticalCenter: false
+  property bool panelAnchorTop: false
+  property bool panelAnchorBottom: false
   property bool panelAnchorLeft: false
   property bool panelAnchorRight: false
 
@@ -153,13 +158,19 @@ Loader {
 
       Rectangle {
         id: panelBackground
-        color: Color.mSurface
+        color: panelBackgroundColor
         radius: Style.radiusL * scaling
         border.color: Color.mOutline
         border.width: Math.max(1, Style.borderS * scaling)
         layer.enabled: true
         width: panelWidth
         height: panelHeight
+
+        scale: root.scaleValue
+        opacity: root.opacityValue
+
+        x: calculatedX
+        y: calculatedY
 
         property int calculatedX: {
           if (root.useButtonPosition) {
@@ -171,9 +182,9 @@ Loader {
             var minX = Style.marginS * scaling
 
             return Math.max(minX, Math.min(targetX, maxX))
-          } else if (!panelAnchorCentered && panelAnchorLeft) {
+          } else if (!panelAnchorHorizontalCenter && panelAnchorLeft) {
             return Style.marginS * scaling
-          } else if (!panelAnchorCentered && panelAnchorRight) {
+          } else if (!panelAnchorHorizontalCenter && panelAnchorRight) {
             return panelWindow.width - panelWidth - (Style.marginS * scaling)
           } else {
             return (panelWindow.width - panelWidth) / 2
@@ -181,23 +192,26 @@ Loader {
         }
 
         property int calculatedY: {
-          // Position panel below or above the bar
-          if (!panelAnchorCentered) {
-            if (!barAtBottom) {
-              return Style.marginS * scaling
-            } else {
-              return panelWindow.height - panelHeight - (Style.marginS * scaling)
-            }
-          } else {
+          if (panelAnchorVerticalCenter) {
             return (panelWindow.height - panelHeight) / 2
           }
+          else if (panelAnchorBottom) {
+            return panelWindow.height - panelHeight - (Style.marginS * scaling)
+          }
+          else if (panelAnchorTop) {
+            return (Style.marginS * scaling)
+          }
+          else if (panelAnchorBottom) {
+            panelWindow.height - panelHeight - (Style.marginS * scaling)
+          }
+          else if (!barAtBottom) {
+            // Below the top bar
+            return Style.marginS * scaling
+          } else {
+            // Above the bottom bar
+            return panelWindow.height - panelHeight - (Style.marginS * scaling)
+          }
         }
-
-        x: calculatedX
-        y: calculatedY
-
-        scale: root.scaleValue
-        opacity: root.opacityValue
 
         // Animate in when component is completed
         Component.onCompleted: {
