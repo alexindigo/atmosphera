@@ -28,9 +28,6 @@ Rectangle {
   signal exited
   signal clicked
 
-
-
-
   implicitWidth: size
   implicitHeight: size
 
