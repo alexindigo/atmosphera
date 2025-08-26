@@ -152,7 +152,7 @@ Item {
       model: localWorkspaces
       Item {
         id: workspacePillContainer
-        height: Math.round(18 * scaling)
+        height: Math.round(19 * scaling)
         width: root.calculatedWsWidth(model)
 
         Rectangle {
@@ -161,11 +161,17 @@ Item {
 
           Loader {
             anchors.centerIn: parent
-            active: Settings.data.bar.showWorkspacesNames
+            active: true
             sourceComponent: Component {
               Text {
-                text: model.name.substring(0, 2)
-                font.pointSize: Style.fontSizeXS * scaling
+                text: {
+                  if (Settings.data.bar.showWorkspacesNames && model.name && model.name.length > 0) {
+                    return model.name.substring(0, 2).toUpperCase()
+                  } else {
+                    return model.idx.toString()
+                  }
+                }
+                font.pointSize: model.isFocused ? Style.fontSizeXS * scaling : Style.fontSizeXXS * scaling
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 wrapMode: Text.Wrap
