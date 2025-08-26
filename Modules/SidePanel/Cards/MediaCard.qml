@@ -168,7 +168,7 @@ NBox {
             visible: MediaService.trackArtUrl.toString() !== ""
 
             anchors.fill: parent
-            anchors.margins: Style.marginXS * scaling
+            anchors.margins: Style.marginXXS * scaling
             imagePath: MediaService.trackArtUrl
             fallbackIcon: "music_note"
             borderColor: Color.mOutline
