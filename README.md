@@ -67,6 +67,9 @@ Features a modern modular architecture with a status bar, notification system, c
 - `ttf-roboto` - The default font used for most of the UI
 - `inter-font` - The default font used for Headers (ex: clock on the LockScreen)
 - `ttf-material-symbols-variable-git` - Icon font for UI elements
+- `gpu-screen-recorder` - Screen recording functionality
+- `brightnessctl` - For internal/laptop monitor brightness
+- `ddcutil` - For desktop monitor brightness (might introduce some system instability with certain monitors)
 - `xdg-desktop-portal-gnome` - Desktop integration (or alternative portal)
 
 
@@ -76,9 +79,6 @@ Features a modern modular architecture with a status bar, notification system, c
 - `swww` - Wallpaper animations and effects
 - `matugen` - Material You color scheme generation
 - `cava` - Audio visualizer component
-- `gpu-screen-recorder` - Screen recording functionality
-- `brightnessctl` - For internal/laptop monitor brightness
-- `ddcutil` - For desktop monitor brightness (might introduce some system instability with certain monitors)
 If you want to use the ArchUpdater Widget, make sure you have any polkit agent installed.
 
 ---
