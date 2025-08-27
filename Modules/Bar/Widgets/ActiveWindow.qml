@@ -14,6 +14,7 @@ Row {
   property real scaling: ScalingService.scale(screen)
   // Title stays collapsed by default; expands only on hover
   property bool showingFullTitle: false
+  readonly property int minWidth: 120
 
   anchors.verticalCenter: parent.verticalCenter
   spacing: Style.marginS * scaling
@@ -63,7 +64,7 @@ Row {
       Row {
         id: row
         anchors.verticalCenter: parent.verticalCenter
-        spacing: Style.marginXS * scaling
+        spacing: Style.marginS * scaling
 
         // Window icon
         Item {
@@ -85,10 +86,10 @@ Row {
         NText {
           id: titleText
 
-          // Fix collapsed width to 150px to avoid layout shifts with neighbors
+          // Fix collapsed width to 120px to avoid layout shifts with neighbors
           // Expand up to 400px on hover
-          width: mouseArea.containsMouse ? Math.min(fullTitleMetrics.contentWidth, 400 * scaling) : 150 * scaling
-          horizontalAlignment: mouseArea.containsMouse ? Text.AlignLeft : Text.AlignHCenter
+          width: mouseArea.containsMouse ? Math.min(Math.max(minWidth * scaling, fullTitleMetrics.contentWidth), 400 * scaling) : minWidth * scaling
+          horizontalAlignment: Text.AlignLeft
           text: getTitle()
           font.pointSize: Style.fontSizeS * scaling
           font.weight: Style.fontWeightMedium

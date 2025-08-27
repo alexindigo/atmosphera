@@ -97,7 +97,7 @@ Row {
       Row {
         id: row
         anchors.verticalCenter: parent.verticalCenter
-        spacing: Style.marginXS * scaling
+        spacing: Style.marginS * scaling
         z: 1 // Above the visualizer
 
         NIcon {
@@ -132,16 +132,6 @@ Row {
               borderWidth: 0
               border.color: Color.transparent
             }
-
-            // Fallback icon when no album art available
-            NIcon {
-              id: windowIconFallback
-              text: MediaService.isPlaying ? "pause" : "play_arrow"
-              font.pointSize: Style.fontSizeL * scaling
-              verticalAlignment: Text.AlignVCenter
-              anchors.verticalCenter: parent.verticalCenter
-              visible: getTitle() !== "" && !trackArt.visible
-            }
           }
         }
 
@@ -149,10 +139,10 @@ Row {
           id: titleText
 
           // If hovered or just switched window, show up to 400 pixels
-          // If not hovered show up to 150 pixels
+          // If not hovered show up to 120 pixels
           width: (mouseArea.containsMouse) ? Math.min(fullTitleMetrics.contentWidth,
                                                       400 * scaling) : Math.min(fullTitleMetrics.contentWidth,
-                                                                                150 * scaling)
+                                                                                120 * scaling)
           text: getTitle()
           font.pointSize: Style.fontSizeS * scaling
           font.weight: Style.fontWeightMedium
