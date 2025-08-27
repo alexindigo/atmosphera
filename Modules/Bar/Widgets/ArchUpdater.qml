@@ -14,62 +14,79 @@ NIconButton {
 
   sizeRatio: 0.8
   colorBg: Color.mSurfaceVariant
-  colorFg: Color.mOnSurface
+  // Highlight color based on update source
+  colorFg: {
+    if (ArchUpdaterService.totalUpdates === 0)
+      return Color.mOnSurface
+    if (ArchUpdaterService.updates > 0 && ArchUpdaterService.aurUpdates > 0)
+      return Color.mPrimary
+    if (ArchUpdaterService.updates > 0)
+      return Color.mPrimary
+    return Color.mSecondary
+  }
   colorBorder: Color.transparent
   colorBorderHover: Color.transparent
 
-  // Enhanced icon states with better visual feedback
+  // Icon states
   icon: {
-    if (ArchUpdaterService.busy)
+    if (ArchUpdaterService.busy || ArchUpdaterService.aurBusy)
       return "sync"
-    if (ArchUpdaterService.updatePackages.length > 0) {
-      // Show different icons based on update count
-      const count = ArchUpdaterService.updatePackages.length
+    if (ArchUpdaterService.totalUpdates > 0) {
+      const count = ArchUpdaterService.totalUpdates
       if (count > 50)
-        return "system_update_alt" // Many updates
+        return "system_update_alt"
       if (count > 10)
-        return "system_update" // Moderate updates
-      return "system_update" // Few updates
+        return "system_update"
+      return "system_update"
     }
     return "task_alt"
   }
 
-  // Enhanced tooltip with more information
+  // Tooltip with repo vs AUR breakdown and sample lists
   tooltipText: {
-    if (ArchUpdaterService.busy)
+    if (ArchUpdaterService.busy || ArchUpdaterService.aurBusy)
       return "Checking for updates…"
 
-    var count = ArchUpdaterService.updatePackages.length
-    if (count === 0)
+    const repoCount = ArchUpdaterService.updates
+    const aurCount = ArchUpdaterService.aurUpdates
+    const total = ArchUpdaterService.totalUpdates
+
+    if (total === 0)
       return "System is up to date ✓"
 
-    var header = count === 1 ? "One package can be upgraded:" : (count + " packages can be upgraded:")
+    let header = total === 1 ? "One package can be upgraded:" : (total + " packages can be upgraded:")
 
-    var list = ArchUpdaterService.updatePackages || []
-    var s = ""
-    var limit = Math.min(list.length, 8)
-    // Reduced to 8 for better readability
-    for (var i = 0; i < limit; ++i) {
-      var p = list[i]
-      s += (i ? "\n" : "") + (p.name + ": " + p.oldVersion + " → " + p.newVersion)
+    function sampleList(arr, n, colorLabel) {
+      const limit = Math.min(arr.length, n)
+      let s = ""
+      for (var i = 0; i < limit; ++i) {
+        const p = arr[i]
+        s += (i ? "\n" : "") + (p.name + ": " + p.oldVersion + " → " + p.newVersion)
+      }
+      if (arr.length > limit)
+        s += "\n… and " + (arr.length - limit) + " more"
+      return (colorLabel ? (colorLabel + "\n") : "") + (s || "None")
     }
-    if (list.length > 8)
-      s += "\n… and " + (list.length - 8) + " more"
 
-    return header + "\n\n" + s + "\n\nClick to update system"
+    const repoHeader = repoCount > 0 ? ("Repo (" + repoCount + "):") : "Repo: 0"
+    const aurHeader = aurCount > 0 ? ("AUR (" + aurCount + "):") : "AUR: 0"
+
+    const repoBlock = repoCount > 0 ? (repoHeader + "\n\n" + sampleList(ArchUpdaterService.repoPackages,
+                                                                        5)) : repoHeader
+    const aurBlock = aurCount > 0 ? (aurHeader + "\n\n" + sampleList(ArchUpdaterService.aurPackages, 5)) : aurHeader
+
+    return header + "\n\n" + repoBlock + "\n\n" + aurBlock + "\n\nClick to update system"
   }
 
-  // Enhanced click behavior with confirmation
   onClicked: {
-    if (ArchUpdaterService.busy)
+    if (ArchUpdaterService.busy || ArchUpdaterService.aurBusy)
       return
 
-    if (ArchUpdaterService.updatePackages.length > 0) {
-      // Show confirmation dialog for updates
+    if (ArchUpdaterService.totalUpdates > 0) {
       PanelService.getPanel("archUpdaterPanel").toggle(screen, this)
     } else {
-      // Just refresh if no updates available
       ArchUpdaterService.doPoll()
+      ArchUpdaterService.doAurPoll()
     }
   }
 }

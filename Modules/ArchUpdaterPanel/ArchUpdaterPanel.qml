@@ -16,6 +16,7 @@ NPanel {
   // When the panel opens
   onOpened: {
     ArchUpdaterService.doPoll()
+    ArchUpdaterService.doAurPoll()
   }
 
   panelContent: Rectangle {
@@ -61,8 +62,7 @@ NPanel {
 
       // Update summary
       Text {
-        text: ArchUpdaterService.updatePackages.length + " package" + (ArchUpdaterService.updatePackages.length
-                                                                       !== 1 ? "s" : "") + " can be updated"
+        text: ArchUpdaterService.totalUpdates + " package" + (ArchUpdaterService.totalUpdates !== 1 ? "s" : "") + " can be updated"
         font.pointSize: Style.fontSizeL * scaling
         font.family: Settings.data.ui.fontDefault
         font.weight: Style.fontWeightMedium
@@ -72,31 +72,35 @@ NPanel {
 
       // Package selection info
       Text {
-        text: ArchUpdaterService.selectedPackagesCount + " of " + ArchUpdaterService.updatePackages.length + " packages selected"
+        text: ArchUpdaterService.selectedPackagesCount + " of " + ArchUpdaterService.totalUpdates + " packages selected"
         font.pointSize: Style.fontSizeS * scaling
         font.family: Settings.data.ui.fontDefault
         color: Color.mOnSurfaceVariant
         Layout.fillWidth: true
       }
 
-      // Package list
+      // Unified list
       Rectangle {
         Layout.fillWidth: true
         Layout.fillHeight: true
         color: Color.mSurfaceVariant
         radius: Style.radiusM * scaling
 
+        // Combine repo and AUR lists in order: repos first, then AUR
+        property var items: (ArchUpdaterService.repoPackages || []).concat(ArchUpdaterService.aurPackages || [])
+
         ListView {
-          id: packageListView
+          id: unifiedList
           anchors.fill: parent
           anchors.margins: Style.marginS * scaling
           clip: true
-          model: ArchUpdaterService.updatePackages
+          model: parent.items
           spacing: Style.marginXS * scaling
+          cacheBuffer: 300 * scaling
 
           delegate: Rectangle {
-            width: packageListView.width
-            height: 50 * scaling
+            width: unifiedList.width
+            height: 56 * scaling
             color: Color.transparent
             radius: Style.radiusS * scaling
 
@@ -105,34 +109,16 @@ NPanel {
               anchors.margins: Style.marginS * scaling
               spacing: Style.marginS * scaling
 
-              // Checkbox for selection
+              // Checkbox for selection (pure bindings; no imperative state)
               NIconButton {
                 id: checkbox
-                icon: "check_box_outline_blank"
-                onClicked: {
-                  const isSelected = ArchUpdaterService.isPackageSelected(modelData.name)
-                  if (isSelected) {
-                    ArchUpdaterService.togglePackageSelection(modelData.name)
-                    icon = "check_box_outline_blank"
-                    colorFg = Color.mOnSurfaceVariant
-                  } else {
-                    ArchUpdaterService.togglePackageSelection(modelData.name)
-                    icon = "check_box"
-                    colorFg = Color.mPrimary
-                  }
-                }
+                icon: ArchUpdaterService.isPackageSelected(modelData.name) ? "check_box" : "check_box_outline_blank"
+                onClicked: ArchUpdaterService.togglePackageSelection(modelData.name)
                 colorBg: Color.transparent
-                colorFg: Color.mOnSurfaceVariant
+                colorFg: ArchUpdaterService.isPackageSelected(
+                           modelData.name) ? ((modelData.source === "aur") ? Color.mSecondary : Color.mPrimary) : Color.mOnSurfaceVariant
                 Layout.preferredWidth: 30 * scaling
                 Layout.preferredHeight: 30 * scaling
-
-                Component.onCompleted: {
-                  // Set initial state
-                  if (ArchUpdaterService.isPackageSelected(modelData.name)) {
-                    icon = "check_box"
-                    colorFg = Color.mPrimary
-                  }
-                }
               }
 
               // Package info
@@ -140,13 +126,38 @@ NPanel {
                 Layout.fillWidth: true
                 spacing: Style.marginXXS * scaling
 
-                Text {
-                  text: modelData.name
-                  font.pointSize: Style.fontSizeM * scaling
-                  font.family: Settings.data.ui.fontDefault
-                  font.weight: Style.fontWeightMedium
-                  color: Color.mOnSurface
+                RowLayout {
                   Layout.fillWidth: true
+                  spacing: Style.marginXS * scaling
+
+                  Text {
+                    text: modelData.name
+                    font.pointSize: Style.fontSizeM * scaling
+                    font.family: Settings.data.ui.fontDefault
+                    font.weight: Style.fontWeightMedium
+                    color: Color.mOnSurface
+                    Layout.fillWidth: true
+                  }
+
+                  // Source badge (custom rectangle)
+                  Rectangle {
+                    visible: !!modelData.source
+                    radius: 9999
+                    color: modelData.source === "aur" ? Color.mSecondary : Color.mPrimary
+                    Layout.alignment: Qt.AlignVCenter
+                    implicitHeight: Math.max(Style.fontSizeXS * 1.7 * scaling, 16 * scaling)
+                    // Width based on label content + horizontal padding
+                    implicitWidth: badgeText.implicitWidth + Math.max(12 * scaling, Style.marginS * scaling)
+
+                    NText {
+                      id: badgeText
+                      anchors.centerIn: parent
+                      text: modelData.source === "aur" ? "AUR" : "Repo"
+                      font.pointSize: Style.fontSizeXS * scaling
+                      font.weight: Style.fontWeightBold
+                      color: modelData.source === "aur" ? Color.mOnSecondary : Color.mOnPrimary
+                    }
+                  }
                 }
 
                 Text {
@@ -176,6 +187,7 @@ NPanel {
           tooltipText: "Check for updates"
           onClicked: {
             ArchUpdaterService.doPoll()
+            ArchUpdaterService.doAurPoll()
           }
           colorBg: Color.mSurfaceVariant
           colorFg: Color.mOnSurface
