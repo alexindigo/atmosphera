@@ -39,10 +39,9 @@ NPanel {
           color: Color.mPrimary
         }
 
-        Text {
+        NText {
           text: "System Updates"
           font.pointSize: Style.fontSizeL * scaling
-          font.family: Settings.data.ui.fontDefault
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface
           Layout.fillWidth: true
@@ -61,20 +60,18 @@ NPanel {
       }
 
       // Update summary
-      Text {
+      NText {
         text: ArchUpdaterService.totalUpdates + " package" + (ArchUpdaterService.totalUpdates !== 1 ? "s" : "") + " can be updated"
         font.pointSize: Style.fontSizeL * scaling
-        font.family: Settings.data.ui.fontDefault
         font.weight: Style.fontWeightMedium
         color: Color.mOnSurface
         Layout.fillWidth: true
       }
 
       // Package selection info
-      Text {
+      NText {
         text: ArchUpdaterService.selectedPackagesCount + " of " + ArchUpdaterService.totalUpdates + " packages selected"
         font.pointSize: Style.fontSizeS * scaling
-        font.family: Settings.data.ui.fontDefault
         color: Color.mOnSurfaceVariant
         Layout.fillWidth: true
       }
@@ -130,10 +127,9 @@ NPanel {
                   Layout.fillWidth: true
                   spacing: Style.marginXS * scaling
 
-                  Text {
+                  NText {
                     text: modelData.name
                     font.pointSize: Style.fontSizeM * scaling
-                    font.family: Settings.data.ui.fontDefault
                     font.weight: Style.fontWeightMedium
                     color: Color.mOnSurface
                     Layout.fillWidth: true
@@ -160,10 +156,9 @@ NPanel {
                   }
                 }
 
-                Text {
+                NText {
                   text: modelData.oldVersion + " → " + modelData.newVersion
                   font.pointSize: Style.fontSizeS * scaling
-                  font.family: Settings.data.ui.fontDefault
                   color: Color.mOnSurfaceVariant
                   Layout.fillWidth: true
                 }
