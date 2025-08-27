@@ -101,7 +101,12 @@ You can install Noctalia from the [AUR](https://aur.archlinux.org/packages/nocta
 paru -S noctalia-shell
 ```
 
-**Note:** When installed from the AUR, you must use the `-c noctalia-shell` flag to run the shell and any IPC commands. For example, to start the shell, run `qs -c noctalia-shell`. See the [Usage](#usage) section for more details.
+If you want the latest development version directly from the git repository, you can use the `noctalia-shell-git` package:
+
+```bash
+paru -S noctalia-shell-git
+```
+This will always build the most recent commit from the Noctalia repository. Note that it may be less stable than the release version.
 
 </details>
 
