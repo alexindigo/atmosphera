@@ -159,9 +159,8 @@ NBox {
           NImageCircled {
             id: trackArt
             visible: MediaService.trackArtUrl.toString() !== ""
-
             anchors.fill: parent
-            anchors.margins: Style.marginXXS * scaling
+            anchors.margins: Style.marginXS * scaling
             imagePath: MediaService.trackArtUrl
             fallbackIcon: "music_note"
             borderColor: Color.mOutline
@@ -221,7 +220,7 @@ NBox {
         id: progressWrapper
         visible: (MediaService.currentPlayer && MediaService.trackLength > 0)
         Layout.fillWidth: true
-        height: Math.max(Style.baseWidgetSize * 0.5 * scaling, 12 * scaling)
+        height: Style.baseWidgetSize * 0.5 * scaling
 
         // Local preview while dragging
         property real localSeekRatio: -1
@@ -267,6 +266,7 @@ NBox {
           snapAlways: false
           enabled: MediaService.trackLength > 0 && MediaService.canSeek
           cutoutColor: Color.mSurface
+          heightRatio: 0.65
 
           onMoved: {
             progressWrapper.localSeekRatio = value
