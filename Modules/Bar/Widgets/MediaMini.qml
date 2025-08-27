@@ -113,20 +113,14 @@ Row {
           anchors.verticalCenter: parent.verticalCenter
           visible: Settings.data.audio.showMiniplayerAlbumArt
 
-          Rectangle {
-            width: 18 * scaling
-            height: 18 * scaling
-            radius: width * 0.5
-            color: Color.transparent
-            antialiasing: true
-            clip: true
+          Item {
+            width: Math.round(18 * scaling)
+            height: Math.round(18 * scaling)
 
             NImageCircled {
               id: trackArt
               visible: MediaService.trackArtUrl.toString() !== ""
               anchors.fill: parent
-              anchors.verticalCenter: parent.verticalCenter
-              anchors.margins: scaling
               imagePath: MediaService.trackArtUrl
               fallbackIcon: MediaService.isPlaying ? "pause" : "play_arrow"
               borderWidth: 0

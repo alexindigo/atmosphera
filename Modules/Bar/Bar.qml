@@ -26,7 +26,7 @@ Variants {
 
       WlrLayershell.namespace: "noctalia-bar"
 
-      implicitHeight: Style.barHeight * scaling
+      implicitHeight: Math.round(Style.barHeight * scaling)
       color: Color.transparent
 
       anchors {

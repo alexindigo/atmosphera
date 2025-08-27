@@ -88,7 +88,8 @@ Row {
 
           // Fix collapsed width to 120px to avoid layout shifts with neighbors
           // Expand up to 400px on hover
-          width: mouseArea.containsMouse ? Math.min(Math.max(minWidth * scaling, fullTitleMetrics.contentWidth), 400 * scaling) : minWidth * scaling
+          width: mouseArea.containsMouse ? Math.min(Math.max(minWidth * scaling, fullTitleMetrics.contentWidth),
+                                                    400 * scaling) : minWidth * scaling
           horizontalAlignment: Text.AlignLeft
           text: getTitle()
           font.pointSize: Style.fontSizeS * scaling

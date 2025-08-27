@@ -46,6 +46,7 @@ Row {
           NText {
             id: cpuUsageText
             text: `${SystemStatService.cpuUsage}%`
+            font.family: Settings.data.ui.fontFixed
             font.pointSize: Style.fontSizeS * scaling
             font.weight: Style.fontWeightMedium
             anchors.verticalCenter: parent.verticalCenter
@@ -67,6 +68,7 @@ Row {
 
           NText {
             text: `${SystemStatService.cpuTemp}°C`
+            font.family: Settings.data.ui.fontFixed
             font.pointSize: Style.fontSizeS * scaling
             font.weight: Style.fontWeightMedium
             anchors.verticalCenter: parent.verticalCenter
@@ -87,6 +89,7 @@ Row {
 
           NText {
             text: `${SystemStatService.memoryUsageGb}G`
+            font.family: Settings.data.ui.fontFixed
             font.pointSize: Style.fontSizeS * scaling
             font.weight: Style.fontWeightMedium
             anchors.verticalCenter: parent.verticalCenter

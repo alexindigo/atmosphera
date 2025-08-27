@@ -152,7 +152,7 @@ Item {
       model: localWorkspaces
       Item {
         id: workspacePillContainer
-        height: (Settings.data.bar.showWorkspaceLabel !== "none") ? 18 * scaling : 14 * scaling
+        height: (Settings.data.bar.showWorkspaceLabel !== "none") ? Math.round(18 * scaling) : Math.round(14 * scaling)
         width: root.calculatedWsWidth(model)
 
         Rectangle {
@@ -177,6 +177,7 @@ Item {
                 font.pointSize: model.isFocused ? Style.fontSizeXS * scaling : Style.fontSizeXXS * scaling
                 font.capitalization: Font.AllUppercase
                 font.family: Settings.data.ui.fontFixed
+                font.weight: Style.fontWeightBold
                 wrapMode: Text.Wrap
                 color: {
                   if (model.isFocused)
