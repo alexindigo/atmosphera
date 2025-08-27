@@ -12,36 +12,16 @@ Row {
 
   property ShellScreen screen
   property real scaling: ScalingService.scale(screen)
+  // Title stays collapsed by default; expands only on hover
   property bool showingFullTitle: false
-  property int lastWindowIndex: -1
 
   anchors.verticalCenter: parent.verticalCenter
   spacing: Style.marginS * scaling
   visible: getTitle() !== ""
 
-  // Timer to hide full title after window switch
-  Timer {
-    id: fullTitleTimer
-    interval: 2000
-    repeat: false
-    onTriggered: {
-      showingFullTitle = false
-    }
-  }
+  // Remove auto-expand timer; we rely solely on hover
 
-  // Update text when window changes
-  Connections {
-    target: CompositorService
-    function onActiveWindowChanged() {
-      // Check if window actually changed
-      if (CompositorService.focusedWindowIndex !== lastWindowIndex) {
-        lastWindowIndex = CompositorService.focusedWindowIndex
-        showingFullTitle = true
-        fullTitleTimer.restart()
-      }
-    }
-  }
-
+  // No auto-expansion on window change; keep collapsed unless hovered
   function getTitle() {
     // Use the service's focusedWindowTitle property which is updated immediately
     // when WindowOpenedOrChanged events are received
@@ -105,11 +85,10 @@ Row {
         NText {
           id: titleText
 
-          // If hovered or just switched window, show up to 400 pixels
-          // If not hovered show up to 150 pixels
-          width: (showingFullTitle || mouseArea.containsMouse) ? Math.min(fullTitleMetrics.contentWidth,
-                                                                          400 * scaling) : Math.min(
-                                                                   fullTitleMetrics.contentWidth, 150 * scaling)
+          // Fix collapsed width to 150px to avoid layout shifts with neighbors
+          // Expand up to 400px on hover
+          width: mouseArea.containsMouse ? Math.min(fullTitleMetrics.contentWidth, 400 * scaling) : 150 * scaling
+          horizontalAlignment: mouseArea.containsMouse ? Text.AlignLeft : Text.AlignHCenter
           text: getTitle()
           font.pointSize: Style.fontSizeS * scaling
           font.weight: Style.fontWeightMedium

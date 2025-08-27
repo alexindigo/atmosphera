@@ -346,7 +346,7 @@ NPanel {
                   loops: Animation.Infinite
                   from: 0
                   to: 360
-                  duration: 2000
+                  duration: Style.animationSlow * 4
                 }
               }
 

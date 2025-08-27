@@ -107,7 +107,7 @@ Item {
       property: "masterProgress"
       from: 0.0
       to: 1.0
-      duration: 1000
+      duration: Style.animationSlow * 2
       easing.type: Easing.OutQuint
     }
     PropertyAction {

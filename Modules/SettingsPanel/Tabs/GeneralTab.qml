@@ -164,6 +164,46 @@ ColumnLayout {
           Layout.bottomMargin: Style.marginL * scaling
         }
 
+        // Animation Speed
+        ColumnLayout {
+          spacing: Style.marginXXS * scaling
+          Layout.fillWidth: true
+
+          NText {
+            text: "Animation Speed"
+            font.pointSize: Style.fontSizeL * scaling
+            font.weight: Style.fontWeightBold
+            color: Color.mOnSurface
+          }
+
+          NText {
+            text: "Adjust global animation speed (0.1× to 2.0×)"
+            font.pointSize: Style.fontSizeXS * scaling
+            color: Color.mOnSurfaceVariant
+            wrapMode: Text.WordWrap
+            Layout.fillWidth: true
+          }
+
+          RowLayout {
+            NSlider {
+              Layout.fillWidth: true
+              from: 0.1
+              to: 2.0
+              stepSize: 0.01
+              value: Settings.data.general.animationSpeed
+              onMoved: Settings.data.general.animationSpeed = value
+              cutoutColor: Color.mSurface
+            }
+
+            NText {
+              text: Math.round(Settings.data.general.animationSpeed * 100) + "%"
+              Layout.alignment: Qt.AlignVCenter
+              Layout.leftMargin: Style.marginS * scaling
+              color: Color.mOnSurface
+            }
+          }
+        }
+
         NText {
           text: "Fonts"
           font.pointSize: Style.fontSizeXXL * scaling
