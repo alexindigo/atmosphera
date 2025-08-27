@@ -179,7 +179,8 @@ Alternatively, you can add it to your NixOS configuration or flake:
 ### Usage
 
 <details>
-<summary> With the binary </summary>
+<summary> Nix/AUR </summary>
+The following commands apply to the Nix flake and also the AUR package installation.
 
 | Action                      | Command                                   |
 | --------------------------- | ----------------------------------------- |
@@ -200,9 +201,9 @@ Alternatively, you can add it to your NixOS configuration or flake:
 
 
 <details>
-<summary> Without the binary (Manual or AUR install) </summary>
+<summary> Manual install </summary>
 
-The following commands apply to a manual installation. If you installed Noctalia via the AUR package, you must add the `-c noctalia-shell` flag to each command (e.g., `qs -c noctalia-shell ipc call launcher toggle`).
+The following commands apply to a manual installation.
 
 | Action                      | Command                                   |
 | --------------------------- | ----------------------------------------- |
