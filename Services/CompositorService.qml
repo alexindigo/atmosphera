@@ -166,10 +166,35 @@ Singleton {
 
       for (var i = 0; i < hlToplevels.length; i++) {
         const toplevel = hlToplevels[i]
+
+        // Try to get appId from various sources
+        let appId = ""
+
+        // First try the direct properties
+        if (toplevel.class) {
+          appId = toplevel.class
+        } else if (toplevel.initialClass) {
+          appId = toplevel.initialClass
+        } else if (toplevel.appId) {
+          appId = toplevel.appId
+        }
+
+        // If still no appId, try to get it from the lastIpcObject
+        if (!appId && toplevel.lastIpcObject) {
+          try {
+            const ipcData = toplevel.lastIpcObject
+            // Try different possible property names for the application identifier
+            appId = ipcData.class || ipcData.initialClass || ipcData.appId || ipcData.wm_class || ""
+          } catch (e) {
+
+            // Ignore errors when accessing lastIpcObject
+          }
+        }
+
         windowsList.push({
                            "id": toplevel.address || "",
                            "title": toplevel.title || "",
-                           "appId": toplevel.class || toplevel.initialClass || "",
+                           "appId": appId,
                            "workspaceId": toplevel.workspace?.id || null,
                            "isFocused": toplevel.activated === true
                          })
