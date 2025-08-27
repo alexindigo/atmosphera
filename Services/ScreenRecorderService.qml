@@ -1,4 +1,5 @@
 pragma Singleton
+
 import QtQuick
 import Quickshell
 import Quickshell.Io
@@ -46,9 +47,9 @@ Singleton {
 
     // Use Process instead of execDetached so we can monitor it
     recorderProcess.exec({
-      command: ["sh", "-c", command]
-    })
-    
+                           "command": ["sh", "-c", command]
+                         })
+
     // Start monitoring - if process ends quickly, it was likely cancelled
     pendingTimer.running = true
   }
@@ -59,8 +60,9 @@ Singleton {
       return
     }
 
-    Quickshell.execDetached(["sh", "-c", "pkill -SIGINT -f 'gpu-screen-recorder' || pkill -SIGINT -f 'com.dec05eba.gpu_screen_recorder'"])
-    
+    Quickshell.execDetached(
+          ["sh", "-c", "pkill -SIGINT -f 'gpu-screen-recorder' || pkill -SIGINT -f 'com.dec05eba.gpu_screen_recorder'"])
+
     isRecording = false
     isPending = false
     pendingTimer.running = false
@@ -73,7 +75,7 @@ Singleton {
   // Process to run and monitor gpu-screen-recorder
   Process {
     id: recorderProcess
-    onExited: function(exitCode, exitStatus) {
+    onExited: function (exitCode, exitStatus) {
       if (isPending) {
         // Process ended while we were pending - likely cancelled or error
         isPending = false
@@ -88,7 +90,7 @@ Singleton {
 
   Timer {
     id: pendingTimer
-    interval: 2000  // Wait 2 seconds to see if process stays alive
+    interval: 2000 // Wait 2 seconds to see if process stays alive
     running: false
     repeat: false
     onTriggered: {
@@ -124,7 +126,8 @@ Singleton {
     running: false
     repeat: false
     onTriggered: {
-      Quickshell.execDetached(["sh", "-c", "pkill -9 -f 'gpu-screen-recorder' 2>/dev/null || pkill -9 -f 'com.dec05eba.gpu_screen_recorder' 2>/dev/null || true"])
+      Quickshell.execDetached(
+        ["sh", "-c", "pkill -9 -f 'gpu-screen-recorder' 2>/dev/null || pkill -9 -f 'com.dec05eba.gpu_screen_recorder' 2>/dev/null || true"])
     }
   }
 }

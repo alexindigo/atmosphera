@@ -11,6 +11,7 @@ Singleton {
 
   property var currentPlayer: null
   property real currentPosition: 0
+  property bool isSeeking: false
   property int selectedPlayerIndex: 0
   property bool isPlaying: currentPlayer ? (currentPlayer.playbackState === MprisPlaybackState.Playing
                                             || currentPlayer.isPlaying) : false
@@ -158,14 +159,30 @@ Singleton {
   Timer {
     id: positionTimer
     interval: 1000
-    running: currentPlayer && currentPlayer.isPlaying && currentPlayer.length > 0
+    running: currentPlayer && !root.isSeeking && currentPlayer.isPlaying && currentPlayer.length > 0
              && currentPlayer.playbackState === MprisPlaybackState.Playing
     repeat: true
     onTriggered: {
-      if (currentPlayer && currentPlayer.isPlaying && currentPlayer.playbackState === MprisPlaybackState.Playing) {
+      if (currentPlayer && !root.isSeeking && currentPlayer.isPlaying
+          && currentPlayer.playbackState === MprisPlaybackState.Playing) {
         currentPosition = currentPlayer.position
       } else {
         running = false
+      }
+    }
+  }
+
+  // Avoid overwriting currentPosition while seeking due to backend position changes
+  Connections {
+    target: currentPlayer
+    function onPositionChanged() {
+      if (!root.isSeeking && currentPlayer) {
+        currentPosition = currentPlayer.position
+      }
+    }
+    function onPlaybackStateChanged() {
+      if (!root.isSeeking && currentPlayer) {
+        currentPosition = currentPlayer.position
       }
     }
   }
