@@ -94,30 +94,245 @@ ColumnLayout {
                      }
         }
 
-        // Interval
+        // Interval (slider + H:M inputs)
         ColumnLayout {
           RowLayout {
             NLabel {
               label: "Wallpaper Interval"
-              description: "How often to change wallpapers automatically (in seconds)."
+              description: "How often to change wallpapers automatically."
               Layout.fillWidth: true
             }
 
             NText {
-              text: sliderWpInterval.value + " seconds"
+              // Show friendly H:MM format from current settings
+              text: {
+                const s = Settings.data.wallpaper.randomInterval
+                const h = Math.floor(s / 3600)
+                const m = Math.floor((s % 3600) / 60)
+                return (h > 0 ? (h + "h ") : "") + (m > 0 ? (m + "m") : (h === 0 ? "0m" : ""))
+              }
               Layout.alignment: Qt.AlignBottom | Qt.AlignRight
             }
           }
 
-          NSlider {
-            id: sliderWpInterval
-            Layout.fillWidth: true
-            from: 10
-            to: 900
-            stepSize: 10
-            value: Settings.data.wallpaper.randomInterval
-            onPressedChanged: Settings.data.wallpaper.randomInterval = Math.round(value)
-            cutoutColor: Color.mSurface
+          // Preset chips
+          RowLayout {
+            id: presetRow
+            spacing: Style.marginS * scaling
+
+            // Preset seconds list
+            property var presets: [15 * 60, 30 * 60, 45 * 60, 60 * 60, 90 * 60, 120 * 60]
+            // Whether current interval equals one of the presets
+            property bool isCurrentPreset: presets.indexOf(Settings.data.wallpaper.randomInterval) !== -1
+            // Allow user to force open the custom input; otherwise it's auto-open when not a preset
+            property bool customForcedVisible: false
+
+            function setIntervalSeconds(sec) {
+              Settings.data.wallpaper.randomInterval = sec
+              WallpaperService.restartRandomWallpaperTimer()
+              // Hide custom when selecting a preset
+              customForcedVisible = false
+            }
+
+            // Helper to color selected chip
+            function isSelected(sec) {
+              return Settings.data.wallpaper.randomInterval === sec
+            }
+
+            // 15m
+            Rectangle {
+              radius: height * 0.5
+              color: presetRow.isSelected(15 * 60) ? Color.mPrimary : Color.mSurfaceVariant
+              implicitHeight: Math.max(Style.baseWidgetSize * 0.55 * scaling, 24 * scaling)
+              implicitWidth: label15.implicitWidth + Style.marginM * 1.5 * scaling
+              border.width: 1
+              border.color: presetRow.isSelected(15 * 60) ? Color.transparent : Color.mOutline
+              MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: presetRow.setIntervalSeconds(15 * 60)
+              }
+              NText {
+                id: label15
+                anchors.centerIn: parent
+                text: "15m"
+                font.pointSize: Style.fontSizeS * scaling
+                font.weight: Style.fontWeightMedium
+                color: presetRow.isSelected(15 * 60) ? Color.mOnPrimary : Color.mOnSurface
+              }
+            }
+
+            // 30m
+            Rectangle {
+              radius: height * 0.5
+              color: presetRow.isSelected(30 * 60) ? Color.mPrimary : Color.mSurfaceVariant
+              implicitHeight: Math.max(Style.baseWidgetSize * 0.55 * scaling, 24 * scaling)
+              implicitWidth: label30.implicitWidth + Style.marginM * 1.5 * scaling
+              border.width: 1
+              border.color: presetRow.isSelected(30 * 60) ? Color.transparent : Color.mOutline
+              MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: presetRow.setIntervalSeconds(30 * 60)
+              }
+              NText {
+                id: label30
+                anchors.centerIn: parent
+                text: "30m"
+                font.pointSize: Style.fontSizeS * scaling
+                font.weight: Style.fontWeightMedium
+                color: presetRow.isSelected(30 * 60) ? Color.mOnPrimary : Color.mOnSurface
+              }
+            }
+
+            // 45m
+            Rectangle {
+              radius: height * 0.5
+              color: presetRow.isSelected(45 * 60) ? Color.mPrimary : Color.mSurfaceVariant
+              implicitHeight: Math.max(Style.baseWidgetSize * 0.55 * scaling, 24 * scaling)
+              implicitWidth: label45.implicitWidth + Style.marginM * 1.5 * scaling
+              border.width: 1
+              border.color: presetRow.isSelected(45 * 60) ? Color.transparent : Color.mOutline
+              MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: presetRow.setIntervalSeconds(45 * 60)
+              }
+              NText {
+                id: label45
+                anchors.centerIn: parent
+                text: "45m"
+                font.pointSize: Style.fontSizeS * scaling
+                font.weight: Style.fontWeightMedium
+                color: presetRow.isSelected(45 * 60) ? Color.mOnPrimary : Color.mOnSurface
+              }
+            }
+
+            // 1h
+            Rectangle {
+              radius: height * 0.5
+              color: presetRow.isSelected(60 * 60) ? Color.mPrimary : Color.mSurfaceVariant
+              implicitHeight: Math.max(Style.baseWidgetSize * 0.55 * scaling, 24 * scaling)
+              implicitWidth: label1h.implicitWidth + Style.marginM * 1.5 * scaling
+              border.width: 1
+              border.color: presetRow.isSelected(60 * 60) ? Color.transparent : Color.mOutline
+              MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: presetRow.setIntervalSeconds(60 * 60)
+              }
+              NText {
+                id: label1h
+                anchors.centerIn: parent
+                text: "1h"
+                font.pointSize: Style.fontSizeS * scaling
+                font.weight: Style.fontWeightMedium
+                color: presetRow.isSelected(60 * 60) ? Color.mOnPrimary : Color.mOnSurface
+              }
+            }
+
+            // 1h 30m
+            Rectangle {
+              radius: height * 0.5
+              color: presetRow.isSelected(90 * 60) ? Color.mPrimary : Color.mSurfaceVariant
+              implicitHeight: Math.max(Style.baseWidgetSize * 0.55 * scaling, 24 * scaling)
+              implicitWidth: label90.implicitWidth + Style.marginM * 1.5 * scaling
+              border.width: 1
+              border.color: presetRow.isSelected(90 * 60) ? Color.transparent : Color.mOutline
+              MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: presetRow.setIntervalSeconds(90 * 60)
+              }
+              NText {
+                id: label90
+                anchors.centerIn: parent
+                text: "1h 30m"
+                font.pointSize: Style.fontSizeS * scaling
+                font.weight: Style.fontWeightMedium
+                color: presetRow.isSelected(90 * 60) ? Color.mOnPrimary : Color.mOnSurface
+              }
+            }
+
+            // 2h
+            Rectangle {
+              radius: height * 0.5
+              color: presetRow.isSelected(120 * 60) ? Color.mPrimary : Color.mSurfaceVariant
+              implicitHeight: Math.max(Style.baseWidgetSize * 0.55 * scaling, 24 * scaling)
+              implicitWidth: label2h.implicitWidth + Style.marginM * 1.5 * scaling
+              border.width: 1
+              border.color: presetRow.isSelected(120 * 60) ? Color.transparent : Color.mOutline
+              MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: presetRow.setIntervalSeconds(120 * 60)
+              }
+              NText {
+                id: label2h
+                anchors.centerIn: parent
+                text: "2h"
+                font.pointSize: Style.fontSizeS * scaling
+                font.weight: Style.fontWeightMedium
+                color: presetRow.isSelected(120 * 60) ? Color.mOnPrimary : Color.mOnSurface
+              }
+            }
+
+            // Custom… opens inline input
+            Rectangle {
+              radius: height * 0.5
+              color: customRow.visible ? Color.mPrimary : Color.mSurfaceVariant
+              implicitHeight: Math.max(Style.baseWidgetSize * 0.55 * scaling, 24 * scaling)
+              implicitWidth: labelCustom.implicitWidth + Style.marginM * 1.5 * scaling
+              border.width: 1
+              border.color: customRow.visible ? Color.transparent : Color.mOutline
+              MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: presetRow.customForcedVisible = !presetRow.customForcedVisible
+              }
+              NText {
+                id: labelCustom
+                anchors.centerIn: parent
+                text: customRow.visible ? "Custom" : "Custom…"
+                font.pointSize: Style.fontSizeS * scaling
+                font.weight: Style.fontWeightMedium
+                color: customRow.visible ? Color.mOnPrimary : Color.mOnSurface
+              }
+            }
+          }
+
+          // Custom HH:MM inline input
+          RowLayout {
+            id: customRow
+            visible: presetRow.customForcedVisible || !presetRow.isCurrentPreset
+            spacing: Style.marginS * scaling
+
+            NTextInput {
+              label: "Custom Interval"
+              description: "Enter time as HH:MM (e.g., 1:30)"
+              text: {
+                const s = Settings.data.wallpaper.randomInterval
+                const h = Math.floor(s / 3600)
+                const m = Math.floor((s % 3600) / 60)
+                return h + ":" + (m < 10 ? ("0" + m) : m)
+              }
+              Layout.fillWidth: true
+              onEditingFinished: {
+                const m = text.trim().match(/^(\d{1,2}):(\d{2})$/)
+                if (m) {
+                  let h = parseInt(m[1])
+                  let min = parseInt(m[2])
+                  if (isNaN(h) || isNaN(min))
+                    return
+                  h = Math.max(0, Math.min(24, h))
+                  min = Math.max(0, Math.min(59, min))
+                  Settings.data.wallpaper.randomInterval = (h * 3600) + (min * 60)
+                  WallpaperService.restartRandomWallpaperTimer()
+                  // Keep custom visible after manual entry
+                  presetRow.customForcedVisible = true
+                }
+              }
+            }
           }
         }
       }
@@ -272,7 +487,6 @@ ColumnLayout {
                   font.weight: Style.fontWeightBold
                   color: Color.mOnSurface
                 }
-
                 NText {
                   text: "Frames per second for transition animations."
                   font.pointSize: Style.fontSizeXS * scaling
@@ -295,7 +509,7 @@ ColumnLayout {
               to: 500
               stepSize: 5
               value: Settings.data.wallpaper.swww.transitionFps
-              onPressedChanged: Settings.data.wallpaper.swww.transitionFps = Math.round(value)
+              onMoved: Settings.data.wallpaper.swww.transitionFps = Math.round(value)
               cutoutColor: Color.mSurface
             }
           }
@@ -311,7 +525,6 @@ ColumnLayout {
                   font.weight: Style.fontWeightBold
                   color: Color.mOnSurface
                 }
-
                 NText {
                   text: "Duration of transition animations in seconds."
                   font.pointSize: Style.fontSizeXS * scaling
@@ -334,7 +547,7 @@ ColumnLayout {
               to: 10
               stepSize: 0.05
               value: Settings.data.wallpaper.swww.transitionDuration
-              onPressedChanged: Settings.data.wallpaper.swww.transitionDuration = value
+              onMoved: Settings.data.wallpaper.swww.transitionDuration = value
               cutoutColor: Color.mSurface
             }
           }
