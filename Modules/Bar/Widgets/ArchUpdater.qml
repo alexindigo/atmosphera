@@ -79,14 +79,12 @@ NIconButton {
   }
 
   onClicked: {
-    if (ArchUpdaterService.busy || ArchUpdaterService.aurBusy)
+    if (ArchUpdaterService.busy || ArchUpdaterService.aurBusy) {
       return
-
-    if (ArchUpdaterService.totalUpdates > 0) {
-      PanelService.getPanel("archUpdaterPanel").toggle(screen, this)
-    } else {
-      ArchUpdaterService.doPoll()
-      ArchUpdaterService.doAurPoll()
     }
+
+    PanelService.getPanel("archUpdaterPanel").toggle(screen, this)
+    ArchUpdaterService.doPoll()
+    ArchUpdaterService.doAurPoll()
   }
 }
