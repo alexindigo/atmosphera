@@ -7,13 +7,16 @@ import qs.Services
 Slider {
   id: root
 
-  readonly property real knobDiameter: Style.baseWidgetSize * 0.75 * scaling
-  readonly property real trackHeight: knobDiameter * 0.5
-  readonly property real cutoutExtra: Style.baseWidgetSize * 0.1 * scaling
-
   // Optional color to cut the track beneath the knob (should match surrounding background)
   property var cutoutColor
   property bool snapAlways: true
+  property real heightRatio: 0.75
+
+  readonly property real knobDiameter: Style.baseWidgetSize * heightRatio * scaling
+  readonly property real trackHeight: knobDiameter * 0.5
+  readonly property real cutoutExtra: Style.baseWidgetSize * 0.1 * scaling
+
+
 
   snapMode: snapAlways ? Slider.SnapAlways : Slider.SnapOnRelease
   implicitHeight: Math.max(trackHeight, knobDiameter)
