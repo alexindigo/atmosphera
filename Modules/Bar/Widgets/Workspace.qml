@@ -152,7 +152,7 @@ Item {
       model: localWorkspaces
       Item {
         id: workspacePillContainer
-        height: Settings.data.bar.showWorkspacesNames ? 18 * scaling : 14 * scaling
+        height: (Settings.data.bar.showWorkspaceLabel !== "none") ? 18 * scaling : 14 * scaling
         width: root.calculatedWsWidth(model)
 
         Rectangle {
@@ -160,7 +160,7 @@ Item {
           anchors.fill: parent
 
           Loader {
-            active: Settings.data.bar.showWorkspacesNames
+            active: (Settings.data.bar.showWorkspaceLabel !== "none")
             sourceComponent: Component {
               Text {
                 // Center horizontally
@@ -168,7 +168,7 @@ Item {
                 // Center vertically accounting for font metrics
                 y: (pill.height - height) / 2 + (height - contentHeight) / 2
                 text: {
-                  if (model.name && model.name.length > 0) {
+                  if (Settings.data.bar.showWorkspaceLabel === "name" && model.name && model.name.length > 0) {
                     return model.name.substring(0, 2)
                   } else {
                     return model.idx.toString()

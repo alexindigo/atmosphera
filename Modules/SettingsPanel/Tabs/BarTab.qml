@@ -128,13 +128,27 @@ ColumnLayout {
                      }
         }
 
-        NToggle {
-          label: "Show Workspaces Names"
-          description: "Display the workspace name in the workspace indicator"
-          checked: Settings.data.bar.showWorkspacesNames
-          onToggled: checked => {
-                       Settings.data.bar.showWorkspacesNames = checked
-                     }
+        NComboBox {
+          label: "Show Workspaces Labels"
+          description: "Display the workspace name or index in the workspace indicator"
+          model: ListModel {
+            ListElement {
+              key: "none"
+              name: "None"
+            }
+            ListElement {
+              key: "index"
+              name: "Index"
+            }
+            ListElement {
+              key: "name"
+              name: "Name"
+            }
+          }
+          currentKey: Settings.data.bar.showWorkspaceLabel
+          onSelected: key => {
+                        Settings.data.bar.showWorkspaceLabel = key
+                      }
         }
 
         NDivider {
