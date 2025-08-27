@@ -16,8 +16,6 @@ Slider {
   readonly property real trackHeight: knobDiameter * 0.5
   readonly property real cutoutExtra: Style.baseWidgetSize * 0.1 * scaling
 
-
-
   snapMode: snapAlways ? Slider.SnapAlways : Slider.SnapOnRelease
   implicitHeight: Math.max(trackHeight, knobDiameter)
 
