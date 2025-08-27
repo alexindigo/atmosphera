@@ -119,7 +119,6 @@ Row {
 
             NImageCircled {
               id: trackArt
-              visible: MediaService.trackArtUrl.toString() !== ""
               anchors.fill: parent
               imagePath: MediaService.trackArtUrl
               fallbackIcon: MediaService.isPlaying ? "pause" : "play_arrow"
