@@ -24,6 +24,7 @@ RowLayout {
   NLabel {
     label: root.label
     description: root.description
+    visible: root.label !== "" || root.description !== ""
   }
 
   Rectangle {
@@ -31,7 +32,7 @@ RowLayout {
 
     implicitWidth: root.baseSize * scaling
     implicitHeight: root.baseSize * scaling
-    radius: Math.max(2 * scaling, Style.radiusXS * scaling)
+    radius: Style.radiusXS * scaling
     color: root.checked ? root.activeColor : Color.mSurface
     border.color: root.checked ? root.activeColor : Color.mOutline
     border.width: Math.max(1, Style.borderM * scaling)

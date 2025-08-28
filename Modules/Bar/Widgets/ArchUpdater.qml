@@ -14,18 +14,9 @@ NIconButton {
 
   sizeRatio: 0.8
   colorBg: Color.mSurfaceVariant
-  // Highlight color based on update source
-  colorFg: {
-    if (ArchUpdaterService.totalUpdates === 0)
-      return Color.mOnSurface
-    if (ArchUpdaterService.updates > 0 && ArchUpdaterService.aurUpdates > 0)
-      return Color.mPrimary
-    if (ArchUpdaterService.updates > 0)
-      return Color.mPrimary
-    return Color.mSecondary
-  }
   colorBorder: Color.transparent
   colorBorderHover: Color.transparent
+  colorFg: (ArchUpdaterService.totalUpdates === 0) ? Color.mOnSurface : Color.mPrimary
 
   // Icon states
   icon: {
@@ -40,42 +31,34 @@ NIconButton {
 
   // Tooltip with repo vs AUR breakdown and sample lists
   tooltipText: {
-    if (ArchUpdaterService.busy || ArchUpdaterService.aurBusy)
+    if (ArchUpdaterService.busy || ArchUpdaterService.aurBusy) {
       return "Checking for updates…"
-
-    const repoCount = ArchUpdaterService.updates
-    const aurCount = ArchUpdaterService.aurUpdates
-    const total = ArchUpdaterService.totalUpdates
-
-    if (total === 0)
-      return "System is up to date ✓"
-
-    let header = total === 1 ? "One package can be upgraded:" : (total + " packages can be upgraded:")
-
-    function sampleList(arr, n, colorLabel) {
-      const limit = Math.min(arr.length, n)
-      let s = ""
-      for (var i = 0; i < limit; ++i) {
-        const p = arr[i]
-        s += (i ? "\n" : "") + (p.name + ": " + p.oldVersion + " → " + p.newVersion)
-      }
-      if (arr.length > limit)
-        s += "\n… and " + (arr.length - limit) + " more"
-      return (colorLabel ? (colorLabel + "\n") : "") + (s || "None")
     }
 
-    const repoHeader = repoCount > 0 ? ("Repo (" + repoCount + "):") : "Repo: 0"
-    const aurHeader = aurCount > 0 ? ("AUR (" + aurCount + "):") : "AUR: 0"
+    const total = ArchUpdaterService.totalUpdates
+    if (total === 0) {
+      return "System is up to date ✓"
+    }
+    let header = (total === 1) ? "1 package can be updated" : (total + " packages can be updated")
 
-    const repoBlock = repoCount > 0 ? (repoHeader + "\n\n" + sampleList(ArchUpdaterService.repoPackages,
-                                                                        5)) : repoHeader
-    const aurBlock = aurCount > 0 ? (aurHeader + "\n\n" + sampleList(ArchUpdaterService.aurPackages, 5)) : aurHeader
+    const pacCount = ArchUpdaterService.updates
+    const aurCount = ArchUpdaterService.aurUpdates
+    const pacmanTooltip = (pacCount > 0) ? ((pacCount === 1) ? "1 system package" : pacCount + " system packages") : ""
+    const aurTooltip = (aurCount > 0) ? ((aurCount === 1) ? "1 AUR package" : aurCount + " AUR packages") : ""
 
-    return header + "\n\n" + repoBlock + "\n\n" + aurBlock + "\n\nClick to update system"
+    let tooltip = header
+    if (pacmanTooltip !== "") {
+      tooltip += "\n" + pacmanTooltip
+    }
+    if (aurTooltip !== "") {
+      tooltip += "\n" + aurTooltip
+    }
+    return tooltip
   }
 
   onClicked: {
     if (ArchUpdaterService.busy || ArchUpdaterService.aurBusy) {
+      ToastService.showNotice("ArchUpdater", "Still fetching updates...")
       return
     }
 
