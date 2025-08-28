@@ -30,26 +30,9 @@ RowLayout {
 
   Layout.fillWidth: true
 
-  ColumnLayout {
-    spacing: Style.marginXXS * scaling
-    Layout.fillWidth: true
-
-    NText {
-      text: label
-      font.pointSize: Style.fontSizeM * scaling
-      font.weight: Style.fontWeightBold
-      color: Color.mOnSurface
-      visible: label !== ""
-    }
-
-    NText {
-      text: description
-      font.pointSize: Style.fontSizeS * scaling
-      color: Color.mOnSurfaceVariant
-      wrapMode: Text.WordWrap
-      Layout.fillWidth: true
-      visible: description !== ""
-    }
+  NLabel {
+    label: root.label
+    description: root.description
   }
 
   // Value

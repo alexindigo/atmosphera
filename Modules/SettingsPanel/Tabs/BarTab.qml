@@ -6,221 +6,181 @@ import qs.Services
 import qs.Widgets
 
 ColumnLayout {
-  id: root
 
-  spacing: 0
+  ColumnLayout {
+    spacing: Style.marginL * scaling
 
-  ScrollView {
-    id: scrollView
-
-    Layout.fillWidth: true
-    Layout.fillHeight: true
-    padding: Style.marginM * scaling
-    clip: true
-    ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-    ScrollBar.vertical.policy: ScrollBar.AsNeeded
+    RowLayout {
+      NComboBox {
+        Layout.fillWidth: true
+        label: "Bar Position"
+        description: "Choose where to place the bar on the screen."
+        model: ListModel {
+          ListElement {
+            key: "top"
+            name: "Top"
+          }
+          ListElement {
+            key: "bottom"
+            name: "Bottom"
+          }
+        }
+        currentKey: Settings.data.bar.position
+        onSelected: key => Settings.data.bar.position = key
+      }
+    }
 
     ColumnLayout {
-      width: scrollView.availableWidth
-      spacing: 0
+      spacing: Style.marginXXS * scaling
+      Layout.fillWidth: true
 
-      Item {
-        Layout.fillWidth: true
-        Layout.preferredHeight: 0
+      NText {
+        text: "Background Opacity"
+        font.pointSize: Style.fontSizeL * scaling
+        font.weight: Style.fontWeightBold
+        color: Color.mOnSurface
       }
 
-      ColumnLayout {
-        spacing: Style.marginL * scaling
+      NText {
+        text: "Adjust the background opacity of the bar"
+        font.pointSize: Style.fontSizeXS * scaling
+        color: Color.mOnSurfaceVariant
+        wrapMode: Text.WordWrap
         Layout.fillWidth: true
+      }
 
-        ColumnLayout {
-          spacing: Style.marginXXS * scaling
+      RowLayout {
+        NSlider {
           Layout.fillWidth: true
-
-          NText {
-            text: "Bar Position"
-            font.pointSize: Style.fontSizeL * scaling
-            font.weight: Style.fontWeightBold
-            color: Color.mOnSurface
-          }
-
-          NText {
-            text: "Choose where to place the bar on the screen"
-            font.pointSize: Style.fontSizeXS * scaling
-            color: Color.mOnSurfaceVariant
-            wrapMode: Text.WordWrap
-            Layout.fillWidth: true
-          }
-
-          NComboBox {
-            Layout.fillWidth: true
-            model: ListModel {
-              ListElement {
-                key: "top"
-                name: "Top"
-              }
-              ListElement {
-                key: "bottom"
-                name: "Bottom"
-              }
-            }
-            currentKey: Settings.data.bar.position
-            onSelected: key => {
-                          Settings.data.bar.position = key
-                        }
-          }
+          from: 0
+          to: 1
+          stepSize: 0.01
+          value: Settings.data.bar.backgroundOpacity
+          onMoved: Settings.data.bar.backgroundOpacity = value
+          cutoutColor: Color.mSurface
         }
 
-        ColumnLayout {
-          spacing: Style.marginXXS * scaling
-          Layout.fillWidth: true
-
-          NText {
-            text: "Background Opacity"
-            font.pointSize: Style.fontSizeL * scaling
-            font.weight: Style.fontWeightBold
-            color: Color.mOnSurface
-          }
-
-          NText {
-            text: "Adjust the background opacity of the bar"
-            font.pointSize: Style.fontSizeXS * scaling
-            color: Color.mOnSurfaceVariant
-            wrapMode: Text.WordWrap
-            Layout.fillWidth: true
-          }
-
-          RowLayout {
-            NSlider {
-              Layout.fillWidth: true
-              from: 0
-              to: 1
-              stepSize: 0.01
-              value: Settings.data.bar.backgroundOpacity
-              onMoved: Settings.data.bar.backgroundOpacity = value
-              cutoutColor: Color.mSurface
-            }
-
-            NText {
-              text: Math.floor(Settings.data.bar.backgroundOpacity * 100) + "%"
-              Layout.alignment: Qt.AlignVCenter
-              Layout.leftMargin: Style.marginS * scaling
-              color: Color.mOnSurface
-            }
-          }
-        }
-
-        NToggle {
-          label: "Show Active Window's Icon"
-          description: "Display the app icon next to the title of the currently focused window."
-          checked: Settings.data.bar.showActiveWindowIcon
-          onToggled: checked => {
-                       Settings.data.bar.showActiveWindowIcon = checked
-                     }
-        }
-
-        NToggle {
-          label: "Show Battery Percentage"
-          description: "Display battery percentage at all times."
-          checked: Settings.data.bar.alwaysShowBatteryPercentage
-          onToggled: checked => {
-                       Settings.data.bar.alwaysShowBatteryPercentage = checked
-                     }
-        }
-
-        NComboBox {
-          label: "Show Workspaces Labels"
-          description: "Display the workspace name or index in the workspace indicator"
-          model: ListModel {
-            ListElement {
-              key: "none"
-              name: "None"
-            }
-            ListElement {
-              key: "index"
-              name: "Index"
-            }
-            ListElement {
-              key: "name"
-              name: "Name"
-            }
-          }
-          currentKey: Settings.data.bar.showWorkspaceLabel
-          onSelected: key => {
-                        Settings.data.bar.showWorkspaceLabel = key
-                      }
-        }
-
-        NDivider {
-          Layout.fillWidth: true
-          Layout.topMargin: Style.marginL * scaling
-          Layout.bottomMargin: Style.marginL * scaling
-        }
-
-        // Widgets Management Section
-        ColumnLayout {
-          spacing: Style.marginXXS * scaling
-          Layout.fillWidth: true
-
-          NText {
-            text: "Widgets Positioning"
-            font.pointSize: Style.fontSizeXXL * scaling
-            font.weight: Style.fontWeightBold
-            color: Color.mOnSurface
-            Layout.bottomMargin: Style.marginS * scaling
-          }
-
-          NText {
-            text: "Drag and drop widgets to reorder them within each section, or use the add/remove buttons to manage widgets."
-            font.pointSize: Style.fontSizeXS * scaling
-            color: Color.mOnSurfaceVariant
-            wrapMode: Text.WordWrap
-            Layout.fillWidth: true
-          }
-
-          // Bar Sections
-          ColumnLayout {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            Layout.topMargin: Style.marginM * scaling
-            spacing: Style.marginM * scaling
-
-            // Left Section
-            NSectionEditor {
-              sectionName: "Left"
-              widgetModel: Settings.data.bar.widgets.left
-              availableWidgets: availableWidgets
-              scrollView: scrollView
-              onAddWidget: (widgetName, section) => addWidgetToSection(widgetName, section)
-              onRemoveWidget: (section, index) => removeWidgetFromSection(section, index)
-              onReorderWidget: (section, fromIndex, toIndex) => reorderWidgetInSection(section, fromIndex, toIndex)
-            }
-
-            // Center Section
-            NSectionEditor {
-              sectionName: "Center"
-              widgetModel: Settings.data.bar.widgets.center
-              availableWidgets: availableWidgets
-              scrollView: scrollView
-              onAddWidget: (widgetName, section) => addWidgetToSection(widgetName, section)
-              onRemoveWidget: (section, index) => removeWidgetFromSection(section, index)
-              onReorderWidget: (section, fromIndex, toIndex) => reorderWidgetInSection(section, fromIndex, toIndex)
-            }
-
-            // Right Section
-            NSectionEditor {
-              sectionName: "Right"
-              widgetModel: Settings.data.bar.widgets.right
-              availableWidgets: availableWidgets
-              scrollView: scrollView
-              onAddWidget: (widgetName, section) => addWidgetToSection(widgetName, section)
-              onRemoveWidget: (section, index) => removeWidgetFromSection(section, index)
-              onReorderWidget: (section, fromIndex, toIndex) => reorderWidgetInSection(section, fromIndex, toIndex)
-            }
-          }
+        NText {
+          text: Math.floor(Settings.data.bar.backgroundOpacity * 100) + "%"
+          Layout.alignment: Qt.AlignVCenter
+          Layout.leftMargin: Style.marginS * scaling
+          color: Color.mOnSurface
         }
       }
     }
+
+    NToggle {
+      label: "Show Active Window's Icon"
+      description: "Display the app icon next to the title of the currently focused window."
+      checked: Settings.data.bar.showActiveWindowIcon
+      onToggled: checked => {
+                   Settings.data.bar.showActiveWindowIcon = checked
+                 }
+    }
+
+    NToggle {
+      label: "Show Battery Percentage"
+      description: "Display battery percentage at all times."
+      checked: Settings.data.bar.alwaysShowBatteryPercentage
+      onToggled: checked => {
+                   Settings.data.bar.alwaysShowBatteryPercentage = checked
+                 }
+    }
+
+    NComboBox {
+      label: "Show Workspaces Labels"
+      description: "Display the workspace name or index in the workspace indicator"
+      model: ListModel {
+        ListElement {
+          key: "none"
+          name: "None"
+        }
+        ListElement {
+          key: "index"
+          name: "Index"
+        }
+        ListElement {
+          key: "name"
+          name: "Name"
+        }
+      }
+      currentKey: Settings.data.bar.showWorkspaceLabel
+      onSelected: key => {
+                    Settings.data.bar.showWorkspaceLabel = key
+                  }
+    }
+  }
+
+  NDivider {
+    Layout.fillWidth: true
+    Layout.topMargin: Style.marginXL * scaling
+    Layout.bottomMargin: Style.marginXL * scaling
+  }
+
+  // Widgets Management Section
+  ColumnLayout {
+    spacing: Style.marginXXS * scaling
+    Layout.fillWidth: true
+
+    NText {
+      text: "Widgets Positioning"
+      font.pointSize: Style.fontSizeXXL * scaling
+      font.weight: Style.fontWeightBold
+      color: Color.mOnSurface
+      Layout.bottomMargin: Style.marginS * scaling
+    }
+
+    NText {
+      text: "Drag and drop widgets to reorder them within each section, or use the add/remove buttons to manage widgets."
+      font.pointSize: Style.fontSizeXS * scaling
+      color: Color.mOnSurfaceVariant
+      wrapMode: Text.WordWrap
+      Layout.fillWidth: true
+    }
+
+    // Bar Sections
+    ColumnLayout {
+      Layout.fillWidth: true
+      Layout.fillHeight: true
+      Layout.topMargin: Style.marginM * scaling
+      spacing: Style.marginM * scaling
+
+      // Left Section
+      NSectionEditor {
+        sectionName: "Left"
+        widgetModel: Settings.data.bar.widgets.left
+        availableWidgets: availableWidgets
+        onAddWidget: (widgetName, section) => addWidgetToSection(widgetName, section)
+        onRemoveWidget: (section, index) => removeWidgetFromSection(section, index)
+        onReorderWidget: (section, fromIndex, toIndex) => reorderWidgetInSection(section, fromIndex, toIndex)
+      }
+
+      // Center Section
+      NSectionEditor {
+        sectionName: "Center"
+        widgetModel: Settings.data.bar.widgets.center
+        availableWidgets: availableWidgets
+        onAddWidget: (widgetName, section) => addWidgetToSection(widgetName, section)
+        onRemoveWidget: (section, index) => removeWidgetFromSection(section, index)
+        onReorderWidget: (section, fromIndex, toIndex) => reorderWidgetInSection(section, fromIndex, toIndex)
+      }
+
+      // Right Section
+      NSectionEditor {
+        sectionName: "Right"
+        widgetModel: Settings.data.bar.widgets.right
+        availableWidgets: availableWidgets
+        onAddWidget: (widgetName, section) => addWidgetToSection(widgetName, section)
+        onRemoveWidget: (section, index) => removeWidgetFromSection(section, index)
+        onReorderWidget: (section, fromIndex, toIndex) => reorderWidgetInSection(section, fromIndex, toIndex)
+      }
+    }
+  }
+
+  NDivider {
+    Layout.fillWidth: true
+    Layout.topMargin: Style.marginXL * scaling
+    Layout.bottomMargin: Style.marginXL * scaling
   }
 
   // Helper functions

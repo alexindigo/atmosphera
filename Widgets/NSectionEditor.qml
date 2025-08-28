@@ -10,7 +10,6 @@ NBox {
   property string sectionName: ""
   property var widgetModel: []
   property var availableWidgets: []
-  property var scrollView: null
 
   signal addWidget(string widgetName, string section)
   signal removeWidget(string section, int index)
@@ -23,7 +22,7 @@ NBox {
     if (widgetCount === 0)
       return 140 * scaling
 
-    var availableWidth = scrollView ? scrollView.availableWidth - (Style.marginM * scaling * 2) : 400 * scaling
+    var availableWidth = parent.width
     var avgWidgetWidth = 150 * scaling
     var widgetsPerRow = Math.max(1, Math.floor(availableWidth / avgWidgetWidth))
     var rows = Math.ceil(widgetCount / widgetsPerRow)
@@ -52,7 +51,7 @@ NBox {
 
   ColumnLayout {
     anchors.fill: parent
-    anchors.margins: Style.marginM * scaling
+    anchors.margins: Style.marginL * scaling
     spacing: Style.marginM * scaling
 
     RowLayout {
@@ -189,13 +188,13 @@ NBox {
                            return
                          }
 
-                         Logger.log("NSectionEditor", `Started dragging widget: ${modelData} at index ${index}`)
+                         //Logger.log("NSectionEditor", `Started dragging widget: ${modelData} at index ${index}`)
                          // Bring to front when starting drag
                          widgetItem.z = 1000
                        }
 
             onReleased: {
-              Logger.log("NSectionEditor", `Released widget: ${modelData} at index ${index}`)
+              //Logger.log("NSectionEditor", `Released widget: ${modelData} at index ${index}`)
               // Reset z-index when drag ends
               widgetItem.z = 0
 
@@ -232,13 +231,13 @@ NBox {
               if (targetIndex !== -1 && targetIndex !== index) {
                 const fromIndex = index
                 const toIndex = targetIndex
-                Logger.log(
-                      "NSectionEditor",
-                      `Dropped widget from index ${fromIndex} to position ${toIndex} (distance: ${minDistance.toFixed(
-                        2)})`)
+                // Logger.log(
+                //       "NSectionEditor",
+                //       `Dropped widget from index ${fromIndex} to position ${toIndex} (distance: ${minDistance.toFixed(
+                //         2)})`)
                 reorderWidget(sectionName.toLowerCase(), fromIndex, toIndex)
               } else {
-                Logger.log("NSectionEditor", `No valid drop target found for widget at index ${index}`)
+                Logger.warn("NSectionEditor", `No valid drop target found for widget at index ${index}`)
               }
             }
           }
@@ -264,17 +263,16 @@ NBox {
         radius: Style.radiusS * scaling
       }
 
-      onEntered: function (drag) {
-        Logger.log("NSectionEditor", "Entered start drop zone")
+      onEntered: function (drag) {//Logger.log("NSectionEditor", "Entered start drop zone")
       }
 
       onDropped: function (drop) {
-        Logger.log("NSectionEditor", "Dropped on start zone")
+        //Logger.log("NSectionEditor", "Dropped on start zone")
         if (drop.source && drop.source.widgetIndex !== undefined) {
           const fromIndex = drop.source.widgetIndex
           const toIndex = 0 // Insert at the beginning
           if (fromIndex !== toIndex) {
-            Logger.log("NSectionEditor", `Dropped widget from index ${fromIndex} to beginning`)
+            //Logger.log("NSectionEditor", `Dropped widget from index ${fromIndex} to beginning`)
             reorderWidget(sectionName.toLowerCase(), fromIndex, toIndex)
           }
         }
@@ -299,17 +297,16 @@ NBox {
         radius: Style.radiusS * scaling
       }
 
-      onEntered: function (drag) {
-        Logger.log("NSectionEditor", "Entered end drop zone")
+      onEntered: function (drag) {//Logger.log("NSectionEditor", "Entered end drop zone")
       }
 
       onDropped: function (drop) {
-        Logger.log("NSectionEditor", "Dropped on end zone")
+        //Logger.log("NSectionEditor", "Dropped on end zone")
         if (drop.source && drop.source.widgetIndex !== undefined) {
           const fromIndex = drop.source.widgetIndex
           const toIndex = widgetModel.length // Insert at the end
           if (fromIndex !== toIndex) {
-            Logger.log("NSectionEditor", `Dropped widget from index ${fromIndex} to end`)
+            //Logger.log("NSectionEditor", `Dropped widget from index ${fromIndex} to end`)
             reorderWidget(sectionName.toLowerCase(), fromIndex, toIndex)
           }
         }

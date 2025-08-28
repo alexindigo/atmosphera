@@ -175,7 +175,7 @@ NPanel {
       // Action buttons
       RowLayout {
         Layout.fillWidth: true
-        spacing: Style.marginS * scaling
+        spacing: Style.marginL * scaling
 
         NIconButton {
           icon: "refresh"
@@ -187,7 +187,6 @@ NPanel {
           colorBg: Color.mSurfaceVariant
           colorFg: Color.mOnSurface
           Layout.fillWidth: true
-          Layout.preferredHeight: 35 * scaling
         }
 
         NIconButton {
@@ -201,7 +200,6 @@ NPanel {
           colorBg: ArchUpdaterService.updateInProgress ? Color.mSurfaceVariant : Color.mPrimary
           colorFg: ArchUpdaterService.updateInProgress ? Color.mOnSurfaceVariant : Color.mOnPrimary
           Layout.fillWidth: true
-          Layout.preferredHeight: 35 * scaling
         }
 
         NIconButton {
@@ -219,7 +217,6 @@ NPanel {
           colorFg: ArchUpdaterService.updateInProgress ? Color.mOnSurfaceVariant : (ArchUpdaterService.selectedPackagesCount
                                                                                     > 0 ? Color.mOnSecondary : Color.mOnSurfaceVariant)
           Layout.fillWidth: true
-          Layout.preferredHeight: 35 * scaling
         }
       }
     }

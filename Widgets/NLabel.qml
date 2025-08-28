@@ -11,7 +11,7 @@ ColumnLayout {
 
   NText {
     text: label
-    font.pointSize: Style.fontSizeM * scaling
+    font.pointSize: Style.fontSizeL * scaling
     font.weight: Style.fontWeightBold
     color: Color.mOnSurface
     visible: label !== ""

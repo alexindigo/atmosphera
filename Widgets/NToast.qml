@@ -150,7 +150,7 @@ Item {
           id: labelText
           text: root.label
           color: Color.mOnSurface
-          font.pointSize: Style.fontSize * scaling
+          font.pointSize: Style.fontSizeM * scaling
           font.weight: Style.fontWeightBold
           wrapMode: Text.WordWrap
           width: parent.width
@@ -161,7 +161,7 @@ Item {
           id: descriptionText
           text: root.description
           color: Color.mOnSurface
-          font.pointSize: Style.fontSize * scaling
+          font.pointSize: Style.fontSizeM * scaling
           wrapMode: Text.WordWrap
           width: parent.width
           visible: text.length > 0
@@ -176,7 +176,7 @@ Item {
 
         color: Color.mOnSurface
 
-        fontPointSize: Style.fontSize * scaling
+        fontPointSize: Style.fontSizeM * scaling
         sizeRatio: 0.8
         Layout.alignment: Qt.AlignTop
 

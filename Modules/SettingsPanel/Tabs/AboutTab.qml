@@ -9,15 +9,11 @@ import qs.Services
 import qs.Widgets
 
 ColumnLayout {
-  id: root
+  id: root 
 
   property string latestVersion: GitHubService.latestVersion
   property string currentVersion: "Unknown" // Fallback version
   property var contributors: GitHubService.contributors
-
-  spacing: 0
-  Layout.fillWidth: true
-  Layout.fillHeight: true
 
   Process {
     id: currentVersionProcess
@@ -41,36 +37,14 @@ ColumnLayout {
     }
   }
 
-  ScrollView {
-    id: scrollView
-
-    Layout.fillWidth: true
-    Layout.fillHeight: true
-    padding: Style.marginL * scaling
-    rightPadding: Style.marginM * scaling
-    clip: true
-    ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-    ScrollBar.vertical.policy: ScrollBar.AsNeeded
-
-    ColumnLayout {
-      width: scrollView.availableWidth
-      spacing: 0
 
       NText {
-        text: "Noctalia: quiet by design"
+        text: "Noctalia Shell"
         font.pointSize: Style.fontSizeXXXL * scaling
         font.weight: Style.fontWeightBold
         color: Color.mOnSurface
         Layout.alignment: Qt.AlignCenter
         Layout.bottomMargin: Style.marginS * scaling
-      }
-
-      NText {
-        text: "It may just be another quickshell setup but it won't get in your way."
-        font.pointSize: Style.fontSizeM * scaling
-        color: Color.mOnSurface
-        Layout.alignment: Qt.AlignCenter
-        Layout.bottomMargin: Style.marginL * scaling
       }
 
       GridLayout {
@@ -163,8 +137,8 @@ ColumnLayout {
 
       NDivider {
         Layout.fillWidth: true
-        Layout.topMargin: Style.marginL * 2 * scaling
-        Layout.bottomMargin: Style.marginL * scaling
+        Layout.topMargin: Style.marginXL * scaling
+        Layout.bottomMargin: Style.marginxL * scaling
       }
 
       NText {
@@ -258,5 +232,4 @@ ColumnLayout {
         }
       }
     }
-  }
-}
+

@@ -5,10 +5,11 @@ import qs.Commons
 import qs.Services
 import qs.Widgets
 
-ColumnLayout {
+RowLayout {
   id: root
 
-  readonly property real preferredHeight: Style.baseWidgetSize * 1.35 * scaling
+  readonly property real preferredHeight: Style.baseWidgetSize * 1.1 * scaling
+  property real preferredWidth: 320 * scaling
 
   property string label: ""
   property string description: ""
@@ -23,11 +24,6 @@ ColumnLayout {
   spacing: Style.marginS * scaling
   Layout.fillWidth: true
 
-  NLabel {
-    label: root.label
-    description: root.description
-  }
-
   function findIndexByKey(key) {
     for (var i = 0; i < root.model.count; i++) {
       if (root.model.get(i).key === key) {
@@ -37,10 +33,15 @@ ColumnLayout {
     return -1
   }
 
+  NLabel {
+    label: root.label
+    description: root.description
+  }
+
   ComboBox {
     id: combo
 
-    Layout.preferredWidth: 320 * scaling
+    Layout.preferredWidth: root.preferredWidth
     Layout.preferredHeight: height
     model: model
     currentIndex: findIndexByKey(currentKey)
