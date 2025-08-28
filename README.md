@@ -27,11 +27,11 @@ Features a modern modular architecture with a status bar, notification system, c
 
 ## Preview
 
-![Launcher](https://assets.noctalia.dev/screenshots/launcher.png)
+![Launcher](https://assets.noctalia.dev/screenshots/launcher.png?v=2)
 
-![SettingsPanel](https://assets.noctalia.dev/screenshots/settings-panel.png)  
+![SettingsPanel](https://assets.noctalia.dev/screenshots/settings-panel.png?v=2)  
 
-![SidePanel](https://assets.noctalia.dev/screenshots/light-mode.png)  
+![SidePanel](https://assets.noctalia.dev/screenshots/light-mode.png?v=2)  
 
 ---
 
