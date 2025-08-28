@@ -111,7 +111,7 @@ NPanel {
                 id: checkbox
                 label: ""
                 description: ""
-                checked: (ArchUpdaterService.selectedPackagesCountArchUpdaterService.isPackageSelected(modelData.name))
+                checked: ArchUpdaterService.isPackageSelected(modelData.name)
                 onToggled: ArchUpdaterService.togglePackageSelection(modelData.name)
                 activeColor: (modelData.source === "aur") ? Color.mSecondary : Color.mPrimary
                 activeOnColor: (modelData.source === "aur") ? Color.mOnSecondary : Color.mOnPrimary
