@@ -7,6 +7,8 @@ import qs.Commons
 import qs.Services
 
 ColumnLayout {
+  id: root
+
   property real localVolume: AudioService.volume
 
   Connections {

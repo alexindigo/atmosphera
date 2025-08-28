@@ -7,6 +7,7 @@ import qs.Services
 import qs.Widgets
 
 ColumnLayout {
+  id: root
 
   // Process to check if swww is installed
   Process {

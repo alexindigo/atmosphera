@@ -7,10 +7,7 @@ import qs.Services
 import qs.Widgets
 
 ColumnLayout {
-  readonly property real scaling: ScalingService.scale(screen)
-  readonly property string tabIcon: "photo_library"
-  readonly property string tabLabel: "Wallpaper Selector"
-  readonly property int tabIndex: 7
+  id: root
 
   spacing: Style.marginL * scaling
 

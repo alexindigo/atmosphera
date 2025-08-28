@@ -9,6 +9,13 @@ import qs.Widgets
 ColumnLayout {
   id: root
 
+  // Cache for scheme JSON (can be flat or {dark, light})
+  property var schemeColorsCache: ({})
+
+  // Scale properties for card animations
+  property real cardScaleLow: 0.95
+  property real cardScaleHigh: 1.0
+
   // Helper function to get color from scheme file (supports dark/light variants)
   function getSchemeColor(schemePath, colorKey) {
     // Extract scheme name from path
@@ -28,13 +35,6 @@ ColumnLayout {
     // Return a default color if not cached yet
     return "#000000"
   }
-
-  // Cache for scheme JSON (can be flat or {dark, light})
-  property var schemeColorsCache: ({})
-
-  // Scale properties for card animations
-  property real cardScaleLow: 0.95
-  property real cardScaleHigh: 1.0
 
   // This function is called by the FileView Repeater when a scheme file is loaded
   function schemeLoaded(schemeName, jsonData) {
