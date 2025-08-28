@@ -142,34 +142,62 @@ Singleton {
       return
 
     updateInProgress = true
+
     // Split selected packages by source
-    const repoPkgs = selectedPackages.filter(pkg => {
-                                               const repoPkg = repoPackages.find(p => p.name === pkg)
-                                               return repoPkg && repoPkg.source === "repo"
-                                             })
-    const aurPkgs = selectedPackages.filter(pkg => {
-                                              const aurPkg = aurPackages.find(p => p.name === pkg)
-                                              return aurPkg && aurPkg.source === "aur"
-                                            })
+    const repoPkgs = []
+    const aurPkgs = []
+
+    for (const pkgName of selectedPackages) {
+      const repoPkg = repoPackages.find(p => p.name === pkgName)
+      if (repoPkg && repoPkg.source === "repo") {
+        repoPkgs.push(pkgName)
+      }
+
+      const aurPkg = aurPackages.find(p => p.name === pkgName)
+      if (aurPkg && aurPkg.source === "aur") {
+        aurPkgs.push(pkgName)
+      }
+    }
 
     // Update repo packages
     if (repoPkgs.length > 0) {
       const repoCommand = ["pkexec", "pacman", "-S", "--noconfirm"].concat(repoPkgs)
+      Logger.log("ArchUpdater", "Running repo command:", repoCommand.join(" "))
       Quickshell.execDetached(repoCommand)
     }
 
     // Update AUR packages
     if (aurPkgs.length > 0) {
-      const aurCommand = ["sh", "-c", `command -v yay >/dev/null 2>&1 && yay -S ${aurPkgs.join(
-                            ' ')} --noconfirm || command -v paru >/dev/null 2>&1 && paru -S ${aurPkgs.join(
-                            ' ')} --noconfirm || true`]
-      Quickshell.execDetached(aurCommand)
+      const aurHelper = getAurHelper()
+      if (aurHelper) {
+        const aurCommand = [aurHelper, "-S", "--noconfirm"].concat(aurPkgs)
+        Logger.log("ArchUpdater", "Running AUR command:", aurCommand.join(" "))
+        Quickshell.execDetached(aurCommand)
+      } else {
+        Logger.warn("ArchUpdater", "No AUR helper found for packages:", aurPkgs.join(", "))
+      }
     }
 
     // Clear selection and refresh
     selectedPackages = []
     selectedPackagesCount = 0
     refreshAfterUpdate()
+  }
+
+  // Helper function to detect AUR helper
+  function getAurHelper() {
+    // Check for yay first, then paru
+    const yayCheck = Quickshell.exec("command -v yay", true)
+    if (yayCheck.exitCode === 0 && yayCheck.stdout.trim()) {
+      return "yay"
+    }
+
+    const paruCheck = Quickshell.exec("command -v paru", true)
+    if (paruCheck.exitCode === 0 && paruCheck.stdout.trim()) {
+      return "paru"
+    }
+
+    return null
   }
 
   // Package selection functions

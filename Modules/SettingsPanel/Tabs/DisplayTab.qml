@@ -303,11 +303,11 @@ ColumnLayout {
       }
     }
 
-     // Temperature
+    // Temperature
     ColumnLayout {
       spacing: Style.marginXS * scaling
       Layout.alignment: Qt.AlignVCenter
-     
+
       NLabel {
         label: "Color temperature"
         description: "Select two temperatures in Kelvin"
@@ -317,7 +317,7 @@ ColumnLayout {
         visible: Settings.data.nightLight.enabled
         spacing: Style.marginM * scaling
         Layout.fillWidth: false
-        Layout.fillHeight: true  
+        Layout.fillHeight: true
         Layout.alignment: Qt.AlignVCenter
 
         NText {

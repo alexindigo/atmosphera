@@ -25,16 +25,16 @@ ColumnLayout {
   NLabel {
     label: root.label
     description: root.description
-    visible: root.label !== "" || root.description !== "" 
+    visible: root.label !== "" || root.description !== ""
   }
 
   // Container
   Rectangle {
     id: frame
     implicitWidth: parent.width
-    implicitHeight: Style.baseWidgetSize * 1.1 * scaling    
+    implicitHeight: Style.baseWidgetSize * 1.1 * scaling
     Layout.minimumWidth: 80 * scaling
-    Layout.maximumWidth:  root.inputMaxWidth
+    Layout.maximumWidth: root.inputMaxWidth
     radius: Style.radiusM * scaling
     color: Color.mSurface
     border.color: Color.mOutline

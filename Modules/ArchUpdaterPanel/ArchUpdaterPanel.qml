@@ -112,7 +112,11 @@ NPanel {
                 label: ""
                 description: ""
                 checked: ArchUpdaterService.isPackageSelected(modelData.name)
-                onToggled: ArchUpdaterService.togglePackageSelection(modelData.name)
+                onToggled: function (checked) {
+                  ArchUpdaterService.togglePackageSelection(modelData.name)
+                  // Force refresh of the checked property
+                  checkbox.checked = ArchUpdaterService.isPackageSelected(modelData.name)
+                }
                 activeColor: (modelData.source === "aur") ? Color.mSecondary : Color.mPrimary
                 activeOnColor: (modelData.source === "aur") ? Color.mOnSecondary : Color.mOnPrimary
                 Layout.fillWidth: false
