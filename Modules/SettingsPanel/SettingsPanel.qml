@@ -301,6 +301,7 @@ NPanel {
                     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
                     ScrollBar.vertical.policy: ScrollBar.AsNeeded
                     padding: Style.marginL * scaling
+                    clip: true
 
                     Loader {
                       active: true

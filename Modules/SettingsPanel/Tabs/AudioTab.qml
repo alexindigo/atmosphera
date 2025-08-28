@@ -216,8 +216,6 @@ ColumnLayout {
     }
     // Preferred player (persistent)
     NTextInput {
-      Layout.fillWidth: true
-      Layout.alignment: Qt.AlignTop
       label: "Preferred Player"
       description: "Substring to match MPRIS player (identity/bus/desktop)."
       placeholderText: "e.g. spotify, vlc, mpv"
@@ -239,8 +237,6 @@ ColumnLayout {
 
         NTextInput {
           id: blacklistInput
-          Layout.fillWidth: true
-          Layout.alignment: Qt.AlignTop
           label: "Blacklist player"
           description: "Substring, e.g. plex, shim, mpv."
           placeholderText: "type substring and press +"

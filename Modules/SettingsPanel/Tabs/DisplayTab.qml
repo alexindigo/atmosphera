@@ -74,7 +74,6 @@ ColumnLayout {
     color: Color.mOnSurfaceVariant
     wrapMode: Text.WordWrap
     Layout.fillWidth: true
-    Layout.preferredWidth: parent.width - (Style.marginL * 2 * scaling)
   }
 
   ColumnLayout {
@@ -253,7 +252,6 @@ ColumnLayout {
         color: Color.mOnSurfaceVariant
         wrapMode: Text.WordWrap
         Layout.fillWidth: true
-        Layout.preferredWidth: parent.width - (Style.marginL * 2 * scaling)
       }
     }
 
@@ -278,7 +276,7 @@ ColumnLayout {
       visible: Settings.data.nightLight.enabled
       NLabel {
         label: "Intensity"
-        description: "Higher values create warmer light."
+        description: "Higher values create warmer tones."
       }
       RowLayout {
         spacing: Style.marginS * scaling
@@ -305,46 +303,61 @@ ColumnLayout {
       }
     }
 
-    // Temperature settings (inline like schedule)
-    RowLayout {
-      visible: Settings.data.nightLight.enabled
-      Layout.fillWidth: false
-      spacing: Style.marginM * scaling
-
-      NText {
-        text: "Low"
-        font.pointSize: Style.fontSizeM * scaling
-        color: Color.mOnSurfaceVariant
+     // Temperature
+    ColumnLayout {
+      spacing: Style.marginXS * scaling
+      Layout.alignment: Qt.AlignVCenter
+     
+      NLabel {
+        label: "Color temperature"
+        description: "Select two temperatures in Kelvin"
       }
-      NTextInput {
-        text: Settings.data.nightLight.lowTemp.toString()
-        inputMethodHints: Qt.ImhDigitsOnly
-        Layout.preferredWidth: 100 * scaling
-        onEditingFinished: {
-          var v = parseInt(text)
-          if (!isNaN(v)) {
-            Settings.data.nightLight.lowTemp = Math.max(1000, Math.min(6500, v))
-            NightLightService.apply()
+
+      RowLayout {
+        visible: Settings.data.nightLight.enabled
+        spacing: Style.marginM * scaling
+        Layout.fillWidth: false
+        Layout.fillHeight: true  
+        Layout.alignment: Qt.AlignVCenter
+
+        NText {
+          text: "Low"
+          font.pointSize: Style.fontSizeM * scaling
+          color: Color.mOnSurfaceVariant
+          Layout.alignment: Qt.AlignVCenter
+        }
+
+        NTextInput {
+          text: Settings.data.nightLight.lowTemp.toString()
+          inputMethodHints: Qt.ImhDigitsOnly
+          Layout.alignment: Qt.AlignVCenter
+          onEditingFinished: {
+            var v = parseInt(text)
+            if (!isNaN(v)) {
+              Settings.data.nightLight.lowTemp = Math.max(1000, Math.min(6500, v))
+              NightLightService.apply()
+            }
           }
         }
-      }
 
-      Item {}
+        Item {}
 
-      NText {
-        text: "High"
-        font.pointSize: Style.fontSizeM * scaling
-        color: Color.mOnSurfaceVariant
-      }
-      NTextInput {
-        text: Settings.data.nightLight.highTemp.toString()
-        inputMethodHints: Qt.ImhDigitsOnly
-        Layout.preferredWidth: 100 * scaling
-        onEditingFinished: {
-          var v = parseInt(text)
-          if (!isNaN(v)) {
-            Settings.data.nightLight.highTemp = Math.max(1000, Math.min(10000, v))
-            NightLightService.apply()
+        NText {
+          text: "High"
+          font.pointSize: Style.fontSizeM * scaling
+          color: Color.mOnSurfaceVariant
+          Layout.alignment: Qt.AlignVCenter
+        }
+        NTextInput {
+          text: Settings.data.nightLight.highTemp.toString()
+          inputMethodHints: Qt.ImhDigitsOnly
+          Layout.alignment: Qt.AlignVCenter
+          onEditingFinished: {
+            var v = parseInt(text)
+            if (!isNaN(v)) {
+              Settings.data.nightLight.highTemp = Math.max(1000, Math.min(10000, v))
+              NightLightService.apply()
+            }
           }
         }
       }
