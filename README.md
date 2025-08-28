@@ -70,6 +70,7 @@ Features a modern modular architecture with a status bar, notification system, c
 - `gpu-screen-recorder` - Screen recording functionality
 - `brightnessctl` - For internal/laptop monitor brightness
 - `ddcutil` - For desktop monitor brightness (might introduce some system instability with certain monitors)
+- `xdg-desktop-portal-gnome` - Desktop integration (or alternative portal)
 
 
 ### Optional
@@ -78,7 +79,6 @@ Features a modern modular architecture with a status bar, notification system, c
 - `swww` - Wallpaper animations and effects
 - `matugen` - Material You color scheme generation
 - `cava` - Audio visualizer component
-- `wlsunset` - To be able to use NightLight
 
 > There are 2 more optional dependencies.  
 > Any `polkit agent` to be able to use the ArchUpdater widget.   
