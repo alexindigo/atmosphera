@@ -10,6 +10,7 @@ ColumnLayout {
 
   // Location section
   RowLayout {
+    Layout.fillWidth: true
     spacing: Style.marginL * scaling
 
     NTextInput {
@@ -25,6 +26,7 @@ ColumnLayout {
           LocationService.resetWeather()
         }
       }
+      Layout.maximumWidth: 420 * scaling
     }
 
     NText {

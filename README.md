@@ -27,11 +27,11 @@ Features a modern modular architecture with a status bar, notification system, c
 
 ## Preview
 
-![Launcher](https://assets.noctalia.dev/screenshots/launcher.png)
+![Launcher](https://assets.noctalia.dev/screenshots/launcher.png?v=2)
 
-![SettingsPanel](https://assets.noctalia.dev/screenshots/settings-panel.png)  
+![SettingsPanel](https://assets.noctalia.dev/screenshots/settings-panel.png?v=2)  
 
-![SidePanel](https://assets.noctalia.dev/screenshots/light-mode.png)  
+![SidePanel](https://assets.noctalia.dev/screenshots/light-mode.png?v=2)  
 
 ---
 
@@ -70,7 +70,6 @@ Features a modern modular architecture with a status bar, notification system, c
 - `gpu-screen-recorder` - Screen recording functionality
 - `brightnessctl` - For internal/laptop monitor brightness
 - `ddcutil` - For desktop monitor brightness (might introduce some system instability with certain monitors)
-- `xdg-desktop-portal-gnome` - Desktop integration (or alternative portal)
 
 
 ### Optional
@@ -79,6 +78,7 @@ Features a modern modular architecture with a status bar, notification system, c
 - `swww` - Wallpaper animations and effects
 - `matugen` - Material You color scheme generation
 - `cava` - Audio visualizer component
+- `wlsunset` - To be able to use NightLight
 
 > There are 2 more optional dependencies.  
 > Any `polkit agent` to be able to use the ArchUpdater widget.   
@@ -152,14 +152,12 @@ Alternatively, you can add it to your NixOS configuration or flake:
     quickshell = {
       url = "github:outfoxxed/quickshell";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.quickshell.follows = "quickshell"
     };
   };
 
   outputs = { self, nixpkgs, noctalia, quickshell, ... }:
-  let
-    system = "x86_64-linux";
-    pkgs = import nixpkgs { inherit system; };
-  in {
+   {
     nixosConfigurations.my-host = nixpkgs.lib.nixosSystem {
       modules = [
         ./configuration.nix
@@ -173,8 +171,8 @@ Alternatively, you can add it to your NixOS configuration or flake:
 ```nix
 {
   environment.systemPackages = with pkgs; [
-    noctalia.packages.${system}.default
-    quickshell.packages.${system}.default
+    inputs.noctalia.packages.${system}.default
+    inputs.quickshell.packages.${system}.default
   ];
 }
 ```
@@ -196,6 +194,10 @@ The following commands apply to the Nix flake and also the AUR package installat
 | Open Calculator             | `noctalia-shell ipc call launcher calculator`         |
 | Increase Brightness         | `noctalia-shell ipc call brightness increase`         |
 | Decrease Brightness         | `noctalia-shell ipc call brightness decrease`         |
+| Increase Output Volume      | `noctalia-shell ipc call volume increase`             |
+| Decrease Output Volume      | `noctalia-shell ipc call volume decrease`             |
+| Toggle Mute Audio Output    | `noctalia-shell ipc call volume muteOutput`           |
+| Toggle Mute Audio Input     | `noctalia-shell ipc call volume muteInput`            |
 | Toggle Power Panel          | `noctalia-shell ipc call powerPanel toggle`           |
 | Toggle Idle Inhibitor       | `noctalia-shell ipc call idleInhibitor toggle`        |
 | Toggle Settings Window      | `noctalia-shell ipc call settings toggle`             |

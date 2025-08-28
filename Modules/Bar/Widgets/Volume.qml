@@ -14,6 +14,7 @@ Item {
 
   // Used to avoid opening the pill on Quickshell startup
   property bool firstVolumeReceived: false
+  property int wheelAccumulator: 0
 
   implicitWidth: pill.width
   implicitHeight: pill.height
@@ -59,10 +60,13 @@ Item {
     tooltipText: "Volume: " + Math.round(
                    AudioService.volume * 100) + "%\nLeft click for advanced settings.\nScroll up/down to change volume."
 
-    onWheel: function (angle) {
-      if (angle > 0) {
+    onWheel: function (delta) {
+      wheelAccumulator += delta
+      if (wheelAccumulator >= 120) {
+        wheelAccumulator = 0
         AudioService.increaseVolume()
-      } else if (angle < 0) {
+      } else if (wheelAccumulator <= -120) {
+        wheelAccumulator = 0
         AudioService.decreaseVolume()
       }
     }

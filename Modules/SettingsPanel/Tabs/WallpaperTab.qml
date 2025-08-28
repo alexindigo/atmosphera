@@ -35,10 +35,10 @@ ColumnLayout {
     label: "Wallpaper Directory"
     description: "Path to your wallpaper directory."
     text: Settings.data.wallpaper.directory
-    Layout.fillWidth: true
     onEditingFinished: {
       Settings.data.wallpaper.directory = text
     }
+    Layout.maximumWidth: 420 * scaling
   }
 
   NDivider {
@@ -79,12 +79,7 @@ ColumnLayout {
 
         NText {
           // Show friendly H:MM format from current settings
-          text: {
-            const s = Settings.data.wallpaper.randomInterval
-            const h = Math.floor(s / 3600)
-            const m = Math.floor((s % 3600) / 60)
-            return (h > 0 ? (h + "h ") : "") + (m > 0 ? (m + "m") : (h === 0 ? "0m" : ""))
-          }
+          text: Time.formatVagueHumanReadableDuration(Settings.data.wallpaper.randomInterval)
           Layout.alignment: Qt.AlignBottom | Qt.AlignRight
         }
       }
@@ -284,14 +279,15 @@ ColumnLayout {
 
         NTextInput {
           label: "Custom Interval"
-          description: "Enter time as HH:MM (e.g., 1:30)."
+          description: "Enter time as HH:MM (e.g., 01:30)."
+          inputMaxWidth: 100 * scaling
           text: {
             const s = Settings.data.wallpaper.randomInterval
             const h = Math.floor(s / 3600)
             const m = Math.floor((s % 3600) / 60)
             return h + ":" + (m < 10 ? ("0" + m) : m)
           }
-          Layout.fillWidth: true
+
           onEditingFinished: {
             const m = text.trim().match(/^(\d{1,2}):(\d{2})$/)
             if (m) {

@@ -34,7 +34,7 @@ NPanel {
         spacing: Style.marginM * scaling
 
         NIcon {
-          text: "system_update"
+          text: "system_update_alt"
           font.pointSize: Style.fontSizeXXL * scaling
           color: Color.mPrimary
         }
@@ -77,11 +77,9 @@ NPanel {
       }
 
       // Unified list
-      Rectangle {
+      NBox {
         Layout.fillWidth: true
         Layout.fillHeight: true
-        color: Color.mSurfaceVariant
-        radius: Style.radiusM * scaling
 
         // Combine repo and AUR lists in order: repos first, then AUR
         property var items: (ArchUpdaterService.repoPackages || []).concat(ArchUpdaterService.aurPackages || [])
@@ -89,33 +87,35 @@ NPanel {
         ListView {
           id: unifiedList
           anchors.fill: parent
-          anchors.margins: Style.marginS * scaling
+          anchors.margins: Style.marginM * scaling
+          cacheBuffer: Math.round(300 * scaling)
           clip: true
+          ScrollBar.vertical: ScrollBar {
+            policy: ScrollBar.AsNeeded
+          }
           model: parent.items
-          spacing: Style.marginXS * scaling
-          cacheBuffer: 300 * scaling
-
           delegate: Rectangle {
             width: unifiedList.width
-            height: 56 * scaling
+            height: 44 * scaling
             color: Color.transparent
             radius: Style.radiusS * scaling
 
             RowLayout {
               anchors.fill: parent
-              anchors.margins: Style.marginS * scaling
               spacing: Style.marginS * scaling
 
-              // Checkbox for selection (pure bindings; no imperative state)
-              NIconButton {
+              // Checkbox for selection
+              NCheckbox {
                 id: checkbox
-                icon: ArchUpdaterService.isPackageSelected(modelData.name) ? "check_box" : "check_box_outline_blank"
-                onClicked: ArchUpdaterService.togglePackageSelection(modelData.name)
-                colorBg: Color.transparent
-                colorFg: ArchUpdaterService.isPackageSelected(
-                           modelData.name) ? ((modelData.source === "aur") ? Color.mSecondary : Color.mPrimary) : Color.mOnSurfaceVariant
-                Layout.preferredWidth: 30 * scaling
-                Layout.preferredHeight: 30 * scaling
+                label: ""
+                description: ""
+                checked: ArchUpdaterService.isPackageSelected(modelData.name)
+                baseSize: Math.max(Style.baseWidgetSize * 0.7, 14)
+                onToggled: function (checked) {
+                  ArchUpdaterService.togglePackageSelection(modelData.name)
+                  // Force refresh of the checked property
+                  checkbox.checked = ArchUpdaterService.isPackageSelected(modelData.name)
+                }
               }
 
               // Package info
@@ -123,51 +123,43 @@ NPanel {
                 Layout.fillWidth: true
                 spacing: Style.marginXXS * scaling
 
-                RowLayout {
+                NText {
+                  text: modelData.name
+                  font.pointSize: Style.fontSizeS * scaling
+                  font.weight: Style.fontWeightBold
+                  color: Color.mOnSurface
                   Layout.fillWidth: true
-                  spacing: Style.marginXS * scaling
-
-                  NText {
-                    text: modelData.name
-                    font.pointSize: Style.fontSizeM * scaling
-                    font.weight: Style.fontWeightMedium
-                    color: Color.mOnSurface
-                    Layout.fillWidth: true
-                  }
-
-                  // Source badge (custom rectangle)
-                  Rectangle {
-                    visible: !!modelData.source
-                    radius: 9999
-                    color: modelData.source === "aur" ? Color.mSecondary : Color.mPrimary
-                    Layout.alignment: Qt.AlignVCenter
-                    implicitHeight: Math.max(Style.fontSizeXS * 1.7 * scaling, 16 * scaling)
-                    // Width based on label content + horizontal padding
-                    implicitWidth: badgeText.implicitWidth + Math.max(12 * scaling, Style.marginS * scaling)
-
-                    NText {
-                      id: badgeText
-                      anchors.centerIn: parent
-                      text: modelData.source === "aur" ? "AUR" : "Repo"
-                      font.pointSize: Style.fontSizeXS * scaling
-                      font.weight: Style.fontWeightBold
-                      color: modelData.source === "aur" ? Color.mOnSecondary : Color.mOnPrimary
-                    }
-                  }
+                  Layout.alignment: Qt.AlignVCenter
                 }
 
                 NText {
                   text: modelData.oldVersion + " → " + modelData.newVersion
-                  font.pointSize: Style.fontSizeS * scaling
+                  font.pointSize: Style.fontSizeXXS * scaling
                   color: Color.mOnSurfaceVariant
                   Layout.fillWidth: true
                 }
               }
-            }
-          }
 
-          ScrollBar.vertical: ScrollBar {
-            policy: ScrollBar.AsNeeded
+              // Source tag (AUR vs PAC)
+              Rectangle {
+                visible: !!modelData.source
+                radius: width * 0.5
+                color: modelData.source === "aur" ? Color.mTertiary : Color.mSecondary
+                Layout.alignment: Qt.AlignVCenter
+                implicitHeight: Style.fontSizeS * 1.8 * scaling
+                // Width based on label content + horizontal padding
+                implicitWidth: badgeText.implicitWidth + Math.max(12 * scaling, Style.marginS * scaling)
+
+                NText {
+                  id: badgeText
+                  anchors.centerIn: parent
+                  text: modelData.source === "aur" ? "AUR" : "PAC"
+                  font.pointSize: Style.fontSizeXXS * scaling
+                  font.weight: Style.fontWeightBold
+                  color: modelData.source === "aur" ? Color.mOnTertiary : Color.mOnSecondary
+                }
+              }
+            }
           }
         }
       }
@@ -190,7 +182,7 @@ NPanel {
         }
 
         NIconButton {
-          icon: ArchUpdaterService.updateInProgress ? "hourglass_empty" : "system_update"
+          icon: ArchUpdaterService.updateInProgress ? "hourglass_empty" : "system_update_alt"
           tooltipText: ArchUpdaterService.updateInProgress ? "Update in progress..." : "Update all packages"
           enabled: !ArchUpdaterService.updateInProgress
           onClicked: {
@@ -203,7 +195,7 @@ NPanel {
         }
 
         NIconButton {
-          icon: ArchUpdaterService.updateInProgress ? "hourglass_empty" : "settings"
+          icon: ArchUpdaterService.updateInProgress ? "hourglass_empty" : "check_box"
           tooltipText: ArchUpdaterService.updateInProgress ? "Update in progress..." : "Update selected packages"
           enabled: !ArchUpdaterService.updateInProgress && ArchUpdaterService.selectedPackagesCount > 0
           onClicked: {
@@ -213,9 +205,9 @@ NPanel {
             }
           }
           colorBg: ArchUpdaterService.updateInProgress ? Color.mSurfaceVariant : (ArchUpdaterService.selectedPackagesCount
-                                                                                  > 0 ? Color.mSecondary : Color.mSurfaceVariant)
+                                                                                  > 0 ? Color.mPrimary : Color.mSurfaceVariant)
           colorFg: ArchUpdaterService.updateInProgress ? Color.mOnSurfaceVariant : (ArchUpdaterService.selectedPackagesCount
-                                                                                    > 0 ? Color.mOnSecondary : Color.mOnSurfaceVariant)
+                                                                                    > 0 ? Color.mOnPrimary : Color.mOnSurfaceVariant)
           Layout.fillWidth: true
         }
       }

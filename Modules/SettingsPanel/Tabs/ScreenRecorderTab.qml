@@ -24,7 +24,8 @@ ColumnLayout {
       onEditingFinished: {
         Settings.data.screenRecorder.directory = text
       }
-      Layout.fillWidth: true
+
+      Layout.maximumWidth: 420 * scaling
     }
 
     ColumnLayout {

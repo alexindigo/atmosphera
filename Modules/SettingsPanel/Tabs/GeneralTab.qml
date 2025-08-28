@@ -25,10 +25,9 @@ ColumnLayout {
 
     NTextInput {
       label: "Profile Picture"
-      description: "Your profile picture displayed in various places throughout the shell."
+      description: "Your profile picture that appears throughout the interface."
       text: Settings.data.general.avatarImage
       placeholderText: "/home/user/.face"
-      Layout.fillWidth: true
       onEditingFinished: {
         Settings.data.general.avatarImage = text
       }
