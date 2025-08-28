@@ -330,5 +330,6 @@ ColumnLayout {
     Layout.fillWidth: true
     Layout.topMargin: Style.marginXL * scaling
     Layout.bottomMargin: Style.marginXL * scaling
+    visible: Settings.data.nightLight.enabled
   }
 }

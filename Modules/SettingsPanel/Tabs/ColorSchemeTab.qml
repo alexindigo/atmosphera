@@ -348,7 +348,8 @@ ColumnLayout {
       font.pointSize: Style.fontSizeXXL * scaling
       font.weight: Style.fontWeightBold
       color: Color.mSecondary
-      Layout.bottomMargin: Style.marginS * scaling
+      // Match spacing with the section above (no extra bottom margin)
+      Layout.bottomMargin: 0
     }
 
     NText {
@@ -359,7 +360,7 @@ ColumnLayout {
       wrapMode: Text.WordWrap
     }
 
-    NToggle {
+    NCheckbox {
       label: "GTK 4 (libadwaita)"
       description: "Write ~/.config/gtk-4.0/gtk.css"
       checked: Settings.data.matugen.gtk4
@@ -370,7 +371,7 @@ ColumnLayout {
                  }
     }
 
-    NToggle {
+    NCheckbox {
       label: "GTK 3"
       description: "Write ~/.config/gtk-3.0/gtk.css"
       checked: Settings.data.matugen.gtk3
@@ -381,7 +382,7 @@ ColumnLayout {
                  }
     }
 
-    NToggle {
+    NCheckbox {
       label: "Qt6ct"
       description: "Write ~/.config/qt6ct/colors/noctalia.conf"
       checked: Settings.data.matugen.qt6
@@ -392,7 +393,7 @@ ColumnLayout {
                  }
     }
 
-    NToggle {
+    NCheckbox {
       label: "Qt5ct"
       description: "Write ~/.config/qt5ct/colors/noctalia.conf"
       checked: Settings.data.matugen.qt5
@@ -403,7 +404,7 @@ ColumnLayout {
                  }
     }
 
-    NToggle {
+    NCheckbox {
       label: "Kitty"
       description: "Write ~/.config/kitty/themes/noctalia.conf and reload"
       checked: Settings.data.matugen.kitty
