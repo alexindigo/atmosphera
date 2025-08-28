@@ -17,21 +17,19 @@ Item {
 
   NPill {
     id: pill
-    icon: NightLightService.isActive ? "bedtime" : "bedtime_off"
-    iconCircleColor: NightLightService.isActive ? Color.mSecondary : Color.mOnSurfaceVariant
-    collapsedIconColor: NightLightService.isActive ? Color.mOnSecondary : Color.mOnSurface
+    icon: Settings.data.nightLight.enabled ? "bedtime" : "bedtime_off"
+    iconCircleColor: Settings.data.nightLight.enabled ? Color.mSecondary : Color.mOnSurfaceVariant
+    collapsedIconColor: Settings.data.nightLight.enabled ? Color.mOnSecondary : Color.mOnSurface
     autoHide: false
-    text: NightLightService.isActive ? "On" : "Off"
+    text: Settings.data.nightLight.enabled ? "On" : "Off"
     tooltipText: {
       if (!Settings.isLoaded || !Settings.data.nightLight.enabled) {
         return "Night Light: Disabled\nLeft click to open settings.\nRight click to enable."
       }
 
-      var status = NightLightService.isActive ? "Active" : "Inactive (outside schedule)"
       var intensity = Math.round(Settings.data.nightLight.intensity * 100)
-      var schedule = Settings.data.nightLight.autoSchedule ? `Schedule: ${Settings.data.nightLight.startTime} - ${Settings.data.nightLight.stopTime}` : "Manual mode"
-
-      return `Intensity: ${intensity}%\n${schedule}\nLeft click to open settings.\nRight click to toggle.`
+      var schedule = Settings.data.nightLight.autoSchedule ? `Auto schedule` : `Manual: ${Settings.data.nightLight.startTime} - ${Settings.data.nightLight.stopTime}`
+      return `Night Light: Enabled\nIntensity: ${intensity}%\n${schedule}\nLeft click to open settings.\nRight click to toggle.`
     }
 
     onClicked: {
@@ -42,14 +40,11 @@ Item {
     }
 
     onRightClicked: {
-      // Right click - toggle night light
+      // Right click - toggle night light (debounced apply handled by service)
       Settings.data.nightLight.enabled = !Settings.data.nightLight.enabled
+      NightLightService.apply()
     }
 
-    onWheel: delta => {
-               var diff = delta > 0 ? 0.05 : -0.05
-               Settings.data.nightLight.intensity = Math.max(0, Math.min(1.0,
-                                                                         Settings.data.nightLight.intensity + diff))
-             }
+    // Wheel handler removed to avoid frequent rapid restarts/flicker
   }
 }

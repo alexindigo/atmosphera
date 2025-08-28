@@ -239,7 +239,10 @@ ColumnLayout {
       label: "Enable Night Light"
       description: "Apply a warm color filter to reduce blue light emission."
       checked: Settings.data.nightLight.enabled
-      onToggled: checked => Settings.data.nightLight.enabled = checked
+      onToggled: checked => {
+        Settings.data.nightLight.enabled = checked
+        NightLightService.apply()
+      }
     }
 
     // Intensity settings
@@ -257,7 +260,10 @@ ColumnLayout {
           to: 1
           stepSize: 0.01
           value: Settings.data.nightLight.intensity
-          onMoved: Settings.data.nightLight.intensity = value
+          onMoved: {
+            Settings.data.nightLight.intensity = value
+            NightLightService.apply()
+          }
           Layout.fillWidth: true
           Layout.minimumWidth: 150 * scaling
         }
@@ -271,11 +277,59 @@ ColumnLayout {
       }
     }
 
+    // Temperature settings (inline like schedule)
+    RowLayout {
+      visible: Settings.data.nightLight.enabled
+      Layout.fillWidth: false
+      spacing: Style.marginM * scaling
+
+      NText {
+        text: "Low"
+        font.pointSize: Style.fontSizeM * scaling
+        color: Color.mOnSurfaceVariant
+      }
+      NTextInput {
+        text: Settings.data.nightLight.lowTemp.toString()
+        inputMethodHints: Qt.ImhDigitsOnly
+        Layout.preferredWidth: 100 * scaling
+        onEditingFinished: {
+          var v = parseInt(text)
+          if (!isNaN(v)) {
+            Settings.data.nightLight.lowTemp = Math.max(1000, Math.min(6500, v))
+            NightLightService.apply()
+          }
+        }
+      }
+
+      Item {}
+
+      NText {
+        text: "High"
+        font.pointSize: Style.fontSizeM * scaling
+        color: Color.mOnSurfaceVariant
+      }
+      NTextInput {
+        text: Settings.data.nightLight.highTemp.toString()
+        inputMethodHints: Qt.ImhDigitsOnly
+        Layout.preferredWidth: 100 * scaling
+        onEditingFinished: {
+          var v = parseInt(text)
+          if (!isNaN(v)) {
+            Settings.data.nightLight.highTemp = Math.max(1000, Math.min(10000, v))
+            NightLightService.apply()
+          }
+        }
+      }
+    }
+
     NToggle {
       label: "Auto Schedule"
       description: "Automatically enable night light based on time schedule."
       checked: Settings.data.nightLight.autoSchedule
-      onToggled: checked => Settings.data.nightLight.autoSchedule = checked
+      onToggled: checked => {
+        Settings.data.nightLight.autoSchedule = checked
+        NightLightService.apply()
+      }
       visible: Settings.data.nightLight.enabled
     }
 
@@ -303,7 +357,7 @@ ColumnLayout {
           model: timeOptions
           currentKey: Settings.data.nightLight.startTime
           placeholder: "Select start time"
-          onSelected: key => Settings.data.nightLight.startTime = key
+          onSelected: key => { Settings.data.nightLight.startTime = key; NightLightService.apply() }
           preferredWidth: 120 * scaling
         }
 
@@ -319,7 +373,7 @@ ColumnLayout {
           model: timeOptions
           currentKey: Settings.data.nightLight.stopTime
           placeholder: "Select stop time"
-          onSelected: key => Settings.data.nightLight.stopTime = key
+          onSelected: key => { Settings.data.nightLight.stopTime = key; NightLightService.apply() }
           preferredWidth: 120 * scaling
         }
       }

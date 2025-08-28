@@ -275,6 +275,9 @@ Singleton {
         property string startTime: "20:00"
         property string stopTime: "07:00"
         property bool autoSchedule: false
+        // wlsunset temperatures (Kelvin)
+        property int lowTemp: 3500
+        property int highTemp: 6500
       }
     }
   }

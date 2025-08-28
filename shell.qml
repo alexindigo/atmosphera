@@ -21,7 +21,6 @@ import qs.Modules.Calendar
 import qs.Modules.Dock
 import qs.Modules.IPC
 import qs.Modules.LockScreen
-import qs.Modules.NightLight
 import qs.Modules.Notification
 import qs.Modules.SettingsPanel
 import qs.Modules.PowerPanel
@@ -51,7 +50,7 @@ ShellRoot {
 
   ToastOverlay {}
 
-  NightLightOverlay {}
+  // Night light handled by wlsunset via NightLightService; no overlay needed
 
   IPCManager {}
 
