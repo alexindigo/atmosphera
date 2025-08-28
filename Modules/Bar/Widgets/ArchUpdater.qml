@@ -29,15 +29,11 @@ NIconButton {
 
   // Icon states
   icon: {
-    if (ArchUpdaterService.busy || ArchUpdaterService.aurBusy)
+    if (ArchUpdaterService.busy || ArchUpdaterService.aurBusy) {
       return "sync"
+    }
     if (ArchUpdaterService.totalUpdates > 0) {
-      const count = ArchUpdaterService.totalUpdates
-      if (count > 50)
-        return "system_update_alt"
-      if (count > 10)
-        return "system_update"
-      return "system_update"
+      return "filter_none"
     }
     return "task_alt"
   }

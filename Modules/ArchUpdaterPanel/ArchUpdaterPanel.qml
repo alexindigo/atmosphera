@@ -190,7 +190,7 @@ NPanel {
         }
 
         NIconButton {
-          icon: ArchUpdaterService.updateInProgress ? "hourglass_empty" : "system_update"
+          icon: ArchUpdaterService.updateInProgress ? "hourglass_empty" : "filter_none"
           tooltipText: ArchUpdaterService.updateInProgress ? "Update in progress..." : "Update all packages"
           enabled: !ArchUpdaterService.updateInProgress
           onClicked: {
@@ -203,7 +203,7 @@ NPanel {
         }
 
         NIconButton {
-          icon: ArchUpdaterService.updateInProgress ? "hourglass_empty" : "settings"
+          icon: ArchUpdaterService.updateInProgress ? "hourglass_empty" : "check_box"
           tooltipText: ArchUpdaterService.updateInProgress ? "Update in progress..." : "Update selected packages"
           enabled: !ArchUpdaterService.updateInProgress && ArchUpdaterService.selectedPackagesCount > 0
           onClicked: {
