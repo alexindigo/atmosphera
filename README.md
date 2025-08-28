@@ -152,14 +152,12 @@ Alternatively, you can add it to your NixOS configuration or flake:
     quickshell = {
       url = "github:outfoxxed/quickshell";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.quickshell.follows = "quickshell"
     };
   };
 
   outputs = { self, nixpkgs, noctalia, quickshell, ... }:
-  let
-    system = "x86_64-linux";
-    pkgs = import nixpkgs { inherit system; };
-  in {
+   {
     nixosConfigurations.my-host = nixpkgs.lib.nixosSystem {
       modules = [
         ./configuration.nix
@@ -173,8 +171,8 @@ Alternatively, you can add it to your NixOS configuration or flake:
 ```nix
 {
   environment.systemPackages = with pkgs; [
-    noctalia.packages.${system}.default
-    quickshell.packages.${system}.default
+    inputs.noctalia.packages.${system}.default
+    inputs.quickshell.packages.${system}.default
   ];
 }
 ```
