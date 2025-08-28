@@ -28,7 +28,8 @@ Singleton {
     var lowTemp = Math.round(hiCfg - (hiCfg - loCfg) * Math.pow(i, 0.6))
     cmd.push("-t", lowTemp.toString())
     cmd.push("-T", hiCfg.toString())
-    if (params.autoSchedule && LocationService.data.coordinatesReady && LocationService.data.stableLatitude !== "" && LocationService.data.stableLongitude !== "") {
+    if (params.autoSchedule && LocationService.data.coordinatesReady && LocationService.data.stableLatitude !== ""
+        && LocationService.data.stableLongitude !== "") {
       cmd.push("-l", LocationService.data.stableLatitude)
       cmd.push("-L", LocationService.data.stableLongitude)
     } else {
@@ -44,7 +45,7 @@ Singleton {
 
   function stopIfRunning() {
     // Best-effort stop; wlsunset runs as foreground, so pkill is simplest
-    Quickshell.execDetached(["pkill", "-x", "wlsunset"]) 
+    Quickshell.execDetached(["pkill", "-x", "wlsunset"])
     isRunning = false
   }
 
@@ -66,25 +67,47 @@ Singleton {
   // Observe setting changes and location readiness
   Connections {
     target: Settings.data.nightLight
-    function onEnabledChanged() { apply() }
-    function onIntensityChanged() { apply() }
-    function onAutoScheduleChanged() { apply() }
-    function onStartTimeChanged() { apply() }
-    function onStopTimeChanged() { apply() }
+    function onEnabledChanged() {
+      apply()
+    }
+    function onIntensityChanged() {
+      apply()
+    }
+    function onAutoScheduleChanged() {
+      apply()
+    }
+    function onStartTimeChanged() {
+      apply()
+    }
+    function onStopTimeChanged() {
+      apply()
+    }
   }
 
   Connections {
     target: LocationService.data
-    function onCoordinatesReadyChanged() { if (params.enabled && params.autoSchedule) apply() }
-    function onStableLatitudeChanged() { if (params.enabled && params.autoSchedule) apply() }
-    function onStableLongitudeChanged() { if (params.enabled && params.autoSchedule) apply() }
+    function onCoordinatesReadyChanged() {
+      if (params.enabled && params.autoSchedule)
+        apply()
+    }
+    function onStableLatitudeChanged() {
+      if (params.enabled && params.autoSchedule)
+        apply()
+    }
+    function onStableLongitudeChanged() {
+      if (params.enabled && params.autoSchedule)
+        apply()
+    }
   }
 
   // Foreground process runner
   Process {
     id: runner
     running: false
-    onStarted: { isRunning = true; Logger.log("NightLight", "Started wlsunset:", root.lastCommand) }
+    onStarted: {
+      isRunning = true
+      Logger.log("NightLight", "Started wlsunset:", root.lastCommand)
+    }
     onExited: function (code, status) {
       isRunning = false
       Logger.log("NightLight", "wlsunset exited:", code, status)

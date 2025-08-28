@@ -19,7 +19,6 @@ Item {
   implicitWidth: pill.width
   implicitHeight: pill.height
 
-
   function getIcon() {
     if (AudioService.muted) {
       return "volume_off"

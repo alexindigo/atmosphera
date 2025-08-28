@@ -240,9 +240,9 @@ ColumnLayout {
       description: "Apply a warm color filter to reduce blue light emission."
       checked: Settings.data.nightLight.enabled
       onToggled: checked => {
-        Settings.data.nightLight.enabled = checked
-        NightLightService.apply()
-      }
+                   Settings.data.nightLight.enabled = checked
+                   NightLightService.apply()
+                 }
     }
 
     // Intensity settings
@@ -327,9 +327,9 @@ ColumnLayout {
       description: "Automatically enable night light based on time schedule."
       checked: Settings.data.nightLight.autoSchedule
       onToggled: checked => {
-        Settings.data.nightLight.autoSchedule = checked
-        NightLightService.apply()
-      }
+                   Settings.data.nightLight.autoSchedule = checked
+                   NightLightService.apply()
+                 }
       visible: Settings.data.nightLight.enabled
     }
 
@@ -357,7 +357,10 @@ ColumnLayout {
           model: timeOptions
           currentKey: Settings.data.nightLight.startTime
           placeholder: "Select start time"
-          onSelected: key => { Settings.data.nightLight.startTime = key; NightLightService.apply() }
+          onSelected: key => {
+                        Settings.data.nightLight.startTime = key
+                        NightLightService.apply()
+                      }
           preferredWidth: 120 * scaling
         }
 
@@ -373,7 +376,10 @@ ColumnLayout {
           model: timeOptions
           currentKey: Settings.data.nightLight.stopTime
           placeholder: "Select stop time"
-          onSelected: key => { Settings.data.nightLight.stopTime = key; NightLightService.apply() }
+          onSelected: key => {
+                        Settings.data.nightLight.stopTime = key
+                        NightLightService.apply()
+                      }
           preferredWidth: 120 * scaling
         }
       }

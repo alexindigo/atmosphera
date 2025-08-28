@@ -47,14 +47,26 @@ RowLayout {
       anchors.fill: parent
       cursorShape: Qt.PointingHandCursor
       hoverEnabled: true
-      onEntered: { hovering = true; root.entered() }
-      onExited: { hovering = false; root.exited() }
+      onEntered: {
+        hovering = true
+        root.entered()
+      }
+      onExited: {
+        hovering = false
+        root.exited()
+      }
       onClicked: root.toggled(!root.checked)
     }
 
-    Behavior on color { ColorAnimation { duration: Style.animationFast } }
-    Behavior on border.color { ColorAnimation { duration: Style.animationFast } }
+    Behavior on color {
+      ColorAnimation {
+        duration: Style.animationFast
+      }
+    }
+    Behavior on border.color {
+      ColorAnimation {
+        duration: Style.animationFast
+      }
+    }
   }
 }
-
-

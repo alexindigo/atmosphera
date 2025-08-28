@@ -51,7 +51,6 @@ ShellRoot {
   ToastOverlay {}
 
   // Night light handled by wlsunset via NightLightService; no overlay needed
-
   IPCManager {}
 
   // ------------------------------
