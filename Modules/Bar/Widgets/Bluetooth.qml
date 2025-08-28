@@ -20,16 +20,7 @@ NIconButton {
   colorBorder: Color.transparent
   colorBorderHover: Color.transparent
 
-  icon: {
-    // Show different icons based on connection status
-    if (BluetoothService.pairedDevices.length > 0) {
-      return "bluetooth_connected"
-    } else if (BluetoothService.discovering) {
-      return "bluetooth_searching"
-    } else {
-      return "bluetooth"
-    }
-  }
+  icon: "bluetooth"
   tooltipText: "Bluetooth Devices"
   onClicked: PanelService.getPanel("bluetoothPanel")?.toggle(screen, this)
 }
