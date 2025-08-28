@@ -9,15 +9,33 @@ ColumnLayout {
   id: root
 
   // Location section
-  NTextInput {
-    label: "Location name"
-    description: "Choose a known location near you."
-    text: Settings.data.location.name
-    placeholderText: "Enter the location name"
-    Layout.fillWidth: true
-    onEditingFinished: {
-      Settings.data.location.name = text.trim()
-      LocationService.resetWeather()
+  RowLayout {
+    spacing: Style.marginL * scaling
+
+    NTextInput {
+      label: "Location name"
+      description: "Choose a known location near you."
+      text: Settings.data.location.name
+      placeholderText: "Enter the location name"
+      onEditingFinished: {
+        // Verify the location has really changed to avoid extra resets
+        var newLocation = text.trim()
+        if (newLocation != Settings.data.location.name) {
+          Settings.data.location.name = newLocation
+          LocationService.resetWeather()
+        }
+      }
+    }
+
+    NText {
+      visible: LocationService.data.coordinatesReady
+      text: `${LocationService.data.stableName} (${LocationService.displayCoordinates})`
+      font.pointSize: Style.fontSizeS * scaling
+      color: Color.mOnSurfaceVariant
+      verticalAlignment: Text.AlignVCenter
+      horizontalAlignment: Text.AlignRight
+      Layout.alignment: Qt.AlignBottom
+      Layout.bottomMargin: 12 * scaling
     }
   }
 

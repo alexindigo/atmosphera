@@ -64,10 +64,10 @@ ColumnLayout {
         // Matugen exists, enable it
         Settings.data.colorSchemes.useWallpaperColors = true
         ColorSchemeService.changedWallpaper()
-        ToastService.showNotice("Matugen", "Enabled!")
+        ToastService.showNotice("Matugen", "Enabled")
       } else {
         // Matugen not found
-        ToastService.showWarning("Matugen", "Not installed!")
+        ToastService.showWarning("Matugen", "Not installed")
       }
     }
 
@@ -343,22 +343,26 @@ ColumnLayout {
     Layout.fillWidth: true
     visible: Settings.data.colorSchemes.useWallpaperColors
 
-    NText {
-      text: "Matugen Templates"
-      font.pointSize: Style.fontSizeXXL * scaling
-      font.weight: Style.fontWeightBold
-      color: Color.mSecondary
-      // Match spacing with the section above (no extra bottom margin)
-      Layout.bottomMargin: 0
-    }
+    ColumnLayout {
+        spacing: Style.marginS * scaling
+        Layout.fillWidth: true
 
-    NText {
-      text: "Choose which external components should be themed by Matugen."
-      font.pointSize: Style.fontSizeM * scaling
-      color: Color.mOnSurfaceVariant
-      Layout.fillWidth: true
-      wrapMode: Text.WordWrap
-    }
+        NText {
+          text: "Matugen Templates"
+          font.pointSize: Style.fontSizeXXL * scaling
+          font.weight: Style.fontWeightBold
+          color: Color.mSecondary
+        }
+
+        NText {
+          text: "Select which external components Matugen should apply theming to."
+          font.pointSize: Style.fontSizeM * scaling
+          color: Color.mOnSurfaceVariant
+          Layout.fillWidth: true
+          wrapMode: Text.WordWrap
+        }
+      }
+
 
     NCheckbox {
       label: "GTK 4 (libadwaita)"

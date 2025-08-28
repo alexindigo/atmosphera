@@ -6,7 +6,7 @@ import Quickshell.Io
 import qs.Commons
 import qs.Services
 
-// Weather logic and caching
+// Weather logic and caching with stable UI properties
 Singleton {
   id: root
 
@@ -16,9 +16,16 @@ Singleton {
   property alias data: adapter // Used to access via LocationService.data.xxx
 
   FileView {
+    id: locationFileView
     path: locationFile
-    onAdapterUpdated: writeAdapter()
+    onAdapterUpdated: saveTimer.start()
     onLoaded: {
+      // Initialize stable properties on load
+      if (adapter.latitude !== "" && adapter.longitude !== "" && adapter.weatherLastFetch > 0) {
+        adapter.stableLatitude = adapter.latitude
+        adapter.stableLongitude = adapter.longitude
+        adapter.coordinatesReady = true
+      }
       updateWeather()
     }
     onLoadFailed: function (error) {
@@ -28,12 +35,29 @@ Singleton {
     JsonAdapter {
       id: adapter
 
+      // Core data properties
       property string latitude: ""
       property string longitude: ""
       property string name: ""
       property int weatherLastFetch: 0
       property var weather: null
+
+      // Stable UI properties - only updated when location is fully resolved
+      property bool coordinatesReady: false
+      property string stableLatitude: ""
+      property string stableLongitude: ""
+      property string stableName: ""
     }
+  }
+
+  // Helper property for UI components (outside JsonAdapter to avoid binding loops)
+  readonly property string displayCoordinates: {
+    if (!data.coordinatesReady || data.stableLatitude === "" || data.stableLongitude === "") {
+      return ""
+    }
+    const lat = parseFloat(data.stableLatitude).toFixed(4)
+    const lon = parseFloat(data.stableLongitude).toFixed(4)
+    return `${lat}, ${lon}`
   }
 
   // Every 20s check if we need to fetch new weather
@@ -47,6 +71,13 @@ Singleton {
     }
   }
 
+  Timer {
+    id: saveTimer
+    running: false
+    interval: 1000
+    onTriggered: locationFileView.writeAdapter()
+  }
+
   // --------------------------------
   function init() {
     // does nothing but ensure the singleton is created
@@ -58,11 +89,20 @@ Singleton {
   function resetWeather() {
     Logger.log("Location", "Resetting weather data")
 
+    // Mark as changing to prevent UI updates
+    data.coordinatesReady = false
+
+    // Reset core data
     data.latitude = ""
     data.longitude = ""
     data.name = ""
     data.weatherLastFetch = 0
     data.weather = null
+
+    // Reset stable properties
+    data.stableLatitude = ""
+    data.stableLongitude = ""
+    data.stableName = ""
 
     // Try to fetch immediately
     updateWeather()
@@ -75,10 +115,6 @@ Singleton {
       return
     }
 
-    if (data.latitude === "") {
-      Logger.warn("Location", "Why is my latitude empty")
-    }
-
     if ((data.weatherLastFetch === "") || (data.weather === null) || (data.latitude === "") || (data.longitude === "")
         || (data.name !== Settings.data.location.name)
         || (Time.timestamp >= data.weatherLastFetch + weatherUpdateFrequency)) {
@@ -89,9 +125,17 @@ Singleton {
   // --------------------------------
   function getFreshWeather() {
     isFetchingWeather = true
-    if ((data.latitude === "") || (data.longitude === "") || (data.name !== Settings.data.location.name)) {
 
-      _geocodeLocation(Settings.data.location.name, function (latitude, longitude) {
+    // Check if location name has changed
+    const locationChanged = data.name !== Settings.data.location.name
+    if (locationChanged) {
+      data.coordinatesReady = false
+      Logger.log("Location", "Location changed from", data.name, "to", Settings.data.location.name)
+    }
+
+    if ((data.latitude === "") || (data.longitude === "") || locationChanged) {
+
+      _geocodeLocation(Settings.data.location.name, function (latitude, longitude, name, country) {
         Logger.log("Location", "Geocoded", Settings.data.location.name, "to:", latitude, "/", longitude)
 
         // Save location name
@@ -100,6 +144,8 @@ Singleton {
         // Save GPS coordinates
         data.latitude = latitude.toString()
         data.longitude = longitude.toString()
+
+        data.stableName = `${name}, ${country}`
 
         _fetchWeather(latitude, longitude, errorCallback)
       }, errorCallback)
@@ -119,9 +165,8 @@ Singleton {
         if (xhr.status === 200) {
           try {
             var geoData = JSON.parse(xhr.responseText)
-            // Logger.logJSON.stringify(geoData))
             if (geoData.lat != null) {
-              callback(geoData.lat, geoData.lng)
+              callback(geoData.lat, geoData.lng, geoData.name, geoData.country)
             } else {
               errorCallback("Location", "could not resolve location name")
             }
@@ -148,15 +193,19 @@ Singleton {
         if (xhr.status === 200) {
           try {
             var weatherData = JSON.parse(xhr.responseText)
+            //console.log(JSON.stringify(weatherData))
 
-            // Save data
+            // Save core data
             data.weather = weatherData
             data.weatherLastFetch = Time.timestamp
-            data.latitude = weatherData.latitude.toString()
-            data.longitude = weatherData.longitude.toString()
+
+            // Update stable display values only when complete and successful
+            data.stableLatitude = data.latitude = weatherData.latitude.toString()
+            data.stableLongitude = data.longitude = weatherData.longitude.toString()
+            data.coordinatesReady = true
 
             isFetchingWeather = false
-            Logger.log("Location", "Cached weather to disk")
+            Logger.log("Location", "Cached weather to disk - stable coordinates updated")
           } catch (e) {
             errorCallback("Location", "Failed to parse weather data")
           }
