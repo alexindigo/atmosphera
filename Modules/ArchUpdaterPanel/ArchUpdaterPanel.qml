@@ -34,7 +34,7 @@ NPanel {
         spacing: Style.marginM * scaling
 
         NIcon {
-          text: "system_update"
+          text: "system_update_alt"
           font.pointSize: Style.fontSizeXXL * scaling
           color: Color.mPrimary
         }
@@ -192,7 +192,7 @@ NPanel {
         }
 
         NIconButton {
-          icon: ArchUpdaterService.updateInProgress ? "hourglass_empty" : "filter_none"
+          icon: ArchUpdaterService.updateInProgress ? "hourglass_empty" : "system_update_alt"
           tooltipText: ArchUpdaterService.updateInProgress ? "Update in progress..." : "Update all packages"
           enabled: !ArchUpdaterService.updateInProgress
           onClicked: {

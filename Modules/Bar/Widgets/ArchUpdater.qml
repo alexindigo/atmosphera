@@ -33,7 +33,7 @@ NIconButton {
       return "sync"
     }
     if (ArchUpdaterService.totalUpdates > 0) {
-      return "filter_none"
+      return "system_update_alt"
     }
     return "task_alt"
   }
