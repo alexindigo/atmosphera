@@ -12,7 +12,7 @@ RowLayout {
   property bool checked: false
   property bool hovering: false
   // Smaller default footprint than NToggle
-  property int baseSize: Math.max(Style.baseWidgetSize * 0.8, 14)
+  property int baseSize: Math.max(Style.baseWidgetSize * 0.8, Math.round(14 / scaling))
 
   signal toggled(bool checked)
   signal entered
