@@ -104,7 +104,6 @@ ColumnLayout {
   }
 
   ColumnLayout {
-    width: scrollView.availableWidth
     spacing: 0
 
     Item {
@@ -125,7 +124,7 @@ ColumnLayout {
         onToggled: checked => {
                      Settings.data.colorSchemes.darkMode = checked
                      if (Settings.data.colorSchemes.useWallpaperColors) {
-                       ColorSchemeService.changedWallpaper()
+                       MatugenService.generateFromWallpaper()
                      } else if (Settings.data.colorSchemes.predefinedScheme) {
                        // Re-apply current scheme to pick the right variant
                        ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme)
@@ -133,19 +132,6 @@ ColumnLayout {
                        var tmp = schemeColorsCache
                        schemeColorsCache = {}
                        schemeColorsCache = tmp
-                     }
-                   }
-      }
-
-      // App theming
-      NToggle {
-        label: "Theme external apps (GTK, Qt & kitty)"
-        description: "Writes GTK (gtk.css), Qt5/6 (noctalia.conf) and Kitty (noctalia.conf) themes based on your colors."
-        checked: Settings.data.colorSchemes.themeApps
-        onToggled: checked => {
-                     Settings.data.colorSchemes.themeApps = checked
-                     if (Settings.data.colorSchemes.useWallpaperColors) {
-                       ColorSchemeService.changedWallpaper()
                      }
                    }
       }
@@ -348,5 +334,84 @@ ColumnLayout {
     Layout.fillWidth: true
     Layout.topMargin: Style.marginXL * scaling
     Layout.bottomMargin: Style.marginXL * scaling
+    visible: Settings.data.colorSchemes.useWallpaperColors
+  }
+
+  // Matugen template toggles (moved from MatugenTab)
+  ColumnLayout {
+    spacing: Style.marginL * scaling
+    Layout.fillWidth: true
+    visible: Settings.data.colorSchemes.useWallpaperColors
+
+    NText {
+      text: "Matugen Templates"
+      font.pointSize: Style.fontSizeXXL * scaling
+      font.weight: Style.fontWeightBold
+      color: Color.mSecondary
+      Layout.bottomMargin: Style.marginS * scaling
+    }
+
+    NText {
+      text: "Choose which external components should be themed by Matugen."
+      font.pointSize: Style.fontSizeM * scaling
+      color: Color.mOnSurfaceVariant
+      Layout.fillWidth: true
+      wrapMode: Text.WordWrap
+    }
+
+    NToggle {
+      label: "GTK 4 (libadwaita)"
+      description: "Write ~/.config/gtk-4.0/gtk.css"
+      checked: Settings.data.matugen.gtk4
+      onToggled: checked => {
+                   Settings.data.matugen.gtk4 = checked
+                   if (Settings.data.colorSchemes.useWallpaperColors)
+                   MatugenService.generateFromWallpaper()
+                 }
+    }
+
+    NToggle {
+      label: "GTK 3"
+      description: "Write ~/.config/gtk-3.0/gtk.css"
+      checked: Settings.data.matugen.gtk3
+      onToggled: checked => {
+                   Settings.data.matugen.gtk3 = checked
+                   if (Settings.data.colorSchemes.useWallpaperColors)
+                   MatugenService.generateFromWallpaper()
+                 }
+    }
+
+    NToggle {
+      label: "Qt6ct"
+      description: "Write ~/.config/qt6ct/colors/noctalia.conf"
+      checked: Settings.data.matugen.qt6
+      onToggled: checked => {
+                   Settings.data.matugen.qt6 = checked
+                   if (Settings.data.colorSchemes.useWallpaperColors)
+                   MatugenService.generateFromWallpaper()
+                 }
+    }
+
+    NToggle {
+      label: "Qt5ct"
+      description: "Write ~/.config/qt5ct/colors/noctalia.conf"
+      checked: Settings.data.matugen.qt5
+      onToggled: checked => {
+                   Settings.data.matugen.qt5 = checked
+                   if (Settings.data.colorSchemes.useWallpaperColors)
+                   MatugenService.generateFromWallpaper()
+                 }
+    }
+
+    NToggle {
+      label: "Kitty"
+      description: "Write ~/.config/kitty/themes/noctalia.conf and reload"
+      checked: Settings.data.matugen.kitty
+      onToggled: checked => {
+                   Settings.data.matugen.kitty = checked
+                   if (Settings.data.colorSchemes.useWallpaperColors)
+                   MatugenService.generateFromWallpaper()
+                 }
+    }
   }
 }

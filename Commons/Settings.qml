@@ -256,8 +256,16 @@ Singleton {
         property bool useWallpaperColors: false
         property string predefinedScheme: ""
         property bool darkMode: true
-        // External app theming (GTK & Qt)
-        property bool themeApps: false
+      }
+
+      // matugen templates toggles
+      property JsonObject matugen: JsonObject {
+        // Per-template flags to control dynamic config generation
+        property bool gtk4: false
+        property bool gtk3: false
+        property bool qt6: false
+        property bool qt5: false
+        property bool kitty: false
       }
 
       // night light

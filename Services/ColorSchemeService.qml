@@ -5,6 +5,7 @@ import Qt.labs.folderlistmodel
 import Quickshell
 import Quickshell.Io
 import qs.Commons
+import qs.Services
 
 Singleton {
   id: root
@@ -37,7 +38,7 @@ Singleton {
   function changedWallpaper() {
     if (Settings.data.colorSchemes.useWallpaperColors) {
       Logger.log("ColorScheme", "Starting color generation from wallpaper")
-      generateColorsProcess.running = true
+      MatugenService.generateFromWallpaper()
       // Invalidate potential predefined scheme
       Settings.data.colorSchemes.predefinedScheme = ""
     }
@@ -137,35 +138,5 @@ Singleton {
     colorsWriter.writeAdapter()
   }
 
-  Process {
-    id: generateColorsProcess
-    command: {
-      // Choose config based on external theming toggles
-      var cfg = Quickshell.shellDir + "/Assets/Matugen/matugen.toml"
-      if (!Settings.data.colorSchemes.themeApps) {
-        cfg = Quickshell.shellDir + "/Assets/Matugen/matugen.base.toml"
-      }
-      var cmd = ["matugen", "image", WallpaperService.currentWallpaper, "--config", cfg]
-      if (!Settings.data.colorSchemes.darkMode) {
-        cmd.push("--mode", "light")
-      } else {
-        cmd.push("--mode", "dark")
-      }
-      return cmd
-    }
-    workingDirectory: Quickshell.shellDir
-    running: false
-    stdout: StdioCollector {
-      onStreamFinished: {
-        Logger.log("ColorScheme", "Completed colors generation")
-      }
-    }
-    stderr: StdioCollector {
-      onStreamFinished: {
-        if (this.text !== "") {
-          Logger.error(this.text)
-        }
-      }
-    }
-  }
+  // Matugen generation moved to MatugenService
 }

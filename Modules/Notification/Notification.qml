@@ -25,8 +25,10 @@ Variants {
     property var removingNotifications: ({})
 
     // If no notification display activated in settings, then show them all
-    active: Settings.isLoaded && modelData && (NotificationService.notificationModel.count > 0) ? (Settings.data.notifications.monitors.includes(modelData.name)
-                                              || (Settings.data.notifications.monitors.length === 0)) : false
+    active: Settings.isLoaded && modelData
+            && (NotificationService.notificationModel.count > 0) ? (Settings.data.notifications.monitors.includes(
+                                                                      modelData.name)
+                                                                    || (Settings.data.notifications.monitors.length === 0)) : false
 
     visible: (NotificationService.notificationModel.count > 0)
 
@@ -51,7 +53,7 @@ Variants {
         NotificationService.animateAndRemove.connect(function (notification, index) {
           // Prefer lookup by identity to avoid index mismatches
           var delegate = null
-          if (notificationStack.children && notificationStack.children.length > 0) {
+          if (notificationStack && notificationStack.children && notificationStack.children.length > 0) {
             for (var i = 0; i < notificationStack.children.length; i++) {
               var child = notificationStack.children[i]
               if (child && child.model && child.model.rawNotification === notification) {
@@ -62,7 +64,7 @@ Variants {
           }
 
           // Fallback to index if identity lookup failed
-          if (!delegate && notificationStack.children && notificationStack.children[index]) {
+          if (!delegate && notificationStack && notificationStack.children && notificationStack.children[index]) {
             delegate = notificationStack.children[index]
           }
 
