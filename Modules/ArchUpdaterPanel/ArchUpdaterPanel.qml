@@ -106,14 +106,16 @@ NPanel {
               anchors.margins: Style.marginS * scaling
               spacing: Style.marginS * scaling
 
-              // Checkbox for selection (pure bindings; no imperative state)
-              NIconButton {
+              // Checkbox for selection
+              NCheckbox {
                 id: checkbox
-                icon: ArchUpdaterService.isPackageSelected(modelData.name) ? "check_box" : "check_box_outline_blank"
-                onClicked: ArchUpdaterService.togglePackageSelection(modelData.name)
-                colorBg: Color.transparent
-                colorFg: ArchUpdaterService.isPackageSelected(
-                           modelData.name) ? ((modelData.source === "aur") ? Color.mSecondary : Color.mPrimary) : Color.mOnSurfaceVariant
+                label: ""
+                description: ""
+                checked: (ArchUpdaterService.selectedPackagesCount, ArchUpdaterService.isPackageSelected(modelData.name))
+                onToggled: ArchUpdaterService.togglePackageSelection(modelData.name)
+                activeColor: (modelData.source === "aur") ? Color.mSecondary : Color.mPrimary
+                activeOnColor: (modelData.source === "aur") ? Color.mOnSecondary : Color.mOnPrimary
+                Layout.fillWidth: false
                 Layout.preferredWidth: 30 * scaling
                 Layout.preferredHeight: 30 * scaling
               }

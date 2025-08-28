@@ -11,6 +11,9 @@ RowLayout {
   property string description: ""
   property bool checked: false
   property bool hovering: false
+  // Active state colors (allow override per-usage)
+  property color activeColor: Color.mPrimary
+  property color activeOnColor: Color.mOnPrimary
   // Smaller default footprint than NToggle
   property int baseSize: Math.max(Style.baseWidgetSize * 0.8, 14)
 
@@ -31,15 +34,15 @@ RowLayout {
     implicitWidth: root.baseSize * scaling
     implicitHeight: root.baseSize * scaling
     radius: Math.max(2 * scaling, Style.radiusXS * scaling)
-    color: root.checked ? Color.mPrimary : Color.mSurface
-    border.color: root.checked ? Color.mPrimary : Color.mOutline
+    color: root.checked ? root.activeColor : Color.mSurface
+    border.color: root.checked ? root.activeColor : Color.mOutline
     border.width: Math.max(1, Style.borderM * scaling)
 
     NIcon {
       visible: root.checked
       anchors.centerIn: parent
       text: "check"
-      color: Color.mOnPrimary
+      color: root.activeOnColor
       font.pointSize: Math.max(Style.fontSizeS, root.baseSize * 0.7) * scaling
     }
 
