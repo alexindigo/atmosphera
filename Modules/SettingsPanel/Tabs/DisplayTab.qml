@@ -7,10 +7,7 @@ import qs.Services
 import qs.Widgets
 
 ColumnLayout {
-  readonly property real scaling: ScalingService.scale(screen)
-  readonly property string tabIcon: "monitor"
-  readonly property string tabLabel: "Display"
-  readonly property int tabIndex: 5
+  id: root
 
   // Time dropdown options (00:00 .. 23:30)
   ListModel {
@@ -245,15 +242,9 @@ ColumnLayout {
       onToggled: checked => Settings.data.nightLight.enabled = checked
     }
 
-    NToggle {
-      label: "Auto Schedule"
-      description: "Automatically enable night light based on time schedule."
-      checked: Settings.data.nightLight.autoSchedule
-      onToggled: checked => Settings.data.nightLight.autoSchedule = checked
-    }
-
     // Intensity settings
     ColumnLayout {
+      visible: Settings.data.nightLight.enabled
       NLabel {
         label: "Intensity"
         description: "Higher values create warmer light."
@@ -280,9 +271,18 @@ ColumnLayout {
       }
     }
 
+    NToggle {
+      label: "Auto Schedule"
+      description: "Automatically enable night light based on time schedule."
+      checked: Settings.data.nightLight.autoSchedule
+      onToggled: checked => Settings.data.nightLight.autoSchedule = checked
+      visible: Settings.data.nightLight.enabled
+    }
+
     // Schedule settings
     ColumnLayout {
       spacing: Style.marginXS * scaling
+      visible: Settings.data.nightLight.enabled && Settings.data.nightLight.autoSchedule
 
       NLabel {
         label: "Schedule"

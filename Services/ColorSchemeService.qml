@@ -137,6 +137,4 @@ Singleton {
     colorsWriter.path = colorsJsonFilePath
     colorsWriter.writeAdapter()
   }
-
-  // Matugen generation moved to MatugenService
 }

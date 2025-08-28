@@ -8,6 +8,7 @@ import qs.Services
 import qs.Widgets
 
 ColumnLayout {
+  id: root
   spacing: Style.marginL * scaling
 
   NToggle {

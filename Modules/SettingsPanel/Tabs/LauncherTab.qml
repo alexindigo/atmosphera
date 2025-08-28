@@ -6,6 +6,7 @@ import qs.Services
 import qs.Widgets
 
 ColumnLayout {
+  id: root
 
   ColumnLayout {
     spacing: Style.marginL * scaling

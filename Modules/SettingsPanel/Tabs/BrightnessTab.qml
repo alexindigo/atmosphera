@@ -7,9 +7,8 @@ import qs.Services
 import qs.Widgets
 
 ColumnLayout {
-  readonly property real scaling: ScalingService.scale(screen)
-  readonly property string tabIcon: "brightness_6"
-  readonly property string tabLabel: "Brightness"
+  id: root
+
   spacing: Style.marginL * scaling
 
   // Brightness Step Section
