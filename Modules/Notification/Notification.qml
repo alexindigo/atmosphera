@@ -25,7 +25,7 @@ Variants {
     property var removingNotifications: ({})
 
     // If no notification display activated in settings, then show them all
-    active: Settings.isLoaded && modelData ? (Settings.data.notifications.monitors.includes(modelData.name)
+    active: Settings.isLoaded && modelData && (NotificationService.notificationModel.count > 0) ? (Settings.data.notifications.monitors.includes(modelData.name)
                                               || (Settings.data.notifications.monitors.length === 0)) : false
 
     visible: (NotificationService.notificationModel.count > 0)
