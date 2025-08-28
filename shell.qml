@@ -50,11 +50,10 @@ ShellRoot {
 
   ToastOverlay {}
 
-  // Night light handled by wlsunset via NightLightService; no overlay needed
   IPCManager {}
 
   // ------------------------------
-  // All the panels
+  // All the NPanels
   Launcher {
     id: launcherPanel
     objectName: "launcherPanel"
