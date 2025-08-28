@@ -194,6 +194,10 @@ The following commands apply to the Nix flake and also the AUR package installat
 | Open Calculator             | `noctalia-shell ipc call launcher calculator`         |
 | Increase Brightness         | `noctalia-shell ipc call brightness increase`         |
 | Decrease Brightness         | `noctalia-shell ipc call brightness decrease`         |
+| Increase Output Volume      | `noctalia-shell ipc call volume increase`             |
+| Decrease Output Volume      | `noctalia-shell ipc call volume decrease`             |
+| Toggle Mute Audio Output    | `noctalia-shell ipc call volume muteOutput`           |
+| Toggle Mute Audio Input     | `noctalia-shell ipc call volume muteInput`            |
 | Toggle Power Panel          | `noctalia-shell ipc call powerPanel toggle`           |
 | Toggle Idle Inhibitor       | `noctalia-shell ipc call idleInhibitor toggle`        |
 | Toggle Settings Window      | `noctalia-shell ipc call settings toggle`             |

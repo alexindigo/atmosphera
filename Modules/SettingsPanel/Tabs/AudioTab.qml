@@ -81,6 +81,54 @@ ColumnLayout {
     }
   }
 
+  // Input Volume
+  ColumnLayout {
+    spacing: Style.marginS * scaling
+    Layout.fillWidth: true
+    Layout.topMargin: Style.marginM * scaling
+
+    NLabel {
+      label: "Input Volume"
+      description: "Microphone input volume level."
+    }
+
+    RowLayout {
+      NSlider {
+        Layout.fillWidth: true
+        from: 0
+        to: 1.0
+        value: AudioService.inputVolume
+        stepSize: 0.01
+        onMoved: {
+          AudioService.setInputVolume(value)
+        }
+      }
+
+      NText {
+        text: Math.floor(AudioService.inputVolume * 100) + "%"
+        Layout.alignment: Qt.AlignVCenter
+        Layout.leftMargin: Style.marginS * scaling
+        color: Color.mOnSurface
+      }
+    }
+  }
+
+  // Input Mute Toggle
+  ColumnLayout {
+    spacing: Style.marginS * scaling
+    Layout.fillWidth: true
+    Layout.topMargin: Style.marginM * scaling
+
+    NToggle {
+      label: "Mute Audio Input"
+      description: "Mute or unmute the default audio input (microphone)."
+      checked: AudioService.inputMuted
+      onToggled: checked => {
+                   AudioService.setInputMuted(checked)
+                 }
+    }
+  }
+
   // Volume Step Size
   ColumnLayout {
     spacing: Style.marginS * scaling

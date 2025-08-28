@@ -100,6 +100,24 @@ Item {
   }
 
   IpcHandler {
+    target: "volume"
+    function increase() {
+      AudioService.increaseVolume()
+    }
+    function decrease() {
+      AudioService.decreaseVolume()
+    }
+    function muteOutput() {
+      AudioService.setMuted(!AudioService.muted)
+    }
+    function muteInput() {
+      if (AudioService.source?.ready && AudioService.source?.audio) {
+        AudioService.source.audio.muted = !AudioService.source.audio.muted
+      }
+    }
+  }
+
+  IpcHandler {
     target: "powerPanel"
     function toggle() {
       powerPanel.toggle(Quickshell.screens[0])
