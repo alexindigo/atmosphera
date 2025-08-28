@@ -20,10 +20,10 @@ ColumnLayout {
         // SWWW exists, enable it
         Settings.data.wallpaper.swww.enabled = true
         WallpaperService.startSWWWDaemon()
-        ToastService.showNotice("SWWW", "Enabled!")
+        ToastService.showNotice("Swww", "Enabled")
       } else {
         // SWWW not found
-        ToastService.showWarning("SWWW", "Not installed!")
+        ToastService.showWarning("Swww", "Not installed")
       }
     }
 
