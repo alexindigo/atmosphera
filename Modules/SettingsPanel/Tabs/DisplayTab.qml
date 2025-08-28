@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 import Quickshell
+import Quickshell.Io
 import qs.Commons
 import qs.Services
 import qs.Widgets
@@ -25,6 +26,27 @@ ColumnLayout {
                            })
       }
     }
+  }
+
+  // Check for wlsunset availability when enabling Night Light
+  Process {
+    id: wlsunsetCheck
+    command: ["which", "wlsunset"]
+    running: false
+
+    onExited: function (exitCode) {
+      if (exitCode === 0) {
+        Settings.data.nightLight.enabled = true
+        NightLightService.apply()
+        ToastService.showNotice("Night Light", "Enabled")
+      } else {
+        Settings.data.nightLight.enabled = false
+        ToastService.showWarning("Night Light", "wlsunset not installed")
+      }
+    }
+
+    stdout: StdioCollector {}
+    stderr: StdioCollector {}
   }
 
   // Helper functions to update arrays immutably
@@ -240,8 +262,14 @@ ColumnLayout {
       description: "Apply a warm color filter to reduce blue light emission."
       checked: Settings.data.nightLight.enabled
       onToggled: checked => {
-                   Settings.data.nightLight.enabled = checked
-                   NightLightService.apply()
+                   if (checked) {
+                     // Verify wlsunset exists before enabling
+                     wlsunsetCheck.running = true
+                   } else {
+                     Settings.data.nightLight.enabled = false
+                     NightLightService.apply()
+                     ToastService.showNotice("Night Light", "Disabled")
+                   }
                  }
     }
 

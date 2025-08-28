@@ -11,10 +11,8 @@ RowLayout {
   property string description: ""
   property bool checked: false
   property bool hovering: false
-  // Active state colors (allow override per-usage)
   property color activeColor: Color.mPrimary
   property color activeOnColor: Color.mOnPrimary
-  // Smaller default footprint than NToggle
   property int baseSize: Math.max(Style.baseWidgetSize * 0.8, 14)
 
   signal toggled(bool checked)
