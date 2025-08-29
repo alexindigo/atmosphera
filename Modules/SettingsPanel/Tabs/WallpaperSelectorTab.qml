@@ -78,7 +78,7 @@ ColumnLayout {
     description: "Set selected wallpaper on all monitors at once."
     checked: Settings.data.wallpaper.setWallpaperOnAllMonitors
     onToggled: checked => Settings.data.wallpaper.setWallpaperOnAllMonitors = checked
-    visible: (wallpaperService.wallpaperList.length > 0)
+    visible: (WallpaperService.wallpaperList.length > 0)
   }
 
   // Wallpaper grid container
@@ -204,7 +204,6 @@ ColumnLayout {
       ColumnLayout {
         id: fallbackColumn
         anchors.fill: parent
-        anchors.margins: Style.marginL * Scaling
 
         Item {
           Layout.fillHeight: true
