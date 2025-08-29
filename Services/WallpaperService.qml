@@ -150,14 +150,28 @@ Singleton {
   // -------------------------------------------------------------------
   function setRandomWallpaper() {
     Logger.log("Wallpaper", "setRandomWallpaper")
-    for (var i = 0; i < Quickshell.screens.length; i++) {
-      var screenName = Quickshell.screens[i].name
-      var wallpaperList = getWallpapersList(screenName)
 
+    if (Settings.data.wallpaper.enableMultiMonitorDirectories) {
+      // Pick a random wallpaper per screen
+      for (var i = 0; i < Quickshell.screens.length; i++) {
+        var screenName = Quickshell.screens[i].name
+        var wallpaperList = getWallpapersList(screenName)
+
+        if (wallpaperList.length > 0) {
+          var randomIndex = Math.floor(Math.random() * wallpaperList.length)
+          var randomPath = wallpaperList[randomIndex]
+          changeWallpaper(screenName, randomPath)
+        }
+      }
+    }
+    else {
+      // Pick a random wallpaper for all screens
+      // We can use any screenName here, so we just pick the primary one.
+      var wallpaperList = getWallpapersList(Screen.name)
       if (wallpaperList.length > 0) {
         var randomIndex = Math.floor(Math.random() * wallpaperList.length)
         var randomPath = wallpaperList[randomIndex]
-        setWallpaper(screenName, randomPath)
+        changeWallpaper(undefined, randomPath)
       }
     }
   }
@@ -165,11 +179,9 @@ Singleton {
   // -------------------------------------------------------------------
   function toggleRandomWallpaper() {
     Logger.log("Wallpaper", "toggleRandomWallpaper")
-    if (Settings.data.wallpaper.randomEnabled && !randomWallpaperTimer.running) {
-      randomWallpaperTimer.start()
+    if (Settings.data.wallpaper.randomEnabled) {
+      randomWallpaperTimer.restart()
       setRandomWallpaper()
-    } else if (!Settings.data.wallpaper.randomEnabled && randomWallpaperTimer.running) {
-      randomWallpaperTimer.stop()
     }
   }
 
@@ -211,7 +223,7 @@ Singleton {
   Timer {
     id: randomWallpaperTimer
     interval: Settings.data.wallpaper.randomIntervalSec * 1000
-    running: false
+    running: Settings.data.wallpaper.randomEnabled
     repeat: true
     onTriggered: setRandomWallpaper()
     triggeredOnStart: false
