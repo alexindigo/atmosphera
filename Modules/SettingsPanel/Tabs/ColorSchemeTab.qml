@@ -417,5 +417,16 @@ ColumnLayout {
                    MatugenService.generateFromWallpaper()
                  }
     }
+
+    NCheckbox {
+      label: "Ghostty"
+      description: "Write ~/.config/ghostty/themes/noctalia and reload"
+      checked: Settings.data.matugen.ghostty
+      onToggled: checked => {
+                   Settings.data.matugen.ghostty = checked
+                   if (Settings.data.colorSchemes.useWallpaperColors)
+                   MatugenService.generateFromWallpaper()
+                 }
+    }
   }
 }

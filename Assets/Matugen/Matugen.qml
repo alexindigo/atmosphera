@@ -46,6 +46,12 @@ Singleton {
       lines.push('output_path = "~/.config/kitty/themes/noctalia.conf"')
       lines.push("post_hook   = 'kitty +kitten themes --reload-in=all noctalia'")
     }
+    if (Settings.data.matugen.ghostty) {
+      lines.push("\n[templates.ghostty]")
+      lines.push('input_path = "' + Quickshell.shellDir + '/Assets/Matugen/templates/ghostty.conf"')
+      lines.push('output_path = "~/.config/ghostty/themes/noctalia"')
+      lines.push("post_hook = \"grep -q '^theme *= *' ~/.config/ghostty/config; and sed -i 's/^theme *= *.*/theme = noctalia/' ~/.config/ghostty/config; or echo 'theme = noctalia' >> ~/.config/ghostty/config\"")
+    }
 
     return lines.join("\n") + "\n"
   }
