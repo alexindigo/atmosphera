@@ -152,7 +152,7 @@ Singleton {
     Logger.log("Wallpaper", "setRandomWallpaper")
     for (var i = 0; i < Quickshell.screens.length; i++) {
       var screenName = Quickshell.screens[i].name
-      var wallpaperList = getWallpaperList(screenName)
+      var wallpaperList = getWallpapersList(screenName)
 
       if (wallpaperList.length > 0) {
         var randomIndex = Math.floor(Math.random() * wallpaperList.length)
@@ -234,15 +234,13 @@ Singleton {
           var lists = root.wallpaperLists
           lists[screenName] = []
           root.wallpaperLists = lists
-        }
-        else if (status === FolderListModel.Loading) {
+        } else if (status === FolderListModel.Loading) {
           // Flush the list
           var lists = root.wallpaperLists
           lists[screenName] = []
           root.wallpaperLists = lists
 
           scanningCount++
-
         } else if (status === FolderListModel.Ready) {
           var files = []
           for (var i = 0; i < count; i++) {
