@@ -163,9 +163,8 @@ Singleton {
           changeWallpaper(screenName, randomPath)
         }
       }
-    }
-    else {
-      // Pick a random wallpaper for all screens
+    } else {
+      // Pick a random wallpaper common to all screens
       // We can use any screenName here, so we just pick the primary one.
       var wallpaperList = getWallpapersList(Screen.name)
       if (wallpaperList.length > 0) {
