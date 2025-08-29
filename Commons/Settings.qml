@@ -89,18 +89,16 @@ Singleton {
       reload()
     }
     onLoaded: function () {
-      Qt.callLater(function () {
-        // Some stuff like settings validation should just be executed once on startup and not on every reload
-        if (!isLoaded) {
-          Logger.log("Settings", "JSON completed loading")
+      if (!isLoaded) {
+        Logger.log("Settings", "----------------------------")
+        Logger.log("Settings", "Settings loaded successfully")
+        isLoaded = true
 
-          // Validate monitor configurations, only once
-          // if none of the configured monitors exist, clear the lists
+        Qt.callLater(function () {
+          // Some stuff like settings validation should just be executed once on startup and not on every reload
           validateMonitorConfigurations()
-
-          isLoaded = true
-        }
-      })
+        })
+      }
     }
     onLoadFailed: function (error) {
       if (error.toString().includes("No such file") || error === 2)

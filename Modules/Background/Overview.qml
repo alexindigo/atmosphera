@@ -11,9 +11,8 @@ Variants {
 
   delegate: Loader {
     required property ShellScreen modelData
-    property string wallpaperSource: WallpaperService.getWallpaper(modelData.name)
 
-    active: CompositorService.isNiri && wallpaperSource !== ""
+    active: Settings.isLoaded && CompositorService.isNiri
 
     sourceComponent: PanelWindow {
       Component.onCompleted: {
@@ -37,7 +36,7 @@ Variants {
         id: bgImage
         anchors.fill: parent
         fillMode: Image.PreserveAspectCrop
-        source: wallpaperSource
+        source: WallpaperService.getWallpaper(modelData.name)
         cache: true
         smooth: true
         mipmap: false

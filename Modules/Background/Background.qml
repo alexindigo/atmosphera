@@ -10,9 +10,8 @@ Variants {
   delegate: Loader {
 
     required property ShellScreen modelData
-    property string wallpaperSource: WallpaperService.getWallpaper(modelData.name)
 
-    active: wallpaperSource !== ""
+    active: Settings.isLoaded && WallpaperService.getWallpaper(modelData.name)
 
     sourceComponent: PanelWindow {
 
@@ -32,7 +31,7 @@ Variants {
       Image {
         anchors.fill: parent
         fillMode: Image.PreserveAspectCrop
-        source: wallpaperSource
+        source: WallpaperService.getWallpaper(modelData.name)
         cache: true
         smooth: true
         mipmap: false
