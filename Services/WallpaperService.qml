@@ -10,66 +10,138 @@ Singleton {
   id: root
 
   Component.onCompleted: {
-    Logger.log("Wallpapers", "Service started")
+    Logger.log("Wallpaper", "Service started")
     listWallpapers()
 
     // Wallpaper is set when the settings are loaded.
     // Don't start random wallpaper during initialization
   }
 
+  readonly property ListModel transitionsModel: ListModel {
+    ListElement {
+      key: "none"
+      name: "None"
+    }
+    ListElement {
+      key: "fade"
+      name: "Fade"
+    }
+  }
+
   property var wallpaperList: []
-  property string currentWallpaper: Settings.data.wallpaper.current
   property bool scanning: false
 
-  // SWWW
-  property string transitionType: Settings.data.wallpaper.swww.transitionType
-  property var randomChoices: ["simple", "fade", "left", "right", "top", "bottom", "wipe", "wave", "grow", "center", "any", "outer"]
+  Connections {
+    target: Settings.data.wallpaper
+    onDirectoryChanged: WallpaperService.listWallpapers()
+    onRandomEnabledChanged: WallpaperService.toggleRandomWallpaper()
+    onRandomIntervalChanged: WallpaperService.restartRandomWallpaperTimer()
+  }
 
+  // -------------------------------------------------------------------
+  function geMonitorDefinition(screenName) {
+    var monitors = Settings.data.wallpaper.monitors
+    if (monitors !== undefined) {
+      for (var i = 0; i < monitors.length; i++) {
+        if (monitors[i].name !== undefined && monitors[i].name === screenName) {
+          return monitors[i]
+        }
+      }
+    }
+  }
+
+  // -------------------------------------------------------------------
+  function getMonitorWallpaperDirectory(screenName) {
+    var monitor = geMonitorDefinition(screenName)
+    if (monitor !== undefined) {
+      return monitor.directory
+    }
+    return Settings.data.wallpaper.directory
+  }
+
+  // -------------------------------------------------------------------
+  function setMonitorWallpaperDirectory(screenName, directory) {
+    var monitor = geMonitorDefinition(screenName)
+    if (monitor !== undefined) {
+      monitor.directory = directory
+      return
+    }
+
+    Settings.data.wallpaper.monitors.push({
+                                            "name": screenName,
+                                            "directory": directory,
+                                            "wallpaper": ""
+                                          })
+  }
+
+  // -------------------------------------------------------------------
   function listWallpapers() {
-    Logger.log("Wallpapers", "Listing wallpapers")
+    Logger.log("Wallpaper", "Listing wallpapers")
     scanning = true
     wallpaperList = []
     // Set the folder directly to avoid model reset issues
     folderModel.folder = "file://" + (Settings.data.wallpaper.directory !== undefined ? Settings.data.wallpaper.directory : "")
   }
 
-  function changeWallpaper(path) {
-    Logger.log("Wallpapers", "Changing to:", path)
-    setCurrentWallpaper(path, false)
+  // -------------------------------------------------------------------
+  function getWallpaper(screenName) {
+    // Logger.log("Wallpaper", "getWallpaper on", screenName)
+    var monitor = geMonitorDefinition(screenName)
+    if (monitor !== undefined) {
+      return monitor["wallpaper"]
+    }
+    return ""
   }
 
-  function setCurrentWallpaper(path, isInitial) {
-    // Only regenerate colors if the wallpaper actually changed
-    var wallpaperChanged = currentWallpaper !== path
-
-    currentWallpaper = path
-    if (!isInitial) {
-      Settings.data.wallpaper.current = path
-    }
-    if (Settings.data.wallpaper.swww.enabled) {
-      if (Settings.data.wallpaper.swww.transitionType === "random") {
-        transitionType = randomChoices[Math.floor(Math.random() * randomChoices.length)]
-      } else {
-        transitionType = Settings.data.wallpaper.swww.transitionType
-      }
-
-      changeWallpaperProcess.running = true
+  // -------------------------------------------------------------------
+  function changeWallpaper(screenName, path) {
+    if (screenName !== undefined) {
+      setCurrentWallpaper(screenName, path, false)
     } else {
+      for (var i = 0; i < Quickshell.screens.length; i++) {
+        setCurrentWallpaper(Quickshell.screens[i].name, path, false)
+      }
+    }
+  }
 
-      // Fallback: update the settings directly for non-SWWW mode
-      //Logger.log("Wallpapers", "Not using Swww, setting wallpaper directly")
+  // -------------------------------------------------------------------
+  function setCurrentWallpaper(screenName, path, isInitial) {
+    if (screenName === undefined) {
+      Logger.warn("Wallpaper", "setCurrentWallpaper", "no screen specified")
+      return
     }
 
+    Logger.log("Wallpaper", "setCurrentWallpaper on", screenName, ": ", path)
+
+    var monitor = geMonitorDefinition(screenName)
+    if (monitor !== undefined) {
+      monitor["wallpaper"] = path
+    } else {
+      Settings.data.wallpaper.monitors.push({
+                                              "name": screenName,
+                                              "directory": Settings.data.wallpaper.directory,
+                                              "wallpaper": path
+                                            })
+    }
+
+    // // Only regenerate colors if the wallpaper actually changed
+    // var wallpaperChanged = currentWallpaper !== path
+
+    // currentWallpaper = path
+    // if (!isInitial) {
+    //   Settings.data.wallpaper.current = path
+    // }
     if (randomWallpaperTimer.running) {
       randomWallpaperTimer.restart()
     }
 
     // Only notify ColorScheme service if the wallpaper actually changed
-    if (wallpaperChanged) {
-      ColorSchemeService.changedWallpaper()
-    }
+    // if (wallpaperChanged) {
+    //   ColorSchemeService.changedWallpaper()
+    // }
   }
 
+  // -------------------------------------------------------------------
   function setRandomWallpaper() {
     var randomIndex = Math.floor(Math.random() * wallpaperList.length)
     var randomPath = wallpaperList[randomIndex]
@@ -79,6 +151,7 @@ Singleton {
     setCurrentWallpaper(randomPath, false)
   }
 
+  // -------------------------------------------------------------------
   function toggleRandomWallpaper() {
     if (Settings.data.wallpaper.isRandom && !randomWallpaperTimer.running) {
       randomWallpaperTimer.start()
@@ -88,6 +161,7 @@ Singleton {
     }
   }
 
+  // -------------------------------------------------------------------
   function restartRandomWallpaperTimer() {
     if (Settings.data.wallpaper.isRandom) {
       randomWallpaperTimer.stop()
@@ -95,16 +169,12 @@ Singleton {
     }
   }
 
-  function startSWWWDaemon() {
-    if (Settings.data.wallpaper.swww.enabled) {
-      Logger.log("Swww", "Requesting swww-daemon")
-      startDaemonProcess.running = true
-    }
-  }
-
+  // -------------------------------------------------------------------
+  // -------------------------------------------------------------------
+  // -------------------------------------------------------------------
   Timer {
     id: randomWallpaperTimer
-    interval: Settings.data.wallpaper.randomInterval * 1000
+    interval: Settings.data.wallpaper.randomIntervalSec * 1000
     running: false
     repeat: true
     onTriggered: setRandomWallpaper()
@@ -113,7 +183,6 @@ Singleton {
 
   FolderListModel {
     id: folderModel
-    // Swww supports many images format but Quickshell only support a subset of those.
     nameFilters: ["*.jpg", "*.jpeg", "*.png", "*.gif", "*.pnm", "*.bmp"]
     showDirs: false
     sortField: FolderListModel.Name
@@ -127,46 +196,7 @@ Singleton {
         }
         wallpaperList = files
         scanning = false
-        Logger.log("Wallpapers", "List refreshed, count:", wallpaperList.length)
-      }
-    }
-  }
-
-  Process {
-    id: changeWallpaperProcess
-    command: ["swww", "img", "--resize", Settings.data.wallpaper.swww.resizeMethod, "--transition-fps", Settings.data.wallpaper.swww.transitionFps.toString(
-        ), "--transition-type", transitionType, "--transition-duration", Settings.data.wallpaper.swww.transitionDuration.toString(
-        ), currentWallpaper]
-    running: false
-
-    onStarted: {
-
-    }
-
-    onExited: function (exitCode, exitStatus) {
-      Logger.log("Swww", "Process finished with exit code:", exitCode, "status:", exitStatus)
-      if (exitCode !== 0) {
-        Logger.log("Swww", "Process failed. Make sure swww-daemon is running with: swww-daemon")
-        Logger.log("Swww", "You can start it with: swww-daemon --format xrgb")
-      }
-    }
-  }
-
-  Process {
-    id: startDaemonProcess
-    command: ["swww-daemon", "--format", "xrgb"]
-    running: false
-
-    onStarted: {
-      Logger.log("Swww", "Daemon start process initiated")
-    }
-
-    onExited: function (exitCode, exitStatus) {
-      Logger.log("Swww", "Daemon start process finished with exit code:", exitCode)
-      if (exitCode === 0) {
-        Logger.log("Swww", "Daemon started successfully")
-      } else {
-        Logger.log("Swww", "Failed to start daemon, may already be running")
+        Logger.log("Wallpaper", "List refreshed, count:", wallpaperList.length)
       }
     }
   }

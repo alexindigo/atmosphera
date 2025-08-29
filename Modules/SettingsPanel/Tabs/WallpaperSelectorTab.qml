@@ -29,7 +29,7 @@ ColumnLayout {
       id: currentWallpaperImage
       anchors.fill: parent
       anchors.margins: Style.marginXS * scaling
-      imagePath: WallpaperService.currentWallpaper
+      imagePath: WallpaperService.getWallpaper(screen.name)
       fallbackIcon: "image"
       imageRadius: Style.radiusM * scaling
     }
@@ -62,14 +62,6 @@ ColumnLayout {
         wrapMode: Text.WordWrap
         Layout.fillWidth: true
       }
-
-      NText {
-        text: Settings.data.wallpaper.swww.enabled ? "Wallpapers will change with " + Settings.data.wallpaper.swww.transitionType
-                                                     + " transition." : "Wallpapers will change instantly."
-        color: Color.mOnSurface
-        font.pointSize: Style.fontSizeXS * scaling
-        visible: Settings.data.wallpaper.swww.enabled
-      }
     }
 
     NIconButton {
@@ -78,8 +70,15 @@ ColumnLayout {
       onClicked: {
         WallpaperService.listWallpapers()
       }
-      Layout.alignment: Qt.AlignTop | Qt.AlignRight
+      Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
     }
+  }
+
+  NToggle {
+    label: "Assign selection to all monitors"
+    description: "Set selected wallpaper on all monitors at once."
+    checked: Settings.data.wallpaper.setWallpaperOnAllMonitors
+    onToggled: checked => Settings.data.wallpaper.setWallpaperOnAllMonitors = checked
   }
 
   // Wallpaper grid container
@@ -179,7 +178,11 @@ ColumnLayout {
           acceptedButtons: Qt.LeftButton
           hoverEnabled: true
           onClicked: {
-            WallpaperService.changeWallpaper(wallpaperPath)
+            if (Settings.data.wallpaper.setWallpaperOnAllMonitors) {
+              WallpaperService.changeWallpaper(undefined, wallpaperPath)
+            } else {
+              WallpaperService.changeWallpaper(screen.name, wallpaperPath)
+            }
           }
         }
       }

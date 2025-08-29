@@ -5,26 +5,16 @@ import qs.Commons
 import qs.Services
 
 Loader {
-  active: !Settings.data.wallpaper.swww.enabled
+  active: true
 
   sourceComponent: Variants {
     model: Quickshell.screens
 
     delegate: PanelWindow {
       required property ShellScreen modelData
-      property string wallpaperSource: WallpaperService.currentWallpaper !== ""
-                                       && !Settings.data.wallpaper.swww.enabled ? WallpaperService.currentWallpaper : ""
+      property string wallpaperSource: WallpaperService.getWallpaper(modelData.name)
 
-      visible: wallpaperSource !== "" && !Settings.data.wallpaper.swww.enabled
-
-      // Force update when SWWW setting changes
-      onVisibleChanged: {
-        if (visible) {
-
-        } else {
-
-        }
-      }
+      visible: wallpaperSource !== ""
       color: Color.transparent
       screen: modelData
       WlrLayershell.layer: WlrLayer.Background

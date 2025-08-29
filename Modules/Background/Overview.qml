@@ -20,10 +20,9 @@ Loader {
 
     delegate: PanelWindow {
       required property ShellScreen modelData
-      property string wallpaperSource: WallpaperService.currentWallpaper !== ""
-                                       && !Settings.data.wallpaper.swww.enabled ? WallpaperService.currentWallpaper : ""
+      property string wallpaperSource: WallpaperService.getWallpaper(modelData.name)
 
-      visible: wallpaperSource !== "" && !Settings.data.wallpaper.swww.enabled
+      visible: wallpaperSource !== ""
       color: Color.transparent
       screen: modelData
       WlrLayershell.layer: WlrLayer.Background

@@ -11,7 +11,7 @@ Singleton {
   function scale(aScreen) {
     try {
       if (aScreen !== undefined && aScreen.name !== undefined) {
-        return scaleByName(aScreen.name)
+        return getMonitorScale(aScreen.name)
       }
     } catch (e) {
 
@@ -20,19 +20,44 @@ Singleton {
     return 1.0
   }
 
-  function scaleByName(aScreenName) {
+  // -------------------------------------------
+  function getMonitorScale(aScreenName) {
     try {
-      if (Settings.data.monitorsScaling !== undefined) {
-        if (Settings.data.monitorsScaling[aScreenName] !== undefined) {
-          return Settings.data.monitorsScaling[aScreenName]
+      var monitors = Settings.data.ui.monitorsScaling
+      if (monitors !== undefined) {
+        for (var i = 0; i < monitors.length; i++) {
+          if (monitors[i].name !== undefined && monitors[i].name === aScreenName) {
+            return monitors[i].scale
+          }
         }
       }
     } catch (e) {
 
       //Logger.warn(e)
     }
-
     return 1.0
+  }
+
+  // -------------------------------------------
+  function setMonitorScale(aScreenName, scale) {
+    try {
+      var monitors = Settings.data.ui.monitorsScaling
+      if (monitors !== undefined) {
+        for (var i = 0; i < monitors.length; i++) {
+          if (monitors[i].name !== undefined && monitors[i].name === aScreenName) {
+            monitors[i].scale = scale
+            return
+          }
+        }
+      }
+      monitors.push({
+                      "name": aScreenName,
+                      "scale": scale
+                    })
+    } catch (e) {
+
+      //Logger.warn(e)
+    }
   }
 
   // -------------------------------------------

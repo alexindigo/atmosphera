@@ -94,10 +94,10 @@ Singleton {
         // And not on every reload
         if (!isLoaded) {
           Logger.log("Settings", "JSON completed loading")
-          if (adapter.wallpaper.current !== "") {
-            Logger.log("Settings", "Set current wallpaper", adapter.wallpaper.current)
-            WallpaperService.setCurrentWallpaper(adapter.wallpaper.current, true)
-          }
+          // if (adapter.wallpaper.current !== "") {
+          //   Logger.log("Settings", "Set current wallpaper", adapter.wallpaper.current)
+          //   WallpaperService.setCurrentWallpaper(adapter.wallpaper.current, true)
+          // }
 
           // Validate monitor configurations, only once
           // if none of the configured monitors exist, clear the lists
@@ -171,22 +171,13 @@ Singleton {
       // wallpaper
       property JsonObject wallpaper: JsonObject {
         property string directory: "/usr/share/wallpapers"
-        property string current: ""
-        property bool isRandom: false
-        property int randomInterval: 300
-        property JsonObject swww
-
-        onDirectoryChanged: WallpaperService.listWallpapers()
-        onIsRandomChanged: WallpaperService.toggleRandomWallpaper()
-        onRandomIntervalChanged: WallpaperService.restartRandomWallpaperTimer()
-
-        swww: JsonObject {
-          property bool enabled: false
-          property string resizeMethod: "crop"
-          property int transitionFps: 60
-          property string transitionType: "random"
-          property real transitionDuration: 1.1
-        }
+        property bool enableMultiMonitorDirectories: false
+        property bool setWallpaperOnAllMonitors: true
+        property bool randomEnabled: false
+        property int randomIntervalSec: 300 // 5 min
+        property int transitionDuration: 1500 // 1500 ms
+        property string transitionType: "fade"
+        property list<var> monitors: []
       }
 
       // applauncher
@@ -234,17 +225,8 @@ Singleton {
         property string fontDefault: "Roboto" // Default font for all text
         property string fontFixed: "DejaVu Sans Mono" // Fixed width font for terminal
         property string fontBillboard: "Inter" // Large bold font for clocks and prominent displays
-
-        // Legacy compatibility
-        property string fontFamily: fontDefault // Keep for backward compatibility
-
-        // Idle inhibitor state
+        property list<var> monitorsScaling: []
         property bool idleInhibitorEnabled: false
-      }
-
-      // Scaling (not stored inside JsonObject, or it crashes)
-      property var monitorsScaling: {
-
       }
 
       // brightness
