@@ -85,6 +85,7 @@ ColumnLayout {
 
   // Wallpaper grid container
   Item {
+    visible: !WallpaperService.scanning
     Layout.fillWidth: true
     Layout.preferredHeight: {
       return Math.ceil(wallpapersList.length / wallpaperGridView.columns) * wallpaperGridView.cellHeight
@@ -197,14 +198,21 @@ ColumnLayout {
     radius: Style.radiusM * scaling
     border.color: Color.mOutline
     border.width: Math.max(1, Style.borderS * scaling)
-    visible: wallpapersList.length === 0 && !WallpaperService.scanning
+    visible: wallpapersList.length === 0 || WallpaperService.scanning
     Layout.fillWidth: true
     Layout.preferredHeight: 130 * scaling
 
     ColumnLayout {
-      id: fallbackColumn
       anchors.fill: parent
+      visible: WallpaperService.scanning
+      NBusyIndicator {
+        Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+      }
+    }
 
+    ColumnLayout {
+      anchors.fill: parent
+      visible: wallpapersList.length === 0 && !WallpaperService.scanning
       Item {
         Layout.fillHeight: true
       }

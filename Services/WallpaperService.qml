@@ -26,7 +26,8 @@ Singleton {
   }
 
   property var wallpaperLists: ({})
-  property bool scanning: false
+  property int scanningCount: 0
+  readonly property bool scanning: (scanningCount > 0)
 
   Connections {
     target: Settings.data.wallpaper
@@ -57,6 +58,10 @@ Singleton {
   // -------------------------------------------------------------------
   // Get specific monitor directory
   function getMonitorDirectory(screenName) {
+    if (!Settings.data.wallpaper.enableMultiMonitorDirectories) {
+      return Settings.data.wallpaper.directory
+    }
+
     var monitor = getMonitorConfig(screenName)
     if (monitor !== undefined && monitor.directory !== undefined) {
       return monitor.directory
@@ -186,13 +191,18 @@ Singleton {
 
   // -------------------------------------------------------------------
   function refreshWallpapersList() {
-    if (!Settings.isLoaded) {
-      return
-    }
-
-    // TODO
     Logger.log("Wallpaper", "refreshWallpapersList")
-    scanning = true
+    scanningCount = 0
+
+    // Force refresh by toggling the folder property on each FolderListModel
+    for (var i = 0; i < wallpaperScanners.count; i++) {
+      var scanner = wallpaperScanners.objectAt(i)
+      if (scanner) {
+        var currentFolder = scanner.folder
+        scanner.folder = ""
+        scanner.folder = currentFolder
+      }
+    }
   }
 
   // -------------------------------------------------------------------
@@ -209,8 +219,8 @@ Singleton {
 
   // Instantiator (not Repeater) to create FolderListModel for each monitor
   Instantiator {
+    id: wallpaperScanners
     model: Quickshell.screens
-
     delegate: FolderListModel {
       property string screenName: modelData.name
 
@@ -218,9 +228,22 @@ Singleton {
       nameFilters: ["*.jpg", "*.jpeg", "*.png", "*.gif", "*.pnm", "*.bmp"]
       showDirs: false
       sortField: FolderListModel.Name
-      
       onStatusChanged: {
-        if (status === FolderListModel.Ready) {
+        if (status === FolderListModel.Null) {
+          // Flush the list
+          var lists = root.wallpaperLists
+          lists[screenName] = []
+          root.wallpaperLists = lists
+        }
+        else if (status === FolderListModel.Loading) {
+          // Flush the list
+          var lists = root.wallpaperLists
+          lists[screenName] = []
+          root.wallpaperLists = lists
+
+          scanningCount++
+
+        } else if (status === FolderListModel.Ready) {
           var files = []
           for (var i = 0; i < count; i++) {
             var directory = root.getMonitorDirectory(screenName)
@@ -232,6 +255,7 @@ Singleton {
           lists[screenName] = files
           root.wallpaperLists = lists
 
+          scanningCount--
           Logger.log("Wallpaper", "List refreshed for", screenName, "count:", files.length)
         }
       }
