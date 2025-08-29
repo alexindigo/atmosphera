@@ -18,9 +18,13 @@ Variants {
       id: root
 
       // Internal state management
-      property bool transitioning: false
-      property real fadeValue: 0.0
       property bool firstWallpaper: true
+      property bool transitioning: false
+      property real transitionProgress: 0.0
+
+      // Swipe direction: 0=left, 1=right, 2=up, 3=down
+      property real swipeDirection: 0
+      property real swipeSmoothness: 0.05
 
       // External state management
       property string servicedWallpaper: WallpaperService.getWallpaper(modelData.name)
@@ -34,10 +38,29 @@ Variants {
             return
           }
 
-          if (Settings.data.wallpaper.transitionType === 'fade') {
-            setWallpaperWithTransition(servicedWallpaper)
-          } else {
-            setWallpaperImmediate(servicedWallpaper)
+          switch (Settings.data.wallpaper.transitionType) {
+            case "none":
+              setWallpaperImmediate(servicedWallpaper)
+              break
+            case "swipe_left":
+              swipeDirection = 0
+              setWallpaperWithTransition(servicedWallpaper)
+              break
+            case "swipe_right":
+              swipeDirection = 1
+              setWallpaperWithTransition(servicedWallpaper)
+              break
+            case "swipe_up":
+              swipeDirection = 2
+              setWallpaperWithTransition(servicedWallpaper)
+              break
+            case "swipe_down":
+              swipeDirection = 3
+              setWallpaperWithTransition(servicedWallpaper)
+              break
+            default:
+              setWallpaperWithTransition(servicedWallpaper)
+              break
           }
         }
       }
@@ -77,30 +100,52 @@ Variants {
         visible: false
       }
 
+      // Fade transition shader
       ShaderEffect {
-        id: shaderEffect
+        id: fadeShader
         anchors.fill: parent
+        visible: Settings.data.wallpaper.transitionType === 'fade'
 
         property variant source1: currentWallpaper
         property variant source2: nextWallpaper
-        property real fade: fadeValue
-        fragmentShader: Qt.resolvedUrl("../../Shaders/qsb/mix_images.frag.qsb")
+        property real fade: transitionProgress
+        fragmentShader: Qt.resolvedUrl("../../Shaders/qsb/wp_fade.frag.qsb")
       }
 
-      // Animation for the fade value
+      // Swipe transition shader
+      ShaderEffect {
+        id: swipeShader
+        anchors.fill: parent
+        visible: Settings.data.wallpaper.transitionType.startsWith('swipe_')
+
+        property variant source1: currentWallpaper
+        property variant source2: nextWallpaper
+        property real progress: transitionProgress
+        property real direction: swipeDirection
+        property real smoothness: swipeSmoothness
+        fragmentShader: Qt.resolvedUrl("../../Shaders/qsb/wp_swipe.frag.qsb")
+      }
+
+      // Animation for the transition progress
       NumberAnimation {
-        id: fadeAnimation
+        id: transitionAnimation
         target: root
-        property: "fadeValue"
+        property: "transitionProgress"
         from: 0.0
         to: 1.0
-        duration: Settings.data.wallpaper.transitionDuration
-        easing.type: Easing.InOutQuad
+        duration: Settings.data.wallpaper.transitionDuration ?? 1000
+        easing.type: {
+          const transitionType = Settings.data.wallpaper.transitionType ?? 'fade'
+          if (transitionType.startsWith('swipe_')) {
+            return Easing.InOutCubic
+          }
+          return Easing.InOutCubic
+        }
 
         onFinished: {
           // Swap images after transition completes
           currentWallpaper.source = nextWallpaper.source
-          fadeValue = 0.0
+          transitionProgress = 0.0
           transitioning = false
         }
       }
@@ -108,14 +153,14 @@ Variants {
       function startTransition() {
         if (!transitioning && nextWallpaper.source != currentWallpaper.source) {
           transitioning = true
-          fadeAnimation.start()
+          transitionAnimation.start()
         }
       }
 
       function setWallpaperImmediate(source) {
         currentWallpaper.source = source
         nextWallpaper.source = source
-        fadeValue = 0.0
+        transitionProgress = 0.0
         transitioning = false
       }
 
@@ -123,13 +168,10 @@ Variants {
         if (source != currentWallpaper.source) {
 
           if (transitioning) {
-            // we are interupting a transition
-            if (fadeValue >= 0.5) {
-
-            }
+            // We are interrupting a transition
             currentWallpaper.source = nextWallpaper.source
-            fadeAnimation.stop()
-            fadeValue = 0
+            transitionAnimation.stop()
+            transitionProgress = 0
             transitioning = false
           }
 

@@ -50,7 +50,8 @@ Singleton {
       lines.push("\n[templates.ghostty]")
       lines.push('input_path = "' + Quickshell.shellDir + '/Assets/Matugen/templates/ghostty.conf"')
       lines.push('output_path = "~/.config/ghostty/themes/noctalia"')
-      lines.push("post_hook = \"grep -q '^theme *= *' ~/.config/ghostty/config; and sed -i 's/^theme *= *.*/theme = noctalia/' ~/.config/ghostty/config; or echo 'theme = noctalia' >> ~/.config/ghostty/config\"")
+      lines.push(
+            "post_hook = \"grep -q '^theme *= *' ~/.config/ghostty/config; and sed -i 's/^theme *= *.*/theme = noctalia/' ~/.config/ghostty/config; or echo 'theme = noctalia' >> ~/.config/ghostty/config\"")
     }
 
     return lines.join("\n") + "\n"

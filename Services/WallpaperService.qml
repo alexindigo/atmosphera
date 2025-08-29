@@ -23,6 +23,22 @@ Singleton {
       key: "fade"
       name: "Fade"
     }
+    ListElement {
+      key: "swipe_left"
+      name: "Swipe Left"
+    }
+    ListElement {
+      key: "swipe_right"
+      name: "Swipe Right"
+    }
+    ListElement {
+      key: "swipe_up"
+      name: "Swipe Up"
+    }
+    ListElement {
+      key: "swipe_down"
+      name: "Swipe Down"
+    }
   }
 
   property var wallpaperLists: ({})
