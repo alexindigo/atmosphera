@@ -22,9 +22,9 @@ Variants {
       property bool transitioning: false
       property real transitionProgress: 0.0
 
-      // Swipe direction: 0=left, 1=right, 2=up, 3=down
-      property real swipeDirection: 0
-      property real swipeSmoothness: 0.05
+      // Wipe direction: 0=left, 1=right, 2=up, 3=down
+      property real wipeDirection: 0
+      property real wipeSmoothness: 0.05
 
       // External state management
       property string servicedWallpaper: WallpaperService.getWallpaper(modelData.name)
@@ -42,20 +42,20 @@ Variants {
             case "none":
               setWallpaperImmediate(servicedWallpaper)
               break
-            case "swipe_left":
-              swipeDirection = 0
+            case "wipe_left":
+              wipeDirection = 0
               setWallpaperWithTransition(servicedWallpaper)
               break
-            case "swipe_right":
-              swipeDirection = 1
+            case "wipe_right":
+              wipeDirection = 1
               setWallpaperWithTransition(servicedWallpaper)
               break
-            case "swipe_up":
-              swipeDirection = 2
+            case "wipe_up":
+              wipeDirection = 2
               setWallpaperWithTransition(servicedWallpaper)
               break
-            case "swipe_down":
-              swipeDirection = 3
+            case "wipe_down":
+              wipeDirection = 3
               setWallpaperWithTransition(servicedWallpaper)
               break
             default:
@@ -112,18 +112,18 @@ Variants {
         fragmentShader: Qt.resolvedUrl("../../Shaders/qsb/wp_fade.frag.qsb")
       }
 
-      // Swipe transition shader
+      // Wipe transition shader
       ShaderEffect {
-        id: swipeShader
+        id: wipeShader
         anchors.fill: parent
-        visible: Settings.data.wallpaper.transitionType.startsWith('swipe_')
+        visible: Settings.data.wallpaper.transitionType.startsWith('wipe_')
 
         property variant source1: currentWallpaper
         property variant source2: nextWallpaper
         property real progress: transitionProgress
-        property real direction: swipeDirection
-        property real smoothness: swipeSmoothness
-        fragmentShader: Qt.resolvedUrl("../../Shaders/qsb/wp_swipe.frag.qsb")
+        property real direction: wipeDirection
+        property real smoothness: wipeSmoothness
+        fragmentShader: Qt.resolvedUrl("../../Shaders/qsb/wp_wipe.frag.qsb")
       }
 
       // Animation for the transition progress
@@ -136,7 +136,7 @@ Variants {
         duration: Settings.data.wallpaper.transitionDuration ?? 1000
         easing.type: {
           const transitionType = Settings.data.wallpaper.transitionType ?? 'fade'
-          if (transitionType.startsWith('swipe_')) {
+          if (transitionType.startsWith('wipe_')) {
             return Easing.InOutCubic
           }
           return Easing.InOutCubic

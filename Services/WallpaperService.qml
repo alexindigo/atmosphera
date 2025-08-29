@@ -24,20 +24,20 @@ Singleton {
       name: "Fade"
     }
     ListElement {
-      key: "swipe_left"
-      name: "Swipe Left"
+      key: "wipe_left"
+      name: "Wipe Left"
     }
     ListElement {
-      key: "swipe_right"
-      name: "Swipe Right"
+      key: "wipe_right"
+      name: "Wipe Right"
     }
     ListElement {
-      key: "swipe_up"
-      name: "Swipe Up"
+      key: "wipe_up"
+      name: "Wipe Up"
     }
     ListElement {
-      key: "swipe_down"
-      name: "Swipe Down"
+      key: "wipe_down"
+      name: "Wipe Down"
     }
   }
 

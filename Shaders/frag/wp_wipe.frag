@@ -29,25 +29,25 @@ void main() {
     // Calculate edge position based on direction
     // As progress goes from 0 to 1, we reveal source2 (new wallpaper)
     if (ubuf.direction < 0.5) {
-        // Swipe from right to left (new image enters from right)
+        // Wipe from right to left (new image enters from right)
         edge = 1.0 - extendedProgress;
         factor = smoothstep(edge - ubuf.smoothness, edge + ubuf.smoothness, uv.x);
         fragColor = mix(color1, color2, factor);
     } 
     else if (ubuf.direction < 1.5) {
-        // Swipe from left to right (new image enters from left)
+        // Wipe from left to right (new image enters from left)
         edge = extendedProgress;
         factor = smoothstep(edge - ubuf.smoothness, edge + ubuf.smoothness, uv.x);
         fragColor = mix(color2, color1, factor);
     }
     else if (ubuf.direction < 2.5) {
-        // Swipe from bottom to top (new image enters from bottom)
+        // Wipe from bottom to top (new image enters from bottom)
         edge = 1.0 - extendedProgress;
         factor = smoothstep(edge - ubuf.smoothness, edge + ubuf.smoothness, uv.y);
         fragColor = mix(color1, color2, factor);
     }
     else {
-        // Swipe from top to bottom (new image enters from top)
+        // Wipe from top to bottom (new image enters from top)
         edge = extendedProgress;
         factor = smoothstep(edge - ubuf.smoothness, edge + ubuf.smoothness, uv.y);
         fragColor = mix(color2, color1, factor);
