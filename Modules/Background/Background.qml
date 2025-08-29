@@ -4,17 +4,18 @@ import Quickshell.Wayland
 import qs.Commons
 import qs.Services
 
-Loader {
-  active: true
+Variants {
+  model: Quickshell.screens
 
-  sourceComponent: Variants {
-    model: Quickshell.screens
+  delegate: Loader {
 
-    delegate: PanelWindow {
-      required property ShellScreen modelData
-      property string wallpaperSource: WallpaperService.getWallpaper(modelData.name)
+    required property ShellScreen modelData
+    property string wallpaperSource: WallpaperService.getWallpaper(modelData.name)
 
-      visible: wallpaperSource !== ""
+    active: wallpaperSource !== ""
+
+    sourceComponent: PanelWindow {
+
       color: Color.transparent
       screen: modelData
       WlrLayershell.layer: WlrLayer.Background
@@ -28,15 +29,10 @@ Loader {
         left: true
       }
 
-      margins {
-        top: 0
-      }
-
       Image {
         anchors.fill: parent
         fillMode: Image.PreserveAspectCrop
         source: wallpaperSource
-        visible: wallpaperSource !== ""
         cache: true
         smooth: true
         mipmap: false

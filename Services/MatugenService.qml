@@ -22,6 +22,8 @@ Singleton {
     // Ensure cache dir exists
     Quickshell.execDetached(["mkdir", "-p", Settings.cacheDir])
 
+
+    // TODO: fix matugen
     var content = buildConfigToml()
     var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light"
     var wp = WallpaperService.currentWallpaper.replace(/'/g, "'\\''")

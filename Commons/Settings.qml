@@ -90,14 +90,9 @@ Singleton {
     }
     onLoaded: function () {
       Qt.callLater(function () {
-        // Some stuff like wallpaper setup and settings validation should just be executed once on startup
-        // And not on every reload
+        // Some stuff like settings validation should just be executed once on startup and not on every reload
         if (!isLoaded) {
           Logger.log("Settings", "JSON completed loading")
-          // if (adapter.wallpaper.current !== "") {
-          //   Logger.log("Settings", "Set current wallpaper", adapter.wallpaper.current)
-          //   WallpaperService.setCurrentWallpaper(adapter.wallpaper.current, true)
-          // }
 
           // Validate monitor configurations, only once
           // if none of the configured monitors exist, clear the lists

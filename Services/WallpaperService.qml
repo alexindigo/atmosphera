@@ -11,10 +11,6 @@ Singleton {
 
   Component.onCompleted: {
     Logger.log("Wallpaper", "Service started")
-    listWallpapers()
-
-    // Wallpaper is set when the settings are loaded.
-    // Don't start random wallpaper during initialization
   }
 
   readonly property ListModel transitionsModel: ListModel {
@@ -33,9 +29,9 @@ Singleton {
 
   Connections {
     target: Settings.data.wallpaper
-    onDirectoryChanged: WallpaperService.listWallpapers()
-    onRandomEnabledChanged: WallpaperService.toggleRandomWallpaper()
-    onRandomIntervalChanged: WallpaperService.restartRandomWallpaperTimer()
+    function onDirectoryChanged() { console.log("ondirchanged") ; root.listWallpapers() }
+    function onRandomEnabledChanged() { root.toggleRandomWallpaper() }
+    function onRandomIntervalSecChanged() { root.restartRandomWallpaperTimer() }
   }
 
   // -------------------------------------------------------------------
@@ -87,7 +83,7 @@ Singleton {
   function getWallpaper(screenName) {
     // Logger.log("Wallpaper", "getWallpaper on", screenName)
     var monitor = geMonitorDefinition(screenName)
-    if (monitor !== undefined) {
+    if ((monitor !== undefined) && (monitor["wallpaper"] !== undefined)) {
       return monitor["wallpaper"]
     }
     return ""
@@ -95,8 +91,9 @@ Singleton {
 
   // -------------------------------------------------------------------
   function changeWallpaper(screenName, path) {
+    Logger.log("Changing wallpaper")
     if (screenName !== undefined) {
-      setCurrentWallpaper(screenName, path, false)
+      setCurrentWallpaper(screenName, path)
     } else {
       for (var i = 0; i < Quickshell.screens.length; i++) {
         setCurrentWallpaper(Quickshell.screens[i].name, path, false)
@@ -105,7 +102,11 @@ Singleton {
   }
 
   // -------------------------------------------------------------------
-  function setCurrentWallpaper(screenName, path, isInitial) {
+  function setCurrentWallpaper(screenName, path) {
+    if (path === "" || path === undefined) {
+      return
+    }
+    
     if (screenName === undefined) {
       Logger.warn("Wallpaper", "setCurrentWallpaper", "no screen specified")
       return
@@ -113,50 +114,51 @@ Singleton {
 
     Logger.log("Wallpaper", "setCurrentWallpaper on", screenName, ": ", path)
 
+    var wallpaperChanged = false
+
     var monitor = geMonitorDefinition(screenName)
     if (monitor !== undefined) {
+      wallpaperChanged = (monitor["wallpaper"] !== path)
       monitor["wallpaper"] = path
     } else {
+      wallpaperChanged = true
       Settings.data.wallpaper.monitors.push({
                                               "name": screenName,
                                               "directory": Settings.data.wallpaper.directory,
                                               "wallpaper": path
-                                            })
+                                            })                  
     }
 
-    // // Only regenerate colors if the wallpaper actually changed
-    // var wallpaperChanged = currentWallpaper !== path
-
-    // currentWallpaper = path
-    // if (!isInitial) {
-    //   Settings.data.wallpaper.current = path
-    // }
+    // Restart the random wallpaper timer
     if (randomWallpaperTimer.running) {
       randomWallpaperTimer.restart()
     }
 
-    // Only notify ColorScheme service if the wallpaper actually changed
-    // if (wallpaperChanged) {
-    //   ColorSchemeService.changedWallpaper()
-    // }
+    // Notify ColorScheme service if the wallpaper actually changed
+    if (wallpaperChanged) {
+      ColorSchemeService.changedWallpaper()
+    }
   }
 
   // -------------------------------------------------------------------
   function setRandomWallpaper() {
-    var randomIndex = Math.floor(Math.random() * wallpaperList.length)
-    var randomPath = wallpaperList[randomIndex]
-    if (!randomPath) {
-      return
+    Logger.log("Wallpaper", "setRandomWallpaper");
+    for (var i = 0; i < Quickshell.screens.length; i++) {
+      var screenName = Quickshell.screens[i].name
+      // TODO one list per monitor
+      var randomIndex = Math.floor(Math.random() * wallpaperList.length)
+      var randomPath = wallpaperList[randomIndex]
+      setCurrentWallpaper(screenName, randomPath)
     }
-    setCurrentWallpaper(randomPath, false)
   }
 
   // -------------------------------------------------------------------
   function toggleRandomWallpaper() {
-    if (Settings.data.wallpaper.isRandom && !randomWallpaperTimer.running) {
+    Logger.log("Wallpaper", "toggleRandomWallpaper")
+    if (Settings.data.wallpaper.randomEnabled && !randomWallpaperTimer.running) {
       randomWallpaperTimer.start()
       setRandomWallpaper()
-    } else if (!Settings.data.randomWallpaper && randomWallpaperTimer.running) {
+    } else if (!Settings.data.wallpaper.randomEnabled && randomWallpaperTimer.running) {
       randomWallpaperTimer.stop()
     }
   }

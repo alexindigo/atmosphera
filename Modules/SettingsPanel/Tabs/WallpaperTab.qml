@@ -146,16 +146,7 @@ ColumnLayout {
         spacing: Style.marginS * scaling
 
         // Factorized presets data
-        property var intervalPresets: [
-          5 * 60,
-          10 * 60,
-          15 * 60,
-          30 * 60,
-          45 * 60,
-          60 * 60,
-          90 * 60,
-          120 * 60,
-        ]
+        property var intervalPresets: [5 * 60, 10 * 60, 15 * 60, 30 * 60, 45 * 60, 60 * 60, 90 * 60, 120 * 60]
 
         // Whether current interval equals one of the presets
         property bool isCurrentPreset: {
@@ -237,7 +228,7 @@ ColumnLayout {
     property int seconds: 0
     property string label: ""
     property bool selected: false
-    signal clicked()
+    signal clicked
 
     radius: height * 0.5
     color: selected ? Color.mPrimary : Color.mSurfaceVariant

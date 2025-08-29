@@ -23,10 +23,9 @@ ColumnLayout {
     Layout.fillWidth: true
     Layout.preferredHeight: 140 * scaling
     radius: Style.radiusM * scaling
-    color: Color.mPrimary
+    color: Color.mSecondary
 
     NImageRounded {
-      id: currentWallpaperImage
       anchors.fill: parent
       anchors.margins: Style.marginXS * scaling
       imagePath: WallpaperService.getWallpaper(screen.name)
@@ -113,7 +112,7 @@ ColumnLayout {
         id: wallpaperItem
 
         property string wallpaperPath: modelData
-        property bool isSelected: wallpaperPath === WallpaperService.currentWallpaper
+        property bool isSelected: wallpaperPath === WallpaperService.getWallpaper(screen.name)
 
         width: wallpaperGridView.itemSize
         height: Math.floor(wallpaperGridView.itemSize * 0.67)
