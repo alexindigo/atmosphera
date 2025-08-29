@@ -52,6 +52,12 @@ Singleton {
       lines.push('output_path = "~/.config/ghostty/themes/noctalia"')
       lines.push("post_hook = \"grep -q '^theme *= *' ~/.config/ghostty/config; and sed -i 's/^theme *= *.*/theme = noctalia/' ~/.config/ghostty/config; or echo 'theme = noctalia' >> ~/.config/ghostty/config\"")
     }
+    if (Settings.data.matugen.foot) {
+      lines.push("\n[templates.foot]")
+      lines.push('input_path = "' + Quickshell.shellDir + '/Assets/Matugen/templates/foot.conf"')
+      lines.push('output_path = "~/.config/foot/themes/noctalia"')
+      lines.push('post_hook = "sed -i /themes/d ~/.config/foot/foot.ini && echo include=~/.config/foot/themes/noctalia >> ~/.config/foot/foot.ini"')
+    }
 
     return lines.join("\n") + "\n"
   }
