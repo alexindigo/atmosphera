@@ -98,7 +98,7 @@ ColumnLayout {
       model: wallpapersList
 
       boundsBehavior: Flickable.StopAtBounds
-      flickableDirection: Flickable.AutoFlickDirection
+      flickableDirection: Flickable.VerticalFlick
       interactive: false
 
       property int columns: 5

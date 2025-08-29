@@ -17,23 +17,30 @@ Variants {
     sourceComponent: PanelWindow {
       id: root
 
-      readonly property real transitionDuration: Settings.data.wallpaper.transitionDuration
-      readonly property real transitionType: Settings.data.wallpaper.transitionType
+      // Internal state management
+      property bool transitioning: false
+      property real fadeValue: 0.0
+      property bool firstWallpaper: true
 
+      // External state management
       property string servicedWallpaper: WallpaperService.getWallpaper(modelData.name)
       onServicedWallpaperChanged: {
         if (servicedWallpaper && servicedWallpaper !== currentWallpaper.source) {
-          if (Settings.data.wallpaper.transitionType == 'fade') {
+
+          // Set wallpaper immediately on startup
+          if (firstWallpaper) {
+            firstWallpaper = false
+            setWallpaperImmediate(servicedWallpaper)
+            return
+          }
+
+          if (Settings.data.wallpaper.transitionType === 'fade') {
             setWallpaperWithTransition(servicedWallpaper)
           } else {
             setWallpaperImmediate(servicedWallpaper)
           }
         }
       }
-
-      // Internal state management
-      property bool transitioning: false
-      property real fadeValue: 0.0
 
       color: Color.transparent
       screen: modelData
@@ -114,6 +121,18 @@ Variants {
 
       function setWallpaperWithTransition(source) {
         if (source != currentWallpaper.source) {
+
+          if (transitioning) {
+            // we are interupting a transition
+            if (fadeValue >= 0.5) {
+
+            }
+            currentWallpaper.source = nextWallpaper.source
+            fadeAnimation.stop()
+            fadeValue = 0
+            transitioning = false
+          }
+
           nextWallpaper.source = source
           startTransition()
         }

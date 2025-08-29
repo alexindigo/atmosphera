@@ -114,7 +114,7 @@ ColumnLayout {
         NSlider {
           Layout.fillWidth: true
           from: 100
-          to: 10000
+          to: 5000
           stepSize: 100
           value: Settings.data.wallpaper.transitionDuration
           onMoved: Settings.data.wallpaper.transitionDuration = value
