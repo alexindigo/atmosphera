@@ -15,7 +15,7 @@ ColumnLayout {
     Layout.fillWidth: true
     NTextInput {
       label: "Wallpaper Directory"
-      description: "Path to your wallpaper directory."
+      description: "Path to your common wallpaper directory."
       text: Settings.data.wallpaper.directory
       onEditingFinished: {
         Settings.data.wallpaper.directory = text
@@ -31,31 +31,34 @@ ColumnLayout {
       onToggled: checked => Settings.data.wallpaper.enableMultiMonitorDirectories = checked
     }
 
-    ColumnLayout {
+    NBox {
       visible: Settings.data.wallpaper.enableMultiMonitorDirectories
-      spacing: Style.marginL * scaling
-      Repeater {
-        model: Quickshell.screens || []
-        delegate: Rectangle {
-          Layout.fillWidth: true
-          Layout.minimumWidth: 550 * scaling
-          radius: Style.radiusM * scaling
-          color: Color.mSurface
-          border.color: Color.mOutline
-          border.width: Math.max(1, Style.borderS * scaling)
-          implicitHeight: contentCol.implicitHeight + Style.marginXL * 2 * scaling
 
-          ColumnLayout {
-            id: contentCol
-            anchors.fill: parent
-            anchors.margins: Style.marginL * scaling
-            spacing: Style.marginXXS * scaling
+      Layout.fillWidth: true
+      Layout.minimumWidth: 550 * scaling
+      radius: Style.radiusM * scaling
+      color: Color.mSurfaceVariant
+      border.color: Color.mOutline
+      border.width: Math.max(1, Style.borderS * scaling)
+      implicitHeight: contentCol.implicitHeight + Style.marginXL * 2 * scaling
 
+      ColumnLayout {
+        id: contentCol
+        anchors.fill: parent
+        anchors.margins: Style.marginXL * scaling
+        spacing: Style.marginM * scaling
+        Repeater {
+          model: Quickshell.screens || []
+          delegate: RowLayout {
+            NText {
+              text: (modelData.name || "Unknown")
+              color: Color.mSecondary
+              font.weight: Style.fontWeightBold
+              Layout.preferredWidth: 90 * scaling
+            }
             NTextInput {
-              label: (modelData.name || "Unknown")
-              description: `Path to your wallpaper directory for "${(modelData.name || "Unknown")}" monitor`
+              Layout.fillWidth: true
               text: WallpaperService.getMonitorDirectory(modelData.name)
-              labelColor: Color.mSecondary
               onEditingFinished: WallpaperService.setMonitorDirectory(modelData.name, text)
               Layout.maximumWidth: 420 * scaling
             }
