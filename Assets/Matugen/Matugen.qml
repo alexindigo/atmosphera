@@ -58,6 +58,12 @@ Singleton {
       lines.push('output_path = "~/.config/foot/themes/noctalia"')
       lines.push('post_hook = "sed -i /themes/d ~/.config/foot/foot.ini && echo include=~/.config/foot/themes/noctalia >> ~/.config/foot/foot.ini"')
     }
+    if (Settings.data.matugen.fuzzel) {
+      lines.push("\n[templates.fuzzel]")
+      lines.push('input_path = "' + Quickshell.shellDir + '/Assets/Matugen/templates/fuzzel.conf"')
+      lines.push('output_path = "~/.config/fuzzel/themes/noctalia"')
+      lines.push('post_hook = "sed -i /themes/d ~/.config/fuzzel/fuzzel.ini && echo include=~/.config/fuzzel/themes/noctalia >> ~/.config/fuzzel/fuzzel.ini"')
+    }
 
     return lines.join("\n") + "\n"
   }

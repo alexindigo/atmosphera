@@ -268,6 +268,7 @@ Singleton {
         property bool kitty: false
         property bool ghostty: false
         property bool foot: false
+        property bool fuzzel: false
       }
 
       // night light

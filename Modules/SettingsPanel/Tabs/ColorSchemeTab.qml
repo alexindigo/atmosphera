@@ -439,5 +439,16 @@ ColumnLayout {
                    MatugenService.generateFromWallpaper()
                  }
     }
+
+    NCheckbox {
+      label: "Fuzzel"
+      description: "Write ~/.config/fuzzel/themes/noctalia and reload"
+      checked: Settings.data.matugen.fuzzel 
+      onToggled: checked => {
+                   Settings.data.matugen.fuzzel = checked
+                   if (Settings.data.colorSchemes.useWallpaperColors)
+                   MatugenService.generateFromWallpaper()
+                 }
+    }
   }
 }
