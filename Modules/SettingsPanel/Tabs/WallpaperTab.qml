@@ -56,7 +56,7 @@ ColumnLayout {
               description: `Path to your wallpaper directory for "${(modelData.name || "Unknown")}" monitor`
               text: WallpaperService.getMonitorDirectory(modelData.name)
               labelColor: Color.mSecondary
-              onEditingFinished: WallpaperService.setMonitorWallpaperDirectory(modelData.name, text)
+              onEditingFinished: WallpaperService.setMonitorDirectory(modelData.name, text)
               Layout.maximumWidth: 420 * scaling
             }
           }

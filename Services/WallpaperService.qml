@@ -25,13 +25,13 @@ Singleton {
     }
   }
 
-  property var wallpaperList: []
+  property var wallpaperLists: ({})
   property bool scanning: false
 
   Connections {
     target: Settings.data.wallpaper
     function onDirectoryChanged() {
-      root.listWallpapers()
+      root.refreshWallpapersList()
     }
     function onRandomEnabledChanged() {
       root.toggleRandomWallpaper()
@@ -110,15 +110,15 @@ Singleton {
     }
 
     if (screenName === undefined) {
-      Logger.warn("Wallpaper", "setCurrentWallpaper", "no screen specified")
+      Logger.warn("Wallpaper", "setWallpaper", "no screen specified")
       return
     }
 
-    Logger.log("Wallpaper", "setCurrentWallpaper on", screenName, ": ", path)
+    Logger.log("Wallpaper", "setWallpaper on", screenName, ": ", path)
 
     var wallpaperChanged = false
 
-    var monitor = geMonitorDefinition(screenName)
+    var monitor = getMonitorConfig(screenName)
     if (monitor !== undefined) {
       wallpaperChanged = (monitor["wallpaper"] !== path)
       monitor["wallpaper"] = path
@@ -152,7 +152,7 @@ Singleton {
       if (wallpaperList.length > 0) {
         var randomIndex = Math.floor(Math.random() * wallpaperList.length)
         var randomPath = wallpaperList[randomIndex]
-        setCurrentWallpaper(screenName, randomPath)
+        setWallpaper(screenName, randomPath)
       }
     }
   }
@@ -177,13 +177,21 @@ Singleton {
   }
 
   // -------------------------------------------------------------------
-  function listWallpapers() {
+  function getWallpapersList(screenName) {
+    if (screenName != undefined && wallpaperLists[screenName] != undefined) {
+      return wallpaperLists[screenName]
+    }
+    return []
+  }
+
+  // -------------------------------------------------------------------
+  function refreshWallpapersList() {
     if (!Settings.isLoaded) {
       return
     }
 
     // TODO
-    Logger.log("Wallpaper", "Listing wallpapers for all monitors")
+    Logger.log("Wallpaper", "refreshWallpapersList")
     scanning = true
   }
 
@@ -199,23 +207,34 @@ Singleton {
     triggeredOnStart: false
   }
 
-  // FolderListModel {
-  //   id: folderModel
-  //   nameFilters: ["*.jpg", "*.jpeg", "*.png", "*.gif", "*.pnm", "*.bmp"]
-  //   showDirs: false
-  //   sortField: FolderListModel.Name
-  //   onStatusChanged: {
-  //     if (status === FolderListModel.Ready) {
-  //       var files = []
-  //       for (var i = 0; i < count; i++) {
-  //         var directory = (Settings.data.wallpaper.directory !== undefined ? Settings.data.wallpaper.directory : "")
-  //         var filepath = directory + "/" + get(i, "fileName")
-  //         files.push(filepath)
-  //       }
-  //       wallpaperList = files
-  //       scanning = false
-  //       Logger.log("Wallpaper", "List refreshed, count:", wallpaperList.length)
-  //     }
-  //   }
-  // }
+  // Instantiator (not Repeater) to create FolderListModel for each monitor
+  Instantiator {
+    model: Quickshell.screens
+
+    delegate: FolderListModel {
+      property string screenName: modelData.name
+
+      folder: "file://" + root.getMonitorDirectory(screenName)
+      nameFilters: ["*.jpg", "*.jpeg", "*.png", "*.gif", "*.pnm", "*.bmp"]
+      showDirs: false
+      sortField: FolderListModel.Name
+      
+      onStatusChanged: {
+        if (status === FolderListModel.Ready) {
+          var files = []
+          for (var i = 0; i < count; i++) {
+            var directory = root.getMonitorDirectory(screenName)
+            var filepath = directory + "/" + get(i, "fileName")
+            files.push(filepath)
+          }
+
+          var lists = root.wallpaperLists
+          lists[screenName] = files
+          root.wallpaperLists = lists
+
+          Logger.log("Wallpaper", "List refreshed for", screenName, "count:", files.length)
+        }
+      }
+    }
+  }
 }
