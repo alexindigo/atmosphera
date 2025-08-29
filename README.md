@@ -75,7 +75,6 @@ Features a modern modular architecture with a status bar, notification system, c
 ### Optional
 
 - `cliphist` - For clipboard history support
-- `swww` - Wallpaper animations and effects
 - `matugen` - Material You color scheme generation
 - `cava` - Audio visualizer component
 - `wlsunset` - To be able to use NightLight
@@ -270,14 +269,6 @@ The launcher supports special commands for enhanced functionality:
 
 ## Advanced Configuration
 
-### Niri Configuration
-
-Add this to your `layout` section for proper swww integration:
-
-```
-background-color "transparent"
-```
-
 ### Recommended Compositor Settings
 
 For Niri:
@@ -286,11 +277,6 @@ For Niri:
 window-rule {
     geometry-corner-radius 20
     clip-to-geometry true
-}
-
-layer-rule {
-    match namespace="^swww-daemon$"
-    place-within-backdrop true
 }
 
 layer-rule {

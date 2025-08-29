@@ -23,13 +23,12 @@ ColumnLayout {
     Layout.fillWidth: true
     Layout.preferredHeight: 140 * scaling
     radius: Style.radiusM * scaling
-    color: Color.mPrimary
+    color: Color.mSecondary
 
     NImageRounded {
-      id: currentWallpaperImage
       anchors.fill: parent
       anchors.margins: Style.marginXS * scaling
-      imagePath: WallpaperService.currentWallpaper
+      imagePath: WallpaperService.getWallpaper(screen.name)
       fallbackIcon: "image"
       imageRadius: Style.radiusM * scaling
     }
@@ -62,41 +61,44 @@ ColumnLayout {
         wrapMode: Text.WordWrap
         Layout.fillWidth: true
       }
-
-      NText {
-        text: Settings.data.wallpaper.swww.enabled ? "Wallpapers will change with " + Settings.data.wallpaper.swww.transitionType
-                                                     + " transition." : "Wallpapers will change instantly."
-        color: Color.mOnSurface
-        font.pointSize: Style.fontSizeXS * scaling
-        visible: Settings.data.wallpaper.swww.enabled
-      }
     }
 
     NIconButton {
       icon: "refresh"
       tooltipText: "Refresh wallpaper list"
       onClicked: {
-        WallpaperService.listWallpapers()
+        WallpaperService.refreshWallpapersList()
       }
-      Layout.alignment: Qt.AlignTop | Qt.AlignRight
+      Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
     }
+  }
+
+  property list<string> wallpapersList: WallpaperService.getWallpapersList(screen.name)
+
+  NToggle {
+    label: "Assign selection to all monitors"
+    description: "Set selected wallpaper on all monitors at once."
+    checked: Settings.data.wallpaper.setWallpaperOnAllMonitors
+    onToggled: checked => Settings.data.wallpaper.setWallpaperOnAllMonitors = checked
+    visible: (wallpapersList.length > 0)
   }
 
   // Wallpaper grid container
   Item {
+    visible: !WallpaperService.scanning
     Layout.fillWidth: true
     Layout.preferredHeight: {
-      return Math.ceil(WallpaperService.wallpaperList.length / wallpaperGridView.columns) * wallpaperGridView.cellHeight
+      return Math.ceil(wallpapersList.length / wallpaperGridView.columns) * wallpaperGridView.cellHeight
     }
 
     GridView {
       id: wallpaperGridView
       anchors.fill: parent
       clip: true
-      model: WallpaperService.wallpaperList
+      model: wallpapersList
 
       boundsBehavior: Flickable.StopAtBounds
-      flickableDirection: Flickable.AutoFlickDirection
+      flickableDirection: Flickable.VerticalFlick
       interactive: false
 
       property int columns: 5
@@ -114,7 +116,7 @@ ColumnLayout {
         id: wallpaperItem
 
         property string wallpaperPath: modelData
-        property bool isSelected: wallpaperPath === WallpaperService.currentWallpaper
+        property bool isSelected: wallpaperPath === WallpaperService.getWallpaper(screen.name)
 
         width: wallpaperGridView.itemSize
         height: Math.floor(wallpaperGridView.itemSize * 0.67)
@@ -179,46 +181,65 @@ ColumnLayout {
           acceptedButtons: Qt.LeftButton
           hoverEnabled: true
           onClicked: {
-            WallpaperService.changeWallpaper(wallpaperPath)
+            if (Settings.data.wallpaper.setWallpaperOnAllMonitors) {
+              WallpaperService.changeWallpaper(undefined, wallpaperPath)
+            } else {
+              WallpaperService.changeWallpaper(screen.name, wallpaperPath)
+            }
           }
         }
       }
     }
+  }
 
-    // Empty state
-    Rectangle {
+  // Empty state
+  Rectangle {
+    color: Color.mSurface
+    radius: Style.radiusM * scaling
+    border.color: Color.mOutline
+    border.width: Math.max(1, Style.borderS * scaling)
+    visible: wallpapersList.length === 0 || WallpaperService.scanning
+    Layout.fillWidth: true
+    Layout.preferredHeight: 130 * scaling
+
+    ColumnLayout {
       anchors.fill: parent
-      color: Color.mSurface
-      radius: Style.radiusM * scaling
-      border.color: Color.mOutline
-      border.width: Math.max(1, Style.borderS * scaling)
-      visible: WallpaperService.wallpaperList.length === 0 && !WallpaperService.scanning
+      visible: WallpaperService.scanning
+      NBusyIndicator {
+        Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+      }
+    }
 
-      ColumnLayout {
-        anchors.centerIn: parent
-        spacing: Style.marginM * scaling
+    ColumnLayout {
+      anchors.fill: parent
+      visible: wallpapersList.length === 0 && !WallpaperService.scanning
+      Item {
+        Layout.fillHeight: true
+      }
 
-        NIcon {
-          text: "folder_open"
-          font.pointSize: Style.fontSizeL * scaling
-          color: Color.mOnSurface
-          Layout.alignment: Qt.AlignHCenter
-        }
+      NIcon {
+        text: "folder_open"
+        font.pointSize: Style.fontSizeXL * scaling
+        color: Color.mOnSurface
+        Layout.alignment: Qt.AlignHCenter
+      }
 
-        NText {
-          text: "No wallpapers found"
-          color: Color.mOnSurface
-          font.weight: Style.fontWeightBold
-          Layout.alignment: Qt.AlignHCenter
-        }
+      NText {
+        text: "No wallpaper found."
+        color: Color.mOnSurface
+        font.weight: Style.fontWeightBold
+        Layout.alignment: Qt.AlignHCenter
+      }
 
-        NText {
-          text: "Make sure your wallpaper directory is configured and contains image files."
-          color: Color.mOnSurface
-          wrapMode: Text.WordWrap
-          horizontalAlignment: Text.AlignHCenter
-          Layout.preferredWidth: Style.sliderWidth * 1.5 * scaling
-        }
+      NText {
+        text: "Make sure your wallpaper directory is configured and contains image files."
+        color: Color.mOnSurfaceVariant
+        wrapMode: Text.WordWrap
+        Layout.alignment: Qt.AlignHCenter
+      }
+
+      Item {
+        Layout.fillHeight: true
       }
     }
   }

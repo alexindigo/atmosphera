@@ -12,6 +12,8 @@ ColumnLayout {
   property bool readOnly: false
   property bool enabled: true
   property int inputMaxWidth: 420 * scaling
+  property color labelColor: Color.mOnSurface
+  property color descriptionColor: Color.mOnSurfaceVariant
 
   property alias text: input.text
   property alias placeholderText: input.placeholderText
@@ -25,6 +27,8 @@ ColumnLayout {
   NLabel {
     label: root.label
     description: root.description
+    labelColor: root.labelColor
+    descriptionColor: root.descriptionColor
     visible: root.label !== "" || root.description !== ""
   }
 
