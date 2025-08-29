@@ -78,6 +78,7 @@ ColumnLayout {
     description: "Set selected wallpaper on all monitors at once."
     checked: Settings.data.wallpaper.setWallpaperOnAllMonitors
     onToggled: checked => Settings.data.wallpaper.setWallpaperOnAllMonitors = checked
+    visible: (wallpaperService.wallpaperList.length > 0)
   }
 
   // Wallpaper grid container
@@ -187,28 +188,37 @@ ColumnLayout {
       }
     }
 
-    // Empty state
+    
+  }
+
+  // Empty state
     Rectangle {
-      anchors.fill: parent
       color: Color.mSurface
       radius: Style.radiusM * scaling
       border.color: Color.mOutline
       border.width: Math.max(1, Style.borderS * scaling)
       visible: WallpaperService.wallpaperList.length === 0 && !WallpaperService.scanning
+      Layout.fillWidth: true
+      Layout.preferredHeight: 130 * scaling
 
       ColumnLayout {
-        anchors.centerIn: parent
-        spacing: Style.marginM * scaling
+        id: fallbackColumn
+        anchors.fill: parent
+        anchors.margins: Style.marginL * Scaling
+
+        Item {
+          Layout.fillHeight: true
+        }
 
         NIcon {
           text: "folder_open"
-          font.pointSize: Style.fontSizeL * scaling
+          font.pointSize: Style.fontSizeXL * scaling
           color: Color.mOnSurface
           Layout.alignment: Qt.AlignHCenter
         }
 
         NText {
-          text: "No wallpapers found"
+          text: "No wallpaper found."
           color: Color.mOnSurface
           font.weight: Style.fontWeightBold
           Layout.alignment: Qt.AlignHCenter
@@ -216,14 +226,16 @@ ColumnLayout {
 
         NText {
           text: "Make sure your wallpaper directory is configured and contains image files."
-          color: Color.mOnSurface
+          color: Color.mOnSurfaceVariant
           wrapMode: Text.WordWrap
-          horizontalAlignment: Text.AlignHCenter
-          Layout.preferredWidth: Style.sliderWidth * 1.5 * scaling
+          Layout.alignment: Qt.AlignHCenter
+        }
+
+        Item {
+          Layout.fillHeight: true
         }
       }
     }
-  }
 
   NDivider {
     Layout.fillWidth: true

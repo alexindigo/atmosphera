@@ -54,7 +54,7 @@ ColumnLayout {
             NTextInput {
               label: (modelData.name || "Unknown")
               description: `Path to your wallpaper directory for "${(modelData.name || "Unknown")}" monitor`
-              text: WallpaperService.getMonitorWallpaperDirectory(modelData.name)
+              text: WallpaperService.getMonitorDirectory(modelData.name)
               labelColor: Color.mSecondary
               onEditingFinished: WallpaperService.setMonitorWallpaperDirectory(modelData.name, text)
               Layout.maximumWidth: 420 * scaling
