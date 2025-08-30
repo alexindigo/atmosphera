@@ -58,8 +58,7 @@ Variants {
             transitionType = 'fade'
           }
 
-          Logger.log("Background", "Using transition:", transitionType)
-
+          //Logger.log("Background", "Using transition:", transitionType)
           switch (transitionType) {
           case "none":
             setWallpaperImmediate(servicedWallpaper)
