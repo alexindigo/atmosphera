@@ -37,9 +37,9 @@ Variants {
         anchors.fill: parent
         fillMode: Image.PreserveAspectCrop
         source: WallpaperService.getWallpaper(modelData.name)
-        cache: true
         smooth: true
         mipmap: false
+        cache: false
       }
 
       MultiEffect {

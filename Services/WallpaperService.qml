@@ -20,6 +20,10 @@ Singleton {
       name: "None"
     }
     ListElement {
+      key: "random"
+      name: "Random"
+    }
+    ListElement {
       key: "fade"
       name: "Fade"
     }
@@ -40,6 +44,12 @@ Singleton {
       name: "Wipe Down"
     }
   }
+
+  // All transition keys but filter out "random"
+  readonly property var allTransitions: Array.from({
+                                                     "length": transitionsModel.count
+                                                   }, (_, i) => transitionsModel.get(i).key).filter(
+                                          key => key !== "random" && key != "none")
 
   property var wallpaperLists: ({})
   property int scanningCount: 0

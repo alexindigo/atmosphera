@@ -19,8 +19,10 @@ Variants {
 
       // Internal state management
       property bool firstWallpaper: true
+      property string transitionType: 'fade'
       property bool transitioning: false
       property real transitionProgress: 0.0
+      readonly property var allTransitions: WallpaperService.allTransitions
 
       // Wipe direction: 0=left, 1=right, 2=up, 3=down
       property real wipeDirection: 0
@@ -38,29 +40,44 @@ Variants {
             return
           }
 
-          switch (Settings.data.wallpaper.transitionType) {
-            case "none":
-              setWallpaperImmediate(servicedWallpaper)
-              break
-            case "wipe_left":
-              wipeDirection = 0
-              setWallpaperWithTransition(servicedWallpaper)
-              break
-            case "wipe_right":
-              wipeDirection = 1
-              setWallpaperWithTransition(servicedWallpaper)
-              break
-            case "wipe_up":
-              wipeDirection = 2
-              setWallpaperWithTransition(servicedWallpaper)
-              break
-            case "wipe_down":
-              wipeDirection = 3
-              setWallpaperWithTransition(servicedWallpaper)
-              break
-            default:
-              setWallpaperWithTransition(servicedWallpaper)
-              break
+          // Get the transitionType from the settings
+          transitionType = Settings.data.wallpaper.transitionType
+
+          if (transitionType == 'random') {
+            var index = Math.floor(Math.random() * allTransitions.length)
+            transitionType = allTransitions[index]
+          }
+
+          // Ensure the transition type really exists
+          if (transitionType !== "none" && !allTransitions.includes(transitionType)) {
+            transitionType = 'fade'
+          }
+
+          Logger.log("Background", "Using transition:", transitionType)
+
+          switch (transitionType) {
+          case "none":
+            setWallpaperImmediate(servicedWallpaper)
+            break
+          case "wipe_left":
+            wipeDirection = 0
+            setWallpaperWithTransition(servicedWallpaper)
+            break
+          case "wipe_right":
+            wipeDirection = 1
+            setWallpaperWithTransition(servicedWallpaper)
+            break
+          case "wipe_up":
+            wipeDirection = 2
+            setWallpaperWithTransition(servicedWallpaper)
+            break
+          case "wipe_down":
+            wipeDirection = 3
+            setWallpaperWithTransition(servicedWallpaper)
+            break
+          default:
+            setWallpaperWithTransition(servicedWallpaper)
+            break
           }
         }
       }
@@ -83,10 +100,10 @@ Variants {
         anchors.fill: parent
         fillMode: Image.PreserveAspectCrop
         source: ""
-        cache: true
         smooth: true
         mipmap: false
         visible: false
+        cache: false
       }
 
       Image {
@@ -94,17 +111,17 @@ Variants {
         anchors.fill: parent
         fillMode: Image.PreserveAspectCrop
         source: ""
-        cache: true
         smooth: true
         mipmap: false
         visible: false
+        cache: false
       }
 
       // Fade transition shader
       ShaderEffect {
         id: fadeShader
         anchors.fill: parent
-        visible: Settings.data.wallpaper.transitionType === 'fade'
+        visible: transitionType === 'fade' || transitionType === 'none'
 
         property variant source1: currentWallpaper
         property variant source2: nextWallpaper
@@ -116,7 +133,7 @@ Variants {
       ShaderEffect {
         id: wipeShader
         anchors.fill: parent
-        visible: Settings.data.wallpaper.transitionType.startsWith('wipe_')
+        visible: transitionType.startsWith('wipe_')
 
         property variant source1: currentWallpaper
         property variant source2: nextWallpaper
@@ -134,14 +151,7 @@ Variants {
         from: 0.0
         to: 1.0
         duration: Settings.data.wallpaper.transitionDuration ?? 1000
-        easing.type: {
-          const transitionType = Settings.data.wallpaper.transitionType ?? 'fade'
-          if (transitionType.startsWith('wipe_')) {
-            return Easing.InOutCubic
-          }
-          return Easing.InOutCubic
-        }
-
+        easing.type: transitionType.startsWith('wipe_') ? Easing.InOutCubic : Easing.InOutCubic
         onFinished: {
           // Swap images after transition completes
           currentWallpaper.source = nextWallpaper.source

@@ -169,7 +169,7 @@ Singleton {
         property bool randomEnabled: false
         property int randomIntervalSec: 300 // 5 min
         property int transitionDuration: 1500 // 1500 ms
-        property string transitionType: "fade"
+        property string transitionType: "random"
         property list<var> monitors: []
       }
 
