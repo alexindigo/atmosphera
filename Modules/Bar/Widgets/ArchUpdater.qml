@@ -64,6 +64,5 @@ NIconButton {
 
     PanelService.getPanel("archUpdaterPanel").toggle(screen, this)
     ArchUpdaterService.doPoll()
-    ArchUpdaterService.doAurPoll()
   }
 }
