@@ -20,10 +20,11 @@ Variants {
       // Internal state management
       property bool firstWallpaper: true
       property string transitionType: "fade"
-      property bool transitioning: false
       property real transitionProgress: 0
-      property real edgeSmoothness: Settings.data.wallpaper.transitionEdgeSmoothness
+
+      readonly property real edgeSmoothness: Settings.data.wallpaper.transitionEdgeSmoothness
       readonly property var allTransitions: WallpaperService.allTransitions
+      readonly property bool transitioning: transitionAnimation.running
 
       // Wipe direction: 0=left, 1=right, 2=up, 3=down
       property real wipeDirection: 0
@@ -38,53 +39,15 @@ Variants {
 
       // External state management
       property string servicedWallpaper: WallpaperService.getWallpaper(modelData.name)
+      property string futureWallpaper: ""
       onServicedWallpaperChanged: {
-        if (servicedWallpaper && servicedWallpaper !== currentWallpaper.source) {
-          // Set wallpaper immediately on startup
-          if (firstWallpaper) {
-            firstWallpaper = false
-            setWallpaperImmediate(servicedWallpaper)
-            return
-          }
-
-          // Get the transitionType from the settings
-          transitionType = Settings.data.wallpaper.transitionType
-
-          if (transitionType == "random") {
-            var index = Math.floor(Math.random() * allTransitions.length)
-            transitionType = allTransitions[index]
-          }
-
-          // Ensure the transition type really exists
-          if (transitionType !== "none" && !allTransitions.includes(transitionType)) {
-            transitionType = "fade"
-          }
-
-          Logger.log("Background", "New wallpaper: ", servicedWallpaper, "On:", modelData.name, "Transition:",
-                     transitionType)
-
-          switch (transitionType) {
-          case "none":
-            setWallpaperImmediate(servicedWallpaper)
-            break
-          case "wipe":
-            wipeDirection = Math.random() * 4
-            setWallpaperWithTransition(servicedWallpaper)
-            break
-          case "disc":
-            discCenterX = Math.random()
-            discCenterY = Math.random()
-            setWallpaperWithTransition(servicedWallpaper)
-            break
-          case "stripes":
-            stripesCount = Math.round(Math.random() * 24 + 6)
-            stripesAngle = Math.random() * 360
-            setWallpaperWithTransition(servicedWallpaper)
-            break
-          default:
-            setWallpaperWithTransition(servicedWallpaper)
-            break
-          }
+        // Set wallpaper immediately on startup
+        if (firstWallpaper) {
+          firstWallpaper = false
+          setWallpaperImmediate(servicedWallpaper)
+        } else {
+          futureWallpaper = servicedWallpaper
+          debounceTimer.restart()
         }
       }
 
@@ -101,6 +64,16 @@ Variants {
         left: true
       }
 
+      Timer {
+        id: debounceTimer
+        interval: 333
+        running: false
+        repeat: false
+        onTriggered: {
+          changeWallpaper()
+        }
+      }
+
       Image {
         id: currentWallpaper
         anchors.fill: parent
@@ -110,6 +83,8 @@ Variants {
         mipmap: false
         visible: false
         cache: false
+        // currentWallpaper should not be asynchronous to avoid flickering when swapping next to current.
+        asynchronous: false
       }
 
       Image {
@@ -121,6 +96,7 @@ Variants {
         mipmap: false
         visible: false
         cache: false
+        asynchronous: true
       }
 
       // Fade or None transition shader
@@ -193,29 +169,27 @@ Variants {
         to: 1.0
         // The stripes shader feels faster visually, we make it a bit slower here.
         duration: transitionType == "stripes" ? Settings.data.wallpaper.transitionDuration
-                                                * 1.4 : Settings.data.wallpaper.transitionDuration
+                                                * 1.6 : Settings.data.wallpaper.transitionDuration
         easing.type: Easing.InOutCubic
         onFinished: {
           // Swap images after transition completes
           currentWallpaper.source = nextWallpaper.source
           nextWallpaper.source = ""
           transitionProgress = 0.0
-          transitioning = false
         }
       }
 
       function startTransition() {
         if (!transitioning && nextWallpaper.source != currentWallpaper.source) {
-          transitioning = true
           transitionAnimation.start()
         }
       }
 
       function setWallpaperImmediate(source) {
+        transitionAnimation.stop()
+        transitionProgress = 0.0
         currentWallpaper.source = source
         nextWallpaper.source = ""
-        transitionProgress = 0.0
-        transitioning = false
       }
 
       function setWallpaperWithTransition(source) {
@@ -224,14 +198,53 @@ Variants {
           if (transitioning) {
             // We are interrupting a transition
             transitionAnimation.stop()
+            transitionProgress = 0
             currentWallpaper.source = nextWallpaper.source
             nextWallpaper.source = ""
-            transitionProgress = 0
-            transitioning = false
           }
 
           nextWallpaper.source = source
           startTransition()
+        }
+      }
+
+      // Main method that actually trigger the wallpaper change
+      function changeWallpaper() {
+        // Get the transitionType from the settings
+        transitionType = Settings.data.wallpaper.transitionType
+
+        if (transitionType == "random") {
+          var index = Math.floor(Math.random() * allTransitions.length)
+          transitionType = allTransitions[index]
+        }
+
+        // Ensure the transition type really exists
+        if (transitionType !== "none" && !allTransitions.includes(transitionType)) {
+          transitionType = "fade"
+        }
+
+        //Logger.log("Background", "New wallpaper: ", futureWallpaper, "On:", modelData.name, "Transition:", transitionType)
+        switch (transitionType) {
+        case "none":
+          setWallpaperImmediate(futureWallpaper)
+          break
+        case "wipe":
+          wipeDirection = Math.random() * 4
+          setWallpaperWithTransition(futureWallpaper)
+          break
+        case "disc":
+          discCenterX = Math.random()
+          discCenterY = Math.random()
+          setWallpaperWithTransition(futureWallpaper)
+          break
+        case "stripes":
+          stripesCount = Math.round(Math.random() * 20 + 4)
+          stripesAngle = Math.random() * 360
+          setWallpaperWithTransition(futureWallpaper)
+          break
+        default:
+          setWallpaperWithTransition(futureWallpaper)
+          break
         }
       }
     }

@@ -8,6 +8,7 @@ import qs.Widgets
 
 ColumnLayout {
   id: root
+  width: parent.width
 
   spacing: Style.marginL * scaling
 
@@ -94,12 +95,10 @@ ColumnLayout {
     GridView {
       id: wallpaperGridView
       anchors.fill: parent
-      clip: true
       model: wallpapersList
 
-      boundsBehavior: Flickable.StopAtBounds
-      flickableDirection: Flickable.VerticalFlick
       interactive: false
+      clip: true
 
       property int columns: 5
       property int itemSize: Math.floor((width - leftMargin - rightMargin - (4 * Style.marginS * scaling)) / columns)
@@ -180,7 +179,8 @@ ColumnLayout {
           anchors.fill: parent
           acceptedButtons: Qt.LeftButton
           hoverEnabled: true
-          onClicked: {
+          // Use on pressed instead of clicked to better register clicks
+          onPressed: {
             if (Settings.data.wallpaper.setWallpaperOnAllMonitors) {
               WallpaperService.changeWallpaper(undefined, wallpaperPath)
             } else {

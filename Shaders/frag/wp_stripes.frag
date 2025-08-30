@@ -22,9 +22,9 @@ void main() {
     vec4 color1 = texture(source1, uv);  // Current (old) wallpaper
     vec4 color2 = texture(source2, uv);  // Next (new) wallpaper
     
-    // Map smoothness from 0.0-1.0 to 0.001-0.1 range
+    // Map smoothness from 0.0-1.0 to 0.001-0.3 range
     // Using a non-linear mapping for better control at low values
-    float mappedSmoothness = mix(0.001, 0.1, ubuf.smoothness * ubuf.smoothness);
+    float mappedSmoothness = mix(0.001, 0.3, ubuf.smoothness * ubuf.smoothness);
     
     // Use values directly without forcing defaults
     float stripes = (ubuf.stripeCount > 0.0) ? ubuf.stripeCount : 12.0;
@@ -66,7 +66,7 @@ void main() {
     float normalizedStripePos = clamp(stripePos / stripes, 0.0, 1.0);
     
     // Increased delay and better distribution
-    float maxDelay = 0.15;
+    float maxDelay = 0.1;
     float stripeDelay = normalizedStripePos * maxDelay;
     
     // Better progress mapping that uses the full 0.0-1.0 range

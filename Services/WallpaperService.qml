@@ -121,17 +121,17 @@ Singleton {
   // -------------------------------------------------------------------
   function changeWallpaper(screenName, path) {
     if (screenName !== undefined) {
-      setWallpaper(screenName, path)
+      _setWallpaper(screenName, path)
     } else {
       // If no screenName specified change for all screens
       for (var i = 0; i < Quickshell.screens.length; i++) {
-        setWallpaper(Quickshell.screens[i].name, path)
+        _setWallpaper(Quickshell.screens[i].name, path)
       }
     }
   }
 
   // -------------------------------------------------------------------
-  function setWallpaper(screenName, path) {
+  function _setWallpaper(screenName, path) {
     if (path === "" || path === undefined) {
       return
     }
