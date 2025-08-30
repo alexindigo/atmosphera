@@ -1,3 +1,4 @@
+// ===== wp_disc.frag =====
 #version 450
 
 layout(location = 0) in vec2 qt_TexCoord0;
@@ -12,7 +13,7 @@ layout(std140, binding = 0) uniform buf {
     float progress;      // Transition progress (0.0 to 1.0)
     float centerX;       // X coordinate of disc center (0.0 to 1.0)
     float centerY;       // Y coordinate of disc center (0.0 to 1.0)
-    float smoothness;    // Edge smoothness (0.01 to 0.5, default 0.05)
+    float smoothness;    // Edge smoothness (0.0 to 1.0, 0=sharp, 1=very smooth)
     float aspectRatio;   // Width / Height of the screen
 } ubuf;
 
@@ -20,6 +21,10 @@ void main() {
     vec2 uv = qt_TexCoord0;
     vec4 color1 = texture(source1, uv);  // Current (old) wallpaper
     vec4 color2 = texture(source2, uv);  // Next (new) wallpaper
+    
+    // Map smoothness from 0.0-1.0 to 0.001-0.5 range
+    // Using a non-linear mapping for better control
+    float mappedSmoothness = mix(0.001, 0.5, ubuf.smoothness * ubuf.smoothness);
     
     // Adjust UV coordinates to compensate for aspect ratio
     // This makes distances circular instead of elliptical
@@ -39,7 +44,7 @@ void main() {
     // Scale progress to cover the maximum distance
     // Add extra range for smoothness to ensure complete coverage
     // Adjust smoothness for aspect ratio to maintain consistent visual appearance
-    float adjustedSmoothness = ubuf.smoothness * max(1.0, ubuf.aspectRatio);
+    float adjustedSmoothness = mappedSmoothness * max(1.0, ubuf.aspectRatio);
     float radius = ubuf.progress * (maxDist + adjustedSmoothness);
     
     // Use smoothstep for a smooth edge transition

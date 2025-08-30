@@ -21,17 +21,20 @@ Variants {
       property bool firstWallpaper: true
       property string transitionType: 'fade'
       property bool transitioning: false
-      property real transitionProgress: 0.0
+      property real transitionProgress: 0
+      property real edgeSmoothness: Settings.data.wallpaper.transitionEdgeSmoothness
       readonly property var allTransitions: WallpaperService.allTransitions
 
       // Wipe direction: 0=left, 1=right, 2=up, 3=down
       property real wipeDirection: 0
-      property real wipeSmoothness: 0.05
 
       // Disc
       property real discCenterX: 0.5
       property real discCenterY: 0.5
-      property real discSmoothness: 0.05
+
+      // Stripe
+      property real stripesCount: 16
+      property real stripesAngle: 0
 
       // External state management
       property string servicedWallpaper: WallpaperService.getWallpaper(modelData.name)
@@ -58,7 +61,8 @@ Variants {
             transitionType = 'fade'
           }
 
-          //Logger.log("Background", "Using transition:", transitionType)
+          Logger.log("Background", "New wallpaper: ", servicedWallpaper, "On:", modelData.name, "Transition:", transitionType)
+
           switch (transitionType) {
           case "none":
             setWallpaperImmediate(servicedWallpaper)
@@ -82,6 +86,11 @@ Variants {
           case "disc":
             discCenterX = Math.random()
             discCenterY = Math.random()
+            setWallpaperWithTransition(servicedWallpaper)
+            break
+          case "stripes":
+            stripesCount = Math.round(Math.random() * 24 + 2)
+            stripesAngle = Math.random() * 360
             setWallpaperWithTransition(servicedWallpaper)
             break
           default:
@@ -134,7 +143,7 @@ Variants {
 
         property variant source1: currentWallpaper
         property variant source2: nextWallpaper
-        property real fade: transitionProgress
+        property real progress: root.transitionProgress
         fragmentShader: Qt.resolvedUrl("../../Shaders/qsb/wp_fade.frag.qsb")
       }
 
@@ -146,9 +155,10 @@ Variants {
 
         property variant source1: currentWallpaper
         property variant source2: nextWallpaper
-        property real progress: transitionProgress
-        property real direction: wipeDirection
-        property real smoothness: wipeSmoothness
+        property real progress: root.transitionProgress
+        property real smoothness: root.edgeSmoothness
+        property real direction: root.wipeDirection
+
         fragmentShader: Qt.resolvedUrl("../../Shaders/qsb/wp_wipe.frag.qsb")
       }
 
@@ -160,12 +170,30 @@ Variants {
 
         property variant source1: currentWallpaper
         property variant source2: nextWallpaper
-        property real progress: transitionProgress
-        property real centerX: discCenterX
-        property real centerY: discCenterY
-        property real smoothness: discSmoothness
-        property real aspectRatio: width / height
+        property real progress: root.transitionProgress
+        property real smoothness: root.edgeSmoothness
+        property real aspectRatio: root.width / root.height
+        property real centerX: root.discCenterX
+        property real centerY: root.discCenterY
+
         fragmentShader: Qt.resolvedUrl("../../Shaders/qsb/wp_disc.frag.qsb")
+      }
+
+      // Diagonal stripes transition shader
+      ShaderEffect {
+        id: stripesShader
+        anchors.fill: parent
+        visible: transitionType === 'stripes'
+
+        property variant source1: currentWallpaper
+        property variant source2: nextWallpaper
+        property real progress: root.transitionProgress
+        property real smoothness: root.edgeSmoothness
+        property real aspectRatio: root.width / root.height
+        property real stripeCount: root.stripesCount
+        property real angle: root.stripesAngle
+
+        fragmentShader: Qt.resolvedUrl("../../Shaders/qsb/wp_stripes.frag.qsb")
       }
 
       // Animation for the transition progress
@@ -176,7 +204,7 @@ Variants {
         from: 0.0
         to: 1.0
         duration: Settings.data.wallpaper.transitionDuration ?? 1000
-        easing.type: transitionType.startsWith('wipe_') ? Easing.InOutCubic : Easing.OutQuad
+        easing.type: Easing.InOutCubic  //transitionType.startsWith('wipe_') ? Easing.InOutCubic : Easing.OutQuad
         onFinished: {
           // Swap images after transition completes
           currentWallpaper.source = nextWallpaper.source

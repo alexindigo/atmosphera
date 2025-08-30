@@ -32,6 +32,10 @@ Singleton {
       name: "Disc"
     }
     ListElement {
+      key: "stripes"
+      name: "Stripes"
+    }
+    ListElement {
       key: "wipe_left"
       name: "Wipe Left"
     }
@@ -149,7 +153,7 @@ Singleton {
       return
     }
 
-    Logger.log("Wallpaper", "setWallpaper on", screenName, ": ", path)
+    //Logger.log("Wallpaper", "setWallpaper on", screenName, ": ", path)
 
     var wallpaperChanged = false
 
