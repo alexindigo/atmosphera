@@ -32,24 +32,16 @@ Singleton {
       name: "Disc"
     }
     ListElement {
-      key: "wipe_left"
-      name: "Wipe Left"
+      key: "stripes"
+      name: "Stripes"
     }
     ListElement {
-      key: "wipe_right"
-      name: "Wipe Right"
-    }
-    ListElement {
-      key: "wipe_up"
-      name: "Wipe Up"
-    }
-    ListElement {
-      key: "wipe_down"
-      name: "Wipe Down"
+      key: "wipe"
+      name: "Wipe"
     }
   }
 
-  // All transition keys but filter out "random"
+  // All transition keys but filter out "none" and "random" so we are left with the real transitions
   readonly property var allTransitions: Array.from({
                                                      "length": transitionsModel.count
                                                    }, (_, i) => transitionsModel.get(i).key).filter(
@@ -129,17 +121,17 @@ Singleton {
   // -------------------------------------------------------------------
   function changeWallpaper(screenName, path) {
     if (screenName !== undefined) {
-      setWallpaper(screenName, path)
+      _setWallpaper(screenName, path)
     } else {
       // If no screenName specified change for all screens
       for (var i = 0; i < Quickshell.screens.length; i++) {
-        setWallpaper(Quickshell.screens[i].name, path)
+        _setWallpaper(Quickshell.screens[i].name, path)
       }
     }
   }
 
   // -------------------------------------------------------------------
-  function setWallpaper(screenName, path) {
+  function _setWallpaper(screenName, path) {
     if (path === "" || path === undefined) {
       return
     }
@@ -149,8 +141,7 @@ Singleton {
       return
     }
 
-    Logger.log("Wallpaper", "setWallpaper on", screenName, ": ", path)
-
+    //Logger.log("Wallpaper", "setWallpaper on", screenName, ": ", path)
     var wallpaperChanged = false
 
     var monitor = getMonitorConfig(screenName)
