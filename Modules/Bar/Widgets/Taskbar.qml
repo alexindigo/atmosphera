@@ -36,12 +36,6 @@ Rectangle {
         required property Toplevel modelData
         property Toplevel toplevel: modelData
         property bool isActive: ToplevelManager.activeToplevel === modelData
-        onIsActiveChanged: {
-          if (modelData) {
-            Logger.log("Taskbar", `Item ${modelData.appId} active: ${isActive}`)
-          }
-        }
-
         width: root.itemSize
         height: root.itemSize
 
