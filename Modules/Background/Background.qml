@@ -28,6 +28,11 @@ Variants {
       property real wipeDirection: 0
       property real wipeSmoothness: 0.05
 
+      // Disc
+      property real discCenterX: 0.5
+      property real discCenterY: 0.5
+      property real discSmoothness: 0.05
+
       // External state management
       property string servicedWallpaper: WallpaperService.getWallpaper(modelData.name)
       onServicedWallpaperChanged: {
@@ -75,6 +80,11 @@ Variants {
             wipeDirection = 3
             setWallpaperWithTransition(servicedWallpaper)
             break
+          case "disc":
+            discCenterX = Math.random()
+            discCenterY = Math.random()
+            setWallpaperWithTransition(servicedWallpaper)
+            break
           default:
             setWallpaperWithTransition(servicedWallpaper)
             break
@@ -117,7 +127,7 @@ Variants {
         cache: false
       }
 
-      // Fade transition shader
+      // Fade or None transition shader
       ShaderEffect {
         id: fadeShader
         anchors.fill: parent
@@ -143,6 +153,22 @@ Variants {
         fragmentShader: Qt.resolvedUrl("../../Shaders/qsb/wp_wipe.frag.qsb")
       }
 
+      // Disc reveal transition shader
+      ShaderEffect {
+        id: discShader
+        anchors.fill: parent
+        visible: transitionType === 'disc'
+
+        property variant source1: currentWallpaper
+        property variant source2: nextWallpaper
+        property real progress: transitionProgress
+        property real centerX: discCenterX
+        property real centerY: discCenterY
+        property real smoothness: discSmoothness
+        property real aspectRatio: width / height
+        fragmentShader: Qt.resolvedUrl("../../Shaders/qsb/wp_disc.frag.qsb")
+      }
+
       // Animation for the transition progress
       NumberAnimation {
         id: transitionAnimation
@@ -151,7 +177,7 @@ Variants {
         from: 0.0
         to: 1.0
         duration: Settings.data.wallpaper.transitionDuration ?? 1000
-        easing.type: transitionType.startsWith('wipe_') ? Easing.InOutCubic : Easing.InOutCubic
+        easing.type: transitionType.startsWith('wipe_') ? Easing.InOutCubic : Easing.OutQuad
         onFinished: {
           // Swap images after transition completes
           currentWallpaper.source = nextWallpaper.source

@@ -28,6 +28,10 @@ Singleton {
       name: "Fade"
     }
     ListElement {
+      key: "disc"
+      name: "Disc"
+    }
+    ListElement {
       key: "wipe_left"
       name: "Wipe Left"
     }
