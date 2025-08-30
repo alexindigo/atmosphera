@@ -116,7 +116,7 @@ Singleton {
   }
 
   function getBattery(device) {
-    return `Battery: ${Math.round(device.battery * 100)}`
+    return `Battery: ${Math.round(device.battery * 100)}%`
   }
 
   function getSignalIcon(device) {
