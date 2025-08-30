@@ -35,7 +35,7 @@ Item {
           }
         }
       }
-      Logger.log("NWidgetLoader", "Loaded", widgetName, "on screen", item.screen.name)
+      //Logger.log("NWidgetLoader", "Loaded", widgetName, "on screen", item.screen.name)
     }
   }
 

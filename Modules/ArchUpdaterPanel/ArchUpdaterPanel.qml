@@ -15,9 +15,8 @@ NPanel {
 
   // When the panel opens
   onOpened: {
-    console.log("ArchUpdaterPanel: Panel opened, refreshing package lists...")
-    // Always refresh when panel opens to ensure we have the latest data
-    ArchUpdaterService.forceRefresh()
+    ArchUpdaterService.doPoll()
+    ArchUpdaterService.doAurPoll()
   }
 
   panelContent: Rectangle {
@@ -48,19 +47,6 @@ NPanel {
           Layout.fillWidth: true
         }
 
-        // Reset button (only show if update failed)
-        NIconButton {
-          visible: ArchUpdaterService.updateFailed
-          icon: "refresh"
-          tooltipText: "Reset update state"
-          sizeRatio: 0.8
-          colorBg: Color.mError
-          colorFg: Color.mOnError
-          onClicked: {
-            ArchUpdaterService.resetUpdateState()
-          }
-        }
-
         NIconButton {
           icon: "close"
           tooltipText: "Close"
@@ -73,10 +59,8 @@ NPanel {
         Layout.fillWidth: true
       }
 
-      // Update summary (only show when packages are available)
+      // Update summary
       NText {
-        visible: !ArchUpdaterService.updateInProgress && !ArchUpdaterService.updateFailed && !ArchUpdaterService.busy
-                 && !ArchUpdaterService.aurBusy && ArchUpdaterService.totalUpdates > 0
         text: ArchUpdaterService.totalUpdates + " package" + (ArchUpdaterService.totalUpdates !== 1 ? "s" : "") + " can be updated"
         font.pointSize: Style.fontSizeL * scaling
         font.weight: Style.fontWeightMedium
@@ -84,184 +68,16 @@ NPanel {
         Layout.fillWidth: true
       }
 
-      // Package selection info (only show when not updating and have packages)
+      // Package selection info
       NText {
-        visible: !ArchUpdaterService.updateInProgress && !ArchUpdaterService.updateFailed && !ArchUpdaterService.busy
-                 && !ArchUpdaterService.aurBusy && ArchUpdaterService.totalUpdates > 0
         text: ArchUpdaterService.selectedPackagesCount + " of " + ArchUpdaterService.totalUpdates + " packages selected"
         font.pointSize: Style.fontSizeS * scaling
         color: Color.mOnSurfaceVariant
         Layout.fillWidth: true
       }
 
-      // Update in progress state
-      ColumnLayout {
-        Layout.fillWidth: true
-        Layout.fillHeight: true
-        visible: ArchUpdaterService.updateInProgress
-        spacing: Style.marginM * scaling
-
-        Item {
-          Layout.fillHeight: true
-        } // Spacer
-
-        NIcon {
-          text: "hourglass_empty"
-          font.pointSize: Style.fontSizeXXXL * scaling
-          color: Color.mPrimary
-          Layout.alignment: Qt.AlignHCenter
-        }
-
-        NText {
-          text: "Update in progress"
-          font.pointSize: Style.fontSizeL * scaling
-          color: Color.mOnSurface
-          Layout.alignment: Qt.AlignHCenter
-        }
-
-        NText {
-          text: "Please check your terminal window for update progress and prompts."
-          font.pointSize: Style.fontSizeNormal * scaling
-          color: Color.mOnSurfaceVariant
-          Layout.alignment: Qt.AlignHCenter
-          horizontalAlignment: Text.AlignHCenter
-          wrapMode: Text.Wrap
-          Layout.maximumWidth: 280 * scaling
-        }
-
-        Item {
-          Layout.fillHeight: true
-        } // Spacer
-      }
-
-      // Update failed state
-      Item {
-        Layout.fillWidth: true
-        Layout.fillHeight: true
-        visible: ArchUpdaterService.updateFailed
-
-        ColumnLayout {
-          anchors.centerIn: parent
-          spacing: Style.marginM * scaling
-
-          NIcon {
-            text: "error_outline"
-            font.pointSize: Style.fontSizeXXXL * scaling
-            color: Color.mError
-            Layout.alignment: Qt.AlignHCenter
-          }
-
-          NText {
-            text: "Update failed"
-            font.pointSize: Style.fontSizeL * scaling
-            color: Color.mOnSurface
-            Layout.alignment: Qt.AlignHCenter
-          }
-
-          NText {
-            text: "Check your terminal for error details and try again."
-            font.pointSize: Style.fontSizeNormal * scaling
-            color: Color.mOnSurfaceVariant
-            Layout.alignment: Qt.AlignHCenter
-            horizontalAlignment: Text.AlignHCenter
-            wrapMode: Text.Wrap
-            Layout.maximumWidth: 280 * scaling
-          }
-
-          // Prominent refresh button
-          NIconButton {
-            icon: "refresh"
-            tooltipText: "Refresh and try again"
-            sizeRatio: 1.2
-            colorBg: Color.mPrimary
-            colorFg: Color.mOnPrimary
-            onClicked: {
-              ArchUpdaterService.resetUpdateState()
-            }
-            Layout.alignment: Qt.AlignHCenter
-            Layout.topMargin: Style.marginL * scaling
-          }
-        }
-      }
-
-      // No updates available state
-      Item {
-        Layout.fillWidth: true
-        Layout.fillHeight: true
-        visible: !ArchUpdaterService.updateInProgress && !ArchUpdaterService.updateFailed && !ArchUpdaterService.busy
-                 && !ArchUpdaterService.aurBusy && ArchUpdaterService.totalUpdates === 0
-
-        ColumnLayout {
-          anchors.centerIn: parent
-          spacing: Style.marginM * scaling
-
-          NIcon {
-            text: "check_circle"
-            font.pointSize: Style.fontSizeXXXL * scaling
-            color: Color.mPrimary
-            Layout.alignment: Qt.AlignHCenter
-          }
-
-          NText {
-            text: "System is up to date"
-            font.pointSize: Style.fontSizeL * scaling
-            color: Color.mOnSurface
-            Layout.alignment: Qt.AlignHCenter
-          }
-
-          NText {
-            text: "All packages are current. Check back later for updates."
-            font.pointSize: Style.fontSizeNormal * scaling
-            color: Color.mOnSurfaceVariant
-            Layout.alignment: Qt.AlignHCenter
-            horizontalAlignment: Text.AlignHCenter
-            wrapMode: Text.Wrap
-            Layout.maximumWidth: 280 * scaling
-          }
-        }
-      }
-
-      // Checking for updates state
-      Item {
-        Layout.fillWidth: true
-        Layout.fillHeight: true
-        visible: (ArchUpdaterService.busy || ArchUpdaterService.aurBusy) && !ArchUpdaterService.updateInProgress
-                 && !ArchUpdaterService.updateFailed
-
-        ColumnLayout {
-          anchors.centerIn: parent
-          spacing: Style.marginM * scaling
-
-          NIcon {
-            text: "refresh"
-            font.pointSize: Style.fontSizeXXXL * scaling
-            color: Color.mPrimary
-            Layout.alignment: Qt.AlignHCenter
-          }
-
-          NText {
-            text: "Checking for updates"
-            font.pointSize: Style.fontSizeL * scaling
-            color: Color.mOnSurface
-            Layout.alignment: Qt.AlignHCenter
-          }
-
-          NText {
-            text: "Scanning package databases for available updates..."
-            font.pointSize: Style.fontSizeNormal * scaling
-            color: Color.mOnSurfaceVariant
-            Layout.alignment: Qt.AlignHCenter
-            horizontalAlignment: Text.AlignHCenter
-            wrapMode: Text.Wrap
-            Layout.maximumWidth: 280 * scaling
-          }
-        }
-      }
-
-      // Package list (only show when not in any special state)
+      // Unified list
       NBox {
-        visible: !ArchUpdaterService.updateInProgress && !ArchUpdaterService.updateFailed && !ArchUpdaterService.busy
-                 && !ArchUpdaterService.aurBusy && ArchUpdaterService.totalUpdates > 0
         Layout.fillWidth: true
         Layout.fillHeight: true
 
@@ -348,49 +164,50 @@ NPanel {
         }
       }
 
-      // Action buttons (only show when not updating)
+      // Action buttons
       RowLayout {
-        visible: !ArchUpdaterService.updateInProgress && !ArchUpdaterService.updateFailed
         Layout.fillWidth: true
         spacing: Style.marginL * scaling
 
         NIconButton {
           icon: "refresh"
-          tooltipText: "Refresh package lists"
+          tooltipText: "Check for updates"
           onClicked: {
-            ArchUpdaterService.forceRefresh()
+            ArchUpdaterService.doPoll()
+            ArchUpdaterService.doAurPoll()
           }
           colorBg: Color.mSurfaceVariant
           colorFg: Color.mOnSurface
           Layout.fillWidth: true
-          enabled: !ArchUpdaterService.busy && !ArchUpdaterService.aurBusy
         }
 
         NIconButton {
-          icon: "system_update_alt"
-          tooltipText: "Update all packages"
-          enabled: ArchUpdaterService.totalUpdates > 0
+          icon: ArchUpdaterService.updateInProgress ? "hourglass_empty" : "system_update_alt"
+          tooltipText: ArchUpdaterService.updateInProgress ? "Update in progress..." : "Update all packages"
+          enabled: !ArchUpdaterService.updateInProgress
           onClicked: {
             ArchUpdaterService.runUpdate()
             root.close()
           }
-          colorBg: ArchUpdaterService.totalUpdates > 0 ? Color.mPrimary : Color.mSurfaceVariant
-          colorFg: ArchUpdaterService.totalUpdates > 0 ? Color.mOnPrimary : Color.mOnSurfaceVariant
+          colorBg: ArchUpdaterService.updateInProgress ? Color.mSurfaceVariant : Color.mPrimary
+          colorFg: ArchUpdaterService.updateInProgress ? Color.mOnSurfaceVariant : Color.mOnPrimary
           Layout.fillWidth: true
         }
 
         NIconButton {
-          icon: "check_box"
-          tooltipText: "Update selected packages"
-          enabled: ArchUpdaterService.selectedPackagesCount > 0
+          icon: ArchUpdaterService.updateInProgress ? "hourglass_empty" : "check_box"
+          tooltipText: ArchUpdaterService.updateInProgress ? "Update in progress..." : "Update selected packages"
+          enabled: !ArchUpdaterService.updateInProgress && ArchUpdaterService.selectedPackagesCount > 0
           onClicked: {
             if (ArchUpdaterService.selectedPackagesCount > 0) {
               ArchUpdaterService.runSelectiveUpdate()
               root.close()
             }
           }
-          colorBg: ArchUpdaterService.selectedPackagesCount > 0 ? Color.mPrimary : Color.mSurfaceVariant
-          colorFg: ArchUpdaterService.selectedPackagesCount > 0 ? Color.mOnPrimary : Color.mOnSurfaceVariant
+          colorBg: ArchUpdaterService.updateInProgress ? Color.mSurfaceVariant : (ArchUpdaterService.selectedPackagesCount
+                                                                                  > 0 ? Color.mPrimary : Color.mSurfaceVariant)
+          colorFg: ArchUpdaterService.updateInProgress ? Color.mOnSurfaceVariant : (ArchUpdaterService.selectedPackagesCount
+                                                                                    > 0 ? Color.mOnPrimary : Color.mOnSurfaceVariant)
           Layout.fillWidth: true
         }
       }

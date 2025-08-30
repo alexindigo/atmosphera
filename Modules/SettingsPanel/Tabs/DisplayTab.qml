@@ -188,7 +188,7 @@ ColumnLayout {
                 }
 
                 NText {
-                  text: `${Math.round(ScalingService.scaleByName(modelData.name) * 100)}%`
+                  text: `${Math.round(ScalingService.getMonitorScale(modelData.name) * 100)}%`
                   Layout.alignment: Qt.AlignVCenter
                   Layout.minimumWidth: 50 * scaling
                   horizontalAlignment: Text.AlignRight
@@ -204,12 +204,8 @@ ColumnLayout {
                   from: 0.7
                   to: 1.8
                   stepSize: 0.01
-                  value: ScalingService.scaleByName(modelData.name)
-                  onPressedChanged: {
-                    var data = Settings.data.monitorsScaling || {}
-                    data[modelData.name] = value
-                    Settings.data.monitorsScaling = data
-                  }
+                  value: ScalingService.getMonitorScale(modelData.name)
+                  onPressedChanged: ScalingService.setMonitorScale(modelData.name, value)
                   Layout.fillWidth: true
                   Layout.minimumWidth: 150 * scaling
                 }
@@ -217,11 +213,7 @@ ColumnLayout {
                 NIconButton {
                   icon: "refresh"
                   tooltipText: "Reset Scaling"
-                  onClicked: {
-                    var data = Settings.data.monitorsScaling || {}
-                    data[modelData.name] = 1.0
-                    Settings.data.monitorsScaling = data
-                  }
+                  onClicked: ScalingService.setMonitorScale(modelData.name, 1.0)
                 }
               }
             }
