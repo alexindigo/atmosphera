@@ -180,6 +180,7 @@ Variants {
         onFinished: {
           // Swap images after transition completes
           currentWallpaper.source = nextWallpaper.source
+          nextWallpaper.source = ""
           transitionProgress = 0.0
           transitioning = false
         }
@@ -194,7 +195,7 @@ Variants {
 
       function setWallpaperImmediate(source) {
         currentWallpaper.source = source
-        nextWallpaper.source = source
+        nextWallpaper.source = ""
         transitionProgress = 0.0
         transitioning = false
       }
@@ -204,8 +205,9 @@ Variants {
 
           if (transitioning) {
             // We are interrupting a transition
-            currentWallpaper.source = nextWallpaper.source
             transitionAnimation.stop()
+            currentWallpaper.source = nextWallpaper.source
+            nextWallpaper.source = ""
             transitionProgress = 0
             transitioning = false
           }
