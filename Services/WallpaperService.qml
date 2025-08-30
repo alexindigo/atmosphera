@@ -36,24 +36,12 @@ Singleton {
       name: "Stripes"
     }
     ListElement {
-      key: "wipe_left"
-      name: "Wipe Left"
-    }
-    ListElement {
-      key: "wipe_right"
-      name: "Wipe Right"
-    }
-    ListElement {
-      key: "wipe_up"
-      name: "Wipe Up"
-    }
-    ListElement {
-      key: "wipe_down"
-      name: "Wipe Down"
+      key: "wipe"
+      name: "Wipe"
     }
   }
 
-  // All transition keys but filter out "random"
+  // All transition keys but filter out "none" and "random" so we are left with the real transitions
   readonly property var allTransitions: Array.from({
                                                      "length": transitionsModel.count
                                                    }, (_, i) => transitionsModel.get(i).key).filter(
@@ -154,7 +142,6 @@ Singleton {
     }
 
     //Logger.log("Wallpaper", "setWallpaper on", screenName, ": ", path)
-
     var wallpaperChanged = false
 
     var monitor = getMonitorConfig(screenName)

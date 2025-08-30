@@ -65,16 +65,28 @@ void main() {
     // Use absolute stripe position for consistent delay across all stripes
     float normalizedStripePos = clamp(stripePos / stripes, 0.0, 1.0);
     
-    // Reduced delay factor and better scaling to match other shaders' timing
-    float maxDelay = 0.15;  // Maximum delay for the last stripe
+    // Increased delay and better distribution
+    float maxDelay = 0.15;
     float stripeDelay = normalizedStripePos * maxDelay;
     
-    // Ensure all stripes complete when progress reaches 1.0
-    // without making the overall animation appear faster
-    float stripeProgress = clamp((ubuf.progress - stripeDelay) / (1.0 - maxDelay), 0.0, 1.0);
+    // Better progress mapping that uses the full 0.0-1.0 range
+    // Map progress so that:
+    // - First stripe starts at progress = 0.0
+    // - Last stripe finishes at progress = 1.0
+    float stripeProgress;
+    if (ubuf.progress <= stripeDelay) {
+        stripeProgress = 0.0;
+    } else if (ubuf.progress >= (stripeDelay + (1.0 - maxDelay))) {
+        stripeProgress = 1.0;
+    } else {
+        // Scale the progress within the active window for this stripe
+        float activeStart = stripeDelay;
+        float activeEnd = stripeDelay + (1.0 - maxDelay);
+        stripeProgress = (ubuf.progress - activeStart) / (activeEnd - activeStart);
+    }
     
-    // Apply smooth easing
-    stripeProgress = smoothstep(0.0, 1.0, stripeProgress);
+    // Use gentler easing curve
+    stripeProgress = stripeProgress * stripeProgress * (3.0 - 2.0 * stripeProgress);  // Smootherstep instead of smoothstep
     
     // Use the perpendicular coordinate for edge comparison
     float yPos = perpCoord;

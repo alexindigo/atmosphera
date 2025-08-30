@@ -12,14 +12,14 @@ Variants {
 
     required property ShellScreen modelData
 
-    active: Settings.isLoaded && WallpaperService.getWallpaper(modelData.name)
+    active: Settings.isLoaded
 
     sourceComponent: PanelWindow {
       id: root
 
       // Internal state management
       property bool firstWallpaper: true
-      property string transitionType: 'fade'
+      property string transitionType: "fade"
       property bool transitioning: false
       property real transitionProgress: 0
       property real edgeSmoothness: Settings.data.wallpaper.transitionEdgeSmoothness
@@ -40,7 +40,6 @@ Variants {
       property string servicedWallpaper: WallpaperService.getWallpaper(modelData.name)
       onServicedWallpaperChanged: {
         if (servicedWallpaper && servicedWallpaper !== currentWallpaper.source) {
-
           // Set wallpaper immediately on startup
           if (firstWallpaper) {
             firstWallpaper = false
@@ -51,36 +50,25 @@ Variants {
           // Get the transitionType from the settings
           transitionType = Settings.data.wallpaper.transitionType
 
-          if (transitionType == 'random') {
+          if (transitionType == "random") {
             var index = Math.floor(Math.random() * allTransitions.length)
             transitionType = allTransitions[index]
           }
 
           // Ensure the transition type really exists
           if (transitionType !== "none" && !allTransitions.includes(transitionType)) {
-            transitionType = 'fade'
+            transitionType = "fade"
           }
 
-          Logger.log("Background", "New wallpaper: ", servicedWallpaper, "On:", modelData.name, "Transition:", transitionType)
+          Logger.log("Background", "New wallpaper: ", servicedWallpaper, "On:", modelData.name, "Transition:",
+                     transitionType)
 
           switch (transitionType) {
           case "none":
             setWallpaperImmediate(servicedWallpaper)
             break
-          case "wipe_left":
-            wipeDirection = 0
-            setWallpaperWithTransition(servicedWallpaper)
-            break
-          case "wipe_right":
-            wipeDirection = 1
-            setWallpaperWithTransition(servicedWallpaper)
-            break
-          case "wipe_up":
-            wipeDirection = 2
-            setWallpaperWithTransition(servicedWallpaper)
-            break
-          case "wipe_down":
-            wipeDirection = 3
+          case "wipe":
+            wipeDirection = Math.random() * 4
             setWallpaperWithTransition(servicedWallpaper)
             break
           case "disc":
@@ -89,7 +77,7 @@ Variants {
             setWallpaperWithTransition(servicedWallpaper)
             break
           case "stripes":
-            stripesCount = Math.round(Math.random() * 24 + 2)
+            stripesCount = Math.round(Math.random() * 24 + 6)
             stripesAngle = Math.random() * 360
             setWallpaperWithTransition(servicedWallpaper)
             break
@@ -139,7 +127,7 @@ Variants {
       ShaderEffect {
         id: fadeShader
         anchors.fill: parent
-        visible: transitionType === 'fade' || transitionType === 'none'
+        visible: transitionType === "fade" || transitionType === "none"
 
         property variant source1: currentWallpaper
         property variant source2: nextWallpaper
@@ -151,7 +139,7 @@ Variants {
       ShaderEffect {
         id: wipeShader
         anchors.fill: parent
-        visible: transitionType.startsWith('wipe_')
+        visible: transitionType === "wipe"
 
         property variant source1: currentWallpaper
         property variant source2: nextWallpaper
@@ -166,7 +154,7 @@ Variants {
       ShaderEffect {
         id: discShader
         anchors.fill: parent
-        visible: transitionType === 'disc'
+        visible: transitionType === "disc"
 
         property variant source1: currentWallpaper
         property variant source2: nextWallpaper
@@ -183,7 +171,7 @@ Variants {
       ShaderEffect {
         id: stripesShader
         anchors.fill: parent
-        visible: transitionType === 'stripes'
+        visible: transitionType === "stripes"
 
         property variant source1: currentWallpaper
         property variant source2: nextWallpaper
@@ -203,8 +191,10 @@ Variants {
         property: "transitionProgress"
         from: 0.0
         to: 1.0
-        duration: Settings.data.wallpaper.transitionDuration ?? 1000
-        easing.type: Easing.InOutCubic  //transitionType.startsWith('wipe_') ? Easing.InOutCubic : Easing.OutQuad
+        // The stripes shader feels faster visually, we make it a bit slower here.
+        duration: transitionType == "stripes" ? Settings.data.wallpaper.transitionDuration
+                                                * 1.4 : Settings.data.wallpaper.transitionDuration
+        easing.type: Easing.InOutCubic
         onFinished: {
           // Swap images after transition completes
           currentWallpaper.source = nextWallpaper.source

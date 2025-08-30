@@ -249,8 +249,6 @@ ColumnLayout {
         }
       }
     }
-
-
   }
 
   // Reusable component for interval preset chips
