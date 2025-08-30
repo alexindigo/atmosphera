@@ -22,11 +22,9 @@ Singleton {
     // Ensure cache dir exists
     Quickshell.execDetached(["mkdir", "-p", Settings.cacheDir])
 
-    Logger.log("Matugen", "Generating from wallpaper on screen:", Screen.name)
-    var wp = WallpaperService.getWallpaper(Screen.name).replace(/'/g, "'\\''")
-
     var content = buildConfigToml()
     var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light"
+    var wp = WallpaperService.currentWallpaper.replace(/'/g, "'\\''")
     var pathEsc = dynamicConfigPath.replace(/'/g, "'\\''")
     var extraRepo = (Quickshell.shellDir + "/Assets/Matugen/extra").replace(/'/g, "'\\''")
     var extraUser = (Settings.configDir + "matugen.d").replace(/'/g, "'\\''")

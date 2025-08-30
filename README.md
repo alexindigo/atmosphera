@@ -27,11 +27,11 @@ Features a modern modular architecture with a status bar, notification system, c
 
 ## Preview
 
-![Launcher](/Assets/Screenshots/launcher.png)
+![Launcher](https://assets.noctalia.dev/screenshots/launcher.png?v=2)
 
-![SettingsPanel](/Assets/Screenshots/settings-panel.png?v=2)  
+![SettingsPanel](https://assets.noctalia.dev/screenshots/settings-panel.png?v=2)  
 
-![SidePanel](/Assets/Screenshots/light-mode.png?v=2)  
+![SidePanel](https://assets.noctalia.dev/screenshots/light-mode.png?v=2)  
 
 ---
 
@@ -75,13 +75,20 @@ Features a modern modular architecture with a status bar, notification system, c
 ### Optional
 
 - `cliphist` - For clipboard history support
+- `swww` - Wallpaper animations and effects
 - `matugen` - Material You color scheme generation
 - `cava` - Audio visualizer component
 - `wlsunset` - To be able to use NightLight
 
-> There are 2 more optional dependencies.  
-> Any `polkit agent` to be able to use the ArchUpdater widget.   
+> There is one more optional dependency.
 > And also any `xdg-desktop-portal` to be able to use the "Portal" option from the screenRecorder. 
+
+If you want to use the ArchUpdater please make sure to set your terminal with the `TERMINAL` environment variable.
+```
+sudo sed -i '/^TERMINAL=/d' /etc/environment && echo 'TERMINAL=/usr/bin/kitty' | sudo tee -a /etc/environment
+
+```
+In that command you **NEED** to replace kitty with whatever your terminal is (and perhaps edit the path depending on the distro).
 
 ---
 
@@ -269,6 +276,14 @@ The launcher supports special commands for enhanced functionality:
 
 ## Advanced Configuration
 
+### Niri Configuration
+
+Add this to your `layout` section for proper swww integration:
+
+```
+background-color "transparent"
+```
+
 ### Recommended Compositor Settings
 
 For Niri:
@@ -277,6 +292,11 @@ For Niri:
 window-rule {
     geometry-corner-radius 20
     clip-to-geometry true
+}
+
+layer-rule {
+    match namespace="^swww-daemon$"
+    place-within-backdrop true
 }
 
 layer-rule {

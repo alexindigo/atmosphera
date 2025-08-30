@@ -17,14 +17,6 @@ Singleton {
     }
   }
 
-  function _getStackTrace() {
-    try {
-      throw new Error("Stack trace")
-    } catch (e) {
-      return e.stack
-    }
-  }
-
   function log(...args) {
     var msg = _formatMessage(...args)
     console.log(msg)
@@ -38,21 +30,5 @@ Singleton {
   function error(...args) {
     var msg = _formatMessage(...args)
     console.error(msg)
-  }
-
-  function callStack() {
-    var stack = _getStackTrace()
-    Logger.log("Debug", "--------------------------")
-    Logger.log("Debug", "Current call stack")
-    // Split the stack into lines and log each one
-    var stackLines = stack.split('\n')
-    for (var i = 0; i < stackLines.length; i++) {
-      var line = stackLines[i].trim() // Remove leading/trailing whitespace
-      if (line.length > 0) {
-        // Only log non-empty lines
-        Logger.log("Debug", `- ${line}`)
-      }
-    }
-    Logger.log("Debug", "--------------------------")
   }
 }

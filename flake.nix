@@ -47,6 +47,7 @@
           libnotify
           matugen
           networkmanager
+          swww
           wl-clipboard
         ];
 

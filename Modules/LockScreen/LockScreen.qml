@@ -93,7 +93,7 @@ Loader {
             id: lockBgImage
             anchors.fill: parent
             fillMode: Image.PreserveAspectCrop
-            source: WallpaperService.getWallpaper(screen.name)
+            source: WallpaperService.currentWallpaper !== "" ? WallpaperService.currentWallpaper : ""
             cache: true
             smooth: true
             mipmap: false

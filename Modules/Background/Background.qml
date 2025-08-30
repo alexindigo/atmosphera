@@ -4,67 +4,27 @@ import Quickshell.Wayland
 import qs.Commons
 import qs.Services
 
-Variants {
-  id: backgroundVariants
-  model: Quickshell.screens
+Loader {
+  active: !Settings.data.wallpaper.swww.enabled
 
-  delegate: Loader {
+  sourceComponent: Variants {
+    model: Quickshell.screens
 
-    required property ShellScreen modelData
+    delegate: PanelWindow {
+      required property ShellScreen modelData
+      property string wallpaperSource: WallpaperService.currentWallpaper !== ""
+                                       && !Settings.data.wallpaper.swww.enabled ? WallpaperService.currentWallpaper : ""
 
-    active: Settings.isLoaded && WallpaperService.getWallpaper(modelData.name)
+      visible: wallpaperSource !== "" && !Settings.data.wallpaper.swww.enabled
 
-    sourceComponent: PanelWindow {
-      id: root
+      // Force update when SWWW setting changes
+      onVisibleChanged: {
+        if (visible) {
 
-      // Internal state management
-      property bool firstWallpaper: true
-      property bool transitioning: false
-      property real transitionProgress: 0.0
+        } else {
 
-      // Wipe direction: 0=left, 1=right, 2=up, 3=down
-      property real wipeDirection: 0
-      property real wipeSmoothness: 0.05
-
-      // External state management
-      property string servicedWallpaper: WallpaperService.getWallpaper(modelData.name)
-      onServicedWallpaperChanged: {
-        if (servicedWallpaper && servicedWallpaper !== currentWallpaper.source) {
-
-          // Set wallpaper immediately on startup
-          if (firstWallpaper) {
-            firstWallpaper = false
-            setWallpaperImmediate(servicedWallpaper)
-            return
-          }
-
-          switch (Settings.data.wallpaper.transitionType) {
-            case "none":
-              setWallpaperImmediate(servicedWallpaper)
-              break
-            case "wipe_left":
-              wipeDirection = 0
-              setWallpaperWithTransition(servicedWallpaper)
-              break
-            case "wipe_right":
-              wipeDirection = 1
-              setWallpaperWithTransition(servicedWallpaper)
-              break
-            case "wipe_up":
-              wipeDirection = 2
-              setWallpaperWithTransition(servicedWallpaper)
-              break
-            case "wipe_down":
-              wipeDirection = 3
-              setWallpaperWithTransition(servicedWallpaper)
-              break
-            default:
-              setWallpaperWithTransition(servicedWallpaper)
-              break
-          }
         }
       }
-
       color: Color.transparent
       screen: modelData
       WlrLayershell.layer: WlrLayer.Background
@@ -78,106 +38,18 @@ Variants {
         left: true
       }
 
-      Image {
-        id: currentWallpaper
-        anchors.fill: parent
-        fillMode: Image.PreserveAspectCrop
-        source: ""
-        cache: true
-        smooth: true
-        mipmap: false
-        visible: false
+      margins {
+        top: 0
       }
 
       Image {
-        id: nextWallpaper
         anchors.fill: parent
         fillMode: Image.PreserveAspectCrop
-        source: ""
+        source: wallpaperSource
+        visible: wallpaperSource !== ""
         cache: true
         smooth: true
         mipmap: false
-        visible: false
-      }
-
-      // Fade transition shader
-      ShaderEffect {
-        id: fadeShader
-        anchors.fill: parent
-        visible: Settings.data.wallpaper.transitionType === 'fade'
-
-        property variant source1: currentWallpaper
-        property variant source2: nextWallpaper
-        property real fade: transitionProgress
-        fragmentShader: Qt.resolvedUrl("../../Shaders/qsb/wp_fade.frag.qsb")
-      }
-
-      // Wipe transition shader
-      ShaderEffect {
-        id: wipeShader
-        anchors.fill: parent
-        visible: Settings.data.wallpaper.transitionType.startsWith('wipe_')
-
-        property variant source1: currentWallpaper
-        property variant source2: nextWallpaper
-        property real progress: transitionProgress
-        property real direction: wipeDirection
-        property real smoothness: wipeSmoothness
-        fragmentShader: Qt.resolvedUrl("../../Shaders/qsb/wp_wipe.frag.qsb")
-      }
-
-      // Animation for the transition progress
-      NumberAnimation {
-        id: transitionAnimation
-        target: root
-        property: "transitionProgress"
-        from: 0.0
-        to: 1.0
-        duration: Settings.data.wallpaper.transitionDuration ?? 1000
-        easing.type: {
-          const transitionType = Settings.data.wallpaper.transitionType ?? 'fade'
-          if (transitionType.startsWith('wipe_')) {
-            return Easing.InOutCubic
-          }
-          return Easing.InOutCubic
-        }
-
-        onFinished: {
-          // Swap images after transition completes
-          currentWallpaper.source = nextWallpaper.source
-          transitionProgress = 0.0
-          transitioning = false
-        }
-      }
-
-      function startTransition() {
-        if (!transitioning && nextWallpaper.source != currentWallpaper.source) {
-          transitioning = true
-          transitionAnimation.start()
-        }
-      }
-
-      function setWallpaperImmediate(source) {
-        currentWallpaper.source = source
-        nextWallpaper.source = source
-        transitionProgress = 0.0
-        transitioning = false
-      }
-
-      function setWallpaperWithTransition(source) {
-        if (source != currentWallpaper.source) {
-
-          if (transitioning) {
-            // We are interrupting a transition
-            currentWallpaper.source = nextWallpaper.source
-            transitionAnimation.stop()
-            transitionProgress = 0
-            transitioning = false
-          }
-
-          nextWallpaper.source = source
-          startTransition()
-        }
       }
     }
   }

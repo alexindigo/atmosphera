@@ -89,16 +89,23 @@ Singleton {
       reload()
     }
     onLoaded: function () {
-      if (!isLoaded) {
-        Logger.log("Settings", "----------------------------")
-        Logger.log("Settings", "Settings loaded successfully")
-        isLoaded = true
+      Qt.callLater(function () {
+        // Some stuff like wallpaper setup and settings validation should just be executed once on startup
+        // And not on every reload
+        if (!isLoaded) {
+          Logger.log("Settings", "JSON completed loading")
+          if (adapter.wallpaper.current !== "") {
+            Logger.log("Settings", "Set current wallpaper", adapter.wallpaper.current)
+            WallpaperService.setCurrentWallpaper(adapter.wallpaper.current, true)
+          }
 
-        Qt.callLater(function () {
-          // Some stuff like settings validation should just be executed once on startup and not on every reload
+          // Validate monitor configurations, only once
+          // if none of the configured monitors exist, clear the lists
           validateMonitorConfigurations()
-        })
-      }
+
+          isLoaded = true
+        }
+      })
     }
     onLoadFailed: function (error) {
       if (error.toString().includes("No such file") || error === 2)
@@ -164,13 +171,22 @@ Singleton {
       // wallpaper
       property JsonObject wallpaper: JsonObject {
         property string directory: "/usr/share/wallpapers"
-        property bool enableMultiMonitorDirectories: false
-        property bool setWallpaperOnAllMonitors: true
-        property bool randomEnabled: false
-        property int randomIntervalSec: 300 // 5 min
-        property int transitionDuration: 1500 // 1500 ms
-        property string transitionType: "fade"
-        property list<var> monitors: []
+        property string current: ""
+        property bool isRandom: false
+        property int randomInterval: 300
+        property JsonObject swww
+
+        onDirectoryChanged: WallpaperService.listWallpapers()
+        onIsRandomChanged: WallpaperService.toggleRandomWallpaper()
+        onRandomIntervalChanged: WallpaperService.restartRandomWallpaperTimer()
+
+        swww: JsonObject {
+          property bool enabled: false
+          property string resizeMethod: "crop"
+          property int transitionFps: 60
+          property string transitionType: "random"
+          property real transitionDuration: 1.1
+        }
       }
 
       // applauncher
@@ -218,8 +234,17 @@ Singleton {
         property string fontDefault: "Roboto" // Default font for all text
         property string fontFixed: "DejaVu Sans Mono" // Fixed width font for terminal
         property string fontBillboard: "Inter" // Large bold font for clocks and prominent displays
-        property list<var> monitorsScaling: []
+
+        // Legacy compatibility
+        property string fontFamily: fontDefault // Keep for backward compatibility
+
+        // Idle inhibitor state
         property bool idleInhibitorEnabled: false
+      }
+
+      // Scaling (not stored inside JsonObject, or it crashes)
+      property var monitorsScaling: {
+
       }
 
       // brightness

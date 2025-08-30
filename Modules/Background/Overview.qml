@@ -6,19 +6,24 @@ import qs.Commons
 import qs.Services
 import qs.Widgets
 
-Variants {
-  model: Quickshell.screens
+Loader {
+  active: CompositorService.isNiri
 
-  delegate: Loader {
-    required property ShellScreen modelData
+  Component.onCompleted: {
+    if (CompositorService.isNiri) {
+      Logger.log("Overview", "Loading Overview component for Niri")
+    }
+  }
 
-    active: Settings.isLoaded && CompositorService.isNiri
+  sourceComponent: Variants {
+    model: Quickshell.screens
 
-    sourceComponent: PanelWindow {
-      Component.onCompleted: {
-        Logger.log("Overview", "Loading Overview component for Niri on", modelData.name)
-      }
+    delegate: PanelWindow {
+      required property ShellScreen modelData
+      property string wallpaperSource: WallpaperService.currentWallpaper !== ""
+                                       && !Settings.data.wallpaper.swww.enabled ? WallpaperService.currentWallpaper : ""
 
+      visible: wallpaperSource !== "" && !Settings.data.wallpaper.swww.enabled
       color: Color.transparent
       screen: modelData
       WlrLayershell.layer: WlrLayer.Background
@@ -34,15 +39,19 @@ Variants {
 
       Image {
         id: bgImage
+
         anchors.fill: parent
         fillMode: Image.PreserveAspectCrop
-        source: WallpaperService.getWallpaper(modelData.name)
+        source: wallpaperSource
         cache: true
         smooth: true
         mipmap: false
+        visible: wallpaperSource !== ""
       }
 
       MultiEffect {
+        id: overviewBgBlur
+
         anchors.fill: parent
         source: bgImage
         blurEnabled: true
