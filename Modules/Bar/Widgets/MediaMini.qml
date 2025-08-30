@@ -31,6 +31,8 @@ Row {
   }
 
   Rectangle {
+    id: mediaMini
+
     // Let the Rectangle size itself based on its content (the Row)
     width: row.width + Style.marginM * scaling * 2
 
@@ -39,6 +41,13 @@ Row {
     color: Color.mSurfaceVariant
 
     anchors.verticalCenter: parent.verticalCenter
+
+    // Used to anchor the tooltip, so the tooltip does not move when the content expands
+    Item {
+      id: anchor
+      height: parent.height
+      width: 200 * scaling
+    }
 
     Item {
       id: mainContainer
@@ -159,8 +168,46 @@ Row {
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
-        onClicked: MediaService.playPause()
+        acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+        onClicked: mouse => {
+                     if (mouse.button === Qt.LeftButton) {
+                       MediaService.playPause()
+                     } else if (mouse.button == Qt.RightButton) {
+                       MediaService.next()
+                       // Need to hide the tooltip instantly
+                       tooltip.visible = false
+                     } else if (mouse.button == Qt.MiddleButton) {
+                       MediaService.previous()
+                       // Need to hide the tooltip instantly
+                       tooltip.visible = false
+                     }
+                   }
+
+        onEntered: {
+          if (tooltip.text !== "") {
+            tooltip.show()
+          }
+        }
+        onExited: {
+          tooltip.hide()
+        }
       }
     }
+  }
+
+  NTooltip {
+    id: tooltip
+    text: {
+      var str = ""
+      if (MediaService.canGoNext) {
+        str += "Right click for next\n"
+      }
+      if (MediaService.canGoPrevious) {
+        str += "Middle click for previous\n"
+      }
+      return str
+    }
+    target: anchor
+    positionAbove: Settings.data.bar.position === "bottom"
   }
 }
