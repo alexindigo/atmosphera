@@ -12,7 +12,7 @@ Variants {
 
     required property ShellScreen modelData
 
-    active: Settings.isLoaded
+    active: Settings.isLoaded && modelData
 
     sourceComponent: PanelWindow {
       id: root
@@ -38,7 +38,7 @@ Variants {
       property real stripesAngle: 0
 
       // External state management
-      property string servicedWallpaper: WallpaperService.getWallpaper(modelData.name)
+      property string servicedWallpaper: modelData ? WallpaperService.getWallpaper(modelData.name) : ""
       property string futureWallpaper: ""
       onServicedWallpaperChanged: {
         // Set wallpaper immediately on startup

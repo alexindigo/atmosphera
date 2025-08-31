@@ -14,7 +14,7 @@ Rectangle {
   id: root
 
   property ShellScreen screen
-  property real scaling: ScalingService.scale(screen)
+  property real scaling: screen ? ScalingService.scale(screen) : 1.0
   readonly property real itemSize: 24 * scaling
 
   visible: SystemTray.items.values.length > 0
@@ -80,35 +80,42 @@ Rectangle {
 
                        if (mouse.button === Qt.LeftButton) {
                          // Close any open menu first
-                         trayPanel.close()
+                         var trayMenuPanel = PanelService.getPanel("trayMenu")
+                         if (trayMenuPanel && trayMenuPanel.active) {
+                           trayMenuPanel.close()
+                         }
 
                          if (!modelData.onlyMenu) {
                            modelData.activate()
                          }
                        } else if (mouse.button === Qt.MiddleButton) {
                          // Close any open menu first
-                         trayPanel.close()
+                         var trayMenuPanel = PanelService.getPanel("trayMenu")
+                         if (trayMenuPanel && trayMenuPanel.active) {
+                           trayMenuPanel.close()
+                         }
 
                          modelData.secondaryActivate && modelData.secondaryActivate()
                        } else if (mouse.button === Qt.RightButton) {
                          trayTooltip.hide()
 
-                         // Close the menu if it was visible
-                         if (trayPanel && trayPanel.visible) {
-                           trayPanel.close()
+                         // Don't open menu if screen is invalid
+                         if (!screen || !screen.name) {
+                           Logger.warn("Tray", "Cannot open tray menu: invalid screen object")
                            return
                          }
 
-                         if (modelData.hasMenu && modelData.menu && trayMenu.item) {
-                           trayPanel.open()
-
-                           // Anchor the menu to the tray icon item (parent) and position it below the icon
-                           const menuX = (width / 2) - (trayMenu.item.width / 2)
-                           const menuY = (Style.barHeight * scaling)
-                           trayMenu.item.menu = modelData.menu
-                           trayMenu.item.showAt(parent, menuX, menuY)
+                         if (modelData.hasMenu && modelData.menu) {
+                           // Get the tray menu panel from PanelService
+                           var trayMenuPanel = PanelService.getPanel("trayMenu")
+                           if (trayMenuPanel) {
+                             trayMenuPanel.menu = modelData.menu
+                             trayMenuPanel.toggle(screen, this)
+                           } else {
+                             Logger.warn("Tray", "Tray menu panel not found")
+                           }
                          } else {
-                           Logger.log("Tray", "No menu available for", modelData.id, "or trayMenu not set")
+                           Logger.log("Tray", "No menu available for", modelData.id)
                          }
                        }
                      }
@@ -126,36 +133,5 @@ Rectangle {
     }
   }
 
-  PanelWindow {
-    id: trayPanel
-    anchors.top: true
-    anchors.left: true
-    anchors.right: true
-    anchors.bottom: true
-    visible: false
-    color: Color.transparent
-    screen: screen
 
-    function open() {
-      visible = true
-
-      PanelService.willOpenPanel(trayPanel)
-    }
-
-    function close() {
-      visible = false
-      trayMenu.item.hideMenu()
-    }
-
-    // Clicking outside of the rectangle to close
-    MouseArea {
-      anchors.fill: parent
-      onClicked: trayPanel.close()
-    }
-
-    Loader {
-      id: trayMenu
-      source: "../Extras/TrayMenu.qml"
-    }
-  }
 }

@@ -29,7 +29,7 @@ ColumnLayout {
     NImageRounded {
       anchors.fill: parent
       anchors.margins: Style.marginXS * scaling
-      imagePath: WallpaperService.getWallpaper(screen.name)
+      imagePath: screen ? WallpaperService.getWallpaper(screen.name) : ""
       fallbackIcon: "image"
       imageRadius: Style.radiusM * scaling
     }
@@ -74,7 +74,7 @@ ColumnLayout {
     }
   }
 
-  property list<string> wallpapersList: WallpaperService.getWallpapersList(screen.name)
+  property list<string> wallpapersList: screen ? WallpaperService.getWallpapersList(screen.name) : []
 
   NToggle {
     label: "Assign selection to all monitors"
@@ -115,7 +115,7 @@ ColumnLayout {
         id: wallpaperItem
 
         property string wallpaperPath: modelData
-        property bool isSelected: wallpaperPath === WallpaperService.getWallpaper(screen.name)
+        property bool isSelected: screen ? (wallpaperPath === WallpaperService.getWallpaper(screen.name)) : false
 
         width: wallpaperGridView.itemSize
         height: Math.floor(wallpaperGridView.itemSize * 0.67)
@@ -183,7 +183,7 @@ ColumnLayout {
           onPressed: {
             if (Settings.data.wallpaper.setWallpaperOnAllMonitors) {
               WallpaperService.changeWallpaper(undefined, wallpaperPath)
-            } else {
+            } else if (screen) {
               WallpaperService.changeWallpaper(screen.name, wallpaperPath)
             }
           }

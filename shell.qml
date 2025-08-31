@@ -16,6 +16,7 @@ import qs.Commons
 import qs.Modules.Launcher
 import qs.Modules.Background
 import qs.Modules.Bar
+import qs.Modules.Bar.Extras
 import qs.Modules.BluetoothPanel
 import qs.Modules.Calendar
 import qs.Modules.Dock
@@ -97,6 +98,11 @@ ShellRoot {
   ArchUpdaterPanel {
     id: archUpdaterPanel
     objectName: "archUpdaterPanel"
+  }
+
+  TrayMenu {
+    id: trayMenuPanel
+    objectName: "trayMenu"
   }
 
   Component.onCompleted: {

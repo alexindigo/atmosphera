@@ -16,13 +16,13 @@ Variants {
     id: root
 
     required property ShellScreen modelData
-    readonly property real scaling: ScalingService.scale(modelData)
+    readonly property real scaling: modelData ? ScalingService.scale(modelData) : 1.0
 
-    active: Settings.isLoaded && modelData ? (Settings.data.bar.monitors.includes(modelData.name)
+    active: Settings.isLoaded && modelData && modelData.name ? (Settings.data.bar.monitors.includes(modelData.name)
                                               || (Settings.data.bar.monitors.length === 0)) : false
 
     sourceComponent: PanelWindow {
-      screen: modelData
+      screen: modelData || null
 
       WlrLayershell.namespace: "noctalia-bar"
 
@@ -65,7 +65,7 @@ Variants {
             delegate: NWidgetLoader {
               widgetName: modelData
               widgetProps: {
-                "screen": screen
+                "screen": root.modelData || null
               }
               anchors.verticalCenter: parent.verticalCenter
             }
@@ -87,7 +87,7 @@ Variants {
             delegate: NWidgetLoader {
               widgetName: modelData
               widgetProps: {
-                "screen": screen
+                "screen": root.modelData || null
               }
               anchors.verticalCenter: parent.verticalCenter
             }
@@ -110,7 +110,7 @@ Variants {
             delegate: NWidgetLoader {
               widgetName: modelData
               widgetProps: {
-                "screen": screen
+                "screen": root.modelData || null
               }
               anchors.verticalCenter: parent.verticalCenter
             }

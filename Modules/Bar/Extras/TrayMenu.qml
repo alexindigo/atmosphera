@@ -6,26 +6,23 @@ import qs.Commons
 import qs.Services
 import qs.Widgets
 
-PopupWindow {
+NPanel {
   id: root
+
+  objectName: "trayMenu"
+
+  panelWidth: 180 * scaling
+  panelHeight: 220 * scaling
+  panelAnchorRight: true
+
   property QsMenuHandle menu
   property var anchorItem: null
   property real anchorX
   property real anchorY
   property bool isSubMenu: false
-  property bool isHovered: rootMouseArea.containsMouse
+  property bool isHovered: false
 
-  readonly property int menuWidth: 180
 
-  implicitWidth: menuWidth * scaling
-
-  // Use the content height of the Flickable for implicit height
-  implicitHeight: Math.min(Screen.height * 0.9, flickable.contentHeight + (Style.marginS * 2 * scaling))
-  visible: false
-  color: Color.transparent
-  anchor.item: anchorItem
-  anchor.rect.x: anchorX
-  anchor.rect.y: anchorY - (isSubMenu ? 0 : 4)
 
   function showAt(item, x, y) {
     if (!item) {
@@ -33,27 +30,18 @@ PopupWindow {
       return
     }
 
-    if (!opener.children || opener.children.values.length === 0) {
-      //Logger.warn("TrayMenu", "Menu not ready, delaying show")
-      Qt.callLater(() => showAt(item, x, y))
-      return
-    }
-
     anchorItem = item
     anchorX = x
     anchorY = y
 
-    visible = true
-    forceActiveFocus()
+    // Use NPanel's open method instead of PopupWindow's visible
+    open(screen)
+    
 
-    // Force update after showing.
-    Qt.callLater(() => {
-                   root.anchor.updateAnchor()
-                 })
   }
 
   function hideMenu() {
-    visible = false
+    close()
 
     // Clean up all submenus recursively
     for (var i = 0; i < columnLayout.children.length; i++) {
@@ -66,38 +54,46 @@ PopupWindow {
     }
   }
 
-  // Full-sized, transparent MouseArea to track the mouse.
-  MouseArea {
-    id: rootMouseArea
-    anchors.fill: parent
-    hoverEnabled: true
-  }
-
-  Item {
-    anchors.fill: parent
-    Keys.onEscapePressed: root.hideMenu()
-  }
-
-  QsMenuOpener {
-    id: opener
-    menu: root.menu
-  }
-
-  Rectangle {
-    anchors.fill: parent
-    color: Color.mSurface
-    border.color: Color.mOutline
-    border.width: Math.max(1, Style.borderS * scaling)
-    radius: Style.radiusM * scaling
-  }
-
-  Flickable {
-    id: flickable
+  panelContent: Rectangle {
+    color: Color.transparent
     anchors.fill: parent
     anchors.margins: Style.marginS * scaling
-    contentHeight: columnLayout.implicitHeight
-    interactive: true
-    clip: true
+
+    // Full-sized, transparent MouseArea to track the mouse.
+    MouseArea {
+      id: rootMouseArea
+      anchors.fill: parent
+      hoverEnabled: true
+      onEntered: root.isHovered = true
+      onExited: root.isHovered = false
+    }
+
+    QsMenuOpener {
+      id: opener
+      menu: root.menu
+    }
+
+    Component.onCompleted: {
+      if (menu && opener.children && opener.children.values.length === 0) {
+        // Menu not ready, try again later
+        Qt.callLater(() => {
+          if (opener.children && opener.children.values.length > 0) {
+            // Menu is now ready
+            root.menuItemCount = opener.children.values.length
+          }
+        })
+      } else if (opener.children && opener.children.values.length > 0) {
+        root.menuItemCount = opener.children.values.length
+      }
+    }
+
+        Flickable {
+      id: flickable
+      anchors.fill: parent
+      anchors.margins: Style.marginS * scaling
+      contentHeight: columnLayout.implicitHeight
+      interactive: true
+      clip: true
 
     // Use a ColumnLayout to handle menu item arrangement
     ColumnLayout {
@@ -206,28 +202,17 @@ PopupWindow {
                     entry.subMenu.destroy()
                   }
 
-                  // Need a slight overlap so that menu don't close when moving the mouse to a submenu
-                  const submenuWidth = menuWidth * scaling // Assuming a similar width as the parent
-                  const overlap = 4 * scaling // A small overlap to bridge the mouse path
-
-                  // Check if there's enough space on the right
-                  const globalPos = entry.mapToGlobal(0, 0)
-                  const openLeft = (globalPos.x + entry.width + submenuWidth > Screen.width)
-
-                  // Position with overlap
-                  const anchorX = openLeft ? -submenuWidth + overlap : entry.width - overlap
-
-                  // Create submenu
+                  // Create submenu using the same TrayMenu component
                   entry.subMenu = Qt.createComponent("TrayMenu.qml").createObject(root, {
-                                                                                    "menu": modelData,
-                                                                                    "anchorItem": entry,
-                                                                                    "anchorX": anchorX,
-                                                                                    "anchorY": 0,
-                                                                                    "isSubMenu": true
-                                                                                  })
+                    "menu": modelData,
+                    "anchorItem": entry,
+                    "anchorX": entry.width,
+                    "anchorY": 0,
+                    "isSubMenu": true
+                  })
 
                   if (entry.subMenu) {
-                    entry.subMenu.showAt(entry, anchorX, 0)
+                    entry.subMenu.open(screen)
                   }
                 }
               }
@@ -253,5 +238,6 @@ PopupWindow {
         }
       }
     }
+  }
   }
 }

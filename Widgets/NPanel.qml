@@ -11,7 +11,7 @@ Loader {
   asynchronous: true
 
   property ShellScreen screen
-  readonly property real scaling: ScalingService.scale(screen)
+  readonly property real scaling: screen ? ScalingService.scale(screen) : 1.0
 
   property Component panelContent: null
   property int panelWidth: 1500
@@ -50,6 +50,12 @@ Loader {
 
   // -----------------------------------------
   function toggle(aScreen, buttonItem) {
+    // Don't toggle if screen is null or invalid
+    if (!aScreen || !aScreen.name) {
+      Logger.warn("NPanel", "Cannot toggle panel: invalid screen object")
+      return
+    }
+    
     if (!active || isClosing) {
       open(aScreen, buttonItem)
     } else {
@@ -59,6 +65,12 @@ Loader {
 
   // -----------------------------------------
   function open(aScreen, buttonItem) {
+    // Don't open if screen is null or invalid
+    if (!aScreen || !aScreen.name) {
+      Logger.warn("NPanel", "Cannot open panel: invalid screen object")
+      return
+    }
+    
     if (aScreen !== null) {
       screen = aScreen
     }

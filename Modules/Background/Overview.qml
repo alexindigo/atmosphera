@@ -12,11 +12,13 @@ Variants {
   delegate: Loader {
     required property ShellScreen modelData
 
-    active: Settings.isLoaded && CompositorService.isNiri
+    active: Settings.isLoaded && CompositorService.isNiri && modelData
 
     sourceComponent: PanelWindow {
       Component.onCompleted: {
-        Logger.log("Overview", "Loading Overview component for Niri on", modelData.name)
+        if (modelData) {
+          Logger.log("Overview", "Loading Overview component for Niri on", modelData.name)
+        }
       }
 
       color: Color.transparent
@@ -36,7 +38,7 @@ Variants {
         id: bgImage
         anchors.fill: parent
         fillMode: Image.PreserveAspectCrop
-        source: WallpaperService.getWallpaper(modelData.name)
+        source: modelData ? WallpaperService.getWallpaper(modelData.name) : ""
         smooth: true
         mipmap: false
         cache: false
