@@ -44,11 +44,11 @@ Loader {
 
       margins {
         top: ((modelData && Settings.data.bar.monitors.includes(modelData.name))
-              || (Settings.data.bar.monitors.length === 0))
-             && Settings.data.bar.position === "top" ? Math.floor(Style.barHeight * scaling) : 0
+              || (Settings.data.bar.monitors.length === 0)) && Settings.data.bar.position === "top"
+             && Settings.data.bar.backgroundOpacity > 0 ? Math.floor(Style.barHeight * scaling) : 0
         bottom: ((modelData && Settings.data.bar.monitors.includes(modelData.name))
-                 || (Settings.data.bar.monitors.length === 0))
-                && Settings.data.bar.position === "bottom" ? Math.floor(Style.barHeight * scaling) : 0
+                 || (Settings.data.bar.monitors.length === 0)) && Settings.data.bar.position === "bottom"
+                && Settings.data.bar.backgroundOpacity > 0 ? Math.floor(Style.barHeight * scaling) : 0
       }
 
       // Source we want to show only as a ring
