@@ -2,15 +2,17 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Controls
+import Quickshell
 import Quickshell.Widgets
 import Quickshell.Wayland
 import qs.Commons
 import qs.Services
+import qs.Widgets
 
 Rectangle {
   id: root
-  property var screen
-  readonly property real scaling: screen ? ScalingService.scale(screen) : 1
+  property ShellScreen modelData
+  readonly property real scaling: modelData ? ScalingService.scale(modelData) : 1
   readonly property real itemSize: 32 * scaling
 
   // Always visible when there are toplevels
@@ -44,12 +46,7 @@ Rectangle {
           anchors.centerIn: parent
           width: root.itemSize * 0.75
           height: root.itemSize * 0.75
-          color: {
-            if (taskbarItem.isActive) {
-              return Color.mPrimary
-            } 
-            return root.color
-          }
+          color: taskbarItem.isActive ? Color.mPrimary : root.color
           border.width: 0
           border.color: "transparent"
           z: -1
@@ -78,13 +75,13 @@ Rectangle {
               try {
                 taskbarItem.modelData.activate()
               } catch (error) {
-                Logger.log("Taskbar", "Failed to activate toplevel: " + error)
+                Logger.error("Taskbar", "Failed to activate toplevel: " + error)
               }
             } else if (mouse.button === Qt.RightButton) {
               try {
                 taskbarItem.modelData.close()
               } catch (error) {
-                Logger.log("Taskbar", "Failed to close toplevel: " + error)
+                Logger.error("Taskbar", "Failed to close toplevel: " + error)
               }
             }
           }
