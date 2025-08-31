@@ -464,6 +464,8 @@ Singleton {
       if (cachedAurHelper !== "") {
         const packageList = selectedPackages.join(" ")
         const command = generateUpdateCommand(cachedAurHelper + " -S " + packageList)
+        Logger.log("ArchUpdater", "Selective update command:", cachedAurHelper + " -S " + packageList)
+        Logger.log("ArchUpdater", "Selected packages:", selectedPackages)
         Quickshell.execDetached([terminal, "-e", "bash", "-c", command])
       } else {
         updateInProgress = false
@@ -481,12 +483,9 @@ Singleton {
 
   // Reset update state (useful for manual recovery)
   function resetUpdateState() {
-    // If update is in progress, mark it as failed first
-    if (updateInProgress) {
-      updateFailed = true
-    }
-
+    // Clear all update states
     updateInProgress = false
+    updateFailed = false
     lastUpdateError = ""
     checkFailed = false
     lastCheckError = ""
