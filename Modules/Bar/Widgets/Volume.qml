@@ -1,5 +1,6 @@
 import QtQuick
 import Quickshell
+import Quickshell.Io
 import Quickshell.Services.Pipewire
 import qs.Commons
 import qs.Modules.SettingsPanel
@@ -75,5 +76,15 @@ Item {
       settingsPanel.requestedTab = SettingsPanel.Tab.AudioService
       settingsPanel.open(screen)
     }
+    onRightClicked : {
+      pwvucontrolProcess.running = true
+    }
+  }
+
+  // Check for wlsunset availability when enabling Night Light
+  Process {
+    id: pwvucontrolProcess
+    command: ["pwvucontrol"]
+    running: false
   }
 }
