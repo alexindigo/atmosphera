@@ -9,8 +9,9 @@ Text {
   font.family: Settings.data.ui.fontDefault
   font.pointSize: Style.fontSizeM * scaling
   font.weight: Style.fontWeightMedium
-  color: Color.mOnSurface
-  renderType: Text.QtRendering
   font.hintingPreference: Font.PreferNoHinting
   font.kerning: true
+  color: Color.mOnSurface
+  renderType: Text.QtRendering
+  textFormat: Text.RichText
 }

@@ -76,7 +76,7 @@ Item {
       settingsPanel.requestedTab = SettingsPanel.Tab.AudioService
       settingsPanel.open(screen)
     }
-    onRightClicked : {
+    onRightClicked: {
       pwvucontrolProcess.running = true
     }
   }

@@ -263,38 +263,6 @@ ColumnLayout {
                  }
     }
 
-    // Intensity settings
-    ColumnLayout {
-      visible: Settings.data.nightLight.enabled
-      NLabel {
-        label: "Intensity"
-        description: "Higher values create warmer tones."
-      }
-      RowLayout {
-        spacing: Style.marginS * scaling
-
-        NSlider {
-          from: 0
-          to: 1
-          stepSize: 0.01
-          value: Settings.data.nightLight.intensity
-          onMoved: {
-            Settings.data.nightLight.intensity = value
-            NightLightService.apply()
-          }
-          Layout.fillWidth: true
-          Layout.minimumWidth: 150 * scaling
-        }
-
-        NText {
-          text: `${Math.round(Settings.data.nightLight.intensity * 100)}%`
-          Layout.alignment: Qt.AlignVCenter
-          Layout.minimumWidth: 60 * scaling
-          horizontalAlignment: Text.AlignRight
-        }
-      }
-    }
-
     // Temperature
     ColumnLayout {
       spacing: Style.marginXS * scaling
@@ -302,7 +270,7 @@ ColumnLayout {
 
       NLabel {
         label: "Color temperature"
-        description: "Select two temperatures in Kelvin"
+        description: "Choose two temperatures in Kelvin."
       }
 
       RowLayout {
@@ -313,21 +281,23 @@ ColumnLayout {
         Layout.alignment: Qt.AlignVCenter
 
         NText {
-          text: "Low"
+          text: "Night"
           font.pointSize: Style.fontSizeM * scaling
           color: Color.mOnSurfaceVariant
           Layout.alignment: Qt.AlignVCenter
         }
 
         NTextInput {
-          text: Settings.data.nightLight.lowTemp.toString()
+          text: Settings.data.nightLight.nightTemp
           inputMethodHints: Qt.ImhDigitsOnly
           Layout.alignment: Qt.AlignVCenter
           onEditingFinished: {
-            var v = parseInt(text)
-            if (!isNaN(v)) {
-              Settings.data.nightLight.lowTemp = Math.max(1000, Math.min(6500, v))
-              NightLightService.apply()
+            var nightTemp = parseInt(text)
+            var dayTemp = parseInt(Settings.data.nightLight.dayTemp)
+            if (!isNaN(nightTemp) && !isNaN(dayTemp)) {
+              // Clamp value between [1000 .. (dayTemp-500)]
+              var clampedValue = Math.min(dayTemp - 500, Math.max(1000, nightTemp))
+              text = Settings.data.nightLight.nightTemp = clampedValue.toString()
             }
           }
         }
@@ -335,20 +305,22 @@ ColumnLayout {
         Item {}
 
         NText {
-          text: "High"
+          text: "Day"
           font.pointSize: Style.fontSizeM * scaling
           color: Color.mOnSurfaceVariant
           Layout.alignment: Qt.AlignVCenter
         }
         NTextInput {
-          text: Settings.data.nightLight.highTemp.toString()
+          text: Settings.data.nightLight.dayTemp
           inputMethodHints: Qt.ImhDigitsOnly
           Layout.alignment: Qt.AlignVCenter
           onEditingFinished: {
-            var v = parseInt(text)
-            if (!isNaN(v)) {
-              Settings.data.nightLight.highTemp = Math.max(1000, Math.min(10000, v))
-              NightLightService.apply()
+            var dayTemp = parseInt(text)
+            var nightTemp = parseInt(Settings.data.nightLight.nightTemp)
+            if (!isNaN(nightTemp) && !isNaN(dayTemp)) {
+              // Clamp value between [(nightTemp+500) .. 6500]
+              var clampedValue = Math.max(nightTemp + 500, Math.min(6500, dayTemp))
+              text = Settings.data.nightLight.dayTemp = clampedValue.toString()
             }
           }
         }
@@ -356,43 +328,41 @@ ColumnLayout {
     }
 
     NToggle {
-      label: "Auto Schedule"
-      description: "Automatically enable night light based on time schedule."
+      label: "Automatic Scheduling"
+      description: `Based on the sunset and sunrise time in <i>${LocationService.data.stableName}</i> - recommended.`
       checked: Settings.data.nightLight.autoSchedule
-      onToggled: checked => {
-                   Settings.data.nightLight.autoSchedule = checked
-                   NightLightService.apply()
-                 }
+      onToggled: checked => Settings.data.nightLight.autoSchedule = checked
       visible: Settings.data.nightLight.enabled
     }
 
     // Schedule settings
     ColumnLayout {
       spacing: Style.marginXS * scaling
-      visible: Settings.data.nightLight.enabled && Settings.data.nightLight.autoSchedule
-
-      NLabel {
-        label: "Schedule"
-        description: "Set a start and end time for automatic schedule."
-      }
+      visible: Settings.data.nightLight.enabled && !Settings.data.nightLight.autoSchedule
 
       RowLayout {
         Layout.fillWidth: false
         spacing: Style.marginM * scaling
 
+        NLabel {
+          label: "Manual Scheduling"
+        }
+
+        Item {// add a little more spacing
+        }
+
         NText {
-          text: "Start Time"
+          text: "Sunrise Time"
           font.pointSize: Style.fontSizeM * scaling
           color: Color.mOnSurfaceVariant
         }
 
         NComboBox {
           model: timeOptions
-          currentKey: Settings.data.nightLight.startTime
+          currentKey: Settings.data.nightLight.manualSunrise
           placeholder: "Select start time"
           onSelected: key => {
-                        Settings.data.nightLight.startTime = key
-                        NightLightService.apply()
+                        Settings.data.nightLight.manualSunrise = key
                       }
           preferredWidth: 120 * scaling
         }
@@ -401,17 +371,16 @@ ColumnLayout {
         }
 
         NText {
-          text: "Stop Time"
+          text: "Sunset Time"
           font.pointSize: Style.fontSizeM * scaling
           color: Color.mOnSurfaceVariant
         }
         NComboBox {
           model: timeOptions
-          currentKey: Settings.data.nightLight.stopTime
+          currentKey: Settings.data.nightLight.manualSunset
           placeholder: "Select stop time"
           onSelected: key => {
-                        Settings.data.nightLight.stopTime = key
-                        NightLightService.apply()
+                        Settings.data.nightLight.manualSunset = key
                       }
           preferredWidth: 120 * scaling
         }

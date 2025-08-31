@@ -250,13 +250,11 @@ Singleton {
       // night light
       property JsonObject nightLight: JsonObject {
         property bool enabled: false
-        property real intensity: 0.8
-        property string startTime: "20:00"
-        property string stopTime: "07:00"
-        property bool autoSchedule: false
-        // wlsunset temperatures (Kelvin)
-        property int lowTemp: 3500
-        property int highTemp: 6500
+        property bool autoSchedule: true
+        property string nightTemp: "4000"
+        property string dayTemp: "6500"
+        property string manualSunrise: "06:30"
+        property string manualSunset: "18:30"
       }
     }
   }

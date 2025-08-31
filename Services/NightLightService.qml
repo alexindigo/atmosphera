@@ -11,57 +11,33 @@ Singleton {
 
   // Night Light properties - directly bound to settings
   readonly property var params: Settings.data.nightLight
-  // Deprecated overlay flag removed; service only manages wlsunset now
-  property bool isActive: false
-  property bool isRunning: false
-  property string lastCommand: ""
-  property var nextCommand: []
+  property var lastCommand: []
 
-  Component.onCompleted: apply()
+  function apply() {
+    var command = buildCommand()
+
+    // Compare with previous command to avoid unecessary restart
+    if (JSON.stringify(command) !== JSON.stringify(lastCommand)) {
+      lastCommand = command
+      runner.command = command
+
+      // Set running to false so it may restarts below if still enabled
+      runner.running = false
+    }
+    runner.running = params.enabled
+  }
 
   function buildCommand() {
     var cmd = ["wlsunset"]
-    // Use user-configured temps; if intensity is used, bias lowTemp towards user low
-    var i = Math.max(0, Math.min(1, params.intensity))
-    var loCfg = params.lowTemp || 3500
-    var hiCfg = params.highTemp || 6500
-    var lowTemp = Math.round(hiCfg - (hiCfg - loCfg) * Math.pow(i, 0.6))
-    cmd.push("-t", lowTemp.toString())
-    cmd.push("-T", hiCfg.toString())
-    if (params.autoSchedule && LocationService.data.coordinatesReady && LocationService.data.stableLatitude !== ""
-        && LocationService.data.stableLongitude !== "") {
-      cmd.push("-l", LocationService.data.stableLatitude)
-      cmd.push("-L", LocationService.data.stableLongitude)
+    cmd.push("-t", `${params.nightTemp}`, "-T", `${params.dayTemp}`)
+    if (params.autoSchedule) {
+      cmd.push("-l", `${LocationService.data.stableLatitude}`, "-L", `${LocationService.data.stableLongitude}`)
     } else {
-      // Manual schedule
-      if (params.startTime && params.stopTime) {
-        cmd.push("-S", params.startTime)
-        cmd.push("-s", params.stopTime)
-      }
-      // Optional: do not pass duration, use wlsunset defaults
+      cmd.push("-S", params.manualSunrise)
+      cmd.push("-s", params.manualSunset)
     }
+    cmd.push("-d", 60 * 15) // 15min progressive fade at sunset/sunrise
     return cmd
-  }
-
-  function stopIfRunning() {
-    // Best-effort stop; wlsunset runs as foreground, so pkill is simplest
-    Quickshell.execDetached(["pkill", "-x", "wlsunset"])
-    isRunning = false
-  }
-
-  function apply() {
-    if (!params.enabled) {
-      // Disable immediately
-      debounceStart.stop()
-      nextCommand = []
-      stopIfRunning()
-      return
-    }
-    // Debounce rapid changes (slider)
-    nextCommand = buildCommand()
-    lastCommand = nextCommand.join(" ")
-    stopIfRunning()
-    debounceStart.restart()
   }
 
   // Observe setting changes and location readiness
@@ -70,16 +46,10 @@ Singleton {
     function onEnabledChanged() {
       apply()
     }
-    function onIntensityChanged() {
+    function onNightTempChanged() {
       apply()
     }
-    function onAutoScheduleChanged() {
-      apply()
-    }
-    function onStartTimeChanged() {
-      apply()
-    }
-    function onStopTimeChanged() {
+    function onDayTempChanged() {
       apply()
     }
   }
@@ -87,16 +57,7 @@ Singleton {
   Connections {
     target: LocationService.data
     function onCoordinatesReadyChanged() {
-      if (params.enabled && params.autoSchedule)
-        apply()
-    }
-    function onStableLatitudeChanged() {
-      if (params.enabled && params.autoSchedule)
-        apply()
-    }
-    function onStableLongitudeChanged() {
-      if (params.enabled && params.autoSchedule)
-        apply()
+      apply()
     }
   }
 
@@ -105,28 +66,10 @@ Singleton {
     id: runner
     running: false
     onStarted: {
-      isRunning = true
-      Logger.log("NightLight", "Started wlsunset:", root.lastCommand)
+      Logger.log("NightLight", "Wlsunset started:", runner.command)
     }
     onExited: function (code, status) {
-      isRunning = false
-      Logger.log("NightLight", "wlsunset exited:", code, status)
-      // Do not auto-restart here; debounceStart handles starts
-    }
-    stdout: StdioCollector {}
-    stderr: StdioCollector {}
-  }
-
-  // Debounce timer to avoid flicker when moving sliders
-  Timer {
-    id: debounceStart
-    interval: 300
-    repeat: false
-    onTriggered: {
-      if (params.enabled && nextCommand.length > 0) {
-        runner.command = nextCommand
-        runner.running = true
-      }
+      Logger.log("NightLight", "Wlsunset exited:", code, status)
     }
   }
 }
