@@ -11,9 +11,10 @@ import qs.Widgets
 
 Rectangle {
   id: root
-  property ShellScreen modelData
-  readonly property real scaling: modelData ? ScalingService.scale(modelData) : 1
-  readonly property real itemSize: 32 * scaling
+  property ShellScreen screen
+  property real scaling: ScalingService.scale(screen)
+
+  readonly property real itemSize: Style.baseWidgetSize * 0.8 * scaling
 
   // Always visible when there are toplevels
   implicitWidth: taskbarRow.width + Style.marginM * scaling * 2
@@ -25,7 +26,7 @@ Rectangle {
     id: taskbarRow
     anchors.verticalCenter: parent.verticalCenter
     anchors.horizontalCenter: parent.horizontalCenter
-    spacing: Style.marginXS * root.scaling
+    spacing: Style.marginXXS * root.scaling
 
     Repeater {
       model: ToplevelManager && ToplevelManager.toplevels ? ToplevelManager.toplevels : []
