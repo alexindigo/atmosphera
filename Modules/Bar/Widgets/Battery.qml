@@ -102,25 +102,25 @@ Item {
     tooltipText: {
       let lines = []
       if (testMode) {
-        lines.push("Time Left: " + Time.formatVagueHumanReadableDuration(12345))
-        return lines.join("\n")
+        lines.push("Time left: " + Time.formatVagueHumanReadableDuration(12345))
+        return lines.join("<br/>")
       }
       if (!isReady || !battery.isLaptopBattery) {
-        return "No Battery Detected"
+        return "No battery detected"
       }
       if (battery.timeToEmpty > 0) {
-        lines.push("Time Left: " + Time.formatVagueHumanReadableDuration(battery.timeToEmpty))
+        lines.push("Time left: " + Time.formatVagueHumanReadableDuration(battery.timeToEmpty))
       }
       if (battery.timeToFull > 0) {
-        lines.push("Time Until Full: " + Time.formatVagueHumanReadableDuration(battery.timeToFull))
+        lines.push("Time until full: " + Time.formatVagueHumanReadableDuration(battery.timeToFull))
       }
       if (battery.changeRate !== undefined) {
         const rate = battery.changeRate
         if (rate > 0) {
-          lines.push(charging ? "Charging Rate: " + rate.toFixed(2) + " W" : "Discharging Rate: " + rate.toFixed(
+          lines.push(charging ? "Charging rate: " + rate.toFixed(2) + " W" : "Discharging rate: " + rate.toFixed(
                                   2) + " W")
         } else if (rate < 0) {
-          lines.push("Discharging Rate: " + Math.abs(rate).toFixed(2) + " W")
+          lines.push("Discharging rate: " + Math.abs(rate).toFixed(2) + " W")
         } else {
           lines.push("Estimating...")
         }
@@ -130,7 +130,7 @@ Item {
       if (battery.healthPercentage !== undefined && battery.healthPercentage > 0) {
         lines.push("Health: " + Math.round(battery.healthPercentage) + "%")
       }
-      return lines.join("\n")
+      return lines.join("<br/>")
     }
   }
 }
