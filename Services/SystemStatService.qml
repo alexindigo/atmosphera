@@ -20,13 +20,13 @@ Singleton {
   // Helper function to format network speeds
   function formatSpeed(bytesPerSecond) {
     if (bytesPerSecond < 1024) {
-      return bytesPerSecond.toFixed(0) + " B/s"
+      return bytesPerSecond.toFixed(0) + "B/s"
     } else if (bytesPerSecond < 1024 * 1024) {
-      return (bytesPerSecond / 1024).toFixed(1) + " KB/s"
+      return (bytesPerSecond / 1024).toFixed(1) + "KB/s"
     } else if (bytesPerSecond < 1024 * 1024 * 1024) {
-      return (bytesPerSecond / (1024 * 1024)).toFixed(1) + " MB/s"
+      return (bytesPerSecond / (1024 * 1024)).toFixed(1) + "MB/s"
     } else {
-      return (bytesPerSecond / (1024 * 1024 * 1024)).toFixed(1) + " GB/s"
+      return (bytesPerSecond / (1024 * 1024 * 1024)).toFixed(1) + "GB/s"
     }
   }
 
