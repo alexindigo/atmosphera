@@ -30,8 +30,8 @@ ColumnLayout {
     }
 
     NText {
-      visible: LocationService.data.coordinatesReady
-      text: `${LocationService.data.stableName} (${LocationService.displayCoordinates})`
+      visible: LocationService.coordinatesReady
+      text: `${LocationService.stableName} (${LocationService.displayCoordinates})`
       font.pointSize: Style.fontSizeS * scaling
       color: Color.mOnSurfaceVariant
       verticalAlignment: Text.AlignVCenter

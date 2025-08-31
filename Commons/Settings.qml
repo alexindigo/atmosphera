@@ -26,7 +26,7 @@ Singleton {
   property string defaultAvatar: Quickshell.env("HOME") + "/.face"
 
   // Used to access via Settings.data.xxx.yyy
-  property alias data: adapter
+  readonly property alias data: adapter
 
   property bool isLoaded: false
 

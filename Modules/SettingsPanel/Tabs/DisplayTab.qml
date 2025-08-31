@@ -329,7 +329,7 @@ ColumnLayout {
 
     NToggle {
       label: "Automatic Scheduling"
-      description: `Based on the sunset and sunrise time in <i>${LocationService.data.stableName}</i> - recommended.`
+      description: `Based on the sunset and sunrise time in <i>${LocationService.stableName}</i> - recommended.`
       checked: Settings.data.nightLight.autoSchedule
       onToggled: checked => Settings.data.nightLight.autoSchedule = checked
       visible: Settings.data.nightLight.enabled

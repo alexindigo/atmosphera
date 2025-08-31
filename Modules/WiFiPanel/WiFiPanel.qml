@@ -271,7 +271,7 @@ NPanel {
 
                   Item {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: Style.barHeight * scaling
+                    Layout.preferredHeight: Math.round(Style.barHeight * scaling)
 
                     Rectangle {
                       anchors.fill: parent
@@ -313,7 +313,7 @@ NPanel {
 
                   Rectangle {
                     Layout.preferredWidth: Style.baseWidgetSize * 2.5 * scaling
-                    Layout.preferredHeight: Style.barHeight * scaling
+                    Layout.preferredHeight: Math.round(Style.barHeight * scaling)
                     radius: Style.radiusM * scaling
                     color: Color.mPrimary
 

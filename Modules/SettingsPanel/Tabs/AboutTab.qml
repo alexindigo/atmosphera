@@ -81,7 +81,7 @@ ColumnLayout {
     Layout.alignment: Qt.AlignCenter
     Layout.topMargin: Style.marginS * scaling
     Layout.preferredWidth: updateText.implicitWidth + 46 * scaling
-    Layout.preferredHeight: Style.barHeight * scaling
+    Layout.preferredHeight: Math.round(Style.barHeight * scaling)
     radius: Style.radiusL * scaling
     color: updateArea.containsMouse ? Color.mPrimary : Color.transparent
     border.color: Color.mPrimary

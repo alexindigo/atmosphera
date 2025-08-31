@@ -38,7 +38,7 @@ Loader {
   property real opacityValue: originalOpacity
 
   property alias isClosing: hideTimer.running
-  readonly property real barHeight: Style.barHeight * scaling
+  readonly property real barHeight: Math.round(Style.barHeight * scaling)
   readonly property bool barAtBottom: Settings.data.bar.position === "bottom"
 
   signal opened

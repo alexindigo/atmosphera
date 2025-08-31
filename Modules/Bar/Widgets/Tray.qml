@@ -104,7 +104,7 @@ Rectangle {
 
                            // Anchor the menu to the tray icon item (parent) and position it below the icon
                            const menuX = (width / 2) - (trayMenu.item.width / 2)
-                           const menuY = (Style.barHeight * scaling)
+                           const menuY = Math.round(Style.barHeight * scaling)
                            trayMenu.item.menu = modelData.menu
                            trayMenu.item.showAt(parent, menuX, menuY)
                          } else {
