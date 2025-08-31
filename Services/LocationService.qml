@@ -32,6 +32,7 @@ Singleton {
       if (adapter.latitude !== "" && adapter.longitude !== "" && adapter.weatherLastFetch > 0) {
         root.stableLatitude = adapter.latitude
         root.stableLongitude = adapter.longitude
+        root.stableName = adapter.name
         root.coordinatesReady = true
         Logger.log("Location", "Coordinates ready")
       }
