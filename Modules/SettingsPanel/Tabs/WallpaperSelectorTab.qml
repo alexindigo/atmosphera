@@ -179,8 +179,7 @@ ColumnLayout {
           anchors.fill: parent
           acceptedButtons: Qt.LeftButton
           hoverEnabled: true
-          // Use on pressed instead of clicked to better register clicks
-          onPressed: {
+          onClicked: {
             if (Settings.data.wallpaper.setWallpaperOnAllMonitors) {
               WallpaperService.changeWallpaper(undefined, wallpaperPath)
             } else if (screen) {
