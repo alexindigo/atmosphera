@@ -244,7 +244,6 @@ Singleton {
     stdout: StdioCollector {
       onStreamFinished: {
         allUpdatesOutput = text
-        Logger.log("ArchUpdater", "First process output length:", text.length, "content:", text.trim())
         // Now get AUR-only updates to compare
         checkAurOnlyProcess.running = true
       }
@@ -274,7 +273,6 @@ Singleton {
     }
     stdout: StdioCollector {
       onStreamFinished: {
-        Logger.log("ArchUpdater", "Processing update results - all updates output length:", allUpdatesOutput.length)
         parseAllUpdatesOutput(allUpdatesOutput, text)
         Logger.log("ArchUpdater", "found", repoPackages.length, "repo package(s) and", aurPackages.length,
                    "AUR package(s) to upgrade")
@@ -509,8 +507,6 @@ Singleton {
       return
     }
 
-    Logger.log("ArchUpdater", "Force refresh requested")
-
     // Clear error states when refreshing
     updateFailed = false
     lastUpdateError = ""
@@ -525,7 +521,6 @@ Singleton {
         lastCheckError = ""
       }
 
-      Logger.log("ArchUpdater", "Force refresh using", cachedAurHelper)
       checkAurUpdatesProcess.command = [cachedAurHelper, "-Qu"]
       checkAurOnlyProcess.command = [cachedAurHelper, getAurOnlyFlag()]
 
@@ -635,7 +630,6 @@ Singleton {
                      checkAurOnlyProcess.command = [cachedAurHelper, getAurOnlyFlag()]
                      checkAurUpdatesProcess.running = true
                      lastPollTime = Date.now()
-                     Logger.log("ArchUpdater", "Initial package check started with", cachedAurHelper)
                    }, 1000)
     }
   }
