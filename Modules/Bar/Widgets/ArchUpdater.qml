@@ -48,10 +48,10 @@ NIconButton {
 
     let tooltip = header
     if (pacmanTooltip !== "") {
-      tooltip += "<br/>" + pacmanTooltip
+      tooltip += "\n" + pacmanTooltip
     }
     if (aurTooltip !== "") {
-      tooltip += "<br/>" + aurTooltip
+      tooltip += "\n" + aurTooltip
     }
     return tooltip
   }

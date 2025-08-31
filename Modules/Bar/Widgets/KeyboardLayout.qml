@@ -25,7 +25,7 @@ Row {
     collapsedIconColor: Color.mOnSurface
     autoHide: false // Important to be false so we can hover as long as we want
     text: currentLayout
-    tooltipText: "Keyboard Layout: " + currentLayout
+    tooltipText: "Keyboard layout: " + currentLayout
 
     onClicked: {
 

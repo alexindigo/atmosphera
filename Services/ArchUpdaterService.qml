@@ -141,7 +141,7 @@ Singleton {
     onExited: function (exitCode) {
       if (exitCode === 0 && updateInProgress) {
         // Success indicators found
-        console.log("ArchUpdater: Update completed successfully")
+        Logger.log("ArchUpdater", "Update completed successfully")
         updateInProgress = false
         updateFailed = false
         updateCompleteTimer.stop()

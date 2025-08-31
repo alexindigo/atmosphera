@@ -10,7 +10,7 @@ NIconButton {
   property real scaling: ScalingService.scale(screen)
 
   icon: "widgets"
-  tooltipText: "Open Side Panel"
+  tooltipText: "Open side panel"
   sizeRatio: 0.8
 
   colorBg: Color.mSurfaceVariant

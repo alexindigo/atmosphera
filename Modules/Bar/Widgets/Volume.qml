@@ -59,7 +59,7 @@ Item {
     autoHide: false // Important to be false so we can hover as long as we want
     text: Math.floor(AudioService.volume * 100) + "%"
     tooltipText: "Volume: " + Math.round(
-                   AudioService.volume * 100) + "%<br/>Left click for advanced settings.<br/>Scroll up/down to change volume."
+                   AudioService.volume * 100) + "%\nLeft click for advanced settings.\nScroll up/down to change volume."
 
     onWheel: function (delta) {
       wheelAccumulator += delta

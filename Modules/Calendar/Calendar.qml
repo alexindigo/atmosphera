@@ -29,7 +29,7 @@ NPanel {
 
       NIconButton {
         icon: "chevron_left"
-        tooltipText: "Previous Month"
+        tooltipText: "Previous month"
         onClicked: {
           let newDate = new Date(grid.year, grid.month - 1, 1)
           grid.year = newDate.getFullYear()
@@ -48,7 +48,7 @@ NPanel {
 
       NIconButton {
         icon: "chevron_right"
-        tooltipText: "Next Month"
+        tooltipText: "Next month"
         onClicked: {
           let newDate = new Date(grid.year, grid.month + 1, 1)
           grid.year = newDate.getFullYear()

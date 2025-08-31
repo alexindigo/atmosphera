@@ -51,7 +51,7 @@ NPanel {
 
         NIconButton {
           icon: "refresh"
-          tooltipText: "Refresh Networks"
+          tooltipText: "Refresh networks"
           sizeRatio: 0.8
           enabled: Settings.data.network.wifiEnabled && !NetworkService.isLoading
           onClicked: {
