@@ -31,7 +31,7 @@ Singleton {
     var cmd = ["wlsunset"]
     cmd.push("-t", `${params.nightTemp}`, "-T", `${params.dayTemp}`)
     if (params.autoSchedule) {
-      cmd.push("-l", `${LocationService.data.stableLatitude}`, "-L", `${LocationService.data.stableLongitude}`)
+      cmd.push("-l", `${LocationService.stableLatitude}`, "-L", `${LocationService.stableLongitude}`)
     } else {
       cmd.push("-S", params.manualSunrise)
       cmd.push("-s", params.manualSunset)
@@ -55,9 +55,11 @@ Singleton {
   }
 
   Connections {
-    target: LocationService.data
+    target: LocationService
     function onCoordinatesReadyChanged() {
-      apply()
+      if (LocationService.coordinatesReady) {
+        apply()
+      }
     }
   }
 
