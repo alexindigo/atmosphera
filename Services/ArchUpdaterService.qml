@@ -29,7 +29,7 @@ Singleton {
   readonly property int updates: repoPackages.length
   readonly property int aurUpdates: aurPackages.length
   readonly property int totalUpdates: updates + aurUpdates
-  
+
   // Polling cooldown (prevent excessive polling)
   property int lastPollTime: 0
   readonly property int pollCooldownMs: 5 * 60 * 1000 // 5 minutes
@@ -224,8 +224,6 @@ Singleton {
   // PACKAGE CHECKING PROCESSES
   // ============================================================================
 
-
-
   // Process for checking all updates with AUR helper (repo + AUR)
   Process {
     id: checkAurUpdatesProcess
@@ -260,7 +258,8 @@ Singleton {
     stdout: StdioCollector {
       onStreamFinished: {
         parseAllUpdatesOutput(allUpdatesOutput, text)
-        Logger.log("ArchUpdater", "found", repoPackages.length, "repo package(s) and", aurPackages.length, "AUR package(s) to upgrade")
+        Logger.log("ArchUpdater", "found", repoPackages.length, "repo package(s) and", aurPackages.length,
+                   "AUR package(s) to upgrade")
       }
     }
   }
@@ -301,7 +300,7 @@ Singleton {
   function parseAllUpdatesOutput(allOutput, aurOnlyOutput) {
     const allLines = allOutput.trim().split('\n').filter(line => line.trim())
     const aurOnlyLines = aurOnlyOutput.trim().split('\n').filter(line => line.trim())
-    
+
     // Create a set of AUR package names for quick lookup
     const aurPackageNames = new Set()
     for (const line of aurOnlyLines) {
@@ -310,7 +309,7 @@ Singleton {
         aurPackageNames.add(m[1])
       }
     }
-    
+
     const repoPackages = []
     const aurPackages = []
 
@@ -323,7 +322,7 @@ Singleton {
           "newVersion": m[3],
           "description": `${m[1]} ${m[2]} -> ${m[3]}`
         }
-        
+
         // Check if this package is in the AUR-only list
         if (aurPackageNames.has(m[1])) {
           packageInfo.source = "aur"
@@ -347,13 +346,13 @@ Singleton {
     if (aurBusy || !canPoll) {
       return
     }
-    
+
     // Get the AUR helper and set commands
     const aurHelper = getAurHelper()
     if (aurHelper) {
       checkAurUpdatesProcess.command = [aurHelper, "-Qu"]
       checkAurOnlyProcess.command = [aurHelper, "-Qua"]
-      
+
       // Start AUR updates check (includes both repo and AUR packages)
       checkAurUpdatesProcess.running = true
       lastPollTime = Date.now()
@@ -491,7 +490,7 @@ Singleton {
     if (aurHelper) {
       checkAurUpdatesProcess.command = [aurHelper, "-Qu"]
       checkAurOnlyProcess.command = [aurHelper, "-Qua"]
-      
+
       // Force refresh by bypassing cooldown
       checkAurUpdatesProcess.running = true
       lastPollTime = Date.now()

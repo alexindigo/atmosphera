@@ -13,8 +13,6 @@ NPanel {
   panelHeight: 500 * scaling
   panelAnchorRight: true
 
-
-
   panelContent: Rectangle {
     color: Color.mSurface
     radius: Style.radiusL * scaling
@@ -70,7 +68,8 @@ NPanel {
 
       // Update summary (only show when packages are available)
       NText {
-        visible: !ArchUpdaterService.updateInProgress && !ArchUpdaterService.updateFailed && !ArchUpdaterService.aurBusy && ArchUpdaterService.totalUpdates > 0
+        visible: !ArchUpdaterService.updateInProgress && !ArchUpdaterService.updateFailed && !ArchUpdaterService.aurBusy
+                 && ArchUpdaterService.totalUpdates > 0
         text: ArchUpdaterService.totalUpdates + " package" + (ArchUpdaterService.totalUpdates !== 1 ? "s" : "") + " can be updated"
         font.pointSize: Style.fontSizeL * scaling
         font.weight: Style.fontWeightMedium
@@ -80,7 +79,8 @@ NPanel {
 
       // Package selection info (only show when not updating and have packages)
       NText {
-        visible: !ArchUpdaterService.updateInProgress && !ArchUpdaterService.updateFailed && !ArchUpdaterService.aurBusy && ArchUpdaterService.totalUpdates > 0
+        visible: !ArchUpdaterService.updateInProgress && !ArchUpdaterService.updateFailed && !ArchUpdaterService.aurBusy
+                 && ArchUpdaterService.totalUpdates > 0
         text: ArchUpdaterService.selectedPackagesCount + " of " + ArchUpdaterService.totalUpdates + " packages selected"
         font.pointSize: Style.fontSizeS * scaling
         color: Color.mOnSurfaceVariant
@@ -181,7 +181,8 @@ NPanel {
       Item {
         Layout.fillWidth: true
         Layout.fillHeight: true
-        visible: !ArchUpdaterService.updateInProgress && !ArchUpdaterService.updateFailed && !ArchUpdaterService.aurBusy && ArchUpdaterService.totalUpdates === 0
+        visible: !ArchUpdaterService.updateInProgress && !ArchUpdaterService.updateFailed && !ArchUpdaterService.aurBusy
+                 && ArchUpdaterService.totalUpdates === 0
 
         ColumnLayout {
           anchors.centerIn: parent
@@ -217,8 +218,7 @@ NPanel {
       Item {
         Layout.fillWidth: true
         Layout.fillHeight: true
-        visible: ArchUpdaterService.aurBusy && !ArchUpdaterService.updateInProgress
-                 && !ArchUpdaterService.updateFailed
+        visible: ArchUpdaterService.aurBusy && !ArchUpdaterService.updateInProgress && !ArchUpdaterService.updateFailed
 
         ColumnLayout {
           anchors.centerIn: parent
@@ -251,7 +251,8 @@ NPanel {
 
       // Package list (only show when not in any special state)
       NBox {
-        visible: !ArchUpdaterService.updateInProgress && !ArchUpdaterService.updateFailed && !ArchUpdaterService.aurBusy && ArchUpdaterService.totalUpdates > 0
+        visible: !ArchUpdaterService.updateInProgress && !ArchUpdaterService.updateFailed && !ArchUpdaterService.aurBusy
+                 && ArchUpdaterService.totalUpdates > 0
         Layout.fillWidth: true
         Layout.fillHeight: true
 
@@ -344,8 +345,7 @@ NPanel {
 
         NIconButton {
           icon: "refresh"
-          tooltipText: ArchUpdaterService.aurBusy ? "Checking for updates..." : 
-                       (!ArchUpdaterService.canPoll ? "Refresh available soon" : "Refresh package lists")
+          tooltipText: ArchUpdaterService.aurBusy ? "Checking for updates..." : (!ArchUpdaterService.canPoll ? "Refresh available soon" : "Refresh package lists")
           onClicked: {
             ArchUpdaterService.forceRefresh()
           }
