@@ -16,10 +16,21 @@ NIconButton {
   colorBg: Color.mSurfaceVariant
   colorBorder: Color.transparent
   colorBorderHover: Color.transparent
-  colorFg: (ArchUpdaterService.totalUpdates === 0) ? Color.mOnSurface : Color.mPrimary
+  colorFg: {
+    if (!ArchUpdaterService.terminalAvailable || !ArchUpdaterService.aurHelperAvailable) {
+      return Color.mError
+    }
+    return (ArchUpdaterService.totalUpdates === 0) ? Color.mOnSurface : Color.mPrimary
+  }
 
   // Icon states
   icon: {
+    if (!ArchUpdaterService.terminalAvailable) {
+      return "terminal"
+    }
+    if (!ArchUpdaterService.aurHelperAvailable) {
+      return "package"
+    }
     if (ArchUpdaterService.aurBusy) {
       return "sync"
     }
@@ -31,6 +42,12 @@ NIconButton {
 
   // Tooltip with repo vs AUR breakdown and sample lists
   tooltipText: {
+    if (!ArchUpdaterService.terminalAvailable) {
+      return "Terminal not configured\nSet TERMINAL environment variable"
+    }
+    if (!ArchUpdaterService.aurHelperAvailable) {
+      return "AUR helper not found\nInstall yay or paru"
+    }
     if (ArchUpdaterService.aurBusy) {
       return "Checking for updates…"
     }

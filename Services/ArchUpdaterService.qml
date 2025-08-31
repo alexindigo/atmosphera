@@ -32,6 +32,14 @@ Singleton {
   readonly property int aurUpdates: aurPackages.length
   readonly property int totalUpdates: updates + aurUpdates
 
+  // Terminal validation
+  readonly property bool terminalAvailable: Quickshell.env("TERMINAL") !== ""
+  readonly property string terminalError: "TERMINAL environment variable not set"
+
+  // AUR helper validation
+  readonly property bool aurHelperAvailable: cachedAurHelper !== ""
+  readonly property string aurHelperError: "No AUR helper found (yay or paru not installed)"
+
   // Polling cooldown (prevent excessive polling)
   property int lastPollTime: 0
   readonly property int pollCooldownMs: 5 * 60 * 1000 // 5 minutes
@@ -360,15 +368,8 @@ Singleton {
   function doPoll() {
     // Prevent excessive polling
     if (aurBusy || !canPoll) {
-      if (aurBusy) {
-        Logger.log("ArchUpdater", "Poll skipped - already checking for updates")
-      } else {
-        Logger.log("ArchUpdater", "Poll skipped - cooldown period active")
-      }
       return
     }
-
-    Logger.log("ArchUpdater", "Automatic poll triggered")
 
     // Check if we have a cached AUR helper
     if (cachedAurHelper !== "") {
@@ -381,9 +382,6 @@ Singleton {
       checkAurUpdatesProcess.command = [cachedAurHelper, "-Qu"]
       checkAurOnlyProcess.command = [cachedAurHelper, getAurOnlyFlag()]
 
-      Logger.log("ArchUpdater", "Poll commands:", cachedAurHelper + " -Qu", "and",
-                 cachedAurHelper + " " + getAurOnlyFlag())
-
       // Start AUR updates check (includes both repo and AUR packages)
       checkAurUpdatesProcess.running = true
       lastPollTime = Date.now()
@@ -391,7 +389,6 @@ Singleton {
       // AUR helper detection is still in progress or failed
       // Try to detect again if not already in progress
       if (!yayCheckProcess.running && !paruCheckProcess.running) {
-        Logger.log("ArchUpdater", "No AUR helper cached, starting detection...")
         getAurHelper()
       }
       Logger.warn("ArchUpdater", "AUR helper detection in progress or failed")
@@ -410,7 +407,6 @@ Singleton {
   // Update all packages (repo + AUR)
   function runUpdate() {
     if (totalUpdates === 0) {
-      Logger.log("ArchUpdater", "No updates available, polling for updates...")
       doPoll()
       return
     }
@@ -419,16 +415,20 @@ Singleton {
     updateFailed = false
     lastUpdateError = ""
     updateInProgress = true
-    Logger.log("ArchUpdater", "Starting full system update...")
 
-    const terminal = Quickshell.env("TERMINAL") || "xterm"
+    const terminal = Quickshell.env("TERMINAL")
+    if (!terminal) {
+      updateInProgress = false
+      updateFailed = true
+      lastUpdateError = "TERMINAL environment variable not set"
+      ToastService.showWarning("ArchUpdater", "TERMINAL environment variable not set")
+      return
+    }
 
     // Check if we have an AUR helper for full system update
     if (cachedAurHelper !== "" && (aurUpdates > 0 || updates > 0)) {
       // Use AUR helper for full system update (handles both repo and AUR)
       const command = generateUpdateCommand(cachedAurHelper + " -Syu")
-      Logger.log("ArchUpdater", "Full update command:", cachedAurHelper + " -Syu")
-      Logger.log("ArchUpdater", "Executing in terminal:", terminal)
       Quickshell.execDetached([terminal, "-e", "bash", "-c", command])
     } else if (cachedAurHelper === "") {
       // No AUR helper found
@@ -453,60 +453,29 @@ Singleton {
     updateFailed = false
     lastUpdateError = ""
     updateInProgress = true
-    Logger.log("ArchUpdater", "Starting selective update for", selectedPackages.length, "packages")
 
-    const terminal = Quickshell.env("TERMINAL") || "xterm"
-
-    // Split selected packages by source
-    const repoPkgs = []
-    const aurPkgs = []
-
-    for (const pkgName of selectedPackages) {
-      const repoPkg = repoPackages.find(p => p.name === pkgName)
-      if (repoPkg && repoPkg.source === "repo") {
-        repoPkgs.push(pkgName)
-      }
-
-      const aurPkg = aurPackages.find(p => p.name === pkgName)
-      if (aurPkg && aurPkg.source === "aur") {
-        aurPkgs.push(pkgName)
-      }
+    const terminal = Quickshell.env("TERMINAL")
+    if (!terminal) {
+      updateInProgress = false
+      updateFailed = true
+      lastUpdateError = "TERMINAL environment variable not set"
+      ToastService.showWarning("ArchUpdater", "TERMINAL environment variable not set")
+      return
     }
-
-    Logger.log("ArchUpdater", "Package source analysis:")
-    Logger.log("ArchUpdater", "  - Repo packages:", repoPkgs)
-    Logger.log("ArchUpdater", "  - AUR packages:", aurPkgs)
-    Logger.log("ArchUpdater", "  - Total repo packages available:", repoPackages.length)
-    Logger.log("ArchUpdater", "  - Total AUR packages available:", aurPackages.length)
 
     // Update all packages with AUR helper (handles both repo and AUR)
     if (selectedPackages.length > 0) {
       if (cachedAurHelper !== "") {
         const packageList = selectedPackages.join(" ")
-        const command = generateUpdateCommand(cachedAurHelper + " -S " + packageList)
-        Logger.log("ArchUpdater", "Selective update command:", cachedAurHelper + " -S " + packageList)
-        Logger.log("ArchUpdater", "Selected packages:", selectedPackages)
-        Logger.log("ArchUpdater", "Terminal:", terminal)
-        Logger.log("ArchUpdater", "AUR helper version check - running:", cachedAurHelper + " --version")
 
-        // Log system info for debugging
-        Logger.log("ArchUpdater", "System info for debugging:")
-        Logger.log("ArchUpdater", "  - AUR helper:", cachedAurHelper)
-        Logger.log("ArchUpdater", "  - Terminal:", terminal)
-        Logger.log("ArchUpdater", "  - Total updates available:", totalUpdates)
-        Logger.log("ArchUpdater", "  - Package source breakdown:")
-        Logger.log("ArchUpdater", "    * Repo packages:", repoPkgs.length, ":", repoPkgs)
-        Logger.log("ArchUpdater", "    * AUR packages:", aurPkgs.length, ":", aurPkgs)
-        Logger.log("ArchUpdater", "  - Base command:", cachedAurHelper + " -S " + packageList)
-        Logger.log("ArchUpdater", "  - Full wrapped command:", command)
-        Logger.log("ArchUpdater", "  - Terminal command array:", [terminal, "-e", "bash", "-c", command])
-
-        // Test: Try without the wrapper first to see if that's the issue
-        Logger.log("ArchUpdater", "TESTING: Executing command without wrapper to isolate issue")
-        Quickshell.execDetached([terminal, "-e", "bash", "-c", cachedAurHelper + " -S " + packageList])
-
-        // Original wrapped command (commented out for testing)
-        // Quickshell.execDetached([terminal, "-e", "bash", "-c", command])
+        // Handle ghostty terminal differently due to command parsing issues
+        if (terminal.includes("ghostty")) {
+          const simpleCommand = cachedAurHelper + " -S " + packageList
+          Quickshell.execDetached([terminal, "-e", simpleCommand])
+        } else {
+          const command = generateUpdateCommand(cachedAurHelper + " -S " + packageList)
+          Quickshell.execDetached([terminal, "-e", "bash", "-c", command])
+        }
       } else {
         updateInProgress = false
         updateFailed = true
@@ -523,8 +492,6 @@ Singleton {
 
   // Reset update state (useful for manual recovery)
   function resetUpdateState() {
-    Logger.log("ArchUpdater", "Reset update state triggered")
-
     // Clear all update states
     updateInProgress = false
     updateFailed = false
@@ -545,11 +512,8 @@ Singleton {
   function forceRefresh() {
     // Prevent multiple simultaneous refreshes
     if (aurBusy) {
-      Logger.log("ArchUpdater", "Refresh skipped - already checking for updates")
       return
     }
-
-    Logger.log("ArchUpdater", "Manual refresh triggered")
 
     // Clear error states when refreshing
     updateFailed = false
@@ -568,9 +532,6 @@ Singleton {
       checkAurUpdatesProcess.command = [cachedAurHelper, "-Qu"]
       checkAurOnlyProcess.command = [cachedAurHelper, getAurOnlyFlag()]
 
-      Logger.log("ArchUpdater", "Refresh commands:", cachedAurHelper + " -Qu", "and",
-                 cachedAurHelper + " " + getAurOnlyFlag())
-
       // Force refresh by bypassing cooldown
       checkAurUpdatesProcess.running = true
       lastPollTime = Date.now()
@@ -578,7 +539,6 @@ Singleton {
       // AUR helper detection is still in progress or failed
       // Try to detect again if not already in progress
       if (!yayCheckProcess.running && !paruCheckProcess.running) {
-        Logger.log("ArchUpdater", "No AUR helper cached, starting detection...")
         getAurHelper()
       }
       Logger.warn("ArchUpdater", "AUR helper detection in progress or failed")
@@ -602,8 +562,6 @@ Singleton {
           checkFailed = false
           lastCheckError = ""
         }
-        // Log diagnostics
-        logAurHelperDiagnostics()
         // Trigger initial check when helper is found
         triggerInitialCheck()
       }
@@ -625,44 +583,11 @@ Singleton {
             checkFailed = false
             lastCheckError = ""
           }
-          // Log diagnostics
-          logAurHelperDiagnostics()
           // Trigger initial check when helper is found
           triggerInitialCheck()
         } else {
           Logger.log("ArchUpdater", "Found paru but using", cachedAurHelper, "(preferred)")
         }
-      }
-    }
-  }
-
-  // Process for checking AUR helper version
-  Process {
-    id: versionCheckProcess
-    command: []
-    onExited: function (exitCode) {
-      if (exitCode === 0) {
-        Logger.log("ArchUpdater", "  - Version check successful")
-      } else {
-        Logger.log("ArchUpdater", "  - Version check failed")
-      }
-    }
-  }
-
-  // Process for checking AUR helper location
-  Process {
-    id: locationCheckProcess
-    command: []
-    onExited: function (exitCode) {
-      if (exitCode === 0) {
-        Logger.log("ArchUpdater", "  - Location check successful")
-      } else {
-        Logger.log("ArchUpdater", "  - Location check failed")
-      }
-    }
-    stdout: StdioCollector {
-      onStreamFinished: {
-        Logger.log("ArchUpdater", "  - Location:", text.trim())
       }
     }
   }
@@ -697,22 +622,6 @@ Singleton {
       return "-Qua" // paru uses the same flag but different exit code behavior
     }
     return "-Qua" // fallback
-  }
-
-  // Helper function to log AUR helper diagnostic info
-  function logAurHelperDiagnostics() {
-    if (cachedAurHelper !== "") {
-      Logger.log("ArchUpdater", "AUR Helper Diagnostics:")
-      Logger.log("ArchUpdater", "  - Helper:", cachedAurHelper)
-
-      // Check version using existing process
-      versionCheckProcess.command = [cachedAurHelper, "--version"]
-      versionCheckProcess.running = true
-
-      // Check location using existing process
-      locationCheckProcess.command = ["which", cachedAurHelper]
-      locationCheckProcess.running = true
-    }
   }
 
   // Helper function to trigger the initial package check

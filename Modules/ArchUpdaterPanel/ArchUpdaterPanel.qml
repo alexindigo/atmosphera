@@ -66,11 +66,12 @@ NPanel {
         Layout.fillWidth: true
       }
 
-      // Update summary (only show when packages are available)
+      // Update summary (only show when packages are available and terminal is configured)
       NText {
         visible: !ArchUpdaterService.updateInProgress && !ArchUpdaterService.updateFailed
                  && !ArchUpdaterService.checkFailed && !ArchUpdaterService.aurBusy
-                 && ArchUpdaterService.totalUpdates > 0
+                 && ArchUpdaterService.totalUpdates > 0 && ArchUpdaterService.terminalAvailable
+                 && ArchUpdaterService.aurHelperAvailable
         text: ArchUpdaterService.totalUpdates + " package" + (ArchUpdaterService.totalUpdates !== 1 ? "s" : "") + " can be updated"
         font.pointSize: Style.fontSizeL * scaling
         font.weight: Style.fontWeightMedium
@@ -78,11 +79,12 @@ NPanel {
         Layout.fillWidth: true
       }
 
-      // Package selection info (only show when not updating and have packages)
+      // Package selection info (only show when not updating and have packages and terminal is configured)
       NText {
         visible: !ArchUpdaterService.updateInProgress && !ArchUpdaterService.updateFailed
                  && !ArchUpdaterService.checkFailed && !ArchUpdaterService.aurBusy
-                 && ArchUpdaterService.totalUpdates > 0
+                 && ArchUpdaterService.totalUpdates > 0 && ArchUpdaterService.terminalAvailable
+                 && ArchUpdaterService.aurHelperAvailable
         text: ArchUpdaterService.selectedPackagesCount + " of " + ArchUpdaterService.totalUpdates + " packages selected"
         font.pointSize: Style.fontSizeS * scaling
         color: Color.mOnSurfaceVariant
@@ -129,12 +131,88 @@ NPanel {
         } // Spacer
       }
 
+      // Terminal not available state
+      Item {
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        visible: !ArchUpdaterService.terminalAvailable && !ArchUpdaterService.updateInProgress
+                 && !ArchUpdaterService.updateFailed
+
+        ColumnLayout {
+          anchors.centerIn: parent
+          spacing: Style.marginM * scaling
+
+          NIcon {
+            text: "terminal"
+            font.pointSize: Style.fontSizeXXXL * scaling
+            color: Color.mError
+            Layout.alignment: Qt.AlignHCenter
+          }
+
+          NText {
+            text: "Terminal not configured"
+            font.pointSize: Style.fontSizeL * scaling
+            color: Color.mOnSurface
+            Layout.alignment: Qt.AlignHCenter
+          }
+
+          NText {
+            text: "The TERMINAL environment variable is not set. Please set it to your preferred terminal (e.g., kitty, alacritty, foot) in your shell configuration."
+            font.pointSize: Style.fontSizeNormal * scaling
+            color: Color.mOnSurfaceVariant
+            Layout.alignment: Qt.AlignHCenter
+            horizontalAlignment: Text.AlignHCenter
+            wrapMode: Text.Wrap
+            Layout.maximumWidth: 280 * scaling
+          }
+        }
+      }
+
+      // AUR helper not available state
+      Item {
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        visible: ArchUpdaterService.terminalAvailable && !ArchUpdaterService.aurHelperAvailable
+                 && !ArchUpdaterService.updateInProgress && !ArchUpdaterService.updateFailed
+                 && !ArchUpdaterService.checkFailed && !ArchUpdaterService.aurBusy
+
+        ColumnLayout {
+          anchors.centerIn: parent
+          spacing: Style.marginM * scaling
+
+          NIcon {
+            text: "package"
+            font.pointSize: Style.fontSizeXXXL * scaling
+            color: Color.mError
+            Layout.alignment: Qt.AlignHCenter
+          }
+
+          NText {
+            text: "AUR helper not found"
+            font.pointSize: Style.fontSizeL * scaling
+            color: Color.mOnSurface
+            Layout.alignment: Qt.AlignHCenter
+          }
+
+          NText {
+            text: "No AUR helper (yay or paru) is installed. Please install either yay or paru to manage AUR packages. yay is recommended."
+            font.pointSize: Style.fontSizeNormal * scaling
+            color: Color.mOnSurfaceVariant
+            Layout.alignment: Qt.AlignHCenter
+            horizontalAlignment: Text.AlignHCenter
+            wrapMode: Text.Wrap
+            Layout.maximumWidth: 280 * scaling
+          }
+        }
+      }
+
       // Check failed state (AUR down, network issues, etc.)
       Item {
         Layout.fillWidth: true
         Layout.fillHeight: true
         visible: ArchUpdaterService.checkFailed && !ArchUpdaterService.updateInProgress
-                 && !ArchUpdaterService.updateFailed
+                 && !ArchUpdaterService.updateFailed && ArchUpdaterService.terminalAvailable
+                 && ArchUpdaterService.aurHelperAvailable
 
         ColumnLayout {
           anchors.centerIn: parent
@@ -237,7 +315,8 @@ NPanel {
         Layout.fillHeight: true
         visible: !ArchUpdaterService.updateInProgress && !ArchUpdaterService.updateFailed
                  && !ArchUpdaterService.checkFailed && !ArchUpdaterService.aurBusy
-                 && ArchUpdaterService.totalUpdates === 0
+                 && ArchUpdaterService.totalUpdates === 0 && ArchUpdaterService.terminalAvailable
+                 && ArchUpdaterService.aurHelperAvailable
 
         ColumnLayout {
           anchors.centerIn: parent
@@ -274,6 +353,7 @@ NPanel {
         Layout.fillWidth: true
         Layout.fillHeight: true
         visible: ArchUpdaterService.aurBusy && !ArchUpdaterService.updateInProgress && !ArchUpdaterService.updateFailed
+                 && ArchUpdaterService.terminalAvailable && ArchUpdaterService.aurHelperAvailable
 
         ColumnLayout {
           anchors.centerIn: parent
@@ -308,7 +388,8 @@ NPanel {
       NBox {
         visible: !ArchUpdaterService.updateInProgress && !ArchUpdaterService.updateFailed
                  && !ArchUpdaterService.checkFailed && !ArchUpdaterService.aurBusy
-                 && ArchUpdaterService.totalUpdates > 0
+                 && ArchUpdaterService.totalUpdates > 0 && ArchUpdaterService.terminalAvailable
+                 && ArchUpdaterService.aurHelperAvailable
         Layout.fillWidth: true
         Layout.fillHeight: true
 
@@ -396,7 +477,8 @@ NPanel {
       // Action buttons (only show when not updating)
       RowLayout {
         visible: !ArchUpdaterService.updateInProgress && !ArchUpdaterService.updateFailed
-                 && !ArchUpdaterService.checkFailed
+                 && !ArchUpdaterService.checkFailed && ArchUpdaterService.terminalAvailable
+                 && ArchUpdaterService.aurHelperAvailable
         Layout.fillWidth: true
         spacing: Style.marginL * scaling
 
