@@ -211,20 +211,15 @@ Singleton {
     // Start AUR helper detection
     getAurHelper()
 
-    // Use a timer to check for AUR helper after detection completes
+    // Set up a fallback timer in case detection takes too long
     Qt.callLater(() => {
-                   if (cachedAurHelper !== "") {
-                     checkAurUpdatesProcess.command = [cachedAurHelper, "-Qu"]
-                     checkAurOnlyProcess.command = [cachedAurHelper, getAurOnlyFlag()]
-                     checkAurUpdatesProcess.running = true
-                     lastPollTime = Date.now()
-                   } else {
-                     // No AUR helper found
+                   if (cachedAurHelper === "") {
+                     // No AUR helper found after reasonable time
                      checkFailed = true
                      lastCheckError = "No AUR helper found (yay or paru not installed)"
                      Logger.warn("ArchUpdater", "No AUR helper found (yay or paru)")
                    }
-                 }, 1000)
+                 }, 5000) // 5 second fallback
   }
 
   // ============================================================================
@@ -236,7 +231,8 @@ Singleton {
     id: checkAurUpdatesProcess
     command: []
     onExited: function (exitCode) {
-      if (exitCode !== 0) {
+      // For both yay and paru: exit code 0 = updates available, exit code 1 = no updates
+      if (exitCode !== 0 && exitCode !== 1) {
         Logger.warn("ArchUpdater", "AUR helper check failed (code:", exitCode, ")")
         checkFailed = true
         lastCheckError = "Failed to check for updates (exit code: " + exitCode + ")"
@@ -248,6 +244,7 @@ Singleton {
     stdout: StdioCollector {
       onStreamFinished: {
         allUpdatesOutput = text
+        Logger.log("ArchUpdater", "First process output length:", text.length, "content:", text.trim())
         // Now get AUR-only updates to compare
         checkAurOnlyProcess.running = true
       }
@@ -259,8 +256,7 @@ Singleton {
     id: checkAurOnlyProcess
     command: []
     onExited: function (exitCode) {
-      // For paru -Qua, exit code 1 means "no AUR updates available", which is valid
-      // For yay -Qua, exit code 0 means success
+      // For both yay and paru: exit code 0 = updates available, exit code 1 = no updates
       if (exitCode !== 0 && exitCode !== 1) {
         Logger.warn("ArchUpdater", "AUR helper AUR-only check failed (code:", exitCode, ")")
         checkFailed = true
@@ -278,6 +274,7 @@ Singleton {
     }
     stdout: StdioCollector {
       onStreamFinished: {
+        Logger.log("ArchUpdater", "Processing update results - all updates output length:", allUpdatesOutput.length)
         parseAllUpdatesOutput(allUpdatesOutput, text)
         Logger.log("ArchUpdater", "found", repoPackages.length, "repo package(s) and", aurPackages.length,
                    "AUR package(s) to upgrade")
@@ -370,6 +367,12 @@ Singleton {
 
     // Check if we have a cached AUR helper
     if (cachedAurHelper !== "") {
+      // Clear error state when helper is available
+      if (checkFailed && lastCheckError.includes("No AUR helper found")) {
+        checkFailed = false
+        lastCheckError = ""
+      }
+
       checkAurUpdatesProcess.command = [cachedAurHelper, "-Qu"]
       checkAurOnlyProcess.command = [cachedAurHelper, getAurOnlyFlag()]
 
@@ -506,6 +509,8 @@ Singleton {
       return
     }
 
+    Logger.log("ArchUpdater", "Force refresh requested")
+
     // Clear error states when refreshing
     updateFailed = false
     lastUpdateError = ""
@@ -514,6 +519,13 @@ Singleton {
 
     // Check if we have a cached AUR helper
     if (cachedAurHelper !== "") {
+      // Clear error state when helper is available
+      if (checkFailed && lastCheckError.includes("No AUR helper found")) {
+        checkFailed = false
+        lastCheckError = ""
+      }
+
+      Logger.log("ArchUpdater", "Force refresh using", cachedAurHelper)
       checkAurUpdatesProcess.command = [cachedAurHelper, "-Qu"]
       checkAurOnlyProcess.command = [cachedAurHelper, getAurOnlyFlag()]
 
@@ -541,7 +553,14 @@ Singleton {
     onExited: function (exitCode) {
       if (exitCode === 0) {
         cachedAurHelper = "yay"
-        Logger.log("ArchUpdater", "Found yay AUR helper")
+        Logger.log("ArchUpdater", "Found yay AUR helper (preferred)")
+        // Clear error state when helper is found
+        if (checkFailed && lastCheckError.includes("No AUR helper found")) {
+          checkFailed = false
+          lastCheckError = ""
+        }
+        // Trigger initial check when helper is found
+        triggerInitialCheck()
       }
     }
   }
@@ -552,9 +571,19 @@ Singleton {
     command: ["which", "paru"]
     onExited: function (exitCode) {
       if (exitCode === 0) {
+        // Only use paru if yay wasn't found (yay is preferred)
         if (cachedAurHelper === "") {
           cachedAurHelper = "paru"
           Logger.log("ArchUpdater", "Found paru AUR helper")
+          // Clear error state when helper is found
+          if (checkFailed && lastCheckError.includes("No AUR helper found")) {
+            checkFailed = false
+            lastCheckError = ""
+          }
+          // Trigger initial check when helper is found
+          triggerInitialCheck()
+        } else {
+          Logger.log("ArchUpdater", "Found paru but using", cachedAurHelper, "(preferred)")
         }
       }
     }
@@ -590,6 +619,25 @@ Singleton {
       return "-Qua" // paru uses the same flag but different exit code behavior
     }
     return "-Qua" // fallback
+  }
+
+  // Helper function to trigger the initial package check
+  function triggerInitialCheck() {
+    // Only trigger if this is the first time (no packages have been checked yet)
+    if (repoPackages.length === 0 && aurPackages.length === 0 && !aurBusy) {
+      // Clear any previous error state
+      checkFailed = false
+      lastCheckError = ""
+
+      // Wait a bit for the system to be ready before the first check
+      Qt.callLater(() => {
+                     checkAurUpdatesProcess.command = [cachedAurHelper, "-Qu"]
+                     checkAurOnlyProcess.command = [cachedAurHelper, getAurOnlyFlag()]
+                     checkAurUpdatesProcess.running = true
+                     lastPollTime = Date.now()
+                     Logger.log("ArchUpdater", "Initial package check started with", cachedAurHelper)
+                   }, 1000)
+    }
   }
 
   // ============================================================================
