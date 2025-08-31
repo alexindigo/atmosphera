@@ -67,6 +67,11 @@ Singleton {
       lines.push(
             'post_hook = "sed -i /themes/d ~/.config/fuzzel/fuzzel.ini && echo include=~/.config/fuzzel/themes/noctalia >> ~/.config/fuzzel/fuzzel.ini"')
     }
+    if (Settings.data.matugen.vesktop) {
+      lines.push("\n[templates.vesktop]")
+      lines.push('input_path = "' + Quickshell.shellDir + '/Assets/Matugen/templates/vesktop.css"')
+      lines.push('output_path = "~/.config/vesktop/themes/noctalia.theme.css"')
+    }
 
     return lines.join("\n") + "\n"
   }

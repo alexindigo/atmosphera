@@ -87,13 +87,14 @@ NBox {
         colorFg: Color.mOnPrimary
         colorBgHover: Color.mSecondary
         colorFgHover: Color.mOnSecondary
-        enabled: comboBox.selectedKey !== ""
+        enabled: comboBox.currentKey !== ""
+        tooltipText: "Add widget to this section"
         Layout.alignment: Qt.AlignVCenter
         Layout.leftMargin: Style.marginS * scaling
         onClicked: {
           if (comboBox.currentKey !== "") {
             addWidget(comboBox.currentKey, sectionName.toLowerCase())
-            comboBox.currentKey = "battery"
+            comboBox.currentKey = ""
           }
         }
       }
