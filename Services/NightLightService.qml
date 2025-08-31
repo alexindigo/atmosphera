@@ -14,6 +14,11 @@ Singleton {
   property var lastCommand: []
 
   function apply() {
+    // If using LocationService, wait for it to be ready
+    if (params.autoSchedule && !LocationService.coordinatesReady) {
+      return
+    }
+
     var command = buildCommand()
 
     // Compare with previous command to avoid unecessary restart
