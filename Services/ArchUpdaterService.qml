@@ -213,8 +213,8 @@ Singleton {
 
     // Set up a fallback timer in case detection takes too long
     Qt.callLater(() => {
-                   if (cachedAurHelper === "") {
-                     // No AUR helper found after reasonable time
+                   if (cachedAurHelper === "" && !yayCheckProcess.running && !paruCheckProcess.running) {
+                     // No AUR helper found after reasonable time and processes have finished
                      checkFailed = true
                      lastCheckError = "No AUR helper found (yay or paru not installed)"
                      Logger.warn("ArchUpdater", "No AUR helper found (yay or paru)")
