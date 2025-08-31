@@ -164,13 +164,13 @@ ColumnLayout {
       anchors.fill: parent
       width: 200 * 4 * scaling
       height: Math.ceil(root.contributors.length / 4) * 100
-      cellWidth: Style.baseWidgetSize * 6.25 * scaling
-      cellHeight: Style.baseWidgetSize * 3.125 * scaling
+      cellWidth: Style.baseWidgetSize * 7.5 * scaling
+      cellHeight: Style.baseWidgetSize * 3.5 * scaling
       model: root.contributors
 
       delegate: Rectangle {
-        width: contributorsGrid.cellWidth - Style.marginL * scaling
-        height: contributorsGrid.cellHeight - Style.marginXS * scaling
+        width: contributorsGrid.cellWidth - Style.marginM * scaling
+        height: contributorsGrid.cellHeight - Style.marginS * scaling
         radius: Style.radiusL * scaling
         color: contributorArea.containsMouse ? Color.mSecondary : Color.transparent
 
