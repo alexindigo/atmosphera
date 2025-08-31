@@ -264,6 +264,7 @@ ColumnLayout {
       }
 
       MouseArea {
+        
         id: availableDeviceArea
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         anchors.fill: parent
@@ -279,7 +280,7 @@ ColumnLayout {
             tooltip.hide()
           }
         }
-        onClicked: {
+        onClicked: function(mouse) {
          
           if (!modelData || modelData.pairing) {
             return
