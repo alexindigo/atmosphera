@@ -18,6 +18,7 @@ Item {
   property bool autoHide: false
   property bool forceOpen: false
   property bool disableOpen: false
+  property bool rightOpen: false
 
   // Effective shown state (true if hovered/animated open or forced)
   readonly property bool effectiveShown: forceOpen || showPill
@@ -48,11 +49,17 @@ Item {
     id: pill
     width: effectiveShown ? maxPillWidth : 1
     height: pillHeight
-    x: (iconCircle.x + iconCircle.width / 2) - width
+
+    x: rightOpen ? (iconCircle.x + iconCircle.width / 2) : // Opens right
+                   (iconCircle.x + iconCircle.width / 2) - width // Opens left
+
     opacity: effectiveShown ? Style.opacityFull : Style.opacityNone
     color: pillColor
-    topLeftRadius: pillHeight * 0.5
-    bottomLeftRadius: pillHeight * 0.5
+
+    topLeftRadius: rightOpen ? 0 : pillHeight * 0.5
+    bottomLeftRadius: rightOpen ? 0 : pillHeight * 0.5
+    topRightRadius: rightOpen ? pillHeight * 0.5 : 0
+    bottomRightRadius: rightOpen ? pillHeight * 0.5 : 0
     anchors.verticalCenter: parent.verticalCenter
 
     NText {
@@ -89,7 +96,9 @@ Item {
     // When forced shown, match pill background; otherwise use accent when hovered
     color: forceOpen ? pillColor : (showPill ? iconCircleColor : Color.mSurfaceVariant)
     anchors.verticalCenter: parent.verticalCenter
-    anchors.right: parent.right
+
+    anchors.left: rightOpen ? parent.left : undefined
+    anchors.right: rightOpen ? undefined : parent.right
 
     Behavior on color {
       ColorAnimation {

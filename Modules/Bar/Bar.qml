@@ -65,7 +65,10 @@ Variants {
             delegate: NWidgetLoader {
               widgetName: modelData
               widgetProps: {
-                "screen": root.modelData || null
+                "screen": root.modelData || null,
+                "barSection": parent.objectName,
+                "sectionWidgetIndex": index,
+                "sectionWidgetsCount": Settings.data.bar.widgets.left.length
               }
               anchors.verticalCenter: parent.verticalCenter
             }
@@ -87,7 +90,10 @@ Variants {
             delegate: NWidgetLoader {
               widgetName: modelData
               widgetProps: {
-                "screen": root.modelData || null
+                "screen": root.modelData || null,
+                "barSection": parent.objectName,
+                "sectionWidgetIndex": index,
+                "sectionWidgetsCount": Settings.data.bar.widgets.center.length
               }
               anchors.verticalCenter: parent.verticalCenter
             }
@@ -110,7 +116,10 @@ Variants {
             delegate: NWidgetLoader {
               widgetName: modelData
               widgetProps: {
-                "screen": root.modelData || null
+                "screen": root.modelData || null,
+                "barSection": parent.objectName,
+                "sectionWidgetIndex": index,
+                "sectionWidgetsCount": Settings.data.bar.widgets.right.length
               }
               anchors.verticalCenter: parent.verticalCenter
             }

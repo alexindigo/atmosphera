@@ -8,13 +8,19 @@ import qs.Widgets
 
 Item {
   id: root
+
   property ShellScreen screen
   property real scaling: ScalingService.scale(screen)
-  implicitWidth: pill.width
-  implicitHeight: pill.height
+  property string barSection: ""
+  property int sectionWidgetIndex: 0
+  property int sectionWidgetsCount: 0
 
   // Track if we've already notified to avoid spam
   property bool hasNotifiedLowBattery: false
+
+  implicitWidth: pill.width
+  implicitHeight: pill.height
+
 
   // Helper to evaluate and possibly notify
   function maybeNotify(percent, charging) {
@@ -57,8 +63,9 @@ Item {
 
   NPill {
     id: pill
+
     // Test mode
-    property bool testMode: false
+    property bool testMode: true
     property int testPercent: 20
     property bool testCharging: false
     property var battery: UPower.displayDevice
@@ -91,8 +98,9 @@ Item {
         return "battery_android_0"
     }
 
+    rightOpen: BarWidgetRegistry.getNPillDirection(root)
     icon: batteryIcon()
-    text: (isReady && battery.isLaptopBattery) ? Math.round(percent) + "%" : "-"
+    text: ((isReady && battery.isLaptopBattery) || testMode) ? Math.round(percent) + "%" : "-"
     textColor: charging ? Color.mPrimary : Color.mOnSurface
     iconCircleColor: Color.mPrimary
     collapsedIconColor: Color.mOnSurface

@@ -10,6 +10,9 @@ Item {
 
   property ShellScreen screen
   property real scaling: ScalingService.scale(screen)
+  property string barSection: ""
+  property int sectionWidgetIndex: 0
+  property int sectionWidgetsCount: 0
 
   // Used to avoid opening the pill on Quickshell startup
   property bool firstBrightnessReceived: false
@@ -58,6 +61,8 @@ Item {
 
   NPill {
     id: pill
+    
+    rightOpen: BarWidgetRegistry.getNPillDirection(root)
     icon: getIcon()
     iconCircleColor: Color.mPrimary
     collapsedIconColor: Color.mOnSurface

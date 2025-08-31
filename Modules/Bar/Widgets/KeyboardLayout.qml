@@ -11,6 +11,9 @@ Row {
 
   property ShellScreen screen
   property real scaling: ScalingService.scale(screen)
+  property string barSection: ""
+  property int sectionWidgetIndex: 0
+  property int sectionWidgetsCount: 0
 
   // Use the shared service for keyboard layout
   property string currentLayout: KeyboardLayoutService.currentLayout
@@ -20,6 +23,8 @@ Row {
 
   NPill {
     id: pill
+
+    rightOpen: BarWidgetRegistry.getNPillDirection(root)
     icon: "keyboard_alt"
     iconCircleColor: Color.mPrimary
     collapsedIconColor: Color.mOnSurface

@@ -2,6 +2,7 @@ pragma Singleton
 
 import QtQuick
 import Quickshell
+import qs.Commons
 import qs.Modules.Bar.Widgets
 
 Singleton {
@@ -103,5 +104,25 @@ Singleton {
   // Get list of available widget names
   function getAvailableWidgets() {
     return Object.keys(widgets)
+  }
+
+  function getNPillDirection(widget) {
+    try {
+      if (widget.barSection === "leftSection") {
+        return true
+      } else if (widget.barSection === "rightSection") {
+        return false
+      } else {
+        // middle section
+        if (widget.sectionWidgetIndex < widget.sectionWidgetsCount / 2) {
+          return false
+        } else {
+          return true
+        }
+      }
+    } catch (e) {
+      Logger.error(e)
+    }
+    return false
   }
 }
