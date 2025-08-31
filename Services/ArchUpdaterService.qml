@@ -494,8 +494,19 @@ Singleton {
         Logger.log("ArchUpdater", "  - AUR helper:", cachedAurHelper)
         Logger.log("ArchUpdater", "  - Terminal:", terminal)
         Logger.log("ArchUpdater", "  - Total updates available:", totalUpdates)
+        Logger.log("ArchUpdater", "  - Package source breakdown:")
+        Logger.log("ArchUpdater", "    * Repo packages:", repoPkgs.length, ":", repoPkgs)
+        Logger.log("ArchUpdater", "    * AUR packages:", aurPkgs.length, ":", aurPkgs)
+        Logger.log("ArchUpdater", "  - Base command:", cachedAurHelper + " -S " + packageList)
+        Logger.log("ArchUpdater", "  - Full wrapped command:", command)
+        Logger.log("ArchUpdater", "  - Terminal command array:", [terminal, "-e", "bash", "-c", command])
 
-        Quickshell.execDetached([terminal, "-e", "bash", "-c", command])
+        // Test: Try without the wrapper first to see if that's the issue
+        Logger.log("ArchUpdater", "TESTING: Executing command without wrapper to isolate issue")
+        Quickshell.execDetached([terminal, "-e", "bash", "-c", cachedAurHelper + " -S " + packageList])
+
+        // Original wrapped command (commented out for testing)
+        // Quickshell.execDetached([terminal, "-e", "bash", "-c", command])
       } else {
         updateInProgress = false
         updateFailed = true
