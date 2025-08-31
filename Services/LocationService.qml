@@ -51,8 +51,6 @@ Singleton {
       property string name: ""
       property int weatherLastFetch: 0
       property var weather: null
-
-
     }
   }
 
@@ -120,8 +118,8 @@ Singleton {
       return
     }
 
-    if ((adapter.weatherLastFetch === "") || (adapter.weather === null) || (adapter.latitude === "") || (adapter.longitude === "")
-        || (adapter.name !== Settings.data.location.name)
+    if ((adapter.weatherLastFetch === "") || (adapter.weather === null) || (adapter.latitude === "")
+        || (adapter.longitude === "") || (adapter.name !== Settings.data.location.name)
         || (Time.timestamp >= adapter.weatherLastFetch + weatherUpdateFrequency)) {
       getFreshWeather()
     }

@@ -26,6 +26,10 @@ Singleton {
   property bool checkFailed: false
   property string lastCheckError: ""
 
+  // Monitoring state
+  property string capturedErrorText: ""
+  property string capturedSuccessText: ""
+
   // Computed properties
   readonly property bool aurBusy: checkAurUpdatesProcess.running || checkAurOnlyProcess.running
   readonly property int updates: repoPackages.length
@@ -55,7 +59,6 @@ Singleton {
     interval: 5000
     repeat: false
     onTriggered: {
-      Logger.log("ArchUpdater", "Refreshing package lists after update...")
       doPoll()
     }
   }
@@ -66,7 +69,6 @@ Singleton {
     interval: 30000 // Increased to 30 seconds to allow more time
     repeat: false
     onTriggered: {
-      Logger.log("ArchUpdater", "Update timeout reached, checking for failures...")
       checkForUpdateFailures()
     }
   }
@@ -94,7 +96,6 @@ Singleton {
     onExited: function (exitCode) {
       if (exitCode !== 0 && updateInProgress) {
         // No update processes found, update likely completed
-        Logger.log("ArchUpdater", "No update processes detected, marking update as complete")
         updateInProgress = false
         updateMonitorTimer.stop()
         errorCheckTimer.stop()
@@ -114,11 +115,10 @@ Singleton {
   // Process to check for errors in log file (only when update is in progress)
   Process {
     id: errorCheckProcess
-    command: ["sh", "-c", "if [ -f /tmp/archupdater_output.log ]; then grep -i 'error\\|failed to build\\|could not resolve\\|unable to satisfy\\|failed to install\\|failed to upgrade' /tmp/archupdater_output.log | grep -v 'ERROR_DETECTED' | tail -1; fi"]
+    command: ["sh", "-c", "if [ -f /tmp/archupdater_output.log ]; then grep -i 'failed to build\\|could not resolve\\|unable to satisfy\\|failed to install\\|failed to upgrade\\|error:' /tmp/archupdater_output.log | grep -v 'ERROR_DETECTED' | tail -1; fi"]
     onExited: function (exitCode) {
-      if (exitCode === 0 && updateInProgress) {
+      if (exitCode === 0 && updateInProgress && capturedErrorText.trim() !== "") {
         // Error found in log
-        Logger.error("ArchUpdater", "Error detected in log file")
         updateInProgress = false
         updateFailed = true
         updateCompleteTimer.stop()
@@ -135,9 +135,7 @@ Singleton {
     }
     stdout: StdioCollector {
       onStreamFinished: {
-        if (text && text.trim() !== "") {
-          Logger.error("ArchUpdater", "Captured error from log:", text.trim())
-        }
+        capturedErrorText = text || ""
       }
     }
   }
@@ -145,11 +143,10 @@ Singleton {
   // Process to check for successful completion
   Process {
     id: successCheckProcess
-    command: ["sh", "-c", "if [ -f /tmp/archupdater_output.log ]; then grep -i ':: Running post-transaction hooks\\|:: Processing package changes\\|upgrading.*\\.\\.\\.\\|installing.*\\.\\.\\.\\|removing.*\\.\\.\\.' /tmp/archupdater_output.log | tail -1; fi"]
+    command: ["sh", "-c", "if [ -f /tmp/archupdater_output.log ]; then grep -i 'Update complete!\\|:: Running post-transaction hooks\\|:: Processing package changes\\|upgrading.*\\.\\.\\.\\|installing.*\\.\\.\\.\\|removing.*\\.\\.\\.' /tmp/archupdater_output.log | tail -1; fi"]
     onExited: function (exitCode) {
-      if (exitCode === 0 && updateInProgress) {
+      if (exitCode === 0 && updateInProgress && capturedSuccessText.trim() !== "") {
         // Success indicators found
-        Logger.log("ArchUpdater", "Update completed successfully")
         updateInProgress = false
         updateFailed = false
         updateCompleteTimer.stop()
@@ -162,6 +159,11 @@ Singleton {
         Qt.callLater(() => {
                        doPoll()
                      }, 1000)
+      }
+    }
+    stdout: StdioCollector {
+      onStreamFinished: {
+        capturedSuccessText = text || ""
       }
     }
   }
@@ -202,7 +204,6 @@ Singleton {
   }
 
   function checkForUpdateFailures() {
-    Logger.error("ArchUpdater", "Checking for update failures...")
     updateInProgress = false
     updateFailed = true
     updateCompleteTimer.stop()
@@ -415,6 +416,8 @@ Singleton {
     updateFailed = false
     lastUpdateError = ""
     updateInProgress = true
+    capturedErrorText = ""
+    capturedSuccessText = ""
 
     const terminal = Quickshell.env("TERMINAL")
     if (!terminal) {
@@ -453,6 +456,8 @@ Singleton {
     updateFailed = false
     lastUpdateError = ""
     updateInProgress = true
+    capturedErrorText = ""
+    capturedSuccessText = ""
 
     const terminal = Quickshell.env("TERMINAL")
     if (!terminal) {
