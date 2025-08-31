@@ -44,6 +44,7 @@ Rectangle {
           height: root.itemSize * 0.75
           color: taskbarItem.isActive ? Color.mPrimary : root.color
           border.width: 0
+          radius: Math.round(Style.radiusXS * root.scaling)
           border.color: "transparent"
           z: -1
 
