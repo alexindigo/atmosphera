@@ -3,6 +3,7 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Bluetooth
+import qs.Commons
 
 Singleton {
   id: root
@@ -85,8 +86,23 @@ Singleton {
   function canConnect(device) {
     if (!device)
       return false
+    /*
+      Paired
 
-    return !device.paired && !device.pairing && !device.blocked
+      Means you’ve successfully exchanged keys with the device.
+
+      The devices remember each other and can authenticate without repeating the pairing process.
+
+      Example: once your headphones are paired, you don’t need to type a PIN every time.
+      Hence, instead of !device.paired, should be device.connected
+    */
+    return !device.connected && !device.pairing && !device.blocked
+  }
+
+  function canDisconnect(device) {
+    if (!device)
+      return false
+    return device.connected && !device.pairing && !device.blocked
   }
 
   function getSignalStrength(device) {
@@ -162,7 +178,6 @@ Singleton {
       return
     }
 
-    device.trusted = false
     device.disconnect()
   }
 
