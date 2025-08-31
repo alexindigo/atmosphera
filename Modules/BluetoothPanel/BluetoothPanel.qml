@@ -83,30 +83,40 @@ NPanel {
           // Connected devices
           BluetoothDevicesList {
             label: "Connected devices"
-            model: {
-              if (!BluetoothService.adapter || !Bluetooth.devices)
-                return []
-
-              var filtered = Bluetooth.devices.values.filter(dev => {
-                                                               return dev && !dev.blocked && (dev.paired || dev.trusted)
-                                                             })
+            property var items: {
+              if (!BluetoothService.adapter || !Bluetooth.devices) return []
+              var filtered = Bluetooth.devices.values.filter(dev => dev && !dev.blocked && dev.connected)
               return BluetoothService.sortDevices(filtered)
             }
+            model: items
+            visible: items.length > 0
+            Layout.fillWidth: true
+          } 
+
+           // Known devices
+          BluetoothDevicesList {
+            label: "Known devices"
+            tooltipText: "Left click to connect, right click to forget"
+            property var items: {
+              if (!BluetoothService.adapter || !Bluetooth.devices) return []
+              var filtered = Bluetooth.devices.values.filter(dev => dev && !dev.blocked && !dev.connected && (dev.paired || dev.trusted))
+              return BluetoothService.sortDevices(filtered)
+            }
+            model: items
+            visible: items.length > 0
             Layout.fillWidth: true
           }
 
           // Available devices
           BluetoothDevicesList {
             label: "Available devices"
-            model: {
-              if (!BluetoothService.adapter || !Bluetooth.devices)
-                return []
-
-              var filtered = Bluetooth.devices.values.filter(dev => {
-                                                               return dev && !dev.blocked && !dev.paired && !dev.trusted
-                                                             })
+            property var items: {
+              if (!BluetoothService.adapter || !Bluetooth.devices) return []
+              var filtered = Bluetooth.devices.values.filter(dev => dev && !dev.blocked && !dev.paired && !dev.trusted)
               return BluetoothService.sortDevices(filtered)
             }
+            model: items
+            visible: items.length > 0
             Layout.fillWidth: true
           }
 
