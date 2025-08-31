@@ -21,10 +21,6 @@ Rectangle {
   radius: Math.round(Style.radiusM * scaling)
   color: Color.mSurfaceVariant
 
-  Component.onCompleted: {
-    Logger.log("Taskbar", "Taskbar loaded")
-  }
-
   Row {
     id: taskbarRow
     anchors.verticalCenter: parent.verticalCenter
@@ -62,7 +58,6 @@ Rectangle {
         }
 
         MouseArea {
-          id: appMouseArea
           anchors.fill: parent
           hoverEnabled: true
           cursorShape: Qt.PointingHandCursor
@@ -85,23 +80,15 @@ Rectangle {
               }
             }
           }
+          onEntered: taskbarTooltip.show()
+          onExited: taskbarTooltip.hide()
+        }
 
-          ToolTip {
-            parent: appIcon
-            visible: appMouseArea.containsMouse
-            delay: 500
-            text: taskbarItem.modelData.title || taskbarItem.modelData.appId || "Unknown App"
-            background: Rectangle {
-              color: Color.mSurface
-              border.color: Color.mOutline
-              radius: Style.radiusS * root.scaling
-            }
-            contentItem: Label {
-              color: Color.mOnSurface
-              font.pixelSize: Style.fontSizeS * root.scaling
-              text: taskbarItem.modelData.title || taskbarItem.modelData.appId || "Unknown App"
-            }
-          }
+        NTooltip {
+          id: taskbarTooltip
+          text: taskbarItem.modelData.title || taskbarItem.modelData.appId || "Unknown App"
+          target: taskbarItem
+          positionAbove: Settings.data.bar.position === "bottom"
         }
       }
     }
