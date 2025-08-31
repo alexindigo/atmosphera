@@ -48,7 +48,7 @@ NBox {
     // Wallpaper
     NIconButton {
       icon: "image"
-      tooltipText: "Open Wallpaper Selector"
+      tooltipText: "Open wallpaper selector"
       onClicked: {
         var settingsPanel = PanelService.getPanel("settingsPanel")
         settingsPanel.requestedTab = SettingsPanel.Tab.WallpaperSelector

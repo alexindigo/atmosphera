@@ -103,7 +103,7 @@ Item {
       let lines = []
       if (testMode) {
         lines.push("Time left: " + Time.formatVagueHumanReadableDuration(12345))
-        return lines.join("<br/>")
+        return lines.join("\n")
       }
       if (!isReady || !battery.isLaptopBattery) {
         return "No battery detected"
@@ -130,7 +130,7 @@ Item {
       if (battery.healthPercentage !== undefined && battery.healthPercentage > 0) {
         lines.push("Health: " + Math.round(battery.healthPercentage) + "%")
       }
-      return lines.join("<br/>")
+      return lines.join("\n")
     }
   }
 }

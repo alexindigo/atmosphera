@@ -212,7 +212,7 @@ ColumnLayout {
 
                 NIconButton {
                   icon: "refresh"
-                  tooltipText: "Reset Scaling"
+                  tooltipText: "Reset scaling"
                   onClicked: ScalingService.setMonitorScale(modelData.name, 1.0)
                 }
               }

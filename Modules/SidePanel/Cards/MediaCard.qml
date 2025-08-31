@@ -324,7 +324,7 @@ NBox {
         // Next button
         NIconButton {
           icon: "skip_next"
-          tooltipText: "Next Media"
+          tooltipText: "Next media"
           visible: MediaService.canGoNext
           onClicked: MediaService.canGoNext ? MediaService.next() : {}
         }

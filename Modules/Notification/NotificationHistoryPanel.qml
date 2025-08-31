@@ -45,7 +45,7 @@ NPanel {
 
         NIconButton {
           icon: "delete"
-          tooltipText: "Clear History"
+          tooltipText: "Clear history"
           sizeRatio: 0.8
           onClicked: NotificationService.clearHistory()
         }
@@ -158,7 +158,7 @@ NPanel {
             // Trash icon button
             NIconButton {
               icon: "delete"
-              tooltipText: "Delete Notification"
+              tooltipText: "Delete notification"
               sizeRatio: 0.7
 
               onClicked: {

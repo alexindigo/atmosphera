@@ -70,8 +70,8 @@ Item {
       var monitor = getMonitor()
       if (!monitor)
         return ""
-      return "Brightness: " + Math.round(monitor.brightness * 100) + "%<br/>Method: " + monitor.method
-          + "<br/>Left click for advanced settings.<br/>Scroll up/down to change brightness."
+      return "Brightness: " + Math.round(monitor.brightness * 100) + "%\nMethod: " + monitor.method
+          + "\nLeft click for advanced settings.\nScroll up/down to change brightness."
     }
 
     onWheel: function (angle) {

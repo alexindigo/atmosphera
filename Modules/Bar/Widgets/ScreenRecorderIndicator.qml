@@ -12,7 +12,7 @@ NIconButton {
 
   visible: ScreenRecorderService.isRecording
   icon: "videocam"
-  tooltipText: "Screen Recording Active\nClick To Stop Recording"
+  tooltipText: "Screen recording is active\nClick to stop recording"
   sizeRatio: 0.8
   colorBg: Color.mPrimary
   colorFg: Color.mOnPrimary

@@ -21,6 +21,6 @@ NIconButton {
   colorBorderHover: Color.transparent
 
   icon: "bluetooth"
-  tooltipText: "Bluetooth Devices"
+  tooltipText: "Bluetooth devices"
   onClicked: PanelService.getPanel("bluetoothPanel")?.toggle(screen, this)
 }
