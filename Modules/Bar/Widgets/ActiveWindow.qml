@@ -12,17 +12,14 @@ Row {
 
   property ShellScreen screen
   property real scaling: ScalingService.scale(screen)
-  // Title stays collapsed by default; expands only on hover
-  property bool showingFullTitle: false
-  readonly property int minWidth: 120
+  readonly property real minWidth: 160
+  readonly property real maxWidth: 400
 
   anchors.verticalCenter: parent.verticalCenter
   spacing: Style.marginS * scaling
   visible: getTitle() !== ""
 
-  // Remove auto-expand timer; we rely solely on hover
 
-  // No auto-expansion on window change; keep collapsed unless hovered
   function getTitle() {
     // Use the service's focusedWindowTitle property which is updated immediately
     // when WindowOpenedOrChanged events are received
@@ -49,7 +46,7 @@ Row {
   Rectangle {
     // Let the Rectangle size itself based on its content (the Row)
     visible: root.visible
-    width: row.width + Style.marginS * scaling
+    width: row.width + Style.marginM * 2 * scaling
     height: Math.round(Style.capsuleHeight * scaling)
     radius: Math.round(Style.radiusM * scaling)
     color: Color.mSurfaceVariant
@@ -89,9 +86,14 @@ Row {
           id: titleText
 
           // For short titles, show full. For long titles, truncate and expand on hover
-          width: mouseArea.containsMouse ? Math.min(fullTitleMetrics.contentWidth + 8,
-                                                    400 * scaling) : Math.min(fullTitleMetrics.contentWidth + 12,
-                                                                              200 * scaling)
+          width: {
+            if (mouseArea.containsMouse) {
+              return Math.round(Math.min(fullTitleMetrics.contentWidth, root.maxWidth * scaling))
+            }
+            else {
+              return Math.round(Math.min(fullTitleMetrics.contentWidth, root.minWidth * scaling))
+            }
+          }
           horizontalAlignment: Text.AlignLeft
           text: getTitle()
           font.pointSize: Style.fontSizeS * scaling

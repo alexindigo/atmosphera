@@ -12,6 +12,8 @@ Row {
 
   property ShellScreen screen
   property real scaling: ScalingService.scale(screen)
+  readonly property real minWidth: 160
+  readonly property real maxWidth: 400
 
   anchors.verticalCenter: parent.verticalCenter
   spacing: Style.marginS * scaling
@@ -34,7 +36,7 @@ Row {
     id: mediaMini
 
     // Let the Rectangle size itself based on its content (the Row)
-    width: row.width + Style.marginM * scaling * 2
+    width: row.width + Style.marginM * 2 * scaling
 
     height: Math.round(Style.capsuleHeight * scaling)
     radius: Math.round(Style.radiusM * scaling)
@@ -140,11 +142,15 @@ Row {
         NText {
           id: titleText
 
-          // If hovered or just switched window, show up to 400 pixels
-          // If not hovered show up to 120 pixels
-          width: (mouseArea.containsMouse) ? Math.min(fullTitleMetrics.contentWidth,
-                                                      400 * scaling) : Math.min(fullTitleMetrics.contentWidth,
-                                                                                120 * scaling)
+          // For short titles, show full. For long titles, truncate and expand on hover
+          width: {
+            if (mouseArea.containsMouse) {
+              return Math.round(Math.min(fullTitleMetrics.contentWidth, root.maxWidth * scaling))
+            }
+            else {
+              return Math.round(Math.min(fullTitleMetrics.contentWidth, root.minWidth * scaling))
+            }
+          }
           text: getTitle()
           font.pointSize: Style.fontSizeS * scaling
           font.weight: Style.fontWeightMedium
