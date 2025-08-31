@@ -55,7 +55,7 @@ Loader {
       Logger.warn("NPanel", "Cannot toggle panel: invalid screen object")
       return
     }
-    
+
     if (!active || isClosing) {
       open(aScreen, buttonItem)
     } else {
@@ -70,7 +70,7 @@ Loader {
       Logger.warn("NPanel", "Cannot open panel: invalid screen object")
       return
     }
-    
+
     if (aScreen !== null) {
       screen = aScreen
     }
