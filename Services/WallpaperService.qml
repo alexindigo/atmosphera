@@ -94,13 +94,6 @@ Singleton {
   }
 
   // -------------------------------------------------------------------
-  function forceRefreshConfig() {
-    var backup = Settings.data.wallpaper.monitors.slice(0)
-    Settings.data.wallpaper.monitors = []
-    Settings.data.wallpaper.monitors = backup
-  }
-
-  // -------------------------------------------------------------------
   // Set specific monitor directory
   function setMonitorDirectory(screenName, directory) {
     var monitor = getMonitorConfig(screenName)
@@ -113,7 +106,6 @@ Singleton {
                                               "wallpaper": ""
                                             })
     }
-    forceRefreshConfig()
   }
 
   // -------------------------------------------------------------------
@@ -136,7 +128,6 @@ Singleton {
         _setWallpaper(Quickshell.screens[i].name, path)
       }
     }
-    forceRefreshConfig()
   }
 
   // -------------------------------------------------------------------
