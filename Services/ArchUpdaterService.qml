@@ -17,6 +17,7 @@ Singleton {
   property var aurPackages: []
   property var selectedPackages: []
   property int selectedPackagesCount: 0
+  property string allUpdatesOutput: ""
 
   // Update state
   property bool updateInProgress: false
@@ -24,11 +25,15 @@ Singleton {
   property string lastUpdateError: ""
 
   // Computed properties
-  readonly property bool busy: checkupdatesProcess.running
-  readonly property bool aurBusy: checkParuUpdatesProcess.running
+  readonly property bool aurBusy: checkAurUpdatesProcess.running || checkAurOnlyProcess.running
   readonly property int updates: repoPackages.length
   readonly property int aurUpdates: aurPackages.length
   readonly property int totalUpdates: updates + aurUpdates
+  
+  // Polling cooldown (prevent excessive polling)
+  property int lastPollTime: 0
+  readonly property int pollCooldownMs: 5 * 60 * 1000 // 5 minutes
+  readonly property bool canPoll: (Date.now() - lastPollTime) > pollCooldownMs
 
   // ============================================================================
   // TIMERS
@@ -98,7 +103,7 @@ Singleton {
   // Process to check for errors in log file (only when update is in progress)
   Process {
     id: errorCheckProcess
-    command: ["sh", "-c", "if [ -f /tmp/archupdater_output.log ]; then grep -i 'error\\|failed\\|failed to build\\|ERROR_DETECTED' /tmp/archupdater_output.log | tail -1; fi"]
+    command: ["sh", "-c", "if [ -f /tmp/archupdater_output.log ]; then grep -i 'error\\|failed to build\\|could not resolve\\|unable to satisfy\\|failed to install\\|failed to upgrade' /tmp/archupdater_output.log | grep -v 'ERROR_DETECTED' | tail -1; fi"]
     onExited: function (exitCode) {
       if (exitCode === 0 && updateInProgress) {
         // Error found in log
@@ -109,6 +114,38 @@ Singleton {
         updateMonitorTimer.stop()
         lastUpdateError = "Build or update error detected"
 
+        // Read full log file for debugging
+        logReaderProcess.running = true
+
+        // Refresh to check actual state
+        Qt.callLater(() => {
+                       doPoll()
+                     }, 1000)
+      }
+    }
+    stdout: StdioCollector {
+      onStreamFinished: {
+        if (text && text.trim() !== "") {
+          console.log("ArchUpdater: Captured error from log:", text.trim())
+        }
+      }
+    }
+  }
+
+  // Process to check for successful completion
+  Process {
+    id: successCheckProcess
+    command: ["sh", "-c", "if [ -f /tmp/archupdater_output.log ]; then grep -i ':: Running post-transaction hooks\\|:: Processing package changes\\|upgrading.*\\.\\.\\.\\|installing.*\\.\\.\\.\\|removing.*\\.\\.\\.' /tmp/archupdater_output.log | tail -1; fi"]
+    onExited: function (exitCode) {
+      if (exitCode === 0 && updateInProgress) {
+        // Success indicators found
+        console.log("ArchUpdater: Update completed successfully")
+        updateInProgress = false
+        updateFailed = false
+        updateCompleteTimer.stop()
+        updateMonitorTimer.stop()
+        lastUpdateError = ""
+
         // Refresh to check actual state
         Qt.callLater(() => {
                        doPoll()
@@ -117,15 +154,33 @@ Singleton {
     }
   }
 
-  // Timer to check for errors more frequently when update is in progress
+  // Process to read full log file for debugging
+  Process {
+    id: logReaderProcess
+    command: ["cat", "/tmp/archupdater_output.log"]
+    onExited: function (exitCode) {
+      if (exitCode === 0) {
+        console.log("ArchUpdater: Full log file contents:")
+      }
+    }
+    stdout: StdioCollector {
+      onStreamFinished: {
+        if (text) {
+          console.log(text)
+        }
+      }
+    }
+  }
+
+  // Timer to check for success more frequently when update is in progress
   Timer {
     id: errorCheckTimer
     interval: 5000 // Check every 5 seconds
     repeat: true
     running: updateInProgress
     onTriggered: {
-      if (updateInProgress && !errorCheckProcess.running) {
-        errorCheckProcess.running = true
+      if (updateInProgress && !successCheckProcess.running) {
+        successCheckProcess.running = true
       }
     }
   }
@@ -155,45 +210,57 @@ Singleton {
   // Initial check
   Component.onCompleted: {
     getAurHelper()
-    doPoll()
+    // Initial poll without cooldown restriction
+    const aurHelper = getAurHelper()
+    if (aurHelper) {
+      checkAurUpdatesProcess.command = [aurHelper, "-Qu"]
+      checkAurOnlyProcess.command = [aurHelper, "-Qua"]
+      checkAurUpdatesProcess.running = true
+      lastPollTime = Date.now()
+    }
   }
 
   // ============================================================================
   // PACKAGE CHECKING PROCESSES
   // ============================================================================
 
-  // Process for checking repo updates
+
+
+  // Process for checking all updates with AUR helper (repo + AUR)
   Process {
-    id: checkupdatesProcess
-    command: ["checkupdates", "--nosync"]
+    id: checkAurUpdatesProcess
+    command: []
     onExited: function (exitCode) {
-      if (exitCode !== 0 && exitCode !== 2) {
-        Logger.warn("ArchUpdater", "checkupdates failed (code:", exitCode, ")")
+      if (exitCode !== 0) {
+        Logger.warn("ArchUpdater", "AUR helper check failed (code:", exitCode, ")")
+        aurPackages = []
         repoPackages = []
       }
     }
     stdout: StdioCollector {
       onStreamFinished: {
-        parseCheckupdatesOutput(text)
-        Logger.log("ArchUpdater", "found", repoPackages.length, "repo package(s) to upgrade")
+        allUpdatesOutput = text
+        // Now get AUR-only updates to compare
+        checkAurOnlyProcess.running = true
       }
     }
   }
 
-  // Process for checking AUR updates with paru specifically
+  // Process for checking AUR-only updates (to separate from repo updates)
   Process {
-    id: checkParuUpdatesProcess
-    command: ["paru", "-Qua"]
+    id: checkAurOnlyProcess
+    command: []
     onExited: function (exitCode) {
       if (exitCode !== 0) {
-        Logger.warn("ArchUpdater", "paru check failed (code:", exitCode, ")")
+        Logger.warn("ArchUpdater", "AUR helper AUR-only check failed (code:", exitCode, ")")
         aurPackages = []
+        repoPackages = []
       }
     }
     stdout: StdioCollector {
       onStreamFinished: {
-        parseAurUpdatesOutput(text)
-        Logger.log("ArchUpdater", "found", aurPackages.length, "AUR package(s) to upgrade")
+        parseAllUpdatesOutput(allUpdatesOutput, text)
+        Logger.log("ArchUpdater", "found", repoPackages.length, "repo package(s) and", aurPackages.length, "AUR package(s) to upgrade")
       }
     }
   }
@@ -230,25 +297,68 @@ Singleton {
     }
   }
 
-  // Parse checkupdates output
-  function parseCheckupdatesOutput(output) {
-    parsePackageOutput(output, "repo")
-  }
+  // Parse all updates output (repo + AUR packages)
+  function parseAllUpdatesOutput(allOutput, aurOnlyOutput) {
+    const allLines = allOutput.trim().split('\n').filter(line => line.trim())
+    const aurOnlyLines = aurOnlyOutput.trim().split('\n').filter(line => line.trim())
+    
+    // Create a set of AUR package names for quick lookup
+    const aurPackageNames = new Set()
+    for (const line of aurOnlyLines) {
+      const m = line.match(/^(\S+)\s+([^\s]+)\s+->\s+([^\s]+)$/)
+      if (m) {
+        aurPackageNames.add(m[1])
+      }
+    }
+    
+    const repoPackages = []
+    const aurPackages = []
 
-  // Parse AUR updates output
-  function parseAurUpdatesOutput(output) {
-    parsePackageOutput(output, "aur")
+    for (const line of allLines) {
+      const m = line.match(/^(\S+)\s+([^\s]+)\s+->\s+([^\s]+)$/)
+      if (m) {
+        const packageInfo = {
+          "name": m[1],
+          "oldVersion": m[2],
+          "newVersion": m[3],
+          "description": `${m[1]} ${m[2]} -> ${m[3]}`
+        }
+        
+        // Check if this package is in the AUR-only list
+        if (aurPackageNames.has(m[1])) {
+          packageInfo.source = "aur"
+          aurPackages.push(packageInfo)
+        } else {
+          packageInfo.source = "repo"
+          repoPackages.push(packageInfo)
+        }
+      }
+    }
+
+    // Update the package lists
+    if (repoPackages.length > 0 || aurPackages.length > 0 || allOutput.trim() === "") {
+      updateService.repoPackages = repoPackages
+      updateService.aurPackages = aurPackages
+    }
   }
 
   function doPoll() {
-    // Start repo updates check
-    if (!busy) {
-      checkupdatesProcess.running = true
+    // Prevent excessive polling
+    if (aurBusy || !canPoll) {
+      return
     }
-
-    // Start AUR updates check
-    if (!aurBusy) {
-      checkParuUpdatesProcess.running = true
+    
+    // Get the AUR helper and set commands
+    const aurHelper = getAurHelper()
+    if (aurHelper) {
+      checkAurUpdatesProcess.command = [aurHelper, "-Qu"]
+      checkAurOnlyProcess.command = [aurHelper, "-Qua"]
+      
+      // Start AUR updates check (includes both repo and AUR packages)
+      checkAurUpdatesProcess.running = true
+      lastPollTime = Date.now()
+    } else {
+      Logger.warn("ArchUpdater", "No AUR helper found (yay or paru)")
     }
   }
 
@@ -365,10 +475,10 @@ Singleton {
     doPoll()
   }
 
-  // Manual refresh function
+  // Manual refresh function (bypasses cooldown)
   function forceRefresh() {
     // Prevent multiple simultaneous refreshes
-    if (busy || aurBusy) {
+    if (aurBusy) {
       return
     }
 
@@ -376,8 +486,18 @@ Singleton {
     updateFailed = false
     lastUpdateError = ""
 
-    // Just refresh the package lists without syncing databases
-    doPoll()
+    // Get the AUR helper and set commands
+    const aurHelper = getAurHelper()
+    if (aurHelper) {
+      checkAurUpdatesProcess.command = [aurHelper, "-Qu"]
+      checkAurOnlyProcess.command = [aurHelper, "-Qua"]
+      
+      // Force refresh by bypassing cooldown
+      checkAurUpdatesProcess.running = true
+      lastPollTime = Date.now()
+    } else {
+      Logger.warn("ArchUpdater", "No AUR helper found (yay or paru)")
+    }
   }
 
   // ============================================================================
@@ -391,6 +511,7 @@ Singleton {
     onExited: function (exitCode) {
       if (exitCode === 0) {
         cachedAurHelper = "yay"
+        console.log("ArchUpdater: Found yay AUR helper")
       }
     }
   }
@@ -403,6 +524,7 @@ Singleton {
       if (exitCode === 0) {
         if (cachedAurHelper === "") {
           cachedAurHelper = "paru"
+          console.log("ArchUpdater: Found paru AUR helper")
         }
       }
     }
@@ -526,13 +648,13 @@ Singleton {
   // AUTO-POLL TIMER
   // ============================================================================
 
-  // Auto-poll every 15 minutes
+  // Auto-poll every 15 minutes (respects cooldown)
   Timer {
     interval: 15 * 60 * 1000 // 15 minutes
     repeat: true
     running: true
     onTriggered: {
-      if (!updateInProgress) {
+      if (!updateInProgress && canPoll) {
         doPoll()
       }
     }

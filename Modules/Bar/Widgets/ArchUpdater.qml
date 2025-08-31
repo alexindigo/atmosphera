@@ -20,7 +20,7 @@ NIconButton {
 
   // Icon states
   icon: {
-    if (ArchUpdaterService.busy || ArchUpdaterService.aurBusy) {
+    if (ArchUpdaterService.aurBusy) {
       return "sync"
     }
     if (ArchUpdaterService.totalUpdates > 0) {
@@ -31,7 +31,7 @@ NIconButton {
 
   // Tooltip with repo vs AUR breakdown and sample lists
   tooltipText: {
-    if (ArchUpdaterService.busy || ArchUpdaterService.aurBusy) {
+    if (ArchUpdaterService.aurBusy) {
       return "Checking for updates…"
     }
 
@@ -57,12 +57,7 @@ NIconButton {
   }
 
   onClicked: {
-    if (ArchUpdaterService.busy || ArchUpdaterService.aurBusy) {
-      ToastService.showNotice("ArchUpdater", "Still fetching updates...")
-      return
-    }
-
+    // Always allow panel to open, never block
     PanelService.getPanel("archUpdaterPanel").toggle(screen, this)
-    ArchUpdaterService.doPoll()
   }
 }

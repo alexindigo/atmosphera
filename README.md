@@ -79,9 +79,17 @@ Features a modern modular architecture with a status bar, notification system, c
 - `cava` - Audio visualizer component
 - `wlsunset` - To be able to use NightLight
 
-> There are 2 more optional dependencies.  
-> Any `polkit agent` to be able to use the ArchUpdater widget.   
-> And also any `xdg-desktop-portal` to be able to use the "Portal" option from the screenRecorder. 
+> There is one more optional dependency.    
+> `xdg-desktop-portal` to be able to use the "Portal" option from the screenRecorder. 
+
+If you want to use the `ArchUpdater` widget, you will have to set your `TERMINAL` environment variable.
+
+Example command (you can edit the /etc/environment file manually too):
+
+`sudo sed -i '/^TERMINAL=/d' /etc/environment && echo 'TERMINAL=/usr/bin/kitty' | sudo tee -a /etc/environment
+`
+
+Please do not forget to edit `TERMINAL=/usr/bin/kitty` to match your terminal.
 
 ---
 
@@ -348,6 +356,7 @@ While I actually didn't want to accept donations, more and more people are askin
 Thank you to everyone who supports me and this project 💜!
 * Gohma
 * <a href="https://pika-os.com/" target="_blank">PikaOS</a>
+* DiscoCevapi
 
 ---
 
