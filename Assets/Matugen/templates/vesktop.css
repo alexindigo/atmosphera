@@ -550,6 +550,18 @@
   color: {{colors.on_surface.default.hex}} !important;
 }
 
+/* Number badge styling */
+.visual-refresh.theme-dark .numberBadge__2b1f5 {
+  color: {{colors.surface.default.hex}} !important;
+  background-color: {{colors.primary.default.hex}} !important;
+}
+
+/* New badge styling */
+.visual-refresh.theme-dark .newBadge__4ed1a {
+  color: {{colors.surface.default.hex}} !important;
+  background-color: {{colors.primary.default.hex}} !important;
+}
+
 
 
 
