@@ -509,7 +509,7 @@
   color: {{colors.on_surface_variant.default.hex}} !important;
 }
 
-.visual-refresh.theme-dark .emptyText__1464f::before {
+.visual-refresh.theme-dark .slateTextArea_ec4baf > div:first-child .emptyText__1464f::before {
   content: "Message #general" !important;
   color: {{colors.on_surface_variant.default.hex}} !important;
 }
