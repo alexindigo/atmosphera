@@ -15,7 +15,7 @@ NIconButton {
 
   sizeRatio: 0.8
   icon: "notifications"
-  tooltipText: "Notification History"
+  tooltipText: "Notification history"
   colorBg: Color.mSurfaceVariant
   colorFg: Color.mOnSurface
   colorBorder: Color.transparent
