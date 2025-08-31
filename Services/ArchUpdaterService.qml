@@ -42,11 +42,10 @@ Singleton {
   // Refresh timer for post-update polling
   Timer {
     id: refreshTimer
-    interval: 5000 // Increased delay to ensure updates complete
+    interval: 5000
     repeat: false
     onTriggered: {
-      console.log("ArchUpdater: Refreshing package lists after update...")
-      // Just refresh package lists without syncing database
+      Logger.log("ArchUpdater", "Refreshing package lists after update...")
       doPoll()
     }
   }
@@ -57,7 +56,7 @@ Singleton {
     interval: 30000 // Increased to 30 seconds to allow more time
     repeat: false
     onTriggered: {
-      console.log("ArchUpdater: Update timeout reached, checking for failures...")
+      Logger.log("ArchUpdater", "Update timeout reached, checking for failures...")
       checkForUpdateFailures()
     }
   }
@@ -81,11 +80,11 @@ Singleton {
   // Process to monitor update completion
   Process {
     id: updateStatusProcess
-    command: ["pgrep", "-f", "(pacman|yay|paru).*(-S|-Syu)"]
+    command: ["pgrep", "-f", "(yay|paru).*(-S|-Syu)"]
     onExited: function (exitCode) {
       if (exitCode !== 0 && updateInProgress) {
         // No update processes found, update likely completed
-        console.log("ArchUpdater: No update processes detected, marking update as complete")
+        Logger.log("ArchUpdater", "No update processes detected, marking update as complete")
         updateInProgress = false
         updateMonitorTimer.stop()
 
@@ -107,15 +106,12 @@ Singleton {
     onExited: function (exitCode) {
       if (exitCode === 0 && updateInProgress) {
         // Error found in log
-        console.log("ArchUpdater: Error detected in log file")
+        Logger.error("ArchUpdater", "Error detected in log file")
         updateInProgress = false
         updateFailed = true
         updateCompleteTimer.stop()
         updateMonitorTimer.stop()
         lastUpdateError = "Build or update error detected"
-
-        // Read full log file for debugging
-        logReaderProcess.running = true
 
         // Refresh to check actual state
         Qt.callLater(() => {
@@ -126,7 +122,7 @@ Singleton {
     stdout: StdioCollector {
       onStreamFinished: {
         if (text && text.trim() !== "") {
-          console.log("ArchUpdater: Captured error from log:", text.trim())
+          Logger.error("ArchUpdater", "Captured error from log:", text.trim())
         }
       }
     }
@@ -154,24 +150,6 @@ Singleton {
     }
   }
 
-  // Process to read full log file for debugging
-  Process {
-    id: logReaderProcess
-    command: ["cat", "/tmp/archupdater_output.log"]
-    onExited: function (exitCode) {
-      if (exitCode === 0) {
-        console.log("ArchUpdater: Full log file contents:")
-      }
-    }
-    stdout: StdioCollector {
-      onStreamFinished: {
-        if (text) {
-          console.log(text)
-        }
-      }
-    }
-  }
-
   // Timer to check for success more frequently when update is in progress
   Timer {
     id: errorCheckTimer
@@ -195,7 +173,7 @@ Singleton {
   }
 
   function checkForUpdateFailures() {
-    console.log("ArchUpdater: Checking for update failures...")
+    Logger.error("ArchUpdater", "Checking for update failures...")
     updateInProgress = false
     updateFailed = true
     updateCompleteTimer.stop()
@@ -209,7 +187,6 @@ Singleton {
 
   // Initial check
   Component.onCompleted: {
-    getAurHelper()
     // Initial poll without cooldown restriction
     const aurHelper = getAurHelper()
     if (aurHelper) {
@@ -381,7 +358,7 @@ Singleton {
     updateFailed = false
     lastUpdateError = ""
     updateInProgress = true
-    console.log("ArchUpdater: Starting full system update...")
+    Logger.log("ArchUpdater", "Starting full system update...")
 
     const terminal = Quickshell.env("TERMINAL") || "xterm"
 
@@ -390,10 +367,6 @@ Singleton {
     if (aurHelper && (aurUpdates > 0 || updates > 0)) {
       // Use AUR helper for full system update (handles both repo and AUR)
       const command = generateUpdateCommand(aurHelper + " -Syu")
-      Quickshell.execDetached([terminal, "-e", "bash", "-c", command])
-    } else if (updates > 0) {
-      // Fallback to pacman if no AUR helper or only repo updates
-      const command = generateUpdateCommand("sudo pacman -Syu")
       Quickshell.execDetached([terminal, "-e", "bash", "-c", command])
     }
 
@@ -412,7 +385,7 @@ Singleton {
     updateFailed = false
     lastUpdateError = ""
     updateInProgress = true
-    console.log("ArchUpdater: Starting selective update for", selectedPackages.length, "packages")
+    Logger.log("ArchUpdater", "Starting selective update for", selectedPackages.length, "packages")
 
     const terminal = Quickshell.env("TERMINAL") || "xterm"
 
@@ -432,22 +405,15 @@ Singleton {
       }
     }
 
-    // Update repo packages with sudo
-    if (repoPkgs.length > 0) {
-      const packageList = repoPkgs.join(" ")
-      const command = generateUpdateCommand("sudo pacman -S " + packageList)
-      Quickshell.execDetached([terminal, "-e", "bash", "-c", command])
-    }
-
-    // Update AUR packages with yay/paru
-    if (aurPkgs.length > 0) {
+    // Update all packages with AUR helper (handles both repo and AUR)
+    if (selectedPackages.length > 0) {
       const aurHelper = getAurHelper()
       if (aurHelper) {
-        const packageList = aurPkgs.join(" ")
+        const packageList = selectedPackages.join(" ")
         const command = generateUpdateCommand(aurHelper + " -S " + packageList)
         Quickshell.execDetached([terminal, "-e", "bash", "-c", command])
       } else {
-        Logger.warn("ArchUpdater", "No AUR helper found for packages:", aurPkgs.join(", "))
+        Logger.warn("ArchUpdater", "No AUR helper found for packages:", selectedPackages.join(", "))
       }
     }
 
@@ -510,7 +476,7 @@ Singleton {
     onExited: function (exitCode) {
       if (exitCode === 0) {
         cachedAurHelper = "yay"
-        console.log("ArchUpdater: Found yay AUR helper")
+        Logger.log("ArchUpdater", "Found yay AUR helper")
       }
     }
   }
@@ -523,33 +489,9 @@ Singleton {
       if (exitCode === 0) {
         if (cachedAurHelper === "") {
           cachedAurHelper = "paru"
-          console.log("ArchUpdater: Found paru AUR helper")
+          Logger.log("ArchUpdater", "Found paru AUR helper")
         }
       }
-    }
-  }
-
-  // Process for syncing package databases with sudo
-  Process {
-    id: syncDatabaseProcess
-    command: ["sudo", "pacman", "-Sy"]
-    onStarted: {
-      console.log("ArchUpdater: Starting database sync with sudo...")
-    }
-    onExited: function (exitCode) {
-      console.log("ArchUpdater: Database sync exited with code:", exitCode)
-      if (exitCode === 0) {
-        console.log("ArchUpdater: Database sync successful")
-      } else {
-        console.log("ArchUpdater: Database sync failed")
-      }
-
-      // After sync completes, wait a moment then refresh package lists
-      console.log("ArchUpdater: Database sync complete, waiting before refresh...")
-      Qt.callLater(() => {
-                     console.log("ArchUpdater: Refreshing package lists after database sync...")
-                     doPoll()
-                   }, 2000)
     }
   }
 
@@ -564,7 +506,7 @@ Singleton {
     }
 
     // Check for AUR helpers using Process objects
-    console.log("ArchUpdater: Detecting AUR helper...")
+    Logger.log("ArchUpdater", "Detecting AUR helper...")
 
     // Start the detection processes
     yayCheckProcess.running = true
@@ -605,34 +547,6 @@ Singleton {
   // ============================================================================
   // REFRESH FUNCTIONS
   // ============================================================================
-
-  // Function to manually sync package databases (separate from refresh)
-  function syncPackageDatabases() {
-    console.log("ArchUpdater: Manual database sync requested...")
-    const terminal = Quickshell.env("TERMINAL") || "xterm"
-    const command = "sudo pacman -Sy && echo 'Database sync complete! Press Enter to close...' && read -p 'Press Enter to continue...'"
-    console.log("ArchUpdater: Executing sync command:", command)
-    console.log("ArchUpdater: Terminal:", terminal)
-    Quickshell.execDetached([terminal, "-e", "bash", "-c", command])
-  }
-
-  // Function to force a complete refresh (sync + check)
-  function forceCompleteRefresh() {
-    console.log("ArchUpdater: Force complete refresh requested...")
-
-    // Start database sync process (will trigger refresh when complete)
-    console.log("ArchUpdater: Starting complete refresh process...")
-    syncDatabaseProcess.running = true
-  }
-
-  // Function to sync database and refresh package lists
-  function syncDatabaseAndRefresh() {
-    console.log("ArchUpdater: Syncing database and refreshing package lists...")
-
-    // Start database sync process (will trigger refresh when complete)
-    console.log("ArchUpdater: Starting database sync process...")
-    syncDatabaseProcess.running = true
-  }
 
   // ============================================================================
   // UTILITY FUNCTIONS
