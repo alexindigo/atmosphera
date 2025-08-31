@@ -32,7 +32,8 @@ Rectangle {
   implicitWidth: size
   implicitHeight: size
 
-  color: root.hovering ? colorBgHover : colorBg
+  opacity: root.enabled ? Style.opacityFull : Style.opacityMedium
+  color: root.enabled && root.hovering ? colorBgHover : colorBg
   radius: width * 0.5
   border.color: root.hovering ? colorBorderHover : colorBorder
   border.width: Math.max(1, Style.borderS * scaling)
@@ -41,7 +42,6 @@ Rectangle {
     text: root.icon
     font.pointSize: root.fontPointSize * scaling
     color: root.hovering ? colorFgHover : colorFg
-    opacity: root.enabled ? Style.opacityFull : Style.opacityMedium
     // Center horizontally
     x: (root.width - width) / 2
     // Center vertically accounting for font metrics
@@ -56,8 +56,9 @@ Rectangle {
   }
 
   MouseArea {
+    enabled: root.enabled
     anchors.fill: parent
-    cursorShape: Qt.PointingHandCursor
+    cursorShape: root.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
     acceptedButtons: Qt.LeftButton | Qt.RightButton
     hoverEnabled: true
     onEntered: {
