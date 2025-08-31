@@ -88,6 +88,15 @@ ColumnLayout {
                  }
     }
 
+    NToggle {
+      label: "Show Network Statistics"
+      description: "Display network upload and download speeds in the system monitor."
+      checked: Settings.data.bar.showNetworkStats
+      onToggled: checked => {
+                   Settings.data.bar.showNetworkStats = checked
+                 }
+    }
+
     NComboBox {
       label: "Show Workspaces Labels"
       description: "Display the workspace name or index in the workspace indicator"

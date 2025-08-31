@@ -141,10 +141,12 @@ NPanel {
                   Layout.fillWidth: true
                   color: (modelData?.enabled
                           ?? true) ? (mouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface) : Color.mOnSurfaceVariant
-                  text: modelData?.text !== "" ? modelData?.text.replace(/[\n\r]+/g, ' ') : "..."
+                  text: modelData?.text !== "" ? modelData?.text.replace(/[\n\r]+/g, ' ').replace(/\s+/g,
+                                                                                                  ' ').trim() : "..."
                   font.pointSize: Style.fontSizeS * scaling
                   verticalAlignment: Text.AlignVCenter
-                  wrapMode: Text.WordWrap
+                  wrapMode: Text.NoWrap
+                  elide: Text.ElideRight
                 }
 
                 Image {

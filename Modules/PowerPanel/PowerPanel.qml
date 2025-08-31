@@ -309,7 +309,8 @@ NPanel {
             return Color.mOnSurfaceVariant
           }
           opacity: Style.opacityHeavy
-          wrapMode: Text.WordWrap
+          wrapMode: Text.NoWrap
+          elide: Text.ElideRight
         }
       }
 

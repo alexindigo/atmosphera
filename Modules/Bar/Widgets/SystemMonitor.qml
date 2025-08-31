@@ -97,6 +97,50 @@ Row {
             color: Color.mPrimary
           }
         }
+
+        // Network Download Speed Component
+        Row {
+          id: networkDownloadLayout
+          spacing: Style.marginXS * scaling
+          visible: Settings.data.bar.showNetworkStats
+
+          NIcon {
+            text: "download"
+            anchors.verticalCenter: parent.verticalCenter
+          }
+
+          NText {
+            text: SystemStatService.formatSpeed(SystemStatService.rxSpeed)
+            font.family: Settings.data.ui.fontFixed
+            font.pointSize: Style.fontSizeS * scaling
+            font.weight: Style.fontWeightMedium
+            anchors.verticalCenter: parent.verticalCenter
+            verticalAlignment: Text.AlignVCenter
+            color: Color.mPrimary
+          }
+        }
+
+        // Network Upload Speed Component
+        Row {
+          id: networkUploadLayout
+          spacing: Style.marginXS * scaling
+          visible: Settings.data.bar.showNetworkStats
+
+          NIcon {
+            text: "upload"
+            anchors.verticalCenter: parent.verticalCenter
+          }
+
+          NText {
+            text: SystemStatService.formatSpeed(SystemStatService.txSpeed)
+            font.family: Settings.data.ui.fontFixed
+            font.pointSize: Style.fontSizeS * scaling
+            font.weight: Style.fontWeightMedium
+            anchors.verticalCenter: parent.verticalCenter
+            verticalAlignment: Text.AlignVCenter
+            color: Color.mPrimary
+          }
+        }
       }
     }
   }

@@ -86,18 +86,18 @@ Row {
         NText {
           id: titleText
 
-          // Fix collapsed width to 120px to avoid layout shifts with neighbors
-          // Expand up to 400px on hover
-          width: mouseArea.containsMouse ? Math.min(Math.max(minWidth * scaling, fullTitleMetrics.contentWidth),
-                                                    400 * scaling) : minWidth * scaling
+          // Collapsed width when not hovered, expand on hover
+          width: mouseArea.containsMouse ? Math.min(fullTitleMetrics.contentWidth + (Style.marginS * scaling),
+                                                    400 * scaling) : (minWidth * scaling)
           horizontalAlignment: Text.AlignLeft
           text: getTitle()
           font.pointSize: Style.fontSizeS * scaling
           font.weight: Style.fontWeightMedium
-          elide: Text.ElideRight
+          elide: mouseArea.containsMouse ? Text.ElideNone : Text.ElideRight
           anchors.verticalCenter: parent.verticalCenter
           verticalAlignment: Text.AlignVCenter
           color: Color.mSecondary
+          clip: true
 
           Behavior on width {
             NumberAnimation {
