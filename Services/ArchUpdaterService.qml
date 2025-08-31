@@ -473,6 +473,12 @@ Singleton {
       }
     }
 
+    Logger.log("ArchUpdater", "Package source analysis:")
+    Logger.log("ArchUpdater", "  - Repo packages:", repoPkgs)
+    Logger.log("ArchUpdater", "  - AUR packages:", aurPkgs)
+    Logger.log("ArchUpdater", "  - Total repo packages available:", repoPackages.length)
+    Logger.log("ArchUpdater", "  - Total AUR packages available:", aurPackages.length)
+
     // Update all packages with AUR helper (handles both repo and AUR)
     if (selectedPackages.length > 0) {
       if (cachedAurHelper !== "") {
@@ -480,6 +486,15 @@ Singleton {
         const command = generateUpdateCommand(cachedAurHelper + " -S " + packageList)
         Logger.log("ArchUpdater", "Selective update command:", cachedAurHelper + " -S " + packageList)
         Logger.log("ArchUpdater", "Selected packages:", selectedPackages)
+        Logger.log("ArchUpdater", "Terminal:", terminal)
+        Logger.log("ArchUpdater", "AUR helper version check - running:", cachedAurHelper + " --version")
+
+        // Log system info for debugging
+        Logger.log("ArchUpdater", "System info for debugging:")
+        Logger.log("ArchUpdater", "  - AUR helper:", cachedAurHelper)
+        Logger.log("ArchUpdater", "  - Terminal:", terminal)
+        Logger.log("ArchUpdater", "  - Total updates available:", totalUpdates)
+
         Quickshell.execDetached([terminal, "-e", "bash", "-c", command])
       } else {
         updateInProgress = false
@@ -576,6 +591,8 @@ Singleton {
           checkFailed = false
           lastCheckError = ""
         }
+        // Log diagnostics
+        logAurHelperDiagnostics()
         // Trigger initial check when helper is found
         triggerInitialCheck()
       }
@@ -597,11 +614,44 @@ Singleton {
             checkFailed = false
             lastCheckError = ""
           }
+          // Log diagnostics
+          logAurHelperDiagnostics()
           // Trigger initial check when helper is found
           triggerInitialCheck()
         } else {
           Logger.log("ArchUpdater", "Found paru but using", cachedAurHelper, "(preferred)")
         }
+      }
+    }
+  }
+
+  // Process for checking AUR helper version
+  Process {
+    id: versionCheckProcess
+    command: []
+    onExited: function (exitCode) {
+      if (exitCode === 0) {
+        Logger.log("ArchUpdater", "  - Version check successful")
+      } else {
+        Logger.log("ArchUpdater", "  - Version check failed")
+      }
+    }
+  }
+
+  // Process for checking AUR helper location
+  Process {
+    id: locationCheckProcess
+    command: []
+    onExited: function (exitCode) {
+      if (exitCode === 0) {
+        Logger.log("ArchUpdater", "  - Location check successful")
+      } else {
+        Logger.log("ArchUpdater", "  - Location check failed")
+      }
+    }
+    stdout: StdioCollector {
+      onStreamFinished: {
+        Logger.log("ArchUpdater", "  - Location:", text.trim())
       }
     }
   }
@@ -636,6 +686,22 @@ Singleton {
       return "-Qua" // paru uses the same flag but different exit code behavior
     }
     return "-Qua" // fallback
+  }
+
+  // Helper function to log AUR helper diagnostic info
+  function logAurHelperDiagnostics() {
+    if (cachedAurHelper !== "") {
+      Logger.log("ArchUpdater", "AUR Helper Diagnostics:")
+      Logger.log("ArchUpdater", "  - Helper:", cachedAurHelper)
+
+      // Check version using existing process
+      versionCheckProcess.command = [cachedAurHelper, "--version"]
+      versionCheckProcess.running = true
+
+      // Check location using existing process
+      locationCheckProcess.command = ["which", cachedAurHelper]
+      locationCheckProcess.running = true
+    }
   }
 
   // Helper function to trigger the initial package check
