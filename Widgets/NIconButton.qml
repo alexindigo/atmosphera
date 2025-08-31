@@ -27,6 +27,7 @@ Rectangle {
   signal entered
   signal exited
   signal clicked
+  signal rightClicked
 
   implicitWidth: size
   implicitHeight: size
@@ -57,6 +58,7 @@ Rectangle {
   MouseArea {
     anchors.fill: parent
     cursorShape: Qt.PointingHandCursor
+    acceptedButtons: Qt.LeftButton | Qt.RightButton
     hoverEnabled: true
     onEntered: {
       hovering = true
@@ -72,11 +74,15 @@ Rectangle {
       }
       root.exited()
     }
-    onClicked: {
+    onClicked: function (mouse) {
       if (tooltipText) {
         tooltip.hide()
       }
-      root.clicked()
+      if (mouse.button === Qt.LeftButton) {
+        root.clicked()
+      } else if (mouse.button === Qt.RightButton) {
+        root.rightClicked()
+      }
     }
   }
 }

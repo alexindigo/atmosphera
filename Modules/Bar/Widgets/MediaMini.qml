@@ -200,10 +200,10 @@ Row {
     text: {
       var str = ""
       if (MediaService.canGoNext) {
-        str += "Right click for next\n"
+        str += "Right click for next<br/>"
       }
       if (MediaService.canGoPrevious) {
-        str += "Middle click for previous\n"
+        str += "Middle click for previous<br/>"
       }
       return str
     }

@@ -1,50 +1,32 @@
 import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
 import Quickshell
+import Quickshell.Wayland
 import qs.Commons
-import qs.Modules.SettingsPanel
 import qs.Services
 import qs.Widgets
 
-Item {
+NIconButton {
   id: root
 
   property ShellScreen screen
   property real scaling: ScalingService.scale(screen)
 
-  implicitWidth: pill.width
-  implicitHeight: pill.height
-  visible: true
+  sizeRatio: 0.8
 
-  NPill {
-    id: pill
-    icon: Settings.data.nightLight.enabled ? "bedtime" : "bedtime_off"
-    iconCircleColor: Settings.data.nightLight.enabled ? Color.mSecondary : Color.mOnSurfaceVariant
-    collapsedIconColor: Settings.data.nightLight.enabled ? Color.mOnSecondary : Color.mOnSurface
-    autoHide: false
-    text: Settings.data.nightLight.enabled ? "On" : "Off"
-    tooltipText: {
-      if (!Settings.isLoaded || !Settings.data.nightLight.enabled) {
-        return "Night Light: Disabled\nLeft click to open settings.\nRight click to enable."
-      }
+  colorBg: Color.mSurfaceVariant
+  colorFg: Color.mOnSurface
+  colorBorder: Color.transparent
+  colorBorderHover: Color.transparent
 
-      var intensity = Math.round(Settings.data.nightLight.intensity * 100)
-      var schedule = Settings.data.nightLight.autoSchedule ? `Auto schedule` : `Manual: ${Settings.data.nightLight.startTime} - ${Settings.data.nightLight.stopTime}`
-      return `Night Light: Enabled\nIntensity: ${intensity}%\n${schedule}\nLeft click to open settings.\nRight click to toggle.`
-    }
+  icon: Settings.data.nightLight.enabled ? "bedtime" : "bedtime_off"
+  tooltipText: `Night Light: ${Settings.data.nightLight.enabled ? "enabled" : "disabled"}<br/>Left click to toggle.<br/>Right click to access settings.`
+  onClicked: Settings.data.nightLight.enabled = !Settings.data.nightLight.enabled
 
-    onClicked: {
-      // Left click - open settings
-      var settingsPanel = PanelService.getPanel("settingsPanel")
-      settingsPanel.requestedTab = SettingsPanel.Tab.Display
-      settingsPanel.open(screen)
-    }
-
-    onRightClicked: {
-      // Right click - toggle night light (debounced apply handled by service)
-      Settings.data.nightLight.enabled = !Settings.data.nightLight.enabled
-      NightLightService.apply()
-    }
-
-    // Wheel handler removed to avoid frequent rapid restarts/flicker
+  onRightClicked: {
+    var settingsPanel = PanelService.getPanel("settingsPanel")
+    settingsPanel.requestedTab = SettingsPanel.Tab.Display
+    settingsPanel.open(screen)
   }
 }
