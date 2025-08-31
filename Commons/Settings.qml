@@ -114,7 +114,7 @@ Singleton {
         property string position: "top" // Possible values: "top", "bottom"
         property bool showActiveWindowIcon: true
         property bool alwaysShowBatteryPercentage: false
-        property bool showNetworkStats: true
+        property bool showNetworkStats: false
         property real backgroundOpacity: 1.0
         property string showWorkspaceLabel: "none"
         property list<string> monitors: []
