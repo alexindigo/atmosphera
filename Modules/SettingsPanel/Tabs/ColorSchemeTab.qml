@@ -450,5 +450,16 @@ ColumnLayout {
                    MatugenService.generateFromWallpaper()
                  }
     }
+
+    NCheckbox {
+      label: "Vesktop"
+      description: "Write ~/.config/vesktop/themes/noctalia.theme.css"
+      checked: Settings.data.matugen.vesktop
+      onToggled: checked => {
+                   Settings.data.matugen.vesktop = checked
+                   if (Settings.data.colorSchemes.useWallpaperColors)
+                   MatugenService.generateFromWallpaper()
+                 }
+    }
   }
 }
