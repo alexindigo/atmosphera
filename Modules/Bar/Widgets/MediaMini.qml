@@ -26,8 +26,9 @@ Row {
   NText {
     id: fullTitleMetrics
     visible: false
-    text: titleText.text
-    font: titleText.font
+    text: getTitle()
+    font.pointSize: Style.fontSizeS * scaling
+    font.weight: Style.fontWeightMedium
   }
 
   Rectangle {
@@ -47,6 +48,37 @@ Row {
       id: anchor
       height: parent.height
       width: 200 * scaling
+    }
+
+    // Mouse area for hover detection - direct child of Rectangle
+    MouseArea {
+      id: mouseArea
+      anchors.fill: parent
+      hoverEnabled: true
+      cursorShape: Qt.PointingHandCursor
+      acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+      onClicked: mouse => {
+                   if (mouse.button === Qt.LeftButton) {
+                     MediaService.playPause()
+                   } else if (mouse.button == Qt.RightButton) {
+                     MediaService.next()
+                     // Need to hide the tooltip instantly
+                     tooltip.visible = false
+                   } else if (mouse.button == Qt.MiddleButton) {
+                     MediaService.previous()
+                     // Need to hide the tooltip instantly
+                     tooltip.visible = false
+                   }
+                 }
+
+      onEntered: {
+        if (tooltip.text !== "") {
+          tooltip.show()
+        }
+      }
+      onExited: {
+        tooltip.hide()
+      }
     }
 
     Item {
@@ -140,18 +172,18 @@ Row {
         NText {
           id: titleText
 
-          // If hovered or just switched window, show up to 400 pixels
-          // If not hovered show up to 120 pixels
-          width: (mouseArea.containsMouse) ? Math.min(fullTitleMetrics.contentWidth,
-                                                      400 * scaling) : Math.min(fullTitleMetrics.contentWidth,
-                                                                                120 * scaling)
+          // If hovered, show up to 400 pixels, otherwise show up to 120 pixels
+          width: (mouseArea.containsMouse) ? Math.min(fullTitleMetrics.contentWidth + (Style.marginS * scaling),
+                                                      400 * scaling) : Math.min(
+                                               fullTitleMetrics.contentWidth + (Style.marginS * scaling), 120 * scaling)
           text: getTitle()
           font.pointSize: Style.fontSizeS * scaling
           font.weight: Style.fontWeightMedium
-          elide: Text.ElideRight
+          elide: mouseArea.containsMouse ? Text.ElideNone : Text.ElideRight
           anchors.verticalCenter: parent.verticalCenter
           verticalAlignment: Text.AlignVCenter
           color: Color.mTertiary
+          clip: true
 
           Behavior on width {
             NumberAnimation {
@@ -159,37 +191,6 @@ Row {
               easing.type: Easing.InOutCubic
             }
           }
-        }
-      }
-
-      // Mouse area for hover detection
-      MouseArea {
-        id: mouseArea
-        anchors.fill: parent
-        hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
-        acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
-        onClicked: mouse => {
-                     if (mouse.button === Qt.LeftButton) {
-                       MediaService.playPause()
-                     } else if (mouse.button == Qt.RightButton) {
-                       MediaService.next()
-                       // Need to hide the tooltip instantly
-                       tooltip.visible = false
-                     } else if (mouse.button == Qt.MiddleButton) {
-                       MediaService.previous()
-                       // Need to hide the tooltip instantly
-                       tooltip.visible = false
-                     }
-                   }
-
-        onEntered: {
-          if (tooltip.text !== "") {
-            tooltip.show()
-          }
-        }
-        onExited: {
-          tooltip.hide()
         }
       }
     }
