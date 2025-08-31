@@ -23,6 +23,8 @@ Singleton {
   property bool updateInProgress: false
   property bool updateFailed: false
   property string lastUpdateError: ""
+  property bool checkFailed: false
+  property string lastCheckError: ""
 
   // Computed properties
   readonly property bool aurBusy: checkAurUpdatesProcess.running || checkAurOnlyProcess.running
@@ -87,6 +89,8 @@ Singleton {
         Logger.log("ArchUpdater", "No update processes detected, marking update as complete")
         updateInProgress = false
         updateMonitorTimer.stop()
+        errorCheckTimer.stop()
+        successCheckTimer.stop()
 
         // Don't stop the complete timer - let it handle failures
         // If the update actually failed, the timer will trigger and set updateFailed = true
@@ -111,6 +115,8 @@ Singleton {
         updateFailed = true
         updateCompleteTimer.stop()
         updateMonitorTimer.stop()
+        errorCheckTimer.stop()
+        successCheckTimer.stop()
         lastUpdateError = "Build or update error detected"
 
         // Refresh to check actual state
@@ -140,6 +146,8 @@ Singleton {
         updateFailed = false
         updateCompleteTimer.stop()
         updateMonitorTimer.stop()
+        errorCheckTimer.stop()
+        successCheckTimer.stop()
         lastUpdateError = ""
 
         // Refresh to check actual state
@@ -152,13 +160,26 @@ Singleton {
 
   // Timer to check for success more frequently when update is in progress
   Timer {
-    id: errorCheckTimer
+    id: successCheckTimer
     interval: 5000 // Check every 5 seconds
     repeat: true
     running: updateInProgress
     onTriggered: {
       if (updateInProgress && !successCheckProcess.running) {
         successCheckProcess.running = true
+      }
+    }
+  }
+
+  // Timer to check for errors more frequently when update is in progress
+  Timer {
+    id: errorCheckTimer
+    interval: 5000 // Check every 5 seconds
+    repeat: true
+    running: updateInProgress
+    onTriggered: {
+      if (updateInProgress && !errorCheckProcess.running) {
+        errorCheckProcess.running = true
       }
     }
   }
@@ -187,14 +208,23 @@ Singleton {
 
   // Initial check
   Component.onCompleted: {
-    // Initial poll without cooldown restriction
-    const aurHelper = getAurHelper()
-    if (aurHelper) {
-      checkAurUpdatesProcess.command = [aurHelper, "-Qu"]
-      checkAurOnlyProcess.command = [aurHelper, "-Qua"]
-      checkAurUpdatesProcess.running = true
-      lastPollTime = Date.now()
-    }
+    // Start AUR helper detection
+    getAurHelper()
+
+    // Use a timer to check for AUR helper after detection completes
+    Qt.callLater(() => {
+                   if (cachedAurHelper !== "") {
+                     checkAurUpdatesProcess.command = [cachedAurHelper, "-Qu"]
+                     checkAurOnlyProcess.command = [cachedAurHelper, getAurOnlyFlag()]
+                     checkAurUpdatesProcess.running = true
+                     lastPollTime = Date.now()
+                   } else {
+                     // No AUR helper found
+                     checkFailed = true
+                     lastCheckError = "No AUR helper found (yay or paru not installed)"
+                     Logger.warn("ArchUpdater", "No AUR helper found (yay or paru)")
+                   }
+                 }, 1000)
   }
 
   // ============================================================================
@@ -208,9 +238,12 @@ Singleton {
     onExited: function (exitCode) {
       if (exitCode !== 0) {
         Logger.warn("ArchUpdater", "AUR helper check failed (code:", exitCode, ")")
+        checkFailed = true
+        lastCheckError = "Failed to check for updates (exit code: " + exitCode + ")"
         aurPackages = []
         repoPackages = []
       }
+      // Don't clear checkFailed here - wait for the second process to complete
     }
     stdout: StdioCollector {
       onStreamFinished: {
@@ -226,10 +259,21 @@ Singleton {
     id: checkAurOnlyProcess
     command: []
     onExited: function (exitCode) {
-      if (exitCode !== 0) {
+      // For paru -Qua, exit code 1 means "no AUR updates available", which is valid
+      // For yay -Qua, exit code 0 means success
+      if (exitCode !== 0 && exitCode !== 1) {
         Logger.warn("ArchUpdater", "AUR helper AUR-only check failed (code:", exitCode, ")")
+        checkFailed = true
+        lastCheckError = "Failed to check AUR updates (exit code: " + exitCode + ")"
         aurPackages = []
         repoPackages = []
+      } else {
+        // Only clear checkFailed if both processes succeeded
+        // Check if the first process also succeeded (no error was set)
+        if (!checkFailed) {
+          checkFailed = false
+          lastCheckError = ""
+        }
       }
     }
     stdout: StdioCollector {
@@ -324,17 +368,21 @@ Singleton {
       return
     }
 
-    // Get the AUR helper and set commands
-    const aurHelper = getAurHelper()
-    if (aurHelper) {
-      checkAurUpdatesProcess.command = [aurHelper, "-Qu"]
-      checkAurOnlyProcess.command = [aurHelper, "-Qua"]
+    // Check if we have a cached AUR helper
+    if (cachedAurHelper !== "") {
+      checkAurUpdatesProcess.command = [cachedAurHelper, "-Qu"]
+      checkAurOnlyProcess.command = [cachedAurHelper, getAurOnlyFlag()]
 
       // Start AUR updates check (includes both repo and AUR packages)
       checkAurUpdatesProcess.running = true
       lastPollTime = Date.now()
     } else {
-      Logger.warn("ArchUpdater", "No AUR helper found (yay or paru)")
+      // AUR helper detection is still in progress or failed
+      // Try to detect again if not already in progress
+      if (!yayCheckProcess.running && !paruCheckProcess.running) {
+        getAurHelper()
+      }
+      Logger.warn("ArchUpdater", "AUR helper detection in progress or failed")
     }
   }
 
@@ -363,11 +411,16 @@ Singleton {
     const terminal = Quickshell.env("TERMINAL") || "xterm"
 
     // Check if we have an AUR helper for full system update
-    const aurHelper = getAurHelper()
-    if (aurHelper && (aurUpdates > 0 || updates > 0)) {
+    if (cachedAurHelper !== "" && (aurUpdates > 0 || updates > 0)) {
       // Use AUR helper for full system update (handles both repo and AUR)
-      const command = generateUpdateCommand(aurHelper + " -Syu")
+      const command = generateUpdateCommand(cachedAurHelper + " -Syu")
       Quickshell.execDetached([terminal, "-e", "bash", "-c", command])
+    } else if (cachedAurHelper === "") {
+      // No AUR helper found
+      updateInProgress = false
+      updateFailed = true
+      lastUpdateError = "No AUR helper found (yay or paru not installed)"
+      Logger.warn("ArchUpdater", "No AUR helper found for update")
     }
 
     // Start monitoring and timeout timers
@@ -407,12 +460,14 @@ Singleton {
 
     // Update all packages with AUR helper (handles both repo and AUR)
     if (selectedPackages.length > 0) {
-      const aurHelper = getAurHelper()
-      if (aurHelper) {
+      if (cachedAurHelper !== "") {
         const packageList = selectedPackages.join(" ")
-        const command = generateUpdateCommand(aurHelper + " -S " + packageList)
+        const command = generateUpdateCommand(cachedAurHelper + " -S " + packageList)
         Quickshell.execDetached([terminal, "-e", "bash", "-c", command])
       } else {
+        updateInProgress = false
+        updateFailed = true
+        lastUpdateError = "No AUR helper found (yay or paru not installed)"
         Logger.warn("ArchUpdater", "No AUR helper found for packages:", selectedPackages.join(", "))
       }
     }
@@ -432,9 +487,13 @@ Singleton {
 
     updateInProgress = false
     lastUpdateError = ""
+    checkFailed = false
+    lastCheckError = ""
     updateCompleteTimer.stop()
     updateMonitorTimer.stop()
     refreshTimer.stop()
+    errorCheckTimer.stop()
+    successCheckTimer.stop()
 
     // Refresh to get current state
     doPoll()
@@ -450,18 +509,24 @@ Singleton {
     // Clear error states when refreshing
     updateFailed = false
     lastUpdateError = ""
+    checkFailed = false
+    lastCheckError = ""
 
-    // Get the AUR helper and set commands
-    const aurHelper = getAurHelper()
-    if (aurHelper) {
-      checkAurUpdatesProcess.command = [aurHelper, "-Qu"]
-      checkAurOnlyProcess.command = [aurHelper, "-Qua"]
+    // Check if we have a cached AUR helper
+    if (cachedAurHelper !== "") {
+      checkAurUpdatesProcess.command = [cachedAurHelper, "-Qu"]
+      checkAurOnlyProcess.command = [cachedAurHelper, getAurOnlyFlag()]
 
       // Force refresh by bypassing cooldown
       checkAurUpdatesProcess.running = true
       lastPollTime = Date.now()
     } else {
-      Logger.warn("ArchUpdater", "No AUR helper found (yay or paru)")
+      // AUR helper detection is still in progress or failed
+      // Try to detect again if not already in progress
+      if (!yayCheckProcess.running && !paruCheckProcess.running) {
+        getAurHelper()
+      }
+      Logger.warn("ArchUpdater", "AUR helper detection in progress or failed")
     }
   }
 
@@ -512,9 +577,19 @@ Singleton {
     yayCheckProcess.running = true
     paruCheckProcess.running = true
 
-    // For now, return a default (will be updated by the processes)
-    // In a real implementation, you'd want to wait for the processes to complete
-    return "paru" // Default fallback
+    // Return empty string to indicate no helper found yet
+    // The processes will update cachedAurHelper when they complete
+    return ""
+  }
+
+  // Helper function to get the correct AUR-only flag for the detected helper
+  function getAurOnlyFlag() {
+    if (cachedAurHelper === "yay") {
+      return "-Qua"
+    } else if (cachedAurHelper === "paru") {
+      return "-Qua" // paru uses the same flag but different exit code behavior
+    }
+    return "-Qua" // fallback
   }
 
   // ============================================================================

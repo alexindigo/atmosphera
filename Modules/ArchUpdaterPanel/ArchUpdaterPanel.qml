@@ -68,7 +68,8 @@ NPanel {
 
       // Update summary (only show when packages are available)
       NText {
-        visible: !ArchUpdaterService.updateInProgress && !ArchUpdaterService.updateFailed && !ArchUpdaterService.aurBusy
+        visible: !ArchUpdaterService.updateInProgress && !ArchUpdaterService.updateFailed
+                 && !ArchUpdaterService.checkFailed && !ArchUpdaterService.aurBusy
                  && ArchUpdaterService.totalUpdates > 0
         text: ArchUpdaterService.totalUpdates + " package" + (ArchUpdaterService.totalUpdates !== 1 ? "s" : "") + " can be updated"
         font.pointSize: Style.fontSizeL * scaling
@@ -79,7 +80,8 @@ NPanel {
 
       // Package selection info (only show when not updating and have packages)
       NText {
-        visible: !ArchUpdaterService.updateInProgress && !ArchUpdaterService.updateFailed && !ArchUpdaterService.aurBusy
+        visible: !ArchUpdaterService.updateInProgress && !ArchUpdaterService.updateFailed
+                 && !ArchUpdaterService.checkFailed && !ArchUpdaterService.aurBusy
                  && ArchUpdaterService.totalUpdates > 0
         text: ArchUpdaterService.selectedPackagesCount + " of " + ArchUpdaterService.totalUpdates + " packages selected"
         font.pointSize: Style.fontSizeS * scaling
@@ -125,6 +127,58 @@ NPanel {
         Item {
           Layout.fillHeight: true
         } // Spacer
+      }
+
+      // Check failed state (AUR down, network issues, etc.)
+      Item {
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        visible: ArchUpdaterService.checkFailed && !ArchUpdaterService.updateInProgress
+                 && !ArchUpdaterService.updateFailed
+
+        ColumnLayout {
+          anchors.centerIn: parent
+          spacing: Style.marginM * scaling
+
+          NIcon {
+            text: "error"
+            font.pointSize: Style.fontSizeXXXL * scaling
+            color: Color.mError
+            Layout.alignment: Qt.AlignHCenter
+          }
+
+          NText {
+            text: "Cannot check for updates"
+            font.pointSize: Style.fontSizeL * scaling
+            color: Color.mOnSurface
+            Layout.alignment: Qt.AlignHCenter
+          }
+
+          NText {
+            text: ArchUpdaterService.lastCheckError
+                  || "AUR helper is unavailable or network connection failed. This could be due to AUR being down, network issues, or missing AUR helper (yay/paru)."
+            font.pointSize: Style.fontSizeNormal * scaling
+            color: Color.mOnSurfaceVariant
+            Layout.alignment: Qt.AlignHCenter
+            horizontalAlignment: Text.AlignHCenter
+            wrapMode: Text.Wrap
+            Layout.maximumWidth: 280 * scaling
+          }
+
+          // Prominent refresh button
+          NIconButton {
+            icon: "refresh"
+            tooltipText: "Try checking again"
+            sizeRatio: 1.2
+            colorBg: Color.mPrimary
+            colorFg: Color.mOnPrimary
+            onClicked: {
+              ArchUpdaterService.forceRefresh()
+            }
+            Layout.alignment: Qt.AlignHCenter
+            Layout.topMargin: Style.marginL * scaling
+          }
+        }
       }
 
       // Update failed state
@@ -181,7 +235,8 @@ NPanel {
       Item {
         Layout.fillWidth: true
         Layout.fillHeight: true
-        visible: !ArchUpdaterService.updateInProgress && !ArchUpdaterService.updateFailed && !ArchUpdaterService.aurBusy
+        visible: !ArchUpdaterService.updateInProgress && !ArchUpdaterService.updateFailed
+                 && !ArchUpdaterService.checkFailed && !ArchUpdaterService.aurBusy
                  && ArchUpdaterService.totalUpdates === 0
 
         ColumnLayout {
@@ -251,7 +306,8 @@ NPanel {
 
       // Package list (only show when not in any special state)
       NBox {
-        visible: !ArchUpdaterService.updateInProgress && !ArchUpdaterService.updateFailed && !ArchUpdaterService.aurBusy
+        visible: !ArchUpdaterService.updateInProgress && !ArchUpdaterService.updateFailed
+                 && !ArchUpdaterService.checkFailed && !ArchUpdaterService.aurBusy
                  && ArchUpdaterService.totalUpdates > 0
         Layout.fillWidth: true
         Layout.fillHeight: true
@@ -340,6 +396,7 @@ NPanel {
       // Action buttons (only show when not updating)
       RowLayout {
         visible: !ArchUpdaterService.updateInProgress && !ArchUpdaterService.updateFailed
+                 && !ArchUpdaterService.checkFailed
         Layout.fillWidth: true
         spacing: Style.marginL * scaling
 
