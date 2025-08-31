@@ -41,21 +41,6 @@ Loader {
   readonly property real barHeight: Style.barHeight * scaling
   readonly property bool barAtBottom: Settings.data.bar.position === "bottom"
 
-  // Helper function to check if bar is enabled on this screen
-  function isBarEnabled(screen) {
-    if (!screen || !screen.name)
-      return false
-    return Settings.data.bar.monitors.includes(screen.name) || (Settings.data.bar.monitors.length === 0)
-  }
-
-  // Helper function to get effective bar height (accounting for opacity)
-  function getEffectiveBarHeight(screen) {
-    if (!isBarEnabled(screen))
-      return 0
-    // If bar opacity is 0, treat it as if bar is not there for dimming purposes
-    return Settings.data.bar.backgroundOpacity > 0 ? barHeight : 0
-  }
-
   signal opened
   signal closed
 
@@ -147,19 +132,27 @@ Loader {
 
       visible: true
 
-      // Dim desktop if required - but exclude corners if screen corners are enabled
-      color: Color.transparent
+      // Dim desktop if required
+      color: (root.active && !root.isClosing && Settings.data.general.dimDesktop) ? Color.applyOpacity(
+                                                                                      Color.mShadow,
+                                                                                      "BB") : Color.transparent
 
       WlrLayershell.exclusionMode: ExclusionMode.Ignore
       WlrLayershell.namespace: "noctalia-panel"
       WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
 
+      Behavior on color {
+        ColorAnimation {
+          duration: Style.animationNormal
+        }
+      }
+
       anchors.top: true
       anchors.left: true
       anchors.right: true
       anchors.bottom: true
-      margins.top: !barAtBottom ? getEffectiveBarHeight(screen) : 0
-      margins.bottom: barAtBottom ? getEffectiveBarHeight(screen) : 0
+      margins.top: !barAtBottom ? barHeight : 0
+      margins.bottom: barAtBottom ? barHeight : 0
 
       // Close any panel with Esc without requiring focus
       Shortcut {
@@ -173,59 +166,6 @@ Loader {
       MouseArea {
         anchors.fill: parent
         onClicked: root.close()
-      }
-
-      // Dim overlay that excludes corners when screen corners are enabled
-      Item {
-        id: dimOverlay
-        anchors.fill: parent
-        visible: root.active && !root.isClosing && Settings.data.general.dimDesktop
-        opacity: visible ? 1.0 : 0.0
-
-        // Helper function to check if screen corners are enabled
-        function isScreenCornersEnabled() {
-          return Settings.data.general.showScreenCorners
-        }
-
-        // Helper function to get corner radius
-        function getCornerRadius() {
-          return 20 // Same as ScreenCorners innerRadius
-        }
-
-        // Helper function to get border width
-        function getBorderWidth() {
-          return Style.borderM
-        }
-
-        // Full screen dim when screen corners are disabled
-        Rectangle {
-          id: fullScreenDim
-          visible: dimOverlay.visible && !dimOverlay.isScreenCornersEnabled()
-          anchors.fill: parent
-          color: Color.applyOpacity(Color.mShadow, "BB")
-        }
-
-        // Masked dim when screen corners are enabled
-        Item {
-          id: maskedDim
-          visible: dimOverlay.visible && dimOverlay.isScreenCornersEnabled()
-          anchors.fill: parent
-
-          // Only dim the center area, leaving the entire border undimmed
-          Rectangle {
-            id: centerDim
-            anchors.margins: dimOverlay.getCornerRadius() + dimOverlay.getBorderWidth()
-            anchors.fill: parent
-            color: Color.applyOpacity(Color.mShadow, "BB")
-          }
-        }
-
-        // Behavior for dim overlay visibility
-        Behavior on opacity {
-          NumberAnimation {
-            duration: Style.animationNormal
-          }
-        }
       }
 
       Rectangle {

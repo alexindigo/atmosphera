@@ -41,14 +41,15 @@ Row {
   NText {
     id: fullTitleMetrics
     visible: false
-    text: titleText.text
-    font: titleText.font
+    text: getTitle()
+    font.pointSize: Style.fontSizeS * scaling
+    font.weight: Style.fontWeightMedium
   }
 
   Rectangle {
     // Let the Rectangle size itself based on its content (the Row)
     visible: root.visible
-    width: row.width + Style.marginM * scaling * 2
+    width: row.width + Style.marginS * scaling
     height: Math.round(Style.capsuleHeight * scaling)
     radius: Math.round(Style.radiusM * scaling)
     color: Color.mSurfaceVariant
@@ -60,6 +61,7 @@ Row {
       anchors.fill: parent
       anchors.leftMargin: Style.marginS * scaling
       anchors.rightMargin: Style.marginS * scaling
+      clip: true
 
       Row {
         id: row
@@ -86,9 +88,10 @@ Row {
         NText {
           id: titleText
 
-          // Collapsed width when not hovered, expand on hover
-          width: mouseArea.containsMouse ? Math.min(fullTitleMetrics.contentWidth + (Style.marginS * scaling),
-                                                    400 * scaling) : (minWidth * scaling)
+          // For short titles, show full. For long titles, truncate and expand on hover
+          width: mouseArea.containsMouse ? Math.min(fullTitleMetrics.contentWidth + 8,
+                                                    400 * scaling) : Math.min(fullTitleMetrics.contentWidth + 12,
+                                                                              200 * scaling)
           horizontalAlignment: Text.AlignLeft
           text: getTitle()
           font.pointSize: Style.fontSizeS * scaling
