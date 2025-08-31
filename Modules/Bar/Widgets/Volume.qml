@@ -81,7 +81,6 @@ Item {
     }
   }
 
-  // Check for wlsunset availability when enabling Night Light
   Process {
     id: pwvucontrolProcess
     command: ["pwvucontrol"]
