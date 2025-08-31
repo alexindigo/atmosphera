@@ -123,8 +123,7 @@ Singleton {
       stdout: StdioCollector {
         onStreamFinished: {
           var dataText = text.trim()
-          if (dataText === "") {        Logger.log("HERE", "TEXT: ", info[0], info[1]);
-
+          if (dataText === "") {
             return
           }
           Logger.log("Brightness", "Raw brightness data for", monitor.modelData.name + ":", dataText)
