@@ -244,7 +244,7 @@ NPanel {
       // Search bar
       Rectangle {
         Layout.fillWidth: true
-        Layout.preferredHeight: Style.barHeight * scaling
+        Layout.preferredHeight: Math.round(Style.barHeight * scaling)
         Layout.bottomMargin: Style.marginM * scaling
         radius: Style.radiusM * scaling
         color: Color.mSurface
