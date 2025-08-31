@@ -360,8 +360,15 @@ Singleton {
   function doPoll() {
     // Prevent excessive polling
     if (aurBusy || !canPoll) {
+      if (aurBusy) {
+        Logger.log("ArchUpdater", "Poll skipped - already checking for updates")
+      } else {
+        Logger.log("ArchUpdater", "Poll skipped - cooldown period active")
+      }
       return
     }
+
+    Logger.log("ArchUpdater", "Automatic poll triggered")
 
     // Check if we have a cached AUR helper
     if (cachedAurHelper !== "") {
@@ -374,6 +381,9 @@ Singleton {
       checkAurUpdatesProcess.command = [cachedAurHelper, "-Qu"]
       checkAurOnlyProcess.command = [cachedAurHelper, getAurOnlyFlag()]
 
+      Logger.log("ArchUpdater", "Poll commands:", cachedAurHelper + " -Qu", "and",
+                 cachedAurHelper + " " + getAurOnlyFlag())
+
       // Start AUR updates check (includes both repo and AUR packages)
       checkAurUpdatesProcess.running = true
       lastPollTime = Date.now()
@@ -381,6 +391,7 @@ Singleton {
       // AUR helper detection is still in progress or failed
       // Try to detect again if not already in progress
       if (!yayCheckProcess.running && !paruCheckProcess.running) {
+        Logger.log("ArchUpdater", "No AUR helper cached, starting detection...")
         getAurHelper()
       }
       Logger.warn("ArchUpdater", "AUR helper detection in progress or failed")
@@ -399,6 +410,7 @@ Singleton {
   // Update all packages (repo + AUR)
   function runUpdate() {
     if (totalUpdates === 0) {
+      Logger.log("ArchUpdater", "No updates available, polling for updates...")
       doPoll()
       return
     }
@@ -415,6 +427,8 @@ Singleton {
     if (cachedAurHelper !== "" && (aurUpdates > 0 || updates > 0)) {
       // Use AUR helper for full system update (handles both repo and AUR)
       const command = generateUpdateCommand(cachedAurHelper + " -Syu")
+      Logger.log("ArchUpdater", "Full update command:", cachedAurHelper + " -Syu")
+      Logger.log("ArchUpdater", "Executing in terminal:", terminal)
       Quickshell.execDetached([terminal, "-e", "bash", "-c", command])
     } else if (cachedAurHelper === "") {
       // No AUR helper found
@@ -483,6 +497,8 @@ Singleton {
 
   // Reset update state (useful for manual recovery)
   function resetUpdateState() {
+    Logger.log("ArchUpdater", "Reset update state triggered")
+
     // Clear all update states
     updateInProgress = false
     updateFailed = false
@@ -503,8 +519,11 @@ Singleton {
   function forceRefresh() {
     // Prevent multiple simultaneous refreshes
     if (aurBusy) {
+      Logger.log("ArchUpdater", "Refresh skipped - already checking for updates")
       return
     }
+
+    Logger.log("ArchUpdater", "Manual refresh triggered")
 
     // Clear error states when refreshing
     updateFailed = false
@@ -523,6 +542,9 @@ Singleton {
       checkAurUpdatesProcess.command = [cachedAurHelper, "-Qu"]
       checkAurOnlyProcess.command = [cachedAurHelper, getAurOnlyFlag()]
 
+      Logger.log("ArchUpdater", "Refresh commands:", cachedAurHelper + " -Qu", "and",
+                 cachedAurHelper + " " + getAurOnlyFlag())
+
       // Force refresh by bypassing cooldown
       checkAurUpdatesProcess.running = true
       lastPollTime = Date.now()
@@ -530,6 +552,7 @@ Singleton {
       // AUR helper detection is still in progress or failed
       // Try to detect again if not already in progress
       if (!yayCheckProcess.running && !paruCheckProcess.running) {
+        Logger.log("ArchUpdater", "No AUR helper cached, starting detection...")
         getAurHelper()
       }
       Logger.warn("ArchUpdater", "AUR helper detection in progress or failed")

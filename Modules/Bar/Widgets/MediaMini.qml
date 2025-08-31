@@ -146,8 +146,7 @@ Row {
           width: {
             if (mouseArea.containsMouse) {
               return Math.round(Math.min(fullTitleMetrics.contentWidth, root.maxWidth * scaling))
-            }
-            else {
+            } else {
               return Math.round(Math.min(fullTitleMetrics.contentWidth, root.minWidth * scaling))
             }
           }

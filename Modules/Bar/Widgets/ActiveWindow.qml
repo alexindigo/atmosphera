@@ -19,7 +19,6 @@ Row {
   spacing: Style.marginS * scaling
   visible: getTitle() !== ""
 
-
   function getTitle() {
     // Use the service's focusedWindowTitle property which is updated immediately
     // when WindowOpenedOrChanged events are received
@@ -89,8 +88,7 @@ Row {
           width: {
             if (mouseArea.containsMouse) {
               return Math.round(Math.min(fullTitleMetrics.contentWidth, root.maxWidth * scaling))
-            }
-            else {
+            } else {
               return Math.round(Math.min(fullTitleMetrics.contentWidth, root.minWidth * scaling))
             }
           }

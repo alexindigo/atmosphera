@@ -1,4 +1,4 @@
-pragma ComponentBehavior: Bound
+pragma ComponentBehavior
 
 import QtQuick
 import QtQuick.Controls
@@ -65,9 +65,10 @@ Rectangle {
           cursorShape: Qt.PointingHandCursor
           acceptedButtons: Qt.LeftButton | Qt.RightButton
 
-          onPressed: function(mouse) {
-            if (!taskbarItem.modelData) return
-            
+          onPressed: function (mouse) {
+            if (!taskbarItem.modelData)
+              return
+
             if (mouse.button === Qt.LeftButton) {
               try {
                 taskbarItem.modelData.activate()
