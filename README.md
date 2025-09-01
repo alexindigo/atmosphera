@@ -113,7 +113,7 @@ If you want the latest development version directly from the git repository, you
 ```bash
 paru -S noctalia-shell-git
 ```
-This will always build the most recent commit from the Noctalia repository. Note that it may be less stable than the release version.
+This will always pull the most recent commit from the Noctalia repository. Note that it may be less stable than the release version.
 
 </details>
 
@@ -122,11 +122,14 @@ This will always build the most recent commit from the Noctalia repository. Note
 
 This method installs the shell to your local user configuration.
 
+Make sure you have Quickshell installed:
 ```bash
-# Install Quickshell
 paru -S quickshell-git
-# Download and install Noctalia (latest release)
-mkdir -p ~/.config/quickshell && curl -sL https://github.com/noctalia-dev/noctalia-shell/releases/latest/download/noctalia-latest.tar.gz | tar -xz --strip-components=1 -C ~/.config/quickshell
+```
+
+Download and install Noctalia (latest release):
+```bash
+mkdir -p ~/.config/quickshell/noctalia-shell && curl -sL https://github.com/noctalia-dev/noctalia-shell/releases/latest/download/noctalia-latest.tar.gz | tar -xz --strip-components=1 -C ~/.config/quickshell/noctalia-shell
 ```
 
 </details>
@@ -189,11 +192,11 @@ Alternatively, you can add it to your NixOS configuration or flake:
 ### Usage
 
 <details>
-<summary> Nix/AUR </summary>
-The following commands apply to the Nix flake and also the AUR package installation.
+<summary> Nix </summary>
+The following commands apply to the Nix flake installation.
 
-| Action                      | Command                                   |
-| --------------------------- | ----------------------------------------- |
+| Action                      | Command                                               |
+| --------------------------- | ----------------------------------------------------- |
 | Start the Shell             | `noctalia-shell`                                      |
 | Toggle Application Launcher | `noctalia-shell ipc call launcher toggle`             |
 | Toggle Side Panel           | `noctalia-shell ipc call sidePanel toggle`            |
@@ -215,24 +218,28 @@ The following commands apply to the Nix flake and also the AUR package installat
 
 
 <details>
-<summary> Manual install </summary>
+<summary> AUR/Manual install </summary>
 
-The following commands apply to a manual installation.
+The following commands apply to both AUR package and manual installation.
 
-| Action                      | Command                                   |
-| --------------------------- | ----------------------------------------- |
-| Start the Shell             | `qs`                                      |
-| Toggle Application Launcher | `qs ipc call launcher toggle`             |
-| Toggle Side Panel           | `qs ipc call sidePanel toggle`            |
-| Open Clipboard History      | `qs ipc call launcher clipboard`          |
-| Open Calculator             | `qs ipc call launcher calculator`         |
-| Increase Brightness         | `qs ipc call brightness increase`         |
-| Decrease Brightness         | `qs ipc call brightness decrease`         |
-| Toggle Power Panel          | `qs ipc call powerPanel toggle`           |
-| Toggle Idle Inhibitor       | `qs ipc call idleInhibitor toggle`        |
-| Toggle Settings Window      | `qs ipc call settings toggle`             |
-| Toggle Lock Screen          | `qs ipc call lockScreen toggle`           |
-| Toggle Notification History | `qs ipc call notifications toggleHistory` |
+| Action                      | Command                                                     |
+| --------------------------- | ----------------------------------------------------------- |
+| Start the Shell             | `qs -c noctalia-shell`                                      |
+| Toggle Application Launcher | `qs -c noctalia-shell ipc call launcher toggle`             |
+| Toggle Side Panel           | `qs -c noctalia-shell ipc call sidePanel toggle`            |
+| Open Clipboard History      | `qs -c noctalia-shell ipc call launcher clipboard`          |
+| Open Calculator             | `qs -c noctalia-shell ipc call launcher calculator`         |
+| Increase Brightness         | `qs -c noctalia-shell ipc call brightness increase`         |
+| Decrease Brightness         | `qs -c noctalia-shell ipc call brightness decrease`         |
+| Increase Output Volume      | `qs -c noctalia-shell ipc call volume increase`             |
+| Decrease Output Volume      | `qs -c noctalia-shell ipc call volume decrease`             |
+| Toggle Mute Audio Output    | `qs -c noctalia-shell ipc call volume muteOutput`           |
+| Toggle Mute Audio Input     | `qs -c noctalia-shell ipc call volume muteInput`            |
+| Toggle Power Panel          | `qs -c noctalia-shell ipc call powerPanel toggle`           |
+| Toggle Idle Inhibitor       | `qs -c noctalia-shell ipc call idleInhibitor toggle`        |
+| Toggle Settings Window      | `qs -c noctalia-shell ipc call settings toggle`             |
+| Toggle Lock Screen          | `qs -c noctalia-shell ipc call lockScreen toggle`           |
+| Toggle Notification History | `qs -c noctalia-shell ipc call notifications toggleHistory` |
 
 </details>
 
