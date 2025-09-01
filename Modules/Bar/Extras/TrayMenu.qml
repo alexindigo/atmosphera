@@ -17,6 +17,15 @@ PopupWindow {
   property ShellScreen screen
   property real scaling: ScalingService.getScreenScale(screen)
 
+  Connections {
+    target: ScalingService
+    function onScaleChanged(screenName, scale) {
+      if ((screen != null) && (screenName === screen.name)) {
+        scaling = scale
+      }
+    }
+  }
+
   readonly property int menuWidth: 180
 
   implicitWidth: menuWidth * scaling
