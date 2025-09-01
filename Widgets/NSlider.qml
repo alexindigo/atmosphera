@@ -77,6 +77,12 @@ Slider {
       border.color: Color.mPrimary
       border.width: Math.max(1, Style.borderL * scaling)
 
+      Behavior on color {
+        ColorAnimation {
+          duration: Style.animationFast
+        }
+      }
+
       // Press feedback halo (using accent color, low opacity)
       Rectangle {
         anchors.centerIn: parent

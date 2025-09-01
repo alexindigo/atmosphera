@@ -49,7 +49,6 @@ RowLayout {
     Behavior on border.color {
       ColorAnimation {
         duration: Style.animationFast
-        easing.type: Easing.InOutCubic
       }
     }
 
@@ -126,7 +125,6 @@ RowLayout {
       Behavior on color {
         ColorAnimation {
           duration: Style.animationFast
-          easing.type: Easing.InOutCubic
         }
       }
 

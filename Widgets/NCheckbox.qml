@@ -37,6 +37,18 @@ RowLayout {
     border.color: root.checked ? root.activeColor : Color.mOutline
     border.width: Math.max(1, Style.borderM * scaling)
 
+    Behavior on color {
+      ColorAnimation {
+        duration: Style.animationNormal
+      }
+    }
+
+    Behavior on border.color {
+      ColorAnimation {
+        duration: Style.animationNormal
+      }
+    }
+
     NIcon {
       visible: root.checked
       anchors.centerIn: parent
@@ -58,17 +70,6 @@ RowLayout {
         root.exited()
       }
       onClicked: root.toggled(!root.checked)
-    }
-
-    Behavior on color {
-      ColorAnimation {
-        duration: Style.animationFast
-      }
-    }
-    Behavior on border.color {
-      ColorAnimation {
-        duration: Style.animationFast
-      }
     }
   }
 }

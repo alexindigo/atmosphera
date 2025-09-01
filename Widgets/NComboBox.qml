@@ -56,6 +56,12 @@ RowLayout {
       border.color: combo.activeFocus ? Color.mSecondary : Color.mOutline
       border.width: Math.max(1, Style.borderS * scaling)
       radius: Style.radiusM * scaling
+
+      Behavior on border.color {
+        ColorAnimation {
+          duration: Style.animationFast
+        }
+      }
     }
 
     contentItem: NText {
@@ -113,12 +119,22 @@ RowLayout {
             color: highlighted ? Color.mSurface : Color.mOnSurface
             verticalAlignment: Text.AlignVCenter
             elide: Text.ElideRight
+            Behavior on color {
+              ColorAnimation {
+                duration: Style.animationFast
+              }
+            }
           }
 
           background: Rectangle {
             width: combo.width - Style.marginM * scaling * 3
-            color: highlighted ? Color.mSecondary : Color.transparent
+            color: highlighted ? Color.mTertiary : Color.transparent
             radius: Style.radiusS * scaling
+            Behavior on color {
+              ColorAnimation {
+                duration: Style.animationFast
+              }
+            }
           }
         }
       }

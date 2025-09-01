@@ -34,6 +34,18 @@ RowLayout {
     border.color: root.checked ? Color.mPrimary : Color.mOutline
     border.width: Math.max(1, Style.borderM * scaling)
 
+    Behavior on color {
+      ColorAnimation {
+        duration: Style.animationFast
+      }
+    }
+
+    Behavior on border.color {
+      ColorAnimation {
+        duration: Style.animationFast
+      }
+    }
+
     Rectangle {
       implicitWidth: (root.baseSize - 5) * scaling
       implicitHeight: (root.baseSize - 5) * scaling

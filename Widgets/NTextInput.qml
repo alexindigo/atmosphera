@@ -51,6 +51,12 @@ ColumnLayout {
       color: Color.transparent
       border.color: input.activeFocus ? Color.mSecondary : Color.transparent
       border.width: input.activeFocus ? Math.max(1, Style.borderS * scaling) : 0
+
+      Behavior on border.color {
+        ColorAnimation {
+          duration: Style.animationFast
+        }
+      }
     }
 
     RowLayout {
