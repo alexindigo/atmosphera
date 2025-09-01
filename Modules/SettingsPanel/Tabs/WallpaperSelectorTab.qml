@@ -53,7 +53,7 @@ ColumnLayout {
     Layout.fillWidth: true
     Layout.preferredHeight: 140 * scaling
     radius: Style.radiusM * scaling
-    color: Color.mSecondary
+    color: Color.transparent
 
     NImageRounded {
       anchors.fill: parent
@@ -61,6 +61,8 @@ ColumnLayout {
       imagePath: currentWallpaper
       fallbackIcon: "image"
       imageRadius: Style.radiusM * scaling
+      borderColor: Color.mSecondary
+      borderWidth: Style.borderL * 2 * scaling
     }
   }
 
