@@ -158,6 +158,7 @@ ColumnLayout {
       // Left Section
       NSectionEditor {
         sectionName: "Left"
+        sectionId: "left"
         widgetModel: Settings.data.bar.widgets.left
         availableWidgets: availableWidgets
         onAddWidget: (widgetName, section) => addWidgetToSection(widgetName, section)
@@ -168,6 +169,7 @@ ColumnLayout {
       // Center Section
       NSectionEditor {
         sectionName: "Center"
+        sectionId: "center"
         widgetModel: Settings.data.bar.widgets.center
         availableWidgets: availableWidgets
         onAddWidget: (widgetName, section) => addWidgetToSection(widgetName, section)
@@ -178,6 +180,7 @@ ColumnLayout {
       // Right Section
       NSectionEditor {
         sectionName: "Right"
+        sectionId: "right"
         widgetModel: Settings.data.bar.widgets.right
         availableWidgets: availableWidgets
         onAddWidget: (widgetName, section) => addWidgetToSection(widgetName, section)
@@ -197,6 +200,7 @@ ColumnLayout {
   function addWidgetToSection(widgetName, section) {
     //Logger.log("BarTab", "Adding widget", widgetName, "to section", section)
     var sectionArray = Settings.data.bar.widgets[section]
+
     if (sectionArray) {
       // Create a new array to avoid modifying the original
       var newArray = sectionArray.slice()

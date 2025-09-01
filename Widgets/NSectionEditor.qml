@@ -8,6 +8,7 @@ NBox {
   id: root
 
   property string sectionName: ""
+  property string sectionId: ""
   property var widgetModel: []
   property var availableWidgets: []
 
@@ -73,7 +74,7 @@ NBox {
         model: availableWidgets
         label: ""
         description: ""
-        placeholder: "Add widget to the " + sectionName.toLowerCase() + " section..."
+        placeholder: "Select a widget to add..."
         onSelected: key => {
                       comboBox.currentKey = key
                     }
@@ -88,12 +89,12 @@ NBox {
         colorBgHover: Color.mSecondary
         colorFgHover: Color.mOnSecondary
         enabled: comboBox.currentKey !== ""
-        tooltipText: "Add widget to this section"
+        tooltipText: "Add widget to section"
         Layout.alignment: Qt.AlignVCenter
         Layout.leftMargin: Style.marginS * scaling
         onClicked: {
           if (comboBox.currentKey !== "") {
-            addWidget(comboBox.currentKey, sectionName.toLowerCase())
+            addWidget(comboBox.currentKey, sectionId)
             comboBox.currentKey = ""
           }
         }
@@ -167,7 +168,7 @@ NBox {
               colorBgHover: Color.applyOpacity(Color.mOnPrimary, "40")
               colorFgHover: Color.mOnPrimary
               onClicked: {
-                removeWidget(sectionName.toLowerCase(), index)
+                removeWidget(sectionId, index)
               }
             }
           }
@@ -239,7 +240,7 @@ NBox {
                 //       "NSectionEditor",
                 //       `Dropped widget from index ${fromIndex} to position ${toIndex} (distance: ${minDistance.toFixed(
                 //         2)})`)
-                reorderWidget(sectionName.toLowerCase(), fromIndex, toIndex)
+                reorderWidget(sectionId, fromIndex, toIndex)
               } else {
                 Logger.warn("NSectionEditor", `No valid drop target found for widget at index ${index}`)
               }
@@ -277,7 +278,7 @@ NBox {
           const toIndex = 0 // Insert at the beginning
           if (fromIndex !== toIndex) {
             //Logger.log("NSectionEditor", `Dropped widget from index ${fromIndex} to beginning`)
-            reorderWidget(sectionName.toLowerCase(), fromIndex, toIndex)
+            reorderWidget(sectionId, fromIndex, toIndex)
           }
         }
       }
@@ -311,7 +312,7 @@ NBox {
           const toIndex = widgetModel.length // Insert at the end
           if (fromIndex !== toIndex) {
             //Logger.log("NSectionEditor", `Dropped widget from index ${fromIndex} to end`)
-            reorderWidget(sectionName.toLowerCase(), fromIndex, toIndex)
+            reorderWidget(sectionId, fromIndex, toIndex)
           }
         }
       }
