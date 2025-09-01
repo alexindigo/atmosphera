@@ -48,11 +48,14 @@ NBox {
     // Wallpaper
     NIconButton {
       icon: "image"
-      tooltipText: "Open wallpaper selector"
+      tooltipText: "Left click: Open wallpaper selector\nRight click: Set random wallpaper"
       onClicked: {
         var settingsPanel = PanelService.getPanel("settingsPanel")
         settingsPanel.requestedTab = SettingsPanel.Tab.WallpaperSelector
         settingsPanel.open(screen)
+      }
+      onRightClicked: {
+        WallpaperService.setRandomWallpaper()
       }
     }
 
