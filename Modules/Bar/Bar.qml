@@ -16,7 +16,16 @@ Variants {
     id: root
 
     required property ShellScreen modelData
-    readonly property real scaling: modelData ? ScalingService.scale(modelData) : 1.0
+    property real scaling: ScalingService.getScreenScale(modelData)
+
+    Connections {
+      target: ScalingService
+      function onScaleChanged(screenName, scale) {
+        if ((modelData !== null) && (screenName === modelData.name)) {
+          scaling = scale
+        }
+      }
+    }
 
     active: Settings.isLoaded && modelData && modelData.name ? (Settings.data.bar.monitors.includes(modelData.name)
                                                                 || (Settings.data.bar.monitors.length === 0)) : false
@@ -67,6 +76,7 @@ Variants {
               widgetName: modelData
               widgetProps: {
                 "screen": root.modelData || null,
+                "scaling": ScalingService.getScreenScale(screen),
                 "barSection": parent.objectName,
                 "sectionWidgetIndex": index,
                 "sectionWidgetsCount": Settings.data.bar.widgets.left.length
@@ -90,9 +100,11 @@ Variants {
           Repeater {
             model: Settings.data.bar.widgets.center
             delegate: NWidgetLoader {
+
               widgetName: modelData
               widgetProps: {
                 "screen": root.modelData || null,
+                "scaling": ScalingService.getScreenScale(screen),
                 "barSection": parent.objectName,
                 "sectionWidgetIndex": index,
                 "sectionWidgetsCount": Settings.data.bar.widgets.center.length
@@ -120,6 +132,7 @@ Variants {
               widgetName: modelData
               widgetProps: {
                 "screen": root.modelData || null,
+                "scaling": ScalingService.getScreenScale(screen),
                 "barSection": parent.objectName,
                 "sectionWidgetIndex": index,
                 "sectionWidgetsCount": Settings.data.bar.widgets.right.length

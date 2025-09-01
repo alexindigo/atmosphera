@@ -14,7 +14,7 @@ Rectangle {
   id: root
 
   property ShellScreen screen
-  property real scaling: ScalingService.scale(screen)
+  property real scaling: 1.0
   readonly property real itemSize: 24 * scaling
 
   visible: SystemTray.items.values.length > 0

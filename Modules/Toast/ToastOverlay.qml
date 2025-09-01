@@ -11,7 +11,15 @@ Variants {
 
   delegate: Loader {
     required property ShellScreen modelData
-    readonly property real scaling: ScalingService.scale(modelData)
+    property real scaling: ScalingService.getScreenScale(modelData)
+    Connections {
+      target: ScalingService
+      function onScaleChanged(screenName, scale) {
+        if (screenName === modelData.name) {
+          scaling = scale
+        }
+      }
+    }
 
     // Only show on screens that have notifications enabled
     active: Settings.isLoaded && modelData ? (Settings.data.notifications.monitors.includes(modelData.name)

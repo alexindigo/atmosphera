@@ -51,6 +51,16 @@ ColumnLayout {
         border.width: Math.max(1, Style.borderS * scaling)
         implicitHeight: contentCol.implicitHeight + Style.marginXL * 2 * scaling
 
+        property real localScaling: ScalingService.getScreenScale(modelData)
+        Connections {
+          target: ScalingService
+          function onScaleChanged(screenName, scale) {
+            if (screenName === modelData.name) {
+              localScaling = scale
+            }
+          }
+        }
+
         ColumnLayout {
           id: contentCol
           anchors.fill: parent
@@ -148,7 +158,7 @@ ColumnLayout {
                 }
 
                 NText {
-                  text: `${Math.round(ScalingService.getMonitorScale(modelData.name) * 100)}%`
+                  text: `${Math.round(localScaling * 100)}%`
                   Layout.alignment: Qt.AlignVCenter
                   Layout.minimumWidth: 50 * scaling
                   horizontalAlignment: Text.AlignRight
@@ -164,8 +174,8 @@ ColumnLayout {
                   from: 0.7
                   to: 1.8
                   stepSize: 0.01
-                  value: ScalingService.getMonitorScale(modelData.name)
-                  onPressedChanged: ScalingService.setMonitorScale(modelData.name, value)
+                  value: localScaling
+                  onPressedChanged: ScalingService.setScreenScale(modelData, value)
                   Layout.fillWidth: true
                   Layout.minimumWidth: 150 * scaling
                 }
@@ -173,7 +183,7 @@ ColumnLayout {
                 NIconButton {
                   icon: "refresh"
                   tooltipText: "Reset scaling"
-                  onClicked: ScalingService.setMonitorScale(modelData.name, 1.0)
+                  onClicked: ScalingService.setScreenScale(modelData, 1.0)
                 }
               }
             }

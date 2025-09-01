@@ -16,13 +16,22 @@ Loader {
       id: root
 
       required property ShellScreen modelData
-      readonly property real scaling: ScalingService.scale(screen)
+      property real scaling: ScalingService.getScreenScale(screen)
       screen: modelData
 
       property color cornerColor: Qt.rgba(Color.mSurface.r, Color.mSurface.g, Color.mSurface.b,
                                           Settings.data.bar.backgroundOpacity)
       property real cornerRadius: 20 * scaling
       property real cornerSize: 20 * scaling
+
+      Connections {
+        target: ScalingService
+        function onScaleChanged(screenName, scale) {
+          if (screenName === screen.name) {
+            scaling = scale
+          }
+        }
+      }
 
       color: Color.transparent
 

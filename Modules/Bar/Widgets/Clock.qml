@@ -8,7 +8,7 @@ Rectangle {
   id: root
 
   property ShellScreen screen
-  property real scaling: ScalingService.scale(screen)
+  property real scaling: 1.0
 
   implicitWidth: clock.width + Style.marginM * 2 * scaling
   implicitHeight: Math.round(Style.capsuleHeight * scaling)

@@ -16,7 +16,7 @@ Variants {
     id: root
 
     required property ShellScreen modelData
-    readonly property real scaling: ScalingService.scale(modelData)
+    readonly property real scaling: ScalingService.getScreenScale(modelData)
 
     // Access the notification model from the service
     property ListModel notificationModel: NotificationService.notificationModel

@@ -12,7 +12,7 @@ Item {
   id: root
 
   property ShellScreen screen: null
-  property real scaling: ScalingService.scale(screen)
+  property real scaling: 1.0
 
   property bool isDestroying: false
   property bool hovered: false

@@ -15,7 +15,7 @@ PopupWindow {
   property bool isSubMenu: false
   property bool isHovered: rootMouseArea.containsMouse
   property ShellScreen screen
-  property real scaling: screen ? ScalingService.scale(screen) : 1.0
+  property real scaling: ScalingService.getScreenScale(screen)
 
   readonly property int menuWidth: 180
 

@@ -11,7 +11,7 @@ Row {
   id: root
 
   property ShellScreen screen
-  property real scaling: ScalingService.scale(screen)
+  property real scaling: 1.0
   readonly property real minWidth: 160
   readonly property real maxWidth: 400
 

@@ -12,7 +12,7 @@ import qs.Widgets
 Rectangle {
   id: root
   property ShellScreen screen
-  property real scaling: ScalingService.scale(screen)
+  property real scaling: 1.0
 
   readonly property real itemSize: Style.baseWidgetSize * 0.8 * scaling
 

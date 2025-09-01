@@ -11,7 +11,16 @@ Loader {
   asynchronous: true
 
   property ShellScreen screen
-  readonly property real scaling: screen ? ScalingService.scale(screen) : 1.0
+  property real scaling: ScalingService.getScreenScale(screen)
+
+  Connections {
+    target: ScalingService
+    function onScaleChanged(screenName, scale) {
+      if ((screen !== null) && (screenName === screen.name)) {
+        scaling = scale
+      }
+    }
+  }
 
   property Component panelContent: null
   property int panelWidth: 1500

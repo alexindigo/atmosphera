@@ -10,7 +10,7 @@ Item {
   id: root
 
   property ShellScreen screen
-  property real scaling: ScalingService.scale(screen)
+  property real scaling: 1.0
   property string barSection: ""
   property int sectionWidgetIndex: 0
   property int sectionWidgetsCount: 0

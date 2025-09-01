@@ -11,7 +11,7 @@ NIconButton {
   id: root
 
   property ShellScreen screen
-  property real scaling: ScalingService.scale(screen)
+  property real scaling: 1.0
 
   sizeRatio: 0.8
   icon: "notifications"

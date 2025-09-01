@@ -10,6 +10,15 @@ Item {
   property var widgetProps: ({})
   property bool enabled: true
 
+  Connections {
+    target: ScalingService
+    function onScaleChanged(screenName, scale) {
+      if ((loader.item.screen !== null) && (screenName === loader.item.screen.name)) {
+        loader.item['scaling'] = scale
+      }
+    }
+  }
+
   // Don't reserve space unless the loaded widget is really visible
   implicitWidth: loader.item ? loader.item.visible ? loader.item.implicitWidth : 0 : 0
   implicitHeight: loader.item ? loader.item.visible ? loader.item.implicitHeight : 0 : 0

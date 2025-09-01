@@ -30,6 +30,9 @@ Singleton {
 
   property bool isLoaded: false
 
+  // Signal emitted when settings are loaded after startupcale changes
+  signal settingsLoaded
+
   // Function to validate monitor configurations
   function validateMonitorConfigurations() {
     var availableScreenNames = []
@@ -93,6 +96,9 @@ Singleton {
         Logger.log("Settings", "----------------------------")
         Logger.log("Settings", "Settings loaded successfully")
         isLoaded = true
+
+        // Emit the signal
+        root.settingsLoaded()
 
         Qt.callLater(function () {
           // Some stuff like settings validation should just be executed once on startup and not on every reload
