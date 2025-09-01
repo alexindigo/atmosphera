@@ -65,9 +65,10 @@ Variants {
         blurMax: 128
       }
 
+      // Make the overview darker
       Rectangle {
         anchors.fill: parent
-        color: Qt.rgba(Color.mSurface.r, Color.mSurface.g, Color.mSurface.b, 0.5)
+        color: Settings.data.colorSchemes.darkMode ? Qt.rgba(Color.mSurface.r, Color.mSurface.g, Color.mSurface.b, 0.5) : Qt.rgba(Color.mOnSurface.r, Color.mOnSurface.g, Color.mOnSurface.b, 0.5)
       }
     }
   }

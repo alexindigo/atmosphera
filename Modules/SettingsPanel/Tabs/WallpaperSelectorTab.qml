@@ -191,7 +191,7 @@ ColumnLayout {
         Rectangle {
           anchors.fill: parent
           color: Color.mSurface
-          opacity: (mouseArea.containsMouse || isSelected) ? 0 : 0.4
+          opacity: (mouseArea.containsMouse || isSelected) ? 0 : 0.3
           radius: parent.radius
 
           Behavior on opacity {
