@@ -116,7 +116,7 @@ NBox {
           required property int index
           required property string modelData
 
-          width: widgetContent.implicitWidth + 16 * scaling
+          width: widgetContent.implicitWidth + Style.marginL * scaling
           height: 40 * scaling
           radius: Style.radiusL * scaling
           color: root.getWidgetColor(modelData)
@@ -145,6 +145,7 @@ NBox {
 
           RowLayout {
             id: widgetContent
+
             anchors.centerIn: parent
             spacing: Style.marginXS * scaling
 
@@ -153,6 +154,8 @@ NBox {
               font.pointSize: Style.fontSizeS * scaling
               color: Color.mOnPrimary
               horizontalAlignment: Text.AlignHCenter
+              elide: Text.ElideRight
+              Layout.preferredWidth: 80 * scaling
             }
 
             NIconButton {
