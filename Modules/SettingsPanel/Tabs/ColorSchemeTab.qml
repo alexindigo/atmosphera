@@ -247,38 +247,43 @@ ColumnLayout {
 
               // Color swatches
               RowLayout {
+                id: swatches
+
+
                 spacing: Style.marginS * scaling
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignHCenter
 
+                readonly property int swatchSize: 20 * scaling
+
                 // Primary color swatch
                 Rectangle {
-                  width: 28 * scaling
-                  height: 28 * scaling
+                  width: swatches.swatchSize
+                  height: swatches.swatchSize
                   radius: width * 0.5
                   color: getSchemeColor(modelData, "mPrimary")
                 }
 
                 // Secondary color swatch
                 Rectangle {
-                  width: 28 * scaling
-                  height: 28 * scaling
+                  width: swatches.swatchSize
+                  height: swatches.swatchSize
                   radius: width * 0.5
                   color: getSchemeColor(modelData, "mSecondary")
                 }
 
                 // Tertiary color swatch
                 Rectangle {
-                  width: 28 * scaling
-                  height: 28 * scaling
+                  width: swatches.swatchSize
+                  height: swatches.swatchSize
                   radius: width * 0.5
                   color: getSchemeColor(modelData, "mTertiary")
                 }
 
                 // Error color swatch
                 Rectangle {
-                  width: 28 * scaling
-                  height: 28 * scaling
+                  width: swatches.swatchSize
+                  height: swatches.swatchSize
                   radius: width * 0.5
                   color: getSchemeColor(modelData, "mError")
                 }
