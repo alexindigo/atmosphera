@@ -12,7 +12,11 @@ NPanel {
   id: root
 
   panelWidth: Math.round(Math.max(screen?.width * 0.4, 1000) * scaling)
-  panelHeight: Math.round(Math.max(screen?.height * 0.75, 800) * scaling)
+  panelHeight: {
+    var height = Math.round(Math.max(screen?.height * 0.75, 800) * scaling)
+    height = Math.min(height, screen?.height - Style.barHeight * scaling)
+    return height
+  }
   panelAnchorHorizontalCenter: true
   panelAnchorVerticalCenter: true
 
