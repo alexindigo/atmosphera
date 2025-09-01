@@ -100,7 +100,7 @@ ColumnLayout {
       interactive: false
       clip: true
 
-      property int columns: 5
+      property int columns: 4
       property int itemSize: Math.floor((width - leftMargin - rightMargin - (4 * Style.marginS * scaling)) / columns)
 
       cellWidth: Math.floor((width - leftMargin - rightMargin) / columns)
@@ -118,7 +118,7 @@ ColumnLayout {
         property bool isSelected: screen ? (wallpaperPath === WallpaperService.getWallpaper(screen.name)) : false
 
         width: wallpaperGridView.itemSize
-        height: Math.floor(wallpaperGridView.itemSize * 0.67)
+        height: Math.round(wallpaperGridView.itemSize * 0.67)
         color: Color.transparent
 
         // NImageCached relies on the image being visible to work properly.
@@ -179,7 +179,7 @@ ColumnLayout {
           anchors.fill: parent
           acceptedButtons: Qt.LeftButton
           hoverEnabled: true
-          onClicked: {
+          onPressed: {
             if (Settings.data.wallpaper.setWallpaperOnAllMonitors) {
               WallpaperService.changeWallpaper(undefined, wallpaperPath)
             } else if (screen) {

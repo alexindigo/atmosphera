@@ -180,9 +180,9 @@ ColumnLayout {
 
       // Color Schemes Grid
       GridLayout {
-        columns: 4
-        rowSpacing: Style.marginL * scaling
-        columnSpacing: Style.marginL * scaling
+        columns: 3
+        rowSpacing: Style.marginM * scaling
+        columnSpacing: Style.marginM * scaling
         Layout.fillWidth: true
 
         Repeater {

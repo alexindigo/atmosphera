@@ -11,8 +11,8 @@ import qs.Widgets
 NPanel {
   id: root
 
-  panelWidth: Math.max(screen?.width * 0.5, 1280) * scaling
-  panelHeight: Math.max(screen?.height * 0.5, 720) * scaling
+  panelWidth: Math.max(screen?.width * 0.4, 768) * scaling
+  panelHeight: Math.max(screen?.height * 0.75, 810) * scaling
   panelAnchorHorizontalCenter: true
   panelAnchorVerticalCenter: true
 
@@ -184,7 +184,7 @@ NPanel {
 
       Rectangle {
         id: sidebar
-        Layout.preferredWidth: Style.sliderWidth * 1.3 * scaling
+        Layout.preferredWidth: 220 * scaling
         Layout.fillHeight: true
         color: Color.mSurfaceVariant
         border.color: Color.mOutline
@@ -208,6 +208,19 @@ NPanel {
               readonly property bool selected: index === currentTabIndex
               property bool hovering: false
               property color tabTextColor: selected ? Color.mOnPrimary : (tabItem.hovering ? Color.mOnTertiary : Color.mOnSurface)
+
+              Behavior on color {
+                ColorAnimation {
+                  duration: Style.animationFast
+                }
+              }
+
+              Behavior on tabTextColor {
+                ColorAnimation {
+                  duration: Style.animationFast
+                }
+              }
+
               RowLayout {
                 anchors.fill: parent
                 anchors.leftMargin: Style.marginS * scaling

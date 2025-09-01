@@ -46,6 +46,7 @@ ColumnLayout {
     Layout.bottomMargin: Style.marginS * scaling
   }
 
+  // Versions
   GridLayout {
     Layout.alignment: Qt.AlignCenter
     columns: 2
@@ -77,6 +78,7 @@ ColumnLayout {
     }
   }
 
+  // Updater
   Rectangle {
     Layout.alignment: Qt.AlignCenter
     Layout.topMargin: Style.marginS * scaling
@@ -137,96 +139,108 @@ ColumnLayout {
   NDivider {
     Layout.fillWidth: true
     Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginxL * scaling
+    Layout.bottomMargin: Style.marginXL * scaling
   }
 
   NText {
-    text: `Shout-out to our ${root.contributors.length} awesome contributors!`
+    text: `Shout-out to our ${root.contributors.length} <b>awesome</b> contributors!`
     font.pointSize: Style.fontSizeL * scaling
-    font.weight: Style.fontWeightBold
     color: Color.mOnSurface
     Layout.alignment: Qt.AlignCenter
-    Layout.topMargin: Style.marginL * 2
   }
 
-  ScrollView {
-    Layout.alignment: Qt.AlignCenter
-    Layout.preferredWidth: 200 * Style.marginXS * scaling
-    Layout.fillHeight: true
+  GridView {
+    id: contributorsGrid
+
     Layout.topMargin: Style.marginL * scaling
+    Layout.alignment: Qt.AlignHCenter
+    Layout.preferredWidth: cellWidth * 3 // Fixed 3 columns
+    Layout.preferredHeight: {
+      if (root.contributors.length === 0)
+        return 0
+      const columns = 3
+      const rows = Math.ceil(root.contributors.length / columns)
+      return rows * cellHeight
+    }
+    cellWidth: Style.baseWidgetSize * 7 * scaling
+    cellHeight: Style.baseWidgetSize * 3 * scaling
+    model: root.contributors
     clip: true
-    ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-    ScrollBar.vertical.policy: ScrollBar.AsNeeded
 
-    GridView {
-      id: contributorsGrid
+    delegate: Rectangle {
+      width: contributorsGrid.cellWidth - Style.marginM * scaling
+      height: contributorsGrid.cellHeight - Style.marginM * scaling
+      radius: Style.radiusL * scaling
+      color: contributorArea.containsMouse ? Color.mTertiary : Color.transparent
 
-      anchors.fill: parent
-      width: 200 * 4 * scaling
-      height: Math.ceil(root.contributors.length / 4) * 100
-      cellWidth: Style.baseWidgetSize * 7.5 * scaling
-      cellHeight: Style.baseWidgetSize * 3.5 * scaling
-      model: root.contributors
+      Behavior on color {
+        ColorAnimation {
+          duration: Style.animationFast
+        }
+      }
 
-      delegate: Rectangle {
-        width: contributorsGrid.cellWidth - Style.marginM * scaling
-        height: contributorsGrid.cellHeight - Style.marginS * scaling
-        radius: Style.radiusL * scaling
-        color: contributorArea.containsMouse ? Color.mSecondary : Color.transparent
+      RowLayout {
+        anchors.fill: parent
+        anchors.margins: Style.marginS * scaling
+        spacing: Style.marginM * scaling
 
-        RowLayout {
-          anchors.fill: parent
-          anchors.margins: Style.marginS * scaling
-          spacing: Style.marginM * scaling
+        Item {
+          Layout.alignment: Qt.AlignVCenter
+          Layout.preferredWidth: Style.baseWidgetSize * 2 * scaling
+          Layout.preferredHeight: Style.baseWidgetSize * 2 * scaling
 
-          Item {
-            Layout.alignment: Qt.AlignVCenter
-            Layout.preferredWidth: Style.baseWidgetSize * 2 * scaling
-            Layout.preferredHeight: Style.baseWidgetSize * 2 * scaling
+          NImageCircled {
+            imagePath: modelData.avatar_url || ""
+            anchors.fill: parent
+            anchors.margins: Style.marginXS * scaling
+            fallbackIcon: "person"
+            borderColor: contributorArea.containsMouse ? Color.mOnTertiary : Color.mPrimary
+            borderWidth: Math.max(1, Style.borderM * scaling)
 
-            NImageCircled {
-              imagePath: modelData.avatar_url || ""
-              anchors.fill: parent
-              anchors.margins: Style.marginXS * scaling
-              fallbackIcon: "person"
-              borderColor: Color.mPrimary
-              borderWidth: Math.max(1, Style.borderM * scaling)
-            }
-          }
-
-          ColumnLayout {
-            spacing: Style.marginXS * scaling
-            Layout.alignment: Qt.AlignVCenter
-            Layout.fillWidth: true
-
-            NText {
-              text: modelData.login || "Unknown"
-              font.weight: Style.fontWeightBold
-              color: contributorArea.containsMouse ? Color.mSurface : Color.mOnSurface
-              elide: Text.ElideRight
-              Layout.fillWidth: true
-            }
-
-            NText {
-              text: (modelData.contributions || 0) + " " + ((modelData.contributions || 0) === 1 ? "commit" : "commits")
-              font.pointSize: Style.fontSizeXS * scaling
-              color: contributorArea.containsMouse ? Color.mSurface : Color.mOnSurface
+            Behavior on borderColor {
+              ColorAnimation {
+                duration: Style.animationFast
+              }
             }
           }
         }
 
-        MouseArea {
-          id: contributorArea
+        ColumnLayout {
+          spacing: Style.marginXS * scaling
+          Layout.alignment: Qt.AlignVCenter
+          Layout.fillWidth: true
 
-          anchors.fill: parent
-          hoverEnabled: true
-          cursorShape: Qt.PointingHandCursor
-          onClicked: {
-            if (modelData.html_url)
-              Quickshell.execDetached(["xdg-open", modelData.html_url])
+          NText {
+            text: modelData.login || "Unknown"
+            font.weight: Style.fontWeightBold
+            color: contributorArea.containsMouse ? Color.mSurface : Color.mOnSurface
+            elide: Text.ElideRight
+            Layout.fillWidth: true
+          }
+
+          NText {
+            text: (modelData.contributions || 0) + " " + ((modelData.contributions || 0) === 1 ? "commit" : "commits")
+            font.pointSize: Style.fontSizeXS * scaling
+            color: contributorArea.containsMouse ? Color.mSurface : Color.mOnSurface
           }
         }
       }
+
+      MouseArea {
+        id: contributorArea
+
+        anchors.fill: parent
+        hoverEnabled: true
+        cursorShape: Qt.PointingHandCursor
+        onClicked: {
+          if (modelData.html_url)
+            Quickshell.execDetached(["xdg-open", modelData.html_url])
+        }
+      }
     }
+  }
+
+  Item {
+    Layout.fillHeight: true
   }
 }
