@@ -12,6 +12,35 @@ ColumnLayout {
 
   spacing: Style.marginL * scaling
 
+  property list<string> wallpapersList: []
+  property string currentWallpaper: ""
+
+  Component.onCompleted: {
+    wallpapersList = screen ? WallpaperService.getWallpapersList(screen.name) : []
+    currentWallpaper = screen ? WallpaperService.getWallpaper(screen.name) : ""
+  }
+
+  Connections {
+    target: WallpaperService
+    function onWallpaperChanged(screenName, path) {
+      if (screenName === screen.name) {
+        currentWallpaper = WallpaperService.getWallpaper(screen.name)
+      }
+    }
+    function onWallpaperDirectoryChanged(screenName, directory) {
+      if (screenName === screen.name) {
+        wallpapersList = WallpaperService.getWallpapersList(screen.name)
+        currentWallpaper = WallpaperService.getWallpaper(screen.name)
+      }
+    }
+    function onWallpaperListChanged(screenName, count) {
+      if (screenName === screen.name) {
+        wallpapersList = WallpaperService.getWallpapersList(screen.name)
+        currentWallpaper = WallpaperService.getWallpaper(screen.name)
+      }
+    }
+  }
+
   // Current wallpaper display
   NText {
     text: "Current Wallpaper"
@@ -29,7 +58,7 @@ ColumnLayout {
     NImageRounded {
       anchors.fill: parent
       anchors.margins: Style.marginXS * scaling
-      imagePath: screen ? WallpaperService.getWallpaper(screen.name) : ""
+      imagePath: currentWallpaper
       fallbackIcon: "image"
       imageRadius: Style.radiusM * scaling
     }
@@ -74,11 +103,9 @@ ColumnLayout {
     }
   }
 
-  property list<string> wallpapersList: screen ? WallpaperService.getWallpapersList(screen.name) : []
-
   NToggle {
-    label: "Assign selection to all monitors"
-    description: "Set selected wallpaper on all monitors at once."
+    label: "Apply to all monitors"
+    description: "Apply selected wallpaper to all monitors at once."
     checked: Settings.data.wallpaper.setWallpaperOnAllMonitors
     onToggled: checked => Settings.data.wallpaper.setWallpaperOnAllMonitors = checked
     visible: (wallpapersList.length > 0)
@@ -115,7 +142,7 @@ ColumnLayout {
         id: wallpaperItem
 
         property string wallpaperPath: modelData
-        property bool isSelected: screen ? (wallpaperPath === WallpaperService.getWallpaper(screen.name)) : false
+        property bool isSelected: screen ? (wallpaperPath === currentWallpaper) : false
 
         width: wallpaperGridView.itemSize
         height: Math.round(wallpaperGridView.itemSize * 0.67)

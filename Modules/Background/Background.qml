@@ -18,7 +18,6 @@ Variants {
       id: root
 
       // Internal state management
-      property bool firstWallpaper: true
       property string transitionType: "fade"
       property real transitionProgress: 0
 
@@ -37,17 +36,26 @@ Variants {
       property real stripesCount: 16
       property real stripesAngle: 0
 
-      // External state management
-      property string servicedWallpaper: modelData ? WallpaperService.getWallpaper(modelData.name) : ""
+      // Used to debounce wallpaper changes
       property string futureWallpaper: ""
-      onServicedWallpaperChanged: {
-        // Set wallpaper immediately on startup
-        if (firstWallpaper) {
-          firstWallpaper = false
-          setWallpaperImmediate(servicedWallpaper)
-        } else {
-          futureWallpaper = servicedWallpaper
-          debounceTimer.restart()
+
+      // On startup assign wallpaper immediately
+      Component.onCompleted: {
+        var path = modelData ? WallpaperService.getWallpaper(modelData.name) : ""
+        setWallpaperImmediate(path)
+      }
+
+      // External state management
+      Connections {
+        target: WallpaperService
+        function onWallpaperChanged(screenName, path) {
+          if (screenName === modelData.name) {
+
+            // Update wallpaper display
+            // Set wallpaper immediately on startup
+            futureWallpaper = path
+            debounceTimer.restart()
+          }
         }
       }
 

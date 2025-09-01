@@ -63,7 +63,8 @@ ColumnLayout {
       if (exitCode === 0) {
         // Matugen exists, enable it
         Settings.data.colorSchemes.useWallpaperColors = true
-        ColorSchemeService.changedWallpaper()
+        Settings.data.colorSchemes.predefinedScheme = ""
+        MatugenService.generateFromWallpaper()
         ToastService.showNotice("Matugen", "Enabled")
       } else {
         // Matugen not found

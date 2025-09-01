@@ -11,6 +11,14 @@ Singleton {
 
   Component.onCompleted: {
     Logger.log("Wallpaper", "Service started")
+
+    // Initialize cache from Settings on startup
+    var monitors = Settings.data.wallpaper.monitors || []
+    for (var i = 0; i < monitors.length; i++) {
+      if (monitors[i].name && monitors[i].wallpaper) {
+        currentWallpapers[monitors[i].name] = monitors[i].wallpaper
+      }
+    }
   }
 
   // All available wallpaper transitions
@@ -51,10 +59,45 @@ Singleton {
   property int scanningCount: 0
   readonly property bool scanning: (scanningCount > 0)
 
+  // Cache for current wallpapers - can be updated directly since we use signals for notifications
+  property var currentWallpapers: ({})
+
+  // Signals for reactive UI updates
+  signal wallpaperChanged(string screenName, string path)
+  // Emitted when a wallpaper changes
+  signal wallpaperDirectoryChanged(string screenName, string directory)
+  // Emitted when a monitor's directory changes
+  signal wallpaperListChanged(string screenName, int count)
+
+  // Emitted when available wallpapers list changes
   Connections {
     target: Settings.data.wallpaper
     function onDirectoryChanged() {
       root.refreshWallpapersList()
+      // Emit directory change signals for monitors using the default directory
+      if (!Settings.data.wallpaper.enableMultiMonitorDirectories) {
+        // All monitors use the main directory
+        for (var i = 0; i < Quickshell.screens.length; i++) {
+          root.wallpaperDirectoryChanged(Quickshell.screens[i].name, Settings.data.wallpaper.directory)
+        }
+      } else {
+        // Only monitors without custom directories are affected
+        for (var i = 0; i < Quickshell.screens.length; i++) {
+          var screenName = Quickshell.screens[i].name
+          var monitor = root.getMonitorConfig(screenName)
+          if (!monitor || !monitor.directory) {
+            root.wallpaperDirectoryChanged(screenName, Settings.data.wallpaper.directory)
+          }
+        }
+      }
+    }
+    function onEnableMultiMonitorDirectoriesChanged() {
+      root.refreshWallpapersList()
+      // Notify all monitors about potential directory changes
+      for (var i = 0; i < Quickshell.screens.length; i++) {
+        var screenName = Quickshell.screens[i].name
+        root.wallpaperDirectoryChanged(screenName, root.getMonitorDirectory(screenName))
+      }
     }
     function onRandomEnabledChanged() {
       root.toggleRandomWallpaper()
@@ -96,26 +139,39 @@ Singleton {
   // -------------------------------------------------------------------
   // Set specific monitor directory
   function setMonitorDirectory(screenName, directory) {
-    var monitor = getMonitorConfig(screenName)
-    if (monitor !== undefined) {
-      monitor.directory = directory
-    } else {
-      Settings.data.wallpaper.monitors.push({
-                                              "name": screenName,
-                                              "directory": directory,
-                                              "wallpaper": ""
-                                            })
+    var monitors = Settings.data.wallpaper.monitors || []
+    var found = false
+
+    // Create a new array with updated values
+    var newMonitors = monitors.map(function (monitor) {
+      if (monitor.name === screenName) {
+        found = true
+        return {
+          "name": screenName,
+          "directory": directory,
+          "wallpaper": monitor.wallpaper || ""
+        }
+      }
+      return monitor
+    })
+
+    if (!found) {
+      newMonitors.push({
+                         "name": screenName,
+                         "directory": directory,
+                         "wallpaper": ""
+                       })
     }
+
+    // Update Settings with new array to ensure proper persistence
+    Settings.data.wallpaper.monitors = newMonitors.slice()
+    root.wallpaperDirectoryChanged(screenName, directory)
   }
 
   // -------------------------------------------------------------------
-  // Get specific monitor wallpaper
+  // Get specific monitor wallpaper - now from cache
   function getWallpaper(screenName) {
-    var monitor = getMonitorConfig(screenName)
-    if ((monitor !== undefined) && (monitor["wallpaper"] !== undefined)) {
-      return monitor["wallpaper"]
-    }
-    return ""
+    return currentWallpapers[screenName] || ""
   }
 
   // -------------------------------------------------------------------
@@ -142,29 +198,52 @@ Singleton {
     }
 
     //Logger.log("Wallpaper", "setWallpaper on", screenName, ": ", path)
-    var wallpaperChanged = false
 
-    var monitor = getMonitorConfig(screenName)
-    if (monitor !== undefined) {
-      wallpaperChanged = (monitor["wallpaper"] !== path)
-      monitor["wallpaper"] = path
-    } else {
-      wallpaperChanged = true
-      Settings.data.wallpaper.monitors.push({
-                                              "name": screenName,
-                                              "directory": getMonitorDirectory(screenName),
-                                              "wallpaper": path
-                                            })
+    // Check if wallpaper actually changed
+    var oldPath = currentWallpapers[screenName] || ""
+    var wallpaperChanged = (oldPath !== path)
+
+    if (!wallpaperChanged) {
+      // No change needed
+      return
     }
+
+    // Update cache directly
+    currentWallpapers[screenName] = path
+
+    // Update Settings - still need immutable update for Settings persistence
+    // The slice() ensures Settings detects the change and saves properly
+    var monitors = Settings.data.wallpaper.monitors || []
+    var found = false
+
+    var newMonitors = monitors.map(function (monitor) {
+      if (monitor.name === screenName) {
+        found = true
+        return {
+          "name": screenName,
+          "directory": monitor.directory || getMonitorDirectory(screenName),
+          "wallpaper": path
+        }
+      }
+      return monitor
+    })
+
+    if (!found) {
+      newMonitors.push({
+                         "name": screenName,
+                         "directory": getMonitorDirectory(screenName),
+                         "wallpaper": path
+                       })
+    }
+
+    Settings.data.wallpaper.monitors = newMonitors.slice()
+
+    // Emit signal for this specific wallpaper change
+    root.wallpaperChanged(screenName, path)
 
     // Restart the random wallpaper timer
     if (randomWallpaperTimer.running) {
       randomWallpaperTimer.restart()
-    }
-
-    // Notify ColorScheme service if the wallpaper actually changed
-    if (wallpaperChanged) {
-      ColorSchemeService.changedWallpaper()
     }
   }
 
@@ -200,7 +279,7 @@ Singleton {
   function toggleRandomWallpaper() {
     Logger.log("Wallpaper", "toggleRandomWallpaper")
     if (Settings.data.wallpaper.randomEnabled) {
-      randomWallpaperTimer.restart()
+      restartRandomWallpaperTimer()
       setRandomWallpaper()
     }
   }
@@ -208,8 +287,7 @@ Singleton {
   // -------------------------------------------------------------------
   function restartRandomWallpaperTimer() {
     if (Settings.data.wallpaper.isRandom) {
-      randomWallpaperTimer.stop()
-      randomWallpaperTimer.start()
+      randomWallpaperTimer.restart()
     }
   }
 
@@ -255,23 +333,35 @@ Singleton {
     model: Quickshell.screens
     delegate: FolderListModel {
       property string screenName: modelData.name
+      property string currentDirectory: root.getMonitorDirectory(screenName)
 
-      folder: "file://" + root.getMonitorDirectory(screenName)
+      folder: "file://" + currentDirectory
       nameFilters: ["*.jpg", "*.jpeg", "*.png", "*.gif", "*.pnm", "*.bmp"]
       showDirs: false
       sortField: FolderListModel.Name
+
+      // Watch for directory changes via property binding
+      onCurrentDirectoryChanged: {
+        folder = "file://" + currentDirectory
+      }
+
+      Component.onCompleted: {
+        // Connect to directory change signal
+        root.wallpaperDirectoryChanged.connect(function (screen, directory) {
+          if (screen === screenName) {
+            currentDirectory = directory
+          }
+        })
+      }
+
       onStatusChanged: {
         if (status === FolderListModel.Null) {
           // Flush the list
-          var lists = root.wallpaperLists
-          lists[screenName] = []
-          root.wallpaperLists = lists
+          root.wallpaperLists[screenName] = []
+          root.wallpaperListChanged(screenName, 0)
         } else if (status === FolderListModel.Loading) {
           // Flush the list
-          var lists = root.wallpaperLists
-          lists[screenName] = []
-          root.wallpaperLists = lists
-
+          root.wallpaperLists[screenName] = []
           scanningCount++
         } else if (status === FolderListModel.Ready) {
           var files = []
@@ -281,12 +371,12 @@ Singleton {
             files.push(filepath)
           }
 
-          var lists = root.wallpaperLists
-          lists[screenName] = files
-          root.wallpaperLists = lists
+          // Update the list
+          root.wallpaperLists[screenName] = files
 
           scanningCount--
           Logger.log("Wallpaper", "List refreshed for", screenName, "count:", files.length)
+          root.wallpaperListChanged(screenName, files.length)
         }
       }
     }

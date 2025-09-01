@@ -15,8 +15,8 @@ ColumnLayout {
 
     // Avatar preview
     NImageCircled {
-      width: 64 * scaling
-      height: 64 * scaling
+      width: 128 * scaling
+      height: 128 * scaling
       imagePath: Settings.data.general.avatarImage
       fallbackIcon: "person"
       borderColor: Color.mPrimary

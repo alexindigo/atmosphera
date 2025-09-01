@@ -35,15 +35,6 @@ Singleton {
     schemeReader.path = filePath
   }
 
-  function changedWallpaper() {
-    if (Settings.data.colorSchemes.useWallpaperColors) {
-      Logger.log("ColorScheme", "Starting color generation from wallpaper")
-      MatugenService.generateFromWallpaper()
-      // Invalidate potential predefined scheme
-      Settings.data.colorSchemes.predefinedScheme = ""
-    }
-  }
-
   FolderListModel {
     id: folderModel
     nameFilters: ["*.json"]

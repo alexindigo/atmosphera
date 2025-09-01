@@ -12,6 +12,17 @@ Singleton {
 
   property string dynamicConfigPath: Settings.cacheDir + "matugen.dynamic.toml"
 
+  // External state management
+  Connections {
+    target: WallpaperService
+    function onWallpaperChanged(screenName, path) {
+      // Only detect changes on main screen
+      if (screenName === Screen.name && Settings.data.colorSchemes.useWallpaperColors) {
+        generateFromWallpaper()
+      }
+    }
+  }
+
   // Build TOML content based on settings
   function buildConfigToml() {
     return Matugen.buildConfigToml()

@@ -14,10 +14,23 @@ Variants {
 
     active: Settings.isLoaded && CompositorService.isNiri && modelData
 
+    property string wallpaper: ""
+
     sourceComponent: PanelWindow {
       Component.onCompleted: {
         if (modelData) {
           Logger.log("Overview", "Loading Overview component for Niri on", modelData.name)
+        }
+        wallpaper = modelData ? WallpaperService.getWallpaper(modelData.name) : ""
+      }
+
+      // External state management
+      Connections {
+        target: WallpaperService
+        function onWallpaperChanged(screenName, path) {
+          if (screenName === modelData.name) {
+            wallpaper = path
+          }
         }
       }
 
@@ -38,7 +51,7 @@ Variants {
         id: bgImage
         anchors.fill: parent
         fillMode: Image.PreserveAspectCrop
-        source: modelData ? WallpaperService.getWallpaper(modelData.name) : ""
+        source: wallpaper
         smooth: true
         mipmap: false
         cache: false
