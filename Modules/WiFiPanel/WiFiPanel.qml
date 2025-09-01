@@ -14,6 +14,9 @@ NPanel {
   panelHeight: 500 * scaling
   panelAnchorRight: true
 
+  // Enable keyboard focus for WiFi panel (needed for password input)
+  panelKeyboardFocus: true
+
   property string passwordPromptSsid: ""
   property string passwordInput: ""
   property bool showPasswordPrompt: false

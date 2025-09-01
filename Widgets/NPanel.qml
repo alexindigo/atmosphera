@@ -40,6 +40,9 @@ Loader {
   property int buttonWidth: 0
   property int buttonHeight: 0
 
+  // Whether this panel should accept keyboard focus
+  property bool panelKeyboardFocus: false
+
   // Animation properties
   readonly property real originalScale: 0.7
   readonly property real originalOpacity: 0.0
@@ -148,7 +151,7 @@ Loader {
 
       WlrLayershell.exclusionMode: ExclusionMode.Ignore
       WlrLayershell.namespace: "noctalia-panel"
-      WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
+      WlrLayershell.keyboardFocus: root.panelKeyboardFocus ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
 
       Behavior on color {
         ColorAnimation {

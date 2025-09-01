@@ -28,6 +28,9 @@ NPanel {
   panelAnchorBottom: launcherPosition.startsWith("bottom_")
   panelAnchorTop: launcherPosition.startsWith("top_")
 
+  // Enable keyboard focus for launcher (needed for search)
+  panelKeyboardFocus: true
+
   // Background opacity following bar's approach
   panelBackgroundColor: Qt.rgba(Color.mSurface.r, Color.mSurface.g, Color.mSurface.b,
                                 Settings.data.appLauncher.backgroundOpacity)
