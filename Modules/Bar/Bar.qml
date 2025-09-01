@@ -53,6 +53,7 @@ Variants {
         // Left Section - Dynamic Widgets
         Row {
           id: leftSection
+          objectName: "leftSection"
 
           height: parent.height
           anchors.left: parent.left
@@ -79,6 +80,7 @@ Variants {
         // Center Section - Dynamic Widgets
         Row {
           id: centerSection
+          objectName: "centerSection"
 
           height: parent.height
           anchors.horizontalCenter: parent.horizontalCenter
@@ -104,6 +106,7 @@ Variants {
         // Right Section - Dynamic Widgets
         Row {
           id: rightSection
+          objectName: "rightSection"
 
           height: parent.height
           anchors.right: bar.right

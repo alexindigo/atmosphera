@@ -35,6 +35,11 @@ Item {
           }
         }
       }
+
+      if (item.hasOwnProperty("onLoaded")) {
+        item.onLoaded()
+      }
+
       //Logger.log("NWidgetLoader", "Loaded", widgetName, "on screen", item.screen.name)
     }
   }
