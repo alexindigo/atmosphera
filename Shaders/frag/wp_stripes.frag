@@ -59,7 +59,7 @@ void main() {
     int stripeIndex = int(floor(stripePos));
     
     // Determine if this is an odd or even stripe
-    bool isOddStripe = (stripeIndex % 2) == 1;
+    bool isOddStripe = mod(float(stripeIndex), 2.0) != 0.0;
     
     // Calculate the progress for this specific stripe with wave delay
     // Use absolute stripe position for consistent delay across all stripes

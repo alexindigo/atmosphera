@@ -170,6 +170,7 @@ Singleton {
 
       // wallpaper
       property JsonObject wallpaper: JsonObject {
+        property bool enabled: true
         property string directory: "/usr/share/wallpapers"
         property bool enableMultiMonitorDirectories: false
         property bool setWallpaperOnAllMonitors: true
