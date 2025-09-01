@@ -249,7 +249,6 @@ ColumnLayout {
               RowLayout {
                 id: swatches
 
-
                 spacing: Style.marginS * scaling
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignHCenter
