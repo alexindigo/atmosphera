@@ -466,5 +466,22 @@ ColumnLayout {
                    MatugenService.generateFromWallpaper()
                  }
     }
+
+    NDivider {
+      Layout.fillWidth: true
+      Layout.topMargin: Style.marginM * scaling
+      Layout.bottomMargin: Style.marginM * scaling
+    }
+
+    NCheckbox {
+      label: "User Templates"
+      description: "Enable user-defined Matugen config from ~/.config/matugen/config.toml"
+      checked: Settings.data.matugen.enableUserTemplates
+      onToggled: checked => {
+                   Settings.data.matugen.enableUserTemplates = checked
+                   if (Settings.data.colorSchemes.useWallpaperColors)
+                   MatugenService.generateFromWallpaper()
+                 }
+    }
   }
 }

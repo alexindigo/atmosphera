@@ -7,6 +7,7 @@ import qs.Commons
 // Central place to define which templates we generate and where they write.
 // Users can extend it by dropping additional templates into:
 //  - Assets/Matugen/templates/
+//  - ~/.config/matugen/ (when enableUserTemplates is true)
 Singleton {
   id: root
 
