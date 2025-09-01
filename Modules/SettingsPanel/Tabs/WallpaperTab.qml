@@ -10,7 +10,15 @@ import qs.Widgets
 ColumnLayout {
   id: root
 
+  NToggle {
+    label: "Enable Wallpaper Management"
+    description: "Let Quickshell manage your wallpaper. Disable this if you use an external wallpaper daemon like swww."
+    checked: Settings.data.wallpaper.enabled
+    onToggled: checked => Settings.data.wallpaper.enabled = checked
+  }
+
   ColumnLayout {
+    enabled: Settings.data.wallpaper.enabled
     spacing: Style.marginL * scaling
     Layout.fillWidth: true
     NTextInput {

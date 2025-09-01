@@ -12,7 +12,7 @@ Variants {
 
     required property ShellScreen modelData
 
-    active: Settings.isLoaded && modelData
+    active: Settings.isLoaded && modelData && Settings.data.wallpaper.enabled
 
     sourceComponent: PanelWindow {
       id: root
