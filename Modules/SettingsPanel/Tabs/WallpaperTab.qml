@@ -12,13 +12,14 @@ ColumnLayout {
 
   NToggle {
     label: "Enable Wallpaper Management"
-    description: "Let Quickshell manage your wallpaper. Disable this if you use an external wallpaper daemon like swww."
+    description: "Manage wallpapers with Noctalia. (Uncheck if you prefer using another application)."
     checked: Settings.data.wallpaper.enabled
     onToggled: checked => Settings.data.wallpaper.enabled = checked
+    Layout.bottomMargin: Style.marginL * scaling
   }
 
   ColumnLayout {
-    enabled: Settings.data.wallpaper.enabled
+    visible: Settings.data.wallpaper.enabled
     spacing: Style.marginL * scaling
     Layout.fillWidth: true
     NTextInput {
@@ -77,12 +78,14 @@ ColumnLayout {
   }
 
   NDivider {
+    visible: Settings.data.wallpaper.enabled
     Layout.fillWidth: true
     Layout.topMargin: Style.marginXL * scaling
     Layout.bottomMargin: Style.marginXL * scaling
   }
 
   ColumnLayout {
+    visible: Settings.data.wallpaper.enabled
     spacing: Style.marginL * scaling
     Layout.fillWidth: true
 
