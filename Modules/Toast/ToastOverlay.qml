@@ -12,6 +12,7 @@ Variants {
   delegate: Loader {
     required property ShellScreen modelData
     property real scaling: ScalingService.getScreenScale(modelData)
+
     Connections {
       target: ScalingService
       function onScaleChanged(screenName, scale) {
@@ -34,28 +35,29 @@ Variants {
       anchors {
         top: Settings.data.bar.position === "top"
         bottom: Settings.data.bar.position === "bottom"
-        left: true
-        right: true
       }
+
+      // Set a width instead of anchoring left/right so we can click on the side of the toast
+      implicitWidth: 500 * scaling
+
+      // Small height when hidden, appropriate height when visible
+      implicitHeight: Math.round(toast.visible ? toast.height + Style.marginM * scaling : 1)
 
       // Set margins based on bar position
       margins.top: Settings.data.bar.position === "top" ? (Style.barHeight + Style.marginS) * scaling : 0
       margins.bottom: Settings.data.bar.position === "bottom" ? (Style.barHeight + Style.marginS) * scaling : 0
 
-      // Small height when hidden, appropriate height when visible
-      implicitHeight: toast.visible ? toast.height + Style.marginS * scaling : 1
-
       // Transparent background
       color: Color.transparent
 
-      // High layer to appear above other panels
-      //WlrLayershell.layer: WlrLayer.Overlay
+      // Overlay layer to appear above other panels
+      WlrLayershell.layer: WlrLayer.Overlay
       WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
       exclusionMode: PanelWindow.ExclusionMode.Ignore
 
       NToast {
         id: toast
-        scaling: scaling
+        screen: modelData
 
         // Simple positioning - margins already account for bar
         targetY: Style.marginS * scaling

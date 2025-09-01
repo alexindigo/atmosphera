@@ -163,7 +163,7 @@ Rectangle {
 
     Loader {
       id: trayMenu
-      source: "../Extras/TrayMenu.qml"     
+      source: "../Extras/TrayMenu.qml"
     }
   }
 }
