@@ -11,7 +11,7 @@ Singleton {
   property list<var> ddcMonitors: []
   readonly property list<Monitor> monitors: variants.instances
   property bool appleDisplayPresent: false
-  
+
   function getMonitorForScreen(screen: ShellScreen): var {
     return monitors.find(m => m.modelData === screen)
   }
@@ -75,29 +75,24 @@ Singleton {
       onStreamFinished: {
         // Do not filter out invalid displays. For some reason --brief returns some invalid which works fine
         var displays = text.trim().split("\n\n")
-        
 
         ddcProc.ddcMonitors = displays.map(d => {
 
-                                          var ddcModelMatc = d.match(/This monitor does not support DDC\/CI/)
-                                          var modelMatch = d.match(/Model:\s*(.*)/)
-                                          var busMatch = d.match(/I2C bus:[ ]*\/dev\/i2c-([0-9]+)/)
-                                          var ddcModel = ddcModelMatc ? ddcModelMatc.length > 0 : false
-                                          var model = modelMatch ? modelMatch[1] : "Unknown"
-                                          var bus = busMatch ? busMatch[1] : "Unknown"
-                                          Logger.log(
-                                            "Detected DDC Monitor:", model,
-                                            "on bus", bus, "is DDC:", !ddcModel
-                                          )
-                                          return {
-                                            "model": model,
-                                            "busNum": bus,
-                                            "isDdc": !ddcModel,
-                                          }
-                                        })
+                                             var ddcModelMatc = d.match(/This monitor does not support DDC\/CI/)
+                                             var modelMatch = d.match(/Model:\s*(.*)/)
+                                             var busMatch = d.match(/I2C bus:[ ]*\/dev\/i2c-([0-9]+)/)
+                                             var ddcModel = ddcModelMatc ? ddcModelMatc.length > 0 : false
+                                             var model = modelMatch ? modelMatch[1] : "Unknown"
+                                             var bus = busMatch ? busMatch[1] : "Unknown"
+                                             Logger.log("Detected DDC Monitor:", model, "on bus", bus, "is DDC:",
+                                                        !ddcModel)
+                                             return {
+                                               "model": model,
+                                               "busNum": bus,
+                                               "isDdc": !ddcModel
+                                             }
+                                           })
         root.ddcMonitors = ddcProc.ddcMonitors.filter(m => m.isDdc)
-
-        
       }
     }
   }

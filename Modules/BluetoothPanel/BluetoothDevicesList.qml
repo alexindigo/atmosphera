@@ -46,11 +46,11 @@ ColumnLayout {
       radius: Style.radiusM * scaling
 
       color: {
-        if (availableDeviceArea.containsMouse){
+        if (availableDeviceArea.containsMouse) {
           if (canDisconnect && !isBusy)
             return Color.mError
 
-          if(!isBusy)
+          if (!isBusy)
             return Color.mTertiary
           return Color.mPrimary
         }
@@ -58,7 +58,7 @@ ColumnLayout {
         if (modelData.pairing || modelData.state === BluetoothDeviceState.Connecting)
           return Color.mPrimary
 
-        if (modelData.blocked )
+        if (modelData.blocked)
           return Color.mError
 
         return Color.mSurfaceVariant
@@ -68,7 +68,7 @@ ColumnLayout {
 
       NTooltip {
         id: tooltip
-        target: bluetoothDeviceRectangle 
+        target: bluetoothDeviceRectangle
         positionAbove: Settings.data.bar.position === "bottom"
         text: root.tooltipText
       }
@@ -210,7 +210,6 @@ ColumnLayout {
           Layout.fillWidth: true
         }
 
-
         // Call to action
         Rectangle {
           Layout.preferredWidth: 80 * scaling
@@ -240,7 +239,7 @@ ColumnLayout {
               if (modelData.blocked) {
                 return "Blocked"
               }
-              if(modelData.connected){
+              if (modelData.connected) {
                 return "Disconnect"
               }
               return "Connect"
@@ -248,7 +247,7 @@ ColumnLayout {
             font.pointSize: Style.fontSizeXS * scaling
             font.weight: Style.fontWeightMedium
             color: {
-              
+
               if (availableDeviceArea.containsMouse) {
                 return Color.mOnTertiary
               }
@@ -264,24 +263,25 @@ ColumnLayout {
       }
 
       MouseArea {
-        
+
         id: availableDeviceArea
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         anchors.fill: parent
         hoverEnabled: true
-        cursorShape: (canConnect || canDisconnect) && !isBusy ? Qt.PointingHandCursor : (isBusy ? Qt.BusyCursor : Qt.ArrowCursor)
+        cursorShape: (canConnect || canDisconnect)
+                     && !isBusy ? Qt.PointingHandCursor : (isBusy ? Qt.BusyCursor : Qt.ArrowCursor)
         onEntered: {
           if (root.tooltipText && !isBusy) {
             tooltip.show()
           }
         }
         onExited: {
-          if(root.tooltipText && !isBusy) {
+          if (root.tooltipText && !isBusy) {
             tooltip.hide()
           }
         }
-        onClicked: function(mouse) {
-         
+        onClicked: function (mouse) {
+
           if (!modelData || modelData.pairing) {
             return
           }
@@ -289,9 +289,8 @@ ColumnLayout {
           if (root.tooltipText && !isBusy) {
             tooltip.hide()
           }
-  
-          
-          if (mouse.button === Qt.LeftButton){
+
+          if (mouse.button === Qt.LeftButton) {
             if (modelData.connected) {
               BluetoothService.disconnectDevice(modelData)
             } else {

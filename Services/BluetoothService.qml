@@ -86,6 +86,8 @@ Singleton {
   function canConnect(device) {
     if (!device)
       return false
+
+
     /*
       Paired
 

@@ -84,22 +84,25 @@ NPanel {
           BluetoothDevicesList {
             label: "Connected devices"
             property var items: {
-              if (!BluetoothService.adapter || !Bluetooth.devices) return []
+              if (!BluetoothService.adapter || !Bluetooth.devices)
+                return []
               var filtered = Bluetooth.devices.values.filter(dev => dev && !dev.blocked && dev.connected)
               return BluetoothService.sortDevices(filtered)
             }
             model: items
             visible: items.length > 0
             Layout.fillWidth: true
-          } 
+          }
 
-           // Known devices
+          // Known devices
           BluetoothDevicesList {
             label: "Known devices"
             tooltipText: "Left click to connect, right click to forget"
             property var items: {
-              if (!BluetoothService.adapter || !Bluetooth.devices) return []
-              var filtered = Bluetooth.devices.values.filter(dev => dev && !dev.blocked && !dev.connected && (dev.paired || dev.trusted))
+              if (!BluetoothService.adapter || !Bluetooth.devices)
+                return []
+              var filtered = Bluetooth.devices.values.filter(dev => dev && !dev.blocked && !dev.connected
+                                                             && (dev.paired || dev.trusted))
               return BluetoothService.sortDevices(filtered)
             }
             model: items
@@ -111,7 +114,8 @@ NPanel {
           BluetoothDevicesList {
             label: "Available devices"
             property var items: {
-              if (!BluetoothService.adapter || !Bluetooth.devices) return []
+              if (!BluetoothService.adapter || !Bluetooth.devices)
+                return []
               var filtered = Bluetooth.devices.values.filter(dev => dev && !dev.blocked && !dev.paired && !dev.trusted)
               return BluetoothService.sortDevices(filtered)
             }

@@ -61,7 +61,7 @@ Item {
 
   NPill {
     id: pill
-    
+
     rightOpen: BarWidgetRegistry.getNPillDirection(root)
     icon: getIcon()
     iconCircleColor: Color.mPrimary

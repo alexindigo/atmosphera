@@ -21,7 +21,6 @@ Item {
   implicitWidth: pill.width
   implicitHeight: pill.height
 
-
   // Helper to evaluate and possibly notify
   function maybeNotify(percent, charging) {
     const p = Math.round(percent)
