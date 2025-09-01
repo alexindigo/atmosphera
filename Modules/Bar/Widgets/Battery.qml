@@ -64,7 +64,7 @@ Item {
     id: pill
 
     // Test mode
-    property bool testMode: true
+    property bool testMode: false
     property int testPercent: 20
     property bool testCharging: false
     property var battery: UPower.displayDevice
