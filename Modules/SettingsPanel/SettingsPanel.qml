@@ -11,10 +11,14 @@ import qs.Widgets
 NPanel {
   id: root
 
-  panelWidth: Math.round(Math.max(screen?.width * 0.4, 1000) * scaling)
+  panelWidth: {
+    var width = Math.round(Math.max(screen?.width * 0.4, 1000) * scaling)
+    width = Math.min(width, screen?.width - Style.marginL * 2)
+    return width
+  }
   panelHeight: {
     var height = Math.round(Math.max(screen?.height * 0.75, 800) * scaling)
-    height = Math.min(height, screen?.height - Style.barHeight * scaling)
+    height = Math.min(height, screen?.height - Style.barHeight * scaling - Style.marginL * 2)
     return height
   }
   panelAnchorHorizontalCenter: true
