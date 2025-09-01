@@ -30,10 +30,22 @@ Singleton {
     var pathEsc = dynamicConfigPath.replace(/'/g, "'\\''")
     var extraRepo = (Quickshell.shellDir + "/Assets/Matugen/extra").replace(/'/g, "'\\''")
     var extraUser = (Settings.configDir + "matugen.d").replace(/'/g, "'\\''")
+
+    // Build the main script
     var script = "cat > '" + pathEsc + "' << 'EOF'\n" + content + "EOF\n" + "for d in '" + extraRepo + "' '" + extraUser
         + "'; do\n" + "  if [ -d \"$d\" ]; then\n"
         + "    for f in \"$d\"/*.toml; do\n" + "      [ -f \"$f\" ] && { echo; echo \"# extra: $f\"; cat \"$f\"; } >> '"
         + pathEsc + "'\n" + "    done\n" + "  fi\n" + "done\n" + "matugen image '" + wp + "' --config '" + pathEsc + "' --mode " + mode
+
+    // Add user config execution if enabled
+    if (Settings.data.matugen.enableUserTemplates) {
+      var userConfigDir = (Quickshell.env("HOME") + "/.config/matugen/").replace(/'/g, "'\\''")
+      script += "\n# Execute user config if it exists\nif [ -f '" + userConfigDir + "config.toml' ]; then\n"
+      script += "  matugen image '" + wp + "' --config '" + userConfigDir + "config.toml' --mode " + mode + "\n"
+      script += "fi"
+    }
+
+    script += "\n"
     generateProcess.command = ["bash", "-lc", script]
     generateProcess.running = true
   }
@@ -42,12 +54,13 @@ Singleton {
     id: generateProcess
     workingDirectory: Quickshell.shellDir
     running: false
-    stdout: StdioCollector {
-      onStreamFinished: Logger.log("Matugen", "Completed colors generation")
-    }
+
     stderr: StdioCollector {
-      onStreamFinished: if (this.text !== "")
-      Logger.error(this.text)
+      onStreamFinished: {
+        if (this.text !== "") {
+          Logger.warn("MatugenService", "Matugen stderr:", this.text)
+        }
+      }
     }
   }
 

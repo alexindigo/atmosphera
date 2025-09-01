@@ -247,6 +247,7 @@ Singleton {
         property bool foot: false
         property bool fuzzel: false
         property bool vesktop: false
+        property bool enableUserTemplates: false
       }
 
       // night light
