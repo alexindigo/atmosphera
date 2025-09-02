@@ -101,6 +101,19 @@ Item {
   }
 
   IpcHandler {
+    target: "darkMode"
+    function toggle() {
+      Settings.data.colorSchemes.darkMode = !Settings.data.colorSchemes.darkMode
+    }
+    function setDark() {
+      Settings.data.colorSchemes.darkMode = true
+    }
+    function setLight() {
+      Settings.data.colorSchemes.darkMode = false
+    }
+  }
+
+  IpcHandler {
     target: "volume"
     function increase() {
       AudioService.increaseVolume()
