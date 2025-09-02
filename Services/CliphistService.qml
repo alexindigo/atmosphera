@@ -12,8 +12,12 @@ Singleton {
   // Public API
   property var items: [] // [{id, preview, mime, isImage}]
   property bool loading: false
-  // Active only when feature is enabled and settings have finished initial load
-  property bool active: Settings.data.appLauncher.enableClipboardHistory && Settings.isLoaded
+  // Active only when feature is enabled, settings have finished initial load, and cliphist is available
+  property bool active: Settings.data.appLauncher.enableClipboardHistory && Settings.isLoaded && cliphistAvailable
+
+  // Check if cliphist is available on the system
+  property bool cliphistAvailable: false
+  property bool dependencyChecked: false
 
   // Optional automatic watchers to feed cliphist DB
   property bool autoWatch: true
@@ -32,13 +36,48 @@ Singleton {
   property string _b64CurrentMime: ""
   property string _b64CurrentId: ""
 
-  // Start/stop watchers when enabled changes
+  // Check if cliphist is available
   Component.onCompleted: {
-    if (root.active)
-    startWatchers()
+    checkCliphistAvailability()
   }
+
+  // Check dependency availability
+  function checkCliphistAvailability() {
+    if (dependencyChecked)
+      return
+
+    dependencyCheckProcess.command = ["which", "cliphist"]
+    dependencyCheckProcess.running = true
+  }
+
+  // Process to check if cliphist is available
+  Process {
+    id: dependencyCheckProcess
+    stdout: StdioCollector {}
+    onExited: (exitCode, exitStatus) => {
+      root.dependencyChecked = true
+      if (exitCode === 0) {
+        root.cliphistAvailable = true
+        // Start watchers if feature is enabled
+        if (root.active) {
+          startWatchers()
+        }
+      } else {
+        root.cliphistAvailable = false
+        // Show toast notification if feature is enabled but cliphist is missing
+        if (Settings.data.appLauncher.enableClipboardHistory) {
+          ToastService.showWarning(
+            "Clipboard History Unavailable",
+            "The 'cliphist' application is not installed. Please install it to use clipboard history features.",
+            false, 6000)
+        }
+      }
+    }
+  }
+
+  // Start/stop watchers when enabled changes
   onActiveChanged: {
-    if (root.active) {
+    if (root.active && root.cliphistAvailable) {
       startWatchers()
     } else {
       stopWatchers()
@@ -52,7 +91,7 @@ Singleton {
   Timer {
     interval: 5000
     repeat: true
-    running: root.active
+    running: root.active && root.cliphistAvailable
     onTriggered: list()
   }
 
@@ -173,7 +212,7 @@ Singleton {
   }
 
   function startWatchers() {
-    if (!root.active || !autoWatch || watchersStarted)
+    if (!root.active || !autoWatch || watchersStarted || !root.cliphistAvailable)
       return
     watchersStarted = true
     // Start text watcher
@@ -193,7 +232,7 @@ Singleton {
   }
 
   function list(maxPreviewWidth) {
-    if (!root.active) {
+    if (!root.active || !root.cliphistAvailable) {
       return
     }
     if (listProc.running)
@@ -205,12 +244,22 @@ Singleton {
   }
 
   function decode(id, cb) {
+    if (!root.cliphistAvailable) {
+      if (cb)
+        cb("")
+      return
+    }
     root._decodeCallback = cb
     decodeProc.command = ["cliphist", "decode", id]
     decodeProc.running = true
   }
 
   function decodeToDataUrl(id, mime, cb) {
+    if (!root.cliphistAvailable) {
+      if (cb)
+        cb("")
+      return
+    }
     // If cached, return immediately
     if (root.imageDataById[id]) {
       if (cb)
@@ -229,7 +278,7 @@ Singleton {
   }
 
   function _startNextB64() {
-    if (root._b64Queue.length === 0)
+    if (root._b64Queue.length === 0 || !root.cliphistAvailable)
       return
     const job = root._b64Queue.shift()
     root._b64CurrentCb = job.cb
@@ -240,17 +289,26 @@ Singleton {
   }
 
   function copyToClipboard(id) {
+    if (!root.cliphistAvailable) {
+      return
+    }
     // decode and pipe to wl-copy; implement via shell to preserve binary
     copyProc.command = ["sh", "-lc", `cliphist decode ${id} | wl-copy`]
     copyProc.running = true
   }
 
   function deleteById(id) {
+    if (!root.cliphistAvailable) {
+      return
+    }
     Quickshell.execDetached(["cliphist", "delete", id])
     Qt.callLater(() => list())
   }
 
   function wipeAll() {
+    if (!root.cliphistAvailable) {
+      return
+    }
     Quickshell.execDetached(["cliphist", "wipe"])
     Qt.callLater(() => list())
   }

@@ -185,7 +185,7 @@ Singleton {
       // applauncher
       property JsonObject appLauncher: JsonObject {
         // When disabled, Launcher hides clipboard command and ignores cliphist
-        property bool enableClipboardHistory: true
+        property bool enableClipboardHistory: false
         // Position: center, top_left, top_right, bottom_left, bottom_right, bottom_center, top_center
         property string position: "center"
         property real backgroundOpacity: 1.0
