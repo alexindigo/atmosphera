@@ -21,6 +21,8 @@ Rectangle {
   border.color: Color.mOutline
   border.width: Math.max(1, Style.borderS * scaling)
 
+  property var presetColors: [Color.mPrimary, Color.mSecondary, Color.mTertiary, Color.mError, Color.mSurface, Color.mSurfaceVariant, Color.mOutline, "#FFFFFF", "#000000", "#F44336", "#E91E63", "#9C27B0", "#673AB7", "#3F51B5", "#2196F3", "#03A9F4", "#00BCD4", "#009688", "#4CAF50", "#8BC34A", "#CDDC39", "#FFEB3B", "#FFC107", "#FF9800", "#FF5722", "#795548", "#9E9E9E"]
+
   Behavior on implicitWidth {
     NumberAnimation {
       duration: Style.animationFast
@@ -96,10 +98,8 @@ Rectangle {
       spacing: Style.marginXS * scaling
       Layout.fillWidth: true
 
-      property var presetColors: ["#F44336", "#E91E63", "#9C27B0", "#673AB7", "#3F51B5", "#2196F3", "#03A9F4", "#00BCD4", "#009688", "#4CAF50", "#8BC34A", "#CDDC39", "#FFEB3B", "#FFC107", "#FF9800", "#FF5722", "#795548", "#9E9E9E", "#607D8B", "#000000", "#FFFFFF", "#F5F5F5", "#E0E0E0", "#9E9E9E"]
-
       Repeater {
-        model: parent.presetColors
+        model: root.presetColors
 
         Rectangle {
           width: Math.round(29 * scaling)
