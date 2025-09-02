@@ -62,7 +62,7 @@ Singleton {
     // Maintains aspect ratio
     ListElement {
       key: "crop"
-      name: "Crop (Fill/Cover)"
+      name: "Crop (Fill)"
       uniform: 1.0
     }
     // Scales image to fit entirely within screen

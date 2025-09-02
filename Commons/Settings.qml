@@ -175,6 +175,7 @@ Singleton {
         property bool enableMultiMonitorDirectories: false
         property bool setWallpaperOnAllMonitors: true
         property string fillMode: "crop"
+        property color fillColor: "#000000"
         property bool randomEnabled: false
         property int randomIntervalSec: 300 // 5 min
         property int transitionDuration: 1500 // 1500 ms

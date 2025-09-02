@@ -105,6 +105,20 @@ ColumnLayout {
       onSelected: key => Settings.data.wallpaper.fillMode = key
     }
 
+    RowLayout {
+      NLabel {
+        label: "Fill Color"
+        description: "Choose a fill color that may appear behind the wallpaper."
+        Layout.alignment: Qt.AlignTop
+      }
+
+      NColorPicker {
+        selectedColor: Settings.data.wallpaper.fillColor
+        onColorSelected: color => Settings.data.wallpaper.fillColor = color
+        onColorCancelled: selectedColor = Settings.data.wallpaper.fillColor
+      }
+    }
+
     // Transition Type
     NComboBox {
       label: "Transition Type"

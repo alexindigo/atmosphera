@@ -41,6 +41,9 @@ Variants {
 
       // Fillmode default is "crop"
       property real fillMode: 1.0
+      property vector4d fillColor: Qt.vector4d(Settings.data.wallpaper.fillColor.r,
+                                               Settings.data.wallpaper.fillColor.g,
+                                               Settings.data.wallpaper.fillColor.b, 1.0)
 
       // On startup assign wallpaper immediately
       Component.onCompleted: {
@@ -127,13 +130,13 @@ Variants {
 
         // Fill mode properties
         property real fillMode: root.fillMode
+        property vector4d fillColor: root.fillColor
         property real imageWidth1: source1.sourceSize.width
         property real imageHeight1: source1.sourceSize.height
         property real imageWidth2: source2.sourceSize.width
         property real imageHeight2: source2.sourceSize.height
         property real screenWidth: width
         property real screenHeight: height
-        property vector4d fillColor: Qt.vector4d(0.0, 0.0, 0.0, 1.0) // Black
 
         fragmentShader: Qt.resolvedUrl("../../Shaders/qsb/wp_fade.frag.qsb")
       }
@@ -152,13 +155,13 @@ Variants {
 
         // Fill mode properties
         property real fillMode: root.fillMode
+        property vector4d fillColor: root.fillColor
         property real imageWidth1: source1.sourceSize.width
         property real imageHeight1: source1.sourceSize.height
         property real imageWidth2: source2.sourceSize.width
         property real imageHeight2: source2.sourceSize.height
         property real screenWidth: width
         property real screenHeight: height
-        property vector4d fillColor: Qt.vector4d(0.0, 0.0, 0.0, 1.0) // Black
 
         fragmentShader: Qt.resolvedUrl("../../Shaders/qsb/wp_wipe.frag.qsb")
       }
@@ -179,13 +182,13 @@ Variants {
 
         // Fill mode properties
         property real fillMode: root.fillMode
+        property vector4d fillColor: root.fillColor
         property real imageWidth1: source1.sourceSize.width
         property real imageHeight1: source1.sourceSize.height
         property real imageWidth2: source2.sourceSize.width
         property real imageHeight2: source2.sourceSize.height
         property real screenWidth: width
         property real screenHeight: height
-        property vector4d fillColor: Qt.vector4d(0.0, 0.0, 0.0, 1.0) // Black
 
         fragmentShader: Qt.resolvedUrl("../../Shaders/qsb/wp_disc.frag.qsb")
       }
@@ -206,13 +209,13 @@ Variants {
 
         // Fill mode properties
         property real fillMode: root.fillMode
+        property vector4d fillColor: root.fillColor
         property real imageWidth1: source1.sourceSize.width
         property real imageHeight1: source1.sourceSize.height
         property real imageWidth2: source2.sourceSize.width
         property real imageHeight2: source2.sourceSize.height
         property real screenWidth: width
         property real screenHeight: height
-        property vector4d fillColor: Qt.vector4d(0.0, 0.0, 0.0, 1.0) // Black
 
         fragmentShader: Qt.resolvedUrl("../../Shaders/qsb/wp_stripes.frag.qsb")
       }
