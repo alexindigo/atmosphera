@@ -158,36 +158,39 @@ ColumnLayout {
       spacing: Style.marginL * scaling
       Layout.fillWidth: true
 
-      NTextInput {
+      NComboBox {
         label: "Default Font"
         description: "Main font used throughout the interface."
-        text: Settings.data.ui.fontDefault
-        placeholderText: "Roboto"
-        Layout.fillWidth: true
-        onEditingFinished: {
-          Settings.data.ui.fontDefault = text
+        model: FontService.availableFonts
+        currentKey: Settings.data.ui.fontDefault
+        placeholder: "Select default font..."
+        popupHeight: 420 * scaling
+        onSelected: function (key) {
+          Settings.data.ui.fontDefault = key
         }
       }
 
-      NTextInput {
+      NComboBox {
         label: "Fixed Width Font"
         description: "Monospace font used for terminal and code display."
-        text: Settings.data.ui.fontFixed
-        placeholderText: "DejaVu Sans Mono"
-        Layout.fillWidth: true
-        onEditingFinished: {
-          Settings.data.ui.fontFixed = text
+        model: FontService.monospaceFonts
+        currentKey: Settings.data.ui.fontFixed
+        placeholder: "Select monospace font..."
+        popupHeight: 320 * scaling
+        onSelected: function (key) {
+          Settings.data.ui.fontFixed = key
         }
       }
 
-      NTextInput {
+      NComboBox {
         label: "Billboard Font"
         description: "Large font used for clocks and prominent displays."
-        text: Settings.data.ui.fontBillboard
-        placeholderText: "Inter"
-        Layout.fillWidth: true
-        onEditingFinished: {
-          Settings.data.ui.fontBillboard = text
+        model: FontService.displayFonts
+        currentKey: Settings.data.ui.fontBillboard
+        placeholder: "Select display font..."
+        popupHeight: 320 * scaling
+        onSelected: function (key) {
+          Settings.data.ui.fontBillboard = key
         }
       }
     }

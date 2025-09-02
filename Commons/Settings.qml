@@ -107,6 +107,9 @@ Singleton {
         // Kickoff Matugen service
         MatugenService.init()
 
+        // Kickoff Font service
+        FontService.init()
+
         Qt.callLater(function () {
           validateMonitorConfigurations()
         })

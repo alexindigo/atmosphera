@@ -10,6 +10,7 @@ RowLayout {
 
   readonly property real preferredHeight: Style.baseWidgetSize * 1.1 * scaling
   property real preferredWidth: 320 * scaling
+  property real popupHeight: 160 * scaling
 
   property string label: ""
   property string description: ""
@@ -86,7 +87,7 @@ RowLayout {
     popup: Popup {
       y: combo.height
       width: combo.width
-      implicitHeight: Math.min(160 * scaling, contentItem.implicitHeight + Style.marginM * scaling * 2)
+      implicitHeight: Math.min(root.popupHeight, contentItem.implicitHeight + Style.marginM * scaling * 2)
       padding: Style.marginM * scaling
 
       contentItem: ListView {
