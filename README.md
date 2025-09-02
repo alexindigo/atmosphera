@@ -213,8 +213,10 @@ The following commands apply to the Nix flake installation.
 | Toggle Settings Window      | `noctalia-shell ipc call settings toggle`             |
 | Toggle Lock Screen          | `noctalia-shell ipc call lockScreen toggle`           |
 | Toggle Notification History | `noctalia-shell ipc call notifications toggleHistory` |
-| Select new random wallpaper | `noctalia-shell ipc call wallpaper random`            |
-
+| Set New Random Wallpaper    | `noctalia-shell ipc call wallpaper random`            |
+| Toggle Dark Mode            | `noctalia-shell ipc call darkMode toggle`             |
+| Set Dark Mode               | `noctalia-shell ipc call darkMode setDark`            |
+| Set Light Mode              | `noctalia-shell ipc call darkMode setLight`           |
 </details>
 
 
