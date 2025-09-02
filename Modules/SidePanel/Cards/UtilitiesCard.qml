@@ -47,6 +47,7 @@ NBox {
 
     // Wallpaper
     NIconButton {
+      visible: Settings.data.wallpaper.enabled
       icon: "image"
       tooltipText: "Left click: Open wallpaper selector\nRight click: Set random wallpaper"
       onClicked: {
