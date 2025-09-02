@@ -13,7 +13,7 @@ Item {
   Connections {
     target: ScalingService
     function onScaleChanged(screenName, scale) {
-      if ((loader.item.screen !== null) && (screenName === loader.item.screen.name)) {
+      if (loader.item && loader.item.screen && screenName === loader.item.screen.name) {
         loader.item['scaling'] = scale
       }
     }

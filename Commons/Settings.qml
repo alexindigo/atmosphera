@@ -122,6 +122,7 @@ Singleton {
         property bool alwaysShowBatteryPercentage: false
         property bool showNetworkStats: false
         property real backgroundOpacity: 1.0
+        property bool useDistroLogo: false
         property string showWorkspaceLabel: "none"
         property list<string> monitors: []
 
@@ -142,8 +143,6 @@ Singleton {
         property real radiusRatio: 1.0
         // Animation speed multiplier (0.1x - 2.0x)
         property real animationSpeed: 1.0
-        // Replace sidepanel toggle with distro logo (shown in bar and/or side panel)
-        property bool useDistroLogoForSidepanel: false
       }
 
       // location

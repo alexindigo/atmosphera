@@ -97,6 +97,15 @@ ColumnLayout {
                  }
     }
 
+    NToggle {
+      label: "Replace SidePanel toggle with distro logo"
+      description: "Show distro logo instead of the SidePanel toggle button in the bar."
+      checked: Settings.data.bar.useDistroLogo
+      onToggled: checked => {
+                   Settings.data.bar.useDistroLogo = checked
+                 }
+    }
+
     NComboBox {
       label: "Show Workspaces Labels"
       description: "Display the workspace name or index in the workspace indicator"
