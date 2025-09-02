@@ -214,7 +214,7 @@ Alternatively, you can add it to your NixOS configuration or flake:
 | Select new random wallpaper | `qs -c noctalia-shell ipc call wallpaper random`            |
 | Toggle Dark Mode            | `qs -c noctalia-shell ipc call darkMode toggle`             |
 | Set Dark Mode               | `qs -c noctalia-shell ipc call darkMode setDark`            |
-| Set Light Mode              | `qs -c noctalia-shell  ipc call darkMode setLight`          |
+| Set Light Mode              | `qs -c noctalia-shell ipc call darkMode setLight`           |
 
 *If using the Flake installation on NixOS, replace `qs -c noctalia-shell` by `noctalia-shell`*
 
