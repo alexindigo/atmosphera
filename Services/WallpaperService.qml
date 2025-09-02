@@ -49,6 +49,51 @@ Singleton {
     }
   }
 
+  readonly property ListModel fillModeModel: ListModel {
+    // Centers image without resizing
+    // Pads with fillColor if image is smaller than screen
+    ListElement {
+      key: "center"
+      name: "Center"
+      uniform: 0.0
+    }
+    // Scales image to fill entire screen
+    // Crops portions that exceed screen bounds
+    // Maintains aspect ratio
+    ListElement {
+      key: "crop"
+      name: "Crop (Fill/Cover)"
+      uniform: 1.0
+    }
+    // Scales image to fit entirely within screen
+    // Maintains aspect ratio
+    // May show fillColor bars on sides
+    ListElement {
+      key: "fit"
+      name: "Fit (Contain)"
+      uniform: 2.0
+    }
+    // Stretches image to exact screen dimensions
+    // Does NOT maintain aspect ratio
+    // May distort the image
+    ListElement {
+      key: "stretch"
+      name: "Stretch"
+      uniform: 3.0
+    }
+  }
+
+  function getFillModeUniform() {
+    for (var i = 0; i < fillModeModel.count; i++) {
+      const mode = fillModeModel.get(i)
+      if (mode.key === Settings.data.wallpaper.fillMode) {
+        return mode.uniform
+      }
+    }
+    // Fallback to crop
+    return 1.0
+  }
+
   // All transition keys but filter out "none" and "random" so we are left with the real transitions
   readonly property var allTransitions: Array.from({
                                                      "length": transitionsModel.count

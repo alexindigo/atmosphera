@@ -39,10 +39,22 @@ Variants {
       // Used to debounce wallpaper changes
       property string futureWallpaper: ""
 
+      // Fillmode default is "crop"
+      property real fillMode: 1.0
+
       // On startup assign wallpaper immediately
       Component.onCompleted: {
+        fillMode = WallpaperService.getFillModeUniform()
+
         var path = modelData ? WallpaperService.getWallpaper(modelData.name) : ""
         setWallpaperImmediate(path)
+      }
+
+      Connections {
+        target: Settings.data.wallpaper
+        function onFillModeChanged() {
+          fillMode = WallpaperService.getFillModeUniform()
+        }
       }
 
       // External state management
@@ -84,8 +96,6 @@ Variants {
 
       Image {
         id: currentWallpaper
-        anchors.fill: parent
-        fillMode: Image.PreserveAspectCrop
         source: ""
         smooth: true
         mipmap: false
@@ -97,8 +107,6 @@ Variants {
 
       Image {
         id: nextWallpaper
-        anchors.fill: parent
-        fillMode: Image.PreserveAspectCrop
         source: ""
         smooth: true
         mipmap: false
@@ -116,6 +124,17 @@ Variants {
         property variant source1: currentWallpaper
         property variant source2: nextWallpaper
         property real progress: root.transitionProgress
+
+        // Fill mode properties
+        property real fillMode: root.fillMode
+        property real imageWidth1: source1.sourceSize.width
+        property real imageHeight1: source1.sourceSize.height
+        property real imageWidth2: source2.sourceSize.width
+        property real imageHeight2: source2.sourceSize.height
+        property real screenWidth: width
+        property real screenHeight: height
+        property vector4d fillColor: Qt.vector4d(0.0, 0.0, 0.0, 1.0) // Black
+
         fragmentShader: Qt.resolvedUrl("../../Shaders/qsb/wp_fade.frag.qsb")
       }
 
@@ -130,6 +149,16 @@ Variants {
         property real progress: root.transitionProgress
         property real smoothness: root.edgeSmoothness
         property real direction: root.wipeDirection
+
+        // Fill mode properties
+        property real fillMode: root.fillMode
+        property real imageWidth1: source1.sourceSize.width
+        property real imageHeight1: source1.sourceSize.height
+        property real imageWidth2: source2.sourceSize.width
+        property real imageHeight2: source2.sourceSize.height
+        property real screenWidth: width
+        property real screenHeight: height
+        property vector4d fillColor: Qt.vector4d(0.0, 0.0, 0.0, 1.0) // Black
 
         fragmentShader: Qt.resolvedUrl("../../Shaders/qsb/wp_wipe.frag.qsb")
       }
@@ -148,6 +177,16 @@ Variants {
         property real centerX: root.discCenterX
         property real centerY: root.discCenterY
 
+        // Fill mode properties
+        property real fillMode: root.fillMode
+        property real imageWidth1: source1.sourceSize.width
+        property real imageHeight1: source1.sourceSize.height
+        property real imageWidth2: source2.sourceSize.width
+        property real imageHeight2: source2.sourceSize.height
+        property real screenWidth: width
+        property real screenHeight: height
+        property vector4d fillColor: Qt.vector4d(0.0, 0.0, 0.0, 1.0) // Black
+
         fragmentShader: Qt.resolvedUrl("../../Shaders/qsb/wp_disc.frag.qsb")
       }
 
@@ -164,6 +203,16 @@ Variants {
         property real aspectRatio: root.width / root.height
         property real stripeCount: root.stripesCount
         property real angle: root.stripesAngle
+
+        // Fill mode properties
+        property real fillMode: root.fillMode
+        property real imageWidth1: source1.sourceSize.width
+        property real imageHeight1: source1.sourceSize.height
+        property real imageWidth2: source2.sourceSize.width
+        property real imageHeight2: source2.sourceSize.height
+        property real screenWidth: width
+        property real screenHeight: height
+        property vector4d fillColor: Qt.vector4d(0.0, 0.0, 0.0, 1.0) // Black
 
         fragmentShader: Qt.resolvedUrl("../../Shaders/qsb/wp_stripes.frag.qsb")
       }
