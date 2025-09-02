@@ -16,6 +16,7 @@ Singleton {
                            "Bluetooth": bluetoothComponent,
                            "Brightness": brightnessComponent,
                            "Clock": clockComponent,
+                           "DarkModeToggle": darkModeToggle,
                            "KeyboardLayout": keyboardLayoutComponent,
                            "MediaMini": mediaMiniComponent,
                            "Microphone": microphoneComponent,
@@ -50,6 +51,9 @@ Singleton {
   }
   property Component clockComponent: Component {
     Clock {}
+  }
+  property Component darkModeToggle: Component {
+    DarkModeToggle {}
   }
   property Component keyboardLayoutComponent: Component {
     KeyboardLayout {}

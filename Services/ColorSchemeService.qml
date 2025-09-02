@@ -10,15 +10,29 @@ import qs.Services
 Singleton {
   id: root
 
-  Component.onCompleted: {
-    Logger.log("ColorScheme", "Service started")
-    loadColorSchemes()
-  }
-
   property var schemes: []
   property bool scanning: false
   property string schemesDirectory: Quickshell.shellDir + "/Assets/ColorScheme"
   property string colorsJsonFilePath: Settings.configDir + "colors.json"
+
+  Connections {
+    target: Settings.data.colorSchemes
+    function onDarkModeChanged() {
+      Logger.log("ColorScheme", "Detected dark mode change")
+      if (!Settings.data.colorSchemes.useWallpaperColors && Settings.data.colorSchemes.predefinedScheme) {
+        // Re-apply current scheme to pick the right variant
+        applyScheme(Settings.data.colorSchemes.predefinedScheme)
+      }
+    }
+  }
+
+  // --------------------------------
+  function init() {
+    // does nothing but ensure the singleton is created
+    // do not remove
+    Logger.log("ColorScheme", "Service started")
+    loadColorSchemes()
+  }
 
   function loadColorSchemes() {
     Logger.log("ColorScheme", "Load ColorScheme")

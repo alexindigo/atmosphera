@@ -10,7 +10,7 @@ import qs.Services
 Singleton {
   id: root
 
-  property string dynamicConfigPath: Settings.cacheDir + "matugen.dynamic.toml"
+  property string dynamicConfigPath: Settings.isLoaded ? Settings.cacheDir + "matugen.dynamic.toml" : ""
 
   // External state management
   Connections {
@@ -23,6 +23,23 @@ Singleton {
     }
   }
 
+  Connections {
+    target: Settings.data.colorSchemes
+    function onDarkModeChanged() {
+      Logger.log("Matugen", "Detected dark mode change")
+      if (Settings.data.colorSchemes.useWallpaperColors) {
+        MatugenService.generateFromWallpaper()
+      }
+    }
+  }
+
+  // --------------------------------
+  function init() {
+    // does nothing but ensure the singleton is created
+    // do not remove
+    Logger.log("Matugen", "Service started")
+  }
+
   // Build TOML content based on settings
   function buildConfigToml() {
     return Matugen.buildConfigToml()
@@ -30,11 +47,12 @@ Singleton {
 
   // Generate colors using current wallpaper and settings
   function generateFromWallpaper() {
-    // Ensure cache dir exists
-    Quickshell.execDetached(["mkdir", "-p", Settings.cacheDir])
-
     Logger.log("Matugen", "Generating from wallpaper on screen:", Screen.name)
     var wp = WallpaperService.getWallpaper(Screen.name).replace(/'/g, "'\\''")
+    if (wp === "") {
+      Logger.error("Matugen", "No wallpaper was found")
+      return
+    }
 
     var content = buildConfigToml()
     var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light"

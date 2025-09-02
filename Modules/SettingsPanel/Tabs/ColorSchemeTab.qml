@@ -63,7 +63,6 @@ ColumnLayout {
       if (exitCode === 0) {
         // Matugen exists, enable it
         Settings.data.colorSchemes.useWallpaperColors = true
-        Settings.data.colorSchemes.predefinedScheme = ""
         MatugenService.generateFromWallpaper()
         ToastService.showNotice("Matugen", "Enabled")
       } else {
@@ -122,19 +121,7 @@ ColumnLayout {
         description: Settings.data.colorSchemes.useWallpaperColors ? "Generate dark theme colors when using Matugen." : "Use a dark variant if available."
         checked: Settings.data.colorSchemes.darkMode
         enabled: true
-        onToggled: checked => {
-                     Settings.data.colorSchemes.darkMode = checked
-                     if (Settings.data.colorSchemes.useWallpaperColors) {
-                       MatugenService.generateFromWallpaper()
-                     } else if (Settings.data.colorSchemes.predefinedScheme) {
-                       // Re-apply current scheme to pick the right variant
-                       ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme)
-                       // Force refresh of previews
-                       var tmp = schemeColorsCache
-                       schemeColorsCache = {}
-                       schemeColorsCache = tmp
-                     }
-                   }
+        onToggled: checked => Settings.data.colorSchemes.darkMode = checked
       }
 
       // Use Matugen
@@ -149,6 +136,11 @@ ColumnLayout {
                      } else {
                        Settings.data.colorSchemes.useWallpaperColors = false
                        ToastService.showNotice("Matugen", "Disabled")
+
+                       if (Settings.data.colorSchemes.predefinedScheme) {
+
+                         ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme)
+                       }
                      }
                    }
       }
@@ -199,7 +191,8 @@ ColumnLayout {
             radius: Style.radiusM * scaling
             color: getSchemeColor(modelData, "mSurface")
             border.width: Math.max(1, Style.borderL * scaling)
-            border.color: Settings.data.colorSchemes.predefinedScheme === modelData ? Color.mPrimary : Color.mOutline
+            border.color: (!Settings.data.colorSchemes.useWallpaperColors
+                           && (Settings.data.colorSchemes.predefinedScheme === modelData)) ? Color.mPrimary : Color.mOutline
             scale: root.cardScaleLow
 
             // Mouse area for selection
@@ -290,9 +283,10 @@ ColumnLayout {
               }
             }
 
-            // Selection indicator
+            // Selection indicator (Checkmark)
             Rectangle {
-              visible: Settings.data.colorSchemes.predefinedScheme === schemePath
+              visible: !Settings.data.colorSchemes.useWallpaperColors
+                       && (Settings.data.colorSchemes.predefinedScheme === schemePath)
               anchors.right: parent.right
               anchors.top: parent.top
               anchors.margins: Style.marginS * scaling

@@ -63,6 +63,7 @@ Singleton {
       Logger.log("Settings", "Bar monitor list is empty, will show on all available screens")
     }
   }
+
   Item {
     Component.onCompleted: {
 
@@ -100,8 +101,13 @@ Singleton {
         // Emit the signal
         root.settingsLoaded()
 
+        // Kickoff ColorScheme service
+        ColorSchemeService.init()
+
+        // Kickoff Matugen service
+        MatugenService.init()
+
         Qt.callLater(function () {
-          // Some stuff like settings validation should just be executed once on startup and not on every reload
           validateMonitorConfigurations()
         })
       }
