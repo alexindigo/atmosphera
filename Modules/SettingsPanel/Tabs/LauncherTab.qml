@@ -56,9 +56,7 @@ ColumnLayout {
       label: "Enable Clipboard History"
       description: "Show clipboard history in the launcher."
       checked: Settings.data.appLauncher.enableClipboardHistory
-      onToggled: checked => {
-                   Settings.data.appLauncher.enableClipboardHistory = checked
-                 }
+      onToggled: checked => Settings.data.appLauncher.enableClipboardHistory = checked
     }
 
     ColumnLayout {

@@ -43,7 +43,7 @@ ColumnLayout {
       }
 
       NText {
-        text: "Adjust the background opacity of the bar"
+        text: "Adjust the background opacity of the bar."
         font.pointSize: Style.fontSizeXS * scaling
         color: Color.mOnSurfaceVariant
         wrapMode: Text.WordWrap
@@ -74,27 +74,21 @@ ColumnLayout {
       label: "Show Active Window's Icon"
       description: "Display the app icon next to the title of the currently focused window."
       checked: Settings.data.bar.showActiveWindowIcon
-      onToggled: checked => {
-                   Settings.data.bar.showActiveWindowIcon = checked
-                 }
+      onToggled: checked => Settings.data.bar.showActiveWindowIcon = checked
     }
 
     NToggle {
       label: "Show Battery Percentage"
       description: "Display battery percentage at all times."
       checked: Settings.data.bar.alwaysShowBatteryPercentage
-      onToggled: checked => {
-                   Settings.data.bar.alwaysShowBatteryPercentage = checked
-                 }
+      onToggled: checked => Settings.data.bar.alwaysShowBatteryPercentage = checked
     }
 
     NToggle {
       label: "Show Network Statistics"
       description: "Display network upload and download speeds in the system monitor."
       checked: Settings.data.bar.showNetworkStats
-      onToggled: checked => {
-                   Settings.data.bar.showNetworkStats = checked
-                 }
+      onToggled: checked => Settings.data.bar.showNetworkStats = checked
     }
 
     NToggle {
@@ -108,7 +102,7 @@ ColumnLayout {
 
     NComboBox {
       label: "Show Workspaces Labels"
-      description: "Display the workspace name or index in the workspace indicator"
+      description: "Show the workspace name or index within the workspace indicator."
       model: ListModel {
         ListElement {
           key: "none"
@@ -124,9 +118,7 @@ ColumnLayout {
         }
       }
       currentKey: Settings.data.bar.showWorkspaceLabel
-      onSelected: key => {
-                    Settings.data.bar.showWorkspaceLabel = key
-                  }
+      onSelected: key => Settings.data.bar.showWorkspaceLabel = key
     }
   }
 
@@ -151,7 +143,7 @@ ColumnLayout {
 
     NText {
       text: "Drag and drop widgets to reorder them within each section, or use the add/remove buttons to manage widgets."
-      font.pointSize: Style.fontSizeXS * scaling
+      font.pointSize: Style.fontSizeM * scaling
       color: Color.mOnSurfaceVariant
       wrapMode: Text.WordWrap
       Layout.fillWidth: true

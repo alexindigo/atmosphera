@@ -123,9 +123,7 @@ ColumnLayout {
       label: "Mute Audio Input"
       description: "Mute or unmute the default audio input (microphone)."
       checked: AudioService.inputMuted
-      onToggled: checked => {
-                   AudioService.setInputMuted(checked)
-                 }
+      onToggled: checked => AudioService.setInputMuted(checked)
     }
   }
 
@@ -249,18 +247,14 @@ ColumnLayout {
       label: "Show Album Art In Bar Media Player"
       description: "Show the album art of the currently playing song next to the title."
       checked: Settings.data.audio.showMiniplayerAlbumArt
-      onToggled: checked => {
-                   Settings.data.audio.showMiniplayerAlbumArt = checked
-                 }
+      onToggled: checked => Settings.data.audio.showMiniplayerAlbumArt = checked
     }
 
     NToggle {
       label: "Show Audio Visualizer In Bar Media Player"
       description: "Shows an audio visualizer in the background of the miniplayer."
       checked: Settings.data.audio.showMiniplayerCava
-      onToggled: checked => {
-                   Settings.data.audio.showMiniplayerCava = checked
-                 }
+      onToggled: checked => Settings.data.audio.showMiniplayerCava = checked
     }
     // Preferred player (persistent)
     NTextInput {
@@ -412,9 +406,7 @@ ColumnLayout {
         }
       }
       currentKey: Settings.data.audio.visualizerType
-      onSelected: key => {
-                    Settings.data.audio.visualizerType = key
-                  }
+      onSelected: key => Settings.data.audio.visualizerType = key
     }
 
     NComboBox {
@@ -451,9 +443,7 @@ ColumnLayout {
         }
       }
       currentKey: Settings.data.audio.cavaFrameRate
-      onSelected: key => {
-                    Settings.data.audio.cavaFrameRate = key
-                  }
+      onSelected: key => Settings.data.audio.cavaFrameRate = key
     }
   }
   // Divider

@@ -191,39 +191,9 @@ Alternatively, you can add it to your NixOS configuration or flake:
 
 ### Usage
 
-<details>
-<summary> Nix </summary>
-The following commands apply to the Nix flake installation.
+Noctalia-shell offers many IPC calls for you convenience, so you can add them to your favorite keybinds or scripts.
 
-| Action                      | Command                                               |
-| --------------------------- | ----------------------------------------------------- |
-| Start the Shell             | `noctalia-shell`                                      |
-| Toggle Application Launcher | `noctalia-shell ipc call launcher toggle`             |
-| Toggle Side Panel           | `noctalia-shell ipc call sidePanel toggle`            |
-| Open Clipboard History      | `noctalia-shell ipc call launcher clipboard`          |
-| Open Calculator             | `noctalia-shell ipc call launcher calculator`         |
-| Increase Brightness         | `noctalia-shell ipc call brightness increase`         |
-| Decrease Brightness         | `noctalia-shell ipc call brightness decrease`         |
-| Increase Output Volume      | `noctalia-shell ipc call volume increase`             |
-| Decrease Output Volume      | `noctalia-shell ipc call volume decrease`             |
-| Toggle Mute Audio Output    | `noctalia-shell ipc call volume muteOutput`           |
-| Toggle Mute Audio Input     | `noctalia-shell ipc call volume muteInput`            |
-| Toggle Power Panel          | `noctalia-shell ipc call powerPanel toggle`           |
-| Toggle Idle Inhibitor       | `noctalia-shell ipc call idleInhibitor toggle`        |
-| Toggle Settings Window      | `noctalia-shell ipc call settings toggle`             |
-| Toggle Lock Screen          | `noctalia-shell ipc call lockScreen toggle`           |
-| Toggle Notification History | `noctalia-shell ipc call notifications toggleHistory` |
-| Select new random wallpaper | `noctalia-shell ipc call wallpaper random`            |
-
-</details>
-
-
-<details>
-<summary> AUR/Manual install </summary>
-
-The following commands apply to both AUR package and manual installation.
-
-| Action                      | Command                                                     |
+| Action                      | Command*                                                    |
 | --------------------------- | ----------------------------------------------------------- |
 | Start the Shell             | `qs -c noctalia-shell`                                      |
 | Toggle Application Launcher | `qs -c noctalia-shell ipc call launcher toggle`             |
@@ -242,9 +212,11 @@ The following commands apply to both AUR package and manual installation.
 | Toggle Lock Screen          | `qs -c noctalia-shell ipc call lockScreen toggle`           |
 | Toggle Notification History | `qs -c noctalia-shell ipc call notifications toggleHistory` |
 | Select new random wallpaper | `qs -c noctalia-shell ipc call wallpaper random`            |
+| Toggle Dark Mode            | `qs -c noctalia-shell ipc call darkMode toggle`             |
+| Set Dark Mode               | `qs -c noctalia-shell ipc call darkMode setDark`            |
+| Set Light Mode              | `qs -c noctalia-shell  ipc call darkMode setLight`          |
 
-</details>
-
+*If using the Flake installation on NixOS, replace `qs -c noctalia-shell` by `noctalia-shell`*
 
 ### Configuration
 

@@ -298,9 +298,8 @@ ColumnLayout {
         model: timeOptions
         currentKey: Settings.data.nightLight.manualSunrise
         placeholder: "Select start time"
-        onSelected: key => {
-                      Settings.data.nightLight.manualSunrise = key
-                    }
+        onSelected: key => Settings.data.nightLight.manualSunrise = key
+
         preferredWidth: 120 * scaling
       }
 
@@ -316,9 +315,8 @@ ColumnLayout {
         model: timeOptions
         currentKey: Settings.data.nightLight.manualSunset
         placeholder: "Select stop time"
-        onSelected: key => {
-                      Settings.data.nightLight.manualSunset = key
-                    }
+        onSelected: key => Settings.data.nightLight.manualSunset = key
+
         preferredWidth: 120 * scaling
       }
     }

@@ -43,9 +43,10 @@ NBox {
       NText {
         text: Quickshell.env("USER") || "user"
         font.weight: Style.fontWeightBold
+        font.capitalization: Font.Capitalize
       }
       NText {
-        text: `System Uptime: ${uptimeText}`
+        text: `System uptime: ${uptimeText}`
         color: Color.mOnSurface
       }
     }
