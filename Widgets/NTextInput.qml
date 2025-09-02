@@ -19,6 +19,7 @@ ColumnLayout {
   property alias text: input.text
   property alias placeholderText: input.placeholderText
   property alias inputMethodHints: input.inputMethodHints
+  property alias inputItem: input
 
   signal editingFinished
 

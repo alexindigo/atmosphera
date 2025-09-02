@@ -23,12 +23,7 @@ QtObject {
     const normalized = (preview || "").replace(/\s+/g, ' ').trim()
     const lines = normalized.split(/\n+/)
     const title = (lines[0] || "Text").slice(0, 60)
-    let subtitle = ""
-    if (lines.length > 1) {
-      subtitle = lines[1].slice(0, 80)
-    } else {
-      subtitle = `${normalized.length} chars`
-    }
+    const subtitle = (lines.length > 1) ? lines[1].slice(0, 80) : ""
     return {
       "title": title,
       "subtitle": subtitle
@@ -39,7 +34,7 @@ QtObject {
     if (item.isImage) {
       const meta = parseImageMeta(item.preview)
       const title = meta ? `Image ${meta.w}×${meta.h}` : "Image"
-      const subtitle = meta ? `${meta.size} · ${meta.fmt}` : (item.preview || "")
+      const subtitle = ""
       return {
         "isClipboard": true,
         "name": title,
@@ -54,7 +49,7 @@ QtObject {
       return {
         "isClipboard": true,
         "name": parts.title,
-        "content": parts.subtitle,
+        "content": "",
         "icon": "content_paste",
         "type": 'text',
         "id": item.id

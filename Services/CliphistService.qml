@@ -27,6 +27,9 @@ Singleton {
   property var imageDataById: ({})
   property int revision: 0
 
+  // Approximate first-seen timestamps for entries this session (seconds)
+  property var firstSeenById: ({})
+
   // Internal: store callback for decode
   property var _decodeCallback: null
 
@@ -130,6 +133,10 @@ Singleton {
                                    mime = "image/gif"
                                    else
                                    mime = "image/*"
+                                 }
+                                 // Record first seen time for new ids (approximate copy time)
+                                 if (!root.firstSeenById[id]) {
+                                   root.firstSeenById[id] = Time.timestamp
                                  }
                                  return {
                                    "id": id,
