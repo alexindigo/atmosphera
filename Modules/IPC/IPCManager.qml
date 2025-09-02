@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import qs.Commons
 import qs.Services
 
 Item {
@@ -128,6 +129,16 @@ Item {
     target: "sidePanel"
     function toggle() {
       sidePanel.toggle(Quickshell.screens[0])
+    }
+  }
+
+  // Wallpaper IPC: trigger a new random wallpaper
+  IpcHandler {
+    target: "wallpaper"
+    function random() {
+      if (Settings.data.wallpaper.enabled) {
+        WallpaperService.setRandomWallpaper()
+      }
     }
   }
 }

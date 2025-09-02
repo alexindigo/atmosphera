@@ -52,6 +52,17 @@ NPanel {
       searchText = ""
       selectedIndex = 0
     }
+    // Focus search input on open and place cursor at end
+    Qt.callLater(() => {
+                   if (searchInputBox && searchInputBox.inputItem) {
+                     searchInputBox.inputItem.forceActiveFocus()
+                     if (searchText && searchText.length > 0) {
+                       searchInputBox.inputItem.cursorPosition = searchText.length
+                     } else {
+                       searchInputBox.inputItem.cursorPosition = 0
+                     }
+                   }
+                 })
   }
 
   onClosed: {
@@ -244,74 +255,48 @@ NPanel {
       anchors.margins: Style.marginL * scaling
       spacing: Style.marginM * scaling
 
-      // Search bar
-      Rectangle {
+      RowLayout {
         Layout.fillWidth: true
         Layout.preferredHeight: Math.round(Style.barHeight * scaling)
         Layout.bottomMargin: Style.marginM * scaling
-        radius: Style.radiusM * scaling
-        color: Color.mSurface
-        border.color: searchInput.activeFocus ? Color.mSecondary : Color.mOutline
-        border.width: Math.max(1, searchInput.activeFocus ? Style.borderM * scaling : Style.borderS * scaling)
 
+        // Wrapper ensures the input stretches to full width under RowLayout
         Item {
-          anchors.fill: parent
-          anchors.margins: Style.marginM * scaling
+          id: searchInputWrap
+          Layout.fillWidth: true
+          Layout.preferredHeight: Math.round(Style.barHeight * scaling)
 
-          NIcon {
-            id: searchIcon
-            text: "search"
-            font.pointSize: Style.fontSizeXL * scaling
-            color: searchInput.activeFocus ? Color.mPrimary : Color.mOnSurface
-            anchors.left: parent.left
-            anchors.verticalCenter: parent.verticalCenter
-          }
-
-          TextField {
-            id: searchInput
-            placeholderText: searchText === "" ? "Search applications... (use > to view commands)" : "Search applications..."
-            color: Color.mOnSurface
-            placeholderTextColor: Color.mOnSurfaceVariant
-            background: null
-            font.pointSize: Style.fontSizeL * scaling
-            anchors.left: searchIcon.right
-            anchors.leftMargin: Style.marginS * scaling
-            anchors.right: parent.right
-            anchors.verticalCenter: parent.verticalCenter
+          NTextInput {
+            id: searchInputBox
+            anchors.fill: parent
+            placeholderText: "Search applications... (use > to view commands)"
             text: searchText
-            onTextChanged: {
-              // Update the parent searchText property
-              if (searchText !== text) {
-                searchText = text
-              }
-              // Defer selectedIndex reset to avoid binding loops
-              Qt.callLater(() => selectedIndex = 0)
-
-              // Reset cursor position if needed
-              if (shouldResetCursor && text === "") {
-                cursorPosition = 0
-                shouldResetCursor = false
-              }
-            }
-            selectedTextColor: Color.mOnSurface
-            selectionColor: Color.mPrimary
-            padding: 0
-            verticalAlignment: TextInput.AlignVCenter
-            leftPadding: 0
-            rightPadding: 0
-            topPadding: 0
-            bottomPadding: 0
+            inputMaxWidth: 100000
+            // Tune vertical centering on inner input
             Component.onCompleted: {
-              // Focus the search bar by default and set cursor position
+              searchInputBox.inputItem.font.pointSize = Style.fontSizeL * scaling
+              searchInputBox.inputItem.verticalAlignment = TextInput.AlignVCenter
+              // Ensure focus when launcher first appears
               Qt.callLater(() => {
-                             selectedIndex = 0
-                             searchInput.forceActiveFocus()
-                             // Set cursor to end if there's already text
+                             searchInputBox.inputItem.forceActiveFocus()
                              if (searchText && searchText.length > 0) {
-                               searchInput.cursorPosition = searchText.length
+                               searchInputBox.inputItem.cursorPosition = searchText.length
+                             } else {
+                               searchInputBox.inputItem.cursorPosition = 0
                              }
                            })
             }
+            onTextChanged: {
+              if (searchText !== text) {
+                searchText = text
+              }
+              Qt.callLater(() => selectedIndex = 0)
+              if (shouldResetCursor && text === "") {
+                searchInputBox.inputItem.cursorPosition = 0
+                shouldResetCursor = false
+              }
+            }
+            // Forward key navigation to behave like before
             Keys.onDownPressed: selectNext()
             Keys.onUpPressed: selectPrev()
             Keys.onEnterPressed: activateSelected()
@@ -355,16 +340,13 @@ NPanel {
           }
         }
 
-        Behavior on border.color {
-          ColorAnimation {
-            duration: Style.animationFast
-          }
-        }
-
-        Behavior on border.width {
-          NumberAnimation {
-            duration: Style.animationFast
-          }
+        // Clear-all action to the right of the input
+        NIconButton {
+          Layout.alignment: Qt.AlignVCenter
+          visible: searchText.startsWith(">clip")
+          icon: "delete_sweep"
+          tooltipText: "Clear clipboard history"
+          onClicked: CliphistService.wipeAll()
         }
       }
 
@@ -388,6 +370,22 @@ NPanel {
         }
         ScrollBar.vertical: ScrollBar {
           policy: ScrollBar.AsNeeded
+        }
+
+        // Keep viewport anchored to the selected item when the clipboard model refreshes
+        Connections {
+          target: CliphistService
+          function onRevisionChanged() {
+            if (Settings.data.appLauncher.enableClipboardHistory && searchText.startsWith(">clip")) {
+              // Clamp selection in case the list shrank
+              if (selectedIndex >= filteredEntries.length) {
+                selectedIndex = Math.max(0, filteredEntries.length - 1)
+              }
+              Qt.callLater(() => {
+                             appsList.positionViewAtIndex(selectedIndex, ListView.Contain)
+                           })
+            }
+          }
         }
 
         delegate: Rectangle {
@@ -430,6 +428,19 @@ NPanel {
                                         || (iconImg.status === Image.Ready && iconImg.source !== ""
                                             && iconImg.status !== Image.Error && iconImg.source !== "")
               visible: !searchText.startsWith(">calc")
+
+              // Decode image thumbnails on demand
+              Component.onCompleted: {
+                if (modelData && modelData.type === 'image' && !CliphistService.imageDataById[modelData.id]) {
+                  CliphistService.decodeToDataUrl(modelData.id, modelData.mime || "image/*", function () {})
+                }
+              }
+              onVisibleChanged: {
+                if (visible && modelData && modelData.type === 'image'
+                    && !CliphistService.imageDataById[modelData.id]) {
+                  CliphistService.decodeToDataUrl(modelData.id, modelData.mime || "image/*", function () {})
+                }
+              }
 
               // Clipboard image display (pull from cache)
               Image {

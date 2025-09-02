@@ -213,6 +213,7 @@ The following commands apply to the Nix flake installation.
 | Toggle Settings Window      | `noctalia-shell ipc call settings toggle`             |
 | Toggle Lock Screen          | `noctalia-shell ipc call lockScreen toggle`           |
 | Toggle Notification History | `noctalia-shell ipc call notifications toggleHistory` |
+| Select new random wallpaper | `noctalia-shell ipc call wallpaper random`            |
 
 </details>
 
@@ -240,6 +241,7 @@ The following commands apply to both AUR package and manual installation.
 | Toggle Settings Window      | `qs -c noctalia-shell ipc call settings toggle`             |
 | Toggle Lock Screen          | `qs -c noctalia-shell ipc call lockScreen toggle`           |
 | Toggle Notification History | `qs -c noctalia-shell ipc call notifications toggleHistory` |
+| Select new random wallpaper | `qs -c noctalia-shell ipc call wallpaper random`            |
 
 </details>
 
