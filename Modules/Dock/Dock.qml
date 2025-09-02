@@ -51,8 +51,8 @@ Variants {
       exclusionMode: ExclusionMode.Ignore
 
       anchors.bottom: true
-      anchors.left: true
-      anchors.right: true
+      implicitWidth: dockContainer.width
+
       focusable: false
       color: Color.transparent
       implicitHeight: iconSize * 1.4 * scaling
