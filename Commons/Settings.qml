@@ -22,8 +22,9 @@ Singleton {
 
   property string settingsFile: Quickshell.env("NOCTALIA_SETTINGS_FILE") || (configDir + "settings.json")
 
-  property string defaultWallpaper: Qt.resolvedUrl("../Assets/Tests/wallpaper.png")
   property string defaultAvatar: Quickshell.env("HOME") + "/.face"
+  property string defaultWallpapersDirectory: Quickshell.env("HOME") + "/Pictures/Wallpapers"
+  property string defaultVideosDirectory: Quickshell.env("HOME") + "/Videos"
 
   // Used to access via Settings.data.xxx.yyy
   readonly property alias data: adapter
@@ -165,7 +166,7 @@ Singleton {
 
       // screen recorder
       property JsonObject screenRecorder: JsonObject {
-        property string directory: "~/Videos"
+        property string directory: defaultVideosDirectory
         property int frameRate: 60
         property string audioCodec: "opus"
         property string videoCodec: "h264"
@@ -179,7 +180,7 @@ Singleton {
       // wallpaper
       property JsonObject wallpaper: JsonObject {
         property bool enabled: true
-        property string directory: "/usr/share/wallpapers"
+        property string directory: defaultWallpapersDirectory
         property bool enableMultiMonitorDirectories: false
         property bool setWallpaperOnAllMonitors: true
         property string fillMode: "crop"
