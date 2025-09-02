@@ -29,19 +29,19 @@ NBox {
       NIcon {
         text: weatherReady ? LocationService.weatherSymbolFromCode(
                                LocationService.data.weather.current_weather.weathercode) : ""
-        font.pointSize: Style.fontSizeXXXL * 1.5 * scaling
+        font.pointSize: Style.fontSizeXXXL * 1.75 * scaling
         color: Color.mPrimary
       }
 
       ColumnLayout {
-        spacing: -Style.marginXS * scaling
+        spacing: Style.marginXXS * scaling
         NText {
           text: {
             // Ensure the name is not too long if one had to specify the country
             const chunks = Settings.data.location.name.split(",")
             return chunks[0]
           }
-          font.pointSize: Style.fontSizeXL * scaling
+          font.pointSize: Style.fontSizeL * scaling
           font.weight: Style.fontWeightBold
         }
 
@@ -61,13 +61,14 @@ NBox {
               temp = Math.round(temp)
               return `${temp}°${suffix}`
             }
-            font.pointSize: Style.fontSizeXXL * scaling
+            font.pointSize: Style.fontSizeXL * scaling
             font.weight: Style.fontWeightBold
           }
 
           NText {
             text: weatherReady ? `(${LocationService.data.weather.timezone_abbreviation})` : ""
             font.pointSize: Style.fontSizeXS * scaling
+            color: Color.mOnSurfaceVariant
             visible: LocationService.data.weather
           }
         }
