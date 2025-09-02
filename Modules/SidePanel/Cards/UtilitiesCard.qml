@@ -31,6 +31,11 @@ NBox {
       colorFg: ScreenRecorderService.isRecording ? Color.mOnPrimary : Color.mPrimary
       onClicked: {
         ScreenRecorderService.toggleRecording()
+        // If we were not recording and we just initiated a start, close the panel
+        if (!ScreenRecorderService.isRecording) {
+          var panel = PanelService.getPanel("sidePanel")
+          panel && panel.close()
+        }
       }
     }
 
