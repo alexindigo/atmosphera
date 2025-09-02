@@ -75,9 +75,8 @@ NBox {
         label: ""
         description: ""
         placeholder: "Select a widget to add..."
-        onSelected: key => {
-                      comboBox.currentKey = key
-                    }
+        onSelected: key => comboBox.currentKey = key
+
         Layout.alignment: Qt.AlignVCenter
       }
 

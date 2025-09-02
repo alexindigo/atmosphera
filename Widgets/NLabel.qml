@@ -17,6 +17,7 @@ ColumnLayout {
     text: label
     font.pointSize: Style.fontSizeL * scaling
     font.weight: Style.fontWeightBold
+    font.capitalization: Font.Capitalize
     color: labelColor
     visible: label !== ""
   }

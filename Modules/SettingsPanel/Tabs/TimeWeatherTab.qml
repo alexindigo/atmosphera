@@ -63,27 +63,21 @@ ColumnLayout {
       label: "Use 12-Hour Clock"
       description: "Display time in 12-hour format (AM/PM) instead of 24-hour."
       checked: Settings.data.location.use12HourClock
-      onToggled: checked => {
-                   Settings.data.location.use12HourClock = checked
-                 }
+      onToggled: checked => Settings.data.location.use12HourClock = checked
     }
 
     NToggle {
       label: "Reverse Day/Month"
-      description: "Display date as DD/MM instead of MM/DD."
+      description: "Display date as dd/mm instead of mm/dd."
       checked: Settings.data.location.reverseDayMonth
-      onToggled: checked => {
-                   Settings.data.location.reverseDayMonth = checked
-                 }
+      onToggled: checked => Settings.data.location.reverseDayMonth = checked
     }
 
     NToggle {
       label: "Show Date with Clock"
       description: "Display date alongside time (e.g., 18:12 - Sat, 23 Aug)."
       checked: Settings.data.location.showDateWithClock
-      onToggled: checked => {
-                   Settings.data.location.showDateWithClock = checked
-                 }
+      onToggled: checked => Settings.data.location.showDateWithClock = checked
     }
   }
 
@@ -109,9 +103,7 @@ ColumnLayout {
       label: "Use Fahrenheit"
       description: "Display temperature in Fahrenheit instead of Celsius."
       checked: Settings.data.location.useFahrenheit
-      onToggled: checked => {
-                   Settings.data.location.useFahrenheit = checked
-                 }
+      onToggled: checked => Settings.data.location.useFahrenheit = checked
     }
   }
 

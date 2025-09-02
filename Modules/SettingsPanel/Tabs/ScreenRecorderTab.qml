@@ -37,9 +37,7 @@ ColumnLayout {
         label: "Show Cursor"
         description: "Record mouse cursor in the video."
         checked: Settings.data.screenRecorder.showCursor
-        onToggled: checked => {
-                     Settings.data.screenRecorder.showCursor = checked
-                   }
+        onToggled: checked => Settings.data.screenRecorder.showCursor = checked
       }
     }
   }
@@ -66,7 +64,7 @@ ColumnLayout {
     // Source
     NComboBox {
       label: "Video Source"
-      description: "We recommend using portal, if you get artifacts try screen."
+      description: "Portal is recommend, if you get artifacts try Screen."
       model: ListModel {
         ListElement {
           key: "portal"
@@ -78,9 +76,7 @@ ColumnLayout {
         }
       }
       currentKey: Settings.data.screenRecorder.videoSource
-      onSelected: key => {
-                    Settings.data.screenRecorder.videoSource = key
-                  }
+      onSelected: key => Settings.data.screenRecorder.videoSource = key
     }
 
     // Frame Rate
@@ -118,9 +114,7 @@ ColumnLayout {
         }
       }
       currentKey: Settings.data.screenRecorder.frameRate
-      onSelected: key => {
-                    Settings.data.screenRecorder.frameRate = key
-                  }
+      onSelected: key => Settings.data.screenRecorder.frameRate = key
     }
 
     // Video Quality
@@ -146,15 +140,13 @@ ColumnLayout {
         }
       }
       currentKey: Settings.data.screenRecorder.quality
-      onSelected: key => {
-                    Settings.data.screenRecorder.quality = key
-                  }
+      onSelected: key => Settings.data.screenRecorder.quality = key
     }
 
     // Video Codec
     NComboBox {
       label: "Video Codec"
-      description: "Different codecs offer different compression and compatibility."
+      description: "h264 is the most common codec."
       model: ListModel {
         ListElement {
           key: "h264"
@@ -178,9 +170,7 @@ ColumnLayout {
         }
       }
       currentKey: Settings.data.screenRecorder.videoCodec
-      onSelected: key => {
-                    Settings.data.screenRecorder.videoCodec = key
-                  }
+      onSelected: key => Settings.data.screenRecorder.videoCodec = key
     }
 
     // Color Range
@@ -198,9 +188,7 @@ ColumnLayout {
         }
       }
       currentKey: Settings.data.screenRecorder.colorRange
-      onSelected: key => {
-                    Settings.data.screenRecorder.colorRange = key
-                  }
+      onSelected: key => Settings.data.screenRecorder.colorRange = key
     }
   }
 
@@ -242,9 +230,7 @@ ColumnLayout {
         }
       }
       currentKey: Settings.data.screenRecorder.audioSource
-      onSelected: key => {
-                    Settings.data.screenRecorder.audioSource = key
-                  }
+      onSelected: key => Settings.data.screenRecorder.audioSource = key
     }
 
     // Audio Codec
@@ -262,9 +248,7 @@ ColumnLayout {
         }
       }
       currentKey: Settings.data.screenRecorder.audioCodec
-      onSelected: key => {
-                    Settings.data.screenRecorder.audioCodec = key
-                  }
+      onSelected: key => Settings.data.screenRecorder.audioCodec = key
     }
   }
 

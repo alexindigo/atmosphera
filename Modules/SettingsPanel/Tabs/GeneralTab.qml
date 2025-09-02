@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import Quickshell
 import qs.Commons
 import qs.Services
 import qs.Widgets
@@ -15,8 +16,8 @@ ColumnLayout {
 
     // Avatar preview
     NImageCircled {
-      width: 128 * scaling
-      height: 128 * scaling
+      width: 108 * scaling
+      height: 108 * scaling
       imagePath: Settings.data.general.avatarImage
       fallbackIcon: "person"
       borderColor: Color.mPrimary
@@ -24,7 +25,7 @@ ColumnLayout {
     }
 
     NTextInput {
-      label: "Profile Picture"
+      label: `${Quickshell.env("USER") || "user"}'s profile picture`
       description: "Your profile picture that appears throughout the interface."
       text: Settings.data.general.avatarImage
       placeholderText: "/home/user/.face"
@@ -57,27 +58,27 @@ ColumnLayout {
       label: "Show Corners"
       description: "Display rounded corners on the edge of the screen."
       checked: Settings.data.general.showScreenCorners
-      onToggled: checked => {
+      onToggled: checked => 
                    Settings.data.general.showScreenCorners = checked
-                 }
+                 
     }
 
     NToggle {
       label: "Dim Desktop"
       description: "Dim the desktop when panels or menus are open."
       checked: Settings.data.general.dimDesktop
-      onToggled: checked => {
+      onToggled: checked => 
                    Settings.data.general.dimDesktop = checked
-                 }
+                 
     }
 
     NToggle {
       label: "Auto-hide Dock"
       description: "Automatically hide the dock when not in use."
       checked: Settings.data.dock.autoHide
-      onToggled: checked => {
+      onToggled: checked => 
                    Settings.data.dock.autoHide = checked
-                 }
+                 
     }
 
     ColumnLayout {
