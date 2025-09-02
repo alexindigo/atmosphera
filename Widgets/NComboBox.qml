@@ -10,7 +10,7 @@ RowLayout {
 
   readonly property real preferredHeight: Style.baseWidgetSize * 1.1 * scaling
   property real preferredWidth: 320 * scaling
-  property real popupHeight: 160 * scaling
+  property real popupHeight: 180 * scaling
 
   property string label: ""
   property string description: ""
