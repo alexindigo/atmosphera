@@ -191,7 +191,7 @@ Alternatively, you can add it to your NixOS configuration or flake:
 
 ### Usage
 
-Noctalia-shell offers many IPC calls for you convenience, so you can add them to your favorite keybinds or scripts.
+`noctalia-shell` offers many IPC calls for your convenience, so you can add them to your favorite keybinds or scripts.
 
 | Action                      | Command*                                                    |
 | --------------------------- | ----------------------------------------------------------- |
