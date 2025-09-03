@@ -104,8 +104,7 @@ Variants {
         mipmap: false
         visible: false
         cache: false
-        // currentWallpaper should not be asynchronous to avoid flickering when swapping next to current.
-        asynchronous: false
+        asynchronous: true
       }
 
       Image {
@@ -236,12 +235,9 @@ Variants {
           currentWallpaper.source = nextWallpaper.source
           nextWallpaper.source = ""
           transitionProgress = 0.0
-        }
-      }
-
-      function startTransition() {
-        if (!transitioning && nextWallpaper.source != currentWallpaper.source) {
-          transitionAnimation.start()
+          Qt.callLater(() => {
+                         currentWallpaper.asynchronous = true
+                       }, 100)
         }
       }
 
@@ -253,19 +249,21 @@ Variants {
       }
 
       function setWallpaperWithTransition(source) {
-        if (source != currentWallpaper.source) {
-
-          if (transitioning) {
-            // We are interrupting a transition
-            transitionAnimation.stop()
-            transitionProgress = 0
-            currentWallpaper.source = nextWallpaper.source
-            nextWallpaper.source = ""
-          }
-
-          nextWallpaper.source = source
-          startTransition()
+        if (source === currentWallpaper.source) {
+          return
         }
+
+        if (transitioning) {
+          // We are interrupting a transition
+          transitionAnimation.stop()
+          transitionProgress = 0
+          currentWallpaper.source = nextWallpaper.source
+          nextWallpaper.source = ""
+        }
+
+        nextWallpaper.source = source
+        currentWallpaper.asynchronous = false
+        transitionAnimation.start()
       }
 
       // Main method that actually trigger the wallpaper change
