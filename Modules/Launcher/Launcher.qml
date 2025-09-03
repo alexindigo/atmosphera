@@ -328,7 +328,7 @@ NPanel {
                 }
 
                 // Error fallback
-                onStatusChanged: {
+                onStatusChanged: status => {
                   if (status === Image.Error) {
                     iconLoader.visible = true
                     imagePreview.visible = false
