@@ -174,29 +174,39 @@ NPanel {
       anchors.margins: Style.marginL * scaling
       spacing: Style.marginM * scaling
 
-      // Wrapper ensures the input stretches to full width under RowLayout
-      Item {
+      FocusScope {
         id: searchInputWrap
         Layout.fillWidth: true
         Layout.preferredHeight: Math.round(Style.barHeight * scaling)
 
-        // Search input
+        // This FocusScope should get focus when panel opens
+        focus: true
+
         NTextInput {
           id: searchInput
-          anchors.fill: parent // The NTextInput fills the wrapper
-          Layout.preferredHeight: Style.barHeight * scaling
+          anchors.fill: parent
+
+          // The input should have focus within the scope
+          focus: true
 
           placeholderText: "Search entries... or use > for commands"
           text: searchText
           inputMaxWidth: Number.MAX_SAFE_INTEGER
 
           function forceActiveFocus() {
-            inputItem.forceActiveFocus()
+            // First ensure the scope has focus
+            searchInputWrap.forceActiveFocus()
+            // Then focus the actual input
+            if (inputItem && inputItem.visible) {
+              inputItem.forceActiveFocus()
+            }
           }
 
           Component.onCompleted: {
-            inputItem.font.pointSize = Style.fontSizeL * scaling
-            inputItem.verticalAlignment = TextInput.AlignVCenter
+            if (inputItem) {
+              inputItem.font.pointSize = Style.fontSizeL * scaling
+              inputItem.verticalAlignment = TextInput.AlignVCenter
+            }
           }
 
           onTextChanged: searchText = text
