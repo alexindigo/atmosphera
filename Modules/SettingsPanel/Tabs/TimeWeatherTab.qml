@@ -16,7 +16,7 @@ ColumnLayout {
     NTextInput {
       label: "Location name"
       description: "Choose a known location near you."
-      text: Settings.data.location.name
+      text: Settings.data.location.name || "Tokyo"
       placeholderText: "Enter the location name"
       onEditingFinished: {
         // Verify the location has really changed to avoid extra resets

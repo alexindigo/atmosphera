@@ -37,8 +37,10 @@ NBox {
         spacing: Style.marginXXS * scaling
         NText {
           text: {
+            // Use the location name or fallback to default if empty
+            const locationName = Settings.data.location.name || "Tokyo"
             // Ensure the name is not too long if one had to specify the country
-            const chunks = Settings.data.location.name.split(",")
+            const chunks = locationName.split(",")
             return chunks[0]
           }
           font.pointSize: Style.fontSizeL * scaling

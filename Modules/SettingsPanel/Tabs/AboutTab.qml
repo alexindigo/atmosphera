@@ -12,30 +12,8 @@ ColumnLayout {
   id: root
 
   property string latestVersion: GitHubService.latestVersion
-  property string currentVersion: "Unknown" // Fallback version
+  property string currentVersion: UpdateService.currentVersion
   property var contributors: GitHubService.contributors
-
-  Process {
-    id: currentVersionProcess
-
-    command: ["sh", "-c", "cd " + Quickshell.shellDir + " && git describe --tags --abbrev=0 2>/dev/null || echo 'Unknown'"]
-    Component.onCompleted: {
-      running = true
-    }
-
-    stdout: StdioCollector {
-      onStreamFinished: {
-        const version = text.trim()
-        if (version && version !== "Unknown") {
-          root.currentVersion = version
-        } else {
-          currentVersionProcess.command = ["sh", "-c", "cd " + Quickshell.shellDir
-                                           + " && cat package.json 2>/dev/null | grep '\"version\"' | cut -d'\"' -f4 || echo 'Unknown'"]
-          currentVersionProcess.running = true
-        }
-      }
-    }
-  }
 
   NText {
     text: "Noctalia Shell"
@@ -89,7 +67,7 @@ ColumnLayout {
     border.color: Color.mPrimary
     border.width: Math.max(1, Style.borderS * scaling)
     visible: {
-      if (root.currentVersion === "Unknown" || root.latestVersion === "Unknown")
+      if (root.latestVersion === "Unknown")
         return false
 
       const latest = root.latestVersion.replace("v", "").split(".")
