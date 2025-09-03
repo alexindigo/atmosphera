@@ -295,29 +295,23 @@ NPanel {
               color: Color.mSurfaceVariant
               clip: true
 
+
               // Image preview for clipboard images
-              Image {
+              NImageRounded {
                 id: imagePreview
                 anchors.fill: parent
-                anchors.margins: 2 * scaling
                 visible: modelData.isImage
+                imageRadius: Style.radiusM * scaling
 
                 // This property creates a dependency on the service's revision counter
                 readonly property int _rev: ClipboardService.revision
 
                 // Fetches from the service's cache.
-                // The dependency on `_rev` ensures this binding is re-evaluated
-                // when the cache is updated by the service.
-                source: {
+                // The dependency on `_rev` ensures this binding is re-evaluated when the cache is updated.
+                imagePath: {
                   _rev
                   return ClipboardService.getImageData(modelData.clipboardId) || ""
                 }
-
-                fillMode: Image.PreserveAspectFit
-                smooth: true
-                mipmap: true
-                asynchronous: true
-                cache: true
 
                 // Loading indicator
                 Rectangle {
@@ -379,8 +373,8 @@ NPanel {
                 anchors.margins: 2 * scaling
                 width: formatLabel.width + 6 * scaling
                 height: formatLabel.height + 2 * scaling
-                radius: 2 * scaling
-                color: Qt.rgba(0, 0, 0, 0.7)
+                radius: Style.radiusM * scaling
+                color: Color.mSurfaceVariant
 
                 NText {
                   id: formatLabel

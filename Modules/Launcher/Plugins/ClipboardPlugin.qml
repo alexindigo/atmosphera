@@ -22,7 +22,7 @@ Item {
   Connections {
     target: ClipboardService
     function onListCompleted() {
-      if (gotResults) {
+      if (gotResults && (lastSearchText === searchText)) {
         // Do not update results after the first fetch.
         // This will avoid the list resetting every 2seconds when the service updates.
         return
