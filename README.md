@@ -193,6 +193,9 @@ Alternatively, you can add it to your NixOS configuration or flake:
 
 `noctalia-shell` offers many IPC calls for your convenience, so you can add them to your favorite keybinds or scripts.
 
+*If you're using the Flake installation on NixOS, replace `qs -c noctalia-shell` by `noctalia-shell`*
+*If you use the manual install (`git clone...` and have it in `~/.config/quickshell/`) you can just use `qs ipc call...`*
+
 | Action                      | Command*                                                    |
 | --------------------------- | ----------------------------------------------------------- |
 | Start the Shell             | `qs -c noctalia-shell`                                      |
@@ -215,8 +218,6 @@ Alternatively, you can add it to your NixOS configuration or flake:
 | Toggle Dark Mode            | `qs -c noctalia-shell ipc call darkMode toggle`             |
 | Set Dark Mode               | `qs -c noctalia-shell ipc call darkMode setDark`            |
 | Set Light Mode              | `qs -c noctalia-shell ipc call darkMode setLight`           |
-
-*If using the Flake installation on NixOS, replace `qs -c noctalia-shell` by `noctalia-shell`*
 
 ### Configuration
 
