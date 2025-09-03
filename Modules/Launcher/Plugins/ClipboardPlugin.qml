@@ -13,9 +13,9 @@ QtObject {
   // Plugin capabilities
   property bool handleSearch: false // Don't handle regular search
 
+  // Listen for clipboard data updates
   // Connections {
-  //   target: CliphistService
-  //   // Use the function syntax for on<SignalName>
+  //   target: ClipboardService
   //   function onListCompleted() {
   //     // Only refresh if the clipboard plugin is active
   //     if (launcher && launcher.activePlugin === root) {
@@ -32,7 +32,7 @@ QtObject {
   // Called when launcher opens
   function onOpened() {
     // Refresh clipboard history when launcher opens
-    CliphistService.list(100)
+    ClipboardService.list(100)
   }
 
   // Check if this plugin handles the command
@@ -56,7 +56,7 @@ QtObject {
               "icon": "delete_sweep",
               "isImage": false,
               "onActivate": function () {
-                CliphistService.wipeAll()
+                ClipboardService.wipeAll()
                 launcher.close()
               }
             }]
@@ -78,9 +78,20 @@ QtObject {
                 "description": "Remove all items from clipboard history",
                 "icon": "delete_sweep",
                 "onActivate": function () {
-                  CliphistService.wipeAll()
+                  ClipboardService.wipeAll()
                   launcher.close()
                 }
+              }]
+    }
+
+    // Show loading state if data isn't ready yet
+    if (ClipboardService.loading) {
+      return [{
+                "name": "Loading clipboard history...",
+                "description": "Please wait",
+                "icon": "view-refresh",
+                "isImage": false,
+                "onActivate": function () {}
               }]
     }
 
@@ -88,8 +99,8 @@ QtObject {
     const searchTerm = query.toLowerCase()
 
     // Force dependency update
-    const _rev = CliphistService.revision
-    const items = CliphistService.items || []
+    const _rev = ClipboardService.revision
+    const items = ClipboardService.items || []
 
     // Filter and format results
     items.forEach(function (item) {
@@ -110,7 +121,7 @@ QtObject {
 
       // Add activation handler
       entry.onActivate = function () {
-        CliphistService.copyToClipboard(item.id)
+        ClipboardService.copyToClipboard(item.id)
         launcher.close()
       }
 
@@ -122,13 +133,14 @@ QtObject {
       results.push({
                      "name": searchTerm ? "No matching clipboard items" : "Clipboard is empty",
                      "description": searchTerm ? `No items containing "${query}"` : "Copy something to see it here",
-                     "icon": "content_paste_off",
+                     "icon": "text-x-generic",
                      "isImage": false,
                      "onActivate": function () {// Do nothing
                      }
                    })
     }
 
+    Logger.log("ClipboardPlugin", `Returning ${results.length} results`)
     return results
   }
 
@@ -145,8 +157,7 @@ QtObject {
       "isImage": true,
       "imageWidth": meta ? meta.w : 0,
       "imageHeight": meta ? meta.h : 0,
-      "clipboardId"// Provide the ID and mime type for the delegate to make an async request
-      : item.id,
+      "clipboardId": item.id,
       "mime": item.mime
     }
   }
@@ -203,6 +214,6 @@ QtObject {
   // Public method to get image data for a clipboard item
   // This can be called by the launcher when rendering
   function getImageForItem(clipboardId) {
-    return CliphistService.getImageData ? CliphistService.getImageData(clipboardId) : null
+    return ClipboardService.getImageData ? ClipboardService.getImageData(clipboardId) : null
   }
 }

@@ -255,8 +255,8 @@ NPanel {
           // When this delegate is assigned a new image item, trigger the decode.
           onCurrentClipboardIdChanged: {
             // Check if it's a valid ID and if the data isn't already cached.
-            if (currentClipboardId && !CliphistService.getImageData(currentClipboardId)) {
-              CliphistService.decodeToDataUrl(currentClipboardId, modelData.mime, null)
+            if (currentClipboardId && !ClipboardService.getImageData(currentClipboardId)) {
+              ClipboardService.decodeToDataUrl(currentClipboardId, modelData.mime, null)
             }
           }
 
@@ -293,14 +293,14 @@ NPanel {
                 visible: modelData.isImage
 
                 // This property creates a dependency on the service's revision counter
-                readonly property int _rev: CliphistService.revision
+                readonly property int _rev: ClipboardService.revision
 
                 // Fetches from the service's cache.
                 // The dependency on `_rev` ensures this binding is re-evaluated
                 // when the cache is updated by the service.
                 source: {
                   _rev
-                  return CliphistService.getImageData(modelData.clipboardId) || ""
+                  return ClipboardService.getImageData(modelData.clipboardId) || ""
                 }
 
                 fillMode: Image.PreserveAspectFit

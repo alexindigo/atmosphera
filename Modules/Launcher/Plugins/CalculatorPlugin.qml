@@ -54,10 +54,7 @@ QtObject {
                 "icon": "accessories-calculator",
                 "isImage": false,
                 "onActivate": function () {
-                  // Copy result to clipboard if service available
-                  // if (typeof ClipboardService !== 'undefined') {
-                  //   ClipboardService.copy(result.toString())
-                  // }
+                  // TODO: copy entry to clipboard via ClipHist
                   launcher.close()
                 }
               }]
