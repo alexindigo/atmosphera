@@ -42,6 +42,9 @@ NPanel {
   property var plugins: []
   property var activePlugin: null
 
+  readonly property int badgeSize: Math.round(Style.baseWidgetSize * 1.6 * scaling)
+  readonly property int entryHeight: Math.round(badgeSize + Style.marginM * 2 * scaling)
+
   // Public API for plugins
   function setSearchText(text) {
     searchText = text
@@ -115,30 +118,6 @@ NPanel {
     }
   }
 
-  // Navigation
-  function selectNext() {
-    if (results.length > 0) {
-      // Clamp the index to not exceed the last item
-      selectedIndex = Math.min(selectedIndex + 1, results.length - 1)
-    }
-  }
-
-  function selectPrev() {
-    if (results.length > 0) {
-      // Clamp the index to not go below the first item (0)
-      selectedIndex = Math.max(selectedIndex - 1, 0)
-    }
-  }
-
-  function activate() {
-    if (results.length > 0 && results[selectedIndex]) {
-      const item = results[selectedIndex]
-      if (item.onActivate) {
-        item.onActivate()
-      }
-    }
-  }
-
   // Load plugins
   Component.onCompleted: {
     // Load applications plugin
@@ -171,12 +150,56 @@ NPanel {
 
   // UI
   panelContent: Rectangle {
+    id: ui
     color: Color.transparent
 
-    Component.onCompleted: {
+    // ---------------------
+    // Navigation
+    function selectNext() {
+      if (results.length > 0) {
+        // Clamp the index to not exceed the last item
+        selectedIndex = Math.min(selectedIndex + 1, results.length - 1)
+      }
+    }
+
+    function selectPrevious() {
+      if (results.length > 0) {
+        // Clamp the index to not go below the first item (0)
+        selectedIndex = Math.max(selectedIndex - 1, 0)
+      }
+    }
+
+    function selectFirst() {
       selectedIndex = 0
-      if (searchInput?.forceActiveFocus) {
-        searchInput.forceActiveFocus()
+    }
+
+    function selectLast() {
+      if (results.length > 0) {
+        selectedIndex = results.length - 1
+      } else {
+        selectedIndex = 0
+      }
+    }
+
+    function selectNextPage() {
+      if (results.length > 0) {
+        const page = Math.max(1, Math.floor(resultsList.height / entryHeight))
+        selectedIndex = Math.min(selectedIndex + page, results.length - 1)
+      }
+    }
+    function selectPreviousPage() {
+      if (results.length > 0) {
+        const page = Math.max(1, Math.floor(resultsList.height / entryHeight))
+        selectedIndex = Math.max(selectedIndex - page, 0)
+      }
+    }
+
+    function activate() {
+      if (results.length > 0 && results[selectedIndex]) {
+        const item = results[selectedIndex]
+        if (item.onActivate) {
+          item.onActivate()
+        }
       }
     }
 
@@ -185,47 +208,61 @@ NPanel {
       anchors.margins: Style.marginL * scaling
       spacing: Style.marginM * scaling
 
-      FocusScope {
+      Item {
         id: searchInputWrap
         Layout.fillWidth: true
         Layout.preferredHeight: Math.round(Style.barHeight * scaling)
 
-        // This FocusScope should get focus when panel opens
-        focus: true
-
         NTextInput {
           id: searchInput
           anchors.fill: parent
-
-          // The input should have focus within the scope
-          focus: true
-
-          placeholderText: "Search entries... or use > for commands"
-          text: searchText
           inputMaxWidth: Number.MAX_SAFE_INTEGER
 
-          function forceActiveFocus() {
-            // First ensure the scope has focus
-            searchInputWrap.forceActiveFocus()
-            // Then focus the actual input
-            if (inputItem && inputItem.visible) {
-              inputItem.forceActiveFocus()
-            }
-          }
+          fontSize: Style.fontSizeL * scaling
+          fontWeight: Style.fontWeightSemiBold
+
+          text: searchText
+          placeholderText: "Search entries... or use > for commands"
 
           Component.onCompleted: {
-            if (inputItem) {
-              inputItem.font.pointSize = Style.fontSizeL * scaling
-              inputItem.verticalAlignment = TextInput.AlignVCenter
+            if (searchInput.inputItem && searchInput.inputItem.visible) {
+              searchInput.inputItem.forceActiveFocus()
             }
           }
 
           onTextChanged: searchText = text
-
-          Keys.onDownPressed: root.selectNext()
-          Keys.onUpPressed: root.selectPrev()
-          Keys.onReturnPressed: root.activate()
           Keys.onEscapePressed: root.close()
+          Keys.onReturnPressed: ui.activate()
+          Keys.onDownPressed: ui.selectNext()
+          Keys.onUpPressed: ui.selectPrevious()
+          Keys.onPressed: event => {
+                            if (event.key === Qt.Key_PageDown) {
+                              ui.selectNextPage()
+                              event.accepted = true
+                            } else if (event.key === Qt.Key_PageUp) {
+                              ui.selectPreviousPage()
+                              event.accepted = true
+                            } else if (event.key === Qt.Key_Home) {
+                              ui.selectFirst()
+                              event.accepted = true
+                            } else if (event.key === Qt.Key_End) {
+                              ui.selectLast()
+                              event.accepted = true
+                            }
+
+                            if (event.modifiers & Qt.ControlModifier) {
+                              switch (event.key) {
+                                case Qt.Key_K:
+                                ui.selectPrevious()
+                                event.accepted = true
+                                break
+                                case Qt.Key_J:
+                                ui.selectNext()
+                                event.accepted = true
+                                break
+                              }
+                            }
+                          }
         }
       }
 
@@ -257,7 +294,6 @@ NPanel {
           id: entry
 
           property bool isSelected: mouseArea.containsMouse || (index === selectedIndex)
-          property int badgeSize: Style.baseWidgetSize * 1.6 * scaling
 
           // Property to reliably track the current item's ID.
           // This changes whenever the delegate is recycled for a new item.
@@ -272,7 +308,7 @@ NPanel {
           }
 
           width: resultsList.width - Style.marginS * scaling
-          height: badgeSize + Style.marginM * 2 * scaling
+          height: entryHeight
           radius: Style.radiusM * scaling
           color: entry.isSelected ? Color.mTertiary : Color.mSurface
 
