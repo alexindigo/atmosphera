@@ -194,6 +194,7 @@ Alternatively, you can add it to your NixOS configuration or flake:
 `noctalia-shell` offers many IPC calls for your convenience, so you can add them to your favorite keybinds or scripts.
 
 *If you're using the Flake installation on NixOS, replace `qs -c noctalia-shell` by `noctalia-shell`*
+
 *If you use the manual install (`git clone...` and have it in `~/.config/quickshell/`) you can just use `qs ipc call...`*
 
 | Action                      | Command*                                                    |
