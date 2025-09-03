@@ -35,6 +35,7 @@ QtObject {
               "name": ">clip",
               "description": "Search clipboard history",
               "icon": "content_paste",
+              "isImage": false,
               "onActivate": function () {
                 launcher.setSearchText(">clip ")
               }
@@ -42,6 +43,7 @@ QtObject {
               "name": ">clip clear",
               "description": "Clear all clipboard history",
               "icon": "delete_sweep",
+              "isImage": false,
               "onActivate": function () {
                 CliphistService.wipeAll()
                 launcher.close()
@@ -110,6 +112,7 @@ QtObject {
                      "name": searchTerm ? "No matching clipboard items" : "Clipboard is empty",
                      "description": searchTerm ? `No items containing "${query}"` : "Copy something to see it here",
                      "icon": "content_paste_off",
+                     "isImage": false,
                      "onActivate": function () {// Do nothing
                      }
                    })
@@ -118,18 +121,44 @@ QtObject {
     return results
   }
 
-  // Helper: Format image clipboard entry
+  // Helper: Format image clipboard entry with actual image data
   function formatImageEntry(item) {
     const meta = parseImageMeta(item.preview)
 
+    // Get the actual image data/path from the clipboard service
+    // This assumes CliphistService provides either a path or base64 data
+    let imageData = null
+
+    // Try to get image data from the service
+    // Method 1: If the service provides a file path
+    if (item.imagePath) {
+      imageData = "file://" + item.imagePath
+    } // Method 2: If the service provides base64 data
+    else if (item.imageData) {
+      imageData = ClipHistService.getImageData(item.id)
+      
+      // "data:" + (item.mime || "image/png") + ";base64," + item.imageData
+    } // Method 3: If we need to fetch it from the service
+
+    // else if (item.id) {
+    //   // Some clipboard services might require fetching the image separately
+    //   // This would depend on your CliphistService implementation
+    //   imageData = CliphistService.getImageData ? CliphistService.getImageData(item.id) : null
+    // }
     return {
       "name": meta ? `Image ${meta.w}×${meta.h}` : "Image",
       "description": meta ? `${meta.fmt} • ${meta.size}` : item.mime || "Image data",
-      "icon": "image"
+      "icon": "image",
+      "isImage": true,
+      "imageSource": imageData,
+      "imageWidth": meta ? meta.w : 0,
+      "imageHeight": meta ? meta.h : 0,
+      "clipboardId"// Add clipboard item ID for potential async loading
+      : item.id
     }
   }
 
-  // Helper: Format text clipboard entry
+  // Helper: Format text clipboard entry with preview
   function formatTextEntry(item) {
     const preview = (item.preview || "").trim()
     const lines = preview.split('\n').filter(l => l.trim())
@@ -156,7 +185,8 @@ QtObject {
     return {
       "name": title,
       "description": description,
-      "icon": "description"
+      "icon": "description",
+      "isImage": false
     }
   }
 
@@ -175,5 +205,11 @@ QtObject {
       "w": Number(match[3]),
       "h": Number(match[4])
     }
+  }
+
+  // Public method to get image data for a clipboard item
+  // This can be called by the launcher when rendering
+  function getImageForItem(clipboardId) {
+    return CliphistService.getImageData ? CliphistService.getImageData(clipboardId) : null
   }
 }

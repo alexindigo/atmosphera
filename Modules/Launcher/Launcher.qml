@@ -245,13 +245,15 @@ NPanel {
           policy: ScrollBar.AsNeeded
         }
 
+        // Replace the delegate in Launcher.qml's ListView with this enhanced version:
         delegate: Rectangle {
           id: entry
 
           property bool isSelected: mouseArea.containsMouse || (index === selectedIndex)
+          property int badgeSize: Style.baseWidgetSize * 1.75 * scaling 
 
           width: resultsList.width - Style.marginS * scaling
-          height: 65 * scaling
+          height: badgeSize +  Style.marginM * 2 *scaling
           radius: Style.radiusM * scaling
           color: entry.isSelected ? Color.mTertiary : Color.mSurface
 
@@ -267,33 +269,107 @@ NPanel {
             anchors.margins: Style.marginM * scaling
             spacing: Style.marginM * scaling
 
-            // Icon badge
+            // Icon badge or Image preview
             Rectangle {
-              Layout.preferredWidth: Style.baseWidgetSize * 1.25 * scaling
-              Layout.preferredHeight: Style.baseWidgetSize * 1.25 * scaling
-              radius: Style.radiusS * scaling
+              Layout.preferredWidth: badgeSize
+              Layout.preferredHeight: badgeSize
+              radius: Style.radiusM * scaling
               color: Color.mSurfaceVariant
+              clip: true
 
-              IconImage {
+              // Image preview for clipboard images
+              Image {
+                id: imagePreview
                 anchors.fill: parent
-                anchors.margins: Style.marginXS * scaling
-                source: modelData.icon ? Icons.iconFromName(modelData.icon, "application-x-executable") : ""
-                visible: modelData.icon && source !== ""
+                anchors.margins: 2 * scaling
+                visible: modelData.isImage && modelData.imageSource
+                source: modelData.imageSource || ""
+                fillMode: Image.PreserveAspectFit
+                smooth: true
+                mipmap: true
                 asynchronous: true
+                cache: true
+
+                // Loading indicator
+                Rectangle {
+                  anchors.fill: parent
+                  visible: parent.status === Image.Loading
+                  color: Color.mSurfaceVariant
+
+                  BusyIndicator {
+                    anchors.centerIn: parent
+                    running: true
+                    width: Style.baseWidgetSize * 0.5 * scaling
+                    height: width
+                  }
+                }
+
+                // Error fallback
+                onStatusChanged: {
+                  if (status === Image.Error) {
+                    // Fall back to icon
+                    iconLoader.visible = true
+                    imagePreview.visible = false
+                  }
+                }
               }
 
-              // Fallback if no icon
+              // Icon fallback
+              Loader {
+                id: iconLoader
+                anchors.fill: parent
+                anchors.margins: Style.marginXS * scaling
+                visible: !modelData.isImage || !modelData.imageSource || imagePreview.status === Image.Error
+                active: visible
+
+                sourceComponent: Component {
+                  IconImage {
+                    anchors.fill: parent
+                    source: modelData.icon ? Icons.iconFromName(modelData.icon, "application-x-executable") : ""
+                    visible: modelData.icon && source !== ""
+                    asynchronous: true
+                  }
+                }
+              }
+
+              // Fallback text if no icon and no image
               NText {
                 anchors.centerIn: parent
-                visible: !modelData.icon || parent.children[0].source === ""
+                visible: !imagePreview.visible && !iconLoader.visible
                 text: modelData.name ? modelData.name.charAt(0).toUpperCase() : "?"
                 font.pointSize: Style.fontSizeXXL * scaling
                 font.weight: Style.fontWeightBold
                 color: Color.mOnPrimary
               }
+
+              // Image type indicator overlay
+              Rectangle {
+                visible: modelData.isImage && imagePreview.visible
+                anchors.bottom: parent.bottom
+                anchors.right: parent.right
+                anchors.margins: 2 * scaling
+                width: formatLabel.width + 6 * scaling
+                height: formatLabel.height + 2 * scaling
+                radius: 2 * scaling
+                color: Qt.rgba(0, 0, 0, 0.7)
+
+                NText {
+                  id: formatLabel
+                  anchors.centerIn: parent
+                  text: {
+                    if (!modelData.isImage)
+                      return ""
+                    const desc = modelData.description || ""
+                    const parts = desc.split(" • ")
+                    return parts[0] || "IMG"
+                  }
+                  font.pointSize: Style.fontSizeXXS * scaling
+                  color: Color.mPrimary
+                }
+              }
             }
 
-            // Text
+            // Text content
             ColumnLayout {
               Layout.fillWidth: true
               spacing: 0 * scaling
@@ -315,6 +391,23 @@ NPanel {
                 Layout.fillWidth: true
                 visible: text !== ""
               }
+
+              // // Show text preview for text items if space allows
+              // NText {
+              //   visible: !modelData.isImage && modelData.fullText && modelData.fullText.length > 100
+              //   text: {
+              //     if (!modelData.fullText) return ""
+              //     const preview = modelData.fullText.substring(0, 150).replace(/\n/g, " ")
+              //     return preview + (modelData.fullText.length > 150 ? "..." : "")
+              //   }
+              //   font.pointSize: Style.fontSizeXS * scaling
+              //   color: entry.isSelected ? Color.mOnTertiary : Color.mOnSurfaceVariant
+              //   opacity: 0.7
+              //   elide: Text.ElideRight
+              //   maximumLineCount: 2
+              //   wrapMode: Text.WordWrap
+              //   Layout.fillWidth: true
+              // }
             }
           }
 

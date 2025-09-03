@@ -80,6 +80,7 @@ QtObject {
       "name": app.name || "Unknown",
       "description": app.genericName || app.comment || "",
       "icon": app.icon || "application-x-executable",
+      "isImage": false,
       "onActivate": function () {
         Logger.log("ApplicationsPlugin", `Launching: ${app.name}`)
         if (app.execute) {

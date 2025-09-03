@@ -17,6 +17,7 @@ QtObject {
               "name": ">calc",
               "description": "Calculator - evaluate mathematical expressions",
               "icon": "accessories-calculator",
+              "isImage": false,
               "onActivate": function () {
                 launcher.setSearchText(">calc ")
               }
@@ -39,6 +40,7 @@ QtObject {
                 "name": "Calculator",
                 "description": "Enter a mathematical expression",
                 "icon": "accessories-calculator",
+                "isImage": false,
                 "onActivate": function () {}
               }]
     }
@@ -50,6 +52,7 @@ QtObject {
                 "name": AdvancedMath.formatResult(result),
                 "description": `${expression} = ${result}`,
                 "icon": "accessories-calculator",
+                "isImage": false,
                 "onActivate": function () {
                   // Copy result to clipboard if service available
                   // if (typeof ClipboardService !== 'undefined') {
@@ -63,6 +66,7 @@ QtObject {
                 "name": "Error",
                 "description": error.message || "Invalid expression",
                 "icon": "dialog-error",
+                "isImage": false,
                 "onActivate": function () {}
               }]
     }

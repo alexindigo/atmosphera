@@ -284,6 +284,11 @@ Singleton {
     }
   }
 
+  function getImageData(id) {
+    return root.imageDataById[id]
+  }
+
+
   function _startNextB64() {
     if (root._b64Queue.length === 0 || !root.cliphistAvailable)
       return
@@ -316,7 +321,11 @@ Singleton {
     if (!root.cliphistAvailable) {
       return
     }
+
     Quickshell.execDetached(["cliphist", "wipe"])
+
+    revision++
+
     Qt.callLater(() => list())
   }
 }
