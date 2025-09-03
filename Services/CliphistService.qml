@@ -39,6 +39,8 @@ Singleton {
   property string _b64CurrentMime: ""
   property string _b64CurrentId: ""
 
+  signal listCompleted()
+
   // Check if cliphist is available
   Component.onCompleted: {
     checkCliphistAvailability()
@@ -147,6 +149,9 @@ Singleton {
                                })
       items = parsed
       loading = false
+
+      // Emit the signal for subscribers
+      root.listCompleted()
     }
   }
 
@@ -285,9 +290,11 @@ Singleton {
   }
 
   function getImageData(id) {
+    if (id === undefined) {
+      return null
+    }
     return root.imageDataById[id]
   }
-
 
   function _startNextB64() {
     if (root._b64Queue.length === 0 || !root.cliphistAvailable)

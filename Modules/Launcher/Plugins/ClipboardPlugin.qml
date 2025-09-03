@@ -13,6 +13,17 @@ QtObject {
   // Plugin capabilities
   property bool handleSearch: false // Don't handle regular search
 
+  // Connections {
+  //   target: CliphistService
+  //   // Use the function syntax for on<SignalName>
+  //   function onListCompleted() {
+  //     // Only refresh if the clipboard plugin is active
+  //     if (launcher && launcher.activePlugin === root) {
+  //       launcher.updateResults()
+  //     }
+  //   }
+  // }
+
   // Initialize plugin
   function init() {
     Logger.log("ClipboardPlugin", "Initialized")
@@ -121,40 +132,22 @@ QtObject {
     return results
   }
 
-  // Helper: Format image clipboard entry with actual image data
+  // Helper: Format image clipboard entry
   function formatImageEntry(item) {
     const meta = parseImageMeta(item.preview)
 
-    // Get the actual image data/path from the clipboard service
-    // This assumes CliphistService provides either a path or base64 data
-    let imageData = null
-
-    // Try to get image data from the service
-    // Method 1: If the service provides a file path
-    if (item.imagePath) {
-      imageData = "file://" + item.imagePath
-    } // Method 2: If the service provides base64 data
-    else if (item.imageData) {
-      imageData = ClipHistService.getImageData(item.id)
-      
-      // "data:" + (item.mime || "image/png") + ";base64," + item.imageData
-    } // Method 3: If we need to fetch it from the service
-
-    // else if (item.id) {
-    //   // Some clipboard services might require fetching the image separately
-    //   // This would depend on your CliphistService implementation
-    //   imageData = CliphistService.getImageData ? CliphistService.getImageData(item.id) : null
-    // }
+    // The launcher's delegate will now be responsible for fetching the image data.
+    // This function's role is to provide the necessary metadata for that request.
     return {
       "name": meta ? `Image ${meta.w}×${meta.h}` : "Image",
       "description": meta ? `${meta.fmt} • ${meta.size}` : item.mime || "Image data",
       "icon": "image",
       "isImage": true,
-      "imageSource": imageData,
       "imageWidth": meta ? meta.w : 0,
       "imageHeight": meta ? meta.h : 0,
-      "clipboardId"// Add clipboard item ID for potential async loading
-      : item.id
+      "clipboardId"// Provide the ID and mime type for the delegate to make an async request
+      : item.id,
+      "mime": item.mime
     }
   }
 
@@ -185,7 +178,7 @@ QtObject {
     return {
       "name": title,
       "description": description,
-      "icon": "description",
+      "icon": "text-x-generic",
       "isImage": false
     }
   }

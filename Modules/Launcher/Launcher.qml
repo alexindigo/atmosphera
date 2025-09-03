@@ -231,9 +231,6 @@ NPanel {
 
         clip: true
         cacheBuffer: resultsList.height * 2
-        //boundsBehavior: Flickable.StopAtBounds
-        // maximumFlickVelocity: 2500
-        // flickDeceleration: 2000
         onCurrentIndexChanged: {
           cancelFlick()
           if (currentIndex >= 0) {
@@ -245,15 +242,26 @@ NPanel {
           policy: ScrollBar.AsNeeded
         }
 
-        // Replace the delegate in Launcher.qml's ListView with this enhanced version:
         delegate: Rectangle {
           id: entry
 
           property bool isSelected: mouseArea.containsMouse || (index === selectedIndex)
-          property int badgeSize: Style.baseWidgetSize * 1.75 * scaling 
+          property int badgeSize: Style.baseWidgetSize * 1.75 * scaling
+
+          // Property to reliably track the current item's ID.
+          // This changes whenever the delegate is recycled for a new item.
+          property var currentClipboardId: modelData.isImage ? modelData.clipboardId : ""
+
+          // When this delegate is assigned a new image item, trigger the decode.
+          onCurrentClipboardIdChanged: {
+            // Check if it's a valid ID and if the data isn't already cached.
+            if (currentClipboardId && !CliphistService.getImageData(currentClipboardId)) {
+              CliphistService.decodeToDataUrl(currentClipboardId, modelData.mime, null)
+            }
+          }
 
           width: resultsList.width - Style.marginS * scaling
-          height: badgeSize +  Style.marginM * 2 *scaling
+          height: badgeSize + Style.marginM * 2 * scaling
           radius: Style.radiusM * scaling
           color: entry.isSelected ? Color.mTertiary : Color.mSurface
 
@@ -282,8 +290,19 @@ NPanel {
                 id: imagePreview
                 anchors.fill: parent
                 anchors.margins: 2 * scaling
-                visible: modelData.isImage && modelData.imageSource
-                source: modelData.imageSource || ""
+                visible: modelData.isImage
+
+                // This property creates a dependency on the service's revision counter
+                readonly property int _rev: CliphistService.revision
+
+                // Fetches from the service's cache.
+                // The dependency on `_rev` ensures this binding is re-evaluated
+                // when the cache is updated by the service.
+                source: {
+                  _rev
+                  return CliphistService.getImageData(modelData.clipboardId) || ""
+                }
+
                 fillMode: Image.PreserveAspectFit
                 smooth: true
                 mipmap: true
@@ -307,7 +326,6 @@ NPanel {
                 // Error fallback
                 onStatusChanged: {
                   if (status === Image.Error) {
-                    // Fall back to icon
                     iconLoader.visible = true
                     imagePreview.visible = false
                   }
@@ -319,7 +337,8 @@ NPanel {
                 id: iconLoader
                 anchors.fill: parent
                 anchors.margins: Style.marginXS * scaling
-                visible: !modelData.isImage || !modelData.imageSource || imagePreview.status === Image.Error
+
+                visible: !modelData.isImage || imagePreview.status === Image.Error
                 active: visible
 
                 sourceComponent: Component {
@@ -391,23 +410,6 @@ NPanel {
                 Layout.fillWidth: true
                 visible: text !== ""
               }
-
-              // // Show text preview for text items if space allows
-              // NText {
-              //   visible: !modelData.isImage && modelData.fullText && modelData.fullText.length > 100
-              //   text: {
-              //     if (!modelData.fullText) return ""
-              //     const preview = modelData.fullText.substring(0, 150).replace(/\n/g, " ")
-              //     return preview + (modelData.fullText.length > 150 ? "..." : "")
-              //   }
-              //   font.pointSize: Style.fontSizeXS * scaling
-              //   color: entry.isSelected ? Color.mOnTertiary : Color.mOnSurfaceVariant
-              //   opacity: 0.7
-              //   elide: Text.ElideRight
-              //   maximumLineCount: 2
-              //   wrapMode: Text.WordWrap
-              //   Layout.fillWidth: true
-              // }
             }
           }
 
