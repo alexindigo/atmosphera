@@ -136,17 +136,13 @@ Singleton {
       Logger.log("Location", "Location changed from", adapter.name, "to", Settings.data.location.name)
     }
 
-    // Ensure we always have a location name, fallback to default if empty
-    const locationName = Settings.data.location.name && Settings.data.location.name.trim(
-                         ) !== "" ? Settings.data.location.name : "Tokyo"
-
     if ((adapter.latitude === "") || (adapter.longitude === "") || locationChanged) {
 
-      _geocodeLocation(locationName, function (latitude, longitude, name, country) {
-        Logger.log("Location", "Geocoded", locationName, "to:", latitude, "/", longitude)
+      _geocodeLocation(Settings.data.location.name, function (latitude, longitude, name, country) {
+        Logger.log("Location", "Geocoded", Settings.data.location.name, "to:", latitude, "/", longitude)
 
         // Save location name
-        adapter.name = locationName
+        adapter.name = Settings.data.location.name
 
         // Save GPS coordinates
         adapter.latitude = latitude.toString()

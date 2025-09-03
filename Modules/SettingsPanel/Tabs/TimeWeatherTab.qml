@@ -16,11 +16,16 @@ ColumnLayout {
     NTextInput {
       label: "Location name"
       description: "Choose a known location near you."
-      text: Settings.data.location.name || "Tokyo"
+      text: Settings.data.location.name || Settings.defaultLocation
       placeholderText: "Enter the location name"
       onEditingFinished: {
         // Verify the location has really changed to avoid extra resets
         var newLocation = text.trim()
+        // If empty, set to default location
+        if (newLocation === "") {
+          newLocation = Settings.defaultLocation
+          text = Settings.defaultLocation // Update the input field to show the default
+        }
         if (newLocation != Settings.data.location.name) {
           Settings.data.location.name = newLocation
           LocationService.resetWeather()

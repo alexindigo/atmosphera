@@ -25,6 +25,7 @@ Singleton {
   property string defaultAvatar: Quickshell.env("HOME") + "/.face"
   property string defaultWallpapersDirectory: Quickshell.env("HOME") + "/Pictures/Wallpapers"
   property string defaultVideosDirectory: Quickshell.env("HOME") + "/Videos"
+  property string defaultLocation: "Tokyo"
 
   // Used to access via Settings.data.xxx.yyy
   readonly property alias data: adapter
@@ -157,7 +158,7 @@ Singleton {
 
       // location
       property JsonObject location: JsonObject {
-        property string name: "Tokyo"
+        property string name: defaultLocation
         property bool useFahrenheit: false
         property bool reverseDayMonth: false
         property bool use12HourClock: false
