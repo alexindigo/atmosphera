@@ -10,10 +10,9 @@ Singleton {
   id: root
 
   // Public API
-  property var items: [] // [{id, preview, mime, isImage}]
+  property bool active: Settings.isLoaded && Settings.data.appLauncher.enableClipboardHistory && cliphistAvailable
   property bool loading: false
-  // Active only when feature is enabled, settings have finished initial load, and cliphist is available
-  property bool active: Settings.data.appLauncher.enableClipboardHistory && Settings.isLoaded && cliphistAvailable
+  property var items: [] // [{id, preview, mime, isImage}]
 
   // Check if cliphist is available on the system
   property bool cliphistAvailable: false
@@ -39,7 +38,7 @@ Singleton {
   property string _b64CurrentMime: ""
   property string _b64CurrentId: ""
 
-  signal listCompleted()
+  signal listCompleted
 
   // Check if cliphist is available
   Component.onCompleted: {
@@ -82,7 +81,7 @@ Singleton {
 
   // Start/stop watchers when enabled changes
   onActiveChanged: {
-    if (root.active && root.cliphistAvailable) {
+    if (root.active) {
       startWatchers()
     } else {
       stopWatchers()
@@ -96,7 +95,7 @@ Singleton {
   Timer {
     interval: 5000
     repeat: true
-    running: root.active && root.cliphistAvailable
+    running: root.active
     onTriggered: list()
   }
 
@@ -185,9 +184,9 @@ Singleton {
         const url = `data:${root._b64CurrentMime};base64,${b64}`
         try {
           root._b64CurrentCb(url)
-        } finally {
+        } catch (e) {
 
-          /* noop */ }
+        }
       }
       if (root._b64CurrentId !== "") {
         root.imageDataById[root._b64CurrentId] = `data:${root._b64CurrentMime};base64,${b64}`
@@ -321,6 +320,7 @@ Singleton {
       return
     }
     Quickshell.execDetached(["cliphist", "delete", id])
+    revision++
     Qt.callLater(() => list())
   }
 
@@ -330,9 +330,7 @@ Singleton {
     }
 
     Quickshell.execDetached(["cliphist", "wipe"])
-
     revision++
-
     Qt.callLater(() => list())
   }
 }

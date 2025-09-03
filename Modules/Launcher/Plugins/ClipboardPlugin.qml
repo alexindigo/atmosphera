@@ -3,7 +3,7 @@ import Quickshell
 import qs.Commons
 import qs.Services
 
-QtObject {
+Item {
   id: root
 
   // Plugin metadata
@@ -13,26 +13,47 @@ QtObject {
   // Plugin capabilities
   property bool handleSearch: false // Don't handle regular search
 
+  // Internal state
+  property bool isWaitingForData: false
+  property bool gotResults: false
+  property string lastSearchText: ""
+
   // Listen for clipboard data updates
-  // Connections {
-  //   target: ClipboardService
-  //   function onListCompleted() {
-  //     // Only refresh if the clipboard plugin is active
-  //     if (launcher && launcher.activePlugin === root) {
-  //       launcher.updateResults()
-  //     }
-  //   }
-  // }
+  Connections {
+    target: ClipboardService
+    function onListCompleted() {
+      if (gotResults) {
+        // Do not update results after the first fetch.
+        // This will avoid the list resetting every 2seconds when the service updates.
+        return
+      }
+      // Refresh results if we're waiting for data or if clipboard plugin is active
+      if (isWaitingForData || (launcher && launcher.searchText.startsWith(">clip"))) {
+        isWaitingForData = false
+        gotResults = true
+        if (launcher) {
+          launcher.updateResults()
+        }
+      }
+    }
+  }
 
   // Initialize plugin
   function init() {
     Logger.log("ClipboardPlugin", "Initialized")
+    // Pre-load clipboard data if service is active
+    if (ClipboardService.active) {
+      ClipboardService.list(100)
+    }
   }
 
   // Called when launcher opens
   function onOpened() {
     // Refresh clipboard history when launcher opens
-    ClipboardService.list(100)
+    if (ClipboardService.active) {
+      isWaitingForData = true
+      ClipboardService.list(100)
+    }
   }
 
   // Check if this plugin handles the command
@@ -45,7 +66,7 @@ QtObject {
     return [{
               "name": ">clip",
               "description": "Search clipboard history",
-              "icon": "content_paste",
+              "icon": "text-x-generic",
               "isImage": false,
               "onActivate": function () {
                 launcher.setSearchText(">clip ")
@@ -53,7 +74,7 @@ QtObject {
             }, {
               "name": ">clip clear",
               "description": "Clear all clipboard history",
-              "icon": "delete_sweep",
+              "icon": "text-x-generic",
               "isImage": false,
               "onActivate": function () {
                 ClipboardService.wipeAll()
@@ -68,8 +89,20 @@ QtObject {
       return []
     }
 
+    lastSearchText = searchText
     const results = []
     const query = searchText.slice(5).trim()
+
+    // Check if clipboard service is not active
+    if (!ClipboardService.active) {
+      return [{
+                "name": "Clipboard History Disabled",
+                "description": "Enable clipboard history in settings or install cliphist",
+                "icon": "view-refresh",
+                "isImage": false,
+                "onActivate": function () {}
+              }]
+    }
 
     // Special command: clear
     if (query === "clear") {
@@ -77,6 +110,7 @@ QtObject {
                 "name": "Clear Clipboard History",
                 "description": "Remove all items from clipboard history",
                 "icon": "delete_sweep",
+                "isImage": false,
                 "onActivate": function () {
                   ClipboardService.wipeAll()
                   launcher.close()
@@ -84,8 +118,24 @@ QtObject {
               }]
     }
 
-    // Show loading state if data isn't ready yet
-    if (ClipboardService.loading) {
+    // Show loading state if data is being loaded
+    if (ClipboardService.loading || isWaitingForData) {
+      return [{
+                "name": "Loading clipboard history...",
+                "description": "Please wait",
+                "icon": "view-refresh",
+                "isImage": false,
+                "onActivate": function () {}
+              }]
+    }
+
+    // Get clipboard items
+    const items = ClipboardService.items || []
+
+    // If no items and we haven't tried loading yet, trigger a load
+    if (items.length === 0 && !ClipboardService.loading) {
+      isWaitingForData = true
+      ClipboardService.list(100)
       return [{
                 "name": "Loading clipboard history...",
                 "description": "Please wait",
@@ -97,10 +147,6 @@ QtObject {
 
     // Search clipboard items
     const searchTerm = query.toLowerCase()
-
-    // Force dependency update
-    const _rev = ClipboardService.revision
-    const items = ClipboardService.items || []
 
     // Filter and format results
     items.forEach(function (item) {
@@ -140,7 +186,7 @@ QtObject {
                    })
     }
 
-    Logger.log("ClipboardPlugin", `Returning ${results.length} results`)
+    //Logger.log("ClipboardPlugin", `Returning ${results.length} results for query: "${query}"`)
     return results
   }
 

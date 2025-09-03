@@ -11,8 +11,18 @@ NPanel {
   id: root
 
   // Panel configuration
-  panelWidth: Math.min(700 * scaling, screen?.width * 0.75)
-  panelHeight: Math.min(600 * scaling, screen?.height * 0.8)
+  panelWidth: {
+    var w = Math.round(Math.max(screen?.width * 0.3, 500) * scaling)
+    w = Math.min(w, screen?.width - Style.marginL * 2)
+    return w
+  }
+  panelHeight: {
+    var h = Math.round(Math.max(screen?.height * 0.5, 600) * scaling)
+    h = Math.min(h, screen?.height - Style.barHeight * scaling - Style.marginL * 2)
+    return h
+  }
+
+
   panelKeyboardFocus: true
   panelBackgroundColor: Qt.rgba(Color.mSurface.r, Color.mSurface.g, Color.mSurface.b,
                                 Settings.data.appLauncher.backgroundOpacity)
@@ -246,7 +256,7 @@ NPanel {
           id: entry
 
           property bool isSelected: mouseArea.containsMouse || (index === selectedIndex)
-          property int badgeSize: Style.baseWidgetSize * 1.75 * scaling
+          property int badgeSize: Style.baseWidgetSize * 1.6 * scaling
 
           // Property to reliably track the current item's ID.
           // This changes whenever the delegate is recycled for a new item.

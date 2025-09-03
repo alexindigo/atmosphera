@@ -5,7 +5,7 @@ import qs.Commons
 import qs.Services
 import "../../../Helpers/FuzzySort.js" as Fuzzysort
 
-QtObject {
+Item {
   property var launcher: null
   property string name: "Applications"
   property bool handleSearch: true

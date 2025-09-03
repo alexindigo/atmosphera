@@ -2,7 +2,7 @@ import QtQuick
 import qs.Services
 import "../../../Helpers/AdvancedMath.js" as AdvancedMath
 
-QtObject {
+Item {
   property var launcher: null
   property string name: "Calculator"
 
