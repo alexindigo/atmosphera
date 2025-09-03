@@ -16,6 +16,8 @@ Rectangle {
 
   property real scaledRadius: imageRadius * Settings.data.general.radiusRatio
 
+  signal statusChanged(int status)
+
   color: Color.transparent
   radius: scaledRadius
   anchors.margins: Style.marginXXS * scaling
@@ -34,6 +36,8 @@ Rectangle {
       asynchronous: true
       antialiasing: true
       fillMode: Image.PreserveAspectCrop
+
+      onStatusChanged: root.statusChanged(status)
     }
 
     ShaderEffect {

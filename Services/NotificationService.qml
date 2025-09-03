@@ -7,7 +7,7 @@ import qs.Commons
 import qs.Services
 import Quickshell.Services.Notifications
 
-QtObject {
+Singleton {
   id: root
 
   // Notification server instance
