@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import qs.Commons
 import qs.Widgets
+import qs.Services
 
 NBox {
   id: root
@@ -12,7 +13,7 @@ NBox {
   property var widgetModel: []
   property var availableWidgets: []
 
-  signal addWidget(string widgetName, string section)
+  signal addWidget(string widgetId, string section)
   signal removeWidget(string section, int index)
   signal reorderWidget(string section, int fromIndex, int toIndex)
 
@@ -32,8 +33,8 @@ NBox {
   }
 
   // Generate widget color from name checksum
-  function getWidgetColor(name) {
-    const totalSum = name.split('').reduce((acc, character) => {
+  function getWidgetColor(widgetId) {
+    const totalSum = widgetId.split('').reduce((acc, character) => {
                                              return acc + character.charCodeAt(0)
                                            }, 0)
     switch (totalSum % 5) {
@@ -110,17 +111,18 @@ NBox {
       spacing: Style.marginS * scaling
       flow: Flow.LeftToRight
 
+
       Repeater {
         model: widgetModel
         delegate: Rectangle {
           id: widgetItem
           required property int index
-          required property string modelData
+          required property var modelData
 
           width: widgetContent.implicitWidth + Style.marginL * scaling
           height: 40 * scaling
           radius: Style.radiusL * scaling
-          color: root.getWidgetColor(modelData)
+          color: root.getWidgetColor(modelData.id)
           border.color: Color.mOutline
           border.width: Math.max(1, Style.borderS * scaling)
 
@@ -151,13 +153,30 @@ NBox {
             spacing: Style.marginXS * scaling
 
             NText {
-              text: modelData
+              text: modelData.id
               font.pointSize: Style.fontSizeS * scaling
               color: Color.mOnPrimary
               horizontalAlignment: Text.AlignHCenter
               elide: Text.ElideRight
               Layout.preferredWidth: 80 * scaling
             }
+
+            Loader {
+              active: BarWidgetRegistry.widgetHasUserSettings(modelData.id)
+              sourceComponent: NIconButton {
+                icon: "settings"
+                sizeRatio: 0.6
+                colorBorder: Color.applyOpacity(Color.mOutline, "40")
+                colorBg: Color.mOnSurface
+                colorFg: Color.mOnPrimary
+                colorBgHover: Color.applyOpacity(Color.mOnPrimary, "40")
+                colorFgHover: Color.mOnPrimary
+                onClicked: {
+                  // TODO open settings
+                }
+              }
+            }
+
 
             NIconButton {
               icon: "close"
@@ -193,13 +212,13 @@ NBox {
                            return
                          }
 
-                         //Logger.log("NSectionEditor", `Started dragging widget: ${modelData} at index ${index}`)
+                         //Logger.log("NSectionEditor", `Started dragging widget: ${modelData.id} at index ${index}`)
                          // Bring to front when starting drag
                          widgetItem.z = 1000
                        }
 
             onReleased: {
-              //Logger.log("NSectionEditor", `Released widget: ${modelData} at index ${index}`)
+              //Logger.log("NSectionEditor", `Released widget: ${modelData.id} at index ${index}`)
               // Reset z-index when drag ends
               widgetItem.z = 0
 

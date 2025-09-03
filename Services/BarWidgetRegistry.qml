@@ -16,6 +16,7 @@ Singleton {
                            "Bluetooth": bluetoothComponent,
                            "Brightness": brightnessComponent,
                            "Clock": clockComponent,
+                           "CustomButton": customButtonComponent,
                            "DarkModeToggle": darkModeToggle,
                            "KeyboardLayout": keyboardLayoutComponent,
                            "MediaMini": mediaMiniComponent,
@@ -32,6 +33,15 @@ Singleton {
                            "WiFi": wiFiComponent,
                            "Workspace": workspaceComponent
                          })
+
+  property var widgetMetadata: ({
+    "CustomButton": { 
+      allowUserSettings: true,
+      icon: "favorite",
+      execute: ""
+    },
+  })
+
 
   // Component definitions - these are loaded once at startup
   property Component activeWindowComponent: Component {
@@ -51,6 +61,9 @@ Singleton {
   }
   property Component clockComponent: Component {
     Clock {}
+  }
+  property Component customButtonComponent: Component {
+    CustomButton {}
   }
   property Component darkModeToggle: Component {
     DarkModeToggle {}
@@ -100,18 +113,23 @@ Singleton {
 
   // ------------------------------
   // Helper function to get widget component by name
-  function getWidget(name) {
-    return widgets[name] || null
+  function getWidget(id) {
+    return widgets[id] || null
   }
 
   // Helper function to check if widget exists
-  function hasWidget(name) {
-    return name in widgets
+  function hasWidget(id) {
+    return id in widgets
   }
 
-  // Get list of available widget names
+  // Get list of available widget id
   function getAvailableWidgets() {
     return Object.keys(widgets)
+  }
+
+  // Helper function to check if widget has user settings
+  function widgetHasUserSettings(id) {
+    return (widgetMetadata[id] !== undefined) && (widgetMetadata[id].allowUserSettings === true)
   }
 
   function getNPillDirection(widget) {

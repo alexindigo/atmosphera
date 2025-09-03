@@ -162,7 +162,7 @@ ColumnLayout {
         sectionId: "left"
         widgetModel: Settings.data.bar.widgets.left
         availableWidgets: availableWidgets
-        onAddWidget: (widgetName, section) => addWidgetToSection(widgetName, section)
+        onAddWidget: (widgetId, section) => addWidgetToSection(widgetId, section)
         onRemoveWidget: (section, index) => removeWidgetFromSection(section, index)
         onReorderWidget: (section, fromIndex, toIndex) => reorderWidgetInSection(section, fromIndex, toIndex)
       }
@@ -173,7 +173,7 @@ ColumnLayout {
         sectionId: "center"
         widgetModel: Settings.data.bar.widgets.center
         availableWidgets: availableWidgets
-        onAddWidget: (widgetName, section) => addWidgetToSection(widgetName, section)
+        onAddWidget: (widgetId, section) => addWidgetToSection(widgetId, section)
         onRemoveWidget: (section, index) => removeWidgetFromSection(section, index)
         onReorderWidget: (section, fromIndex, toIndex) => reorderWidgetInSection(section, fromIndex, toIndex)
       }
@@ -184,7 +184,7 @@ ColumnLayout {
         sectionId: "right"
         widgetModel: Settings.data.bar.widgets.right
         availableWidgets: availableWidgets
-        onAddWidget: (widgetName, section) => addWidgetToSection(widgetName, section)
+        onAddWidget: (widgetId, section) => addWidgetToSection(widgetId, section)
         onRemoveWidget: (section, index) => removeWidgetFromSection(section, index)
         onReorderWidget: (section, fromIndex, toIndex) => reorderWidgetInSection(section, fromIndex, toIndex)
       }
@@ -198,14 +198,16 @@ ColumnLayout {
   }
 
   // Helper functions
-  function addWidgetToSection(widgetName, section) {
-    //Logger.log("BarTab", "Adding widget", widgetName, "to section", section)
+  function addWidgetToSection(widgetId, section) {
+    //Logger.log("BarTab", "Adding widget", widgetId, "to section", section)
     var sectionArray = Settings.data.bar.widgets[section]
 
     if (sectionArray) {
       // Create a new array to avoid modifying the original
       var newArray = sectionArray.slice()
-      newArray.push(widgetName)
+      newArray.push({
+                      "id": widgetId
+                    })
       //Logger.log("BarTab", "Widget added. New array:", JSON.stringify(newArray))
 
       // Assign the new array
