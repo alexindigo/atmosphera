@@ -38,44 +38,17 @@ Item {
   }
 
   IpcHandler {
-    target: "appLauncher"
-    function toggle() {
-      launcherPanel.toggle(Quickshell.screens[0])
-    }
-    function clipboard() {
-      launcherPanel.toggle(Quickshell.screens[0])
-      // Use the setSearchText function to set clipboard mode
-      Qt.callLater(() => {
-                     launcherPanel.setSearchText(">clip ")
-                   })
-    }
-    function calculator() {
-      launcherPanel.toggle(Quickshell.screens[0])
-      // Use the setSearchText function to set calculator mode
-      Qt.callLater(() => {
-                     launcherPanel.setSearchText(">calc ")
-                   })
-    }
-  }
-
-  IpcHandler {
     target: "launcher"
     function toggle() {
       launcherPanel.toggle(Quickshell.screens[0])
     }
     function clipboard() {
+      launcherPanel.setSearchText(">clip ")
       launcherPanel.toggle(Quickshell.screens[0])
-      // Use the setSearchText function to set clipboard mode
-      Qt.callLater(() => {
-                     launcherPanel.setSearchText(">clip ")
-                   })
     }
     function calculator() {
+      launcherPanel.setSearchText(">calc ")
       launcherPanel.toggle(Quickshell.screens[0])
-      // Use the setSearchText function to set calculator mode
-      Qt.callLater(() => {
-                     launcherPanel.setSearchText(">calc ")
-                   })
     }
   }
 

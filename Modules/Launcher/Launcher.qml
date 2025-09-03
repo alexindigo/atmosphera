@@ -22,7 +22,6 @@ NPanel {
     return h
   }
 
-
   panelKeyboardFocus: true
   panelBackgroundColor: Qt.rgba(Color.mSurface.r, Color.mSurface.g, Color.mSurface.b,
                                 Settings.data.appLauncher.backgroundOpacity)
@@ -106,6 +105,9 @@ NPanel {
   }
 
   onClosed: {
+    // Reset search text
+    searchText = ""
+
     // Notify plugins
     for (let plugin of plugins) {
       if (plugin.onClosed)
@@ -172,7 +174,6 @@ NPanel {
     color: Color.transparent
 
     Component.onCompleted: {
-      searchText = ""
       selectedIndex = 0
       if (searchInput?.forceActiveFocus) {
         searchInput.forceActiveFocus()
@@ -295,7 +296,6 @@ NPanel {
               color: Color.mSurfaceVariant
               clip: true
 
-
               // Image preview for clipboard images
               NImageRounded {
                 id: imagePreview
@@ -329,11 +329,11 @@ NPanel {
 
                 // Error fallback
                 onStatusChanged: status => {
-                  if (status === Image.Error) {
-                    iconLoader.visible = true
-                    imagePreview.visible = false
-                  }
-                }
+                                   if (status === Image.Error) {
+                                     iconLoader.visible = true
+                                     imagePreview.visible = false
+                                   }
+                                 }
               }
 
               // Icon fallback

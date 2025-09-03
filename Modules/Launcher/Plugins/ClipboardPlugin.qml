@@ -49,9 +49,12 @@ Item {
 
   // Called when launcher opens
   function onOpened() {
+    isWaitingForData = true
+    gotResults = false
+    lastSearchText = ""
+
     // Refresh clipboard history when launcher opens
     if (ClipboardService.active) {
-      isWaitingForData = true
       ClipboardService.list(100)
     }
   }
