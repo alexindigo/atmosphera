@@ -285,18 +285,6 @@ NPanel {
     }
 
     Shortcut {
-      sequence: "PgDown"
-      onActivated: root.scrollPageDown()
-      enabled: root.opened
-    }
-
-    Shortcut {
-      sequence: "PgUp"
-      onActivated: root.scrollPageUp()
-      enabled: root.opened
-    }
-
-    Shortcut {
       sequence: "Ctrl+J"
       onActivated: root.scrollDown()
       enabled: root.opened
@@ -305,6 +293,18 @@ NPanel {
     Shortcut {
       sequence: "Ctrl+K"
       onActivated: root.scrollUp()
+      enabled: root.opened
+    }
+
+    Shortcut {
+      sequence: "PgDown"
+      onActivated: root.scrollPageDown()
+      enabled: root.opened
+    }
+
+    Shortcut {
+      sequence: "PgUp"
+      onActivated: root.scrollPageUp()
       enabled: root.opened
     }
 
