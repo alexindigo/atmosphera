@@ -75,8 +75,8 @@ Singleton {
     }
 
     fontsLoaded = true
-    Logger.log("FontService", "Loaded", availableFonts.count, "fonts (", monospaceFonts.count, "monospace,",
-               displayFonts.count, "display)")
+    Logger.log("FontService", "Loaded", availableFonts.count, "fonts:" , monospaceFonts.count, "monospace,",
+               displayFonts.count, "display")
   }
 
   function isMonospaceFont(fontName) {
