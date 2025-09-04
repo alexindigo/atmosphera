@@ -335,6 +335,13 @@ Singleton {
         property string manualSunrise: "06:30"
         property string manualSunset: "18:30"
       }
+
+      // hooks
+      property JsonObject hooks: JsonObject {
+        property bool enabled: false
+        property string wallpaperChange: ""
+        property string darkModeChange: ""
+      }
     }
   }
 }

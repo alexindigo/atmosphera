@@ -152,7 +152,7 @@ Rectangle {
           target: ripple
           property: "opacity"
           from: 0
-          to: 0.2
+          to: 0.05
           duration: 100
           easing.type: Easing.OutCubic
         }
@@ -160,7 +160,7 @@ Rectangle {
         NumberAnimation {
           target: ripple
           property: "opacity"
-          from: 0.2
+          from: 0.05
           to: 0
           duration: 300
           easing.type: Easing.InCubic

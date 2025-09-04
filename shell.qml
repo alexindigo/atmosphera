@@ -110,6 +110,9 @@ ShellRoot {
     // Initialize UpdateService
     UpdateService.init()
 
+    // Initialize HooksService
+    HooksService.init()
+
     // Kickoff NightLight service
     NightLightService.apply()
   }

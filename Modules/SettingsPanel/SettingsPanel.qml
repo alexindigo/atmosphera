@@ -31,6 +31,7 @@ NPanel {
     About,
     Audio,
     Bar,
+    Hooks,
     Launcher,
     Brightness,
     ColorScheme,
@@ -111,6 +112,10 @@ NPanel {
     id: aboutTab
     Tabs.AboutTab {}
   }
+  Component {
+    id: hooksTab
+    Tabs.HooksTab {}
+  }
 
   // Order *DOES* matter
   function updateTabsModel() {
@@ -181,6 +186,11 @@ NPanel {
                    "label": "Screen Recorder",
                    "icon": "videocam",
                    "source": screenRecorderTab
+                 }, {
+                   "id": SettingsPanel.Tab.Hooks,
+                   "label": "Hooks",
+                   "icon": "link",
+                   "source": hooksTab
                  }, {
                    "id": SettingsPanel.Tab.About,
                    "label": "About",

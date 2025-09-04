@@ -1,0 +1,104 @@
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import qs.Commons
+import qs.Services
+import qs.Widgets
+
+ScrollView {
+  id: root
+
+  property real scaling: 1.0
+
+  contentWidth: contentColumn.width
+  contentHeight: contentColumn.height
+
+  ColumnLayout {
+    id: contentColumn
+    spacing: Style.marginL * scaling
+    width: root.width
+
+    // Enable/Disable Toggle
+    NToggle {
+      label: "Enable Hooks"
+      description: "Enable or disable all hook commands."
+      checked: Settings.data.hooks.enabled
+      onToggled: checked => Settings.data.hooks.enabled = checked
+    }
+
+    ColumnLayout {
+      visible: Settings.data.hooks.enabled
+      spacing: Style.marginL * scaling
+      Layout.fillWidth: true
+
+      NDivider {
+        Layout.fillWidth: true
+      }
+
+      // Wallpaper Hook Section
+      NInputAction {
+        id: wallpaperHookInput
+        label: "Wallpaper Change Hook"
+        description: "Command to be executed when wallpaper changes."
+        placeholderText: "e.g., notify-send \"Wallpaper\" \"Changed\""
+        text: Settings.data.hooks.wallpaperChange
+        onEditingFinished: {
+          Settings.data.hooks.wallpaperChange = wallpaperHookInput.text
+        }
+        onActionClicked: {
+          if (wallpaperHookInput.text) {
+            HooksService.executeWallpaperHook("test")
+          }
+        }
+        Layout.fillWidth: true
+      }
+
+      NDivider {
+        Layout.fillWidth: true
+      }
+
+      // Dark Mode Hook Section
+      NInputAction {
+        id: darkModeHookInput
+        label: "Theme Toggle Hook"
+        description: "Command to be executed when theme toggles between dark and light mode."
+        placeholderText: "e.g., notify-send \"Theme\" \"Toggled\""
+        text: Settings.data.hooks.darkModeChange
+        onEditingFinished: {
+          Settings.data.hooks.darkModeChange = darkModeHookInput.text
+        }
+        onActionClicked: {
+          if (darkModeHookInput.text) {
+            HooksService.executeDarkModeHook(Settings.data.colorSchemes.darkMode)
+          }
+        }
+        Layout.fillWidth: true
+      }
+
+      NDivider {
+        Layout.fillWidth: true
+      }
+
+      // Info section
+      ColumnLayout {
+        spacing: Style.marginS * scaling
+        Layout.fillWidth: true
+
+        NText {
+          text: "Hook Command Information"
+          font.pointSize: Style.fontSizeM * scaling
+          font.weight: Style.fontWeightBold
+          color: Color.mOnSurface
+        }
+
+        NText {
+          text: "• Commands are executed via shell (sh -c)\n• Commands run in background (detached)\n• Test buttons execute with current values"
+          font.pointSize: Style.fontSizeS * scaling
+          color: Color.mOnSurfaceVariant
+          wrapMode: Text.Wrap
+          Layout.fillWidth: true
+        }
+      }
+    }
+  }
+}
