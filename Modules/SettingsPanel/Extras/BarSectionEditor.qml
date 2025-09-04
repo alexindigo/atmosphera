@@ -182,10 +182,10 @@ NBox {
                   sourceComponent: NIconButton {
                     icon: "settings"
                     sizeRatio: 0.6
-                    colorBorder: Color.applyOpacity(Color.mOutline, "40")
+                    colorBorder: Qt.alpha(Color.mOutline, Style.opacityLight)
                     colorBg: Color.mOnSurface
                     colorFg: Color.mOnPrimary
-                    colorBgHover: Color.applyOpacity(Color.mOnPrimary, "40")
+                    colorBgHover: Qt.alpha(Color.mOnPrimary, Style.opacityLight)
                     colorFgHover: Color.mOnPrimary
                     onClicked: {
                       var dialog = Qt.createComponent("BarWidgetSettingsDialog.qml").createObject(root, {
@@ -202,10 +202,10 @@ NBox {
                 NIconButton {
                   icon: "close"
                   sizeRatio: 0.6
-                  colorBorder: Color.applyOpacity(Color.mOutline, "40")
+                  colorBorder: Qt.alpha(Color.mOutline, Style.opacityLight)
                   colorBg: Color.mOnSurface
                   colorFg: Color.mOnPrimary
-                  colorBgHover: Color.applyOpacity(Color.mOnPrimary, "40")
+                  colorBgHover: Qt.alpha(Color.mOnPrimary, Style.opacityLight)
                   colorFgHover: Color.mOnPrimary
                   onClicked: {
                     removeWidget(sectionId, index)
