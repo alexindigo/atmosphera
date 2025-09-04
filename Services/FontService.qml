@@ -75,7 +75,7 @@ Singleton {
     }
 
     fontsLoaded = true
-    Logger.log("FontService", "Loaded", availableFonts.count, "fonts:" , monospaceFonts.count, "monospace,",
+    Logger.log("FontService", "Loaded", availableFonts.count, "fonts:", monospaceFonts.count, "monospace,",
                displayFonts.count, "display")
   }
 

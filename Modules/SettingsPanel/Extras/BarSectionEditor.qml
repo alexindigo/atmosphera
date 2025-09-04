@@ -378,6 +378,7 @@ NBox {
                           if (targetWidget) {
                             const targetCenterX = targetWidget.x + targetWidget.width / 2
                             if (mouseX > targetCenterX) {
+
                               // Mouse is to the right of target center, insert after
                               //Logger.log("BarSectionEditor", "Inserting after widget at index:", targetIndex)
                             } else {
