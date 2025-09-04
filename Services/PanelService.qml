@@ -16,8 +16,6 @@ Singleton {
 
   property var registeredPanels: ({})
 
-
-
   // Register this panel
   function registerPanel(panel) {
     registeredPanels[panel.objectName] = panel
