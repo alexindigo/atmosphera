@@ -12,8 +12,12 @@ Item {
   function getActiveScreen() {
     const activeWindow = ToplevelManager.activeToplevel
     if (activeWindow && activeWindow.screens.length > 0) {
-      var screen = activeWindow.screens[0]
-      return screen
+      var screenName = activeWindow.screens[0].name
+      for (let i=0; i<Quickshell.screens.length; i++) {
+        if (screenName === Quickshell.screens[i].name) {
+          return Quickshell.screens[i]
+        }
+      }
     }
 
     // Fall back to the primary screen
