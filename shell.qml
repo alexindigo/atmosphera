@@ -103,11 +103,5 @@ ShellRoot {
   Component.onCompleted: {
     // Save a ref. to our lockScreen so we can access it  easily
     PanelService.lockScreen = lockScreen
-
-    // Ensure our location singleton is created as soon as possible so we start fetching weather asap
-    LocationService.init()
-
-    // Kickoff NightLight service
-    NightLightService.apply()
   }
 }

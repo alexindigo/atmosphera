@@ -141,9 +141,9 @@ NPanel {
     const clipboardPlugin = Qt.createComponent("Plugins/ClipboardPlugin.qml").createObject(this)
     if (clipboardPlugin) {
       registerPlugin(clipboardPlugin)
-      Logger.log("Launcher", "Registered: clipboardPlugin")
+      Logger.log("Launcher", "Registered: ClipboardPlugin")
     } else {
-      Logger.error("Launcher", "Failed to load clipboardPlugin")
+      Logger.error("Launcher", "Failed to load ClipboardPlugin")
     }
   }
 

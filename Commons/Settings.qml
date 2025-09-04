@@ -35,6 +35,7 @@ Singleton {
   // Signal emitted when settings are loaded after startupcale changes
   signal settingsLoaded
 
+  // -----------------------------------------------------
   // Function to validate monitor configurations
   function validateMonitorConfigurations() {
     var availableScreenNames = []
@@ -55,17 +56,65 @@ Singleton {
         }
       }
       if (!hasValidBarMonitor) {
-        Logger.log("Settings",
+        Logger.warn("Settings",
                    "No configured bar monitors found on system, clearing bar monitor list to show on all screens")
         adapter.bar.monitors = []
       } else {
-        Logger.log("Settings", "Found valid bar monitors, keeping configuration")
+        //Logger.log("Settings", "Found valid bar monitors, keeping configuration")
       }
     } else {
-      Logger.log("Settings", "Bar monitor list is empty, will show on all available screens")
+      //Logger.log("Settings", "Bar monitor list is empty, will show on all available screens")
     }
   }
 
+  // -----------------------------------------------------
+  // If the settings structure has changed, ensure
+  // backward compatibility
+  function upgradeSettingsData() {
+    for (var i = 0; i < adapter.bar.widgets.left.length; i++) {
+      var obj = adapter.bar.widgets.left[i]
+      if (typeof obj === "string") {
+        adapter.bar.widgets.left[i] = {
+          "id": obj
+        }
+      }
+    }
+    for (var i = 0; i < adapter.bar.widgets.center.length; i++) {
+      var obj = adapter.bar.widgets.center[i]
+      if (typeof obj === "string") {
+        adapter.bar.widgets.center[i] = {
+          "id": obj
+        }
+      }
+    }
+    for (var i = 0; i < adapter.bar.widgets.right.length; i++) {
+      var obj = adapter.bar.widgets.right[i]
+      if (typeof obj === "string") {
+        adapter.bar.widgets.right[i] = {
+          "id": obj
+        }
+      }
+    }
+  }
+
+  // -----------------------------------------------------
+  // Kickoff essential services
+  function kickOffServices() {
+    // Ensure our location singleton is created as soon as possible so we start fetching weather asap
+    LocationService.init()
+
+    NightLightService.apply()
+
+    ColorSchemeService.init()
+
+    MatugenService.init()
+
+    FontService.init()
+
+    HooksService.init()
+  }
+
+  // -----------------------------------------------------
   Item {
     Component.onCompleted: {
 
@@ -100,49 +149,14 @@ Singleton {
         Logger.log("Settings", "Settings loaded successfully")
         isLoaded = true
 
-        for (var i = 0; i < adapter.bar.widgets.left.length; i++) {
-          var obj = adapter.bar.widgets.left[i]
-          if (typeof obj === "string") {
-            adapter.bar.widgets.left[i] = {
-              "id": obj
-            }
-          }
-        }
-        for (var i = 0; i < adapter.bar.widgets.center.length; i++) {
-          var obj = adapter.bar.widgets.center[i]
-          if (typeof obj === "string") {
-            adapter.bar.widgets.center[i] = {
-              "id": obj
-            }
-          }
-        }
-        for (var i = 0; i < adapter.bar.widgets.right.length; i++) {
-          var obj = adapter.bar.widgets.right[i]
-          if (typeof obj === "string") {
-            adapter.bar.widgets.right[i] = {
-              "id": obj
-            }
-          }
-        }
+        upgradeSettingsData()
+
+        validateMonitorConfigurations()
+
+        kickOffServices();
 
         // Emit the signal
         root.settingsLoaded()
-
-        // Kickoff ColorScheme service
-        ColorSchemeService.init()
-
-        // Kickoff Matugen service
-        MatugenService.init()
-
-        // Kickoff Font service
-        FontService.init()
-
-        // Kickoff HooksService
-        HooksService.init()
-
-        Qt.callLater(function () {
-          validateMonitorConfigurations()
-        })
       }
     }
     onLoadFailed: function (error) {
