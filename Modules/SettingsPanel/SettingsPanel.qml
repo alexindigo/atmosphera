@@ -30,7 +30,7 @@ NPanel {
   // Tabs enumeration, order is NOT relevant
   enum Tab {
     About,
-    AudioService,
+    Audio,
     Bar,
     Launcher,
     Brightness,
@@ -131,7 +131,7 @@ NPanel {
                      "icon": "apps",
                      "source": launcherTab
                    }, {
-                     "id": SettingsPanel.Tab.AudioService,
+                     "id": SettingsPanel.Tab.Audio,
                      "label": "Audio",
                      "icon": "volume_up",
                      "source": audioTab
