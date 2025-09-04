@@ -165,6 +165,7 @@ ColumnLayout {
         onAddWidget: (widgetId, section) => addWidgetToSection(widgetId, section)
         onRemoveWidget: (section, index) => removeWidgetFromSection(section, index)
         onReorderWidget: (section, fromIndex, toIndex) => reorderWidgetInSection(section, fromIndex, toIndex)
+        onUpdateWidgetSettings: (section, index, settings) => updateWidgetSettingsInSection(section, index, settings)
       }
 
       // Center Section
@@ -176,6 +177,7 @@ ColumnLayout {
         onAddWidget: (widgetId, section) => addWidgetToSection(widgetId, section)
         onRemoveWidget: (section, index) => removeWidgetFromSection(section, index)
         onReorderWidget: (section, fromIndex, toIndex) => reorderWidgetInSection(section, fromIndex, toIndex)
+        onUpdateWidgetSettings: (section, index, settings) => updateWidgetSettingsInSection(section, index, settings)
       }
 
       // Right Section
@@ -187,6 +189,7 @@ ColumnLayout {
         onAddWidget: (widgetId, section) => addWidgetToSection(widgetId, section)
         onRemoveWidget: (section, index) => removeWidgetFromSection(section, index)
         onReorderWidget: (section, fromIndex, toIndex) => reorderWidgetInSection(section, fromIndex, toIndex)
+        onUpdateWidgetSettings: (section, index, settings) => updateWidgetSettingsInSection(section, index, settings)
       }
     }
   }
@@ -195,6 +198,12 @@ ColumnLayout {
     Layout.fillWidth: true
     Layout.topMargin: Style.marginXL * scaling
     Layout.bottomMargin: Style.marginXL * scaling
+  }
+
+  function updateWidgetSettingsInSection(section, index, settings) {
+    // Update the widget settings in the Settings data
+    Settings.data.bar.widgets[section][index] = settings
+    Logger.log("BarTab", `Updated widget settings for ${settings.id} in ${section} section`)
   }
 
   // Helper functions
