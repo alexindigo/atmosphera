@@ -288,7 +288,7 @@ Singleton {
 
     // Execute wallpaper change hook after the change is complete
     if (HooksService) {
-      HooksService.executeWallpaperHook(path)
+      HooksService.executeWallpaperHook(path, screenName)
     }
 
     // Restart the random wallpaper timer

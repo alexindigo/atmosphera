@@ -47,7 +47,7 @@ ScrollView {
         }
         onActionClicked: {
           if (wallpaperHookInput.text) {
-            HooksService.executeWallpaperHook("test")
+            HooksService.executeWallpaperHook("test", "test-screen")
           }
         }
         Layout.fillWidth: true
@@ -87,6 +87,11 @@ ScrollView {
         NLabel {
           label: "Hook Command Information"
           description: "• Commands are executed via shell (sh -c)\n• Commands run in background (detached)\n• Test buttons execute with current values"
+        }
+
+        NLabel {
+          label: "Available Parameters"
+          description: "• Wallpaper Hook: $1 = wallpaper path, $2 = screen name\n• Theme Toggle Hook: $1 = true/false (dark mode state)"
         }
       }
     }

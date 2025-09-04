@@ -17,7 +17,7 @@ Singleton {
   }
 
   // Execute wallpaper change hook
-  function executeWallpaperHook(wallpaperPath) {
+  function executeWallpaperHook(wallpaperPath, screenName) {
     if (!Settings.data.hooks?.enabled) {
       return
     }
@@ -28,7 +28,8 @@ Singleton {
     }
 
     try {
-      const command = script.replace(/\$1/g, wallpaperPath)
+      let command = script.replace(/\$1/g, wallpaperPath)
+      command = command.replace(/\$2/g, screenName || "")
       Quickshell.execDetached(["sh", "-c", command])
       Logger.log("HooksService", `Executed wallpaper hook: ${command}`)
     } catch (e) {
