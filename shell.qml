@@ -107,12 +107,6 @@ ShellRoot {
     // Ensure our location singleton is created as soon as possible so we start fetching weather asap
     LocationService.init()
 
-    // Initialize UpdateService
-    UpdateService.init()
-
-    // Initialize HooksService
-    HooksService.init()
-
     // Kickoff NightLight service
     NightLightService.apply()
   }

@@ -137,6 +137,9 @@ Singleton {
         // Kickoff Font service
         FontService.init()
 
+        // Kickoff HooksService
+        HooksService.init()
+
         Qt.callLater(function () {
           validateMonitorConfigurations()
         })

@@ -286,11 +286,6 @@ Singleton {
     // Emit signal for this specific wallpaper change
     root.wallpaperChanged(screenName, path)
 
-    // Execute wallpaper change hook after the change is complete
-    if (HooksService) {
-      HooksService.executeWallpaperHook(path, screenName)
-    }
-
     // Restart the random wallpaper timer
     if (randomWallpaperTimer.running) {
       randomWallpaperTimer.restart()
