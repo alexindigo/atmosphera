@@ -93,10 +93,10 @@ Variants {
           model: notificationModel
           delegate: Rectangle {
             width: 360 * scaling
-            height: Math.max(80 * scaling, contentColumn.implicitHeight + (Style.marginM * 2 * scaling))
+            height: Math.max(80 * scaling, contentRow.implicitHeight + (Style.marginL * 2 * scaling))
             clip: true
-            radius: Style.radiusM * scaling
-            border.color: Color.mPrimary
+            radius: Style.radiusL * scaling
+            border.color: Color.applyOpacity(Color.mOutline, "33")
             border.width: Math.max(1, Style.borderS * scaling)
             color: Color.mSurface
 
@@ -156,55 +156,88 @@ Variants {
               }
             }
 
-            Column {
-              id: contentColumn
+            RowLayout {
+              id: contentRow
               anchors.fill: parent
-              anchors.margins: Style.marginM * scaling
-              spacing: Style.marginS * scaling
+              anchors.margins: Style.marginL * scaling
+              spacing: Style.marginL * scaling
 
-              RowLayout {
+              // Right: header on top, then avatar + texts
+              ColumnLayout {
+                id: textColumn
                 spacing: Style.marginS * scaling
-                NText {
-                  text: (model.appName || model.desktopEntry) || "Unknown App"
-                  color: Color.mSecondary
-                  font.pointSize: Style.fontSizeXS * scaling
-                }
-                Rectangle {
-                  width: 6 * scaling
-                  height: 6 * scaling
-                  radius: Style.radiusXS * scaling
-                  color: (model.urgency === NotificationUrgency.Critical) ? Color.mError : (model.urgency === NotificationUrgency.Low) ? Color.mOnSurface : Color.mPrimary
-                  Layout.alignment: Qt.AlignVCenter
-                }
-                Item {
-                  Layout.fillWidth: true
-                }
-                NText {
-                  text: NotificationService.formatTimestamp(model.timestamp)
-                  color: Color.mOnSurface
-                  font.pointSize: Style.fontSizeXS * scaling
-                }
-              }
+                Layout.fillWidth: true
 
-              NText {
-                text: model.summary || "No summary"
-                font.pointSize: Style.fontSizeL * scaling
-                font.weight: Style.fontWeightBold
-                color: Color.mOnSurface
-                wrapMode: Text.Wrap
-                width: 300 * scaling
-                maximumLineCount: 3
-                elide: Text.ElideRight
-              }
+                RowLayout {
+                  spacing: Style.marginS * scaling
+                  id: appHeaderRow
+                  NText {
+                    text: `${(model.appName || model.desktopEntry)
+                          || "Unknown App"} · ${NotificationService.formatTimestamp(model.timestamp)}`
+                    color: Color.mSecondary
+                    font.pointSize: Style.fontSizeXS * scaling
+                  }
+                  Rectangle {
+                    width: 6 * scaling
+                    height: 6 * scaling
+                    radius: Style.radiusXS * scaling
+                    color: (model.urgency === NotificationUrgency.Critical) ? Color.mError : (model.urgency === NotificationUrgency.Low) ? Color.mOnSurface : Color.mPrimary
+                    Layout.alignment: Qt.AlignVCenter
+                  }
+                  Item {
+                    Layout.fillWidth: true
+                  }
+                }
 
-              NText {
-                text: model.body || ""
-                font.pointSize: Style.fontSizeXS * scaling
-                color: Color.mOnSurface
-                wrapMode: Text.Wrap
-                width: 300 * scaling
-                maximumLineCount: 5
-                elide: Text.ElideRight
+                RowLayout {
+                  id: bodyRow
+                  spacing: Style.marginM * scaling
+
+                  NImageCircled {
+                    id: appAvatar
+                    Layout.preferredWidth: 40 * scaling
+                    Layout.preferredHeight: 40 * scaling
+                    Layout.alignment: Qt.AlignTop
+                    // Start avatar aligned with body (below the summary)
+                    anchors.topMargin: textContent.childrenRect.y
+                    imagePath: Icons.iconFromName(model.appIcon, "application-x-executable")
+                    fallbackIcon: "apps"
+                    borderColor: Color.transparent
+                    borderWidth: 0
+                    visible: imagePath && imagePath !== ""
+                  }
+
+                  Column {
+                    id: textContent
+                    spacing: Style.marginS * scaling
+                    Layout.fillWidth: true
+                    // Ensure a concrete width so text wraps
+                    width: (textColumn.width - (appAvatar.visible ? (appAvatar.width + Style.marginM * scaling) : 0))
+
+                    NText {
+                      text: model.summary || "No summary"
+                      font.pointSize: Style.fontSizeL * scaling
+                      font.weight: Style.fontWeightMedium
+                      color: Color.mOnSurface
+                      wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                      Layout.fillWidth: true
+                      width: parent.width
+                      maximumLineCount: 3
+                      elide: Text.ElideRight
+                    }
+
+                    NText {
+                      text: model.body || ""
+                      font.pointSize: Style.fontSizeM * scaling
+                      color: Color.mOnSurface
+                      wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                      Layout.fillWidth: true
+                      width: parent.width
+                      maximumLineCount: 5
+                      elide: Text.ElideRight
+                    }
+                  }
+                }
               }
 
               // Actions removed
@@ -213,7 +246,9 @@ Variants {
             NIconButton {
               icon: "close"
               tooltipText: "Close"
-              sizeRatio: 0.8
+              // Compact target (~24dp) and glyph (~16dp)
+              sizeRatio: 0.75
+              fontPointSize: 16
               anchors.top: parent.top
               anchors.right: parent.right
               anchors.margins: Style.marginS * scaling

@@ -116,6 +116,8 @@ Singleton {
                                "summary": notification.summary,
                                "body": notification.body,
                                "appName": notification.appName,
+                               "image": notification.image,
+                               "appIcon": notification.appIcon,
                                "urgency": notification.urgency,
                                "timestamp": new Date()
                              })
