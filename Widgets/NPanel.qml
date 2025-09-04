@@ -52,6 +52,7 @@ Loader {
   property alias isClosing: hideTimer.running
   readonly property real barHeight: Math.round(Style.barHeight * scaling)
   readonly property bool barAtBottom: Settings.data.bar.position === "bottom"
+  readonly property bool barIsVisible: (screen !== null) && (Settings.data.bar.monitors.includes(screen.name) || (Settings.data.bar.monitors.length === 0))
 
   signal opened
   signal closed
@@ -163,8 +164,8 @@ Loader {
       anchors.left: true
       anchors.right: true
       anchors.bottom: true
-      margins.top: !barAtBottom ? barHeight : 0
-      margins.bottom: barAtBottom ? barHeight : 0
+      margins.top: (barIsVisible && !barAtBottom) ? barHeight : 0
+      margins.bottom: (barIsVisible && barAtBottom) ? barHeight : 0
 
       // Close any panel with Esc without requiring focus
       Shortcut {

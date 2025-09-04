@@ -1,11 +1,21 @@
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import Quickshell.Wayland
 import qs.Commons
 import qs.Services
 
 Item {
   id: root
+
+  // Using Wayland protocols to get focused window then determine which screen it's on.
+  function getActiveScreen() {
+    const activeWindow = ToplevelManager.activeToplevel
+    if (activeWindow.screens.length > 0) {
+      return activeWindow.screens[0]
+    }
+    return null
+  }
 
   IpcHandler {
     target: "screenRecorder"
@@ -17,14 +27,14 @@ Item {
   IpcHandler {
     target: "settings"
     function toggle() {
-      settingsPanel.toggle(Quickshell.screens[0])
+      settingsPanel.toggle(getActiveScreen())
     }
   }
 
   IpcHandler {
     target: "notifications"
     function toggleHistory() {
-      notificationHistoryPanel.toggle(Quickshell.screens[0])
+      notificationHistoryPanel.toggle(getActiveScreen())
     }
     function toggleDoNotDisturb() {// TODO
     }
@@ -40,15 +50,15 @@ Item {
   IpcHandler {
     target: "launcher"
     function toggle() {
-      launcherPanel.toggle(Quickshell.screens[0])
+      launcherPanel.toggle(Screen)
     }
     function clipboard() {
       launcherPanel.setSearchText(">clip ")
-      launcherPanel.toggle(Quickshell.screens[0])
+      launcherPanel.toggle(getActiveScreen())
     }
     function calculator() {
       launcherPanel.setSearchText(">calc ")
-      launcherPanel.toggle(Quickshell.screens[0])
+      launcherPanel.toggle(getActiveScreen())
     }
   }
 
@@ -107,14 +117,14 @@ Item {
   IpcHandler {
     target: "powerPanel"
     function toggle() {
-      powerPanel.toggle(Quickshell.screens[0])
+      powerPanel.toggle(getActiveScreen())
     }
   }
 
   IpcHandler {
     target: "sidePanel"
     function toggle() {
-      sidePanel.toggle(Quickshell.screens[0])
+      sidePanel.toggle(getActiveScreen())
     }
   }
 
