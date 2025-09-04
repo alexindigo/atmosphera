@@ -52,7 +52,8 @@ Loader {
   property alias isClosing: hideTimer.running
   readonly property real barHeight: Math.round(Style.barHeight * scaling)
   readonly property bool barAtBottom: Settings.data.bar.position === "bottom"
-  readonly property bool barIsVisible: (screen !== null) && (Settings.data.bar.monitors.includes(screen.name) || (Settings.data.bar.monitors.length === 0))
+  readonly property bool barIsVisible: (screen !== null) && (Settings.data.bar.monitors.includes(screen.name)
+                                                             || (Settings.data.bar.monitors.length === 0))
 
   signal opened
   signal closed
