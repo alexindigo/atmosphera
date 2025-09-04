@@ -24,6 +24,7 @@ Singleton {
                            "NightLight": nightLightComponent,
                            "NotificationHistory": notificationHistoryComponent,
                            "PowerProfile": powerProfileComponent,
+                           "PowerToggle": powerToggleComponent,
                            "ScreenRecorderIndicator": screenRecorderIndicatorComponent,
                            "SidePanelToggle": sidePanelToggleComponent,
                            "SystemMonitor": systemMonitorComponent,
@@ -86,6 +87,9 @@ Singleton {
   }
   property Component powerProfileComponent: Component {
     PowerProfile {}
+  }
+  property Component powerToggleComponent: Component {
+    PowerToggle {}
   }
   property Component screenRecorderIndicatorComponent: Component {
     ScreenRecorderIndicator {}
