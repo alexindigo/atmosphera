@@ -18,6 +18,7 @@ Singleton {
                            "Clock": clockComponent,
                            "CustomButton": customButtonComponent,
                            "DarkModeToggle": darkModeToggle,
+                           "KeepAwake": keepAwakeComponent,
                            "KeyboardLayout": keyboardLayoutComponent,
                            "MediaMini": mediaMiniComponent,
                            "Microphone": microphoneComponent,
@@ -72,6 +73,9 @@ Singleton {
   }
   property Component keyboardLayoutComponent: Component {
     KeyboardLayout {}
+  }
+  property Component keepAwakeComponent: Component {
+    KeepAwake {}
   }
   property Component mediaMiniComponent: Component {
     MediaMini {}
