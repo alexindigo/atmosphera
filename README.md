@@ -193,9 +193,9 @@ Alternatively, you can add it to your NixOS configuration or flake:
 
 `noctalia-shell` offers many IPC calls for your convenience, so you can add them to your favorite keybinds or scripts.
 
-*If you're using the Flake installation on NixOS, replace `qs -c noctalia-shell` by `noctalia-shell`*
+*If you're using the Flake installation on NixOS, replace `qs -c noctalia-shell` with `noctalia-shell`*
 
-*If you use the manual install (`git clone...` and have it in `~/.config/quickshell/`) you can just use `qs ipc call...`*
+*If you're using the manual install (`git clone...` and have it in `~/.config/quickshell/`) you can just use `qs ipc call...`*
 
 | Action                      | Command*                                                    |
 | --------------------------- | ----------------------------------------------------------- |
@@ -331,11 +331,13 @@ Special thanks to the creators of [**Caelestia**](https://github.com/caelestia-d
 
 #### Donation
 
-While I actually didn't want to accept donations, more and more people are asking to donate so... I don't know, if you really feel like donating then I obviously highly appreciate it but **PLEASE** never feel forced to donate or anything. It won't change how we work on Noctalia, it's a project that we work on for fun in the end.
+While all donations are greatly appreciated, they are completely voluntary.
 
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/R6R01IX85B)
+<a href="https://ko-fi.com/soramane">
+  <img src="https://img.shields.io/badge/donate-ko--fi-A8AEFF?style=for-the-badge&logo=kofi&logoColor=FFFFFF&labelColor=0C0D11" alt="Ko-Fi" />
+</a>
 
-Thank you to everyone who supports me and this project 💜!
+#### Thank you to everyone who supports the project 💜!
 * Gohma
 * <a href="https://pika-os.com/" target="_blank">PikaOS</a>
 * DiscoCevapi
