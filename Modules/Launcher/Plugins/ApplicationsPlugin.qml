@@ -37,8 +37,8 @@ Item {
 
     if (!query || query.trim() === "") {
       // Return all apps alphabetically
-      return entries.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
-      .map(app => createResultEntry(app))
+      return entries.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase())).map(
+            app => createResultEntry(app))
     }
 
     // Use fuzzy search if available, fallback to simple search

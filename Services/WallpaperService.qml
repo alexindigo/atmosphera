@@ -256,11 +256,6 @@ Singleton {
     // Update cache directly
     currentWallpapers[screenName] = path
 
-    // Execute wallpaper change hook
-    if (HooksService) {
-      HooksService.executeWallpaperHook(path)
-    }
-
     // Update Settings - still need immutable update for Settings persistence
     // The slice() ensures Settings detects the change and saves properly
     var monitors = Settings.data.wallpaper.monitors || []
@@ -290,6 +285,11 @@ Singleton {
 
     // Emit signal for this specific wallpaper change
     root.wallpaperChanged(screenName, path)
+
+    // Execute wallpaper change hook after the change is complete
+    if (HooksService) {
+      HooksService.executeWallpaperHook(path)
+    }
 
     // Restart the random wallpaper timer
     if (randomWallpaperTimer.running) {
