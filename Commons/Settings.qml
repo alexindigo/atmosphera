@@ -57,12 +57,14 @@ Singleton {
       }
       if (!hasValidBarMonitor) {
         Logger.warn("Settings",
-                   "No configured bar monitors found on system, clearing bar monitor list to show on all screens")
+                    "No configured bar monitors found on system, clearing bar monitor list to show on all screens")
         adapter.bar.monitors = []
       } else {
+
         //Logger.log("Settings", "Found valid bar monitors, keeping configuration")
       }
     } else {
+
       //Logger.log("Settings", "Bar monitor list is empty, will show on all available screens")
     }
   }
@@ -153,7 +155,7 @@ Singleton {
 
         validateMonitorConfigurations()
 
-        kickOffServices();
+        kickOffServices()
 
         // Emit the signal
         root.settingsLoaded()
