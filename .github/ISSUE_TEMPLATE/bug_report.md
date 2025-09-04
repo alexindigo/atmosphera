@@ -21,9 +21,9 @@ Explain what you expected to happen.
 Add screenshots if applicable.
 
 ### Environment
-- Distro [e.g., CachyOS, NixOS, Arch, ...]
-- Compositor [ e.g., Hyprland, Niri, ...]
-- Version: [e.g., 1.0.0 or `main`]
+- Distro:  [e.g., CachyOS, NixOS, Arch, ...]
+- Compositor: [ e.g., Hyprland, Niri, ...]
+- Noctalia-shell Version: [e.g., 1.0.0, available in About tab]
 
 ### Additional Context
 Add any other context about the problem here.

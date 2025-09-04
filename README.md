@@ -51,7 +51,7 @@ Features a modern modular architecture with a status bar, notification system, c
 - **Lock Screen:** Secure lock experience with PAM authentication, time display, and animated background.
 - **Audio Integration:** Volume controls, media playback, and audio visualizer (cava-based).
 - **Connectivity:** WiFi and Bluetooth management with device pairing and network status.
-- **Power Management:** Battery monitoring, brightness control, and power profile switching.
+- **Power Management:** Battery monitoring, brightness control, power profile switching, power menu, and idle inhibition.
 - **System Monitoring:** CPU, memory, and network usage monitoring with visual indicators.
 - **Tray System:** Application tray with menu support and system integration.
 - **Background Management:** Wallpaper management with effects and dynamic theming support.
