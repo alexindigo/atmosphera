@@ -197,28 +197,29 @@ Alternatively, you can add it to your NixOS configuration or flake:
 
 *If you're using the manual install (`git clone...` and have it in `~/.config/quickshell/`) you can just use `qs ipc call...`*
 
-| Action                      | Command*                                                    |
-| --------------------------- | ----------------------------------------------------------- |
-| Start the Shell             | `qs -c noctalia-shell`                                      |
-| Toggle Application Launcher | `qs -c noctalia-shell ipc call launcher toggle`             |
-| Toggle Side Panel           | `qs -c noctalia-shell ipc call sidePanel toggle`            |
-| Open Clipboard History      | `qs -c noctalia-shell ipc call launcher clipboard`          |
-| Open Calculator             | `qs -c noctalia-shell ipc call launcher calculator`         |
-| Increase Brightness         | `qs -c noctalia-shell ipc call brightness increase`         |
-| Decrease Brightness         | `qs -c noctalia-shell ipc call brightness decrease`         |
-| Increase Output Volume      | `qs -c noctalia-shell ipc call volume increase`             |
-| Decrease Output Volume      | `qs -c noctalia-shell ipc call volume decrease`             |
-| Toggle Mute Audio Output    | `qs -c noctalia-shell ipc call volume muteOutput`           |
-| Toggle Mute Audio Input     | `qs -c noctalia-shell ipc call volume muteInput`            |
-| Toggle Power Panel          | `qs -c noctalia-shell ipc call powerPanel toggle`           |
-| Toggle Idle Inhibitor       | `qs -c noctalia-shell ipc call idleInhibitor toggle`        |
-| Toggle Settings Window      | `qs -c noctalia-shell ipc call settings toggle`             |
-| Toggle Lock Screen          | `qs -c noctalia-shell ipc call lockScreen toggle`           |
-| Toggle Notification History | `qs -c noctalia-shell ipc call notifications toggleHistory` |
-| Select new random wallpaper | `qs -c noctalia-shell ipc call wallpaper random`            |
-| Toggle Dark Mode            | `qs -c noctalia-shell ipc call darkMode toggle`             |
-| Set Dark Mode               | `qs -c noctalia-shell ipc call darkMode setDark`            |
-| Set Light Mode              | `qs -c noctalia-shell ipc call darkMode setLight`           |
+| Action                      | Command*                                                       |
+| --------------------------- | -------------------------------------------------------------- |
+| Start the Shell             | `qs -c noctalia-shell`                                         |
+| Toggle Application Launcher | `qs -c noctalia-shell ipc call launcher toggle`                |
+| Toggle Side Panel           | `qs -c noctalia-shell ipc call sidePanel toggle`               |
+| Open Clipboard History      | `qs -c noctalia-shell ipc call launcher clipboard`             |
+| Open Calculator             | `qs -c noctalia-shell ipc call launcher calculator`            |
+| Increase Brightness         | `qs -c noctalia-shell ipc call brightness increase`            |
+| Decrease Brightness         | `qs -c noctalia-shell ipc call brightness decrease`            |
+| Increase Output Volume      | `qs -c noctalia-shell ipc call volume increase`                |
+| Decrease Output Volume      | `qs -c noctalia-shell ipc call volume decrease`                |
+| Toggle Mute Audio Output    | `qs -c noctalia-shell ipc call volume muteOutput`              |
+| Toggle Mute Audio Input     | `qs -c noctalia-shell ipc call volume muteInput`               |
+| Toggle Power Panel          | `qs -c noctalia-shell ipc call powerPanel toggle`              |
+| Toggle Idle Inhibitor       | `qs -c noctalia-shell ipc call idleInhibitor toggle`           |
+| Toggle Settings Window      | `qs -c noctalia-shell ipc call settings toggle`                |
+| Toggle Lock Screen          | `qs -c noctalia-shell ipc call lockScreen toggle`              |
+| Toggle Notification History | `qs -c noctalia-shell ipc call notifications toggleHistory`    |
+| Change Wallpaper            | `qs -c noctalia-shell ipc call wallpaper set $path $monitor`   |
+| Assign a Random Wallpaper   | `qs -c noctalia-shell ipc call wallpaper random`               |
+| Toggle Dark Mode            | `qs -c noctalia-shell ipc call darkMode toggle`                |
+| Set Dark Mode               | `qs -c noctalia-shell ipc call darkMode setDark`               |
+| Set Light Mode              | `qs -c noctalia-shell ipc call darkMode setLight`              |
 
 ### Configuration
 
