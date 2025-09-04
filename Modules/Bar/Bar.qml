@@ -73,7 +73,7 @@ Variants {
           Repeater {
             model: Settings.data.bar.widgets.left
             delegate: NWidgetLoader {
-              widgetName: modelData
+              widgetId: (modelData.id !== undefined ? modelData.id : "")
               widgetProps: {
                 "screen": root.modelData || null,
                 "scaling": ScalingService.getScreenScale(screen),
@@ -100,8 +100,7 @@ Variants {
           Repeater {
             model: Settings.data.bar.widgets.center
             delegate: NWidgetLoader {
-
-              widgetName: modelData
+              widgetId: (modelData.id !== undefined ? modelData.id : "")
               widgetProps: {
                 "screen": root.modelData || null,
                 "scaling": ScalingService.getScreenScale(screen),
@@ -129,7 +128,7 @@ Variants {
           Repeater {
             model: Settings.data.bar.widgets.right
             delegate: NWidgetLoader {
-              widgetName: modelData
+              widgetId: (modelData.id !== undefined ? modelData.id : "")
               widgetProps: {
                 "screen": root.modelData || null,
                 "scaling": ScalingService.getScreenScale(screen),

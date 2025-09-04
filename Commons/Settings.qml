@@ -100,6 +100,31 @@ Singleton {
         Logger.log("Settings", "Settings loaded successfully")
         isLoaded = true
 
+        for (var i = 0; i < adapter.bar.widgets.left.length; i++) {
+          var obj = adapter.bar.widgets.left[i]
+          if (typeof obj === "string") {
+            adapter.bar.widgets.left[i] = {
+              "id": obj
+            }
+          }
+        }
+        for (var i = 0; i < adapter.bar.widgets.center.length; i++) {
+          var obj = adapter.bar.widgets.center[i]
+          if (typeof obj === "string") {
+            adapter.bar.widgets.center[i] = {
+              "id": obj
+            }
+          }
+        }
+        for (var i = 0; i < adapter.bar.widgets.right.length; i++) {
+          var obj = adapter.bar.widgets.right[i]
+          if (typeof obj === "string") {
+            adapter.bar.widgets.right[i] = {
+              "id": obj
+            }
+          }
+        }
+
         // Emit the signal
         root.settingsLoaded()
 
@@ -126,6 +151,8 @@ Singleton {
     JsonAdapter {
       id: adapter
 
+      property int settingsVersion: 1
+
       // bar
       property JsonObject bar: JsonObject {
         property string position: "top" // Possible values: "top", "bottom"
@@ -140,9 +167,39 @@ Singleton {
         // Widget configuration for modular bar system
         property JsonObject widgets
         widgets: JsonObject {
-          property list<string> left: ["SystemMonitor", "ActiveWindow", "MediaMini"]
-          property list<string> center: ["Workspace"]
-          property list<string> right: ["ScreenRecorderIndicator", "Tray", "NotificationHistory", "WiFi", "Bluetooth", "Battery", "Volume", "Brightness", "NightLight", "Clock", "SidePanelToggle"]
+          property list<var> left: [{
+              "id": "SystemMonitor"
+            }, {
+              "id": "ActiveWindow"
+            }, {
+              "id": "MediaMini"
+            }]
+          property list<var> center: [{
+              "id": "Workspace"
+            }]
+          property list<var> right: [{
+              "id": "ScreenRecorderIndicator"
+            }, {
+              "id": "Tray"
+            }, {
+              "id": "NotificationHistory"
+            }, {
+              "id": "WiFi"
+            }, {
+              "id": "Bluetooth"
+            }, {
+              "id": "Battery"
+            }, {
+              "id": "Volume"
+            }, {
+              "id": "Brightness"
+            }, {
+              "id": "NightLight"
+            }, {
+              "id": "Clock"
+            }, {
+              "id": "SidePanelToggle"
+            }]
         }
       }
 

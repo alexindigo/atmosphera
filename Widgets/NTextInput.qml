@@ -39,10 +39,13 @@ ColumnLayout {
   // Container
   Rectangle {
     id: frame
-    implicitWidth: parent.width
-    implicitHeight: Style.baseWidgetSize * 1.1 * scaling
+
+    Layout.fillWidth: true
     Layout.minimumWidth: 80 * scaling
     Layout.maximumWidth: root.inputMaxWidth
+
+    implicitWidth: parent.width
+    implicitHeight: Style.baseWidgetSize * 1.1 * scaling
     radius: Style.radiusM * scaling
     color: Color.mSurface
     border.color: Color.mOutline
@@ -76,7 +79,7 @@ ColumnLayout {
         readOnly: root.readOnly
         enabled: root.enabled
         color: Color.mOnSurface
-        placeholderTextColor: Color.mOnSurfaceVariant
+        placeholderTextColor: Qt.alpha(Color.mOnSurfaceVariant, 0.6)
         background: null
         font.family: fontFamily
         font.pointSize: fontSize

@@ -28,6 +28,7 @@ Rectangle {
   signal exited
   signal clicked
   signal rightClicked
+  signal middleClicked
 
   implicitWidth: size
   implicitHeight: size
@@ -59,7 +60,7 @@ Rectangle {
     enabled: root.enabled
     anchors.fill: parent
     cursorShape: root.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-    acceptedButtons: Qt.LeftButton | Qt.RightButton
+    acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
     hoverEnabled: true
     onEntered: {
       hovering = true
@@ -83,6 +84,8 @@ Rectangle {
         root.clicked()
       } else if (mouse.button === Qt.RightButton) {
         root.rightClicked()
+      } else if (mouse.button === Qt.MiddleButton) {
+        root.middleClicked()
       }
     }
   }
