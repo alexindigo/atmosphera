@@ -13,7 +13,7 @@ Item {
     const activeWindow = ToplevelManager.activeToplevel
     if (activeWindow && activeWindow.screens.length > 0) {
       var screenName = activeWindow.screens[0].name
-      for (let i=0; i<Quickshell.screens.length; i++) {
+      for (var i = 0; i < Quickshell.screens.length; i++) {
         if (screenName === Quickshell.screens[i].name) {
           return Quickshell.screens[i]
         }
@@ -57,7 +57,7 @@ Item {
   IpcHandler {
     target: "launcher"
     function toggle() {
-      launcherPanel.toggle(Screen)
+      launcherPanel.toggle(getActiveScreen())
     }
     function clipboard() {
       launcherPanel.setSearchText(">clip ")
