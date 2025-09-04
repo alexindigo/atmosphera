@@ -288,7 +288,7 @@ NPanel {
                         anchors.fill: parent
                         anchors.margins: Style.marginM * scaling
                         text: passwordInput
-                        font.pointSize: Style.fontSizeM * scaling
+                        font.pointSize: Style.fontSizeS * scaling
                         color: Color.mOnSurface
                         verticalAlignment: TextInput.AlignVCenter
                         clip: true
