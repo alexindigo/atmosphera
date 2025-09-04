@@ -163,10 +163,10 @@ ColumnLayout {
         sectionId: "left"
         widgetModel: Settings.data.bar.widgets.left
         availableWidgets: availableWidgets
-        onAddWidget: (widgetId, section) => addWidgetToSection(widgetId, section)
-        onRemoveWidget: (section, index) => removeWidgetFromSection(section, index)
-        onReorderWidget: (section, fromIndex, toIndex) => reorderWidgetInSection(section, fromIndex, toIndex)
-        onUpdateWidgetSettings: (section, index, settings) => updateWidgetSettingsInSection(section, index, settings)
+        onAddWidget: (widgetId, section) => _addWidgetToSection(widgetId, section)
+        onRemoveWidget: (section, index) => _removeWidgetFromSection(section, index)
+        onReorderWidget: (section, fromIndex, toIndex) => _reorderWidgetInSection(section, fromIndex, toIndex)
+        onUpdateWidgetSettings: (section, index, settings) => _updateWidgetSettingsInSection(section, index, settings)
       }
 
       // Center Section
@@ -175,10 +175,10 @@ ColumnLayout {
         sectionId: "center"
         widgetModel: Settings.data.bar.widgets.center
         availableWidgets: availableWidgets
-        onAddWidget: (widgetId, section) => addWidgetToSection(widgetId, section)
-        onRemoveWidget: (section, index) => removeWidgetFromSection(section, index)
-        onReorderWidget: (section, fromIndex, toIndex) => reorderWidgetInSection(section, fromIndex, toIndex)
-        onUpdateWidgetSettings: (section, index, settings) => updateWidgetSettingsInSection(section, index, settings)
+        onAddWidget: (widgetId, section) => _addWidgetToSection(widgetId, section)
+        onRemoveWidget: (section, index) => _removeWidgetFromSection(section, index)
+        onReorderWidget: (section, fromIndex, toIndex) => _reorderWidgetInSection(section, fromIndex, toIndex)
+        onUpdateWidgetSettings: (section, index, settings) => _updateWidgetSettingsInSection(section, index, settings)
       }
 
       // Right Section
@@ -187,10 +187,10 @@ ColumnLayout {
         sectionId: "right"
         widgetModel: Settings.data.bar.widgets.right
         availableWidgets: availableWidgets
-        onAddWidget: (widgetId, section) => addWidgetToSection(widgetId, section)
-        onRemoveWidget: (section, index) => removeWidgetFromSection(section, index)
-        onReorderWidget: (section, fromIndex, toIndex) => reorderWidgetInSection(section, fromIndex, toIndex)
-        onUpdateWidgetSettings: (section, index, settings) => updateWidgetSettingsInSection(section, index, settings)
+        onAddWidget: (widgetId, section) => _addWidgetToSection(widgetId, section)
+        onRemoveWidget: (section, index) => _removeWidgetFromSection(section, index)
+        onReorderWidget: (section, fromIndex, toIndex) => _reorderWidgetInSection(section, fromIndex, toIndex)
+        onUpdateWidgetSettings: (section, index, settings) => _updateWidgetSettingsInSection(section, index, settings)
       }
     }
   }
@@ -202,14 +202,9 @@ ColumnLayout {
   }
 
   // ---------------------------------
-  // Helper functions
-  function updateWidgetSettingsInSection(section, index, settings) {
-    // Update the widget settings in the Settings data
-    Settings.data.bar.widgets[section][index] = settings
-    //Logger.log("BarTab", `Updated widget settings for ${settings.id} in ${section} section`)
-  }
-
-  function addWidgetToSection(widgetId, section) {
+  // Signal functions
+  // ---------------------------------
+  function _addWidgetToSection(widgetId, section) {
     var newWidget = {
       "id": widgetId
     }
@@ -226,7 +221,7 @@ ColumnLayout {
     Settings.data.bar.widgets[section].push(newWidget)
   }
 
-  function removeWidgetFromSection(section, index) {
+  function _removeWidgetFromSection(section, index) {
     if (index >= 0 && index < Settings.data.bar.widgets[section].length) {
       var newArray = Settings.data.bar.widgets[section].slice()
       newArray.splice(index, 1)
@@ -234,7 +229,7 @@ ColumnLayout {
     }
   }
 
-  function reorderWidgetInSection(section, fromIndex, toIndex) {
+  function _reorderWidgetInSection(section, fromIndex, toIndex) {
     if (fromIndex >= 0 && fromIndex < Settings.data.bar.widgets[section].length && toIndex >= 0
         && toIndex < Settings.data.bar.widgets[section].length) {
 
@@ -247,6 +242,12 @@ ColumnLayout {
       Settings.data.bar.widgets[section] = newArray
       //Logger.log("BarTab", "Widget reordered. New array:", JSON.stringify(newArray))
     }
+  }
+
+  function _updateWidgetSettingsInSection(section, index, settings) {
+    // Update the widget settings in the Settings data
+    Settings.data.bar.widgets[section][index] = settings
+    //Logger.log("BarTab", `Updated widget settings for ${settings.id} in ${section} section`)
   }
 
   // Base list model for all combo boxes
