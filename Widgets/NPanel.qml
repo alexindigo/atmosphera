@@ -148,9 +148,7 @@ Loader {
       visible: true
 
       // Dim desktop if required
-      color: (root.active && !root.isClosing && Settings.data.general.dimDesktop) ? Color.applyOpacity(
-                                                                                      Color.mShadow,
-                                                                                      "BB") : Color.transparent
+      color: (root.active && !root.isClosing && Settings.data.general.dimDesktop) ? Qt.alpha(Color.mShadow, Style.opacityHeavy) : Color.transparent
 
       WlrLayershell.exclusionMode: ExclusionMode.Ignore
       WlrLayershell.namespace: "noctalia-panel"

@@ -96,7 +96,7 @@ Variants {
             height: Math.max(80 * scaling, contentRow.implicitHeight + (Style.marginL * 2 * scaling))
             clip: true
             radius: Style.radiusL * scaling
-            border.color: Color.applyOpacity(Color.mOutline, "33")
+            border.color: Qt.alpha(Color.mOutline, Style.opacityLight)
             border.width: Math.max(1, Style.borderS * scaling)
             color: Color.mSurface
 

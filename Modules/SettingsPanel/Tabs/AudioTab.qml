@@ -316,8 +316,8 @@ ColumnLayout {
             // Padding around the inner row
             property real pad: Style.marginS * scaling
             // Visuals
-            color: Color.applyOpacity(Color.mOnSurface, "20")
-            border.color: Color.applyOpacity(Color.mOnSurface, "50")
+            color: Qt.alpha(Color.mOnSurface, 0.125)
+            border.color: Qt.alpha(Color.mOnSurface, Style.opacityLight)
             border.width: Math.max(1, Style.borderS * scaling)
 
             // Content

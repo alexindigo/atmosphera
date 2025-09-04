@@ -126,7 +126,7 @@ NPanel {
           icon: timerActive ? "back_hand" : "close"
           tooltipText: timerActive ? "Cancel Timer" : "Close"
           Layout.alignment: Qt.AlignVCenter
-          colorBg: timerActive ? Color.applyOpacity(Color.mError, "20") : Color.transparent
+          colorBg: timerActive ? Qt.alpha(Color.mError, 0.08) : Color.transparent
           colorFg: timerActive ? Color.mError : Color.mOnSurface
           onClicked: {
             if (timerActive) {
@@ -213,10 +213,12 @@ NPanel {
     height: Style.baseWidgetSize * 1.6 * scaling
     radius: Style.radiusS * scaling
     color: {
-      if (pending)
-        return Color.applyOpacity(Color.mPrimary, "20")
-      if (mouseArea.containsMouse)
+      if (pending) {
+        return Qt.alpha(Color.mPrimary, 0.08)
+      }
+      if (mouseArea.containsMouse) {
         return Color.mSecondary
+      }
       return Color.transparent
     }
 

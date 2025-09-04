@@ -392,7 +392,7 @@ Loader {
                   id: terminalBackground
                   anchors.fill: parent
                   radius: Style.radiusM * scaling
-                  color: Color.applyOpacity(Color.mSurface, "E6")
+                  color: Qt.alpha(Color.mSurface, 0.9)
                   border.color: Color.mPrimary
                   border.width: Math.max(1, Style.borderM * scaling)
 
@@ -401,7 +401,7 @@ Loader {
                     Rectangle {
                       width: parent.width
                       height: 1
-                      color: Color.applyOpacity(Color.mPrimary, "1A")
+                      color: Qt.alpha(Color.mPrimary, 0.1)
                       y: index * 10 * scaling
                       opacity: Style.opacityMedium
                       SequentialAnimation on opacity {
@@ -421,7 +421,7 @@ Loader {
                   Rectangle {
                     width: parent.width
                     height: 40 * scaling
-                    color: Color.applyOpacity(Color.mPrimary, "33")
+                    color: Qt.alpha(Color.mPrimary, 0.2)
                     topLeftRadius: Style.radiusS * scaling
                     topRightRadius: Style.radiusS * scaling
 
@@ -659,8 +659,7 @@ Loader {
                         width: 120 * scaling
                         height: 40 * scaling
                         radius: Style.radiusS * scaling
-                        color: executeButtonArea.containsMouse ? Color.mPrimary : Color.applyOpacity(Color.mPrimary,
-                                                                                                     "33")
+                        color: executeButtonArea.containsMouse ? Color.mPrimary : Qt.alpha(Color.mPrimary, 0.2)
                         border.color: Color.mPrimary
                         border.width: Math.max(1, Style.borderS * scaling)
                         enabled: !lockContext.unlockInProgress
@@ -723,7 +722,7 @@ Loader {
                     anchors.fill: parent
                     radius: parent.radius
                     color: Color.transparent
-                    border.color: Color.applyOpacity(Color.mPrimary, "4D")
+                    border.color: Qt.alpha(Color.mPrimary, 0.3)
                     border.width: Math.max(1, Style.borderS * scaling)
                     z: -1
 
@@ -756,7 +755,7 @@ Loader {
                 width: 60 * scaling
                 height: 60 * scaling
                 radius: width * 0.5
-                color: powerButtonArea.containsMouse ? Color.mError : Color.applyOpacity(Color.mError, "33")
+                color: powerButtonArea.containsMouse ? Color.mError : Qt.alpha(Color.mError, 0.2)
                 border.color: Color.mError
                 border.width: Math.max(1, Style.borderM * scaling)
 
@@ -781,7 +780,7 @@ Loader {
                 width: 60 * scaling
                 height: 60 * scaling
                 radius: width * 0.5
-                color: restartButtonArea.containsMouse ? Color.mPrimary : Color.applyOpacity(Color.mPrimary, "33")
+                color: restartButtonArea.containsMouse ? Color.mPrimary : Qt.alpha(Color.mPrimary, Style.opacityLight)
                 border.color: Color.mPrimary
                 border.width: Math.max(1, Style.borderM * scaling)
 
@@ -806,7 +805,7 @@ Loader {
                 width: 60 * scaling
                 height: 60 * scaling
                 radius: width * 0.5
-                color: suspendButtonArea.containsMouse ? Color.mSecondary : Color.applyOpacity(Color.mSecondary, "33")
+                color: suspendButtonArea.containsMouse ? Color.mSecondary : Qt.alpha(Color.mSecondary, 0.2)
                 border.color: Color.mSecondary
                 border.width: Math.max(1, Style.borderM * scaling)
 
