@@ -170,7 +170,6 @@ NPanel {
 
     function selectFirst() {
       selectedIndex = 0
-      console.log("selectFirst")
     }
 
     function selectLast() {
