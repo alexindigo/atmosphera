@@ -11,10 +11,13 @@ Item {
   // Using Wayland protocols to get focused window then determine which screen it's on.
   function getActiveScreen() {
     const activeWindow = ToplevelManager.activeToplevel
-    if (activeWindow.screens.length > 0) {
-      return activeWindow.screens[0]
+    if (activeWindow && activeWindow.screens.length > 0) {
+      var screen = activeWindow.screens[0]
+      return screen
     }
-    return null
+
+    // Fall back to the primary screen
+    return Quickshell.screens[0]
   }
 
   IpcHandler {
