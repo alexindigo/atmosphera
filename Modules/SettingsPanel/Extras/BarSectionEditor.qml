@@ -352,7 +352,7 @@ NBox {
                         if (isLastItem && insertAtEnd) {
                           insertAtEnd = false
                           targetIndex = -1
-                          Logger.log("BarSectionEditor", "Last item dropped to right - no reordering needed")
+                          //Logger.log("BarSectionEditor", "Last item dropped to right - no reordering needed")
                         }
 
                         // Determine final target index based on position
@@ -361,7 +361,7 @@ NBox {
                         if (insertAtBeginning && widgetModel.length > 1) {
                           // Insert at the very beginning (position 0)
                           finalTargetIndex = 0
-                          Logger.log("BarSectionEditor", "Inserting at beginning")
+                          //Logger.log("BarSectionEditor", "Inserting at beginning")
                         } else if (insertAtEnd && widgetModel.length > 1) {
                           // Insert at the very end
                           let maxIndex = -1
@@ -371,7 +371,7 @@ NBox {
                             }
                           }
                           finalTargetIndex = maxIndex
-                          Logger.log("BarSectionEditor", "Inserting at end, target:", finalTargetIndex)
+                          //Logger.log("BarSectionEditor", "Inserting at end, target:", finalTargetIndex)
                         } else if (targetIndex !== -1) {
                           // Normal case - determine if we should insert before or after the target
                           const targetWidget = widgetFlow.children[targetIndex]
@@ -379,16 +379,16 @@ NBox {
                             const targetCenterX = targetWidget.x + targetWidget.width / 2
                             if (mouseX > targetCenterX) {
                               // Mouse is to the right of target center, insert after
-                              Logger.log("BarSectionEditor", "Inserting after widget at index:", targetIndex)
+                              //Logger.log("BarSectionEditor", "Inserting after widget at index:", targetIndex)
                             } else {
                               // Mouse is to the left of target center, insert before
                               finalTargetIndex = targetIndex
-                              Logger.log("BarSectionEditor", "Inserting before widget at index:", targetIndex)
+                              //Logger.log("BarSectionEditor", "Inserting before widget at index:", targetIndex)
                             }
                           }
                         }
 
-                        Logger.log("BarSectionEditor", "Final drop target index:", finalTargetIndex)
+                        //Logger.log("BarSectionEditor", "Final drop target index:", finalTargetIndex)
 
                         // Check if reordering is needed
                         if (finalTargetIndex !== -1 && finalTargetIndex !== draggedIndex) {
@@ -402,7 +402,7 @@ NBox {
                           draggedWidget.x = originalWidgetPos.x
                           draggedWidget.y = originalWidgetPos.y
                           draggedWidget.z = 0
-                          Logger.log("BarSectionEditor", "No reordering - restoring original position")
+                          //Logger.log("BarSectionEditor", "No reordering - restoring original position")
                         }
                       } else if (draggedIndex !== -1 && !dragStarted) {
 
