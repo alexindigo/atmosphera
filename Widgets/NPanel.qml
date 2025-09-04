@@ -89,7 +89,7 @@ Loader {
       screen = aScreen
     }
 
-    // Get t button position if provided
+    // Get the button position if provided
     if (buttonItem !== undefined && buttonItem !== null) {
       useButtonPosition = true
 
@@ -207,31 +207,29 @@ Loader {
             var maxX = panelWindow.width - panelWidth - (Style.marginS * scaling)
             var minX = Style.marginS * scaling
 
-            return Math.max(minX, Math.min(targetX, maxX))
+            return Math.round(Math.max(minX, Math.min(targetX, maxX)))
           } else if (!panelAnchorHorizontalCenter && panelAnchorLeft) {
-            return Style.marginS * scaling
+            return Math.round(marginS * scaling)
           } else if (!panelAnchorHorizontalCenter && panelAnchorRight) {
-            return panelWindow.width - panelWidth - (Style.marginS * scaling)
+            return Math.round(panelWindow.width - panelWidth - (Style.marginS * scaling))
           } else {
-            return (panelWindow.width - panelWidth) / 2
+            return Math.round((panelWindow.width - panelWidth) / 2)
           }
         }
 
         property int calculatedY: {
           if (panelAnchorVerticalCenter) {
-            return (panelWindow.height - panelHeight) / 2
+            return Math.round((panelWindow.height - panelHeight) / 2)
           } else if (panelAnchorBottom) {
-            return panelWindow.height - panelHeight - (Style.marginS * scaling)
+            return Math.round(panelWindow.height - panelHeight - (Style.marginS * scaling))
           } else if (panelAnchorTop) {
-            return (Style.marginS * scaling)
-          } else if (panelAnchorBottom) {
-            panelWindow.height - panelHeight - (Style.marginS * scaling)
+            return Math.round(Style.marginS * scaling)
           } else if (!barAtBottom) {
             // Below the top bar
-            return Style.marginS * scaling
+            return Math.round(Style.marginS * scaling)
           } else {
             // Above the bottom bar
-            return panelWindow.height - panelHeight - (Style.marginS * scaling)
+            return Math.round(panelWindow.height - panelHeight - (Style.marginS * scaling))
           }
         }
 
