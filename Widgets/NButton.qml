@@ -22,6 +22,8 @@ Rectangle {
 
   // Signals
   signal clicked
+  signal rightClicked
+  signal middleClicked
 
   // Internal properties
   property bool hovered: false
@@ -125,56 +127,13 @@ Rectangle {
     }
   }
 
-  // Ripple effect
-  Rectangle {
-    id: ripple
-    anchors.centerIn: parent
-    width: 0
-    height: width
-    radius: width / 2
-    color: root.outlined ? root.backgroundColor : root.textColor
-    opacity: 0
-
-    ParallelAnimation {
-      id: rippleAnimation
-
-      NumberAnimation {
-        target: ripple
-        property: "width"
-        from: 0
-        to: Math.max(root.width, root.height) * 2
-        duration: Style.animationFast
-        easing.type: Easing.OutCubic
-      }
-
-      SequentialAnimation {
-        NumberAnimation {
-          target: ripple
-          property: "opacity"
-          from: 0
-          to: 0.05
-          duration: 100
-          easing.type: Easing.OutCubic
-        }
-
-        NumberAnimation {
-          target: ripple
-          property: "opacity"
-          from: 0.05
-          to: 0
-          duration: 300
-          easing.type: Easing.InCubic
-        }
-      }
-    }
-  }
-
   // Mouse interaction
   MouseArea {
     id: mouseArea
     anchors.fill: parent
     enabled: root.enabled
     hoverEnabled: true
+    acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
     cursorShape: root.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
 
     onEntered: root.hovered = true
@@ -182,16 +141,23 @@ Rectangle {
       root.hovered = false
       root.pressed = false
     }
-    onPressed: {
-      root.pressed = true
-      rippleAnimation.restart()
-    }
-    onReleased: {
-      if (containsMouse) {
-        root.clicked()
-      }
-      root.pressed = false
-    }
+    onPressed: mouse => {
+                 root.pressed = true
+               }
+    onReleased: mouse => {
+                  root.pressed = false
+                  if (!root.hovered) {
+                    return
+                  }
+
+                  if (mouse.button === Qt.LeftButton) {
+                    root.clicked()
+                  } else if (mouse.button == Qt.RightButton) {
+                    root.rightClicked()
+                  } else if (mouse.button == Qt.MiddleButton) {
+                    root.middleClicked
+                  }
+                }
     onCanceled: {
       root.pressed = false
       root.hovered = false
