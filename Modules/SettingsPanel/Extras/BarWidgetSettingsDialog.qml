@@ -18,9 +18,9 @@ Popup {
   x: (parent.width - width) * 0.5
   y: (parent.height - height) * 0.5
 
-  width: 400 * scaling
+  width: 420 * scaling
   height: content.implicitHeight + padding * 2
-  padding: Style.marginL * scaling
+  padding: Style.marginXL * scaling
   modal: true
 
   background: Rectangle {
@@ -50,10 +50,6 @@ Popup {
 
       NIconButton {
         icon: "close"
-        colorBg: Color.transparent
-        colorFg: Color.mOnSurface
-        colorBgHover: Color.applyOpacity(Color.mError, "20")
-        colorFgHover: Color.mError
         onClicked: settingsPopup.close()
       }
     }
@@ -96,7 +92,6 @@ Popup {
       NButton {
         text: "Save"
         onClicked: {
-
           if (settingsLoader.item && settingsLoader.item.saveSettings) {
             var newSettings = settingsLoader.item.saveSettings()
             root.updateWidgetSettings(sectionId, settingsPopup.widgetIndex, newSettings)
@@ -114,13 +109,12 @@ Popup {
     ColumnLayout {
       spacing: Style.marginM * scaling
 
-      property alias iconField: iconInput
-      property alias executeField: executeInput
-
       function saveSettings() {
         var settings = Object.assign({}, settingsPopup.widgetData)
         settings.icon = iconInput.text
-        settings.execute = executeInput.text
+        settings.leftClickExec = leftClickExecInput.text
+        settings.rightClickExec = rightClickExecInput.text
+        settings.middleClickExec = middleClickExecInput.text
         return settings
       }
 
@@ -128,19 +122,39 @@ Popup {
       NTextInput {
         id: iconInput
         Layout.fillWidth: true
+        Layout.bottomMargin: Style.marginXL * scaling
         label: "Icon Name"
         description: "Use Material Icon names from the icon set."
         text: settingsPopup.widgetData.icon || ""
         placeholderText: "Enter icon name (e.g., favorite, home, settings)"
       }
 
-      // Execute command setting
+
+
       NTextInput {
-        id: executeInput
+        id: leftClickExecInput
         Layout.fillWidth: true
-        label: "Execute Command"
-        description: "Command or application to run when clicked."
+        label: "Left Click Command"
+        description: "Command or application to run when left clicked."
         text: settingsPopup.widgetData.leftClickExec || ""
+        placeholderText: "Enter command to execute (app or custom script)"
+      }
+
+      NTextInput {
+        id: rightClickExecInput
+        Layout.fillWidth: true
+        label: "Right Click Command"
+        description: "Command or application to run when right clicked."
+        text: settingsPopup.widgetData.rightClickExec || ""
+        placeholderText: "Enter command to execute (app or custom script)"
+      }
+
+      NTextInput {
+        id: middleClickExecInput
+        Layout.fillWidth: true
+        label: "Middle Click Command"
+        description: "Command or application to run when middle clicked."
+        text: settingsPopup.widgetData.middleClickExec || ""
         placeholderText: "Enter command to execute (app or custom script)"
       }
     }

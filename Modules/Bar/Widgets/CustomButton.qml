@@ -46,14 +46,15 @@ NIconButton {
     } else {
       var lines = []
       if (userLeftClickExec !== "") {
-        lines.push(`Left click: ${userLeftClickExec}\n`)
+        lines.push(`Left click: <i>${userLeftClickExec}</i>`)
       }
       if (userRightClickExec !== "") {
-        lines.push(`Right click: ${userRightClickExec}\n`)
+        lines.push(`Right click: <i>${userRightClickExec}</i>`)
       }
       if (userLeftClickExec !== "") {
-        lines.push(`Middle click: ${userMiddleClickExec}\n`)
+        lines.push(`Middle click: <i>${userMiddleClickExec}</i>`)
       }
+      return lines.join("<br/>")
     }
   }
   opacity: hasExec ? Style.opacityFull : Style.opacityMedium

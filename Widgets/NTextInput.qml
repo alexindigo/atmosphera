@@ -79,7 +79,7 @@ ColumnLayout {
         readOnly: root.readOnly
         enabled: root.enabled
         color: Color.mOnSurface
-        placeholderTextColor: Color.mOnSurfaceVariant
+        placeholderTextColor: Qt.alpha(Color.mOnSurfaceVariant, 0.6)
         background: null
         font.family: fontFamily
         font.pointSize: fontSize
