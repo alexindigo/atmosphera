@@ -115,93 +115,72 @@ NBox {
     }
 
     // Drag and Drop Widget Area
-    Flow {
-      id: widgetFlow
-      Layout.fillWidth: true
-      Layout.fillHeight: true
-      Layout.minimumHeight: 65 * scaling
-      spacing: Style.marginS * scaling
-      flow: Flow.LeftToRight
+    // Replace your Flow section with this:
 
-      Repeater {
-        model: widgetModel
-        delegate: Rectangle {
-          id: widgetItem
-          required property int index
-          required property var modelData
+// Drag and Drop Widget Area - use Item container
+Item {
+  Layout.fillWidth: true
+  Layout.fillHeight: true
+  Layout.minimumHeight: 65 * scaling
 
-          width: widgetContent.implicitWidth + Style.marginL * scaling
-          height: Style.baseWidgetSize * 1.15 * scaling
-          radius: Style.radiusL * scaling
-          color: root.getWidgetColor(modelData)
-          border.color: Color.mOutline
-          border.width: Math.max(1, Style.borderS * scaling)
+  Flow {
+    id: widgetFlow
+    anchors.fill: parent
+    spacing: Style.marginS * scaling
+    flow: Flow.LeftToRight
 
-          // Drag properties
-          Drag.keys: ["widget"]
-          Drag.active: mouseArea.drag.active
-          Drag.hotSpot.x: width / 2
-          Drag.hotSpot.y: height / 2
+    Repeater {
+      model: widgetModel
+      delegate: Rectangle {
+        id: widgetItem
+        required property int index
+        required property var modelData
 
-          // Store the widget index for drag operations
-          property int widgetIndex: index
-          readonly property int buttonsWidth: Math.round(20 * scaling)
-          readonly property int buttonsCount: 1 + BarWidgetRegistry.widgetHasUserSettings(modelData.id)
+        width: widgetContent.implicitWidth + Style.marginL * scaling
+        height: Style.baseWidgetSize * 1.15 * scaling
+        radius: Style.radiusL * scaling
+        color: root.getWidgetColor(modelData)
+        border.color: Color.mOutline
+        border.width: Math.max(1, Style.borderS * scaling)
 
-          // Visual feedback during drag
-          states: State {
-            when: mouseArea.drag.active
-            PropertyChanges {
-              target: widgetItem
-              scale: 1.1
-              opacity: 0.9
-              z: 1000
-            }
+        // Store the widget index for drag operations
+        property int widgetIndex: index
+        readonly property int buttonsWidth: Math.round(20 * scaling)
+        readonly property int buttonsCount: 1 + BarWidgetRegistry.widgetHasUserSettings(modelData.id)
+
+        // Visual feedback during drag
+        states: State {
+          when: flowDragArea.draggedIndex === index
+          PropertyChanges {
+            target: widgetItem
+            scale: 1.1
+            opacity: 0.9
+            z: 1000
+          }
+        }
+
+        RowLayout {
+          id: widgetContent
+          anchors.centerIn: parent
+          spacing: Style.marginXXS * scaling
+
+          NText {
+            text: modelData.id
+            font.pointSize: Style.fontSizeS * scaling
+            color: Color.mOnPrimary
+            horizontalAlignment: Text.AlignHCenter
+            elide: Text.ElideRight
+            Layout.preferredWidth: 80 * scaling
           }
 
           RowLayout {
-            id: widgetContent
-
-            anchors.centerIn: parent
-            spacing: Style.marginXXS * scaling
-
-            NText {
-              text: modelData.id
-              font.pointSize: Style.fontSizeS * scaling
-              color: Color.mOnPrimary
-              horizontalAlignment: Text.AlignHCenter
-              elide: Text.ElideRight
-              Layout.preferredWidth: 80 * scaling
-            }
-
-            RowLayout {
-              spacing: 0
-              Layout.preferredWidth: buttonsCount * buttonsWidth
-              Loader {
-                active: BarWidgetRegistry.widgetHasUserSettings(modelData.id)
-                sourceComponent: NIconButton {
-                  icon: "settings"
-                  sizeRatio: 0.6
-                  colorBorder: Color.applyOpacity(Color.mOutline, "40")
-                  colorBg: Color.mOnSurface
-                  colorFg: Color.mOnPrimary
-                  colorBgHover: Color.applyOpacity(Color.mOnPrimary, "40")
-                  colorFgHover: Color.mOnPrimary
-                  onClicked: {
-                    // Open widget settings dialog
-                    var dialog = Qt.createComponent("BarWidgetSettingsDialog.qml").createObject(root, {
-                                                                                                  "widgetIndex": index,
-                                                                                                  "widgetData": modelData,
-                                                                                                  "widgetId": modelData.id,
-                                                                                                  "parent": Overlay.overlay
-                                                                                                })
-                    dialog.open()
-                  }
-                }
-              }
-
-              NIconButton {
-                icon: "close"
+            spacing: 0
+            Layout.preferredWidth: buttonsCount * buttonsWidth
+            
+            Loader {
+              active: BarWidgetRegistry.widgetHasUserSettings(modelData.id)
+              sourceComponent: NIconButton {
+                icon: "settings"
                 sizeRatio: 0.6
                 colorBorder: Color.applyOpacity(Color.mOutline, "40")
                 colorBg: Color.mOnSurface
@@ -209,151 +188,183 @@ NBox {
                 colorBgHover: Color.applyOpacity(Color.mOnPrimary, "40")
                 colorFgHover: Color.mOnPrimary
                 onClicked: {
-                  removeWidget(sectionId, index)
+                  var dialog = Qt.createComponent("BarWidgetSettingsDialog.qml").createObject(root, {
+                                                                                                "widgetIndex": index,
+                                                                                                "widgetData": modelData,
+                                                                                                "widgetId": modelData.id,
+                                                                                                "parent": Overlay.overlay
+                                                                                              })
+                  dialog.open()
                 }
               }
             }
-          }
 
-          // Mouse area for drag and drop
-          property int mouseXStartDrag: 0
-
-          MouseArea {
-            id: mouseArea
-            anchors.fill: parent
-            drag.target: parent
-
-            onPressed: mouse => {
-                         // Check if the click is on the settings or close button area
-                         const buttonsX = widgetContent.x + widgetContent.width - (buttonsWidth * buttonsCount)
-                         if (mouseX >= buttonsX) {
-                           // Click is on the buttons, don't start drag
-                           mouse.accepted = false
-                           return
-                         }
-
-                         //Logger.log("BarSectionEditor", `Started dragging widget: ${modelData.id} at index ${index}`)
-                         // Bring to front when starting drag
-                         widgetItem.z = 1000
-                         mouseXStartDrag = mouseX
-                       }
-
-            onReleased: mouse => {
-              //Logger.log("BarSectionEditor", `Released widget: ${modelData.id} at index ${index}`)
-              // Reset z-index when drag ends
-              widgetItem.z = 0
-
-              console.log(mouseXStartDrag - mouse.x)
-
-
-
-              // Get the global mouse position
-              const globalDropX = mouseArea.mouseX + widgetItem.x + widgetFlow.x
-              const globalDropY = mouseArea.mouseY + widgetItem.y + widgetFlow.y
-
-              // Find which widget the drop position is closest to
-              let targetIndex = -1
-              let minDistance = Infinity
-
-              for (var i = 0; i < widgetModel.length; i++) {
-                if (i !== index) {
-                  // Get the position of other widgets
-                  const otherWidget = widgetFlow.children[i]
-                  if (otherWidget && otherWidget.widgetIndex !== undefined) {
-                    // Calculate the center of the other widget
-                    const otherCenterX = otherWidget.x + otherWidget.width / 2 + widgetFlow.x
-                    const otherCenterY = otherWidget.y + otherWidget.height / 2 + widgetFlow.y
-
-                    // Calculate distance to the center of this widget
-                    const distance = Math.sqrt(Math.pow(globalDropX - otherCenterX,
-                                                        2) + Math.pow(globalDropY - otherCenterY, 2))
-
-                    if (distance < minDistance) {
-                      minDistance = distance
-                      targetIndex = otherWidget.widgetIndex
-                    }
-                  }
-                }
-              }
-
-              // Only reorder if we found a valid target and it's different from current position
-              if (targetIndex !== -1 && targetIndex !== index) {
-                const fromIndex = index
-                const toIndex = targetIndex
-                reorderWidget(sectionId, fromIndex, toIndex)
+            NIconButton {
+              icon: "close"
+              sizeRatio: 0.6
+              colorBorder: Color.applyOpacity(Color.mOutline, "40")
+              colorBg: Color.mOnSurface
+              colorFg: Color.mOnPrimary
+              colorBgHover: Color.applyOpacity(Color.mOnPrimary, "40")
+              colorFgHover: Color.mOnPrimary
+              onClicked: {
+                removeWidget(sectionId, index)
               }
             }
           }
         }
       }
     }
+  }
 
-    // Drop zone at the beginning (positioned absolutely)
-    DropArea {
-      id: startDropZone
-      width: 40 * scaling
-      height: 40 * scaling
-      x: widgetFlow.x
-      y: widgetFlow.y + (widgetFlow.height - height) / 2
-      keys: ["widget"]
-      z: 1001 // Above the Flow
-
-      Rectangle {
-        anchors.fill: parent
-        color: startDropZone.containsDrag ? Color.applyOpacity(Color.mPrimary, "20") : Color.transparent
-        border.color: startDropZone.containsDrag ? Color.mPrimary : Color.transparent
-        border.width: startDropZone.containsDrag ? 2 : 0
-        radius: Style.radiusS * scaling
-      }
-
-      onEntered: function (drag) {//Logger.log("BarSectionEditor", "Entered start drop zone")
-      }
-
-      onDropped: function (drop) {
-        //Logger.log("BarSectionEditor", "Dropped on start zone")
-        if (drop.source && drop.source.widgetIndex !== undefined) {
-          const fromIndex = drop.source.widgetIndex
-          const toIndex = 0 // Insert at the beginning
-          if (fromIndex !== toIndex) {
-            //Logger.log("BarSectionEditor", `Dropped widget from index ${fromIndex} to beginning`)
-            reorderWidget(sectionId, fromIndex, toIndex)
+// MouseArea outside Flow, covering the same area
+  MouseArea {
+    id: flowDragArea
+    anchors.fill: parent
+    z: 999  // Above all widgets to ensure it gets events first
+    
+    // Critical properties for proper event handling
+    acceptedButtons: Qt.LeftButton
+    preventStealing: true  // Prevent child items from stealing events
+    propagateComposedEvents: false  // Don't propagate to children during drag
+    hoverEnabled: true
+    
+    property point startPos: Qt.point(0, 0)
+    property bool dragStarted: false
+    property int draggedIndex: -1
+    property real dragThreshold: 15 * scaling
+    property Item draggedWidget: null
+    property point clickOffsetInWidget: Qt.point(0, 0)  // Add this line
+    
+    onPressed: mouse => {
+      startPos = Qt.point(mouse.x, mouse.y)
+      dragStarted = false
+      draggedIndex = -1
+      draggedWidget = null
+      
+      console.log("Mouse pressed at:", mouse.x, mouse.y)
+      
+      // Find which widget was clicked
+      for (var i = 0; i < widgetModel.length; i++) {
+        const widget = widgetFlow.children[i]
+        if (widget && widget.widgetIndex !== undefined) {
+          if (mouse.x >= widget.x && mouse.x <= widget.x + widget.width &&
+              mouse.y >= widget.y && mouse.y <= widget.y + widget.height) {
+            
+            const localX = mouse.x - widget.x
+            const buttonsStartX = widget.width - (widget.buttonsCount * widget.buttonsWidth)
+            
+            if (localX < buttonsStartX) {
+              draggedIndex = widget.widgetIndex
+              draggedWidget = widget
+              
+              // Calculate and store where within the widget the user clicked
+              const clickOffsetX = mouse.x - widget.x  // Distance from widget's left edge
+              const clickOffsetY = mouse.y - widget.y  // Distance from widget's top edge
+              clickOffsetInWidget = Qt.point(clickOffsetX, clickOffsetY)
+              
+              Logger.log("BarSectionEditor", "Selected widget:", widgetModel[i].id, "at index", i)
+              Logger.log("BarSectionEditor", "Widget position:", widget.x, widget.y)
+              Logger.log("BarSectionEditor", "Mouse position:", mouse.x, mouse.y)
+              Logger.log("BarSectionEditor", "Click offset within widget:", clickOffsetInWidget.x, clickOffsetInWidget.y)
+              
+              // Immediately set prevent stealing to true when drag candidate is found
+              preventStealing = true
+              break
+            }else {
+              // Click was on buttons - allow event propagation
+              mouse.accepted = false
+              return
+            }
           }
         }
       }
     }
 
-    // Drop zone at the end (positioned absolutely)
-    DropArea {
-      id: endDropZone
-      width: 40 * scaling
-      height: 40 * scaling
-      x: widgetFlow.x + widgetFlow.width - width
-      y: widgetFlow.y + (widgetFlow.height - height) / 2
-      keys: ["widget"]
-      z: 1001 // Above the Flow
-
-      Rectangle {
-        anchors.fill: parent
-        color: endDropZone.containsDrag ? Color.applyOpacity(Color.mPrimary, "20") : Color.transparent
-        border.color: endDropZone.containsDrag ? Color.mPrimary : Color.transparent
-        border.width: endDropZone.containsDrag ? 2 : 0
-        radius: Style.radiusS * scaling
-      }
-
-      onEntered: function (drag) {//Logger.log("BarSectionEditor", "Entered end drop zone")
-      }
-
-      onDropped: function (drop) {
-        //Logger.log("BarSectionEditor", "Dropped on end zone")
-        if (drop.source && drop.source.widgetIndex !== undefined) {
-          const fromIndex = drop.source.widgetIndex
-          const toIndex = widgetModel.length // Insert at the end
-          if (fromIndex !== toIndex) {
-            //Logger.log("BarSectionEditor", `Dropped widget from index ${fromIndex} to end`)
-            reorderWidget(sectionId, fromIndex, toIndex)
+    onPositionChanged: mouse => {
+      if (draggedIndex !== -1) {
+        const deltaX = mouse.x - startPos.x
+        const deltaY = mouse.y - startPos.y
+        const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
+        
+        //Logger.log("BarSectionEditor", "Position changed - distance:", distance.toFixed(2))
+        
+        if (!dragStarted && distance > dragThreshold) {
+          dragStarted = true
+          Logger.log("BarSectionEditor", "Drag started")
+          
+          // Enable visual feedback
+          if (draggedWidget) {
+            draggedWidget.z = 1000
           }
+        }
+        
+        if (dragStarted && draggedWidget) {
+          // Adjust position to account for where within the widget the user clicked
+          draggedWidget.x = mouse.x - clickOffsetInWidget.x
+          draggedWidget.y = mouse.y - clickOffsetInWidget.y
         }
       }
     }
+
+    onReleased: mouse => {
+      if (dragStarted && draggedWidget) {
+        // Find drop target using current mouse position
+        let targetIndex = -1
+        let minDistance = Infinity
+        
+        for (var i = 0; i < widgetModel.length; i++) {
+          if (i !== draggedIndex) {
+            const widget = widgetFlow.children[i]
+            if (widget && widget.widgetIndex !== undefined) {
+              const centerX = widget.x + widget.width / 2
+              const centerY = widget.y + widget.height / 2
+              const distance = Math.sqrt(Math.pow(mouse.x - centerX, 2) + Math.pow(mouse.y - centerY, 2))
+              
+              if (distance < minDistance) {
+                minDistance = distance
+                targetIndex = widget.widgetIndex
+              }
+            }
+          }
+        }
+        
+        Logger.log("BarSectionEditor", "Drop target index:", targetIndex)
+        
+        // Reset widget position and z-order
+        draggedWidget.x = 0
+        draggedWidget.y = 0
+        draggedWidget.z = 0
+        
+        if (targetIndex !== -1 && targetIndex !== draggedIndex) {
+          reorderWidget(sectionId, draggedIndex, targetIndex)
+        }
+      } else if (draggedIndex !== -1 && !dragStarted) {
+        // This was a click without drag - simulate click on the widget
+        // Find the clicked widget and trigger appropriate action
+        const widget = draggedWidget
+        if (widget) {
+          // Could add click handling here if needed
+        }
+      }
+      
+      // Reset everything
+      dragStarted = false
+      draggedIndex = -1
+      draggedWidget = null
+      preventStealing = false  // Allow normal event propagation again
+    }
+    
+    // Handle case where mouse leaves the area during drag
+    onExited: {
+      if (dragStarted && draggedWidget) {
+        // Reset position but keep drag state until release
+        draggedWidget.x = 0
+        draggedWidget.y = 0
+        draggedWidget.z = 0
+      }
+    }
+  }
+}
   }
 }
