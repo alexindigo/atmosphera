@@ -47,6 +47,7 @@ NPanel {
   property int requestedTab: SettingsPanel.Tab.General
   property int currentTabIndex: 0
   property var tabsModel: []
+  property var activeScrollView: null
 
   Connections {
     target: Settings.data.wallpaper
@@ -217,6 +218,41 @@ NPanel {
     root.currentTabIndex = initialIndex
   }
 
+  // Add scroll functions
+  function scrollDown() {
+    if (activeScrollView && activeScrollView.ScrollBar.vertical) {
+      const scrollBar = activeScrollView.ScrollBar.vertical
+      const stepSize = activeScrollView.height * 0.1 // Scroll 10% of viewport
+      scrollBar.position = Math.min(scrollBar.position + stepSize / activeScrollView.contentHeight,
+                                    1.0 - scrollBar.size)
+    }
+  }
+
+  function scrollUp() {
+    if (activeScrollView && activeScrollView.ScrollBar.vertical) {
+      const scrollBar = activeScrollView.ScrollBar.vertical
+      const stepSize = activeScrollView.height * 0.1 // Scroll 10% of viewport
+      scrollBar.position = Math.max(scrollBar.position - stepSize / activeScrollView.contentHeight, 0)
+    }
+  }
+
+  function scrollPageDown() {
+    if (activeScrollView && activeScrollView.ScrollBar.vertical) {
+      const scrollBar = activeScrollView.ScrollBar.vertical
+      const pageSize = activeScrollView.height * 0.9 // Scroll 90% of viewport
+      scrollBar.position = Math.min(scrollBar.position + pageSize / activeScrollView.contentHeight,
+                                    1.0 - scrollBar.size)
+    }
+  }
+
+  function scrollPageUp() {
+    if (activeScrollView && activeScrollView.ScrollBar.vertical) {
+      const scrollBar = activeScrollView.ScrollBar.vertical
+      const pageSize = activeScrollView.height * 0.9 // Scroll 90% of viewport
+      scrollBar.position = Math.max(scrollBar.position - pageSize / activeScrollView.contentHeight, 0)
+    }
+  }
+
   // Add navigation functions
   function selectNextTab() {
     if (tabsModel.length > 0) {
@@ -235,33 +271,44 @@ NPanel {
     anchors.margins: Style.marginL * scaling
     color: Color.transparent
 
-    // Add shortcuts at the panel level
-    Shortcut {
-      sequence: "Ctrl+J"
-      onActivated: root.selectNextTab()
-      enabled: root.opened
-    }
-
-    Shortcut {
-      sequence: "Ctrl+K"
-      onActivated: root.selectPreviousTab()
-      enabled: root.opened
-    }
-
-    // Optional: Add more navigation shortcuts
+    // Scrolling via keyboard
     Shortcut {
       sequence: "Down"
-      onActivated: root.selectNextTab()
+      onActivated: root.scrollDown()
       enabled: root.opened
     }
 
     Shortcut {
       sequence: "Up"
-      onActivated: root.selectPreviousTab()
+      onActivated: root.scrollUp()
       enabled: root.opened
     }
 
-    // Optional: Tab/Shift+Tab navigation
+    Shortcut {
+      sequence: "PgDown"
+      onActivated: root.scrollPageDown()
+      enabled: root.opened
+    }
+
+    Shortcut {
+      sequence: "PgUp"
+      onActivated: root.scrollPageUp()
+      enabled: root.opened
+    }
+
+    Shortcut {
+      sequence: "Ctrl+J"
+      onActivated: root.scrollDown()
+      enabled: root.opened
+    }
+
+    Shortcut {
+      sequence: "Ctrl+K"
+      onActivated: root.scrollUp()
+      enabled: root.opened
+    }
+
+    // Changing tab via keyboard
     Shortcut {
       sequence: "Tab"
       onActivated: root.selectNextTab()
@@ -286,6 +333,23 @@ NPanel {
         border.color: Color.mOutline
         border.width: Math.max(1, Style.borderS * scaling)
         radius: Style.radiusM * scaling
+
+        MouseArea {
+          anchors.fill: parent
+          acceptedButtons: Qt.NoButton // Don't interfere with clicks
+          property int wheelAccumulator: 0
+          onWheel: wheel => {
+                     wheelAccumulator += wheel.angleDelta.y
+                     if (wheelAccumulator >= 120) {
+                       root.selectPreviousTab()
+                       wheelAccumulator = 0
+                     } else if (wheelAccumulator <= -120) {
+                       root.selectNextTab()
+                       wheelAccumulator = 0
+                     }
+                     wheel.accepted = true
+                   }
+        }
 
         Column {
           anchors.fill: parent
@@ -402,6 +466,17 @@ NPanel {
               delegate: Loader {
                 anchors.fill: parent
                 active: index === root.currentTabIndex
+
+                onStatusChanged: {
+                  if (status === Loader.Ready && item) {
+                    // Find and store reference to the ScrollView
+                    const scrollView = item.children[0]
+                    if (scrollView && scrollView.toString().includes("ScrollView")) {
+                      root.activeScrollView = scrollView
+                    }
+                  }
+                }
+
                 sourceComponent: ColumnLayout {
                   ScrollView {
                     id: scrollView
@@ -411,6 +486,10 @@ NPanel {
                     ScrollBar.vertical.policy: ScrollBar.AsNeeded
                     padding: Style.marginL * scaling
                     clip: true
+
+                    Component.onCompleted: {
+                      root.activeScrollView = scrollView
+                    }
 
                     Loader {
                       active: true
