@@ -210,9 +210,9 @@ ColumnLayout {
           hoverEnabled: true
           onPressed: {
             if (Settings.data.wallpaper.setWallpaperOnAllMonitors) {
-              WallpaperService.changeWallpaper(undefined, wallpaperPath)
+              WallpaperService.changeWallpaper(wallpaperPath, undefined)
             } else if (screen) {
-              WallpaperService.changeWallpaper(screen.name, wallpaperPath)
+              WallpaperService.changeWallpaper(wallpaperPath, screen.name)
             }
           }
         }

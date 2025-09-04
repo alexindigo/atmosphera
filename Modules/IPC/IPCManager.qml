@@ -138,5 +138,12 @@ Item {
         WallpaperService.setRandomWallpaper()
       }
     }
+
+    function set(path: string, screen: string) {
+      if (screen === "all" || screen === "") {
+        screen = undefined
+      }
+      WallpaperService.changeWallpaper(path, screen)
+    }
   }
 }
