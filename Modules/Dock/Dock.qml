@@ -223,22 +223,6 @@ Variants {
                 property string appId: modelData ? modelData.appId : ""
                 property string appTitle: modelData ? modelData.title : ""
 
-                // Hover background
-                Rectangle {
-                  id: hoverBackground
-                  anchors.fill: parent
-                  color: appButton.hovered ? Color.mSurfaceVariant : Color.transparent
-                  radius: parent.radius
-                  opacity: appButton.hovered ? 0.8 : 0
-
-                  Behavior on opacity {
-                    NumberAnimation {
-                      duration: Style.animationFast
-                      easing.type: Easing.OutQuad
-                    }
-                  }
-                }
-
                 // The icon
                 Image {
                   id: appIcon
@@ -324,7 +308,7 @@ Variants {
 
                 Rectangle {
                   visible: isActive
-                  width: iconSize * 0.75
+                  width: iconSize * 0.25
                   height: 4 * scaling
                   color: Color.mPrimary
                   radius: Style.radiusXS
