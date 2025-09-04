@@ -8,8 +8,8 @@ Singleton {
   id: root
 
   // Public properties
-  property string baseVersion: "v2.4.1"
-  property bool isRelease: false
+  property string baseVersion: "v2.5.0"
+  property bool isRelease: true
 
   property string currentVersion: isRelease ? baseVersion : baseVersion + "-dev"
 
