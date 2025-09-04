@@ -22,6 +22,7 @@ NIconButton {
 
   anchors.verticalCenter: parent.verticalCenter
   onClicked: PanelService.getPanel("sidePanel")?.toggle(screen)
+  onRightClicked: PanelService.getPanel("settingsPanel")?.toggle(screen)
 
   // When enabled, draw the distro logo instead of the icon glyph
   IconImage {
