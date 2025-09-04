@@ -4,6 +4,7 @@ import Quickshell
 import qs.Commons
 import qs.Services
 import qs.Widgets
+import qs.Modules.SettingsPanel
 
 NIconButton {
   id: root
@@ -29,24 +30,57 @@ NIconButton {
   }
 
   // Use settings or defaults from BarWidgetRegistry
-  property string userIcon: widgetSettings.icon || BarWidgetRegistry.widgetMetadata["CustomButton"].icon
-  property string userExecute: widgetSettings.execute || BarWidgetRegistry.widgetMetadata["CustomButton"].execute
+  readonly property string userIcon: widgetSettings.icon || BarWidgetRegistry.widgetMetadata["CustomButton"].icon
+  readonly property string userLeftClickExec: widgetSettings.leftClickExec
+                                              || BarWidgetRegistry.widgetMetadata["CustomButton"].leftClickExec
+  readonly property string userRightClickExec: widgetSettings.rightClickExec
+                                               || BarWidgetRegistry.widgetMetadata["CustomButton"].rightClickExec
+  readonly property string userMiddleClickExec: widgetSettings.middleClickExec
+                                                || BarWidgetRegistry.widgetMetadata["CustomButton"].middleClickExec
+  readonly property bool hasExec: (userLeftClickExec || userRightClickExec || userMiddleClickExec)
 
   icon: userIcon
-  tooltipText: userExecute ? `Execute: ${userExecute}` : "Custom Button - Configure in settings"
-  opacity: userExecute ? Style.opacityFull : Style.opacityMedium
+  tooltipText: {
+    if (!hasExec) {
+      return "Custom Button - Configure in settings"
+    } else {
+      var lines = []
+      if (userLeftClickExec !== "") {
+        lines.push(`Left click: ${userLeftClickExec}\n`)
+      }
+      if (userRightClickExec !== "") {
+        lines.push(`Right click: ${userRightClickExec}\n`)
+      }
+      if (userLeftClickExec !== "") {
+        lines.push(`Middle click: ${userMiddleClickExec}\n`)
+      }
+    }
+  }
+  opacity: hasExec ? Style.opacityFull : Style.opacityMedium
 
   onClicked: {
-    if (userExecute) {
-      // Execute the user's command
-      Quickshell.execDetached(userExecute.split(" "))
-      Logger.log("CustomButton", `Executing command: ${userExecute}`)
-    } else {
-      Logger.warn("CustomButton", "No command configured for this button")
+    if (userLeftClickExec) {
+      Quickshell.execDetached(userLeftClickExec.split(" "))
+      Logger.log("CustomButton", `Executing command: ${userLeftClickExec}`)
+    } else if (!hasExec) {
+      // No script was defined, open settings
+      var settingsPanel = PanelService.getPanel("settingsPanel")
+      settingsPanel.requestedTab = SettingsPanel.Tab.Bar
+      settingsPanel.open(screen)
     }
   }
 
-  Component.onCompleted: {
-    Logger.log("CustomButton", `Initialized with icon: ${userIcon}, command: ${userExecute}`)
+  onRightClicked: {
+    if (userRightClickExec) {
+      Quickshell.execDetached(userRightClickExec.split(" "))
+      Logger.log("CustomButton", `Executing command: ${userRightClickExec}`)
+    }
+  }
+
+  onMiddleClicked: {
+    if (userMiddleClickExec) {
+      Quickshell.execDetached(userMiddleClickExec.split(" "))
+      Logger.log("CustomButton", `Executing command: ${userMiddleClickExec}`)
+    }
   }
 }

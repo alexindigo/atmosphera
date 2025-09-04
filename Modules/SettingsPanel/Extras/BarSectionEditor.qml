@@ -190,14 +190,6 @@ NBox {
                                                                                                 "widgetId": modelData.id,
                                                                                                 "parent": Overlay.overlay
                                                                                               })
-                  //                                                                 })
-
-                  // var dialog = widgetSettingsDialog.createObject(root, {
-                  //   widgetIndex: index,
-                  //   widgetData: modelData,
-                  //   widgetId: modelData.id,
-                  //   parent: Overlay.overlay
-                  // })
                   dialog.open()
                 }
               }

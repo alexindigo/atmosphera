@@ -96,6 +96,7 @@ Popup {
       NButton {
         text: "Save"
         onClicked: {
+
           if (settingsLoader.item && settingsLoader.item.saveSettings) {
             var newSettings = settingsLoader.item.saveSettings()
             root.updateWidgetSettings(sectionId, settingsPopup.widgetIndex, newSettings)
@@ -128,7 +129,7 @@ Popup {
         id: iconInput
         Layout.fillWidth: true
         label: "Icon Name"
-        description: "Use Material Icon names from the icon set"
+        description: "Use Material Icon names from the icon set."
         text: settingsPopup.widgetData.icon || ""
         placeholderText: "Enter icon name (e.g., favorite, home, settings)"
       }
@@ -138,8 +139,8 @@ Popup {
         id: executeInput
         Layout.fillWidth: true
         label: "Execute Command"
-        description: "Command or application to run when clicked"
-        text: settingsPopup.widgetData.execute || ""
+        description: "Command or application to run when clicked."
+        text: settingsPopup.widgetData.leftClickExec || ""
         placeholderText: "Enter command to execute (app or custom script)"
       }
     }

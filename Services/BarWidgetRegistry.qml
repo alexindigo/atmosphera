@@ -38,7 +38,9 @@ Singleton {
                                   "CustomButton": {
                                     "allowUserSettings": true,
                                     "icon": "favorite",
-                                    "execute": ""
+                                    "leftClickExec": "",
+                                    "rightClickExec": "",
+                                    "middleClickExec": ""
                                   }
                                 })
 
