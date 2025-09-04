@@ -84,19 +84,9 @@ ScrollView {
         spacing: Style.marginS * scaling
         Layout.fillWidth: true
 
-        NText {
-          text: "Hook Command Information"
-          font.pointSize: Style.fontSizeM * scaling
-          font.weight: Style.fontWeightBold
-          color: Color.mOnSurface
-        }
-
-        NText {
-          text: "• Commands are executed via shell (sh -c)\n• Commands run in background (detached)\n• Test buttons execute with current values"
-          font.pointSize: Style.fontSizeS * scaling
-          color: Color.mOnSurfaceVariant
-          wrapMode: Text.Wrap
-          Layout.fillWidth: true
+        NLabel {
+          label: "Hook Command Information"
+          description: "• Commands are executed via shell (sh -c)\n• Commands run in background (detached)\n• Test buttons execute with current values"
         }
       }
     }
