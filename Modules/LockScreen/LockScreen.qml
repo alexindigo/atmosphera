@@ -134,7 +134,7 @@ Loader {
                 width: Math.random() * 4 + 2
                 height: width
                 radius: width * 0.5
-                color: Qt.rgba(Color.mPrimary.r, Color.mPrimary.g, Color.mPrimary.b, 0.3)
+                color: Qt.alpha(Color.mPrimary, 0.3)
                 x: Math.random() * parent.width
                 y: Math.random() * parent.height
 
@@ -333,7 +333,7 @@ Loader {
                     height: parent.height + 24 * scaling
                     radius: width * 0.5
                     color: Color.transparent
-                    border.color: Qt.rgba(Color.mPrimary.r, Color.mPrimary.g, Color.mPrimary.b, 0.3)
+                    border.color: Qt.alpha(Color.mPrimary, 0.3)
                     border.width: Math.max(1, Style.borderM * scaling)
                     z: -1
                     visible: !MediaService.isPlaying

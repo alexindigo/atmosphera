@@ -23,8 +23,7 @@ NPanel {
   }
 
   panelKeyboardFocus: true
-  panelBackgroundColor: Qt.rgba(Color.mSurface.r, Color.mSurface.g, Color.mSurface.b,
-                                Settings.data.appLauncher.backgroundOpacity)
+  panelBackgroundColor: Qt.alpha(Color.mSurface, Settings.data.appLauncher.backgroundOpacity)
 
   // Positioning
   readonly property string launcherPosition: Settings.data.appLauncher.position
