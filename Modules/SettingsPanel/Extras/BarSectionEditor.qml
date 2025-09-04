@@ -131,7 +131,7 @@ NBox {
           required property var modelData
 
           width: widgetContent.implicitWidth + Style.marginL * scaling
-          height: 40 * scaling
+          height: Style.baseWidgetSize * 1.15 * scaling
           radius: Style.radiusL * scaling
           color: root.getWidgetColor(modelData)
           border.color: Color.mOutline
@@ -145,6 +145,8 @@ NBox {
 
           // Store the widget index for drag operations
           property int widgetIndex: index
+          readonly property int buttonsWidth: Math.round(20 * scaling)
+          readonly property int buttonsCount: 1 + BarWidgetRegistry.widgetHasUserSettings(modelData.id)
 
           // Visual feedback during drag
           states: State {
@@ -161,7 +163,7 @@ NBox {
             id: widgetContent
 
             anchors.centerIn: parent
-            spacing: Style.marginXS * scaling
+            spacing: Style.marginXXS * scaling
 
             NText {
               text: modelData.id
@@ -172,10 +174,34 @@ NBox {
               Layout.preferredWidth: 80 * scaling
             }
 
-            Loader {
-              active: BarWidgetRegistry.widgetHasUserSettings(modelData.id)
-              sourceComponent: NIconButton {
-                icon: "settings"
+            RowLayout {
+              spacing: 0
+              Layout.preferredWidth: buttonsCount * buttonsWidth
+              Loader {
+                active: BarWidgetRegistry.widgetHasUserSettings(modelData.id)
+                sourceComponent: NIconButton {
+                  icon: "settings"
+                  sizeRatio: 0.6
+                  colorBorder: Color.applyOpacity(Color.mOutline, "40")
+                  colorBg: Color.mOnSurface
+                  colorFg: Color.mOnPrimary
+                  colorBgHover: Color.applyOpacity(Color.mOnPrimary, "40")
+                  colorFgHover: Color.mOnPrimary
+                  onClicked: {
+                    // Open widget settings dialog
+                    var dialog = Qt.createComponent("BarWidgetSettingsDialog.qml").createObject(root, {
+                                                                                                  "widgetIndex": index,
+                                                                                                  "widgetData": modelData,
+                                                                                                  "widgetId": modelData.id,
+                                                                                                  "parent": Overlay.overlay
+                                                                                                })
+                    dialog.open()
+                  }
+                }
+              }
+
+              NIconButton {
+                icon: "close"
                 sizeRatio: 0.6
                 colorBorder: Color.applyOpacity(Color.mOutline, "40")
                 colorBg: Color.mOnSurface
@@ -183,33 +209,15 @@ NBox {
                 colorBgHover: Color.applyOpacity(Color.mOnPrimary, "40")
                 colorFgHover: Color.mOnPrimary
                 onClicked: {
-                  // Open widget settings dialog
-                  var dialog = Qt.createComponent("BarWidgetSettingsDialog.qml").createObject(root, {
-                                                                                                "widgetIndex": index,
-                                                                                                "widgetData": modelData,
-                                                                                                "widgetId": modelData.id,
-                                                                                                "parent": Overlay.overlay
-                                                                                              })
-                  dialog.open()
+                  removeWidget(sectionId, index)
                 }
-              }
-            }
-
-            NIconButton {
-              icon: "close"
-              sizeRatio: 0.6
-              colorBorder: Color.applyOpacity(Color.mOutline, "40")
-              colorBg: Color.mOnSurface
-              colorFg: Color.mOnPrimary
-              colorBgHover: Color.applyOpacity(Color.mOnPrimary, "40")
-              colorFgHover: Color.mOnPrimary
-              onClicked: {
-                removeWidget(sectionId, index)
               }
             }
           }
 
           // Mouse area for drag and drop
+          property int mouseXStartDrag: 0
+
           MouseArea {
             id: mouseArea
             anchors.fill: parent
@@ -217,13 +225,8 @@ NBox {
 
             onPressed: mouse => {
                          // Check if the click is on the settings or close button area
-                         const buttonsX = widgetContent.x + widgetContent.width - 45 * scaling
-                         const buttonsY = widgetContent.y
-                         const buttonsWidth = 45 * scaling
-                         const buttonsHeight = 20 * scaling
-
-                         if (mouseX >= buttonsX && mouseX <= buttonsX + buttonsWidth && mouseY >= buttonsY
-                             && mouseY <= buttonsY + buttonsHeight) {
+                         const buttonsX = widgetContent.x + widgetContent.width - (buttonsWidth * buttonsCount)
+                         if (mouseX >= buttonsX) {
                            // Click is on the buttons, don't start drag
                            mouse.accepted = false
                            return
@@ -232,12 +235,17 @@ NBox {
                          //Logger.log("BarSectionEditor", `Started dragging widget: ${modelData.id} at index ${index}`)
                          // Bring to front when starting drag
                          widgetItem.z = 1000
+                         mouseXStartDrag = mouseX
                        }
 
-            onReleased: {
+            onReleased: mouse => {
               //Logger.log("BarSectionEditor", `Released widget: ${modelData.id} at index ${index}`)
               // Reset z-index when drag ends
               widgetItem.z = 0
+
+              console.log(mouseXStartDrag - mouse.x)
+
+
 
               // Get the global mouse position
               const globalDropX = mouseArea.mouseX + widgetItem.x + widgetFlow.x

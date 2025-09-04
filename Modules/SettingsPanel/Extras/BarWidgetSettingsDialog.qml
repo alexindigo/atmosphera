@@ -129,8 +129,6 @@ Popup {
         placeholderText: "Enter icon name (e.g., favorite, home, settings)"
       }
 
-
-
       NTextInput {
         id: leftClickExecInput
         Layout.fillWidth: true
