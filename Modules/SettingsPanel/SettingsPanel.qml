@@ -217,10 +217,62 @@ NPanel {
     root.currentTabIndex = initialIndex
   }
 
+  // Add navigation functions
+  function selectNextTab() {
+    if (tabsModel.length > 0) {
+      currentTabIndex = (currentTabIndex + 1) % tabsModel.length
+    }
+  }
+
+  function selectPreviousTab() {
+    if (tabsModel.length > 0) {
+      currentTabIndex = (currentTabIndex - 1 + tabsModel.length) % tabsModel.length
+    }
+  }
+
   panelContent: Rectangle {
     anchors.fill: parent
     anchors.margins: Style.marginL * scaling
     color: Color.transparent
+
+    // Add shortcuts at the panel level
+    Shortcut {
+      sequence: "Ctrl+J"
+      onActivated: root.selectNextTab()
+      enabled: root.opened
+    }
+
+    Shortcut {
+      sequence: "Ctrl+K"
+      onActivated: root.selectPreviousTab()
+      enabled: root.opened
+    }
+
+    // Optional: Add more navigation shortcuts
+    Shortcut {
+      sequence: "Down"
+      onActivated: root.selectNextTab()
+      enabled: root.opened
+    }
+
+    Shortcut {
+      sequence: "Up"
+      onActivated: root.selectPreviousTab()
+      enabled: root.opened
+    }
+
+    // Optional: Tab/Shift+Tab navigation
+    Shortcut {
+      sequence: "Tab"
+      onActivated: root.selectNextTab()
+      enabled: root.opened
+    }
+
+    Shortcut {
+      sequence: "Shift+Tab"
+      onActivated: root.selectPreviousTab()
+      enabled: root.opened
+    }
 
     RowLayout {
       anchors.fill: parent
