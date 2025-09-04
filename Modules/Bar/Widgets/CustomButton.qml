@@ -51,7 +51,7 @@ NIconButton {
       if (userRightClickExec !== "") {
         lines.push(`Right click: <i>${userRightClickExec}</i>`)
       }
-      if (userLeftClickExec !== "") {
+      if (userMiddleClickExec !== "") {
         lines.push(`Middle click: <i>${userMiddleClickExec}</i>`)
       }
       return lines.join("<br/>")
@@ -61,7 +61,7 @@ NIconButton {
 
   onClicked: {
     if (userLeftClickExec) {
-      Quickshell.execDetached(userLeftClickExec.split(" "))
+      Quickshell.execDetached(["sh", "-c", userLeftClickExec])
       Logger.log("CustomButton", `Executing command: ${userLeftClickExec}`)
     } else if (!hasExec) {
       // No script was defined, open settings
@@ -73,14 +73,14 @@ NIconButton {
 
   onRightClicked: {
     if (userRightClickExec) {
-      Quickshell.execDetached(userRightClickExec.split(" "))
+      Quickshell.execDetached(["sh", "-c", userRightClickExec])
       Logger.log("CustomButton", `Executing command: ${userRightClickExec}`)
     }
   }
 
   onMiddleClicked: {
     if (userMiddleClickExec) {
-      Quickshell.execDetached(userMiddleClickExec.split(" "))
+      Quickshell.execDetached(["sh", "-c", userMiddleClickExec])
       Logger.log("CustomButton", `Executing command: ${userMiddleClickExec}`)
     }
   }
