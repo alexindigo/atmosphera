@@ -24,6 +24,8 @@ NPanel {
   panelAnchorHorizontalCenter: true
   panelAnchorVerticalCenter: true
 
+  panelKeyboardFocus: true
+
   // Tabs enumeration, order is NOT relevant
   enum Tab {
     About,
