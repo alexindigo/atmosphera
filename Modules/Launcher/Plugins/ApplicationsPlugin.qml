@@ -37,8 +37,7 @@ Item {
 
     if (!query || query.trim() === "") {
       // Return all apps alphabetically
-      return entries.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase())).slice(
-            0, 50) // Limit to 50 for performance
+      return entries.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
       .map(app => createResultEntry(app))
     }
 
