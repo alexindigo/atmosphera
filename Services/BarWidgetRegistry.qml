@@ -35,13 +35,12 @@ Singleton {
                          })
 
   property var widgetMetadata: ({
-    "CustomButton": { 
-      allowUserSettings: true,
-      icon: "favorite",
-      execute: ""
-    },
-  })
-
+                                  "CustomButton": {
+                                    "allowUserSettings": true,
+                                    "icon": "favorite",
+                                    "execute": ""
+                                  }
+                                })
 
   // Component definitions - these are loaded once at startup
   property Component activeWindowComponent: Component {

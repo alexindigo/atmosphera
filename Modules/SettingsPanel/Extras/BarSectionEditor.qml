@@ -37,207 +37,29 @@ NBox {
   // Generate widget color from name checksum
   function getWidgetColor(widget) {
     const totalSum = JSON.stringify(widget).split('').reduce((acc, character) => {
-                                             return acc + character.charCodeAt(0)
-                                           }, 0)
+                                                               return acc + character.charCodeAt(0)
+                                                             }, 0)
     switch (totalSum % 10) {
-      case 0:
-        return Color.mPrimary
-      case 1:
-        return Color.mSecondary
-      case 2:
-        return Color.mTertiary
-      case 3:
-        return Color.mError
-      case 4:
-        return Color.mOnSurface
-      case 5:
-        return Qt.darker(Color.mPrimary, 1.3)
-      case 6:
-        return Qt.darker(Color.mSecondary, 1.3)
-      case 7:
-        return Qt.darker(Color.mTertiary, 1.3)
-      case 8:
-        return Qt.darker(Color.mError, 1.3)
-      case 9:
-        return Qt.darker(Color.mOnSurface, 1.3)
-    }
-  }
-
-  // Widget Settings Dialog Component
-  Component {
-    id: widgetSettingsDialog
-    
-    Popup {
-      id: settingsPopup
-      
-      property int widgetIndex: -1
-      property var widgetData: null
-      property string widgetId: ""
-
-      // Center popup in parent
-      x: (parent.width - width) * 0.5
-      y: (parent.height - height) * 0.5
-      
-      width: 400 * scaling
-      height: content.implicitHeight + padding * 2
-      padding: Style.marginL * scaling
-      modal: true
-      
-      background: Rectangle {
-        id: bgRect
-        color: Color.mSurface
-        radius: Style.radiusL * scaling
-        border.color: Color.mPrimary
-        border.width: Style.borderM * scaling
-      }
-
-
-      
-      ColumnLayout {
-        id: content
-        width: parent.width
-        spacing: Style.marginM * scaling
-        
-        // Title
-        RowLayout {
-          Layout.fillWidth: true
-          
-          NText {
-            text: "Widget Settings: " + settingsPopup.widgetId
-            font.pointSize: Style.fontSizeL * scaling
-            font.weight: Style.fontWeightBold
-            color: Color.mPrimary
-            Layout.fillWidth: true
-          }
-          
-          NIconButton {
-            icon: "close"
-            colorBg: Color.transparent
-            colorFg: Color.mOnSurface
-            colorBgHover: Color.applyOpacity(Color.mError, "20")
-            colorFgHover: Color.mError
-            onClicked: settingsPopup.close()
-          }
-        }
-        
-        // Separator
-        Rectangle {
-          Layout.fillWidth: true
-          Layout.preferredHeight: 1
-          color: Color.mOutline
-        }
-        
-        // Settings based on widget type
-        Loader {
-          id: settingsLoader
-          Layout.fillWidth: true
-          sourceComponent: {
-            if (settingsPopup.widgetId === "CustomButton") {
-              return customButtonSettings
-            }
-            // Add more widget settings components here as needed
-            return null
-          }
-        }
-        
-        // Action buttons
-        RowLayout {
-          Layout.fillWidth: true
-          Layout.topMargin: Style.marginM * scaling
-          
-          Item {
-            Layout.fillWidth: true
-          }
-          
-          NButton {
-            text: "Cancel"
-            outlined: true
-            onClicked: settingsPopup.close()
-          }
-          
-          NButton {
-            text: "Save"
-            onClicked: {
-              if (settingsLoader.item && settingsLoader.item.saveSettings) {
-                var newSettings = settingsLoader.item.saveSettings()
-                root.updateWidgetSettings(sectionId, settingsPopup.widgetIndex, newSettings)
-                settingsPopup.close()
-              }
-            }
-          }
-        }
-      }
-      
-      // CustomButton settings component
-      Component {
-        id: customButtonSettings
-        
-        ColumnLayout {
-          spacing: Style.marginM * scaling
-          
-          property alias iconField: iconInput
-          property alias executeField: executeInput
-          
-          function saveSettings() {
-            var settings = Object.assign({}, settingsPopup.widgetData)
-            settings.icon = iconInput.text
-            settings.execute = executeInput.text
-            return settings
-          }
-          
-          // Icon setting
-          ColumnLayout {
-            Layout.fillWidth: true
-            spacing: Style.marginXS * scaling
-            
-            NText {
-              text: "Icon Name"
-              font.pointSize: Style.fontSizeS * scaling
-              color: Color.mOnSurfaceVariant
-            }
-            
-            NTextInput{
-              id: iconInput
-              Layout.fillWidth: true
-              //placeholder: "Enter icon name (e.g., favorite, home, settings)"
-              text: settingsPopup.widgetData.icon || ""
-            }
-            
-            NText {
-              text: "Use Material Icon names from the icon set"
-              font.pointSize: Style.fontSizeXS * scaling
-              color: Color.applyOpacity(Color.mOnSurfaceVariant, "80")
-            }
-          }
-          
-          // Execute command setting
-          ColumnLayout {
-            Layout.fillWidth: true
-            spacing: Style.marginXS * scaling
-            
-            NText {
-              text: "Execute Command"
-              font.pointSize: Style.fontSizeS * scaling
-              color: Color.mOnSurfaceVariant
-            }
-            
-            NTextInput {
-              id: executeInput
-              Layout.fillWidth: true
-              //placeholder: "Enter command to execute (e.g., firefox, code, terminal)"
-              text: settingsPopup.widgetData.execute || ""
-            }
-            
-            NText {
-              text: "Command or application to run when clicked"
-              font.pointSize: Style.fontSizeXS * scaling
-              color: Color.applyOpacity(Color.mOnSurfaceVariant, "80")
-              wrapMode: Text.WordWrap
-              Layout.fillWidth: true
-            }
-          }
-        }
-      }
+    case 0:
+      return Color.mPrimary
+    case 1:
+      return Color.mSecondary
+    case 2:
+      return Color.mTertiary
+    case 3:
+      return Color.mError
+    case 4:
+      return Color.mOnSurface
+    case 5:
+      return Qt.darker(Color.mPrimary, 1.3)
+    case 6:
+      return Qt.darker(Color.mSecondary, 1.3)
+    case 7:
+      return Qt.darker(Color.mTertiary, 1.3)
+    case 8:
+      return Qt.darker(Color.mError, 1.3)
+    case 9:
+      return Qt.darker(Color.mOnSurface, 1.3)
     }
   }
 
@@ -301,7 +123,6 @@ NBox {
       spacing: Style.marginS * scaling
       flow: Flow.LeftToRight
 
-
       Repeater {
         model: widgetModel
         delegate: Rectangle {
@@ -363,17 +184,24 @@ NBox {
                 colorFgHover: Color.mOnPrimary
                 onClicked: {
                   // Open widget settings dialog
-                  var dialog = widgetSettingsDialog.createObject(root, {
-                    widgetIndex: index,
-                    widgetData: modelData,
-                    widgetId: modelData.id,
-                    parent: Overlay.overlay
-                  })
+                  var dialog = Qt.createComponent("BarWidgetSettingsDialog.qml").createObject(root, {
+                                                                                                "widgetIndex": index,
+                                                                                                "widgetData": modelData,
+                                                                                                "widgetId": modelData.id,
+                                                                                                "parent": Overlay.overlay
+                                                                                              })
+                  //                                                                 })
+
+                  // var dialog = widgetSettingsDialog.createObject(root, {
+                  //   widgetIndex: index,
+                  //   widgetData: modelData,
+                  //   widgetId: modelData.id,
+                  //   parent: Overlay.overlay
+                  // })
                   dialog.open()
                 }
               }
             }
-
 
             NIconButton {
               icon: "close"
@@ -402,20 +230,20 @@ NBox {
                          const buttonsWidth = 45 * scaling
                          const buttonsHeight = 20 * scaling
 
-                         if (mouseX >= buttonsX && mouseX <= buttonsX + buttonsWidth
-                             && mouseY >= buttonsY && mouseY <= buttonsY + buttonsHeight) {
+                         if (mouseX >= buttonsX && mouseX <= buttonsX + buttonsWidth && mouseY >= buttonsY
+                             && mouseY <= buttonsY + buttonsHeight) {
                            // Click is on the buttons, don't start drag
                            mouse.accepted = false
                            return
                          }
 
-                         //Logger.log("NSectionEditor", `Started dragging widget: ${modelData.id} at index ${index}`)
+                         //Logger.log("BarSectionEditor", `Started dragging widget: ${modelData.id} at index ${index}`)
                          // Bring to front when starting drag
                          widgetItem.z = 1000
                        }
 
             onReleased: {
-              //Logger.log("NSectionEditor", `Released widget: ${modelData.id} at index ${index}`)
+              //Logger.log("BarSectionEditor", `Released widget: ${modelData.id} at index ${index}`)
               // Reset z-index when drag ends
               widgetItem.z = 0
 
@@ -478,16 +306,16 @@ NBox {
         radius: Style.radiusS * scaling
       }
 
-      onEntered: function (drag) {//Logger.log("NSectionEditor", "Entered start drop zone")
+      onEntered: function (drag) {//Logger.log("BarSectionEditor", "Entered start drop zone")
       }
 
       onDropped: function (drop) {
-        //Logger.log("NSectionEditor", "Dropped on start zone")
+        //Logger.log("BarSectionEditor", "Dropped on start zone")
         if (drop.source && drop.source.widgetIndex !== undefined) {
           const fromIndex = drop.source.widgetIndex
           const toIndex = 0 // Insert at the beginning
           if (fromIndex !== toIndex) {
-            //Logger.log("NSectionEditor", `Dropped widget from index ${fromIndex} to beginning`)
+            //Logger.log("BarSectionEditor", `Dropped widget from index ${fromIndex} to beginning`)
             reorderWidget(sectionId, fromIndex, toIndex)
           }
         }
@@ -512,16 +340,16 @@ NBox {
         radius: Style.radiusS * scaling
       }
 
-      onEntered: function (drag) {//Logger.log("NSectionEditor", "Entered end drop zone")
+      onEntered: function (drag) {//Logger.log("BarSectionEditor", "Entered end drop zone")
       }
 
       onDropped: function (drop) {
-        //Logger.log("NSectionEditor", "Dropped on end zone")
+        //Logger.log("BarSectionEditor", "Dropped on end zone")
         if (drop.source && drop.source.widgetIndex !== undefined) {
           const fromIndex = drop.source.widgetIndex
           const toIndex = widgetModel.length // Insert at the end
           if (fromIndex !== toIndex) {
-            //Logger.log("NSectionEditor", `Dropped widget from index ${fromIndex} to end`)
+            //Logger.log("BarSectionEditor", `Dropped widget from index ${fromIndex} to end`)
             reorderWidget(sectionId, fromIndex, toIndex)
           }
         }

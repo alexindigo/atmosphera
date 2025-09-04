@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import qs.Commons
 import qs.Services
 import qs.Widgets
+import qs.Modules.SettingsPanel.Extras
 
 ColumnLayout {
   id: root
@@ -157,7 +158,7 @@ ColumnLayout {
       spacing: Style.marginM * scaling
 
       // Left Section
-      NSectionEditor {
+      BarSectionEditor {
         sectionName: "Left"
         sectionId: "left"
         widgetModel: Settings.data.bar.widgets.left
@@ -169,7 +170,7 @@ ColumnLayout {
       }
 
       // Center Section
-      NSectionEditor {
+      BarSectionEditor {
         sectionName: "Center"
         sectionId: "center"
         widgetModel: Settings.data.bar.widgets.center
@@ -181,7 +182,7 @@ ColumnLayout {
       }
 
       // Right Section
-      NSectionEditor {
+      BarSectionEditor {
         sectionName: "Right"
         sectionId: "right"
         widgetModel: Settings.data.bar.widgets.right
