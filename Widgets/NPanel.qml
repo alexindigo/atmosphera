@@ -125,6 +125,7 @@ Loader {
     root.closed()
     active = false
     useButtonPosition = false // Reset button position usage
+    PanelService.closedPanel(root)
   }
 
   // -----------------------------------------
