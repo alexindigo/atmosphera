@@ -189,7 +189,7 @@ NPanel {
                  }, {
                    "id": SettingsPanel.Tab.Hooks,
                    "label": "Hooks",
-                   "icon": "link",
+                   "icon": "cable",
                    "source": hooksTab
                  }, {
                    "id": SettingsPanel.Tab.About,

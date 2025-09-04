@@ -39,6 +39,7 @@ NIconButton {
                                                 || BarWidgetRegistry.widgetMetadata["CustomButton"].middleClickExec
   readonly property bool hasExec: (userLeftClickExec || userRightClickExec || userMiddleClickExec)
 
+  sizeRatio: 0.8
   icon: userIcon
   tooltipText: {
     if (!hasExec) {

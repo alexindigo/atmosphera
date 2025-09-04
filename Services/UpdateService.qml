@@ -8,10 +8,10 @@ Singleton {
   id: root
 
   // Public properties
-  property string baseVersion: "v2.5.0"
-  property bool isRelease: false
+  property string baseVersion: "2.5.0"
+  property bool isDevelopment: true
 
-  property string currentVersion: isRelease ? baseVersion : baseVersion + "-dev"
+  property string currentVersion: `v${!isDevelopment ? baseVersion : baseVersion + "-dev"}`
 
   // Internal helpers
   function getVersion() {
