@@ -275,7 +275,7 @@ Variants {
 
                   delegate: NButton {
                     text: {
-                      var actionText = modelData.text || "Action"
+                      var actionText = modelData.text || "Open"
                       // If text contains comma, take the part after the comma (the display text)
                       if (actionText.includes(",")) {
                         return actionText.split(",")[1] || actionText
