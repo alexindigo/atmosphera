@@ -22,11 +22,6 @@ NBox {
     anchors.bottomMargin: Style.marginM * scaling
     spacing: Style.marginS * scaling
 
-    // Slight top padding
-    Item {
-      height: Style.marginXS * scaling
-    }
-
     NCircleStat {
       value: SystemStatService.cpuUsage
       icon: "speed"
@@ -59,11 +54,6 @@ NBox {
       contentScale: 0.8
       width: 72 * scaling
       height: 68 * scaling
-    }
-
-    // Extra bottom padding to shift the perceived stack slightly upward
-    Item {
-      height: Style.marginM * scaling
     }
   }
 }
