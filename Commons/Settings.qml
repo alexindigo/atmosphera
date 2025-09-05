@@ -278,6 +278,7 @@ Singleton {
         property string position: "center"
         property real backgroundOpacity: 1.0
         property list<string> pinnedExecs: []
+        property bool useApp2Unit: false
       }
 
       // dock
