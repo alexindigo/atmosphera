@@ -175,7 +175,10 @@ Item {
         icon: "close"
         visible: root.persistent || root.duration === 0
 
-        color: Color.mOnSurface
+        colorBg: Color.mSurfaceVariant
+        colorFg: Color.mOnSurface
+        colorBorder: Color.transparent
+        colorBorderHover: Color.mOutline
 
         fontPointSize: Style.fontSizeM * scaling
         sizeRatio: 0.8
