@@ -130,7 +130,7 @@ Variants {
 
       Rectangle {
         id: dockContainer
-        width: dock.width + 48 * scaling
+        width: dockLayout.implicitWidth + 48 * scaling
         height: iconSize * 1.4 * scaling
         color: Qt.alpha(Color.mSurface, Settings.data.dock.backgroundOpacity)
         anchors.horizontalCenter: parent.horizontalCenter
@@ -178,7 +178,7 @@ Variants {
 
         Item {
           id: dock
-          width: runningAppsRow.width
+          width: dockLayout.implicitWidth
           height: parent.height - (20 * scaling)
           anchors.centerIn: parent
 
@@ -194,10 +194,10 @@ Variants {
             return Icons.iconForAppId(toplevel.appId?.toLowerCase())
           }
 
-          Row {
-            id: runningAppsRow
+          RowLayout {
+            id: dockLayout
             spacing: Style.marginL * scaling
-            height: parent.height
+            Layout.preferredHeight: parent.height
             anchors.centerIn: parent
 
             Repeater {
@@ -205,8 +205,10 @@ Variants {
 
               delegate: Rectangle {
                 id: appButton
-                width: iconSize * scaling
-                height: iconSize * scaling
+                Layout.preferredWidth: iconSize * scaling
+                Layout.preferredHeight: iconSize * scaling
+                Layout.alignment: Qt.AlignCenter
+
                 color: Color.transparent
                 radius: Style.radiusM * scaling
 
