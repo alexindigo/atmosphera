@@ -8,33 +8,87 @@ import qs.Commons
 Singleton {
   id: root
 
+  // Core properties
   property var networks: ({})
   property string connectingSsid: ""
   property string connectStatus: ""
   property string connectStatusSsid: ""
   property string connectError: ""
-  property string detectedInterface: ""
-  property string lastConnectedNetwork: ""
   property bool isLoading: false
   property bool ethernet: false
+  property int retryCount: 0
+  property int maxRetries: 3
+
+  // File path for persistent storage
+  property string cacheFile: Settings.cacheDir + "network.json"
+
+  // Stable properties for UI
+  readonly property alias cache: adapter
+  readonly property string lastConnectedNetwork: adapter.lastConnected
+
+  // File-based persistent storage
+  FileView {
+    id: cacheFileView
+    path: root.cacheFile
+    onAdapterUpdated: saveTimer.start()
+    onLoaded: {
+      Logger.log("Network", "Loaded network cache from disk")
+      // Try to auto-connect on startup if WiFi is enabled
+      if (Settings.data.network.wifiEnabled && adapter.lastConnected) {
+        autoConnectTimer.start()
+      }
+    }
+    onLoadFailed: function (error) {
+      Logger.log("Network", "No existing cache found, creating new one")
+      // Initialize with empty data
+      adapter.knownNetworks = ({})
+      adapter.lastConnected = ""
+    }
+
+    JsonAdapter {
+      id: adapter
+      property var knownNetworks: ({})
+      property string lastConnected: ""
+      property int lastRefresh: 0
+    }
+  }
+
+  // Save timer to batch writes
+  Timer {
+    id: saveTimer
+    running: false
+    interval: 1000
+    onTriggered: cacheFileView.writeAdapter()
+  }
 
   Component.onCompleted: {
     Logger.log("Network", "Service started")
-    // Only refresh networks if WiFi is enabled
+
     if (Settings.data.network.wifiEnabled) {
       refreshNetworks()
     }
   }
 
+  // Signal strength icon mapping
   function signalIcon(signal) {
-    if (signal >= 80)
-      return "network_wifi"
-    if (signal >= 60)
-      return "network_wifi_3_bar"
-    if (signal >= 40)
-      return "network_wifi_2_bar"
-    if (signal >= 20)
-      return "network_wifi_1_bar"
+    const levels = [{
+                      "threshold": 80,
+                      "icon": "network_wifi"
+                    }, {
+                      "threshold": 60,
+                      "icon": "network_wifi_3_bar"
+                    }, {
+                      "threshold": 40,
+                      "icon": "network_wifi_2_bar"
+                    }, {
+                      "threshold": 20,
+                      "icon": "network_wifi_1_bar"
+                    }]
+
+    for (const level of levels) {
+      if (signal >= level.threshold)
+        return level.icon
+    }
     return "signal_wifi_0_bar"
   }
 
@@ -42,455 +96,492 @@ Singleton {
     return security && security.trim() !== "" && security.trim() !== "--"
   }
 
+  // Enhanced refresh with retry logic
   function refreshNetworks() {
+    if (isLoading)
+      return
+
     isLoading = true
-    checkEthernet.running = true
-    existingNetwork.running = true
+    retryCount = 0
+    adapter.lastRefresh = Date.now()
+    performRefresh()
   }
 
+  function performRefresh() {
+    checkEthernet.running = true
+    existingNetworkProcess.running = true
+  }
+
+  // Retry mechanism for failed operations
+  function retryRefresh() {
+    if (retryCount < maxRetries) {
+      retryCount++
+      Logger.log("Network", `Retrying refresh (${retryCount}/${maxRetries})`)
+      retryTimer.start()
+    } else {
+      isLoading = false
+      connectError = "Failed to refresh networks after multiple attempts"
+    }
+  }
+
+  Timer {
+    id: retryTimer
+    interval: 1000 * retryCount // Progressive backoff
+    repeat: false
+    onTriggered: performRefresh()
+  }
+
+  Timer {
+    id: autoConnectTimer
+    interval: 3000
+    repeat: false
+    onTriggered: {
+      if (adapter.lastConnected && networks[adapter.lastConnected]?.existing) {
+        Logger.log("Network", `Auto-connecting to ${adapter.lastConnected}`)
+        connectToExisting(adapter.lastConnected)
+      }
+    }
+  }
+
+  // Forget network function
+  function forgetNetwork(ssid) {
+    Logger.log("Network", `Forgetting network: ${ssid}`)
+
+    // Remove from cache
+    let known = adapter.knownNetworks
+    delete known[ssid]
+    adapter.knownNetworks = known
+
+    // Clear last connected if it's this network
+    if (adapter.lastConnected === ssid) {
+      adapter.lastConnected = ""
+    }
+
+    // Save changes
+    saveTimer.restart()
+
+    // Remove NetworkManager profile
+    forgetProcess.ssid = ssid
+    forgetProcess.running = true
+  }
+
+  Process {
+    id: forgetProcess
+    property string ssid: ""
+    running: false
+    command: ["nmcli", "connection", "delete", "id", ssid]
+
+    stdout: StdioCollector {
+      onStreamFinished: {
+        Logger.log("Network", `Successfully forgot network: ${forgetProcess.ssid}`)
+        refreshNetworks()
+      }
+    }
+
+    stderr: StdioCollector {
+      onStreamFinished: {
+        if (text.includes("no such connection profile")) {
+          Logger.log("Network", `Network profile not found: ${forgetProcess.ssid}`)
+        } else {
+          Logger.warn("Network", `Error forgetting network: ${text}`)
+        }
+        refreshNetworks()
+      }
+    }
+  }
+
+  // WiFi enable/disable functions
   function setWifiEnabled(enabled) {
     if (enabled) {
-      // Enable WiFi radio
       isLoading = true
-      enableWifiProcess.running = true
+      wifiRadioProcess.action = "on"
+      wifiRadioProcess.running = true
     } else {
-      // Disconnect from current network and store it for reconnection
+      // Save current connection for later
       for (const ssid in networks) {
         if (networks[ssid].connected) {
-          lastConnectedNetwork = ssid
-          // Disconnect from the current network before disabling WiFi
+          adapter.lastConnected = ssid
+          saveTimer.restart()
           disconnectNetwork(ssid)
           break
         }
       }
 
-      // Disable WiFi radio
-      disableWifiProcess.running = true
+      wifiRadioProcess.action = "off"
+      wifiRadioProcess.running = true
     }
   }
 
-  function connectNetwork(ssid, security) {
-    pendingConnect = {
-      "ssid": ssid,
-      "security": security,
-      "password": ""
+  // Unified WiFi radio control
+  Process {
+    id: wifiRadioProcess
+    property string action: "on"
+    running: false
+    command: ["nmcli", "radio", "wifi", action]
+
+    onRunningChanged: {
+      if (!running) {
+        if (action === "on") {
+          wifiEnableTimer.start()
+        } else {
+          root.networks = ({})
+          root.isLoading = false
+        }
+      }
     }
-    doConnect()
+
+    stderr: StdioCollector {
+      onStreamFinished: {
+        if (text.trim()) {
+          Logger.warn("Network", `Error ${action === "on" ? "enabling" : "disabling"} WiFi: ${text}`)
+        }
+      }
+    }
+  }
+
+  Timer {
+    id: wifiEnableTimer
+    interval: 2000
+    repeat: false
+    onTriggered: {
+      refreshNetworks()
+      if (adapter.lastConnected) {
+        reconnectTimer.start()
+      }
+    }
+  }
+
+  Timer {
+    id: reconnectTimer
+    interval: 3000
+    repeat: false
+    onTriggered: {
+      if (adapter.lastConnected && networks[adapter.lastConnected]?.existing) {
+        connectToExisting(adapter.lastConnected)
+      }
+    }
+  }
+
+  // Connection management
+  function connectNetwork(ssid, security) {
+    connectingSsid = ssid
+    connectStatus = ""
+    connectStatusSsid = ssid
+    connectError = ""
+
+    // Check if profile exists
+    if (networks[ssid]?.existing) {
+      connectToExisting(ssid)
+      return
+    }
+
+    // Check cache for known network
+    const known = adapter.knownNetworks[ssid]
+    if (known?.profileName) {
+      connectToExisting(known.profileName)
+      return
+    }
+
+    // New connection - need password for secured networks
+    if (isSecured(security)) {
+      // Password will be provided through submitPassword
+      return
+    }
+
+    // Open network - connect directly
+    createAndConnect(ssid, "", security)
   }
 
   function submitPassword(ssid, password) {
-    pendingConnect = {
-      "ssid": ssid,
-      "security": networks[ssid].security,
-      "password": password
-    }
-    doConnect()
+    const security = networks[ssid]?.security || ""
+    createAndConnect(ssid, password, security)
+  }
+
+  function connectToExisting(ssid) {
+    connectingSsid = ssid
+    upConnectionProcess.profileName = ssid
+    upConnectionProcess.running = true
+  }
+
+  function createAndConnect(ssid, password, security) {
+    connectingSsid = ssid
+
+    connectProcess.ssid = ssid
+    connectProcess.password = password
+    connectProcess.isSecured = isSecured(security)
+    connectProcess.running = true
   }
 
   function disconnectNetwork(ssid) {
-    disconnectProfileProcess.connectionName = ssid
-    disconnectProfileProcess.running = true
+    disconnectProcess.ssid = ssid
+    disconnectProcess.running = true
   }
 
-  property var pendingConnect: null
-
-  function doConnect() {
-    const params = pendingConnect
-    if (!params)
-      return
-
-    connectingSsid = params.ssid
-    connectStatus = ""
-    connectStatusSsid = params.ssid
-
-    const targetNetwork = networks[params.ssid]
-
-    if (targetNetwork && targetNetwork.existing) {
-      upConnectionProcess.profileName = params.ssid
-      upConnectionProcess.running = true
-      pendingConnect = null
-      return
-    }
-
-    if (params.security && params.security !== "--") {
-      getInterfaceProcess.running = true
-      return
-    }
-    connectProcess.security = params.security
-    connectProcess.ssid = params.ssid
-    connectProcess.password = params.password
-    connectProcess.running = true
-    pendingConnect = null
-  }
-
-  property int refreshInterval: 25000
-
-  // Only refresh when we have an active connection and WiFi is enabled
-  property bool hasActiveConnection: {
-    for (const net in networks) {
-      if (networks[net].connected) {
-        return true
-      }
-    }
-    return false
-  }
-
-  property Timer refreshTimer: Timer {
-    interval: root.refreshInterval
-    // Only run timer when we're connected to a network and WiFi is enabled
-    running: root.hasActiveConnection && Settings.data.network.wifiEnabled
-    repeat: true
-    onTriggered: root.refreshNetworks()
-  }
-
-  // Force a refresh when menu is opened
-  function onMenuOpened() {
-    if (Settings.data.network.wifiEnabled) {
-      refreshNetworks()
-    }
-  }
-
-  function onMenuClosed() {// No need to do anything special on close
-  }
-
-  // Process to enable WiFi radio
-  property Process enableWifiProcess: Process {
-    id: enableWifiProcess
-    running: false
-    command: ["nmcli", "radio", "wifi", "on"]
-    onRunningChanged: {
-      if (!running) {
-        // Wait a moment for the radio to be enabled, then refresh networks
-        enableWifiDelayTimer.start()
-      }
-    }
-    stderr: StdioCollector {
-      onStreamFinished: {
-        if (text.trim() !== "") {
-          Logger.warn("Network", "Error enabling WiFi:", text)
-        }
-      }
-    }
-  }
-
-  // Timer to delay network refresh after enabling WiFi
-  property Timer enableWifiDelayTimer: Timer {
-    id: enableWifiDelayTimer
-    interval: 2000 // Wait 2 seconds for radio to be ready
-    repeat: false
-    onTriggered: {
-      // Force refresh networks multiple times to ensure UI updates
-      root.refreshNetworks()
-
-      // Try to auto-reconnect to the last connected network if it exists
-      if (lastConnectedNetwork) {
-        autoReconnectTimer.start()
-      }
-
-      // Set up additional refresh to ensure UI is populated
-      postEnableRefreshTimer.start()
-    }
-  }
-
-  // Additional timer to ensure networks are populated after enabling
-  property Timer postEnableRefreshTimer: Timer {
-    id: postEnableRefreshTimer
-    interval: 1000
-    repeat: false
-    onTriggered: {
-      root.refreshNetworks()
-    }
-  }
-
-  // Timer to attempt auto-reconnection to the last connected network
-  property Timer autoReconnectTimer: Timer {
-    id: autoReconnectTimer
-    interval: 3000 // Wait 3 seconds after scan for networks to be available
-    repeat: false
-    onTriggered: {
-      if (lastConnectedNetwork && networks[lastConnectedNetwork]) {
-        const network = networks[lastConnectedNetwork]
-        if (network.existing && !network.connected) {
-          upConnectionProcess.profileName = lastConnectedNetwork
-          upConnectionProcess.running = true
-        }
-      }
-    }
-  }
-
-  // Process to disable WiFi radio
-  property Process disableWifiProcess: Process {
-    id: disableWifiProcess
-    running: false
-    command: ["nmcli", "radio", "wifi", "off"]
-    onRunningChanged: {
-      if (!running) {
-        // Clear networks when WiFi is disabled
-        root.networks = ({})
-        root.connectingSsid = ""
-        root.connectStatus = ""
-        root.connectStatusSsid = ""
-        root.connectError = ""
-        root.isLoading = false
-      }
-    }
-    stderr: StdioCollector {
-      onStreamFinished: {
-        if (text.trim() !== "") {
-          Logger.warn("Network", "Error disabling WiFi:", text)
-        }
-      }
-    }
-  }
-
-  property Process disconnectProfileProcess: Process {
-    id: disconnectProfileProcess
-    property string connectionName: ""
-    running: false
-    command: ["nmcli", "connection", "down", connectionName]
-    onRunningChanged: {
-      if (!running) {
-        // Clear connection status when disconnecting
-        root.connectingSsid = ""
-        root.connectStatus = ""
-        root.connectStatusSsid = ""
-        root.connectError = ""
-      }
-    }
-  }
-
-  property Process existingNetwork: Process {
-    id: existingNetwork
-    running: false
-    command: ["nmcli", "-t", "-f", "NAME,TYPE", "connection", "show"]
-    stdout: StdioCollector {
-      onStreamFinished: {
-        const lines = text.split("\n")
-        const networksMap = {}
-
-        for (var i = 0; i < lines.length; ++i) {
-          const line = lines[i].trim()
-          if (!line)
-          continue
-
-          const parts = line.split(":")
-          if (parts.length < 2) {
-            Logger.warn("Network", "Malformed nmcli output line:", line)
-            continue
-          }
-
-          const ssid = parts[0]
-          const type = parts[1]
-
-          if (ssid) {
-            networksMap[ssid] = {
-              "ssid": ssid,
-              "type": type
-            }
-          }
-        }
-        scanProcess.existingNetwork = networksMap
-        scanProcess.running = true
-      }
-    }
-  }
-
-  property Process scanProcess: Process {
-    id: scanProcess
-    running: false
-    command: ["nmcli", "-t", "-f", "SSID,SECURITY,SIGNAL,IN-USE", "device", "wifi", "list"]
-
-    property var existingNetwork
-
-    stdout: StdioCollector {
-      onStreamFinished: {
-        const lines = text.split("\n")
-        const networksMap = {}
-
-        for (var i = 0; i < lines.length; ++i) {
-          const line = lines[i].trim()
-          if (!line)
-          continue
-
-          const parts = line.split(":")
-          if (parts.length < 4) {
-            Logger.warn("Network", "Malformed nmcli output line:", line)
-            continue
-          }
-          const ssid = parts[0]
-          const security = parts[1]
-          const signal = parseInt(parts[2])
-          const inUse = parts[3] === "*"
-
-          if (ssid) {
-            if (!networksMap[ssid]) {
-              networksMap[ssid] = {
-                "ssid": ssid,
-                "security": security,
-                "signal": signal,
-                "connected": inUse,
-                "existing": ssid in scanProcess.existingNetwork
-              }
-            } else {
-              const existingNet = networksMap[ssid]
-              if (inUse) {
-                existingNet.connected = true
-              }
-              if (signal > existingNet.signal) {
-                existingNet.signal = signal
-                existingNet.security = security
-              }
-            }
-          }
-        }
-
-        root.networks = networksMap
-        root.isLoading = false
-        scanProcess.existingNetwork = {}
-      }
-    }
-  }
-
-  property Process connectProcess: Process {
+  // Connection process
+  Process {
     id: connectProcess
     property string ssid: ""
     property string password: ""
-    property string security: ""
+    property bool isSecured: false
     running: false
+
     command: {
-      if (password) {
-        return ["nmcli", "device", "wifi", "connect", `'${ssid}'`, "password", password]
-      } else {
-        return ["nmcli", "device", "wifi", "connect", `'${ssid}'`]
-      }
-    }
-    stdout: StdioCollector {
-      onStreamFinished: {
-        root.connectingSsid = ""
-        root.connectStatus = "success"
-        root.connectStatusSsid = connectProcess.ssid
-        root.connectError = ""
-        root.lastConnectedNetwork = connectProcess.ssid
-        root.refreshNetworks()
-      }
-    }
-    stderr: StdioCollector {
-      onStreamFinished: {
-        root.connectingSsid = ""
-        root.connectStatus = "error"
-        root.connectStatusSsid = connectProcess.ssid
-        root.connectError = text
-      }
-    }
-  }
-
-  property Process getInterfaceProcess: Process {
-    id: getInterfaceProcess
-    running: false
-    command: ["nmcli", "-t", "-f", "DEVICE,TYPE,STATE", "device"]
-    stdout: StdioCollector {
-      onStreamFinished: {
-        var lines = text.split("\n")
-        for (var i = 0; i < lines.length; ++i) {
-          var parts = lines[i].split(":")
-          if (parts[1] === "wifi" && parts[2] !== "unavailable") {
-            root.detectedInterface = parts[0]
-            break
-          }
-        }
-        if (root.detectedInterface) {
-          var params = root.pendingConnect
-          addConnectionProcess.ifname = root.detectedInterface
-          addConnectionProcess.ssid = params.ssid
-          addConnectionProcess.password = params.password
-          addConnectionProcess.profileName = params.ssid
-          addConnectionProcess.security = params.security
-          addConnectionProcess.running = true
-        } else {
-          root.connectStatus = "error"
-          root.connectStatusSsid = root.pendingConnect.ssid
-          root.connectError = "No Wi-Fi interface found."
-          root.connectingSsid = ""
-          root.pendingConnect = null
-        }
-      }
-    }
-  }
-
-  property Process checkEthernet: Process {
-    id: checkEthernet
-    running: false
-    command: ["nmcli", "-t", "-f", "DEVICE,TYPE,STATE", "device"]
-    stdout: StdioCollector {
-      onStreamFinished: {
-        var lines = text.split("\n")
-        for (var i = 0; i < lines.length; ++i) {
-          var parts = lines[i].split(":")
-          if (parts[1] === "ethernet" && parts[2] === "connected") {
-            root.ethernet = true
-            break
-          }
-        }
-      }
-    }
-  }
-
-  property Process addConnectionProcess: Process {
-    id: addConnectionProcess
-    property string ifname: ""
-    property string ssid: ""
-    property string password: ""
-    property string profileName: ""
-    property string security: ""
-    running: false
-    command: {
-      var cmd = ["nmcli", "connection", "add", "type", "wifi", "ifname", ifname, "con-name", profileName, "ssid", ssid]
-      if (security && security !== "--") {
-        cmd.push("wifi-sec.key-mgmt")
-        cmd.push("wpa-psk")
-        cmd.push("wifi-sec.psk")
-        cmd.push(password)
+      const cmd = ["nmcli", "device", "wifi", "connect", ssid]
+      if (isSecured && password) {
+        cmd.push("password", password)
       }
       return cmd
     }
+
     stdout: StdioCollector {
       onStreamFinished: {
-        upConnectionProcess.profileName = addConnectionProcess.profileName
-        upConnectionProcess.running = true
+        handleConnectionSuccess(connectProcess.ssid)
       }
     }
+
     stderr: StdioCollector {
       onStreamFinished: {
-        upConnectionProcess.profileName = addConnectionProcess.profileName
-        upConnectionProcess.running = true
+        handleConnectionError(connectProcess.ssid, text)
       }
     }
   }
 
-  property Process upConnectionProcess: Process {
+  Process {
     id: upConnectionProcess
     property string profileName: ""
     running: false
     command: ["nmcli", "connection", "up", "id", profileName]
+
     stdout: StdioCollector {
       onStreamFinished: {
-        root.connectingSsid = ""
-        root.connectStatus = "success"
-        root.connectStatusSsid = root.pendingConnect ? root.pendingConnect.ssid : upConnectionProcess.profileName
-        root.connectError = ""
-        root.lastConnectedNetwork = upConnectionProcess.profileName
-        root.pendingConnect = null
-        root.refreshNetworks()
+        handleConnectionSuccess(upConnectionProcess.profileName)
       }
     }
+
     stderr: StdioCollector {
       onStreamFinished: {
-        root.connectingSsid = ""
-        root.connectStatus = "error"
-        root.connectStatusSsid = root.pendingConnect ? root.pendingConnect.ssid : upConnectionProcess.profileName
-        root.connectError = text
-        root.pendingConnect = null
+        handleConnectionError(upConnectionProcess.profileName, text)
       }
     }
   }
-}
+
+  Process {
+    id: disconnectProcess
+    property string ssid: ""
+    running: false
+    command: ["nmcli", "connection", "down", "id", ssid]
+
+    onRunningChanged: {
+      if (!running) {
+        connectingSsid = ""
+        connectStatus = ""
+        connectStatusSsid = ""
+        connectError = ""
+        refreshNetworks()
+      }
+    }
+
+    stderr: StdioCollector {
+      onStreamFinished: {
+        if (text.trim()) {
+          Logger.warn("Network", `Disconnect warning: ${text}`)
+        }
+      }
+    }
+  }
+
+  // Connection result handlers
+  function handleConnectionSuccess(ssid) {
+    connectingSsid = ""
+    connectStatus = "success"
+    connectStatusSsid = ssid
+    connectError = ""
+
+    // Update cache
+    let known = adapter.knownNetworks
+    known[ssid] = {
+      "profileName": ssid,
+      "lastConnected": Date.now(),
+      "autoConnect": true
+    }
+    adapter.knownNetworks = known
+    adapter.lastConnected = ssid
+    saveTimer.restart()
+
+    Logger.log("Network", `Successfully connected to ${ssid}`)
+    refreshNetworks()
+  }
+
+  function handleConnectionError(ssid, error) {
+    connectingSsid = ""
+    connectStatus = "error"
+    connectStatusSsid = ssid
+    connectError = parseError(error)
+
+    Logger.warn("Network", `Failed to connect to ${ssid}: ${error}`)
+  }
+
+  function parseError(error) {
+    // Simplify common error messages
+    if (error.includes("Secrets were required") || error.includes("no secrets provided")) {
+      return "Incorrect password"
+    }
+    if (error.includes("No network with SSID")) {
+      return "Network not found"
+    }
+    if (error.includes("Connection activation failed")) {
+      return "Connection failed. Please try again."
+    }
+    if (error.includes("Timeout")) {
+      return "Connection timeout. Network may be out of range."
+    }
+    // Return first line only
+    return error.split("\n")[0].trim()
+  }
+
+  // Network scanning processes
+  Process {
+    id: existingNetworkProcess
+    running: false
+    command: ["nmcli", "-t", "-f", "NAME,TYPE", "connection", "show"]
+
+    stdout: StdioCollector {
+      onStreamFinished: {
+        const profiles = {}
+        const lines = text.split("\n").filter(l => l.trim())
+
+        for (const line of lines) {
+          const [ = line.split(":")
+                 if (name && type === "802-11-wireless") {
+                   profiles[name] = {
+                     "ssid": name,
+                     "type": type
+                   }
+                 }
+        }
+
+                 scanProcess.existingProfiles = profiles
+                 scanProcess.running = true
+        }
+        }
+
+                 stderr: StdioCollector {
+                   onStreamFinished: {
+                     if (text.trim()) {
+                       Logger.warn("Network", "Error listing connections:", text)
+                       retryRefresh()
+                     }
+                   }
+                 }
+        }
+
+                 Process {
+                   id: scanProcess
+                   property var existingProfiles: ({})
+                   running: false
+                   command: ["nmcli", "-t", "-f", "SSID,SECURITY,SIGNAL,IN-USE", "device", "wifi", "list"]
+
+                   stdout: StdioCollector {
+                     onStreamFinished: {
+                       const networksMap = {}
+                       const lines = text.split("\n").filter(l => l.trim())
+
+                       for (const line of lines) {
+                         const parts = line.split(":")
+                         if (parts.length < 4)
+                         continue
+
+                         const [ = parts
+                                if (!ssid)
+                                continue
+
+                                const signal = parseInt(signalStr) || 0
+                                const connected = inUse === "*"
+
+                                // Update last connected if we find the connected network
+                                if (connected && adapter.lastConnected !== ssid) {
+                                  adapter.lastConnected = ssid
+                                  saveTimer.restart()
+                                }
+
+                                // Merge with existing or create new
+                                if (!networksMap[ssid] || signal > networksMap[ssid].signal) {
+                                  networksMap[ssid] = {
+                                    "ssid": ssid,
+                                    "security": security || "--",
+                                    "signal": signal,
+                                    "connected": connected,
+                                    "existing": ssid in scanProcess.existingProfiles,
+                                    "cached": ssid in adapter.knownNetworks
+                                  }
+                                }
+                       }
+
+                                root.networks = networksMap
+                                root.isLoading = false
+                                scanProcess.existingProfiles = {}
+
+                                Logger.log("Network", `Found ${Object.keys(networksMap).length} networks`)
+                       }
+                       }
+
+                                stderr: StdioCollector {
+                                  onStreamFinished: {
+                                    if (text.trim()) {
+                                      Logger.warn("Network", "Error scanning networks:", text)
+                                      retryRefresh()
+                                    }
+                                  }
+                                }
+                       }
+
+                                Process {
+                                  id: checkEthernet
+                                  running: false
+                                  command: ["nmcli", "-t", "-f", "DEVICE,TYPE,STATE", "device"]
+
+                                  stdout: StdioCollector {
+                                    onStreamFinished: {
+                                      root.ethernet = text.split("\n").some(line => {
+                                                                              const parts = line.split(":")
+                                                                              return parts[1] === "ethernet"
+                                                                              && parts[2] === "connected"
+                                                                            })
+                                    }
+                                  }
+                                }
+
+                                // Auto-refresh timer
+                                Timer {
+                                  interval: 30000 // 30 seconds
+                                  running: Settings.data.network.wifiEnabled && !isLoading
+                                  repeat: true
+                                  onTriggered: {
+                                    // Only refresh if we should
+                                    const now = Date.now()
+                                    const timeSinceLastRefresh = now - adapter.lastRefresh
+
+                                    // Refresh if: connected, or it's been more than 30 seconds
+                                    if (hasActiveConnection || timeSinceLastRefresh > 30000) {
+                                      refreshNetworks()
+                                    }
+                                  }
+                                }
+
+                                property bool hasActiveConnection: {
+                                  return Object.values(networks).some(net => net.connected)
+                                }
+
+                                // Menu state management
+                                function onMenuOpened() {
+                                  if (Settings.data.network.wifiEnabled) {
+                                    refreshNetworks()
+                                  }
+                                }
+
+                                function onMenuClosed() {
+                                  // Clean up temporary states
+                                  connectStatus = ""
+                                  connectError = ""
+                                }
+                       }
