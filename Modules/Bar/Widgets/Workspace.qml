@@ -132,13 +132,7 @@ Item {
 
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.verticalCenter: parent.verticalCenter
-    layer.enabled: true
-    layer.effect: MultiEffect {
-      shadowColor: Color.mShadow
-      shadowVerticalOffset: 0
-      shadowHorizontalOffset: 0
-      shadowOpacity: 0.10
-    }
+
   }
 
   Row {

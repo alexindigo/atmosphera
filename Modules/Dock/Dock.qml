@@ -149,16 +149,6 @@ Variants {
           }
         }
 
-        // Drop shadow for better visibility when bar is transparent
-        layer.enabled: true
-        layer.effect: MultiEffect {
-          shadowEnabled: true
-          shadowColor: Qt.rgba(0, 0, 0, 0.3)
-          shadowBlur: 0.5
-          shadowVerticalOffset: 2
-          shadowHorizontalOffset: 0
-        }
-
         MouseArea {
           id: dockMouseArea
           anchors.fill: parent

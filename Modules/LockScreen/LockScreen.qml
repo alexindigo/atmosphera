@@ -101,14 +101,6 @@ Loader {
 
           Rectangle {
             anchors.fill: parent
-            color: Color.transparent
-            layer.enabled: true
-            layer.smooth: true
-            layer.samples: 4
-          }
-
-          Rectangle {
-            anchors.fill: parent
             gradient: Gradient {
               GradientStop {
                 position: 0.0

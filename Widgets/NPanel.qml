@@ -188,7 +188,6 @@ Loader {
         radius: Style.radiusL * scaling
         border.color: Color.mOutline
         border.width: Math.max(1, Style.borderS * scaling)
-        layer.enabled: true
         width: panelWidth
         height: panelHeight
 

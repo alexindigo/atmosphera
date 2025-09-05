@@ -55,7 +55,6 @@ Variants {
 
           anchors.fill: parent
           color: Qt.alpha(Color.mSurface, Settings.data.bar.backgroundOpacity)
-          layer.enabled: true
         }
 
         // ------------------------------

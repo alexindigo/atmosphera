@@ -101,15 +101,6 @@ Item {
     }
     border.width: Math.max(2, Style.borderM * scaling)
 
-    // Drop shadow effect
-    layer.enabled: true
-    layer.effect: MultiEffect {
-      shadowEnabled: true
-      shadowColor: Qt.rgba(0, 0, 0, 0.3)
-      shadowBlur: 20 * scaling
-      shadowVerticalOffset: 4 * scaling
-    }
-
     RowLayout {
       id: contentLayout
       anchors.fill: parent
