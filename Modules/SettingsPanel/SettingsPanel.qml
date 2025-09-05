@@ -477,23 +477,30 @@ NPanel {
                   }
                 }
 
-                sourceComponent: ScrollView {
-                  id: scrollView
-                  Layout.fillWidth: true
-                  Layout.fillHeight: true
-                  ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-                  ScrollBar.vertical.policy: ScrollBar.AsNeeded
-                  padding: Style.marginL * scaling
-                  clip: true
+                sourceComponent: Flickable {
+                  // Using a Flickable here with a pressDelay to fix conflict between
+                  // ScrollView and NTextInput. This fix the weird text selection issue.
+                  id: flickable
+                  anchors.fill: parent
+                  pressDelay: 200
 
-                  Component.onCompleted: {
-                    root.activeScrollView = scrollView
-                  }
+                  ScrollView {
+                    id: scrollView
+                    anchors.fill: parent
+                    ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+                    ScrollBar.vertical.policy: ScrollBar.AsNeeded
+                    padding: Style.marginL * scaling
+                    clip: true
 
-                  Loader {
-                    active: true
-                    sourceComponent: root.tabsModel[index].source
-                    width: scrollView.availableWidth
+                    Component.onCompleted: {
+                      root.activeScrollView = scrollView
+                    }
+
+                    Loader {
+                      active: true
+                      sourceComponent: root.tabsModel[index].source
+                      width: scrollView.availableWidth
+                    }
                   }
                 }
               }
