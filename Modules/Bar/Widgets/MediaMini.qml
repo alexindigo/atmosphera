@@ -18,12 +18,13 @@ RowLayout {
   Layout.alignment: Qt.AlignVCenter
   spacing: Style.marginS * scaling
   visible: MediaService.currentPlayer !== null && MediaService.canPlay
-  width: MediaService.currentPlayer !== null && MediaService.canPlay ? implicitWidth : 0
+  Layout.preferredWidth: MediaService.currentPlayer !== null && MediaService.canPlay ? implicitWidth : 0
 
   function getTitle() {
     return MediaService.trackTitle + (MediaService.trackArtist !== "" ? ` - ${MediaService.trackArtist}` : "")
   }
 
+  //  A hidden text element to safely measure the full title width
   NText {
     id: fullTitleMetrics
     visible: false
@@ -33,133 +34,167 @@ RowLayout {
 
   Rectangle {
     id: mediaMini
-    width: contentLayout.implicitWidth + Style.marginS * 2 * scaling
-    height: Math.round(Style.capsuleHeight * scaling)
-    radius: Math.round(Style.radiusM * scaling)
-    color: Color.mSurfaceVariant
+
+    Layout.preferredWidth: rowLayout.implicitWidth + Style.marginM * 2 * scaling
+    Layout.preferredHeight: Math.round(Style.capsuleHeight * scaling)
     Layout.alignment: Qt.AlignVCenter
 
-    // --- Visualizer Loaders ---
-    Loader {
-      anchors.centerIn: parent
-      active: Settings.data.audio.showMiniplayerCava && Settings.data.audio.visualizerType == "linear"
-              && MediaService.isPlaying && MediaService.trackLength > 0
-      z: 0
-      sourceComponent: LinearSpectrum {
-        width: mediaMini.width - Style.marginS * scaling
-        height: 20 * scaling
-        values: CavaService.values
-        fillColor: Color.mOnSurfaceVariant
-        opacity: 0.4
-      }
+    radius: Math.round(Style.radiusM * scaling)
+    color: Color.mSurfaceVariant
+
+    // Used to anchor the tooltip, so the tooltip does not move when the content expands
+    Item {
+      id: anchor
+      height: parent.height
+      width: 200 * scaling
     }
 
-    Loader {
-      anchors.centerIn: parent
-      active: Settings.data.audio.showMiniplayerCava && Settings.data.audio.visualizerType == "mirrored"
-              && MediaService.isPlaying && MediaService.trackLength > 0
-      z: 0
-      sourceComponent: MirroredSpectrum {
-        width: mediaMini.width - Style.marginS * scaling
-        height: mediaMini.height - Style.marginS * scaling
-        values: CavaService.values
-        fillColor: Color.mOnSurfaceVariant
-        opacity: 0.4
-      }
-    }
-
-    Loader {
-      anchors.centerIn: parent
-      active: Settings.data.audio.showMiniplayerCava && Settings.data.audio.visualizerType == "wave"
-              && MediaService.isPlaying && MediaService.trackLength > 0
-      z: 0
-      sourceComponent: WaveSpectrum {
-        width: mediaMini.width - Style.marginS * scaling
-        height: mediaMini.height - Style.marginS * scaling
-        values: CavaService.values
-        fillColor: Color.mOnSurfaceVariant
-        opacity: 0.4
-      }
-    }
-
-    // --- Main Content Layout ---
-    RowLayout {
-      id: contentLayout
-      anchors.left: parent.left
-      anchors.verticalCenter: parent.verticalCenter
-      anchors.leftMargin: Style.marginS * scaling
-      spacing: Style.marginS * scaling
-      z: 1
-
-      NIcon {
-        id: windowIcon
-        text: MediaService.isPlaying ? "pause" : "play_arrow"
-        font.pointSize: Style.fontSizeL * scaling
-        Layout.alignment: Qt.AlignVCenter
-        visible: !Settings.data.audio.showMiniplayerAlbumArt && getTitle() !== "" && !trackArt.visible
-      }
-
-      NImageCircled {
-        id: trackArt
-        imagePath: MediaService.trackArtUrl
-        fallbackIcon: MediaService.isPlaying ? "pause" : "play_arrow"
-        borderWidth: 0
-        border.color: Color.transparent
-        Layout.preferredWidth: Math.round(18 * scaling)
-        Layout.preferredHeight: Math.round(18 * scaling)
-        Layout.alignment: Qt.AlignVCenter
-        visible: Settings.data.audio.showMiniplayerAlbumArt
-      }
-
-      NText {
-        id: titleText
-        Layout.preferredWidth: {
-          if (mouseArea.containsMouse) {
-            return Math.round(Math.min(fullTitleMetrics.contentWidth, root.maxWidth * scaling))
-          } else {
-            return Math.round(Math.min(fullTitleMetrics.contentWidth, root.minWidth * scaling))
-          }
-        }
-        text: getTitle()
-        font.pointSize: Style.fontSizeS * scaling
-        font.weight: Style.fontWeightMedium
-        elide: Text.ElideRight
-        color: Color.mTertiary
-        Layout.alignment: Qt.AlignVCenter
-
-        Behavior on Layout.preferredWidth {
-          NumberAnimation {
-            duration: Style.animationSlow
-            easing.type: Easing.InOutCubic
-          }
-        }
-      }
-    }
-
-    MouseArea {
-      id: mouseArea
+    Item {
+      id: mainContainer
       anchors.fill: parent
-      hoverEnabled: true
-      cursorShape: Qt.PointingHandCursor
-      acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
-      onClicked: mouse => {
-                   if (mouse.button === Qt.LeftButton) {
-                     MediaService.playPause()
-                   } else if (mouse.button == Qt.RightButton) {
-                     MediaService.next()
-                     tooltip.visible = false
-                   } else if (mouse.button == Qt.MiddleButton) {
-                     MediaService.previous()
-                     tooltip.visible = false
-                   }
-                 }
-      onEntered: {
-        if (tooltip.text !== "") {
-          tooltip.show()
+      anchors.leftMargin: Style.marginS * scaling
+      anchors.rightMargin: Style.marginS * scaling
+
+      Loader {
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.horizontalCenter: parent.horizontalCenter
+        active: Settings.data.audio.showMiniplayerCava && Settings.data.audio.visualizerType == "linear"
+                && MediaService.isPlaying
+        z: 0
+
+        sourceComponent: LinearSpectrum {
+          width: mainContainer.width - Style.marginS * scaling
+          height: 20 * scaling
+          values: CavaService.values
+          fillColor: Color.mOnSurfaceVariant
+          opacity: 0.4
         }
       }
-      onExited: {
-        tooltip.hide()
+
+      Loader {
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.horizontalCenter: parent.horizontalCenter
+        active: Settings.data.audio.showMiniplayerCava && Settings.data.audio.visualizerType == "mirrored"
+                && MediaService.isPlaying
+        z: 0
+
+        sourceComponent: MirroredSpectrum {
+          width: mainContainer.width - Style.marginS * scaling
+          height: mainContainer.height - Style.marginS * scaling
+          values: CavaService.values
+          fillColor: Color.mOnSurfaceVariant
+          opacity: 0.4
+        }
+      }
+
+      Loader {
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.horizontalCenter: parent.horizontalCenter
+        active: Settings.data.audio.showMiniplayerCava && Settings.data.audio.visualizerType == "wave"
+                && MediaService.isPlaying
+        z: 0
+
+        sourceComponent: WaveSpectrum {
+          width: mainContainer.width - Style.marginS * scaling
+          height: mainContainer.height - Style.marginS * scaling
+          values: CavaService.values
+          fillColor: Color.mOnSurfaceVariant
+          opacity: 0.4
+        }
+      }
+
+      RowLayout {
+        id: rowLayout
+        anchors.verticalCenter: parent.verticalCenter
+        spacing: Style.marginS * scaling
+        z: 1 // Above the visualizer
+
+        NIcon {
+          id: windowIcon
+          text: MediaService.isPlaying ? "pause" : "play_arrow"
+          font.pointSize: Style.fontSizeL * scaling
+          verticalAlignment: Text.AlignVCenter
+          Layout.alignment: Qt.AlignVCenter
+          visible: !Settings.data.audio.showMiniplayerAlbumArt && getTitle() !== "" && !trackArt.visible
+        }
+
+        ColumnLayout {
+          Layout.alignment: Qt.AlignVCenter
+          visible: Settings.data.audio.showMiniplayerAlbumArt
+          spacing: 0
+
+          Item {
+            Layout.preferredWidth: Math.round(18 * scaling)
+            Layout.preferredHeight: Math.round(18 * scaling)
+
+            NImageCircled {
+              id: trackArt
+              anchors.fill: parent
+              imagePath: MediaService.trackArtUrl
+              fallbackIcon: MediaService.isPlaying ? "pause" : "play_arrow"
+              borderWidth: 0
+              border.color: Color.transparent
+            }
+          }
+        }
+
+        NText {
+          id: titleText
+
+          Layout.preferredWidth: {
+            if (mouseArea.containsMouse) {
+              return Math.round(Math.min(fullTitleMetrics.contentWidth, root.maxWidth * scaling))
+            } else {
+              return Math.round(Math.min(fullTitleMetrics.contentWidth, root.minWidth * scaling))
+            }
+          }
+          Layout.alignment: Qt.AlignVCenter
+
+          text: getTitle()
+          font.pointSize: Style.fontSizeS * scaling
+          font.weight: Style.fontWeightMedium
+          elide: Text.ElideRight
+          verticalAlignment: Text.AlignVCenter
+          color: Color.mTertiary
+
+          Behavior on Layout.preferredWidth {
+            NumberAnimation {
+              duration: Style.animationSlow
+              easing.type: Easing.InOutCubic
+            }
+          }
+        }
+      }
+
+      // Mouse area for hover detection
+      MouseArea {
+        id: mouseArea
+        anchors.fill: parent
+        hoverEnabled: true
+        cursorShape: Qt.PointingHandCursor
+        acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+        onClicked: mouse => {
+                     if (mouse.button === Qt.LeftButton) {
+                       MediaService.playPause()
+                     } else if (mouse.button == Qt.RightButton) {
+                       MediaService.next()
+                       // Need to hide the tooltip instantly
+                       tooltip.visible = false
+                     } else if (mouse.button == Qt.MiddleButton) {
+                       MediaService.previous()
+                       // Need to hide the tooltip instantly
+                       tooltip.visible = false
+                     }
+                   }
+
+        onEntered: {
+          if (tooltip.text !== "") {
+            tooltip.show()
+          }
+        }
+        onExited: {
+          tooltip.hide()
+        }
       }
     }
   }
@@ -169,14 +204,14 @@ RowLayout {
     text: {
       var str = ""
       if (MediaService.canGoNext) {
-        str += "Right click for next\n"
+        str += "Right click for next.\n"
       }
       if (MediaService.canGoPrevious) {
-        str += "Middle click for previous\n"
+        str += "Middle click for previous."
       }
       return str
     }
-    target: mediaMini
+    target: anchor
     positionAbove: Settings.data.bar.position === "bottom"
   }
 }
