@@ -487,7 +487,7 @@ NPanel {
             cursorShape: Qt.PointingHandCursor
             onClicked: {
               selectedIndex = index
-              root.activate()
+              ui.activate()
             }
           }
         }
