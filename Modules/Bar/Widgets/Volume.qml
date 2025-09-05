@@ -64,7 +64,7 @@ Item {
     autoHide: false // Important to be false so we can hover as long as we want
     text: Math.floor(AudioService.volume * 100) + "%"
     tooltipText: "Volume: " + Math.round(
-                   AudioService.volume * 100) + "%\nLeft click for advanced settings.\nScroll up/down to change volume."
+                   AudioService.volume * 100) + "%\nLeft click for advanced settings.\nScroll up/down to change volume.\nRight click to toggle mute."
 
     onWheel: function (delta) {
       wheelAccumulator += delta
@@ -82,13 +82,10 @@ Item {
       settingsPanel.open(screen)
     }
     onRightClicked: {
-      pwvucontrolProcess.running = true
+      AudioService.setMuted(!AudioService.muted)
     }
-  }
-
-  Process {
-    id: pwvucontrolProcess
-    command: ["pwvucontrol"]
-    running: false
+    onMiddleClicked: {
+      Quickshell.execDetached(["pwvucontrol"]);
+    }
   }
 }

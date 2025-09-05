@@ -99,11 +99,8 @@ Item {
     onRightClicked: {
       AudioService.setInputMuted(!AudioService.inputMuted)
     }
-  }
-
-  Process {
-    id: pwvucontrolProcess
-    command: ["pwvucontrol"]
-    running: false
+    onMiddleClicked: {
+      Quickshell.execDetached(["pwvucontrol"]);
+    }
   }
 }
