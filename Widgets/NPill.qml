@@ -29,6 +29,7 @@ Item {
   signal exited
   signal clicked
   signal rightClicked
+  signal middleClicked
   signal wheel(int delta)
 
   // Internal state
@@ -207,7 +208,7 @@ Item {
   MouseArea {
     anchors.fill: parent
     hoverEnabled: true
-    acceptedButtons: Qt.LeftButton | Qt.RightButton
+    acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
     onEntered: {
       root.entered()
       tooltip.show()
@@ -230,6 +231,9 @@ Item {
         root.clicked()
       } else if (mouse.button === Qt.RightButton) {
         root.rightClicked()
+      }
+      else if (mouse.button === Qt.MiddleButton) {
+        root.middleClicked()
       }
     }
     onWheel: wheel => {
