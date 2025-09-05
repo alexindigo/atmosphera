@@ -81,7 +81,7 @@ ScrollView {
 
       // Info section
       ColumnLayout {
-        spacing: Style.marginS * scaling
+        spacing: Style.marginM * scaling
         Layout.fillWidth: true
 
         NLabel {

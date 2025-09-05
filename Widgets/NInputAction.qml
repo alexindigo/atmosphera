@@ -3,7 +3,8 @@ import QtQuick.Layouts
 import qs.Commons
 import qs.Widgets
 
-ColumnLayout {
+// Input and button row
+RowLayout {
   id: root
 
   // Public properties
@@ -21,41 +22,35 @@ ColumnLayout {
 
   // Internal properties
   property real scaling: 1.0
+  spacing: Style.marginM * scaling
 
-  // Input and button row
-  RowLayout {
-    spacing: Style.marginM * scaling
+  NTextInput {
+    id: textInput
+    label: root.label
+    description: root.description
+    placeholderText: root.placeholderText
+    text: root.text
+    onEditingFinished: {
+      root.text = text
+      root.editingFinished()
+    }
     Layout.fillWidth: true
+  }
 
-    NTextInput {
-      id: textInput
-      label: root.label
-      description: root.description
-      placeholderText: root.placeholderText
-      text: root.text
-      onEditingFinished: {
-        root.text = text
-        root.editingFinished()
-      }
-      Layout.fillWidth: true
-    }
+  NButton {
+    Layout.fillWidth: false
+    Layout.alignment: Qt.AlignBottom
 
-    Item {
-      Layout.fillWidth: true
-    }
+    text: root.actionButtonText
+    icon: root.actionButtonIcon
+    backgroundColor: Color.mSecondary
+    textColor: Color.mOnSecondary
+    hoverColor: Color.mTertiary
+    pressColor: Color.mPrimary
+    enabled: root.actionButtonEnabled
 
-    NButton {
-      text: root.actionButtonText
-      icon: root.actionButtonIcon
-      backgroundColor: Color.mSecondary
-      textColor: Color.mOnSecondary
-      hoverColor: Color.mTertiary
-      pressColor: Color.mPrimary
-      enabled: root.actionButtonEnabled
-      Layout.fillWidth: false
-      onClicked: {
-        root.actionClicked()
-      }
+    onClicked: {
+      root.actionClicked()
     }
   }
 }
