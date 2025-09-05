@@ -267,239 +267,269 @@ NPanel {
   }
 
   panelContent: Rectangle {
-    anchors.fill: parent
-    anchors.margins: Style.marginL * scaling
     color: Color.transparent
 
-    // Scrolling via keyboard
-    Shortcut {
-      sequence: "Down"
-      onActivated: root.scrollDown()
-      enabled: root.opened
-    }
-
-    Shortcut {
-      sequence: "Up"
-      onActivated: root.scrollUp()
-      enabled: root.opened
-    }
-
-    Shortcut {
-      sequence: "Ctrl+J"
-      onActivated: root.scrollDown()
-      enabled: root.opened
-    }
-
-    Shortcut {
-      sequence: "Ctrl+K"
-      onActivated: root.scrollUp()
-      enabled: root.opened
-    }
-
-    Shortcut {
-      sequence: "PgDown"
-      onActivated: root.scrollPageDown()
-      enabled: root.opened
-    }
-
-    Shortcut {
-      sequence: "PgUp"
-      onActivated: root.scrollPageUp()
-      enabled: root.opened
-    }
-
-    // Changing tab via keyboard
-    Shortcut {
-      sequence: "Tab"
-      onActivated: root.selectNextTab()
-      enabled: root.opened
-    }
-
-    Shortcut {
-      sequence: "Shift+Tab"
-      onActivated: root.selectPreviousTab()
-      enabled: root.opened
-    }
-
-    RowLayout {
+    // Main layout container that fills the panel
+    ColumnLayout {
       anchors.fill: parent
-      spacing: Style.marginM * scaling
+      anchors.margins: Style.marginL * scaling
+      spacing: 0
 
-      Rectangle {
-        id: sidebar
-        Layout.preferredWidth: 220 * scaling
-        Layout.fillHeight: true
-        color: Color.mSurfaceVariant
-        border.color: Color.mOutline
-        border.width: Math.max(1, Style.borderS * scaling)
-        radius: Style.radiusM * scaling
+      // Keyboard shortcuts container
+      Item {
+        Layout.preferredWidth: 0
+        Layout.preferredHeight: 0
 
-        MouseArea {
-          anchors.fill: parent
-          acceptedButtons: Qt.NoButton // Don't interfere with clicks
-          property int wheelAccumulator: 0
-          onWheel: wheel => {
-                     wheelAccumulator += wheel.angleDelta.y
-                     if (wheelAccumulator >= 120) {
-                       root.selectPreviousTab()
-                       wheelAccumulator = 0
-                     } else if (wheelAccumulator <= -120) {
-                       root.selectNextTab()
-                       wheelAccumulator = 0
-                     }
-                     wheel.accepted = true
-                   }
+        // Scrolling via keyboard
+        Shortcut {
+          sequence: "Down"
+          onActivated: root.scrollDown()
+          enabled: root.opened
         }
 
-        Column {
-          anchors.fill: parent
-          anchors.margins: Style.marginS * scaling
-          spacing: Style.marginXS * 1.5 * scaling
+        Shortcut {
+          sequence: "Up"
+          onActivated: root.scrollUp()
+          enabled: root.opened
+        }
 
-          Repeater {
-            id: sections
-            model: root.tabsModel
-            delegate: Rectangle {
-              id: tabItem
-              width: parent.width
-              height: 32 * scaling
-              radius: Style.radiusS * scaling
-              color: selected ? Color.mPrimary : (tabItem.hovering ? Color.mTertiary : Color.transparent)
-              readonly property bool selected: index === currentTabIndex
-              property bool hovering: false
-              property color tabTextColor: selected ? Color.mOnPrimary : (tabItem.hovering ? Color.mOnTertiary : Color.mOnSurface)
+        Shortcut {
+          sequence: "Ctrl+J"
+          onActivated: root.scrollDown()
+          enabled: root.opened
+        }
 
-              Behavior on color {
-                ColorAnimation {
-                  duration: Style.animationFast
-                }
-              }
+        Shortcut {
+          sequence: "Ctrl+K"
+          onActivated: root.scrollUp()
+          enabled: root.opened
+        }
 
-              Behavior on tabTextColor {
-                ColorAnimation {
-                  duration: Style.animationFast
-                }
-              }
+        Shortcut {
+          sequence: "PgDown"
+          onActivated: root.scrollPageDown()
+          enabled: root.opened
+        }
 
-              RowLayout {
-                anchors.fill: parent
-                anchors.leftMargin: Style.marginS * scaling
-                anchors.rightMargin: Style.marginS * scaling
-                spacing: Style.marginS * scaling
-                // Tab icon on the left side
-                NIcon {
-                  text: modelData.icon
-                  color: tabTextColor
-                  font.pointSize: Style.fontSizeL * scaling
-                }
-                // Tab label on the left side
-                NText {
-                  text: modelData.label
-                  color: tabTextColor
-                  font.pointSize: Style.fontSizeM * scaling
-                  font.weight: Style.fontWeightBold
-                  Layout.fillWidth: true
-                }
-              }
-              MouseArea {
-                anchors.fill: parent
-                hoverEnabled: true
-                acceptedButtons: Qt.LeftButton
-                onEntered: tabItem.hovering = true
-                onExited: tabItem.hovering = false
-                onCanceled: tabItem.hovering = false
-                onClicked: currentTabIndex = index
-              }
-            }
-          }
+        Shortcut {
+          sequence: "PgUp"
+          onActivated: root.scrollPageUp()
+          enabled: root.opened
+        }
+
+        // Changing tab via keyboard
+        Shortcut {
+          sequence: "Tab"
+          onActivated: root.selectNextTab()
+          enabled: root.opened
+        }
+
+        Shortcut {
+          sequence: "Shift+Tab"
+          onActivated: root.selectPreviousTab()
+          enabled: root.opened
         }
       }
 
-      // Content
-      Rectangle {
-        id: contentPane
+      // Main content area
+      RowLayout {
         Layout.fillWidth: true
         Layout.fillHeight: true
-        radius: Style.radiusM * scaling
-        color: Color.mSurfaceVariant
-        border.color: Color.mOutline
-        border.width: Math.max(1, Style.borderS * scaling)
-        clip: true
+        spacing: Style.marginM * scaling
 
-        ColumnLayout {
-          id: contentLayout
-          anchors.fill: parent
-          anchors.margins: Style.marginL * scaling
-          spacing: Style.marginS * scaling
+        // Sidebar
+        Rectangle {
+          id: sidebar
+          Layout.preferredWidth: 220 * scaling
+          Layout.fillHeight: true
+          Layout.alignment: Qt.AlignTop
+          color: Color.mSurfaceVariant
+          border.color: Color.mOutline
+          border.width: Math.max(1, Style.borderS * scaling)
+          radius: Style.radiusM * scaling
 
-          RowLayout {
-            id: headerRow
-            Layout.fillWidth: true
-            spacing: Style.marginS * scaling
-
-            // Tab label on the main right side
-            NText {
-              text: root.tabsModel[currentTabIndex].label
-              font.pointSize: Style.fontSizeXL * scaling
-              font.weight: Style.fontWeightBold
-              color: Color.mPrimary
-              Layout.fillWidth: true
-            }
-            NIconButton {
-              icon: "close"
-              tooltipText: "Close"
-              Layout.alignment: Qt.AlignVCenter
-              onClicked: root.close()
-            }
+          MouseArea {
+            anchors.fill: parent
+            acceptedButtons: Qt.NoButton // Don't interfere with clicks
+            property int wheelAccumulator: 0
+            onWheel: wheel => {
+                       wheelAccumulator += wheel.angleDelta.y
+                       if (wheelAccumulator >= 120) {
+                         root.selectPreviousTab()
+                         wheelAccumulator = 0
+                       } else if (wheelAccumulator <= -120) {
+                         root.selectNextTab()
+                         wheelAccumulator = 0
+                       }
+                       wheel.accepted = true
+                     }
           }
 
-          NDivider {
-            Layout.fillWidth: true
-          }
-
-          Item {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
+          ColumnLayout {
+            anchors.fill: parent
+            anchors.margins: Style.marginS * scaling
+            spacing: Style.marginXS * 1.5 * scaling
 
             Repeater {
+              id: sections
               model: root.tabsModel
-              delegate: Loader {
-                anchors.fill: parent
-                active: index === root.currentTabIndex
+              delegate: Rectangle {
+                id: tabItem
+                Layout.fillWidth: true
+                Layout.preferredHeight: tabEntryRow.implicitHeight + Style.marginS * scaling * 2
+                radius: Style.radiusS * scaling
+                color: selected ? Color.mPrimary : (tabItem.hovering ? Color.mTertiary : Color.transparent)
+                readonly property bool selected: index === currentTabIndex
+                property bool hovering: false
+                property color tabTextColor: selected ? Color.mOnPrimary : (tabItem.hovering ? Color.mOnTertiary : Color.mOnSurface)
 
-                onStatusChanged: {
-                  if (status === Loader.Ready && item) {
-                    // Find and store reference to the ScrollView
-                    const scrollView = item.children[0]
-                    if (scrollView && scrollView.toString().includes("ScrollView")) {
-                      root.activeScrollView = scrollView
-                    }
+                Behavior on color {
+                  ColorAnimation {
+                    duration: Style.animationFast
                   }
                 }
 
-                sourceComponent: Flickable {
-                  // Using a Flickable here with a pressDelay to fix conflict between
-                  // ScrollView and NTextInput. This fix the weird text selection issue.
-                  id: flickable
+                Behavior on tabTextColor {
+                  ColorAnimation {
+                    duration: Style.animationFast
+                  }
+                }
+
+                RowLayout {
+                  id: tabEntryRow
                   anchors.fill: parent
-                  pressDelay: 200
+                  anchors.margins: Style.marginS * scaling
+                  spacing: Style.marginS * scaling
 
-                  ScrollView {
-                    id: scrollView
-                    anchors.fill: parent
-                    ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-                    ScrollBar.vertical.policy: ScrollBar.AsNeeded
-                    padding: Style.marginL * scaling
-                    clip: true
+                  // Tab icon
+                  NIcon {
+                    text: modelData.icon
+                    color: tabTextColor
+                    font.pointSize: Style.fontSizeL * scaling
+                  }
+                  
+                  // Tab label
+                  NText {
+                    text: modelData.label
+                    color: tabTextColor
+                    font.pointSize: Style.fontSizeM * scaling
+                    font.weight: Style.fontWeightBold
+                    Layout.fillWidth: true
+                  }
+                }
 
-                    Component.onCompleted: {
-                      root.activeScrollView = scrollView
+                MouseArea {
+                  anchors.fill: parent
+                  hoverEnabled: true
+                  acceptedButtons: Qt.LeftButton
+                  onEntered: tabItem.hovering = true
+                  onExited: tabItem.hovering = false
+                  onCanceled: tabItem.hovering = false
+                  onClicked: currentTabIndex = index
+                }
+              }
+            }
+
+            Item {
+              Layout.fillHeight: true
+            }
+          }
+        }
+
+        // Content pane
+        Rectangle {
+          id: contentPane
+          Layout.fillWidth: true
+          Layout.fillHeight: true
+          Layout.alignment: Qt.AlignTop
+          radius: Style.radiusM * scaling
+          color: Color.mSurfaceVariant
+          border.color: Color.mOutline
+          border.width: Math.max(1, Style.borderS * scaling)
+          clip: true
+
+          ColumnLayout {
+            id: contentLayout
+            anchors.fill: parent
+            anchors.margins: Style.marginL * scaling
+            spacing: Style.marginS * scaling
+
+            // Header row
+            RowLayout {
+              id: headerRow
+              Layout.fillWidth: true
+              spacing: Style.marginS * scaling
+
+              // Tab title
+              NText {
+                text: root.tabsModel[currentTabIndex]?.label || ""
+                font.pointSize: Style.fontSizeXL * scaling
+                font.weight: Style.fontWeightBold
+                color: Color.mPrimary
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignVCenter
+              }
+
+              // Close button
+              NIconButton {
+                icon: "close"
+                tooltipText: "Close"
+                Layout.alignment: Qt.AlignVCenter
+                onClicked: root.close()
+              }
+            }
+
+            // Divider
+            NDivider {
+              Layout.fillWidth: true
+            }
+
+            // Tab content area
+            Rectangle {
+              Layout.fillWidth: true
+              Layout.fillHeight: true
+              color: Color.transparent
+
+              Repeater {
+                model: root.tabsModel
+                delegate: Loader {
+                  anchors.fill: parent
+                  active: index === root.currentTabIndex
+
+                  onStatusChanged: {
+                    if (status === Loader.Ready && item) {
+                      // Find and store reference to the ScrollView
+                      const scrollView = item.children[0]
+                      if (scrollView && scrollView.toString().includes("ScrollView")) {
+                        root.activeScrollView = scrollView
+                      }
                     }
+                  }
 
-                    Loader {
-                      active: true
-                      sourceComponent: root.tabsModel[index].source
-                      width: scrollView.availableWidth
+                  sourceComponent: Flickable {
+                    // Using a Flickable here with a pressDelay to fix conflict between
+                    // ScrollView and NTextInput. This fixes the weird text selection issue.
+                    id: flickable
+                    anchors.fill: parent
+                    pressDelay: 200
+
+                    ScrollView {
+                      id: scrollView
+                      anchors.fill: parent
+                      ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+                      ScrollBar.vertical.policy: ScrollBar.AsNeeded
+                      padding: Style.marginL * scaling
+                      clip: true
+
+                      Component.onCompleted: {
+                        root.activeScrollView = scrollView
+                      }
+
+                      Loader {
+                        active: true
+                        sourceComponent: root.tabsModel[index]?.source
+                        width: scrollView.availableWidth
+                      }
                     }
                   }
                 }
