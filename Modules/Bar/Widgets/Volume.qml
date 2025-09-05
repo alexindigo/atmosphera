@@ -82,13 +82,10 @@ Item {
       settingsPanel.open(screen)
     }
     onRightClicked: {
-      pwvucontrolProcess.running = true
+      AudioService.setMuted(!AudioService.muted)
     }
-  }
-
-  Process {
-    id: pwvucontrolProcess
-    command: ["pwvucontrol"]
-    running: false
+    onMiddleClicked: {
+      Quickshell.execDetached(["pwvucontrol"]);
+    }
   }
 }
