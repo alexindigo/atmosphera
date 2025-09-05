@@ -180,7 +180,6 @@ Item {
         colorBorder: Color.transparent
         colorBorderHover: Color.mOutline
 
-        fontPointSize: Style.fontSizeM * scaling
         sizeRatio: 0.8
         Layout.alignment: Qt.AlignTop
 
