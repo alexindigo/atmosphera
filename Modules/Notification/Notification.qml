@@ -185,7 +185,6 @@ Variants {
                         || "Unknown App"} · ${NotificationService.formatTimestamp(model.timestamp)}`
                   color: Color.mSecondary
                   font.pointSize: Style.fontSizeXS * scaling
-                  
                 }
 
                 Rectangle {
