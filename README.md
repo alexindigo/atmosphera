@@ -265,6 +265,10 @@ The launcher supports special commands for enhanced functionality:
 For Niri:
 
 ```
+debug {
+  honor-xdg-activation-with-invalid-serial
+}
+
 window-rule {
     geometry-corner-radius 20
     clip-to-geometry true
@@ -279,6 +283,8 @@ layer-rule {
     place-within-backdrop true
 }
 ```
+`honor-xdg-activation-with-invalid-serial` allows notification actions (like view etc) to work.
+
 
 ---
 
