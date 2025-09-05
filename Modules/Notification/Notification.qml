@@ -108,6 +108,17 @@ Variants {
             property real opacityValue: 0.0
             property bool isRemoving: false
 
+            // Right-click to dismiss
+            MouseArea {
+              anchors.fill: parent
+              acceptedButtons: Qt.RightButton
+              onClicked: {
+                if (mouse.button === Qt.RightButton) {
+                  animateOut()
+                }
+              }
+            }
+
             // Scale and fade-in animation
             scale: scaleValue
             opacity: opacityValue
@@ -259,15 +270,6 @@ Variants {
 
                 property var notificationActions: model.rawNotification ? model.rawNotification.actions : []
 
-                Component.onCompleted: {
-                  console.log("Actions row created, rawNotification:", model.rawNotification)
-                  if (model.rawNotification) {
-                    console.log("Actions:", model.rawNotification.actions)
-                    console.log("Actions length:",
-                                model.rawNotification.actions ? model.rawNotification.actions.length : "null")
-                  }
-                }
-
                 Repeater {
                   model: actionsRow.notificationActions
 
@@ -288,12 +290,7 @@ Variants {
                     outlined: false
                     customHeight: 32 * scaling
 
-                    Component.onCompleted: {
-                      console.log("Action button created:", modelData.text, "Display text:", text)
-                    }
-
                     onClicked: {
-                      console.log("Action clicked:", modelData.text)
                       if (modelData && modelData.invoke) {
                         modelData.invoke()
                       }
