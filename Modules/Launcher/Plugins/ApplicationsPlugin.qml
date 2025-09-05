@@ -82,7 +82,11 @@ Item {
       "isImage": false,
       "onActivate": function () {
         Logger.log("ApplicationsPlugin", `Launching: ${app.name}`)
-        if (app.execute) {
+
+        if (Settings.data.appLauncher.useApp2Unit && app.id) {
+          Logger.log("ApplicationsPlugin", `Using app2unit for: ${app.id}`)
+          Quickshell.execDetached(["app2unit", "--", app.id])
+        } else if (app.execute) {
           app.execute()
         } else if (app.exec) {
           // Fallback to manual execution
