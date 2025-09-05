@@ -22,24 +22,6 @@ ColumnLayout {
   // Internal properties
   property real scaling: 1.0
 
-  // Label
-  NText {
-    text: root.label
-    font.pointSize: Style.fontSizeL * scaling
-    font.weight: Style.fontWeightBold
-    color: Color.mOnSurface
-    Layout.fillWidth: true
-  }
-
-  // Description
-  NText {
-    text: root.description
-    font.pointSize: Style.fontSizeS * scaling
-    color: Color.mOnSurfaceVariant
-    wrapMode: Text.Wrap
-    Layout.fillWidth: true
-  }
-
   // Input and button row
   RowLayout {
     spacing: Style.marginM * scaling
@@ -47,6 +29,8 @@ ColumnLayout {
 
     NTextInput {
       id: textInput
+      label: root.label
+      description: root.description
       placeholderText: root.placeholderText
       text: root.text
       onEditingFinished: {

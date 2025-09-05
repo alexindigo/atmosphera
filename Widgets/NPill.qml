@@ -231,8 +231,7 @@ Item {
         root.clicked()
       } else if (mouse.button === Qt.RightButton) {
         root.rightClicked()
-      }
-      else if (mouse.button === Qt.MiddleButton) {
+      } else if (mouse.button === Qt.MiddleButton) {
         root.middleClicked()
       }
     }

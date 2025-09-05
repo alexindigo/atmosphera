@@ -100,7 +100,7 @@ Item {
       AudioService.setInputMuted(!AudioService.inputMuted)
     }
     onMiddleClicked: {
-      Quickshell.execDetached(["pwvucontrol"]);
+      Quickshell.execDetached(["pwvucontrol"])
     }
   }
 }
