@@ -12,7 +12,6 @@ NPanel {
 
   panelWidth: 460 * scaling
   panelHeight: 708 * scaling
-  panelAnchorRight: true
 
   panelContent: Item {
     id: content
