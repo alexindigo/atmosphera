@@ -23,11 +23,5 @@ NIconButton {
 
   onClicked: PanelService.getPanel("notificationHistoryPanel")?.toggle(screen, this)
 
-  onRightClicked: {
-    Settings.data.notifications.doNotDisturb = !Settings.data.notifications.doNotDisturb
-    ToastService.showNotice(
-          Settings.data.notifications.doNotDisturb ? "Do Not Disturb enabled" : "Do Not Disturb disabled",
-          Settings.data.notifications.doNotDisturb ? "Notifications will be hidden but saved to history" : "Notifications will be shown normally",
-          "notice", false, 2000)
-  }
+  onRightClicked: Settings.data.notifications.doNotDisturb = !Settings.data.notifications.doNotDisturb
 }

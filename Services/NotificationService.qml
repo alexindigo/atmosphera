@@ -28,11 +28,11 @@ Singleton {
 
     // Signal when notification is received
     onNotification: function (notification) {
+      // Always add notification to history
+      root.addToHistory(notification)
 
       // Check if do-not-disturb is enabled
       if (Settings.data.notifications && Settings.data.notifications.doNotDisturb) {
-        // Still add to history but don't show notification
-        root.addToHistory(notification)
         return
       }
 
@@ -46,8 +46,6 @@ Singleton {
 
       // Add to our model
       root.addNotification(notification)
-      // Also add to history
-      root.addToHistory(notification)
     }
   }
 
@@ -106,6 +104,15 @@ Singleton {
         // Trigger animation signal instead of direct dismiss
         animateAndRemove(oldestNotification, notificationModel.count - 1)
       }
+    }
+  }
+
+  Connections {
+    target: Settings.data.notifications
+    function onDoNotDisturbChanged() {
+      const label = Settings.data.notifications.doNotDisturb ? "'Do Not Disturb' enabled" : "'Do Not Disturb' disabled"
+      const description = Settings.data.notifications.doNotDisturb ? "You'll find these notifications in your history." : "Showing all notifications."
+      ToastService.showNotice(label, description, "notice", false, 2000)
     }
   }
 
