@@ -180,12 +180,14 @@ Singleton {
 
     stderr: StdioCollector {
       onStreamFinished: {
-        if (text.includes("no such connection profile")) {
-          Logger.log("Network", `Network profile not found: ${forgetProcess.ssid}`)
-        } else {
-          Logger.warn("Network", `Error forgetting network: ${text}`)
+        if (text.trim()) {
+          if (text.includes("no such connection profile")) {
+            Logger.log("Network", `Network profile not found: ${forgetProcess.ssid}`)
+          } else {
+            Logger.warn("Network", `Error forgetting network: ${text}`)
+          }
+          refreshNetworks()
         }
-        refreshNetworks()
       }
     }
   }
@@ -341,7 +343,9 @@ Singleton {
 
     stderr: StdioCollector {
       onStreamFinished: {
-        handleConnectionError(connectProcess.ssid, text)
+        if (text.trim()) {
+          handleConnectionError(connectProcess.ssid, text)
+        }
       }
     }
   }
@@ -360,7 +364,9 @@ Singleton {
 
     stderr: StdioCollector {
       onStreamFinished: {
-        handleConnectionError(upConnectionProcess.profileName, text)
+        if (text.trim()) {
+          handleConnectionError(upConnectionProcess.profileName, text)
+        }
       }
     }
   }
@@ -413,9 +419,6 @@ Singleton {
   }
 
   function handleConnectionError(ssid, error) {
-    if (error === "")
-      return
-
     connectingSsid = ""
     connectStatus = "error"
     connectStatusSsid = ssid
@@ -529,7 +532,7 @@ Singleton {
         root.isLoading = false
         scanProcess.existingProfiles = {}
 
-        Logger.log("Network", `Found ${Object.keys(networksMap).length} wireless networks`)
+        //Logger.log("Network", `Found ${Object.keys(networksMap).length} wireless networks`)
       }
     }
 

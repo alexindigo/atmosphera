@@ -10,7 +10,7 @@ import qs.Widgets
 NPanel {
   id: root
 
-  panelWidth: 440 * scaling
+  panelWidth: 400 * scaling
   panelHeight: 500 * scaling
   panelKeyboardFocus: true
 
@@ -269,14 +269,6 @@ NPanel {
                       }
                     }
 
-                    // Loading indicator
-                    NBusyIndicator {
-                      visible: NetworkService.connectingSsid === modelData.ssid
-                      running: NetworkService.connectingSsid === modelData.ssid
-                      color: Color.mPrimary
-                      size: Style.baseWidgetSize * 0.6 * scaling
-                    }
-
                     // Right-aligned items container
                     RowLayout {
                       Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
@@ -330,6 +322,14 @@ NPanel {
                         }
                       }
 
+                      // Loading indicator
+                      NBusyIndicator {
+                        visible: NetworkService.connectingSsid === modelData.ssid
+                        running: NetworkService.connectingSsid === modelData.ssid
+                        color: Color.mPrimary
+                        size: Style.baseWidgetSize * 0.6 * scaling
+                      }
+
                       // Action buttons
                       RowLayout {
                         spacing: Style.marginXS * scaling
@@ -341,7 +341,6 @@ NPanel {
                           fontSize: Style.fontSizeXS * scaling
                           text: modelData.existing ? "Connect" : (NetworkService.isSecured(
                                                                     modelData.security) ? "Password" : "Connect")
-                          icon: "wifi"
                           onClicked: {
                             if (modelData.existing || !NetworkService.isSecured(modelData.security)) {
                               NetworkService.connectNetwork(modelData.ssid, modelData.security)
@@ -361,7 +360,6 @@ NPanel {
                           fontSize: Style.fontSizeXS * scaling
                           backgroundColor: Color.mError
                           text: "Disconnect"
-                          icon: "cancel"
                           onClicked: NetworkService.disconnectNetwork(modelData.ssid)
                         }
                       }
@@ -384,9 +382,9 @@ NPanel {
                       Rectangle {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
-                        radius: Style.radiusXS * scaling
+                        radius: Style.radiusS * scaling
                         color: Color.mSurface
-                        border.color: passwordInputField.activeFocus ? Color.mPrimary : Color.mOutline
+                        border.color: passwordInputField.activeFocus ? Color.mSecondary : Color.mOutline
                         border.width: Math.max(1, Style.borderS * scaling)
 
                         TextInput {
@@ -396,15 +394,16 @@ NPanel {
                           anchors.verticalCenter: parent.verticalCenter
                           anchors.leftMargin: Style.marginM * scaling
                           anchors.rightMargin: Style.marginM * scaling
-                          height: parent.height - (Style.marginS * scaling * 2)
+                          height: parent.height
                           text: passwordInput
-                          font.pointSize: Style.fontSizeS * scaling
+                          font.pointSize: Style.fontSizeM * scaling
                           color: Color.mOnSurface
                           verticalAlignment: TextInput.AlignVCenter
                           clip: true
                           focus: modelData.ssid === passwordPromptSsid && showPasswordPrompt
                           selectByMouse: true
                           echoMode: TextInput.Password
+                          passwordCharacter: "●"
                           onTextChanged: passwordInput = text
                           onAccepted: {
                             if (passwordInput) {
