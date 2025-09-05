@@ -198,15 +198,14 @@ Variants {
                     Layout.preferredWidth: 40 * scaling
                     Layout.preferredHeight: 40 * scaling
                     Layout.alignment: Qt.AlignTop
-                    // Start avatar aligned with body (below the summary)
                     anchors.topMargin: textContent.childrenRect.y
-                    // Prefer notification-provided image (e.g., user avatar) then fall back to app icon
-                    imagePath: (model.image && model.image !== "") ? model.image : Icons.iconFromName(
-                                                                       model.appIcon, "application-x-executable")
-                    fallbackIcon: "apps"
+                    imagePath: model.image && model.image !== "" ? model.image : ""
+                    fallbackIcon: ""
                     borderColor: Color.transparent
                     borderWidth: 0
-                    visible: (imagePath && imagePath !== "")
+                    visible: (model.image && model.image !== "")
+                    Layout.fillWidth: false
+                    Layout.fillHeight: false
                   }
 
                   Column {
