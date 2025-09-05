@@ -107,13 +107,21 @@ Singleton {
     return device.connected && !device.pairing && !device.blocked
   }
 
-  function getSignalStrength(device) {
+  function getStatusString(device) {
+    if (device.state === BluetoothDeviceState.Connecting) {
+      return "Connecting..."
+    }
     if (device.pairing) {
       return "Pairing..."
     }
     if (device.blocked) {
       return "Blocked"
     }
+    return ""
+  }
+
+
+  function getSignalStrength(device) {
     if (!device || device.signalStrength === undefined || device.signalStrength <= 0) {
       return "Signal: Unknown"
     }

@@ -132,7 +132,6 @@ Item {
 
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.verticalCenter: parent.verticalCenter
-
   }
 
   Row {

@@ -9,13 +9,15 @@ Rectangle {
   // Public properties
   property string text: ""
   property string icon: ""
+  property string tooltipText
   property color backgroundColor: Color.mPrimary
   property color textColor: Color.mOnPrimary
   property color hoverColor: Color.mTertiary
   property color pressColor: Color.mSecondary
   property bool enabled: true
-  property int fontSize: Style.fontSizeM * scaling
-  property int iconSize: Style.fontSizeL * scaling
+  property real fontSize: Style.fontSizeM * scaling
+  property int fontWeight: Style.fontWeightBold
+  property real iconSize: Style.fontSizeL * scaling
   property bool outlined: false
   property real customWidth: -1
   property real customHeight: -1
@@ -106,7 +108,7 @@ Rectangle {
       visible: root.text !== ""
       text: root.text
       font.pointSize: root.fontSize
-      font.weight: Style.fontWeightBold
+      font.weight: root.fontWeight
       color: {
         if (!root.enabled)
           return Color.mOnSurfaceVariant
@@ -127,6 +129,13 @@ Rectangle {
     }
   }
 
+  NTooltip {
+    id: tooltip
+    target: root
+    positionAbove: Settings.data.bar.position === "bottom"
+    text: root.tooltipText
+  }
+
   // Mouse interaction
   MouseArea {
     id: mouseArea
@@ -136,16 +145,27 @@ Rectangle {
     acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
     cursorShape: root.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
 
-    onEntered: root.hovered = true
+    onEntered: {
+      root.hovered = true
+      if (tooltipText) {
+        tooltip.show()
+      }
+    }
     onExited: {
       root.hovered = false
       root.pressed = false
+      if (tooltipText) {
+        tooltip.hide()
+      }
     }
     onPressed: mouse => {
                  root.pressed = true
                }
     onReleased: mouse => {
                   root.pressed = false
+                  if (tooltipText) {
+                    tooltip.hide()
+                  }
                   if (!root.hovered) {
                     return
                   }
@@ -161,6 +181,9 @@ Rectangle {
     onCanceled: {
       root.pressed = false
       root.hovered = false
+      if (tooltipText) {
+        tooltip.hide()
+      }
     }
   }
 }
