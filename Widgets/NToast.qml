@@ -90,7 +90,6 @@ Item {
 
   // Main toast container
   Rectangle {
-    id: container
     anchors.fill: parent
     radius: Style.radiusL * scaling
 
@@ -146,37 +145,33 @@ Item {
       }
 
       // Label and description
-      Column {
-        id: textColumn
+      ColumnLayout {
         spacing: Style.marginXXS * scaling
         Layout.fillWidth: true
         Layout.alignment: Qt.AlignVCenter
 
         NText {
-          id: labelText
+          Layout.fillWidth: true
           text: root.label
           color: Color.mOnSurface
           font.pointSize: Style.fontSizeM * scaling
           font.weight: Style.fontWeightBold
           wrapMode: Text.WordWrap
-          width: parent.width
           visible: text.length > 0
         }
 
         NText {
-          id: descriptionText
+          Layout.fillWidth: true
           text: root.description
           color: Color.mOnSurface
           font.pointSize: Style.fontSizeM * scaling
           wrapMode: Text.WordWrap
-          width: parent.width
           visible: text.length > 0
         }
       }
 
       // Close button (only if persistent or manual dismiss needed)
       NIconButton {
-        id: closeButton
         icon: "close"
         visible: root.persistent || root.duration === 0
 
