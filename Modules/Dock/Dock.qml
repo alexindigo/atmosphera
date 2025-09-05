@@ -32,6 +32,8 @@ Variants {
 
       screen: modelData
 
+      WlrLayershell.namespace: "noctalia-dock"
+
       property bool autoHide: Settings.data.dock.autoHide
       property bool hidden: autoHide
       property int hideDelay: 500
@@ -130,7 +132,7 @@ Variants {
         id: dockContainer
         width: dock.width + 48 * scaling
         height: iconSize * 1.4 * scaling
-        color: Color.mSurface
+        color: Qt.alpha(Color.mSurface, Settings.data.dock.backgroundOpacity)
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
         anchors.bottomMargin: dockSpacing
