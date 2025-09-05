@@ -407,7 +407,7 @@ NPanel {
                     color: tabTextColor
                     font.pointSize: Style.fontSizeL * scaling
                   }
-                  
+
                   // Tab label
                   NText {
                     text: modelData.label
