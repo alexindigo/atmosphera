@@ -255,7 +255,6 @@ Singleton {
         root.connectStatus = ""
         root.connectStatusSsid = ""
         root.connectError = ""
-        root.refreshNetworks()
       }
     }
   }

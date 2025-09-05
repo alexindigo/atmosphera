@@ -12,7 +12,6 @@ NPanel {
 
   panelWidth: 380 * scaling
   panelHeight: 500 * scaling
-  panelAnchorRight: true
 
   // Enable keyboard focus for WiFi panel (needed for password input)
   panelKeyboardFocus: true
@@ -29,14 +28,16 @@ NPanel {
 
   panelContent: Rectangle {
     color: Color.transparent
-    anchors.fill: parent
-    anchors.margins: Style.marginL * scaling
 
     ColumnLayout {
       anchors.fill: parent
+      anchors.margins: Style.marginL * scaling
+      spacing: Style.marginM * scaling
 
       // Header
       RowLayout {
+        Layout.fillWidth: true
+
         NIcon {
           text: "wifi"
           font.pointSize: Style.fontSizeXXL * scaling
@@ -76,107 +77,106 @@ NPanel {
         Layout.fillWidth: true
       }
 
-      // Show errors at the very top
-      NText {
-        visible: NetworkService.connectStatus === "error" && NetworkService.connectError.length > 0
-        text: NetworkService.connectError
-        color: Color.mError
-        font.pointSize: Style.fontSizeXS * scaling
-        wrapMode: Text.Wrap
-        Layout.fillWidth: true
-      }
-
-      Item {
+      ScrollView {
         Layout.fillWidth: true
         Layout.fillHeight: true
+        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+        ScrollBar.vertical.policy: ScrollBar.AsNeeded
+        clip: true
+        contentWidth: availableWidth
 
-        // Loading indicator
         ColumnLayout {
-          anchors.centerIn: parent
-          visible: Settings.data.network.wifiEnabled && NetworkService.isLoading
-          spacing: Style.marginM * scaling
-
-          NBusyIndicator {
-            running: NetworkService.isLoading
-            color: Color.mPrimary
-            size: Style.baseWidgetSize * scaling
-            Layout.alignment: Qt.AlignHCenter
-          }
-
-          NText {
-            text: "Scanning for networks..."
-            font.pointSize: Style.fontSizeNormal * scaling
-            color: Color.mOnSurfaceVariant
-            Layout.alignment: Qt.AlignHCenter
-          }
-        }
-
-        // WiFi disabled message
-        ColumnLayout {
-          anchors.centerIn: parent
-          visible: !Settings.data.network.wifiEnabled
-          spacing: Style.marginM * scaling
-
-          NIcon {
-            text: "wifi_off"
-            font.pointSize: Style.fontSizeXXXL * scaling
-            color: Color.mOnSurfaceVariant
-            Layout.alignment: Qt.AlignHCenter
-          }
-
-          NText {
-            text: "WiFi is disabled"
-            font.pointSize: Style.fontSizeL * scaling
-            color: Color.mOnSurfaceVariant
-            Layout.alignment: Qt.AlignHCenter
-          }
-
-          NText {
-            text: "Enable WiFi to see available networks"
-            font.pointSize: Style.fontSizeNormal * scaling
-            color: Color.mOnSurfaceVariant
-            Layout.alignment: Qt.AlignHCenter
-          }
-        }
-
-        // Network list
-        ListView {
-          anchors.fill: parent
-          visible: Settings.data.network.wifiEnabled && !NetworkService.isLoading
-          model: Object.values(NetworkService.networks)
+          width: parent.width
           spacing: Style.marginS * scaling
-          clip: true
 
-          delegate: Item {
-            width: parent ? parent.width : 0
-            height: modelData.ssid === passwordPromptSsid
-                    && showPasswordPrompt ? 130 * scaling : Style.baseWidgetSize * 1.75 * scaling
+          // Show errors at the very top
+          NText {
+            visible: NetworkService.connectStatus === "error" && NetworkService.connectError.length > 0
+            text: NetworkService.connectError
+            color: Color.mError
+            font.pointSize: Style.fontSizeXS * scaling
+            wrapMode: Text.Wrap
+            Layout.fillWidth: true
+          }
 
-            ColumnLayout {
-              anchors.fill: parent
-              spacing: 0
+          // Scanning... - Now properly centered
+          ColumnLayout {
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+            visible: Settings.data.network.wifiEnabled && NetworkService.isLoading
+            spacing: Style.marginM * scaling
 
-              Rectangle {
-                id: rect
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                radius: Style.radiusS * scaling
-                color: networkMouseArea.containsMouse ? Color.mTertiary : Color.transparent
-                border.color: modelData.connected ? Color.mPrimary : Color.transparent
-                border.width: Math.max(1, Style.borderM * scaling)
+            NBusyIndicator {
+              running: NetworkService.isLoading
+              color: Color.mPrimary
+              size: Style.baseWidgetSize * scaling
+              Layout.alignment: Qt.AlignHCenter
+            }
+
+            NText {
+              text: "Scanning for networks..."
+              font.pointSize: Style.fontSizeNormal * scaling
+              color: Color.mOnSurfaceVariant
+              Layout.alignment: Qt.AlignHCenter
+            }
+          }
+
+          // WiFi disabled message
+          ColumnLayout {
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+            visible: !Settings.data.network.wifiEnabled
+            spacing: Style.marginM * scaling
+
+            NIcon {
+              text: "wifi_off"
+              font.pointSize: Style.fontSizeXXXL * scaling
+              color: Color.mOnSurfaceVariant
+              Layout.alignment: Qt.AlignHCenter
+            }
+
+            NText {
+              text: "WiFi is disabled"
+              font.pointSize: Style.fontSizeL * scaling
+              color: Color.mOnSurfaceVariant
+              Layout.alignment: Qt.AlignHCenter
+            }
+
+            NText {
+              text: "Enable WiFi to see available networks"
+              font.pointSize: Style.fontSizeNormal * scaling
+              color: Color.mOnSurfaceVariant
+              Layout.alignment: Qt.AlignHCenter
+            }
+          }
+
+          // Network list
+          Repeater {
+            model: Settings.data.network.wifiEnabled && !NetworkService.isLoading ? Object.values(
+                                                                                      NetworkService.networks) : []
+
+            Rectangle {
+              Layout.fillWidth: true
+              Layout.preferredHeight: networkLayout.implicitHeight + (Style.marginM * scaling * 2)
+              radius: Style.radiusM * scaling
+              color: Color.mSurface
+              border.width: Math.max(1, Style.borderS * scaling)
+              border.color: modelData.connected ? Color.mOnSurface : Color.mOutline
+
+              ColumnLayout {
+                id: networkLayout
+                anchors.fill: parent
+                anchors.margins: Style.marginM * scaling
+                spacing: 0
 
                 RowLayout {
-                  anchors {
-                    fill: parent
-                    leftMargin: Style.marginL * scaling
-                    rightMargin: Style.marginL * scaling
-                  }
+                  Layout.fillWidth: true
                   spacing: Style.marginS * scaling
 
                   NIcon {
                     text: NetworkService.signalIcon(modelData.signal)
                     font.pointSize: Style.fontSizeXXL * scaling
-                    color: networkMouseArea.containsMouse ? Color.mSurface : Color.mOnSurface
+                    color: Color.mOnSurface
                   }
 
                   ColumnLayout {
@@ -190,7 +190,7 @@ NPanel {
                       text: modelData.ssid || "Unknown Network"
                       font.pointSize: Style.fontSizeNormal * scaling
                       elide: Text.ElideRight
-                      color: networkMouseArea.containsMouse ? Color.mSurface : Color.mOnSurface
+                      color: Color.mOnSurface
                     }
 
                     // Security Protocol
@@ -199,7 +199,7 @@ NPanel {
                       font.pointSize: Style.fontSizeXXS * scaling
                       elide: Text.ElideRight
                       Layout.fillWidth: true
-                      color: networkMouseArea.containsMouse ? Color.mSurface : Color.mOnSurface
+                      color: Color.mOnSurfaceVariant
                     }
                   }
 
@@ -213,145 +213,120 @@ NPanel {
                     NBusyIndicator {
                       visible: NetworkService.connectingSsid === modelData.ssid
                       running: NetworkService.connectingSsid === modelData.ssid
-                      color: networkMouseArea.containsMouse ? Color.mSurface : Color.mOnSurface
+                      color: Color.mOnSurface
                       anchors.centerIn: parent
                       size: Style.baseWidgetSize * 0.7 * scaling
                     }
                   }
+                  // Call to action
+                  NButton {
+                    id: button
+                    outlined: !button.hovered
+                    fontSize: Style.fontSizeXS * scaling
+                    fontWeight: Style.fontWeightMedium
+                    backgroundColor: {
+                      if (modelData.connected) {
+                        return Color.mError
+                      }
+                      return Color.mPrimary
+                    }
+                    text: {
+                      if (modelData.connected) {
+                        return "Disconnect"
+                      }
+                      if (modelData.existing) {
+                        return "Connect"
+                      }
+                      return ""
+                    }
+                    icon: (modelData.connected ? "cancel" : "wifi")
+                    onClicked: {
+                      if (modelData.connected) {
+                        NetworkService.disconnectNetwork(modelData.ssid)
+                        showPasswordPrompt = false
+                      } else if (NetworkService.isSecured(modelData.security) && !modelData.existing) {
+                        showPasswordPrompt = !showPasswordPrompt
+                        if (showPasswordPrompt) {
+                          passwordPromptSsid = modelData.ssid
+                          passwordInput = "" // Clear previous input
+                          Qt.callLater(function () {
+                            passwordInputField.forceActiveFocus()
+                          })
+                        }
+                      } else {
+                        NetworkService.connectNetwork(modelData.ssid, modelData.security)
+                      }
+                    }
+                  }
+                }
+
+                // Password prompt section
+                Rectangle {
+                  visible: modelData.ssid === passwordPromptSsid && showPasswordPrompt
+                  Layout.fillWidth: true
+                  Layout.preferredHeight: modelData.ssid === passwordPromptSsid && showPasswordPrompt ? 60 * scaling : 0
+                  Layout.margins: Style.marginS * scaling
+
+                  color: Color.mSurfaceVariant
+                  radius: Style.radiusS * scaling
 
                   RowLayout {
-                    visible: modelData.connected
-                    NText {
-                      text: "Connected"
-                      font.pointSize: Style.fontSizeXS * scaling
-                      color: networkMouseArea.containsMouse ? Color.mSurface : Color.mOnSurface
-                      Layout.alignment: Qt.AlignVCenter
-                    }
-                    NIcon {
-                      text: "check"
-                      font.pointSize: Style.fontSizeXXL * scaling
-                      color: networkMouseArea.containsMouse ? Color.mSurface : Color.mOnSurface
-                    }
-                  }
-                }
+                    anchors.fill: parent
+                    anchors.margins: Style.marginS * scaling
+                    spacing: Style.marginS * scaling
 
-                MouseArea {
-                  id: networkMouseArea
-                  anchors.fill: parent
-                  hoverEnabled: true
-                  onClicked: {
-                    if (modelData.connected) {
-                      NetworkService.disconnectNetwork(modelData.ssid)
-                      showPasswordPrompt = false
-                    } else if (NetworkService.isSecured(modelData.security) && !modelData.existing) {
-                      passwordPromptSsid = modelData.ssid
-                      showPasswordPrompt = true
-                      passwordInput = "" // Clear previous input
-                      Qt.callLater(function () {
-                        passwordInputField.forceActiveFocus()
-                      })
-                    } else {
-                      NetworkService.connectNetwork(modelData.ssid, modelData.security)
-                    }
-                  }
-                }
-              }
+                    Item {
+                      Layout.fillWidth: true
+                      Layout.preferredHeight: Math.round(Style.barHeight * scaling)
 
-              // Password prompt section
-              Rectangle {
-                visible: modelData.ssid === passwordPromptSsid && showPasswordPrompt
-                Layout.fillWidth: true
-                Layout.preferredHeight: modelData.ssid === passwordPromptSsid && showPasswordPrompt ? 60 : 0
-                Layout.margins: Style.marginS * scaling
-
-                color: Color.mSurfaceVariant
-                radius: Style.radiusS * scaling
-
-                RowLayout {
-                  anchors.fill: parent
-                  anchors.margins: Style.marginS * scaling
-                  spacing: Style.marginS * scaling
-
-                  Item {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: Math.round(Style.barHeight * scaling)
-
-                    Rectangle {
-                      anchors.fill: parent
-                      radius: Style.radiusXS * scaling
-                      color: Color.transparent
-                      border.color: passwordInputField.activeFocus ? Color.mPrimary : Color.mOutline
-                      border.width: Math.max(1, Style.borderS * scaling)
-
-                      TextInput {
-                        id: passwordInputField
+                      Rectangle {
                         anchors.fill: parent
-                        anchors.margins: Style.marginM * scaling
-                        text: passwordInput
-                        font.pointSize: Style.fontSizeS * scaling
-                        color: Color.mOnSurface
-                        verticalAlignment: TextInput.AlignVCenter
-                        clip: true
-                        focus: true
-                        selectByMouse: true
-                        activeFocusOnTab: true
-                        inputMethodHints: Qt.ImhNone
-                        echoMode: TextInput.Password
-                        onTextChanged: passwordInput = text
-                        onAccepted: {
-                          if (passwordInput !== "") {
-                            NetworkService.submitPassword(passwordPromptSsid, passwordInput)
-                            showPasswordPrompt = false
+                        radius: Style.radiusXS * scaling
+                        color: Color.transparent
+                        border.color: passwordInputField.activeFocus ? Color.mPrimary : Color.mOutline
+                        border.width: Math.max(1, Style.borderS * scaling)
+
+                        TextInput {
+                          id: passwordInputField
+                          anchors.fill: parent
+                          anchors.margins: Style.marginM * scaling
+                          text: passwordInput
+                          font.pointSize: Style.fontSizeS * scaling
+                          color: Color.mOnSurface
+                          verticalAlignment: TextInput.AlignVCenter
+                          clip: true
+                          focus: true
+                          selectByMouse: true
+                          activeFocusOnTab: true
+                          inputMethodHints: Qt.ImhNone
+                          echoMode: TextInput.Password
+                          onTextChanged: passwordInput = text
+                          onAccepted: {
+                            if (passwordInput !== "") {
+                              NetworkService.submitPassword(passwordPromptSsid, passwordInput)
+                              showPasswordPrompt = false
+                            }
                           }
                         }
-
-                        MouseArea {
-                          id: passwordInputMouseArea
-                          anchors.fill: parent
-                          onClicked: passwordInputField.forceActiveFocus()
-                        }
-                      }
-                    }
-                  }
-
-                  Rectangle {
-                    Layout.preferredWidth: Style.baseWidgetSize * 2.5 * scaling
-                    Layout.preferredHeight: Math.round(Style.barHeight * scaling)
-                    radius: Style.radiusM * scaling
-                    color: Color.mPrimary
-
-                    Behavior on color {
-                      ColorAnimation {
-                        duration: Style.animationFast
                       }
                     }
 
-                    NText {
-                      anchors.centerIn: parent
+                    // Connect button
+                    NButton {
+                      id: connectButton
+                      outlined: !connectButton.hovered
+                      fontSize: Style.fontSizeXS * scaling
+                      fontWeight: Style.fontWeightMedium
+                      backgroundColor: Color.mPrimary
                       text: "Connect"
-                      color: Color.mSurface
-                      font.pointSize: Style.fontSizeXS * scaling
-                    }
-
-                    MouseArea {
-                      anchors.fill: parent
+                      icon: "check"
+                      enabled: passwordInput !== ""
                       onClicked: {
                         if (passwordInput !== "") {
                           NetworkService.submitPassword(passwordPromptSsid, passwordInput)
                           showPasswordPrompt = false
                         }
                       }
-                      cursorShape: Qt.PointingHandCursor
-                      hoverEnabled: true
-                      onEntered: parent.color = Qt.darker(Color.mPrimary, 1.1)
-                      onExited: parent.color = Color.mPrimary
-                    }
-                  }
-
-                  NIconButton {
-                    icon: "close"
-                    onClicked: {
-                      showPasswordPrompt = false
                     }
                   }
                 }

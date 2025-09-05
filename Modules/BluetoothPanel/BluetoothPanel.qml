@@ -13,7 +13,6 @@ NPanel {
 
   panelWidth: 380 * scaling
   panelHeight: 500 * scaling
-  panelAnchorRight: true
 
   panelContent: Rectangle {
     color: Color.transparent
