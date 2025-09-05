@@ -2,6 +2,7 @@ pragma ComponentBehavior
 
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Wayland
@@ -17,15 +18,14 @@ Rectangle {
   readonly property real itemSize: Style.baseWidgetSize * 0.8 * scaling
 
   // Always visible when there are toplevels
-  implicitWidth: taskbarRow.width + Style.marginM * scaling * 2
+  implicitWidth: taskbarLayout.implicitWidth + Style.marginM * scaling * 2
   implicitHeight: Math.round(Style.capsuleHeight * scaling)
   radius: Math.round(Style.radiusM * scaling)
   color: Color.mSurfaceVariant
 
-  Row {
-    id: taskbarRow
-    anchors.verticalCenter: parent.verticalCenter
-    anchors.horizontalCenter: parent.horizontalCenter
+  RowLayout {
+    id: taskbarLayout
+    anchors.centerIn: parent
     spacing: Style.marginXXS * root.scaling
 
     Repeater {
@@ -35,8 +35,10 @@ Rectangle {
         required property Toplevel modelData
         property Toplevel toplevel: modelData
         property bool isActive: ToplevelManager.activeToplevel === modelData
-        width: root.itemSize
-        height: root.itemSize
+
+        Layout.preferredWidth: root.itemSize
+        Layout.preferredHeight: root.itemSize
+        Layout.alignment: Qt.AlignCenter
 
         Rectangle {
           id: iconBackground

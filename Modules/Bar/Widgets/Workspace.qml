@@ -11,7 +11,7 @@ import qs.Services
 Item {
   id: root
 
-  property ShellScreen screen: null
+  property ShellScreen screen
   property real scaling: 1.0
 
   property bool isDestroying: false
