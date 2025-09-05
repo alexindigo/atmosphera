@@ -18,6 +18,7 @@ Rectangle {
     id: textItem
     text: Time.time
     anchors.centerIn: parent
+    font.pointSize: Style.fontSizeS * scaling
     font.weight: Style.fontWeightBold
   }
 
