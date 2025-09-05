@@ -13,18 +13,13 @@ Singleton {
   property ListModel displayFonts: ListModel {}
   property bool fontsLoaded: false
 
-  Component.onCompleted: {
-
-    // Fonts will be loaded when init() is called
-  }
-
   function init() {
-    Logger.log("FontService", "Service started")
+    Logger.log("Font", "Service started")
     loadSystemFonts()
   }
 
   function loadSystemFonts() {
-    Logger.log("FontService", "Loading system fonts...")
+    Logger.log("Font", "Loading system fonts...")
 
     var fontFamilies = Qt.fontFamilies()
 
@@ -61,21 +56,21 @@ Singleton {
     sortModel(displayFonts)
 
     if (monospaceFonts.count === 0) {
-      Logger.log("FontService", "No monospace fonts detected, adding fallbacks")
+      Logger.log("Font", "No monospace fonts detected, adding fallbacks")
       addFallbackFonts(
             monospaceFonts,
             ["DejaVu Sans Mono", "Liberation Mono", "Courier New", "Courier", "Monaco", "Consolas", "Lucida Console", "Monaco", "Andale Mono"])
     }
 
     if (displayFonts.count === 0) {
-      Logger.log("FontService", "No display fonts detected, adding fallbacks")
+      Logger.log("Font", "No display fonts detected, adding fallbacks")
       addFallbackFonts(
             displayFonts,
             ["Inter", "Roboto", "Open Sans", "Arial", "Helvetica", "Verdana", "Segoe UI", "SF Pro Display", "Ubuntu", "Noto Sans"])
     }
 
     fontsLoaded = true
-    Logger.log("FontService", "Loaded", availableFonts.count, "fonts:", monospaceFonts.count, "monospace,",
+    Logger.log("Font", "Loaded", availableFonts.count, "fonts:", monospaceFonts.count, "monospace,",
                displayFonts.count, "display")
   }
 
