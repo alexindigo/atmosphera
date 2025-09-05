@@ -159,8 +159,8 @@ Variants {
             RowLayout {
               id: contentRow
               anchors.fill: parent
-              anchors.margins: Style.marginL * scaling
-              spacing: Style.marginL * scaling
+              anchors.margins: Style.marginM * scaling
+              spacing: Style.marginM * scaling
 
               // Right: header on top, then avatar + texts
               ColumnLayout {
@@ -248,12 +248,12 @@ Variants {
             NIconButton {
               icon: "close"
               tooltipText: "Close"
-              // Compact target (~24dp) and glyph (~16dp)
-              sizeRatio: 0.75
-              fontPointSize: 16
+              sizeRatio: 0.6
+              fontPointSize: 12
               anchors.top: parent.top
+              anchors.topMargin: Style.marginM * scaling
               anchors.right: parent.right
-              anchors.margins: Style.marginS * scaling
+              anchors.rightMargin: Style.marginM * scaling
 
               onClicked: {
                 animateOut()
