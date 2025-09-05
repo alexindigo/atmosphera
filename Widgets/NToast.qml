@@ -37,7 +37,16 @@ Item {
     // NToast updates its scaling when showing.
     scaling = ScalingService.getScreenScale(screen)
 
+    // Stop any running animations and reset state
+    showAnimation.stop()
+    hideAnimation.stop()
+    autoHideTimer.stop()
+
+    // Ensure we start from the hidden position
+    y = hiddenY
     visible = true
+
+    // Start the show animation
     showAnimation.start()
     if (duration > 0 && !persistent) {
       autoHideTimer.start()
