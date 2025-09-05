@@ -1,145 +1,146 @@
 import QtQuick
+import QtQuick.Layouts
 import Quickshell
 import qs.Commons
 import qs.Services
 import qs.Widgets
 
-Row {
+RowLayout {
   id: root
 
   property ShellScreen screen
   property real scaling: 1.0
 
-  anchors.verticalCenter: parent.verticalCenter
+  Layout.alignment: Qt.AlignVCenter
   spacing: Style.marginS * scaling
 
   Rectangle {
-    // Let the Rectangle size itself based on its content (the Row)
-    width: row.width + Style.marginM * scaling * 2
+    Layout.preferredHeight: Math.round(Style.capsuleHeight * scaling)
+    Layout.preferredWidth: mainLayout.implicitWidth + Style.marginM * scaling * 2
+    Layout.alignment: Qt.AlignVCenter
 
-    height: Math.round(Style.capsuleHeight * scaling)
     radius: Math.round(Style.radiusM * scaling)
     color: Color.mSurfaceVariant
 
-    anchors.verticalCenter: parent.verticalCenter
-
-    Item {
-      id: mainContainer
+    RowLayout {
+      id: mainLayout
       anchors.fill: parent
       anchors.leftMargin: Style.marginS * scaling
       anchors.rightMargin: Style.marginS * scaling
+      spacing: Style.marginS * scaling
 
-      Row {
-        id: row
-        anchors.verticalCenter: parent.verticalCenter
-        spacing: Style.marginS * scaling
-        Row {
-          id: cpuUsageLayout
-          spacing: Style.marginXS * scaling
+      // CPU Usage Component
+      RowLayout {
+        id: cpuUsageLayout
+        spacing: Style.marginXS * scaling
+        Layout.alignment: Qt.AlignVCenter
 
-          NIcon {
-            id: cpuUsageIcon
-            text: "speed"
-            anchors.verticalCenter: parent.verticalCenter
-          }
-
-          NText {
-            id: cpuUsageText
-            text: `${SystemStatService.cpuUsage}%`
-            font.family: Settings.data.ui.fontFixed
-            font.pointSize: Style.fontSizeS * scaling
-            font.weight: Style.fontWeightMedium
-            anchors.verticalCenter: parent.verticalCenter
-            verticalAlignment: Text.AlignVCenter
-            color: Color.mPrimary
-          }
+        NIcon {
+          id: cpuUsageIcon
+          text: "speed"
+          Layout.alignment: Qt.AlignVCenter
         }
 
-        // CPU Temperature Component
-        Row {
-          id: cpuTempLayout
-          // spacing is thin here to compensate for the vertical thermometer icon
-          spacing: Style.marginXXS * scaling
+        NText {
+          id: cpuUsageText
+          text: `${SystemStatService.cpuUsage}%`
+          font.family: Settings.data.ui.fontFixed
+          font.pointSize: Style.fontSizeS * scaling
+          font.weight: Style.fontWeightMedium
+          Layout.alignment: Qt.AlignVCenter
+          verticalAlignment: Text.AlignVCenter
+          color: Color.mPrimary
+        }
+      }
 
-          NIcon {
-            text: "thermometer"
-            anchors.verticalCenter: parent.verticalCenter
-          }
+      // CPU Temperature Component
+      RowLayout {
+        id: cpuTempLayout
+        // spacing is thin here to compensate for the vertical thermometer icon
+        spacing: Style.marginXXS * scaling
+        Layout.alignment: Qt.AlignVCenter
 
-          NText {
-            text: `${SystemStatService.cpuTemp}°C`
-            font.family: Settings.data.ui.fontFixed
-            font.pointSize: Style.fontSizeS * scaling
-            font.weight: Style.fontWeightMedium
-            anchors.verticalCenter: parent.verticalCenter
-            verticalAlignment: Text.AlignVCenter
-            color: Color.mPrimary
-          }
+        NIcon {
+          text: "thermometer"
+          Layout.alignment: Qt.AlignVCenter
         }
 
-        // Memory Usage Component
-        Row {
-          id: memoryUsageLayout
-          spacing: Style.marginXS * scaling
+        NText {
+          text: `${SystemStatService.cpuTemp}°C`
+          font.family: Settings.data.ui.fontFixed
+          font.pointSize: Style.fontSizeS * scaling
+          font.weight: Style.fontWeightMedium
+          Layout.alignment: Qt.AlignVCenter
+          verticalAlignment: Text.AlignVCenter
+          color: Color.mPrimary
+        }
+      }
 
-          NIcon {
-            text: "memory"
-            anchors.verticalCenter: parent.verticalCenter
-          }
+      // Memory Usage Component
+      RowLayout {
+        id: memoryUsageLayout
+        spacing: Style.marginXS * scaling
+        Layout.alignment: Qt.AlignVCenter
 
-          NText {
-            text: `${SystemStatService.memoryUsageGb}G`
-            font.family: Settings.data.ui.fontFixed
-            font.pointSize: Style.fontSizeS * scaling
-            font.weight: Style.fontWeightMedium
-            anchors.verticalCenter: parent.verticalCenter
-            verticalAlignment: Text.AlignVCenter
-            color: Color.mPrimary
-          }
+        NIcon {
+          text: "memory"
+          Layout.alignment: Qt.AlignVCenter
         }
 
-        // Network Download Speed Component
-        Row {
-          id: networkDownloadLayout
-          spacing: Style.marginXS * scaling
-          visible: Settings.data.bar.showNetworkStats
+        NText {
+          text: `${SystemStatService.memoryUsageGb}G`
+          font.family: Settings.data.ui.fontFixed
+          font.pointSize: Style.fontSizeS * scaling
+          font.weight: Style.fontWeightMedium
+          Layout.alignment: Qt.AlignVCenter
+          verticalAlignment: Text.AlignVCenter
+          color: Color.mPrimary
+        }
+      }
 
-          NIcon {
-            text: "download"
-            anchors.verticalCenter: parent.verticalCenter
-          }
+      // Network Download Speed Component
+      RowLayout {
+        id: networkDownloadLayout
+        spacing: Style.marginXS * scaling
+        Layout.alignment: Qt.AlignVCenter
+        visible: Settings.data.bar.showNetworkStats
 
-          NText {
-            text: SystemStatService.formatSpeed(SystemStatService.rxSpeed)
-            font.family: Settings.data.ui.fontFixed
-            font.pointSize: Style.fontSizeS * scaling
-            font.weight: Style.fontWeightMedium
-            anchors.verticalCenter: parent.verticalCenter
-            verticalAlignment: Text.AlignVCenter
-            color: Color.mPrimary
-          }
+        NIcon {
+          text: "download"
+          Layout.alignment: Qt.AlignVCenter
         }
 
-        // Network Upload Speed Component
-        Row {
-          id: networkUploadLayout
-          spacing: Style.marginXS * scaling
-          visible: Settings.data.bar.showNetworkStats
+        NText {
+          text: SystemStatService.formatSpeed(SystemStatService.rxSpeed)
+          font.family: Settings.data.ui.fontFixed
+          font.pointSize: Style.fontSizeS * scaling
+          font.weight: Style.fontWeightMedium
+          Layout.alignment: Qt.AlignVCenter
+          verticalAlignment: Text.AlignVCenter
+          color: Color.mPrimary
+        }
+      }
 
-          NIcon {
-            text: "upload"
-            anchors.verticalCenter: parent.verticalCenter
-          }
+      // Network Upload Speed Component
+      RowLayout {
+        id: networkUploadLayout
+        spacing: Style.marginXS * scaling
+        Layout.alignment: Qt.AlignVCenter
+        visible: Settings.data.bar.showNetworkStats
 
-          NText {
-            text: SystemStatService.formatSpeed(SystemStatService.txSpeed)
-            font.family: Settings.data.ui.fontFixed
-            font.pointSize: Style.fontSizeS * scaling
-            font.weight: Style.fontWeightMedium
-            anchors.verticalCenter: parent.verticalCenter
-            verticalAlignment: Text.AlignVCenter
-            color: Color.mPrimary
-          }
+        NIcon {
+          text: "upload"
+          Layout.alignment: Qt.AlignVCenter
+        }
+
+        NText {
+          text: SystemStatService.formatSpeed(SystemStatService.txSpeed)
+          font.family: Settings.data.ui.fontFixed
+          font.pointSize: Style.fontSizeS * scaling
+          font.weight: Style.fontWeightMedium
+          Layout.alignment: Qt.AlignVCenter
+          verticalAlignment: Text.AlignVCenter
+          color: Color.mPrimary
         }
       }
     }
