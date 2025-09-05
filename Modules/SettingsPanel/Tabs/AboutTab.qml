@@ -60,7 +60,7 @@ ColumnLayout {
   Rectangle {
     Layout.alignment: Qt.AlignCenter
     Layout.topMargin: Style.marginS * scaling
-    Layout.preferredWidth: updateText.implicitWidth + 46 * scaling
+    Layout.preferredWidth: Math.round(updateRow.implicitWidth + (Style.marginL * scaling * 2))
     Layout.preferredHeight: Math.round(Style.barHeight * scaling)
     radius: Style.radiusL * scaling
     color: updateArea.containsMouse ? Color.mPrimary : Color.transparent
@@ -85,11 +85,12 @@ ColumnLayout {
     }
 
     RowLayout {
+      id: updateRow
       anchors.centerIn: parent
       spacing: Style.marginS * scaling
 
       NIcon {
-        text: "system_update"
+        text: "download"
         font.pointSize: Style.fontSizeXXL * scaling
         color: updateArea.containsMouse ? Color.mSurface : Color.mPrimary
       }
