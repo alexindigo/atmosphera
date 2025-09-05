@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
 import Quickshell.Io
@@ -6,7 +7,7 @@ import qs.Commons
 import qs.Services
 import qs.Widgets
 
-Row {
+RowLayout {
   id: root
 
   property ShellScreen screen
@@ -18,11 +19,16 @@ Row {
   // Use the shared service for keyboard layout
   property string currentLayout: KeyboardLayoutService.currentLayout
 
-  width: pill.width
-  height: pill.height
+  Layout.preferredWidth: pill.implicitWidth
+  Layout.preferredHeight: pill.implicitHeight
+  spacing: 0
 
   NPill {
     id: pill
+
+    Layout.alignment: Qt.AlignCenter
+    Layout.fillWidth: false
+    Layout.fillHeight: false
 
     rightOpen: BarWidgetRegistry.getNPillDirection(root)
     icon: "keyboard_alt"
@@ -33,7 +39,6 @@ Row {
     tooltipText: "Keyboard layout: " + currentLayout
 
     onClicked: {
-
       // You could open keyboard settings here if needed
       // For now, just show the current layout
     }
