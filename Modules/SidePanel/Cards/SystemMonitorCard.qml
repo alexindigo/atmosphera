@@ -11,7 +11,7 @@ NBox {
   Layout.preferredWidth: Style.baseWidgetSize * 2.625 * scaling
   implicitHeight: content.implicitHeight + Style.marginXS * 2 * scaling
 
-  Column {
+  ColumnLayout {
     id: content
     anchors.left: parent.left
     anchors.right: parent.right
