@@ -413,6 +413,9 @@ Singleton {
   }
 
   function handleConnectionError(ssid, error) {
+    if (error === "")
+      return
+
     connectingSsid = ""
     connectStatus = "error"
     connectStatusSsid = ssid
@@ -526,7 +529,7 @@ Singleton {
         root.isLoading = false
         scanProcess.existingProfiles = {}
 
-        Logger.log("Network", `Found ${Object.keys(networksMap).length} networks`)
+        Logger.log("Network", `Found ${Object.keys(networksMap).length} wireless networks`)
       }
     }
 
