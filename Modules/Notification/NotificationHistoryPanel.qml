@@ -44,6 +44,19 @@ NPanel {
         }
 
         NIconButton {
+          icon: Settings.data.notifications.doNotDisturb ? "notifications_off" : "notifications_active"
+          tooltipText: Settings.data.notifications.doNotDisturb ? "Do Not Disturb (ON)" : "Do Not Disturb (OFF)"
+          sizeRatio: 0.8
+          onClicked: {
+            Settings.data.notifications.doNotDisturb = !Settings.data.notifications.doNotDisturb
+            ToastService.showNotice(
+                  Settings.data.notifications.doNotDisturb ? "Do Not Disturb enabled" : "Do Not Disturb disabled",
+                  Settings.data.notifications.doNotDisturb ? "Notifications will be hidden but saved to history" : "Notifications will be shown normally",
+                  "notice", false, 2000)
+          }
+        }
+
+        NIconButton {
           icon: "delete"
           tooltipText: "Clear history"
           sizeRatio: 0.8

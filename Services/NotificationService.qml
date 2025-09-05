@@ -29,8 +29,8 @@ Singleton {
     // Signal when notification is received
     onNotification: function (notification) {
 
-      // Check if notifications are suppressed
-      if (Settings.data.notifications && Settings.data.notifications.suppressed) {
+      // Check if do-not-disturb is enabled
+      if (Settings.data.notifications && Settings.data.notifications.doNotDisturb) {
         // Still add to history but don't show notification
         root.addToHistory(notification)
         return

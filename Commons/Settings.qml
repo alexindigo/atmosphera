@@ -296,6 +296,7 @@ Singleton {
 
       // notifications
       property JsonObject notifications: JsonObject {
+        property bool doNotDisturb: false
         property list<string> monitors: []
       }
 
