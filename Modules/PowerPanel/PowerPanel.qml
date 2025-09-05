@@ -264,7 +264,7 @@ NPanel {
       }
 
       // Text content in the middle
-      Column {
+      ColumnLayout {
         anchors.left: iconElement.right
         anchors.right: pendingIndicator.visible ? pendingIndicator.left : parent.right
         anchors.verticalCenter: parent.verticalCenter
