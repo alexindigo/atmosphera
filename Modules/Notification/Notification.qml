@@ -93,7 +93,10 @@ Variants {
           model: notificationModel
           delegate: Rectangle {
             width: 360 * scaling
-            height: Math.max(80 * scaling, contentRow.implicitHeight + (Style.marginL * 2 * scaling))
+            height: Math.max(
+                      80 * scaling,
+                      contentRow.implicitHeight + (actionsRow.visible ? actionsRow.implicitHeight + Style.marginM
+                                                                        * scaling : 0) + (Style.marginL * 2 * scaling))
             clip: true
             radius: Style.radiusL * scaling
             border.color: Color.mOutline
@@ -156,92 +159,148 @@ Variants {
               }
             }
 
-            RowLayout {
-              id: contentRow
+            ColumnLayout {
               anchors.fill: parent
               anchors.margins: Style.marginM * scaling
               spacing: Style.marginM * scaling
 
-              // Right: header on top, then avatar + texts
-              ColumnLayout {
-                id: textColumn
-                spacing: Style.marginS * scaling
+              RowLayout {
+                id: contentRow
+                spacing: Style.marginM * scaling
                 Layout.fillWidth: true
 
-                RowLayout {
+                // Right: header on top, then avatar + texts
+                ColumnLayout {
+                  id: textColumn
                   spacing: Style.marginS * scaling
-                  id: appHeaderRow
-                  NText {
-                    text: `${(model.appName || model.desktopEntry)
-                          || "Unknown App"} · ${NotificationService.formatTimestamp(model.timestamp)}`
-                    color: Color.mSecondary
-                    font.pointSize: Style.fontSizeXS * scaling
-                  }
-                  Rectangle {
-                    width: 6 * scaling
-                    height: 6 * scaling
-                    radius: Style.radiusXS * scaling
-                    color: (model.urgency === NotificationUrgency.Critical) ? Color.mError : (model.urgency === NotificationUrgency.Low) ? Color.mOnSurface : Color.mPrimary
-                    Layout.alignment: Qt.AlignVCenter
-                  }
-                  Item {
-                    Layout.fillWidth: true
-                  }
-                }
+                  Layout.fillWidth: true
 
-                RowLayout {
-                  id: bodyRow
-                  spacing: Style.marginM * scaling
-
-                  NImageCircled {
-                    id: appAvatar
-                    Layout.preferredWidth: 40 * scaling
-                    Layout.preferredHeight: 40 * scaling
-                    Layout.alignment: Qt.AlignTop
-                    anchors.topMargin: textContent.childrenRect.y
-                    imagePath: model.image && model.image !== "" ? model.image : ""
-                    fallbackIcon: ""
-                    borderColor: Color.transparent
-                    borderWidth: 0
-                    visible: (model.image && model.image !== "")
-                    Layout.fillWidth: false
-                    Layout.fillHeight: false
-                  }
-
-                  Column {
-                    id: textContent
+                  RowLayout {
                     spacing: Style.marginS * scaling
-                    Layout.fillWidth: true
-                    // Ensure a concrete width so text wraps
-                    width: (textColumn.width - (appAvatar.visible ? (appAvatar.width + Style.marginM * scaling) : 0))
-
+                    id: appHeaderRow
                     NText {
-                      text: model.summary || "No summary"
-                      font.pointSize: Style.fontSizeL * scaling
-                      font.weight: Style.fontWeightMedium
-                      color: Color.mOnSurface
-                      wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                      text: `${(model.appName || model.desktopEntry)
+                            || "Unknown App"} · ${NotificationService.formatTimestamp(model.timestamp)}`
+                      color: Color.mSecondary
+                      font.pointSize: Style.fontSizeXS * scaling
+                    }
+                    Rectangle {
+                      width: 6 * scaling
+                      height: 6 * scaling
+                      radius: Style.radiusXS * scaling
+                      color: (model.urgency === NotificationUrgency.Critical) ? Color.mError : (model.urgency === NotificationUrgency.Low) ? Color.mOnSurface : Color.mPrimary
+                      Layout.alignment: Qt.AlignVCenter
+                    }
+                    Item {
                       Layout.fillWidth: true
-                      width: parent.width
-                      maximumLineCount: 3
-                      elide: Text.ElideRight
+                    }
+                  }
+
+                  RowLayout {
+                    id: bodyRow
+                    spacing: Style.marginM * scaling
+
+                    NImageCircled {
+                      id: appAvatar
+                      Layout.preferredWidth: 40 * scaling
+                      Layout.preferredHeight: 40 * scaling
+                      Layout.alignment: Qt.AlignTop
+                      anchors.topMargin: textContent.childrenRect.y
+                      imagePath: model.image && model.image !== "" ? model.image : ""
+                      fallbackIcon: ""
+                      borderColor: Color.transparent
+                      borderWidth: 0
+                      visible: (model.image && model.image !== "")
+                      Layout.fillWidth: false
+                      Layout.fillHeight: false
                     }
 
-                    NText {
-                      text: model.body || ""
-                      font.pointSize: Style.fontSizeM * scaling
-                      color: Color.mOnSurface
-                      wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                    Column {
+                      id: textContent
+                      spacing: Style.marginS * scaling
                       Layout.fillWidth: true
-                      width: parent.width
-                      maximumLineCount: 5
-                      elide: Text.ElideRight
+                      // Ensure a concrete width so text wraps
+                      width: (textColumn.width - (appAvatar.visible ? (appAvatar.width + Style.marginM * scaling) : 0))
+
+                      NText {
+                        text: model.summary || "No summary"
+                        font.pointSize: Style.fontSizeL * scaling
+                        font.weight: Style.fontWeightMedium
+                        color: Color.mOnSurface
+                        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                        Layout.fillWidth: true
+                        width: parent.width
+                        maximumLineCount: 3
+                        elide: Text.ElideRight
+                      }
+
+                      NText {
+                        text: model.body || ""
+                        font.pointSize: Style.fontSizeM * scaling
+                        color: Color.mOnSurface
+                        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                        Layout.fillWidth: true
+                        width: parent.width
+                        maximumLineCount: 5
+                        elide: Text.ElideRight
+                      }
                     }
                   }
                 }
               }
 
-              // Actions removed
+              // Notification actions - positioned below the main content
+              RowLayout {
+                id: actionsRow
+                Layout.fillWidth: true
+                spacing: Style.marginS * scaling
+                visible: model.rawNotification && model.rawNotification.actions
+                         && model.rawNotification.actions.length > 0
+
+                property var notificationActions: model.rawNotification ? model.rawNotification.actions : []
+
+                Component.onCompleted: {
+                  console.log("Actions row created, rawNotification:", model.rawNotification)
+                  if (model.rawNotification) {
+                    console.log("Actions:", model.rawNotification.actions)
+                    console.log("Actions length:",
+                                model.rawNotification.actions ? model.rawNotification.actions.length : "null")
+                  }
+                }
+
+                Repeater {
+                  model: actionsRow.notificationActions
+
+                  delegate: NButton {
+                    text: {
+                      var actionText = modelData.text || "Action"
+                      // If text contains comma, take the part after the comma (the display text)
+                      if (actionText.includes(",")) {
+                        return actionText.split(",")[1] || actionText
+                      }
+                      return actionText
+                    }
+                    fontSize: Style.fontSizeS * scaling
+                    backgroundColor: Color.mPrimary
+                    textColor: Color.mOnPrimary
+                    hoverColor: Color.mSecondary
+                    pressColor: Color.mTertiary
+                    outlined: false
+                    customHeight: 32 * scaling
+
+                    Component.onCompleted: {
+                      console.log("Action button created:", modelData.text, "Display text:", text)
+                    }
+
+                    onClicked: {
+                      console.log("Action clicked:", modelData.text)
+                      if (modelData && modelData.invoke) {
+                        modelData.invoke()
+                      }
+                    }
+                  }
+                }
+              }
             }
 
             NIconButton {
