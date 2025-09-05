@@ -22,7 +22,7 @@ Singleton {
     if (bytesPerSecond < 1024) {
       return bytesPerSecond.toFixed(0) + "B/s"
     } else if (bytesPerSecond < 1024 * 1024) {
-      return (bytesPerSecond / 1024).toFixed(1) + "KB/s"
+      return (bytesPerSecond / 1024).toFixed(0) + "KB/s"
     } else if (bytesPerSecond < 1024 * 1024 * 1024) {
       return (bytesPerSecond / (1024 * 1024)).toFixed(1) + "MB/s"
     } else {
