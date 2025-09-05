@@ -22,9 +22,11 @@ ColumnLayout {
       fallbackIcon: "person"
       borderColor: Color.mPrimary
       borderWidth: Math.max(1, Style.borderM * scaling)
+      Layout.alignment: Qt.AlignTop
     }
 
     NTextInput {
+      Layout.fillWidth: true
       label: `${Quickshell.env("USER") || "user"}'s profile picture`
       description: "Your profile picture that appears throughout the interface."
       text: Settings.data.general.avatarImage

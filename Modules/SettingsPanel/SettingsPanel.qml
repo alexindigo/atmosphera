@@ -477,25 +477,23 @@ NPanel {
                   }
                 }
 
-                sourceComponent: ColumnLayout {
-                  ScrollView {
-                    id: scrollView
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-                    ScrollBar.vertical.policy: ScrollBar.AsNeeded
-                    padding: Style.marginL * scaling
-                    clip: true
+                sourceComponent: ScrollView {
+                  id: scrollView
+                  Layout.fillWidth: true
+                  Layout.fillHeight: true
+                  ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+                  ScrollBar.vertical.policy: ScrollBar.AsNeeded
+                  padding: Style.marginL * scaling
+                  clip: true
 
-                    Component.onCompleted: {
-                      root.activeScrollView = scrollView
-                    }
+                  Component.onCompleted: {
+                    root.activeScrollView = scrollView
+                  }
 
-                    Loader {
-                      active: true
-                      sourceComponent: root.tabsModel[index].source
-                      width: scrollView.availableWidth
-                    }
+                  Loader {
+                    active: true
+                    sourceComponent: root.tabsModel[index].source
+                    width: scrollView.availableWidth
                   }
                 }
               }

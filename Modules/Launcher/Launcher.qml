@@ -243,52 +243,45 @@ NPanel {
       anchors.margins: Style.marginL * scaling
       spacing: Style.marginM * scaling
 
-      Item {
-        id: searchInputWrap
+      NTextInput {
+        id: searchInput
         Layout.fillWidth: true
-        Layout.preferredHeight: Math.round(Style.barHeight * scaling)
 
-        NTextInput {
-          id: searchInput
-          anchors.fill: parent
-          inputMaxWidth: Number.MAX_SAFE_INTEGER
+        fontSize: Style.fontSizeL * scaling
+        fontWeight: Style.fontWeightSemiBold
 
-          fontSize: Style.fontSizeL * scaling
-          fontWeight: Style.fontWeightSemiBold
+        text: searchText
+        placeholderText: "Search entries... or use > for commands"
 
-          text: searchText
-          placeholderText: "Search entries... or use > for commands"
+        onTextChanged: searchText = text
 
-          onTextChanged: searchText = text
+        Component.onCompleted: {
+          if (searchInput.inputItem && searchInput.inputItem.visible) {
+            searchInput.inputItem.forceActiveFocus()
 
-          Component.onCompleted: {
-            if (searchInput.inputItem && searchInput.inputItem.visible) {
-              searchInput.inputItem.forceActiveFocus()
-
-              // Override the TextField's default Home/End behavior
-              searchInput.inputItem.Keys.priority = Keys.BeforeItem
-              searchInput.inputItem.Keys.onPressed.connect(function (event) {
-                // Intercept Home and End BEFORE the TextField handles them
-                if (event.key === Qt.Key_Home) {
-                  ui.selectFirst()
-                  event.accepted = true
-                  return
-                } else if (event.key === Qt.Key_End) {
-                  ui.selectLast()
-                  event.accepted = true
-                  return
-                }
-              })
-              searchInput.inputItem.Keys.onDownPressed.connect(function (event) {
-                ui.selectNext()
-              })
-              searchInput.inputItem.Keys.onUpPressed.connect(function (event) {
-                ui.selectPrevious()
-              })
-              searchInput.inputItem.Keys.onReturnPressed.connect(function (event) {
-                ui.activate()
-              })
-            }
+            // Override the TextField's default Home/End behavior
+            searchInput.inputItem.Keys.priority = Keys.BeforeItem
+            searchInput.inputItem.Keys.onPressed.connect(function (event) {
+              // Intercept Home and End BEFORE the TextField handles them
+              if (event.key === Qt.Key_Home) {
+                ui.selectFirst()
+                event.accepted = true
+                return
+              } else if (event.key === Qt.Key_End) {
+                ui.selectLast()
+                event.accepted = true
+                return
+              }
+            })
+            searchInput.inputItem.Keys.onDownPressed.connect(function (event) {
+              ui.selectNext()
+            })
+            searchInput.inputItem.Keys.onUpPressed.connect(function (event) {
+              ui.selectPrevious()
+            })
+            searchInput.inputItem.Keys.onReturnPressed.connect(function (event) {
+              ui.activate()
+            })
           }
         }
       }

@@ -278,7 +278,6 @@ ColumnLayout {
         NTextInput {
           label: "Custom Interval"
           description: "Enter time as HH:MM (e.g., 01:30)."
-          inputMaxWidth: 100 * scaling
           text: {
             const s = Settings.data.wallpaper.randomIntervalSec
             const h = Math.floor(s / 3600)
