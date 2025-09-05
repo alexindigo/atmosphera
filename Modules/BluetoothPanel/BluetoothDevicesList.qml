@@ -96,7 +96,7 @@ ColumnLayout {
 
           // Signal Strength
           RowLayout {
-            visible: modelData.signalStrength !== undefined 
+            visible: modelData.signalStrength !== undefined
             Layout.fillWidth: true
             spacing: Style.marginXS * scaling
 
@@ -115,8 +115,7 @@ ColumnLayout {
             }
 
             NText {
-              visible: modelData.signalStrength > 0 && !modelData.pairing
-                       && !modelData.blocked
+              visible: modelData.signalStrength > 0 && !modelData.pairing && !modelData.blocked
               text: (modelData.signalStrength !== undefined
                      && modelData.signalStrength > 0) ? modelData.signalStrength + "%" : ""
               font.pointSize: Style.fontSizeXS * scaling
@@ -171,10 +170,9 @@ ColumnLayout {
               BluetoothService.disconnectDevice(modelData)
             } else {
               BluetoothService.connectDeviceWithTrust(modelData)
-            }            
+            }
           }
-          onRightClicked:
- {
+          onRightClicked: {
             BluetoothService.forgetDevice(modelData)
           }
         }

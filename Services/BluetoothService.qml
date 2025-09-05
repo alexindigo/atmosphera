@@ -120,7 +120,6 @@ Singleton {
     return ""
   }
 
-
   function getSignalStrength(device) {
     if (!device || device.signalStrength === undefined || device.signalStrength <= 0) {
       return "Signal: Unknown"

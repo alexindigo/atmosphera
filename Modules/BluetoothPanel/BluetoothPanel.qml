@@ -97,7 +97,7 @@ NPanel {
           // Known devices
           BluetoothDevicesList {
             label: "Known devices"
-            tooltipText: "Left click to connect, right click to forget"
+            tooltipText: "Left click to connect.\nRight click to forget."
             property var items: {
               if (!BluetoothService.adapter || !Bluetooth.devices)
                 return []
@@ -124,9 +124,9 @@ NPanel {
             Layout.fillWidth: true
           }
 
-          // Fallback
+          // Fallback - No devices, scanning
           ColumnLayout {
-            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignHCenter
             spacing: Style.marginM * scaling
             visible: {
               if (!BluetoothService.adapter || !BluetoothService.adapter.discovering || !Bluetooth.devices) {
@@ -144,11 +144,11 @@ NPanel {
 
             RowLayout {
               Layout.alignment: Qt.AlignHCenter
-              spacing: Style.marginM * scaling
+              spacing: Style.marginXS * scaling
 
               NIcon {
                 text: "sync"
-                font.pointSize: Style.fontSizeXLL * 1.5 * scaling
+                font.pointSize: Style.fontSizeXXL * 1.5 * scaling
                 color: Color.mPrimary
 
                 RotationAnimation on rotation {
@@ -164,12 +164,11 @@ NPanel {
                 text: "Scanning for devices..."
                 font.pointSize: Style.fontSizeL * scaling
                 color: Color.mOnSurface
-                font.weight: Style.fontWeightMedium
               }
             }
 
             NText {
-              text: "Make sure your device is in pairing mode"
+              text: "Make sure your device is in pairing mode."
               font.pointSize: Style.fontSizeM * scaling
               color: Color.mOnSurfaceVariant
               Layout.alignment: Qt.AlignHCenter
