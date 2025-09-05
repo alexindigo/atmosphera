@@ -18,7 +18,7 @@ Singleton {
   property bool ethernet: false
   property int retryCount: 0
   property int maxRetries: 3
-  
+
   // File path for persistent storage
   property string cacheFile: Settings.cacheDir + "network.json"
 
@@ -38,7 +38,7 @@ Singleton {
         autoConnectTimer.start()
       }
     }
-    onLoadFailed: function(error) {
+    onLoadFailed: function (error) {
       Logger.log("Network", "No existing cache found, creating new one")
       // Initialize with empty data
       adapter.knownNetworks = ({})
@@ -63,7 +63,7 @@ Singleton {
 
   Component.onCompleted: {
     Logger.log("Network", "Service started")
-    
+
     if (Settings.data.network.wifiEnabled) {
       refreshNetworks()
     }
@@ -71,15 +71,23 @@ Singleton {
 
   // Signal strength icon mapping
   function signalIcon(signal) {
-    const levels = [
-      { threshold: 80, icon: "network_wifi" },
-      { threshold: 60, icon: "network_wifi_3_bar" },
-      { threshold: 40, icon: "network_wifi_2_bar" },
-      { threshold: 20, icon: "network_wifi_1_bar" }
-    ]
-    
+    const levels = [{
+                      "threshold": 80,
+                      "icon": "network_wifi"
+                    }, {
+                      "threshold": 60,
+                      "icon": "network_wifi_3_bar"
+                    }, {
+                      "threshold": 40,
+                      "icon": "network_wifi_2_bar"
+                    }, {
+                      "threshold": 20,
+                      "icon": "network_wifi_1_bar"
+                    }]
+
     for (const level of levels) {
-      if (signal >= level.threshold) return level.icon
+      if (signal >= level.threshold)
+        return level.icon
     }
     return "signal_wifi_0_bar"
   }
@@ -90,8 +98,9 @@ Singleton {
 
   // Enhanced refresh with retry logic
   function refreshNetworks() {
-    if (isLoading) return
-    
+    if (isLoading)
+      return
+
     isLoading = true
     retryCount = 0
     adapter.lastRefresh = Date.now()
@@ -137,20 +146,20 @@ Singleton {
   // Forget network function
   function forgetNetwork(ssid) {
     Logger.log("Network", `Forgetting network: ${ssid}`)
-    
+
     // Remove from cache
     let known = adapter.knownNetworks
     delete known[ssid]
     adapter.knownNetworks = known
-    
+
     // Clear last connected if it's this network
     if (adapter.lastConnected === ssid) {
       adapter.lastConnected = ""
     }
-    
+
     // Save changes
     saveTimer.restart()
-    
+
     // Remove NetworkManager profile
     forgetProcess.ssid = ssid
     forgetProcess.running = true
@@ -161,14 +170,14 @@ Singleton {
     property string ssid: ""
     running: false
     command: ["nmcli", "connection", "delete", "id", ssid]
-    
+
     stdout: StdioCollector {
       onStreamFinished: {
         Logger.log("Network", `Successfully forgot network: ${forgetProcess.ssid}`)
         refreshNetworks()
       }
     }
-    
+
     stderr: StdioCollector {
       onStreamFinished: {
         if (text.includes("no such connection profile")) {
@@ -197,7 +206,7 @@ Singleton {
           break
         }
       }
-      
+
       wifiRadioProcess.action = "off"
       wifiRadioProcess.running = true
     }
@@ -209,7 +218,7 @@ Singleton {
     property string action: "on"
     running: false
     command: ["nmcli", "radio", "wifi", action]
-    
+
     onRunningChanged: {
       if (!running) {
         if (action === "on") {
@@ -220,7 +229,7 @@ Singleton {
         }
       }
     }
-    
+
     stderr: StdioCollector {
       onStreamFinished: {
         if (text.trim()) {
@@ -259,26 +268,26 @@ Singleton {
     connectStatus = ""
     connectStatusSsid = ssid
     connectError = ""
-    
+
     // Check if profile exists
     if (networks[ssid]?.existing) {
       connectToExisting(ssid)
       return
     }
-    
+
     // Check cache for known network
     const known = adapter.knownNetworks[ssid]
     if (known?.profileName) {
       connectToExisting(known.profileName)
       return
     }
-    
+
     // New connection - need password for secured networks
     if (isSecured(security)) {
       // Password will be provided through submitPassword
       return
     }
-    
+
     // Open network - connect directly
     createAndConnect(ssid, "", security)
   }
@@ -296,7 +305,7 @@ Singleton {
 
   function createAndConnect(ssid, password, security) {
     connectingSsid = ssid
-    
+
     connectProcess.ssid = ssid
     connectProcess.password = password
     connectProcess.isSecured = isSecured(security)
@@ -315,7 +324,7 @@ Singleton {
     property string password: ""
     property bool isSecured: false
     running: false
-    
+
     command: {
       const cmd = ["nmcli", "device", "wifi", "connect", ssid]
       if (isSecured && password) {
@@ -323,13 +332,13 @@ Singleton {
       }
       return cmd
     }
-    
+
     stdout: StdioCollector {
       onStreamFinished: {
         handleConnectionSuccess(connectProcess.ssid)
       }
     }
-    
+
     stderr: StdioCollector {
       onStreamFinished: {
         handleConnectionError(connectProcess.ssid, text)
@@ -342,13 +351,13 @@ Singleton {
     property string profileName: ""
     running: false
     command: ["nmcli", "connection", "up", "id", profileName]
-    
+
     stdout: StdioCollector {
       onStreamFinished: {
         handleConnectionSuccess(upConnectionProcess.profileName)
       }
     }
-    
+
     stderr: StdioCollector {
       onStreamFinished: {
         handleConnectionError(upConnectionProcess.profileName, text)
@@ -361,7 +370,7 @@ Singleton {
     property string ssid: ""
     running: false
     command: ["nmcli", "connection", "down", "id", ssid]
-    
+
     onRunningChanged: {
       if (!running) {
         connectingSsid = ""
@@ -371,7 +380,7 @@ Singleton {
         refreshNetworks()
       }
     }
-    
+
     stderr: StdioCollector {
       onStreamFinished: {
         if (text.trim()) {
@@ -387,18 +396,18 @@ Singleton {
     connectStatus = "success"
     connectStatusSsid = ssid
     connectError = ""
-    
+
     // Update cache
     let known = adapter.knownNetworks
     known[ssid] = {
-      profileName: ssid,
-      lastConnected: Date.now(),
-      autoConnect: true
+      "profileName": ssid,
+      "lastConnected": Date.now(),
+      "autoConnect": true
     }
     adapter.knownNetworks = known
     adapter.lastConnected = ssid
     saveTimer.restart()
-    
+
     Logger.log("Network", `Successfully connected to ${ssid}`)
     refreshNetworks()
   }
@@ -408,7 +417,7 @@ Singleton {
     connectStatus = "error"
     connectStatusSsid = ssid
     connectError = parseError(error)
-    
+
     Logger.warn("Network", `Failed to connect to ${ssid}: ${error}`)
   }
 
@@ -435,24 +444,29 @@ Singleton {
     id: existingNetworkProcess
     running: false
     command: ["nmcli", "-t", "-f", "NAME,TYPE", "connection", "show"]
-    
+
     stdout: StdioCollector {
       onStreamFinished: {
         const profiles = {}
         const lines = text.split("\n").filter(l => l.trim())
-        
+
         for (const line of lines) {
-          const [name, type] = line.split(":")
+          const parts = line.split(":")
+          const name = parts[0]
+          const type = parts[1]
           if (name && type === "802-11-wireless") {
-            profiles[name] = { ssid: name, type: type }
+            profiles[name] = {
+              "ssid": name,
+              "type": type
+            }
           }
         }
-        
+
         scanProcess.existingProfiles = profiles
         scanProcess.running = true
       }
     }
-    
+
     stderr: StdioCollector {
       onStreamFinished: {
         if (text.trim()) {
@@ -468,49 +482,54 @@ Singleton {
     property var existingProfiles: ({})
     running: false
     command: ["nmcli", "-t", "-f", "SSID,SECURITY,SIGNAL,IN-USE", "device", "wifi", "list"]
-    
+
     stdout: StdioCollector {
       onStreamFinished: {
         const networksMap = {}
         const lines = text.split("\n").filter(l => l.trim())
-        
+
         for (const line of lines) {
           const parts = line.split(":")
-          if (parts.length < 4) continue
-          
-          const [ssid, security, signalStr, inUse] = parts
-          if (!ssid) continue
-          
+          if (parts.length < 4)
+          continue
+
+          const ssid = parts[0]
+          const security = parts[1]
+          const signalStr = parts[2]
+          const inUse = parts[3]
+          if (!ssid)
+          continue
+
           const signal = parseInt(signalStr) || 0
           const connected = inUse === "*"
-          
+
           // Update last connected if we find the connected network
           if (connected && adapter.lastConnected !== ssid) {
             adapter.lastConnected = ssid
             saveTimer.restart()
           }
-          
+
           // Merge with existing or create new
           if (!networksMap[ssid] || signal > networksMap[ssid].signal) {
             networksMap[ssid] = {
-              ssid: ssid,
-              security: security || "--",
-              signal: signal,
-              connected: connected,
-              existing: ssid in scanProcess.existingProfiles,
-              cached: ssid in adapter.knownNetworks
+              "ssid": ssid,
+              "security": security || "--",
+              "signal": signal,
+              "connected": connected,
+              "existing": ssid in scanProcess.existingProfiles,
+              "cached": ssid in adapter.knownNetworks
             }
           }
         }
-        
+
         root.networks = networksMap
         root.isLoading = false
         scanProcess.existingProfiles = {}
-        
+
         Logger.log("Network", `Found ${Object.keys(networksMap).length} networks`)
       }
     }
-    
+
     stderr: StdioCollector {
       onStreamFinished: {
         if (text.trim()) {
@@ -525,13 +544,13 @@ Singleton {
     id: checkEthernet
     running: false
     command: ["nmcli", "-t", "-f", "DEVICE,TYPE,STATE", "device"]
-    
+
     stdout: StdioCollector {
       onStreamFinished: {
         root.ethernet = text.split("\n").some(line => {
-          const parts = line.split(":")
-          return parts[1] === "ethernet" && parts[2] === "connected"
-        })
+                                                const parts = line.split(":")
+                                                return parts[1] === "ethernet" && parts[2] === "connected"
+                                              })
       }
     }
   }
@@ -545,7 +564,7 @@ Singleton {
       // Only refresh if we should
       const now = Date.now()
       const timeSinceLastRefresh = now - adapter.lastRefresh
-      
+
       // Refresh if: connected, or it's been more than 30 seconds
       if (hasActiveConnection || timeSinceLastRefresh > 30000) {
         refreshNetworks()

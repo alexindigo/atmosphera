@@ -139,7 +139,8 @@ NPanel {
           ColumnLayout {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-            visible: Settings.data.network.wifiEnabled && NetworkService.isLoading && Object.keys(NetworkService.networks).length === 0
+            visible: Settings.data.network.wifiEnabled && NetworkService.isLoading && Object.keys(
+                       NetworkService.networks).length === 0
             spacing: Style.marginM * scaling
 
             NBusyIndicator {
@@ -193,15 +194,18 @@ NPanel {
           // Network list
           Repeater {
             model: {
-              if (!Settings.data.network.wifiEnabled || NetworkService.isLoading) return []
-              
+              if (!Settings.data.network.wifiEnabled || NetworkService.isLoading)
+                return []
+
               // Sort networks: connected first, then by signal strength
               const nets = Object.values(NetworkService.networks)
               return nets.sort((a, b) => {
-                if (a.connected && !b.connected) return -1
-                if (!a.connected && b.connected) return 1
-                return b.signal - a.signal
-              })
+                                 if (a.connected && !b.connected)
+                                 return -1
+                                 if (!a.connected && b.connected)
+                                 return 1
+                                 return b.signal - a.signal
+                               })
             }
 
             Item {
@@ -213,7 +217,8 @@ NPanel {
                 width: parent.width
                 implicitHeight: networkContent.implicitHeight + (Style.marginM * scaling * 2)
                 radius: Style.radiusM * scaling
-                color: modelData.connected ? Qt.rgba(Color.mPrimary.r, Color.mPrimary.g, Color.mPrimary.b, 0.05) : Color.mSurface
+                color: modelData.connected ? Qt.rgba(Color.mPrimary.r, Color.mPrimary.g, Color.mPrimary.b,
+                                                     0.05) : Color.mSurface
                 border.width: Math.max(1, Style.borderS * scaling)
                 border.color: modelData.connected ? Color.mPrimary : Color.mOutline
                 clip: true
@@ -254,7 +259,8 @@ NPanel {
 
                       NText {
                         text: {
-                          const security = modelData.security && modelData.security !== "--" ? modelData.security : "Open"
+                          const security = modelData.security
+                                         && modelData.security !== "--" ? modelData.security : "Open"
                           const signal = `${modelData.signal}%`
                           return `${signal} • ${security}`
                         }
@@ -333,7 +339,8 @@ NPanel {
                           visible: !modelData.connected && (expandedNetwork !== modelData.ssid || !showPasswordPrompt)
                           outlined: !hovered
                           fontSize: Style.fontSizeXS * scaling
-                          text: modelData.existing ? "Connect" : (NetworkService.isSecured(modelData.security) ? "Password" : "Connect")
+                          text: modelData.existing ? "Connect" : (NetworkService.isSecured(
+                                                                    modelData.security) ? "Password" : "Connect")
                           icon: "wifi"
                           onClicked: {
                             if (modelData.existing || !NetworkService.isSecured(modelData.security)) {
@@ -447,12 +454,15 @@ NPanel {
 
                   // Forget network option - appears when saved badge is clicked
                   RowLayout {
-                    visible: (modelData.existing || modelData.cached) && expandedNetwork === modelData.ssid && !showPasswordPrompt
+                    visible: (modelData.existing || modelData.cached) && expandedNetwork === modelData.ssid
+                             && !showPasswordPrompt
                     Layout.fillWidth: true
                     Layout.topMargin: Style.marginXS * scaling
                     spacing: Style.marginS * scaling
 
-                    Item { Layout.fillWidth: true }
+                    Item {
+                      Layout.fillWidth: true
+                    }
 
                     NButton {
                       id: forgetButton
@@ -478,7 +488,8 @@ NPanel {
           ColumnLayout {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-            visible: Settings.data.network.wifiEnabled && !NetworkService.isLoading && Object.keys(NetworkService.networks).length === 0
+            visible: Settings.data.network.wifiEnabled && !NetworkService.isLoading && Object.keys(
+                       NetworkService.networks).length === 0
             spacing: Style.marginM * scaling
 
             NIcon {
