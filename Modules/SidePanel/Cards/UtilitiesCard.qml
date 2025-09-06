@@ -26,7 +26,7 @@ NBox {
     // Screen Recorder
     NIconButton {
       icon: "videocam"
-      tooltipText: ScreenRecorderService.isRecording ? "Stop screen recording" : "Start screen recording"
+      tooltipText: ScreenRecorderService.isRecording ? "Stop screen recording." : "Start screen recording."
       colorBg: ScreenRecorderService.isRecording ? Color.mPrimary : Color.mSurfaceVariant
       colorFg: ScreenRecorderService.isRecording ? Color.mOnPrimary : Color.mPrimary
       onClicked: {
@@ -42,7 +42,7 @@ NBox {
     // Idle Inhibitor
     NIconButton {
       icon: "coffee"
-      tooltipText: IdleInhibitorService.isInhibited ? "Disable keep awake" : "Enable keep awake"
+      tooltipText: IdleInhibitorService.isInhibited ? "Disable keep awake." : "Enable keep awake."
       colorBg: IdleInhibitorService.isInhibited ? Color.mPrimary : Color.mSurfaceVariant
       colorFg: IdleInhibitorService.isInhibited ? Color.mOnPrimary : Color.mPrimary
       onClicked: {
@@ -54,7 +54,7 @@ NBox {
     NIconButton {
       visible: Settings.data.wallpaper.enabled
       icon: "image"
-      tooltipText: "Left click: Open wallpaper selector\nRight click: Set random wallpaper"
+      tooltipText: "Left click: Open wallpaper selector.\nRight click: Set random wallpaper."
       onClicked: {
         var settingsPanel = PanelService.getPanel("settingsPanel")
         settingsPanel.requestedTab = SettingsPanel.Tab.WallpaperSelector

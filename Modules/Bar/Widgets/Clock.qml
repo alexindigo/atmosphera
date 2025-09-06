@@ -23,7 +23,7 @@ Rectangle {
 
     NTooltip {
       id: tooltip
-      text: Time.dateString
+      text: `${Time.dateString}.`
       target: clock
       positionAbove: Settings.data.bar.position === "bottom"
     }

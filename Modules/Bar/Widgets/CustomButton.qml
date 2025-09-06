@@ -47,13 +47,13 @@ NIconButton {
     } else {
       var lines = []
       if (userLeftClickExec !== "") {
-        lines.push(`Left click: <i>${userLeftClickExec}</i>`)
+        lines.push(`Left click: <i>${userLeftClickExec}</i>.`)
       }
       if (userRightClickExec !== "") {
-        lines.push(`Right click: <i>${userRightClickExec}</i>`)
+        lines.push(`Right click: <i>${userRightClickExec}</i>.`)
       }
       if (userMiddleClickExec !== "") {
-        lines.push(`Middle click: <i>${userMiddleClickExec}</i>`)
+        lines.push(`Middle click: <i>${userMiddleClickExec}</i>.`)
       }
       return lines.join("<br/>")
     }
