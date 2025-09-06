@@ -14,16 +14,11 @@ NPanel {
   panelHeight: 500 * scaling
   panelKeyboardFocus: true
 
-  property string passwordPromptSsid: ""
+  property string passwordSsid: ""
   property string passwordInput: ""
-  property bool showPasswordPrompt: false
-  property string expandedNetwork: "" // Track which network shows options
+  property string expandedSsid: ""
 
-  onOpened: {
-    if (Settings.data.network.wifiEnabled) {
-      NetworkService.refreshNetworks()
-    }
-  }
+  onOpened: NetworkService.scan()
 
   panelContent: Rectangle {
     color: Color.transparent
@@ -39,9 +34,9 @@ NPanel {
         spacing: Style.marginM * scaling
 
         NIcon {
-          text: "wifi"
+          text: Settings.data.network.wifiEnabled ? "wifi" : "wifi_off"
           font.pointSize: Style.fontSizeXXL * scaling
-          color: Color.mPrimary
+          color: Settings.data.network.wifiEnabled ? Color.mPrimary : Color.mOnSurfaceVariant
         }
 
         NText {
@@ -50,15 +45,21 @@ NPanel {
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface
           Layout.fillWidth: true
-          Layout.leftMargin: Style.marginS * scaling
+        }
+
+        NToggle {
+          id: wifiSwitch
+          checked: Settings.data.network.wifiEnabled
+          onToggled: checked => NetworkService.setWifiEnabled(checked)
+          baseSize: Style.baseWidgetSize * 0.7 * scaling
         }
 
         NIconButton {
           icon: "refresh"
-          tooltipText: "Refresh networks"
+          tooltipText: "Refresh"
           sizeRatio: 0.8
-          enabled: Settings.data.network.wifiEnabled
-          onClicked: NetworkService.refreshNetworks()
+          enabled: Settings.data.network.wifiEnabled && !NetworkService.scanning
+          onClicked: NetworkService.scan()
         }
 
         NIconButton {
@@ -73,17 +74,18 @@ NPanel {
         Layout.fillWidth: true
       }
 
-      // Error banner
+      // Error message
       Rectangle {
-        visible: NetworkService.connectStatus === "error" && NetworkService.connectError.length > 0
+        visible: NetworkService.lastError.length > 0
         Layout.fillWidth: true
-        Layout.preferredHeight: errorText.implicitHeight + (Style.marginM * scaling * 2)
+        Layout.preferredHeight: errorRow.implicitHeight + (Style.marginM * scaling * 2)
         color: Qt.rgba(Color.mError.r, Color.mError.g, Color.mError.b, 0.1)
         radius: Style.radiusS * scaling
         border.width: Math.max(1, Style.borderS * scaling)
         border.color: Color.mError
 
         RowLayout {
+          id: errorRow
           anchors.fill: parent
           anchors.margins: Style.marginM * scaling
           spacing: Style.marginS * scaling
@@ -95,8 +97,7 @@ NPanel {
           }
 
           NText {
-            id: errorText
-            text: NetworkService.connectError
+            text: NetworkService.lastError
             color: Color.mError
             font.pointSize: Style.fontSizeS * scaling
             wrapMode: Text.Wrap
@@ -106,301 +107,287 @@ NPanel {
           NIconButton {
             icon: "close"
             sizeRatio: 0.6
-            onClicked: {
-              NetworkService.connectStatus = ""
-              NetworkService.connectError = ""
-            }
+            onClicked: NetworkService.lastError = ""
           }
         }
       }
 
-      ScrollView {
+      // Main content area
+      Rectangle {
         Layout.fillWidth: true
         Layout.fillHeight: true
-        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-        ScrollBar.vertical.policy: ScrollBar.AsNeeded
-        clip: true
-        contentWidth: availableWidth
+        color: Color.transparent
 
+        // WiFi disabled state
         ColumnLayout {
-          width: parent.width
-          spacing: Style.marginM * scaling
+          visible: !Settings.data.network.wifiEnabled
+          anchors.fill: parent
+          spacing: Style.marginL * scaling
 
-          // Loading state
-          ColumnLayout {
-            Layout.fillWidth: true
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-            visible: Settings.data.network.wifiEnabled && NetworkService.isLoading && Object.keys(
-                       NetworkService.networks).length === 0
-            spacing: Style.marginM * scaling
+          Item { Layout.fillHeight: true }
 
-            NBusyIndicator {
-              running: true
-              color: Color.mPrimary
-              size: Style.baseWidgetSize * scaling
-              Layout.alignment: Qt.AlignHCenter
-            }
-
-            NText {
-              text: "Scanning for networks..."
-              font.pointSize: Style.fontSizeNormal * scaling
-              color: Color.mOnSurfaceVariant
-              Layout.alignment: Qt.AlignHCenter
-            }
+          NIcon {
+            text: "wifi_off"
+            font.pointSize: 64 * scaling
+            color: Color.mOnSurfaceVariant
+            Layout.alignment: Qt.AlignHCenter
           }
 
-          // WiFi disabled state
+          NText {
+            text: "Wi-Fi is disabled"
+            font.pointSize: Style.fontSizeL * scaling
+            color: Color.mOnSurfaceVariant
+            Layout.alignment: Qt.AlignHCenter
+          }
+
+          NText {
+            text: "Enable Wi-Fi to see available networks"
+            font.pointSize: Style.fontSizeS * scaling
+            color: Color.mOnSurfaceVariant
+            Layout.alignment: Qt.AlignHCenter
+          }
+
+          Item { Layout.fillHeight: true }
+        }
+
+        // Scanning state
+        ColumnLayout {
+          visible: Settings.data.network.wifiEnabled && NetworkService.scanning && Object.keys(NetworkService.networks).length === 0
+          anchors.fill: parent
+          spacing: Style.marginL * scaling
+
+          Item { Layout.fillHeight: true }
+
+          NBusyIndicator {
+            running: true
+            color: Color.mPrimary
+            size: Style.baseWidgetSize * scaling
+            Layout.alignment: Qt.AlignHCenter
+          }
+
+          NText {
+            text: "Scanning for networks..."
+            font.pointSize: Style.fontSizeNormal * scaling
+            color: Color.mOnSurfaceVariant
+            Layout.alignment: Qt.AlignHCenter
+          }
+
+          Item { Layout.fillHeight: true }
+        }
+
+        // Networks list container
+        ScrollView {
+          visible: Settings.data.network.wifiEnabled && (!NetworkService.scanning || Object.keys(NetworkService.networks).length > 0)
+          anchors.fill: parent
+          ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+          ScrollBar.vertical.policy: ScrollBar.AsNeeded
+          clip: true
+
           ColumnLayout {
-            Layout.fillWidth: true
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-            visible: !Settings.data.network.wifiEnabled
+            width: parent.width
             spacing: Style.marginM * scaling
 
-            NIcon {
-              text: "wifi_off"
-              font.pointSize: Style.fontSizeXXXL * scaling
-              color: Color.mOnSurfaceVariant
-              Layout.alignment: Qt.AlignHCenter
-            }
-
-            NText {
-              text: "WiFi is disabled"
-              font.pointSize: Style.fontSizeL * scaling
-              color: Color.mOnSurfaceVariant
-              Layout.alignment: Qt.AlignHCenter
-            }
-
-            NButton {
-              text: "Enable WiFi"
-              icon: "wifi"
-              Layout.alignment: Qt.AlignHCenter
-              onClicked: {
-                Settings.data.network.wifiEnabled = true
-                Settings.save()
-                NetworkService.setWifiEnabled(true)
+            // Network list
+            Repeater {
+              model: {
+                if (!Settings.data.network.wifiEnabled) return []
+                
+                const nets = Object.values(NetworkService.networks)
+                return nets.sort((a, b) => {
+                  if (a.connected !== b.connected) return b.connected - a.connected
+                  return b.signal - a.signal
+                })
               }
-            }
-          }
-
-          // Network list
-          Repeater {
-            model: {
-              if (!Settings.data.network.wifiEnabled || NetworkService.isLoading)
-                return []
-
-              // Sort networks: connected first, then by signal strength
-              const nets = Object.values(NetworkService.networks)
-              return nets.sort((a, b) => {
-                                 if (a.connected && !b.connected)
-                                 return -1
-                                 if (!a.connected && b.connected)
-                                 return 1
-                                 return b.signal - a.signal
-                               })
-            }
-
-            Item {
-              Layout.fillWidth: true
-              implicitHeight: networkRect.implicitHeight
 
               Rectangle {
-                id: networkRect
-                width: parent.width
-                implicitHeight: networkContent.implicitHeight + (Style.marginM * scaling * 2)
+                Layout.fillWidth: true
+                implicitHeight: netColumn.implicitHeight + (Style.marginM * scaling * 2)
                 radius: Style.radiusM * scaling
-                color: modelData.connected ? Qt.rgba(Color.mPrimary.r, Color.mPrimary.g, Color.mPrimary.b,
-                                                     0.05) : Color.mSurface
+                color: modelData.connected ? Qt.rgba(Color.mPrimary.r, Color.mPrimary.g, Color.mPrimary.b, 0.05) : Color.mSurface
                 border.width: Math.max(1, Style.borderS * scaling)
                 border.color: modelData.connected ? Color.mPrimary : Color.mOutline
-                clip: true
 
                 ColumnLayout {
-                  id: networkContent
+                  id: netColumn
                   width: parent.width - (Style.marginM * scaling * 2)
                   x: Style.marginM * scaling
                   y: Style.marginM * scaling
-                  spacing: Style.marginM * scaling
+                  spacing: Style.marginS * scaling
 
-                  // Main network row
+                  // Main row
                   RowLayout {
                     Layout.fillWidth: true
                     spacing: Style.marginS * scaling
 
-                    // Signal icon
                     NIcon {
                       text: NetworkService.signalIcon(modelData.signal)
                       font.pointSize: Style.fontSizeXXL * scaling
                       color: modelData.connected ? Color.mPrimary : Color.mOnSurface
                     }
 
-                    // Network info
                     ColumnLayout {
                       Layout.fillWidth: true
-                      Layout.alignment: Qt.AlignVCenter
-                      spacing: 0
+                      spacing: 2 * scaling
 
                       NText {
-                        text: modelData.ssid || "Unknown Network"
+                        text: modelData.ssid
                         font.pointSize: Style.fontSizeNormal * scaling
                         font.weight: modelData.connected ? Style.fontWeightBold : Style.fontWeightMedium
-                        elide: Text.ElideRight
                         color: Color.mOnSurface
+                        elide: Text.ElideRight
                         Layout.fillWidth: true
                       }
 
-                      NText {
-                        text: {
-                          const security = modelData.security
-                                         && modelData.security !== "--" ? modelData.security : "Open"
-                          const signal = `${modelData.signal}%`
-                          return `${signal} • ${security}`
-                        }
-                        font.pointSize: Style.fontSizeXXS * scaling
-                        color: Color.mOnSurfaceVariant
-                      }
-                    }
-
-                    // Right-aligned items container
-                    RowLayout {
-                      Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                      spacing: Style.marginS * scaling
-
-                      // Connected badge
-                      Rectangle {
-                        visible: modelData.connected
-                        color: Color.mPrimary
-                        radius: width * 0.5
-                        width: connectedLabel.implicitWidth + (Style.marginS * scaling * 2)
-                        height: connectedLabel.implicitHeight + (Style.marginXS * scaling * 2)
+                      RowLayout {
+                        spacing: Style.marginXS * scaling
 
                         NText {
-                          id: connectedLabel
-                          anchors.centerIn: parent
-                          text: "Connected"
-                          font.pointSize: Style.fontSizeXXS * scaling
-                          color: Color.mOnPrimary
-                        }
-                      }
-
-                      // Saved badge - clickable
-                      Rectangle {
-                        visible: modelData.cached && !modelData.connected
-                        color: Color.mSurfaceVariant
-                        radius: width * 0.5
-                        width: savedLabel.implicitWidth + (Style.marginS * scaling * 2)
-                        height: savedLabel.implicitHeight + (Style.marginXS * scaling * 2)
-                        border.color: Color.mOutline
-                        border.width: Math.max(1, Style.borderS * scaling)
-
-                        MouseArea {
-                          anchors.fill: parent
-                          cursorShape: Qt.PointingHandCursor
-                          hoverEnabled: true
-                          onEntered: parent.color = Qt.darker(Color.mSurfaceVariant, 1.1)
-                          onExited: parent.color = Color.mSurfaceVariant
-                          onClicked: {
-                            expandedNetwork = expandedNetwork === modelData.ssid ? "" : modelData.ssid
-                            showPasswordPrompt = false
-                          }
-                        }
-
-                        NText {
-                          id: savedLabel
-                          anchors.centerIn: parent
-                          text: "Saved"
+                          text: `${modelData.signal}%`
                           font.pointSize: Style.fontSizeXXS * scaling
                           color: Color.mOnSurfaceVariant
                         }
-                      }
 
-                      // Loading indicator
-                      NBusyIndicator {
-                        visible: NetworkService.connectingSsid === modelData.ssid
-                        running: NetworkService.connectingSsid === modelData.ssid
-                        color: Color.mPrimary
-                        size: Style.baseWidgetSize * 0.6 * scaling
-                      }
+                        NText {
+                          text: "•"
+                          font.pointSize: Style.fontSizeXXS * scaling
+                          color: Color.mOnSurfaceVariant
+                        }
 
-                      // Action buttons
-                      RowLayout {
-                        spacing: Style.marginXS * scaling
-                        visible: NetworkService.connectingSsid !== modelData.ssid
+                        NText {
+                          text: NetworkService.isSecured(modelData.security) ? modelData.security : "Open"
+                          font.pointSize: Style.fontSizeXXS * scaling
+                          color: Color.mOnSurfaceVariant
+                        }
 
-                        NButton {
-                          visible: !modelData.connected && (expandedNetwork !== modelData.ssid || !showPasswordPrompt)
-                          outlined: !hovered
-                          fontSize: Style.fontSizeXS * scaling
-                          text: modelData.existing ? "Connect" : (NetworkService.isSecured(
-                                                                    modelData.security) ? "Password" : "Connect")
-                          onClicked: {
-                            if (modelData.existing || !NetworkService.isSecured(modelData.security)) {
-                              NetworkService.connectNetwork(modelData.ssid, modelData.security)
-                            } else {
-                              expandedNetwork = modelData.ssid
-                              passwordPromptSsid = modelData.ssid
-                              showPasswordPrompt = true
-                              passwordInput = ""
-                              Qt.callLater(() => passwordInputField.forceActiveFocus())
-                            }
+                        Item {
+                          Layout.preferredWidth: Style.marginXXS * scaling
+                        }
+                        
+
+                        Rectangle {
+                          visible: modelData.connected
+                          color: Color.mPrimary
+                          radius: height * 0.5
+                          width: connectedText.implicitWidth + (Style.marginS * scaling * 2)
+                          height: connectedText.implicitHeight + (Style.marginXXS * scaling * 2)
+
+                          NText {
+                            id: connectedText
+                            anchors.centerIn: parent
+                            text: "Connected"
+                            font.pointSize: Style.fontSizeXXS * scaling
+                            color: Color.mOnPrimary
                           }
                         }
 
-                        NButton {
-                          visible: modelData.connected
-                          outlined: !hovered
-                          fontSize: Style.fontSizeXS * scaling
-                          backgroundColor: Color.mError
-                          text: "Disconnect"
-                          onClicked: NetworkService.disconnectNetwork(modelData.ssid)
+                        Rectangle {
+                          visible: modelData.cached && !modelData.connected
+                          color: Color.transparent
+                          border.color: Color.mOutline
+                          border.width: Math.max(1, Style.borderS * scaling)
+                          radius: height * 0.5
+                          width: savedText.implicitWidth + (Style.marginS * scaling * 2)
+                          height: savedText.implicitHeight + (Style.marginXXS * scaling * 2)
+
+                          NText {
+                            id: savedText
+                            anchors.centerIn: parent
+                            text: "Saved"
+                            font.pointSize: Style.fontSizeXXS * scaling
+                            color: Color.mOnSurfaceVariant
+                          }
                         }
+                      }
+                    }
+
+                    // Action area
+                    RowLayout {
+                      spacing: Style.marginXS * scaling
+
+                      NBusyIndicator {
+                        visible: NetworkService.connectingTo === modelData.ssid
+                        running: visible
+                        color: Color.mPrimary
+                        size: Style.baseWidgetSize * 0.5 * scaling
+                      }
+
+                      NButton {
+                        visible: !modelData.connected && NetworkService.connectingTo !== modelData.ssid && passwordSsid !== modelData.ssid
+                        text: {
+                          if (modelData.existing || modelData.cached) return "Connect"
+                          if (!NetworkService.isSecured(modelData.security)) return "Connect"
+                          return "Password"
+                        }
+                        outlined: !hovered
+                        fontSize: Style.fontSizeXS * scaling
+                        onClicked: {
+                          if (modelData.existing || modelData.cached || !NetworkService.isSecured(modelData.security)) {
+                            NetworkService.connect(modelData.ssid)
+                          } else {
+                            passwordSsid = modelData.ssid
+                            passwordInput = ""
+                            expandedSsid = ""
+                          }
+                        }
+                      }
+
+                      NButton {
+                        visible: modelData.connected
+                        text: "Disconnect"
+                        outlined: !hovered
+                        fontSize: Style.fontSizeXS * scaling
+                        backgroundColor: Color.mError
+                        onClicked: NetworkService.disconnect(modelData.ssid)
+                      }
+
+                      NIconButton {
+                        visible: (modelData.existing || modelData.cached) && !modelData.connected && NetworkService.connectingTo !== modelData.ssid
+                        icon: "more_vert"
+                        sizeRatio: 0.7
+                        onClicked: expandedSsid = expandedSsid === modelData.ssid ? "" : modelData.ssid
                       }
                     }
                   }
 
-                  // Password input section
+                  // Password input
                   Rectangle {
-                    visible: modelData.ssid === passwordPromptSsid && showPasswordPrompt
+                    visible: passwordSsid === modelData.ssid
                     Layout.fillWidth: true
-                    implicitHeight: visible ? 50 * scaling : 0
+                    height: 40 * scaling
                     color: Color.mSurfaceVariant
                     radius: Style.radiusS * scaling
 
                     RowLayout {
                       anchors.fill: parent
-                      anchors.margins: Style.marginS * scaling
-                      spacing: Style.marginS * scaling
+                      anchors.margins: Style.marginXS * scaling
+                      spacing: Style.marginXS * scaling
 
                       Rectangle {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
-                        radius: Style.radiusS * scaling
+                        radius: Style.radiusXS * scaling
                         color: Color.mSurface
-                        border.color: passwordInputField.activeFocus ? Color.mSecondary : Color.mOutline
+                        border.color: pwdInput.activeFocus ? Color.mPrimary : Color.mOutline
                         border.width: Math.max(1, Style.borderS * scaling)
 
                         TextInput {
-                          id: passwordInputField
+                          id: pwdInput
                           anchors.left: parent.left
                           anchors.right: parent.right
                           anchors.verticalCenter: parent.verticalCenter
-                          anchors.leftMargin: Style.marginM * scaling
-                          anchors.rightMargin: Style.marginM * scaling
-                          height: parent.height
+                          anchors.margins: Style.marginS * scaling
                           text: passwordInput
-                          font.pointSize: Style.fontSizeM * scaling
+                          font.pointSize: Style.fontSizeS * scaling
                           color: Color.mOnSurface
-                          verticalAlignment: TextInput.AlignVCenter
-                          clip: true
-                          focus: modelData.ssid === passwordPromptSsid && showPasswordPrompt
-                          selectByMouse: true
                           echoMode: TextInput.Password
-                          passwordCharacter: "●"
+                          selectByMouse: true
+                          focus: visible
                           onTextChanged: passwordInput = text
                           onAccepted: {
-                            if (passwordInput) {
-                              NetworkService.submitPassword(passwordPromptSsid, passwordInput)
-                              showPasswordPrompt = false
-                              expandedNetwork = ""
+                            if (text) {
+                              NetworkService.connect(passwordSsid, text)
+                              passwordSsid = ""
+                              passwordInput = ""
                             }
                           }
 
@@ -416,56 +403,68 @@ NPanel {
 
                       NButton {
                         text: "Connect"
-                        icon: "check"
-                        fontSize: Style.fontSizeXS * scaling
+                        fontSize: Style.fontSizeXXS * scaling
                         enabled: passwordInput.length > 0
-                        outlined: !enabled
                         onClicked: {
-                          if (passwordInput) {
-                            NetworkService.submitPassword(passwordPromptSsid, passwordInput)
-                            showPasswordPrompt = false
-                            expandedNetwork = ""
-                          }
+                          NetworkService.connect(passwordSsid, passwordInput)
+                          passwordSsid = ""
+                          passwordInput = ""
                         }
                       }
 
                       NIconButton {
                         icon: "close"
-                        tooltipText: "Cancel"
-                        sizeRatio: 0.9
+                        sizeRatio: 0.6
                         onClicked: {
-                          showPasswordPrompt = false
-                          expandedNetwork = ""
+                          passwordSsid = ""
                           passwordInput = ""
                         }
                       }
                     }
                   }
 
-                  // Forget network option - appears when saved badge is clicked
-                  RowLayout {
-                    visible: (modelData.existing || modelData.cached) && expandedNetwork === modelData.ssid
-                             && !showPasswordPrompt
+                  // Options menu
+                  Rectangle {
+                    visible: expandedSsid === modelData.ssid
                     Layout.fillWidth: true
-                    Layout.topMargin: Style.marginXS * scaling
-                    spacing: Style.marginS * scaling
+                    height: forgetRow.implicitHeight + Style.marginS * 2
+                    color: Color.mSurfaceVariant
+                    radius: Style.radiusS * scaling
+                    border.width: Math.max(1, Style.borderS * scaling)
+                    border.color: Color.mError
 
-                    Item {
-                      Layout.fillWidth: true
-                    }
+                    RowLayout {
+                      id: forgetRow
+                      anchors.fill: parent
+                      anchors.margins: Style.marginS * scaling
 
-                    NButton {
-                      id: forgetButton
-                      text: "Forget Network"
-                      icon: "delete_outline"
-                      fontSize: Style.fontSizeXXS * scaling
-                      backgroundColor: Color.mError
-                      textColor: !forgetButton.hovered ? Color.mError : Color.mOnTertiary
-                      outlined: !forgetButton.hovered
-                      Layout.preferredHeight: 28 * scaling
-                      onClicked: {
-                        NetworkService.forgetNetwork(modelData.ssid)
-                        expandedNetwork = ""
+                      NIcon {
+                        text: "delete_outline"
+                        font.pointSize: Style.fontSizeM * scaling
+                        color: Color.mError
+                      }
+
+                      NText {
+                        text: "Forget this network?"
+                        font.pointSize: Style.fontSizeS * scaling
+                        color: Color.mError
+                        Layout.fillWidth: true
+                      }
+
+                      NButton {
+                        text: "Forget"
+                        fontSize: Style.fontSizeXXS * scaling
+                        backgroundColor: Color.mError
+                        onClicked: {
+                          NetworkService.forget(modelData.ssid)
+                          expandedSsid = ""
+                        }
+                      }
+
+                      NIconButton {
+                        icon: "close"
+                        sizeRatio: 0.6
+                        onClicked: expandedSsid = ""
                       }
                     }
                   }
@@ -473,36 +472,38 @@ NPanel {
               }
             }
           }
+        }
 
-          // No networks found
-          ColumnLayout {
-            Layout.fillWidth: true
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-            visible: Settings.data.network.wifiEnabled && !NetworkService.isLoading && Object.keys(
-                       NetworkService.networks).length === 0
-            spacing: Style.marginM * scaling
+        // Empty state when no networks
+        ColumnLayout {
+          visible: Settings.data.network.wifiEnabled && !NetworkService.scanning && Object.keys(NetworkService.networks).length === 0
+          anchors.fill: parent
+          spacing: Style.marginL * scaling
 
-            NIcon {
-              text: "wifi_find"
-              font.pointSize: Style.fontSizeXXXL * scaling
-              color: Color.mOnSurfaceVariant
-              Layout.alignment: Qt.AlignHCenter
-            }
+          Item { Layout.fillHeight: true }
 
-            NText {
-              text: "No networks found"
-              font.pointSize: Style.fontSizeL * scaling
-              color: Color.mOnSurfaceVariant
-              Layout.alignment: Qt.AlignHCenter
-            }
-
-            NButton {
-              text: "Refresh"
-              icon: "refresh"
-              Layout.alignment: Qt.AlignHCenter
-              onClicked: NetworkService.refreshNetworks()
-            }
+          NIcon {
+            text: "wifi_find"
+            font.pointSize: 64 * scaling
+            color: Color.mOnSurfaceVariant
+            Layout.alignment: Qt.AlignHCenter
           }
+
+          NText {
+            text: "No networks found"
+            font.pointSize: Style.fontSizeL * scaling
+            color: Color.mOnSurfaceVariant
+            Layout.alignment: Qt.AlignHCenter
+          }
+
+          NButton {
+            text: "Scan Again"
+            icon: "refresh"
+            Layout.alignment: Qt.AlignHCenter
+            onClicked: NetworkService.scan()
+          }
+
+          Item { Layout.fillHeight: true }
         }
       }
     }

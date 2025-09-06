@@ -13,8 +13,6 @@ NIconButton {
   property ShellScreen screen
   property real scaling: 1.0
 
-  visible: Settings.data.network.wifiEnabled
-
   sizeRatio: 0.8
 
   Component.onCompleted: {
