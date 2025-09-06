@@ -65,40 +65,17 @@ Item {
 
     // Test mode
     property bool testMode: false
-    property int testPercent: 20
-    property bool testCharging: false
+    property int testPercent: 50
+    property bool testCharging: true
     property var battery: UPower.displayDevice
     property bool isReady: testMode ? true : (battery && battery.ready && battery.isLaptopBattery && battery.isPresent)
     property real percent: testMode ? testPercent : (isReady ? (battery.percentage * 100) : 0)
     property bool charging: testMode ? testCharging : (isReady ? battery.state === UPowerDeviceState.Charging : false)
 
-    // Choose icon based on charge and charging state
-    function batteryIcon() {
-      if (!isReady || !battery.isLaptopBattery)
-        return "battery_android_alert"
-      if (charging)
-        return "battery_android_bolt"
-      if (percent >= 95)
-        return "battery_android_full"
-      // Hardcoded battery symbols
-      if (percent >= 85)
-        return "battery_android_6"
-      if (percent >= 70)
-        return "battery_android_5"
-      if (percent >= 55)
-        return "battery_android_4"
-      if (percent >= 40)
-        return "battery_android_3"
-      if (percent >= 25)
-        return "battery_android_2"
-      if (percent >= 10)
-        return "battery_android_1"
-      if (percent >= 0)
-        return "battery_android_0"
-    }
-
     rightOpen: BarWidgetRegistry.getNPillDirection(root)
-    icon: batteryIcon()
+    icon: testMode ? BatteryService.getIcon(testPercent, testCharging, true) : BatteryService.getIcon(percent,
+                                                                                                      charging, isReady)
+    iconRotation: -90
     text: ((isReady && battery.isLaptopBattery) || testMode) ? Math.round(percent) + "%" : "-"
     textColor: charging ? Color.mPrimary : Color.mOnSurface
     iconCircleColor: Color.mPrimary
@@ -109,30 +86,30 @@ Item {
     tooltipText: {
       let lines = []
       if (testMode) {
-        lines.push("Time left: " + Time.formatVagueHumanReadableDuration(12345))
+        lines.push(`Time left: ${Time.formatVagueHumanReadableDuration(12345)}.`)
         return lines.join("\n")
       }
       if (!isReady || !battery.isLaptopBattery) {
-        return "No battery detected"
+        return "No battery detected."
       }
       if (battery.timeToEmpty > 0) {
-        lines.push("Time left: " + Time.formatVagueHumanReadableDuration(battery.timeToEmpty))
+        lines.push(`Time left: ${Time.formatVagueHumanReadableDuration(battery.timeToEmpty)}.`)
       }
       if (battery.timeToFull > 0) {
-        lines.push("Time until full: " + Time.formatVagueHumanReadableDuration(battery.timeToFull))
+        lines.push(`Time until full: ${Time.formatVagueHumanReadableDuration(battery.timeToFull)}.`)
       }
       if (battery.changeRate !== undefined) {
         const rate = battery.changeRate
         if (rate > 0) {
-          lines.push(charging ? "Charging rate: " + rate.toFixed(2) + " W" : "Discharging rate: " + rate.toFixed(
-                                  2) + " W")
+          lines.push(charging ? "Charging rate: " + rate.toFixed(2) + " W." : "Discharging rate: " + rate.toFixed(
+                                  2) + " W.")
         } else if (rate < 0) {
-          lines.push("Discharging rate: " + Math.abs(rate).toFixed(2) + " W")
+          lines.push("Discharging rate: " + Math.abs(rate).toFixed(2) + " W.")
         } else {
           lines.push("Estimating...")
         }
       } else {
-        lines.push(charging ? "Charging" : "Discharging")
+        lines.push(charging ? "Charging." : "Discharging.")
       }
       if (battery.healthPercentage !== undefined && battery.healthPercentage > 0) {
         lines.push("Health: " + Math.round(battery.healthPercentage) + "%")
