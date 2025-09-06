@@ -68,6 +68,8 @@ Popup {
       sourceComponent: {
         if (settingsPopup.widgetId === "CustomButton") {
           return customButtonSettings
+        } else if (settingsPopup.widgetId === "Spacer") {
+          return spacerSettings
         }
         // Add more widget settings components here as needed
         return null
@@ -154,6 +156,30 @@ Popup {
         description: "Command or application to run when middle clicked."
         text: settingsPopup.widgetData.middleClickExec || ""
         placeholderText: "Enter command to execute (app or custom script)"
+      }
+    }
+  }
+
+  // Spacer settings component
+  Component {
+    id: spacerSettings
+
+    ColumnLayout {
+      spacing: Style.marginM * scaling
+
+      function saveSettings() {
+        var settings = Object.assign({}, settingsPopup.widgetData)
+        settings.width = parseInt(widthInput.text) || 20
+        return settings
+      }
+
+      NTextInput {
+        id: widthInput
+        Layout.fillWidth: true
+        label: "Width (pixels)"
+        description: "Width of the spacer in pixels."
+        text: settingsPopup.widgetData.width || "20"
+        placeholderText: "Enter width in pixels"
       }
     }
   }

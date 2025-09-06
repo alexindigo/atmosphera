@@ -28,6 +28,7 @@ Singleton {
                            "PowerToggle": powerToggleComponent,
                            "ScreenRecorderIndicator": screenRecorderIndicatorComponent,
                            "SidePanelToggle": sidePanelToggleComponent,
+                           "Spacer": spacerComponent,
                            "SystemMonitor": systemMonitorComponent,
                            "Taskbar": taskbarComponent,
                            "Tray": trayComponent,
@@ -43,6 +44,11 @@ Singleton {
                                     "leftClickExec": "",
                                     "rightClickExec": "",
                                     "middleClickExec": ""
+                                  },
+                                  "Spacer": {
+                                    "allowUserSettings": true,
+                                    "icon": "space_bar",
+                                    "width": 20
                                   }
                                 })
 
@@ -100,6 +106,9 @@ Singleton {
   }
   property Component sidePanelToggleComponent: Component {
     SidePanelToggle {}
+  }
+  property Component spacerComponent: Component {
+    Spacer {}
   }
   property Component systemMonitorComponent: Component {
     SystemMonitor {}
