@@ -28,12 +28,6 @@ Scope {
       return
     }
 
-    if (currentText === "") {
-      errorMessage = "Password required"
-      showFailure = true
-      return
-    }
-
     root.unlockInProgress = true
     errorMessage = ""
     showFailure = false
