@@ -45,7 +45,7 @@ NPanel {
         }
 
         NText {
-          text: "WiFi"
+          text: "Wi-Fi"
           font.pointSize: Style.fontSizeL * scaling
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface
@@ -53,20 +53,11 @@ NPanel {
           Layout.leftMargin: Style.marginS * scaling
         }
 
-        // Connection status indicator
-        Rectangle {
-          visible: NetworkService.hasActiveConnection
-          width: 8 * scaling
-          height: 8 * scaling
-          radius: 4 * scaling
-          color: Color.mPrimary
-        }
-
         NIconButton {
           icon: "refresh"
           tooltipText: "Refresh networks"
           sizeRatio: 0.8
-          enabled: Settings.data.network.wifiEnabled && !NetworkService.isLoading
+          enabled: Settings.data.network.wifiEnabled
           onClicked: NetworkService.refreshNetworks()
         }
 
