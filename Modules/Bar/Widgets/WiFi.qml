@@ -30,7 +30,7 @@ NIconButton {
 
   icon: {
     try {
-      if (NetworkService.ethernet) {
+      if (NetworkService.ethernetConnected) {
         return "lan"
       }
       let connected = false

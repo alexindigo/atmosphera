@@ -14,7 +14,7 @@ Singleton {
   property bool connecting: false
   property string connectingTo: ""
   property string lastError: ""
-  property bool ethernet: false
+  property bool ethernetConnected: false
 
   // Persistent cache
   property string cacheFile: Settings.cacheDir + "network.json"
@@ -169,12 +169,14 @@ Singleton {
 
     stdout: StdioCollector {
       onStreamFinished: {
-
-        root.ethernet = text.split("\n").some(line => {
+        const connected = text.split("\n").some(line => {
                                                 const parts = line.split(":")
                                                 return parts[1] === "ethernet" && parts[2] === "connected"
                                               })
-        Logger.log("Network", "Ethernet connected:", root.ethernet)
+        if (root.ethernetConnected !== connected) {
+          root.ethernetConnected = connected
+          Logger.log("Network", "Ethernet connected:", root.ethernetConnected)
+        }
       }
     }
   }
@@ -286,9 +288,12 @@ Singleton {
           }
         }
 
+        if (JSON.stringify(root.networks) !== JSON.stringify(nets)) {
+          Logger.log("Network", "Discovered", Object.keys(nets).length, "Wi-Fi networks")
+        }
         root.networks = nets
         root.scanning = false
-        Logger.log("Network", "Discovered", Object.keys(root.networks).length, "Wi-Fi networks")
+
       }
     }
 
