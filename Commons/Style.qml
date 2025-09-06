@@ -29,6 +29,7 @@ Singleton {
   property int fontWeightBold: 700
 
   // Radii
+  property int radiusXXS: 4 * Settings.data.general.radiusRatio
   property int radiusXS: 8 * Settings.data.general.radiusRatio
   property int radiusS: 12 * Settings.data.general.radiusRatio
   property int radiusM: 16 * Settings.data.general.radiusRatio
