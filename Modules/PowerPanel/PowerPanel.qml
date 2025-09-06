@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Effects
 import QtQuick.Layouts
 import Quickshell
@@ -16,6 +17,7 @@ NPanel {
   panelHeight: 380 * scaling
   panelAnchorHorizontalCenter: true
   panelAnchorVerticalCenter: true
+  panelKeyboardFocus: true
 
   // Timer properties
   property int timerDuration: 9000 // 9 seconds
@@ -23,9 +25,44 @@ NPanel {
   property bool timerActive: false
   property int timeRemaining: 0
 
-  // Cancel timer when panel is closing
+  // Navigation properties
+  property int selectedIndex: 0
+  readonly property var powerOptions: [{
+      "action": "lock",
+      "icon": "lock_outline",
+      "title": "Lock",
+      "subtitle": "Lock your session"
+    }, {
+      "action": "suspend",
+      "icon": "bedtime",
+      "title": "Suspend",
+      "subtitle": "Put the system to sleep"
+    }, {
+      "action": "reboot",
+      "icon": "refresh",
+      "title": "Reboot",
+      "subtitle": "Restart the system"
+    }, {
+      "action": "logout",
+      "icon": "exit_to_app",
+      "title": "Logout",
+      "subtitle": "End your session"
+    }, {
+      "action": "shutdown",
+      "icon": "power_settings_new",
+      "title": "Shutdown",
+      "subtitle": "Turn off the system",
+      "isShutdown": true
+    }]
+
+  // Lifecycle handlers
+  onOpened: {
+    selectedIndex = 0
+  }
+
   onClosed: {
     cancelTimer()
+    selectedIndex = 0
   }
 
   // Timer management
@@ -79,6 +116,38 @@ NPanel {
     root.close()
   }
 
+  // Navigation functions
+  function selectNext() {
+    if (powerOptions.length > 0) {
+      selectedIndex = Math.min(selectedIndex + 1, powerOptions.length - 1)
+    }
+  }
+
+  function selectPrevious() {
+    if (powerOptions.length > 0) {
+      selectedIndex = Math.max(selectedIndex - 1, 0)
+    }
+  }
+
+  function selectFirst() {
+    selectedIndex = 0
+  }
+
+  function selectLast() {
+    if (powerOptions.length > 0) {
+      selectedIndex = powerOptions.length - 1
+    } else {
+      selectedIndex = 0
+    }
+  }
+
+  function activate() {
+    if (powerOptions.length > 0 && powerOptions[selectedIndex]) {
+      const option = powerOptions[selectedIndex]
+      startTimer(option.action)
+    }
+  }
+
   // Countdown timer
   Timer {
     id: countdownTimer
@@ -93,7 +162,91 @@ NPanel {
   }
 
   panelContent: Rectangle {
+    id: ui
     color: Color.transparent
+
+    // Keyboard shortcuts
+    Shortcut {
+      sequence: "Ctrl+K"
+      onActivated: ui.selectPrevious()
+      enabled: root.opened
+    }
+
+    Shortcut {
+      sequence: "Ctrl+J"
+      onActivated: ui.selectNext()
+      enabled: root.opened
+    }
+
+    Shortcut {
+      sequence: "Up"
+      onActivated: ui.selectPrevious()
+      enabled: root.opened
+    }
+
+    Shortcut {
+      sequence: "Down"
+      onActivated: ui.selectNext()
+      enabled: root.opened
+    }
+
+    Shortcut {
+      sequence: "Home"
+      onActivated: ui.selectFirst()
+      enabled: root.opened
+    }
+
+    Shortcut {
+      sequence: "End"
+      onActivated: ui.selectLast()
+      enabled: root.opened
+    }
+
+    Shortcut {
+      sequence: "Return"
+      onActivated: ui.activate()
+      enabled: root.opened
+    }
+
+    Shortcut {
+      sequence: "Enter"
+      onActivated: ui.activate()
+      enabled: root.opened
+    }
+
+    Shortcut {
+      sequence: "Escape"
+      onActivated: {
+        if (timerActive) {
+          cancelTimer()
+        } else {
+          cancelTimer()
+          root.close()
+        }
+      }
+      enabled: root.opened
+    }
+
+    // Navigation functions
+    function selectNext() {
+      root.selectNext()
+    }
+
+    function selectPrevious() {
+      root.selectPrevious()
+    }
+
+    function selectFirst() {
+      root.selectFirst()
+    }
+
+    function selectLast() {
+      root.selectLast()
+    }
+
+    function activate() {
+      root.activate()
+    }
 
     ColumnLayout {
       anchors.fill: parent
@@ -144,55 +297,21 @@ NPanel {
         Layout.fillWidth: true
         spacing: Style.marginM * scaling
 
-        // Lock Screen
-        PowerButton {
-          Layout.fillWidth: true
-          icon: "lock_outline"
-          title: "Lock"
-          subtitle: "Lock your session"
-          onClicked: startTimer("lock")
-          pending: timerActive && pendingAction === "lock"
-        }
-
-        // Suspend
-        PowerButton {
-          Layout.fillWidth: true
-          icon: "bedtime"
-          title: "Suspend"
-          subtitle: "Put the system to sleep"
-          onClicked: startTimer("suspend")
-          pending: timerActive && pendingAction === "suspend"
-        }
-
-        // Reboot
-        PowerButton {
-          Layout.fillWidth: true
-          icon: "refresh"
-          title: "Reboot"
-          subtitle: "Restart the system"
-          onClicked: startTimer("reboot")
-          pending: timerActive && pendingAction === "reboot"
-        }
-
-        // Logout
-        PowerButton {
-          Layout.fillWidth: true
-          icon: "exit_to_app"
-          title: "Logout"
-          subtitle: "End your session"
-          onClicked: startTimer("logout")
-          pending: timerActive && pendingAction === "logout"
-        }
-
-        // Shutdown
-        PowerButton {
-          Layout.fillWidth: true
-          icon: "power_settings_new"
-          title: "Shutdown"
-          subtitle: "Turn off the system"
-          onClicked: startTimer("shutdown")
-          pending: timerActive && pendingAction === "shutdown"
-          isShutdown: true
+        Repeater {
+          model: powerOptions
+          delegate: PowerButton {
+            Layout.fillWidth: true
+            icon: modelData.icon
+            title: modelData.title
+            subtitle: modelData.subtitle
+            isShutdown: modelData.isShutdown || false
+            isSelected: index === selectedIndex
+            onClicked: {
+              selectedIndex = index
+              startTimer(modelData.action)
+            }
+            pending: timerActive && pendingAction === modelData.action
+          }
         }
       }
     }
@@ -207,6 +326,7 @@ NPanel {
     property string subtitle: ""
     property bool pending: false
     property bool isShutdown: false
+    property bool isSelected: false
 
     signal clicked
 
@@ -216,7 +336,7 @@ NPanel {
       if (pending) {
         return Qt.alpha(Color.mPrimary, 0.08)
       }
-      if (mouseArea.containsMouse) {
+      if (isSelected || mouseArea.containsMouse) {
         return Color.mSecondary
       }
       return Color.transparent
@@ -242,13 +362,12 @@ NPanel {
         anchors.verticalCenter: parent.verticalCenter
         text: buttonRoot.icon
         color: {
-
           if (buttonRoot.pending)
             return Color.mPrimary
-          if (buttonRoot.isShutdown && !mouseArea.containsMouse)
+          if (buttonRoot.isShutdown && !buttonRoot.isSelected && !mouseArea.containsMouse)
             return Color.mError
-          if (mouseArea.containsMouse)
-            return Color.mOnTertiary
+          if (buttonRoot.isSelected || mouseArea.containsMouse)
+            return Color.mOnSecondary
           return Color.mOnSurface
         }
         font.pointSize: Style.fontSizeXXXL * scaling
@@ -279,10 +398,10 @@ NPanel {
           color: {
             if (buttonRoot.pending)
               return Color.mPrimary
-            if (buttonRoot.isShutdown && !mouseArea.containsMouse)
+            if (buttonRoot.isShutdown && !buttonRoot.isSelected && !mouseArea.containsMouse)
               return Color.mError
-            if (mouseArea.containsMouse)
-              return Color.mOnTertiary
+            if (buttonRoot.isSelected || mouseArea.containsMouse)
+              return Color.mOnSecondary
             return Color.mOnSurface
           }
 
@@ -304,10 +423,10 @@ NPanel {
           color: {
             if (buttonRoot.pending)
               return Color.mPrimary
-            if (buttonRoot.isShutdown && !mouseArea.containsMouse)
+            if (buttonRoot.isShutdown && !buttonRoot.isSelected && !mouseArea.containsMouse)
               return Color.mError
-            if (mouseArea.containsMouse)
-              return Color.mOnTertiary
+            if (buttonRoot.isSelected || mouseArea.containsMouse)
+              return Color.mOnSecondary
             return Color.mOnSurfaceVariant
           }
           opacity: Style.opacityHeavy
