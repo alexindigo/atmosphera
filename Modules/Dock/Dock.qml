@@ -45,8 +45,8 @@ Variants {
       readonly property int floatingMargin: 12 * scaling // Margin to make dock float
 
       // Bar detection and positioning properties
-      readonly property bool hasBar: modelData.name ? (Settings.data.bar.monitors.includes(modelData.name) 
-                                              || (Settings.data.bar.monitors.length === 0)) : false
+      readonly property bool hasBar: modelData.name ? (Settings.data.bar.monitors.includes(modelData.name)
+                                                       || (Settings.data.bar.monitors.length === 0)) : false
       readonly property bool barAtBottom: hasBar && Settings.data.bar.position === "bottom"
       readonly property bool barAtTop: hasBar && Settings.data.bar.position === "top"
       readonly property int barHeight: (barAtBottom || barAtTop) ? (Settings.data.bar.height || 30) * scaling : 0
@@ -191,7 +191,7 @@ Variants {
         Item {
           id: dock
           width: dockLayout.implicitWidth
-          height: parent.height - (Style.marginM * 2 * scaling) 
+          height: parent.height - (Style.marginM * 2 * scaling)
           anchors.centerIn: parent
 
           NTooltip {
@@ -235,7 +235,7 @@ Variants {
                   source: dock.getAppIcon(modelData)
                   visible: source.toString() !== ""
                   sourceSize.width: iconSize * 2
-                  sourceSize.height: iconSize * 2 
+                  sourceSize.height: iconSize * 2
                   smooth: true
                   mipmap: true
                   antialiasing: true
@@ -328,8 +328,16 @@ Variants {
                   SequentialAnimation on opacity {
                     running: isActive
                     loops: Animation.Infinite
-                    NumberAnimation { to: 0.6; duration: Style.animationSlowest; easing.type: Easing.InOutQuad }
-                    NumberAnimation { to: 1.0; duration: Style.animationSlowest; easing.type: Easing.InOutQuad }
+                    NumberAnimation {
+                      to: 0.6
+                      duration: Style.animationSlowest
+                      easing.type: Easing.InOutQuad
+                    }
+                    NumberAnimation {
+                      to: 1.0
+                      duration: Style.animationSlowest
+                      easing.type: Easing.InOutQuad
+                    }
                   }
                 }
               }
