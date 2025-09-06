@@ -12,7 +12,7 @@ NIconButton {
   property real scaling: 1.0
 
   icon: Settings.data.bar.useDistroLogo ? "" : "widgets"
-  tooltipText: "Open side panel"
+  tooltipText: "Open side panel."
   sizeRatio: 0.8
 
   colorBg: Color.mSurfaceVariant

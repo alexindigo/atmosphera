@@ -59,7 +59,7 @@ NBox {
       }
       NIconButton {
         icon: "settings"
-        tooltipText: "Open settings"
+        tooltipText: "Open settings."
         onClicked: {
           settingsPanel.requestedTab = SettingsPanel.Tab.General
           settingsPanel.open(screen)
@@ -69,7 +69,7 @@ NBox {
       NIconButton {
         id: powerButton
         icon: "power_settings_new"
-        tooltipText: "Power menu"
+        tooltipText: "Power menu."
         onClicked: {
           powerPanel.open(screen)
           sidePanel.close()
@@ -79,7 +79,7 @@ NBox {
       NIconButton {
         id: closeButton
         icon: "close"
-        tooltipText: "Close side panel"
+        tooltipText: "Close side panel."
         onClicked: {
           sidePanel.close()
         }
@@ -104,19 +104,7 @@ NBox {
     stdout: StdioCollector {
       onStreamFinished: {
         var uptimeSeconds = parseFloat(this.text.trim().split(' ')[0])
-        var minutes = Math.floor(uptimeSeconds / 60) % 60
-        var hours = Math.floor(uptimeSeconds / 3600) % 24
-        var days = Math.floor(uptimeSeconds / 86400)
-
-        // Format the output
-        if (days > 0) {
-          uptimeText = days + "d " + hours + "h"
-        } else if (hours > 0) {
-          uptimeText = hours + "h" + minutes + "m"
-        } else {
-          uptimeText = minutes + "m"
-        }
-
+        uptimeText = Time.formatVagueHumanReadableDuration(uptimeSeconds)
         uptimeProcess.running = false
       }
     }

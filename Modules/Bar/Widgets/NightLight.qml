@@ -21,7 +21,7 @@ NIconButton {
   colorBorderHover: Color.transparent
 
   icon: Settings.data.nightLight.enabled ? "bedtime" : "bedtime_off"
-  tooltipText: `Night light: ${Settings.data.nightLight.enabled ? "enabled" : "disabled"}\nLeft click to toggle.\nRight click to access settings.`
+  tooltipText: `Night light: ${Settings.data.nightLight.enabled ? "enabled." : "disabled"}\nLeft click to toggle.\nRight click to access settings.`
   onClicked: Settings.data.nightLight.enabled = !Settings.data.nightLight.enabled
 
   onRightClicked: {
