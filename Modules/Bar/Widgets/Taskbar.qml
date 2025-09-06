@@ -91,7 +91,7 @@ Rectangle {
 
         NTooltip {
           id: taskbarTooltip
-          text: taskbarItem.modelData.title || taskbarItem.modelData.appId || "Unknown App"
+          text: taskbarItem.modelData.title || taskbarItem.modelData.appId || "Unknown App."
           target: taskbarItem
           positionAbove: Settings.data.bar.position === "bottom"
         }
