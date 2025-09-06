@@ -34,24 +34,28 @@ Variants {
 
       WlrLayershell.namespace: "noctalia-dock"
 
-      property bool autoHide: Settings.data.dock.autoHide
-      property bool hidden: autoHide
-      property int hideDelay: 500
-      property int showDelay: 100
-      property int hideAnimationDuration: Style.animationFast
-      property int showAnimationDuration: Style.animationFast
-      property int peekHeight: 7 * scaling
-      property int fullHeight: dockContainer.height
-      property int iconSize: 36
+      readonly property bool autoHide: Settings.data.dock.autoHide
+      readonly property int hideDelay: 500
+      readonly property int showDelay: 100
+      readonly property int hideAnimationDuration: Style.animationFast
+      readonly property int showAnimationDuration: Style.animationFast
+      readonly property int peekHeight: 7 * scaling
+      readonly property int fullHeight: dockContainer.height
+      readonly property int iconSize: 36 * scaling
+      readonly property int floatingMargin: 12 * scaling // Margin to make dock float
 
-      // Bar positioning properties
-      property bool barAtBottom: Settings.data.bar.position === "bottom"
-      property int barHeight: barAtBottom ? (Settings.data.bar.height || 30) * scaling : 0
-      property int dockSpacing: 4 * scaling // Space between dock and bar
+      // Bar detection and positioning properties
+      readonly property bool hasBar: modelData.name ? (Settings.data.bar.monitors.includes(modelData.name) 
+                                              || (Settings.data.bar.monitors.length === 0)) : false
+      readonly property bool barAtBottom: hasBar && Settings.data.bar.position === "bottom"
+      readonly property bool barAtTop: hasBar && Settings.data.bar.position === "top"
+      readonly property int barHeight: (barAtBottom || barAtTop) ? (Settings.data.bar.height || 30) * scaling : 0
+      readonly property int dockSpacing: 8 * scaling // Space between dock and bar/edge
 
       // Track hover state
       property bool dockHovered: false
       property bool anyAppHovered: false
+      property bool hidden: autoHide
 
       // Dock is positioned at the bottom
       anchors.bottom: true
@@ -63,11 +67,11 @@ Variants {
       // Make the window transparent
       color: Color.transparent
 
-      // Set the window size - always include space for peek area when auto-hide is enabled
-      implicitWidth: dockContainer.width
-      implicitHeight: fullHeight + (barAtBottom ? barHeight + dockSpacing : 0)
+      // Set the window size - include extra height only if bar is at bottom
+      implicitWidth: dockContainer.width + (floatingMargin * 2)
+      implicitHeight: fullHeight + floatingMargin + (barAtBottom ? barHeight + dockSpacing : 0)
 
-      // Position the entire window above the bar when bar is at bottom
+      // Position the entire window above the bar only when bar is at bottom
       margins.bottom: barAtBottom ? barHeight : 0
 
       // Watch for autoHide setting changes
@@ -111,7 +115,7 @@ Variants {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        height: peekHeight + dockSpacing
+        height: peekHeight + floatingMargin + (barAtBottom ? dockSpacing : 0)
         hoverEnabled: autoHide
         visible: autoHide
 
@@ -130,24 +134,32 @@ Variants {
 
       Rectangle {
         id: dockContainer
-        width: dockLayout.implicitWidth + 48 * scaling
-        height: iconSize * 1.4 * scaling
+        width: dockLayout.implicitWidth + Style.marginL * scaling * 2
+        height: Math.round(iconSize * 1.6)
         color: Qt.alpha(Color.mSurface, Settings.data.dock.backgroundOpacity)
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: dockSpacing
-        topLeftRadius: Style.radiusL * scaling
-        topRightRadius: Style.radiusL * scaling
+        anchors.bottomMargin: floatingMargin + (barAtBottom ? dockSpacing : 0)
+        radius: Style.radiusL * scaling
+        border.width: Math.max(1, Style.borderS * scaling)
+        border.color: Color.mOutline
 
-        // Animate the dock sliding up and down
-        transform: Translate {
-          y: hidden ? (fullHeight - peekHeight) : 0
+        // Fade and zoom animation properties
+        opacity: hidden ? 0 : 1
+        scale: hidden ? 0.85 : 1
 
-          Behavior on y {
-            NumberAnimation {
-              duration: hidden ? hideAnimationDuration : showAnimationDuration
-              easing.type: Easing.InOutQuad
-            }
+        Behavior on opacity {
+          NumberAnimation {
+            duration: hidden ? hideAnimationDuration : showAnimationDuration
+            easing.type: Easing.InOutQuad
+          }
+        }
+
+        Behavior on scale {
+          NumberAnimation {
+            duration: hidden ? hideAnimationDuration : showAnimationDuration
+            easing.type: hidden ? Easing.InQuad : Easing.OutBack
+            easing.overshoot: hidden ? 0 : 1.05
           }
         }
 
@@ -179,7 +191,7 @@ Variants {
         Item {
           id: dock
           width: dockLayout.implicitWidth
-          height: parent.height - (20 * scaling)
+          height: parent.height - (Style.marginM * 2 * scaling) 
           anchors.centerIn: parent
 
           NTooltip {
@@ -203,39 +215,40 @@ Variants {
             Repeater {
               model: ToplevelManager ? ToplevelManager.toplevels : null
 
-              delegate: Rectangle {
+              delegate: Item {
                 id: appButton
-                Layout.preferredWidth: iconSize * scaling
-                Layout.preferredHeight: iconSize * scaling
+                Layout.preferredWidth: iconSize
+                Layout.preferredHeight: iconSize
                 Layout.alignment: Qt.AlignCenter
-
-                color: Color.transparent
-                radius: Style.radiusM * scaling
 
                 property bool isActive: ToplevelManager.activeToplevel && ToplevelManager.activeToplevel === modelData
                 property bool hovered: appMouseArea.containsMouse
                 property string appId: modelData ? modelData.appId : ""
                 property string appTitle: modelData ? modelData.title : ""
 
-                // The icon
+                // The icon with better quality settings
                 Image {
                   id: appIcon
-                  width: iconSize * scaling
-                  height: iconSize * scaling
+                  width: iconSize
+                  height: iconSize
                   anchors.centerIn: parent
                   source: dock.getAppIcon(modelData)
                   visible: source.toString() !== ""
+                  sourceSize.width: iconSize * 2
+                  sourceSize.height: iconSize * 2 
                   smooth: true
-                  mipmap: false
-                  antialiasing: false
+                  mipmap: true
+                  antialiasing: true
                   fillMode: Image.PreserveAspectFit
+                  cache: true
 
-                  scale: appButton.hovered ? 1.1 : 1.0
+                  scale: appButton.hovered ? 1.15 : 1.0
 
                   Behavior on scale {
                     NumberAnimation {
-                      duration: Style.animationFast
+                      duration: Style.animationNormal
                       easing.type: Easing.OutBack
+                      easing.overshoot: 1.2
                     }
                   }
                 }
@@ -246,15 +259,15 @@ Variants {
                   visible: !appIcon.visible
                   text: "question_mark"
                   font.family: "Material Symbols Rounded"
-                  font.pointSize: iconSize * 0.7 * scaling
+                  font.pointSize: iconSize * 0.7
                   color: appButton.isActive ? Color.mPrimary : Color.mOnSurfaceVariant
-
-                  scale: appButton.hovered ? 1.1 : 1.0
+                  scale: appButton.hovered ? 1.15 : 1.0
 
                   Behavior on scale {
                     NumberAnimation {
                       duration: Style.animationFast
                       easing.type: Easing.OutBack
+                      easing.overshoot: 1.2
                     }
                   }
                 }
@@ -269,8 +282,8 @@ Variants {
                   onEntered: {
                     anyAppHovered = true
                     const appName = appButton.appTitle || appButton.appId || "Unknown"
-                    appTooltip.text = appName.length > 40 ? appName.substring(0, 37) + "..." : appName
                     appTooltip.target = appButton
+                    appTooltip.text = appName.length > 40 ? appName.substring(0, 37) + "..." : appName
                     appTooltip.isVisible = true
                     if (autoHide) {
                       showTimer.stop()
@@ -300,15 +313,24 @@ Variants {
                   }
                 }
 
+                // Active indicator
                 Rectangle {
                   visible: isActive
-                  width: iconSize * 0.25
-                  height: 4 * scaling
+                  width: iconSize * 0.2
+                  height: iconSize * 0.1
                   color: Color.mPrimary
-                  radius: Style.radiusXS
+                  radius: Style.radiusXS * scaling
                   anchors.top: parent.bottom
                   anchors.horizontalCenter: parent.horizontalCenter
-                  anchors.topMargin: Style.marginXXS * scaling
+                  anchors.topMargin: Style.marginXXS * 1.5 * scaling
+
+                  // Pulse animation for active indicator
+                  SequentialAnimation on opacity {
+                    running: isActive
+                    loops: Animation.Infinite
+                    NumberAnimation { to: 0.6; duration: Style.animationSlowest; easing.type: Easing.InOutQuad }
+                    NumberAnimation { to: 1.0; duration: Style.animationSlowest; easing.type: Easing.InOutQuad }
+                  }
                 }
               }
             }
