@@ -99,6 +99,8 @@ Item {
     // When forced shown, match pill background; otherwise use accent when hovered
     color: forceOpen ? pillColor : (showPill ? iconCircleColor : Color.mSurfaceVariant)
     anchors.verticalCenter: parent.verticalCenter
+    border.width: Math.max(1, Style.borderS * scaling)
+    border.color: forceOpen ? Qt.alpha(Color.mOutline, 0.5) : Color.transparent
 
     anchors.left: rightOpen ? parent.left : undefined
     anchors.right: rightOpen ? undefined : parent.right
