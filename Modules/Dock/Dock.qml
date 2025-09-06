@@ -194,12 +194,6 @@ Variants {
           height: parent.height - (Style.marginM * 2 * scaling)
           anchors.centerIn: parent
 
-          NTooltip {
-            id: appTooltip
-            visible: false
-            positionAbove: true
-          }
-
           function getAppIcon(toplevel: Toplevel): string {
             if (!toplevel)
               return ""
@@ -225,6 +219,14 @@ Variants {
                 property bool hovered: appMouseArea.containsMouse
                 property string appId: modelData ? modelData.appId : ""
                 property string appTitle: modelData ? modelData.title : ""
+
+                // Individual tooltip for this app
+                NTooltip {
+                  id: appTooltip
+                  target: appButton
+                  positionAbove: true
+                  visible: false
+                }
 
                 // The icon with better quality settings
                 Image {
@@ -282,7 +284,6 @@ Variants {
                   onEntered: {
                     anyAppHovered = true
                     const appName = appButton.appTitle || appButton.appId || "Unknown"
-                    appTooltip.target = appButton
                     appTooltip.text = appName.length > 40 ? appName.substring(0, 37) + "..." : appName
                     appTooltip.isVisible = true
                     if (autoHide) {
