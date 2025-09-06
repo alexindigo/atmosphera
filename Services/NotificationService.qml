@@ -112,7 +112,7 @@ Singleton {
     function onDoNotDisturbChanged() {
       const label = Settings.data.notifications.doNotDisturb ? "'Do Not Disturb' enabled" : "'Do Not Disturb' disabled"
       const description = Settings.data.notifications.doNotDisturb ? "You'll find these notifications in your history." : "Showing all notifications."
-      ToastService.showNotice(label, description, "notice", false, 2000)
+      ToastService.showNotice(label, description)
     }
   }
 

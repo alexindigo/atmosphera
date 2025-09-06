@@ -46,7 +46,7 @@ NPanel {
 
         NIconButton {
           icon: Settings.data.notifications.doNotDisturb ? "notifications_off" : "notifications_active"
-          tooltipText: Settings.data.notifications.doNotDisturb ? "Do Not Disturb (ON)" : "Do Not Disturb (OFF)"
+          tooltipText: Settings.data.notifications.doNotDisturb ? "'Do Not Disturb' is enabled." : "'Do Not Disturb' is disabled."
           sizeRatio: 0.8
           onClicked: Settings.data.notifications.doNotDisturb = !Settings.data.notifications.doNotDisturb
         }
