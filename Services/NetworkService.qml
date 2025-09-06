@@ -54,7 +54,7 @@ Singleton {
   Component.onCompleted: {
     Logger.log("Network", "Service initialized")
     syncWifiState()
-    refresh()
+    scan()
   }
 
   // Save cache with debounce
@@ -75,6 +75,16 @@ Singleton {
     onTriggered: scan()
   }
 
+  // Ethernet check timer
+  // Always running every 30s
+  Timer {
+    id: ethernetCheckTimer
+    interval: 30000
+    running: true
+    repeat: true
+    onTriggered: ethernetStateProcess.running = true
+  }
+
   // Core functions
   function syncWifiState() {
     wifiStateProcess.running = true
@@ -85,14 +95,6 @@ Singleton {
 
     wifiToggleProcess.action = enabled ? "on" : "off"
     wifiToggleProcess.running = true
-  }
-
-  function refresh() {
-    ethernetStateProcess.running = true
-
-    if (Settings.data.network.wifiEnabled) {
-      scan()
-    }
   }
 
   function scan() {
@@ -206,7 +208,7 @@ Singleton {
   // Processes
   Process {
     id: ethernetStateProcess
-    running: false
+    running: true
     command: ["nmcli", "-t", "-f", "DEVICE,TYPE,STATE", "device"]
 
     stdout: StdioCollector {
@@ -408,7 +410,7 @@ Singleton {
         Logger.log("Network", `Connected to network: "${connectProcess.ssid}"`)
 
         // Still do a scan to get accurate signal and security info
-        delayedScanTimer.interval = 1000
+        delayedScanTimer.interval = 5000
         delayedScanTimer.restart()
       }
     }
@@ -522,8 +524,8 @@ Singleton {
 
         root.forgettingNetwork = ""
 
-        // Quick scan to verify the profile is gone
-        delayedScanTimer.interval = 500
+        // Scan to verify the profile is gone
+        delayedScanTimer.interval = 5000
         delayedScanTimer.restart()
       }
     }
@@ -535,7 +537,7 @@ Singleton {
           Logger.warn("Network", "Forget error: " + text)
         }
         // Still Trigger a scan even on error
-        delayedScanTimer.interval = 500
+        delayedScanTimer.interval = 1000
         delayedScanTimer.restart()
       }
     }

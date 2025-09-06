@@ -40,6 +40,6 @@ NIconButton {
       return "signal_wifi_bad"
     }
   }
-  tooltipText: "Network / Wi-Fi."
+  tooltipText: "Manage Wi-Fi."
   onClicked: PanelService.getPanel("wifiPanel")?.toggle(screen, this)
 }
