@@ -115,7 +115,6 @@ ColumnLayout {
       NColorPicker {
         selectedColor: Settings.data.wallpaper.fillColor
         onColorSelected: color => Settings.data.wallpaper.fillColor = color
-        onColorCancelled: selectedColor = Settings.data.wallpaper.fillColor
       }
     }
 
