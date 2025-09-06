@@ -237,7 +237,7 @@ Variants {
           transitionProgress = 0.0
           Qt.callLater(() => {
                          currentWallpaper.asynchronous = true
-                       }, 100)
+                       })
         }
       }
 
