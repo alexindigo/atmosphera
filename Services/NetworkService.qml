@@ -41,9 +41,7 @@ Singleton {
   Component.onCompleted: {
     Logger.log("Network", "Service initialized")
     syncWifiState()
-    if (Settings.data.network.wifiEnabled) {
-      scan()
-    }
+    refresh()
   }
 
   // Save cache with debounce
@@ -61,9 +59,9 @@ Singleton {
   Timer {
     id: refreshTimer
     interval: 30000
-    running: Settings.data.network.wifiEnabled && !scanning
+    running: true
     repeat: true
-    onTriggered: scan()
+    onTriggered: refresh()
   }
 
   // Delayed scan timer for WiFi enable
@@ -85,6 +83,14 @@ Singleton {
     wifiToggleProcess.running = true
   }
 
+  function refresh() {
+    ethernetStateProcess.running = true
+
+    if (Settings.data.network.wifiEnabled) {
+      scan()
+    }
+  }
+
   function scan() {
     if (scanning)
       return
@@ -92,7 +98,6 @@ Singleton {
     scanning = true
     lastError = ""
     scanProcess.running = true
-    ethernetStateProcess.running = true
   }
 
   function connect(ssid, password = "") {
