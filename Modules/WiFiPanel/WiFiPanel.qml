@@ -173,7 +173,7 @@ NPanel {
           }
 
           NText {
-            text: "Scanning for networks..."
+            text: "Searching for nearby networks..."
             font.pointSize: Style.fontSizeNormal * scaling
             color: Color.mOnSurfaceVariant
             Layout.alignment: Qt.AlignHCenter
@@ -584,7 +584,7 @@ NPanel {
           }
 
           NButton {
-            text: "Scan Again"
+            text: "Scan again"
             icon: "refresh"
             Layout.alignment: Qt.AlignHCenter
             onClicked: NetworkService.scan()

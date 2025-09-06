@@ -40,6 +40,17 @@ Singleton {
     }
   }
 
+  Connections {
+    target: Settings.data.network
+    function onWifiEnabledChanged() {
+      if (Settings.data.network.wifiEnabled) {
+        ToastService.showNotice("Wi-Fi", "Enabled")
+      } else {
+        ToastService.showNotice("Wi-Fi", "Disabled")
+      }
+    }
+  }
+
   Component.onCompleted: {
     Logger.log("Network", "Service initialized")
     syncWifiState()
@@ -57,16 +68,7 @@ Singleton {
     saveDebounce.restart()
   }
 
-  // Single refresh timer for periodic scans
-  Timer {
-    id: refreshTimer
-    interval: 30000
-    running: true
-    repeat: true
-    onTriggered: refresh()
-  }
-
-  // Delayed scan timer for WiFi enable
+  // Delayed scan timer
   Timer {
     id: delayedScanTimer
     interval: 7000
@@ -100,6 +102,7 @@ Singleton {
     scanning = true
     lastError = ""
     scanProcess.running = true
+    Logger.log("Network", "Wi-Fi scan in progress...")
   }
 
   function connect(ssid, password = "") {
@@ -330,6 +333,7 @@ Singleton {
         }
 
         // For logging purpose only
+        Logger.log("Network", "Wi-Fi scan completed")
         const oldSSIDs = Object.keys(root.networks)
         const newSSIDs = Object.keys(nets)
         const newNetworks = newSSIDs.filter(ssid => !oldSSIDs.includes(ssid))
