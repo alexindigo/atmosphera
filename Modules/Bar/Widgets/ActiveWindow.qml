@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
+import Quickshell.Wayland
 import Quickshell.Widgets
 import qs.Commons
 import qs.Services
@@ -9,28 +10,34 @@ import qs.Widgets
 
 RowLayout {
   id: root
-
   property ShellScreen screen
   property real scaling: 1.0
   readonly property real minWidth: 160
   readonly property real maxWidth: 400
-
   Layout.alignment: Qt.AlignVCenter
   spacing: Style.marginS * scaling
   visible: getTitle() !== ""
 
   function getTitle() {
-    // Use the service's focusedWindowTitle property which is updated immediately
-    // when WindowOpenedOrChanged events are received
     return CompositorService.focusedWindowTitle !== "(No active window)" ? CompositorService.focusedWindowTitle : ""
   }
 
   function getAppIcon() {
+    // Try CompositorService first
     const focusedWindow = CompositorService.getFocusedWindow()
-    if (!focusedWindow || !focusedWindow.appId)
-      return ""
+    if (focusedWindow && focusedWindow.appId) {
+      return Icons.iconForAppId(focusedWindow.appId.toLowerCase())
+    }
 
-    return Icons.iconForAppId(focusedWindow.appId)
+    // Fallback to ToplevelManager
+    if (ToplevelManager && ToplevelManager.activeToplevel) {
+      const activeToplevel = ToplevelManager.activeToplevel
+      if (activeToplevel.appId) {
+        return Icons.iconForAppId(activeToplevel.appId.toLowerCase())
+      }
+    }
+
+    return ""
   }
 
   // A hidden text element to safely measure the full title width
@@ -81,8 +88,6 @@ RowLayout {
 
         NText {
           id: titleText
-
-          // For short titles, show full. For long titles, truncate and expand on hover
           Layout.preferredWidth: {
             if (mouseArea.containsMouse) {
               return Math.round(Math.min(fullTitleMetrics.contentWidth, root.maxWidth * scaling))
@@ -91,7 +96,6 @@ RowLayout {
             }
           }
           Layout.alignment: Qt.AlignVCenter
-
           horizontalAlignment: Text.AlignLeft
           text: getTitle()
           font.pointSize: Style.fontSizeS * scaling
@@ -117,6 +121,16 @@ RowLayout {
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
       }
+    }
+  }
+
+  Connections {
+    target: CompositorService
+    function onActiveWindowChanged() {
+      windowIcon.source = Qt.binding(getAppIcon)
+    }
+    function onWindowListChanged() {
+      windowIcon.source = Qt.binding(getAppIcon)
     }
   }
 }
