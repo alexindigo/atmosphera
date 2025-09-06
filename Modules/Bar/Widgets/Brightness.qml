@@ -37,26 +37,24 @@ Item {
     target: getMonitor()
     ignoreUnknownSignals: true
     function onBrightnessUpdated() {
-      Logger.log("Bar-Brightness", "OnBrightnessUpdated")
-      var monitor = getMonitor()
-      if (!monitor)
-        return
-      var currentBrightness = monitor.brightness
-
-      // Ignore if this is the first time or if brightness hasn't actually changed
+      // Ignore if this is the first time we receive an update.
+      // Most likely service just kicked off.
       if (!firstBrightnessReceived) {
         firstBrightnessReceived = true
-        monitor.lastBrightness = currentBrightness
         return
       }
 
-      // Only show pill if brightness actually changed (not just loaded from settings)
-      if (Math.abs(currentBrightness - monitor.lastBrightness) > 0.1) {
-        pill.show()
-      }
-
-      monitor.lastBrightness = currentBrightness
+      pill.show()
+      hideTimerAfterChange.restart()
     }
+  }
+
+  Timer {
+    id: hideTimerAfterChange
+    interval: 2500
+    running: false
+    repeat: false
+    onTriggered: pill.hide()
   }
 
   NPill {
