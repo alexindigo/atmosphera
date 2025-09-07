@@ -33,7 +33,7 @@ NIconButton {
   readonly property bool userDoNotDisturb: (widgetSettings.doNotDisturb !== undefined) ? widgetSettings.doNotDisturb : BarWidgetRegistry.widgetMetadata["NotificationHistory"].doNotDisturb
 
   function lastSeenTs() {
-    return widgetSettings.lastSeenTs || 0
+    return Settings.data.notifications?.lastSeenTs || 0
   }
 
   function computeUnreadCount() {
@@ -59,23 +59,9 @@ NIconButton {
   colorBorderHover: Color.transparent
 
   onClicked: {
-    // Open first using current geometry as anchor
     var panel = PanelService.getPanel("notificationHistoryPanel")
     panel?.toggle(screen, this)
-    // Update last seen right after to avoid affecting anchor calculation
-    Qt.callLater(function () {
-      try {
-        var section = barSection.replace("Section", "").toLowerCase()
-        if (section && sectionWidgetIndex >= 0) {
-          var widgets = Settings.data.bar.widgets[section]
-          if (widgets && sectionWidgetIndex < widgets.length) {
-            widgets[sectionWidgetIndex].lastSeenTs = Time.timestamp * 1000
-          }
-        }
-      } catch (e) {
-
-      }
-    })
+    Settings.data.notifications.lastSeenTs = Time.timestamp * 1000
   }
 
   onRightClicked: Settings.data.notifications.doNotDisturb = !Settings.data.notifications.doNotDisturb
