@@ -67,7 +67,11 @@ Item {
 
     NText {
       id: textItem
-      anchors.centerIn: parent
+      anchors.verticalCenter: parent.verticalCenter
+      anchors.left: rightOpen ? parent.left : undefined
+      anchors.right: rightOpen ? undefined : parent.right
+      anchors.leftMargin: rightOpen ? iconSize * 0.8 : 0
+      anchors.rightMargin: rightOpen ?  0 : iconSize * 0.8
       text: root.text
       font.pointSize: Style.fontSizeXS * scaling
       font.weight: Style.fontWeightBold
