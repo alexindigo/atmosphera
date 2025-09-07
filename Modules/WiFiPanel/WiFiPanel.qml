@@ -397,6 +397,7 @@ NPanel {
                         }
                         outlined: !hovered
                         fontSize: Style.fontSizeXS * scaling
+                        enabled: !NetworkService.connecting
                         onClicked: {
                           if (modelData.existing || modelData.cached || !NetworkService.isSecured(modelData.security)) {
                             NetworkService.connect(modelData.ssid)
@@ -461,7 +462,7 @@ NPanel {
                           onVisibleChanged: if (visible)
                                               forceActiveFocus()
                           onAccepted: {
-                            if (text) {
+                            if (text && !NetworkService.connecting) {
                               NetworkService.connect(passwordSsid, text)
                               passwordSsid = ""
                               passwordInput = ""
@@ -481,7 +482,7 @@ NPanel {
                       NButton {
                         text: "Connect"
                         fontSize: Style.fontSizeXXS * scaling
-                        enabled: passwordInput.length > 0
+                        enabled: passwordInput.length > 0 && !NetworkService.connecting
                         outlined: true
                         onClicked: {
                           NetworkService.connect(passwordSsid, passwordInput)

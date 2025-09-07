@@ -18,6 +18,9 @@ Singleton {
   property string disconnectingFrom: ""
   property string forgettingNetwork: ""
 
+  property bool ignoreScanResults: false
+  property bool scanPending: false
+
   // Persistent cache
   property string cacheFile: Settings.cacheDir + "network.json"
   readonly property string cachedLastConnected: cacheAdapter.lastConnected
@@ -95,11 +98,20 @@ Singleton {
   }
 
   function scan() {
-    if (scanning)
+    if (!Settings.data.network.wifiEnabled)
       return
+
+    if (scanning) {
+      // Mark current scan results to be ignored and schedule a new scan
+      Logger.log("Network", "Scan already in progress, will ignore results and rescan")
+      ignoreScanResults = true
+      scanPending = true
+      return
+    }
 
     scanning = true
     lastError = ""
+    ignoreScanResults = false
 
     // Get existing profiles first, then scan
     profileCheckProcess.running = true
@@ -247,13 +259,24 @@ Singleton {
 
     stdout: StdioCollector {
       onStreamFinished: {
+        if (root.ignoreScanResults) {
+          Logger.log("Network", "Ignoring profile check results (new scan requested)")
+          root.scanning = false
+
+          // Check if we need to start a new scan
+          if (root.scanPending) {
+            root.scanPending = false
+            delayedScanTimer.interval = 100
+            delayedScanTimer.restart()
+          }
+          return
+        }
+
         const profiles = {}
         const lines = text.split("\n").filter(l => l.trim())
         for (const line of lines) {
           profiles[line.trim()] = true
         }
-
-        Logger.log("Network", "Got profiles", JSON.stringify(profiles))
         scanProcess.existingProfiles = profiles
         scanProcess.running = true
       }
@@ -265,11 +288,24 @@ Singleton {
     running: false
     command: ["nmcli", "-t", "-f", "SSID,SECURITY,SIGNAL,IN-USE", "device", "wifi", "list", "--rescan", "yes"]
 
-    // Store existing profiles
     property var existingProfiles: ({})
 
     stdout: StdioCollector {
       onStreamFinished: {
+        if (root.ignoreScanResults) {
+          Logger.log("Network", "Ignoring scan results (new scan requested)")
+          root.scanning = false
+
+          // Check if we need to start a new scan
+          if (root.scanPending) {
+            root.scanPending = false
+            delayedScanTimer.interval = 100
+            delayedScanTimer.restart()
+          }
+          return
+        }
+
+        // Process the scan results as before...
         const lines = text.split("\n")
         const networksMap = {}
 
@@ -358,9 +394,15 @@ Singleton {
         }
 
         Logger.log("Network", "Wi-Fi scan completed")
-        Logger.log("Network", JSON.stringify(networksMap))
         root.networks = networksMap
         root.scanning = false
+
+        // Check if we need to start a new scan
+        if (root.scanPending) {
+          root.scanPending = false
+          delayedScanTimer.interval = 100
+          delayedScanTimer.restart()
+        }
       }
     }
 
@@ -369,16 +411,14 @@ Singleton {
         root.scanning = false
         if (text.trim()) {
           Logger.warn("Network", "Scan error: " + text)
-          // If scan fails, set a short retry
-          if (Settings.data.network.wifiEnabled) {
-            delayedScanTimer.interval = 5000
-            delayedScanTimer.restart()
-          }
+
+          // If scan fails, retry
+          delayedScanTimer.interval = 5000
+          delayedScanTimer.restart()
         }
       }
     }
   }
-
   Process {
     id: connectProcess
     property string mode: "new"
@@ -400,6 +440,17 @@ Singleton {
 
     stdout: StdioCollector {
       onStreamFinished: {
+        // Check if the output actually indicates success
+        // nmcli outputs "Device '...' successfully activated" or "Connection successfully activated"
+        // on success. Empty output or other messages indicate failure.
+        const output = text.trim()
+
+        if (!output || (!output.includes("successfully activated") && !output.includes("Connection successfully"))) {
+          // No success message - likely an error occurred
+          // Don't update anything, let stderr handler deal with it
+          return
+        }
+
         // Success - update cache
         let known = cacheAdapter.knownNetworks
         known[connectProcess.ssid] = {
@@ -474,7 +525,7 @@ Singleton {
           Logger.warn("Network", "Disconnect error: " + text)
         }
         // Still trigger a scan even on error
-        delayedScanTimer.interval = 1000
+        delayedScanTimer.interval = 5000
         delayedScanTimer.restart()
       }
     }
@@ -545,7 +596,7 @@ Singleton {
           Logger.warn("Network", "Forget error: " + text)
         }
         // Still Trigger a scan even on error
-        delayedScanTimer.interval = 1000
+        delayedScanTimer.interval = 5000
         delayedScanTimer.restart()
       }
     }
