@@ -27,8 +27,8 @@ Singleton {
   // Internal state for network speed calculation
   // Previous Bytes need to be stored as 'real' as they represent the total of bytes transfered
   // since the computer started, so their value will easily overlfow a 32bit int.
-  property real prevRxBytes: undefined
-  property real prevTxBytes: undefined
+  property real prevRxBytes: 0
+  property real prevTxBytes: 0
   property real prevTime: 0
 
   // Cpu temperature is the most complex
@@ -292,7 +292,7 @@ Singleton {
     }
 
     // Compute only if we have a previous run to compare to.
-    if (root.prevTime > 0 && root.prevRxBytes !== undefined) {
+    if (root.prevTime > 0) {
       const timeDiff = currentTime - root.prevTime
 
       // Avoid division by zero if time hasn't passed.
