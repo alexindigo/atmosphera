@@ -27,11 +27,14 @@ Rectangle {
     return {}
   }
 
-  // Use settings or defaults from BarWidgetRegistry metadata
-  readonly property bool userShowDate: (widgetSettings.showDate
-                                        !== undefined) ? widgetSettings.showDate : BarWidgetRegistry.widgetMetadata["Clock"].showDate
-  readonly property bool userUse12h: (widgetSettings.use12HourClock !== undefined) ? widgetSettings.use12HourClock : BarWidgetRegistry.widgetMetadata["Clock"].use12HourClock
-  readonly property bool userShowSeconds: (widgetSettings.showSeconds !== undefined) ? widgetSettings.showSeconds : BarWidgetRegistry.widgetMetadata["Clock"].showSeconds
+  // Resolve settings: try user settings or defaults from BarWidgetRegistry
+  readonly property bool showDate: widgetSettings.showDate || BarWidgetRegistry.widgetMetadata["Clock"].showDate
+  readonly property bool use12h: widgetSettings.use12HourClock
+                                 || BarWidgetRegistry.widgetMetadata["Clock"].use12HourClock
+  readonly property bool showSeconds: widgetSettings.showSeconds
+                                      || BarWidgetRegistry.widgetMetadata["Clock"].showSeconds
+  readonly property bool reverseDayMonth: widgetSettings.reverseDayMonth
+                                          || BarWidgetRegistry.widgetMetadata["Clock"].reverseDayMonth
 
   implicitWidth: clock.width + Style.marginM * 2 * scaling
   implicitHeight: Math.round(Style.capsuleHeight * scaling)
@@ -39,22 +42,39 @@ Rectangle {
   color: Color.mSurfaceVariant
 
   // Clock Icon with attached calendar
-  NClock {
+  NText {
     id: clock
-    anchors.verticalCenter: parent.verticalCenter
-    anchors.horizontalCenter: parent.horizontalCenter
-    // Per-instance overrides to Time formatting
-    showDate: userShowDate
-    use12h: userUse12h
-    showSeconds: userShowSeconds
+    text: {
+      const now = Time.date
+      const timeFormat = use12h ? (showSeconds ? "h:mm:ss AP" : "h:mm AP") : (showSeconds ? "HH:mm:ss" : "HH:mm")
+      const timeString = Qt.formatDateTime(now, timeFormat)
 
-    NTooltip {
-      id: tooltip
-      text: `${Time.dateString}.`
-      target: clock
-      positionAbove: Settings.data.bar.position === "bottom"
+      if (showDate) {
+        let dayName = now.toLocaleDateString(Qt.locale(), "ddd")
+        dayName = dayName.charAt(0).toUpperCase() + dayName.slice(1)
+        let day = now.getDate()
+        let month = now.toLocaleDateString(Qt.locale(), "MMM")
+        return timeString + " - " + (reverseDayMonth ? `${dayName}, ${month} ${day}` : `${dayName}, ${day} ${month}`)
+      }
+      return timeString
     }
+    anchors.centerIn: parent
+    font.pointSize: Style.fontSizeS * scaling
+    font.weight: Style.fontWeightBold
+  }
 
+  NTooltip {
+    id: tooltip
+    text: `${Time.formatDate(reverseDayMonth)}.`
+    target: clock
+    positionAbove: Settings.data.bar.position === "bottom"
+  }
+
+  MouseArea {
+    id: clockMouseArea
+    anchors.fill: parent
+    cursorShape: Qt.PointingHandCursor
+    hoverEnabled: true
     onEntered: {
       if (!PanelService.getPanel("calendarPanel")?.active) {
         tooltip.show()

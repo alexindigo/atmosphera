@@ -82,7 +82,8 @@ Singleton {
                                     "allowUserSettings": true,
                                     "showDate": false,
                                     "use12HourClock": false,
-                                    "showSeconds": false
+                                    "showSeconds": false,
+                                    "reverseDayMonth": true
                                   },
                                   "Volume": {
                                     "allowUserSettings": true,

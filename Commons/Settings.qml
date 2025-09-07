@@ -71,34 +71,64 @@ Singleton {
 
   // -----------------------------------------------------
   // If the settings structure has changed, ensure
-  // backward compatibility
+  // backward compatibility by upgrading the settings
   function upgradeSettingsData() {
-    for (var i = 0; i < adapter.bar.widgets.left.length; i++) {
-      var obj = adapter.bar.widgets.left[i]
-      if (typeof obj === "string") {
-        adapter.bar.widgets.left[i] = {
-          "id": obj
+
+    const sections = ["left", "center", "right"]
+
+    // -----------------
+    // 1st. check our settings are not super old, when we only had the widget type as a string
+    for (var s = 0; s < sections.length; s++) {
+      const sectionName = sections[s]
+      for (var i = 0; i < adapter.bar.widgets[sectionName].length; i++) {
+        var widget = adapter.bar.widgets[sectionName][i]
+        if (typeof widget === "string") {
+          console.log("founf old stuff")
+          adapter.bar.widgets[sectionName][i] = {
+            "id": widget
+          }
         }
       }
     }
-    for (var i = 0; i < adapter.bar.widgets.center.length; i++) {
-      var obj = adapter.bar.widgets.center[i]
-      if (typeof obj === "string") {
-        adapter.bar.widgets.center[i] = {
-          "id": obj
+
+    // -----------------
+    // 2nd. migrate global settings to user settings
+    for (var s = 0; s < sections.length; s++) {
+      const sectionName = sections[s]
+      for (var i = 0; i < adapter.bar.widgets[sectionName].length; i++) {
+        var widget = adapter.bar.widgets[sectionName][i]
+
+        // Check if widget registry supports user settings, if it does not, then there is nothing to do
+        const reg = BarWidgetRegistry.widgetMetadata[widget.id]
+        if ((reg === undefined) || (reg.allowUserSettings === undefined) || !reg.allowUserSettings) {
+          continue
         }
-      }
-    }
-    for (var i = 0; i < adapter.bar.widgets.right.length; i++) {
-      var obj = adapter.bar.widgets.right[i]
-      if (typeof obj === "string") {
-        adapter.bar.widgets.right[i] = {
-          "id": obj
+
+        // Check that the widget was not previously migrated and skip if necessary
+        const keys = Object.keys(widget)
+        if (keys.length > 1) {
+          continue
         }
+
+        _migrateWidget(widget)
+        Logger.log("Settings", JSON.stringify(widget))
       }
     }
   }
 
+  // -----------------------------------------------------
+  function _migrateWidget(widget) {
+    Logger.log("Settings", `Migrating '${widget.id}' widget`)
+
+    switch (widget.id) {
+    case "Clock":
+      widget.showDate = adapter.location.showDateWithClock
+      widget.use12HourClock = adapter.location.use12HourClock
+      widget.reverseDayMonth = adapter.location.reverseDayMonth
+      widget.showSeconds = BarWidgetRegistry.widgetMetadata[widget.id].reverseDayMonth
+      break
+    }
+  }
   // -----------------------------------------------------
   // Kickoff essential services
   function kickOffServices() {
@@ -174,13 +204,13 @@ Singleton {
 
       // bar
       property JsonObject bar: JsonObject {
-        property string position: "top" // Possible values: "top", "bottom"
-        property bool showActiveWindowIcon: true
-        property bool alwaysShowBatteryPercentage: false
-        property bool showNetworkStats: false
+        property string position: "top" // "top" or "bottom"
+        property bool showActiveWindowIcon: true // TODO: delete
+        property bool alwaysShowBatteryPercentage: false // TODO: delete
+        property bool showNetworkStats: false // TODO: delete
         property real backgroundOpacity: 1.0
-        property bool useDistroLogo: false
-        property string showWorkspaceLabel: "none"
+        property bool useDistroLogo: false // TODO: delete
+        property string showWorkspaceLabel: "none" // TODO: delete
         property list<string> monitors: []
 
         // Widget configuration for modular bar system
@@ -236,9 +266,9 @@ Singleton {
       property JsonObject location: JsonObject {
         property string name: defaultLocation
         property bool useFahrenheit: false
-        property bool reverseDayMonth: false
-        property bool use12HourClock: false
-        property bool showDateWithClock: false
+        property bool reverseDayMonth: false // TODO: delete
+        property bool use12HourClock: false // TODO: delete
+        property bool showDateWithClock: false // TODO: delete
       }
 
       // screen recorder
@@ -305,8 +335,8 @@ Singleton {
 
       // audio
       property JsonObject audio: JsonObject {
-        property bool showMiniplayerAlbumArt: false
-        property bool showMiniplayerCava: false
+        property bool showMiniplayerAlbumArt: false // TODO: delete
+        property bool showMiniplayerCava: false // TODO: delete
         property string visualizerType: "linear"
         property int volumeStep: 5
         property int cavaFrameRate: 60
