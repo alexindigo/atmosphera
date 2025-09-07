@@ -30,7 +30,6 @@ NIconButton {
 
   readonly property bool userShowUnreadBadge: (widgetSettings.showUnreadBadge !== undefined) ? widgetSettings.showUnreadBadge : BarWidgetRegistry.widgetMetadata["NotificationHistory"].showUnreadBadge
   readonly property bool userHideWhenZero: (widgetSettings.hideWhenZero !== undefined) ? widgetSettings.hideWhenZero : BarWidgetRegistry.widgetMetadata["NotificationHistory"].hideWhenZero
-  readonly property bool userDoNotDisturb: (widgetSettings.doNotDisturb !== undefined) ? widgetSettings.doNotDisturb : BarWidgetRegistry.widgetMetadata["NotificationHistory"].doNotDisturb
 
   function lastSeenTs() {
     return Settings.data.notifications?.lastSeenTs || 0
@@ -50,11 +49,10 @@ NIconButton {
   }
 
   sizeRatio: 0.8
-  icon: (Settings.data.notifications.doNotDisturb || userDoNotDisturb) ? "notifications_off" : "notifications"
-  tooltipText: (Settings.data.notifications.doNotDisturb
-                || userDoNotDisturb) ? "Notification history.\nRight-click to disable 'Do Not Disturb'." : "Notification history.\nRight-click to enable 'Do Not Disturb'."
+  icon: Settings.data.notifications.doNotDisturb ? "notifications_off" : "notifications"
+  tooltipText: Settings.data.notifications.doNotDisturb ? "Notification history.\nRight-click to disable 'Do Not Disturb'." : "Notification history.\nRight-click to enable 'Do Not Disturb'."
   colorBg: Color.mSurfaceVariant
-  colorFg: (Settings.data.notifications.doNotDisturb || userDoNotDisturb) ? Color.mError : Color.mOnSurface
+  colorFg: Settings.data.notifications.doNotDisturb ? Color.mError : Color.mOnSurface
   colorBorder: Color.transparent
   colorBorderHover: Color.transparent
 
