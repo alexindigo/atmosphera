@@ -92,9 +92,6 @@ Singleton {
 
   function setWifiEnabled(enabled) {
     Settings.data.network.wifiEnabled = enabled
-
-    wifiToggleProcess.action = enabled ? "on" : "off"
-    wifiToggleProcess.running = true
   }
 
   function scan() {
@@ -103,7 +100,9 @@ Singleton {
 
     scanning = true
     lastError = ""
-    scanProcess.running = true
+
+    // Get existing profiles first, then scan
+    profileCheckProcess.running = true
     Logger.log("Network", "Wi-Fi scan in progress...")
   }
 
@@ -176,8 +175,7 @@ Singleton {
         "ssid": ssid,
         "security": "--",
         "signal": 100,
-        "connected"// Default to good signal until real scan
-        : true,
+        "connected": true,
         "existing": true,
         "cached": true
       }
@@ -241,30 +239,23 @@ Singleton {
     }
   }
 
+  // Helper process to get existing profiles
   Process {
-    id: wifiToggleProcess
-    property string action: "on"
+    id: profileCheckProcess
     running: false
-    command: ["nmcli", "radio", "wifi", action]
+    command: ["nmcli", "-t", "-f", "NAME", "connection", "show"]
 
-    onRunningChanged: {
-      if (!running) {
-        if (action === "on") {
-          // Clear networks immediately and start delayed scan
-          root.networks = ({})
-          delayedScanTimer.interval = 8000
-          delayedScanTimer.restart()
-        } else {
-          root.networks = ({})
-        }
-      }
-    }
-
-    stderr: StdioCollector {
+    stdout: StdioCollector {
       onStreamFinished: {
-        if (text.trim()) {
-          Logger.warn("Network", "WiFi toggle error: " + text)
+        const profiles = {}
+        const lines = text.split("\n").filter(l => l.trim())
+        for (const line of lines) {
+          profiles[line.trim()] = true
         }
+
+        Logger.log("Network", "Got profiles", JSON.stringify(profiles))
+        scanProcess.existingProfiles = profiles
+        scanProcess.running = true
       }
     }
   }
@@ -272,74 +263,90 @@ Singleton {
   Process {
     id: scanProcess
     running: false
-    command: ["sh", "-c", `
-      # Get list of saved connection profiles (just the names)
-      profiles=$(nmcli -t -f NAME connection show | tr '\n' '|')
+    command: ["nmcli", "-t", "-f", "SSID,SECURITY,SIGNAL,IN-USE", "device", "wifi", "list", "--rescan", "yes"]
 
-      # Get WiFi networks
-      nmcli -t -f SSID,SECURITY,SIGNAL,IN-USE device wifi list --rescan yes | while read line; do
-      ssid=$(echo "$line" | cut -d: -f1)
-      security=$(echo "$line" | cut -d: -f2)
-      signal=$(echo "$line" | cut -d: -f3)
-      in_use=$(echo "$line" | cut -d: -f4)
-
-      # Skip empty SSIDs
-      if [ -z "$ssid" ]; then
-      continue
-      fi
-
-      # Check if SSID matches any profile name (simple check)
-      # This covers most cases where profile name equals or contains the SSID
-      existing=false
-      if echo "$profiles" | grep -qF "$ssid|"; then
-      existing=true
-      fi
-
-      echo "$ssid|$security|$signal|$in_use|$existing"
-      done
-      `]
+    // Store existing profiles
+    property var existingProfiles: ({})
 
     stdout: StdioCollector {
       onStreamFinished: {
-        const nets = {}
-        const lines = text.split("\n").filter(l => l.trim())
+        const lines = text.split("\n")
+        const networksMap = {}
 
-        for (const line of lines) {
-          const parts = line.split("|")
-          if (parts.length < 5)
+        for (var i = 0; i < lines.length; ++i) {
+          const line = lines[i].trim()
+          if (!line)
           continue
 
-          const ssid = parts[0]
-          if (!ssid || ssid.trim() === "")
-          continue
-
-          const network = {
-            "ssid": ssid,
-            "security": parts[1] || "--",
-            "signal": parseInt(parts[2]) || 0,
-            "connected": parts[3] === "*",
-            "existing": parts[4] === "true",
-            "cached": ssid in cacheAdapter.knownNetworks
+          // Parse from the end to handle SSIDs with colons
+          // Format is SSID:SECURITY:SIGNAL:IN-USE
+          // We know the last 3 fields, so everything else is SSID
+          const lastColonIdx = line.lastIndexOf(":")
+          if (lastColonIdx === -1) {
+            Logger.warn("Network", "Malformed nmcli output line:", line)
+            continue
           }
 
-          // Track connected network
-          if (network.connected && cacheAdapter.lastConnected !== ssid) {
-            cacheAdapter.lastConnected = ssid
-            saveCache()
+          const inUse = line.substring(lastColonIdx + 1)
+          const remainingLine = line.substring(0, lastColonIdx)
+
+          const secondLastColonIdx = remainingLine.lastIndexOf(":")
+          if (secondLastColonIdx === -1) {
+            Logger.warn("Network", "Malformed nmcli output line:", line)
+            continue
           }
 
-          // Keep best signal for duplicate SSIDs
-          if (!nets[ssid] || network.signal > nets[ssid].signal) {
-            nets[ssid] = network
+          const signal = remainingLine.substring(secondLastColonIdx + 1)
+          const remainingLine2 = remainingLine.substring(0, secondLastColonIdx)
+
+          const thirdLastColonIdx = remainingLine2.lastIndexOf(":")
+          if (thirdLastColonIdx === -1) {
+            Logger.warn("Network", "Malformed nmcli output line:", line)
+            continue
+          }
+
+          const security = remainingLine2.substring(thirdLastColonIdx + 1)
+          const ssid = remainingLine2.substring(0, thirdLastColonIdx)
+
+          if (ssid) {
+            const signalInt = parseInt(signal) || 0
+            const connected = inUse === "*"
+
+            // Track connected network in cache
+            if (connected && cacheAdapter.lastConnected !== ssid) {
+              cacheAdapter.lastConnected = ssid
+              saveCache()
+            }
+
+            if (!networksMap[ssid]) {
+              networksMap[ssid] = {
+                "ssid": ssid,
+                "security": security || "--",
+                "signal": signalInt,
+                "connected": connected,
+                "existing": ssid in scanProcess.existingProfiles,
+                "cached": ssid in cacheAdapter.knownNetworks
+              }
+            } else {
+              // Keep the best signal for duplicate SSIDs
+              const existingNet = networksMap[ssid]
+              if (connected) {
+                existingNet.connected = true
+              }
+              if (signalInt > existingNet.signal) {
+                existingNet.signal = signalInt
+                existingNet.security = security || "--"
+              }
+            }
           }
         }
 
-        // For logging purpose only
-        Logger.log("Network", "Wi-Fi scan completed")
+        // Logging
         const oldSSIDs = Object.keys(root.networks)
-        const newSSIDs = Object.keys(nets)
+        const newSSIDs = Object.keys(networksMap)
         const newNetworks = newSSIDs.filter(ssid => !oldSSIDs.includes(ssid))
         const lostNetworks = oldSSIDs.filter(ssid => !newSSIDs.includes(ssid))
+
         if (newNetworks.length > 0 || lostNetworks.length > 0) {
           if (newNetworks.length > 0) {
             Logger.log("Network", "New Wi-Fi SSID discovered:", newNetworks.join(", "))
@@ -347,11 +354,12 @@ Singleton {
           if (lostNetworks.length > 0) {
             Logger.log("Network", "Wi-Fi SSID disappeared:", lostNetworks.join(", "))
           }
-          Logger.log("Network", "Total Wi-Fi SSIDs:", Object.keys(nets).length)
+          Logger.log("Network", "Total Wi-Fi SSIDs:", Object.keys(networksMap).length)
         }
 
-        // Assign the results
-        root.networks = nets
+        Logger.log("Network", "Wi-Fi scan completed")
+        Logger.log("Network", JSON.stringify(networksMap))
+        root.networks = networksMap
         root.scanning = false
       }
     }
