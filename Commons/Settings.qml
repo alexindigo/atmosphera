@@ -300,7 +300,7 @@ Singleton {
         property bool doNotDisturb: false
         property list<string> monitors: []
         // Last time the user opened the notification history (ms since epoch)
-        property double lastSeenTs: 0
+        property real lastSeenTs: 0
       }
 
       // audio

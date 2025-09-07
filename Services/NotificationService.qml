@@ -80,7 +80,7 @@ Singleton {
     JsonAdapter {
       id: historyAdapter
       property var history: []
-      property double timestamp: 0
+      property real timestamp: 0
     }
   }
 
