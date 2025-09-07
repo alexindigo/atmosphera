@@ -74,16 +74,21 @@ NIconButton {
     z: 2
     active: userShowUnreadBadge && (!userHideWhenZero || computeUnreadCount() > 0)
     sourceComponent: Rectangle {
-      width: 16 * scaling
+      id: badge
+      readonly property int count: computeUnreadCount()
+      readonly property string label: count <= 99 ? String(count) : "99+"
+      readonly property real pad: 8 * scaling
       height: 16 * scaling
-      radius: width / 2
+      width: Math.max(height, textNode.implicitWidth + pad)
+      radius: height / 2
       color: Color.mError
       border.color: Color.mSurface
       border.width: 1
-      visible: computeUnreadCount() > 0 || !userHideWhenZero
+      visible: count > 0 || !userHideWhenZero
       NText {
+        id: textNode
         anchors.centerIn: parent
-        text: Math.min(computeUnreadCount(), 9)
+        text: badge.label
         font.pointSize: Style.fontSizeXXS * scaling
         color: Color.mOnError
       }

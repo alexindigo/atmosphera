@@ -299,6 +299,8 @@ Singleton {
       property JsonObject notifications: JsonObject {
         property bool doNotDisturb: false
         property list<string> monitors: []
+        // Last time the user opened the notification history (ms since epoch)
+        property double lastSeenTs: 0
       }
 
       // audio
