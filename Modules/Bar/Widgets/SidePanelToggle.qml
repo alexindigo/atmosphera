@@ -1,3 +1,4 @@
+import QtQuick
 import Quickshell
 import Quickshell.Widgets
 import QtQuick.Effects
@@ -10,8 +11,24 @@ NIconButton {
 
   property ShellScreen screen
   property real scaling: 1.0
+  property string barSection: ""
+  property int sectionWidgetIndex: -1
+  property int sectionWidgetsCount: 0
 
-  icon: Settings.data.bar.useDistroLogo ? "" : "widgets"
+  property var widgetSettings: {
+    var section = barSection.replace("Section", "").toLowerCase()
+    if (section && sectionWidgetIndex >= 0) {
+      var widgets = Settings.data.bar.widgets[section]
+      if (widgets && sectionWidgetIndex < widgets.length) {
+        return widgets[sectionWidgetIndex]
+      }
+    }
+    return {}
+  }
+
+  readonly property bool userUseDistroLogo: (widgetSettings.useDistroLogo !== undefined) ? widgetSettings.useDistroLogo : ((Settings.data.bar.useDistroLogo !== undefined) ? Settings.data.bar.useDistroLogo : BarWidgetRegistry.widgetMetadata["SidePanelToggle"].useDistroLogo)
+
+  icon: userUseDistroLogo ? "" : "widgets"
   tooltipText: "Open side panel."
   sizeRatio: 0.8
 
@@ -24,14 +41,30 @@ NIconButton {
   onClicked: PanelService.getPanel("sidePanel")?.toggle(screen, this)
   onRightClicked: PanelService.getPanel("settingsPanel")?.toggle(screen)
 
-  // When enabled, draw the distro logo instead of the icon glyph
+  Component.onCompleted: {
+    try {
+      var section = barSection.replace("Section", "").toLowerCase()
+      if (section && sectionWidgetIndex >= 0) {
+        var widgets = Settings.data.bar.widgets[section]
+        if (widgets && sectionWidgetIndex < widgets.length) {
+          if (widgets[sectionWidgetIndex].useDistroLogo === undefined
+              && Settings.data.bar.useDistroLogo !== undefined) {
+            widgets[sectionWidgetIndex].useDistroLogo = Settings.data.bar.useDistroLogo
+          }
+        }
+      }
+    } catch (e) {
+
+    }
+  }
+
   IconImage {
     id: logo
     anchors.centerIn: parent
     width: root.width * 0.6
     height: width
-    source: Settings.data.bar.useDistroLogo ? DistroLogoService.osLogo : ""
-    visible: false //Settings.data.bar.useDistroLogo && source !== ""
+    source: userUseDistroLogo ? DistroLogoService.osLogo : ""
+    visible: userUseDistroLogo && source !== ""
     smooth: true
   }
 

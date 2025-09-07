@@ -27,6 +27,11 @@ RowLayout {
     visible: root.label !== "" || root.description !== ""
   }
 
+  // Spacer to push the checkbox to the far right
+  Item {
+    Layout.fillWidth: true
+  }
+
   Rectangle {
     id: box
 

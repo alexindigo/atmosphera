@@ -49,6 +49,61 @@ Singleton {
                                     "allowUserSettings": true,
                                     "icon": "space_bar",
                                     "width": 20
+                                  },
+                                  "ActiveWindow"// Per-instance settings for common widgets shown in BarTab
+                                  : {
+                                    "allowUserSettings": true,
+                                    "showIcon": true
+                                  },
+                                  "Battery": {
+                                    "allowUserSettings": true,
+                                    "alwaysShowPercentage": false
+                                  },
+                                  "SystemMonitor": {
+                                    "allowUserSettings": true,
+                                    "showCpuUsage": true,
+                                    "showCpuTemp": true,
+                                    "showMemoryUsage": true,
+                                    "showNetworkStats": false
+                                  },
+                                  "Workspace": {
+                                    "allowUserSettings": true,
+                                    "labelMode"// none | index | name
+                                    : "index"
+                                  },
+                                  "MediaMini": {
+                                    "allowUserSettings": true,
+                                    "showAlbumArt": false,
+                                    "showVisualizer": false,
+                                    "visualizerType"// linear | mirrored | wave
+                                    : "linear"
+                                  },
+                                  "Clock": {
+                                    "allowUserSettings": true,
+                                    "showDate": false,
+                                    "use12HourClock": false,
+                                    "showSeconds": false
+                                  },
+                                  "Volume": {
+                                    "allowUserSettings": true,
+                                    "alwaysShowPercentage": false
+                                  },
+                                  "Microphone": {
+                                    "allowUserSettings": true,
+                                    "alwaysShowPercentage": false
+                                  },
+                                  "Brightness": {
+                                    "allowUserSettings": true,
+                                    "alwaysShowPercentage": false
+                                  },
+                                  "SidePanelToggle": {
+                                    "allowUserSettings": true,
+                                    "useDistroLogo": false
+                                  },
+                                  "NotificationHistory": {
+                                    "allowUserSettings": true,
+                                    "showUnreadBadge": true,
+                                    "hideWhenZero": false
                                   }
                                 })
 

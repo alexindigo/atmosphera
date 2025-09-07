@@ -18,8 +18,42 @@ RowLayout {
   spacing: Style.marginS * scaling
   visible: getTitle() !== ""
 
+  property string barSection: ""
+  property int sectionWidgetIndex: -1
+  property int sectionWidgetsCount: 0
+
+  property var widgetSettings: {
+    var section = barSection.replace("Section", "").toLowerCase()
+    if (section && sectionWidgetIndex >= 0) {
+      var widgets = Settings.data.bar.widgets[section]
+      if (widgets && sectionWidgetIndex < widgets.length) {
+        return widgets[sectionWidgetIndex]
+      }
+    }
+    return {}
+  }
+
+  readonly property bool userShowIcon: (widgetSettings.showIcon !== undefined) ? widgetSettings.showIcon : ((Settings.data.bar.showActiveWindowIcon !== undefined) ? Settings.data.bar.showActiveWindowIcon : BarWidgetRegistry.widgetMetadata["ActiveWindow"].showIcon)
+
   function getTitle() {
     return CompositorService.focusedWindowTitle !== "(No active window)" ? CompositorService.focusedWindowTitle : ""
+  }
+
+  Component.onCompleted: {
+    try {
+      var section = barSection.replace("Section", "").toLowerCase()
+      if (section && sectionWidgetIndex >= 0) {
+        var widgets = Settings.data.bar.widgets[section]
+        if (widgets && sectionWidgetIndex < widgets.length) {
+          if (widgets[sectionWidgetIndex].showIcon === undefined
+              && Settings.data.bar.showActiveWindowIcon !== undefined) {
+            widgets[sectionWidgetIndex].showIcon = Settings.data.bar.showActiveWindowIcon
+          }
+        }
+      }
+    } catch (e) {
+
+    }
   }
 
   function getAppIcon() {
@@ -74,7 +108,7 @@ RowLayout {
           Layout.preferredWidth: Style.fontSizeL * scaling * 1.2
           Layout.preferredHeight: Style.fontSizeL * scaling * 1.2
           Layout.alignment: Qt.AlignVCenter
-          visible: getTitle() !== "" && Settings.data.bar.showActiveWindowIcon
+          visible: getTitle() !== "" && userShowIcon
 
           IconImage {
             id: windowIcon

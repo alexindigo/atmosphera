@@ -14,6 +14,23 @@ Item {
   property ShellScreen screen
   property real scaling: 1.0
 
+  property string barSection: ""
+  property int sectionWidgetIndex: -1
+  property int sectionWidgetsCount: 0
+
+  property var widgetSettings: {
+    var section = barSection.replace("Section", "").toLowerCase()
+    if (section && sectionWidgetIndex >= 0) {
+      var widgets = Settings.data.bar.widgets[section]
+      if (widgets && sectionWidgetIndex < widgets.length) {
+        return widgets[sectionWidgetIndex]
+      }
+    }
+    return {}
+  }
+
+  readonly property string userLabelMode: (widgetSettings.labelMode !== undefined) ? widgetSettings.labelMode : ((Settings.data.bar.showWorkspaceLabel !== undefined) ? Settings.data.bar.showWorkspaceLabel : BarWidgetRegistry.widgetMetadata["Workspace"].labelMode)
+
   property bool isDestroying: false
   property bool hovered: false
 
@@ -50,6 +67,20 @@ Item {
 
   Component.onCompleted: {
     refreshWorkspaces()
+    try {
+      var section = barSection.replace("Section", "").toLowerCase()
+      if (section && sectionWidgetIndex >= 0) {
+        var widgets = Settings.data.bar.widgets[section]
+        if (widgets && sectionWidgetIndex < widgets.length) {
+          if (widgets[sectionWidgetIndex].labelMode === undefined
+              && Settings.data.bar.showWorkspaceLabel !== undefined) {
+            widgets[sectionWidgetIndex].labelMode = Settings.data.bar.showWorkspaceLabel
+          }
+        }
+      }
+    } catch (e) {
+
+    }
   }
 
   Component.onDestruction: {
@@ -145,7 +176,7 @@ Item {
       model: localWorkspaces
       Item {
         id: workspacePillContainer
-        height: (Settings.data.bar.showWorkspaceLabel !== "none") ? Math.round(18 * scaling) : Math.round(14 * scaling)
+        height: (userLabelMode !== "none") ? Math.round(18 * scaling) : Math.round(14 * scaling)
         width: root.calculatedWsWidth(model)
 
         Rectangle {
@@ -153,15 +184,13 @@ Item {
           anchors.fill: parent
 
           Loader {
-            active: (Settings.data.bar.showWorkspaceLabel !== "none")
+            active: (userLabelMode !== "none")
             sourceComponent: Component {
               Text {
-                // Center horizontally
                 x: (pill.width - width) / 2
-                // Center vertically accounting for font metrics
                 y: (pill.height - height) / 2 + (height - contentHeight) / 2
                 text: {
-                  if (Settings.data.bar.showWorkspaceLabel === "name" && model.name && model.name.length > 0) {
+                  if (userLabelMode === "name" && model.name && model.name.length > 0) {
                     return model.name.substring(0, 2)
                   } else {
                     return model.idx.toString()

@@ -20,6 +20,28 @@ RowLayout {
   visible: MediaService.currentPlayer !== null && MediaService.canPlay
   Layout.preferredWidth: MediaService.currentPlayer !== null && MediaService.canPlay ? implicitWidth : 0
 
+  property string barSection: ""
+  property int sectionWidgetIndex: -1
+  property int sectionWidgetsCount: 0
+
+  property var widgetSettings: {
+    var section = barSection.replace("Section", "").toLowerCase()
+    if (section && sectionWidgetIndex >= 0) {
+      var widgets = Settings.data.bar.widgets[section]
+      if (widgets && sectionWidgetIndex < widgets.length) {
+        return widgets[sectionWidgetIndex]
+      }
+    }
+    return {}
+  }
+
+  readonly property bool userShowAlbumArt: (widgetSettings.showAlbumArt !== undefined) ? widgetSettings.showAlbumArt : ((Settings.data.audio.showMiniplayerAlbumArt !== undefined) ? Settings.data.audio.showMiniplayerAlbumArt : BarWidgetRegistry.widgetMetadata["MediaMini"].showAlbumArt)
+  readonly property bool userShowVisualizer: (widgetSettings.showVisualizer !== undefined) ? widgetSettings.showVisualizer : ((Settings.data.audio.showMiniplayerCava !== undefined) ? Settings.data.audio.showMiniplayerCava : BarWidgetRegistry.widgetMetadata["MediaMini"].showVisualizer)
+  readonly property string userVisualizerType: (widgetSettings.visualizerType !== undefined
+                                                && widgetSettings.visualizerType
+                                                !== "") ? widgetSettings.visualizerType : ((Settings.data.audio.visualizerType !== undefined
+                                                                                            && Settings.data.audio.visualizerType !== "") ? Settings.data.audio.visualizerType : BarWidgetRegistry.widgetMetadata["MediaMini"].visualizerType)
+
   function getTitle() {
     return MediaService.trackTitle + (MediaService.trackArtist !== "" ? ` - ${MediaService.trackArtist}` : "")
   }
@@ -58,8 +80,7 @@ RowLayout {
       Loader {
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
-        active: Settings.data.audio.showMiniplayerCava && Settings.data.audio.visualizerType == "linear"
-                && MediaService.isPlaying
+        active: userShowVisualizer && userVisualizerType == "linear" && MediaService.isPlaying
         z: 0
 
         sourceComponent: LinearSpectrum {
@@ -74,8 +95,7 @@ RowLayout {
       Loader {
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
-        active: Settings.data.audio.showMiniplayerCava && Settings.data.audio.visualizerType == "mirrored"
-                && MediaService.isPlaying
+        active: userShowVisualizer && userVisualizerType == "mirrored" && MediaService.isPlaying
         z: 0
 
         sourceComponent: MirroredSpectrum {
@@ -90,8 +110,7 @@ RowLayout {
       Loader {
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
-        active: Settings.data.audio.showMiniplayerCava && Settings.data.audio.visualizerType == "wave"
-                && MediaService.isPlaying
+        active: userShowVisualizer && userVisualizerType == "wave" && MediaService.isPlaying
         z: 0
 
         sourceComponent: WaveSpectrum {
@@ -115,12 +134,12 @@ RowLayout {
           font.pointSize: Style.fontSizeL * scaling
           verticalAlignment: Text.AlignVCenter
           Layout.alignment: Qt.AlignVCenter
-          visible: !Settings.data.audio.showMiniplayerAlbumArt && getTitle() !== "" && !trackArt.visible
+          visible: !userShowAlbumArt && getTitle() !== "" && !trackArt.visible
         }
 
         ColumnLayout {
           Layout.alignment: Qt.AlignVCenter
-          visible: Settings.data.audio.showMiniplayerAlbumArt
+          visible: userShowAlbumArt
           spacing: 0
 
           Item {
@@ -196,6 +215,30 @@ RowLayout {
           tooltip.hide()
         }
       }
+    }
+  }
+
+  Component.onCompleted: {
+    try {
+      var section = barSection.replace("Section", "").toLowerCase()
+      if (section && sectionWidgetIndex >= 0) {
+        var widgets = Settings.data.bar.widgets[section]
+        if (widgets && sectionWidgetIndex < widgets.length) {
+          var w = widgets[sectionWidgetIndex]
+          if (w.showAlbumArt === undefined && Settings.data.audio.showMiniplayerAlbumArt !== undefined) {
+            w.showAlbumArt = Settings.data.audio.showMiniplayerAlbumArt
+          }
+          if (w.showVisualizer === undefined && Settings.data.audio.showMiniplayerCava !== undefined) {
+            w.showVisualizer = Settings.data.audio.showMiniplayerCava
+          }
+          if ((w.visualizerType === undefined || w.visualizerType === "")
+              && (Settings.data.audio.visualizerType !== undefined && Settings.data.audio.visualizerType !== "")) {
+            w.visualizerType = Settings.data.audio.visualizerType
+          }
+        }
+      }
+    } catch (e) {
+
     }
   }
 

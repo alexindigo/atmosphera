@@ -71,55 +71,12 @@ ColumnLayout {
       }
     }
 
-    NToggle {
-      label: "Show Active Window's Icon"
-      description: "Display the app icon next to the title of the currently focused window."
-      checked: Settings.data.bar.showActiveWindowIcon
-      onToggled: checked => Settings.data.bar.showActiveWindowIcon = checked
-    }
-
+    // Keep Battery toggle here for now (cannot test per-widget yet)
     NToggle {
       label: "Show Battery Percentage"
       description: "Display battery percentage at all times."
       checked: Settings.data.bar.alwaysShowBatteryPercentage
       onToggled: checked => Settings.data.bar.alwaysShowBatteryPercentage = checked
-    }
-
-    NToggle {
-      label: "Show Network Statistics"
-      description: "Display network upload and download speeds in the system monitor."
-      checked: Settings.data.bar.showNetworkStats
-      onToggled: checked => Settings.data.bar.showNetworkStats = checked
-    }
-
-    NToggle {
-      label: "Replace SidePanel toggle with distro logo"
-      description: "Show distro logo instead of the SidePanel toggle button in the bar."
-      checked: Settings.data.bar.useDistroLogo
-      onToggled: checked => {
-                   Settings.data.bar.useDistroLogo = checked
-                 }
-    }
-
-    NComboBox {
-      label: "Show Workspaces Labels"
-      description: "Show the workspace name or index within the workspace indicator."
-      model: ListModel {
-        ListElement {
-          key: "none"
-          name: "None"
-        }
-        ListElement {
-          key: "index"
-          name: "Index"
-        }
-        ListElement {
-          key: "name"
-          name: "Name"
-        }
-      }
-      currentKey: Settings.data.bar.showWorkspaceLabel
-      onSelected: key => Settings.data.bar.showWorkspaceLabel = key
     }
   }
 

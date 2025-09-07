@@ -11,6 +11,44 @@ RowLayout {
   property ShellScreen screen
   property real scaling: 1.0
 
+  property string barSection: ""
+  property int sectionWidgetIndex: -1
+  property int sectionWidgetsCount: 0
+
+  property var widgetSettings: {
+    var section = barSection.replace("Section", "").toLowerCase()
+    if (section && sectionWidgetIndex >= 0) {
+      var widgets = Settings.data.bar.widgets[section]
+      if (widgets && sectionWidgetIndex < widgets.length) {
+        return widgets[sectionWidgetIndex]
+      }
+    }
+    return {}
+  }
+
+  readonly property bool userShowCpuUsage: (widgetSettings.showCpuUsage !== undefined) ? widgetSettings.showCpuUsage : BarWidgetRegistry.widgetMetadata["SystemMonitor"].showCpuUsage
+  readonly property bool userShowCpuTemp: (widgetSettings.showCpuTemp !== undefined) ? widgetSettings.showCpuTemp : BarWidgetRegistry.widgetMetadata["SystemMonitor"].showCpuTemp
+  readonly property bool userShowMemoryUsage: (widgetSettings.showMemoryUsage !== undefined) ? widgetSettings.showMemoryUsage : BarWidgetRegistry.widgetMetadata["SystemMonitor"].showMemoryUsage
+  readonly property bool userShowNetworkStats: (widgetSettings.showNetworkStats
+                                                !== undefined) ? widgetSettings.showNetworkStats : ((Settings.data.bar.showNetworkStats !== undefined) ? Settings.data.bar.showNetworkStats : BarWidgetRegistry.widgetMetadata["SystemMonitor"].showNetworkStats)
+
+  Component.onCompleted: {
+    try {
+      var section = barSection.replace("Section", "").toLowerCase()
+      if (section && sectionWidgetIndex >= 0) {
+        var widgets = Settings.data.bar.widgets[section]
+        if (widgets && sectionWidgetIndex < widgets.length) {
+          if (widgets[sectionWidgetIndex].showNetworkStats === undefined
+              && Settings.data.bar.showNetworkStats !== undefined) {
+            widgets[sectionWidgetIndex].showNetworkStats = Settings.data.bar.showNetworkStats
+          }
+        }
+      }
+    } catch (e) {
+
+    }
+  }
+
   Layout.alignment: Qt.AlignVCenter
   spacing: Style.marginS * scaling
 
@@ -34,6 +72,7 @@ RowLayout {
         id: cpuUsageLayout
         spacing: Style.marginXS * scaling
         Layout.alignment: Qt.AlignVCenter
+        visible: userShowCpuUsage
 
         NIcon {
           id: cpuUsageIcon
@@ -59,6 +98,7 @@ RowLayout {
         // spacing is thin here to compensate for the vertical thermometer icon
         spacing: Style.marginXXS * scaling
         Layout.alignment: Qt.AlignVCenter
+        visible: userShowCpuTemp
 
         NIcon {
           text: "thermometer"
@@ -81,6 +121,7 @@ RowLayout {
         id: memoryUsageLayout
         spacing: Style.marginXS * scaling
         Layout.alignment: Qt.AlignVCenter
+        visible: userShowMemoryUsage
 
         NIcon {
           text: "memory"
@@ -103,7 +144,7 @@ RowLayout {
         id: networkDownloadLayout
         spacing: Style.marginXS * scaling
         Layout.alignment: Qt.AlignVCenter
-        visible: Settings.data.bar.showNetworkStats
+        visible: userShowNetworkStats
 
         NIcon {
           text: "download"
@@ -126,7 +167,7 @@ RowLayout {
         id: networkUploadLayout
         spacing: Style.marginXS * scaling
         Layout.alignment: Qt.AlignVCenter
-        visible: Settings.data.bar.showNetworkStats
+        visible: userShowNetworkStats
 
         NIcon {
           text: "upload"

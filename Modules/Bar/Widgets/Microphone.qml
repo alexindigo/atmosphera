@@ -16,6 +16,20 @@ Item {
   property int sectionWidgetIndex: 0
   property int sectionWidgetsCount: 0
 
+  property var widgetSettings: {
+    var section = barSection.replace("Section", "").toLowerCase()
+    if (section && sectionWidgetIndex >= 0) {
+      var widgets = Settings.data.bar.widgets[section]
+      if (widgets && sectionWidgetIndex < widgets.length) {
+        return widgets[sectionWidgetIndex]
+      }
+    }
+    return {}
+  }
+
+  readonly property bool userAlwaysShowPercentage: (widgetSettings.alwaysShowPercentage
+                                                    !== undefined) ? widgetSettings.alwaysShowPercentage : BarWidgetRegistry.widgetMetadata["Microphone"].alwaysShowPercentage
+
   // Used to avoid opening the pill on Quickshell startup
   property bool firstInputVolumeReceived: false
   property int wheelAccumulator: 0
@@ -69,6 +83,23 @@ Item {
     }
   }
 
+  Component.onCompleted: {
+    try {
+      var section = barSection.replace("Section", "").toLowerCase()
+      if (section && sectionWidgetIndex >= 0) {
+        var widgets = Settings.data.bar.widgets[section]
+        if (widgets && sectionWidgetIndex < widgets.length) {
+          if (widgets[sectionWidgetIndex].alwaysShowPercentage === undefined
+              && Settings.data.bar.alwaysShowBatteryPercentage !== undefined) {
+            widgets[sectionWidgetIndex].alwaysShowPercentage = Settings.data.bar.alwaysShowBatteryPercentage
+          }
+        }
+      }
+    } catch (e) {
+
+    }
+  }
+
   NPill {
     id: pill
 
@@ -78,6 +109,7 @@ Item {
     collapsedIconColor: Color.mOnSurface
     autoHide: false // Important to be false so we can hover as long as we want
     text: Math.floor(AudioService.inputVolume * 100) + "%"
+    forceOpen: userAlwaysShowPercentage
     tooltipText: "Microphone: " + Math.round(AudioService.inputVolume * 100)
                  + "%\nLeft click for advanced settings.\nScroll up/down to change volume.\nRight click to toggle mute."
 

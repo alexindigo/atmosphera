@@ -188,13 +188,33 @@ NBox {
                     colorBgHover: Qt.alpha(Color.mOnPrimary, Style.opacityLight)
                     colorFgHover: Color.mOnPrimary
                     onClicked: {
-                      var dialog = Qt.createComponent("BarWidgetSettingsDialog.qml").createObject(root, {
-                                                                                                    "widgetIndex": index,
-                                                                                                    "widgetData": modelData,
-                                                                                                    "widgetId": modelData.id,
-                                                                                                    "parent": Overlay.overlay
-                                                                                                  })
-                      dialog.open()
+                      var component = Qt.createComponent(Qt.resolvedUrl("BarWidgetSettingsDialog.qml"))
+                      function instantiateAndOpen() {
+                        var dialog = component.createObject(root, {
+                                                              "widgetIndex": index,
+                                                              "widgetData": modelData,
+                                                              "widgetId": modelData.id,
+                                                              "parent": Overlay.overlay
+                                                            })
+                        if (dialog) {
+                          dialog.open()
+                        } else {
+                          Logger.error("BarSectionEditor", "Failed to create settings dialog instance")
+                        }
+                      }
+                      if (component.status === Component.Ready) {
+                        instantiateAndOpen()
+                      } else if (component.status === Component.Error) {
+                        Logger.error("BarSectionEditor", component.errorString())
+                      } else {
+                        component.statusChanged.connect(function () {
+                          if (component.status === Component.Ready) {
+                            instantiateAndOpen()
+                          } else if (component.status === Component.Error) {
+                            Logger.error("BarSectionEditor", component.errorString())
+                          }
+                        })
+                      }
                     }
                   }
                 }
