@@ -52,46 +52,6 @@ ColumnLayout {
     Layout.bottomMargin: Style.marginXL * scaling
   }
 
-  // Time section
-  ColumnLayout {
-    spacing: Style.marginL * scaling
-    Layout.fillWidth: true
-
-    NText {
-      text: "Time Format"
-      font.pointSize: Style.fontSizeXXL * scaling
-      font.weight: Style.fontWeightBold
-      color: Color.mSecondary
-    }
-
-    NToggle {
-      label: "Use 12-Hour Clock"
-      description: "Display time in 12-hour format (AM/PM) instead of 24-hour."
-      checked: Settings.data.location.use12HourClock
-      onToggled: checked => Settings.data.location.use12HourClock = checked
-    }
-
-    NToggle {
-      label: "Reverse Day/Month"
-      description: "Display date as dd/mm instead of mm/dd."
-      checked: Settings.data.location.reverseDayMonth
-      onToggled: checked => Settings.data.location.reverseDayMonth = checked
-    }
-
-    NToggle {
-      label: "Show Date with Clock"
-      description: "Display date alongside time (e.g., 18:12 - Sat, 23 Aug)."
-      checked: Settings.data.location.showDateWithClock
-      onToggled: checked => Settings.data.location.showDateWithClock = checked
-    }
-  }
-
-  NDivider {
-    Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
-  }
-
   // Weather section
   ColumnLayout {
     spacing: Style.marginM * scaling
