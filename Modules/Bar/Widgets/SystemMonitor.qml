@@ -88,7 +88,7 @@ RowLayout {
         }
 
         NText {
-          text: `${SystemStatService.memoryUsageGb}G`
+          text: `${SystemStatService.memGb}G`
           font.family: Settings.data.ui.fontFixed
           font.pointSize: Style.fontSizeS * scaling
           font.weight: Style.fontWeightMedium

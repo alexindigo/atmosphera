@@ -11,71 +11,92 @@ NPanel {
   id: root
 
   panelWidth: 460 * scaling
-  panelHeight: 708 * scaling
+  panelHeight: contentHeight
+
+  // Default height, will be modified via binding when the content is fully loaded
+  property real contentHeight: 720 * scaling
 
   panelContent: Item {
     id: content
 
     property real cardSpacing: Style.marginL * scaling
 
-    anchors.left: parent.left
-    anchors.right: parent.right
-    anchors.top: parent.top
-    anchors.margins: content.cardSpacing
-    implicitHeight: layout.implicitHeight
+    width: root.panelWidth
+    implicitHeight: layout.implicitHeight + (2 * cardSpacing)
+    height: implicitHeight
 
-    // Layout content (not vertically anchored so implicitHeight is valid)
+    // Update parent's contentHeight whenever our height changes
+    onHeightChanged: {
+      root.contentHeight = height
+    }
+
+    onImplicitHeightChanged: {
+      if (implicitHeight > 0) {
+        root.contentHeight = implicitHeight
+      }
+    }
+
+    // Layout content
     ColumnLayout {
       id: layout
-      // Use the same spacing value horizontally and vertically
-      anchors.left: parent.left
-      anchors.right: parent.right
-      anchors.top: parent.top
+      x: content.cardSpacing
+      y: content.cardSpacing
+      width: parent.width - (2 * content.cardSpacing)
       spacing: content.cardSpacing
 
       // Cards (consistent inter-card spacing via ColumnLayout spacing)
-      ProfileCard {// Layout.topMargin: 0
-        // Layout.bottomMargin: 0
+      ProfileCard {
+        id: profileCard
+        Layout.fillWidth: true
       }
-      WeatherCard {// Layout.topMargin: 0
-        // Layout.bottomMargin: 0
+
+      WeatherCard {
+        id: weatherCard
+        Layout.fillWidth: true
       }
 
       // Middle section: media + stats column
       RowLayout {
+        id: middleRow
         Layout.fillWidth: true
-        Layout.topMargin: 0
-        Layout.bottomMargin: 0
+        Layout.minimumHeight: 280 * scaling
+        Layout.preferredHeight: Math.max(280 * scaling, statsCard.implicitHeight)
         spacing: content.cardSpacing
 
         // Media card
         MediaCard {
           id: mediaCard
           Layout.fillWidth: true
-          implicitHeight: statsCard.implicitHeight
+          Layout.fillHeight: true
         }
 
         // System monitors combined in one card
         SystemMonitorCard {
           id: statsCard
+          Layout.alignment: Qt.AlignTop
         }
       }
 
       // Bottom actions (two grouped rows of round buttons)
       RowLayout {
+        id: bottomRow
         Layout.fillWidth: true
-        Layout.topMargin: 0
-        Layout.bottomMargin: 0
+        Layout.minimumHeight: 60 * scaling
+        Layout.preferredHeight: Math.max(60 * scaling, powerProfilesCard.implicitHeight, utilitiesCard.implicitHeight)
         spacing: content.cardSpacing
 
         // Power Profiles switcher
         PowerProfilesCard {
+          id: powerProfilesCard
           spacing: content.cardSpacing
+          Layout.fillWidth: true
         }
 
         // Utilities buttons
         UtilitiesCard {
+          id: utilitiesCard
           spacing: content.cardSpacing
+          Layout.fillWidth: true
         }
       }
     }

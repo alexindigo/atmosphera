@@ -40,7 +40,7 @@ NBox {
       height: 68 * scaling
     }
     NCircleStat {
-      value: SystemStatService.memoryUsagePer
+      value: SystemStatService.memPercent
       icon: "memory"
       flat: true
       contentScale: 0.8
@@ -48,7 +48,7 @@ NBox {
       height: 68 * scaling
     }
     NCircleStat {
-      value: SystemStatService.diskUsage
+      value: SystemStatService.diskPercent
       icon: "hard_drive"
       flat: true
       contentScale: 0.8

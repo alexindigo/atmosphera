@@ -14,7 +14,9 @@ Singleton {
   property bool connecting: false
   property string connectingTo: ""
   property string lastError: ""
-  property bool ethernet: false
+  property bool ethernetConnected: false
+  property string disconnectingFrom: ""
+  property string forgettingNetwork: ""
 
   // Persistent cache
   property string cacheFile: Settings.cacheDir + "network.json"
@@ -38,10 +40,21 @@ Singleton {
     }
   }
 
+  Connections {
+    target: Settings.data.network
+    function onWifiEnabledChanged() {
+      if (Settings.data.network.wifiEnabled) {
+        ToastService.showNotice("Wi-Fi", "Enabled")
+      } else {
+        ToastService.showNotice("Wi-Fi", "Disabled")
+      }
+    }
+  }
+
   Component.onCompleted: {
     Logger.log("Network", "Service initialized")
     syncWifiState()
-    refresh()
+    scan()
   }
 
   // Save cache with debounce
@@ -55,20 +68,21 @@ Singleton {
     saveDebounce.restart()
   }
 
-  // Single refresh timer for periodic scans
-  Timer {
-    id: refreshTimer
-    interval: 30000
-    running: true
-    repeat: true
-    onTriggered: refresh()
-  }
-
-  // Delayed scan timer for WiFi enable
+  // Delayed scan timer
   Timer {
     id: delayedScanTimer
     interval: 7000
     onTriggered: scan()
+  }
+
+  // Ethernet check timer
+  // Always running every 30s
+  Timer {
+    id: ethernetCheckTimer
+    interval: 30000
+    running: true
+    repeat: true
+    onTriggered: ethernetStateProcess.running = true
   }
 
   // Core functions
@@ -83,14 +97,6 @@ Singleton {
     wifiToggleProcess.running = true
   }
 
-  function refresh() {
-    ethernetStateProcess.running = true
-
-    if (Settings.data.network.wifiEnabled) {
-      scan()
-    }
-  }
-
   function scan() {
     if (scanning)
       return
@@ -98,6 +104,7 @@ Singleton {
     scanning = true
     lastError = ""
     scanProcess.running = true
+    Logger.log("Network", "Wi-Fi scan in progress...")
   }
 
   function connect(ssid, password = "") {
@@ -123,11 +130,14 @@ Singleton {
   }
 
   function disconnect(ssid) {
+    disconnectingFrom = ssid
     disconnectProcess.ssid = ssid
     disconnectProcess.running = true
   }
 
   function forget(ssid) {
+    forgettingNetwork = ssid
+
     // Remove from cache
     let known = cacheAdapter.knownNetworks
     delete known[ssid]
@@ -142,6 +152,40 @@ Singleton {
     // Remove from system
     forgetProcess.ssid = ssid
     forgetProcess.running = true
+  }
+
+  // Helper function to immediately update network status
+  function updateNetworkStatus(ssid, connected) {
+    let nets = networks
+
+    // Update all networks connected status
+    for (let key in nets) {
+      if (nets[key].connected && key !== ssid) {
+        nets[key].connected = false
+      }
+    }
+
+    // Update the target network if it exists
+    if (nets[ssid]) {
+      nets[ssid].connected = connected
+      nets[ssid].existing = true
+      nets[ssid].cached = true
+    } else if (connected) {
+      // Create a temporary entry if network doesn't exist yet
+      nets[ssid] = {
+        "ssid": ssid,
+        "security": "--",
+        "signal": 100,
+        "connected"// Default to good signal until real scan
+        : true,
+        "existing": true,
+        "cached": true
+      }
+    }
+
+    // Trigger property change notification
+    networks = ({})
+    networks = nets
   }
 
   // Helper functions
@@ -164,17 +208,19 @@ Singleton {
   // Processes
   Process {
     id: ethernetStateProcess
-    running: false
+    running: true
     command: ["nmcli", "-t", "-f", "DEVICE,TYPE,STATE", "device"]
 
     stdout: StdioCollector {
       onStreamFinished: {
-
-        root.ethernet = text.split("\n").some(line => {
-                                                const parts = line.split(":")
-                                                return parts[1] === "ethernet" && parts[2] === "connected"
-                                              })
-        Logger.log("Network", "Ethernet connected:", root.ethernet)
+        const connected = text.split("\n").some(line => {
+                                                  const parts = line.split(":")
+                                                  return parts[1] === "ethernet" && parts[2] === "connected"
+                                                })
+        if (root.ethernetConnected !== connected) {
+          root.ethernetConnected = connected
+          Logger.log("Network", "Ethernet connected:", root.ethernetConnected)
+        }
       }
     }
   }
@@ -187,7 +233,7 @@ Singleton {
     stdout: StdioCollector {
       onStreamFinished: {
         const enabled = text.trim() === "enabled"
-        Logger.log("Network", "Wifi enabled:", enabled)
+        Logger.log("Network", "Wi-Fi enabled:", enabled)
         if (Settings.data.network.wifiEnabled !== enabled) {
           Settings.data.network.wifiEnabled = enabled
         }
@@ -227,11 +273,11 @@ Singleton {
     id: scanProcess
     running: false
     command: ["sh", "-c", `
-      # Get existing profiles
-      profiles=$(nmcli -t -f NAME,TYPE connection show | grep ':802-11-wireless' | cut -d: -f1)
+      # Get list of saved connection profiles (just the names)
+      profiles=$(nmcli -t -f NAME connection show | tr '\n' '|')
 
       # Get WiFi networks
-      nmcli -t -f SSID,SECURITY,SIGNAL,IN-USE device wifi list | while read line; do
+      nmcli -t -f SSID,SECURITY,SIGNAL,IN-USE device wifi list --rescan yes | while read line; do
       ssid=$(echo "$line" | cut -d: -f1)
       security=$(echo "$line" | cut -d: -f2)
       signal=$(echo "$line" | cut -d: -f3)
@@ -242,8 +288,10 @@ Singleton {
       continue
       fi
 
+      # Check if SSID matches any profile name (simple check)
+      # This covers most cases where profile name equals or contains the SSID
       existing=false
-      if echo "$profiles" | grep -q "^$ssid$"; then
+      if echo "$profiles" | grep -qF "$ssid|"; then
       existing=true
       fi
 
@@ -286,9 +334,25 @@ Singleton {
           }
         }
 
+        // For logging purpose only
+        Logger.log("Network", "Wi-Fi scan completed")
+        const oldSSIDs = Object.keys(root.networks)
+        const newSSIDs = Object.keys(nets)
+        const newNetworks = newSSIDs.filter(ssid => !oldSSIDs.includes(ssid))
+        const lostNetworks = oldSSIDs.filter(ssid => !newSSIDs.includes(ssid))
+        if (newNetworks.length > 0 || lostNetworks.length > 0) {
+          if (newNetworks.length > 0) {
+            Logger.log("Network", "New Wi-Fi SSID discovered:", newNetworks.join(", "))
+          }
+          if (lostNetworks.length > 0) {
+            Logger.log("Network", "Wi-Fi SSID disappeared:", lostNetworks.join(", "))
+          }
+          Logger.log("Network", "Total Wi-Fi SSIDs:", Object.keys(nets).length)
+        }
+
+        // Assign the results
         root.networks = nets
         root.scanning = false
-        Logger.log("Network", "Discovered", Object.keys(root.networks).length, "Wi-Fi networks")
       }
     }
 
@@ -338,12 +402,15 @@ Singleton {
         cacheAdapter.lastConnected = connectProcess.ssid
         saveCache()
 
+        // Immediately update the UI before scanning
+        root.updateNetworkStatus(connectProcess.ssid, true)
+
         root.connecting = false
         root.connectingTo = ""
-        Logger.log("Network", "Connected to " + connectProcess.ssid)
+        Logger.log("Network", `Connected to network: "${connectProcess.ssid}"`)
 
-        // Rescan to update status
-        delayedScanTimer.interval = 1000
+        // Still do a scan to get accurate signal and security info
+        delayedScanTimer.interval = 5000
         delayedScanTimer.restart()
       }
     }
@@ -378,8 +445,27 @@ Singleton {
     running: false
     command: ["nmcli", "connection", "down", "id", ssid]
 
-    onRunningChanged: {
-      if (!running) {
+    stdout: StdioCollector {
+      onStreamFinished: {
+        Logger.log("Network", `Disconnected from network: "${disconnectProcess.ssid}"`)
+
+        // Immediately update UI on successful disconnect
+        root.updateNetworkStatus(disconnectProcess.ssid, false)
+        root.disconnectingFrom = ""
+
+        // Do a scan to refresh the list
+        delayedScanTimer.interval = 1000
+        delayedScanTimer.restart()
+      }
+    }
+
+    stderr: StdioCollector {
+      onStreamFinished: {
+        root.disconnectingFrom = ""
+        if (text.trim()) {
+          Logger.warn("Network", "Disconnect error: " + text)
+        }
+        // Still trigger a scan even on error
         delayedScanTimer.interval = 1000
         delayedScanTimer.restart()
       }
@@ -390,10 +476,67 @@ Singleton {
     id: forgetProcess
     property string ssid: ""
     running: false
-    command: ["nmcli", "connection", "delete", "id", ssid]
 
-    onRunningChanged: {
-      if (!running) {
+    // Try multiple common profile name patterns
+    command: ["sh", "-c", `
+      ssid="$1"
+      deleted=false
+
+      # Try exact SSID match first
+      if nmcli connection delete id "$ssid" 2>/dev/null; then
+      echo "Deleted profile: $ssid"
+      deleted=true
+      fi
+
+      # Try "Auto <SSID>" pattern
+      if nmcli connection delete id "Auto $ssid" 2>/dev/null; then
+      echo "Deleted profile: Auto $ssid"
+      deleted=true
+      fi
+
+      # Try "<SSID> 1", "<SSID> 2", etc. patterns
+      for i in 1 2 3; do
+      if nmcli connection delete id "$ssid $i" 2>/dev/null; then
+      echo "Deleted profile: $ssid $i"
+      deleted=true
+      fi
+      done
+
+      if [ "$deleted" = "false" ]; then
+      echo "No profiles found for SSID: $ssid"
+      fi
+      `, "--", ssid]
+
+    stdout: StdioCollector {
+      onStreamFinished: {
+        Logger.log("Network", `Forget network: "${forgetProcess.ssid}"`)
+        Logger.log("Network", text.trim().replace(/[\r\n]/g, " "))
+
+        // Update both cached and existing status immediately
+        let nets = root.networks
+        if (nets[forgetProcess.ssid]) {
+          nets[forgetProcess.ssid].cached = false
+          nets[forgetProcess.ssid].existing = false
+          // Trigger property change
+          root.networks = ({})
+          root.networks = nets
+        }
+
+        root.forgettingNetwork = ""
+
+        // Scan to verify the profile is gone
+        delayedScanTimer.interval = 5000
+        delayedScanTimer.restart()
+      }
+    }
+
+    stderr: StdioCollector {
+      onStreamFinished: {
+        root.forgettingNetwork = ""
+        if (text.trim() && !text.includes("No profiles found")) {
+          Logger.warn("Network", "Forget error: " + text)
+        }
+        // Still Trigger a scan even on error
         delayedScanTimer.interval = 1000
         delayedScanTimer.restart()
       }

@@ -58,29 +58,6 @@ Loader {
             property real percent: isReady ? (battery.percentage * 100) : 0
             property bool charging: isReady ? battery.state === UPowerDeviceState.Charging : false
             property bool batteryVisible: isReady && percent > 0
-
-            function getIcon() {
-              if (!batteryVisible)
-                return ""
-              if (charging)
-                return "battery_android_bolt"
-              if (percent >= 95)
-                return "battery_android_full"
-              if (percent >= 85)
-                return "battery_android_6"
-              if (percent >= 70)
-                return "battery_android_5"
-              if (percent >= 55)
-                return "battery_android_4"
-              if (percent >= 40)
-                return "battery_android_3"
-              if (percent >= 25)
-                return "battery_android_2"
-              if (percent >= 10)
-                return "battery_android_1"
-              if (percent >= 0)
-                return "battery_android_0"
-            }
           }
 
           Item {
@@ -420,7 +397,7 @@ Loader {
                     anchors.bottomMargin: Style.marginM * scaling
                     anchors.leftMargin: Style.marginL * scaling
                     anchors.rightMargin: Style.marginL * scaling
-                    spacing: Style.marginM * scaling
+                    spacing: Style.marginL * scaling
 
                     NText {
                       text: "SECURE TERMINAL"
@@ -429,23 +406,6 @@ Loader {
                       font.pointSize: Style.fontSizeL * scaling
                       font.weight: Style.fontWeightBold
                       Layout.fillWidth: true
-                    }
-
-                    RowLayout {
-                      spacing: Style.marginS * scaling
-                      visible: batteryIndicator.batteryVisible
-                      NIcon {
-                        text: batteryIndicator.getIcon()
-                        font.pointSize: Style.fontSizeM * scaling
-                        color: batteryIndicator.charging ? Color.mPrimary : Color.mOnSurface
-                      }
-                      NText {
-                        text: Math.round(batteryIndicator.percent) + "%"
-                        color: Color.mOnSurface
-                        font.family: Settings.data.ui.fontFixed
-                        font.pointSize: Style.fontSizeM * scaling
-                        font.weight: Style.fontWeightBold
-                      }
                     }
 
                     RowLayout {
@@ -461,6 +421,25 @@ Loader {
                         text: "keyboard_alt"
                         font.pointSize: Style.fontSizeM * scaling
                         color: Color.mOnSurface
+                      }
+                    }
+
+                    RowLayout {
+                      spacing: Style.marginS * scaling
+                      visible: batteryIndicator.batteryVisible
+                      NIcon {
+                        text: BatteryService.getIcon(batteryIndicator.percent, batteryIndicator.charging,
+                                                     batteryIndicator.isReady)
+                        font.pointSize: Style.fontSizeM * scaling
+                        color: batteryIndicator.charging ? Color.mPrimary : Color.mOnSurface
+                        rotation: -90
+                      }
+                      NText {
+                        text: Math.round(batteryIndicator.percent) + "%"
+                        color: Color.mOnSurface
+                        font.family: Settings.data.ui.fontFixed
+                        font.pointSize: Style.fontSizeM * scaling
+                        font.weight: Style.fontWeightBold
                       }
                     }
                   }
