@@ -77,13 +77,12 @@ Singleton {
     const sections = ["left", "center", "right"]
 
     // -----------------
-    // 1st. check our settings are not super old, when we only had the widget type as a string
+    // 1st. check our settings are not super old, when we only had the widget type as a plain string
     for (var s = 0; s < sections.length; s++) {
       const sectionName = sections[s]
       for (var i = 0; i < adapter.bar.widgets[sectionName].length; i++) {
         var widget = adapter.bar.widgets[sectionName][i]
         if (typeof widget === "string") {
-          console.log("founf old stuff")
           adapter.bar.widgets[sectionName][i] = {
             "id": widget
           }
