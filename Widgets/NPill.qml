@@ -45,7 +45,7 @@ Item {
   readonly property int pillOverlap: iconSize * 0.5
   readonly property int maxPillWidth: Math.max(1, textItem.implicitWidth + pillPaddingHorizontal * 2 + pillOverlap)
 
-  width: iconSize + (effectiveShown ? maxPillWidth - pillOverlap : 0)
+  width: iconSize + Math.max(0, pill.width - pillOverlap)
   height: pillHeight
 
   Rectangle {
