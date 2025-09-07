@@ -71,10 +71,4 @@ ColumnLayout {
       onToggled: checked => Settings.data.location.useFahrenheit = checked
     }
   }
-
-  NDivider {
-    Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
-  }
 }
