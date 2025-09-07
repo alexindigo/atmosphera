@@ -77,10 +77,12 @@ Rectangle {
   RowLayout {
     id: contentRow
     anchors.centerIn: parent
-    spacing: Style.marginS * scaling
+    spacing: Style.marginXS * scaling
 
     // Icon (optional)
     NIcon {
+      Layout.alignment: Qt.AlignVCenter
+      layoutTopMargin: 1 * scaling
       visible: root.icon !== ""
       text: root.icon
       font.pointSize: root.iconSize
@@ -105,6 +107,7 @@ Rectangle {
 
     // Text
     NText {
+      Layout.alignment: Qt.AlignVCenter
       visible: root.text !== ""
       text: root.text
       font.pointSize: root.fontSize

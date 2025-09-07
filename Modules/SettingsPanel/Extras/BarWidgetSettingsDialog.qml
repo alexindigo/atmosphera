@@ -113,6 +113,7 @@ Popup {
 
       NButton {
         text: "Apply"
+        icon: "check"
         onClicked: {
           if (settingsLoader.item && settingsLoader.item.saveSettings) {
             var newSettings = settingsLoader.item.saveSettings()

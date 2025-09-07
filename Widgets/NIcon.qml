@@ -1,8 +1,11 @@
 import QtQuick
 import qs.Commons
 import qs.Widgets
+import QtQuick.Layouts
 
 Text {
+  // Optional layout nudge for optical alignment when used inside Layouts
+  property real layoutTopMargin: 0
   text: "question_mark"
   font.family: "Material Symbols Rounded"
   font.pointSize: Style.fontSizeL * scaling
@@ -12,4 +15,5 @@ Text {
   }
   color: Color.mOnSurface
   verticalAlignment: Text.AlignVCenter
+  Layout.topMargin: layoutTopMargin
 }
