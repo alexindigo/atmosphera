@@ -35,7 +35,7 @@ Singleton {
   readonly property var supportedTempCpuSensorNames: ["coretemp", "k10temp", "zenpower"]
   property string cpuTempSensorName: ""
   property string cpuTempHwmonPath: ""
-  // For Intel coretemp averaging
+  // For Intel coretemp averaging of all cores/sensors
   property var intelTempValues: []
   property int intelTempFilesChecked: 0
   property int intelTempMaxFiles: 20 // Will test up to temp20_input
@@ -359,7 +359,7 @@ Singleton {
           sum += root.intelTempValues[i]
         }
         root.cpuTemp = Math.round(sum / root.intelTempValues.length)
-        Logger.log("SystemStat", `Averaged ${root.intelTempValues.length} CPU thermal sensors: ${root.cpuTemp}°C`)
+        //Logger.log("SystemStat", `Averaged ${root.intelTempValues.length} CPU thermal sensors: ${root.cpuTemp}°C`)
       } else {
         Logger.warn("SystemStat", "No temperature sensors found for coretemp")
         root.cpuTemp = 0
