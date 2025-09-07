@@ -112,7 +112,7 @@ Popup {
       }
 
       NButton {
-        text: "Save"
+        text: "Apply"
         onClicked: {
           if (settingsLoader.item && settingsLoader.item.saveSettings) {
             var newSettings = settingsLoader.item.saveSettings()
@@ -186,14 +186,11 @@ Popup {
                                           !== undefined ? settingsPopup.widgetData.showUnreadBadge : BarWidgetRegistry.widgetMetadata["NotificationHistory"].showUnreadBadge
       property bool valueHideWhenZero: settingsPopup.widgetData.hideWhenZero
                                        !== undefined ? settingsPopup.widgetData.hideWhenZero : BarWidgetRegistry.widgetMetadata["NotificationHistory"].hideWhenZero
-      // Stage DND locally; commit on Save
-      property bool valueDoNotDisturbGlobal: Settings.data.notifications.doNotDisturb
 
       function saveSettings() {
         var settings = Object.assign({}, settingsPopup.widgetData)
         settings.showUnreadBadge = valueShowUnreadBadge
         settings.hideWhenZero = valueHideWhenZero
-        Settings.data.notifications.doNotDisturb = valueDoNotDisturbGlobal
         return settings
       }
 
@@ -207,13 +204,6 @@ Popup {
         label: "Hide badge when zero"
         checked: valueHideWhenZero
         onToggled: checked => valueHideWhenZero = checked
-      }
-
-      NCheckbox {
-        label: "Do Not Disturb (notifications)"
-        description: "Toggle notifications 'Do Not Disturb'"
-        checked: valueDoNotDisturbGlobal
-        onToggled: checked => valueDoNotDisturbGlobal = checked
       }
     }
   }
