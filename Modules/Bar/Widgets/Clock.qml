@@ -28,13 +28,13 @@ Rectangle {
   }
 
   // Resolve settings: try user settings or defaults from BarWidgetRegistry
-  readonly property bool showDate: widgetSettings.showDate || BarWidgetRegistry.widgetMetadata["Clock"].showDate
+  readonly property bool showDate: widgetSettings.showDate
+                                   !== undefined ? widgetSettings.showDate : BarWidgetRegistry.widgetMetadata["Clock"].showDate
   readonly property bool use12h: widgetSettings.use12HourClock
-                                 || BarWidgetRegistry.widgetMetadata["Clock"].use12HourClock
+                                 !== undefined ? widgetSettings.use12HourClock : BarWidgetRegistry.widgetMetadata["Clock"].use12HourClock
   readonly property bool showSeconds: widgetSettings.showSeconds
-                                      || BarWidgetRegistry.widgetMetadata["Clock"].showSeconds
-  readonly property bool reverseDayMonth: widgetSettings.reverseDayMonth
-                                          || BarWidgetRegistry.widgetMetadata["Clock"].reverseDayMonth
+                                      !== undefined ? widgetSettings.showSeconds : BarWidgetRegistry.widgetMetadata["Clock"].showSeconds
+  readonly property bool reverseDayMonth: widgetSettings.reverseDayMonth !== undefined ? widgetSettings.reverseDayMonth : BarWidgetRegistry.widgetMetadata["Clock"].reverseDayMonth
 
   implicitWidth: clock.width + Style.marginM * 2 * scaling
   implicitHeight: Math.round(Style.capsuleHeight * scaling)

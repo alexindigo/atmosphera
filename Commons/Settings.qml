@@ -124,7 +124,7 @@ Singleton {
       widget.showDate = adapter.location.showDateWithClock
       widget.use12HourClock = adapter.location.use12HourClock
       widget.reverseDayMonth = adapter.location.reverseDayMonth
-      widget.showSeconds = BarWidgetRegistry.widgetMetadata[widget.id].reverseDayMonth
+      widget.showSeconds = BarWidgetRegistry.widgetMetadata[widget.id].showSeconds
       break
     }
   }

@@ -273,12 +273,15 @@ Popup {
                                  !== undefined ? settingsPopup.widgetData.use12HourClock : BarWidgetRegistry.widgetMetadata["Clock"].use12HourClock
       property bool valueShowSeconds: settingsPopup.widgetData.showSeconds
                                       !== undefined ? settingsPopup.widgetData.showSeconds : BarWidgetRegistry.widgetMetadata["Clock"].showSeconds
+      property bool valueReverseDayMonth: settingsPopup.widgetData.reverseDayMonth
+                                          !== undefined ? settingsPopup.widgetData.reverseDayMonth : BarWidgetRegistry.widgetMetadata["Clock"].reverseDayMonth
 
       function saveSettings() {
         var settings = Object.assign({}, settingsPopup.widgetData)
         settings.showDate = valueShowDate
         settings.use12HourClock = valueUse12h
         settings.showSeconds = valueShowSeconds
+        settings.reverseDayMonth = valueReverseDayMonth
         return settings
       }
 
@@ -298,6 +301,12 @@ Popup {
         label: "Show seconds"
         checked: valueShowSeconds
         onToggled: checked => valueShowSeconds = checked
+      }
+
+      NCheckbox {
+        label: "Reverse day and month"
+        checked: valueReverseDayMonth
+        onToggled: checked => valueReverseDayMonth = checked
       }
     }
   }
