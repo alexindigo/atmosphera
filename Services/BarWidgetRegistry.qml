@@ -83,6 +83,7 @@ Singleton {
                                     "showCpuUsage": true,
                                     "showCpuTemp": true,
                                     "showMemoryUsage": true,
+                                    "showMemoryAsPercent": false,
                                     "showNetworkStats": false
                                   },
                                   "Workspace": {

@@ -43,7 +43,7 @@ Item {
   property color effectColor: Color.mPrimary
 
   property int horizontalPadding: Math.round(Style.marginS * scaling)
-  property int spacingBetweenPills: Math.round(Style.marginXS  * scaling)
+  property int spacingBetweenPills: Math.round(Style.marginXS * scaling)
 
   signal workspaceChanged(int workspaceId, color accentColor)
 

@@ -34,6 +34,8 @@ RowLayout {
   readonly property bool showCpuTemp: (widgetSettings.showCpuTemp !== undefined) ? widgetSettings.showCpuTemp : widgetMetadata.showCpuTemp
   readonly property bool showMemoryUsage: (widgetSettings.showMemoryUsage
                                            !== undefined) ? widgetSettings.showMemoryUsage : widgetMetadata.showMemoryUsage
+  readonly property bool showMemoryAsPercent: (widgetSettings.showMemoryAsPercent
+                                               !== undefined) ? widgetSettings.showMemoryAsPercent : widgetMetadata.showMemoryAsPercent
   readonly property bool showNetworkStats: (widgetSettings.showNetworkStats
                                             !== undefined) ? widgetSettings.showNetworkStats : widgetMetadata.showNetworkStats
 
@@ -117,7 +119,7 @@ RowLayout {
         }
 
         NText {
-          text: `${SystemStatService.memGb}G`
+          text: showMemoryAsPercent ? `${SystemStatService.memPercent}%` : `${SystemStatService.memGb}G`
           font.family: Settings.data.ui.fontFixed
           font.pointSize: Style.fontSizeS * scaling
           font.weight: Style.fontWeightMedium

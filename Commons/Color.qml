@@ -112,7 +112,7 @@ Singleton {
       Logger.log("Color", "Writing colors to disk")
       writeAdapter()
     }
-    
+
     // Trigger initial load when path changes from empty to actual path
     onPathChanged: {
       if (path === Settings.configDir + "colors.json") {

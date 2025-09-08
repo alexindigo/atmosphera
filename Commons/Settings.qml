@@ -183,7 +183,7 @@ Singleton {
     Quickshell.execDetached(["mkdir", "-p", configDir])
     Quickshell.execDetached(["mkdir", "-p", cacheDir])
     Quickshell.execDetached(["mkdir", "-p", cacheDirImages])
-    
+
     // Mark directories as created and trigger file loading
     directoriesCreated = true
   }
@@ -203,7 +203,7 @@ Singleton {
     watchChanges: true
     onFileChanged: reload()
     onAdapterUpdated: saveTimer.start()
-    
+
     // Trigger initial load when path changes from empty to actual path
     onPathChanged: {
       if (path === settingsFile) {

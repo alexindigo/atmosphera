@@ -17,6 +17,8 @@ ColumnLayout {
   property bool valueShowCpuUsage: widgetData.showCpuUsage !== undefined ? widgetData.showCpuUsage : widgetMetadata.showCpuUsage
   property bool valueShowCpuTemp: widgetData.showCpuTemp !== undefined ? widgetData.showCpuTemp : widgetMetadata.showCpuTemp
   property bool valueShowMemoryUsage: widgetData.showMemoryUsage !== undefined ? widgetData.showMemoryUsage : widgetMetadata.showMemoryUsage
+  property bool valueShowMemoryAsPercent: widgetData.showMemoryAsPercent
+                                          !== undefined ? widgetData.showMemoryAsPercent : widgetMetadata.showMemoryAsPercent
   property bool valueShowNetworkStats: widgetData.showNetworkStats
                                        !== undefined ? widgetData.showNetworkStats : widgetMetadata.showNetworkStats
 
@@ -25,6 +27,7 @@ ColumnLayout {
     settings.showCpuUsage = valueShowCpuUsage
     settings.showCpuTemp = valueShowCpuTemp
     settings.showMemoryUsage = valueShowMemoryUsage
+    settings.showMemoryAsPercent = valueShowMemoryAsPercent
     settings.showNetworkStats = valueShowNetworkStats
     return settings
   }
@@ -51,6 +54,14 @@ ColumnLayout {
     label: "Memory usage"
     checked: valueShowMemoryUsage
     onToggled: checked => valueShowMemoryUsage = checked
+  }
+
+  NToggle {
+    id: showMemoryAsPercent
+    Layout.fillWidth: true
+    label: "Show memory as percentage"
+    checked: valueShowMemoryAsPercent
+    onToggled: checked => valueShowMemoryAsPercent = checked
   }
 
   NToggle {
