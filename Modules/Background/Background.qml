@@ -22,8 +22,6 @@ Variants {
       // Internal state management
       property string transitionType: "fade"
       property real transitionProgress: 0
-      // Scaling support for widgets that rely on it
-      property real scaling: ScalingService.getScreenScale(screen)
 
       readonly property real edgeSmoothness: Settings.data.wallpaper.transitionEdgeSmoothness
       readonly property var allTransitions: WallpaperService.allTransitions
@@ -91,14 +89,7 @@ Variants {
         left: true
       }
 
-      Connections {
-        target: ScalingService
-        function onScaleChanged(screenName, scale) {
-          if ((screen !== null) && (screenName === screen.name)) {
-            scaling = scale
-          }
-        }
-      }
+
 
       Timer {
         id: debounceTimer

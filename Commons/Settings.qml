@@ -23,9 +23,9 @@ Singleton {
   property string settingsFile: Quickshell.env("NOCTALIA_SETTINGS_FILE") || (configDir + "settings.json")
 
   property string defaultAvatar: Quickshell.env("HOME") + "/.face"
-  property string defaultWallpapersDirectory: Quickshell.env("HOME") + "/Pictures/Wallpapers"
   property string defaultVideosDirectory: Quickshell.env("HOME") + "/Videos"
   property string defaultLocation: "Tokyo"
+  property string defaultWallpapersDirectory: Quickshell.env("HOME") + "/Pictures/Wallpapers"
   property string defaultWallpaper: Quickshell.shellDir + "/Assets/Wallpaper/noctalia.png"
 
   // Used to access via Settings.data.xxx.yyy
@@ -335,7 +335,6 @@ Singleton {
         property int transitionDuration: 1500 // 1500 ms
         property string transitionType: "random"
         property real transitionEdgeSmoothness: 0.05
-        property string defaultWallpaper: root.defaultWallpaper
         property list<var> monitors: []
       }
 

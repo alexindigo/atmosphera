@@ -216,11 +216,7 @@ Singleton {
   // -------------------------------------------------------------------
   // Get specific monitor wallpaper - now from cache
   function getWallpaper(screenName) {
-    var path = currentWallpapers[screenName] || ""
-    if (path === "") {
-      return Settings.data.wallpaper.defaultWallpaper || ""
-    }
-    return path
+    return currentWallpapers[screenName] || Settings.defaultWallpaper
   }
 
   // -------------------------------------------------------------------
