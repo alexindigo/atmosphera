@@ -68,10 +68,12 @@ Item {
     NText {
       id: textItem
       anchors.verticalCenter: parent.verticalCenter
-      anchors.left: rightOpen ? parent.left : undefined
-      anchors.right: rightOpen ? undefined : parent.right
-      anchors.leftMargin: rightOpen ? iconSize * 0.8 : 0
-      anchors.rightMargin: rightOpen ? 0 : iconSize * 0.8
+      x: {
+        // Little tweak to have a better text horizontal centering
+        var centerX = (parent.width - width) / 2
+        var offset = rightOpen ? Style.marginXS * scaling : -Style.marginXS * scaling
+        return centerX + offset
+      }
       text: root.text
       font.pointSize: Style.fontSizeXS * scaling
       font.weight: Style.fontWeightBold
