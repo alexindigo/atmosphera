@@ -109,22 +109,52 @@ Singleton {
           continue
         }
 
-        _migrateWidget(widget)
+        migrateWidget(widget)
         Logger.log("Settings", JSON.stringify(widget))
       }
     }
   }
 
   // -----------------------------------------------------
-  function _migrateWidget(widget) {
+  function migrateWidget(widget) {
     Logger.log("Settings", `Migrating '${widget.id}' widget`)
 
     switch (widget.id) {
+    case "ActiveWindow":
+      widget.showIcon = adapter.bar.showActiveWindowIcon
+      break
+    case "Battery":
+      widget.alwaysShowPercentage = adapter.bar.alwaysShowBatteryPercentage
+      break
+    case "Brightness":
+      widget.alwaysShowPercentage = BarWidgetRegistry.widgetMetadata[widget.id].alwaysShowPercentage
+      break
     case "Clock":
       widget.showDate = adapter.location.showDateWithClock
       widget.use12HourClock = adapter.location.use12HourClock
       widget.reverseDayMonth = adapter.location.reverseDayMonth
       widget.showSeconds = BarWidgetRegistry.widgetMetadata[widget.id].showSeconds
+      break
+    case "MediaMini":
+      widget.showAlbumArt = adapter.audio.showMiniplayerAlbumArt
+      widget.showVisualizer = adapter.audio.showMiniplayerCava
+      widget.visualizerType = BarWidgetRegistry.widgetMetadata[widget.id].visualizerType
+      break
+    case "NotificationHistory":
+      widget.showUnreadBadge = BarWidgetRegistry.widgetMetadata[widget.id].showUnreadBadge
+      widget.hideWhenZero = BarWidgetRegistry.widgetMetadata[widget.id].hideWhenZero
+      break
+    case "SidePanelToggle":
+      widget.useDistroLogo = adapter.bar.useDistroLogo
+      break
+    case "SystemMonitor":
+      widget.showNetworkStats = adapter.bar.showNetworkStats
+      break
+    case "Volume":
+      widget.alwaysShowPercentage = BarWidgetRegistry.widgetMetadata[widget.id].alwaysShowPercentage
+      break
+    case "Workspace":
+      widget.labelMode = adapter.bar.showWorkspaceLabel
       break
     }
   }
@@ -204,13 +234,14 @@ Singleton {
       // bar
       property JsonObject bar: JsonObject {
         property string position: "top" // "top" or "bottom"
+        property real backgroundOpacity: 1.0
+        property list<string> monitors: []
+
         property bool showActiveWindowIcon: true // TODO: delete
         property bool alwaysShowBatteryPercentage: false // TODO: delete
         property bool showNetworkStats: false // TODO: delete
-        property real backgroundOpacity: 1.0
         property bool useDistroLogo: false // TODO: delete
         property string showWorkspaceLabel: "none" // TODO: delete
-        property list<string> monitors: []
 
         // Widget configuration for modular bar system
         property JsonObject widgets
@@ -265,6 +296,7 @@ Singleton {
       property JsonObject location: JsonObject {
         property string name: defaultLocation
         property bool useFahrenheit: false
+
         property bool reverseDayMonth: false // TODO: delete
         property bool use12HourClock: false // TODO: delete
         property bool showDateWithClock: false // TODO: delete
@@ -334,21 +366,21 @@ Singleton {
 
       // audio
       property JsonObject audio: JsonObject {
-        property bool showMiniplayerAlbumArt: false // TODO: delete
-        property bool showMiniplayerCava: false // TODO: delete
-        property string visualizerType: "linear"
         property int volumeStep: 5
         property int cavaFrameRate: 60
-        // MPRIS controls
+        property string visualizerType: "linear"
         property list<string> mprisBlacklist: []
         property string preferredPlayer: ""
+
+        property bool showMiniplayerAlbumArt: false // TODO: delete
+        property bool showMiniplayerCava: false // TODO: delete
       }
 
       // ui
       property JsonObject ui: JsonObject {
-        property string fontDefault: "Roboto" // Default font for all text
-        property string fontFixed: "DejaVu Sans Mono" // Fixed width font for terminal
-        property string fontBillboard: "Inter" // Large bold font for clocks and prominent displays
+        property string fontDefault: "Roboto"
+        property string fontFixed: "DejaVu Sans Mono"
+        property string fontBillboard: "Inter"
         property list<var> monitorsScaling: []
         property bool idleInhibitorEnabled: false
       }

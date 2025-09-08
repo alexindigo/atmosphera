@@ -29,7 +29,7 @@ ColumnLayout {
   }
 
   NCheckbox {
-    label: "Show date next to time"
+    label: "Show date"
     checked: valueShowDate
     onToggled: checked => valueShowDate = checked
   }

@@ -12,11 +12,6 @@ RowLayout {
   id: root
   property ShellScreen screen
   property real scaling: 1.0
-  readonly property real minWidth: 160
-  readonly property real maxWidth: 400
-  Layout.alignment: Qt.AlignVCenter
-  spacing: Style.marginS * scaling
-  visible: getTitle() !== ""
 
   // Widget properties passed from Bar.qml for per-instance settings
   property string widgetId: ""
@@ -37,6 +32,12 @@ RowLayout {
   }
 
   readonly property bool showIcon: (widgetSettings.showIcon !== undefined) ? widgetSettings.showIcon : widgetMetadata.showIcon
+
+  readonly property real minWidth: 160
+  readonly property real maxWidth: 400
+  Layout.alignment: Qt.AlignVCenter
+  spacing: Style.marginS * scaling
+  visible: getTitle() !== ""
 
   function getTitle() {
     return CompositorService.focusedWindowTitle !== "(No active window)" ? CompositorService.focusedWindowTitle : ""

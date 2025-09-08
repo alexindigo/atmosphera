@@ -38,17 +38,6 @@ Singleton {
                          })
 
   property var widgetMetadata: ({
-                                  "CustomButton": {
-                                    "allowUserSettings": true,
-                                    "icon": "favorite",
-                                    "leftClickExec": "",
-                                    "rightClickExec": "",
-                                    "middleClickExec": ""
-                                  },
-                                  "Spacer": {
-                                    "allowUserSettings": true,
-                                    "width": 20
-                                  },
                                   "ActiveWindow": {
                                     "allowUserSettings": true,
                                     "showIcon": true
@@ -57,6 +46,37 @@ Singleton {
                                     "allowUserSettings": true,
                                     "alwaysShowPercentage": false,
                                     "warningThreshold": 30
+                                  },
+                                  "Brightness": {
+                                    "allowUserSettings": true,
+                                    "alwaysShowPercentage": false
+                                  },
+                                  "Clock": {
+                                    "allowUserSettings": true,
+                                    "showDate": false,
+                                    "use12HourClock": false,
+                                    "showSeconds": false,
+                                    "reverseDayMonth": true
+                                  },
+                                  "CustomButton": {
+                                    "allowUserSettings": true,
+                                    "icon": "favorite",
+                                    "leftClickExec": "",
+                                    "rightClickExec": "",
+                                    "middleClickExec": ""
+                                  },
+                                  "Microphone": {
+                                    "allowUserSettings": true,
+                                    "alwaysShowPercentage": false
+                                  },
+                                  "NotificationHistory": {
+                                    "allowUserSettings": true,
+                                    "showUnreadBadge": true,
+                                    "hideWhenZero": false
+                                  },
+                                  "Spacer": {
+                                    "allowUserSettings": true,
+                                    "width": 20
                                   },
                                   "SystemMonitor": {
                                     "allowUserSettings": true,
@@ -75,33 +95,13 @@ Singleton {
                                     "showVisualizer": false,
                                     "visualizerType": "linear"
                                   },
-                                  "Clock": {
-                                    "allowUserSettings": true,
-                                    "showDate": false,
-                                    "use12HourClock": false,
-                                    "showSeconds": false,
-                                    "reverseDayMonth": true
-                                  },
-                                  "Volume": {
-                                    "allowUserSettings": true,
-                                    "alwaysShowPercentage": false
-                                  },
-                                  "Microphone": {
-                                    "allowUserSettings": true,
-                                    "alwaysShowPercentage": false
-                                  },
-                                  "Brightness": {
-                                    "allowUserSettings": true,
-                                    "alwaysShowPercentage": false
-                                  },
                                   "SidePanelToggle": {
                                     "allowUserSettings": true,
                                     "useDistroLogo": false
                                   },
-                                  "NotificationHistory": {
+                                  "Volume": {
                                     "allowUserSettings": true,
-                                    "showUnreadBadge": true,
-                                    "hideWhenZero": false
+                                    "alwaysShowPercentage": false
                                   }
                                 })
 
