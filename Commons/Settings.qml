@@ -31,6 +31,7 @@ Singleton {
   readonly property alias data: adapter
 
   property bool isLoaded: false
+  property bool directoriesCreated: false
 
   // Signal emitted when settings are loaded after startupcale changes
   signal settingsLoaded
@@ -176,14 +177,15 @@ Singleton {
   }
 
   // -----------------------------------------------------
-  Item {
-    Component.onCompleted: {
-
-      // ensure settings dir exists
-      Quickshell.execDetached(["mkdir", "-p", configDir])
-      Quickshell.execDetached(["mkdir", "-p", cacheDir])
-      Quickshell.execDetached(["mkdir", "-p", cacheDirImages])
-    }
+  // Ensure directories exist before FileView tries to read files
+  Component.onCompleted: {
+    // ensure settings dir exists
+    Quickshell.execDetached(["mkdir", "-p", configDir])
+    Quickshell.execDetached(["mkdir", "-p", cacheDir])
+    Quickshell.execDetached(["mkdir", "-p", cacheDirImages])
+    
+    // Mark directories as created and trigger file loading
+    directoriesCreated = true
   }
 
   // Don't write settings to disk immediately
@@ -197,12 +199,16 @@ Singleton {
 
   FileView {
     id: settingsFileView
-    path: settingsFile
+    path: directoriesCreated ? settingsFile : ""
     watchChanges: true
     onFileChanged: reload()
     onAdapterUpdated: saveTimer.start()
-    Component.onCompleted: function () {
-      reload()
+    
+    // Trigger initial load when path changes from empty to actual path
+    onPathChanged: {
+      if (path === settingsFile) {
+        reload()
+      }
     }
     onLoaded: function () {
       if (!isLoaded) {
