@@ -8,8 +8,7 @@ import qs.Widgets
 RowLayout {
   id: root
 
-  readonly property real preferredHeight: Style.baseWidgetSize * 1.1 * scaling
-  property real preferredWidth: 320 * scaling
+  property real minimumWidth: 280 * scaling
   property real popupHeight: 180 * scaling
 
   property string label: ""
@@ -20,9 +19,11 @@ RowLayout {
   property string currentKey: ""
   property string placeholder: ""
 
+  readonly property real preferredHeight: Style.baseWidgetSize * 1.1 * scaling
+
   signal selected(string key)
 
-  spacing: Style.marginS * scaling
+  spacing: Style.marginL * scaling
   Layout.fillWidth: true
 
   function findIndexByKey(key) {
@@ -39,11 +40,15 @@ RowLayout {
     description: root.description
   }
 
+  Item {
+    Layout.fillWidth: true
+  }
+
   ComboBox {
     id: combo
 
-    Layout.preferredWidth: root.preferredWidth
-    Layout.preferredHeight: height
+    Layout.minimumWidth: root.minimumWidth
+    Layout.preferredHeight: root.preferredHeight
     model: model
     currentIndex: findIndexByKey(currentKey)
     onActivated: {
