@@ -72,7 +72,7 @@ Singleton {
                                   "NotificationHistory": {
                                     "allowUserSettings": true,
                                     "showUnreadBadge": true,
-                                    "hideWhenZero": false
+                                    "hideWhenZero": true
                                   },
                                   "Spacer": {
                                     "allowUserSettings": true,
