@@ -105,9 +105,9 @@ Singleton {
           continue
         }
 
-        if (upgradeWidget(widget)) {
-          Logger.log("Settings", `Upgraded ${widget.id} widget:`, JSON.stringify(widget))
-        }
+        // if (upgradeWidget(widget)) {
+        //   Logger.log("Settings", `Upgraded ${widget.id} widget:`, JSON.stringify(widget))
+        // }
       }
     }
   }
@@ -153,7 +153,7 @@ Singleton {
         continue
       }
 
-      if (!widget.hasOwnProperty(k)) {
+      if (widget[k] === undefined) {
         widget[k] = BarWidgetRegistry.widgetMetadata[widget.id][k]
       }
     }
