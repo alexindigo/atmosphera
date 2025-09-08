@@ -29,13 +29,14 @@ Singleton {
     "volume_off": "\uF026",
     "volume_half": "\uF027",
     "volume_full": "\uF028",
+    "brightness_low": "\uF1CF",
+    "brightness_high": "\uF1CD",
     "power": "\uf011",
     "gear": "\ue615",
     "close": "\uf00D",
     "check": "\uf00C",
     "panel": "\uF28C",
     "memory": "\uF2D6",
-
     "trash": "\uF014",
     "image": "\uF03E",
     "refresh": "\uF021",
@@ -57,17 +58,22 @@ Singleton {
     "stop": "\uEFFB",
     "next": "\uF051",
     "prev": "\uF048",
-    "paint_drop": "\uF043",
+    "paint_drop": "\uF30C",
     "lightning": "\uF0E7",
     "brightness": "\uF0A3",
     "arrow_drop_down": "\uF0D7",
-
+    "warning": "\uF334",
+    "info": "\uF26A",
+    "upload": "\uF01B",
+    "download": "\uF01A",
     "vinyl": "\uEFBD",
+    "link": "\uF0C1",
+    "add": "\uF055", // FIXME UGLY
     "bell": "\uF189",
     "bell_striked": "\uEE15", // FIXME
         "drive": "\uEE15", // FIXME
-    "upload": "\uEE15", // FIXME   
-     "download": "\uEE15", // FIXME
+        "person": "\uEE15", // FIXME
+
 
   }
 

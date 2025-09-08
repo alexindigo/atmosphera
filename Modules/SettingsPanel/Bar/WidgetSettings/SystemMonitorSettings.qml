@@ -59,7 +59,7 @@ ColumnLayout {
   NToggle {
     id: showMemoryAsPercent
     Layout.fillWidth: true
-    label: "Show memory as percentage"
+    label: "Memory as percentage"
     checked: valueShowMemoryAsPercent
     onToggled: checked => valueShowMemoryAsPercent = checked
   }

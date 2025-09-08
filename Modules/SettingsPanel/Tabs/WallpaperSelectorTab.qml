@@ -59,7 +59,7 @@ ColumnLayout {
       anchors.fill: parent
       anchors.margins: Style.marginXS * scaling
       imagePath: currentWallpaper
-      fallbackIcon: "image"
+      fallbackIcon: FontService.icons["image"]
       imageRadius: Style.radiusM * scaling
       borderColor: Color.mSecondary
       borderWidth: Style.borderL * 2 * scaling

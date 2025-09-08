@@ -162,7 +162,7 @@ NBox {
             anchors.fill: parent
             anchors.margins: Style.marginXS * scaling
             imagePath: MediaService.trackArtUrl
-            fallbackIcon: "music_note"
+            fallbackIcon: FontService.icons["vinyl"]
             borderColor: Color.mOutline
             borderWidth: Math.max(1, Style.borderS * scaling)
           }
@@ -307,7 +307,7 @@ NBox {
 
         // Previous button
         NIconButton {
-          icon: "skip_previous"
+          icon: FontService.icons["previous"]
           tooltipText: "Previous Media"
           visible: MediaService.canGoPrevious
           onClicked: MediaService.canGoPrevious ? MediaService.previous() : {}
@@ -323,7 +323,7 @@ NBox {
 
         // Next button
         NIconButton {
-          icon: "skip_next"
+          icon: FontService.icons["next"]
           tooltipText: "Next media"
           visible: MediaService.canGoNext
           onClicked: MediaService.canGoNext ? MediaService.next() : {}

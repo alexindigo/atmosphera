@@ -120,7 +120,7 @@ Popup {
 
       NButton {
         text: "Apply"
-        icon: "check"
+        icon: FontService.icons["check"]
         onClicked: {
           if (settingsLoader.item && settingsLoader.item.saveSettings) {
             var newSettings = settingsLoader.item.saveSettings()

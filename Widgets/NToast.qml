@@ -118,17 +118,7 @@ Item {
       // Icon
       NIcon {
         id: icon
-        text: {
-          switch (root.type) {
-          case "warning":
-            return "warning"
-          case "notice":
-            return "info"
-          default:
-            return "info"
-          }
-        }
-
+        text:  (root.type == "warning") ? FontService.icons["warning"] :  FontService.icons["info"]
         color: {
           switch (root.type) {
           case "warning":

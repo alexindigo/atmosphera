@@ -15,7 +15,6 @@ Item {
   property color iconTextColor: Color.mSurface
   property color collapsedIconColor: Color.mOnSurface
 
-  property real iconRotation: 0
   property real sizeRatio: 0.8
   property bool autoHide: false
   property bool forceOpen: false
@@ -119,7 +118,6 @@ Item {
 
     NIcon {
       text: root.icon
-      rotation: root.iconRotation
       font.pointSize: Style.fontSizeM * scaling
       // When forced shown, use pill text color; otherwise accent color when hovered
       color: forceOpen ? textColor : (showPill ? iconTextColor : Color.mOnSurface)

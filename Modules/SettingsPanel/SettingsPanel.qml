@@ -163,7 +163,7 @@ NPanel {
                    }, {
                      "id": SettingsPanel.Tab.ColorScheme,
                      "label": "Color Scheme",
-                     "icon": "paint_bucket",
+                     "icon": "paint_drop",
                      "source": colorSchemeTab
                    }, {
                      "id": SettingsPanel.Tab.Wallpaper,
@@ -190,7 +190,7 @@ NPanel {
                  }, {
                    "id": SettingsPanel.Tab.Hooks,
                    "label": "Hooks",
-                   "icon": "cable",
+                   "icon": "link",
                    "source": hooksTab
                  }, {
                    "id": SettingsPanel.Tab.About,

@@ -85,7 +85,7 @@ NBox {
       }
 
       NIconButton {
-        icon: "add"
+        icon: FontService.icons["add"]
 
         colorBg: Color.mPrimary
         colorFg: Color.mOnPrimary

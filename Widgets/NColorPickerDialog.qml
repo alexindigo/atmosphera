@@ -502,7 +502,7 @@ Popup {
 
         NButton {
           text: "Apply"
-          icon: "check"
+          icon: FontService.icons["check"]
           customHeight: 36 * scaling
           customWidth: 100 * scaling
           onClicked: {

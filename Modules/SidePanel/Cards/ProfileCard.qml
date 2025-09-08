@@ -32,7 +32,7 @@ NBox {
       width: Style.baseWidgetSize * 1.25 * scaling
       height: Style.baseWidgetSize * 1.25 * scaling
       imagePath: Settings.data.general.avatarImage
-      fallbackIcon: "person"
+      fallbackIcon: FontService.icons["person"]
       borderColor: Color.mPrimary
       borderWidth: Math.max(1, Style.borderM * scaling)
     }

@@ -39,7 +39,7 @@ Item {
   // Test mode
   readonly property bool testMode: false
   readonly property int testPercent: 50
-  readonly property bool testCharging: true
+  readonly property bool testCharging: false
 
   // Main properties
   readonly property var battery: UPower.displayDevice
@@ -87,8 +87,7 @@ Item {
     rightOpen: BarWidgetRegistry.getNPillDirection(root)
     icon: testMode ? BatteryService.getIcon(testPercent, testCharging, true) : BatteryService.getIcon(percent,
                                                                                                       charging, isReady)
-    iconRotation: -90
-    text: ((isReady && battery.isLaptopBattery) || testMode) ? Math.round(percent) + "%" : "-"
+    text: (isReady || testMode) ? Math.round(percent) + "%" : "-"
     textColor: charging ? Color.mPrimary : Color.mOnSurface
     iconCircleColor: Color.mPrimary
     collapsedIconColor: Color.mOnSurface
