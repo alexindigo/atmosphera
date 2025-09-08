@@ -1,0 +1,63 @@
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import qs.Commons
+import qs.Widgets
+import qs.Services
+
+ColumnLayout {
+  id: root
+  spacing: Style.marginM * scaling
+
+  // Properties to receive data from parent
+  property var widgetData: null
+  property var widgetMetadata: null
+
+  // Local, editable state for checkboxes
+  property bool valueShowCpuUsage: widgetData.showCpuUsage !== undefined ? widgetData.showCpuUsage : widgetMetadata.showCpuUsage
+  property bool valueShowCpuTemp: widgetData.showCpuTemp !== undefined ? widgetData.showCpuTemp : widgetMetadata.showCpuTemp
+  property bool valueShowMemoryUsage: widgetData.showMemoryUsage !== undefined ? widgetData.showMemoryUsage : widgetMetadata.showMemoryUsage
+  property bool valueShowNetworkStats: widgetData.showNetworkStats
+                                       !== undefined ? widgetData.showNetworkStats : widgetMetadata.showNetworkStats
+
+  function saveSettings() {
+    var settings = Object.assign({}, widgetData || {})
+    settings.showCpuUsage = valueShowCpuUsage
+    settings.showCpuTemp = valueShowCpuTemp
+    settings.showMemoryUsage = valueShowMemoryUsage
+    settings.showNetworkStats = valueShowNetworkStats
+    return settings
+  }
+
+  NCheckbox {
+    id: showCpuUsage
+    Layout.fillWidth: true
+    label: "CPU usage"
+    checked: valueShowCpuUsage
+    onToggled: checked => valueShowCpuUsage = checked
+  }
+
+  NCheckbox {
+    id: showCpuTemp
+    Layout.fillWidth: true
+    label: "CPU temperature"
+    checked: valueShowCpuTemp
+    onToggled: checked => valueShowCpuTemp = checked
+  }
+
+  NCheckbox {
+    id: showMemoryUsage
+    Layout.fillWidth: true
+    label: "Memory usage"
+    checked: valueShowMemoryUsage
+    onToggled: checked => valueShowMemoryUsage = checked
+  }
+
+  NCheckbox {
+    id: showNetworkStats
+    Layout.fillWidth: true
+    label: "Network traffic"
+    checked: valueShowNetworkStats
+    onToggled: checked => valueShowNetworkStats = checked
+  }
+}

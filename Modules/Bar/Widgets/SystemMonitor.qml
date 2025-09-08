@@ -32,23 +32,6 @@ RowLayout {
   readonly property bool userShowNetworkStats: (widgetSettings.showNetworkStats
                                                 !== undefined) ? widgetSettings.showNetworkStats : ((Settings.data.bar.showNetworkStats !== undefined) ? Settings.data.bar.showNetworkStats : BarWidgetRegistry.widgetMetadata["SystemMonitor"].showNetworkStats)
 
-  Component.onCompleted: {
-    try {
-      var section = barSection.replace("Section", "").toLowerCase()
-      if (section && sectionWidgetIndex >= 0) {
-        var widgets = Settings.data.bar.widgets[section]
-        if (widgets && sectionWidgetIndex < widgets.length) {
-          if (widgets[sectionWidgetIndex].showNetworkStats === undefined
-              && Settings.data.bar.showNetworkStats !== undefined) {
-            widgets[sectionWidgetIndex].showNetworkStats = Settings.data.bar.showNetworkStats
-          }
-        }
-      }
-    } catch (e) {
-
-    }
-  }
-
   Layout.alignment: Qt.AlignVCenter
   spacing: Style.marginS * scaling
 

@@ -47,17 +47,16 @@ Singleton {
                                   },
                                   "Spacer": {
                                     "allowUserSettings": true,
-                                    "icon": "space_bar",
                                     "width": 20
                                   },
-                                  "ActiveWindow"// Per-instance settings for common widgets shown in BarTab
-                                  : {
+                                  "ActiveWindow": {
                                     "allowUserSettings": true,
                                     "showIcon": true
                                   },
                                   "Battery": {
                                     "allowUserSettings": true,
-                                    "alwaysShowPercentage": false
+                                    "alwaysShowPercentage": false,
+                                    "warningThreshold": 30
                                   },
                                   "SystemMonitor": {
                                     "allowUserSettings": true,
@@ -68,15 +67,13 @@ Singleton {
                                   },
                                   "Workspace": {
                                     "allowUserSettings": true,
-                                    "labelMode"// none | index | name
-                                    : "index"
+                                    "labelMode": "index"
                                   },
                                   "MediaMini": {
                                     "allowUserSettings": true,
                                     "showAlbumArt": false,
                                     "showVisualizer": false,
-                                    "visualizerType"// linear | mirrored | wave
-                                    : "linear"
+                                    "visualizerType": "linear"
                                   },
                                   "Clock": {
                                     "allowUserSettings": true,

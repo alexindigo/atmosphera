@@ -11,11 +11,41 @@ Item {
 
   property ShellScreen screen
   property real scaling: 1.0
+
+  // Widget properties passed from Bar.qml for per-instance settings
   property string barSection: ""
-  property int sectionWidgetIndex: 0
+  property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
 
-  // Track if we've already notified to avoid spam
+  // Resolve per-instance widget settings from Settings.data
+  property var widgetSettings: {
+    var section = barSection.replace("Section", "").toLowerCase()
+    if (section && sectionWidgetIndex >= 0) {
+      var widgets = Settings.data.bar.widgets[section]
+      if (widgets && sectionWidgetIndex < widgets.length) {
+        return widgets[sectionWidgetIndex]
+      }
+    }
+    return {}
+  }
+
+  // Resolve settings: try user settings or defaults from BarWidgetRegistry
+  readonly property bool alwaysShowPercentage: widgetSettings.alwaysShowPercentage
+                                               !== undefined ? widgetSettings.alwaysShowPercentage : BarWidgetRegistry.widgetMetadata["Battery"].alwaysShowPercentage
+  readonly property real warningThreshold: widgetSettings.warningThreshold
+                                           !== undefined ? widgetSettings.warningThreshold : BarWidgetRegistry.widgetMetadata["Battery"].warningThreshold
+
+  // Test mode
+  readonly property bool testMode: true
+  readonly property int testPercent: 50
+  readonly property bool testCharging: true
+
+  // Main properties
+  readonly property var battery: UPower.displayDevice
+  readonly property bool isReady: testMode ? true : (battery && battery.ready && battery.isLaptopBattery
+                                                     && battery.isPresent)
+  readonly property real percent: testMode ? testPercent : (isReady ? (battery.percentage * 100) : 0)
+  readonly property bool charging: testMode ? testCharging : (isReady ? battery.state === UPowerDeviceState.Charging : false)
   property bool hasNotifiedLowBattery: false
 
   implicitWidth: pill.width
@@ -23,15 +53,14 @@ Item {
 
   // Helper to evaluate and possibly notify
   function maybeNotify(percent, charging) {
-    const p = Math.round(percent)
-    // Only notify exactly at 15%, not at 0% or any other percentage
-    if (!charging && p === 15 && !root.hasNotifiedLowBattery) {
+    // Only notify once we are a below threshold
+    if (!charging && !root.hasNotifiedLowBattery && percent <= warningThreshold) {
+      root.hasNotifiedLowBattery = true
+      // Maybe go with toast ?
       Quickshell.execDetached(
             ["notify-send", "-u", "critical", "-i", "battery-caution", "Low Battery", `Battery is at ${p}%. Please connect charger.`])
-      root.hasNotifiedLowBattery = true
-    }
-    // Reset when charging starts or when battery recovers above 20%
-    if (charging || p > 20) {
+    } else if (root.hasNotifiedLowBattery && (charging || percent > warningThreshold + 5)) {
+      // Reset when charging starts or when battery recovers 5% above threshold
       root.hasNotifiedLowBattery = false
     }
   }
@@ -40,19 +69,10 @@ Item {
   Connections {
     target: UPower.displayDevice
     function onPercentageChanged() {
-      let battery = UPower.displayDevice
-      let isReady = battery && battery.ready && battery.isLaptopBattery && battery.isPresent
-      let percent = isReady ? (battery.percentage * 100) : 0
-      let charging = isReady ? battery.state === UPowerDeviceState.Charging : false
-
       root.maybeNotify(percent, charging)
     }
 
     function onStateChanged() {
-      let battery = UPower.displayDevice
-      let isReady = battery && battery.ready && battery.isLaptopBattery && battery.isPresent
-      let charging = isReady ? battery.state === UPowerDeviceState.Charging : false
-
       // Reset notification flag when charging starts
       if (charging) {
         root.hasNotifiedLowBattery = false
@@ -63,15 +83,6 @@ Item {
   NPill {
     id: pill
 
-    // Test mode
-    property bool testMode: false
-    property int testPercent: 50
-    property bool testCharging: true
-    property var battery: UPower.displayDevice
-    property bool isReady: testMode ? true : (battery && battery.ready && battery.isLaptopBattery && battery.isPresent)
-    property real percent: testMode ? testPercent : (isReady ? (battery.percentage * 100) : 0)
-    property bool charging: testMode ? testCharging : (isReady ? battery.state === UPowerDeviceState.Charging : false)
-
     rightOpen: BarWidgetRegistry.getNPillDirection(root)
     icon: testMode ? BatteryService.getIcon(testPercent, testCharging, true) : BatteryService.getIcon(percent,
                                                                                                       charging, isReady)
@@ -81,7 +92,7 @@ Item {
     iconCircleColor: Color.mPrimary
     collapsedIconColor: Color.mOnSurface
     autoHide: false
-    forceOpen: isReady && (testMode || battery.isLaptopBattery) && Settings.data.bar.alwaysShowBatteryPercentage
+    forceOpen: isReady && (testMode || battery.isLaptopBattery) && alwaysShowPercentage
     disableOpen: (!isReady || (!testMode && !battery.isLaptopBattery))
     tooltipText: {
       let lines = []

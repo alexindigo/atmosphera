@@ -27,8 +27,7 @@ Item {
     return {}
   }
 
-  readonly property bool userAlwaysShowPercentage: (widgetSettings.alwaysShowPercentage
-                                                    !== undefined) ? widgetSettings.alwaysShowPercentage : BarWidgetRegistry.widgetMetadata["Microphone"].alwaysShowPercentage
+  readonly property bool userAlwaysShowPercentage: widgetSettings?.alwaysShowPercentage
 
   // Used to avoid opening the pill on Quickshell startup
   property bool firstInputVolumeReceived: false
@@ -80,23 +79,6 @@ Item {
     interval: 1500
     onTriggered: {
       pill.hide()
-    }
-  }
-
-  Component.onCompleted: {
-    try {
-      var section = barSection.replace("Section", "").toLowerCase()
-      if (section && sectionWidgetIndex >= 0) {
-        var widgets = Settings.data.bar.widgets[section]
-        if (widgets && sectionWidgetIndex < widgets.length) {
-          if (widgets[sectionWidgetIndex].alwaysShowPercentage === undefined
-              && Settings.data.bar.alwaysShowBatteryPercentage !== undefined) {
-            widgets[sectionWidgetIndex].alwaysShowPercentage = Settings.data.bar.alwaysShowBatteryPercentage
-          }
-        }
-      }
-    } catch (e) {
-
     }
   }
 

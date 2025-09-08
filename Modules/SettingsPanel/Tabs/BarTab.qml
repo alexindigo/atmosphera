@@ -4,7 +4,7 @@ import QtQuick.Layouts
 import qs.Commons
 import qs.Services
 import qs.Widgets
-import qs.Modules.SettingsPanel.Extras
+import qs.Modules.SettingsPanel.Bar
 
 ColumnLayout {
   id: root
@@ -69,14 +69,6 @@ ColumnLayout {
           color: Color.mOnSurface
         }
       }
-    }
-
-    // Keep Battery toggle here for now (cannot test per-widget yet)
-    NToggle {
-      label: "Show Battery Percentage"
-      description: "Display battery percentage at all times."
-      checked: Settings.data.bar.alwaysShowBatteryPercentage
-      onToggled: checked => Settings.data.bar.alwaysShowBatteryPercentage = checked
     }
   }
 

@@ -41,23 +41,6 @@ NIconButton {
   onClicked: PanelService.getPanel("sidePanel")?.toggle(screen, this)
   onRightClicked: PanelService.getPanel("settingsPanel")?.toggle(screen)
 
-  Component.onCompleted: {
-    try {
-      var section = barSection.replace("Section", "").toLowerCase()
-      if (section && sectionWidgetIndex >= 0) {
-        var widgets = Settings.data.bar.widgets[section]
-        if (widgets && sectionWidgetIndex < widgets.length) {
-          if (widgets[sectionWidgetIndex].useDistroLogo === undefined
-              && Settings.data.bar.useDistroLogo !== undefined) {
-            widgets[sectionWidgetIndex].useDistroLogo = Settings.data.bar.useDistroLogo
-          }
-        }
-      }
-    } catch (e) {
-
-    }
-  }
-
   IconImage {
     id: logo
     anchors.centerIn: parent

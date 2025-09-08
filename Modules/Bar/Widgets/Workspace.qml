@@ -67,20 +67,6 @@ Item {
 
   Component.onCompleted: {
     refreshWorkspaces()
-    try {
-      var section = barSection.replace("Section", "").toLowerCase()
-      if (section && sectionWidgetIndex >= 0) {
-        var widgets = Settings.data.bar.widgets[section]
-        if (widgets && sectionWidgetIndex < widgets.length) {
-          if (widgets[sectionWidgetIndex].labelMode === undefined
-              && Settings.data.bar.showWorkspaceLabel !== undefined) {
-            widgets[sectionWidgetIndex].labelMode = Settings.data.bar.showWorkspaceLabel
-          }
-        }
-      }
-    } catch (e) {
-
-    }
   }
 
   Component.onDestruction: {

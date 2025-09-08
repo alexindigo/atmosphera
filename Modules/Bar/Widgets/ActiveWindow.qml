@@ -39,23 +39,6 @@ RowLayout {
     return CompositorService.focusedWindowTitle !== "(No active window)" ? CompositorService.focusedWindowTitle : ""
   }
 
-  Component.onCompleted: {
-    try {
-      var section = barSection.replace("Section", "").toLowerCase()
-      if (section && sectionWidgetIndex >= 0) {
-        var widgets = Settings.data.bar.widgets[section]
-        if (widgets && sectionWidgetIndex < widgets.length) {
-          if (widgets[sectionWidgetIndex].showIcon === undefined
-              && Settings.data.bar.showActiveWindowIcon !== undefined) {
-            widgets[sectionWidgetIndex].showIcon = Settings.data.bar.showActiveWindowIcon
-          }
-        }
-      }
-    } catch (e) {
-
-    }
-  }
-
   function getAppIcon() {
     // Try CompositorService first
     const focusedWindow = CompositorService.getFocusedWindow()

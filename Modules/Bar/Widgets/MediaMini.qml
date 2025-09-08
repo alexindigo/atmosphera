@@ -218,30 +218,6 @@ RowLayout {
     }
   }
 
-  Component.onCompleted: {
-    try {
-      var section = barSection.replace("Section", "").toLowerCase()
-      if (section && sectionWidgetIndex >= 0) {
-        var widgets = Settings.data.bar.widgets[section]
-        if (widgets && sectionWidgetIndex < widgets.length) {
-          var w = widgets[sectionWidgetIndex]
-          if (w.showAlbumArt === undefined && Settings.data.audio.showMiniplayerAlbumArt !== undefined) {
-            w.showAlbumArt = Settings.data.audio.showMiniplayerAlbumArt
-          }
-          if (w.showVisualizer === undefined && Settings.data.audio.showMiniplayerCava !== undefined) {
-            w.showVisualizer = Settings.data.audio.showMiniplayerCava
-          }
-          if ((w.visualizerType === undefined || w.visualizerType === "")
-              && (Settings.data.audio.visualizerType !== undefined && Settings.data.audio.visualizerType !== "")) {
-            w.visualizerType = Settings.data.audio.visualizerType
-          }
-        }
-      }
-    } catch (e) {
-
-    }
-  }
-
   NTooltip {
     id: tooltip
     text: {
