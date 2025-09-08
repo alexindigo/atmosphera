@@ -79,7 +79,7 @@ NBox {
         description: ""
         placeholder: "Select a widget to add..."
         onSelected: key => comboBox.currentKey = key
-        popupHeight: 240 * scaling
+        popupHeight: 340 * scaling
 
         Layout.alignment: Qt.AlignVCenter
       }
