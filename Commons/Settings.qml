@@ -105,9 +105,9 @@ Singleton {
           continue
         }
 
-        // if (upgradeWidget(widget)) {
-        //   Logger.log("Settings", `Upgraded ${widget.id} widget:`, JSON.stringify(widget))
-        // }
+        if (upgradeWidget(widget)) {
+          Logger.log("Settings", `Upgraded ${widget.id} widget:`, JSON.stringify(widget))
+        }
       }
     }
   }
@@ -120,28 +120,28 @@ Singleton {
     // Migrate old bar settings to proper per widget settings
     switch (widget.id) {
     case "ActiveWindow":
-      widget.showIcon = adapter.bar.showActiveWindowIcon
+      widget.showIcon = widget.showIcon !== undefined ? widget.showIcon : adapter.bar.showActiveWindowIcon
       break
     case "Battery":
-      widget.alwaysShowPercentage = adapter.bar.alwaysShowBatteryPercentage
+      widget.alwaysShowPercentage = widget.alwaysShowPercentage!== undefined ? widget.alwaysShowPercentage : adapter.bar.alwaysShowBatteryPercentage
       break
     case "Clock":
-      widget.showDate = adapter.location.showDateWithClock
-      widget.use12HourClock = adapter.location.use12HourClock
-      widget.reverseDayMonth = adapter.location.reverseDayMonth
+      widget.showDate = widget.showDate !== undefined ? widget.showDate : adapter.location.showDateWithClock
+      widget.use12HourClock =  widget.use12HourClock !== undefined ? widget.use12HourClock : adapter.location.use12HourClock
+      widget.reverseDayMonth = widget.reverseDayMonth !== undefined ? widget.reverseDayMonth : adapter.location.reverseDayMonth
       break
     case "MediaMini":
-      widget.showAlbumArt = adapter.audio.showMiniplayerAlbumArt
-      widget.showVisualizer = adapter.audio.showMiniplayerCava
+      widget.showAlbumArt = widget.showAlbumArt !== undefined ? widget.showAlbumArt : adapter.audio.showMiniplayerAlbumArt
+      widget.showVisualizer = widget.showVisualizer !== undefined ? widget.showVisualizer : adapter.audio.showMiniplayerCava
       break
     case "SidePanelToggle":
-      widget.useDistroLogo = adapter.bar.useDistroLogo
+      widget.useDistroLogo = widget.useDistroLogo !== undefined ? widget.useDistroLogo : adapter.bar.useDistroLogo
       break
     case "SystemMonitor":
-      widget.showNetworkStats = adapter.bar.showNetworkStats
+      widget.showNetworkStats = widget.showNetworkStats !== undefined ? widget.showNetworkStats : adapter.bar.showNetworkStats
       break
     case "Workspace":
-      widget.labelMode = adapter.bar.showWorkspaceLabel
+      widget.labelMode = widget.labelMode !==  undefined ? widget.labelMode  : adapter.bar.showWorkspaceLabel
       break
     }
 
