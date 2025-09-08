@@ -14,11 +14,18 @@ Singleton {
   property bool fontsLoaded: false
 
   property var icons: {
+    // weather
     "sunny": "\ue30d",
     "partly_cloudy": "\ue302",
     "cloud": "\ue312",
     "foggy": "\ue311",
-    "rainy": "\ue318"
+    "rainy": "\ue318",
+    "snowy": "\ue319",
+    "thunderstom": "\ue31d",
+
+    "power":  "\uf011",
+    "gear":  "\uf013",
+    "close": "\uf00D"
   }
 
 

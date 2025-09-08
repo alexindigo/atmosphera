@@ -58,7 +58,7 @@ NBox {
         Layout.fillWidth: true
       }
       NIconButton {
-        icon: "settings"
+        icon: FontService.icons["gear"]
         tooltipText: "Open settings."
         onClicked: {
           settingsPanel.requestedTab = SettingsPanel.Tab.General
@@ -68,7 +68,7 @@ NBox {
 
       NIconButton {
         id: powerButton
-        icon: "power_settings_new"
+        icon: FontService.icons["power"]
         tooltipText: "Power menu."
         onClicked: {
           powerPanel.open(screen)
@@ -78,7 +78,7 @@ NBox {
 
       NIconButton {
         id: closeButton
-        icon: "close"
+        icon: FontService.icons["close"]
         tooltipText: "Close side panel."
         onClicked: {
           sidePanel.close()

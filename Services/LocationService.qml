@@ -241,7 +241,7 @@ Singleton {
     if (code >= 51 && code <= 67)
       return FontService.icons["rainy"]
     if (code >= 71 && code <= 77)
-      return FontService.icons["weather_snowy"]
+      return FontService.icons["snowy"]
     if (code >= 80 && code <= 82)
       return FontService.icons["rainy"]
     if (code >= 95 && code <= 99)
