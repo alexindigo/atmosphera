@@ -11,11 +11,12 @@ Rectangle {
   property real scaling: 1.0
 
   // Widget properties passed from Bar.qml for per-instance settings
+  property string widgetId: ""
   property string barSection: ""
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
 
-  // Resolve per-instance widget settings from Settings.data
+  property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
     var section = barSection.replace("Section", "").toLowerCase()
     if (section && sectionWidgetIndex >= 0) {
@@ -28,13 +29,11 @@ Rectangle {
   }
 
   // Resolve settings: try user settings or defaults from BarWidgetRegistry
-  readonly property bool showDate: widgetSettings.showDate
-                                   !== undefined ? widgetSettings.showDate : BarWidgetRegistry.widgetMetadata["Clock"].showDate
-  readonly property bool use12h: widgetSettings.use12HourClock
-                                 !== undefined ? widgetSettings.use12HourClock : BarWidgetRegistry.widgetMetadata["Clock"].use12HourClock
-  readonly property bool showSeconds: widgetSettings.showSeconds
-                                      !== undefined ? widgetSettings.showSeconds : BarWidgetRegistry.widgetMetadata["Clock"].showSeconds
-  readonly property bool reverseDayMonth: widgetSettings.reverseDayMonth !== undefined ? widgetSettings.reverseDayMonth : BarWidgetRegistry.widgetMetadata["Clock"].reverseDayMonth
+  readonly property bool showDate: widgetSettings.showDate !== undefined ? widgetSettings.showDate : widgetMetadata.showDate
+  readonly property bool use12h: widgetSettings.use12HourClock !== undefined ? widgetSettings.use12HourClock : widgetMetadata.use12HourClock
+  readonly property bool showSeconds: widgetSettings.showSeconds !== undefined ? widgetSettings.showSeconds : widgetMetadata.showSeconds
+  readonly property bool reverseDayMonth: widgetSettings.reverseDayMonth
+                                          !== undefined ? widgetSettings.reverseDayMonth : widgetMetadata.reverseDayMonth
 
   implicitWidth: clock.width + Style.marginM * 2 * scaling
   implicitHeight: Math.round(Style.capsuleHeight * scaling)

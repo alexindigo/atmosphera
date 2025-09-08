@@ -13,10 +13,13 @@ NIconButton {
   property ShellScreen screen
   property real scaling: 1.0
 
+  // Widget properties passed from Bar.qml for per-instance settings
+  property string widgetId: ""
   property string barSection: ""
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
 
+  property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
     var section = barSection.replace("Section", "").toLowerCase()
     if (section && sectionWidgetIndex >= 0) {
@@ -27,9 +30,10 @@ NIconButton {
     }
     return {}
   }
-
-  readonly property bool userShowUnreadBadge: (widgetSettings.showUnreadBadge !== undefined) ? widgetSettings.showUnreadBadge : BarWidgetRegistry.widgetMetadata["NotificationHistory"].showUnreadBadge
-  readonly property bool userHideWhenZero: (widgetSettings.hideWhenZero !== undefined) ? widgetSettings.hideWhenZero : BarWidgetRegistry.widgetMetadata["NotificationHistory"].hideWhenZero
+  readonly property bool showUnreadBadge: (widgetSettings.showUnreadBadge
+                                           !== undefined) ? widgetSettings.showUnreadBadge : widgetMetadata.showUnreadBadge
+  readonly property bool hideWhenZero: (widgetSettings.hideWhenZero
+                                        !== undefined) ? widgetSettings.hideWhenZero : widgetMetadata.hideWhenZero
 
   function lastSeenTs() {
     return Settings.data.notifications?.lastSeenTs || 0
@@ -70,7 +74,7 @@ NIconButton {
     anchors.rightMargin: -4 * scaling
     anchors.topMargin: -4 * scaling
     z: 2
-    active: userShowUnreadBadge && (!userHideWhenZero || computeUnreadCount() > 0)
+    active: showUnreadBadge && (!hideWhenZero || computeUnreadCount() > 0)
     sourceComponent: Rectangle {
       id: badge
       readonly property int count: computeUnreadCount()
@@ -82,7 +86,7 @@ NIconButton {
       color: Color.mError
       border.color: Color.mSurface
       border.width: 1
-      visible: count > 0 || !userHideWhenZero
+      visible: count > 0 || !hideWhenZero
       NText {
         id: textNode
         anchors.centerIn: parent

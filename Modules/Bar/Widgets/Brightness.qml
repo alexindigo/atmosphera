@@ -10,10 +10,14 @@ Item {
 
   property ShellScreen screen
   property real scaling: 1.0
+
+  // Widget properties passed from Bar.qml for per-instance settings
+  property string widgetId: ""
   property string barSection: ""
-  property int sectionWidgetIndex: 0
+  property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
 
+  property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
     var section = barSection.replace("Section", "").toLowerCase()
     if (section && sectionWidgetIndex >= 0) {
@@ -26,7 +30,7 @@ Item {
   }
 
   readonly property bool userAlwaysShowPercentage: (widgetSettings.alwaysShowPercentage
-                                                    !== undefined) ? widgetSettings.alwaysShowPercentage : BarWidgetRegistry.widgetMetadata["Brightness"].alwaysShowPercentage
+                                                    !== undefined) ? widgetSettings.alwaysShowPercentage : widgetMetadata.alwaysShowPercentage
 
   // Used to avoid opening the pill on Quickshell startup
   property bool firstBrightnessReceived: false

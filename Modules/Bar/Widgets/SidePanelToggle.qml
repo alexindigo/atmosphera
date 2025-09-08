@@ -11,10 +11,14 @@ NIconButton {
 
   property ShellScreen screen
   property real scaling: 1.0
+
+  // Widget properties passed from Bar.qml for per-instance settings
+  property string widgetId: ""
   property string barSection: ""
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
 
+  property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
     var section = barSection.replace("Section", "").toLowerCase()
     if (section && sectionWidgetIndex >= 0) {
@@ -26,9 +30,10 @@ NIconButton {
     return {}
   }
 
-  readonly property bool userUseDistroLogo: (widgetSettings.useDistroLogo !== undefined) ? widgetSettings.useDistroLogo : ((Settings.data.bar.useDistroLogo !== undefined) ? Settings.data.bar.useDistroLogo : BarWidgetRegistry.widgetMetadata["SidePanelToggle"].useDistroLogo)
+  readonly property bool useDistroLogo: (widgetSettings.useDistroLogo
+                                         !== undefined) ? widgetSettings.useDistroLogo : widgetMetadata.useDistroLogo
 
-  icon: userUseDistroLogo ? "" : "widgets"
+  icon: useDistroLogo ? "" : "widgets"
   tooltipText: "Open side panel."
   sizeRatio: 0.8
 
@@ -46,8 +51,8 @@ NIconButton {
     anchors.centerIn: parent
     width: root.width * 0.6
     height: width
-    source: userUseDistroLogo ? DistroLogoService.osLogo : ""
-    visible: userUseDistroLogo && source !== ""
+    source: useDistroLogo ? DistroLogoService.osLogo : ""
+    visible: useDistroLogo && source !== ""
     smooth: true
   }
 

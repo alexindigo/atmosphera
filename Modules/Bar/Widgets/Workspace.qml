@@ -14,10 +14,13 @@ Item {
   property ShellScreen screen
   property real scaling: 1.0
 
+  // Widget properties passed from Bar.qml for per-instance settings
+  property string widgetId: ""
   property string barSection: ""
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
 
+  property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
     var section = barSection.replace("Section", "").toLowerCase()
     if (section && sectionWidgetIndex >= 0) {
@@ -29,7 +32,7 @@ Item {
     return {}
   }
 
-  readonly property string userLabelMode: (widgetSettings.labelMode !== undefined) ? widgetSettings.labelMode : ((Settings.data.bar.showWorkspaceLabel !== undefined) ? Settings.data.bar.showWorkspaceLabel : BarWidgetRegistry.widgetMetadata["Workspace"].labelMode)
+  readonly property string labelMode: (widgetSettings.labelMode !== undefined) ? widgetSettings.labelMode : widgetMetadata.labelMode
 
   property bool isDestroying: false
   property bool hovered: false
@@ -162,7 +165,7 @@ Item {
       model: localWorkspaces
       Item {
         id: workspacePillContainer
-        height: (userLabelMode !== "none") ? Math.round(18 * scaling) : Math.round(14 * scaling)
+        height: (labelMode !== "none") ? Math.round(18 * scaling) : Math.round(14 * scaling)
         width: root.calculatedWsWidth(model)
 
         Rectangle {
@@ -170,13 +173,13 @@ Item {
           anchors.fill: parent
 
           Loader {
-            active: (userLabelMode !== "none")
+            active: (labelMode !== "none")
             sourceComponent: Component {
               Text {
                 x: (pill.width - width) / 2
                 y: (pill.height - height) / 2 + (height - contentHeight) / 2
                 text: {
-                  if (userLabelMode === "name" && model.name && model.name.length > 0) {
+                  if (labelMode === "name" && model.name && model.name.length > 0) {
                     return model.name.substring(0, 2)
                   } else {
                     return model.idx.toString()

@@ -12,18 +12,14 @@ RowLayout {
 
   property ShellScreen screen
   property real scaling: 1.0
-  readonly property real minWidth: 160
-  readonly property real maxWidth: 400
 
-  Layout.alignment: Qt.AlignVCenter
-  spacing: Style.marginS * scaling
-  visible: MediaService.currentPlayer !== null && MediaService.canPlay
-  Layout.preferredWidth: MediaService.currentPlayer !== null && MediaService.canPlay ? implicitWidth : 0
-
+  // Widget properties passed from Bar.qml for per-instance settings
+  property string widgetId: ""
   property string barSection: ""
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
 
+  property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
     var section = barSection.replace("Section", "").toLowerCase()
     if (section && sectionWidgetIndex >= 0) {
@@ -35,16 +31,24 @@ RowLayout {
     return {}
   }
 
-  readonly property bool userShowAlbumArt: (widgetSettings.showAlbumArt !== undefined) ? widgetSettings.showAlbumArt : ((Settings.data.audio.showMiniplayerAlbumArt !== undefined) ? Settings.data.audio.showMiniplayerAlbumArt : BarWidgetRegistry.widgetMetadata["MediaMini"].showAlbumArt)
-  readonly property bool userShowVisualizer: (widgetSettings.showVisualizer !== undefined) ? widgetSettings.showVisualizer : ((Settings.data.audio.showMiniplayerCava !== undefined) ? Settings.data.audio.showMiniplayerCava : BarWidgetRegistry.widgetMetadata["MediaMini"].showVisualizer)
-  readonly property string userVisualizerType: (widgetSettings.visualizerType !== undefined
-                                                && widgetSettings.visualizerType
-                                                !== "") ? widgetSettings.visualizerType : ((Settings.data.audio.visualizerType !== undefined
-                                                                                            && Settings.data.audio.visualizerType !== "") ? Settings.data.audio.visualizerType : BarWidgetRegistry.widgetMetadata["MediaMini"].visualizerType)
+  readonly property bool showAlbumArt: (widgetSettings.showAlbumArt
+                                        !== undefined) ? widgetSettings.showAlbumArt : widgetMetadata.showAlbumArt
+  readonly property bool showVisualizer: (widgetSettings.showVisualizer
+                                          !== undefined) ? widgetSettings.showVisualizer : widgetMetadata.showVisualizer
+  readonly property string visualizerType: (widgetSettings.visualizerType !== undefined && widgetSettings.visualizerType
+                                            !== "") ? widgetSettings.visualizerType : widgetMetadata.visualizerType
+
+  readonly property real minWidth: 160
+  readonly property real maxWidth: 400
 
   function getTitle() {
     return MediaService.trackTitle + (MediaService.trackArtist !== "" ? ` - ${MediaService.trackArtist}` : "")
   }
+
+  Layout.alignment: Qt.AlignVCenter
+  spacing: Style.marginS * scaling
+  visible: MediaService.currentPlayer !== null && MediaService.canPlay
+  Layout.preferredWidth: MediaService.currentPlayer !== null && MediaService.canPlay ? implicitWidth : 0
 
   //  A hidden text element to safely measure the full title width
   NText {
@@ -80,7 +84,7 @@ RowLayout {
       Loader {
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
-        active: userShowVisualizer && userVisualizerType == "linear" && MediaService.isPlaying
+        active: showVisualizer && visualizerType == "linear" && MediaService.isPlaying
         z: 0
 
         sourceComponent: LinearSpectrum {
@@ -95,7 +99,7 @@ RowLayout {
       Loader {
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
-        active: userShowVisualizer && userVisualizerType == "mirrored" && MediaService.isPlaying
+        active: showVisualizer && visualizerType == "mirrored" && MediaService.isPlaying
         z: 0
 
         sourceComponent: MirroredSpectrum {
@@ -110,7 +114,7 @@ RowLayout {
       Loader {
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
-        active: userShowVisualizer && userVisualizerType == "wave" && MediaService.isPlaying
+        active: showVisualizer && visualizerType == "wave" && MediaService.isPlaying
         z: 0
 
         sourceComponent: WaveSpectrum {
@@ -134,12 +138,12 @@ RowLayout {
           font.pointSize: Style.fontSizeL * scaling
           verticalAlignment: Text.AlignVCenter
           Layout.alignment: Qt.AlignVCenter
-          visible: !userShowAlbumArt && getTitle() !== "" && !trackArt.visible
+          visible: !showAlbumArt && getTitle() !== "" && !trackArt.visible
         }
 
         ColumnLayout {
           Layout.alignment: Qt.AlignVCenter
-          visible: userShowAlbumArt
+          visible: showAlbumArt
           spacing: 0
 
           Item {

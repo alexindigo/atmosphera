@@ -13,11 +13,12 @@ Item {
   property real scaling: 1.0
 
   // Widget properties passed from Bar.qml for per-instance settings
+  property string widgetId: ""
   property string barSection: ""
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
 
-  // Resolve per-instance widget settings from Settings.data
+  property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
     var section = barSection.replace("Section", "").toLowerCase()
     if (section && sectionWidgetIndex >= 0) {
@@ -31,9 +32,9 @@ Item {
 
   // Resolve settings: try user settings or defaults from BarWidgetRegistry
   readonly property bool alwaysShowPercentage: widgetSettings.alwaysShowPercentage
-                                               !== undefined ? widgetSettings.alwaysShowPercentage : BarWidgetRegistry.widgetMetadata["Battery"].alwaysShowPercentage
+                                               !== undefined ? widgetSettings.alwaysShowPercentage : widgetMetadata.alwaysShowPercentage
   readonly property real warningThreshold: widgetSettings.warningThreshold
-                                           !== undefined ? widgetSettings.warningThreshold : BarWidgetRegistry.widgetMetadata["Battery"].warningThreshold
+                                           !== undefined ? widgetSettings.warningThreshold : widgetMetadata.warningThreshold
 
   // Test mode
   readonly property bool testMode: true

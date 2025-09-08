@@ -14,7 +14,6 @@ NIconButton {
   property real scaling: 1.0
 
   sizeRatio: 0.8
-
   colorBg: Color.mSurfaceVariant
   colorFg: Color.mOnSurface
   colorBorder: Color.transparent

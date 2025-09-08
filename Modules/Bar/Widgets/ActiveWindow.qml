@@ -18,10 +18,13 @@ RowLayout {
   spacing: Style.marginS * scaling
   visible: getTitle() !== ""
 
+  // Widget properties passed from Bar.qml for per-instance settings
+  property string widgetId: ""
   property string barSection: ""
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
 
+  property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
     var section = barSection.replace("Section", "").toLowerCase()
     if (section && sectionWidgetIndex >= 0) {
@@ -33,7 +36,7 @@ RowLayout {
     return {}
   }
 
-  readonly property bool userShowIcon: (widgetSettings.showIcon !== undefined) ? widgetSettings.showIcon : ((Settings.data.bar.showActiveWindowIcon !== undefined) ? Settings.data.bar.showActiveWindowIcon : BarWidgetRegistry.widgetMetadata["ActiveWindow"].showIcon)
+  readonly property bool showIcon: (widgetSettings.showIcon !== undefined) ? widgetSettings.showIcon : widgetMetadata.showIcon
 
   function getTitle() {
     return CompositorService.focusedWindowTitle !== "(No active window)" ? CompositorService.focusedWindowTitle : ""
@@ -91,7 +94,7 @@ RowLayout {
           Layout.preferredWidth: Style.fontSizeL * scaling * 1.2
           Layout.preferredHeight: Style.fontSizeL * scaling * 1.2
           Layout.alignment: Qt.AlignVCenter
-          visible: getTitle() !== "" && userShowIcon
+          visible: getTitle() !== "" && showIcon
 
           IconImage {
             id: windowIcon

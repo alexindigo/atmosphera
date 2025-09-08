@@ -11,10 +11,13 @@ RowLayout {
   property ShellScreen screen
   property real scaling: 1.0
 
+  // Widget properties passed from Bar.qml for per-instance settings
+  property string widgetId: ""
   property string barSection: ""
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
 
+  property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
     var section = barSection.replace("Section", "").toLowerCase()
     if (section && sectionWidgetIndex >= 0) {
@@ -26,11 +29,13 @@ RowLayout {
     return {}
   }
 
-  readonly property bool userShowCpuUsage: (widgetSettings.showCpuUsage !== undefined) ? widgetSettings.showCpuUsage : BarWidgetRegistry.widgetMetadata["SystemMonitor"].showCpuUsage
-  readonly property bool userShowCpuTemp: (widgetSettings.showCpuTemp !== undefined) ? widgetSettings.showCpuTemp : BarWidgetRegistry.widgetMetadata["SystemMonitor"].showCpuTemp
-  readonly property bool userShowMemoryUsage: (widgetSettings.showMemoryUsage !== undefined) ? widgetSettings.showMemoryUsage : BarWidgetRegistry.widgetMetadata["SystemMonitor"].showMemoryUsage
-  readonly property bool userShowNetworkStats: (widgetSettings.showNetworkStats
-                                                !== undefined) ? widgetSettings.showNetworkStats : ((Settings.data.bar.showNetworkStats !== undefined) ? Settings.data.bar.showNetworkStats : BarWidgetRegistry.widgetMetadata["SystemMonitor"].showNetworkStats)
+  readonly property bool showCpuUsage: (widgetSettings.showCpuUsage
+                                        !== undefined) ? widgetSettings.showCpuUsage : widgetMetadata.showCpuUsage
+  readonly property bool showCpuTemp: (widgetSettings.showCpuTemp !== undefined) ? widgetSettings.showCpuTemp : widgetMetadata.showCpuTemp
+  readonly property bool showMemoryUsage: (widgetSettings.showMemoryUsage
+                                           !== undefined) ? widgetSettings.showMemoryUsage : widgetMetadata.showMemoryUsage
+  readonly property bool showNetworkStats: (widgetSettings.showNetworkStats
+                                            !== undefined) ? widgetSettings.showNetworkStats : widgetMetadata.showNetworkStats
 
   Layout.alignment: Qt.AlignVCenter
   spacing: Style.marginS * scaling
@@ -55,7 +60,7 @@ RowLayout {
         id: cpuUsageLayout
         spacing: Style.marginXS * scaling
         Layout.alignment: Qt.AlignVCenter
-        visible: userShowCpuUsage
+        visible: showCpuUsage
 
         NIcon {
           id: cpuUsageIcon
@@ -81,7 +86,7 @@ RowLayout {
         // spacing is thin here to compensate for the vertical thermometer icon
         spacing: Style.marginXXS * scaling
         Layout.alignment: Qt.AlignVCenter
-        visible: userShowCpuTemp
+        visible: showCpuTemp
 
         NIcon {
           text: "thermometer"
@@ -104,7 +109,7 @@ RowLayout {
         id: memoryUsageLayout
         spacing: Style.marginXS * scaling
         Layout.alignment: Qt.AlignVCenter
-        visible: userShowMemoryUsage
+        visible: showMemoryUsage
 
         NIcon {
           text: "memory"
@@ -127,7 +132,7 @@ RowLayout {
         id: networkDownloadLayout
         spacing: Style.marginXS * scaling
         Layout.alignment: Qt.AlignVCenter
-        visible: userShowNetworkStats
+        visible: showNetworkStats
 
         NIcon {
           text: "download"
@@ -150,7 +155,7 @@ RowLayout {
         id: networkUploadLayout
         spacing: Style.marginXS * scaling
         Layout.alignment: Qt.AlignVCenter
-        visible: userShowNetworkStats
+        visible: showNetworkStats
 
         NIcon {
           text: "upload"
