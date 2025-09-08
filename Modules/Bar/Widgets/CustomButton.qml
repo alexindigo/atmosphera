@@ -13,11 +13,13 @@ NIconButton {
   property var screen
   property real scaling: 1.0
 
+  // Widget properties passed from Bar.qml for per-instance settings
+  property string widgetId: ""
   property string barSection: ""
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
 
-  // Get user settings from Settings data
+  property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
     var section = barSection.replace("Section", "").toLowerCase()
     if (section && sectionWidgetIndex >= 0) {
@@ -30,30 +32,27 @@ NIconButton {
   }
 
   // Use settings or defaults from BarWidgetRegistry
-  readonly property string userIcon: widgetSettings.icon || BarWidgetRegistry.widgetMetadata["CustomButton"].icon
-  readonly property string userLeftClickExec: widgetSettings.leftClickExec
-                                              || BarWidgetRegistry.widgetMetadata["CustomButton"].leftClickExec
-  readonly property string userRightClickExec: widgetSettings.rightClickExec
-                                               || BarWidgetRegistry.widgetMetadata["CustomButton"].rightClickExec
-  readonly property string userMiddleClickExec: widgetSettings.middleClickExec
-                                                || BarWidgetRegistry.widgetMetadata["CustomButton"].middleClickExec
-  readonly property bool hasExec: (userLeftClickExec || userRightClickExec || userMiddleClickExec)
+  readonly property string customIcon: widgetSettings.icon || widgetMetadata.icon
+  readonly property string leftClickExec: widgetSettings.leftClickExec || widgetMetadata.leftClickExec
+  readonly property string rightClickExec: widgetSettings.rightClickExec || widgetMetadata.rightClickExec
+  readonly property string middleClickExec: widgetSettings.middleClickExec || widgetMetadata.middleClickExec
+  readonly property bool hasExec: (leftClickExec || rightClickExec || middleClickExec)
 
   sizeRatio: 0.8
-  icon: userIcon
+  icon: customIcon
   tooltipText: {
     if (!hasExec) {
       return "Custom Button - Configure in settings"
     } else {
       var lines = []
-      if (userLeftClickExec !== "") {
-        lines.push(`Left click: <i>${userLeftClickExec}</i>.`)
+      if (leftClickExec !== "") {
+        lines.push(`Left click: <i>${leftClickExec}</i>.`)
       }
-      if (userRightClickExec !== "") {
-        lines.push(`Right click: <i>${userRightClickExec}</i>.`)
+      if (rightClickExec !== "") {
+        lines.push(`Right click: <i>${rightClickExec}</i>.`)
       }
-      if (userMiddleClickExec !== "") {
-        lines.push(`Middle click: <i>${userMiddleClickExec}</i>.`)
+      if (middleClickExec !== "") {
+        lines.push(`Middle click: <i>${middleClickExec}</i>.`)
       }
       return lines.join("<br/>")
     }
@@ -61,9 +60,9 @@ NIconButton {
   opacity: hasExec ? Style.opacityFull : Style.opacityMedium
 
   onClicked: {
-    if (userLeftClickExec) {
-      Quickshell.execDetached(["sh", "-c", userLeftClickExec])
-      Logger.log("CustomButton", `Executing command: ${userLeftClickExec}`)
+    if (leftClickExec) {
+      Quickshell.execDetached(["sh", "-c", leftClickExec])
+      Logger.log("CustomButton", `Executing command: ${leftClickExec}`)
     } else if (!hasExec) {
       // No script was defined, open settings
       var settingsPanel = PanelService.getPanel("settingsPanel")
@@ -73,16 +72,16 @@ NIconButton {
   }
 
   onRightClicked: {
-    if (userRightClickExec) {
-      Quickshell.execDetached(["sh", "-c", userRightClickExec])
-      Logger.log("CustomButton", `Executing command: ${userRightClickExec}`)
+    if (rightClickExec) {
+      Quickshell.execDetached(["sh", "-c", rightClickExec])
+      Logger.log("CustomButton", `Executing command: ${rightClickExec}`)
     }
   }
 
   onMiddleClicked: {
-    if (userMiddleClickExec) {
-      Quickshell.execDetached(["sh", "-c", userMiddleClickExec])
-      Logger.log("CustomButton", `Executing command: ${userMiddleClickExec}`)
+    if (middleClickExec) {
+      Quickshell.execDetached(["sh", "-c", middleClickExec])
+      Logger.log("CustomButton", `Executing command: ${middleClickExec}`)
     }
   }
 }

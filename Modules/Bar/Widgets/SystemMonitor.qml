@@ -11,6 +11,34 @@ RowLayout {
   property ShellScreen screen
   property real scaling: 1.0
 
+  // Widget properties passed from Bar.qml for per-instance settings
+  property string widgetId: ""
+  property string barSection: ""
+  property int sectionWidgetIndex: -1
+  property int sectionWidgetsCount: 0
+
+  property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
+  property var widgetSettings: {
+    var section = barSection.replace("Section", "").toLowerCase()
+    if (section && sectionWidgetIndex >= 0) {
+      var widgets = Settings.data.bar.widgets[section]
+      if (widgets && sectionWidgetIndex < widgets.length) {
+        return widgets[sectionWidgetIndex]
+      }
+    }
+    return {}
+  }
+
+  readonly property bool showCpuUsage: (widgetSettings.showCpuUsage
+                                        !== undefined) ? widgetSettings.showCpuUsage : widgetMetadata.showCpuUsage
+  readonly property bool showCpuTemp: (widgetSettings.showCpuTemp !== undefined) ? widgetSettings.showCpuTemp : widgetMetadata.showCpuTemp
+  readonly property bool showMemoryUsage: (widgetSettings.showMemoryUsage
+                                           !== undefined) ? widgetSettings.showMemoryUsage : widgetMetadata.showMemoryUsage
+  readonly property bool showMemoryAsPercent: (widgetSettings.showMemoryAsPercent
+                                               !== undefined) ? widgetSettings.showMemoryAsPercent : widgetMetadata.showMemoryAsPercent
+  readonly property bool showNetworkStats: (widgetSettings.showNetworkStats
+                                            !== undefined) ? widgetSettings.showNetworkStats : widgetMetadata.showNetworkStats
+
   Layout.alignment: Qt.AlignVCenter
   spacing: Style.marginS * scaling
 
@@ -34,6 +62,7 @@ RowLayout {
         id: cpuUsageLayout
         spacing: Style.marginXS * scaling
         Layout.alignment: Qt.AlignVCenter
+        visible: showCpuUsage
 
         NIcon {
           id: cpuUsageIcon
@@ -59,6 +88,7 @@ RowLayout {
         // spacing is thin here to compensate for the vertical thermometer icon
         spacing: Style.marginXXS * scaling
         Layout.alignment: Qt.AlignVCenter
+        visible: showCpuTemp
 
         NIcon {
           text: "thermometer"
@@ -81,6 +111,7 @@ RowLayout {
         id: memoryUsageLayout
         spacing: Style.marginXS * scaling
         Layout.alignment: Qt.AlignVCenter
+        visible: showMemoryUsage
 
         NIcon {
           text: "memory"
@@ -88,7 +119,7 @@ RowLayout {
         }
 
         NText {
-          text: `${SystemStatService.memGb}G`
+          text: showMemoryAsPercent ? `${SystemStatService.memPercent}%` : `${SystemStatService.memGb}G`
           font.family: Settings.data.ui.fontFixed
           font.pointSize: Style.fontSizeS * scaling
           font.weight: Style.fontWeightMedium
@@ -103,7 +134,7 @@ RowLayout {
         id: networkDownloadLayout
         spacing: Style.marginXS * scaling
         Layout.alignment: Qt.AlignVCenter
-        visible: Settings.data.bar.showNetworkStats
+        visible: showNetworkStats
 
         NIcon {
           text: "download"
@@ -126,7 +157,7 @@ RowLayout {
         id: networkUploadLayout
         spacing: Style.marginXS * scaling
         Layout.alignment: Qt.AlignVCenter
-        visible: Settings.data.bar.showNetworkStats
+        visible: showNetworkStats
 
         NIcon {
           text: "upload"

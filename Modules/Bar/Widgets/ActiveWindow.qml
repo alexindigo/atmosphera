@@ -12,6 +12,27 @@ RowLayout {
   id: root
   property ShellScreen screen
   property real scaling: 1.0
+
+  // Widget properties passed from Bar.qml for per-instance settings
+  property string widgetId: ""
+  property string barSection: ""
+  property int sectionWidgetIndex: -1
+  property int sectionWidgetsCount: 0
+
+  property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
+  property var widgetSettings: {
+    var section = barSection.replace("Section", "").toLowerCase()
+    if (section && sectionWidgetIndex >= 0) {
+      var widgets = Settings.data.bar.widgets[section]
+      if (widgets && sectionWidgetIndex < widgets.length) {
+        return widgets[sectionWidgetIndex]
+      }
+    }
+    return {}
+  }
+
+  readonly property bool showIcon: (widgetSettings.showIcon !== undefined) ? widgetSettings.showIcon : widgetMetadata.showIcon
+
   readonly property real minWidth: 160
   readonly property real maxWidth: 400
   Layout.alignment: Qt.AlignVCenter
@@ -74,7 +95,7 @@ RowLayout {
           Layout.preferredWidth: Style.fontSizeL * scaling * 1.2
           Layout.preferredHeight: Style.fontSizeL * scaling * 1.2
           Layout.alignment: Qt.AlignVCenter
-          visible: getTitle() !== "" && Settings.data.bar.showActiveWindowIcon
+          visible: getTitle() !== "" && showIcon
 
           IconImage {
             id: windowIcon

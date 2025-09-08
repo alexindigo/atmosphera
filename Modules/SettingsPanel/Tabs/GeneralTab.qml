@@ -70,52 +70,6 @@ ColumnLayout {
       onToggled: checked => Settings.data.general.dimDesktop = checked
     }
 
-    NToggle {
-      label: "Auto-hide Dock"
-      description: "Automatically hide the dock when not in use."
-      checked: Settings.data.dock.autoHide
-      onToggled: checked => Settings.data.dock.autoHide = checked
-    }
-
-    ColumnLayout {
-      spacing: Style.marginXXS * scaling
-      Layout.fillWidth: true
-
-      NText {
-        text: "Dock Background Opacity"
-        font.pointSize: Style.fontSizeL * scaling
-        font.weight: Style.fontWeightBold
-        color: Color.mOnSurface
-      }
-
-      NText {
-        text: "Adjust the background opacity of the dock."
-        font.pointSize: Style.fontSizeXS * scaling
-        color: Color.mOnSurfaceVariant
-        wrapMode: Text.WordWrap
-        Layout.fillWidth: true
-      }
-
-      RowLayout {
-        NSlider {
-          Layout.fillWidth: true
-          from: 0
-          to: 1
-          stepSize: 0.01
-          value: Settings.data.dock.backgroundOpacity
-          onMoved: Settings.data.dock.backgroundOpacity = value
-          cutoutColor: Color.mSurface
-        }
-
-        NText {
-          text: Math.floor(Settings.data.dock.backgroundOpacity * 100) + "%"
-          Layout.alignment: Qt.AlignVCenter
-          Layout.leftMargin: Style.marginS * scaling
-          color: Color.mOnSurface
-        }
-      }
-    }
-
     ColumnLayout {
       spacing: Style.marginXXS * scaling
       Layout.fillWidth: true
@@ -175,7 +129,70 @@ ColumnLayout {
       }
     }
   }
+  NDivider {
+    Layout.fillWidth: true
+    Layout.topMargin: Style.marginXL * scaling
+    Layout.bottomMargin: Style.marginXL * scaling
+  }
 
+  // Dock
+  ColumnLayout {
+    spacing: Style.marginL * scaling
+    Layout.fillWidth: true
+    NText {
+      text: "Dock"
+      font.pointSize: Style.fontSizeXXL * scaling
+      font.weight: Style.fontWeightBold
+      color: Color.mSecondary
+      Layout.bottomMargin: Style.marginS * scaling
+    }
+
+    NToggle {
+      label: "Auto-hide Dock"
+      description: "Automatically hide the dock when not in use."
+      checked: Settings.data.dock.autoHide
+      onToggled: checked => Settings.data.dock.autoHide = checked
+    }
+
+    ColumnLayout {
+      spacing: Style.marginXXS * scaling
+      Layout.fillWidth: true
+
+      NText {
+        text: "Dock Background Opacity"
+        font.pointSize: Style.fontSizeL * scaling
+        font.weight: Style.fontWeightBold
+        color: Color.mOnSurface
+      }
+
+      NText {
+        text: "Adjust the background opacity of the dock."
+        font.pointSize: Style.fontSizeXS * scaling
+        color: Color.mOnSurfaceVariant
+        wrapMode: Text.WordWrap
+        Layout.fillWidth: true
+      }
+
+      RowLayout {
+        NSlider {
+          Layout.fillWidth: true
+          from: 0
+          to: 1
+          stepSize: 0.01
+          value: Settings.data.dock.backgroundOpacity
+          onMoved: Settings.data.dock.backgroundOpacity = value
+          cutoutColor: Color.mSurface
+        }
+
+        NText {
+          text: Math.floor(Settings.data.dock.backgroundOpacity * 100) + "%"
+          Layout.alignment: Qt.AlignVCenter
+          Layout.leftMargin: Style.marginS * scaling
+          color: Color.mOnSurface
+        }
+      }
+    }
+  }
   NDivider {
     Layout.fillWidth: true
     Layout.topMargin: Style.marginXL * scaling
@@ -206,6 +223,7 @@ ColumnLayout {
         currentKey: Settings.data.ui.fontDefault
         placeholder: "Select default font..."
         popupHeight: 420 * scaling
+        minimumWidth: 300 * scaling
         onSelected: function (key) {
           Settings.data.ui.fontDefault = key
         }
@@ -218,6 +236,7 @@ ColumnLayout {
         currentKey: Settings.data.ui.fontFixed
         placeholder: "Select monospace font..."
         popupHeight: 320 * scaling
+        minimumWidth: 300 * scaling
         onSelected: function (key) {
           Settings.data.ui.fontFixed = key
         }
@@ -230,6 +249,7 @@ ColumnLayout {
         currentKey: Settings.data.ui.fontBillboard
         placeholder: "Select display font..."
         popupHeight: 320 * scaling
+        minimumWidth: 300 * scaling
         onSelected: function (key) {
           Settings.data.ui.fontBillboard = key
         }

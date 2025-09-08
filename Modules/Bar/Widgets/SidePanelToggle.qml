@@ -1,3 +1,4 @@
+import QtQuick
 import Quickshell
 import Quickshell.Widgets
 import QtQuick.Effects
@@ -11,7 +12,28 @@ NIconButton {
   property ShellScreen screen
   property real scaling: 1.0
 
-  icon: Settings.data.bar.useDistroLogo ? "" : "widgets"
+  // Widget properties passed from Bar.qml for per-instance settings
+  property string widgetId: ""
+  property string barSection: ""
+  property int sectionWidgetIndex: -1
+  property int sectionWidgetsCount: 0
+
+  property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
+  property var widgetSettings: {
+    var section = barSection.replace("Section", "").toLowerCase()
+    if (section && sectionWidgetIndex >= 0) {
+      var widgets = Settings.data.bar.widgets[section]
+      if (widgets && sectionWidgetIndex < widgets.length) {
+        return widgets[sectionWidgetIndex]
+      }
+    }
+    return {}
+  }
+
+  readonly property bool useDistroLogo: (widgetSettings.useDistroLogo
+                                         !== undefined) ? widgetSettings.useDistroLogo : widgetMetadata.useDistroLogo
+
+  icon: useDistroLogo ? "" : "widgets"
   tooltipText: "Open side panel."
   sizeRatio: 0.8
 
@@ -24,14 +46,13 @@ NIconButton {
   onClicked: PanelService.getPanel("sidePanel")?.toggle(screen, this)
   onRightClicked: PanelService.getPanel("settingsPanel")?.toggle(screen)
 
-  // When enabled, draw the distro logo instead of the icon glyph
   IconImage {
     id: logo
     anchors.centerIn: parent
     width: root.width * 0.6
     height: width
-    source: Settings.data.bar.useDistroLogo ? DistroLogoService.osLogo : ""
-    visible: false //Settings.data.bar.useDistroLogo && source !== ""
+    source: useDistroLogo ? DistroLogoService.osLogo : ""
+    visible: useDistroLogo && source !== ""
     smooth: true
   }
 

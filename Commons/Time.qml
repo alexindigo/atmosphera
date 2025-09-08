@@ -9,52 +9,38 @@ Singleton {
   id: root
 
   property var date: new Date()
-  property string time: {
-    let timeFormat = Settings.data.location.use12HourClock ? "h:mm AP" : "HH:mm"
-    let timeString = Qt.formatDateTime(date, timeFormat)
 
-    if (Settings.data.location.showDateWithClock) {
-      let dayName = date.toLocaleDateString(Qt.locale(), "ddd")
-      dayName = dayName.charAt(0).toUpperCase() + dayName.slice(1)
-      let day = date.getDate()
-      let month = date.toLocaleDateString(Qt.locale(), "MMM")
-
-      return timeString + " - " + (Settings.data.location.reverseDayMonth ? `${dayName}, ${month} ${day}` : `${dayName}, ${day} ${month}`)
-    }
-
-    return timeString
+  // Returns a Unix Timestamp (in seconds)
+  readonly property int timestamp: {
+    return Math.floor(date / 1000)
   }
-  readonly property string dateString: {
+
+  function formatDate(reverseDayMonth = true) {
     let now = date
     let dayName = now.toLocaleDateString(Qt.locale(), "ddd")
     dayName = dayName.charAt(0).toUpperCase() + dayName.slice(1)
     let day = now.getDate()
     let suffix
     if (day > 3 && day < 21)
-    suffix = 'th'
+      suffix = 'th'
     else
-    switch (day % 10) {
+      switch (day % 10) {
       case 1:
-      suffix = "st"
-      break
+        suffix = "st"
+        break
       case 2:
-      suffix = "nd"
-      break
+        suffix = "nd"
+        break
       case 3:
-      suffix = "rd"
-      break
+        suffix = "rd"
+        break
       default:
-      suffix = "th"
-    }
+        suffix = "th"
+      }
     let month = now.toLocaleDateString(Qt.locale(), "MMMM")
     let year = now.toLocaleDateString(Qt.locale(), "yyyy")
-    return `${dayName}, `
-    + (Settings.data.location.reverseDayMonth ? `${month} ${day}${suffix} ${year}` : `${day}${suffix} ${month} ${year}`)
-  }
 
-  // Returns a Unix Timestamp (in seconds)
-  readonly property int timestamp: {
-    return Math.floor(date / 1000)
+    return `${dayName}, ` + (reverseDayMonth ? `${month} ${day}${suffix} ${year}` : `${day}${suffix} ${month} ${year}`)
   }
 
 

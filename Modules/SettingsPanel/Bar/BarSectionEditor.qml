@@ -39,7 +39,7 @@ NBox {
     const totalSum = JSON.stringify(widget).split('').reduce((acc, character) => {
                                                                return acc + character.charCodeAt(0)
                                                              }, 0)
-    switch (totalSum % 10) {
+    switch (totalSum % 5) {
     case 0:
       return Color.mPrimary
     case 1:
@@ -50,16 +50,6 @@ NBox {
       return Color.mError
     case 4:
       return Color.mOnSurface
-    case 5:
-      return Qt.darker(Color.mPrimary, 1.3)
-    case 6:
-      return Qt.darker(Color.mSecondary, 1.3)
-    case 7:
-      return Qt.darker(Color.mTertiary, 1.3)
-    case 8:
-      return Qt.darker(Color.mError, 1.3)
-    case 9:
-      return Qt.darker(Color.mOnSurface, 1.3)
     }
   }
 
@@ -75,7 +65,7 @@ NBox {
         text: sectionName + " Section"
         font.pointSize: Style.fontSizeL * scaling
         font.weight: Style.fontWeightBold
-        color: Color.mSecondary
+        color: Color.mOnSurface
         Layout.alignment: Qt.AlignVCenter
       }
 
@@ -89,7 +79,7 @@ NBox {
         description: ""
         placeholder: "Select a widget to add..."
         onSelected: key => comboBox.currentKey = key
-        popupHeight: 240 * scaling
+        popupHeight: 340 * scaling
 
         Layout.alignment: Qt.AlignVCenter
       }
@@ -188,13 +178,33 @@ NBox {
                     colorBgHover: Qt.alpha(Color.mOnPrimary, Style.opacityLight)
                     colorFgHover: Color.mOnPrimary
                     onClicked: {
-                      var dialog = Qt.createComponent("BarWidgetSettingsDialog.qml").createObject(root, {
-                                                                                                    "widgetIndex": index,
-                                                                                                    "widgetData": modelData,
-                                                                                                    "widgetId": modelData.id,
-                                                                                                    "parent": Overlay.overlay
-                                                                                                  })
-                      dialog.open()
+                      var component = Qt.createComponent(Qt.resolvedUrl("BarWidgetSettingsDialog.qml"))
+                      function instantiateAndOpen() {
+                        var dialog = component.createObject(root, {
+                                                              "widgetIndex": index,
+                                                              "widgetData": modelData,
+                                                              "widgetId": modelData.id,
+                                                              "parent": Overlay.overlay
+                                                            })
+                        if (dialog) {
+                          dialog.open()
+                        } else {
+                          Logger.error("BarSectionEditor", "Failed to create settings dialog instance")
+                        }
+                      }
+                      if (component.status === Component.Ready) {
+                        instantiateAndOpen()
+                      } else if (component.status === Component.Error) {
+                        Logger.error("BarSectionEditor", component.errorString())
+                      } else {
+                        component.statusChanged.connect(function () {
+                          if (component.status === Component.Ready) {
+                            instantiateAndOpen()
+                          } else if (component.status === Component.Error) {
+                            Logger.error("BarSectionEditor", component.errorString())
+                          }
+                        })
+                      }
                     }
                   }
                 }
@@ -221,7 +231,7 @@ NBox {
       MouseArea {
         id: flowDragArea
         anchors.fill: parent
-        z: 999 // Above all widgets to ensure it gets events first
+        z: -1 // Ensure this mouse area is below the Settings and Close buttons
 
         // Critical properties for proper event handling
         acceptedButtons: Qt.LeftButton

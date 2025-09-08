@@ -15,6 +15,7 @@ Rectangle {
 
   property ShellScreen screen
   property real scaling: 1.0
+
   readonly property real itemSize: 24 * scaling
 
   function onLoaded() {

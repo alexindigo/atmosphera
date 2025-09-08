@@ -38,6 +38,26 @@ Singleton {
                          })
 
   property var widgetMetadata: ({
+                                  "ActiveWindow": {
+                                    "allowUserSettings": true,
+                                    "showIcon": true
+                                  },
+                                  "Battery": {
+                                    "allowUserSettings": true,
+                                    "alwaysShowPercentage": false,
+                                    "warningThreshold": 30
+                                  },
+                                  "Brightness": {
+                                    "allowUserSettings": true,
+                                    "alwaysShowPercentage": false
+                                  },
+                                  "Clock": {
+                                    "allowUserSettings": true,
+                                    "showDate": false,
+                                    "use12HourClock": false,
+                                    "showSeconds": false,
+                                    "reverseDayMonth": true
+                                  },
                                   "CustomButton": {
                                     "allowUserSettings": true,
                                     "icon": "favorite",
@@ -45,10 +65,44 @@ Singleton {
                                     "rightClickExec": "",
                                     "middleClickExec": ""
                                   },
+                                  "Microphone": {
+                                    "allowUserSettings": true,
+                                    "alwaysShowPercentage": false
+                                  },
+                                  "NotificationHistory": {
+                                    "allowUserSettings": true,
+                                    "showUnreadBadge": true,
+                                    "hideWhenZero": true
+                                  },
                                   "Spacer": {
                                     "allowUserSettings": true,
-                                    "icon": "space_bar",
                                     "width": 20
+                                  },
+                                  "SystemMonitor": {
+                                    "allowUserSettings": true,
+                                    "showCpuUsage": true,
+                                    "showCpuTemp": true,
+                                    "showMemoryUsage": true,
+                                    "showMemoryAsPercent": false,
+                                    "showNetworkStats": false
+                                  },
+                                  "Workspace": {
+                                    "allowUserSettings": true,
+                                    "labelMode": "index"
+                                  },
+                                  "MediaMini": {
+                                    "allowUserSettings": true,
+                                    "showAlbumArt": false,
+                                    "showVisualizer": false,
+                                    "visualizerType": "linear"
+                                  },
+                                  "SidePanelToggle": {
+                                    "allowUserSettings": true,
+                                    "useDistroLogo": false
+                                  },
+                                  "Volume": {
+                                    "allowUserSettings": true,
+                                    "alwaysShowPercentage": false
                                   }
                                 })
 

@@ -27,6 +27,11 @@ RowLayout {
     visible: root.label !== "" || root.description !== ""
   }
 
+  // Spacer to push the checkbox to the far right
+  Item {
+    Layout.fillWidth: true
+  }
+
   Rectangle {
     id: box
 
@@ -39,13 +44,13 @@ RowLayout {
 
     Behavior on color {
       ColorAnimation {
-        duration: Style.animationNormal
+        duration: Style.animationFast
       }
     }
 
     Behavior on border.color {
       ColorAnimation {
-        duration: Style.animationNormal
+        duration: Style.animationFast
       }
     }
 

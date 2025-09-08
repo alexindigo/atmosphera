@@ -12,9 +12,6 @@ Item {
 
   property ShellScreen screen
   property real scaling: 1.0
-  property string barSection: ""
-  property int sectionWidgetIndex: 0
-  property int sectionWidgetsCount: 0
 
   // Use the shared service for keyboard layout
   property string currentLayout: KeyboardLayoutService.currentLayout

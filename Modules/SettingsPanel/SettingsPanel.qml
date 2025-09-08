@@ -39,7 +39,7 @@ NPanel {
     General,
     Network,
     ScreenRecorder,
-    TimeWeather,
+    Weather,
     Wallpaper,
     WallpaperSelector
   }
@@ -90,8 +90,8 @@ NPanel {
     Tabs.NetworkTab {}
   }
   Component {
-    id: timeWeatherTab
-    Tabs.TimeWeatherTab {}
+    id: weatherTab
+    Tabs.WeatherTab {}
   }
   Component {
     id: colorSchemeTab
@@ -156,10 +156,10 @@ NPanel {
                      "icon": "brightness_6",
                      "source": brightnessTab
                    }, {
-                     "id": SettingsPanel.Tab.TimeWeather,
-                     "label": "Time & Weather",
-                     "icon": "schedule",
-                     "source": timeWeatherTab
+                     "id": SettingsPanel.Tab.Weather,
+                     "label": "Weather",
+                     "icon": "partly_cloudy_day",
+                     "source": weatherTab
                    }, {
                      "id": SettingsPanel.Tab.ColorScheme,
                      "label": "Color Scheme",

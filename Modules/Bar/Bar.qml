@@ -76,6 +76,7 @@ Variants {
               widgetProps: {
                 "screen": root.modelData || null,
                 "scaling": ScalingService.getScreenScale(screen),
+                "widgetId": modelData.id,
                 "barSection": parent.objectName,
                 "sectionWidgetIndex": index,
                 "sectionWidgetsCount": Settings.data.bar.widgets.left.length
@@ -103,6 +104,7 @@ Variants {
               widgetProps: {
                 "screen": root.modelData || null,
                 "scaling": ScalingService.getScreenScale(screen),
+                "widgetId": modelData.id,
                 "barSection": parent.objectName,
                 "sectionWidgetIndex": index,
                 "sectionWidgetsCount": Settings.data.bar.widgets.center.length
@@ -131,6 +133,7 @@ Variants {
               widgetProps: {
                 "screen": root.modelData || null,
                 "scaling": ScalingService.getScreenScale(screen),
+                "widgetId": modelData.id,
                 "barSection": parent.objectName,
                 "sectionWidgetIndex": index,
                 "sectionWidgetsCount": Settings.data.bar.widgets.right.length

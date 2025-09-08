@@ -12,11 +12,13 @@ Item {
   property var screen
   property real scaling: 1.0
 
+  // Widget properties passed from Bar.qml for per-instance settings
+  property string widgetId: ""
   property string barSection: ""
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
 
-  // Get user settings from Settings data - make it reactive
+  property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
     var section = barSection.replace("Section", "").toLowerCase()
     if (section && sectionWidgetIndex >= 0) {
@@ -29,19 +31,10 @@ Item {
   }
 
   // Use settings or defaults from BarWidgetRegistry
-  readonly property int userWidth: {
-    var section = barSection.replace("Section", "").toLowerCase()
-    if (section && sectionWidgetIndex >= 0) {
-      var widgets = Settings.data.bar.widgets[section]
-      if (widgets && sectionWidgetIndex < widgets.length) {
-        return widgets[sectionWidgetIndex].width || BarWidgetRegistry.widgetMetadata["Spacer"].width
-      }
-    }
-    return BarWidgetRegistry.widgetMetadata["Spacer"].width
-  }
+  readonly property int spacerWidth: widgetSettings.width !== undefined ? widgetSettings.width : widgetMetadata.width
 
   // Set the width based on user settings
-  implicitWidth: userWidth * scaling
+  implicitWidth: spacerWidth * scaling
   implicitHeight: Style.barHeight * scaling
   width: implicitWidth
   height: implicitHeight
@@ -51,6 +44,6 @@ Item {
     anchors.fill: parent
     color: Qt.rgba(1, 0, 0, 0.1) // Very subtle red tint
     visible: Settings.data.general.debugMode || false
-    radius: 2 * scaling
+    radius: Style.radiusXXS * scaling
   }
 }
