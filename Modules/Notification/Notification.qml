@@ -294,7 +294,7 @@ Variants {
 
             // Close button positioned absolutely
             NIconButton {
-              icon: "close"
+              icon: FontService.icons["close"]
               tooltipText: "Close"
               sizeRatio: 0.6
               anchors.top: parent.top

@@ -42,7 +42,7 @@ NBox {
     }
     // Balanced
     NIconButton {
-      icon: FontService.icons["scale"]
+      icon: FontService.icons["yin_yang"]
       tooltipText: "Set balanced power profile."
       enabled: hasPP
       opacity: enabled ? Style.opacityFull : Style.opacityMedium

@@ -210,7 +210,7 @@ NBox {
                 }
 
                 NIconButton {
-                  icon: "close"
+                  icon: FontService.icons["close"]
                   sizeRatio: 0.6
                   colorBorder: Qt.alpha(Color.mOutline, Style.opacityLight)
                   colorBg: Color.mOnSurface

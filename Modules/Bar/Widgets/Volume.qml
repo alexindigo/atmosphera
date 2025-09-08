@@ -43,7 +43,7 @@ Item {
 
   function getIcon() {
     if (AudioService.muted) {
-      return FontService.icons["volume_off"] // TODO disabled icon ?
+      return FontService.icons["volume_muted"]
     }
     return AudioService.volume
         <= Number.EPSILON ? FontService.icons["volume_off"] : (AudioService.volume

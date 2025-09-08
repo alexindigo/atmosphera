@@ -147,7 +147,7 @@ Popup {
         }
 
         NIconButton {
-          icon: "close"
+          icon: FontService.icons["close"]
           onClicked: root.close()
         }
       }
@@ -491,7 +491,7 @@ Popup {
         NButton {
           id: cancelButton
           text: "Cancel"
-          icon: "close"
+          icon: FontService.icons["close"]
           outlined: cancelButton.hovered ? false : true
           customHeight: 36 * scaling
           customWidth: 100 * scaling

@@ -322,7 +322,7 @@ ColumnLayout {
               }
 
               NIconButton {
-                icon: "close"
+                icon: FontService.icons["close"]
                 sizeRatio: 0.8
                 Layout.alignment: Qt.AlignVCenter
                 Layout.rightMargin: Style.marginXS * scaling

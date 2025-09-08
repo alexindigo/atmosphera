@@ -163,7 +163,7 @@ NPanel {
                    }, {
                      "id": SettingsPanel.Tab.ColorScheme,
                      "label": "Color Scheme",
-                     "icon": FontService.icons["palette"],
+                     "icon": FontService.icons["paint_bucket"],
                      "source": colorSchemeTab
                    }, {
                      "id": SettingsPanel.Tab.Wallpaper,
@@ -177,7 +177,7 @@ NPanel {
       newTabs.push({
                      "id": SettingsPanel.Tab.WallpaperSelector,
                      "label": "Wallpaper Selector",
-                     "icon": FontService.icons["image"],
+                     "icon": FontService.icons["paint_brush"],
                      "source": wallpaperSelectorTab
                    })
     }
@@ -473,7 +473,7 @@ NPanel {
 
               // Close button
               NIconButton {
-                icon: "close"
+                icon: FontService.icons["close"]
                 tooltipText: "Close"
                 Layout.alignment: Qt.AlignVCenter
                 onClicked: root.close()

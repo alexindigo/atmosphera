@@ -25,6 +25,7 @@ Singleton {
     "battery_low": "\uF187",
     "battery_full": "\uF186",
     "battery_charging": "\uF185",
+    "volume_muted": "\uEEE8",
     "volume_off": "\uF026",
     "volume_half": "\uF027",
     "volume_full": "\uF028",
@@ -46,7 +47,10 @@ Singleton {
     "coffee": "\uef59",
     "thermometer": "\uE350",
     "contrast": "\uF042",
-    "skull": "\uEE15"
+    "skull": "\uEE15",
+    "paint_brush": "\uEE26",
+    "paint_bucket": "\uEE3F",
+    "yin_yang": "\uEEE9"
   }
 
   // -------------------------------------------

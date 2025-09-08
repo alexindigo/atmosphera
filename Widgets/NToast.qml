@@ -172,7 +172,7 @@ Item {
 
       // Close button (only if persistent or manual dismiss needed)
       NIconButton {
-        icon: "close"
+        icon: FontService.icons["close"]
         visible: root.persistent || root.duration === 0
 
         colorBg: Color.mSurfaceVariant

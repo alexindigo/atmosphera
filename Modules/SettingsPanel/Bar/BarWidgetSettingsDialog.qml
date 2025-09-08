@@ -84,7 +84,7 @@ Popup {
       }
 
       NIconButton {
-        icon: "close"
+        icon: FontService.icons["close"]
         onClicked: settingsPopup.close()
       }
     }
