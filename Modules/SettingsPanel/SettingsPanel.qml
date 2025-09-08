@@ -133,7 +133,7 @@ NPanel {
                    }, {
                      "id": SettingsPanel.Tab.Launcher,
                      "label": "Launcher",
-                     "icon": "apps",
+                     "icon": "launcher",
                      "source": launcherTab
                    }, {
                      "id": SettingsPanel.Tab.Audio,
