@@ -31,7 +31,7 @@ NBox {
       }
 
       NIcon {
-        text: "album"
+        text: FontService.icons["album"]
         font.pointSize: Style.fontSizeXXXL * 2.5 * scaling
         color: Color.mPrimary
         Layout.alignment: Qt.AlignHCenter
@@ -89,7 +89,7 @@ NBox {
         indicator: NIcon {
           x: playerSelector.width - width
           y: playerSelector.topPadding + (playerSelector.availableHeight - height) / 2
-          text: "arrow_drop_down"
+          text: FontService.icons["arrow_drop_down"]
           font.pointSize: Style.fontSizeXXL * scaling
           color: Color.mOnSurface
           horizontalAlignment: Text.AlignRight
@@ -162,14 +162,14 @@ NBox {
             anchors.fill: parent
             anchors.margins: Style.marginXS * scaling
             imagePath: MediaService.trackArtUrl
-            fallbackIcon: FontService.icons["vinyl"]
+            fallbackIcon: FontService.icons["album"]
             borderColor: Color.mOutline
             borderWidth: Math.max(1, Style.borderS * scaling)
           }
 
           // Fallback icon when no album art available
           NIcon {
-            text: "album"
+            text: FontService.icons["album"]
             color: Color.mPrimary
             font.pointSize: Style.fontSizeL * 12 * scaling
             visible: !trackArt.visible
@@ -307,7 +307,7 @@ NBox {
 
         // Previous button
         NIconButton {
-          icon: FontService.icons["previous"]
+          icon: FontService.icons["prev"]
           tooltipText: "Previous Media"
           visible: MediaService.canGoPrevious
           onClicked: MediaService.canGoPrevious ? MediaService.previous() : {}
