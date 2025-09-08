@@ -55,7 +55,7 @@ NPanel {
         }
 
         NIconButton {
-          icon: "refresh"
+          icon: FontService.icons["refresh"]
           tooltipText: "Refresh"
           sizeRatio: 0.8
           enabled: Settings.data.network.wifiEnabled && !NetworkService.scanning
@@ -377,7 +377,7 @@ NPanel {
                                  && NetworkService.connectingTo !== modelData.ssid
                                  && NetworkService.forgettingNetwork !== modelData.ssid
                                  && NetworkService.disconnectingFrom !== modelData.ssid
-                        icon: "delete"
+                        icon: FontService.icons["trash"]
                         tooltipText: "Forget network"
                         sizeRatio: 0.7
                         onClicked: expandedSsid = expandedSsid === modelData.ssid ? "" : modelData.ssid
@@ -586,7 +586,7 @@ NPanel {
 
           NButton {
             text: "Scan again"
-            icon: "refresh"
+            icon: FontService.icons["refresh"]
             Layout.alignment: Qt.AlignHCenter
             onClicked: NetworkService.scan()
           }

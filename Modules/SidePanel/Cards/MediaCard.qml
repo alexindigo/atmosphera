@@ -315,7 +315,7 @@ NBox {
 
         // Play/Pause button
         NIconButton {
-          icon: MediaService.isPlaying ? "pause" : "play_arrow"
+          icon: MediaService.isPlaying ? FontService.icons["pause"] : FontService.icons["play"]
           tooltipText: MediaService.isPlaying ? "Pause" : "Play"
           visible: (MediaService.canPlay || MediaService.canPause)
           onClicked: (MediaService.canPlay || MediaService.canPause) ? MediaService.playPause() : {}

@@ -170,7 +170,7 @@ NBox {
                 Loader {
                   active: BarWidgetRegistry.widgetHasUserSettings(modelData.id)
                   sourceComponent: NIconButton {
-                    icon: "settings"
+                    icon: FontService.icons["gear"]
                     sizeRatio: 0.6
                     colorBorder: Qt.alpha(Color.mOutline, Style.opacityLight)
                     colorBg: Color.mOnSurface

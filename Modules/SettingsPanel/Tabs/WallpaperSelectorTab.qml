@@ -96,7 +96,7 @@ ColumnLayout {
     }
 
     NIconButton {
-      icon: "refresh"
+      icon: FontService.icons["refresh"]
       tooltipText: "Refresh wallpaper list"
       onClicked: {
         WallpaperService.refreshWallpapersList()

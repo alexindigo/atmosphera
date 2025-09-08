@@ -9,10 +9,11 @@ Rectangle {
   id: root
 
   property string imagePath: ""
-  property string fallbackIcon: ""
   property color borderColor: Color.transparent
   property real borderWidth: 0
   property real imageRadius: width * 0.5
+  property string fallbackIcon: ""
+  property real fallbackIconSize: Style.fontSizeXXL * scaling
 
   property real scaledRadius: imageRadius * Settings.data.general.radiusRatio
 
@@ -74,7 +75,7 @@ Rectangle {
     NIcon {
       anchors.centerIn: parent
       text: fallbackIcon
-      font.pointSize: Style.fontSizeXXL * scaling
+      font.pointSize: fallbackIconSize
       visible: fallbackIcon !== undefined && fallbackIcon !== "" && (imagePath === undefined || imagePath === "")
       z: 0
     }

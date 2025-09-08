@@ -123,52 +123,52 @@ NPanel {
     let newTabs = [{
                      "id": SettingsPanel.Tab.General,
                      "label": "General",
-                     "icon": FontService.icons["general"],
+                     "icon": "general",
                      "source": generalTab
                    }, {
                      "id": SettingsPanel.Tab.Bar,
                      "label": "Bar",
-                     "icon": FontService.icons["bar"],
+                     "icon": "bar",
                      "source": barTab
                    }, {
                      "id": SettingsPanel.Tab.Launcher,
                      "label": "Launcher",
-                     "icon": FontService.icons["apps"],
+                     "icon": "apps",
                      "source": launcherTab
                    }, {
                      "id": SettingsPanel.Tab.Audio,
                      "label": "Audio",
-                     "icon": FontService.icons["volume_full"],
+                     "icon": "volume_full",
                      "source": audioTab
                    }, {
                      "id": SettingsPanel.Tab.Display,
                      "label": "Display",
-                     "icon": FontService.icons["monitor"],
+                     "icon": "monitor",
                      "source": displayTab
                    }, {
                      "id": SettingsPanel.Tab.Network,
                      "label": "Network",
-                     "icon": FontService.icons["ethernet"],
+                     "icon": "ethernet",
                      "source": networkTab
                    }, {
                      "id": SettingsPanel.Tab.Brightness,
                      "label": "Brightness",
-                     "icon": FontService.icons["brightness"],
+                     "icon": "brightness",
                      "source": brightnessTab
                    }, {
                      "id": SettingsPanel.Tab.Weather,
                      "label": "Weather",
-                     "icon": FontService.icons["partly_cloudy"],
+                     "icon": "partly_cloudy",
                      "source": weatherTab
                    }, {
                      "id": SettingsPanel.Tab.ColorScheme,
                      "label": "Color Scheme",
-                     "icon": FontService.icons["paint_bucket"],
+                     "icon": "paint_bucket",
                      "source": colorSchemeTab
                    }, {
                      "id": SettingsPanel.Tab.Wallpaper,
                      "label": "Wallpaper",
-                     "icon": FontService.icons["image"],
+                     "icon": "image",
                      "source": wallpaperTab
                    }]
 
@@ -177,7 +177,7 @@ NPanel {
       newTabs.push({
                      "id": SettingsPanel.Tab.WallpaperSelector,
                      "label": "Wallpaper Selector",
-                     "icon": FontService.icons["paint_brush"],
+                     "icon": "paint_brush",
                      "source": wallpaperSelectorTab
                    })
     }
@@ -185,17 +185,17 @@ NPanel {
     newTabs.push({
                    "id": SettingsPanel.Tab.ScreenRecorder,
                    "label": "Screen Recorder",
-                   "icon": FontService.icons["video_camera"],
+                   "icon": "video_camera",
                    "source": screenRecorderTab
                  }, {
                    "id": SettingsPanel.Tab.Hooks,
                    "label": "Hooks",
-                   "icon": FontService.icons["cable"],
+                   "icon": "cable",
                    "source": hooksTab
                  }, {
                    "id": SettingsPanel.Tab.About,
                    "label": "About",
-                   "icon": FontService.icons["info"],
+                   "icon": "info",
                    "source": aboutTab
                  })
 
@@ -404,7 +404,7 @@ NPanel {
 
                   // Tab icon
                   NIcon {
-                    text: modelData.icon
+                    text: FontService.icons[modelData.icon]
                     color: tabTextColor
                     font.pointSize: Style.fontSizeL * scaling
                   }

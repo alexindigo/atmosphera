@@ -35,14 +35,14 @@ Singleton {
     "check": "\uf00C",
     "panel": "\uF28C",
     "memory": "\uF2D6",
-    "bell": "\uF189",
+
     "trash": "\uF014",
     "image": "\uF03E",
     "refresh": "\uF021",
     "video_camera": "\uF03D",
     "ethernet": "\uEF09",
     "speed": "\uEEB2",
-    "leaf": "\uEE34",
+    "leaf": "\uF06C",
     "microphone": "\uED03",
     "coffee": "\uef59",
     "thermometer": "\uE350",
@@ -50,7 +50,25 @@ Singleton {
     "skull": "\uEE15",
     "paint_brush": "\uEE26",
     "paint_bucket": "\uEE3F",
-    "yin_yang": "\uEEE9"
+    "yin_yang": "\uEEE9",
+    "record": "\uEFFA",
+    "pause": "\uF04C",
+    "play": "\uF04B",
+    "stop": "\uEFFB",
+    "next": "\uF051",
+    "prev": "\uF048",
+    "paint_drop": "\uF043",
+    "lightning": "\uF0E7",
+    "brightness": "\uF0A3",
+    "arrow_drop_down": "\uF0D7",
+
+    "vinyl": "\uEFBD",
+    "bell": "\uF189",
+    "bell_striked": "\uEE15", // FIXME
+        "drive": "\uEE15", // FIXME
+    "upload": "\uEE15", // FIXME   
+     "download": "\uEE15", // FIXME
+
   }
 
   // -------------------------------------------
