@@ -36,7 +36,7 @@ Singleton {
     "close": "\uf00D",
     "check": "\uf00C",
     "panel": "\uF28C",
-    "memory": "\uF2D6",
+    "memory": "\uF2D5",
     "trash": "\uF014",
     "image": "\uF03E",
     "refresh": "\uF021",

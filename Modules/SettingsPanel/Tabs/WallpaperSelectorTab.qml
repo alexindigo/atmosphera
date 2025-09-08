@@ -181,7 +181,7 @@ ColumnLayout {
           visible: isSelected
 
           NIcon {
-            text: "check"
+            text: FontService.icons["check"]
             font.pointSize: Style.fontSizeM * scaling
             font.weight: Style.fontWeightBold
             color: Color.mOnSecondary

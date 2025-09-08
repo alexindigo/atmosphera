@@ -403,16 +403,15 @@ NPanel {
                   spacing: Style.marginS * scaling
 
                   // Tab icon
-                  Rectangle {
-                    color: Color.transparent
+                  Item {
                     width: 20 * scaling
-                    height: 20 * scaling
+                    height: width
 
                     NIcon {
                       text: FontService.icons[modelData.icon]
                       color: tabTextColor
                       font.pointSize: Style.fontSizeL * scaling
-                      anchors.fill: parent
+                      anchors.centerIn: parent
                     }
                   }
 
@@ -423,6 +422,7 @@ NPanel {
                     font.pointSize: Style.fontSizeM * scaling
                     font.weight: Style.fontWeightBold
                     Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignVCenter
                   }
                 }
 
