@@ -3,18 +3,10 @@ import QtQuick.Layouts
 import qs.Commons
 import qs.Widgets
 
-
 Text {
-  // Optional layout nudge for optical alignment when used inside Layouts
-  property real layoutTopMargin: 0
-  text: "\uEE15" // default skull icon
+  text: "\uEE15" // fallback/default to skull icon
   font.family: "bootstrap-icons"
   font.pointSize: Style.fontSizeL * scaling
-  font.variableAxes: {
-    "wght"// slightly bold to ensure all lines looks good
-    : (Font.Normal + Font.Bold) / 2.5
-  }
   color: Color.mOnSurface
   verticalAlignment: Text.AlignVCenter
-  Layout.topMargin: layoutTopMargin
 }

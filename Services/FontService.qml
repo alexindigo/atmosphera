@@ -68,7 +68,8 @@ Singleton {
     "download": "\uF01A",
     "vinyl": "\uEFBD",
     "link": "\uF0C1",
-    "add": "\uF055", // FIXME UGLY
+    "plus": "\uF067",
+    "minus": "\uF068",
     "bell": "\uF189",
     "bell_striked": "\uEE15", // FIXME
         "drive": "\uEE15", // FIXME
