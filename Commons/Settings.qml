@@ -123,11 +123,12 @@ Singleton {
       widget.showIcon = widget.showIcon !== undefined ? widget.showIcon : adapter.bar.showActiveWindowIcon
       break
     case "Battery":
-      widget.alwaysShowPercentage = widget.alwaysShowPercentage!== undefined ? widget.alwaysShowPercentage : adapter.bar.alwaysShowBatteryPercentage
+      widget.alwaysShowPercentage = widget.alwaysShowPercentage
+          !== undefined ? widget.alwaysShowPercentage : adapter.bar.alwaysShowBatteryPercentage
       break
     case "Clock":
       widget.showDate = widget.showDate !== undefined ? widget.showDate : adapter.location.showDateWithClock
-      widget.use12HourClock =  widget.use12HourClock !== undefined ? widget.use12HourClock : adapter.location.use12HourClock
+      widget.use12HourClock = widget.use12HourClock !== undefined ? widget.use12HourClock : adapter.location.use12HourClock
       widget.reverseDayMonth = widget.reverseDayMonth !== undefined ? widget.reverseDayMonth : adapter.location.reverseDayMonth
       break
     case "MediaMini":
@@ -141,7 +142,7 @@ Singleton {
       widget.showNetworkStats = widget.showNetworkStats !== undefined ? widget.showNetworkStats : adapter.bar.showNetworkStats
       break
     case "Workspace":
-      widget.labelMode = widget.labelMode !==  undefined ? widget.labelMode  : adapter.bar.showWorkspaceLabel
+      widget.labelMode = widget.labelMode !== undefined ? widget.labelMode : adapter.bar.showWorkspaceLabel
       break
     }
 
