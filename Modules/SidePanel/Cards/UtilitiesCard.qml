@@ -25,7 +25,7 @@ NBox {
     }
     // Screen Recorder
     NIconButton {
-      icon: "videocam"
+      icon: FontService.icons["video_camera"]
       tooltipText: ScreenRecorderService.isRecording ? "Stop screen recording." : "Start screen recording."
       colorBg: ScreenRecorderService.isRecording ? Color.mPrimary : Color.mSurfaceVariant
       colorFg: ScreenRecorderService.isRecording ? Color.mOnPrimary : Color.mPrimary
@@ -41,7 +41,7 @@ NBox {
 
     // Idle Inhibitor
     NIconButton {
-      icon: "coffee"
+      icon: FontService.icons["coffee"]
       tooltipText: IdleInhibitorService.isInhibited ? "Disable keep awake." : "Enable keep awake."
       colorBg: IdleInhibitorService.isInhibited ? Color.mPrimary : Color.mSurfaceVariant
       colorFg: IdleInhibitorService.isInhibited ? Color.mOnPrimary : Color.mPrimary
@@ -53,7 +53,7 @@ NBox {
     // Wallpaper
     NIconButton {
       visible: Settings.data.wallpaper.enabled
-      icon: "image"
+      icon: FontService.icons["image"]
       tooltipText: "Left click: Open wallpaper selector.\nRight click: Set random wallpaper."
       onClicked: {
         var settingsPanel = PanelService.getPanel("settingsPanel")

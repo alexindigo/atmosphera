@@ -43,9 +43,9 @@ Item {
 
   function getIcon() {
     if (AudioService.muted) {
-      return "volume_off"
+      return FontService.icons["volume_off"]  // TODO disabled icon ?
     }
-    return AudioService.volume <= Number.EPSILON ? "volume_off" : (AudioService.volume < 0.33 ? "volume_down" : "volume_up")
+    return AudioService.volume <= Number.EPSILON ? FontService.icons["volume_off"] : (AudioService.volume < 0.5 ? FontService.icons["volume_half"]: FontService.icons["volume_full"])
   }
 
   // Connection used to open the pill when volume changes

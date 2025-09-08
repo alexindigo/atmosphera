@@ -14,7 +14,6 @@ Singleton {
   property bool fontsLoaded: false
 
   property var icons: {
-    // weather
     "sunny": "\ue30d",
     "partly_cloudy": "\ue302",
     "cloud": "\ue312",
@@ -22,17 +21,27 @@ Singleton {
     "rainy": "\ue318",
     "snowy": "\ue319",
     "thunderstom": "\ue31d",
-
-    "power":  "\uf011",
-    "gear":  "\uf013",
+    "battery_empty": "\uF188",
+    "battery_low": "\uF187",
+    "battery_full": "\uF186",
+    "battery_charging": "\uF185",
+    "volume_off": "\uF026",
+    "volume_half": "\uF027",
+    "volume_full": "\uF028",
+    "power": "\uf011",
+    "gear": "\uf013",
     "close": "\uf00D",
     "check": "\uf00C",
-    "panel": "\uF00B"
+    "panel": "\uF28C",
+    "memory": "\uF2D6",
+    "bell": "\uF189",
+    "trash": "\uF014",
+    "image": "\uF03E",
+    "refresh": "\uF021",
+    "video_camera": "\uF03D",
   }
 
-
   // -------------------------------------------
-
   function init() {
     Logger.log("Font", "Service started")
     loadSystemFonts()
