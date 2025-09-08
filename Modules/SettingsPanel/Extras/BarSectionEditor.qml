@@ -39,7 +39,7 @@ NBox {
     const totalSum = JSON.stringify(widget).split('').reduce((acc, character) => {
                                                                return acc + character.charCodeAt(0)
                                                              }, 0)
-    switch (totalSum % 10) {
+    switch (totalSum % 5) {
     case 0:
       return Color.mPrimary
     case 1:
@@ -50,16 +50,6 @@ NBox {
       return Color.mError
     case 4:
       return Color.mOnSurface
-    case 5:
-      return Qt.darker(Color.mPrimary, 1.3)
-    case 6:
-      return Qt.darker(Color.mSecondary, 1.3)
-    case 7:
-      return Qt.darker(Color.mTertiary, 1.3)
-    case 8:
-      return Qt.darker(Color.mError, 1.3)
-    case 9:
-      return Qt.darker(Color.mOnSurface, 1.3)
     }
   }
 
@@ -241,7 +231,7 @@ NBox {
       MouseArea {
         id: flowDragArea
         anchors.fill: parent
-        z: 999 // Above all widgets to ensure it gets events first
+        z: -1 // Ensure this mouse area is below the Settings and Close buttons
 
         // Critical properties for proper event handling
         acceptedButtons: Qt.LeftButton
