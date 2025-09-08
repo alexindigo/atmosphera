@@ -37,7 +37,7 @@ Item {
                                            !== undefined ? widgetSettings.warningThreshold : widgetMetadata.warningThreshold
 
   // Test mode
-  readonly property bool testMode: true
+  readonly property bool testMode: false
   readonly property int testPercent: 50
   readonly property bool testCharging: true
 
