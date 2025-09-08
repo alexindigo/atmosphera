@@ -118,7 +118,7 @@ Item {
       // Icon
       NIcon {
         id: icon
-        text:  (root.type == "warning") ? FontService.icons["warning"] :  FontService.icons["info"]
+        text: (root.type == "warning") ? FontService.icons["warning"] : FontService.icons["info"]
         color: {
           switch (root.type) {
           case "warning":

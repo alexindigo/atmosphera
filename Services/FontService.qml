@@ -70,12 +70,14 @@ Singleton {
     "link": "\uF0C1",
     "plus": "\uF067",
     "minus": "\uF068",
+    "eyedropper": "\uF342",
     "bell": "\uF189",
-    "bell_striked": "\uEE15", // FIXME
-        "drive": "\uEE15", // FIXME
-        "person": "\uEE15", // FIXME
-
-
+    "bell_striked": "\uEE15",
+    "drive"// FIXME
+    : "\uEE15",
+    "person"// FIXME
+    : "\uEE15"
+    // FIXME
   }
 
   // -------------------------------------------

@@ -403,10 +403,17 @@ NPanel {
                   spacing: Style.marginS * scaling
 
                   // Tab icon
-                  NIcon {
-                    text: FontService.icons[modelData.icon]
-                    color: tabTextColor
-                    font.pointSize: Style.fontSizeL * scaling
+                  Rectangle {
+                    color: Color.transparent
+                    width: 20 * scaling
+                    height: 20 * scaling
+
+                    NIcon {
+                      text: FontService.icons[modelData.icon]
+                      color: tabTextColor
+                      font.pointSize: Style.fontSizeL * scaling
+                      anchors.fill: parent
+                    }
                   }
 
                   // Tab label

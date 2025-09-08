@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import qs.Commons
+import qs.Services
 import qs.Widgets
 
 Popup {
@@ -129,7 +130,7 @@ Popup {
           spacing: Style.marginS * scaling
 
           NIcon {
-            text: "palette"
+            text: FontService.icons["eyedropper"]
             font.pointSize: Style.fontSizeXXL * scaling
             color: Color.mPrimary
           }

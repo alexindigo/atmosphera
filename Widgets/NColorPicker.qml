@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import qs.Commons
+import qs.Services
 import qs.Widgets
 
 Rectangle {
@@ -58,7 +59,7 @@ Rectangle {
       }
 
       NIcon {
-        text: "palette"
+        text: FontService.icons["eyedropper"]
         color: Color.mOnSurfaceVariant
       }
     }
