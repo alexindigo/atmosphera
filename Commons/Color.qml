@@ -102,7 +102,8 @@ Singleton {
   // FileView to load custom colors data from colors.json
   FileView {
     id: customColorsFile
-    path: Settings.directoriesCreated ? (Settings.configDir + "colors.json") : ""
+    path: Settings.directoriesCreated ? (Settings.configDir + "colors.json") : undefined
+    printErrors: false
     watchChanges: true
     onFileChanged: {
       Logger.log("Color", "Reloading colors from disk")
@@ -115,7 +116,7 @@ Singleton {
 
     // Trigger initial load when path changes from empty to actual path
     onPathChanged: {
-      if (path === Settings.configDir + "colors.json") {
+      if (path !== undefined) {
         reload()
       }
     }

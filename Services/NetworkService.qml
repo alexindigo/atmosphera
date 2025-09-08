@@ -30,6 +30,7 @@ Singleton {
   FileView {
     id: cacheFileView
     path: root.cacheFile
+    printErrors: false
 
     JsonAdapter {
       id: cacheAdapter

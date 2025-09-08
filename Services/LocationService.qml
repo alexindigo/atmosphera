@@ -25,6 +25,7 @@ Singleton {
   FileView {
     id: locationFileView
     path: locationFile
+    printErrors: false
     onAdapterUpdated: saveTimer.start()
     onLoaded: {
       Logger.log("Location", "Loaded cached data")

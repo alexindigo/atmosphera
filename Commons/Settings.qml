@@ -105,22 +105,19 @@ Singleton {
           continue
         }
 
-        // Check that the widget was not previously migrated and skip if necessary
-        const keys = Object.keys(widget)
-        if (keys.length > 1) {
-          continue
+        if (upgradeWidget(widget)) {
+          Logger.log("Settings", `Upgraded ${widget.id} widget:`, JSON.stringify(widget))
         }
-
-        migrateWidget(widget)
-        Logger.log("Settings", JSON.stringify(widget))
       }
     }
   }
 
   // -----------------------------------------------------
-  function migrateWidget(widget) {
-    Logger.log("Settings", `Migrating '${widget.id}' widget`)
+  function upgradeWidget(widget) {
+    // Backup the widget definition before altering
+    const widgetBefore = JSON.stringify(widget)
 
+    // Migrate old bar settings to proper per widget settings
     switch (widget.id) {
     case "ActiveWindow":
       widget.showIcon = adapter.bar.showActiveWindowIcon
@@ -128,23 +125,14 @@ Singleton {
     case "Battery":
       widget.alwaysShowPercentage = adapter.bar.alwaysShowBatteryPercentage
       break
-    case "Brightness":
-      widget.alwaysShowPercentage = BarWidgetRegistry.widgetMetadata[widget.id].alwaysShowPercentage
-      break
     case "Clock":
       widget.showDate = adapter.location.showDateWithClock
       widget.use12HourClock = adapter.location.use12HourClock
       widget.reverseDayMonth = adapter.location.reverseDayMonth
-      widget.showSeconds = BarWidgetRegistry.widgetMetadata[widget.id].showSeconds
       break
     case "MediaMini":
       widget.showAlbumArt = adapter.audio.showMiniplayerAlbumArt
       widget.showVisualizer = adapter.audio.showMiniplayerCava
-      widget.visualizerType = BarWidgetRegistry.widgetMetadata[widget.id].visualizerType
-      break
-    case "NotificationHistory":
-      widget.showUnreadBadge = BarWidgetRegistry.widgetMetadata[widget.id].showUnreadBadge
-      widget.hideWhenZero = BarWidgetRegistry.widgetMetadata[widget.id].hideWhenZero
       break
     case "SidePanelToggle":
       widget.useDistroLogo = adapter.bar.useDistroLogo
@@ -152,13 +140,27 @@ Singleton {
     case "SystemMonitor":
       widget.showNetworkStats = adapter.bar.showNetworkStats
       break
-    case "Volume":
-      widget.alwaysShowPercentage = BarWidgetRegistry.widgetMetadata[widget.id].alwaysShowPercentage
-      break
     case "Workspace":
       widget.labelMode = adapter.bar.showWorkspaceLabel
       break
     }
+
+    // Inject missing default setting (metaData) from BarWidgetRegistry
+    const keys = Object.keys(BarWidgetRegistry.widgetMetadata[widget.id])
+    for (let i=0; i<keys.length; i++) {
+      const k = keys[i]
+      if (k === "id" || k === "allowUserSettings") {
+        continue
+      }
+
+      if (!widget.hasOwnProperty(k)) {
+        widget[k] = BarWidgetRegistry.widgetMetadata[widget.id][k]
+      }
+    }
+
+    // Backup the widget definition before altering
+    const widgetAfter = JSON.stringify(widget)
+    return (widgetAfter !== widgetBefore)
   }
   // -----------------------------------------------------
   // Kickoff essential services
@@ -200,14 +202,15 @@ Singleton {
 
   FileView {
     id: settingsFileView
-    path: directoriesCreated ? settingsFile : ""
+    path: directoriesCreated ? settingsFile : undefined
+    printErrors: false
     watchChanges: true
     onFileChanged: reload()
     onAdapterUpdated: saveTimer.start()
 
     // Trigger initial load when path changes from empty to actual path
     onPathChanged: {
-      if (path === settingsFile) {
+      if (path !== undefined) {
         reload()
       }
     }

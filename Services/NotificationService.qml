@@ -65,6 +65,7 @@ Singleton {
     id: historyFileView
     objectName: "notificationHistoryFileView"
     path: historyFile
+    printErrors: false
     watchChanges: true
     onFileChanged: reload()
     onAdapterUpdated: writeAdapter()

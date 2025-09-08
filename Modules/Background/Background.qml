@@ -89,8 +89,6 @@ Variants {
         left: true
       }
 
-
-
       Timer {
         id: debounceTimer
         interval: 333
