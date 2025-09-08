@@ -87,7 +87,7 @@ ColumnLayout {
       text: "Widgets Positioning"
       font.pointSize: Style.fontSizeXXL * scaling
       font.weight: Style.fontWeightBold
-      color: Color.mOnSurface
+      color: Color.mSecondary
       Layout.bottomMargin: Style.marginS * scaling
     }
 

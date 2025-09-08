@@ -65,7 +65,7 @@ NBox {
         text: sectionName + " Section"
         font.pointSize: Style.fontSizeL * scaling
         font.weight: Style.fontWeightBold
-        color: Color.mSecondary
+        color: Color.mOnSurface
         Layout.alignment: Qt.AlignVCenter
       }
 

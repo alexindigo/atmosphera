@@ -242,21 +242,7 @@ ColumnLayout {
       Layout.bottomMargin: Style.marginS * scaling
     }
 
-    // Miniplayer section
-    NToggle {
-      label: "Show Album Art In Bar Media Player"
-      description: "Show the album art of the currently playing song next to the title."
-      checked: Settings.data.audio.showMiniplayerAlbumArt
-      onToggled: checked => Settings.data.audio.showMiniplayerAlbumArt = checked
-    }
-
-    NToggle {
-      label: "Show Audio Visualizer In Bar Media Player"
-      description: "Shows an audio visualizer in the background of the miniplayer."
-      checked: Settings.data.audio.showMiniplayerCava
-      onToggled: checked => Settings.data.audio.showMiniplayerCava = checked
-    }
-    // Preferred player (persistent)
+    // Preferred player
     NTextInput {
       label: "Preferred Player"
       description: "Substring to match MPRIS player (identity/bus/desktop)."

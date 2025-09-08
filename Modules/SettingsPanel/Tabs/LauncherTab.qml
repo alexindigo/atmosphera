@@ -52,21 +52,7 @@ ColumnLayout {
       }
     }
 
-    NToggle {
-      label: "Enable Clipboard History"
-      description: "Show clipboard history in the launcher."
-      checked: Settings.data.appLauncher.enableClipboardHistory
-      onToggled: checked => Settings.data.appLauncher.enableClipboardHistory = checked
-    }
-
-    NToggle {
-      label: "Use App2Unit for Launching"
-      description: "Use app2unit -- 'desktop-entry' when launching applications for better systemd integration."
-      checked: Settings.data.appLauncher.useApp2Unit
-      onToggled: checked => Settings.data.appLauncher.useApp2Unit = checked
-    }
-
-    ColumnLayout {
+        ColumnLayout {
       spacing: Style.marginXXS * scaling
       Layout.fillWidth: true
 
@@ -105,6 +91,22 @@ ColumnLayout {
         }
       }
     }
+
+    NToggle {
+      label: "Enable Clipboard History"
+      description: "Show clipboard history in the launcher."
+      checked: Settings.data.appLauncher.enableClipboardHistory
+      onToggled: checked => Settings.data.appLauncher.enableClipboardHistory = checked
+    }
+
+    NToggle {
+      label: "Use App2Unit for Launching"
+      description: "Use app2unit -- 'desktop-entry' when launching applications for better systemd integration."
+      checked: Settings.data.appLauncher.useApp2Unit
+      onToggled: checked => Settings.data.appLauncher.useApp2Unit = checked
+    }
+
+
   }
 
   NDivider {
