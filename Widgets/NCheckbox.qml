@@ -44,13 +44,13 @@ RowLayout {
 
     Behavior on color {
       ColorAnimation {
-        duration: Style.animationNormal
+        duration: Style.animationFast
       }
     }
 
     Behavior on border.color {
       ColorAnimation {
-        duration: Style.animationNormal
+        duration: Style.animationFast
       }
     }
 
