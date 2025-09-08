@@ -24,13 +24,13 @@ ColumnLayout {
     return settings
   }
 
-  NCheckbox {
+  NToggle {
     label: "Show unread badge"
     checked: valueShowUnreadBadge
     onToggled: checked => valueShowUnreadBadge = checked
   }
 
-  NCheckbox {
+  NToggle {
     label: "Hide badge when zero"
     checked: valueHideWhenZero
     onToggled: checked => valueHideWhenZero = checked

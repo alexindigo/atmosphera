@@ -26,13 +26,13 @@ ColumnLayout {
     return settings
   }
 
-  NCheckbox {
+  NToggle {
     label: "Show album art"
     checked: valueShowAlbumArt
     onToggled: checked => valueShowAlbumArt = checked
   }
 
-  NCheckbox {
+  NToggle {
     label: "Show visualizer"
     checked: valueShowVisualizer
     onToggled: checked => valueShowVisualizer = checked

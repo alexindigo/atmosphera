@@ -22,7 +22,7 @@ ColumnLayout {
     return settings
   }
 
-  NCheckbox {
+  NToggle {
     label: "Use distro logo instead of icon"
     checked: valueUseDistroLogo
     onToggled: checked => valueUseDistroLogo = checked

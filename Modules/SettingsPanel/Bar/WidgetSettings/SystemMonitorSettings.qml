@@ -29,7 +29,7 @@ ColumnLayout {
     return settings
   }
 
-  NCheckbox {
+  NToggle {
     id: showCpuUsage
     Layout.fillWidth: true
     label: "CPU usage"
@@ -37,7 +37,7 @@ ColumnLayout {
     onToggled: checked => valueShowCpuUsage = checked
   }
 
-  NCheckbox {
+  NToggle {
     id: showCpuTemp
     Layout.fillWidth: true
     label: "CPU temperature"
@@ -45,7 +45,7 @@ ColumnLayout {
     onToggled: checked => valueShowCpuTemp = checked
   }
 
-  NCheckbox {
+  NToggle {
     id: showMemoryUsage
     Layout.fillWidth: true
     label: "Memory usage"
@@ -53,7 +53,7 @@ ColumnLayout {
     onToggled: checked => valueShowMemoryUsage = checked
   }
 
-  NCheckbox {
+  NToggle {
     id: showNetworkStats
     Layout.fillWidth: true
     label: "Network traffic"

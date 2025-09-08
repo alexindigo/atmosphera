@@ -22,7 +22,7 @@ ColumnLayout {
     return settings
   }
 
-  NCheckbox {
+  NToggle {
     id: showIcon
     Layout.fillWidth: true
     label: "Show app icon"

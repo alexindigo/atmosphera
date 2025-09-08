@@ -23,7 +23,7 @@ ColumnLayout {
     return settings
   }
 
-  NCheckbox {
+  NToggle {
     label: "Always show percentage"
     checked: root.valueAlwaysShowPercentage
     onToggled: checked => root.valueAlwaysShowPercentage = checked

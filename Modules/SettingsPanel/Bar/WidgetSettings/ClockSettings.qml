@@ -28,25 +28,25 @@ ColumnLayout {
     return settings
   }
 
-  NCheckbox {
+  NToggle {
     label: "Show date"
     checked: valueShowDate
     onToggled: checked => valueShowDate = checked
   }
 
-  NCheckbox {
+  NToggle {
     label: "Use 12-hour clock"
     checked: valueUse12h
     onToggled: checked => valueUse12h = checked
   }
 
-  NCheckbox {
+  NToggle {
     label: "Show seconds"
     checked: valueShowSeconds
     onToggled: checked => valueShowSeconds = checked
   }
 
-  NCheckbox {
+  NToggle {
     label: "Reverse day and month"
     checked: valueReverseDayMonth
     onToggled: checked => valueReverseDayMonth = checked
