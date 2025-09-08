@@ -18,6 +18,8 @@ Singleton {
     } else {
       if (percent >= 85)
         return FontService.icons["battery_full"]
+      if (percent >= 45)
+        return FontService.icons["battery_half"]
       if (percent >= 25)
         return FontService.icons["battery_low"]
       if (percent >= 0)

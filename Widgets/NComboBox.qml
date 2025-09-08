@@ -86,7 +86,7 @@ RowLayout {
       x: combo.width - width - Style.marginM * scaling
       y: combo.topPadding + (combo.availableHeight - height) / 2
       text: FontService.icons["arrow_drop_down"]
-      font.pointSize: Style.fontSizeXXL * scaling
+      font.pointSize: Style.fontSizeL * scaling
     }
 
     popup: Popup {

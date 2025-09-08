@@ -123,7 +123,7 @@ NPanel {
     let newTabs = [{
                      "id": SettingsPanel.Tab.General,
                      "label": "General",
-                     "icon": "general",
+                     "icon": "box",
                      "source": generalTab
                    }, {
                      "id": SettingsPanel.Tab.Bar,
@@ -153,7 +153,7 @@ NPanel {
                    }, {
                      "id": SettingsPanel.Tab.Brightness,
                      "label": "Brightness",
-                     "icon": "brightness",
+                     "icon": "brightness_high",
                      "source": brightnessTab
                    }, {
                      "id": SettingsPanel.Tab.Weather,
@@ -195,7 +195,7 @@ NPanel {
                  }, {
                    "id": SettingsPanel.Tab.About,
                    "label": "About",
-                   "icon": "info",
+                   "icon": "macaron",
                    "source": aboutTab
                  })
 
