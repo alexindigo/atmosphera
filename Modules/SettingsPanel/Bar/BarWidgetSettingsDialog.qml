@@ -32,6 +32,40 @@ Popup {
     border.width: Style.borderM * scaling
   }
 
+  // Load settings when popup opens with data
+  onOpened: {
+    if (widgetData && widgetId) {
+      loadWidgetSettings()
+    }
+  }
+
+  function loadWidgetSettings() {
+    const widgetSettingsMap = {
+      "ActiveWindow": "WidgetSettings/ActiveWindowSettings.qml",
+      "Battery": "WidgetSettings/BatterySettings.qml",
+      "Brightness": "WidgetSettings/BrightnessSettings.qml",
+      "Clock": "WidgetSettings/ClockSettings.qml",
+      "CustomButton": "WidgetSettings/CustomButtonSettings.qml",
+      "MediaMini": "WidgetSettings/MediaMiniSettings.qml",
+      "Microphone": "WidgetSettings/MicrophoneSettings.qml",
+      "NotificationHistory": "WidgetSettings/NotificationHistorySettings.qml",
+      "Workspace": "WidgetSettings/WorkspaceSettings.qml",
+      "SidePanelToggle": "WidgetSettings/SidePanelToggleSettings.qml",
+      "Spacer": "WidgetSettings/SpacerSettings.qml",
+      "SystemMonitor": "WidgetSettings/SystemMonitorSettings.qml",
+      "Volume": "WidgetSettings/VolumeSettings.qml"
+    }
+
+    const source = widgetSettingsMap[widgetId]
+    if (source) {
+      // Use setSource to pass properties at creation time
+      settingsLoader.setSource(source, {
+                                 "widgetData": widgetData,
+                                 "widgetMetadata": BarWidgetRegistry.widgetMetadata[widgetId]
+                               })
+    }
+  }
+
   ColumnLayout {
     id: content
     width: parent.width
@@ -63,36 +97,10 @@ Popup {
     }
 
     // Settings based on widget type
+    // Will be triggered via settingsLoader.setSource()
     Loader {
       id: settingsLoader
       Layout.fillWidth: true
-
-      source: {
-        const widgetSettingsMap = {
-          "ActiveWindow": "WidgetSettings/ActiveWindowSettings.qml",
-          "Battery": "WidgetSettings/BatterySettings.qml",
-          "Brightness": "WidgetSettings/BrightnessSettings.qml",
-          "Clock": "WidgetSettings/ClockSettings.qml",
-          "CustomButton": "WidgetSettings/CustomButtonSettings.qml",
-          "MediaMini": "WidgetSettings/MediaMiniSettings.qml",
-          "Microphone": "WidgetSettings/MicrophoneSettings.qml",
-          "NotificationHistory": "WidgetSettings/NotificationHistorySettings.qml",
-          "Workspace": "WidgetSettings/WorkspaceSettings.qml",
-          "SidePanelToggle": "WidgetSettings/SidePanelToggleSettings.qml",
-          "Spacer": "WidgetSettings/SpacerSettings.qml",
-          "SystemMonitor": "WidgetSettings/SystemMonitorSettings.qml",
-          "Volume": "WidgetSettings/VolumeSettings.qml"
-        }
-        return widgetSettingsMap[settingsPopup.widgetId] || ""
-      }
-
-      onLoaded: {
-        if (item) {
-          // Pass data to the loaded component
-          item.widgetData = settingsPopup.widgetData
-          item.widgetMetadata = BarWidgetRegistry.widgetMetadata[settingsPopup.widgetId]
-        }
-      }
     }
 
     // Action buttons
