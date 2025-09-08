@@ -1,12 +1,13 @@
 import QtQuick
+import QtQuick.Layouts
 import qs.Commons
 import qs.Widgets
-import QtQuick.Layouts
+
 
 Text {
   // Optional layout nudge for optical alignment when used inside Layouts
   property real layoutTopMargin: 0
-  text: "question_mark"
+  text: "\uEE15" // default skull icon
   font.family: "bootstrap-icons"
   font.pointSize: Style.fontSizeL * scaling
   font.variableAxes: {

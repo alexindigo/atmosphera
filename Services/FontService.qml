@@ -29,7 +29,7 @@ Singleton {
     "volume_half": "\uF027",
     "volume_full": "\uF028",
     "power": "\uf011",
-    "gear": "\uf013",
+    "gear": "\ue615",
     "close": "\uf00D",
     "check": "\uf00C",
     "panel": "\uF28C",
@@ -39,6 +39,14 @@ Singleton {
     "image": "\uF03E",
     "refresh": "\uF021",
     "video_camera": "\uF03D",
+    "ethernet": "\uEF09",
+    "speed": "\uEEB2",
+    "leaf": "\uEE34",
+    "microphone": "\uED03",
+    "coffee": "\uef59",
+    "thermometer": "\uE350",
+    "contrast": "\uF042",
+    "skull": "\uEE15"
   }
 
   // -------------------------------------------

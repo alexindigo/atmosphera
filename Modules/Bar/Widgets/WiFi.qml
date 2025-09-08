@@ -23,7 +23,7 @@ NIconButton {
   icon: {
     try {
       if (NetworkService.ethernetConnected) {
-        return "lan"
+        return FontService.icons["ethernet"]
       }
       let connected = false
       let signalStrength = 0

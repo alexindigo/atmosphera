@@ -9,7 +9,7 @@ NIconButton {
   property ShellScreen screen
   property real scaling: 1.0
 
-  icon: "contrast"
+  icon: FontService.icons["contrast"]
   tooltipText: "Toggle light/dark mode"
   sizeRatio: 0.8
 
