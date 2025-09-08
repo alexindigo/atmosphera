@@ -206,6 +206,7 @@ ColumnLayout {
         currentKey: Settings.data.ui.fontDefault
         placeholder: "Select default font..."
         popupHeight: 420 * scaling
+        minimumWidth: 300 * scaling
         onSelected: function (key) {
           Settings.data.ui.fontDefault = key
         }
@@ -218,6 +219,7 @@ ColumnLayout {
         currentKey: Settings.data.ui.fontFixed
         placeholder: "Select monospace font..."
         popupHeight: 320 * scaling
+        minimumWidth: 300 * scaling
         onSelected: function (key) {
           Settings.data.ui.fontFixed = key
         }
@@ -230,6 +232,7 @@ ColumnLayout {
         currentKey: Settings.data.ui.fontBillboard
         placeholder: "Select display font..."
         popupHeight: 320 * scaling
+        minimumWidth: 300 * scaling
         onSelected: function (key) {
           Settings.data.ui.fontBillboard = key
         }
