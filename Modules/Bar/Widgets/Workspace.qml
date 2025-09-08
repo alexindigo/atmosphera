@@ -42,8 +42,8 @@ Item {
   property bool effectsActive: false
   property color effectColor: Color.mPrimary
 
-  property int horizontalPadding: Math.round(16 * scaling)
-  property int spacingBetweenPills: Math.round(8 * scaling)
+  property int horizontalPadding: Math.round(Style.marginS * scaling)
+  property int spacingBetweenPills: Math.round(Style.marginXS  * scaling)
 
   signal workspaceChanged(int workspaceId, color accentColor)
 
@@ -144,7 +144,7 @@ Item {
 
   Rectangle {
     id: workspaceBackground
-    width: parent.width - Style.marginS * scaling * 2
+    width: parent.width
 
     height: Math.round(Style.capsuleHeight * scaling)
     radius: Math.round(Style.radiusM * scaling)
