@@ -42,7 +42,7 @@ Singleton {
     "refresh": "\uF021",
     "video_camera": "\uF03D",
     "ethernet": "\uEF09",
-    "speed": "\uF06D",
+    "speed": "\uF153",
     "leaf": "\uF06C",
     "microphone": "\uED03",
     "coffee": "\uef59",
