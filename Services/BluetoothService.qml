@@ -49,6 +49,7 @@ Singleton {
                         })
   }
 
+  // FIXME
   function getDeviceIcon(device) {
     if (!device) {
       return "bluetooth"

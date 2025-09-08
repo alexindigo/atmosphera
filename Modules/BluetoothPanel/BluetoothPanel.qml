@@ -28,7 +28,7 @@ NPanel {
         spacing: Style.marginM * scaling
 
         NIcon {
-          text: "bluetooth"
+          text: FontService.icons["bluetooth"]
           font.pointSize: Style.fontSizeXXL * scaling
           color: Color.mPrimary
         }
@@ -42,7 +42,7 @@ NPanel {
         }
 
         NIconButton {
-          icon: BluetoothService.adapter && BluetoothService.adapter.discovering ? "stop_circle" : "refresh"
+          icon: BluetoothService.adapter && BluetoothService.adapter.discovering ? FontService.icons["stop"] : FontService.icons["refresh"]
           tooltipText: "Refresh Devices"
           sizeRatio: 0.8
           onClicked: {
