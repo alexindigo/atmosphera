@@ -13,6 +13,17 @@ Singleton {
   property ListModel displayFonts: ListModel {}
   property bool fontsLoaded: false
 
+  property var icons: {
+    "sunny": "\ue30d",
+    "partly_cloudy": "\ue302",
+    "cloud": "\ue312",
+    "foggy": "\ue311",
+    "rainy": "\ue318"
+  }
+
+
+  // -------------------------------------------
+
   function init() {
     Logger.log("Font", "Service started")
     loadSystemFonts()

@@ -231,22 +231,22 @@ Singleton {
   // --------------------------------
   function weatherSymbolFromCode(code) {
     if (code === 0)
-      return "sunny"
+      return FontService.icons["sunny"]
     if (code === 1 || code === 2)
-      return "partly_cloudy_day"
+      return FontService.icons["partly_cloudy"]
     if (code === 3)
-      return "cloud"
+      return FontService.icons["cloud"]
     if (code >= 45 && code <= 48)
-      return "foggy"
+      return FontService.icons["foggy"]
     if (code >= 51 && code <= 67)
-      return "rainy"
+      return FontService.icons["rainy"]
     if (code >= 71 && code <= 77)
-      return "weather_snowy"
+      return FontService.icons["weather_snowy"]
     if (code >= 80 && code <= 82)
-      return "rainy"
+      return FontService.icons["rainy"]
     if (code >= 95 && code <= 99)
-      return "thunderstorm"
-    return "cloud"
+      return FontService.icons["thunderstorm"]
+    return FontService.icons["cloud"]
   }
 
   // --------------------------------

@@ -7,7 +7,7 @@ Text {
   // Optional layout nudge for optical alignment when used inside Layouts
   property real layoutTopMargin: 0
   text: "question_mark"
-  font.family: "Material Symbols Rounded"
+  font.family: "bootstrap-icons"
   font.pointSize: Style.fontSizeL * scaling
   font.variableAxes: {
     "wght"// slightly bold to ensure all lines looks good
