@@ -104,70 +104,69 @@ ColumnLayout {
     }
   }
 
+  // Main Toggles - Dark Mode / Matugen
+  ColumnLayout {
+    spacing: Style.marginL * scaling
+    Layout.fillWidth: true
 
-    // Main Toggles - Dark Mode / Matugen
-    ColumnLayout {
-      spacing: Style.marginL * scaling
-      Layout.fillWidth: true
+    // Dark Mode Toggle (affects both Matugen and predefined schemes that provide variants)
+    NToggle {
+      label: "Dark Mode"
+      description: Settings.data.colorSchemes.useWallpaperColors ? "Generate dark theme colors when using Matugen." : "Use a dark variant if available."
+      checked: Settings.data.colorSchemes.darkMode
+      enabled: true
+      onToggled: checked => Settings.data.colorSchemes.darkMode = checked
+    }
 
-      // Dark Mode Toggle (affects both Matugen and predefined schemes that provide variants)
-      NToggle {
-        label: "Dark Mode"
-        description: Settings.data.colorSchemes.useWallpaperColors ? "Generate dark theme colors when using Matugen." : "Use a dark variant if available."
-        checked: Settings.data.colorSchemes.darkMode
-        enabled: true
-        onToggled: checked => Settings.data.colorSchemes.darkMode = checked
-      }
+    // Use Matugen
+    NToggle {
+      label: "Enable Matugen"
+      description: "Automatically generate colors based on your active wallpaper."
+      checked: Settings.data.colorSchemes.useWallpaperColors
+      onToggled: checked => {
+                   if (checked) {
+                     // Check if matugen is installed
+                     matugenCheck.running = true
+                   } else {
+                     Settings.data.colorSchemes.useWallpaperColors = false
+                     ToastService.showNotice("Matugen", "Disabled")
 
-      // Use Matugen
-      NToggle {
-        label: "Enable Matugen"
-        description: "Automatically generate colors based on your active wallpaper."
-        checked: Settings.data.colorSchemes.useWallpaperColors
-        onToggled: checked => {
-                     if (checked) {
-                       // Check if matugen is installed
-                       matugenCheck.running = true
-                     } else {
-                       Settings.data.colorSchemes.useWallpaperColors = false
-                       ToastService.showNotice("Matugen", "Disabled")
+                     if (Settings.data.colorSchemes.predefinedScheme) {
 
-                       if (Settings.data.colorSchemes.predefinedScheme) {
-
-                         ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme)
-                       }
+                       ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme)
                      }
                    }
-      }
+                 }
+    }
+  }
+
+  NDivider {
+    Layout.fillWidth: true
+    Layout.topMargin: Style.marginXL * scaling
+    Layout.bottomMargin: Style.marginXL * scaling
+  }
+
+  // Predefined Color Schemes
+  ColumnLayout {
+    spacing: Style.marginM * scaling
+    Layout.fillWidth: true
+
+    NText {
+      text: "Predefined Color Schemes"
+      font.pointSize: Style.fontSizeXXL * scaling
+      font.weight: Style.fontWeightBold
+      color: Color.mSecondary
     }
 
-    NDivider {
+    NText {
+      text: "To use these color schemes, you must turn off Matugen. With Matugen enabled, colors are automatically generated from your wallpaper."
+      font.pointSize: Style.fontSizeM * scaling
+      color: Color.mOnSurfaceVariant
       Layout.fillWidth: true
-      Layout.topMargin: Style.marginXL * scaling
-      Layout.bottomMargin: Style.marginXL * scaling
+      wrapMode: Text.WordWrap
     }
 
-    // Predefined Color Schemes
-    ColumnLayout {
-      spacing: Style.marginM * scaling
-      Layout.fillWidth: true
-
-      NText {
-        text: "Predefined Color Schemes"
-        font.pointSize: Style.fontSizeXXL * scaling
-        font.weight: Style.fontWeightBold
-        color: Color.mSecondary
-      }
-
-      NText {
-        text: "To use these color schemes, you must turn off Matugen. With Matugen enabled, colors are automatically generated from your wallpaper."
-        font.pointSize: Style.fontSizeM * scaling
-        color: Color.mOnSurfaceVariant
-        Layout.fillWidth: true
-        wrapMode: Text.WordWrap
-      }
-
-          // Color Schemes Grid
+    // Color Schemes Grid
     GridLayout {
       columns: 3
       rowSpacing: Style.marginM * scaling
@@ -188,7 +187,7 @@ ColumnLayout {
           color: getSchemeColor(modelData, "mSurface")
           border.width: Math.max(1, Style.borderL * scaling)
           border.color: (!Settings.data.colorSchemes.useWallpaperColors
-                          && (Settings.data.colorSchemes.predefinedScheme === modelData)) ? Color.mPrimary : Color.mOutline
+                         && (Settings.data.colorSchemes.predefinedScheme === modelData)) ? Color.mPrimary : Color.mOutline
           scale: root.cardScaleLow
 
           // Mouse area for selection
@@ -282,7 +281,7 @@ ColumnLayout {
           // Selection indicator (Checkmark)
           Rectangle {
             visible: !Settings.data.colorSchemes.useWallpaperColors
-                      && (Settings.data.colorSchemes.predefinedScheme === schemePath)
+                     && (Settings.data.colorSchemes.predefinedScheme === schemePath)
             anchors.right: parent.right
             anchors.top: parent.top
             anchors.margins: Style.marginS * scaling
@@ -322,11 +321,7 @@ ColumnLayout {
         }
       }
     }
-    }
-
-
- 
-
+  }
 
   NDivider {
     Layout.fillWidth: true

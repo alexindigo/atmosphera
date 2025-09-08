@@ -52,7 +52,7 @@ ColumnLayout {
       }
     }
 
-        ColumnLayout {
+    ColumnLayout {
       spacing: Style.marginXXS * scaling
       Layout.fillWidth: true
 
@@ -105,8 +105,6 @@ ColumnLayout {
       checked: Settings.data.appLauncher.useApp2Unit
       onToggled: checked => Settings.data.appLauncher.useApp2Unit = checked
     }
-
-
   }
 
   NDivider {
