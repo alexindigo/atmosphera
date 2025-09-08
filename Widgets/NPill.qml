@@ -39,9 +39,9 @@ Item {
   property bool shouldAnimateHide: false
 
   // Exposed width logic
-  readonly property int pillHeight: Style.baseWidgetSize * sizeRatio * scaling
-  readonly property int iconSize: Style.baseWidgetSize * sizeRatio * scaling
-  readonly property int pillPaddingHorizontal: Style.marginM * scaling
+  readonly property int iconSize: Math.round(Style.baseWidgetSize * sizeRatio * scaling)
+  readonly property int pillHeight: iconSize
+  readonly property int pillPaddingHorizontal: Style.marginS * scaling
   readonly property int pillOverlap: iconSize * 0.5
   readonly property int maxPillWidth: Math.max(1, textItem.implicitWidth + pillPaddingHorizontal * 2 + pillOverlap)
 
@@ -108,8 +108,7 @@ Item {
     border.width: Math.max(1, Style.borderS * scaling)
     border.color: forceOpen ? Qt.alpha(Color.mOutline, 0.5) : Color.transparent
 
-    anchors.left: rightOpen ? parent.left : undefined
-    anchors.right: rightOpen ? undefined : parent.right
+    x: rightOpen ? 0 : (parent.width - width)
 
     Behavior on color {
       ColorAnimation {
