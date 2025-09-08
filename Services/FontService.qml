@@ -25,7 +25,9 @@ Singleton {
 
     "power":  "\uf011",
     "gear":  "\uf013",
-    "close": "\uf00D"
+    "close": "\uf00D",
+    "check": "\uf00C",
+    "panel": "\uF00B"
   }
 
 

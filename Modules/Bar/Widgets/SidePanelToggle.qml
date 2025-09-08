@@ -33,7 +33,7 @@ NIconButton {
   readonly property bool useDistroLogo: (widgetSettings.useDistroLogo
                                          !== undefined) ? widgetSettings.useDistroLogo : widgetMetadata.useDistroLogo
 
-  icon: useDistroLogo ? "" : "\ue30d"
+  icon: useDistroLogo ? "" : FontService.icons["panel"]
   tooltipText: "Open side panel."
   sizeRatio: 0.8
 
