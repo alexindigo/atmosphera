@@ -4,7 +4,7 @@ import qs.Commons
 import qs.Widgets
 
 Text {
-  text: "\uEE15" // fallback/default to skull icon
+  text: "\uF706" // fallback/default to balloon icon
   font.family: "bootstrap-icons"
   font.pointSize: Style.fontSizeL * scaling
   color: Color.mOnSurface
