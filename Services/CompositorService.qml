@@ -192,9 +192,9 @@ Singleton {
         }
 
         windowsList.push({
-                           "id": toplevel.address || "",
-                           "title": toplevel.title || "",
-                           "appId": appId,
+                           "id": (toplevel.address !== undefined && toplevel.address !== null) ? String(toplevel.address) : "",
+                           "title": (toplevel.title !== undefined && toplevel.title !== null) ? String(toplevel.title) : "",
+                           "appId": (appId !== undefined && appId !== null) ? String(appId) : "",
                            "workspaceId": toplevel.workspace?.id || null,
                            "isFocused": toplevel.activated === true
                          })

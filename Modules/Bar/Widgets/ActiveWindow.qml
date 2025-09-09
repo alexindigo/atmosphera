@@ -48,14 +48,18 @@ RowLayout {
     // Try CompositorService first
     const focusedWindow = CompositorService.getFocusedWindow()
     if (focusedWindow && focusedWindow.appId) {
-      return Icons.iconForAppId(focusedWindow.appId.toLowerCase())
+      const idValue = focusedWindow.appId
+      const normalizedId = (typeof idValue === 'string') ? idValue : String(idValue)
+      return Icons.iconForAppId(normalizedId.toLowerCase())
     }
 
     // Fallback to ToplevelManager
     if (ToplevelManager && ToplevelManager.activeToplevel) {
       const activeToplevel = ToplevelManager.activeToplevel
       if (activeToplevel.appId) {
-        return Icons.iconForAppId(activeToplevel.appId.toLowerCase())
+        const idValue2 = activeToplevel.appId
+        const normalizedId2 = (typeof idValue2 === 'string') ? idValue2 : String(idValue2)
+        return Icons.iconForAppId(normalizedId2.toLowerCase())
       }
     }
 
