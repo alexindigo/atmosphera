@@ -39,8 +39,7 @@ RowLayout {
   readonly property bool showNetworkStats: (widgetSettings.showNetworkStats
                                             !== undefined) ? widgetSettings.showNetworkStats : widgetMetadata.showNetworkStats
   readonly property bool showDiskUsage: (widgetSettings.showDiskUsage
-                                         !== undefined) ? widgetSettings.showDiskUsage : (widgetMetadata.showDiskUsage
-                                                                                          || false)
+                                         !== undefined) ? widgetSettings.showDiskUsage : widgetMetadata.showDiskUsage
 
   Layout.alignment: Qt.AlignVCenter
   spacing: Style.marginS * scaling
