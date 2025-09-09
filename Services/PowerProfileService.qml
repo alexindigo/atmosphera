@@ -52,7 +52,11 @@ Singleton {
     target: powerProfiles
     function onProfileChanged() {
       root.profile = powerProfiles.profile
-      ToastService.showNotice("Power Profile", root.profileName())
+      // Only show toast if we have a valid profile name (not "Unknown")
+      const profileName = root.profileName()
+      if (profileName !== "Unknown") {
+        ToastService.showNotice("Power Profile", profileName)
+      }
     }
   }
 }

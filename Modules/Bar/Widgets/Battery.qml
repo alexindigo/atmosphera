@@ -68,14 +68,20 @@ Item {
   Connections {
     target: UPower.displayDevice
     function onPercentageChanged() {
-      root.maybeNotify(percent, charging)
+      var currentPercent = UPower.displayDevice.percentage * 100
+      var isCharging = UPower.displayDevice.state === UPowerDeviceState.Charging
+      root.maybeNotify(currentPercent, isCharging)
     }
 
     function onStateChanged() {
+      var isCharging = UPower.displayDevice.state === UPowerDeviceState.Charging
       // Reset notification flag when charging starts
-      if (charging) {
+      if (isCharging) {
         root.hasNotifiedLowBattery = false
       }
+      // Also re-evaluate maybeNotify, as state might have changed
+      var currentPercent = UPower.displayDevice.percentage * 100
+      root.maybeNotify(currentPercent, isCharging)
     }
   }
 
