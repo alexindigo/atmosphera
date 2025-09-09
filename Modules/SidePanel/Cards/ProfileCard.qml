@@ -32,7 +32,7 @@ NBox {
       width: Style.baseWidgetSize * 1.25 * scaling
       height: Style.baseWidgetSize * 1.25 * scaling
       imagePath: Settings.data.general.avatarImage
-      fallbackIcon: FontService.icons["person"]
+      fallbackIcon: Bootstrap.icons["person"]
       borderColor: Color.mPrimary
       borderWidth: Math.max(1, Style.borderM * scaling)
     }
@@ -58,7 +58,7 @@ NBox {
         Layout.fillWidth: true
       }
       NIconButton {
-        icon: FontService.icons["gear"]
+        icon: Bootstrap.icons["gear"]
         tooltipText: "Open settings."
         onClicked: {
           settingsPanel.requestedTab = SettingsPanel.Tab.General
@@ -68,7 +68,7 @@ NBox {
 
       NIconButton {
         id: powerButton
-        icon: FontService.icons["power"]
+        icon: Bootstrap.icons["power"]
         tooltipText: "Power menu."
         onClicked: {
           powerPanel.open(screen)
@@ -78,7 +78,7 @@ NBox {
 
       NIconButton {
         id: closeButton
-        icon: FontService.icons["close"]
+        icon: Bootstrap.icons["close"]
         tooltipText: "Close side panel."
         onClicked: {
           sidePanel.close()

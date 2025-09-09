@@ -84,7 +84,7 @@ Popup {
       }
 
       NIconButton {
-        icon: FontService.icons["close"]
+        icon: Bootstrap.icons["close"]
         onClicked: settingsPopup.close()
       }
     }
@@ -121,7 +121,7 @@ Popup {
 
       NButton {
         text: "Apply"
-        icon: FontService.icons["check"]
+        icon: Bootstrap.icons["check"]
         onClicked: {
           if (settingsLoader.item && settingsLoader.item.saveSettings) {
             var newSettings = settingsLoader.item.saveSettings()

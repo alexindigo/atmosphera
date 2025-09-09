@@ -134,7 +134,7 @@ RowLayout {
 
         NIcon {
           id: windowIcon
-          text: MediaService.isPlaying ? FontService.icons["pause"] : FontService.icons["play"]
+          text: MediaService.isPlaying ? Bootstrap.icons["pause"] : Bootstrap.icons["play"]
           font.pointSize: Style.fontSizeL * scaling
           verticalAlignment: Text.AlignVCenter
           Layout.alignment: Qt.AlignVCenter
@@ -154,7 +154,7 @@ RowLayout {
               id: trackArt
               anchors.fill: parent
               imagePath: MediaService.trackArtUrl
-              fallbackIcon: MediaService.isPlaying ? FontService.icons["pause"] : FontService.icons["play"]
+              fallbackIcon: MediaService.isPlaying ? Bootstrap.icons["pause"] : Bootstrap.icons["play"]
               fallbackIconSize: 10 * scaling
               borderWidth: 0
               border.color: Color.transparent

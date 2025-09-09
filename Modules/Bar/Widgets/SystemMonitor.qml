@@ -66,7 +66,7 @@ RowLayout {
 
         NIcon {
           id: cpuUsageIcon
-          text: FontService.icons["speed"]
+          text: Bootstrap.icons["speed"]
           Layout.alignment: Qt.AlignVCenter
         }
 
@@ -91,7 +91,7 @@ RowLayout {
         visible: showCpuTemp
 
         NIcon {
-          text: FontService.icons["thermometer"]
+          text: Bootstrap.icons["thermometer"]
           Layout.alignment: Qt.AlignVCenter
         }
 
@@ -114,7 +114,7 @@ RowLayout {
         visible: showMemoryUsage
 
         NIcon {
-          text: FontService.icons["memory"]
+          text: Bootstrap.icons["memory"]
           Layout.alignment: Qt.AlignVCenter
         }
 
@@ -137,7 +137,7 @@ RowLayout {
         visible: showNetworkStats
 
         NIcon {
-          text: FontService.icons["download"]
+          text: Bootstrap.icons["download"]
           Layout.alignment: Qt.AlignVCenter
         }
 
@@ -160,7 +160,7 @@ RowLayout {
         visible: showNetworkStats
 
         NIcon {
-          text: FontService.icons["upload"]
+          text: Bootstrap.icons["upload"]
           Layout.alignment: Qt.AlignVCenter
         }
 

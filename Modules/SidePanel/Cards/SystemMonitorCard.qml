@@ -24,7 +24,7 @@ NBox {
 
     NCircleStat {
       value: SystemStatService.cpuUsage
-      icon: FontService.icons["speed"]
+      icon: Bootstrap.icons["speed"]
       flat: true
       contentScale: 0.8
       width: 72 * scaling
@@ -33,7 +33,7 @@ NBox {
     NCircleStat {
       value: SystemStatService.cpuTemp
       suffix: "°C"
-      icon: FontService.icons["thermometer"]
+      icon: Bootstrap.icons["thermometer"]
       flat: true
       contentScale: 0.8
       width: 72 * scaling
@@ -41,7 +41,7 @@ NBox {
     }
     NCircleStat {
       value: SystemStatService.memPercent
-      icon: FontService.icons["memory"]
+      icon: Bootstrap.icons["memory"]
       flat: true
       contentScale: 0.8
       width: 72 * scaling
@@ -49,7 +49,7 @@ NBox {
     }
     NCircleStat {
       value: SystemStatService.diskPercent
-      icon: FontService.icons["drive"]
+      icon: Bootstrap.icons["drive"]
       flat: true
       contentScale: 0.8
       width: 72 * scaling

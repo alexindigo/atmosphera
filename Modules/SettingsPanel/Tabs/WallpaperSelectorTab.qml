@@ -59,7 +59,7 @@ ColumnLayout {
       anchors.fill: parent
       anchors.margins: Style.marginXS * scaling
       imagePath: currentWallpaper
-      fallbackIcon: FontService.icons["image"]
+      fallbackIcon: Bootstrap.icons["image"]
       imageRadius: Style.radiusM * scaling
       borderColor: Color.mSecondary
       borderWidth: Style.borderL * 2 * scaling
@@ -96,7 +96,7 @@ ColumnLayout {
     }
 
     NIconButton {
-      icon: FontService.icons["refresh"]
+      icon: Bootstrap.icons["arrow-repeat"]
       tooltipText: "Refresh wallpaper list"
       onClicked: {
         WallpaperService.refreshWallpapersList()
@@ -181,7 +181,7 @@ ColumnLayout {
           visible: isSelected
 
           NIcon {
-            text: FontService.icons["check"]
+            text: Bootstrap.icons["check"]
             font.pointSize: Style.fontSizeM * scaling
             font.weight: Style.fontWeightBold
             color: Color.mOnSecondary

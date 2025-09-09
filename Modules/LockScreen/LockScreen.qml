@@ -328,7 +328,7 @@ Loader {
                     width: 100 * scaling
                     height: 100 * scaling
                     imagePath: Settings.data.general.avatarImage
-                    fallbackIcon: FontService.icons["person"]
+                    fallbackIcon: Bootstrap.icons["person"]
                   }
 
                   MouseArea {

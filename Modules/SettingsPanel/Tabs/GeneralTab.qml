@@ -19,7 +19,7 @@ ColumnLayout {
       width: 108 * scaling
       height: 108 * scaling
       imagePath: Settings.data.general.avatarImage
-      fallbackIcon: FontService.icons["person"]
+      fallbackIcon: Bootstrap.icons["person"]
       borderColor: Color.mPrimary
       borderWidth: Math.max(1, Style.borderM * scaling)
       Layout.alignment: Qt.AlignTop

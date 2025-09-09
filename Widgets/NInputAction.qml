@@ -14,7 +14,7 @@ RowLayout {
   property string placeholderText: ""
   property string text: ""
   property string actionButtonText: "Test"
-  property string actionButtonIcon: FontService.icons["play"]
+  property string actionButtonIcon: Bootstrap.icons["play"]
   property bool actionButtonEnabled: text !== ""
 
   // Signals

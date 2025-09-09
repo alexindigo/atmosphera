@@ -172,7 +172,7 @@ ColumnLayout {
             imagePath: modelData.avatar_url || ""
             anchors.fill: parent
             anchors.margins: Style.marginXS * scaling
-            fallbackIcon: FontService.icons["person"]
+            fallbackIcon: Bootstrap.icons["person"]
             borderColor: contributorArea.containsMouse ? Color.mOnTertiary : Color.mPrimary
             borderWidth: Math.max(1, Style.borderM * scaling)
 

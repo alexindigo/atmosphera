@@ -13,7 +13,7 @@ NIconButton {
 
   sizeRatio: 0.8
 
-  icon: FontService.icons["coffee"]
+  icon: Bootstrap.icons["coffee"]
   tooltipText: IdleInhibitorService.isInhibited ? "Disable keep awake" : "Enable keep awake"
   colorBg: Color.mSurfaceVariant
   colorFg: IdleInhibitorService.isInhibited ? Color.mPrimary : Color.mOnSurface

@@ -31,7 +31,7 @@ NPanel {
         spacing: Style.marginM * scaling
 
         NIcon {
-          text: FontService.icons["bell"]
+          text: Bootstrap.icons["bell"]
           font.pointSize: Style.fontSizeXXL * scaling
           color: Color.mPrimary
         }
@@ -45,21 +45,21 @@ NPanel {
         }
 
         NIconButton {
-          icon: Settings.data.notifications.doNotDisturb ? FontService.icons["bell_striked"] : FontService.icons["bell"]
+          icon: Settings.data.notifications.doNotDisturb ? Bootstrap.icons["bell_striked"] : Bootstrap.icons["bell"]
           tooltipText: Settings.data.notifications.doNotDisturb ? "'Do Not Disturb' is enabled." : "'Do Not Disturb' is disabled."
           sizeRatio: 0.8
           onClicked: Settings.data.notifications.doNotDisturb = !Settings.data.notifications.doNotDisturb
         }
 
         NIconButton {
-          icon: FontService.icons["trash"]
+          icon: Bootstrap.icons["trash"]
           tooltipText: "Clear history"
           sizeRatio: 0.8
           onClicked: NotificationService.clearHistory()
         }
 
         NIconButton {
-          icon: FontService.icons["close"]
+          icon: Bootstrap.icons["close"]
           tooltipText: "Close"
           sizeRatio: 0.8
           onClicked: {
@@ -175,7 +175,7 @@ NPanel {
 
             // Delete button
             NIconButton {
-              icon: FontService.icons["trash"]
+              icon: Bootstrap.icons["trash"]
               tooltipText: "Delete notification"
               sizeRatio: 0.7
               Layout.alignment: Qt.AlignTop

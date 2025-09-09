@@ -28,7 +28,7 @@ NBox {
     }
     // Performance
     NIconButton {
-      icon: FontService.icons["speed"]
+      icon: Bootstrap.icons["speed"]
       tooltipText: "Set performance power profile."
       enabled: hasPP
       opacity: enabled ? Style.opacityFull : Style.opacityMedium
@@ -42,7 +42,7 @@ NBox {
     }
     // Balanced
     NIconButton {
-      icon: FontService.icons["yin_yang"]
+      icon: Bootstrap.icons["yin_yang"]
       tooltipText: "Set balanced power profile."
       enabled: hasPP
       opacity: enabled ? Style.opacityFull : Style.opacityMedium
@@ -56,7 +56,7 @@ NBox {
     }
     // Eco
     NIconButton {
-      icon: FontService.icons["leaf"]
+      icon: Bootstrap.icons["leaf"]
       tooltipText: "Set eco power profile."
       enabled: hasPP
       opacity: enabled ? Style.opacityFull : Style.opacityMedium

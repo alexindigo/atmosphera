@@ -46,7 +46,7 @@ Item {
   function getIcon() {
     var monitor = getMonitor()
     var brightness = monitor ? monitor.brightness : 0
-    return brightness <= 0.5 ? FontService.icons["brightness_low"] : FontService.icons["brightness_high"]
+    return brightness <= 0.5 ? Bootstrap.icons["brightness_low"] : Bootstrap.icons["brightness_high"]
   }
 
   // Connection used to open the pill when brightness changes

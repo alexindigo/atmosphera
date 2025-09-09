@@ -408,7 +408,7 @@ NPanel {
                     height: width
 
                     NIcon {
-                      text: FontService.icons[modelData.icon]
+                      text: Bootstrap.icons[modelData.icon]
                       color: tabTextColor
                       font.pointSize: Style.fontSizeL * scaling
                       anchors.centerIn: parent
@@ -480,7 +480,7 @@ NPanel {
 
               // Close button
               NIconButton {
-                icon: FontService.icons["close"]
+                icon: Bootstrap.icons["close"]
                 tooltipText: "Close"
                 Layout.alignment: Qt.AlignVCenter
                 onClicked: root.close()

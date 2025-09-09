@@ -31,7 +31,7 @@ NBox {
       }
 
       NIcon {
-        text: FontService.icons["album"]
+        text: Bootstrap.icons["album"]
         font.pointSize: Style.fontSizeXXXL * 2.5 * scaling
         color: Color.mPrimary
         Layout.alignment: Qt.AlignHCenter
@@ -89,7 +89,7 @@ NBox {
         indicator: NIcon {
           x: playerSelector.width - width
           y: playerSelector.topPadding + (playerSelector.availableHeight - height) / 2
-          text: FontService.icons["arrow_drop_down"]
+          text: Bootstrap.icons["arrow_drop_down"]
           font.pointSize: Style.fontSizeXXL * scaling
           color: Color.mOnSurface
           horizontalAlignment: Text.AlignRight
@@ -162,14 +162,14 @@ NBox {
             anchors.fill: parent
             anchors.margins: Style.marginXS * scaling
             imagePath: MediaService.trackArtUrl
-            fallbackIcon: FontService.icons["album"]
+            fallbackIcon: Bootstrap.icons["album"]
             borderColor: Color.mOutline
             borderWidth: Math.max(1, Style.borderS * scaling)
           }
 
           // Fallback icon when no album art available
           NIcon {
-            text: FontService.icons["album"]
+            text: Bootstrap.icons["album"]
             color: Color.mPrimary
             font.pointSize: Style.fontSizeL * 12 * scaling
             visible: !trackArt.visible
@@ -307,7 +307,7 @@ NBox {
 
         // Previous button
         NIconButton {
-          icon: FontService.icons["prev"]
+          icon: Bootstrap.icons["prev"]
           tooltipText: "Previous Media"
           visible: MediaService.canGoPrevious
           onClicked: MediaService.canGoPrevious ? MediaService.previous() : {}
@@ -315,7 +315,7 @@ NBox {
 
         // Play/Pause button
         NIconButton {
-          icon: MediaService.isPlaying ? FontService.icons["pause"] : FontService.icons["play"]
+          icon: MediaService.isPlaying ? Bootstrap.icons["pause"] : Bootstrap.icons["play"]
           tooltipText: MediaService.isPlaying ? "Pause" : "Play"
           visible: (MediaService.canPlay || MediaService.canPause)
           onClicked: (MediaService.canPlay || MediaService.canPause) ? MediaService.playPause() : {}
@@ -323,7 +323,7 @@ NBox {
 
         // Next button
         NIconButton {
-          icon: FontService.icons["next"]
+          icon: Bootstrap.icons["next"]
           tooltipText: "Next media"
           visible: MediaService.canGoNext
           onClicked: MediaService.canGoNext ? MediaService.next() : {}

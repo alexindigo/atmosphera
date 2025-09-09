@@ -59,7 +59,7 @@ Rectangle {
       }
 
       NIcon {
-        text: FontService.icons["eyedropper"]
+        text: Bootstrap.icons["eyedropper"]
         color: Color.mOnSurfaceVariant
       }
     }

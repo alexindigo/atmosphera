@@ -55,7 +55,7 @@ NPanel {
         }
 
         NIconButton {
-          icon: FontService.icons["refresh"]
+          icon: Bootstrap.icons["arrow-repeat"]
           tooltipText: "Refresh"
           sizeRatio: 0.8
           enabled: Settings.data.network.wifiEnabled && !NetworkService.scanning
@@ -63,7 +63,7 @@ NPanel {
         }
 
         NIconButton {
-          icon: FontService.icons["close"]
+          icon: Bootstrap.icons["close"]
           tooltipText: "Close"
           sizeRatio: 0.8
           onClicked: root.close()
@@ -105,7 +105,7 @@ NPanel {
           }
 
           NIconButton {
-            icon: FontService.icons["close"]
+            icon: Bootstrap.icons["close"]
             sizeRatio: 0.6
             onClicked: NetworkService.lastError = ""
           }
@@ -377,7 +377,7 @@ NPanel {
                                  && NetworkService.connectingTo !== modelData.ssid
                                  && NetworkService.forgettingNetwork !== modelData.ssid
                                  && NetworkService.disconnectingFrom !== modelData.ssid
-                        icon: FontService.icons["trash"]
+                        icon: Bootstrap.icons["trash"]
                         tooltipText: "Forget network"
                         sizeRatio: 0.7
                         onClicked: expandedSsid = expandedSsid === modelData.ssid ? "" : modelData.ssid
@@ -492,7 +492,7 @@ NPanel {
                       }
 
                       NIconButton {
-                        icon: FontService.icons["close"]
+                        icon: Bootstrap.icons["close"]
                         sizeRatio: 0.8
                         onClicked: {
                           passwordSsid = ""
@@ -547,7 +547,7 @@ NPanel {
                       }
 
                       NIconButton {
-                        icon: FontService.icons["close"]
+                        icon: Bootstrap.icons["close"]
                         sizeRatio: 0.8
                         onClicked: expandedSsid = ""
                       }
@@ -586,7 +586,7 @@ NPanel {
 
           NButton {
             text: "Scan again"
-            icon: FontService.icons["refresh"]
+            icon: Bootstrap.icons["arrow-repeat"]
             Layout.alignment: Qt.AlignHCenter
             onClicked: NetworkService.scan()
           }

@@ -10,20 +10,20 @@ Singleton {
   // Choose icon based on charge and charging state
   function getIcon(percent, charging, isReady) {
     if (!isReady) {
-      return FontService.icons["battery_empty"] // FIXME: find battery error ?
+      return Bootstrap.icons["battery_empty"] // FIXME: find battery error ?
     }
 
     if (charging) {
-      return FontService.icons["battery_charging"]
+      return Bootstrap.icons["battery_charging"]
     } else {
       if (percent >= 85)
-        return FontService.icons["battery_full"]
+        return Bootstrap.icons["battery_full"]
       if (percent >= 45)
-        return FontService.icons["battery_half"]
+        return Bootstrap.icons["battery_half"]
       if (percent >= 25)
-        return FontService.icons["battery_low"]
+        return Bootstrap.icons["battery_low"]
       if (percent >= 0)
-        return FontService.icons["battery_empty"]
+        return Bootstrap.icons["battery_empty"]
     }
   }
 }
