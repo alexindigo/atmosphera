@@ -13,9 +13,8 @@ NBox {
   Layout.preferredWidth: 1
   implicitHeight: powerRow.implicitHeight + Style.marginM * 2 * scaling
 
-  // PowerProfiles service
-  property var powerProfiles: PowerProfiles
-  readonly property bool hasPP: powerProfiles.hasPerformanceProfile
+  // Centralized service
+  readonly property bool hasPP: PowerProfileService.available
   property real spacing: 0
 
   RowLayout {
@@ -32,12 +31,12 @@ NBox {
       tooltipText: "Set performance power profile."
       enabled: hasPP
       opacity: enabled ? Style.opacityFull : Style.opacityMedium
-      colorBg: (enabled && powerProfiles.profile === PowerProfile.Performance) ? Color.mPrimary : Color.mSurfaceVariant
-      colorFg: (enabled && powerProfiles.profile === PowerProfile.Performance) ? Color.mOnPrimary : Color.mPrimary
+      colorBg: (enabled
+                && PowerProfileService.profile === PowerProfile.Performance) ? Color.mPrimary : Color.mSurfaceVariant
+      colorFg: (enabled && PowerProfileService.profile === PowerProfile.Performance) ? Color.mOnPrimary : Color.mPrimary
       onClicked: {
         if (enabled) {
-          powerProfiles.profile = PowerProfile.Performance
-          ToastService.showNotice("Power Profile", "Performance")
+          PowerProfileService.setProfile(PowerProfile.Performance)
         }
       }
     }
@@ -47,12 +46,12 @@ NBox {
       tooltipText: "Set balanced power profile."
       enabled: hasPP
       opacity: enabled ? Style.opacityFull : Style.opacityMedium
-      colorBg: (enabled && powerProfiles.profile === PowerProfile.Balanced) ? Color.mPrimary : Color.mSurfaceVariant
-      colorFg: (enabled && powerProfiles.profile === PowerProfile.Balanced) ? Color.mOnPrimary : Color.mPrimary
+      colorBg: (enabled
+                && PowerProfileService.profile === PowerProfile.Balanced) ? Color.mPrimary : Color.mSurfaceVariant
+      colorFg: (enabled && PowerProfileService.profile === PowerProfile.Balanced) ? Color.mOnPrimary : Color.mPrimary
       onClicked: {
         if (enabled) {
-          powerProfiles.profile = PowerProfile.Balanced
-          ToastService.showNotice("Power Profile", "Balanced")
+          PowerProfileService.setProfile(PowerProfile.Balanced)
         }
       }
     }
@@ -62,12 +61,12 @@ NBox {
       tooltipText: "Set eco power profile."
       enabled: hasPP
       opacity: enabled ? Style.opacityFull : Style.opacityMedium
-      colorBg: (enabled && powerProfiles.profile === PowerProfile.PowerSaver) ? Color.mPrimary : Color.mSurfaceVariant
-      colorFg: (enabled && powerProfiles.profile === PowerProfile.PowerSaver) ? Color.mOnPrimary : Color.mPrimary
+      colorBg: (enabled
+                && PowerProfileService.profile === PowerProfile.PowerSaver) ? Color.mPrimary : Color.mSurfaceVariant
+      colorFg: (enabled && PowerProfileService.profile === PowerProfile.PowerSaver) ? Color.mOnPrimary : Color.mPrimary
       onClicked: {
         if (enabled) {
-          powerProfiles.profile = PowerProfile.PowerSaver
-          ToastService.showNotice("Power Profile", "Power Saver")
+          PowerProfileService.setProfile(PowerProfile.PowerSaver)
         }
       }
     }

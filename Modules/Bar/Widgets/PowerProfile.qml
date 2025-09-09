@@ -11,8 +11,7 @@ NIconButton {
 
   property ShellScreen screen
   property real scaling: 1.0
-  property var powerProfiles: PowerProfiles
-  readonly property bool hasPP: powerProfiles.hasPerformanceProfile
+  readonly property bool hasPP: PowerProfileService.available
 
   sizeRatio: 0.8
   visible: hasPP
@@ -20,34 +19,29 @@ NIconButton {
   function profileIcon() {
     if (!hasPP)
       return "yin-yang"
-    if (powerProfiles.profile === PowerProfile.Performance)
+    if (PowerProfileService.profile === PowerProfile.Performance)
       return "speedometer2"
-    if (powerProfiles.profile === PowerProfile.Balanced)
+    if (PowerProfileService.profile === PowerProfile.Balanced)
       return "yin-yang"
-    if (powerProfiles.profile === PowerProfile.PowerSaver)
+    if (PowerProfileService.profile === PowerProfile.PowerSaver)
       return "leaf"
   }
 
   function profileName() {
     if (!hasPP)
       return "Unknown"
-    if (powerProfiles.profile === PowerProfile.Performance)
+    if (PowerProfileService.profile === PowerProfile.Performance)
       return "Performance"
-    if (powerProfiles.profile === PowerProfile.Balanced)
+    if (PowerProfileService.profile === PowerProfile.Balanced)
       return "Balanced"
-    if (powerProfiles.profile === PowerProfile.PowerSaver)
+    if (PowerProfileService.profile === PowerProfile.PowerSaver)
       return "Power Saver"
   }
 
   function changeProfile() {
     if (!hasPP)
       return
-    if (powerProfiles.profile === PowerProfile.Performance)
-      powerProfiles.profile = PowerProfile.PowerSaver
-    else if (powerProfiles.profile === PowerProfile.Balanced)
-      powerProfiles.profile = PowerProfile.Performance
-    else if (powerProfiles.profile === PowerProfile.PowerSaver)
-      powerProfiles.profile = PowerProfile.Balanced
+    PowerProfileService.cycleProfile()
   }
 
   icon: root.profileIcon()
