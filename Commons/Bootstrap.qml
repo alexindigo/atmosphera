@@ -41,7 +41,7 @@ Singleton {
     }
   }
 
-  property var icons: {
+  readonly property var icons: {
     "alarm-fill": "\uF101",
     "alarm": "\uF102",
     "align-bottom": "\uF103",
