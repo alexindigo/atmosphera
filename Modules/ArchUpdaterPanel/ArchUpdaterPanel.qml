@@ -27,7 +27,8 @@ NPanel {
         Layout.fillWidth: true
         spacing: Style.marginM * scaling
 
-        NIcon {           icon: "system_update_alt"
+        NIcon {
+          icon: "system_update_alt"
           font.pointSize: Style.fontSizeXXL * scaling
           color: Color.mPrimary
         }
@@ -101,7 +102,8 @@ NPanel {
           Layout.fillHeight: true
         } // Spacer
 
-        NIcon {           icon: "hourglass_empty"
+        NIcon {
+          icon: "hourglass_empty"
           font.pointSize: Style.fontSizeXXXL * scaling
           color: Color.mPrimary
           Layout.alignment: Qt.AlignHCenter
@@ -217,7 +219,7 @@ NPanel {
           spacing: Style.marginM * scaling
 
           NIcon {
-            icon: "error"
+            icon: "exclamation"
             font.pointSize: Style.fontSizeXXXL * scaling
             color: Color.mError
             Layout.alignment: Qt.AlignHCenter
@@ -268,7 +270,7 @@ NPanel {
           spacing: Style.marginM * scaling
 
           NIcon {
-            icon: "error_outline"
+            icon: "exclamation"
             font.pointSize: Style.fontSizeXXXL * scaling
             color: Color.mError
             Layout.alignment: Qt.AlignHCenter
@@ -321,7 +323,7 @@ NPanel {
           spacing: Style.marginM * scaling
 
           NIcon {
-            icon: "check_circle"
+            icon: "check-lg"
             font.pointSize: Style.fontSizeXXXL * scaling
             color: Color.mPrimary
             Layout.alignment: Qt.AlignHCenter
@@ -493,7 +495,7 @@ NPanel {
         }
 
         NIconButton {
-          icon: "system_update_alt"
+          icon: "box-fill"
           tooltipText: "Update all packages"
           enabled: ArchUpdaterService.totalUpdates > 0
           onClicked: {
@@ -506,7 +508,7 @@ NPanel {
         }
 
         NIconButton {
-          icon: "check_box"
+          icon: "box"
           tooltipText: "Update selected packages"
           enabled: ArchUpdaterService.selectedPackagesCount > 0
           onClicked: {

@@ -74,7 +74,7 @@ Rectangle {
     // Fallback icon
     NIcon {
       anchors.centerIn: parent
-      text: fallbackIcon
+      icon: fallbackIcon
       font.pointSize: fallbackIconSize
       visible: fallbackIcon !== undefined && fallbackIcon !== "" && (imagePath === undefined || imagePath === "")
       z: 0

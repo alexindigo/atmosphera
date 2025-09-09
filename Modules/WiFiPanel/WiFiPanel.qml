@@ -33,7 +33,8 @@ NPanel {
         Layout.fillWidth: true
         spacing: Style.marginM * scaling
 
-        NIcon {           icon: Settings.data.network.wifiEnabled ? "wifi" : "wifi-off"
+        NIcon {
+          icon: Settings.data.network.wifiEnabled ? "wifi" : "wifi-off"
           font.pointSize: Style.fontSizeXXL * scaling
           color: Settings.data.network.wifiEnabled ? Color.mPrimary : Color.mOnSurfaceVariant
         }

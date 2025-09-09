@@ -13,7 +13,7 @@ NIconButton {
 
   sizeRatio: 0.8
 
-  icon: "power_settings_new"
+  icon: "power"
   tooltipText: "Power Settings"
   colorBg: Color.mSurfaceVariant
   colorFg: Color.mError

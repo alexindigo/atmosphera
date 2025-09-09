@@ -31,7 +31,7 @@ NBox {
       }
 
       NIcon {
-        text: "album"
+        icon: "disc"
         font.pointSize: Style.fontSizeXXXL * 2.5 * scaling
         color: Color.mPrimary
         Layout.alignment: Qt.AlignHCenter
@@ -162,14 +162,14 @@ NBox {
             anchors.fill: parent
             anchors.margins: Style.marginXS * scaling
             imagePath: MediaService.trackArtUrl
-            fallbackIcon: "album"
+            fallbackIcon: "disc"
             borderColor: Color.mOutline
             borderWidth: Math.max(1, Style.borderS * scaling)
           }
 
           // Fallback icon when no album art available
           NIcon {
-            icon: "album"
+            icon: "disc"
             color: Color.mPrimary
             font.pointSize: Style.fontSizeL * 12 * scaling
             visible: !trackArt.visible

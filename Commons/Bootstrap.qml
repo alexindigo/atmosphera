@@ -8,54 +8,6 @@ import qs.Commons
 Singleton {
   id: root
 
-  //   "wifi_disable": "\uF61B",
-  //   "wifi_low": "\uF619",
-  //   "wifi_half": "\uF61A",
-  //   "wifi_full": "\uF61C",
-  //   "power": "\uF4FF",
-
-  //   "close": "\uF659",
-  //   "check": "\uF272",
-  //   "panel": "\uF290",
-  //   "memory": "\uF2D6",
-  //   "trash": "\uF78B",
-  //   "video_camera": "\uF21F",
-  //   "ethernet": "\uF2EB",
-  //   "speed": "\uF66B",
-  //   "leaf": "\uF90C",
-  //   "microphone": "\uF490",
-  //   "microphone_muted": "\uF48F",
-  //   "coffee": "\uF2E0",
-  //   "refresh": "\uF130",
-  //   "image": "\uF226",
-  //   "contrast": "\uF288",
-  //   "record": "\uF518",
-  //   "pause": "\uF4C1",
-  //   "play": "\uF4F2",
-  //   "stop": "\uF590",
-  //   "prev": "\uF561",
-  //   "next": "\uF55B",
-  //   "arrow_drop_down": "\uF22C",
-  //   "warning": "\uF334",
-  //   "info": "\uF26A",
-  //   "upload": "\uF296",
-  //   "download": "\uF294",
-  //   "album": "\uF2FF",
-
-  //   "eyedropper": "\uF342",
-  //   "drive": "\uF412",
-
-  //   "person": "\uF4DA",
-  //   "bar": "\uF52B",
-  //   "launcher": "\uF843",
-  //   "palette": "\uF4B1",
-  //   "sunrise": "\uF5A5",
-  //   "moon_stars": "\uF496",
-  //   "gauge": "\uF580",
-  //   "lightning": "\uF46D",
-
-  //   // another contrast  \uF8F3   \uF8DA
-  // }
   property var icons: {
     "alarm-fill": "\uF101",
     "alarm": "\uF102",

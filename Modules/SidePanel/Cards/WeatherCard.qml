@@ -27,7 +27,7 @@ NBox {
     RowLayout {
       spacing: Style.marginS * scaling
       NIcon {
-        text: weatherReady ? LocationService.weatherSymbolFromCode(
+        icon: weatherReady ? LocationService.weatherSymbolFromCode(
                                LocationService.data.weather.current_weather.weathercode) : ""
         font.pointSize: Style.fontSizeXXXL * 1.75 * scaling
         color: Color.mPrimary

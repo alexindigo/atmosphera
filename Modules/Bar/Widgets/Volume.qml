@@ -45,9 +45,7 @@ Item {
     if (AudioService.muted) {
       return "volume-mute"
     }
-    return AudioService.volume
-        <= Number.EPSILON ? "volume-off" : (AudioService.volume
-                                                             < 0.5 ? "volume-down" : "volume-up")
+    return AudioService.volume <= Number.EPSILON ? "volume-off" : (AudioService.volume < 0.5 ? "volume-down" : "volume-up")
   }
 
   // Connection used to open the pill when volume changes

@@ -64,7 +64,8 @@ RowLayout {
         Layout.alignment: Qt.AlignVCenter
         visible: showCpuUsage
 
-        NIcon {           icon: "speedometer2"
+        NIcon {
+          icon: "speedometer2"
           font.pointSize: Style.fontSizeM * scaling
           Layout.alignment: Qt.AlignVCenter
         }
@@ -87,7 +88,8 @@ RowLayout {
         Layout.alignment: Qt.AlignVCenter
         visible: showCpuTemp
 
-        NIcon {           icon: "fire"
+        NIcon {
+          icon: "fire"
           font.pointSize: Style.fontSizeM * scaling
           Layout.alignment: Qt.AlignVCenter
         }
@@ -110,7 +112,8 @@ RowLayout {
         Layout.alignment: Qt.AlignVCenter
         visible: showMemoryUsage
 
-        NIcon {           icon: "memory"
+        NIcon {
+          icon: "memory"
           font.pointSize: Style.fontSizeM * scaling
           Layout.alignment: Qt.AlignVCenter
         }
@@ -133,7 +136,8 @@ RowLayout {
         Layout.alignment: Qt.AlignVCenter
         visible: showNetworkStats
 
-        NIcon {           icon: "download"
+        NIcon {
+          icon: "download"
           font.pointSize: Style.fontSizeM * scaling
           Layout.alignment: Qt.AlignVCenter
         }
@@ -156,7 +160,8 @@ RowLayout {
         Layout.alignment: Qt.AlignVCenter
         visible: showNetworkStats
 
-        NIcon {           icon: "upload"
+        NIcon {
+          icon: "upload"
           font.pointSize: Style.fontSizeM * scaling
           Layout.alignment: Qt.AlignVCenter
         }

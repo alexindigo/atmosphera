@@ -30,7 +30,8 @@ NPanel {
         Layout.fillWidth: true
         spacing: Style.marginM * scaling
 
-        NIcon {           icon: "bell"
+        NIcon {
+          icon: "bell"
           font.pointSize: Style.fontSizeXXL * scaling
           color: Color.mPrimary
         }
@@ -83,7 +84,8 @@ NPanel {
           Layout.fillHeight: true
         }
 
-        NIcon {           icon: "bell-slash"
+        NIcon {
+          icon: "bell-slash"
           font.pointSize: 64 * scaling
           color: Color.mOnSurfaceVariant
           Layout.alignment: Qt.AlignHCenter
