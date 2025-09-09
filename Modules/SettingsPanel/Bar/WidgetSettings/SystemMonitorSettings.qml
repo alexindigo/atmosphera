@@ -21,8 +21,7 @@ ColumnLayout {
                                           !== undefined ? widgetData.showMemoryAsPercent : widgetMetadata.showMemoryAsPercent
   property bool valueShowNetworkStats: widgetData.showNetworkStats
                                        !== undefined ? widgetData.showNetworkStats : widgetMetadata.showNetworkStats
-  property bool valueShowDiskUsage: widgetData.showDiskUsage !== undefined ? widgetData.showDiskUsage : (widgetMetadata.showDiskUsage
-                                                                                                         || false)
+  property bool valueShowDiskUsage: widgetData.showDiskUsage !== undefined ? widgetData.showDiskUsage : widgetMetadata.showDiskUsage
 
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {})

@@ -38,12 +38,4 @@ Item {
   implicitHeight: Style.barHeight * scaling
   width: implicitWidth
   height: implicitHeight
-
-  // Optional: Add a subtle visual indicator in debug mode
-  Rectangle {
-    anchors.fill: parent
-    color: Qt.rgba(1, 0, 0, 0.1) // Very subtle red tint
-    visible: Settings.data.general.debugMode || false
-    radius: Style.radiusXXS * scaling
-  }
 }
