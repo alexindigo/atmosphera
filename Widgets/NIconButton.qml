@@ -35,13 +35,13 @@ Rectangle {
   opacity: root.enabled ? Style.opacityFull : Style.opacityMedium
   color: root.enabled && root.hovering ? colorBgHover : colorBg
   radius: width * 0.5
-  border.color: root.hovering ? colorBorderHover : colorBorder
+  border.color: root.enabled && root.hovering ? colorBorderHover : colorBorder
   border.width: Math.max(1, Style.borderS * scaling)
 
   NIcon {
     icon: root.icon
     font.pointSize: Style.fontSizeM * scaling
-    color: root.hovering ? colorFgHover : colorFg
+    color: root.enabled && root.hovering ? colorFgHover : colorFg
     // Center horizontally
     x: (root.width - width) / 2
     // Center vertically accounting for font metrics
@@ -56,13 +56,14 @@ Rectangle {
   }
 
   MouseArea {
-    enabled: root.enabled
+    // Always enabled to allow hover/tooltip even when the button is disabled
+    enabled: true
     anchors.fill: parent
     cursorShape: root.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
     acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
     hoverEnabled: true
     onEntered: {
-      hovering = true
+      hovering = root.enabled ? true : false
       if (tooltipText) {
         tooltip.show()
       }
@@ -78,6 +79,9 @@ Rectangle {
     onClicked: function (mouse) {
       if (tooltipText) {
         tooltip.hide()
+      }
+      if (!root.enabled) {
+        return
       }
       if (mouse.button === Qt.LeftButton) {
         root.clicked()

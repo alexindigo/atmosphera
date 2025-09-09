@@ -735,12 +735,28 @@ Loader {
                   color: powerButtonArea.containsMouse ? Color.mOnError : Color.mError
                 }
 
-                // Tooltip
-                NTooltip {
-                  id: tooltipShutdown
-                  target: parent
-                  positionAbove: true
-                  text: "Shut down"
+                // Tooltip (inline rectangle to avoid separate Window during lock)
+                Rectangle {
+                  anchors.horizontalCenter: parent.horizontalCenter
+                  anchors.bottom: parent.top
+                  anchors.bottomMargin: 12 * scaling
+                  radius: Style.radiusM * scaling
+                  color: Color.mSurface
+                  border.color: Color.mOutline
+                  border.width: Math.max(1, Style.borderS * scaling)
+                  visible: powerButtonArea.containsMouse
+                  z: 1
+                  NText {
+                    id: shutdownTooltipText
+                    anchors.margins: Style.marginM * scaling
+                    anchors.fill: parent
+                    text: "Shut down the computer."
+                    font.pointSize: Style.fontSizeM * scaling
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                  }
+                  implicitWidth: shutdownTooltipText.implicitWidth + Style.marginM * 2 * scaling
+                  implicitHeight: shutdownTooltipText.implicitHeight + Style.marginM * 2 * scaling
                 }
 
                 MouseArea {
@@ -750,8 +766,6 @@ Loader {
                   onClicked: {
                     CompositorService.shutdown()
                   }
-                  onEntered: tooltipShutdown.show()
-                  onExited: tooltipShutdown.hide()
                 }
               }
 
@@ -773,11 +787,27 @@ Loader {
                 }
 
                 // Tooltip
-                NTooltip {
-                  id: tooltipRestart
-                  target: parent
-                  positionAbove: true
-                  text: "Restart"
+                Rectangle {
+                  anchors.horizontalCenter: parent.horizontalCenter
+                  anchors.bottom: parent.top
+                  anchors.bottomMargin: 12 * scaling
+                  radius: Style.radiusM * scaling
+                  color: Color.mSurface
+                  border.color: Color.mOutline
+                  border.width: Math.max(1, Style.borderS * scaling)
+                  visible: restartButtonArea.containsMouse
+                  z: 1
+                  NText {
+                    id: restartTooltipText
+                    anchors.margins: Style.marginM * scaling
+                    anchors.fill: parent
+                    text: "Restart the computer."
+                    font.pointSize: Style.fontSizeM * scaling
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                  }
+                  implicitWidth: restartTooltipText.implicitWidth + Style.marginM * 2 * scaling
+                  implicitHeight: restartTooltipText.implicitHeight + Style.marginM * 2 * scaling
                 }
 
                 MouseArea {
@@ -787,8 +817,7 @@ Loader {
                   onClicked: {
                     CompositorService.reboot()
                   }
-                  onEntered: tooltipRestart.show()
-                  onExited: tooltipRestart.hide()
+                  // Tooltip handled via inline rectangle visibility
                 }
               }
 
@@ -810,11 +839,27 @@ Loader {
                 }
 
                 // Tooltip
-                NTooltip {
-                  id: tooltipSuspend
-                  target: parent
-                  positionAbove: true
-                  text: "Suspend"
+                Rectangle {
+                  anchors.horizontalCenter: parent.horizontalCenter
+                  anchors.bottom: parent.top
+                  anchors.bottomMargin: 12 * scaling
+                  radius: Style.radiusM * scaling
+                  color: Color.mSurface
+                  border.color: Color.mOutline
+                  border.width: Math.max(1, Style.borderS * scaling)
+                  visible: suspendButtonArea.containsMouse
+                  z: 1
+                  NText {
+                    id: suspendTooltipText
+                    anchors.margins: Style.marginM * scaling
+                    anchors.fill: parent
+                    text: "Suspend the system."
+                    font.pointSize: Style.fontSizeM * scaling
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                  }
+                  implicitWidth: suspendTooltipText.implicitWidth + Style.marginM * 2 * scaling
+                  implicitHeight: suspendTooltipText.implicitHeight + Style.marginM * 2 * scaling
                 }
 
                 MouseArea {
@@ -824,8 +869,7 @@ Loader {
                   onClicked: {
                     CompositorService.suspend()
                   }
-                  onEntered: tooltipSuspend.show()
-                  onExited: tooltipSuspend.hide()
+                  // Tooltip handled via inline rectangle visibility
                 }
               }
             }

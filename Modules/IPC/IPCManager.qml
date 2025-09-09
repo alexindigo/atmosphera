@@ -22,7 +22,9 @@ Item {
   IpcHandler {
     target: "screenRecorder"
     function toggle() {
-      ScreenRecorderService.toggleRecording()
+      if (ScreenRecorderService.isAvailable) {
+        ScreenRecorderService.toggleRecording()
+      }
     }
   }
 
