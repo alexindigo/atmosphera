@@ -102,10 +102,8 @@ Item {
     height: iconSize
     radius: width * 0.5
     // When forced shown, match pill background; otherwise use accent when hovered
-    color: forceOpen ? pillColor : (showPill ? iconCircleColor : Color.mSurfaceVariant)
+    color: forceOpen ? Color.mSurface : (showPill ? iconCircleColor : Color.mSurfaceVariant)
     anchors.verticalCenter: parent.verticalCenter
-    border.width: Math.max(1, Style.borderS * scaling)
-    border.color: forceOpen ? Qt.alpha(Color.mOutline, 0.5) : Color.transparent
 
     x: rightOpen ? 0 : (parent.width - width)
 
