@@ -256,11 +256,10 @@ Variants {
                 }
 
                 // Fall back if no icon
-                NText {
+                NIcon {
                   anchors.centerIn: parent
                   visible: !appIcon.visible
-                  text: "question_mark"
-                  font.family: "Material Symbols Rounded"
+                  icon: "question-mark"
                   font.pointSize: iconSize * 0.7
                   color: appButton.isActive ? Color.mPrimary : Color.mOnSurfaceVariant
                   scale: appButton.hovered ? 1.15 : 1.0

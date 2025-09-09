@@ -15,15 +15,17 @@ Singleton {
     "refresh": "refresh",
     "add": "plus",
     "trash": "trash-filled",
+    "menu": "menu-2",
     "toast-notice": "circle-check",
     "toast-warning": "exclamation-circle",
+    "question-mark": "question-mark",
+    "search": "search",
     "warning": "exclamation-circle",
     "stop": "player-stop-filled",
     "media-pause": "player-pause",
     "media-play": "player-play",
     "media-prev": "player-track-prev",
     "media-next": "player-track-next",
-    
     "cpu-usage": "brand-speedtest",
     "cpu-temperature": "flame",
     "memory": "cpu",
@@ -35,19 +37,11 @@ Singleton {
     "storage": "device-floppy",
     "ethernet": "plug-connected",
     "keyboard": "keyboard",
-    
     "shutdown": "power",
     "lock": "lock",
     "logout": "logout",
     "reboot": "refresh",
     "suspend": "player-pause-filled",
-
-
-    "wifi-0": "wifi-0",
-    "wifi-1": "wifi-1",
-    "wifi-2": "wifi-2",
-    "wifi-off": "wifi-off",
-    "wifi": "wifi",
     "nightlight-on": "moon-filled",
     "nightlight-off": "moon-off",
     "bell": "bell-filled",
@@ -70,6 +64,11 @@ Singleton {
     "battery-2": "battery-2",
     "battery-1": "battery-1",
     "battery": "battery",
+    "wifi-0": "wifi-0",
+    "wifi-1": "wifi-1",
+    "wifi-2": "wifi-2",
+    "wifi-off": "wifi-off",
+    "wifi": "wifi",
     "microphone": "microphone",
     "microphone-mute": "microphone-off",
     "volume-mute": "volume-off",
@@ -99,7 +98,6 @@ Singleton {
     "settings-screen-recorder": "video",
     "settings-hooks": "link",
     "settings-about": "info-square-rounded",
-
     "bluetooth": "bluetooth",
     "bt-device-generic": "bluetooth",
     "bt-device-headphones": "headphones-filled",
@@ -108,7 +106,7 @@ Singleton {
     "bt-device-phone": "device-mobile-filled",
     "bt-device-watch": "device-watch",
     "bt-device-speaker": "device-speaker",
-    "bt-device-tv": "device-tv",
+    "bt-device-tv": "device-tv"
   }
 
   readonly property var icons: {

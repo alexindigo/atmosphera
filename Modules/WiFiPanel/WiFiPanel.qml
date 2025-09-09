@@ -521,7 +521,7 @@ NPanel {
 
                       RowLayout {
                         NIcon {
-                          text: "delete_outline"
+                          icon: "trash"
                           font.pointSize: Style.fontSizeL * scaling
                           color: Color.mError
                         }

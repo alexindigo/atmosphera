@@ -257,7 +257,7 @@ Singleton {
   Process {
     id: wifiStateEnableProcess
     running: false
-    command: ["nmcli", "radio", "wifi", Settings.data.network.wifiEnabled  ? "on" : "off"]
+    command: ["nmcli", "radio", "wifi", Settings.data.network.wifiEnabled ? "on" : "off"]
 
     stdout: StdioCollector {
       onStreamFinished: {
@@ -275,7 +275,6 @@ Singleton {
       }
     }
   }
-
 
   // Helper process to get existing profiles
   Process {
