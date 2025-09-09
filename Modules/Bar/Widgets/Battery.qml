@@ -57,9 +57,7 @@ Item {
     // Only notify once we are a below threshold
     if (!charging && !root.hasNotifiedLowBattery && percent <= warningThreshold) {
       root.hasNotifiedLowBattery = true
-      // Maybe go with toast ?
-      Quickshell.execDetached(
-            ["notify-send", "-u", "critical", "-i", "battery-caution", "Low Battery", `Battery is at ${p}%. Please connect charger.`])
+      ToastService.showWarning("Low Battery", `Battery is at ${Math.round(percent)}%. Please connect the charger.`)
     } else if (root.hasNotifiedLowBattery && (charging || percent > warningThreshold + 5)) {
       // Reset when charging starts or when battery recovers 5% above threshold
       root.hasNotifiedLowBattery = false

@@ -95,7 +95,7 @@ RowLayout {
 
       NIcon {
         anchors.centerIn: parent
-        text: "dash-lg"
+        text: "\uF2E6"
         font.pointSize: Style.fontSizeS * scaling
         color: decreaseArea.containsMouse ? Color.mOnPrimary : Color.mPrimary
       }
@@ -130,7 +130,7 @@ RowLayout {
 
       NIcon {
         anchors.centerIn: parent
-        text: "plus-lg"
+        text: "\uF4FA"
         font.pointSize: Style.fontSizeS * scaling
         color: increaseArea.containsMouse ? Color.mOnPrimary : Color.mPrimary
       }
