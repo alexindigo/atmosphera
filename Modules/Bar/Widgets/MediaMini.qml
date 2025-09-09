@@ -179,7 +179,7 @@ RowLayout {
           font.weight: Style.fontWeightMedium
           elide: Text.ElideRight
           verticalAlignment: Text.AlignVCenter
-          color: Color.mTertiary
+          color: Color.mSecondary
 
           Behavior on Layout.preferredWidth {
             NumberAnimation {

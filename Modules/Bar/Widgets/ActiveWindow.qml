@@ -123,7 +123,7 @@ RowLayout {
           font.weight: Style.fontWeightMedium
           elide: mouseArea.containsMouse ? Text.ElideNone : Text.ElideRight
           verticalAlignment: Text.AlignVCenter
-          color: Color.mSecondary
+          color: Color.mPrimary
           clip: true
 
           Behavior on Layout.preferredWidth {
