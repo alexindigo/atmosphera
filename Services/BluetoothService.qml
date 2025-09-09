@@ -51,36 +51,36 @@ Singleton {
 
   function getDeviceIcon(device) {
     if (!device) {
-      return "bluetooth"
+      return "bt-device-generic"
     }
 
     var name = (device.name || device.deviceName || "").toLowerCase()
     var icon = (device.icon || "").toLowerCase()
     if (icon.includes("headset") || icon.includes("audio") || name.includes("headphone") || name.includes("airpod")
         || name.includes("headset") || name.includes("arctis")) {
-      return "headset"
+      return "bt-device-headphones"
     }
 
     if (icon.includes("mouse") || name.includes("mouse")) {
-      return "mouse-2"
+      return "bt-device-mouse"
     }
     if (icon.includes("keyboard") || name.includes("keyboard")) {
-      return "keyboard"
+      return "bt-device-keyboard"
     }
     if (icon.includes("phone") || name.includes("phone") || name.includes("iphone") || name.includes("android")
         || name.includes("samsung")) {
-      return "phone"
+      return "bt-device-phone"
     }
     if (icon.includes("watch") || name.includes("watch")) {
-      return "smartwatch"
+      return "bt-device-watch"
     }
     if (icon.includes("speaker") || name.includes("speaker")) {
-      return "speaker"
+      return "bt-device-speaker"
     }
     if (icon.includes("display") || name.includes("tv")) {
-      return "tv"
+      return "bt-device-tv"
     }
-    return "bluetooth"
+    return "bt-device-generic"
   }
 
   function canConnect(device) {

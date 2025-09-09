@@ -29,7 +29,7 @@ Singleton {
     "download-speed": "download",
     "upload-speed": "upload",
     "storage": "device-floppy",
-    "bluetooth": "bluetooth",
+
     "ethernet": "network",
     "keyboard": "keyboard",
     "power": "power",
@@ -89,8 +89,17 @@ Singleton {
     "settings-wallpaper-selector": "library-photo",
     "settings-screen-recorder": "video",
     "settings-hooks": "link",
-    "settings-about": "info-square-rounded"
-    // TODO BT DEVICES
+    "settings-about": "info-square-rounded",
+
+    "bluetooth": "bluetooth",
+    "bt-device-generic": "bluetooth",
+    "bt-device-headphones": "headphones-filled",
+    "bt-device-mouse": "mouse-2",
+    "bt-device-keyboard": "bluetooth",
+    "bt-device-phone": "device-mobile-filled",
+    "bt-device-watch": "device-watch",
+    "bt-device-speaker": "device-speaker",
+    "bt-device-tv": "device-tv",
   }
 
   readonly property var icons: {
