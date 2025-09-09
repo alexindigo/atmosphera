@@ -16,11 +16,11 @@ NIconButton {
 
   sizeRatio: 0.8
   colorBg: Color.mSurfaceVariant
-  colorFg: Settings.data.nightLight.enabled ? Color.mOnSurface : Color.mError
+  colorFg: Color.mOnSurface
   colorBorder: Color.transparent
   colorBorderHover: Color.transparent
 
-  icon: FontService.icons["moon"]
+  icon: Settings.data.nightLight.enabled ? FontService.icons["moon_stars"] : FontService.icons["sunrise"]
   tooltipText: `Night light: ${Settings.data.nightLight.enabled ? "enabled." : "disabled."}\nLeft click to toggle.\nRight click to access settings.`
   onClicked: Settings.data.nightLight.enabled = !Settings.data.nightLight.enabled
 
