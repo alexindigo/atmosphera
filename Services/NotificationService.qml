@@ -201,7 +201,7 @@ Singleton {
 
       // Resolve themed icon names to absolute paths
       try {
-        const p = Icons.iconFromName(icon, "")
+        const p = AppIcons.iconFromName(icon, "")
         return p || ""
       } catch (e2) {
         return ""

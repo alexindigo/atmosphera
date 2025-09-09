@@ -56,7 +56,7 @@ Rectangle {
             anchors.centerIn: parent
             width: Style.marginL * root.scaling
             height: Style.marginL * root.scaling
-            source: Icons.iconForAppId(taskbarItem.modelData.appId)
+            source: AppIcons.iconForAppId(taskbarItem.modelData.appId)
             smooth: true
           }
         }

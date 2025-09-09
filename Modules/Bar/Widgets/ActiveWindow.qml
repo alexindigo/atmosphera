@@ -51,7 +51,7 @@ RowLayout {
     if (focusedWindow && focusedWindow.appId) {
       const idValue = focusedWindow.appId
       const normalizedId = (typeof idValue === 'string') ? idValue : String(idValue)
-      return Icons.iconForAppId(normalizedId.toLowerCase())
+      return AppIcons.iconForAppId(normalizedId.toLowerCase())
     }
 
     // Fallback to ToplevelManager
@@ -60,7 +60,7 @@ RowLayout {
       if (activeToplevel.appId) {
         const idValue2 = activeToplevel.appId
         const normalizedId2 = (typeof idValue2 === 'string') ? idValue2 : String(idValue2)
-        return Icons.iconForAppId(normalizedId2.toLowerCase())
+        return AppIcons.iconForAppId(normalizedId2.toLowerCase())
       }
     }
 

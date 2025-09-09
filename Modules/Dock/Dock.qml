@@ -197,7 +197,7 @@ Variants {
           function getAppIcon(toplevel: Toplevel): string {
             if (!toplevel)
               return ""
-            return Icons.iconForAppId(toplevel.appId?.toLowerCase())
+            return AppIcons.iconForAppId(toplevel.appId?.toLowerCase())
           }
 
           RowLayout {

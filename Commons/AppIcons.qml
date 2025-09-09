@@ -5,7 +5,7 @@ import Quickshell
 import qs.Services
 
 Singleton {
-  id: icons
+  id: root
 
   function iconFromName(iconName, fallbackName) {
     const fallback = fallbackName || "application-x-executable"
