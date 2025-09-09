@@ -245,7 +245,7 @@ NPanel {
                     spacing: Style.marginS * scaling
 
                     NIcon {
-                      text: NetworkService.signalIcon(modelData.signal)
+                      icon: NetworkService.signalIcon(modelData.signal)
                       font.pointSize: Style.fontSizeXXL * scaling
                       color: modelData.connected ? Color.mPrimary : Color.mOnSurface
                     }
