@@ -38,8 +38,8 @@ RowLayout {
   readonly property string visualizerType: (widgetSettings.visualizerType !== undefined && widgetSettings.visualizerType
                                             !== "") ? widgetSettings.visualizerType : widgetMetadata.visualizerType
 
-  // 5% of total width
-  readonly property real minWidth: Math.max(1, screen.width * 0.05)
+  // 6% of total width
+  readonly property real minWidth: Math.max(1, screen.width * 0.06)
   readonly property real maxWidth: minWidth * 2
 
   function getTitle() {

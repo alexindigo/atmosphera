@@ -33,16 +33,17 @@ RowLayout {
 
   readonly property bool showIcon: (widgetSettings.showIcon !== undefined) ? widgetSettings.showIcon : widgetMetadata.showIcon
 
-  // 5% of total width
-  readonly property real minWidth: Math.max(1, screen.width * 0.05)
+  // 6% of total width
+  readonly property real minWidth: Math.max(1, screen.width * 0.06)
   readonly property real maxWidth: minWidth * 2
-  Layout.alignment: Qt.AlignVCenter
-  spacing: Style.marginS * scaling
-  visible: getTitle() !== ""
 
   function getTitle() {
     return CompositorService.focusedWindowTitle !== "(No active window)" ? CompositorService.focusedWindowTitle : ""
   }
+
+  Layout.alignment: Qt.AlignVCenter
+  spacing: Style.marginS * scaling
+  visible: getTitle() !== ""
 
   function getAppIcon() {
     // Try CompositorService first
