@@ -45,7 +45,7 @@ NPanel {
         }
 
         NIconButton {
-          icon: Settings.data.notifications.doNotDisturb ? FontService.icons["bell"] : FontService.icons["bell_striked"]
+          icon: Settings.data.notifications.doNotDisturb ? FontService.icons["bell_striked"] : FontService.icons["bell"]
           tooltipText: Settings.data.notifications.doNotDisturb ? "'Do Not Disturb' is enabled." : "'Do Not Disturb' is disabled."
           sizeRatio: 0.8
           onClicked: Settings.data.notifications.doNotDisturb = !Settings.data.notifications.doNotDisturb
