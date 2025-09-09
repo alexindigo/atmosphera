@@ -10,9 +10,11 @@ Singleton {
 
   readonly property var aliases: {
     "close": "x",
-    "check": "checks",
+    "check": "check",
     "settings": "settings",
     "add": "plus",
+    "circle-check": "circle-check",
+    "exclamation-circle": "exclamation-circle",
     "media-pause": "player-pause",
     "media-play": "player-play",
     "media-prev": "player-track-prev",
@@ -37,8 +39,10 @@ Singleton {
     "wifi-2": "wifi-2",
     "wifi-off": "wifi-off",
     "wifi": "wifi",
-    "nightlight-on": "moon",
+    "nightlight-on": "moon-filled",
     "nightlight-off": "moon-off",
+    "bell": "bell-filled",
+    "bell-off": "bell-off",
     "keep-awake-on": "mug",
     "keep-awake-off": "mug-off",
     "panel": "layout-sidebar-right-inactive",
@@ -50,6 +54,28 @@ Singleton {
     "chevron-right": "chevron-right",
     "chevron-up": "chevron-up",
     "chevron-down": "chevron-down",
+    "battery-exclamation": "battery-exclamation",
+    "battery-charging": "battery-charging",
+    "battery-4": "battery-4",
+    "battery-3": "battery-3",
+    "battery-2": "battery-2",
+    "battery-1": "battery-1",
+    "battery": "battery",
+    "microphone": "microphone",
+    "microphone-mute": "microphone-off",
+    "volume-mute": "volume-off",
+    "volume-zero": "volume-3",
+    "volume-low": "volume-2",
+    "volume-high": "volume",
+    "weather-sun": "sun-filled",
+    "weather-cloud-sun": "sun",
+    "weather-cloud": "cloud",
+    "weather-cloud-haze": "cloud-rain",
+    "weather-cloud-rain": "cloud-rain",
+    "weather-cloud-snow": "cloud-snow",
+    "weather-cloud-lightning": "cloud-bolt",
+    "brightness-low": "brightness-down",
+    "brightness-high": "brightness-up",
     "settings-general": "box",
     "settings-bar": "line-dashed",
     "settings-launcher": "rocket",
@@ -63,28 +89,8 @@ Singleton {
     "settings-wallpaper-selector": "library-photo",
     "settings-screen-recorder": "video",
     "settings-hooks": "link",
-    "settings-about": "info-square-rounded",
-
-    "microphone": "microphone",
-    "microphone-mute": "microphone-off",
-
-    "volume-mute": "volume-off",
-    "volume-zero": "volume-3",
-    "volume-low": "volume-2",
-    "volume-high": "volume",
-
-    "weather-sun": "sun-filled",
-    "weather-cloud-sun": "sun",
-    "weather-cloud": "cloud",
-    "weather-cloud-haze": "cloud-rain",
-    "weather-cloud-rain": "cloud-rain",
-    "weather-cloud-snow": "cloud-snow",
-    "weather-cloud-lightning": "cloud-bolt",
-
-
-    // TODO BRIGHTNESS
+    "settings-about": "info-square-rounded"
     // TODO BT DEVICES
-    // TODO VOLUME
   }
 
   readonly property var icons: {

@@ -11,20 +11,21 @@ Singleton {
   // Choose icon based on charge and charging state
   function getIcon(percent, charging, isReady) {
     if (!isReady) {
-      return "exclamation-triangle"
+      return "battery-exclamation"
     }
 
     if (charging) {
       return "battery-charging"
     } else {
-      if (percent >= 85)
-        return "battery-full"
-      if (percent >= 45)
-        return "battery-half"
+      if (percent >= 90)
+        return "battery-4"
+      if (percent >= 50)
+        return "battery-3"
       if (percent >= 25)
-        return "battery-low"
+        return "battery-2"
       if (percent >= 0)
-        return "battery"
+        return "battery-1"
+      return "battery"
     }
   }
 }

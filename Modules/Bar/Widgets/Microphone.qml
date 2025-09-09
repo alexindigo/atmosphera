@@ -45,7 +45,7 @@ Item {
     if (AudioService.inputMuted) {
       return "microphone-mute"
     }
-    return (AudioService.inputVolume <= Number.EPSILON)? "microphone-mute" : "microphone"
+    return (AudioService.inputVolume <= Number.EPSILON) ? "microphone-mute" : "microphone"
   }
 
   // Connection used to open the pill when input volume changes
