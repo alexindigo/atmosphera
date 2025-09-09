@@ -38,6 +38,8 @@ NIconButton {
   readonly property string middleClickExec: widgetSettings.middleClickExec || widgetMetadata.middleClickExec
   readonly property bool hasExec: (leftClickExec || rightClickExec || middleClickExec)
 
+  colorBorder: Color.transparent
+  colorBorderHover: Color.transparent
   sizeRatio: 0.8
   icon: customIcon
   tooltipText: {

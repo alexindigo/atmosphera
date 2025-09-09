@@ -7,8 +7,12 @@ Text {
   readonly property string defaultIcon: "balloon"
   property string icon: defaultIcon
 
+  visible: (icon !== undefined) && (icon !== "")
   text: {
-    if (icon === undefined || Bootstrap.icons[icon] === undefined) {
+    if ((icon === undefined) || (icon === "")) {
+      return ""
+    }
+    if (Bootstrap.icons[icon] === undefined) {
       Logger.warn("Icon", `"${icon}"`, "doesn't exist in the bootstrap font")
       Logger.callStack()
       return Bootstrap.icons[defaultIcon]
