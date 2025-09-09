@@ -28,7 +28,6 @@ import qs.Modules.PowerPanel
 import qs.Modules.SidePanel
 import qs.Modules.Toast
 import qs.Modules.WiFiPanel
-import qs.Modules.ArchUpdaterPanel
 import qs.Services
 import qs.Widgets
 
@@ -93,11 +92,6 @@ ShellRoot {
   BluetoothPanel {
     id: bluetoothPanel
     objectName: "bluetoothPanel"
-  }
-
-  ArchUpdaterPanel {
-    id: archUpdaterPanel
-    objectName: "archUpdaterPanel"
   }
 
   Component.onCompleted: {

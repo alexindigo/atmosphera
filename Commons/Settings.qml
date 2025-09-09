@@ -93,7 +93,22 @@ Singleton {
     }
 
     // -----------------
-    // 2nd. migrate global settings to user settings
+    // 2nd. remove any non existing widget type
+    for (var s = 0; s < sections.length; s++) {
+      const sectionName = sections[s]
+      const widgets = adapter.bar.widgets[sectionName]
+      // Iterate backward through the widgets array, so it does not break when removing a widget
+      for (var i = widgets.length - 1; i >= 0; i--) {
+        var widget = widgets[i]
+        if (!BarWidgetRegistry.hasWidget(widget.id)) {
+          widgets.splice(i, 1)
+          Logger.warn(`Settings`, `Deleted invalid widget ${widget.id}`)
+        }
+      }
+    }
+
+    // -----------------
+    // 3nd. migrate global settings to user settings
     for (var s = 0; s < sections.length; s++) {
       const sectionName = sections[s]
       for (var i = 0; i < adapter.bar.widgets[sectionName].length; i++) {
@@ -219,13 +234,14 @@ Singleton {
       if (!isLoaded) {
         Logger.log("Settings", "----------------------------")
         Logger.log("Settings", "Settings loaded successfully")
-        isLoaded = true
 
         upgradeSettingsData()
 
         validateMonitorConfigurations()
 
         kickOffServices()
+
+        isLoaded = true
 
         // Emit the signal
         root.settingsLoaded()
