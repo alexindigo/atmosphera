@@ -23,7 +23,10 @@
 
 
 > ⚠️ **BREAKING CHANGE:**  
-> We transitioned from using Material Symbols to Bootstrap Icons, that means you will have to install the new font.
+> We're switching our icon set from Material Symbols to Bootstrap Icons!
+> - Arch Users: if using the AUR version, the font will be installed automatically. If installed manually you will need to install `ttf-bootstrap-icons` from the AUR.
+> - NixOS Users: I've attempted to add the new font to the flake, but it's untested. Feedback would be greatly appreciated!
+> - All Other Users: Please check your package manager for a Bootstrap Icons font. If it's not available, you may need to download it and copy it to `~/.local/share/fonts` or `/usr/share/fonts`.
 ---
 
 A sleek and minimal desktop shell thoughtfully crafted for Wayland, built with Quickshell.
