@@ -96,6 +96,7 @@ Singleton {
 
   function setWifiEnabled(enabled) {
     Settings.data.network.wifiEnabled = enabled
+    wifiStateEnableProcess.running = true
   }
 
   function scan() {
@@ -234,6 +235,8 @@ Singleton {
     }
   }
 
+  // Only check the state of the actual interface
+  // and update our setting to be in sync.
   Process {
     id: wifiStateProcess
     running: false
@@ -242,13 +245,37 @@ Singleton {
     stdout: StdioCollector {
       onStreamFinished: {
         const enabled = text.trim() === "enabled"
-        Logger.log("Network", "Wi-Fi enabled:", enabled)
+        Logger.log("Network", "Wi-Fi adapter was detect as enabled:", enabled)
         if (Settings.data.network.wifiEnabled !== enabled) {
           Settings.data.network.wifiEnabled = enabled
         }
       }
     }
   }
+
+  // Process to enable/disable the Wi-Fi interface
+  Process {
+    id: wifiStateEnableProcess
+    running: false
+    command: ["nmcli", "radio", "wifi", Settings.data.network.wifiEnabled  ? "on" : "off"]
+
+    stdout: StdioCollector {
+      onStreamFinished: {
+        Logger.log("Network", "Wi-Fi state change command executed.")
+        // Re-check the state to ensure it's in sync
+        syncWifiState()
+      }
+    }
+
+    stderr: StdioCollector {
+      onStreamFinished: {
+        if (text.trim()) {
+          Logger.warn("Network", "Error changing Wi-Fi state: " + text)
+        }
+      }
+    }
+  }
+
 
   // Helper process to get existing profiles
   Process {
