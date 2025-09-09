@@ -40,7 +40,7 @@ Rectangle {
 
   NIcon {
     icon: root.icon
-    font.pointSize: Style.fontSizeM * scaling
+    font.pointSize: Math.max(1, root.width * 0.4)
     color: root.enabled && root.hovering ? colorFgHover : colorFg
     // Center horizontally
     x: (root.width - width) / 2

@@ -38,8 +38,9 @@ RowLayout {
   readonly property string visualizerType: (widgetSettings.visualizerType !== undefined && widgetSettings.visualizerType
                                             !== "") ? widgetSettings.visualizerType : widgetMetadata.visualizerType
 
-  readonly property real minWidth: 160
-  readonly property real maxWidth: 400
+  // 6% of total width
+  readonly property real minWidth: Math.max(1, screen.width * 0.06)
+  readonly property real maxWidth: minWidth * 2
 
   function getTitle() {
     return MediaService.trackTitle + (MediaService.trackArtist !== "" ? ` - ${MediaService.trackArtist}` : "")
