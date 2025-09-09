@@ -12,14 +12,16 @@ Singleton {
     "close": "x",
     "check": "check",
     "settings": "settings",
+    "refresh": "refresh",
     "add": "plus",
     "circle-check": "circle-check",
     "exclamation-circle": "exclamation-circle",
+    "stop": "player-stop-filled",
     "media-pause": "player-pause",
     "media-play": "player-play",
     "media-prev": "player-track-prev",
     "media-next": "player-track-next",
-    "refresh": "refresh",
+    
     "cpu-usage": "brand-speedtest",
     "cpu-temperature": "flame",
     "memory": "cpu",
@@ -29,11 +31,16 @@ Singleton {
     "download-speed": "download",
     "upload-speed": "upload",
     "storage": "device-floppy",
-
     "ethernet": "network",
     "keyboard": "keyboard",
-    "power": "power",
+    
+    "shutdown": "power",
     "lock": "lock",
+    "logout": "logout",
+    "reboot": "refresh",
+    "suspend": "player-pause-filled",
+
+
     "wifi-0": "wifi-0",
     "wifi-1": "wifi-1",
     "wifi-2": "wifi-2",

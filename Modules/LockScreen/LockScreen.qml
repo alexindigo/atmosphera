@@ -730,7 +730,7 @@ Loader {
                 NIcon {
                   id: iconPower
                   anchors.centerIn: parent
-                  icon: "power"
+                  icon: "shutdown"
                   font.pointSize: Style.fontSizeXXXL * scaling
                   color: powerButtonArea.containsMouse ? Color.mOnError : Color.mError
                 }
@@ -781,7 +781,7 @@ Loader {
                 NIcon {
                   id: iconReboot
                   anchors.centerIn: parent
-                  icon: "refresh"
+                  icon: "reboot"
                   font.pointSize: Style.fontSizeXXXL * scaling
                   color: restartButtonArea.containsMouse ? Color.mOnPrimary : Color.mPrimary
                 }
@@ -833,7 +833,7 @@ Loader {
                 NIcon {
                   id: iconSuspend
                   anchors.centerIn: parent
-                  icon: "pause-fill"
+                  icon: "suspend"
                   font.pointSize: Style.fontSizeXXXL * scaling
                   color: suspendButtonArea.containsMouse ? Color.mOnSecondary : Color.mSecondary
                 }

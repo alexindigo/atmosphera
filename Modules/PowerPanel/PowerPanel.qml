@@ -34,22 +34,22 @@ NPanel {
       "subtitle": "Lock your session"
     }, {
       "action": "suspend",
-      "icon": "pause-circle",
+      "icon": "suspend",
       "title": "Suspend",
       "subtitle": "Put the system to sleep"
     }, {
       "action": "reboot",
-      "icon": "refresh",
+      "icon": "reboot",
       "title": "Reboot",
       "subtitle": "Restart the system"
     }, {
       "action": "logout",
-      "icon": "escape",
+      "icon": "logout",
       "title": "Logout",
       "subtitle": "End your session"
     }, {
       "action": "shutdown",
-      "icon": "power",
+      "icon": "shutdown",
       "title": "Shutdown",
       "subtitle": "Turn off the system",
       "isShutdown": true
@@ -276,7 +276,7 @@ NPanel {
         }
 
         NIconButton {
-          icon: timerActive ? "x-square" : "close"
+          icon: timerActive ? "stop" : "close"
           tooltipText: timerActive ? "Cancel Timer" : "Close"
           Layout.alignment: Qt.AlignVCenter
           colorBg: timerActive ? Qt.alpha(Color.mError, 0.08) : Color.transparent
