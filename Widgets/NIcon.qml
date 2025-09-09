@@ -15,7 +15,7 @@ Text {
     }
     return Bootstrap.icons[icon]
   }
-  font.family: "bootstrap-icons"
+  font.family: Bootstrap.fontFamily
   font.pointSize: Style.fontSizeL * scaling
   color: Color.mOnSurface
   verticalAlignment: Text.AlignVCenter

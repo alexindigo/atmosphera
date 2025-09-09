@@ -8,6 +8,39 @@ import qs.Commons
 Singleton {
   id: root
 
+  // FontLoader for Bootstrap Icons
+  FontLoader {
+    id: bootstrapIconsFont
+    source: Quickshell.shellDir + "/Assets/Bootstrap/bootstrap-icons.woff2"
+  }
+
+  // Expose the font family name for easy access
+  readonly property string fontFamily: bootstrapIconsFont.name
+
+  // Check if font is loaded
+  readonly property bool fontLoaded: bootstrapIconsFont.status === FontLoader.Ready
+
+  Component.onCompleted: {
+    Logger.log("Bootstrap", "Service started")
+    if (fontLoaded) {
+      Logger.log("Bootstrap", "Font loaded successfully:", fontFamily)
+    } else {
+      Logger.warn("Bootstrap", "Font failed to load")
+    }
+  }
+
+  // Monitor font loading status
+  Connections {
+    target: bootstrapIconsFont
+    function onStatusChanged() {
+      if (bootstrapIconsFont.status === FontLoader.Ready) {
+        Logger.log("Bootstrap", "Font loaded successfully:", fontFamily)
+      } else if (bootstrapIconsFont.status === FontLoader.Error) {
+        Logger.error("Bootstrap", "Font failed to load")
+      }
+    }
+  }
+
   property var icons: {
     "alarm-fill": "\uF101",
     "alarm": "\uF102",
