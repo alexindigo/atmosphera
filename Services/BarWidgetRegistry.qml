@@ -60,7 +60,7 @@ Singleton {
                                   },
                                   "CustomButton": {
                                     "allowUserSettings": true,
-                                    "icon": "favorite",
+                                    "icon": "heart",
                                     "leftClickExec": "",
                                     "rightClickExec": "",
                                     "middleClickExec": ""
