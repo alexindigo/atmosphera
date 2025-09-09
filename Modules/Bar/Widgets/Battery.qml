@@ -85,7 +85,8 @@ Item {
     id: pill
 
     rightOpen: BarWidgetRegistry.getNPillDirection(root)
-    icon: testMode ? BatteryService.getIcon(testPercent, testCharging, true) : BatteryService.getIcon(percent, charging, isReady)
+    icon: testMode ? BatteryService.getIcon(testPercent, testCharging, true) : BatteryService.getIcon(percent,
+                                                                                                      charging, isReady)
     text: (isReady || testMode) ? Math.round(percent) + "%" : "-"
     autoHide: false
     forceOpen: isReady && (testMode || battery.isLaptopBattery) && alwaysShowPercentage

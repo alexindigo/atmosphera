@@ -50,6 +50,9 @@ Singleton {
     target: Settings.data.nightLight
     function onEnabledChanged() {
       apply()
+      // Toast: night light toggled
+      const enabled = !!Settings.data.nightLight.enabled
+      ToastService.showNotice("Night Light", enabled ? "Enabled" : "Disabled")
     }
     function onNightTempChanged() {
       apply()

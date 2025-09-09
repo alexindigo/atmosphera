@@ -735,6 +735,14 @@ Loader {
                   color: powerButtonArea.containsMouse ? Color.mOnError : Color.mError
                 }
 
+                // Tooltip
+                NTooltip {
+                  id: tooltipShutdown
+                  target: parent
+                  positionAbove: true
+                  text: "Shut down"
+                }
+
                 MouseArea {
                   id: powerButtonArea
                   anchors.fill: parent
@@ -742,6 +750,8 @@ Loader {
                   onClicked: {
                     CompositorService.shutdown()
                   }
+                  onEntered: tooltipShutdown.show()
+                  onExited: tooltipShutdown.hide()
                 }
               }
 
@@ -762,6 +772,14 @@ Loader {
                   color: restartButtonArea.containsMouse ? Color.mOnPrimary : Color.mPrimary
                 }
 
+                // Tooltip
+                NTooltip {
+                  id: tooltipRestart
+                  target: parent
+                  positionAbove: true
+                  text: "Restart"
+                }
+
                 MouseArea {
                   id: restartButtonArea
                   anchors.fill: parent
@@ -769,6 +787,8 @@ Loader {
                   onClicked: {
                     CompositorService.reboot()
                   }
+                  onEntered: tooltipRestart.show()
+                  onExited: tooltipRestart.hide()
                 }
               }
 
@@ -789,6 +809,14 @@ Loader {
                   color: suspendButtonArea.containsMouse ? Color.mOnSecondary : Color.mSecondary
                 }
 
+                // Tooltip
+                NTooltip {
+                  id: tooltipSuspend
+                  target: parent
+                  positionAbove: true
+                  text: "Suspend"
+                }
+
                 MouseArea {
                   id: suspendButtonArea
                   anchors.fill: parent
@@ -796,6 +824,8 @@ Loader {
                   onClicked: {
                     CompositorService.suspend()
                   }
+                  onEntered: tooltipSuspend.show()
+                  onExited: tooltipSuspend.hide()
                 }
               }
             }

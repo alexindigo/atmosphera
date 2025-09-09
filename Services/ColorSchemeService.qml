@@ -23,6 +23,11 @@ Singleton {
         // Re-apply current scheme to pick the right variant
         applyScheme(Settings.data.colorSchemes.predefinedScheme)
       }
+      // Toast: dark/light mode switched
+      const enabled = !!Settings.data.colorSchemes.darkMode
+      const label = enabled ? "Dark Mode" : "Light Mode"
+      const description = enabled ? "Enabled" : "Enabled"
+      ToastService.showNotice(label, description)
     }
   }
 
