@@ -65,8 +65,7 @@ ColumnLayout {
         Layout.alignment: Qt.AlignVCenter
 
         // One device BT icon
-        NIcon {
-          text: BluetoothService.getDeviceIcon(modelData)
+        NIcon {           icon: BluetoothService.getDeviceIcon(modelData)
           font.pointSize: Style.fontSizeXXL * scaling
           color: getContentColor(Color.mOnSurface)
           Layout.alignment: Qt.AlignVCenter

@@ -39,7 +39,7 @@ Rectangle {
   border.width: Math.max(1, Style.borderS * scaling)
 
   NIcon {
-    text: root.icon
+    icon: root.icon
     font.pointSize: Style.fontSizeM * scaling
     color: root.hovering ? colorFgHover : colorFg
     // Center horizontally

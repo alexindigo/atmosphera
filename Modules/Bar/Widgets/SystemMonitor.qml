@@ -64,14 +64,12 @@ RowLayout {
         Layout.alignment: Qt.AlignVCenter
         visible: showCpuUsage
 
-        NIcon {
-          id: cpuUsageIcon
-          text: Bootstrap.icons["speedometer2"]
+        NIcon {           icon: "speedometer2"
+          font.pointSize: Style.fontSizeM * scaling
           Layout.alignment: Qt.AlignVCenter
         }
 
         NText {
-          id: cpuUsageText
           text: `${SystemStatService.cpuUsage}%`
           font.family: Settings.data.ui.fontFixed
           font.pointSize: Style.fontSizeS * scaling
@@ -89,8 +87,8 @@ RowLayout {
         Layout.alignment: Qt.AlignVCenter
         visible: showCpuTemp
 
-        NIcon {
-          text: Bootstrap.icons["fire"]
+        NIcon {           icon: "fire"
+          font.pointSize: Style.fontSizeM * scaling
           Layout.alignment: Qt.AlignVCenter
         }
 
@@ -112,8 +110,8 @@ RowLayout {
         Layout.alignment: Qt.AlignVCenter
         visible: showMemoryUsage
 
-        NIcon {
-          text: Bootstrap.icons["memory"]
+        NIcon {           icon: "memory"
+          font.pointSize: Style.fontSizeM * scaling
           Layout.alignment: Qt.AlignVCenter
         }
 
@@ -135,8 +133,8 @@ RowLayout {
         Layout.alignment: Qt.AlignVCenter
         visible: showNetworkStats
 
-        NIcon {
-          text: Bootstrap.icons["download"]
+        NIcon {           icon: "download"
+          font.pointSize: Style.fontSizeM * scaling
           Layout.alignment: Qt.AlignVCenter
         }
 
@@ -158,8 +156,8 @@ RowLayout {
         Layout.alignment: Qt.AlignVCenter
         visible: showNetworkStats
 
-        NIcon {
-          text: Bootstrap.icons["upload"]
+        NIcon {           icon: "upload"
+          font.pointSize: Style.fontSizeM * scaling
           Layout.alignment: Qt.AlignVCenter
         }
 

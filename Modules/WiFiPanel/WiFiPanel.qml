@@ -33,8 +33,7 @@ NPanel {
         Layout.fillWidth: true
         spacing: Style.marginM * scaling
 
-        NIcon {
-          text: Settings.data.network.wifiEnabled ? "wifi" : "wifi_off"
+        NIcon {           icon: Settings.data.network.wifiEnabled ? "wifi" : "wifi-off"
           font.pointSize: Style.fontSizeXXL * scaling
           color: Settings.data.network.wifiEnabled ? Color.mPrimary : Color.mOnSurfaceVariant
         }
@@ -55,7 +54,7 @@ NPanel {
         }
 
         NIconButton {
-          icon: Bootstrap.icons["arrow-repeat"]
+          icon: "arrow-repeat"
           tooltipText: "Refresh"
           sizeRatio: 0.8
           enabled: Settings.data.network.wifiEnabled && !NetworkService.scanning
@@ -63,7 +62,7 @@ NPanel {
         }
 
         NIconButton {
-          icon: Bootstrap.icons["x-lg"]
+          icon: "x-lg"
           tooltipText: "Close"
           sizeRatio: 0.8
           onClicked: root.close()
@@ -91,7 +90,7 @@ NPanel {
           spacing: Style.marginS * scaling
 
           NIcon {
-            text: "error"
+            icon: "error"
             font.pointSize: Style.fontSizeL * scaling
             color: Color.mError
           }
@@ -105,7 +104,7 @@ NPanel {
           }
 
           NIconButton {
-            icon: Bootstrap.icons["x-lg"]
+            icon: "x-lg"
             sizeRatio: 0.6
             onClicked: NetworkService.lastError = ""
           }
@@ -129,7 +128,7 @@ NPanel {
           }
 
           NIcon {
-            text: "wifi_off"
+            icon: "wifi-off"
             font.pointSize: 64 * scaling
             color: Color.mOnSurfaceVariant
             Layout.alignment: Qt.AlignHCenter
@@ -377,7 +376,7 @@ NPanel {
                                  && NetworkService.connectingTo !== modelData.ssid
                                  && NetworkService.forgettingNetwork !== modelData.ssid
                                  && NetworkService.disconnectingFrom !== modelData.ssid
-                        icon: Bootstrap.icons["trash"]
+                        icon: "trash"
                         tooltipText: "Forget network"
                         sizeRatio: 0.7
                         onClicked: expandedSsid = expandedSsid === modelData.ssid ? "" : modelData.ssid
@@ -492,7 +491,7 @@ NPanel {
                       }
 
                       NIconButton {
-                        icon: Bootstrap.icons["x-lg"]
+                        icon: "x-lg"
                         sizeRatio: 0.8
                         onClicked: {
                           passwordSsid = ""
@@ -547,7 +546,7 @@ NPanel {
                       }
 
                       NIconButton {
-                        icon: Bootstrap.icons["x-lg"]
+                        icon: "x-lg"
                         sizeRatio: 0.8
                         onClicked: expandedSsid = ""
                       }
@@ -571,7 +570,7 @@ NPanel {
           }
 
           NIcon {
-            text: "wifi_find"
+            icon: "search"
             font.pointSize: 64 * scaling
             color: Color.mOnSurfaceVariant
             Layout.alignment: Qt.AlignHCenter
@@ -586,7 +585,7 @@ NPanel {
 
           NButton {
             text: "Scan again"
-            icon: Bootstrap.icons["arrow-repeat"]
+            icon: "arrow-repeat"
             Layout.alignment: Qt.AlignHCenter
             onClicked: NetworkService.scan()
           }

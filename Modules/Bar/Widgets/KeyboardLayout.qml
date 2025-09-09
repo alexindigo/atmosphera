@@ -24,7 +24,7 @@ Item {
 
     anchors.verticalCenter: parent.verticalCenter
     rightOpen: BarWidgetRegistry.getNPillDirection(root)
-    icon: Bootstrap.icons["keyboard"]
+    icon: "keyboard"
     iconCircleColor: Color.mPrimary
     collapsedIconColor: Color.mOnSurface
     autoHide: false // Important to be false so we can hover as long as we want

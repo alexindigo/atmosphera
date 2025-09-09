@@ -85,7 +85,7 @@ NBox {
       }
 
       NIconButton {
-        icon: Bootstrap.icons["plus-lg"]
+        icon: "plus-lg"
 
         colorBg: Color.mPrimary
         colorFg: Color.mOnPrimary
@@ -170,7 +170,7 @@ NBox {
                 Loader {
                   active: BarWidgetRegistry.widgetHasUserSettings(modelData.id)
                   sourceComponent: NIconButton {
-                    icon: Bootstrap.icons["gear"]
+                    icon: "gear"
                     sizeRatio: 0.6
                     colorBorder: Qt.alpha(Color.mOutline, Style.opacityLight)
                     colorBg: Color.mOnSurface
@@ -210,7 +210,7 @@ NBox {
                 }
 
                 NIconButton {
-                  icon: Bootstrap.icons["x-lg"]
+                  icon: "x-lg"
                   sizeRatio: 0.6
                   colorBorder: Qt.alpha(Color.mOutline, Style.opacityLight)
                   colorBg: Color.mOnSurface

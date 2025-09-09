@@ -85,7 +85,7 @@ RowLayout {
     indicator: NIcon {
       x: combo.width - width - Style.marginM * scaling
       y: combo.topPadding + (combo.availableHeight - height) / 2
-      text: Bootstrap.icons["chevron-down"]
+      icon: "chevron-down"
       font.pointSize: Style.fontSizeL * scaling
     }
 

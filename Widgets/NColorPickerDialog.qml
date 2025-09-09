@@ -130,7 +130,7 @@ Popup {
           spacing: Style.marginS * scaling
 
           NIcon {
-            text: Bootstrap.icons["eyedropper"]
+            icon: "eyedropper"
             font.pointSize: Style.fontSizeXXL * scaling
             color: Color.mPrimary
           }
@@ -148,7 +148,7 @@ Popup {
         }
 
         NIconButton {
-          icon: Bootstrap.icons["x-lg"]
+          icon: "x-lg"
           onClicked: root.close()
         }
       }
@@ -492,7 +492,7 @@ Popup {
         NButton {
           id: cancelButton
           text: "Cancel"
-          icon: Bootstrap.icons["x-lg"]
+          icon: "x-lg"
           outlined: cancelButton.hovered ? false : true
           customHeight: 36 * scaling
           customWidth: 100 * scaling
@@ -503,7 +503,7 @@ Popup {
 
         NButton {
           text: "Apply"
-          icon: Bootstrap.icons["check"]
+          icon: "check-lg"
           customHeight: 36 * scaling
           customWidth: 100 * scaling
           onClicked: {

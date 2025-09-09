@@ -51,36 +51,36 @@ Singleton {
 
   function getDeviceIcon(device) {
     if (!device) {
-      return Bootstrap.icons["bluetooth"]
+      return "bluetooth"
     }
 
     var name = (device.name || device.deviceName || "").toLowerCase()
     var icon = (device.icon || "").toLowerCase()
     if (icon.includes("headset") || icon.includes("audio") || name.includes("headphone") || name.includes("airpod")
         || name.includes("headset") || name.includes("arctis")) {
-      return Bootstrap.icons["headset"]
+      return "headset"
     }
 
     if (icon.includes("mouse") || name.includes("mouse")) {
-      return Bootstrap.icons["mouse-2"]
+      return "mouse-2"
     }
     if (icon.includes("keyboard") || name.includes("keyboard")) {
-      return Bootstrap.icons["keyboard"]
+      return "keyboard"
     }
     if (icon.includes("phone") || name.includes("phone") || name.includes("iphone") || name.includes("android")
         || name.includes("samsung")) {
-      return Bootstrap.icons["phone"]
+      return "phone"
     }
     if (icon.includes("watch") || name.includes("watch")) {
-      return Bootstrap.icons["smartwatch"]
+      return "smartwatch"
     }
     if (icon.includes("speaker") || name.includes("speaker")) {
-      return Bootstrap.icons["speaker"]
+      return "speaker"
     }
     if (icon.includes("display") || name.includes("tv")) {
-      return Bootstrap.icons["tv"]
+      return "tv"
     }
-    return Bootstrap.icons["bluetooth"]
+    return "bluetooth"
   }
 
   function canConnect(device) {

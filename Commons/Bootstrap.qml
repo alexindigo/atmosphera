@@ -8,8 +8,6 @@ import qs.Commons
 Singleton {
   id: root
 
-  //   "brightness_low": "\uF1D4",
-  //   "brightness_high": "\uF1D2",
   //   "wifi_disable": "\uF61B",
   //   "wifi_low": "\uF619",
   //   "wifi_half": "\uF61A",
@@ -31,9 +29,6 @@ Singleton {
   //   "refresh": "\uF130",
   //   "image": "\uF226",
   //   "contrast": "\uF288",
-  //   "thermometer": "\uF5CD",
-  //   "paint_drop": "\uF30C",
-  //   "yin_yang": "\uF8E7",
   //   "record": "\uF518",
   //   "pause": "\uF4C1",
   //   "play": "\uF4F2",
@@ -46,10 +41,8 @@ Singleton {
   //   "upload": "\uF296",
   //   "download": "\uF294",
   //   "album": "\uF2FF",
-  //   "minus": "\uF63B",
+
   //   "eyedropper": "\uF342",
-  //   "bell": "\uF18A",
-  //   "bell_striked": "\uF631",
   //   "drive": "\uF412",
 
   //   "person": "\uF4DA",
@@ -60,11 +53,7 @@ Singleton {
   //   "moon_stars": "\uF496",
   //   "gauge": "\uF580",
   //   "lightning": "\uF46D",
-  //   "keyboard": "\uF451",
-  //   "link": "\uF470",
-  //   "macaron": "\uF154",
-  //   "box": "\uF1C8",
-  //   "monitor": "\uF302"
+
   //   // another contrast  \uF8F3   \uF8DA
   // }
   property var icons: {

@@ -99,7 +99,7 @@ Rectangle {
 
         NIcon {
           anchors.centerIn: parent
-          text: root.icon
+          icon: root.icon
           font.pointSize: Style.fontSizeLargeXL * scaling * contentScale
           color: Color.mOnSurface
           horizontalAlignment: Text.AlignHCenter

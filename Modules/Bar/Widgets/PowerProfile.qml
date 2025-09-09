@@ -19,13 +19,13 @@ NIconButton {
 
   function profileIcon() {
     if (!hasPP)
-      return Bootstrap.icons["yin-yang"]
+      return "yin-yang"
     if (powerProfiles.profile === PowerProfile.Performance)
-      return Bootstrap.icons["speedometer2"]
+      return "speedometer2"
     if (powerProfiles.profile === PowerProfile.Balanced)
-      return Bootstrap.icons["yin-yang"]
+      return "yin-yang"
     if (powerProfiles.profile === PowerProfile.PowerSaver)
-      return Bootstrap.icons["leaf"]
+      return "leaf"
   }
 
   function profileName() {

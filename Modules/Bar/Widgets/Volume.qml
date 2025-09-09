@@ -43,11 +43,11 @@ Item {
 
   function getIcon() {
     if (AudioService.muted) {
-      return Bootstrap.icons["volume-mute"]
+      return "volume-mute"
     }
     return AudioService.volume
-        <= Number.EPSILON ? Bootstrap.icons["volume-off"] : (AudioService.volume
-                                                             < 0.5 ? Bootstrap.icons["volume-down"] : Bootstrap.icons["volume-up"])
+        <= Number.EPSILON ? "volume-off" : (AudioService.volume
+                                                             < 0.5 ? "volume-down" : "volume-up")
   }
 
   // Connection used to open the pill when volume changes

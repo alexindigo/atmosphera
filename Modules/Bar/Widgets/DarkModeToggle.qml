@@ -9,7 +9,7 @@ NIconButton {
   property ShellScreen screen
   property real scaling: 1.0
 
-  icon: Bootstrap.icons["contrast"]
+  icon: "contrast"
   tooltipText: "Toggle light/dark mode"
   sizeRatio: 0.8
 

@@ -59,7 +59,7 @@ Rectangle {
       }
 
       NIcon {
-        text: Bootstrap.icons["eyedropper"]
+        icon: "paint-bucket"
         color: Color.mOnSurfaceVariant
       }
     }

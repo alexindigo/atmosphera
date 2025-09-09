@@ -98,7 +98,7 @@ NBox {
             color: Color.mOnSurface
           }
           NIcon {
-            text: LocationService.weatherSymbolFromCode(LocationService.data.weather.daily.weathercode[index])
+            icon: LocationService.weatherSymbolFromCode(LocationService.data.weather.daily.weathercode[index])
             font.pointSize: Style.fontSizeXXL * scaling
             color: Color.mPrimary
           }

@@ -202,14 +202,12 @@ Singleton {
   // Helper functions
   function signalIcon(signal) {
     if (signal >= 80)
-      return "network_wifi"
-    if (signal >= 60)
-      return "network_wifi_3_bar"
-    if (signal >= 40)
-      return "network_wifi_2_bar"
+      return "wifi"
+    if (signal >= 50)
+      return "wifi-2"
     if (signal >= 20)
-      return "network_wifi_1_bar"
-    return "signal_wifi_0_bar"
+      return "wifi-1"
+    return "dot"
   }
 
   function isSecured(security) {

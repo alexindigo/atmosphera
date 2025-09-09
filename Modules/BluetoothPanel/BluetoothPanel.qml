@@ -27,8 +27,7 @@ NPanel {
         Layout.fillWidth: true
         spacing: Style.marginM * scaling
 
-        NIcon {
-          text: Bootstrap.icons["bluetooth"]
+        NIcon {           icon: "bluetooth"
           font.pointSize: Style.fontSizeXXL * scaling
           color: Color.mPrimary
         }
@@ -43,7 +42,7 @@ NPanel {
 
         NIconButton {
           icon: BluetoothService.adapter
-                && BluetoothService.adapter.discovering ? Bootstrap.icons["stop"] : Bootstrap.icons["arrow-repeat"]
+                && BluetoothService.adapter.discovering ? "stop" : "arrow-repeat"
           tooltipText: "Refresh Devices"
           sizeRatio: 0.8
           onClicked: {
@@ -54,7 +53,7 @@ NPanel {
         }
 
         NIconButton {
-          icon: Bootstrap.icons["x-lg"]
+          icon: "x-lg"
           tooltipText: "Close"
           sizeRatio: 0.8
           onClicked: {

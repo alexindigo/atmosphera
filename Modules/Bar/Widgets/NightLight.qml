@@ -20,7 +20,7 @@ NIconButton {
   colorBorder: Color.transparent
   colorBorderHover: Color.transparent
 
-  icon: Bootstrap.icons["moon-stars"]
+  icon: "moon-stars"
   tooltipText: `Night light: ${Settings.data.nightLight.enabled ? "enabled." : "disabled."}\nLeft click to toggle.\nRight click to access settings.`
   onClicked: Settings.data.nightLight.enabled = !Settings.data.nightLight.enabled
 

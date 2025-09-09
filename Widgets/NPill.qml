@@ -117,7 +117,7 @@ Item {
     }
 
     NIcon {
-      text: root.icon
+      icon: root.icon
       font.pointSize: Style.fontSizeM * scaling
       // When forced shown, use pill text color; otherwise accent color when hovered
       color: forceOpen ? textColor : (showPill ? iconTextColor : Color.mOnSurface)

@@ -11,20 +11,20 @@ Singleton {
   // Choose icon based on charge and charging state
   function getIcon(percent, charging, isReady) {
     if (!isReady) {
-      return Bootstrap.icons["exclamation-diamond"]
+      return "exclamation-diamond"
     }
 
     if (charging) {
-      return Bootstrap.icons["battery-charging"]
+      return "battery-charging"
     } else {
       if (percent >= 85)
-        return Bootstrap.icons["battery-full"]
+        return "battery-full"
       if (percent >= 45)
-        return Bootstrap.icons["battery-half"]
+        return "battery-half"
       if (percent >= 25)
-        return Bootstrap.icons["battery-low"]
+        return "battery-low"
       if (percent >= 0)
-        return Bootstrap.icons["battery"]
+        return "battery"
     }
   }
 }

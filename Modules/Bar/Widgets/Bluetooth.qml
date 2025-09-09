@@ -20,7 +20,7 @@ NIconButton {
   colorBorder: Color.transparent
   colorBorderHover: Color.transparent
 
-  icon: Bootstrap.icons["bluetooth"]
+  icon: "bluetooth"
   tooltipText: "Bluetooth"
   onClicked: PanelService.getPanel("bluetoothPanel")?.toggle(screen, this)
 }

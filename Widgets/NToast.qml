@@ -118,7 +118,7 @@ Item {
       // Icon
       NIcon {
         id: icon
-        text: (root.type == "warning") ? Bootstrap.icons["warning"] : Bootstrap.icons["info"]
+        text: (root.type == "warning") ? "warning" : "info"
         color: {
           switch (root.type) {
           case "warning":
@@ -162,7 +162,7 @@ Item {
 
       // Close button (only if persistent or manual dismiss needed)
       NIconButton {
-        icon: Bootstrap.icons["x-lg"]
+        icon: "x-lg"
         visible: root.persistent || root.duration === 0
 
         colorBg: Color.mSurfaceVariant
