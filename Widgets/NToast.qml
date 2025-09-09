@@ -118,7 +118,7 @@ Item {
       // Icon
       NIcon {
         id: icon
-        icon: (root.type == "warning") ? "exclamation-circle" : "circle-check"
+        icon: (root.type == "warning") ? "toast-warning" : "toast-notice"
         color: {
           switch (root.type) {
           case "warning":

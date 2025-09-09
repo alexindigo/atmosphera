@@ -86,7 +86,7 @@ NPanel {
         }
 
         NIcon {
-          icon: "bell-slash"
+          icon: "bell-off"
           font.pointSize: 64 * scaling
           color: Color.mOnSurfaceVariant
           Layout.alignment: Qt.AlignHCenter

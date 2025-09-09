@@ -91,7 +91,7 @@ NPanel {
           spacing: Style.marginS * scaling
 
           NIcon {
-            icon: "exclamation-circle"
+            icon: "warning"
             font.pointSize: Style.fontSizeL * scaling
             color: Color.mError
           }
