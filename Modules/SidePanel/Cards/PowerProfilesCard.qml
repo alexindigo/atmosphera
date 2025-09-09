@@ -28,7 +28,7 @@ NBox {
     }
     // Performance
     NIconButton {
-      icon: Bootstrap.icons["speed"]
+      icon: Bootstrap.icons["speedometer2"]
       tooltipText: "Set performance power profile."
       enabled: hasPP
       opacity: enabled ? Style.opacityFull : Style.opacityMedium
@@ -42,7 +42,7 @@ NBox {
     }
     // Balanced
     NIconButton {
-      icon: Bootstrap.icons["yin_yang"]
+      icon: Bootstrap.icons["yin-yang"]
       tooltipText: "Set balanced power profile."
       enabled: hasPP
       opacity: enabled ? Style.opacityFull : Style.opacityMedium

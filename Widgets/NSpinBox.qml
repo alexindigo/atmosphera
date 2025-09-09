@@ -95,7 +95,7 @@ RowLayout {
 
       NIcon {
         anchors.centerIn: parent
-        text: Bootstrap.icons["minus"]
+        text: Bootstrap.icons["dash-lg"]
         font.pointSize: Style.fontSizeS * scaling
         color: decreaseArea.containsMouse ? Color.mOnPrimary : Color.mPrimary
       }
@@ -130,7 +130,7 @@ RowLayout {
 
       NIcon {
         anchors.centerIn: parent
-        text: Bootstrap.icons["plus"]
+        text: Bootstrap.icons["plus-lg"]
         font.pointSize: Style.fontSizeS * scaling
         color: increaseArea.containsMouse ? Color.mOnPrimary : Color.mPrimary
       }

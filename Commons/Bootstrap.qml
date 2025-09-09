@@ -46,7 +46,6 @@ Singleton {
   //   "upload": "\uF296",
   //   "download": "\uF294",
   //   "album": "\uF2FF",
-  //   "plus": "\uF64D",
   //   "minus": "\uF63B",
   //   "eyedropper": "\uF342",
   //   "bell": "\uF18A",
@@ -62,16 +61,12 @@ Singleton {
   //   "gauge": "\uF580",
   //   "lightning": "\uF46D",
   //   "keyboard": "\uF451",
-  //   "paint_brush": "\uEE26",
   //   "link": "\uF470",
   //   "macaron": "\uF154",
   //   "box": "\uF1C8",
   //   "monitor": "\uF302"
   //   // another contrast  \uF8F3   \uF8DA
   // }
-
-
-
   property var icons: {
     "alarm-fill": "\uF101",
     "alarm": "\uF102",

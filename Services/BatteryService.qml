@@ -2,6 +2,7 @@ pragma Singleton
 
 import Quickshell
 import Quickshell.Services.UPower
+import qs.Commons
 import qs.Services
 
 Singleton {
@@ -10,7 +11,7 @@ Singleton {
   // Choose icon based on charge and charging state
   function getIcon(percent, charging, isReady) {
     if (!isReady) {
-      return Bootstrap.icons["battery"] // FIXME: find battery error ?
+      return Bootstrap.icons["exclamation-diamond"]
     }
 
     if (charging) {

@@ -25,7 +25,7 @@ NBox {
     }
     // Screen Recorder
     NIconButton {
-      icon: Bootstrap.icons["video_camera"]
+      icon: Bootstrap.icons["camera-video"]
       tooltipText: ScreenRecorderService.isRecording ? "Stop screen recording." : "Start screen recording."
       colorBg: ScreenRecorderService.isRecording ? Color.mPrimary : Color.mSurfaceVariant
       colorFg: ScreenRecorderService.isRecording ? Color.mOnPrimary : Color.mPrimary
@@ -41,7 +41,7 @@ NBox {
 
     // Idle Inhibitor
     NIconButton {
-      icon: Bootstrap.icons["coffee"]
+      icon: Bootstrap.icons["cup-hot"]
       tooltipText: IdleInhibitorService.isInhibited ? "Disable keep awake." : "Enable keep awake."
       colorBg: IdleInhibitorService.isInhibited ? Color.mPrimary : Color.mSurfaceVariant
       colorFg: IdleInhibitorService.isInhibited ? Color.mOnPrimary : Color.mPrimary

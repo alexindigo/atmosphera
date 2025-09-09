@@ -272,7 +272,7 @@ ColumnLayout {
 
         // Button aligned to the center of the actual input field
         NIconButton {
-          icon: Bootstrap.icons["plus"]
+          icon: Bootstrap.icons["plus-lg"]
           Layout.alignment: Qt.AlignBottom
           Layout.bottomMargin: blacklistInput.description ? Style.marginS * scaling : 0
           onClicked: {

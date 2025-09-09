@@ -47,7 +47,7 @@ Item {
     }
     return AudioService.volume
         <= Number.EPSILON ? Bootstrap.icons["volume-off"] : (AudioService.volume
-                                                               < 0.5 ? Bootstrap.icons["volume-down"] : Bootstrap.icons["volume-up"])
+                                                             < 0.5 ? Bootstrap.icons["volume-down"] : Bootstrap.icons["volume-up"])
   }
 
   // Connection used to open the pill when volume changes

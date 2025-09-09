@@ -24,7 +24,7 @@ NBox {
 
     NCircleStat {
       value: SystemStatService.cpuUsage
-      icon: Bootstrap.icons["speed"]
+      icon: Bootstrap.icons["speedometer2"]
       flat: true
       contentScale: 0.8
       width: 72 * scaling
@@ -33,7 +33,7 @@ NBox {
     NCircleStat {
       value: SystemStatService.cpuTemp
       suffix: "°C"
-      icon: Bootstrap.icons["thermometer"]
+      icon: Bootstrap.icons["fire"]
       flat: true
       contentScale: 0.8
       width: 72 * scaling

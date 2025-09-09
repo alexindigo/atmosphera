@@ -85,7 +85,7 @@ NBox {
       }
 
       NIconButton {
-        icon: Bootstrap.icons["plus"]
+        icon: Bootstrap.icons["plus-lg"]
 
         colorBg: Color.mPrimary
         colorFg: Color.mOnPrimary

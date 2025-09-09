@@ -85,7 +85,7 @@ NPanel {
         }
 
         NIcon {
-          text: "notifications_off"
+          text: Bootstrap.icons["bell-slash"]
           font.pointSize: 64 * scaling
           color: Color.mOnSurfaceVariant
           Layout.alignment: Qt.AlignHCenter

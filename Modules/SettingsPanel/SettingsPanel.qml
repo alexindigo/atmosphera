@@ -195,7 +195,7 @@ NPanel {
                  }, {
                    "id": SettingsPanel.Tab.About,
                    "label": "About",
-                   "icon": "person",
+                   "icon": "info-circle",
                    "source": aboutTab
                  })
 
@@ -400,21 +400,13 @@ NPanel {
                   anchors.fill: parent
                   anchors.leftMargin: Style.marginS * scaling
                   anchors.rightMargin: Style.marginS * scaling
-                  spacing: Style.marginS * scaling
+                  spacing: Style.marginM * scaling
 
-                  // Tab icon
-                  Item {
-                    width: 20 * scaling
-                    height: width
-
-                    NIcon {
-                      text: Bootstrap.icons[modelData.icon]
-                      color: tabTextColor
-                      font.pointSize: Style.fontSizeL * scaling
-                      anchors.centerIn: parent
-                    }
+                  NIcon {
+                    text: Bootstrap.icons[modelData.icon]
+                    color: tabTextColor
+                    font.pointSize: Style.fontSizeL * scaling
                   }
-
                   // Tab label
                   NText {
                     text: modelData.label
