@@ -133,7 +133,7 @@ RowLayout {
           spacing: Style.marginXS * scaling
 
           NIcon {
-            icon: "memory"
+            icon: "cpu"
             font.pointSize: Style.fontSizeM * scaling
             Layout.alignment: Qt.AlignVCenter
           }

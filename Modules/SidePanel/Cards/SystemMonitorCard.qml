@@ -41,7 +41,7 @@ NBox {
     }
     NCircleStat {
       value: SystemStatService.memPercent
-      icon: "memory"
+      icon: "cpu"
       flat: true
       contentScale: 0.8
       width: 72 * scaling
