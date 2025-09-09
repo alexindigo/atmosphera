@@ -148,7 +148,7 @@ Popup {
         }
 
         NIconButton {
-          icon: "x-lg"
+          icon: "close"
           onClicked: root.close()
         }
       }
@@ -492,7 +492,7 @@ Popup {
         NButton {
           id: cancelButton
           text: "Cancel"
-          icon: "x-lg"
+          icon: "close"
           outlined: cancelButton.hovered ? false : true
           customHeight: 36 * scaling
           customWidth: 100 * scaling

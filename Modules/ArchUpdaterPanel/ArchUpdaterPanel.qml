@@ -44,7 +44,7 @@ NPanel {
         // Reset button (only show if update failed)
         NIconButton {
           visible: ArchUpdaterService.updateFailed
-          icon: "arrow-repeat"
+          icon: "refresh"
           tooltipText: "Reset update state"
           sizeRatio: 0.8
           colorBg: Color.mError
@@ -55,7 +55,7 @@ NPanel {
         }
 
         NIconButton {
-          icon: "x-lg"
+          icon: "close"
           tooltipText: "Close"
           sizeRatio: 0.8
           onClicked: root.close()
@@ -245,7 +245,7 @@ NPanel {
 
           // Prominent refresh button
           NIconButton {
-            icon: "arrow-repeat"
+            icon: "refresh"
             tooltipText: "Try checking again"
             sizeRatio: 1.2
             colorBg: Color.mPrimary
@@ -295,7 +295,7 @@ NPanel {
 
           // Prominent refresh button
           NIconButton {
-            icon: "arrow-repeat"
+            icon: "refresh"
             tooltipText: "Refresh and try again"
             sizeRatio: 1.2
             colorBg: Color.mPrimary
@@ -483,7 +483,7 @@ NPanel {
         spacing: Style.marginL * scaling
 
         NIconButton {
-          icon: "arrow-repeat"
+          icon: "refresh"
           tooltipText: ArchUpdaterService.aurBusy ? "Checking for updates..." : (!ArchUpdaterService.canPoll ? "Refresh available soon" : "Refresh package lists")
           onClicked: {
             ArchUpdaterService.forceRefresh()

@@ -55,7 +55,7 @@ NPanel {
         }
 
         NIconButton {
-          icon: "arrow-repeat"
+          icon: "refresh"
           tooltipText: "Refresh"
           sizeRatio: 0.8
           enabled: Settings.data.network.wifiEnabled && !NetworkService.scanning
@@ -63,7 +63,7 @@ NPanel {
         }
 
         NIconButton {
-          icon: "x-lg"
+          icon: "close"
           tooltipText: "Close"
           sizeRatio: 0.8
           onClicked: root.close()
@@ -105,7 +105,7 @@ NPanel {
           }
 
           NIconButton {
-            icon: "x-lg"
+            icon: "close"
             sizeRatio: 0.6
             onClicked: NetworkService.lastError = ""
           }
@@ -492,7 +492,7 @@ NPanel {
                       }
 
                       NIconButton {
-                        icon: "x-lg"
+                        icon: "close"
                         sizeRatio: 0.8
                         onClicked: {
                           passwordSsid = ""
@@ -547,7 +547,7 @@ NPanel {
                       }
 
                       NIconButton {
-                        icon: "x-lg"
+                        icon: "close"
                         sizeRatio: 0.8
                         onClicked: expandedSsid = ""
                       }
@@ -586,7 +586,7 @@ NPanel {
 
           NButton {
             text: "Scan again"
-            icon: "arrow-repeat"
+            icon: "refresh"
             Layout.alignment: Qt.AlignHCenter
             onClicked: NetworkService.scan()
           }

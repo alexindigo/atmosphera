@@ -59,7 +59,7 @@ NBox {
         Layout.fillWidth: true
       }
       NIconButton {
-        icon: "gear"
+        icon: "settings"
         tooltipText: "Open settings."
         onClicked: {
           settingsPanel.requestedTab = SettingsPanel.Tab.General
@@ -79,7 +79,7 @@ NBox {
 
       NIconButton {
         id: closeButton
-        icon: "x-lg"
+        icon: "close"
         tooltipText: "Close side panel."
         onClicked: {
           sidePanel.close()

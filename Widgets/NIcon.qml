@@ -4,8 +4,9 @@ import qs.Commons
 import qs.Widgets
 
 Text {
+  id: root
+
   property string icon: Icons.defaultIcon
-  property string family: Icons.fontFamily
 
   visible: (icon !== undefined) && (icon !== "")
   text: {
@@ -15,11 +16,11 @@ Text {
     if (Icons.get(icon) === undefined) {
       Logger.warn("Icon", `"${icon}"`, "doesn't exist in the icons font")
       Logger.callStack()
-      return Icons.get(defaultIcon)
+      return Icons.get(Icons.defaultIcon)
     }
     return Icons.get(icon)
   }
-  font.family: family
+  font.family: Icons.fontFamily
   font.pointSize: Style.fontSizeL * scaling
   color: Color.mOnSurface
   verticalAlignment: Text.AlignVCenter

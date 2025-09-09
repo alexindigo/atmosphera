@@ -9,7 +9,33 @@ Singleton {
   readonly property string defaultIcon: "balloon"
 
   readonly property var aliases: {
-    "close": "x-lg"
+    "close": "x-lg",
+    "settings": "gear",
+    "add": "plus-lg",
+    "media-pause": "pause",
+    "media-play": "play",
+    "media-prev": "skip-start",
+    "media-next": "skip-end",
+    "refresh": "arrow-repeat",
+    "cpu-usage": "speedometer2",
+    "cpu-temperature": "fire",
+    "memory": "cpu",
+    "performance": "speedometer2",
+    "balanced": "yin-yang",
+    "powersaver": "leaf",
+    "download-speed": "cloud-arrow-down",
+    "upload-speed": "cloud-arrow-up",
+    "storage": "hdd",
+    "bluetooth": "bluetooth",
+    "ethernet": "ethernet",
+    "keyboard": "keyboard",
+    "power": "power",
+    "keep-awake": "cup",
+    "nightlight": "moon-stars",
+    "camera-video": "camera-video",
+    "chevron-left": "chevron-left",
+    "chevron-right": "chevron-right",
+    "dark-mode": "transparency"
   }
 
   readonly property var icons: {

@@ -292,7 +292,7 @@ Variants {
 
             // Close button positioned absolutely
             NIconButton {
-              icon: "x-lg"
+              icon: "close"
               tooltipText: "Close"
               sizeRatio: 0.6
               anchors.top: parent.top

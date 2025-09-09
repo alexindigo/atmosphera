@@ -39,7 +39,7 @@ NPanel {
       "subtitle": "Put the system to sleep"
     }, {
       "action": "reboot",
-      "icon": "arrow-repeat",
+      "icon": "refresh",
       "title": "Reboot",
       "subtitle": "Restart the system"
     }, {
@@ -276,7 +276,7 @@ NPanel {
         }
 
         NIconButton {
-          icon: timerActive ? "x-square" : "x-lg"
+          icon: timerActive ? "x-square" : "close"
           tooltipText: timerActive ? "Cancel Timer" : "Close"
           Layout.alignment: Qt.AlignVCenter
           colorBg: timerActive ? Qt.alpha(Color.mError, 0.08) : Color.transparent

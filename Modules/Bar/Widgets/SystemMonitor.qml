@@ -71,7 +71,7 @@ RowLayout {
           spacing: Style.marginXS * scaling
 
           NIcon {
-            icon: "speedometer2"
+            icon: "cpu-usage"
             font.pointSize: Style.fontSizeM * scaling
             Layout.alignment: Qt.AlignVCenter
           }
@@ -101,7 +101,7 @@ RowLayout {
           spacing: Style.marginXS * scaling
 
           NIcon {
-            icon: "fire"
+            icon: "cpu-temperature"
             // Fire is so tall, we need to make it smaller
             font.pointSize: Style.fontSizeS * scaling
             Layout.alignment: Qt.AlignVCenter
@@ -132,7 +132,7 @@ RowLayout {
           spacing: Style.marginXS * scaling
 
           NIcon {
-            icon: "cpu"
+            icon: "memory"
             font.pointSize: Style.fontSizeM * scaling
             Layout.alignment: Qt.AlignVCenter
           }
@@ -162,7 +162,7 @@ RowLayout {
           spacing: Style.marginXS * scaling
 
           NIcon {
-            icon: "cloud-arrow-down"
+            icon: "download-speed"
             font.pointSize: Style.fontSizeM * scaling
             Layout.alignment: Qt.AlignVCenter
           }
@@ -192,7 +192,7 @@ RowLayout {
           spacing: Style.marginXS * scaling
 
           NIcon {
-            icon: "cloud-arrow-up"
+            icon: "upload-speed"
             font.pointSize: Style.fontSizeM * scaling
             Layout.alignment: Qt.AlignVCenter
           }
@@ -222,7 +222,7 @@ RowLayout {
           spacing: Style.marginXS * scaling
 
           NIcon {
-            icon: "hdd"
+            icon: "storage"
             font.pointSize: Style.fontSizeM * scaling
             Layout.alignment: Qt.AlignVCenter
           }

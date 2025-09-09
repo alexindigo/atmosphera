@@ -42,7 +42,7 @@ NPanel {
         }
 
         NIconButton {
-          icon: BluetoothService.adapter && BluetoothService.adapter.discovering ? "stop" : "arrow-repeat"
+          icon: BluetoothService.adapter && BluetoothService.adapter.discovering ? "stop" : "refresh"
           tooltipText: "Refresh Devices"
           sizeRatio: 0.8
           onClicked: {
@@ -53,7 +53,7 @@ NPanel {
         }
 
         NIconButton {
-          icon: "x-lg"
+          icon: "close"
           tooltipText: "Close"
           sizeRatio: 0.8
           onClicked: {

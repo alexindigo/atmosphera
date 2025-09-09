@@ -84,7 +84,7 @@ Popup {
       }
 
       NIconButton {
-        icon: "x-lg"
+        icon: "close"
         onClicked: settingsPopup.close()
       }
     }

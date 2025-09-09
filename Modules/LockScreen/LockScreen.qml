@@ -781,7 +781,7 @@ Loader {
                 NIcon {
                   id: iconReboot
                   anchors.centerIn: parent
-                  icon: "arrow-repeat"
+                  icon: "refresh"
                   font.pointSize: Style.fontSizeXXXL * scaling
                   color: restartButtonArea.containsMouse ? Color.mOnPrimary : Color.mPrimary
                 }

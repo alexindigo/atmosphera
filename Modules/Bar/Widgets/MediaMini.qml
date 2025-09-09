@@ -135,7 +135,7 @@ RowLayout {
 
         NIcon {
           id: windowIcon
-          text: MediaService.isPlaying ? "pause" : "play"
+          icon: MediaService.isPlaying ? "media-pause" : "media-play"
           font.pointSize: Style.fontSizeL * scaling
           verticalAlignment: Text.AlignVCenter
           Layout.alignment: Qt.AlignVCenter
@@ -155,7 +155,7 @@ RowLayout {
               id: trackArt
               anchors.fill: parent
               imagePath: MediaService.trackArtUrl
-              fallbackIcon: MediaService.isPlaying ? "pause" : "play"
+              fallbackIcon: MediaService.isPlaying ? "media-pause" : "media-play"
               fallbackIconSize: 10 * scaling
               borderWidth: 0
               border.color: Color.transparent

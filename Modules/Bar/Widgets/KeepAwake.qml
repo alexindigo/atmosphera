@@ -13,7 +13,7 @@ NIconButton {
 
   sizeRatio: 0.8
 
-  icon: "cup"
+  icon: IdleInhibitorService.isInhibited ? "keep-awake-on" : "keep-awake-off"
   tooltipText: IdleInhibitorService.isInhibited ? "Disable keep awake" : "Enable keep awake"
   colorBg: IdleInhibitorService.isInhibited ? Color.mPrimary : Color.mSurfaceVariant
   colorFg: IdleInhibitorService.isInhibited ? Color.mOnPrimary : Color.mOnSurface

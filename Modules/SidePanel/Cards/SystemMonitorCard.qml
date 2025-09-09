@@ -24,7 +24,7 @@ NBox {
 
     NCircleStat {
       value: SystemStatService.cpuUsage
-      icon: "speedometer2"
+      icon: "cpu-usage"
       flat: true
       contentScale: 0.8
       width: 72 * scaling
@@ -33,7 +33,7 @@ NBox {
     NCircleStat {
       value: SystemStatService.cpuTemp
       suffix: "°C"
-      icon: "fire"
+      icon: "cpu-temperature"
       flat: true
       contentScale: 0.8
       width: 72 * scaling
@@ -41,7 +41,7 @@ NBox {
     }
     NCircleStat {
       value: SystemStatService.memPercent
-      icon: "cpu"
+      icon: "memory"
       flat: true
       contentScale: 0.8
       width: 72 * scaling

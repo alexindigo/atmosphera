@@ -181,7 +181,7 @@ ColumnLayout {
                 }
 
                 NIconButton {
-                  icon: "arrow-repeat"
+                  icon: "refresh"
                   tooltipText: "Reset scaling"
                   onClicked: ScalingService.setScreenScale(modelData, 1.0)
                 }

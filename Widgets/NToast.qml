@@ -162,7 +162,7 @@ Item {
 
       // Close button (only if persistent or manual dismiss needed)
       NIconButton {
-        icon: "x-lg"
+        icon: "close"
         visible: root.persistent || root.duration === 0
 
         colorBg: Color.mSurfaceVariant

@@ -26,8 +26,8 @@ ColumnLayout {
     id: iconInput
     Layout.fillWidth: true
     label: "Icon Name"
-    description: "Pick from Bootstrap Icons or type a name."
-    placeholderText: "Enter icon name (e.g., speedometer2, gear, house)"
+    description: "Select an icon from the library."
+    placeholderText: "Enter icon name (e.g., cat, gear, house, ...)"
     text: widgetData?.icon || widgetMetadata.icon
   }
 
@@ -65,7 +65,7 @@ ColumnLayout {
 
     property string query: ""
     property string selectedIcon: ""
-    property var allIcons: Object.keys(Bootstrap.icons)
+    property var allIcons: Object.keys(Icons.icons)
     property var filteredIcons: allIcons.filter(function (name) {
       return query === "" || name.toLowerCase().indexOf(query.toLowerCase()) !== -1
     })
@@ -96,7 +96,7 @@ ColumnLayout {
           Layout.fillWidth: true
         }
         NIconButton {
-          icon: "x-lg"
+          icon: "close"
           onClicked: iconPicker.close()
         }
       }

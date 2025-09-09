@@ -207,7 +207,7 @@ Singleton {
       return "wifi-2"
     if (signal >= 20)
       return "wifi-1"
-    return "dot"
+    return "wifi-0"
   }
 
   function isSecured(security) {

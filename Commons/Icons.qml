@@ -11,19 +11,28 @@ Singleton {
 
   // Expose the font family name for easy access
   readonly property string fontFamily: fontLoader.name
-  readonly property string defaultIcon: Bootstrap.defaultIcon
+  readonly property string defaultIcon: TablerIcons.defaultIcon
+  readonly property var icons: TablerIcons.icons
+  readonly property var aliases: TablerIcons.aliases
+  readonly property string fontPath: "/Assets/Fonts/tabler/tabler-icons.woff2"
 
   Component.onCompleted: {
     Logger.log("Icons", "Service started")
   }
 
   function get(iconName) {
-    return Bootstrap.icons[iconName]
+    // Check in aliases first
+    if (aliases[iconName] !== undefined) {
+      iconName = aliases[iconName]
+    }
+
+    // Find the appropriate codepoint
+    return icons[iconName]
   }
 
   FontLoader {
     id: fontLoader
-    source: Quickshell.shellDir + "/Assets/Fonts/bootstrap/bootstrap-icons.woff2"
+    source: Quickshell.shellDir + fontPath
   }
 
   // Monitor font loading status
@@ -31,9 +40,9 @@ Singleton {
     target: fontLoader
     function onStatusChanged() {
       if (fontLoader.status === FontLoader.Ready) {
-        Logger.log("Bootstrap", "Font loaded successfully:", fontFamily)
+        Logger.log("Icons", "Font loaded successfully:", fontFamily)
       } else if (fontLoader.status === FontLoader.Error) {
-        Logger.error("Bootstrap", "Font failed to load")
+        Logger.error("Icons", "Font failed to load")
       }
     }
   }

@@ -32,7 +32,7 @@ NIconButton {
       return "box"
     }
     if (ArchUpdaterService.aurBusy) {
-      return "arrow-repeat"
+      return "refresh"
     }
     if (ArchUpdaterService.totalUpdates > 0) {
       return "box-fill"
