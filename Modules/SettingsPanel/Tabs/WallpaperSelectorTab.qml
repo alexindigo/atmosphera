@@ -181,7 +181,7 @@ ColumnLayout {
           visible: isSelected
 
           NIcon {
-            icon: "check-lg"
+            icon: "check"
             font.pointSize: Style.fontSizeM * scaling
             font.weight: Style.fontWeightBold
             color: Color.mOnSecondary
@@ -246,7 +246,7 @@ ColumnLayout {
       }
 
       NIcon {
-        text: "folder_open"
+        icon: "folder-open"
         font.pointSize: Style.fontSizeXL * scaling
         color: Color.mOnSurface
         Layout.alignment: Qt.AlignHCenter

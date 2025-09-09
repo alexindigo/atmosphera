@@ -49,7 +49,7 @@ NBox {
     }
     NCircleStat {
       value: SystemStatService.diskPercent
-      icon: "hdd"
+      icon: "storage"
       flat: true
       contentScale: 0.8
       width: 72 * scaling

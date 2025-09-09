@@ -43,9 +43,9 @@ Item {
 
   function getIcon() {
     if (AudioService.inputMuted) {
-      return "mic-mute"
+      return "microphone-mute"
     }
-    return AudioService.inputVolume <= Number.EPSILON ? "mic-mute" : (AudioService.inputVolume < 0.33 ? "mic" : "mic")
+    return (AudioService.inputVolume <= Number.EPSILON)? "microphone-mute" : "microphone"
   }
 
   // Connection used to open the pill when input volume changes

@@ -231,24 +231,24 @@ Singleton {
   // --------------------------------
   function weatherSymbolFromCode(code) {
     if (code === 0)
-      return "sun"
+      return "weather-sun"
     if (code === 1 || code === 2)
-      return "cloud-sun"
+      return "weather-cloud-sun"
     if (code === 3)
-      return "cloud"
+      return "weather-cloud"
     if (code >= 45 && code <= 48)
-      return "cloud-haze"
+      return "weather-cloud-haze"
     if (code >= 51 && code <= 67)
-      return "cloud-rain"
+      return "weather-cloud-rain"
     if (code >= 71 && code <= 77)
-      return "cloud-snow"
+      return "weather-cloud-snow"
     if (code >= 71 && code <= 77)
-      return "cloud-snow"
+      return "weather-cloud-snow"
     if (code >= 85 && code <= 86)
-      return "cloud-snow"
+      return "weather-cloud-snow"
     if (code >= 95 && code <= 99)
-      return "cloud-lightning"
-    return "cloud"
+      return "weather-cloud-lightning"
+    return "weather-cloud"
   }
 
   // --------------------------------

@@ -59,7 +59,7 @@ Rectangle {
       }
 
       NIcon {
-        icon: "paint-bucket"
+        icon: "color-picker"
         color: Color.mOnSurfaceVariant
       }
     }

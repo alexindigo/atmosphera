@@ -46,8 +46,8 @@ NIconButton {
 
   icon: root.profileIcon()
   tooltipText: root.profileName()
-  colorBg: Color.mSurfaceVariant
-  colorFg: Color.mOnSurface
+  colorBg: (PowerProfileService.profile === PowerProfile.Balanced) ? Color.mSurfaceVariant : Color.mPrimary
+  colorFg: (PowerProfileService.profile === PowerProfile.Balanced) ? Color.mOnSurface : Color.mOnPrimary
   colorBorder: Color.transparent
   colorBorderHover: Color.transparent
   onClicked: root.changeProfile()

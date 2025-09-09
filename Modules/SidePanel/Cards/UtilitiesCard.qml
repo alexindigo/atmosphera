@@ -56,7 +56,7 @@ NBox {
     // Wallpaper
     NIconButton {
       visible: Settings.data.wallpaper.enabled
-      icon: "image"
+      icon: "wallpaper-selector"
       tooltipText: "Left click: Open wallpaper selector.\nRight click: Set random wallpaper."
       onClicked: {
         var settingsPanel = PanelService.getPanel("settingsPanel")

@@ -90,7 +90,7 @@ ColumnLayout {
       spacing: Style.marginS * scaling
 
       NIcon {
-        text: "download"
+        icon: "download"
         font.pointSize: Style.fontSizeXXL * scaling
         color: updateArea.containsMouse ? Color.mSurface : Color.mPrimary
       }

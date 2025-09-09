@@ -323,7 +323,7 @@ NPanel {
           spacing: Style.marginM * scaling
 
           NIcon {
-            icon: "check-lg"
+            icon: "check"
             font.pointSize: Style.fontSizeXXXL * scaling
             color: Color.mPrimary
             Layout.alignment: Qt.AlignHCenter

@@ -195,7 +195,7 @@ ColumnLayout {
         }
         NButton {
           text: "Apply"
-          icon: "check-lg"
+          icon: "check"
           enabled: iconPicker.selectedIcon !== ""
           onClicked: {
             iconInput.text = iconPicker.selectedIcon

@@ -10,6 +10,7 @@ Singleton {
 
   readonly property var aliases: {
     "close": "x",
+    "check": "checks",
     "settings": "settings",
     "add": "plus",
     "media-pause": "player-pause",
@@ -21,7 +22,7 @@ Singleton {
     "cpu-temperature": "flame",
     "memory": "cpu",
     "performance": "brand-speedtest",
-    "balanced": "brand-speedtest",
+    "balanced": "scale",
     "powersaver": "leaf",
     "download-speed": "download",
     "upload-speed": "upload",
@@ -43,6 +44,8 @@ Singleton {
     "panel": "layout-sidebar-right-inactive",
     "dark-mode": "contrast",
     "camera-video": "video",
+    "wallpaper-selector": "library-photo",
+    "color-picker": "color-picker",
     "chevron-left": "chevron-left",
     "chevron-right": "chevron-right",
     "chevron-up": "chevron-up",
@@ -62,8 +65,26 @@ Singleton {
     "settings-hooks": "link",
     "settings-about": "info-square-rounded",
 
+    "microphone": "microphone",
+    "microphone-mute": "microphone-off",
+
+    "volume-mute": "volume-off",
+    "volume-zero": "volume-3",
+    "volume-low": "volume-2",
+    "volume-high": "volume",
+
+    "weather-sun": "sun-filled",
+    "weather-cloud-sun": "sun",
+    "weather-cloud": "cloud",
+    "weather-cloud-haze": "cloud-rain",
+    "weather-cloud-rain": "cloud-rain",
+    "weather-cloud-snow": "cloud-snow",
+    "weather-cloud-lightning": "cloud-bolt",
+
+
     // TODO BRIGHTNESS
     // TODO BT DEVICES
+    // TODO VOLUME
   }
 
   readonly property var icons: {

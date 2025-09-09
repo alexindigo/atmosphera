@@ -90,21 +90,23 @@ NBox {
         model: weatherReady ? LocationService.data.weather.daily.time : []
         delegate: ColumnLayout {
           Layout.alignment: Qt.AlignHCenter
-          spacing: Style.marginS * scaling
+          spacing: Style.marginL * scaling
           NText {
             text: {
               var weatherDate = new Date(LocationService.data.weather.daily.time[index].replace(/-/g, "/"))
               return Qt.formatDateTime(weatherDate, "ddd")
             }
             color: Color.mOnSurface
+            Layout.alignment: Qt.AlignHCenter
           }
           NIcon {
-            Layout.alignment: Qt.AlignVCenter
+            Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
             icon: LocationService.weatherSymbolFromCode(LocationService.data.weather.daily.weathercode[index])
-            font.pointSize: Style.fontSizeXXL * scaling
+            font.pointSize: Style.fontSizeXXL * 1.6 * scaling
             color: Color.mPrimary
           }
           NText {
+            Layout.alignment: Qt.AlignHCenter
             text: {
               var max = LocationService.data.weather.daily.temperature_2m_max[index]
               var min = LocationService.data.weather.daily.temperature_2m_min[index]
