@@ -322,7 +322,7 @@ ColumnLayout {
               }
 
               NIconButton {
-                icon: Bootstrap.icons["close"]
+                icon: Bootstrap.icons["x-lg"]
                 sizeRatio: 0.8
                 Layout.alignment: Qt.AlignVCenter
                 Layout.rightMargin: Style.marginXS * scaling

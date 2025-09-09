@@ -45,7 +45,7 @@ NPanel {
         }
 
         NIconButton {
-          icon: Settings.data.notifications.doNotDisturb ? Bootstrap.icons["bell_striked"] : Bootstrap.icons["bell"]
+          icon: Settings.data.notifications.doNotDisturb ? Bootstrap.icons["bell-slash"] : Bootstrap.icons["bell"]
           tooltipText: Settings.data.notifications.doNotDisturb ? "'Do Not Disturb' is enabled." : "'Do Not Disturb' is disabled."
           sizeRatio: 0.8
           onClicked: Settings.data.notifications.doNotDisturb = !Settings.data.notifications.doNotDisturb
@@ -59,7 +59,7 @@ NPanel {
         }
 
         NIconButton {
-          icon: Bootstrap.icons["close"]
+          icon: Bootstrap.icons["x-lg"]
           tooltipText: "Close"
           sizeRatio: 0.8
           onClicked: {

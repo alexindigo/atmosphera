@@ -210,7 +210,7 @@ NBox {
                 }
 
                 NIconButton {
-                  icon: Bootstrap.icons["close"]
+                  icon: Bootstrap.icons["x-lg"]
                   sizeRatio: 0.6
                   colorBorder: Qt.alpha(Color.mOutline, Style.opacityLight)
                   colorBg: Color.mOnSurface

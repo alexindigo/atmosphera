@@ -55,7 +55,7 @@ NPanel {
         }
 
         NIconButton {
-          icon: Bootstrap.icons["close"]
+          icon: Bootstrap.icons["x-lg"]
           tooltipText: "Close"
           sizeRatio: 0.8
           onClicked: root.close()

@@ -66,7 +66,7 @@ RowLayout {
 
         NIcon {
           id: cpuUsageIcon
-          text: Bootstrap.icons["speed"]
+          text: Bootstrap.icons["speedometer2"]
           Layout.alignment: Qt.AlignVCenter
         }
 
@@ -85,13 +85,12 @@ RowLayout {
       // CPU Temperature Component
       RowLayout {
         id: cpuTempLayout
-        // spacing is thin here to compensate for the vertical thermometer icon
-        spacing: Style.marginXXS * scaling
+        spacing: Style.marginXS * scaling
         Layout.alignment: Qt.AlignVCenter
         visible: showCpuTemp
 
         NIcon {
-          text: Bootstrap.icons["thermometer"]
+          text: Bootstrap.icons["fire"]
           Layout.alignment: Qt.AlignVCenter
         }
 

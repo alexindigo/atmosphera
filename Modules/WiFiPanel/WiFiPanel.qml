@@ -63,7 +63,7 @@ NPanel {
         }
 
         NIconButton {
-          icon: Bootstrap.icons["close"]
+          icon: Bootstrap.icons["x-lg"]
           tooltipText: "Close"
           sizeRatio: 0.8
           onClicked: root.close()
@@ -105,7 +105,7 @@ NPanel {
           }
 
           NIconButton {
-            icon: Bootstrap.icons["close"]
+            icon: Bootstrap.icons["x-lg"]
             sizeRatio: 0.6
             onClicked: NetworkService.lastError = ""
           }
@@ -492,7 +492,7 @@ NPanel {
                       }
 
                       NIconButton {
-                        icon: Bootstrap.icons["close"]
+                        icon: Bootstrap.icons["x-lg"]
                         sizeRatio: 0.8
                         onClicked: {
                           passwordSsid = ""
@@ -547,7 +547,7 @@ NPanel {
                       }
 
                       NIconButton {
-                        icon: Bootstrap.icons["close"]
+                        icon: Bootstrap.icons["x-lg"]
                         sizeRatio: 0.8
                         onClicked: expandedSsid = ""
                       }

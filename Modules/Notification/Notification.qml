@@ -294,7 +294,7 @@ Variants {
 
             // Close button positioned absolutely
             NIconButton {
-              icon: Bootstrap.icons["close"]
+              icon: Bootstrap.icons["x-lg"]
               tooltipText: "Close"
               sizeRatio: 0.6
               anchors.top: parent.top

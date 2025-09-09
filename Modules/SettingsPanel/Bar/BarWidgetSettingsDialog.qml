@@ -84,7 +84,7 @@ Popup {
       }
 
       NIconButton {
-        icon: Bootstrap.icons["close"]
+        icon: Bootstrap.icons["x-lg"]
         onClicked: settingsPopup.close()
       }
     }

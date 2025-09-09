@@ -78,7 +78,7 @@ NBox {
 
       NIconButton {
         id: closeButton
-        icon: Bootstrap.icons["close"]
+        icon: Bootstrap.icons["x-lg"]
         tooltipText: "Close side panel."
         onClicked: {
           sidePanel.close()

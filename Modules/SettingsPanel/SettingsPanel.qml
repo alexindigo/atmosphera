@@ -128,22 +128,22 @@ NPanel {
                    }, {
                      "id": SettingsPanel.Tab.Bar,
                      "label": "Bar",
-                     "icon": "bar",
+                     "icon": "segmented-nav",
                      "source": barTab
                    }, {
                      "id": SettingsPanel.Tab.Launcher,
                      "label": "Launcher",
-                     "icon": "launcher",
+                     "icon": "rocket",
                      "source": launcherTab
                    }, {
                      "id": SettingsPanel.Tab.Audio,
                      "label": "Audio",
-                     "icon": "volume_full",
+                     "icon": "speaker",
                      "source": audioTab
                    }, {
                      "id": SettingsPanel.Tab.Display,
                      "label": "Display",
-                     "icon": "monitor",
+                     "icon": "display",
                      "source": displayTab
                    }, {
                      "id": SettingsPanel.Tab.Network,
@@ -153,22 +153,22 @@ NPanel {
                    }, {
                      "id": SettingsPanel.Tab.Brightness,
                      "label": "Brightness",
-                     "icon": "brightness_high",
+                     "icon": "brightness-high",
                      "source": brightnessTab
                    }, {
                      "id": SettingsPanel.Tab.Weather,
                      "label": "Weather",
-                     "icon": "partly_cloudy",
+                     "icon": "cloud-sun",
                      "source": weatherTab
                    }, {
                      "id": SettingsPanel.Tab.ColorScheme,
                      "label": "Color Scheme",
-                     "icon": "paint_drop",
+                     "icon": "palette",
                      "source": colorSchemeTab
                    }, {
                      "id": SettingsPanel.Tab.Wallpaper,
                      "label": "Wallpaper",
-                     "icon": "image",
+                     "icon": "easel",
                      "source": wallpaperTab
                    }]
 
@@ -177,7 +177,7 @@ NPanel {
       newTabs.push({
                      "id": SettingsPanel.Tab.WallpaperSelector,
                      "label": "Wallpaper Selector",
-                     "icon": "paint_brush",
+                     "icon": "image",
                      "source": wallpaperSelectorTab
                    })
     }
@@ -185,17 +185,17 @@ NPanel {
     newTabs.push({
                    "id": SettingsPanel.Tab.ScreenRecorder,
                    "label": "Screen Recorder",
-                   "icon": "video_camera",
+                   "icon": "camera-video",
                    "source": screenRecorderTab
                  }, {
                    "id": SettingsPanel.Tab.Hooks,
                    "label": "Hooks",
-                   "icon": "link",
+                   "icon": "link-45deg",
                    "source": hooksTab
                  }, {
                    "id": SettingsPanel.Tab.About,
                    "label": "About",
-                   "icon": "macaron",
+                   "icon": "person",
                    "source": aboutTab
                  })
 
@@ -480,7 +480,7 @@ NPanel {
 
               // Close button
               NIconButton {
-                icon: Bootstrap.icons["close"]
+                icon: Bootstrap.icons["x-lg"]
                 tooltipText: "Close"
                 Layout.alignment: Qt.AlignVCenter
                 onClicked: root.close()

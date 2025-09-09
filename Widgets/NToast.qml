@@ -162,7 +162,7 @@ Item {
 
       // Close button (only if persistent or manual dismiss needed)
       NIconButton {
-        icon: Bootstrap.icons["close"]
+        icon: Bootstrap.icons["x-lg"]
         visible: root.persistent || root.duration === 0
 
         colorBg: Color.mSurfaceVariant

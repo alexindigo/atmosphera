@@ -148,7 +148,7 @@ Popup {
         }
 
         NIconButton {
-          icon: Bootstrap.icons["close"]
+          icon: Bootstrap.icons["x-lg"]
           onClicked: root.close()
         }
       }
@@ -492,7 +492,7 @@ Popup {
         NButton {
           id: cancelButton
           text: "Cancel"
-          icon: Bootstrap.icons["close"]
+          icon: Bootstrap.icons["x-lg"]
           outlined: cancelButton.hovered ? false : true
           customHeight: 36 * scaling
           customWidth: 100 * scaling

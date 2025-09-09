@@ -8,24 +8,6 @@ import qs.Commons
 Singleton {
   id: root
 
-
-  // property var icons: {
-  //   "sunny": "\uF1D2",
-  //   "partly_cloudy": "\uF2BE",
-  //   "cloud": "\uF2C3",
-  //   "foggy": "\uF2A7",
-  //   "rainy": "\uF29D",
-  //   "snowy": "\uF2BC",
-  //   "thunderstorm": "\uF2AC",
-  //   "battery_empty": "\uF188",
-  //   "battery_low": "\uF911",
-  //   "battery_half": "\uF187",
-  //   "battery_full": "\uF186",
-  //   "battery_charging": "\uF185",
-  //   "volume_muted": "\uF60D",
-  //   "volume_off": "\uF60F",
-  //   "volume_half": "\uF60B",
-  //   "volume_full": "\uF611",
   //   "brightness_low": "\uF1D4",
   //   "brightness_high": "\uF1D2",
   //   "wifi_disable": "\uF61B",
@@ -33,7 +15,7 @@ Singleton {
   //   "wifi_half": "\uF61A",
   //   "wifi_full": "\uF61C",
   //   "power": "\uF4FF",
-  //   "gear": "\uF3E5",
+
   //   "close": "\uF659",
   //   "check": "\uF272",
   //   "panel": "\uF290",
@@ -70,7 +52,7 @@ Singleton {
   //   "bell": "\uF18A",
   //   "bell_striked": "\uF631",
   //   "drive": "\uF412",
-  //   "bluetooth": "\uF682",
+
   //   "person": "\uF4DA",
   //   "bar": "\uF52B",
   //   "launcher": "\uF843",
