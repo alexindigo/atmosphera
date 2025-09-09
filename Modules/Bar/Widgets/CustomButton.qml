@@ -38,6 +38,8 @@ NIconButton {
   readonly property string middleClickExec: widgetSettings.middleClickExec || widgetMetadata.middleClickExec
   readonly property bool hasExec: (leftClickExec || rightClickExec || middleClickExec)
 
+  enabled: hasExec
+  allowClickWhenDisabled: true // we want to be able to open config with left click when its not setup properly
   colorBorder: Color.transparent
   colorBorderHover: Color.transparent
   sizeRatio: 0.8
@@ -59,7 +61,6 @@ NIconButton {
       return lines.join("<br/>")
     }
   }
-  opacity: hasExec ? Style.opacityFull : Style.opacityMedium
 
   onClicked: {
     if (leftClickExec) {
