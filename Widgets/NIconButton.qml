@@ -38,6 +38,13 @@ Rectangle {
   border.color: root.enabled && root.hovering ? colorBorderHover : colorBorder
   border.width: Math.max(1, Style.borderS * scaling)
 
+  Behavior on color {
+    ColorAnimation {
+      duration: Style.animationNormal
+      easing.type: Easing.InOutQuad
+    }
+  }
+
   NIcon {
     icon: root.icon
     font.pointSize: Math.max(1, root.width * 0.4)
@@ -46,6 +53,13 @@ Rectangle {
     x: (root.width - width) / 2
     // Center vertically accounting for font metrics
     y: (root.height - height) / 2 + (height - contentHeight) / 2
+
+    Behavior on color {
+      ColorAnimation {
+        duration: Style.animationFast
+        easing.type: Easing.InOutQuad
+      }
+    }
   }
 
   NTooltip {

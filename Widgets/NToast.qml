@@ -112,8 +112,8 @@ Item {
     RowLayout {
       id: contentLayout
       anchors.fill: parent
-      anchors.margins: Style.marginM * scaling
-      spacing: Style.marginS * scaling
+      anchors.margins: Style.marginL * scaling
+      spacing: Style.marginL * scaling
 
       // Icon
       NIcon {
