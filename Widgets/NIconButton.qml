@@ -14,6 +14,7 @@ Rectangle {
   property string icon
   property string tooltipText
   property bool enabled: true
+  property bool allowClickWhenDisabled: false
   property bool hovering: false
 
   property color colorBg: Color.mSurfaceVariant
@@ -94,7 +95,7 @@ Rectangle {
       if (tooltipText) {
         tooltip.hide()
       }
-      if (!root.enabled) {
+      if (!root.enabled && !allowClickWhenDisabled) {
         return
       }
       if (mouse.button === Qt.LeftButton) {
