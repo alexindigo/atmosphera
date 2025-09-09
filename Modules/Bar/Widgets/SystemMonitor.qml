@@ -38,6 +38,9 @@ RowLayout {
                                                !== undefined) ? widgetSettings.showMemoryAsPercent : widgetMetadata.showMemoryAsPercent
   readonly property bool showNetworkStats: (widgetSettings.showNetworkStats
                                             !== undefined) ? widgetSettings.showNetworkStats : widgetMetadata.showNetworkStats
+  readonly property bool showDiskUsage: (widgetSettings.showDiskUsage
+                                         !== undefined) ? widgetSettings.showDiskUsage : (widgetMetadata.showDiskUsage
+                                                                                          || false)
 
   Layout.alignment: Qt.AlignVCenter
   spacing: Style.marginS * scaling
@@ -197,6 +200,36 @@ RowLayout {
 
           NText {
             text: SystemStatService.formatSpeed(SystemStatService.txSpeed)
+            font.family: Settings.data.ui.fontFixed
+            font.pointSize: Style.fontSizeS * scaling
+            font.weight: Style.fontWeightMedium
+            Layout.alignment: Qt.AlignVCenter
+            verticalAlignment: Text.AlignVCenter
+            color: Color.mPrimary
+          }
+        }
+      }
+
+      // Disk Usage Component (primary drive)
+      Item {
+        Layout.preferredWidth: diskUsageRow.implicitWidth
+        Layout.preferredHeight: Math.round(Style.capsuleHeight * scaling)
+        Layout.alignment: Qt.AlignVCenter
+        visible: showDiskUsage
+
+        RowLayout {
+          id: diskUsageRow
+          anchors.centerIn: parent
+          spacing: Style.marginXS * scaling
+
+          NIcon {
+            icon: "hdd"
+            font.pointSize: Style.fontSizeM * scaling
+            Layout.alignment: Qt.AlignVCenter
+          }
+
+          NText {
+            text: `${SystemStatService.diskPercent}%`
             font.family: Settings.data.ui.fontFixed
             font.pointSize: Style.fontSizeS * scaling
             font.weight: Style.fontWeightMedium

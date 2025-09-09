@@ -21,6 +21,8 @@ ColumnLayout {
                                           !== undefined ? widgetData.showMemoryAsPercent : widgetMetadata.showMemoryAsPercent
   property bool valueShowNetworkStats: widgetData.showNetworkStats
                                        !== undefined ? widgetData.showNetworkStats : widgetMetadata.showNetworkStats
+  property bool valueShowDiskUsage: widgetData.showDiskUsage !== undefined ? widgetData.showDiskUsage : (widgetMetadata.showDiskUsage
+                                                                                                         || false)
 
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {})
@@ -29,6 +31,7 @@ ColumnLayout {
     settings.showMemoryUsage = valueShowMemoryUsage
     settings.showMemoryAsPercent = valueShowMemoryAsPercent
     settings.showNetworkStats = valueShowNetworkStats
+    settings.showDiskUsage = valueShowDiskUsage
     return settings
   }
 
@@ -70,5 +73,13 @@ ColumnLayout {
     label: "Network traffic"
     checked: valueShowNetworkStats
     onToggled: checked => valueShowNetworkStats = checked
+  }
+
+  NToggle {
+    id: showDiskUsage
+    Layout.fillWidth: true
+    label: "Storage usage"
+    checked: valueShowDiskUsage
+    onToggled: checked => valueShowDiskUsage = checked
   }
 }

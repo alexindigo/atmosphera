@@ -37,6 +37,7 @@ NBox {
       onClicked: {
         if (enabled) {
           powerProfiles.profile = PowerProfile.Performance
+          ToastService.showNotice("Power Profile", "Performance")
         }
       }
     }
@@ -51,6 +52,7 @@ NBox {
       onClicked: {
         if (enabled) {
           powerProfiles.profile = PowerProfile.Balanced
+          ToastService.showNotice("Power Profile", "Balanced")
         }
       }
     }
@@ -65,6 +67,7 @@ NBox {
       onClicked: {
         if (enabled) {
           powerProfiles.profile = PowerProfile.PowerSaver
+          ToastService.showNotice("Power Profile", "Power Saver")
         }
       }
     }
