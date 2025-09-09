@@ -57,7 +57,7 @@ Rectangle {
       property real itemHeight: root.height
       property real cornerRadius: root.radius
       property real imageOpacity: root.opacity
-      fragmentShader: Qt.resolvedUrl("../Shaders/qsb/rounded_image.frag.qsb")
+      fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/rounded_image.frag.qsb")
 
       // Qt6 specific properties - ensure proper blending
       supportsAtlasTextures: false
@@ -72,12 +72,14 @@ Rectangle {
     }
 
     // Fallback icon
-    NIcon {
-      anchors.centerIn: parent
-      icon: fallbackIcon
-      font.pointSize: fallbackIconSize
-      visible: fallbackIcon !== undefined && fallbackIcon !== "" && (imagePath === undefined || imagePath === "")
-      z: 0
+    Loader {
+      active: fallbackIcon !== undefined && fallbackIcon !== "" && (imagePath === undefined || imagePath === "")
+      sourceComponent: NIcon {
+        anchors.centerIn: parent
+        icon: fallbackIcon
+        font.pointSize: fallbackIconSize
+        z: 0
+      }
     }
   }
 

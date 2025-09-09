@@ -728,7 +728,7 @@ Loader {
                 border.width: Math.max(1, Style.borderM * scaling)
 
                 NIcon {
-                   id: iconPower
+                  id: iconPower
                   anchors.centerIn: parent
                   icon: "power"
                   font.pointSize: Style.fontSizeXXXL * scaling

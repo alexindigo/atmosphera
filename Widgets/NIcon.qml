@@ -8,7 +8,7 @@ Text {
   property string icon: defaultIcon
 
   text: {
-    if (Bootstrap.icons[icon] === undefined) {
+    if (icon === undefined || Bootstrap.icons[icon] === undefined) {
       Logger.warn("Icon", `"${icon}"`, "doesn't exist in the bootstrap font")
       Logger.callStack()
       return Bootstrap.icons[defaultIcon]
