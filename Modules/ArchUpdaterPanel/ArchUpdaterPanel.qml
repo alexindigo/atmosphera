@@ -28,7 +28,7 @@ NPanel {
         spacing: Style.marginM * scaling
 
         NIcon {
-          icon: "system_update_alt"
+          icon: "box"
           font.pointSize: Style.fontSizeXXL * scaling
           color: Color.mPrimary
         }
@@ -103,7 +103,7 @@ NPanel {
         } // Spacer
 
         NIcon {
-          icon: "hourglass_empty"
+          icon: "hourglass"
           font.pointSize: Style.fontSizeXXXL * scaling
           color: Color.mPrimary
           Layout.alignment: Qt.AlignHCenter
@@ -181,7 +181,7 @@ NPanel {
           spacing: Style.marginM * scaling
 
           NIcon {
-            icon: "package"
+            icon: "box"
             font.pointSize: Style.fontSizeXXXL * scaling
             color: Color.mError
             Layout.alignment: Qt.AlignHCenter
@@ -219,7 +219,7 @@ NPanel {
           spacing: Style.marginM * scaling
 
           NIcon {
-            icon: "exclamation"
+            icon: "exclamation-triangle"
             font.pointSize: Style.fontSizeXXXL * scaling
             color: Color.mError
             Layout.alignment: Qt.AlignHCenter
@@ -270,7 +270,7 @@ NPanel {
           spacing: Style.marginM * scaling
 
           NIcon {
-            icon: "exclamation"
+            icon: "exclamation-triangle"
             font.pointSize: Style.fontSizeXXXL * scaling
             color: Color.mError
             Layout.alignment: Qt.AlignHCenter

@@ -11,7 +11,7 @@ Singleton {
   // Choose icon based on charge and charging state
   function getIcon(percent, charging, isReady) {
     if (!isReady) {
-      return "exclamation-diamond"
+      return "exclamation-triangle"
     }
 
     if (charging) {

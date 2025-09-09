@@ -80,26 +80,29 @@ Rectangle {
     spacing: Style.marginXS * scaling
 
     // Icon (optional)
-    NIcon {
-      Layout.alignment: Qt.AlignVCenter
-      visible: root.icon !== ""
-      icon: root.icon
-      font.pointSize: root.iconSize
-      color: {
-        if (!root.enabled)
-          return Color.mOnSurfaceVariant
-        if (root.outlined) {
-          if (root.pressed || root.hovered)
-            return root.backgroundColor
-          return root.backgroundColor
-        }
-        return root.textColor
-      }
+    Loader {
+      active: root.icon !== ""
+      sourceComponent: NIcon {
+        Layout.alignment: Qt.AlignVCenter
 
-      Behavior on color {
-        ColorAnimation {
-          duration: Style.animationFast
-          easing.type: Easing.OutCubic
+        icon: root.icon
+        font.pointSize: root.iconSize
+        color: {
+          if (!root.enabled)
+            return Color.mOnSurfaceVariant
+          if (root.outlined) {
+            if (root.pressed || root.hovered)
+              return root.backgroundColor
+            return root.backgroundColor
+          }
+          return root.textColor
+        }
+
+        Behavior on color {
+          ColorAnimation {
+            duration: Style.animationFast
+            easing.type: Easing.OutCubic
+          }
         }
       }
     }

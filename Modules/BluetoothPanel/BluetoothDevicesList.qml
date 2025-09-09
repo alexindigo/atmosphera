@@ -164,7 +164,7 @@ ColumnLayout {
             }
             return "Connect"
           }
-          icon: (isBusy ? "hourglass_full" : null)
+          icon: (isBusy ? "hourglass-split" : null)
           onClicked: {
             if (modelData.connected) {
               BluetoothService.disconnectDevice(modelData)

@@ -91,7 +91,7 @@ NPanel {
           spacing: Style.marginS * scaling
 
           NIcon {
-            icon: "error"
+            icon: "exclamation-triangle"
             font.pointSize: Style.fontSizeL * scaling
             color: Color.mError
           }

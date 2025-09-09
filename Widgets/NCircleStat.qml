@@ -88,20 +88,21 @@ Rectangle {
       // Tiny circular badge for the icon, positioned using anchors within the gauge
       Rectangle {
         id: iconBadge
-        width: 28 * scaling * contentScale
+        width: iconText.implicitWidth + Style.marginXS * scaling
         height: width
         radius: width / 2
-        color: Color.mSurface
+        color: Color.mPrimary
         anchors.right: parent.right
         anchors.top: parent.top
-        anchors.rightMargin: -6 * scaling * contentScale
-        anchors.topMargin: Style.marginXXS * scaling * contentScale
+        anchors.rightMargin: Style.marginXXS * scaling * contentScale
+        anchors.topMargin: Style.marginXS * scaling * contentScale
 
         NIcon {
+          id: iconText
           anchors.centerIn: parent
           icon: root.icon
-          font.pointSize: Style.fontSizeLargeXL * scaling * contentScale
-          color: Color.mOnSurface
+          font.pointSize: Style.fontSizeS * scaling * contentScale
+          color: Color.mOnPrimary
           horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter
         }
