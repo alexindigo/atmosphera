@@ -25,8 +25,6 @@ Item {
     anchors.verticalCenter: parent.verticalCenter
     rightOpen: BarWidgetRegistry.getNPillDirection(root)
     icon: "keyboard"
-    iconCircleColor: Color.mPrimary
-    collapsedIconColor: Color.mOnSurface
     autoHide: false // Important to be false so we can hover as long as we want
     text: currentLayout
     tooltipText: "Keyboard layout: " + currentLayout
