@@ -66,7 +66,7 @@ ColumnLayout {
 
         // One device BT icon
         NIcon {
-          text: BluetoothService.getDeviceIcon(modelData)
+          icon: BluetoothService.getDeviceIcon(modelData)
           font.pointSize: Style.fontSizeXXL * scaling
           color: getContentColor(Color.mOnSurface)
           Layout.alignment: Qt.AlignVCenter
@@ -164,7 +164,7 @@ ColumnLayout {
             }
             return "Connect"
           }
-          icon: (isBusy ? "hourglass_full" : null)
+          icon: (isBusy ? "hourglass-split" : null)
           onClicked: {
             if (modelData.connected) {
               BluetoothService.disconnectDevice(modelData)

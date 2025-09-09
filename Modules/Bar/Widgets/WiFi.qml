@@ -23,7 +23,7 @@ NIconButton {
   icon: {
     try {
       if (NetworkService.ethernetConnected) {
-        return "lan"
+        return "ethernet"
       }
       let connected = false
       let signalStrength = 0
@@ -34,7 +34,7 @@ NIconButton {
           break
         }
       }
-      return connected ? NetworkService.signalIcon(signalStrength) : "wifi_find"
+      return connected ? NetworkService.signalIcon(signalStrength) : "wifi-off"
     } catch (error) {
       Logger.error("Wi-Fi", "Error getting icon:", error)
       return "signal_wifi_bad"

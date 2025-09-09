@@ -39,7 +39,7 @@ Item {
   // Test mode
   readonly property bool testMode: false
   readonly property int testPercent: 50
-  readonly property bool testCharging: true
+  readonly property bool testCharging: false
 
   // Main properties
   readonly property var battery: UPower.displayDevice
@@ -57,9 +57,7 @@ Item {
     // Only notify once we are a below threshold
     if (!charging && !root.hasNotifiedLowBattery && percent <= warningThreshold) {
       root.hasNotifiedLowBattery = true
-      // Maybe go with toast ?
-      Quickshell.execDetached(
-            ["notify-send", "-u", "critical", "-i", "battery-caution", "Low Battery", `Battery is at ${p}%. Please connect charger.`])
+      ToastService.showWarning("Low Battery", `Battery is at ${Math.round(percent)}%. Please connect the charger.`)
     } else if (root.hasNotifiedLowBattery && (charging || percent > warningThreshold + 5)) {
       // Reset when charging starts or when battery recovers 5% above threshold
       root.hasNotifiedLowBattery = false
@@ -87,11 +85,7 @@ Item {
     rightOpen: BarWidgetRegistry.getNPillDirection(root)
     icon: testMode ? BatteryService.getIcon(testPercent, testCharging, true) : BatteryService.getIcon(percent,
                                                                                                       charging, isReady)
-    iconRotation: -90
-    text: ((isReady && battery.isLaptopBattery) || testMode) ? Math.round(percent) + "%" : "-"
-    textColor: charging ? Color.mPrimary : Color.mOnSurface
-    iconCircleColor: Color.mPrimary
-    collapsedIconColor: Color.mOnSurface
+    text: (isReady || testMode) ? Math.round(percent) + "%" : "-"
     autoHide: false
     forceOpen: isReady && (testMode || battery.isLaptopBattery) && alwaysShowPercentage
     disableOpen: (!isReady || (!testMode && !battery.isLaptopBattery))

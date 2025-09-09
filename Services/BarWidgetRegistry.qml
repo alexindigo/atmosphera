@@ -84,7 +84,8 @@ Singleton {
                                     "showCpuTemp": true,
                                     "showMemoryUsage": true,
                                     "showMemoryAsPercent": false,
-                                    "showNetworkStats": false
+                                    "showNetworkStats": false,
+                                    "showDiskUsage": false
                                   },
                                   "Workspace": {
                                     "allowUserSettings": true,

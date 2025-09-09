@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import qs.Commons
+import qs.Services
 import qs.Widgets
 
 Popup {
@@ -129,7 +130,7 @@ Popup {
           spacing: Style.marginS * scaling
 
           NIcon {
-            text: "palette"
+            icon: "eyedropper"
             font.pointSize: Style.fontSizeXXL * scaling
             color: Color.mPrimary
           }
@@ -147,7 +148,7 @@ Popup {
         }
 
         NIconButton {
-          icon: "close"
+          icon: "x-lg"
           onClicked: root.close()
         }
       }
@@ -491,7 +492,7 @@ Popup {
         NButton {
           id: cancelButton
           text: "Cancel"
-          icon: "close"
+          icon: "x-lg"
           outlined: cancelButton.hovered ? false : true
           customHeight: 36 * scaling
           customWidth: 100 * scaling
@@ -502,7 +503,7 @@ Popup {
 
         NButton {
           text: "Apply"
-          icon: "check"
+          icon: "check-lg"
           customHeight: 36 * scaling
           customWidth: 100 * scaling
           onClicked: {

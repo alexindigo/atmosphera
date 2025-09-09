@@ -85,7 +85,7 @@ NBox {
       }
 
       NIconButton {
-        icon: "add"
+        icon: "plus-lg"
 
         colorBg: Color.mPrimary
         colorFg: Color.mOnPrimary
@@ -170,7 +170,7 @@ NBox {
                 Loader {
                   active: BarWidgetRegistry.widgetHasUserSettings(modelData.id)
                   sourceComponent: NIconButton {
-                    icon: "settings"
+                    icon: "gear"
                     sizeRatio: 0.6
                     colorBorder: Qt.alpha(Color.mOutline, Style.opacityLight)
                     colorBg: Color.mOnSurface
@@ -210,7 +210,7 @@ NBox {
                 }
 
                 NIconButton {
-                  icon: "close"
+                  icon: "x-lg"
                   sizeRatio: 0.6
                   colorBorder: Qt.alpha(Color.mOutline, Style.opacityLight)
                   colorBg: Color.mOnSurface

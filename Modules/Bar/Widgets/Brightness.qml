@@ -46,8 +46,7 @@ Item {
   function getIcon() {
     var monitor = getMonitor()
     var brightness = monitor ? monitor.brightness : 0
-    return brightness <= 0 ? "brightness_1" : brightness < 0.33 ? "brightness_low" : brightness
-                                                                  < 0.66 ? "brightness_medium" : "brightness_high"
+    return brightness <= 0.5 ? "brightness-low" : "brightness-high"
   }
 
   // Connection used to open the pill when brightness changes
@@ -80,8 +79,6 @@ Item {
 
     rightOpen: BarWidgetRegistry.getNPillDirection(root)
     icon: getIcon()
-    iconCircleColor: Color.mPrimary
-    collapsedIconColor: Color.mOnSurface
     autoHide: false // Important to be false so we can hover as long as we want
     text: {
       var monitor = getMonitor()

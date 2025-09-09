@@ -62,17 +62,17 @@ Singleton {
     }
 
     if (icon.includes("mouse") || name.includes("mouse")) {
-      return "mouse"
+      return "mouse-2"
     }
     if (icon.includes("keyboard") || name.includes("keyboard")) {
       return "keyboard"
     }
     if (icon.includes("phone") || name.includes("phone") || name.includes("iphone") || name.includes("android")
         || name.includes("samsung")) {
-      return "smartphone"
+      return "phone"
     }
     if (icon.includes("watch") || name.includes("watch")) {
-      return "watch"
+      return "smartwatch"
     }
     if (icon.includes("speaker") || name.includes("speaker")) {
       return "speaker"

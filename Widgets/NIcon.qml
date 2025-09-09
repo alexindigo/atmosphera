@@ -1,19 +1,22 @@
 import QtQuick
+import QtQuick.Layouts
 import qs.Commons
 import qs.Widgets
-import QtQuick.Layouts
 
 Text {
-  // Optional layout nudge for optical alignment when used inside Layouts
-  property real layoutTopMargin: 0
-  text: "question_mark"
-  font.family: "Material Symbols Rounded"
-  font.pointSize: Style.fontSizeL * scaling
-  font.variableAxes: {
-    "wght"// slightly bold to ensure all lines looks good
-    : (Font.Normal + Font.Bold) / 2.5
+  readonly property string defaultIcon: "balloon"
+  property string icon: defaultIcon
+
+  text: {
+    if (icon === undefined || Bootstrap.icons[icon] === undefined) {
+      Logger.warn("Icon", `"${icon}"`, "doesn't exist in the bootstrap font")
+      Logger.callStack()
+      return Bootstrap.icons[defaultIcon]
+    }
+    return Bootstrap.icons[icon]
   }
+  font.family: "bootstrap-icons"
+  font.pointSize: Style.fontSizeL * scaling
   color: Color.mOnSurface
   verticalAlignment: Text.AlignVCenter
-  Layout.topMargin: layoutTopMargin
 }

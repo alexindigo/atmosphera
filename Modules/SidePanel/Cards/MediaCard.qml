@@ -31,7 +31,7 @@ NBox {
       }
 
       NIcon {
-        text: "album"
+        icon: "disc"
         font.pointSize: Style.fontSizeXXXL * 2.5 * scaling
         color: Color.mPrimary
         Layout.alignment: Qt.AlignHCenter
@@ -162,14 +162,14 @@ NBox {
             anchors.fill: parent
             anchors.margins: Style.marginXS * scaling
             imagePath: MediaService.trackArtUrl
-            fallbackIcon: "music_note"
+            fallbackIcon: "disc"
             borderColor: Color.mOutline
             borderWidth: Math.max(1, Style.borderS * scaling)
           }
 
           // Fallback icon when no album art available
           NIcon {
-            text: "album"
+            icon: "disc"
             color: Color.mPrimary
             font.pointSize: Style.fontSizeL * 12 * scaling
             visible: !trackArt.visible
@@ -307,7 +307,7 @@ NBox {
 
         // Previous button
         NIconButton {
-          icon: "skip_previous"
+          icon: "skip-start"
           tooltipText: "Previous Media"
           visible: MediaService.canGoPrevious
           onClicked: MediaService.canGoPrevious ? MediaService.previous() : {}
@@ -315,7 +315,7 @@ NBox {
 
         // Play/Pause button
         NIconButton {
-          icon: MediaService.isPlaying ? "pause" : "play_arrow"
+          icon: MediaService.isPlaying ? "pause" : "play"
           tooltipText: MediaService.isPlaying ? "Pause" : "Play"
           visible: (MediaService.canPlay || MediaService.canPause)
           onClicked: (MediaService.canPlay || MediaService.canPause) ? MediaService.playPause() : {}
@@ -323,7 +323,7 @@ NBox {
 
         // Next button
         NIconButton {
-          icon: "skip_next"
+          icon: "skip-end"
           tooltipText: "Next media"
           visible: MediaService.canGoNext
           onClicked: MediaService.canGoNext ? MediaService.next() : {}

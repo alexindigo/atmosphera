@@ -185,6 +185,11 @@ Singleton {
   // Process the message queue
   function processQueue() {
     if (messageQueue.length === 0 || allToasts.length === 0) {
+      // Added this so we don't accidentally get duplicate toasts
+      // if it causes issues, remove it and we'll find a different solution
+      if (allToasts.length === 0 && messageQueue.length > 0) {
+        messageQueue = []
+      }
       isShowingToast = false
       return
     }

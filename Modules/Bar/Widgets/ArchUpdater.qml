@@ -29,15 +29,15 @@ NIconButton {
       return "terminal"
     }
     if (!ArchUpdaterService.aurHelperAvailable) {
-      return "package"
+      return "box"
     }
     if (ArchUpdaterService.aurBusy) {
-      return "sync"
+      return "arrow-repeat"
     }
     if (ArchUpdaterService.totalUpdates > 0) {
-      return "system_update_alt"
+      return "box-fill"
     }
-    return "task_alt"
+    return "box"
   }
 
   // Tooltip with repo vs AUR breakdown and sample lists

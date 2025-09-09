@@ -31,7 +31,7 @@ NPanel {
         spacing: Style.marginM * scaling
 
         NIcon {
-          text: "notifications"
+          icon: "bell"
           font.pointSize: Style.fontSizeXXL * scaling
           color: Color.mPrimary
         }
@@ -45,21 +45,21 @@ NPanel {
         }
 
         NIconButton {
-          icon: Settings.data.notifications.doNotDisturb ? "notifications_off" : "notifications_active"
+          icon: Settings.data.notifications.doNotDisturb ? "bell-slash" : "bell"
           tooltipText: Settings.data.notifications.doNotDisturb ? "'Do Not Disturb' is enabled." : "'Do Not Disturb' is disabled."
           sizeRatio: 0.8
           onClicked: Settings.data.notifications.doNotDisturb = !Settings.data.notifications.doNotDisturb
         }
 
         NIconButton {
-          icon: "delete"
+          icon: "trash"
           tooltipText: "Clear history"
           sizeRatio: 0.8
           onClicked: NotificationService.clearHistory()
         }
 
         NIconButton {
-          icon: "close"
+          icon: "x-lg"
           tooltipText: "Close"
           sizeRatio: 0.8
           onClicked: {
@@ -85,7 +85,7 @@ NPanel {
         }
 
         NIcon {
-          text: "notifications_off"
+          icon: "bell-slash"
           font.pointSize: 64 * scaling
           color: Color.mOnSurfaceVariant
           Layout.alignment: Qt.AlignHCenter
@@ -175,7 +175,7 @@ NPanel {
 
             // Delete button
             NIconButton {
-              icon: "delete"
+              icon: "trash"
               tooltipText: "Delete notification"
               sizeRatio: 0.7
               Layout.alignment: Qt.AlignTop

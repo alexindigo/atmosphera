@@ -13,6 +13,7 @@ Singleton {
   property ListModel displayFonts: ListModel {}
   property bool fontsLoaded: false
 
+  // -------------------------------------------
   function init() {
     Logger.log("Font", "Service started")
     loadSystemFonts()

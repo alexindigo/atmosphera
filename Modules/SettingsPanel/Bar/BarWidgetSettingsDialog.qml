@@ -84,7 +84,7 @@ Popup {
       }
 
       NIconButton {
-        icon: "close"
+        icon: "x-lg"
         onClicked: settingsPopup.close()
       }
     }
@@ -107,6 +107,7 @@ Popup {
     RowLayout {
       Layout.fillWidth: true
       Layout.topMargin: Style.marginM * scaling
+      spacing: Style.marginM * scaling
 
       Item {
         Layout.fillWidth: true
@@ -120,7 +121,7 @@ Popup {
 
       NButton {
         text: "Apply"
-        icon: "check"
+        icon: "check-lg"
         onClicked: {
           if (settingsLoader.item && settingsLoader.item.saveSettings) {
             var newSettings = settingsLoader.item.saveSettings()

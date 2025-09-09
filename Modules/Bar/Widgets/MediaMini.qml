@@ -38,8 +38,9 @@ RowLayout {
   readonly property string visualizerType: (widgetSettings.visualizerType !== undefined && widgetSettings.visualizerType
                                             !== "") ? widgetSettings.visualizerType : widgetMetadata.visualizerType
 
-  readonly property real minWidth: 160
-  readonly property real maxWidth: 400
+  // 6% of total width
+  readonly property real minWidth: Math.max(1, screen.width * 0.06)
+  readonly property real maxWidth: minWidth * 2
 
   function getTitle() {
     return MediaService.trackTitle + (MediaService.trackArtist !== "" ? ` - ${MediaService.trackArtist}` : "")
@@ -134,7 +135,7 @@ RowLayout {
 
         NIcon {
           id: windowIcon
-          text: MediaService.isPlaying ? "pause" : "play_arrow"
+          text: MediaService.isPlaying ? "pause" : "play"
           font.pointSize: Style.fontSizeL * scaling
           verticalAlignment: Text.AlignVCenter
           Layout.alignment: Qt.AlignVCenter
@@ -154,7 +155,8 @@ RowLayout {
               id: trackArt
               anchors.fill: parent
               imagePath: MediaService.trackArtUrl
-              fallbackIcon: MediaService.isPlaying ? "pause" : "play_arrow"
+              fallbackIcon: MediaService.isPlaying ? "pause" : "play"
+              fallbackIconSize: 10 * scaling
               borderWidth: 0
               border.color: Color.transparent
             }
@@ -178,7 +180,7 @@ RowLayout {
           font.weight: Style.fontWeightMedium
           elide: Text.ElideRight
           verticalAlignment: Text.AlignVCenter
-          color: Color.mTertiary
+          color: Color.mSecondary
 
           Behavior on Layout.preferredWidth {
             NumberAnimation {

@@ -85,8 +85,8 @@ RowLayout {
     indicator: NIcon {
       x: combo.width - width - Style.marginM * scaling
       y: combo.topPadding + (combo.availableHeight - height) / 2
-      text: "arrow_drop_down"
-      font.pointSize: Style.fontSizeXXL * scaling
+      icon: "chevron-down"
+      font.pointSize: Style.fontSizeL * scaling
     }
 
     popup: Popup {

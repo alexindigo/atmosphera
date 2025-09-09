@@ -29,27 +29,27 @@ NPanel {
   property int selectedIndex: 0
   readonly property var powerOptions: [{
       "action": "lock",
-      "icon": "lock_outline",
+      "icon": "lock",
       "title": "Lock",
       "subtitle": "Lock your session"
     }, {
       "action": "suspend",
-      "icon": "bedtime",
+      "icon": "pause-circle",
       "title": "Suspend",
       "subtitle": "Put the system to sleep"
     }, {
       "action": "reboot",
-      "icon": "refresh",
+      "icon": "arrow-repeat",
       "title": "Reboot",
       "subtitle": "Restart the system"
     }, {
       "action": "logout",
-      "icon": "exit_to_app",
+      "icon": "escape",
       "title": "Logout",
       "subtitle": "End your session"
     }, {
       "action": "shutdown",
-      "icon": "power_settings_new",
+      "icon": "power",
       "title": "Shutdown",
       "subtitle": "Turn off the system",
       "isShutdown": true
@@ -276,7 +276,7 @@ NPanel {
         }
 
         NIconButton {
-          icon: timerActive ? "back_hand" : "close"
+          icon: timerActive ? "x-square" : "x-lg"
           tooltipText: timerActive ? "Cancel Timer" : "Close"
           Layout.alignment: Qt.AlignVCenter
           colorBg: timerActive ? Qt.alpha(Color.mError, 0.08) : Color.transparent
@@ -360,7 +360,7 @@ NPanel {
         id: iconElement
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
-        text: buttonRoot.icon
+        icon: buttonRoot.icon
         color: {
           if (buttonRoot.pending)
             return Color.mPrimary

@@ -28,7 +28,7 @@ NBox {
     }
     // Performance
     NIconButton {
-      icon: "speed"
+      icon: "speedometer2"
       tooltipText: "Set performance power profile."
       enabled: hasPP
       opacity: enabled ? Style.opacityFull : Style.opacityMedium
@@ -37,12 +37,13 @@ NBox {
       onClicked: {
         if (enabled) {
           powerProfiles.profile = PowerProfile.Performance
+          ToastService.showNotice("Power Profile", "Performance")
         }
       }
     }
     // Balanced
     NIconButton {
-      icon: "balance"
+      icon: "yin-yang"
       tooltipText: "Set balanced power profile."
       enabled: hasPP
       opacity: enabled ? Style.opacityFull : Style.opacityMedium
@@ -51,12 +52,13 @@ NBox {
       onClicked: {
         if (enabled) {
           powerProfiles.profile = PowerProfile.Balanced
+          ToastService.showNotice("Power Profile", "Balanced")
         }
       }
     }
     // Eco
     NIconButton {
-      icon: "eco"
+      icon: "leaf"
       tooltipText: "Set eco power profile."
       enabled: hasPP
       opacity: enabled ? Style.opacityFull : Style.opacityMedium
@@ -65,6 +67,7 @@ NBox {
       onClicked: {
         if (enabled) {
           powerProfiles.profile = PowerProfile.PowerSaver
+          ToastService.showNotice("Power Profile", "Power Saver")
         }
       }
     }

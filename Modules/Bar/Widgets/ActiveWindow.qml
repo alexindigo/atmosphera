@@ -33,28 +33,34 @@ RowLayout {
 
   readonly property bool showIcon: (widgetSettings.showIcon !== undefined) ? widgetSettings.showIcon : widgetMetadata.showIcon
 
-  readonly property real minWidth: 160
-  readonly property real maxWidth: 400
-  Layout.alignment: Qt.AlignVCenter
-  spacing: Style.marginS * scaling
-  visible: getTitle() !== ""
+  // 6% of total width
+  readonly property real minWidth: Math.max(1, screen.width * 0.06)
+  readonly property real maxWidth: minWidth * 2
 
   function getTitle() {
     return CompositorService.focusedWindowTitle !== "(No active window)" ? CompositorService.focusedWindowTitle : ""
   }
 
+  Layout.alignment: Qt.AlignVCenter
+  spacing: Style.marginS * scaling
+  visible: getTitle() !== ""
+
   function getAppIcon() {
     // Try CompositorService first
     const focusedWindow = CompositorService.getFocusedWindow()
     if (focusedWindow && focusedWindow.appId) {
-      return Icons.iconForAppId(focusedWindow.appId.toLowerCase())
+      const idValue = focusedWindow.appId
+      const normalizedId = (typeof idValue === 'string') ? idValue : String(idValue)
+      return Icons.iconForAppId(normalizedId.toLowerCase())
     }
 
     // Fallback to ToplevelManager
     if (ToplevelManager && ToplevelManager.activeToplevel) {
       const activeToplevel = ToplevelManager.activeToplevel
       if (activeToplevel.appId) {
-        return Icons.iconForAppId(activeToplevel.appId.toLowerCase())
+        const idValue2 = activeToplevel.appId
+        const normalizedId2 = (typeof idValue2 === 'string') ? idValue2 : String(idValue2)
+        return Icons.iconForAppId(normalizedId2.toLowerCase())
       }
     }
 
@@ -123,7 +129,7 @@ RowLayout {
           font.weight: Style.fontWeightMedium
           elide: mouseArea.containsMouse ? Text.ElideNone : Text.ElideRight
           verticalAlignment: Text.AlignVCenter
-          color: Color.mSecondary
+          color: Color.mPrimary
           clip: true
 
           Behavior on Layout.preferredWidth {

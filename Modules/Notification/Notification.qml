@@ -205,14 +205,12 @@ Variants {
                 Layout.fillWidth: true
                 spacing: Style.marginM * scaling
 
-                // Avatar
+                // Image
                 NImageCircled {
-                  id: appAvatar
                   Layout.preferredWidth: 40 * scaling
                   Layout.preferredHeight: 40 * scaling
                   Layout.alignment: Qt.AlignTop
                   imagePath: model.image && model.image !== "" ? model.image : ""
-                  fallbackIcon: ""
                   borderColor: Color.transparent
                   borderWidth: 0
                   visible: (model.image && model.image !== "")
@@ -294,7 +292,7 @@ Variants {
 
             // Close button positioned absolutely
             NIconButton {
-              icon: "close"
+              icon: "x-lg"
               tooltipText: "Close"
               sizeRatio: 0.6
               anchors.top: parent.top

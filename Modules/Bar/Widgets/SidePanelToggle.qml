@@ -33,7 +33,7 @@ NIconButton {
   readonly property bool useDistroLogo: (widgetSettings.useDistroLogo
                                          !== undefined) ? widgetSettings.useDistroLogo : widgetMetadata.useDistroLogo
 
-  icon: useDistroLogo ? "" : "widgets"
+  icon: useDistroLogo ? "" : "layout-sidebar-inset-reverse"
   tooltipText: "Open side panel."
   sizeRatio: 0.8
 

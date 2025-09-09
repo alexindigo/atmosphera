@@ -60,6 +60,7 @@ Rectangle {
     anchors.centerIn: parent
     font.pointSize: Style.fontSizeS * scaling
     font.weight: Style.fontWeightBold
+    color: Color.mPrimary
   }
 
   NTooltip {

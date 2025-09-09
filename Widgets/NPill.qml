@@ -9,21 +9,15 @@ Item {
   property string icon: ""
   property string text: ""
   property string tooltipText: ""
-  property color pillColor: Color.mSurfaceVariant
-  property color textColor: Color.mOnSurface
-  property color iconCircleColor: Color.mPrimary
-  property color iconTextColor: Color.mSurface
-  property color collapsedIconColor: Color.mOnSurface
-
-  property real iconRotation: 0
   property real sizeRatio: 0.8
   property bool autoHide: false
   property bool forceOpen: false
   property bool disableOpen: false
   property bool rightOpen: false
+  property bool hovered: false
 
   // Effective shown state (true if hovered/animated open or forced)
-  readonly property bool effectiveShown: forceOpen || showPill
+  readonly property bool revealed: forceOpen || showPill
 
   signal shown
   signal hidden
@@ -50,14 +44,14 @@ Item {
 
   Rectangle {
     id: pill
-    width: effectiveShown ? maxPillWidth : 1
+    width: revealed ? maxPillWidth : 1
     height: pillHeight
 
     x: rightOpen ? (iconCircle.x + iconCircle.width / 2) : // Opens right
                    (iconCircle.x + iconCircle.width / 2) - width // Opens left
 
-    opacity: effectiveShown ? Style.opacityFull : Style.opacityNone
-    color: pillColor
+    opacity: revealed ? Style.opacityFull : Style.opacityNone
+    color: Color.mSurfaceVariant
 
     topLeftRadius: rightOpen ? 0 : pillHeight * 0.5
     bottomLeftRadius: rightOpen ? 0 : pillHeight * 0.5
@@ -77,8 +71,8 @@ Item {
       text: root.text
       font.pointSize: Style.fontSizeXS * scaling
       font.weight: Style.fontWeightBold
-      color: textColor
-      visible: effectiveShown
+      color: Color.mPrimary
+      visible: revealed
     }
 
     Behavior on width {
@@ -102,11 +96,8 @@ Item {
     width: iconSize
     height: iconSize
     radius: width * 0.5
-    // When forced shown, match pill background; otherwise use accent when hovered
-    color: forceOpen ? pillColor : (showPill ? iconCircleColor : Color.mSurfaceVariant)
+    color: hovered && !forceOpen ? Color.mPrimary : Color.mSurfaceVariant
     anchors.verticalCenter: parent.verticalCenter
-    border.width: Math.max(1, Style.borderS * scaling)
-    border.color: forceOpen ? Qt.alpha(Color.mOutline, 0.5) : Color.transparent
 
     x: rightOpen ? 0 : (parent.width - width)
 
@@ -118,11 +109,9 @@ Item {
     }
 
     NIcon {
-      text: root.icon
-      rotation: root.iconRotation
+      icon: root.icon
       font.pointSize: Style.fontSizeM * scaling
-      // When forced shown, use pill text color; otherwise accent color when hovered
-      color: forceOpen ? textColor : (showPill ? iconTextColor : Color.mOnSurface)
+      color: hovered && !forceOpen ? Color.mOnPrimary : Color.mOnSurface
       // Center horizontally
       x: (iconCircle.width - width) / 2
       // Center vertically accounting for font metrics
@@ -220,6 +209,7 @@ Item {
     hoverEnabled: true
     acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
     onEntered: {
+      hovered = true
       root.entered()
       tooltip.show()
       if (disableOpen) {
@@ -230,6 +220,7 @@ Item {
       }
     }
     onExited: {
+      hovered = false
       root.exited()
       if (!forceOpen) {
         hide()

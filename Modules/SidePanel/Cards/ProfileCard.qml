@@ -47,7 +47,8 @@ NBox {
       }
       NText {
         text: `System uptime: ${uptimeText}`
-        color: Color.mOnSurface
+        font.pointSize: Style.fontSizeS * scaling
+        color: Color.mOnSurfaceVariant
       }
     }
 
@@ -58,7 +59,7 @@ NBox {
         Layout.fillWidth: true
       }
       NIconButton {
-        icon: "settings"
+        icon: "gear"
         tooltipText: "Open settings."
         onClicked: {
           settingsPanel.requestedTab = SettingsPanel.Tab.General
@@ -68,7 +69,7 @@ NBox {
 
       NIconButton {
         id: powerButton
-        icon: "power_settings_new"
+        icon: "power"
         tooltipText: "Power menu."
         onClicked: {
           powerPanel.open(screen)
@@ -78,7 +79,7 @@ NBox {
 
       NIconButton {
         id: closeButton
-        icon: "close"
+        icon: "x-lg"
         tooltipText: "Close side panel."
         onClicked: {
           sidePanel.close()

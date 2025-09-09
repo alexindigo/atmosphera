@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import qs.Commons
 import qs.Widgets
+import qs.Services
 
 // Input and button row
 RowLayout {
@@ -13,7 +14,7 @@ RowLayout {
   property string placeholderText: ""
   property string text: ""
   property string actionButtonText: "Test"
-  property string actionButtonIcon: "play_arrow"
+  property string actionButtonIcon: "play"
   property bool actionButtonEnabled: text !== ""
 
   // Signals

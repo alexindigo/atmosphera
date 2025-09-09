@@ -57,7 +57,7 @@ RowLayout {
     NIcon {
       visible: root.checked
       anchors.centerIn: parent
-      text: "check"
+      icon: "check-lg"
       color: root.activeOnColor
       font.pointSize: Math.max(Style.fontSizeS, root.baseSize * 0.7) * scaling
     }

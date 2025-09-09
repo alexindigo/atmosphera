@@ -112,23 +112,13 @@ Item {
     RowLayout {
       id: contentLayout
       anchors.fill: parent
-      anchors.margins: Style.marginM * scaling
-      spacing: Style.marginS * scaling
+      anchors.margins: Style.marginL * scaling
+      spacing: Style.marginL * scaling
 
       // Icon
       NIcon {
         id: icon
-        text: {
-          switch (root.type) {
-          case "warning":
-            return "warning"
-          case "notice":
-            return "info"
-          default:
-            return "info"
-          }
-        }
-
+        icon: (root.type == "warning") ? "exclamation-triangle" : "check-circle"
         color: {
           switch (root.type) {
           case "warning":
@@ -172,7 +162,7 @@ Item {
 
       // Close button (only if persistent or manual dismiss needed)
       NIconButton {
-        icon: "close"
+        icon: "x-lg"
         visible: root.persistent || root.duration === 0
 
         colorBg: Color.mSurfaceVariant

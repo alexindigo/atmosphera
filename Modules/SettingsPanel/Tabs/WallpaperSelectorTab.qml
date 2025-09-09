@@ -96,7 +96,7 @@ ColumnLayout {
     }
 
     NIconButton {
-      icon: "refresh"
+      icon: "arrow-repeat"
       tooltipText: "Refresh wallpaper list"
       onClicked: {
         WallpaperService.refreshWallpapersList()
@@ -181,7 +181,7 @@ ColumnLayout {
           visible: isSelected
 
           NIcon {
-            text: "check"
+            icon: "check-lg"
             font.pointSize: Style.fontSizeM * scaling
             font.weight: Style.fontWeightBold
             color: Color.mOnSecondary

@@ -28,7 +28,7 @@ NPanel {
         spacing: Style.marginM * scaling
 
         NIcon {
-          text: "system_update_alt"
+          icon: "box"
           font.pointSize: Style.fontSizeXXL * scaling
           color: Color.mPrimary
         }
@@ -44,7 +44,7 @@ NPanel {
         // Reset button (only show if update failed)
         NIconButton {
           visible: ArchUpdaterService.updateFailed
-          icon: "refresh"
+          icon: "arrow-repeat"
           tooltipText: "Reset update state"
           sizeRatio: 0.8
           colorBg: Color.mError
@@ -55,7 +55,7 @@ NPanel {
         }
 
         NIconButton {
-          icon: "close"
+          icon: "x-lg"
           tooltipText: "Close"
           sizeRatio: 0.8
           onClicked: root.close()
@@ -103,7 +103,7 @@ NPanel {
         } // Spacer
 
         NIcon {
-          text: "hourglass_empty"
+          icon: "hourglass"
           font.pointSize: Style.fontSizeXXXL * scaling
           color: Color.mPrimary
           Layout.alignment: Qt.AlignHCenter
@@ -143,7 +143,7 @@ NPanel {
           spacing: Style.marginM * scaling
 
           NIcon {
-            text: "terminal"
+            icon: "terminal"
             font.pointSize: Style.fontSizeXXXL * scaling
             color: Color.mError
             Layout.alignment: Qt.AlignHCenter
@@ -181,7 +181,7 @@ NPanel {
           spacing: Style.marginM * scaling
 
           NIcon {
-            text: "package"
+            icon: "box"
             font.pointSize: Style.fontSizeXXXL * scaling
             color: Color.mError
             Layout.alignment: Qt.AlignHCenter
@@ -219,7 +219,7 @@ NPanel {
           spacing: Style.marginM * scaling
 
           NIcon {
-            text: "error"
+            icon: "exclamation-triangle"
             font.pointSize: Style.fontSizeXXXL * scaling
             color: Color.mError
             Layout.alignment: Qt.AlignHCenter
@@ -245,7 +245,7 @@ NPanel {
 
           // Prominent refresh button
           NIconButton {
-            icon: "refresh"
+            icon: "arrow-repeat"
             tooltipText: "Try checking again"
             sizeRatio: 1.2
             colorBg: Color.mPrimary
@@ -270,7 +270,7 @@ NPanel {
           spacing: Style.marginM * scaling
 
           NIcon {
-            text: "error_outline"
+            icon: "exclamation-triangle"
             font.pointSize: Style.fontSizeXXXL * scaling
             color: Color.mError
             Layout.alignment: Qt.AlignHCenter
@@ -295,7 +295,7 @@ NPanel {
 
           // Prominent refresh button
           NIconButton {
-            icon: "refresh"
+            icon: "arrow-repeat"
             tooltipText: "Refresh and try again"
             sizeRatio: 1.2
             colorBg: Color.mPrimary
@@ -323,7 +323,7 @@ NPanel {
           spacing: Style.marginM * scaling
 
           NIcon {
-            text: "check_circle"
+            icon: "check-lg"
             font.pointSize: Style.fontSizeXXXL * scaling
             color: Color.mPrimary
             Layout.alignment: Qt.AlignHCenter
@@ -483,7 +483,7 @@ NPanel {
         spacing: Style.marginL * scaling
 
         NIconButton {
-          icon: "refresh"
+          icon: "arrow-repeat"
           tooltipText: ArchUpdaterService.aurBusy ? "Checking for updates..." : (!ArchUpdaterService.canPoll ? "Refresh available soon" : "Refresh package lists")
           onClicked: {
             ArchUpdaterService.forceRefresh()
@@ -495,7 +495,7 @@ NPanel {
         }
 
         NIconButton {
-          icon: "system_update_alt"
+          icon: "box-fill"
           tooltipText: "Update all packages"
           enabled: ArchUpdaterService.totalUpdates > 0
           onClicked: {
@@ -508,7 +508,7 @@ NPanel {
         }
 
         NIconButton {
-          icon: "check_box"
+          icon: "box"
           tooltipText: "Update selected packages"
           enabled: ArchUpdaterService.selectedPackagesCount > 0
           onClicked: {
