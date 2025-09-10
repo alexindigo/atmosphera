@@ -132,8 +132,8 @@ ColumnLayout {
         onRemoveWidget: (section, index) => _removeWidgetFromSection(section, index)
         onReorderWidget: (section, fromIndex, toIndex) => _reorderWidgetInSection(section, fromIndex, toIndex)
         onUpdateWidgetSettings: (section, index, settings) => _updateWidgetSettingsInSection(section, index, settings)
-        onDragStarted: root.handleDragStart()
-        onDragEnded: root.handleDragEnd()
+        onDragPotentialStarted: root.handleDragStart()
+        onDragPotentialEnded: root.handleDragEnd()
       }
 
       // Center Section
@@ -146,8 +146,8 @@ ColumnLayout {
         onRemoveWidget: (section, index) => _removeWidgetFromSection(section, index)
         onReorderWidget: (section, fromIndex, toIndex) => _reorderWidgetInSection(section, fromIndex, toIndex)
         onUpdateWidgetSettings: (section, index, settings) => _updateWidgetSettingsInSection(section, index, settings)
-        onDragStarted: root.handleDragStart()
-        onDragEnded: root.handleDragEnd()
+        onDragPotentialStarted: root.handleDragStart()
+        onDragPotentialEnded: root.handleDragEnd()
       }
 
       // Right Section
@@ -160,8 +160,8 @@ ColumnLayout {
         onRemoveWidget: (section, index) => _removeWidgetFromSection(section, index)
         onReorderWidget: (section, fromIndex, toIndex) => _reorderWidgetInSection(section, fromIndex, toIndex)
         onUpdateWidgetSettings: (section, index, settings) => _updateWidgetSettingsInSection(section, index, settings)
-        onDragStarted: root.handleDragStart()
-        onDragEnded: root.handleDragEnd()
+        onDragPotentialStarted: root.handleDragStart()
+        onDragPotentialEnded: root.handleDragEnd()
       }
     }
   }

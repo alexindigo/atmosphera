@@ -18,9 +18,11 @@ NBox {
   signal removeWidget(string section, int index)
   signal reorderWidget(string section, int fromIndex, int toIndex)
   signal updateWidgetSettings(string section, int index, var settings)
-  signal dragStarted
-  signal dragEnded
+  signal dragPotentialStarted
+  // Emitted when a widget is pressed (potential drag start)
+  signal dragPotentialEnded
 
+  // Emitted when interaction ends (drag or click)
   color: Color.mSurface
   Layout.fillWidth: true
   Layout.minimumHeight: {
@@ -308,6 +310,7 @@ NBox {
 
         property point startPos: Qt.point(0, 0)
         property bool dragStarted: false
+        property bool potentialDrag: false // Track if we're in a potential drag interaction
         property int draggedIndex: -1
         property real dragThreshold: 15 * scaling
         property Item draggedWidget: null
@@ -406,6 +409,7 @@ NBox {
         onPressed: mouse => {
                      startPos = Qt.point(mouse.x, mouse.y)
                      dragStarted = false
+                     potentialDrag = false
                      draggedIndex = -1
                      draggedWidget = null
                      dropTargetIndex = -1
@@ -422,12 +426,18 @@ NBox {
                            const buttonsStartX = widget.width - (widget.buttonsCount * widget.buttonsWidth)
 
                            if (localX < buttonsStartX) {
+                             // This is a draggable area - prevent panel close immediately
                              draggedIndex = widget.widgetIndex
                              draggedWidget = widget
                              draggedModelData = widget.modelData
+                             potentialDrag = true
                              preventStealing = true
+
+                             // Signal that interaction started (prevents panel close)
+                             root.dragPotentialStarted()
                              break
                            } else {
+                             // This is a button area - let the click through
                              mouse.accepted = false
                              return
                            }
@@ -437,16 +447,13 @@ NBox {
                    }
 
         onPositionChanged: mouse => {
-                             if (draggedIndex !== -1) {
+                             if (draggedIndex !== -1 && potentialDrag) {
                                const deltaX = mouse.x - startPos.x
                                const deltaY = mouse.y - startPos.y
                                const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
 
                                if (!dragStarted && distance > dragThreshold) {
                                  dragStarted = true
-
-                                 // Emit signal when drag starts
-                                 root.dragStarted()
 
                                  // Setup ghost widget
                                  if (draggedWidget) {
@@ -473,13 +480,14 @@ NBox {
                         reorderWidget(sectionId, draggedIndex, dropTargetIndex)
                       }
 
-                      // Emit signal when drag ends (only if it was actually started)
-                      if (dragStarted) {
-                        root.dragEnded()
+                      // Always signal end of interaction if we started one
+                      if (potentialDrag) {
+                        root.dragPotentialEnded()
                       }
 
                       // Reset everything
                       dragStarted = false
+                      potentialDrag = false
                       draggedIndex = -1
                       draggedWidget = null
                       dropTargetIndex = -1
@@ -500,12 +508,13 @@ NBox {
 
         onCanceled: {
           // Handle cancel (e.g., ESC key pressed during drag)
-          if (dragStarted) {
-            root.dragEnded()
+          if (potentialDrag) {
+            root.dragPotentialEnded()
           }
 
           // Reset everything
           dragStarted = false
+          potentialDrag = false
           draggedIndex = -1
           draggedWidget = null
           dropTargetIndex = -1
