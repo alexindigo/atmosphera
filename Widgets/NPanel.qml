@@ -40,8 +40,8 @@ Loader {
   property int buttonWidth: 0
   property int buttonHeight: 0
 
-  // Whether this panel should accept keyboard focus
   property bool panelKeyboardFocus: false
+  property bool backgroundClickEnabled: true
 
   // Animation properties
   readonly property real originalScale: 0.7
@@ -60,6 +60,24 @@ Loader {
 
   Component.onCompleted: {
     PanelService.registerPanel(root)
+  }
+
+  // -----------------------------------------
+  // Functions to control background click behavior
+  function disableBackgroundClick() {
+    backgroundClickEnabled = false
+  }
+
+  function enableBackgroundClick() {
+    // Add a small delay to prevent immediate close after drag release
+    enableBackgroundClickTimer.restart()
+  }
+
+  Timer {
+    id: enableBackgroundClickTimer
+    interval: 100
+    repeat: false
+    onTriggered: backgroundClickEnabled = true
   }
 
   // -----------------------------------------
@@ -110,6 +128,7 @@ Loader {
 
     PanelService.willOpenPanel(root)
 
+    backgroundClickEnabled = true
     active = true
     root.opened()
   }
@@ -125,7 +144,8 @@ Loader {
   function closeCompleted() {
     root.closed()
     active = false
-    useButtonPosition = false // Reset button position usage
+    useButtonPosition = false
+    backgroundClickEnabled = true
     PanelService.closedPanel(root)
   }
 
@@ -179,6 +199,7 @@ Loader {
       // Clicking outside of the rectangle to close
       MouseArea {
         anchors.fill: parent
+        enabled: root.backgroundClickEnabled
         onClicked: root.close()
       }
 
@@ -208,7 +229,7 @@ Loader {
 
             return Math.round(Math.max(minX, Math.min(targetX, maxX)))
           } else if (!panelAnchorHorizontalCenter && panelAnchorLeft) {
-            return Math.round(marginS * scaling)
+            return Math.round(Style.marginS * scaling)
           } else if (!panelAnchorHorizontalCenter && panelAnchorRight) {
             return Math.round(panelWindow.width - panelWidth - (Style.marginS * scaling))
           } else {
