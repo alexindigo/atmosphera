@@ -16,6 +16,8 @@ ColumnLayout {
   // Local, editable state for checkboxes
   property bool valueShowCpuUsage: widgetData.showCpuUsage !== undefined ? widgetData.showCpuUsage : widgetMetadata.showCpuUsage
   property bool valueShowCpuTemp: widgetData.showCpuTemp !== undefined ? widgetData.showCpuTemp : widgetMetadata.showCpuTemp
+  property bool valueShowGpuTemp: widgetData.showGpuTemp !== undefined ? widgetData.showGpuTemp : (widgetMetadata.showGpuTemp
+                                                                                                   || false)
   property bool valueShowMemoryUsage: widgetData.showMemoryUsage !== undefined ? widgetData.showMemoryUsage : widgetMetadata.showMemoryUsage
   property bool valueShowMemoryAsPercent: widgetData.showMemoryAsPercent
                                           !== undefined ? widgetData.showMemoryAsPercent : widgetMetadata.showMemoryAsPercent
@@ -27,6 +29,7 @@ ColumnLayout {
     var settings = Object.assign({}, widgetData || {})
     settings.showCpuUsage = valueShowCpuUsage
     settings.showCpuTemp = valueShowCpuTemp
+    settings.showGpuTemp = valueShowGpuTemp
     settings.showMemoryUsage = valueShowMemoryUsage
     settings.showMemoryAsPercent = valueShowMemoryAsPercent
     settings.showNetworkStats = valueShowNetworkStats
@@ -48,6 +51,14 @@ ColumnLayout {
     label: "CPU temperature"
     checked: valueShowCpuTemp
     onToggled: checked => valueShowCpuTemp = checked
+  }
+
+  NToggle {
+    id: showGpuTemp
+    Layout.fillWidth: true
+    label: "GPU temperature"
+    checked: valueShowGpuTemp
+    onToggled: checked => valueShowGpuTemp = checked
   }
 
   NToggle {

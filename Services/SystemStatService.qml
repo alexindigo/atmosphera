@@ -12,6 +12,7 @@ Singleton {
   // Public values
   property real cpuUsage: 0
   property real cpuTemp: 0
+  property real gpuTemp: 0
   property real memGb: 0
   property real memPercent: 0
   property real diskPercent: 0
@@ -35,6 +36,12 @@ Singleton {
   readonly property var supportedTempCpuSensorNames: ["coretemp", "k10temp", "zenpower"]
   property string cpuTempSensorName: ""
   property string cpuTempHwmonPath: ""
+  // Gpu temperature (simple hwmon read if available)
+  readonly property var supportedTempGpuSensorNames: ["amdgpu", "nvidia", "radeon"]
+  property string gpuTempSensorName: ""
+  property string gpuTempHwmonPath: ""
+  property bool gpuIsDedicated: false
+  property string _gpuPendingAmdPath: ""
   // For Intel coretemp averaging of all cores/sensors
   property var intelTempValues: []
   property int intelTempFilesChecked: 0
@@ -66,6 +73,7 @@ Singleton {
       dfProcess.running = true
 
       updateCpuTemperature()
+      updateGpuTemperature()
     }
   }
 
@@ -115,9 +123,10 @@ Singleton {
   FileView {
     id: cpuTempNameReader
     property int currentIndex: 0
+    printErrors: false
 
     function checkNext() {
-      if (currentIndex >= 10) {
+      if (currentIndex >= 16) {
         // Check up to hwmon10
         Logger.warn("No supported temperature sensor found")
         return
@@ -148,6 +157,105 @@ Singleton {
       Qt.callLater(() => {
                      // Qt.callLater is mandatory
                      checkNext()
+                   })
+    }
+  }
+
+  // ---- GPU temperature detection (hwmon)
+  FileView {
+    id: gpuTempNameReader
+    property int currentIndex: 0
+    printErrors: false
+
+    function checkNext() {
+      if (currentIndex >= 16) {
+        // Check up to hwmon10
+        Logger.warn("SystemStat", "No supported GPU temperature sensor found")
+        return
+      }
+
+      gpuTempNameReader.path = `/sys/class/hwmon/hwmon${currentIndex}/name`
+      gpuTempNameReader.reload()
+    }
+
+    Component.onCompleted: checkNext()
+
+    onLoaded: {
+      const name = text().trim()
+      if (root.supportedTempGpuSensorNames.includes(name)) {
+        const hwPath = `/sys/class/hwmon/hwmon${currentIndex}`
+        if (name === "nvidia") {
+          // Treat NVIDIA as dedicated by default
+          root.gpuTempSensorName = name
+          root.gpuTempHwmonPath = hwPath
+          root.gpuIsDedicated = true
+          Logger.log("SystemStat", `Selected NVIDIA GPU thermal sensor at ${root.gpuTempHwmonPath}`)
+        } else if (name === "amdgpu") {
+          // Probe VRAM to distinguish dGPU vs iGPU
+          root._gpuPendingAmdPath = hwPath
+          vramReader.requestCheck(hwPath)
+        } else if (!root.gpuTempHwmonPath) {
+          // Fallback to first supported sensor (e.g., radeon)
+          root.gpuTempSensorName = name
+          root.gpuTempHwmonPath = hwPath
+          Logger.log("SystemStat", `Selected GPU thermal sensor at ${root.gpuTempHwmonPath}`)
+        }
+      } else {
+        currentIndex++
+        Qt.callLater(() => {
+                       checkNext()
+                     })
+      }
+    }
+
+    onLoadFailed: function (error) {
+      currentIndex++
+      Qt.callLater(() => {
+                     checkNext()
+                   })
+    }
+  }
+
+  // Reader to detect AMD dGPU by checking VRAM presence
+  FileView {
+    id: vramReader
+    property string targetHwmonPath: ""
+    function requestCheck(hwPath) {
+      targetHwmonPath = hwPath
+      vramReader.path = `${hwPath}/device/mem_info_vram_total`
+      vramReader.reload()
+    }
+    printErrors: false
+    onLoaded: {
+      const val = parseInt(text().trim())
+      // If VRAM present (>0), prefer this as dGPU
+      if (!isNaN(val) && val > 0) {
+        root.gpuTempSensorName = "amdgpu"
+        root.gpuTempHwmonPath = targetHwmonPath
+        root.gpuIsDedicated = true
+        Logger.log("SystemStat", `Selected AMD dGPU (VRAM=${val}) at ${root.gpuTempHwmonPath}`)
+      } else if (!root.gpuTempHwmonPath) {
+        // Use as fallback iGPU if nothing selected yet
+        root.gpuTempSensorName = "amdgpu"
+        root.gpuTempHwmonPath = targetHwmonPath
+        root.gpuIsDedicated = false
+        Logger.log("SystemStat", `Selected AMD GPU (no VRAM) at ${root.gpuTempHwmonPath}`)
+      }
+      // Continue scanning other hwmon entries
+      gpuTempNameReader.currentIndex++
+      Qt.callLater(() => {
+                     gpuTempNameReader.checkNext()
+                   })
+    }
+    onLoadFailed: function (error) {
+      // If failed to read VRAM, consider as fallback if none selected
+      if (!root.gpuTempHwmonPath) {
+        root.gpuTempSensorName = "amdgpu"
+        root.gpuTempHwmonPath = targetHwmonPath
+      }
+      gpuTempNameReader.currentIndex++
+      Qt.callLater(() => {
+                     gpuTempNameReader.checkNext()
                    })
     }
   }
@@ -343,6 +451,26 @@ Singleton {
       root.intelTempValues = []
       root.intelTempFilesChecked = 0
       checkNextIntelTemp()
+    }
+  }
+
+  // -------------------------------------------------------
+  // Function to start/refresh the GPU temperature
+  function updateGpuTemperature() {
+    if (!root.gpuTempHwmonPath)
+      return
+    gpuTempReader.path = `${root.gpuTempHwmonPath}/temp1_input`
+    gpuTempReader.reload()
+  }
+
+  FileView {
+    id: gpuTempReader
+    printErrors: false
+    onLoaded: {
+      const data = parseInt(text().trim())
+      if (!isNaN(data)) {
+        root.gpuTemp = Math.round(data / 1000.0)
+      }
     }
   }
 

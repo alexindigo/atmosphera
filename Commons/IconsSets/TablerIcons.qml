@@ -33,6 +33,7 @@ Singleton {
     "upload-speed": "upload",
     "cpu-usage": "brand-speedtest",
     "cpu-temperature": "flame-filled",
+    "gpu-temperature": "device-desktop",
     "memory": "cpu",
     "performance": "gauge-filled",
     "balanced": "scale",

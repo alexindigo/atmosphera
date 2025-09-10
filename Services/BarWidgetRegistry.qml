@@ -81,6 +81,7 @@ Singleton {
                                     "allowUserSettings": true,
                                     "showCpuUsage": true,
                                     "showCpuTemp": true,
+                                    "showGpuTemp": false,
                                     "showMemoryUsage": true,
                                     "showMemoryAsPercent": false,
                                     "showNetworkStats": false,
