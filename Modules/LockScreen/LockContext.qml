@@ -12,6 +12,7 @@ Scope {
   property bool unlockInProgress: false
   property bool showFailure: false
   property string errorMessage: ""
+  property string infoMessage: ""
   property bool pamAvailable: typeof PamContext !== "undefined"
 
   onCurrentTextChanged: {
@@ -47,6 +48,8 @@ Scope {
 
       if (messageIsError) {
         errorMessage = message
+      } else {
+        infoMessage = message
       }
 
       if (responseRequired) {
