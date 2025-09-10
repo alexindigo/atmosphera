@@ -61,7 +61,7 @@ NBox {
       onClicked: {
         var settingsPanel = PanelService.getPanel("settingsPanel")
         settingsPanel.requestedTab = SettingsPanel.Tab.WallpaperSelector
-        settingsPanel.open(screen)
+        settingsPanel.open()
       }
       onRightClicked: {
         WallpaperService.setRandomWallpaper()

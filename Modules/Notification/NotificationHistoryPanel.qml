@@ -12,8 +12,8 @@ import qs.Widgets
 NPanel {
   id: root
 
-  panelWidth: 380 * scaling
-  panelHeight: 500 * scaling
+  preferredWidth: 380
+  preferredHeight: 500
   panelAnchorRight: true
 
   panelContent: Rectangle {

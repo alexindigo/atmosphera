@@ -63,7 +63,7 @@ NBox {
         tooltipText: "Open settings."
         onClicked: {
           settingsPanel.requestedTab = SettingsPanel.Tab.General
-          settingsPanel.open(screen)
+          settingsPanel.open()
         }
       }
 
@@ -72,7 +72,7 @@ NBox {
         icon: "power"
         tooltipText: "Power menu."
         onClicked: {
-          powerPanel.open(screen)
+          powerPanel.open()
           sidePanel.close()
         }
       }

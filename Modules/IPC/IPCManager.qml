@@ -8,17 +8,6 @@ import qs.Services
 Item {
   id: root
 
-  // Using Wayland protocols to get focused window then determine which screen it's on.
-  function getActiveScreen() {
-    const activeWindow = ToplevelManager.activeToplevel
-    if (activeWindow && activeWindow.screens.length > 0) {
-      return activeWindow.screens[0]
-    }
-
-    // Fall back to the primary screen
-    return Quickshell.screens[0]
-  }
-
   IpcHandler {
     target: "screenRecorder"
     function toggle() {
@@ -31,14 +20,14 @@ Item {
   IpcHandler {
     target: "settings"
     function toggle() {
-      settingsPanel.toggle(getActiveScreen())
+      settingsPanel.toggle()
     }
   }
 
   IpcHandler {
     target: "notifications"
     function toggleHistory() {
-      notificationHistoryPanel.toggle(getActiveScreen())
+      notificationHistoryPanel.toggle()
     }
     function toggleDND() {
       Settings.data.notifications.doNotDisturb = !Settings.data.notifications.doNotDisturb
@@ -55,15 +44,15 @@ Item {
   IpcHandler {
     target: "launcher"
     function toggle() {
-      launcherPanel.toggle(getActiveScreen())
+      launcherPanel.toggle()
     }
     function clipboard() {
       launcherPanel.setSearchText(">clip ")
-      launcherPanel.toggle(getActiveScreen())
+      launcherPanel.toggle()
     }
     function calculator() {
       launcherPanel.setSearchText(">calc ")
-      launcherPanel.toggle(getActiveScreen())
+      launcherPanel.toggle()
     }
   }
 
@@ -122,14 +111,14 @@ Item {
   IpcHandler {
     target: "powerPanel"
     function toggle() {
-      powerPanel.toggle(getActiveScreen())
+      powerPanel.toggle()
     }
   }
 
   IpcHandler {
     target: "sidePanel"
     function toggle() {
-      sidePanel.toggle(getActiveScreen())
+      sidePanel.toggle()
     }
   }
 

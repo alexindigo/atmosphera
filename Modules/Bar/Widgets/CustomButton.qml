@@ -70,7 +70,7 @@ NIconButton {
       // No script was defined, open settings
       var settingsPanel = PanelService.getPanel("settingsPanel")
       settingsPanel.requestedTab = SettingsPanel.Tab.Bar
-      settingsPanel.open(screen)
+      settingsPanel.open()
     }
   }
 

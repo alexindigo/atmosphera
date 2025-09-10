@@ -37,6 +37,6 @@ NIconButton {
   onRightClicked: {
     var settingsPanel = PanelService.getPanel("settingsPanel")
     settingsPanel.requestedTab = SettingsPanel.Tab.Brightness
-    settingsPanel.open(screen)
+    settingsPanel.open()
   }
 }

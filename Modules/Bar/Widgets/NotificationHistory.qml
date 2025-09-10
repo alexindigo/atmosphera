@@ -62,7 +62,7 @@ NIconButton {
 
   onClicked: {
     var panel = PanelService.getPanel("notificationHistoryPanel")
-    panel?.toggle(screen, this)
+    panel?.toggle(this)
     Settings.data.notifications.lastSeenTs = Time.timestamp * 1000
   }
 

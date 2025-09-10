@@ -10,12 +10,8 @@ import qs.Widgets
 NBox {
   id: root
 
-  Layout.fillWidth: true
-  Layout.fillHeight: true
-
   ColumnLayout {
     anchors.fill: parent
-    Layout.fillHeight: true
     anchors.margins: Style.marginL * scaling
 
     // No media player detected

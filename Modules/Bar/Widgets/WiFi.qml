@@ -41,5 +41,5 @@ NIconButton {
     }
   }
   tooltipText: "Manage Wi-Fi."
-  onClicked: PanelService.getPanel("wifiPanel")?.toggle(screen, this)
+  onClicked: PanelService.getPanel("wifiPanel")?.toggle(this)
 }
