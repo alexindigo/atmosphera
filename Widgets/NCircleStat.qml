@@ -94,14 +94,13 @@ Rectangle {
         color: Color.mPrimary
         anchors.right: parent.right
         anchors.top: parent.top
-        anchors.rightMargin: Style.marginXXS * scaling * contentScale
-        anchors.topMargin: Style.marginXS * scaling * contentScale
+        anchors.rightMargin: -2 * scaling
+        anchors.topMargin: -2 * scaling
 
         NIcon {
           id: iconText
           anchors.centerIn: parent
           icon: root.icon
-          font.pointSize: Style.fontSizeS * scaling * contentScale
           color: Color.mOnPrimary
           horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter

@@ -18,7 +18,7 @@ NBox {
     Layout.fillHeight: true
     anchors.margins: Style.marginL * scaling
 
-    // Fallback
+    // No media player detected
     ColumnLayout {
       id: fallback
 
@@ -32,7 +32,7 @@ NBox {
 
       NIcon {
         icon: "disc"
-        font.pointSize: Style.fontSizeXXXL * 2.5 * scaling
+        font.pointSize: Style.fontSizeXXXL * 3 * scaling
         color: Color.mPrimary
         Layout.alignment: Qt.AlignHCenter
       }
@@ -89,7 +89,7 @@ NBox {
         indicator: NIcon {
           x: playerSelector.width - width
           y: playerSelector.topPadding + (playerSelector.availableHeight - height) / 2
-          icon: "chevron-down"
+          icon: "caret-down"
           font.pointSize: Style.fontSizeXXL * scaling
           color: Color.mOnSurface
           horizontalAlignment: Text.AlignRight
@@ -156,13 +156,13 @@ NBox {
           color: trackArt.visible ? Color.mPrimary : Color.transparent
           clip: true
 
+          // Can't use fallback icon here, as we have a big disc behind
           NImageCircled {
             id: trackArt
-            visible: MediaService.trackArtUrl.toString() !== ""
+            visible: MediaService.trackArtUrl !== ""
             anchors.fill: parent
             anchors.margins: Style.marginXS * scaling
             imagePath: MediaService.trackArtUrl
-            fallbackIcon: "disc"
             borderColor: Color.mOutline
             borderWidth: Math.max(1, Style.borderS * scaling)
           }
@@ -171,7 +171,7 @@ NBox {
           NIcon {
             icon: "disc"
             color: Color.mPrimary
-            font.pointSize: Style.fontSizeL * 12 * scaling
+            font.pointSize: Style.fontSizeXXXL * 3 * scaling
             visible: !trackArt.visible
             anchors.centerIn: parent
           }
