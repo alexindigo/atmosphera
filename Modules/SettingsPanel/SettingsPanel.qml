@@ -402,11 +402,13 @@ NPanel {
                   anchors.rightMargin: Style.marginS * scaling
                   spacing: Style.marginM * scaling
 
+                  // Tab icon
                   NIcon {
                     icon: modelData.icon
                     color: tabTextColor
                     font.pointSize: Style.fontSizeXL * scaling
                   }
+
                   // Tab label
                   NText {
                     text: modelData.label
@@ -460,7 +462,14 @@ NPanel {
               Layout.fillWidth: true
               spacing: Style.marginS * scaling
 
-              // Tab title
+              // Main icon
+              NIcon {
+                icon: root.tabsModel[currentTabIndex]?.icon
+                color: Color.mPrimary
+                font.pointSize: Style.fontSizeXL * scaling
+              }
+
+              // Main title
               NText {
                 text: root.tabsModel[currentTabIndex]?.label || ""
                 font.pointSize: Style.fontSizeXL * scaling
