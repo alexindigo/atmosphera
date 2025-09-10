@@ -443,6 +443,7 @@ Singleton {
       // night light
       property JsonObject nightLight: JsonObject {
         property bool enabled: false
+        property bool forced: false
         property bool autoSchedule: true
         property string nightTemp: "4000"
         property string dayTemp: "6500"
