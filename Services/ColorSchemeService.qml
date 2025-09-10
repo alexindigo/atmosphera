@@ -48,8 +48,26 @@ Singleton {
     folderModel.folder = "file://" + schemesDirectory
   }
 
-  function applyScheme(filePath) {
+  function getBasename(path) {
+    if (!path)
+      return ""
+    var chunks = path.split("/")
+    var last = chunks[chunks.length - 1]
+    return last.endsWith(".json") ? last.slice(0, -5) : last
+  }
+
+  function resolveSchemePath(nameOrPath) {
+    if (!nameOrPath)
+      return ""
+    if (nameOrPath.indexOf("/") !== -1) {
+      return nameOrPath
+    }
+    return schemesDirectory + "/" + nameOrPath.replace(".json", "") + ".json"
+  }
+
+  function applyScheme(nameOrPath) {
     // Force reload by bouncing the path
+    var filePath = resolveSchemePath(nameOrPath)
     schemeReader.path = ""
     schemeReader.path = filePath
   }
@@ -69,6 +87,17 @@ Singleton {
         schemes = files
         scanning = false
         Logger.log("ColorScheme", "Listed", schemes.length, "schemes")
+        // Normalize stored scheme to basename and re-apply if necessary
+        var stored = Settings.data.colorSchemes.predefinedScheme
+        if (stored) {
+          var basename = getBasename(stored)
+          if (basename !== stored) {
+            Settings.data.colorSchemes.predefinedScheme = basename
+          }
+          if (!Settings.data.colorSchemes.useWallpaperColors) {
+            applyScheme(basename)
+          }
+        }
       }
     }
   }
