@@ -116,6 +116,7 @@ Singleton {
   }
 
   // --------------------------------------------
+  // --------------------------------------------
   // CPU Temperature
   // It's more complex.
   // ----
@@ -161,6 +162,38 @@ Singleton {
     }
   }
 
+  // ----
+  // #2 - Read sensor value
+  FileView {
+    id: cpuTempReader
+    printErrors: false
+
+    onLoaded: {
+      const data = text().trim()
+      if (root.cpuTempSensorName === "coretemp") {
+        // For Intel, collect all temperature values
+        const temp = parseInt(data) / 1000.0
+        //console.log(temp, cpuTempReader.path)
+        root.intelTempValues.push(temp)
+        Qt.callLater(() => {
+                       // Qt.callLater is mandatory
+                       checkNextIntelTemp()
+                     })
+      } else {
+        // For AMD sensors (k10temp and zenpower), directly set the temperature
+        root.cpuTemp = Math.round(parseInt(data) / 1000.0)
+      }
+    }
+    onLoadFailed: function (error) {
+      Qt.callLater(() => {
+                     // Qt.callLater is mandatory
+                     checkNextIntelTemp()
+                   })
+    }
+  }
+
+  // --------------------------------------------
+  // --------------------------------------------
   // ---- GPU temperature detection (hwmon)
   FileView {
     id: gpuTempNameReader
@@ -233,7 +266,8 @@ Singleton {
         root.gpuTempSensorName = "amdgpu"
         root.gpuTempHwmonPath = targetHwmonPath
         root.gpuIsDedicated = true
-        Logger.log("SystemStat", `Selected AMD dGPU (VRAM=${Math.round(val / (1024 * 1024 * 1024))}GB) at ${root.gpuTempHwmonPath}`)
+        Logger.log("SystemStat",
+                   `Selected AMD dGPU (VRAM=${Math.round(val / (1024 * 1024 * 1024))}GB) at ${root.gpuTempHwmonPath}`)
       } else if (!root.gpuTempHwmonPath) {
         // Use as fallback iGPU if nothing selected yet
         root.gpuTempSensorName = "amdgpu"
@@ -260,36 +294,7 @@ Singleton {
     }
   }
 
-  // ----
-  // #2 - Read sensor value
-  FileView {
-    id: cpuTempReader
-    printErrors: false
-
-    onLoaded: {
-      const data = text().trim()
-      if (root.cpuTempSensorName === "coretemp") {
-        // For Intel, collect all temperature values
-        const temp = parseInt(data) / 1000.0
-        //console.log(temp, cpuTempReader.path)
-        root.intelTempValues.push(temp)
-        Qt.callLater(() => {
-                       // Qt.callLater is mandatory
-                       checkNextIntelTemp()
-                     })
-      } else {
-        // For AMD sensors (k10temp and zenpower), directly set the temperature
-        root.cpuTemp = Math.round(parseInt(data) / 1000.0)
-      }
-    }
-    onLoadFailed: function (error) {
-      Qt.callLater(() => {
-                     // Qt.callLater is mandatory
-                     checkNextIntelTemp()
-                   })
-    }
-  }
-
+  // -------------------------------------------------------
   // -------------------------------------------------------
   // Parse memory info from /proc/meminfo
   function parseMemoryInfo(text) {
