@@ -80,7 +80,7 @@ Singleton {
     "volume-low": "volume-2",
     "volume-high": "volume",
     "weather-sun": "sun-filled",
-    "weather-cloud-sun": "sun",
+    "weather-cloud-sun": "sun-wind",
     "weather-cloud": "cloud",
     "weather-cloud-haze": "cloud-rain",
     "weather-cloud-rain": "cloud-rain",
