@@ -83,15 +83,6 @@ Features a modern modular architecture with a status bar, notification system, c
 > There is one more optional dependency.    
 > `xdg-desktop-portal` to be able to use the "Portal" option from the screenRecorder. 
 
-If you want to use the `ArchUpdater` widget, you will have to set your `TERMINAL` environment variable.
-
-Example command (you can edit the /etc/environment file manually too):
-
-`sudo sed -i '/^TERMINAL=/d' /etc/environment && echo 'TERMINAL=/usr/bin/kitty' | sudo tee -a /etc/environment
-`
-
-Please do not forget to edit `TERMINAL=/usr/bin/kitty` to match your terminal.
-
 ---
 
 ## Quick Start
