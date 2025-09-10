@@ -144,18 +144,17 @@ NPanel {
               Layout.preferredWidth: 28 * scaling
               Layout.preferredHeight: 28 * scaling
               Layout.alignment: Qt.AlignVCenter
-              imagePath: (image
-                          && image !== "") ? image : ((appIcon
-                                                       && appIcon !== "") ? AppIcons.iconFromName(
-                                                                              appIcon,
-                                                                              "application-x-executable") : AppIcons.iconForAppId(
-                                                                              desktopEntry || appName,
-                                                                              "application-x-executable"))
+              // Prefer stable themed icons over transient image paths
+              imagePath: (appIcon
+                          && appIcon !== "") ? (AppIcons.iconFromName(appIcon, "application-x-executable")
+                                                || appIcon) : ((AppIcons.iconForAppId(desktopEntry
+                                                                                      || appName, "application-x-executable")
+                                                                || (image && image
+                                                                    !== "" ? image : AppIcons.iconFromName("application-x-executable",
+                                                                                                           "application-x-executable"))))
               borderColor: Color.transparent
               borderWidth: 0
-              visible: (image && image !== "") || (appIcon && AppIcons.iconFromName(appIcon,
-                                                                                    "application-x-executable") !== "")
-                       || (AppIcons.iconForAppId(desktopEntry || appName, "application-x-executable") !== "")
+              visible: true
             }
 
             // Notification content column
