@@ -87,7 +87,7 @@ Singleton {
     "weather-sun": "sun-filled",
     "weather-cloud-sun": "sun-wind",
     "weather-cloud": "cloud",
-    "weather-cloud-haze": "cloud-rain",
+    "weather-cloud-haze": "cloud-fog",
     "weather-cloud-rain": "cloud-rain",
     "weather-cloud-snow": "cloud-snow",
     "weather-cloud-lightning": "cloud-bolt",
