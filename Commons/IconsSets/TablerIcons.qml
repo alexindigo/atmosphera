@@ -14,7 +14,7 @@ Singleton {
     "settings": "settings",
     "refresh": "refresh",
     "add": "plus",
-    "trash": "trash-filled",
+    "trash": "trash",
     "menu": "menu-2",
     "person": "user",
     "folder-open": "folder-open",
