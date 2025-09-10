@@ -36,7 +36,7 @@ Singleton {
     "balanced": "scale",
     "powersaver": "leaf",
     "storage": "database",
-    "ethernet": "jump-rope",
+    "ethernet": "sitemap-filled",
     "keyboard": "keyboard",
     "shutdown": "power",
     "lock": "lock-filled",
