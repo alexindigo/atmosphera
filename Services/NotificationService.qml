@@ -211,14 +211,15 @@ Singleton {
     }
   }
 
-  // Add a simplified copy into persistent history
   function addToHistory(notification) {
     const resolvedAppName = resolveAppName(notification)
+    const resolvedImage = resolveNotificationImage(notification)
 
     historyModel.insert(0, {
                           "summary": notification.summary,
                           "body": notification.body,
                           "appName": resolvedAppName,
+                          "image": resolvedImage,
                           "urgency": notification.urgency,
                           "timestamp": new Date()
                         })
@@ -249,6 +250,7 @@ Singleton {
                               "summary": it.summary || "",
                               "body": it.body || "",
                               "appName": it.appName || "",
+                              "image": it.image || "",
                               "urgency": it.urgency,
                               "timestamp": ts ? new Date(ts) : new Date()
                             })
@@ -268,6 +270,7 @@ Singleton {
                    "summary": n.summary,
                    "body": n.body,
                    "appName": n.appName,
+                   "image": n.image,
                    "urgency": n.urgency,
                    "timestamp"// Always persist in milliseconds
                    : (n.timestamp instanceof Date) ? n.timestamp.getTime(

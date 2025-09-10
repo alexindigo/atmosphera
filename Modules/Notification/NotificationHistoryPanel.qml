@@ -139,6 +139,17 @@ NPanel {
             anchors.margins: Style.marginM * scaling
             spacing: Style.marginM * scaling
 
+            // App icon (same style as popup)
+            NImageCircled {
+              Layout.preferredWidth: 28 * scaling
+              Layout.preferredHeight: 28 * scaling
+              Layout.alignment: Qt.AlignVCenter
+              imagePath: image && image !== "" ? image : ""
+              borderColor: Color.transparent
+              borderWidth: 0
+              visible: (image && image !== "")
+            }
+
             // Notification content column
             ColumnLayout {
               Layout.fillWidth: true
