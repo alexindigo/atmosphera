@@ -69,8 +69,7 @@ ColumnLayout {
     property var filteredIcons: allIcons.filter(function (name) {
       return query === "" || name.toLowerCase().indexOf(query.toLowerCase()) !== -1
     })
-    readonly property int tileBase: Math.round(112 * scaling)
-    readonly property int columns: Math.max(3, Math.floor(grid.width / (tileBase + Style.marginS * 2)))
+    readonly property int columns: 6
     readonly property int cellW: Math.floor(grid.width / columns)
     readonly property int cellH: Math.round(cellW * 0.7 + 36 * scaling)
 
@@ -160,7 +159,7 @@ ColumnLayout {
               NIcon {
                 Layout.alignment: Qt.AlignHCenter
                 icon: modelData
-                font.pointSize: Style.fontSizeXXXL * scaling
+                font.pointSize: 42 * scaling
               }
               NText {
                 Layout.alignment: Qt.AlignHCenter
