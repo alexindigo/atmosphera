@@ -233,7 +233,7 @@ Singleton {
         root.gpuTempSensorName = "amdgpu"
         root.gpuTempHwmonPath = targetHwmonPath
         root.gpuIsDedicated = true
-        Logger.log("SystemStat", `Selected AMD dGPU (VRAM=${val}) at ${root.gpuTempHwmonPath}`)
+        Logger.log("SystemStat", `Selected AMD dGPU (VRAM=${Math.round(val / (1024 * 1024 * 1024))}GB) at ${root.gpuTempHwmonPath}`)
       } else if (!root.gpuTempHwmonPath) {
         // Use as fallback iGPU if nothing selected yet
         root.gpuTempSensorName = "amdgpu"
