@@ -144,10 +144,18 @@ NPanel {
               Layout.preferredWidth: 28 * scaling
               Layout.preferredHeight: 28 * scaling
               Layout.alignment: Qt.AlignVCenter
-              imagePath: image && image !== "" ? image : ""
+              imagePath: (image
+                          && image !== "") ? image : ((appIcon
+                                                       && appIcon !== "") ? AppIcons.iconFromName(
+                                                                              appIcon,
+                                                                              "application-x-executable") : AppIcons.iconForAppId(
+                                                                              desktopEntry || appName,
+                                                                              "application-x-executable"))
               borderColor: Color.transparent
               borderWidth: 0
-              visible: (image && image !== "")
+              visible: (image && image !== "") || (appIcon && AppIcons.iconFromName(appIcon,
+                                                                                    "application-x-executable") !== "")
+                       || (AppIcons.iconForAppId(desktopEntry || appName, "application-x-executable") !== "")
             }
 
             // Notification content column
