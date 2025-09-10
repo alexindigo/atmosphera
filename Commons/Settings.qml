@@ -193,6 +193,8 @@ Singleton {
     FontService.init()
 
     HooksService.init()
+
+    BluetoothService.init()
   }
 
   // -----------------------------------------------------

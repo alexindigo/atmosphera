@@ -41,7 +41,15 @@ NPanel {
           Layout.fillWidth: true
         }
 
+        NToggle {
+          id: wifiSwitch
+          checked: Settings.data.network.bluetoothEnabled
+          onToggled: checked => BluetoothService.setBluetoothEnabled(checked)
+          baseSize: Style.baseWidgetSize * 0.65 * scaling
+        }
+
         NIconButton {
+          enabled: Settings.data.network.bluetoothEnabled
           icon: BluetoothService.adapter && BluetoothService.adapter.discovering ? "stop" : "refresh"
           tooltipText: "Refresh Devices"
           sizeRatio: 0.8
@@ -66,7 +74,42 @@ NPanel {
         Layout.fillWidth: true
       }
 
+      Rectangle {
+        visible: !Settings.data.network.bluetoothEnabled
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        color: Color.transparent
+
+        // Center the content within this rectangle
+        ColumnLayout {
+          anchors.centerIn: parent
+          spacing: Style.marginM * scaling
+
+          NIcon {
+            icon: "bluetooth-off"
+            font.pointSize: 64 * scaling
+            color: Color.mOnSurfaceVariant
+            Layout.alignment: Qt.AlignHCenter
+          }
+
+          NText {
+            text: "Bluetooth is disabled"
+            font.pointSize: Style.fontSizeL * scaling
+            color: Color.mOnSurfaceVariant
+            Layout.alignment: Qt.AlignHCenter
+          }
+
+          NText {
+            text: "Enable Bluetooth to see available devices."
+            font.pointSize: Style.fontSizeS * scaling
+            color: Color.mOnSurfaceVariant
+            Layout.alignment: Qt.AlignHCenter
+          }
+        }
+      }
+
       ScrollView {
+        visible: BluetoothService.adapter && BluetoothService.adapter.enabled
         Layout.fillWidth: true
         Layout.fillHeight: true
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
@@ -75,7 +118,6 @@ NPanel {
         contentWidth: availableWidth
 
         ColumnLayout {
-          visible: BluetoothService.adapter && BluetoothService.adapter.enabled
           width: parent.width
           spacing: Style.marginM * scaling
 

@@ -22,15 +22,7 @@ ColumnLayout {
     label: "Enable Bluetooth"
     description: "Enable Bluetooth connectivity."
     checked: Settings.data.network.bluetoothEnabled
-    onToggled: checked => {
-                 Settings.data.network.bluetoothEnabled = checked
-                 BluetoothService.setBluetoothEnabled(checked)
-                 if (checked) {
-                   ToastService.showNotice("Bluetooth", "Enabled")
-                 } else {
-                   ToastService.showNotice("Bluetooth", "Disabled")
-                 }
-               }
+    onToggled: checked => BluetoothService.setBluetoothEnabled(checked)
   }
 
   NDivider {

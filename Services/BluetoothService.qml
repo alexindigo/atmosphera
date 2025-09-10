@@ -30,6 +30,31 @@ Singleton {
                                          })
   }
 
+  function init() {
+    Logger.log("Bluetooth", "Service initialized")
+  }
+
+  Timer {
+    id: delayDiscovery
+    interval: 1000
+    repeat: false
+    onTriggered: adapter.discovering = true
+  }
+
+  Connections {
+    target: adapter
+    function onEnabledChanged() {
+      Settings.data.network.bluetoothEnabled = adapter.enabled
+      if (adapter.enabled) {
+        ToastService.showNotice("Bluetooth", "Enabled")
+        // Using a timer to give a little time so the adapter is really enabled
+        delayDiscovery.running = true
+      } else {
+        ToastService.showNotice("Bluetooth", "Disabled")
+      }
+    }
+  }
+
   function sortDevices(devices) {
     return devices.sort((a, b) => {
                           var aName = a.name || a.deviceName || ""
