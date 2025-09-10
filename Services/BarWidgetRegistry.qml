@@ -104,6 +104,10 @@ Singleton {
                                   "Volume": {
                                     "allowUserSettings": true,
                                     "alwaysShowPercentage": false
+                                  },
+                                  "KeyboardLayout": {
+                                    "allowUserSettings": true,
+                                    "forceOpen": false
                                   }
                                 })
 
