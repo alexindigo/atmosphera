@@ -9,6 +9,22 @@ import qs.Modules.SettingsPanel.Bar
 ColumnLayout {
   id: root
 
+  // Handler for drag start - disables panel background clicks
+  function handleDragStart() {
+    var panel = PanelService.getPanel("settingsPanel")
+    if (panel && panel.disableBackgroundClick) {
+      panel.disableBackgroundClick()
+    }
+  }
+
+  // Handler for drag end - re-enables panel background clicks
+  function handleDragEnd() {
+    var panel = PanelService.getPanel("settingsPanel")
+    if (panel && panel.enableBackgroundClick) {
+      panel.enableBackgroundClick()
+    }
+  }
+
   ColumnLayout {
     spacing: Style.marginL * scaling
 
@@ -116,6 +132,8 @@ ColumnLayout {
         onRemoveWidget: (section, index) => _removeWidgetFromSection(section, index)
         onReorderWidget: (section, fromIndex, toIndex) => _reorderWidgetInSection(section, fromIndex, toIndex)
         onUpdateWidgetSettings: (section, index, settings) => _updateWidgetSettingsInSection(section, index, settings)
+        onDragStarted: root.handleDragStart()
+        onDragEnded: root.handleDragEnd()
       }
 
       // Center Section
@@ -128,6 +146,8 @@ ColumnLayout {
         onRemoveWidget: (section, index) => _removeWidgetFromSection(section, index)
         onReorderWidget: (section, fromIndex, toIndex) => _reorderWidgetInSection(section, fromIndex, toIndex)
         onUpdateWidgetSettings: (section, index, settings) => _updateWidgetSettingsInSection(section, index, settings)
+        onDragStarted: root.handleDragStart()
+        onDragEnded: root.handleDragEnd()
       }
 
       // Right Section
@@ -140,6 +160,8 @@ ColumnLayout {
         onRemoveWidget: (section, index) => _removeWidgetFromSection(section, index)
         onReorderWidget: (section, fromIndex, toIndex) => _reorderWidgetInSection(section, fromIndex, toIndex)
         onUpdateWidgetSettings: (section, index, settings) => _updateWidgetSettingsInSection(section, index, settings)
+        onDragStarted: root.handleDragStart()
+        onDragEnded: root.handleDragEnd()
       }
     }
   }

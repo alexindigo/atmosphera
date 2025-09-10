@@ -118,7 +118,7 @@ Singleton {
           }
         }
         writeColorsToDisk(variant)
-        Logger.log("ColorScheme", "Applying color scheme:", path)
+        Logger.log("ColorScheme", "Applying color scheme:", getBasename(path))
       } catch (e) {
         Logger.error("ColorScheme", "Failed to parse scheme JSON:", e)
       }

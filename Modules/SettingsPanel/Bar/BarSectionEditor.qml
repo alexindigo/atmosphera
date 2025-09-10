@@ -18,6 +18,8 @@ NBox {
   signal removeWidget(string section, int index)
   signal reorderWidget(string section, int fromIndex, int toIndex)
   signal updateWidgetSettings(string section, int index, var settings)
+  signal dragStarted
+  signal dragEnded
 
   color: Color.mSurface
   Layout.fillWidth: true
@@ -105,13 +107,11 @@ NBox {
     }
 
     // Drag and Drop Widget Area
-    // Replace your Flow section with this:
-
-    // Drag and Drop Widget Area - use Item container
     Item {
       Layout.fillWidth: true
       Layout.fillHeight: true
       Layout.minimumHeight: 65 * scaling
+      clip: false // Don't clip children so ghost can move freely
 
       Flow {
         id: widgetFlow
@@ -139,13 +139,18 @@ NBox {
             readonly property int buttonsCount: 1 + BarWidgetRegistry.widgetHasUserSettings(modelData.id)
 
             // Visual feedback during drag
-            states: State {
-              when: flowDragArea.draggedIndex === index
-              PropertyChanges {
-                target: widgetItem
-                scale: 1.1
-                opacity: 0.9
-                z: 1000
+            opacity: flowDragArea.draggedIndex === index ? 0.5 : 1.0
+            scale: flowDragArea.draggedIndex === index ? 0.95 : 1.0
+            z: flowDragArea.draggedIndex === index ? 1000 : 0
+
+            Behavior on opacity {
+              NumberAnimation {
+                duration: 150
+              }
+            }
+            Behavior on scale {
+              NumberAnimation {
+                duration: 150
               }
             }
 
@@ -227,31 +232,184 @@ NBox {
         }
       }
 
-      // MouseArea outside Flow, covering the same area
+      // Ghost/Clone widget for dragging
+      Rectangle {
+        id: dragGhost
+        width: 0
+        height: Style.baseWidgetSize * 1.15 * scaling
+        radius: Style.radiusL * scaling
+        color: "transparent"
+        border.color: Color.mOutline
+        border.width: Math.max(1, Style.borderS * scaling)
+        opacity: 0.7
+        visible: flowDragArea.dragStarted
+        z: 2000
+        clip: false // Ensure ghost isn't clipped
+
+        Text {
+          id: ghostText
+          anchors.centerIn: parent
+          font.pointSize: Style.fontSizeS * scaling
+          color: Color.mOnPrimary
+        }
+      }
+
+      // Drop indicator - visual feedback for where the widget will be inserted
+      Rectangle {
+        id: dropIndicator
+        width: 3 * scaling
+        height: Style.baseWidgetSize * 1.15 * scaling
+        radius: width / 2
+        color: Color.mPrimary
+        opacity: 0
+        visible: opacity > 0
+        z: 1999
+
+        SequentialAnimation on opacity {
+          id: pulseAnimation
+          running: false
+          loops: Animation.Infinite
+          NumberAnimation {
+            to: 1
+            duration: 400
+            easing.type: Easing.InOutQuad
+          }
+          NumberAnimation {
+            to: 0.6
+            duration: 400
+            easing.type: Easing.InOutQuad
+          }
+        }
+
+        Behavior on x {
+          NumberAnimation {
+            duration: 100
+            easing.type: Easing.OutCubic
+          }
+        }
+        Behavior on y {
+          NumberAnimation {
+            duration: 100
+            easing.type: Easing.OutCubic
+          }
+        }
+      }
+
+      // MouseArea for drag and drop
       MouseArea {
         id: flowDragArea
         anchors.fill: parent
-        z: -1 // Ensure this mouse area is below the Settings and Close buttons
+        z: -1
 
-        // Critical properties for proper event handling
         acceptedButtons: Qt.LeftButton
-        preventStealing: false // Prevent child items from stealing events
-        propagateComposedEvents: draggedIndex != -1 // Don't propagate to children during drag
-        hoverEnabled: draggedIndex != -1
+        preventStealing: false
+        propagateComposedEvents: !dragStarted
+        hoverEnabled: true // Always track mouse for drag operations
 
         property point startPos: Qt.point(0, 0)
         property bool dragStarted: false
         property int draggedIndex: -1
         property real dragThreshold: 15 * scaling
         property Item draggedWidget: null
-        property point clickOffsetInWidget: Qt.point(0, 0)
-        property point originalWidgetPos: Qt.point(0, 0) // ADD THIS: Store original position
+        property int dropTargetIndex: -1
+        property var draggedModelData: null
+
+        // Drop position calculation
+        function updateDropIndicator(mouseX, mouseY) {
+          if (!dragStarted || draggedIndex === -1) {
+            dropIndicator.opacity = 0
+            pulseAnimation.running = false
+            return
+          }
+
+          let bestIndex = -1
+          let bestPosition = null
+          let minDistance = Infinity
+
+          // Check position relative to each widget
+          for (var i = 0; i < widgetModel.length; i++) {
+            if (i === draggedIndex)
+              continue
+
+            const widget = widgetFlow.children[i]
+            if (!widget || widget.widgetIndex === undefined)
+              continue
+
+            // Check distance to left edge (insert before)
+            const leftDist = Math.sqrt(Math.pow(mouseX - widget.x,
+                                                2) + Math.pow(mouseY - (widget.y + widget.height / 2), 2))
+
+            // Check distance to right edge (insert after)
+            const rightDist = Math.sqrt(Math.pow(mouseX - (widget.x + widget.width),
+                                                 2) + Math.pow(mouseY - (widget.y + widget.height / 2), 2))
+
+            if (leftDist < minDistance) {
+              minDistance = leftDist
+              bestIndex = i
+              bestPosition = Qt.point(widget.x - dropIndicator.width / 2 - Style.marginXS * scaling, widget.y)
+            }
+
+            if (rightDist < minDistance) {
+              minDistance = rightDist
+              bestIndex = i + 1
+              bestPosition = Qt.point(widget.x + widget.width + Style.marginXS * scaling - dropIndicator.width / 2,
+                                      widget.y)
+            }
+          }
+
+          // Check if we should insert at position 0 (very beginning)
+          if (widgetModel.length > 0 && draggedIndex !== 0) {
+            const firstWidget = widgetFlow.children[0]
+            if (firstWidget) {
+              const dist = Math.sqrt(Math.pow(mouseX, 2) + Math.pow(mouseY - firstWidget.y, 2))
+              if (dist < minDistance && mouseX < firstWidget.x + firstWidget.width / 2) {
+                minDistance = dist
+                bestIndex = 0
+                bestPosition = Qt.point(Math.max(0, firstWidget.x - dropIndicator.width - Style.marginS * scaling),
+                                        firstWidget.y)
+              }
+            }
+          }
+
+          // Only show indicator if we're close enough and it's a different position
+          if (minDistance < 80 * scaling && bestIndex !== -1) {
+            // Adjust index if we're moving forward
+            let adjustedIndex = bestIndex
+            if (bestIndex > draggedIndex) {
+              adjustedIndex = bestIndex - 1
+            }
+
+            // Don't show if it's the same position
+            if (adjustedIndex === draggedIndex) {
+              dropIndicator.opacity = 0
+              pulseAnimation.running = false
+              dropTargetIndex = -1
+              return
+            }
+
+            dropTargetIndex = adjustedIndex
+            if (bestPosition) {
+              dropIndicator.x = bestPosition.x
+              dropIndicator.y = bestPosition.y
+              dropIndicator.opacity = 1
+              if (!pulseAnimation.running) {
+                pulseAnimation.running = true
+              }
+            }
+          } else {
+            dropIndicator.opacity = 0
+            pulseAnimation.running = false
+            dropTargetIndex = -1
+          }
+        }
 
         onPressed: mouse => {
                      startPos = Qt.point(mouse.x, mouse.y)
                      dragStarted = false
                      draggedIndex = -1
                      draggedWidget = null
+                     dropTargetIndex = -1
+                     draggedModelData = null
 
                      // Find which widget was clicked
                      for (var i = 0; i < widgetModel.length; i++) {
@@ -266,20 +424,10 @@ NBox {
                            if (localX < buttonsStartX) {
                              draggedIndex = widget.widgetIndex
                              draggedWidget = widget
-
-                             // Calculate and store where within the widget the user clicked
-                             const clickOffsetX = mouse.x - widget.x
-                             const clickOffsetY = mouse.y - widget.y
-                             clickOffsetInWidget = Qt.point(clickOffsetX, clickOffsetY)
-
-                             // STORE ORIGINAL POSITION
-                             originalWidgetPos = Qt.point(widget.x, widget.y)
-
-                             // Immediately set prevent stealing to true when drag candidate is found
+                             draggedModelData = widget.modelData
                              preventStealing = true
                              break
                            } else {
-                             // Click was on buttons - allow event propagation
                              mouse.accepted = false
                              return
                            }
@@ -296,146 +444,76 @@ NBox {
 
                                if (!dragStarted && distance > dragThreshold) {
                                  dragStarted = true
-                                 //Logger.log("BarSectionEditor", "Drag started")
 
-                                 // Enable visual feedback
+                                 // Emit signal when drag starts
+                                 root.dragStarted()
+
+                                 // Setup ghost widget
                                  if (draggedWidget) {
-                                   draggedWidget.z = 1000
+                                   dragGhost.width = draggedWidget.width
+                                   dragGhost.color = root.getWidgetColor(draggedModelData)
+                                   ghostText.text = draggedModelData.id
                                  }
                                }
 
-                               if (dragStarted && draggedWidget) {
-                                 // Adjust position to account for where within the widget the user clicked
-                                 draggedWidget.x = mouse.x - clickOffsetInWidget.x
-                                 draggedWidget.y = mouse.y - clickOffsetInWidget.y
+                               if (dragStarted) {
+                                 // Move ghost widget
+                                 dragGhost.x = mouse.x - dragGhost.width / 2
+                                 dragGhost.y = mouse.y - dragGhost.height / 2
+
+                                 // Update drop indicator
+                                 updateDropIndicator(mouse.x, mouse.y)
                                }
                              }
                            }
 
         onReleased: mouse => {
-                      if (dragStarted && draggedWidget) {
-                        // Find drop target using improved logic
-                        let targetIndex = -1
-                        let minDistance = Infinity
-                        const mouseX = mouse.x
-                        const mouseY = mouse.y
+                      if (dragStarted && dropTargetIndex !== -1 && dropTargetIndex !== draggedIndex) {
+                        // Perform the reorder
+                        reorderWidget(sectionId, draggedIndex, dropTargetIndex)
+                      }
 
-                        // Check if we should insert at the beginning
-                        let insertAtBeginning = true
-                        let insertAtEnd = true
-
-                        // Check if the dragged item is already the last item
-                        let isLastItem = true
-                        for (var k = 0; k < widgetModel.length; k++) {
-                          if (k !== draggedIndex && k > draggedIndex) {
-                            isLastItem = false
-                            break
-                          }
-                        }
-
-                        for (var i = 0; i < widgetModel.length; i++) {
-                          if (i !== draggedIndex) {
-                            const widget = widgetFlow.children[i]
-                            if (widget && widget.widgetIndex !== undefined) {
-                              const centerX = widget.x + widget.width / 2
-                              const centerY = widget.y + widget.height / 2
-                              const distance = Math.sqrt(Math.pow(mouseX - centerX, 2) + Math.pow(mouseY - centerY, 2))
-
-                              // Check if mouse is to the right of this widget
-                              if (mouseX > widget.x + widget.width / 2) {
-                                insertAtBeginning = false
-                              }
-                              // Check if mouse is to the left of this widget
-                              if (mouseX < widget.x + widget.width / 2) {
-                                insertAtEnd = false
-                              }
-
-                              if (distance < minDistance) {
-                                minDistance = distance
-                                targetIndex = widget.widgetIndex
-                              }
-                            }
-                          }
-                        }
-
-                        // If dragging the last item to the right, don't reorder
-                        if (isLastItem && insertAtEnd) {
-                          insertAtEnd = false
-                          targetIndex = -1
-                          //Logger.log("BarSectionEditor", "Last item dropped to right - no reordering needed")
-                        }
-
-                        // Determine final target index based on position
-                        let finalTargetIndex = targetIndex
-
-                        if (insertAtBeginning && widgetModel.length > 1) {
-                          // Insert at the very beginning (position 0)
-                          finalTargetIndex = 0
-                          //Logger.log("BarSectionEditor", "Inserting at beginning")
-                        } else if (insertAtEnd && widgetModel.length > 1) {
-                          // Insert at the very end
-                          let maxIndex = -1
-                          for (var j = 0; j < widgetModel.length; j++) {
-                            if (j !== draggedIndex) {
-                              maxIndex = Math.max(maxIndex, j)
-                            }
-                          }
-                          finalTargetIndex = maxIndex
-                          //Logger.log("BarSectionEditor", "Inserting at end, target:", finalTargetIndex)
-                        } else if (targetIndex !== -1) {
-                          // Normal case - determine if we should insert before or after the target
-                          const targetWidget = widgetFlow.children[targetIndex]
-                          if (targetWidget) {
-                            const targetCenterX = targetWidget.x + targetWidget.width / 2
-                            if (mouseX > targetCenterX) {
-
-                              // Mouse is to the right of target center, insert after
-                              //Logger.log("BarSectionEditor", "Inserting after widget at index:", targetIndex)
-                            } else {
-                              // Mouse is to the left of target center, insert before
-                              finalTargetIndex = targetIndex
-                              //Logger.log("BarSectionEditor", "Inserting before widget at index:", targetIndex)
-                            }
-                          }
-                        }
-
-                        //Logger.log("BarSectionEditor", "Final drop target index:", finalTargetIndex)
-
-                        // Check if reordering is needed
-                        if (finalTargetIndex !== -1 && finalTargetIndex !== draggedIndex) {
-                          // Reordering will happen - reset position for the Flow to handle
-                          draggedWidget.x = 0
-                          draggedWidget.y = 0
-                          draggedWidget.z = 0
-                          reorderWidget(sectionId, draggedIndex, finalTargetIndex)
-                        } else {
-                          // No reordering - restore original position
-                          draggedWidget.x = originalWidgetPos.x
-                          draggedWidget.y = originalWidgetPos.y
-                          draggedWidget.z = 0
-                          //Logger.log("BarSectionEditor", "No reordering - restoring original position")
-                        }
-                      } else if (draggedIndex !== -1 && !dragStarted) {
-
-                        // This was a click without drag - could add click handling here if needed
+                      // Emit signal when drag ends (only if it was actually started)
+                      if (dragStarted) {
+                        root.dragEnded()
                       }
 
                       // Reset everything
                       dragStarted = false
                       draggedIndex = -1
                       draggedWidget = null
-                      preventStealing = false // Allow normal event propagation again
-                      originalWidgetPos = Qt.point(0, 0) // Reset stored position
+                      dropTargetIndex = -1
+                      draggedModelData = null
+                      preventStealing = false
+                      dropIndicator.opacity = 0
+                      pulseAnimation.running = false
+                      dragGhost.width = 0
                     }
 
-        // Handle case where mouse leaves the area during drag
         onExited: {
-          if (dragStarted && draggedWidget) {
-            // Restore original position when mouse leaves area
-            draggedWidget.x = originalWidgetPos.x
-            draggedWidget.y = originalWidgetPos.y
-            draggedWidget.z = 0
+          if (dragStarted) {
+            // Hide drop indicator when mouse leaves, but keep ghost visible
+            dropIndicator.opacity = 0
+            pulseAnimation.running = false
           }
+        }
+
+        onCanceled: {
+          // Handle cancel (e.g., ESC key pressed during drag)
+          if (dragStarted) {
+            root.dragEnded()
+          }
+
+          // Reset everything
+          dragStarted = false
+          draggedIndex = -1
+          draggedWidget = null
+          dropTargetIndex = -1
+          draggedModelData = null
+          preventStealing = false
+          dropIndicator.opacity = 0
+          pulseAnimation.running = false
+          dragGhost.width = 0
         }
       }
     }
