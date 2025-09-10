@@ -247,7 +247,7 @@ ColumnLayout {
 
       NIcon {
         icon: "folder-open"
-        font.pointSize: Style.fontSizeXL * scaling
+        font.pointSize: Style.fontSizeXXL * scaling
         color: Color.mOnSurface
         Layout.alignment: Qt.AlignHCenter
       }
