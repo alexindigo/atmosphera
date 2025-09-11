@@ -35,7 +35,6 @@ Singleton {
           const layoutName = data.names[data.current_idx]
           root.currentLayout = extractLayoutCode(layoutName)
         } catch (e) {
-          console.log("Niri layout error:", e)
           root.currentLayout = "Unknown"
         }
       }
@@ -59,7 +58,6 @@ Singleton {
             root.currentLayout = "Unknown"
           }
         } catch (e) {
-          console.log("Hyprland layout error:", e)
           root.currentLayout = "Unknown"
         }
       }
@@ -84,7 +82,6 @@ Singleton {
           }
           root.currentLayout = "Unknown"
         } catch (e) {
-          console.log("X11 layout error:", e)
           root.currentLayout = "Unknown"
         }
       }
@@ -118,7 +115,6 @@ Singleton {
           }
           root.currentLayout = "Unknown"
         } catch (e) {
-          console.log("Localectl error:", e)
           root.currentLayout = "Unknown"
         }
       }
@@ -136,7 +132,6 @@ Singleton {
           const currentIndex = parseInt(text.trim())
           gsettingsSourcesProcess.running = true
         } catch (e) {
-          console.log("Gsettings current error:", e)
           fallbackToLocalectl()
         }
       }
@@ -163,7 +158,6 @@ Singleton {
             fallbackToLocalectl()
           }
         } catch (e) {
-          console.log("Gsettings sources error:", e)
           fallbackToLocalectl()
         }
       }

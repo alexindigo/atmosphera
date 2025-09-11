@@ -29,6 +29,21 @@ Singleton {
   signal windowListChanged
   signal windowTitleChanged
 
+  // Debounce timer for updates
+  property Timer updateTimer: Timer {
+    interval: 50  // 50ms debounce
+    repeat: false
+    onTriggered: {
+      try {
+        updateHyprlandWindows()
+        updateHyprlandWorkspaces()
+        windowListChanged()
+      } catch (e) {
+        Logger.error("Compositor", "Error in debounced update:", e)
+      }
+    }
+  }
+
   // Compositor detection
   Component.onCompleted: {
     detectCompositor()
@@ -39,8 +54,12 @@ Singleton {
     target: Hyprland.workspaces
     enabled: isHyprland
     function onValuesChanged() {
-      updateHyprlandWorkspaces()
-      workspaceChanged()
+      try {
+        updateHyprlandWorkspaces()
+        workspaceChanged()
+      } catch (e) {
+        Logger.error("Compositor", "Error in workspaces onValuesChanged:", e)
+      }
     }
   }
 
@@ -48,10 +67,12 @@ Singleton {
     target: Hyprland.toplevels
     enabled: isHyprland
     function onValuesChanged() {
-      updateHyprlandWindows()
-      // Keep workspace occupancy up to date when windows change
-      updateHyprlandWorkspaces()
-      windowListChanged()
+      try {
+        // Use debounced update to prevent too frequent calls
+        updateTimer.restart()
+      } catch (e) {
+        Logger.error("Compositor", "Error in toplevels onValuesChanged:", e)
+      }
     }
   }
 
@@ -59,10 +80,13 @@ Singleton {
     target: Hyprland
     enabled: isHyprland
     function onRawEvent(event) {
-      updateHyprlandWorkspaces()
-      workspaceChanged()
-      updateHyprlandWindows()
-      windowListChanged()
+      try {
+        updateHyprlandWorkspaces()
+        workspaceChanged()
+        updateTimer.restart()
+      } catch (e) {
+        Logger.error("Compositor", "Error in rawEvent:", e)
+      }
     }
   }
 
@@ -77,7 +101,6 @@ Singleton {
         return
       }
     } catch (e) {
-
       // Hyprland not available
     }
 
@@ -111,7 +134,8 @@ Singleton {
     }
   }
 
-  function setupHyprlandConnections() {// Connections are set up at the top level, this function just marks that Hyprland is ready
+  function setupHyprlandConnections() {
+    // Connections are set up at the top level, this function just marks that Hyprland is ready
   }
 
   function updateHyprlandWorkspaces() {
@@ -121,34 +145,50 @@ Singleton {
     workspaces.clear()
     try {
       const hlWorkspaces = Hyprland.workspaces.values
+      
       // Determine occupied workspace ids from current toplevels
       const occupiedIds = {}
       try {
         const hlToplevels = Hyprland.toplevels.values
         for (var t = 0; t < hlToplevels.length; t++) {
-          const tws = hlToplevels[t].workspace?.id
-          if (tws !== undefined && tws !== null) {
-            occupiedIds[tws] = true
+          const toplevel = hlToplevels[t]
+          if (toplevel) {
+            try {
+              const tws = toplevel.workspace?.id
+              if (tws !== undefined && tws !== null) {
+                occupiedIds[tws] = true
+              }
+            } catch (toplevelError) {
+              // Ignore errors from individual toplevels
+              continue
+            }
           }
         }
       } catch (e2) {
-
         // ignore occupancy errors; fall back to false
       }
+      
       for (var i = 0; i < hlWorkspaces.length; i++) {
         const ws = hlWorkspaces[i]
-        // Only append workspaces with id >= 1
-        if (ws.id >= 1) {
-          workspaces.append({
-                              "id": i,
-                              "idx": ws.id,
-                              "name": ws.name || "",
-                              "output": ws.monitor?.name || "",
-                              "isActive": ws.active === true,
-                              "isFocused": ws.focused === true,
-                              "isUrgent": ws.urgent === true,
-                              "isOccupied": occupiedIds[ws.id] === true
-                            })
+        if (!ws) continue
+        
+        try {
+          // Only append workspaces with id >= 1
+          if (ws.id >= 1) {
+            workspaces.append({
+              "id": i,
+              "idx": ws.id,
+              "name": ws.name || "",
+              "output": ws.monitor?.name || "",
+              "isActive": ws.active === true,
+              "isFocused": ws.focused === true,
+              "isUrgent": ws.urgent === true,
+              "isOccupied": occupiedIds[ws.id] === true
+            })
+          }
+        } catch (workspaceError) {
+          Logger.warn("Compositor", "Error processing workspace at index", i, ":", workspaceError)
+          continue
         }
       }
     } catch (e) {
@@ -167,39 +207,83 @@ Singleton {
       for (var i = 0; i < hlToplevels.length; i++) {
         const toplevel = hlToplevels[i]
 
-        // Try to get appId from various sources
-        let appId = ""
-
-        // First try the direct properties
-        if (toplevel.class) {
-          appId = toplevel.class
-        } else if (toplevel.initialClass) {
-          appId = toplevel.initialClass
-        } else if (toplevel.appId) {
-          appId = toplevel.appId
+        // Skip if toplevel is null or invalid
+        if (!toplevel) {
+          continue
         }
 
-        // If still no appId, try to get it from the lastIpcObject
-        if (!appId && toplevel.lastIpcObject) {
+        try {
+          // Try to get appId from various sources with proper null checks
+          let appId = ""
+
+          // First try the direct properties with null/undefined checks
           try {
-            const ipcData = toplevel.lastIpcObject
-            // Try different possible property names for the application identifier
-            appId = ipcData.class || ipcData.initialClass || ipcData.appId || ipcData.wm_class || ""
-          } catch (e) {
-
-            // Ignore errors when accessing lastIpcObject
+            if (toplevel.class !== undefined && toplevel.class !== null) {
+              appId = String(toplevel.class)
+            } else if (toplevel.initialClass !== undefined && toplevel.initialClass !== null) {
+              appId = String(toplevel.initialClass)
+            } else if (toplevel.appId !== undefined && toplevel.appId !== null) {
+              appId = String(toplevel.appId)
+            }
+          } catch (propertyError) {
+            // Ignore property access errors and continue with empty appId
           }
-        }
 
-        windowsList.push({
-                           "id": (toplevel.address !== undefined
-                                  && toplevel.address !== null) ? String(toplevel.address) : "",
-                           "title": (toplevel.title !== undefined && toplevel.title !== null) ? String(
-                                                                                                  toplevel.title) : "",
-                           "appId": (appId !== undefined && appId !== null) ? String(appId) : "",
-                           "workspaceId": toplevel.workspace?.id || null,
-                           "isFocused": toplevel.activated === true
-                         })
+          // If still no appId, try to get it from the lastIpcObject
+          if (!appId) {
+            try {
+              const ipcData = toplevel.lastIpcObject
+              if (ipcData) {
+                appId = String(ipcData.class || ipcData.initialClass || ipcData.appId || ipcData.wm_class || "")
+              }
+            } catch (ipcError) {
+              // Ignore errors when accessing lastIpcObject
+            }
+          }
+
+          // Safely get other properties with fallbacks
+          let windowId = ""
+          let windowTitle = ""
+          let workspaceId = null
+          let isActivated = false
+
+          try {
+            windowId = (toplevel.address !== undefined && toplevel.address !== null) ? String(toplevel.address) : ""
+          } catch (e) {
+            windowId = ""
+          }
+
+          try {
+            windowTitle = (toplevel.title !== undefined && toplevel.title !== null) ? String(toplevel.title) : ""
+          } catch (e) {
+            windowTitle = ""
+          }
+
+          try {
+            workspaceId = toplevel.workspace?.id || null
+          } catch (e) {
+            workspaceId = null
+          }
+
+          try {
+            isActivated = toplevel.activated === true
+          } catch (e) {
+            isActivated = false
+          }
+
+          windowsList.push({
+            "id": windowId,
+            "title": windowTitle,
+            "appId": appId,
+            "workspaceId": workspaceId,
+            "isFocused": isActivated
+          })
+
+        } catch (toplevelError) {
+          // Log the error but continue processing other toplevels
+          Logger.warn("Compositor", "Error processing toplevel at index", i, ":", toplevelError)
+          continue
+        }
       }
 
       windows = windowsList
@@ -217,6 +301,7 @@ Singleton {
       activeWindowChanged()
     } catch (e) {
       Logger.error("Compositor", "Error updating Hyprland windows:", e)
+      // Don't crash, just keep the previous windows list
     }
   }
 
@@ -266,23 +351,23 @@ Singleton {
 
           for (const ws of workspacesData) {
             workspacesList.push({
-                                  "id": ws.id,
-                                  "idx": ws.idx,
-                                  "name": ws.name || "",
-                                  "output": ws.output || "",
-                                  "isFocused": ws.is_focused === true,
-                                  "isActive": ws.is_active === true,
-                                  "isUrgent": ws.is_urgent === true,
-                                  "isOccupied": ws.active_window_id ? true : false
-                                })
+              "id": ws.id,
+              "idx": ws.idx,
+              "name": ws.name || "",
+              "output": ws.output || "",
+              "isFocused": ws.is_focused === true,
+              "isActive": ws.is_active === true,
+              "isUrgent": ws.is_urgent === true,
+              "isOccupied": ws.active_window_id ? true : false
+            })
           }
 
           workspacesList.sort((a, b) => {
-                                if (a.output !== b.output) {
-                                  return a.output.localeCompare(b.output)
-                                }
-                                return a.idx - b.idx
-                              })
+            if (a.output !== b.output) {
+              return a.output.localeCompare(b.output)
+            }
+            return a.idx - b.idx
+          })
 
           // Update the workspaces ListModel
           workspaces.clear()
@@ -387,12 +472,12 @@ Singleton {
               const windowsList = []
               for (const win of windowsData) {
                 windowsList.push({
-                                   "id": win.id,
-                                   "title": win.title || "",
-                                   "appId": win.app_id || "",
-                                   "workspaceId": win.workspace_id || null,
-                                   "isFocused": win.is_focused === true
-                                 })
+                  "id": win.id,
+                  "title": win.title || "",
+                  "appId": win.app_id || "",
+                  "workspaceId": win.workspace_id || null,
+                  "isFocused": win.is_focused === true
+                })
               }
 
               windowsList.sort((a, b) => a.id - b.id)
@@ -457,12 +542,12 @@ Singleton {
           const windowsList = []
           for (const win of windowsData) {
             windowsList.push({
-                               "id": win.id,
-                               "title": win.title || "",
-                               "appId": win.app_id || "",
-                               "workspaceId": win.workspace_id || null,
-                               "isFocused": win.is_focused === true
-                             })
+              "id": win.id,
+              "title": win.title || "",
+              "appId": win.app_id || "",
+              "workspaceId": win.workspace_id || null,
+              "isFocused": win.is_focused === true
+            })
           }
 
           windowsList.sort((a, b) => a.id - b.id)

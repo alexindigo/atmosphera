@@ -38,7 +38,12 @@ RowLayout {
   readonly property real maxWidth: minWidth * 2
 
   function getTitle() {
-    return CompositorService.focusedWindowTitle !== "(No active window)" ? CompositorService.focusedWindowTitle : ""
+    try {
+      return CompositorService.focusedWindowTitle !== "(No active window)" ? CompositorService.focusedWindowTitle : ""
+    } catch (e) {
+      Logger.warn("ActiveWindow", "Error getting title:", e)
+      return ""
+    }
   }
 
   Layout.alignment: Qt.AlignVCenter
@@ -46,25 +51,44 @@ RowLayout {
   visible: getTitle() !== ""
 
   function getAppIcon() {
-    // Try CompositorService first
-    const focusedWindow = CompositorService.getFocusedWindow()
-    if (focusedWindow && focusedWindow.appId) {
-      const idValue = focusedWindow.appId
-      const normalizedId = (typeof idValue === 'string') ? idValue : String(idValue)
-      return AppIcons.iconForAppId(normalizedId.toLowerCase())
-    }
-
-    // Fallback to ToplevelManager
-    if (ToplevelManager && ToplevelManager.activeToplevel) {
-      const activeToplevel = ToplevelManager.activeToplevel
-      if (activeToplevel.appId) {
-        const idValue2 = activeToplevel.appId
-        const normalizedId2 = (typeof idValue2 === 'string') ? idValue2 : String(idValue2)
-        return AppIcons.iconForAppId(normalizedId2.toLowerCase())
+    try {
+      // Try CompositorService first
+      const focusedWindow = CompositorService.getFocusedWindow()
+      if (focusedWindow && focusedWindow.appId) {
+        try {
+          const idValue = focusedWindow.appId
+          const normalizedId = (typeof idValue === 'string') ? idValue : String(idValue)
+          const iconResult = AppIcons.iconForAppId(normalizedId.toLowerCase())
+          if (iconResult && iconResult !== "") {
+            return iconResult
+          }
+        } catch (iconError) {
+          Logger.warn("ActiveWindow", "Error getting icon from CompositorService:", iconError)
+        }
       }
-    }
 
-    return ""
+      // Fallback to ToplevelManager
+      if (ToplevelManager && ToplevelManager.activeToplevel) {
+        try {
+          const activeToplevel = ToplevelManager.activeToplevel
+          if (activeToplevel.appId) {
+            const idValue2 = activeToplevel.appId
+            const normalizedId2 = (typeof idValue2 === 'string') ? idValue2 : String(idValue2)
+            const iconResult2 = AppIcons.iconForAppId(normalizedId2.toLowerCase())
+            if (iconResult2 && iconResult2 !== "") {
+              return iconResult2
+            }
+          }
+        } catch (fallbackError) {
+          Logger.warn("ActiveWindow", "Error getting icon from ToplevelManager:", fallbackError)
+        }
+      }
+
+      return ""
+    } catch (e) {
+      Logger.warn("ActiveWindow", "Error in getAppIcon:", e)
+      return ""
+    }
   }
 
   // A hidden text element to safely measure the full title width
@@ -110,16 +134,28 @@ RowLayout {
             asynchronous: true
             smooth: true
             visible: source !== ""
+            
+            // Handle loading errors gracefully
+            onStatusChanged: {
+              if (status === Image.Error) {
+                Logger.warn("ActiveWindow", "Failed to load icon:", source)
+              }
+            }
           }
         }
 
         NText {
           id: titleText
           Layout.preferredWidth: {
-            if (mouseArea.containsMouse) {
-              return Math.round(Math.min(fullTitleMetrics.contentWidth, root.maxWidth * scaling))
-            } else {
-              return Math.round(Math.min(fullTitleMetrics.contentWidth, root.minWidth * scaling))
+            try {
+              if (mouseArea.containsMouse) {
+                return Math.round(Math.min(fullTitleMetrics.contentWidth, root.maxWidth * scaling))
+              } else {
+                return Math.round(Math.min(fullTitleMetrics.contentWidth, root.minWidth * scaling))
+              }
+            } catch (e) {
+              Logger.warn("ActiveWindow", "Error calculating width:", e)
+              return root.minWidth * scaling
             }
           }
           Layout.alignment: Qt.AlignVCenter
@@ -154,10 +190,18 @@ RowLayout {
   Connections {
     target: CompositorService
     function onActiveWindowChanged() {
-      windowIcon.source = Qt.binding(getAppIcon)
+      try {
+        windowIcon.source = Qt.binding(getAppIcon)
+      } catch (e) {
+        Logger.warn("ActiveWindow", "Error in onActiveWindowChanged:", e)
+      }
     }
     function onWindowListChanged() {
-      windowIcon.source = Qt.binding(getAppIcon)
+      try {
+        windowIcon.source = Qt.binding(getAppIcon)
+      } catch (e) {
+        Logger.warn("ActiveWindow", "Error in onWindowListChanged:", e)
+      }
     }
   }
 }
