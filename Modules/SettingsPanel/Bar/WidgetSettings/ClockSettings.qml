@@ -23,7 +23,6 @@ ColumnLayout {
     settings.displayFormat = valueDisplayFormat
     settings.use12HourClock = valueUse12h
     settings.reverseDayMonth = valueReverseDayMonth
-    console.log(JSON.stringify(settings))
     return settings
   }
 
@@ -48,10 +47,7 @@ ColumnLayout {
       }
     }
     currentKey: valueDisplayFormat
-    onSelected: key => {
-                  valueDisplayFormat = key
-                  console.log(key)
-                }
+    onSelected: key => valueDisplayFormat = key
     minimumWidth: 230 * scaling
   }
 
