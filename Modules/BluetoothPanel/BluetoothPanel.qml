@@ -42,7 +42,7 @@ NPanel {
         }
 
         NToggle {
-          id: wifiSwitch
+          id: bluetoothSwitch
           checked: Settings.data.network.bluetoothEnabled
           onToggled: checked => BluetoothService.setBluetoothEnabled(checked)
           baseSize: Style.baseWidgetSize * 0.65 * scaling
