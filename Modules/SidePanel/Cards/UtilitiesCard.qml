@@ -12,7 +12,6 @@ NBox {
 
   property real spacing: 0
 
-
   RowLayout {
     id: utilRow
     anchors.fill: parent

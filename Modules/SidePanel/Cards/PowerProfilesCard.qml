@@ -14,7 +14,7 @@ NBox {
 
   // Centralized service
   readonly property bool hasPP: PowerProfileService.available
-  
+
   RowLayout {
     id: powerRow
     anchors.fill: parent

@@ -8,8 +8,6 @@ import qs.Widgets
 NBox {
   id: root
 
-
-
   ColumnLayout {
     id: content
     anchors.left: parent.left

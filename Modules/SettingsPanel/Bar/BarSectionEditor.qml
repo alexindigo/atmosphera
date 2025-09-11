@@ -41,17 +41,19 @@ NBox {
     const totalSum = JSON.stringify(widget).split('').reduce((acc, character) => {
                                                                return acc + character.charCodeAt(0)
                                                              }, 0)
-    switch (totalSum % 5) {
+    switch (totalSum % 6) {
     case 0:
-      return Color.mPrimary
+      return [Color.mPrimary, Color.mOnPrimary]
     case 1:
-      return Color.mSecondary
+      return [Color.mSecondary, Color.mOnSecondary]
     case 2:
-      return Color.mTertiary
+      return [Color.mTertiary, Color.mOnTertiary]
     case 3:
-      return Color.mError
+      return [Color.mError, Color.mOnError]
     case 4:
-      return Color.mOnSurface
+      return [Color.mOnSurface, Color.mSurface]
+    case 5:
+      return [Color.mOnSurfaceVariant, Color.mSurfaceVariant]
     }
   }
 
@@ -129,7 +131,7 @@ NBox {
             width: widgetContent.implicitWidth + Style.marginL * scaling
             height: Style.baseWidgetSize * 1.15 * scaling
             radius: Style.radiusL * scaling
-            color: root.getWidgetColor(modelData)
+            color: root.getWidgetColor(modelData)[0]
             border.color: Color.mOutline
             border.width: Math.max(1, Style.borderS * scaling)
 
@@ -162,7 +164,7 @@ NBox {
               NText {
                 text: modelData.id
                 font.pointSize: Style.fontSizeS * scaling
-                color: Color.mOnPrimary
+                color: root.getWidgetColor(modelData)[1]
                 horizontalAlignment: Text.AlignHCenter
                 elide: Text.ElideRight
                 Layout.preferredWidth: 80 * scaling
