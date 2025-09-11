@@ -134,7 +134,7 @@ RowLayout {
             asynchronous: true
             smooth: true
             visible: source !== ""
-            
+
             // Handle loading errors gracefully
             onStatusChanged: {
               if (status === Image.Error) {

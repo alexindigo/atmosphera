@@ -31,7 +31,7 @@ Singleton {
 
   // Debounce timer for updates
   property Timer updateTimer: Timer {
-    interval: 50  // 50ms debounce
+    interval: 50 // 50ms debounce
     repeat: false
     onTriggered: {
       try {
@@ -101,6 +101,7 @@ Singleton {
         return
       }
     } catch (e) {
+
       // Hyprland not available
     }
 
@@ -134,8 +135,7 @@ Singleton {
     }
   }
 
-  function setupHyprlandConnections() {
-    // Connections are set up at the top level, this function just marks that Hyprland is ready
+  function setupHyprlandConnections() {// Connections are set up at the top level, this function just marks that Hyprland is ready
   }
 
   function updateHyprlandWorkspaces() {
@@ -145,7 +145,7 @@ Singleton {
     workspaces.clear()
     try {
       const hlWorkspaces = Hyprland.workspaces.values
-      
+
       // Determine occupied workspace ids from current toplevels
       const occupiedIds = {}
       try {
@@ -165,26 +165,28 @@ Singleton {
           }
         }
       } catch (e2) {
+
         // ignore occupancy errors; fall back to false
       }
-      
+
       for (var i = 0; i < hlWorkspaces.length; i++) {
         const ws = hlWorkspaces[i]
-        if (!ws) continue
-        
+        if (!ws)
+          continue
+
         try {
           // Only append workspaces with id >= 1
           if (ws.id >= 1) {
             workspaces.append({
-              "id": i,
-              "idx": ws.id,
-              "name": ws.name || "",
-              "output": ws.monitor?.name || "",
-              "isActive": ws.active === true,
-              "isFocused": ws.focused === true,
-              "isUrgent": ws.urgent === true,
-              "isOccupied": occupiedIds[ws.id] === true
-            })
+                                "id": i,
+                                "idx": ws.id,
+                                "name": ws.name || "",
+                                "output": ws.monitor?.name || "",
+                                "isActive": ws.active === true,
+                                "isFocused": ws.focused === true,
+                                "isUrgent": ws.urgent === true,
+                                "isOccupied": occupiedIds[ws.id] === true
+                              })
           }
         } catch (workspaceError) {
           Logger.warn("Compositor", "Error processing workspace at index", i, ":", workspaceError)
@@ -226,6 +228,7 @@ Singleton {
               appId = String(toplevel.appId)
             }
           } catch (propertyError) {
+
             // Ignore property access errors and continue with empty appId
           }
 
@@ -237,6 +240,7 @@ Singleton {
                 appId = String(ipcData.class || ipcData.initialClass || ipcData.appId || ipcData.wm_class || "")
               }
             } catch (ipcError) {
+
               // Ignore errors when accessing lastIpcObject
             }
           }
@@ -272,13 +276,12 @@ Singleton {
           }
 
           windowsList.push({
-            "id": windowId,
-            "title": windowTitle,
-            "appId": appId,
-            "workspaceId": workspaceId,
-            "isFocused": isActivated
-          })
-
+                             "id": windowId,
+                             "title": windowTitle,
+                             "appId": appId,
+                             "workspaceId": workspaceId,
+                             "isFocused": isActivated
+                           })
         } catch (toplevelError) {
           // Log the error but continue processing other toplevels
           Logger.warn("Compositor", "Error processing toplevel at index", i, ":", toplevelError)
@@ -351,23 +354,23 @@ Singleton {
 
           for (const ws of workspacesData) {
             workspacesList.push({
-              "id": ws.id,
-              "idx": ws.idx,
-              "name": ws.name || "",
-              "output": ws.output || "",
-              "isFocused": ws.is_focused === true,
-              "isActive": ws.is_active === true,
-              "isUrgent": ws.is_urgent === true,
-              "isOccupied": ws.active_window_id ? true : false
-            })
+                                  "id": ws.id,
+                                  "idx": ws.idx,
+                                  "name": ws.name || "",
+                                  "output": ws.output || "",
+                                  "isFocused": ws.is_focused === true,
+                                  "isActive": ws.is_active === true,
+                                  "isUrgent": ws.is_urgent === true,
+                                  "isOccupied": ws.active_window_id ? true : false
+                                })
           }
 
           workspacesList.sort((a, b) => {
-            if (a.output !== b.output) {
-              return a.output.localeCompare(b.output)
-            }
-            return a.idx - b.idx
-          })
+                                if (a.output !== b.output) {
+                                  return a.output.localeCompare(b.output)
+                                }
+                                return a.idx - b.idx
+                              })
 
           // Update the workspaces ListModel
           workspaces.clear()
@@ -472,12 +475,12 @@ Singleton {
               const windowsList = []
               for (const win of windowsData) {
                 windowsList.push({
-                  "id": win.id,
-                  "title": win.title || "",
-                  "appId": win.app_id || "",
-                  "workspaceId": win.workspace_id || null,
-                  "isFocused": win.is_focused === true
-                })
+                                   "id": win.id,
+                                   "title": win.title || "",
+                                   "appId": win.app_id || "",
+                                   "workspaceId": win.workspace_id || null,
+                                   "isFocused": win.is_focused === true
+                                 })
               }
 
               windowsList.sort((a, b) => a.id - b.id)
@@ -542,12 +545,12 @@ Singleton {
           const windowsList = []
           for (const win of windowsData) {
             windowsList.push({
-              "id": win.id,
-              "title": win.title || "",
-              "appId": win.app_id || "",
-              "workspaceId": win.workspace_id || null,
-              "isFocused": win.is_focused === true
-            })
+                               "id": win.id,
+                               "title": win.title || "",
+                               "appId": win.app_id || "",
+                               "workspaceId": win.workspace_id || null,
+                               "isFocused": win.is_focused === true
+                             })
           }
 
           windowsList.sort((a, b) => a.id - b.id)

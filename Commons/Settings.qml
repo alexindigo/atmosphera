@@ -145,7 +145,6 @@ Singleton {
       widget.use12HourClock = widget.use12HourClock !== undefined ? widget.use12HourClock : adapter.location.use12HourClock
       widget.reverseDayMonth = widget.reverseDayMonth !== undefined ? widget.reverseDayMonth : adapter.location.reverseDayMonth
       if (widget.showDate !== undefined) {
-        console.log("HELLLO")
         widget.displayFormat = "time-date"
       } else if (widget.showSeconds) {
         widget.displayFormat = "time-seconds"
