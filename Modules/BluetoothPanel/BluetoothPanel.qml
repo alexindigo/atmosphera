@@ -75,7 +75,7 @@ NPanel {
       }
 
       Rectangle {
-        visible: !Settings.data.network.bluetoothEnabled
+        visible: !(BluetoothService.adapter && BluetoothService.adapter.enabled)
         Layout.fillWidth: true
         Layout.fillHeight: true
         color: Color.transparent
