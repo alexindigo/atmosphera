@@ -240,7 +240,7 @@ NBox {
         width: 0
         height: Style.baseWidgetSize * 1.15 * scaling
         radius: Style.radiusL * scaling
-        color: "transparent"
+        color: Color.transparent
         border.color: Color.mOutline
         border.width: Math.max(1, Style.borderS * scaling)
         opacity: 0.7
@@ -305,7 +305,7 @@ NBox {
 
         acceptedButtons: Qt.LeftButton
         preventStealing: false
-        propagateComposedEvents: !dragStarted
+        propagateComposedEvents: false
         hoverEnabled: true // Always track mouse for drag operations
 
         property point startPos: Qt.point(0, 0)
@@ -458,7 +458,7 @@ NBox {
                                  // Setup ghost widget
                                  if (draggedWidget) {
                                    dragGhost.width = draggedWidget.width
-                                   dragGhost.color = root.getWidgetColor(draggedModelData)
+                                   dragGhost.color = root.getWidgetColor(draggedModelData)[0]
                                    ghostText.text = draggedModelData.id
                                  }
                                }
