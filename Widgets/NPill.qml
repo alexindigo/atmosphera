@@ -97,7 +97,7 @@ Item {
     width: iconSize
     height: iconSize
     radius: width * 0.5
-    color: hovered && !forceOpen ? Color.mPrimary : Color.mSurfaceVariant
+    color: hovered && !forceOpen ? Color.mTertiary : Color.mSurfaceVariant
     anchors.verticalCenter: parent.verticalCenter
 
     x: rightOpen ? 0 : (parent.width - width)
@@ -112,7 +112,7 @@ Item {
     NIcon {
       icon: root.icon
       font.pointSize: Style.fontSizeM * scaling
-      color: hovered && !forceOpen ? Color.mOnPrimary : Color.mOnSurface
+      color: hovered && !forceOpen ? Color.mOnTertiary : Color.mOnSurface
       // Center horizontally
       x: (iconCircle.width - width) / 2
       // Center vertically accounting for font metrics
