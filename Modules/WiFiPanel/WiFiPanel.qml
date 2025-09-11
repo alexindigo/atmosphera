@@ -10,8 +10,8 @@ import qs.Widgets
 NPanel {
   id: root
 
-  panelWidth: 400 * scaling
-  panelHeight: 500 * scaling
+  preferredWidth: 400
+  preferredHeight: 500
   panelKeyboardFocus: true
 
   property string passwordSsid: ""

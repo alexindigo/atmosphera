@@ -48,18 +48,16 @@ ColumnLayout {
   Popup {
     id: iconPicker
     modal: true
-    property real panelWidth: {
+    width: {
       var w = Math.round(Math.max(Screen.width * 0.35, 900) * scaling)
       w = Math.min(w, Screen.width - Style.marginL * 2)
       return w
     }
-    property real panelHeight: {
+    height: {
       var h = Math.round(Math.max(Screen.height * 0.65, 700) * scaling)
       h = Math.min(h, Screen.height - Style.barHeight * scaling - Style.marginL * 2)
       return h
     }
-    width: panelWidth
-    height: panelHeight
     anchors.centerIn: Overlay.overlay
     padding: Style.marginXL * scaling
 

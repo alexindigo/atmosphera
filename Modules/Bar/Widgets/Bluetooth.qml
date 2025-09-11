@@ -21,5 +21,5 @@ NIconButton {
 
   icon: Settings.data.network.bluetoothEnabled ? "bluetooth" : "bluetooth-off"
   tooltipText: "Bluetooth devices."
-  onClicked: PanelService.getPanel("bluetoothPanel")?.toggle(screen, this)
+  onClicked: PanelService.getPanel("bluetoothPanel")?.toggle(this)
 }

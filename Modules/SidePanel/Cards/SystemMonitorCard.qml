@@ -9,7 +9,6 @@ NBox {
   id: root
 
   Layout.preferredWidth: Style.baseWidgetSize * 2.625 * scaling
-  implicitHeight: content.implicitHeight + Style.marginXS * 2 * scaling
 
   ColumnLayout {
     id: content

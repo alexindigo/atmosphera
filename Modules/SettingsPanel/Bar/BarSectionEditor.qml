@@ -19,10 +19,8 @@ NBox {
   signal reorderWidget(string section, int fromIndex, int toIndex)
   signal updateWidgetSettings(string section, int index, var settings)
   signal dragPotentialStarted
-  // Emitted when a widget is pressed (potential drag start)
   signal dragPotentialEnded
 
-  // Emitted when interaction ends (drag or click)
   color: Color.mSurface
   Layout.fillWidth: true
   Layout.minimumHeight: {
@@ -147,12 +145,12 @@ NBox {
 
             Behavior on opacity {
               NumberAnimation {
-                duration: 150
+                duration: Style.animationFast
               }
             }
             Behavior on scale {
               NumberAnimation {
-                duration: 150
+                duration: Style.animationFast
               }
             }
 
