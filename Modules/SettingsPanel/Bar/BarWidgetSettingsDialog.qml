@@ -46,6 +46,7 @@ Popup {
       "Brightness": "WidgetSettings/BrightnessSettings.qml",
       "Clock": "WidgetSettings/ClockSettings.qml",
       "CustomButton": "WidgetSettings/CustomButtonSettings.qml",
+      "KeyboardLayout": "WidgetSettings/KeyboardLayoutSettings.qml",
       "MediaMini": "WidgetSettings/MediaMiniSettings.qml",
       "Microphone": "WidgetSettings/MicrophoneSettings.qml",
       "NotificationHistory": "WidgetSettings/NotificationHistorySettings.qml",
