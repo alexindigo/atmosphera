@@ -79,7 +79,7 @@ NBox {
     RowLayout {
       visible: weatherReady
       Layout.fillWidth: true
-      Layout.alignment: Qt.AlignHCenter
+      Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
       spacing: Style.marginL * scaling
       Repeater {
         model: weatherReady ? LocationService.data.weather.daily.time : []
