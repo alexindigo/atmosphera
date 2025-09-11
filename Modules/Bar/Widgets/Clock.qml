@@ -41,14 +41,14 @@ Rectangle {
   implicitHeight: compactMode ? (timeText.implicitHeight + dateText.implicitHeight + Math.round(
                                    Style.marginXS * scaling) + Math.round(Style.marginM * 2 * scaling)) : Math.round(
                                   Style.capsuleHeight * scaling)
-  radius: Math.round(Style.radiusM * scaling)
+  radius: Math.round(implicitHeight / 2)
   color: Color.mSurfaceVariant
 
   // Clock with optional compact layout & attached calendar
   Item {
     id: clockContainer
     anchors.fill: parent
-    anchors.margins: Math.round((compactMode ? Style.marginXS : Style.marginM) * scaling)
+    anchors.margins: 0
 
     Column {
       id: compactColumn

@@ -37,7 +37,7 @@ ColumnLayout {
   }
 
   NToggle {
-    label: "Compact clock (date under time)"
+    label: "Compact Mode"
     checked: valueCompactMode
     onToggled: checked => valueCompactMode = checked
   }

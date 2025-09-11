@@ -281,7 +281,7 @@ Singleton {
                                 if (a.output !== b.output) {
                                   return a.output.localeCompare(b.output)
                                 }
-                                return a.id - b.id
+                                return a.idx - b.idx
                               })
 
           // Update the workspaces ListModel
