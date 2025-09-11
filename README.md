@@ -29,7 +29,7 @@ Features a modern modular architecture with a status bar, notification system, c
 
 ## Preview
 
-https://github.com/user-attachments/assets/29e65909-78f6-4c29-b484-c761f540bc26
+https://github.com/user-attachments/assets/72c6d6dc-48b0-48a0-bd8b-c7e70990edc4
 
 <details>
 <summary>Screenshots</summary>
