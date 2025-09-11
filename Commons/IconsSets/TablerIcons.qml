@@ -115,7 +115,8 @@ Singleton {
     "bt-device-phone": "device-mobile-filled",
     "bt-device-watch": "device-watch",
     "bt-device-speaker": "device-speaker",
-    "bt-device-tv": "device-tv"
+    "bt-device-tv": "device-tv",
+    "noctalia": "noctalia"
   }
 
   // Fonts Codepoints - do not change!
@@ -4299,6 +4300,7 @@ Singleton {
     "news-off": "\u{f167}",
     "nfc": "\u{eeb7}",
     "nfc-off": "\u{f168}",
+    "noctalia": "\u{ec33}",
     "no-copyright": "\u{efb9}",
     "no-creative-commons": "\u{efba}",
     "no-derivatives": "\u{efbb}",
