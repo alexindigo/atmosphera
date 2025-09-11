@@ -34,33 +34,94 @@ Rectangle {
   readonly property bool showSeconds: widgetSettings.showSeconds !== undefined ? widgetSettings.showSeconds : widgetMetadata.showSeconds
   readonly property bool reverseDayMonth: widgetSettings.reverseDayMonth
                                           !== undefined ? widgetSettings.reverseDayMonth : widgetMetadata.reverseDayMonth
+  readonly property bool compactMode: widgetSettings.compactMode !== undefined ? widgetSettings.compactMode : widgetMetadata.compactMode
+  readonly property bool compactDateNumeric: widgetSettings.compactDateNumeric
+                                             !== undefined ? widgetSettings.compactDateNumeric : widgetMetadata.compactDateNumeric
 
-  implicitWidth: clock.width + Style.marginM * 2 * scaling
-  implicitHeight: Math.round(Style.capsuleHeight * scaling)
+  implicitWidth: (compactMode ? Math.max(timeText.implicitWidth,
+                                         dateText.implicitWidth) : clock.width) + Style.marginM * 2 * scaling
+  implicitHeight: compactMode ? (timeText.implicitHeight + dateText.implicitHeight + Math.round(
+                                   Style.marginXS * scaling) + Math.round(Style.marginM * 2 * scaling)) : Math.round(
+                                  Style.capsuleHeight * scaling)
   radius: Math.round(Style.radiusM * scaling)
   color: Color.mSurfaceVariant
 
-  // Clock Icon with attached calendar
-  NText {
-    id: clock
-    text: {
-      const now = Time.date
-      const timeFormat = use12h ? (showSeconds ? "h:mm:ss AP" : "h:mm AP") : (showSeconds ? "HH:mm:ss" : "HH:mm")
-      const timeString = Qt.formatDateTime(now, timeFormat)
+  // Clock with optional compact layout & attached calendar
+  Item {
+    id: clockContainer
+    anchors.fill: parent
+    anchors.margins: Math.round((compactMode ? Style.marginS : Style.marginM) * scaling)
 
-      if (showDate) {
-        let dayName = now.toLocaleDateString(Qt.locale(), "ddd")
-        dayName = dayName.charAt(0).toUpperCase() + dayName.slice(1)
-        let day = now.getDate()
-        let month = now.toLocaleDateString(Qt.locale(), "MMM")
-        return timeString + " - " + (reverseDayMonth ? `${dayName}, ${month} ${day}` : `${dayName}, ${day} ${month}`)
+    Column {
+      id: compactColumn
+      anchors.centerIn: parent
+      spacing: Math.round(Style.marginXXS * scaling)
+      visible: compactMode
+
+      NText {
+        id: timeText
+        text: {
+          const now = Time.date
+          const timeFormat = use12h ? (showSeconds ? "h:mm:ss AP" : "h:mm AP") : (showSeconds ? "HH:mm:ss" : "HH:mm")
+          return Qt.formatDateTime(now, timeFormat)
+        }
+        font.pointSize: Style.fontSizeS * scaling
+        font.weight: Style.fontWeightBold
+        color: Color.mPrimary
+        horizontalAlignment: Text.AlignHCenter
+        anchors.horizontalCenter: parent.horizontalCenter
       }
-      return timeString
+
+      NText {
+        id: dateText
+        visible: compactMode || showDate
+        text: {
+          const now = Time.date
+          if (compactDateNumeric) {
+            const day = now.getDate()
+            const month = now.getMonth() + 1
+            const dd = (day < 10 ? "0" + day : "" + day)
+            const mm = (month < 10 ? "0" + month : "" + month)
+            return reverseDayMonth ? `${mm}/${dd}` : `${dd}/${mm}`
+          } else {
+            let dayName = now.toLocaleDateString(Qt.locale(), "ddd")
+            dayName = dayName.charAt(0).toUpperCase() + dayName.slice(1)
+            let day = now.getDate()
+            let month = now.toLocaleDateString(Qt.locale(), "MMM")
+            return reverseDayMonth ? `${dayName}, ${month} ${day}` : `${dayName}, ${day} ${month}`
+          }
+        }
+        font.pointSize: Math.max(Style.fontSizeXS, Style.fontSizeXS * scaling)
+        font.weight: Style.fontWeightRegular
+        color: Color.mPrimary
+        horizontalAlignment: Text.AlignHCenter
+        anchors.horizontalCenter: parent.horizontalCenter
+      }
     }
-    anchors.centerIn: parent
-    font.pointSize: Style.fontSizeS * scaling
-    font.weight: Style.fontWeightBold
-    color: Color.mPrimary
+
+    // Non-compact single-line text
+    NText {
+      id: clock
+      visible: !compactMode
+      text: {
+        const now = Time.date
+        const timeFormat = use12h ? (showSeconds ? "h:mm:ss AP" : "h:mm AP") : (showSeconds ? "HH:mm:ss" : "HH:mm")
+        const timeString = Qt.formatDateTime(now, timeFormat)
+
+        if (showDate) {
+          let dayName = now.toLocaleDateString(Qt.locale(), "ddd")
+          dayName = dayName.charAt(0).toUpperCase() + dayName.slice(1)
+          let day = now.getDate()
+          let month = now.toLocaleDateString(Qt.locale(), "MMM")
+          return timeString + " - " + (reverseDayMonth ? `${dayName}, ${month} ${day}` : `${dayName}, ${day} ${month}`)
+        }
+        return timeString
+      }
+      anchors.centerIn: parent
+      font.pointSize: Style.fontSizeS * scaling
+      font.weight: Style.fontWeightBold
+      color: Color.mPrimary
+    }
   }
 
   NTooltip {

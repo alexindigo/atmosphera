@@ -55,7 +55,9 @@ Singleton {
                                     "showDate": false,
                                     "use12HourClock": false,
                                     "showSeconds": false,
-                                    "reverseDayMonth": true
+                                    "reverseDayMonth": true,
+                                    "compactMode": false,
+                                    "compactDateNumeric": true
                                   },
                                   "CustomButton": {
                                     "allowUserSettings": true,
