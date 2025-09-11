@@ -154,6 +154,13 @@ ColumnLayout {
       onToggled: checked => Settings.data.dock.autoHide = checked
     }
 
+    NToggle {
+      label: "Exclusive Dock"
+      description: "Ensure windows don't open underneath the Dock."
+      checked: Settings.data.dock.exclusive
+      onToggled: checked => Settings.data.dock.exclusive = checked
+    }
+
     ColumnLayout {
       spacing: Style.marginXXS * scaling
       Layout.fillWidth: true

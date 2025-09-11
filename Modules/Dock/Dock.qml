@@ -33,6 +33,7 @@ Variants {
       screen: modelData
 
       WlrLayershell.namespace: "noctalia-dock"
+      WlrLayershell.exclusionMode: Settings.data.dock.exclusive ? ExclusionMode.Auto : ExclusionMode.Ignore
 
       readonly property bool autoHide: Settings.data.dock.autoHide
       readonly property int hideDelay: 500
