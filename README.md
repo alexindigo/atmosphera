@@ -29,12 +29,7 @@ Features a modern modular architecture with a status bar, notification system, c
 
 ## Preview
 
-<div align="center">
- <video loop>
-<source src="Assets/Screenshots/noctalia_transition.mp4" type="video/mp4">
- Your browser does not support the video tag.
-</video>
-</div>
+https://github.com/user-attachments/assets/29e65909-78f6-4c29-b484-c761f540bc26
 
 <details>
 <summary>Screenshots</summary>
