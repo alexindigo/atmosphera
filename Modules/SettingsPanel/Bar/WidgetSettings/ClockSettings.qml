@@ -19,8 +19,6 @@ ColumnLayout {
   property bool valueShowSeconds: widgetData.showSeconds !== undefined ? widgetData.showSeconds : widgetMetadata.showSeconds
   property bool valueReverseDayMonth: widgetData.reverseDayMonth !== undefined ? widgetData.reverseDayMonth : widgetMetadata.reverseDayMonth
   property bool valueCompactMode: widgetData.compactMode !== undefined ? widgetData.compactMode : widgetMetadata.compactMode
-  property bool valueCompactDateNumeric: widgetData.compactDateNumeric
-                                         !== undefined ? widgetData.compactDateNumeric : widgetMetadata.compactDateNumeric
 
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {})
@@ -29,7 +27,6 @@ ColumnLayout {
     settings.showSeconds = valueShowSeconds
     settings.reverseDayMonth = valueReverseDayMonth
     settings.compactMode = valueCompactMode
-    settings.compactDateNumeric = valueCompactDateNumeric
     return settings
   }
 
@@ -43,14 +40,6 @@ ColumnLayout {
     label: "Compact clock (date under time)"
     checked: valueCompactMode
     onToggled: checked => valueCompactMode = checked
-  }
-
-  // Only visible when compact mode is enabled
-  NToggle {
-    visible: valueCompactMode
-    label: "Compact date numeric (DD/MM)"
-    checked: valueCompactDateNumeric
-    onToggled: checked => valueCompactDateNumeric = checked
   }
 
   NToggle {

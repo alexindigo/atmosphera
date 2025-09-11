@@ -35,8 +35,6 @@ Rectangle {
   readonly property bool reverseDayMonth: widgetSettings.reverseDayMonth
                                           !== undefined ? widgetSettings.reverseDayMonth : widgetMetadata.reverseDayMonth
   readonly property bool compactMode: widgetSettings.compactMode !== undefined ? widgetSettings.compactMode : widgetMetadata.compactMode
-  readonly property bool compactDateNumeric: widgetSettings.compactDateNumeric
-                                             !== undefined ? widgetSettings.compactDateNumeric : widgetMetadata.compactDateNumeric
 
   implicitWidth: (compactMode ? Math.max(timeText.implicitWidth,
                                          dateText.implicitWidth) : clock.width) + Style.marginM * 2 * scaling
@@ -50,12 +48,12 @@ Rectangle {
   Item {
     id: clockContainer
     anchors.fill: parent
-    anchors.margins: Math.round((compactMode ? Style.marginS : Style.marginM) * scaling)
+    anchors.margins: Math.round((compactMode ? Style.marginXS : Style.marginM) * scaling)
 
     Column {
       id: compactColumn
       anchors.centerIn: parent
-      spacing: Math.round(Style.marginXXS * scaling)
+      spacing: compactMode ? 0 : Math.round(Style.marginXXS * scaling)
       visible: compactMode
 
       NText {
@@ -77,21 +75,13 @@ Rectangle {
         visible: compactMode || showDate
         text: {
           const now = Time.date
-          if (compactDateNumeric) {
-            const day = now.getDate()
-            const month = now.getMonth() + 1
-            const dd = (day < 10 ? "0" + day : "" + day)
-            const mm = (month < 10 ? "0" + month : "" + month)
-            return reverseDayMonth ? `${mm}/${dd}` : `${dd}/${mm}`
-          } else {
-            let dayName = now.toLocaleDateString(Qt.locale(), "ddd")
-            dayName = dayName.charAt(0).toUpperCase() + dayName.slice(1)
-            let day = now.getDate()
-            let month = now.toLocaleDateString(Qt.locale(), "MMM")
-            return reverseDayMonth ? `${dayName}, ${month} ${day}` : `${dayName}, ${day} ${month}`
-          }
+          const day = now.getDate()
+          const month = now.getMonth() + 1
+          const dd = (day < 10 ? "0" + day : "" + day)
+          const mm = (month < 10 ? "0" + month : "" + month)
+          return reverseDayMonth ? `${mm}/${dd}` : `${dd}/${mm}`
         }
-        font.pointSize: Math.max(Style.fontSizeXS, Style.fontSizeXS * scaling)
+        font.pointSize: Math.max(Style.fontSizeXXS, Style.fontSizeXXS * scaling)
         font.weight: Style.fontWeightRegular
         color: Color.mPrimary
         horizontalAlignment: Text.AlignHCenter
