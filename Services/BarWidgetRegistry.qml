@@ -52,11 +52,9 @@ Singleton {
                                   },
                                   "Clock": {
                                     "allowUserSettings": true,
-                                    "showDate": false,
+                                    "displayFormat": "time-date-short",
                                     "use12HourClock": false,
-                                    "showSeconds": false,
-                                    "reverseDayMonth": true,
-                                    "compactMode": false
+                                    "reverseDayMonth": true
                                   },
                                   "CustomButton": {
                                     "allowUserSettings": true,
