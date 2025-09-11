@@ -32,6 +32,16 @@ Singleton {
 
   function init() {
     Logger.log("Bluetooth", "Service initialized")
+    delaySyncState.running = true
+  }
+
+  Timer {
+    id: delaySyncState
+    interval: 1000
+    repeat: false
+    onTriggered: {
+      Settings.data.network.bluetoothEnabled = adapter.enabled
+    }
   }
 
   Timer {
