@@ -30,8 +30,8 @@ Rectangle {
   signal rightClicked
   signal middleClicked
 
-  implicitWidth: size
-  implicitHeight: size
+  implicitWidth: Style.baseWidgetSize * scaling * sizeRatio
+  implicitHeight: Style.baseWidgetSize * scaling * sizeRatio
 
   opacity: root.enabled ? Style.opacityFull : Style.opacityMedium
   color: root.enabled && root.hovering ? colorBgHover : colorBg
