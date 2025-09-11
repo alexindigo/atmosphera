@@ -63,42 +63,6 @@ ColumnLayout {
       onToggled: checked => Settings.data.general.dimDesktop = checked
     }
 
-    NToggle {
-      label: "Show Corners"
-      description: "Display rounded corners on the edge of the screen."
-      checked: Settings.data.general.showScreenCorners
-      onToggled: checked => Settings.data.general.showScreenCorners = checked
-    }
-
-    ColumnLayout {
-      spacing: Style.marginXXS * scaling
-      Layout.fillWidth: true
-
-      NLabel {
-        label: "Screen edge radius"
-        description: "Adjust the rounded corners of the screen."
-      }
-
-      RowLayout {
-        NSlider {
-          Layout.fillWidth: true
-          from: 0
-          to: 1
-          stepSize: 0.01
-          value: Settings.data.general.screenRadiusRatio
-          onMoved: Settings.data.general.screenRadiusRatio = value
-          cutoutColor: Color.mSurface
-        }
-
-        NText {
-          text: Math.floor(Settings.data.general.screenRadiusRatio * 100) + "%"
-          Layout.alignment: Qt.AlignVCenter
-          Layout.leftMargin: Style.marginS * scaling
-          color: Color.mOnSurface
-        }
-      }
-    }
-
     ColumnLayout {
       spacing: Style.marginXXS * scaling
       Layout.fillWidth: true
@@ -151,6 +115,61 @@ ColumnLayout {
 
         NText {
           text: Math.round(Settings.data.general.animationSpeed * 100) + "%"
+          Layout.alignment: Qt.AlignVCenter
+          Layout.leftMargin: Style.marginS * scaling
+          color: Color.mOnSurface
+        }
+      }
+    }
+  }
+
+  NDivider {
+    Layout.fillWidth: true
+    Layout.topMargin: Style.marginXL * scaling
+    Layout.bottomMargin: Style.marginXL * scaling
+  }
+
+  // Dock
+  ColumnLayout {
+    spacing: Style.marginL * scaling
+    Layout.fillWidth: true
+    NText {
+      text: "Screen Corners"
+      font.pointSize: Style.fontSizeXXL * scaling
+      font.weight: Style.fontWeightBold
+      color: Color.mSecondary
+      Layout.bottomMargin: Style.marginS * scaling
+    }
+
+    NToggle {
+      label: "Show Screen Corners"
+      description: "Display rounded corners on the edge of the screen."
+      checked: Settings.data.general.showScreenCorners
+      onToggled: checked => Settings.data.general.showScreenCorners = checked
+    }
+
+    ColumnLayout {
+      spacing: Style.marginXXS * scaling
+      Layout.fillWidth: true
+
+      NLabel {
+        label: "Screen Corners Radius"
+        description: "Adjust the rounded corners of the screen."
+      }
+
+      RowLayout {
+        NSlider {
+          Layout.fillWidth: true
+          from: 0
+          to: 2
+          stepSize: 0.01
+          value: Settings.data.general.screenRadiusRatio
+          onMoved: Settings.data.general.screenRadiusRatio = value
+          cutoutColor: Color.mSurface
+        }
+
+        NText {
+          text: Math.floor(Settings.data.general.screenRadiusRatio * 100) + "%"
           Layout.alignment: Qt.AlignVCenter
           Layout.leftMargin: Style.marginS * scaling
           color: Color.mOnSurface
