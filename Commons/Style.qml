@@ -35,6 +35,9 @@ Singleton {
   property int radiusM: 16 * Settings.data.general.radiusRatio
   property int radiusL: 20 * Settings.data.general.radiusRatio
 
+  //screen Radii
+  property int screenRadius: 20 * Settings.data.general.screenRadiusRatio
+
   // Border
   property int borderS: 1
   property int borderM: 2
