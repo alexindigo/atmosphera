@@ -317,6 +317,7 @@ Singleton {
         property bool dimDesktop: false
         property bool showScreenCorners: false
         property real radiusRatio: 1.0
+        property real screenRadiusRatio: 1.0
         // Animation speed multiplier (0.1x - 2.0x)
         property real animationSpeed: 1.0
       }

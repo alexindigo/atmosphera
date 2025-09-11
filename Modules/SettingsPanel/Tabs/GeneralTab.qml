@@ -57,17 +57,46 @@ ColumnLayout {
     }
 
     NToggle {
+      label: "Dim Desktop"
+      description: "Dim the desktop when panels or menus are open."
+      checked: Settings.data.general.dimDesktop
+      onToggled: checked => Settings.data.general.dimDesktop = checked
+    }
+
+    NToggle {
       label: "Show Corners"
       description: "Display rounded corners on the edge of the screen."
       checked: Settings.data.general.showScreenCorners
       onToggled: checked => Settings.data.general.showScreenCorners = checked
     }
 
-    NToggle {
-      label: "Dim Desktop"
-      description: "Dim the desktop when panels or menus are open."
-      checked: Settings.data.general.dimDesktop
-      onToggled: checked => Settings.data.general.dimDesktop = checked
+    ColumnLayout {
+      spacing: Style.marginXXS * scaling
+      Layout.fillWidth: true
+
+      NLabel {
+        label: "Screen edge radius"
+        description: "Adjust the rounded corners of the screen."
+      }
+
+      RowLayout {
+        NSlider {
+          Layout.fillWidth: true
+          from: 0
+          to: 1
+          stepSize: 0.01
+          value: Settings.data.general.screenRadiusRatio
+          onMoved: Settings.data.general.screenRadiusRatio = value
+          cutoutColor: Color.mSurface
+        }
+
+        NText {
+          text: Math.floor(Settings.data.general.screenRadiusRatio * 100) + "%"
+          Layout.alignment: Qt.AlignVCenter
+          Layout.leftMargin: Style.marginS * scaling
+          color: Color.mOnSurface
+        }
+      }
     }
 
     ColumnLayout {
