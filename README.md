@@ -29,11 +29,25 @@ Features a modern modular architecture with a status bar, notification system, c
 
 ## Preview
 
-![Launcher](/Assets/Screenshots/launcher.png)
+<div align="center">
+ <video loop>
+<source src="Assets/Screenshots/noctalia_transition.mp4" type="video/mp4">
+ Your browser does not support the video tag.
+</video>
+</div>
 
-![SettingsPanel](/Assets/Screenshots/settings-panel.png?v=2)  
+<details>
+<summary>Screenshots</summary>
 
-![SidePanel](/Assets/Screenshots/light-mode.png?v=2)  
+![Dark 1](/Assets/Screenshots/noctalia-dark-1.png)
+![Dark 2](/Assets/Screenshots/noctalia-dark-2.png)
+![Dark 3](/Assets/Screenshots/noctalia-dark-3.png)
+
+![Light 1](/Assets/Screenshots/noctalia-light-1.png)
+![Light 2](/Assets/Screenshots/noctalia-light-2.png)
+![Light 3](/Assets/Screenshots/noctalia-light-3.png)
+
+</details>
 
 ---
 
