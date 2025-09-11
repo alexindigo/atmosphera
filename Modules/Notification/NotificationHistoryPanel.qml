@@ -129,7 +129,7 @@ NPanel {
           width: notificationList.width
           height: notificationLayout.implicitHeight + (Style.marginM * scaling * 2)
           radius: Style.radiusM * scaling
-          color: notificationMouseArea.containsMouse ? Color.mSecondary : Color.mSurfaceVariant
+          color: notificationMouseArea.containsMouse ? Color.mTertiary : Color.mSurfaceVariant
           border.color: Qt.alpha(Color.mOutline, Style.opacityMedium)
           border.width: Math.max(1, Style.borderS * scaling)
 
@@ -168,7 +168,7 @@ NPanel {
                 text: (summary || "No summary").substring(0, 100)
                 font.pointSize: Style.fontSizeM * scaling
                 font.weight: Font.Medium
-                color: notificationMouseArea.containsMouse ? Color.mSurface : Color.mPrimary
+                color: notificationMouseArea.containsMouse ? Color.mOnTertiary : Color.mPrimary
                 wrapMode: Text.Wrap
                 Layout.fillWidth: true
                 maximumLineCount: 2
@@ -178,7 +178,7 @@ NPanel {
               NText {
                 text: (body || "").substring(0, 150)
                 font.pointSize: Style.fontSizeXS * scaling
-                color: notificationMouseArea.containsMouse ? Color.mSurface : Color.mOnSurface
+                color: notificationMouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface
                 wrapMode: Text.Wrap
                 Layout.fillWidth: true
                 maximumLineCount: 3
@@ -189,7 +189,7 @@ NPanel {
               NText {
                 text: NotificationService.formatTimestamp(timestamp)
                 font.pointSize: Style.fontSizeXS * scaling
-                color: notificationMouseArea.containsMouse ? Color.mSurface : Color.mOnSurface
+                color: notificationMouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface
                 Layout.fillWidth: true
               }
             }
