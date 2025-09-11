@@ -7,14 +7,14 @@ import qs.Services
 Loader {
   id: root
 
-  property ShellScreen screen: undefined
+  property ShellScreen screen
   property real scaling: 1.0
 
   property Component panelContent: null
   property real preferredWidth: 700
   property real preferredHeight: 900
-  property real preferredWidthRatio: undefined
-  property real preferredHeightRatio: undefined
+  property real preferredWidthRatio
+  property real preferredHeightRatio
   property color panelBackgroundColor: Color.mSurface
 
   property bool panelAnchorHorizontalCenter: false
