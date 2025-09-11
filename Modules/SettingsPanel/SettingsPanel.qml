@@ -517,11 +517,11 @@ NPanel {
                     anchors.fill: parent
                     pressDelay: 200
 
-                    ScrollView {
+                    NScrollView {
                       id: scrollView
                       anchors.fill: parent
-                      ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-                      ScrollBar.vertical.policy: ScrollBar.AsNeeded
+                      horizontalPolicy: ScrollBar.AlwaysOff
+                      verticalPolicy: ScrollBar.AsNeeded
                       padding: Style.marginL * scaling
                       clip: true
 

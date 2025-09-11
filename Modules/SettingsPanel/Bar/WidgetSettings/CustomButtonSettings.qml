@@ -115,10 +115,12 @@ ColumnLayout {
       }
 
       // Icon grid
-      ScrollView {
+      NScrollView {
         Layout.fillWidth: true
         Layout.fillHeight: true
         clip: true
+        horizontalPolicy: ScrollBar.AlwaysOff
+        verticalPolicy: ScrollBar.AlwaysOn
 
         GridView {
           id: grid

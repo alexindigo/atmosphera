@@ -110,12 +110,12 @@ Popup {
     border.width: Math.max(1, Style.borderM * scaling)
   }
 
-  ScrollView {
+  NScrollView {
     id: scrollView
     anchors.fill: parent
 
-    ScrollBar.vertical.policy: ScrollBar.AlwaysOff
-    ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+    verticalPolicy: ScrollBar.AlwaysOff
+    horizontalPolicy: ScrollBar.AlwaysOff
     clip: true
 
     ColumnLayout {

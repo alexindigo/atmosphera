@@ -115,10 +115,13 @@ NPanel {
       }
 
       // Notification list
-      ListView {
+      NListView {
         id: notificationList
         Layout.fillWidth: true
         Layout.fillHeight: true
+        horizontalPolicy: ScrollBar.AlwaysOff
+        verticalPolicy: ScrollBar.AsNeeded
+
         model: NotificationService.historyModel
         spacing: Style.marginM * scaling
         clip: true

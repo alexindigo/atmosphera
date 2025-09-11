@@ -185,12 +185,12 @@ NPanel {
         }
 
         // Networks list container
-        ScrollView {
+        NScrollView {
           visible: Settings.data.network.wifiEnabled && (!NetworkService.scanning || Object.keys(
                                                            NetworkService.networks).length > 0)
           anchors.fill: parent
-          ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-          ScrollBar.vertical.policy: ScrollBar.AsNeeded
+          horizontalPolicy: ScrollBar.AlwaysOff
+          verticalPolicy: ScrollBar.AsNeeded
           clip: true
 
           ColumnLayout {
