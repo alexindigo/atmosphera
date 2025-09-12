@@ -39,7 +39,7 @@ Singleton {
     "balanced": "scale",
     "powersaver": "leaf",
     "storage": "database",
-    "ethernet": "sitemap-filled",
+    "ethernet": "sitemap",
     "keyboard": "keyboard",
     "shutdown": "power",
     "lock": "lock-filled",
