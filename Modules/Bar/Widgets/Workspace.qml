@@ -202,8 +202,6 @@ Item {
                     return Color.mOnError
                   if (model.isActive || model.isOccupied)
                     return Color.mOnSecondary
-                  if (model.isUrgent)
-                    return Color.mOnError
 
                   return Color.mOnSurface
                 }
@@ -219,8 +217,6 @@ Item {
               return Color.mError
             if (model.isActive || model.isOccupied)
               return Color.mSecondary
-            if (model.isUrgent)
-              return Color.mError
 
             return Color.mOutline
           }
