@@ -3,6 +3,7 @@ pragma Singleton
 import QtQuick
 import QtQuick.Controls
 import Quickshell
+import Quickshell.Io
 import qs.Commons
 
 Singleton {
@@ -13,10 +14,27 @@ Singleton {
   property ListModel displayFonts: ListModel {}
   property bool fontsLoaded: false
 
+  // System font detection
+  property string systemSansFont: ""
+  property string systemMonospaceFont: ""
+  property string systemDisplayFont: ""
+  property bool systemFontsDetected: false
+
+  // Signal emitted when system font detection is complete
+  signal systemFontsDetected
+
   // -------------------------------------------
   function init() {
     Logger.log("Font", "Service started")
+    detectSystemFonts()
     loadSystemFonts()
+  }
+
+  function detectSystemFonts() {
+    Logger.log("Font", "Detecting system fonts...")
+
+    // Start detecting sans-serif font
+    sansFontProcess.running = true
   }
 
   function loadSystemFonts() {
@@ -157,5 +175,87 @@ Singleton {
     }
 
     return results
+  }
+
+  // Get system font with fallback
+  function getSystemSansFont() {
+    if (systemSansFont && systemSansFont !== "") {
+      return systemSansFont
+    }
+    return "Roboto" // Fallback
+  }
+
+  function getSystemMonospaceFont() {
+    if (systemMonospaceFont && systemMonospaceFont !== "") {
+      return systemMonospaceFont
+    }
+    return "DejaVu Sans Mono" // Fallback
+  }
+
+  function getSystemDisplayFont() {
+    if (systemDisplayFont && systemDisplayFont !== "") {
+      return systemDisplayFont
+    }
+    return "Inter" // Fallback
+  }
+
+  // Process for detecting sans fonts
+  Process {
+    id: sansFontProcess
+    command: ["fc-match", "-f", "%{family[0]}\n", "sans"]
+    onExited: function (exitCode) {
+      if (exitCode === 0) {
+        var fontName = stdout.text.trim()
+        if (fontName !== "") {
+          systemSansFont = fontName
+          Logger.log("Font", "Detected system sans font:", systemSansFont)
+        } else {
+          Logger.warn("Font", "Empty result for system sans font, will use fallback")
+        }
+      } else {
+        Logger.warn("Font", "Failed to detect system sans font, will use fallback")
+      }
+      // Start detecting monospace font
+      monoFontProcess.running = true
+    }
+    stdout: StdioCollector {}
+    stderr: StdioCollector {}
+  }
+
+  // Process for detecting mono fonts
+  Process {
+    id: monoFontProcess
+    command: ["fc-match", "-f", "%{family[0]}\n", "monospace"]
+    onExited: function (exitCode) {
+      if (exitCode === 0) {
+        var fontName = stdout.text.trim()
+        if (fontName !== "") {
+          systemMonospaceFont = fontName
+          Logger.log("Font", "Detected system monospace font:", systemMonospaceFont)
+        } else {
+          Logger.warn("Font", "Empty result for system monospace font, will use fallback")
+        }
+      } else {
+        Logger.warn("Font", "Failed to detect system monospace font, will use fallback")
+      }
+      // for now we'll use the same font for display as sans
+      systemDisplayFont = systemSansFont
+
+      // Log the final font choices after all detection is complete
+      Logger.log("Font", "=== FONT DETECTION RESULTS ===")
+      Logger.log("Font", "System Sans Font:", systemSansFont || "NOT DETECTED")
+      Logger.log("Font", "System Monospace Font:", systemMonospaceFont || "NOT DETECTED")
+      Logger.log("Font", "System Display Font:", systemDisplayFont || "NOT DETECTED")
+      Logger.log("Font", "=== FINAL FONT DEFAULTS ===")
+      Logger.log("Font", "Default Font (getSystemSansFont):", getSystemSansFont())
+      Logger.log("Font", "Fixed Font (getSystemMonospaceFont):", getSystemMonospaceFont())
+      Logger.log("Font", "Billboard Font (getSystemDisplayFont):", getSystemDisplayFont())
+
+      // Mark detection as complete and emit signal
+      systemFontsDetected = true
+      systemFontsDetected()
+    }
+    stdout: StdioCollector {}
+    stderr: StdioCollector {}
   }
 }

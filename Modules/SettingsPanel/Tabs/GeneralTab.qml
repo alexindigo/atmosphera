@@ -195,6 +195,15 @@ ColumnLayout {
       Layout.bottomMargin: Style.marginS * scaling
     }
 
+    NText {
+      text: "Fonts are automatically detected from your system. Inter/Roboto are used as fallbacks when system fonts cannot be detected."
+      font.pointSize: Style.fontSizeS * scaling
+      color: Color.mOnSurfaceVariant
+      wrapMode: Text.WordWrap
+      Layout.fillWidth: true
+      Layout.bottomMargin: Style.marginM * scaling
+    }
+
     // Font configuration section
     ColumnLayout {
       spacing: Style.marginL * scaling
