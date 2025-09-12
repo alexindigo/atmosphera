@@ -1,0 +1,34 @@
+{
+  "dark": {
+    "mPrimary": "#ffffff",
+    "mOnPrimary": "#000000",
+    "mSecondary": "#ffffff",
+    "mOnSecondary": "#000000",
+    "mTertiary": "#ffffff",
+    "mOnTertiary": "#000000",
+    "mError": "#ffffff",
+    "mOnError": "#000000",
+    "mSurface": "#000000",
+    "mOnSurface": "#ffffff",
+    "mSurfaceVariant": "#000000",
+    "mOnSurfaceVariant": "#ffffff",
+    "mOutline": "#ffffff",
+    "mShadow": "#000000"
+  },
+  "light": {
+    "mPrimary": "#000000",
+    "mOnPrimary": "#ffffff",
+    "mSecondary": "#000000",
+    "mOnSecondary": "#ffffff",
+    "mTertiary": "#000000",
+    "mOnTertiary": "#ffffff",
+    "mError": "#000000",
+    "mOnError": "#ffffff",
+    "mSurface": "#ffffff",
+    "mOnSurface": "#000000",
+    "mSurfaceVariant": "#ffffff",
+    "mOnSurfaceVariant": "#000000",
+    "mOutline": "#000000",
+    "mShadow": "#ffffff"
+  }
+}
