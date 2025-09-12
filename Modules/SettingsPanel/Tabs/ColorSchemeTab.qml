@@ -188,7 +188,7 @@ ColumnLayout {
           border.width: Math.max(1, Style.borderL * scaling)
           border.color: (!Settings.data.colorSchemes.useWallpaperColors
                          && (Settings.data.colorSchemes.predefinedScheme === modelData.split("/").pop().replace(
-                               ".json", ""))) ? Color.mPrimary : Color.mOutline
+                               ".json", ""))) ? Color.mSecondary : Color.mOutline
           scale: root.cardScaleLow
 
           // Mouse area for selection
@@ -287,17 +287,17 @@ ColumnLayout {
             anchors.right: parent.right
             anchors.top: parent.top
             anchors.margins: Style.marginS * scaling
-            width: 24 * scaling
-            height: 24 * scaling
+            width: 28 * scaling
+            height: 28 * scaling
             radius: width * 0.5
-            color: Color.mPrimary
+            color: Color.mSecondary
 
-            NText {
-              anchors.centerIn: parent
-              text: "✓"
-              font.pointSize: Style.fontSizeXS * scaling
+            NIcon {
+              icon: "check"
+              font.pointSize: Style.fontSizeM * scaling
               font.weight: Style.fontWeightBold
-              color: Color.mOnPrimary
+              color: Color.mOnSecondary
+              anchors.centerIn: parent
             }
           }
 
