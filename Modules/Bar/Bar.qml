@@ -77,7 +77,7 @@ Variants {
                 "screen": root.modelData || null,
                 "scaling": ScalingService.getScreenScale(screen),
                 "widgetId": modelData.id,
-                "barSection": parent.objectName,
+                "section": parent.objectName.replace("Section", "").toLowerCase(),
                 "sectionWidgetIndex": index,
                 "sectionWidgetsCount": Settings.data.bar.widgets.left.length
               }
@@ -105,7 +105,7 @@ Variants {
                 "screen": root.modelData || null,
                 "scaling": ScalingService.getScreenScale(screen),
                 "widgetId": modelData.id,
-                "barSection": parent.objectName,
+                "section": parent.objectName.replace("Section", "").toLowerCase(),
                 "sectionWidgetIndex": index,
                 "sectionWidgetsCount": Settings.data.bar.widgets.center.length
               }
@@ -134,7 +134,7 @@ Variants {
                 "screen": root.modelData || null,
                 "scaling": ScalingService.getScreenScale(screen),
                 "widgetId": modelData.id,
-                "barSection": parent.objectName,
+                "section": parent.objectName.replace("Section", "").toLowerCase(),
                 "sectionWidgetIndex": index,
                 "sectionWidgetsCount": Settings.data.bar.widgets.right.length
               }

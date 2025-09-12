@@ -206,9 +206,9 @@ Singleton {
 
   function getNPillDirection(widget) {
     try {
-      if (widget.barSection === "leftSection") {
+      if (widget.section === "left") {
         return true
-      } else if (widget.barSection === "rightSection") {
+      } else if (widget.section === "right") {
         return false
       } else {
         // middle section
