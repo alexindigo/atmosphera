@@ -33,6 +33,8 @@ Item {
   }
 
   readonly property string labelMode: (widgetSettings.labelMode !== undefined) ? widgetSettings.labelMode : widgetMetadata.labelMode
+  readonly property bool hideUnoccupied: (widgetSettings.hideUnoccupied !== undefined) ? widgetSettings.hideUnoccupied : widgetMetadata.hideUnoccupied
+  onHideUnoccupiedChanged: refreshWorkspaces()
 
   property bool isDestroying: false
   property bool hovered: false
@@ -91,6 +93,9 @@ Item {
       for (var i = 0; i < WorkspaceService.workspaces.count; i++) {
         const ws = WorkspaceService.workspaces.get(i)
         if (ws.output.toLowerCase() === screen.name.toLowerCase()) {
+          if (hideUnoccupied && !ws.isOccupied && !ws.isFocused) {
+            continue
+          }
           localWorkspaces.append(ws)
         }
       }
