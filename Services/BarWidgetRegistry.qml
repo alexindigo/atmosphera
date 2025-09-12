@@ -87,7 +87,8 @@ Singleton {
                                   },
                                   "Workspace": {
                                     "allowUserSettings": true,
-                                    "labelMode": "index"
+                                    "labelMode": "index",
+                                    "hideUnoccupied": false
                                   },
                                   "MediaMini": {
                                     "allowUserSettings": true,
