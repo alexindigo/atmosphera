@@ -204,17 +204,6 @@ Singleton {
   }
 
   // -----------------------------------------------------
-  // Update font defaults when system fonts are detected
-  function updateFontDefaults() {
-    if (FontService.systemFontsDetected) {
-      Logger.log("Settings", "Updating font defaults with detected system fonts")
-      adapter.ui.fontDefault = FontService.getSystemSansFont()
-      adapter.ui.fontFixed = FontService.getSystemMonospaceFont()
-      adapter.ui.fontBillboard = FontService.getSystemDisplayFont()
-    }
-  }
-
-  // -----------------------------------------------------
   // Ensure directories exist before FileView tries to read files
   Component.onCompleted: {
     // ensure settings dir exists
@@ -224,9 +213,6 @@ Singleton {
 
     // Mark directories as created and trigger file loading
     directoriesCreated = true
-
-    // Connect to font service signal to update defaults when system fonts are detected
-    FontService.systemFontsDetected.connect(updateFontDefaults)
   }
 
   // Don't write settings to disk immediately
@@ -429,9 +415,9 @@ Singleton {
 
       // ui
       property JsonObject ui: JsonObject {
-        property string fontDefault: FontService.getSystemSansFont()
-        property string fontFixed: FontService.getSystemMonospaceFont()
-        property string fontBillboard: FontService.getSystemDisplayFont()
+        property string fontDefault: "Roboto"
+        property string fontFixed: "DejaVu Sans Mono"
+        property string fontBillboard: "Inter"
         property list<var> monitorsScaling: []
         property bool idleInhibitorEnabled: false
       }
