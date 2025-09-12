@@ -15,6 +15,7 @@ NPanel {
   preferredWidth: 380
   preferredHeight: 500
   panelAnchorRight: true
+  panelKeyboardFocus: true
 
   panelContent: Rectangle {
     id: notificationRect

@@ -12,6 +12,7 @@ NPanel {
 
   preferredWidth: 460
   preferredHeight: 734
+  panelKeyboardFocus: true
 
   panelContent: Item {
     id: content
