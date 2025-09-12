@@ -32,8 +32,8 @@ Item {
   }
 
   readonly property string labelMode: (widgetSettings.labelMode !== undefined) ? widgetSettings.labelMode : widgetMetadata.labelMode
-  readonly property bool hideUnoccupied: (widgetSettings.hideUnoccupied !== undefined) ? widgetSettings.hideUnoccupied : widgetMetadata.hideUnoccupied
-  onHideUnoccupiedChanged: refreshWorkspaces()
+  readonly property bool hideUnoccupied: (widgetSettings.hideUnoccupied
+                                          !== undefined) ? widgetSettings.hideUnoccupied : widgetMetadata.hideUnoccupied
 
   property bool isDestroying: false
   property bool hovered: false
@@ -78,6 +78,7 @@ Item {
   }
 
   onScreenChanged: refreshWorkspaces()
+  onHideUnoccupiedChanged: refreshWorkspaces()
 
   Connections {
     target: WorkspaceService

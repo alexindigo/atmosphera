@@ -14,10 +14,10 @@ ColumnLayout {
   property var widgetMetadata: null
 
   function saveSettings() {
-    var settings = Object.assign({}, widgetData || {});
-    settings.labelMode = labelModeCombo.currentKey;
-    settings.hideUnoccupied = hideUnoccupiedToggle.checked;
-    return settings;
+    var settings = Object.assign({}, widgetData || {})
+    settings.labelMode = labelModeCombo.currentKey
+    settings.hideUnoccupied = hideUnoccupiedToggle.checked
+    return settings
   }
 
   NComboBox {
