@@ -164,7 +164,7 @@ Alternatively, you can add it to your NixOS configuration or flake:
     noctalia = {
       url = "github:noctalia-dev/noctalia-shell";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.quickshell.follows = "quickshell"
+      inputs.quickshell.follows = "quickshell";
     };
   };
 
