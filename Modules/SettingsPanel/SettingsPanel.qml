@@ -26,6 +26,7 @@ NPanel {
     About,
     Audio,
     Bar,
+    Dock,
     Hooks,
     Launcher,
     Brightness,
@@ -67,7 +68,6 @@ NPanel {
     id: barTab
     Tabs.BarTab {}
   }
-
   Component {
     id: audioTab
     Tabs.AudioTab {}
@@ -112,6 +112,10 @@ NPanel {
     id: hooksTab
     Tabs.HooksTab {}
   }
+  Component {
+    id: dockTab
+    Tabs.DockTab {}
+  }
 
   // Order *DOES* matter
   function updateTabsModel() {
@@ -125,6 +129,11 @@ NPanel {
                      "label": "Bar",
                      "icon": "settings-bar",
                      "source": barTab
+                   }, {
+                     "id": SettingsPanel.Tab.Dock,
+                     "label": "Dock",
+                     "icon": "settings-dock",
+                     "source": dockTab
                    }, {
                      "id": SettingsPanel.Tab.Launcher,
                      "label": "Launcher",

@@ -383,6 +383,7 @@ Singleton {
         property bool autoHide: false
         property bool exclusive: false
         property real backgroundOpacity: 1.0
+        property real floatingRatio: 1.0
         property list<string> monitors: []
       }
 
