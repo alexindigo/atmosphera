@@ -94,7 +94,7 @@ Singleton {
     "brightness-low": "brightness-down-filled",
     "brightness-high": "brightness-up-filled",
     "settings-general": "adjustments-horizontal",
-    "settings-bar": "capsule-horizontal-filled",
+    "settings-bar": "capsule-horizontal",
     "settings-dock": "layout-bottombar",
     "settings-launcher": "rocket",
     "settings-audio": "device-speaker",
