@@ -853,7 +853,7 @@ Loader {
                     id: suspendTooltipText
                     anchors.margins: Style.marginM * scaling
                     anchors.fill: parent
-                    text: "Suspend the system."
+                    text: "Suspend the computer."
                     font.pointSize: Style.fontSizeM * scaling
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
