@@ -1,7 +1,7 @@
 ---
 name: Bug Report
 about: Report a bug from noctalia-shell
-title: "[Bug]: "
+title: "[Bug] "
 labels: bug
 assignees: ''
 ---
