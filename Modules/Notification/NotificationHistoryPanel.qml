@@ -56,7 +56,10 @@ NPanel {
           icon: "trash"
           tooltipText: "Clear history"
           sizeRatio: 0.8
-          onClicked: NotificationService.clearHistory()
+          onClicked: {
+            NotificationService.clearHistory()
+            root.close()
+          }
         }
 
         NIconButton {
