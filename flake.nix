@@ -1,5 +1,6 @@
 {
-  description = "Noctalia shell - a Wayland desktop shell built with Quickshell";
+  description =
+    "Noctalia shell - a Wayland desktop shell built with Quickshell";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
@@ -11,22 +12,13 @@
     };
   };
 
-  outputs =
-    {
-      self,
-      nixpkgs,
-      systems,
-      quickshell,
-      ...
-    }:
-    let
-      eachSystem = nixpkgs.lib.genAttrs (import systems);
-    in
-    {
-      formatter = eachSystem (system: nixpkgs.legacyPackages.${system}.alejandra);
+  outputs = { self, nixpkgs, systems, quickshell, ... }:
+    let eachSystem = nixpkgs.lib.genAttrs (import systems);
+    in {
+      formatter =
+        eachSystem (system: nixpkgs.legacyPackages.${system}.alejandra);
 
-      packages = eachSystem (
-        system:
+      packages = eachSystem (system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
           qs = quickshell.packages.${system}.default.override {
@@ -34,8 +26,7 @@
             withI3 = false;
           };
 
-          runtimeDeps =
-            with pkgs;
+          runtimeDeps = with pkgs;
             [
               bash
               bluez
@@ -50,34 +41,21 @@
               matugen
               networkmanager
               wl-clipboard
-            ]
-            ++ lib.optionals (pkgs.stdenv.hostPlatform.isx86_64) [
-              gpu-screen-recorder
-            ];
+            ] ++ lib.optionals (pkgs.stdenv.hostPlatform.isx86_64)
+            [ gpu-screen-recorder ];
 
           fontconfig = pkgs.makeFontsConf {
-            fontDirectories = [
-              pkgs.roboto
-              pkgs.inter-nerdfont
-            ];
+            fontDirectories = [ pkgs.roboto pkgs.inter-nerdfont ];
           };
-        in
-        {
+        in {
           default = pkgs.stdenv.mkDerivation {
             pname = "noctalia-shell";
             version = self.rev or self.dirtyRev or "dirty";
             src = ./.;
 
-            nativeBuildInputs = [
-              pkgs.gcc
-              pkgs.makeWrapper
-              pkgs.qt6.wrapQtAppsHook
-            ];
-            buildInputs = [
-              qs
-              pkgs.xkeyboard-config
-              pkgs.qt6.qtbase
-            ];
+            nativeBuildInputs =
+              [ pkgs.gcc pkgs.makeWrapper pkgs.qt6.wrapQtAppsHook ];
+            buildInputs = [ qs pkgs.xkeyboard_config pkgs.qt6.qtbase ];
             propagatedBuildInputs = runtimeDeps;
 
             installPhase = ''
@@ -91,14 +69,14 @@
             '';
 
             meta = {
-              description = "A sleek and minimal desktop shell thoughtfully crafted for Wayland, built with Quickshell.";
+              description =
+                "A sleek and minimal desktop shell thoughtfully crafted for Wayland, built with Quickshell.";
               homepage = "https://github.com/noctalia-dev/noctalia-shell";
               license = pkgs.lib.licenses.mit;
               mainProgram = "noctalia-shell";
             };
           };
-        }
-      );
+        });
 
       defaultPackage = eachSystem (system: self.packages.${system}.default);
     };
