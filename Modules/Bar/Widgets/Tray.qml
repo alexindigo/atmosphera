@@ -15,6 +15,7 @@ Rectangle {
 
   property ShellScreen screen
   property real scaling: 1.0
+  property string barPosition: "top"
 
   readonly property real itemSize: 24 * scaling
 
@@ -26,9 +27,20 @@ Rectangle {
     }
   }
 
+  // React to bar position changes
+  Connections {
+    target: BarService
+    function onBarPositionChanged(newPosition) {
+      root.barPosition = newPosition
+      // Force re-evaluation of implicitWidth and implicitHeight
+      root.implicitWidth = Qt.binding(() => (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : (trayLayout.implicitWidth + Style.marginM * scaling * 2))
+      root.implicitHeight = Qt.binding(() => (barPosition === "left" || barPosition === "right") ? Math.round(trayLayout.implicitHeight + Style.marginM * scaling * 2) : Math.round(Style.capsuleHeight * scaling))
+    }
+  }
+
   visible: SystemTray.items.values.length > 0
-  implicitWidth: trayLayout.implicitWidth + Style.marginM * scaling * 2
-  implicitHeight: Math.round(Style.capsuleHeight * scaling)
+  implicitWidth: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : (trayLayout.implicitWidth + Style.marginM * scaling * 2)
+  implicitHeight: (barPosition === "left" || barPosition === "right") ? Math.round(trayLayout.implicitHeight + Style.marginM * scaling * 2) : Math.round(Style.capsuleHeight * scaling)
   radius: Math.round(Style.radiusM * scaling)
   color: Color.mSurfaceVariant
 
@@ -111,9 +123,21 @@ Rectangle {
                          if (modelData.hasMenu && modelData.menu && trayMenu.item) {
                            trayPanel.open()
 
-                           // Anchor the menu to the tray icon item (parent) and position it below the icon
-                           const menuX = (width / 2) - (trayMenu.item.width / 2)
-                           const menuY = Math.round(Style.barHeight * scaling)
+                           // Position menu based on bar position
+                           let menuX, menuY
+                           if (barPosition === "left") {
+                             // For left bar: position menu to the right of the bar
+                             menuX = width + Style.marginM * scaling
+                             menuY = 0
+                           } else if (barPosition === "right") {
+                             // For right bar: position menu to the left of the bar
+                             menuX = -trayMenu.item.width - Style.marginM * scaling
+                             menuY = 0
+                           } else {
+                             // For horizontal bars: center horizontally and position below
+                             menuX = (width / 2) - (trayMenu.item.width / 2)
+                             menuY = Math.round(Style.barHeight * scaling)
+                           }
                            trayMenu.item.menu = modelData.menu
                            trayMenu.item.showAt(parent, menuX, menuY)
                          } else {
