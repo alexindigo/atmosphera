@@ -33,6 +33,7 @@ Variants {
       screen: modelData
       color: Color.transparent
 
+<<<<<<< HEAD
       // Position based on bar location - always at top
       anchors.top: true
       anchors.right: Settings.data.bar.position === "right" || Settings.data.bar.position === "top" || Settings.data.bar.position === "bottom"
@@ -41,6 +42,15 @@ Variants {
       margins.bottom: Settings.data.bar.position === "bottom" ? (Style.barHeight + Style.marginM + (Settings.data.bar.floating ? Settings.data.bar.marginBottom : 0)) * scaling : 0
       margins.right: (Settings.data.bar.position === "right" || Settings.data.bar.position === "top" || Settings.data.bar.position === "bottom") ? (Settings.data.bar.position === "right" ? (Style.barHeight + Style.marginM) * scaling : Style.marginM * scaling) : 0
       margins.left: Settings.data.bar.position === "left" ? (Style.barHeight + Style.marginM) * scaling : 0
+=======
+      // Position based on bar location
+      anchors.top: Settings.data.bar.position === "top"
+      anchors.bottom: Settings.data.bar.position === "bottom"
+      anchors.right: true
+      margins.top: Settings.data.bar.position === "top" ? (Style.barHeight + Style.marginM + (Settings.data.bar.floating ? Settings.data.bar.marginVertical : 0)) * scaling : 0
+      margins.bottom: Settings.data.bar.position === "bottom" ? (Style.barHeight + Style.marginM + (Settings.data.bar.floating ? Settings.data.bar.marginVertical : 0)) * scaling : 0
+      margins.right: Style.marginM * scaling
+>>>>>>> main
       implicitWidth: 360 * scaling
       implicitHeight: Math.min(notificationStack.implicitHeight, (NotificationService.maxVisible * 120) * scaling)
       //WlrLayershell.layer: WlrLayer.Overlay
