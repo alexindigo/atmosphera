@@ -750,7 +750,7 @@ Loader {
                     id: shutdownTooltipText
                     anchors.margins: Style.marginM * scaling
                     anchors.fill: parent
-                    text: "Shut down the computer."
+                    text: "Shut down."
                     font.pointSize: Style.fontSizeM * scaling
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
@@ -801,7 +801,7 @@ Loader {
                     id: restartTooltipText
                     anchors.margins: Style.marginM * scaling
                     anchors.fill: parent
-                    text: "Restart the computer."
+                    text: "Restart."
                     font.pointSize: Style.fontSizeM * scaling
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
@@ -853,7 +853,7 @@ Loader {
                     id: suspendTooltipText
                     anchors.margins: Style.marginM * scaling
                     anchors.fill: parent
-                    text: "Suspend the computer."
+                    text: "Suspend."
                     font.pointSize: Style.fontSizeM * scaling
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
