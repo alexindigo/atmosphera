@@ -269,11 +269,8 @@ Singleton {
 
         // Floating bar settings
         property bool floating: false
-        property real rounding: 12.0
-        property real marginTop: 16.0
-        property real marginBottom: 16.0
-        property real marginLeft: 16.0
-        property real marginRight: 16.0
+        property real marginVertical: 0.25
+        property real marginHorizontal: 0.25
 
         property bool showActiveWindowIcon: true // TODO: delete
         property bool alwaysShowBatteryPercentage: false // TODO: delete

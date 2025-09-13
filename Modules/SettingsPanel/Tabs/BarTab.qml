@@ -106,72 +106,23 @@ ColumnLayout {
     // Floating bar options - only show when floating is enabled
     ColumnLayout {
       visible: Settings.data.bar.floating
-      spacing: Style.marginXXS * scaling
+      spacing: Style.marginS * scaling
       Layout.fillWidth: true
 
-      NText {
-        text: "Rounding"
-        font.pointSize: Style.fontSizeL * scaling
-        font.weight: Style.fontWeightBold
-        color: Color.mOnSurface
-      }
-
-      NText {
-        text: "Adjust the corner rounding of the floating bar."
-        font.pointSize: Style.fontSizeXS * scaling
-        color: Color.mOnSurfaceVariant
-        wrapMode: Text.WordWrap
-        Layout.fillWidth: true
+      NLabel {
+        label: "Margins"
+        description: "Adjust the margins around the floating bar."
       }
 
       RowLayout {
-        NSlider {
-          Layout.fillWidth: true
-          from: 0
-          to: 50
-          stepSize: 1
-          value: Settings.data.bar.rounding
-          onMoved: Settings.data.bar.rounding = value
-          cutoutColor: Color.mSurface
-        }
-
-        NText {
-          text: Math.round(Settings.data.bar.rounding) + "px"
-          Layout.alignment: Qt.AlignVCenter
-          Layout.leftMargin: Style.marginS * scaling
-          Layout.preferredWidth: 50
-          horizontalAlignment: Text.AlignRight
-          color: Color.mOnSurface
-        }
-      }
-
-      NText {
-        text: "Margins"
-        font.pointSize: Style.fontSizeL * scaling
-        font.weight: Style.fontWeightBold
-        color: Color.mOnSurface
-        Layout.topMargin: Style.marginM * scaling
-      }
-
-      NText {
-        text: "Adjust the margins around the floating bar."
-        font.pointSize: Style.fontSizeXS * scaling
-        color: Color.mOnSurfaceVariant
-        wrapMode: Text.WordWrap
         Layout.fillWidth: true
-      }
-
-      GridLayout {
-        columns: 2
-        Layout.fillWidth: true
-        rowSpacing: Style.marginS * scaling
-        columnSpacing: Style.marginS * scaling
+        spacing: Style.marginL * scaling
 
         ColumnLayout {
           spacing: Style.marginXXS * scaling
 
           NText {
-            text: "Top"
+            text: "Vertical"
             font.pointSize: Style.fontSizeXS * scaling
             color: Color.mOnSurfaceVariant
           }
@@ -180,44 +131,15 @@ ColumnLayout {
             NSlider {
               Layout.fillWidth: true
               from: 0
-              to: 50
-              stepSize: 1
-              value: Settings.data.bar.marginTop
-              onMoved: Settings.data.bar.marginTop = value
+              to: 1
+              stepSize: 0.01
+              value: Settings.data.bar.marginVertical
+              onMoved: Settings.data.bar.marginVertical = value
               cutoutColor: Color.mSurface
             }
 
             NText {
-              text: Math.round(Settings.data.bar.marginTop) + "px"
-              Layout.alignment: Qt.AlignVCenter
-              Layout.leftMargin: Style.marginXS * scaling
-              color: Color.mOnSurface
-            }
-          }
-        }
-
-        ColumnLayout {
-          spacing: Style.marginXXS * scaling
-
-          NText {
-            text: "Bottom"
-            font.pointSize: Style.fontSizeXS * scaling
-            color: Color.mOnSurfaceVariant
-          }
-
-          RowLayout {
-            NSlider {
-              Layout.fillWidth: true
-              from: 0
-              to: 50
-              stepSize: 1
-              value: Settings.data.bar.marginBottom
-              onMoved: Settings.data.bar.marginBottom = value
-              cutoutColor: Color.mSurface
-            }
-
-            NText {
-              text: Math.round(Settings.data.bar.marginBottom) + "px"
+              text: Math.round(Settings.data.bar.marginVertical * 100) + "%"
               Layout.alignment: Qt.AlignVCenter
               Layout.leftMargin: Style.marginXS * scaling
               Layout.preferredWidth: 50
@@ -231,7 +153,7 @@ ColumnLayout {
           spacing: Style.marginXXS * scaling
 
           NText {
-            text: "Left"
+            text: "Horizontal"
             font.pointSize: Style.fontSizeXS * scaling
             color: Color.mOnSurfaceVariant
           }
@@ -240,46 +162,15 @@ ColumnLayout {
             NSlider {
               Layout.fillWidth: true
               from: 0
-              to: 50
-              stepSize: 1
-              value: Settings.data.bar.marginLeft
-              onMoved: Settings.data.bar.marginLeft = value
+              to: 1
+              stepSize: 0.01
+              value: Settings.data.bar.marginHorizontal
+              onMoved: Settings.data.bar.marginHorizontal = value
               cutoutColor: Color.mSurface
             }
 
             NText {
-              text: Math.round(Settings.data.bar.marginLeft) + "px"
-              Layout.alignment: Qt.AlignVCenter
-              Layout.leftMargin: Style.marginXS * scaling
-              Layout.preferredWidth: 50
-              horizontalAlignment: Text.AlignRight
-              color: Color.mOnSurface
-            }
-          }
-        }
-
-        ColumnLayout {
-          spacing: Style.marginXXS * scaling
-
-          NText {
-            text: "Right"
-            font.pointSize: Style.fontSizeXS * scaling
-            color: Color.mOnSurfaceVariant
-          }
-
-          RowLayout {
-            NSlider {
-              Layout.fillWidth: true
-              from: 0
-              to: 50
-              stepSize: 1
-              value: Settings.data.bar.marginRight
-              onMoved: Settings.data.bar.marginRight = value
-              cutoutColor: Color.mSurface
-            }
-
-            NText {
-              text: Math.round(Settings.data.bar.marginRight) + "px"
+              text: Math.round(Settings.data.bar.marginHorizontal * 100) + "%"
               Layout.alignment: Qt.AlignVCenter
               Layout.leftMargin: Style.marginXS * scaling
               Layout.preferredWidth: 50
