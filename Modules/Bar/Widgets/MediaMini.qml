@@ -18,22 +18,6 @@ Item {
   property string section: ""
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
-  property string barPosition: "top"
-
-  // Listen to BarService position changes
-  Connections {
-    target: BarService
-    function onBarPositionChanged(newPosition) {
-      barPosition = newPosition
-      // Force re-evaluation of implicit sizing
-      implicitWidth = Qt.binding(function () {
-        return (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : (rowLayout.implicitWidth + Style.marginM * 2 * scaling)
-      })
-      implicitHeight = Qt.binding(function () {
-        return (barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Math.round(Style.barHeight * scaling)
-      })
-    }
-  }
 
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
@@ -45,6 +29,9 @@ Item {
     }
     return {}
   }
+
+
+  readonly property string barPosition: Settings.data.bar.position
 
   readonly property bool showAlbumArt: (widgetSettings.showAlbumArt !== undefined) ? widgetSettings.showAlbumArt : widgetMetadata.showAlbumArt
   readonly property bool showVisualizer: (widgetSettings.showVisualizer !== undefined) ? widgetSettings.showVisualizer : widgetMetadata.showVisualizer

@@ -108,8 +108,7 @@ Variants {
                     "widgetId": modelData.id,
                     "section": "left",
                     "sectionWidgetIndex": index,
-                    "sectionWidgetsCount": Settings.data.bar.widgets.left.length,
-                    "barPosition": BarService.position
+                    "sectionWidgetsCount": Settings.data.bar.widgets.left.length
                   }
                   anchors.horizontalCenter: parent.horizontalCenter
                 }
@@ -133,8 +132,7 @@ Variants {
                     "widgetId": modelData.id,
                     "section": "center",
                     "sectionWidgetIndex": index,
-                    "sectionWidgetsCount": Settings.data.bar.widgets.center.length,
-                    "barPosition": BarService.position
+                    "sectionWidgetsCount": Settings.data.bar.widgets.center.length
                   }
                   anchors.horizontalCenter: parent.horizontalCenter
                 }
@@ -159,8 +157,7 @@ Variants {
                     "widgetId": modelData.id,
                     "section": "right",
                     "sectionWidgetIndex": index,
-                    "sectionWidgetsCount": Settings.data.bar.widgets.right.length,
-                    "barPosition": BarService.position
+                    "sectionWidgetsCount": Settings.data.bar.widgets.right.length
                   }
                   anchors.horizontalCenter: parent.horizontalCenter
                 }
@@ -193,8 +190,7 @@ Variants {
                     "widgetId": modelData.id,
                     "section": "left",
                     "sectionWidgetIndex": index,
-                    "sectionWidgetsCount": Settings.data.bar.widgets.left.length,
-                    "barPosition": BarService.position
+                    "sectionWidgetsCount": Settings.data.bar.widgets.left.length
                   }
                 }
               }
@@ -218,8 +214,7 @@ Variants {
                     "widgetId": modelData.id,
                     "section": "center",
                     "sectionWidgetIndex": index,
-                    "sectionWidgetsCount": Settings.data.bar.widgets.center.length,
-                    "barPosition": BarService.position
+                    "sectionWidgetsCount": Settings.data.bar.widgets.center.length
                   }
                 }
               }
@@ -244,8 +239,7 @@ Variants {
                     "widgetId": modelData.id,
                     "section": "right",
                     "sectionWidgetIndex": index,
-                    "sectionWidgetsCount": Settings.data.bar.widgets.right.length,
-                    "barPosition": BarService.position
+                    "sectionWidgetsCount": Settings.data.bar.widgets.right.length
                   }
                 }
               }

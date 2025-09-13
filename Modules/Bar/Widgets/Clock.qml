@@ -16,7 +16,6 @@ Rectangle {
   property string section: ""
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
-  property string barPosition: "top"
 
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
@@ -29,6 +28,8 @@ Rectangle {
     return {}
   }
 
+  readonly property string barPosition: Settings.data.bar.position
+
   // Resolve settings: try user settings or defaults from BarWidgetRegistry
   readonly property bool use12h: widgetSettings.use12HourClock !== undefined ? widgetSettings.use12HourClock : widgetMetadata.use12HourClock
   readonly property bool reverseDayMonth: widgetSettings.reverseDayMonth !== undefined ? widgetSettings.reverseDayMonth : widgetMetadata.reverseDayMonth
@@ -40,16 +41,6 @@ Rectangle {
   implicitWidth: useCompactMode ? Math.round(Style.capsuleHeight * scaling) : Math.round(layout.implicitWidth + Style.marginM * 2 * scaling)
   implicitHeight: useCompactMode ? Math.round(Style.capsuleHeight * 2.5 * scaling) : Math.round(Style.capsuleHeight * scaling)
 
-  // React to bar position changes
-  Connections {
-    target: BarService
-    function onBarPositionChanged(newPosition) {
-      root.barPosition = newPosition
-      // Force re-evaluation of implicitWidth and implicitHeight
-      root.implicitWidth = Qt.binding(() => useCompactMode ? Math.round(Style.capsuleHeight * scaling) : Math.round(layout.implicitWidth + Style.marginM * 2 * scaling))
-      root.implicitHeight = Qt.binding(() => useCompactMode ? Math.round(Style.capsuleHeight * 2.5 * scaling) : Math.round(Style.capsuleHeight * scaling))
-    }
-  }
   radius: Math.round(Style.radiusS * scaling)
   color: Color.mSurfaceVariant
 

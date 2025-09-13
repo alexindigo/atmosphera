@@ -40,6 +40,7 @@ Loader {
   property real opacityValue: originalOpacity
 
   property alias isClosing: hideTimer.running
+  readonly property string barPosition: Settings.data.bar.position
 
   signal opened
   signal closed

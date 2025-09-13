@@ -13,6 +13,8 @@ Window {
   property bool positionLeft: false
   property bool positionRight: false
 
+  readonly property string barPosition: Settings.data.bar.position
+
   flags: Qt.ToolTip | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
   color: Color.transparent
   visible: false
@@ -53,7 +55,6 @@ Window {
 
     // If no explicit positioning is set, auto-detect based on bar position
     if (!positionLeft && !positionRight && !positionAbove) {
-      var barPosition = BarService.position
       if (barPosition === "left") {
         shouldPositionRight = true
       } else if (barPosition === "right") {

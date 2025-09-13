@@ -51,8 +51,8 @@ ColumnLayout {
             name: "Right"
           }
         }
-        currentKey: BarService.position
-        onSelected: key => BarService.setPosition(key)
+        currentKey: Settings.data.bar.position
+        onSelected: key => Settings.data.bar.position = key
       }
     }
 

@@ -15,26 +15,15 @@ Rectangle {
 
   property ShellScreen screen
   property real scaling: 1.0
-  property string barPosition: "top"
 
   readonly property real itemSize: 24 * scaling
+  readonly property string barPosition: Settings.data.bar.position
 
   function onLoaded() {
     // When the widget is fully initialized with its props
     // set the screen for the trayMenu
     if (trayMenu.item) {
       trayMenu.item.screen = screen
-    }
-  }
-
-  // React to bar position changes
-  Connections {
-    target: BarService
-    function onBarPositionChanged(newPosition) {
-      root.barPosition = newPosition
-      // Force re-evaluation of implicitWidth and implicitHeight
-      root.implicitWidth = Qt.binding(() => (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : (trayLayout.implicitWidth + Style.marginM * scaling * 2))
-      root.implicitHeight = Qt.binding(() => (barPosition === "left" || barPosition === "right") ? Math.round(trayLayout.implicitHeight + Style.marginM * scaling * 2) : Math.round(Style.capsuleHeight * scaling))
     }
   }
 
