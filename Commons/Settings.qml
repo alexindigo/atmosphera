@@ -267,6 +267,14 @@ Singleton {
         property real backgroundOpacity: 1.0
         property list<string> monitors: []
 
+        // Floating bar settings
+        property bool floating: false
+        property real rounding: 12.0
+        property real marginTop: 16.0
+        property real marginBottom: 16.0
+        property real marginLeft: 16.0
+        property real marginRight: 16.0
+
         property bool showActiveWindowIcon: true // TODO: delete
         property bool alwaysShowBatteryPercentage: false // TODO: delete
         property bool showNetworkStats: false // TODO: delete
