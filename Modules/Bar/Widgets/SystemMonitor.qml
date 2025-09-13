@@ -42,42 +42,96 @@ Item {
   function calculatedVerticalHeight() {
     let total = 0
     let visibleCount = 0
-    
-    if (showCpuUsage) visibleCount++
-    if (showCpuTemp) visibleCount++
-    if (showMemoryUsage) visibleCount++
-    if (showNetworkStats) visibleCount += 2 // download + upload
-    if (showDiskUsage) visibleCount++
-    
+
+    if (showCpuUsage)
+      visibleCount++
+    if (showCpuTemp)
+      visibleCount++
+    if (showMemoryUsage)
+      visibleCount++
+    if (showNetworkStats)
+      visibleCount += 2 // download + upload
+    if (showDiskUsage)
+      visibleCount++
+
     total = visibleCount * Math.round(Style.capsuleHeight * scaling)
     total += Math.max(visibleCount - 1, 0) * Style.marginS * scaling
     total += Style.marginM * scaling * 2 // padding
-    
+
     return total
   }
 
   function calculatedHorizontalWidth() {
-    let total = 0
+    let total = Style.marginM * scaling * 2 // base padding
+
+    if (showCpuUsage) {
+      // Icon + "99%" text
+      total += Style.fontSizeM * scaling * 1.2 + // icon
+          Style.fontSizeXS * scaling * 2.5 + // text (~3 chars)
+          2 * scaling // spacing
+    }
+
+    if (showCpuTemp) {
+      // Icon + "85°C" text
+      total += Style.fontSizeS * scaling * 1.2 + // smaller fire icon
+          Style.fontSizeXS * scaling * 3.5 + // text (~4 chars)
+          2 * scaling // spacing
+    }
+
+    if (showMemoryUsage) {
+      // Icon + "16G" or "85%" text
+      total += Style.fontSizeM * scaling * 1.2 + // icon
+          Style.fontSizeXS * scaling * 3 + // text (~3-4 chars)
+          2 * scaling // spacing
+    }
+
+    if (showNetworkStats) {
+      // Download: icon + "1.2M" text
+      total += Style.fontSizeM * scaling * 1.2 + // icon
+          Style.fontSizeXS * scaling * 3.5 + // text
+          Style.marginXS * scaling + 2 * scaling // spacing
+
+      // Upload: icon + "256K" text
+      total += Style.fontSizeM * scaling * 1.2 + // icon
+          Style.fontSizeXS * scaling * 3.5 + // text
+          Style.marginXS * scaling + 2 * scaling // spacing
+    }
+
+    if (showDiskUsage) {
+      // Icon + "75%" text
+      total += Style.fontSizeM * scaling * 1.2 + // icon
+          Style.fontSizeXS * scaling * 3 + // text (~3 chars)
+          Style.marginXS * scaling + 2 * scaling // spacing
+    }
+
+    // Add spacing between visible components
     let visibleCount = 0
-    
-    if (showCpuUsage) visibleCount++
-    if (showCpuTemp) visibleCount++
-    if (showMemoryUsage) visibleCount++
-    if (showNetworkStats) visibleCount += 2 // download + upload
-    if (showDiskUsage) visibleCount++
-    
-    // Estimate width per component (icon + text + spacing)
-    total = visibleCount * Math.round(60 * scaling) // rough estimate
-    total += Math.max(visibleCount - 1, 0) * Style.marginS * scaling
-    total += Style.marginM * scaling * 2 // padding
-    
-    return total
+    if (showCpuUsage)
+      visibleCount++
+    if (showCpuTemp)
+      visibleCount++
+    if (showMemoryUsage)
+      visibleCount++
+    if (showNetworkStats)
+      visibleCount += 2
+    if (showDiskUsage)
+      visibleCount++
+
+    if (visibleCount > 1) {
+      total += (visibleCount - 1) * Style.marginXS * scaling
+    }
+
+    // Add extra margin for spacing between widgets in the bar
+    total += Style.marginM * scaling * 2 // widget-to-widget spacing
+
+    return Math.max(total, Style.capsuleHeight * scaling)
   }
 
   Rectangle {
     id: backgroundContainer
-    anchors.centerIn: parent
-    width: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : parent.width
+    anchors.left: parent.left
+    anchors.verticalCenter: parent.verticalCenter
+    width: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : calculatedHorizontalWidth()
     height: (barPosition === "left" || barPosition === "right") ? parent.height : Math.round(Style.capsuleHeight * scaling)
     radius: Math.round(Style.radiusM * scaling)
     color: Color.mSurfaceVariant
@@ -86,10 +140,8 @@ Item {
     RowLayout {
       id: horizontalLayout
       anchors.centerIn: parent
-      width: parent.width - Style.marginM * scaling * 2
-      height: parent.height - Style.marginM * scaling * 2
-      spacing: Style.marginS * scaling
-      visible: false // Temporarily hide horizontal layout for debugging
+      spacing: Style.marginXS * scaling
+      visible: barPosition === "top" || barPosition === "bottom"
 
       // CPU Usage Component
       Item {
@@ -101,7 +153,7 @@ Item {
         RowLayout {
           id: cpuUsageRow
           anchors.centerIn: parent
-          spacing: Style.marginXS * scaling
+          spacing: 2 * scaling
 
           NIcon {
             icon: "cpu-usage"
@@ -131,7 +183,7 @@ Item {
         RowLayout {
           id: cpuTempRow
           anchors.centerIn: parent
-          spacing: Style.marginXS * scaling
+          spacing: 2 * scaling
 
           NIcon {
             icon: "cpu-temperature"
@@ -162,7 +214,7 @@ Item {
         RowLayout {
           id: memoryUsageRow
           anchors.centerIn: parent
-          spacing: Style.marginXS * scaling
+          spacing: 2 * scaling
 
           NIcon {
             icon: "memory"
@@ -280,7 +332,7 @@ Item {
       width: Math.round(32 * scaling)
       height: parent.height - Style.marginM * scaling * 2
       spacing: Style.marginS * scaling
-      visible: true // Temporarily show vertical layout for debugging
+      visible: barPosition === "left" || barPosition === "right"
 
       // CPU Usage Component
       Item {

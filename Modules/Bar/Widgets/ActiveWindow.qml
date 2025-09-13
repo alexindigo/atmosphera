@@ -38,7 +38,7 @@ Item {
   readonly property real maxWidth: minWidth * 2
 
   implicitHeight: (barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Math.round(Style.barHeight * scaling)
-  implicitWidth: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : calculatedHorizontalWidth()
+  implicitWidth: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : calculatedHorizontalWidth()
 
   function getTitle() {
     try {
@@ -52,20 +52,40 @@ Item {
   visible: getTitle() !== ""
 
   function calculatedVerticalHeight() {
+    // Base height for the background rectangle
     let total = Math.round(Style.capsuleHeight * scaling)
+
+    // Add padding for the container margins
+    total += Style.marginM * scaling * 2 // Top and bottom margins
+
+    // Add space for icon if shown
     if (showIcon) {
       total += Style.fontSizeL * scaling * 1.2 + Style.marginS * scaling
     }
+
     return total
   }
 
   function calculatedHorizontalWidth() {
-    let total = Style.marginM * 2 * scaling // padding
+    let total = Style.marginM * 2 * scaling // internal padding
+
     if (showIcon) {
-      total += Style.fontSizeL * scaling * 1.2 + Style.marginS * scaling
+      total += Style.baseWidgetSize * 0.5 * scaling + 2 * scaling // icon + spacing
     }
-    total += Math.min(fullTitleMetrics.contentWidth, minWidth * scaling)
-    return total
+
+    // Calculate actual text width more accurately
+    const title = getTitle()
+    if (title !== "") {
+      // Estimate text width: average character width * number of characters
+      const avgCharWidth = Style.fontSizeS * scaling * 0.6 // rough estimate
+      const titleWidth = Math.min(title.length * avgCharWidth, 80 * scaling)
+      total += titleWidth
+    }
+
+    // Add extra margin for spacing between widgets in the bar
+    total += Style.marginM * scaling * 2 // widget-to-widget spacing
+
+    return Math.max(total, Style.capsuleHeight * scaling) // Minimum width
   }
 
   function getAppIcon() {
@@ -121,30 +141,31 @@ Item {
   Rectangle {
     id: windowTitleRect
     visible: root.visible
-    anchors.centerIn: parent
-    width: (barPosition === "left" || barPosition === "right") ? Math.round(60 * scaling) : parent.width
-    height: (barPosition === "left" || barPosition === "right") ? parent.height : Math.round(Style.capsuleHeight * scaling)
+    anchors.left: parent.left
+    anchors.verticalCenter: parent.verticalCenter
+    width: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : (horizontalLayout.implicitWidth + Style.marginM * 2 * scaling)
+    height: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : Math.round(Style.capsuleHeight * scaling)
     radius: Math.round(Style.radiusM * scaling)
     color: Color.mSurfaceVariant
 
     Item {
       id: mainContainer
       anchors.fill: parent
-      anchors.leftMargin: Style.marginS * scaling
-      anchors.rightMargin: Style.marginS * scaling
+      anchors.leftMargin: (barPosition === "left" || barPosition === "right") ? 0 : Style.marginS * scaling
+      anchors.rightMargin: (barPosition === "left" || barPosition === "right") ? 0 : Style.marginS * scaling
       clip: true
 
       // Horizontal layout for top/bottom bars
       RowLayout {
         id: horizontalLayout
         anchors.centerIn: parent
-        spacing: Style.marginS * scaling
+        spacing: 2 * scaling
         visible: barPosition === "top" || barPosition === "bottom"
 
         // Window icon
         Item {
-          Layout.preferredWidth: Style.fontSizeL * scaling * 1.2
-          Layout.preferredHeight: Style.fontSizeL * scaling * 1.2
+          Layout.preferredWidth: Style.baseWidgetSize * 0.5 * scaling
+          Layout.preferredHeight: Style.baseWidgetSize * 0.5 * scaling
           Layout.alignment: Qt.AlignVCenter
           visible: getTitle() !== "" && showIcon
 
@@ -172,11 +193,11 @@ Item {
               if (mouseArea.containsMouse) {
                 return Math.round(Math.min(fullTitleMetrics.contentWidth, root.maxWidth * scaling))
               } else {
-                return Math.round(Math.min(fullTitleMetrics.contentWidth, root.minWidth * scaling))
+                return Math.round(Math.min(fullTitleMetrics.contentWidth, 80 * scaling)) // Limited width for horizontal bars
               }
             } catch (e) {
               Logger.warn("ActiveWindow", "Error calculating width:", e)
-              return root.minWidth * scaling
+              return 80 * scaling
             }
           }
           Layout.alignment: Qt.AlignVCenter
@@ -208,8 +229,8 @@ Item {
 
         // Window icon
         Item {
-          width: Style.fontSizeL * scaling * 1.2
-          height: Style.fontSizeL * scaling * 1.2
+          width: Style.baseWidgetSize * 0.5 * scaling
+          height: Style.baseWidgetSize * 0.5 * scaling
           anchors.centerIn: parent
           visible: getTitle() !== "" && showIcon
 
@@ -229,7 +250,6 @@ Item {
             }
           }
         }
-
       }
 
       // Mouse area for hover detection

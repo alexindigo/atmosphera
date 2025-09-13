@@ -89,7 +89,7 @@ Variants {
           id: verticalBarComponent
           Item {
             anchors.fill: parent
-            
+
             // Top section (left widgets)
             Column {
               spacing: Style.marginS * root.scaling
@@ -97,7 +97,7 @@ Variants {
               anchors.top: parent.top
               anchors.topMargin: Style.marginM * root.scaling
               width: parent.width
-              
+
               Repeater {
                 model: Settings.data.bar.widgets.left
                 delegate: NWidgetLoader {
@@ -115,14 +115,14 @@ Variants {
                 }
               }
             }
-            
+
             // Center section (center widgets)
             Column {
               spacing: Style.marginS * root.scaling
               anchors.horizontalCenter: parent.horizontalCenter
               anchors.verticalCenter: parent.verticalCenter
               width: parent.width
-              
+
               Repeater {
                 model: Settings.data.bar.widgets.center
                 delegate: NWidgetLoader {
@@ -140,7 +140,7 @@ Variants {
                 }
               }
             }
-            
+
             // Bottom section (right widgets)
             Column {
               spacing: Style.marginS * root.scaling
@@ -148,7 +148,7 @@ Variants {
               anchors.bottom: parent.bottom
               anchors.bottomMargin: Style.marginM * root.scaling
               width: parent.width
-              
+
               Repeater {
                 model: Settings.data.bar.widgets.right
                 delegate: NWidgetLoader {
@@ -173,7 +173,7 @@ Variants {
           id: horizontalBarComponent
           Row {
             anchors.fill: parent
-            
+
             // Left Section
             Row {
               id: leftSection
@@ -182,7 +182,7 @@ Variants {
               anchors.left: parent.left
               anchors.leftMargin: Style.marginS * root.scaling
               anchors.verticalCenter: parent.verticalCenter
-              spacing: Style.marginS * root.scaling
+              spacing: 0
 
               Repeater {
                 model: Settings.data.bar.widgets.left
@@ -258,7 +258,6 @@ Variants {
             }
           }
         }
-
       }
     }
   }

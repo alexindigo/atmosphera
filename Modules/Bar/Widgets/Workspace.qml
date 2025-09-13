@@ -189,7 +189,7 @@ Item {
     width: root.width - horizontalPadding * 2
     x: horizontalPadding
     visible: barPosition === "top" || barPosition === "bottom"
-    
+
     Repeater {
       id: workspaceRepeaterHorizontal
       model: localWorkspaces
@@ -334,7 +334,7 @@ Item {
     height: root.height - horizontalPadding * 2
     y: horizontalPadding
     visible: barPosition === "left" || barPosition === "right"
-    
+
     Repeater {
       id: workspaceRepeaterVertical
       model: localWorkspaces
