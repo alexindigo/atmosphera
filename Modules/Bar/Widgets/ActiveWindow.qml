@@ -52,7 +52,7 @@ Item {
   readonly property real minWidth: Math.max(1, screen.width * 0.06)
   readonly property real maxWidth: minWidth * 2
 
-  implicitHeight: Math.round(Style.capsuleHeight * scaling)
+  implicitHeight: (barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Math.round(Style.barHeight * scaling)
   implicitWidth: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : (horizontalLayout.implicitWidth + Style.marginM * 2 * scaling)
 
   function getTitle() {
@@ -65,6 +65,21 @@ Item {
   }
 
   visible: getTitle() !== ""
+
+  function calculatedVerticalHeight() {
+    // Base height for the background rectangle
+    let total = Math.round(Style.capsuleHeight * scaling)
+
+    // Add padding for the container margins
+    total += Style.marginM * scaling * 2 // Top and bottom margins
+
+    // Add space for icon if shown
+    if (showIcon) {
+      total += Style.fontSizeL * scaling * 1.2 + Style.marginS * scaling
+    }
+
+    return total
+  }
 
   function calculatedHorizontalWidth() {
     let total = Style.marginM * 2 * scaling // internal padding

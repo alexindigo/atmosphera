@@ -33,23 +33,12 @@ Rectangle {
   readonly property bool use12h: widgetSettings.use12HourClock !== undefined ? widgetSettings.use12HourClock : widgetMetadata.use12HourClock
   readonly property bool reverseDayMonth: widgetSettings.reverseDayMonth !== undefined ? widgetSettings.reverseDayMonth : widgetMetadata.reverseDayMonth
   readonly property string displayFormat: widgetSettings.displayFormat !== undefined ? widgetSettings.displayFormat : widgetMetadata.displayFormat
-
+  
   // Use compact mode for vertical bars
   readonly property bool useCompactMode: barPosition === "left" || barPosition === "right"
 
   implicitWidth: useCompactMode ? Math.round(Style.capsuleHeight * scaling) : Math.round(layout.implicitWidth + Style.marginM * 2 * scaling)
   implicitHeight: useCompactMode ? Math.round(Style.capsuleHeight * 2.5 * scaling) : Math.round(Style.capsuleHeight * scaling)
-
-  // React to bar position changes
-  Connections {
-    target: BarService
-    function onBarPositionChanged(newPosition) {
-      root.barPosition = newPosition
-      // Force re-evaluation of implicitWidth and implicitHeight
-      root.implicitWidth = Qt.binding(() => useCompactMode ? Math.round(Style.capsuleHeight * scaling) : Math.round(layout.implicitWidth + Style.marginM * 2 * scaling))
-      root.implicitHeight = Qt.binding(() => useCompactMode ? Math.round(Style.capsuleHeight * 2.5 * scaling) : Math.round(Style.capsuleHeight * scaling))
-    }
-  }
   radius: Math.round(Style.radiusS * scaling)
   color: Color.mSurfaceVariant
 
@@ -75,20 +64,18 @@ Rectangle {
             if (useCompactMode) {
               // Compact mode: time section (first 2 lines)
               switch (index) {
-              case 0:
-                // Hours
-                if (use12h) {
-                  const hours = now.getHours()
-                  const displayHours = hours === 0 ? 12 : (hours > 12 ? hours - 12 : hours)
-                  return displayHours.toString().padStart(2, '0')
-                } else {
-                  return now.getHours().toString().padStart(2, '0')
-                }
-              case 1:
-                // Minutes
-                return now.getMinutes().toString().padStart(2, '0')
-              default:
-                return ""
+                case 0: // Hours
+                  if (use12h) {
+                    const hours = now.getHours()
+                    const displayHours = hours === 0 ? 12 : (hours > 12 ? hours - 12 : hours)
+                    return displayHours.toString().padStart(2, '0')
+                  } else {
+                    return now.getHours().toString().padStart(2, '0')
+                  }
+                case 1: // Minutes
+                  return now.getMinutes().toString().padStart(2, '0')
+                default:
+                  return ""
               }
             } else {
               // Normal mode: single line with time
@@ -165,14 +152,12 @@ Rectangle {
             if (useCompactMode) {
               // Compact mode: date section (last 2 lines)
               switch (index) {
-              case 0:
-                // Day
-                return now.getDate().toString().padStart(2, '0')
-              case 1:
-                // Month
-                return (now.getMonth() + 1).toString().padStart(2, '0')
-              default:
-                return ""
+                case 0: // Day
+                  return now.getDate().toString().padStart(2, '0')
+                case 1: // Month
+                  return (now.getMonth() + 1).toString().padStart(2, '0')
+                default:
+                  return ""
               }
             }
             return ""
