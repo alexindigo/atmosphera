@@ -15,6 +15,8 @@ Singleton {
   property bool isHyprland: false
   property bool isNiri: false
 
+  readonly property string hyprlandSignature: Quickshell.env("HYPRLAND_INSTANCE_SIGNATURE")
+
   // Generic workspace and window data
   property ListModel workspaces: ListModel {}
   property var windows: []
@@ -50,42 +52,49 @@ Singleton {
   }
 
   // Hyprland connections
-  Connections {
-    target: Hyprland.workspaces
-    enabled: isHyprland
-    function onValuesChanged() {
-      try {
-        updateHyprlandWorkspaces()
-        workspaceChanged()
-      } catch (e) {
-        Logger.error("Compositor", "Error in workspaces onValuesChanged:", e)
-      }
-    }
-  }
+  Loader {
+    active: isHyprland
+    sourceComponent: Component {
+      Item {
+        Connections {
+          target: Hyprland.workspaces
+          enabled: isHyprland
+          function onValuesChanged() {
+            try {
+              updateHyprlandWorkspaces()
+              workspaceChanged()
+            } catch (e) {
+              Logger.error("Compositor", "Error in workspaces onValuesChanged:", e)
+            }
+          }
+        }
 
-  Connections {
-    target: Hyprland.toplevels
-    enabled: isHyprland
-    function onValuesChanged() {
-      try {
-        // Use debounced update to prevent too frequent calls
-        updateTimer.restart()
-      } catch (e) {
-        Logger.error("Compositor", "Error in toplevels onValuesChanged:", e)
-      }
-    }
-  }
+        Connections {
+          target: Hyprland.toplevels
+          enabled: isHyprland
+          function onValuesChanged() {
+            try {
+              // Use debounced update to prevent too frequent calls
+              updateTimer.restart()
+            } catch (e) {
+              Logger.error("Compositor", "Error in toplevels onValuesChanged:", e)
+            }
+          }
+        }
 
-  Connections {
-    target: Hyprland
-    enabled: isHyprland
-    function onRawEvent(event) {
-      try {
-        updateHyprlandWorkspaces()
-        workspaceChanged()
-        updateTimer.restart()
-      } catch (e) {
-        Logger.error("Compositor", "Error in rawEvent:", e)
+        Connections {
+          target: Hyprland
+          enabled: isHyprland
+          function onRawEvent(event) {
+            try {
+              updateHyprlandWorkspaces()
+              workspaceChanged()
+              updateTimer.restart()
+            } catch (e) {
+              Logger.error("Compositor", "Error in rawEvent:", e)
+            }
+          }
+        }
       }
     }
   }
@@ -93,7 +102,7 @@ Singleton {
   function detectCompositor() {
     try {
       // Try Hyprland first
-      if (Hyprland.eventSocketPath) {
+      if (hyprlandSignature && hyprlandSignature.length > 0) {
         compositorType = "hyprland"
         isHyprland = true
         isNiri = false
