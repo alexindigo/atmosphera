@@ -209,7 +209,7 @@ Variants {
             anchors.centerIn: parent
             radius: Style.radiusL * scaling
             border.width: Math.max(1, Style.borderS * scaling)
-            border.color: Color.mOutline
+            border.color: Qt.alpha(Color.mOutline, Settings.data.dock.backgroundOpacity)
 
             MouseArea {
               id: dockMouseArea
