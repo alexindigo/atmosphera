@@ -19,17 +19,17 @@ Item {
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
   property string barPosition: "top"
-  
+
   // Listen to BarService position changes
   Connections {
     target: BarService
     function onBarPositionChanged(newPosition) {
       barPosition = newPosition
       // Force re-evaluation of implicit sizing
-      implicitWidth = Qt.binding(function() {
-        return (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : calculatedHorizontalWidth()
+      implicitWidth = Qt.binding(function () {
+        return (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : (horizontalLayout.implicitWidth + Style.marginM * 2 * scaling)
       })
-      implicitHeight = Qt.binding(function() {
+      implicitHeight = Qt.binding(function () {
         return (barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Math.round(Style.barHeight * scaling)
       })
     }
@@ -53,7 +53,7 @@ Item {
   readonly property real maxWidth: minWidth * 2
 
   implicitHeight: (barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Math.round(Style.barHeight * scaling)
-  implicitWidth: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : calculatedHorizontalWidth()
+  implicitWidth: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : (horizontalLayout.implicitWidth + Style.marginM * 2 * scaling)
 
   function getTitle() {
     try {
@@ -97,8 +97,7 @@ Item {
       total += titleWidth
     }
 
-     // Row layout handles spacing between widgets
-
+    // Row layout handles spacing between widgets
     return Math.max(total, Style.capsuleHeight * scaling) // Minimum width
   }
 

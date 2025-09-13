@@ -17,17 +17,17 @@ Item {
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
   property string barPosition: "top"
-  
+
   // Listen to BarService position changes
   Connections {
     target: BarService
     function onBarPositionChanged(newPosition) {
       barPosition = newPosition
       // Force re-evaluation of implicit sizing
-      implicitWidth = Qt.binding(function() {
-        return (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : calculatedHorizontalWidth()
+      implicitWidth = Qt.binding(function () {
+        return (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : (horizontalLayout.implicitWidth + Style.marginL * 2 * scaling)
       })
-      implicitHeight = Qt.binding(function() {
+      implicitHeight = Qt.binding(function () {
         return (barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Math.round(Style.barHeight * scaling)
       })
     }
@@ -52,7 +52,7 @@ Item {
   readonly property bool showDiskUsage: (widgetSettings.showDiskUsage !== undefined) ? widgetSettings.showDiskUsage : widgetMetadata.showDiskUsage
 
   implicitHeight: (barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Math.round(Style.barHeight * scaling)
-  implicitWidth: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : calculatedHorizontalWidth()
+  implicitWidth: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : (horizontalLayout.implicitWidth + Style.marginL * 2 * scaling)
 
   function calculatedVerticalHeight() {
     let total = 0
@@ -70,14 +70,14 @@ Item {
       visibleCount++
 
     total = visibleCount * Math.round(Style.capsuleHeight * scaling)
-    total += Math.max(visibleCount - 1, 0) * Style.marginS * scaling
+    total += Math.max(visibleCount - 1, 0) * Style.marginXS * scaling
     total += Style.marginM * scaling * 2 // padding
 
     return total
   }
 
   function calculatedHorizontalWidth() {
-    let total = Style.marginM * scaling * 2 // base padding
+    let total = Style.marginL * scaling * 2.5 // base padding
 
     if (showCpuUsage) {
       // Icon + "99%" text
@@ -136,8 +136,7 @@ Item {
       total += (visibleCount - 1) * Style.marginXS * scaling
     }
 
-     // Row layout handles spacing between widgets
-
+    // Row layout handles spacing between widgets
     return Math.max(total, Style.capsuleHeight * scaling)
   }
 
@@ -145,7 +144,7 @@ Item {
     id: backgroundContainer
     anchors.left: parent.left
     anchors.verticalCenter: parent.verticalCenter
-    width: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : calculatedHorizontalWidth()
+    width: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : (horizontalLayout.implicitWidth + Style.marginL * 2 * scaling)
     height: (barPosition === "left" || barPosition === "right") ? parent.height : Math.round(Style.capsuleHeight * scaling)
     radius: Math.round(Style.radiusM * scaling)
     color: Color.mSurfaceVariant
@@ -345,7 +344,7 @@ Item {
       anchors.centerIn: parent
       width: Math.round(32 * scaling)
       height: parent.height - Style.marginM * scaling * 2
-      spacing: Style.marginS * scaling
+      spacing: Style.marginXS * scaling
       visible: barPosition === "left" || barPosition === "right"
 
       // CPU Usage Component

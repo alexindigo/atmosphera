@@ -19,17 +19,17 @@ Item {
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
   property string barPosition: "top"
-  
+
   // Listen to BarService position changes
   Connections {
     target: BarService
     function onBarPositionChanged(newPosition) {
       barPosition = newPosition
       // Force re-evaluation of implicit sizing
-      implicitWidth = Qt.binding(function() {
-        return (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : calculatedHorizontalWidth()
+      implicitWidth = Qt.binding(function () {
+        return (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : (rowLayout.implicitWidth + Style.marginM * 2 * scaling)
       })
-      implicitHeight = Qt.binding(function() {
+      implicitHeight = Qt.binding(function () {
         return (barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Math.round(Style.barHeight * scaling)
       })
     }
@@ -75,7 +75,7 @@ Item {
   }
 
   implicitHeight: (barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Math.round(Style.barHeight * scaling)
-  implicitWidth: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : calculatedHorizontalWidth()
+  implicitWidth: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : (rowLayout.implicitWidth + Style.marginM * 2 * scaling)
 
   visible: MediaService.currentPlayer !== null && MediaService.canPlay
 

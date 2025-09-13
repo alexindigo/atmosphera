@@ -171,14 +171,13 @@ Variants {
 
         Component {
           id: horizontalBarComponent
-          Row {
+          Item {
             anchors.fill: parent
 
             // Left Section
-            Row {
+            RowLayout {
               id: leftSection
               objectName: "leftSection"
-              height: parent.height
               anchors.left: parent.left
               anchors.leftMargin: Style.marginS * root.scaling
               anchors.verticalCenter: parent.verticalCenter
@@ -197,16 +196,14 @@ Variants {
                     "sectionWidgetsCount": Settings.data.bar.widgets.left.length,
                     "barPosition": BarService.position
                   }
-                  anchors.verticalCenter: parent.verticalCenter
                 }
               }
             }
 
             // Center Section
-            Row {
+            RowLayout {
               id: centerSection
               objectName: "centerSection"
-              height: parent.height
               anchors.horizontalCenter: parent.horizontalCenter
               anchors.verticalCenter: parent.verticalCenter
               spacing: Style.marginS * root.scaling
@@ -224,16 +221,14 @@ Variants {
                     "sectionWidgetsCount": Settings.data.bar.widgets.center.length,
                     "barPosition": BarService.position
                   }
-                  anchors.verticalCenter: parent.verticalCenter
                 }
               }
             }
 
             // Right Section
-            Row {
+            RowLayout {
               id: rightSection
               objectName: "rightSection"
-              height: parent.height
               anchors.right: parent.right
               anchors.rightMargin: Style.marginS * root.scaling
               anchors.verticalCenter: parent.verticalCenter
@@ -252,7 +247,6 @@ Variants {
                     "sectionWidgetsCount": Settings.data.bar.widgets.right.length,
                     "barPosition": BarService.position
                   }
-                  anchors.verticalCenter: parent.verticalCenter
                 }
               }
             }
