@@ -42,6 +42,14 @@ ColumnLayout {
             key: "bottom"
             name: "Bottom"
           }
+          ListElement {
+            key: "left"
+            name: "Left"
+          }
+          ListElement {
+            key: "right"
+            name: "Right"
+          }
         }
         currentKey: Settings.data.bar.position
         onSelected: key => Settings.data.bar.position = key

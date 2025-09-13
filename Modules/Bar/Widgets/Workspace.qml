@@ -19,6 +19,7 @@ Item {
   property string section: ""
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
+  property string barPosition: "top"
 
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
@@ -47,17 +48,8 @@ Item {
 
   signal workspaceChanged(int workspaceId, color accentColor)
 
-  implicitHeight: Math.round(Style.barHeight * scaling)
-  implicitWidth: {
-    let total = 0
-    for (var i = 0; i < localWorkspaces.count; i++) {
-      const ws = localWorkspaces.get(i)
-      total += calculatedWsWidth(ws)
-    }
-    total += Math.max(localWorkspaces.count - 1, 0) * spacingBetweenPills
-    total += horizontalPadding * 2
-    return total
-  }
+  implicitHeight: (barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Math.round(Style.barHeight * scaling)
+  implicitWidth: (barPosition === "left" || barPosition === "right") ? Math.round(Style.barHeight * scaling) : calculatedHorizontalWidth()
 
   function calculatedWsWidth(ws) {
     if (ws.isFocused)
@@ -66,6 +58,37 @@ Item {
       return Math.round(28 * scaling)
     else
       return Math.round(20 * scaling)
+  }
+
+  function calculatedWsHeight(ws) {
+    if (ws.isFocused)
+      return Math.round(44 * scaling)
+    else if (ws.isActive)
+      return Math.round(28 * scaling)
+    else
+      return Math.round(20 * scaling)
+  }
+
+  function calculatedVerticalHeight() {
+    let total = 0
+    for (var i = 0; i < localWorkspaces.count; i++) {
+      const ws = localWorkspaces.get(i)
+      total += calculatedWsHeight(ws)
+    }
+    total += Math.max(localWorkspaces.count - 1, 0) * spacingBetweenPills
+    total += horizontalPadding * 2
+    return total
+  }
+
+  function calculatedHorizontalWidth() {
+    let total = 0
+    for (var i = 0; i < localWorkspaces.count; i++) {
+      const ws = localWorkspaces.get(i)
+      total += calculatedWsWidth(ws)
+    }
+    total += Math.max(localWorkspaces.count - 1, 0) * spacingBetweenPills
+    total += horizontalPadding * 2
+    return total
   }
 
   Component.onCompleted: {
@@ -99,7 +122,8 @@ Item {
         }
       }
     }
-    workspaceRepeater.model = localWorkspaces
+    workspaceRepeaterHorizontal.model = localWorkspaces
+    workspaceRepeaterVertical.model = localWorkspaces
     updateWorkspaceFocus()
   }
 
@@ -148,9 +172,8 @@ Item {
 
   Rectangle {
     id: workspaceBackground
-    width: parent.width
-
-    height: Math.round(Style.capsuleHeight * scaling)
+    width: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : parent.width
+    height: (barPosition === "left" || barPosition === "right") ? parent.height : Math.round(Style.capsuleHeight * scaling)
     radius: Math.round(Style.radiusM * scaling)
     color: Color.mSurfaceVariant
 
@@ -158,14 +181,17 @@ Item {
     anchors.verticalCenter: parent.verticalCenter
   }
 
+  // Horizontal layout for top/bottom bars
   Row {
     id: pillRow
     spacing: spacingBetweenPills
     anchors.verticalCenter: workspaceBackground.verticalCenter
     width: root.width - horizontalPadding * 2
     x: horizontalPadding
+    visible: barPosition === "top" || barPosition === "bottom"
+    
     Repeater {
-      id: workspaceRepeater
+      id: workspaceRepeaterHorizontal
       model: localWorkspaces
       Item {
         id: workspacePillContainer
@@ -288,6 +314,151 @@ Item {
           anchors.centerIn: workspacePillContainer
           width: workspacePillContainer.width + 18 * root.masterProgress * scale
           height: workspacePillContainer.height + 18 * root.masterProgress * scale
+          radius: width / 2
+          color: Color.transparent
+          border.color: root.effectColor
+          border.width: Math.max(1, Math.round((2 + 6 * (1.0 - root.masterProgress)) * scaling))
+          opacity: root.effectsActive && model.isFocused ? (1.0 - root.masterProgress) * 0.7 : 0
+          visible: root.effectsActive && model.isFocused
+          z: 1
+        }
+      }
+    }
+  }
+
+  // Vertical layout for left/right bars
+  Column {
+    id: pillColumn
+    spacing: spacingBetweenPills
+    anchors.horizontalCenter: workspaceBackground.horizontalCenter
+    height: root.height - horizontalPadding * 2
+    y: horizontalPadding
+    visible: barPosition === "left" || barPosition === "right"
+    
+    Repeater {
+      id: workspaceRepeaterVertical
+      model: localWorkspaces
+      Item {
+        id: workspacePillContainerVertical
+        width: (labelMode !== "none") ? Math.round(18 * scaling) : Math.round(14 * scaling)
+        height: root.calculatedWsHeight(model)
+
+        Rectangle {
+          id: pillVertical
+          anchors.fill: parent
+
+          Loader {
+            active: (labelMode !== "none")
+            sourceComponent: Component {
+              Text {
+                x: (pillVertical.width - width) / 2
+                y: (pillVertical.height - height) / 2 + (height - contentHeight) / 2
+                text: {
+                  if (labelMode === "name" && model.name && model.name.length > 0) {
+                    return model.name.substring(0, 2)
+                  } else {
+                    return model.idx.toString()
+                  }
+                }
+                font.pointSize: model.isFocused ? Style.fontSizeXS * scaling : Style.fontSizeXXS * scaling
+                font.capitalization: Font.AllUppercase
+                font.family: Settings.data.ui.fontFixed
+                font.weight: Style.fontWeightBold
+                wrapMode: Text.Wrap
+                color: {
+                  if (model.isFocused)
+                    return Color.mOnPrimary
+                  if (model.isUrgent)
+                    return Color.mOnError
+                  if (model.isActive || model.isOccupied)
+                    return Color.mOnSecondary
+
+                  return Color.mOnSurface
+                }
+              }
+            }
+          }
+
+          radius: width * 0.5
+          color: {
+            if (model.isFocused)
+              return Color.mPrimary
+            if (model.isUrgent)
+              return Color.mError
+            if (model.isActive || model.isOccupied)
+              return Color.mSecondary
+
+            return Color.mOutline
+          }
+          scale: model.isFocused ? 1.0 : 0.9
+          z: 0
+
+          MouseArea {
+            id: pillMouseAreaVertical
+            anchors.fill: parent
+            cursorShape: Qt.PointingHandCursor
+            onClicked: {
+              WorkspaceService.switchToWorkspace(model.idx)
+            }
+            hoverEnabled: true
+          }
+          // Material 3-inspired smooth animation for width, height, scale, color, opacity, and radius
+          Behavior on width {
+            NumberAnimation {
+              duration: Style.animationNormal
+              easing.type: Easing.OutBack
+            }
+          }
+          Behavior on height {
+            NumberAnimation {
+              duration: Style.animationNormal
+              easing.type: Easing.OutBack
+            }
+          }
+          Behavior on scale {
+            NumberAnimation {
+              duration: Style.animationNormal
+              easing.type: Easing.OutBack
+            }
+          }
+          Behavior on color {
+            ColorAnimation {
+              duration: Style.animationFast
+              easing.type: Easing.InOutCubic
+            }
+          }
+          Behavior on opacity {
+            NumberAnimation {
+              duration: Style.animationFast
+              easing.type: Easing.InOutCubic
+            }
+          }
+          Behavior on radius {
+            NumberAnimation {
+              duration: Style.animationNormal
+              easing.type: Easing.OutBack
+            }
+          }
+        }
+
+        Behavior on width {
+          NumberAnimation {
+            duration: Style.animationNormal
+            easing.type: Easing.OutBack
+          }
+        }
+        Behavior on height {
+          NumberAnimation {
+            duration: Style.animationNormal
+            easing.type: Easing.OutBack
+          }
+        }
+        // Burst effect overlay for focused pill (smaller outline)
+        Rectangle {
+          id: pillBurstVertical
+          anchors.centerIn: workspacePillContainerVertical
+          width: workspacePillContainerVertical.width + 18 * root.masterProgress * scale
+          height: workspacePillContainerVertical.height + 18 * root.masterProgress * scale
           radius: width / 2
           color: Color.transparent
           border.color: root.effectColor

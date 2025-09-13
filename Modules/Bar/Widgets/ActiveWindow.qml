@@ -8,7 +8,7 @@ import qs.Commons
 import qs.Services
 import qs.Widgets
 
-RowLayout {
+Item {
   id: root
   property ShellScreen screen
   property real scaling: 1.0
@@ -18,6 +18,7 @@ RowLayout {
   property string section: ""
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
+  property string barPosition: "top"
 
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
@@ -36,6 +37,9 @@ RowLayout {
   readonly property real minWidth: Math.max(1, screen.width * 0.06)
   readonly property real maxWidth: minWidth * 2
 
+  implicitHeight: (barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Math.round(Style.barHeight * scaling)
+  implicitWidth: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : calculatedHorizontalWidth()
+
   function getTitle() {
     try {
       return CompositorService.focusedWindowTitle !== "(No active window)" ? CompositorService.focusedWindowTitle : ""
@@ -45,9 +49,24 @@ RowLayout {
     }
   }
 
-  Layout.alignment: Qt.AlignVCenter
-  spacing: Style.marginS * scaling
   visible: getTitle() !== ""
+
+  function calculatedVerticalHeight() {
+    let total = Math.round(Style.capsuleHeight * scaling)
+    if (showIcon) {
+      total += Style.fontSizeL * scaling * 1.2 + Style.marginS * scaling
+    }
+    return total
+  }
+
+  function calculatedHorizontalWidth() {
+    let total = Style.marginM * 2 * scaling // padding
+    if (showIcon) {
+      total += Style.fontSizeL * scaling * 1.2 + Style.marginS * scaling
+    }
+    total += Math.min(fullTitleMetrics.contentWidth, minWidth * scaling)
+    return total
+  }
 
   function getAppIcon() {
     try {
@@ -102,8 +121,9 @@ RowLayout {
   Rectangle {
     id: windowTitleRect
     visible: root.visible
-    Layout.preferredWidth: contentLayout.implicitWidth + Style.marginM * 2 * scaling
-    Layout.preferredHeight: Math.round(Style.capsuleHeight * scaling)
+    anchors.centerIn: parent
+    width: (barPosition === "left" || barPosition === "right") ? Math.round(60 * scaling) : parent.width
+    height: (barPosition === "left" || barPosition === "right") ? parent.height : Math.round(Style.capsuleHeight * scaling)
     radius: Math.round(Style.radiusM * scaling)
     color: Color.mSurfaceVariant
 
@@ -114,10 +134,12 @@ RowLayout {
       anchors.rightMargin: Style.marginS * scaling
       clip: true
 
+      // Horizontal layout for top/bottom bars
       RowLayout {
-        id: contentLayout
+        id: horizontalLayout
         anchors.centerIn: parent
         spacing: Style.marginS * scaling
+        visible: barPosition === "top" || barPosition === "bottom"
 
         // Window icon
         Item {
@@ -176,12 +198,66 @@ RowLayout {
         }
       }
 
+      // Vertical layout for left/right bars - icon only
+      Item {
+        id: verticalLayout
+        anchors.centerIn: parent
+        width: parent.width - Style.marginM * scaling * 2
+        height: parent.height - Style.marginM * scaling * 2
+        visible: barPosition === "left" || barPosition === "right"
+
+        // Window icon
+        Item {
+          width: Style.fontSizeL * scaling * 1.2
+          height: Style.fontSizeL * scaling * 1.2
+          anchors.centerIn: parent
+          visible: getTitle() !== "" && showIcon
+
+          IconImage {
+            id: windowIconVertical
+            anchors.fill: parent
+            source: getAppIcon()
+            asynchronous: true
+            smooth: true
+            visible: source !== ""
+
+            // Handle loading errors gracefully
+            onStatusChanged: {
+              if (status === Image.Error) {
+                Logger.warn("ActiveWindow", "Failed to load icon:", source)
+              }
+            }
+          }
+        }
+
+      }
+
       // Mouse area for hover detection
       MouseArea {
         id: mouseArea
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
+        onEntered: {
+          if (barPosition === "left" || barPosition === "right") {
+            tooltip.show()
+          }
+        }
+        onExited: {
+          if (barPosition === "left" || barPosition === "right") {
+            tooltip.hide()
+          }
+        }
+      }
+
+      // Hover tooltip with full title (only for vertical bars)
+      NTooltip {
+        id: tooltip
+        target: verticalLayout
+        text: getTitle()
+        positionLeft: barPosition === "right"
+        positionRight: barPosition === "left"
+        delay: 500
       }
     }
   }
@@ -191,6 +267,7 @@ RowLayout {
     function onActiveWindowChanged() {
       try {
         windowIcon.source = Qt.binding(getAppIcon)
+        windowIconVertical.source = Qt.binding(getAppIcon)
       } catch (e) {
         Logger.warn("ActiveWindow", "Error in onActiveWindowChanged:", e)
       }
@@ -198,6 +275,7 @@ RowLayout {
     function onWindowListChanged() {
       try {
         windowIcon.source = Qt.binding(getAppIcon)
+        windowIconVertical.source = Qt.binding(getAppIcon)
       } catch (e) {
         Logger.warn("ActiveWindow", "Error in onWindowListChanged:", e)
       }

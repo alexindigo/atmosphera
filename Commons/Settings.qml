@@ -263,7 +263,7 @@ Singleton {
 
       // bar
       property JsonObject bar: JsonObject {
-        property string position: "top" // "top" or "bottom"
+        property string position: "top" // "top", "bottom", "left", or "right"
         property real backgroundOpacity: 1.0
         property list<string> monitors: []
 

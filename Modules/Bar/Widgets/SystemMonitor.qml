@@ -5,7 +5,7 @@ import qs.Commons
 import qs.Services
 import qs.Widgets
 
-RowLayout {
+Item {
   id: root
 
   property ShellScreen screen
@@ -16,6 +16,7 @@ RowLayout {
   property string section: ""
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
+  property string barPosition: "top"
 
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
@@ -35,22 +36,60 @@ RowLayout {
   readonly property bool showNetworkStats: (widgetSettings.showNetworkStats !== undefined) ? widgetSettings.showNetworkStats : widgetMetadata.showNetworkStats
   readonly property bool showDiskUsage: (widgetSettings.showDiskUsage !== undefined) ? widgetSettings.showDiskUsage : widgetMetadata.showDiskUsage
 
-  Layout.alignment: Qt.AlignVCenter
-  spacing: Style.marginS * scaling
+  implicitHeight: (barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Math.round(Style.barHeight * scaling)
+  implicitWidth: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : calculatedHorizontalWidth()
+
+  function calculatedVerticalHeight() {
+    let total = 0
+    let visibleCount = 0
+    
+    if (showCpuUsage) visibleCount++
+    if (showCpuTemp) visibleCount++
+    if (showMemoryUsage) visibleCount++
+    if (showNetworkStats) visibleCount += 2 // download + upload
+    if (showDiskUsage) visibleCount++
+    
+    total = visibleCount * Math.round(Style.capsuleHeight * scaling)
+    total += Math.max(visibleCount - 1, 0) * Style.marginS * scaling
+    total += Style.marginM * scaling * 2 // padding
+    
+    return total
+  }
+
+  function calculatedHorizontalWidth() {
+    let total = 0
+    let visibleCount = 0
+    
+    if (showCpuUsage) visibleCount++
+    if (showCpuTemp) visibleCount++
+    if (showMemoryUsage) visibleCount++
+    if (showNetworkStats) visibleCount += 2 // download + upload
+    if (showDiskUsage) visibleCount++
+    
+    // Estimate width per component (icon + text + spacing)
+    total = visibleCount * Math.round(60 * scaling) // rough estimate
+    total += Math.max(visibleCount - 1, 0) * Style.marginS * scaling
+    total += Style.marginM * scaling * 2 // padding
+    
+    return total
+  }
 
   Rectangle {
-    Layout.preferredHeight: Math.round(Style.capsuleHeight * scaling)
-    Layout.preferredWidth: mainLayout.implicitWidth + Style.marginM * scaling * 2
-    Layout.alignment: Qt.AlignVCenter
-
+    id: backgroundContainer
+    anchors.centerIn: parent
+    width: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : parent.width
+    height: (barPosition === "left" || barPosition === "right") ? parent.height : Math.round(Style.capsuleHeight * scaling)
     radius: Math.round(Style.radiusM * scaling)
     color: Color.mSurfaceVariant
 
+    // Horizontal layout for top/bottom bars
     RowLayout {
-      id: mainLayout
-      anchors.centerIn: parent // Better centering than margins
+      id: horizontalLayout
+      anchors.centerIn: parent
       width: parent.width - Style.marginM * scaling * 2
+      height: parent.height - Style.marginM * scaling * 2
       spacing: Style.marginS * scaling
+      visible: false // Temporarily hide horizontal layout for debugging
 
       // CPU Usage Component
       Item {
@@ -228,6 +267,197 @@ RowLayout {
             font.weight: Style.fontWeightMedium
             Layout.alignment: Qt.AlignVCenter
             verticalAlignment: Text.AlignVCenter
+            color: Color.mPrimary
+          }
+        }
+      }
+    }
+
+    // Vertical layout for left/right bars
+    ColumnLayout {
+      id: verticalLayout
+      anchors.centerIn: parent
+      width: Math.round(32 * scaling)
+      height: parent.height - Style.marginM * scaling * 2
+      spacing: Style.marginS * scaling
+      visible: true // Temporarily show vertical layout for debugging
+
+      // CPU Usage Component
+      Item {
+        Layout.preferredHeight: Math.round(Style.capsuleHeight * scaling)
+        Layout.preferredWidth: Math.round(32 * scaling)
+        Layout.alignment: Qt.AlignHCenter
+        visible: showCpuUsage
+
+        Column {
+          id: cpuUsageRowVertical
+          anchors.centerIn: parent
+          spacing: Style.marginXXS * scaling
+
+          NIcon {
+            icon: "cpu-usage"
+            font.pointSize: Style.fontSizeS * scaling
+            anchors.horizontalCenter: parent.horizontalCenter
+          }
+
+          NText {
+            text: `${SystemStatService.cpuUsage}%`
+            font.family: Settings.data.ui.fontFixed
+            font.pointSize: Style.fontSizeXXS * scaling * 0.8
+            font.weight: Style.fontWeightMedium
+            anchors.horizontalCenter: parent.horizontalCenter
+            horizontalAlignment: Text.AlignHCenter
+            color: Color.mPrimary
+          }
+        }
+      }
+
+      // CPU Temperature Component
+      Item {
+        Layout.preferredHeight: Math.round(Style.capsuleHeight * scaling)
+        Layout.preferredWidth: Math.round(32 * scaling)
+        Layout.alignment: Qt.AlignHCenter
+        visible: showCpuTemp
+
+        Column {
+          id: cpuTempRowVertical
+          anchors.centerIn: parent
+          spacing: Style.marginXXS * scaling
+
+          NIcon {
+            icon: "cpu-temperature"
+            // Fire is so tall, we need to make it smaller
+            font.pointSize: Style.fontSizeXS * scaling
+            anchors.horizontalCenter: parent.horizontalCenter
+          }
+
+          NText {
+            text: `${SystemStatService.cpuTemp}°C`
+            font.family: Settings.data.ui.fontFixed
+            font.pointSize: Style.fontSizeXXS * scaling * 0.8
+            font.weight: Style.fontWeightMedium
+            anchors.horizontalCenter: parent.horizontalCenter
+            horizontalAlignment: Text.AlignHCenter
+            color: Color.mPrimary
+          }
+        }
+      }
+
+      // Memory Usage Component
+      Item {
+        Layout.preferredHeight: Math.round(Style.capsuleHeight * scaling)
+        Layout.preferredWidth: Math.round(32 * scaling)
+        Layout.alignment: Qt.AlignHCenter
+        visible: showMemoryUsage
+
+        Column {
+          id: memoryUsageRowVertical
+          anchors.centerIn: parent
+          spacing: Style.marginXXS * scaling
+
+          NIcon {
+            icon: "memory"
+            font.pointSize: Style.fontSizeS * scaling
+            anchors.horizontalCenter: parent.horizontalCenter
+          }
+
+          NText {
+            text: showMemoryAsPercent ? `${SystemStatService.memPercent}%` : `${SystemStatService.memGb}G`
+            font.family: Settings.data.ui.fontFixed
+            font.pointSize: Style.fontSizeXXS * scaling * 0.8
+            font.weight: Style.fontWeightMedium
+            anchors.horizontalCenter: parent.horizontalCenter
+            horizontalAlignment: Text.AlignHCenter
+            color: Color.mPrimary
+          }
+        }
+      }
+
+      // Network Download Speed Component
+      Item {
+        Layout.preferredHeight: Math.round(Style.capsuleHeight * scaling)
+        Layout.preferredWidth: Math.round(32 * scaling)
+        Layout.alignment: Qt.AlignHCenter
+        visible: showNetworkStats
+
+        Column {
+          id: networkDownloadRowVertical
+          anchors.centerIn: parent
+          spacing: Style.marginXXS * scaling
+
+          NIcon {
+            icon: "download-speed"
+            font.pointSize: Style.fontSizeS * scaling
+            anchors.horizontalCenter: parent.horizontalCenter
+          }
+
+          NText {
+            text: SystemStatService.formatSpeed(SystemStatService.rxSpeed)
+            font.family: Settings.data.ui.fontFixed
+            font.pointSize: Style.fontSizeXXS * scaling * 0.8
+            font.weight: Style.fontWeightMedium
+            anchors.horizontalCenter: parent.horizontalCenter
+            horizontalAlignment: Text.AlignHCenter
+            color: Color.mPrimary
+          }
+        }
+      }
+
+      // Network Upload Speed Component
+      Item {
+        Layout.preferredHeight: Math.round(Style.capsuleHeight * scaling)
+        Layout.preferredWidth: Math.round(32 * scaling)
+        Layout.alignment: Qt.AlignHCenter
+        visible: showNetworkStats
+
+        Column {
+          id: networkUploadRowVertical
+          anchors.centerIn: parent
+          spacing: Style.marginXXS * scaling
+
+          NIcon {
+            icon: "upload-speed"
+            font.pointSize: Style.fontSizeS * scaling
+            anchors.horizontalCenter: parent.horizontalCenter
+          }
+
+          NText {
+            text: SystemStatService.formatSpeed(SystemStatService.txSpeed)
+            font.family: Settings.data.ui.fontFixed
+            font.pointSize: Style.fontSizeXXS * scaling * 0.8
+            font.weight: Style.fontWeightMedium
+            anchors.horizontalCenter: parent.horizontalCenter
+            horizontalAlignment: Text.AlignHCenter
+            color: Color.mPrimary
+          }
+        }
+      }
+
+      // Disk Usage Component (primary drive)
+      Item {
+        Layout.preferredHeight: Math.round(Style.capsuleHeight * scaling)
+        Layout.preferredWidth: Math.round(32 * scaling)
+        Layout.alignment: Qt.AlignHCenter
+        visible: showDiskUsage
+
+        ColumnLayout {
+          id: diskUsageRowVertical
+          anchors.centerIn: parent
+          spacing: Style.marginXXS * scaling
+
+          NIcon {
+            icon: "storage"
+            font.pointSize: Style.fontSizeS * scaling
+            Layout.alignment: Qt.AlignHCenter
+          }
+
+          NText {
+            text: `${SystemStatService.diskPercent}%`
+            font.family: Settings.data.ui.fontFixed
+            font.pointSize: Style.fontSizeXXS * scaling * 0.8
+            font.weight: Style.fontWeightMedium
+            Layout.alignment: Qt.AlignHCenter
+            horizontalAlignment: Text.AlignHCenter
             color: Color.mPrimary
           }
         }
