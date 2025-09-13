@@ -192,6 +192,7 @@ Alternatively, you can add it to your NixOS configuration or flake:
 </details>
 
 ### Usage
+Start the Shell	with: `qs -c noctalia-shell`
 
 `noctalia-shell` offers many IPC calls for your convenience, so you can add them to your favorite keybinds or scripts.
 
