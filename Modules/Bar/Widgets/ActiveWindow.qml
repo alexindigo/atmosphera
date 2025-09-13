@@ -19,7 +19,6 @@ Item {
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
 
-
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
     if (section && sectionWidgetIndex >= 0) {
@@ -53,18 +52,8 @@ Item {
   visible: getTitle() !== ""
 
   function calculatedVerticalHeight() {
-    // Base height for the background rectangle
-    let total = Math.round(Style.capsuleHeight * scaling)
-
-    // Add padding for the container margins
-    total += Style.marginM * scaling * 2 // Top and bottom margins
-
-    // Add space for icon if shown
-    if (showIcon) {
-      total += Style.fontSizeL * scaling * 1.2 + Style.marginS * scaling
-    }
-
-    return total
+    // Use standard widget height like other widgets
+    return Math.round(Style.capsuleHeight * scaling)
   }
 
   function calculatedHorizontalWidth() {
@@ -222,8 +211,8 @@ Item {
       Item {
         id: verticalLayout
         anchors.centerIn: parent
-        width: parent.width - Style.marginM * scaling * 2
-        height: parent.height - Style.marginM * scaling * 2
+        width: parent.width - Style.marginXS * scaling * 2
+        height: parent.height - Style.marginXS * scaling * 2
         visible: barPosition === "left" || barPosition === "right"
 
         // Window icon

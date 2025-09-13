@@ -92,10 +92,10 @@ Variants {
 
             // Top section (left widgets)
             Column {
-              spacing: Style.marginS * root.scaling
+              spacing: Style.marginXS * root.scaling
               anchors.horizontalCenter: parent.horizontalCenter
               anchors.top: parent.top
-              anchors.topMargin: Style.marginM * root.scaling
+              anchors.topMargin: Style.marginS * root.scaling
               width: parent.width
 
               Repeater {
@@ -117,7 +117,7 @@ Variants {
 
             // Center section (center widgets)
             Column {
-              spacing: Style.marginS * root.scaling
+              spacing: Style.marginXS * root.scaling
               anchors.horizontalCenter: parent.horizontalCenter
               anchors.verticalCenter: parent.verticalCenter
               width: parent.width
@@ -141,10 +141,10 @@ Variants {
 
             // Bottom section (right widgets)
             Column {
-              spacing: Style.marginS * root.scaling
+              spacing: Style.marginXS * root.scaling
               anchors.horizontalCenter: parent.horizontalCenter
               anchors.bottom: parent.bottom
-              anchors.bottomMargin: Style.marginM * root.scaling
+              anchors.bottomMargin: Style.marginS * root.scaling
               width: parent.width
 
               Repeater {

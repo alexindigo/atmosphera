@@ -30,7 +30,6 @@ Item {
     return {}
   }
 
-
   readonly property string barPosition: Settings.data.bar.position
 
   readonly property bool showAlbumArt: (widgetSettings.showAlbumArt !== undefined) ? widgetSettings.showAlbumArt : widgetMetadata.showAlbumArt

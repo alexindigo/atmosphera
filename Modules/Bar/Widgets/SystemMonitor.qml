@@ -57,7 +57,7 @@ Item {
 
     total = visibleCount * Math.round(Style.capsuleHeight * scaling)
     total += Math.max(visibleCount - 1, 0) * Style.marginXS * scaling
-    total += Style.marginM * scaling * 2 // padding
+    total += Style.marginXS * scaling * 2 // minimal padding to match other widgets
 
     return total
   }
@@ -329,7 +329,7 @@ Item {
       id: verticalLayout
       anchors.centerIn: parent
       width: Math.round(32 * scaling)
-      height: parent.height - Style.marginM * scaling * 2
+      height: parent.height - Style.marginXS * scaling * 2
       spacing: Style.marginXS * scaling
       visible: barPosition === "left" || barPosition === "right"
 

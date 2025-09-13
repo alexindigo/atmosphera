@@ -19,7 +19,7 @@ Item {
   property string section: ""
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
-  
+
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
     if (section && sectionWidgetIndex >= 0) {
@@ -30,7 +30,6 @@ Item {
     }
     return {}
   }
-
 
   readonly property string barPosition: Settings.data.bar.position
 
