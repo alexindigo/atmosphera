@@ -46,10 +46,10 @@ Variants {
 
       // Floating bar margins - only apply when floating is enabled
       margins {
-        top: Settings.data.bar.floating ? Settings.data.bar.marginTop : 0
-        bottom: Settings.data.bar.floating ? Settings.data.bar.marginBottom : 0
-        left: Settings.data.bar.floating ? Settings.data.bar.marginLeft : 0
-        right: Settings.data.bar.floating ? Settings.data.bar.marginRight : 0
+        top: Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL : 0
+        bottom: Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL : 0
+        left: Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL : 0
+        right: Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL : 0
       }
 
       Item {
@@ -64,7 +64,7 @@ Variants {
           color: Qt.alpha(Color.mSurface, Settings.data.bar.backgroundOpacity)
 
           // Floating bar rounded corners
-          radius: Settings.data.bar.floating ? Settings.data.bar.rounding : 0
+          radius: Settings.data.bar.floating ? Style.radiusL : 0
         }
 
         // ------------------------------
