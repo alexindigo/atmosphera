@@ -186,9 +186,7 @@ ColumnLayout {
           radius: Style.radiusM * scaling
           color: getSchemeColor(modelData, "mSurface")
           border.width: Math.max(1, Style.borderL * scaling)
-          border.color: (!Settings.data.colorSchemes.useWallpaperColors
-                         && (Settings.data.colorSchemes.predefinedScheme === modelData.split("/").pop().replace(
-                               ".json", ""))) ? Color.mSecondary : Color.mOutline
+          border.color: (!Settings.data.colorSchemes.useWallpaperColors && (Settings.data.colorSchemes.predefinedScheme === modelData.split("/").pop().replace(".json", ""))) ? Color.mSecondary : Color.mOutline
           scale: root.cardScaleLow
 
           // Mouse area for selection
@@ -281,9 +279,7 @@ ColumnLayout {
 
           // Selection indicator (Checkmark)
           Rectangle {
-            visible: !Settings.data.colorSchemes.useWallpaperColors
-                     && (Settings.data.colorSchemes.predefinedScheme === schemePath.split("/").pop().replace(".json",
-                                                                                                             ""))
+            visible: !Settings.data.colorSchemes.useWallpaperColors && (Settings.data.colorSchemes.predefinedScheme === schemePath.split("/").pop().replace(".json", ""))
             anchors.right: parent.right
             anchors.top: parent.top
             anchors.margins: Style.marginS * scaling

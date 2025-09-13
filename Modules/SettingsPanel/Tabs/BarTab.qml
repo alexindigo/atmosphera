@@ -201,8 +201,7 @@ ColumnLayout {
   }
 
   function _reorderWidgetInSection(section, fromIndex, toIndex) {
-    if (fromIndex >= 0 && fromIndex < Settings.data.bar.widgets[section].length && toIndex >= 0
-        && toIndex < Settings.data.bar.widgets[section].length) {
+    if (fromIndex >= 0 && fromIndex < Settings.data.bar.widgets[section].length && toIndex >= 0 && toIndex < Settings.data.bar.widgets[section].length) {
 
       // Create a new array to avoid modifying the original
       var newArray = Settings.data.bar.widgets[section].slice()

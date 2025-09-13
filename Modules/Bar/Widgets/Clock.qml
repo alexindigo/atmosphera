@@ -30,10 +30,8 @@ Rectangle {
 
   // Resolve settings: try user settings or defaults from BarWidgetRegistry
   readonly property bool use12h: widgetSettings.use12HourClock !== undefined ? widgetSettings.use12HourClock : widgetMetadata.use12HourClock
-  readonly property bool reverseDayMonth: widgetSettings.reverseDayMonth
-                                          !== undefined ? widgetSettings.reverseDayMonth : widgetMetadata.reverseDayMonth
-  readonly property string displayFormat: widgetSettings.displayFormat
-                                          !== undefined ? widgetSettings.displayFormat : widgetMetadata.displayFormat
+  readonly property bool reverseDayMonth: widgetSettings.reverseDayMonth !== undefined ? widgetSettings.reverseDayMonth : widgetMetadata.reverseDayMonth
+  readonly property string displayFormat: widgetSettings.displayFormat !== undefined ? widgetSettings.displayFormat : widgetMetadata.displayFormat
 
   implicitWidth: Math.round(layout.implicitWidth + Style.marginM * 2 * scaling)
   implicitHeight: Math.round(Style.capsuleHeight * scaling)

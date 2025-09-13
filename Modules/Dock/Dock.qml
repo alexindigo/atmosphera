@@ -36,8 +36,7 @@ Variants {
     readonly property int floatingMargin: Settings.data.dock.floatingRatio * Style.marginL * scaling
 
     // Bar detection and positioning properties
-    readonly property bool hasBar: modelData.name ? (Settings.data.bar.monitors.includes(modelData.name)
-                                                     || (Settings.data.bar.monitors.length === 0)) : false
+    readonly property bool hasBar: modelData.name ? (Settings.data.bar.monitors.includes(modelData.name) || (Settings.data.bar.monitors.length === 0)) : false
     readonly property bool barAtBottom: hasBar && Settings.data.bar.position === "bottom"
     readonly property int barHeight: Style.barHeight * scaling
 
@@ -261,8 +260,7 @@ Variants {
                     Layout.preferredHeight: iconSize
                     Layout.alignment: Qt.AlignCenter
 
-                    property bool isActive: ToplevelManager.activeToplevel
-                                            && ToplevelManager.activeToplevel === modelData
+                    property bool isActive: ToplevelManager.activeToplevel && ToplevelManager.activeToplevel === modelData
                     property bool hovered: appMouseArea.containsMouse
                     property string appId: modelData ? modelData.appId : ""
                     property string appTitle: modelData ? modelData.title : ""

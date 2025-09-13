@@ -152,13 +152,7 @@ NPanel {
               Layout.preferredHeight: 28 * scaling
               Layout.alignment: Qt.AlignVCenter
               // Prefer stable themed icons over transient image paths
-              imagePath: (appIcon
-                          && appIcon !== "") ? (AppIcons.iconFromName(appIcon, "application-x-executable")
-                                                || appIcon) : ((AppIcons.iconForAppId(desktopEntry
-                                                                                      || appName, "application-x-executable")
-                                                                || (image && image
-                                                                    !== "" ? image : AppIcons.iconFromName("application-x-executable",
-                                                                                                           "application-x-executable"))))
+              imagePath: (appIcon && appIcon !== "") ? (AppIcons.iconFromName(appIcon, "application-x-executable") || appIcon) : ((AppIcons.iconForAppId(desktopEntry || appName, "application-x-executable") || (image && image !== "" ? image : AppIcons.iconFromName("application-x-executable", "application-x-executable"))))
               borderColor: Color.transparent
               borderWidth: 0
               visible: true

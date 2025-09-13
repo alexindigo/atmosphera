@@ -339,12 +339,10 @@ NBox {
               continue
 
             // Check distance to left edge (insert before)
-            const leftDist = Math.sqrt(Math.pow(mouseX - widget.x,
-                                                2) + Math.pow(mouseY - (widget.y + widget.height / 2), 2))
+            const leftDist = Math.sqrt(Math.pow(mouseX - widget.x, 2) + Math.pow(mouseY - (widget.y + widget.height / 2), 2))
 
             // Check distance to right edge (insert after)
-            const rightDist = Math.sqrt(Math.pow(mouseX - (widget.x + widget.width),
-                                                 2) + Math.pow(mouseY - (widget.y + widget.height / 2), 2))
+            const rightDist = Math.sqrt(Math.pow(mouseX - (widget.x + widget.width), 2) + Math.pow(mouseY - (widget.y + widget.height / 2), 2))
 
             if (leftDist < minDistance) {
               minDistance = leftDist
@@ -355,8 +353,7 @@ NBox {
             if (rightDist < minDistance) {
               minDistance = rightDist
               bestIndex = i + 1
-              bestPosition = Qt.point(widget.x + widget.width + Style.marginXS * scaling - dropIndicator.width / 2,
-                                      widget.y)
+              bestPosition = Qt.point(widget.x + widget.width + Style.marginXS * scaling - dropIndicator.width / 2, widget.y)
             }
           }
 
@@ -368,8 +365,7 @@ NBox {
               if (dist < minDistance && mouseX < firstWidget.x + firstWidget.width / 2) {
                 minDistance = dist
                 bestIndex = 0
-                bestPosition = Qt.point(Math.max(0, firstWidget.x - dropIndicator.width - Style.marginS * scaling),
-                                        firstWidget.y)
+                bestPosition = Qt.point(Math.max(0, firstWidget.x - dropIndicator.width - Style.marginS * scaling), firstWidget.y)
               }
             }
           }
@@ -419,8 +415,7 @@ NBox {
                      for (var i = 0; i < widgetModel.length; i++) {
                        const widget = widgetFlow.children[i]
                        if (widget && widget.widgetIndex !== undefined) {
-                         if (mouse.x >= widget.x && mouse.x <= widget.x + widget.width && mouse.y >= widget.y
-                             && mouse.y <= widget.y + widget.height) {
+                         if (mouse.x >= widget.x && mouse.x <= widget.x + widget.width && mouse.y >= widget.y && mouse.y <= widget.y + widget.height) {
 
                            const localX = mouse.x - widget.x
                            const buttonsStartX = widget.width - (widget.buttonsCount * widget.buttonsWidth)

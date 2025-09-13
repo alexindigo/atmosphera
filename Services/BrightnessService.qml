@@ -84,8 +84,7 @@ Singleton {
                                              var ddcModel = ddcModelMatc ? ddcModelMatc.length > 0 : false
                                              var model = modelMatch ? modelMatch[1] : "Unknown"
                                              var bus = busMatch ? busMatch[1] : "Unknown"
-                                             Logger.log("Detected DDC Monitor:", model, "on bus", bus, "is DDC:",
-                                                        !ddcModel)
+                                             Logger.log("Detected DDC Monitor:", model, "on bus", bus, "is DDC:", !ddcModel)
                                              return {
                                                "model": model,
                                                "busNum": bus,
@@ -261,9 +260,7 @@ Singleton {
       } else {
         // Internal backlight - find the first available backlight device and get its info
         // This now returns: device_path, current_brightness, max_brightness (on separate lines)
-        initProc.command = ["sh", "-c", "for dev in /sys/class/backlight/*; do "
-                            + "  if [ -f \"$dev/brightness\" ] && [ -f \"$dev/max_brightness\" ]; then " + "    echo \"$dev\"; "
-                            + "    cat \"$dev/brightness\"; " + "    cat \"$dev/max_brightness\"; " + "    break; " + "  fi; " + "done"]
+        initProc.command = ["sh", "-c", "for dev in /sys/class/backlight/*; do " + "  if [ -f \"$dev/brightness\" ] && [ -f \"$dev/max_brightness\" ]; then " + "    echo \"$dev\"; " + "    cat \"$dev/brightness\"; " + "    cat \"$dev/max_brightness\"; " + "    break; " + "  fi; " + "done"]
       }
       initProc.running = true
     }

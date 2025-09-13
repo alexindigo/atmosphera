@@ -23,8 +23,7 @@ Variants {
     }
 
     // Only show on screens that have notifications enabled
-    active: Settings.isLoaded && modelData ? (Settings.data.notifications.monitors.includes(modelData.name)
-                                              || (Settings.data.notifications.monitors.length === 0)) : false
+    active: Settings.isLoaded && modelData ? (Settings.data.notifications.monitors.includes(modelData.name) || (Settings.data.notifications.monitors.length === 0)) : false
 
     sourceComponent: PanelWindow {
       id: root

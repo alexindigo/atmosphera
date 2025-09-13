@@ -48,8 +48,7 @@ Scope {
     user: Quickshell.env("USER")
 
     onPamMessage: {
-      Logger.log("LockContext", "PAM message:", message, "isError:", messageIsError, "responseRequired:",
-                 responseRequired)
+      Logger.log("LockContext", "PAM message:", message, "isError:", messageIsError, "responseRequired:", responseRequired)
 
       if (messageIsError) {
         errorMessage = message

@@ -106,11 +106,9 @@ ColumnLayout {
               checked: (Settings.data.notifications.monitors || []).indexOf(modelData.name) !== -1
               onToggled: checked => {
                            if (checked) {
-                             Settings.data.notifications.monitors = addMonitor(Settings.data.notifications.monitors,
-                                                                               modelData.name)
+                             Settings.data.notifications.monitors = addMonitor(Settings.data.notifications.monitors, modelData.name)
                            } else {
-                             Settings.data.notifications.monitors = removeMonitor(Settings.data.notifications.monitors,
-                                                                                  modelData.name)
+                             Settings.data.notifications.monitors = removeMonitor(Settings.data.notifications.monitors, modelData.name)
                            }
                          }
             }

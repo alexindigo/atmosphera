@@ -57,8 +57,7 @@ Singleton {
   property int maxHistory: 100
 
   // Cached history file path
-  property string historyFile: Quickshell.env("NOCTALIA_NOTIF_HISTORY_FILE")
-                               || (Settings.cacheDir + "notifications.json")
+  property string historyFile: Quickshell.env("NOCTALIA_NOTIF_HISTORY_FILE") || (Settings.cacheDir + "notifications.json")
 
   // Persisted storage for history
   property FileView historyFileView: FileView {
@@ -280,9 +279,7 @@ Singleton {
                    "appIcon": n.appIcon,
                    "urgency": n.urgency,
                    "timestamp"// Always persist in milliseconds
-                   : (n.timestamp instanceof Date) ? n.timestamp.getTime(
-                                                       ) : (typeof n.timestamp === "number"
-                                                            && n.timestamp < 1e12 ? n.timestamp * 1000 : n.timestamp)
+                   : (n.timestamp instanceof Date) ? n.timestamp.getTime() : (typeof n.timestamp === "number" && n.timestamp < 1e12 ? n.timestamp * 1000 : n.timestamp)
                  })
       }
       historyAdapter.history = arr

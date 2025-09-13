@@ -68,9 +68,7 @@ Variants {
       // Make the overview darker
       Rectangle {
         anchors.fill: parent
-        color: Settings.data.colorSchemes.darkMode ? Qt.alpha(Color.mSurface,
-                                                              Style.opacityMedium) : Qt.alpha(Color.mOnSurface,
-                                                                                              Style.opacityMedium)
+        color: Settings.data.colorSchemes.darkMode ? Qt.alpha(Color.mSurface, Style.opacityMedium) : Qt.alpha(Color.mOnSurface, Style.opacityMedium)
       }
     }
   }

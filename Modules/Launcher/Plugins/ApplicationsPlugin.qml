@@ -37,8 +37,7 @@ Item {
 
     if (!query || query.trim() === "") {
       // Return all apps alphabetically
-      return entries.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase())).map(
-            app => createResultEntry(app))
+      return entries.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase())).map(app => createResultEntry(app))
     }
 
     // Use fuzzy search if available, fallback to simple search
@@ -57,8 +56,7 @@ Item {
                               const name = (app.name || "").toLowerCase()
                               const comment = (app.comment || "").toLowerCase()
                               const generic = (app.genericName || "").toLowerCase()
-                              return name.includes(searchTerm) || comment.includes(searchTerm) || generic.includes(
-                                searchTerm)
+                              return name.includes(searchTerm) || comment.includes(searchTerm) || generic.includes(searchTerm)
                             }).sort((a, b) => {
                                       // Prioritize name matches
                                       const aName = a.name.toLowerCase()

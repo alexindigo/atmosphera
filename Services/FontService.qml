@@ -58,21 +58,16 @@ Singleton {
 
     if (monospaceFonts.count === 0) {
       Logger.log("Font", "No monospace fonts detected, adding fallbacks")
-      addFallbackFonts(
-            monospaceFonts,
-            ["DejaVu Sans Mono", "Liberation Mono", "Courier New", "Courier", "Monaco", "Consolas", "Lucida Console", "Monaco", "Andale Mono"])
+      addFallbackFonts(monospaceFonts, ["DejaVu Sans Mono", "Liberation Mono", "Courier New", "Courier", "Monaco", "Consolas", "Lucida Console", "Monaco", "Andale Mono"])
     }
 
     if (displayFonts.count === 0) {
       Logger.log("Font", "No display fonts detected, adding fallbacks")
-      addFallbackFonts(
-            displayFonts,
-            ["Inter", "Roboto", "Open Sans", "Arial", "Helvetica", "Verdana", "Segoe UI", "SF Pro Display", "Ubuntu", "Noto Sans"])
+      addFallbackFonts(displayFonts, ["Inter", "Roboto", "Open Sans", "Arial", "Helvetica", "Verdana", "Segoe UI", "SF Pro Display", "Ubuntu", "Noto Sans"])
     }
 
     fontsLoaded = true
-    Logger.log("Font", "Loaded", availableFonts.count, "fonts:", monospaceFonts.count, "monospace,",
-               displayFonts.count, "display")
+    Logger.log("Font", "Loaded", availableFonts.count, "fonts:", monospaceFonts.count, "monospace,", displayFonts.count, "display")
   }
 
   function isMonospaceFont(fontName) {

@@ -74,8 +74,7 @@ Singleton {
       return
     }
 
-    Quickshell.execDetached(
-          ["sh", "-c", "pkill -SIGINT -f 'gpu-screen-recorder' || pkill -SIGINT -f 'com.dec05eba.gpu_screen_recorder'"])
+    Quickshell.execDetached(["sh", "-c", "pkill -SIGINT -f 'gpu-screen-recorder' || pkill -SIGINT -f 'com.dec05eba.gpu_screen_recorder'"])
 
     isRecording = false
     isPending = false
@@ -152,8 +151,7 @@ Singleton {
     running: false
     repeat: false
     onTriggered: {
-      Quickshell.execDetached(
-        ["sh", "-c", "pkill -9 -f 'gpu-screen-recorder' 2>/dev/null || pkill -9 -f 'com.dec05eba.gpu_screen_recorder' 2>/dev/null || true"])
+      Quickshell.execDetached(["sh", "-c", "pkill -9 -f 'gpu-screen-recorder' 2>/dev/null || pkill -9 -f 'com.dec05eba.gpu_screen_recorder' 2>/dev/null || true"])
     }
   }
 }

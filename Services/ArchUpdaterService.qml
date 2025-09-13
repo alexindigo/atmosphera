@@ -283,8 +283,7 @@ Singleton {
     stdout: StdioCollector {
       onStreamFinished: {
         parseAllUpdatesOutput(allUpdatesOutput, text)
-        Logger.log("ArchUpdater", "found", repoPackages.length, "repo package(s) and", aurPackages.length,
-                   "AUR package(s) to upgrade")
+        Logger.log("ArchUpdater", "found", repoPackages.length, "repo package(s) and", aurPackages.length, "AUR package(s) to upgrade")
       }
     }
   }

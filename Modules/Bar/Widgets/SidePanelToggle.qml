@@ -29,8 +29,7 @@ NIconButton {
     return {}
   }
 
-  readonly property bool useDistroLogo: (widgetSettings.useDistroLogo
-                                         !== undefined) ? widgetSettings.useDistroLogo : widgetMetadata.useDistroLogo
+  readonly property bool useDistroLogo: (widgetSettings.useDistroLogo !== undefined) ? widgetSettings.useDistroLogo : widgetMetadata.useDistroLogo
 
   icon: useDistroLogo ? "" : "noctalia"
   tooltipText: "Open side panel."

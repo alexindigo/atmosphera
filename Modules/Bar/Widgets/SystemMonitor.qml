@@ -28,17 +28,12 @@ RowLayout {
     return {}
   }
 
-  readonly property bool showCpuUsage: (widgetSettings.showCpuUsage
-                                        !== undefined) ? widgetSettings.showCpuUsage : widgetMetadata.showCpuUsage
+  readonly property bool showCpuUsage: (widgetSettings.showCpuUsage !== undefined) ? widgetSettings.showCpuUsage : widgetMetadata.showCpuUsage
   readonly property bool showCpuTemp: (widgetSettings.showCpuTemp !== undefined) ? widgetSettings.showCpuTemp : widgetMetadata.showCpuTemp
-  readonly property bool showMemoryUsage: (widgetSettings.showMemoryUsage
-                                           !== undefined) ? widgetSettings.showMemoryUsage : widgetMetadata.showMemoryUsage
-  readonly property bool showMemoryAsPercent: (widgetSettings.showMemoryAsPercent
-                                               !== undefined) ? widgetSettings.showMemoryAsPercent : widgetMetadata.showMemoryAsPercent
-  readonly property bool showNetworkStats: (widgetSettings.showNetworkStats
-                                            !== undefined) ? widgetSettings.showNetworkStats : widgetMetadata.showNetworkStats
-  readonly property bool showDiskUsage: (widgetSettings.showDiskUsage
-                                         !== undefined) ? widgetSettings.showDiskUsage : widgetMetadata.showDiskUsage
+  readonly property bool showMemoryUsage: (widgetSettings.showMemoryUsage !== undefined) ? widgetSettings.showMemoryUsage : widgetMetadata.showMemoryUsage
+  readonly property bool showMemoryAsPercent: (widgetSettings.showMemoryAsPercent !== undefined) ? widgetSettings.showMemoryAsPercent : widgetMetadata.showMemoryAsPercent
+  readonly property bool showNetworkStats: (widgetSettings.showNetworkStats !== undefined) ? widgetSettings.showNetworkStats : widgetMetadata.showNetworkStats
+  readonly property bool showDiskUsage: (widgetSettings.showDiskUsage !== undefined) ? widgetSettings.showDiskUsage : widgetMetadata.showDiskUsage
 
   Layout.alignment: Qt.AlignVCenter
   spacing: Style.marginS * scaling

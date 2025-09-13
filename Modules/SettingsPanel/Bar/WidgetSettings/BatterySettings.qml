@@ -14,10 +14,8 @@ ColumnLayout {
   property var widgetMetadata: null
 
   // Local state
-  property bool valueAlwaysShowPercentage: widgetData.alwaysShowPercentage
-                                           !== undefined ? widgetData.alwaysShowPercentage : widgetMetadata.alwaysShowPercentage
-  property int valueWarningThreshold: widgetData.warningThreshold
-                                      !== undefined ? widgetData.warningThreshold : widgetMetadata.warningThreshold
+  property bool valueAlwaysShowPercentage: widgetData.alwaysShowPercentage !== undefined ? widgetData.alwaysShowPercentage : widgetMetadata.alwaysShowPercentage
+  property int valueWarningThreshold: widgetData.warningThreshold !== undefined ? widgetData.warningThreshold : widgetMetadata.warningThreshold
 
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {})

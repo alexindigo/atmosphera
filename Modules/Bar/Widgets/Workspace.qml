@@ -32,8 +32,7 @@ Item {
   }
 
   readonly property string labelMode: (widgetSettings.labelMode !== undefined) ? widgetSettings.labelMode : widgetMetadata.labelMode
-  readonly property bool hideUnoccupied: (widgetSettings.hideUnoccupied
-                                          !== undefined) ? widgetSettings.hideUnoccupied : widgetMetadata.hideUnoccupied
+  readonly property bool hideUnoccupied: (widgetSettings.hideUnoccupied !== undefined) ? widgetSettings.hideUnoccupied : widgetMetadata.hideUnoccupied
 
   property bool isDestroying: false
   property bool hovered: false

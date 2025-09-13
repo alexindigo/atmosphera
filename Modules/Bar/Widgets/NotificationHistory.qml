@@ -29,10 +29,8 @@ NIconButton {
     }
     return {}
   }
-  readonly property bool showUnreadBadge: (widgetSettings.showUnreadBadge
-                                           !== undefined) ? widgetSettings.showUnreadBadge : widgetMetadata.showUnreadBadge
-  readonly property bool hideWhenZero: (widgetSettings.hideWhenZero
-                                        !== undefined) ? widgetSettings.hideWhenZero : widgetMetadata.hideWhenZero
+  readonly property bool showUnreadBadge: (widgetSettings.showUnreadBadge !== undefined) ? widgetSettings.showUnreadBadge : widgetMetadata.showUnreadBadge
+  readonly property bool hideWhenZero: (widgetSettings.hideWhenZero !== undefined) ? widgetSettings.hideWhenZero : widgetMetadata.hideWhenZero
 
   function lastSeenTs() {
     return Settings.data.notifications?.lastSeenTs || 0

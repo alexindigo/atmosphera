@@ -28,8 +28,7 @@ Item {
     return {}
   }
 
-  readonly property bool userAlwaysShowPercentage: (widgetSettings.alwaysShowPercentage
-                                                    !== undefined) ? widgetSettings.alwaysShowPercentage : widgetMetadata.alwaysShowPercentage
+  readonly property bool userAlwaysShowPercentage: (widgetSettings.alwaysShowPercentage !== undefined) ? widgetSettings.alwaysShowPercentage : widgetMetadata.alwaysShowPercentage
 
   // Used to avoid opening the pill on Quickshell startup
   property bool firstBrightnessReceived: false
@@ -88,8 +87,7 @@ Item {
       var monitor = getMonitor()
       if (!monitor)
         return ""
-      return "Brightness: " + Math.round(monitor.brightness * 100) + "%\nMethod: " + monitor.method
-          + "\nLeft click for advanced settings.\nScroll up/down to change brightness."
+      return "Brightness: " + Math.round(monitor.brightness * 100) + "%\nMethod: " + monitor.method + "\nLeft click for advanced settings.\nScroll up/down to change brightness."
     }
 
     onWheel: function (angle) {

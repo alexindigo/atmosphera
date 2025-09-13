@@ -276,8 +276,7 @@ ColumnLayout {
   // Schedule settings
   ColumnLayout {
     spacing: Style.marginXS * scaling
-    visible: Settings.data.nightLight.enabled && !Settings.data.nightLight.autoSchedule
-             && !Settings.data.nightLight.forced
+    visible: Settings.data.nightLight.enabled && !Settings.data.nightLight.autoSchedule && !Settings.data.nightLight.forced
 
     RowLayout {
       Layout.fillWidth: false

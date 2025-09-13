@@ -16,8 +16,7 @@ T.ScrollView {
   property int horizontalPolicy: ScrollBar.AsNeeded
 
   implicitWidth: Math.max(implicitBackgroundWidth + leftInset + rightInset, contentWidth + leftPadding + rightPadding)
-  implicitHeight: Math.max(implicitBackgroundHeight + topInset + bottomInset,
-                           contentHeight + topPadding + bottomPadding)
+  implicitHeight: Math.max(implicitBackgroundHeight + topInset + bottomInset, contentHeight + topPadding + bottomPadding)
 
   ScrollBar.vertical: ScrollBar {
     parent: root

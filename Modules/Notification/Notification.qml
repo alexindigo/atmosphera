@@ -25,10 +25,7 @@ Variants {
     property var removingNotifications: ({})
 
     // If no notification display activated in settings, then show them all
-    active: Settings.isLoaded && modelData
-            && (NotificationService.notificationModel.count > 0) ? (Settings.data.notifications.monitors.includes(
-                                                                      modelData.name)
-                                                                    || (Settings.data.notifications.monitors.length === 0)) : false
+    active: Settings.isLoaded && modelData && (NotificationService.notificationModel.count > 0) ? (Settings.data.notifications.monitors.includes(modelData.name) || (Settings.data.notifications.monitors.length === 0)) : false
 
     visible: (NotificationService.notificationModel.count > 0)
 
@@ -181,8 +178,7 @@ Variants {
                 spacing: Style.marginS * scaling
 
                 NText {
-                  text: `${(model.appName || model.desktopEntry)
-                        || "Unknown App"} · ${NotificationService.formatTimestamp(model.timestamp)}`
+                  text: `${(model.appName || model.desktopEntry) || "Unknown App"} · ${NotificationService.formatTimestamp(model.timestamp)}`
                   color: Color.mSecondary
                   font.pointSize: Style.fontSizeXS * scaling
                 }
@@ -249,8 +245,7 @@ Variants {
               RowLayout {
                 Layout.fillWidth: true
                 spacing: Style.marginS * scaling
-                visible: model.rawNotification && model.rawNotification.actions
-                         && model.rawNotification.actions.length > 0
+                visible: model.rawNotification && model.rawNotification.actions && model.rawNotification.actions.length > 0
 
                 property var notificationActions: model.rawNotification ? model.rawNotification.actions : []
 

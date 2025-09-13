@@ -216,8 +216,7 @@ Singleton {
       // Try detection methods in order of preference
       if (Qt.platform.os === "linux") {
         // Check if we're in X11 or Wayland
-        const sessionType = Qt.application.arguments.find(arg => arg.includes("QT_QPA_PLATFORM"))
-                          || process.env.XDG_SESSION_TYPE
+        const sessionType = Qt.application.arguments.find(arg => arg.includes("QT_QPA_PLATFORM")) || process.env.XDG_SESSION_TYPE
 
         if (sessionType && sessionType.includes("xcb") || process.env.DISPLAY) {
           // X11 system

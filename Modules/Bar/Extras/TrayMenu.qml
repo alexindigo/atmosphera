@@ -31,8 +31,7 @@ PopupWindow {
   implicitWidth: menuWidth * scaling
 
   // Use the content height of the Flickable for implicit height
-  implicitHeight: Math.min(screen ? screen.height * 0.9 : Screen.height * 0.9,
-                           flickable.contentHeight + (Style.marginS * 2 * scaling))
+  implicitHeight: Math.min(screen ? screen.height * 0.9 : Screen.height * 0.9, flickable.contentHeight + (Style.marginS * 2 * scaling))
   visible: false
   color: Color.transparent
   anchor.item: anchorItem
@@ -159,8 +158,7 @@ PopupWindow {
               NText {
                 id: text
                 Layout.fillWidth: true
-                color: (modelData?.enabled
-                        ?? true) ? (mouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface) : Color.mOnSurfaceVariant
+                color: (modelData?.enabled ?? true) ? (mouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface) : Color.mOnSurfaceVariant
                 text: modelData?.text !== "" ? modelData?.text.replace(/[\n\r]+/g, ' ') : "..."
                 font.pointSize: Style.fontSizeS * scaling
                 verticalAlignment: Text.AlignVCenter

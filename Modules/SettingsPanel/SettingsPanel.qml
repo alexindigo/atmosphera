@@ -227,8 +227,7 @@ NPanel {
     if (activeScrollView && activeScrollView.ScrollBar.vertical) {
       const scrollBar = activeScrollView.ScrollBar.vertical
       const stepSize = activeScrollView.height * 0.1 // Scroll 10% of viewport
-      scrollBar.position = Math.min(scrollBar.position + stepSize / activeScrollView.contentHeight,
-                                    1.0 - scrollBar.size)
+      scrollBar.position = Math.min(scrollBar.position + stepSize / activeScrollView.contentHeight, 1.0 - scrollBar.size)
     }
   }
 
@@ -244,8 +243,7 @@ NPanel {
     if (activeScrollView && activeScrollView.ScrollBar.vertical) {
       const scrollBar = activeScrollView.ScrollBar.vertical
       const pageSize = activeScrollView.height * 0.9 // Scroll 90% of viewport
-      scrollBar.position = Math.min(scrollBar.position + pageSize / activeScrollView.contentHeight,
-                                    1.0 - scrollBar.size)
+      scrollBar.position = Math.min(scrollBar.position + pageSize / activeScrollView.contentHeight, 1.0 - scrollBar.size)
     }
   }
 

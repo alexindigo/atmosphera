@@ -143,8 +143,7 @@ NPanel {
             property var items: {
               if (!BluetoothService.adapter || !Bluetooth.devices)
                 return []
-              var filtered = Bluetooth.devices.values.filter(dev => dev && !dev.blocked && !dev.connected
-                                                             && (dev.paired || dev.trusted))
+              var filtered = Bluetooth.devices.values.filter(dev => dev && !dev.blocked && !dev.connected && (dev.paired || dev.trusted))
               return BluetoothService.sortDevices(filtered)
             }
             model: items
@@ -176,10 +175,7 @@ NPanel {
               }
 
               var availableCount = Bluetooth.devices.values.filter(dev => {
-                                                                     return dev && !dev.paired && !dev.pairing
-                                                                     && !dev.blocked
-                                                                     && (dev.signalStrength === undefined
-                                                                         || dev.signalStrength > 0)
+                                                                     return dev && !dev.paired && !dev.pairing && !dev.blocked && (dev.signalStrength === undefined || dev.signalStrength > 0)
                                                                    }).length
               return (availableCount === 0)
             }

@@ -27,8 +27,7 @@ Variants {
       }
     }
 
-    active: Settings.isLoaded && modelData && modelData.name ? (Settings.data.bar.monitors.includes(modelData.name)
-                                                                || (Settings.data.bar.monitors.length === 0)) : false
+    active: Settings.isLoaded && modelData && modelData.name ? (Settings.data.bar.monitors.includes(modelData.name) || (Settings.data.bar.monitors.length === 0)) : false
 
     sourceComponent: PanelWindow {
       screen: modelData || null
