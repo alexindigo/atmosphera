@@ -37,8 +37,8 @@ Variants {
       anchors.top: Settings.data.bar.position === "top"
       anchors.bottom: Settings.data.bar.position === "bottom"
       anchors.right: true
-      margins.top: Settings.data.bar.position === "top" ? (Style.barHeight + Style.marginM) * scaling : 0
-      margins.bottom: Settings.data.bar.position === "bottom" ? (Style.barHeight + Style.marginM) * scaling : 0
+      margins.top: Settings.data.bar.position === "top" ? (Style.barHeight + Style.marginM + (Settings.data.bar.floating ? Settings.data.bar.marginTop : 0)) * scaling : 0
+      margins.bottom: Settings.data.bar.position === "bottom" ? (Style.barHeight + Style.marginM + (Settings.data.bar.floating ? Settings.data.bar.marginBottom : 0)) * scaling : 0
       margins.right: Style.marginM * scaling
       implicitWidth: 360 * scaling
       implicitHeight: Math.min(notificationStack.implicitHeight, (NotificationService.maxVisible * 120) * scaling)
