@@ -58,10 +58,6 @@ Item {
     return MediaService.trackTitle + (MediaService.trackArtist !== "" ? ` - ${MediaService.trackArtist}` : "")
   }
 
-  function calculatedVerticalHeight() {
-    return Math.round(Style.baseWidgetSize * 0.8 * scaling)
-  }
-
   function calculatedHorizontalWidth() {
     let total = Style.marginM * 2 * scaling // internal padding
     if (showAlbumArt) {
@@ -74,7 +70,7 @@ Item {
     return total
   }
 
-  implicitHeight: (barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Math.round(Style.barHeight * scaling)
+  implicitHeight: Math.round(Style.capsuleHeight * scaling)
   implicitWidth: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : (rowLayout.implicitWidth + Style.marginM * 2 * scaling)
 
   visible: MediaService.currentPlayer !== null && MediaService.canPlay
