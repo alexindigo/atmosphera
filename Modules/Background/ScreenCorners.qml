@@ -48,6 +48,8 @@ Loader {
       margins {
         top: ((modelData && Settings.data.bar.monitors.includes(modelData.name)) || (Settings.data.bar.monitors.length === 0)) && Settings.data.bar.position === "top" && Settings.data.bar.backgroundOpacity > 0 ? Math.round(Style.barHeight * scaling) : 0
         bottom: ((modelData && Settings.data.bar.monitors.includes(modelData.name)) || (Settings.data.bar.monitors.length === 0)) && Settings.data.bar.position === "bottom" && Settings.data.bar.backgroundOpacity > 0 ? Math.round(Style.barHeight * scaling) : 0
+        left: ((modelData && Settings.data.bar.monitors.includes(modelData.name)) || (Settings.data.bar.monitors.length === 0)) && Settings.data.bar.position === "left" && Settings.data.bar.backgroundOpacity > 0 ? Math.round(Style.barHeight * scaling) : 0
+        right: ((modelData && Settings.data.bar.monitors.includes(modelData.name)) || (Settings.data.bar.monitors.length === 0)) && Settings.data.bar.position === "right" && Settings.data.bar.backgroundOpacity > 0 ? Math.round(Style.barHeight * scaling) : 0
       }
 
       mask: Region {}

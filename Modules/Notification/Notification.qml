@@ -33,13 +33,14 @@ Variants {
       screen: modelData
       color: Color.transparent
 
-      // Position based on bar location
-      anchors.top: Settings.data.bar.position === "top"
-      anchors.bottom: Settings.data.bar.position === "bottom"
-      anchors.right: true
-      margins.top: Settings.data.bar.position === "top" ? (Style.barHeight + Style.marginM + (Settings.data.bar.floating ? Settings.data.bar.marginTop : 0)) * scaling : 0
+      // Position based on bar location - always at top
+      anchors.top: true
+      anchors.right: Settings.data.bar.position === "left" || Settings.data.bar.position === "top" || Settings.data.bar.position === "bottom"
+      anchors.left: Settings.data.bar.position === "right"
+      margins.top: Settings.data.bar.position === "top" ? (Style.barHeight + Style.marginM + (Settings.data.bar.floating ? Settings.data.bar.marginTop : 0)) * scaling : Style.marginM * scaling
       margins.bottom: Settings.data.bar.position === "bottom" ? (Style.barHeight + Style.marginM + (Settings.data.bar.floating ? Settings.data.bar.marginBottom : 0)) * scaling : 0
-      margins.right: Style.marginM * scaling
+      margins.right: (Settings.data.bar.position === "left" || Settings.data.bar.position === "top" || Settings.data.bar.position === "bottom") ? Style.marginM * scaling : 0
+      margins.left: Settings.data.bar.position === "right" ? Style.marginM * scaling : 0
       implicitWidth: 360 * scaling
       implicitHeight: Math.min(notificationStack.implicitHeight, (NotificationService.maxVisible * 120) * scaling)
       //WlrLayershell.layer: WlrLayer.Overlay
@@ -77,10 +78,10 @@ Variants {
       // Main notification container
       ColumnLayout {
         id: notificationStack
-        // Position based on bar location
-        anchors.top: Settings.data.bar.position === "top" ? parent.top : undefined
-        anchors.bottom: Settings.data.bar.position === "bottom" ? parent.bottom : undefined
-        anchors.right: parent.right
+        // Position based on bar location - always at top
+        anchors.top: parent.top
+        anchors.right: (Settings.data.bar.position === "left" || Settings.data.bar.position === "top" || Settings.data.bar.position === "bottom") ? parent.right : undefined
+        anchors.left: Settings.data.bar.position === "right" ? parent.left : undefined
         spacing: Style.marginS * scaling
         width: 360 * scaling
         visible: true
