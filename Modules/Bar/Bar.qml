@@ -109,7 +109,7 @@ Variants {
                     "section": "left",
                     "sectionWidgetIndex": index,
                     "sectionWidgetsCount": Settings.data.bar.widgets.left.length,
-                    "barPosition": Settings.data.bar.position
+                    "barPosition": BarService.position
                   }
                   anchors.horizontalCenter: parent.horizontalCenter
                 }
@@ -134,7 +134,7 @@ Variants {
                     "section": "center",
                     "sectionWidgetIndex": index,
                     "sectionWidgetsCount": Settings.data.bar.widgets.center.length,
-                    "barPosition": Settings.data.bar.position
+                    "barPosition": BarService.position
                   }
                   anchors.horizontalCenter: parent.horizontalCenter
                 }
@@ -160,7 +160,7 @@ Variants {
                     "section": "right",
                     "sectionWidgetIndex": index,
                     "sectionWidgetsCount": Settings.data.bar.widgets.right.length,
-                    "barPosition": Settings.data.bar.position
+                    "barPosition": BarService.position
                   }
                   anchors.horizontalCenter: parent.horizontalCenter
                 }
@@ -182,7 +182,7 @@ Variants {
               anchors.left: parent.left
               anchors.leftMargin: Style.marginS * root.scaling
               anchors.verticalCenter: parent.verticalCenter
-              spacing: 0
+              spacing: Style.marginS * root.scaling
 
               Repeater {
                 model: Settings.data.bar.widgets.left
@@ -195,7 +195,7 @@ Variants {
                     "section": "left",
                     "sectionWidgetIndex": index,
                     "sectionWidgetsCount": Settings.data.bar.widgets.left.length,
-                    "barPosition": Settings.data.bar.position
+                    "barPosition": BarService.position
                   }
                   anchors.verticalCenter: parent.verticalCenter
                 }
@@ -222,7 +222,7 @@ Variants {
                     "section": "center",
                     "sectionWidgetIndex": index,
                     "sectionWidgetsCount": Settings.data.bar.widgets.center.length,
-                    "barPosition": Settings.data.bar.position
+                    "barPosition": BarService.position
                   }
                   anchors.verticalCenter: parent.verticalCenter
                 }
@@ -250,7 +250,7 @@ Variants {
                     "section": "right",
                     "sectionWidgetIndex": index,
                     "sectionWidgetsCount": Settings.data.bar.widgets.right.length,
-                    "barPosition": Settings.data.bar.position
+                    "barPosition": BarService.position
                   }
                   anchors.verticalCenter: parent.verticalCenter
                 }

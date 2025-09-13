@@ -19,6 +19,21 @@ Item {
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
   property string barPosition: "top"
+  
+  // Listen to BarService position changes
+  Connections {
+    target: BarService
+    function onBarPositionChanged(newPosition) {
+      barPosition = newPosition
+      // Force re-evaluation of implicit sizing
+      implicitWidth = Qt.binding(function() {
+        return (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : calculatedHorizontalWidth()
+      })
+      implicitHeight = Qt.binding(function() {
+        return (barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Math.round(Style.barHeight * scaling)
+      })
+    }
+  }
 
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
@@ -48,13 +63,14 @@ Item {
   }
 
   function calculatedHorizontalWidth() {
-    let total = Style.marginM * 2 * scaling // padding
+    let total = Style.marginM * 2 * scaling // internal padding
     if (showAlbumArt) {
-      total += 18 * scaling + Style.marginS * scaling // album art + spacing
+      total += 18 * scaling + 2 * scaling // album art + spacing
     } else {
-      total += Style.fontSizeL * scaling + Style.marginS * scaling // icon + spacing
+      total += Style.fontSizeL * scaling + 2 * scaling // icon + spacing
     }
     total += Math.min(fullTitleMetrics.contentWidth, maxWidth * scaling) // title text
+    // Row layout handles spacing between widgets
     return total
   }
 
@@ -74,18 +90,10 @@ Item {
   Rectangle {
     id: mediaMini
     visible: root.visible
-
-    // For vertical bars, use anchors to center in parent
-    anchors.centerIn: (barPosition === "left" || barPosition === "right") ? parent : undefined
-
-    // For horizontal bars, use Layout properties
-    Layout.preferredWidth: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : (rowLayout.implicitWidth + Style.marginM * 2 * scaling)
-    Layout.preferredHeight: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : Math.round(Style.capsuleHeight * scaling)
-    Layout.alignment: (barPosition === "left" || barPosition === "right") ? undefined : Qt.AlignVCenter
-
-    width: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : undefined
-    height: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : undefined
-
+    anchors.left: parent.left
+    anchors.verticalCenter: parent.verticalCenter
+    width: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : (rowLayout.implicitWidth + Style.marginM * 2 * scaling)
+    height: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : Math.round(Style.capsuleHeight * scaling)
     radius: (barPosition === "left" || barPosition === "right") ? width / 2 : Math.round(Style.radiusM * scaling)
     color: Color.mSurfaceVariant
 

@@ -17,6 +17,21 @@ Item {
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
   property string barPosition: "top"
+  
+  // Listen to BarService position changes
+  Connections {
+    target: BarService
+    function onBarPositionChanged(newPosition) {
+      barPosition = newPosition
+      // Force re-evaluation of implicit sizing
+      implicitWidth = Qt.binding(function() {
+        return (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : calculatedHorizontalWidth()
+      })
+      implicitHeight = Qt.binding(function() {
+        return (barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Math.round(Style.barHeight * scaling)
+      })
+    }
+  }
 
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
@@ -121,8 +136,7 @@ Item {
       total += (visibleCount - 1) * Style.marginXS * scaling
     }
 
-    // Add extra margin for spacing between widgets in the bar
-    total += Style.marginM * scaling * 2 // widget-to-widget spacing
+     // Row layout handles spacing between widgets
 
     return Math.max(total, Style.capsuleHeight * scaling)
   }
