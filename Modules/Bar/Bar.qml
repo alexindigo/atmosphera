@@ -46,8 +46,8 @@ Variants {
 
       // Floating bar margins - only apply when floating is enabled
       margins {
-        top: Settings.data.bar.marginTop
-        bottom: Settings.data.bar.marginBottom
+        top: Settings.data.bar.floating ? Settings.data.bar.marginTop : 0
+        bottom: Settings.data.bar.floating ? Settings.data.bar.marginBottom : 0
         left: Settings.data.bar.floating ? Settings.data.bar.marginLeft : 0
         right: Settings.data.bar.floating ? Settings.data.bar.marginRight : 0
       }
@@ -62,7 +62,7 @@ Variants {
 
           anchors.fill: parent
           color: Qt.alpha(Color.mSurface, Settings.data.bar.backgroundOpacity)
-          
+
           // Floating bar rounded corners
           radius: Settings.data.bar.floating ? Settings.data.bar.rounding : 0
         }
