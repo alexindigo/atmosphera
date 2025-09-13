@@ -77,7 +77,7 @@ https://github.com/user-attachments/assets/72c6d6dc-48b0-48a0-bd8b-c7e70990edc4
 - `quickshell-git` - Core shell framework
 - `ttf-roboto` - The default font used for most of the UI
 - `inter-font` - The default font used for Headers (ex: clock on the LockScreen)
-- `gpu-screen-recorder` - Screen recording functionality
+- `gpu-screen-recorder` - Screen recording functionality (Flatpak also supported)
 - `brightnessctl` - For internal/laptop monitor brightness
 - `ddcutil` - For desktop monitor brightness (might introduce some system instability with certain monitors)
 
