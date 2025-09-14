@@ -186,8 +186,29 @@ Loader {
       anchors.left: true
       anchors.right: true
       anchors.bottom: true
-      margins.top: (barIsVisible && !barAtBottom) ? (barHeight + ((Settings.data.bar.floating && !panelAnchorVerticalCenter) ? Settings.data.bar.marginVertical : 0)) : 0
-      margins.bottom: (barIsVisible && barAtBottom) ? (barHeight + ((Settings.data.bar.floating && !panelAnchorVerticalCenter) ? Settings.data.bar.marginVertical : 0)) : 0
+      margins.top: {
+        if (!barIsVisible || barAtBottom) {
+          return 0
+        }
+        switch (Settings.data.bar.position) {
+        case "top":
+          return (Style.barHeight + Style.marginM) * scaling + (Settings.data.bar.floating && !panelAnchorVerticalCenter ? Settings.data.bar.marginVertical * Style.marginXL * scaling : 0)
+        default:
+          return Style.marginM * scaling
+        }
+      }
+
+      margins.bottom: {
+        if (!barIsVisible || !barAtBottom) {
+          return 0
+        }
+        switch (Settings.data.bar.position) {
+        case "bottom":
+          return (Style.barHeight + Style.marginM) * scaling + (Settings.data.bar.floating && !panelAnchorVerticalCenter ? Settings.data.bar.marginVertical * Style.marginXL * scaling : 0)
+        default:
+          return 0
+        }
+      }
 
       // Close any panel with Esc without requiring focus
       Shortcut {

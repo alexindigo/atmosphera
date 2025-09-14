@@ -47,10 +47,10 @@ Variants {
 
       // Floating bar margins - only apply when floating is enabled
       margins {
-        top: Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL * scaling: 0
+        top: Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL * scaling : 0
         bottom: Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL * scaling : 0
-        left: Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL * scaling: 0
-        right: Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL * scaling: 0
+        left: Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL * scaling : 0
+        right: Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL * scaling : 0
       }
 
       Item {

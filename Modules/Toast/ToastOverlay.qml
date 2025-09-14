@@ -44,13 +44,43 @@ Variants {
       implicitHeight: Math.round(toast.visible ? toast.height + Style.marginM * scaling : 1)
 
       // Set margins based on bar position
-      margins.top: Settings.data.bar.position === "top" ? (Style.barHeight + Style.marginS + (Settings.data.bar.floating ? Settings.data.bar.marginVertical : 0)) : 0
+      margins.top: {
+        switch (Settings.data.bar.position) {
+        case "top":
+          return (Style.barHeight + Style.marginS) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL * scaling : 0)
+        default:
+          return 0
+        }
+      }
 
-      margins.bottom: Settings.data.bar.position === "bottom" ? (Style.barHeight + Style.marginS + (Settings.data.bar.floating ? Settings.data.bar.marginVertical : 0)) : 0
+      margins.bottom: {
+        switch (Settings.data.bar.position) {
+        case "bottom":
+          return (Style.barHeight + Style.marginS) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL * scaling : 0)
+        default:
+          return 0
+        }
+      }
 
-      margins.right: (Settings.data.bar.position === "left" || Settings.data.bar.position === "top" || Settings.data.bar.position === "bottom") ? Style.marginM * scaling : 0
+      margins.right: {
+        switch (Settings.data.bar.position) {
+        case "left":
+        case "top":
+        case "bottom":
+          return Style.marginM * scaling
+        default:
+          return 0
+        }
+      }
 
-      margins.left: Settings.data.bar.position === "right" ? Style.marginM * scaling : 0
+      margins.left: {
+        switch (Settings.data.bar.position) {
+        case "right":
+          return Style.marginM * scaling
+        default:
+          return 0
+        }
+      }
 
       // Transparent background
       color: Color.transparent
@@ -67,8 +97,8 @@ Variants {
         // Simple positioning - margins already account for bar
         targetY: Style.marginS * scaling
 
-        // Hidden position based on bar location
-        hiddenY: Settings.data.bar.position === "top" ? -toast.height - 20 : toast.height + 20
+        // Hidden position - always start from above the screen
+        hiddenY: -toast.height - 20
 
         Component.onCompleted: {
           // Register this toast with the service
