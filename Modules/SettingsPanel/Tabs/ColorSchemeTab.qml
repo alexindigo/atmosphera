@@ -11,7 +11,7 @@ ColumnLayout {
   spacing: 0
 
   NHeader {
-    title: "Color Schemes"
+    label: "Color Schemes"
     description: "Choose and customize color schemes for your interface."
   }
 
@@ -157,7 +157,7 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      title: "Predefined Color Schemes"
+      label: "Predefined Color Schemes"
       description: "To use these color schemes, you must turn off Matugen. With Matugen enabled, colors are automatically generated from your wallpaper."
     }
 

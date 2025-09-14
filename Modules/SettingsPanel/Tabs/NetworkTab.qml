@@ -12,7 +12,7 @@ ColumnLayout {
   spacing: Style.marginL * scaling
 
   NHeader {
-    title: "Network Settings"
+    label: "Network Settings"
     description: "Configure Wi-Fi and Bluetooth connectivity options."
   }
 

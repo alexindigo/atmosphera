@@ -12,7 +12,7 @@ ColumnLayout {
   width: root.width
 
   NHeader {
-    title: "Dock Settings"
+    label: "Dock Settings"
     description: "Configure dock behavior, appearance, and monitor settings."
   }
 
@@ -55,7 +55,7 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      title: "Monitor Configuration"
+      label: "Monitor Configuration"
       description: "Choose which monitors should display the dock."
     }
 
@@ -88,7 +88,7 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      title: "Background Opacity"
+      label: "Background Opacity"
       description: "Adjust the background opacity."
     }
 
@@ -123,7 +123,7 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      title: "Dock Floating Distance"
+      label: "Dock Floating Distance"
       description: "Adjust the floating distance from the screen edge."
     }
 

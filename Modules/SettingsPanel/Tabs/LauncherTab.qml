@@ -9,7 +9,7 @@ ColumnLayout {
   id: root
 
   NHeader {
-    title: "Launcher Settings"
+    label: "Launcher Settings"
     description: "Configure the application launcher panel behavior and appearance."
   }
 

@@ -28,7 +28,7 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      title: "General Settings"
+      label: "General Settings"
     }
 
     NToggle {
@@ -51,7 +51,7 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      title: "Monitor Configuration"
+      label: "Monitor Configuration"
       description: "Choose which monitors should display notifications."
     }
 
@@ -85,7 +85,7 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      title: "Notification Duration"
+      label: "Notification Duration"
       description: "Configure how long notifications stay visible based on their urgency level."
     }
 

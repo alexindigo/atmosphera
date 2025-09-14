@@ -219,11 +219,8 @@ ColumnLayout {
     spacing: Style.marginS * scaling
     Layout.fillWidth: true
 
-    NText {
-      text: "Brightness"
-      font.pointSize: Style.fontSizeXXL * scaling
-      font.weight: Style.fontWeightBold
-      color: Color.mSecondary
+    NHeader {
+      label: "Brightness"
     }
 
     // Brightness Step Section
@@ -258,19 +255,9 @@ ColumnLayout {
     spacing: Style.marginXS * scaling
     Layout.fillWidth: true
 
-    NText {
-      text: "Night Light"
-      font.pointSize: Style.fontSizeXXL * scaling
-      font.weight: Style.fontWeightBold
-      color: Color.mSecondary
-    }
-
-    NText {
-      text: "Reduce blue light emission to help you sleep better and reduce eye strain."
-      font.pointSize: Style.fontSizeM * scaling
-      color: Color.mOnSurfaceVariant
-      wrapMode: Text.WordWrap
-      Layout.fillWidth: true
+NHeader {
+      label: "Night Light"
+      description: "Reduce blue light emission to help you sleep better and reduce eye strain."
     }
   }
 

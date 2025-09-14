@@ -13,7 +13,7 @@ ColumnLayout {
   spacing: Style.marginL * scaling
 
   NHeader {
-    title: "Wallpaper Selector"
+    label: "Wallpaper Selector"
     description: "Browse and select wallpapers from your configured directory."
   }
 
@@ -48,7 +48,7 @@ ColumnLayout {
 
   // Current wallpaper display
   NHeader {
-    title: "Current Wallpaper"
+    label: "Current Wallpaper"
   }
 
   Rectangle {
@@ -83,7 +83,7 @@ ColumnLayout {
 
       // Wallpaper grid
       NHeader {
-        title: "Wallpaper Selector"
+        label: "Wallpaper Selector"
         description: "Click on a wallpaper to set it as your current wallpaper."
       }
     }

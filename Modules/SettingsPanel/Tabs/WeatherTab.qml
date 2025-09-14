@@ -9,7 +9,7 @@ ColumnLayout {
   id: root
 
   NHeader {
-    title: "Weather & Location"
+    label: "Weather & Location"
     description: "Configure weather display and location settings."
   }
 
@@ -63,7 +63,7 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      title: "Weather"
+      label: "Weather"
     }
 
     NToggle {

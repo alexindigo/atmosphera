@@ -11,7 +11,7 @@ ColumnLayout {
   id: root
 
   NHeader {
-    title: "Bar Settings"
+    label: "Bar Settings"
     description: "Configure bar appearance, positioning, and monitor settings."
   }
 
@@ -86,7 +86,7 @@ ColumnLayout {
       Layout.fillWidth: true
 
       NHeader {
-        title: "Background Opacity"
+        label: "Background Opacity"
         description: "Adjust the background opacity of the bar."
       }
 
@@ -210,7 +210,7 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      title: "Monitor Configuration"
+      label: "Monitor Configuration"
       description: "Choose which monitors should display the bar."
     }
 
@@ -244,9 +244,8 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      title: "Widgets Positioning"
+      label: "Widgets Positioning"
       description: "Drag and drop widgets to reorder them within each section, or use the add/remove buttons to manage widgets."
-      bottomMargin: 0
     }
 
     // Bar Sections

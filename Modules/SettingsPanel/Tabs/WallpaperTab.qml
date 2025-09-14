@@ -11,7 +11,7 @@ ColumnLayout {
   id: root
 
   NHeader {
-    title: "Wallpaper Management"
+    label: "Wallpaper Management"
     description: "Configure wallpaper settings, automation, and appearance options."
   }
 
@@ -95,7 +95,7 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      title: "Look & Feel"
+      label: "Look & Feel"
     }
 
     // Fill Mode
@@ -192,7 +192,7 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      title: "Automation"
+      label: "Automation"
     }
 
     // Random Wallpaper

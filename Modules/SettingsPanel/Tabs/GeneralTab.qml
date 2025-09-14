@@ -10,7 +10,7 @@ ColumnLayout {
   id: root
 
   NHeader {
-    title: "Profile"
+    label: "Profile"
     description: "Configure your user profile and avatar settings."
   }
 
@@ -54,7 +54,7 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      title: "User Interface"
+      label: "User Interface"
     }
 
     NToggle {
@@ -135,7 +135,7 @@ ColumnLayout {
     spacing: Style.marginL * scaling
     Layout.fillWidth: true
     NHeader {
-      title: "Screen Corners"
+      label: "Screen Corners"
     }
 
     NToggle {
@@ -184,8 +184,9 @@ ColumnLayout {
   ColumnLayout {
     spacing: Style.marginL * scaling
     Layout.fillWidth: true
+    
     NHeader {
-      title: "Fonts"
+      label: "Fonts"
     }
 
     // Font configuration section

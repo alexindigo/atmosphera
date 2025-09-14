@@ -10,7 +10,7 @@ ColumnLayout {
   id: root
 
   NHeader {
-    title: "Audio Settings"
+    label: "Audio Settings"
     description: "Configure system audio, devices, and media player preferences."
   }
 
@@ -164,7 +164,7 @@ ColumnLayout {
     spacing: Style.marginS * scaling
 
     NHeader {
-      title: "Audio Devices"
+      label: "Audio Devices"
     }
 
     // -------------------------------
@@ -236,7 +236,7 @@ ColumnLayout {
     spacing: Style.marginL * scaling
 
     NHeader {
-      title: "Media Player"
+      label: "Media Player"
     }
 
     // Preferred player
@@ -358,7 +358,7 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      title: "Audio Visualizer"
+      label: "Audio Visualizer"
     }
 
     // AudioService Visualizer section

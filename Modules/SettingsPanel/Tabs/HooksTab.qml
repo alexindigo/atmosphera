@@ -11,7 +11,7 @@ ColumnLayout {
   width: root.width
 
   NHeader {
-    title: "System Hooks"
+    label: "System Hooks"
     description: "Configure commands to be executed when system events occur."
   }
 

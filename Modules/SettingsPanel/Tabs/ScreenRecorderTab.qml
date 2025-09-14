@@ -11,7 +11,7 @@ ColumnLayout {
   spacing: Style.marginL * scaling
 
   NHeader {
-    title: "Screen Recorder"
+    label: "Screen Recorder"
     description: "Configure screen recording settings and output options."
   }
 
@@ -59,7 +59,7 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      title: "Video Settings"
+      label: "Video Settings"
     }
 
     // Source
@@ -205,7 +205,7 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      title: "Audio Settings"
+      label: "Audio Settings"
     }
 
     // Audio Source
