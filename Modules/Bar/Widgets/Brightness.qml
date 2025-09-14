@@ -83,7 +83,7 @@ Item {
       return monitor ? Math.round(monitor.brightness * 100) : ""
     }
     forceOpen: displayMode === "alwaysShow"
-    forceClosed: displayMode === "alwaysHide"
+    forceClose: displayMode === "alwaysHide"
     tooltipText: {
       var monitor = getMonitor()
       if (!monitor)

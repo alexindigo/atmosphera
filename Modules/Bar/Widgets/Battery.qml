@@ -34,7 +34,7 @@ Item {
   readonly property real warningThreshold: widgetSettings.warningThreshold !== undefined ? widgetSettings.warningThreshold : widgetMetadata.warningThreshold
 
   // Test mode
-  readonly property bool testMode: true
+  readonly property bool testMode: false
   readonly property int testPercent: 100
   readonly property bool testCharging: false
 
@@ -89,7 +89,7 @@ Item {
     text: (isReady || testMode) ? Math.round(percent) : "-"
     autoHide: false
     forceOpen: isReady && (testMode || battery.isLaptopBattery) && displayMode === "alwaysShow"
-    forceClosed: displayMode === "alwaysHide"
+    forceClose: displayMode === "alwaysHide"
     disableOpen: (!isReady || (!testMode && !battery.isLaptopBattery))
     tooltipText: {
       let lines = []

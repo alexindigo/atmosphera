@@ -93,7 +93,7 @@ Item {
     autoHide: false // Important to be false so we can hover as long as we want
     text: Math.floor(AudioService.inputVolume * 100)
     forceOpen: displayMode === "alwaysShow"
-    forceClosed: displayMode === "alwaysHide"
+    forceClose: displayMode === "alwaysHide"
     tooltipText: "Microphone: " + Math.round(AudioService.inputVolume * 100) + "%\nLeft click for advanced settings.\nScroll up/down to change volume.\nRight click to toggle mute."
 
     onWheel: function (delta) {

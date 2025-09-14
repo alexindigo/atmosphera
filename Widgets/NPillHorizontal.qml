@@ -12,7 +12,7 @@ Item {
   property real sizeRatio: 0.8
   property bool autoHide: false
   property bool forceOpen: false
-  property bool forceClosed: false
+  property bool forceClose: false
   property bool disableOpen: false
   property bool rightOpen: false
   property bool hovered: false
@@ -27,7 +27,7 @@ Item {
   readonly property bool openLeftward: !rightOpen
 
   // Effective shown state (true if animated open or forced, but not if force closed)
-  readonly property bool revealed: !forceClosed && (forceOpen || showPill)
+  readonly property bool revealed: !forceClose && (forceOpen || showPill)
 
   signal shown
   signal hidden
@@ -254,7 +254,7 @@ Item {
       hovered = true
       root.entered()
       tooltip.show()
-      if (disableOpen || forceClosed) {
+      if (disableOpen || forceClose) {
         return
       }
       if (!forceOpen) {
@@ -264,7 +264,7 @@ Item {
     onExited: {
       hovered = false
       root.exited()
-      if (!forceOpen && !forceClosed) {
+      if (!forceOpen && !forceClose) {
         hide()
       }
       tooltip.hide()

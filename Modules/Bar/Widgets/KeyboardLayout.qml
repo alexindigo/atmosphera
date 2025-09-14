@@ -48,7 +48,7 @@ Item {
     text: currentLayout.toUpperCase()
     tooltipText: "Keyboard layout: " + currentLayout.toUpperCase()
     forceOpen: root.displayMode === "forceOpen"
-    forceClosed: root.displayMode === "alwaysHide"
+    forceClose: root.displayMode === "alwaysHide"
     fontSize: Style.fontSizeS // Use larger font size
 
     onClicked: {
