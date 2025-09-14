@@ -19,13 +19,9 @@ Singleton {
   function init() {
     Logger.log("Font", "Service started")
     loadFontconfigMonospaceFonts()
-    loadSystemFonts()
   }
 
   function loadFontconfigMonospaceFonts() {
-    Logger.log("Font", "Loading monospace fonts via fontconfig...")
-
-    // Use fc-list :mono to get all monospace fonts
     fontconfigProcess.command = ["fc-list", ":mono", "family"]
     fontconfigProcess.running = true
   }
@@ -68,13 +64,11 @@ Singleton {
     sortModel(displayFonts)
 
     if (monospaceFonts.count === 0) {
-      Logger.log("Font", "No monospace fonts detected, adding fallbacks")
-      addFallbackFonts(monospaceFonts, ["DejaVu Sans Mono", "Liberation Mono", "Courier New", "Courier", "Monaco", "Consolas", "Lucida Console", "Monaco", "Andale Mono"])
+      addFallbackFonts(monospaceFonts, ["DejaVu Sans Mono"])
     }
 
     if (displayFonts.count === 0) {
-      Logger.log("Font", "No display fonts detected, adding fallbacks")
-      addFallbackFonts(displayFonts, ["Inter", "Roboto", "Open Sans", "Arial", "Helvetica", "Verdana", "Segoe UI", "SF Pro Display", "Ubuntu", "Noto Sans"])
+      addFallbackFonts(displayFonts, ["Inter", "Roboto", "DejaVu Sans"])
     }
 
     fontsLoaded = true
@@ -87,30 +81,25 @@ Singleton {
       return true
     }
 
-    // Fallback to pattern matching if fontconfig is not available or didn't detect it
-    var patterns = ["mono", "monospace", "fixed", "console", "terminal", "typewriter", "courier", "dejavu", "liberation", "source code", "fira code", "jetbrains", "cascadia", "hack", "inconsolata", "roboto mono", "ubuntu mono", "menlo", "consolas", "monaco", "andale mono"]
+    // Minimal fallback: only check for basic monospace patterns
     var lowerFontName = fontName.toLowerCase()
-
-    for (var i = 0; i < patterns.length; i++) {
-      if (lowerFontName.includes(patterns[i]))
-        return true
+    if (lowerFontName.includes("mono") || lowerFontName.includes("monospace")) {
+      return true
     }
 
-    var commonFonts = ["DejaVu Sans Mono", "Liberation Mono", "Source Code Pro", "Fira Code", "JetBrains Mono", "Cascadia Code", "Hack", "Inconsolata", "Roboto Mono", "Ubuntu Mono", "Menlo", "Consolas", "Monaco", "Andale Mono", "Courier New", "Courier", "Lucida Console", "Monaco", "MS Gothic", "MS Mincho"]
-    return commonFonts.includes(fontName)
+    return false
   }
 
   function isDisplayFont(fontName) {
-    var patterns = ["display", "headline", "title", "hero", "showcase", "brand", "inter", "roboto", "open sans", "lato", "montserrat", "poppins", "raleway", "nunito", "source sans", "ubuntu", "noto sans", "work sans", "dm sans", "manrope", "plus jakarta", "figtree"]
+    // Minimal fallback: only check for basic display patterns
     var lowerFontName = fontName.toLowerCase()
-
-    for (var i = 0; i < patterns.length; i++) {
-      if (lowerFontName.includes(patterns[i]))
-        return true
+    if (lowerFontName.includes("display") || lowerFontName.includes("headline") || lowerFontName.includes("title")) {
+      return true
     }
 
-    var commonFonts = ["Inter", "Roboto", "Open Sans", "Lato", "Montserrat", "Poppins", "Raleway", "Nunito", "Source Sans Pro", "Ubuntu", "Noto Sans", "Work Sans", "DM Sans", "Manrope", "Plus Jakarta Sans", "Figtree", "SF Pro Display", "Segoe UI", "Arial", "Helvetica", "Verdana"]
-    return commonFonts.includes(fontName)
+    // Essential fallback fonts only
+    var essentialFonts = ["Inter", "Roboto", "DejaVu Sans"]
+    return essentialFonts.includes(fontName)
   }
 
   function sortModel(model) {
@@ -185,44 +174,21 @@ Singleton {
           for (var i = 0; i < lines.length; i++) {
             var line = lines[i].trim()
             if (line && line !== "") {
-              // Parse format: /path/to/font.ttf: Font Family Name:style=Style
-              // Extract the font family name between the colon and the style
-              var colonIndex = line.indexOf(':')
-              if (colonIndex !== -1) {
-                var afterColon = line.substring(colonIndex + 1).trim()
-                var styleIndex = afterColon.indexOf(':style=')
-                var familyName
-                if (styleIndex !== -1) {
-                  familyName = afterColon.substring(0, styleIndex).trim()
-                } else {
-                  // Fallback: if no style info, use the whole string after the colon
-                  familyName = afterColon.trim()
-                }
-                if (familyName && fontconfigMonospaceFonts.indexOf(familyName) === -1) {
-                  fontconfigMonospaceFonts.push(familyName)
-                }
+              if (fontconfigMonospaceFonts.indexOf(line) === -1) {
+                fontconfigMonospaceFonts.push(line)
               }
             }
           }
-
-          Logger.log("Font", "Found", fontconfigMonospaceFonts.length, "monospace fonts via fontconfig")
         }
-      }
-    }
-
-    stderr: StdioCollector {
-      onStreamFinished: {
-        if (this.text !== "") {
-          Logger.log("Font", "Fontconfig stderr:", this.text)
-        }
+        loadSystemFonts()
       }
     }
 
     onExited: function (exitCode, exitStatus) {
       if (exitCode !== 0) {
-        Logger.log("Font", "Fontconfig not available or failed, falling back to pattern matching")
         fontconfigMonospaceFonts = []
       }
+      loadSystemFonts()
     }
   }
 }
