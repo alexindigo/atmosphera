@@ -12,9 +12,9 @@ Slider {
   property bool snapAlways: true
   property real heightRatio: 0.75
 
-  readonly property real knobDiameter: Style.baseWidgetSize * heightRatio * scaling
+  readonly property real knobDiameter: Math.round(Style.baseWidgetSize * heightRatio * scaling)
   readonly property real trackHeight: knobDiameter * 0.5
-  readonly property real cutoutExtra: Style.baseWidgetSize * 0.1 * scaling
+  readonly property real cutoutExtra: Math.round(Style.baseWidgetSize * 0.1 * scaling)
 
   snapMode: snapAlways ? Slider.SnapAlways : Slider.SnapOnRelease
   implicitHeight: Math.max(trackHeight, knobDiameter)
@@ -72,7 +72,7 @@ Slider {
       implicitWidth: knobDiameter
       implicitHeight: knobDiameter
       radius: width * 0.5
-      color: root.pressed ? Color.mSurfaceVariant : Color.mSurface
+      color: root.pressed ? Color.mTertiary : Color.mSurface
       border.color: Color.mPrimary
       border.width: Math.max(1, Style.borderL * scaling)
 
@@ -82,15 +82,6 @@ Slider {
         }
       }
 
-      // Press feedback halo (using accent color, low opacity)
-      Rectangle {
-        anchors.centerIn: parent
-        width: parent.width + 8 * scaling
-        height: parent.height + 8 * scaling
-        radius: width / 2
-        color: Color.mPrimary
-        opacity: root.pressed ? 0.16 : 0.0
-      }
     }
   }
 }
