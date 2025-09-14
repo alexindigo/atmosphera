@@ -81,7 +81,6 @@ Slider {
           duration: Style.animationFast
         }
       }
-
     }
   }
 }

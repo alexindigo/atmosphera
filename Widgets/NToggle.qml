@@ -32,7 +32,7 @@ RowLayout {
     radius: height * 0.5
     color: root.checked ? Color.mPrimary : Color.mSurface
     border.color: Color.mOutline
-    border.width: Math.max(1, Style.borderS* scaling)
+    border.width: Math.max(1, Style.borderS * scaling)
 
     Behavior on color {
       ColorAnimation {
