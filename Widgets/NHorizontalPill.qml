@@ -80,6 +80,7 @@ Item {
       id: textItem
       anchors.horizontalCenter: parent.horizontalCenter
       anchors.verticalCenter: parent.verticalCenter
+      anchors.horizontalCenterOffset: openLeftward ? -6 * scaling : 6 * scaling // Adjust based on opening direction
       text: root.text
       font.pointSize: Style.fontSizeXXS * scaling
       font.weight: Style.fontWeightBold
