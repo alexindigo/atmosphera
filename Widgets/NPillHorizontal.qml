@@ -134,7 +134,7 @@ Item {
     NIcon {
       icon: root.icon
       font.pointSize: Style.fontSizeM * scaling
-      color: hovered && !forceOpen ? Color.mOnTertiary : Color.mOnSurfaceVariant
+      color: hovered && !forceOpen ? Color.mOnTertiary : Color.mOnSurface
       // Center horizontally
       x: (iconCircle.width - width) / 2
       // Center vertically accounting for font metrics
