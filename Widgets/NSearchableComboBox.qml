@@ -90,7 +90,6 @@ RowLayout {
     }
   }
 
-  // Update filtered model when search text or original model changes
   onSearchTextChanged: filterModel()
   onModelChanged: filterModel()
 
@@ -207,7 +206,7 @@ RowLayout {
             }
 
             background: Rectangle {
-              width: listView.width - Style.marginM * scaling * 2
+              width: listView.width * scaling
               color: highlighted ? Color.mTertiary : Color.transparent
               radius: Style.radiusS * scaling
               Behavior on color {
