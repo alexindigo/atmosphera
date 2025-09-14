@@ -37,99 +37,15 @@ Item {
   readonly property bool showNetworkStats: (widgetSettings.showNetworkStats !== undefined) ? widgetSettings.showNetworkStats : widgetMetadata.showNetworkStats
   readonly property bool showDiskUsage: (widgetSettings.showDiskUsage !== undefined) ? widgetSettings.showDiskUsage : widgetMetadata.showDiskUsage
 
-  implicitHeight: (barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Math.round(Style.barHeight * scaling)
-  implicitWidth: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : (horizontalLayout.implicitWidth + Style.marginL * 2 * scaling)
+  implicitWidth: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : Math.round(horizontalLayout.implicitWidth + Style.marginS * 2 * scaling)
 
-  function calculatedVerticalHeight() {
-    let total = 0
-    let visibleCount = 0
+  implicitHeight: (barPosition === "left" || barPosition === "right") ? Math.round(verticalLayout.implicitHeight + Style.marginS * 2 * scaling) : Math.round(Style.barHeight * scaling)
 
-    if (showCpuUsage)
-      visibleCount++
-    if (showCpuTemp)
-      visibleCount++
-    if (showMemoryUsage)
-      visibleCount++
-    if (showNetworkStats)
-      visibleCount += 2 // download + upload
-    if (showDiskUsage)
-      visibleCount++
-
-    total = visibleCount * Math.round(Style.capsuleHeight * scaling)
-    total += Math.max(visibleCount - 1, 0) * Style.marginXS * scaling
-    total += Style.marginXS * scaling * 2 // minimal padding to match other widgets
-
-    return total
-  }
-
-  function calculatedHorizontalWidth() {
-    let total = Style.marginL * scaling * 2.5 // base padding
-
-    if (showCpuUsage) {
-      // Icon + "99%" text
-      total += Style.fontSizeM * scaling * 1.2 + // icon
-          Style.fontSizeXS * scaling * 2.5 + // text (~3 chars)
-          2 * scaling // spacing
-    }
-
-    if (showCpuTemp) {
-      // Icon + "85°C" text
-      total += Style.fontSizeS * scaling * 1.2 + // smaller fire icon
-          Style.fontSizeXS * scaling * 3.5 + // text (~4 chars)
-          2 * scaling // spacing
-    }
-
-    if (showMemoryUsage) {
-      // Icon + "16G" or "85%" text
-      total += Style.fontSizeM * scaling * 1.2 + // icon
-          Style.fontSizeXS * scaling * 3 + // text (~3-4 chars)
-          2 * scaling // spacing
-    }
-
-    if (showNetworkStats) {
-      // Download: icon + "1.2M" text
-      total += Style.fontSizeM * scaling * 1.2 + // icon
-          Style.fontSizeXS * scaling * 3.5 + // text
-          Style.marginXS * scaling + 2 * scaling // spacing
-
-      // Upload: icon + "256K" text
-      total += Style.fontSizeM * scaling * 1.2 + // icon
-          Style.fontSizeXS * scaling * 3.5 + // text
-          Style.marginXS * scaling + 2 * scaling // spacing
-    }
-
-    if (showDiskUsage) {
-      // Icon + "75%" text
-      total += Style.fontSizeM * scaling * 1.2 + // icon
-          Style.fontSizeXS * scaling * 3 + // text (~3 chars)
-          Style.marginXS * scaling + 2 * scaling // spacing
-    }
-
-    // Add spacing between visible components
-    let visibleCount = 0
-    if (showCpuUsage)
-      visibleCount++
-    if (showCpuTemp)
-      visibleCount++
-    if (showMemoryUsage)
-      visibleCount++
-    if (showNetworkStats)
-      visibleCount += 2
-    if (showDiskUsage)
-      visibleCount++
-
-    if (visibleCount > 1) {
-      total += (visibleCount - 1) * Style.marginXS * scaling
-    }
-
-    // Row layout handles spacing between widgets
-    return Math.max(total, Style.capsuleHeight * scaling)
-  }
 
   Rectangle {
     id: backgroundContainer
     anchors.centerIn: parent
-    width: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : (horizontalLayout.implicitWidth + Style.marginL * 2 * scaling)
+    width: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : parent.width
     height: (barPosition === "left" || barPosition === "right") ? parent.height : Math.round(Style.capsuleHeight * scaling)
     radius: Math.round(Style.radiusM * scaling)
     color: Color.mSurfaceVariant
@@ -138,6 +54,8 @@ Item {
     RowLayout {
       id: horizontalLayout
       anchors.centerIn: parent
+      anchors.leftMargin: Style.marginM * scaling
+      anchors.rightMargin: Style.marginM * scaling
       spacing: Style.marginXS * scaling
       visible: barPosition === "top" || barPosition === "bottom"
 
@@ -151,7 +69,7 @@ Item {
         RowLayout {
           id: cpuUsageRow
           anchors.centerIn: parent
-          spacing: 2 * scaling
+          spacing: Style.marginXXS * scaling
 
           NIcon {
             icon: "cpu-usage"
@@ -181,7 +99,7 @@ Item {
         RowLayout {
           id: cpuTempRow
           anchors.centerIn: parent
-          spacing: 2 * scaling
+          spacing: Style.marginXXS * scaling
 
           NIcon {
             icon: "cpu-temperature"
@@ -212,7 +130,7 @@ Item {
         RowLayout {
           id: memoryUsageRow
           anchors.centerIn: parent
-          spacing: 2 * scaling
+          spacing: Style.marginXXS * scaling
 
           NIcon {
             icon: "memory"
@@ -327,10 +245,12 @@ Item {
     ColumnLayout {
       id: verticalLayout
       anchors.centerIn: parent
+      anchors.topMargin: Style.marginS * scaling
+      anchors.bottomMargin: Style.marginS * scaling
       width: Math.round(28 * scaling)
-      height: parent.height
-      spacing: Style.marginXXS * scaling
+      spacing: Style.marginS * scaling
       visible: barPosition === "left" || barPosition === "right"
+
 
       // CPU Usage Component
       Item {
@@ -342,7 +262,17 @@ Item {
         Column {
           id: cpuUsageRowVertical
           anchors.centerIn: parent
-          spacing: 1 * scaling
+          spacing: Style.marginXXS * scaling
+
+          NText {
+            text: `${Math.round(SystemStatService.cpuUsage)}%`
+            font.family: Settings.data.ui.fontFixed
+            font.pointSize: Style.fontSizeXXS * scaling
+            font.weight: Style.fontWeightMedium
+            anchors.horizontalCenter: parent.horizontalCenter
+            horizontalAlignment: Text.AlignHCenter
+            color: Color.mPrimary
+          }
 
           NIcon {
             icon: "cpu-usage"
@@ -350,15 +280,6 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
           }
 
-          NText {
-            text: `${Math.round(SystemStatService.cpuUsage)}%`
-            font.family: Settings.data.ui.fontFixed
-            font.pointSize: Style.fontSizeXXS * scaling * 0.8
-            font.weight: Style.fontWeightMedium
-            anchors.horizontalCenter: parent.horizontalCenter
-            horizontalAlignment: Text.AlignHCenter
-            color: Color.mPrimary
-          }
         }
       }
 
@@ -372,24 +293,26 @@ Item {
         Column {
           id: cpuTempRowVertical
           anchors.centerIn: parent
-          spacing: 1 * scaling
+          spacing: Style.marginXXS * scaling
 
-          NIcon {
+
+          NText {
+            text: `${SystemStatService.cpuTemp}°`
+            font.family: Settings.data.ui.fontFixed
+            font.pointSize: Style.fontSizeXXS * scaling
+            font.weight: Style.fontWeightMedium
+            anchors.horizontalCenter: parent.horizontalCenter
+            horizontalAlignment: Text.AlignHCenter
+            color: Color.mPrimary
+          }
+
+                    NIcon {
             icon: "cpu-temperature"
             // Fire is so tall, we need to make it smaller
             font.pointSize: Style.fontSizeXS * scaling
             anchors.horizontalCenter: parent.horizontalCenter
           }
 
-          NText {
-            text: `${SystemStatService.cpuTemp}°`
-            font.family: Settings.data.ui.fontFixed
-            font.pointSize: Style.fontSizeXXS * scaling * 0.8
-            font.weight: Style.fontWeightMedium
-            anchors.horizontalCenter: parent.horizontalCenter
-            horizontalAlignment: Text.AlignHCenter
-            color: Color.mPrimary
-          }
         }
       }
 
@@ -403,22 +326,22 @@ Item {
         Column {
           id: memoryUsageRowVertical
           anchors.centerIn: parent
-          spacing: 1 * scaling
+          spacing: Style.marginXXS * scaling
+
+          NText {
+            text: showMemoryAsPercent ? `${SystemStatService.memPercent}%` : `${Math.round(SystemStatService.memGb)}G`
+            font.family: Settings.data.ui.fontFixed
+            font.pointSize: Style.fontSizeXXS * scaling
+            font.weight: Style.fontWeightMedium
+            anchors.horizontalCenter: parent.horizontalCenter
+            horizontalAlignment: Text.AlignHCenter
+            color: Color.mPrimary
+          }
 
           NIcon {
             icon: "memory"
             font.pointSize: Style.fontSizeS * scaling
             anchors.horizontalCenter: parent.horizontalCenter
-          }
-
-          NText {
-            text: showMemoryAsPercent ? `${SystemStatService.memPercent}%` : `${Math.round(SystemStatService.memGb)}G`
-            font.family: Settings.data.ui.fontFixed
-            font.pointSize: Style.fontSizeXXS * scaling * 0.8
-            font.weight: Style.fontWeightMedium
-            anchors.horizontalCenter: parent.horizontalCenter
-            horizontalAlignment: Text.AlignHCenter
-            color: Color.mPrimary
           }
         }
       }
@@ -433,7 +356,7 @@ Item {
         Column {
           id: networkDownloadRowVertical
           anchors.centerIn: parent
-          spacing: 1 * scaling
+           spacing: Style.marginXXS * scaling
 
           NIcon {
             icon: "download-speed"
@@ -444,7 +367,7 @@ Item {
           NText {
             text: SystemStatService.formatSpeed(SystemStatService.rxSpeed)
             font.family: Settings.data.ui.fontFixed
-            font.pointSize: Style.fontSizeXXS * scaling * 0.8
+            font.pointSize: Style.fontSizeXXS * scaling
             font.weight: Style.fontWeightMedium
             anchors.horizontalCenter: parent.horizontalCenter
             horizontalAlignment: Text.AlignHCenter
@@ -463,7 +386,7 @@ Item {
         Column {
           id: networkUploadRowVertical
           anchors.centerIn: parent
-          spacing: 1 * scaling
+           spacing: Style.marginXXS * scaling
 
           NIcon {
             icon: "upload-speed"
@@ -474,7 +397,7 @@ Item {
           NText {
             text: SystemStatService.formatSpeed(SystemStatService.txSpeed)
             font.family: Settings.data.ui.fontFixed
-            font.pointSize: Style.fontSizeXXS * scaling * 0.8
+            font.pointSize: Style.fontSizeXXS * scaling
             font.weight: Style.fontWeightMedium
             anchors.horizontalCenter: parent.horizontalCenter
             horizontalAlignment: Text.AlignHCenter
@@ -493,7 +416,7 @@ Item {
         ColumnLayout {
           id: diskUsageRowVertical
           anchors.centerIn: parent
-          spacing: 1 * scaling
+           spacing: Style.marginXXS * scaling
 
           NIcon {
             icon: "storage"
@@ -504,7 +427,7 @@ Item {
           NText {
             text: `${SystemStatService.diskPercent}%`
             font.family: Settings.data.ui.fontFixed
-            font.pointSize: Style.fontSizeXXS * scaling * 0.8
+            font.pointSize: Style.fontSizeXXS * scaling
             font.weight: Style.fontWeightMedium
             Layout.alignment: Qt.AlignHCenter
             horizontalAlignment: Text.AlignHCenter
