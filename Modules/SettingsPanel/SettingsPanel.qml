@@ -474,7 +474,7 @@ NPanel {
               // Main title
               NText {
                 text: root.tabsModel[currentTabIndex]?.label || ""
-                font.pointSize: Style.fontSizeXXL * scaling
+                font.pointSize: Style.fontSizeXL * scaling
                 font.weight: Style.fontWeightBold
                 color: Color.mPrimary
                 Layout.fillWidth: true
@@ -484,7 +484,7 @@ NPanel {
               // Close button
               NIconButton {
                 icon: "close"
-                tooltipText: "Close"
+                tooltipText: "Close."
                 Layout.alignment: Qt.AlignVCenter
                 onClicked: root.close()
               }

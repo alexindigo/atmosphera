@@ -65,7 +65,7 @@ NPanel {
 
         NIconButton {
           icon: "close"
-          tooltipText: "Close"
+          tooltipText: "Close."
           sizeRatio: 0.8
           onClicked: {
             root.close()
