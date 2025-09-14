@@ -125,7 +125,7 @@ Rectangle {
             }
           }
 
-          //font.family: Settings.data.ui.fontFixed
+          font.family: Settings.data.ui.fontFixed
           font.pointSize: useCompactMode ? Style.fontSizeXXS * scaling : Style.fontSizeXS * scaling
           font.weight: Style.fontWeightBold
           color: Color.mPrimary
@@ -187,7 +187,7 @@ Rectangle {
         }
 
         // Enable fixed-width font for consistent spacing
-        //font.family: Settings.data.ui.fontFixed
+        font.family: Settings.data.ui.fontFixed
         font.pointSize: Style.fontSizeXXS * scaling
         font.weight: Style.fontWeightRegular
         color: Color.mPrimary
