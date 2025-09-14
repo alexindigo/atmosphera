@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import Qt5Compat.GraphicalEffects
 import Quickshell
 import Quickshell.Wayland
 import Quickshell.Services.UPower
@@ -57,7 +58,7 @@ Variants {
         anchors.fill: parent
         clip: true
 
-        // Background fill
+        // Background fill with shadow
         Rectangle {
           id: bar
 
@@ -92,10 +93,10 @@ Variants {
 
             // Top section (left widgets)
             Column {
-              spacing: Style.marginXS * root.scaling
+              spacing: Style.marginM * root.scaling
               anchors.horizontalCenter: parent.horizontalCenter
               anchors.top: parent.top
-              anchors.topMargin: Style.marginS * root.scaling
+              anchors.topMargin: Style.marginL * root.scaling
               width: parent.width
 
               Repeater {
@@ -117,7 +118,7 @@ Variants {
 
             // Center section (center widgets)
             Column {
-              spacing: Style.marginXS * root.scaling
+              spacing: Style.marginM * root.scaling
               anchors.horizontalCenter: parent.horizontalCenter
               anchors.verticalCenter: parent.verticalCenter
               width: parent.width
@@ -141,10 +142,10 @@ Variants {
 
             // Bottom section (right widgets)
             Column {
-              spacing: Style.marginXS * root.scaling
+              spacing: Style.marginM * root.scaling
               anchors.horizontalCenter: parent.horizontalCenter
               anchors.bottom: parent.bottom
-              anchors.bottomMargin: Style.marginS * root.scaling
+              anchors.bottomMargin: Style.marginL * root.scaling
               width: parent.width
 
               Repeater {

@@ -51,7 +51,7 @@ Item {
   readonly property int maxPillHeight: iconSize
 
   // For horizontal bars: height is just icon size, width includes pill space
-  width: revealed ? (iconSize + maxPillWidth - pillOverlap) : iconSize
+  width: revealed ? (openRightward ? (iconSize + maxPillWidth - pillOverlap) : (iconSize + maxPillWidth - pillOverlap)) : iconSize
   height: iconSize
 
   Rectangle {
@@ -60,7 +60,7 @@ Item {
     height: revealed ? maxPillHeight : 1
 
     // Position based on direction - center the pill relative to the icon
-    x: openLeftward ? (iconCircle.x + iconCircle.width / 2 - width) : (iconCircle.x + iconCircle.width / 2)
+    x: openLeftward ? (iconCircle.x + iconCircle.width / 2 - width) : (iconCircle.x + iconCircle.width / 2 - pillOverlap)
     y: 0
 
     opacity: revealed ? Style.opacityFull : Style.opacityNone
