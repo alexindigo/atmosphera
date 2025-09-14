@@ -166,7 +166,15 @@ Variants {
 
         // Position above the bar if it's at bottom
         anchors.bottom: true
-        margins.bottom: barAtBottom ? barHeight + floatingMargin : floatingMargin
+
+        margins.bottom: {
+          switch (Settings.data.bar.position) {
+          case "bottom":
+            return (Style.barHeight + Style.marginM) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL * scaling + floatingMargin : floatingMargin)
+          default:
+            return floatingMargin
+          }
+        }
 
         // Rectangle {
         //   anchors.fill: parent

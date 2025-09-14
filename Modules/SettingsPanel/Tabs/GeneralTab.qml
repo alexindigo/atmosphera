@@ -9,6 +9,11 @@ import qs.Widgets
 ColumnLayout {
   id: root
 
+  NHeader {
+    label: "Profile"
+    description: "Configure your user profile and avatar settings."
+  }
+
   // Profile section
   RowLayout {
     Layout.fillWidth: true
@@ -48,12 +53,9 @@ ColumnLayout {
     spacing: Style.marginL * scaling
     Layout.fillWidth: true
 
-    NText {
-      text: "User Interface"
-      font.pointSize: Style.fontSizeXXL * scaling
-      font.weight: Style.fontWeightBold
-      color: Color.mSecondary
-      Layout.bottomMargin: Style.marginS * scaling
+    NHeader {
+      label: "User Interface"
+      description: "Main settings for the user interface."
     }
 
     NToggle {
@@ -133,12 +135,9 @@ ColumnLayout {
   ColumnLayout {
     spacing: Style.marginL * scaling
     Layout.fillWidth: true
-    NText {
-      text: "Screen Corners"
-      font.pointSize: Style.fontSizeXXL * scaling
-      font.weight: Style.fontWeightBold
-      color: Color.mSecondary
-      Layout.bottomMargin: Style.marginS * scaling
+    NHeader {
+      label: "Screen Corners"
+      description: "Customize screen corner rounding and visual effects."
     }
 
     NToggle {
@@ -187,12 +186,10 @@ ColumnLayout {
   ColumnLayout {
     spacing: Style.marginL * scaling
     Layout.fillWidth: true
-    NText {
-      text: "Fonts"
-      font.pointSize: Style.fontSizeXXL * scaling
-      font.weight: Style.fontWeightBold
-      color: Color.mSecondary
-      Layout.bottomMargin: Style.marginS * scaling
+
+    NHeader {
+      label: "Fonts"
+      description: "Configure interface typography."
     }
 
     // Font configuration section
@@ -200,12 +197,13 @@ ColumnLayout {
       spacing: Style.marginL * scaling
       Layout.fillWidth: true
 
-      NComboBox {
+      NSearchableComboBox {
         label: "Default Font"
         description: "Main font used throughout the interface."
         model: FontService.availableFonts
         currentKey: Settings.data.ui.fontDefault
         placeholder: "Select default font..."
+        searchPlaceholder: "Search fonts..."
         popupHeight: 420 * scaling
         minimumWidth: 300 * scaling
         onSelected: function (key) {
@@ -213,12 +211,13 @@ ColumnLayout {
         }
       }
 
-      NComboBox {
+      NSearchableComboBox {
         label: "Fixed Width Font"
         description: "Monospace font used for terminal and code display."
         model: FontService.monospaceFonts
         currentKey: Settings.data.ui.fontFixed
         placeholder: "Select monospace font..."
+        searchPlaceholder: "Search monospace fonts..."
         popupHeight: 320 * scaling
         minimumWidth: 300 * scaling
         onSelected: function (key) {
@@ -226,12 +225,13 @@ ColumnLayout {
         }
       }
 
-      NComboBox {
+      NSearchableComboBox {
         label: "Billboard Font"
         description: "Large font used for clocks and prominent displays."
         model: FontService.displayFonts
         currentKey: Settings.data.ui.fontBillboard
         placeholder: "Select display font..."
+        searchPlaceholder: "Search display fonts..."
         popupHeight: 320 * scaling
         minimumWidth: 300 * scaling
         onSelected: function (key) {

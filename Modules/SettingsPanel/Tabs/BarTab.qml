@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import Quickshell
 import qs.Commons
 import qs.Services
 import qs.Widgets
@@ -8,6 +9,21 @@ import qs.Modules.SettingsPanel.Bar
 
 ColumnLayout {
   id: root
+  spacing: Style.marginL * scaling
+
+
+  // Helper functions to update arrays immutably
+  function addMonitor(list, name) {
+    const arr = (list || []).slice()
+    if (!arr.includes(name))
+      arr.push(name)
+    return arr
+  }
+  function removeMonitor(list, name) {
+    return (list || []).filter(function (n) {
+      return n !== name
+    })
+  }
 
   // Handler for drag start - disables panel background clicks
   function handleDragStart() {
@@ -24,9 +40,12 @@ ColumnLayout {
       panel.enableBackgroundClick()
     }
   }
+  
+  NHeader {
+    label: "Appearance"
+    description: "Configure bar appearance and positioning."
+  }
 
-  ColumnLayout {
-    spacing: Style.marginL * scaling
 
     RowLayout {
       NComboBox {
@@ -42,6 +61,14 @@ ColumnLayout {
             key: "bottom"
             name: "Bottom"
           }
+          ListElement {
+            key: "left"
+            name: "Left"
+          }
+          ListElement {
+            key: "right"
+            name: "Right"
+          }
         }
         currentKey: Settings.data.bar.position
         onSelected: key => Settings.data.bar.position = key
@@ -52,19 +79,9 @@ ColumnLayout {
       spacing: Style.marginXXS * scaling
       Layout.fillWidth: true
 
-      NText {
-        text: "Background Opacity"
-        font.pointSize: Style.fontSizeL * scaling
-        font.weight: Style.fontWeightBold
-        color: Color.mOnSurface
-      }
-
-      NText {
-        text: "Adjust the background opacity of the bar."
-        font.pointSize: Style.fontSizeXS * scaling
-        color: Color.mOnSurfaceVariant
-        wrapMode: Text.WordWrap
-        Layout.fillWidth: true
+      NLabel {
+        label: "Background Opacity"
+        description: "Adjust the background opacity of the bar."
       }
 
       RowLayout {
@@ -86,7 +103,6 @@ ColumnLayout {
         }
       }
     }
-
     NToggle {
       Layout.fillWidth: true
       label: "Floating Bar"
@@ -173,6 +189,40 @@ ColumnLayout {
         }
       }
     }
+  
+
+  NDivider {
+    Layout.fillWidth: true
+    Layout.topMargin: Style.marginXL * scaling
+    Layout.bottomMargin: Style.marginXL * scaling
+  }
+
+  // Monitor Configuration
+  ColumnLayout {
+    spacing: Style.marginM * scaling
+    Layout.fillWidth: true
+
+    NHeader {
+      label: "Monitors Configuration"
+      description: "Choose which monitors should display the bar."
+    }
+
+    Repeater {
+      model: Quickshell.screens || []
+      delegate: NCheckbox {
+        Layout.fillWidth: true
+        label: `${modelData.name || "Unknown"}${modelData.model ? `: ${modelData.model}` : ""}`
+        description: `${modelData.width}x${modelData.height} at (${modelData.x}, ${modelData.y})`
+        checked: (Settings.data.bar.monitors || []).indexOf(modelData.name) !== -1
+        onToggled: checked => {
+                     if (checked) {
+                       Settings.data.bar.monitors = addMonitor(Settings.data.bar.monitors, modelData.name)
+                     } else {
+                       Settings.data.bar.monitors = removeMonitor(Settings.data.bar.monitors, modelData.name)
+                     }
+                   }
+      }
+    }
   }
 
   NDivider {
@@ -186,20 +236,9 @@ ColumnLayout {
     spacing: Style.marginXXS * scaling
     Layout.fillWidth: true
 
-    NText {
-      text: "Widgets Positioning"
-      font.pointSize: Style.fontSizeXXL * scaling
-      font.weight: Style.fontWeightBold
-      color: Color.mSecondary
-      Layout.bottomMargin: Style.marginS * scaling
-    }
-
-    NText {
-      text: "Drag and drop widgets to reorder them within each section, or use the add/remove buttons to manage widgets."
-      font.pointSize: Style.fontSizeM * scaling
-      color: Color.mOnSurfaceVariant
-      wrapMode: Text.WordWrap
-      Layout.fillWidth: true
+    NHeader {
+      label: "Widgets Positioning"
+      description: "Drag and drop widgets to reorder them within each section, or use the add/remove buttons to manage widgets."
     }
 
     // Bar Sections

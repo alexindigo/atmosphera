@@ -8,6 +8,12 @@ import qs.Services
 
 ColumnLayout {
   id: root
+  spacing: Style.marginL * scaling
+
+  NHeader {
+    label: "Volumes"
+    description: "Configure volume controls and audio levels."
+  }
 
   property real localVolume: AudioService.volume
 
@@ -20,7 +26,7 @@ ColumnLayout {
 
   // Master Volume
   ColumnLayout {
-    spacing: Style.marginS * scaling
+    spacing: Style.marginXXS * scaling
     Layout.fillWidth: true
 
     NLabel {
@@ -67,7 +73,6 @@ ColumnLayout {
   ColumnLayout {
     spacing: Style.marginS * scaling
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginM * scaling
 
     NToggle {
       label: "Mute Audio Output"
@@ -83,9 +88,8 @@ ColumnLayout {
 
   // Input Volume
   ColumnLayout {
-    spacing: Style.marginS * scaling
+    spacing: Style.marginXS * scaling
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginM * scaling
 
     NLabel {
       label: "Input Volume"
@@ -117,7 +121,6 @@ ColumnLayout {
   ColumnLayout {
     spacing: Style.marginS * scaling
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginM * scaling
 
     NToggle {
       label: "Mute Audio Input"
@@ -131,7 +134,6 @@ ColumnLayout {
   ColumnLayout {
     spacing: Style.marginS * scaling
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginM * scaling
 
     NSpinBox {
       Layout.fillWidth: true
@@ -158,12 +160,9 @@ ColumnLayout {
   ColumnLayout {
     spacing: Style.marginS * scaling
 
-    NText {
-      text: "Audio Devices"
-      font.pointSize: Style.fontSizeXXL * scaling
-      font.weight: Style.fontWeightBold
-      color: Color.mSecondary
-      Layout.bottomMargin: Style.marginS * scaling
+    NHeader {
+      label: "Audio Devices"
+      description: "Configure audio input and output devices."
     }
 
     // -------------------------------
@@ -203,7 +202,6 @@ ColumnLayout {
     ColumnLayout {
       spacing: Style.marginXS * scaling
       Layout.fillWidth: true
-      Layout.bottomMargin: Style.marginL * scaling
 
       NLabel {
         label: "Input Device"
@@ -234,12 +232,9 @@ ColumnLayout {
   ColumnLayout {
     spacing: Style.marginL * scaling
 
-    NText {
-      text: "Media Player"
-      font.pointSize: Style.fontSizeXXL * scaling
-      font.weight: Style.fontWeightBold
-      color: Color.mSecondary
-      Layout.bottomMargin: Style.marginS * scaling
+    NHeader {
+      label: "Media Player"
+      description: "Configure your favorite media players."
     }
 
     // Preferred player
@@ -360,12 +355,9 @@ ColumnLayout {
     spacing: Style.marginS * scaling
     Layout.fillWidth: true
 
-    NText {
-      text: "Audio Visualizer"
-      font.pointSize: Style.fontSizeXXL * scaling
-      font.weight: Style.fontWeightBold
-      color: Color.mSecondary
-      Layout.bottomMargin: Style.marginS * scaling
+    NHeader {
+      label: "Audio Visualizer"
+      description: "Customize visual effects that respond to audio playback."
     }
 
     // AudioService Visualizer section

@@ -10,6 +10,11 @@ ColumnLayout {
 
   spacing: Style.marginL * scaling
 
+  NHeader {
+    label: "General Settings"
+    description: "Configure screen recording output and content."
+  }
+
   // Output Directory
   ColumnLayout {
     spacing: Style.marginS * scaling
@@ -53,12 +58,8 @@ ColumnLayout {
     spacing: Style.marginL * scaling
     Layout.fillWidth: true
 
-    NText {
-      text: "Video Settings"
-      font.pointSize: Style.fontSizeXXL * scaling
-      font.weight: Style.fontWeightBold
-      color: Color.mSecondary
-      Layout.bottomMargin: Style.marginS * scaling
+    NHeader {
+      label: "Video Settings"
     }
 
     // Source
@@ -203,12 +204,8 @@ ColumnLayout {
     spacing: Style.marginL * scaling
     Layout.fillWidth: true
 
-    NText {
-      text: "Audio Settings"
-      font.pointSize: Style.fontSizeXXL * scaling
-      font.weight: Style.fontWeightBold
-      color: Color.mSecondary
-      Layout.bottomMargin: Style.marginS * scaling
+    NHeader {
+      label: "Audio Settings"
     }
 
     // Audio Source

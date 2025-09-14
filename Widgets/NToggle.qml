@@ -11,7 +11,7 @@ RowLayout {
   property string description: ""
   property bool checked: false
   property bool hovering: false
-  property int baseSize: Style.baseWidgetSize
+  property int baseSize: Style.baseWidgetSize * 0.8
 
   signal toggled(bool checked)
   signal entered
@@ -31,7 +31,7 @@ RowLayout {
     implicitHeight: root.baseSize * scaling
     radius: height * 0.5
     color: root.checked ? Color.mPrimary : Color.mSurface
-    border.color: root.checked ? Color.mPrimary : Color.mOutline
+    border.color: Color.mOutline
     border.width: Math.max(1, Style.borderM * scaling)
 
     Behavior on color {
@@ -53,7 +53,7 @@ RowLayout {
       color: root.checked ? Color.mOnPrimary : Color.mPrimary
       border.color: root.checked ? Color.mSurface : Color.mSurface
       border.width: Math.max(1, Style.borderM * scaling)
-      y: 2 * scaling
+      anchors.verticalCenter: parent.verticalCenter
       x: root.checked ? switcher.width - width - 2 * scaling : 2 * scaling
 
       Behavior on x {

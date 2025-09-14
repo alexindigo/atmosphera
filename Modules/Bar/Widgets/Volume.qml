@@ -61,15 +61,6 @@ Item {
     }
   }
 
-  Timer {
-    id: externalHideTimer
-    running: false
-    interval: 1500
-    onTriggered: {
-      pill.hide()
-    }
-  }
-
   NPill {
     id: pill
 

@@ -29,11 +29,11 @@ NPanel {
     Dock,
     Hooks,
     Launcher,
-    Brightness,
     ColorScheme,
     Display,
     General,
     Network,
+    Notification,
     ScreenRecorder,
     Weather,
     Wallpaper,
@@ -71,10 +71,6 @@ NPanel {
   Component {
     id: audioTab
     Tabs.AudioTab {}
-  }
-  Component {
-    id: brightnessTab
-    Tabs.BrightnessTab {}
   }
   Component {
     id: displayTab
@@ -116,6 +112,10 @@ NPanel {
     id: dockTab
     Tabs.DockTab {}
   }
+  Component {
+    id: notificationTab
+    Tabs.NotificationTab {}
+  }
 
   // Order *DOES* matter
   function updateTabsModel() {
@@ -150,15 +150,15 @@ NPanel {
                      "icon": "settings-display",
                      "source": displayTab
                    }, {
+                     "id": SettingsPanel.Tab.Notification,
+                     "label": "Notification",
+                     "icon": "settings-notification",
+                     "source": notificationTab
+                   }, {
                      "id": SettingsPanel.Tab.Network,
                      "label": "Network",
                      "icon": "settings-network",
                      "source": networkTab
-                   }, {
-                     "id": SettingsPanel.Tab.Brightness,
-                     "label": "Brightness",
-                     "icon": "settings-brightness",
-                     "source": brightnessTab
                    }, {
                      "id": SettingsPanel.Tab.Weather,
                      "label": "Weather",
@@ -468,7 +468,7 @@ NPanel {
               NIcon {
                 icon: root.tabsModel[currentTabIndex]?.icon
                 color: Color.mPrimary
-                font.pointSize: Style.fontSizeXL * scaling
+                font.pointSize: Style.fontSizeXXL * scaling
               }
 
               // Main title
@@ -484,7 +484,7 @@ NPanel {
               // Close button
               NIconButton {
                 icon: "close"
-                tooltipText: "Close"
+                tooltipText: "Close."
                 Layout.alignment: Qt.AlignVCenter
                 onClicked: root.close()
               }

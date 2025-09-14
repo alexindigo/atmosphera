@@ -7,7 +7,7 @@ import qs.Commons
 import qs.Services
 import qs.Widgets
 
-RowLayout {
+Item {
   id: root
 
   property ShellScreen screen
@@ -30,6 +30,8 @@ RowLayout {
     return {}
   }
 
+  readonly property string barPosition: Settings.data.bar.position
+
   readonly property bool showAlbumArt: (widgetSettings.showAlbumArt !== undefined) ? widgetSettings.showAlbumArt : widgetMetadata.showAlbumArt
   readonly property bool showVisualizer: (widgetSettings.showVisualizer !== undefined) ? widgetSettings.showVisualizer : widgetMetadata.showVisualizer
   readonly property string visualizerType: (widgetSettings.visualizerType !== undefined && widgetSettings.visualizerType !== "") ? widgetSettings.visualizerType : widgetMetadata.visualizerType
@@ -42,10 +44,26 @@ RowLayout {
     return MediaService.trackTitle + (MediaService.trackArtist !== "" ? ` - ${MediaService.trackArtist}` : "")
   }
 
-  Layout.alignment: Qt.AlignVCenter
-  spacing: Style.marginS * scaling
+  function calculatedVerticalHeight() {
+    return Math.round(Style.baseWidgetSize * 0.8 * scaling)
+  }
+
+  function calculatedHorizontalWidth() {
+    let total = Style.marginM * 2 * scaling // internal padding
+    if (showAlbumArt) {
+      total += 18 * scaling + 2 * scaling // album art + spacing
+    } else {
+      total += Style.fontSizeL * scaling + 2 * scaling // icon + spacing
+    }
+    total += Math.min(fullTitleMetrics.contentWidth, maxWidth * scaling) // title text
+    // Row layout handles spacing between widgets
+    return total
+  }
+
+  implicitHeight: visible ? ((barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Math.round(Style.barHeight * scaling)) : 0
+  implicitWidth: visible ? ((barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : (rowLayout.implicitWidth + Style.marginM * 2 * scaling)) : 0
+
   visible: MediaService.currentPlayer !== null && MediaService.canPlay
-  Layout.preferredWidth: MediaService.currentPlayer !== null && MediaService.canPlay ? implicitWidth : 0
 
   //  A hidden text element to safely measure the full title width
   NText {
@@ -57,12 +75,12 @@ RowLayout {
 
   Rectangle {
     id: mediaMini
-
-    Layout.preferredWidth: rowLayout.implicitWidth + Style.marginM * 2 * scaling
-    Layout.preferredHeight: Math.round(Style.capsuleHeight * scaling)
-    Layout.alignment: Qt.AlignVCenter
-
-    radius: Math.round(Style.radiusM * scaling)
+    visible: root.visible
+    anchors.left: parent.left
+    anchors.verticalCenter: parent.verticalCenter
+    width: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : (rowLayout.implicitWidth + Style.marginM * 2 * scaling)
+    height: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : Math.round(Style.capsuleHeight * scaling)
+    radius: (barPosition === "left" || barPosition === "right") ? width / 2 : Math.round(Style.radiusM * scaling)
     color: Color.mSurfaceVariant
 
     // Used to anchor the tooltip, so the tooltip does not move when the content expands
@@ -75,8 +93,8 @@ RowLayout {
     Item {
       id: mainContainer
       anchors.fill: parent
-      anchors.leftMargin: Style.marginS * scaling
-      anchors.rightMargin: Style.marginS * scaling
+      anchors.leftMargin: (barPosition === "left" || barPosition === "right") ? 0 : Style.marginS * scaling
+      anchors.rightMargin: (barPosition === "left" || barPosition === "right") ? 0 : Style.marginS * scaling
 
       Loader {
         anchors.verticalCenter: parent.verticalCenter
@@ -123,10 +141,12 @@ RowLayout {
         }
       }
 
+      // Horizontal layout for top/bottom bars
       RowLayout {
         id: rowLayout
         anchors.verticalCenter: parent.verticalCenter
         spacing: Style.marginS * scaling
+        visible: barPosition === "top" || barPosition === "bottom"
         z: 1 // Above the visualizer
 
         NIcon {
@@ -187,6 +207,33 @@ RowLayout {
         }
       }
 
+      // Vertical layout for left/right bars - icon only
+      Item {
+        id: verticalLayout
+        anchors.centerIn: parent
+        width: parent.width - Style.marginM * scaling * 2
+        height: parent.height - Style.marginM * scaling * 2
+        visible: barPosition === "left" || barPosition === "right"
+        z: 1 // Above the visualizer
+
+        // Media icon
+        Item {
+          width: Style.baseWidgetSize * 0.5 * scaling
+          height: Style.baseWidgetSize * 0.5 * scaling
+          anchors.centerIn: parent
+          visible: getTitle() !== ""
+
+          NIcon {
+            id: mediaIconVertical
+            anchors.fill: parent
+            icon: MediaService.isPlaying ? "media-pause" : "media-play"
+            font.pointSize: Style.fontSizeL * scaling
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignHCenter
+          }
+        }
+      }
+
       // Mouse area for hover detection
       MouseArea {
         id: mouseArea
@@ -209,12 +256,18 @@ RowLayout {
                    }
 
         onEntered: {
-          if (tooltip.text !== "") {
+          if (barPosition === "left" || barPosition === "right") {
+            tooltip.show()
+          } else if (tooltip.text !== "") {
             tooltip.show()
           }
         }
         onExited: {
-          tooltip.hide()
+          if (barPosition === "left" || barPosition === "right") {
+            tooltip.hide()
+          } else {
+            tooltip.hide()
+          }
         }
       }
     }
@@ -223,16 +276,23 @@ RowLayout {
   NTooltip {
     id: tooltip
     text: {
-      var str = ""
-      if (MediaService.canGoNext) {
-        str += "Right click for next.\n"
+      if (barPosition === "left" || barPosition === "right") {
+        return getTitle()
+      } else {
+        var str = ""
+        if (MediaService.canGoNext) {
+          str += "Right click for next.\n"
+        }
+        if (MediaService.canGoPrevious) {
+          str += "Middle click for previous."
+        }
+        return str
       }
-      if (MediaService.canGoPrevious) {
-        str += "Middle click for previous."
-      }
-      return str
     }
-    target: anchor
+    target: (barPosition === "left" || barPosition === "right") ? verticalLayout : anchor
+    positionLeft: barPosition === "right"
+    positionRight: barPosition === "left"
     positionAbove: Settings.data.bar.position === "bottom"
+    delay: 500
   }
 }

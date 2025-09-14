@@ -10,23 +10,23 @@ import qs.Widgets
 
 ColumnLayout {
   id: root
+  spacing: Style.marginL * scaling
 
   property string latestVersion: GitHubService.latestVersion
   property string currentVersion: UpdateService.currentVersion
   property var contributors: GitHubService.contributors
 
-  NText {
-    text: "Noctalia Shell"
-    font.pointSize: Style.fontSizeXXXL * scaling
-    font.weight: Style.fontWeightBold
-    color: Color.mOnSurface
-    Layout.alignment: Qt.AlignCenter
-    Layout.bottomMargin: Style.marginS * scaling
+  NHeader {
+    label: "Noctalia Shell"
+    description: "A sleek and minimal desktop shell thoughtfully crafted for Wayland, built with Quickshell."
   }
+
+  RowLayout {
+    spacing: Style.marginL * scaling
+  
 
   // Versions
   GridLayout {
-    Layout.alignment: Qt.AlignCenter
     columns: 2
     rowSpacing: Style.marginXS * scaling
     columnSpacing: Style.marginS * scaling
@@ -34,7 +34,6 @@ ColumnLayout {
     NText {
       text: "Latest Version:"
       color: Color.mOnSurface
-      Layout.alignment: Qt.AlignRight
     }
 
     NText {
@@ -46,7 +45,6 @@ ColumnLayout {
     NText {
       text: "Installed Version:"
       color: Color.mOnSurface
-      Layout.alignment: Qt.AlignRight
     }
 
     NText {
@@ -56,10 +54,13 @@ ColumnLayout {
     }
   }
 
-  // Updater
+  Item {
+    Layout.fillWidth: true
+  }
+
+ // Update button
   Rectangle {
-    Layout.alignment: Qt.AlignCenter
-    Layout.topMargin: Style.marginS * scaling
+    Layout.alignment: Qt.alignmentRight
     Layout.preferredWidth: Math.round(updateRow.implicitWidth + (Style.marginL * scaling * 2))
     Layout.preferredHeight: Math.round(Style.barHeight * scaling)
     radius: Style.radiusL * scaling
@@ -115,23 +116,21 @@ ColumnLayout {
     }
   }
 
+}
+
   NDivider {
     Layout.fillWidth: true
     Layout.topMargin: Style.marginXL * scaling
     Layout.bottomMargin: Style.marginXL * scaling
   }
 
-  NText {
-    text: `Shout-out to our ${root.contributors.length} <b>awesome</b> contributors!`
-    font.pointSize: Style.fontSizeL * scaling
-    color: Color.mOnSurface
-    Layout.alignment: Qt.AlignCenter
+  NHeader {
+    label: "Contributors"
+    description: `Shout-out to our ${root.contributors.length} <b>awesome</b> contributors!`
   }
 
   GridView {
     id: contributorsGrid
-
-    Layout.topMargin: Style.marginL * scaling
     Layout.alignment: Qt.AlignHCenter
     Layout.preferredWidth: cellWidth * 3 // Fixed 3 columns
     Layout.preferredHeight: {

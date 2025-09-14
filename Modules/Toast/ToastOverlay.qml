@@ -30,10 +30,11 @@ Variants {
 
       screen: modelData
 
-      // Position based on bar location, like Notification popup does
+      // Position at top of screen, always allow horizontal centering
       anchors {
-        top: Settings.data.bar.position === "top"
-        bottom: Settings.data.bar.position === "bottom"
+        top: true
+        left: true
+        right: true
       }
 
       // Set a width instead of anchoring left/right so we can click on the side of the toast
@@ -43,8 +44,43 @@ Variants {
       implicitHeight: Math.round(toast.visible ? toast.height + Style.marginM * scaling : 1)
 
       // Set margins based on bar position
-      margins.top: Settings.data.bar.position === "top" ? (Style.barHeight + Style.marginS + (Settings.data.bar.floating ? Settings.data.bar.marginVertical : 0)) * scaling : 0
-      margins.bottom: Settings.data.bar.position === "bottom" ? (Style.barHeight + Style.marginS + (Settings.data.bar.floating ? Settings.data.bar.marginVertical : 0)) * scaling : 0
+      margins.top: {
+        switch (Settings.data.bar.position) {
+        case "top":
+          return (Style.barHeight + Style.marginS) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL * scaling : 0)
+        default:
+          return 0
+        }
+      }
+
+      margins.bottom: {
+        switch (Settings.data.bar.position) {
+        case "bottom":
+          return (Style.barHeight + Style.marginS) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL * scaling : 0)
+        default:
+          return 0
+        }
+      }
+
+      margins.right: {
+        switch (Settings.data.bar.position) {
+        case "left":
+        case "top":
+        case "bottom":
+          return Style.marginM * scaling
+        default:
+          return 0
+        }
+      }
+
+      margins.left: {
+        switch (Settings.data.bar.position) {
+        case "right":
+          return Style.marginM * scaling
+        default:
+          return 0
+        }
+      }
 
       // Transparent background
       color: Color.transparent
@@ -61,8 +97,8 @@ Variants {
         // Simple positioning - margins already account for bar
         targetY: Style.marginS * scaling
 
-        // Hidden position based on bar location
-        hiddenY: Settings.data.bar.position === "top" ? -toast.height - 20 : toast.height + 20
+        // Hidden position - always start from above the screen
+        hiddenY: -toast.height - 20
 
         Component.onCompleted: {
           // Register this toast with the service

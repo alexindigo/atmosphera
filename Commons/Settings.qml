@@ -263,7 +263,7 @@ Singleton {
 
       // bar
       property JsonObject bar: JsonObject {
-        property string position: "top" // "top" or "bottom"
+        property string position: "top" // "top", "bottom", "left", or "right"
         property real backgroundOpacity: 1.0
         property list<string> monitors: []
 
@@ -399,6 +399,10 @@ Singleton {
         property list<string> monitors: []
         // Last time the user opened the notification history (ms since epoch)
         property real lastSeenTs: 0
+        // Duration settings for different urgency levels (in seconds)
+        property int lowUrgencyDuration: 3
+        property int normalUrgencyDuration: 8
+        property int criticalUrgencyDuration: 15
       }
 
       // audio

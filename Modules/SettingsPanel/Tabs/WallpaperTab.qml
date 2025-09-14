@@ -9,6 +9,12 @@ import qs.Widgets
 
 ColumnLayout {
   id: root
+  spacing: Style.marginL * scaling
+
+  NHeader {
+    label: "Wallpaper Settings"
+    description: "Control how wallpapers are managed and displayed."
+  }
 
   NToggle {
     label: "Enable Wallpaper Management"
@@ -22,6 +28,7 @@ ColumnLayout {
     visible: Settings.data.wallpaper.enabled
     spacing: Style.marginL * scaling
     Layout.fillWidth: true
+    
     NTextInput {
       label: "Wallpaper Directory"
       description: "Path to your common wallpaper directory."
@@ -61,7 +68,7 @@ ColumnLayout {
           delegate: RowLayout {
             NText {
               text: (modelData.name || "Unknown")
-              color: Color.mSecondary
+              color: Color.mPrimary
               font.weight: Style.fontWeightBold
               Layout.preferredWidth: 90 * scaling
             }
@@ -89,11 +96,8 @@ ColumnLayout {
     spacing: Style.marginL * scaling
     Layout.fillWidth: true
 
-    NText {
-      text: "Look & Feel"
-      font.pointSize: Style.fontSizeXXL * scaling
-      font.weight: Style.fontWeightBold
-      color: Color.mSecondary
+    NHeader {
+      label: "Look & Feel"
     }
 
     // Fill Mode
@@ -189,11 +193,8 @@ ColumnLayout {
     spacing: Style.marginL * scaling
     Layout.fillWidth: true
 
-    NText {
-      text: "Automation"
-      font.pointSize: Style.fontSizeXXL * scaling
-      font.weight: Style.fontWeightBold
-      color: Color.mSecondary
+    NHeader {
+      label: "Automation"
     }
 
     // Random Wallpaper

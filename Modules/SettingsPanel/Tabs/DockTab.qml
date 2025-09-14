@@ -1,14 +1,34 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import Quickshell
 import qs.Commons
 import qs.Services
 import qs.Widgets
 
 ColumnLayout {
-  id: contentColumn
+  id: root
   spacing: Style.marginL * scaling
-  width: root.width
+
+
+
+  // Helper functions to update arrays immutably
+  function addMonitor(list, name) {
+    const arr = (list || []).slice()
+    if (!arr.includes(name))
+      arr.push(name)
+    return arr
+  }
+  function removeMonitor(list, name) {
+    return (list || []).filter(function (n) {
+      return n !== name
+    })
+  }
+
+  NHeader {
+    label: "Appearance"
+    description: "Configure dock behavior and appearance."
+  }
 
   NToggle {
     label: "Auto-hide"
@@ -27,7 +47,6 @@ ColumnLayout {
   ColumnLayout {
     spacing: Style.marginXXS * scaling
     Layout.fillWidth: true
-
     NLabel {
       label: "Background Opacity"
       description: "Adjust the background opacity."
@@ -80,5 +99,45 @@ ColumnLayout {
         color: Color.mOnSurface
       }
     }
+  }
+
+  NDivider {
+    Layout.fillWidth: true
+    Layout.topMargin: Style.marginXL * scaling
+    Layout.bottomMargin: Style.marginXL * scaling
+  }
+
+  // Monitor Configuration
+  ColumnLayout {
+    spacing: Style.marginM * scaling
+    Layout.fillWidth: true
+
+    NHeader {
+      label: "Monitors Configuration"
+      description: "Choose which monitors should display the dock."
+    }
+
+    Repeater {
+      model: Quickshell.screens || []
+      delegate: NCheckbox {
+        Layout.fillWidth: true
+        label: `${modelData.name || "Unknown"}${modelData.model ? `: ${modelData.model}` : ""}`
+        description: `${modelData.width}x${modelData.height} at (${modelData.x}, ${modelData.y})`
+        checked: (Settings.data.dock.monitors || []).indexOf(modelData.name) !== -1
+        onToggled: checked => {
+                     if (checked) {
+                       Settings.data.dock.monitors = addMonitor(Settings.data.dock.monitors, modelData.name)
+                     } else {
+                       Settings.data.dock.monitors = removeMonitor(Settings.data.dock.monitors, modelData.name)
+                     }
+                   }
+      }
+    }
+  }
+
+  NDivider {
+    Layout.fillWidth: true
+    Layout.topMargin: Style.marginXL * scaling
+    Layout.bottomMargin: Style.marginXL * scaling
   }
 }
