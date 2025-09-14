@@ -16,9 +16,9 @@ Loader {
   // Local queue for this screen only
   property var messageQueue: []
   property bool isShowingToast: false
-  
+
   // If true, immediately show new toasts
-  property bool replaceOnNew: true  
+  property bool replaceOnNew: true
 
   Connections {
     target: ScalingService
@@ -47,15 +47,15 @@ Loader {
   function enqueueToast(toastData) {
     if (replaceOnNew && isShowingToast) {
       // Cancel current toast and clear queue for latest toast
-      messageQueue = []  // Clear existing queue
+      messageQueue = [] // Clear existing queue
       messageQueue.push(toastData)
-      
+
       // Hide current toast immediately
       if (item) {
         hideTimer.stop()
-        item.hideToast()  // Need to add this method to PanelWindow
+        item.hideToast() // Need to add this method to PanelWindow
       }
-      
+
       // Process new toast after a brief delay
       isShowingToast = false
       quickSwitchTimer.restart()
@@ -65,10 +65,10 @@ Loader {
       processQueue()
     }
   }
-  
+
   Timer {
     id: quickSwitchTimer
-    interval: 50  // Brief delay for smooth transition
+    interval: 50 // Brief delay for smooth transition
     onTriggered: root.processQueue()
   }
 
@@ -127,10 +127,10 @@ Loader {
     function showToast(message, description, type, duration) {
       toastItem.show(message, description, type, duration)
     }
-    
+
     // Add method to immediately hide toast
     function hideToast() {
-      toastItem.hideImmediately() 
+      toastItem.hideImmediately()
     }
 
     SimpleToast {
