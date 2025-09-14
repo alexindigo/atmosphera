@@ -12,6 +12,7 @@ Item {
   property real sizeRatio: 0.8
   property bool autoHide: false
   property bool forceOpen: false
+  property bool forceClosed: false
   property bool disableOpen: false
   property bool rightOpen: false
   property bool hovered: false
@@ -47,6 +48,7 @@ Item {
         sizeRatio: root.sizeRatio
         autoHide: root.autoHide
         forceOpen: root.forceOpen
+        forceClosed: root.forceClosed
         disableOpen: root.disableOpen
         rightOpen: root.rightOpen
         hovered: root.hovered
@@ -72,6 +74,7 @@ Item {
         sizeRatio: root.sizeRatio
         autoHide: root.autoHide
         forceOpen: root.forceOpen
+        forceClosed: root.forceClosed
         disableOpen: root.disableOpen
         rightOpen: root.rightOpen
         hovered: root.hovered

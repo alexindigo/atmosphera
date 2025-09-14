@@ -28,7 +28,7 @@ Item {
     return {}
   }
 
-  readonly property bool userAlwaysShowPercentage: (widgetSettings.alwaysShowPercentage !== undefined) ? widgetSettings.alwaysShowPercentage : widgetMetadata.alwaysShowPercentage
+  readonly property string displayMode: (widgetSettings.displayMode !== undefined) ? widgetSettings.displayMode : widgetMetadata.displayMode
 
   // Used to avoid opening the pill on Quickshell startup
   property bool firstBrightnessReceived: false
@@ -80,9 +80,10 @@ Item {
     autoHide: false // Important to be false so we can hover as long as we want
     text: {
       var monitor = getMonitor()
-      return monitor ? (Math.round(monitor.brightness * 100) + "%") : ""
+      return monitor ? Math.round(monitor.brightness * 100) : ""
     }
-    forceOpen: userAlwaysShowPercentage
+    forceOpen: displayMode === "alwaysShow"
+    forceClosed: displayMode === "alwaysHide"
     tooltipText: {
       var monitor = getMonitor()
       if (!monitor)

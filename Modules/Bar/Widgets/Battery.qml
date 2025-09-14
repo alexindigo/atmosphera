@@ -30,12 +30,12 @@ Item {
   }
 
   // Resolve settings: try user settings or defaults from BarWidgetRegistry
-  readonly property bool alwaysShowPercentage: widgetSettings.alwaysShowPercentage !== undefined ? widgetSettings.alwaysShowPercentage : widgetMetadata.alwaysShowPercentage
+  readonly property string displayMode: widgetSettings.displayMode !== undefined ? widgetSettings.displayMode : widgetMetadata.displayMode
   readonly property real warningThreshold: widgetSettings.warningThreshold !== undefined ? widgetSettings.warningThreshold : widgetMetadata.warningThreshold
 
   // Test mode
-  readonly property bool testMode: false
-  readonly property int testPercent: 90
+  readonly property bool testMode: true
+  readonly property int testPercent: 100
   readonly property bool testCharging: false
 
   // Main properties
@@ -86,9 +86,10 @@ Item {
 
     rightOpen: BarWidgetRegistry.getNPillDirection(root)
     icon: testMode ? BatteryService.getIcon(testPercent, testCharging, true) : BatteryService.getIcon(percent, charging, isReady)
-    text: (isReady || testMode) ? Math.round(percent) + "%" : "-"
+    text: (isReady || testMode) ? Math.round(percent) : "-"
     autoHide: false
-    forceOpen: isReady && (testMode || battery.isLaptopBattery) && alwaysShowPercentage
+    forceOpen: isReady && (testMode || battery.isLaptopBattery) && displayMode === "alwaysShow"
+    forceClosed: displayMode === "alwaysHide"
     disableOpen: (!isReady || (!testMode && !battery.isLaptopBattery))
     tooltipText: {
       let lines = []

@@ -12,6 +12,7 @@ Item {
   property real sizeRatio: 0.8
   property bool autoHide: false
   property bool forceOpen: false
+  property bool forceClosed: false
   property bool disableOpen: false
   property bool rightOpen: false
   property bool hovered: false
@@ -25,8 +26,8 @@ Item {
   readonly property bool openDownward: rightOpen
   readonly property bool openUpward: !rightOpen
 
-  // Effective shown state (true if animated open or forced)
-  readonly property bool revealed: forceOpen || showPill
+  // Effective shown state (true if animated open or forced, but not if force closed)
+  readonly property bool revealed: !forceClosed && (forceOpen || showPill)
 
   signal shown
   signal hidden
@@ -48,7 +49,7 @@ Item {
   readonly property int pillPaddingVertical: Style.marginS * scaling
   readonly property int pillOverlap: iconSize * 0.5
   readonly property int maxPillWidth: iconSize
-  readonly property int maxPillHeight: Math.max(1, textItem.implicitHeight + pillPaddingVertical * 3)
+  readonly property int maxPillHeight: Math.max(1, textItem.implicitHeight + pillPaddingVertical * 4)
 
   // For vertical bars: width is just icon size, height includes pill space
   width: iconSize
@@ -76,14 +77,17 @@ Item {
 
     anchors.horizontalCenter: parent.horizontalCenter
 
-    NTextVertical {
+    NText {
       id: textItem
       anchors.horizontalCenter: parent.horizontalCenter
       anchors.verticalCenter: parent.verticalCenter
-      anchors.verticalCenterOffset: 0 // Center the text properly in the pill
+      anchors.verticalCenterOffset: -pillPaddingVertical * 0.5 // Position text slightly higher in the pill
       text: root.text
-      fontSize: Style.fontSizeXXS * scaling
-      fontWeight: Style.fontWeightBold
+      font.family: Settings.data.ui.fontFixed
+      font.pointSize: Style.fontSizeXXS * scaling
+      font.weight: Style.fontWeightMedium
+      horizontalAlignment: Text.AlignHCenter
+      verticalAlignment: Text.AlignVCenter
       color: Color.mOnSurface
       visible: revealed
     }
@@ -252,7 +256,7 @@ Item {
       hovered = true
       root.entered()
       tooltip.show()
-      if (disableOpen) {
+      if (disableOpen || forceClosed) {
         return
       }
       if (!forceOpen) {
@@ -262,7 +266,7 @@ Item {
     onExited: {
       hovered = false
       root.exited()
-      if (!forceOpen) {
+      if (!forceOpen && !forceClosed) {
         hide()
       }
       tooltip.hide()
