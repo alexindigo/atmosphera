@@ -128,8 +128,7 @@ Item {
 
   Rectangle {
     id: backgroundContainer
-    anchors.left: parent.left
-    anchors.verticalCenter: parent.verticalCenter
+    anchors.centerIn: parent
     width: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : (horizontalLayout.implicitWidth + Style.marginL * 2 * scaling)
     height: (barPosition === "left" || barPosition === "right") ? parent.height : Math.round(Style.capsuleHeight * scaling)
     radius: Math.round(Style.radiusM * scaling)
@@ -328,22 +327,22 @@ Item {
     ColumnLayout {
       id: verticalLayout
       anchors.centerIn: parent
-      width: Math.round(32 * scaling)
-      height: parent.height - Style.marginXS * scaling * 2
-      spacing: Style.marginXS * scaling
+      width: Math.round(28 * scaling)
+      height: parent.height
+      spacing: Style.marginXXS * scaling
       visible: barPosition === "left" || barPosition === "right"
 
       // CPU Usage Component
       Item {
         Layout.preferredHeight: Math.round(Style.capsuleHeight * scaling)
-        Layout.preferredWidth: Math.round(32 * scaling)
+        Layout.preferredWidth: Math.round(28 * scaling)
         Layout.alignment: Qt.AlignHCenter
         visible: showCpuUsage
 
         Column {
           id: cpuUsageRowVertical
           anchors.centerIn: parent
-          spacing: Style.marginXXS * scaling
+          spacing: 1 * scaling
 
           NIcon {
             icon: "cpu-usage"
@@ -352,7 +351,7 @@ Item {
           }
 
           NText {
-            text: `${SystemStatService.cpuUsage}%`
+            text: `${Math.round(SystemStatService.cpuUsage)}%`
             font.family: Settings.data.ui.fontFixed
             font.pointSize: Style.fontSizeXXS * scaling * 0.8
             font.weight: Style.fontWeightMedium
@@ -366,14 +365,14 @@ Item {
       // CPU Temperature Component
       Item {
         Layout.preferredHeight: Math.round(Style.capsuleHeight * scaling)
-        Layout.preferredWidth: Math.round(32 * scaling)
+        Layout.preferredWidth: Math.round(28 * scaling)
         Layout.alignment: Qt.AlignHCenter
         visible: showCpuTemp
 
         Column {
           id: cpuTempRowVertical
           anchors.centerIn: parent
-          spacing: Style.marginXXS * scaling
+          spacing: 1 * scaling
 
           NIcon {
             icon: "cpu-temperature"
@@ -383,7 +382,7 @@ Item {
           }
 
           NText {
-            text: `${SystemStatService.cpuTemp}°C`
+            text: `${SystemStatService.cpuTemp}°`
             font.family: Settings.data.ui.fontFixed
             font.pointSize: Style.fontSizeXXS * scaling * 0.8
             font.weight: Style.fontWeightMedium
@@ -397,14 +396,14 @@ Item {
       // Memory Usage Component
       Item {
         Layout.preferredHeight: Math.round(Style.capsuleHeight * scaling)
-        Layout.preferredWidth: Math.round(32 * scaling)
+        Layout.preferredWidth: Math.round(28 * scaling)
         Layout.alignment: Qt.AlignHCenter
         visible: showMemoryUsage
 
         Column {
           id: memoryUsageRowVertical
           anchors.centerIn: parent
-          spacing: Style.marginXXS * scaling
+          spacing: 1 * scaling
 
           NIcon {
             icon: "memory"
@@ -413,7 +412,7 @@ Item {
           }
 
           NText {
-            text: showMemoryAsPercent ? `${SystemStatService.memPercent}%` : `${SystemStatService.memGb}G`
+            text: showMemoryAsPercent ? `${SystemStatService.memPercent}%` : `${Math.round(SystemStatService.memGb)}G`
             font.family: Settings.data.ui.fontFixed
             font.pointSize: Style.fontSizeXXS * scaling * 0.8
             font.weight: Style.fontWeightMedium
@@ -427,14 +426,14 @@ Item {
       // Network Download Speed Component
       Item {
         Layout.preferredHeight: Math.round(Style.capsuleHeight * scaling)
-        Layout.preferredWidth: Math.round(32 * scaling)
+        Layout.preferredWidth: Math.round(28 * scaling)
         Layout.alignment: Qt.AlignHCenter
         visible: showNetworkStats
 
         Column {
           id: networkDownloadRowVertical
           anchors.centerIn: parent
-          spacing: Style.marginXXS * scaling
+          spacing: 1 * scaling
 
           NIcon {
             icon: "download-speed"
@@ -457,14 +456,14 @@ Item {
       // Network Upload Speed Component
       Item {
         Layout.preferredHeight: Math.round(Style.capsuleHeight * scaling)
-        Layout.preferredWidth: Math.round(32 * scaling)
+        Layout.preferredWidth: Math.round(28 * scaling)
         Layout.alignment: Qt.AlignHCenter
         visible: showNetworkStats
 
         Column {
           id: networkUploadRowVertical
           anchors.centerIn: parent
-          spacing: Style.marginXXS * scaling
+          spacing: 1 * scaling
 
           NIcon {
             icon: "upload-speed"
@@ -487,14 +486,14 @@ Item {
       // Disk Usage Component (primary drive)
       Item {
         Layout.preferredHeight: Math.round(Style.capsuleHeight * scaling)
-        Layout.preferredWidth: Math.round(32 * scaling)
+        Layout.preferredWidth: Math.round(28 * scaling)
         Layout.alignment: Qt.AlignHCenter
         visible: showDiskUsage
 
         ColumnLayout {
           id: diskUsageRowVertical
           anchors.centerIn: parent
-          spacing: Style.marginXXS * scaling
+          spacing: 1 * scaling
 
           NIcon {
             icon: "storage"
