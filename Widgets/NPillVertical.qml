@@ -76,7 +76,7 @@ Item {
 
     anchors.horizontalCenter: parent.horizontalCenter
 
-    NVerticalText {
+    NTextVertical {
       id: textItem
       anchors.horizontalCenter: parent.horizontalCenter
       anchors.verticalCenter: parent.verticalCenter

@@ -16,9 +16,9 @@ Column {
     model: root.text.split("")
     NText {
       text: modelData
+      font.family: Settings.data.ui.fontFixed
       font.pointSize: root.fontSize
       font.weight: root.fontWeight
-      font.family: Settings.data.ui.fontDefault
       color: root.color
       horizontalAlignment: Text.AlignHCenter
     }
