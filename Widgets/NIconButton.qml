@@ -9,7 +9,6 @@ Rectangle {
 
   // Multiplier to control how large the button container is relative to Style.baseWidgetSize
   property real sizeRatio: 1.0
-  readonly property real size: Style.baseWidgetSize * sizeRatio * scaling
 
   property string icon
   property string tooltipText
@@ -30,8 +29,8 @@ Rectangle {
   signal rightClicked
   signal middleClicked
 
-  implicitWidth: Style.baseWidgetSize * scaling * sizeRatio
-  implicitHeight: Style.baseWidgetSize * scaling * sizeRatio
+  implicitWidth: Math.round(Style.baseWidgetSize * scaling * sizeRatio)
+  implicitHeight: Math.round(Style.baseWidgetSize * scaling * sizeRatio)
 
   opacity: root.enabled ? Style.opacityFull : Style.opacityMedium
   color: root.enabled && root.hovering ? colorBgHover : colorBg

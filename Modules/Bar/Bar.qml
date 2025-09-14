@@ -97,7 +97,6 @@ Variants {
               anchors.horizontalCenter: parent.horizontalCenter
               anchors.top: parent.top
               anchors.topMargin: Style.marginM * root.scaling
-              width: parent.width
 
               Repeater {
                 model: Settings.data.bar.widgets.left
@@ -121,7 +120,6 @@ Variants {
               spacing: Style.marginS * root.scaling
               anchors.horizontalCenter: parent.horizontalCenter
               anchors.verticalCenter: parent.verticalCenter
-              width: parent.width
 
               Repeater {
                 model: Settings.data.bar.widgets.center
@@ -146,7 +144,6 @@ Variants {
               anchors.horizontalCenter: parent.horizontalCenter
               anchors.bottom: parent.bottom
               anchors.bottomMargin: Style.marginM * root.scaling
-              width: parent.width
 
               Repeater {
                 model: Settings.data.bar.widgets.right
