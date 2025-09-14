@@ -185,10 +185,22 @@ Singleton {
           for (var i = 0; i < lines.length; i++) {
             var line = lines[i].trim()
             if (line && line !== "") {
-              // Extract font family name (remove any style info in brackets)
-              var familyName = line.split(',')[0].trim()
-              if (familyName && fontconfigMonospaceFonts.indexOf(familyName) === -1) {
-                fontconfigMonospaceFonts.push(familyName)
+              // Parse format: /path/to/font.ttf: Font Family Name:style=Style
+              // Extract the font family name between the colon and the style
+              var colonIndex = line.indexOf(':')
+              if (colonIndex !== -1) {
+                var afterColon = line.substring(colonIndex + 1).trim()
+                var styleIndex = afterColon.indexOf(':style=')
+                var familyName
+                if (styleIndex !== -1) {
+                  familyName = afterColon.substring(0, styleIndex).trim()
+                } else {
+                  // Fallback: if no style info, use the whole string after the colon
+                  familyName = afterColon.trim()
+                }
+                if (familyName && fontconfigMonospaceFonts.indexOf(familyName) === -1) {
+                  fontconfigMonospaceFonts.push(familyName)
+                }
               }
             }
           }
