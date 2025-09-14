@@ -28,7 +28,7 @@ ColumnLayout {
     visible: Settings.data.wallpaper.enabled
     spacing: Style.marginL * scaling
     Layout.fillWidth: true
-    
+
     NTextInput {
       label: "Wallpaper Directory"
       description: "Path to your common wallpaper directory."

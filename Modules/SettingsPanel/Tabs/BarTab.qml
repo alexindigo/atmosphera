@@ -11,7 +11,6 @@ ColumnLayout {
   id: root
   spacing: Style.marginL * scaling
 
-
   // Helper functions to update arrays immutably
   function addMonitor(list, name) {
     const arr = (list || []).slice()
@@ -40,156 +39,154 @@ ColumnLayout {
       panel.enableBackgroundClick()
     }
   }
-  
+
   NHeader {
     label: "Appearance"
     description: "Configure bar appearance and positioning."
   }
 
+  RowLayout {
+    NComboBox {
+      Layout.fillWidth: true
+      label: "Bar Position"
+      description: "Choose where to place the bar on the screen."
+      model: ListModel {
+        ListElement {
+          key: "top"
+          name: "Top"
+        }
+        ListElement {
+          key: "bottom"
+          name: "Bottom"
+        }
+        ListElement {
+          key: "left"
+          name: "Left"
+        }
+        ListElement {
+          key: "right"
+          name: "Right"
+        }
+      }
+      currentKey: Settings.data.bar.position
+      onSelected: key => Settings.data.bar.position = key
+    }
+  }
+
+  ColumnLayout {
+    spacing: Style.marginXXS * scaling
+    Layout.fillWidth: true
+
+    NLabel {
+      label: "Background Opacity"
+      description: "Adjust the background opacity of the bar."
+    }
 
     RowLayout {
-      NComboBox {
+      NSlider {
         Layout.fillWidth: true
-        label: "Bar Position"
-        description: "Choose where to place the bar on the screen."
-        model: ListModel {
-          ListElement {
-            key: "top"
-            name: "Top"
-          }
-          ListElement {
-            key: "bottom"
-            name: "Bottom"
-          }
-          ListElement {
-            key: "left"
-            name: "Left"
-          }
-          ListElement {
-            key: "right"
-            name: "Right"
-          }
-        }
-        currentKey: Settings.data.bar.position
-        onSelected: key => Settings.data.bar.position = key
+        from: 0
+        to: 1
+        stepSize: 0.01
+        value: Settings.data.bar.backgroundOpacity
+        onMoved: Settings.data.bar.backgroundOpacity = value
+        cutoutColor: Color.mSurface
+      }
+
+      NText {
+        text: Math.floor(Settings.data.bar.backgroundOpacity * 100) + "%"
+        Layout.alignment: Qt.AlignVCenter
+        Layout.leftMargin: Style.marginS * scaling
+        color: Color.mOnSurface
       }
     }
+  }
+  NToggle {
+    Layout.fillWidth: true
+    label: "Floating Bar"
+    description: "Make the bar float with rounded corners and margins. This will hide screen corners."
+    checked: Settings.data.bar.floating
+    onToggled: checked => Settings.data.bar.floating = checked
+  }
 
-    ColumnLayout {
-      spacing: Style.marginXXS * scaling
+  // Floating bar options - only show when floating is enabled
+  ColumnLayout {
+    visible: Settings.data.bar.floating
+    spacing: Style.marginS * scaling
+    Layout.fillWidth: true
+
+    NLabel {
+      label: "Margins"
+      description: "Adjust the margins around the floating bar."
+    }
+
+    RowLayout {
       Layout.fillWidth: true
+      spacing: Style.marginL * scaling
 
-      NLabel {
-        label: "Background Opacity"
-        description: "Adjust the background opacity of the bar."
-      }
-
-      RowLayout {
-        NSlider {
-          Layout.fillWidth: true
-          from: 0
-          to: 1
-          stepSize: 0.01
-          value: Settings.data.bar.backgroundOpacity
-          onMoved: Settings.data.bar.backgroundOpacity = value
-          cutoutColor: Color.mSurface
-        }
+      ColumnLayout {
+        spacing: Style.marginXXS * scaling
 
         NText {
-          text: Math.floor(Settings.data.bar.backgroundOpacity * 100) + "%"
-          Layout.alignment: Qt.AlignVCenter
-          Layout.leftMargin: Style.marginS * scaling
-          color: Color.mOnSurface
+          text: "Vertical"
+          font.pointSize: Style.fontSizeXS * scaling
+          color: Color.mOnSurfaceVariant
         }
-      }
-    }
-    NToggle {
-      Layout.fillWidth: true
-      label: "Floating Bar"
-      description: "Make the bar float with rounded corners and margins. This will hide screen corners."
-      checked: Settings.data.bar.floating
-      onToggled: checked => Settings.data.bar.floating = checked
-    }
 
-    // Floating bar options - only show when floating is enabled
-    ColumnLayout {
-      visible: Settings.data.bar.floating
-      spacing: Style.marginS * scaling
-      Layout.fillWidth: true
-
-      NLabel {
-        label: "Margins"
-        description: "Adjust the margins around the floating bar."
-      }
-
-      RowLayout {
-        Layout.fillWidth: true
-        spacing: Style.marginL * scaling
-
-        ColumnLayout {
-          spacing: Style.marginXXS * scaling
+        RowLayout {
+          NSlider {
+            Layout.fillWidth: true
+            from: 0
+            to: 1
+            stepSize: 0.01
+            value: Settings.data.bar.marginVertical
+            onMoved: Settings.data.bar.marginVertical = value
+            cutoutColor: Color.mSurface
+          }
 
           NText {
-            text: "Vertical"
-            font.pointSize: Style.fontSizeXS * scaling
-            color: Color.mOnSurfaceVariant
-          }
-
-          RowLayout {
-            NSlider {
-              Layout.fillWidth: true
-              from: 0
-              to: 1
-              stepSize: 0.01
-              value: Settings.data.bar.marginVertical
-              onMoved: Settings.data.bar.marginVertical = value
-              cutoutColor: Color.mSurface
-            }
-
-            NText {
-              text: Math.round(Settings.data.bar.marginVertical * 100) + "%"
-              Layout.alignment: Qt.AlignVCenter
-              Layout.leftMargin: Style.marginXS * scaling
-              Layout.preferredWidth: 50
-              horizontalAlignment: Text.AlignRight
-              color: Color.mOnSurface
-            }
+            text: Math.round(Settings.data.bar.marginVertical * 100) + "%"
+            Layout.alignment: Qt.AlignVCenter
+            Layout.leftMargin: Style.marginXS * scaling
+            Layout.preferredWidth: 50
+            horizontalAlignment: Text.AlignRight
+            color: Color.mOnSurface
           }
         }
+      }
 
-        ColumnLayout {
-          spacing: Style.marginXXS * scaling
+      ColumnLayout {
+        spacing: Style.marginXXS * scaling
 
-          NText {
-            text: "Horizontal"
-            font.pointSize: Style.fontSizeXS * scaling
-            color: Color.mOnSurfaceVariant
+        NText {
+          text: "Horizontal"
+          font.pointSize: Style.fontSizeXS * scaling
+          color: Color.mOnSurfaceVariant
+        }
+
+        RowLayout {
+          NSlider {
+            Layout.fillWidth: true
+            from: 0
+            to: 1
+            stepSize: 0.01
+            value: Settings.data.bar.marginHorizontal
+            onMoved: Settings.data.bar.marginHorizontal = value
+            cutoutColor: Color.mSurface
           }
 
-          RowLayout {
-            NSlider {
-              Layout.fillWidth: true
-              from: 0
-              to: 1
-              stepSize: 0.01
-              value: Settings.data.bar.marginHorizontal
-              onMoved: Settings.data.bar.marginHorizontal = value
-              cutoutColor: Color.mSurface
-            }
-
-            NText {
-              text: Math.round(Settings.data.bar.marginHorizontal * 100) + "%"
-              Layout.alignment: Qt.AlignVCenter
-              Layout.leftMargin: Style.marginXS * scaling
-              Layout.preferredWidth: 50
-              horizontalAlignment: Text.AlignRight
-              color: Color.mOnSurface
-            }
+          NText {
+            text: Math.round(Settings.data.bar.marginHorizontal * 100) + "%"
+            Layout.alignment: Qt.AlignVCenter
+            Layout.leftMargin: Style.marginXS * scaling
+            Layout.preferredWidth: 50
+            horizontalAlignment: Text.AlignRight
+            color: Color.mOnSurface
           }
         }
       }
     }
-  
+  }
 
   NDivider {
     Layout.fillWidth: true

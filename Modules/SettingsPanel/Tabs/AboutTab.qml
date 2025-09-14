@@ -23,100 +23,98 @@ ColumnLayout {
 
   RowLayout {
     spacing: Style.marginL * scaling
-  
 
-  // Versions
-  GridLayout {
-    columns: 2
-    rowSpacing: Style.marginXS * scaling
-    columnSpacing: Style.marginS * scaling
+    // Versions
+    GridLayout {
+      columns: 2
+      rowSpacing: Style.marginXS * scaling
+      columnSpacing: Style.marginS * scaling
 
-    NText {
-      text: "Latest Version:"
-      color: Color.mOnSurface
-    }
-
-    NText {
-      text: root.latestVersion
-      color: Color.mOnSurface
-      font.weight: Style.fontWeightBold
-    }
-
-    NText {
-      text: "Installed Version:"
-      color: Color.mOnSurface
-    }
-
-    NText {
-      text: root.currentVersion
-      color: Color.mOnSurface
-      font.weight: Style.fontWeightBold
-    }
-  }
-
-  Item {
-    Layout.fillWidth: true
-  }
-
- // Update button
-  Rectangle {
-    Layout.alignment: Qt.alignmentRight
-    Layout.preferredWidth: Math.round(updateRow.implicitWidth + (Style.marginL * scaling * 2))
-    Layout.preferredHeight: Math.round(Style.barHeight * scaling)
-    radius: Style.radiusL * scaling
-    color: updateArea.containsMouse ? Color.mPrimary : Color.transparent
-    border.color: Color.mPrimary
-    border.width: Math.max(1, Style.borderS * scaling)
-    visible: {
-      if (root.latestVersion === "Unknown")
-        return false
-
-      const latest = root.latestVersion.replace("v", "").split(".")
-      const current = root.currentVersion.replace("v", "").split(".")
-      for (var i = 0; i < Math.max(latest.length, current.length); i++) {
-        const l = parseInt(latest[i] || "0")
-        const c = parseInt(current[i] || "0")
-        if (l > c)
-          return true
-
-        if (l < c)
-          return false
-      }
-      return false
-    }
-
-    RowLayout {
-      id: updateRow
-      anchors.centerIn: parent
-      spacing: Style.marginS * scaling
-
-      NIcon {
-        icon: "download"
-        font.pointSize: Style.fontSizeXXL * scaling
-        color: updateArea.containsMouse ? Color.mSurface : Color.mPrimary
+      NText {
+        text: "Latest Version:"
+        color: Color.mOnSurface
       }
 
       NText {
-        id: updateText
-        text: "Download latest release"
-        font.pointSize: Style.fontSizeL * scaling
-        color: updateArea.containsMouse ? Color.mSurface : Color.mPrimary
+        text: root.latestVersion
+        color: Color.mOnSurface
+        font.weight: Style.fontWeightBold
+      }
+
+      NText {
+        text: "Installed Version:"
+        color: Color.mOnSurface
+      }
+
+      NText {
+        text: root.currentVersion
+        color: Color.mOnSurface
+        font.weight: Style.fontWeightBold
       }
     }
 
-    MouseArea {
-      id: updateArea
+    Item {
+      Layout.fillWidth: true
+    }
 
-      anchors.fill: parent
-      hoverEnabled: true
-      cursorShape: Qt.PointingHandCursor
-      onClicked: {
-        Quickshell.execDetached(["xdg-open", "https://github.com/Ly-sec/Noctalia/releases/latest"])
+    // Update button
+    Rectangle {
+      Layout.alignment: Qt.alignmentRight
+      Layout.preferredWidth: Math.round(updateRow.implicitWidth + (Style.marginL * scaling * 2))
+      Layout.preferredHeight: Math.round(Style.barHeight * scaling)
+      radius: Style.radiusL * scaling
+      color: updateArea.containsMouse ? Color.mPrimary : Color.transparent
+      border.color: Color.mPrimary
+      border.width: Math.max(1, Style.borderS * scaling)
+      visible: {
+        if (root.latestVersion === "Unknown")
+          return false
+
+        const latest = root.latestVersion.replace("v", "").split(".")
+        const current = root.currentVersion.replace("v", "").split(".")
+        for (var i = 0; i < Math.max(latest.length, current.length); i++) {
+          const l = parseInt(latest[i] || "0")
+          const c = parseInt(current[i] || "0")
+          if (l > c)
+            return true
+
+          if (l < c)
+            return false
+        }
+        return false
+      }
+
+      RowLayout {
+        id: updateRow
+        anchors.centerIn: parent
+        spacing: Style.marginS * scaling
+
+        NIcon {
+          icon: "download"
+          font.pointSize: Style.fontSizeXXL * scaling
+          color: updateArea.containsMouse ? Color.mSurface : Color.mPrimary
+        }
+
+        NText {
+          id: updateText
+          text: "Download latest release"
+          font.pointSize: Style.fontSizeL * scaling
+          color: updateArea.containsMouse ? Color.mSurface : Color.mPrimary
+        }
+      }
+
+      MouseArea {
+        id: updateArea
+
+        anchors.fill: parent
+        hoverEnabled: true
+        cursorShape: Qt.PointingHandCursor
+        onClicked: {
+          Quickshell.execDetached(["xdg-open", "https://github.com/Ly-sec/Noctalia/releases/latest"])
+        }
       }
     }
   }
-
-}
 
   NDivider {
     Layout.fillWidth: true

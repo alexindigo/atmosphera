@@ -10,8 +10,6 @@ ColumnLayout {
   id: root
   spacing: Style.marginL * scaling
 
-
-
   // Helper functions to update arrays immutably
   function addMonitor(list, name) {
     const arr = (list || []).slice()

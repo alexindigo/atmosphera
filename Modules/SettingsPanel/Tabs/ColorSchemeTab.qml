@@ -10,8 +10,6 @@ ColumnLayout {
   id: root
   spacing: Style.marginL * scaling
 
-
-
   // Cache for scheme JSON (can be flat or {dark, light})
   property var schemeColorsCache: ({})
 
@@ -106,43 +104,41 @@ ColumnLayout {
     }
   }
 
-
   // Main Toggles - Dark Mode / Matugen
   NHeader {
     label: "Behavior"
     description: "Main settings for Noctalia's colors."
   }
 
-    // Dark Mode Toggle (affects both Matugen and predefined schemes that provide variants)
-    NToggle {
-      label: "Dark Mode"
-      description: Settings.data.colorSchemes.useWallpaperColors ? "Generate dark theme colors when using Matugen." : "Use a dark variant if available."
-      checked: Settings.data.colorSchemes.darkMode
-      enabled: true
-      onToggled: checked => Settings.data.colorSchemes.darkMode = checked
-    }
+  // Dark Mode Toggle (affects both Matugen and predefined schemes that provide variants)
+  NToggle {
+    label: "Dark Mode"
+    description: Settings.data.colorSchemes.useWallpaperColors ? "Generate dark theme colors when using Matugen." : "Use a dark variant if available."
+    checked: Settings.data.colorSchemes.darkMode
+    enabled: true
+    onToggled: checked => Settings.data.colorSchemes.darkMode = checked
+  }
 
-    // Use Matugen
-    NToggle {
-      label: "Enable Matugen"
-      description: "Automatically generate colors based on your active wallpaper."
-      checked: Settings.data.colorSchemes.useWallpaperColors
-      onToggled: checked => {
-                   if (checked) {
-                     // Check if matugen is installed
-                     matugenCheck.running = true
-                   } else {
-                     Settings.data.colorSchemes.useWallpaperColors = false
-                     ToastService.showNotice("Matugen", "Disabled")
+  // Use Matugen
+  NToggle {
+    label: "Enable Matugen"
+    description: "Automatically generate colors based on your active wallpaper."
+    checked: Settings.data.colorSchemes.useWallpaperColors
+    onToggled: checked => {
+                 if (checked) {
+                   // Check if matugen is installed
+                   matugenCheck.running = true
+                 } else {
+                   Settings.data.colorSchemes.useWallpaperColors = false
+                   ToastService.showNotice("Matugen", "Disabled")
 
-                     if (Settings.data.colorSchemes.predefinedScheme) {
+                   if (Settings.data.colorSchemes.predefinedScheme) {
 
-                       ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme)
-                     }
+                     ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme)
                    }
                  }
-    }
- 
+               }
+  }
 
   NDivider {
     Layout.fillWidth: true

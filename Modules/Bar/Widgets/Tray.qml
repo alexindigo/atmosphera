@@ -21,15 +21,13 @@ Rectangle {
   readonly property bool isVertical: barPosition === "left" || barPosition === "right"
 
   function onLoaded() {
-    // When the widget is fully initialized with its props
-    // set the screen for the trayMenu
+    // When the widget is fully initialized with its props set the screen for the trayMenu
     if (trayMenu.item) {
       trayMenu.item.screen = screen
     }
   }
 
   visible: SystemTray.items.values.length > 0
-  // Changed: The binding now refers to 'trayFlow'
   implicitWidth: isVertical ? Math.round(Style.capsuleHeight * scaling) : (trayFlow.implicitWidth + Style.marginS * scaling * 2)
   implicitHeight: isVertical ? (trayFlow.implicitHeight + Style.marginS * scaling * 2) : Math.round(Style.capsuleHeight * scaling)
   radius: Math.round(Style.radiusM * scaling)
@@ -41,8 +39,6 @@ Rectangle {
     id: trayFlow
     anchors.centerIn: parent
     spacing: Style.marginS * scaling
-
-    // The key change: Dynamically set the flow direction
     flow: isVertical ? Flow.TopToBottom : Flow.LeftToRight
 
     Repeater {
