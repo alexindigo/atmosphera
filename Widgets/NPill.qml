@@ -40,7 +40,7 @@ Item {
 
     Component {
       id: verticalPillComponent
-      NVerticalPill {
+      NPillVertical {
         icon: root.icon
         text: root.text
         tooltipText: root.tooltipText
@@ -65,7 +65,7 @@ Item {
 
     Component {
       id: horizontalPillComponent
-      NHorizontalPill {
+      NPillHorizontal {
         icon: root.icon
         text: root.text
         tooltipText: root.tooltipText
