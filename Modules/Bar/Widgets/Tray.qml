@@ -18,6 +18,7 @@ Rectangle {
 
   readonly property real itemSize: 24 * scaling
   readonly property string barPosition: Settings.data.bar.position
+  readonly property bool isVertical: barPosition === "left" || barPosition === "right"
 
   function onLoaded() {
     // When the widget is fully initialized with its props
@@ -28,26 +29,29 @@ Rectangle {
   }
 
   visible: SystemTray.items.values.length > 0
-  implicitWidth: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : (trayLayout.implicitWidth + Style.marginM * scaling * 2)
-  implicitHeight: (barPosition === "left" || barPosition === "right") ? Math.round(trayLayout.implicitHeight + Style.marginM * scaling * 2) : Math.round(Style.capsuleHeight * scaling)
+  // Changed: The binding now refers to 'trayFlow'
+  implicitWidth: isVertical ? Math.round(Style.capsuleHeight * scaling) : (trayFlow.implicitWidth + Style.marginS * scaling * 2)
+  implicitHeight: isVertical ? (trayFlow.implicitHeight + Style.marginS * scaling * 2) : Math.round(Style.capsuleHeight * scaling)
   radius: Math.round(Style.radiusM * scaling)
   color: Color.mSurfaceVariant
 
   Layout.alignment: Qt.AlignVCenter
 
-  RowLayout {
-    id: trayLayout
+  Flow {
+    id: trayFlow
     anchors.centerIn: parent
     spacing: Style.marginS * scaling
+
+    // The key change: Dynamically set the flow direction
+    flow: isVertical ? Flow.TopToBottom : Flow.LeftToRight
 
     Repeater {
       id: repeater
       model: SystemTray.items
 
       delegate: Item {
-        Layout.preferredWidth: itemSize
-        Layout.preferredHeight: itemSize
-        Layout.alignment: Qt.AlignCenter
+        width: itemSize
+        height: itemSize
         visible: modelData
 
         IconImage {
