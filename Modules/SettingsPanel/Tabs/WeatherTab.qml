@@ -9,8 +9,8 @@ ColumnLayout {
   id: root
 
   NHeader {
-    label: "Weather & Location"
-    description: "Configure weather display and location settings."
+ label: "Your Location" 
+  description: "Set your location for weather, time zones, and scheduling."
   }
 
   // Location section

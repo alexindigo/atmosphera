@@ -9,13 +9,8 @@ import qs.Widgets
 ColumnLayout {
   id: root
   width: parent.width
-
   spacing: Style.marginL * scaling
 
-  NHeader {
-    label: "Wallpaper Selector"
-    description: "Browse and select wallpapers from your configured directory."
-  }
 
   property list<string> wallpapersList: []
   property string currentWallpaper: ""
@@ -49,6 +44,7 @@ ColumnLayout {
   // Current wallpaper display
   NHeader {
     label: "Current Wallpaper"
+    description: "Preview and manage your desktop background."
   }
 
   Rectangle {

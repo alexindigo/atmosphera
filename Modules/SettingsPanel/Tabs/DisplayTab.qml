@@ -51,14 +51,13 @@ ColumnLayout {
 
   spacing: Style.marginL * scaling
 
-  NLabel {
+  NHeader {
     label: "Monitor-specific configuration"
     description: "Configure scaling and brightness settings individually for each connected display."
   }
 
   ColumnLayout {
     spacing: Style.marginL * scaling
-    Layout.topMargin: Style.marginL * scaling
 
     Repeater {
       model: Quickshell.screens || []
@@ -92,7 +91,7 @@ ColumnLayout {
             text: (`${modelData.name}: ${modelData.model}` || "Unknown")
             font.pointSize: Style.fontSizeL * scaling
             font.weight: Style.fontWeightBold
-            color: Color.mSecondary
+            color: Color.mPrimary
           }
 
           NText {
@@ -255,7 +254,7 @@ ColumnLayout {
     spacing: Style.marginXS * scaling
     Layout.fillWidth: true
 
-NHeader {
+    NHeader {
       label: "Night Light"
       description: "Reduce blue light emission to help you sleep better and reduce eye strain."
     }

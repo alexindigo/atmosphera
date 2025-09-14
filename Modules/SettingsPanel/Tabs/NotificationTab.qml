@@ -28,7 +28,8 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      label: "General Settings"
+      label: "Appearance"
+      description: "Configure notifications appearance and behavior."
     }
 
     NToggle {
@@ -47,11 +48,11 @@ ColumnLayout {
 
   // Monitor Configuration
   ColumnLayout {
-    spacing: Style.marginXXS * scaling
+    spacing: Style.marginM * scaling
     Layout.fillWidth: true
 
     NHeader {
-      label: "Monitor Configuration"
+      label: "Monitors Configuration"
       description: "Choose which monitors should display notifications."
     }
 

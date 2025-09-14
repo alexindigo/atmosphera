@@ -7,13 +7,12 @@ import qs.Services
 import qs.Widgets
 
 ColumnLayout {
-  id: contentColumn
+  id: root
   spacing: Style.marginL * scaling
-  width: root.width
 
   NHeader {
-    label: "Dock Settings"
-    description: "Configure dock behavior, appearance, and monitor settings."
+    label: "Appearance"
+    description: "Configure dock behavior and appearance."
   }
 
   // Helper functions to update arrays immutably
@@ -43,6 +42,63 @@ ColumnLayout {
     onToggled: checked => Settings.data.dock.exclusive = checked
   }
 
+  ColumnLayout {
+    spacing: Style.marginXXS * scaling
+    Layout.fillWidth: true
+    NLabel {
+      label: "Background Opacity"
+      description: "Adjust the background opacity."
+    }
+
+    RowLayout {
+      NSlider {
+        Layout.fillWidth: true
+        from: 0
+        to: 1
+        stepSize: 0.01
+        value: Settings.data.dock.backgroundOpacity
+        onMoved: Settings.data.dock.backgroundOpacity = value
+        cutoutColor: Color.mSurface
+      }
+
+      NText {
+        text: Math.floor(Settings.data.dock.backgroundOpacity * 100) + "%"
+        Layout.alignment: Qt.AlignVCenter
+        Layout.leftMargin: Style.marginS * scaling
+        color: Color.mOnSurface
+      }
+    }
+  }
+
+  ColumnLayout {
+    spacing: Style.marginXXS * scaling
+    Layout.fillWidth: true
+
+    NLabel {
+      label: "Dock Floating Distance"
+      description: "Adjust the floating distance from the screen edge."
+    }
+
+    RowLayout {
+      NSlider {
+        Layout.fillWidth: true
+        from: 0
+        to: 4
+        stepSize: 0.01
+        value: Settings.data.dock.floatingRatio
+        onMoved: Settings.data.dock.floatingRatio = value
+        cutoutColor: Color.mSurface
+      }
+
+      NText {
+        text: Math.floor(Settings.data.dock.floatingRatio * 100) + "%"
+        Layout.alignment: Qt.AlignVCenter
+        Layout.leftMargin: Style.marginS * scaling
+        color: Color.mOnSurface
+      }
+    }
+  }
+
   NDivider {
     Layout.fillWidth: true
     Layout.topMargin: Style.marginXL * scaling
@@ -51,11 +107,11 @@ ColumnLayout {
 
   // Monitor Configuration
   ColumnLayout {
-    spacing: Style.marginXXS * scaling
+    spacing: Style.marginM * scaling
     Layout.fillWidth: true
 
     NHeader {
-      label: "Monitor Configuration"
+      label: "Monitors Configuration"
       description: "Choose which monitors should display the dock."
     }
 
@@ -81,69 +137,5 @@ ColumnLayout {
     Layout.fillWidth: true
     Layout.topMargin: Style.marginXL * scaling
     Layout.bottomMargin: Style.marginXL * scaling
-  }
-
-  ColumnLayout {
-    spacing: Style.marginXXS * scaling
-    Layout.fillWidth: true
-
-    NHeader {
-      label: "Background Opacity"
-      description: "Adjust the background opacity."
-    }
-
-    RowLayout {
-      NSlider {
-        Layout.fillWidth: true
-        from: 0
-        to: 1
-        stepSize: 0.01
-        value: Settings.data.dock.backgroundOpacity
-        onMoved: Settings.data.dock.backgroundOpacity = value
-        cutoutColor: Color.mSurface
-      }
-
-      NText {
-        text: Math.floor(Settings.data.dock.backgroundOpacity * 100) + "%"
-        Layout.alignment: Qt.AlignVCenter
-        Layout.leftMargin: Style.marginS * scaling
-        color: Color.mOnSurface
-      }
-    }
-  }
-
-  NDivider {
-    Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
-  }
-
-  ColumnLayout {
-    spacing: Style.marginXXS * scaling
-    Layout.fillWidth: true
-
-    NHeader {
-      label: "Dock Floating Distance"
-      description: "Adjust the floating distance from the screen edge."
-    }
-
-    RowLayout {
-      NSlider {
-        Layout.fillWidth: true
-        from: 0
-        to: 4
-        stepSize: 0.01
-        value: Settings.data.dock.floatingRatio
-        onMoved: Settings.data.dock.floatingRatio = value
-        cutoutColor: Color.mSurface
-      }
-
-      NText {
-        text: Math.floor(Settings.data.dock.floatingRatio * 100) + "%"
-        Layout.alignment: Qt.AlignVCenter
-        Layout.leftMargin: Style.marginS * scaling
-        color: Color.mOnSurface
-      }
-    }
   }
 }

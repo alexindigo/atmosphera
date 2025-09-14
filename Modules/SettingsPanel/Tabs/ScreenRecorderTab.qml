@@ -11,8 +11,8 @@ ColumnLayout {
   spacing: Style.marginL * scaling
 
   NHeader {
-    label: "Screen Recorder"
-    description: "Configure screen recording settings and output options."
+    label: "General Settings"
+    description: "Configure screen recording output and content."
   }
 
   // Output Directory

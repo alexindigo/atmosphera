@@ -8,9 +8,10 @@ import qs.Services
 
 ColumnLayout {
   id: root
+  spacing: Style.marginL * scaling
 
   NHeader {
-    label: "Audio Settings"
+    label: "Volumes"
     description: "Configure system audio, devices, and media player preferences."
   }
 
@@ -24,9 +25,9 @@ ColumnLayout {
   }
 
   // Master Volume
-  ColumnLayout {
-    spacing: Style.marginS * scaling
-    Layout.fillWidth: true
+    ColumnLayout {
+      spacing: Style.marginXXS * scaling
+      Layout.fillWidth: true
 
     NLabel {
       label: "Output Volume"
@@ -72,7 +73,6 @@ ColumnLayout {
   ColumnLayout {
     spacing: Style.marginS * scaling
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginM * scaling
 
     NToggle {
       label: "Mute Audio Output"
@@ -88,9 +88,8 @@ ColumnLayout {
 
   // Input Volume
   ColumnLayout {
-    spacing: Style.marginS * scaling
+    spacing: Style.marginXS * scaling
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginM * scaling
 
     NLabel {
       label: "Input Volume"
@@ -122,7 +121,6 @@ ColumnLayout {
   ColumnLayout {
     spacing: Style.marginS * scaling
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginM * scaling
 
     NToggle {
       label: "Mute Audio Input"
@@ -136,7 +134,6 @@ ColumnLayout {
   ColumnLayout {
     spacing: Style.marginS * scaling
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginM * scaling
 
     NSpinBox {
       Layout.fillWidth: true
@@ -204,7 +201,6 @@ ColumnLayout {
     ColumnLayout {
       spacing: Style.marginXS * scaling
       Layout.fillWidth: true
-      Layout.bottomMargin: Style.marginL * scaling
 
       NLabel {
         label: "Input Device"

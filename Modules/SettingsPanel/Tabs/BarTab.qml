@@ -11,8 +11,8 @@ ColumnLayout {
   id: root
 
   NHeader {
-    label: "Bar Settings"
-    description: "Configure bar appearance, positioning, and monitor settings."
+    label: "Appearance"
+    description: "Configure bar appearance and positioning."
   }
 
   // Helper functions to update arrays immutably
@@ -75,41 +75,34 @@ ColumnLayout {
       }
     }
 
-    NDivider {
-      Layout.fillWidth: true
-      Layout.topMargin: Style.marginXL * scaling
-      Layout.bottomMargin: Style.marginXL * scaling
-    }
-
-    ColumnLayout {
+        ColumnLayout {
       spacing: Style.marginXXS * scaling
       Layout.fillWidth: true
 
-      NHeader {
-        label: "Background Opacity"
-        description: "Adjust the background opacity of the bar."
-      }
-
-      RowLayout {
-        NSlider {
-          Layout.fillWidth: true
-          from: 0
-          to: 1
-          stepSize: 0.01
-          value: Settings.data.bar.backgroundOpacity
-          onMoved: Settings.data.bar.backgroundOpacity = value
-          cutoutColor: Color.mSurface
-        }
-
-        NText {
-          text: Math.floor(Settings.data.bar.backgroundOpacity * 100) + "%"
-          Layout.alignment: Qt.AlignVCenter
-          Layout.leftMargin: Style.marginS * scaling
-          color: Color.mOnSurface
-        }
-      }
+    NLabel {
+      label: "Background Opacity"
+      description: "Adjust the background opacity of the bar."
     }
 
+    RowLayout {
+      NSlider {
+        Layout.fillWidth: true
+        from: 0
+        to: 1
+        stepSize: 0.01
+        value: Settings.data.bar.backgroundOpacity
+        onMoved: Settings.data.bar.backgroundOpacity = value
+        cutoutColor: Color.mSurface
+      }
+
+      NText {
+        text: Math.floor(Settings.data.bar.backgroundOpacity * 100) + "%"
+        Layout.alignment: Qt.AlignVCenter
+        Layout.leftMargin: Style.marginS * scaling
+        color: Color.mOnSurface
+      }
+    }
+        }
     NToggle {
       Layout.fillWidth: true
       label: "Floating Bar"
@@ -206,11 +199,11 @@ ColumnLayout {
 
   // Monitor Configuration
   ColumnLayout {
-    spacing: Style.marginXXS * scaling
+    spacing: Style.marginM * scaling
     Layout.fillWidth: true
 
     NHeader {
-      label: "Monitor Configuration"
+      label: "Monitors Configuration"
       description: "Choose which monitors should display the bar."
     }
 

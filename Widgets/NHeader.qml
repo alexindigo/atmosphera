@@ -10,11 +10,13 @@ ColumnLayout {
 
   spacing: Style.marginXXS * scaling
   Layout.fillWidth: true
+  Layout.bottomMargin: Style.marginM * scaling
 
   NText {
     text: root.label
-    font.pointSize: Style.fontSizeXXL * scaling
+    font.pointSize: Style.fontSizeXL * scaling
     font.weight: Style.fontWeightBold
+    font.capitalization: Font.Capitalize
     color: Color.mSecondary
     visible: root.title !== ""
   }

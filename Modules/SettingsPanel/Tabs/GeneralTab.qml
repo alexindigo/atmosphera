@@ -55,6 +55,7 @@ ColumnLayout {
 
     NHeader {
       label: "User Interface"
+      description: "Main settings for the user interface."
     }
 
     NToggle {
@@ -136,6 +137,7 @@ ColumnLayout {
     Layout.fillWidth: true
     NHeader {
       label: "Screen Corners"
+      description: "Customize screen corner rounding and visual effects."
     }
 
     NToggle {
@@ -184,9 +186,10 @@ ColumnLayout {
   ColumnLayout {
     spacing: Style.marginL * scaling
     Layout.fillWidth: true
-    
+
     NHeader {
       label: "Fonts"
+      description: "Configure interface typography."
     }
 
     // Font configuration section

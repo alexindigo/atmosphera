@@ -11,8 +11,8 @@ ColumnLayout {
   spacing: 0
 
   NHeader {
-    label: "Color Schemes"
-    description: "Choose and customize color schemes for your interface."
+    label: "Behavior"
+    description: "Main settings for Noctalia's colors."
   }
 
   // Cache for scheme JSON (can be flat or {dark, light})

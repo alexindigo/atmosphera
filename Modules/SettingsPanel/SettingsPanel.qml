@@ -468,13 +468,13 @@ NPanel {
               NIcon {
                 icon: root.tabsModel[currentTabIndex]?.icon
                 color: Color.mPrimary
-                font.pointSize: Style.fontSizeXL * scaling
+                font.pointSize: Style.fontSizeXXL * scaling
               }
 
               // Main title
               NText {
                 text: root.tabsModel[currentTabIndex]?.label || ""
-                font.pointSize: Style.fontSizeXL * scaling
+                font.pointSize: Style.fontSizeXXL * scaling
                 font.weight: Style.fontWeightBold
                 color: Color.mPrimary
                 Layout.fillWidth: true
