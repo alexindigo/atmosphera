@@ -103,8 +103,6 @@ Loader {
 
     anchors {
       top: true
-      left: true
-      right: true
     }
 
     implicitWidth: 500 * root.scaling
