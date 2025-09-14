@@ -49,10 +49,7 @@ Item {
     tooltipText: "Keyboard layout: " + currentLayout.toUpperCase()
     forceOpen: root.displayMode === "forceOpen"
     forceClose: root.displayMode === "alwaysHide"
-    fontSize: Style.fontSizeS // Use larger font size
-
     onClicked: {
-
       // You could open keyboard settings here if needed
       // For now, just show the current layout
     }

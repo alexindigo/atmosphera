@@ -8,6 +8,7 @@ Item {
 
   property string icon: ""
   property string text: ""
+  property string suffix: ""
   property string tooltipText: ""
   property real sizeRatio: 0.8
   property bool autoHide: false
@@ -16,7 +17,6 @@ Item {
   property bool disableOpen: false
   property bool rightOpen: false
   property bool hovered: false
-  property real fontSize: Style.fontSizeXS
 
   readonly property string barPosition: Settings.data.bar.position
   readonly property bool isVerticalBar: barPosition === "left" || barPosition === "right"
@@ -44,6 +44,7 @@ Item {
       NPillVertical {
         icon: root.icon
         text: root.text
+        suffix: root.suffix
         tooltipText: root.tooltipText
         sizeRatio: root.sizeRatio
         autoHide: root.autoHide
@@ -52,8 +53,6 @@ Item {
         disableOpen: root.disableOpen
         rightOpen: root.rightOpen
         hovered: root.hovered
-        fontSize: root.fontSize
-
         onShown: root.shown()
         onHidden: root.hidden()
         onEntered: root.entered()
@@ -70,6 +69,7 @@ Item {
       NPillHorizontal {
         icon: root.icon
         text: root.text
+        suffix: root.suffix
         tooltipText: root.tooltipText
         sizeRatio: root.sizeRatio
         autoHide: root.autoHide
@@ -78,8 +78,6 @@ Item {
         disableOpen: root.disableOpen
         rightOpen: root.rightOpen
         hovered: root.hovered
-        fontSize: root.fontSize
-
         onShown: root.shown()
         onHidden: root.hidden()
         onEntered: root.entered()

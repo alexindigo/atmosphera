@@ -8,6 +8,7 @@ Item {
 
   property string icon: ""
   property string text: ""
+  property string suffix: ""
   property string tooltipText: ""
   property real sizeRatio: 0.8
   property bool autoHide: false
@@ -16,7 +17,6 @@ Item {
   property bool disableOpen: false
   property bool rightOpen: false
   property bool hovered: false
-  property real fontSize: Style.fontSizeXS
 
   // Bar position detection for pill direction
   readonly property string barPosition: Settings.data.bar.position
@@ -66,8 +66,6 @@ Item {
 
     opacity: revealed ? Style.opacityFull : Style.opacityNone
     color: Color.mSurfaceVariant
-    border.color: Color.mOutline
-    border.width: Math.max(1, Style.borderS * scaling)
 
     // Radius logic for vertical expansion - rounded on the side that connects to icon
     topLeftRadius: openUpward ? iconSize * 0.5 : 0
@@ -81,14 +79,21 @@ Item {
       id: textItem
       anchors.horizontalCenter: parent.horizontalCenter
       anchors.verticalCenter: parent.verticalCenter
-      anchors.verticalCenterOffset: -pillPaddingVertical * 0.5 // Position text slightly higher in the pill
-      text: root.text
+      anchors.verticalCenterOffset: {
+        var offset = openDownward ? pillPaddingVertical * 0.75 : -pillPaddingVertical * 0.75
+        if (forceOpen) {
+          // If its force open, the icon disc background is the same color as the bg pill move text slightly
+          offset += rightOpen ? -Style.marginXXS * scaling : Style.marginXS * scaling
+        }
+        return offset
+      }
+      text: root.text + root.suffix
       font.family: Settings.data.ui.fontFixed
       font.pointSize: Style.fontSizeXXS * scaling
       font.weight: Style.fontWeightMedium
       horizontalAlignment: Text.AlignHCenter
       verticalAlignment: Text.AlignVCenter
-      color: Color.mOnSurface
+      color: Color.mPrimary
       visible: revealed
     }
 

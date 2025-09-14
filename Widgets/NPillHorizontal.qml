@@ -8,6 +8,7 @@ Item {
 
   property string icon: ""
   property string text: ""
+  property string suffix: ""
   property string tooltipText: ""
   property real sizeRatio: 0.8
   property bool autoHide: false
@@ -16,18 +17,9 @@ Item {
   property bool disableOpen: false
   property bool rightOpen: false
   property bool hovered: false
-  property real fontSize: Style.fontSizeXS
 
-  // Bar position detection for pill direction
-  readonly property string barPosition: Settings.data.bar.position
-  readonly property bool isVerticalBar: barPosition === "left" || barPosition === "right"
-
-  // Determine pill direction based on section position
-  readonly property bool openRightward: rightOpen
-  readonly property bool openLeftward: !rightOpen
-
-  // Effective shown state (true if animated open or forced, but not if force closed)
-  readonly property bool revealed: !forceClose && (forceOpen || showPill)
+  // Effective shown state (true if hovered/animated open or forced)
+  readonly property bool revealed: forceOpen || showPill
 
   signal shown
   signal hidden
@@ -42,62 +34,55 @@ Item {
   property bool showPill: false
   property bool shouldAnimateHide: false
 
-  // Sizing logic for horizontal bars
+  // Exposed width logic
   readonly property int iconSize: Math.round(Style.baseWidgetSize * sizeRatio * scaling)
-  readonly property int pillWidth: iconSize
+  readonly property int pillHeight: iconSize
   readonly property int pillPaddingHorizontal: Style.marginS * scaling
-  readonly property int pillPaddingVertical: Style.marginS * scaling
   readonly property int pillOverlap: iconSize * 0.5
-  readonly property int maxPillWidth: Math.max(1, textItem.implicitWidth + pillPaddingHorizontal * 4)
-  readonly property int maxPillHeight: iconSize
+  readonly property int maxPillWidth: Math.max(1, textItem.implicitWidth + pillPaddingHorizontal * 2 + pillOverlap)
 
-  // For horizontal bars: height is just icon size, width includes pill space
-  width: revealed ? (openRightward ? (iconSize + maxPillWidth - pillOverlap) : (iconSize + maxPillWidth - pillOverlap)) : iconSize
-  height: iconSize
+  width: iconSize + Math.max(0, pill.width - pillOverlap)
+  height: pillHeight
 
   Rectangle {
     id: pill
     width: revealed ? maxPillWidth : 1
-    height: revealed ? maxPillHeight : 1
+    height: pillHeight
 
-    // Position based on direction - center the pill relative to the icon
-    x: openLeftward ? (iconCircle.x + iconCircle.width / 2 - width) : (iconCircle.x + iconCircle.width / 2 - pillOverlap)
-    y: 0
+    x: rightOpen ? (iconCircle.x + iconCircle.width / 2) : // Opens right
+                   (iconCircle.x + iconCircle.width / 2) - width // Opens left
 
     opacity: revealed ? Style.opacityFull : Style.opacityNone
     color: Color.mSurfaceVariant
-    border.color: Color.mOutline
-    border.width: Math.max(1, Style.borderS * scaling)
 
-    // Radius logic for horizontal expansion - rounded on the side that connects to icon
-    topLeftRadius: openLeftward ? iconSize * 0.5 : 0
-    bottomLeftRadius: openLeftward ? iconSize * 0.5 : 0
-    topRightRadius: openRightward ? iconSize * 0.5 : 0
-    bottomRightRadius: openRightward ? iconSize * 0.5 : 0
-
+    topLeftRadius: rightOpen ? 0 : pillHeight * 0.5
+    bottomLeftRadius: rightOpen ? 0 : pillHeight * 0.5
+    topRightRadius: rightOpen ? pillHeight * 0.5 : 0
+    bottomRightRadius: rightOpen ? pillHeight * 0.5 : 0
     anchors.verticalCenter: parent.verticalCenter
 
     NText {
       id: textItem
-      anchors.horizontalCenter: parent.horizontalCenter
       anchors.verticalCenter: parent.verticalCenter
-      anchors.horizontalCenterOffset: -pillPaddingHorizontal * 0.5 // Position text slightly left in the pill
-      text: root.text
+      x: {
+        // Better text horizontal centering
+        var centerX = (parent.width - width) / 2
+        var offset = rightOpen ? Style.marginXS * scaling : -Style.marginXS * scaling
+        if (forceOpen) {
+          // If its force open, the icon disc background is the same color as the bg pill move text slightly
+          offset += rightOpen ? -Style.marginXXS * scaling : Style.marginXS * scaling
+        }
+        return centerX + offset
+      }
+      text: root.text + root.suffix
       font.family: Settings.data.ui.fontFixed
-      font.pointSize: Style.fontSizeXXS * scaling
+      font.pointSize: Style.fontSizeXS * scaling
       font.weight: Style.fontWeightBold
-      color: Color.mOnSurface
+      color: Color.mPrimary
       visible: revealed
     }
 
     Behavior on width {
-      enabled: showAnim.running || hideAnim.running
-      NumberAnimation {
-        duration: Style.animationNormal
-        easing.type: Easing.OutCubic
-      }
-    }
-    Behavior on height {
       enabled: showAnim.running || hideAnim.running
       NumberAnimation {
         duration: Style.animationNormal
@@ -119,11 +104,9 @@ Item {
     height: iconSize
     radius: width * 0.5
     color: hovered && !forceOpen ? Color.mTertiary : Color.mSurfaceVariant
-
-    // Icon positioning based on direction
-    x: openLeftward ? (parent.width - width) : 0
-    y: 0
     anchors.verticalCenter: parent.verticalCenter
+
+    x: rightOpen ? 0 : (parent.width - width)
 
     Behavior on color {
       ColorAnimation {
@@ -151,14 +134,6 @@ Item {
       property: "width"
       from: 1
       to: maxPillWidth
-      duration: Style.animationNormal
-      easing.type: Easing.OutCubic
-    }
-    NumberAnimation {
-      target: pill
-      property: "height"
-      from: 1
-      to: maxPillHeight
       duration: Style.animationNormal
       easing.type: Easing.OutCubic
     }
@@ -205,14 +180,6 @@ Item {
     }
     NumberAnimation {
       target: pill
-      property: "height"
-      from: maxPillHeight
-      to: 1
-      duration: Style.animationNormal
-      easing.type: Easing.InCubic
-    }
-    NumberAnimation {
-      target: pill
       property: "opacity"
       from: 1
       to: 0
@@ -228,12 +195,10 @@ Item {
 
   NTooltip {
     id: tooltip
-    target: pill
-    text: root.tooltipText
-    positionLeft: barPosition === "right"
-    positionRight: barPosition === "left"
     positionAbove: Settings.data.bar.position === "bottom"
+    target: pill
     delay: Style.tooltipDelayLong
+    text: root.tooltipText
   }
 
   Timer {
@@ -254,7 +219,7 @@ Item {
       hovered = true
       root.entered()
       tooltip.show()
-      if (disableOpen || forceClose) {
+      if (disableOpen) {
         return
       }
       if (!forceOpen) {
@@ -264,7 +229,7 @@ Item {
     onExited: {
       hovered = false
       root.exited()
-      if (!forceOpen && !forceClose) {
+      if (!forceOpen) {
         hide()
       }
       tooltip.hide()

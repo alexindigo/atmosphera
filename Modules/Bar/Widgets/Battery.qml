@@ -29,7 +29,7 @@ Item {
     return {}
   }
 
-  // Resolve settings: try user settings or defaults from BarWidgetRegistry
+  readonly property bool isBarVertical: Settings.data.bar.position === "left" || Settings.data.bar.position === "right"
   readonly property string displayMode: widgetSettings.displayMode !== undefined ? widgetSettings.displayMode : widgetMetadata.displayMode
   readonly property real warningThreshold: widgetSettings.warningThreshold !== undefined ? widgetSettings.warningThreshold : widgetMetadata.warningThreshold
 
@@ -87,6 +87,7 @@ Item {
     rightOpen: BarWidgetRegistry.getNPillDirection(root)
     icon: testMode ? BatteryService.getIcon(testPercent, testCharging, true) : BatteryService.getIcon(percent, charging, isReady)
     text: (isReady || testMode) ? Math.round(percent) : "-"
+    suffix: "%"
     autoHide: false
     forceOpen: isReady && (testMode || battery.isLaptopBattery) && displayMode === "alwaysShow"
     forceClose: displayMode === "alwaysHide"
