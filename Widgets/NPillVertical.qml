@@ -125,7 +125,7 @@ Item {
     width: iconSize
     height: iconSize
     radius: width * 0.5
-    color: hovered && !forceOpen ? Color.mTertiary : Color.mSurfaceVariant
+    color: hovered ? Color.mTertiary : Color.mSurfaceVariant
 
     // Icon positioning based on direction
     x: 0
