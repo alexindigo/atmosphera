@@ -5,8 +5,12 @@ import qs.Commons
 import qs.Services
 import qs.Widgets
 
-Item {
-  id: root
+
+
+  Rectangle {
+    id: root
+
+      
 
   property ShellScreen screen
   property real scaling: 1.0
@@ -37,14 +41,11 @@ Item {
   readonly property bool showNetworkStats: (widgetSettings.showNetworkStats !== undefined) ? widgetSettings.showNetworkStats : widgetMetadata.showNetworkStats
   readonly property bool showDiskUsage: (widgetSettings.showDiskUsage !== undefined) ? widgetSettings.showDiskUsage : widgetMetadata.showDiskUsage
 
-  implicitWidth: backgroundContainer.width
-  implicitHeight: backgroundContainer.height
 
-  Rectangle {
-    id: backgroundContainer
+    
     anchors.centerIn: parent
-    width: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : Math.round(horizontalLayout.implicitWidth + Style.marginS * 2 * scaling)
-    height: (barPosition === "left" || barPosition === "right") ? Math.round(verticalLayout.implicitHeight + Style.marginS * 2 * scaling) : Math.round(Style.capsuleHeight * scaling)
+    implicitWidth: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : Math.round(horizontalLayout.implicitWidth + Style.marginM * 2 * scaling)
+    implicitHeight: (barPosition === "left" || barPosition === "right") ? Math.round(verticalLayout.implicitHeight + Style.marginM * 2 * scaling) : Math.round(Style.capsuleHeight * scaling)
     radius: Math.round(Style.radiusM * scaling)
     color: Color.mSurfaceVariant
 
@@ -431,4 +432,4 @@ Item {
       }
     }
   }
-}
+
