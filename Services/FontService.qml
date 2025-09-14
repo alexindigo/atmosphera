@@ -3,6 +3,7 @@ pragma Singleton
 import QtQuick
 import QtQuick.Controls
 import Quickshell
+import Quickshell.Io
 import qs.Commons
 
 Singleton {
@@ -12,11 +13,21 @@ Singleton {
   property ListModel monospaceFonts: ListModel {}
   property ListModel displayFonts: ListModel {}
   property bool fontsLoaded: false
+  property var fontconfigMonospaceFonts: []
 
   // -------------------------------------------
   function init() {
     Logger.log("Font", "Service started")
+    loadFontconfigMonospaceFonts()
     loadSystemFonts()
+  }
+
+  function loadFontconfigMonospaceFonts() {
+    Logger.log("Font", "Loading monospace fonts via fontconfig...")
+
+    // Use fc-list :mono to get all monospace fonts
+    fontconfigProcess.command = ["fc-list", ":mono", "family"]
+    fontconfigProcess.running = true
   }
 
   function loadSystemFonts() {
@@ -71,6 +82,12 @@ Singleton {
   }
 
   function isMonospaceFont(fontName) {
+    // First, check if fontconfig detected this as monospace
+    if (fontconfigMonospaceFonts.indexOf(fontName) !== -1) {
+      return true
+    }
+
+    // Fallback to pattern matching if fontconfig is not available or didn't detect it
     var patterns = ["mono", "monospace", "fixed", "console", "terminal", "typewriter", "courier", "dejavu", "liberation", "source code", "fira code", "jetbrains", "cascadia", "hack", "inconsolata", "roboto mono", "ubuntu mono", "menlo", "consolas", "monaco", "andale mono"]
     var lowerFontName = fontName.toLowerCase()
 
@@ -152,5 +169,48 @@ Singleton {
     }
 
     return results
+  }
+
+  // Process for fontconfig commands
+  Process {
+    id: fontconfigProcess
+    running: false
+
+    stdout: StdioCollector {
+      onStreamFinished: {
+        if (this.text !== "") {
+          var lines = this.text.split('\n')
+          fontconfigMonospaceFonts = []
+
+          for (var i = 0; i < lines.length; i++) {
+            var line = lines[i].trim()
+            if (line && line !== "") {
+              // Extract font family name (remove any style info in brackets)
+              var familyName = line.split(',')[0].trim()
+              if (familyName && fontconfigMonospaceFonts.indexOf(familyName) === -1) {
+                fontconfigMonospaceFonts.push(familyName)
+              }
+            }
+          }
+
+          Logger.log("Font", "Found", fontconfigMonospaceFonts.length, "monospace fonts via fontconfig")
+        }
+      }
+    }
+
+    stderr: StdioCollector {
+      onStreamFinished: {
+        if (this.text !== "") {
+          Logger.log("Font", "Fontconfig stderr:", this.text)
+        }
+      }
+    }
+
+    onExited: function (exitCode, exitStatus) {
+      if (exitCode !== 0) {
+        Logger.log("Font", "Fontconfig not available or failed, falling back to pattern matching")
+        fontconfigMonospaceFonts = []
+      }
+    }
   }
 }
