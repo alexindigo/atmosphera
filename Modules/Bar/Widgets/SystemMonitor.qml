@@ -43,8 +43,8 @@ Item {
   Rectangle {
     id: backgroundContainer
     anchors.centerIn: parent
-    width: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : Math.round(horizontalLayout.implicitWidth + Style.marginS * 2 * scaling)
-    height: (barPosition === "left" || barPosition === "right") ? Math.round(verticalLayout.implicitHeight + Style.marginS * 2 * scaling) : Math.round(Style.capsuleHeight * scaling)
+    width: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : Math.round(horizontalLayout.implicitWidth + Style.marginM * 2 * scaling)
+    height: (barPosition === "left" || barPosition === "right") ? Math.round(verticalLayout.implicitHeight + Style.marginM * 2 * scaling) : Math.round(Style.capsuleHeight * scaling)
     radius: Math.round(Style.radiusM * scaling)
     color: Color.mSurfaceVariant
 
