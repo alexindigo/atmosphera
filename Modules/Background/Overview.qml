@@ -60,6 +60,7 @@ Variants {
       MultiEffect {
         anchors.fill: parent
         source: bgImage
+        autoPaddingEnabled: false
         blurEnabled: true
         blur: 0.48
         blurMax: 128
