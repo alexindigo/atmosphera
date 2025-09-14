@@ -13,7 +13,7 @@ QtObject {
     "united states": "us",
     "us english": "us",
     "british": "gb",
-    "uk": "gb",
+    "uk": "ua", // FIXED: Ukrainian language code should map to Ukraine
     "united kingdom": "gb",
     "english (uk)": "gb",
     "canadian": "ca",
@@ -91,6 +91,7 @@ QtObject {
     "slovak": "sk",
     "slovenčina": "sk",
     "slovakia": "sk",
+    "uk": "ua", // Ukrainian language code
     "ukrainian": "ua",
     "українська": "ua",
     "ukraine": "ua",
