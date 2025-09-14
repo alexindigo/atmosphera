@@ -80,7 +80,7 @@ Item {
       id: textItem
       anchors.horizontalCenter: parent.horizontalCenter
       anchors.verticalCenter: parent.verticalCenter
-      anchors.horizontalCenterOffset: openLeftward ? -6 * scaling : 6 * scaling // Adjust based on opening direction
+      anchors.horizontalCenterOffset: 0 // Center the text properly in the pill
       text: root.text
       font.family: Settings.data.ui.fontFixed
       font.pointSize: Style.fontSizeXXS * scaling
