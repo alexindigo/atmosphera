@@ -166,6 +166,8 @@ Variants {
 
         // Position above the bar if it's at bottom
         anchors.bottom: true
+
+        // TODO fixme
         margins.bottom: barAtBottom ? barHeight + floatingMargin : floatingMargin
 
         // Rectangle {

@@ -150,7 +150,7 @@ Loader {
         target: ScalingService
         function onScaleChanged(screenName, scale) {
           if ((screen !== null) && (screenName === screen.name)) {
-            root.scaling = scale
+            root.scaling = scaling = scale
           }
         }
       }
@@ -159,7 +159,7 @@ Loader {
         target: panelWindow
         function onScreenChanged() {
           root.screen = screen
-          root.scaling = ScalingService.getScreenScale(screen)
+          root.scaling = scaling = ScalingService.getScreenScale(screen)
 
           // It's mandatory to force refresh the subloader to ensure the scaling is properly dispatched
           panelContentLoader.active = false

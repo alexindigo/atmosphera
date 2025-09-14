@@ -44,9 +44,12 @@ Variants {
       implicitHeight: Math.round(toast.visible ? toast.height + Style.marginM * scaling : 1)
 
       // Set margins based on bar position
-      margins.top: Settings.data.bar.position === "top" ? (Style.barHeight + Style.marginS + (Settings.data.bar.floating ? Settings.data.bar.marginVertical : 0)) * scaling : 0
-      margins.bottom: Settings.data.bar.position === "bottom" ? (Style.barHeight + Style.marginS + (Settings.data.bar.floating ? Settings.data.bar.marginVertical : 0)) * scaling : 0
+      margins.top: Settings.data.bar.position === "top" ? (Style.barHeight + Style.marginS + (Settings.data.bar.floating ? Settings.data.bar.marginVertical : 0)) : 0
+
+      margins.bottom: Settings.data.bar.position === "bottom" ? (Style.barHeight + Style.marginS + (Settings.data.bar.floating ? Settings.data.bar.marginVertical : 0)) : 0
+
       margins.right: (Settings.data.bar.position === "left" || Settings.data.bar.position === "top" || Settings.data.bar.position === "bottom") ? Style.marginM * scaling : 0
+
       margins.left: Settings.data.bar.position === "right" ? Style.marginM * scaling : 0
 
       // Transparent background

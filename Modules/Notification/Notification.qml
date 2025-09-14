@@ -33,24 +33,50 @@ Variants {
       screen: modelData
       color: Color.transparent
 
-<<<<<<< HEAD
       // Position based on bar location - always at top
       anchors.top: true
       anchors.right: Settings.data.bar.position === "right" || Settings.data.bar.position === "top" || Settings.data.bar.position === "bottom"
       anchors.left: Settings.data.bar.position === "left"
-      margins.top: Settings.data.bar.position === "top" ? (Style.barHeight + Style.marginM + (Settings.data.bar.floating ? Settings.data.bar.marginTop : 0)) * scaling : Style.marginM * scaling
-      margins.bottom: Settings.data.bar.position === "bottom" ? (Style.barHeight + Style.marginM + (Settings.data.bar.floating ? Settings.data.bar.marginBottom : 0)) * scaling : 0
-      margins.right: (Settings.data.bar.position === "right" || Settings.data.bar.position === "top" || Settings.data.bar.position === "bottom") ? (Settings.data.bar.position === "right" ? (Style.barHeight + Style.marginM) * scaling : Style.marginM * scaling) : 0
-      margins.left: Settings.data.bar.position === "left" ? (Style.barHeight + Style.marginM) * scaling : 0
-=======
-      // Position based on bar location
-      anchors.top: Settings.data.bar.position === "top"
-      anchors.bottom: Settings.data.bar.position === "bottom"
-      anchors.right: true
-      margins.top: Settings.data.bar.position === "top" ? (Style.barHeight + Style.marginM + (Settings.data.bar.floating ? Settings.data.bar.marginVertical : 0)) * scaling : 0
-      margins.bottom: Settings.data.bar.position === "bottom" ? (Style.barHeight + Style.marginM + (Settings.data.bar.floating ? Settings.data.bar.marginVertical : 0)) * scaling : 0
-      margins.right: Style.marginM * scaling
->>>>>>> main
+
+      margins.top: {
+        switch (Settings.data.bar.position) {
+        case "top":
+          return (Style.barHeight + Style.marginM) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL * scaling : 0)
+        default:
+          return Style.marginM * scaling
+        }
+      }
+
+      margins.bottom: {
+        switch (Settings.data.bar.position) {
+        case "bottom":
+          return (Style.barHeight + Style.marginM) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL * scaling : 0)
+        default:
+          return 0
+        }
+      }
+
+      margins.left: {
+        switch (Settings.data.bar.position) {
+        case "left":
+          return (Style.barHeight + Style.marginM) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL * scaling : 0)
+        default:
+          return 0
+        }
+      }
+
+      margins.right: {
+        switch (Settings.data.bar.position) {
+        case "right":
+          return (Style.barHeight + Style.marginM) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL * scaling : 0)
+        case "top":
+        case "bottom":
+          return Style.marginM * scaling
+        default:
+          return 0
+        }
+      }
+
       implicitWidth: 360 * scaling
       implicitHeight: Math.min(notificationStack.implicitHeight, (NotificationService.maxVisible * 120) * scaling)
       //WlrLayershell.layer: WlrLayer.Overlay

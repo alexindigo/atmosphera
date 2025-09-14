@@ -84,10 +84,9 @@ Item {
         if (Settings.data.appLauncher.useApp2Unit && app.id) {
           Logger.log("ApplicationsPlugin", `Using app2unit for: ${app.id}`)
           if (app.runInTerminal)
-              Quickshell.execDetached(["app2unit", "--", app.id + ".desktop"])
+            Quickshell.execDetached(["app2unit", "--", app.id + ".desktop"])
           else
-              Quickshell.execDetached(["app2unit", "--"].concat(app.command))
-
+            Quickshell.execDetached(["app2unit", "--"].concat(app.command))
         } else if (app.execute) {
           app.execute()
         } else if (app.exec) {
