@@ -101,9 +101,9 @@ Item {
       }
     }
 
-    onClicked: {
+    onRightClicked: {
       var settingsPanel = PanelService.getPanel("settingsPanel")
-      settingsPanel.requestedTab = SettingsPanel.Tab.Brightness
+      settingsPanel.requestedTab = SettingsPanel.Tab.Display
       settingsPanel.open()
     }
   }

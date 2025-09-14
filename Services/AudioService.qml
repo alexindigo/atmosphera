@@ -105,7 +105,7 @@ Singleton {
     }
   }
 
-  function setMuted(muted: bool) {
+  function setOutputMuted(muted: bool) {
     if (sink?.ready && sink?.audio) {
       sink.audio.muted = muted
     } else {

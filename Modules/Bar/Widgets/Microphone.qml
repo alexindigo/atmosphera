@@ -106,12 +106,12 @@ Item {
       }
     }
     onClicked: {
+      AudioService.setInputMuted(!AudioService.inputMuted)
+    }
+    onRightClicked: {
       var settingsPanel = PanelService.getPanel("settingsPanel")
       settingsPanel.requestedTab = SettingsPanel.Tab.Audio
       settingsPanel.open()
-    }
-    onRightClicked: {
-      AudioService.setInputMuted(!AudioService.inputMuted)
     }
     onMiddleClicked: {
       Quickshell.execDetached(["pwvucontrol"])
