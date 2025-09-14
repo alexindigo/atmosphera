@@ -37,16 +37,14 @@ Item {
   readonly property bool showNetworkStats: (widgetSettings.showNetworkStats !== undefined) ? widgetSettings.showNetworkStats : widgetMetadata.showNetworkStats
   readonly property bool showDiskUsage: (widgetSettings.showDiskUsage !== undefined) ? widgetSettings.showDiskUsage : widgetMetadata.showDiskUsage
 
-  implicitWidth: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : Math.round(horizontalLayout.implicitWidth + Style.marginS * 2 * scaling)
-
-  implicitHeight: (barPosition === "left" || barPosition === "right") ? Math.round(verticalLayout.implicitHeight + Style.marginS * 2 * scaling) : Math.round(Style.barHeight * scaling)
-
+  implicitWidth: backgroundContainer.width
+  implicitHeight: backgroundContainer.height
 
   Rectangle {
     id: backgroundContainer
     anchors.centerIn: parent
-    width: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : parent.width
-    height: (barPosition === "left" || barPosition === "right") ? parent.height : Math.round(Style.capsuleHeight * scaling)
+    width: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : Math.round(horizontalLayout.implicitWidth + Style.marginS * 2 * scaling)
+    height: (barPosition === "left" || barPosition === "right") ? Math.round(verticalLayout.implicitHeight + Style.marginS * 2 * scaling) : Math.round(Style.capsuleHeight * scaling)
     radius: Math.round(Style.radiusM * scaling)
     color: Color.mSurfaceVariant
 
@@ -251,7 +249,6 @@ Item {
       spacing: Style.marginS * scaling
       visible: barPosition === "left" || barPosition === "right"
 
-
       // CPU Usage Component
       Item {
         Layout.preferredHeight: Math.round(Style.capsuleHeight * scaling)
@@ -279,7 +276,6 @@ Item {
             font.pointSize: Style.fontSizeS * scaling
             anchors.horizontalCenter: parent.horizontalCenter
           }
-
         }
       }
 
@@ -295,7 +291,6 @@ Item {
           anchors.centerIn: parent
           spacing: Style.marginXXS * scaling
 
-
           NText {
             text: `${SystemStatService.cpuTemp}°`
             font.family: Settings.data.ui.fontFixed
@@ -306,13 +301,12 @@ Item {
             color: Color.mPrimary
           }
 
-                    NIcon {
+          NIcon {
             icon: "cpu-temperature"
             // Fire is so tall, we need to make it smaller
             font.pointSize: Style.fontSizeXS * scaling
             anchors.horizontalCenter: parent.horizontalCenter
           }
-
         }
       }
 
@@ -356,7 +350,7 @@ Item {
         Column {
           id: networkDownloadRowVertical
           anchors.centerIn: parent
-           spacing: Style.marginXXS * scaling
+          spacing: Style.marginXXS * scaling
 
           NIcon {
             icon: "download-speed"
@@ -386,7 +380,7 @@ Item {
         Column {
           id: networkUploadRowVertical
           anchors.centerIn: parent
-           spacing: Style.marginXXS * scaling
+          spacing: Style.marginXXS * scaling
 
           NIcon {
             icon: "upload-speed"
@@ -416,7 +410,7 @@ Item {
         ColumnLayout {
           id: diskUsageRowVertical
           anchors.centerIn: parent
-           spacing: Style.marginXXS * scaling
+          spacing: Style.marginXXS * scaling
 
           NIcon {
             icon: "storage"
