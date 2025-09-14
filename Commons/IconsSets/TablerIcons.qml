@@ -46,7 +46,7 @@ Singleton {
     "lock": "lock",
     "logout": "logout",
     "reboot": "refresh",
-    "suspend": "player-pause-filled",
+    "suspend": "player-pause",
     "nightlight-on": "moon",
     "nightlight-off": "moon-off",
     "nightlight-forced": "moon-stars",
