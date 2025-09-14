@@ -24,12 +24,12 @@ ColumnLayout {
 
   NComboBox {
     label: "Display mode"
-    description: "Choose how the percentage is displayed."
+    description: "Choose how you'd like this value to appear."
     minimumWidth: 134 * scaling
     model: ListModel {
       ListElement {
-        key: "normal"
-        name: "Normal"
+        key: "onhover"
+        name: "On Hover"
       }
       ListElement {
         key: "alwaysShow"
