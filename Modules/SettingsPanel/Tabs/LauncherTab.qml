@@ -7,14 +7,12 @@ import qs.Widgets
 
 ColumnLayout {
   id: root
+  spacing: Style.marginL * scaling
 
   NHeader {
     label: "Appearance"
     description: "Configure the launcher behavior and appearance."
   }
-
-  ColumnLayout {
-    spacing: Style.marginL * scaling
 
     NComboBox {
       id: launcherPosition
@@ -110,7 +108,7 @@ ColumnLayout {
       checked: Settings.data.appLauncher.useApp2Unit
       onToggled: checked => Settings.data.appLauncher.useApp2Unit = checked
     }
-  }
+  
 
   NDivider {
     Layout.fillWidth: true

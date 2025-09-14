@@ -8,12 +8,9 @@ import qs.Widgets
 
 ColumnLayout {
   id: root
-  spacing: 0
+  spacing: Style.marginL * scaling
 
-  NHeader {
-    label: "Behavior"
-    description: "Main settings for Noctalia's colors."
-  }
+
 
   // Cache for scheme JSON (can be flat or {dark, light})
   property var schemeColorsCache: ({})
@@ -109,10 +106,12 @@ ColumnLayout {
     }
   }
 
+
   // Main Toggles - Dark Mode / Matugen
-  ColumnLayout {
-    spacing: Style.marginL * scaling
-    Layout.fillWidth: true
+  NHeader {
+    label: "Behavior"
+    description: "Main settings for Noctalia's colors."
+  }
 
     // Dark Mode Toggle (affects both Matugen and predefined schemes that provide variants)
     NToggle {
@@ -143,7 +142,7 @@ ColumnLayout {
                    }
                  }
     }
-  }
+ 
 
   NDivider {
     Layout.fillWidth: true

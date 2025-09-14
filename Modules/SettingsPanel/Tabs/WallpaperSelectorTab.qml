@@ -11,7 +11,6 @@ ColumnLayout {
   width: parent.width
   spacing: Style.marginL * scaling
 
-
   property list<string> wallpapersList: []
   property string currentWallpaper: ""
 

@@ -220,6 +220,7 @@ ColumnLayout {
 
     NHeader {
       label: "Brightness"
+      description: "Adjust brightness related settings."
     }
 
     // Brightness Step Section
@@ -230,7 +231,7 @@ ColumnLayout {
       NSpinBox {
         Layout.fillWidth: true
         label: "Brightness Step Size"
-        description: "Adjust the step size for brightness changes (scroll wheel, keyboard shortcuts)."
+        description: "Adjust the step size for brightness changes (scroll wheel and keyboard shortcuts)."
         minimum: 1
         maximum: 50
         value: Settings.data.brightness.brightnessStep

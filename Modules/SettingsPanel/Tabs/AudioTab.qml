@@ -12,7 +12,7 @@ ColumnLayout {
 
   NHeader {
     label: "Volumes"
-    description: "Configure system audio, devices, and media player preferences."
+    description: "Configure volume controls and audio levels."
   }
 
   property real localVolume: AudioService.volume
@@ -25,9 +25,9 @@ ColumnLayout {
   }
 
   // Master Volume
-    ColumnLayout {
-      spacing: Style.marginXXS * scaling
-      Layout.fillWidth: true
+  ColumnLayout {
+    spacing: Style.marginXXS * scaling
+    Layout.fillWidth: true
 
     NLabel {
       label: "Output Volume"
@@ -162,6 +162,7 @@ ColumnLayout {
 
     NHeader {
       label: "Audio Devices"
+      description: "Configure audio input and output devices."
     }
 
     // -------------------------------
@@ -233,6 +234,7 @@ ColumnLayout {
 
     NHeader {
       label: "Media Player"
+      description: "Configure your favorite media players."
     }
 
     // Preferred player
@@ -355,6 +357,7 @@ ColumnLayout {
 
     NHeader {
       label: "Audio Visualizer"
+      description: "Customize visual effects that respond to audio playback."
     }
 
     // AudioService Visualizer section

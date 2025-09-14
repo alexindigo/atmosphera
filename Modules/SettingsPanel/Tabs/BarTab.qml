@@ -9,11 +9,8 @@ import qs.Modules.SettingsPanel.Bar
 
 ColumnLayout {
   id: root
+  spacing: Style.marginL * scaling
 
-  NHeader {
-    label: "Appearance"
-    description: "Configure bar appearance and positioning."
-  }
 
   // Helper functions to update arrays immutably
   function addMonitor(list, name) {
@@ -43,9 +40,12 @@ ColumnLayout {
       panel.enableBackgroundClick()
     }
   }
+  
+  NHeader {
+    label: "Appearance"
+    description: "Configure bar appearance and positioning."
+  }
 
-  ColumnLayout {
-    spacing: Style.marginL * scaling
 
     RowLayout {
       NComboBox {
@@ -75,34 +75,34 @@ ColumnLayout {
       }
     }
 
-        ColumnLayout {
+    ColumnLayout {
       spacing: Style.marginXXS * scaling
       Layout.fillWidth: true
 
-    NLabel {
-      label: "Background Opacity"
-      description: "Adjust the background opacity of the bar."
-    }
-
-    RowLayout {
-      NSlider {
-        Layout.fillWidth: true
-        from: 0
-        to: 1
-        stepSize: 0.01
-        value: Settings.data.bar.backgroundOpacity
-        onMoved: Settings.data.bar.backgroundOpacity = value
-        cutoutColor: Color.mSurface
+      NLabel {
+        label: "Background Opacity"
+        description: "Adjust the background opacity of the bar."
       }
 
-      NText {
-        text: Math.floor(Settings.data.bar.backgroundOpacity * 100) + "%"
-        Layout.alignment: Qt.AlignVCenter
-        Layout.leftMargin: Style.marginS * scaling
-        color: Color.mOnSurface
-      }
-    }
+      RowLayout {
+        NSlider {
+          Layout.fillWidth: true
+          from: 0
+          to: 1
+          stepSize: 0.01
+          value: Settings.data.bar.backgroundOpacity
+          onMoved: Settings.data.bar.backgroundOpacity = value
+          cutoutColor: Color.mSurface
         }
+
+        NText {
+          text: Math.floor(Settings.data.bar.backgroundOpacity * 100) + "%"
+          Layout.alignment: Qt.AlignVCenter
+          Layout.leftMargin: Style.marginS * scaling
+          color: Color.mOnSurface
+        }
+      }
+    }
     NToggle {
       Layout.fillWidth: true
       label: "Floating Bar"
@@ -189,7 +189,7 @@ ColumnLayout {
         }
       }
     }
-  }
+  
 
   NDivider {
     Layout.fillWidth: true

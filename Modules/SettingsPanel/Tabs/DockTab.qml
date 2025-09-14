@@ -10,10 +10,7 @@ ColumnLayout {
   id: root
   spacing: Style.marginL * scaling
 
-  NHeader {
-    label: "Appearance"
-    description: "Configure dock behavior and appearance."
-  }
+
 
   // Helper functions to update arrays immutably
   function addMonitor(list, name) {
@@ -26,6 +23,11 @@ ColumnLayout {
     return (list || []).filter(function (n) {
       return n !== name
     })
+  }
+
+  NHeader {
+    label: "Appearance"
+    description: "Configure dock behavior and appearance."
   }
 
   NToggle {

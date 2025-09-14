@@ -7,10 +7,11 @@ import qs.Widgets
 
 ColumnLayout {
   id: root
+  spacing: Style.marginL * scaling
 
   NHeader {
- label: "Your Location" 
-  description: "Set your location for weather, time zones, and scheduling."
+    label: "Your Location"
+    description: "Set your location for weather, time zones, and scheduling."
   }
 
   // Location section
@@ -64,6 +65,7 @@ ColumnLayout {
 
     NHeader {
       label: "Weather"
+      description: "Configure weather display preferences and temperature units."
     }
 
     NToggle {

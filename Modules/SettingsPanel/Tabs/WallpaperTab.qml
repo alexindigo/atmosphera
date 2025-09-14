@@ -9,10 +9,11 @@ import qs.Widgets
 
 ColumnLayout {
   id: root
+  spacing: Style.marginL * scaling
 
   NHeader {
-    label: "Wallpaper Management"
-    description: "Configure wallpaper settings, automation, and appearance options."
+    label: "Wallpaper Settings"
+    description: "Control how wallpapers are managed and displayed."
   }
 
   NToggle {
@@ -27,6 +28,7 @@ ColumnLayout {
     visible: Settings.data.wallpaper.enabled
     spacing: Style.marginL * scaling
     Layout.fillWidth: true
+    
     NTextInput {
       label: "Wallpaper Directory"
       description: "Path to your common wallpaper directory."
@@ -66,7 +68,7 @@ ColumnLayout {
           delegate: RowLayout {
             NText {
               text: (modelData.name || "Unknown")
-              color: Color.mSecondary
+              color: Color.mPrimary
               font.weight: Style.fontWeightBold
               Layout.preferredWidth: 90 * scaling
             }
