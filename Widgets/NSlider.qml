@@ -44,28 +44,17 @@ Slider {
       height: knobDiameter + cutoutExtra
       radius: width / 2
       color: root.cutoutColor !== undefined ? root.cutoutColor : Color.mSurface
-      x: Math.max(0, Math.min(parent.width - width, root.visualPosition * (parent.width - root.knobDiameter) - cutoutExtra / 2))
+      x: Math.max(0, Math.min(parent.width - width, Math.round(root.visualPosition * (parent.width - root.knobDiameter) - cutoutExtra / 2)))
       y: (parent.height - height) / 2
+      anchors.verticalCenter: parent.verticalCenter
     }
   }
 
   handle: Item {
     width: knob.implicitWidth
     height: knob.implicitHeight
-    x: root.leftPadding + root.visualPosition * (root.availableWidth - width)
+    x: root.leftPadding + Math.round(root.visualPosition * (root.availableWidth - width))
     y: root.topPadding + root.availableHeight / 2 - height / 2
-
-    // Subtle shadow for a more polished look
-    MultiEffect {
-      anchors.fill: knob
-      source: knob
-      shadowEnabled: true
-      shadowColor: Color.mShadow
-      shadowOpacity: 0.25
-      shadowHorizontalOffset: 0
-      shadowVerticalOffset: 1
-      shadowBlur: 8
-    }
 
     Rectangle {
       id: knob
@@ -75,6 +64,7 @@ Slider {
       color: root.pressed ? Color.mTertiary : Color.mSurface
       border.color: Color.mPrimary
       border.width: Math.max(1, Style.borderL * scaling)
+      anchors.centerIn: parent
 
       Behavior on color {
         ColorAnimation {

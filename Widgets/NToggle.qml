@@ -54,6 +54,7 @@ RowLayout {
       border.color: root.checked ? Color.mSurface : Color.mSurface
       border.width: Math.max(1, Style.borderM * scaling)
       anchors.verticalCenter: parent.verticalCenter
+      anchors.verticalCenterOffset: 0
       x: root.checked ? switcher.width - width - 3 * scaling : 3 * scaling
 
       Behavior on x {
