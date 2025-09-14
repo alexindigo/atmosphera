@@ -8,6 +8,11 @@ import qs.Widgets
 ColumnLayout {
   id: root
 
+  NHeader {
+    title: "Launcher Settings"
+    description: "Configure the application launcher panel behavior and appearance."
+  }
+
   ColumnLayout {
     spacing: Style.marginL * scaling
 

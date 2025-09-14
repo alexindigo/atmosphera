@@ -10,6 +10,11 @@ ColumnLayout {
   id: root
   spacing: 0
 
+  NHeader {
+    title: "Color Schemes"
+    description: "Choose and customize color schemes for your interface."
+  }
+
   // Cache for scheme JSON (can be flat or {dark, light})
   property var schemeColorsCache: ({})
 
@@ -151,19 +156,9 @@ ColumnLayout {
     spacing: Style.marginM * scaling
     Layout.fillWidth: true
 
-    NText {
-      text: "Predefined Color Schemes"
-      font.pointSize: Style.fontSizeXXL * scaling
-      font.weight: Style.fontWeightBold
-      color: Color.mSecondary
-    }
-
-    NText {
-      text: "To use these color schemes, you must turn off Matugen. With Matugen enabled, colors are automatically generated from your wallpaper."
-      font.pointSize: Style.fontSizeM * scaling
-      color: Color.mOnSurfaceVariant
-      Layout.fillWidth: true
-      wrapMode: Text.WordWrap
+    NHeader {
+      title: "Predefined Color Schemes"
+      description: "To use these color schemes, you must turn off Matugen. With Matugen enabled, colors are automatically generated from your wallpaper."
     }
 
     // Color Schemes Grid

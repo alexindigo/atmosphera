@@ -399,6 +399,10 @@ Singleton {
         property list<string> monitors: []
         // Last time the user opened the notification history (ms since epoch)
         property real lastSeenTs: 0
+        // Duration settings for different urgency levels (in seconds)
+        property int lowUrgencyDuration: 3
+        property int normalUrgencyDuration: 8
+        property int criticalUrgencyDuration: 15
       }
 
       // audio

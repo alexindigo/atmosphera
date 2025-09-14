@@ -12,6 +12,11 @@ ColumnLayout {
 
   spacing: Style.marginL * scaling
 
+  NHeader {
+    title: "Wallpaper Selector"
+    description: "Browse and select wallpapers from your configured directory."
+  }
+
   property list<string> wallpapersList: []
   property string currentWallpaper: ""
 
@@ -42,11 +47,8 @@ ColumnLayout {
   }
 
   // Current wallpaper display
-  NText {
-    text: "Current Wallpaper"
-    font.pointSize: Style.fontSizeXXL * scaling
-    font.weight: Style.fontWeightBold
-    color: Color.mSecondary
+  NHeader {
+    title: "Current Wallpaper"
   }
 
   Rectangle {
@@ -80,18 +82,9 @@ ColumnLayout {
       Layout.fillWidth: true
 
       // Wallpaper grid
-      NText {
-        text: "Wallpaper Selector"
-        font.pointSize: Style.fontSizeXXL * scaling
-        font.weight: Style.fontWeightBold
-        color: Color.mSecondary
-      }
-
-      NText {
-        text: "Click on a wallpaper to set it as your current wallpaper."
-        color: Color.mOnSurfaceVariant
-        wrapMode: Text.WordWrap
-        Layout.fillWidth: true
+      NHeader {
+        title: "Wallpaper Selector"
+        description: "Click on a wallpaper to set it as your current wallpaper."
       }
     }
 

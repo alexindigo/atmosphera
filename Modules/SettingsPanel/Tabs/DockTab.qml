@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import Quickshell
 import qs.Commons
 import qs.Services
 import qs.Widgets
@@ -9,6 +10,24 @@ ColumnLayout {
   id: contentColumn
   spacing: Style.marginL * scaling
   width: root.width
+
+  NHeader {
+    title: "Dock Settings"
+    description: "Configure dock behavior, appearance, and monitor settings."
+  }
+
+  // Helper functions to update arrays immutably
+  function addMonitor(list, name) {
+    const arr = (list || []).slice()
+    if (!arr.includes(name))
+      arr.push(name)
+    return arr
+  }
+  function removeMonitor(list, name) {
+    return (list || []).filter(function (n) {
+      return n !== name
+    })
+  }
 
   NToggle {
     label: "Auto-hide"
@@ -24,12 +43,52 @@ ColumnLayout {
     onToggled: checked => Settings.data.dock.exclusive = checked
   }
 
+  NDivider {
+    Layout.fillWidth: true
+    Layout.topMargin: Style.marginXL * scaling
+    Layout.bottomMargin: Style.marginXL * scaling
+  }
+
+  // Monitor Configuration
   ColumnLayout {
     spacing: Style.marginXXS * scaling
     Layout.fillWidth: true
 
-    NLabel {
-      label: "Background Opacity"
+    NHeader {
+      title: "Monitor Configuration"
+      description: "Choose which monitors should display the dock."
+    }
+
+    Repeater {
+      model: Quickshell.screens || []
+      delegate: NCheckbox {
+        Layout.fillWidth: true
+        label: `${modelData.name || "Unknown"}${modelData.model ? `: ${modelData.model}` : ""}`
+        description: `${modelData.width}x${modelData.height} at (${modelData.x}, ${modelData.y})`
+        checked: (Settings.data.dock.monitors || []).indexOf(modelData.name) !== -1
+        onToggled: checked => {
+                     if (checked) {
+                       Settings.data.dock.monitors = addMonitor(Settings.data.dock.monitors, modelData.name)
+                     } else {
+                       Settings.data.dock.monitors = removeMonitor(Settings.data.dock.monitors, modelData.name)
+                     }
+                   }
+      }
+    }
+  }
+
+  NDivider {
+    Layout.fillWidth: true
+    Layout.topMargin: Style.marginXL * scaling
+    Layout.bottomMargin: Style.marginXL * scaling
+  }
+
+  ColumnLayout {
+    spacing: Style.marginXXS * scaling
+    Layout.fillWidth: true
+
+    NHeader {
+      title: "Background Opacity"
       description: "Adjust the background opacity."
     }
 
@@ -53,12 +112,18 @@ ColumnLayout {
     }
   }
 
+  NDivider {
+    Layout.fillWidth: true
+    Layout.topMargin: Style.marginXL * scaling
+    Layout.bottomMargin: Style.marginXL * scaling
+  }
+
   ColumnLayout {
     spacing: Style.marginXXS * scaling
     Layout.fillWidth: true
 
-    NLabel {
-      label: "Dock Floating Distance"
+    NHeader {
+      title: "Dock Floating Distance"
       description: "Adjust the floating distance from the screen edge."
     }
 

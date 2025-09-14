@@ -9,6 +9,11 @@ import qs.Widgets
 ColumnLayout {
   id: root
 
+  NHeader {
+    title: "Profile"
+    description: "Configure your user profile and avatar settings."
+  }
+
   // Profile section
   RowLayout {
     Layout.fillWidth: true
@@ -48,12 +53,8 @@ ColumnLayout {
     spacing: Style.marginL * scaling
     Layout.fillWidth: true
 
-    NText {
-      text: "User Interface"
-      font.pointSize: Style.fontSizeXXL * scaling
-      font.weight: Style.fontWeightBold
-      color: Color.mSecondary
-      Layout.bottomMargin: Style.marginS * scaling
+    NHeader {
+      title: "User Interface"
     }
 
     NToggle {
@@ -133,12 +134,8 @@ ColumnLayout {
   ColumnLayout {
     spacing: Style.marginL * scaling
     Layout.fillWidth: true
-    NText {
-      text: "Screen Corners"
-      font.pointSize: Style.fontSizeXXL * scaling
-      font.weight: Style.fontWeightBold
-      color: Color.mSecondary
-      Layout.bottomMargin: Style.marginS * scaling
+    NHeader {
+      title: "Screen Corners"
     }
 
     NToggle {
@@ -187,12 +184,8 @@ ColumnLayout {
   ColumnLayout {
     spacing: Style.marginL * scaling
     Layout.fillWidth: true
-    NText {
-      text: "Fonts"
-      font.pointSize: Style.fontSizeXXL * scaling
-      font.weight: Style.fontWeightBold
-      color: Color.mSecondary
-      Layout.bottomMargin: Style.marginS * scaling
+    NHeader {
+      title: "Fonts"
     }
 
     // Font configuration section

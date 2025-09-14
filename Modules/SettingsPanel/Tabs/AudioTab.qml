@@ -9,6 +9,11 @@ import qs.Services
 ColumnLayout {
   id: root
 
+  NHeader {
+    title: "Audio Settings"
+    description: "Configure system audio, devices, and media player preferences."
+  }
+
   property real localVolume: AudioService.volume
 
   Connections {
@@ -158,12 +163,8 @@ ColumnLayout {
   ColumnLayout {
     spacing: Style.marginS * scaling
 
-    NText {
-      text: "Audio Devices"
-      font.pointSize: Style.fontSizeXXL * scaling
-      font.weight: Style.fontWeightBold
-      color: Color.mSecondary
-      Layout.bottomMargin: Style.marginS * scaling
+    NHeader {
+      title: "Audio Devices"
     }
 
     // -------------------------------
@@ -234,12 +235,8 @@ ColumnLayout {
   ColumnLayout {
     spacing: Style.marginL * scaling
 
-    NText {
-      text: "Media Player"
-      font.pointSize: Style.fontSizeXXL * scaling
-      font.weight: Style.fontWeightBold
-      color: Color.mSecondary
-      Layout.bottomMargin: Style.marginS * scaling
+    NHeader {
+      title: "Media Player"
     }
 
     // Preferred player
@@ -360,12 +357,8 @@ ColumnLayout {
     spacing: Style.marginS * scaling
     Layout.fillWidth: true
 
-    NText {
-      text: "Audio Visualizer"
-      font.pointSize: Style.fontSizeXXL * scaling
-      font.weight: Style.fontWeightBold
-      color: Color.mSecondary
-      Layout.bottomMargin: Style.marginS * scaling
+    NHeader {
+      title: "Audio Visualizer"
     }
 
     // AudioService Visualizer section

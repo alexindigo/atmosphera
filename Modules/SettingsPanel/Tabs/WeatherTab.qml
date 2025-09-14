@@ -8,6 +8,11 @@ import qs.Widgets
 ColumnLayout {
   id: root
 
+  NHeader {
+    title: "Weather & Location"
+    description: "Configure weather display and location settings."
+  }
+
   // Location section
   RowLayout {
     Layout.fillWidth: true
@@ -57,11 +62,8 @@ ColumnLayout {
     spacing: Style.marginM * scaling
     Layout.fillWidth: true
 
-    NText {
-      text: "Weather"
-      font.pointSize: Style.fontSizeXXL * scaling
-      font.weight: Style.fontWeightBold
-      color: Color.mSecondary
+    NHeader {
+      title: "Weather"
     }
 
     NToggle {

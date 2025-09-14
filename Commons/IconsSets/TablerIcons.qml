@@ -106,6 +106,7 @@ Singleton {
     "settings-wallpaper-selector": "library-photo",
     "settings-screen-recorder": "video",
     "settings-hooks": "link",
+    "settings-notification": "notification",
     "settings-about": "info-square-rounded",
     "bluetooth": "bluetooth",
     "bt-device-generic": "bluetooth",

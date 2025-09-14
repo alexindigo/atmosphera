@@ -10,6 +10,11 @@ import qs.Widgets
 ColumnLayout {
   id: root
 
+  NHeader {
+    title: "Wallpaper Management"
+    description: "Configure wallpaper settings, automation, and appearance options."
+  }
+
   NToggle {
     label: "Enable Wallpaper Management"
     description: "Manage wallpapers with Noctalia. (Uncheck if you prefer using another application)."
@@ -89,11 +94,8 @@ ColumnLayout {
     spacing: Style.marginL * scaling
     Layout.fillWidth: true
 
-    NText {
-      text: "Look & Feel"
-      font.pointSize: Style.fontSizeXXL * scaling
-      font.weight: Style.fontWeightBold
-      color: Color.mSecondary
+    NHeader {
+      title: "Look & Feel"
     }
 
     // Fill Mode
@@ -189,11 +191,8 @@ ColumnLayout {
     spacing: Style.marginL * scaling
     Layout.fillWidth: true
 
-    NText {
-      text: "Automation"
-      font.pointSize: Style.fontSizeXXL * scaling
-      font.weight: Style.fontWeightBold
-      color: Color.mSecondary
+    NHeader {
+      title: "Automation"
     }
 
     // Random Wallpaper

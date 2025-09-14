@@ -11,6 +11,11 @@ ColumnLayout {
   id: root
   spacing: Style.marginL * scaling
 
+  NHeader {
+    title: "Network Settings"
+    description: "Configure Wi-Fi and Bluetooth connectivity options."
+  }
+
   NToggle {
     label: "Enable Wi-Fi"
     description: "Enable Wi-Fi connectivity."
