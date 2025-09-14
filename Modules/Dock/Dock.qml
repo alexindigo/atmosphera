@@ -147,7 +147,7 @@ Variants {
 
     // DOCK WINDOW
     Loader {
-      active: Settings.isLoaded && modelData && Settings.data.dock.monitors.includes(modelData.name) && dockLoaded
+      active: Settings.isLoaded && modelData && Settings.data.dock.monitors.includes(modelData.name) && dockLoaded && ToplevelManager && (ToplevelManager.toplevels.values.length > 0)
 
       sourceComponent: PanelWindow {
         id: dockWindow
