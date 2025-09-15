@@ -60,7 +60,7 @@ Item {
         onClicked: root.clicked()
         onRightClicked: root.rightClicked()
         onMiddleClicked: root.middleClicked()
-        onWheel: root.wheel
+        onWheel: delta => root.wheel(delta)
       }
     }
 
@@ -85,7 +85,7 @@ Item {
         onClicked: root.clicked()
         onRightClicked: root.rightClicked()
         onMiddleClicked: root.middleClicked()
-        onWheel: root.wheel
+        onWheel: delta => root.wheel(delta)
       }
     }
   }

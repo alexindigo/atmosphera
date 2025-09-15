@@ -284,9 +284,7 @@ Item {
         root.middleClicked()
       }
     }
-    onWheel: wheel => {
-               root.wheel(wheel.angleDelta.y)
-             }
+    onWheel: wheel => root.wheel(wheel.angleDelta.y)
   }
 
   function show() {
