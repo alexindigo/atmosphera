@@ -70,6 +70,12 @@ Singleton {
       lines.push('input_path = "' + Quickshell.shellDir + '/Assets/Matugen/templates/vesktop.css"')
       lines.push('output_path = "~/.config/vesktop/themes/noctalia.theme.css"')
     }
+    if (Settings.data.matugen.pywalfox) {
+      lines.push("\n[templates.pywalfox]")
+      lines.push('input_path = "' + Quickshell.shellDir + '/Assets/Matugen/templates/pywalfox.json"')
+      lines.push('output_path = "~/.cache/wal/colors.json"')
+      lines.push('post_hook = "pywalfox update"')
+    }
 
     return lines.join("\n") + "\n"
   }

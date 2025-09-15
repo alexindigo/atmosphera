@@ -318,146 +318,187 @@ ColumnLayout {
     visible: Settings.data.colorSchemes.useWallpaperColors
   }
 
-  // Matugen template toggles (moved from MatugenTab)
+  // Matugen template toggles organized by category
   ColumnLayout {
-    spacing: Style.marginL * scaling
     Layout.fillWidth: true
     visible: Settings.data.colorSchemes.useWallpaperColors
+    spacing: Style.marginL * scaling
 
-    ColumnLayout {
-      spacing: Style.marginS * scaling
+    // UI Components
+    NCollapsible {
       Layout.fillWidth: true
+      label: "UI"
+      description: "Desktop environment and UI toolkit theming."
+      defaultExpanded: false
 
-      NText {
-        text: "Matugen Templates"
-        font.pointSize: Style.fontSizeXXL * scaling
-        font.weight: Style.fontWeightBold
-        color: Color.mSecondary
+      NCheckbox {
+        label: "GTK 4 (libadwaita)"
+        description: "Write ~/.config/gtk-4.0/gtk.css"
+        checked: Settings.data.matugen.gtk4
+        onToggled: checked => {
+                     Settings.data.matugen.gtk4 = checked
+                     if (Settings.data.colorSchemes.useWallpaperColors)
+                     MatugenService.generateFromWallpaper()
+                   }
       }
 
-      NText {
-        text: "Select which external components Matugen should apply theming to."
-        font.pointSize: Style.fontSizeM * scaling
-        color: Color.mOnSurfaceVariant
-        Layout.fillWidth: true
-        wrapMode: Text.WordWrap
+      NCheckbox {
+        label: "GTK 3"
+        description: "Write ~/.config/gtk-3.0/gtk.css"
+        checked: Settings.data.matugen.gtk3
+        onToggled: checked => {
+                     Settings.data.matugen.gtk3 = checked
+                     if (Settings.data.colorSchemes.useWallpaperColors)
+                     MatugenService.generateFromWallpaper()
+                   }
+      }
+
+      NCheckbox {
+        label: "Qt6ct"
+        description: "Write ~/.config/qt6ct/colors/noctalia.conf"
+        checked: Settings.data.matugen.qt6
+        onToggled: checked => {
+                     Settings.data.matugen.qt6 = checked
+                     if (Settings.data.colorSchemes.useWallpaperColors)
+                     MatugenService.generateFromWallpaper()
+                   }
+      }
+
+      NCheckbox {
+        label: "Qt5ct"
+        description: "Write ~/.config/qt5ct/colors/noctalia.conf"
+        checked: Settings.data.matugen.qt5
+        onToggled: checked => {
+                     Settings.data.matugen.qt5 = checked
+                     if (Settings.data.colorSchemes.useWallpaperColors)
+                     MatugenService.generateFromWallpaper()
+                   }
       }
     }
 
-    NCheckbox {
-      label: "GTK 4 (libadwaita)"
-      description: "Write ~/.config/gtk-4.0/gtk.css"
-      checked: Settings.data.matugen.gtk4
-      onToggled: checked => {
-                   Settings.data.matugen.gtk4 = checked
-                   if (Settings.data.colorSchemes.useWallpaperColors)
-                   MatugenService.generateFromWallpaper()
-                 }
-    }
-
-    NCheckbox {
-      label: "GTK 3"
-      description: "Write ~/.config/gtk-3.0/gtk.css"
-      checked: Settings.data.matugen.gtk3
-      onToggled: checked => {
-                   Settings.data.matugen.gtk3 = checked
-                   if (Settings.data.colorSchemes.useWallpaperColors)
-                   MatugenService.generateFromWallpaper()
-                 }
-    }
-
-    NCheckbox {
-      label: "Qt6ct"
-      description: "Write ~/.config/qt6ct/colors/noctalia.conf"
-      checked: Settings.data.matugen.qt6
-      onToggled: checked => {
-                   Settings.data.matugen.qt6 = checked
-                   if (Settings.data.colorSchemes.useWallpaperColors)
-                   MatugenService.generateFromWallpaper()
-                 }
-    }
-
-    NCheckbox {
-      label: "Qt5ct"
-      description: "Write ~/.config/qt5ct/colors/noctalia.conf"
-      checked: Settings.data.matugen.qt5
-      onToggled: checked => {
-                   Settings.data.matugen.qt5 = checked
-                   if (Settings.data.colorSchemes.useWallpaperColors)
-                   MatugenService.generateFromWallpaper()
-                 }
-    }
-
-    NCheckbox {
-      label: "Kitty"
-      description: "Write ~/.config/kitty/themes/noctalia.conf and reload"
-      checked: Settings.data.matugen.kitty
-      onToggled: checked => {
-                   Settings.data.matugen.kitty = checked
-                   if (Settings.data.colorSchemes.useWallpaperColors)
-                   MatugenService.generateFromWallpaper()
-                 }
-    }
-
-    NCheckbox {
-      label: "Ghostty"
-      description: "Write ~/.config/ghostty/themes/noctalia and reload"
-      checked: Settings.data.matugen.ghostty
-      onToggled: checked => {
-                   Settings.data.matugen.ghostty = checked
-                   if (Settings.data.colorSchemes.useWallpaperColors)
-                   MatugenService.generateFromWallpaper()
-                 }
-    }
-
-    NCheckbox {
-      label: "Foot"
-      description: "Write ~/.config/foot/themes/noctalia and reload"
-      checked: Settings.data.matugen.foot
-      onToggled: checked => {
-                   Settings.data.matugen.foot = checked
-                   if (Settings.data.colorSchemes.useWallpaperColors)
-                   MatugenService.generateFromWallpaper()
-                 }
-    }
-
-    NCheckbox {
-      label: "Fuzzel"
-      description: "Write ~/.config/fuzzel/themes/noctalia and reload"
-      checked: Settings.data.matugen.fuzzel
-      onToggled: checked => {
-                   Settings.data.matugen.fuzzel = checked
-                   if (Settings.data.colorSchemes.useWallpaperColors)
-                   MatugenService.generateFromWallpaper()
-                 }
-    }
-
-    NCheckbox {
-      label: "Vesktop"
-      description: "Write ~/.config/vesktop/themes/noctalia.theme.css"
-      checked: Settings.data.matugen.vesktop
-      onToggled: checked => {
-                   Settings.data.matugen.vesktop = checked
-                   if (Settings.data.colorSchemes.useWallpaperColors)
-                   MatugenService.generateFromWallpaper()
-                 }
-    }
-
-    NDivider {
+    // Terminal Emulators
+    NCollapsible {
       Layout.fillWidth: true
-      Layout.topMargin: Style.marginM * scaling
-      Layout.bottomMargin: Style.marginM * scaling
+      label: "Terminal"
+      description: "Terminal emulator theming."
+      defaultExpanded: false
+
+      NCheckbox {
+        label: "Kitty"
+        description: ProgramCheckerService.kittyAvailable ? "Write ~/.config/kitty/themes/noctalia.conf and reload" : "Requires kitty terminal to be installed"
+        checked: Settings.data.matugen.kitty
+        enabled: ProgramCheckerService.kittyAvailable
+        opacity: ProgramCheckerService.kittyAvailable ? 1.0 : 0.6
+        onToggled: checked => {
+                     if (ProgramCheckerService.kittyAvailable) {
+                       Settings.data.matugen.kitty = checked
+                       if (Settings.data.colorSchemes.useWallpaperColors)
+                       MatugenService.generateFromWallpaper()
+                     }
+                   }
+      }
+
+      NCheckbox {
+        label: "Ghostty"
+        description: ProgramCheckerService.ghosttyAvailable ? "Write ~/.config/ghostty/themes/noctalia and reload" : "Requires ghostty terminal to be installed"
+        checked: Settings.data.matugen.ghostty
+        enabled: ProgramCheckerService.ghosttyAvailable
+        opacity: ProgramCheckerService.ghosttyAvailable ? 1.0 : 0.6
+        onToggled: checked => {
+                     if (ProgramCheckerService.ghosttyAvailable) {
+                       Settings.data.matugen.ghostty = checked
+                       if (Settings.data.colorSchemes.useWallpaperColors)
+                       MatugenService.generateFromWallpaper()
+                     }
+                   }
+      }
+
+      NCheckbox {
+        label: "Foot"
+        description: ProgramCheckerService.footAvailable ? "Write ~/.config/foot/themes/noctalia and reload" : "Requires foot terminal to be installed"
+        checked: Settings.data.matugen.foot
+        enabled: ProgramCheckerService.footAvailable
+        opacity: ProgramCheckerService.footAvailable ? 1.0 : 0.6
+        onToggled: checked => {
+                     if (ProgramCheckerService.footAvailable) {
+                       Settings.data.matugen.foot = checked
+                       if (Settings.data.colorSchemes.useWallpaperColors)
+                       MatugenService.generateFromWallpaper()
+                     }
+                   }
+      }
     }
 
-    NCheckbox {
-      label: "User Templates"
-      description: "Enable user-defined Matugen config from ~/.config/matugen/config.toml"
-      checked: Settings.data.matugen.enableUserTemplates
-      onToggled: checked => {
-                   Settings.data.matugen.enableUserTemplates = checked
-                   if (Settings.data.colorSchemes.useWallpaperColors)
-                   MatugenService.generateFromWallpaper()
-                 }
+    // Applications
+    NCollapsible {
+      Layout.fillWidth: true
+      label: "Programs"
+      description: "Application-specific theming."
+      defaultExpanded: false
+
+      NCheckbox {
+        label: "Fuzzel"
+        description: ProgramCheckerService.fuzzelAvailable ? "Write ~/.config/fuzzel/themes/noctalia and reload" : "Requires fuzzel launcher to be installed"
+        checked: Settings.data.matugen.fuzzel
+        enabled: ProgramCheckerService.fuzzelAvailable
+        opacity: ProgramCheckerService.fuzzelAvailable ? 1.0 : 0.6
+        onToggled: checked => {
+                     if (ProgramCheckerService.fuzzelAvailable) {
+                       Settings.data.matugen.fuzzel = checked
+                       if (Settings.data.colorSchemes.useWallpaperColors)
+                       MatugenService.generateFromWallpaper()
+                     }
+                   }
+      }
+
+      NCheckbox {
+        label: "Vesktop"
+        description: ProgramCheckerService.vesktopAvailable ? "Write ~/.config/vesktop/themes/noctalia.theme.css" : "Requires vesktop Discord client to be installed"
+        checked: Settings.data.matugen.vesktop
+        enabled: ProgramCheckerService.vesktopAvailable
+        opacity: ProgramCheckerService.vesktopAvailable ? 1.0 : 0.6
+        onToggled: checked => {
+                     if (ProgramCheckerService.vesktopAvailable) {
+                       Settings.data.matugen.vesktop = checked
+                       if (Settings.data.colorSchemes.useWallpaperColors)
+                       MatugenService.generateFromWallpaper()
+                     }
+                   }
+      }
+
+      NCheckbox {
+        label: "Pywalfox (Firefox)"
+        description: ProgramCheckerService.pywalfoxAvailable ? "Write ~/.cache/wal/colors.json and run pywalfox update" : "Requires pywalfox package to be installed"
+        checked: Settings.data.matugen.pywalfox
+        enabled: ProgramCheckerService.pywalfoxAvailable
+        opacity: ProgramCheckerService.pywalfoxAvailable ? 1.0 : 0.6
+        onToggled: checked => {
+                     if (ProgramCheckerService.pywalfoxAvailable) {
+                       Settings.data.matugen.pywalfox = checked
+                       if (Settings.data.colorSchemes.useWallpaperColors)
+                       MatugenService.generateFromWallpaper()
+                     }
+                   }
+      }
+    }
+
+    // Miscellaneous
+    NCollapsible {
+      Layout.fillWidth: true
+      label: "Misc"
+      description: "Additional configuration options."
+      defaultExpanded: false
+
+      NCheckbox {
+        label: "User Templates"
+        description: "Enable user-defined Matugen config from ~/.config/matugen/config.toml"
+        checked: Settings.data.matugen.enableUserTemplates
+        onToggled: checked => {
+                     Settings.data.matugen.enableUserTemplates = checked
+                     if (Settings.data.colorSchemes.useWallpaperColors)
+                     MatugenService.generateFromWallpaper()
+                   }
+      }
     }
   }
 }

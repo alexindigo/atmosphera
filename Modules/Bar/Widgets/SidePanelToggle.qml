@@ -39,7 +39,7 @@ NIconButton {
   colorFg: Color.mOnSurface
   colorBgHover: useDistroLogo ? Color.mSurfaceVariant : Color.mTertiary
   colorBorder: Color.transparent
-  colorBorderHover: useDistroLogo ? Color.mTertiary :  Color.transparent
+  colorBorderHover: useDistroLogo ? Color.mTertiary : Color.transparent
   onClicked: PanelService.getPanel("sidePanel")?.toggle(this)
   onRightClicked: PanelService.getPanel("settingsPanel")?.toggle()
 
