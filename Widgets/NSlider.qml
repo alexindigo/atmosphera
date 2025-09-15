@@ -34,25 +34,39 @@ Slider {
       width: root.visualPosition * parent.width
       height: parent.height
       radius: parent.radius
-      
+
       // Animated gradient fill
       gradient: Gradient {
         orientation: Gradient.Horizontal
-        GradientStop { 
+        GradientStop {
           position: 0.0
           color: Qt.darker(Color.mPrimary, 1.2)
-          Behavior on color { ColorAnimation { duration: 300 } }
+          Behavior on color {
+            ColorAnimation {
+              duration: 300
+            }
+          }
         }
-        GradientStop { 
+        GradientStop {
           position: 0.5
           color: Color.mPrimary
           SequentialAnimation on position {
             loops: Animation.Infinite
-            NumberAnimation { from: 0.3; to: 0.7; duration: 2000; easing.type: Easing.InOutSine }
-            NumberAnimation { from: 0.7; to: 0.3; duration: 2000; easing.type: Easing.InOutSine }
+            NumberAnimation {
+              from: 0.3
+              to: 0.7
+              duration: 2000
+              easing.type: Easing.InOutSine
+            }
+            NumberAnimation {
+              from: 0.7
+              to: 0.3
+              duration: 2000
+              easing.type: Easing.InOutSine
+            }
           }
         }
-        GradientStop { 
+        GradientStop {
           position: 1.0
           color: Qt.lighter(Color.mPrimary, 1.2)
         }

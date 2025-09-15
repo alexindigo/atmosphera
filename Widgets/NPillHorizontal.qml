@@ -78,7 +78,7 @@ Item {
       font.family: Settings.data.ui.fontFixed
       font.pointSize: Style.fontSizeXS * scaling
       font.weight: Style.fontWeightBold
-      color: forceOpen ? Color.mOnSurface : Color.mPrimary 
+      color: forceOpen ? Color.mOnSurface : Color.mPrimary
       visible: revealed
     }
 
