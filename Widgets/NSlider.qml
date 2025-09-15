@@ -26,7 +26,9 @@ Slider {
     width: root.availableWidth
     height: implicitHeight
     radius: 0
-    color: Color.mSurface
+    color: Qt.alpha(Color.mSurface, 0.5)
+    border.color: Qt.alpha(Color.mOutline, 0.5)
+    border.width: Math.max(1, Style.borderS * scaling)
 
     // Animated gradient active track
     Rectangle {
