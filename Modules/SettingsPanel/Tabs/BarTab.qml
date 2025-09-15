@@ -95,7 +95,7 @@ ColumnLayout {
   NToggle {
     Layout.fillWidth: true
     label: "Floating Bar"
-    description: "Make the bar float with rounded corners and margins. This will hide screen corners."
+    description: "Make the bar float with rounded corners and margins. Screen corners will move to screen edges."
     checked: Settings.data.bar.floating
     onToggled: checked => Settings.data.bar.floating = checked
   }

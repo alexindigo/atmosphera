@@ -97,3 +97,17 @@
   color: var(--text-0) !important;
   fill: var(--text-0) !important;
 }
+
+/* Make channel name text less visible (darker) */
+.name__2ea32 {
+  color: var(--text-5) !important;
+  opacity: 0.7 !important;
+}
+
+/* Make unread channel names brighter */
+.link__2ea32[aria-label*="unread"] .name__2ea32 {
+  color: var(--text-2) !important;
+  opacity: 1 !important;
+  font-weight: 600 !important;
+}
+
