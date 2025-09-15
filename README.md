@@ -230,6 +230,23 @@ Start the Shell	with: `qs -c noctalia-shell`
 Access settings through the side panel (top right button) to configure weather, wallpapers, screen recording, audio, network, and theme options.  
 Configuration is usually stored in ~/.config/noctalia. 
 
+### Some of my app icons are missing!
+
+The issue is most likely that you did not set up your environment variables properly.
+Example environment variables that you can use one of the following:
+
+If you already have an icon theme set for GTK then you can use this one:
+- `QT_QPA_PLATFORMTHEME=gtk3`
+
+You can also use Qt6ct to set your icon theme, for that you can use:
+- `QT_QPA_PLATFORMTHEME=qt6ct`
+
+If you don't have either of those set then you can just use:
+- `QS_ICON_THEME="youricontheme"`
+
+**Any of these environment variables should go into `/etc/environment` (you need to reboot afterwards). For NixOS you can use `environment.variables` or `home.sessionVariables`.**
+
+
 ### Application Launcher
 
 The launcher supports special commands for enhanced functionality:
