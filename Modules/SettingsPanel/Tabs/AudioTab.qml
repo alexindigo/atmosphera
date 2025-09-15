@@ -126,7 +126,7 @@ ColumnLayout {
       value: Settings.data.audio.volumeStep
       stepSize: 1
       suffix: "%"
-      onValueChanged: value => Settings.data.audio.volumeStep = value
+      onValueChanged: Settings.data.audio.volumeStep = value
     }
   }
 

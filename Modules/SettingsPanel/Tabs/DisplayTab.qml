@@ -221,9 +221,7 @@ ColumnLayout {
         value: Settings.data.brightness.brightnessStep
         stepSize: 1
         suffix: "%"
-        onValueChanged: {
-          Settings.data.brightness.brightnessStep = value
-        }
+        onValueChanged: Settings.data.brightness.brightnessStep = value
       }
     }
   }
