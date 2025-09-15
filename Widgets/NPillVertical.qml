@@ -45,8 +45,7 @@ Item {
   // Sizing logic for vertical bars
   readonly property int iconSize: Math.round(Style.baseWidgetSize * sizeRatio * scaling)
   readonly property int pillHeight: iconSize
-  readonly property int pillPaddingHorizontal: Style.marginS * scaling
-  readonly property int pillPaddingVertical: Style.marginS * scaling
+  readonly property int pillPaddingVertical: 3 * 2 * scaling // Very precise adjustment don't replace by Style.margin
   readonly property int pillOverlap: iconSize * 0.5
   readonly property int maxPillWidth: iconSize
   readonly property int maxPillHeight: Math.max(1, textItem.implicitHeight + pillPaddingVertical * 4)
@@ -83,7 +82,7 @@ Item {
         var offset = openDownward ? pillPaddingVertical * 0.75 : -pillPaddingVertical * 0.75
         if (forceOpen) {
           // If its force open, the icon disc background is the same color as the bg pill move text slightly
-          offset += rightOpen ? -Style.marginXXS * scaling : Style.marginXS * scaling
+          offset += rightOpen ? -Style.marginXXS * scaling : Style.marginXXS * scaling
         }
         return offset
       }
@@ -93,7 +92,7 @@ Item {
       font.weight: Style.fontWeightMedium
       horizontalAlignment: Text.AlignHCenter
       verticalAlignment: Text.AlignVCenter
-      color: Color.mPrimary
+      color: forceOpen ? Color.mOnSurface : Color.mPrimary
       visible: revealed
     }
 
