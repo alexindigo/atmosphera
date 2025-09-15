@@ -43,6 +43,26 @@ Rectangle {
   radius: Math.round(Style.radiusM * scaling)
   color: Color.mSurfaceVariant
 
+  // Compact speed formatter for vertical bar display
+  function formatCompactSpeed(bytesPerSecond) {
+    if (!bytesPerSecond || bytesPerSecond <= 0)
+      return "0"
+    const units = ["", "k", "M", "G"]
+    let value = bytesPerSecond
+    let unitIndex = 0
+    while (value >= 1024 && unitIndex < units.length - 1) {
+      value = value / 1024.0
+      unitIndex++
+    }
+    // Promote at ~100 of current unit (e.g., 100k -> ~0.1M shown as 0.1M or 0M if rounded)
+    if (unitIndex < units.length - 1 && value >= 100) {
+      value = value / 1024.0
+      unitIndex++
+    }
+    const display = (value >= 10) ? Math.round(value).toString() : value.toFixed(1)
+    return display + units[unitIndex]
+  }
+
   // Horizontal layout for top/bottom bars
   RowLayout {
     id: horizontalLayout
@@ -347,20 +367,20 @@ Rectangle {
         anchors.centerIn: parent
         spacing: Style.marginXXS * scaling
 
+        NText {
+          anchors.horizontalCenter: parent.horizontalCenter
+          horizontalAlignment: Text.AlignHCenter
+          text: formatCompactSpeed(SystemStatService.rxSpeed)
+          font.family: Settings.data.ui.fontFixed
+          font.pointSize: Style.fontSizeXXS * scaling
+          font.weight: Style.fontWeightMedium
+          color: Color.mPrimary
+        }
+
         NIcon {
           icon: "download-speed"
           font.pointSize: Style.fontSizeS * scaling
           anchors.horizontalCenter: parent.horizontalCenter
-        }
-
-        NText {
-          text: SystemStatService.formatSpeed(SystemStatService.rxSpeed)
-          font.family: Settings.data.ui.fontFixed
-          font.pointSize: Style.fontSizeXXS * scaling
-          font.weight: Style.fontWeightMedium
-          anchors.horizontalCenter: parent.horizontalCenter
-          horizontalAlignment: Text.AlignHCenter
-          color: Color.mPrimary
         }
       }
     }
@@ -377,20 +397,20 @@ Rectangle {
         anchors.centerIn: parent
         spacing: Style.marginXXS * scaling
 
+        NText {
+          anchors.horizontalCenter: parent.horizontalCenter
+          horizontalAlignment: Text.AlignHCenter
+          text: formatCompactSpeed(SystemStatService.txSpeed)
+          font.family: Settings.data.ui.fontFixed
+          font.pointSize: Style.fontSizeXXS * scaling
+          font.weight: Style.fontWeightMedium
+          color: Color.mPrimary
+        }
+
         NIcon {
           icon: "upload-speed"
           font.pointSize: Style.fontSizeS * scaling
           anchors.horizontalCenter: parent.horizontalCenter
-        }
-
-        NText {
-          text: SystemStatService.formatSpeed(SystemStatService.txSpeed)
-          font.family: Settings.data.ui.fontFixed
-          font.pointSize: Style.fontSizeXXS * scaling
-          font.weight: Style.fontWeightMedium
-          anchors.horizontalCenter: parent.horizontalCenter
-          horizontalAlignment: Text.AlignHCenter
-          color: Color.mPrimary
         }
       }
     }
@@ -407,12 +427,6 @@ Rectangle {
         anchors.centerIn: parent
         spacing: Style.marginXXS * scaling
 
-        NIcon {
-          icon: "storage"
-          font.pointSize: Style.fontSizeS * scaling
-          Layout.alignment: Qt.AlignHCenter
-        }
-
         NText {
           text: `${SystemStatService.diskPercent}%`
           font.family: Settings.data.ui.fontFixed
@@ -421,6 +435,12 @@ Rectangle {
           Layout.alignment: Qt.AlignHCenter
           horizontalAlignment: Text.AlignHCenter
           color: Color.mPrimary
+        }
+
+        NIcon {
+          icon: "storage"
+          font.pointSize: Style.fontSizeS * scaling
+          Layout.alignment: Qt.AlignHCenter
         }
       }
     }
