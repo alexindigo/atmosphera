@@ -296,10 +296,6 @@ window-rule {
 }
 
 layer-rule {
-    match namespace="^quickshell-wallpaper$"
-}
-
-layer-rule {
     match namespace="^quickshell-overview$"
     place-within-backdrop true
 }
