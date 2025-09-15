@@ -109,7 +109,7 @@ Variants {
                     "sectionWidgetIndex": index,
                     "sectionWidgetsCount": Settings.data.bar.widgets.left.length
                   }
-                  anchors.horizontalCenter: parent.horizontalCenter
+                  Layout.alignment: Qt.AlignHCenter 
                 }
               }
             }
@@ -132,7 +132,7 @@ Variants {
                     "sectionWidgetIndex": index,
                     "sectionWidgetsCount": Settings.data.bar.widgets.center.length
                   }
-                  anchors.horizontalCenter: parent.horizontalCenter
+                  Layout.alignment: Qt.AlignHCenter 
                 }
               }
             }
@@ -156,7 +156,7 @@ Variants {
                     "sectionWidgetIndex": index,
                     "sectionWidgetsCount": Settings.data.bar.widgets.right.length
                   }
-                  anchors.horizontalCenter: parent.horizontalCenter
+                  Layout.alignment: Qt.AlignHCenter 
                 }
               }
             }
@@ -189,7 +189,7 @@ Variants {
                     "sectionWidgetIndex": index,
                     "sectionWidgetsCount": Settings.data.bar.widgets.left.length
                   }
-                  Layout.alignment: Qt.alignVCenter
+                  Layout.alignment: Qt.AlignVCenter
                 }
               }
             }
@@ -214,7 +214,7 @@ Variants {
                     "sectionWidgetIndex": index,
                     "sectionWidgetsCount": Settings.data.bar.widgets.center.length
                   }
-                  Layout.alignment: Qt.alignVCenter
+                  Layout.alignment: Qt.AlignVCenter
                 }
               }
             }
@@ -240,7 +240,7 @@ Variants {
                     "sectionWidgetIndex": index,
                     "sectionWidgetsCount": Settings.data.bar.widgets.right.length
                   }
-                  Layout.alignment: Qt.alignVCenter
+                  Layout.alignment: Qt.AlignVCenter
                 }
               }
             }
