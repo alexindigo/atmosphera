@@ -19,7 +19,6 @@ ColumnLayout {
   ColumnLayout {
     spacing: Style.marginS * scaling
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginS * scaling
 
     NTextInput {
       label: "Output Directory"

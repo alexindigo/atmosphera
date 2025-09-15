@@ -59,7 +59,7 @@ ColumnLayout {
 
     // Update button
     Rectangle {
-      Layout.alignment: Qt.alignmentRight
+      Layout.alignment: Qt.AlignRight
       Layout.preferredWidth: Math.round(updateRow.implicitWidth + (Style.marginL * scaling * 2))
       Layout.preferredHeight: Math.round(Style.barHeight * scaling)
       radius: Style.radiusL * scaling
