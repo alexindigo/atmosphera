@@ -61,7 +61,9 @@ Singleton {
                                     "icon": "heart",
                                     "leftClickExec": "",
                                     "rightClickExec": "",
-                                    "middleClickExec": ""
+                                    "middleClickExec": "",
+                                    "textCommand": "",
+                                    "textIntervalMs": 3000
                                   },
                                   "Microphone": {
                                     "allowUserSettings": true,

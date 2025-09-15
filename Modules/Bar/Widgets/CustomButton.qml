@@ -1,12 +1,13 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
+import Quickshell.Io
 import qs.Commons
 import qs.Services
 import qs.Widgets
 import qs.Modules.SettingsPanel
 
-NIconButton {
+Item {
   id: root
 
   // Widget properties passed from Bar.qml
@@ -35,33 +36,80 @@ NIconButton {
   readonly property string leftClickExec: widgetSettings.leftClickExec || widgetMetadata.leftClickExec
   readonly property string rightClickExec: widgetSettings.rightClickExec || widgetMetadata.rightClickExec
   readonly property string middleClickExec: widgetSettings.middleClickExec || widgetMetadata.middleClickExec
+  readonly property string textCommand: widgetSettings.textCommand !== undefined ? widgetSettings.textCommand : (widgetMetadata.textCommand || "")
+  readonly property int textIntervalMs: widgetSettings.textIntervalMs !== undefined ? widgetSettings.textIntervalMs : (widgetMetadata.textIntervalMs || 3000)
   readonly property bool hasExec: (leftClickExec || rightClickExec || middleClickExec)
 
-  enabled: hasExec
-  allowClickWhenDisabled: true // we want to be able to open config with left click when its not setup properly
-  colorBorder: Color.transparent
-  colorBorderHover: Color.transparent
-  sizeRatio: 0.8
-  icon: customIcon
-  tooltipText: {
-    if (!hasExec) {
-      return "Custom Button - Configure in settings"
-    } else {
-      var lines = []
-      if (leftClickExec !== "") {
-        lines.push(`Left click: <i>${leftClickExec}</i>.`)
+  implicitWidth: pill.width
+  implicitHeight: pill.height
+
+  NPill {
+    id: pill
+
+    rightOpen: BarWidgetRegistry.getNPillDirection(root)
+    icon: customIcon
+    text: _dynamicText
+    autoHide: false
+    forceOpen: _dynamicText !== ""
+    forceClose: false
+    disableOpen: true
+    tooltipText: {
+      if (!hasExec) {
+        return "Custom Button - Configure in settings"
+      } else {
+        var lines = []
+        if (leftClickExec !== "") {
+          lines.push(`Left click: ${leftClickExec}.`)
+        }
+        if (rightClickExec !== "") {
+          lines.push(`Right click: ${rightClickExec}.`)
+        }
+        if (middleClickExec !== "") {
+          lines.push(`Middle click: ${middleClickExec}.`)
+        }
+        return lines.join("\n")
       }
-      if (rightClickExec !== "") {
-        lines.push(`Right click: <i>${rightClickExec}</i>.`)
-      }
-      if (middleClickExec !== "") {
-        lines.push(`Middle click: <i>${middleClickExec}</i>.`)
-      }
-      return lines.join("<br/>")
+    }
+
+    onClicked: root.onClicked()
+    onRightClicked: root.onRightClicked()
+    onMiddleClicked: root.onMiddleClicked()
+  }
+
+  // Internal state for dynamic text
+  property string _dynamicText: ""
+
+  // Periodically run the text command (if set)
+  Timer {
+    id: refreshTimer
+    interval: Math.max(250, textIntervalMs)
+    repeat: true
+    running: (textCommand && textCommand.length > 0)
+    triggeredOnStart: true
+    onTriggered: {
+      if (!textCommand || textCommand.length === 0)
+        return
+      if (textProc.running)
+        return
+      textProc.command = ["sh", "-lc", textCommand]
+      textProc.running = true
     }
   }
 
-  onClicked: {
+  Process {
+    id: textProc
+    stdout: StdioCollector {}
+    stderr: StdioCollector {}
+    onExited: (exitCode, exitStatus) => {
+                var out = String(stdout.text || "").trim()
+                if (out.indexOf("\n") !== -1) {
+                  out = out.split("\n")[0]
+                }
+                _dynamicText = out
+              }
+  }
+
+  function onClicked() {
     if (leftClickExec) {
       Quickshell.execDetached(["sh", "-c", leftClickExec])
       Logger.log("CustomButton", `Executing command: ${leftClickExec}`)
@@ -73,14 +121,14 @@ NIconButton {
     }
   }
 
-  onRightClicked: {
+  function onRightClicked() {
     if (rightClickExec) {
       Quickshell.execDetached(["sh", "-c", rightClickExec])
       Logger.log("CustomButton", `Executing command: ${rightClickExec}`)
     }
   }
 
-  onMiddleClicked: {
+  function onMiddleClicked() {
     if (middleClickExec) {
       Quickshell.execDetached(["sh", "-c", middleClickExec])
       Logger.log("CustomButton", `Executing command: ${middleClickExec}`)
