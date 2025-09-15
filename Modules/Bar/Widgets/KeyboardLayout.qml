@@ -50,6 +50,7 @@ Item {
     forceOpen: root.displayMode === "forceOpen"
     forceClose: root.displayMode === "alwaysHide"
     onClicked: {
+
       // You could open keyboard settings here if needed
       // For now, just show the current layout
     }

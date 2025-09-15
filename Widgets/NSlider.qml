@@ -7,13 +7,12 @@ import qs.Services
 Slider {
   id: root
 
-  // Optional color to cut the track beneath the knob (should match surrounding background)
-  property var cutoutColor
+  property var cutoutColor: Color.mSurface
   property bool snapAlways: true
   property real heightRatio: 0.75
 
   readonly property real knobDiameter: Math.round(Style.baseWidgetSize * heightRatio * scaling)
-  readonly property real trackHeight: knobDiameter * 0.5
+  readonly property real trackHeight: knobDiameter * 0.4
   readonly property real cutoutExtra: Math.round(Style.baseWidgetSize * 0.1 * scaling)
 
   snapMode: snapAlways ? Slider.SnapAlways : Slider.SnapOnRelease
@@ -26,15 +25,38 @@ Slider {
     implicitHeight: trackHeight
     width: root.availableWidth
     height: implicitHeight
-    radius: height / 2
+    radius: 0
     color: Color.mSurface
 
+    // Animated gradient active track
     Rectangle {
       id: activeTrack
       width: root.visualPosition * parent.width
       height: parent.height
-      color: Color.mPrimary
       radius: parent.radius
+      
+      // Animated gradient fill
+      gradient: Gradient {
+        orientation: Gradient.Horizontal
+        GradientStop { 
+          position: 0.0
+          color: Qt.darker(Color.mPrimary, 1.2)
+          Behavior on color { ColorAnimation { duration: 300 } }
+        }
+        GradientStop { 
+          position: 0.5
+          color: Color.mPrimary
+          SequentialAnimation on position {
+            loops: Animation.Infinite
+            NumberAnimation { from: 0.3; to: 0.7; duration: 2000; easing.type: Easing.InOutSine }
+            NumberAnimation { from: 0.7; to: 0.3; duration: 2000; easing.type: Easing.InOutSine }
+          }
+        }
+        GradientStop { 
+          position: 1.0
+          color: Qt.lighter(Color.mPrimary, 1.2)
+        }
+      }
     }
 
     // Circular cutout
@@ -44,8 +66,7 @@ Slider {
       height: knobDiameter + cutoutExtra
       radius: width / 2
       color: root.cutoutColor !== undefined ? root.cutoutColor : Color.mSurface
-      x: Math.max(0, Math.min(parent.width - width, Math.round(root.visualPosition * (parent.width - root.knobDiameter) - cutoutExtra / 2)))
-      y: (parent.height - height) / 2
+      x: root.leftPadding + root.visualPosition * (root.availableWidth - root.knobDiameter) - cutoutExtra / 2
       anchors.verticalCenter: parent.verticalCenter
     }
   }

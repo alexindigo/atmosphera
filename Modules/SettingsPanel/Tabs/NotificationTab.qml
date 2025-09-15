@@ -100,23 +100,14 @@ ColumnLayout {
         description: "How long low priority notifications stay visible."
       }
 
-      RowLayout {
-        NSlider {
-          Layout.fillWidth: true
-          from: 1
-          to: 30
-          stepSize: 1
-          value: Settings.data.notifications.lowUrgencyDuration
-          onMoved: Settings.data.notifications.lowUrgencyDuration = value
-          cutoutColor: Color.mSurface
-        }
-
-        NText {
-          text: Settings.data.notifications.lowUrgencyDuration + "s"
-          Layout.alignment: Qt.AlignVCenter
-          Layout.leftMargin: Style.marginS * scaling
-          color: Color.mOnSurface
-        }
+      NValueSlider {
+        Layout.fillWidth: true
+        from: 1
+        to: 30
+        stepSize: 1
+        value: Settings.data.notifications.lowUrgencyDuration
+        onMoved: value => Settings.data.notifications.lowUrgencyDuration = value
+        text: Settings.data.notifications.lowUrgencyDuration + "s"
       }
     }
 
@@ -130,23 +121,14 @@ ColumnLayout {
         description: "How long normal priority notifications stay visible."
       }
 
-      RowLayout {
-        NSlider {
-          Layout.fillWidth: true
-          from: 1
-          to: 30
-          stepSize: 1
-          value: Settings.data.notifications.normalUrgencyDuration
-          onMoved: Settings.data.notifications.normalUrgencyDuration = value
-          cutoutColor: Color.mSurface
-        }
-
-        NText {
-          text: Settings.data.notifications.normalUrgencyDuration + "s"
-          Layout.alignment: Qt.AlignVCenter
-          Layout.leftMargin: Style.marginS * scaling
-          color: Color.mOnSurface
-        }
+      NValueSlider {
+        Layout.fillWidth: true
+        from: 1
+        to: 30
+        stepSize: 1
+        value: Settings.data.notifications.normalUrgencyDuration
+        onMoved: value => Settings.data.notifications.normalUrgencyDuration = value
+        text: Settings.data.notifications.normalUrgencyDuration + "s"
       }
     }
 
@@ -160,23 +142,14 @@ ColumnLayout {
         description: "How long critical priority notifications stay visible."
       }
 
-      RowLayout {
-        NSlider {
-          Layout.fillWidth: true
-          from: 1
-          to: 30
-          stepSize: 1
-          value: Settings.data.notifications.criticalUrgencyDuration
-          onMoved: Settings.data.notifications.criticalUrgencyDuration = value
-          cutoutColor: Color.mSurface
-        }
-
-        NText {
-          text: Settings.data.notifications.criticalUrgencyDuration + "s"
-          Layout.alignment: Qt.AlignVCenter
-          Layout.leftMargin: Style.marginS * scaling
-          color: Color.mOnSurface
-        }
+      NValueSlider {
+        Layout.fillWidth: true
+        from: 1
+        to: 30
+        stepSize: 1
+        value: Settings.data.notifications.criticalUrgencyDuration
+        onMoved: value => Settings.data.notifications.criticalUrgencyDuration = value
+        text: Settings.data.notifications.criticalUrgencyDuration + "s"
       }
     }
   }

@@ -82,23 +82,14 @@ ColumnLayout {
       description: "Adjust the background opacity of the bar."
     }
 
-    RowLayout {
-      NSlider {
-        Layout.fillWidth: true
-        from: 0
-        to: 1
-        stepSize: 0.01
-        value: Settings.data.bar.backgroundOpacity
-        onMoved: Settings.data.bar.backgroundOpacity = value
-        cutoutColor: Color.mSurface
-      }
-
-      NText {
-        text: Math.floor(Settings.data.bar.backgroundOpacity * 100) + "%"
-        Layout.alignment: Qt.AlignVCenter
-        Layout.leftMargin: Style.marginS * scaling
-        color: Color.mOnSurface
-      }
+    NValueSlider {
+      Layout.fillWidth: true
+      from: 0
+      to: 1
+      stepSize: 0.01
+      value: Settings.data.bar.backgroundOpacity
+      onMoved: value => Settings.data.bar.backgroundOpacity = value
+      text: Math.floor(Settings.data.bar.backgroundOpacity * 100) + "%"
     }
   }
   NToggle {
@@ -133,25 +124,14 @@ ColumnLayout {
           color: Color.mOnSurfaceVariant
         }
 
-        RowLayout {
-          NSlider {
-            Layout.fillWidth: true
-            from: 0
-            to: 1
-            stepSize: 0.01
-            value: Settings.data.bar.marginVertical
-            onMoved: Settings.data.bar.marginVertical = value
-            cutoutColor: Color.mSurface
-          }
-
-          NText {
-            text: Math.round(Settings.data.bar.marginVertical * 100) + "%"
-            Layout.alignment: Qt.AlignVCenter
-            Layout.leftMargin: Style.marginXS * scaling
-            Layout.preferredWidth: 50
-            horizontalAlignment: Text.AlignRight
-            color: Color.mOnSurface
-          }
+        NValueSlider {
+          Layout.fillWidth: true
+          from: 0
+          to: 1
+          stepSize: 0.01
+          value: Settings.data.bar.marginVertical
+          onMoved: value => Settings.data.bar.marginVertical = value
+          text: Math.round(Settings.data.bar.marginVertical * 100) + "%"
         }
       }
 
@@ -164,25 +144,14 @@ ColumnLayout {
           color: Color.mOnSurfaceVariant
         }
 
-        RowLayout {
-          NSlider {
-            Layout.fillWidth: true
-            from: 0
-            to: 1
-            stepSize: 0.01
-            value: Settings.data.bar.marginHorizontal
-            onMoved: Settings.data.bar.marginHorizontal = value
-            cutoutColor: Color.mSurface
-          }
-
-          NText {
-            text: Math.round(Settings.data.bar.marginHorizontal * 100) + "%"
-            Layout.alignment: Qt.AlignVCenter
-            Layout.leftMargin: Style.marginXS * scaling
-            Layout.preferredWidth: 50
-            horizontalAlignment: Text.AlignRight
-            color: Color.mOnSurface
-          }
+        NValueSlider {
+          Layout.fillWidth: true
+          from: 0
+          to: 1
+          stepSize: 0.01
+          value: Settings.data.bar.marginHorizontal
+          onMoved: value => Settings.data.bar.marginHorizontal = value
+          text: Math.round(Settings.data.bar.marginHorizontal * 100) + "%"
         }
       }
     }

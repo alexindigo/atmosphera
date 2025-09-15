@@ -138,21 +138,14 @@ ColumnLayout {
         description: "Duration of transition animations in seconds."
       }
 
-      RowLayout {
-        spacing: Style.marginL * scaling
-        NSlider {
-          Layout.fillWidth: true
-          from: 500
-          to: 10000
-          stepSize: 100
-          value: Settings.data.wallpaper.transitionDuration
-          onMoved: Settings.data.wallpaper.transitionDuration = value
-          cutoutColor: Color.mSurface
-        }
-        NText {
-          text: (Settings.data.wallpaper.transitionDuration / 1000).toFixed(2) + "s"
-          Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
-        }
+      NValueSlider {
+        Layout.fillWidth: true
+        from: 500
+        to: 10000
+        stepSize: 100
+        value: Settings.data.wallpaper.transitionDuration
+        onMoved: value => Settings.data.wallpaper.transitionDuration = value
+        text: (Settings.data.wallpaper.transitionDuration / 1000).toFixed(1) + "s"
       }
     }
 
@@ -163,20 +156,13 @@ ColumnLayout {
         description: "Duration of transition animations in seconds."
       }
 
-      RowLayout {
-        spacing: Style.marginL * scaling
-        NSlider {
-          Layout.fillWidth: true
-          from: 0.0
-          to: 1.0
-          value: Settings.data.wallpaper.transitionEdgeSmoothness
-          onMoved: Settings.data.wallpaper.transitionEdgeSmoothness = value
-          cutoutColor: Color.mSurface
-        }
-        NText {
-          text: Math.round(Settings.data.wallpaper.transitionEdgeSmoothness * 100) + "%"
-          Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
-        }
+      NValueSlider {
+        Layout.fillWidth: true
+        from: 0.0
+        to: 1.0
+        value: Settings.data.wallpaper.transitionEdgeSmoothness
+        onMoved: value => Settings.data.wallpaper.transitionEdgeSmoothness = value
+        text: Math.round(Settings.data.wallpaper.transitionEdgeSmoothness * 100) + "%"
       }
     }
   }

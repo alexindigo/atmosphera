@@ -74,24 +74,15 @@ ColumnLayout {
       Layout.fillWidth: true
     }
 
-    RowLayout {
-      NSlider {
-        id: launcherBgOpacity
-        Layout.fillWidth: true
-        from: 0.0
-        to: 1.0
-        stepSize: 0.01
-        value: Settings.data.appLauncher.backgroundOpacity
-        onMoved: Settings.data.appLauncher.backgroundOpacity = value
-        cutoutColor: Color.mSurface
-      }
-
-      NText {
-        text: Math.floor(Settings.data.appLauncher.backgroundOpacity * 100) + "%"
-        Layout.alignment: Qt.AlignVCenter
-        Layout.leftMargin: Style.marginS * scaling
-        color: Color.mOnSurface
-      }
+    NValueSlider {
+      id: launcherBgOpacity
+      Layout.fillWidth: true
+      from: 0.0
+      to: 1.0
+      stepSize: 0.01
+      value: Settings.data.appLauncher.backgroundOpacity
+      onMoved: value => Settings.data.appLauncher.backgroundOpacity = value
+      text: Math.floor(Settings.data.appLauncher.backgroundOpacity * 100) + "%"
     }
   }
 

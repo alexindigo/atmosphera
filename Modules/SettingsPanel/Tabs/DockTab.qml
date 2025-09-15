@@ -49,24 +49,14 @@ ColumnLayout {
       label: "Background Opacity"
       description: "Adjust the background opacity."
     }
-
-    RowLayout {
-      NSlider {
-        Layout.fillWidth: true
-        from: 0
-        to: 1
-        stepSize: 0.01
-        value: Settings.data.dock.backgroundOpacity
-        onMoved: Settings.data.dock.backgroundOpacity = value
-        cutoutColor: Color.mSurface
-      }
-
-      NText {
-        text: Math.floor(Settings.data.dock.backgroundOpacity * 100) + "%"
-        Layout.alignment: Qt.AlignVCenter
-        Layout.leftMargin: Style.marginS * scaling
-        color: Color.mOnSurface
-      }
+    NValueSlider {
+      Layout.fillWidth: true
+      from: 0
+      to: 1
+      stepSize: 0.01
+      value: Settings.data.dock.backgroundOpacity
+      onMoved: value => Settings.data.dock.backgroundOpacity = value
+      text: Math.floor(Settings.data.dock.backgroundOpacity * 100) + "%"
     }
   }
 
@@ -79,23 +69,14 @@ ColumnLayout {
       description: "Adjust the floating distance from the screen edge."
     }
 
-    RowLayout {
-      NSlider {
-        Layout.fillWidth: true
-        from: 0
-        to: 4
-        stepSize: 0.01
-        value: Settings.data.dock.floatingRatio
-        onMoved: Settings.data.dock.floatingRatio = value
-        cutoutColor: Color.mSurface
-      }
-
-      NText {
-        text: Math.floor(Settings.data.dock.floatingRatio * 100) + "%"
-        Layout.alignment: Qt.AlignVCenter
-        Layout.leftMargin: Style.marginS * scaling
-        color: Color.mOnSurface
-      }
+    NValueSlider {
+      Layout.fillWidth: true
+      from: 0
+      to: 4
+      stepSize: 0.01
+      value: Settings.data.dock.floatingRatio
+      onMoved: value => Settings.data.dock.floatingRatio = value
+      text: Math.floor(Settings.data.dock.floatingRatio * 100) + "%"
     }
   }
 

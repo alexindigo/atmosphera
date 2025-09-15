@@ -116,21 +116,15 @@ ColumnLayout {
                 Layout.preferredWidth: 80 * scaling
               }
 
-              NSlider {
+              NValueSlider {
                 id: scaleSlider
                 from: 0.7
                 to: 1.8
                 stepSize: 0.01
                 value: localScaling
-                onPressedChanged: ScalingService.setScreenScale(modelData, value)
-                Layout.fillWidth: true
-                Layout.minimumWidth: 200 * scaling
-              }
-
-              NText {
+                onPressedChanged: (pressed, value) => ScalingService.setScreenScale(modelData, value)
                 text: `${Math.round(localScaling * 100)}%`
-                Layout.preferredWidth: 50 * scaling
-                horizontalAlignment: Text.AlignRight
+                Layout.fillWidth: true
               }
 
               // Reset button container
@@ -165,24 +159,14 @@ ColumnLayout {
                 Layout.preferredWidth: 80 * scaling
               }
 
-              NSlider {
+              NValueSlider {
                 Layout.fillWidth: true
-                Layout.minimumWidth: 200 * scaling
                 from: 0
                 to: 1
                 value: brightnessMonitor ? brightnessMonitor.brightness : 0.5
-                stepSize: 0.05
-                onPressedChanged: {
-                  if (!pressed && brightnessMonitor) {
-                    brightnessMonitor.setBrightness(value)
-                  }
-                }
-              }
-
-              NText {
+                stepSize: 0.01
+                onPressedChanged: (pressed, value) => brightnessMonitor.setBrightness(value)
                 text: brightnessMonitor ? Math.round(brightnessMonitor.brightness * 100) + "%" : "N/A"
-                Layout.preferredWidth: 50 * scaling
-                horizontalAlignment: Text.AlignRight
               }
 
               // Empty container to match scale row layout

@@ -74,23 +74,14 @@ ColumnLayout {
         description: "Adjust the rounded border of all UI elements."
       }
 
-      RowLayout {
-        NSlider {
-          Layout.fillWidth: true
-          from: 0
-          to: 1
-          stepSize: 0.01
-          value: Settings.data.general.radiusRatio
-          onMoved: Settings.data.general.radiusRatio = value
-          cutoutColor: Color.mSurface
-        }
-
-        NText {
-          text: Math.floor(Settings.data.general.radiusRatio * 100) + "%"
-          Layout.alignment: Qt.AlignVCenter
-          Layout.leftMargin: Style.marginS * scaling
-          color: Color.mOnSurface
-        }
+      NValueSlider {
+        Layout.fillWidth: true
+        from: 0
+        to: 1
+        stepSize: 0.01
+        value: Settings.data.general.radiusRatio
+        onMoved: value => Settings.data.general.radiusRatio = value
+        text: Math.floor(Settings.data.general.radiusRatio * 100) + "%"
       }
     }
 
@@ -104,23 +95,14 @@ ColumnLayout {
         description: "Adjust global animation speed."
       }
 
-      RowLayout {
-        NSlider {
-          Layout.fillWidth: true
-          from: 0.1
-          to: 2.0
-          stepSize: 0.01
-          value: Settings.data.general.animationSpeed
-          onMoved: Settings.data.general.animationSpeed = value
-          cutoutColor: Color.mSurface
-        }
-
-        NText {
-          text: Math.round(Settings.data.general.animationSpeed * 100) + "%"
-          Layout.alignment: Qt.AlignVCenter
-          Layout.leftMargin: Style.marginS * scaling
-          color: Color.mOnSurface
-        }
+      NValueSlider {
+        Layout.fillWidth: true
+        from: 0.1
+        to: 2.0
+        stepSize: 0.01
+        value: Settings.data.general.animationSpeed
+        onMoved: value => Settings.data.general.animationSpeed = value
+        text: Math.round(Settings.data.general.animationSpeed * 100) + "%"
       }
     }
   }
@@ -156,23 +138,14 @@ ColumnLayout {
         description: "Adjust the rounded corners of the screen."
       }
 
-      RowLayout {
-        NSlider {
-          Layout.fillWidth: true
-          from: 0
-          to: 2
-          stepSize: 0.01
-          value: Settings.data.general.screenRadiusRatio
-          onMoved: Settings.data.general.screenRadiusRatio = value
-          cutoutColor: Color.mSurface
-        }
-
-        NText {
-          text: Math.floor(Settings.data.general.screenRadiusRatio * 100) + "%"
-          Layout.alignment: Qt.AlignVCenter
-          Layout.leftMargin: Style.marginS * scaling
-          color: Color.mOnSurface
-        }
+      NValueSlider {
+        Layout.fillWidth: true
+        from: 0
+        to: 2
+        stepSize: 0.01
+        value: Settings.data.general.screenRadiusRatio
+        onMoved: value => Settings.data.general.screenRadiusRatio = value
+        text: Math.floor(Settings.data.general.screenRadiusRatio * 100) + "%"
       }
     }
   }

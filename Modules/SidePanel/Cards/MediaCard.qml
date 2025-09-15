@@ -258,7 +258,6 @@ NBox {
           stepSize: 0
           snapAlways: false
           enabled: MediaService.trackLength > 0 && MediaService.canSeek
-          cutoutColor: Color.mSurface
           heightRatio: 0.65
 
           onMoved: {

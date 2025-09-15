@@ -2,9 +2,9 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell.Services.Pipewire
-import qs.Widgets
 import qs.Commons
 import qs.Services
+import qs.Widgets
 
 ColumnLayout {
   id: root
@@ -34,37 +34,29 @@ ColumnLayout {
       description: "System-wide volume level."
     }
 
-    RowLayout {
-      // Pipewire seems a bit finicky, if we spam too many volume changes it breaks easily
-      // Probably because they have some quick fades in and out to avoid clipping
-      // We use a timer to space out the updates, to avoid lock up
-      Timer {
-        interval: Style.animationFast
-        running: true
-        repeat: true
-        onTriggered: {
-          if (Math.abs(localVolume - AudioService.volume) >= 0.01) {
-            AudioService.setVolume(localVolume)
-          }
+    // Pipewire seems a bit finicky, if we spam too many volume changes it breaks easily
+    // Probably because they have some quick fades in and out to avoid clipping
+    // We use a timer to space out the updates, to avoid lock up
+    Timer {
+      interval: Style.animationFast
+      running: true
+      repeat: true
+      onTriggered: {
+        if (Math.abs(localVolume - AudioService.volume) >= 0.01) {
+          AudioService.setVolume(localVolume)
         }
       }
+    }
 
-      NSlider {
-        Layout.fillWidth: true
-        from: 0
-        to: Settings.data.audio.volumeOverdrive ? 2.0 : 1.0
-        value: localVolume
-        stepSize: 0.01
-        onMoved: {
-          localVolume = value
-        }
-      }
-
-      NText {
-        text: Math.floor(AudioService.volume * 100) + "%"
-        Layout.alignment: Qt.AlignVCenter
-        Layout.leftMargin: Style.marginS * scaling
-        color: Color.mOnSurface
+    NValueSlider {
+      Layout.fillWidth: true
+      from: 0
+      to: Settings.data.audio.volumeOverdrive ? 2.0 : 1.0
+      value: localVolume
+      stepSize: 0.01
+      text: Math.floor(AudioService.volume * 100) + "%"
+      onMoved: {
+        localVolume = value
       }
     }
   }
@@ -96,24 +88,14 @@ ColumnLayout {
       description: "Microphone input volume level."
     }
 
-    RowLayout {
-      NSlider {
-        Layout.fillWidth: true
-        from: 0
-        to: 1.0
-        value: AudioService.inputVolume
-        stepSize: 0.01
-        onMoved: {
-          AudioService.setInputVolume(value)
-        }
-      }
-
-      NText {
-        text: Math.floor(AudioService.inputVolume * 100) + "%"
-        Layout.alignment: Qt.AlignVCenter
-        Layout.leftMargin: Style.marginS * scaling
-        color: Color.mOnSurface
-      }
+    NValueSlider {
+      Layout.fillWidth: true
+      from: 0
+      to: 1.0
+      value: AudioService.inputVolume
+      stepSize: 0.01
+      text: Math.floor(AudioService.inputVolume * 100) + "%"
+      onMoved: value => AudioService.setInputVolume(value)
     }
   }
 
@@ -144,9 +126,7 @@ ColumnLayout {
       value: Settings.data.audio.volumeStep
       stepSize: 1
       suffix: "%"
-      onValueChanged: {
-        Settings.data.audio.volumeStep = value
-      }
+      onValueChanged: value => Settings.data.audio.volumeStep = value
     }
   }
 
