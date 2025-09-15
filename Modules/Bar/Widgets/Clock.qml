@@ -36,10 +36,10 @@ Rectangle {
   readonly property string displayFormat: widgetSettings.displayFormat !== undefined ? widgetSettings.displayFormat : widgetMetadata.displayFormat
 
   // Use compact mode for vertical bars
-  readonly property bool useCompactMode: barPosition === "left" || barPosition === "right"
+  readonly property bool verticalMode: barPosition === "left" || barPosition === "right"
 
-  implicitWidth: useCompactMode ? Math.round(Style.capsuleHeight * scaling) : Math.round(layout.implicitWidth + Style.marginM * 2 * scaling)
-  implicitHeight: useCompactMode ? Math.round(Style.capsuleHeight * 2.5 * scaling) : Math.round(Style.capsuleHeight * scaling)
+  implicitWidth: verticalMode ? Math.round(Style.capsuleHeight * scaling) : Math.round(layout.implicitWidth + Style.marginM * 2 * scaling)
+  implicitHeight: verticalMode ? Math.round(Style.capsuleHeight * 2.5 * scaling) : Math.round(Style.baseWidgetSize * 0.8 * scaling) // Match NPill
 
   radius: Math.round(Style.radiusS * scaling)
   color: Color.mSurfaceVariant
@@ -52,18 +52,18 @@ Rectangle {
     ColumnLayout {
       id: layout
       anchors.centerIn: parent
-      spacing: useCompactMode ? -2 * scaling : -3 * scaling
+      spacing: verticalMode ? -2 * scaling : -3 * scaling
 
       // Compact mode for vertical bars - Time section (HH, MM)
       Repeater {
-        model: useCompactMode ? 2 : 1
+        model: verticalMode ? 2 : 1
         NText {
           readonly property bool showSeconds: (displayFormat === "time-seconds")
           readonly property bool inlineDate: (displayFormat === "time-date")
           readonly property var now: Time.date
 
           text: {
-            if (useCompactMode) {
+            if (verticalMode) {
               // Compact mode: time section (first 2 lines)
               switch (index) {
               case 0:
@@ -126,7 +126,7 @@ Rectangle {
           }
 
           font.family: Settings.data.ui.fontFixed
-          font.pointSize: useCompactMode ? Style.fontSizeXXS * scaling : Style.fontSizeXS * scaling
+          font.pointSize: verticalMode ? Style.fontSizeXXS * scaling : Style.fontSizeXS * scaling
           font.weight: Style.fontWeightBold
           color: Color.mPrimary
           Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
@@ -135,7 +135,7 @@ Rectangle {
 
       // Separator line for compact mode (between time and date)
       Rectangle {
-        visible: useCompactMode
+        visible: verticalMode
         Layout.preferredWidth: 20 * scaling
         Layout.preferredHeight: 2 * scaling
         Layout.alignment: Qt.AlignHCenter
@@ -148,12 +148,12 @@ Rectangle {
 
       // Compact mode for vertical bars - Date section (DD, MM)
       Repeater {
-        model: useCompactMode ? 2 : 0
+        model: verticalMode ? 2 : 0
         NText {
           readonly property var now: Time.date
 
           text: {
-            if (useCompactMode) {
+            if (verticalMode) {
               // Compact mode: date section (last 2 lines)
               switch (index) {
               case 0:
@@ -178,7 +178,7 @@ Rectangle {
 
       // Second line for normal mode (date)
       NText {
-        visible: !useCompactMode && (displayFormat === "time-date-short")
+        visible: !verticalMode && (displayFormat === "time-date-short")
         text: {
           const now = Time.date
           const day = now.getDate().toString().padStart(2, '0')
