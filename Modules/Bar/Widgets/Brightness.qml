@@ -90,7 +90,7 @@ Item {
       var monitor = getMonitor()
       if (!monitor)
         return ""
-      return "Brightness: " + Math.round(monitor.brightness * 100) + "%\nMethod: " + monitor.method + "\nLeft click for advanced settings.\nScroll up/down to change brightness."
+      return "Brightness: " + Math.round(monitor.brightness * 100) + "%\nRight click for settings.\nScroll to modify brightness."
     }
 
     onWheel: function (angle) {
@@ -102,6 +102,12 @@ Item {
       } else if (angle < 0) {
         monitor.decreaseBrightness()
       }
+    }
+
+    onClicked: {
+      var settingsPanel = PanelService.getPanel("settingsPanel")
+      settingsPanel.requestedTab = SettingsPanel.Tab.Display
+      settingsPanel.open()
     }
 
     onRightClicked: {
