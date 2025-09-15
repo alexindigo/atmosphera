@@ -91,7 +91,7 @@ Variants {
             anchors.fill: parent
 
             // Top section (left widgets)
-            Column {
+            ColumnLayout {
               anchors.horizontalCenter: parent.horizontalCenter
               anchors.top: parent.top
               anchors.topMargin: Style.marginM * root.scaling
@@ -115,7 +115,7 @@ Variants {
             }
 
             // Center section (center widgets)
-            Column {
+            ColumnLayout {
               anchors.horizontalCenter: parent.horizontalCenter
               anchors.verticalCenter: parent.verticalCenter
               spacing: Style.marginS * root.scaling
@@ -138,7 +138,7 @@ Variants {
             }
 
             // Bottom section (right widgets)
-            Column {
+            ColumnLayout {
               anchors.horizontalCenter: parent.horizontalCenter
               anchors.bottom: parent.bottom
               anchors.bottomMargin: Style.marginM * root.scaling
@@ -169,7 +169,7 @@ Variants {
             anchors.fill: parent
 
             // Left Section
-            RowLayout {
+            RowLayout{
               id: leftSection
               objectName: "leftSection"
               anchors.left: parent.left
@@ -189,6 +189,7 @@ Variants {
                     "sectionWidgetIndex": index,
                     "sectionWidgetsCount": Settings.data.bar.widgets.left.length
                   }
+                  Layout.alignment: Qt.alignVCenter
                 }
               }
             }
@@ -213,6 +214,7 @@ Variants {
                     "sectionWidgetIndex": index,
                     "sectionWidgetsCount": Settings.data.bar.widgets.center.length
                   }
+                  Layout.alignment: Qt.alignVCenter
                 }
               }
             }
@@ -238,6 +240,7 @@ Variants {
                     "sectionWidgetIndex": index,
                     "sectionWidgetsCount": Settings.data.bar.widgets.right.length
                   }
+                  Layout.alignment: Qt.alignVCenter
                 }
               }
             }
