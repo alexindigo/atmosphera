@@ -178,7 +178,7 @@ PopupWindow {
                 font.pointSize: Style.fontSizeS * scaling
                 verticalAlignment: Text.AlignVCenter
                 visible: modelData?.hasChildren ?? false
-                color: Color.mOnSurface
+                color: (mouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface) 
               }
             }
 
