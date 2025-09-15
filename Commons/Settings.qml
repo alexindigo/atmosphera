@@ -322,6 +322,7 @@ Singleton {
         property string avatarImage: defaultAvatar
         property bool dimDesktop: false
         property bool showScreenCorners: false
+        property bool forceBlackScreenCorners: false
         property real radiusRatio: 1.0
         property real screenRadiusRatio: 1.0
         // Animation speed multiplier (0.1x - 2.0x)

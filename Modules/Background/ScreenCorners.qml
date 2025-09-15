@@ -19,7 +19,7 @@ Loader {
       property real scaling: ScalingService.getScreenScale(screen)
       screen: modelData
 
-      property color cornerColor: Qt.alpha(Color.mSurface, Settings.data.bar.backgroundOpacity)
+      property color cornerColor: Settings.data.general.forceBlackScreenCorners ? Qt.rgba(0, 0, 0, 1) : Qt.alpha(Color.mSurface, Settings.data.bar.backgroundOpacity)
       property real cornerRadius: Style.screenRadius * scaling
       property real cornerSize: Style.screenRadius * scaling
 

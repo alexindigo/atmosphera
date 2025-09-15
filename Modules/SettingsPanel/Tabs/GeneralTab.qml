@@ -129,6 +129,13 @@ ColumnLayout {
       onToggled: checked => Settings.data.general.showScreenCorners = checked
     }
 
+    NToggle {
+      label: "Solid Black Corners"
+      description: "Force screen corners to always render as solid black."
+      checked: Settings.data.general.forceBlackScreenCorners
+      onToggled: checked => Settings.data.general.forceBlackScreenCorners = checked
+    }
+
     ColumnLayout {
       spacing: Style.marginXXS * scaling
       Layout.fillWidth: true
