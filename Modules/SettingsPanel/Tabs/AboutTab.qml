@@ -189,7 +189,7 @@ ColumnLayout {
           NText {
             text: modelData.login || "Unknown"
             font.weight: Style.fontWeightBold
-            color: contributorArea.containsMouse ? Color.mSurface : Color.mOnSurface
+            color: contributorArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface
             elide: Text.ElideRight
             Layout.fillWidth: true
           }
@@ -197,7 +197,7 @@ ColumnLayout {
           NText {
             text: (modelData.contributions || 0) + " " + ((modelData.contributions || 0) === 1 ? "commit" : "commits")
             font.pointSize: Style.fontSizeXS * scaling
-            color: contributorArea.containsMouse ? Color.mSurface : Color.mOnSurface
+            color: contributorArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface
           }
         }
       }
