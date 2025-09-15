@@ -40,7 +40,6 @@ NIconButton {
   colorBorder: Color.transparent
   colorBorderHover: Color.transparent
 
-  anchors.verticalCenter: parent.verticalCenter
   onClicked: PanelService.getPanel("sidePanel")?.toggle(this)
   onRightClicked: PanelService.getPanel("settingsPanel")?.toggle()
 

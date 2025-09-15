@@ -16,6 +16,5 @@ NIconButton {
   sizeRatio: 0.8
   colorBg: Color.mPrimary
   colorFg: Color.mOnPrimary
-  anchors.verticalCenter: parent.verticalCenter
   onClicked: ScreenRecorderService.toggleRecording()
 }
