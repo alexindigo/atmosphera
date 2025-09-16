@@ -40,6 +40,7 @@
               libnotify
               matugen
               networkmanager
+              wlsunset
               wl-clipboard
             ] ++ lib.optionals (pkgs.stdenv.hostPlatform.isx86_64)
             [ gpu-screen-recorder ];
