@@ -1,5 +1,3 @@
-pragma ComponentBehavior
-
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -16,17 +14,30 @@ Rectangle {
   property real scaling: 1.0
 
   readonly property real itemSize: Style.capsuleHeight * 0.8 * scaling
+  readonly property bool isVerticalBar: Settings.data.bar.position === "left" || Settings.data.bar.position === "right"
 
   // Always visible when there are toplevels
-  implicitWidth: taskbarLayout.implicitWidth + Style.marginM * scaling * 2
-  implicitHeight: Math.round(Style.capsuleHeight * scaling)
+  implicitWidth: isVerticalBar ? Math.round(Style.capsuleHeight * scaling) : taskbarLayout.implicitWidth + Style.marginM * scaling * 2
+  implicitHeight: isVerticalBar ? taskbarLayout.implicitHeight + Style.marginM * scaling * 2 : Math.round(Style.capsuleHeight * scaling)
   radius: Math.round(Style.radiusM * scaling)
   color: Color.mSurfaceVariant
 
-  RowLayout {
+  GridLayout {
     id: taskbarLayout
-    anchors.centerIn: parent
-    spacing: Style.marginXXS * root.scaling
+    anchors.fill: parent
+    anchors {
+      leftMargin: isVerticalBar ? undefined : Style.marginM * scaling
+      rightMargin: isVerticalBar ? undefined : Style.marginM * scaling
+      topMargin: isVerticalBar ? Style.marginM * scaling : undefined
+      bottomMargin: isVerticalBar ? Style.marginM * scaling : undefined
+    }
+
+    // Configure GridLayout to behave like RowLayout or ColumnLayout
+    rows: isVerticalBar ? -1 : 1 // -1 means unlimited
+    columns: isVerticalBar ? 1 : -1 // -1 means unlimited
+
+    rowSpacing: isVerticalBar ? Style.marginXXS * root.scaling : 0
+    columnSpacing: isVerticalBar ? 0 : Style.marginXXS * root.scaling
 
     Repeater {
       model: ToplevelManager && ToplevelManager.toplevels ? ToplevelManager.toplevels : []
