@@ -79,8 +79,11 @@ Item {
       "icon": app.icon || "application-x-executable",
       "isImage": false,
       "onActivate": function () {
-        Logger.log("ApplicationsPlugin", `Launching: ${app.name}`)
+        // Close the launcher/NPanel immediately without any animations.
+        // Ensures we are not preventing the future focusing of the app
+        launcher.closeCompleted()
 
+        Logger.log("ApplicationsPlugin", `Launching: ${app.name}`)
         if (Settings.data.appLauncher.useApp2Unit && app.id) {
           Logger.log("ApplicationsPlugin", `Using app2unit for: ${app.id}`)
           if (app.runInTerminal)
@@ -89,11 +92,9 @@ Item {
             Quickshell.execDetached(["app2unit", "--"].concat(app.command))
         } else if (app.execute) {
           app.execute()
-        } else if (app.exec) {
-          // Fallback to manual execution
-          Process.execute(app.exec)
+        } else {
+          Logger.log("ApplicationsPlugin", `Could not launch: ${app.name}`)
         }
-        launcher.close()
       }
     }
   }
