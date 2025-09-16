@@ -34,7 +34,13 @@ Item {
   readonly property string barPosition: Settings.data.bar.position
   readonly property bool isVertical: barPosition === "left" || barPosition === "right"
   readonly property bool compact: (Settings.data.bar.density === "compact")
-  readonly property real baseDimensionRatio: compact ? 0.85 : 0.65
+  readonly property real baseDimensionRatio: {
+    const b = compact ? 0.85 : 0.65
+    if (widgetSettings.labelMode === "none") {
+      return b * 0.75
+    }
+    return b
+  }
 
   readonly property string labelMode: (widgetSettings.labelMode !== undefined) ? widgetSettings.labelMode : widgetMetadata.labelMode
   readonly property bool hideUnoccupied: (widgetSettings.hideUnoccupied !== undefined) ? widgetSettings.hideUnoccupied : widgetMetadata.hideUnoccupied

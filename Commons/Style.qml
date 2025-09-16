@@ -91,7 +91,7 @@ Singleton {
       return barHeight * 0.95
     }
     if (Settings.data.bar.density === "default") {
-      return barHeight * 0.85
+      return barHeight * 0.82
     }
     if (Settings.data.bar.density === "comfortable") {
       return barHeight * 0.73
