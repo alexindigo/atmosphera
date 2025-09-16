@@ -32,7 +32,9 @@ Item {
   }
 
   readonly property string barPosition: Settings.data.bar.position
+  readonly property bool isVertical: barPosition === "left" || barPosition === "right"
   readonly property bool compact: (Settings.data.bar.density === "compact")
+  readonly property real baseDimensionRatio: compact ? 0.85 : 0.73
 
   readonly property string labelMode: (widgetSettings.labelMode !== undefined) ? widgetSettings.labelMode : widgetMetadata.labelMode
   readonly property bool hideUnoccupied: (widgetSettings.hideUnoccupied !== undefined) ? widgetSettings.hideUnoccupied : widgetMetadata.hideUnoccupied
@@ -50,43 +52,42 @@ Item {
 
   signal workspaceChanged(int workspaceId, color accentColor)
 
-  implicitHeight: (barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Math.round(Style.barHeight * scaling)
-  implicitWidth: (barPosition === "left" || barPosition === "right") ? Math.round(Style.barHeight * scaling) : calculatedHorizontalWidth()
+  implicitWidth: isVertical ? Math.round(Style.barHeight * scaling) : computeWidth()
+  implicitHeight: isVertical ? computeHeight() : Math.round(Style.barHeight * scaling)
 
-  function calculatedWsWidth(ws) {
+
+  function getWorkspaceWidth(ws) {
+    const d = Style.capsuleHeight * root.baseDimensionRatio
     if (ws.isFocused)
-      return Math.round(44 * scaling)
-    else if (ws.isActive)
-      return Math.round(28 * scaling)
-    else
-      return Math.round(20 * scaling)
+      return d * 2.5
+    else 
+      return d
   }
 
-  function calculatedWsHeight(ws) {
+  function getWorkspaceHeight(ws) {
+    const d = Style.capsuleHeight * root.baseDimensionRatio
     if (ws.isFocused)
-      return Math.round(44 * scaling)
-    else if (ws.isActive)
-      return Math.round(28 * scaling)
-    else
-      return Math.round(20 * scaling)
+      return d * 3
+    else 
+      return d
   }
 
-  function calculatedVerticalHeight() {
+  function computeWidth() {
     let total = 0
     for (var i = 0; i < localWorkspaces.count; i++) {
       const ws = localWorkspaces.get(i)
-      total += calculatedWsHeight(ws)
+      total += getWorkspaceWidth(ws)
     }
     total += Math.max(localWorkspaces.count - 1, 0) * spacingBetweenPills
     total += horizontalPadding * 2
     return total
   }
 
-  function calculatedHorizontalWidth() {
+  function computeHeight() {
     let total = 0
     for (var i = 0; i < localWorkspaces.count; i++) {
       const ws = localWorkspaces.get(i)
-      total += calculatedWsWidth(ws)
+      total += getWorkspaceHeight(ws)
     }
     total += Math.max(localWorkspaces.count - 1, 0) * spacingBetweenPills
     total += horizontalPadding * 2
@@ -174,8 +175,8 @@ Item {
 
   Rectangle {
     id: workspaceBackground
-    width: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : parent.width
-    height: (barPosition === "left" || barPosition === "right") ? parent.height : Math.round(Style.capsuleHeight * scaling)
+    width: isVertical ? Math.round(Style.capsuleHeight * scaling) : parent.width
+    height: isVertical ? parent.height : Math.round(Style.capsuleHeight * scaling)
     radius: Math.round(Style.radiusM * scaling)
     color: compact ? Color.transparent : Color.mSurfaceVariant
 
@@ -189,16 +190,16 @@ Item {
     spacing: spacingBetweenPills
     anchors.verticalCenter: workspaceBackground.verticalCenter
     x: horizontalPadding
-    visible: barPosition === "top" || barPosition === "bottom"
+    visible: !isVertical
 
     Repeater {
       id: workspaceRepeaterHorizontal
       model: localWorkspaces
       Item {
         id: workspacePillContainer
-        height: compact ? root.height : workspaceBackground.height * 0.75
-        width: root.calculatedWsWidth(model)
-
+        width: root.getWorkspaceWidth(model)
+        height: Style.capsuleHeight * root.baseDimensionRatio
+        
         Rectangle {
           id: pill
           anchors.fill: parent
@@ -333,15 +334,15 @@ Item {
     spacing: spacingBetweenPills
     anchors.horizontalCenter: workspaceBackground.horizontalCenter
     y: horizontalPadding
-    visible: barPosition === "left" || barPosition === "right"
+    visible: isVertical
 
     Repeater {
       id: workspaceRepeaterVertical
       model: localWorkspaces
       Item {
         id: workspacePillContainerVertical
-        width: compact ? root.width : workspaceBackground.width * 0.75
-        height: root.calculatedWsHeight(model)
+        width: Style.capsuleHeight * root.baseDimensionRatio
+        height: root.getWorkspaceHeight(model)
 
         Rectangle {
           id: pillVertical

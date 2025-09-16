@@ -77,10 +77,10 @@ Singleton {
   // Bar Dimensions
   property real barHeight: {
     if (Settings.data.bar.density === "compact") {
-      return (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 25 : 23
+      return (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 27 : 25
     }
     if (Settings.data.bar.density === "default") {
-      return (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 29 : 27
+      return (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 33 : 31
     }
     if (Settings.data.bar.density === "comfortable") {
       return (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 39 : 37
@@ -88,13 +88,13 @@ Singleton {
   }
   property real capsuleHeight: {
     if (Settings.data.bar.density === "compact") {
-      return barHeight
+      return barHeight * 0.95
     }
     if (Settings.data.bar.density === "default") {
-      return barHeight * 0.9
+      return barHeight * 0.85
     }
     if (Settings.data.bar.density === "comfortable") {
-      return Math.round(barHeight * 0.73)
+      return barHeight * 0.73
     }
   }
 }
