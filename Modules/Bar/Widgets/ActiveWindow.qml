@@ -38,7 +38,7 @@ Item {
 
   readonly property string barPosition: Settings.data.bar.position
   implicitHeight: (barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Math.round(Style.barHeight * scaling)
-  implicitWidth: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : (horizontalLayout.implicitWidth + Style.marginM * 2 * scaling)
+  implicitWidth: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * 0.8 * scaling) : (horizontalLayout.implicitWidth + Style.marginM * 2 * scaling)
 
   function getTitle() {
     try {
@@ -60,7 +60,7 @@ Item {
     let total = Style.marginM * 2 * scaling // internal padding
 
     if (showIcon) {
-      total += Style.baseWidgetSize * 0.5 * scaling + 2 * scaling // icon + spacing
+      total += Style.capsuleHeight * 0.5 * scaling + 2 * scaling // icon + spacing
     }
 
     // Calculate actual text width more accurately
@@ -129,11 +129,13 @@ Item {
   Rectangle {
     id: windowTitleRect
     visible: root.visible
-    anchors.left: parent.left
+    anchors.left: (barPosition === "top" || barPosition === "bottom") ? parent.left : undefined
+    anchors.top: (barPosition === "left" || barPosition === "right") ? parent.top : undefined
     anchors.verticalCenter: parent.verticalCenter
+    anchors.horizontalCenter: parent.horizontalCenter
     width: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : (horizontalLayout.implicitWidth + Style.marginM * 2 * scaling)
     height: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : Math.round(Style.capsuleHeight * scaling)
-    radius: Math.round(Style.radiusM * scaling)
+    radius: width / 2
     color: Color.mSurfaceVariant
 
     Item {
@@ -152,8 +154,8 @@ Item {
 
         // Window icon
         Item {
-          Layout.preferredWidth: Style.baseWidgetSize * 0.5 * scaling
-          Layout.preferredHeight: Style.baseWidgetSize * 0.5 * scaling
+          Layout.preferredWidth: Style.capsuleHeight * 0.75 * scaling
+          Layout.preferredHeight: Style.capsuleHeight * 0.75 * scaling
           Layout.alignment: Qt.AlignVCenter
           visible: getTitle() !== "" && showIcon
 
@@ -217,11 +219,10 @@ Item {
 
         // Window icon
         Item {
-          width: Style.baseWidgetSize * 0.5 * scaling
-          height: Style.baseWidgetSize * 0.5 * scaling
+          width: Style.capsuleHeight * 0.75 * scaling
+          height: Style.capsuleHeight * 0.75 * scaling
           anchors.centerIn: parent
-          visible: getTitle() !== "" && showIcon
-
+          
           IconImage {
             id: windowIconVertical
             anchors.fill: parent

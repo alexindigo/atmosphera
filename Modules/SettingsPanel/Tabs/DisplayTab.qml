@@ -87,19 +87,9 @@ ColumnLayout {
           anchors.margins: Style.marginL * scaling
           spacing: Style.marginXXS * scaling
 
-          NText {
-            text: (`${modelData.name}: ${modelData.model}` || "Unknown")
-            font.pointSize: Style.fontSizeL * scaling
-            font.weight: Style.fontWeightBold
-            color: Color.mPrimary
-          }
-
-          NText {
-            text: `Resolution: ${modelData.width}x${modelData.height} at (${modelData.x}, ${modelData.y})`
-            font.pointSize: Style.fontSizeXS * scaling
-            color: Color.mOnSurfaceVariant
-            wrapMode: Text.WordWrap
-            Layout.fillWidth: true
+          NLabel {
+            label: modelData.name|| "Unknown"
+            description: `${modelData.model} - ${modelData.width}x${modelData.height} [x:${modelData.x} y:${modelData.y}]`
           }
 
           // Scale
@@ -134,8 +124,8 @@ ColumnLayout {
 
                 NIconButton {
                   icon: "refresh"
-                  sizeRatio: 0.8
-                  tooltipText: "Reset scaling"
+                  baseSize: Style.baseWidgetSize * 0.9
+                  tooltipText: "Reset scaling."
                   onClicked: ScalingService.setScreenScale(modelData, 1.0)
                   anchors.right: parent.right
                   anchors.verticalCenter: parent.verticalCenter

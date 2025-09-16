@@ -68,23 +68,13 @@ Variants {
           radius: Settings.data.bar.floating ? Style.radiusL : 0
         }
 
-        // For vertical bars, use a single column layout
         Loader {
-          id: verticalBarLayout
           anchors.fill: parent
-          visible: Settings.data.bar.position === "left" || Settings.data.bar.position === "right"
-          sourceComponent: verticalBarComponent
+          active: true
+          sourceComponent: (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? verticalBarComponent : horizontalBarComponent
         }
 
-        // For horizontal bars, use the original three-section layout
-        Loader {
-          id: horizontalBarLayout
-          anchors.fill: parent
-          visible: Settings.data.bar.position === "top" || Settings.data.bar.position === "bottom"
-          sourceComponent: horizontalBarComponent
-        }
-
-        // Main layout components
+        // For vertical bars
         Component {
           id: verticalBarComponent
           Item {
@@ -163,6 +153,7 @@ Variants {
           }
         }
 
+        // For horizontal bars
         Component {
           id: horizontalBarComponent
           Item {

@@ -65,14 +65,16 @@ Singleton {
   property int animationSlow: Math.round(450 / Settings.data.general.animationSpeed)
   property int animationSlowest: Math.round(750 / Settings.data.general.animationSpeed)
 
-  // Dimensions
-  property int barHeight: (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 39 : 37
-  property int capsuleHeight: (barHeight * 0.73)
-  property int baseWidgetSize: (barHeight * 0.9)
-  property int sliderWidth: 200
-
   // Delays
   property int tooltipDelay: 300
   property int tooltipDelayLong: 1200
   property int pillDelay: 500
+
+  // Settings widgets base size
+  property real baseWidgetSize: 33
+  property real sliderWidth: 200
+
+  // Bar Dimensions
+  property real barHeight: (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 39 : 37
+  property real capsuleHeight: Math.round(barHeight * 0.73)
 }

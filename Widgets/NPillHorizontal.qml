@@ -10,7 +10,6 @@ Item {
   property string text: ""
   property string suffix: ""
   property string tooltipText: ""
-  property real sizeRatio: 0.8
   property bool autoHide: false
   property bool forceOpen: false
   property bool forceClose: false
@@ -34,19 +33,17 @@ Item {
   property bool showPill: false
   property bool shouldAnimateHide: false
 
-  // Exposed width logic
-  readonly property int iconSize: Math.round(Style.baseWidgetSize * sizeRatio * scaling)
-  readonly property int pillHeight: iconSize
-  readonly property int pillPaddingHorizontal: 3 * 2 * scaling // Very precise adjustment don't replace by Style.margin
-  readonly property int pillOverlap: iconSize * 0.5
-  readonly property int maxPillWidth: Math.max(1, textItem.implicitWidth + pillPaddingHorizontal * 2 + pillOverlap)
+  readonly property int pillHeight: Math.round(Style.capsuleHeight * scaling)
+  readonly property int pillPaddingHorizontal: Math.round(Style.capsuleHeight * 0.2 * scaling)
+  readonly property int pillOverlap: Math.round(Style.capsuleHeight * 0.5 * scaling)
+  readonly property int pillMaxWidth: Math.max(1, textItem.implicitWidth + pillPaddingHorizontal * 2 + pillOverlap)
 
-  width: iconSize + Math.max(0, pill.width - pillOverlap)
+  width: pillHeight + Math.max(0, pill.width - pillOverlap)
   height: pillHeight
 
   Rectangle {
     id: pill
-    width: revealed ? maxPillWidth : 1
+    width: revealed ? pillMaxWidth : 1
     height: pillHeight
 
     x: rightOpen ? (iconCircle.x + iconCircle.width / 2) : // Opens right
@@ -76,7 +73,7 @@ Item {
       }
       text: root.text + root.suffix
       font.family: Settings.data.ui.fontFixed
-      font.pointSize: Style.fontSizeXS * scaling
+      font.pointSize: Math.max(1, root.pillHeight * 0.33)
       font.weight: Style.fontWeightBold
       color: forceOpen ? Color.mOnSurface : Color.mPrimary
       visible: revealed
@@ -100,8 +97,8 @@ Item {
 
   Rectangle {
     id: iconCircle
-    width: iconSize
-    height: iconSize
+    width: pillHeight
+    height: pillHeight
     radius: width * 0.5
     color: hovered ? Color.mTertiary : Color.mSurfaceVariant
     anchors.verticalCenter: parent.verticalCenter
@@ -117,7 +114,7 @@ Item {
 
     NIcon {
       icon: root.icon
-      font.pointSize: Style.fontSizeM * scaling
+      font.pointSize: Math.max(1, pillHeight * 0.5)
       color: hovered ? Color.mOnTertiary : Color.mOnSurface
       // Center horizontally
       x: (iconCircle.width - width) / 2
@@ -133,7 +130,7 @@ Item {
       target: pill
       property: "width"
       from: 1
-      to: maxPillWidth
+      to: pillMaxWidth
       duration: Style.animationNormal
       easing.type: Easing.OutCubic
     }
@@ -173,7 +170,7 @@ Item {
     NumberAnimation {
       target: pill
       property: "width"
-      from: maxPillWidth
+      from: pillMaxWidth
       to: 1
       duration: Style.animationNormal
       easing.type: Easing.InCubic

@@ -53,7 +53,7 @@ NPanel {
           enabled: Settings.data.network.bluetoothEnabled
           icon: BluetoothService.adapter && BluetoothService.adapter.discovering ? "stop" : "refresh"
           tooltipText: "Refresh Devices"
-          sizeRatio: 0.8
+          baseSize: Style.baseWidgetSize * 0.8
           onClicked: {
             if (BluetoothService.adapter) {
               BluetoothService.adapter.discovering = !BluetoothService.adapter.discovering
@@ -64,7 +64,7 @@ NPanel {
         NIconButton {
           icon: "close"
           tooltipText: "Close."
-          sizeRatio: 0.8
+          baseSize: Style.baseWidgetSize * 0.8
           onClicked: {
             root.close()
           }

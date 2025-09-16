@@ -10,7 +10,6 @@ Item {
   property string text: ""
   property string suffix: ""
   property string tooltipText: ""
-  property real sizeRatio: 0.8
   property bool autoHide: false
   property bool forceOpen: false
   property bool forceClose: false
@@ -43,7 +42,7 @@ Item {
   property bool shouldAnimateHide: false
 
   // Sizing logic for vertical bars
-  readonly property int iconSize: Math.round(Style.baseWidgetSize * sizeRatio * scaling)
+  readonly property int iconSize: Math.round(Style.capsuleHeight * scaling)
   readonly property int pillHeight: iconSize
   readonly property int pillPaddingVertical: 3 * 2 * scaling // Very precise adjustment don't replace by Style.margin
   readonly property int pillOverlap: iconSize * 0.5

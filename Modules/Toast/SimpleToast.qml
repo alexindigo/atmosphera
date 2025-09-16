@@ -136,7 +136,7 @@ Rectangle {
       colorBorder: Color.transparent
       colorBorderHover: Color.mOutline
 
-      sizeRatio: 0.8
+      baseSize: Style.baseWidgetSize * 0.8
       Layout.alignment: Qt.AlignTop
 
       onClicked: root.hide()

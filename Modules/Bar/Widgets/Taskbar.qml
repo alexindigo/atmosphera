@@ -15,7 +15,7 @@ Rectangle {
   property ShellScreen screen
   property real scaling: 1.0
 
-  readonly property real itemSize: Style.baseWidgetSize * 0.8 * scaling
+  readonly property real itemSize: Style.capsuleHeight * 0.8 * scaling
 
   // Always visible when there are toplevels
   implicitWidth: taskbarLayout.implicitWidth + Style.marginM * scaling * 2

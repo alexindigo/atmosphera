@@ -326,7 +326,7 @@ Variants {
             NIconButton {
               icon: "close"
               tooltipText: "Close."
-              sizeRatio: 0.6
+              baseSize: Style.baseWidgetSize * 0.6
               anchors.top: parent.top
               anchors.topMargin: Style.marginM * scaling
               anchors.right: parent.right

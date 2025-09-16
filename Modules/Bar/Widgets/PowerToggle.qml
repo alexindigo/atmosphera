@@ -11,7 +11,7 @@ NIconButton {
   property ShellScreen screen
   property real scaling: 1.0
 
-  sizeRatio: 0.8
+  baseSize: Style.capsuleHeight
 
   icon: "power"
   tooltipText: "Power Settings"

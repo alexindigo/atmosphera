@@ -57,7 +57,7 @@ NPanel {
         NIconButton {
           icon: "refresh"
           tooltipText: "Refresh"
-          sizeRatio: 0.8
+          baseSize: Style.baseWidgetSize * 0.8
           enabled: Settings.data.network.wifiEnabled && !NetworkService.scanning
           onClicked: NetworkService.scan()
         }
@@ -65,7 +65,7 @@ NPanel {
         NIconButton {
           icon: "close"
           tooltipText: "Close."
-          sizeRatio: 0.8
+          baseSize: Style.baseWidgetSize * 0.8
           onClicked: root.close()
         }
       }
@@ -106,7 +106,7 @@ NPanel {
 
           NIconButton {
             icon: "close"
-            sizeRatio: 0.6
+            baseSize: Style.baseWidgetSize * 0.6
             onClicked: NetworkService.lastError = ""
           }
         }
@@ -368,7 +368,7 @@ NPanel {
                         visible: (modelData.existing || modelData.cached) && !modelData.connected && NetworkService.connectingTo !== modelData.ssid && NetworkService.forgettingNetwork !== modelData.ssid && NetworkService.disconnectingFrom !== modelData.ssid
                         icon: "trash"
                         tooltipText: "Forget network"
-                        sizeRatio: 0.7
+                        baseSize: Style.baseWidgetSize * 0.8
                         onClicked: expandedSsid = expandedSsid === modelData.ssid ? "" : modelData.ssid
                       }
 
@@ -478,7 +478,7 @@ NPanel {
 
                       NIconButton {
                         icon: "close"
-                        sizeRatio: 0.8
+                        baseSize: Style.baseWidgetSize * 0.8
                         onClicked: {
                           passwordSsid = ""
                           passwordInput = ""
@@ -532,7 +532,7 @@ NPanel {
 
                       NIconButton {
                         icon: "close"
-                        sizeRatio: 0.8
+                        baseSize: Style.baseWidgetSize * 0.8
                         onClicked: expandedSsid = ""
                       }
                     }

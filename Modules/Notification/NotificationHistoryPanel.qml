@@ -48,15 +48,15 @@ NPanel {
         NIconButton {
           icon: Settings.data.notifications.doNotDisturb ? "bell-off" : "bell"
           tooltipText: Settings.data.notifications.doNotDisturb ? "'Do Not Disturb' is enabled." : "'Do Not Disturb' is disabled."
-          sizeRatio: 0.8
+          baseSize: Style.baseWidgetSize * 0.8
           onClicked: Settings.data.notifications.doNotDisturb = !Settings.data.notifications.doNotDisturb
           onRightClicked: Settings.data.notifications.doNotDisturb = !Settings.data.notifications.doNotDisturb
         }
 
         NIconButton {
           icon: "trash"
-          tooltipText: "Clear history"
-          sizeRatio: 0.8
+          tooltipText: "Clear history."
+          baseSize: Style.baseWidgetSize * 0.8
           onClicked: {
             NotificationService.clearHistory()
             root.close()
@@ -66,7 +66,7 @@ NPanel {
         NIconButton {
           icon: "close"
           tooltipText: "Close."
-          sizeRatio: 0.8
+          baseSize: Style.baseWidgetSize * 0.8
           onClicked: {
             root.close()
           }
@@ -198,8 +198,8 @@ NPanel {
             // Delete button
             NIconButton {
               icon: "trash"
-              tooltipText: "Delete notification"
-              sizeRatio: 0.7
+              tooltipText: "Delete notification."
+              baseSize: Style.baseWidgetSize * 0.7
               Layout.alignment: Qt.AlignTop
 
               onClicked: {

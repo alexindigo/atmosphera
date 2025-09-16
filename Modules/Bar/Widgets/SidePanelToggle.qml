@@ -33,7 +33,7 @@ NIconButton {
 
   icon: useDistroLogo ? "" : "noctalia"
   tooltipText: "Open side panel."
-  sizeRatio: 0.85
+  baseSize: Style.capsuleHeight
 
   colorBg: Color.mSurfaceVariant
   colorFg: Color.mOnSurface

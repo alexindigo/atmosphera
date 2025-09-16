@@ -10,7 +10,6 @@ Item {
   property string text: ""
   property string suffix: ""
   property string tooltipText: ""
-  property real sizeRatio: 0.8
   property bool autoHide: false
   property bool forceOpen: false
   property bool forceClose: false
@@ -46,7 +45,6 @@ Item {
         text: root.text
         suffix: root.suffix
         tooltipText: root.tooltipText
-        sizeRatio: root.sizeRatio
         autoHide: root.autoHide
         forceOpen: root.forceOpen
         forceClose: root.forceClose
@@ -71,7 +69,6 @@ Item {
         text: root.text
         suffix: root.suffix
         tooltipText: root.tooltipText
-        sizeRatio: root.sizeRatio
         autoHide: root.autoHide
         forceOpen: root.forceOpen
         forceClose: root.forceClose

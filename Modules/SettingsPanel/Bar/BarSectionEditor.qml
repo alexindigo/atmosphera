@@ -14,6 +14,9 @@ NBox {
   property var widgetModel: []
   property var availableWidgets: []
 
+
+  readonly property real miniButtonSize: Style.baseWidgetSize * 0.65
+
   signal addWidget(string widgetId, string section)
   signal removeWidget(string section, int index)
   signal reorderWidget(string section, int fromIndex, int toIndex)
@@ -178,7 +181,7 @@ NBox {
                   active: BarWidgetRegistry.widgetHasUserSettings(modelData.id)
                   sourceComponent: NIconButton {
                     icon: "settings"
-                    sizeRatio: 0.6
+                    baseSize: miniButtonSize
                     colorBorder: Qt.alpha(Color.mOutline, Style.opacityLight)
                     colorBg: Color.mOnSurface
                     colorFg: Color.mOnPrimary
@@ -218,7 +221,7 @@ NBox {
 
                 NIconButton {
                   icon: "close"
-                  sizeRatio: 0.6
+                  baseSize: miniButtonSize
                   colorBorder: Qt.alpha(Color.mOutline, Style.opacityLight)
                   colorBg: Color.mOnSurface
                   colorFg: Color.mOnPrimary
