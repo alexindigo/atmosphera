@@ -140,21 +140,15 @@ mkdir -p ~/.config/quickshell/noctalia-shell && curl -sL https://github.com/noct
 <details>
 <summary><strong>Nix Installation</strong></summary>
 
-You can run Noctalia directly using the `nix run` command:
-```bash
-nix run github:noctalia-dev/noctalia-shell
-```
+You can add it to your NixOS configuration or flake:
 
-Alternatively, you can add it to your NixOS configuration or flake:
-
-**Step 1**: Add Quickshell and Noctalia flakes to your `flake.nix`:
+Add this to your `flake.nix`:
 ```nix
 {
-  description = "Example Nix flake with Noctalia + Quickshell";
+  description = "Example Nix flake with Noctalia";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    # you need nixpkgs unstable
 
     quickshell = {
       url = "github:outfoxxed/quickshell";
@@ -164,28 +158,19 @@ Alternatively, you can add it to your NixOS configuration or flake:
     noctalia = {
       url = "github:noctalia-dev/noctalia-shell";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.quickshell.follows = "quickshell";
+      inputs.quickshell.follows = "quickshell";  # Use same quickshell version
     };
   };
 
-  outputs = { self, nixpkgs, noctalia, quickshell, ... }:
+  outputs = { self, nixpkgs, noctalia, ... }:
    {
     nixosConfigurations.my-host = nixpkgs.lib.nixosSystem {
       modules = [
         ./configuration.nix
+        noctalia.nixosModules.noctalia  # Import Noctalia module here
       ];
     };
   };
-}
-```
-
-**Step 2**: Add the packages to your `configuration.nix`:
-```nix
-{
-  environment.systemPackages = with pkgs; [
-    inputs.noctalia.packages.${system}.default
-    inputs.quickshell.packages.${system}.default
-  ];
 }
 ```
 
