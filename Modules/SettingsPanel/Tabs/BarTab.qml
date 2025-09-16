@@ -45,32 +45,52 @@ ColumnLayout {
     description: "Configure bar appearance and positioning."
   }
 
-  RowLayout {
-    NComboBox {
-      Layout.fillWidth: true
-      label: "Bar Position"
-      description: "Choose where to place the bar on the screen."
-      model: ListModel {
-        ListElement {
-          key: "top"
-          name: "Top"
-        }
-        ListElement {
-          key: "bottom"
-          name: "Bottom"
-        }
-        ListElement {
-          key: "left"
-          name: "Left"
-        }
-        ListElement {
-          key: "right"
-          name: "Right"
-        }
+  NComboBox {
+    Layout.fillWidth: true
+    label: "Bar Position"
+    description: "Choose where to place the bar on the screen."
+    model: ListModel {
+      ListElement {
+        key: "top"
+        name: "Top"
       }
-      currentKey: Settings.data.bar.position
-      onSelected: key => Settings.data.bar.position = key
+      ListElement {
+        key: "bottom"
+        name: "Bottom"
+      }
+      ListElement {
+        key: "left"
+        name: "Left"
+      }
+      ListElement {
+        key: "right"
+        name: "Right"
+      }
     }
+    currentKey: Settings.data.bar.position
+    onSelected: key => Settings.data.bar.position = key
+  }
+
+  NComboBox {
+    Layout.fillWidth: true
+    label: "Bar Density"
+    description: "Choose the density of the bar."
+    model: ListModel {
+      ListElement {
+        key: "compact"
+        name: "Compact"
+      }
+      ListElement {
+        key: "default"
+        name: "Default"
+      }
+      ListElement {
+        key: "comfortable"
+        name: "Comfortable"
+      }
+    }
+    currentKey: Settings.data.bar.density
+    onSelected: key => Settings.data.bar.density = key
   }
 
   ColumnLayout {

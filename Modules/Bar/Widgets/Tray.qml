@@ -16,9 +16,10 @@ Rectangle {
   property ShellScreen screen
   property real scaling: 1.0
 
-  readonly property real itemSize: 24 * scaling
   readonly property string barPosition: Settings.data.bar.position
   readonly property bool isVertical: barPosition === "left" || barPosition === "right"
+  readonly property bool compact: (Settings.data.bar.density === "compact")
+  readonly property real itemSize: isVertical ? width * 0.75 : height * 0.85
 
   function onLoaded() {
     // When the widget is fully initialized with its props set the screen for the trayMenu
@@ -31,7 +32,7 @@ Rectangle {
   implicitWidth: isVertical ? Math.round(Style.capsuleHeight * scaling) : (trayFlow.implicitWidth + Style.marginS * scaling * 2)
   implicitHeight: isVertical ? (trayFlow.implicitHeight + Style.marginS * scaling * 2) : Math.round(Style.capsuleHeight * scaling)
   radius: Math.round(Style.radiusM * scaling)
-  color: Color.mSurfaceVariant
+  color: compact ? Color.transparent : Color.mSurfaceVariant
 
   Layout.alignment: Qt.AlignVCenter
 

@@ -34,7 +34,7 @@ NIconButton {
   icon: useDistroLogo ? "" : "noctalia"
   tooltipText: "Open side panel."
   baseSize: Style.capsuleHeight
-
+  compact: (Settings.data.bar.density === "compact")
   colorBg: Color.mSurfaceVariant
   colorFg: Color.mOnSurface
   colorBgHover: useDistroLogo ? Color.mSurfaceVariant : Color.mTertiary

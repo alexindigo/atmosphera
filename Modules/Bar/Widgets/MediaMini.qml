@@ -31,6 +31,7 @@ Item {
   }
 
   readonly property string barPosition: Settings.data.bar.position
+  readonly property bool compact: (Settings.data.bar.density === "compact")
 
   readonly property bool showAlbumArt: (widgetSettings.showAlbumArt !== undefined) ? widgetSettings.showAlbumArt : widgetMetadata.showAlbumArt
   readonly property bool showVisualizer: (widgetSettings.showVisualizer !== undefined) ? widgetSettings.showVisualizer : widgetMetadata.showVisualizer
@@ -81,7 +82,7 @@ Item {
     width: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : (rowLayout.implicitWidth + Style.marginM * 2 * scaling)
     height: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : Math.round(Style.capsuleHeight * scaling)
     radius: (barPosition === "left" || barPosition === "right") ? width / 2 : Math.round(Style.radiusM * scaling)
-    color: Color.mSurfaceVariant
+    color: compact ? Color.transparent : Color.mSurfaceVariant
 
     // Used to anchor the tooltip, so the tooltip does not move when the content expands
     Item {

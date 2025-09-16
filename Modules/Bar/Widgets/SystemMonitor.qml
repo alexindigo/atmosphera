@@ -30,6 +30,7 @@ Rectangle {
 
   readonly property string barPosition: Settings.data.bar.position
   readonly property bool isVertical: barPosition === "left" || barPosition === "right"
+  readonly property bool compact: (Settings.data.bar.density === "compact")
 
   readonly property bool showCpuUsage: (widgetSettings.showCpuUsage !== undefined) ? widgetSettings.showCpuUsage : widgetMetadata.showCpuUsage
   readonly property bool showCpuTemp: (widgetSettings.showCpuTemp !== undefined) ? widgetSettings.showCpuTemp : widgetMetadata.showCpuTemp
@@ -38,31 +39,18 @@ Rectangle {
   readonly property bool showNetworkStats: (widgetSettings.showNetworkStats !== undefined) ? widgetSettings.showNetworkStats : widgetMetadata.showNetworkStats
   readonly property bool showDiskUsage: (widgetSettings.showDiskUsage !== undefined) ? widgetSettings.showDiskUsage : widgetMetadata.showDiskUsage
 
+  readonly property real textSize: {
+    var base = isVertical ? width * 0.82 : height
+    return Math.max(1, compact ? base * 0.43 : base * 0.33)
+  }
+
+  readonly property real iconSize: textSize * 1.25
+
   anchors.centerIn: parent
   implicitWidth: isVertical ? Math.round(Style.capsuleHeight * scaling) : Math.round(mainGrid.implicitWidth + Style.marginM * 2 * scaling)
   implicitHeight: isVertical ? Math.round(mainGrid.implicitHeight + Style.marginM * 2 * scaling) : Math.round(Style.capsuleHeight * scaling)
   radius: Math.round(Style.radiusM * scaling)
-  color: Color.mSurfaceVariant
-
-  // Compact speed formatter for vertical bar display
-  function formatCompactSpeed(bytesPerSecond) {
-    if (!bytesPerSecond || bytesPerSecond <= 0)
-      return "0"
-    const units = ["", "k", "M", "G"]
-    let value = bytesPerSecond
-    let unitIndex = 0
-    while (value >= 1024 && unitIndex < units.length - 1) {
-      value = value / 1024.0
-      unitIndex++
-    }
-    // Promote at ~100 of current unit (e.g., 100k -> ~0.1M shown as 0.1M or 0M if rounded)
-    if (unitIndex < units.length - 1 && value >= 100) {
-      value = value / 1024.0
-      unitIndex++
-    }
-    const display = (value >= 10) ? Math.round(value).toString() : value.toFixed(1)
-    return display + units[unitIndex]
-  }
+  color: compact ? Color.transparent : Color.mSurfaceVariant
 
   GridLayout {
     id: mainGrid
@@ -95,7 +83,7 @@ Rectangle {
         NText {
           text: isVertical ? `${Math.round(SystemStatService.cpuUsage)}%` : `${SystemStatService.cpuUsage}%`
           font.family: Settings.data.ui.fontFixed
-          font.pointSize: isVertical ? (Style.fontSizeXXS * scaling) : (Style.fontSizeXS * scaling)
+          font.pointSize: textSize
           font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
           horizontalAlignment: Text.AlignHCenter
@@ -107,7 +95,7 @@ Rectangle {
 
         NIcon {
           icon: "cpu-usage"
-          font.pointSize: isVertical ? (Style.fontSizeS * scaling) : (Style.fontSizeM * scaling)
+          font.pointSize: iconSize
           Layout.alignment: Qt.AlignCenter
           Layout.row: isVertical ? 1 : 0
           Layout.column: 0
@@ -134,7 +122,7 @@ Rectangle {
         NText {
           text: isVertical ? `${SystemStatService.cpuTemp}°` : `${SystemStatService.cpuTemp}°C`
           font.family: Settings.data.ui.fontFixed
-          font.pointSize: isVertical ? (Style.fontSizeXXS * scaling) : (Style.fontSizeXS * scaling)
+          font.pointSize: textSize
           font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
           horizontalAlignment: Text.AlignHCenter
@@ -146,7 +134,7 @@ Rectangle {
 
         NIcon {
           icon: "cpu-temperature"
-          font.pointSize: isVertical ? (Style.fontSizeXS * scaling) : (Style.fontSizeS * scaling)
+          font.pointSize: iconSize
           Layout.alignment: Qt.AlignCenter
           Layout.row: isVertical ? 1 : 0
           Layout.column: 0
@@ -179,7 +167,7 @@ Rectangle {
             }
           }
           font.family: Settings.data.ui.fontFixed
-          font.pointSize: isVertical ? (Style.fontSizeXXS * scaling) : (Style.fontSizeXS * scaling)
+          font.pointSize: textSize
           font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
           horizontalAlignment: Text.AlignHCenter
@@ -191,7 +179,7 @@ Rectangle {
 
         NIcon {
           icon: "memory"
-          font.pointSize: isVertical ? (Style.fontSizeS * scaling) : (Style.fontSizeM * scaling)
+          font.pointSize: iconSize
           Layout.alignment: Qt.AlignCenter
           Layout.row: isVertical ? 1 : 0
           Layout.column: 0
@@ -216,9 +204,9 @@ Rectangle {
         columnSpacing: isVertical ? (Style.marginXXS * scaling) : (Style.marginXS * scaling)
 
         NText {
-          text: isVertical ? formatCompactSpeed(SystemStatService.rxSpeed) : SystemStatService.formatSpeed(SystemStatService.rxSpeed)
+          text: isVertical ? SystemStatService.formatCompactSpeed(SystemStatService.rxSpeed) : SystemStatService.formatSpeed(SystemStatService.rxSpeed)
           font.family: Settings.data.ui.fontFixed
-          font.pointSize: isVertical ? (Style.fontSizeXXS * scaling) : (Style.fontSizeXS * scaling)
+          font.pointSize: textSize
           font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
           horizontalAlignment: Text.AlignHCenter
@@ -230,7 +218,7 @@ Rectangle {
 
         NIcon {
           icon: "download-speed"
-          font.pointSize: isVertical ? (Style.fontSizeS * scaling) : (Style.fontSizeM * scaling)
+          font.pointSize: iconSize
           Layout.alignment: Qt.AlignCenter
           Layout.row: isVertical ? 1 : 0
           Layout.column: 0
@@ -255,9 +243,9 @@ Rectangle {
         columnSpacing: isVertical ? (Style.marginXXS * scaling) : (Style.marginXS * scaling)
 
         NText {
-          text: isVertical ? formatCompactSpeed(SystemStatService.txSpeed) : SystemStatService.formatSpeed(SystemStatService.txSpeed)
+          text: isVertical ? SystemStatService.formatCompactSpeed(SystemStatService.txSpeed) : SystemStatService.formatSpeed(SystemStatService.txSpeed)
           font.family: Settings.data.ui.fontFixed
-          font.pointSize: isVertical ? (Style.fontSizeXXS * scaling) : (Style.fontSizeXS * scaling)
+          font.pointSize: textSize
           font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
           horizontalAlignment: Text.AlignHCenter
@@ -269,7 +257,7 @@ Rectangle {
 
         NIcon {
           icon: "upload-speed"
-          font.pointSize: isVertical ? (Style.fontSizeS * scaling) : (Style.fontSizeM * scaling)
+          font.pointSize: iconSize
           Layout.alignment: Qt.AlignCenter
           Layout.row: isVertical ? 1 : 0
           Layout.column: 0
@@ -296,7 +284,7 @@ Rectangle {
         NText {
           text: `${SystemStatService.diskPercent}%`
           font.family: Settings.data.ui.fontFixed
-          font.pointSize: isVertical ? (Style.fontSizeXXS * scaling) : (Style.fontSizeXS * scaling)
+          font.pointSize: textSize
           font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
           horizontalAlignment: Text.AlignHCenter
@@ -308,7 +296,7 @@ Rectangle {
 
         NIcon {
           icon: "storage"
-          font.pointSize: isVertical ? (Style.fontSizeS * scaling) : (Style.fontSizeM * scaling)
+          font.pointSize: iconSize
           Layout.alignment: Qt.AlignCenter
           Layout.row: isVertical ? 1 : 0
           Layout.column: 0

@@ -37,8 +37,18 @@ Item {
   readonly property real maxWidth: minWidth * 2
 
   readonly property string barPosition: Settings.data.bar.position
+  readonly property bool isVertical: barPosition === "left" || barPosition === "right"
+  readonly property bool compact: (Settings.data.bar.density === "compact")
+
   implicitHeight: (barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Math.round(Style.barHeight * scaling)
   implicitWidth: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * 0.8 * scaling) : (horizontalLayout.implicitWidth + Style.marginM * 2 * scaling)
+
+  readonly property real textSize: {
+    var base = isVertical ? width : height
+    return Math.max(1, compact ? base * 0.43 : base * 0.33)
+  }
+
+  readonly property real iconSize: textSize * 1.25
 
   function getTitle() {
     try {
@@ -122,7 +132,7 @@ Item {
     id: fullTitleMetrics
     visible: false
     text: getTitle()
-    font.pointSize: Style.fontSizeS * scaling
+    font.pointSize: textSize
     font.weight: Style.fontWeightMedium
   }
 
@@ -136,7 +146,7 @@ Item {
     width: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : (horizontalLayout.implicitWidth + Style.marginM * 2 * scaling)
     height: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : Math.round(Style.capsuleHeight * scaling)
     radius: width / 2
-    color: Color.mSurfaceVariant
+    color: compact ? Color.transparent : Color.mSurfaceVariant
 
     Item {
       id: mainContainer
@@ -193,7 +203,7 @@ Item {
           Layout.alignment: Qt.AlignVCenter
           horizontalAlignment: Text.AlignLeft
           text: getTitle()
-          font.pointSize: Style.fontSizeS * scaling
+          font.pointSize: textSize
           font.weight: Style.fontWeightMedium
           elide: mouseArea.containsMouse ? Text.ElideNone : Text.ElideRight
           verticalAlignment: Text.AlignVCenter

@@ -49,6 +49,7 @@ Item {
     rightOpen: BarWidgetRegistry.getNPillDirection(root)
     icon: customIcon
     text: _dynamicText
+    compact: (Settings.data.bar.density === "compact")
     autoHide: false
     forceOpen: _dynamicText !== ""
     forceClose: false

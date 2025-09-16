@@ -29,6 +29,7 @@ Rectangle {
   }
 
   readonly property string barPosition: Settings.data.bar.position
+  readonly property bool compact: (Settings.data.bar.density === "compact")
 
   // Resolve settings: try user settings or defaults from BarWidgetRegistry
   readonly property bool use12h: widgetSettings.use12HourClock !== undefined ? widgetSettings.use12HourClock : widgetMetadata.use12HourClock
@@ -42,12 +43,12 @@ Rectangle {
   implicitHeight: verticalMode ? Math.round(Style.capsuleHeight * 2.5 * scaling) : Math.round(Style.capsuleHeight * scaling) // Match NPill
 
   radius: Math.round(Style.radiusS * scaling)
-  color: Color.mSurfaceVariant
+  color: compact ? Color.transparent : Color.mSurfaceVariant
 
   Item {
     id: clockContainer
     anchors.fill: parent
-    anchors.margins: Style.marginXS * scaling
+    anchors.margins: compact ? 0 : Style.marginXS * scaling
 
     ColumnLayout {
       id: layout

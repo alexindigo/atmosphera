@@ -50,6 +50,7 @@ NIconButton {
   }
 
   baseSize: Style.capsuleHeight
+  compact: (Settings.data.bar.density === "compact")
   icon: Settings.data.notifications.doNotDisturb ? "bell-off" : "bell"
   tooltipText: Settings.data.notifications.doNotDisturb ? "Notification history.\nRight-click to disable 'Do Not Disturb'." : "Notification history.\nRight-click to enable 'Do Not Disturb'."
   colorBg: Color.mSurfaceVariant

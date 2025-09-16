@@ -32,6 +32,7 @@ Item {
   }
 
   readonly property string barPosition: Settings.data.bar.position
+  readonly property bool compact: (Settings.data.bar.density === "compact")
 
   readonly property string labelMode: (widgetSettings.labelMode !== undefined) ? widgetSettings.labelMode : widgetMetadata.labelMode
   readonly property bool hideUnoccupied: (widgetSettings.hideUnoccupied !== undefined) ? widgetSettings.hideUnoccupied : widgetMetadata.hideUnoccupied
@@ -176,7 +177,7 @@ Item {
     width: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * scaling) : parent.width
     height: (barPosition === "left" || barPosition === "right") ? parent.height : Math.round(Style.capsuleHeight * scaling)
     radius: Math.round(Style.radiusM * scaling)
-    color: Color.mSurfaceVariant
+    color: compact ? Color.transparent : Color.mSurfaceVariant
 
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.verticalCenter: parent.verticalCenter
@@ -187,7 +188,6 @@ Item {
     id: pillRow
     spacing: spacingBetweenPills
     anchors.verticalCenter: workspaceBackground.verticalCenter
-    width: root.width - horizontalPadding * 2
     x: horizontalPadding
     visible: barPosition === "top" || barPosition === "bottom"
 
@@ -196,7 +196,7 @@ Item {
       model: localWorkspaces
       Item {
         id: workspacePillContainer
-        height: (labelMode !== "none") ? Math.round(18 * scaling) : Math.round(14 * scaling)
+        height: compact ? root.height : workspaceBackground.height * 0.75
         width: root.calculatedWsWidth(model)
 
         Rectangle {
@@ -216,7 +216,7 @@ Item {
                     return model.idx.toString()
                   }
                 }
-                font.pointSize: model.isFocused ? Style.fontSizeXS * scaling : Style.fontSizeXXS * scaling
+                font.pointSize: model.isFocused ? workspacePillContainer.height * 0.5 : workspacePillContainer.height * 0.42
                 font.capitalization: Font.AllUppercase
                 font.family: Settings.data.ui.fontFixed
                 font.weight: Style.fontWeightBold
@@ -332,7 +332,6 @@ Item {
     id: pillColumn
     spacing: spacingBetweenPills
     anchors.horizontalCenter: workspaceBackground.horizontalCenter
-    height: root.height - horizontalPadding * 2
     y: horizontalPadding
     visible: barPosition === "left" || barPosition === "right"
 
@@ -341,7 +340,7 @@ Item {
       model: localWorkspaces
       Item {
         id: workspacePillContainerVertical
-        width: (labelMode !== "none") ? Math.round(18 * scaling) : Math.round(14 * scaling)
+        width: compact ? root.width : workspaceBackground.width * 0.75
         height: root.calculatedWsHeight(model)
 
         Rectangle {
@@ -361,7 +360,7 @@ Item {
                     return model.idx.toString()
                   }
                 }
-                font.pointSize: model.isFocused ? Style.fontSizeXS * scaling : Style.fontSizeXXS * scaling
+                font.pointSize: model.isFocused ? workspacePillContainerVertical.width * 0.45 : workspacePillContainerVertical.width * 0.42
                 font.capitalization: Font.AllUppercase
                 font.family: Settings.data.ui.fontFixed
                 font.weight: Style.fontWeightBold

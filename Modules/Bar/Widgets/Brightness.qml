@@ -76,6 +76,7 @@ Item {
   NPill {
     id: pill
 
+    compact: (Settings.data.bar.density === "compact")
     rightOpen: BarWidgetRegistry.getNPillDirection(root)
     icon: getIcon()
     autoHide: false // Important to be false so we can hover as long as we want

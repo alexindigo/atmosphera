@@ -75,6 +75,26 @@ Singleton {
   property real sliderWidth: 200
 
   // Bar Dimensions
-  property real barHeight: (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 39 : 37
-  property real capsuleHeight: Math.round(barHeight * 0.73)
+  property real barHeight: {
+    if (Settings.data.bar.density === "compact") {
+      return (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 25 : 23
+    }
+    if (Settings.data.bar.density === "default") {
+      return (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 29 : 27
+    }
+    if (Settings.data.bar.density === "comfortable") {
+      return (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 39 : 37
+    }
+  }
+  property real capsuleHeight: {
+    if (Settings.data.bar.density === "compact") {
+      return barHeight
+    }
+    if (Settings.data.bar.density === "default") {
+      return barHeight
+    }
+    if (Settings.data.bar.density === "comfortable") {
+      return Math.round(barHeight * 0.73)
+    }
+  }
 }

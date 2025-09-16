@@ -42,6 +42,7 @@ Item {
     id: pill
 
     anchors.verticalCenter: parent.verticalCenter
+    compact: (Settings.data.bar.density === "compact")
     rightOpen: BarWidgetRegistry.getNPillDirection(root)
     icon: "keyboard"
     autoHide: false // Important to be false so we can hover as long as we want
