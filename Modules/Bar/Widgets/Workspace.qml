@@ -86,7 +86,7 @@ Item {
     }
     total += Math.max(localWorkspaces.count - 1, 0) * spacingBetweenPills
     total += horizontalPadding * 2
-    return total
+    return Math.round(total)
   }
 
   function computeHeight() {
@@ -97,7 +97,7 @@ Item {
     }
     total += Math.max(localWorkspaces.count - 1, 0) * spacingBetweenPills
     total += horizontalPadding * 2
-    return total
+    return Math.round(total)
   }
 
   Component.onCompleted: {

@@ -88,7 +88,7 @@ Singleton {
   }
   property real capsuleHeight: {
     if (Settings.data.bar.density === "compact") {
-      return barHeight * 0.95
+      return barHeight * 0.85
     }
     if (Settings.data.bar.density === "default") {
       return barHeight * 0.82
