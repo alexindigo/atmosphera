@@ -58,6 +58,7 @@ Rectangle {
             height: Style.marginL * root.scaling
             source: AppIcons.iconForAppId(taskbarItem.modelData.appId)
             smooth: true
+            asynchronous: true
           }
         }
 

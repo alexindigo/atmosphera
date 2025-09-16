@@ -51,5 +51,6 @@ NIconButton {
     source: useDistroLogo ? DistroLogoService.osLogo : ""
     visible: useDistroLogo && source !== ""
     smooth: true
+    asynchronous: true
   }
 }
