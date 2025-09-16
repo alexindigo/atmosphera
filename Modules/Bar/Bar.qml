@@ -70,7 +70,6 @@ Variants {
 
         Loader {
           anchors.fill: parent
-          active: true
           sourceComponent: (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? verticalBarComponent : horizontalBarComponent
         }
 

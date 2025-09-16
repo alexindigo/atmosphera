@@ -42,7 +42,7 @@ Rectangle {
       anchors.fill: parent
       anchors {
         leftMargin: Style.marginL * scaling
-        rightMargin:  Style.marginL * scaling
+        rightMargin: Style.marginL * scaling
       }
       spacing: Style.marginS * scaling
 

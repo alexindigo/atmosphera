@@ -88,7 +88,7 @@ ColumnLayout {
           spacing: Style.marginXXS * scaling
 
           NLabel {
-            label: modelData.name|| "Unknown"
+            label: modelData.name || "Unknown"
             description: `${modelData.model} - ${modelData.width}x${modelData.height} [x:${modelData.x} y:${modelData.y}]`
           }
 

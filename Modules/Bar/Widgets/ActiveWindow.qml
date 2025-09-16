@@ -222,7 +222,7 @@ Item {
           width: Style.capsuleHeight * 0.75 * scaling
           height: Style.capsuleHeight * 0.75 * scaling
           anchors.centerIn: parent
-          
+
           IconImage {
             id: windowIconVertical
             anchors.fill: parent

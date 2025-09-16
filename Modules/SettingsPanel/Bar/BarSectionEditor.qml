@@ -14,7 +14,6 @@ NBox {
   property var widgetModel: []
   property var availableWidgets: []
 
-
   readonly property real miniButtonSize: Style.baseWidgetSize * 0.65
 
   signal addWidget(string widgetId, string section)
