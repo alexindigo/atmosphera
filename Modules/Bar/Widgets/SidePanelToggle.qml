@@ -46,7 +46,7 @@ NIconButton {
   IconImage {
     id: logo
     anchors.centerIn: parent
-    width: root.width * 0.85
+    width: root.width * 0.8
     height: width
     source: useDistroLogo ? DistroLogoService.osLogo : ""
     visible: useDistroLogo && source !== ""

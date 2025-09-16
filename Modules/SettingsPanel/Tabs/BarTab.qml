@@ -112,6 +112,15 @@ ColumnLayout {
       text: Math.floor(Settings.data.bar.backgroundOpacity * 100) + "%"
     }
   }
+
+  NToggle {
+    Layout.fillWidth: true
+    label: "Show Capsule"
+    description: "Adds a capsule behind each widget to improve readability on transparent bars."
+    checked: Settings.data.bar.showCapsule
+    onToggled: checked => Settings.data.bar.showCapsule = checked
+  }
+
   NToggle {
     Layout.fillWidth: true
     label: "Floating Bar"
