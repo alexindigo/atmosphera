@@ -69,29 +69,20 @@ NIconButton {
   Loader {
     anchors.right: parent.right
     anchors.top: parent.top
-    anchors.rightMargin: -4 * scaling
-    anchors.topMargin: -4 * scaling
+    anchors.rightMargin: 2 * scaling
+    anchors.topMargin: 1 * scaling
     z: 2
     active: showUnreadBadge && (!hideWhenZero || computeUnreadCount() > 0)
     sourceComponent: Rectangle {
       id: badge
       readonly property int count: computeUnreadCount()
-      readonly property string label: count <= 99 ? String(count) : "99+"
-      readonly property real pad: 8 * scaling
-      height: 16 * scaling
-      width: Math.max(height, textNode.implicitWidth + pad)
+      height: 8 * scaling
+      width: height
       radius: height / 2
       color: Color.mError
       border.color: Color.mSurface
       border.width: 1
       visible: count > 0 || !hideWhenZero
-      NText {
-        id: textNode
-        anchors.centerIn: parent
-        text: badge.label
-        font.pointSize: Style.fontSizeXXS * scaling
-        color: Color.mOnError
-      }
     }
   }
 }
