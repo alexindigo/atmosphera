@@ -16,6 +16,7 @@ Item {
   property bool disableOpen: false
   property bool rightOpen: false
   property bool hovered: false
+  property bool compact: false
 
   // Bar position detection for pill direction
   readonly property string barPosition: Settings.data.bar.position
@@ -42,16 +43,19 @@ Item {
   property bool shouldAnimateHide: false
 
   // Sizing logic for vertical bars
-  readonly property int iconSize: Math.round(Style.capsuleHeight * scaling)
-  readonly property int pillHeight: iconSize
+  readonly property int buttonSize: Math.round(Style.capsuleHeight * scaling)
+  readonly property int pillHeight: buttonSize
   readonly property int pillPaddingVertical: 3 * 2 * scaling // Very precise adjustment don't replace by Style.margin
-  readonly property int pillOverlap: iconSize * 0.5
-  readonly property int maxPillWidth: iconSize
+  readonly property int pillOverlap: buttonSize * 0.5
+  readonly property int maxPillWidth: buttonSize
   readonly property int maxPillHeight: Math.max(1, textItem.implicitHeight + pillPaddingVertical * 4)
 
+  readonly property real iconSize: Math.max(1, compact ? pillHeight * 0.65 : pillHeight * 0.48)
+  readonly property real textSize: Math.max(1, compact ? pillHeight * 0.38 : pillHeight * 0.33)
+
   // For vertical bars: width is just icon size, height includes pill space
-  width: iconSize
-  height: revealed ? (iconSize + maxPillHeight - pillOverlap) : iconSize
+  width: buttonSize
+  height: revealed ? (buttonSize + maxPillHeight - pillOverlap) : buttonSize
 
   Rectangle {
     id: pill
@@ -63,13 +67,13 @@ Item {
     y: openUpward ? (iconCircle.y + iconCircle.height / 2 - height) : (iconCircle.y + iconCircle.height / 2)
 
     opacity: revealed ? Style.opacityFull : Style.opacityNone
-    color: Color.mSurfaceVariant
+    color: compact ? Color.transparent : Color.mSurfaceVariant
 
     // Radius logic for vertical expansion - rounded on the side that connects to icon
-    topLeftRadius: openUpward ? iconSize * 0.5 : 0
-    bottomLeftRadius: openDownward ? iconSize * 0.5 : 0
-    topRightRadius: openUpward ? iconSize * 0.5 : 0
-    bottomRightRadius: openDownward ? iconSize * 0.5 : 0
+    topLeftRadius: openUpward ? buttonSize * 0.5 : 0
+    bottomLeftRadius: openDownward ? buttonSize * 0.5 : 0
+    topRightRadius: openUpward ? buttonSize * 0.5 : 0
+    bottomRightRadius: openDownward ? buttonSize * 0.5 : 0
 
     anchors.horizontalCenter: parent.horizontalCenter
 
@@ -87,7 +91,7 @@ Item {
       }
       text: root.text + root.suffix
       font.family: Settings.data.ui.fontFixed
-      font.pointSize: Style.fontSizeXXS * scaling
+      font.pointSize: textSize
       font.weight: Style.fontWeightMedium
       horizontalAlignment: Text.AlignHCenter
       verticalAlignment: Text.AlignVCenter
@@ -120,10 +124,10 @@ Item {
 
   Rectangle {
     id: iconCircle
-    width: iconSize
-    height: iconSize
+    width: buttonSize
+    height: buttonSize
     radius: width * 0.5
-    color: hovered ? Color.mTertiary : Color.mSurfaceVariant
+    color: hovered ? Color.mTertiary : compact ? Color.transparent : Color.mSurfaceVariant
 
     // Icon positioning based on direction
     x: 0
@@ -139,7 +143,7 @@ Item {
 
     NIcon {
       icon: root.icon
-      font.pointSize: Style.fontSizeM * scaling
+      font.pointSize: iconSize
       color: hovered ? Color.mOnTertiary : Color.mOnSurface
       // Center horizontally
       x: (iconCircle.width - width) / 2

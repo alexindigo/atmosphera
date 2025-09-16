@@ -16,6 +16,7 @@ Item {
   property bool disableOpen: false
   property bool rightOpen: false
   property bool hovered: false
+  property bool compact: false
 
   readonly property string barPosition: Settings.data.bar.position
   readonly property bool isVerticalBar: barPosition === "left" || barPosition === "right"
@@ -51,6 +52,7 @@ Item {
         disableOpen: root.disableOpen
         rightOpen: root.rightOpen
         hovered: root.hovered
+        compact: root.compact
         onShown: root.shown()
         onHidden: root.hidden()
         onEntered: root.entered()
@@ -75,6 +77,7 @@ Item {
         disableOpen: root.disableOpen
         rightOpen: root.rightOpen
         hovered: root.hovered
+        compact: root.compact
         onShown: root.shown()
         onHidden: root.hidden()
         onEntered: root.entered()

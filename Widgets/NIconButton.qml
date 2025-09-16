@@ -14,6 +14,7 @@ Rectangle {
   property bool enabled: true
   property bool allowClickWhenDisabled: false
   property bool hovering: false
+  property bool compact: false
 
   property color colorBg: Color.mSurfaceVariant
   property color colorFg: Color.mPrimary
@@ -32,7 +33,7 @@ Rectangle {
   implicitHeight: Math.round(baseSize * scaling)
 
   opacity: root.enabled ? Style.opacityFull : Style.opacityMedium
-  color: root.enabled && root.hovering ? colorBgHover : colorBg
+  color: root.enabled && root.hovering ? colorBgHover : root.compact ? Color.transparent : colorBg
   radius: width * 0.5
   border.color: root.enabled && root.hovering ? colorBorderHover : colorBorder
   border.width: Math.max(1, Style.borderS * scaling)
@@ -46,7 +47,7 @@ Rectangle {
 
   NIcon {
     icon: root.icon
-    font.pointSize: Math.max(1, root.width * 0.48)
+    font.pointSize: Math.max(1, root.compact ? root.width * 0.65 : root.width * 0.48)
     color: root.enabled && root.hovering ? colorFgHover : colorFg
     // Center horizontally
     x: (root.width - width) / 2

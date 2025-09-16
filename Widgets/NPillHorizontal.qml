@@ -16,6 +16,7 @@ Item {
   property bool disableOpen: false
   property bool rightOpen: false
   property bool hovered: false
+  property bool compact: false
 
   // Effective shown state (true if hovered/animated open or forced)
   readonly property bool revealed: forceOpen || showPill
@@ -38,6 +39,9 @@ Item {
   readonly property int pillOverlap: Math.round(Style.capsuleHeight * 0.5 * scaling)
   readonly property int pillMaxWidth: Math.max(1, textItem.implicitWidth + pillPaddingHorizontal * 2 + pillOverlap)
 
+  readonly property real iconSize: Math.max(1, compact ? pillHeight * 0.65 : pillHeight * 0.48)
+  readonly property real textSize: Math.max(1, compact ? pillHeight * 0.45 : pillHeight * 0.33)
+
   width: pillHeight + Math.max(0, pill.width - pillOverlap)
   height: pillHeight
 
@@ -50,7 +54,7 @@ Item {
                    (iconCircle.x + iconCircle.width / 2) - width // Opens left
 
     opacity: revealed ? Style.opacityFull : Style.opacityNone
-    color: Color.mSurfaceVariant
+    color: compact ? Color.transparent : Color.mSurfaceVariant
 
     topLeftRadius: rightOpen ? 0 : pillHeight * 0.5
     bottomLeftRadius: rightOpen ? 0 : pillHeight * 0.5
@@ -73,7 +77,7 @@ Item {
       }
       text: root.text + root.suffix
       font.family: Settings.data.ui.fontFixed
-      font.pointSize: Math.max(1, root.pillHeight * 0.33)
+      font.pointSize: textSize
       font.weight: Style.fontWeightBold
       color: forceOpen ? Color.mOnSurface : Color.mPrimary
       visible: revealed
@@ -100,7 +104,7 @@ Item {
     width: pillHeight
     height: pillHeight
     radius: width * 0.5
-    color: hovered ? Color.mTertiary : Color.mSurfaceVariant
+    color: hovered ? Color.mTertiary : compact ? Color.transparent : Color.mSurfaceVariant
     anchors.verticalCenter: parent.verticalCenter
 
     x: rightOpen ? 0 : (parent.width - width)
@@ -114,7 +118,7 @@ Item {
 
     NIcon {
       icon: root.icon
-      font.pointSize: Math.max(1, pillHeight * 0.5)
+      font.pointSize: iconSize
       color: hovered ? Color.mOnTertiary : Color.mOnSurface
       // Center horizontally
       x: (iconCircle.width - width) / 2
