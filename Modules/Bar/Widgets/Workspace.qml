@@ -216,7 +216,7 @@ Item {
                     return model.idx.toString()
                   }
                 }
-                font.pointSize: model.isFocused ? workspacePillContainer.height * 0.5 : workspacePillContainer.height * 0.42
+                font.pointSize: model.isFocused ? workspacePillContainer.height * 0.45 : workspacePillContainer.height * 0.42
                 font.capitalization: Font.AllUppercase
                 font.family: Settings.data.ui.fontFixed
                 font.weight: Style.fontWeightBold
