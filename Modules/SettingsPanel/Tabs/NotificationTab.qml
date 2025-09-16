@@ -53,7 +53,7 @@ ColumnLayout {
 
     NHeader {
       label: "Monitors Configuration"
-      description: "Choose which monitors should display notifications."
+      description: "Show bar on specific monitors. Defaults to all if none are chosen."
     }
 
     Repeater {

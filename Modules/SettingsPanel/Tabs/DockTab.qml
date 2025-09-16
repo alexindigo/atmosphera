@@ -93,7 +93,7 @@ ColumnLayout {
 
     NHeader {
       label: "Monitors Configuration"
-      description: "Choose which monitors should display the dock."
+      description: "Show dock on specific monitors."
     }
 
     Repeater {
