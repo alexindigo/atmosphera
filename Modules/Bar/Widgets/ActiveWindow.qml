@@ -132,7 +132,7 @@ Item {
     id: fullTitleMetrics
     visible: false
     text: getTitle()
-    font.pointSize: textSize
+    font.pointSize: Style.fontSizeS * scaling
     font.weight: Style.fontWeightMedium
   }
 
@@ -203,7 +203,7 @@ Item {
           Layout.alignment: Qt.AlignVCenter
           horizontalAlignment: Text.AlignLeft
           text: getTitle()
-          font.pointSize: textSize
+          font.pointSize: Style.fontSizeS * scaling
           font.weight: Style.fontWeightMedium
           elide: mouseArea.containsMouse ? Text.ElideNone : Text.ElideRight
           verticalAlignment: Text.AlignVCenter
