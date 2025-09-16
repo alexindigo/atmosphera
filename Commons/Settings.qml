@@ -273,6 +273,7 @@ Singleton {
         property real backgroundOpacity: 1.0
         property list<string> monitors: []
         property string density: "default" // "compact", "default", "comfortable"
+        property bool showCapsule: true
 
         // Floating bar settings
         property bool floating: false

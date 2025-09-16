@@ -54,7 +54,7 @@ Item {
                    (iconCircle.x + iconCircle.width / 2) - width // Opens left
 
     opacity: revealed ? Style.opacityFull : Style.opacityNone
-    color: compact ? Color.transparent : Color.mSurfaceVariant
+    color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
     topLeftRadius: rightOpen ? 0 : pillHeight * 0.5
     bottomLeftRadius: rightOpen ? 0 : pillHeight * 0.5
@@ -104,7 +104,7 @@ Item {
     width: pillHeight
     height: pillHeight
     radius: width * 0.5
-    color: hovered ? Color.mTertiary : compact ? Color.transparent : Color.mSurfaceVariant
+    color: hovered ? Color.mTertiary : Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
     anchors.verticalCenter: parent.verticalCenter
 
     x: rightOpen ? 0 : (parent.width - width)

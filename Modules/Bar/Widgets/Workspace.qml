@@ -61,12 +61,11 @@ Item {
   implicitWidth: isVertical ? Math.round(Style.barHeight * scaling) : computeWidth()
   implicitHeight: isVertical ? computeHeight() : Math.round(Style.barHeight * scaling)
 
-
   function getWorkspaceWidth(ws) {
     const d = Style.capsuleHeight * root.baseDimensionRatio
     if (ws.isFocused)
       return d * 2.5
-    else 
+    else
       return d
   }
 
@@ -74,7 +73,7 @@ Item {
     const d = Style.capsuleHeight * root.baseDimensionRatio
     if (ws.isFocused)
       return d * 3
-    else 
+    else
       return d
   }
 
@@ -184,7 +183,7 @@ Item {
     width: isVertical ? Math.round(Style.capsuleHeight * scaling) : parent.width
     height: isVertical ? parent.height : Math.round(Style.capsuleHeight * scaling)
     radius: Math.round(Style.radiusM * scaling)
-    color: compact ? Color.transparent : Color.mSurfaceVariant
+    color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.verticalCenter: parent.verticalCenter
@@ -205,7 +204,7 @@ Item {
         id: workspacePillContainer
         width: root.getWorkspaceWidth(model)
         height: Style.capsuleHeight * root.baseDimensionRatio
-        
+
         Rectangle {
           id: pill
           anchors.fill: parent

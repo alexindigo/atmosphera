@@ -43,7 +43,7 @@ Rectangle {
   implicitHeight: verticalMode ? Math.round(Style.capsuleHeight * 2.5 * scaling) : Math.round(Style.capsuleHeight * scaling) // Match NPill
 
   radius: Math.round(Style.radiusS * scaling)
-  color: compact ? Color.transparent : Color.mSurfaceVariant
+  color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
   Item {
     id: clockContainer

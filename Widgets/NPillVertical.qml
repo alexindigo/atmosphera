@@ -67,7 +67,7 @@ Item {
     y: openUpward ? (iconCircle.y + iconCircle.height / 2 - height) : (iconCircle.y + iconCircle.height / 2)
 
     opacity: revealed ? Style.opacityFull : Style.opacityNone
-    color: compact ? Color.transparent : Color.mSurfaceVariant
+    color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
     // Radius logic for vertical expansion - rounded on the side that connects to icon
     topLeftRadius: openUpward ? buttonSize * 0.5 : 0
@@ -127,7 +127,7 @@ Item {
     width: buttonSize
     height: buttonSize
     radius: width * 0.5
-    color: hovered ? Color.mTertiary : compact ? Color.transparent : Color.mSurfaceVariant
+    color: hovered ? Color.mTertiary : Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
     // Icon positioning based on direction
     x: 0

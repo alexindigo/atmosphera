@@ -33,7 +33,7 @@ Rectangle {
   implicitHeight: Math.round(baseSize * scaling)
 
   opacity: root.enabled ? Style.opacityFull : Style.opacityMedium
-  color: root.enabled && root.hovering ? colorBgHover : root.compact ? Color.transparent : colorBg
+  color: root.enabled && root.hovering ? colorBgHover : Settings.data.bar.showCapsule ? colorBg : Color.transparent
   radius: width * 0.5
   border.color: root.enabled && root.hovering ? colorBorderHover : colorBorder
   border.width: Math.max(1, Style.borderS * scaling)
