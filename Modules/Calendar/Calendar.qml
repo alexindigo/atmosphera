@@ -12,7 +12,6 @@ NPanel {
 
   preferredWidth: 340
   preferredHeight: 320
-  panelAnchorRight: Settings.data.bar.position === "right"
 
   // Main Column
   panelContent: ColumnLayout {

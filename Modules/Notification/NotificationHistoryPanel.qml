@@ -14,7 +14,6 @@ NPanel {
 
   preferredWidth: 380
   preferredHeight: 500
-  panelAnchorRight: Settings.data.bar.position === "right"
   panelKeyboardFocus: true
 
   panelContent: Rectangle {
