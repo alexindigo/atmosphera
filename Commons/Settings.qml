@@ -328,7 +328,7 @@ Singleton {
       // general
       property JsonObject general: JsonObject {
         property string avatarImage: defaultAvatar
-        property bool dimDesktop: false
+        property bool dimDesktop: true
         property bool showScreenCorners: false
         property bool forceBlackScreenCorners: false
         property real radiusRatio: 1.0

@@ -193,54 +193,6 @@ Loader {
       anchors.right: true
       anchors.bottom: true
 
-      margins.top: {
-        if (!barIsVisible) {
-          return 0
-        }
-        switch (barPosition || panelAnchorVerticalCenter) {
-        case "top":
-          return (Style.barHeight + Style.marginS) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginVertical * 2 * Style.marginXL * scaling : 0)
-        default:
-          return Style.marginS * scaling
-        }
-      }
-
-      margins.bottom: {
-        if (!barIsVisible || panelAnchorVerticalCenter) {
-          return 0
-        }
-        switch (barPosition) {
-        case "bottom":
-          return (Style.barHeight + Style.marginS) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginVertical * 2 * Style.marginXL * scaling : 0)
-        default:
-          return Style.marginS * scaling
-        }
-      }
-
-      margins.left: {
-        if (!barIsVisible || panelAnchorHorizontalCenter) {
-          return 0
-        }
-        switch (barPosition) {
-        case "left":
-          return (Style.barHeight + Style.marginS) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * 2 * Style.marginXL * scaling : 0)
-        default:
-          return Style.marginS * scaling
-        }
-      }
-
-      margins.right: {
-        if (!barIsVisible || panelAnchorHorizontalCenter) {
-          return 0
-        }
-        switch (barPosition) {
-        case "right":
-          return (Style.barHeight + Style.marginS) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * 2 * Style.marginXL * scaling : 0)
-        default:
-          return Style.marginS * scaling
-        }
-      }
-
       // Close any panel with Esc without requiring focus
       Shortcut {
         sequences: ["Escape"]
@@ -290,9 +242,55 @@ Loader {
         y: calculatedY
 
         // ---------------------------------------------
-        // All Style.marginXXX are handled above in the PanelWindow itself.
         // Does not account for corners are they are negligible and helps keep the code clean.
         // ---------------------------------------------
+        property real marginTop: {
+          if (!barIsVisible) {
+            return 0
+          }
+          switch (barPosition || panelAnchorVerticalCenter) {
+          case "top":
+            return (Style.barHeight + Style.marginS) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginVertical * 2 * Style.marginXL * scaling : 0)
+          default:
+            return Style.marginS * scaling
+          }
+        }
+
+        property real marginBottom: {
+          if (!barIsVisible || panelAnchorVerticalCenter) {
+            return 0
+          }
+          switch (barPosition) {
+          case "bottom":
+            return (Style.barHeight + Style.marginS) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginVertical * 2 * Style.marginXL * scaling : 0)
+          default:
+            return Style.marginS * scaling
+          }
+        }
+
+        property real marginLeft: {
+          if (!barIsVisible || panelAnchorHorizontalCenter) {
+            return 0
+          }
+          switch (barPosition) {
+          case "left":
+            return (Style.barHeight + Style.marginS) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * 2 * Style.marginXL * scaling : 0)
+          default:
+            return Style.marginS * scaling
+          }
+        }
+
+        property real marginRight: {
+          if (!barIsVisible || panelAnchorHorizontalCenter) {
+            return 0
+          }
+          switch (barPosition) {
+          case "right":
+            return (Style.barHeight + Style.marginS) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * 2 * Style.marginXL * scaling : 0)
+          default:
+            return Style.marginS * scaling
+          }
+        }
 
         // ---------------------------------------------
         property int calculatedX: {
@@ -300,9 +298,9 @@ Loader {
           if (panelAnchorHorizontalCenter) {
             return Math.round((panelWindow.width - panelBackground.width) / 2)
           } else if (panelAnchorLeft) {
-            return 0
+            return marginLeft
           } else if (panelAnchorRight) {
-            return Math.round(panelWindow.width - panelBackground.width)
+            return Math.round(panelWindow.width - panelBackground.width - marginRight)
           }
 
           // No fixed anchoring
@@ -310,10 +308,10 @@ Loader {
             // Vertical bar
             if (barPosition === "right") {
               // To the left of the right bar
-              return Math.round(panelWindow.width - panelBackground.width)
+              return Math.round(panelWindow.width - panelBackground.width - marginRight)
             } else {
               // To the right of the left bar
-              return 0
+              return marginLeft
             }
           } else {
             // Horizontal bar
@@ -321,8 +319,8 @@ Loader {
               // Position panel relative to button
               var targetX = buttonPosition.x + (buttonWidth / 2) - (panelBackground.width / 2)
               // Keep panel within screen bounds
-              var maxX = panelWindow.width - panelBackground.width
-              var minX = Style.marginS * scaling
+              var maxX = panelWindow.width - panelBackground.width - marginRight
+              var minX = marginLeft
               return Math.round(Math.max(minX, Math.min(targetX, maxX)))
             } else {
               // Fallback to center horizontally
@@ -337,9 +335,9 @@ Loader {
           if (panelAnchorVerticalCenter) {
             return Math.round((panelWindow.height - panelBackground.height) / 2)
           } else if (panelAnchorTop) {
-            return 0
+            return marginTop
           } else if (panelAnchorBottom) {
-            return Math.round(panelWindow.height - panelBackground.height)
+            return Math.round(panelWindow.height - panelBackground.height - marginBottom)
           }
 
           // No fixed anchoring
@@ -349,8 +347,8 @@ Loader {
               // Position panel relative to button
               var targetY = buttonPosition.y + (buttonHeight / 2) - (panelBackground.height / 2)
               // Keep panel within screen bounds
-              var maxY = panelWindow.height - panelBackground.height
-              var minY = Style.marginS * scaling
+              var maxY = panelWindow.height - panelBackground.height - marginBottom
+              var minY = marginTop
               return Math.round(Math.max(minY, Math.min(targetY, maxY)))
             } else {
               // Fallback to center vertically
@@ -360,10 +358,10 @@ Loader {
             // Horizontal bar
             if (barPosition === "bottom") {
               // Above the bottom bar
-              return Math.round(panelWindow.height - panelBackground.height)
+              return Math.round(panelWindow.height - panelBackground.height - marginBottom)
             } else {
               // Below the top bar
-              return 0
+              return marginTop
             }
           }
         }
