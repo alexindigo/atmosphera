@@ -38,6 +38,7 @@ Loader {
   readonly property real originalOpacity: 0.0
   property real scaleValue: originalScale
   property real opacityValue: originalOpacity
+  property real dimmingOpacity: 0
 
   property alias isClosing: hideTimer.running
 
@@ -108,6 +109,7 @@ Loader {
 
   // -----------------------------------------
   function close() {
+    dimmingOpacity = 0
     scaleValue = originalScale
     opacityValue = originalOpacity
     hideTimer.start()
@@ -149,6 +151,7 @@ Loader {
 
       Component.onCompleted: {
         Logger.log("NPanel", "Opened", root.objectName)
+        dimmingOpacity = Style.opacityHeavy
       }
 
       Connections {
@@ -174,17 +177,14 @@ Loader {
 
       visible: true
 
-      // No dimming here
-      color: Color.transparent
-
-      WlrLayershell.layer: Settings.data.general.dimDesktop ? WlrLayer.Overlay : WlrLayer.Top
+      color: Settings.data.general.dimDesktop ? Qt.alpha(Color.mShadow, dimmingOpacity) : Color.transparent
       WlrLayershell.exclusionMode: ExclusionMode.Ignore
       WlrLayershell.namespace: "noctalia-panel"
       WlrLayershell.keyboardFocus: root.panelKeyboardFocus ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
 
       Behavior on color {
         ColorAnimation {
-          duration: Style.animationNormal
+          duration: Style.animationSlow
         }
       }
 
@@ -208,6 +208,7 @@ Loader {
         onClicked: root.close()
       }
 
+      // The actual panel's content
       Rectangle {
         id: panelBackground
         color: panelBackgroundColor

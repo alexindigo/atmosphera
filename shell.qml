@@ -37,7 +37,6 @@ ShellRoot {
   Background {}
   Overview {}
   ScreenCorners {}
-  Dimmer {}
   Bar {}
   Dock {}
 
