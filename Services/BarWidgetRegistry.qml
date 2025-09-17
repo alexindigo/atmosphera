@@ -207,7 +207,7 @@ Singleton {
     return (widgetMetadata[id] !== undefined) && (widgetMetadata[id].allowUserSettings === true)
   }
 
-  function getNPillDirection(widget) {
+  function getPillDirection(widget) {
     try {
       if (widget.section === "left") {
         return true

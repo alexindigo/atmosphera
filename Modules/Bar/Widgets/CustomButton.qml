@@ -6,6 +6,7 @@ import qs.Commons
 import qs.Services
 import qs.Widgets
 import qs.Modules.SettingsPanel
+import qs.Modules.Bar.Extras
 
 Item {
   id: root
@@ -43,10 +44,10 @@ Item {
   implicitWidth: pill.width
   implicitHeight: pill.height
 
-  NPill {
+  BarPill {
     id: pill
 
-    rightOpen: BarWidgetRegistry.getNPillDirection(root)
+    rightOpen: BarWidgetRegistry.getPillDirection(root)
     icon: customIcon
     text: _dynamicText
     compact: (Settings.data.bar.density === "compact")
