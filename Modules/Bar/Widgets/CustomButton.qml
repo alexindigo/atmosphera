@@ -47,7 +47,7 @@ Item {
   BarPill {
     id: pill
 
-    rightOpen: BarWidgetRegistry.getPillDirection(root)
+    rightOpen: BarService.getPillDirection(root)
     icon: customIcon
     text: _dynamicText
     compact: (Settings.data.bar.density === "compact")

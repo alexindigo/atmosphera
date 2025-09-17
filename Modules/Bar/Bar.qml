@@ -8,6 +8,7 @@ import qs.Commons
 import qs.Services
 import qs.Widgets
 import qs.Modules.Notification
+import qs.Modules.Bar.Extras
 
 Variants {
   model: Quickshell.screens
@@ -88,7 +89,7 @@ Variants {
 
               Repeater {
                 model: Settings.data.bar.widgets.left
-                delegate: NWidgetLoader {
+                delegate: BarWidgetLoader {
                   widgetId: (modelData.id !== undefined ? modelData.id : "")
                   widgetProps: {
                     "screen": root.modelData || null,
@@ -111,7 +112,7 @@ Variants {
 
               Repeater {
                 model: Settings.data.bar.widgets.center
-                delegate: NWidgetLoader {
+                delegate: BarWidgetLoader {
                   widgetId: (modelData.id !== undefined ? modelData.id : "")
                   widgetProps: {
                     "screen": root.modelData || null,
@@ -135,7 +136,7 @@ Variants {
 
               Repeater {
                 model: Settings.data.bar.widgets.right
-                delegate: NWidgetLoader {
+                delegate: BarWidgetLoader {
                   widgetId: (modelData.id !== undefined ? modelData.id : "")
                   widgetProps: {
                     "screen": root.modelData || null,
@@ -169,7 +170,7 @@ Variants {
 
               Repeater {
                 model: Settings.data.bar.widgets.left
-                delegate: NWidgetLoader {
+                delegate: BarWidgetLoader {
                   widgetId: (modelData.id !== undefined ? modelData.id : "")
                   widgetProps: {
                     "screen": root.modelData || null,
@@ -194,7 +195,7 @@ Variants {
 
               Repeater {
                 model: Settings.data.bar.widgets.center
-                delegate: NWidgetLoader {
+                delegate: BarWidgetLoader {
                   widgetId: (modelData.id !== undefined ? modelData.id : "")
                   widgetProps: {
                     "screen": root.modelData || null,
@@ -220,7 +221,7 @@ Variants {
 
               Repeater {
                 model: Settings.data.bar.widgets.right
-                delegate: NWidgetLoader {
+                delegate: BarWidgetLoader {
                   widgetId: (modelData.id !== undefined ? modelData.id : "")
                   widgetProps: {
                     "screen": root.modelData || null,

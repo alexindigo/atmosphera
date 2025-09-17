@@ -206,24 +206,4 @@ Singleton {
   function widgetHasUserSettings(id) {
     return (widgetMetadata[id] !== undefined) && (widgetMetadata[id].allowUserSettings === true)
   }
-
-  function getPillDirection(widget) {
-    try {
-      if (widget.section === "left") {
-        return true
-      } else if (widget.section === "right") {
-        return false
-      } else {
-        // middle section
-        if (widget.sectionWidgetIndex < widget.sectionWidgetsCount / 2) {
-          return false
-        } else {
-          return true
-        }
-      }
-    } catch (e) {
-      Logger.error(e)
-    }
-    return false
-  }
 }

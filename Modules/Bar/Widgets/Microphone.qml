@@ -89,7 +89,7 @@ Item {
 
   BarPill {
     id: pill
-    rightOpen: BarWidgetRegistry.getPillDirection(root)
+    rightOpen: BarService.getPillDirection(root)
     icon: getIcon()
     compact: (Settings.data.bar.density === "compact")
     autoHide: false // Important to be false so we can hover as long as we want
