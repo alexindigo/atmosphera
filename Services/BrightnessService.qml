@@ -212,7 +212,8 @@ Singleton {
 
     function setBrightnessDebounced(value: real): void {
       monitor.queuedBrightness = value
-      timer.start()
+      if (!timer.running)
+        timer.start()
     }
 
     function increaseBrightness(): void {
