@@ -169,6 +169,7 @@ NPanel {
                 font.pointSize: Style.fontSizeM * scaling
                 font.weight: Font.Medium
                 color: Color.mPrimary
+                textFormat: Text.PlainText
                 wrapMode: Text.Wrap
                 Layout.fillWidth: true
                 maximumLineCount: 2
@@ -179,6 +180,7 @@ NPanel {
                 text: (body || "").substring(0, 150)
                 font.pointSize: Style.fontSizeXS * scaling
                 color: Color.mOnSurface
+                textFormat: Text.PlainText
                 wrapMode: Text.Wrap
                 Layout.fillWidth: true
                 maximumLineCount: 3

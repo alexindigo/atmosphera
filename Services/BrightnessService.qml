@@ -199,7 +199,6 @@ Singleton {
 
     readonly property real stepSize: Settings.data.brightness.brightnessStep / 100.0
 
-
     // Timer for debouncing rapid changes
     readonly property Timer timer: Timer {
       interval: 100
