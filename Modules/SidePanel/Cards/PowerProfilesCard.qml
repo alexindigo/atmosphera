@@ -25,45 +25,33 @@ NBox {
     }
     // Performance
     NIconButton {
-      icon: "performance"
-      tooltipText: "Set performance power profile."
+      icon: PowerProfileService.getIcon(PowerProfile.Performance)
+      tooltipText: `Set "${PowerProfileService.getName(PowerProfile.Performance)}" power profile.`
       enabled: hasPP
       opacity: enabled ? Style.opacityFull : Style.opacityMedium
       colorBg: (enabled && PowerProfileService.profile === PowerProfile.Performance) ? Color.mPrimary : Color.mSurfaceVariant
       colorFg: (enabled && PowerProfileService.profile === PowerProfile.Performance) ? Color.mOnPrimary : Color.mPrimary
-      onClicked: {
-        if (enabled) {
-          PowerProfileService.setProfile(PowerProfile.Performance)
-        }
-      }
+      onClicked: PowerProfileService.setProfile(PowerProfile.Performance)
     }
     // Balanced
     NIconButton {
-      icon: "balanced"
-      tooltipText: "Set balanced power profile."
+      icon: PowerProfileService.getIcon(PowerProfile.Balanced)
+      tooltipText: `Set "${PowerProfileService.getName(PowerProfile.Balanced)}" power profile.`
       enabled: hasPP
       opacity: enabled ? Style.opacityFull : Style.opacityMedium
       colorBg: (enabled && PowerProfileService.profile === PowerProfile.Balanced) ? Color.mPrimary : Color.mSurfaceVariant
       colorFg: (enabled && PowerProfileService.profile === PowerProfile.Balanced) ? Color.mOnPrimary : Color.mPrimary
-      onClicked: {
-        if (enabled) {
-          PowerProfileService.setProfile(PowerProfile.Balanced)
-        }
-      }
+      onClicked: PowerProfileService.setProfile(PowerProfile.Balanced)
     }
     // Eco
     NIconButton {
-      icon: "powersaver"
-      tooltipText: "Set eco power profile."
+      icon: PowerProfileService.getIcon(PowerProfile.PowerSaver)
+      tooltipText: `Set "${PowerProfileService.getName(PowerProfile.PowerSaver)}" power profile.`
       enabled: hasPP
       opacity: enabled ? Style.opacityFull : Style.opacityMedium
       colorBg: (enabled && PowerProfileService.profile === PowerProfile.PowerSaver) ? Color.mPrimary : Color.mSurfaceVariant
       colorFg: (enabled && PowerProfileService.profile === PowerProfile.PowerSaver) ? Color.mOnPrimary : Color.mPrimary
-      onClicked: {
-        if (enabled) {
-          PowerProfileService.setProfile(PowerProfile.PowerSaver)
-        }
-      }
+      onClicked: PowerProfileService.setProfile(PowerProfile.PowerSaver)
     }
     Item {
       Layout.fillWidth: true
