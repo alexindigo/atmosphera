@@ -133,7 +133,7 @@ ColumnLayout {
 
     NHeader {
       label: "Monitors Configuration"
-      description: "Show bar on specific monitors. Defaults to all if none are chosen."
+      description: "Show notification on specific monitors. Defaults to all if none are chosen."
     }
 
     Repeater {
