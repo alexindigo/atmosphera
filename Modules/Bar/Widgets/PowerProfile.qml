@@ -47,7 +47,7 @@ NIconButton {
   icon: root.profileIcon()
   tooltipText: root.profileName()
   compact: (Settings.data.bar.density === "compact")
-  colorBg: (PowerProfileService.profile === PowerProfile.Balanced) ? Color.mSurfaceVariant : Color.mPrimary
+  colorBg: (PowerProfileService.profile === PowerProfile.Balanced) ? (Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent) : Color.mPrimary
   colorFg: (PowerProfileService.profile === PowerProfile.Balanced) ? Color.mOnSurface : Color.mOnPrimary
   colorBorder: Color.transparent
   colorBorderHover: Color.transparent

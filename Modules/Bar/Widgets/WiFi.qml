@@ -15,7 +15,7 @@ NIconButton {
 
   compact: (Settings.data.bar.density === "compact")
   baseSize: Style.capsuleHeight
-  colorBg: Color.mSurfaceVariant
+  colorBg: (Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent)
   colorFg: Color.mOnSurface
   colorBorder: Color.transparent
   colorBorderHover: Color.transparent
