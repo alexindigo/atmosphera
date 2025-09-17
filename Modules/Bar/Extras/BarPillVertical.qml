@@ -4,7 +4,6 @@ import qs.Commons
 import qs.Services
 import qs.Widgets
 
-
 Item {
   id: root
 

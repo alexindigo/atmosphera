@@ -19,5 +19,3 @@ NIconButton {
   colorBorderHover: Color.transparent
   onClicked: Settings.data.colorSchemes.darkMode = !Settings.data.colorSchemes.darkMode
 }
-
-

@@ -14,7 +14,7 @@ Variants {
 
     // Dimmer is only active on the screen where the panel is currently open.
     active: {
-      if (Settings.isLoaded && Settings.data.general.dimDesktop && modelData !== undefined && PanelService.openedPanel !== null && PanelService.openedPanel.item !== null) {
+      if (Settings.isLoaded && Settings.data.general.dimDesktop && modelData !== undefined && PanelService.openedPanel !== null && PanelService.openedPanel.item !== undefined && PanelService.openedPanel.item !== null) {
         return (PanelService.openedPanel.item.screen === modelData)
       }
 
@@ -28,7 +28,7 @@ Variants {
 
       Component.onCompleted: {
         if (modelData) {
-          Logger.log("Dimmer", "component loaded on", modelData.name)
+          Logger.log("Dimmer", "Loaded on", modelData.name)
         }
 
         // When a NPanel opens it seems it is initialized with the primary screen for a very brief moment
