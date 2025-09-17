@@ -111,6 +111,7 @@ Loader {
     scaleValue = originalScale
     opacityValue = originalOpacity
     hideTimer.start()
+    PanelService.willClosePanel(root)
   }
 
   // -----------------------------------------
@@ -146,6 +147,10 @@ Loader {
       readonly property bool barIsVisible: (screen !== null) && (Settings.data.bar.monitors.includes(screen.name) || (Settings.data.bar.monitors.length === 0))
       readonly property real verticalBarWidth: Math.round(Style.barHeight * scaling)
 
+      Component.onCompleted: {
+        Logger.log("NPanel", "Opened", root.objectName)
+      }
+
       Connections {
         target: ScalingService
         function onScaleChanged(screenName, scale) {
@@ -172,6 +177,7 @@ Loader {
       // No dimming here
       color: Color.transparent
 
+      WlrLayershell.layer: Settings.data.general.dimDesktop ? WlrLayer.Overlay : WlrLayer.Top
       WlrLayershell.exclusionMode: ExclusionMode.Ignore
       WlrLayershell.namespace: "noctalia-panel"
       WlrLayershell.keyboardFocus: root.panelKeyboardFocus ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
@@ -280,14 +286,14 @@ Loader {
 
         scale: root.scaleValue
         opacity: root.opacityValue
-
         x: calculatedX
         y: calculatedY
 
         // ---------------------------------------------
-        // ---------------------------------------------
         // All Style.marginXXX are handled above in the PanelWindow itself.
         // Does not account for corners are they are negligible and helps keep the code clean.
+        // ---------------------------------------------
+
         // ---------------------------------------------
         property int calculatedX: {
           // Priority to fixed anchoring
