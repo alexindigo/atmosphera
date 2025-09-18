@@ -6,6 +6,7 @@ import Quickshell.Wayland
 import qs.Commons
 import qs.Services
 import qs.Widgets
+import "../../Helpers/FuzzySort.js" as FuzzySort
 
 NPanel {
   id: root
@@ -13,7 +14,7 @@ NPanel {
   preferredWidth: 640
   preferredHeight: 480
   preferredWidthRatio: 0.4
-  preferredHeightRatio: 0.41
+  preferredHeightRatio: 0.48
   panelAnchorHorizontalCenter: true
   panelAnchorVerticalCenter: true
   panelKeyboardFocus: true
@@ -23,11 +24,14 @@ NPanel {
   // Local reactive state
   property list<string> wallpapersList: []
   property string currentWallpaper: ""
+  property string filterText: ""
+  property list<string> filteredWallpapers: []
 
   function refreshForScreen() {
     const name = Screen.name
     wallpapersList = WallpaperService.getWallpapersList(name)
     currentWallpaper = WallpaperService.getWallpaper(name)
+    updateFiltered()
   }
 
   onOpened: refreshForScreen()
@@ -49,6 +53,28 @@ NPanel {
         refreshForScreen()
       }
     }
+  }
+
+  function updateFiltered() {
+    if (!filterText || filterText.trim().length === 0) {
+      filteredWallpapers = wallpapersList
+      return
+    }
+    // Build objects with basename for ranking
+    const items = wallpapersList.map(function (p) {
+      return {
+        "path": p,
+        "name": p.split('/').pop()
+      }
+    })
+    const results = FuzzySort.go(filterText.trim(), items, {
+                                   "key": 'name',
+                                   "limit": 200
+                                 })
+    // Map back to path list
+    filteredWallpapers = results.map(function (r) {
+      return r.obj.path
+    })
   }
 
   panelContent: Rectangle {
@@ -95,10 +121,9 @@ NPanel {
 
       NDivider {
         Layout.fillWidth: true
-        Layout.topMargin: Style.marginXL * scaling
-        Layout.bottomMargin: Style.marginXL * scaling
       }
 
+      // Scroll container mirrors SettingsPanel to avoid overflow and keep interactions smooth
       Flickable {
         Layout.fillWidth: true
         Layout.fillHeight: true
@@ -124,20 +149,43 @@ NPanel {
               visible: (wallpapersList.length > 0)
             }
 
+            // Filter input
+            RowLayout {
+              Layout.fillWidth: true
+              spacing: Style.marginM * scaling
+
+              NText {
+                text: "Search:"
+                color: Color.mOnSurface
+                font.pointSize: Style.fontSizeM * scaling
+                Layout.preferredWidth: implicitWidth
+              }
+
+              NTextInput {
+                placeholderText: "Type to filter wallpapers..."
+                text: filterText
+                onTextChanged: {
+                  filterText = text
+                  updateFiltered()
+                }
+                Layout.fillWidth: true
+              }
+            }
+
             // Grid container
             Item {
               visible: !WallpaperService.scanning
               Layout.fillWidth: true
-              Layout.preferredHeight: Math.ceil(wallpapersList.length / wallpaperGridView.columns) * wallpaperGridView.cellHeight
+              Layout.preferredHeight: Math.ceil(filteredWallpapers.length / wallpaperGridView.columns) * wallpaperGridView.cellHeight
 
               GridView {
                 id: wallpaperGridView
                 anchors.fill: parent
-                model: wallpapersList
+                model: filteredWallpapers
                 interactive: false
                 clip: true
 
-                property int columns: 5
+                property int columns: 4
                 property int itemSize: Math.floor((width - leftMargin - rightMargin - (columns * Style.marginS * scaling)) / columns)
 
                 cellWidth: Math.floor((width - leftMargin - rightMargin) / columns)
@@ -227,7 +275,7 @@ NPanel {
               radius: Style.radiusM * scaling
               border.color: Color.mOutline
               border.width: Math.max(1, Style.borderS * scaling)
-              visible: wallpapersList.length === 0 || WallpaperService.scanning
+              visible: (filteredWallpapers.length === 0 && !WallpaperService.scanning) || WallpaperService.scanning
               Layout.fillWidth: true
               Layout.preferredHeight: 130 * scaling
 
@@ -241,7 +289,7 @@ NPanel {
 
               ColumnLayout {
                 anchors.fill: parent
-                visible: wallpapersList.length === 0 && !WallpaperService.scanning
+                visible: filteredWallpapers.length === 0 && !WallpaperService.scanning
                 Item {
                   Layout.fillHeight: true
                 }
@@ -252,13 +300,13 @@ NPanel {
                   Layout.alignment: Qt.AlignHCenter
                 }
                 NText {
-                  text: "No wallpaper found."
+                  text: (filterText && filterText.length > 0) ? "No match for filter." : "No wallpaper found."
                   color: Color.mOnSurface
                   font.weight: Style.fontWeightBold
                   Layout.alignment: Qt.AlignHCenter
                 }
                 NText {
-                  text: "Configure your wallpaper directory with images."
+                  text: (filterText && filterText.length > 0) ? "Try a different query." : "Configure your wallpaper directory with images."
                   color: Color.mOnSurfaceVariant
                   wrapMode: Text.WordWrap
                   Layout.alignment: Qt.AlignHCenter
@@ -267,6 +315,12 @@ NPanel {
                   Layout.fillHeight: true
                 }
               }
+            }
+
+            NDivider {
+              Layout.fillWidth: true
+              Layout.topMargin: Style.marginXL * scaling
+              Layout.bottomMargin: Style.marginXL * scaling
             }
           }
         }

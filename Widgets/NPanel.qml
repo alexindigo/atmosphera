@@ -441,11 +441,21 @@ Loader {
             var nx = dragStartX + translation.x
             var ny = dragStartY + translation.y
 
-            // Clamp within screen bounds accounting for margins
-            var maxX = panelWindow.width - panelBackground.width - panelBackground.marginRight
-            var minX = panelBackground.marginLeft
-            var maxY = panelWindow.height - panelBackground.height - panelBackground.marginBottom
-            var minY = panelBackground.marginTop
+            // Calculate gaps so we never overlap the bar on any side
+            var baseGap = Style.marginS * scaling
+            var floatExtraH = Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * 2 * Style.marginXL * scaling : 0
+            var floatExtraV = Settings.data.bar.floating ? Settings.data.bar.marginVertical * 2 * Style.marginXL * scaling : 0
+
+            var insetLeft = baseGap + ((barIsVisible && barPosition === "left") ? (Style.barHeight * scaling + floatExtraH) : 0)
+            var insetRight = baseGap + ((barIsVisible && barPosition === "right") ? (Style.barHeight * scaling + floatExtraH) : 0)
+            var insetTop = baseGap + ((barIsVisible && barPosition === "top") ? (Style.barHeight * scaling + floatExtraV) : 0)
+            var insetBottom = baseGap + ((barIsVisible && barPosition === "bottom") ? (Style.barHeight * scaling + floatExtraV) : 0)
+
+            // Clamp within screen bounds accounting for insets
+            var maxX = panelWindow.width - panelBackground.width - insetRight
+            var minX = insetLeft
+            var maxY = panelWindow.height - panelBackground.height - insetBottom
+            var minY = insetTop
 
             panelBackground.manualX = Math.round(Math.max(minX, Math.min(nx, maxX)))
             panelBackground.manualY = Math.round(Math.max(minY, Math.min(ny, maxY)))
