@@ -127,6 +127,12 @@ Item {
   // Wallpaper IPC: trigger a new random wallpaper
   IpcHandler {
     target: "wallpaper"
+    function toggle() {
+      if (Settings.data.wallpaper.enabled) {
+        wallpaperSelector.toggle()
+      }
+    }
+    
     function random() {
       if (Settings.data.wallpaper.enabled) {
         WallpaperService.setRandomWallpaper()
