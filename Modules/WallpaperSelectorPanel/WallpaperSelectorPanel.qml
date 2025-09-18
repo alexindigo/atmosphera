@@ -97,7 +97,6 @@ NPanel {
         Layout.bottomMargin: Style.marginXL * scaling
       }
 
-      // Scroll container mirrors SettingsPanel to avoid overflow and keep interactions smooth
       Flickable {
         Layout.fillWidth: true
         Layout.fillHeight: true
@@ -115,7 +114,6 @@ NPanel {
             width: scrollView.availableWidth
             spacing: Style.marginM * scaling
 
-            // Selector header removed (title and refresh are redundant here)
             NToggle {
               label: "Apply to all monitors"
               description: "Apply selected wallpaper to all monitors at once."
