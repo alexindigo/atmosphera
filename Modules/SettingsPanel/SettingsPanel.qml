@@ -46,13 +46,6 @@ NPanel {
   property var tabsModel: []
   property var activeScrollView: null
 
-  Connections {
-    target: Settings.data.wallpaper
-    function onEnabledChanged() {
-      updateTabsModel()
-    }
-  }
-
   Component.onCompleted: {
     updateTabsModel()
   }
@@ -172,25 +165,22 @@ NPanel {
                      "label": "Wallpaper",
                      "icon": "settings-wallpaper",
                      "source": wallpaperTab
+                   }, {
+                     "id": SettingsPanel.Tab.ScreenRecorder,
+                     "label": "Screen Recorder",
+                     "icon": "settings-screen-recorder",
+                     "source": screenRecorderTab
+                   }, {
+                     "id": SettingsPanel.Tab.Hooks,
+                     "label": "Hooks",
+                     "icon": "settings-hooks",
+                     "source": hooksTab
+                   }, {
+                     "id": SettingsPanel.Tab.About,
+                     "label": "About",
+                     "icon": "settings-about",
+                     "source": aboutTab
                    }]
-
-    // Wallpaper selector moved to its own panel
-    newTabs.push({
-                   "id": SettingsPanel.Tab.ScreenRecorder,
-                   "label": "Screen Recorder",
-                   "icon": "settings-screen-recorder",
-                   "source": screenRecorderTab
-                 }, {
-                   "id": SettingsPanel.Tab.Hooks,
-                   "label": "Hooks",
-                   "icon": "settings-hooks",
-                   "source": hooksTab
-                 }, {
-                   "id": SettingsPanel.Tab.About,
-                   "label": "About",
-                   "icon": "settings-about",
-                   "source": aboutTab
-                 })
 
     root.tabsModel = newTabs // Assign the generated list to the model
   }
