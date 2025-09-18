@@ -14,7 +14,7 @@ NPanel {
   preferredWidth: 640
   preferredHeight: 480
   preferredWidthRatio: 0.4
-  preferredHeightRatio: 0.48
+  preferredHeightRatio: 0.52
   panelAnchorHorizontalCenter: true
   panelAnchorVerticalCenter: true
   panelKeyboardFocus: true
@@ -123,7 +123,39 @@ NPanel {
         Layout.fillWidth: true
       }
 
-      // Scroll container mirrors SettingsPanel to avoid overflow and keep interactions smooth
+      NToggle {
+        label: "Apply to all monitors"
+        description: "Apply selected wallpaper to all monitors at once."
+        checked: Settings.data.wallpaper.setWallpaperOnAllMonitors
+        onToggled: checked => Settings.data.wallpaper.setWallpaperOnAllMonitors = checked
+        visible: (wallpapersList.length > 0)
+        Layout.fillWidth: true
+      }
+
+      // Filter input
+      RowLayout {
+        Layout.fillWidth: true
+        spacing: Style.marginM * scaling
+
+        NText {
+          text: "Search:"
+          color: Color.mOnSurface
+          font.pointSize: Style.fontSizeM * scaling
+          Layout.preferredWidth: implicitWidth
+        }
+
+        NTextInput {
+          placeholderText: "Type to filter wallpapers..."
+          text: filterText
+          onTextChanged: {
+            filterText = text
+            updateFiltered()
+          }
+          Layout.fillWidth: true
+        }
+      }
+
+      // Scroll container for wallpaper grid only
       Flickable {
         Layout.fillWidth: true
         Layout.fillHeight: true
@@ -140,37 +172,6 @@ NPanel {
           ColumnLayout {
             width: scrollView.availableWidth
             spacing: Style.marginM * scaling
-
-            NToggle {
-              label: "Apply to all monitors"
-              description: "Apply selected wallpaper to all monitors at once."
-              checked: Settings.data.wallpaper.setWallpaperOnAllMonitors
-              onToggled: checked => Settings.data.wallpaper.setWallpaperOnAllMonitors = checked
-              visible: (wallpapersList.length > 0)
-            }
-
-            // Filter input
-            RowLayout {
-              Layout.fillWidth: true
-              spacing: Style.marginM * scaling
-
-              NText {
-                text: "Search:"
-                color: Color.mOnSurface
-                font.pointSize: Style.fontSizeM * scaling
-                Layout.preferredWidth: implicitWidth
-              }
-
-              NTextInput {
-                placeholderText: "Type to filter wallpapers..."
-                text: filterText
-                onTextChanged: {
-                  filterText = text
-                  updateFiltered()
-                }
-                Layout.fillWidth: true
-              }
-            }
 
             // Grid container
             Item {
@@ -189,7 +190,7 @@ NPanel {
                 property int itemSize: Math.floor((width - leftMargin - rightMargin - (columns * Style.marginS * scaling)) / columns)
 
                 cellWidth: Math.floor((width - leftMargin - rightMargin) / columns)
-                cellHeight: Math.floor(itemSize * 0.67) + Style.marginXS * scaling + Style.fontSizeXS * scaling + Style.marginS * scaling
+                cellHeight: Math.floor(itemSize * 0.7) + Style.marginXS * scaling + Style.fontSizeXS * scaling + Style.marginM * scaling
 
                 leftMargin: Style.marginS * scaling
                 rightMargin: Style.marginS * scaling
@@ -279,6 +280,8 @@ NPanel {
                     opacity: 0.5
                     font.pointSize: Style.fontSizeXS * scaling
                     Layout.fillWidth: true
+                    Layout.leftMargin: Style.marginS * scaling
+                    Layout.rightMargin: Style.marginS * scaling
                     Layout.alignment: Qt.AlignHCenter
                     horizontalAlignment: Text.AlignHCenter
                     elide: Text.ElideRight
