@@ -356,6 +356,7 @@ Singleton {
         property real backgroundOpacity: 1.0
         property list<string> pinnedExecs: []
         property bool useApp2Unit: false
+        property bool sortByMostUsed: true
       }
 
       // dock

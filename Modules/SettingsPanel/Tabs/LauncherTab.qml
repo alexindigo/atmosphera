@@ -94,6 +94,13 @@ ColumnLayout {
   }
 
   NToggle {
+    label: "Sort by Most Used"
+    description: "When enabled, frequently launched apps appear first in the list."
+    checked: Settings.data.appLauncher.sortByMostUsed
+    onToggled: checked => Settings.data.appLauncher.sortByMostUsed = checked
+  }
+
+  NToggle {
     label: "Use App2Unit for Launching"
     description: "Use app2unit -- 'desktop-entry' when launching applications for better systemd integration."
     checked: Settings.data.appLauncher.useApp2Unit
