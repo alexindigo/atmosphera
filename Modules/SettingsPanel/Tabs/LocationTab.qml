@@ -65,7 +65,7 @@ ColumnLayout {
 
     NHeader {
       label: "Weather"
-      description: "Configure weather display preferences and temperature units."
+      description: "Configure temperature units."
     }
 
     NToggle {
@@ -73,6 +73,37 @@ ColumnLayout {
       description: "Display temperature in Fahrenheit instead of Celsius."
       checked: Settings.data.location.useFahrenheit
       onToggled: checked => Settings.data.location.useFahrenheit = checked
+    }
+  }
+
+  NDivider {
+    Layout.fillWidth: true
+    Layout.topMargin: Style.marginXL * scaling
+    Layout.bottomMargin: Style.marginXL * scaling
+  }
+
+  // Weather section
+  ColumnLayout {
+    spacing: Style.marginM * scaling
+    Layout.fillWidth: true
+
+    NHeader {
+      label: "Time & Date"
+      description: "Configure time and date formats."
+    }
+
+    NToggle {
+      label: "Use 12-hour time format"
+      description: "Classic AM/PM or modern 24-hour."
+      checked: Settings.data.location.use12hourFormat
+      onToggled: checked => Settings.data.location.use12hourFormat = checked
+    }
+
+    NToggle {
+      label: "Show Month Before Day"
+      description: "Organize your dates. On for 09/17/2025, off for 17/09/2025."
+      checked: Settings.data.location.monthBeforeDay
+      onToggled: checked => Settings.data.location.monthBeforeDay = checked
     }
   }
 

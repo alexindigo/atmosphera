@@ -30,10 +30,10 @@ Rectangle {
 
   readonly property string barPosition: Settings.data.bar.position
   readonly property bool compact: (Settings.data.bar.density === "compact")
+  readonly property bool use12h: Settings.data.location.use12hourFormat
+  readonly property bool monthBeforeDay: Settings.data.location.monthBeforeDay
 
   // Resolve settings: try user settings or defaults from BarWidgetRegistry
-  readonly property bool use12h: widgetSettings.use12HourClock !== undefined ? widgetSettings.use12HourClock : widgetMetadata.use12HourClock
-  readonly property bool reverseDayMonth: widgetSettings.reverseDayMonth !== undefined ? widgetSettings.reverseDayMonth : widgetMetadata.reverseDayMonth
   readonly property string displayFormat: widgetSettings.displayFormat !== undefined ? widgetSettings.displayFormat : widgetMetadata.displayFormat
 
   // Use compact mode for vertical bars
@@ -119,7 +119,7 @@ Rectangle {
                 dayName = dayName.charAt(0).toUpperCase() + dayName.slice(1)
                 const day = now.getDate().toString().padStart(2, '0')
                 let month = now.toLocaleDateString(Qt.locale(), "MMM")
-                timeStr += " - " + (reverseDayMonth ? `${dayName}, ${month} ${day}` : `${dayName}, ${day} ${month}`)
+                timeStr += " - " + (monthBeforeDay ? `${dayName}, ${month} ${day}` : `${dayName}, ${day} ${month}`)
               }
 
               return timeStr
@@ -184,7 +184,7 @@ Rectangle {
           const now = Time.date
           const day = now.getDate().toString().padStart(2, '0')
           const month = (now.getMonth() + 1).toString().padStart(2, '0')
-          return reverseDayMonth ? `${month}/${day}` : `${day}/${month}`
+          return monthBeforeDay ? `${month}/${day}` : `${day}/${month}`
         }
 
         // Enable fixed-width font for consistent spacing
@@ -199,7 +199,7 @@ Rectangle {
 
   NTooltip {
     id: tooltip
-    text: `${Time.formatDate(reverseDayMonth)}.`
+    text: `${Time.formatDate(monthBeforeDay)}.`
     target: clockContainer
     positionAbove: Settings.data.bar.position === "bottom"
   }

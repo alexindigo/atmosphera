@@ -26,6 +26,15 @@ Loader {
     }
   }
 
+  function formatTime() {
+    return Settings.data.location.use12hourFormat ? Qt.formatDateTime(new Date(), "h:mm A") : Qt.formatDateTime(new Date(), "HH:mm")
+  }
+
+  function formatDate() {
+    // For full text date, day is always before month, so we use this format for everybody: Wednesday, September 17.
+    return Qt.formatDateTime(new Date(), "dddd, MMMM d")
+  }
+
   function scheduleUnloadAfterUnlock() {
     unloadAfterUnlockTimer.start()
   }
@@ -137,9 +146,10 @@ Loader {
 
                 NText {
                   id: timeText
-                  text: Qt.formatDateTime(new Date(), "HH:mm")
+                  text: formatTime()
                   font.family: Settings.data.ui.fontBillboard
-                  font.pointSize: Style.fontSizeXXXL * 6 * scaling
+                  // Smaller time display when using longer 12 hour format
+                  font.pointSize: Settings.data.location.use12hourFormat ? Style.fontSizeXXXL * 4 * scaling : Style.fontSizeXXXL * 5 * scaling
                   font.weight: Style.fontWeightBold
                   font.letterSpacing: -2 * scaling
                   color: Color.mOnSurface
@@ -163,7 +173,7 @@ Loader {
 
                 NText {
                   id: dateText
-                  text: Qt.formatDateTime(new Date(), "dddd, MMMM d")
+                  text: formatDate()
                   font.family: Settings.data.ui.fontBillboard
                   font.pointSize: Style.fontSizeXXL * scaling
                   font.weight: Font.Light
@@ -877,8 +887,8 @@ Loader {
             running: true
             repeat: true
             onTriggered: {
-              timeText.text = Qt.formatDateTime(new Date(), "HH:mm")
-              dateText.text = Qt.formatDateTime(new Date(), "dddd, MMMM d")
+              timeText.text = formatTime()
+              dateText.text = formatDate()
             }
           }
         }

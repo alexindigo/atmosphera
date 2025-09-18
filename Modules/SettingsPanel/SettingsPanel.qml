@@ -26,16 +26,16 @@ NPanel {
     About,
     Audio,
     Bar,
-    Dock,
-    Hooks,
-    Launcher,
     ColorScheme,
     Display,
+    Dock,
     General,
+    Hooks,
+    Launcher,
+    Location,
     Network,
     Notification,
     ScreenRecorder,
-    Weather,
     Wallpaper,
     WallpaperSelector
   }
@@ -81,8 +81,8 @@ NPanel {
     Tabs.NetworkTab {}
   }
   Component {
-    id: weatherTab
-    Tabs.WeatherTab {}
+    id: locationTab
+    Tabs.LocationTab {}
   }
   Component {
     id: colorSchemeTab
@@ -160,10 +160,10 @@ NPanel {
                      "icon": "settings-network",
                      "source": networkTab
                    }, {
-                     "id": SettingsPanel.Tab.Weather,
-                     "label": "Weather",
-                     "icon": "settings-weather",
-                     "source": weatherTab
+                     "id": SettingsPanel.Tab.Location,
+                     "label": "Location",
+                     "icon": "settings-location",
+                     "source": locationTab
                    }, {
                      "id": SettingsPanel.Tab.ColorScheme,
                      "label": "Color Scheme",

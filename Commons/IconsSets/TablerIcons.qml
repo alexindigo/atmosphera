@@ -101,7 +101,7 @@ Singleton {
     "settings-display": "device-desktop",
     "settings-network": "sitemap",
     "settings-brightness": "brightness-up",
-    "settings-weather": "cloud-sun",
+    "settings-location": "world-pin",
     "settings-color-scheme": "palette",
     "settings-wallpaper": "paint",
     "settings-wallpaper-selector": "library-photo",

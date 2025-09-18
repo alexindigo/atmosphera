@@ -15,7 +15,7 @@ Singleton {
     return Math.floor(date / 1000)
   }
 
-  function formatDate(reverseDayMonth = true) {
+  function formatDate(monthBeforeDay = true) {
     let now = date
     let dayName = now.toLocaleDateString(Qt.locale(), "ddd")
     dayName = dayName.charAt(0).toUpperCase() + dayName.slice(1)
@@ -40,7 +40,7 @@ Singleton {
     let month = now.toLocaleDateString(Qt.locale(), "MMMM")
     let year = now.toLocaleDateString(Qt.locale(), "yyyy")
 
-    return `${dayName}, ` + (reverseDayMonth ? `${month} ${day}${suffix} ${year}` : `${day}${suffix} ${month} ${year}`)
+    return `${dayName}, ` + (monthBeforeDay ? `${month} ${day}${suffix} ${year}` : `${day}${suffix} ${month} ${year}`)
   }
 
 
