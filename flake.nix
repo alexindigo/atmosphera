@@ -40,6 +40,7 @@
               libnotify
               matugen
               networkmanager
+              wlsunset
               wl-clipboard
             ] ++ lib.optionals (pkgs.stdenv.hostPlatform.isx86_64)
             [ gpu-screen-recorder ];
@@ -79,6 +80,17 @@
         });
 
       defaultPackage = eachSystem (system: self.packages.${system}.default);
+
+      nixosModules = {
+        noctalia = { pkgs, lib, ... }: {
+          environment.systemPackages = [
+            self.packages.${pkgs.system}.default
+          ];
+          # Required services for proper functionality
+          services.power-profiles-daemon.enable = true;  # Power profile switching support
+          services.upower.enable = true;                 # Battery monitoring & power management
+        };
+      };
     };
 }
 
