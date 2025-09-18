@@ -18,6 +18,8 @@ NPanel {
   panelAnchorVerticalCenter: true
   panelKeyboardFocus: true
 
+  draggable: true
+
   // Local reactive state
   property list<string> wallpapersList: []
   property string currentWallpaper: ""

@@ -21,6 +21,8 @@ NPanel {
 
   panelKeyboardFocus: true
 
+  draggable: true
+
   // Tabs enumeration, order is NOT relevant
   enum Tab {
     About,
