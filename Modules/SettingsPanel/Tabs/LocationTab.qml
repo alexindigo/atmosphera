@@ -100,10 +100,17 @@ ColumnLayout {
     }
 
     NToggle {
-      label: "Show Month Before Day"
+      label: "Show month before day"
       description: "Organize your dates. On for 09/17/2025, off for 17/09/2025."
       checked: Settings.data.location.monthBeforeDay
       onToggled: checked => Settings.data.location.monthBeforeDay = checked
+    }
+
+    NToggle {
+      label: "Show week number in calendar"
+      description: "Displays the week number of the year in calendar view."
+      checked: Settings.data.location.showWeekNumberInCalendar
+      onToggled: checked => Settings.data.location.showWeekNumberInCalendar = checked
     }
   }
 

@@ -316,6 +316,7 @@ Singleton {
         property bool useFahrenheit: false
         property bool use12hourFormat: false
         property bool monthBeforeDay: false
+        property bool showWeekNumberInCalendar: false
       }
 
       // screen recorder
