@@ -18,66 +18,69 @@ NPanel {
   panelAnchorHorizontalCenter: true
   panelAnchorVerticalCenter: true
   panelKeyboardFocus: true
-
   draggable: true
 
-  // Local reactive state
-  property list<string> wallpapersList: []
-  property string currentWallpaper: ""
-  property string filterText: ""
-  property list<string> filteredWallpapers: []
-
-  function refreshForScreen() {
-    const name = Screen.name
-    wallpapersList = WallpaperService.getWallpapersList(name)
-    currentWallpaper = WallpaperService.getWallpaper(name)
-    updateFiltered()
-  }
-
-  onOpened: refreshForScreen()
-
-  Connections {
-    target: WallpaperService
-    function onWallpaperChanged(screenName, path) {
-      if (screenName === Screen.name) {
-        currentWallpaper = WallpaperService.getWallpaper(Screen.name)
-      }
-    }
-    function onWallpaperDirectoryChanged(screenName, directory) {
-      if (screenName === Screen.name) {
-        refreshForScreen()
-      }
-    }
-    function onWallpaperListChanged(screenName, count) {
-      if (screenName === Screen.name) {
-        refreshForScreen()
-      }
-    }
-  }
-
-  function updateFiltered() {
-    if (!filterText || filterText.trim().length === 0) {
-      filteredWallpapers = wallpapersList
-      return
-    }
-    // Build objects with basename for ranking
-    const items = wallpapersList.map(function (p) {
-      return {
-        "path": p,
-        "name": p.split('/').pop()
-      }
-    })
-    const results = FuzzySort.go(filterText.trim(), items, {
-                                   "key": 'name',
-                                   "limit": 200
-                                 })
-    // Map back to path list
-    filteredWallpapers = results.map(function (r) {
-      return r.obj.path
-    })
-  }
-
   panelContent: Rectangle {
+    // Local reactive state
+    property list<string> wallpapersList: []
+    property string currentWallpaper: ""
+    property string filterText: ""
+    property list<string> filteredWallpapers: []
+
+    Component.onCompleted: {
+      refreshWallpaperScreenData()
+    }
+
+    Connections {
+      target: WallpaperService
+      function onWallpaperChanged(screenName, path) {
+        if (screen !== null && screenName === screen.name) {
+          currentWallpaper = WallpaperService.getWallpaper(screen.name)
+        }
+      }
+      function onWallpaperDirectoryChanged(screenName, directory) {
+        if (screen !== null && screenName === screen.name) {
+          refreshWallpaperScreenData()
+        }
+      }
+      function onWallpaperListChanged(screenName, count) {
+        if (screen !== null && screenName === screen.name) {
+          refreshWallpaperScreenData()
+        }
+      }
+    }
+
+    function refreshWallpaperScreenData() {
+      if (screen === null) {
+        return
+      }
+      wallpapersList = WallpaperService.getWallpapersList(screen.name)
+      currentWallpaper = WallpaperService.getWallpaper(screen.name)
+      updateFiltered()
+    }
+
+    function updateFiltered() {
+      if (!filterText || filterText.trim().length === 0) {
+        filteredWallpapers = wallpapersList
+        return
+      }
+      // Build objects with basename for ranking
+      const items = wallpapersList.map(function (p) {
+        return {
+          "path": p,
+          "name": p.split('/').pop()
+        }
+      })
+      const results = FuzzySort.go(filterText.trim(), items, {
+                                     "key": 'name',
+                                     "limit": 200
+                                   })
+      // Map back to path list
+      filteredWallpapers = results.map(function (r) {
+        return r.obj.path
+      })
+    }
+
     color: Color.transparent
 
     ColumnLayout {
@@ -106,7 +109,7 @@ NPanel {
 
         NIconButton {
           icon: "refresh"
-          tooltipText: "Refresh wallpaper list"
+          tooltipText: "Refresh wallpaper list."
           baseSize: Style.baseWidgetSize * 0.8
           onClicked: WallpaperService.refreshWallpapersList()
         }
@@ -321,13 +324,13 @@ NPanel {
                   Layout.alignment: Qt.AlignHCenter
                 }
                 NText {
-                  text: (filterText && filterText.length > 0) ? "No match for filter." : "No wallpaper found."
+                  text: (filterText && filterText.length > 0) ? "No match found." : "No wallpaper found."
                   color: Color.mOnSurface
                   font.weight: Style.fontWeightBold
                   Layout.alignment: Qt.AlignHCenter
                 }
                 NText {
-                  text: (filterText && filterText.length > 0) ? "Try a different query." : "Configure your wallpaper directory with images."
+                  text: (filterText && filterText.length > 0) ? "Try a different search query." : "Configure your wallpaper directory with images."
                   color: Color.mOnSurfaceVariant
                   wrapMode: Text.WordWrap
                   Layout.alignment: Qt.AlignHCenter
