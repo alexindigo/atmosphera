@@ -73,6 +73,7 @@ We welcome contributions of any size - bug fixes, new features, documentation im
 - **Want to code?** Check out our [development guidelines](https://docs.noctalia.dev/development/guideline)
 - **Need help?** Join our [Discord](https://discord.noctalia.dev)
 
+---
 
 ## 💜 Credits
 
