@@ -55,7 +55,7 @@ NBox {
       visible: Settings.data.wallpaper.enabled
       icon: "wallpaper-selector"
       tooltipText: "Left click: Open wallpaper selector.\nRight click: Set random wallpaper."
-      onClicked: PanelService.getPanel("wallpaperSelectorPanel")?.toggle(this)
+      onClicked: PanelService.getPanel("wallpaperSelector")?.toggle(this)
       onRightClicked: WallpaperService.setRandomWallpaper()
     }
 
