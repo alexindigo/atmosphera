@@ -197,9 +197,11 @@ Singleton {
       }
     }
 
+    readonly property real stepSize: Settings.data.brightness.brightnessStep / 100.0
+
     // Timer for debouncing rapid changes
     readonly property Timer timer: Timer {
-      interval: 200
+      interval: 100
       onTriggered: {
         if (!isNaN(monitor.queuedBrightness)) {
           monitor.setBrightness(monitor.queuedBrightness)
@@ -208,14 +210,19 @@ Singleton {
       }
     }
 
+    function setBrightnessDebounced(value: real): void {
+      monitor.queuedBrightness = value
+      timer.start()
+    }
+
     function increaseBrightness(): void {
-      var stepSize = Settings.data.brightness.brightnessStep / 100.0
-      setBrightnessDebounced(monitor.brightness + stepSize)
+      const value = !isNaN(monitor.queuedBrightness) ? monitor.queuedBrightness : monitor.brightness
+      setBrightnessDebounced(value + stepSize)
     }
 
     function decreaseBrightness(): void {
-      var stepSize = Settings.data.brightness.brightnessStep / 100.0
-      setBrightnessDebounced(monitor.brightness - stepSize)
+      const value = !isNaN(monitor.queuedBrightness) ? monitor.queuedBrightness : monitor.brightness
+      setBrightnessDebounced(value - stepSize)
     }
 
     function setBrightness(value: real): void {
@@ -225,7 +232,7 @@ Singleton {
       if (Math.round(monitor.brightness * 100) === rounded)
         return
 
-      if (isDdc && timer.running) {
+      if (timer.running) {
         monitor.queuedBrightness = value
         return
       }
@@ -245,11 +252,6 @@ Singleton {
       if (isDdc) {
         timer.restart()
       }
-    }
-
-    function setBrightnessDebounced(value: real): void {
-      monitor.queuedBrightness = value
-      timer.restart()
     }
 
     function initBrightness(): void {

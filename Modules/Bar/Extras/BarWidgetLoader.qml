@@ -8,12 +8,14 @@ Item {
 
   property string widgetId: ""
   property var widgetProps: ({})
-  property bool enabled: true
+  property string screenName: widgetProps.screen ? widgetProps.screen.name : ""
+  property string section: widgetProps.section || ""
+  property int sectionIndex: widgetProps.sectionWidgetIndex || 0
 
   Connections {
     target: ScalingService
-    function onScaleChanged(screenName, scale) {
-      if (loader.item && loader.item.screen && screenName === loader.item.screen.name) {
+    function onScaleChanged(aScreenName, scale) {
+      if (loader.item && loader.item.screen && aScreenName === screenName) {
         loader.item['scaling'] = scale
       }
     }
@@ -27,7 +29,7 @@ Item {
     id: loader
 
     anchors.fill: parent
-    active: Settings.isLoaded && enabled && widgetId !== ""
+    active: Settings.isLoaded && widgetId !== ""
     sourceComponent: {
       if (!active) {
         return null
@@ -45,18 +47,30 @@ Item {
         }
       }
 
+      // Register this widget instance with BarService
+      if (screenName && section) {
+        BarService.registerWidget(screenName, section, widgetId, sectionIndex, item)
+      }
+
       if (item.hasOwnProperty("onLoaded")) {
         item.onLoaded()
       }
 
-      Logger.log("NWidgetLoader", "Loaded", widgetId, "on screen", item.screen.name)
+      //Logger.log("BarWidgetLoader", "Loaded", widgetId, "on screen", item.screen.name)
+    }
+
+    Component.onDestruction: {
+      // Unregister when destroyed
+      if (screenName && section) {
+        BarService.unregisterWidget(screenName, section, widgetId, sectionIndex)
+      }
     }
   }
 
   // Error handling
   onWidgetIdChanged: {
     if (widgetId && !BarWidgetRegistry.hasWidget(widgetId)) {
-      Logger.warn("WidgetLoader", "Widget not found in registry:", widgetId)
+      Logger.warn("BarWidgetLoader", "Widget not found in bar registry:", widgetId)
     }
   }
 }

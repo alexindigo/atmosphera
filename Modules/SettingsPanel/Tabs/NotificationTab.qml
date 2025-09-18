@@ -46,40 +46,6 @@ ColumnLayout {
     Layout.bottomMargin: Style.marginXL * scaling
   }
 
-  // Monitor Configuration
-  ColumnLayout {
-    spacing: Style.marginM * scaling
-    Layout.fillWidth: true
-
-    NHeader {
-      label: "Monitors Configuration"
-      description: "Show bar on specific monitors. Defaults to all if none are chosen."
-    }
-
-    Repeater {
-      model: Quickshell.screens || []
-      delegate: NCheckbox {
-        Layout.fillWidth: true
-        label: modelData.name || "Unknown"
-        description: `${modelData.model} - ${modelData.width}x${modelData.height} [x:${modelData.x} y:${modelData.y}]`
-        checked: (Settings.data.notifications.monitors || []).indexOf(modelData.name) !== -1
-        onToggled: checked => {
-                     if (checked) {
-                       Settings.data.notifications.monitors = addMonitor(Settings.data.notifications.monitors, modelData.name)
-                     } else {
-                       Settings.data.notifications.monitors = removeMonitor(Settings.data.notifications.monitors, modelData.name)
-                     }
-                   }
-      }
-    }
-  }
-
-  NDivider {
-    Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
-  }
-
   // Notification Duration Settings
   ColumnLayout {
     spacing: Style.marginL * scaling
@@ -150,6 +116,40 @@ ColumnLayout {
         value: Settings.data.notifications.criticalUrgencyDuration
         onMoved: value => Settings.data.notifications.criticalUrgencyDuration = value
         text: Settings.data.notifications.criticalUrgencyDuration + "s"
+      }
+    }
+  }
+
+  NDivider {
+    Layout.fillWidth: true
+    Layout.topMargin: Style.marginXL * scaling
+    Layout.bottomMargin: Style.marginXL * scaling
+  }
+
+  // Monitor Configuration
+  ColumnLayout {
+    spacing: Style.marginM * scaling
+    Layout.fillWidth: true
+
+    NHeader {
+      label: "Monitors Configuration"
+      description: "Show notification on specific monitors. Defaults to all if none are chosen."
+    }
+
+    Repeater {
+      model: Quickshell.screens || []
+      delegate: NCheckbox {
+        Layout.fillWidth: true
+        label: modelData.name || "Unknown"
+        description: `${modelData.model} - ${modelData.width}x${modelData.height} [x:${modelData.x} y:${modelData.y}]`
+        checked: (Settings.data.notifications.monitors || []).indexOf(modelData.name) !== -1
+        onToggled: checked => {
+                     if (checked) {
+                       Settings.data.notifications.monitors = addMonitor(Settings.data.notifications.monitors, modelData.name)
+                     } else {
+                       Settings.data.notifications.monitors = removeMonitor(Settings.data.notifications.monitors, modelData.name)
+                     }
+                   }
       }
     }
   }

@@ -134,37 +134,17 @@ Singleton {
     // Backup the widget definition before altering
     const widgetBefore = JSON.stringify(widget)
 
-    // Migrate old bar settings to proper per widget settings
     switch (widget.id) {
-    case "ActiveWindow":
-      widget.showIcon = widget.showIcon !== undefined ? widget.showIcon : adapter.bar.showActiveWindowIcon
-      break
-    case "Battery":
-      widget.alwaysShowPercentage = widget.alwaysShowPercentage !== undefined ? widget.alwaysShowPercentage : adapter.bar.alwaysShowBatteryPercentage
-      break
+      // Get back to global settings for these two clock settings
     case "Clock":
-      widget.use12HourClock = widget.use12HourClock !== undefined ? widget.use12HourClock : adapter.location.use12HourClock
-      widget.reverseDayMonth = widget.reverseDayMonth !== undefined ? widget.reverseDayMonth : adapter.location.reverseDayMonth
-      if (widget.showDate !== undefined) {
-        widget.displayFormat = "time-date"
-      } else if (widget.showSeconds) {
-        widget.displayFormat = "time-seconds"
+      if (widget.use12HourClock !== undefined) {
+        adapter.location.use12hourFormat = widget.use12HourClock
+        delete widget.use12HourClock
       }
-      delete widget.showDate
-      delete widget.showSeconds
-      break
-    case "MediaMini":
-      widget.showAlbumArt = widget.showAlbumArt !== undefined ? widget.showAlbumArt : adapter.audio.showMiniplayerAlbumArt
-      widget.showVisualizer = widget.showVisualizer !== undefined ? widget.showVisualizer : adapter.audio.showMiniplayerCava
-      break
-    case "SidePanelToggle":
-      widget.useDistroLogo = widget.useDistroLogo !== undefined ? widget.useDistroLogo : adapter.bar.useDistroLogo
-      break
-    case "SystemMonitor":
-      widget.showNetworkStats = widget.showNetworkStats !== undefined ? widget.showNetworkStats : adapter.bar.showNetworkStats
-      break
-    case "Workspace":
-      widget.labelMode = widget.labelMode !== undefined ? widget.labelMode : adapter.bar.showWorkspaceLabel
+      if (widget.reverseDayMonth !== undefined) {
+        adapter.location.monthBeforeDay = widget.reverseDayMonth
+        delete widget.reverseDayMonth
+      }
       break
     }
 
@@ -280,12 +260,6 @@ Singleton {
         property real marginVertical: 0.25
         property real marginHorizontal: 0.25
 
-        property bool showActiveWindowIcon: true // TODO: delete
-        property bool alwaysShowBatteryPercentage: false // TODO: delete
-        property bool showNetworkStats: false // TODO: delete
-        property bool useDistroLogo: false // TODO: delete
-        property string showWorkspaceLabel: "none" // TODO: delete
-
         // Widget configuration for modular bar system
         property JsonObject widgets
         widgets: JsonObject {
@@ -328,12 +302,11 @@ Singleton {
       // general
       property JsonObject general: JsonObject {
         property string avatarImage: defaultAvatar
-        property bool dimDesktop: false
+        property bool dimDesktop: true
         property bool showScreenCorners: false
         property bool forceBlackScreenCorners: false
         property real radiusRatio: 1.0
         property real screenRadiusRatio: 1.0
-        // Animation speed multiplier (0.1x - 2.0x)
         property real animationSpeed: 1.0
       }
 
@@ -341,10 +314,9 @@ Singleton {
       property JsonObject location: JsonObject {
         property string name: defaultLocation
         property bool useFahrenheit: false
-
-        property bool reverseDayMonth: false // TODO: delete
-        property bool use12HourClock: false // TODO: delete
-        property bool showDateWithClock: false // TODO: delete
+        property bool use12hourFormat: false
+        property bool monthBeforeDay: false
+        property bool showWeekNumberInCalendar: false
       }
 
       // screen recorder
@@ -378,13 +350,13 @@ Singleton {
 
       // applauncher
       property JsonObject appLauncher: JsonObject {
-        // When disabled, Launcher hides clipboard command and ignores cliphist
         property bool enableClipboardHistory: false
         // Position: center, top_left, top_right, bottom_left, bottom_right, bottom_center, top_center
         property string position: "center"
         property real backgroundOpacity: 1.0
         property list<string> pinnedExecs: []
         property bool useApp2Unit: false
+        property bool sortByMostUsed: true
       }
 
       // dock
@@ -406,7 +378,7 @@ Singleton {
       property JsonObject notifications: JsonObject {
         property bool doNotDisturb: false
         property list<string> monitors: []
-        // Last time the user opened the notification history (ms since epoch)
+        // Last time the user opened the notification history (ms since e899999999999998poch)
         property real lastSeenTs: 0
         // Duration settings for different urgency levels (in seconds)
         property int lowUrgencyDuration: 3
@@ -421,9 +393,6 @@ Singleton {
         property string visualizerType: "linear"
         property list<string> mprisBlacklist: []
         property string preferredPlayer: ""
-
-        property bool showMiniplayerAlbumArt: false // TODO: delete
-        property bool showMiniplayerCava: false // TODO: delete
       }
 
       // ui

@@ -15,14 +15,10 @@ ColumnLayout {
 
   // Local state
   property string valueDisplayFormat: widgetData.displayFormat !== undefined ? widgetData.displayFormat : widgetMetadata.displayFormat
-  property bool valueUse12h: widgetData.use12HourClock !== undefined ? widgetData.use12HourClock : widgetMetadata.use12HourClock
-  property bool valueReverseDayMonth: widgetData.reverseDayMonth !== undefined ? widgetData.reverseDayMonth : widgetMetadata.reverseDayMonth
 
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {})
     settings.displayFormat = valueDisplayFormat
-    settings.use12HourClock = valueUse12h
-    settings.reverseDayMonth = valueReverseDayMonth
     return settings
   }
 
@@ -49,17 +45,5 @@ ColumnLayout {
     currentKey: valueDisplayFormat
     onSelected: key => valueDisplayFormat = key
     minimumWidth: 230 * scaling
-  }
-
-  NToggle {
-    label: "Use 12-hour clock"
-    checked: valueUse12h
-    onToggled: checked => valueUse12h = checked
-  }
-
-  NToggle {
-    label: "Reverse day and month"
-    checked: valueReverseDayMonth
-    onToggled: checked => valueReverseDayMonth = checked
   }
 }

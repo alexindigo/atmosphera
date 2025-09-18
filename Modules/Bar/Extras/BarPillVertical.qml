@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import qs.Commons
 import qs.Services
+import qs.Widgets
 
 Item {
   id: root
@@ -18,8 +19,16 @@ Item {
   property bool hovered: false
   property bool compact: false
 
-  // Effective shown state (true if hovered/animated open or forced)
-  readonly property bool revealed: forceOpen || showPill
+  // Bar position detection for pill direction
+  readonly property string barPosition: Settings.data.bar.position
+  readonly property bool isVerticalBar: barPosition === "left" || barPosition === "right"
+
+  // Determine pill direction based on section position
+  readonly property bool openDownward: rightOpen
+  readonly property bool openUpward: !rightOpen
+
+  // Effective shown state (true if animated open or forced, but not if force closed)
+  readonly property bool revealed: !forceClose && (forceOpen || showPill)
 
   signal shown
   signal hidden
@@ -34,56 +43,71 @@ Item {
   property bool showPill: false
   property bool shouldAnimateHide: false
 
-  readonly property int pillHeight: Math.round(Style.capsuleHeight * scaling)
-  readonly property int pillPaddingHorizontal: Math.round(Style.capsuleHeight * 0.2 * scaling)
-  readonly property int pillOverlap: Math.round(Style.capsuleHeight * 0.5 * scaling)
-  readonly property int pillMaxWidth: Math.max(1, textItem.implicitWidth + pillPaddingHorizontal * 2 + pillOverlap)
+  // Sizing logic for vertical bars
+  readonly property int buttonSize: Math.round(Style.capsuleHeight * scaling)
+  readonly property int pillHeight: buttonSize
+  readonly property int pillPaddingVertical: 3 * 2 * scaling // Very precise adjustment don't replace by Style.margin
+  readonly property int pillOverlap: buttonSize * 0.5
+  readonly property int maxPillWidth: buttonSize
+  readonly property int maxPillHeight: Math.max(1, textItem.implicitHeight + pillPaddingVertical * 4)
 
   readonly property real iconSize: Math.max(1, compact ? pillHeight * 0.65 : pillHeight * 0.48)
-  readonly property real textSize: Math.max(1, compact ? pillHeight * 0.45 : pillHeight * 0.33)
+  readonly property real textSize: Math.max(1, compact ? pillHeight * 0.38 : pillHeight * 0.33)
 
-  width: pillHeight + Math.max(0, pill.width - pillOverlap)
-  height: pillHeight
+  // For vertical bars: width is just icon size, height includes pill space
+  width: buttonSize
+  height: revealed ? (buttonSize + maxPillHeight - pillOverlap) : buttonSize
 
   Rectangle {
     id: pill
-    width: revealed ? pillMaxWidth : 1
-    height: pillHeight
+    width: revealed ? maxPillWidth : 1
+    height: revealed ? maxPillHeight : 1
 
-    x: rightOpen ? (iconCircle.x + iconCircle.width / 2) : // Opens right
-                   (iconCircle.x + iconCircle.width / 2) - width // Opens left
+    // Position based on direction - center the pill relative to the icon
+    x: 0
+    y: openUpward ? (iconCircle.y + iconCircle.height / 2 - height) : (iconCircle.y + iconCircle.height / 2)
 
     opacity: revealed ? Style.opacityFull : Style.opacityNone
     color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
-    topLeftRadius: rightOpen ? 0 : pillHeight * 0.5
-    bottomLeftRadius: rightOpen ? 0 : pillHeight * 0.5
-    topRightRadius: rightOpen ? pillHeight * 0.5 : 0
-    bottomRightRadius: rightOpen ? pillHeight * 0.5 : 0
-    anchors.verticalCenter: parent.verticalCenter
+    // Radius logic for vertical expansion - rounded on the side that connects to icon
+    topLeftRadius: openUpward ? buttonSize * 0.5 : 0
+    bottomLeftRadius: openDownward ? buttonSize * 0.5 : 0
+    topRightRadius: openUpward ? buttonSize * 0.5 : 0
+    bottomRightRadius: openDownward ? buttonSize * 0.5 : 0
+
+    anchors.horizontalCenter: parent.horizontalCenter
 
     NText {
       id: textItem
+      anchors.horizontalCenter: parent.horizontalCenter
       anchors.verticalCenter: parent.verticalCenter
-      x: {
-        // Better text horizontal centering
-        var centerX = (parent.width - width) / 2
-        var offset = rightOpen ? Style.marginXS * scaling : -Style.marginXS * scaling
+      anchors.verticalCenterOffset: {
+        var offset = openDownward ? pillPaddingVertical * 0.75 : -pillPaddingVertical * 0.75
         if (forceOpen) {
           // If its force open, the icon disc background is the same color as the bg pill move text slightly
           offset += rightOpen ? -Style.marginXXS * scaling : Style.marginXXS * scaling
         }
-        return centerX + offset
+        return offset
       }
       text: root.text + root.suffix
       font.family: Settings.data.ui.fontFixed
       font.pointSize: textSize
-      font.weight: Style.fontWeightBold
+      font.weight: Style.fontWeightMedium
+      horizontalAlignment: Text.AlignHCenter
+      verticalAlignment: Text.AlignVCenter
       color: forceOpen ? Color.mOnSurface : Color.mPrimary
       visible: revealed
     }
 
     Behavior on width {
+      enabled: showAnim.running || hideAnim.running
+      NumberAnimation {
+        duration: Style.animationNormal
+        easing.type: Easing.OutCubic
+      }
+    }
+    Behavior on height {
       enabled: showAnim.running || hideAnim.running
       NumberAnimation {
         duration: Style.animationNormal
@@ -101,13 +125,15 @@ Item {
 
   Rectangle {
     id: iconCircle
-    width: pillHeight
-    height: pillHeight
+    width: buttonSize
+    height: buttonSize
     radius: width * 0.5
     color: hovered ? Color.mTertiary : Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
-    anchors.verticalCenter: parent.verticalCenter
 
-    x: rightOpen ? 0 : (parent.width - width)
+    // Icon positioning based on direction
+    x: 0
+    y: openUpward ? (parent.height - height) : 0
+    anchors.horizontalCenter: parent.horizontalCenter
 
     Behavior on color {
       ColorAnimation {
@@ -134,7 +160,15 @@ Item {
       target: pill
       property: "width"
       from: 1
-      to: pillMaxWidth
+      to: maxPillWidth
+      duration: Style.animationNormal
+      easing.type: Easing.OutCubic
+    }
+    NumberAnimation {
+      target: pill
+      property: "height"
+      from: 1
+      to: maxPillHeight
       duration: Style.animationNormal
       easing.type: Easing.OutCubic
     }
@@ -174,7 +208,15 @@ Item {
     NumberAnimation {
       target: pill
       property: "width"
-      from: pillMaxWidth
+      from: maxPillWidth
+      to: 1
+      duration: Style.animationNormal
+      easing.type: Easing.InCubic
+    }
+    NumberAnimation {
+      target: pill
+      property: "height"
+      from: maxPillHeight
       to: 1
       duration: Style.animationNormal
       easing.type: Easing.InCubic
@@ -196,10 +238,12 @@ Item {
 
   NTooltip {
     id: tooltip
-    positionAbove: Settings.data.bar.position === "bottom"
     target: pill
-    delay: Style.tooltipDelayLong
     text: root.tooltipText
+    positionLeft: barPosition === "right"
+    positionRight: barPosition === "left"
+    positionAbove: Settings.data.bar.position === "bottom"
+    delay: Style.tooltipDelayLong
   }
 
   Timer {
@@ -220,7 +264,7 @@ Item {
       hovered = true
       root.entered()
       tooltip.show()
-      if (disableOpen) {
+      if (disableOpen || forceClose) {
         return
       }
       if (!forceOpen) {
@@ -230,7 +274,7 @@ Item {
     onExited: {
       hovered = false
       root.exited()
-      if (!forceOpen) {
+      if (!forceOpen && !forceClose) {
         hide()
       }
       tooltip.hide()

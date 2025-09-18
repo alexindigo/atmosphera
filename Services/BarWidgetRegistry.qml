@@ -52,9 +52,7 @@ Singleton {
                                   },
                                   "Clock": {
                                     "allowUserSettings": true,
-                                    "displayFormat": "time-date-short",
-                                    "use12HourClock": false,
-                                    "reverseDayMonth": true
+                                    "displayFormat": "time-date-short"
                                   },
                                   "CustomButton": {
                                     "allowUserSettings": true,
@@ -205,25 +203,5 @@ Singleton {
   // Helper function to check if widget has user settings
   function widgetHasUserSettings(id) {
     return (widgetMetadata[id] !== undefined) && (widgetMetadata[id].allowUserSettings === true)
-  }
-
-  function getNPillDirection(widget) {
-    try {
-      if (widget.section === "left") {
-        return true
-      } else if (widget.section === "right") {
-        return false
-      } else {
-        // middle section
-        if (widget.sectionWidgetIndex < widget.sectionWidgetsCount / 2) {
-          return false
-        } else {
-          return true
-        }
-      }
-    } catch (e) {
-      Logger.error(e)
-    }
-    return false
   }
 }

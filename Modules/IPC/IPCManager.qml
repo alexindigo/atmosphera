@@ -27,7 +27,8 @@ Item {
   IpcHandler {
     target: "notifications"
     function toggleHistory() {
-      notificationHistoryPanel.toggle()
+      // Will attempt to open the panel next to the bar button if any.
+      notificationHistoryPanel.toggle(BarService.lookupWidget("NotificationHistory"))
     }
     function toggleDND() {
       Settings.data.notifications.doNotDisturb = !Settings.data.notifications.doNotDisturb
@@ -118,7 +119,8 @@ Item {
   IpcHandler {
     target: "sidePanel"
     function toggle() {
-      sidePanel.toggle()
+      // Will attempt to open the panel next to the bar button if any.
+      sidePanel.toggle(BarService.lookupWidget("SidePanelToggle"))
     }
   }
 

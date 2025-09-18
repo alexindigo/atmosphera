@@ -192,40 +192,6 @@ ColumnLayout {
     Layout.bottomMargin: Style.marginXL * scaling
   }
 
-  // Monitor Configuration
-  ColumnLayout {
-    spacing: Style.marginM * scaling
-    Layout.fillWidth: true
-
-    NHeader {
-      label: "Monitors Configuration"
-      description: "Show bar on specific monitors. Defaults to all if none are chosen."
-    }
-
-    Repeater {
-      model: Quickshell.screens || []
-      delegate: NCheckbox {
-        Layout.fillWidth: true
-        label: modelData.name || "Unknown"
-        description: `${modelData.model} - ${modelData.width}x${modelData.height} [x:${modelData.x} y:${modelData.y}]`
-        checked: (Settings.data.bar.monitors || []).indexOf(modelData.name) !== -1
-        onToggled: checked => {
-                     if (checked) {
-                       Settings.data.bar.monitors = addMonitor(Settings.data.bar.monitors, modelData.name)
-                     } else {
-                       Settings.data.bar.monitors = removeMonitor(Settings.data.bar.monitors, modelData.name)
-                     }
-                   }
-      }
-    }
-  }
-
-  NDivider {
-    Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
-  }
-
   // Widgets Management Section
   ColumnLayout {
     spacing: Style.marginXXS * scaling
@@ -283,6 +249,40 @@ ColumnLayout {
         onUpdateWidgetSettings: (section, index, settings) => _updateWidgetSettingsInSection(section, index, settings)
         onDragPotentialStarted: root.handleDragStart()
         onDragPotentialEnded: root.handleDragEnd()
+      }
+    }
+  }
+
+  NDivider {
+    Layout.fillWidth: true
+    Layout.topMargin: Style.marginXL * scaling
+    Layout.bottomMargin: Style.marginXL * scaling
+  }
+
+  // Monitor Configuration
+  ColumnLayout {
+    spacing: Style.marginM * scaling
+    Layout.fillWidth: true
+
+    NHeader {
+      label: "Monitors Configuration"
+      description: "Show bar on specific monitors. Defaults to all if none are chosen."
+    }
+
+    Repeater {
+      model: Quickshell.screens || []
+      delegate: NCheckbox {
+        Layout.fillWidth: true
+        label: modelData.name || "Unknown"
+        description: `${modelData.model} - ${modelData.width}x${modelData.height} [x:${modelData.x} y:${modelData.y}]`
+        checked: (Settings.data.bar.monitors || []).indexOf(modelData.name) !== -1
+        onToggled: checked => {
+                     if (checked) {
+                       Settings.data.bar.monitors = addMonitor(Settings.data.bar.monitors, modelData.name)
+                     } else {
+                       Settings.data.bar.monitors = removeMonitor(Settings.data.bar.monitors, modelData.name)
+                     }
+                   }
       }
     }
   }
