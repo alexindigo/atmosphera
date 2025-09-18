@@ -515,6 +515,19 @@ Loader {
                       font.family: Settings.data.ui.fontFixed
                       font.pointSize: Style.fontSizeL * scaling
                     }
+                  }
+
+                  RowLayout {
+                    Layout.fillWidth: true
+                    spacing: Style.marginM * scaling
+
+                    NText {
+                      text: "Password:"
+                      color: Color.mPrimary
+                      font.family: Settings.data.ui.fontFixed
+                      font.pointSize: Style.fontSizeL * scaling
+                      font.weight: Style.fontWeightBold
+                    }
 
                     TextInput {
                       id: passwordInput
