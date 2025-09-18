@@ -58,9 +58,9 @@ Check out our documentation & installation guide to get started!
 
 ---
 
-## Supported compositors
+## 🖥️ Wayland Compositors
 
-Currently works with **Niri** and **Hyprland**. Other Wayland compositors need custom workspace logic implementation.
+Noctalia provides native support for **Niri** and **Hyprland**. Other Wayland compositors will work but may require additional workspace logic configuration.
 
 ---
 
