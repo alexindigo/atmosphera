@@ -132,7 +132,7 @@ Item {
         wallpaperSelector.toggle()
       }
     }
-    
+
     function random() {
       if (Settings.data.wallpaper.enabled) {
         WallpaperService.setRandomWallpaper()

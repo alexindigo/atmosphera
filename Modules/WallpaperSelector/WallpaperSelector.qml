@@ -189,81 +189,99 @@ NPanel {
                 property int itemSize: Math.floor((width - leftMargin - rightMargin - (columns * Style.marginS * scaling)) / columns)
 
                 cellWidth: Math.floor((width - leftMargin - rightMargin) / columns)
-                cellHeight: Math.floor(itemSize * 0.67) + Style.marginS * scaling
+                cellHeight: Math.floor(itemSize * 0.67) + Style.marginXS * scaling + Style.fontSizeXS * scaling + Style.marginS * scaling
 
                 leftMargin: Style.marginS * scaling
                 rightMargin: Style.marginS * scaling
                 topMargin: Style.marginS * scaling
                 bottomMargin: Style.marginS * scaling
 
-                delegate: Rectangle {
+                delegate: ColumnLayout {
                   id: wallpaperItem
 
                   property string wallpaperPath: modelData
                   property bool isSelected: (wallpaperPath === currentWallpaper)
+                  property string filename: wallpaperPath.split('/').pop()
 
                   width: wallpaperGridView.itemSize
-                  height: Math.round(wallpaperGridView.itemSize * 0.67)
-                  color: Color.transparent
-
-                  NImageCached {
-                    id: img
-                    imagePath: wallpaperPath
-                    anchors.fill: parent
-                  }
+                  spacing: Style.marginXS * scaling
 
                   Rectangle {
-                    anchors.fill: parent
+                    id: imageContainer
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: Math.round(wallpaperGridView.itemSize * 0.67)
                     color: Color.transparent
-                    border.color: isSelected ? Color.mSecondary : Color.mSurface
-                    border.width: Math.max(1, Style.borderL * 1.5 * scaling)
-                  }
 
-                  Rectangle {
-                    anchors.top: parent.top
-                    anchors.right: parent.right
-                    anchors.margins: Style.marginS * scaling
-                    width: 28 * scaling
-                    height: 28 * scaling
-                    radius: width / 2
-                    color: Color.mSecondary
-                    border.color: Color.mOutline
-                    border.width: Math.max(1, Style.borderS * scaling)
-                    visible: isSelected
-
-                    NIcon {
-                      icon: "check"
-                      font.pointSize: Style.fontSizeM * scaling
-                      font.weight: Style.fontWeightBold
-                      color: Color.mOnSecondary
-                      anchors.centerIn: parent
+                    NImageCached {
+                      id: img
+                      imagePath: wallpaperPath
+                      anchors.fill: parent
                     }
-                  }
 
-                  Rectangle {
-                    anchors.fill: parent
-                    color: Color.mSurface
-                    opacity: (mouseArea.containsMouse || isSelected) ? 0 : 0.3
-                    radius: parent.radius
-                    Behavior on opacity {
-                      NumberAnimation {
-                        duration: Style.animationFast
+                    Rectangle {
+                      anchors.fill: parent
+                      color: Color.transparent
+                      border.color: isSelected ? Color.mSecondary : Color.mSurface
+                      border.width: Math.max(1, Style.borderL * 1.5 * scaling)
+                    }
+
+                    Rectangle {
+                      anchors.top: parent.top
+                      anchors.right: parent.right
+                      anchors.margins: Style.marginS * scaling
+                      width: 28 * scaling
+                      height: 28 * scaling
+                      radius: width / 2
+                      color: Color.mSecondary
+                      border.color: Color.mOutline
+                      border.width: Math.max(1, Style.borderS * scaling)
+                      visible: isSelected
+
+                      NIcon {
+                        icon: "check"
+                        font.pointSize: Style.fontSizeM * scaling
+                        font.weight: Style.fontWeightBold
+                        color: Color.mOnSecondary
+                        anchors.centerIn: parent
+                      }
+                    }
+
+                    Rectangle {
+                      anchors.fill: parent
+                      color: Color.mSurface
+                      opacity: (mouseArea.containsMouse || isSelected) ? 0 : 0.3
+                      radius: parent.radius
+                      Behavior on opacity {
+                        NumberAnimation {
+                          duration: Style.animationFast
+                        }
+                      }
+                    }
+
+                    MouseArea {
+                      id: mouseArea
+                      anchors.fill: parent
+                      acceptedButtons: Qt.LeftButton
+                      hoverEnabled: true
+                      onPressed: {
+                        if (Settings.data.wallpaper.setWallpaperOnAllMonitors) {
+                          WallpaperService.changeWallpaper(wallpaperPath, undefined)
+                        } else {
+                          WallpaperService.changeWallpaper(wallpaperPath, Screen.name)
+                        }
                       }
                     }
                   }
 
-                  MouseArea {
-                    id: mouseArea
-                    anchors.fill: parent
-                    acceptedButtons: Qt.LeftButton
-                    hoverEnabled: true
-                    onPressed: {
-                      if (Settings.data.wallpaper.setWallpaperOnAllMonitors) {
-                        WallpaperService.changeWallpaper(wallpaperPath, undefined)
-                      } else {
-                        WallpaperService.changeWallpaper(wallpaperPath, Screen.name)
-                      }
-                    }
+                  NText {
+                    text: filename
+                    color: Color.mOnSurfaceVariant
+                    opacity: 0.5
+                    font.pointSize: Style.fontSizeXS * scaling
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignHCenter
+                    horizontalAlignment: Text.AlignHCenter
+                    elide: Text.ElideRight
                   }
                 }
               }
@@ -315,12 +333,6 @@ NPanel {
                   Layout.fillHeight: true
                 }
               }
-            }
-
-            NDivider {
-              Layout.fillWidth: true
-              Layout.topMargin: Style.marginXL * scaling
-              Layout.bottomMargin: Style.marginXL * scaling
             }
           }
         }
