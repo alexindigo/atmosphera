@@ -26,6 +26,7 @@ Singleton {
     "search": "search",
     "warning": "exclamation-circle",
     "stop": "player-stop-filled",
+    "busy": "hourglass-empty",
     "media-pause": "player-pause-filled",
     "media-play": "player-play-filled",
     "media-prev": "player-skip-back-filled",
