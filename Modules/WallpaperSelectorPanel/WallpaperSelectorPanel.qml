@@ -13,7 +13,7 @@ NPanel {
   preferredWidth: 640
   preferredHeight: 480
   preferredWidthRatio: 0.4
-  preferredHeightRatio: 0.5
+  preferredHeightRatio: 0.41
   panelAnchorHorizontalCenter: true
   panelAnchorVerticalCenter: true
   panelKeyboardFocus: true
@@ -267,12 +267,6 @@ NPanel {
                   Layout.fillHeight: true
                 }
               }
-            }
-
-            NDivider {
-              Layout.fillWidth: true
-              Layout.topMargin: Style.marginXL * scaling
-              Layout.bottomMargin: Style.marginXL * scaling
             }
           }
         }
