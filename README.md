@@ -73,22 +73,31 @@ We welcome contributions of any size - bug fixes, new features, documentation im
 - **Want to code?** Check out our [development guidelines](https://docs.noctalia.dev/development/guideline)
 - **Need help?** Join our [Discord](https://discord.noctalia.dev)
 
-Special thanks to our amazing [contributors](https://github.com/noctalia-dev/noctalia-shell/graphs/contributors) and the creators of [Caelestia](https://github.com/caelestia-dots/shell) and [DankMaterialShell](https://github.com/AvengeMedia/DankMaterialShell) for inspiration.
+
+## 💜 Credits
+
+A heartfelt thank you to our incredible community of [**contributors**](https://github.com/noctalia-dev/noctalia-shell/graphs/contributors). We are immensely grateful for your dedicated participation and the constructive feedback you've provided, which continue to shape and improve our project for everyone.
 
 ---
 
-## Support the project
+## Acknowledgment
 
-While donations are completely optional, they help keep the project going:
+Special thanks to the creators of [**Caelestia**](https://github.com/caelestia-dots/shell) and [**DankMaterialShell**](https://github.com/AvengeMedia/DankMaterialShell) for their inspirational designs and clever implementation techniques.
+
+---
+
+#### Donation
+
+While all donations are greatly appreciated, they are completely voluntary.
 
 <a href="https://ko-fi.com/lysec">
   <img src="https://img.shields.io/badge/donate-ko--fi-A8AEFF?style=for-the-badge&logo=kofi&logoColor=FFFFFF&labelColor=0C0D11" alt="Ko-Fi" />
 </a>
 
-**Thank you to our supporters 💜:**
-- Gohma
-- [PikaOS](https://pika-os.com/)
-- DiscoCevapi
+#### Thank you to everyone who supports the project 💜!
+* Gohma
+* <a href="https://pika-os.com/" target="_blank">PikaOS</a>
+* DiscoCevapi
 
 
 ---
