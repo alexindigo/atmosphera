@@ -51,13 +51,13 @@ ColumnLayout {
     id: iconPicker
     modal: true
     width: {
-      var w = Math.round(Math.max(Screen.width * 0.35, 900) * scaling)
-      w = Math.min(w, Screen.width - Style.marginL * 2)
+      var w = Math.round(Math.max(screen.width * 0.35, 900) * scaling)
+      w = Math.min(w, screen.width - Style.marginL * 2)
       return w
     }
     height: {
-      var h = Math.round(Math.max(Screen.height * 0.65, 700) * scaling)
-      h = Math.min(h, Screen.height - Style.barHeight * scaling - Style.marginL * 2)
+      var h = Math.round(Math.max(screen.height * 0.65, 700) * scaling)
+      h = Math.min(h, screen.height - Style.barHeight * scaling - Style.marginL * 2)
       return h
     }
     anchors.centerIn: Overlay.overlay
