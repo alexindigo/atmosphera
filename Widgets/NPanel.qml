@@ -428,10 +428,12 @@ Loader {
               dragStartX = panelBackground.x
               dragStartY = panelBackground.y
               panelBackground.isDragged = true
-              if (root.enableBackgroundClick) root.disableBackgroundClick()
+              if (root.enableBackgroundClick)
+                root.disableBackgroundClick()
             } else {
               // Keep isDragged true so we continue using the manual x/y after release
-              if (root.enableBackgroundClick) root.enableBackgroundClick()
+              if (root.enableBackgroundClick)
+                root.enableBackgroundClick()
             }
           }
           onTranslationChanged: {
@@ -447,6 +449,30 @@ Loader {
 
             panelBackground.manualX = Math.round(Math.max(minX, Math.min(nx, maxX)))
             panelBackground.manualY = Math.round(Math.max(minY, Math.min(ny, maxY)))
+          }
+        }
+
+        // Drag indicator border
+        Rectangle {
+          anchors.fill: parent
+          anchors.margins: 0
+          color: Color.transparent
+          border.color: Color.mPrimary
+          border.width: Math.max(2, Style.borderL * scaling)
+          radius: parent.radius
+          visible: panelBackground.isDragged && dragHandler.active
+          opacity: 0.8
+          z: 3000
+
+          // Subtle glow effect
+          Rectangle {
+            anchors.fill: parent
+            anchors.margins: 0
+            color: Color.transparent
+            border.color: Color.mPrimary
+            border.width: Math.max(1, Style.borderS * scaling)
+            radius: parent.radius
+            opacity: 0.3
           }
         }
       }
