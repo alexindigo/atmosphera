@@ -44,16 +44,16 @@ https://github.com/user-attachments/assets/72c6d6dc-48b0-48a0-bd8b-c7e70990edc4
 
 ---
 
-## Get started
+## 🚀 Getting Started
 
-**New to Noctalia?** Check out our [installation guide](https://docs.noctalia.dev/getting-started/installation/) to get started.
+**New to Noctalia?**  
+Check out our documentation & installation guide to get started!
 
-**Quick install on Arch:**
-```bash
-paru -S noctalia-shell
-qs -c noctalia-shell
-```
-
+<a href="https://docs.noctalia.dev/getting-started/installation">
+  <img src="https://img.shields.io/badge/⚡%20Quick%20Install-Get%20Started-A8AEFF?style=for-the-badge&logoColor=FFFFFF&labelColor=0C0D11" alt="Quick Install" />
+</a>
+  
+  
 **Need help?** Join our [Discord community](https://discord.noctalia.dev) or browse the [FAQ](https://docs.noctalia.dev/getting-started/faq/).
 
 ---
@@ -64,7 +64,7 @@ Currently works with **Niri** and **Hyprland**. Other Wayland compositors need c
 
 ---
 
-## Contributing
+## 🤝 Contributing
 
 We welcome contributions of any size - bug fixes, new features, documentation improvements, or custom themes and configs.
 
@@ -80,13 +80,13 @@ A heartfelt thank you to our incredible community of [**contributors**](https://
 
 ---
 
-## Acknowledgment
+## 🙏 Acknowledgment
 
 Special thanks to the creators of [**Caelestia**](https://github.com/caelestia-dots/shell) and [**DankMaterialShell**](https://github.com/AvengeMedia/DankMaterialShell) for their inspirational designs and clever implementation techniques.
 
 ---
 
-#### Donation
+## ☕ Donation
 
 While all donations are greatly appreciated, they are completely voluntary.
 
@@ -94,14 +94,14 @@ While all donations are greatly appreciated, they are completely voluntary.
   <img src="https://img.shields.io/badge/donate-ko--fi-A8AEFF?style=for-the-badge&logo=kofi&logoColor=FFFFFF&labelColor=0C0D11" alt="Ko-Fi" />
 </a>
 
-#### Thank you to everyone who supports the project 💜!
+### Thank you to everyone who supports the project 💜!
 * Gohma
-* <a href="https://pika-os.com/" target="_blank">PikaOS</a>
 * DiscoCevapi
+* <a href="https://pika-os.com/" target="_blank">PikaOS</a>
 
 
 ---
 
-## License
+## 📄 License
 
 MIT License - see [LICENSE](./LICENSE) for details.
