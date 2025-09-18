@@ -36,8 +36,7 @@ NPanel {
     Network,
     Notification,
     ScreenRecorder,
-    Wallpaper,
-    WallpaperSelector
+    Wallpaper
   }
 
   property int requestedTab: SettingsPanel.Tab.General
@@ -92,10 +91,7 @@ NPanel {
     id: wallpaperTab
     Tabs.WallpaperTab {}
   }
-  Component {
-    id: wallpaperSelectorTab
-    Tabs.WallpaperSelectorTab {}
-  }
+
   Component {
     id: screenRecorderTab
     Tabs.ScreenRecorderTab {}
@@ -176,16 +172,7 @@ NPanel {
                      "source": wallpaperTab
                    }]
 
-    // Only add the Wallpaper Selector tab if the feature is enabled
-    if (Settings.data.wallpaper.enabled) {
-      newTabs.push({
-                     "id": SettingsPanel.Tab.WallpaperSelector,
-                     "label": "Wallpaper Selector",
-                     "icon": "settings-wallpaper-selector",
-                     "source": wallpaperSelectorTab
-                   })
-    }
-
+    // Wallpaper selector moved to its own panel
     newTabs.push({
                    "id": SettingsPanel.Tab.ScreenRecorder,
                    "label": "Screen Recorder",
