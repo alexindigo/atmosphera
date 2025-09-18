@@ -148,6 +148,7 @@ NPanel {
         }
 
         NTextInput {
+          id: searchInput
           placeholderText: "Type to filter wallpapers..."
           text: filterText
           onTextChanged: {
@@ -155,6 +156,11 @@ NPanel {
             updateFiltered()
           }
           Layout.fillWidth: true
+          Component.onCompleted: {
+            if (searchInput.inputItem && searchInput.inputItem.visible) {
+              searchInput.inputItem.forceActiveFocus()
+            }
+          }
         }
       }
 
@@ -187,7 +193,6 @@ NPanel {
                 anchors.fill: parent
                 model: filteredWallpapers
                 interactive: false
-                clip: true
 
                 property int columns: 4
                 property int itemSize: Math.floor((width - leftMargin - rightMargin - (columns * Style.marginS * scaling)) / columns)
