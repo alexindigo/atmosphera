@@ -21,6 +21,8 @@ NPanel {
 
   panelKeyboardFocus: true
 
+  draggable: true
+
   // Tabs enumeration, order is NOT relevant
   enum Tab {
     About,
@@ -36,21 +38,13 @@ NPanel {
     Network,
     Notification,
     ScreenRecorder,
-    Wallpaper,
-    WallpaperSelector
+    Wallpaper
   }
 
   property int requestedTab: SettingsPanel.Tab.General
   property int currentTabIndex: 0
   property var tabsModel: []
   property var activeScrollView: null
-
-  Connections {
-    target: Settings.data.wallpaper
-    function onEnabledChanged() {
-      updateTabsModel()
-    }
-  }
 
   Component.onCompleted: {
     updateTabsModel()
@@ -92,10 +86,7 @@ NPanel {
     id: wallpaperTab
     Tabs.WallpaperTab {}
   }
-  Component {
-    id: wallpaperSelectorTab
-    Tabs.WallpaperSelectorTab {}
-  }
+
   Component {
     id: screenRecorderTab
     Tabs.ScreenRecorderTab {}
@@ -174,34 +165,22 @@ NPanel {
                      "label": "Wallpaper",
                      "icon": "settings-wallpaper",
                      "source": wallpaperTab
+                   }, {
+                     "id": SettingsPanel.Tab.ScreenRecorder,
+                     "label": "Screen Recorder",
+                     "icon": "settings-screen-recorder",
+                     "source": screenRecorderTab
+                   }, {
+                     "id": SettingsPanel.Tab.Hooks,
+                     "label": "Hooks",
+                     "icon": "settings-hooks",
+                     "source": hooksTab
+                   }, {
+                     "id": SettingsPanel.Tab.About,
+                     "label": "About",
+                     "icon": "settings-about",
+                     "source": aboutTab
                    }]
-
-    // Only add the Wallpaper Selector tab if the feature is enabled
-    if (Settings.data.wallpaper.enabled) {
-      newTabs.push({
-                     "id": SettingsPanel.Tab.WallpaperSelector,
-                     "label": "Wallpaper Selector",
-                     "icon": "settings-wallpaper-selector",
-                     "source": wallpaperSelectorTab
-                   })
-    }
-
-    newTabs.push({
-                   "id": SettingsPanel.Tab.ScreenRecorder,
-                   "label": "Screen Recorder",
-                   "icon": "settings-screen-recorder",
-                   "source": screenRecorderTab
-                 }, {
-                   "id": SettingsPanel.Tab.Hooks,
-                   "label": "Hooks",
-                   "icon": "settings-hooks",
-                   "source": hooksTab
-                 }, {
-                   "id": SettingsPanel.Tab.About,
-                   "label": "About",
-                   "icon": "settings-about",
-                   "source": aboutTab
-                 })
 
     root.tabsModel = newTabs // Assign the generated list to the model
   }

@@ -9,6 +9,20 @@ import qs.Commons
 Singleton {
   id: root
 
+  // Public init to rehydrate cache after Settings load
+  function init() {
+    // Rebuild cache from persisted settings
+    var monitors = Settings.data.wallpaper.monitors || []
+    currentWallpapers = ({})
+    for (var i = 0; i < monitors.length; i++) {
+      if (monitors[i].name && monitors[i].wallpaper) {
+        currentWallpapers[monitors[i].name] = monitors[i].wallpaper
+        // Notify listeners so Background updates immediately after settings load
+        root.wallpaperChanged(monitors[i].name, monitors[i].wallpaper)
+      }
+    }
+  }
+
   Component.onCompleted: {
     Logger.log("Wallpaper", "Service started")
 

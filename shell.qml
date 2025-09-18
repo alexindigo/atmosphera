@@ -28,6 +28,7 @@ import qs.Modules.PowerPanel
 import qs.Modules.SidePanel
 import qs.Modules.Toast
 import qs.Modules.WiFiPanel
+import qs.Modules.WallpaperSelector
 import qs.Services
 import qs.Widgets
 
@@ -92,6 +93,11 @@ ShellRoot {
   BluetoothPanel {
     id: bluetoothPanel
     objectName: "bluetoothPanel"
+  }
+
+  WallpaperSelector {
+    id: wallpaperSelector
+    objectName: "wallpaperSelector"
   }
 
   Component.onCompleted: {

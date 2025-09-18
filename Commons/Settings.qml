@@ -177,6 +177,9 @@ Singleton {
 
     MatugenService.init()
 
+    // Ensure wallpapers are restored after settings have been loaded
+    WallpaperService.init()
+
     FontService.init()
 
     HooksService.init()

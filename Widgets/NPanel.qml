@@ -16,6 +16,7 @@ Loader {
   property real preferredWidthRatio
   property real preferredHeightRatio
   property color panelBackgroundColor: Color.mSurface
+  property bool draggable: false
 
   property bool panelAnchorHorizontalCenter: false
   property bool panelAnchorVerticalCenter: false
@@ -215,6 +216,11 @@ Loader {
         radius: Style.radiusL * scaling
         border.color: Color.mOutline
         border.width: Math.max(1, Style.borderS * scaling)
+        // Dragging support
+        property bool draggable: root.draggable
+        property bool isDragged: false
+        property real manualX: 0
+        property real manualY: 0
         width: {
           var w
           if (preferredWidthRatio !== undefined) {
@@ -239,8 +245,8 @@ Loader {
 
         scale: root.scaleValue
         opacity: root.opacityValue
-        x: calculatedX
-        y: calculatedY
+        x: isDragged ? manualX : calculatedX
+        y: isDragged ? manualY : calculatedY
 
         // ---------------------------------------------
         // Does not account for corners are they are negligible and helps keep the code clean.
@@ -373,6 +379,14 @@ Loader {
           root.opacityValue = 1.0
         }
 
+        // Reset drag position when panel closes
+        Connections {
+          target: root
+          function onClosed() {
+            panelBackground.isDragged = false
+          }
+        }
+
         // Prevent closing when clicking in the panel bg
         MouseArea {
           anchors.fill: parent
@@ -397,6 +411,79 @@ Loader {
           id: panelContentLoader
           anchors.fill: parent
           sourceComponent: root.panelContent
+        }
+
+        // Handle drag move on the whole panel area
+        DragHandler {
+          id: dragHandler
+          target: null
+          enabled: panelBackground.draggable
+          property real dragStartX: 0
+          property real dragStartY: 0
+          onActiveChanged: {
+            if (active) {
+              // Capture current position into manual coordinates BEFORE toggling isDragged
+              panelBackground.manualX = panelBackground.x
+              panelBackground.manualY = panelBackground.y
+              dragStartX = panelBackground.x
+              dragStartY = panelBackground.y
+              panelBackground.isDragged = true
+              if (root.enableBackgroundClick)
+                root.disableBackgroundClick()
+            } else {
+              // Keep isDragged true so we continue using the manual x/y after release
+              if (root.enableBackgroundClick)
+                root.enableBackgroundClick()
+            }
+          }
+          onTranslationChanged: {
+            // Proposed new coordinates from fixed drag origin
+            var nx = dragStartX + translation.x
+            var ny = dragStartY + translation.y
+
+            // Calculate gaps so we never overlap the bar on any side
+            var baseGap = Style.marginS * scaling
+            var floatExtraH = Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * 2 * Style.marginXL * scaling : 0
+            var floatExtraV = Settings.data.bar.floating ? Settings.data.bar.marginVertical * 2 * Style.marginXL * scaling : 0
+
+            var insetLeft = baseGap + ((barIsVisible && barPosition === "left") ? (Style.barHeight * scaling + floatExtraH) : 0)
+            var insetRight = baseGap + ((barIsVisible && barPosition === "right") ? (Style.barHeight * scaling + floatExtraH) : 0)
+            var insetTop = baseGap + ((barIsVisible && barPosition === "top") ? (Style.barHeight * scaling + floatExtraV) : 0)
+            var insetBottom = baseGap + ((barIsVisible && barPosition === "bottom") ? (Style.barHeight * scaling + floatExtraV) : 0)
+
+            // Clamp within screen bounds accounting for insets
+            var maxX = panelWindow.width - panelBackground.width - insetRight
+            var minX = insetLeft
+            var maxY = panelWindow.height - panelBackground.height - insetBottom
+            var minY = insetTop
+
+            panelBackground.manualX = Math.round(Math.max(minX, Math.min(nx, maxX)))
+            panelBackground.manualY = Math.round(Math.max(minY, Math.min(ny, maxY)))
+          }
+        }
+
+        // Drag indicator border
+        Rectangle {
+          anchors.fill: parent
+          anchors.margins: 0
+          color: Color.transparent
+          border.color: Color.mPrimary
+          border.width: Math.max(2, Style.borderL * scaling)
+          radius: parent.radius
+          visible: panelBackground.isDragged && dragHandler.active
+          opacity: 0.8
+          z: 3000
+
+          // Subtle glow effect
+          Rectangle {
+            anchors.fill: parent
+            anchors.margins: 0
+            color: Color.transparent
+            border.color: Color.mPrimary
+            border.width: Math.max(1, Style.borderS * scaling)
+            radius: parent.radius
+            opacity: 0.3
+          }
         }
       }
     }
