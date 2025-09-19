@@ -13,9 +13,11 @@ ColumnLayout {
   property var widgetData: null
   property var widgetMetadata: null
 
+  property string valueIcon: widgetData.icon !== undefined ? widgetData.icon : widgetMetadata.icon
+
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {})
-    settings.icon = iconInput.text
+    settings.icon = valueIcon
     settings.leftClickExec = leftClickExecInput.text
     settings.rightClickExec = rightClickExecInput.text
     settings.middleClickExec = middleClickExecInput.text
@@ -24,23 +26,21 @@ ColumnLayout {
     return settings
   }
 
-  NTextInput {
-    id: iconInput
-    Layout.fillWidth: true
-    label: "Icon Name"
-    description: "Select an icon from the library."
-    placeholderText: "Enter icon name (e.g., cat, gear, house, ...)"
-    text: widgetData?.icon || widgetMetadata.icon
-  }
-
   RowLayout {
-    spacing: Style.marginS * scaling
-    Layout.alignment: Qt.AlignLeft
+    spacing: Style.marginM * scaling
+
+    NLabel {
+      label: "Icon"
+      description: "Select an icon from the library."
+    }
+
     NIcon {
       Layout.alignment: Qt.AlignVCenter
-      icon: iconInput.text
-      visible: iconInput.text !== ""
+      icon: valueIcon
+      font.pointSize: Style.fontSizeXL * scaling
+      visible: valueIcon !== ""
     }
+
     NButton {
       text: "Browse"
       onClicked: iconPicker.open()
@@ -49,9 +49,9 @@ ColumnLayout {
 
   NIconPicker {
     id: iconPicker
-    initialIcon: iconInput.text
+    initialIcon: valueIcon
     onIconSelected: function (iconName) {
-      iconInput.text = iconName
+      valueIcon = iconName
     }
   }
 
