@@ -13,8 +13,10 @@
   };
 
   outputs = { self, nixpkgs, systems, quickshell, ... }:
-    let eachSystem = nixpkgs.lib.genAttrs (import systems);
+    let
+      eachSystem = nixpkgs.lib.genAttrs (import systems);
     in {
+      # formatter for `nix fmt`
       formatter =
         eachSystem (system: nixpkgs.legacyPackages.${system}.alejandra);
 
@@ -42,7 +44,7 @@
               networkmanager
               wlsunset
               wl-clipboard
-            ] ++ lib.optionals (pkgs.stdenv.hostPlatform.isx86_64)
+            ] ++ pkgs.lib.optionals (pkgs.stdenv.hostPlatform.isx86_64)
             [ gpu-screen-recorder ];
 
           fontconfig = pkgs.makeFontsConf {
@@ -79,6 +81,7 @@
           };
         });
 
+      # convenience defaultPackage for each system
       defaultPackage = eachSystem (system: self.packages.${system}.default);
 
       nixosModules = {
@@ -90,7 +93,9 @@
           services.power-profiles-daemon.enable = true;  # Power profile switching support
           services.upower.enable = true;                 # Battery monitoring & power management
         };
+
+        # add an alias so consumers can do `noctalia.nixosModules.default`
+        default = self.nixosModules.noctalia;
       };
     };
 }
-
