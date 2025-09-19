@@ -156,7 +156,7 @@ NPanel {
                      "source": locationTab
                    }, {
                      "id": SettingsPanel.Tab.ColorScheme,
-                     "label": "Color Scheme",
+                     "label": "Color scheme",
                      "icon": "settings-color-scheme",
                      "source": colorSchemeTab
                    }, {
@@ -166,7 +166,7 @@ NPanel {
                      "source": wallpaperTab
                    }, {
                      "id": SettingsPanel.Tab.ScreenRecorder,
-                     "label": "Screen Recorder",
+                     "label": "Screen recorder",
                      "icon": "settings-screen-recorder",
                      "source": screenRecorderTab
                    }, {

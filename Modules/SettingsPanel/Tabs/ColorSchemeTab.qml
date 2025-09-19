@@ -490,7 +490,7 @@ ColumnLayout {
       defaultExpanded: false
 
       NCheckbox {
-        label: "User Templates"
+        label: "User templates"
         description: "Enable user-defined Matugen config from ~/.config/matugen/config.toml"
         checked: Settings.data.matugen.enableUserTemplates
         onToggled: checked => {
