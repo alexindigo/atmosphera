@@ -54,38 +54,6 @@ Variants {
         right: Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL * scaling : 0
       }
 
-
-      // Filter out potentially invisible widgets so they we don't have extra spacing around an invisble widget.
-      // TODO: add activewindow
-      property var visibleLeftWidgets: {
-        if (!Settings.data.bar.widgets.left) return []
-        return Settings.data.bar.widgets.left.filter(widget => {
-          if (widget.id === "ScreenRecorderIndicator") {
-            return ScreenRecorderService.isRecording
-          }
-          return true
-        })
-      }
-      property var visibleCenterWidgets: {
-        if (!Settings.data.bar.widgets.center) return []
-        return Settings.data.bar.widgets.center.filter(widget => {
-          if (widget.id === "ScreenRecorderIndicator") {
-            return ScreenRecorderService.isRecording
-          }
-          return true
-        })
-      }
-      property var visibleRightWidgets: {
-        if (!Settings.data.bar.widgets.right) return []
-        return Settings.data.bar.widgets.right.filter(widget => {
-          if (widget.id === "ScreenRecorderIndicator") {
-            return ScreenRecorderService.isRecording
-          }
-          return true
-        })
-      }
-
-
       Item {
         anchors.fill: parent
         clip: true
@@ -120,7 +88,7 @@ Variants {
               spacing: Style.marginS * root.scaling
 
               Repeater {
-                model: visibleLeftWidgets
+                model: Settings.data.bar.widgets.left
                 delegate: BarWidgetLoader {
                   widgetId: (modelData.id !== undefined ? modelData.id : "")
                   widgetProps: {
@@ -143,7 +111,7 @@ Variants {
               spacing: Style.marginS * root.scaling
 
               Repeater {
-                model: visibleCenterWidgets
+                model: Settings.data.bar.widgets.center
                 delegate: BarWidgetLoader {
                   widgetId: (modelData.id !== undefined ? modelData.id : "")
                   widgetProps: {
@@ -167,7 +135,7 @@ Variants {
               spacing: Style.marginS * root.scaling
 
               Repeater {
-                model: visibleRightWidgets
+                model: Settings.data.bar.widgets.right
                 delegate: BarWidgetLoader {
                   widgetId: (modelData.id !== undefined ? modelData.id : "")
                   widgetProps: {
@@ -201,7 +169,7 @@ Variants {
               spacing: Style.marginS * root.scaling
 
               Repeater {
-                model: visibleLeftWidgets
+                model: Settings.data.bar.widgets.left
                 delegate: BarWidgetLoader {
                   widgetId: (modelData.id !== undefined ? modelData.id : "")
                   widgetProps: {
@@ -226,7 +194,7 @@ Variants {
               spacing: Style.marginS * root.scaling
 
               Repeater {
-                model: visibleCenterWidgets
+                model: Settings.data.bar.widgets.center
                 delegate: BarWidgetLoader {
                   widgetId: (modelData.id !== undefined ? modelData.id : "")
                   widgetProps: {
@@ -252,7 +220,7 @@ Variants {
               spacing: Style.marginS * root.scaling
 
               Repeater {
-                model: visibleRightWidgets
+                model: Settings.data.bar.widgets.right
                 delegate: BarWidgetLoader {
                   widgetId: (modelData.id !== undefined ? modelData.id : "")
                   widgetProps: {
