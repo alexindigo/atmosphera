@@ -18,5 +18,6 @@ NIconButton {
   colorBg: IdleInhibitorService.isInhibited ? Color.mPrimary : (Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent)
   colorFg: IdleInhibitorService.isInhibited ? Color.mOnPrimary : Color.mOnSurface
   colorBorder: Color.transparent
+  colorBorderHover: Color.transparent
   onClicked: IdleInhibitorService.manualToggle()
 }
