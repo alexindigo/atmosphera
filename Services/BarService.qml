@@ -39,8 +39,7 @@ Singleton {
         if (widget.widgetId === widgetId && widget.screenName === screenName && widget.section === section) {
           if (index === null) {
             return widget.instance
-          }
-          else if (widget.index == index) {
+          } else if (widget.index == index) {
             return widget.instance
           }
         }

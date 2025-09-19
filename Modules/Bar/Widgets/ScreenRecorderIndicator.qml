@@ -16,5 +16,7 @@ NIconButton {
   baseSize: Style.capsuleHeight
   colorBg: ScreenRecorderService.isRecording ? Color.mPrimary : (Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent)
   colorFg: ScreenRecorderService.isRecording ? Color.mOnPrimary : Color.mOnSurface
+  colorBorder: Color.transparent
+  colorBorderHover: Color.transparent
   onClicked: ScreenRecorderService.toggleRecording()
 }
