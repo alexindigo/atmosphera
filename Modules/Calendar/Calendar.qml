@@ -15,9 +15,12 @@ NPanel {
 
   // Main Column
   panelContent: ColumnLayout {
+    id: content
     anchors.fill: parent
     anchors.margins: Style.marginM * scaling
     spacing: Style.marginXS * scaling
+
+    readonly property int firstDayOfWeek: Qt.locale().firstDayOfWeek
 
     // Header: Month/Year with navigation
     RowLayout {
@@ -106,9 +109,7 @@ NPanel {
             NText {
               anchors.centerIn: parent
               text: {
-                // Use the locale's first day of week setting
-                let firstDay = Qt.locale().firstDayOfWeek
-                let dayIndex = (firstDay + index) % 7
+                let dayIndex = (content.firstDayOfWeek + index) % 7
                 return Qt.locale().dayName(dayIndex, Locale.ShortFormat)
               }
               color: Color.mSecondary
@@ -130,22 +131,19 @@ NPanel {
       spacing: 0
 
       // Week numbers column (only visible when enabled)
-      GridLayout {
+      ColumnLayout {
         visible: Settings.data.location.showWeekNumberInCalendar
         Layout.preferredWidth: visible ? Style.baseWidgetSize * scaling : 0
         Layout.fillHeight: true
-        columns: 1
-        rows: 6
-        columnSpacing: 0
-        rowSpacing: 0
+        spacing: 0
 
         Repeater {
           model: 6 // Maximum 6 weeks in a month view
 
-          Rectangle {
+          Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            color: Color.transparent
+            Layout.preferredHeight: Style.baseWidgetSize * scaling
 
             NText {
               anchors.centerIn: parent
@@ -153,30 +151,54 @@ NPanel {
               font.pointSize: Style.fontSizeXS * scaling
               font.weight: Style.fontWeightBold
               text: {
-                // Calculate the first day shown in the calendar grid
-                let firstDay = new Date(grid.year, grid.month, 1)
-                let firstDayOfWeek = Qt.locale().firstDayOfWeek
-                let startOffset = (firstDay.getDay() - firstDayOfWeek + 7) % 7
-                let gridStartDate = new Date(grid.year, grid.month, 1 - startOffset)
+                // Calculate the date shown in the first column of this row
+                // MonthGrid always shows 42 days (6 weeks × 7 days)
 
-                // Get the date for the start of this specific row
-                let rowDate = new Date(gridStartDate)
-                rowDate.setDate(gridStartDate.getDate() + (index * 7))
+                // First, find the first day of the month
+                let firstOfMonth = new Date(grid.year, grid.month, 1)
 
-                // Calculate week number based on the Thursday of the visual row
-                // This correctly handles rows that span two different ISO weeks.
-                let thursdayOfRow = new Date(rowDate)
-                let offsetToThursday = (4 - thursdayOfRow.getDay() + 7) % 7
-                thursdayOfRow.setDate(thursdayOfRow.getDate() + offsetToThursday)
+                // Calculate how many days before the 1st to start the grid
+                // This depends on the locale's first day of week
+                let firstDayOfWeek = content.firstDayOfWeek
+                let firstOfMonthDayOfWeek = firstOfMonth.getDay()
 
-                // Check if this row is visible (contains days from current month)
-                let rowEndDate = new Date(rowDate)
-                rowEndDate.setDate(rowDate.getDate() + 6)
+                // Calculate offset: how many days before the 1st should the grid start?
+                let daysBeforeFirst = (firstOfMonthDayOfWeek - firstDayOfWeek + 7) % 7
 
-                if (rowDate.getMonth() === grid.month || rowEndDate.getMonth() === grid.month || (rowDate.getMonth() < grid.month && rowEndDate.getMonth() > grid.month)) {
-                  return `${getISOWeekNumber(thursdayOfRow)}`
+                // MonthGrid typically shows the previous month's days to fill the first week
+                // If the 1st is already on the first day of week, show the previous week
+                if (daysBeforeFirst === 0) {
+                  daysBeforeFirst = 7
                 }
-                return ""
+
+                // Calculate the start date of the grid
+                let gridStartDate = new Date(grid.year, grid.month, 1 - daysBeforeFirst)
+
+                // Calculate the date for this specific row (week)
+                let rowStartDate = new Date(gridStartDate)
+                rowStartDate.setDate(gridStartDate.getDate() + (index * 7))
+
+                // For ISO week numbers, we need to find the Thursday of this week
+                // ISO 8601 week numbering: week with year's first Thursday is week 1
+                // The week number is determined by the Thursday
+
+                // Find the Thursday of this row's week
+                // If firstDayOfWeek is Monday (1), Thursday is +3 days
+                // If firstDayOfWeek is Sunday (0), we need to adjust
+                let thursday = new Date(rowStartDate)
+                if (firstDayOfWeek === 0) {
+                  // Sunday start: Thursday is 4 days after Sunday
+                  thursday.setDate(rowStartDate.getDate() + 4)
+                } else if (firstDayOfWeek === 1) {
+                  // Monday start: Thursday is 3 days after Monday
+                  thursday.setDate(rowStartDate.getDate() + 3)
+                } else {
+                  // Other start days: calculate offset to Thursday
+                  let daysToThursday = (4 - firstDayOfWeek + 7) % 7
+                  thursday.setDate(rowStartDate.getDate() + daysToThursday)
+                }
+
+                return `${getISOWeekNumber(thursday)}`
               }
             }
           }
@@ -219,21 +241,27 @@ NPanel {
     }
   }
 
+  // ISO 8601 week number calculation
+  // This is locale-independent and always uses Monday as first day of week
   function getISOWeekNumber(date) {
-    // Create a copy of the date and normalize to noon to prevent DST issues
-    const targetDate = new Date(date.getTime())
-    targetDate.setHours(12, 0, 0, 0)
+    // Create a copy and set to nearest Thursday (current date + 4 - current day number)
+    // ISO week starts on Monday (1) to Sunday (7)
+    const target = new Date(date.getTime())
+    target.setHours(0, 0, 0, 0)
 
-    // Roll the date to the Thursday of the week.
-    // getDay() is 0 for Sunday, we want Monday to be 1 and Sunday to be 7.
-    const dayOfWeek = targetDate.getDay() || 7
-    targetDate.setDate(targetDate.getDate() - dayOfWeek + 4)
+    // Get day of week where Monday = 1, Sunday = 7
+    const dayOfWeek = target.getDay() || 7
 
-    // Get the first day of that Thursday's year
-    const yearStart = new Date(targetDate.getFullYear(), 0, 1)
+    // Set to nearest Thursday (which determines the week number)
+    target.setDate(target.getDate() + 4 - dayOfWeek)
 
-    // Calculate the difference in days and find the week number
-    const dayOfYear = ((targetDate - yearStart) / 86400000) + 1
-    return Math.ceil(dayOfYear / 7)
+    // Get first day of year
+    const yearStart = new Date(target.getFullYear(), 0, 1)
+
+    // Calculate full weeks between yearStart and target
+    // Add 1 because we're counting weeks, not week differences
+    const weekNumber = Math.ceil(((target - yearStart) / 86400000 + 1) / 7)
+
+    return weekNumber
   }
 }
