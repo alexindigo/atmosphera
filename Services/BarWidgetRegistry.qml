@@ -33,6 +33,7 @@ Singleton {
                            "Tray": trayComponent,
                            "Volume": volumeComponent,
                            "WiFi": wiFiComponent,
+                           "WallpaperSelector": wallpaperSelectorComponent,
                            "Workspace": workspaceComponent
                          })
 
@@ -176,6 +177,9 @@ Singleton {
   }
   property Component wiFiComponent: Component {
     WiFi {}
+  }
+  property Component wallpaperSelectorComponent: Component {
+    WallpaperSelector {}
   }
   property Component workspaceComponent: Component {
     Workspace {}
