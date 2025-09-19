@@ -257,7 +257,7 @@ Loader {
           }
           switch (barPosition || panelAnchorVerticalCenter) {
           case "top":
-            return (Style.barHeight + Style.marginS) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginVertical * 2 * Style.marginXL * scaling : 0)
+            return (Style.barHeight + Style.marginS) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL * scaling : 0)
           default:
             return Style.marginS * scaling
           }
@@ -269,7 +269,7 @@ Loader {
           }
           switch (barPosition) {
           case "bottom":
-            return (Style.barHeight + Style.marginS) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginVertical * 2 * Style.marginXL * scaling : 0)
+            return (Style.barHeight + Style.marginS) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL * scaling : 0)
           default:
             return Style.marginS * scaling
           }
@@ -281,7 +281,7 @@ Loader {
           }
           switch (barPosition) {
           case "left":
-            return (Style.barHeight + Style.marginS) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * 2 * Style.marginXL * scaling : 0)
+            return (Style.barHeight + Style.marginS) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL * scaling : 0)
           default:
             return Style.marginS * scaling
           }
@@ -293,7 +293,7 @@ Loader {
           }
           switch (barPosition) {
           case "right":
-            return (Style.barHeight + Style.marginS) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * 2 * Style.marginXL * scaling : 0)
+            return (Style.barHeight + Style.marginS) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL * scaling : 0)
           default:
             return Style.marginS * scaling
           }

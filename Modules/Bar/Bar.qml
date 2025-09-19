@@ -47,11 +47,12 @@ Variants {
       }
 
       // Floating bar margins - only apply when floating is enabled
+      // Also don't apply margin on the opposite side ot the bar orientation, ex: if bar is floating on top, margin is only applied on top, not bottom.
       margins {
-        top: Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL * scaling : 0
-        bottom: Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL * scaling : 0
-        left: Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL * scaling : 0
-        right: Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL * scaling : 0
+        top: Settings.data.bar.floating && Settings.data.bar.position !== "bottom" ? Settings.data.bar.marginVertical * Style.marginXL * scaling : 0
+        bottom: Settings.data.bar.floating && Settings.data.bar.position !== "top"  ? Settings.data.bar.marginVertical * Style.marginXL * scaling : 0
+        left: Settings.data.bar.floating && Settings.data.bar.position !== "right" ? Settings.data.bar.marginHorizontal * Style.marginXL * scaling : 0
+        right: Settings.data.bar.floating && Settings.data.bar.position !== "left" ? Settings.data.bar.marginHorizontal * Style.marginXL * scaling : 0
       }
 
       Item {
