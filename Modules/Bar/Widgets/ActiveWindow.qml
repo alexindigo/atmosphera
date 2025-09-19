@@ -30,6 +30,9 @@ Item {
     return {}
   }
 
+  readonly property string windowTitle: CompositorService.getFocusedWindowTitle()
+
+
   readonly property bool showIcon: (widgetSettings.showIcon !== undefined) ? widgetSettings.showIcon : widgetMetadata.showIcon
 
   // 6% of total width
@@ -40,26 +43,19 @@ Item {
   readonly property bool isVertical: barPosition === "left" || barPosition === "right"
   readonly property bool compact: (Settings.data.bar.density === "compact")
 
-  implicitHeight: (barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Math.round(Style.barHeight * scaling)
-  implicitWidth: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * 0.8 * scaling) : (horizontalLayout.implicitWidth + Style.marginM * 2 * scaling)
-
-  readonly property real textSize: {
+ readonly property real textSize: {
     var base = isVertical ? width : height
     return Math.max(1, compact ? base * 0.43 : base * 0.33)
   }
 
   readonly property real iconSize: textSize * 1.25
 
-  function getTitle() {
-    try {
-      return CompositorService.focusedWindowTitle !== "(No active window)" ? CompositorService.focusedWindowTitle : ""
-    } catch (e) {
-      Logger.warn("ActiveWindow", "Error getting title:", e)
-      return ""
-    }
-  }
+  implicitHeight: (barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Math.round(Style.barHeight * scaling)
+  implicitWidth: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * 0.8 * scaling) : (horizontalLayout.implicitWidth + Style.marginM * 2 * scaling)
 
-  visible: getTitle() !== ""
+
+
+  visible: windowTitle !== ""
 
   function calculatedVerticalHeight() {
     // Use standard widget height like other widgets
@@ -74,11 +70,10 @@ Item {
     }
 
     // Calculate actual text width more accurately
-    const title = getTitle()
-    if (title !== "") {
+    if (windowTitle !== "") {
       // Estimate text width: average character width * number of characters
       const avgCharWidth = Style.fontSizeS * scaling * 0.6 // rough estimate
-      const titleWidth = Math.min(title.length * avgCharWidth, 80 * scaling)
+      const titleWidth = Math.min(windowTitle.length * avgCharWidth, 80 * scaling)
       total += titleWidth
     }
 
@@ -131,7 +126,7 @@ Item {
   NText {
     id: fullTitleMetrics
     visible: false
-    text: getTitle()
+    text: windowTitle
     font.pointSize: Style.fontSizeS * scaling
     font.weight: Style.fontWeightMedium
   }
@@ -167,7 +162,7 @@ Item {
           Layout.preferredWidth: Style.capsuleHeight * 0.75 * scaling
           Layout.preferredHeight: Style.capsuleHeight * 0.75 * scaling
           Layout.alignment: Qt.AlignVCenter
-          visible: getTitle() !== "" && showIcon
+          visible: windowTitle !== "" && showIcon
 
           IconImage {
             id: windowIcon
@@ -202,7 +197,7 @@ Item {
           }
           Layout.alignment: Qt.AlignVCenter
           horizontalAlignment: Text.AlignLeft
-          text: getTitle()
+          text: windowTitle
           font.pointSize: Style.fontSizeS * scaling
           font.weight: Style.fontWeightMedium
           elide: mouseArea.containsMouse ? Text.ElideNone : Text.ElideRight
@@ -273,7 +268,7 @@ Item {
       NTooltip {
         id: tooltip
         target: verticalLayout
-        text: getTitle()
+        text: windowTitle
         positionLeft: barPosition === "right"
         positionRight: barPosition === "left"
         delay: 500
