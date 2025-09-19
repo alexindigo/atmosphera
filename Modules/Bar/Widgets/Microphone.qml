@@ -97,7 +97,7 @@ Item {
     suffix: "%"
     forceOpen: displayMode === "alwaysShow"
     forceClose: displayMode === "alwaysHide"
-    tooltipText: "Microphone: " + Math.round(AudioService.inputVolume * 100) + "%\nLeft click to toggle mute.\nRight click for  settings.\nScroll to modify volume."
+    tooltipText: "Microphone volume at " + Math.round(AudioService.inputVolume * 100) + "%\nLeft click to toggle mute. Right click for settings.\nScroll to modify volume."
 
     onWheel: function (delta) {
       wheelAccumulator += delta

@@ -263,7 +263,7 @@ NPanel {
         Layout.preferredHeight: Style.baseWidgetSize * 0.8 * scaling
 
         NText {
-          text: timerActive ? `${pendingAction.charAt(0).toUpperCase() + pendingAction.slice(1)} in ${Math.ceil(timeRemaining / 1000)} seconds...` : "Power Menu"
+          text: timerActive ? `${pendingAction.charAt(0).toUpperCase() + pendingAction.slice(1)} in ${Math.ceil(timeRemaining / 1000)} seconds...` : "Power panel"
           font.weight: Style.fontWeightBold
           font.pointSize: Style.fontSizeL * scaling
           color: timerActive ? Color.mPrimary : Color.mOnSurface
@@ -277,7 +277,7 @@ NPanel {
 
         NIconButton {
           icon: timerActive ? "stop" : "close"
-          tooltipText: timerActive ? "Cancel Timer" : "Close"
+          tooltipText: timerActive ? "Cancel timer" : "Close"
           Layout.alignment: Qt.AlignVCenter
           colorBg: timerActive ? Qt.alpha(Color.mError, 0.08) : Color.transparent
           colorFg: timerActive ? Color.mError : Color.mOnSurface

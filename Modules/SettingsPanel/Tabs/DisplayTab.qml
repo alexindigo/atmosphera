@@ -125,7 +125,7 @@ ColumnLayout {
                 NIconButton {
                   icon: "refresh"
                   baseSize: Style.baseWidgetSize * 0.9
-                  tooltipText: "Reset scaling."
+                  tooltipText: "Reset scaling"
                   onClicked: ScalingService.setScreenScale(modelData, 1.0)
                   anchors.right: parent.right
                   anchors.verticalCenter: parent.verticalCenter

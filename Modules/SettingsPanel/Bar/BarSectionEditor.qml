@@ -98,7 +98,7 @@ NBox {
         colorBgHover: Color.mSecondary
         colorFgHover: Color.mOnSecondary
         enabled: comboBox.currentKey !== ""
-        tooltipText: "Add widget to section"
+        tooltipText: "Add widget"
         Layout.alignment: Qt.AlignVCenter
         Layout.leftMargin: Style.marginS * scaling
         onClicked: {

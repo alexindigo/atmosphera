@@ -52,7 +52,7 @@ NPanel {
         NIconButton {
           enabled: Settings.data.network.bluetoothEnabled
           icon: BluetoothService.adapter && BluetoothService.adapter.discovering ? "stop" : "refresh"
-          tooltipText: "Refresh Devices"
+          tooltipText: "Refresh devices"
           baseSize: Style.baseWidgetSize * 0.8
           onClicked: {
             if (BluetoothService.adapter) {
@@ -63,7 +63,7 @@ NPanel {
 
         NIconButton {
           icon: "close"
-          tooltipText: "Close."
+          tooltipText: "Close"
           baseSize: Style.baseWidgetSize * 0.8
           onClicked: {
             root.close()
@@ -139,7 +139,7 @@ NPanel {
           // Known devices
           BluetoothDevicesList {
             label: "Known devices"
-            tooltipText: "Left click to connect.\nRight click to forget."
+            tooltipText: "Left click to connect. Right click to forget."
             property var items: {
               if (!BluetoothService.adapter || !Bluetooth.devices)
                 return []

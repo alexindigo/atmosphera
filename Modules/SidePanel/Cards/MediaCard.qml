@@ -300,7 +300,7 @@ NBox {
         // Previous button
         NIconButton {
           icon: "media-prev"
-          tooltipText: "Previous Media"
+          tooltipText: "Previous media"
           visible: MediaService.canGoPrevious
           onClicked: MediaService.canGoPrevious ? MediaService.previous() : {}
         }

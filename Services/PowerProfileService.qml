@@ -25,7 +25,7 @@ Singleton {
     case PowerProfile.Balanced:
       return "Balanced"
     case PowerProfile.PowerSaver:
-      return "Power Saver"
+      return "Power saver"
     default:
       return "Unknown"
     }

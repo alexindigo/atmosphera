@@ -176,46 +176,6 @@ ColumnLayout {
           }
         }
       }
-
-      // MouseArea {
-
-      //   id: availableDeviceArea
-      //   acceptedButtons: Qt.LeftButton | Qt.RightButton
-      //   anchors.fill: parent
-      //   hoverEnabled: true
-      //   cursorShape: (canConnect || canDisconnect)
-      //                && !isBusy ? Qt.PointingHandCursor : (isBusy ? Qt.BusyCursor : Qt.ArrowCursor)
-      //   onEntered: {
-      //     if (root.tooltipText && !isBusy) {
-      //       tooltip.show()
-      //     }
-      //   }
-      //   onExited: {
-      //     if (root.tooltipText && !isBusy) {
-      //       tooltip.hide()
-      //     }
-      //   }
-      //   onClicked: function (mouse) {
-
-      //     if (!modelData || modelData.pairing) {
-      //       return
-      //     }
-
-      //     if (root.tooltipText && !isBusy) {
-      //       tooltip.hide()
-      //     }
-
-      //     if (mouse.button === Qt.LeftButton) {
-      //       if (modelData.connected) {
-      //         BluetoothService.disconnectDevice(modelData)
-      //       } else {
-      //         BluetoothService.connectDeviceWithTrust(modelData)
-      //       }
-      //     } else if (mouse.button === Qt.RightButton) {
-      //       BluetoothService.forgetDevice(modelData)
-      //     }
-      //   }
-      // }
     }
   }
 }

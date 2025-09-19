@@ -32,7 +32,7 @@ NIconButton {
   readonly property bool useDistroLogo: (widgetSettings.useDistroLogo !== undefined) ? widgetSettings.useDistroLogo : widgetMetadata.useDistroLogo
 
   icon: useDistroLogo ? "" : "noctalia"
-  tooltipText: "Open side panel."
+  tooltipText: "Open side panel"
   baseSize: Style.capsuleHeight
   compact: (Settings.data.bar.density === "compact")
   colorBg: (Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent)

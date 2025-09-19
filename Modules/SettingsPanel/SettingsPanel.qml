@@ -462,7 +462,7 @@ NPanel {
               // Close button
               NIconButton {
                 icon: "close"
-                tooltipText: "Close."
+                tooltipText: "Close"
                 Layout.alignment: Qt.AlignVCenter
                 onClicked: root.close()
               }

@@ -14,7 +14,7 @@ NIconButton {
   compact: (Settings.data.bar.density === "compact")
   baseSize: Style.capsuleHeight
   icon: "power"
-  tooltipText: "Power Settings"
+  tooltipText: "Power panel"
   colorBg: (Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent)
   colorFg: Color.mError
   colorBorder: Color.transparent

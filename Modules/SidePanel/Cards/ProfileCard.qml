@@ -56,7 +56,7 @@ NBox {
       }
       NIconButton {
         icon: "settings"
-        tooltipText: "Open settings."
+        tooltipText: "Open settings"
         onClicked: {
           settingsPanel.requestedTab = SettingsPanel.Tab.General
           settingsPanel.open()
@@ -66,7 +66,7 @@ NBox {
       NIconButton {
         id: powerButton
         icon: "power"
-        tooltipText: "Power menu."
+        tooltipText: "Power panel"
         onClicked: {
           powerPanel.open()
           sidePanel.close()
@@ -76,7 +76,7 @@ NBox {
       NIconButton {
         id: closeButton
         icon: "close"
-        tooltipText: "Close side panel."
+        tooltipText: "Close side panel"
         onClicked: {
           sidePanel.close()
         }

@@ -55,14 +55,14 @@ NPanel {
 
         NIconButton {
           icon: "refresh"
-          tooltipText: "Refresh wallpaper list."
+          tooltipText: "Refresh wallpaper list"
           baseSize: Style.baseWidgetSize * 0.8
           onClicked: WallpaperService.refreshWallpapersList()
         }
 
         NIconButton {
           icon: "close"
-          tooltipText: "Close."
+          tooltipText: "Close"
           baseSize: Style.baseWidgetSize * 0.8
           onClicked: root.close()
         }

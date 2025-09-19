@@ -48,13 +48,11 @@ Item {
     icon: "keyboard"
     autoHide: false // Important to be false so we can hover as long as we want
     text: currentLayout.toUpperCase()
-    tooltipText: "Keyboard layout: " + currentLayout.toUpperCase()
+    tooltipText: `${currentLayout.toUpperCase()} keyboard layout`
     forceOpen: root.displayMode === "forceOpen"
     forceClose: root.displayMode === "alwaysHide"
     onClicked: {
-
-      // You could open keyboard settings here if needed
-      // For now, just show the current layout
+      // You could open keyboard settings here if needed.
     }
   }
 }

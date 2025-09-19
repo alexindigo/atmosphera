@@ -24,7 +24,7 @@ NBox {
     NIconButton {
       icon: "camera-video"
       enabled: ScreenRecorderService.isAvailable
-      tooltipText: ScreenRecorderService.isAvailable ? (ScreenRecorderService.isRecording ? "Stop screen recording." : "Start screen recording.") : "Screen recorder not installed."
+      tooltipText: ScreenRecorderService.isAvailable ? (ScreenRecorderService.isRecording ? "Stop screen recording" : "Start screen recording") : "Screen recorder is not installed"
       colorBg: ScreenRecorderService.isRecording ? Color.mPrimary : Color.mSurfaceVariant
       colorFg: ScreenRecorderService.isRecording ? Color.mOnPrimary : Color.mPrimary
       onClicked: {
@@ -42,7 +42,7 @@ NBox {
     // Idle Inhibitor
     NIconButton {
       icon: IdleInhibitorService.isInhibited ? "keep-awake-on" : "keep-awake-off"
-      tooltipText: IdleInhibitorService.isInhibited ? "Disable keep awake." : "Enable keep awake."
+      tooltipText: `${IdleInhibitorService.isInhibited ? "Disable" : "Enable"} keep awake`
       colorBg: IdleInhibitorService.isInhibited ? Color.mPrimary : Color.mSurfaceVariant
       colorFg: IdleInhibitorService.isInhibited ? Color.mOnPrimary : Color.mPrimary
       onClicked: {
