@@ -99,7 +99,8 @@ Singleton {
                                   },
                                   "SidePanelToggle": {
                                     "allowUserSettings": true,
-                                    "useDistroLogo": false
+                                    "useDistroLogo": false,
+                                    "icon": "noctalia"
                                   },
                                   "Volume": {
                                     "allowUserSettings": true,
