@@ -10,12 +10,11 @@ NIconButton {
   property ShellScreen screen
   property real scaling: 1.0
 
-  visible: ScreenRecorderService.isRecording
   icon: "camera-video"
-  tooltipText: "Screen recording is active.\nClick to stop recording."
+  tooltipText: ScreenRecorderService.isRecording ? "Click to stop recording." : "Click to start recording."
   compact: (Settings.data.bar.density === "compact")
   baseSize: Style.capsuleHeight
-  colorBg: Color.mPrimary
-  colorFg: Color.mOnPrimary
+  colorBg: ScreenRecorderService.isRecording ? Color.mPrimary : (Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent)
+  colorFg: ScreenRecorderService.isRecording ? Color.mOnPrimary : Color.mOnSurface
   onClicked: ScreenRecorderService.toggleRecording()
 }
