@@ -25,7 +25,7 @@ ColumnLayout {
 
   NHeader {
     label: "Appearance"
-    description: "Configure dock behavior and appearance."
+    description: "Customize the dock's behavior and appearance."
   }
 
   NToggle {
@@ -36,8 +36,8 @@ ColumnLayout {
   }
 
   NToggle {
-    label: "Exclusive Zone"
-    description: "Ensure windows don't open underneath."
+    label: "Exclusive zone"
+    description: "Prevent window overlap."
     checked: Settings.data.dock.exclusive
     onToggled: checked => Settings.data.dock.exclusive = checked
   }
@@ -46,8 +46,8 @@ ColumnLayout {
     spacing: Style.marginXXS * scaling
     Layout.fillWidth: true
     NLabel {
-      label: "Background Opacity"
-      description: "Adjust the background opacity."
+      label: "Background opacity"
+      description: "Adjust the dock's background opacity."
     }
     NValueSlider {
       Layout.fillWidth: true
@@ -65,7 +65,7 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NLabel {
-      label: "Dock Floating Distance"
+      label: "Dock floating distance"
       description: "Adjust the floating distance from the screen edge."
     }
 
@@ -92,8 +92,8 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      label: "Monitors Configuration"
-      description: "Show dock on specific monitors."
+      label: "Monitor display"
+      description: "Choose which monitor to display the dock on."
     }
 
     Repeater {
@@ -101,7 +101,7 @@ ColumnLayout {
       delegate: NCheckbox {
         Layout.fillWidth: true
         label: modelData.name || "Unknown"
-        description: `${modelData.model} - ${modelData.width}x${modelData.height} [x:${modelData.x} y:${modelData.y}]`
+        description: `${modelData.model} (${modelData.width}x${modelData.height})`
         checked: (Settings.data.dock.monitors || []).indexOf(modelData.name) !== -1
         onToggled: checked => {
                      if (checked) {

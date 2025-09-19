@@ -11,18 +11,18 @@ ColumnLayout {
   spacing: Style.marginL * scaling
 
   NHeader {
-    label: "General Settings"
-    description: "Configure screen recording output and content."
+    label: "General settings"
+    description: "Manage screen recording output and content."
   }
 
-  // Output Directory
+  // Output Folder
   ColumnLayout {
     spacing: Style.marginS * scaling
     Layout.fillWidth: true
 
     NTextInput {
-      label: "Output Directory"
-      description: "Directory where screen recordings will be saved."
+      label: "Output folder"
+      description: "Folder where screen recordings will be saved."
       placeholderText: "/home/xxx/Videos"
       text: Settings.data.screenRecorder.directory
       onEditingFinished: {
@@ -38,7 +38,7 @@ ColumnLayout {
       Layout.topMargin: Style.marginM * scaling
       // Show Cursor
       NToggle {
-        label: "Show Cursor"
+        label: "Show cursor"
         description: "Record mouse cursor in the video."
         checked: Settings.data.screenRecorder.showCursor
         onToggled: checked => Settings.data.screenRecorder.showCursor = checked
@@ -58,12 +58,12 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      label: "Video Settings"
+      label: "Video settings"
     }
 
     // Source
     NComboBox {
-      label: "Video Source"
+      label: "Video source"
       description: "Portal is recommended, if you get artifacts try Screen."
       model: ListModel {
         ListElement {
@@ -81,7 +81,7 @@ ColumnLayout {
 
     // Frame Rate
     NComboBox {
-      label: "Frame Rate"
+      label: "Frame rate"
       description: "Target frame rate for screen recordings."
       model: ListModel {
         ListElement {
@@ -119,7 +119,7 @@ ColumnLayout {
 
     // Video Quality
     NComboBox {
-      label: "Video Quality"
+      label: "Video quality"
       description: "Higher quality results in larger file sizes."
       model: ListModel {
         ListElement {
@@ -132,7 +132,7 @@ ColumnLayout {
         }
         ListElement {
           key: "very_high"
-          name: "Very High"
+          name: "Very high"
         }
         ListElement {
           key: "ultra"
@@ -145,7 +145,7 @@ ColumnLayout {
 
     // Video Codec
     NComboBox {
-      label: "Video Codec"
+      label: "Video codec"
       description: "h264 is the most common codec."
       model: ListModel {
         ListElement {
@@ -175,7 +175,7 @@ ColumnLayout {
 
     // Color Range
     NComboBox {
-      label: "Color Range"
+      label: "Color range"
       description: "Limited is recommended for better compatibility."
       model: ListModel {
         ListElement {
@@ -204,25 +204,25 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      label: "Audio Settings"
+      label: "Audio settings"
     }
 
     // Audio Source
     NComboBox {
-      label: "Audio Source"
+      label: "Audio source"
       description: "Audio source to capture during recording."
       model: ListModel {
         ListElement {
           key: "default_output"
-          name: "System Output"
+          name: "System output"
         }
         ListElement {
           key: "default_input"
-          name: "Microphone Input"
+          name: "Microphone input"
         }
         ListElement {
           key: "both"
-          name: "System Output + Microphone Input"
+          name: "System output + Microphone input"
         }
       }
       currentKey: Settings.data.screenRecorder.audioSource
@@ -231,7 +231,7 @@ ColumnLayout {
 
     // Audio Codec
     NComboBox {
-      label: "Audio Codec"
+      label: "Audio codec"
       description: "Opus is recommended for best performance and smallest audio size."
       model: ListModel {
         ListElement {

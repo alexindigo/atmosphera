@@ -17,7 +17,7 @@ ColumnLayout {
   property var contributors: GitHubService.contributors
 
   NHeader {
-    label: "Noctalia Shell"
+    label: "Noctalia shell"
     description: "A sleek and minimal desktop shell thoughtfully crafted for Wayland, built with Quickshell."
   }
 
@@ -31,7 +31,7 @@ ColumnLayout {
       columnSpacing: Style.marginS * scaling
 
       NText {
-        text: "Latest Version:"
+        text: "Latest version:"
         color: Color.mOnSurface
       }
 
@@ -42,7 +42,7 @@ ColumnLayout {
       }
 
       NText {
-        text: "Installed Version:"
+        text: "Installed version:"
         color: Color.mOnSurface
       }
 

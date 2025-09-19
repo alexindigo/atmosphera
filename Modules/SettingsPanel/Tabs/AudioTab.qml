@@ -12,7 +12,7 @@ ColumnLayout {
 
   NHeader {
     label: "Volumes"
-    description: "Configure volume controls and audio levels."
+    description: "Adjust volume controls and audio levels."
   }
 
   property real localVolume: AudioService.volume
@@ -30,7 +30,7 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NLabel {
-      label: "Output Volume"
+      label: "Output volume"
       description: "System-wide volume level."
     }
 
@@ -67,8 +67,8 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NToggle {
-      label: "Mute Audio Output"
-      description: "Mute or unmute the default audio output."
+      label: "Mute audio output"
+      description: "Mute the system's main audio output."
       checked: AudioService.muted
       onToggled: checked => {
                    if (AudioService.sink && AudioService.sink.audio) {
@@ -84,7 +84,7 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NLabel {
-      label: "Input Volume"
+      label: "Input volume"
       description: "Microphone input volume level."
     }
 
@@ -105,8 +105,8 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NToggle {
-      label: "Mute Audio Input"
-      description: "Mute or unmute the default audio input (microphone)."
+      label: "Mute audio input"
+      description: "Mute the default audio input (microphone)."
       checked: AudioService.inputMuted
       onToggled: checked => AudioService.setInputMuted(checked)
     }
@@ -119,7 +119,7 @@ ColumnLayout {
 
     NSpinBox {
       Layout.fillWidth: true
-      label: "Volume Step Size"
+      label: "Volume step size"
       description: "Adjust the step size for volume changes (scroll wheel, keyboard shortcuts)."
       minimum: 1
       maximum: 25
@@ -141,8 +141,8 @@ ColumnLayout {
     spacing: Style.marginS * scaling
 
     NHeader {
-      label: "Audio Devices"
-      description: "Configure audio input and output devices."
+      label: "Audio devices"
+      description: "Choose your audio input and output devices."
     }
 
     // -------------------------------
@@ -157,7 +157,7 @@ ColumnLayout {
       Layout.bottomMargin: Style.marginL * scaling
 
       NLabel {
-        label: "Output Device"
+        label: "Output device"
         description: "Select the desired audio output device."
       }
 
@@ -184,7 +184,7 @@ ColumnLayout {
       Layout.fillWidth: true
 
       NLabel {
-        label: "Input Device"
+        label: "Input device"
         description: "Select the desired audio input device."
       }
 
@@ -213,14 +213,14 @@ ColumnLayout {
     spacing: Style.marginL * scaling
 
     NHeader {
-      label: "Media Player"
-      description: "Configure your favorite media players."
+      label: "Media players"
+      description: "Set your preferred and ignored media applications."
     }
 
     // Preferred player
     NTextInput {
-      label: "Preferred Player"
-      description: "Substring to match MPRIS player (identity/bus/desktop)."
+      label: "Primary player"
+      description: "Enter a keyword to identify your main player."
       placeholderText: "e.g. spotify, vlc, mpv"
       text: Settings.data.audio.preferredPlayer
       onTextChanged: {
@@ -240,8 +240,8 @@ ColumnLayout {
 
         NTextInput {
           id: blacklistInput
-          label: "Blacklist player"
-          description: "Substring, e.g. plex, shim, mpv."
+          label: "Excluded player"
+          description: "Add keywords for players you want the system to ignore. Each keyword should be on a new line."
           placeholderText: "type substring and press +"
         }
 
@@ -336,14 +336,14 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      label: "Audio Visualizer"
+      label: "Audio visualizer"
       description: "Customize visual effects that respond to audio playback."
     }
 
     // AudioService Visualizer section
     NComboBox {
       id: audioVisualizerCombo
-      label: "Visualization Type"
+      label: "Visualization type"
       description: "Choose a visualization type for media playback"
       model: ListModel {
         ListElement {
@@ -368,8 +368,8 @@ ColumnLayout {
     }
 
     NComboBox {
-      label: "Frame Rate"
-      description: "Target frame rate for audio visualizer."
+      label: "Frame rate"
+      description: "Higher rates are smoother but use more resources."
       model: ListModel {
         ListElement {
           key: "30"

@@ -42,12 +42,12 @@ ColumnLayout {
 
   NHeader {
     label: "Appearance"
-    description: "Configure bar appearance and positioning."
+    description: "Customize the bar's appearance and position."
   }
 
   NComboBox {
     Layout.fillWidth: true
-    label: "Bar Position"
+    label: "Bar position"
     description: "Choose where to place the bar on the screen."
     model: ListModel {
       ListElement {
@@ -73,8 +73,8 @@ ColumnLayout {
 
   NComboBox {
     Layout.fillWidth: true
-    label: "Bar Density"
-    description: "Choose the density of the bar."
+    label: "Bar density"
+    description: "Adjust the bar's padding for a compact or spacious look."
     model: ListModel {
       ListElement {
         key: "compact"
@@ -98,7 +98,7 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NLabel {
-      label: "Background Opacity"
+      label: "Background opacity"
       description: "Adjust the background opacity of the bar."
     }
 
@@ -115,16 +115,16 @@ ColumnLayout {
 
   NToggle {
     Layout.fillWidth: true
-    label: "Show Capsule"
-    description: "Adds a capsule behind each widget to improve readability on transparent bars."
+    label: "Show capsule"
+    description: "Show widget backgrounds."
     checked: Settings.data.bar.showCapsule
     onToggled: checked => Settings.data.bar.showCapsule = checked
   }
 
   NToggle {
     Layout.fillWidth: true
-    label: "Floating Bar"
-    description: "Make the bar float with rounded corners and margins. Screen corners will move to screen edges."
+    label: "Floating bar"
+    description: "Displays the bar as a floating 'pill'. Note: This will move the screen corners to the edges."
     checked: Settings.data.bar.floating
     onToggled: checked => Settings.data.bar.floating = checked
   }
@@ -198,7 +198,7 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      label: "Widgets Positioning"
+      label: "Widgets positioning"
       description: "Drag and drop widgets to reorder them within each section, or use the add/remove buttons to manage widgets."
     }
 
@@ -265,7 +265,7 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      label: "Monitors Configuration"
+      label: "Monitor display"
       description: "Show bar on specific monitors. Defaults to all if none are chosen."
     }
 
@@ -274,7 +274,7 @@ ColumnLayout {
       delegate: NCheckbox {
         Layout.fillWidth: true
         label: modelData.name || "Unknown"
-        description: `${modelData.model} - ${modelData.width}x${modelData.height} [x:${modelData.x} y:${modelData.y}]`
+        description: `${modelData.model} (${modelData.width}x${modelData.height})`
         checked: (Settings.data.bar.monitors || []).indexOf(modelData.name) !== -1
         onToggled: checked => {
                      if (checked) {

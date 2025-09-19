@@ -11,13 +11,13 @@ ColumnLayout {
   width: root.width
 
   NHeader {
-    label: "System Hooks"
+    label: "System hooks"
     description: "Configure commands to be executed when system events occur."
   }
 
   // Enable/Disable Toggle
   NToggle {
-    label: "Enable Hooks"
+    label: "Enable hooks"
     description: "Enable or disable all hook commands."
     checked: Settings.data.hooks.enabled
     onToggled: checked => Settings.data.hooks.enabled = checked

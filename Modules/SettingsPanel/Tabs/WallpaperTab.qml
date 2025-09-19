@@ -12,12 +12,12 @@ ColumnLayout {
   spacing: Style.marginL * scaling
 
   NHeader {
-    label: "Wallpaper Settings"
+    label: "Wallpaper settings"
     description: "Control how wallpapers are managed and displayed."
   }
 
   NToggle {
-    label: "Enable Wallpaper Management"
+    label: "Enable wallpaper management"
     description: "Manage wallpapers with Noctalia. (Uncheck if you prefer using another application)."
     checked: Settings.data.wallpaper.enabled
     onToggled: checked => Settings.data.wallpaper.enabled = checked
@@ -30,8 +30,8 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NTextInput {
-      label: "Wallpaper Directory"
-      description: "Path to your common wallpaper directory."
+      label: "Wallpaper folder"
+      description: "Path to your main wallpaper folder."
       text: Settings.data.wallpaper.directory
       onEditingFinished: {
         Settings.data.wallpaper.directory = text
@@ -42,7 +42,7 @@ ColumnLayout {
     // Monitor-specific directories
     NToggle {
       label: "Monitor-specific directories"
-      description: "Enable multi-monitor wallpaper directory management."
+      description: "Set a different wallpaper folder for each monitor."
       checked: Settings.data.wallpaper.enableMultiMonitorDirectories
       onToggled: checked => Settings.data.wallpaper.enableMultiMonitorDirectories = checked
     }
@@ -97,12 +97,12 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      label: "Look & Feel"
+      label: "Look & feel"
     }
 
     // Fill Mode
     NComboBox {
-      label: "Fill Mode"
+      label: "Fill mode"
       description: "Select how the image should scale to match your monitor's resolution."
       model: WallpaperService.fillModeModel
       currentKey: Settings.data.wallpaper.fillMode
@@ -111,7 +111,7 @@ ColumnLayout {
 
     RowLayout {
       NLabel {
-        label: "Fill Color"
+        label: "Fill color"
         description: "Choose a fill color that may appear behind the wallpaper."
         Layout.alignment: Qt.AlignTop
       }
@@ -124,7 +124,7 @@ ColumnLayout {
 
     // Transition Type
     NComboBox {
-      label: "Transition Type"
+      label: "Transition type"
       description: "Animation type when switching between wallpapers."
       model: WallpaperService.transitionsModel
       currentKey: Settings.data.wallpaper.transitionType
@@ -134,7 +134,7 @@ ColumnLayout {
     // Transition Duration
     ColumnLayout {
       NLabel {
-        label: "Transition Duration"
+        label: "Transition duration"
         description: "Duration of transition animations in seconds."
       }
 
@@ -152,8 +152,8 @@ ColumnLayout {
     // Edge Smoothness
     ColumnLayout {
       NLabel {
-        label: "Transition Edge Smoothness"
-        description: "Duration of transition animations in seconds."
+        label: "Soften transition edge"
+        description: "Applies a soft, feathered effect to the edge of transitions."
       }
 
       NValueSlider {
@@ -185,7 +185,7 @@ ColumnLayout {
 
     // Random Wallpaper
     NToggle {
-      label: "Random Wallpaper"
+      label: "Random wallpaper"
       description: "Schedule random wallpaper changes at regular intervals."
       checked: Settings.data.wallpaper.randomEnabled
       onToggled: checked => Settings.data.wallpaper.randomEnabled = checked
@@ -196,7 +196,7 @@ ColumnLayout {
       visible: Settings.data.wallpaper.randomEnabled
       RowLayout {
         NLabel {
-          label: "Wallpaper Interval"
+          label: "Wallpaper interval"
           description: "How often to change wallpapers automatically."
           Layout.fillWidth: true
         }
@@ -262,7 +262,7 @@ ColumnLayout {
         Layout.topMargin: Style.marginS * scaling
 
         NTextInput {
-          label: "Custom Interval"
+          label: "Custom interval"
           description: "Enter time as HH:MM (e.g., 01:30)."
           text: {
             const s = Settings.data.wallpaper.randomIntervalSec

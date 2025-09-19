@@ -33,7 +33,7 @@ ColumnLayout {
     }
 
     NToggle {
-      label: "Do Not Disturb"
+      label: "Do not disturb"
       description: "Disable all notification popups when enabled."
       checked: Settings.data.notifications.doNotDisturb
       onToggled: checked => Settings.data.notifications.doNotDisturb = checked
@@ -52,7 +52,7 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      label: "Notification Duration"
+      label: "Notification duration"
       description: "Configure how long notifications stay visible based on their urgency level."
     }
 
@@ -62,7 +62,7 @@ ColumnLayout {
       Layout.fillWidth: true
 
       NLabel {
-        label: "Low Urgency Duration"
+        label: "Low urgency"
         description: "How long low priority notifications stay visible."
       }
 
@@ -83,7 +83,7 @@ ColumnLayout {
       Layout.fillWidth: true
 
       NLabel {
-        label: "Normal Urgency Duration"
+        label: "Normal urgency"
         description: "How long normal priority notifications stay visible."
       }
 
@@ -104,7 +104,7 @@ ColumnLayout {
       Layout.fillWidth: true
 
       NLabel {
-        label: "Critical Urgency Duration"
+        label: "Critical urgency"
         description: "How long critical priority notifications stay visible."
       }
 
@@ -132,7 +132,7 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      label: "Monitors Configuration"
+      label: "Monitors display"
       description: "Show notification on specific monitors. Defaults to all if none are chosen."
     }
 
@@ -141,7 +141,7 @@ ColumnLayout {
       delegate: NCheckbox {
         Layout.fillWidth: true
         label: modelData.name || "Unknown"
-        description: `${modelData.model} - ${modelData.width}x${modelData.height} [x:${modelData.x} y:${modelData.y}]`
+        description: `${modelData.model} (${modelData.width}x${modelData.height})`
         checked: (Settings.data.notifications.monitors || []).indexOf(modelData.name) !== -1
         onToggled: checked => {
                      if (checked) {

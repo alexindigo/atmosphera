@@ -52,8 +52,8 @@ ColumnLayout {
   spacing: Style.marginL * scaling
 
   NHeader {
-    label: "Monitor-specific configuration"
-    description: "Configure scaling and brightness settings individually for each connected display."
+    label: "Per-monitor settings"
+    description: "Adjust scaling and brightness for each display."
   }
 
   ColumnLayout {
@@ -89,7 +89,7 @@ ColumnLayout {
 
           NLabel {
             label: modelData.name || "Unknown"
-            description: `${modelData.model} - ${modelData.width}x${modelData.height} [x:${modelData.x} y:${modelData.y}]`
+            description: `${modelData.model} (${modelData.width}x${modelData.height})`
           }
 
           // Scale
@@ -204,7 +204,7 @@ ColumnLayout {
 
       NSpinBox {
         Layout.fillWidth: true
-        label: "Brightness Step Size"
+        label: "Brightness step size"
         description: "Adjust the step size for brightness changes (scroll wheel and keyboard shortcuts)."
         minimum: 1
         maximum: 50
@@ -228,13 +228,13 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      label: "Night Light"
+      label: "Night light"
       description: "Reduce blue light emission to help you sleep better and reduce eye strain."
     }
   }
 
   NToggle {
-    label: "Enable Night Light"
+    label: "Enable night light"
     description: "Apply a warm color filter to reduce blue light emission."
     checked: Settings.data.nightLight.enabled
     onToggled: checked => {
@@ -257,7 +257,7 @@ ColumnLayout {
 
     NLabel {
       label: "Color temperature"
-      description: "Choose two temperatures in Kelvin."
+      description: "Set the color warmth for nighttime and daytime."
     }
 
     RowLayout {
@@ -373,7 +373,7 @@ ColumnLayout {
   // Force activation toggle
   NToggle {
     label: "Force activation"
-    description: "Immediately apply night temperature without scheduling or fade."
+    description: "Ignores the schedule and applies the night filter immediately."
     checked: Settings.data.nightLight.forced
     onToggled: checked => {
                  Settings.data.nightLight.forced = checked

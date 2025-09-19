@@ -106,14 +106,14 @@ ColumnLayout {
 
   // Main Toggles - Dark Mode / Matugen
   NHeader {
-    label: "Behavior"
+    label: "Color Source"
     description: "Main settings for Noctalia's colors."
   }
 
   // Dark Mode Toggle (affects both Matugen and predefined schemes that provide variants)
   NToggle {
-    label: "Dark Mode"
-    description: Settings.data.colorSchemes.useWallpaperColors ? "Generate dark theme colors when using Matugen." : "Use a dark variant if available."
+    label: "Dark mode"
+    description: "Switches to a darker theme for easier viewing at night."
     checked: Settings.data.colorSchemes.darkMode
     enabled: true
     onToggled: checked => Settings.data.colorSchemes.darkMode = checked
@@ -152,7 +152,7 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      label: "Predefined Color Schemes"
+      label: "Predefined color schemes"
       description: "To use these color schemes, you must turn off Matugen. With Matugen enabled, colors are automatically generated from your wallpaper."
     }
 

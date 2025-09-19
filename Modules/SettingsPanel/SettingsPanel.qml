@@ -36,7 +36,7 @@ NPanel {
     Launcher,
     Location,
     Network,
-    Notification,
+    Notifications,
     ScreenRecorder,
     Wallpaper
   }
@@ -86,7 +86,6 @@ NPanel {
     id: wallpaperTab
     Tabs.WallpaperTab {}
   }
-
   Component {
     id: screenRecorderTab
     Tabs.ScreenRecorderTab {}
@@ -104,8 +103,8 @@ NPanel {
     Tabs.DockTab {}
   }
   Component {
-    id: notificationTab
-    Tabs.NotificationTab {}
+    id: notificationsTab
+    Tabs.NotificationsTab {}
   }
 
   // Order *DOES* matter
@@ -141,10 +140,10 @@ NPanel {
                      "icon": "settings-display",
                      "source": displayTab
                    }, {
-                     "id": SettingsPanel.Tab.Notification,
-                     "label": "Notification",
-                     "icon": "settings-notification",
-                     "source": notificationTab
+                     "id": SettingsPanel.Tab.Notifications,
+                     "label": "Notifications",
+                     "icon": "settings-notifications",
+                     "source": notificationsTab
                    }, {
                      "id": SettingsPanel.Tab.Network,
                      "label": "Network",

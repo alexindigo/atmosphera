@@ -11,7 +11,7 @@ ColumnLayout {
 
   NHeader {
     label: "Profile"
-    description: "Configure your user profile and avatar settings."
+    description: "Edit your user details and avatar."
   }
 
   // Profile section
@@ -54,12 +54,12 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      label: "User Interface"
-      description: "Main settings for the user interface."
+      label: "User interface"
+      description: "Customize the look, feel, and behavior of the interface."
     }
 
     NToggle {
-      label: "Dim Desktop"
+      label: "Dim desktop"
       description: "Dim the desktop when panels or menus are open."
       checked: Settings.data.general.dimDesktop
       onToggled: checked => Settings.data.general.dimDesktop = checked
@@ -71,7 +71,7 @@ ColumnLayout {
 
       NLabel {
         label: "Border radius"
-        description: "Adjust the rounded border of all UI elements."
+        description: "Controls the corner roundness of windows, buttons, and other elements."
       }
 
       NValueSlider {
@@ -91,7 +91,7 @@ ColumnLayout {
       Layout.fillWidth: true
 
       NLabel {
-        label: "Animation Speed"
+        label: "Animation speed"
         description: "Adjust global animation speed."
       }
 
@@ -117,21 +117,22 @@ ColumnLayout {
   ColumnLayout {
     spacing: Style.marginL * scaling
     Layout.fillWidth: true
+
     NHeader {
-      label: "Screen Corners"
+      label: "Screen corners"
       description: "Customize screen corner rounding and visual effects."
     }
 
     NToggle {
-      label: "Show Screen Corners"
+      label: "Show screen corners"
       description: "Display rounded corners on the edge of the screen."
       checked: Settings.data.general.showScreenCorners
       onToggled: checked => Settings.data.general.showScreenCorners = checked
     }
 
     NToggle {
-      label: "Solid Black Corners"
-      description: "Force screen corners to always render as solid black."
+      label: "Solid black corners"
+      description: "Use solid black instead of the bar background color."
       checked: Settings.data.general.forceBlackScreenCorners
       onToggled: checked => Settings.data.general.forceBlackScreenCorners = checked
     }
@@ -141,7 +142,7 @@ ColumnLayout {
       Layout.fillWidth: true
 
       NLabel {
-        label: "Screen Corners Radius"
+        label: "Screen corners radius"
         description: "Adjust the rounded corners of the screen."
       }
 
@@ -169,7 +170,7 @@ ColumnLayout {
 
     NHeader {
       label: "Fonts"
-      description: "Configure interface typography."
+      description: "Choose the fonts used throughout the interface."
     }
 
     // Font configuration section
@@ -178,7 +179,7 @@ ColumnLayout {
       Layout.fillWidth: true
 
       NSearchableComboBox {
-        label: "Default Font"
+        label: "Default font"
         description: "Main font used throughout the interface."
         model: FontService.availableFonts
         currentKey: Settings.data.ui.fontDefault
@@ -192,8 +193,8 @@ ColumnLayout {
       }
 
       NSearchableComboBox {
-        label: "Fixed Width Font"
-        description: "Monospace font used for terminal and code display."
+        label: "Monospaced font"
+        description: "Monospaced font used for numbers and stats display."
         model: FontService.monospaceFonts
         currentKey: Settings.data.ui.fontFixed
         placeholder: "Select monospace font..."
@@ -206,8 +207,8 @@ ColumnLayout {
       }
 
       NSearchableComboBox {
-        label: "Billboard Font"
-        description: "Large font used for clocks and prominent displays."
+        label: "Accent font"
+        description: "Large font used for prominent displays."
         model: FontService.displayFonts
         currentKey: Settings.data.ui.fontBillboard
         placeholder: "Select display font..."

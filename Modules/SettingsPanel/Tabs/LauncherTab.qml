@@ -11,7 +11,7 @@ ColumnLayout {
 
   NHeader {
     label: "Appearance"
-    description: "Configure the launcher behavior and appearance."
+    description: "Customize the launcher's behavior and appearance."
   }
 
   NComboBox {
@@ -26,27 +26,27 @@ ColumnLayout {
       }
       ListElement {
         key: "top_left"
-        name: "Top Left"
+        name: "Top left"
       }
       ListElement {
         key: "top_right"
-        name: "Top Right"
+        name: "Top right"
       }
       ListElement {
         key: "bottom_left"
-        name: "Bottom Left"
+        name: "Bottom left"
       }
       ListElement {
         key: "bottom_right"
-        name: "Bottom Right"
+        name: "Bottom right"
       }
       ListElement {
         key: "bottom_center"
-        name: "Bottom Center"
+        name: "Bottom center"
       }
       ListElement {
         key: "top_center"
-        name: "Top Center"
+        name: "Top center"
       }
     }
     currentKey: Settings.data.appLauncher.position
@@ -60,7 +60,7 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NText {
-      text: "Background Opacity"
+      text: "Background opacity"
       font.pointSize: Style.fontSizeL * scaling
       font.weight: Style.fontWeightBold
       color: Color.mOnSurface
@@ -87,22 +87,22 @@ ColumnLayout {
   }
 
   NToggle {
-    label: "Enable Clipboard History"
-    description: "Show clipboard history in the launcher."
+    label: "Enable clipboard history"
+    description: "Access previously copied items from the launcher."
     checked: Settings.data.appLauncher.enableClipboardHistory
     onToggled: checked => Settings.data.appLauncher.enableClipboardHistory = checked
   }
 
   NToggle {
-    label: "Sort by Most Used"
+    label: "Sort by most used"
     description: "When enabled, frequently launched apps appear first in the list."
     checked: Settings.data.appLauncher.sortByMostUsed
     onToggled: checked => Settings.data.appLauncher.sortByMostUsed = checked
   }
 
   NToggle {
-    label: "Use App2Unit for Launching"
-    description: "Use app2unit -- 'desktop-entry' when launching applications for better systemd integration."
+    label: "Use App2Unit to launch applications"
+    description: "Uses an alternative launch method to better manage app processes and prevent issues."
     checked: Settings.data.appLauncher.useApp2Unit
     onToggled: checked => Settings.data.appLauncher.useApp2Unit = checked
   }

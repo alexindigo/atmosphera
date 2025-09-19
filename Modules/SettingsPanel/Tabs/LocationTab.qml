@@ -10,8 +10,8 @@ ColumnLayout {
   spacing: Style.marginL * scaling
 
   NHeader {
-    label: "Your Location"
-    description: "Set your location for weather, time zones, and scheduling."
+    label: "Your location"
+    description: "Get accurate weather and night light scheduling by setting your location."
   }
 
   // Location section
@@ -20,8 +20,8 @@ ColumnLayout {
     spacing: Style.marginL * scaling
 
     NTextInput {
-      label: "Location name"
-      description: "Choose a known location near you."
+      label: "Search for a location"
+      description: "e.g., Toronto, ON"
       text: Settings.data.location.name || Settings.defaultLocation
       placeholderText: "Enter the location name"
       onEditingFinished: {
@@ -65,11 +65,11 @@ ColumnLayout {
 
     NHeader {
       label: "Weather"
-      description: "Configure temperature units."
+      description: "Choose your preferred temperature unit."
     }
 
     NToggle {
-      label: "Use Fahrenheit"
+      label: "Display temperature in Fahrenheit (°F)"
       description: "Display temperature in Fahrenheit instead of Celsius."
       checked: Settings.data.location.useFahrenheit
       onToggled: checked => Settings.data.location.useFahrenheit = checked
@@ -88,27 +88,27 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      label: "Time & Date"
-      description: "Configure time and date formats."
+      label: "Date & time"
+      description: "Customize how date and time appear."
     }
 
     NToggle {
       label: "Use 12-hour time format"
-      description: "Classic AM/PM or modern 24-hour."
+      description: "On for AM/PM format (e.g., 8:00 PM), off for 24-hour format (e.g., 20:00)."
       checked: Settings.data.location.use12hourFormat
       onToggled: checked => Settings.data.location.use12hourFormat = checked
     }
 
     NToggle {
       label: "Show month before day"
-      description: "Organize your dates. On for 09/17/2025, off for 17/09/2025."
+      description: "On for 09/17/2025, off for 17/09/2025."
       checked: Settings.data.location.monthBeforeDay
       onToggled: checked => Settings.data.location.monthBeforeDay = checked
     }
 
     NToggle {
-      label: "Show week number in calendar"
-      description: "Displays the week number of the year in calendar view."
+      label: "Show week numbers"
+      description: "Displays the week of the year (e.g., Week 38) in the calendar."
       checked: Settings.data.location.showWeekNumberInCalendar
       onToggled: checked => Settings.data.location.showWeekNumberInCalendar = checked
     }
