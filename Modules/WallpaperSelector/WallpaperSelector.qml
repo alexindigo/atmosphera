@@ -23,7 +23,16 @@ NPanel {
   panelContent: Rectangle {
     id: wallpaperPanel
 
-    property int currentScreenIndex: 0
+    property int currentScreenIndex: {
+      if (screen !== null) {
+        for (var i = 0; i < Quickshell.screens.length; i++) {
+          if (Quickshell.screens[i].name == screen.name) {
+            return i
+          }
+        }
+      }
+      return 0
+    }
     property var currentScreen: Quickshell.screens[currentScreenIndex]
     property string filterText: ""
 
