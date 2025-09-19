@@ -98,14 +98,14 @@ Singleton {
         try {
           const lines = text.split('\n')
           for (const line of lines) {
-            if (line.includes('X11 Layout:')) {
+            if (line.includes("X11 Layout:")) {
               const layout = line.split(':')[1].trim()
               if (layout && layout !== "n/a") {
                 root.currentLayout = layout
                 return
               }
             }
-            if (line.includes('VC Keymap:')) {
+            if (line.includes("VC Keymap:")) {
               const keymap = line.split(':')[1].trim()
               if (keymap && keymap !== "n/a") {
                 root.currentLayout = extractLayoutCode(keymap)

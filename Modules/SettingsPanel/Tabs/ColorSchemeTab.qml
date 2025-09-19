@@ -106,7 +106,7 @@ ColumnLayout {
 
   // Main Toggles - Dark Mode / Matugen
   NHeader {
-    label: "Color Source"
+    label: "Color source"
     description: "Main settings for Noctalia's colors."
   }
 

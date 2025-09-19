@@ -35,7 +35,7 @@ ColumnLayout {
     // Wallpaper Hook Section
     NInputAction {
       id: wallpaperHookInput
-      label: "Wallpaper Change Hook"
+      label: "Wallpaper changed"
       description: "Command to be executed when wallpaper changes."
       placeholderText: "e.g., notify-send \"Wallpaper\" \"Changed\""
       text: Settings.data.hooks.wallpaperChange
@@ -57,7 +57,7 @@ ColumnLayout {
     // Dark Mode Hook Section
     NInputAction {
       id: darkModeHookInput
-      label: "Theme Toggle Hook"
+      label: "Theme changed"
       description: "Command to be executed when theme toggles between dark and light mode."
       placeholderText: "e.g., notify-send \"Theme\" \"Toggled\""
       text: Settings.data.hooks.darkModeChange

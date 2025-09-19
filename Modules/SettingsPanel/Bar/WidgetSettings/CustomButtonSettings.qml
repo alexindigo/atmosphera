@@ -58,7 +58,7 @@ ColumnLayout {
   NTextInput {
     id: leftClickExecInput
     Layout.fillWidth: true
-    label: "Left Click Command"
+    label: "Left click"
     placeholderText: "Enter command to execute (app or custom script)"
     text: widgetData?.leftClickExec || widgetMetadata.leftClickExec
   }
@@ -66,7 +66,7 @@ ColumnLayout {
   NTextInput {
     id: rightClickExecInput
     Layout.fillWidth: true
-    label: "Right Click Command"
+    label: "Right click"
     placeholderText: "Enter command to execute (app or custom script)"
     text: widgetData?.rightClickExec || widgetMetadata.rightClickExec
   }
@@ -74,7 +74,7 @@ ColumnLayout {
   NTextInput {
     id: middleClickExecInput
     Layout.fillWidth: true
-    label: "Middle Click Command"
+    label: "Middle click"
     placeholderText: "Enter command to execute (app or custom script)"
     text: widgetData.middleClickExec || widgetMetadata.middleClickExec
   }
@@ -84,8 +84,8 @@ ColumnLayout {
   }
 
   NText {
-    text: "Dynamic Text"
-    font.pointSize: Style.fontSizeM * scaling
+    text: "Dynamic text"
+    font.pointSize: Style.fontSizeL * scaling
     font.weight: Style.fontWeightBold
     color: Color.mPrimary
   }
@@ -93,8 +93,8 @@ ColumnLayout {
   NTextInput {
     id: textCommandInput
     Layout.fillWidth: true
-    label: "Text Command"
-    description: "Shell command to run periodically (first line becomes the text)."
+    label: "Display Command Output"
+    description: "Enter a command to run at a regular interval. The first line of its output will be displayed as text."
     placeholderText: "echo \"Hello World\""
     text: widgetData?.textCommand || widgetMetadata.textCommand
   }
@@ -102,7 +102,7 @@ ColumnLayout {
   NTextInput {
     id: textIntervalInput
     Layout.fillWidth: true
-    label: "Refresh Interval"
+    label: "Refresh interval"
     description: "Interval in milliseconds."
     placeholderText: String(widgetMetadata.textIntervalMs || 3000)
     text: widgetData && widgetData.textIntervalMs !== undefined ? String(widgetData.textIntervalMs) : ""

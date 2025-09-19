@@ -29,15 +29,15 @@ ColumnLayout {
     model: ListModel {
       ListElement {
         key: "onhover"
-        name: "On Hover"
+        name: "On hover"
       }
       ListElement {
         key: "alwaysShow"
-        name: "Always Show"
+        name: "Always show"
       }
       ListElement {
         key: "alwaysHide"
-        name: "Always Hide"
+        name: "Always hide"
       }
     }
     currentKey: valueDisplayMode

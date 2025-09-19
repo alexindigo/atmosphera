@@ -196,7 +196,7 @@ Singleton {
     if (signal >= 20) {
       return "Signal: Poor"
     }
-    return "Signal: Very Poor"
+    return "Signal: Very poor"
   }
 
   function getBattery(device) {

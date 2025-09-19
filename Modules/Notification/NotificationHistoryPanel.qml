@@ -37,7 +37,7 @@ NPanel {
         }
 
         NText {
-          text: "Notification History"
+          text: "Notification history"
           font.pointSize: Style.fontSizeL * scaling
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface
@@ -46,7 +46,7 @@ NPanel {
 
         NIconButton {
           icon: Settings.data.notifications.doNotDisturb ? "bell-off" : "bell"
-          tooltipText: `'Do Not Disturb' ${Settings.data.notifications.doNotDisturb ? "enabled" : "disabled"}`
+          tooltipText: `'Do not disturb' ${Settings.data.notifications.doNotDisturb ? "enabled" : "disabled"}`
           baseSize: Style.baseWidgetSize * 0.8
           onClicked: Settings.data.notifications.doNotDisturb = !Settings.data.notifications.doNotDisturb
           onRightClicked: Settings.data.notifications.doNotDisturb = !Settings.data.notifications.doNotDisturb

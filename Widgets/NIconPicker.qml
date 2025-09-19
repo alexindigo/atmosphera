@@ -57,7 +57,7 @@ Popup {
     RowLayout {
       Layout.fillWidth: true
       NText {
-        text: "Icon Picker"
+        text: "Icon picker"
         font.pointSize: Style.fontSizeL * scaling
         font.weight: Style.fontWeightBold
         color: Color.mPrimary

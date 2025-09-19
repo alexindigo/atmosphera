@@ -7,7 +7,7 @@ Item {
   id: root
 
   // Plugin metadata
-  property string name: "Clipboard History"
+  property string name: "Clipboard history"
   property var launcher: null
 
   // Plugin capabilities
@@ -99,7 +99,7 @@ Item {
     // Check if clipboard service is not active
     if (!ClipboardService.active) {
       return [{
-                "name": "Clipboard History Disabled",
+                "name": "Clipboard history disabled",
                 "description": "Enable clipboard history in settings or install cliphist",
                 "icon": "view-refresh",
                 "isImage": false,
@@ -110,7 +110,7 @@ Item {
     // Special command: clear
     if (query === "clear") {
       return [{
-                "name": "Clear Clipboard History",
+                "name": "Clear clipboard history",
                 "description": "Remove all items from clipboard history",
                 "icon": "delete_sweep",
                 "isImage": false,

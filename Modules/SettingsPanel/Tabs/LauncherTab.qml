@@ -17,7 +17,7 @@ ColumnLayout {
   NComboBox {
     id: launcherPosition
     label: "Position"
-    description: "Choose where the Launcher panel appears."
+    description: "Choose where the launcher panel appears."
     Layout.fillWidth: true
     model: ListModel {
       ListElement {

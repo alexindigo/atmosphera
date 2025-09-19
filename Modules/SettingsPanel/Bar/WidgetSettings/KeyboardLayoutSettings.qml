@@ -29,7 +29,7 @@ ColumnLayout {
     model: ListModel {
       ListElement {
         key: "onhover"
-        name: "On Hover"
+        name: "On hover"
       }
       ListElement {
         key: "forceOpen"
@@ -37,7 +37,7 @@ ColumnLayout {
       }
       ListElement {
         key: "alwaysHide"
-        name: "Always Hide"
+        name: "Always hide"
       }
     }
     currentKey: valueDisplayMode

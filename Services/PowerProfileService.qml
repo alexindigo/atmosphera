@@ -78,7 +78,7 @@ Singleton {
       // Only show toast if we have a valid profile name (not "Unknown")
       const profileName = root.getName()
       if (profileName !== "Unknown") {
-        ToastService.showNotice("Power Profile Changed", `"${profileName}"`)
+        ToastService.showNotice("Power profile changed", `"${profileName}"`)
       }
     }
   }

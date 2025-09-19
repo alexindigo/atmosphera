@@ -136,7 +136,7 @@ Popup {
           }
 
           NText {
-            text: "Color Picker"
+            text: "Color picker"
             font.pointSize: Style.fontSizeXL * scaling
             font.weight: Style.fontWeightBold
             color: Color.mPrimary
@@ -199,8 +199,8 @@ Popup {
         spacing: Style.marginM * scaling
 
         NLabel {
-          label: "Hex Color"
-          description: "Enter a hexadecimal color code"
+          label: "Hex color"
+          description: "Enter a hexadecimal color code."
           Layout.fillWidth: true
         }
 
@@ -228,8 +228,8 @@ Popup {
           spacing: Style.marginM * scaling
 
           NLabel {
-            label: "RGB Values"
-            description: "Adjust red, green, blue, and brightness values"
+            label: "RGB values"
+            description: "Adjust red, green, blue, and brightness values."
             Layout.fillWidth: true
           }
 
@@ -364,8 +364,8 @@ Popup {
           spacing: Style.marginS * scaling
 
           NLabel {
-            label: "Theme Colors"
-            description: "Quick access to your theme's color palette"
+            label: "Theme colors"
+            description: "Quick access to your theme's color palette."
             Layout.fillWidth: true
           }
 
@@ -412,8 +412,8 @@ Popup {
           spacing: Style.marginS * scaling
 
           NLabel {
-            label: "Colors Palette"
-            description: "Choose from a wide range of predefined colors"
+            label: "Palette"
+            description: "Choose from a wide range of predefined colors."
             Layout.fillWidth: true
           }
 

@@ -23,7 +23,7 @@ ColumnLayout {
   }
 
   NComboBox {
-    label: "Display Format"
+    label: "Display format"
     model: ListModel {
       ListElement {
         key: "time"
@@ -35,11 +35,11 @@ ColumnLayout {
       }
       ListElement {
         key: "time-date"
-        name: "HH:mm - Date"
+        name: "HH:mm + Date"
       }
       ListElement {
         key: "time-date-short"
-        name: "HH:mm - Short Date"
+        name: "HH:mm + Short date"
       }
     }
     currentKey: valueDisplayFormat

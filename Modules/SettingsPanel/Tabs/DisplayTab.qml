@@ -38,10 +38,10 @@ ColumnLayout {
       if (exitCode === 0) {
         Settings.data.nightLight.enabled = true
         NightLightService.apply()
-        ToastService.showNotice("Night Light", "Enabled")
+        ToastService.showNotice("Night light", "Enabled")
       } else {
         Settings.data.nightLight.enabled = false
-        ToastService.showWarning("Night Light", "wlsunset not installed")
+        ToastService.showWarning("Night light", "wlsunset not installed")
       }
     }
 
@@ -245,7 +245,7 @@ ColumnLayout {
                    Settings.data.nightLight.enabled = false
                    Settings.data.nightLight.forced = false
                    NightLightService.apply()
-                   ToastService.showNotice("Night Light", "Disabled")
+                   ToastService.showNotice("Night light", "Disabled")
                  }
                }
   }
@@ -315,7 +315,7 @@ ColumnLayout {
   }
 
   NToggle {
-    label: "Automatic Scheduling"
+    label: "Automatic scheduling"
     description: `Based on the sunset and sunrise time in <i>${LocationService.stableName}</i> - recommended.`
     checked: Settings.data.nightLight.autoSchedule
     onToggled: checked => Settings.data.nightLight.autoSchedule = checked
@@ -332,14 +332,14 @@ ColumnLayout {
       spacing: Style.marginM * scaling
 
       NLabel {
-        label: "Manual Scheduling"
+        label: "Manual scheduling"
       }
 
       Item {// add a little more spacing
       }
 
       NText {
-        text: "Sunrise Time"
+        text: "Sunrise time"
         font.pointSize: Style.fontSizeM * scaling
         color: Color.mOnSurfaceVariant
       }
@@ -356,7 +356,7 @@ ColumnLayout {
       }
 
       NText {
-        text: "Sunset Time"
+        text: "Sunset time"
         font.pointSize: Style.fontSizeM * scaling
         color: Color.mOnSurfaceVariant
       }

@@ -222,7 +222,7 @@ ColumnLayout {
         }
         ListElement {
           key: "both"
-          name: "System output + Microphone input"
+          name: "System output + microphone input"
         }
       }
       currentKey: Settings.data.screenRecorder.audioSource

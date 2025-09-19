@@ -57,7 +57,7 @@ Item {
     disableOpen: true
     tooltipText: {
       if (!hasExec) {
-        return "Custom Button - Configure in settings"
+        return "Custom button, configure in settings."
       } else {
         var lines = []
         if (leftClickExec !== "") {

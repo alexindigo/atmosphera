@@ -55,7 +55,7 @@ NPanel {
         }
 
         NText {
-          text: "Wallpaper Selector"
+          text: "Wallpaper selector"
           font.pointSize: Style.fontSizeL * scaling
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface
