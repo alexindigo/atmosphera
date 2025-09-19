@@ -31,13 +31,18 @@ Singleton {
   }
 
   // Lookup a specific widget instance (returns the actual QML instance)
-  function lookupWidget(widgetId, screenName = null, section = null) {
+  function lookupWidget(widgetId, screenName = null, section = null, index = null) {
     // If looking for a specific instance
     if (screenName && section !== null) {
       for (var key in widgetInstances) {
         var widget = widgetInstances[key]
         if (widget.widgetId === widgetId && widget.screenName === screenName && widget.section === section) {
-          return widget.instance
+          if (index === null) {
+            return widget.instance
+          }
+          else if (widget.index == index) {
+            return widget.instance
+          }
         }
       }
     }
