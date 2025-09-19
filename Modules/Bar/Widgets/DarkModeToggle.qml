@@ -10,7 +10,7 @@ NIconButton {
   property real scaling: 1.0
 
   icon: "dark-mode"
-  tooltipText: `Switch to ${Settings.data.colorSchemes.darkMode ? "light" : "dark" } mode`
+  tooltipText: `Switch to ${Settings.data.colorSchemes.darkMode ? "light" : "dark"} mode`
   compact: (Settings.data.bar.density === "compact")
   baseSize: Style.capsuleHeight
   colorBg: Settings.data.colorSchemes.darkMode ? (Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent) : Color.mPrimary
