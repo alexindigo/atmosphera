@@ -111,7 +111,7 @@ Item {
   onHideUnoccupiedChanged: refreshWorkspaces()
 
   Connections {
-    target: WorkspaceService
+    target: CompositorService
     function onWorkspacesChanged() {
       refreshWorkspaces()
     }
@@ -120,8 +120,8 @@ Item {
   function refreshWorkspaces() {
     localWorkspaces.clear()
     if (screen !== null) {
-      for (var i = 0; i < WorkspaceService.workspaces.count; i++) {
-        const ws = WorkspaceService.workspaces.get(i)
+      for (var i = 0; i < CompositorService.workspaces.count; i++) {
+        const ws = CompositorService.workspaces.get(i)
         if (ws.output.toLowerCase() === screen.name.toLowerCase()) {
           if (hideUnoccupied && !ws.isOccupied && !ws.isFocused) {
             continue
@@ -260,7 +260,7 @@ Item {
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-              WorkspaceService.switchToWorkspace(model.idx)
+              CompositorService.switchToWorkspace(model.idx)
             }
             hoverEnabled: true
           }
@@ -404,7 +404,7 @@ Item {
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-              WorkspaceService.switchToWorkspace(model.idx)
+              CompositorService.switchToWorkspace(model.idx)
             }
             hoverEnabled: true
           }
