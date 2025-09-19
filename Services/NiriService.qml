@@ -48,31 +48,31 @@ Item {
 
           for (const ws of workspacesData) {
             workspacesList.push({
-              "id": ws.id,
-              "idx": ws.idx,
-              "name": ws.name || "",
-              "output": ws.output || "",
-              "isFocused": ws.is_focused === true,
-              "isActive": ws.is_active === true,
-              "isUrgent": ws.is_urgent === true,
-              "isOccupied": ws.active_window_id ? true : false
-            })
+                                  "id": ws.id,
+                                  "idx": ws.idx,
+                                  "name": ws.name || "",
+                                  "output": ws.output || "",
+                                  "isFocused": ws.is_focused === true,
+                                  "isActive": ws.is_active === true,
+                                  "isUrgent": ws.is_urgent === true,
+                                  "isOccupied": ws.active_window_id ? true : false
+                                })
           }
 
           // Sort workspaces by output, then by index
           workspacesList.sort((a, b) => {
-            if (a.output !== b.output) {
-              return a.output.localeCompare(b.output)
-            }
-            return a.idx - b.idx
-          })
+                                if (a.output !== b.output) {
+                                  return a.output.localeCompare(b.output)
+                                }
+                                return a.idx - b.idx
+                              })
 
           // Update the workspaces ListModel
           workspaces.clear()
           for (var i = 0; i < workspacesList.length; i++) {
             workspaces.append(workspacesList[i])
           }
-          
+
           workspaceChanged()
         } catch (e) {
           Logger.error("NiriService", "Failed to parse workspaces:", e, line)
@@ -92,15 +92,15 @@ Item {
         try {
           const windowsData = JSON.parse(line)
           const windowsList = []
-          
+
           for (const win of windowsData) {
             windowsList.push({
-              "id": win.id,
-              "title": win.title || "",
-              "appId": win.app_id || "",
-              "workspaceId": win.workspace_id || null,
-              "isFocused": win.is_focused === true
-            })
+                               "id": win.id,
+                               "title": win.title || "",
+                               "appId": win.app_id || "",
+                               "workspaceId": win.workspace_id || null,
+                               "isFocused": win.is_focused === true
+                             })
           }
 
           windowsList.sort((a, b) => a.id - b.id)
@@ -115,7 +115,7 @@ Item {
               break
             }
           }
-          
+
           activeWindowChanged()
         } catch (e) {
           Logger.error("NiriService", "Failed to parse windows:", e, line)
@@ -132,32 +132,27 @@ Item {
 
     stdout: SplitParser {
       onRead: data => {
-        try {
-          const event = JSON.parse(data.trim())
+                try {
+                  const event = JSON.parse(data.trim())
 
-          if (event.WorkspacesChanged) {
-            updateWorkspaces()
-          } 
-          else if (event.WindowOpenedOrChanged) {
-            handleWindowOpenedOrChanged(event.WindowOpenedOrChanged)
-          } 
-          else if (event.WindowClosed) {
-            handleWindowClosed(event.WindowClosed)
-          } 
-          else if (event.WindowsChanged) {
-            handleWindowsChanged(event.WindowsChanged)
-          } 
-          else if (event.WorkspaceActivated) {
-            updateWorkspaces()
-          } 
-          else if (event.WindowFocusChanged) {
-            handleWindowFocusChanged(event.WindowFocusChanged)
-          }
-          // Removed OverviewOpenedOrClosed handling
-        } catch (e) {
-          Logger.error("NiriService", "Error parsing event stream:", e, data)
-        }
-      }
+                  if (event.WorkspacesChanged) {
+                    updateWorkspaces()
+                  } else if (event.WindowOpenedOrChanged) {
+                    handleWindowOpenedOrChanged(event.WindowOpenedOrChanged)
+                  } else if (event.WindowClosed) {
+                    handleWindowClosed(event.WindowClosed)
+                  } else if (event.WindowsChanged) {
+                    handleWindowsChanged(event.WindowsChanged)
+                  } else if (event.WorkspaceActivated) {
+                    updateWorkspaces()
+                  } else if (event.WindowFocusChanged) {
+                    handleWindowFocusChanged(event.WindowFocusChanged)
+                  }
+                  // Removed OverviewOpenedOrClosed handling
+                } catch (e) {
+                  Logger.error("NiriService", "Error parsing event stream:", e, data)
+                }
+              }
     }
   }
 
@@ -205,7 +200,7 @@ Item {
     try {
       const windowId = eventData.id
       const windowIndex = windows.findIndex(w => w.id === windowId)
-      
+
       if (windowIndex >= 0) {
         // If this was the focused window, clear focus
         if (windowIndex === focusedWindowIndex) {
@@ -229,15 +224,15 @@ Item {
     try {
       const windowsData = eventData.windows
       const windowsList = []
-      
+
       for (const win of windowsData) {
         windowsList.push({
-          "id": win.id,
-          "title": win.title || "",
-          "appId": win.app_id || "",
-          "workspaceId": win.workspace_id || null,
-          "isFocused": win.is_focused === true
-        })
+                           "id": win.id,
+                           "title": win.title || "",
+                           "appId": win.app_id || "",
+                           "workspaceId": win.workspace_id || null,
+                           "isFocused": win.is_focused === true
+                         })
       }
 
       windowsList.sort((a, b) => a.id - b.id)
@@ -252,7 +247,7 @@ Item {
           break
         }
       }
-      
+
       activeWindowChanged()
     } catch (e) {
       Logger.error("NiriService", "Error handling WindowsChanged:", e)
@@ -262,14 +257,14 @@ Item {
   function handleWindowFocusChanged(eventData) {
     try {
       const focusedId = eventData.id
-      
+
       if (focusedId) {
         const newIndex = windows.findIndex(w => w.id === focusedId)
         focusedWindowIndex = newIndex >= 0 ? newIndex : -1
       } else {
         focusedWindowIndex = -1
       }
-      
+
       activeWindowChanged()
     } catch (e) {
       Logger.error("NiriService", "Error handling WindowFocusChanged:", e)

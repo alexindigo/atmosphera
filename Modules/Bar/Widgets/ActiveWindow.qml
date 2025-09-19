@@ -32,7 +32,6 @@ Item {
 
   readonly property string windowTitle: CompositorService.getFocusedWindowTitle()
 
-
   readonly property bool showIcon: (widgetSettings.showIcon !== undefined) ? widgetSettings.showIcon : widgetMetadata.showIcon
 
   // 6% of total width
@@ -43,7 +42,7 @@ Item {
   readonly property bool isVertical: barPosition === "left" || barPosition === "right"
   readonly property bool compact: (Settings.data.bar.density === "compact")
 
- readonly property real textSize: {
+  readonly property real textSize: {
     var base = isVertical ? width : height
     return Math.max(1, compact ? base * 0.43 : base * 0.33)
   }
@@ -52,8 +51,6 @@ Item {
 
   implicitHeight: (barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Math.round(Style.barHeight * scaling)
   implicitWidth: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * 0.8 * scaling) : (horizontalLayout.implicitWidth + Style.marginM * 2 * scaling)
-
-
 
   visible: windowTitle !== ""
 

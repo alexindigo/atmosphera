@@ -31,15 +31,16 @@ Item {
 
   // Initialization
   function initialize() {
-    if (initialized) return
-    
+    if (initialized)
+      return
+
     try {
       Hyprland.refreshWorkspaces()
       Hyprland.refreshToplevels()
       Qt.callLater(() => {
-        safeUpdateWorkspaces()
-        safeUpdateWindows()
-      })
+                     safeUpdateWorkspaces()
+                     safeUpdateWindows()
+                   })
       initialized = true
       Logger.log("HyprlandService", "Initialized successfully")
     } catch (e) {
@@ -59,7 +60,7 @@ Item {
     try {
       workspaces.clear()
       workspaceCache = {}
-      
+
       if (!Hyprland.workspaces || !Hyprland.workspaces.values) {
         return
       }
@@ -69,7 +70,8 @@ Item {
 
       for (var i = 0; i < hlWorkspaces.length; i++) {
         const ws = hlWorkspaces[i]
-        if (!ws || ws.id < 1) continue
+        if (!ws || ws.id < 1)
+          continue
 
         const wsData = {
           "id": i,
@@ -81,7 +83,7 @@ Item {
           "isUrgent": ws.urgent === true,
           "isOccupied": occupiedIds[ws.id] === true
         }
-        
+
         workspaceCache[ws.id] = wsData
         workspaces.append(wsData)
       }
@@ -93,7 +95,7 @@ Item {
   // Get occupied workspace IDs safely
   function getOccupiedWorkspaceIds() {
     const occupiedIds = {}
-    
+
     try {
       if (!Hyprland.toplevels || !Hyprland.toplevels.values) {
         return occupiedIds
@@ -102,21 +104,24 @@ Item {
       const hlToplevels = Hyprland.toplevels.values
       for (var i = 0; i < hlToplevels.length; i++) {
         const toplevel = hlToplevels[i]
-        if (!toplevel) continue
-        
+        if (!toplevel)
+          continue
+
         try {
           const wsId = toplevel.workspace ? toplevel.workspace.id : null
           if (wsId !== null && wsId !== undefined) {
             occupiedIds[wsId] = true
           }
         } catch (e) {
+
           // Ignore individual toplevel errors
         }
       }
     } catch (e) {
+
       // Return empty if we can't determine occupancy
     }
-    
+
     return occupiedIds
   }
 
@@ -125,7 +130,7 @@ Item {
     try {
       const windowsList = []
       windowCache = {}
-      
+
       if (!Hyprland.toplevels || !Hyprland.toplevels.values) {
         windows = []
         focusedWindowIndex = -1
@@ -137,13 +142,14 @@ Item {
 
       for (var i = 0; i < hlToplevels.length; i++) {
         const toplevel = hlToplevels[i]
-        if (!toplevel) continue
+        if (!toplevel)
+          continue
 
         const windowData = extractWindowData(toplevel)
         if (windowData) {
           windowsList.push(windowData)
           windowCache[windowData.id] = windowData
-          
+
           if (windowData.isFocused) {
             newFocusedIndex = windowsList.length - 1
           }
@@ -151,7 +157,7 @@ Item {
       }
 
       windows = windowsList
-      
+
       if (newFocusedIndex !== focusedWindowIndex) {
         focusedWindowIndex = newFocusedIndex
         activeWindowChanged()
@@ -163,18 +169,20 @@ Item {
 
   // Extract window data safely from a toplevel
   function extractWindowData(toplevel) {
-    if (!toplevel) return null
-    
+    if (!toplevel)
+      return null
+
     try {
       // Safely extract properties
       const windowId = safeGetProperty(toplevel, "address", "")
-      if (!windowId) return null
-      
+      if (!windowId)
+        return null
+
       const appId = extractAppId(toplevel)
       const title = safeGetProperty(toplevel, "title", "")
       const wsId = toplevel.workspace ? toplevel.workspace.id : null
       const focused = toplevel.activated === true
-      
+
       return {
         "id": windowId,
         "title": title,
@@ -189,29 +197,33 @@ Item {
 
   // Extract app ID from various possible sources
   function extractAppId(toplevel) {
-    if (!toplevel) return ""
-    
+    if (!toplevel)
+      return ""
+
     // Try direct properties
     var appId = safeGetProperty(toplevel, "class", "")
-    if (appId) return appId
-    
+    if (appId)
+      return appId
+
     appId = safeGetProperty(toplevel, "initialClass", "")
-    if (appId) return appId
-    
+    if (appId)
+      return appId
+
     appId = safeGetProperty(toplevel, "appId", "")
-    if (appId) return appId
-    
+    if (appId)
+      return appId
+
     // Try lastIpcObject
     try {
       const ipcData = toplevel.lastIpcObject
       if (ipcData) {
-        return String(ipcData.class || ipcData.initialClass || 
-                     ipcData.appId || ipcData.wm_class || "")
+        return String(ipcData.class || ipcData.initialClass || ipcData.appId || ipcData.wm_class || "")
       }
     } catch (e) {
+
       // Ignore IPC errors
     }
-    
+
     return ""
   }
 
@@ -223,6 +235,7 @@ Item {
         return String(value)
       }
     } catch (e) {
+
       // Property access failed
     }
     return defaultValue

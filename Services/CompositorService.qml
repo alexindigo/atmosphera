@@ -71,28 +71,29 @@ Singleton {
   }
 
   function setupBackendConnections() {
-    if (!backend) return
+    if (!backend)
+      return
 
     // Connect backend signals to facade signals
     backend.workspaceChanged.connect(() => {
-      // Sync workspaces when they change
-      syncWorkspaces()
-      // Forward the signal
-      workspaceChanged()
-    })
-    
+                                       // Sync workspaces when they change
+                                       syncWorkspaces()
+                                       // Forward the signal
+                                       workspaceChanged()
+                                     })
+
     backend.activeWindowChanged.connect(activeWindowChanged)
     backend.windowListChanged.connect(() => {
-      // Sync windows when they change
-      windows = backend.windows
-      // Forward the signal
-      windowListChanged()
-    })
+                                        // Sync windows when they change
+                                        windows = backend.windows
+                                        // Forward the signal
+                                        windowListChanged()
+                                      })
 
     // Property bindings
     backend.focusedWindowIndexChanged.connect(() => {
-      focusedWindowIndex = backend.focusedWindowIndex
-    })
+                                                focusedWindowIndex = backend.focusedWindowIndex
+                                              })
 
     // Initial sync
     syncWorkspaces()
