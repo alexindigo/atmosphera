@@ -18,8 +18,8 @@ Rectangle {
   ColumnLayout {
     id: column
     anchors.fill: parent
-    anchors.margins: Style.marginL * scaling
-    spacing: Style.marginM * scaling
+    anchors.margins: Style.marginS * scaling
+    spacing: Style.marginS * scaling
 
     // Scrollable list of tokens
     NScrollView {
@@ -82,30 +82,30 @@ Rectangle {
           }
 
           // Hour tokens
-          ListElement {
-            category: "Hour"
-            token: "h"
-            description: "Hour without leading zero (12-hour when used with AP/ap, otherwise 24-hour)"
-            example: "2 (needs AP/ap for 12hr)"
-          }
-          ListElement {
-            category: "Hour"
-            token: "hh"
-            description: "Hour with leading zero (12-hour when used with AP/ap, otherwise 24-hour)"
-            example: "02 (needs AP/ap for 12hr)"
-          }
-          ListElement {
-            category: "Hour"
-            token: "h AP"
-            description: "12-hour format with AM/PM"
-            example: "2 PM"
-          }
-          ListElement {
-            category: "Hour"
-            token: "hh AP"
-            description: "12-hour format with leading zero and AM/PM"
-            example: "02 PM"
-          }
+          // ListElement {
+          //   category: "Hour"
+          //   token: "h"
+          //   description: "Hour without leading zero (12-hour when used with AP/ap, otherwise 24-hour)"
+          //   example: "2 (needs AP/ap for 12hr)"
+          // }
+          // ListElement {
+          //   category: "Hour"
+          //   token: "hh"
+          //   description: "Hour with leading zero (12-hour when used with AP/ap, otherwise 24-hour)"
+          //   example: "02 (needs AP/ap for 12hr)"
+          // }
+          // ListElement {
+          //   category: "Hour"
+          //   token: "h AP"
+          //   description: "12-hour format with AM/PM"
+          //   example: "2 PM"
+          // }
+          // ListElement {
+          //   category: "Hour"
+          //   token: "hh AP"
+          //   description: "12-hour format with leading zero and AM/PM"
+          //   example: "02 PM"
+          // }
           ListElement {
             category: "Hour"
             token: "H"
@@ -239,7 +239,7 @@ Rectangle {
         delegate: Rectangle {
           id: tokenDelegate
           width: tokensList.width
-          height: 50 * scaling
+          height: 32 * scaling
           color: {
             if (tokenMouseArea.containsMouse) {
               return Qt.alpha(Color.mPrimary, 0.1)
@@ -288,7 +288,7 @@ Rectangle {
             // Category badge
             Rectangle {
               width: 70 * scaling
-              height: 28 * scaling
+              height: 22 * scaling
               color: getCategoryColor(model.category)[0]
               radius: Style.radiusS * scaling
               opacity: tokenMouseArea.containsMouse ? 0.9 : 1.0
@@ -311,7 +311,7 @@ Rectangle {
             Rectangle {
               id: tokenButton
               width: 100 * scaling
-              height: 28 * scaling
+              height: 22 * scaling
               color: tokenMouseArea.containsMouse ? Color.mPrimary : Color.mOnSurface
               radius: Style.radiusS * scaling
 
@@ -354,7 +354,7 @@ Rectangle {
             // Live example
             Rectangle {
               width: 90 * scaling
-              height: 28 * scaling
+              height: 22 * scaling
               color: tokenMouseArea.containsMouse ? Color.mPrimary : Color.mOnSurfaceVariant
               radius: Style.radiusS * scaling
               border.color: tokenMouseArea.containsMouse ? Color.mPrimary : Color.mOutline

@@ -107,7 +107,7 @@ ColumnLayout {
 
   NHeader {
     label: "Clock format"
-    description: "Build your clock display using the tokens below.\nAdditional lines (3 & 4) are only shown in the vertical bar layout.\nClick on any token to insert it into the selected input field."
+    description: "Build your clock display using the tokens below. Additional lines (3 & 4) are only shown in the vertical bar layout.\nClick on any token to insert it into the selected input field."
   }
 
   RowLayout {
@@ -319,14 +319,14 @@ ColumnLayout {
     Layout.bottomMargin: Style.marginL * scaling
   }
 
-  NHeader {
-    label: "Tokens"
-    description: focusedLineIndex > 0 ? "Click any token to add it to line " + focusedLineIndex : "Select an input field above, then click a token to insert it."
-  }
+  // NHeader {
+  //   label: "Tokens"
+  //   description: focusedLineIndex > 0 ? "Click any token to add it to line " + focusedLineIndex : "Select an input field above, then click a token to insert it."
+  // }
 
   NDateTimeTokens {
     Layout.fillWidth: true
-    height: 400 * scaling
+    height: 200 * scaling
 
     // Connect to token clicked signal if NDateTimeTokens provides it
     onTokenClicked: token => root.insertToken(token)
