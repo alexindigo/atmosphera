@@ -15,36 +15,7 @@ Singleton {
     return Math.floor(date / 1000)
   }
 
-  function formatDate(monthBeforeDay = true) {
-    let now = date
-    let dayName = now.toLocaleDateString(Qt.locale(), "ddd")
-    dayName = dayName.charAt(0).toUpperCase() + dayName.slice(1)
-    let day = now.getDate()
-    let suffix
-    if (day > 3 && day < 21)
-      suffix = 'th'
-    else
-      switch (day % 10) {
-      case 1:
-        suffix = "st"
-        break
-      case 2:
-        suffix = "nd"
-        break
-      case 3:
-        suffix = "rd"
-        break
-      default:
-        suffix = "th"
-      }
-    let month = now.toLocaleDateString(Qt.locale(), "MMMM")
-    let year = now.toLocaleDateString(Qt.locale(), "yyyy")
-
-    return `${dayName}, ` + (monthBeforeDay ? `${month} ${day}${suffix} ${year}` : `${day}${suffix} ${month} ${year}`)
-  }
-
-
-  /**
+/**
  * Formats a Date object into a YYYYMMDD-HHMMSS string.
  * @param {Date} [date=new Date()] - The date to format. Defaults to the current date and time.
  * @returns {string} The formatted date string.

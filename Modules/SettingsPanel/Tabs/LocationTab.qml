@@ -93,17 +93,10 @@ ColumnLayout {
     }
 
     NToggle {
-      label: "Use 12-hour time format"
+      label: "Use 12-hour time format on the lock screen"
       description: "On for AM/PM format (e.g., 8:00 PM), off for 24-hour format (e.g., 20:00)."
       checked: Settings.data.location.use12hourFormat
       onToggled: checked => Settings.data.location.use12hourFormat = checked
-    }
-
-    NToggle {
-      label: "Show month before day"
-      description: "On for 09/17/2025, off for 17/09/2025."
-      checked: Settings.data.location.monthBeforeDay
-      onToggled: checked => Settings.data.location.monthBeforeDay = checked
     }
 
     NToggle {

@@ -142,10 +142,6 @@ Singleton {
         adapter.location.use12hourFormat = widget.use12HourClock
         delete widget.use12HourClock
       }
-      if (widget.reverseDayMonth !== undefined) {
-        adapter.location.monthBeforeDay = widget.reverseDayMonth
-        delete widget.reverseDayMonth
-      }
       break
     }
 
@@ -331,7 +327,6 @@ Singleton {
         property string name: defaultLocation
         property bool useFahrenheit: false
         property bool use12hourFormat: false
-        property bool monthBeforeDay: false
         property bool showWeekNumberInCalendar: false
       }
 

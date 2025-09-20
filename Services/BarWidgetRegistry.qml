@@ -53,7 +53,12 @@ Singleton {
                                   },
                                   "Clock": {
                                     "allowUserSettings": true,
-                                    "displayFormat": "time-date-short"
+                                    "usePrimaryColor": true,
+                                    "useMonospacedFont": true,
+                                    "line1": "HH:mm ddd, MMM dd",
+                                    "line2": "",
+                                    "line3": "",
+                                    "line4": ""
                                   },
                                   "CustomButton": {
                                     "allowUserSettings": true,
