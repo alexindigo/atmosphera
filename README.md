@@ -1,4 +1,4 @@
-# Noctalia
+# Noctalia shell
 
 **_quiet by design_**
 
