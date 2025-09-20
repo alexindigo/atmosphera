@@ -323,7 +323,6 @@ ColumnLayout {
   //   label: "Tokens"
   //   description: focusedLineIndex > 0 ? "Click any token to add it to line " + focusedLineIndex : "Select an input field above, then click a token to insert it."
   // }
-
   NDateTimeTokens {
     Layout.fillWidth: true
     height: 200 * scaling

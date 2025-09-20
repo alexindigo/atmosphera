@@ -15,7 +15,8 @@ Singleton {
     return Math.floor(date / 1000)
   }
 
-/**
+
+  /**
  * Formats a Date object into a YYYYMMDD-HHMMSS string.
  * @param {Date} [date=new Date()] - The date to format. Defaults to the current date and time.
  * @returns {string} The formatted date string.

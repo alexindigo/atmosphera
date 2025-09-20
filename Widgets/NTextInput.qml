@@ -54,6 +54,14 @@ ColumnLayout {
       }
     }
 
+    // Block mouse events from going through
+    MouseArea {
+      anchors.fill: parent
+      z: -1 // Place behind the TextField
+      acceptedButtons: Qt.AllButtons
+      propagateComposedEvents: false
+    }
+
     TextField {
       id: input
 
