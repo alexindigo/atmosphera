@@ -83,19 +83,23 @@ ColumnLayout {
   }
 
   NHeader {
-    label: "Clock format"
-    description: "Build your clock display using the tokens below. Additional lines (3 & 4) are only shown in the vertical bar layout.\nClick on any token to insert it into the selected input field."
+    label: "Clock display"
+    description: "Arrange your clock's layout. Click a token below to add it to the selected field."
   }
 
   RowLayout {
     id: main
-    Layout.fillWidth: true
+
     spacing: Style.marginL * scaling
+    Layout.fillWidth: true
+    Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
 
     ColumnLayout {
+      spacing: Style.marginM * scaling
+
       Layout.fillWidth: true
       Layout.preferredWidth: 1 // Equal sizing hint
-      spacing: Style.marginM * scaling
+      Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
 
       NTextInput {
         id: inputHoriz
@@ -113,6 +117,10 @@ ColumnLayout {
             })
           }
         }
+      }
+
+      Item {
+        Layout.fillHeight: true
       }
 
       NTextInput {
