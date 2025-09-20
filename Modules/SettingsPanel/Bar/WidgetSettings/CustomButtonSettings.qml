@@ -83,11 +83,8 @@ ColumnLayout {
     Layout.fillWidth: true
   }
 
-  NText {
-    text: "Dynamic text"
-    font.pointSize: Style.fontSizeL * scaling
-    font.weight: Style.fontWeightBold
-    color: Color.mPrimary
+  NHeader {
+    label: "Dynamic text"
   }
 
   NTextInput {
