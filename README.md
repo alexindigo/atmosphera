@@ -3,7 +3,7 @@
 **_quiet by design_**
 
 <p align="center">
-  <img src="https://assets.noctalia.dev/noctalia-logo-256.png" alt="Noctalia Logo" />
+  <img src="https://assets.noctalia.dev/noctalia-logo.svg" alt="Noctalia Logo" style="width: 192px" />
 </p>
 
 <p align="center">
