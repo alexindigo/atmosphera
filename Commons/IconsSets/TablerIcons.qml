@@ -4303,6 +4303,7 @@ Singleton {
     "news-off": "\u{f167}",
     "nfc": "\u{eeb7}",
     "nfc-off": "\u{f168}",
+    "niri": "\u{ec32}",
     "noctalia": "\u{ec33}",
     "no-copyright": "\u{efb9}",
     "no-creative-commons": "\u{efba}",

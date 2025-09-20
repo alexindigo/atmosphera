@@ -39,6 +39,7 @@ Popup {
 
   onOpened: {
     selectedIcon = initialIcon
+    query = initialIcon
     searchInput.forceActiveFocus()
   }
 
@@ -80,7 +81,7 @@ Popup {
         id: searchInput
         Layout.fillWidth: true
         label: "Search"
-        placeholderText: "Search (e.g., arrow, battery, cloud)"
+        placeholderText: "e.g., noctalia, niri, battery, cloud"
         text: root.query
         onTextChanged: root.query = text.trim().toLowerCase()
       }
