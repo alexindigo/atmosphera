@@ -105,6 +105,7 @@ ColumnLayout {
         id: inputHoriz
         Layout.fillWidth: true
         label: "Horizontal bar"
+        description: "Tip: Use \\n to create a line break."
         placeholderText: "HH:mm ddd, MMM dd"
         text: valueFormatHorizontal
         onTextChanged: valueFormatHorizontal = text
@@ -127,6 +128,7 @@ ColumnLayout {
         id: inputVert
         Layout.fillWidth: true
         label: "Vertical bar"
+        description: "Use a space to separate each part onto a new line."
         placeholderText: "HH mm dd MM"
         text: valueFormatVertical
         onTextChanged: valueFormatVertical = text
@@ -146,7 +148,7 @@ ColumnLayout {
     // Preview
     ColumnLayout {
       Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-      Layout.fillWidth: false // Don't stretch this column
+      Layout.fillWidth: false
 
       NLabel {
         label: "Preview"
@@ -155,7 +157,7 @@ ColumnLayout {
 
       Rectangle {
         Layout.preferredWidth: 320 * scaling
-        Layout.preferredHeight: 140 * scaling // Fixed height instead of fillHeight
+        Layout.preferredHeight: 160 * scaling // Fixed height instead of fillHeight
 
         color: Color.mSurfaceVariant
         radius: Style.radiusM * scaling
@@ -172,22 +174,35 @@ ColumnLayout {
           spacing: Style.marginM * scaling
           anchors.centerIn: parent
 
-          // Horizontal
-          NText {
-            visible: text !== ""
-            text: Qt.formatDateTime(now, valueFormatHorizontal.trim())
-            font.family: valueUseMonospacedFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault
-            font.pointSize: Style.fontSizeM * scaling
-            font.weight: Style.fontWeightBold
-            color: valueUsePrimaryColor ? Color.mPrimary : Color.mOnSurface
-            wrapMode: Text.WordWrap
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+          ColumnLayout {
+            spacing: -2 * scaling
+            Layout.alignment: Qt.AlignHCenter
 
-            Behavior on color {
-              ColorAnimation {
-                duration: Style.animationFast
+            // Horizontal
+            Repeater {
+              Layout.topMargin: Style.marginM * scaling
+              model: Qt.formatDateTime(now, valueFormatHorizontal.trim()).split("\\n")
+              delegate: NText {
+                visible: text !== ""
+                text: modelData
+                font.family: valueUseMonospacedFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault
+                font.pointSize: Style.fontSizeM * scaling
+                font.weight: Style.fontWeightBold
+                color: valueUsePrimaryColor ? Color.mPrimary : Color.mOnSurface
+                wrapMode: Text.WordWrap
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+
+                Behavior on color {
+                  ColorAnimation {
+                    duration: Style.animationFast
+                  }
+                }
               }
             }
+          }
+
+          NDivider {
+            Layout.fillWidth: true
           }
 
           // Vertical
@@ -222,14 +237,11 @@ ColumnLayout {
   }
 
   NDivider {
-    Layout.topMargin: Style.marginL * scaling
-    Layout.bottomMargin: Style.marginL * scaling
+    Layout.topMargin: Style.marginM * scaling
+    Layout.bottomMargin: Style.marginM * scaling
   }
 
-  // NHeader {
-  //   label: "Tokens"
-  //   description: focusedLineIndex > 0 ? "Click any token to add it to line " + focusedLineIndex : "Select an input field above, then click a token to insert it."
-  // }
+
   NDateTimeTokens {
     Layout.fillWidth: true
     height: 200 * scaling

@@ -54,20 +54,29 @@ Rectangle {
       id: layout
       anchors.centerIn: parent
 
+      // Horizontal
       Loader {
         active: !isBarVertical
-        sourceComponent: NText {
+        sourceComponent: ColumnLayout {
           anchors.centerIn: parent
-          visible: text !== ""
-          text: Qt.formatDateTime(now, formatHorizontal.trim())
-          font.family: useMonospacedFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault
-          font.pointSize: isBarVertical ? Style.fontSizeS * scaling : Style.fontSizeS * scaling
-          font.weight: Style.fontWeightBold
-          color: usePrimaryColor ? Color.mPrimary : Color.mOnSurface
-          wrapMode: Text.WordWrap
+          spacing: -3 * scaling
+          Repeater {
+            model: Qt.formatDateTime(now, formatHorizontal.trim()).split("\\n")
+            NText {
+              visible: text !== ""
+              text: modelData
+              font.family: useMonospacedFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault
+              font.pointSize: (index == 0) ? Style.fontSizeS * scaling : Style.fontSizeXXS * scaling
+              font.weight: Style.fontWeightBold
+              color: usePrimaryColor ? Color.mPrimary : Color.mOnSurface
+              wrapMode: Text.WordWrap
+              Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+            }
+          }
         }
       }
 
+      // Vertical
       Loader {
         active: isBarVertical
         sourceComponent: ColumnLayout {
@@ -79,7 +88,7 @@ Rectangle {
               visible: text !== ""
               text: modelData
               font.family: useMonospacedFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault
-              font.pointSize: isBarVertical ? Style.fontSizeS * scaling : Style.fontSizeXS * scaling
+              font.pointSize: Style.fontSizeS * scaling
               font.weight: Style.fontWeightBold
               color: usePrimaryColor ? Color.mPrimary : Color.mOnSurface
               wrapMode: Text.WordWrap
