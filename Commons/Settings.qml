@@ -123,6 +123,7 @@ Singleton {
     }
 
     // Upgrade the density of the bar so the look stay the same for people who upgrade.
+    // TODO: remove soon
     if (adapter.settingsVersion == 2) {
       adapter.bar.density = "comfortable"
       adapter.settingsVersion++
@@ -148,8 +149,20 @@ Singleton {
       break
     }
 
-    // Inject missing default setting (metaData) from BarWidgetRegistry
+    // Get all existing custom settings keys
     const keys = Object.keys(BarWidgetRegistry.widgetMetadata[widget.id])
+
+    // Delete deprecated user settings from the wiget
+    for (const k of Object.keys(widget)) {
+      if (k === "id" || k === "allowUserSettings") {
+        continue
+      }
+      if (!keys.includes(k)) {
+        delete widget[k]
+      }
+    }
+
+    // Inject missing default setting (metaData) from BarWidgetRegistry
     for (var i = 0; i < keys.length; i++) {
       const k = keys[i]
       if (k === "id" || k === "allowUserSettings") {
