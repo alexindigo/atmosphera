@@ -241,7 +241,6 @@ ColumnLayout {
     Layout.bottomMargin: Style.marginM * scaling
   }
 
-
   NDateTimeTokens {
     Layout.fillWidth: true
     height: 200 * scaling

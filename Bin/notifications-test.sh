@@ -1,10 +1,10 @@
 #!/usr/bin/env -S bash
 
-echo "Sending 8 test notifications..."
+echo "Sending test notifications..."
 
-# Send 8 notifications with numbers
-for i in {1..8}; do
-    notify-send "Notification $i" "This is test notification number $i of 8"
+# Send a bunch of notifications with numbers
+for i in {1..4}; do
+    notify-send "Notification $i" "This is test notification number $i with a very long text that will probably break the layout or maybe not? Who knows?"
     sleep 1
 done
 
@@ -30,3 +30,17 @@ if command -v notify-send >/dev/null 2>&1; then
 
     echo "Icon/image tests sent!"
 fi
+
+# A test notification with actions
+gdbus call --session \
+          --dest org.freedesktop.Notifications \
+          --object-path /org/freedesktop/Notifications \
+          --method org.freedesktop.Notifications.Notify \
+          "my-app" \
+          0 \
+          "dialog-question" \
+          "Confirmation Required" \
+          "Do you want to proceed with the action?" \
+          "['default', 'OK', 'cancel', 'Cancel']" \
+          "{}" \
+          5000

@@ -81,7 +81,7 @@ NPanel {
         Layout.fillWidth: true
         Layout.fillHeight: true
         Layout.alignment: Qt.AlignHCenter
-        visible: NotificationService.historyModel.count === 0
+        visible: NotificationService.notificationHistory.count === 0
         spacing: Style.marginL * scaling
 
         Item {
@@ -125,13 +125,15 @@ NPanel {
         horizontalPolicy: ScrollBar.AlwaysOff
         verticalPolicy: ScrollBar.AsNeeded
 
-        model: NotificationService.historyModel
+        model: NotificationService.notificationHistory
         spacing: Style.marginM * scaling
         clip: true
         boundsBehavior: Flickable.StopAtBounds
-        visible: NotificationService.historyModel.count > 0
+        visible: NotificationService.notificationHistory.count > 0
 
         delegate: Rectangle {
+          property string notificationId: model.id
+
           width: notificationList.width
           height: notificationLayout.implicitHeight + (Style.marginM * scaling * 2)
           radius: Style.radiusM * scaling
@@ -139,36 +141,87 @@ NPanel {
           border.color: Qt.alpha(Color.mOutline, Style.opacityMedium)
           border.width: Math.max(1, Style.borderS * scaling)
 
+          // Smooth color transition on hover
+          Behavior on color {
+            ColorAnimation {
+              duration: Style.animationFast
+            }
+          }
+
           RowLayout {
             id: notificationLayout
             anchors.fill: parent
             anchors.margins: Style.marginM * scaling
             spacing: Style.marginM * scaling
 
-            // App icon (same style as popup)
-            NImageCircled {
-              Layout.preferredWidth: 28 * scaling
-              Layout.preferredHeight: 28 * scaling
-              Layout.alignment: Qt.AlignVCenter
-              // Prefer stable themed icons over transient image paths
-              imagePath: (appIcon && appIcon !== "") ? (AppIcons.iconFromName(appIcon, "application-x-executable") || appIcon) : ((AppIcons.iconForAppId(desktopEntry || appName, "application-x-executable") || (image && image !== "" ? image : AppIcons.iconFromName("application-x-executable", "application-x-executable"))))
-              borderColor: Color.transparent
-              borderWidth: 0
-              visible: true
+            ColumnLayout {
+              NImageCircled {
+                Layout.preferredWidth: 40 * scaling
+                Layout.preferredHeight: 40 * scaling
+                Layout.alignment: Qt.AlignTop
+                Layout.topMargin: 20 * scaling
+                imagePath: model.cachedImage || model.originalImage || ""
+                borderColor: Color.transparent
+                borderWidth: 0
+                fallbackIcon: "bell"
+                fallbackIconSize: 24 * scaling
+              }
+              Item {
+                Layout.fillHeight: true
+              }
             }
 
             // Notification content column
             ColumnLayout {
               Layout.fillWidth: true
-              Layout.alignment: Qt.AlignVCenter
-              Layout.maximumWidth: notificationList.width - (Style.marginM * scaling * 4) // Account for margins and delete button
-              spacing: Style.marginXXS * scaling
+              Layout.alignment: Qt.AlignTop
+              spacing: Style.marginXS * scaling
 
+              // Header row with app name and timestamp
+              RowLayout {
+                Layout.fillWidth: true
+                spacing: Style.marginS * scaling
+
+                // Urgency indicator
+                Rectangle {
+                  Layout.preferredWidth: 6 * scaling
+                  Layout.preferredHeight: 6 * scaling
+                  Layout.alignment: Qt.AlignVCenter
+                  radius: 3 * scaling
+                  visible: model.urgency !== 1
+                  color: {
+                    if (model.urgency === 2)
+                      return Color.mError
+                    else if (model.urgency === 0)
+                      return Color.mOnSurfaceVariant
+                    else
+                      return Color.transparent
+                  }
+                }
+
+                NText {
+                  text: model.appName || "Unknown App"
+                  font.pointSize: Style.fontSizeXS * scaling
+                  color: Color.mSecondary
+                }
+
+                NText {
+                  text: NotificationService.formatTimestamp(model.timestamp)
+                  font.pointSize: Style.fontSizeXS * scaling
+                  color: Color.mSecondary
+                }
+
+                Item {
+                  Layout.fillWidth: true
+                }
+              }
+
+              // Summary
               NText {
-                text: (summary || "No summary").substring(0, 100)
+                text: model.summary || "No summary"
                 font.pointSize: Style.fontSizeM * scaling
                 font.weight: Font.Medium
-                color: Color.mPrimary
+                color: Color.mOnSurface
                 textFormat: Text.PlainText
                 wrapMode: Text.Wrap
                 Layout.fillWidth: true
@@ -176,23 +229,17 @@ NPanel {
                 elide: Text.ElideRight
               }
 
+              // Body
               NText {
-                text: (body || "").substring(0, 150)
-                font.pointSize: Style.fontSizeXS * scaling
-                color: Color.mOnSurface
+                text: model.body || ""
+                font.pointSize: Style.fontSizeS * scaling
+                color: Color.mOnSurfaceVariant
                 textFormat: Text.PlainText
                 wrapMode: Text.Wrap
                 Layout.fillWidth: true
                 maximumLineCount: 3
                 elide: Text.ElideRight
                 visible: text.length > 0
-              }
-
-              NText {
-                text: NotificationService.formatTimestamp(timestamp)
-                font.pointSize: Style.fontSizeXS * scaling
-                color: Color.mOnSurface
-                Layout.fillWidth: true
               }
             }
 
@@ -204,18 +251,10 @@ NPanel {
               Layout.alignment: Qt.AlignTop
 
               onClicked: {
-                Logger.log("NotificationHistory", "Removing notification:", summary)
-                NotificationService.historyModel.remove(index)
-                NotificationService.saveHistory()
+                // Remove from history using the service API
+                NotificationService.removeFromHistory(notificationId)
               }
             }
-          }
-
-          MouseArea {
-            id: notificationMouseArea
-            anchors.fill: parent
-            anchors.rightMargin: Style.marginXL * scaling
-            hoverEnabled: true
           }
         }
       }

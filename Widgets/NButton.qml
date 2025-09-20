@@ -19,8 +19,6 @@ Rectangle {
   property int fontWeight: Style.fontWeightBold
   property real iconSize: Style.fontSizeL * scaling
   property bool outlined: false
-  property real customWidth: -1
-  property real customHeight: -1
 
   // Signals
   signal clicked
@@ -32,8 +30,8 @@ Rectangle {
   property bool pressed: false
 
   // Dimensions
-  implicitWidth: customWidth > 0 ? customWidth : contentRow.implicitWidth + (Style.marginL * 2 * scaling)
-  implicitHeight: customHeight > 0 ? customHeight : Math.max(Style.baseWidgetSize * scaling, contentRow.implicitHeight + (Style.marginM * scaling))
+  implicitWidth: contentRow.implicitWidth + (Style.marginL * 2 * scaling)
+  implicitHeight: Math.max(Style.baseWidgetSize * scaling, contentRow.implicitHeight + (Style.marginM * scaling))
 
   // Appearance
   radius: Style.radiusS * scaling
