@@ -101,6 +101,73 @@
 
       defaultPackage = eachSystem (system: self.packages.${system}.default);
 
+      homeModules.default =
+        {
+          config,
+          lib,
+          pkgs,
+          ...
+        }:
+        let
+          cfg = config.programs.noctalia-shell;
+        in
+        {
+          options.programs.noctalia-shell = {
+            enable = lib.mkEnableOption "Noctalia shell configuration";
+
+            settings = lib.mkOption {
+              type =
+                with lib.types;
+                nullOr (oneOf [
+                  attrs
+                  str
+                  path
+                ]);
+              default = null;
+              example = lib.literalExpression ''
+                {
+                  bar = {
+                    position = "bottom";
+                    floating = true;
+                    backgroundOpacity = 0.95;
+                  };
+                  general = {
+                    animationSpeed = 1.5;
+                    radiusRatio = 1.2;
+                  };
+                  colorSchemes = {
+                    darkMode = true;
+                    useWallpaperColors = true;
+                  };
+                }
+              '';
+              description = ''
+                Noctalia shell configuration settings as an attribute set, string
+                or filepath, to be written to ~/.config/noctalia/settings.json.
+              '';
+            };
+          };
+
+          config = lib.mkIf cfg.enable {
+            xdg.configFile.noctalia = lib.mkIf (cfg.settings != null) (
+              {
+                target = "noctalia/settings.json";
+                onChange = ''
+                  ${pkgs.systemd}/bin/systemctl --user try-restart noctalia-shell.service 2>/dev/null || true
+                '';
+              }
+              // (
+                if builtins.isAttrs cfg.settings then
+                  { text = builtins.toJSON cfg.settings; }
+                else if builtins.isString cfg.settings then
+                  { text = cfg.settings; }
+                else
+                  { source = cfg.settings; }
+              )
+            );
+          };
+        };
+
       nixosModules.default =
         {
           config,
