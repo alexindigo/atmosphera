@@ -146,26 +146,77 @@
                 or filepath, to be written to ~/.config/noctalia/settings.json.
               '';
             };
+
+            colors = lib.mkOption {
+              type =
+                with lib.types;
+                nullOr (oneOf [
+                  attrs
+                  str
+                  path
+                ]);
+              default = null;
+              example = lib.literalExpression ''
+                 {
+                   mError = "#dddddd";
+                   mOnError = "#111111";
+                   mOnPrimary = "#111111";
+                   mOnSecondary = "#111111";
+                   mOnSurface = "#828282";
+                   mOnSurfaceVariant = "#5d5d5d";
+                   mOnTertiary = "#111111";
+                   mOutline = "#3c3c3c";
+                   mPrimary = "#aaaaaa";
+                   mSecondary = "#a7a7a7";
+                   mShadow = "#000000";
+                   mSurface = "#111111";
+                   mSurfaceVariant = "#191919";
+                   mTertiary = "#cccccc";
+                }
+              '';
+              description = ''
+                Noctalia shell color configuration as an attribute set, string
+                or filepath, to be written to ~/.config/noctalia/colors.json.
+              '';
+            };
           };
 
-          config = lib.mkIf cfg.enable {
-            xdg.configFile.noctalia = lib.mkIf (cfg.settings != null) (
-              {
-                target = "noctalia/settings.json";
-                onChange = ''
-                  ${pkgs.systemd}/bin/systemctl --user try-restart noctalia-shell.service 2>/dev/null || true
-                '';
-              }
-              // (
-                if builtins.isAttrs cfg.settings then
-                  { text = builtins.toJSON cfg.settings; }
-                else if builtins.isString cfg.settings then
-                  { text = cfg.settings; }
-                else
-                  { source = cfg.settings; }
-              )
-            );
-          };
+          config =
+            let
+              restart = ''
+                ${pkgs.systemd}/bin/systemctl --user try-restart noctalia-shell.service 2>/dev/null || true
+              '';
+            in
+            lib.mkIf cfg.enable {
+              xdg.configFile = {
+                "noctalia/settings.json" = lib.mkIf (cfg.settings != null) (
+                  {
+                    onChange = restart;
+                  }
+                  // (
+                    if builtins.isAttrs cfg.settings then
+                      { text = builtins.toJSON cfg.settings; }
+                    else if builtins.isString cfg.settings then
+                      { text = cfg.settings; }
+                    else
+                      { source = cfg.settings; }
+                  )
+                );
+                "noctalia/colors.json" = lib.mkIf (cfg.colors != null) (
+                  {
+                    onChange = restart;
+                  }
+                  // (
+                    if builtins.isAttrs cfg.colors then
+                      { text = builtins.toJSON cfg.colors; }
+                    else if builtins.isString cfg.colors then
+                      { text = cfg.colors; }
+                    else
+                      { source = cfg.colors; }
+                  )
+                );
+              };
+            };
         };
 
       nixosModules.default =
