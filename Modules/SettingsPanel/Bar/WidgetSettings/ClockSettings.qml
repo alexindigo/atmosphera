@@ -17,10 +17,8 @@ ColumnLayout {
   // Local state
   property bool valueUsePrimaryColor: widgetData.usePrimaryColor !== undefined ? widgetData.usePrimaryColor : widgetMetadata.usePrimaryColor
   property bool valueUseMonospacedFont: widgetData.useMonospacedFont !== undefined ? widgetData.useMonospacedFont : widgetMetadata.useMonospacedFont
-  property string valueLine1: widgetData.line1 !== undefined ? widgetData.line1 : widgetMetadata.line1
-  property string valueLine2: widgetData.line2 !== undefined ? widgetData.line2 : widgetMetadata.line2
-  property string valueLine3: widgetData.line3 !== undefined ? widgetData.line3 : widgetMetadata.line3
-  property string valueLine4: widgetData.line4 !== undefined ? widgetData.line4 : widgetMetadata.line4
+  property string valueFormatHorizontal: widgetData.formatHorizontal !== undefined ? widgetData.formatHorizontal : widgetMetadata.formatHorizontal
+  property string valueFormatVertical: widgetData.formatVertical !== undefined ? widgetData.formatVertical : widgetMetadata.formatVertical
 
   // Track the currently focused input field
   property var focusedInput: null
@@ -32,21 +30,18 @@ ColumnLayout {
     var settings = Object.assign({}, widgetData || {})
     settings.usePrimaryColor = valueUsePrimaryColor
     settings.useMonospacedFont = valueUseMonospacedFont
-    settings.line1 = valueLine1.trim()
-    settings.line2 = valueLine2.trim()
-    settings.line3 = valueLine3.trim()
-    settings.line4 = valueLine4.trim()
+    settings.formatHorizontal = valueFormatHorizontal.trim()
+    settings.formatVertical = valueFormatVertical.trim()
     return settings
   }
 
   // Function to insert token at cursor position in the focused input
   function insertToken(token) {
     if (!focusedInput || !focusedInput.inputItem) {
-      // If no input is focused, default to line 1
-      if (inputLine1.inputItem) {
-        inputLine1.inputItem.focus = true
-        focusedInput = inputLine1
-        focusedLineIndex = 1
+      // If no input is focused, default to horiz
+      if (inputHoriz.inputItem) {
+        inputHoriz.inputItem.focus = true
+        focusedInput = inputHoriz
       }
     }
 
@@ -64,24 +59,6 @@ ColumnLayout {
 
       // Ensure the input keeps focus
       input.focus = true
-    }
-  }
-
-  // Function to update the value property based on which line was edited
-  function updateLineValue(lineIndex, text) {
-    switch (lineIndex) {
-    case 1:
-      valueLine1 = text
-      break
-    case 2:
-      valueLine2 = text
-      break
-    case 3:
-      valueLine3 = text
-      break
-    case 4:
-      valueLine4 = text
-      break
     }
   }
 
@@ -121,20 +98,17 @@ ColumnLayout {
       spacing: Style.marginM * scaling
 
       NTextInput {
-        id: inputLine1
+        id: inputHoriz
         Layout.fillWidth: true
-        label: "1st line"
-        placeholderText: "HH:mm"
-        text: valueLine1
-        onTextChanged: updateLineValue(1, text)
-
-        // Track focus state
+        label: "Horizontal bar"
+        placeholderText: "HH:mm ddd, MMM dd"
+        text: valueFormatHorizontal
+        onTextChanged: valueFormatHorizontal = text
         Component.onCompleted: {
           if (inputItem) {
             inputItem.onActiveFocusChanged.connect(function () {
               if (inputItem.activeFocus) {
-                root.focusedInput = inputLine1
-                root.focusedLineIndex = 1
+                root.focusedInput = inputHoriz
               }
             })
           }
@@ -142,68 +116,17 @@ ColumnLayout {
       }
 
       NTextInput {
-        id: inputLine2
+        id: inputVert
         Layout.fillWidth: true
-        label: "2nd line"
-        placeholderText: "ddd MMM d"
-        text: valueLine2
-        onTextChanged: updateLineValue(2, text)
-
-        // Track focus state
+        label: "Vertical bar"
+        placeholderText: "HH mm dd MM"
+        text: valueFormatVertical
+        onTextChanged: valueFormatVertical = text
         Component.onCompleted: {
           if (inputItem) {
             inputItem.onActiveFocusChanged.connect(function () {
               if (inputItem.activeFocus) {
-                root.focusedInput = inputLine2
-                root.focusedLineIndex = 2
-              }
-            })
-          }
-        }
-      }
-    }
-
-    ColumnLayout {
-      Layout.fillWidth: true
-      Layout.preferredWidth: 1 // Equal sizing hint
-      spacing: Style.marginM * scaling
-
-      NTextInput {
-        id: inputLine3
-        Layout.fillWidth: true
-        label: "3rd line"
-        placeholderText: ""
-        text: valueLine3
-        onTextChanged: updateLineValue(3, text)
-
-        // Track focus state
-        Component.onCompleted: {
-          if (inputItem) {
-            inputItem.onActiveFocusChanged.connect(function () {
-              if (inputItem.activeFocus) {
-                root.focusedInput = inputLine3
-                root.focusedLineIndex = 3
-              }
-            })
-          }
-        }
-      }
-
-      NTextInput {
-        id: inputLine4
-        Layout.fillWidth: true
-        label: "4th line"
-        placeholderText: ""
-        text: valueLine4
-        onTextChanged: updateLineValue(4, text)
-
-        // Track focus state
-        Component.onCompleted: {
-          if (inputItem) {
-            inputItem.onActiveFocusChanged.connect(function () {
-              if (inputItem.activeFocus) {
-                root.focusedInput = inputLine4
-                root.focusedLineIndex = 4
+                root.focusedInput = inputVert
               }
             })
           }
@@ -223,12 +146,12 @@ ColumnLayout {
       }
 
       Rectangle {
-        Layout.preferredWidth: 240 * scaling
-        Layout.preferredHeight: 120 * scaling // Fixed height instead of fillHeight
+        Layout.preferredWidth: 320 * scaling
+        Layout.preferredHeight: 140 * scaling // Fixed height instead of fillHeight
 
         color: Color.mSurfaceVariant
         radius: Style.radiusM * scaling
-        border.color: focusedLineIndex > 0 ? Color.mSecondary : Color.mOutline
+        border.color: Color.mSecondary
         border.width: Math.max(1, Style.borderS * scaling)
 
         Behavior on border.color {
@@ -238,12 +161,13 @@ ColumnLayout {
         }
 
         ColumnLayout {
-          spacing: -2 * scaling
+          spacing: Style.marginM * scaling
           anchors.centerIn: parent
 
+          // Horizontal
           NText {
             visible: text !== ""
-            text: Qt.formatDateTime(now, valueLine1.trim())
+            text: Qt.formatDateTime(now, valueFormatHorizontal.trim())
             font.family: valueUseMonospacedFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault
             font.pointSize: Style.fontSizeM * scaling
             font.weight: Style.fontWeightBold
@@ -258,54 +182,29 @@ ColumnLayout {
             }
           }
 
-          NText {
-            visible: text !== ""
-            text: Qt.formatDateTime(now, valueLine2.trim())
-            font.family: valueUseMonospacedFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault
-            font.pointSize: Style.fontSizeM * scaling
-            font.weight: Style.fontWeightBold
-            color: valueUsePrimaryColor ? Color.mPrimary : Color.mOnSurface
-            wrapMode: Text.WordWrap
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+          // Vertical
+          ColumnLayout {
+            spacing: -2 * scaling
+            Layout.alignment: Qt.AlignHCenter
 
-            Behavior on color {
-              ColorAnimation {
-                duration: Style.animationFast
-              }
-            }
-          }
+            Repeater {
+              Layout.topMargin: Style.marginM * scaling
+              model: Qt.formatDateTime(now, valueFormatVertical.trim()).split(" ")
+              delegate: NText {
+                visible: text !== ""
+                text: modelData
+                font.family: valueUseMonospacedFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault
+                font.pointSize: Style.fontSizeM * scaling
+                font.weight: Style.fontWeightBold
+                color: valueUsePrimaryColor ? Color.mPrimary : Color.mOnSurface
+                wrapMode: Text.WordWrap
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
 
-          NText {
-            visible: text !== ""
-            text: Qt.formatDateTime(now, valueLine3.trim())
-            font.family: valueUseMonospacedFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault
-            font.pointSize: Style.fontSizeM * scaling
-            font.weight: Style.fontWeightBold
-            color: valueUsePrimaryColor ? Color.mPrimary : Color.mOnSurface
-            wrapMode: Text.WordWrap
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-            Layout.topMargin: visible ? Style.marginXS * scaling : 0
-
-            Behavior on color {
-              ColorAnimation {
-                duration: Style.animationFast
-              }
-            }
-          }
-
-          NText {
-            visible: text !== ""
-            text: Qt.formatDateTime(now, valueLine4.trim())
-            font.family: valueUseMonospacedFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault
-            font.pointSize: Style.fontSizeM * scaling
-            font.weight: Style.fontWeightBold
-            color: valueUsePrimaryColor ? Color.mPrimary : Color.mOnSurface
-            wrapMode: Text.WordWrap
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-
-            Behavior on color {
-              ColorAnimation {
-                duration: Style.animationFast
+                Behavior on color {
+                  ColorAnimation {
+                    duration: Style.animationFast
+                  }
+                }
               }
             }
           }
