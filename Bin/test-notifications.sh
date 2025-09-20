@@ -18,7 +18,7 @@ if command -v notify-send >/dev/null 2>&1; then
     notify-send -i dialog-information "Icon name test" "Should resolve from theme (dialog-information)"
 
     # 2) Absolute path if a sample image exists
-    SAMPLE_IMG="/usr/share/pixmaps/debian-logo.png"
+    SAMPLE_IMG="/usr/share/pixmaps/steam.png"
     if [ -f "$SAMPLE_IMG" ]; then
         notify-send -i "$SAMPLE_IMG" "Absolute path test" "Should show the provided image path"
     fi
