@@ -18,8 +18,8 @@ Singleton {
   property string historyFile: Quickshell.env("NOCTALIA_NOTIF_HISTORY_FILE") || (Settings.cacheDir + "notifications.json")
 
   // Models
-  property ListModel activeNotifications: ListModel {}
-  property ListModel notificationHistory: ListModel {}
+  property ListModel activeList: ListModel {}
+  property ListModel historyList: ListModel {}
 
   // Internal state
   property var activeMap: ({})
@@ -39,6 +39,8 @@ Singleton {
       visible: true
       cache: false
       asynchronous: true
+      mipmap: true
+      antialiasing: true
 
       onStatusChanged: {
         if (imageQueue.length === 0)
@@ -88,11 +90,11 @@ Singleton {
     notification.tracked = true
     notification.closed.connect(() => removeActive(data.id))
 
-    activeNotifications.insert(0, data)
-    while (activeNotifications.count > maxVisible) {
-      const last = activeNotifications.get(activeNotifications.count - 1)
+    activeList.insert(0, data)
+    while (activeList.count > maxVisible) {
+      const last = activeList.get(activeList.count - 1)
       activeMap[last.id]?.dismiss()
-      activeNotifications.remove(activeNotifications.count - 1)
+      activeList.remove(activeList.count - 1)
     }
   }
 
@@ -147,8 +149,8 @@ Singleton {
   }
 
   function updateImagePath(id, path) {
-    updateModel(activeNotifications, id, "cachedImage", path)
-    updateModel(notificationHistory, id, "cachedImage", path)
+    updateModel(activeList, id, "cachedImage", path)
+    updateModel(historyList, id, "cachedImage", path)
     saveHistory()
   }
 
@@ -162,9 +164,9 @@ Singleton {
   }
 
   function removeActive(id) {
-    for (var i = 0; i < activeNotifications.count; i++) {
-      if (activeNotifications.get(i).id === id) {
-        activeNotifications.remove(i)
+    for (var i = 0; i < activeList.count; i++) {
+      if (activeList.get(i).id === id) {
+        activeList.remove(i)
         delete activeMap[id]
         break
       }
@@ -175,13 +177,13 @@ Singleton {
   Timer {
     interval: 1000
     repeat: true
-    running: activeNotifications.count > 0
+    running: activeList.count > 0
     onTriggered: {
       const now = Date.now()
       const durations = [3000, 8000, 15000] // low, normal, critical
 
-      for (var i = activeNotifications.count - 1; i >= 0; i--) {
-        const notif = activeNotifications.get(i)
+      for (var i = activeList.count - 1; i >= 0; i--) {
+        const notif = activeList.get(i)
         const elapsed = now - notif.timestamp.getTime()
 
         if (elapsed >= durations[notif.urgency] || elapsed >= 8000) {
@@ -194,16 +196,15 @@ Singleton {
 
   // History management
   function addToHistory(data) {
-    notificationHistory.insert(0, data)
+    historyList.insert(0, data)
 
-    while (notificationHistory.count > maxHistory) {
-      const old = notificationHistory.get(notificationHistory.count - 1)
+    while (historyList.count > maxHistory) {
+      const old = historyList.get(historyList.count - 1)
       if (old.cachedImage && !old.cachedImage.startsWith("image://")) {
         Quickshell.execDetached(["rm", "-f", old.cachedImage])
       }
-      notificationHistory.remove(notificationHistory.count - 1)
+      historyList.remove(historyList.count - 1)
     }
-
     saveHistory()
   }
 
@@ -215,7 +216,7 @@ Singleton {
     onLoaded: loadHistory()
     onLoadFailed: error => {
       if (error === 2)
-        writeAdapter()
+      writeAdapter()
     }
 
     JsonAdapter {
@@ -237,8 +238,8 @@ Singleton {
   function performSave() {
     try {
       const items = []
-      for (var i = 0; i < notificationHistory.count; i++) {
-        const n = notificationHistory.get(i)
+      for (var i = 0; i < historyList.count; i++) {
+        const n = historyList.get(i)
         const copy = Object.assign({}, n)
         copy.timestamp = n.timestamp.getTime()
         items.push(copy)
@@ -253,7 +254,7 @@ Singleton {
 
   function loadHistory() {
     try {
-      notificationHistory.clear()
+      historyList.clear()
       for (const item of adapter.notifications || []) {
         let time = item.timestamp
         if (typeof time === "number") {
@@ -273,17 +274,17 @@ Singleton {
             cachedImage = Settings.cacheDirImagesNotifications + imageId + ".png"
           }
         }
-        
-        notificationHistory.append({
-                                     "id": item.id || "",
-                                     "summary": item.summary || "",
-                                     "body": item.body || "",
-                                     "appName": item.appName || "",
-                                     "urgency": item.urgency || 1,
-                                     "timestamp": time,
-                                     "originalImage": item.originalImage || "",
-                                     "cachedImage": cachedImage
-                                   })
+
+        historyList.append({
+                             "id": item.id || "",
+                             "summary": item.summary || "",
+                             "body": item.body || "",
+                             "appName": item.appName || "",
+                             "urgency": item.urgency || 1,
+                             "timestamp": time,
+                             "originalImage": item.originalImage || "",
+                             "cachedImage": cachedImage
+                           })
       }
     } catch (e) {
       Logger.error("Notifications", "Load failed:", e)
@@ -337,7 +338,7 @@ Singleton {
 
   function dismissAllActive() {
     Object.values(activeMap).forEach(n => n.dismiss())
-    activeNotifications.clear()
+    activeList.clear()
     activeMap = {}
   }
 
@@ -356,14 +357,14 @@ Singleton {
   }
 
   function removeFromHistory(notificationId) {
-    for (let i = 0; i < notificationHistory.count; i++) {
-      const notif = notificationHistory.get(i)
+    for (var i = 0; i < historyList.count; i++) {
+      const notif = historyList.get(i)
       if (notif.id === notificationId) {
         // Delete cached image if it exists
         if (notif.cachedImage && !notif.cachedImage.startsWith("image://")) {
           Quickshell.execDetached(["rm", "-f", notif.cachedImage])
         }
-        notificationHistory.remove(i)
+        historyList.remove(i)
         saveHistory()
         return true
       }
@@ -378,22 +379,9 @@ Singleton {
     } catch (e) {
       Logger.error("Notifications", "Failed to clear cache directory:", e)
     }
-    
-    notificationHistory.clear()
-    saveHistory()
-  }
 
-  function formatTimestamp(timestamp) {
-    if (!timestamp)
-      return ""
-    const diff = Date.now() - timestamp.getTime()
-    if (diff < 60000)
-      return "now"
-    if (diff < 3600000)
-      return `${Math.floor(diff / 60000)}m ago`
-    if (diff < 86400000)
-      return `${Math.floor(diff / 3600000)}h ago`
-    return `${Math.floor(diff / 86400000)}d ago`
+    historyList.clear()
+    saveHistory()
   }
 
   // Signals & connections

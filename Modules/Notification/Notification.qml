@@ -19,7 +19,7 @@ Variants {
     readonly property real scaling: ScalingService.getScreenScale(modelData)
 
     // Access the notification model from the service - UPDATED NAME
-    property ListModel notificationModel: NotificationService.activeNotifications
+    property ListModel notificationModel: NotificationService.activeList
 
     // If no notification display activated in settings, then show them all
     active: Settings.isLoaded && modelData && (notificationModel.count > 0) ? (Settings.data.notifications.monitors.includes(modelData.name) || (Settings.data.notifications.monitors.length === 0)) : false
@@ -256,7 +256,7 @@ Variants {
                     }
 
                     NText {
-                      text: `${model.appName || "Unknown App"} · ${NotificationService.formatTimestamp(model.timestamp)}`
+                      text: `${model.appName || "Unknown App"} · ${Time.formatRelativeTime(model.timestamp)}`
                       color: Color.mSecondary
                       font.pointSize: Style.fontSizeXS * scaling
                     }

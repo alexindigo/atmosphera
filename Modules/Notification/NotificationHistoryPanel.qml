@@ -55,7 +55,11 @@ NPanel {
           icon: "trash"
           tooltipText: "Clear history"
           baseSize: Style.baseWidgetSize * 0.8
-          onClicked: NotificationService.clearHistory()
+          onClicked: {
+            NotificationService.clearHistory()
+            // Close panel as there is nothing more to see.
+            root.close()
+          }
         }
 
         NIconButton {
@@ -75,7 +79,7 @@ NPanel {
         Layout.fillWidth: true
         Layout.fillHeight: true
         Layout.alignment: Qt.AlignHCenter
-        visible: NotificationService.notificationHistory.count === 0
+        visible: NotificationService.historyList.count === 0
         spacing: Style.marginL * scaling
 
         Item {
@@ -119,11 +123,11 @@ NPanel {
         horizontalPolicy: ScrollBar.AlwaysOff
         verticalPolicy: ScrollBar.AsNeeded
 
-        model: NotificationService.notificationHistory
+        model: NotificationService.historyList
         spacing: Style.marginM * scaling
         clip: true
         boundsBehavior: Flickable.StopAtBounds
-        visible: NotificationService.notificationHistory.count > 0
+        visible: NotificationService.historyList.count > 0
 
         delegate: Rectangle {
           property string notificationId: model.id
@@ -200,7 +204,7 @@ NPanel {
                 }
 
                 NText {
-                  text: NotificationService.formatTimestamp(model.timestamp)
+                  text: Time.formatRelativeTime(model.timestamp)
                   font.pointSize: Style.fontSizeXS * scaling
                   color: Color.mSecondary
                 }
