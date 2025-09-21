@@ -39,7 +39,7 @@ NIconButton {
   function computeUnreadCount() {
     var since = lastSeenTs()
     var count = 0
-    var model = NotificationService.historyModel
+    var model = NotificationService.historyList
     for (var i = 0; i < model.count; i++) {
       var item = model.get(i)
       var ts = item.timestamp instanceof Date ? item.timestamp.getTime() : item.timestamp

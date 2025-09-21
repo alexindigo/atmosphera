@@ -464,8 +464,6 @@ Popup {
           id: cancelButton
           text: "Cancel"
           outlined: cancelButton.hovered ? false : true
-          customHeight: 36 * scaling
-          customWidth: 100 * scaling
           onClicked: {
             root.close()
           }
@@ -474,8 +472,6 @@ Popup {
         NButton {
           text: "Apply"
           icon: "check"
-          customHeight: 36 * scaling
-          customWidth: 100 * scaling
           onClicked: {
             root.colorSelected(root.selectedColor)
             root.close()

@@ -9,7 +9,7 @@ Slider {
 
   property var cutoutColor: Color.mSurface
   property bool snapAlways: true
-  property real heightRatio: 0.75
+  property real heightRatio: 0.7
 
   readonly property real knobDiameter: Math.round(Style.baseWidgetSize * heightRatio * scaling)
   readonly property real trackHeight: knobDiameter * 0.4
