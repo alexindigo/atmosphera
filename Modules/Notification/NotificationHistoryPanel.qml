@@ -12,8 +12,8 @@ import qs.Widgets
 NPanel {
   id: root
 
-  preferredWidth: 380
-  preferredHeight: 500
+  preferredWidth: 360
+  preferredHeight: 480
   panelKeyboardFocus: true
 
   panelContent: Rectangle {
@@ -49,26 +49,20 @@ NPanel {
           tooltipText: `'Do not disturb' ${Settings.data.notifications.doNotDisturb ? "enabled" : "disabled"}`
           baseSize: Style.baseWidgetSize * 0.8
           onClicked: Settings.data.notifications.doNotDisturb = !Settings.data.notifications.doNotDisturb
-          onRightClicked: Settings.data.notifications.doNotDisturb = !Settings.data.notifications.doNotDisturb
         }
 
         NIconButton {
           icon: "trash"
           tooltipText: "Clear history"
           baseSize: Style.baseWidgetSize * 0.8
-          onClicked: {
-            NotificationService.clearHistory()
-            root.close()
-          }
+          onClicked: NotificationService.clearHistory()
         }
 
         NIconButton {
           icon: "close"
           tooltipText: "Close"
           baseSize: Style.baseWidgetSize * 0.8
-          onClicked: {
-            root.close()
-          }
+          onClicked: root.close()
         }
       }
 

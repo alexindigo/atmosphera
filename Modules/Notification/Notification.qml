@@ -102,7 +102,7 @@ Variants {
             delegate.animateOut()
           } else {
             // Force removal without animation as fallback
-            NotificationService.removeActiveNotification(notificationId)
+            NotificationService.dismissActiveNotification(notificationId)
           }
         })
       }
