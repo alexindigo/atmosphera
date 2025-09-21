@@ -329,6 +329,7 @@ NPanel {
                   NImageCached {
                     id: img
                     imagePath: wallpaperPath
+                    cacheFolder: Settings.cacheDirImagesWallpapers
                     anchors.fill: parent
                   }
 
