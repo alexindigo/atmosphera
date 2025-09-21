@@ -255,7 +255,7 @@ Popup {
           }
 
           NIconButton {
-            icon: filePickerPanel.viewMode ? "filepicker-layout-grid" : "filepicker-list"
+            icon: filePickerPanel.viewMode ? "filepicker-list" : "filepicker-layout-grid"
             tooltipText: filePickerPanel.viewMode ? "List View" : "Grid View"
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: filePickerPanel.viewMode = !filePickerPanel.viewMode

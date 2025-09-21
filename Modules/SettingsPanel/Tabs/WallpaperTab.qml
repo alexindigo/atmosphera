@@ -72,27 +72,27 @@ ColumnLayout {
         spacing: Style.marginM * scaling
         Repeater {
           model: Quickshell.screens || []
-          delegate: RowLayout {
+          delegate: ColumnLayout {
+            Layout.fillWidth: true
+            spacing: Style.marginS * scaling
+
             NText {
               text: (modelData.name || "Unknown")
               color: Color.mPrimary
               font.weight: Style.fontWeightBold
-              Layout.preferredWidth: 90 * scaling
-            }
-            NTextInput {
-              id: monitorPathInput
-              Layout.fillWidth: true
-              text: WallpaperService.getMonitorDirectory(modelData.name)
-              onEditingFinished: WallpaperService.setMonitorDirectory(modelData.name, text)
-              Layout.maximumWidth: 420 * scaling
+              font.pointSize: Style.fontSizeM * scaling
             }
 
-            NIconButton {
-              icon: "folder-open"
-              tooltipText: "Browse for wallpaper folder"
-              baseSize: Style.baseWidgetSize * 0.8
-              Layout.alignment: Qt.AlignBottom
-              onClicked: {
+            NInputButton {
+              text: WallpaperService.getMonitorDirectory(modelData.name)
+              buttonIcon: "folder-open"
+              buttonTooltip: "Browse for wallpaper folder"
+              Layout.fillWidth: true
+
+              onInputEditingFinished: {
+                WallpaperService.setMonitorDirectory(modelData.name, text)
+              }
+              onButtonClicked: {
                 openMonitorFileManager(modelData.name)
               }
             }
