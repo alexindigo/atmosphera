@@ -209,12 +209,13 @@ Singleton {
 
   // Persistence
   FileView {
+    id: historyFileView
     path: historyFile
     printErrors: false
     onLoaded: loadHistory()
     onLoadFailed: error => {
       if (error === 2)
-      writeAdapter()
+        writeAdapter()
     }
 
     JsonAdapter {
@@ -243,6 +244,8 @@ Singleton {
         items.push(copy)
       }
       adapter.notifications = items
+      // Actually write the file
+      historyFileView.writeAdapter()
     } catch (e) {
       Logger.error("Notifications", "Save failed:", e)
     }
@@ -261,6 +264,16 @@ Singleton {
           time = new Date()
         }
 
+        // Check if we have a cached image and try to use it
+        let cachedImage = item.cachedImage || ""
+        if (item.originalImage && item.originalImage.startsWith("image://") && !cachedImage) {
+          // Try to generate the expected cached path
+          const imageId = generateImageId(item, item.originalImage)
+          if (imageId) {
+            cachedImage = Settings.cacheDirImagesNotifications + imageId + ".png"
+          }
+        }
+        
         notificationHistory.append({
                                      "id": item.id || "",
                                      "summary": item.summary || "",
@@ -269,7 +282,7 @@ Singleton {
                                      "urgency": item.urgency || 1,
                                      "timestamp": time,
                                      "originalImage": item.originalImage || "",
-                                     "cachedImage": item.cachedImage || ""
+                                     "cachedImage": cachedImage
                                    })
       }
     } catch (e) {
@@ -342,8 +355,30 @@ Singleton {
     return false
   }
 
+  function removeFromHistory(notificationId) {
+    for (let i = 0; i < notificationHistory.count; i++) {
+      const notif = notificationHistory.get(i)
+      if (notif.id === notificationId) {
+        // Delete cached image if it exists
+        if (notif.cachedImage && !notif.cachedImage.startsWith("image://")) {
+          Quickshell.execDetached(["rm", "-f", notif.cachedImage])
+        }
+        notificationHistory.remove(i)
+        saveHistory()
+        return true
+      }
+    }
+    return false
+  }
+
   function clearHistory() {
-    Quickshell.execDetached(["rm", "-rf", Settings.cacheDirImagesNotifications + "*"])
+    // Remove all cached images
+    try {
+      Quickshell.execDetached(["sh", "-c", `rm -rf "${Settings.cacheDirImagesNotifications}"*`])
+    } catch (e) {
+      Logger.error("Notifications", "Failed to clear cache directory:", e)
+    }
+    
     notificationHistory.clear()
     saveHistory()
   }
