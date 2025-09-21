@@ -140,6 +140,7 @@ Singleton {
     "filepicker-code": "code",
     "filepicker-settings": "settings",
     "filepicker-file": "file",
+    "filepicker-text": "file-text",
     "noctalia": "noctalia"
   }
 
