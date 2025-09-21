@@ -27,8 +27,8 @@ Singleton {
 
   // Simple image cacher
   PanelWindow {
-    width: 1
-    height: 1
+    implicitHeight: 1
+    implicitWidth: 1
     color: "transparent"
     mask: Region {}
 
