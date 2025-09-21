@@ -63,18 +63,14 @@ Item {
 
   function getWorkspaceWidth(ws) {
     const d = Style.capsuleHeight * root.baseDimensionRatio
-    if (ws.isFocused)
-      return d * 2.5
-    else
-      return d
+    const factor = ws.isFocused ? 2.2 : 1
+    return d * factor
   }
 
   function getWorkspaceHeight(ws) {
     const d = Style.capsuleHeight * root.baseDimensionRatio
-    if (ws.isFocused)
-      return d * 3
-    else
-      return d
+    const factor = ws.isFocused ? 2.2 : 1
+    return d * factor
   }
 
   function computeWidth() {
