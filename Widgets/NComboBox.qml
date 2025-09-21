@@ -40,10 +40,6 @@ RowLayout {
     description: root.description
   }
 
-  Item {
-    Layout.fillWidth: true
-  }
-
   ComboBox {
     id: combo
 

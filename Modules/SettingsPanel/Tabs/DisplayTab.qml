@@ -63,7 +63,7 @@ ColumnLayout {
       model: Quickshell.screens || []
       delegate: Rectangle {
         Layout.fillWidth: true
-        implicitHeight: contentCol.implicitHeight + Style.marginXL * 2 * scaling
+        implicitHeight: contentCol.implicitHeight + Style.marginL * 2 * scaling
         radius: Style.radiusM * scaling
         color: Color.mSurfaceVariant
         border.color: Color.mOutline
@@ -83,8 +83,9 @@ ColumnLayout {
 
         ColumnLayout {
           id: contentCol
-          anchors.fill: parent
-          anchors.margins: Style.marginL * scaling
+          width: parent.width - 2 * Style.marginL * scaling
+          x: Style.marginL * scaling
+          y: Style.marginL * scaling
           spacing: Style.marginXXS * scaling
 
           NLabel {
@@ -98,7 +99,7 @@ ColumnLayout {
             Layout.fillWidth: true
 
             RowLayout {
-              spacing: Style.marginM * scaling
+              spacing: Style.marginL * scaling
               Layout.fillWidth: true
 
               NText {
@@ -142,7 +143,7 @@ ColumnLayout {
 
             RowLayout {
               Layout.fillWidth: true
-              spacing: Style.marginM * scaling
+              spacing: Style.marginL * scaling
 
               NText {
                 text: "Brightness"
@@ -289,8 +290,6 @@ ColumnLayout {
         }
       }
 
-      Item {}
-
       NText {
         text: "Day"
         font.pointSize: Style.fontSizeM * scaling
@@ -322,21 +321,19 @@ ColumnLayout {
     visible: Settings.data.nightLight.enabled
   }
 
-  // Schedule settings
+  // Manual scheduling
   ColumnLayout {
-    spacing: Style.marginXS * scaling
+    spacing: Style.marginS * scaling
     visible: Settings.data.nightLight.enabled && !Settings.data.nightLight.autoSchedule && !Settings.data.nightLight.forced
+
+    NLabel {
+      label: "Manual scheduling"
+      description: "Set custom times for sunrise and sunset."
+    }
 
     RowLayout {
       Layout.fillWidth: false
-      spacing: Style.marginM * scaling
-
-      NLabel {
-        label: "Manual scheduling"
-      }
-
-      Item {// add a little more spacing
-      }
+      spacing: Style.marginS * scaling
 
       NText {
         text: "Sunrise time"
@@ -352,7 +349,8 @@ ColumnLayout {
         minimumWidth: 120 * scaling
       }
 
-      Item {// add a little more spacing
+      Item {
+        Layout.preferredWidth: 20 * scaling
       }
 
       NText {
@@ -360,6 +358,7 @@ ColumnLayout {
         font.pointSize: Style.fontSizeM * scaling
         color: Color.mOnSurfaceVariant
       }
+
       NComboBox {
         model: timeOptions
         currentKey: Settings.data.nightLight.manualSunset
