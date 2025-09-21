@@ -64,13 +64,13 @@ Item {
   function getWorkspaceWidth(ws) {
     const d = Style.capsuleHeight * root.baseDimensionRatio
     const factor = ws.isFocused ? 2.2 : 1
-    return d * factor
+    return d * factor * scaling
   }
 
   function getWorkspaceHeight(ws) {
     const d = Style.capsuleHeight * root.baseDimensionRatio
     const factor = ws.isFocused ? 2.2 : 1
-    return d * factor
+    return d * factor * scaling
   }
 
   function computeWidth() {
@@ -199,7 +199,7 @@ Item {
       Item {
         id: workspacePillContainer
         width: root.getWorkspaceWidth(model)
-        height: Style.capsuleHeight * root.baseDimensionRatio
+        height: Style.capsuleHeight * root.baseDimensionRatio * scaling
 
         Rectangle {
           id: pill
@@ -342,7 +342,7 @@ Item {
       model: localWorkspaces
       Item {
         id: workspacePillContainerVertical
-        width: Style.capsuleHeight * root.baseDimensionRatio
+        width: Style.capsuleHeight * root.baseDimensionRatio * scaling
         height: root.getWorkspaceHeight(model)
 
         Rectangle {
