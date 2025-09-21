@@ -5,9 +5,15 @@ import Quickshell
 import Quickshell.Io
 import qs.Commons
 import qs.Services
+import "../Helpers/QtObj2JS.js" as QtObj2JS
 
 Singleton {
   id: root
+
+  // Used to access via Settings.data.xxx.yyy
+  readonly property alias data: adapter
+  property bool isLoaded: false
+  property bool directoriesCreated: false
 
   // Define our app directories
   // Default config directory: ~/.config/noctalia
@@ -18,20 +24,14 @@ Singleton {
   property string cacheDirImages: cacheDir + "images/"
   property string cacheDirImagesWallpapers: cacheDir + "images/wallpapers/"
   property string cacheDirImagesNotifications: cacheDir + "images/notifications/"
-
   property string settingsFile: Quickshell.env("NOCTALIA_SETTINGS_FILE") || (configDir + "settings.json")
+
+  property string defaultLocation: "Tokyo"
+  property string defaultWallpaper: Quickshell.shellDir + "/Assets/Wallpaper/noctalia.png"
 
   property string defaultAvatar: Quickshell.env("HOME") + "/.face"
   property string defaultVideosDirectory: Quickshell.env("HOME") + "/Videos"
-  property string defaultLocation: "Tokyo"
   property string defaultWallpapersDirectory: Quickshell.env("HOME") + "/Pictures/Wallpapers"
-  property string defaultWallpaper: Quickshell.shellDir + "/Assets/Wallpaper/noctalia.png"
-
-  // Used to access via Settings.data.xxx.yyy
-  readonly property alias data: adapter
-
-  property bool isLoaded: false
-  property bool directoriesCreated: false
 
   // Signal emitted when settings are loaded after startupcale changes
   signal settingsLoaded
@@ -50,11 +50,18 @@ Singleton {
     // Mark directories as created and trigger file loading
     directoriesCreated = true
 
-    generateDefaultSettings();
+    // This should only be activated once when the settings structure has changed
+    // Then it should be commented out again, regular users don't need to generate
+    // default settings on every start
+    //generateDefaultSettings()
 
-    settingsFileView.adapter = adapter;
+    // Patch-in the local default, resolved to user's home
+    adapter.general.avatarImage = defaultAvatar
+    adapter.screenRecorder.directory = defaultVideosDirectory
+    adapter.wallpaper.directory = defaultWallpapersDirectory
 
-
+    // Set the adapter to the settingsFileView to trigger the real settings load
+    settingsFileView.adapter = adapter
   }
 
   // Don't write settings to disk immediately
@@ -162,7 +169,7 @@ Singleton {
 
     // general
     property JsonObject general: JsonObject {
-      property string avatarImage: defaultAvatar
+      property string avatarImage: ""
       property bool dimDesktop: true
       property bool showScreenCorners: false
       property bool forceBlackScreenCorners: false
@@ -181,7 +188,7 @@ Singleton {
 
     // screen recorder
     property JsonObject screenRecorder: JsonObject {
-      property string directory: defaultVideosDirectory
+      property string directory: ""
       property int frameRate: 60
       property string audioCodec: "opus"
       property string videoCodec: "h264"
@@ -195,7 +202,7 @@ Singleton {
     // wallpaper
     property JsonObject wallpaper: JsonObject {
       property bool enabled: true
-      property string directory: defaultWallpapersDirectory
+      property string directory: ""
       property bool enableMultiMonitorDirectories: false
       property bool setWallpaperOnAllMonitors: true
       property string fillMode: "crop"
@@ -271,7 +278,7 @@ Singleton {
 
     property JsonObject colorSchemes: JsonObject {
       property bool useWallpaperColors: false
-      property string predefinedScheme: ""
+      property string predefinedScheme: "Noctalia (default)"
       property bool darkMode: true
     }
 
@@ -310,18 +317,21 @@ Singleton {
     }
   }
 
+  // -----------------------------------------------------
+  // Generate default settings at the root of the repo
   function generateDefaultSettings() {
     try {
-      Logger.log("Settings", "Generating default settings file...")
+      Logger.log("Settings", "Generating settings-default.json")
 
-      var defaultPath = configDir + "settings-default.json"
-      var jsonData = JSON.stringify(adapter, null, 2)
-      var tempFile = "/tmp/noctalia-default-settings.json"
+      // Prepare a clean JSON
+      var plainAdapter = QtObj2JS.qtObjectToPlainObject(adapter)
+      var jsonData = JSON.stringify(plainAdapter, null, 2)
 
-      // Write to temp file first, then copy to final location
-      Quickshell.execDetached(["sh", "-c", `echo '${jsonData}' > "${tempFile}" && cp "${tempFile}" "${defaultPath}" && rm "${tempFile}"`])
+      var defaultPath = Quickshell.shellDir + "/Assets/settings-default.json"
 
-      Logger.log("Settings", "Generated settings-default.json with default values")
+      // Encode transfer it has base64 to avoid any escaping issue
+      var base64Data = Qt.btoa(jsonData)
+      Quickshell.execDetached(["sh", "-c", `echo "${base64Data}" | base64 -d > "${defaultPath}"`])
     } catch (error) {
       Logger.error("Settings", "Failed to generate default settings file: " + error)
     }
@@ -467,6 +477,7 @@ Singleton {
     const widgetAfter = JSON.stringify(widget)
     return (widgetAfter !== widgetBefore)
   }
+
   // -----------------------------------------------------
   // Kickoff essential services
   function kickOffServices() {
