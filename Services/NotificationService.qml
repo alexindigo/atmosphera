@@ -228,14 +228,14 @@ Singleton {
   Timer {
     id: saveTimer
     interval: 200
-    onTriggered: performSave()
+    onTriggered: performSaveHistory()
   }
 
   function saveHistory() {
     saveTimer.restart()
   }
 
-  function performSave() {
+  function performSaveHistory() {
     try {
       const items = []
       for (var i = 0; i < historyList.count; i++) {
@@ -248,7 +248,7 @@ Singleton {
       // Actually write the file
       historyFileView.writeAdapter()
     } catch (e) {
-      Logger.error("Notifications", "Save failed:", e)
+      Logger.error("Notifications", "Save history failed:", e)
     }
   }
 
@@ -256,14 +256,7 @@ Singleton {
     try {
       historyList.clear()
       for (const item of adapter.notifications || []) {
-        let time = item.timestamp
-        if (typeof time === "number") {
-          if (time < 1e12)
-            time *= 1000
-          time = new Date(time)
-        } else {
-          time = new Date()
-        }
+        const time = new Date(item.timestamp)
 
         // Check if we have a cached image and try to use it
         let cachedImage = item.cachedImage || ""
