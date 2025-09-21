@@ -600,11 +600,57 @@ Popup {
                 Layout.preferredHeight: Math.round(gridView.itemSize * 0.67)
                 color: Color.transparent
 
+                // Check if file is an image
+                property bool isImage: {
+                  if (isDirectory)
+                    return false
+                  var ext = fileName.split('.').pop().toLowerCase()
+                  return ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg', 'ico'].includes(ext)
+                }
+
+                // Show thumbnail for images, icon for others
+                Image {
+                  id: thumbnail
+                  anchors.fill: parent
+                  anchors.margins: Style.marginXS * scaling
+                  source: iconContainer.isImage ? "file://" + filePath : ""
+                  fillMode: Image.PreserveAspectFit
+                  visible: iconContainer.isImage && status === Image.Ready
+                  smooth: false // Disable smooth for faster rendering
+                  cache: true
+                  asynchronous: true // Load images asynchronously
+                  sourceSize.width: 120 * scaling // Limit image size for faster loading
+                  sourceSize.height: 120 * scaling
+
+                  // Fallback to icon if image fails to load or takes too long
+                  onStatusChanged: {
+                    if (status === Image.Error) {
+                      visible = false
+                    }
+                  }
+
+                  // Show loading indicator while image loads
+                  Rectangle {
+                    anchors.fill: parent
+                    color: Color.mSurfaceVariant
+                    radius: Style.radiusS * scaling
+                    visible: thumbnail.status === Image.Loading
+
+                    NIcon {
+                      icon: "photo"
+                      font.pointSize: Style.fontSizeL * scaling
+                      color: Color.mOnSurfaceVariant
+                      anchors.centerIn: parent
+                    }
+                  }
+                }
+
                 NIcon {
                   icon: isDirectory ? "folder" : root.getFileIcon(fileName)
                   font.pointSize: Style.fontSizeXXL * scaling
                   color: isDirectory ? Color.mPrimary : Color.mOnSurfaceVariant
                   anchors.centerIn: parent
+                  visible: !iconContainer.isImage || thumbnail.status !== Image.Ready
                 }
 
                 // Selection indicator (like WallpaperSelector)
