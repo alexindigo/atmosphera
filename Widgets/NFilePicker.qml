@@ -13,7 +13,7 @@ Popup {
   id: root
 
   // Public properties
-  property string title: "File Manager"
+  property string title: "File Picker"
   property string initialPath: Quickshell.env("HOME") || "/home"
   property bool selectFiles: true
   property bool selectFolders: true
@@ -112,14 +112,14 @@ Popup {
   }
 
   function confirmSelection() {
-    if (fileManagerPanel.currentSelection.length === 0) {
+    if (filePickerPanel.currentSelection.length === 0) {
       return
     }
 
-    root.selectedPaths = fileManagerPanel.currentSelection
+    root.selectedPaths = filePickerPanel.currentSelection
 
-    if (fileManagerPanel.currentSelection.length === 1) {
-      var path = fileManagerPanel.currentSelection[0]
+    if (filePickerPanel.currentSelection.length === 1) {
+      var path = filePickerPanel.currentSelection[0]
       if (root.selectFiles && !root.selectFolders) {
         root.fileSelected(path)
       } else if (root.selectFolders && !root.selectFiles) {
@@ -134,7 +134,7 @@ Popup {
         }
       }
     } else {
-      root.filesSelected(fileManagerPanel.currentSelection)
+      root.filesSelected(filePickerPanel.currentSelection)
     }
 
     root.close()
@@ -143,7 +143,7 @@ Popup {
   // Function to update the filtered model
   function updateFilteredModel() {
     filteredModel.clear()
-    var searchText = fileManagerPanel.filterText.toLowerCase()
+    var searchText = filePickerPanel.filterText.toLowerCase()
 
     for (var i = 0; i < folderModel.count; i++) {
       var fileName = folderModel.get(i, "fileName")
@@ -205,7 +205,7 @@ Popup {
   }
 
   Rectangle {
-    id: fileManagerPanel
+    id: filePickerPanel
     anchors.fill: parent
     anchors.margins: Style.marginL * scaling
     color: Color.transparent
@@ -221,20 +221,20 @@ Popup {
     // Keyboard shortcuts
     Keys.onPressed: event => {
                       if (event.modifiers & Qt.ControlModifier && event.key === Qt.Key_F) {
-                        fileManagerPanel.showSearchBar = !fileManagerPanel.showSearchBar
-                        if (fileManagerPanel.showSearchBar) {
+                        filePickerPanel.showSearchBar = !filePickerPanel.showSearchBar
+                        if (filePickerPanel.showSearchBar) {
                           // Focus the search input when opening
                           Qt.callLater(() => {
                                          searchInput.forceActiveFocus()
                                        })
                         }
                         event.accepted = true
-                      } else if (event.key === Qt.Key_Escape && fileManagerPanel.showSearchBar) {
+                      } else if (event.key === Qt.Key_Escape && filePickerPanel.showSearchBar) {
                         // Close search bar on Escape
-                        fileManagerPanel.showSearchBar = false
-                        fileManagerPanel.searchText = ""
-                        fileManagerPanel.isSearching = false
-                        fileManagerPanel.filterText = ""
+                        filePickerPanel.showSearchBar = false
+                        filePickerPanel.searchText = ""
+                        filePickerPanel.isSearching = false
+                        filePickerPanel.filterText = ""
                         root.updateFilteredModel()
                         event.accepted = true
                       }
@@ -351,26 +351,26 @@ Popup {
 
           // View mode toggle
           NIconButton {
-            icon: fileManagerPanel.viewMode ? "layout-grid" : "list"
-            tooltipText: fileManagerPanel.viewMode ? "List View" : "Grid View"
+            icon: filePickerPanel.viewMode ? "layout-grid" : "list"
+            tooltipText: filePickerPanel.viewMode ? "List View" : "Grid View"
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: {
-              fileManagerPanel.viewMode = !fileManagerPanel.viewMode
+              filePickerPanel.viewMode = !filePickerPanel.viewMode
             }
           }
 
           // Search toggle
           NIconButton {
-            icon: fileManagerPanel.showSearchBar ? "x" : "search"
-            tooltipText: fileManagerPanel.showSearchBar ? "Close Search" : "Search"
+            icon: filePickerPanel.showSearchBar ? "x" : "search"
+            tooltipText: filePickerPanel.showSearchBar ? "Close Search" : "Search"
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: {
-              fileManagerPanel.showSearchBar = !fileManagerPanel.showSearchBar
-              if (!fileManagerPanel.showSearchBar) {
+              filePickerPanel.showSearchBar = !filePickerPanel.showSearchBar
+              if (!filePickerPanel.showSearchBar) {
                 // Clear search when closing
-                fileManagerPanel.searchText = ""
-                fileManagerPanel.isSearching = false
-                fileManagerPanel.filterText = ""
+                filePickerPanel.searchText = ""
+                filePickerPanel.isSearching = false
+                filePickerPanel.filterText = ""
                 root.updateFilteredModel()
               }
             }
@@ -416,7 +416,7 @@ Popup {
         radius: Style.radiusS * scaling
         border.color: Color.mOutline
         border.width: Math.max(1, Style.borderS * scaling)
-        visible: fileManagerPanel.showSearchBar
+        visible: filePickerPanel.showSearchBar
 
         RowLayout {
           anchors.left: parent.left
@@ -435,20 +435,20 @@ Popup {
             id: searchInput
             placeholderText: "Search files and folders..."
             Layout.fillWidth: true
-            text: fileManagerPanel.searchText
+            text: filePickerPanel.searchText
 
             onTextChanged: {
-              fileManagerPanel.searchText = text
-              fileManagerPanel.isSearching = text.length > 0
-              fileManagerPanel.filterText = text
+              filePickerPanel.searchText = text
+              filePickerPanel.isSearching = text.length > 0
+              filePickerPanel.filterText = text
               root.updateFilteredModel()
             }
 
             Keys.onEscapePressed: {
-              fileManagerPanel.showSearchBar = false
-              fileManagerPanel.searchText = ""
-              fileManagerPanel.isSearching = false
-              fileManagerPanel.filterText = ""
+              filePickerPanel.showSearchBar = false
+              filePickerPanel.searchText = ""
+              filePickerPanel.isSearching = false
+              filePickerPanel.filterText = ""
               root.updateFilteredModel()
             }
           }
@@ -457,12 +457,12 @@ Popup {
             icon: "x"
             tooltipText: "Clear"
             baseSize: Style.baseWidgetSize * 0.6
-            visible: fileManagerPanel.searchText.length > 0
+            visible: filePickerPanel.searchText.length > 0
             onClicked: {
               searchInput.text = ""
-              fileManagerPanel.searchText = ""
-              fileManagerPanel.isSearching = false
-              fileManagerPanel.filterText = ""
+              filePickerPanel.searchText = ""
+              filePickerPanel.isSearching = false
+              filePickerPanel.filterText = ""
               root.updateFilteredModel()
             }
           }
@@ -490,7 +490,7 @@ Popup {
 
           onFolderChanged: {
             root.currentPath = folder.toString().replace("file://", "")
-            fileManagerPanel.currentSelection = []
+            filePickerPanel.currentSelection = []
           }
 
           onStatusChanged: {
@@ -518,7 +518,7 @@ Popup {
           anchors.fill: parent
           anchors.margins: Style.marginM * scaling
           model: filteredModel
-          visible: fileManagerPanel.viewMode
+          visible: filePickerPanel.viewMode
           clip: true
 
           property int columns: Math.max(1, Math.floor(width / (120 * scaling)))
@@ -584,7 +584,7 @@ Popup {
             property string fileName: model.fileName
             property string filePath: model.filePath
             property bool isDirectory: model.fileIsDir
-            property bool isSelected: fileManagerPanel.currentSelection.includes(filePath)
+            property bool isSelected: filePickerPanel.currentSelection.includes(filePath)
 
             // Selection background (covers entire item)
             Rectangle {
@@ -604,9 +604,11 @@ Popup {
             // Hover overlay
             Rectangle {
               anchors.fill: parent
-              color: Color.mSurface
-              opacity: (mouseArea.containsMouse && !isSelected) ? 0.1 : 0
+              color: Qt.alpha(Color.mPrimary, 0.1)
+              opacity: (mouseArea.containsMouse && !isSelected) ? 1.0 : 0
               radius: parent.radius
+              border.color: Qt.alpha(Color.mPrimary, 0.3)
+              border.width: Math.max(1, Style.borderS * scaling)
               Behavior on opacity {
                 NumberAnimation {
                   duration: Style.animationFast
@@ -724,14 +726,14 @@ Popup {
                            if (mouse.button === Qt.LeftButton) {
                              if (isDirectory) {
                                if (root.selectFolders && !root.selectFiles) {
-                                 fileManagerPanel.currentSelection = [filePath]
+                                 filePickerPanel.currentSelection = [filePath]
                                } else {
                                  folderModel.folder = "file://" + filePath
                                  root.currentPath = filePath
                                }
                              } else {
                                if (root.selectFiles) {
-                                 fileManagerPanel.currentSelection = [filePath]
+                                 filePickerPanel.currentSelection = [filePath]
                                }
                              }
                            }
@@ -741,7 +743,7 @@ Popup {
                                  if (mouse.button === Qt.LeftButton) {
                                    if (isDirectory) {
                                      if (root.selectFolders && !root.selectFiles) {
-                                       fileManagerPanel.currentSelection = [filePath]
+                                       filePickerPanel.currentSelection = [filePath]
                                        root.confirmSelection()
                                      } else {
                                        folderModel.folder = "file://" + filePath
@@ -749,7 +751,7 @@ Popup {
                                      }
                                    } else {
                                      if (root.selectFiles) {
-                                       fileManagerPanel.currentSelection = [filePath]
+                                       filePickerPanel.currentSelection = [filePath]
                                        root.confirmSelection()
                                      }
                                    }
@@ -765,7 +767,7 @@ Popup {
           anchors.fill: parent
           anchors.margins: Style.marginS * scaling
           model: filteredModel
-          visible: !fileManagerPanel.viewMode
+          visible: !filePickerPanel.viewMode
           clip: true
 
           ScrollBar.vertical: ScrollBar {
@@ -815,7 +817,7 @@ Popup {
             width: listView.width
             height: 40 * scaling
             color: {
-              if (fileManagerPanel.currentSelection.includes(filePath)) {
+              if (filePickerPanel.currentSelection.includes(filePath)) {
                 return Color.mSecondary
               }
               if (mouseArea.containsMouse) {
@@ -844,21 +846,21 @@ Popup {
               NIcon {
                 icon: isDirectory ? "folder" : root.getFileIcon(fileName)
                 font.pointSize: Style.fontSizeL * scaling
-                color: isDirectory ? (fileManagerPanel.currentSelection.includes(filePath) ? Color.mOnSecondary : Color.mPrimary) : Color.mOnSurfaceVariant
+                color: isDirectory ? (filePickerPanel.currentSelection.includes(filePath) ? Color.mOnSecondary : Color.mPrimary) : Color.mOnSurfaceVariant
               }
 
               NText {
                 text: fileName
-                color: fileManagerPanel.currentSelection.includes(filePath) ? Color.mOnSecondary : Color.mOnSurface
+                color: filePickerPanel.currentSelection.includes(filePath) ? Color.mOnSecondary : Color.mOnSurface
                 font.pointSize: Style.fontSizeM * scaling
-                font.weight: fileManagerPanel.currentSelection.includes(filePath) ? Style.fontWeightBold : Style.fontWeightRegular
+                font.weight: filePickerPanel.currentSelection.includes(filePath) ? Style.fontWeightBold : Style.fontWeightRegular
                 Layout.fillWidth: true
                 elide: Text.ElideRight
               }
 
               NText {
                 text: isDirectory ? "" : root.formatFileSize(model.fileSize)
-                color: fileManagerPanel.currentSelection.includes(filePath) ? Color.mOnSecondary : Color.mOnSurfaceVariant
+                color: filePickerPanel.currentSelection.includes(filePath) ? Color.mOnSecondary : Color.mOnSurfaceVariant
                 font.pointSize: Style.fontSizeS * scaling
                 visible: !isDirectory
                 Layout.preferredWidth: implicitWidth
@@ -875,14 +877,14 @@ Popup {
                            if (mouse.button === Qt.LeftButton) {
                              if (isDirectory) {
                                if (root.selectFolders && !root.selectFiles) {
-                                 fileManagerPanel.currentSelection = [filePath]
+                                 filePickerPanel.currentSelection = [filePath]
                                } else {
                                  folderModel.folder = "file://" + filePath
                                  root.currentPath = filePath
                                }
                              } else {
                                if (root.selectFiles) {
-                                 fileManagerPanel.currentSelection = [filePath]
+                                 filePickerPanel.currentSelection = [filePath]
                                }
                              }
                            }
@@ -892,7 +894,7 @@ Popup {
                                  if (mouse.button === Qt.LeftButton) {
                                    if (isDirectory) {
                                      if (root.selectFolders && !root.selectFiles) {
-                                       fileManagerPanel.currentSelection = [filePath]
+                                       filePickerPanel.currentSelection = [filePath]
                                        root.confirmSelection()
                                      } else {
                                        folderModel.folder = "file://" + filePath
@@ -900,7 +902,7 @@ Popup {
                                      }
                                    } else {
                                      if (root.selectFiles) {
-                                       fileManagerPanel.currentSelection = [filePath]
+                                       filePickerPanel.currentSelection = [filePath]
                                        root.confirmSelection()
                                      }
                                    }
@@ -919,15 +921,15 @@ Popup {
         // Status text
         NText {
           text: {
-            if (fileManagerPanel.isSearching) {
-              return "Searching for: \"" + fileManagerPanel.searchText + "\" (" + filteredModel.count + " matches)"
-            } else if (fileManagerPanel.currentSelection.length > 0) {
-              return fileManagerPanel.currentSelection.length + " item(s) selected"
+            if (filePickerPanel.isSearching) {
+              return "Searching for: \"" + filePickerPanel.searchText + "\" (" + filteredModel.count + " matches)"
+            } else if (filePickerPanel.currentSelection.length > 0) {
+              return filePickerPanel.currentSelection.length + " item(s) selected"
             } else {
               return filteredModel.count + " items"
             }
           }
-          color: fileManagerPanel.isSearching ? Color.mPrimary : Color.mOnSurfaceVariant
+          color: filePickerPanel.isSearching ? Color.mPrimary : Color.mOnSurfaceVariant
           font.pointSize: Style.fontSizeS * scaling
           Layout.fillWidth: true
         }
@@ -953,7 +955,7 @@ Popup {
             }
           }
           icon: "check"
-          enabled: fileManagerPanel.currentSelection.length > 0
+          enabled: filePickerPanel.currentSelection.length > 0
           onClicked: root.confirmSelection()
         }
       }
@@ -964,7 +966,7 @@ Popup {
       target: root
       function onShouldResetSelectionChanged() {
         if (root.shouldResetSelection) {
-          fileManagerPanel.currentSelection = []
+          filePickerPanel.currentSelection = []
           root.shouldResetSelection = false
         }
       }

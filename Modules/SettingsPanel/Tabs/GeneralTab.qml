@@ -42,17 +42,17 @@ ColumnLayout {
         Settings.data.general.avatarImage = text
       }
       onButtonClicked: {
-        FileManagerService.open({
-                                  "title": "Select Avatar Image",
-                                  "initialPath": Settings.data.general.avatarImage || Quickshell.env("HOME"),
-                                  "selectFiles": true,
-                                  "scaling": scaling,
-                                  "onSelected": function (path) {
-                                    Settings.data.general.avatarImage = path
-                                    text = path
-                                  },
-                                  "parent": root
-                                })
+        FilePickerService.open({
+                                 "title": "Select Avatar Image",
+                                 "initialPath": Settings.data.general.avatarImage || Quickshell.env("HOME"),
+                                 "selectFiles": true,
+                                 "scaling": scaling,
+                                 "onSelected": function (path) {
+                                   Settings.data.general.avatarImage = path
+                                   text = path
+                                 },
+                                 "parent": root
+                               })
       }
     }
   }

@@ -345,29 +345,29 @@ ColumnLayout {
 
   // File manager functions
   function openFileManager() {
-    FileManagerService.open({
-                              "title": "Select Wallpaper Folder",
-                              "initialPath": Settings.data.wallpaper.directory || Quickshell.env("HOME"),
-                              "selectFiles": false,
-                              "scaling": scaling,
-                              "onSelected": function (path) {
-                                Settings.data.wallpaper.directory = path
-                                wallpaperPathInput.text = path
-                              },
-                              "parent": root
-                            })
+    FilePickerService.open({
+                             "title": "Select Wallpaper Folder",
+                             "initialPath": Settings.data.wallpaper.directory || Quickshell.env("HOME"),
+                             "selectFiles": false,
+                             "scaling": scaling,
+                             "onSelected": function (path) {
+                               Settings.data.wallpaper.directory = path
+                               wallpaperPathInput.text = path
+                             },
+                             "parent": root
+                           })
   }
 
   function openMonitorFileManager(monitorName) {
-    FileManagerService.open({
-                              "title": "Select Monitor Wallpaper Folder",
-                              "initialPath": WallpaperService.getMonitorDirectory(monitorName),
-                              "selectFiles": false,
-                              "scaling": scaling,
-                              "onSelected": function (path) {
-                                WallpaperService.setMonitorDirectory(monitorName, path)
-                              },
-                              "parent": root
-                            })
+    FilePickerService.open({
+                             "title": "Select Monitor Wallpaper Folder",
+                             "initialPath": WallpaperService.getMonitorDirectory(monitorName),
+                             "selectFiles": false,
+                             "scaling": scaling,
+                             "onSelected": function (path) {
+                               WallpaperService.setMonitorDirectory(monitorName, path)
+                             },
+                             "parent": root
+                           })
   }
 }

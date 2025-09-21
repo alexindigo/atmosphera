@@ -8,7 +8,7 @@ QtObject {
 
   // Function to open a file manager dialog
   function open(options) {
-    var component = Qt.createComponent(Qt.resolvedUrl(Quickshell.shellDir + "/Widgets/NFileManager.qml"))
+    var component = Qt.createComponent(Qt.resolvedUrl(Quickshell.shellDir + "/Widgets/NFilePicker.qml"))
     if (component.status === Component.Ready) {
       // Extract directory from file path if it's a file
       var initialPath = options.initialPath || Quickshell.env("HOME")
