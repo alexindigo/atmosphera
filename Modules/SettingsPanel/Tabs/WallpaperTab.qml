@@ -29,14 +29,21 @@ ColumnLayout {
     spacing: Style.marginL * scaling
     Layout.fillWidth: true
 
-    NTextInput {
+    NInputButton {
+      id: wallpaperPathInput
       label: "Wallpaper folder"
       description: "Path to your main wallpaper folder."
       text: Settings.data.wallpaper.directory
-      onEditingFinished: {
+      buttonIcon: "folder-open"
+      buttonTooltip: "Browse for wallpaper folder"
+      Layout.fillWidth: true
+
+      onInputEditingFinished: {
         Settings.data.wallpaper.directory = text
       }
-      Layout.maximumWidth: 420 * scaling
+      onButtonClicked: {
+        openFileManager()
+      }
     }
 
     // Monitor-specific directories
@@ -73,10 +80,21 @@ ColumnLayout {
               Layout.preferredWidth: 90 * scaling
             }
             NTextInput {
+              id: monitorPathInput
               Layout.fillWidth: true
               text: WallpaperService.getMonitorDirectory(modelData.name)
               onEditingFinished: WallpaperService.setMonitorDirectory(modelData.name, text)
               Layout.maximumWidth: 420 * scaling
+            }
+
+            NIconButton {
+              icon: "folder-open"
+              tooltipText: "Browse for wallpaper folder"
+              baseSize: Style.baseWidgetSize * 0.8
+              Layout.alignment: Qt.AlignBottom
+              onClicked: {
+                openMonitorFileManager(modelData.name)
+              }
             }
           }
         }
@@ -323,5 +341,33 @@ ColumnLayout {
     Layout.fillWidth: true
     Layout.topMargin: Style.marginXL * scaling
     Layout.bottomMargin: Style.marginXL * scaling
+  }
+
+  // File manager functions
+  function openFileManager() {
+    FileManagerService.open({
+                              "title": "Select Wallpaper Folder",
+                              "initialPath": Settings.data.wallpaper.directory || Quickshell.env("HOME"),
+                              "selectFiles": false,
+                              "scaling": scaling,
+                              "onSelected": function (path) {
+                                Settings.data.wallpaper.directory = path
+                                wallpaperPathInput.text = path
+                              },
+                              "parent": root
+                            })
+  }
+
+  function openMonitorFileManager(monitorName) {
+    FileManagerService.open({
+                              "title": "Select Monitor Wallpaper Folder",
+                              "initialPath": WallpaperService.getMonitorDirectory(monitorName),
+                              "selectFiles": false,
+                              "scaling": scaling,
+                              "onSelected": function (path) {
+                                WallpaperService.setMonitorDirectory(monitorName, path)
+                              },
+                              "parent": root
+                            })
   }
 }
