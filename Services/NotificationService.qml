@@ -48,6 +48,7 @@ Singleton {
         const req = imageQueue[0]
 
         if (status === Image.Ready) {
+          Logger.log("Notification", "Caching image to:", req.dest)
           Quickshell.execDetached(["mkdir", "-p", Settings.cacheDirImagesNotifications])
           grabToImage(result => {
                         if (result.saveToFile(req.dest))
@@ -144,6 +145,8 @@ Singleton {
                       "dest": dest,
                       "imageId": imageId
                     })
+
+    // If we have a single item in the queue, process it immediately
     if (imageQueue.length === 1)
       cacher.source = path
   }
@@ -157,6 +160,7 @@ Singleton {
   function updateModel(model, id, prop, value) {
     for (var i = 0; i < model.count; i++) {
       if (model.get(i).id === id) {
+        model.setProperty(i, prop, "")
         model.setProperty(i, prop, value)
         break
       }
@@ -313,12 +317,10 @@ Singleton {
       if (image.startsWith("image://qsimage/")) {
         // Try to use app name + summary for uniqueness (summary often contains username)
         const key = (notification.appName || "") + "|" + (notification.summary || "")
-        const hash = Checksum.sha256(key)
-        return hash
+        return Checksum.sha256(key)
       }
 
-      const hash = Checksum.sha256(image)
-      return hash
+      return Checksum.sha256(image)
     }
     return ""
   }
