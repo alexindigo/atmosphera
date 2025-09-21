@@ -113,8 +113,8 @@ Singleton {
 
     return {
       "id": id,
-      "summary": (n.summary || "").substring(0, 100),
-      "body": stripTags(n.body || "").substring(0, 100),
+      "summary": (n.summary || ""),
+      "body": stripTags(n.body || ""),
       "appName": getAppName(n.appName),
       "urgency": n.urgency || 1,
       "timestamp": time,

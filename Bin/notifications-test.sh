@@ -4,7 +4,7 @@ echo "Sending test notifications..."
 
 # Send a bunch of notifications with numbers
 for i in {1..4}; do
-    notify-send "Notification $i" "This is test notification number $i with a very long text that will probably break the layout or maybe not? Who knows?"
+    notify-send "Notification $i" "This is test notification number $i with a very long text that will probably break the layout or maybe not? Who knows? Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
     sleep 1
 done
 
