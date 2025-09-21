@@ -151,6 +151,11 @@ Popup {
       var fileIsDir = folderModel.get(i, "fileIsDir")
       var fileSize = folderModel.get(i, "fileSize")
 
+      // In folder selection mode, only show directories
+      if (root.selectFolders && !root.selectFiles && !fileIsDir) {
+        continue
+      }
+
       // If no search text or file name contains search text
       if (searchText === "" || fileName.toLowerCase().includes(searchText)) {
         filteredModel.append({
@@ -537,9 +542,29 @@ Popup {
             contentItem: Rectangle {
               implicitWidth: 6 * scaling
               implicitHeight: 100
-              radius: 3 * scaling
-              color: parent.pressed ? Color.mTertiary : parent.hovered ? Color.mSecondary : Color.mTertiary
+              radius: Style.radiusM * scaling
+              color: parent.pressed ? Qt.alpha(Color.mTertiary, 0.8) : parent.hovered ? Qt.alpha(Color.mTertiary, 0.8) : Qt.alpha(Color.mTertiary, 0.8)
               opacity: parent.policy === ScrollBar.AlwaysOn || parent.active ? 1.0 : 0.0
+
+              Behavior on opacity {
+                NumberAnimation {
+                  duration: Style.animationFast
+                }
+              }
+
+              Behavior on color {
+                ColorAnimation {
+                  duration: Style.animationFast
+                }
+              }
+            }
+
+            background: Rectangle {
+              implicitWidth: 6 * scaling
+              implicitHeight: 100
+              color: Color.transparent
+              opacity: parent.policy === ScrollBar.AlwaysOn || parent.active ? 0.3 : 0.0
+              radius: (Style.radiusM * scaling) / 2
 
               Behavior on opacity {
                 NumberAnimation {
@@ -753,9 +778,29 @@ Popup {
             contentItem: Rectangle {
               implicitWidth: 6 * scaling
               implicitHeight: 100
-              radius: 3 * scaling
-              color: parent.pressed ? Color.mTertiary : parent.hovered ? Color.mSecondary : Color.mTertiary
+              radius: Style.radiusM * scaling
+              color: parent.pressed ? Qt.alpha(Color.mTertiary, 0.8) : parent.hovered ? Qt.alpha(Color.mTertiary, 0.8) : Qt.alpha(Color.mTertiary, 0.8)
               opacity: parent.policy === ScrollBar.AlwaysOn || parent.active ? 1.0 : 0.0
+
+              Behavior on opacity {
+                NumberAnimation {
+                  duration: Style.animationFast
+                }
+              }
+
+              Behavior on color {
+                ColorAnimation {
+                  duration: Style.animationFast
+                }
+              }
+            }
+
+            background: Rectangle {
+              implicitWidth: 6 * scaling
+              implicitHeight: 100
+              color: Color.transparent
+              opacity: parent.policy === ScrollBar.AlwaysOn || parent.active ? 0.3 : 0.0
+              radius: (Style.radiusM * scaling) / 2
 
               Behavior on opacity {
                 NumberAnimation {
@@ -799,7 +844,7 @@ Popup {
               NIcon {
                 icon: isDirectory ? "folder" : root.getFileIcon(fileName)
                 font.pointSize: Style.fontSizeL * scaling
-                color: isDirectory ? Color.mPrimary : Color.mOnSurfaceVariant
+                color: isDirectory ? (fileManagerPanel.currentSelection.includes(filePath) ? Color.mOnSecondary : Color.mPrimary) : Color.mOnSurfaceVariant
               }
 
               NText {
@@ -898,7 +943,15 @@ Popup {
         }
 
         NButton {
-          text: "Select"
+          text: {
+            if (root.selectFolders && !root.selectFiles) {
+              return "Select Folder"
+            } else if (root.selectFiles && !root.selectFolders) {
+              return "Select File"
+            } else {
+              return "Select"
+            }
+          }
           icon: "check"
           enabled: fileManagerPanel.currentSelection.length > 0
           onClicked: root.confirmSelection()
