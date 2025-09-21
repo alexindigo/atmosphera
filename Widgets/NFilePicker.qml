@@ -50,30 +50,30 @@ Popup {
     case 'txt':
     case 'md':
     case 'log':
-      return 'file-text'
+      return 'filepicker-file-text'
     case 'jpg':
     case 'jpeg':
     case 'png':
     case 'gif':
     case 'bmp':
     case 'svg':
-      return 'photo'
+      return 'filepicker-photo'
     case 'mp4':
     case 'avi':
     case 'mkv':
     case 'mov':
-      return 'video'
+      return 'filepicker-video'
     case 'mp3':
     case 'wav':
     case 'flac':
     case 'ogg':
-      return 'music'
+      return 'filepicker-music'
     case 'zip':
     case 'tar':
     case 'gz':
     case 'rar':
     case '7z':
-      return 'archive'
+      return 'filepicker-archive'
     case 'pdf':
       return 'file-text'
     case 'doc':
@@ -81,24 +81,24 @@ Popup {
       return 'file-text'
     case 'xls':
     case 'xlsx':
-      return 'table'
+      return 'filepicker-table'
     case 'ppt':
     case 'pptx':
-      return 'presentation'
+      return 'filepicker-presentation'
     case 'html':
     case 'htm':
     case 'css':
     case 'js':
     case 'json':
     case 'xml':
-      return 'code'
+      return 'filepicker-code'
     case 'exe':
     case 'app':
     case 'deb':
     case 'rpm':
-      return 'settings'
+      return 'filepicker-settings'
     default:
-      return 'file'
+      return 'filepicker-file'
     }
   }
 
@@ -254,7 +254,7 @@ Popup {
 
         // Main icon
         NIcon {
-          icon: "folder"
+          icon: "filepicker-folder"
           color: Color.mPrimary
           font.pointSize: Style.fontSizeXXL * scaling
         }
@@ -271,7 +271,7 @@ Popup {
 
         // Action buttons
         NIconButton {
-          icon: "refresh"
+          icon: "filepicker-refresh"
           tooltipText: "Refresh"
           Layout.alignment: Qt.AlignVCenter
           onClicked: {
@@ -280,7 +280,7 @@ Popup {
         }
 
         NIconButton {
-          icon: "close"
+          icon: "filepicker-close"
           tooltipText: "Close"
           Layout.alignment: Qt.AlignVCenter
           onClicked: {
@@ -313,7 +313,7 @@ Popup {
 
           // Navigation buttons
           NIconButton {
-            icon: "arrow-left"
+            icon: "filepicker-arrow-left"
             tooltipText: "Back"
             baseSize: Style.baseWidgetSize * 0.8
             enabled: folderModel.folder.toString() !== "file://" + root.initialPath
@@ -327,7 +327,7 @@ Popup {
           }
 
           NIconButton {
-            icon: "arrow-up"
+            icon: "filepicker-arrow-up"
             tooltipText: "Up"
             baseSize: Style.baseWidgetSize * 0.8
             enabled: folderModel.folder.toString() !== "file:///"
@@ -339,7 +339,7 @@ Popup {
           }
 
           NIconButton {
-            icon: "home"
+            icon: "filepicker-home"
             tooltipText: "Home"
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: {
@@ -351,7 +351,7 @@ Popup {
 
           // View mode toggle
           NIconButton {
-            icon: filePickerPanel.viewMode ? "layout-grid" : "list"
+            icon: filePickerPanel.viewMode ? "filepicker-layout-grid" : "filepicker-list"
             tooltipText: filePickerPanel.viewMode ? "List View" : "Grid View"
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: {
@@ -361,7 +361,7 @@ Popup {
 
           // Search toggle
           NIconButton {
-            icon: filePickerPanel.showSearchBar ? "x" : "search"
+            icon: filePickerPanel.showSearchBar ? "filepicker-x" : "filepicker-search"
             tooltipText: filePickerPanel.showSearchBar ? "Close Search" : "Search"
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: {
@@ -426,7 +426,7 @@ Popup {
           spacing: Style.marginS * scaling
 
           NIcon {
-            icon: "search"
+            icon: "filepicker-search"
             color: Color.mOnSurfaceVariant
             font.pointSize: Style.fontSizeS * scaling
           }
@@ -454,7 +454,7 @@ Popup {
           }
 
           NIconButton {
-            icon: "x"
+            icon: "filepicker-x"
             tooltipText: "Clear"
             baseSize: Style.baseWidgetSize * 0.6
             visible: filePickerPanel.searchText.length > 0
@@ -589,10 +589,10 @@ Popup {
             // Selection background (covers entire item)
             Rectangle {
               anchors.fill: parent
-              color: isSelected ? Qt.alpha(Color.mSecondary, 0.15) : Color.transparent
+              color: Color.transparent
               radius: parent.radius
               border.color: isSelected ? Color.mSecondary : Color.mSurface
-              border.width: Math.max(1, Style.borderL * 1.5 * scaling)
+              border.width: Math.max(1, Style.borderL * scaling)
 
               Behavior on color {
                 ColorAnimation {
@@ -604,13 +604,17 @@ Popup {
             // Hover overlay
             Rectangle {
               anchors.fill: parent
-              color: Qt.alpha(Color.mPrimary, 0.1)
-              opacity: (mouseArea.containsMouse && !isSelected) ? 1.0 : 0
+              color: (mouseArea.containsMouse && !isSelected) ? Color.mTertiary : Color.transparent
               radius: parent.radius
-              border.color: Qt.alpha(Color.mPrimary, 0.3)
+              border.color: (mouseArea.containsMouse && !isSelected) ? Color.mTertiary : Color.transparent
               border.width: Math.max(1, Style.borderS * scaling)
-              Behavior on opacity {
-                NumberAnimation {
+              Behavior on color {
+                ColorAnimation {
+                  duration: Style.animationFast
+                }
+              }
+              Behavior on border.color {
+                ColorAnimation {
                   duration: Style.animationFast
                 }
               }
@@ -664,7 +668,7 @@ Popup {
                     visible: thumbnail.status === Image.Loading
 
                     NIcon {
-                      icon: "photo"
+                      icon: "filepicker-photo"
                       font.pointSize: Style.fontSizeL * scaling
                       color: Color.mOnSurfaceVariant
                       anchors.centerIn: parent
@@ -673,9 +677,17 @@ Popup {
                 }
 
                 NIcon {
-                  icon: isDirectory ? "folder" : root.getFileIcon(fileName)
-                  font.pointSize: Style.fontSizeXXL * scaling
-                  color: isDirectory ? Color.mPrimary : Color.mOnSurfaceVariant
+                  icon: isDirectory ? "filepicker-folder" : root.getFileIcon(fileName)
+                  font.pointSize: Style.fontSizeXXL * 2 * scaling
+                  color: {
+                    if (isSelected) {
+                      return Color.mSecondary
+                    } else if (mouseArea.containsMouse) {
+                      return isDirectory ? Color.mOnTertiary : Color.mOnTertiary
+                    } else {
+                      return isDirectory ? Color.mPrimary : Color.mOnSurfaceVariant
+                    }
+                  }
                   anchors.centerIn: parent
                   visible: !iconContainer.isImage || thumbnail.status !== Image.Ready
                 }
@@ -694,7 +706,7 @@ Popup {
                   visible: isSelected
 
                   NIcon {
-                    icon: "check"
+                    icon: "filepicker-check"
                     font.pointSize: Style.fontSizeS * scaling
                     font.weight: Style.fontWeightBold
                     color: Color.mOnSecondary
@@ -705,7 +717,15 @@ Popup {
 
               NText {
                 text: fileName
-                color: isSelected ? Color.mPrimary : Color.mOnSurface
+                color: {
+                  if (isSelected) {
+                    return Color.mSecondary
+                  } else if (mouseArea.containsMouse) {
+                    return Color.mOnTertiary
+                  } else {
+                    return Color.mOnSurface
+                  }
+                }
                 font.pointSize: Style.fontSizeS * scaling
                 font.weight: isSelected ? Style.fontWeightBold : Style.fontWeightRegular
                 Layout.fillWidth: true
@@ -844,7 +864,7 @@ Popup {
               spacing: Style.marginM * scaling
 
               NIcon {
-                icon: isDirectory ? "folder" : root.getFileIcon(fileName)
+                icon: isDirectory ? "filepicker-folder" : root.getFileIcon(fileName)
                 font.pointSize: Style.fontSizeL * scaling
                 color: isDirectory ? (filePickerPanel.currentSelection.includes(filePath) ? Color.mOnSecondary : Color.mPrimary) : Color.mOnSurfaceVariant
               }
@@ -954,7 +974,7 @@ Popup {
               return "Select"
             }
           }
-          icon: "check"
+          icon: "filepicker-check"
           enabled: filePickerPanel.currentSelection.length > 0
           onClicked: root.confirmSelection()
         }
