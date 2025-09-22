@@ -30,7 +30,7 @@ ColumnLayout {
       Layout.alignment: Qt.AlignTop
     }
 
-    NInputButton {
+    NTextInputButton {
       label: `${Quickshell.env("USER") || "user"}'s profile picture`
       description: "Your profile picture that appears throughout the interface."
       text: Settings.data.general.avatarImage
@@ -39,16 +39,18 @@ ColumnLayout {
       buttonTooltip: "Browse for avatar image"
       onInputEditingFinished: Settings.data.general.avatarImage = text
       onButtonClicked: {
-        FilePickerService.open({
-                                 "title": "Select Avatar Image",
-                                 "initialPath": Settings.data.general.avatarImage || Quickshell.env("HOME"),
-                                 "selectFiles": true,
-                                 "scaling": scaling,
-                                 "parent": root,
-                                 "onSelected": path => Settings.data.general.avatarImage = path
-                               })
+        filePicker.open()
       }
     }
+  }
+
+  NFilePicker {
+    id: filePicker
+    pickerType: "file"
+    title: "Select avatar image"
+    initialPath: Settings.data.general.avatarImage.substr(0, Settings.data.general.avatarImage.lastIndexOf("/")) || Quickshell.env("HOME")
+    nameFilters: ["Image files (*.jpg *.jpeg *.png *.gif *.pnm *.bmp *.face)", "All files (*)"]
+    onAccepted: paths => Settings.data.general.avatarImage = paths[0]
   }
 
   NDivider {

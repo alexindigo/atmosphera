@@ -11,6 +11,8 @@ ColumnLayout {
   id: root
   spacing: Style.marginL * scaling
 
+  property string specificFolderMonitorName: ""
+
   NHeader {
     label: "Wallpaper settings"
     description: "Control how wallpapers are managed and displayed."
@@ -18,7 +20,7 @@ ColumnLayout {
 
   NToggle {
     label: "Enable wallpaper management"
-    description: "Manage wallpapers with Noctalia. (Uncheck if you prefer using another application)."
+    description: "Manage wallpapers with Noctalia. Uncheck if you prefer using another application."
     checked: Settings.data.wallpaper.enabled
     onToggled: checked => Settings.data.wallpaper.enabled = checked
     Layout.bottomMargin: Style.marginL * scaling
@@ -29,7 +31,7 @@ ColumnLayout {
     spacing: Style.marginL * scaling
     Layout.fillWidth: true
 
-    NInputButton {
+    NTextInputButton {
       id: wallpaperPathInput
       label: "Wallpaper folder"
       description: "Path to your main wallpaper folder."
@@ -37,13 +39,8 @@ ColumnLayout {
       buttonIcon: "folder-open"
       buttonTooltip: "Browse for wallpaper folder"
       Layout.fillWidth: true
-
-      onInputEditingFinished: {
-        Settings.data.wallpaper.directory = text
-      }
-      onButtonClicked: {
-        openFileManager()
-      }
+      onInputEditingFinished: Settings.data.wallpaper.directory = text
+      onButtonClicked: mainFolderPicker.open()
     }
 
     // Monitor-specific directories
@@ -83,17 +80,15 @@ ColumnLayout {
               font.pointSize: Style.fontSizeM * scaling
             }
 
-            NInputButton {
+            NTextInputButton {
               text: WallpaperService.getMonitorDirectory(modelData.name)
               buttonIcon: "folder-open"
               buttonTooltip: "Browse for wallpaper folder"
               Layout.fillWidth: true
-
-              onInputEditingFinished: {
-                WallpaperService.setMonitorDirectory(modelData.name, text)
-              }
+              onInputEditingFinished: WallpaperService.setMonitorDirectory(modelData.name, text)
               onButtonClicked: {
-                openMonitorFileManager(modelData.name)
+                specificFolderMonitorName = modelData.name
+                monitorFolderPicker.open()
               }
             }
           }
@@ -343,26 +338,17 @@ ColumnLayout {
     Layout.bottomMargin: Style.marginXL * scaling
   }
 
-  // File manager functions
-  function openFileManager() {
-    FilePickerService.open({
-                             "title": "Select Wallpaper Folder",
-                             "initialPath": Settings.data.wallpaper.directory || Quickshell.env("HOME"),
-                             "selectFiles": false,
-                             "scaling": scaling,
-                             "parent": root,
-                             "onSelected": path => Settings.data.wallpaper.directory = path
-                           })
+  NFilePicker {
+    id: mainFolderPicker
+    pickerType: "folder"
+    title: "Select wallpaper folder"
+    onAccepted: paths => Settings.data.wallpaper.directory = paths[0]
   }
 
-  function openMonitorFileManager(monitorName) {
-    FilePickerService.open({
-                             "title": "Select Monitor Wallpaper Folder",
-                             "initialPath": WallpaperService.getMonitorDirectory(monitorName),
-                             "selectFiles": false,
-                             "scaling": scaling,
-                             "parent": root,
-                             "onSelected": path => WallpaperService.setMonitorDirectory(monitorName, path)
-                           })
+  NFilePicker {
+    id: monitorFolderPicker
+    pickerType: "folder"
+    title: "Select monitor wallpaper folder"
+    onAccepted: paths => WallpaperService.setMonitorDirectory(specificFolderMonitorName, paths[0])
   }
 }

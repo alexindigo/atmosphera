@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import Quickshell
 import qs.Commons
 import qs.Services
 import qs.Widgets
@@ -20,24 +21,15 @@ ColumnLayout {
     spacing: Style.marginS * scaling
     Layout.fillWidth: true
 
-    NInputButton {
+    NTextInputButton {
       label: "Output folder"
       description: "Folder where screen recordings will be saved."
-      placeholderText: "/home/xxx/Videos"
+      placeholderText: Quickshell.env("HOME") + "/Videos"
       text: Settings.data.screenRecorder.directory
       buttonIcon: "folder-open"
       buttonTooltip: "Browse for output folder"
       onInputEditingFinished: Settings.data.screenRecorder.directory = text
-      onButtonClicked: {
-        FilePickerService.open({
-                                 "title": "Select Output Folder",
-                                 "initialPath": Settings.data.screenRecorder.directory || Quickshell.env("HOME") + "/Videos",
-                                 "selectFiles": false,
-                                 "scaling": scaling,
-                                 "parent": root,
-                                 "onSelected": path => Settings.data.screenRecorder.directory = path
-                               })
-      }
+      onButtonClicked: folderPicker.open()
     }
 
     ColumnLayout {
@@ -260,5 +252,13 @@ ColumnLayout {
     Layout.fillWidth: true
     Layout.topMargin: Style.marginXL * scaling
     Layout.bottomMargin: Style.marginXL * scaling
+  }
+
+  NFilePicker {
+    id: folderPicker
+    pickerType: "folder"
+    title: "Select output folder"
+    initialPath: Settings.data.screenRecorder.directory || Quickshell.env("HOME") + "/Videos"
+    onAccepted: paths => Settings.data.screenRecorder.directory = paths[0]
   }
 }
