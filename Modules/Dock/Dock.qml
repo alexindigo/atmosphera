@@ -34,14 +34,6 @@ Variants {
       }
     }
 
-    // Also listen to model changes (for ObjectModel)
-    Connections {
-      target: ToplevelManager ? ToplevelManager.toplevels : null
-      function onCountChanged() {
-        updateDockApps()
-      }
-    }
-
     // Update dock apps when pinned apps change
     Connections {
       target: Settings.data.dock
