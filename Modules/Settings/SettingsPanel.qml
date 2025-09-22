@@ -3,7 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
-import qs.Modules.SettingsPanel.Tabs as Tabs
+import qs.Modules.Settings.Tabs as Tabs
 import qs.Commons
 import qs.Services
 import qs.Widgets

@@ -5,7 +5,7 @@ import Quickshell
 import qs.Commons
 import qs.Services
 import qs.Widgets
-import qs.Modules.SettingsPanel.Bar
+import qs.Modules.Settings.Bar
 
 ColumnLayout {
   id: root

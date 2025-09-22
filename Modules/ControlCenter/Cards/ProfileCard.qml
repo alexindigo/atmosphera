@@ -4,8 +4,8 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
 import Quickshell.Widgets
-import qs.Modules.SettingsPanel
-import qs.Modules.SidePanel
+import qs.Modules.Settings
+import qs.Modules.ControlCenter
 import qs.Commons
 import qs.Services
 import qs.Widgets
@@ -69,7 +69,7 @@ NBox {
         tooltipText: "Power panel"
         onClicked: {
           powerPanel.open()
-          sidePanel.close()
+          controlCenterPanel.close()
         }
       }
 
@@ -78,7 +78,7 @@ NBox {
         icon: "close"
         tooltipText: "Close side panel"
         onClicked: {
-          sidePanel.close()
+          controlCenterPanel.close()
         }
       }
     }

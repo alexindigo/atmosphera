@@ -23,7 +23,6 @@ import qs.Widgets
 // Core Modules
 import qs.Modules.Background
 import qs.Modules.Dock
-import qs.Modules.IPC
 import qs.Modules.LockScreen
 
 // Bar & Bar Components
@@ -35,12 +34,12 @@ import qs.Modules.Bar.Power
 import qs.Modules.Bar.WiFi
 
 // Panels & UI Components
+import qs.Modules.ControlCenter
 import qs.Modules.Launcher
 import qs.Modules.Notification
-import qs.Modules.SettingsPanel
-import qs.Modules.SidePanel
+import qs.Modules.Settings
 import qs.Modules.Toast
-import qs.Modules.WallpaperSelector
+import qs.Modules.Wallpaper
 
 ShellRoot {
   id: shellRoot
@@ -61,7 +60,9 @@ ShellRoot {
 
   ToastOverlay {}
 
-  IPCManager {}
+  // IPCService is treated as a service 
+  // but it's actually an Item that needs to exists in the shell.
+  IPCService {}
 
   // ------------------------------
   // All the NPanels
@@ -70,12 +71,12 @@ ShellRoot {
     objectName: "launcherPanel"
   }
 
-  SidePanel {
-    id: sidePanel
-    objectName: "sidePanel"
+  ControlCenterPanel {
+    id: controlCenterPanel
+    objectName: "controlCenterPanel"
   }
 
-  Calendar {
+  CalendarPanel {
     id: calendarPanel
     objectName: "calendarPanel"
   }
@@ -105,9 +106,9 @@ ShellRoot {
     objectName: "bluetoothPanel"
   }
 
-  WallpaperSelector {
-    id: wallpaperSelector
-    objectName: "wallpaperSelector"
+  WallpaperPanel {
+    id: wallpaperPanel
+    objectName: "wallpaperPanel"
   }
 
   Component.onCompleted: {

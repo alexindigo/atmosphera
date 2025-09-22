@@ -3,7 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import qs.Commons
-import qs.Modules.SettingsPanel
+import qs.Modules.Settings
 import qs.Services
 import qs.Widgets
 
@@ -33,8 +33,8 @@ NBox {
         ScreenRecorderService.toggleRecording()
         // If we were not recording and we just initiated a start, close the panel
         if (!ScreenRecorderService.isRecording) {
-          var panel = PanelService.getPanel("sidePanel")
-          panel && panel.close()
+          var panel = PanelService.getPanel("controlCenterPanel")
+          panel?.close()
         }
       }
     }
@@ -55,7 +55,7 @@ NBox {
       visible: Settings.data.wallpaper.enabled
       icon: "wallpaper-selector"
       tooltipText: "Left click: Open wallpaper selector.\nRight click: Set random wallpaper."
-      onClicked: PanelService.getPanel("wallpaperSelector")?.toggle(this)
+      onClicked: PanelService.getPanel("wallpaperPanel")?.toggle(this)
       onRightClicked: WallpaperService.setRandomWallpaper()
     }
 

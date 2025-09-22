@@ -4,7 +4,7 @@ import QtQuick.Controls
 import Quickshell
 import Quickshell.Wayland
 import qs.Commons
-import qs.Modules.SettingsPanel
+import qs.Modules.Settings
 import qs.Services
 import qs.Widgets
 

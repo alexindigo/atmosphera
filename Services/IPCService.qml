@@ -117,10 +117,11 @@ Item {
   }
 
   IpcHandler {
+    // TODO: upgrade when breaking changes
     target: "sidePanel"
     function toggle() {
       // Will attempt to open the panel next to the bar button if any.
-      sidePanel.toggle(BarService.lookupWidget("SidePanelToggle"))
+      controlCenterPanel.toggle(BarService.lookupWidget("SidePanelToggle"))
     }
   }
 
@@ -129,7 +130,7 @@ Item {
     target: "wallpaper"
     function toggle() {
       if (Settings.data.wallpaper.enabled) {
-        wallpaperSelector.toggle()
+        wallpaperPanel.toggle()
       }
     }
 

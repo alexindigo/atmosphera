@@ -1,10 +1,10 @@
 import QtQuick
 import Quickshell
 import qs.Commons
-import qs.Modules.SettingsPanel
+import qs.Modules.Bar.Extras
+import qs.Modules.Settings
 import qs.Services
 import qs.Widgets
-import qs.Modules.Bar.Extras
 
 Item {
   id: root
