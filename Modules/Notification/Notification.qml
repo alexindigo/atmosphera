@@ -37,6 +37,9 @@ Variants {
 
     sourceComponent: PanelWindow {
       screen: modelData
+
+      WlrLayershell.namespace: "noctalia-notifications"
+
       color: Color.transparent
 
       readonly property string location: (Settings.isLoaded && Settings.data && Settings.data.notifications && Settings.data.notifications.location) ? Settings.data.notifications.location : "top_right"
