@@ -379,15 +379,25 @@ Singleton {
     const sections = ["left", "center", "right"]
 
     // -----------------
-    // 1st. check our settings are not super old, when we only had the widget type as a plain string
+    // 1st. convert old widget id to new id
     for (var s = 0; s < sections.length; s++) {
       const sectionName = sections[s]
       for (var i = 0; i < adapter.bar.widgets[sectionName].length; i++) {
         var widget = adapter.bar.widgets[sectionName][i]
-        if (typeof widget === "string") {
-          adapter.bar.widgets[sectionName][i] = {
-            "id": widget
-          }
+
+        switch (widget.id) {
+          case "DarkModeToggle":
+            widget.id = "DarkMode"
+            break;
+          case "PowerToggle":
+            widget.id = "SessionMenu"
+            break;
+          case "ScreenRecorderIndicator":
+            widget.id = "ScreenRecorder"
+            break;
+          case "SidePanelToggle":
+            widget.id = "ControlCenter"
+            break;
         }
       }
     }

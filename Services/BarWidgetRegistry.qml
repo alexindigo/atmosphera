@@ -16,7 +16,7 @@ Singleton {
                            "Brightness": brightnessComponent,
                            "Clock": clockComponent,
                            "CustomButton": customButtonComponent,
-                           "DarkModeToggle": darkModeToggle,
+                           "DarkMode": darkMode,
                            "KeepAwake": keepAwakeComponent,
                            "KeyboardLayout": keyboardLayoutComponent,
                            "MediaMini": mediaMiniComponent,
@@ -24,9 +24,9 @@ Singleton {
                            "NightLight": nightLightComponent,
                            "NotificationHistory": notificationHistoryComponent,
                            "PowerProfile": powerProfileComponent,
-                           "PowerToggle": powerToggleComponent,
-                           "ScreenRecorderIndicator": screenRecorderIndicatorComponent,
-                           "SidePanelToggle": sidePanelToggleComponent,
+                           "SessionMenu": sessionMenuComponent,
+                           "ScreenRecorder": screenRecorderComponent,
+                           "ControlCenter": controlCenterComponent,
                            "Spacer": spacerComponent,
                            "SystemMonitor": systemMonitorComponent,
                            "Taskbar": taskbarComponent,
@@ -100,7 +100,7 @@ Singleton {
                                     "showVisualizer": false,
                                     "visualizerType": "linear"
                                   },
-                                  "SidePanelToggle": {
+                                  "ControlCenter": {
                                     "allowUserSettings": true,
                                     "useDistroLogo": false,
                                     "icon": "noctalia",
@@ -135,8 +135,8 @@ Singleton {
   property Component customButtonComponent: Component {
     CustomButton {}
   }
-  property Component darkModeToggle: Component {
-    DarkModeToggle {}
+  property Component darkMode: Component {
+    DarkMode{}
   }
   property Component keyboardLayoutComponent: Component {
     KeyboardLayout {}
@@ -159,14 +159,14 @@ Singleton {
   property Component powerProfileComponent: Component {
     PowerProfile {}
   }
-  property Component powerToggleComponent: Component {
-    PowerToggle {}
+  property Component sessionMenuComponent: Component {
+    SessionMenu {}
   }
-  property Component screenRecorderIndicatorComponent: Component {
-    ScreenRecorderIndicator {}
+  property Component screenRecorderComponent: Component {
+    ScreenRecorder {}
   }
-  property Component sidePanelToggleComponent: Component {
-    SidePanelToggle {}
+  property Component controlCenterComponent: Component {
+    ControlCenter {}
   }
   property Component spacerComponent: Component {
     Spacer {}
