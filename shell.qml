@@ -30,11 +30,11 @@ import qs.Modules.LockScreen
 import qs.Modules.Bar
 import qs.Modules.Bar.Extras
 import qs.Modules.Bar.Bluetooth
+import qs.Modules.Bar.Calendar
 import qs.Modules.Bar.Power
 import qs.Modules.Bar.WiFi
 
 // Panels & UI Components
-import qs.Modules.Calendar
 import qs.Modules.Launcher
 import qs.Modules.Notification
 import qs.Modules.SettingsPanel
