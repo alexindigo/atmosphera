@@ -42,7 +42,7 @@ Rectangle {
 
   implicitWidth: isBarVertical ? Math.round(Style.capsuleHeight * scaling) : Math.round((isBarVertical ? verticalLoader.implicitWidth : horizontalLoader.implicitWidth) + Style.marginM * 2 * scaling)
 
-  implicitHeight: isBarVertical ? verticalLoader.implicitHeight + Style.marginS * 2 * scaling : Math.round(Style.capsuleHeight * scaling)
+  implicitHeight: isBarVertical ? Math.round(verticalLoader.implicitHeight + Style.marginS * 2 * scaling) : Math.round(Style.capsuleHeight * scaling)
 
   radius: Math.round(Style.radiusS * scaling)
   color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
@@ -58,7 +58,7 @@ Rectangle {
       anchors.centerIn: parent
       sourceComponent: ColumnLayout {
         anchors.centerIn: parent
-        spacing: -4 * scaling
+        spacing: Settings.data.bar.showCapsule ? -4 * scaling : -2 * scaling
         Repeater {
           id: repeater
           model: Qt.formatDateTime(now, formatHorizontal.trim()).split("\\n")
