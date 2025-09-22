@@ -29,9 +29,9 @@ import qs.Modules.LockScreen
 // Bar & Bar Components
 import qs.Modules.Bar
 import qs.Modules.Bar.Extras
-import qs.Modules.Bar.BluetoothPanel
-import qs.Modules.Bar.PowerPanel
-import qs.Modules.Bar.WiFiPanel
+import qs.Modules.Bar.Bluetooth
+import qs.Modules.Bar.Power
+import qs.Modules.Bar.WiFi
 
 // Panels & UI Components
 import qs.Modules.Calendar
