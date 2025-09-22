@@ -9,11 +9,13 @@ import "./WidgetSettings" as WidgetSettings
 
 // Widget Settings Dialog Component
 Popup {
-  id: settingsPopup
+  id: root
 
   property int widgetIndex: -1
   property var widgetData: null
   property string widgetId: ""
+
+  property bool isMasked: false
 
   // Center popup in parent
   x: (parent.width - width) * 0.5
@@ -23,52 +25,35 @@ Popup {
   height: content.implicitHeight + padding * 2
   padding: Style.marginXL * scaling
   modal: true
-
-  background: Rectangle {
-    id: bgRect
-    color: Color.mSurface
-    radius: Style.radiusL * scaling
-    border.color: Color.mPrimary
-    border.width: Style.borderM * scaling
-  }
-
-  // Load settings when popup opens with data
+  
   onOpened: {
+    // Mark this popup has opened in the PanelService
+    PanelService.willOpenPopup(root)
+
+    // Load settings when popup opens with data
     if (widgetData && widgetId) {
       loadWidgetSettings()
     }
   }
 
-  function loadWidgetSettings() {
-    const widgetSettingsMap = {
-      "ActiveWindow": "WidgetSettings/ActiveWindowSettings.qml",
-      "Battery": "WidgetSettings/BatterySettings.qml",
-      "Brightness": "WidgetSettings/BrightnessSettings.qml",
-      "Clock": "WidgetSettings/ClockSettings.qml",
-      "CustomButton": "WidgetSettings/CustomButtonSettings.qml",
-      "KeyboardLayout": "WidgetSettings/KeyboardLayoutSettings.qml",
-      "MediaMini": "WidgetSettings/MediaMiniSettings.qml",
-      "Microphone": "WidgetSettings/MicrophoneSettings.qml",
-      "NotificationHistory": "WidgetSettings/NotificationHistorySettings.qml",
-      "Workspace": "WidgetSettings/WorkspaceSettings.qml",
-      "SidePanelToggle": "WidgetSettings/SidePanelToggleSettings.qml",
-      "Spacer": "WidgetSettings/SpacerSettings.qml",
-      "SystemMonitor": "WidgetSettings/SystemMonitorSettings.qml",
-      "Volume": "WidgetSettings/VolumeSettings.qml"
-    }
-
-    const source = widgetSettingsMap[widgetId]
-    if (source) {
-      // Use setSource to pass properties at creation time
-      settingsLoader.setSource(source, {
-                                 "widgetData": widgetData,
-                                 "widgetMetadata": BarWidgetRegistry.widgetMetadata[widgetId]
-                               })
-    }
+  onClosed: {
+    PanelService.willClosePopup(root)
   }
 
-  ColumnLayout {
+  background: Rectangle {
+    id: bgRect
+
+    opacity: root.isMasked ? 0 : 1.0
+    color: Color.mSurface
+    radius: Style.radiusL * scaling
+    border.color: Color.mPrimary
+    border.width: Math.max(1, Style.borderM * scaling)
+  }
+
+  contentItem: ColumnLayout {
     id: content
+
+    opacity: root.isMasked ? 0 : 1.0
     width: parent.width
     spacing: Style.marginM * scaling
 
@@ -77,7 +62,7 @@ Popup {
       Layout.fillWidth: true
 
       NText {
-        text: `${settingsPopup.widgetId} Settings`
+        text: `${root.widgetId} Settings`
         font.pointSize: Style.fontSizeL * scaling
         font.weight: Style.fontWeightBold
         color: Color.mPrimary
@@ -86,7 +71,7 @@ Popup {
 
       NIconButton {
         icon: "close"
-        onClicked: settingsPopup.close()
+        onClicked: root.close()
       }
     }
 
@@ -117,7 +102,7 @@ Popup {
       NButton {
         text: "Cancel"
         outlined: true
-        onClicked: settingsPopup.close()
+        onClicked: root.close()
       }
 
       NButton {
@@ -126,11 +111,40 @@ Popup {
         onClicked: {
           if (settingsLoader.item && settingsLoader.item.saveSettings) {
             var newSettings = settingsLoader.item.saveSettings()
-            root.updateWidgetSettings(sectionId, settingsPopup.widgetIndex, newSettings)
-            settingsPopup.close()
+            root.updateWidgetSettings(sectionId, root.widgetIndex, newSettings)
+            root.close()
           }
         }
       }
     }
   }
+
+    function loadWidgetSettings() {
+    const widgetSettingsMap = {
+      "ActiveWindow": "WidgetSettings/ActiveWindowSettings.qml",
+      "Battery": "WidgetSettings/BatterySettings.qml",
+      "Brightness": "WidgetSettings/BrightnessSettings.qml",
+      "Clock": "WidgetSettings/ClockSettings.qml",
+      "CustomButton": "WidgetSettings/CustomButtonSettings.qml",
+      "KeyboardLayout": "WidgetSettings/KeyboardLayoutSettings.qml",
+      "MediaMini": "WidgetSettings/MediaMiniSettings.qml",
+      "Microphone": "WidgetSettings/MicrophoneSettings.qml",
+      "NotificationHistory": "WidgetSettings/NotificationHistorySettings.qml",
+      "Workspace": "WidgetSettings/WorkspaceSettings.qml",
+      "SidePanelToggle": "WidgetSettings/SidePanelToggleSettings.qml",
+      "Spacer": "WidgetSettings/SpacerSettings.qml",
+      "SystemMonitor": "WidgetSettings/SystemMonitorSettings.qml",
+      "Volume": "WidgetSettings/VolumeSettings.qml"
+    }
+
+    const source = widgetSettingsMap[widgetId]
+    if (source) {
+      // Use setSource to pass properties at creation time
+      settingsLoader.setSource(source, {
+                                 "widgetData": widgetData,
+                                 "widgetMetadata": BarWidgetRegistry.widgetMetadata[widgetId]
+                               })
+    }
+  }
+
 }

@@ -38,13 +38,6 @@ ColumnLayout {
     }
   }
 
-  NFilePicker {
-    id: filePicker
-    title: "Select a custom icon"
-    onFileSelected: function (filePath) {
-      valueCustomIconPath = "file://" + filePath
-    }
-  }
 
   RowLayout {
     spacing: Style.marginM * scaling
@@ -85,9 +78,15 @@ ColumnLayout {
   NIconPicker {
     id: iconPicker
     initialIcon: valueIcon
-    onIconSelected: function (iconName) {
+    onIconSelected: iconName => {
       valueIcon = iconName
       valueCustomIconPath = ""
     }
+  }
+
+  NFilePicker {
+    id: filePicker
+    title: "Select a custom icon"
+    onAccepted: paths => valueCustomIconPath = paths[0]
   }
 }

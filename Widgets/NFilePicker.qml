@@ -37,6 +37,10 @@ Item {
       PanelService.openedPanel.isMasked = true
     }
 
+    if (PanelService.openedPopup !== null) {
+      PanelService.openedPopup.isMasked = true
+    }
+
     isOpen = true
 
     // Small delay to ensure panel changes happen first
@@ -64,6 +68,10 @@ Item {
 
     if (PanelService.openedPanel !== null) {
       PanelService.openedPanel.isMasked = false
+    }
+
+    if (PanelService.openedPopup !== null) {
+      PanelService.openedPopup.isMasked = false
     }
 
     afterClose()

@@ -14,6 +14,9 @@ Singleton {
   property var openedPanel: null
   readonly property bool hasOpenedPanel: (openedPanel !== null)
 
+  // Currently opened popup
+  property var openedPopup: null
+
   property var registeredPanels: ({})
 
   signal willOpen
@@ -54,6 +57,16 @@ Singleton {
   function closedPanel(panel) {
     if (openedPanel && openedPanel === panel) {
       openedPanel = null
+    }
+  }
+
+  // Popups
+  function willOpenPopup(popup) {
+    openedPopup = popup
+  }
+  function willClosePopup(popup) {
+    if (openedPopup && openedPopup === popup) {
+      openedPopup = null
     }
   }
 }
