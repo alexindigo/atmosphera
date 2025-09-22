@@ -5,7 +5,7 @@ import qs.Commons
 
 Rectangle {
   id: root
-  color: Color.mSurfaceVariant
+  color: Color.mSurface
   border.color: Color.mOutline
   border.width: Math.max(1, Style.borderS * scaling)
   radius: Style.radiusM * scaling
@@ -26,6 +26,8 @@ Rectangle {
       Layout.fillWidth: true
       Layout.fillHeight: true
       clip: true
+      horizontalPolicy: ScrollBar.AlwaysOff
+      verticalPolicy: ScrollBar.AsNeeded
 
       ListView {
         id: tokensList
@@ -239,12 +241,13 @@ Rectangle {
         delegate: Rectangle {
           id: tokenDelegate
           width: tokensList.width
-          height: 32 * scaling
+          height: layout.implicitHeight + Style.marginS * scaling
+          radius: Style.radiusS * scaling
           color: {
             if (tokenMouseArea.containsMouse) {
               return Qt.alpha(Color.mPrimary, 0.1)
             }
-            return index % 2 === 0 ? Color.mSurface : Color.mSurfaceVariant
+            return index % 2 === 0 ? Color.mSurfaceVariant : Qt.alpha(Color.mSurfaceVariant, 0.6)
           }
 
           // Mouse area for the entire delegate
@@ -281,12 +284,14 @@ Rectangle {
           }
 
           RowLayout {
+            id: layout
             anchors.fill: parent
-            anchors.margins: Style.marginS * scaling
+            anchors.margins: Style.marginXS * scaling
             spacing: Style.marginM * scaling
 
             // Category badge
             Rectangle {
+              Layout.alignment: Qt.AlignVCenter
               width: 70 * scaling
               height: 22 * scaling
               color: getCategoryColor(model.category)[0]
@@ -310,6 +315,7 @@ Rectangle {
             // Token - Made more prominent and clickable
             Rectangle {
               id: tokenButton
+              Layout.alignment: Qt.AlignVCenter // Added this line
               width: 100 * scaling
               height: 22 * scaling
               color: tokenMouseArea.containsMouse ? Color.mPrimary : Color.mOnSurface
@@ -339,6 +345,7 @@ Rectangle {
             // Description
             NText {
               Layout.fillWidth: true
+              Layout.alignment: Qt.AlignVCenter // Added this line
               text: model.description
               color: tokenMouseArea.containsMouse ? Color.mOnSurface : Color.mOnSurfaceVariant
               font.pointSize: Style.fontSizeS * scaling
@@ -353,6 +360,7 @@ Rectangle {
 
             // Live example
             Rectangle {
+              Layout.alignment: Qt.AlignVCenter // Added this line
               width: 90 * scaling
               height: 22 * scaling
               color: tokenMouseArea.containsMouse ? Color.mPrimary : Color.mOnSurfaceVariant
