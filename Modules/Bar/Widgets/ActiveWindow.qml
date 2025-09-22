@@ -31,6 +31,10 @@ Item {
   }
 
   readonly property string windowTitle: CompositorService.getFocusedWindowTitle()
+  readonly property bool hasActiveWindow: {
+    const t = (windowTitle || "").trim()
+    return t.length > 0 && t !== "(No active window)"
+  }
 
   readonly property bool showIcon: (widgetSettings.showIcon !== undefined) ? widgetSettings.showIcon : widgetMetadata.showIcon
 
@@ -52,7 +56,7 @@ Item {
   implicitHeight: (barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Math.round(Style.barHeight * scaling)
   implicitWidth: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * 0.8 * scaling) : (horizontalLayout.implicitWidth + Style.marginM * 2 * scaling)
 
-  visible: windowTitle !== ""
+  visible: hasActiveWindow
 
   function calculatedVerticalHeight() {
     // Use standard widget height like other widgets
@@ -159,7 +163,7 @@ Item {
           Layout.preferredWidth: Style.capsuleHeight * 0.75 * scaling
           Layout.preferredHeight: Style.capsuleHeight * 0.75 * scaling
           Layout.alignment: Qt.AlignVCenter
-          visible: windowTitle !== "" && showIcon
+          visible: hasActiveWindow && showIcon
 
           IconImage {
             id: windowIcon
@@ -217,7 +221,7 @@ Item {
         anchors.centerIn: parent
         width: parent.width - Style.marginXS * scaling * 2
         height: parent.height - Style.marginXS * scaling * 2
-        visible: barPosition === "left" || barPosition === "right"
+        visible: (barPosition === "left" || barPosition === "right") && hasActiveWindow
 
         // Window icon
         Item {
