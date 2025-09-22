@@ -31,6 +31,7 @@ Item {
   }
 
   readonly property string windowTitle: CompositorService.getFocusedWindowTitle()
+  readonly property bool hasActiveWindow: windowTitle !== "" && windowTitle !== "(No active window)"
 
   readonly property bool showIcon: (widgetSettings.showIcon !== undefined) ? widgetSettings.showIcon : widgetMetadata.showIcon
 
@@ -52,7 +53,7 @@ Item {
   implicitHeight: (barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Math.round(Style.barHeight * scaling)
   implicitWidth: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * 0.8 * scaling) : (horizontalLayout.implicitWidth + Style.marginM * 2 * scaling)
 
-  visible: windowTitle !== ""
+  visible: hasActiveWindow
 
   function calculatedVerticalHeight() {
     // Use standard widget height like other widgets
