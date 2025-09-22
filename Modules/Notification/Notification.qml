@@ -16,7 +16,7 @@ Variants {
     id: root
 
     required property ShellScreen modelData
-    readonly property real scaling: ScalingService.getScreenScale(modelData)
+    property real scaling: ScalingService.getScreenScale(modelData)
 
     // Access the notification model from the service - UPDATED NAME
     property ListModel notificationModel: NotificationService.activeList
@@ -25,6 +25,15 @@ Variants {
     active: Settings.isLoaded && modelData && (notificationModel.count > 0) ? (Settings.data.notifications.monitors.includes(modelData.name) || (Settings.data.notifications.monitors.length === 0)) : false
 
     visible: (notificationModel.count > 0)
+
+    Connections {
+      target: ScalingService
+      function onScaleChanged(screenName, scale) {
+        if (root.modelData && screenName === root.modelData.name) {
+          root.scaling = scale
+        }
+      }
+    }
 
     sourceComponent: PanelWindow {
       screen: modelData
