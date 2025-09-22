@@ -20,16 +20,30 @@ ColumnLayout {
     spacing: Style.marginS * scaling
     Layout.fillWidth: true
 
-    NTextInput {
+    NInputButton {
       label: "Output folder"
       description: "Folder where screen recordings will be saved."
       placeholderText: "/home/xxx/Videos"
       text: Settings.data.screenRecorder.directory
-      onEditingFinished: {
+      buttonIcon: "folder-open"
+      buttonTooltip: "Browse for output folder"
+
+      onInputEditingFinished: {
         Settings.data.screenRecorder.directory = text
       }
-
-      Layout.maximumWidth: 420 * scaling
+      onButtonClicked: {
+        FilePickerService.open({
+                                 "title": "Select Output Folder",
+                                 "initialPath": Settings.data.screenRecorder.directory || Quickshell.env("HOME") + "/Videos",
+                                 "selectFiles": false,
+                                 "scaling": scaling,
+                                 "onSelected": function (path) {
+                                   Settings.data.screenRecorder.directory = path
+                                   text = path
+                                 },
+                                 "parent": root
+                               })
+      }
     }
 
     ColumnLayout {

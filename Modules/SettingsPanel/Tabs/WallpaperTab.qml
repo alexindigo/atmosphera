@@ -29,14 +29,21 @@ ColumnLayout {
     spacing: Style.marginL * scaling
     Layout.fillWidth: true
 
-    NTextInput {
+    NInputButton {
+      id: wallpaperPathInput
       label: "Wallpaper folder"
       description: "Path to your main wallpaper folder."
       text: Settings.data.wallpaper.directory
-      onEditingFinished: {
+      buttonIcon: "folder-open"
+      buttonTooltip: "Browse for wallpaper folder"
+      Layout.fillWidth: true
+
+      onInputEditingFinished: {
         Settings.data.wallpaper.directory = text
       }
-      Layout.maximumWidth: 420 * scaling
+      onButtonClicked: {
+        openFileManager()
+      }
     }
 
     // Monitor-specific directories
@@ -65,18 +72,29 @@ ColumnLayout {
         spacing: Style.marginM * scaling
         Repeater {
           model: Quickshell.screens || []
-          delegate: RowLayout {
+          delegate: ColumnLayout {
+            Layout.fillWidth: true
+            spacing: Style.marginS * scaling
+
             NText {
               text: (modelData.name || "Unknown")
               color: Color.mPrimary
               font.weight: Style.fontWeightBold
-              Layout.preferredWidth: 90 * scaling
+              font.pointSize: Style.fontSizeM * scaling
             }
-            NTextInput {
-              Layout.fillWidth: true
+
+            NInputButton {
               text: WallpaperService.getMonitorDirectory(modelData.name)
-              onEditingFinished: WallpaperService.setMonitorDirectory(modelData.name, text)
-              Layout.maximumWidth: 420 * scaling
+              buttonIcon: "folder-open"
+              buttonTooltip: "Browse for wallpaper folder"
+              Layout.fillWidth: true
+
+              onInputEditingFinished: {
+                WallpaperService.setMonitorDirectory(modelData.name, text)
+              }
+              onButtonClicked: {
+                openMonitorFileManager(modelData.name)
+              }
             }
           }
         }
@@ -323,5 +341,33 @@ ColumnLayout {
     Layout.fillWidth: true
     Layout.topMargin: Style.marginXL * scaling
     Layout.bottomMargin: Style.marginXL * scaling
+  }
+
+  // File manager functions
+  function openFileManager() {
+    FilePickerService.open({
+                             "title": "Select Wallpaper Folder",
+                             "initialPath": Settings.data.wallpaper.directory || Quickshell.env("HOME"),
+                             "selectFiles": false,
+                             "scaling": scaling,
+                             "onSelected": function (path) {
+                               Settings.data.wallpaper.directory = path
+                               wallpaperPathInput.text = path
+                             },
+                             "parent": root
+                           })
+  }
+
+  function openMonitorFileManager(monitorName) {
+    FilePickerService.open({
+                             "title": "Select Monitor Wallpaper Folder",
+                             "initialPath": WallpaperService.getMonitorDirectory(monitorName),
+                             "selectFiles": false,
+                             "scaling": scaling,
+                             "onSelected": function (path) {
+                               WallpaperService.setMonitorDirectory(monitorName, path)
+                             },
+                             "parent": root
+                           })
   }
 }

@@ -30,14 +30,29 @@ ColumnLayout {
       Layout.alignment: Qt.AlignTop
     }
 
-    NTextInput {
-      Layout.fillWidth: true
+    NInputButton {
       label: `${Quickshell.env("USER") || "user"}'s profile picture`
       description: "Your profile picture that appears throughout the interface."
       text: Settings.data.general.avatarImage
       placeholderText: "/home/user/.face"
-      onEditingFinished: {
+      buttonIcon: "photo"
+      buttonTooltip: "Browse for avatar image"
+
+      onInputEditingFinished: {
         Settings.data.general.avatarImage = text
+      }
+      onButtonClicked: {
+        FilePickerService.open({
+                                 "title": "Select Avatar Image",
+                                 "initialPath": Settings.data.general.avatarImage || Quickshell.env("HOME"),
+                                 "selectFiles": true,
+                                 "scaling": scaling,
+                                 "onSelected": function (path) {
+                                   Settings.data.general.avatarImage = path
+                                   text = path
+                                 },
+                                 "parent": root
+                               })
       }
     }
   }
