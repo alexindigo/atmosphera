@@ -9,7 +9,8 @@ import "./WidgetSettings" as WidgetSettings
 
 // Widget Settings Dialog Component
 Popup {
-  id: root
+  // Don't replace by root!
+  id: widgetSettings
 
   property int widgetIndex: -1
   property var widgetData: null
@@ -28,7 +29,7 @@ Popup {
   
   onOpened: {
     // Mark this popup has opened in the PanelService
-    PanelService.willOpenPopup(root)
+    PanelService.willOpenPopup(widgetSettings)
 
     // Load settings when popup opens with data
     if (widgetData && widgetId) {
@@ -37,13 +38,13 @@ Popup {
   }
 
   onClosed: {
-    PanelService.willClosePopup(root)
+    PanelService.willClosePopup(widgetSettings)
   }
 
   background: Rectangle {
     id: bgRect
 
-    opacity: root.isMasked ? 0 : 1.0
+    opacity: widgetSettings.isMasked ? 0 : 1.0
     color: Color.mSurface
     radius: Style.radiusL * scaling
     border.color: Color.mPrimary
@@ -53,7 +54,7 @@ Popup {
   contentItem: ColumnLayout {
     id: content
 
-    opacity: root.isMasked ? 0 : 1.0
+    opacity: widgetSettings.isMasked ? 0 : 1.0
     width: parent.width
     spacing: Style.marginM * scaling
 
@@ -62,7 +63,7 @@ Popup {
       Layout.fillWidth: true
 
       NText {
-        text: `${root.widgetId} Settings`
+        text: `${widgetSettings.widgetId} Settings`
         font.pointSize: Style.fontSizeL * scaling
         font.weight: Style.fontWeightBold
         color: Color.mPrimary
@@ -71,7 +72,7 @@ Popup {
 
       NIconButton {
         icon: "close"
-        onClicked: root.close()
+        onClicked: widgetSettings.close()
       }
     }
 
@@ -102,7 +103,7 @@ Popup {
       NButton {
         text: "Cancel"
         outlined: true
-        onClicked: root.close()
+        onClicked: widgetSettings.close()
       }
 
       NButton {
@@ -111,8 +112,8 @@ Popup {
         onClicked: {
           if (settingsLoader.item && settingsLoader.item.saveSettings) {
             var newSettings = settingsLoader.item.saveSettings()
-            root.updateWidgetSettings(sectionId, root.widgetIndex, newSettings)
-            root.close()
+            root.updateWidgetSettings(sectionId, widgetSettings.widgetIndex, newSettings)
+            widgetSettings.close()
           }
         }
       }
