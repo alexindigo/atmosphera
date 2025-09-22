@@ -120,7 +120,7 @@ Rectangle {
         columnSpacing: Style.marginXXS * scaling
 
         NText {
-          text: isVertical ? `${SystemStatService.cpuTemp}°` : `${SystemStatService.cpuTemp}°C`
+          text: `${SystemStatService.cpuTemp}°C`
           font.family: Settings.data.ui.fontFixed
           font.pointSize: textSize
           font.weight: Style.fontWeightMedium
@@ -128,6 +128,7 @@ Rectangle {
           horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter
           color: Color.mPrimary
+          scale: isVertical ? Math.min(1.0, cpuTempContent.width / implicitWidth) : 1.0
           Layout.row: isVertical ? 0 : 0
           Layout.column: isVertical ? 0 : 1
         }
