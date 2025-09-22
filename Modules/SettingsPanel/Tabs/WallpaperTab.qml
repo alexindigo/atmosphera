@@ -350,11 +350,8 @@ ColumnLayout {
                              "initialPath": Settings.data.wallpaper.directory || Quickshell.env("HOME"),
                              "selectFiles": false,
                              "scaling": scaling,
-                             "onSelected": function (path) {
-                               Settings.data.wallpaper.directory = path
-                               wallpaperPathInput.text = path
-                             },
-                             "parent": root
+                             "parent": root,
+                             "onSelected": path => Settings.data.wallpaper.directory = path
                            })
   }
 
@@ -364,10 +361,8 @@ ColumnLayout {
                              "initialPath": WallpaperService.getMonitorDirectory(monitorName),
                              "selectFiles": false,
                              "scaling": scaling,
-                             "onSelected": function (path) {
-                               WallpaperService.setMonitorDirectory(monitorName, path)
-                             },
-                             "parent": root
+                             "parent": root,
+                             "onSelected": path => WallpaperService.setMonitorDirectory(monitorName, path)
                            })
   }
 }

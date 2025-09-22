@@ -166,7 +166,6 @@ RowLayout {
           fontSize: Style.fontSizeS * scaling
         }
 
-        // Font list
         ListView {
           id: listView
           Layout.fillWidth: true

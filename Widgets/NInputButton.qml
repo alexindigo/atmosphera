@@ -36,41 +36,12 @@ ColumnLayout {
     Layout.fillWidth: true
     spacing: Style.marginM * scaling
 
-    // Input field container
-    Rectangle {
-      id: inputContainer
+    NTextInput{
+      id: input
       Layout.fillWidth: true
-      Layout.maximumWidth: root.maximumWidth > 0 ? root.maximumWidth : -1
-      implicitHeight: Style.baseWidgetSize * 1.1 * scaling
-
-      radius: Style.radiusM * scaling
-      color: Color.mSurface
-      border.color: input.activeFocus ? Color.mSecondary : Color.mOutline
-      border.width: Math.max(1, Style.borderS * scaling)
-
-      Behavior on border.color {
-        ColorAnimation {
-          duration: Style.animationFast
-        }
-      }
-
-      TextField {
-        id: input
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.margins: Style.marginM * scaling
-
-        color: Color.mOnSurface
-        font.pointSize: Style.fontSizeS * scaling
-        font.family: Settings.data.ui.fontDefault
-        selectByMouse: true
-
-        background: Item {} // Remove default background since we have our own Rectangle
-
-        onTextChanged: root.inputTextChanged(text)
-        onEditingFinished: root.inputEditingFinished()
-      }
+      Layout.alignment: Qt.AlignVCenter
+      onTextChanged: root.inputTextChanged(text)
+      onEditingFinished: root.inputEditingFinished()
     }
 
     // Button

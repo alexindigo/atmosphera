@@ -27,21 +27,15 @@ ColumnLayout {
       text: Settings.data.screenRecorder.directory
       buttonIcon: "folder-open"
       buttonTooltip: "Browse for output folder"
-
-      onInputEditingFinished: {
-        Settings.data.screenRecorder.directory = text
-      }
+      onInputEditingFinished: Settings.data.screenRecorder.directory = text
       onButtonClicked: {
         FilePickerService.open({
                                  "title": "Select Output Folder",
                                  "initialPath": Settings.data.screenRecorder.directory || Quickshell.env("HOME") + "/Videos",
                                  "selectFiles": false,
                                  "scaling": scaling,
-                                 "onSelected": function (path) {
-                                   Settings.data.screenRecorder.directory = path
-                                   text = path
-                                 },
-                                 "parent": root
+                                 "parent": root,
+                                 "onSelected": path => Settings.data.screenRecorder.directory = path
                                })
       }
     }

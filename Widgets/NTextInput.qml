@@ -54,14 +54,6 @@ ColumnLayout {
       }
     }
 
-    // Block mouse events from going through
-    MouseArea {
-      anchors.fill: parent
-      z: -1 // Place behind the TextField
-      acceptedButtons: Qt.AllButtons
-      propagateComposedEvents: false
-    }
-
     TextField {
       id: input
 
@@ -91,6 +83,14 @@ ColumnLayout {
       font.weight: root.fontWeight
 
       onEditingFinished: root.editingFinished()
+    }
+
+    // Block mouse events from going through to components behind this one
+    MouseArea {
+      anchors.fill: parent
+      z: -1 // Place behind the TextField
+      acceptedButtons: Qt.AllButtons
+      propagateComposedEvents: false
     }
   }
 }

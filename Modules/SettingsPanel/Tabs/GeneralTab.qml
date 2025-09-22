@@ -37,21 +37,15 @@ ColumnLayout {
       placeholderText: "/home/user/.face"
       buttonIcon: "photo"
       buttonTooltip: "Browse for avatar image"
-
-      onInputEditingFinished: {
-        Settings.data.general.avatarImage = text
-      }
+      onInputEditingFinished: Settings.data.general.avatarImage = text
       onButtonClicked: {
         FilePickerService.open({
                                  "title": "Select Avatar Image",
                                  "initialPath": Settings.data.general.avatarImage || Quickshell.env("HOME"),
                                  "selectFiles": true,
                                  "scaling": scaling,
-                                 "onSelected": function (path) {
-                                   Settings.data.general.avatarImage = path
-                                   text = path
-                                 },
-                                 "parent": root
+                                 "parent": root,
+                                 "onSelected": path =>  Settings.data.general.avatarImage = path
                                })
       }
     }
