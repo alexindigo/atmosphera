@@ -454,7 +454,13 @@ Variants {
                       id: contextMenu
                       scaling: root.scaling
                       onHoveredChanged: menuHovered = hovered
-                      onRequestClose: contextMenu.hide()
+                      onRequestClose: {
+                        contextMenu.hide()
+                        // Restart hide timer after menu action if auto-hide is enabled
+                        if (autoHide && !dockHovered && !anyAppHovered && !peekHovered) {
+                          hideTimer.restart()
+                        }
+                      }
                       onAppClosed: root.updateDockApps // Force immediate dock update when app is closed
                       onVisibleChanged: {
                         if (visible) {
@@ -493,10 +499,22 @@ Variants {
                       }
 
                       onClicked: function (mouse) {
-                        // Close any existing context menu first
-                        if (mouse.button !== Qt.RightButton || root.currentContextMenu !== contextMenu) {
+                        if (mouse.button === Qt.RightButton) {
+                          // If right-clicking on the same app with an open context menu, close it
+                          if (root.currentContextMenu === contextMenu && contextMenu.visible) {
+                            root.closeAllContextMenus()
+                            return
+                          }
+                          // Close any other existing context menu first
                           root.closeAllContextMenus()
+                          // Hide tooltip when showing context menu
+                          appTooltip.hide()
+                          contextMenu.show(appButton, modelData.toplevel || modelData)
+                          return
                         }
+
+                        // Close any existing context menu for non-right-click actions
+                        root.closeAllContextMenus()
 
                         // Check if toplevel is still valid (not a stale reference)
                         const isValidToplevel = modelData?.toplevel && ToplevelManager && ToplevelManager.toplevels.values.includes(modelData.toplevel)
@@ -512,10 +530,6 @@ Variants {
                             // Pinned app not running - launch it
                             Quickshell.execDetached(["gtk-launch", modelData.appId])
                           }
-                        } else if (mouse.button === Qt.RightButton) {
-                          // Hide tooltip when showing context menu
-                          appTooltip.hide()
-                          contextMenu.show(appButton, modelData.toplevel || modelData)
                         }
                       }
                     }
