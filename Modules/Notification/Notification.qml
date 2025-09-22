@@ -162,6 +162,34 @@ Variants {
             border.width: Math.max(1, Style.borderS * scaling)
             color: Color.mSurface
 
+            Rectangle {
+              id: progressBar
+              anchors.top: parent.top
+              anchors.left: parent.left
+              anchors.right: parent.right
+              height: 3 * scaling
+              color: "transparent"
+              clip: true
+
+              Rectangle {
+                width: parent.width * (model.progress || 0)
+                height: parent.height
+                color: {
+                  if (model.urgency === NotificationUrgency.Critical || model.urgency === 2)
+                    return Color.mError
+                  else if (model.urgency === NotificationUrgency.Low || model.urgency === 0)
+                    return Color.mOnSurface
+                  else
+                    return Color.mPrimary
+                }
+
+                radius: parent.height / 2
+                antialiasing: true
+              }
+            }
+
+
+
             // Animation properties
             property real scaleValue: 0.8
             property real opacityValue: 0.0

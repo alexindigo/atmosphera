@@ -24,6 +24,7 @@ Singleton {
   // Internal state
   property var activeMap: ({})
   property var imageQueue: []
+  property var progressTimers: ({})
 
   // Simple image cacher
   PanelWindow {
@@ -118,7 +119,9 @@ Singleton {
       "body": stripTags(n.body || ""),
       "appName": getAppName(n.appName),
       "urgency": n.urgency || 1,
+      "expireTimeout": n.expireTimeout,
       "timestamp": time,
+      "progress": 1.0,
       "originalImage": image,
       "cachedImage": imageId ? (Settings.cacheDirImagesNotifications + imageId + ".png") : image,
       "actionsJson": JSON.stringify((n.actions || []).map(a => ({
@@ -160,7 +163,6 @@ Singleton {
   function updateModel(model, id, prop, value) {
     for (var i = 0; i < model.count; i++) {
       if (model.get(i).id === id) {
-        model.setProperty(i, prop, "")
         model.setProperty(i, prop, value)
         break
       }
@@ -172,6 +174,7 @@ Singleton {
       if (activeList.get(i).id === id) {
         activeList.remove(i)
         delete activeMap[id]
+        delete progressTimers[id]
         break
       }
     }
@@ -179,7 +182,7 @@ Singleton {
 
   // Auto-hide timer
   Timer {
-    interval: 1000
+    interval: 10
     repeat: true
     running: activeList.count > 0
     onTriggered: {
@@ -189,14 +192,21 @@ Singleton {
       for (var i = activeList.count - 1; i >= 0; i--) {
         const notif = activeList.get(i)
         const elapsed = now - notif.timestamp.getTime()
+        const expire = notif.expireTimeout > 0 ? notif.expireTimeout : durations[notif.urgency]
 
-        if (elapsed >= durations[notif.urgency] || elapsed >= 8000) {
+        const progress = Math.max(1.0 - (elapsed / expire), 0.0)
+        updateModel(activeList, notif.id, "progress", progress)
+
+        if (elapsed >= expire) {
           animateAndRemove(notif.id, i)
+          delete progressTimers[notif.id]
           break
         }
       }
     }
   }
+
+
 
   // History management
   function addToHistory(data) {
@@ -273,20 +283,22 @@ Singleton {
         }
 
         historyList.append({
-                             "id": item.id || "",
-                             "summary": item.summary || "",
-                             "body": item.body || "",
-                             "appName": item.appName || "",
-                             "urgency": item.urgency || 1,
-                             "timestamp": time,
-                             "originalImage": item.originalImage || "",
-                             "cachedImage": cachedImage
-                           })
+                            "id": item.id || "",
+                            "summary": item.summary || "",
+                            "body": item.body || "",
+                            "appName": item.appName || "",
+                            "urgency": item.urgency || 1,
+                            "timestamp": time,
+                            "progress": 1.0,
+                            "originalImage": item.originalImage || "",
+                            "cachedImage": cachedImage
+                          })
       }
     } catch (e) {
       Logger.error("Notifications", "Load failed:", e)
     }
   }
+
 
   // Helpers
   function getAppName(name) {
