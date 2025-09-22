@@ -401,8 +401,8 @@ Singleton {
       for (var i = widgets.length - 1; i >= 0; i--) {
         var widget = widgets[i]
         if (!BarWidgetRegistry.hasWidget(widget.id)) {
-          widgets.splice(i, 1)
           Logger.warn(`Settings`, `Deleted invalid widget ${widget.id}`)
+          widgets.splice(i, 1)
         }
       }
     }
