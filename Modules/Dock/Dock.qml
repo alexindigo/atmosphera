@@ -347,7 +347,7 @@ Variants {
               function getAppIcon(appData): string {
                 if (!appData || !appData.appId)
                   return ""
-                return AppIcons.iconForAppId(appData.appId?.toLowerCase())
+                return ThemeIcons.iconForAppId(appData.appId?.toLowerCase())
               }
 
               RowLayout {

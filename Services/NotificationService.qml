@@ -304,7 +304,7 @@ Singleton {
       return ""
     if (icon.startsWith("/") || icon.startsWith("file://"))
       return icon
-    return AppIcons.iconFromName(icon)
+    return ThemeIcons.iconFromName(icon)
   }
 
   function stripTags(text) {

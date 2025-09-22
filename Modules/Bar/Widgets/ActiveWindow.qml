@@ -86,7 +86,7 @@ Item {
         try {
           const idValue = focusedWindow.appId
           const normalizedId = (typeof idValue === 'string') ? idValue : String(idValue)
-          const iconResult = AppIcons.iconForAppId(normalizedId.toLowerCase())
+          const iconResult = ThemeIcons.iconForAppId(normalizedId.toLowerCase())
           if (iconResult && iconResult !== "") {
             return iconResult
           }
@@ -102,7 +102,7 @@ Item {
           if (activeToplevel.appId) {
             const idValue2 = activeToplevel.appId
             const normalizedId2 = (typeof idValue2 === 'string') ? idValue2 : String(idValue2)
-            const iconResult2 = AppIcons.iconForAppId(normalizedId2.toLowerCase())
+            const iconResult2 = ThemeIcons.iconForAppId(normalizedId2.toLowerCase())
             if (iconResult2 && iconResult2 !== "") {
               return iconResult2
             }
