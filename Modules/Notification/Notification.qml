@@ -16,7 +16,7 @@ Variants {
     id: root
 
     required property ShellScreen modelData
-    readonly property real scaling: ScalingService.getScreenScale(modelData)
+    property real scaling: ScalingService.getScreenScale(modelData)
 
     // Access the notification model from the service - UPDATED NAME
     property ListModel notificationModel: NotificationService.activeList
@@ -26,52 +26,75 @@ Variants {
 
     visible: (notificationModel.count > 0)
 
+    Connections {
+      target: ScalingService
+      function onScaleChanged(screenName, scale) {
+        if (root.modelData && screenName === root.modelData.name) {
+          root.scaling = scale
+        }
+      }
+    }
+
     sourceComponent: PanelWindow {
       screen: modelData
       color: Color.transparent
 
-      // Position based on bar location - always at top
-      anchors.top: true
-      anchors.right: Settings.data.bar.position === "right" || Settings.data.bar.position === "top" || Settings.data.bar.position === "bottom"
-      anchors.left: Settings.data.bar.position === "left"
+      readonly property string location: (Settings.isLoaded && Settings.data && Settings.data.notifications && Settings.data.notifications.location) ? Settings.data.notifications.location : "top_right"
+      readonly property bool isTop: (location === "top") || (location.length >= 3 && location.substring(0, 3) === "top")
+      readonly property bool isBottom: (location === "bottom") || (location.length >= 6 && location.substring(0, 6) === "bottom")
+      readonly property bool isLeft: location.indexOf("_left") >= 0
+      readonly property bool isRight: location.indexOf("_right") >= 0
+      readonly property bool isCentered: (location === "top" || location === "bottom")
 
+      // Anchor selection based on location (window edges)
+      anchors.top: isTop
+      anchors.bottom: isBottom
+      anchors.left: isLeft
+      anchors.right: isRight
+
+      // Margins depending on bar position and chosen location
       margins.top: {
-        switch (Settings.data.bar.position) {
-        case "top":
-          return (Style.barHeight + Style.marginM) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL * scaling : 0)
-        default:
-          return Style.marginM * scaling
+        if (!(anchors.top))
+          return 0
+        var base = Style.marginM * scaling
+        if (Settings.data.bar.position === "top") {
+          var floatExtraV = Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL * scaling : 0
+          return (Style.barHeight * scaling) + base + floatExtraV
         }
+        return base
       }
 
       margins.bottom: {
-        switch (Settings.data.bar.position) {
-        case "bottom":
-          return (Style.barHeight + Style.marginM) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL * scaling : 0)
-        default:
+        if (!(anchors.bottom))
           return 0
+        var base = Style.marginM * scaling
+        if (Settings.data.bar.position === "bottom") {
+          var floatExtraV = Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL * scaling : 0
+          return (Style.barHeight * scaling) + base + floatExtraV
         }
+        return base
       }
 
       margins.left: {
-        switch (Settings.data.bar.position) {
-        case "left":
-          return (Style.barHeight + Style.marginM) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL * scaling : 0)
-        default:
+        if (!(anchors.left))
           return 0
+        var base = Style.marginM * scaling
+        if (Settings.data.bar.position === "left") {
+          var floatExtraH = Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL * scaling : 0
+          return (Style.barHeight * scaling) + base + floatExtraH
         }
+        return base
       }
 
       margins.right: {
-        switch (Settings.data.bar.position) {
-        case "right":
-          return (Style.barHeight + Style.marginM) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL * scaling : 0)
-        case "top":
-        case "bottom":
-          return Style.marginM * scaling
-        default:
+        if (!(anchors.right))
           return 0
+        var base = Style.marginM * scaling
+        if (Settings.data.bar.position === "right") {
+          var floatExtraH = Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL * scaling : 0
+          return (Style.barHeight * scaling) + base + floatExtraH
         }
+        return base
       }
 
       implicitWidth: 360 * scaling
@@ -110,9 +133,12 @@ Variants {
       // Main notification container
       ColumnLayout {
         id: notificationStack
-        anchors.top: parent.top
-        anchors.right: (Settings.data.bar.position === "right" || Settings.data.bar.position === "top" || Settings.data.bar.position === "bottom") ? parent.right : undefined
-        anchors.left: Settings.data.bar.position === "left" ? parent.left : undefined
+        // Anchor the stack inside the window based on chosen location
+        anchors.top: parent.isTop ? parent.top : undefined
+        anchors.bottom: parent.isBottom ? parent.bottom : undefined
+        anchors.left: parent.isLeft ? parent.left : undefined
+        anchors.right: parent.isRight ? parent.right : undefined
+        anchors.horizontalCenter: parent.isCentered ? parent.horizontalCenter : undefined
         spacing: Style.marginS * scaling
         width: 360 * scaling
         visible: true

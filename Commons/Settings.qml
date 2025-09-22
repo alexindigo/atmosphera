@@ -113,7 +113,7 @@ Singleton {
   JsonAdapter {
     id: adapter
 
-    property int settingsVersion: 3
+    property int settingsVersion: 4
 
     // bar
     property JsonObject bar: JsonObject {
@@ -233,6 +233,8 @@ Singleton {
       property real backgroundOpacity: 1.0
       property real floatingRatio: 1.0
       property list<string> monitors: []
+      // Desktop entry IDs pinned to the dock (e.g., "org.kde.konsole", "firefox.desktop")
+      property list<string> pinnedApps: []
     }
 
     // network
@@ -245,9 +247,8 @@ Singleton {
     property JsonObject notifications: JsonObject {
       property bool doNotDisturb: false
       property list<string> monitors: []
-      // Last time the user opened the notification history (ms since e899999999999998poch)
+      property string location: "top_right"
       property real lastSeenTs: 0
-      // Duration settings for different urgency levels (in seconds)
       property int lowUrgencyDuration: 3
       property int normalUrgencyDuration: 8
       property int criticalUrgencyDuration: 15
