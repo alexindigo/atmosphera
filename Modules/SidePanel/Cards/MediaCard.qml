@@ -99,6 +99,14 @@ NBox {
           implicitHeight: Math.min(160 * scaling, contentItem.implicitHeight + Style.marginM * scaling)
           padding: Style.marginS * scaling
 
+          onOpened: {
+            PanelService.willOpenPopup(root)
+          }
+
+          onClosed: {
+            PanelService.willClosePopup(root)
+          }
+
           contentItem: ListView {
             clip: true
             implicitHeight: contentHeight
