@@ -23,9 +23,6 @@ NBox {
   signal dragPotentialStarted
   signal dragPotentialEnded
 
-  property bool hasOpenDialog: false
-  property bool hasOpenPopup: false
-
   color: Color.mSurface
   Layout.fillWidth: true
   Layout.minimumHeight: {
@@ -192,26 +189,17 @@ NBox {
                     onClicked: {
                       var component = Qt.createComponent(Qt.resolvedUrl("BarWidgetSettingsDialog.qml"))
                       function instantiateAndOpen() {
-                        // Find the settings panel
-                        var settingsPanel = findSettingsPanel()
-
                         var dialog = component.createObject(root, {
                                                               "widgetIndex": index,
                                                               "widgetData": modelData,
                                                               "widgetId": modelData.id,
-                                                              "parent": Overlay.overlay,
-                                                              "settingsPanel": settingsPanel
+                                                              "parent": Overlay.overlay
                                                             })
                         if (dialog) {
                           dialog.open()
                         } else {
                           Logger.error("BarSectionEditor", "Failed to create settings dialog instance")
                         }
-                      }
-
-                      function findSettingsPanel() {
-                        var panel = PanelService.getPanel("settingsPanel")
-                        return panel
                       }
                       if (component.status === Component.Ready) {
                         instantiateAndOpen()

@@ -14,7 +14,6 @@ Popup {
   property int widgetIndex: -1
   property var widgetData: null
   property string widgetId: ""
-  property var settingsPanel: null
 
   // Center popup in parent
   x: (parent.width - width) * 0.5
@@ -24,7 +23,6 @@ Popup {
   height: content.implicitHeight + padding * 2
   padding: Style.marginXL * scaling
   modal: true
-  closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
   background: Rectangle {
     id: bgRect
@@ -38,20 +36,6 @@ Popup {
   onOpened: {
     if (widgetData && widgetId) {
       loadWidgetSettings()
-    }
-    notifySettingsPanel(true)
-  }
-
-  onClosed: {
-    notifySettingsPanel(false)
-  }
-
-  function notifySettingsPanel(isOpen) {
-    if (settingsPanel && settingsPanel.hasOwnProperty('hasOpenPopup')) {
-      settingsPanel.hasOpenPopup = isOpen
-      Logger.log("BarWidgetSettingsDialog", "Notified settings panel popup state:", isOpen, "Panel:", settingsPanel.objectName || "unnamed")
-    } else {
-      Logger.warn("BarWidgetSettingsDialog", "No settings panel reference available to notify popup state:", isOpen)
     }
   }
 

@@ -33,7 +33,6 @@ Loader {
 
   property bool panelKeyboardFocus: false
   property bool backgroundClickEnabled: true
-  property bool hasOpenPopup: false
 
   // Animation properties
   readonly property real originalScale: 0.7
@@ -154,70 +153,6 @@ Loader {
       Component.onCompleted: {
         Logger.log("NPanel", "Opened", root.objectName)
         dimmingOpacity = Style.opacityHeavy
-      }
-
-      // Function to check if any popups are open
-      function checkForOpenPopups() {
-        // Check if this panel has an open popup
-        if (root.hasOpenPopup) {
-          return true
-        }
-
-        var contentItem = panelContentLoader.item
-        if (!contentItem)
-          return false
-
-        // Check for BarSectionEditor dialogs
-        if (hasOpenDialogInContent(contentItem)) {
-          return true
-        }
-
-        return hasOpenPopupRecursive(contentItem)
-      }
-
-      function hasOpenDialogInContent(item) {
-        if (!item)
-          return false
-
-        // Check if this item is a BarSectionEditor with an open dialog
-        if (item.hasOwnProperty('hasOpenDialog') && item.hasOpenDialog) {
-          return true
-        }
-
-        // Check children recursively
-        if (item.children) {
-          for (var i = 0; i < item.children.length; i++) {
-            var child = item.children[i]
-            if (child && hasOpenDialogInContent(child)) {
-              return true
-            }
-          }
-        }
-
-        return false
-      }
-
-      function hasOpenPopupRecursive(item) {
-        if (!item)
-          return false
-
-        // Check if this item is a popup and is open
-        if (item.hasOwnProperty('opened') && item.opened)
-          return true
-        if (item.hasOwnProperty('visible') && item.visible && item.toString().includes("Popup"))
-          return true
-
-        // Check children recursively
-        if (item.children) {
-          for (var i = 0; i < item.children.length; i++) {
-            var child = item.children[i]
-            if (child && hasOpenPopupRecursive(child)) {
-              return true
-            }
-          }
-        }
-
-        return false
       }
 
       Connections {
@@ -478,64 +413,15 @@ Loader {
           sourceComponent: root.panelContent
         }
 
-        // FIXED: Handle drag move with text input exclusion
+        // Handle drag move on the whole panel area
         DragHandler {
           id: dragHandler
           target: null
-          enabled: panelBackground.draggable && !panelWindow.checkForOpenPopups()
-
-          // Add grab permissions to be more selective
-          grabPermissions: PointerHandler.CanTakeOverFromItems | PointerHandler.CanTakeOverFromHandlersOfDifferentType
-
+          enabled: panelBackground.draggable
           property real dragStartX: 0
           property real dragStartY: 0
-
-          // Helper function to check if an item is a text input
-          function isTextInputItem(item) {
-            if (!item)
-              return false
-
-            var itemString = item.toString()
-            return (itemString.indexOf("TextField") >= 0 || itemString.indexOf("TextInput") >= 0 || itemString.indexOf("TextEdit") >= 0 || (item.objectName && (item.objectName.indexOf("textField") >= 0 || item.objectName.indexOf("textInput") >= 0 || item.objectName.indexOf("input") >= 0)))
-          }
-
-          // Helper function to check if we're over a text input (walks up parent chain)
-          function isOverTextInput(x, y) {
-            var item = panelContentLoader.childAt(x, y)
-            var maxDepth = 10 // Prevent infinite loops
-            var depth = 0
-
-            while (item && depth < maxDepth) {
-              if (isTextInputItem(item)) {
-                return true
-              }
-
-              // Check if this item has text input children
-              for (var i = 0; i < item.children.length; i++) {
-                if (isTextInputItem(item.children[i])) {
-                  // Check if the point is within this child
-                  var childPos = item.children[i].mapToItem(panelBackground, 0, 0)
-                  if (x >= childPos.x && x <= childPos.x + item.children[i].width && y >= childPos.y && y <= childPos.y + item.children[i].height) {
-                    return true
-                  }
-                }
-              }
-
-              item = item.parent
-              depth++
-            }
-            return false
-          }
-
           onActiveChanged: {
             if (active) {
-              // Check if we're starting drag over a text input
-              var localPos = mapToItem(panelBackground, centroid.position)
-              if (isOverTextInput(localPos.x, localPos.y)) {
-                // Cancel drag by returning early
-                return
-              }
-
               // Capture current position into manual coordinates BEFORE toggling isDragged
               panelBackground.manualX = panelBackground.x
               panelBackground.manualY = panelBackground.y
@@ -550,12 +436,7 @@ Loader {
                 root.enableBackgroundClick()
             }
           }
-
           onTranslationChanged: {
-            // Only process if we're actually dragging (not cancelled)
-            if (!panelBackground.isDragged)
-              return
-
             // Proposed new coordinates from fixed drag origin
             var nx = dragStartX + translation.x
             var ny = dragStartY + translation.y
