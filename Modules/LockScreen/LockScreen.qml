@@ -364,6 +364,7 @@ Loader {
               Rectangle {
                 id: terminalBackground
                 anchors.fill: parent
+                clip: true
                 radius: Style.radiusM * scaling
                 color: Qt.alpha(Color.mSurface, 0.9)
                 border.color: Color.mPrimary
@@ -565,6 +566,11 @@ Loader {
                       font.family: Settings.data.ui.fontFixed
                       font.pointSize: Style.fontSizeL * scaling
                       visible: passwordInput.activeFocus && !lockContext.unlockInProgress
+                      Layout.fillWidth: true
+                      wrapMode: Text.NoWrap
+                      maximumLineCount: 1
+                      elide: Text.ElideRight
+                      clip: true
 
                       SequentialAnimation {
                         id: typingEffect
@@ -643,6 +649,7 @@ Loader {
                   RowLayout {
                     Layout.alignment: Qt.AlignRight
                     Layout.bottomMargin: -10 * scaling
+                    Layout.fillWidth: true
                     Rectangle {
                       Layout.preferredWidth: 120 * scaling
                       Layout.preferredHeight: 40 * scaling
