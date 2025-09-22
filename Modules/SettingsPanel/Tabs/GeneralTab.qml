@@ -45,7 +45,7 @@ ColumnLayout {
                                  "selectFiles": true,
                                  "scaling": scaling,
                                  "parent": root,
-                                 "onSelected": path =>  Settings.data.general.avatarImage = path
+                                 "onSelected": path => Settings.data.general.avatarImage = path
                                })
       }
     }

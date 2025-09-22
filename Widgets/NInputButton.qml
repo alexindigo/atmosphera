@@ -36,7 +36,7 @@ ColumnLayout {
     Layout.fillWidth: true
     spacing: Style.marginM * scaling
 
-    NTextInput{
+    NTextInput {
       id: input
       Layout.fillWidth: true
       Layout.alignment: Qt.AlignVCenter
