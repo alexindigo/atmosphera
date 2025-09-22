@@ -7,30 +7,40 @@
 */
 
 // Disable reload popup add this as a new row:  //pragma Env QS_NO_RELOAD_POPUP=1
+
+// Qt & Quickshell Core
 import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Services.Pipewire
 import Quickshell.Widgets
+
+// Commons & Services
 import qs.Commons
-import qs.Modules.Launcher
+import qs.Services
+import qs.Widgets
+
+// Core Modules
 import qs.Modules.Background
-import qs.Modules.Bar
-import qs.Modules.Bar.Extras
-import qs.Modules.BluetoothPanel
-import qs.Modules.Calendar
 import qs.Modules.Dock
 import qs.Modules.IPC
 import qs.Modules.LockScreen
+
+// Bar & Bar Components
+import qs.Modules.Bar
+import qs.Modules.Bar.Extras
+import qs.Modules.Bar.BluetoothPanel
+import qs.Modules.Bar.PowerPanel
+import qs.Modules.Bar.WiFiPanel
+
+// Panels & UI Components
+import qs.Modules.Calendar
+import qs.Modules.Launcher
 import qs.Modules.Notification
 import qs.Modules.SettingsPanel
-import qs.Modules.PowerPanel
 import qs.Modules.SidePanel
 import qs.Modules.Toast
-import qs.Modules.WiFiPanel
 import qs.Modules.WallpaperSelector
-import qs.Services
-import qs.Widgets
 
 ShellRoot {
   id: shellRoot

@@ -108,7 +108,7 @@ Variants {
                             if (toplevel && toplevel.appId) {
                               const isPinned = pinnedApps.includes(toplevel.appId)
                               const appType = isPinned ? "pinned-running" : "running"
-                              
+
                               combined.push({
                                               "type": appType,
                                               "toplevel": toplevel,
@@ -461,6 +461,12 @@ Variants {
                           root.currentContextMenu = contextMenu
                         } else if (root.currentContextMenu === contextMenu) {
                           root.currentContextMenu = null
+                          // Reset menu hover state when menu becomes invisible
+                          menuHovered = false
+                          // Restart hide timer if conditions are met
+                          if (autoHide && !dockHovered && !anyAppHovered && !peekHovered) {
+                            hideTimer.restart()
+                          }
                         }
                       }
                     }
