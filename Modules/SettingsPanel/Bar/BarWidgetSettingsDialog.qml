@@ -26,7 +26,7 @@ Popup {
   height: content.implicitHeight + padding * 2
   padding: Style.marginXL * scaling
   modal: true
-  
+
   onOpened: {
     // Mark this popup has opened in the PanelService
     PanelService.willOpenPopup(widgetSettings)
@@ -120,7 +120,7 @@ Popup {
     }
   }
 
-    function loadWidgetSettings() {
+  function loadWidgetSettings() {
     const widgetSettingsMap = {
       "ActiveWindow": "WidgetSettings/ActiveWindowSettings.qml",
       "Battery": "WidgetSettings/BatterySettings.qml",
@@ -147,5 +147,4 @@ Popup {
                                })
     }
   }
-
 }

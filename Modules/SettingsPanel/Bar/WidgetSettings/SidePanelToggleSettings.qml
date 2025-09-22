@@ -38,7 +38,6 @@ ColumnLayout {
     }
   }
 
-
   RowLayout {
     spacing: Style.marginM * scaling
 
@@ -79,9 +78,9 @@ ColumnLayout {
     id: iconPicker
     initialIcon: valueIcon
     onIconSelected: iconName => {
-      valueIcon = iconName
-      valueCustomIconPath = ""
-    }
+                      valueIcon = iconName
+                      valueCustomIconPath = ""
+                    }
   }
 
   NFilePicker {

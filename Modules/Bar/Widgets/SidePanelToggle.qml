@@ -52,9 +52,11 @@ NIconButton {
     width: root.width * 0.8
     height: width
     source: {
-      if (customIconPath !== "") return customIconPath;
-      if (useDistroLogo) return DistroLogoService.osLogo;
-      return "";
+      if (customIconPath !== "")
+        return customIconPath
+      if (useDistroLogo)
+        return DistroLogoService.osLogo
+      return ""
     }
     visible: source !== ""
     smooth: true

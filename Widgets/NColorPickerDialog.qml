@@ -26,7 +26,14 @@ Popup {
   y: (parent.height - height) * 0.5
 
   modal: true
-  clip: true
+
+  onOpened: {
+    PanelService.willOpenPopup(root)
+  }
+
+  onClosed: {
+    PanelService.willClosePopup(root)
+  }
 
   function rgbToHsv(r, g, b) {
     r /= 255
@@ -110,9 +117,9 @@ Popup {
     border.width: Math.max(1, Style.borderM * scaling)
   }
 
-  NScrollView {
+  contentItem: NScrollView {
     id: scrollView
-    anchors.fill: parent
+    width: parent.width
 
     verticalPolicy: ScrollBar.AlwaysOff
     horizontalPolicy: ScrollBar.AlwaysOff
