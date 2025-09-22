@@ -114,7 +114,7 @@ Singleton {
   // Get window title for focused window
   function getFocusedWindowTitle() {
     if (focusedWindowIndex >= 0 && focusedWindowIndex < windows.length) {
-      return windows[focusedWindowIndex].title || "Unnamed window"
+      return windows[focusedWindowIndex].title || ""
     }
     return ""
   }

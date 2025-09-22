@@ -31,10 +31,7 @@ Item {
   }
 
   readonly property string windowTitle: CompositorService.getFocusedWindowTitle()
-  readonly property bool hasActiveWindow: {
-    const t = (windowTitle || "").trim()
-    return t.length > 0 && t !== "(No active window)"
-  }
+  readonly property bool hasActiveWindow: windowTitle !== ""
 
   readonly property bool showIcon: (widgetSettings.showIcon !== undefined) ? widgetSettings.showIcon : widgetMetadata.showIcon
 
