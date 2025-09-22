@@ -30,7 +30,6 @@ Variants {
     Connections {
       target: ToplevelManager ? ToplevelManager.toplevels : null
       function onValuesChanged() {
-        Logger.log("Dock", "ToplevelManager.toplevels.onValuesChanged triggered")
         updateDockApps()
       }
     }
@@ -39,7 +38,6 @@ Variants {
     Connections {
       target: ToplevelManager ? ToplevelManager.toplevels : null
       function onCountChanged() {
-        Logger.log("Dock", "ToplevelManager.toplevels.onCountChanged triggered, count:", ToplevelManager.toplevels.count)
         updateDockApps()
       }
     }
@@ -111,8 +109,6 @@ Variants {
       const pinnedApps = Settings.data.dock.pinnedApps || []
       const combined = []
 
-      Logger.log("Dock", "Updating dock apps. Running:", runningApps.length, "Pinned:", pinnedApps.length)
-
       // First, add pinned apps (both running and non-running) in their pinned order
       pinnedApps.forEach(pinnedAppId => {
                            const runningApp = runningApps.find(toplevel => toplevel && toplevel.appId === pinnedAppId)
@@ -124,7 +120,6 @@ Variants {
                                              "appId": runningApp.appId,
                                              "title": runningApp.title
                                            })
-                             Logger.log("Dock", "Added pinned-running app:", runningApp.appId)
                            } else {
                              // Pinned app that is not running
                              combined.push({
@@ -133,7 +128,6 @@ Variants {
                                              "appId": pinnedAppId,
                                              "title": pinnedAppId
                                            })
-                             Logger.log("Dock", "Added pinned app:", pinnedAppId)
                            }
                          })
 
@@ -148,12 +142,10 @@ Variants {
                                                 "appId": toplevel.appId,
                                                 "title": toplevel.title
                                               })
-                                Logger.log("Dock", "Added running app:", toplevel.appId)
                               }
                             }
                           })
 
-      Logger.log("Dock", "Total dock apps:", combined.length)
       dockApps = combined
     }
 
@@ -391,7 +383,6 @@ Variants {
                     Connections {
                       target: modelData?.toplevel
                       function onClosed() {
-                        Logger.log("Dock", "Toplevel closed signal received for:", appButton.appId)
                         Qt.callLater(root.updateDockApps)
                       }
                     }
@@ -519,17 +510,14 @@ Variants {
                         const isValidToplevel = modelData?.toplevel && ToplevelManager && ToplevelManager.toplevels.values.includes(modelData.toplevel)
 
                         if (mouse.button === Qt.MiddleButton && isValidToplevel && modelData.toplevel.close) {
-                          Logger.log("Dock", "Middle-click closing app:", modelData.appId)
                           modelData.toplevel.close()
                           Qt.callLater(root.updateDockApps) // Force immediate dock update
                         } else if (mouse.button === Qt.LeftButton) {
                           if (isValidToplevel && modelData.toplevel.activate) {
                             // Running app - activate it
-                            Logger.log("Dock", "Activating running app:", modelData.appId)
                             modelData.toplevel.activate()
                           } else if (modelData?.appId) {
                             // Pinned app not running - launch it
-                            Logger.log("Dock", "Launching pinned app:", modelData.appId)
                             Quickshell.execDetached(["gtk-launch", modelData.appId])
                           }
                         } else if (mouse.button === Qt.RightButton) {

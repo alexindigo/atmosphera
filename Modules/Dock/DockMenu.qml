@@ -49,7 +49,6 @@ PopupWindow {
 
     // Update the settings
     Settings.data.dock.pinnedApps = pinnedApps
-    Logger.log("DockMenu", isPinned ? "Unpinned" : "Pinned", "app:", appId)
   }
 
   anchor.item: anchorItem
@@ -121,7 +120,7 @@ PopupWindow {
 
           NIcon {
             icon: "eye"
-            font.pointSize: 12 * scaling
+            font.pointSize: Style.fontSizeL * scaling
             color: Color.mOnSurface
             anchors.verticalCenter: parent.verticalCenter
           }
@@ -174,7 +173,7 @@ PopupWindow {
                 return "pin"
               return root.isAppPinned(root.toplevel.appId) ? "pinned-off" : "pin"
             }
-            font.pointSize: 12 * scaling
+            font.pointSize: Style.fontSizeL * scaling
             color: Color.mOnSurface
             anchors.verticalCenter: parent.verticalCenter
           }
@@ -221,7 +220,7 @@ PopupWindow {
 
           NIcon {
             icon: "x"
-            font.pointSize: 12 * scaling
+            font.pointSize: Style.fontSizeL * scaling
             color: closeMouseArea.containsMouse ? Color.mPrimary : Color.mOnSurface
             anchors.verticalCenter: parent.verticalCenter
           }
@@ -245,7 +244,6 @@ PopupWindow {
             const isValidToplevel = root.toplevel && ToplevelManager && ToplevelManager.toplevels.values.includes(root.toplevel)
 
             if (isValidToplevel && root.toplevel.close) {
-              Logger.log("DockMenu", "Closing app via menu:", root.toplevel.appId)
               root.toplevel.close()
               // Trigger immediate dock update callback if provided
               if (root.onAppClosed && typeof root.onAppClosed === "function") {
