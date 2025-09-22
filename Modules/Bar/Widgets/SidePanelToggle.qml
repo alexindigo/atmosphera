@@ -31,8 +31,10 @@ NIconButton {
 
   readonly property string customIcon: widgetSettings.icon || widgetMetadata.icon
   readonly property bool useDistroLogo: (widgetSettings.useDistroLogo !== undefined) ? widgetSettings.useDistroLogo : widgetMetadata.useDistroLogo
+  readonly property string customIconPath: widgetSettings.customIconPath || ""
 
-  icon: useDistroLogo ? "" : customIcon
+  // If we have a custom path or distro logo, don't use the theme icon.
+  icon: (customIconPath === "" && !useDistroLogo) ? customIcon : ""
   tooltipText: "Open side panel"
   baseSize: Style.capsuleHeight
   compact: (Settings.data.bar.density === "compact")
@@ -45,12 +47,16 @@ NIconButton {
   onRightClicked: PanelService.getPanel("settingsPanel")?.toggle()
 
   IconImage {
-    id: logo
+    id: customOrDistroLogo
     anchors.centerIn: parent
     width: root.width * 0.8
     height: width
-    source: useDistroLogo ? DistroLogoService.osLogo : ""
-    visible: useDistroLogo && source !== ""
+    source: {
+      if (customIconPath !== "") return customIconPath;
+      if (useDistroLogo) return DistroLogoService.osLogo;
+      return "";
+    }
+    visible: source !== ""
     smooth: true
     asynchronous: true
   }
