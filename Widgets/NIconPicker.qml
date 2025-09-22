@@ -41,6 +41,11 @@ Popup {
     selectedIcon = initialIcon
     query = initialIcon
     searchInput.forceActiveFocus()
+    PanelService.willOpenPopup(root)
+  }
+
+  onClosed: {
+    PanelService.willClosePopup(root)
   }
 
   background: Rectangle {

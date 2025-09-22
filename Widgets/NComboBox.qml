@@ -89,6 +89,14 @@ RowLayout {
       implicitHeight: Math.min(root.popupHeight, contentItem.implicitHeight + Style.marginM * scaling * 2)
       padding: Style.marginM * scaling
 
+      onOpened: {
+        PanelService.willOpenPopup(root)
+      }
+
+      onClosed: {
+        PanelService.willClosePopup(root)
+      }
+
       contentItem: ListView {
         property var comboBoxRoot: root
         clip: true
