@@ -38,6 +38,39 @@ ColumnLayout {
       checked: Settings.data.notifications.doNotDisturb
       onToggled: checked => Settings.data.notifications.doNotDisturb = checked
     }
+
+    NComboBox {
+      label: "Location"
+      description: "Where notifications appear on screen."
+      model: ListModel {
+        ListElement {
+          key: "top"
+          name: "Top"
+        }
+        ListElement {
+          key: "top_left"
+          name: "Top left"
+        }
+        ListElement {
+          key: "top_right"
+          name: "Top right"
+        }
+        ListElement {
+          key: "bottom"
+          name: "Bottom"
+        }
+        ListElement {
+          key: "bottom_left"
+          name: "Bottom left"
+        }
+        ListElement {
+          key: "bottom_right"
+          name: "Bottom right"
+        }
+      }
+      currentKey: Settings.data.notifications.location || "top_right"
+      onSelected: key => Settings.data.notifications.location = key
+    }
   }
 
   NDivider {

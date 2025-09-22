@@ -245,9 +245,8 @@ Singleton {
     property JsonObject notifications: JsonObject {
       property bool doNotDisturb: false
       property list<string> monitors: []
-      // Last time the user opened the notification history (ms since e899999999999998poch)
+      property string location: "top_right"
       property real lastSeenTs: 0
-      // Duration settings for different urgency levels (in seconds)
       property int lowUrgencyDuration: 3
       property int normalUrgencyDuration: 8
       property int criticalUrgencyDuration: 15
