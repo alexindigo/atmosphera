@@ -113,7 +113,7 @@ Singleton {
   JsonAdapter {
     id: adapter
 
-    property int settingsVersion: 3
+    property int settingsVersion: 4
 
     // bar
     property JsonObject bar: JsonObject {
@@ -233,6 +233,8 @@ Singleton {
       property real backgroundOpacity: 1.0
       property real floatingRatio: 1.0
       property list<string> monitors: []
+      // Desktop entry IDs pinned to the dock (e.g., "org.kde.konsole", "firefox.desktop")
+      property list<string> pinnedApps: []
     }
 
     // network

@@ -13,6 +13,7 @@ Variants {
   model: Quickshell.screens
 
   delegate: Item {
+    id: root
     required property ShellScreen modelData
     property real scaling: ScalingService.getScreenScale(modelData)
 
@@ -22,6 +23,47 @@ Variants {
         if (screenName === modelData.name) {
           scaling = scale
         }
+      }
+    }
+
+    // Update dock apps when toplevels change
+    Connections {
+      target: ToplevelManager ? ToplevelManager.toplevels : null
+      function onValuesChanged() {
+        Logger.log("Dock", "ToplevelManager.toplevels.onValuesChanged triggered")
+        updateDockApps()
+      }
+    }
+
+    // Also listen to model changes (for ObjectModel)
+    Connections {
+      target: ToplevelManager ? ToplevelManager.toplevels : null
+      function onCountChanged() {
+        Logger.log("Dock", "ToplevelManager.toplevels.onCountChanged triggered, count:", ToplevelManager.toplevels.count)
+        updateDockApps()
+      }
+    }
+
+    // Update dock apps when pinned apps change
+    Connections {
+      target: Settings.data.dock
+      function onPinnedAppsChanged() {
+        updateDockApps()
+      }
+    }
+
+    // Initial update when component is ready
+    Component.onCompleted: {
+      if (Settings.isLoaded && ToplevelManager) {
+        updateDockApps()
+      }
+    }
+
+    // Update when Settings are loaded
+    Connections {
+      target: Settings
+      function onSettingsLoaded() {
+        updateDockApps()
       }
     }
 
@@ -43,11 +85,77 @@ Variants {
     // Shared state between windows
     property bool dockHovered: false
     property bool anyAppHovered: false
+    property bool menuHovered: false
     property bool hidden: autoHide
     property bool peekHovered: false
 
     // Separate property to control Loader - stays true during animations
     property bool dockLoaded: !autoHide // Start loaded if autoHide is off
+
+    // Track the currently open context menu
+    property var currentContextMenu: null
+
+    // Combined model of running apps and pinned apps
+    property var dockApps: []
+
+    // Function to close any open context menu
+    function closeAllContextMenus() {
+      if (currentContextMenu && currentContextMenu.visible) {
+        currentContextMenu.hide()
+      }
+    }
+
+    // Function to update the combined dock apps model
+    function updateDockApps() {
+      const runningApps = ToplevelManager ? (ToplevelManager.toplevels.values || []) : []
+      const pinnedApps = Settings.data.dock.pinnedApps || []
+      const combined = []
+
+      Logger.log("Dock", "Updating dock apps. Running:", runningApps.length, "Pinned:", pinnedApps.length)
+
+      // First, add pinned apps (both running and non-running) in their pinned order
+      pinnedApps.forEach(pinnedAppId => {
+                           const runningApp = runningApps.find(toplevel => toplevel && toplevel.appId === pinnedAppId)
+                           if (runningApp) {
+                             // Pinned app that is currently running
+                             combined.push({
+                                             "type": "pinned-running",
+                                             "toplevel": runningApp,
+                                             "appId": runningApp.appId,
+                                             "title": runningApp.title
+                                           })
+                             Logger.log("Dock", "Added pinned-running app:", runningApp.appId)
+                           } else {
+                             // Pinned app that is not running
+                             combined.push({
+                                             "type": "pinned",
+                                             "toplevel": null,
+                                             "appId": pinnedAppId,
+                                             "title": pinnedAppId
+                                           })
+                             Logger.log("Dock", "Added pinned app:", pinnedAppId)
+                           }
+                         })
+
+      // Then, add running apps that are not pinned
+      runningApps.forEach(toplevel => {
+                            if (toplevel && toplevel.appId) {
+                              const isPinned = pinnedApps.includes(toplevel.appId)
+                              if (!isPinned) {
+                                combined.push({
+                                                "type": "running",
+                                                "toplevel": toplevel,
+                                                "appId": toplevel.appId,
+                                                "title": toplevel.title
+                                              })
+                                Logger.log("Dock", "Added running app:", toplevel.appId)
+                              }
+                            }
+                          })
+
+      Logger.log("Dock", "Total dock apps:", combined.length)
+      dockApps = combined
+    }
 
     // Timer to unload dock after hide animation completes
     Timer {
@@ -65,7 +173,7 @@ Variants {
       id: hideTimer
       interval: hideDelay
       onTriggered: {
-        if (autoHide && !dockHovered && !anyAppHovered && !peekHovered) {
+        if (autoHide && !dockHovered && !anyAppHovered && !peekHovered && !menuHovered) {
           hidden = true
           unloadTimer.restart() // Start unload timer when hiding
         }
@@ -137,7 +245,7 @@ Variants {
 
           onExited: {
             peekHovered = false
-            if (!hidden && !dockHovered && !anyAppHovered) {
+            if (!hidden && !dockHovered && !anyAppHovered && !menuHovered) {
               hideTimer.restart()
             }
           }
@@ -147,7 +255,7 @@ Variants {
 
     // DOCK WINDOW
     Loader {
-      active: Settings.isLoaded && modelData && Settings.data.dock.monitors.includes(modelData.name) && dockLoaded && ToplevelManager && (ToplevelManager.toplevels.values.length > 0)
+      active: Settings.isLoaded && modelData && Settings.data.dock.monitors.includes(modelData.name) && dockLoaded && ToplevelManager && (dockApps.length > 0)
 
       sourceComponent: PanelWindow {
         id: dockWindow
@@ -235,9 +343,14 @@ Variants {
 
               onExited: {
                 dockHovered = false
-                if (autoHide && !anyAppHovered && !peekHovered) {
+                if (autoHide && !anyAppHovered && !peekHovered && !menuHovered) {
                   hideTimer.restart()
                 }
+              }
+
+              onClicked: {
+                // Close any open context menu when clicking on the dock background
+                closeAllContextMenus()
               }
             }
 
@@ -247,10 +360,10 @@ Variants {
               height: parent.height - (Style.marginM * 2 * scaling)
               anchors.centerIn: parent
 
-              function getAppIcon(toplevel: Toplevel): string {
-                if (!toplevel)
+              function getAppIcon(appData): string {
+                if (!appData || !appData.appId)
                   return ""
-                return AppIcons.iconForAppId(toplevel.appId?.toLowerCase())
+                return AppIcons.iconForAppId(appData.appId?.toLowerCase())
               }
 
               RowLayout {
@@ -260,7 +373,7 @@ Variants {
                 anchors.centerIn: parent
 
                 Repeater {
-                  model: ToplevelManager ? ToplevelManager.toplevels : null
+                  model: dockApps
 
                   delegate: Item {
                     id: appButton
@@ -268,10 +381,20 @@ Variants {
                     Layout.preferredHeight: iconSize
                     Layout.alignment: Qt.AlignCenter
 
-                    property bool isActive: ToplevelManager.activeToplevel && ToplevelManager.activeToplevel === modelData
+                    property bool isActive: modelData.toplevel && ToplevelManager.activeToplevel && ToplevelManager.activeToplevel === modelData.toplevel
                     property bool hovered: appMouseArea.containsMouse
                     property string appId: modelData ? modelData.appId : ""
-                    property string appTitle: modelData ? modelData.title : ""
+                    property string appTitle: modelData ? (modelData.title || modelData.appId) : ""
+                    property bool isRunning: modelData && (modelData.type === "running" || modelData.type === "pinned-running")
+
+                    // Listen for the toplevel being closed
+                    Connections {
+                      target: modelData?.toplevel
+                      function onClosed() {
+                        Logger.log("Dock", "Toplevel closed signal received for:", appButton.appId)
+                        Qt.callLater(root.updateDockApps)
+                      }
+                    }
 
                     // Individual tooltip for this app
                     NTooltip {
@@ -296,6 +419,9 @@ Variants {
                       fillMode: Image.PreserveAspectFit
                       cache: true
 
+                      // Dim pinned apps that aren't running
+                      opacity: appButton.isRunning ? 1.0 : 0.6
+
                       scale: appButton.hovered ? 1.15 : 1.0
 
                       Behavior on scale {
@@ -303,6 +429,13 @@ Variants {
                           duration: Style.animationNormal
                           easing.type: Easing.OutBack
                           easing.overshoot: 1.2
+                        }
+                      }
+
+                      Behavior on opacity {
+                        NumberAnimation {
+                          duration: Style.animationFast
+                          easing.type: Easing.OutQuad
                         }
                       }
                     }
@@ -314,6 +447,7 @@ Variants {
                       icon: "question-mark"
                       font.pointSize: iconSize * 0.7
                       color: appButton.isActive ? Color.mPrimary : Color.mOnSurfaceVariant
+                      opacity: appButton.isRunning ? 1.0 : 0.6
                       scale: appButton.hovered ? 1.15 : 1.0
 
                       Behavior on scale {
@@ -323,6 +457,29 @@ Variants {
                           easing.overshoot: 1.2
                         }
                       }
+
+                      Behavior on opacity {
+                        NumberAnimation {
+                          duration: Style.animationFast
+                          easing.type: Easing.OutQuad
+                        }
+                      }
+                    }
+
+                    // Context menu popup
+                    DockMenu {
+                      id: contextMenu
+                      scaling: root.scaling
+                      onHoveredChanged: menuHovered = hovered
+                      onRequestClose: contextMenu.hide()
+                      onAppClosed: root.updateDockApps // Force immediate dock update when app is closed
+                      onVisibleChanged: {
+                        if (visible) {
+                          root.currentContextMenu = contextMenu
+                        } else if (root.currentContextMenu === contextMenu) {
+                          root.currentContextMenu = null
+                        }
+                      }
                     }
 
                     MouseArea {
@@ -330,7 +487,7 @@ Variants {
                       anchors.fill: parent
                       hoverEnabled: true
                       cursorShape: Qt.PointingHandCursor
-                      acceptedButtons: Qt.LeftButton | Qt.MiddleButton
+                      acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
 
                       onEntered: {
                         anyAppHovered = true
@@ -347,17 +504,38 @@ Variants {
                       onExited: {
                         anyAppHovered = false
                         appTooltip.hide()
-                        if (autoHide && !dockHovered && !peekHovered) {
+                        if (autoHide && !dockHovered && !peekHovered && !menuHovered) {
                           hideTimer.restart()
                         }
                       }
 
                       onClicked: function (mouse) {
-                        if (mouse.button === Qt.MiddleButton && modelData?.close) {
-                          modelData.close()
+                        // Close any existing context menu first
+                        if (mouse.button !== Qt.RightButton || root.currentContextMenu !== contextMenu) {
+                          root.closeAllContextMenus()
                         }
-                        if (mouse.button === Qt.LeftButton && modelData?.activate) {
-                          modelData.activate()
+
+                        // Check if toplevel is still valid (not a stale reference)
+                        const isValidToplevel = modelData?.toplevel && ToplevelManager && ToplevelManager.toplevels.values.includes(modelData.toplevel)
+
+                        if (mouse.button === Qt.MiddleButton && isValidToplevel && modelData.toplevel.close) {
+                          Logger.log("Dock", "Middle-click closing app:", modelData.appId)
+                          modelData.toplevel.close()
+                          Qt.callLater(root.updateDockApps) // Force immediate dock update
+                        } else if (mouse.button === Qt.LeftButton) {
+                          if (isValidToplevel && modelData.toplevel.activate) {
+                            // Running app - activate it
+                            Logger.log("Dock", "Activating running app:", modelData.appId)
+                            modelData.toplevel.activate()
+                          } else if (modelData?.appId) {
+                            // Pinned app not running - launch it
+                            Logger.log("Dock", "Launching pinned app:", modelData.appId)
+                            Quickshell.execDetached(["gtk-launch", modelData.appId])
+                          }
+                        } else if (mouse.button === Qt.RightButton) {
+                          // Hide tooltip when showing context menu
+                          appTooltip.hide()
+                          contextMenu.show(appButton, modelData.toplevel || modelData)
                         }
                       }
                     }

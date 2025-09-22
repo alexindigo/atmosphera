@@ -1,5 +1,5 @@
 {
-  "settingsVersion": 3,
+  "settingsVersion": 4,
   "bar": {
     "position": "top",
     "backgroundOpacity": 1,
@@ -116,7 +116,8 @@
     "exclusive": false,
     "backgroundOpacity": 1,
     "floatingRatio": 1,
-    "monitors": []
+    "monitors": [],
+    "pinnedApps": []
   },
   "network": {
     "wifiEnabled": true,
@@ -125,6 +126,7 @@
   "notifications": {
     "doNotDisturb": false,
     "monitors": [],
+    "location": "top_right",
     "lastSeenTs": 0,
     "lowUrgencyDuration": 3,
     "normalUrgencyDuration": 8,
@@ -149,7 +151,7 @@
   },
   "colorSchemes": {
     "useWallpaperColors": false,
-    "predefinedScheme": "",
+    "predefinedScheme": "Noctalia (default)",
     "darkMode": true
   },
   "matugen": {
