@@ -100,19 +100,28 @@ Variants {
       const runningApps = ToplevelManager ? (ToplevelManager.toplevels.values || []) : []
       const pinnedApps = Settings.data.dock.pinnedApps || []
       const combined = []
+      const processedAppIds = new Set()
 
-      // First, add pinned apps (both running and non-running) in their pinned order
+      // Strategy: Maintain app positions as much as possible
+      // 1. First pass: Add all running apps (both pinned and non-pinned) in their current order
+      runningApps.forEach(toplevel => {
+                            if (toplevel && toplevel.appId) {
+                              const isPinned = pinnedApps.includes(toplevel.appId)
+                              const appType = isPinned ? "pinned-running" : "running"
+                              
+                              combined.push({
+                                              "type": appType,
+                                              "toplevel": toplevel,
+                                              "appId": toplevel.appId,
+                                              "title": toplevel.title
+                                            })
+                              processedAppIds.add(toplevel.appId)
+                            }
+                          })
+
+      // 2. Second pass: Add non-running pinned apps at the end
       pinnedApps.forEach(pinnedAppId => {
-                           const runningApp = runningApps.find(toplevel => toplevel && toplevel.appId === pinnedAppId)
-                           if (runningApp) {
-                             // Pinned app that is currently running
-                             combined.push({
-                                             "type": "pinned-running",
-                                             "toplevel": runningApp,
-                                             "appId": runningApp.appId,
-                                             "title": runningApp.title
-                                           })
-                           } else {
+                           if (!processedAppIds.has(pinnedAppId)) {
                              // Pinned app that is not running
                              combined.push({
                                              "type": "pinned",
@@ -122,21 +131,6 @@ Variants {
                                            })
                            }
                          })
-
-      // Then, add running apps that are not pinned
-      runningApps.forEach(toplevel => {
-                            if (toplevel && toplevel.appId) {
-                              const isPinned = pinnedApps.includes(toplevel.appId)
-                              if (!isPinned) {
-                                combined.push({
-                                                "type": "running",
-                                                "toplevel": toplevel,
-                                                "appId": toplevel.appId,
-                                                "title": toplevel.title
-                                              })
-                              }
-                            }
-                          })
 
       dockApps = combined
     }
