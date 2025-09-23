@@ -32,11 +32,11 @@ NBox {
         color: Color.mPrimary
         Layout.alignment: Qt.AlignHCenter
       }
-      NText {
-        text: "No media player detected"
-        color: Color.mOnSurfaceVariant
-        Layout.alignment: Qt.AlignHCenter
-      }
+      // NText {
+      //   text: "No media player detected"
+      //   color: Color.mOnSurfaceVariant
+      //   Layout.alignment: Qt.AlignHCenter
+      // }
 
       Item {
         Layout.fillWidth: true
@@ -51,98 +51,71 @@ NBox {
       visible: MediaService.currentPlayer && MediaService.canPlay
       spacing: Style.marginM * scaling
 
-      // Player selector
-      ComboBox {
-        id: playerSelector
+      // Player selector using NContextMenu
+      Rectangle {
+        id: playerSelectorButton
         Layout.fillWidth: true
-        Layout.preferredHeight: Style.barHeight * 0.83 * scaling
+        Layout.preferredHeight: Style.barHeight * scaling
         visible: MediaService.getAvailablePlayers().length > 1
-        model: MediaService.getAvailablePlayers()
-        textRole: "identity"
-        currentIndex: MediaService.selectedPlayerIndex
+        radius: Style.radiusM * scaling
+        color: Color.transparent
 
-        background: Rectangle {
-          visible: false
-          // implicitWidth: 120 * scaling
-          // implicitHeight: 30 * scaling
-          color: Color.transparent
-          border.color: playerSelector.activeFocus ? Color.mSecondary : Color.mOutline
-          border.width: Math.max(1, Style.borderS * scaling)
-          radius: Style.radiusM * scaling
-        }
+        property var currentPlayer: MediaService.getAvailablePlayers()[MediaService.selectedPlayerIndex]
 
-        contentItem: NText {
-          visible: false
-          leftPadding: Style.marginM * scaling
-          rightPadding: playerSelector.indicator.width + playerSelector.spacing
-          text: playerSelector.displayText
-          font.pointSize: Style.fontSizeXS * scaling
-          color: Color.mOnSurface
-          verticalAlignment: Text.AlignVCenter
-          elide: Text.ElideRight
-        }
-
-        indicator: NIcon {
-          x: playerSelector.width - width
-          y: playerSelector.topPadding + (playerSelector.availableHeight - height) / 2
-          icon: "caret-down"
-          font.pointSize: Style.fontSizeXXL * scaling
-          color: Color.mOnSurface
-          horizontalAlignment: Text.AlignRight
-        }
-
-        popup: Popup {
-          id: popup
-          x: playerSelector.width * 0.5
-          y: playerSelector.height * 0.75
-          width: playerSelector.width * 0.5
-          implicitHeight: Math.min(160 * scaling, contentItem.implicitHeight + Style.marginM * 2 * scaling)
-          padding: Style.marginS * scaling
-
-          onOpened: {
-            PanelService.willOpenPopup(root)
+        RowLayout {
+          anchors.fill: parent
+          spacing: Style.marginS * scaling
+   
+          NIcon {
+            icon: "caret-down"
+            font.pointSize: Style.fontSizeXXL * scaling
+            color: Color.mOnSurfaceVariant
           }
 
-          onClosed: {
-            PanelService.willClosePopup(root)
-          }
-
-          contentItem: NListView {
-            implicitHeight: contentHeight
-            model: playerSelector.popup.visible ? playerSelector.delegateModel : null
-            currentIndex: playerSelector.highlightedIndex
-            horizontalPolicy: ScrollBar.AlwaysOff
-            verticalPolicy: ScrollBar.AsNeeded
-          }
-
-          background: Rectangle {
-            color: Color.mSurface
-            border.color: Color.mOutline
-            border.width: Math.max(1, Style.borderS * scaling)
-            radius: Style.radiusS * scaling
+          NText {
+            text: playerSelectorButton.currentPlayer ? playerSelectorButton.currentPlayer.identity : ""
+            font.pointSize: Style.fontSizeXS * scaling
+            color: Color.mOnSurfaceVariant
+            Layout.fillWidth: true
           }
         }
 
-        delegate: ItemDelegate {
-          width: playerSelector.width
-          highlighted: playerSelector.highlightedIndex === index
-          background: Rectangle {
-            width: popup.width - Style.marginS * scaling * 2
-            color: highlighted ? Color.mTertiary : Color.transparent
-            radius: Style.radiusXS * scaling
-          }
-          contentItem: NText {
-            text: modelData.identity
-            font.pointSize: Style.fontSizeS * scaling
-            color: highlighted ? Color.mOnTertiary : Color.mOnSurface
-            verticalAlignment: Text.AlignVCenter
-            elide: Text.ElideRight
+        MouseArea {
+          id: playerSelectorMouseArea
+          anchors.fill: parent
+          hoverEnabled: true
+          cursorShape: Qt.PointingHandCursor
+
+          onClicked: {
+            // Create menu items from available players
+            var menuItems = []
+            var players = MediaService.getAvailablePlayers()
+            for (var i = 0; i < players.length; i++) {
+              menuItems.push({
+                label: players[i].identity,
+                action: i.toString(),
+                icon: "disc",
+                enabled: true,
+                visible: true
+              })
+            }
+            playerContextMenu.model = menuItems
+            playerContextMenu.openAtItem(playerSelectorButton, playerSelectorButton.width - playerContextMenu.width, playerSelectorButton.height)
           }
         }
 
-        onActivated: {
-          MediaService.selectedPlayerIndex = currentIndex
-          MediaService.updateCurrentPlayer()
+        NContextMenu {
+          id: playerContextMenu
+          parent: root
+          width: 200 * scaling
+
+          onTriggered: function(action) {
+            var index = parseInt(action)
+            if (!isNaN(index)) {
+              MediaService.selectedPlayerIndex = index
+              MediaService.updateCurrentPlayer()
+            }
+          }
         }
       }
 
@@ -200,7 +173,7 @@ NBox {
           NText {
             visible: MediaService.trackArtist !== ""
             text: MediaService.trackArtist
-            color: Color.mOnSurface
+            color: Color.mPrimary
             font.pointSize: Style.fontSizeXS * scaling
             elide: Text.ElideRight
             Layout.fillWidth: true
