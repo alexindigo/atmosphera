@@ -8,9 +8,9 @@ import qs.Commons
 Singleton {
   id: root
 
+  property bool shouldRun: BarService.hasAudioVisualizer || (PanelService.getPanel("controlCenterPanel") === PanelService.openedPanel)
   property var values: Array(barsCount).fill(0)
   property int barsCount: 24
-
   property var config: ({
                           "general": {
                             "bars": barsCount,
@@ -37,8 +37,11 @@ Singleton {
   Process {
     id: process
     stdinEnabled: true
-    running: true // Yes, cava should run at all times! Even if no mpris is available.
+    running: root.shouldRun
     command: ["cava", "-p", "/dev/stdin"]
+    onRunningChanged: {
+      Logger.log("Cava", "Process running:", running)
+    }
     onExited: {
       stdinEnabled = true
       values = Array(barsCount).fill(0)
