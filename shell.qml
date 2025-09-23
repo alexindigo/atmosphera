@@ -116,4 +116,12 @@ ShellRoot {
     // Save a ref. to our lockScreen so we can access it  easily
     PanelService.lockScreen = lockScreen
   }
+
+  Connections {
+    function onReloadCompleted() {
+      Quickshell.inhibitReloadPopup();
+    }
+
+    target: Quickshell
+  }
 }
