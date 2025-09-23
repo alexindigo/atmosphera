@@ -126,16 +126,16 @@ Popup {
       "Battery": "WidgetSettings/BatterySettings.qml",
       "Brightness": "WidgetSettings/BrightnessSettings.qml",
       "Clock": "WidgetSettings/ClockSettings.qml",
+      "ControlCenter": "WidgetSettings/ControlCenterSettings.qml",
       "CustomButton": "WidgetSettings/CustomButtonSettings.qml",
       "KeyboardLayout": "WidgetSettings/KeyboardLayoutSettings.qml",
       "MediaMini": "WidgetSettings/MediaMiniSettings.qml",
       "Microphone": "WidgetSettings/MicrophoneSettings.qml",
       "NotificationHistory": "WidgetSettings/NotificationHistorySettings.qml",
-      "Workspace": "WidgetSettings/WorkspaceSettings.qml",
-      "SidePanelToggle": "WidgetSettings/SidePanelToggleSettings.qml",
       "Spacer": "WidgetSettings/SpacerSettings.qml",
       "SystemMonitor": "WidgetSettings/SystemMonitorSettings.qml",
-      "Volume": "WidgetSettings/VolumeSettings.qml"
+      "Volume": "WidgetSettings/VolumeSettings.qml",
+      "Workspace": "WidgetSettings/WorkspaceSettings.qml"
     }
 
     const source = widgetSettingsMap[widgetId]

@@ -24,13 +24,14 @@ import qs.Widgets
 import qs.Modules.Background
 import qs.Modules.Dock
 import qs.Modules.LockScreen
+import qs.Modules.SessionMenu
 
 // Bar & Bar Components
 import qs.Modules.Bar
 import qs.Modules.Bar.Extras
 import qs.Modules.Bar.Bluetooth
 import qs.Modules.Bar.Calendar
-import qs.Modules.Bar.Power
+
 import qs.Modules.Bar.WiFi
 
 // Panels & UI Components
@@ -60,7 +61,7 @@ ShellRoot {
 
   ToastOverlay {}
 
-  // IPCService is treated as a service 
+  // IPCService is treated as a service
   // but it's actually an Item that needs to exists in the shell.
   IPCService {}
 
@@ -91,9 +92,9 @@ ShellRoot {
     objectName: "notificationHistoryPanel"
   }
 
-  PowerPanel {
-    id: powerPanel
-    objectName: "powerPanel"
+  SessionMenu {
+    id: sessionMenuPanel
+    objectName: "sessionMenuPanel"
   }
 
   WiFiPanel {

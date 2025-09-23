@@ -14,10 +14,10 @@ NIconButton {
   compact: (Settings.data.bar.density === "compact")
   baseSize: Style.capsuleHeight
   icon: "power"
-  tooltipText: "Power panel"
+  tooltipText: "Session menu"
   colorBg: (Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent)
   colorFg: Color.mError
   colorBorder: Color.transparent
   colorBorderHover: Color.transparent
-  onClicked: PanelService.getPanel("powerPanel")?.toggle()
+  onClicked: PanelService.getPanel("sessionMenuPanel")?.toggle()
 }

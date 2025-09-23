@@ -142,7 +142,7 @@ Singleton {
             "id": "Workspace"
           }]
         property list<var> right: [{
-            "id": "ScreenRecorderIndicator"
+            "id": "ScreenRecorder"
           }, {
             "id": "Tray"
           }, {
@@ -162,7 +162,7 @@ Singleton {
           }, {
             "id": "Clock"
           }, {
-            "id": "SidePanelToggle"
+            "id": "ControlCenter"
           }]
       }
     }
@@ -386,18 +386,18 @@ Singleton {
         var widget = adapter.bar.widgets[sectionName][i]
 
         switch (widget.id) {
-          case "DarkModeToggle":
-            widget.id = "DarkMode"
-            break;
-          case "PowerToggle":
-            widget.id = "SessionMenu"
-            break;
-          case "ScreenRecorderIndicator":
-            widget.id = "ScreenRecorder"
-            break;
-          case "SidePanelToggle":
-            widget.id = "ControlCenter"
-            break;
+        case "DarkModeToggle":
+          widget.id = "DarkMode"
+          break
+        case "PowerToggle":
+          widget.id = "SessionMenu"
+          break
+        case "ScreenRecorderIndicator":
+          widget.id = "ScreenRecorder"
+          break
+        case "SidePanelToggle":
+          widget.id = "ControlCenter"
+          break
         }
       }
     }

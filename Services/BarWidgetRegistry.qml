@@ -136,7 +136,7 @@ Singleton {
     CustomButton {}
   }
   property Component darkMode: Component {
-    DarkMode{}
+    DarkMode {}
   }
   property Component keyboardLayoutComponent: Component {
     KeyboardLayout {}

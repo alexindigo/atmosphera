@@ -109,19 +109,35 @@ Item {
     }
   }
 
+  // TODO: delete in next major release
   IpcHandler {
     target: "powerPanel"
     function toggle() {
-      powerPanel.toggle()
+      sessionMenuPanel.toggle()
+      ToastService.showWarning("IPC", "PowerPanel has been renamed to SessionMenu, this IPC call will be deprecated soon. Please use \"ipc call sessionMenu toggle\" instead.", 8000)
+    }
+  }
+  IpcHandler {
+    target: "sessionMenu"
+    function toggle() {
+      sessionMenuPanel.toggle()
     }
   }
 
+  // TODO: delete in next major release
   IpcHandler {
-    // TODO: upgrade when breaking changes
     target: "sidePanel"
     function toggle() {
       // Will attempt to open the panel next to the bar button if any.
-      controlCenterPanel.toggle(BarService.lookupWidget("SidePanelToggle"))
+      controlCenterPanel.toggle(BarService.lookupWidget("ControlCenter"))
+      ToastService.showWarning("IPC", "SidePanel has been renamed to ControlCenter, this IPC call will be deprecated soon. Please use \"ipc call controlCenter toggle\" instead.", 8000)
+    }
+  }
+  IpcHandler {
+    target: "controlCenter"
+    function toggle() {
+      // Will attempt to open the panel next to the bar button if any.
+      controlCenterPanel.toggle(BarService.lookupWidget("ControlCenter"))
     }
   }
 

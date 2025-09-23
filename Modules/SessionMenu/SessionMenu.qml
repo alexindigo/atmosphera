@@ -263,7 +263,7 @@ NPanel {
         Layout.preferredHeight: Style.baseWidgetSize * 0.8 * scaling
 
         NText {
-          text: timerActive ? `${pendingAction.charAt(0).toUpperCase() + pendingAction.slice(1)} in ${Math.ceil(timeRemaining / 1000)} seconds...` : "Power panel"
+          text: timerActive ? `${pendingAction.charAt(0).toUpperCase() + pendingAction.slice(1)} in ${Math.ceil(timeRemaining / 1000)} seconds...` : "Session Menu"
           font.weight: Style.fontWeightBold
           font.pointSize: Style.fontSizeL * scaling
           color: timerActive ? Color.mPrimary : Color.mOnSurface

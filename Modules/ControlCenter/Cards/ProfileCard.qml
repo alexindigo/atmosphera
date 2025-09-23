@@ -66,9 +66,9 @@ NBox {
       NIconButton {
         id: powerButton
         icon: "power"
-        tooltipText: "Power panel"
+        tooltipText: "Session Menu"
         onClicked: {
-          powerPanel.open()
+          sessionMenuPanel.open()
           controlCenterPanel.close()
         }
       }

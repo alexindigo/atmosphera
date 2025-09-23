@@ -28,7 +28,7 @@
       ],
       "right": [
         {
-          "id": "ScreenRecorderIndicator"
+          "id": "ScreenRecorder"
         },
         {
           "id": "Tray"
@@ -58,7 +58,7 @@
           "id": "Clock"
         },
         {
-          "id": "SidePanelToggle"
+          "id": "ControlCenter"
         }
       ]
     }
