@@ -96,7 +96,7 @@ NBox {
           x: playerSelector.width * 0.5
           y: playerSelector.height * 0.75
           width: playerSelector.width * 0.5
-          implicitHeight: Math.min(160 * scaling, contentItem.implicitHeight + Style.marginM * scaling)
+          implicitHeight: Math.min(160 * scaling, contentItem.implicitHeight + Style.marginM * 2 * scaling)
           padding: Style.marginS * scaling
 
           onOpened: {
@@ -107,37 +107,36 @@ NBox {
             PanelService.willClosePopup(root)
           }
 
-          contentItem: ListView {
-            clip: true
+          contentItem: NListView {
             implicitHeight: contentHeight
             model: playerSelector.popup.visible ? playerSelector.delegateModel : null
             currentIndex: playerSelector.highlightedIndex
-            ScrollIndicator.vertical: ScrollIndicator {}
+            horizontalPolicy: ScrollBar.AlwaysOff
+            verticalPolicy: ScrollBar.AsNeeded
           }
 
           background: Rectangle {
             color: Color.mSurface
             border.color: Color.mOutline
             border.width: Math.max(1, Style.borderS * scaling)
-            radius: Style.radiusXS * scaling
+            radius: Style.radiusS * scaling
           }
         }
 
         delegate: ItemDelegate {
           width: playerSelector.width
+          highlighted: playerSelector.highlightedIndex === index
+          background: Rectangle {
+            width: popup.width - Style.marginS * scaling * 2
+            color: highlighted ? Color.mTertiary : Color.transparent
+            radius: Style.radiusXS * scaling
+          }
           contentItem: NText {
             text: modelData.identity
             font.pointSize: Style.fontSizeS * scaling
-            color: highlighted ? Color.mSurface : Color.mOnSurface
+            color: highlighted ? Color.mOnTertiary : Color.mOnSurface
             verticalAlignment: Text.AlignVCenter
             elide: Text.ElideRight
-          }
-          highlighted: playerSelector.highlightedIndex === index
-
-          background: Rectangle {
-            width: popup.width - Style.marginS * scaling * 2
-            color: highlighted ? Color.mSecondary : Color.transparent
-            radius: Style.radiusXS * scaling
           }
         }
 

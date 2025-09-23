@@ -85,7 +85,7 @@ RowLayout {
 
     popup: Popup {
       y: combo.height
-      width: combo.width
+      implicitWidth: combo.width - Style.marginM * scaling
       implicitHeight: Math.min(root.popupHeight, contentItem.implicitHeight + Style.marginM * scaling * 2)
       padding: Style.marginM * scaling
 
@@ -97,12 +97,11 @@ RowLayout {
         PanelService.willClosePopup(root)
       }
 
-      contentItem: ListView {
-        property var comboBoxRoot: root
-        clip: true
-        implicitHeight: contentHeight
+      contentItem: NListView {
         model: combo.popup.visible ? root.model : null
-        ScrollIndicator.vertical: ScrollIndicator {}
+        implicitHeight: contentHeight
+        horizontalPolicy: ScrollBar.AlwaysOff
+        verticalPolicy: ScrollBar.AsNeeded
 
         delegate: ItemDelegate {
           width: combo.width
@@ -116,17 +115,15 @@ RowLayout {
           }
 
           onClicked: {
-            ListView.view.comboBoxRoot.selected(ListView.view.comboBoxRoot.model.get(index).key)
+            root.selected(root.model.get(index).key)
             combo.currentIndex = index
             combo.popup.close()
           }
 
-          contentItem: NText {
-            text: name
-            font.pointSize: Style.fontSizeM * scaling
-            color: highlighted ? Color.mSurface : Color.mOnSurface
-            verticalAlignment: Text.AlignVCenter
-            elide: Text.ElideRight
+          background: Rectangle {
+            width: combo.width - Style.marginM * scaling * 3
+            color: highlighted ? Color.mTertiary : Color.transparent
+            radius: Style.radiusS * scaling
             Behavior on color {
               ColorAnimation {
                 duration: Style.animationFast
@@ -134,10 +131,12 @@ RowLayout {
             }
           }
 
-          background: Rectangle {
-            width: combo.width - Style.marginM * scaling * 3
-            color: highlighted ? Color.mTertiary : Color.transparent
-            radius: Style.radiusS * scaling
+          contentItem: NText {
+            text: name
+            font.pointSize: Style.fontSizeM * scaling
+            color: highlighted ? Color.mOnTertiary : Color.mOnSurface
+            verticalAlignment: Text.AlignVCenter
+            elide: Text.ElideRight
             Behavior on color {
               ColorAnimation {
                 duration: Style.animationFast

@@ -84,7 +84,7 @@ ColumnLayout {
 
   NHeader {
     label: "Clock display"
-    description: "Arrange your clock's layout. Click a token below to add it to the selected field."
+    description: "Customize your clock's display by adding tokens from the list below. To use the 12-hour format, you must include the 'AP' token."
   }
 
   RowLayout {

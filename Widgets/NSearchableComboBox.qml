@@ -174,13 +174,13 @@ RowLayout {
           fontSize: Style.fontSizeS * scaling
         }
 
-        ListView {
+        NListView {
           id: listView
           Layout.fillWidth: true
           Layout.fillHeight: true
-          clip: true
           model: combo.popup.visible ? filteredModel : null
-          ScrollIndicator.vertical: ScrollIndicator {}
+          horizontalPolicy: ScrollBar.AlwaysOff
+          verticalPolicy: ScrollBar.AsNeeded
 
           delegate: ItemDelegate {
             width: listView.width
