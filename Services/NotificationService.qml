@@ -118,7 +118,7 @@ Singleton {
       "summary": (n.summary || ""),
       "body": stripTags(n.body || ""),
       "appName": getAppName(n.appName),
-      "urgency": n.urgency || 1,
+      "urgency": n.urgency < 0 || n.urgency > 2 ? 1 : n.urgency,
       "expireTimeout": n.expireTimeout,
       "timestamp": time,
       "progress": 1.0,
@@ -294,9 +294,8 @@ Singleton {
                             "summary": item.summary || "",
                             "body": item.body || "",
                             "appName": item.appName || "",
-                            "urgency": item.urgency || 1,
+                            "urgency": item.urgency < 0 || item.urgency > 2 ? 1 : item.urgency,
                             "timestamp": time,
-                            "progress": 1.0,
                             "originalImage": item.originalImage || "",
                             "cachedImage": cachedImage
                           })
