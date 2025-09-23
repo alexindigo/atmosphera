@@ -37,6 +37,7 @@ Singleton {
   Process {
     id: process
     stdinEnabled: true
+    running: true // Yes, cava should run at all times! Even if no mpris is available.
     command: ["cava", "-p", "/dev/stdin"]
     onExited: {
       stdinEnabled = true
