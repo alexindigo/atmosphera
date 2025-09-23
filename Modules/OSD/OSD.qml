@@ -306,8 +306,11 @@ Loader {
   }
 
   function hideOSD() {
-    if (windowLoader.item) {
+    if (windowLoader.item && windowLoader.item.osdItem) {
       windowLoader.item.osdItem.hideImmediately()
+    } else if (windowLoader.active) {
+      // If window exists but osdItem isn't ready, just deactivate the loader
+      windowLoader.active = false
     }
   }
 }
