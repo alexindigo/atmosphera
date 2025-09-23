@@ -164,20 +164,21 @@ NBox {
             NContextMenu {
               id: contextMenu
               parent: Overlay.overlay
+              width: 240 * scaling
               model: [{
-                  "label": "Move to Left",
+                  "label": "Move to left section",
                   "action": "left",
-                  "icon": "arrow-left",
+                  "icon": "arrow-bar-to-left",
                   "visible": root.sectionId !== "left"
                 }, {
-                  "label": "Move to Center",
+                  "label": "Move to center section",
                   "action": "center",
-                  "icon": "arrows-horizontal",
+                  "icon": "layout-columns",
                   "visible": root.sectionId !== "center"
                 }, {
-                  "label": "Move to Right",
+                  "label": "Move to right section",
                   "action": "right",
-                  "icon": "arrow-right",
+                  "icon": "arrow-bar-to-right",
                   "visible": root.sectionId !== "right"
                 }]
 
