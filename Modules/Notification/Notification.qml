@@ -107,7 +107,7 @@ Variants {
 
       // Connect to animation signal from service - UPDATED TO USE ID
       Component.onCompleted: {
-        NotificationService.animateAndRemove.connect(function (notificationId, index) {
+        NotificationService.animateAndRemove.connect(function (notificationId) {
           // Find the delegate by notification ID
           var delegate = null
           if (notificationStack && notificationStack.children && notificationStack.children.length > 0) {
@@ -118,11 +118,6 @@ Variants {
                 break
               }
             }
-          }
-
-          // Fallback to index if ID lookup failed
-          if (!delegate && notificationStack && notificationStack.children && notificationStack.children[index]) {
-            delegate = notificationStack.children[index]
           }
 
           if (delegate && delegate.animateOut) {

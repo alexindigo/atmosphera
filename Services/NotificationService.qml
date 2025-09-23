@@ -187,7 +187,9 @@ Singleton {
     running: activeList.count > 0
     onTriggered: {
       const now = Date.now()
-      const durations = [3000, 8000, 15000] // low, normal, critical
+      const durations = [Settings.data.notifications?.lowUrgencyDuration * 1000 || 3000,
+                         Settings.data.notifications?.normalUrgencyDuration * 1000 || 8000,
+                         Settings.data.notifications?.criticalUrgencyDuration * 1000 || 15000]
 
       for (var i = activeList.count - 1; i >= 0; i--) {
         const notif = activeList.get(i)
@@ -203,7 +205,7 @@ Singleton {
         updateModel(activeList, notif.id, "progress", progress)
 
         if (elapsed >= expire) {
-          animateAndRemove(notif.id, i)
+          animateAndRemove(notif.id)
           delete progressTimers[notif.id]
           break
         }
@@ -397,7 +399,7 @@ Singleton {
   }
 
   // Signals & connections
-  signal animateAndRemove(string notificationId, int index)
+  signal animateAndRemove(string notificationId)
 
   Connections {
     target: Settings.data.notifications
