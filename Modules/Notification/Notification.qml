@@ -163,7 +163,7 @@ Variants {
               anchors.top: parent.top
               anchors.left: parent.left
               anchors.right: parent.right
-              height: 3 * scaling
+              height: 2 * scaling
               color: "transparent"
               clip: true
 
@@ -178,13 +178,9 @@ Variants {
                   else
                     return Color.mPrimary
                 }
-
-                radius: parent.height / 2
                 antialiasing: true
               }
             }
-
-
 
             // Animation properties
             property real scaleValue: 0.8
