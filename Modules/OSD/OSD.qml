@@ -11,19 +11,78 @@ Loader {
   id: windowLoader
   active: false
 
-  readonly property real currentVolume: AudioService.volume
-  readonly property bool isMuted: AudioService.muted
+  // OSD Type enum
+  enum Type {
+    Volume,
+    Brightness
+  }
+
+  property int osdType: OSD.Type.Volume
   readonly property real scaling: ScalingService.getScreenScale(Quickshell.screens[0])
 
-  // Used to avoid showing OSD on Quickshell startup
+  // Volume properties
+  readonly property real currentVolume: AudioService.volume
+  readonly property bool isMuted: AudioService.muted
   property bool firstVolumeReceived: false
   property bool firstMuteReceived: false
 
-  function getIcon() {
-    if (AudioService.muted) {
-      return "volume-mute"
+  // Brightness properties
+  readonly property real currentBrightness: {
+    if (BrightnessService.monitors.length > 0) {
+      return BrightnessService.monitors[0].brightness || 0
     }
-    return (AudioService.volume <= Number.EPSILON) ? "volume-zero" : (AudioService.volume <= 0.5) ? "volume-low" : "volume-high"
+    return 0
+  }
+  property bool firstBrightnessReceived: false
+
+  // Get appropriate icon based on OSD type
+  function getIcon() {
+    if (osdType === OSD.Type.Volume) {
+      if (AudioService.muted) {
+        return "volume-mute"
+      }
+      return (AudioService.volume <= Number.EPSILON) ? "volume-zero" : (AudioService.volume <= 0.5) ? "volume-low" : "volume-high"
+    } else {
+      // Brightness
+      var brightness = currentBrightness
+      return brightness <= 0.5 ? "brightness-low" : "brightness-high"
+    }
+  }
+
+  // Get current value (0-1 range)
+  function getCurrentValue() {
+    if (osdType === OSD.Type.Volume) {
+      return isMuted ? 0 : currentVolume
+    } else {
+      return currentBrightness
+    }
+  }
+
+  // Get display percentage
+  function getDisplayPercentage() {
+    if (osdType === OSD.Type.Volume) {
+      return isMuted ? "0%" : Math.round(currentVolume * 100) + "%"
+    } else {
+      return Math.round(currentBrightness * 100) + "%"
+    }
+  }
+
+  // Get progress bar color
+  function getProgressColor() {
+    if (osdType === OSD.Type.Volume) {
+      return isMuted ? Color.mError : Color.mPrimary
+    } else {
+      return Color.mPrimary
+    }
+  }
+
+  // Get icon color
+  function getIconColor() {
+    if (osdType === OSD.Type.Volume) {
+      return isMuted ? Color.mError : Color.mOnSurface
+    } else {
+      return Color.mOnSurface
+    }
   }
 
   sourceComponent: PanelWindow {
@@ -96,7 +155,7 @@ Loader {
 
         NIcon {
           icon: windowLoader.getIcon()
-          color: windowLoader.isMuted ? Color.mError : Color.mOnSurface
+          color: windowLoader.getIconColor()
           font.pointSize: Style.fontSizeXL * windowLoader.scaling
           Layout.alignment: Qt.AlignVCenter
         }
@@ -116,9 +175,9 @@ Loader {
               anchors.left: parent.left
               anchors.top: parent.top
               anchors.bottom: parent.bottom
-              width: parent.width * (windowLoader.isMuted ? 0 : Math.min(1.0, windowLoader.currentVolume))
+              width: parent.width * Math.min(1.0, windowLoader.getCurrentValue())
               radius: parent.radius
-              color: windowLoader.isMuted ? Color.mError : Color.mPrimary
+              color: windowLoader.getProgressColor()
 
               Behavior on width {
                 NumberAnimation {
@@ -136,7 +195,7 @@ Loader {
           }
 
           NText {
-            text: windowLoader.isMuted ? "0%" : Math.round(windowLoader.currentVolume * 100) + "%"
+            text: windowLoader.getDisplayPercentage()
             color: Color.mOnSurfaceVariant
             font.pointSize: Style.fontSizeS * windowLoader.scaling
             Layout.alignment: Qt.AlignVCenter
@@ -163,6 +222,14 @@ Loader {
           windowLoader.active = false
         })
       }
+
+      function hideImmediately() {
+        hideTimer.stop()
+        osdItem.opacity = 0
+        osdItem.scale = 0.7
+        osdItem.visible = false
+        windowLoader.active = false
+      }
     }
 
     function showOSD() {
@@ -170,13 +237,13 @@ Loader {
     }
   }
 
-  // Monitor volume changes
+  // Volume change monitoring
   Connections {
     target: AudioService
+    enabled: osdType === OSD.Type.Volume
 
     function onVolumeChanged() {
       if (!firstVolumeReceived) {
-        // Ignore the first volume change on startup
         firstVolumeReceived = true
       } else {
         showOSD()
@@ -185,11 +252,40 @@ Loader {
 
     function onMutedChanged() {
       if (!firstMuteReceived) {
-        // Ignore the first mute state change on startup
         firstMuteReceived = true
       } else {
         showOSD()
       }
+    }
+  }
+
+  // Brightness change monitoring
+  Connections {
+    target: BrightnessService
+    enabled: osdType === OSD.Type.Brightness
+
+    function onMonitorsChanged() {
+      for (var i = 0; i < BrightnessService.monitors.length; i++) {
+        let monitor = BrightnessService.monitors[i]
+        monitor.brightnessUpdated.connect(windowLoader.onBrightnessChanged)
+      }
+    }
+  }
+
+  Component.onCompleted: {
+    if (osdType === OSD.Type.Brightness) {
+      for (var i = 0; i < BrightnessService.monitors.length; i++) {
+        let monitor = BrightnessService.monitors[i]
+        monitor.brightnessUpdated.connect(windowLoader.onBrightnessChanged)
+      }
+    }
+  }
+
+  function onBrightnessChanged(newBrightness) {
+    if (!firstBrightnessReceived) {
+      firstBrightnessReceived = true
+    } else {
+      showOSD()
     }
   }
 

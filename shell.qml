@@ -61,15 +61,17 @@ ShellRoot {
   ToastOverlay {}
 
   // OSD overlays for volume and brightness
-  VolumeOSD {
+  OSD {
     id: volumeOSD
     objectName: "volumeOSD"
+    osdType: OSD.Type.Volume
     onOsdShowing: brightnessOSD.hideOSD()
   }
 
-  BrightnessOSD {
+  OSD {
     id: brightnessOSD
     objectName: "brightnessOSD"
+    osdType: OSD.Type.Brightness
     onOsdShowing: volumeOSD.hideOSD()
   }
 
