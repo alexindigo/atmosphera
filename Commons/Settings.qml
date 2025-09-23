@@ -53,6 +53,7 @@ Singleton {
     // This should only be activated once when the settings structure has changed
     // Then it should be commented out again, regular users don't need to generate
     // default settings on every start
+    // TODO: automate this someday!
     //generateDefaultSettings()
 
     // Patch-in the local default, resolved to user's home
