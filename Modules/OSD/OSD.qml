@@ -294,7 +294,7 @@ Loader {
 
   function showOSD() {
     // Check if OSD is enabled in settings
-    if (!Settings.data.general.showOSD) {
+    if (!Settings.data.notifications.enableOSD) {
       return
     }
 

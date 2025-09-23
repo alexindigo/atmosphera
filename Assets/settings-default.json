@@ -70,8 +70,7 @@
     "forceBlackScreenCorners": false,
     "radiusRatio": 1,
     "screenRadiusRatio": 1,
-    "animationSpeed": 1,
-    "showOSD": true
+    "animationSpeed": 1
   },
   "location": {
     "name": "Tokyo",
@@ -131,7 +130,8 @@
     "lastSeenTs": 0,
     "lowUrgencyDuration": 3,
     "normalUrgencyDuration": 8,
-    "criticalUrgencyDuration": 15
+    "criticalUrgencyDuration": 15,
+    "enableOSD": true
   },
   "audio": {
     "volumeStep": 5,
