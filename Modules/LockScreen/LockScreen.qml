@@ -766,7 +766,7 @@ Loader {
                 Rectangle {
                   anchors.horizontalCenter: parent.horizontalCenter
                   anchors.bottom: parent.top
-                  anchors.bottomMargin: 12 * scaling
+                  anchors.bottomMargin: Style.marginM * scaling
                   radius: Style.radiusM * scaling
                   color: Color.mSurface
                   border.color: Color.mOutline
@@ -817,7 +817,7 @@ Loader {
                 Rectangle {
                   anchors.horizontalCenter: parent.horizontalCenter
                   anchors.bottom: parent.top
-                  anchors.bottomMargin: 12 * scaling
+                  anchors.bottomMargin: Style.marginM * scaling
                   radius: Style.radiusM * scaling
                   color: Color.mSurface
                   border.color: Color.mOutline
@@ -869,7 +869,7 @@ Loader {
                 Rectangle {
                   anchors.horizontalCenter: parent.horizontalCenter
                   anchors.bottom: parent.top
-                  anchors.bottomMargin: 12 * scaling
+                  anchors.bottomMargin: Style.marginM * scaling
                   radius: Style.radiusM * scaling
                   color: Color.mSurface
                   border.color: Color.mOutline

@@ -48,7 +48,7 @@ ColumnLayout {
       verticalAlignment: Text.AlignVCenter
       horizontalAlignment: Text.AlignRight
       Layout.alignment: Qt.AlignBottom
-      Layout.bottomMargin: 12 * scaling
+      Layout.bottomMargin: Style.marginM * scaling
     }
   }
 
