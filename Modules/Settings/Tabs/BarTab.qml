@@ -219,6 +219,7 @@ ColumnLayout {
         onRemoveWidget: (section, index) => _removeWidgetFromSection(section, index)
         onReorderWidget: (section, fromIndex, toIndex) => _reorderWidgetInSection(section, fromIndex, toIndex)
         onUpdateWidgetSettings: (section, index, settings) => _updateWidgetSettingsInSection(section, index, settings)
+        onMoveWidget: (fromSection, index, toSection) => _moveWidgetBetweenSections(fromSection, index, toSection)
         onDragPotentialStarted: root.handleDragStart()
         onDragPotentialEnded: root.handleDragEnd()
       }
@@ -233,6 +234,7 @@ ColumnLayout {
         onRemoveWidget: (section, index) => _removeWidgetFromSection(section, index)
         onReorderWidget: (section, fromIndex, toIndex) => _reorderWidgetInSection(section, fromIndex, toIndex)
         onUpdateWidgetSettings: (section, index, settings) => _updateWidgetSettingsInSection(section, index, settings)
+        onMoveWidget: (fromSection, index, toSection) => _moveWidgetBetweenSections(fromSection, index, toSection)
         onDragPotentialStarted: root.handleDragStart()
         onDragPotentialEnded: root.handleDragEnd()
       }
@@ -247,6 +249,7 @@ ColumnLayout {
         onRemoveWidget: (section, index) => _removeWidgetFromSection(section, index)
         onReorderWidget: (section, fromIndex, toIndex) => _reorderWidgetInSection(section, fromIndex, toIndex)
         onUpdateWidgetSettings: (section, index, settings) => _updateWidgetSettingsInSection(section, index, settings)
+        onMoveWidget: (fromSection, index, toSection) => _moveWidgetBetweenSections(fromSection, index, toSection)
         onDragPotentialStarted: root.handleDragStart()
         onDragPotentialEnded: root.handleDragEnd()
       }
@@ -339,6 +342,25 @@ ColumnLayout {
     // Update the widget settings in the Settings data
     Settings.data.bar.widgets[section][index] = settings
     //Logger.log("BarTab", `Updated widget settings for ${settings.id} in ${section} section`)
+  }
+
+  function _moveWidgetBetweenSections(fromSection, index, toSection) {
+    // Get the widget from the source section
+    if (index >= 0 && index < Settings.data.bar.widgets[fromSection].length) {
+      var widget = Settings.data.bar.widgets[fromSection][index]
+
+      // Remove from source section
+      var sourceArray = Settings.data.bar.widgets[fromSection].slice()
+      sourceArray.splice(index, 1)
+      Settings.data.bar.widgets[fromSection] = sourceArray
+
+      // Add to target section
+      var targetArray = Settings.data.bar.widgets[toSection].slice()
+      targetArray.push(widget)
+      Settings.data.bar.widgets[toSection] = targetArray
+
+      //Logger.log("BarTab", `Moved widget ${widget.id} from ${fromSection} to ${toSection}`)
+    }
   }
 
   // Base list model for all combo boxes

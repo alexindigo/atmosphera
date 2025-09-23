@@ -20,6 +20,7 @@ NBox {
   signal removeWidget(string section, int index)
   signal reorderWidget(string section, int fromIndex, int toIndex)
   signal updateWidgetSettings(string section, int index, var settings)
+  signal moveWidget(string fromSection, int index, string toSection)
   signal dragPotentialStarted
   signal dragPotentialEnded
 
@@ -125,6 +126,7 @@ NBox {
 
         Repeater {
           model: widgetModel
+
           delegate: Rectangle {
             id: widgetItem
             required property int index
@@ -158,6 +160,50 @@ NBox {
               }
             }
 
+            // Context menu for moving widget to other sections
+            NContextMenu {
+              id: contextMenu
+              parent: Overlay.overlay
+              model: [{
+                  "label": "Move to Left",
+                  "action": "left",
+                  "icon": "arrow-left",
+                  "visible": root.sectionId !== "left"
+                }, {
+                  "label": "Move to Center",
+                  "action": "center",
+                  "icon": "arrows-horizontal",
+                  "visible": root.sectionId !== "center"
+                }, {
+                  "label": "Move to Right",
+                  "action": "right",
+                  "icon": "arrow-right",
+                  "visible": root.sectionId !== "right"
+                }]
+
+              onTriggered: action => root.moveWidget(root.sectionId, index, action)
+            }
+
+            // Update the MouseArea to use the new context menu
+            MouseArea {
+              id: contextMouseArea
+              anchors.fill: parent
+              acceptedButtons: Qt.RightButton
+              z: -1 // Below the buttons but above background
+
+              onClicked: mouse => {
+                           if (mouse.button === Qt.RightButton) {
+                             // Check if click is not on the buttons area
+                             const localX = mouse.x
+                             const buttonsStartX = parent.width - (parent.buttonsCount * parent.buttonsWidth)
+
+                             if (localX < buttonsStartX) {
+                               // Use the helper function to open at mouse position
+                               contextMenu.openAtItem(widgetItem, mouse.x, mouse.y)
+                             }
+                           }
+                         }
+            }
             RowLayout {
               id: widgetContent
               anchors.centerIn: parent
