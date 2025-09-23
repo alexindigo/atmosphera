@@ -42,8 +42,8 @@ ColumnLayout {
     NToggle {
       label: "Enable on screen display"
       description: "Show volume and brightness changes in real-time."
-      checked: Settings.data.general.showOSD
-      onToggled: checked => Settings.data.general.showOSD = checked
+      checked: Settings.data.notifications.enableOSD
+      onToggled: checked => Settings.data.notifications.enableOSD = checked
     }
 
     NComboBox {

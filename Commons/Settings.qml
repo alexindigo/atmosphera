@@ -54,7 +54,7 @@ Singleton {
     // Then it should be commented out again, regular users don't need to generate
     // default settings on every start
     // TODO: automate this someday!
-    //generateDefaultSettings()
+    // generateDefaultSettings()
 
     // Patch-in the local default, resolved to user's home
     adapter.general.avatarImage = defaultAvatar
@@ -177,7 +177,6 @@ Singleton {
       property real radiusRatio: 1.0
       property real screenRadiusRatio: 1.0
       property real animationSpeed: 1.0
-      property bool showOSD: true
     }
 
     // location
@@ -254,6 +253,7 @@ Singleton {
       property int lowUrgencyDuration: 3
       property int normalUrgencyDuration: 8
       property int criticalUrgencyDuration: 15
+      property bool enableOSD: true
     }
 
     // audio
