@@ -159,7 +159,8 @@ Singleton {
         isRecording = true
         hasActiveRecording = true
         monitorTimer.running = true
-        ToastService.showNotice("Recording started", outputPath, 4000)
+        // Don't show a toast when recording starts to avoid having the toast in every video.
+        //ToastService.showNotice("Recording started", outputPath, 4000)
       } else if (isPending) {
         // Process not running anymore - was cancelled or failed
         isPending = false
