@@ -93,7 +93,7 @@ PopupWindow {
 
   Rectangle {
     anchors.fill: parent
-    color: Color.mSurface
+    color: Color.mSurfaceVariant
     radius: Style.radiusS * scaling
     border.color: Color.mOutline
     border.width: Math.max(1, Style.borderS * scaling)
@@ -128,14 +128,14 @@ PopupWindow {
           NIcon {
             icon: "eye"
             font.pointSize: Style.fontSizeL * scaling
-            color: activateMouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface
+            color: activateMouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurfaceVariant
             anchors.verticalCenter: parent.verticalCenter
           }
 
           NText {
             text: "Focus"
             font.pointSize: Style.fontSizeS * scaling
-            color: activateMouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface
+            color: activateMouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurfaceVariant
             anchors.verticalCenter: parent.verticalCenter
           }
         }
@@ -150,7 +150,6 @@ PopupWindow {
             if (root.toplevel?.activate) {
               root.toplevel.activate()
             }
-            root.hide()
             root.requestClose()
           }
         }
@@ -173,10 +172,10 @@ PopupWindow {
             icon: {
               if (!root.toplevel)
                 return "pin"
-              return root.isAppPinned(root.toplevel.appId) ? "pinned-off" : "pin"
+              return root.isAppPinned(root.toplevel.appId) ? "unpin" : "pin"
             }
             font.pointSize: Style.fontSizeL * scaling
-            color: pinMouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface
+            color: pinMouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurfaceVariant
             anchors.verticalCenter: parent.verticalCenter
           }
 
@@ -187,7 +186,7 @@ PopupWindow {
               return root.isAppPinned(root.toplevel.appId) ? "Unpin" : "Pin"
             }
             font.pointSize: Style.fontSizeS * scaling
-            color: pinMouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface
+            color: pinMouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurfaceVariant
             anchors.verticalCenter: parent.verticalCenter
           }
         }
@@ -202,7 +201,7 @@ PopupWindow {
             if (root.toplevel?.appId) {
               root.toggleAppPin(root.toplevel.appId)
             }
-            root.hide()
+            //root.hide()
             root.requestClose()
           }
         }
@@ -222,16 +221,16 @@ PopupWindow {
           spacing: Style.marginS * scaling
 
           NIcon {
-            icon: "x"
+            icon: "close"
             font.pointSize: Style.fontSizeL * scaling
-            color: closeMouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface
+            color: closeMouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurfaceVariant
             anchors.verticalCenter: parent.verticalCenter
           }
 
           NText {
             text: "Close"
             font.pointSize: Style.fontSizeS * scaling
-            color: closeMouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface
+            color: closeMouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurfaceVariant
             anchors.verticalCenter: parent.verticalCenter
           }
         }
