@@ -70,7 +70,8 @@
     "forceBlackScreenCorners": false,
     "radiusRatio": 1,
     "screenRadiusRatio": 1,
-    "animationSpeed": 1
+    "animationSpeed": 1,
+    "showOSD": true
   },
   "location": {
     "name": "Tokyo",

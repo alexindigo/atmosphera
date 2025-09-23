@@ -177,6 +177,7 @@ Singleton {
       property real radiusRatio: 1.0
       property real screenRadiusRatio: 1.0
       property real animationSpeed: 1.0
+      property bool showOSD: true
     }
 
     // location

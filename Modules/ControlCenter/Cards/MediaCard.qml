@@ -32,12 +32,12 @@ NBox {
         color: Color.mPrimary
         Layout.alignment: Qt.AlignHCenter
       }
+
       // NText {
       //   text: "No media player detected"
       //   color: Color.mOnSurfaceVariant
       //   Layout.alignment: Qt.AlignHCenter
       // }
-
       Item {
         Layout.fillWidth: true
         Layout.fillHeight: true
@@ -65,7 +65,7 @@ NBox {
         RowLayout {
           anchors.fill: parent
           spacing: Style.marginS * scaling
-   
+
           NIcon {
             icon: "caret-down"
             font.pointSize: Style.fontSizeXXL * scaling
@@ -92,12 +92,12 @@ NBox {
             var players = MediaService.getAvailablePlayers()
             for (var i = 0; i < players.length; i++) {
               menuItems.push({
-                label: players[i].identity,
-                action: i.toString(),
-                icon: "disc",
-                enabled: true,
-                visible: true
-              })
+                               "label": players[i].identity,
+                               "action": i.toString(),
+                               "icon": "disc",
+                               "enabled": true,
+                               "visible": true
+                             })
             }
             playerContextMenu.model = menuItems
             playerContextMenu.openAtItem(playerSelectorButton, playerSelectorButton.width - playerContextMenu.width, playerSelectorButton.height)
@@ -109,7 +109,7 @@ NBox {
           parent: root
           width: 200 * scaling
 
-          onTriggered: function(action) {
+          onTriggered: function (action) {
             var index = parseInt(action)
             if (!isNaN(index)) {
               MediaService.selectedPlayerIndex = index

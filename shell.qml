@@ -36,6 +36,7 @@ import qs.Modules.Bar.WiFi
 import qs.Modules.ControlCenter
 import qs.Modules.Launcher
 import qs.Modules.Notification
+import qs.Modules.OSD
 import qs.Modules.Settings
 import qs.Modules.Toast
 import qs.Modules.Wallpaper
@@ -58,6 +59,19 @@ ShellRoot {
   }
 
   ToastOverlay {}
+
+  // OSD overlays for volume and brightness
+  VolumeOSD {
+    id: volumeOSD
+    objectName: "volumeOSD"
+    onOsdShowing: brightnessOSD.hideOSD()
+  }
+
+  BrightnessOSD {
+    id: brightnessOSD
+    objectName: "brightnessOSD"
+    onOsdShowing: volumeOSD.hideOSD()
+  }
 
   // IPCService is treated as a service
   // but it's actually an Item that needs to exists in the shell.

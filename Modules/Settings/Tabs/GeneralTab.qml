@@ -76,6 +76,13 @@ ColumnLayout {
       onToggled: checked => Settings.data.general.dimDesktop = checked
     }
 
+    NToggle {
+      label: "Show volume and brightness OSD"
+      description: "Display on-screen notifications when adjusting volume or brightness."
+      checked: Settings.data.general.showOSD
+      onToggled: checked => Settings.data.general.showOSD = checked
+    }
+
     ColumnLayout {
       spacing: Style.marginXXS * scaling
       Layout.fillWidth: true
