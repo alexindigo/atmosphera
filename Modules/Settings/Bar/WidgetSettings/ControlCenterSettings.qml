@@ -57,10 +57,13 @@ ColumnLayout {
     NIcon {
       Layout.alignment: Qt.AlignVCenter
       icon: valueIcon
-      font.pointSize: Style.fontSizeXL * scaling
+      font.pointSize: Style.fontSizeXXL * 1.5 * scaling
       visible: valueIcon !== "" && valueCustomIconPath === ""
     }
+  }
 
+  RowLayout {
+    spacing: Style.marginM * scaling
     NButton {
       enabled: !valueUseDistroLogo
       text: "Browse Library"
