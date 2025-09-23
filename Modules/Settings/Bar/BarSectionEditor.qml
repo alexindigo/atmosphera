@@ -180,6 +180,7 @@ NBox {
                   active: BarWidgetRegistry.widgetHasUserSettings(modelData.id)
                   sourceComponent: NIconButton {
                     icon: "settings"
+                    tooltipText: "Widget settings"
                     baseSize: miniButtonSize
                     colorBorder: Qt.alpha(Color.mOutline, Style.opacityLight)
                     colorBg: Color.mOnSurface
@@ -220,6 +221,7 @@ NBox {
 
                 NIconButton {
                   icon: "close"
+                  tooltipText: "Remove widget"
                   baseSize: miniButtonSize
                   colorBorder: Qt.alpha(Color.mOutline, Style.opacityLight)
                   colorBg: Color.mOnSurface
