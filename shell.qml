@@ -6,8 +6,6 @@
  * but proper credit must be given to the original author.
 */
 
-// Disable reload popup add this as a new row:  //pragma Env QS_NO_RELOAD_POPUP=1
-
 // Qt & Quickshell Core
 import QtQuick
 import Quickshell
@@ -118,10 +116,9 @@ ShellRoot {
   }
 
   Connections {
+    target: Quickshell
     function onReloadCompleted() {
       Quickshell.inhibitReloadPopup();
     }
-
-    target: Quickshell
   }
 }
