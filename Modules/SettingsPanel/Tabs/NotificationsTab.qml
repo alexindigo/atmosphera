@@ -89,6 +89,14 @@ ColumnLayout {
       description: "Configure how long notifications stay visible based on their urgency level."
     }
 
+    // Respect Expire Timeout (eg. --expire-time flag in notify-send)
+    NToggle {
+      label: "Respect expire timeout"
+      description: "Use the expire timeout set in the notification."
+      checked: Settings.data.notifications.respectExpireTimeout
+      onToggled: checked => Settings.data.notifications.respectExpireTimeout = checked
+    }
+
     // Low Urgency Duration
     ColumnLayout {
       spacing: Style.marginXXS * scaling

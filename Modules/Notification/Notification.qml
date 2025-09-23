@@ -39,6 +39,7 @@ Variants {
       screen: modelData
 
       WlrLayershell.namespace: "noctalia-notifications"
+      WlrLayershell.layer: WlrLayer.Top
 
       color: Color.transparent
 

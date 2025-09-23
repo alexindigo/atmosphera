@@ -192,7 +192,12 @@ Singleton {
       for (var i = activeList.count - 1; i >= 0; i--) {
         const notif = activeList.get(i)
         const elapsed = now - notif.timestamp.getTime()
-        const expire = notif.expireTimeout > 0 ? notif.expireTimeout : durations[notif.urgency]
+        var expire = 0
+
+        if (Settings.data.notifications?.respectExpireTimeout)
+          expire = notif.expireTimeout > 0 ? notif.expireTimeout : durations[notif.urgency]
+        else
+          expire = durations[notif.urgency]
 
         const progress = Math.max(1.0 - (elapsed / expire), 0.0)
         updateModel(activeList, notif.id, "progress", progress)

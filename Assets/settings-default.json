@@ -128,6 +128,7 @@
     "monitors": [],
     "location": "top_right",
     "lastSeenTs": 0,
+    "respectExpireTimeout": false,
     "lowUrgencyDuration": 3,
     "normalUrgencyDuration": 8,
     "criticalUrgencyDuration": 15
