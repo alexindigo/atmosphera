@@ -199,7 +199,7 @@ Loader {
                   z: 10
 
                   Loader {
-                    active: MediaService.isPlaying && Settings.data.audio.visualizerType == "linear"
+                    active: Settings.data.audio.visualizerType == "linear"
                     anchors.centerIn: parent
                     width: 160 * scaling
                     height: 160 * scaling
@@ -228,7 +228,7 @@ Loader {
                   }
 
                   Loader {
-                    active: MediaService.isPlaying && Settings.data.audio.visualizerType == "mirrored"
+                    active: Settings.data.audio.visualizerType == "mirrored"
                     anchors.centerIn: parent
                     width: 160 * scaling
                     height: 160 * scaling
@@ -258,7 +258,7 @@ Loader {
                   }
 
                   Loader {
-                    active: MediaService.isPlaying && Settings.data.audio.visualizerType == "wave"
+                    active: Settings.data.audio.visualizerType == "wave"
                     anchors.centerIn: parent
                     width: 160 * scaling
                     height: 160 * scaling
@@ -301,31 +301,6 @@ Loader {
                         running: true
                         repeat: true
                         onTriggered: waveCanvas.requestPaint()
-                      }
-                    }
-                  }
-
-                  Rectangle {
-                    anchors.centerIn: parent
-                    width: parent.width + 24 * scaling
-                    height: parent.height + 24 * scaling
-                    radius: width * 0.5
-                    color: Color.transparent
-                    border.color: Qt.alpha(Color.mPrimary, 0.3)
-                    border.width: Math.max(1, Style.borderM * scaling)
-                    z: -1
-                    visible: !MediaService.isPlaying
-                    SequentialAnimation on scale {
-                      loops: Animation.Infinite
-                      NumberAnimation {
-                        to: 1.1
-                        duration: 1500
-                        easing.type: Easing.InOutQuad
-                      }
-                      NumberAnimation {
-                        to: 1.0
-                        duration: 1500
-                        easing.type: Easing.InOutQuad
                       }
                     }
                   }

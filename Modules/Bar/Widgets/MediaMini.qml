@@ -100,7 +100,7 @@ Item {
       Loader {
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
-        active: showVisualizer && visualizerType == "linear" && MediaService.isPlaying
+        active: showVisualizer && visualizerType == "linear"
         z: 0
 
         sourceComponent: LinearSpectrum {
@@ -115,7 +115,7 @@ Item {
       Loader {
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
-        active: showVisualizer && visualizerType == "mirrored" && MediaService.isPlaying
+        active: showVisualizer && visualizerType == "mirrored"
         z: 0
 
         sourceComponent: MirroredSpectrum {
@@ -130,7 +130,7 @@ Item {
       Loader {
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
-        active: showVisualizer && visualizerType == "wave" && MediaService.isPlaying
+        active: showVisualizer && visualizerType == "wave"
         z: 0
 
         sourceComponent: WaveSpectrum {
