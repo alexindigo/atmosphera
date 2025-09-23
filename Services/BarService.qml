@@ -18,7 +18,7 @@ Singleton {
     onTriggered: {
       hasAudioVisualizer = false
       const widgets = getAllWidgetInstances("MediaMini")
-      for(var i=0; i<widgets.length; i++) {
+      for (var i = 0; i < widgets.length; i++) {
         const widget = widgets[i]
         if (widget.showVisualizer) {
           hasAudioVisualizer = true
