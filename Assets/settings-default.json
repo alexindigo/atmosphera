@@ -127,6 +127,7 @@
     "doNotDisturb": false,
     "monitors": [],
     "location": "top_right",
+    "alwaysOnTop": false,
     "lastSeenTs": 0,
     "respectExpireTimeout": false,
     "lowUrgencyDuration": 3,

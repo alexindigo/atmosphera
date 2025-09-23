@@ -248,6 +248,7 @@ Singleton {
       property bool doNotDisturb: false
       property list<string> monitors: []
       property string location: "top_right"
+      property bool alwaysOnTop: false
       property real lastSeenTs: 0
       property bool respectExpireTimeout: false
       property int lowUrgencyDuration: 3

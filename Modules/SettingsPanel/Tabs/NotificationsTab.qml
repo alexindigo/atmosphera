@@ -71,6 +71,13 @@ ColumnLayout {
       currentKey: Settings.data.notifications.location || "top_right"
       onSelected: key => Settings.data.notifications.location = key
     }
+
+    NToggle {
+      label: "Always on top"
+      description: "Display notifications above fullscreen windows and other layers."
+      checked: Settings.data.notifications.alwaysOnTop
+      onToggled: checked => Settings.data.notifications.alwaysOnTop = checked
+    }
   }
 
   NDivider {

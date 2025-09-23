@@ -39,7 +39,7 @@ Variants {
       screen: modelData
 
       WlrLayershell.namespace: "noctalia-notifications"
-      WlrLayershell.layer: WlrLayer.Top
+      WlrLayershell.layer: (Settings.isLoaded && Settings.data && Settings.data.notifications && Settings.data.notifications.alwaysOnTop) ? WlrLayer.Overlay : WlrLayer.Top
 
       color: Color.transparent
 
