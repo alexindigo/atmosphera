@@ -559,53 +559,60 @@ Loader {
                       }
                     }
 
-                    NText {
-                      id: asterisksText
-                      text: "*".repeat(passwordInput.text.length)
-                      color: Color.mOnSurface
-                      font.family: Settings.data.ui.fontFixed
-                      font.pointSize: Style.fontSizeL * scaling
-                      visible: passwordInput.activeFocus && !lockContext.unlockInProgress
+                    // Container for asterisks and cursor to control positioning
+                    Item {
                       Layout.fillWidth: true
-                      wrapMode: Text.NoWrap
-                      maximumLineCount: 1
-                      elide: Text.ElideRight
-                      clip: true
+                      Layout.preferredHeight: asterisksText.implicitHeight
 
-                      SequentialAnimation {
-                        id: typingEffect
-                        NumberAnimation {
-                          target: passwordInput
-                          property: "scale"
-                          to: 1.01
-                          duration: 50
-                        }
-                        NumberAnimation {
-                          target: passwordInput
-                          property: "scale"
-                          to: 1.0
-                          duration: 50
+                      NText {
+                        id: asterisksText
+                        text: "*".repeat(passwordInput.text.length)
+                        color: Color.mOnSurface
+                        font.family: Settings.data.ui.fontFixed
+                        font.pointSize: Style.fontSizeL * scaling
+                        visible: passwordInput.activeFocus && !lockContext.unlockInProgress
+                        anchors.left: parent.left
+                        anchors.verticalCenter: parent.verticalCenter
+                        wrapMode: Text.NoWrap
+                        maximumLineCount: 1
+                        elide: Text.ElideRight
+
+                        SequentialAnimation {
+                          id: typingEffect
+                          NumberAnimation {
+                            target: passwordInput
+                            property: "scale"
+                            to: 1.01
+                            duration: 50
+                          }
+                          NumberAnimation {
+                            target: passwordInput
+                            property: "scale"
+                            to: 1.0
+                            duration: 50
+                          }
                         }
                       }
-                    }
 
-                    Rectangle {
-                      width: 8 * scaling
-                      height: 20 * scaling
-                      color: Color.mPrimary
-                      visible: passwordInput.activeFocus
-                      Layout.leftMargin: -Style.marginS * scaling
-                      Layout.alignment: Qt.AlignVCenter
+                      Rectangle {
+                        width: 8 * scaling
+                        height: 20 * scaling
+                        color: Color.mPrimary
+                        visible: passwordInput.activeFocus
+                        anchors.left: asterisksText.right
+                        anchors.leftMargin: Style.marginXS * scaling
+                        anchors.verticalCenter: parent.verticalCenter
 
-                      SequentialAnimation on opacity {
-                        loops: Animation.Infinite
-                        NumberAnimation {
-                          to: 1.0
-                          duration: 500
-                        }
-                        NumberAnimation {
-                          to: 0.0
-                          duration: 500
+                        SequentialAnimation on opacity {
+                          loops: Animation.Infinite
+                          NumberAnimation {
+                            to: 1.0
+                            duration: 500
+                          }
+                          NumberAnimation {
+                            to: 0.0
+                            duration: 500
+                          }
                         }
                       }
                     }
@@ -732,6 +739,149 @@ Loader {
                       to: 0.2
                       duration: 2000
                       easing.type: Easing.InOutQuad
+                    }
+                  }
+                }
+              }
+            }
+
+            // ALARMING Easter Egg for long passwords
+            Item {
+              id: easterEggContainer
+              anchors.fill: parent
+              z: 1000
+
+              property bool easterEggTriggered: false
+
+              // Monitor password length
+              Connections {
+                target: passwordInput
+                function onTextChanged() {
+                  if (passwordInput.text.length >= 25) {
+                    easterEggContainer.easterEggTriggered = true
+                  }
+                }
+                function onActiveFocusChanged() {
+                  if (!passwordInput.activeFocus) {
+                    easterEggContainer.easterEggTriggered = false
+                  }
+                }
+              }
+
+              // Also reset when authentication starts
+              Connections {
+                target: lockContext
+                function onUnlockInProgressChanged() {
+                  if (lockContext.unlockInProgress) {
+                    easterEggContainer.easterEggTriggered = false
+                  }
+                }
+              }
+
+              // Scattered warning messages (game-style pop-ups)
+              Repeater {
+                model: easterEggContainer.easterEggTriggered && passwordInput.activeFocus && !lockContext.unlockInProgress ? 12 : 0
+
+                NText {
+                  property var messages: ["BREACH DETECTED", "SECURITY ALERT", "SYSTEM COMPROMISED", "ANOMALY DETECTED", "FIREWALL BREACH", "DEFENSE FAILING", "16 // 16 // 16", "THE ATLAS SEES ALL", "SIMULATION DETECTED", "WAKE UP", "16 16 16 16 16", "KZZT... 16... KZZT", "ERROR ERROR ERROR", "THEY'RE WATCHING", "16 MINUTES REMAIN"]
+
+                  property real baseX: Math.random() * (parent.width - 300)
+                  property real baseY: Math.random() * (parent.height - 80)
+
+                  text: messages[index % messages.length]
+                  color: Color.mError
+                  font.family: Settings.data.ui.fontFixed
+                  font.pointSize: Style.fontSizeXXL * scaling
+                  font.weight: Style.fontWeightBold
+
+                  x: baseX
+                  y: baseY
+
+                  // Better random positioning avoiding center terminal
+                  Component.onCompleted: {
+                    var centerX = parent.width / 2
+                    var centerY = parent.height / 2
+                    var avoidRadius = 350 * scaling
+
+                    // If too close to center, push to random edge zones
+                    var distanceFromCenter = Math.sqrt((x - centerX) * (x - centerX) + (y - centerY) * (y - centerY))
+                    if (distanceFromCenter < avoidRadius) {
+                      // Pick a random edge zone
+                      var zone = Math.floor(Math.random() * 4)
+                      switch (zone) {
+                      case 0:
+                        // Top
+                        x = Math.random() * parent.width
+                        y = Math.random() * 100 * scaling
+                        break
+                      case 1:
+                        // Right
+                        x = parent.width - (50 + Math.random() * 200) * scaling
+                        y = Math.random() * parent.height
+                        break
+                      case 2:
+                        // Bottom
+                        x = Math.random() * parent.width
+                        y = parent.height - (50 + Math.random() * 100) * scaling
+                        break
+                      case 3:
+                        // Left
+                        x = Math.random() * 200 * scaling
+                        y = Math.random() * parent.height
+                        break
+                      }
+                    }
+
+                    // Add some random drift to make positioning more varied
+                    x += (Math.random() - 0.5) * 100 * scaling
+                    y += (Math.random() - 0.5) * 50 * scaling
+
+                    // Ensure we stay within bounds
+                    x = Math.max(20 * scaling, Math.min(parent.width - 280 * scaling, x))
+                    y = Math.max(20 * scaling, Math.min(parent.height - 60 * scaling, y))
+                  }
+
+                  // Simple pop-in animation
+                  SequentialAnimation on scale {
+                    loops: Animation.Infinite
+                    PauseAnimation {
+                      duration: index * 400 + Math.random() * 1000
+                    }
+                    NumberAnimation {
+                      from: 0
+                      to: 1.2
+                      duration: 300
+                      easing.type: Easing.OutBack
+                    }
+                    NumberAnimation {
+                      to: 1.0
+                      duration: 200
+                    }
+                    PauseAnimation {
+                      duration: 2000 + Math.random() * 3000
+                    }
+                    NumberAnimation {
+                      to: 0
+                      duration: 300
+                    }
+                    PauseAnimation {
+                      duration: 800 + Math.random() * 1200
+                    }
+                  }
+
+                  // Gentle blinking effect
+                  SequentialAnimation on opacity {
+                    loops: Animation.Infinite
+                    PauseAnimation {
+                      duration: index * 200
+                    }
+                    NumberAnimation {
+                      to: 0.6
+                      duration: 400 + Math.random() * 300
+                    }
+                    NumberAnimation {
+                      to: 1.0
+                      duration: 300 + Math.random() * 200
                     }
                   }
                 }
