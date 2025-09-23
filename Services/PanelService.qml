@@ -10,17 +10,18 @@ Singleton {
   // This is not a panel...
   property var lockScreen: null
 
-  // Currently opened panel
-  property var openedPanel: null
-  readonly property bool hasOpenedPanel: (openedPanel !== null)
-
-  // Currently opened popup
-  property var openedPopup: null
-
+  // Panels
   property var registeredPanels: ({})
-
+  property var openedPanel: null
+  property bool hasOpenedPanel: false
   signal willOpen
   signal willClose
+
+  // Currently opened popups, can have more than one.
+  // ex: when opening an NIconPicker from a widget setting.
+  property var openedPopups: []
+  property bool hasOpenedPopup: false
+  signal popupChanged
 
   // Register this panel
   function registerPanel(panel) {
@@ -44,12 +45,15 @@ Singleton {
       openedPanel.close()
     }
     openedPanel = panel
+    hasOpenedPanel = true
 
     // emit signal
     willOpen()
   }
 
   function willClosePanel(panel) {
+    hasOpenedPanel = false
+
     // emit signal
     willClose()
   }
@@ -62,11 +66,14 @@ Singleton {
 
   // Popups
   function willOpenPopup(popup) {
-    openedPopup = popup
+    openedPopups.push(popup)
+    hasOpenedPopup = (openedPopups.length !== 0)
+    popupChanged()
   }
+
   function willClosePopup(popup) {
-    if (openedPopup && openedPopup === popup) {
-      openedPopup = null
-    }
+    openedPopups = openedPopups.filter(p => p !== popup)
+    hasOpenedPopup = (openedPopups.length !== 0)
+    popupChanged()
   }
 }

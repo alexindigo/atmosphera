@@ -19,7 +19,7 @@ NPanel {
   panelAnchorVerticalCenter: true
   panelKeyboardFocus: true
 
-  draggable: (PanelService.openedPopup === null)
+  draggable: !PanelService.hasOpenedPopup
 
   panelContent: Rectangle {
     id: wallpaperPanel

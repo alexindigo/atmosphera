@@ -37,8 +37,8 @@ Item {
       PanelService.openedPanel.isMasked = true
     }
 
-    if (PanelService.openedPopup !== null) {
-      PanelService.openedPopup.isMasked = true
+    for (var i = 0; i < PanelService.openedPopups.length; i++) {
+      PanelService.openedPopups[i].isMasked = true
     }
 
     isOpen = true
@@ -70,8 +70,8 @@ Item {
       PanelService.openedPanel.isMasked = false
     }
 
-    if (PanelService.openedPopup !== null) {
-      PanelService.openedPopup.isMasked = false
+    for (var i = 0; i < PanelService.openedPopups.length; i++) {
+      PanelService.openedPopups[i].isMasked = false
     }
 
     afterClose()

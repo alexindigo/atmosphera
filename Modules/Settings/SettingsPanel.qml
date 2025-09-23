@@ -21,7 +21,7 @@ NPanel {
 
   panelKeyboardFocus: true
 
-  draggable: (PanelService.openedPopup === null)
+  draggable: !PanelService.hasOpenedPopup
 
   // Tabs enumeration, order is NOT relevant
   enum Tab {
