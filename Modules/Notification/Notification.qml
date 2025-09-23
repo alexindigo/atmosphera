@@ -165,10 +165,12 @@ Variants {
               anchors.right: parent.right
               height: 2 * scaling
               color: "transparent"
-              clip: true
+
+              property real availableWidth: parent.width - (2 * parent.radius)
 
               Rectangle {
-                width: parent.width * (model.progress || 0)
+                x: parent.parent.radius + (parent.availableWidth * (1 - model.progress)) / 2
+                width: parent.availableWidth * model.progress
                 height: parent.height
                 color: {
                   if (model.urgency === NotificationUrgency.Critical || model.urgency === 2)

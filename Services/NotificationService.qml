@@ -213,8 +213,6 @@ Singleton {
     }
   }
 
-
-
   // History management
   function addToHistory(data) {
     historyList.insert(0, data)
