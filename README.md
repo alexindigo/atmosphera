@@ -81,13 +81,7 @@ A heartfelt thank you to our incredible community of [**contributors**](https://
 
 ---
 
-## 🙏 Acknowledgment
-
-Special thanks to the creators of [**Caelestia**](https://github.com/caelestia-dots/shell) and [**DankMaterialShell**](https://github.com/AvengeMedia/DankMaterialShell) for their inspirational designs and clever implementation techniques.
-
----
-
-## ☕ Donation
+## ☕ Donations
 
 While all donations are greatly appreciated, they are completely voluntary.
 
