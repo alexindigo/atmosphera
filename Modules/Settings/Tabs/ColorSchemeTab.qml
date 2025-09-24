@@ -400,7 +400,9 @@ ColumnLayout {
         label: "Kitty"
         description: ProgramCheckerService.kittyAvailable ? I18n.tr("settings.color-scheme.matugen.terminal.kitty.description", {
                                                                       "filepath": "~/.config/kitty/themes/noctalia.conf"
-                                                                    }) : I18n.tr("settings.color-scheme.matugen.terminal.kitty.description-missing", {"app": "kitty"})
+                                                                    }) : I18n.tr("settings.color-scheme.matugen.terminal.kitty.description-missing", {
+                                                                                   "app": "kitty"
+                                                                                 })
         checked: Settings.data.matugen.kitty
         enabled: ProgramCheckerService.kittyAvailable
         opacity: ProgramCheckerService.kittyAvailable ? 1.0 : 0.6
@@ -417,7 +419,9 @@ ColumnLayout {
         label: "Ghostty"
         description: ProgramCheckerService.ghosttyAvailable ? I18n.tr("settings.color-scheme.matugen.terminal.ghostty.description", {
                                                                         "filepath": "~/.config/ghostty/themes/noctalia"
-                                                                      }) : I18n.tr("settings.color-scheme.matugen.terminal.ghostty.description-missing", {"app": "ghostty"})
+                                                                      }) : I18n.tr("settings.color-scheme.matugen.terminal.ghostty.description-missing", {
+                                                                                     "app": "ghostty"
+                                                                                   })
         checked: Settings.data.matugen.ghostty
         enabled: ProgramCheckerService.ghosttyAvailable
         opacity: ProgramCheckerService.ghosttyAvailable ? 1.0 : 0.6
@@ -434,7 +438,9 @@ ColumnLayout {
         label: "Foot"
         description: ProgramCheckerService.footAvailable ? I18n.tr("settings.color-scheme.matugen.terminal.foot.description", {
                                                                      "filepath": "~/.config/foot/themes/noctalia"
-                                                                   }) : I18n.tr("settings.color-scheme.matugen.terminal.foot.description-missing", {"app": "foot"})
+                                                                   }) : I18n.tr("settings.color-scheme.matugen.terminal.foot.description-missing", {
+                                                                                  "app": "foot"
+                                                                                })
         checked: Settings.data.matugen.foot
         enabled: ProgramCheckerService.footAvailable
         opacity: ProgramCheckerService.footAvailable ? 1.0 : 0.6
@@ -459,7 +465,9 @@ ColumnLayout {
         label: "Fuzzel"
         description: ProgramCheckerService.fuzzelAvailable ? I18n.tr("settings.color-scheme.matugen.programs.fuzzel.description", {
                                                                        "filepath": "~/.config/fuzzel/themes/noctalia"
-                                                                     }) : I18n.tr("settings.color-scheme.matugen.programs.fuzzel.description-missing", {"app": "fuzzel"})
+                                                                     }) : I18n.tr("settings.color-scheme.matugen.programs.fuzzel.description-missing", {
+                                                                                    "app": "fuzzel"
+                                                                                  })
         checked: Settings.data.matugen.fuzzel
         enabled: ProgramCheckerService.fuzzelAvailable
         opacity: ProgramCheckerService.fuzzelAvailable ? 1.0 : 0.6
@@ -476,7 +484,9 @@ ColumnLayout {
         label: "Vesktop"
         description: ProgramCheckerService.vesktopAvailable ? I18n.tr("settings.color-scheme.matugen.programs.vesktop.description", {
                                                                         "filepath": "~/.config/vesktop/themes/noctalia.theme.css"
-                                                                      }) : I18n.tr("settings.color-scheme.matugen.programs.vesktop.description-missing", {"app": "vesktop"})
+                                                                      }) : I18n.tr("settings.color-scheme.matugen.programs.vesktop.description-missing", {
+                                                                                     "app": "vesktop"
+                                                                                   })
         checked: Settings.data.matugen.vesktop
         enabled: ProgramCheckerService.vesktopAvailable
         opacity: ProgramCheckerService.vesktopAvailable ? 1.0 : 0.6
@@ -493,7 +503,9 @@ ColumnLayout {
         label: "Pywalfox"
         description: ProgramCheckerService.pywalfoxAvailable ? I18n.tr("settings.color-scheme.matugen.programs.pywalfox.description", {
                                                                          "filepath": "~/.cache/wal/colors.json"
-                                                                       }) : I18n.tr("settings.color-scheme.matugen.programs.pywalfox.description-missing", {"app": "pywalfox"})
+                                                                       }) : I18n.tr("settings.color-scheme.matugen.programs.pywalfox.description-missing", {
+                                                                                      "app": "pywalfox"
+                                                                                    })
         checked: Settings.data.matugen.pywalfox
         enabled: ProgramCheckerService.pywalfoxAvailable
         opacity: ProgramCheckerService.pywalfoxAvailable ? 1.0 : 0.6
