@@ -59,21 +59,7 @@ ShellRoot {
   }
 
   ToastOverlay {}
-
-  // OSD overlays for volume and brightness
-  OSD {
-    id: volumeOSD
-    objectName: "volumeOSD"
-    osdType: OSD.Type.Volume
-    onOsdShowing: brightnessOSD.hideOSD()
-  }
-
-  OSD {
-    id: brightnessOSD
-    objectName: "brightnessOSD"
-    osdType: OSD.Type.Brightness
-    onOsdShowing: volumeOSD.hideOSD()
-  }
+  OSD {}
 
   // IPCService is treated as a service
   // but it's actually an Item that needs to exists in the shell.
