@@ -38,7 +38,7 @@ ColumnLayout {
     // Probably because they have some quick fades in and out to avoid clipping
     // We use a timer to space out the updates, to avoid lock up
     Timer {
-      interval: Style.animationFast
+      interval: 100
       running: true
       repeat: true
       onTriggered: {
