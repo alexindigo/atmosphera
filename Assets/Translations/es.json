@@ -756,7 +756,8 @@
         "apply": "Aplicar"
       },
       "section-editor": {
-        "placeholder": "Selecciona un widget para añadir..."
+        "placeholder": "Selecciona un widget para añadir...",
+        "search-placeholder": "Buscar widgets..."
       },
       "active-window": {
         "show-app-icon": "Mostrar icono de la aplicación"

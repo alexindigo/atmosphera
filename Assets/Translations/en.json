@@ -758,7 +758,8 @@
         "apply": "Apply"
       },
       "section-editor": {
-        "placeholder": "Select a widget to add..."
+        "placeholder": "Select a widget to add...",
+        "search-placeholder": "Search widgets..."
       },
       "active-window": {
         "show-app-icon": "Show app icon"

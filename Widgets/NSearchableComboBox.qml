@@ -53,6 +53,11 @@ RowLayout {
   function filterModel() {
     filteredModel.clear()
 
+    // Check if model exists and has items
+    if (!root.model || root.model.count === undefined || root.model.count === 0) {
+      return
+    }
+
     if (searchText.trim() === "") {
       // If no search text, show all items
       for (var i = 0; i < root.model.count; i++) {
@@ -242,11 +247,13 @@ RowLayout {
       }
     }
 
-    // Focus search input when popup opens
+    // Focus search input when popup opens and ensure model is filtered
     Connections {
       target: combo.popup
       function onVisibleChanged() {
         if (combo.popup.visible) {
+          // Ensure the model is filtered when popup opens
+          filterModel()
           // Small delay to ensure the popup is fully rendered
           Qt.callLater(function () {
             if (searchInput && searchInput.inputItem) {

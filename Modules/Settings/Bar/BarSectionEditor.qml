@@ -79,16 +79,29 @@ NBox {
       Item {
         Layout.fillWidth: true
       }
-      NComboBox {
+      NSearchableComboBox {
         id: comboBox
         model: availableWidgets
         label: ""
         description: ""
         placeholder: I18n.tr("bar.widget-settings.section-editor.placeholder")
+        searchPlaceholder: I18n.tr("bar.widget-settings.section-editor.search-placeholder")
         onSelected: key => comboBox.currentKey = key
         popupHeight: 340 * scaling
+        minimumWidth: 200 * scaling
 
         Layout.alignment: Qt.AlignVCenter
+
+        // Re-filter when the model count changes (when widgets are loaded)
+        Connections {
+          target: availableWidgets
+          function onCountChanged() {
+            // Trigger a re-filter by clearing and re-setting the search text
+            var currentSearch = comboBox.searchText
+            comboBox.searchText = ""
+            comboBox.searchText = currentSearch
+          }
+        }
       }
 
       NIconButton {

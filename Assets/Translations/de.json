@@ -746,7 +746,8 @@
         "apply": "Anwenden"
       },
       "section-editor": {
-        "placeholder": "Widget auswählen..."
+        "placeholder": "Widget auswählen...",
+        "search-placeholder": "Widgets suchen..."
       },
       "active-window": {
         "show-app-icon": "App-Symbol anzeigen"
