@@ -938,6 +938,9 @@
     "add-widget": "Add widget",
     "widget-settings": "Widget settings",
     "remove-widget": "Remove widget",
+    "move-to-left-section": "Move to left section",
+    "move-to-center-section": "Move to center section",
+    "move-to-right-section": "Move to right section",
     "open-settings": "Open settings",
     "session-menu": "Session Menu",
     "close-side-panel": "Close side panel",
@@ -1060,10 +1063,29 @@
       }
     }
   },
+  "session-menu": {
+    "lock": "Lock",
+    "suspend": "Suspend", 
+    "reboot": "Reboot",
+    "logout": "Logout",
+    "shutdown": "Shutdown"
+  },
   "plugins": {
     "applications": "Applications",
     "clipboard": "Clipboard history",
-    "calculator": "Calculator"
+    "calculator": "Calculator",
+    "clipboard-search-description": "Search clipboard history",
+    "clipboard-clear-description": "Clear all clipboard history",
+    "clipboard-history-disabled": "Clipboard history disabled",
+    "clipboard-history-disabled-description": "Enable clipboard history in settings or install cliphist",
+    "clipboard-clear-history": "Clear clipboard history",
+    "clipboard-clear-description-full": "Remove all items from clipboard history",
+    "clipboard-loading": "Loading clipboard history...",
+    "clipboard-loading-description": "Please wait",
+    "calculator-description": "Calculator - evaluate mathematical expressions",
+    "calculator-name": "Calculator",
+    "calculator-enter-expression": "Enter a mathematical expression",
+    "calculator-error": "Error"
   },
   "system": {
     "uptime": "System uptime: {uptime}",

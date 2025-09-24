@@ -166,17 +166,17 @@ NBox {
               parent: Overlay.overlay
               width: 240 * scaling
               model: [{
-                  "label": "Move to left section",
+                  "label": I18n.tr("tooltips.move-to-left-section"),
                   "action": "left",
                   "icon": "arrow-bar-to-left",
                   "visible": root.sectionId !== "left"
                 }, {
-                  "label": "Move to center section",
+                  "label": I18n.tr("tooltips.move-to-center-section"),
                   "action": "center",
                   "icon": "layout-columns",
                   "visible": root.sectionId !== "center"
                 }, {
-                  "label": "Move to right section",
+                  "label": I18n.tr("tooltips.move-to-right-section"),
                   "action": "right",
                   "icon": "arrow-bar-to-right",
                   "visible": root.sectionId !== "right"

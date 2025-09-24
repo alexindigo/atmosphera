@@ -30,27 +30,27 @@ NPanel {
   readonly property var powerOptions: [{
       "action": "lock",
       "icon": "lock",
-      "title": "Lock",
+      "title": I18n.tr("session-menu.lock"),
       "subtitle": "Lock your session"
     }, {
       "action": "suspend",
       "icon": "suspend",
-      "title": "Suspend",
+      "title": I18n.tr("session-menu.suspend"),
       "subtitle": "Put the system to sleep"
     }, {
       "action": "reboot",
       "icon": "reboot",
-      "title": "Reboot",
+      "title": I18n.tr("session-menu.reboot"),
       "subtitle": "Restart the system"
     }, {
       "action": "logout",
       "icon": "logout",
-      "title": "Logout",
+      "title": I18n.tr("session-menu.logout"),
       "subtitle": "End your session"
     }, {
       "action": "shutdown",
       "icon": "shutdown",
-      "title": "Shutdown",
+      "title": I18n.tr("session-menu.shutdown"),
       "subtitle": "Turn off the system",
       "isShutdown": true
     }]

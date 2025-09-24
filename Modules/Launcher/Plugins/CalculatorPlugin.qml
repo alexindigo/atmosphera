@@ -14,7 +14,7 @@ Item {
   function commands() {
     return [{
               "name": ">calc",
-              "description": "Calculator - evaluate mathematical expressions",
+              "description": I18n.tr("plugins.calculator-description"),
               "icon": "accessories-calculator",
               "isImage": false,
               "onActivate": function () {
@@ -36,8 +36,8 @@ Item {
 
     if (!expression) {
       return [{
-                "name": "Calculator",
-                "description": "Enter a mathematical expression",
+                "name": I18n.tr("plugins.calculator-name"),
+                "description": I18n.tr("plugins.calculator-enter-expression"),
                 "icon": "accessories-calculator",
                 "isImage": false,
                 "onActivate": function () {}
@@ -59,7 +59,7 @@ Item {
               }]
     } catch (error) {
       return [{
-                "name": "Error",
+                "name": I18n.tr("plugins.calculator-error"),
                 "description": error.message || "Invalid expression",
                 "icon": "dialog-error",
                 "isImage": false,
