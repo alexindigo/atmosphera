@@ -183,7 +183,7 @@ ColumnLayout {
       model: Quickshell.screens || []
       delegate: NCheckbox {
         Layout.fillWidth: true
-        label: modelData.name || "Unknown"
+        label: modelData.name || I18n.tr("system.unknown")
         description: I18n.tr("system.monitor-description", {
                                "model": modelData.model,
                                "width": modelData.width,
