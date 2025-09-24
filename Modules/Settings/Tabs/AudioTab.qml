@@ -55,9 +55,7 @@ ColumnLayout {
       value: localVolume
       stepSize: 0.01
       text: Math.round(AudioService.volume * 100) + "%"
-      onMoved: {
-        localVolume = value
-      }
+      onMoved: value => localVolume = value
     }
   }
 
