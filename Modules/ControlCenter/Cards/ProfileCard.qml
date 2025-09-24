@@ -78,7 +78,7 @@ NBox {
       NIconButton {
         id: closeButton
         icon: "close"
-        tooltipText: I18n.tr("tooltips.close-side-panel")
+        tooltipText: I18n.tr("tooltips.close")
         onClicked: {
           controlCenterPanel.close()
         }
