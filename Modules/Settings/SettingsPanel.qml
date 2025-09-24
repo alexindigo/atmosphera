@@ -111,7 +111,7 @@ NPanel {
   function updateTabsModel() {
     let newTabs = [{
                      "id": SettingsPanel.Tab.General,
-                     "label": "General",
+                     "label": "settings.general.title",
                      "icon": "settings-general",
                      "source": generalTab
                    }, {
@@ -391,7 +391,7 @@ NPanel {
 
                   // Tab label
                   NText {
-                    text: modelData.label
+                    text: I18n.tr(modelData.label)
                     color: tabTextColor
                     font.pointSize: Style.fontSizeM * scaling
                     font.weight: Style.fontWeightBold
@@ -451,7 +451,7 @@ NPanel {
 
               // Main title
               NText {
-                text: root.tabsModel[currentTabIndex]?.label || ""
+                text: I18n.tr(root.tabsModel[currentTabIndex]?.label) || ""
                 font.pointSize: Style.fontSizeXL * scaling
                 font.weight: Style.fontWeightBold
                 color: Color.mPrimary

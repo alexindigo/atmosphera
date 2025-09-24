@@ -10,8 +10,8 @@ ColumnLayout {
   id: root
 
   NHeader {
-    label: "Profile"
-    description: "Edit your user details and avatar."
+    label: I18n.tr("settings.general.profile.section.label")
+    description: I18n.tr("settings.general.profile.section.description")
   }
 
   // Profile section
@@ -31,8 +31,10 @@ ColumnLayout {
     }
 
     NTextInputButton {
-      label: `${Quickshell.env("USER") || "user"}'s profile picture`
-      description: "Your profile picture that appears throughout the interface."
+      label: I18n.tr("settings.general.profile.picture.label", {
+                       "user": Quickshell.env("USER" || "User")
+                     })
+      description: I18n.tr("settings.general.profile.picture.description")
       text: Settings.data.general.avatarImage
       placeholderText: "/home/user/.face"
       buttonIcon: "photo"
@@ -47,7 +49,7 @@ ColumnLayout {
   NFilePicker {
     id: filePicker
     pickerType: "file"
-    title: "Select avatar image"
+    title: I18n.tr("settings.general.profile.select-avatar") //Select avatar image"
     initialPath: Settings.data.general.avatarImage.substr(0, Settings.data.general.avatarImage.lastIndexOf("/")) || Quickshell.env("HOME")
     nameFilters: ["Image files (*.jpg *.jpeg *.png *.gif *.pnm *.bmp *.face)", "All files (*)"]
     onAccepted: paths => Settings.data.general.avatarImage = paths[0]
@@ -65,13 +67,13 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      label: "User interface"
-      description: "Customize the look, feel, and behavior of the interface."
+      label: I18n.tr("settings.general.ui.section.label")
+      description: I18n.tr("settings.general.ui.section.description")
     }
 
     NToggle {
-      label: "Dim desktop"
-      description: "Dim the desktop when panels or menus are open."
+      label: I18n.tr("settings.general.ui.dim-desktop.label")
+      description: I18n.tr("settings.general.ui.dim-desktop.description")
       checked: Settings.data.general.dimDesktop
       onToggled: checked => Settings.data.general.dimDesktop = checked
     }
@@ -81,8 +83,8 @@ ColumnLayout {
       Layout.fillWidth: true
 
       NLabel {
-        label: "Border radius"
-        description: "Controls the corner roundness of windows, buttons, and other elements."
+        label: I18n.tr("settings.general.ui.border-radius.label")
+        description: I18n.tr("settings.general.ui.border-radius.description")
       }
 
       NValueSlider {

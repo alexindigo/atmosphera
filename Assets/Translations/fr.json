@@ -1,0 +1,17 @@
+{
+  "settings": {
+    "general": {
+      "title": "General",
+      "profile": {
+        "section": {
+          "label": "Profile",
+          "description": "Modifiez vos informations d'utilisateur et votre avatar."
+        },
+        "picture": {
+          "label": "Image de profile de {user}",
+          "description": "Votre photo de profil qui apparaît tout au long de l'interface."
+        }
+      }
+    }
+  }
+}

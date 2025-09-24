@@ -41,7 +41,7 @@ ColumnLayout {
   }
 
   NHeader {
-    label: "Appearance"
+    label: "settings.appearance"
     description: "Customize the bar's appearance and position."
   }
 

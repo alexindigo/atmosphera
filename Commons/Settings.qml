@@ -494,6 +494,8 @@ Singleton {
   // -----------------------------------------------------
   // Kickoff essential services
   function kickOffServices() {
+    I18n.init()
+
     // Ensure our location singleton is created as soon as possible so we start fetching weather asap
     LocationService.init()
 

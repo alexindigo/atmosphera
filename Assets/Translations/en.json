@@ -1,0 +1,33 @@
+{
+  "settings": {
+    "general": {
+      "title": "General",
+      
+      "profile": {
+        "section": {
+          "label": "Profile",
+          "description": "Edit your user details and avatar."
+        },
+        "picture": {
+          "label": "{user}'s Profile picture",
+          "description": "Your profile picture that appears throughout the interface."
+        }
+      },
+
+      "ui": {
+        "section": {
+          "label": "User interface",
+          "description": "Customize the look, feel, and behavior of the interface."
+        },
+        "dim-desktop": {
+          "label": "Dim desktop",
+          "description": "Dim the desktop when panels or menus are open."
+        },
+        "border-radius": {
+          "label": "Border radius",
+          "description": "Controls the corner roundness of windows, buttons, and other elements."
+        }
+      }
+    }
+  }
+}
