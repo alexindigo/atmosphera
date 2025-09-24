@@ -138,6 +138,14 @@
         "frame-rate": {
           "label": "Tasa de fotogramas",
           "description": "Tasas más altas son más fluidas pero usan más recursos."
+        },
+        "scrolling-title": {
+          "label": "Título con desplazamiento",
+          "description": "Activar desplazamiento continuo para títulos de medios largos"
+        },
+        "scrolling-speed": {
+          "label": "Velocidad de desplazamiento",
+          "description": "Tiempo en segundos para que el título se desplace del inicio al final"
         }
       }
     },

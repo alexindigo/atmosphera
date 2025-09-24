@@ -138,6 +138,14 @@
         "frame-rate": {
           "label": "Taxa de quadros",
           "description": "Taxas mais altas são mais suaves, mas consomem mais recursos."
+        },
+        "scrolling-title": {
+          "label": "Título com rolagem",
+          "description": "Ativar rolagem contínua para títulos de mídia longos"
+        },
+        "scrolling-speed": {
+          "label": "Velocidade de rolagem",
+          "description": "Tempo em segundos para o título rolar do início ao fim"
         }
       }
     },

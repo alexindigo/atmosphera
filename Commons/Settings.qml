@@ -266,6 +266,8 @@ Singleton {
       property string visualizerType: "linear"
       property list<string> mprisBlacklist: []
       property string preferredPlayer: ""
+      property bool scrollingTitle: true
+      property int scrollingSpeed: 18
     }
 
     // ui

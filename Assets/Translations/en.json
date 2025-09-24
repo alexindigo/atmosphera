@@ -140,6 +140,14 @@
         "frame-rate": {
           "label": "Frame rate",
           "description": "Higher rates are smoother but use more resources."
+        },
+        "scrolling-title": {
+          "label": "Scrolling title",
+          "description": "Enable continuous scrolling for long media titles"
+        },
+        "scrolling-speed": {
+          "label": "Scrolling speed",
+          "description": "Time in seconds for the title to scroll from start to end"
         }
       }
     },

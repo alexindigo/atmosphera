@@ -141,7 +141,7 @@
     "cavaFrameRate": 60,
     "visualizerType": "linear",
     "mprisBlacklist": [],
-    "preferredPlayer": ""
+    "preferredPlayer": "",
   },
   "ui": {
     "fontDefault": "Roboto",

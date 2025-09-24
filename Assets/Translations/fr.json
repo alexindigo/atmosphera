@@ -138,6 +138,14 @@
         "frame-rate": {
           "label": "Fréquence d'images",
           "description": "Des fréquences plus élevées sont plus fluides mais utilisent plus de ressources."
+        },
+        "scrolling-title": {
+          "label": "Titre défilant",
+          "description": "Activer le défilement continu pour les titres multimédias longs"
+        },
+        "scrolling-speed": {
+          "label": "Vitesse de défilement",
+          "description": "Temps en secondes pour que le titre défile du début à la fin"
         }
       }
     },

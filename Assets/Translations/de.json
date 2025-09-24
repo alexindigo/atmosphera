@@ -140,6 +140,14 @@
         "frame-rate": {
           "label": "Bildrate",
           "description": "Höhere Raten sind flüssiger, verbrauchen aber mehr Ressourcen."
+        },
+        "scrolling-title": {
+          "label": "Scrollender Titel",
+          "description": "Kontinuierliches Scrollen für lange Medientitel aktivieren"
+        },
+        "scrolling-speed": {
+          "label": "Scrollgeschwindigkeit",
+          "description": "Zeit in Sekunden, die der Titel zum Scrollen vom Anfang bis zum Ende benötigt"
         }
       }
     },

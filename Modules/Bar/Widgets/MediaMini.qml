@@ -36,6 +36,8 @@ Item {
   readonly property bool showAlbumArt: (widgetSettings.showAlbumArt !== undefined) ? widgetSettings.showAlbumArt : widgetMetadata.showAlbumArt
   readonly property bool showVisualizer: (widgetSettings.showVisualizer !== undefined) ? widgetSettings.showVisualizer : widgetMetadata.showVisualizer
   readonly property string visualizerType: (widgetSettings.visualizerType !== undefined && widgetSettings.visualizerType !== "") ? widgetSettings.visualizerType : widgetMetadata.visualizerType
+  readonly property bool scrollingTitle: Settings.data.audio.scrollingTitle
+  readonly property int scrollingSpeed: Settings.data.audio.scrollingSpeed
 
   // 6% of total width
   readonly property real minWidth: Math.max(1, screen.width * 0.06)
@@ -180,8 +182,8 @@ Item {
           }
         }
 
-        NText {
-          id: titleText
+        Item {
+          id: titleContainer
 
           Layout.preferredWidth: {
             if (mouseArea.containsMouse) {
@@ -191,13 +193,73 @@ Item {
             }
           }
           Layout.alignment: Qt.AlignVCenter
+          Layout.preferredHeight: titleText.height
 
-          text: getTitle()
-          font.pointSize: Style.fontSizeS * scaling
-          font.weight: Style.fontWeightMedium
-          elide: Text.ElideRight
-          verticalAlignment: Text.AlignVCenter
-          color: Color.mSecondary
+          clip: true
+
+          property bool shouldScroll: scrollingTitle && fullTitleMetrics.contentWidth > titleContainer.width
+          property bool isScrolling: false
+
+          // Start scrolling when text is too long and not hovering
+          Timer {
+            id: scrollStartTimer
+            interval: 2000 // Wait 2 seconds before starting scroll
+            repeat: false
+            onTriggered: {
+              if (titleContainer.shouldScroll && !mouseArea.containsMouse) {
+                titleContainer.isScrolling = true
+              }
+            }
+          }
+
+          // Reset scroll position when text changes or on hover
+          onShouldScrollChanged: {
+            if (shouldScroll && !mouseArea.containsMouse) {
+              scrollStartTimer.restart()
+            } else {
+              scrollStartTimer.stop()
+              isScrolling = false
+            }
+          }
+
+          Connections {
+            target: mouseArea
+            function onContainsMouseChanged() {
+              if (mouseArea.containsMouse) {
+                scrollStartTimer.stop()
+                titleContainer.isScrolling = false
+              } else if (titleContainer.shouldScroll) {
+                scrollStartTimer.restart()
+              }
+            }
+          }
+
+          NText {
+            id: titleText
+
+            text: getTitle()
+            font.pointSize: Style.fontSizeS * scaling
+            font.weight: Style.fontWeightMedium
+            verticalAlignment: Text.AlignVCenter
+            color: Color.mSecondary
+
+            property real scrollPosition: 0
+
+            x: scrollPosition
+
+            // Continuous scrolling animation
+            SequentialAnimation on scrollPosition {
+              running: titleContainer.isScrolling
+              loops: Animation.Infinite
+
+              NumberAnimation {
+                from: 0
+                to: -(fullTitleMetrics.contentWidth - titleContainer.width)
+                duration: scrollingSpeed * 1000 // Convert seconds to milliseconds
+                easing.type: Easing.Linear
+              }
+            }
+          }
 
           Behavior on Layout.preferredWidth {
             NumberAnimation {
