@@ -433,38 +433,31 @@
           "label": "UI",
           "description": "Desktop-Umgebung und UI-Toolkit-Theming.",
           "gtk4": {
-            "label": "GTK 4 (libadwaita)",
-            "description": "Schreibt ~/.config/gtk-4.0/gtk.css"
+            "description": "Schreibt {filepath}"
           },
           "gtk3": {
-            "label": "GTK 3",
-            "description": "Schreibt ~/.config/gtk-3.0/gtk.css"
+            "description": "Schreibt {filepath}"
           },
           "qt6": {
-            "label": "Qt6ct",
-            "description": "Schreibt ~/.config/qt6ct/colors/noctalia.conf"
+            "description": "Schreibt {filepath}"
           },
           "qt5": {
-            "label": "Qt5ct",
-            "description": "Schreibt ~/.config/qt5ct/colors/noctalia.conf"
+            "description": "Schreibt {filepath}"
           }
         },
         "terminal": {
           "label": "Terminal",
           "description": "Terminal-Emulator-Theming.",
           "kitty": {
-            "label": "Kitty",
-            "description": "Schreibt ~/.config/kitty/themes/noctalia.conf und lädt neu",
+            "description": "Schreibt {filepath} und lädt neu",
             "description-missing": "Erfordert kitty Terminal"
           },
           "ghostty": {
-            "label": "Ghostty",
-            "description": "Schreibt ~/.config/ghostty/themes/noctalia und lädt neu",
+            "description": "Schreibt {filepath} und lädt neu",
             "description-missing": "Erfordert ghostty Terminal"
           },
           "foot": {
-            "label": "Foot",
-            "description": "Schreibt ~/.config/foot/themes/noctalia und lädt neu",
+            "description": "Schreibt {filepath} und lädt neu",
             "description-missing": "Erfordert foot Terminal"
           }
         },
@@ -472,18 +465,15 @@
           "label": "Programme",
           "description": "Anwendungsspezifisches Theming.",
           "fuzzel": {
-            "label": "Fuzzel",
-            "description": "Schreibt ~/.config/fuzzel/themes/noctalia und lädt neu",
+            "description": "Schreibt {filepath} und lädt neu",
             "description-missing": "Erfordert fuzzel Starter"
           },
           "vesktop": {
-            "label": "Vesktop",
-            "description": "Schreibt ~/.config/vesktop/themes/noctalia.theme.css",
+            "description": "Schreibt {filepath}",
             "description-missing": "Erfordert vesktop Discord-Client"
           },
           "pywalfox": {
-            "label": "Pywalfox (Firefox)",
-            "description": "Schreibt ~/.cache/wal/colors.json und führt pywalfox update aus",
+            "description": "Schreibt {filepath} und führt pywalfox update aus",
             "description-missing": "Erfordert pywalfox Paket"
           }
         },
@@ -1016,8 +1006,7 @@
     "enter-width-pixels": "Breite in Pixeln eingeben",
     "enter-command": "Befehl eingeben (App oder benutzerdefiniertes Skript)",
     "command-example": "echo \"Hallo Welt\"",
-    "clock-horizontal": "HH:mm ddd, MMM dd",
-    "clock-vertical": "HH mm dd MM",
+    
     "search-wallpapers": "Zum Filtern von Hintergrundbildern eingeben...",
     "search-launcher": "Einträge suchen... oder > für Befehle verwenden",
     "search": "Suchen...",
@@ -1067,15 +1056,7 @@
       "mirrored": "Gespiegelt",
       "wave": "Welle"
     },
-    "frame-rates": {
-      "30-fps": "30 FPS",
-      "60-fps": "60 FPS",
-      "100-fps": "100 FPS",
-      "120-fps": "120 FPS",
-      "144-fps": "144 FPS",
-      "165-fps": "165 FPS",
-      "240-fps": "240 FPS"
-    },
+    
     "screen-recording": {
       "sources": {
         "portal": "Portal",
@@ -1086,13 +1067,6 @@
         "high": "Hoch",
         "very-high": "Sehr hoch",
         "ultra": "Ultra"
-      },
-      "codecs": {
-        "h264": "H264",
-        "hevc": "HEVC",
-        "av1": "AV1",
-        "vp8": "VP8",
-        "vp9": "VP9"
       },
       "color-range": {
         "limited": "Begrenzt",

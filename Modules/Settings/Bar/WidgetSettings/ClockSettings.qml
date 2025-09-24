@@ -106,7 +106,7 @@ ColumnLayout {
         Layout.fillWidth: true
         label: I18n.tr("bar.widget-settings.clock.horizontal-bar.label")
         description: I18n.tr("bar.widget-settings.clock.horizontal-bar.description")
-        placeholderText: I18n.tr("placeholders.clock-horizontal")
+        placeholderText: "HH:mm ddd, MMM dd"
         text: valueFormatHorizontal
         onTextChanged: valueFormatHorizontal = text
         Component.onCompleted: {
@@ -129,7 +129,8 @@ ColumnLayout {
         Layout.fillWidth: true
         label: I18n.tr("bar.widget-settings.clock.vertical-bar.label")
         description: I18n.tr("bar.widget-settings.clock.vertical-bar.description")
-        placeholderText: I18n.tr("placeholders.clock-vertical")
+        // Tokens are Qt format tokens and must not be localized
+        placeholderText: "HH mm dd MM"
         text: valueFormatVertical
         onTextChanged: valueFormatVertical = text
         Component.onCompleted: {

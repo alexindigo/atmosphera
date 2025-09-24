@@ -76,28 +76,15 @@ ColumnLayout {
     NComboBox {
       label: I18n.tr("settings.screen-recorder.video.frame-rate.label")
       description: I18n.tr("settings.screen-recorder.video.frame-rate.description")
-      model: [{
-          "key": "30",
-          "name": I18n.tr("options.frame-rates.30-fps")
-        }, {
-          "key": "60",
-          "name": I18n.tr("options.frame-rates.60-fps")
-        }, {
-          "key": "100",
-          "name": I18n.tr("options.frame-rates.100-fps")
-        }, {
-          "key": "120",
-          "name": I18n.tr("options.frame-rates.120-fps")
-        }, {
-          "key": "144",
-          "name": I18n.tr("options.frame-rates.144-fps")
-        }, {
-          "key": "165",
-          "name": I18n.tr("options.frame-rates.165-fps")
-        }, {
-          "key": "240",
-          "name": I18n.tr("options.frame-rates.240-fps")
-        }]
+      model: (function () {
+        const values = ["30", "60", "100", "120", "144", "165", "240"]
+        return values.map(function (v) {
+          return {
+            "key": v,
+            "name": (v + " FPS")
+          }
+        })
+      })()
       currentKey: Settings.data.screenRecorder.frameRate
       onSelected: key => Settings.data.screenRecorder.frameRate = key
     }
@@ -129,19 +116,19 @@ ColumnLayout {
       description: I18n.tr("settings.screen-recorder.video.video-codec.description")
       model: [{
           "key": "h264",
-          "name": I18n.tr("options.screen-recording.codecs.h264")
+          "name": "H264"
         }, {
           "key": "hevc",
-          "name": I18n.tr("options.screen-recording.codecs.hevc")
+          "name": "HEVC"
         }, {
           "key": "av1",
-          "name": I18n.tr("options.screen-recording.codecs.av1")
+          "name": "AV1"
         }, {
           "key": "vp8",
-          "name": I18n.tr("options.screen-recording.codecs.vp8")
+          "name": "VP8"
         }, {
           "key": "vp9",
-          "name": I18n.tr("options.screen-recording.codecs.vp9")
+          "name": "VP9"
         }]
       currentKey: Settings.data.screenRecorder.videoCodec
       onSelected: key => Settings.data.screenRecorder.videoCodec = key

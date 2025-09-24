@@ -337,8 +337,10 @@ ColumnLayout {
       defaultExpanded: false
 
       NCheckbox {
-        label: I18n.tr("settings.color-scheme.matugen.ui.gtk4.label")
-        description: I18n.tr("settings.color-scheme.matugen.ui.gtk4.description")
+        label: "GTK 4 (libadwaita)"
+        description: I18n.tr("settings.color-scheme.matugen.ui.gtk4.description", {
+                               "filepath": "~/.config/gtk-4.0/gtk.css"
+                             })
         checked: Settings.data.matugen.gtk4
         onToggled: checked => {
                      Settings.data.matugen.gtk4 = checked
@@ -348,8 +350,10 @@ ColumnLayout {
       }
 
       NCheckbox {
-        label: I18n.tr("settings.color-scheme.matugen.ui.gtk3.label")
-        description: I18n.tr("settings.color-scheme.matugen.ui.gtk3.description")
+        label: "GTK 3"
+        description: I18n.tr("settings.color-scheme.matugen.ui.gtk3.description", {
+                               "filepath": "~/.config/gtk-3.0/gtk.css"
+                             })
         checked: Settings.data.matugen.gtk3
         onToggled: checked => {
                      Settings.data.matugen.gtk3 = checked
@@ -359,8 +363,10 @@ ColumnLayout {
       }
 
       NCheckbox {
-        label: I18n.tr("settings.color-scheme.matugen.ui.qt6.label")
-        description: I18n.tr("settings.color-scheme.matugen.ui.qt6.description")
+        label: "Qt6ct"
+        description: I18n.tr("settings.color-scheme.matugen.ui.qt6.description", {
+                               "filepath": "~/.config/qt6ct/colors/noctalia.conf"
+                             })
         checked: Settings.data.matugen.qt6
         onToggled: checked => {
                      Settings.data.matugen.qt6 = checked
@@ -370,8 +376,10 @@ ColumnLayout {
       }
 
       NCheckbox {
-        label: I18n.tr("settings.color-scheme.matugen.ui.qt5.label")
-        description: I18n.tr("settings.color-scheme.matugen.ui.qt5.description")
+        label: "Qt5ct"
+        description: I18n.tr("settings.color-scheme.matugen.ui.qt5.description", {
+                               "filepath": "~/.config/qt5ct/colors/noctalia.conf"
+                             })
         checked: Settings.data.matugen.qt5
         onToggled: checked => {
                      Settings.data.matugen.qt5 = checked
@@ -389,8 +397,10 @@ ColumnLayout {
       defaultExpanded: false
 
       NCheckbox {
-        label: I18n.tr("settings.color-scheme.matugen.terminal.kitty.label")
-        description: ProgramCheckerService.kittyAvailable ? I18n.tr("settings.color-scheme.matugen.terminal.kitty.description") : I18n.tr("settings.color-scheme.matugen.terminal.kitty.description-missing")
+        label: "Kitty"
+        description: ProgramCheckerService.kittyAvailable ? I18n.tr("settings.color-scheme.matugen.terminal.kitty.description", {
+                                                                      "filepath": "~/.config/kitty/themes/noctalia.conf"
+                                                                    }) : I18n.tr("settings.color-scheme.matugen.terminal.kitty.description-missing")
         checked: Settings.data.matugen.kitty
         enabled: ProgramCheckerService.kittyAvailable
         opacity: ProgramCheckerService.kittyAvailable ? 1.0 : 0.6
@@ -404,8 +414,10 @@ ColumnLayout {
       }
 
       NCheckbox {
-        label: I18n.tr("settings.color-scheme.matugen.terminal.ghostty.label")
-        description: ProgramCheckerService.ghosttyAvailable ? I18n.tr("settings.color-scheme.matugen.terminal.ghostty.description") : I18n.tr("settings.color-scheme.matugen.terminal.ghostty.description-missing")
+        label: "Ghostty"
+        description: ProgramCheckerService.ghosttyAvailable ? I18n.tr("settings.color-scheme.matugen.terminal.ghostty.description", {
+                                                                        "filepath": "~/.config/ghostty/themes/noctalia"
+                                                                      }) : I18n.tr("settings.color-scheme.matugen.terminal.ghostty.description-missing")
         checked: Settings.data.matugen.ghostty
         enabled: ProgramCheckerService.ghosttyAvailable
         opacity: ProgramCheckerService.ghosttyAvailable ? 1.0 : 0.6
@@ -419,8 +431,10 @@ ColumnLayout {
       }
 
       NCheckbox {
-        label: I18n.tr("settings.color-scheme.matugen.terminal.foot.label")
-        description: ProgramCheckerService.footAvailable ? I18n.tr("settings.color-scheme.matugen.terminal.foot.description") : I18n.tr("settings.color-scheme.matugen.terminal.foot.description-missing")
+        label: "Foot"
+        description: ProgramCheckerService.footAvailable ? I18n.tr("settings.color-scheme.matugen.terminal.foot.description", {
+                                                                     "filepath": "~/.config/foot/themes/noctalia"
+                                                                   }) : I18n.tr("settings.color-scheme.matugen.terminal.foot.description-missing")
         checked: Settings.data.matugen.foot
         enabled: ProgramCheckerService.footAvailable
         opacity: ProgramCheckerService.footAvailable ? 1.0 : 0.6
@@ -442,8 +456,10 @@ ColumnLayout {
       defaultExpanded: false
 
       NCheckbox {
-        label: I18n.tr("settings.color-scheme.matugen.programs.fuzzel.label")
-        description: ProgramCheckerService.fuzzelAvailable ? I18n.tr("settings.color-scheme.matugen.programs.fuzzel.description") : I18n.tr("settings.color-scheme.matugen.programs.fuzzel.description-missing")
+        label: "Fuzzel"
+        description: ProgramCheckerService.fuzzelAvailable ? I18n.tr("settings.color-scheme.matugen.programs.fuzzel.description", {
+                                                                       "filepath": "~/.config/fuzzel/themes/noctalia"
+                                                                     }) : I18n.tr("settings.color-scheme.matugen.programs.fuzzel.description-missing")
         checked: Settings.data.matugen.fuzzel
         enabled: ProgramCheckerService.fuzzelAvailable
         opacity: ProgramCheckerService.fuzzelAvailable ? 1.0 : 0.6
@@ -457,8 +473,10 @@ ColumnLayout {
       }
 
       NCheckbox {
-        label: I18n.tr("settings.color-scheme.matugen.programs.vesktop.label")
-        description: ProgramCheckerService.vesktopAvailable ? I18n.tr("settings.color-scheme.matugen.programs.vesktop.description") : I18n.tr("settings.color-scheme.matugen.programs.vesktop.description-missing")
+        label: "Vesktop"
+        description: ProgramCheckerService.vesktopAvailable ? I18n.tr("settings.color-scheme.matugen.programs.vesktop.description", {
+                                                                        "filepath": "~/.config/vesktop/themes/noctalia.theme.css"
+                                                                      }) : I18n.tr("settings.color-scheme.matugen.programs.vesktop.description-missing")
         checked: Settings.data.matugen.vesktop
         enabled: ProgramCheckerService.vesktopAvailable
         opacity: ProgramCheckerService.vesktopAvailable ? 1.0 : 0.6
@@ -472,8 +490,10 @@ ColumnLayout {
       }
 
       NCheckbox {
-        label: I18n.tr("settings.color-scheme.matugen.programs.pywalfox.label")
-        description: ProgramCheckerService.pywalfoxAvailable ? I18n.tr("settings.color-scheme.matugen.programs.pywalfox.description") : I18n.tr("settings.color-scheme.matugen.programs.pywalfox.description-missing")
+        label: "Pywalfox"
+        description: ProgramCheckerService.pywalfoxAvailable ? I18n.tr("settings.color-scheme.matugen.programs.pywalfox.description", {
+                                                                         "filepath": "~/.cache/wal/colors.json"
+                                                                       }) : I18n.tr("settings.color-scheme.matugen.programs.pywalfox.description-missing")
         checked: Settings.data.matugen.pywalfox
         enabled: ProgramCheckerService.pywalfoxAvailable
         opacity: ProgramCheckerService.pywalfoxAvailable ? 1.0 : 0.6
