@@ -27,34 +27,30 @@ ColumnLayout {
   }
 
   NToggle {
-    label: "Show album art"
+    label: I18n.tr("bar.widget-settings.media-mini.show-album-art")
     checked: valueShowAlbumArt
     onToggled: checked => valueShowAlbumArt = checked
   }
 
   NToggle {
-    label: "Show visualizer"
+    label: I18n.tr("bar.widget-settings.media-mini.show-visualizer")
     checked: valueShowVisualizer
     onToggled: checked => valueShowVisualizer = checked
   }
 
   NComboBox {
     visible: valueShowVisualizer
-    label: "Visualizer type"
-    model: ListModel {
-      ListElement {
-        key: "linear"
-        name: "Linear"
-      }
-      ListElement {
-        key: "mirrored"
-        name: "Mirrored"
-      }
-      ListElement {
-        key: "wave"
-        name: "Wave"
-      }
-    }
+    label: I18n.tr("bar.widget-settings.media-mini.visualizer-type")
+    model: [{
+        "key": "linear",
+        "name": I18n.tr("options.visualizer-types.linear")
+      }, {
+        "key": "mirrored",
+        "name": I18n.tr("options.visualizer-types.mirrored")
+      }, {
+        "key": "wave",
+        "name": I18n.tr("options.visualizer-types.wave")
+      }]
     currentKey: valueVisualizerType
     onSelected: key => valueVisualizerType = key
     minimumWidth: 200 * scaling

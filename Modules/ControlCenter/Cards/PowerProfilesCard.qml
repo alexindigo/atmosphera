@@ -26,7 +26,9 @@ NBox {
     // Performance
     NIconButton {
       icon: PowerProfileService.getIcon(PowerProfile.Performance)
-      tooltipText: `Set "${PowerProfileService.getName(PowerProfile.Performance)}" power profile`
+      tooltipText: I18n.tr("tooltips.set-power-profile", {
+                             "profile": PowerProfileService.getName(PowerProfile.Performance)
+                           })
       enabled: hasPP
       opacity: enabled ? Style.opacityFull : Style.opacityMedium
       colorBg: (enabled && PowerProfileService.profile === PowerProfile.Performance) ? Color.mPrimary : Color.mSurfaceVariant
@@ -36,7 +38,9 @@ NBox {
     // Balanced
     NIconButton {
       icon: PowerProfileService.getIcon(PowerProfile.Balanced)
-      tooltipText: `Set "${PowerProfileService.getName(PowerProfile.Balanced)}" power profile`
+      tooltipText: I18n.tr("tooltips.set-power-profile", {
+                             "profile": PowerProfileService.getName(PowerProfile.Balanced)
+                           })
       enabled: hasPP
       opacity: enabled ? Style.opacityFull : Style.opacityMedium
       colorBg: (enabled && PowerProfileService.profile === PowerProfile.Balanced) ? Color.mPrimary : Color.mSurfaceVariant
@@ -46,7 +50,9 @@ NBox {
     // Eco
     NIconButton {
       icon: PowerProfileService.getIcon(PowerProfile.PowerSaver)
-      tooltipText: `Set "${PowerProfileService.getName(PowerProfile.PowerSaver)}" power profile`
+      tooltipText: I18n.tr("tooltips.set-power-profile", {
+                             "profile": PowerProfileService.getName(PowerProfile.PowerSaver)
+                           })
       enabled: hasPP
       opacity: enabled ? Style.opacityFull : Style.opacityMedium
       colorBg: (enabled && PowerProfileService.profile === PowerProfile.PowerSaver) ? Color.mPrimary : Color.mSurfaceVariant

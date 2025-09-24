@@ -133,7 +133,7 @@ PopupWindow {
           }
 
           NText {
-            text: "Focus"
+            text: I18n.tr("dock.menu.focus")
             font.pointSize: Style.fontSizeS * scaling
             color: activateMouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurfaceVariant
             anchors.verticalCenter: parent.verticalCenter
@@ -182,8 +182,8 @@ PopupWindow {
           NText {
             text: {
               if (!root.toplevel)
-                return "Pin"
-              return root.isAppPinned(root.toplevel.appId) ? "Unpin" : "Pin"
+                return I18n.tr("dock.menu.pin")
+              return root.isAppPinned(root.toplevel.appId) ? I18n.tr("dock.menu.unpin") : I18n.tr("dock.menu.pin")
             }
             font.pointSize: Style.fontSizeS * scaling
             color: pinMouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurfaceVariant
@@ -228,7 +228,7 @@ PopupWindow {
           }
 
           NText {
-            text: "Close"
+            text: I18n.tr("dock.menu.close")
             font.pointSize: Style.fontSizeS * scaling
             color: closeMouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurfaceVariant
             anchors.verticalCenter: parent.verticalCenter

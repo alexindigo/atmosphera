@@ -83,7 +83,9 @@ Item {
     suffix: "%"
     forceOpen: displayMode === "alwaysShow"
     forceClose: displayMode === "alwaysHide"
-    tooltipText: "Volume at " + Math.round(AudioService.volume * 100) + "%\nLeft click to toggle mute. Right click for settings.\nScroll to modify volume."
+    tooltipText: I18n.tr("tooltips.volume-at", {
+                           "volume": Math.round(AudioService.volume * 100)
+                         })
 
     onWheel: function (delta) {
       wheelAccumulator += delta

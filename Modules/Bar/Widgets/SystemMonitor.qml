@@ -120,7 +120,9 @@ Rectangle {
         columnSpacing: Style.marginXXS * scaling
 
         NText {
-          text: `${SystemStatService.cpuTemp}°C`
+          text: I18n.tr("system.cpu-temperature", {
+                          "temp": SystemStatService.cpuTemp
+                        })
           font.family: Settings.data.ui.fontFixed
           font.pointSize: textSize
           font.weight: Style.fontWeightMedium
@@ -283,7 +285,9 @@ Rectangle {
         columnSpacing: isVertical ? (Style.marginXXS * scaling) : (Style.marginXS * scaling)
 
         NText {
-          text: `${SystemStatService.diskPercent}%`
+          text: I18n.tr("system.disk-usage", {
+                          "percent": SystemStatService.diskPercent
+                        })
           font.family: Settings.data.ui.fontFixed
           font.pointSize: textSize
           font.weight: Style.fontWeightMedium

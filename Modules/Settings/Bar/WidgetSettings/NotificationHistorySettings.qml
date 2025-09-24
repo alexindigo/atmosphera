@@ -25,13 +25,13 @@ ColumnLayout {
   }
 
   NToggle {
-    label: "Show unread badge"
+    label: I18n.tr("bar.widget-settings.notification-history.show-unread-badge")
     checked: valueShowUnreadBadge
     onToggled: checked => valueShowUnreadBadge = checked
   }
 
   NToggle {
-    label: "Hide badge when zero"
+    label: I18n.tr("bar.widget-settings.notification-history.hide-badge-when-zero")
     checked: valueHideWhenZero
     onToggled: checked => valueHideWhenZero = checked
   }

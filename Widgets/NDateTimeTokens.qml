@@ -31,87 +31,62 @@ Rectangle {
         ListElement {
           category: "Common"
           token: "h:mm AP"
-          description: "12-hour time with minutes"
+          description: I18n.tr("widgets.datetime-tokens.common.12hour-time-minutes")
           example: "2:30 PM"
         }
         ListElement {
           category: "Common"
           token: "HH:mm"
-          description: "24-hour time with minutes"
+          description: I18n.tr("widgets.datetime-tokens.common.24hour-time-minutes")
           example: "14:30"
         }
         ListElement {
           category: "Common"
           token: "HH:mm:ss"
-          description: "24-hour time with seconds"
+          description: I18n.tr("widgets.datetime-tokens.common.24hour-time-seconds")
           example: "14:30:45"
         }
         ListElement {
           category: "Common"
           token: "ddd MMM d"
-          description: "Weekday, month and day"
+          description: I18n.tr("widgets.datetime-tokens.common.weekday-month-day")
           example: "Mon Dec 25"
         }
         ListElement {
           category: "Common"
           token: "yyyy-MM-dd"
-          description: "ISO date format"
+          description: I18n.tr("widgets.datetime-tokens.common.iso-date")
           example: "2023-12-25"
         }
         ListElement {
           category: "Common"
           token: "MM/dd/yyyy"
-          description: "US date format"
+          description: I18n.tr("widgets.datetime-tokens.common.us-date")
           example: "12/25/2023"
         }
         ListElement {
           category: "Common"
           token: "dd.MM.yyyy"
-          description: "European date format"
+          description: I18n.tr("widgets.datetime-tokens.common.european-date")
           example: "25.12.2023"
         }
         ListElement {
           category: "Common"
           token: "ddd, MMM dd"
-          description: "Weekday with date"
+          description: I18n.tr("widgets.datetime-tokens.common.weekday-date")
           example: "Fri, Dec 12"
         }
 
-        // Hour tokens
-        // ListElement {
-        //   category: "Hour"
-        //   token: "h"
-        //   description: "Hour without leading zero (12-hour when used with AP/ap, otherwise 24-hour)"
-        //   example: "2 (needs AP/ap for 12hr)"
-        // }
-        // ListElement {
-        //   category: "Hour"
-        //   token: "hh"
-        //   description: "Hour with leading zero (12-hour when used with AP/ap, otherwise 24-hour)"
-        //   example: "02 (needs AP/ap for 12hr)"
-        // }
-        // ListElement {
-        //   category: "Hour"
-        //   token: "h AP"
-        //   description: "12-hour format with AM/PM"
-        //   example: "2 PM"
-        // }
-        // ListElement {
-        //   category: "Hour"
-        //   token: "hh AP"
-        //   description: "12-hour format with leading zero and AM/PM"
-        //   example: "02 PM"
-        // }
         ListElement {
           category: "Hour"
           token: "H"
-          description: "Hour without leading zero (0-23) - 24-hour format"
+          description: I18n.tr("widgets.datetime-tokens.hour.no-leading-zero")
           example: "14"
         }
         ListElement {
           category: "Hour"
           token: "HH"
-          description: "Hour with leading zero (00-23) - 24-hour format"
+          description: I18n.tr("widgets.datetime-tokens.hour.leading-zero")
           example: "14"
         }
 
@@ -119,13 +94,13 @@ Rectangle {
         ListElement {
           category: "Minute"
           token: "m"
-          description: "Minute without leading zero (0-59)"
+          description: I18n.tr("widgets.datetime-tokens.minute.no-leading-zero")
           example: "30"
         }
         ListElement {
           category: "Minute"
           token: "mm"
-          description: "Minute with leading zero (00-59)"
+          description: I18n.tr("widgets.datetime-tokens.minute.leading-zero")
           example: "30"
         }
 
@@ -133,13 +108,13 @@ Rectangle {
         ListElement {
           category: "Second"
           token: "s"
-          description: "Second without leading zero (0-59)"
+          description: I18n.tr("widgets.datetime-tokens.second.no-leading-zero")
           example: "45"
         }
         ListElement {
           category: "Second"
           token: "ss"
-          description: "Second with leading zero (00-59)"
+          description: I18n.tr("widgets.datetime-tokens.second.leading-zero")
           example: "45"
         }
 
@@ -147,13 +122,13 @@ Rectangle {
         ListElement {
           category: "AM/PM"
           token: "AP"
-          description: "AM/PM in uppercase"
+          description: I18n.tr("widgets.datetime-tokens.ampm.uppercase")
           example: "PM"
         }
         ListElement {
           category: "AM/PM"
           token: "ap"
-          description: "am/pm in lowercase"
+          description: I18n.tr("widgets.datetime-tokens.ampm.lowercase")
           example: "pm"
         }
 
@@ -161,7 +136,7 @@ Rectangle {
         ListElement {
           category: "Timezone"
           token: "t"
-          description: "Timezone abbreviation"
+          description: I18n.tr("widgets.datetime-tokens.timezone.abbreviation")
           example: "UTC"
         }
 
@@ -169,13 +144,13 @@ Rectangle {
         ListElement {
           category: "Year"
           token: "yy"
-          description: "Year as two-digit number (00-99)"
+          description: I18n.tr("widgets.datetime-tokens.year.two-digit")
           example: "23"
         }
         ListElement {
           category: "Year"
           token: "yyyy"
-          description: "Year as four-digit number"
+          description: I18n.tr("widgets.datetime-tokens.year.four-digit")
           example: "2023"
         }
 
@@ -183,25 +158,25 @@ Rectangle {
         ListElement {
           category: "Month"
           token: "M"
-          description: "Month as number without leading zero (1-12)"
+          description: I18n.tr("widgets.datetime-tokens.month.number-no-zero")
           example: "12"
         }
         ListElement {
           category: "Month"
           token: "MM"
-          description: "Month as number with leading zero (01-12)"
+          description: I18n.tr("widgets.datetime-tokens.month.number-leading-zero")
           example: "12"
         }
         ListElement {
           category: "Month"
           token: "MMM"
-          description: "Abbreviated month name"
+          description: I18n.tr("widgets.datetime-tokens.month.abbreviated")
           example: "Dec"
         }
         ListElement {
           category: "Month"
           token: "MMMM"
-          description: "Full month name"
+          description: I18n.tr("widgets.datetime-tokens.month.full")
           example: "December"
         }
 
@@ -209,25 +184,25 @@ Rectangle {
         ListElement {
           category: "Day"
           token: "d"
-          description: "Day without leading zero (1-31)"
+          description: I18n.tr("widgets.datetime-tokens.day.no-leading-zero")
           example: "25"
         }
         ListElement {
           category: "Day"
           token: "dd"
-          description: "Day with leading zero (01-31)"
+          description: I18n.tr("widgets.datetime-tokens.day.leading-zero")
           example: "25"
         }
         ListElement {
           category: "Day"
           token: "ddd"
-          description: "Abbreviated day name"
+          description: I18n.tr("widgets.datetime-tokens.day.abbreviated")
           example: "Mon"
         }
         ListElement {
           category: "Day"
           token: "dddd"
-          description: "Full day name"
+          description: I18n.tr("widgets.datetime-tokens.day.full")
           example: "Monday"
         }
       }

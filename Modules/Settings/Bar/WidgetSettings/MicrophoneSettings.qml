@@ -23,23 +23,19 @@ ColumnLayout {
   }
 
   NComboBox {
-    label: "Display mode"
-    description: "Choose how you'd like this value to appear."
+    label: I18n.tr("bar.widget-settings.microphone.display-mode.label")
+    description: I18n.tr("bar.widget-settings.microphone.display-mode.description")
     minimumWidth: 134 * scaling
-    model: ListModel {
-      ListElement {
-        key: "onhover"
-        name: "On hover"
-      }
-      ListElement {
-        key: "alwaysShow"
-        name: "Always show"
-      }
-      ListElement {
-        key: "alwaysHide"
-        name: "Always hide"
-      }
-    }
+    model: [{
+        "key": "onhover",
+        "name": I18n.tr("options.display-mode.on-hover")
+      }, {
+        "key": "alwaysShow",
+        "name": I18n.tr("options.display-mode.always-show")
+      }, {
+        "key": "alwaysHide",
+        "name": I18n.tr("options.display-mode.always-hide")
+      }]
     currentKey: valueDisplayMode
     onSelected: key => valueDisplayMode = key
   }

@@ -31,7 +31,7 @@ NPanel {
 
       NIconButton {
         icon: "chevron-left"
-        tooltipText: "Previous month"
+        tooltipText: I18n.tr("tooltips.previous-month")
         onClicked: {
           let newDate = new Date(grid.year, grid.month - 1, 1)
           grid.year = newDate.getFullYear()
@@ -50,7 +50,7 @@ NPanel {
 
       NIconButton {
         icon: "chevron-right"
-        tooltipText: "Next month"
+        tooltipText: I18n.tr("tooltips.next-month")
         onClicked: {
           let newDate = new Date(grid.year, grid.month + 1, 1)
           grid.year = newDate.getFullYear()
@@ -81,7 +81,7 @@ NPanel {
 
         NText {
           anchors.centerIn: parent
-          text: "Week"
+          text: I18n.tr("calendar.panel.week")
           color: Color.mOutline
           font.pointSize: Style.fontSizeXS * scaling
           font.weight: Style.fontWeightRegular

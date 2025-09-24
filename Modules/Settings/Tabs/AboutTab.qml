@@ -17,8 +17,8 @@ ColumnLayout {
   property var contributors: GitHubService.contributors
 
   NHeader {
-    label: "Noctalia shell"
-    description: "A sleek and minimal desktop shell thoughtfully crafted for Wayland, built with Quickshell."
+    label: I18n.tr("settings.about.noctalia.section.label")
+    description: I18n.tr("settings.about.noctalia.section.description")
   }
 
   RowLayout {
@@ -31,7 +31,7 @@ ColumnLayout {
       columnSpacing: Style.marginS * scaling
 
       NText {
-        text: "Latest version:"
+        text: I18n.tr("settings.about.noctalia.latest-version")
         color: Color.mOnSurface
       }
 
@@ -42,7 +42,7 @@ ColumnLayout {
       }
 
       NText {
-        text: "Installed version:"
+        text: I18n.tr("settings.about.noctalia.installed-version")
         color: Color.mOnSurface
       }
 
@@ -97,7 +97,7 @@ ColumnLayout {
 
         NText {
           id: updateText
-          text: "Download latest release"
+          text: I18n.tr("settings.about.noctalia.download-latest")
           font.pointSize: Style.fontSizeL * scaling
           color: updateArea.containsMouse ? Color.mSurface : Color.mPrimary
         }
@@ -123,8 +123,12 @@ ColumnLayout {
   }
 
   NHeader {
-    label: "Contributors"
-    description: `Shout-out to our ${root.contributors.length} <b>awesome</b> contributors!`
+    label: I18n.tr("settings.about.contributors.section.label")
+    description: root.contributors.length === 1 ? I18n.tr("settings.about.contributors.section.description", {
+                                                            "count": root.contributors.length
+                                                          }) : I18n.tr("settings.about.contributors.section.description_plural", {
+                                                                         "count": root.contributors.length
+                                                                       })
   }
 
   GridView {

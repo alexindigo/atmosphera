@@ -12,8 +12,8 @@ ColumnLayout {
   spacing: Style.marginL * scaling
 
   NHeader {
-    label: "General settings"
-    description: "Manage screen recording output and content."
+    label: I18n.tr("settings.screen-recorder.general.section.label")
+    description: I18n.tr("settings.screen-recorder.general.section.description")
   }
 
   // Output Folder
@@ -22,27 +22,22 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NTextInputButton {
-      label: "Output folder"
-      description: "Folder where screen recordings will be saved."
+      label: I18n.tr("settings.screen-recorder.general.output-folder.label")
+      description: I18n.tr("settings.screen-recorder.general.output-folder.description")
       placeholderText: Quickshell.env("HOME") + "/Videos"
       text: Settings.data.screenRecorder.directory
       buttonIcon: "folder-open"
-      buttonTooltip: "Browse for output folder"
+      buttonTooltip: I18n.tr("settings.screen-recorder.general.output-folder.tooltip")
       onInputEditingFinished: Settings.data.screenRecorder.directory = text
       onButtonClicked: folderPicker.open()
     }
 
-    ColumnLayout {
-      spacing: Style.marginS * scaling
-      Layout.fillWidth: true
-      Layout.topMargin: Style.marginM * scaling
-      // Show Cursor
-      NToggle {
-        label: "Show cursor"
-        description: "Record mouse cursor in the video."
-        checked: Settings.data.screenRecorder.showCursor
-        onToggled: checked => Settings.data.screenRecorder.showCursor = checked
-      }
+    // Show Cursor
+    NToggle {
+      label: I18n.tr("settings.screen-recorder.general.show-cursor.label")
+      description: I18n.tr("settings.screen-recorder.general.show-cursor.description")
+      checked: Settings.data.screenRecorder.showCursor
+      onToggled: checked => Settings.data.screenRecorder.showCursor = checked
     }
   }
 
@@ -58,193 +53,100 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      label: "Video settings"
+      label: I18n.tr("settings.screen-recorder.video.section.label")
+      description: I18n.tr("settings.screen-recorder.video.section.description")
     }
 
     // Source
     NComboBox {
-      label: "Video source"
-      description: "Portal is recommended, if you get artifacts try Screen."
-      model: ListModel {
-        ListElement {
-          key: "portal"
-          name: "Portal"
-        }
-        ListElement {
-          key: "screen"
-          name: "Screen"
-        }
-      }
+      label: I18n.tr("settings.screen-recorder.video.video-source.label")
+      description: I18n.tr("settings.screen-recorder.video.video-source.description")
+      model: [{
+          "key": "portal",
+          "name": I18n.tr("options.screen-recording.sources.portal")
+        }, {
+          "key": "screen",
+          "name": I18n.tr("options.screen-recording.sources.screen")
+        }]
       currentKey: Settings.data.screenRecorder.videoSource
       onSelected: key => Settings.data.screenRecorder.videoSource = key
     }
 
     // Frame Rate
     NComboBox {
-      label: "Frame rate"
-      description: "Target frame rate for screen recordings."
-      model: ListModel {
-        ListElement {
-          key: "30"
-          name: "30 FPS"
-        }
-        ListElement {
-          key: "60"
-          name: "60 FPS"
-        }
-        ListElement {
-          key: "100"
-          name: "100 FPS"
-        }
-        ListElement {
-          key: "120"
-          name: "120 FPS"
-        }
-        ListElement {
-          key: "144"
-          name: "144 FPS"
-        }
-        ListElement {
-          key: "165"
-          name: "165 FPS"
-        }
-        ListElement {
-          key: "240"
-          name: "240 FPS"
-        }
-      }
+      label: I18n.tr("settings.screen-recorder.video.frame-rate.label")
+      description: I18n.tr("settings.screen-recorder.video.frame-rate.description")
+      model: (function () {
+        const values = ["30", "60", "100", "120", "144", "165", "240"]
+        return values.map(function (v) {
+          return {
+            "key": v,
+            "name": (v + " FPS")
+          }
+        })
+      })()
       currentKey: Settings.data.screenRecorder.frameRate
       onSelected: key => Settings.data.screenRecorder.frameRate = key
     }
 
     // Video Quality
     NComboBox {
-      label: "Video quality"
-      description: "Higher quality results in larger file sizes."
-      model: ListModel {
-        ListElement {
-          key: "medium"
-          name: "Medium"
-        }
-        ListElement {
-          key: "high"
-          name: "High"
-        }
-        ListElement {
-          key: "very_high"
-          name: "Very high"
-        }
-        ListElement {
-          key: "ultra"
-          name: "Ultra"
-        }
-      }
+      label: I18n.tr("settings.screen-recorder.video.video-quality.label")
+      description: I18n.tr("settings.screen-recorder.video.video-quality.description")
+      model: [{
+          "key": "medium",
+          "name": I18n.tr("options.screen-recording.quality.medium")
+        }, {
+          "key": "high",
+          "name": I18n.tr("options.screen-recording.quality.high")
+        }, {
+          "key": "very_high",
+          "name": I18n.tr("options.screen-recording.quality.very-high")
+        }, {
+          "key": "ultra",
+          "name": I18n.tr("options.screen-recording.quality.ultra")
+        }]
       currentKey: Settings.data.screenRecorder.quality
       onSelected: key => Settings.data.screenRecorder.quality = key
     }
 
     // Video Codec
     NComboBox {
-      label: "Video codec"
-      description: "h264 is the most common codec."
-      model: ListModel {
-        ListElement {
-          key: "h264"
-          name: "H264"
-        }
-        ListElement {
-          key: "hevc"
-          name: "HEVC"
-        }
-        ListElement {
-          key: "av1"
-          name: "AV1"
-        }
-        ListElement {
-          key: "vp8"
-          name: "VP8"
-        }
-        ListElement {
-          key: "vp9"
-          name: "VP9"
-        }
-      }
+      label: I18n.tr("settings.screen-recorder.video.video-codec.label")
+      description: I18n.tr("settings.screen-recorder.video.video-codec.description")
+      model: [{
+          "key": "h264",
+          "name": "H264"
+        }, {
+          "key": "hevc",
+          "name": "HEVC"
+        }, {
+          "key": "av1",
+          "name": "AV1"
+        }, {
+          "key": "vp8",
+          "name": "VP8"
+        }, {
+          "key": "vp9",
+          "name": "VP9"
+        }]
       currentKey: Settings.data.screenRecorder.videoCodec
       onSelected: key => Settings.data.screenRecorder.videoCodec = key
     }
 
     // Color Range
     NComboBox {
-      label: "Color range"
-      description: "Limited is recommended for better compatibility."
-      model: ListModel {
-        ListElement {
-          key: "limited"
-          name: "Limited"
-        }
-        ListElement {
-          key: "full"
-          name: "Full"
-        }
-      }
+      label: I18n.tr("settings.screen-recorder.video.color-range.label")
+      description: I18n.tr("settings.screen-recorder.video.color-range.description")
+      model: [{
+          "key": "limited",
+          "name": I18n.tr("options.screen-recording.color-range.limited")
+        }, {
+          "key": "full",
+          "name": I18n.tr("options.screen-recording.color-range.full")
+        }]
       currentKey: Settings.data.screenRecorder.colorRange
       onSelected: key => Settings.data.screenRecorder.colorRange = key
-    }
-  }
-
-  NDivider {
-    Layout.fillWidth: true
-    Layout.topMargin: Style.marginL * 2 * scaling
-    Layout.bottomMargin: Style.marginL * scaling
-  }
-
-  // Audio Settings
-  ColumnLayout {
-    spacing: Style.marginL * scaling
-    Layout.fillWidth: true
-
-    NHeader {
-      label: "Audio settings"
-    }
-
-    // Audio Source
-    NComboBox {
-      label: "Audio source"
-      description: "Audio source to capture during recording."
-      model: ListModel {
-        ListElement {
-          key: "default_output"
-          name: "System output"
-        }
-        ListElement {
-          key: "default_input"
-          name: "Microphone input"
-        }
-        ListElement {
-          key: "both"
-          name: "System output + microphone input"
-        }
-      }
-      currentKey: Settings.data.screenRecorder.audioSource
-      onSelected: key => Settings.data.screenRecorder.audioSource = key
-    }
-
-    // Audio Codec
-    NComboBox {
-      label: "Audio codec"
-      description: "Opus is recommended for best performance and smallest audio size."
-      model: ListModel {
-        ListElement {
-          key: "opus"
-          name: "Opus"
-        }
-        ListElement {
-          key: "aac"
-          name: "AAC"
-        }
-      }
-      currentKey: Settings.data.screenRecorder.audioCodec
-      onSelected: key => Settings.data.screenRecorder.audioCodec = key
     }
   }
 
@@ -254,10 +156,54 @@ ColumnLayout {
     Layout.bottomMargin: Style.marginXL * scaling
   }
 
+  // Audio Settings
+  ColumnLayout {
+    spacing: Style.marginL * scaling
+    Layout.fillWidth: true
+
+    NHeader {
+      label: I18n.tr("settings.screen-recorder.audio.section.label")
+      description: I18n.tr("settings.screen-recorder.audio.section.description")
+    }
+
+    // Audio Source
+    NComboBox {
+      label: I18n.tr("settings.screen-recorder.audio.audio-source.label")
+      description: I18n.tr("settings.screen-recorder.audio.audio-source.description")
+      model: [{
+          "key": "default_output",
+          "name": I18n.tr("options.screen-recording.audio-sources.system-output")
+        }, {
+          "key": "default_input",
+          "name": I18n.tr("options.screen-recording.audio-sources.microphone-input")
+        }, {
+          "key": "both",
+          "name": I18n.tr("options.screen-recording.audio-sources.both")
+        }]
+      currentKey: Settings.data.screenRecorder.audioSource
+      onSelected: key => Settings.data.screenRecorder.audioSource = key
+    }
+
+    // Audio Codec
+    NComboBox {
+      label: I18n.tr("settings.screen-recorder.audio.audio-codec.label")
+      description: I18n.tr("settings.screen-recorder.audio.audio-codec.description")
+      model: [{
+          "key": "opus",
+          "name": I18n.tr("options.screen-recording.audio-codecs.opus")
+        }, {
+          "key": "aac",
+          "name": I18n.tr("options.screen-recording.audio-codecs.aac")
+        }]
+      currentKey: Settings.data.screenRecorder.audioCodec
+      onSelected: key => Settings.data.screenRecorder.audioCodec = key
+    }
+  }
+
   NFilePicker {
     id: folderPicker
     pickerType: "folder"
-    title: "Select output folder"
+    title: I18n.tr("settings.screen-recorder.general.select-output-folder")
     initialPath: Settings.data.screenRecorder.directory || Quickshell.env("HOME") + "/Videos"
     onAccepted: paths => Settings.data.screenRecorder.directory = paths[0]
   }

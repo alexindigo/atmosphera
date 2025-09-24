@@ -66,9 +66,9 @@ Singleton {
       }
       lastAdapterState = adapter.enabled
       if (adapter.enabled) {
-        ToastService.showNotice("Bluetooth", "Enabled")
+        ToastService.showNotice(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.enabled"))
       } else {
-        ToastService.showNotice("Bluetooth", "Disabled")
+        ToastService.showNotice(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.disabled"))
       }
     }
   }

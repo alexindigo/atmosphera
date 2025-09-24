@@ -19,7 +19,7 @@ RowLayout {
   }
   property string currentKey: ""
   property string placeholder: ""
-  property string searchPlaceholder: "Search..."
+  property string searchPlaceholder: I18n.tr("placeholders.search")
 
   readonly property real preferredHeight: Style.baseWidgetSize * 1.1 * scaling
 

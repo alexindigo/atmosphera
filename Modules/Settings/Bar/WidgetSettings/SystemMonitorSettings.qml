@@ -35,7 +35,7 @@ ColumnLayout {
   NToggle {
     id: showCpuUsage
     Layout.fillWidth: true
-    label: "CPU usage"
+    label: I18n.tr("bar.widget-settings.system-monitor.cpu-usage")
     checked: valueShowCpuUsage
     onToggled: checked => valueShowCpuUsage = checked
   }
@@ -43,7 +43,7 @@ ColumnLayout {
   NToggle {
     id: showCpuTemp
     Layout.fillWidth: true
-    label: "CPU temperature"
+    label: I18n.tr("bar.widget-settings.system-monitor.cpu-temperature")
     checked: valueShowCpuTemp
     onToggled: checked => valueShowCpuTemp = checked
   }
@@ -51,7 +51,7 @@ ColumnLayout {
   NToggle {
     id: showMemoryUsage
     Layout.fillWidth: true
-    label: "Memory usage"
+    label: I18n.tr("bar.widget-settings.system-monitor.memory-usage")
     checked: valueShowMemoryUsage
     onToggled: checked => valueShowMemoryUsage = checked
   }
@@ -59,7 +59,7 @@ ColumnLayout {
   NToggle {
     id: showMemoryAsPercent
     Layout.fillWidth: true
-    label: "Memory as percentage"
+    label: I18n.tr("bar.widget-settings.system-monitor.memory-percentage")
     checked: valueShowMemoryAsPercent
     onToggled: checked => valueShowMemoryAsPercent = checked
   }
@@ -67,7 +67,7 @@ ColumnLayout {
   NToggle {
     id: showNetworkStats
     Layout.fillWidth: true
-    label: "Network traffic"
+    label: I18n.tr("bar.widget-settings.system-monitor.network-traffic")
     checked: valueShowNetworkStats
     onToggled: checked => valueShowNetworkStats = checked
   }
@@ -75,7 +75,7 @@ ColumnLayout {
   NToggle {
     id: showDiskUsage
     Layout.fillWidth: true
-    label: "Storage usage"
+    label: I18n.tr("bar.widget-settings.system-monitor.storage-usage")
     checked: valueShowDiskUsage
     onToggled: checked => valueShowDiskUsage = checked
   }

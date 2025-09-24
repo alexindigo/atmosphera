@@ -307,7 +307,7 @@ Variants {
                     }
 
                     NText {
-                      text: `${model.appName || "Unknown App"} · ${Time.formatRelativeTime(model.timestamp)}`
+                      text: `${model.appName || I18n.tr("system.unknown-app")} · ${Time.formatRelativeTime(model.timestamp)}`
                       color: Color.mSecondary
                       font.pointSize: Style.fontSizeXS * scaling
                     }
@@ -318,7 +318,7 @@ Variants {
                   }
 
                   NText {
-                    text: model.summary || "No summary"
+                    text: model.summary || I18n.tr("general.no-summary")
                     font.pointSize: Style.fontSizeL * scaling
                     font.weight: Style.fontWeightMedium
                     color: Color.mOnSurface
@@ -399,7 +399,7 @@ Variants {
             // Close button positioned absolutely
             NIconButton {
               icon: "close"
-              tooltipText: "Close"
+              tooltipText: I18n.tr("tooltips.close")
               baseSize: Style.baseWidgetSize * 0.6
               anchors.top: parent.top
               anchors.topMargin: Style.marginM * scaling

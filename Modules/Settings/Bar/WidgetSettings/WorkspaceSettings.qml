@@ -23,21 +23,17 @@ ColumnLayout {
   NComboBox {
     id: labelModeCombo
 
-    label: "Label Mode"
-    model: ListModel {
-      ListElement {
-        key: "none"
-        name: "None"
-      }
-      ListElement {
-        key: "index"
-        name: "Index"
-      }
-      ListElement {
-        key: "name"
-        name: "Name"
-      }
-    }
+    label: I18n.tr("bar.widget-settings.workspace.label-mode")
+    model: [{
+        "key": "none",
+        "name": I18n.tr("options.workspace-labels.none")
+      }, {
+        "key": "index",
+        "name": I18n.tr("options.workspace-labels.index")
+      }, {
+        "key": "name",
+        "name": I18n.tr("options.workspace-labels.name")
+      }]
     currentKey: widgetData.labelMode || widgetMetadata.labelMode
     onSelected: key => labelModeCombo.currentKey = key
     minimumWidth: 200 * scaling
@@ -45,8 +41,8 @@ ColumnLayout {
 
   NToggle {
     id: hideUnoccupiedToggle
-    label: "Hide unoccupied"
-    description: "Don't display workspaces without windows."
+    label: I18n.tr("bar.widget-settings.workspace.hide-unoccupied.label")
+    description: I18n.tr("bar.widget-settings.workspace.hide-unoccupied.description")
     checked: widgetData.hideUnoccupied
     onToggled: checked => hideUnoccupiedToggle.checked = checked
   }

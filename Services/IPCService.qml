@@ -114,7 +114,7 @@ Item {
     target: "powerPanel"
     function toggle() {
       sessionMenuPanel.toggle()
-      ToastService.showWarning("IPC", "PowerPanel has been renamed to SessionMenu, this IPC call will be deprecated soon. Please use \"ipc call sessionMenu toggle\" instead.", 8000)
+      ToastService.showWarning("IPC", I18n.tr("toast.ipc.powerpanel-deprecated"), 8000)
     }
   }
   IpcHandler {
@@ -130,7 +130,7 @@ Item {
     function toggle() {
       // Will attempt to open the panel next to the bar button if any.
       controlCenterPanel.toggle(BarService.lookupWidget("ControlCenter"))
-      ToastService.showWarning("IPC", "SidePanel has been renamed to ControlCenter, this IPC call will be deprecated soon. Please use \"ipc call controlCenter toggle\" instead.", 8000)
+      ToastService.showWarning("IPC", I18n.tr("toast.ipc.sidepanel-deprecated"), 8000)
     }
   }
   IpcHandler {

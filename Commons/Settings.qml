@@ -497,22 +497,13 @@ Singleton {
   // -----------------------------------------------------
   // Kickoff essential services
   function kickOffServices() {
-    // Ensure our location singleton is created as soon as possible so we start fetching weather asap
     LocationService.init()
-
     NightLightService.apply()
-
     ColorSchemeService.init()
-
     MatugenService.init()
-
-    // Ensure wallpapers are restored after settings have been loaded
     WallpaperService.init()
-
     FontService.init()
-
     HooksService.init()
-
     BluetoothService.init()
   }
 }

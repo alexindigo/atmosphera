@@ -84,7 +84,7 @@ NBox {
         model: availableWidgets
         label: ""
         description: ""
-        placeholder: "Select a widget to add..."
+        placeholder: I18n.tr("bar.widget-settings.section-editor.placeholder")
         onSelected: key => comboBox.currentKey = key
         popupHeight: 340 * scaling
 
@@ -99,7 +99,7 @@ NBox {
         colorBgHover: Color.mSecondary
         colorFgHover: Color.mOnSecondary
         enabled: comboBox.currentKey !== ""
-        tooltipText: "Add widget"
+        tooltipText: I18n.tr("tooltips.add-widget")
         Layout.alignment: Qt.AlignVCenter
         Layout.leftMargin: Style.marginS * scaling
         onClicked: {
@@ -166,17 +166,17 @@ NBox {
               parent: Overlay.overlay
               width: 240 * scaling
               model: [{
-                  "label": "Move to left section",
+                  "label": I18n.tr("tooltips.move-to-left-section"),
                   "action": "left",
                   "icon": "arrow-bar-to-left",
                   "visible": root.sectionId !== "left"
                 }, {
-                  "label": "Move to center section",
+                  "label": I18n.tr("tooltips.move-to-center-section"),
                   "action": "center",
                   "icon": "layout-columns",
                   "visible": root.sectionId !== "center"
                 }, {
-                  "label": "Move to right section",
+                  "label": I18n.tr("tooltips.move-to-right-section"),
                   "action": "right",
                   "icon": "arrow-bar-to-right",
                   "visible": root.sectionId !== "right"
@@ -227,7 +227,7 @@ NBox {
                   active: BarWidgetRegistry.widgetHasUserSettings(modelData.id)
                   sourceComponent: NIconButton {
                     icon: "settings"
-                    tooltipText: "Widget settings"
+                    tooltipText: I18n.tr("tooltips.widget-settings")
                     baseSize: miniButtonSize
                     colorBorder: Qt.alpha(Color.mOutline, Style.opacityLight)
                     colorBg: Color.mOnSurface
@@ -268,7 +268,7 @@ NBox {
 
                 NIconButton {
                   icon: "close"
-                  tooltipText: "Remove widget"
+                  tooltipText: I18n.tr("tooltips.remove-widget")
                   baseSize: miniButtonSize
                   colorBorder: Qt.alpha(Color.mOutline, Style.opacityLight)
                   colorBg: Color.mOnSurface

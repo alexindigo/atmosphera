@@ -108,7 +108,7 @@ Rectangle {
   }
   NTooltip {
     id: tooltip
-    text: "Open calendar"
+    text: I18n.tr("clock.tooltip")
     target: clockContainer
     positionAbove: Settings.data.bar.position === "bottom"
   }

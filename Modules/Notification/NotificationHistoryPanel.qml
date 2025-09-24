@@ -37,7 +37,7 @@ NPanel {
         }
 
         NText {
-          text: "Notifications"
+          text: I18n.tr("notifications.panel.title")
           font.pointSize: Style.fontSizeL * scaling
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface
@@ -46,14 +46,14 @@ NPanel {
 
         NIconButton {
           icon: Settings.data.notifications.doNotDisturb ? "bell-off" : "bell"
-          tooltipText: `'Do not disturb' ${Settings.data.notifications.doNotDisturb ? "enabled" : "disabled"}`
+          tooltipText: Settings.data.notifications.doNotDisturb ? I18n.tr("tooltips.do-not-disturb-enabled") : I18n.tr("tooltips.do-not-disturb-disabled")
           baseSize: Style.baseWidgetSize * 0.8
           onClicked: Settings.data.notifications.doNotDisturb = !Settings.data.notifications.doNotDisturb
         }
 
         NIconButton {
           icon: "trash"
-          tooltipText: "Clear history"
+          tooltipText: I18n.tr("tooltips.clear-history")
           baseSize: Style.baseWidgetSize * 0.8
           onClicked: {
             NotificationService.clearHistory()
@@ -64,7 +64,7 @@ NPanel {
 
         NIconButton {
           icon: "close"
-          tooltipText: "Close"
+          tooltipText: I18n.tr("tooltips.close")
           baseSize: Style.baseWidgetSize * 0.8
           onClicked: root.close()
         }
@@ -94,14 +94,14 @@ NPanel {
         }
 
         NText {
-          text: "No notifications"
+          text: I18n.tr("notifications.panel.no-notifications")
           font.pointSize: Style.fontSizeL * scaling
           color: Color.mOnSurfaceVariant
           Layout.alignment: Qt.AlignHCenter
         }
 
         NText {
-          text: "Your notifications will show up here as they arrive."
+          text: I18n.tr("notifications.panel.description")
           font.pointSize: Style.fontSizeS * scaling
           color: Color.mOnSurfaceVariant
           Layout.alignment: Qt.AlignHCenter
@@ -216,7 +216,7 @@ NPanel {
 
               // Summary
               NText {
-                text: model.summary || "No summary"
+                text: model.summary || I18n.tr("general.no-summary")
                 font.pointSize: Style.fontSizeM * scaling
                 font.weight: Font.Medium
                 color: Color.mOnSurface
@@ -244,7 +244,7 @@ NPanel {
             // Delete button
             NIconButton {
               icon: "trash"
-              tooltipText: "Delete notification"
+              tooltipText: I18n.tr("tooltips.delete-notification")
               baseSize: Style.baseWidgetSize * 0.7
               Layout.alignment: Qt.AlignTop
 

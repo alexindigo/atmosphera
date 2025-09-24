@@ -30,27 +30,27 @@ NPanel {
   readonly property var powerOptions: [{
       "action": "lock",
       "icon": "lock",
-      "title": "Lock",
-      "subtitle": "Lock your session"
+      "title": I18n.tr("session-menu.lock"),
+      "subtitle": I18n.tr("session-menu.lock-subtitle")
     }, {
       "action": "suspend",
       "icon": "suspend",
-      "title": "Suspend",
+      "title": I18n.tr("session-menu.suspend"),
       "subtitle": "Put the system to sleep"
     }, {
       "action": "reboot",
       "icon": "reboot",
-      "title": "Reboot",
+      "title": I18n.tr("session-menu.reboot"),
       "subtitle": "Restart the system"
     }, {
       "action": "logout",
       "icon": "logout",
-      "title": "Logout",
-      "subtitle": "End your session"
+      "title": I18n.tr("session-menu.logout"),
+      "subtitle": I18n.tr("session-menu.end-subtitle")
     }, {
       "action": "shutdown",
       "icon": "shutdown",
-      "title": "Shutdown",
+      "title": I18n.tr("session-menu.shutdown"),
       "subtitle": "Turn off the system",
       "isShutdown": true
     }]
@@ -263,7 +263,10 @@ NPanel {
         Layout.preferredHeight: Style.baseWidgetSize * 0.8 * scaling
 
         NText {
-          text: timerActive ? `${pendingAction.charAt(0).toUpperCase() + pendingAction.slice(1)} in ${Math.ceil(timeRemaining / 1000)} seconds...` : "Session Menu"
+          text: timerActive ? I18n.tr("session-menu.action-in-seconds", {
+                                        "action": pendingAction.charAt(0).toUpperCase() + pendingAction.slice(1),
+                                        "seconds": Math.ceil(timeRemaining / 1000)
+                                      }) : I18n.tr("session-menu.title")
           font.weight: Style.fontWeightBold
           font.pointSize: Style.fontSizeL * scaling
           color: timerActive ? Color.mPrimary : Color.mOnSurface
@@ -277,7 +280,7 @@ NPanel {
 
         NIconButton {
           icon: timerActive ? "stop" : "close"
-          tooltipText: timerActive ? "Cancel timer" : "Close"
+          tooltipText: timerActive ? I18n.tr("tooltips.cancel-timer") : I18n.tr("tooltips.close")
           Layout.alignment: Qt.AlignVCenter
           colorBg: timerActive ? Qt.alpha(Color.mError, 0.08) : Color.transparent
           colorFg: timerActive ? Color.mError : Color.mOnSurface
@@ -419,7 +422,7 @@ NPanel {
         NText {
           text: {
             if (buttonRoot.pending) {
-              return "Click again to execute immediately"
+              return I18n.tr("session-menu.click-again")
             }
             return buttonRoot.subtitle
           }

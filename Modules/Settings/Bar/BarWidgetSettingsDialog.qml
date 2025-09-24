@@ -5,7 +5,6 @@ import QtQuick.Layouts
 import qs.Commons
 import qs.Widgets
 import qs.Services
-import "./WidgetSettings" as WidgetSettings
 
 // Widget Settings Dialog Component
 Popup {
@@ -63,7 +62,9 @@ Popup {
       Layout.fillWidth: true
 
       NText {
-        text: `${widgetSettings.widgetId} Settings`
+        text: I18n.tr("system.widget-settings-title", {
+                        "widget": widgetSettings.widgetId
+                      })
         font.pointSize: Style.fontSizeL * scaling
         font.weight: Style.fontWeightBold
         color: Color.mPrimary
@@ -101,13 +102,13 @@ Popup {
       }
 
       NButton {
-        text: "Cancel"
+        text: I18n.tr("bar.widget-settings.dialog.cancel")
         outlined: true
         onClicked: widgetSettings.close()
       }
 
       NButton {
-        text: "Apply"
+        text: I18n.tr("bar.widget-settings.dialog.apply")
         icon: "check"
         onClicked: {
           if (settingsLoader.item && settingsLoader.item.saveSettings) {

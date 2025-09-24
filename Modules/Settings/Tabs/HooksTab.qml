@@ -11,14 +11,14 @@ ColumnLayout {
   width: root.width
 
   NHeader {
-    label: "System hooks"
-    description: "Configure commands to be executed when system events occur."
+    label: I18n.tr("settings.hooks.system-hooks.section.label")
+    description: I18n.tr("settings.hooks.system-hooks.section.description")
   }
 
   // Enable/Disable Toggle
   NToggle {
-    label: "Enable hooks"
-    description: "Enable or disable all hook commands."
+    label: I18n.tr("settings.hooks.system-hooks.enable.label")
+    description: I18n.tr("settings.hooks.system-hooks.enable.description")
     checked: Settings.data.hooks.enabled
     onToggled: checked => Settings.data.hooks.enabled = checked
   }
@@ -35,9 +35,9 @@ ColumnLayout {
     // Wallpaper Hook Section
     NInputAction {
       id: wallpaperHookInput
-      label: "Wallpaper changed"
-      description: "Command to be executed when wallpaper changes."
-      placeholderText: "e.g., notify-send \"Wallpaper\" \"Changed\""
+      label: I18n.tr("settings.hooks.wallpaper-changed.label")
+      description: I18n.tr("settings.hooks.wallpaper-changed.description")
+      placeholderText: I18n.tr("settings.hooks.wallpaper-changed.placeholder")
       text: Settings.data.hooks.wallpaperChange
       onEditingFinished: {
         Settings.data.hooks.wallpaperChange = wallpaperHookInput.text
@@ -57,9 +57,9 @@ ColumnLayout {
     // Dark Mode Hook Section
     NInputAction {
       id: darkModeHookInput
-      label: "Theme changed"
-      description: "Command to be executed when theme toggles between dark and light mode."
-      placeholderText: "e.g., notify-send \"Theme\" \"Toggled\""
+      label: I18n.tr("settings.hooks.theme-changed.label")
+      description: I18n.tr("settings.hooks.theme-changed.description")
+      placeholderText: I18n.tr("settings.hooks.theme-changed.placeholder")
       text: Settings.data.hooks.darkModeChange
       onEditingFinished: {
         Settings.data.hooks.darkModeChange = darkModeHookInput.text
@@ -82,13 +82,13 @@ ColumnLayout {
       Layout.fillWidth: true
 
       NLabel {
-        label: "Hook Command Information"
-        description: "• Commands are executed via shell (sh -c)\n• Commands run in background (detached)\n• Test buttons execute with current values"
+        label: I18n.tr("settings.hooks.info.command-info.label")
+        description: I18n.tr("settings.hooks.info.command-info.description")
       }
 
       NLabel {
-        label: "Available Parameters"
-        description: "• Wallpaper Hook: $1 = wallpaper path, $2 = screen name\n• Theme Toggle Hook: $1 = true/false (dark mode state)"
+        label: I18n.tr("settings.hooks.info.parameters.label")
+        description: I18n.tr("settings.hooks.info.parameters.description")
       }
     }
   }

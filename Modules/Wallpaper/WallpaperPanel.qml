@@ -56,7 +56,7 @@ NPanel {
         }
 
         NText {
-          text: "Wallpaper selector"
+          text: I18n.tr("wallpaper.panel.title")
           font.pointSize: Style.fontSizeL * scaling
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface
@@ -65,14 +65,14 @@ NPanel {
 
         NIconButton {
           icon: "refresh"
-          tooltipText: "Refresh wallpaper list"
+          tooltipText: I18n.tr("tooltips.refresh-wallpaper-list")
           baseSize: Style.baseWidgetSize * 0.8
           onClicked: WallpaperService.refreshWallpapersList()
         }
 
         NIconButton {
           icon: "close"
-          tooltipText: "Close"
+          tooltipText: I18n.tr("tooltips.close")
           baseSize: Style.baseWidgetSize * 0.8
           onClicked: root.close()
         }
@@ -83,8 +83,8 @@ NPanel {
       }
 
       NToggle {
-        label: "Apply to all monitors"
-        description: "Apply selected wallpaper to all monitors at once."
+        label: I18n.tr("wallpaper.panel.apply-all-monitors.label")
+        description: I18n.tr("wallpaper.panel.apply-all-monitors.description")
         checked: Settings.data.wallpaper.setWallpaperOnAllMonitors
         onToggled: checked => Settings.data.wallpaper.setWallpaperOnAllMonitors = checked
         Layout.fillWidth: true
@@ -175,7 +175,7 @@ NPanel {
         spacing: Style.marginM * scaling
 
         NText {
-          text: "Search:"
+          text: I18n.tr("wallpaper.panel.search")
           color: Color.mOnSurface
           font.pointSize: Style.fontSizeM * scaling
           Layout.preferredWidth: implicitWidth
@@ -183,7 +183,7 @@ NPanel {
 
         NTextInput {
           id: searchInput
-          placeholderText: "Type to filter wallpapers..."
+          placeholderText: I18n.tr("placeholders.search-wallpapers")
           Layout.fillWidth: true
 
           onTextChanged: {
@@ -436,13 +436,13 @@ NPanel {
                 Layout.alignment: Qt.AlignHCenter
               }
               NText {
-                text: (wallpaperPanel.filterText && wallpaperPanel.filterText.length > 0) ? "No match found." : "No wallpaper found."
+                text: (wallpaperPanel.filterText && wallpaperPanel.filterText.length > 0) ? I18n.tr("wallpaper.no-match") : I18n.tr("wallpaper.no-wallpaper")
                 color: Color.mOnSurface
                 font.weight: Style.fontWeightBold
                 Layout.alignment: Qt.AlignHCenter
               }
               NText {
-                text: (wallpaperPanel.filterText && wallpaperPanel.filterText.length > 0) ? "Try a different search query." : "Configure your wallpaper directory with images."
+                text: (wallpaperPanel.filterText && wallpaperPanel.filterText.length > 0) ? I18n.tr("wallpaper.try-different-search") : I18n.tr("wallpaper.configure-directory")
                 color: Color.mOnSurfaceVariant
                 wrapMode: Text.WordWrap
                 Layout.alignment: Qt.AlignHCenter

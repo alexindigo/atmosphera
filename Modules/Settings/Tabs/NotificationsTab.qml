@@ -28,62 +28,55 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      label: "Appearance"
-      description: "Configure notifications appearance and behavior."
+      label: I18n.tr("settings.notifications.settings.section.label")
+      description: I18n.tr("settings.notifications.settings.section.description")
     }
 
     NToggle {
-      label: "Do not disturb"
-      description: "Disable all notification popups when enabled."
+      label: I18n.tr("settings.notifications.settings.do-not-disturb.label")
+      description: I18n.tr("settings.notifications.settings.do-not-disturb.description")
       checked: Settings.data.notifications.doNotDisturb
       onToggled: checked => Settings.data.notifications.doNotDisturb = checked
     }
 
-    NToggle {
-      label: "Enable on screen display"
-      description: "Show volume and brightness changes in real-time."
-      checked: Settings.data.notifications.enableOSD
-      onToggled: checked => Settings.data.notifications.enableOSD = checked
-    }
-
     NComboBox {
-      label: "Location"
-      description: "Where notifications appear on screen."
-      model: ListModel {
-        ListElement {
-          key: "top"
-          name: "Top"
-        }
-        ListElement {
-          key: "top_left"
-          name: "Top left"
-        }
-        ListElement {
-          key: "top_right"
-          name: "Top right"
-        }
-        ListElement {
-          key: "bottom"
-          name: "Bottom"
-        }
-        ListElement {
-          key: "bottom_left"
-          name: "Bottom left"
-        }
-        ListElement {
-          key: "bottom_right"
-          name: "Bottom right"
-        }
-      }
+      label: I18n.tr("settings.notifications.settings.location.label")
+      description: I18n.tr("settings.notifications.settings.location.description")
+      model: [{
+          "key": "top",
+          "name": I18n.tr("options.launcher.position.top_center")
+        }, {
+          "key": "top_left",
+          "name": I18n.tr("options.launcher.position.top_left")
+        }, {
+          "key": "top_right",
+          "name": I18n.tr("options.launcher.position.top_right")
+        }, {
+          "key": "bottom",
+          "name": I18n.tr("options.launcher.position.bottom_center")
+        }, {
+          "key": "bottom_left",
+          "name": I18n.tr("options.launcher.position.bottom_left")
+        }, {
+          "key": "bottom_right",
+          "name": I18n.tr("options.launcher.position.bottom_right")
+        }]
       currentKey: Settings.data.notifications.location || "top_right"
       onSelected: key => Settings.data.notifications.location = key
     }
 
     NToggle {
-      label: "Always on top"
-      description: "Display notifications above fullscreen windows and other layers."
+      label: I18n.tr("settings.notifications.settings.always-on-top.label")
+      description: I18n.tr("settings.notifications.settings.always-on-top.description")
       checked: Settings.data.notifications.alwaysOnTop
       onToggled: checked => Settings.data.notifications.alwaysOnTop = checked
+    }
+
+    NToggle {
+      label: I18n.tr("settings.notifications.settings.enable-osd.label")
+      description: I18n.tr("settings.notifications.settings.enable-osd.description")
+      checked: Settings.data.notifications.enableOSD
+      onToggled: checked => Settings.data.notifications.enableOSD = checked
     }
   }
 
@@ -93,20 +86,20 @@ ColumnLayout {
     Layout.bottomMargin: Style.marginXL * scaling
   }
 
-  // Notification Duration Settings
+  // Duration
   ColumnLayout {
     spacing: Style.marginL * scaling
     Layout.fillWidth: true
 
     NHeader {
-      label: "Notification duration"
-      description: "Configure how long notifications stay visible based on their urgency level."
+      label: I18n.tr("settings.notifications.duration.section.label")
+      description: I18n.tr("settings.notifications.duration.section.description")
     }
 
     // Respect Expire Timeout (eg. --expire-time flag in notify-send)
     NToggle {
-      label: "Respect expire timeout"
-      description: "Use the expire timeout set in the notification."
+      label: I18n.tr("settings.notifications.duration.respect-expire.label")
+      description: I18n.tr("settings.notifications.duration.respect-expire.description")
       checked: Settings.data.notifications.respectExpireTimeout
       onToggled: checked => Settings.data.notifications.respectExpireTimeout = checked
     }
@@ -117,8 +110,8 @@ ColumnLayout {
       Layout.fillWidth: true
 
       NLabel {
-        label: "Low urgency"
-        description: "How long low priority notifications stay visible."
+        label: I18n.tr("settings.notifications.duration.low-urgency.label")
+        description: I18n.tr("settings.notifications.duration.low-urgency.description")
       }
 
       NValueSlider {
@@ -138,8 +131,8 @@ ColumnLayout {
       Layout.fillWidth: true
 
       NLabel {
-        label: "Normal urgency"
-        description: "How long normal priority notifications stay visible."
+        label: I18n.tr("settings.notifications.duration.normal-urgency.label")
+        description: I18n.tr("settings.notifications.duration.normal-urgency.description")
       }
 
       NValueSlider {
@@ -159,8 +152,8 @@ ColumnLayout {
       Layout.fillWidth: true
 
       NLabel {
-        label: "Critical urgency"
-        description: "How long critical priority notifications stay visible."
+        label: I18n.tr("settings.notifications.duration.critical-urgency.label")
+        description: I18n.tr("settings.notifications.duration.critical-urgency.description")
       }
 
       NValueSlider {
@@ -173,22 +166,17 @@ ColumnLayout {
         text: Settings.data.notifications.criticalUrgencyDuration + "s"
       }
     }
-  }
 
-  NDivider {
-    Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
-  }
+    NDivider {
+      Layout.fillWidth: true
+      Layout.topMargin: Style.marginXL * scaling
+      Layout.bottomMargin: Style.marginXL * scaling
+    }
 
-  // Monitor Configuration
-  ColumnLayout {
-    spacing: Style.marginM * scaling
-    Layout.fillWidth: true
-
+    // Monitor Configuration
     NHeader {
-      label: "Monitors display"
-      description: "Show notification on specific monitors. Defaults to all if none are chosen."
+      label: I18n.tr("settings.notifications.monitors.section.label")
+      description: I18n.tr("settings.notifications.monitors.section.description")
     }
 
     Repeater {
@@ -196,7 +184,11 @@ ColumnLayout {
       delegate: NCheckbox {
         Layout.fillWidth: true
         label: modelData.name || "Unknown"
-        description: `${modelData.model} (${modelData.width}x${modelData.height})`
+        description: I18n.tr("system.monitor-description", {
+                               "model": modelData.model,
+                               "width": modelData.width,
+                               "height": modelData.height
+                             })
         checked: (Settings.data.notifications.monitors || []).indexOf(modelData.name) !== -1
         onToggled: checked => {
                      if (checked) {
