@@ -187,9 +187,7 @@ Singleton {
     running: activeList.count > 0
     onTriggered: {
       const now = Date.now()
-      const durations = [Settings.data.notifications?.lowUrgencyDuration * 1000 || 3000,
-                         Settings.data.notifications?.normalUrgencyDuration * 1000 || 8000,
-                         Settings.data.notifications?.criticalUrgencyDuration * 1000 || 15000]
+      const durations = [Settings.data.notifications?.lowUrgencyDuration * 1000 || 3000, Settings.data.notifications?.normalUrgencyDuration * 1000 || 8000, Settings.data.notifications?.criticalUrgencyDuration * 1000 || 15000]
 
       for (var i = activeList.count - 1; i >= 0; i--) {
         const notif = activeList.get(i)
@@ -197,9 +195,9 @@ Singleton {
         var expire = 0
 
         if (Settings.data.notifications?.respectExpireTimeout)
-          expire = notif.expireTimeout > 0 ? notif.expireTimeout : durations[notif.urgency]
+        expire = notif.expireTimeout > 0 ? notif.expireTimeout : durations[notif.urgency]
         else
-          expire = durations[notif.urgency]
+        expire = durations[notif.urgency]
 
         const progress = Math.max(1.0 - (elapsed / expire), 0.0)
         updateModel(activeList, notif.id, "progress", progress)
@@ -288,21 +286,20 @@ Singleton {
         }
 
         historyList.append({
-                            "id": item.id || "",
-                            "summary": item.summary || "",
-                            "body": item.body || "",
-                            "appName": item.appName || "",
-                            "urgency": item.urgency < 0 || item.urgency > 2 ? 1 : item.urgency,
-                            "timestamp": time,
-                            "originalImage": item.originalImage || "",
-                            "cachedImage": cachedImage
-                          })
+                             "id": item.id || "",
+                             "summary": item.summary || "",
+                             "body": item.body || "",
+                             "appName": item.appName || "",
+                             "urgency": item.urgency < 0 || item.urgency > 2 ? 1 : item.urgency,
+                             "timestamp": time,
+                             "originalImage": item.originalImage || "",
+                             "cachedImage": cachedImage
+                           })
       }
     } catch (e) {
       Logger.error("Notifications", "Load failed:", e)
     }
   }
-
 
   // Helpers
   function getAppName(name) {
