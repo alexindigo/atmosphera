@@ -297,7 +297,7 @@ Item {
                   if (model.isActive || model.isOccupied)
                     return Color.mOnSecondary
 
-                  return Color.mOnSurface
+                  return Color.mOnSecondary
                 }
               }
             }
@@ -312,7 +312,7 @@ Item {
             if (model.isActive || model.isOccupied)
               return Color.mSecondary
 
-            return Color.mOutline
+            return Qt.alpha(Color.mSecondary, 0.3)
           }
           scale: model.isFocused ? 1.0 : 0.9
           z: 0
