@@ -37,6 +37,10 @@ Variants {
 
     sourceComponent: PanelWindow {
       screen: modelData
+
+      WlrLayershell.namespace: "noctalia-notifications"
+      WlrLayershell.layer: (Settings.isLoaded && Settings.data && Settings.data.notifications && Settings.data.notifications.alwaysOnTop) ? WlrLayer.Overlay : WlrLayer.Top
+
       color: Color.transparent
 
       readonly property string location: (Settings.isLoaded && Settings.data && Settings.data.notifications && Settings.data.notifications.location) ? Settings.data.notifications.location : "top_right"
@@ -103,7 +107,7 @@ Variants {
 
       // Connect to animation signal from service - UPDATED TO USE ID
       Component.onCompleted: {
-        NotificationService.animateAndRemove.connect(function (notificationId, index) {
+        NotificationService.animateAndRemove.connect(function (notificationId) {
           // Find the delegate by notification ID
           var delegate = null
           if (notificationStack && notificationStack.children && notificationStack.children.length > 0) {
@@ -114,11 +118,6 @@ Variants {
                 break
               }
             }
-          }
-
-          // Fallback to index if ID lookup failed
-          if (!delegate && notificationStack && notificationStack.children && notificationStack.children[index]) {
-            delegate = notificationStack.children[index]
           }
 
           if (delegate && delegate.animateOut) {
@@ -158,6 +157,32 @@ Variants {
             border.color: Color.mOutline
             border.width: Math.max(1, Style.borderS * scaling)
             color: Color.mSurface
+
+            Rectangle {
+              id: progressBar
+              anchors.top: parent.top
+              anchors.left: parent.left
+              anchors.right: parent.right
+              height: 2 * scaling
+              color: "transparent"
+
+              property real availableWidth: parent.width - (2 * parent.radius)
+
+              Rectangle {
+                x: parent.parent.radius + (parent.availableWidth * (1 - model.progress)) / 2
+                width: parent.availableWidth * model.progress
+                height: parent.height
+                color: {
+                  if (model.urgency === NotificationUrgency.Critical || model.urgency === 2)
+                    return Color.mError
+                  else if (model.urgency === NotificationUrgency.Low || model.urgency === 0)
+                    return Color.mOnSurface
+                  else
+                    return Color.mPrimary
+                }
+                antialiasing: true
+              }
+            }
 
             // Animation properties
             property real scaleValue: 0.8

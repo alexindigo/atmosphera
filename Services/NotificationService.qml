@@ -24,6 +24,7 @@ Singleton {
   // Internal state
   property var activeMap: ({})
   property var imageQueue: []
+  property var progressTimers: ({})
 
   // Simple image cacher
   PanelWindow {
@@ -117,8 +118,10 @@ Singleton {
       "summary": (n.summary || ""),
       "body": stripTags(n.body || ""),
       "appName": getAppName(n.appName),
-      "urgency": n.urgency || 1,
+      "urgency": n.urgency < 0 || n.urgency > 2 ? 1 : n.urgency,
+      "expireTimeout": n.expireTimeout,
       "timestamp": time,
+      "progress": 1.0,
       "originalImage": image,
       "cachedImage": imageId ? (Settings.cacheDirImagesNotifications + imageId + ".png") : image,
       "actionsJson": JSON.stringify((n.actions || []).map(a => ({
@@ -160,7 +163,6 @@ Singleton {
   function updateModel(model, id, prop, value) {
     for (var i = 0; i < model.count; i++) {
       if (model.get(i).id === id) {
-        model.setProperty(i, prop, "")
         model.setProperty(i, prop, value)
         break
       }
@@ -172,6 +174,7 @@ Singleton {
       if (activeList.get(i).id === id) {
         activeList.remove(i)
         delete activeMap[id]
+        delete progressTimers[id]
         break
       }
     }
@@ -179,19 +182,31 @@ Singleton {
 
   // Auto-hide timer
   Timer {
-    interval: 1000
+    interval: 10
     repeat: true
     running: activeList.count > 0
     onTriggered: {
       const now = Date.now()
-      const durations = [3000, 8000, 15000] // low, normal, critical
+      const durations = [Settings.data.notifications?.lowUrgencyDuration * 1000 || 3000,
+                         Settings.data.notifications?.normalUrgencyDuration * 1000 || 8000,
+                         Settings.data.notifications?.criticalUrgencyDuration * 1000 || 15000]
 
       for (var i = activeList.count - 1; i >= 0; i--) {
         const notif = activeList.get(i)
         const elapsed = now - notif.timestamp.getTime()
+        var expire = 0
 
-        if (elapsed >= durations[notif.urgency] || elapsed >= 8000) {
-          animateAndRemove(notif.id, i)
+        if (Settings.data.notifications?.respectExpireTimeout)
+          expire = notif.expireTimeout > 0 ? notif.expireTimeout : durations[notif.urgency]
+        else
+          expire = durations[notif.urgency]
+
+        const progress = Math.max(1.0 - (elapsed / expire), 0.0)
+        updateModel(activeList, notif.id, "progress", progress)
+
+        if (elapsed >= expire) {
+          animateAndRemove(notif.id)
+          delete progressTimers[notif.id]
           break
         }
       }
@@ -273,20 +288,21 @@ Singleton {
         }
 
         historyList.append({
-                             "id": item.id || "",
-                             "summary": item.summary || "",
-                             "body": item.body || "",
-                             "appName": item.appName || "",
-                             "urgency": item.urgency || 1,
-                             "timestamp": time,
-                             "originalImage": item.originalImage || "",
-                             "cachedImage": cachedImage
-                           })
+                            "id": item.id || "",
+                            "summary": item.summary || "",
+                            "body": item.body || "",
+                            "appName": item.appName || "",
+                            "urgency": item.urgency < 0 || item.urgency > 2 ? 1 : item.urgency,
+                            "timestamp": time,
+                            "originalImage": item.originalImage || "",
+                            "cachedImage": cachedImage
+                          })
       }
     } catch (e) {
       Logger.error("Notifications", "Load failed:", e)
     }
   }
+
 
   // Helpers
   function getAppName(name) {
@@ -380,7 +396,7 @@ Singleton {
   }
 
   // Signals & connections
-  signal animateAndRemove(string notificationId, int index)
+  signal animateAndRemove(string notificationId)
 
   Connections {
     target: Settings.data.notifications

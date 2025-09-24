@@ -78,6 +78,13 @@ ColumnLayout {
       currentKey: Settings.data.notifications.location || "top_right"
       onSelected: key => Settings.data.notifications.location = key
     }
+
+    NToggle {
+      label: "Always on top"
+      description: "Display notifications above fullscreen windows and other layers."
+      checked: Settings.data.notifications.alwaysOnTop
+      onToggled: checked => Settings.data.notifications.alwaysOnTop = checked
+    }
   }
 
   NDivider {
@@ -94,6 +101,14 @@ ColumnLayout {
     NHeader {
       label: "Notification duration"
       description: "Configure how long notifications stay visible based on their urgency level."
+    }
+
+    // Respect Expire Timeout (eg. --expire-time flag in notify-send)
+    NToggle {
+      label: "Respect expire timeout"
+      description: "Use the expire timeout set in the notification."
+      checked: Settings.data.notifications.respectExpireTimeout
+      onToggled: checked => Settings.data.notifications.respectExpireTimeout = checked
     }
 
     // Low Urgency Duration
