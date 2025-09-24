@@ -178,7 +178,10 @@ ColumnLayout {
           required property PwNode modelData
           ButtonGroup.group: sinks
           checked: AudioService.sink?.id === modelData.id
-          onClicked: AudioService.setAudioSink(modelData)
+          onClicked: {
+            AudioService.setAudioSink(modelData)
+            localVolume = AudioService.volume
+          }
           text: modelData.description
         }
       }
