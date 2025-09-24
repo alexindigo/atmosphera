@@ -26,20 +26,16 @@ ColumnLayout {
     label: I18n.tr("bar.widget-settings.volume.display-mode.label")
     description: I18n.tr("bar.widget-settings.volume.display-mode.description")
     minimumWidth: 134 * scaling
-    model: [
-      {
-        key: "onhover",
-        name: I18n.tr("options.display-mode.on-hover")
-      },
-      {
-        key: "alwaysShow",
-        name: I18n.tr("options.display-mode.always-show")
-      },
-      {
-        key: "alwaysHide",
-        name: I18n.tr("options.display-mode.always-hide")
-      }
-    ]
+    model: [{
+        "key": "onhover",
+        "name": I18n.tr("options.display-mode.on-hover")
+      }, {
+        "key": "alwaysShow",
+        "name": I18n.tr("options.display-mode.always-show")
+      }, {
+        "key": "alwaysHide",
+        "name": I18n.tr("options.display-mode.always-hide")
+      }]
     currentKey: valueDisplayMode
     onSelected: key => valueDisplayMode = key
   }

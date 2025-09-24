@@ -34,7 +34,7 @@ NBox {
       }
 
       // NText {
-      //   text: "No media player detected"
+      //   text: I18n.tr("system.no-media-player-detected")
       //   color: Color.mOnSurfaceVariant
       //   Layout.alignment: Qt.AlignHCenter
       // }

@@ -9,7 +9,7 @@ import qs.Services
 
 Singleton {
   id: root
-  property string currentLayout: "Unknown"
+  property string currentLayout: I18n.tr("system.unknown-layout")
   property int updateInterval: 1000 // Update every second
 
   // Timer to periodically update the layout

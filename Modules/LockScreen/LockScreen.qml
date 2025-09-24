@@ -455,7 +455,9 @@ Loader {
                       font.family: Settings.data.ui.fontFixed
                       font.pointSize: Style.fontSizeL * scaling
                       property int currentIndex: 0
-                      property string fullText: "Welcome back, " + Quickshell.env("USER") + "!"
+                      property string fullText: I18n.tr("system.welcome-back", {
+                                                          "user": Quickshell.env("USER")
+                                                        })
 
                       Timer {
                         interval: Style.animationFast

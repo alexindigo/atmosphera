@@ -282,7 +282,7 @@ Variants {
                     }
 
                     NText {
-                      text: `${model.appName || "Unknown App"} · ${Time.formatRelativeTime(model.timestamp)}`
+                      text: `${model.appName || I18n.tr("system.unknown-app")} · ${Time.formatRelativeTime(model.timestamp)}`
                       color: Color.mSecondary
                       font.pointSize: Style.fontSizeXS * scaling
                     }

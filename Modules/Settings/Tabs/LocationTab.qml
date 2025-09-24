@@ -42,7 +42,10 @@ ColumnLayout {
 
     NText {
       visible: LocationService.coordinatesReady
-      text: `${LocationService.stableName} (${LocationService.displayCoordinates})`
+      text: I18n.tr("system.location-display", {
+                      "name": LocationService.stableName,
+                      "coordinates": LocationService.displayCoordinates
+                    })
       font.pointSize: Style.fontSizeS * scaling
       color: Color.mOnSurfaceVariant
       verticalAlignment: Text.AlignVCenter

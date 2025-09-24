@@ -24,20 +24,16 @@ ColumnLayout {
     id: labelModeCombo
 
     label: I18n.tr("bar.widget-settings.workspace.label-mode")
-    model: [
-      {
-        key: "none",
-        name: I18n.tr("options.workspace-labels.none")
-      },
-      {
-        key: "index",
-        name: I18n.tr("options.workspace-labels.index")
-      },
-      {
-        key: "name",
-        name: I18n.tr("options.workspace-labels.name")
-      }
-    ]
+    model: [{
+        "key": "none",
+        "name": I18n.tr("options.workspace-labels.none")
+      }, {
+        "key": "index",
+        "name": I18n.tr("options.workspace-labels.index")
+      }, {
+        "key": "name",
+        "name": I18n.tr("options.workspace-labels.name")
+      }]
     currentKey: widgetData.labelMode || widgetMetadata.labelMode
     onSelected: key => labelModeCombo.currentKey = key
     minimumWidth: 200 * scaling

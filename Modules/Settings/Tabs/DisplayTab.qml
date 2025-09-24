@@ -90,7 +90,11 @@ ColumnLayout {
 
           NLabel {
             label: modelData.name || "Unknown"
-            description: `${modelData.model} (${modelData.width}x${modelData.height})`
+            description: I18n.tr("system.monitor-description", {
+                                   "model": modelData.model,
+                                   "width": modelData.width,
+                                   "height": modelData.height
+                                 })
           }
 
           // Scale
@@ -114,7 +118,9 @@ ColumnLayout {
                 stepSize: 0.01
                 value: localScaling
                 onPressedChanged: (pressed, value) => ScalingService.setScreenScale(modelData, value)
-                text: `${Math.round(localScaling * 100)}%`
+                text: I18n.tr("system.scaling-percentage", {
+                                "percentage": Math.round(localScaling * 100)
+                              })
                 Layout.fillWidth: true
               }
 

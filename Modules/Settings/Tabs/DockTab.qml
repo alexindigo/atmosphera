@@ -101,7 +101,11 @@ ColumnLayout {
       delegate: NCheckbox {
         Layout.fillWidth: true
         label: modelData.name || "Unknown"
-        description: `${modelData.model} (${modelData.width}x${modelData.height})`
+        description: I18n.tr("system.monitor-description", {
+                               "model": modelData.model,
+                               "width": modelData.width,
+                               "height": modelData.height
+                             })
         checked: (Settings.data.dock.monitors || []).indexOf(modelData.name) !== -1
         onToggled: checked => {
                      if (checked) {

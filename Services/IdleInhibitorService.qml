@@ -10,7 +10,7 @@ Singleton {
   id: root
 
   property bool isInhibited: false
-  property string reason: "User requested"
+  property string reason: I18n.tr("system.user-requested")
   property var activeInhibitors: []
 
   // Different inhibitor strategies

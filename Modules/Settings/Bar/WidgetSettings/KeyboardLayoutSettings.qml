@@ -26,20 +26,16 @@ ColumnLayout {
     label: I18n.tr("bar.widget-settings.keyboard-layout.display-mode.label")
     description: I18n.tr("bar.widget-settings.keyboard-layout.display-mode.description")
     minimumWidth: 134 * scaling
-    model: [
-      {
-        key: "onhover",
-        name: I18n.tr("options.display-mode.on-hover")
-      },
-      {
-        key: "forceOpen",
-        name: I18n.tr("options.display-mode.force-open")
-      },
-      {
-        key: "alwaysHide",
-        name: I18n.tr("options.display-mode.always-hide")
-      }
-    ]
+    model: [{
+        "key": "onhover",
+        "name": I18n.tr("options.display-mode.on-hover")
+      }, {
+        "key": "forceOpen",
+        "name": I18n.tr("options.display-mode.force-open")
+      }, {
+        "key": "alwaysHide",
+        "name": I18n.tr("options.display-mode.always-hide")
+      }]
     currentKey: valueDisplayMode
     onSelected: key => valueDisplayMode = key
   }

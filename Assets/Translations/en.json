@@ -970,7 +970,9 @@
     "previous-media": "Previous media",
     "pause": "Pause",
     "play": "Play",
-    "next-media": "Next media"
+    "next-media": "Next media",
+    "power-profile": "'{profile}' power profile",
+    "keyboard-layout": "{layout} keyboard layout"
   },
   "clock": {
     "tooltip": "Open calendar"
@@ -992,7 +994,11 @@
     "clock-horizontal": "HH:mm ddd, MMM dd",
     "clock-vertical": "HH mm dd MM",
     "search-wallpapers": "Type to filter wallpapers...",
-    "search-launcher": "Search entries... or use > for commands"
+    "search-launcher": "Search entries... or use > for commands",
+    "search": "Search...",
+    "select": "Select",
+    "cancel": "Cancel",
+    "test": "Test"
   },
   "options": {
     "display-mode": {
@@ -1058,6 +1064,23 @@
     "applications": "Applications",
     "clipboard": "Clipboard history",
     "calculator": "Calculator"
+  },
+  "system": {
+    "uptime": "System uptime: {uptime}",
+    "welcome-back": "Welcome back, {user}!",
+    "monitor-description": "{model} ({width}x{height})",
+    "scaling-percentage": "{percentage}%",
+    "location-display": "{name} ({coordinates})",
+    "signal-strength": "{signal}%",
+    "cpu-temperature": "{temp}°C",
+    "disk-usage": "{percent}%",
+    "widget-settings-title": "{widget} Settings",
+    "unknown-app": "Unknown App",
+    "no-media-player-detected": "No media player detected",
+    "user-requested": "User requested",
+    "unknown": "Unknown",
+    "unknown-version": "Unknown",
+    "unknown-layout": "Unknown"
   },
   "lock-screen": {
     "secure-terminal": "SECURE TERMINAL",

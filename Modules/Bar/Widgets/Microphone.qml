@@ -97,7 +97,9 @@ Item {
     suffix: "%"
     forceOpen: displayMode === "alwaysShow"
     forceClose: displayMode === "alwaysHide"
-    tooltipText: I18n.tr("tooltips.microphone-volume-at", {"volume": Math.round(AudioService.inputVolume * 100)})
+    tooltipText: I18n.tr("tooltips.microphone-volume-at", {
+                           "volume": Math.round(AudioService.inputVolume * 100)
+                         })
 
     onWheel: function (delta) {
       wheelAccumulator += delta

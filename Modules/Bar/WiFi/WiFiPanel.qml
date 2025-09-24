@@ -263,7 +263,9 @@ NPanel {
                         spacing: Style.marginXS * scaling
 
                         NText {
-                          text: `${modelData.signal}%`
+                          text: I18n.tr("system.signal-strength", {
+                                          "signal": modelData.signal
+                                        })
                           font.pointSize: Style.fontSizeXXS * scaling
                           color: Color.mOnSurfaceVariant
                         }

@@ -326,24 +326,19 @@ ColumnLayout {
       id: audioVisualizerCombo
       label: I18n.tr("settings.audio.media.visualizer-type.label")
       description: I18n.tr("settings.audio.media.visualizer-type.description")
-      model: [
-        {
-          key: "none",
-          name: I18n.tr("options.visualizer-types.none")
-        },
-        {
-          key: "linear",
-          name: I18n.tr("options.visualizer-types.linear")
-        },
-        {
-          key: "mirrored",
-          name: I18n.tr("options.visualizer-types.mirrored")
-        },
-        {
-          key: "wave",
-          name: I18n.tr("options.visualizer-types.wave")
-        }
-      ]
+      model: [{
+          "key": "none",
+          "name": I18n.tr("options.visualizer-types.none")
+        }, {
+          "key": "linear",
+          "name": I18n.tr("options.visualizer-types.linear")
+        }, {
+          "key": "mirrored",
+          "name": I18n.tr("options.visualizer-types.mirrored")
+        }, {
+          "key": "wave",
+          "name": I18n.tr("options.visualizer-types.wave")
+        }]
       currentKey: Settings.data.audio.visualizerType
       onSelected: key => Settings.data.audio.visualizerType = key
     }
@@ -351,36 +346,28 @@ ColumnLayout {
     NComboBox {
       label: I18n.tr("settings.audio.media.frame-rate.label")
       description: I18n.tr("settings.audio.media.frame-rate.description")
-      model: [
-        {
-          key: "30",
-          name: I18n.tr("options.frame-rates.30-fps")
-        },
-        {
-          key: "60",
-          name: I18n.tr("options.frame-rates.60-fps")
-        },
-        {
-          key: "100",
-          name: I18n.tr("options.frame-rates.100-fps")
-        },
-        {
-          key: "120",
-          name: I18n.tr("options.frame-rates.120-fps")
-        },
-        {
-          key: "144",
-          name: I18n.tr("options.frame-rates.144-fps")
-        },
-        {
-          key: "165",
-          name: I18n.tr("options.frame-rates.165-fps")
-        },
-        {
-          key: "240",
-          name: I18n.tr("options.frame-rates.240-fps")
-        }
-      ]
+      model: [{
+          "key": "30",
+          "name": I18n.tr("options.frame-rates.30-fps")
+        }, {
+          "key": "60",
+          "name": I18n.tr("options.frame-rates.60-fps")
+        }, {
+          "key": "100",
+          "name": I18n.tr("options.frame-rates.100-fps")
+        }, {
+          "key": "120",
+          "name": I18n.tr("options.frame-rates.120-fps")
+        }, {
+          "key": "144",
+          "name": I18n.tr("options.frame-rates.144-fps")
+        }, {
+          "key": "165",
+          "name": I18n.tr("options.frame-rates.165-fps")
+        }, {
+          "key": "240",
+          "name": I18n.tr("options.frame-rates.240-fps")
+        }]
       currentKey: Settings.data.audio.cavaFrameRate
       onSelected: key => Settings.data.audio.cavaFrameRate = key
     }

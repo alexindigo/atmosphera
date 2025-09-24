@@ -63,7 +63,9 @@ Popup {
       Layout.fillWidth: true
 
       NText {
-        text: `${widgetSettings.widgetId} Settings`
+        text: I18n.tr("system.widget-settings-title", {
+                        "widget": widgetSettings.widgetId
+                      })
         font.pointSize: Style.fontSizeL * scaling
         font.weight: Style.fontWeightBold
         color: Color.mPrimary

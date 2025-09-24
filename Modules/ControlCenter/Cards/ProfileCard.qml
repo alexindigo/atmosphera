@@ -42,7 +42,9 @@ NBox {
         font.capitalization: Font.Capitalize
       }
       NText {
-        text: `System uptime: ${uptimeText}`
+        text: I18n.tr("system.uptime", {
+                        "uptime": uptimeText
+                      })
         font.pointSize: Style.fontSizeS * scaling
         color: Color.mOnSurfaceVariant
       }
