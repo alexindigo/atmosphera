@@ -131,9 +131,15 @@ Singleton {
 
   function setAudioSink(newSink: PwNode): void {
     Pipewire.preferredDefaultAudioSink = newSink
+    // Volume is changed by the sink change
+    root._volume = newSink?.audio?.volume ?? 0
+    root._muted = !!newSink?.audio?.muted
   }
 
   function setAudioSource(newSource: PwNode): void {
     Pipewire.preferredDefaultAudioSource = newSource
+    // Volume is changed by the source change
+    root._inputVolume = newSource?.audio?.volume ?? 0
+    root._inputMuted = !!newSource?.audio?.muted
   }
 }
