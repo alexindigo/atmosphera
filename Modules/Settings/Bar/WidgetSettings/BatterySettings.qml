@@ -28,20 +28,20 @@ ColumnLayout {
     label: I18n.tr("bar.widget-settings.battery.display-mode.label")
     description: I18n.tr("bar.widget-settings.battery.display-mode.description")
     minimumWidth: 134 * scaling
-    model: ListModel {
-      ListElement {
-        key: "onhover"
-        name: "On hover"
+    model: [
+      {
+        key: "onhover",
+        name: I18n.tr("options.display-mode.on-hover")
+      },
+      {
+        key: "alwaysShow",
+        name: I18n.tr("options.display-mode.always-show")
+      },
+      {
+        key: "alwaysHide",
+        name: I18n.tr("options.display-mode.always-hide")
       }
-      ListElement {
-        key: "alwaysShow"
-        name: "Always show"
-      }
-      ListElement {
-        key: "alwaysHide"
-        name: "Always hide"
-      }
-    }
+    ]
     currentKey: root.valueDisplayMode
     onSelected: key => root.valueDisplayMode = key
   }

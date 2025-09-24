@@ -374,7 +374,7 @@ Variants {
             // Close button positioned absolutely
             NIconButton {
               icon: "close"
-              tooltipText: "Close"
+              tooltipText: I18n.tr("tooltips.close")
               baseSize: Style.baseWidgetSize * 0.6
               anchors.top: parent.top
               anchors.topMargin: Style.marginM * scaling

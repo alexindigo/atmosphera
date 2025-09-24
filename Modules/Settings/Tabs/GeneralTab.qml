@@ -36,7 +36,7 @@ ColumnLayout {
                      })
       description: I18n.tr("settings.general.profile.picture.description")
       text: Settings.data.general.avatarImage
-      placeholderText: "/home/user/.face"
+      placeholderText: I18n.tr("placeholders.profile-picture-path")
       buttonIcon: "photo"
       buttonTooltip: "Browse for avatar image"
       onInputEditingFinished: Settings.data.general.avatarImage = text

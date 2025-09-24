@@ -86,7 +86,7 @@ Popup {
         id: searchInput
         Layout.fillWidth: true
         label: I18n.tr("widgets.icon-picker.search.label")
-        placeholderText: "e.g., noctalia, niri, battery, cloud"
+        placeholderText: I18n.tr("placeholders.search-icons")
         text: root.query
         onTextChanged: root.query = text.trim().toLowerCase()
       }

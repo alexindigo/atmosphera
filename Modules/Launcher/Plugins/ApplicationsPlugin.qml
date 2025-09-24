@@ -7,7 +7,7 @@ import "../../../Helpers/FuzzySort.js" as Fuzzysort
 
 Item {
   property var launcher: null
-  property string name: "Applications"
+  property string name: I18n.tr("plugins.applications")
   property bool handleSearch: true
   property var entries: []
 

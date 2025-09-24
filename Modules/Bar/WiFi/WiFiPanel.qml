@@ -56,7 +56,7 @@ NPanel {
 
         NIconButton {
           icon: "refresh"
-          tooltipText: "Refresh"
+          tooltipText: I18n.tr("tooltips.refresh")
           baseSize: Style.baseWidgetSize * 0.8
           enabled: Settings.data.network.wifiEnabled && !NetworkService.scanning
           onClicked: NetworkService.scan()
@@ -64,7 +64,7 @@ NPanel {
 
         NIconButton {
           icon: "close"
-          tooltipText: "Close"
+          tooltipText: I18n.tr("tooltips.close")
           baseSize: Style.baseWidgetSize * 0.8
           onClicked: root.close()
         }
@@ -367,7 +367,7 @@ NPanel {
                       NIconButton {
                         visible: (modelData.existing || modelData.cached) && !modelData.connected && NetworkService.connectingTo !== modelData.ssid && NetworkService.forgettingNetwork !== modelData.ssid && NetworkService.disconnectingFrom !== modelData.ssid
                         icon: "trash"
-                        tooltipText: "Forget network"
+                        tooltipText: I18n.tr("tooltips.forget-network")
                         baseSize: Style.baseWidgetSize * 0.8
                         onClicked: expandedSsid = expandedSsid === modelData.ssid ? "" : modelData.ssid
                       }

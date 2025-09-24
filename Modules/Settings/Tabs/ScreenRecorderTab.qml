@@ -61,16 +61,16 @@ ColumnLayout {
     NComboBox {
       label: I18n.tr("settings.screen-recorder.video.video-source.label")
       description: I18n.tr("settings.screen-recorder.video.video-source.description")
-      model: ListModel {
-        ListElement {
-          key: "portal"
-          name: "Portal"
+      model: [
+        {
+          key: "portal",
+          name: I18n.tr("options.screen-recording.sources.portal")
+        },
+        {
+          key: "screen",
+          name: I18n.tr("options.screen-recording.sources.screen")
         }
-        ListElement {
-          key: "screen"
-          name: "Screen"
-        }
-      }
+      ]
       currentKey: Settings.data.screenRecorder.videoSource
       onSelected: key => Settings.data.screenRecorder.videoSource = key
     }

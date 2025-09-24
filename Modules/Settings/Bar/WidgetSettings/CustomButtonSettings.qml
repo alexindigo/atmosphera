@@ -59,7 +59,7 @@ ColumnLayout {
     id: leftClickExecInput
     Layout.fillWidth: true
     label: I18n.tr("bar.widget-settings.custom-button.left-click")
-    placeholderText: "Enter command to execute (app or custom script)"
+    placeholderText: I18n.tr("placeholders.enter-command")
     text: widgetData?.leftClickExec || widgetMetadata.leftClickExec
   }
 
@@ -67,7 +67,7 @@ ColumnLayout {
     id: rightClickExecInput
     Layout.fillWidth: true
     label: I18n.tr("bar.widget-settings.custom-button.right-click")
-    placeholderText: "Enter command to execute (app or custom script)"
+    placeholderText: I18n.tr("placeholders.enter-command")
     text: widgetData?.rightClickExec || widgetMetadata.rightClickExec
   }
 
@@ -75,7 +75,7 @@ ColumnLayout {
     id: middleClickExecInput
     Layout.fillWidth: true
     label: I18n.tr("bar.widget-settings.custom-button.middle-click")
-    placeholderText: "Enter command to execute (app or custom script)"
+    placeholderText: I18n.tr("placeholders.enter-command")
     text: widgetData.middleClickExec || widgetMetadata.middleClickExec
   }
 
@@ -92,7 +92,7 @@ ColumnLayout {
     Layout.fillWidth: true
     label: I18n.tr("bar.widget-settings.custom-button.display-command-output.label")
     description: I18n.tr("bar.widget-settings.custom-button.display-command-output.description")
-    placeholderText: "echo \"Hello World\""
+    placeholderText: I18n.tr("placeholders.command-example")
     text: widgetData?.textCommand || widgetMetadata.textCommand
   }
 

@@ -245,7 +245,7 @@ NPanel {
         fontWeight: Style.fontWeightSemiBold
 
         text: searchText
-        placeholderText: "Search entries... or use > for commands"
+        placeholderText: I18n.tr("placeholders.search-launcher")
 
         onTextChanged: searchText = text
 

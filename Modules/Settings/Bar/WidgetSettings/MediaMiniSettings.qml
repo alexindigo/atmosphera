@@ -41,20 +41,20 @@ ColumnLayout {
   NComboBox {
     visible: valueShowVisualizer
     label: I18n.tr("bar.widget-settings.media-mini.visualizer-type")
-    model: ListModel {
-      ListElement {
-        key: "linear"
-        name: "Linear"
+    model: [
+      {
+        key: "linear",
+        name: I18n.tr("options.visualizer-types.linear")
+      },
+      {
+        key: "mirrored",
+        name: I18n.tr("options.visualizer-types.mirrored")
+      },
+      {
+        key: "wave",
+        name: I18n.tr("options.visualizer-types.wave")
       }
-      ListElement {
-        key: "mirrored"
-        name: "Mirrored"
-      }
-      ListElement {
-        key: "wave"
-        name: "Wave"
-      }
-    }
+    ]
     currentKey: valueVisualizerType
     onSelected: key => valueVisualizerType = key
     minimumWidth: 200 * scaling

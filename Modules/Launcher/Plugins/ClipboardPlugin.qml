@@ -7,7 +7,7 @@ Item {
   id: root
 
   // Plugin metadata
-  property string name: "Clipboard history"
+  property string name: I18n.tr("plugins.clipboard")
   property var launcher: null
 
   // Plugin capabilities

@@ -65,14 +65,14 @@ NPanel {
 
         NIconButton {
           icon: "refresh"
-          tooltipText: "Refresh wallpaper list"
+          tooltipText: I18n.tr("tooltips.refresh-wallpaper-list")
           baseSize: Style.baseWidgetSize * 0.8
           onClicked: WallpaperService.refreshWallpapersList()
         }
 
         NIconButton {
           icon: "close"
-          tooltipText: "Close"
+          tooltipText: I18n.tr("tooltips.close")
           baseSize: Style.baseWidgetSize * 0.8
           onClicked: root.close()
         }
@@ -183,7 +183,7 @@ NPanel {
 
         NTextInput {
           id: searchInput
-          placeholderText: "Type to filter wallpapers..."
+          placeholderText: I18n.tr("placeholders.search-wallpapers")
           Layout.fillWidth: true
 
           onTextChanged: {

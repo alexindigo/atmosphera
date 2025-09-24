@@ -4,7 +4,7 @@ import "../../../Helpers/AdvancedMath.js" as AdvancedMath
 
 Item {
   property var launcher: null
-  property string name: "Calculator"
+  property string name: I18n.tr("plugins.calculator")
 
   function handleCommand(query) {
     // Handle >calc command or direct math expressions after >

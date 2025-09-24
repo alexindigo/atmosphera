@@ -106,7 +106,7 @@ ColumnLayout {
         Layout.fillWidth: true
         label: I18n.tr("bar.widget-settings.clock.horizontal-bar.label")
         description: I18n.tr("bar.widget-settings.clock.horizontal-bar.description")
-        placeholderText: "HH:mm ddd, MMM dd"
+        placeholderText: I18n.tr("placeholders.clock-horizontal")
         text: valueFormatHorizontal
         onTextChanged: valueFormatHorizontal = text
         Component.onCompleted: {
@@ -129,7 +129,7 @@ ColumnLayout {
         Layout.fillWidth: true
         label: I18n.tr("bar.widget-settings.clock.vertical-bar.label")
         description: I18n.tr("bar.widget-settings.clock.vertical-bar.description")
-        placeholderText: "HH mm dd MM"
+        placeholderText: I18n.tr("placeholders.clock-vertical")
         text: valueFormatVertical
         onTextChanged: valueFormatVertical = text
         Component.onCompleted: {

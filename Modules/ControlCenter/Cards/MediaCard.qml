@@ -280,7 +280,7 @@ NBox {
         // Previous button
         NIconButton {
           icon: "media-prev"
-          tooltipText: "Previous media"
+          tooltipText: I18n.tr("tooltips.previous-media")
           visible: MediaService.canGoPrevious
           onClicked: MediaService.canGoPrevious ? MediaService.previous() : {}
         }
@@ -288,7 +288,7 @@ NBox {
         // Play/Pause button
         NIconButton {
           icon: MediaService.isPlaying ? "media-pause" : "media-play"
-          tooltipText: MediaService.isPlaying ? "Pause" : "Play"
+          tooltipText: MediaService.isPlaying ? I18n.tr("tooltips.pause") : I18n.tr("tooltips.play")
           visible: (MediaService.canPlay || MediaService.canPause)
           onClicked: (MediaService.canPlay || MediaService.canPause) ? MediaService.playPause() : {}
         }
@@ -296,7 +296,7 @@ NBox {
         // Next button
         NIconButton {
           icon: "media-next"
-          tooltipText: "Next media"
+          tooltipText: I18n.tr("tooltips.next-media")
           visible: MediaService.canGoNext
           onClicked: MediaService.canGoNext ? MediaService.next() : {}
         }
