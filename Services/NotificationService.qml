@@ -386,7 +386,7 @@ Singleton {
     target: Settings.data.notifications
     function onDoNotDisturbChanged() {
       const enabled = Settings.data.notifications.doNotDisturb
-      ToastService.showNotice(enabled ? "'Do not disturb' enabled" : "'Do not disturb' disabled", enabled ? "You'll find these notifications in your history." : "Showing all notifications.")
+      ToastService.showNotice(enabled ? I18n.tr("toast.do-not-disturb.enabled") : I18n.tr("toast.do-not-disturb.disabled"), enabled ? I18n.tr("toast.do-not-disturb.enabled-desc") : I18n.tr("toast.do-not-disturb.disabled-desc"))
     }
   }
 }

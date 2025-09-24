@@ -1064,6 +1064,9 @@
     }
   },
   "session-menu": {
+    "title": "Sitzungsmenü",
+    "click-again": "Erneut klicken für sofortige Ausführung",
+    "action-in-seconds": "{action} in {seconds} Sekunden...",
     "lock": "Sperren",
     "suspend": "Ruhezustand",
     "reboot": "Neu starten",
@@ -1111,5 +1114,69 @@
     "shut-down": "Herunterfahren",
     "restart": "Neu starten",
     "suspend": "Ruhezustand"
+  },
+  "toast": {
+    "night-light": {
+      "enabled": "Aktiviert",
+      "disabled": "Deaktiviert",
+      "not-installed": "wlsunset nicht installiert",
+      "forced": "Aktivierung erzwungen",
+      "normal": "Normaler Modus"
+    },
+    "keep-awake": {
+      "enabled": "Aktiviert",
+      "disabled": "Deaktiviert"
+    },
+    "matugen": {
+      "enabled": "Aktiviert",
+      "disabled": "Deaktiviert",
+      "not-installed": "Nicht installiert"
+    },
+    "recording": {
+      "stopping": "Aufnahme wird gestoppt…",
+      "started": "Aufnahme gestartet",
+      "saved": "Aufnahme gespeichert",
+      "failed-start": "Aufnahme konnte nicht gestartet werden",
+      "failed-gpu": "gpu-screen-recorder unerwartet beendet.",
+      "failed-general": "Der Rekorder wurde mit einem Fehler beendet.",
+      "no-portals": "Desktop-Portale laufen nicht",
+      "no-portals-desc": "Starten Sie xdg-desktop-portal und ein Compositor-Portal (wlr/hyprland/gnome/kde)."
+    },
+    "clipboard": {
+      "unavailable": "Zwischenablage-Verlauf nicht verfügbar",
+      "unavailable-desc": "Die 'cliphist' Anwendung ist nicht installiert. Bitte installieren Sie sie, um Zwischenablage-Verlauf-Features zu nutzen."
+    },
+    "ipc": {
+      "powerpanel-deprecated": "PowerPanel wurde in SessionMenu umbenannt, dieser IPC-Aufruf wird bald veraltet sein. Bitte verwenden Sie stattdessen \"ipc call sessionMenu toggle\".",
+      "sidepanel-deprecated": "SidePanel wurde in ControlCenter umbenannt, dieser IPC-Aufruf wird bald veraltet sein. Bitte verwenden Sie stattdessen \"ipc call controlCenter toggle\"."
+    },
+    "wifi": {
+      "enabled": "Aktiviert",
+      "disabled": "Deaktiviert",
+      "connected": "Verbunden mit '{ssid}'",
+      "disconnected": "Getrennt von '{ssid}'"
+    },
+    "bluetooth": {
+      "enabled": "Aktiviert",
+      "disabled": "Deaktiviert"
+    },
+    "do-not-disturb": {
+      "enabled": "'Nicht stören' aktiviert",
+      "disabled": "'Nicht stören' deaktiviert",
+      "enabled-desc": "Sie finden diese Benachrichtigungen in Ihrem Verlauf.",
+      "disabled-desc": "Alle Benachrichtigungen werden angezeigt."
+    },
+    "power-profile": {
+      "changed": "Energieprofil geändert",
+      "profile-name": "\"{profile}\""
+    },
+    "audio": {
+      "muted": "Stummgeschaltet",
+      "unmuted": "Lautgeschaltet"
+    },
+    "battery": {
+      "low": "Niedriger Batteriestand",
+      "low-desc": "Batterie ist bei {percent}%. Bitte schließen Sie das Ladegerät an."
+    }
   }
 }

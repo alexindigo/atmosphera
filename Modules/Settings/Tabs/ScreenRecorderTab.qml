@@ -76,36 +76,28 @@ ColumnLayout {
     NComboBox {
       label: I18n.tr("settings.screen-recorder.video.frame-rate.label")
       description: I18n.tr("settings.screen-recorder.video.frame-rate.description")
-      model: ListModel {
-        ListElement {
-          key: "30"
-          name: "30 FPS"
-        }
-        ListElement {
-          key: "60"
-          name: "60 FPS"
-        }
-        ListElement {
-          key: "100"
-          name: "100 FPS"
-        }
-        ListElement {
-          key: "120"
-          name: "120 FPS"
-        }
-        ListElement {
-          key: "144"
-          name: "144 FPS"
-        }
-        ListElement {
-          key: "165"
-          name: "165 FPS"
-        }
-        ListElement {
-          key: "240"
-          name: "240 FPS"
-        }
-      }
+      model: [{
+          "key": "30",
+          "name": I18n.tr("options.frame-rates.30-fps")
+        }, {
+          "key": "60",
+          "name": I18n.tr("options.frame-rates.60-fps")
+        }, {
+          "key": "100",
+          "name": I18n.tr("options.frame-rates.100-fps")
+        }, {
+          "key": "120",
+          "name": I18n.tr("options.frame-rates.120-fps")
+        }, {
+          "key": "144",
+          "name": I18n.tr("options.frame-rates.144-fps")
+        }, {
+          "key": "165",
+          "name": I18n.tr("options.frame-rates.165-fps")
+        }, {
+          "key": "240",
+          "name": I18n.tr("options.frame-rates.240-fps")
+        }]
       currentKey: Settings.data.screenRecorder.frameRate
       onSelected: key => Settings.data.screenRecorder.frameRate = key
     }
@@ -114,24 +106,19 @@ ColumnLayout {
     NComboBox {
       label: I18n.tr("settings.screen-recorder.video.video-quality.label")
       description: I18n.tr("settings.screen-recorder.video.video-quality.description")
-      model: ListModel {
-        ListElement {
-          key: "medium"
-          name: "Medium"
-        }
-        ListElement {
-          key: "high"
-          name: "High"
-        }
-        ListElement {
-          key: "very_high"
-          name: "Very high"
-        }
-        ListElement {
-          key: "ultra"
-          name: "Ultra"
-        }
-      }
+      model: [{
+          "key": "medium",
+          "name": I18n.tr("options.screen-recording.quality.medium")
+        }, {
+          "key": "high",
+          "name": I18n.tr("options.screen-recording.quality.high")
+        }, {
+          "key": "very_high",
+          "name": I18n.tr("options.screen-recording.quality.very-high")
+        }, {
+          "key": "ultra",
+          "name": I18n.tr("options.screen-recording.quality.ultra")
+        }]
       currentKey: Settings.data.screenRecorder.quality
       onSelected: key => Settings.data.screenRecorder.quality = key
     }
@@ -140,28 +127,22 @@ ColumnLayout {
     NComboBox {
       label: I18n.tr("settings.screen-recorder.video.video-codec.label")
       description: I18n.tr("settings.screen-recorder.video.video-codec.description")
-      model: ListModel {
-        ListElement {
-          key: "h264"
-          name: "H264"
-        }
-        ListElement {
-          key: "hevc"
-          name: "HEVC"
-        }
-        ListElement {
-          key: "av1"
-          name: "AV1"
-        }
-        ListElement {
-          key: "vp8"
-          name: "VP8"
-        }
-        ListElement {
-          key: "vp9"
-          name: "VP9"
-        }
-      }
+      model: [{
+          "key": "h264",
+          "name": I18n.tr("options.screen-recording.codecs.h264")
+        }, {
+          "key": "hevc",
+          "name": I18n.tr("options.screen-recording.codecs.hevc")
+        }, {
+          "key": "av1",
+          "name": I18n.tr("options.screen-recording.codecs.av1")
+        }, {
+          "key": "vp8",
+          "name": I18n.tr("options.screen-recording.codecs.vp8")
+        }, {
+          "key": "vp9",
+          "name": I18n.tr("options.screen-recording.codecs.vp9")
+        }]
       currentKey: Settings.data.screenRecorder.videoCodec
       onSelected: key => Settings.data.screenRecorder.videoCodec = key
     }
@@ -170,16 +151,13 @@ ColumnLayout {
     NComboBox {
       label: I18n.tr("settings.screen-recorder.video.color-range.label")
       description: I18n.tr("settings.screen-recorder.video.color-range.description")
-      model: ListModel {
-        ListElement {
-          key: "limited"
-          name: "Limited"
-        }
-        ListElement {
-          key: "full"
-          name: "Full"
-        }
-      }
+      model: [{
+          "key": "limited",
+          "name": I18n.tr("options.screen-recording.color-range.limited")
+        }, {
+          "key": "full",
+          "name": I18n.tr("options.screen-recording.color-range.full")
+        }]
       currentKey: Settings.data.screenRecorder.colorRange
       onSelected: key => Settings.data.screenRecorder.colorRange = key
     }
@@ -205,20 +183,16 @@ ColumnLayout {
     NComboBox {
       label: I18n.tr("settings.screen-recorder.audio.audio-source.label")
       description: I18n.tr("settings.screen-recorder.audio.audio-source.description")
-      model: ListModel {
-        ListElement {
-          key: "default_output"
-          name: "System output"
-        }
-        ListElement {
-          key: "default_input"
-          name: "Microphone input"
-        }
-        ListElement {
-          key: "both"
-          name: "System output + microphone input"
-        }
-      }
+      model: [{
+          "key": "default_output",
+          "name": I18n.tr("options.screen-recording.audio-sources.system-output")
+        }, {
+          "key": "default_input",
+          "name": I18n.tr("options.screen-recording.audio-sources.microphone-input")
+        }, {
+          "key": "both",
+          "name": I18n.tr("options.screen-recording.audio-sources.both")
+        }]
       currentKey: Settings.data.screenRecorder.audioSource
       onSelected: key => Settings.data.screenRecorder.audioSource = key
     }
@@ -227,16 +201,13 @@ ColumnLayout {
     NComboBox {
       label: I18n.tr("settings.screen-recorder.audio.audio-codec.label")
       description: I18n.tr("settings.screen-recorder.audio.audio-codec.description")
-      model: ListModel {
-        ListElement {
-          key: "opus"
-          name: "Opus"
-        }
-        ListElement {
-          key: "aac"
-          name: "AAC"
-        }
-      }
+      model: [{
+          "key": "opus",
+          "name": I18n.tr("options.screen-recording.audio-codecs.opus")
+        }, {
+          "key": "aac",
+          "name": I18n.tr("options.screen-recording.audio-codecs.aac")
+        }]
       currentKey: Settings.data.screenRecorder.audioCodec
       onSelected: key => Settings.data.screenRecorder.audioCodec = key
     }

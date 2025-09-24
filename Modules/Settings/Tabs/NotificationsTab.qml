@@ -49,32 +49,25 @@ ColumnLayout {
     NComboBox {
       label: I18n.tr("settings.notifications.settings.location.label")
       description: I18n.tr("settings.notifications.settings.location.description")
-      model: ListModel {
-        ListElement {
-          key: "top"
-          name: "Top"
-        }
-        ListElement {
-          key: "top_left"
-          name: "Top left"
-        }
-        ListElement {
-          key: "top_right"
-          name: "Top right"
-        }
-        ListElement {
-          key: "bottom"
-          name: "Bottom"
-        }
-        ListElement {
-          key: "bottom_left"
-          name: "Bottom left"
-        }
-        ListElement {
-          key: "bottom_right"
-          name: "Bottom right"
-        }
-      }
+      model: [{
+          "key": "top",
+          "name": I18n.tr("options.launcher.position.top_center")
+        }, {
+          "key": "top_left",
+          "name": I18n.tr("options.launcher.position.top_left")
+        }, {
+          "key": "top_right",
+          "name": I18n.tr("options.launcher.position.top_right")
+        }, {
+          "key": "bottom",
+          "name": I18n.tr("options.launcher.position.bottom_center")
+        }, {
+          "key": "bottom_left",
+          "name": I18n.tr("options.launcher.position.bottom_left")
+        }, {
+          "key": "bottom_right",
+          "name": I18n.tr("options.launcher.position.bottom_right")
+        }]
       currentKey: Settings.data.notifications.location || "top_right"
       onSelected: key => Settings.data.notifications.location = key
     }

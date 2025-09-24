@@ -49,24 +49,19 @@ ColumnLayout {
     Layout.fillWidth: true
     label: I18n.tr("settings.bar.appearance.position.label")
     description: I18n.tr("settings.bar.appearance.position.description")
-    model: ListModel {
-      ListElement {
-        key: "top"
-        name: "Top"
-      }
-      ListElement {
-        key: "bottom"
-        name: "Bottom"
-      }
-      ListElement {
-        key: "left"
-        name: "Left"
-      }
-      ListElement {
-        key: "right"
-        name: "Right"
-      }
-    }
+    model: [{
+        "key": "top",
+        "name": I18n.tr("options.bar.position.top")
+      }, {
+        "key": "bottom",
+        "name": I18n.tr("options.bar.position.bottom")
+      }, {
+        "key": "left",
+        "name": I18n.tr("options.bar.position.left")
+      }, {
+        "key": "right",
+        "name": I18n.tr("options.bar.position.right")
+      }]
     currentKey: Settings.data.bar.position
     onSelected: key => Settings.data.bar.position = key
   }
@@ -75,20 +70,16 @@ ColumnLayout {
     Layout.fillWidth: true
     label: I18n.tr("settings.bar.appearance.density.label")
     description: I18n.tr("settings.bar.appearance.density.description")
-    model: ListModel {
-      ListElement {
-        key: "compact"
-        name: "Compact"
-      }
-      ListElement {
-        key: "default"
-        name: "Default"
-      }
-      ListElement {
-        key: "comfortable"
-        name: "Comfortable"
-      }
-    }
+    model: [{
+        "key": "compact",
+        "name": I18n.tr("options.bar.density.compact")
+      }, {
+        "key": "default",
+        "name": I18n.tr("options.bar.density.default")
+      }, {
+        "key": "comfortable",
+        "name": I18n.tr("options.bar.density.comfortable")
+      }]
     currentKey: Settings.data.bar.density
     onSelected: key => Settings.data.bar.density = key
   }

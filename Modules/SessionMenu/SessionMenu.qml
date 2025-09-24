@@ -31,7 +31,7 @@ NPanel {
       "action": "lock",
       "icon": "lock",
       "title": I18n.tr("session-menu.lock"),
-      "subtitle": "Lock your session"
+      "subtitle": I18n.tr("session-menu.lock-subtitle")
     }, {
       "action": "suspend",
       "icon": "suspend",
@@ -46,7 +46,7 @@ NPanel {
       "action": "logout",
       "icon": "logout",
       "title": I18n.tr("session-menu.logout"),
-      "subtitle": "End your session"
+      "subtitle": I18n.tr("session-menu.end-subtitle")
     }, {
       "action": "shutdown",
       "icon": "shutdown",
@@ -263,7 +263,10 @@ NPanel {
         Layout.preferredHeight: Style.baseWidgetSize * 0.8 * scaling
 
         NText {
-          text: timerActive ? `${pendingAction.charAt(0).toUpperCase() + pendingAction.slice(1)} in ${Math.ceil(timeRemaining / 1000)} seconds...` : "Session Menu"
+          text: timerActive ? I18n.tr("session-menu.action-in-seconds", {
+                                        "action": pendingAction.charAt(0).toUpperCase() + pendingAction.slice(1),
+                                        "seconds": Math.ceil(timeRemaining / 1000)
+                                      }) : I18n.tr("session-menu.title")
           font.weight: Style.fontWeightBold
           font.pointSize: Style.fontSizeL * scaling
           color: timerActive ? Color.mPrimary : Color.mOnSurface
@@ -419,7 +422,7 @@ NPanel {
         NText {
           text: {
             if (buttonRoot.pending) {
-              return "Click again to execute immediately"
+              return I18n.tr("session-menu.click-again")
             }
             return buttonRoot.subtitle
           }

@@ -216,7 +216,7 @@ NPanel {
 
               // Summary
               NText {
-                text: model.summary || "No summary"
+                text: model.summary || I18n.tr("general.no-summary")
                 font.pointSize: Style.fontSizeM * scaling
                 font.weight: Font.Medium
                 color: Color.mOnSurface

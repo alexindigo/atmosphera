@@ -293,7 +293,7 @@ Variants {
                   }
 
                   NText {
-                    text: model.summary || "No summary"
+                    text: model.summary || I18n.tr("general.no-summary")
                     font.pointSize: Style.fontSizeL * scaling
                     font.weight: Style.fontWeightMedium
                     color: Color.mOnSurface

@@ -163,13 +163,13 @@ Singleton {
     if (activeInhibitors.includes("manual")) {
       removeInhibitor("manual")
       Settings.data.ui.idleInhibitorEnabled = false
-      ToastService.showNotice("Keep awake", "Disabled")
+      ToastService.showNotice(I18n.tr("tooltips.keep-awake"), I18n.tr("toast.keep-awake.disabled"))
       Logger.log("IdleInhibitor", "Manual inhibition disabled and saved to settings")
       return false
     } else {
       addInhibitor("manual", "Manually activated by user")
       Settings.data.ui.idleInhibitorEnabled = true
-      ToastService.showNotice("Keep awake", "Enabled")
+      ToastService.showNotice(I18n.tr("tooltips.keep-awake"), I18n.tr("toast.keep-awake.enabled"))
       Logger.log("IdleInhibitor", "Manual inhibition enabled and saved to settings")
       return true
     }

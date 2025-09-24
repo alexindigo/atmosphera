@@ -19,36 +19,28 @@ ColumnLayout {
     label: I18n.tr("settings.launcher.settings.position.label")
     description: I18n.tr("settings.launcher.settings.position.description")
     Layout.fillWidth: true
-    model: ListModel {
-      ListElement {
-        key: "center"
-        name: "Center (default)"
-      }
-      ListElement {
-        key: "top_left"
-        name: "Top left"
-      }
-      ListElement {
-        key: "top_right"
-        name: "Top right"
-      }
-      ListElement {
-        key: "bottom_left"
-        name: "Bottom left"
-      }
-      ListElement {
-        key: "bottom_right"
-        name: "Bottom right"
-      }
-      ListElement {
-        key: "bottom_center"
-        name: "Bottom center"
-      }
-      ListElement {
-        key: "top_center"
-        name: "Top center"
-      }
-    }
+    model: [{
+        "key": "center",
+        "name": I18n.tr("options.launcher.position.center")
+      }, {
+        "key": "top_left",
+        "name": I18n.tr("options.launcher.position.top_left")
+      }, {
+        "key": "top_right",
+        "name": I18n.tr("options.launcher.position.top_right")
+      }, {
+        "key": "bottom_left",
+        "name": I18n.tr("options.launcher.position.bottom_left")
+      }, {
+        "key": "bottom_right",
+        "name": I18n.tr("options.launcher.position.bottom_right")
+      }, {
+        "key": "bottom_center",
+        "name": I18n.tr("options.launcher.position.bottom_center")
+      }, {
+        "key": "top_center",
+        "name": I18n.tr("options.launcher.position.top_center")
+      }]
     currentKey: Settings.data.appLauncher.position
     onSelected: function (key) {
       Settings.data.appLauncher.position = key

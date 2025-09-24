@@ -82,7 +82,7 @@ Singleton {
       return
     }
 
-    ToastService.showNotice("Stopping recording…", outputPath, 2000)
+    ToastService.showNotice(I18n.tr("toast.recording.stopping"), outputPath, 2000)
 
     Quickshell.execDetached(["sh", "-c", "pkill -SIGINT -f 'gpu-screen-recorder' || pkill -SIGINT -f 'com.dec05eba.gpu_screen_recorder'"])
 
@@ -110,9 +110,9 @@ Singleton {
         if (exitCode !== 0) {
           const err = String(stderr.text || "").trim()
           if (err.length > 0)
-            ToastService.showError("Failed to start recording", err, 7000)
+            ToastService.showError(I18n.tr("toast.recording.failed-start"), err, 7000)
           else
-            ToastService.showError("Failed to start recording", "gpu-screen-recorder exited unexpectedly.", 7000)
+            ToastService.showError(I18n.tr("toast.recording.failed-start"), I18n.tr("toast.recording.failed-gpu"), 7000)
         }
       } else if (isRecording) {
         // Process ended normally while recording
@@ -120,13 +120,13 @@ Singleton {
         monitorTimer.running = false
         // Consider successful save if exitCode == 0
         if (exitCode === 0) {
-          ToastService.showNotice("Recording saved", outputPath, 5000)
+          ToastService.showNotice(I18n.tr("toast.recording.saved"), outputPath, 5000)
         } else {
           const err2 = String(stderr.text || "").trim()
           if (err2.length > 0)
-            ToastService.showError("Recording failed", err2, 7000)
+            ToastService.showError(I18n.tr("toast.recording.failed-start"), err2, 7000)
           else
-            ToastService.showError("Recording failed", "The recorder exited with an error.", 7000)
+            ToastService.showError(I18n.tr("toast.recording.failed-start"), I18n.tr("toast.recording.failed-general"), 7000)
         }
       }
     }
@@ -142,7 +142,7 @@ Singleton {
       } else {
         isPending = false
         hasActiveRecording = false
-        ToastService.showError("Desktop portals not running", "Start xdg-desktop-portal and a compositor portal (wlr/hyprland/gnome/kde).", 8000)
+        ToastService.showError(I18n.tr("toast.recording.no-portals"), I18n.tr("toast.recording.no-portals-desc"), 8000)
       }
     }
   }

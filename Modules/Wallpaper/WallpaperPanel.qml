@@ -436,13 +436,13 @@ NPanel {
                 Layout.alignment: Qt.AlignHCenter
               }
               NText {
-                text: (wallpaperPanel.filterText && wallpaperPanel.filterText.length > 0) ? "No match found." : "No wallpaper found."
+                text: (wallpaperPanel.filterText && wallpaperPanel.filterText.length > 0) ? I18n.tr("wallpaper.no-match") : I18n.tr("wallpaper.no-wallpaper")
                 color: Color.mOnSurface
                 font.weight: Style.fontWeightBold
                 Layout.alignment: Qt.AlignHCenter
               }
               NText {
-                text: (wallpaperPanel.filterText && wallpaperPanel.filterText.length > 0) ? "Try a different search query." : "Configure your wallpaper directory with images."
+                text: (wallpaperPanel.filterText && wallpaperPanel.filterText.length > 0) ? I18n.tr("wallpaper.try-different-search") : I18n.tr("wallpaper.configure-directory")
                 color: Color.mOnSurfaceVariant
                 wrapMode: Text.WordWrap
                 Layout.alignment: Qt.AlignHCenter

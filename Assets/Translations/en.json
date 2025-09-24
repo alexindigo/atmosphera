@@ -663,6 +663,10 @@
     "tooltip": {
       "placeholder": "Placeholder"
     },
+    "file-picker": {
+      "select-folder": "Select Folder",
+      "select-file": "Select File"
+    },
     "datetime-tokens": {
       "common": {
         "12hour-time-minutes": "12-hour time with minutes",
@@ -886,7 +890,25 @@
         "description": "Apply selected wallpaper to all monitors at once."
       },
       "search": "Search:"
-    }
+    },
+    "transitions": {
+      "none": "None",
+      "random": "Random",
+      "fade": "Fade",
+      "disc": "Disc",
+      "stripes": "Stripes",
+      "wipe": "Wipe"
+    },
+    "fill-modes": {
+      "center": "Center",
+      "crop": "Crop (Fill)",
+      "fit": "Fit (Contain)",
+      "stretch": "Stretch"
+    },
+    "no-match": "No match found.",
+    "no-wallpaper": "No wallpaper found.",
+    "try-different-search": "Try a different search query.",
+    "configure-directory": "Configure your wallpaper directory with images."
   },
   "bluetooth": {
     "panel": {
@@ -1004,6 +1026,30 @@
     "test": "Test"
   },
   "options": {
+    "bar": {
+      "position": {
+        "top": "Top",
+        "bottom": "Bottom",
+        "left": "Left",
+        "right": "Right"
+      },
+      "density": {
+        "compact": "Compact",
+        "default": "Default",
+        "comfortable": "Comfortable"
+      }
+    },
+    "launcher": {
+      "position": {
+        "center": "Center (default)",
+        "top_left": "Top left",
+        "top_right": "Top right",
+        "bottom_left": "Bottom left",
+        "bottom_right": "Bottom right",
+        "bottom_center": "Bottom center",
+        "top_center": "Top center"
+      }
+    },
     "display-mode": {
       "on-hover": "On hover",
       "always-show": "Always show",
@@ -1064,6 +1110,11 @@
     }
   },
   "session-menu": {
+    "title": "Session Menu",
+    "click-again": "Click again to execute immediately",
+    "action-in-seconds": "{action} in {seconds} seconds...",
+    "lock-subtitle": "Lock your session",
+    "end-subtitle": "End your session",
     "lock": "Lock",
     "suspend": "Suspend", 
     "reboot": "Reboot",
@@ -1111,5 +1162,98 @@
     "shut-down": "Shut down",
     "restart": "Restart",
     "suspend": "Suspend"
+  },
+  "toast": {
+    "night-light": {
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "not-installed": "wlsunset not installed",
+      "forced": "Forced activation",
+      "normal": "Normal mode"
+    },
+    "keep-awake": {
+      "enabled": "Enabled",
+      "disabled": "Disabled"
+    },
+    "matugen": {
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "not-installed": "Not installed"
+    },
+    "recording": {
+      "stopping": "Stopping recording…",
+      "started": "Recording started",
+      "saved": "Recording saved",
+      "failed-start": "Failed to start recording",
+      "failed-gpu": "gpu-screen-recorder exited unexpectedly.",
+      "failed-general": "The recorder exited with an error.",
+      "no-portals": "Desktop portals not running",
+      "no-portals-desc": "Start xdg-desktop-portal and a compositor portal (wlr/hyprland/gnome/kde)."
+    },
+    "clipboard": {
+      "unavailable": "Clipboard history unavailable",
+      "unavailable-desc": "The 'cliphist' application is not installed. Please install it to use clipboard history features."
+    },
+    "ipc": {
+      "powerpanel-deprecated": "PowerPanel has been renamed to SessionMenu, this IPC call will be deprecated soon. Please use \"ipc call sessionMenu toggle\" instead.",
+      "sidepanel-deprecated": "SidePanel has been renamed to ControlCenter, this IPC call will be deprecated soon. Please use \"ipc call controlCenter toggle\" instead."
+    },
+    "wifi": {
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "connected": "Connected to '{ssid}'",
+      "disconnected": "Disconnected from '{ssid}'"
+    },
+    "bluetooth": {
+      "enabled": "Enabled",
+      "disabled": "Disabled"
+    },
+    "do-not-disturb": {
+      "enabled": "'Do not disturb' enabled",
+      "disabled": "'Do not disturb' disabled",
+      "enabled-desc": "You'll find these notifications in your history.",
+      "disabled-desc": "Showing all notifications."
+    },
+    "power-profile": {
+      "changed": "Power profile changed",
+      "profile-name": "\"{profile}\""
+    },
+    "audio": {
+      "muted": "Muted",
+      "unmuted": "Unmuted"
+    },
+    "battery": {
+      "low": "Low Battery",
+      "low-desc": "Battery is at {percent}%. Please connect the charger."
+    }
+  },
+  "weather": {
+    "clear-sky": "Clear sky",
+    "mainly-clear": "Mainly clear", 
+    "partly-cloudy": "Partly cloudy",
+    "overcast": "Overcast",
+    "fog": "Fog",
+    "drizzle": "Drizzle",
+    "snow": "Snow",
+    "rain-showers": "Rain showers",
+    "thunderstorm": "Thunderstorm",
+    "unknown": "Unknown"
+  },
+  
+  "authentication": {
+    "failed": "Authentication failed",
+    "error": "Authentication error"
+  },
+  "general": {
+    "no-results": "No results",
+    "no-summary": "No summary",
+    "unknown": "Unknown"
+  },
+  "battery": {
+    "no-battery-detected": "No battery detected.",
+    "charging-rate": "Charging rate: {rate} W.",
+    "discharging-rate": "Discharging rate: {rate} W.",
+    "charging": "Charging.",
+    "discharging": "Discharging."
   }
 }

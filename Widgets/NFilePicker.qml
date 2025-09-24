@@ -15,7 +15,7 @@ Item {
   property bool multipleSelection: false
   property string pickerType: "file" // "file" or "folder"
   property var nameFilters: ["All files (*)"] // e.g., ["Image files (*.png *.jpg)", "Text files (*.txt)"]
-  property string title: pickerType === "folder" ? "Select Folder" : "Select File"
+  property string title: pickerType === "folder" ? I18n.tr("widgets.file-picker.select-folder") : I18n.tr("widgets.file-picker.select-file")
   property string acceptLabel: I18n.tr("placeholders.select")
   property string rejectLabel: I18n.tr("placeholders.cancel")
 

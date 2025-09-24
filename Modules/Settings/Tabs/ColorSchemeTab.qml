@@ -65,10 +65,10 @@ ColumnLayout {
         // Matugen exists, enable it
         Settings.data.colorSchemes.useWallpaperColors = true
         MatugenService.generateFromWallpaper()
-        ToastService.showNotice("Matugen", "Enabled")
+        ToastService.showNotice(I18n.tr("settings.color-scheme.color-source.enable-matugen.label"), I18n.tr("toast.matugen.enabled"))
       } else {
         // Matugen not found
-        ToastService.showWarning("Matugen", "Not installed")
+        ToastService.showWarning(I18n.tr("settings.color-scheme.color-source.enable-matugen.label"), I18n.tr("toast.matugen.not-installed"))
       }
     }
 
@@ -130,7 +130,7 @@ ColumnLayout {
                    matugenCheck.running = true
                  } else {
                    Settings.data.colorSchemes.useWallpaperColors = false
-                   ToastService.showNotice("Matugen", "Disabled")
+                   ToastService.showNotice(I18n.tr("settings.color-scheme.color-source.enable-matugen.label"), I18n.tr("toast.matugen.disabled"))
 
                    if (Settings.data.colorSchemes.predefinedScheme) {
 
