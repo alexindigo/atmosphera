@@ -86,8 +86,7 @@ Singleton {
     }
   }
 
-  // -------------------------------------------
-  function init() {
+  Component.onCompleted: {
     Logger.log("I18n", "Service started")
     scanAvailableLanguages()
   }
@@ -266,7 +265,9 @@ Singleton {
       interpolations = {}
 
     if (!isLoaded) {
-      Logger.warn("I18n", "Translations not loaded yet")
+      // if (debug) {
+      //   Logger.warn("I18n", "Translations not loaded yet")
+      // }
       return key
     }
 
