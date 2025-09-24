@@ -44,7 +44,7 @@
         },
         "solid-black": {
           "label": "Schwarze Ecken",
-          "description": "Schwarze Ecken anstelle der Leisten-Hintergrundfarbe verwenden."
+          "description": "Schwarze Ecken anstelle der Statusleisten-Hintergrundfarbe verwenden."
         },
         "radius": {
           "label": "Bildschirmecken-Radius",
@@ -192,35 +192,35 @@
       }
     },
     "bar": {
-      "title": "Leiste",
+      "title": "Statusleiste",
       "appearance": {
         "section": {
           "label": "Erscheinungsbild",
-          "description": "Erscheinungsbild und Position der Leiste anpassen."
+          "description": "Erscheinungsbild und Position der Statusleiste anpassen."
         },
         "position": {
-          "label": "Leistenposition",
-          "description": "Wählen Sie, wo die Leiste auf dem Bildschirm platziert werden soll."
+          "label": "Statusleistenposition",
+          "description": "Wählen Sie, wo die Statusleiste auf dem Bildschirm platziert werden soll."
         },
         "density": {
-          "label": "Leistendichte",
-          "description": "Innenabstand der Leiste für kompaktes oder geräumiges Aussehen anpassen."
+          "label": "Statusleistendichte",
+          "description": "Innenabstand der Statusleiste für kompaktes oder geräumiges Aussehen anpassen."
         },
         "background-opacity": {
           "label": "Hintergrund-Transparenz",
-          "description": "Hintergrund-Transparenz der Leiste anpassen."
+          "description": "Hintergrund-Transparenz der Statusleiste anpassen."
         },
         "show-capsule": {
           "label": "Kapsel anzeigen",
           "description": "Widget-Hintergründe anzeigen."
         },
         "floating": {
-          "label": "Schwebende Leiste",
-          "description": "Leiste als schwebende 'Pille' anzeigen. Hinweis: Dies verschiebt die Bildschirmecken an die Ränder."
+          "label": "Schwebende Statusleiste",
+          "description": "Statusleiste als schwebende 'Pille' anzeigen. Hinweis: Dies verschiebt die Bildschirmecken an die Ränder."
         },
         "margins": {
           "label": "Ränder",
-          "description": "Ränder um die schwebende Leiste anpassen.",
+          "description": "Ränder um die schwebende Statusleiste anpassen.",
           "vertical": "Vertikal",
           "horizontal": "Horizontal"
         }
@@ -234,7 +234,7 @@
       "monitors": {
         "section": {
           "label": "Monitor-Anzeige",
-          "description": "Leiste auf bestimmten Monitoren anzeigen. Standard ist alle, wenn keine ausgewählt sind."
+          "description": "Statusleiste auf bestimmten Monitoren anzeigen. Standard ist alle, wenn keine ausgewählt sind."
         }
       }
     },
@@ -663,6 +663,10 @@
     "tooltip": {
       "placeholder": "Platzhalter"
     },
+    "file-picker": {
+      "select-folder": "Ordner auswählen",
+      "select-file": "Datei auswählen"
+    },
     "datetime-tokens": {
       "common": {
         "12hour-time-minutes": "12-Stunden-Zeit mit Minuten",
@@ -860,11 +864,11 @@
           "description": "Passen Sie die Anzeige Ihrer Uhr an, indem Sie Token aus der Liste unten hinzufügen. Um das 12-Stunden-Format zu verwenden, müssen Sie das 'AP'-Token einschließen."
         },
         "horizontal-bar": {
-          "label": "Horizontale Leiste",
+          "label": "Horizontale Statusleiste",
           "description": "Tipp: Verwenden Sie \\n, um einen Zeilenumbruch zu erstellen."
         },
         "vertical-bar": {
-          "label": "Vertikale Leiste",
+          "label": "Vertikale Statusleiste",
           "description": "Verwenden Sie ein Leerzeichen, um jeden Teil in eine neue Zeile zu trennen."
         },
         "preview": "Vorschau"
@@ -886,7 +890,25 @@
         "description": "Ausgewähltes Hintergrundbild auf alle Monitore gleichzeitig anwenden."
       },
       "search": "Suchen:"
-    }
+    },
+    "transitions": {
+      "none": "Keine",
+      "random": "Zufällig",
+      "fade": "Überblenden",
+      "disc": "Scheibe",
+      "stripes": "Streifen",
+      "wipe": "Wischen"
+    },
+    "fill-modes": {
+      "center": "Zentrieren",
+      "crop": "Zuschneiden (Füllen)",
+      "fit": "Einpassen (Beibehalten)",
+      "stretch": "Strecken"
+    },
+    "no-match": "Keine Übereinstimmung gefunden.",
+    "no-wallpaper": "Kein Hintergrundbild gefunden.",
+    "try-different-search": "Versuchen Sie eine andere Suchanfrage.",
+    "configure-directory": "Konfigurieren Sie Ihr Hintergrundbild-Verzeichnis mit Bildern."
   },
   "bluetooth": {
     "panel": {
@@ -1004,6 +1026,30 @@
     "test": "Test"
   },
   "options": {
+    "bar": {
+      "position": {
+        "top": "Oben",
+        "bottom": "Unten",
+        "left": "Links",
+        "right": "Rechts"
+      },
+      "density": {
+        "compact": "Kompakt",
+        "default": "Standard",
+        "comfortable": "Bequem"
+      }
+    },
+    "launcher": {
+      "position": {
+        "center": "Mitte (Standard)",
+        "top_left": "Oben links",
+        "top_right": "Oben rechts",
+        "bottom_left": "Unten links",
+        "bottom_right": "Unten rechts",
+        "bottom_center": "Unten mittig",
+        "top_center": "Oben mittig"
+      }
+    },
     "display-mode": {
       "on-hover": "Beim Darüberfahren",
       "always-show": "Immer anzeigen",
@@ -1067,6 +1113,8 @@
     "title": "Sitzungsmenü",
     "click-again": "Erneut klicken für sofortige Ausführung",
     "action-in-seconds": "{action} in {seconds} Sekunden...",
+    "lock-subtitle": "Sitzung sperren",
+    "end-subtitle": "Sitzung beenden",
     "lock": "Sperren",
     "suspend": "Ruhezustand",
     "reboot": "Neu starten",
@@ -1106,6 +1154,17 @@
     "unknown": "Unbekannt",
     "unknown-version": "Unbekannt",
     "unknown-layout": "Unbekannt"
+  },
+  "battery": {
+    "no-battery-detected": "Keine Batterie erkannt.",
+    "charging-rate": "Laderate: {rate} W.",
+    "discharging-rate": "Entladerate: {rate} W.",
+    "charging": "Wird geladen.",
+    "discharging": "Wird entladen."
+  },
+  "authentication": {
+    "failed": "Authentifizierung fehlgeschlagen",
+    "error": "Authentifizierungsfehler"
   },
   "lock-screen": {
     "secure-terminal": "SICHERES TERMINAL",
