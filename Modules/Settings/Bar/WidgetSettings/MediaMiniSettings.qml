@@ -27,20 +27,20 @@ ColumnLayout {
   }
 
   NToggle {
-    label: "Show album art"
+    label: I18n.tr("bar.widget-settings.media-mini.show-album-art")
     checked: valueShowAlbumArt
     onToggled: checked => valueShowAlbumArt = checked
   }
 
   NToggle {
-    label: "Show visualizer"
+    label: I18n.tr("bar.widget-settings.media-mini.show-visualizer")
     checked: valueShowVisualizer
     onToggled: checked => valueShowVisualizer = checked
   }
 
   NComboBox {
     visible: valueShowVisualizer
-    label: "Visualizer type"
+    label: I18n.tr("bar.widget-settings.media-mini.visualizer-type")
     model: ListModel {
       ListElement {
         key: "linear"

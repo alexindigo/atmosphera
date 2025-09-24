@@ -63,7 +63,7 @@ Popup {
     RowLayout {
       Layout.fillWidth: true
       NText {
-        text: "Icon picker"
+        text: I18n.tr("widgets.icon-picker.title")
         font.pointSize: Style.fontSizeL * scaling
         font.weight: Style.fontWeightBold
         color: Color.mPrimary
@@ -85,7 +85,7 @@ Popup {
       NTextInput {
         id: searchInput
         Layout.fillWidth: true
-        label: "Search"
+        label: I18n.tr("widgets.icon-picker.search.label")
         placeholderText: "e.g., noctalia, niri, battery, cloud"
         text: root.query
         onTextChanged: root.query = text.trim().toLowerCase()
@@ -166,12 +166,12 @@ Popup {
         Layout.fillWidth: true
       }
       NButton {
-        text: "Cancel"
+        text: I18n.tr("widgets.icon-picker.cancel")
         outlined: true
         onClicked: root.close()
       }
       NButton {
-        text: "Apply"
+        text: I18n.tr("widgets.icon-picker.apply")
         icon: "check"
         enabled: root.selectedIcon !== ""
         onClicked: {

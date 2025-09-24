@@ -27,7 +27,7 @@ ColumnLayout {
   }
 
   NToggle {
-    label: "Use distro logo instead of icon"
+    label: I18n.tr("bar.widget-settings.control-center.use-distro-logo")
     checked: valueUseDistroLogo
     onToggled: {
       valueUseDistroLogo = checked
@@ -42,8 +42,8 @@ ColumnLayout {
     spacing: Style.marginM * scaling
 
     NLabel {
-      label: "Icon"
-      description: "Select an icon from the library or a custom file."
+      label: I18n.tr("bar.widget-settings.control-center.icon.label")
+      description: I18n.tr("bar.widget-settings.control-center.icon.description")
     }
 
     NImageCircled {
@@ -66,13 +66,13 @@ ColumnLayout {
     spacing: Style.marginM * scaling
     NButton {
       enabled: !valueUseDistroLogo
-      text: "Browse Library"
+      text: I18n.tr("bar.widget-settings.control-center.browse-library")
       onClicked: iconPicker.open()
     }
 
     NButton {
       enabled: !valueUseDistroLogo
-      text: "Browse File"
+      text: I18n.tr("bar.widget-settings.control-center.browse-file")
       onClicked: filePicker.open()
     }
   }
@@ -88,7 +88,7 @@ ColumnLayout {
 
   NFilePicker {
     id: filePicker
-    title: "Select a custom icon"
+    title: I18n.tr("bar.widget-settings.control-center.select-custom-icon")
     onAccepted: paths => valueCustomIconPath = paths[0]
   }
 }

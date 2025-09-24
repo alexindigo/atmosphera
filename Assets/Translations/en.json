@@ -45,6 +45,10 @@
         "solid-black": {
           "label": "Solid black corners",
           "description": "Use solid black instead of the bar background color."
+        },
+        "radius": {
+          "label": "Screen corners radius",
+          "description": "Adjust the rounded corners of the screen."
         }
       },
       "fonts": {
@@ -654,5 +658,290 @@
         }
       }
     }
+  },
+  "widgets": {
+    "tooltip": {
+      "placeholder": "Placeholder"
+    },
+    "datetime-tokens": {
+      "common": {
+        "12hour-time-minutes": "12-hour time with minutes",
+        "24hour-time-minutes": "24-hour time with minutes",
+        "24hour-time-seconds": "24-hour time with seconds",
+        "weekday-month-day": "Weekday, month and day",
+        "iso-date": "ISO date format",
+        "us-date": "US date format",
+        "european-date": "European date format",
+        "weekday-date": "Weekday with date"
+      },
+      "hour": {
+        "no-leading-zero": "Hour without leading zero (0-23) - 24-hour format",
+        "leading-zero": "Hour with leading zero (00-23) - 24-hour format"
+      },
+      "minute": {
+        "no-leading-zero": "Minute without leading zero (0-59)",
+        "leading-zero": "Minute with leading zero (00-59)"
+      },
+      "second": {
+        "no-leading-zero": "Second without leading zero (0-59)",
+        "leading-zero": "Second with leading zero (00-59)"
+      },
+      "ampm": {
+        "uppercase": "AM/PM in uppercase",
+        "lowercase": "am/pm in lowercase"
+      },
+      "timezone": {
+        "abbreviation": "Timezone abbreviation"
+      },
+      "year": {
+        "two-digit": "Year as two-digit number (00-99)",
+        "four-digit": "Year as four-digit number"
+      },
+      "month": {
+        "number-no-zero": "Month as number without leading zero (1-12)",
+        "number-leading-zero": "Month as number with leading zero (01-12)",
+        "abbreviated": "Abbreviated month name",
+        "full": "Full month name"
+      },
+      "day": {
+        "no-leading-zero": "Day without leading zero (1-31)",
+        "leading-zero": "Day with leading zero (01-31)",
+        "abbreviated": "Abbreviated day name",
+        "full": "Full day name"
+      }
+    },
+    "icon-picker": {
+      "title": "Icon picker",
+      "search": {
+        "label": "Search"
+      },
+      "cancel": "Cancel",
+      "apply": "Apply"
+    },
+    "color-picker": {
+      "title": "Color picker",
+      "hex": {
+        "label": "Hex color",
+        "description": "Enter a hexadecimal color code."
+      },
+      "rgb": {
+        "label": "RGB values",
+        "description": "Adjust red, green, blue, and brightness values."
+      },
+      "brightness": "Brightness",
+      "theme-colors": {
+        "label": "Theme colors",
+        "description": "Quick access to your theme's color palette."
+      },
+      "palette": {
+        "label": "Palette",
+        "description": "Choose from a wide range of predefined colors."
+      },
+      "cancel": "Cancel",
+      "apply": "Apply"
+    }
+  },
+  "bar": {
+    "widget-settings": {
+      "dialog": {
+        "cancel": "Cancel",
+        "apply": "Apply"
+      },
+      "section-editor": {
+        "placeholder": "Select a widget to add..."
+      },
+      "active-window": {
+        "show-app-icon": "Show app icon"
+      },
+      "system-monitor": {
+        "cpu-usage": "CPU usage",
+        "cpu-temperature": "CPU temperature",
+        "memory-usage": "Memory usage",
+        "memory-percentage": "Memory as percentage",
+        "network-traffic": "Network traffic",
+        "storage-usage": "Storage usage"
+      },
+      "notification-history": {
+        "show-unread-badge": "Show unread badge",
+        "hide-badge-when-zero": "Hide badge when zero"
+      },
+      "battery": {
+        "display-mode": {
+          "label": "Display mode",
+          "description": "Choose how you'd like this value to appear."
+        },
+        "low-battery-threshold": {
+          "label": "Low battery warning threshold",
+          "description": "Show a warning when battery falls below this percentage."
+        }
+      },
+      "control-center": {
+        "use-distro-logo": "Use distro logo instead of icon",
+        "icon": {
+          "label": "Icon",
+          "description": "Select an icon from the library or a custom file."
+        },
+        "browse-library": "Browse Library",
+        "browse-file": "Browse File",
+        "select-custom-icon": "Select a custom icon"
+      },
+      "keyboard-layout": {
+        "display-mode": {
+          "label": "Display mode",
+          "description": "Choose how you'd like this value to appear."
+        }
+      },
+      "volume": {
+        "display-mode": {
+          "label": "Display mode",
+          "description": "Choose how you'd like this value to appear."
+        }
+      },
+      "workspace": {
+        "label-mode": "Label Mode",
+        "hide-unoccupied": {
+          "label": "Hide unoccupied",
+          "description": "Don't display workspaces without windows."
+        }
+      },
+      "microphone": {
+        "display-mode": {
+          "label": "Display mode",
+          "description": "Choose how you'd like this value to appear."
+        }
+      },
+      "brightness": {
+        "display-mode": {
+          "label": "Display mode",
+          "description": "Choose how you'd like this value to appear."
+        }
+      },
+      "spacer": {
+        "width": {
+          "label": "Width",
+          "description": "Spacing width in pixels"
+        }
+      },
+      "custom-button": {
+        "icon": {
+          "label": "Icon",
+          "description": "Select an icon from the library."
+        },
+        "browse": "Browse",
+        "left-click": "Left click",
+        "right-click": "Right click",
+        "middle-click": "Middle click",
+        "dynamic-text": "Dynamic text",
+        "display-command-output": {
+          "label": "Display Command Output",
+          "description": "Enter a command to run at a regular interval. The first line of its output will be displayed as text."
+        },
+        "refresh-interval": {
+          "label": "Refresh interval",
+          "description": "Interval in milliseconds."
+        }
+      },
+      "media-mini": {
+        "show-album-art": "Show album art",
+        "show-visualizer": "Show visualizer",
+        "visualizer-type": "Visualizer type"
+      },
+      "clock": {
+        "use-primary-color": {
+          "label": "Use primary color",
+          "description": "When enabled, this applies the primary color for emphasis."
+        },
+        "use-monospaced-font": {
+          "label": "Use monospaced font",
+          "description": "When enabled, the clock will use the monospaced font."
+        },
+        "clock-display": {
+          "label": "Clock display",
+          "description": "Customize your clock's display by adding tokens from the list below. To use the 12-hour format, you must include the 'AP' token."
+        },
+        "horizontal-bar": {
+          "label": "Horizontal bar",
+          "description": "Tip: Use \\n to create a line break."
+        },
+        "vertical-bar": {
+          "label": "Vertical bar",
+          "description": "Use a space to separate each part onto a new line."
+        },
+        "preview": "Preview"
+      }
+    }
+  },
+  "notifications": {
+    "panel": {
+      "title": "Notifications",
+      "no-notifications": "No notifications",
+      "description": "Your notifications will show up here as they arrive."
+    }
+  },
+  "wallpaper": {
+    "panel": {
+      "title": "Wallpaper selector",
+      "apply-all-monitors": {
+        "label": "Apply to all monitors",
+        "description": "Apply selected wallpaper to all monitors at once."
+      },
+      "search": "Search:"
+    }
+  },
+  "bluetooth": {
+    "panel": {
+      "title": "Bluetooth",
+      "disabled": "Bluetooth is disabled",
+      "enable-message": "Enable Bluetooth to see available devices.",
+      "connected-devices": "Connected devices",
+      "known-devices": "Known devices",
+      "available-devices": "Available devices",
+      "scanning": "Scanning for devices...",
+      "pairing-mode": "Make sure your device is in pairing mode."
+    }
+  },
+  "wifi": {
+    "panel": {
+      "title": "Wi-Fi",
+      "disabled": "Wi-Fi is disabled",
+      "enable-message": "Enable Wi-Fi to see available networks.",
+      "searching": "Searching for nearby networks...",
+      "connected": "Connected",
+      "disconnecting": "Disconnecting...",
+      "forgetting": "Forgetting...",
+      "saved": "Saved",
+      "disconnect": "Disconnect",
+      "enter-password": "Enter password...",
+      "connect": "Connect",
+      "password": "Password",
+      "forget-network": "Forget this network?",
+      "forget": "Forget",
+      "no-networks": "No networks found",
+      "scan-again": "Scan again"
+    }
+  },
+  "calendar": {
+    "panel": {
+      "week": "Week"
+    }
+  },
+  "clock": {
+    "tooltip": "Open calendar"
+  },
+  "dock": {
+    "menu": {
+      "focus": "Focus",
+      "pin": "Pin",
+      "unpin": "Unpin",
+      "close": "Close"
+    }
+  },
+  "lock-screen": {
+    "secure-terminal": "SECURE TERMINAL",
+    "unlock-command": "sudo unlock-session",
+    "password": "Password:",
+    "shut-down": "Shut down",
+    "restart": "Restart",
+    "suspend": "Suspend"
   }
 }

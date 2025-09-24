@@ -37,7 +37,7 @@ NPanel {
         }
 
         NText {
-          text: "Notifications"
+          text: I18n.tr("notifications.panel.title")
           font.pointSize: Style.fontSizeL * scaling
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface
@@ -94,14 +94,14 @@ NPanel {
         }
 
         NText {
-          text: "No notifications"
+          text: I18n.tr("notifications.panel.no-notifications")
           font.pointSize: Style.fontSizeL * scaling
           color: Color.mOnSurfaceVariant
           Layout.alignment: Qt.AlignHCenter
         }
 
         NText {
-          text: "Your notifications will show up here as they arrive."
+          text: I18n.tr("notifications.panel.description")
           font.pointSize: Style.fontSizeS * scaling
           color: Color.mOnSurfaceVariant
           Layout.alignment: Qt.AlignHCenter

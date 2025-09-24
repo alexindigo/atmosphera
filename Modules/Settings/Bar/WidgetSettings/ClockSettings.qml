@@ -64,16 +64,16 @@ ColumnLayout {
 
   NToggle {
     Layout.fillWidth: true
-    label: "Use primary color"
-    description: "When enabled, this applies the primary color for emphasis."
+    label: I18n.tr("bar.widget-settings.clock.use-primary-color.label")
+    description: I18n.tr("bar.widget-settings.clock.use-primary-color.description")
     checked: valueUsePrimaryColor
     onToggled: checked => valueUsePrimaryColor = checked
   }
 
   NToggle {
     Layout.fillWidth: true
-    label: "Use monospaced font"
-    description: "When enabled, the clock will use the monospaced font."
+    label: I18n.tr("bar.widget-settings.clock.use-monospaced-font.label")
+    description: I18n.tr("bar.widget-settings.clock.use-monospaced-font.description")
     checked: valueUseMonospacedFont
     onToggled: checked => valueUseMonospacedFont = checked
   }
@@ -83,8 +83,8 @@ ColumnLayout {
   }
 
   NHeader {
-    label: "Clock display"
-    description: "Customize your clock's display by adding tokens from the list below. To use the 12-hour format, you must include the 'AP' token."
+    label: I18n.tr("bar.widget-settings.clock.clock-display.label")
+    description: I18n.tr("bar.widget-settings.clock.clock-display.description")
   }
 
   RowLayout {
@@ -104,8 +104,8 @@ ColumnLayout {
       NTextInput {
         id: inputHoriz
         Layout.fillWidth: true
-        label: "Horizontal bar"
-        description: "Tip: Use \\n to create a line break."
+        label: I18n.tr("bar.widget-settings.clock.horizontal-bar.label")
+        description: I18n.tr("bar.widget-settings.clock.horizontal-bar.description")
         placeholderText: "HH:mm ddd, MMM dd"
         text: valueFormatHorizontal
         onTextChanged: valueFormatHorizontal = text
@@ -127,8 +127,8 @@ ColumnLayout {
       NTextInput {
         id: inputVert
         Layout.fillWidth: true
-        label: "Vertical bar"
-        description: "Use a space to separate each part onto a new line."
+        label: I18n.tr("bar.widget-settings.clock.vertical-bar.label")
+        description: I18n.tr("bar.widget-settings.clock.vertical-bar.description")
         placeholderText: "HH mm dd MM"
         text: valueFormatVertical
         onTextChanged: valueFormatVertical = text
@@ -151,7 +151,7 @@ ColumnLayout {
       Layout.fillWidth: false
 
       NLabel {
-        label: "Preview"
+        label: I18n.tr("bar.widget-settings.clock.preview")
         Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
       }
 

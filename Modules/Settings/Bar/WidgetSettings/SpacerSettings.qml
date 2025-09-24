@@ -22,8 +22,8 @@ ColumnLayout {
   NTextInput {
     id: widthInput
     Layout.fillWidth: true
-    label: "Width"
-    description: "Spacing width in pixels"
+    label: I18n.tr("bar.widget-settings.spacer.width.label")
+    description: I18n.tr("bar.widget-settings.spacer.width.description")
     text: widgetData.width || widgetMetadata.width
     placeholderText: "Enter width in pixels"
   }

@@ -101,13 +101,13 @@ Popup {
       }
 
       NButton {
-        text: "Cancel"
+        text: I18n.tr("bar.widget-settings.dialog.cancel")
         outlined: true
         onClicked: widgetSettings.close()
       }
 
       NButton {
-        text: "Apply"
+        text: I18n.tr("bar.widget-settings.dialog.apply")
         icon: "check"
         onClicked: {
           if (settingsLoader.item && settingsLoader.item.saveSettings) {

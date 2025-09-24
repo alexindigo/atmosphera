@@ -25,7 +25,7 @@ ColumnLayout {
   NToggle {
     id: showIcon
     Layout.fillWidth: true
-    label: "Show app icon"
+    label: I18n.tr("bar.widget-settings.active-window.show-app-icon")
     checked: root.valueShowIcon
     onToggled: checked => root.valueShowIcon = checked
   }

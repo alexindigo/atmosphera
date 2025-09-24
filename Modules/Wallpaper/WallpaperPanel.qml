@@ -56,7 +56,7 @@ NPanel {
         }
 
         NText {
-          text: "Wallpaper selector"
+          text: I18n.tr("wallpaper.panel.title")
           font.pointSize: Style.fontSizeL * scaling
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface
@@ -83,8 +83,8 @@ NPanel {
       }
 
       NToggle {
-        label: "Apply to all monitors"
-        description: "Apply selected wallpaper to all monitors at once."
+        label: I18n.tr("wallpaper.panel.apply-all-monitors.label")
+        description: I18n.tr("wallpaper.panel.apply-all-monitors.description")
         checked: Settings.data.wallpaper.setWallpaperOnAllMonitors
         onToggled: checked => Settings.data.wallpaper.setWallpaperOnAllMonitors = checked
         Layout.fillWidth: true
@@ -175,7 +175,7 @@ NPanel {
         spacing: Style.marginM * scaling
 
         NText {
-          text: "Search:"
+          text: I18n.tr("wallpaper.panel.search")
           color: Color.mOnSurface
           font.pointSize: Style.fontSizeM * scaling
           Layout.preferredWidth: implicitWidth

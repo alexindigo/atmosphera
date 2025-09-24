@@ -23,8 +23,8 @@ ColumnLayout {
   }
 
   NComboBox {
-    label: "Display mode"
-    description: "Choose how you'd like this value to appear."
+    label: I18n.tr("bar.widget-settings.keyboard-layout.display-mode.label")
+    description: I18n.tr("bar.widget-settings.keyboard-layout.display-mode.description")
     minimumWidth: 134 * scaling
     model: ListModel {
       ListElement {

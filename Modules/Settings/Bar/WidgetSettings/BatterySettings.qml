@@ -25,8 +25,8 @@ ColumnLayout {
   }
 
   NComboBox {
-    label: "Display mode"
-    description: "Choose how you'd like this value to appear."
+    label: I18n.tr("bar.widget-settings.battery.display-mode.label")
+    description: I18n.tr("bar.widget-settings.battery.display-mode.description")
     minimumWidth: 134 * scaling
     model: ListModel {
       ListElement {
@@ -47,8 +47,8 @@ ColumnLayout {
   }
 
   NSpinBox {
-    label: "Low battery warning threshold"
-    description: "Show a warning when battery falls below this percentage."
+    label: I18n.tr("bar.widget-settings.battery.low-battery-threshold.label")
+    description: I18n.tr("bar.widget-settings.battery.low-battery-threshold.description")
     value: valueWarningThreshold
     suffix: "%"
     minimum: 5

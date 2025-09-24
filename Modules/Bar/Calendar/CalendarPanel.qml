@@ -81,7 +81,7 @@ NPanel {
 
         NText {
           anchors.centerIn: parent
-          text: "Week"
+          text: I18n.tr("calendar.panel.week")
           color: Color.mOutline
           font.pointSize: Style.fontSizeXS * scaling
           font.weight: Style.fontWeightRegular

@@ -84,7 +84,7 @@ NBox {
         model: availableWidgets
         label: ""
         description: ""
-        placeholder: "Select a widget to add..."
+        placeholder: I18n.tr("bar.widget-settings.section-editor.placeholder")
         onSelected: key => comboBox.currentKey = key
         popupHeight: 340 * scaling
 

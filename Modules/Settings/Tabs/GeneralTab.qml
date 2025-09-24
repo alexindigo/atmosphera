@@ -155,8 +155,8 @@ ColumnLayout {
       Layout.fillWidth: true
 
       NLabel {
-        label: "Screen corners radius"
-        description: "Adjust the rounded corners of the screen."
+        label: I18n.tr("settings.general.screen-corners.radius.label")
+        description: I18n.tr("settings.general.screen-corners.radius.description")
       }
 
       NValueSlider {

@@ -383,7 +383,7 @@ Loader {
                     spacing: Style.marginL * scaling
 
                     NText {
-                      text: "SECURE TERMINAL"
+                      text: I18n.tr("lock-screen.secure-terminal")
                       color: Color.mOnSurface
                       font.family: Settings.data.ui.fontFixed
                       font.pointSize: Style.fontSizeL * scaling
@@ -486,7 +486,7 @@ Loader {
                     }
 
                     NText {
-                      text: "sudo unlock-session"
+                      text: I18n.tr("lock-screen.unlock-command")
                       color: Color.mOnSurface
                       font.family: Settings.data.ui.fontFixed
                       font.pointSize: Style.fontSizeL * scaling
@@ -498,7 +498,7 @@ Loader {
                     spacing: Style.marginM * scaling
 
                     NText {
-                      text: "Password:"
+                      text: I18n.tr("lock-screen.password")
                       color: Color.mPrimary
                       font.family: Settings.data.ui.fontFixed
                       font.pointSize: Style.fontSizeL * scaling
@@ -902,7 +902,7 @@ Loader {
                     id: shutdownTooltipText
                     anchors.margins: Style.marginM * scaling
                     anchors.fill: parent
-                    text: "Shut down"
+                    text: I18n.tr("lock-screen.shut-down")
                     font.pointSize: Style.fontSizeM * scaling
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
@@ -953,7 +953,7 @@ Loader {
                     id: restartTooltipText
                     anchors.margins: Style.marginM * scaling
                     anchors.fill: parent
-                    text: "Restart"
+                    text: I18n.tr("lock-screen.restart")
                     font.pointSize: Style.fontSizeM * scaling
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
@@ -1005,7 +1005,7 @@ Loader {
                     id: suspendTooltipText
                     anchors.margins: Style.marginM * scaling
                     anchors.fill: parent
-                    text: "Suspend"
+                    text: I18n.tr("lock-screen.suspend")
                     font.pointSize: Style.fontSizeM * scaling
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter

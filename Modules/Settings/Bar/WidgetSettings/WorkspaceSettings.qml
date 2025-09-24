@@ -23,7 +23,7 @@ ColumnLayout {
   NComboBox {
     id: labelModeCombo
 
-    label: "Label Mode"
+    label: I18n.tr("bar.widget-settings.workspace.label-mode")
     model: ListModel {
       ListElement {
         key: "none"
@@ -45,8 +45,8 @@ ColumnLayout {
 
   NToggle {
     id: hideUnoccupiedToggle
-    label: "Hide unoccupied"
-    description: "Don't display workspaces without windows."
+    label: I18n.tr("bar.widget-settings.workspace.hide-unoccupied.label")
+    description: I18n.tr("bar.widget-settings.workspace.hide-unoccupied.description")
     checked: widgetData.hideUnoccupied
     onToggled: checked => hideUnoccupiedToggle.checked = checked
   }

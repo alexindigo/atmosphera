@@ -654,5 +654,87 @@
         }
       }
     }
+  },
+  "widgets": {
+    "tooltip": {
+      "placeholder": "Platzhalter"
+    },
+    "datetime-tokens": {
+      "common": {
+        "12hour-time-minutes": "12-Stunden-Zeit mit Minuten",
+        "24hour-time-minutes": "24-Stunden-Zeit mit Minuten",
+        "24hour-time-seconds": "24-Stunden-Zeit mit Sekunden",
+        "weekday-month-day": "Wochentag, Monat und Tag",
+        "iso-date": "ISO-Datumsformat",
+        "us-date": "US-Datumsformat",
+        "european-date": "Europäisches Datumsformat",
+        "weekday-date": "Wochentag mit Datum"
+      },
+      "hour": {
+        "no-leading-zero": "Stunde ohne führende Null (0-23) - 24-Stunden-Format",
+        "leading-zero": "Stunde mit führender Null (00-23) - 24-Stunden-Format"
+      },
+      "minute": {
+        "no-leading-zero": "Minute ohne führende Null (0-59)",
+        "leading-zero": "Minute mit führender Null (00-59)"
+      },
+      "second": {
+        "no-leading-zero": "Sekunde ohne führende Null (0-59)",
+        "leading-zero": "Sekunde mit führender Null (00-59)"
+      },
+      "ampm": {
+        "uppercase": "AM/PM in Großbuchstaben",
+        "lowercase": "am/pm in Kleinbuchstaben"
+      },
+      "timezone": {
+        "abbreviation": "Zeitzonenabkürzung"
+      },
+      "year": {
+        "two-digit": "Jahr als zweistellige Zahl (00-99)",
+        "four-digit": "Jahr als vierstellige Zahl"
+      },
+      "month": {
+        "number-no-zero": "Monat als Zahl ohne führende Null (1-12)",
+        "number-leading-zero": "Monat als Zahl mit führender Null (01-12)",
+        "abbreviated": "Abgekürzter Monatsname",
+        "full": "Vollständiger Monatsname"
+      },
+      "day": {
+        "no-leading-zero": "Tag ohne führende Null (1-31)",
+        "leading-zero": "Tag mit führender Null (01-31)",
+        "abbreviated": "Abgekürzter Tagesname",
+        "full": "Vollständiger Tagesname"
+      }
+    },
+    "icon-picker": {
+      "title": "Symbol-Auswahl",
+      "search": {
+        "label": "Suchen"
+      },
+      "cancel": "Abbrechen",
+      "apply": "Anwenden"
+    },
+    "color-picker": {
+      "title": "Farbauswahl",
+      "hex": {
+        "label": "Hex-Farbe",
+        "description": "Geben Sie einen hexadezimalen Farbcode ein."
+      },
+      "rgb": {
+        "label": "RGB-Werte",
+        "description": "Passen Sie Rot-, Grün-, Blau- und Helligkeitswerte an."
+      },
+      "brightness": "Helligkeit",
+      "theme-colors": {
+        "label": "Theme-Farben",
+        "description": "Schnellzugriff auf die Farbpalette Ihres Themes."
+      },
+      "palette": {
+        "label": "Palette",
+        "description": "Wählen Sie aus einer großen Auswahl vordefinierter Farben."
+      },
+      "cancel": "Abbrechen",
+      "apply": "Anwenden"
+    }
   }
 }
