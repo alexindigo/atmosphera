@@ -5,7 +5,6 @@ import QtQuick.Layouts
 import qs.Commons
 import qs.Widgets
 import qs.Services
-import "./WidgetSettings" as WidgetSettings
 
 // Widget Settings Dialog Component
 Popup {

@@ -2,6 +2,7 @@ import QtCore
 import QtQuick
 import QtQuick.Dialogs
 import QtQuick.Controls
+import qs.Commons
 import qs.Services
 
 Item {

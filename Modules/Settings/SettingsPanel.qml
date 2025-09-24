@@ -3,7 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
-import qs.Modules.Settings.Tabs as Tabs
+import qs.Modules.Settings.Tabs
 import qs.Commons
 import qs.Services
 import qs.Widgets
@@ -52,59 +52,59 @@ NPanel {
 
   Component {
     id: generalTab
-    Tabs.GeneralTab {}
+    GeneralTab {}
   }
   Component {
     id: launcherTab
-    Tabs.LauncherTab {}
+    LauncherTab {}
   }
   Component {
     id: barTab
-    Tabs.BarTab {}
+    BarTab {}
   }
   Component {
     id: audioTab
-    Tabs.AudioTab {}
+    AudioTab {}
   }
   Component {
     id: displayTab
-    Tabs.DisplayTab {}
+    DisplayTab {}
   }
   Component {
     id: networkTab
-    Tabs.NetworkTab {}
+    NetworkTab {}
   }
   Component {
     id: locationTab
-    Tabs.LocationTab {}
+    LocationTab {}
   }
   Component {
     id: colorSchemeTab
-    Tabs.ColorSchemeTab {}
+    ColorSchemeTab {}
   }
   Component {
     id: wallpaperTab
-    Tabs.WallpaperTab {}
+    WallpaperTab {}
   }
   Component {
     id: screenRecorderTab
-    Tabs.ScreenRecorderTab {}
+    ScreenRecorderTab {}
   }
   Component {
     id: aboutTab
-    Tabs.AboutTab {}
+    AboutTab {}
   }
   Component {
     id: hooksTab
-    Tabs.HooksTab {}
+    HooksTab {}
   }
   Component {
     id: dockTab
-    Tabs.DockTab {}
+    DockTab {}
   }
   Component {
     id: notificationsTab
-    Tabs.NotificationsTab {}
+    NotificationsTab {}
   }
 
   // Order *DOES* matter
