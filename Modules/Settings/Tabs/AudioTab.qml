@@ -51,10 +51,10 @@ ColumnLayout {
     NValueSlider {
       Layout.fillWidth: true
       from: 0
-      to: Settings.data.audio.volumeOverdrive ? 2.0 : 1.0
+      to: Settings.data.audio.volumeOverdrive ? 1.5 : 1.0
       value: localVolume
       stepSize: 0.01
-      text: Math.floor(AudioService.volume * 100) + "%"
+      text: Math.round(AudioService.volume * 100) + "%"
       onMoved: {
         localVolume = value
       }
@@ -91,10 +91,10 @@ ColumnLayout {
     NValueSlider {
       Layout.fillWidth: true
       from: 0
-      to: 1.0
+      to: Settings.data.audio.volumeOverdrive ? 1.5 : 1.0
       value: AudioService.inputVolume
       stepSize: 0.01
-      text: Math.floor(AudioService.inputVolume * 100) + "%"
+      text: Math.round(AudioService.inputVolume * 100) + "%"
       onMoved: value => AudioService.setInputVolume(value)
     }
   }
@@ -127,6 +127,19 @@ ColumnLayout {
       stepSize: 1
       suffix: "%"
       onValueChanged: Settings.data.audio.volumeStep = value
+    }
+  }
+
+  // Raise maximum volume above 100%
+  ColumnLayout {
+    spacing: Style.marginS * scaling
+    Layout.fillWidth: true
+
+    NToggle {
+      label: "Allow volume overdrive"
+      description: "Allow raising volume above 100%."
+      checked: Settings.data.audio.volumeOverdrive
+      onToggled: checked => Settings.data.audio.volumeOverdrive = checked
     }
   }
 

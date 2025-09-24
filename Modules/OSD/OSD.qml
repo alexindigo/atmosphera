@@ -70,7 +70,11 @@ Loader {
   // Get progress bar color
   function getProgressColor() {
     if (osdType === OSD.Type.Volume) {
-      return isMuted ? Color.mError : Color.mPrimary
+      if (isMuted)
+        return Color.mError
+      if (currentVolume > 1.0)
+        return Color.mError
+      return Color.mPrimary
     } else {
       return Color.mPrimary
     }
