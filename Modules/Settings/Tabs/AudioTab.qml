@@ -135,7 +135,7 @@ ColumnLayout {
 
     NToggle {
       label: "Allow volume overdrive"
-      description: "Allow raising volume above 100%."
+      description: "Allow raising volume above 100%. May not be supported by all hardware."
       checked: Settings.data.audio.volumeOverdrive
       onToggled: checked => Settings.data.audio.volumeOverdrive = checked
     }
