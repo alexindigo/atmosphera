@@ -106,14 +106,14 @@ ColumnLayout {
 
   // Main Toggles - Dark Mode / Matugen
   NHeader {
-    label: "Color source"
-    description: "Main settings for Noctalia's colors."
+    label: I18n.tr("settings.color-scheme.color-source.section.label")
+    description: I18n.tr("settings.color-scheme.color-source.section.description")
   }
 
   // Dark Mode Toggle (affects both Matugen and predefined schemes that provide variants)
   NToggle {
-    label: "Dark mode"
-    description: "Switches to a darker theme for easier viewing at night."
+    label: I18n.tr("settings.color-scheme.color-source.dark-mode.label")
+    description: I18n.tr("settings.color-scheme.color-source.dark-mode.description")
     checked: Settings.data.colorSchemes.darkMode
     enabled: true
     onToggled: checked => Settings.data.colorSchemes.darkMode = checked
@@ -121,8 +121,8 @@ ColumnLayout {
 
   // Use Matugen
   NToggle {
-    label: "Enable Matugen"
-    description: "Automatically generate colors based on your active wallpaper."
+    label: I18n.tr("settings.color-scheme.color-source.enable-matugen.label")
+    description: I18n.tr("settings.color-scheme.color-source.enable-matugen.description")
     checked: Settings.data.colorSchemes.useWallpaperColors
     onToggled: checked => {
                  if (checked) {
@@ -152,8 +152,8 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      label: "Predefined color schemes"
-      description: "To use these color schemes, you must turn off Matugen. With Matugen enabled, colors are automatically generated from your wallpaper."
+      label: I18n.tr("settings.color-scheme.predefined.section.label")
+      description: I18n.tr("settings.color-scheme.predefined.section.description")
     }
 
     // Color Schemes Grid
@@ -324,16 +324,21 @@ ColumnLayout {
     visible: Settings.data.colorSchemes.useWallpaperColors
     spacing: Style.marginL * scaling
 
+    NHeader {
+      label: I18n.tr("settings.color-scheme.matugen.section.label")
+      description: I18n.tr("settings.color-scheme.matugen.section.description")
+    }
+
     // UI Components
     NCollapsible {
       Layout.fillWidth: true
-      label: "UI"
-      description: "Desktop environment and UI toolkit theming."
+      label: I18n.tr("settings.color-scheme.matugen.ui.label")
+      description: I18n.tr("settings.color-scheme.matugen.ui.description")
       defaultExpanded: false
 
       NCheckbox {
-        label: "GTK 4 (libadwaita)"
-        description: "Write ~/.config/gtk-4.0/gtk.css"
+        label: I18n.tr("settings.color-scheme.matugen.ui.gtk4.label")
+        description: I18n.tr("settings.color-scheme.matugen.ui.gtk4.description")
         checked: Settings.data.matugen.gtk4
         onToggled: checked => {
                      Settings.data.matugen.gtk4 = checked
@@ -343,8 +348,8 @@ ColumnLayout {
       }
 
       NCheckbox {
-        label: "GTK 3"
-        description: "Write ~/.config/gtk-3.0/gtk.css"
+        label: I18n.tr("settings.color-scheme.matugen.ui.gtk3.label")
+        description: I18n.tr("settings.color-scheme.matugen.ui.gtk3.description")
         checked: Settings.data.matugen.gtk3
         onToggled: checked => {
                      Settings.data.matugen.gtk3 = checked
@@ -354,8 +359,8 @@ ColumnLayout {
       }
 
       NCheckbox {
-        label: "Qt6ct"
-        description: "Write ~/.config/qt6ct/colors/noctalia.conf"
+        label: I18n.tr("settings.color-scheme.matugen.ui.qt6.label")
+        description: I18n.tr("settings.color-scheme.matugen.ui.qt6.description")
         checked: Settings.data.matugen.qt6
         onToggled: checked => {
                      Settings.data.matugen.qt6 = checked
@@ -365,8 +370,8 @@ ColumnLayout {
       }
 
       NCheckbox {
-        label: "Qt5ct"
-        description: "Write ~/.config/qt5ct/colors/noctalia.conf"
+        label: I18n.tr("settings.color-scheme.matugen.ui.qt5.label")
+        description: I18n.tr("settings.color-scheme.matugen.ui.qt5.description")
         checked: Settings.data.matugen.qt5
         onToggled: checked => {
                      Settings.data.matugen.qt5 = checked
@@ -379,13 +384,13 @@ ColumnLayout {
     // Terminal Emulators
     NCollapsible {
       Layout.fillWidth: true
-      label: "Terminal"
-      description: "Terminal emulator theming."
+      label: I18n.tr("settings.color-scheme.matugen.terminal.label")
+      description: I18n.tr("settings.color-scheme.matugen.terminal.description")
       defaultExpanded: false
 
       NCheckbox {
-        label: "Kitty"
-        description: ProgramCheckerService.kittyAvailable ? "Write ~/.config/kitty/themes/noctalia.conf and reload" : "Requires kitty terminal to be installed"
+        label: I18n.tr("settings.color-scheme.matugen.terminal.kitty.label")
+        description: ProgramCheckerService.kittyAvailable ? I18n.tr("settings.color-scheme.matugen.terminal.kitty.description") : I18n.tr("settings.color-scheme.matugen.terminal.kitty.description-missing")
         checked: Settings.data.matugen.kitty
         enabled: ProgramCheckerService.kittyAvailable
         opacity: ProgramCheckerService.kittyAvailable ? 1.0 : 0.6
@@ -399,8 +404,8 @@ ColumnLayout {
       }
 
       NCheckbox {
-        label: "Ghostty"
-        description: ProgramCheckerService.ghosttyAvailable ? "Write ~/.config/ghostty/themes/noctalia and reload" : "Requires ghostty terminal to be installed"
+        label: I18n.tr("settings.color-scheme.matugen.terminal.ghostty.label")
+        description: ProgramCheckerService.ghosttyAvailable ? I18n.tr("settings.color-scheme.matugen.terminal.ghostty.description") : I18n.tr("settings.color-scheme.matugen.terminal.ghostty.description-missing")
         checked: Settings.data.matugen.ghostty
         enabled: ProgramCheckerService.ghosttyAvailable
         opacity: ProgramCheckerService.ghosttyAvailable ? 1.0 : 0.6
@@ -414,8 +419,8 @@ ColumnLayout {
       }
 
       NCheckbox {
-        label: "Foot"
-        description: ProgramCheckerService.footAvailable ? "Write ~/.config/foot/themes/noctalia and reload" : "Requires foot terminal to be installed"
+        label: I18n.tr("settings.color-scheme.matugen.terminal.foot.label")
+        description: ProgramCheckerService.footAvailable ? I18n.tr("settings.color-scheme.matugen.terminal.foot.description") : I18n.tr("settings.color-scheme.matugen.terminal.foot.description-missing")
         checked: Settings.data.matugen.foot
         enabled: ProgramCheckerService.footAvailable
         opacity: ProgramCheckerService.footAvailable ? 1.0 : 0.6
@@ -432,13 +437,13 @@ ColumnLayout {
     // Applications
     NCollapsible {
       Layout.fillWidth: true
-      label: "Programs"
-      description: "Application-specific theming."
+      label: I18n.tr("settings.color-scheme.matugen.programs.label")
+      description: I18n.tr("settings.color-scheme.matugen.programs.description")
       defaultExpanded: false
 
       NCheckbox {
-        label: "Fuzzel"
-        description: ProgramCheckerService.fuzzelAvailable ? "Write ~/.config/fuzzel/themes/noctalia and reload" : "Requires fuzzel launcher to be installed"
+        label: I18n.tr("settings.color-scheme.matugen.programs.fuzzel.label")
+        description: ProgramCheckerService.fuzzelAvailable ? I18n.tr("settings.color-scheme.matugen.programs.fuzzel.description") : I18n.tr("settings.color-scheme.matugen.programs.fuzzel.description-missing")
         checked: Settings.data.matugen.fuzzel
         enabled: ProgramCheckerService.fuzzelAvailable
         opacity: ProgramCheckerService.fuzzelAvailable ? 1.0 : 0.6
@@ -452,8 +457,8 @@ ColumnLayout {
       }
 
       NCheckbox {
-        label: "Vesktop"
-        description: ProgramCheckerService.vesktopAvailable ? "Write ~/.config/vesktop/themes/noctalia.theme.css" : "Requires vesktop Discord client to be installed"
+        label: I18n.tr("settings.color-scheme.matugen.programs.vesktop.label")
+        description: ProgramCheckerService.vesktopAvailable ? I18n.tr("settings.color-scheme.matugen.programs.vesktop.description") : I18n.tr("settings.color-scheme.matugen.programs.vesktop.description-missing")
         checked: Settings.data.matugen.vesktop
         enabled: ProgramCheckerService.vesktopAvailable
         opacity: ProgramCheckerService.vesktopAvailable ? 1.0 : 0.6
@@ -467,8 +472,8 @@ ColumnLayout {
       }
 
       NCheckbox {
-        label: "Pywalfox (Firefox)"
-        description: ProgramCheckerService.pywalfoxAvailable ? "Write ~/.cache/wal/colors.json and run pywalfox update" : "Requires pywalfox package to be installed"
+        label: I18n.tr("settings.color-scheme.matugen.programs.pywalfox.label")
+        description: ProgramCheckerService.pywalfoxAvailable ? I18n.tr("settings.color-scheme.matugen.programs.pywalfox.description") : I18n.tr("settings.color-scheme.matugen.programs.pywalfox.description-missing")
         checked: Settings.data.matugen.pywalfox
         enabled: ProgramCheckerService.pywalfoxAvailable
         opacity: ProgramCheckerService.pywalfoxAvailable ? 1.0 : 0.6
@@ -485,13 +490,13 @@ ColumnLayout {
     // Miscellaneous
     NCollapsible {
       Layout.fillWidth: true
-      label: "Misc"
-      description: "Additional configuration options."
+      label: I18n.tr("settings.color-scheme.matugen.misc.label")
+      description: I18n.tr("settings.color-scheme.matugen.misc.description")
       defaultExpanded: false
 
       NCheckbox {
-        label: "User templates"
-        description: "Enable user-defined Matugen config from ~/.config/matugen/config.toml"
+        label: I18n.tr("settings.color-scheme.matugen.misc.user-templates.label")
+        description: I18n.tr("settings.color-scheme.matugen.misc.user-templates.description")
         checked: Settings.data.matugen.enableUserTemplates
         onToggled: checked => {
                      Settings.data.matugen.enableUserTemplates = checked

@@ -11,8 +11,8 @@ ColumnLayout {
   spacing: Style.marginL * scaling
 
   NHeader {
-    label: "Volumes"
-    description: "Adjust volume controls and audio levels."
+    label: I18n.tr("settings.audio.volumes.section.label")
+    description: I18n.tr("settings.audio.volumes.section.description")
   }
 
   property real localVolume: AudioService.volume
@@ -30,8 +30,8 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NLabel {
-      label: "Output volume"
-      description: "System-wide volume level."
+      label: I18n.tr("settings.audio.volumes.output-volume.label")
+      description: I18n.tr("settings.audio.volumes.output-volume.description")
     }
 
     // Pipewire seems a bit finicky, if we spam too many volume changes it breaks easily
@@ -67,8 +67,8 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NToggle {
-      label: "Mute audio output"
-      description: "Mute the system's main audio output."
+      label: I18n.tr("settings.audio.volumes.mute-output.label")
+      description: I18n.tr("settings.audio.volumes.mute-output.description")
       checked: AudioService.muted
       onToggled: checked => {
                    if (AudioService.sink && AudioService.sink.audio) {
@@ -84,8 +84,8 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NLabel {
-      label: "Input volume"
-      description: "Microphone input volume level."
+      label: I18n.tr("settings.audio.volumes.input-volume.label")
+      description: I18n.tr("settings.audio.volumes.input-volume.description")
     }
 
     NValueSlider {
@@ -105,8 +105,8 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NToggle {
-      label: "Mute audio input"
-      description: "Mute the default audio input (microphone)."
+      label: I18n.tr("settings.audio.volumes.mute-input.label")
+      description: I18n.tr("settings.audio.volumes.mute-input.description")
       checked: AudioService.inputMuted
       onToggled: checked => AudioService.setInputMuted(checked)
     }
@@ -119,8 +119,8 @@ ColumnLayout {
 
     NSpinBox {
       Layout.fillWidth: true
-      label: "Volume step size"
-      description: "Adjust the step size for volume changes (scroll wheel, keyboard shortcuts)."
+      label: I18n.tr("settings.audio.volumes.step-size.label")
+      description: I18n.tr("settings.audio.volumes.step-size.description")
       minimum: 1
       maximum: 25
       value: Settings.data.audio.volumeStep
@@ -141,8 +141,8 @@ ColumnLayout {
     spacing: Style.marginS * scaling
 
     NHeader {
-      label: "Audio devices"
-      description: "Choose your audio input and output devices."
+      label: I18n.tr("settings.audio.devices.section.label")
+      description: I18n.tr("settings.audio.devices.section.description")
     }
 
     // -------------------------------
@@ -157,8 +157,8 @@ ColumnLayout {
       Layout.bottomMargin: Style.marginL * scaling
 
       NLabel {
-        label: "Output device"
-        description: "Select the desired audio output device."
+        label: I18n.tr("settings.audio.devices.output-device.label")
+        description: I18n.tr("settings.audio.devices.output-device.description")
       }
 
       Repeater {
@@ -184,8 +184,8 @@ ColumnLayout {
       Layout.fillWidth: true
 
       NLabel {
-        label: "Input device"
-        description: "Select the desired audio input device."
+        label: I18n.tr("settings.audio.devices.input-device.label")
+        description: I18n.tr("settings.audio.devices.input-device.description")
       }
 
       Repeater {
@@ -213,15 +213,15 @@ ColumnLayout {
     spacing: Style.marginL * scaling
 
     NHeader {
-      label: "Media players"
-      description: "Set your preferred and ignored media applications."
+      label: I18n.tr("settings.audio.media.section.label")
+      description: I18n.tr("settings.audio.media.section.description")
     }
 
     // Preferred player
     NTextInput {
-      label: "Primary player"
-      description: "Enter a keyword to identify your main player."
-      placeholderText: "e.g. spotify, vlc, mpv"
+      label: I18n.tr("settings.audio.media.primary-player.label")
+      description: I18n.tr("settings.audio.media.primary-player.description")
+      placeholderText: I18n.tr("settings.audio.media.primary-player.placeholder")
       text: Settings.data.audio.preferredPlayer
       onTextChanged: {
         Settings.data.audio.preferredPlayer = text
@@ -240,9 +240,9 @@ ColumnLayout {
 
         NTextInput {
           id: blacklistInput
-          label: "Excluded player"
-          description: "Add keywords for players you want the system to ignore. Each keyword should be on a new line."
-          placeholderText: "type substring and press +"
+          label: I18n.tr("settings.audio.media.excluded-player.label")
+          description: I18n.tr("settings.audio.media.excluded-player.description")
+          placeholderText: I18n.tr("settings.audio.media.excluded-player.placeholder")
         }
 
         // Button aligned to the center of the actual input field
@@ -321,30 +321,11 @@ ColumnLayout {
         }
       }
     }
-  }
-
-  // Divider
-  NDivider {
-    Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
-  }
-
-  // AudioService Visualizer Category
-  ColumnLayout {
-    spacing: Style.marginS * scaling
-    Layout.fillWidth: true
-
-    NHeader {
-      label: "Audio visualizer"
-      description: "Customize visual effects that respond to audio playback."
-    }
-
     // AudioService Visualizer section
     NComboBox {
       id: audioVisualizerCombo
-      label: "Visualization type"
-      description: "Choose a visualization type for media playback"
+      label: I18n.tr("settings.audio.media.visualizer-type.label")
+      description: I18n.tr("settings.audio.media.visualizer-type.description")
       model: ListModel {
         ListElement {
           key: "none"
@@ -368,8 +349,8 @@ ColumnLayout {
     }
 
     NComboBox {
-      label: "Frame rate"
-      description: "Higher rates are smoother but use more resources."
+      label: I18n.tr("settings.audio.media.frame-rate.label")
+      description: I18n.tr("settings.audio.media.frame-rate.description")
       model: ListModel {
         ListElement {
           key: "30"
@@ -404,7 +385,7 @@ ColumnLayout {
       onSelected: key => Settings.data.audio.cavaFrameRate = key
     }
   }
-  // Divider
+
   NDivider {
     Layout.fillWidth: true
     Layout.topMargin: Style.marginXL * scaling

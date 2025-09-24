@@ -52,8 +52,8 @@ ColumnLayout {
   spacing: Style.marginL * scaling
 
   NHeader {
-    label: "Per-monitor settings"
-    description: "Adjust scaling and brightness for each display."
+    label: I18n.tr("settings.display.monitors.section.label")
+    description: I18n.tr("settings.display.monitors.section.description")
   }
 
   ColumnLayout {
@@ -103,7 +103,7 @@ ColumnLayout {
               Layout.fillWidth: true
 
               NText {
-                text: "Scale"
+                text: I18n.tr("settings.display.monitors.scale")
                 Layout.preferredWidth: 80 * scaling
               }
 
@@ -126,7 +126,7 @@ ColumnLayout {
                 NIconButton {
                   icon: "refresh"
                   baseSize: Style.baseWidgetSize * 0.9
-                  tooltipText: "Reset scaling"
+                  tooltipText: I18n.tr("settings.display.monitors.reset-scaling")
                   onClicked: ScalingService.setScreenScale(modelData, 1.0)
                   anchors.right: parent.right
                   anchors.verticalCenter: parent.verticalCenter
@@ -146,7 +146,7 @@ ColumnLayout {
               spacing: Style.marginL * scaling
 
               NText {
-                text: "Brightness"
+                text: I18n.tr("settings.display.monitors.brightness")
                 Layout.preferredWidth: 80 * scaling
               }
 
@@ -180,24 +180,6 @@ ColumnLayout {
         }
       }
     }
-  }
-
-  NDivider {
-    Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
-  }
-
-  // Brightness Section
-  ColumnLayout {
-    spacing: Style.marginS * scaling
-    Layout.fillWidth: true
-
-    NHeader {
-      label: "Brightness"
-      description: "Adjust brightness related settings."
-    }
-
     // Brightness Step Section
     ColumnLayout {
       spacing: Style.marginS * scaling
@@ -205,8 +187,8 @@ ColumnLayout {
 
       NSpinBox {
         Layout.fillWidth: true
-        label: "Brightness step size"
-        description: "Adjust the step size for brightness changes (scroll wheel and keyboard shortcuts)."
+        label: I18n.tr("settings.display.monitors.brightness-step.label")
+        description: I18n.tr("settings.display.monitors.brightness-step.description")
         minimum: 1
         maximum: 50
         value: Settings.data.brightness.brightnessStep
@@ -229,14 +211,14 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      label: "Night light"
-      description: "Reduce blue light emission to help you sleep better and reduce eye strain."
+      label: I18n.tr("settings.display.night-light.section.label")
+      description: I18n.tr("settings.display.night-light.section.description")
     }
   }
 
   NToggle {
-    label: "Enable night light"
-    description: "Apply a warm color filter to reduce blue light emission."
+    label: I18n.tr("settings.display.night-light.enable.label")
+    description: I18n.tr("settings.display.night-light.enable.description")
     checked: Settings.data.nightLight.enabled
     onToggled: checked => {
                  if (checked) {
@@ -257,8 +239,8 @@ ColumnLayout {
     Layout.alignment: Qt.AlignVCenter
 
     NLabel {
-      label: "Color temperature"
-      description: "Set the color warmth for nighttime and daytime."
+      label: I18n.tr("settings.display.night-light.temperature.label")
+      description: I18n.tr("settings.display.night-light.temperature.description")
     }
 
     RowLayout {
@@ -269,7 +251,7 @@ ColumnLayout {
       Layout.alignment: Qt.AlignVCenter
 
       NText {
-        text: "Night"
+        text: I18n.tr("settings.display.night-light.temperature.night")
         font.pointSize: Style.fontSizeM * scaling
         color: Color.mOnSurfaceVariant
         Layout.alignment: Qt.AlignVCenter
@@ -291,7 +273,7 @@ ColumnLayout {
       }
 
       NText {
-        text: "Day"
+        text: I18n.tr("settings.display.night-light.temperature.day")
         font.pointSize: Style.fontSizeM * scaling
         color: Color.mOnSurfaceVariant
         Layout.alignment: Qt.AlignVCenter
@@ -314,8 +296,10 @@ ColumnLayout {
   }
 
   NToggle {
-    label: "Automatic scheduling"
-    description: `Based on the sunset and sunrise time in <i>${LocationService.stableName}</i> - recommended.`
+    label: I18n.tr("settings.display.night-light.auto-schedule.label")
+    description: I18n.tr("settings.display.night-light.auto-schedule.description", {
+                           "location": LocationService.stableName
+                         })
     checked: Settings.data.nightLight.autoSchedule
     onToggled: checked => Settings.data.nightLight.autoSchedule = checked
     visible: Settings.data.nightLight.enabled
@@ -327,8 +311,8 @@ ColumnLayout {
     visible: Settings.data.nightLight.enabled && !Settings.data.nightLight.autoSchedule && !Settings.data.nightLight.forced
 
     NLabel {
-      label: "Manual scheduling"
-      description: "Set custom times for sunrise and sunset."
+      label: I18n.tr("settings.display.night-light.manual-schedule.label")
+      description: I18n.tr("settings.display.night-light.manual-schedule.description")
     }
 
     RowLayout {
@@ -336,7 +320,7 @@ ColumnLayout {
       spacing: Style.marginS * scaling
 
       NText {
-        text: "Sunrise time"
+        text: I18n.tr("settings.display.night-light.manual-schedule.sunrise")
         font.pointSize: Style.fontSizeM * scaling
         color: Color.mOnSurfaceVariant
       }
@@ -344,7 +328,7 @@ ColumnLayout {
       NComboBox {
         model: timeOptions
         currentKey: Settings.data.nightLight.manualSunrise
-        placeholder: "Select start time"
+        placeholder: I18n.tr("settings.display.night-light.manual-schedule.select-start")
         onSelected: key => Settings.data.nightLight.manualSunrise = key
         minimumWidth: 120 * scaling
       }
@@ -354,7 +338,7 @@ ColumnLayout {
       }
 
       NText {
-        text: "Sunset time"
+        text: I18n.tr("settings.display.night-light.manual-schedule.sunset")
         font.pointSize: Style.fontSizeM * scaling
         color: Color.mOnSurfaceVariant
       }
@@ -362,7 +346,7 @@ ColumnLayout {
       NComboBox {
         model: timeOptions
         currentKey: Settings.data.nightLight.manualSunset
-        placeholder: "Select stop time"
+        placeholder: I18n.tr("settings.display.night-light.manual-schedule.select-stop")
         onSelected: key => Settings.data.nightLight.manualSunset = key
         minimumWidth: 120 * scaling
       }
@@ -371,8 +355,8 @@ ColumnLayout {
 
   // Force activation toggle
   NToggle {
-    label: "Force activation"
-    description: "Ignores the schedule and applies the night filter immediately."
+    label: I18n.tr("settings.display.night-light.force-activation.label")
+    description: I18n.tr("settings.display.night-light.force-activation.description")
     checked: Settings.data.nightLight.forced
     onToggled: checked => {
                  Settings.data.nightLight.forced = checked

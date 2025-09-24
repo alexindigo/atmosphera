@@ -1,0 +1,658 @@
+{
+  "settings": {
+    "general": {
+      "title": "Allgemein",
+      
+      "profile": {
+        "section": {
+          "label": "Profil",
+          "description": "Bearbeite deine Benutzerdaten und deinen Avatar."
+        },
+        "picture": {
+          "label": "{user}s Profilbild",
+          "description": "Dein Profilbild, das überall in der Oberfläche angezeigt wird."
+        },
+        "select-avatar": "Avatar-Bild auswählen"
+      },
+
+      "ui": {
+        "section": {
+          "label": "Benutzeroberfläche",
+          "description": "Passe Aussehen, Gefühl und Verhalten der Oberfläche an."
+        },
+        "dim-desktop": {
+          "label": "Desktop abdunkeln",
+          "description": "Desktop abdunkeln, wenn Panels oder Menüs geöffnet sind."
+        },
+        "border-radius": {
+          "label": "Eckenrundung",
+          "description": "Bestimmt die Rundung von Fenstern, Buttons und anderen Elementen."
+        },
+        "animation-speed": {
+          "label": "Animationsgeschwindigkeit",
+          "description": "Globale Animationsgeschwindigkeit anpassen."
+        }
+      },
+      "screen-corners": {
+        "section": {
+          "label": "Bildschirmecken",
+          "description": "Rundung und visuelle Effekte der Bildschirmecken anpassen."
+        },
+        "show-corners": {
+          "label": "Bildschirmecken anzeigen",
+          "description": "Gerundete Ecken am Bildschirmrand anzeigen."
+        },
+        "solid-black": {
+          "label": "Durchgehend schwarze Ecken",
+          "description": "Verwende durchgehend schwarz statt der Hintergrundfarbe der Statusleiste."
+        }
+      },
+      "fonts": {
+        "section": {
+          "label": "Schriftarten",
+          "description": "Wähle die Schriftarten für die gesamte Oberfläche."
+        },
+        "default": {
+          "label": "Standard-Schriftart",
+          "description": "Hauptschriftart für die gesamte Oberfläche.",
+          "placeholder": "Standard-Schriftart auswählen...",
+          "search-placeholder": "Schriftarten durchsuchen..."
+        },
+        "monospace": {
+          "label": "Monospace-Schriftart",
+          "description": "Monospace-Schriftart für Zahlen und Statistiken.",
+          "placeholder": "Monospace-Schriftart auswählen...",
+          "search-placeholder": "Monospace-Schriftarten durchsuchen..."
+        },
+        "accent": {
+          "label": "Akzent-Schriftart",
+          "description": "Große Schriftart für prominente Anzeigen.",
+          "placeholder": "Display-Schriftart auswählen...",
+          "search-placeholder": "Display-Schriftarten durchsuchen..."
+        }
+      }
+    },
+    "audio": {
+      "title": "Audio",
+      "volumes": {
+        "section": {
+          "label": "Lautstärke",
+          "description": "Lautstärke-Einstellungen und Audiopegel anpassen."
+        },
+        "output-volume": {
+          "label": "Ausgabe-Lautstärke",
+          "description": "Systemweite Lautstärke."
+        },
+        "mute-output": {
+          "label": "Audio-Ausgabe stumm",
+          "description": "Haupt-Audio-Ausgabe des Systems stummschalten."
+        },
+        "input-volume": {
+          "label": "Eingabe-Lautstärke",
+          "description": "Mikrofon-Eingangslautstärke."
+        },
+        "mute-input": {
+          "label": "Audio-Eingabe stumm",
+          "description": "Standard-Audio-Eingang (Mikrofon) stummschalten."
+        },
+        "step-size": {
+          "label": "Lautstärke-Schrittgröße",
+          "description": "Schrittgröße für Lautstärkeänderungen (Mausrad, Tastenkürzel)."
+        }
+      },
+      "devices": {
+        "section": {
+          "label": "Audio-Geräte",
+          "description": "Verfügbare Audio-Ein- und Ausgabegeräte konfigurieren."
+        },
+        "output-device": {
+          "label": "Ausgabegerät",
+          "description": "Gewünschtes Audio-Ausgabegerät auswählen."
+        },
+        "input-device": {
+          "label": "Eingabegerät",
+          "description": "Gewünschtes Audio-Eingabegerät auswählen."
+        }
+      },
+      "media": {
+        "section": {
+          "label": "Media Player",
+          "description": "Bevorzugte und ignorierte Media-Anwendungen festlegen."
+        },
+        "primary-player": {
+          "label": "Haupt-Player",
+          "description": "Stichwort eingeben, um deinen Haupt-Player zu identifizieren.",
+          "placeholder": "z.B. spotify, vlc, mpv"
+        },
+        "excluded-player": {
+          "label": "Ausgeschlossene Player",
+          "description": "Stichwörter für Player hinzufügen, die das System ignorieren soll. Jedes Stichwort in eine neue Zeile.",
+          "placeholder": "Teilstring eingeben und + drücken"
+        },
+        "visualizer-type": {
+          "label": "Visualisierung",
+          "description": "Visualisierung für Media-Wiedergabe auswählen"
+        },
+        "frame-rate": {
+          "label": "Bildrate",
+          "description": "Höhere Raten sind flüssiger, brauchen aber mehr Ressourcen."
+        }
+      }
+    },
+    "display": {
+      "title": "Display",
+      "monitors": {
+        "section": {
+          "label": "Monitor-Einstellungen",
+          "description": "Skalierung und Helligkeit für jeden Bildschirm anpassen."
+        },
+        "scale": "Skalierung",
+        "brightness": "Helligkeit",
+        "reset-scaling": "Skalierung zurücksetzen",
+        "brightness-step": {
+          "label": "Helligkeits-Schrittgröße",
+          "description": "Schrittgröße für Helligkeitsänderungen (Mausrad und Tastenkürzel)."
+        }
+      },
+      "night-light": {
+        "section": {
+          "label": "Nachtlicht",
+          "description": "Blaues Licht reduzieren für besseren Schlaf und weniger Augenbelastung."
+        },
+        "enable": {
+          "label": "Nachtlicht aktivieren",
+          "description": "Warmen Farbfilter anwenden, um blaues Licht zu reduzieren."
+        },
+        "temperature": {
+          "label": "Farbtemperatur",
+          "description": "Farbwärme für Nacht- und Tageszeit einstellen.",
+          "night": "Nacht",
+          "day": "Tag"
+        },
+        "auto-schedule": {
+          "label": "Automatische Zeiten",
+          "description": "Basiert auf Sonnenuntergang und -aufgang in <i>{location}</i> - empfohlen."
+        },
+        "manual-schedule": {
+          "label": "Manuelle Zeiten",
+          "description": "Eigene Zeiten für Sonnenauf- und -untergang festlegen.",
+          "sunrise": "Sonnenaufgang",
+          "sunset": "Sonnenuntergang",
+          "select-start": "Startzeit auswählen",
+          "select-stop": "Endzeit auswählen"
+        },
+        "force-activation": {
+          "label": "Sofort aktivieren",
+          "description": "Ignoriert den Zeitplan und wendet den Nachtfilter sofort an."
+        }
+      }
+    },
+    "bar": {
+      "title": "Statusleiste",
+      "appearance": {
+        "section": {
+          "label": "Aussehen",
+          "description": "Aussehen und Position der Statusleiste anpassen."
+        },
+        "position": {
+          "label": "Statusleistenposition",
+          "description": "Wähle, wo die Statusleiste auf dem Bildschirm platziert wird."
+        },
+        "density": {
+          "label": "Statusleistendichte",
+          "description": "Innenabstand der Statusleiste für kompaktes oder geräumiges Aussehen anpassen."
+        },
+        "background-opacity": {
+          "label": "Hintergrund-Transparenz",
+          "description": "Transparenz des Statusleistenhintergrunds anpassen."
+        },
+        "show-capsule": {
+          "label": "Kapsel anzeigen",
+          "description": "Widget-Hintergründe anzeigen."
+        },
+        "floating": {
+          "label": "Schwebende Statusleiste",
+          "description": "Statusleiste als schwebende 'Pille' anzeigen. Hinweis: Dadurch werden die Bildschirmecken an die Ränder verschoben."
+        },
+        "margins": {
+          "label": "Ränder",
+          "description": "Ränder um die schwebende Statusleiste anpassen.",
+          "vertical": "Vertikal",
+          "horizontal": "Horizontal"
+        }
+      },
+      "widgets": {
+        "section": {
+          "label": "Widget-Positionierung",
+          "description": "Widgets per Drag & Drop innerhalb jeder Sektion neu ordnen oder mit den Hinzufügen/Entfernen-Buttons verwalten."
+        }
+      },
+      "monitors": {
+        "section": {
+          "label": "Monitor-Anzeige",
+          "description": "Statusleiste auf bestimmten Monitoren anzeigen. Standard ist alle, wenn keine ausgewählt."
+        }
+      }
+    },
+    "dock": {
+      "title": "Dock",
+      "appearance": {
+        "section": {
+          "label": "Aussehen",
+          "description": "Verhalten und Aussehen des Docks anpassen."
+        },
+        "auto-hide": {
+          "label": "Automatisch ausblenden",
+          "description": "Automatisch ausblenden, wenn nicht verwendet."
+        },
+        "exclusive-zone": {
+          "label": "Exklusivbereich",
+          "description": "Fensterüberlappung verhindern."
+        },
+        "background-opacity": {
+          "label": "Hintergrund-Transparenz",
+          "description": "Transparenz des Dock-Hintergrunds anpassen."
+        },
+        "floating-distance": {
+          "label": "Schwebeabstand",
+          "description": "Schwebeabstand vom Bildschirmrand anpassen."
+        }
+      },
+      "monitors": {
+        "section": {
+          "label": "Monitor-Anzeige",
+          "description": "Monitor auswählen, auf dem das Dock angezeigt wird."
+        }
+      }
+    },
+    "launcher": {
+      "title": "Starter",
+      "settings": {
+        "section": {
+          "label": "Aussehen",
+          "description": "Verhalten und Aussehen des Starters anpassen."
+        },
+        "position": {
+          "label": "Position",
+          "description": "Wähle, wo das Starter-Panel erscheint."
+        },
+        "background-opacity": {
+          "label": "Hintergrund-Transparenz",
+          "description": "Transparenz des Starter-Hintergrunds anpassen."
+        },
+        "clipboard-history": {
+          "label": "Zwischenablage-Verlauf aktivieren",
+          "description": "Auf zuvor kopierte Inhalte über den Starter zugreifen."
+        },
+        "sort-by-usage": {
+          "label": "Nach Nutzung sortieren",
+          "description": "Wenn aktiviert, erscheinen häufig gestartete Apps zuerst in der Liste."
+        },
+        "use-app2unit": {
+          "label": "App2Unit zum Starten verwenden",
+          "description": "Verwendet eine alternative Startmethode für bessere Prozessverwaltung und weniger Probleme."
+        }
+      }
+    },
+    "notifications": {
+      "title": "Benachrichtigungen",
+      "settings": {
+        "section": {
+          "label": "Aussehen",
+          "description": "Aussehen und Verhalten von Benachrichtigungen konfigurieren."
+        },
+        "do-not-disturb": {
+          "label": "Nicht stören",
+          "description": "Alle Benachrichtigungs-Popups deaktivieren, wenn aktiviert."
+        },
+        "enable-osd": {
+          "label": "Bildschirmanzeige aktivieren",
+          "description": "Lautstärke- und Helligkeitsänderungen in Echtzeit anzeigen."
+        },
+        "location": {
+          "label": "Position",
+          "description": "Wo Benachrichtigungen auf dem Bildschirm erscheinen."
+        },
+        "low-urgency": {
+          "label": "Niedrige Priorität",
+          "description": "Wie lange Benachrichtigungen niedriger Priorität sichtbar bleiben."
+        },
+        "normal-urgency": {
+          "label": "Normale Priorität",
+          "description": "Wie lange Benachrichtigungen normaler Priorität sichtbar bleiben."
+        },
+        "critical-urgency": {
+          "label": "Kritische Priorität",
+          "description": "Wie lange kritische Benachrichtigungen sichtbar bleiben."
+        },
+        "monitors-display": {
+          "label": "Monitor-Anzeige",
+          "description": "Benachrichtigungen auf bestimmten Monitoren anzeigen. Standard ist alle, wenn keine ausgewählt."
+        }
+      }
+    },
+    "wallpaper": {
+      "title": "Hintergrundbild",
+      "settings": {
+        "section": {
+          "label": "Hintergrundbild-Einstellungen",
+          "description": "Verwaltung und Anzeige von Hintergrundbildern steuern."
+        },
+        "enable-management": {
+          "label": "Hintergrundbild-Verwaltung aktivieren",
+          "description": "Hintergrundbilder mit Noctalia verwalten. Deaktivieren, wenn du eine andere Anwendung bevorzugst."
+        },
+        "folder": {
+          "label": "Hintergrundbild-Ordner",
+          "description": "Pfad zu deinem Haupt-Hintergrundbild-Ordner.",
+          "tooltip": "Nach Hintergrundbild-Ordner suchen"
+        },
+        "monitor-specific": {
+          "label": "Monitor-spezifische Verzeichnisse",
+          "description": "Anderen Hintergrundbild-Ordner für jeden Monitor festlegen.",
+          "tooltip": "Nach Monitor-Hintergrundbild-Ordner suchen"
+        },
+        "select-folder": "Hintergrundbild-Ordner auswählen",
+        "select-monitor-folder": "Monitor-Hintergrundbild-Ordner auswählen"
+      },
+      "look-feel": {
+        "section": {
+          "label": "Aussehen"
+        },
+        "fill-mode": {
+          "label": "Füllmodus",
+          "description": "Wähle, wie das Bild an die Auflösung deines Monitors angepasst werden soll."
+        },
+        "fill-color": {
+          "label": "Füllfarbe",
+          "description": "Wähle eine Füllfarbe, die hinter dem Hintergrundbild erscheinen kann."
+        },
+        "transition-type": {
+          "label": "Übergangstyp",
+          "description": "Animationstyp beim Wechsel zwischen Hintergrundbildern."
+        },
+        "transition-duration": {
+          "label": "Übergangsdauer",
+          "description": "Dauer der Übergangsanimationen in Sekunden."
+        },
+        "edge-smoothness": {
+          "label": "Übergangskante weichzeichnen",
+          "description": "Wendet einen weichen, ausgefransten Effekt auf die Kante der Übergänge an."
+        }
+      },
+      "automation": {
+        "section": {
+          "label": "Automatisierung"
+        },
+        "random-wallpaper": {
+          "label": "Zufälliges Hintergrundbild",
+          "description": "Plane zufällige Hintergrundbild-Wechsel in regelmäßigen Abständen."
+        },
+        "interval": {
+          "label": "Hintergrundbild-Intervall",
+          "description": "Wie oft Hintergrundbilder automatisch gewechselt werden."
+        },
+        "custom-interval": {
+          "label": "Eigenes Intervall",
+          "description": "Zeit als HH:MM eingeben (z.B. 01:30)."
+        }
+      }
+    },
+    "color-scheme": {
+      "title": "Farbschema",
+      "color-source": {
+        "section": {
+          "label": "Farbquelle",
+          "description": "Haupteinstellungen für Noctalias Farben."
+        },
+        "dark-mode": {
+          "label": "Dunkler Modus",
+          "description": "Wechselt zu einem dunkleren Design für angenehmeres Sehen bei Nacht."
+        },
+        "enable-matugen": {
+          "label": "Matugen aktivieren",
+          "description": "Automatisch Farben basierend auf deinem aktiven Hintergrundbild generieren."
+        }
+      },
+      "predefined": {
+        "section": {
+          "label": "Vordefinierte Farbschemata",
+          "description": "Um diese Farbschemata zu verwenden, musst du Matugen deaktivieren. Mit aktiviertem Matugen werden Farben automatisch aus deinem Hintergrundbild generiert."
+        }
+      },
+      "matugen": {
+        "section": {
+          "label": "Matugen-Vorlagen",
+          "description": "Farben auf externe Anwendungen anwenden."
+        },
+        "ui": {
+          "label": "UI",
+          "description": "Desktop-Umgebung und UI-Toolkit-Theming.",
+          "gtk4": {
+            "label": "GTK 4 (libadwaita)",
+            "description": "Schreibt ~/.config/gtk-4.0/gtk.css"
+          },
+          "gtk3": {
+            "label": "GTK 3",
+            "description": "Schreibt ~/.config/gtk-3.0/gtk.css"
+          },
+          "qt6": {
+            "label": "Qt6ct",
+            "description": "Schreibt ~/.config/qt6ct/colors/noctalia.conf"
+          },
+          "qt5": {
+            "label": "Qt5ct",
+            "description": "Schreibt ~/.config/qt5ct/colors/noctalia.conf"
+          }
+        },
+        "terminal": {
+          "label": "Terminal",
+          "description": "Terminal-Emulator-Theming.",
+          "kitty": {
+            "label": "Kitty",
+            "description": "Schreibt ~/.config/kitty/themes/noctalia.conf und lädt neu",
+            "description-missing": "Erfordert installiertes kitty Terminal"
+          },
+          "ghostty": {
+            "label": "Ghostty",
+            "description": "Schreibt ~/.config/ghostty/themes/noctalia und lädt neu",
+            "description-missing": "Erfordert installiertes ghostty Terminal"
+          },
+          "foot": {
+            "label": "Foot",
+            "description": "Schreibt ~/.config/foot/themes/noctalia und lädt neu",
+            "description-missing": "Erfordert installiertes foot Terminal"
+          }
+        },
+        "programs": {
+          "label": "Programme",
+          "description": "Anwendungsspezifisches Theming.",
+          "fuzzel": {
+            "label": "Fuzzel",
+            "description": "Schreibt ~/.config/fuzzel/themes/noctalia und lädt neu",
+            "description-missing": "Erfordert installierten fuzzel Launcher"
+          },
+          "vesktop": {
+            "label": "Vesktop",
+            "description": "Schreibt ~/.config/vesktop/themes/noctalia.theme.css",
+            "description-missing": "Erfordert installierten vesktop Discord-Client"
+          },
+          "pywalfox": {
+            "label": "Pywalfox (Firefox)",
+            "description": "Schreibt ~/.cache/wal/colors.json und führt pywalfox update aus",
+            "description-missing": "Erfordert installiertes pywalfox Paket"
+          }
+        },
+        "misc": {
+          "label": "Sonstiges",
+          "description": "Weitere Konfigurationsoptionen.",
+          "user-templates": {
+            "label": "Benutzer-Vorlagen",
+            "description": "Benutzerdefinierte Matugen-Konfiguration aus ~/.config/matugen/config.toml aktivieren"
+          }
+        }
+      }
+    },
+    "location": {
+      "title": "Standort",
+      "location": {
+        "section": {
+          "label": "Dein Standort",
+          "description": "Genaues Wetter und Nachtlicht-Zeitplan durch Festlegen deines Standorts erhalten."
+        },
+        "search": {
+          "label": "Nach Standort suchen",
+          "description": "z.B. Berlin, DE",
+          "placeholder": "Ortsnamen eingeben"
+        }
+      },
+      "weather": {
+        "section": {
+          "label": "Wetter",
+          "description": "Wähle deine bevorzugte Temperatureinheit."
+        },
+        "fahrenheit": {
+          "label": "Temperatur in Fahrenheit (°F) anzeigen",
+          "description": "Temperatur in Fahrenheit statt Celsius anzeigen."
+        }
+      },
+      "date-time": {
+        "section": {
+          "label": "Datum & Zeit",
+          "description": "Anpassen, wie Datum und Zeit angezeigt werden."
+        },
+        "12hour-format": {
+          "label": "12-Stunden-Format auf dem Sperrbildschirm verwenden",
+          "description": "An für AM/PM-Format (z.B. 8:00 PM), aus für 24-Stunden-Format (z.B. 20:00)."
+        },
+        "week-numbers": {
+          "label": "Wochennummern anzeigen",
+          "description": "Zeigt die Woche des Jahres (z.B. Woche 38) im Kalender an."
+        }
+      }
+    },
+    "network": {
+      "title": "Netzwerk",
+      "section": {
+        "description": "Wi-Fi- und Bluetooth-Verbindungen verwalten."
+      },
+      "wifi": {
+        "label": "Wi-Fi aktivieren"
+      },
+      "bluetooth": {
+        "label": "Bluetooth aktivieren"
+      }
+    },
+    "screen-recorder": {
+      "title": "Bildschirmaufnahme",
+      "general": {
+        "section": {
+          "label": "Allgemeine Einstellungen",
+          "description": "Ausgabe und Inhalt der Bildschirmaufnahme verwalten."
+        },
+        "output-folder": {
+          "label": "Ausgabe-Ordner",
+          "description": "Ordner, in dem Bildschirmaufnahmen gespeichert werden.",
+          "tooltip": "Nach Ausgabe-Ordner suchen"
+        },
+        "show-cursor": {
+          "label": "Cursor anzeigen",
+          "description": "Mauszeiger im Video aufnehmen."
+        },
+        "select-output-folder": "Ausgabe-Ordner auswählen"
+      },
+      "video": {
+        "section": {
+          "label": "Video-Einstellungen",
+          "description": "Video-Aufnahmeoptionen konfigurieren."
+        },
+        "video-source": {
+          "label": "Video-Quelle",
+          "description": "Portal wird empfohlen, bei Artefakten versuche Screen."
+        },
+        "frame-rate": {
+          "label": "Bildrate",
+          "description": "Ziel-Bildrate für Bildschirmaufnahmen."
+        },
+        "video-quality": {
+          "label": "Video-Qualität",
+          "description": "Höhere Qualität führt zu größeren Dateien."
+        },
+        "video-codec": {
+          "label": "Video-Codec",
+          "description": "h264 ist der gängigste Codec."
+        },
+        "color-range": {
+          "label": "Farbbereich",
+          "description": "Begrenzt wird für bessere Kompatibilität empfohlen."
+        }
+      },
+      "audio": {
+        "section": {
+          "label": "Audio-Einstellungen",
+          "description": "Audio-Aufnahmeoptionen konfigurieren."
+        },
+        "audio-source": {
+          "label": "Audio-Quelle",
+          "description": "Audio-Quelle für die Aufnahme."
+        },
+        "audio-codec": {
+          "label": "Audio-Codec",
+          "description": "Opus wird für beste Performance und kleinste Audio-Dateigröße empfohlen."
+        }
+      }
+    },
+    "about": {
+      "title": "Über",
+      "noctalia": {
+        "section": {
+          "label": "Noctalia Shell",
+          "description": "Eine schlanke und minimalistische Desktop-Shell, durchdacht für Wayland entwickelt, gebaut mit Quickshell."
+        },
+        "latest-version": "Neueste Version:",
+        "installed-version": "Installierte Version:",
+        "download-latest": "Neueste Version herunterladen"
+      },
+      "contributors": {
+        "section": {
+          "label": "Mitwirkende",
+          "description": "Shoutout an unseren {count} <b>großartigen</b> Mitwirkenden!",
+          "description_plural": "Shoutout an unsere {count} <b>großartigen</b> Mitwirkenden!"
+        }
+      }
+    },
+    "hooks": {
+      "title": "Hooks",
+      "system-hooks": {
+        "section": {
+          "label": "System-Hooks",
+          "description": "Befehle konfigurieren, die bei Systemereignissen ausgeführt werden."
+        },
+        "enable": {
+          "label": "Hooks aktivieren",
+          "description": "Alle Hook-Befehle aktivieren oder deaktivieren."
+        }
+      },
+      "wallpaper-changed": {
+        "label": "Hintergrundbild geändert",
+        "description": "Befehl, der ausgeführt wird, wenn das Hintergrundbild wechselt.",
+        "placeholder": "z.B. notify-send \"Hintergrundbild\" \"Geändert\""
+      },
+      "theme-changed": {
+        "label": "Design geändert",
+        "description": "Befehl, der ausgeführt wird, wenn zwischen dunklem und hellem Modus gewechselt wird.",
+        "placeholder": "z.B. notify-send \"Design\" \"Gewechselt\""
+      },
+      "info": {
+        "command-info": {
+          "label": "Hook-Befehl-Informationen",
+          "description": "• Befehle werden über Shell ausgeführt (sh -c)\n• Befehle laufen im Hintergrund (detached)\n• Test-Buttons führen mit aktuellen Werten aus"
+        },
+        "parameters": {
+          "label": "Verfügbare Parameter",
+          "description": "• Hintergrundbild-Hook: $1 = Hintergrundbild-Pfad, $2 = Bildschirmname\n• Design-Wechsel-Hook: $1 = true/false (Dunkler-Modus-Status)"
+        }
+      }
+    }
+  }
+}

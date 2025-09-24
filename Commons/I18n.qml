@@ -13,13 +13,36 @@ Singleton {
 
   property bool isLoaded: false
   property string langCode: ""
-  readonly property var availableLanguages: ["en", "fr"]
+  property var availableLanguages: []
   property var translations: ({})
   property var fallbackTranslations: ({})
 
   // Signals for reactive updates
   signal languageChanged(string newLanguage)
   signal translationsLoaded
+
+  // Process to list directory contents
+  property Process directoryScanner: Process {
+    id: directoryProcess
+    command: ["ls", `${Quickshell.shellDir}/Assets/Translations/`]
+    running: false
+
+    stdout: StdioCollector {
+      id: stdoutCollector
+    }
+
+    onExited: function (exitCode, exitStatus) {
+      if (exitCode === 0) {
+        var output = stdoutCollector.text || ""
+        parseDirectoryListing(output)
+      } else {
+        Logger.error("I18n", `Failed to scan translation directory`)
+        // Fallback to default languages
+        availableLanguages = ["en"]
+        detectLanguage()
+      }
+    }
+  }
 
   // FileView to load translation files
   property FileView translationFile: FileView {
@@ -44,7 +67,7 @@ Singleton {
     }
   }
 
-  // FileView to load translation files
+  // FileView to load fallback translation files
   property FileView fallbackTranslationFile: FileView {
     id: fallbackFileView
     watchChanges: true
@@ -66,15 +89,84 @@ Singleton {
   // -------------------------------------------
   function init() {
     Logger.log("I18n", "Service started")
-    detectLanguage()
+    scanAvailableLanguages()
+  }
+
+  // -------------------------------------------
+  function scanAvailableLanguages() {
+    Logger.log("I18n", "Scanning for available translation files...")
+    directoryScanner.running = true
+  }
+
+  // -------------------------------------------
+  function parseDirectoryListing(output) {
+    var languages = []
+
+    try {
+      if (!output || output.trim() === "") {
+        Logger.warn("I18n", "Empty directory listing output")
+        availableLanguages = ["en"]
+        detectLanguage()
+        return
+      }
+
+      const entries = output.trim().split('\n')
+
+      for (var i = 0; i < entries.length; i++) {
+        const entry = entries[i].trim()
+        if (entry && entry.endsWith('.json')) {
+          // Extract language code from filename (e.g., "en.json" -> "en")
+          const langCode = entry.substring(0, entry.lastIndexOf('.json'))
+          if (langCode.length >= 2 && langCode.length <= 5) {
+            // Basic validation for language codes
+            languages.push(langCode)
+          }
+        }
+      }
+
+      // Sort languages alphabetically, but ensure "en" comes first if available
+      languages.sort()
+      const enIndex = languages.indexOf("en")
+      if (enIndex > 0) {
+        languages.splice(enIndex, 1)
+        languages.unshift("en")
+      }
+
+      if (languages.length === 0) {
+        Logger.warn("I18n", "No translation files found, using fallback")
+        languages = ["en"] // Fallback
+      }
+
+      availableLanguages = languages
+      Logger.log("I18n", `Found ${languages.length} available languages: ${languages.join(', ')}`)
+
+      // Detect language after scanning
+      detectLanguage()
+    } catch (e) {
+      Logger.error("I18n", `Failed to parse directory listing: ${e}`)
+      // Fallback to default languages
+      availableLanguages = ["en"]
+      detectLanguage()
+    }
   }
 
   // -------------------------------------------
   function detectLanguage() {
+    Logger.log("I18n", `detectLanguage() called. Available languages: [${availableLanguages.join(', ')}]`)
+
+    if (availableLanguages.length === 0) {
+      Logger.warn("I18n", "No available languages found")
+      return
+    }
 
     if (debug && debugForceLanguage !== "") {
-      setLanguage(debugForceLanguage)
-      return
+      Logger.log("I18n", `Debug mode: forcing language to "${debugForceLanguage}"`)
+      if (availableLanguages.includes(debugForceLanguage)) {
+        setLanguage(debugForceLanguage)
+        return
+      } else {
+        Logger.warn("I18n", `Debug language "${debugForceLanguage}" not available in [${availableLanguages.join(', ')}]`)
+      }
     }
 
     // Detect user's favorite locale - languages
@@ -86,8 +178,9 @@ Singleton {
       }
     }
 
-    // Fallback to english
-    setLanguage("en")
+    // Fallback to first available language (preferably "en" if available)
+    const fallbackLang = availableLanguages.includes("en") ? "en" : availableLanguages[0]
+    setLanguage(fallbackLang)
   }
 
   // -------------------------------------------
@@ -97,6 +190,8 @@ Singleton {
       Logger.log("I18n", `Language set to "${langCode}"`)
       languageChanged(langCode)
       loadTranslations()
+    } else if (!availableLanguages.includes(newLangCode)) {
+      Logger.warn("I18n", `Language "${newLangCode}" is not available`)
     }
   }
 
@@ -110,8 +205,8 @@ Singleton {
     isLoaded = false
     Logger.log("I18n", `Loading translations from: ${filePath}`)
 
-    // Only load fallback translations if we are not using enlgish
-    if (langCode !== "en") {
+    // Only load fallback translations if we are not using english and english is available
+    if (langCode !== "en" && availableLanguages.includes("en")) {
       fallbackFileView.path = `file://${Quickshell.shellDir}/Assets/Translations/en.json`
     }
   }
@@ -194,7 +289,7 @@ Singleton {
     }
 
     // Fallback to english if not found
-    if (notFound) {
+    if (notFound && availableLanguages.includes("en") && langCode !== "en") {
       value = fallbackTranslations
       for (var i = 0; i < keys.length; i++) {
         if (value && typeof value === "object" && keys[i] in value) {
@@ -207,6 +302,9 @@ Singleton {
 
       // Make untranslated string easy to spot
       value = `<i>${value}</i>`
+    } else if (notFound) {
+      // No fallback available
+      return `## ${key} ##`
     }
 
     if (typeof value !== "string") {
@@ -247,6 +345,6 @@ Singleton {
       finalInterpolations[prop] = interpolations[prop]
     }
 
-    return t(pluralKey, defaultValue, finalInterpolations)
+    return tr(pluralKey, finalInterpolations)
   }
 }

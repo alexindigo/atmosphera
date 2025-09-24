@@ -41,14 +41,14 @@ ColumnLayout {
   }
 
   NHeader {
-    label: "settings.appearance"
-    description: "Customize the bar's appearance and position."
+    label: I18n.tr("settings.bar.appearance.section.label")
+    description: I18n.tr("settings.bar.appearance.section.description")
   }
 
   NComboBox {
     Layout.fillWidth: true
-    label: "Bar position"
-    description: "Choose where to place the bar on the screen."
+    label: I18n.tr("settings.bar.appearance.position.label")
+    description: I18n.tr("settings.bar.appearance.position.description")
     model: ListModel {
       ListElement {
         key: "top"
@@ -73,8 +73,8 @@ ColumnLayout {
 
   NComboBox {
     Layout.fillWidth: true
-    label: "Bar density"
-    description: "Adjust the bar's padding for a compact or spacious look."
+    label: I18n.tr("settings.bar.appearance.density.label")
+    description: I18n.tr("settings.bar.appearance.density.description")
     model: ListModel {
       ListElement {
         key: "compact"
@@ -98,8 +98,8 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NLabel {
-      label: "Background opacity"
-      description: "Adjust the background opacity of the bar."
+      label: I18n.tr("settings.bar.appearance.background-opacity.label")
+      description: I18n.tr("settings.bar.appearance.background-opacity.description")
     }
 
     NValueSlider {
@@ -115,16 +115,16 @@ ColumnLayout {
 
   NToggle {
     Layout.fillWidth: true
-    label: "Show capsule"
-    description: "Show widget backgrounds."
+    label: I18n.tr("settings.bar.appearance.show-capsule.label")
+    description: I18n.tr("settings.bar.appearance.show-capsule.description")
     checked: Settings.data.bar.showCapsule
     onToggled: checked => Settings.data.bar.showCapsule = checked
   }
 
   NToggle {
     Layout.fillWidth: true
-    label: "Floating bar"
-    description: "Displays the bar as a floating 'pill'. Note: This will move the screen corners to the edges."
+    label: I18n.tr("settings.bar.appearance.floating.label")
+    description: I18n.tr("settings.bar.appearance.floating.description")
     checked: Settings.data.bar.floating
     onToggled: checked => Settings.data.bar.floating = checked
   }
@@ -136,8 +136,8 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NLabel {
-      label: "Margins"
-      description: "Adjust the margins around the floating bar."
+      label: I18n.tr("settings.bar.appearance.margins.label")
+      description: I18n.tr("settings.bar.appearance.margins.description")
     }
 
     RowLayout {
@@ -148,7 +148,7 @@ ColumnLayout {
         spacing: Style.marginXXS * scaling
 
         NText {
-          text: "Vertical"
+          text: I18n.tr("settings.bar.appearance.margins.vertical")
           font.pointSize: Style.fontSizeXS * scaling
           color: Color.mOnSurfaceVariant
         }
@@ -168,7 +168,7 @@ ColumnLayout {
         spacing: Style.marginXXS * scaling
 
         NText {
-          text: "Horizontal"
+          text: I18n.tr("settings.bar.appearance.margins.horizontal")
           font.pointSize: Style.fontSizeXS * scaling
           color: Color.mOnSurfaceVariant
         }
@@ -198,8 +198,8 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      label: "Widgets positioning"
-      description: "Drag and drop widgets to reorder them within each section, or use the add/remove buttons to manage widgets."
+      label: I18n.tr("settings.bar.widgets.section.label")
+      description: I18n.tr("settings.bar.widgets.section.description")
     }
 
     // Bar Sections
@@ -268,8 +268,8 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      label: "Monitor display"
-      description: "Show bar on specific monitors. Defaults to all if none are chosen."
+      label: I18n.tr("settings.bar.monitors.section.label")
+      description: I18n.tr("settings.bar.monitors.section.description")
     }
 
     Repeater {

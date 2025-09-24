@@ -11,7 +11,8 @@
         "picture": {
           "label": "{user}'s Profile picture",
           "description": "Your profile picture that appears throughout the interface."
-        }
+        },
+        "select-avatar": "Select avatar image"
       },
 
       "ui": {
@@ -26,6 +27,630 @@
         "border-radius": {
           "label": "Border radius",
           "description": "Controls the corner roundness of windows, buttons, and other elements."
+        },
+        "animation-speed": {
+          "label": "Animation speed",
+          "description": "Adjust global animation speed."
+        }
+      },
+      "screen-corners": {
+        "section": {
+          "label": "Screen corners",
+          "description": "Customize screen corner rounding and visual effects."
+        },
+        "show-corners": {
+          "label": "Show screen corners",
+          "description": "Display rounded corners on the edge of the screen."
+        },
+        "solid-black": {
+          "label": "Solid black corners",
+          "description": "Use solid black instead of the bar background color."
+        }
+      },
+      "fonts": {
+        "section": {
+          "label": "Fonts",
+          "description": "Choose the fonts used throughout the interface."
+        },
+        "default": {
+          "label": "Default font",
+          "description": "Main font used throughout the interface.",
+          "placeholder": "Select default font...",
+          "search-placeholder": "Search fonts..."
+        },
+        "monospace": {
+          "label": "Monospaced font",
+          "description": "Monospaced font used for numbers and stats display.",
+          "placeholder": "Select monospace font...",
+          "search-placeholder": "Search monospace fonts..."
+        },
+        "accent": {
+          "label": "Accent font",
+          "description": "Large font used for prominent displays.",
+          "placeholder": "Select display font...",
+          "search-placeholder": "Search display fonts..."
+        }
+      }
+    },
+    "audio": {
+      "title": "Audio",
+      "volumes": {
+        "section": {
+          "label": "Volumes",
+          "description": "Adjust volume controls and audio levels."
+        },
+        "output-volume": {
+          "label": "Output volume",
+          "description": "System-wide volume level."
+        },
+        "mute-output": {
+          "label": "Mute audio output",
+          "description": "Mute the system's main audio output."
+        },
+        "input-volume": {
+          "label": "Input volume",
+          "description": "Microphone input volume level."
+        },
+        "mute-input": {
+          "label": "Mute audio input",
+          "description": "Mute the default audio input (microphone)."
+        },
+        "step-size": {
+          "label": "Volume step size",
+          "description": "Adjust the step size for volume changes (scroll wheel, keyboard shortcuts)."
+        }
+      },
+      "devices": {
+        "section": {
+          "label": "Audio devices",
+          "description": "Configure available audio input and output devices."
+        },
+        "output-device": {
+          "label": "Output device",
+          "description": "Select the desired audio output device."
+        },
+        "input-device": {
+          "label": "Input device",
+          "description": "Select the desired audio input device."
+        }
+      },
+      "media": {
+        "section": {
+          "label": "Media players",
+          "description": "Set your preferred and ignored media applications."
+        },
+        "primary-player": {
+          "label": "Primary player",
+          "description": "Enter a keyword to identify your main player.",
+          "placeholder": "e.g. spotify, vlc, mpv"
+        },
+        "excluded-player": {
+          "label": "Excluded player",
+          "description": "Add keywords for players you want the system to ignore. Each keyword should be on a new line.",
+          "placeholder": "type substring and press +"
+        },
+        "visualizer-type": {
+          "label": "Visualization type",
+          "description": "Choose a visualization type for media playback"
+        },
+        "frame-rate": {
+          "label": "Frame rate",
+          "description": "Higher rates are smoother but use more resources."
+        }
+      }
+    },
+    "display": {
+      "title": "Display",
+      "monitors": {
+        "section": {
+          "label": "Per-monitor settings",
+          "description": "Adjust scaling and brightness for each display."
+        },
+        "scale": "Scale",
+        "brightness": "Brightness",
+        "reset-scaling": "Reset scaling",
+        "brightness-step": {
+          "label": "Brightness step size",
+          "description": "Adjust the step size for brightness changes (scroll wheel and keyboard shortcuts)."
+        }
+      },
+      "night-light": {
+        "section": {
+          "label": "Night light",
+          "description": "Reduce blue light emission to help you sleep better and reduce eye strain."
+        },
+        "enable": {
+          "label": "Enable night light",
+          "description": "Apply a warm color filter to reduce blue light emission."
+        },
+        "temperature": {
+          "label": "Color temperature",
+          "description": "Set the color warmth for nighttime and daytime.",
+          "night": "Night",
+          "day": "Day"
+        },
+        "auto-schedule": {
+          "label": "Automatic scheduling",
+          "description": "Based on the sunset and sunrise time in <i>{location}</i> - recommended."
+        },
+        "manual-schedule": {
+          "label": "Manual scheduling",
+          "description": "Set custom times for sunrise and sunset.",
+          "sunrise": "Sunrise time",
+          "sunset": "Sunset time",
+          "select-start": "Select start time",
+          "select-stop": "Select stop time"
+        },
+        "force-activation": {
+          "label": "Force activation",
+          "description": "Ignores the schedule and applies the night filter immediately."
+        }
+      }
+    },
+    "bar": {
+      "title": "Bar",
+      "appearance": {
+        "section": {
+          "label": "Appearance",
+          "description": "Customize the bar's appearance and position."
+        },
+        "position": {
+          "label": "Bar position",
+          "description": "Choose where to place the bar on the screen."
+        },
+        "density": {
+          "label": "Bar density",
+          "description": "Adjust the bar's padding for a compact or spacious look."
+        },
+        "background-opacity": {
+          "label": "Background opacity",
+          "description": "Adjust the background opacity of the bar."
+        },
+        "show-capsule": {
+          "label": "Show capsule",
+          "description": "Show widget backgrounds."
+        },
+        "floating": {
+          "label": "Floating bar",
+          "description": "Displays the bar as a floating 'pill'. Note: This will move the screen corners to the edges."
+        },
+        "margins": {
+          "label": "Margins",
+          "description": "Adjust the margins around the floating bar.",
+          "vertical": "Vertical",
+          "horizontal": "Horizontal"
+        }
+      },
+      "widgets": {
+        "section": {
+          "label": "Widgets positioning",
+          "description": "Drag and drop widgets to reorder them within each section, or use the add/remove buttons to manage widgets."
+        }
+      },
+      "monitors": {
+        "section": {
+          "label": "Monitor display",
+          "description": "Show bar on specific monitors. Defaults to all if none are chosen."
+        }
+      }
+    },
+    "dock": {
+      "title": "Dock",
+      "appearance": {
+        "section": {
+          "label": "Appearance",
+          "description": "Customize the dock's behavior and appearance."
+        },
+        "auto-hide": {
+          "label": "Auto-hide",
+          "description": "Automatically hide when not in use."
+        },
+        "exclusive-zone": {
+          "label": "Exclusive zone",
+          "description": "Prevent window overlap."
+        },
+        "background-opacity": {
+          "label": "Background opacity",
+          "description": "Adjust the dock's background opacity."
+        },
+        "floating-distance": {
+          "label": "Dock floating distance",
+          "description": "Adjust the floating distance from the screen edge."
+        }
+      },
+      "monitors": {
+        "section": {
+          "label": "Monitor display",
+          "description": "Choose which monitor to display the dock on."
+        }
+      }
+    },
+    "launcher": {
+      "title": "Launcher",
+      "settings": {
+        "section": {
+          "label": "Appearance",
+          "description": "Customize the launcher's behavior and appearance."
+        },
+        "position": {
+          "label": "Position",
+          "description": "Choose where the launcher panel appears."
+        },
+        "background-opacity": {
+          "label": "Background opacity",
+          "description": "Adjust the background opacity of the launcher."
+        },
+        "clipboard-history": {
+          "label": "Enable clipboard history",
+          "description": "Access previously copied items from the launcher."
+        },
+        "sort-by-usage": {
+          "label": "Sort by most used",
+          "description": "When enabled, frequently launched apps appear first in the list."
+        },
+        "use-app2unit": {
+          "label": "Use App2Unit to launch applications",
+          "description": "Uses an alternative launch method to better manage app processes and prevent issues."
+        }
+      }
+    },
+    "notifications": {
+      "title": "Notifications",
+      "settings": {
+        "section": {
+          "label": "Appearance",
+          "description": "Configure notifications appearance and behavior."
+        },
+        "do-not-disturb": {
+          "label": "Do not disturb",
+          "description": "Disable all notification popups when enabled."
+        },
+        "enable-osd": {
+          "label": "Enable on screen display",
+          "description": "Show volume and brightness changes in real-time."
+        },
+        "location": {
+          "label": "Location",
+          "description": "Where notifications appear on screen."
+        },
+        "low-urgency": {
+          "label": "Low urgency",
+          "description": "How long low priority notifications stay visible."
+        },
+        "normal-urgency": {
+          "label": "Normal urgency",
+          "description": "How long normal priority notifications stay visible."
+        },
+        "critical-urgency": {
+          "label": "Critical urgency",
+          "description": "How long critical priority notifications stay visible."
+        },
+        "monitors-display": {
+          "label": "Monitors display",
+          "description": "Show notification on specific monitors. Defaults to all if none are chosen."
+        }
+      }
+    },
+    "wallpaper": {
+      "title": "Wallpaper",
+      "settings": {
+        "section": {
+          "label": "Wallpaper settings",
+          "description": "Control how wallpapers are managed and displayed."
+        },
+        "enable-management": {
+          "label": "Enable wallpaper management",
+          "description": "Manage wallpapers with Noctalia. Uncheck if you prefer using another application."
+        },
+        "folder": {
+          "label": "Wallpaper folder",
+          "description": "Path to your main wallpaper folder.",
+          "tooltip": "Browse for wallpaper folder"
+        },
+        "monitor-specific": {
+          "label": "Monitor-specific directories",
+          "description": "Set a different wallpaper folder for each monitor.",
+          "tooltip": "Browse for wallpaper folder"
+        },
+        "select-folder": "Select wallpaper folder",
+        "select-monitor-folder": "Select monitor wallpaper folder"
+      },
+      "look-feel": {
+        "section": {
+          "label": "Look & feel"
+        },
+        "fill-mode": {
+          "label": "Fill mode",
+          "description": "Select how the image should scale to match your monitor's resolution."
+        },
+        "fill-color": {
+          "label": "Fill color",
+          "description": "Choose a fill color that may appear behind the wallpaper."
+        },
+        "transition-type": {
+          "label": "Transition type",
+          "description": "Animation type when switching between wallpapers."
+        },
+        "transition-duration": {
+          "label": "Transition duration",
+          "description": "Duration of transition animations in seconds."
+        },
+        "edge-smoothness": {
+          "label": "Soften transition edge",
+          "description": "Applies a soft, feathered effect to the edge of transitions."
+        }
+      },
+      "automation": {
+        "section": {
+          "label": "Automation"
+        },
+        "random-wallpaper": {
+          "label": "Random wallpaper",
+          "description": "Schedule random wallpaper changes at regular intervals."
+        },
+        "interval": {
+          "label": "Wallpaper interval",
+          "description": "How often to change wallpapers automatically."
+        },
+        "custom-interval": {
+          "label": "Custom interval",
+          "description": "Enter time as HH:MM (e.g., 01:30)."
+        }
+      }
+    },
+    "color-scheme": {
+      "title": "Color scheme",
+      "color-source": {
+        "section": {
+          "label": "Color source",
+          "description": "Main settings for Noctalia's colors."
+        },
+        "dark-mode": {
+          "label": "Dark mode",
+          "description": "Switches to a darker theme for easier viewing at night."
+        },
+        "enable-matugen": {
+          "label": "Enable Matugen",
+          "description": "Automatically generate colors based on your active wallpaper."
+        }
+      },
+      "predefined": {
+        "section": {
+          "label": "Predefined color schemes",
+          "description": "To use these color schemes, you must turn off Matugen. With Matugen enabled, colors are automatically generated from your wallpaper."
+        }
+      },
+      "matugen": {
+        "section": {
+          "label": "Matugen templates",
+          "description": "Apply colors to external applications."
+        },
+        "ui": {
+          "label": "UI",
+          "description": "Desktop environment and UI toolkit theming.",
+          "gtk4": {
+            "label": "GTK 4 (libadwaita)",
+            "description": "Write ~/.config/gtk-4.0/gtk.css"
+          },
+          "gtk3": {
+            "label": "GTK 3",
+            "description": "Write ~/.config/gtk-3.0/gtk.css"
+          },
+          "qt6": {
+            "label": "Qt6ct",
+            "description": "Write ~/.config/qt6ct/colors/noctalia.conf"
+          },
+          "qt5": {
+            "label": "Qt5ct",
+            "description": "Write ~/.config/qt5ct/colors/noctalia.conf"
+          }
+        },
+        "terminal": {
+          "label": "Terminal",
+          "description": "Terminal emulator theming.",
+          "kitty": {
+            "label": "Kitty",
+            "description": "Write ~/.config/kitty/themes/noctalia.conf and reload",
+            "description-missing": "Requires kitty terminal to be installed"
+          },
+          "ghostty": {
+            "label": "Ghostty",
+            "description": "Write ~/.config/ghostty/themes/noctalia and reload",
+            "description-missing": "Requires ghostty terminal to be installed"
+          },
+          "foot": {
+            "label": "Foot",
+            "description": "Write ~/.config/foot/themes/noctalia and reload",
+            "description-missing": "Requires foot terminal to be installed"
+          }
+        },
+        "programs": {
+          "label": "Programs",
+          "description": "Application-specific theming.",
+          "fuzzel": {
+            "label": "Fuzzel",
+            "description": "Write ~/.config/fuzzel/themes/noctalia and reload",
+            "description-missing": "Requires fuzzel launcher to be installed"
+          },
+          "vesktop": {
+            "label": "Vesktop",
+            "description": "Write ~/.config/vesktop/themes/noctalia.theme.css",
+            "description-missing": "Requires vesktop Discord client to be installed"
+          },
+          "pywalfox": {
+            "label": "Pywalfox (Firefox)",
+            "description": "Write ~/.cache/wal/colors.json and run pywalfox update",
+            "description-missing": "Requires pywalfox package to be installed"
+          }
+        },
+        "misc": {
+          "label": "Misc",
+          "description": "Additional configuration options.",
+          "user-templates": {
+            "label": "User templates",
+            "description": "Enable user-defined Matugen config from ~/.config/matugen/config.toml"
+          }
+        }
+      }
+    },
+    "location": {
+      "title": "Location",
+      "location": {
+        "section": {
+          "label": "Your location",
+          "description": "Get accurate weather and night light scheduling by setting your location."
+        },
+        "search": {
+          "label": "Search for a location",
+          "description": "e.g., Toronto, ON",
+          "placeholder": "Enter the location name"
+        }
+      },
+      "weather": {
+        "section": {
+          "label": "Weather",
+          "description": "Choose your preferred temperature unit."
+        },
+        "fahrenheit": {
+          "label": "Display temperature in Fahrenheit (°F)",
+          "description": "Display temperature in Fahrenheit instead of Celsius."
+        }
+      },
+      "date-time": {
+        "section": {
+          "label": "Date & time",
+          "description": "Customize how date and time appear."
+        },
+        "12hour-format": {
+          "label": "Use 12-hour time format on the lock screen",
+          "description": "On for AM/PM format (e.g., 8:00 PM), off for 24-hour format (e.g., 20:00)."
+        },
+        "week-numbers": {
+          "label": "Show week numbers",
+          "description": "Displays the week of the year (e.g., Week 38) in the calendar."
+        }
+      }
+    },
+    "network": {
+      "title": "Network",
+      "section": {
+        "description": "Manage Wi-Fi and Bluetooth connections."
+      },
+      "wifi": {
+        "label": "Enable Wi-Fi"
+      },
+      "bluetooth": {
+        "label": "Enable Bluetooth"
+      }
+    },
+    "screen-recorder": {
+      "title": "Screen recorder",
+      "general": {
+        "section": {
+          "label": "General settings",
+          "description": "Manage screen recording output and content."
+        },
+        "output-folder": {
+          "label": "Output folder",
+          "description": "Folder where screen recordings will be saved.",
+          "tooltip": "Browse for output folder"
+        },
+        "show-cursor": {
+          "label": "Show cursor",
+          "description": "Record mouse cursor in the video."
+        },
+        "select-output-folder": "Select output folder"
+      },
+      "video": {
+        "section": {
+          "label": "Video settings",
+          "description": "Configure video recording options."
+        },
+        "video-source": {
+          "label": "Video source",
+          "description": "Portal is recommended, if you get artifacts try Screen."
+        },
+        "frame-rate": {
+          "label": "Frame rate",
+          "description": "Target frame rate for screen recordings."
+        },
+        "video-quality": {
+          "label": "Video quality",
+          "description": "Higher quality results in larger file sizes."
+        },
+        "video-codec": {
+          "label": "Video codec",
+          "description": "h264 is the most common codec."
+        },
+        "color-range": {
+          "label": "Color range",
+          "description": "Limited is recommended for better compatibility."
+        }
+      },
+      "audio": {
+        "section": {
+          "label": "Audio settings",
+          "description": "Configure audio recording options."
+        },
+        "audio-source": {
+          "label": "Audio source",
+          "description": "Audio source to capture during recording."
+        },
+        "audio-codec": {
+          "label": "Audio codec",
+          "description": "Opus is recommended for best performance and smallest audio size."
+        }
+      }
+    },
+    "about": {
+      "title": "About",
+      "noctalia": {
+        "section": {
+          "label": "Noctalia shell",
+          "description": "A sleek and minimal desktop shell thoughtfully crafted for Wayland, built with Quickshell."
+        },
+        "latest-version": "Latest version:",
+        "installed-version": "Installed version:",
+        "download-latest": "Download latest release"
+      },
+      "contributors": {
+        "section": {
+          "label": "Contributors",
+          "description": "Shout-out to our {count} <b>awesome</b> contributor!",
+          "description_plural": "Shout-out to our {count} <b>awesome</b> contributors!"
+        }
+      }
+    },
+    "hooks": {
+      "title": "Hooks",
+      "system-hooks": {
+        "section": {
+          "label": "System hooks",
+          "description": "Configure commands to be executed when system events occur."
+        },
+        "enable": {
+          "label": "Enable hooks",
+          "description": "Enable or disable all hook commands."
+        }
+      },
+      "wallpaper-changed": {
+        "label": "Wallpaper changed",
+        "description": "Command to be executed when wallpaper changes.",
+        "placeholder": "e.g., notify-send \"Wallpaper\" \"Changed\""
+      },
+      "theme-changed": {
+        "label": "Theme changed",
+        "description": "Command to be executed when theme toggles between dark and light mode.",
+        "placeholder": "e.g., notify-send \"Theme\" \"Toggled\""
+      },
+      "info": {
+        "command-info": {
+          "label": "Hook Command Information",
+          "description": "• Commands are executed via shell (sh -c)\n• Commands run in background (detached)\n• Test buttons execute with current values"
+        },
+        "parameters": {
+          "label": "Available Parameters",
+          "description": "• Wallpaper Hook: $1 = wallpaper path, $2 = screen name\n• Theme Toggle Hook: $1 = true/false (dark mode state)"
         }
       }
     }

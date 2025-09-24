@@ -24,20 +24,20 @@ ColumnLayout {
   }
 
   NHeader {
-    label: "Appearance"
-    description: "Customize the dock's behavior and appearance."
+    label: I18n.tr("settings.dock.appearance.section.label")
+    description: I18n.tr("settings.dock.appearance.section.description")
   }
 
   NToggle {
-    label: "Auto-hide"
-    description: "Automatically hide when not in use."
+    label: I18n.tr("settings.dock.appearance.auto-hide.label")
+    description: I18n.tr("settings.dock.appearance.auto-hide.description")
     checked: Settings.data.dock.autoHide
     onToggled: checked => Settings.data.dock.autoHide = checked
   }
 
   NToggle {
-    label: "Exclusive zone"
-    description: "Prevent window overlap."
+    label: I18n.tr("settings.dock.appearance.exclusive-zone.label")
+    description: I18n.tr("settings.dock.appearance.exclusive-zone.description")
     checked: Settings.data.dock.exclusive
     onToggled: checked => Settings.data.dock.exclusive = checked
   }
@@ -46,8 +46,8 @@ ColumnLayout {
     spacing: Style.marginXXS * scaling
     Layout.fillWidth: true
     NLabel {
-      label: "Background opacity"
-      description: "Adjust the dock's background opacity."
+      label: I18n.tr("settings.dock.appearance.background-opacity.label")
+      description: I18n.tr("settings.dock.appearance.background-opacity.description")
     }
     NValueSlider {
       Layout.fillWidth: true
@@ -65,8 +65,8 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NLabel {
-      label: "Dock floating distance"
-      description: "Adjust the floating distance from the screen edge."
+      label: I18n.tr("settings.dock.appearance.floating-distance.label")
+      description: I18n.tr("settings.dock.appearance.floating-distance.description")
     }
 
     NValueSlider {
@@ -92,8 +92,8 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      label: "Monitor display"
-      description: "Choose which monitor to display the dock on."
+      label: I18n.tr("settings.dock.monitors.section.label")
+      description: I18n.tr("settings.dock.monitors.section.description")
     }
 
     Repeater {

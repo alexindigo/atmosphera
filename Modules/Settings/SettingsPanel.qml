@@ -116,67 +116,67 @@ NPanel {
                      "source": generalTab
                    }, {
                      "id": SettingsPanel.Tab.Bar,
-                     "label": "Bar",
+                     "label": "settings.bar.title",
                      "icon": "settings-bar",
                      "source": barTab
                    }, {
                      "id": SettingsPanel.Tab.Dock,
-                     "label": "Dock",
+                     "label": "settings.dock.title",
                      "icon": "settings-dock",
                      "source": dockTab
                    }, {
                      "id": SettingsPanel.Tab.Launcher,
-                     "label": "Launcher",
+                     "label": "settings.launcher.title",
                      "icon": "settings-launcher",
                      "source": launcherTab
                    }, {
                      "id": SettingsPanel.Tab.Audio,
-                     "label": "Audio",
+                     "label": "settings.audio.title",
                      "icon": "settings-audio",
                      "source": audioTab
                    }, {
                      "id": SettingsPanel.Tab.Display,
-                     "label": "Display",
+                     "label": "settings.display.title",
                      "icon": "settings-display",
                      "source": displayTab
                    }, {
                      "id": SettingsPanel.Tab.Notifications,
-                     "label": "Notifications",
+                     "label": "settings.notifications.title",
                      "icon": "settings-notifications",
                      "source": notificationsTab
                    }, {
                      "id": SettingsPanel.Tab.Network,
-                     "label": "Network",
+                     "label": "settings.network.title",
                      "icon": "settings-network",
                      "source": networkTab
                    }, {
                      "id": SettingsPanel.Tab.Location,
-                     "label": "Location",
+                     "label": "settings.location.title",
                      "icon": "settings-location",
                      "source": locationTab
                    }, {
                      "id": SettingsPanel.Tab.ColorScheme,
-                     "label": "Color scheme",
+                     "label": "settings.color-scheme.title",
                      "icon": "settings-color-scheme",
                      "source": colorSchemeTab
                    }, {
                      "id": SettingsPanel.Tab.Wallpaper,
-                     "label": "Wallpaper",
+                     "label": "settings.wallpaper.title",
                      "icon": "settings-wallpaper",
                      "source": wallpaperTab
                    }, {
                      "id": SettingsPanel.Tab.ScreenRecorder,
-                     "label": "Screen recorder",
+                     "label": "settings.screen-recorder.title",
                      "icon": "settings-screen-recorder",
                      "source": screenRecorderTab
                    }, {
                      "id": SettingsPanel.Tab.Hooks,
-                     "label": "Hooks",
+                     "label": "settings.hooks.title",
                      "icon": "settings-hooks",
                      "source": hooksTab
                    }, {
                      "id": SettingsPanel.Tab.About,
-                     "label": "About",
+                     "label": "settings.about.title",
                      "icon": "settings-about",
                      "source": aboutTab
                    }]

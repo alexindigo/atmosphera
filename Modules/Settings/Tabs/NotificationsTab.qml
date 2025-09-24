@@ -28,27 +28,27 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      label: "Appearance"
-      description: "Configure notifications appearance and behavior."
+      label: I18n.tr("settings.notifications.settings.section.label")
+      description: I18n.tr("settings.notifications.settings.section.description")
     }
 
     NToggle {
-      label: "Do not disturb"
-      description: "Disable all notification popups when enabled."
+      label: I18n.tr("settings.notifications.settings.do-not-disturb.label")
+      description: I18n.tr("settings.notifications.settings.do-not-disturb.description")
       checked: Settings.data.notifications.doNotDisturb
       onToggled: checked => Settings.data.notifications.doNotDisturb = checked
     }
 
     NToggle {
-      label: "Enable on screen display"
-      description: "Show volume and brightness changes in real-time."
+      label: I18n.tr("settings.notifications.settings.enable-osd.label")
+      description: I18n.tr("settings.notifications.settings.enable-osd.description")
       checked: Settings.data.notifications.enableOSD
       onToggled: checked => Settings.data.notifications.enableOSD = checked
     }
 
     NComboBox {
-      label: "Location"
-      description: "Where notifications appear on screen."
+      label: I18n.tr("settings.notifications.settings.location.label")
+      description: I18n.tr("settings.notifications.settings.location.description")
       model: ListModel {
         ListElement {
           key: "top"
@@ -78,32 +78,14 @@ ColumnLayout {
       currentKey: Settings.data.notifications.location || "top_right"
       onSelected: key => Settings.data.notifications.location = key
     }
-  }
-
-  NDivider {
-    Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
-  }
-
-  // Notification Duration Settings
-  ColumnLayout {
-    spacing: Style.marginL * scaling
-    Layout.fillWidth: true
-
-    NHeader {
-      label: "Notification duration"
-      description: "Configure how long notifications stay visible based on their urgency level."
-    }
-
     // Low Urgency Duration
     ColumnLayout {
       spacing: Style.marginXXS * scaling
       Layout.fillWidth: true
 
       NLabel {
-        label: "Low urgency"
-        description: "How long low priority notifications stay visible."
+        label: I18n.tr("settings.notifications.settings.low-urgency.label")
+        description: I18n.tr("settings.notifications.settings.low-urgency.description")
       }
 
       NValueSlider {
@@ -123,8 +105,8 @@ ColumnLayout {
       Layout.fillWidth: true
 
       NLabel {
-        label: "Normal urgency"
-        description: "How long normal priority notifications stay visible."
+        label: I18n.tr("settings.notifications.settings.normal-urgency.label")
+        description: I18n.tr("settings.notifications.settings.normal-urgency.description")
       }
 
       NValueSlider {
@@ -144,8 +126,8 @@ ColumnLayout {
       Layout.fillWidth: true
 
       NLabel {
-        label: "Critical urgency"
-        description: "How long critical priority notifications stay visible."
+        label: I18n.tr("settings.notifications.settings.critical-urgency.label")
+        description: I18n.tr("settings.notifications.settings.critical-urgency.description")
       }
 
       NValueSlider {
@@ -158,22 +140,10 @@ ColumnLayout {
         text: Settings.data.notifications.criticalUrgencyDuration + "s"
       }
     }
-  }
-
-  NDivider {
-    Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
-  }
-
-  // Monitor Configuration
-  ColumnLayout {
-    spacing: Style.marginM * scaling
-    Layout.fillWidth: true
-
-    NHeader {
-      label: "Monitors display"
-      description: "Show notification on specific monitors. Defaults to all if none are chosen."
+    // Monitor Configuration
+    NLabel {
+      label: I18n.tr("settings.notifications.settings.monitors-display.label")
+      description: I18n.tr("settings.notifications.settings.monitors-display.description")
     }
 
     Repeater {

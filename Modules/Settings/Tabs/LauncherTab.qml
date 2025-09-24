@@ -10,14 +10,14 @@ ColumnLayout {
   spacing: Style.marginL * scaling
 
   NHeader {
-    label: "Appearance"
-    description: "Customize the launcher's behavior and appearance."
+    label: I18n.tr("settings.launcher.settings.section.label")
+    description: I18n.tr("settings.launcher.settings.section.description")
   }
 
   NComboBox {
     id: launcherPosition
-    label: "Position"
-    description: "Choose where the launcher panel appears."
+    label: I18n.tr("settings.launcher.settings.position.label")
+    description: I18n.tr("settings.launcher.settings.position.description")
     Layout.fillWidth: true
     model: ListModel {
       ListElement {
@@ -60,14 +60,14 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NText {
-      text: "Background opacity"
+      text: I18n.tr("settings.launcher.settings.background-opacity.label")
       font.pointSize: Style.fontSizeL * scaling
       font.weight: Style.fontWeightBold
       color: Color.mOnSurface
     }
 
     NText {
-      text: "Adjust the background opacity of the launcher."
+      text: I18n.tr("settings.launcher.settings.background-opacity.description")
       font.pointSize: Style.fontSizeXS * scaling
       color: Color.mOnSurfaceVariant
       wrapMode: Text.WordWrap
@@ -87,22 +87,22 @@ ColumnLayout {
   }
 
   NToggle {
-    label: "Enable clipboard history"
-    description: "Access previously copied items from the launcher."
+    label: I18n.tr("settings.launcher.settings.clipboard-history.label")
+    description: I18n.tr("settings.launcher.settings.clipboard-history.description")
     checked: Settings.data.appLauncher.enableClipboardHistory
     onToggled: checked => Settings.data.appLauncher.enableClipboardHistory = checked
   }
 
   NToggle {
-    label: "Sort by most used"
-    description: "When enabled, frequently launched apps appear first in the list."
+    label: I18n.tr("settings.launcher.settings.sort-by-usage.label")
+    description: I18n.tr("settings.launcher.settings.sort-by-usage.description")
     checked: Settings.data.appLauncher.sortByMostUsed
     onToggled: checked => Settings.data.appLauncher.sortByMostUsed = checked
   }
 
   NToggle {
-    label: "Use App2Unit to launch applications"
-    description: "Uses an alternative launch method to better manage app processes and prevent issues."
+    label: I18n.tr("settings.launcher.settings.use-app2unit.label")
+    description: I18n.tr("settings.launcher.settings.use-app2unit.description")
     checked: Settings.data.appLauncher.useApp2Unit
     onToggled: checked => Settings.data.appLauncher.useApp2Unit = checked
   }

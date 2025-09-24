@@ -12,8 +12,8 @@ ColumnLayout {
   spacing: Style.marginL * scaling
 
   NHeader {
-    label: "General settings"
-    description: "Manage screen recording output and content."
+    label: I18n.tr("settings.screen-recorder.general.section.label")
+    description: I18n.tr("settings.screen-recorder.general.section.description")
   }
 
   // Output Folder
@@ -22,27 +22,22 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NTextInputButton {
-      label: "Output folder"
-      description: "Folder where screen recordings will be saved."
+      label: I18n.tr("settings.screen-recorder.general.output-folder.label")
+      description: I18n.tr("settings.screen-recorder.general.output-folder.description")
       placeholderText: Quickshell.env("HOME") + "/Videos"
       text: Settings.data.screenRecorder.directory
       buttonIcon: "folder-open"
-      buttonTooltip: "Browse for output folder"
+      buttonTooltip: I18n.tr("settings.screen-recorder.general.output-folder.tooltip")
       onInputEditingFinished: Settings.data.screenRecorder.directory = text
       onButtonClicked: folderPicker.open()
     }
 
-    ColumnLayout {
-      spacing: Style.marginS * scaling
-      Layout.fillWidth: true
-      Layout.topMargin: Style.marginM * scaling
-      // Show Cursor
-      NToggle {
-        label: "Show cursor"
-        description: "Record mouse cursor in the video."
-        checked: Settings.data.screenRecorder.showCursor
-        onToggled: checked => Settings.data.screenRecorder.showCursor = checked
-      }
+    // Show Cursor
+    NToggle {
+      label: I18n.tr("settings.screen-recorder.general.show-cursor.label")
+      description: I18n.tr("settings.screen-recorder.general.show-cursor.description")
+      checked: Settings.data.screenRecorder.showCursor
+      onToggled: checked => Settings.data.screenRecorder.showCursor = checked
     }
   }
 
@@ -58,13 +53,14 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      label: "Video settings"
+      label: I18n.tr("settings.screen-recorder.video.section.label")
+      description: I18n.tr("settings.screen-recorder.video.section.description")
     }
 
     // Source
     NComboBox {
-      label: "Video source"
-      description: "Portal is recommended, if you get artifacts try Screen."
+      label: I18n.tr("settings.screen-recorder.video.video-source.label")
+      description: I18n.tr("settings.screen-recorder.video.video-source.description")
       model: ListModel {
         ListElement {
           key: "portal"
@@ -81,8 +77,8 @@ ColumnLayout {
 
     // Frame Rate
     NComboBox {
-      label: "Frame rate"
-      description: "Target frame rate for screen recordings."
+      label: I18n.tr("settings.screen-recorder.video.frame-rate.label")
+      description: I18n.tr("settings.screen-recorder.video.frame-rate.description")
       model: ListModel {
         ListElement {
           key: "30"
@@ -119,8 +115,8 @@ ColumnLayout {
 
     // Video Quality
     NComboBox {
-      label: "Video quality"
-      description: "Higher quality results in larger file sizes."
+      label: I18n.tr("settings.screen-recorder.video.video-quality.label")
+      description: I18n.tr("settings.screen-recorder.video.video-quality.description")
       model: ListModel {
         ListElement {
           key: "medium"
@@ -145,8 +141,8 @@ ColumnLayout {
 
     // Video Codec
     NComboBox {
-      label: "Video codec"
-      description: "h264 is the most common codec."
+      label: I18n.tr("settings.screen-recorder.video.video-codec.label")
+      description: I18n.tr("settings.screen-recorder.video.video-codec.description")
       model: ListModel {
         ListElement {
           key: "h264"
@@ -175,8 +171,8 @@ ColumnLayout {
 
     // Color Range
     NComboBox {
-      label: "Color range"
-      description: "Limited is recommended for better compatibility."
+      label: I18n.tr("settings.screen-recorder.video.color-range.label")
+      description: I18n.tr("settings.screen-recorder.video.color-range.description")
       model: ListModel {
         ListElement {
           key: "limited"
@@ -194,8 +190,8 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginL * 2 * scaling
-    Layout.bottomMargin: Style.marginL * scaling
+    Layout.topMargin: Style.marginXL * scaling
+    Layout.bottomMargin: Style.marginXL * scaling
   }
 
   // Audio Settings
@@ -204,13 +200,14 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      label: "Audio settings"
+      label: I18n.tr("settings.screen-recorder.audio.section.label")
+      description: I18n.tr("settings.screen-recorder.audio.section.description")
     }
 
     // Audio Source
     NComboBox {
-      label: "Audio source"
-      description: "Audio source to capture during recording."
+      label: I18n.tr("settings.screen-recorder.audio.audio-source.label")
+      description: I18n.tr("settings.screen-recorder.audio.audio-source.description")
       model: ListModel {
         ListElement {
           key: "default_output"
@@ -231,8 +228,8 @@ ColumnLayout {
 
     // Audio Codec
     NComboBox {
-      label: "Audio codec"
-      description: "Opus is recommended for best performance and smallest audio size."
+      label: I18n.tr("settings.screen-recorder.audio.audio-codec.label")
+      description: I18n.tr("settings.screen-recorder.audio.audio-codec.description")
       model: ListModel {
         ListElement {
           key: "opus"
@@ -248,16 +245,10 @@ ColumnLayout {
     }
   }
 
-  NDivider {
-    Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
-  }
-
   NFilePicker {
     id: folderPicker
     pickerType: "folder"
-    title: "Select output folder"
+    title: I18n.tr("settings.screen-recorder.general.select-output-folder")
     initialPath: Settings.data.screenRecorder.directory || Quickshell.env("HOME") + "/Videos"
     onAccepted: paths => Settings.data.screenRecorder.directory = paths[0]
   }

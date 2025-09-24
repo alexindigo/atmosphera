@@ -49,7 +49,7 @@ ColumnLayout {
   NFilePicker {
     id: filePicker
     pickerType: "file"
-    title: I18n.tr("settings.general.profile.select-avatar") //Select avatar image"
+    title: I18n.tr("settings.general.profile.select-avatar")
     initialPath: Settings.data.general.avatarImage.substr(0, Settings.data.general.avatarImage.lastIndexOf("/")) || Quickshell.env("HOME")
     nameFilters: ["Image files (*.jpg *.jpeg *.png *.gif *.pnm *.bmp *.face)", "All files (*)"]
     onAccepted: paths => Settings.data.general.avatarImage = paths[0]
@@ -104,8 +104,8 @@ ColumnLayout {
       Layout.fillWidth: true
 
       NLabel {
-        label: "Animation speed"
-        description: "Adjust global animation speed."
+        label: I18n.tr("settings.general.ui.animation-speed.label")
+        description: I18n.tr("settings.general.ui.animation-speed.description")
       }
 
       NValueSlider {
@@ -132,20 +132,20 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      label: "Screen corners"
-      description: "Customize screen corner rounding and visual effects."
+      label: I18n.tr("settings.general.screen-corners.section.label")
+      description: I18n.tr("settings.general.screen-corners.section.description")
     }
 
     NToggle {
-      label: "Show screen corners"
-      description: "Display rounded corners on the edge of the screen."
+      label: I18n.tr("settings.general.screen-corners.show-corners.label")
+      description: I18n.tr("settings.general.screen-corners.show-corners.description")
       checked: Settings.data.general.showScreenCorners
       onToggled: checked => Settings.data.general.showScreenCorners = checked
     }
 
     NToggle {
-      label: "Solid black corners"
-      description: "Use solid black instead of the bar background color."
+      label: I18n.tr("settings.general.screen-corners.solid-black.label")
+      description: I18n.tr("settings.general.screen-corners.solid-black.description")
       checked: Settings.data.general.forceBlackScreenCorners
       onToggled: checked => Settings.data.general.forceBlackScreenCorners = checked
     }
@@ -182,8 +182,8 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      label: "Fonts"
-      description: "Choose the fonts used throughout the interface."
+      label: I18n.tr("settings.general.fonts.section.label")
+      description: I18n.tr("settings.general.fonts.section.description")
     }
 
     // Font configuration section
@@ -192,12 +192,12 @@ ColumnLayout {
       Layout.fillWidth: true
 
       NSearchableComboBox {
-        label: "Default font"
-        description: "Main font used throughout the interface."
+        label: I18n.tr("settings.general.fonts.default.label")
+        description: I18n.tr("settings.general.fonts.default.description")
         model: FontService.availableFonts
         currentKey: Settings.data.ui.fontDefault
-        placeholder: "Select default font..."
-        searchPlaceholder: "Search fonts..."
+        placeholder: I18n.tr("settings.general.fonts.default.placeholder")
+        searchPlaceholder: I18n.tr("settings.general.fonts.default.search-placeholder")
         popupHeight: 420 * scaling
         minimumWidth: 300 * scaling
         onSelected: function (key) {
@@ -206,12 +206,12 @@ ColumnLayout {
       }
 
       NSearchableComboBox {
-        label: "Monospaced font"
-        description: "Monospaced font used for numbers and stats display."
+        label: I18n.tr("settings.general.fonts.monospace.label")
+        description: I18n.tr("settings.general.fonts.monospace.description")
         model: FontService.monospaceFonts
         currentKey: Settings.data.ui.fontFixed
-        placeholder: "Select monospace font..."
-        searchPlaceholder: "Search monospace fonts..."
+        placeholder: I18n.tr("settings.general.fonts.monospace.placeholder")
+        searchPlaceholder: I18n.tr("settings.general.fonts.monospace.search-placeholder")
         popupHeight: 320 * scaling
         minimumWidth: 300 * scaling
         onSelected: function (key) {
@@ -220,12 +220,12 @@ ColumnLayout {
       }
 
       NSearchableComboBox {
-        label: "Accent font"
-        description: "Large font used for prominent displays."
+        label: I18n.tr("settings.general.fonts.accent.label")
+        description: I18n.tr("settings.general.fonts.accent.description")
         model: FontService.displayFonts
         currentKey: Settings.data.ui.fontBillboard
-        placeholder: "Select display font..."
-        searchPlaceholder: "Search display fonts..."
+        placeholder: I18n.tr("settings.general.fonts.accent.placeholder")
+        searchPlaceholder: I18n.tr("settings.general.fonts.accent.search-placeholder")
         popupHeight: 320 * scaling
         minimumWidth: 300 * scaling
         onSelected: function (key) {

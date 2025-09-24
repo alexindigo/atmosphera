@@ -10,8 +10,8 @@ ColumnLayout {
   spacing: Style.marginL * scaling
 
   NHeader {
-    label: "Your location"
-    description: "Get accurate weather and night light scheduling by setting your location."
+    label: I18n.tr("settings.location.location.section.label")
+    description: I18n.tr("settings.location.location.section.description")
   }
 
   // Location section
@@ -20,10 +20,10 @@ ColumnLayout {
     spacing: Style.marginL * scaling
 
     NTextInput {
-      label: "Search for a location"
-      description: "e.g., Toronto, ON"
+      label: I18n.tr("settings.location.location.search.label")
+      description: I18n.tr("settings.location.location.search.description")
       text: Settings.data.location.name || Settings.defaultLocation
-      placeholderText: "Enter the location name"
+      placeholderText: I18n.tr("settings.location.location.search.placeholder")
       onEditingFinished: {
         // Verify the location has really changed to avoid extra resets
         var newLocation = text.trim()
@@ -64,13 +64,13 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      label: "Weather"
-      description: "Choose your preferred temperature unit."
+      label: I18n.tr("settings.location.weather.section.label")
+      description: I18n.tr("settings.location.weather.section.description")
     }
 
     NToggle {
-      label: "Display temperature in Fahrenheit (°F)"
-      description: "Display temperature in Fahrenheit instead of Celsius."
+      label: I18n.tr("settings.location.weather.fahrenheit.label")
+      description: I18n.tr("settings.location.weather.fahrenheit.description")
       checked: Settings.data.location.useFahrenheit
       onToggled: checked => Settings.data.location.useFahrenheit = checked
     }
@@ -82,26 +82,26 @@ ColumnLayout {
     Layout.bottomMargin: Style.marginXL * scaling
   }
 
-  // Weather section
+  // Date & time section
   ColumnLayout {
     spacing: Style.marginM * scaling
     Layout.fillWidth: true
 
     NHeader {
-      label: "Date & time"
-      description: "Customize how date and time appear."
+      label: I18n.tr("settings.location.date-time.section.label")
+      description: I18n.tr("settings.location.date-time.section.description")
     }
 
     NToggle {
-      label: "Use 12-hour time format on the lock screen"
-      description: "On for AM/PM format (e.g., 8:00 PM), off for 24-hour format (e.g., 20:00)."
+      label: I18n.tr("settings.location.date-time.12hour-format.label")
+      description: I18n.tr("settings.location.date-time.12hour-format.description")
       checked: Settings.data.location.use12hourFormat
       onToggled: checked => Settings.data.location.use12hourFormat = checked
     }
 
     NToggle {
-      label: "Show week numbers"
-      description: "Displays the week of the year (e.g., Week 38) in the calendar."
+      label: I18n.tr("settings.location.date-time.week-numbers.label")
+      description: I18n.tr("settings.location.date-time.week-numbers.description")
       checked: Settings.data.location.showWeekNumberInCalendar
       onToggled: checked => Settings.data.location.showWeekNumberInCalendar = checked
     }
