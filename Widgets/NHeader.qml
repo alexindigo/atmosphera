@@ -17,7 +17,7 @@ ColumnLayout {
     font.pointSize: Style.fontSizeXL * scaling
     font.weight: Style.fontWeightBold
     color: Color.mSecondary
-    visible: root.title !== ""
+    visible: root.label !== ""
   }
 
   NText {
