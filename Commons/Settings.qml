@@ -261,6 +261,7 @@ Singleton {
     // audio
     property JsonObject audio: JsonObject {
       property int volumeStep: 5
+      property bool volumeOverdrive: false
       property int cavaFrameRate: 60
       property string visualizerType: "linear"
       property list<string> mprisBlacklist: []

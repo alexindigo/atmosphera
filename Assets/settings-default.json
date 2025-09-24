@@ -137,6 +137,7 @@
   },
   "audio": {
     "volumeStep": 5,
+    "volumeOverdrive": false,
     "cavaFrameRate": 60,
     "visualizerType": "linear",
     "mprisBlacklist": [],

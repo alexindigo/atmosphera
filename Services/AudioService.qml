@@ -96,7 +96,7 @@ Singleton {
     if (sink?.ready && sink?.audio) {
       // Clamp it accordingly
       sink.audio.muted = false
-      sink.audio.volume = Math.max(0, Math.min(1, newVolume))
+      sink.audio.volume = Math.max(0, Math.min(Settings.data.audio.volumeOverdrive ? 1.5 : 1.0, newVolume))
       //Logger.log("AudioService", "SetVolume", sink.audio.volume);
     } else {
       Logger.warn("AudioService", "No sink available")
@@ -115,7 +115,7 @@ Singleton {
     if (source?.ready && source?.audio) {
       // Clamp it accordingly
       source.audio.muted = false
-      source.audio.volume = Math.max(0, Math.min(1, newVolume))
+      source.audio.volume = Math.max(0, Math.min(Settings.data.audio.volumeOverdrive ? 1.5 : 1.0, newVolume))
     } else {
       Logger.warn("AudioService", "No source available")
     }
