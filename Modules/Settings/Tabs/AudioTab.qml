@@ -54,7 +54,7 @@ ColumnLayout {
       to: Settings.data.audio.volumeOverdrive ? 1.5 : 1.0
       value: localVolume
       stepSize: 0.01
-      text: Math.floor(AudioService.volume * 100) + "%"
+      text: Math.round(AudioService.volume * 100) + "%"
       onMoved: {
         localVolume = value
       }
@@ -94,7 +94,7 @@ ColumnLayout {
       to: Settings.data.audio.volumeOverdrive ? 1.5 : 1.0
       value: AudioService.inputVolume
       stepSize: 0.01
-      text: Math.floor(AudioService.inputVolume * 100) + "%"
+      text: Math.round(AudioService.inputVolume * 100) + "%"
       onMoved: value => AudioService.setInputVolume(value)
     }
   }
