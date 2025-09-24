@@ -10,8 +10,8 @@ import qs.Widgets
 NPanel {
   id: root
 
-  preferredWidth: Settings.data.location.showWeekNumberInCalendar ? 350 : 330
-  preferredHeight: 320
+  preferredWidth: Settings.data.location.showWeekNumberInCalendar ? 320 : 300
+  preferredHeight: 300
 
   // Main Column
   panelContent: ColumnLayout {
@@ -216,24 +216,27 @@ NPanel {
         year: Time.date.getFullYear()
         locale: Qt.locale()
 
-        delegate: Rectangle {
-          width: Style.baseWidgetSize * scaling
-          height: Style.baseWidgetSize * scaling
-          radius: Style.radiusS * scaling
-          color: model.today ? Color.mPrimary : Color.transparent
+        delegate: Item {
 
-          NText {
-            anchors.centerIn: parent
-            text: model.day
-            color: model.today ? Color.mOnPrimary : Color.mOnSurface
-            opacity: model.month === grid.month ? Style.opacityHeavy : Style.opacityLight
-            font.pointSize: Style.fontSizeM * scaling
-            font.weight: model.today ? Style.fontWeightBold : Style.fontWeightRegular
-          }
+          Rectangle {
+            width: Style.baseWidgetSize * scaling
+            height: Style.baseWidgetSize * scaling
+            radius: width / 2
+            color: model.today ? Color.mPrimary : Color.transparent
 
-          Behavior on color {
-            ColorAnimation {
-              duration: Style.animationFast
+            NText {
+              anchors.centerIn: parent
+              text: model.day
+              color: model.today ? Color.mOnPrimary : Color.mOnSurface
+              opacity: model.month === grid.month ? Style.opacityHeavy : Style.opacityLight
+              font.pointSize: Style.fontSizeM * scaling
+              font.weight: model.today ? Style.fontWeightBold : Style.fontWeightRegular
+            }
+
+            Behavior on color {
+              ColorAnimation {
+                duration: Style.animationFast
+              }
             }
           }
         }
