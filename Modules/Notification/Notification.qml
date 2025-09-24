@@ -22,9 +22,7 @@ Variants {
     property ListModel notificationModel: NotificationService.activeList
 
     // If no notification display activated in settings, then show them all
-    active: Settings.isLoaded && modelData && (notificationModel.count > 0) ? (Settings.data.notifications.monitors.includes(modelData.name) || (Settings.data.notifications.monitors.length === 0)) : false
-
-    visible: (notificationModel.count > 0)
+    active: Settings.isLoaded && modelData && (Settings.data.notifications.monitors.includes(modelData.name) || (Settings.data.notifications.monitors.length === 0))
 
     Connections {
       target: ScalingService
