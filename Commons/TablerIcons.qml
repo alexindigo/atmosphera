@@ -3474,6 +3474,7 @@ Singleton {
     "http-que-off": "\u{100df}",
     "http-trace": "\u{fa30}",
     "http-trace-off": "\u{100de}",
+    "hyprland": "\u{ec6a}",
     "ice-cream": "\u{eac2}",
     "ice-cream-2": "\u{ee9f}",
     "ice-cream-off": "\u{f148}",
