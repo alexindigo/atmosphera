@@ -33,6 +33,9 @@ Item {
     function toggleDND() {
       Settings.data.notifications.doNotDisturb = !Settings.data.notifications.doNotDisturb
     }
+    function clear() {
+      NotificationService.clearHistory()
+    }
   }
 
   IpcHandler {
