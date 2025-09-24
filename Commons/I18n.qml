@@ -8,7 +8,7 @@ import qs.Commons
 Singleton {
   id: root
 
-  property bool debug: true
+  property bool debug: false
   property string debugForceLanguage: ""
 
   property bool isLoaded: false
