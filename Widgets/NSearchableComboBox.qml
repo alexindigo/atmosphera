@@ -153,6 +153,14 @@ RowLayout {
       height: root.popupHeight + 60 * scaling
       padding: Style.marginM * scaling
 
+      onOpened: {
+        PanelService.willOpenPopup(root)
+      }
+
+      onClosed: {
+        PanelService.willClosePopup(root)
+      }
+
       contentItem: ColumnLayout {
         spacing: Style.marginS * scaling
 
@@ -166,13 +174,13 @@ RowLayout {
           fontSize: Style.fontSizeS * scaling
         }
 
-        ListView {
+        NListView {
           id: listView
           Layout.fillWidth: true
           Layout.fillHeight: true
-          clip: true
           model: combo.popup.visible ? filteredModel : null
-          ScrollIndicator.vertical: ScrollIndicator {}
+          horizontalPolicy: ScrollBar.AlwaysOff
+          verticalPolicy: ScrollBar.AsNeeded
 
           delegate: ItemDelegate {
             width: listView.width

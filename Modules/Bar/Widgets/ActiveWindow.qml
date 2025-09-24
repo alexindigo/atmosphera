@@ -31,6 +31,7 @@ Item {
   }
 
   readonly property string windowTitle: CompositorService.getFocusedWindowTitle()
+  readonly property bool hasActiveWindow: windowTitle !== ""
 
   readonly property bool showIcon: (widgetSettings.showIcon !== undefined) ? widgetSettings.showIcon : widgetMetadata.showIcon
 
@@ -52,7 +53,7 @@ Item {
   implicitHeight: (barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Math.round(Style.barHeight * scaling)
   implicitWidth: (barPosition === "left" || barPosition === "right") ? Math.round(Style.capsuleHeight * 0.8 * scaling) : (horizontalLayout.implicitWidth + Style.marginM * 2 * scaling)
 
-  visible: windowTitle !== ""
+  visible: hasActiveWindow
 
   function calculatedVerticalHeight() {
     // Use standard widget height like other widgets
@@ -86,7 +87,7 @@ Item {
         try {
           const idValue = focusedWindow.appId
           const normalizedId = (typeof idValue === 'string') ? idValue : String(idValue)
-          const iconResult = AppIcons.iconForAppId(normalizedId.toLowerCase())
+          const iconResult = ThemeIcons.iconForAppId(normalizedId.toLowerCase())
           if (iconResult && iconResult !== "") {
             return iconResult
           }
@@ -102,7 +103,7 @@ Item {
           if (activeToplevel.appId) {
             const idValue2 = activeToplevel.appId
             const normalizedId2 = (typeof idValue2 === 'string') ? idValue2 : String(idValue2)
-            const iconResult2 = AppIcons.iconForAppId(normalizedId2.toLowerCase())
+            const iconResult2 = ThemeIcons.iconForAppId(normalizedId2.toLowerCase())
             if (iconResult2 && iconResult2 !== "") {
               return iconResult2
             }
@@ -159,7 +160,7 @@ Item {
           Layout.preferredWidth: Style.capsuleHeight * 0.75 * scaling
           Layout.preferredHeight: Style.capsuleHeight * 0.75 * scaling
           Layout.alignment: Qt.AlignVCenter
-          visible: windowTitle !== "" && showIcon
+          visible: hasActiveWindow && showIcon
 
           IconImage {
             id: windowIcon
@@ -217,7 +218,7 @@ Item {
         anchors.centerIn: parent
         width: parent.width - Style.marginXS * scaling * 2
         height: parent.height - Style.marginXS * scaling * 2
-        visible: barPosition === "left" || barPosition === "right"
+        visible: (barPosition === "left" || barPosition === "right") && hasActiveWindow
 
         // Window icon
         Item {

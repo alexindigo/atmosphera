@@ -13,7 +13,6 @@ Rectangle {
   property color backgroundColor: Color.mPrimary
   property color textColor: Color.mOnPrimary
   property color hoverColor: Color.mTertiary
-  property color pressColor: Color.mSecondary
   property bool enabled: true
   property real fontSize: Style.fontSizeM * scaling
   property int fontWeight: Style.fontWeightBold
@@ -38,8 +37,6 @@ Rectangle {
   color: {
     if (!enabled)
       return outlined ? Color.transparent : Qt.lighter(Color.mSurfaceVariant, 1.2)
-    if (pressed)
-      return pressColor
     if (hovered)
       return hoverColor
     return outlined ? Color.transparent : backgroundColor
@@ -113,7 +110,7 @@ Rectangle {
         if (!root.enabled)
           return Color.mOnSurfaceVariant
         if (root.outlined) {
-          if (root.pressed || root.hovered)
+          if (root.hovered)
             return root.textColor
           return root.backgroundColor
         }
@@ -153,33 +150,24 @@ Rectangle {
     }
     onExited: {
       root.hovered = false
-      root.pressed = false
       if (tooltipText) {
         tooltip.hide()
       }
     }
     onPressed: mouse => {
-                 root.pressed = true
+                 if (tooltipText) {
+                   tooltip.hide()
+                 }
+                 if (mouse.button === Qt.LeftButton) {
+                   root.clicked()
+                 } else if (mouse.button == Qt.RightButton) {
+                   root.rightClicked()
+                 } else if (mouse.button == Qt.MiddleButton) {
+                   root.middleClicked()
+                 }
                }
-    onReleased: mouse => {
-                  root.pressed = false
-                  if (tooltipText) {
-                    tooltip.hide()
-                  }
-                  if (!root.hovered) {
-                    return
-                  }
 
-                  if (mouse.button === Qt.LeftButton) {
-                    root.clicked()
-                  } else if (mouse.button == Qt.RightButton) {
-                    root.rightClicked()
-                  } else if (mouse.button == Qt.MiddleButton) {
-                    root.middleClicked
-                  }
-                }
     onCanceled: {
-      root.pressed = false
       root.hovered = false
       if (tooltipText) {
         tooltip.hide()

@@ -1,10 +1,31 @@
 pragma Singleton
 
+import QtQuick
 import Quickshell
 import qs.Commons
 
 Singleton {
   id: root
+
+  property bool hasAudioVisualizer: false
+
+  // Simple timer that run once when the widget structure has changed
+  // and determine if any MediaMini widget has the visualizer on
+  Timer {
+    id: timerCheckVisualizer
+    interval: 100
+    repeat: false
+    onTriggered: {
+      hasAudioVisualizer = false
+      const widgets = getAllWidgetInstances("MediaMini")
+      for (var i = 0; i < widgets.length; i++) {
+        const widget = widgets[i]
+        if (widget.showVisualizer) {
+          hasAudioVisualizer = true
+        }
+      }
+    }
+  }
 
   // Registry to store actual widget instances
   // Key format: "screenName|section|widgetId|index"
@@ -20,6 +41,9 @@ Singleton {
       "index": index,
       "instance": instance
     }
+
+    timerCheckVisualizer.restart()
+
     Logger.log("BarService", "Registered widget:", key)
   }
 

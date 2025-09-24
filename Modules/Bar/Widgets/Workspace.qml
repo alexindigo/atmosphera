@@ -56,6 +56,10 @@ Item {
   property int horizontalPadding: Math.round(Style.marginS * scaling)
   property int spacingBetweenPills: Math.round(Style.marginXS * scaling)
 
+  // Wheel scroll handling
+  property int wheelAccumulatedDelta: 0
+  property bool wheelCooldown: false
+
   signal workspaceChanged(int workspaceId, color accentColor)
 
   implicitWidth: isVertical ? Math.round(Style.barHeight * scaling) : computeWidth()
@@ -93,6 +97,28 @@ Item {
     total += Math.max(localWorkspaces.count - 1, 0) * spacingBetweenPills
     total += horizontalPadding * 2
     return Math.round(total)
+  }
+
+  function getFocusedLocalIndex() {
+    for (var i = 0; i < localWorkspaces.count; i++) {
+      if (localWorkspaces.get(i).isFocused === true)
+        return i
+    }
+    return -1
+  }
+
+  function switchByOffset(offset) {
+    if (localWorkspaces.count === 0)
+      return
+    var current = getFocusedLocalIndex()
+    if (current < 0)
+      current = 0
+    var next = (current + offset) % localWorkspaces.count
+    if (next < 0)
+      next = localWorkspaces.count - 1
+    const ws = localWorkspaces.get(next)
+    if (ws && ws.idx !== undefined)
+      CompositorService.switchToWorkspace(ws.idx)
   }
 
   Component.onCompleted: {
@@ -183,6 +209,46 @@ Item {
 
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.verticalCenter: parent.verticalCenter
+  }
+
+  // Debounce timer for wheel interactions
+  Timer {
+    id: wheelDebounce
+    interval: 150
+    repeat: false
+    onTriggered: {
+      root.wheelCooldown = false
+      root.wheelAccumulatedDelta = 0
+    }
+  }
+
+  // Scroll to switch workspaces
+  WheelHandler {
+    id: wheelHandler
+    target: root
+    acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+    onWheel: function (event) {
+      if (root.wheelCooldown)
+        return
+      // Prefer vertical delta, fall back to horizontal if needed
+      var dy = event.angleDelta.y
+      var dx = event.angleDelta.x
+      var useDy = Math.abs(dy) >= Math.abs(dx)
+      var delta = useDy ? dy : dx
+      // One notch is typically 120
+      root.wheelAccumulatedDelta += delta
+      var step = 120
+      if (Math.abs(root.wheelAccumulatedDelta) >= step) {
+        var direction = root.wheelAccumulatedDelta > 0 ? -1 : 1
+        // For vertical layout, natural mapping: wheel up -> previous, down -> next (already handled by sign)
+        // For horizontal layout, same mapping using vertical wheel
+        root.switchByOffset(direction)
+        root.wheelCooldown = true
+        wheelDebounce.restart()
+        root.wheelAccumulatedDelta = 0
+        event.accepted = true
+      }
+    }
   }
 
   // Horizontal layout for top/bottom bars

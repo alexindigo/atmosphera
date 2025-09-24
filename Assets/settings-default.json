@@ -1,5 +1,5 @@
 {
-  "settingsVersion": 4,
+  "settingsVersion": 5,
   "bar": {
     "position": "top",
     "backgroundOpacity": 1,
@@ -28,7 +28,7 @@
       ],
       "right": [
         {
-          "id": "ScreenRecorderIndicator"
+          "id": "ScreenRecorder"
         },
         {
           "id": "Tray"
@@ -58,7 +58,7 @@
           "id": "Clock"
         },
         {
-          "id": "SidePanelToggle"
+          "id": "ControlCenter"
         }
       ]
     }
@@ -132,7 +132,8 @@
     "respectExpireTimeout": false,
     "lowUrgencyDuration": 3,
     "normalUrgencyDuration": 8,
-    "criticalUrgencyDuration": 15
+    "criticalUrgencyDuration": 15,
+    "enableOSD": true
   },
   "audio": {
     "volumeStep": 5,

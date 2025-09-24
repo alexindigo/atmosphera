@@ -68,7 +68,7 @@ Rectangle {
             anchors.centerIn: parent
             width: parent.width
             height: parent.height
-            source: AppIcons.iconForAppId(taskbarItem.modelData.appId)
+            source: ThemeIcons.iconForAppId(taskbarItem.modelData.appId)
             smooth: true
             asynchronous: true
           }

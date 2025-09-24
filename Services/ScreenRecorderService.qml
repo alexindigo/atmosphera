@@ -12,6 +12,8 @@ Singleton {
   readonly property var settings: Settings.data.screenRecorder
   property bool isRecording: false
   property bool isPending: false
+  // True only if the recorder actually started capturing at least once
+  property bool hasActiveRecording: false
   property string outputPath: ""
   property bool isAvailable: ProgramCheckerService.gpuScreenRecorderAvailable
 
@@ -36,7 +38,16 @@ Singleton {
       return
     }
     isPending = true
+    hasActiveRecording = false
 
+    // First, ensure xdg-desktop-portal and a compositor portal are running
+    portalCheckProcess.exec({
+                              "command": ["sh", "-c", // require core portal AND one of the backends
+                                "pidof xdg-desktop-portal >/dev/null 2>&1 && (pidof xdg-desktop-portal-wlr >/dev/null 2>&1 || pidof xdg-desktop-portal-hyprland >/dev/null 2>&1 || pidof xdg-desktop-portal-gnome >/dev/null 2>&1 || pidof xdg-desktop-portal-kde >/dev/null 2>&1)"]
+                            })
+  }
+
+  function launchRecorder() {
     var filename = Time.getFormattedTimestamp() + ".mp4"
     var videoDir = settings.directory
     if (videoDir && !videoDir.endsWith("/")) {
@@ -56,7 +67,7 @@ Singleton {
     notify-send "gpu-screen-recorder not installed!" -u critical
     fi`
 
-    // Use Process instead of execDetached so we can monitor it
+    // Use Process instead of execDetached so we can monitor it and read stderr
     recorderProcess.exec({
                            "command": ["sh", "-c", command]
                          })
@@ -71,12 +82,15 @@ Singleton {
       return
     }
 
+    ToastService.showNotice("Stopping recording…", outputPath, 2000)
+
     Quickshell.execDetached(["sh", "-c", "pkill -SIGINT -f 'gpu-screen-recorder' || pkill -SIGINT -f 'com.dec05eba.gpu_screen_recorder'"])
 
     isRecording = false
     isPending = false
     pendingTimer.running = false
     monitorTimer.running = false
+    hasActiveRecording = false
 
     // Just in case, force kill after 3 seconds
     killTimer.running = true
@@ -85,15 +99,50 @@ Singleton {
   // Process to run and monitor gpu-screen-recorder
   Process {
     id: recorderProcess
+    stdout: StdioCollector {}
+    stderr: StdioCollector {}
     onExited: function (exitCode, exitStatus) {
       if (isPending) {
         // Process ended while we were pending - likely cancelled or error
         isPending = false
         pendingTimer.running = false
+        // If it failed to start, show a clear error toast with stderr
+        if (exitCode !== 0) {
+          const err = String(stderr.text || "").trim()
+          if (err.length > 0)
+            ToastService.showError("Failed to start recording", err, 7000)
+          else
+            ToastService.showError("Failed to start recording", "gpu-screen-recorder exited unexpectedly.", 7000)
+        }
       } else if (isRecording) {
         // Process ended normally while recording
         isRecording = false
         monitorTimer.running = false
+        // Consider successful save if exitCode == 0
+        if (exitCode === 0) {
+          ToastService.showNotice("Recording saved", outputPath, 5000)
+        } else {
+          const err2 = String(stderr.text || "").trim()
+          if (err2.length > 0)
+            ToastService.showError("Recording failed", err2, 7000)
+          else
+            ToastService.showError("Recording failed", "The recorder exited with an error.", 7000)
+        }
+      }
+    }
+  }
+
+  // Pre-flight check for xdg-desktop-portal
+  Process {
+    id: portalCheckProcess
+    onExited: function (exitCode, exitStatus) {
+      if (exitCode === 0) {
+        // Portals available, proceed to launch
+        launchRecorder()
+      } else {
+        isPending = false
+        hasActiveRecording = false
+        ToastService.showError("Desktop portals not running", "Start xdg-desktop-portal and a compositor portal (wlr/hyprland/gnome/kde).", 8000)
       }
     }
   }
@@ -108,7 +157,10 @@ Singleton {
         // Process is still running after 2 seconds - assume recording started successfully
         isPending = false
         isRecording = true
+        hasActiveRecording = true
         monitorTimer.running = true
+        // Don't show a toast when recording starts to avoid having the toast in every video.
+        //ToastService.showNotice("Recording started", outputPath, 4000)
       } else if (isPending) {
         // Process not running anymore - was cancelled or failed
         isPending = false

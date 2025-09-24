@@ -34,14 +34,6 @@ Variants {
       }
     }
 
-    // Also listen to model changes (for ObjectModel)
-    Connections {
-      target: ToplevelManager ? ToplevelManager.toplevels : null
-      function onCountChanged() {
-        updateDockApps()
-      }
-    }
-
     // Update dock apps when pinned apps change
     Connections {
       target: Settings.data.dock
@@ -108,19 +100,28 @@ Variants {
       const runningApps = ToplevelManager ? (ToplevelManager.toplevels.values || []) : []
       const pinnedApps = Settings.data.dock.pinnedApps || []
       const combined = []
+      const processedAppIds = new Set()
 
-      // First, add pinned apps (both running and non-running) in their pinned order
+      // Strategy: Maintain app positions as much as possible
+      // 1. First pass: Add all running apps (both pinned and non-pinned) in their current order
+      runningApps.forEach(toplevel => {
+                            if (toplevel && toplevel.appId) {
+                              const isPinned = pinnedApps.includes(toplevel.appId)
+                              const appType = isPinned ? "pinned-running" : "running"
+
+                              combined.push({
+                                              "type": appType,
+                                              "toplevel": toplevel,
+                                              "appId": toplevel.appId,
+                                              "title": toplevel.title
+                                            })
+                              processedAppIds.add(toplevel.appId)
+                            }
+                          })
+
+      // 2. Second pass: Add non-running pinned apps at the end
       pinnedApps.forEach(pinnedAppId => {
-                           const runningApp = runningApps.find(toplevel => toplevel && toplevel.appId === pinnedAppId)
-                           if (runningApp) {
-                             // Pinned app that is currently running
-                             combined.push({
-                                             "type": "pinned-running",
-                                             "toplevel": runningApp,
-                                             "appId": runningApp.appId,
-                                             "title": runningApp.title
-                                           })
-                           } else {
+                           if (!processedAppIds.has(pinnedAppId)) {
                              // Pinned app that is not running
                              combined.push({
                                              "type": "pinned",
@@ -130,21 +131,6 @@ Variants {
                                            })
                            }
                          })
-
-      // Then, add running apps that are not pinned
-      runningApps.forEach(toplevel => {
-                            if (toplevel && toplevel.appId) {
-                              const isPinned = pinnedApps.includes(toplevel.appId)
-                              if (!isPinned) {
-                                combined.push({
-                                                "type": "running",
-                                                "toplevel": toplevel,
-                                                "appId": toplevel.appId,
-                                                "title": toplevel.title
-                                              })
-                              }
-                            }
-                          })
 
       dockApps = combined
     }
@@ -355,7 +341,7 @@ Variants {
               function getAppIcon(appData): string {
                 if (!appData || !appData.appId)
                   return ""
-                return AppIcons.iconForAppId(appData.appId?.toLowerCase())
+                return ThemeIcons.iconForAppId(appData.appId?.toLowerCase())
               }
 
               RowLayout {
@@ -462,13 +448,25 @@ Variants {
                       id: contextMenu
                       scaling: root.scaling
                       onHoveredChanged: menuHovered = hovered
-                      onRequestClose: contextMenu.hide()
+                      onRequestClose: {
+                        contextMenu.hide()
+                        // Restart hide timer after menu action if auto-hide is enabled
+                        if (autoHide && !dockHovered && !anyAppHovered && !peekHovered) {
+                          hideTimer.restart()
+                        }
+                      }
                       onAppClosed: root.updateDockApps // Force immediate dock update when app is closed
                       onVisibleChanged: {
                         if (visible) {
                           root.currentContextMenu = contextMenu
                         } else if (root.currentContextMenu === contextMenu) {
                           root.currentContextMenu = null
+                          // Reset menu hover state when menu becomes invisible
+                          menuHovered = false
+                          // Restart hide timer if conditions are met
+                          if (autoHide && !dockHovered && !anyAppHovered && !peekHovered) {
+                            hideTimer.restart()
+                          }
                         }
                       }
                     }
@@ -501,10 +499,22 @@ Variants {
                       }
 
                       onClicked: function (mouse) {
-                        // Close any existing context menu first
-                        if (mouse.button !== Qt.RightButton || root.currentContextMenu !== contextMenu) {
+                        if (mouse.button === Qt.RightButton) {
+                          // If right-clicking on the same app with an open context menu, close it
+                          if (root.currentContextMenu === contextMenu && contextMenu.visible) {
+                            root.closeAllContextMenus()
+                            return
+                          }
+                          // Close any other existing context menu first
                           root.closeAllContextMenus()
+                          // Hide tooltip when showing context menu
+                          appTooltip.hide()
+                          contextMenu.show(appButton, modelData.toplevel || modelData)
+                          return
                         }
+
+                        // Close any existing context menu for non-right-click actions
+                        root.closeAllContextMenus()
 
                         // Check if toplevel is still valid (not a stale reference)
                         const isValidToplevel = modelData?.toplevel && ToplevelManager && ToplevelManager.toplevels.values.includes(modelData.toplevel)
@@ -520,10 +530,6 @@ Variants {
                             // Pinned app not running - launch it
                             Quickshell.execDetached(["gtk-launch", modelData.appId])
                           }
-                        } else if (mouse.button === Qt.RightButton) {
-                          // Hide tooltip when showing context menu
-                          appTooltip.hide()
-                          contextMenu.show(appButton, modelData.toplevel || modelData)
                         }
                       }
                     }

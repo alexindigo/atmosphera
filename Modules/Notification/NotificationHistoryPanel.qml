@@ -12,7 +12,7 @@ import qs.Widgets
 NPanel {
   id: root
 
-  preferredWidth: 360
+  preferredWidth: 380
   preferredHeight: 480
   panelKeyboardFocus: true
 
@@ -37,7 +37,7 @@ NPanel {
         }
 
         NText {
-          text: "Notification history"
+          text: "Notifications"
           font.pointSize: Style.fontSizeL * scaling
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface

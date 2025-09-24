@@ -19,7 +19,7 @@ PopupWindow {
 
   signal requestClose
 
-  implicitWidth: 160 * scaling
+  implicitWidth: 140 * scaling
   implicitHeight: contextMenuColumn.implicitHeight + (Style.marginM * scaling * 2)
   color: Color.transparent
   visible: false
@@ -75,7 +75,14 @@ PopupWindow {
     id: menuMouseArea
     anchors.fill: parent
     hoverEnabled: true
-    onClicked: root.hide() // Close when clicking on the background (outside menu content)
+    acceptedButtons: Qt.LeftButton | Qt.RightButton
+    onClicked: function (mouse) {
+      if (mouse.button === Qt.RightButton) {
+        root.hide() // Close on right-click
+      } else {
+        root.hide() // Close when clicking on the background (outside menu content)
+      }
+    }
   }
 
   Shortcut {
@@ -86,7 +93,7 @@ PopupWindow {
 
   Rectangle {
     anchors.fill: parent
-    color: Color.mSurface
+    color: Color.mSurfaceVariant
     radius: Style.radiusS * scaling
     border.color: Color.mOutline
     border.width: Math.max(1, Style.borderS * scaling)
@@ -105,11 +112,11 @@ PopupWindow {
       anchors.margins: Style.marginM * scaling
       spacing: 0
 
-      // Activate/Focus item
+      // Focus item
       Rectangle {
         width: parent.width
         height: 32 * scaling
-        color: activateMouseArea.containsMouse ? Qt.alpha(Color.mSecondary, 0.2) : Color.transparent
+        color: activateMouseArea.containsMouse ? Color.mTertiary : Color.transparent
         radius: Style.radiusXS * scaling
 
         Row {
@@ -121,20 +128,14 @@ PopupWindow {
           NIcon {
             icon: "eye"
             font.pointSize: Style.fontSizeL * scaling
-            color: Color.mOnSurface
+            color: activateMouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurfaceVariant
             anchors.verticalCenter: parent.verticalCenter
           }
 
           NText {
-            text: {
-              if (!root.toplevel)
-                return "Activate"
-              // Check if this toplevel is active by comparing with ToplevelManager.activeToplevel
-              const isActive = ToplevelManager.activeToplevel && ToplevelManager.activeToplevel === root.toplevel
-              return isActive ? "Focus" : "Activate"
-            }
+            text: "Focus"
             font.pointSize: Style.fontSizeS * scaling
-            color: Color.mOnSurface
+            color: activateMouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurfaceVariant
             anchors.verticalCenter: parent.verticalCenter
           }
         }
@@ -149,7 +150,7 @@ PopupWindow {
             if (root.toplevel?.activate) {
               root.toplevel.activate()
             }
-            root.hide()
+            root.requestClose()
           }
         }
       }
@@ -158,7 +159,7 @@ PopupWindow {
       Rectangle {
         width: parent.width
         height: 32 * scaling
-        color: pinMouseArea.containsMouse ? Qt.alpha(Color.mTertiary, 0.2) : Color.transparent
+        color: pinMouseArea.containsMouse ? Color.mTertiary : Color.transparent
         radius: Style.radiusXS * scaling
 
         Row {
@@ -171,10 +172,10 @@ PopupWindow {
             icon: {
               if (!root.toplevel)
                 return "pin"
-              return root.isAppPinned(root.toplevel.appId) ? "pinned-off" : "pin"
+              return root.isAppPinned(root.toplevel.appId) ? "unpin" : "pin"
             }
             font.pointSize: Style.fontSizeL * scaling
-            color: Color.mOnSurface
+            color: pinMouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurfaceVariant
             anchors.verticalCenter: parent.verticalCenter
           }
 
@@ -185,7 +186,7 @@ PopupWindow {
               return root.isAppPinned(root.toplevel.appId) ? "Unpin" : "Pin"
             }
             font.pointSize: Style.fontSizeS * scaling
-            color: Color.mOnSurface
+            color: pinMouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurfaceVariant
             anchors.verticalCenter: parent.verticalCenter
           }
         }
@@ -200,7 +201,8 @@ PopupWindow {
             if (root.toplevel?.appId) {
               root.toggleAppPin(root.toplevel.appId)
             }
-            root.hide()
+            //root.hide()
+            root.requestClose()
           }
         }
       }
@@ -209,7 +211,7 @@ PopupWindow {
       Rectangle {
         width: parent.width
         height: 32 * scaling
-        color: closeMouseArea.containsMouse ? Qt.alpha(Color.mPrimary, 0.2) : Color.transparent
+        color: closeMouseArea.containsMouse ? Color.mTertiary : Color.transparent
         radius: Style.radiusXS * scaling
 
         Row {
@@ -219,16 +221,16 @@ PopupWindow {
           spacing: Style.marginS * scaling
 
           NIcon {
-            icon: "x"
+            icon: "close"
             font.pointSize: Style.fontSizeL * scaling
-            color: closeMouseArea.containsMouse ? Color.mPrimary : Color.mOnSurface
+            color: closeMouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurfaceVariant
             anchors.verticalCenter: parent.verticalCenter
           }
 
           NText {
             text: "Close"
             font.pointSize: Style.fontSizeS * scaling
-            color: closeMouseArea.containsMouse ? Color.mPrimary : Color.mOnSurface
+            color: closeMouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurfaceVariant
             anchors.verticalCenter: parent.verticalCenter
           }
         }
@@ -253,6 +255,7 @@ PopupWindow {
               Logger.warn("DockMenu", "Cannot close app - invalid toplevel reference")
             }
             root.hide()
+            root.requestClose()
           }
         }
       }

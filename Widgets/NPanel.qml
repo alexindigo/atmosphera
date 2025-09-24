@@ -25,6 +25,8 @@ Loader {
   property bool panelAnchorLeft: false
   property bool panelAnchorRight: false
 
+  property bool isMasked: false
+
   // Properties to support positioning relative to the opener (button)
   property bool useButtonPosition: false
   property point buttonPosition: Qt.point(0, 0)
@@ -177,11 +179,17 @@ Loader {
       }
 
       visible: true
-
       color: Settings.data.general.dimDesktop ? Qt.alpha(Color.mShadow, dimmingOpacity) : Color.transparent
+
       WlrLayershell.exclusionMode: ExclusionMode.Ignore
       WlrLayershell.namespace: "noctalia-panel"
       WlrLayershell.keyboardFocus: root.panelKeyboardFocus ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
+
+      mask: root.isMasked ? maskRegion : null
+
+      Region {
+        id: maskRegion
+      }
 
       Behavior on color {
         ColorAnimation {
@@ -244,7 +252,7 @@ Loader {
         }
 
         scale: root.scaleValue
-        opacity: root.opacityValue
+        opacity: root.isMasked ? 0 : root.opacityValue
         x: isDragged ? manualX : calculatedX
         y: isDragged ? manualY : calculatedY
 

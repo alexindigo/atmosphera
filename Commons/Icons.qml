@@ -4,7 +4,6 @@ import QtQuick
 import QtQuick.Controls
 import Quickshell
 import qs.Commons
-import qs.Commons.IconsSets
 
 Singleton {
   id: root
