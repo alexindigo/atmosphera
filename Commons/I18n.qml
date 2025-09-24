@@ -9,7 +9,7 @@ Singleton {
   id: root
 
   property bool debug: true
-  property string debugForceLanguage: "de"
+  property string debugForceLanguage: ""
 
   property bool isLoaded: false
   property string langCode: ""

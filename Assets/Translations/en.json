@@ -450,15 +450,15 @@
           "description": "Terminal emulator theming.",
           "kitty": {
             "description": "Write {filepath} and reload",
-            "description-missing": "Requires kitty terminal to be installed"
+            "description-missing": "Requires {app} to be installed"
           },
           "ghostty": {
             "description": "Write {filepath} and reload",
-            "description-missing": "Requires ghostty terminal to be installed"
+            "description-missing": "Requires {app} to be installed"
           },
           "foot": {
             "description": "Write {filepath} and reload",
-            "description-missing": "Requires foot terminal to be installed"
+            "description-missing": "Requires {app} to be installed"
           }
         },
         "programs": {
@@ -466,15 +466,15 @@
           "description": "Application-specific theming.",
           "fuzzel": {
             "description": "Write {filepath} and reload",
-            "description-missing": "Requires fuzzel launcher to be installed"
+            "description-missing": "Requires {app} to be installed"
           },
           "vesktop": {
             "description": "Write {filepath}",
-            "description-missing": "Requires vesktop Discord client to be installed"
+            "description-missing": "Requires {app} to be installed"
           },
           "pywalfox": {
             "description": "Write {filepath} and run pywalfox update",
-            "description-missing": "Requires pywalfox package to be installed"
+            "description-missing": "Requires {app} to be installed"
           }
         },
         "misc": {
