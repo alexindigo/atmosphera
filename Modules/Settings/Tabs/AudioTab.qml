@@ -135,7 +135,7 @@ ColumnLayout {
 
     NToggle {
       label: "Allow volume overdrive"
-      description: "Allow raising volume above 100%."
+      description: "Allow raising volume above 100%. May not be supported by all hardware."
       checked: Settings.data.audio.volumeOverdrive
       onToggled: checked => Settings.data.audio.volumeOverdrive = checked
     }
@@ -178,7 +178,10 @@ ColumnLayout {
           required property PwNode modelData
           ButtonGroup.group: sinks
           checked: AudioService.sink?.id === modelData.id
-          onClicked: AudioService.setAudioSink(modelData)
+          onClicked: {
+            AudioService.setAudioSink(modelData)
+            localVolume = AudioService.volume
+          }
           text: modelData.description
         }
       }
