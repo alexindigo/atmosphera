@@ -861,7 +861,8 @@
       "media-mini": {
         "show-album-art": "Mostrar carátula del álbum",
         "show-visualizer": "Mostrar visualizador",
-        "visualizer-type": "Tipo de visualizador"
+        "visualizer-type": "Tipo de visualizador",
+        "scrolling-mode": "Modo de desplazamiento"
       },
       "clock": {
         "use-primary-color": {
@@ -1076,6 +1077,11 @@
       "linear": "Lineal",
       "mirrored": "Espejado",
       "wave": "Onda"
+    },
+    "scrolling-modes": {
+      "always": "Desplazar Siempre",
+      "hover": "Desplazar al Pasar",
+      "never": "Nunca Desplazar"
     },
     "screen-recording": {
       "sources": {

@@ -861,7 +861,8 @@
       "media-mini": {
         "show-album-art": "Mostrar arte do álbum",
         "show-visualizer": "Mostrar visualizador",
-        "visualizer-type": "Tipo de visualizador"
+        "visualizer-type": "Tipo de visualizador",
+        "scrolling-mode": "Modo de rolagem"
       },
       "clock": {
         "use-primary-color": {

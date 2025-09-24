@@ -851,7 +851,8 @@
       "media-mini": {
         "show-album-art": "Albumcover anzeigen",
         "show-visualizer": "Visualizer anzeigen",
-        "visualizer-type": "Visualizer-Typ"
+        "visualizer-type": "Visualizer-Typ",
+        "scrolling-mode": "Scrollmodus"
       },
       "clock": {
         "use-primary-color": {
@@ -1067,6 +1068,11 @@
       "linear": "Linear",
       "mirrored": "Gespiegelt",
       "wave": "Welle"
+    },
+    "scrolling-modes": {
+      "always": "Immer Scrollen",
+      "hover": "Beim Hover Scrollen",
+      "never": "Nie Scrollen"
     },
     
     "screen-recording": {

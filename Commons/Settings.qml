@@ -54,7 +54,7 @@ Singleton {
     // Then it should be commented out again, regular users don't need to generate
     // default settings on every start
     // TODO: automate this someday!
-    // generateDefaultSettings()
+    //generateDefaultSettings()
 
     // Patch-in the local default, resolved to user's home
     adapter.general.avatarImage = defaultAvatar
@@ -114,7 +114,7 @@ Singleton {
   JsonAdapter {
     id: adapter
 
-    property int settingsVersion: 5
+    property int settingsVersion: 6
 
     // bar
     property JsonObject bar: JsonObject {
@@ -266,8 +266,6 @@ Singleton {
       property string visualizerType: "linear"
       property list<string> mprisBlacklist: []
       property string preferredPlayer: ""
-      property bool scrollingTitle: false
-      property int scrollingSpeed: 18
     }
 
     // ui

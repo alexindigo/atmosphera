@@ -1,5 +1,5 @@
 {
-  "settingsVersion": 5,
+  "settingsVersion": 6,
   "bar": {
     "position": "top",
     "backgroundOpacity": 1,
@@ -141,7 +141,7 @@
     "cavaFrameRate": 60,
     "visualizerType": "linear",
     "mprisBlacklist": [],
-    "preferredPlayer": "",
+    "preferredPlayer": ""
   },
   "ui": {
     "fontDefault": "Roboto",

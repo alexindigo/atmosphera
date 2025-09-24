@@ -385,27 +385,6 @@ ColumnLayout {
       currentKey: Settings.data.audio.cavaFrameRate
       onSelected: key => Settings.data.audio.cavaFrameRate = key
     }
-
-    // Scrolling Title Settings
-    NToggle {
-      label: I18n.tr("settings.audio.media.scrolling-title.label")
-      description: I18n.tr("settings.audio.media.scrolling-title.description")
-      checked: Settings.data.audio.scrollingTitle
-      onToggled: checked => Settings.data.audio.scrollingTitle = checked
-    }
-
-    NSpinBox {
-      Layout.fillWidth: true
-      label: I18n.tr("settings.audio.media.scrolling-speed.label")
-      description: I18n.tr("settings.audio.media.scrolling-speed.description")
-      minimum: 5
-      maximum: 60
-      value: Settings.data.audio.scrollingSpeed
-      stepSize: 1
-      suffix: "s"
-      enabled: Settings.data.audio.scrollingTitle
-      onValueChanged: Settings.data.audio.scrollingSpeed = value
-    }
   }
 
   NDivider {

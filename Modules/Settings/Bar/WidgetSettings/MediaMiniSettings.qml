@@ -17,12 +17,14 @@ ColumnLayout {
   property bool valueShowAlbumArt: widgetData.showAlbumArt !== undefined ? widgetData.showAlbumArt : widgetMetadata.showAlbumArt
   property bool valueShowVisualizer: widgetData.showVisualizer !== undefined ? widgetData.showVisualizer : widgetMetadata.showVisualizer
   property string valueVisualizerType: widgetData.visualizerType || widgetMetadata.visualizerType
+  property string valueScrollingMode: widgetData.scrollingMode || widgetMetadata.scrollingMode
 
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {})
     settings.showAlbumArt = valueShowAlbumArt
     settings.showVisualizer = valueShowVisualizer
     settings.visualizerType = valueVisualizerType
+    settings.scrollingMode = valueScrollingMode
     return settings
   }
 
@@ -53,6 +55,23 @@ ColumnLayout {
       }]
     currentKey: valueVisualizerType
     onSelected: key => valueVisualizerType = key
+    minimumWidth: 200 * scaling
+  }
+
+  NComboBox {
+    label: I18n.tr("bar.widget-settings.media-mini.scrolling-mode")
+    model: [{
+        "key": "always",
+        "name": I18n.tr("options.scrolling-modes.always")
+      }, {
+        "key": "hover",
+        "name": I18n.tr("options.scrolling-modes.hover")
+      }, {
+        "key": "never",
+        "name": I18n.tr("options.scrolling-modes.never")
+      }]
+    currentKey: valueScrollingMode
+    onSelected: key => valueScrollingMode = key
     minimumWidth: 200 * scaling
   }
 }

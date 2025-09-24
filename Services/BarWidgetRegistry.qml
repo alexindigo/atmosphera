@@ -98,7 +98,8 @@ Singleton {
                                     "allowUserSettings": true,
                                     "showAlbumArt": false,
                                     "showVisualizer": false,
-                                    "visualizerType": "linear"
+                                    "visualizerType": "linear",
+                                    "scrollingMode": "hover"
                                   },
                                   "ControlCenter": {
                                     "allowUserSettings": true,

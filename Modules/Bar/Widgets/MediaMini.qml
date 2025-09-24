@@ -36,12 +36,10 @@ Item {
   readonly property bool showAlbumArt: (widgetSettings.showAlbumArt !== undefined) ? widgetSettings.showAlbumArt : widgetMetadata.showAlbumArt
   readonly property bool showVisualizer: (widgetSettings.showVisualizer !== undefined) ? widgetSettings.showVisualizer : widgetMetadata.showVisualizer
   readonly property string visualizerType: (widgetSettings.visualizerType !== undefined && widgetSettings.visualizerType !== "") ? widgetSettings.visualizerType : widgetMetadata.visualizerType
-  readonly property bool scrollingTitle: Settings.data.audio.scrollingTitle
-  readonly property int scrollingSpeed: Settings.data.audio.scrollingSpeed
+  readonly property string scrollingMode: (widgetSettings.scrollingMode !== undefined) ? widgetSettings.scrollingMode : widgetMetadata.scrollingMode
 
-  // 6% of total width
-  readonly property real minWidth: Math.max(1, screen.width * 0.06)
-  readonly property real maxWidth: minWidth * 2
+  // Fixed width - no expansion
+  readonly property real widgetWidth: Math.max(1, screen.width * 0.06)
 
   function getTitle() {
     return MediaService.trackTitle + (MediaService.trackArtist !== "" ? ` - ${MediaService.trackArtist}` : "")
@@ -51,20 +49,8 @@ Item {
     return Math.round(Style.baseWidgetSize * 0.8 * scaling)
   }
 
-  function calculatedHorizontalWidth() {
-    let total = Style.marginM * 2 * scaling // internal padding
-    if (showAlbumArt) {
-      total += 18 * scaling + 2 * scaling // album art + spacing
-    } else {
-      total += Style.fontSizeL * scaling + 2 * scaling // icon + spacing
-    }
-    total += Math.min(fullTitleMetrics.contentWidth, maxWidth * scaling) // title text
-    // Row layout handles spacing between widgets
-    return total
-  }
-
   implicitHeight: visible ? ((barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Math.round(Style.barHeight * scaling)) : 0
-  implicitWidth: visible ? ((barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : (rowLayout.implicitWidth + Style.marginM * 2 * scaling)) : 0
+  implicitWidth: visible ? ((barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : (widgetWidth * scaling)) : 0
 
   visible: MediaService.currentPlayer !== null && MediaService.canPlay
 
@@ -81,7 +67,7 @@ Item {
     visible: root.visible
     anchors.left: parent.left
     anchors.verticalCenter: parent.verticalCenter
-    width: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : (rowLayout.implicitWidth + Style.marginM * 2 * scaling)
+    width: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : (widgetWidth * scaling)
     height: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : Math.round(Style.capsuleHeight * scaling)
     radius: (barPosition === "left" || barPosition === "right") ? width / 2 : Math.round(Style.radiusM * scaling)
     color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
@@ -185,52 +171,55 @@ Item {
         Item {
           id: titleContainer
 
-          Layout.preferredWidth: {
-            if (mouseArea.containsMouse) {
-              return Math.round(Math.min(fullTitleMetrics.contentWidth, root.maxWidth * scaling))
-            } else {
-              return Math.round(Math.min(fullTitleMetrics.contentWidth, root.minWidth * scaling))
-            }
-          }
+          Layout.preferredWidth: widgetWidth * scaling
           Layout.alignment: Qt.AlignVCenter
           Layout.preferredHeight: titleText.height
 
           clip: true
 
-          property bool shouldScroll: scrollingTitle && fullTitleMetrics.contentWidth > titleContainer.width
           property bool isScrolling: false
 
-          // Start scrolling when text is too long and not hovering
+          // Timer for "always" mode with delay
           Timer {
             id: scrollStartTimer
             interval: 2000 // Wait 2 seconds before starting scroll
             repeat: false
             onTriggered: {
-              if (titleContainer.shouldScroll && !mouseArea.containsMouse) {
+              if (scrollingMode === "always" && fullTitleMetrics.contentWidth > titleContainer.width) {
                 titleContainer.isScrolling = true
               }
             }
           }
 
-          // Reset scroll position when text changes or on hover
-          onShouldScrollChanged: {
-            if (shouldScroll && !mouseArea.containsMouse) {
-              scrollStartTimer.restart()
-            } else {
-              scrollStartTimer.stop()
+          // Update scrolling state based on mode - using property instead of function
+          property var updateScrollingState: function () {
+            if (scrollingMode === "never") {
               isScrolling = false
+            } else if (scrollingMode === "always") {
+              if (fullTitleMetrics.contentWidth > titleContainer.width) {
+                if (mouseArea.containsMouse) {
+                  isScrolling = false
+                } else {
+                  scrollStartTimer.restart()
+                }
+              } else {
+                scrollStartTimer.stop()
+                isScrolling = false
+              }
+            } else if (scrollingMode === "hover") {
+              isScrolling = mouseArea.containsMouse && fullTitleMetrics.contentWidth > titleContainer.width
             }
           }
 
+          // React to text changes
+          onWidthChanged: updateScrollingState()
+          Component.onCompleted: updateScrollingState()
+
+          // React to hover changes from the main mouse area
           Connections {
             target: mouseArea
             function onContainsMouseChanged() {
-              if (mouseArea.containsMouse) {
-                scrollStartTimer.stop()
-                titleContainer.isScrolling = false
-              } else if (titleContainer.shouldScroll) {
-                scrollStartTimer.restart()
-              }
+              titleContainer.updateScrollingState()
             }
           }
 
@@ -255,7 +244,7 @@ Item {
               NumberAnimation {
                 from: 0
                 to: -(fullTitleMetrics.contentWidth - titleContainer.width)
-                duration: scrollingSpeed * 1000 // Convert seconds to milliseconds
+                duration: Math.max(3000, getTitle().length * 100) // Compute from character count
                 easing.type: Easing.Linear
               }
             }
@@ -339,18 +328,18 @@ Item {
   NTooltip {
     id: tooltip
     text: {
-      if (barPosition === "left" || barPosition === "right") {
-        return getTitle()
-      } else {
-        var str = ""
-        if (MediaService.canGoNext) {
-          str += "Right click for next.\n"
-        }
-        if (MediaService.canGoPrevious) {
-          str += "Middle click for previous."
-        }
-        return str
+      var title = getTitle()
+      var controls = ""
+      if (MediaService.canGoNext) {
+        controls += "Right click for next.\n"
       }
+      if (MediaService.canGoPrevious) {
+        controls += "Middle click for previous."
+      }
+      if (controls !== "") {
+        return title + "\n\n" + controls
+      }
+      return title
     }
     target: (barPosition === "left" || barPosition === "right") ? verticalLayout : anchor
     positionLeft: barPosition === "right"
