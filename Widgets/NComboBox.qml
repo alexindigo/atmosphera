@@ -155,10 +155,10 @@ RowLayout {
           }
 
           contentItem: NText {
-            text: (function () {
+            text: {
               var item = root.getItem(index)
               return item && item.name ? item.name : ""
-            })()
+            }
             font.pointSize: Style.fontSizeM * scaling
             color: highlighted ? Color.mOnTertiary : Color.mOnSurface
             verticalAlignment: Text.AlignVCenter
