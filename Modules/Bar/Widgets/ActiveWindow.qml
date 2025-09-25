@@ -39,17 +39,26 @@ Item {
 
   // Widget settings - matching MediaMini pattern
   readonly property bool showIcon: (widgetSettings.showIcon !== undefined) ? widgetSettings.showIcon : widgetMetadata.showIcon
+  readonly property bool autoHide: (widgetSettings.autoHide !== undefined) ? widgetSettings.autoHide : widgetMetadata.autoHide
   readonly property string scrollingMode: (widgetSettings.scrollingMode !== undefined) ? widgetSettings.scrollingMode : (widgetMetadata.scrollingMode !== undefined ? widgetMetadata.scrollingMode : "hover")
 
   // Fixed width
   readonly property real widgetWidth: Math.max(1, screen.width * 0.06)
 
+  implicitHeight: visible ? ((barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Math.round(Style.barHeight * scaling)) : 0
+  implicitWidth: visible ? ((barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : (widgetWidth * scaling)) : 0
+
+  opacity: !autoHide || hasActiveWindow ? 1.0 : 0
+  Behavior on opacity {
+    NumberAnimation {
+      duration: Style.animationNormal
+      easing.type: Easing.OutCubic
+    }
+  }
+
   function calculatedVerticalHeight() {
     return Math.round(Style.baseWidgetSize * 0.8 * scaling)
   }
-
-  implicitHeight: visible ? ((barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Math.round(Style.barHeight * scaling)) : 0
-  implicitWidth: visible ? ((barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : (widgetWidth * scaling)) : 0
 
   function getAppIcon() {
     try {

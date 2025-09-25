@@ -41,6 +41,7 @@ Singleton {
                                   "ActiveWindow": {
                                     "allowUserSettings": true,
                                     "showIcon": true,
+                                    "autoHide": true,
                                     "scrollingMode": "hover"
                                   },
                                   "Battery": {
@@ -59,6 +60,12 @@ Singleton {
                                     "formatHorizontal": "HH:mm ddd, MMM dd",
                                     "formatVertical": "HH mm - dd MM"
                                   },
+                                  "ControlCenter": {
+                                    "allowUserSettings": true,
+                                    "useDistroLogo": false,
+                                    "icon": "noctalia",
+                                    "customIconPath": ""
+                                  },
                                   "CustomButton": {
                                     "allowUserSettings": true,
                                     "icon": "heart",
@@ -67,6 +74,19 @@ Singleton {
                                     "middleClickExec": "",
                                     "textCommand": "",
                                     "textIntervalMs": 3000
+                                  },
+                                  "KeyboardLayout": {
+                                    "allowUserSettings": true,
+                                    "displayMode": "onhover"
+                                  },
+                                  "MediaMini": {
+                                    "allowUserSettings": true,
+                                    "hideAutomatically": false,
+                                    "scrollingMode": "hover",
+                                    "showAlbumArt": false,
+                                    "showVisualizer": false,
+                                    "visualizerType": "linear",
+                                    "autoHide": false
                                   },
                                   "Microphone": {
                                     "allowUserSettings": true,
@@ -95,24 +115,7 @@ Singleton {
                                     "labelMode": "index",
                                     "hideUnoccupied": false
                                   },
-                                  "MediaMini": {
-                                    "allowUserSettings": true,
-                                    "showAlbumArt": false,
-                                    "showVisualizer": false,
-                                    "visualizerType": "linear",
-                                    "scrollingMode": "hover"
-                                  },
-                                  "ControlCenter": {
-                                    "allowUserSettings": true,
-                                    "useDistroLogo": false,
-                                    "icon": "noctalia",
-                                    "customIconPath": ""
-                                  },
                                   "Volume": {
-                                    "allowUserSettings": true,
-                                    "displayMode": "onhover"
-                                  },
-                                  "KeyboardLayout": {
                                     "allowUserSettings": true,
                                     "displayMode": "onhover"
                                   }

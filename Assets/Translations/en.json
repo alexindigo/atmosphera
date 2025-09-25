@@ -774,7 +774,9 @@
         "search-placeholder": "Search widgets..."
       },
       "active-window": {
-        "show-app-icon": "Show app icon"
+        "show-app-icon": "Show app icon",
+        "auto-hide": "Hide automatically",
+        "scrolling-mode": "Scrolling mode"
       },
       "system-monitor": {
         "cpu-usage": "CPU usage",
