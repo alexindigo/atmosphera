@@ -1096,7 +1096,6 @@
     "frame-rates": {
       "fps": "{fps} FPS"
     },
-    
     "screen-recording": {
       "sources": {
         "portal": "Portal",
@@ -1116,10 +1115,6 @@
         "system-output": "System output",
         "microphone-input": "Microphone input",
         "both": "System output + microphone input"
-      },
-      "audio-codecs": {
-        "opus": "Opus",
-        "aac": "AAC"
       }
     }
   },
