@@ -40,7 +40,8 @@ Singleton {
   property var widgetMetadata: ({
                                   "ActiveWindow": {
                                     "allowUserSettings": true,
-                                    "showIcon": true
+                                    "showIcon": true,
+                                    "scrollingMode": "hover"
                                   },
                                   "Battery": {
                                     "allowUserSettings": true,
