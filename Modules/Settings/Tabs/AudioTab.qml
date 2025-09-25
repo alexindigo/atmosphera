@@ -134,8 +134,8 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NToggle {
-      label: "Allow volume overdrive"
-      description: "Allow raising volume above 100%. May not be supported by all hardware."
+      label: I18n.tr("settings.audio.volumes.volume-overdrive.label")
+      description: I18n.tr("settings.audio.volumes.volume-overdrive.description")
       checked: Settings.data.audio.volumeOverdrive
       onToggled: checked => Settings.data.audio.volumeOverdrive = checked
     }
@@ -362,25 +362,39 @@ ColumnLayout {
       description: I18n.tr("settings.audio.media.frame-rate.description")
       model: [{
           "key": "30",
-          "name": I18n.tr("options.frame-rates.30-fps")
+          "name": I18n.tr("options.frame-rates.fps", {
+                            "fps": "30"
+                          })
         }, {
           "key": "60",
-          "name": I18n.tr("options.frame-rates.60-fps")
+          "name": I18n.tr("options.frame-rates.fps", {
+                            "fps": "60"
+                          })
         }, {
           "key": "100",
-          "name": I18n.tr("options.frame-rates.100-fps")
+          "name": I18n.tr("options.frame-rates.fps", {
+                            "fps": "100"
+                          })
         }, {
           "key": "120",
-          "name": I18n.tr("options.frame-rates.120-fps")
+          "name": I18n.tr("options.frame-rates.fps", {
+                            "fps": "120"
+                          })
         }, {
           "key": "144",
-          "name": I18n.tr("options.frame-rates.144-fps")
+          "name": I18n.tr("options.frame-rates.fps", {
+                            "fps": "144"
+                          })
         }, {
           "key": "165",
-          "name": I18n.tr("options.frame-rates.165-fps")
+          "name": I18n.tr("options.frame-rates.fps", {
+                            "fps": "165"
+                          })
         }, {
           "key": "240",
-          "name": I18n.tr("options.frame-rates.240-fps")
+          "name": I18n.tr("options.frame-rates.fps", {
+                            "fps": "240"
+                          })
         }]
       currentKey: Settings.data.audio.cavaFrameRate
       onSelected: key => Settings.data.audio.cavaFrameRate = key
