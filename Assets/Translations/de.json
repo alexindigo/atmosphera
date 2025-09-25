@@ -102,6 +102,10 @@
         "step-size": {
           "label": "Lautstärke-Schrittgröße",
           "description": "Schrittgröße für Lautstärkeänderungen anpassen (Mausrad, Tastenkombinationen)."
+        },
+        "volume-overdrive": {
+          "label": "Lautstärke-Übersteuerung erlauben",
+          "description": "Erlaubt das Anheben der Lautstärke über 100%. Wird möglicherweise nicht von aller Hardware unterstützt."
         }
       },
       "devices": {
@@ -324,9 +328,21 @@
         "location": {
           "label": "Position",
           "description": "Wo Benachrichtigungen auf dem Bildschirm erscheinen."
+        },
+        "always-on-top": {
+          "label": "Immer im Vordergrund",
+          "description": "Benachrichtigungen über Vollbildfenstern und anderen Ebenen anzeigen."
         }
       },
       "duration": {
+        "section": {
+          "label": "Benachrichtigungsdauer",
+          "description": "Konfigurieren, wie lange Benachrichtigungen je nach Dringlichkeitsstufe sichtbar bleiben."
+        },
+        "respect-expire": {
+          "label": "Ablaufzeit respektieren",
+          "description": "Die in der Benachrichtigung gesetzte Ablaufzeit verwenden."
+        },
         "low-urgency": {
           "label": "Niedrige Dringlichkeit",
           "description": "Wie lange Benachrichtigungen niedriger Priorität sichtbar bleiben."
@@ -661,6 +677,23 @@
       }
     }
   },
+  "general": {
+    "no-results": "Keine Ergebnisse",
+    "no-summary": "Keine Zusammenfassung",
+    "unknown": "Unbekannt"
+  },
+  "weather": {
+    "clear-sky": "Klarer Himmel",
+    "mainly-clear": "Überwiegend klar",
+    "partly-cloudy": "Teilweise bewölkt",
+    "overcast": "Bedeckt",
+    "fog": "Nebel",
+    "drizzle": "Nieselregen",
+    "snow": "Schnee",
+    "rain-showers": "Regenschauer",
+    "thunderstorm": "Gewitter",
+    "unknown": "Unbekannt"
+  },
   "widgets": {
     "tooltip": {
       "placeholder": "Platzhalter"
@@ -758,6 +791,8 @@
         "search-placeholder": "Widgets suchen..."
       },
       "active-window": {
+        "auto-hide": "Automatisch ausblenden",
+        "scrolling-mode": "Scrollmodus",
         "show-app-icon": "App-Symbol anzeigen"
       },
       "system-monitor": {
@@ -849,6 +884,7 @@
         }
       },
       "media-mini": {
+        "auto-hide": "Automatisch ausblenden",
         "show-album-art": "Albumcover anzeigen",
         "show-visualizer": "Visualizer anzeigen",
         "visualizer-type": "Visualizer-Typ",
@@ -987,7 +1023,7 @@
     "night-light-forced": "Nachtlicht ist erzwungen.\\nLinksklick zum Wechseln des Modus.\\nRechtsklick für Einstellungen.",
     "click-to-start-recording": "Klicken zum Starten der Aufnahme",
     "click-to-stop-recording": "Klicken zum Stoppen der Aufnahme",
-    "open-side-panel": "Seitenpanel öffnen",
+    "open-control-center": "Kontrollzentrum öffnen",
     "volume-at": "Lautstärke bei {volume}%\\nLinksklick zum Stumm-/Lautschalten. Rechtsklick für Einstellungen.\\nScrollen zum Ändern der Lautstärke.",
     "microphone-volume-at": "Mikrofon-Lautstärke bei {volume}%\\nLinksklick zum Stumm-/Lautschalten. Rechtsklick für Einstellungen.\\nScrollen zum Ändern der Lautstärke.",
     "manage-wifi": "WLAN verwalten",
@@ -1073,6 +1109,9 @@
       "always": "Immer Scrollen",
       "hover": "Beim Hover Scrollen",
       "never": "Nie Scrollen"
+    },
+    "frame-rates": {
+      "fps": "{fps} FPS"
     },
     
     "screen-recording": {
