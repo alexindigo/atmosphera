@@ -992,6 +992,7 @@
     "start-screen-recording": "Start screen recording",
     "stop-screen-recording": "Stop screen recording",
     "screen-recorder-not-installed": "Screen recorder is not installed",
+    "keep-awake": "Keep awake",
     "enable-keep-awake": "Enable keep awake",
     "disable-keep-awake": "Disable keep awake",
     "wallpaper-selector": "Left click: Open wallpaper selector.\nRight click: Set random wallpaper.",

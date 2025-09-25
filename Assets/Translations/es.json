@@ -990,6 +990,7 @@
     "start-screen-recording": "Iniciar grabación de pantalla",
     "stop-screen-recording": "Detener grabación de pantalla",
     "screen-recorder-not-installed": "La grabadora de pantalla no está instalada",
+    "keep-awake": "Mantener despierto",
     "enable-keep-awake": "Activar mantener despierto",
     "disable-keep-awake": "Desactivar mantener despierto",
     "wallpaper-selector": "Clic izquierdo: Abrir selector de fondos de pantalla.\nClic derecho: Establecer fondo de pantalla aleatorio.",
