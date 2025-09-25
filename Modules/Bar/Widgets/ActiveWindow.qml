@@ -30,8 +30,10 @@ Item {
     return {}
   }
 
-  readonly property string windowTitle: CompositorService.getFocusedWindowTitle()
-  readonly property bool hasActiveWindow: windowTitle !== ""
+  
+  readonly property bool hasActiveWindow: CompositorService.getFocusedWindowTitle() !== ""
+  readonly property string windowTitle: CompositorService.getFocusedWindowTitle() || "No active window"
+  readonly property string fallbackIcon: "user-desktop"
 
   readonly property string barPosition: Settings.data.bar.position
   readonly property bool compact: (Settings.data.bar.density === "compact")
@@ -50,8 +52,6 @@ Item {
   implicitHeight: visible ? ((barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Math.round(Style.barHeight * scaling)) : 0
   implicitWidth: visible ? ((barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : (widgetWidth * scaling)) : 0
 
-  visible: hasActiveWindow
-
   function getAppIcon() {
     try {
       // Try CompositorService first
@@ -69,27 +69,28 @@ Item {
         }
       }
 
-      // Fallback to ToplevelManager
-      if (ToplevelManager && ToplevelManager.activeToplevel) {
-        try {
-          const activeToplevel = ToplevelManager.activeToplevel
-          if (activeToplevel.appId) {
-            const idValue2 = activeToplevel.appId
-            const normalizedId2 = (typeof idValue2 === 'string') ? idValue2 : String(idValue2)
-            const iconResult2 = ThemeIcons.iconForAppId(normalizedId2.toLowerCase())
-            if (iconResult2 && iconResult2 !== "") {
-              return iconResult2
-            }
-          }
-        } catch (fallbackError) {
-          Logger.warn("ActiveWindow", "Error getting icon from ToplevelManager:", fallbackError)
-        }
-      }
+      // // Fallback to ToplevelManager
+      // if (ToplevelManager && ToplevelManager.activeToplevel) {
+      //   try {
+      //     const activeToplevel = ToplevelManager.activeToplevel
+      //     if (activeToplevel.appId) {
+      //     console.log(activeToplevel.appId)
+      //       const idValue2 = activeToplevel.appId
+      //       const normalizedId2 = (typeof idValue2 === 'string') ? idValue2 : String(idValue2)
+      //       const iconResult2 = ThemeIcons.iconForAppId(normalizedId2.toLowerCase())
+      //       if (iconResult2 && iconResult2 !== "") {
+      //         return iconResult2
+      //       }
+      //     }
+      //   } catch (fallbackError) {
+      //     Logger.warn("ActiveWindow", "Error getting icon from ToplevelManager:", fallbackError)
+      //   }
+      // }
 
-      return ""
+      return ThemeIcons.iconFromName(fallbackIcon)
     } catch (e) {
       Logger.warn("ActiveWindow", "Error in getAppIcon:", e)
-      return ""
+      return ThemeIcons.iconFromName(fallbackIcon)
     }
   }
 
@@ -131,7 +132,7 @@ Item {
           Layout.preferredWidth: Math.round(18 * scaling)
           Layout.preferredHeight: Math.round(18 * scaling)
           Layout.alignment: Qt.AlignVCenter
-          visible: showIcon && windowTitle !== ""
+          visible: showIcon
 
           IconImage {
             id: windowIcon
