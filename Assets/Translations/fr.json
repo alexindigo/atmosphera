@@ -100,6 +100,10 @@
         "step-size": {
           "label": "Incrément de volume",
           "description": "Ajustez l'incrément pour les changements de volume (molette de la souris, raccourcis clavier)."
+        },
+        "volume-overdrive": {
+          "label": "Autoriser le dépassement du volume",
+          "description": "Permet d'augmenter le volume au-delà de 100 %. Cette fonctionnalité peut ne pas être prise en charge par tout le matériel."
         }
       },
       "devices": {
@@ -322,9 +326,22 @@
         "location": {
           "label": "Emplacement",
           "description": "Où les notifications apparaissent à l'écran."
+        },
+        "always-on-top": {
+          "label": "Toujours au premier plan",
+          "description": "Afficher les notifications au-dessus des fenêtres en plein écran et des autres applications."
         }
       },
-      "duration":{
+              
+      "duration": {
+        "section": {
+          "label": "Durée des notifications",
+          "description": "Configurer la durée d'affichage des notifications en fonction de leur niveau d'urgence."
+        },
+        "respect-expire": {
+          "label": "Respecter le délai d'expiration",
+          "description": "Utiliser le délai d'expiration défini dans la notification."
+        },
         "low-urgency": {
           "label": "Urgence faible",
           "description": "Durée de visibilité des notifications de faible priorité."
@@ -336,7 +353,7 @@
         "critical-urgency": {
           "label": "Urgence critique",
           "description": "Durée de visibilité des notifications de priorité critique."
-        } 
+        }
       },
       "monitors": {
         "section": {
@@ -443,19 +460,15 @@
           "label": "UI",
           "description": "Thématisation de l'environnement de bureau et de la boîte à outils d'interface utilisateur.",
           "gtk4": {
-            "label": "GTK 4 (libadwaita)",
             "description": "Écrire ~/.config/gtk-4.0/gtk.css"
           },
           "gtk3": {
-            "label": "GTK 3",
             "description": "Écrire ~/.config/gtk-3.0/gtk.css"
           },
           "qt6": {
-            "label": "Qt6ct",
             "description": "Écrire ~/.config/qt6ct/colors/noctalia.conf"
           },
           "qt5": {
-            "label": "Qt5ct",
             "description": "Écrire ~/.config/qt5ct/colors/noctalia.conf"
           }
         },
@@ -463,17 +476,14 @@
           "label": "Terminal",
           "description": "Thématisation de l'émulateur de terminal.",
           "kitty": {
-            "label": "Kitty",
             "description": "Écrire ~/.config/kitty/themes/noctalia.conf et recharger",
             "description-missing": "Nécessite que le terminal Kitty soit installé"
           },
           "ghostty": {
-            "label": "Ghostty",
             "description": "Écrire ~/.config/ghostty/themes/noctalia et recharger",
             "description-missing": "Nécessite que le terminal ghostty soit installé"
           },
           "foot": {
-            "label": "Foot",
             "description": "Écrire ~/.config/foot/themes/noctalia et recharger",
             "description-missing": "Nécessite que le terminal foot soit installé"
           }
@@ -482,17 +492,14 @@
           "label": "Programmes",
           "description": "Thématisation spécifique aux applications.",
           "fuzzel": {
-            "label": "Fuzzel",
             "description": "Écrire ~/.config/fuzzel/themes/noctalia et recharger",
             "description-missing": "Nécessite que le lanceur fuzzel soit installé"
           },
           "vesktop": {
-            "label": "Vesktop",
             "description": "Écrire ~/.config/vesktop/themes/noctalia.theme.css",
             "description-missing": "Nécessite que le client Discord vesktop soit installé"
           },
           "pywalfox": {
-            "label": "Pywalfox (Firefox)",
             "description": "Écrire ~/.cache/wal/colors.json et exécuter pywalfox update",
             "description-missing": "Nécessite que le paquet pywalfox soit installé"
           }
@@ -766,7 +773,9 @@
         "search-placeholder": "Rechercher des widgets..."
       },
       "active-window": {
-        "show-app-icon": "Afficher l'icône de l'application"
+        "show-app-icon": "Afficher l'icône de l'application",
+        "scrolling-mode": "Mode de défilement",
+        "auto-hide": "Masquer automatiquement"
       },
       "system-monitor": {
         "cpu-usage": "Utilisation du CPU",
@@ -860,7 +869,8 @@
         "show-album-art": "Afficher la pochette de l'album",
         "show-visualizer": "Afficher le visualiseur",
         "visualizer-type": "Type de visualiseur",
-        "scrolling-mode": "Mode de défilement"
+        "scrolling-mode": "Mode de défilement",
+        "auto-hide": "Masquer automatiquement"
       },
       "clock": {
         "use-primary-color": {
@@ -995,7 +1005,7 @@
     "night-light-forced": "L'éclairage nocturne est forcé.\nClic gauche pour changer de mode.\nClic droit pour accéder aux paramètres.",
     "click-to-start-recording": "Cliquez pour démarrer l'enregistrement",
     "click-to-stop-recording": "Cliquez pour arrêter l'enregistrement",
-    "open-side-panel": "Ouvrir le panneau latéral",
+    "open-control-center": "Ouvrir le centre de contrôle",
     "volume-at": "Volume à {volume}%\nClic gauche pour couper/rétablir le son. Clic droit pour les paramètres.\nFaites défiler pour modifier le volume.",
     "microphone-volume-at": "Volume du microphone à {volume}%\nClic gauche pour couper/rétablir le son. Clic droit pour les paramètres.\nFaites défiler pour modifier le volume.",
     "manage-wifi": "Gérer le Wi-Fi",
@@ -1027,8 +1037,6 @@
     "enter-width-pixels": "Entrez la largeur en pixels",
     "enter-command": "Entrez la commande à exécuter (application ou script personnalisé)",
     "command-example": "echo \"Bonjour le monde\"",
-    "clock-horizontal": "HH:mm jjj, dd MMM",
-    "clock-vertical": "HH mm dd MM",
     "search-wallpapers": "Tapez pour filtrer les fonds d'écran...",
     "search-launcher": "Rechercher des entrées... ou utilisez > pour les commandes",
     "search": "Rechercher...",
@@ -1084,13 +1092,7 @@
       "never": "Ne Jamais Défiler"
     },
     "frame-rates": {
-      "30-fps": "30 FPS",
-      "60-fps": "60 FPS",
-      "100-fps": "100 FPS",
-      "120-fps": "120 FPS",
-      "144-fps": "144 FPS",
-      "165-fps": "165 FPS",
-      "240-fps": "240 FPS"
+      "fps": "{fps} FPS"
     },
     "screen-recording": {
       "sources": {
@@ -1111,10 +1113,6 @@
         "system-output": "Sortie système",
         "microphone-input": "Entrée microphone",
         "both": "Sortie système + entrée microphone"
-      },
-      "audio-codecs": {
-        "opus": "Opus",
-        "aac": "AAC"
       }
     }
   },
