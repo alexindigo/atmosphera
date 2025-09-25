@@ -69,23 +69,25 @@ Item {
         }
       }
 
-      // // Fallback to ToplevelManager
-      // if (ToplevelManager && ToplevelManager.activeToplevel) {
-      //   try {
-      //     const activeToplevel = ToplevelManager.activeToplevel
-      //     if (activeToplevel.appId) {
-      //     console.log(activeToplevel.appId)
-      //       const idValue2 = activeToplevel.appId
-      //       const normalizedId2 = (typeof idValue2 === 'string') ? idValue2 : String(idValue2)
-      //       const iconResult2 = ThemeIcons.iconForAppId(normalizedId2.toLowerCase())
-      //       if (iconResult2 && iconResult2 !== "") {
-      //         return iconResult2
-      //       }
-      //     }
-      //   } catch (fallbackError) {
-      //     Logger.warn("ActiveWindow", "Error getting icon from ToplevelManager:", fallbackError)
-      //   }
-      // }
+      if (CompositorService.isHyprland) {
+        // Fallback to ToplevelManager
+        if (ToplevelManager && ToplevelManager.activeToplevel) {
+          try {
+            const activeToplevel = ToplevelManager.activeToplevel
+            if (activeToplevel.appId) {
+            console.log(activeToplevel.appId)
+              const idValue2 = activeToplevel.appId
+              const normalizedId2 = (typeof idValue2 === 'string') ? idValue2 : String(idValue2)
+              const iconResult2 = ThemeIcons.iconForAppId(normalizedId2.toLowerCase())
+              if (iconResult2 && iconResult2 !== "") {
+                return iconResult2
+              }
+            }
+          } catch (fallbackError) {
+            Logger.warn("ActiveWindow", "Error getting icon from ToplevelManager:", fallbackError)
+          }
+        }
+      }
 
       return ThemeIcons.iconFromName(fallbackIcon)
     } catch (e) {
