@@ -52,8 +52,6 @@ Item {
   implicitHeight: visible ? ((barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Math.round(Style.barHeight * scaling)) : 0
   implicitWidth: visible ? ((barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : (widgetWidth * scaling)) : 0
 
-  visible: MediaService.currentPlayer !== null && MediaService.canPlay
-
   //  A hidden text element to safely measure the full title width
   NText {
     id: fullTitleMetrics
@@ -126,9 +124,10 @@ Item {
       // Horizontal layout for top/bottom bars
       RowLayout {
         id: rowLayout
+
         anchors.verticalCenter: parent.verticalCenter
         spacing: Style.marginS * scaling
-        visible: barPosition === "top" || barPosition === "bottom"
+        visible: (barPosition === "top" || barPosition === "bottom") && getTitle() !== ""
         z: 1 // Above the visualizer
 
         NIcon {
@@ -161,148 +160,142 @@ Item {
           }
         }
 
-// Alternative approach - Replace the entire titleContainer Item with this:
+        Item {
+          id: titleContainer
+          Layout.preferredWidth: {
+            // Calculate available width based on other elements in the row
+            var iconWidth = (windowIcon.visible ? (Style.fontSizeL * scaling + Style.marginS * scaling) : 0)
+            var albumArtWidth = (showAlbumArt ? (18 * scaling + Style.marginS * scaling) : 0)
+            var totalMargins = Style.marginXXS * scaling * 2
+            var availableWidth = mainContainer.width - iconWidth - albumArtWidth - totalMargins
+            return Math.max(20 * scaling, availableWidth)
+          }
+          Layout.maximumWidth: Layout.preferredWidth
+          Layout.alignment: Qt.AlignVCenter
+          Layout.preferredHeight: titleText.height
 
-Item {
-  id: titleContainer
-  Layout.preferredWidth: {
-    // Calculate available width based on other elements in the row
-    var iconWidth = (windowIcon.visible ? (Style.fontSizeL * scaling + Style.marginS * scaling) : 0)
-    var albumArtWidth = (showAlbumArt ? (18 * scaling + Style.marginS * scaling) : 0)
-    var totalMargins = Style.marginXXS * scaling * 2
-    var availableWidth = mainContainer.width - iconWidth - albumArtWidth - totalMargins
-    return Math.max(20 * scaling, availableWidth)
-  }
-  Layout.maximumWidth: Layout.preferredWidth
-  Layout.alignment: Qt.AlignVCenter
-  Layout.preferredHeight: titleText.height
-  
-  clip: true
-  
-  property bool isScrolling: false
-  property bool isResetting: false
-  property real textWidth: fullTitleMetrics.contentWidth
-  property real containerWidth: width
-  property bool needsScrolling: textWidth > containerWidth
-  
-  // Timer for "always" mode with delay
-  Timer {
-    id: scrollStartTimer
-    interval: 1000
-    repeat: false
-    onTriggered: {
-      if (scrollingMode === "always" && titleContainer.needsScrolling) {
-        titleContainer.isScrolling = true
-        titleContainer.isResetting = false
-      }
-    }
-  }
-  
-  // Update scrolling state based on mode
-  property var updateScrollingState: function () {
-    if (scrollingMode === "never") {
-      isScrolling = false
-      isResetting = false
-    } else if (scrollingMode === "always") {
-      if (needsScrolling) {
-        if (mouseArea.containsMouse) {
-          isScrolling = false
-          isResetting = true
-        } else {
-          scrollStartTimer.restart()
+          clip: true
+
+          property bool isScrolling: false
+          property bool isResetting: false
+          property real textWidth: fullTitleMetrics.contentWidth
+          property real containerWidth: width
+          property bool needsScrolling: textWidth > containerWidth
+
+          // Timer for "always" mode with delay
+          Timer {
+            id: scrollStartTimer
+            interval: 1000
+            repeat: false
+            onTriggered: {
+              if (scrollingMode === "always" && titleContainer.needsScrolling) {
+                titleContainer.isScrolling = true
+                titleContainer.isResetting = false
+              }
+            }
+          }
+
+          // Update scrolling state based on mode
+          property var updateScrollingState: function () {
+            if (scrollingMode === "never") {
+              isScrolling = false
+              isResetting = false
+            } else if (scrollingMode === "always") {
+              if (needsScrolling) {
+                if (mouseArea.containsMouse) {
+                  isScrolling = false
+                  isResetting = true
+                } else {
+                  scrollStartTimer.restart()
+                }
+              } else {
+                scrollStartTimer.stop()
+                isScrolling = false
+                isResetting = false
+              }
+            } else if (scrollingMode === "hover") {
+              if (mouseArea.containsMouse && needsScrolling) {
+                isScrolling = true
+                isResetting = false
+              } else {
+                isScrolling = false
+                if (needsScrolling) {
+                  isResetting = true
+                }
+              }
+            }
+          }
+
+          onWidthChanged: updateScrollingState()
+          Component.onCompleted: updateScrollingState()
+
+          Connections {
+            target: mouseArea
+            function onContainsMouseChanged() {
+              titleContainer.updateScrollingState()
+            }
+          }
+
+          // Scrolling content
+          Item {
+            id: scrollContainer
+            height: parent.height
+            width: childrenRect.width
+
+            property real scrollX: 0
+            x: scrollX
+
+            Row {
+              spacing: 50 * scaling // Gap between text copies
+
+              NText {
+                id: titleText
+                text: getTitle()
+                font.pointSize: Style.fontSizeS * scaling
+                font.weight: Style.fontWeightMedium
+                verticalAlignment: Text.AlignVCenter
+                color: Color.mOnSurface
+              }
+
+              NText {
+                text: getTitle()
+                font: titleText.font
+                verticalAlignment: Text.AlignVCenter
+                color: Color.mOnSurface
+                visible: titleContainer.needsScrolling && titleContainer.isScrolling
+              }
+            }
+
+            // Reset animation
+            NumberAnimation on scrollX {
+              running: titleContainer.isResetting
+              to: 0
+              duration: 300
+              easing.type: Easing.OutQuad
+              onFinished: {
+                titleContainer.isResetting = false
+              }
+            }
+
+            // Seamless infinite scroll
+            NumberAnimation on scrollX {
+              id: infiniteScroll
+              running: titleContainer.isScrolling && !titleContainer.isResetting
+              from: 0
+              to: -(titleContainer.textWidth + 50 * scaling) // Scroll one complete text width + gap
+              duration: Math.max(4000, getTitle().length * 120)
+              loops: Animation.Infinite
+              easing.type: Easing.Linear
+            }
+          }
+
+          Behavior on Layout.preferredWidth {
+            NumberAnimation {
+              duration: Style.animationSlow
+              easing.type: Easing.InOutCubic
+            }
+          }
         }
-      } else {
-        scrollStartTimer.stop()
-        isScrolling = false
-        isResetting = false
-      }
-    } else if (scrollingMode === "hover") {
-      if (mouseArea.containsMouse && needsScrolling) {
-        isScrolling = true
-        isResetting = false
-      } else {
-        isScrolling = false
-        if (needsScrolling) {
-          isResetting = true
-        }
-      }
-    }
-  }
-  
-  onWidthChanged: updateScrollingState()
-  Component.onCompleted: updateScrollingState()
-  
-  Connections {
-    target: mouseArea
-    function onContainsMouseChanged() {
-      titleContainer.updateScrollingState()
-    }
-  }
-  
-  // Scrolling content
-  Item {
-    id: scrollContainer
-    height: parent.height
-    width: childrenRect.width
-    
-    property real scrollX: 0
-    x: scrollX
-    
-    Row {
-      spacing: 50 * scaling  // Gap between text copies
-      
-      NText {
-        id: titleText
-        text: getTitle()
-        font.pointSize: Style.fontSizeS * scaling
-        font.weight: Style.fontWeightMedium
-        verticalAlignment: Text.AlignVCenter
-        color: Color.mOnSurface
-      }
-      
-      NText {
-        text: getTitle()
-        font: titleText.font
-        verticalAlignment: Text.AlignVCenter
-        color: Color.mOnSurface
-        visible: titleContainer.needsScrolling && titleContainer.isScrolling
-      }
-    }
-    
-    // Reset animation
-    NumberAnimation on scrollX {
-      running: titleContainer.isResetting
-      to: 0
-      duration: 300
-      easing.type: Easing.OutQuad
-      onFinished: {
-        titleContainer.isResetting = false
-      }
-    }
-    
-    // Seamless infinite scroll
-    NumberAnimation on scrollX {
-      id: infiniteScroll
-      running: titleContainer.isScrolling && !titleContainer.isResetting
-      from: 0
-      to: -(titleContainer.textWidth + 50 * scaling)  // Scroll one complete text width + gap
-      duration: Math.max(4000, getTitle().length * 120)
-      loops: Animation.Infinite
-      easing.type: Easing.Linear
-      
-      // This creates a seamless loop:
-      // When we reach -(textWidth + gap), the second text is exactly where the first text started
-      // The animation automatically loops back to 0, but visually it appears continuous
-    }
-  }
-  
-  Behavior on Layout.preferredWidth {
-    NumberAnimation {
-      duration: Style.animationSlow
-      easing.type: Easing.InOutCubic
-    }
-  }
-}
       }
 
       // Vertical layout for left/right bars - icon only
@@ -340,6 +333,10 @@ Item {
         cursorShape: Qt.PointingHandCursor
         acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
         onClicked: mouse => {
+                     if (!MediaService.currentPlayer || !MediaService.canPlay) {
+                       return
+                     }
+
                      if (mouse.button === Qt.LeftButton) {
                        MediaService.playPause()
                      } else if (mouse.button == Qt.RightButton) {
@@ -354,7 +351,7 @@ Item {
                    }
 
         onEntered: {
-          if (barPosition === "left" || barPosition === "right") {
+          if ((tooltip.text !== "") && (barPosition === "left" || barPosition === "right")) {
             tooltip.show()
           } else if ((tooltip.text !== "") && (scrollingMode === "never")) {
             tooltip.show()

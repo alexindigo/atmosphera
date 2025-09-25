@@ -31,7 +31,7 @@ ColumnLayout {
     checked: root.valueShowIcon
     onToggled: checked => root.valueShowIcon = checked
   }
-    NComboBox {
+  NComboBox {
     label: I18n.tr("bar.widget-settings.active-window.scrolling-mode")
     model: [{
         "key": "always",
