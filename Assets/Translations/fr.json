@@ -1103,13 +1103,6 @@
         "very-high": "Très haute",
         "ultra": "Ultra"
       },
-      "codecs": {
-        "h264": "H264",
-        "hevc": "HEVC",
-        "av1": "AV1",
-        "vp8": "VP8",
-        "vp9": "VP9"
-      },
       "color-range": {
         "limited": "Limitée",
         "full": "Complète"
