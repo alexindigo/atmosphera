@@ -9,6 +9,13 @@ Item {
   id: root
 
   IpcHandler {
+    target: "bar"
+    function toggle() {
+      BarService.isVisible = !BarService.isVisible
+    }
+  }
+
+  IpcHandler {
     target: "screenRecorder"
     function toggle() {
       if (ScreenRecorderService.isAvailable) {

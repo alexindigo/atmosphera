@@ -8,6 +8,7 @@ Singleton {
   id: root
 
   property bool hasAudioVisualizer: false
+  property bool isVisible: true
 
   // Simple timer that run once when the widget structure has changed
   // and determine if any MediaMini widget has the visualizer on
