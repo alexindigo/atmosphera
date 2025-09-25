@@ -41,6 +41,10 @@ Item {
   // Fixed width - no expansion
   readonly property real widgetWidth: Math.max(1, screen.width * 0.06)
 
+  // Visibility: hide when there's no active playback
+  readonly property bool hasTrack: getTitle() !== ""
+  visible: MediaService.isPlaying && hasTrack
+
   function getTitle() {
     return MediaService.trackTitle + (MediaService.trackArtist !== "" ? ` - ${MediaService.trackArtist}` : "")
   }
