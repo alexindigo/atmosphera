@@ -217,10 +217,10 @@ ColumnLayout {
       description: I18n.tr("settings.screen-recorder.audio.audio-codec.description")
       model: [{
           "key": "opus",
-          "name": I18n.tr("options.screen-recording.audio-codecs.opus")
+          "name": "Opus"
         }, {
           "key": "aac",
-          "name": I18n.tr("options.screen-recording.audio-codecs.aac")
+          "name": "AAC"
         }]
       currentKey: Settings.data.screenRecorder.audioCodec
       onSelected: key => Settings.data.screenRecorder.audioCodec = key
