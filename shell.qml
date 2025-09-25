@@ -115,6 +115,8 @@ ShellRoot {
   Component.onCompleted: {
     // Save a ref. to our lockScreen so we can access it  easily
     PanelService.lockScreen = lockScreen
+
+    BarWidgetRegistry.init()
   }
 
   Connections {

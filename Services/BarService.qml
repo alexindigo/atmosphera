@@ -31,6 +31,11 @@ Singleton {
   // Registry to store actual widget instances
   // Key format: "screenName|section|widgetId|index"
   property var widgetInstances: ({})
+
+  Component.onCompleted: {
+    Logger.log("BarService", "Service started")
+  }
+
   // Register a widget instance
   function registerWidget(screenName, section, widgetId, index, instance) {
     const key = [screenName, section, widgetId, index].join("|")

@@ -380,6 +380,12 @@ Singleton {
   // If the settings structure has changed, ensure
   // backward compatibility by upgrading the settings
   function upgradeSettingsData() {
+    // Wait for BarWidgetRegistry to be ready
+    if (!BarWidgetRegistry.widgets || Object.keys(BarWidgetRegistry.widgets).length === 0) {
+      Logger.warn("Settings", "BarWidgetRegistry not ready, deferring upgrade")
+      Qt.callLater(upgradeSettingsData)
+      return
+    }
 
     const sections = ["left", "center", "right"]
 
@@ -409,6 +415,7 @@ Singleton {
 
     // -----------------
     // 2nd. remove any non existing widget type
+    var removedWidget = false
     for (var s = 0; s < sections.length; s++) {
       const sectionName = sections[s]
       const widgets = adapter.bar.widgets[sectionName]
@@ -418,12 +425,13 @@ Singleton {
         if (!BarWidgetRegistry.hasWidget(widget.id)) {
           Logger.warn(`Settings`, `Deleted invalid widget ${widget.id}`)
           widgets.splice(i, 1)
+          removedWidget = true
         }
       }
     }
 
     // -----------------
-    // 3nd. migrate global settings to user settings
+    // 3nd. upgrade widget settings
     for (var s = 0; s < sections.length; s++) {
       const sectionName = sections[s]
       for (var i = 0; i < adapter.bar.widgets[sectionName].length; i++) {
@@ -441,11 +449,27 @@ Singleton {
       }
     }
 
-    // Upgrade the density of the bar so the look stay the same for people who upgrade.
-    // TODO: remove soon
-    if (adapter.settingsVersion == 2) {
-      adapter.bar.density = "comfortable"
-      adapter.settingsVersion++
+    // -----------------
+    // 4th. safety check
+    // if a widget was deleted, ensure we still have a control center
+    if (removedWidget) {
+      var gotControlCenter = false
+      for (var s = 0; s < sections.length; s++) {
+        const sectionName = sections[s]
+        for (var i = 0; i < adapter.bar.widgets[sectionName].length; i++) {
+          var widget = adapter.bar.widgets[sectionName][i]
+          if (widget.id === "ControlCenter") {
+            gotControlCenter = true
+            break
+          }
+        }
+      }
+
+      if (!gotControlCenter) {
+        //const obj = JSON.parse('{"id": "ControlCenter"}');
+        adapter.bar.widgets["right"].push(({"id": "ControlCenter"}))
+        Logger.warn("Settings", "Added a ControlCenter widget to the right section")
+      }
     }
   }
 
@@ -453,16 +477,6 @@ Singleton {
   function upgradeWidget(widget) {
     // Backup the widget definition before altering
     const widgetBefore = JSON.stringify(widget)
-
-    switch (widget.id) {
-      // Get back to global settings for these two clock settings
-    case "Clock":
-      if (widget.use12HourClock !== undefined) {
-        adapter.location.use12hourFormat = widget.use12HourClock
-        delete widget.use12HourClock
-      }
-      break
-    }
 
     // Get all existing custom settings keys
     const keys = Object.keys(BarWidgetRegistry.widgetMetadata[widget.id])

@@ -197,6 +197,10 @@ Singleton {
     Taskbar {}
   }
 
+  function init() {
+    Logger.log("BarWidgetRegistry", "Service started")
+  }
+
   // ------------------------------
   // Helper function to get widget component by name
   function getWidget(id) {
