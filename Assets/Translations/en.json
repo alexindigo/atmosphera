@@ -1003,7 +1003,7 @@
     "night-light-forced": "Night light is forced.\nLeft click to cycle mode.\nRight click to access settings.",
     "click-to-start-recording": "Click to start recording",
     "click-to-stop-recording": "Click to stop recording",
-    "open-side-panel": "Open side panel",
+    "open-control-center": "Open control center",
     "volume-at": "Volume at {volume}%\nLeft click to toggle mute. Right click for settings.\nScroll to modify volume.",
     "microphone-volume-at": "Microphone volume at {volume}%\nLeft click to toggle mute. Right click for settings.\nScroll to modify volume.",
     "manage-wifi": "Manage Wi-Fi",
