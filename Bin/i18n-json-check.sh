@@ -76,6 +76,13 @@ generate_header() {
     echo "Reference file: $REFERENCE_FILE"
     echo "Folder: $(realpath "$FOLDER_PATH")"
     echo ""
+    echo "Notes:"
+    echo "- Keys are compared recursively through all nested JSON objects"
+    echo "- Missing keys indicate incomplete translations"
+    echo "- Extra keys might indicate deprecated keys or translation-specific additions"
+    echo "- Translation completion percentage is calculated based on English reference"
+    echo "- Results are sorted by descending line numbers for easier editing"
+    echo ""
     echo "This report compares all language JSON files against the English reference file"
     echo "and identifies missing keys and extra keys in each language."
     echo ""
@@ -150,13 +157,20 @@ compare_language() {
         completion_percentage=$(( (total_ref_keys - missing_count) * 100 / total_ref_keys ))
     fi
     
-    echo "================================================================================"
-    echo "LANGUAGE: $lang_name"
-    echo "================================================================================"
+    print_color $YELLOW "================================================================================"
+    print_color $YELLOW "LANGUAGE: $lang_name"
+    print_color $YELLOW "================================================================================"
     echo "File: $lang_file"
     echo "Total keys in reference (en): $total_ref_keys"
     echo "Total keys in $lang_name: $total_lang_keys"
-    echo "Translation completion: ${completion_percentage}%"
+    
+    # Color code the completion percentage
+    if [[ $completion_percentage -eq 100 ]]; then
+        echo -e "Translation completion: ${GREEN}${completion_percentage}%${NC}"
+    else
+        echo -e "Translation completion: ${RED}${completion_percentage}%${NC}"
+    fi
+    
     echo ""
     echo "SUMMARY:"
     echo "- Missing keys (exist in English but not in $lang_name): $missing_count"
@@ -338,13 +352,6 @@ main() {
         echo "Target language: $target_language"
     fi
     echo "Report generated: $(date '+%Y-%m-%d %H:%M:%S')"
-    echo ""
-    echo "Notes:"
-    echo "- Keys are compared recursively through all nested JSON objects"
-    echo "- Missing keys indicate incomplete translations"
-    echo "- Extra keys might indicate deprecated keys or translation-specific additions"
-    echo "- Translation completion percentage is calculated based on English reference"
-    echo "- Results are sorted by descending line numbers for easier editing"
     echo ""
     echo "================================================================================"
     
