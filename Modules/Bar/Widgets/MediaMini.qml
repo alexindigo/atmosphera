@@ -72,12 +72,7 @@ Item {
     radius: (barPosition === "left" || barPosition === "right") ? width / 2 : Math.round(Style.radiusM * scaling)
     color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
-    // Used to anchor the tooltip, so the tooltip does not move when the content expands
-    Item {
-      id: anchor
-      height: parent.height
-      width: 200 * scaling
-    }
+
 
     Item {
       id: mainContainer
@@ -170,14 +165,22 @@ Item {
 
         Item {
           id: titleContainer
-
-          Layout.preferredWidth: widgetWidth * scaling
+          Layout.preferredWidth: {
+            // Calculate available width based on other elements in the row
+            var iconWidth = (windowIcon.visible ? (Style.fontSizeL * scaling + Style.marginS * scaling) : 0)
+            var albumArtWidth = (showAlbumArt ? (18 * scaling + Style.marginS * scaling) : 0)
+            var totalMargins = Style.marginXXS * scaling * 2
+            var availableWidth = mainContainer.width - iconWidth - albumArtWidth - totalMargins
+            return Math.max(20 * scaling, availableWidth) // Ensure minimum width
+          }
+          Layout.maximumWidth: Layout.preferredWidth // Constrain maximum width
           Layout.alignment: Qt.AlignVCenter
           Layout.preferredHeight: titleText.height
 
-          clip: true
+          clip: true // This is already set, but crucial for preventing overflow
 
           property bool isScrolling: false
+          property bool isResetting: false
 
           // Timer for "always" mode with delay
           Timer {
@@ -187,6 +190,7 @@ Item {
             onTriggered: {
               if (scrollingMode === "always" && fullTitleMetrics.contentWidth > titleContainer.width) {
                 titleContainer.isScrolling = true
+                titleContainer.isResetting = false
               }
             }
           }
@@ -195,19 +199,33 @@ Item {
           property var updateScrollingState: function () {
             if (scrollingMode === "never") {
               isScrolling = false
+              isResetting = false
             } else if (scrollingMode === "always") {
               if (fullTitleMetrics.contentWidth > titleContainer.width) {
                 if (mouseArea.containsMouse) {
+                  // Mouse entered - stop scrolling and reset
                   isScrolling = false
+                  isResetting = true
                 } else {
+                  // Mouse not hovering - start scroll after delay
                   scrollStartTimer.restart()
                 }
               } else {
                 scrollStartTimer.stop()
                 isScrolling = false
+                isResetting = false
               }
             } else if (scrollingMode === "hover") {
-              isScrolling = mouseArea.containsMouse && fullTitleMetrics.contentWidth > titleContainer.width
+              if (mouseArea.containsMouse && fullTitleMetrics.contentWidth > titleContainer.width) {
+                isScrolling = true
+                isResetting = false
+              } else {
+                // Stop scrolling and reset when not hovering
+                isScrolling = false
+                if (fullTitleMetrics.contentWidth > titleContainer.width) {
+                  isResetting = true
+                }
+              }
             }
           }
 
@@ -223,29 +241,62 @@ Item {
             }
           }
 
-          NText {
-            id: titleText
+          Item {
+            anchors.fill: parent
+            clip: true
 
-            text: getTitle()
-            font.pointSize: Style.fontSizeS * scaling
-            font.weight: Style.fontWeightMedium
-            verticalAlignment: Text.AlignVCenter
-            color: Color.mSecondary
+            NText {
+              id: titleText
 
-            property real scrollPosition: 0
+              text: getTitle()
+              font.pointSize: Style.fontSizeS * scaling
+              font.weight: Style.fontWeightMedium
+              verticalAlignment: Text.AlignVCenter
+              color: Color.mOnSurface
 
-            x: scrollPosition
+              property real scrollPosition: 0
 
-            // Continuous scrolling animation
-            SequentialAnimation on scrollPosition {
-              running: titleContainer.isScrolling
-              loops: Animation.Infinite
+              x: scrollPosition
 
-              NumberAnimation {
-                from: 0
-                to: -(fullTitleMetrics.contentWidth - titleContainer.width)
-                duration: Math.max(3000, getTitle().length * 100) // Compute from character count
-                easing.type: Easing.Linear
+              // Reset animation when mouse exits
+              NumberAnimation on scrollPosition {
+                id: resetAnimation
+                running: titleContainer.isResetting
+                to: 0
+                duration: 300
+                easing.type: Easing.OutQuad
+                onFinished: {
+                  titleContainer.isResetting = false
+                }
+              }
+
+              // Continuous scrolling animation
+              SequentialAnimation on scrollPosition {
+                running: titleContainer.isScrolling && !titleContainer.isResetting
+                loops: Animation.Infinite
+
+                // Reset position at start of each loop
+                PropertyAction {
+                  target: titleText
+                  property: "scrollPosition"
+                  value: 0
+                }
+
+                PauseAnimation {
+                  duration: 1000
+                }
+
+                NumberAnimation {
+                  from: 0
+                  to: -(fullTitleMetrics.contentWidth - titleContainer.width + 10 * scaling)
+                  duration: Math.max(3000, getTitle().length * 100)
+                  easing.type: Easing.Linear
+                }
+
+                // Add pause at the end before looping
+                PauseAnimation {
+                  duration: 1000
+                }
               }
             }
           }
@@ -308,6 +359,7 @@ Item {
                    }
 
         onEntered: {
+          if (scrollingMode !== "never") return
           if (barPosition === "left" || barPosition === "right") {
             tooltip.show()
           } else if (tooltip.text !== "") {
@@ -315,6 +367,7 @@ Item {
           }
         }
         onExited: {
+          if (scrollingMode !== "never") return
           if (barPosition === "left" || barPosition === "right") {
             tooltip.hide()
           } else {
@@ -341,10 +394,10 @@ Item {
       }
       return title
     }
-    target: (barPosition === "left" || barPosition === "right") ? verticalLayout : anchor
+    target: (barPosition === "left" || barPosition === "right") ? verticalLayout : mediaMini
     positionLeft: barPosition === "right"
     positionRight: barPosition === "left"
     positionAbove: Settings.data.bar.position === "bottom"
-    delay: 500
+    delay: Style.tooltipDelayLong
   }
 }
