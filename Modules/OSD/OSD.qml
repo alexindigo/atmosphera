@@ -302,13 +302,13 @@ Variants {
 
     // Timer to initialize volume/mute flags after services are ready
     Timer {
-        id: initTimer
-        interval: 100  // 100ms delay to allow services to initialize
-        running: true
-        onTriggered: {
-            volumeInitialized = true
-            muteInitialized = true
-        }
+      id: initTimer
+      interval: 100 // 100ms delay to allow services to initialize
+      running: true
+      onTriggered: {
+        volumeInitialized = true
+        muteInitialized = true
+      }
     }
 
     // Brightness change monitoring
