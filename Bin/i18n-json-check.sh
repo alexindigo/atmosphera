@@ -69,75 +69,157 @@ get_language_files() {
 generate_header() {
     local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
     
-    cat << EOF
-================================================================================
-                     LANGUAGE FILE COMPARISON REPORT
-================================================================================
-Generated: $timestamp
-Reference file: $REFERENCE_FILE
-Folder: $(realpath "$FOLDER_PATH")
+    echo "================================================================================"
+    echo "                     LANGUAGE FILE COMPARISON REPORT"
+    echo "================================================================================"
+    echo "Generated: $timestamp"
+    echo "Reference file: $REFERENCE_FILE"
+    echo "Folder: $(realpath "$FOLDER_PATH")"
+    echo ""
+    echo "This report compares all language JSON files against the English reference file"
+    echo "and identifies missing keys and extra keys in each language."
+    echo ""
+}
 
-This report compares all language JSON files against the English reference file
-and identifies missing keys and extra keys in each language.
+# Function to find line number of a key in JSON file
+find_key_line_number() {
+    local json_file=$1
+    local key_path=$2
+    
+    # Extract the final key name (after last dot)
+    local key_name="${key_path##*.}"
+    
+    # Search for the key in the file with line numbers
+    # Look for the pattern "key": (with quotes and colon)
+    local line_num=$(grep -n "\"$key_name\":" "$json_file" 2>/dev/null | head -1 | cut -d: -f1 || echo "")
+    
+    if [[ -n "$line_num" ]]; then
+        echo "$line_num"
+    else
+        # If not found with quotes, try without (though less reliable)
+        line_num=$(grep -n "$key_name:" "$json_file" 2>/dev/null | head -1 | cut -d: -f1 || echo "")
+        if [[ -n "$line_num" ]]; then
+            echo "$line_num"
+        else
+            echo "?"
+        fi
+    fi
+}
 
-EOF
+# Function to safely count lines
+count_non_empty_lines() {
+    local content="$1"
+    if [[ -z "$content" ]]; then
+        echo "0"
+    else
+        echo "$content" | grep -c -v '^$' || echo "0"
+    fi
 }
 
 # Function to compare keys and generate report section
 compare_language() {
-    local lang_file=$1
-    local lang_name=$2
-    local ref_keys_file=$3
+    local lang_file="$1"
+    local lang_name="$2"
+    local ref_keys_file="$3"
+    local ref_file_path="$FOLDER_PATH/$REFERENCE_FILE"
     
+    # Create temporary file for language keys
     local lang_keys_file=$(mktemp)
-    extract_keys "$lang_file" > "$lang_keys_file"
+    extract_keys "$lang_file" > "$lang_keys_file" || {
+        echo "Error: Failed to extract keys from $lang_file" >&2
+        rm -f "$lang_keys_file"
+        return 1
+    }
     
-    local missing_keys=$(comm -23 "$ref_keys_file" "$lang_keys_file")
-    local extra_keys=$(comm -13 "$ref_keys_file" "$lang_keys_file")
+    # Get missing and extra keys safely
+    local missing_keys=""
+    local extra_keys=""
     
-    local missing_count=$(echo "$missing_keys" | grep -v '^$' | wc -l)
-    local extra_count=$(echo "$extra_keys" | grep -v '^$' | wc -l)
-    local total_ref_keys=$(wc -l < "$ref_keys_file")
-    local total_lang_keys=$(wc -l < "$lang_keys_file")
+    missing_keys=$(comm -23 "$ref_keys_file" "$lang_keys_file" 2>/dev/null || echo "")
+    extra_keys=$(comm -13 "$ref_keys_file" "$lang_keys_file" 2>/dev/null || echo "")
     
-    # Calculate completion percentage
+    # Count lines safely
+    local missing_count=$(count_non_empty_lines "$missing_keys")
+    local extra_count=$(count_non_empty_lines "$extra_keys")
+    local total_ref_keys=$(wc -l < "$ref_keys_file" 2>/dev/null || echo "0")
+    local total_lang_keys=$(wc -l < "$lang_keys_file" 2>/dev/null || echo "0")
+    
+    # Calculate completion percentage safely
     local completion_percentage=0
     if [[ $total_ref_keys -gt 0 ]]; then
         completion_percentage=$(( (total_ref_keys - missing_count) * 100 / total_ref_keys ))
     fi
     
-    cat << EOF
-================================================================================
-LANGUAGE: $lang_name
-================================================================================
-File: $lang_file
-Total keys in reference (en): $total_ref_keys
-Total keys in $lang_name: $total_lang_keys
-Translation completion: ${completion_percentage}%
+    echo "================================================================================"
+    echo "LANGUAGE: $lang_name"
+    echo "================================================================================"
+    echo "File: $lang_file"
+    echo "Total keys in reference (en): $total_ref_keys"
+    echo "Total keys in $lang_name: $total_lang_keys"
+    echo "Translation completion: ${completion_percentage}%"
+    echo ""
+    echo "SUMMARY:"
+    echo "- Missing keys (exist in English but not in $lang_name): $missing_count"
+    echo "- Extra keys (exist in $lang_name but not in English): $extra_count"
+    echo ""
 
-SUMMARY:
-- Missing keys (exist in English but not in $lang_name): $missing_count
-- Extra keys (exist in $lang_name but not in English): $extra_count
-
-EOF
-
-    if [[ $missing_count -gt 0 ]]; then
-        cat << EOF
-MISSING KEYS IN $lang_name:
-$(echo "$missing_keys" | grep -v '^$' | sed 's/^/  /')
-
-EOF
+    # Handle missing keys
+    if [[ $missing_count -gt 0 && -n "$missing_keys" ]]; then
+        echo "MISSING KEYS IN $lang_name:"
+        
+        # Collect keys with line numbers and sort by line number (descending)
+        local temp_missing=$(mktemp)
+        while IFS= read -r key; do
+            if [[ -n "$key" ]]; then
+                local ref_line=$(find_key_line_number "$ref_file_path" "$key")
+                # Use numeric sort padding for proper sorting
+                if [[ "$ref_line" =~ ^[0-9]+$ ]]; then
+                    printf "%06d|%s|en.json:%s\n" "$ref_line" "$key" "$ref_line" >> "$temp_missing"
+                else
+                    printf "999999|%s|en.json:%s\n" "$key" "$ref_line" >> "$temp_missing"
+                fi
+            fi
+        done <<< "$missing_keys"
+        
+        # Sort by line number (descending) and display
+        local counter=1
+        sort -t'|' -k1,1nr "$temp_missing" | while IFS='|' read -r sort_key key location; do
+            printf "  %3d. %s (%s)\n" "$counter" "$key" "$location"
+            counter=$((counter + 1))
+        done
+        rm -f "$temp_missing"
+        echo ""
     else
         echo "✅ No missing keys in $lang_name"
         echo ""
     fi
     
-    if [[ $extra_count -gt 0 ]]; then
-        cat << EOF
-EXTRA KEYS IN $lang_name (not in English):
-$(echo "$extra_keys" | grep -v '^$' | sed 's/^/  /')
-
-EOF
+    # Handle extra keys
+    if [[ $extra_count -gt 0 && -n "$extra_keys" ]]; then
+        echo "EXTRA KEYS IN $lang_name (not in English):"
+        
+        # Collect keys with line numbers and sort by line number (descending)
+        local temp_extra=$(mktemp)
+        while IFS= read -r key; do
+            if [[ -n "$key" ]]; then
+                local lang_line=$(find_key_line_number "$lang_file" "$key")
+                # Use numeric sort padding for proper sorting
+                if [[ "$lang_line" =~ ^[0-9]+$ ]]; then
+                    printf "%06d|%s|%s:%s\n" "$lang_line" "$key" "$(basename "$lang_file")" "$lang_line" >> "$temp_extra"
+                else
+                    printf "999999|%s|%s:%s\n" "$key" "$(basename "$lang_file")" "$lang_line" >> "$temp_extra"
+                fi
+            fi
+        done <<< "$extra_keys"
+        
+        # Sort by line number (descending) and display
+        local counter=1
+        sort -t'|' -k1,1nr "$temp_extra" | while IFS='|' read -r sort_key key location; do
+            printf "  %3d. %s (%s)\n" "$counter" "$key" "$location"
+            counter=$((counter + 1))
+        done
+        rm -f "$temp_extra"
+        echo ""
     else
         echo "✅ No extra keys in $lang_name"
         echo ""
@@ -171,13 +253,21 @@ main() {
     
     # Extract keys from reference file
     local ref_keys_file=$(mktemp)
-    extract_keys "$ref_file_path" > "$ref_keys_file"
-    local total_ref_keys=$(wc -l < "$ref_keys_file")
+    if ! extract_keys "$ref_file_path" > "$ref_keys_file"; then
+        print_color $RED "Error: Failed to extract keys from reference file" >&2
+        rm -f "$ref_keys_file"
+        exit 1
+    fi
+    
+    local total_ref_keys=$(wc -l < "$ref_keys_file" 2>/dev/null || echo "0")
     
     print_color $BLUE "Extracted $total_ref_keys keys from reference file" >&2
     
     # Get all language files
-    local language_files=($(get_language_files))
+    local -a language_files
+    while IFS= read -r -d '' file; do
+        language_files+=("$file")
+    done < <(find "$FOLDER_PATH" -maxdepth 1 -name "*.json" -type f -print0 | sort -z)
     
     if [[ ${#language_files[@]} -eq 0 ]]; then
         print_color $RED "Error: No JSON files found in $FOLDER_PATH" >&2
@@ -211,27 +301,28 @@ main() {
             continue
         fi
         
-        compare_language "$lang_file" "$lang_name" "$ref_keys_file"
-        processed=$((processed + 1))
+        if compare_language "$lang_file" "$lang_name" "$ref_keys_file"; then
+            processed=$((processed + 1))
+        else
+            print_color $RED "Error processing $lang_file" >&2
+        fi
     done
     
     # Add summary at the end
-    cat << EOF
-================================================================================
-SUMMARY
-================================================================================
-Total files processed: $processed
-Reference file: $REFERENCE_FILE (English)
-Report generated: $(date '+%Y-%m-%d %H:%M:%S')
-
-Notes:
-- Keys are compared recursively through all nested JSON objects
-- Missing keys indicate incomplete translations
-- Extra keys might indicate deprecated keys or translation-specific additions
-- Translation completion percentage is calculated based on English reference
-
-================================================================================
-EOF
+    echo "================================================================================"
+    echo "SUMMARY"
+    echo "================================================================================"
+    echo "Total files processed: $processed"
+    echo "Reference file: $REFERENCE_FILE (English)"
+    echo "Report generated: $(date '+%Y-%m-%d %H:%M:%S')"
+    echo ""
+    echo "Notes:"
+    echo "- Keys are compared recursively through all nested JSON objects"
+    echo "- Missing keys indicate incomplete translations"
+    echo "- Extra keys might indicate deprecated keys or translation-specific additions"
+    echo "- Translation completion percentage is calculated based on English reference"
+    echo ""
+    echo "================================================================================"
     
     # Clean up
     rm -f "$ref_keys_file"
