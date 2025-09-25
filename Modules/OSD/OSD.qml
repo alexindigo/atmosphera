@@ -288,20 +288,27 @@ Variants {
       target: AudioService
 
       function onVolumeChanged() {
-        if (!volumeInitialized) {
-          volumeInitialized = true
-        } else {
+        if (volumeInitialized) {
           showOSD("volume")
         }
       }
 
       function onMutedChanged() {
-        if (!muteInitialized) {
-          muteInitialized = true
-        } else {
+        if (muteInitialized) {
           showOSD("volume")
         }
       }
+    }
+
+    // Timer to initialize volume/mute flags after services are ready
+    Timer {
+        id: initTimer
+        interval: 100  // 100ms delay to allow services to initialize
+        running: true
+        onTriggered: {
+            volumeInitialized = true
+            muteInitialized = true
+        }
     }
 
     // Brightness change monitoring
