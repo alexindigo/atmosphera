@@ -86,7 +86,7 @@ Item {
           width: mainContainer.width - Style.marginS * scaling
           height: 20 * scaling
           values: CavaService.values
-          fillColor: Color.mOnSurfaceVariant
+          fillColor: Color.mPrimary
           opacity: 0.4
         }
       }
@@ -101,7 +101,7 @@ Item {
           width: mainContainer.width - Style.marginS * scaling
           height: mainContainer.height - Style.marginS * scaling
           values: CavaService.values
-          fillColor: Color.mOnSurfaceVariant
+          fillColor: Color.mPrimary
           opacity: 0.4
         }
       }
@@ -116,7 +116,7 @@ Item {
           width: mainContainer.width - Style.marginS * scaling
           height: mainContainer.height - Style.marginS * scaling
           values: CavaService.values
-          fillColor: Color.mOnSurfaceVariant
+          fillColor: Color.mPrimary
           opacity: 0.4
         }
       }

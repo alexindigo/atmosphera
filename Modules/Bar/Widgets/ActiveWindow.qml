@@ -30,7 +30,6 @@ Item {
     return {}
   }
 
-  
   readonly property bool hasActiveWindow: CompositorService.getFocusedWindowTitle() !== ""
   readonly property string windowTitle: CompositorService.getFocusedWindowTitle() || "No active window"
   readonly property string fallbackIcon: "user-desktop"
@@ -75,7 +74,6 @@ Item {
           try {
             const activeToplevel = ToplevelManager.activeToplevel
             if (activeToplevel.appId) {
-            console.log(activeToplevel.appId)
               const idValue2 = activeToplevel.appId
               const normalizedId2 = (typeof idValue2 === 'string') ? idValue2 : String(idValue2)
               const iconResult2 = ThemeIcons.iconForAppId(normalizedId2.toLowerCase())
@@ -182,7 +180,7 @@ Item {
           }
 
           // Update scrolling state based on mode
-          property var updateScrollingState: function() {
+          property var updateScrollingState: function () {
             if (scrollingMode === "never") {
               isScrolling = false
               isResetting = false
@@ -228,13 +226,13 @@ Item {
             id: scrollContainer
             height: parent.height
             width: childrenRect.width
-            
+
             property real scrollX: 0
             x: scrollX
-            
+
             Row {
-              spacing: 50 * scaling  // Gap between text copies
-              
+              spacing: 50 * scaling // Gap between text copies
+
               NText {
                 id: titleText
                 text: windowTitle
@@ -243,7 +241,7 @@ Item {
                 verticalAlignment: Text.AlignVCenter
                 color: Color.mOnSurface
               }
-              
+
               // Second copy for seamless scrolling
               NText {
                 text: windowTitle
@@ -253,7 +251,7 @@ Item {
                 visible: titleContainer.needsScrolling && titleContainer.isScrolling
               }
             }
-            
+
             // Reset animation
             NumberAnimation on scrollX {
               running: titleContainer.isResetting
@@ -264,7 +262,7 @@ Item {
                 titleContainer.isResetting = false
               }
             }
-            
+
             // Seamless infinite scroll
             NumberAnimation on scrollX {
               id: infiniteScroll
