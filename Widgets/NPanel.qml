@@ -179,7 +179,7 @@ Loader {
       }
 
       visible: true
-      color: Settings.data.general.dimDesktop ? Qt.alpha(Color.mShadow, dimmingOpacity) : Color.transparent
+      color: Settings.data.general.dimDesktop && !root.isMasked ? Qt.alpha(Color.mShadow, dimmingOpacity) : Color.transparent
 
       WlrLayershell.exclusionMode: ExclusionMode.Ignore
       WlrLayershell.namespace: "noctalia-panel"
