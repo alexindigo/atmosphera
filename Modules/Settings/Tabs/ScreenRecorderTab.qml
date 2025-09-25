@@ -76,15 +76,42 @@ ColumnLayout {
     NComboBox {
       label: I18n.tr("settings.screen-recorder.video.frame-rate.label")
       description: I18n.tr("settings.screen-recorder.video.frame-rate.description")
-      model: (function () {
-        const values = ["30", "60", "100", "120", "144", "165", "240"]
-        return values.map(function (v) {
-          return {
-            "key": v,
-            "name": (v + " FPS")
-          }
-        })
-      })()
+      model: [{
+          "key": "30",
+          "name": I18n.tr("options.frame-rates.fps", {
+                            "fps": "30"
+                          })
+        }, {
+          "key": "60",
+          "name": I18n.tr("options.frame-rates.fps", {
+                            "fps": "60"
+                          })
+        }, {
+          "key": "100",
+          "name": I18n.tr("options.frame-rates.fps", {
+                            "fps": "100"
+                          })
+        }, {
+          "key": "120",
+          "name": I18n.tr("options.frame-rates.fps", {
+                            "fps": "120"
+                          })
+        }, {
+          "key": "144",
+          "name": I18n.tr("options.frame-rates.fps", {
+                            "fps": "144"
+                          })
+        }, {
+          "key": "165",
+          "name": I18n.tr("options.frame-rates.fps", {
+                            "fps": "165"
+                          })
+        }, {
+          "key": "240",
+          "name": I18n.tr("options.frame-rates.fps", {
+                            "fps": "240"
+                          })
+        }]
       currentKey: Settings.data.screenRecorder.frameRate
       onSelected: key => Settings.data.screenRecorder.frameRate = key
     }

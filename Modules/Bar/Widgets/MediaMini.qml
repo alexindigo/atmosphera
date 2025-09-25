@@ -72,8 +72,6 @@ Item {
     radius: (barPosition === "left" || barPosition === "right") ? width / 2 : Math.round(Style.radiusM * scaling)
     color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
-
-
     Item {
       id: mainContainer
       anchors.fill: parent
@@ -359,7 +357,8 @@ Item {
                    }
 
         onEntered: {
-          if (scrollingMode !== "never") return
+          if (scrollingMode !== "never")
+            return
           if (barPosition === "left" || barPosition === "right") {
             tooltip.show()
           } else if (tooltip.text !== "") {
@@ -367,7 +366,8 @@ Item {
           }
         }
         onExited: {
-          if (scrollingMode !== "never") return
+          if (scrollingMode !== "never")
+            return
           if (barPosition === "left" || barPosition === "right") {
             tooltip.hide()
           } else {

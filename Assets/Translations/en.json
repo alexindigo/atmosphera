@@ -102,6 +102,10 @@
         "step-size": {
           "label": "Volume step size",
           "description": "Adjust the step size for volume changes (scroll wheel, keyboard shortcuts)."
+        },
+        "volume-overdrive": {
+          "label": "Allow volume overdrive",
+          "description": "Allow raising volume above 100%. May not be supported by all hardware."
         }
       },
       "devices": {
@@ -1085,6 +1089,9 @@
       "always": "Scroll Always",
       "hover": "Scroll On Hover",
       "never": "Never Scroll"
+    },
+    "frame-rates": {
+      "fps": "{fps} FPS"
     },
     
     "screen-recording": {
