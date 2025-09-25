@@ -990,6 +990,7 @@
     "start-screen-recording": "Iniciar gravação de tela",
     "stop-screen-recording": "Parar gravação de tela",
     "screen-recorder-not-installed": "O gravador de tela não está instalado",
+    "keep-awake": "Manter acordado",
     "enable-keep-awake": "Ativar 'manter acordado'",
     "disable-keep-awake": "Desativar 'manter acordado'",
     "wallpaper-selector": "Clique esquerdo: Abrir seletor de papel de parede.\nClique direito: Definir papel de parede aleatório.",

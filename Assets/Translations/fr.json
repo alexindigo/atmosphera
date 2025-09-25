@@ -990,6 +990,7 @@
     "start-screen-recording": "Démarrer l'enregistrement d'écran",
     "stop-screen-recording": "Arrêter l'enregistrement d'écran",
     "screen-recorder-not-installed": "L'enregistreur d'écran n'est pas installé",
+    "keep-awake": "Rester éveillé",
     "enable-keep-awake": "Activer le mode 'rester éveillé'",
     "disable-keep-awake": "Désactiver le mode 'rester éveillé'",
     "wallpaper-selector": "Clic gauche : Ouvrir le sélecteur de fond d'écran.\nClic droit : Définir un fond d'écran aléatoire.",
