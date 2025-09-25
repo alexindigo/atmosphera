@@ -72,8 +72,6 @@ Item {
     radius: (barPosition === "left" || barPosition === "right") ? width / 2 : Math.round(Style.radiusM * scaling)
     color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
-
-
     Item {
       id: mainContainer
       anchors.fill: parent
@@ -185,7 +183,7 @@ Item {
           // Timer for "always" mode with delay
           Timer {
             id: scrollStartTimer
-            interval: 2000 // Wait 2 seconds before starting scroll
+            interval: 1000 // Wait 1 second before starting scroll
             repeat: false
             onTriggered: {
               if (scrollingMode === "always" && fullTitleMetrics.contentWidth > titleContainer.width) {
@@ -359,20 +357,14 @@ Item {
                    }
 
         onEntered: {
-          if (scrollingMode !== "never") return
           if (barPosition === "left" || barPosition === "right") {
             tooltip.show()
-          } else if (tooltip.text !== "") {
+          } else if ((tooltip.text !== "") && (scrollingMode === "never")) {
             tooltip.show()
           }
         }
         onExited: {
-          if (scrollingMode !== "never") return
-          if (barPosition === "left" || barPosition === "right") {
-            tooltip.hide()
-          } else {
-            tooltip.hide()
-          }
+          tooltip.hide()
         }
       }
     }
@@ -398,6 +390,6 @@ Item {
     positionLeft: barPosition === "right"
     positionRight: barPosition === "left"
     positionAbove: Settings.data.bar.position === "bottom"
-    delay: Style.tooltipDelayLong
+    delay: Style.tooltipDelay
   }
 }
