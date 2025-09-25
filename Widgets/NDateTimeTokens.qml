@@ -66,8 +66,7 @@ Rectangle {
           "token": "ddd, MMM dd",
           "description": I18n.tr("widgets.datetime-tokens.common.weekday-date"),
           "example": "Fri, Dec 12"
-        },
-        // Hour tokens
+        }, // Hour tokens
         {
           "category": "Hour",
           "token": "H",
@@ -78,8 +77,7 @@ Rectangle {
           "token": "HH",
           "description": I18n.tr("widgets.datetime-tokens.hour.leading-zero"),
           "example": "14"
-        },
-        // Minute tokens
+        }, // Minute tokens
         {
           "category": "Minute",
           "token": "m",
@@ -90,8 +88,7 @@ Rectangle {
           "token": "mm",
           "description": I18n.tr("widgets.datetime-tokens.minute.leading-zero"),
           "example": "30"
-        },
-        // Second tokens
+        }, // Second tokens
         {
           "category": "Second",
           "token": "s",
@@ -102,8 +99,7 @@ Rectangle {
           "token": "ss",
           "description": I18n.tr("widgets.datetime-tokens.second.leading-zero"),
           "example": "45"
-        },
-        // AM/PM tokens
+        }, // AM/PM tokens
         {
           "category": "AM/PM",
           "token": "AP",
@@ -114,15 +110,13 @@ Rectangle {
           "token": "ap",
           "description": I18n.tr("widgets.datetime-tokens.ampm.lowercase"),
           "example": "pm"
-        },
-        // Timezone tokens
+        }, // Timezone tokens
         {
           "category": "Timezone",
           "token": "t",
           "description": I18n.tr("widgets.datetime-tokens.timezone.abbreviation"),
           "example": "UTC"
-        },
-        // Year tokens
+        }, // Year tokens
         {
           "category": "Year",
           "token": "yy",
@@ -133,8 +127,7 @@ Rectangle {
           "token": "yyyy",
           "description": I18n.tr("widgets.datetime-tokens.year.four-digit"),
           "example": "2023"
-        },
-        // Month tokens
+        }, // Month tokens
         {
           "category": "Month",
           "token": "M",
@@ -155,8 +148,7 @@ Rectangle {
           "token": "MMMM",
           "description": I18n.tr("widgets.datetime-tokens.month.full"),
           "example": "December"
-        },
-        // Day tokens
+        }, // Day tokens
         {
           "category": "Day",
           "token": "d",

@@ -14,6 +14,7 @@ ColumnLayout {
   property var widgetMetadata: null
 
   // Local state
+  property bool valueAutoHide: widgetData.autoHide !== undefined ? widgetData.autoHide : widgetMetadata.autoHide
   property bool valueShowAlbumArt: widgetData.showAlbumArt !== undefined ? widgetData.showAlbumArt : widgetMetadata.showAlbumArt
   property bool valueShowVisualizer: widgetData.showVisualizer !== undefined ? widgetData.showVisualizer : widgetMetadata.showVisualizer
   property string valueVisualizerType: widgetData.visualizerType || widgetMetadata.visualizerType
@@ -21,11 +22,19 @@ ColumnLayout {
 
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {})
+    settings.autoHide = valueAutoHide
     settings.showAlbumArt = valueShowAlbumArt
     settings.showVisualizer = valueShowVisualizer
     settings.visualizerType = valueVisualizerType
     settings.scrollingMode = valueScrollingMode
     return settings
+  }
+
+  NToggle {
+    Layout.fillWidth: true
+    label: I18n.tr("bar.widget-settings.media-mini.auto-hide")
+    checked: root.valueAutoHide
+    onToggled: checked => root.valueAutoHide = checked
   }
 
   NToggle {

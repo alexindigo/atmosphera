@@ -81,12 +81,11 @@ Singleton {
                                   },
                                   "MediaMini": {
                                     "allowUserSettings": true,
-                                    "hideAutomatically": false,
+                                    "autoHide": true,
                                     "scrollingMode": "hover",
                                     "showAlbumArt": false,
                                     "showVisualizer": false,
-                                    "visualizerType": "linear",
-                                    "autoHide": false
+                                    "visualizerType": "linear"
                                   },
                                   "Microphone": {
                                     "allowUserSettings": true,

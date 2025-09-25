@@ -774,8 +774,8 @@
         "search-placeholder": "Search widgets..."
       },
       "active-window": {
-        "show-app-icon": "Show app icon",
         "auto-hide": "Hide automatically",
+        "show-app-icon": "Show app icon",
         "scrolling-mode": "Scrolling mode"
       },
       "system-monitor": {
@@ -867,6 +867,7 @@
         }
       },
       "media-mini": {
+        "auto-hide": "Hide automatically",
         "show-album-art": "Show album art",
         "show-visualizer": "Show visualizer",
         "visualizer-type": "Visualizer type",
