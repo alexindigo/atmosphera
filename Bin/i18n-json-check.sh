@@ -231,6 +231,8 @@ compare_language() {
 
 # Main function
 main() {
+    local target_language="$1"
+    
     print_color $BLUE "Starting language file comparison..." >&2
     
     # Check dependencies
@@ -263,19 +265,37 @@ main() {
     
     print_color $BLUE "Extracted $total_ref_keys keys from reference file" >&2
     
-    # Get all language files
+    # Get all language files or just the target language
     local -a language_files
-    while IFS= read -r -d '' file; do
-        language_files+=("$file")
-    done < <(find "$FOLDER_PATH" -maxdepth 1 -name "*.json" -type f -print0 | sort -z)
-    
-    if [[ ${#language_files[@]} -eq 0 ]]; then
-        print_color $RED "Error: No JSON files found in $FOLDER_PATH" >&2
-        rm -f "$ref_keys_file"
-        exit 1
+    if [[ -n "$target_language" ]]; then
+        # Single language mode
+        local target_file="$FOLDER_PATH/${target_language}.json"
+        if [[ ! -f "$target_file" ]]; then
+            print_color $RED "Error: Language file '$target_file' does not exist" >&2
+            rm -f "$ref_keys_file"
+            exit 1
+        fi
+        if [[ "$target_language" == "${REFERENCE_FILE%.json}" ]]; then
+            print_color $RED "Error: Cannot compare reference file against itself" >&2
+            rm -f "$ref_keys_file"
+            exit 1
+        fi
+        language_files=("$target_file")
+        print_color $BLUE "Checking single language: $target_language" >&2
+    else
+        # All languages mode
+        while IFS= read -r -d '' file; do
+            language_files+=("$file")
+        done < <(find "$FOLDER_PATH" -maxdepth 1 -name "*.json" -type f -print0 | sort -z)
+        
+        if [[ ${#language_files[@]} -eq 0 ]]; then
+            print_color $RED "Error: No JSON files found in $FOLDER_PATH" >&2
+            rm -f "$ref_keys_file"
+            exit 1
+        fi
+        print_color $BLUE "Found ${#language_files[@]} JSON files to process" >&2
     fi
     
-    print_color $BLUE "Found ${#language_files[@]} JSON files to process" >&2
     echo "" >&2
     
     # Generate report header
@@ -286,8 +306,8 @@ main() {
         local filename=$(basename "$lang_file")
         local lang_name="${filename%.json}"
         
-        # Skip the reference file
-        if [[ "$filename" == "$REFERENCE_FILE" ]]; then
+        # Skip the reference file in all-languages mode
+        if [[ -z "$target_language" && "$filename" == "$REFERENCE_FILE" ]]; then
             continue
         fi
         
@@ -314,6 +334,9 @@ main() {
     echo "================================================================================"
     echo "Total files processed: $processed"
     echo "Reference file: $REFERENCE_FILE (English)"
+    if [[ -n "$target_language" ]]; then
+        echo "Target language: $target_language"
+    fi
     echo "Report generated: $(date '+%Y-%m-%d %H:%M:%S')"
     echo ""
     echo "Notes:"
@@ -321,46 +344,74 @@ main() {
     echo "- Missing keys indicate incomplete translations"
     echo "- Extra keys might indicate deprecated keys or translation-specific additions"
     echo "- Translation completion percentage is calculated based on English reference"
+    echo "- Results are sorted by descending line numbers for easier editing"
     echo ""
     echo "================================================================================"
     
     # Clean up
     rm -f "$ref_keys_file"
     
-    print_color $GREEN "Comparison completed: Processed $processed language files against English reference" >&2
+    if [[ -n "$target_language" ]]; then
+        print_color $GREEN "Comparison completed for language: $target_language" >&2
+    else
+        print_color $GREEN "Comparison completed: Processed $processed language files against English reference" >&2
+    fi
 }
 
 # Usage information
 show_usage() {
-    echo "Usage: $0" >&2
+    echo "Usage: $0 [language_code]" >&2
     echo "" >&2
     echo "This script compares JSON language files in '$FOLDER_PATH' against the English reference." >&2
+    echo "" >&2
+    echo "Arguments:" >&2
+    echo "  language_code  Optional. Compare only the specified language (e.g., 'fr', 'es', 'de')" >&2
+    echo "                 If not provided, all language files will be compared" >&2
     echo "" >&2
     echo "Configuration:" >&2
     echo "  - Folder path: $FOLDER_PATH (hardcoded)" >&2
     echo "  - Reference file: $REFERENCE_FILE" >&2
     echo "" >&2
+    echo "Examples:" >&2
+    echo "  $0              # Compare all languages" >&2
+    echo "  $0 fr           # Compare only French (fr.json)" >&2
+    echo "  $0 es           # Compare only Spanish (es.json)" >&2
+    echo "" >&2
     echo "Requirements:" >&2
     echo "  - jq must be installed" >&2
     echo "  - $REFERENCE_FILE must exist in $FOLDER_PATH" >&2
+    echo "  - Target language file must exist if specified" >&2
     echo "" >&2
     echo "Output:" >&2
     echo "  - Comparison report is printed to stdout" >&2
     echo "  - Progress messages are printed to stderr" >&2
+    echo "  - Results are sorted by descending line numbers for easier editing" >&2
 }
 
 # Handle command line arguments
-if [[ $# -gt 0 ]]; then
+if [[ $# -gt 1 ]]; then
+    echo "Error: Too many arguments. Only one language code is allowed." >&2
+    echo "" >&2
+    show_usage
+    exit 1
+fi
+
+if [[ $# -eq 1 ]]; then
     if [[ "$1" == "-h" || "$1" == "--help" ]]; then
         show_usage
         exit 0
     else
-        echo "Error: This script does not accept arguments." >&2
-        echo "" >&2
-        show_usage
-        exit 1
+        # Validate language code format (basic check for reasonable filename)
+        if [[ ! "$1" =~ ^[a-zA-Z][a-zA-Z0-9_-]*$ ]]; then
+            echo "Error: Invalid language code format '$1'. Use alphanumeric characters, hyphens, and underscores only." >&2
+            echo "" >&2
+            show_usage
+            exit 1
+        fi
+        # Run main function with target language
+        main "$1"
     fi
+else
+    # Run main function for all languages
+    main ""
 fi
-
-# Run main function
-main
