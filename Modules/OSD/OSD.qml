@@ -101,22 +101,66 @@ Variants {
     sourceComponent: PanelWindow {
       screen: modelData
 
-      anchors {
-        top: true
+      readonly property string location: (Settings.isLoaded && Settings.data && Settings.data.notifications && Settings.data.notifications.location) ? Settings.data.notifications.location : "top_right"
+      readonly property bool isTop: (location === "top") || (location.length >= 3 && location.substring(0, 3) === "top")
+      readonly property bool isBottom: (location === "bottom") || (location.length >= 6 && location.substring(0, 6) === "bottom")
+      readonly property bool isLeft: location.indexOf("_left") >= 0
+      readonly property bool isRight: location.indexOf("_right") >= 0
+      readonly property bool isCentered: (location === "top" || location === "bottom")
+
+      // Anchor selection based on location (window edges)
+      anchors.top: isTop
+      anchors.bottom: isBottom
+      anchors.left: isLeft
+      anchors.right: isRight
+
+      // Margins depending on bar position and chosen location
+      margins.top: {
+        if (!(anchors.top))
+          return 0
+        var base = Style.marginM * scaling
+        if (Settings.data.bar.position === "top") {
+          var floatExtraV = Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL * scaling : 0
+          return (Style.barHeight * scaling) + base + floatExtraV
+        }
+        return base
+      }
+
+      margins.bottom: {
+        if (!(anchors.bottom))
+          return 0
+        var base = Style.marginM * scaling
+        if (Settings.data.bar.position === "bottom") {
+          var floatExtraV = Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL * scaling : 0
+          return (Style.barHeight * scaling) + base + floatExtraV
+        }
+        return base
+      }
+
+      margins.left: {
+        if (!(anchors.left))
+          return 0
+        var base = Style.marginM * scaling
+        if (Settings.data.bar.position === "left") {
+          var floatExtraH = Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL * scaling : 0
+          return (Style.barHeight * scaling) + base + floatExtraH
+        }
+        return base
+      }
+
+      margins.right: {
+        if (!(anchors.right))
+          return 0
+        var base = Style.marginM * scaling
+        if (Settings.data.bar.position === "right") {
+          var floatExtraH = Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL * scaling : 0
+          return (Style.barHeight * scaling) + base + floatExtraH
+        }
+        return base
       }
 
       implicitWidth: 320 * root.scaling
       implicitHeight: osdItem.height
-
-      // Set margins based on bar position
-      margins.top: {
-        switch (Settings.data.bar.position) {
-        case "top":
-          return (Style.barHeight + Style.marginS) * root.scaling + (Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL * root.scaling : 0)
-        default:
-          return Style.marginL * root.scaling
-        }
-      }
 
       color: Color.transparent
 
