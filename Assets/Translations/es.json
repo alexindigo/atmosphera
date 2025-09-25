@@ -100,6 +100,10 @@
         "step-size": {
           "label": "Tamaño del paso de volumen",
           "description": "Ajusta el tamaño del paso para los cambios de volumen (rueda de desplazamiento, atajos de teclado)."
+        },
+        "volume-overdrive": {
+          "label": "Permitir sobreamplificación de volumen",
+          "description": "Permite subir el volumen por encima del 100 %. Es posible que no sea compatible con todo el hardware."
         }
       },
       "devices": {
@@ -768,7 +772,9 @@
         "search-placeholder": "Buscar widgets..."
       },
       "active-window": {
-        "show-app-icon": "Mostrar icono de la aplicación"
+        "auto-hide": "Ocultar automáticamente",
+        "show-app-icon": "Mostrar icono de la aplicación",
+        "scrolling-mode": "Modo de desplazamiento"
       },
       "system-monitor": {
         "cpu-usage": "Uso de CPU",
@@ -859,6 +865,7 @@
         }
       },
       "media-mini": {
+        "auto-hide": "Ocultar automáticamente",
         "show-album-art": "Mostrar carátula del álbum",
         "show-visualizer": "Mostrar visualizador",
         "visualizer-type": "Tipo de visualizador",
@@ -997,7 +1004,7 @@
     "night-light-forced": "Luz nocturna forzada.\nClic izquierdo para cambiar de modo.\nClic derecho para acceder a la configuración.",
     "click-to-start-recording": "Haz clic para iniciar la grabación",
     "click-to-stop-recording": "Haz clic para detener la grabación",
-    "open-side-panel": "Abrir panel lateral",
+    "open-control-center": "Abrir el centro de control",
     "volume-at": "Volumen al {volume}%\nClic izquierdo para silenciar. Clic derecho para configuración.\nDesplaza para modificar el volumen.",
     "microphone-volume-at": "Volumen del micrófono al {volume}%\nClic izquierdo para silenciar. Clic derecho para configuración.\nDesplaza para modificar el volumen.",
     "manage-wifi": "Gestionar Wi-Fi",
@@ -1083,6 +1090,9 @@
       "hover": "Desplazar al Pasar",
       "never": "Nunca Desplazar"
     },
+    "frame-rates": {
+      "fps": "{fps} FPS"
+    },
     "screen-recording": {
       "sources": {
         "portal": "Portal",
@@ -1102,10 +1112,6 @@
         "system-output": "Salida del sistema",
         "microphone-input": "Entrada del micrófono",
         "both": "Salida del sistema + entrada del micrófono"
-      },
-      "audio-codecs": {
-        "opus": "Opus",
-        "aac": "AAC"
       }
     }
   },
