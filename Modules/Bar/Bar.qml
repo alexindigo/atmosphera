@@ -70,6 +70,17 @@ Variants {
           radius: Settings.data.bar.floating ? Style.radiusL : 0
         }
 
+        MouseArea {
+          anchors.fill: parent
+          acceptedButtons: Qt.RightButton
+          onClicked: function (mouse) {
+            if (mouse.button === Qt.RightButton) {
+              controlCenterPanel.toggle(BarService.lookupWidget("ControlCenter"))
+              mouse.accepted = true
+            }
+          }
+        }
+
         Loader {
           anchors.fill: parent
           sourceComponent: (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? verticalBarComponent : horizontalBarComponent
