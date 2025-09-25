@@ -25,187 +25,159 @@ Rectangle {
       id: tokensList
       Layout.fillWidth: true
       Layout.fillHeight: true
-      model: ListModel {
-
-        // Common format combinations
-        ListElement {
-          category: "Common"
-          token: "h:mm AP"
-          description: I18n.tr("widgets.datetime-tokens.common.12hour-time-minutes")
-          example: "2:30 PM"
-        }
-        ListElement {
-          category: "Common"
-          token: "HH:mm"
-          description: I18n.tr("widgets.datetime-tokens.common.24hour-time-minutes")
-          example: "14:30"
-        }
-        ListElement {
-          category: "Common"
-          token: "HH:mm:ss"
-          description: I18n.tr("widgets.datetime-tokens.common.24hour-time-seconds")
-          example: "14:30:45"
-        }
-        ListElement {
-          category: "Common"
-          token: "ddd MMM d"
-          description: I18n.tr("widgets.datetime-tokens.common.weekday-month-day")
-          example: "Mon Dec 25"
-        }
-        ListElement {
-          category: "Common"
-          token: "yyyy-MM-dd"
-          description: I18n.tr("widgets.datetime-tokens.common.iso-date")
-          example: "2023-12-25"
-        }
-        ListElement {
-          category: "Common"
-          token: "MM/dd/yyyy"
-          description: I18n.tr("widgets.datetime-tokens.common.us-date")
-          example: "12/25/2023"
-        }
-        ListElement {
-          category: "Common"
-          token: "dd.MM.yyyy"
-          description: I18n.tr("widgets.datetime-tokens.common.european-date")
-          example: "25.12.2023"
-        }
-        ListElement {
-          category: "Common"
-          token: "ddd, MMM dd"
-          description: I18n.tr("widgets.datetime-tokens.common.weekday-date")
-          example: "Fri, Dec 12"
-        }
-
-        ListElement {
-          category: "Hour"
-          token: "H"
-          description: I18n.tr("widgets.datetime-tokens.hour.no-leading-zero")
-          example: "14"
-        }
-        ListElement {
-          category: "Hour"
-          token: "HH"
-          description: I18n.tr("widgets.datetime-tokens.hour.leading-zero")
-          example: "14"
-        }
-
+      model: [// Common format combinations
+        {
+          "category": "Common",
+          "token": "h:mm AP",
+          "description": I18n.tr("widgets.datetime-tokens.common.12hour-time-minutes"),
+          "example": "2:30 PM"
+        }, {
+          "category": "Common",
+          "token": "HH:mm",
+          "description": I18n.tr("widgets.datetime-tokens.common.24hour-time-minutes"),
+          "example": "14:30"
+        }, {
+          "category": "Common",
+          "token": "HH:mm:ss",
+          "description": I18n.tr("widgets.datetime-tokens.common.24hour-time-seconds"),
+          "example": "14:30:45"
+        }, {
+          "category": "Common",
+          "token": "ddd MMM d",
+          "description": I18n.tr("widgets.datetime-tokens.common.weekday-month-day"),
+          "example": "Mon Dec 25"
+        }, {
+          "category": "Common",
+          "token": "yyyy-MM-dd",
+          "description": I18n.tr("widgets.datetime-tokens.common.iso-date"),
+          "example": "2023-12-25"
+        }, {
+          "category": "Common",
+          "token": "MM/dd/yyyy",
+          "description": I18n.tr("widgets.datetime-tokens.common.us-date"),
+          "example": "12/25/2023"
+        }, {
+          "category": "Common",
+          "token": "dd.MM.yyyy",
+          "description": I18n.tr("widgets.datetime-tokens.common.european-date"),
+          "example": "25.12.2023"
+        }, {
+          "category": "Common",
+          "token": "ddd, MMM dd",
+          "description": I18n.tr("widgets.datetime-tokens.common.weekday-date"),
+          "example": "Fri, Dec 12"
+        },
+        // Hour tokens
+        {
+          "category": "Hour",
+          "token": "H",
+          "description": I18n.tr("widgets.datetime-tokens.hour.no-leading-zero"),
+          "example": "14"
+        }, {
+          "category": "Hour",
+          "token": "HH",
+          "description": I18n.tr("widgets.datetime-tokens.hour.leading-zero"),
+          "example": "14"
+        },
         // Minute tokens
-        ListElement {
-          category: "Minute"
-          token: "m"
-          description: I18n.tr("widgets.datetime-tokens.minute.no-leading-zero")
-          example: "30"
-        }
-        ListElement {
-          category: "Minute"
-          token: "mm"
-          description: I18n.tr("widgets.datetime-tokens.minute.leading-zero")
-          example: "30"
-        }
-
+        {
+          "category": "Minute",
+          "token": "m",
+          "description": I18n.tr("widgets.datetime-tokens.minute.no-leading-zero"),
+          "example": "30"
+        }, {
+          "category": "Minute",
+          "token": "mm",
+          "description": I18n.tr("widgets.datetime-tokens.minute.leading-zero"),
+          "example": "30"
+        },
         // Second tokens
-        ListElement {
-          category: "Second"
-          token: "s"
-          description: I18n.tr("widgets.datetime-tokens.second.no-leading-zero")
-          example: "45"
-        }
-        ListElement {
-          category: "Second"
-          token: "ss"
-          description: I18n.tr("widgets.datetime-tokens.second.leading-zero")
-          example: "45"
-        }
-
+        {
+          "category": "Second",
+          "token": "s",
+          "description": I18n.tr("widgets.datetime-tokens.second.no-leading-zero"),
+          "example": "45"
+        }, {
+          "category": "Second",
+          "token": "ss",
+          "description": I18n.tr("widgets.datetime-tokens.second.leading-zero"),
+          "example": "45"
+        },
         // AM/PM tokens
-        ListElement {
-          category: "AM/PM"
-          token: "AP"
-          description: I18n.tr("widgets.datetime-tokens.ampm.uppercase")
-          example: "PM"
-        }
-        ListElement {
-          category: "AM/PM"
-          token: "ap"
-          description: I18n.tr("widgets.datetime-tokens.ampm.lowercase")
-          example: "pm"
-        }
-
+        {
+          "category": "AM/PM",
+          "token": "AP",
+          "description": I18n.tr("widgets.datetime-tokens.ampm.uppercase"),
+          "example": "PM"
+        }, {
+          "category": "AM/PM",
+          "token": "ap",
+          "description": I18n.tr("widgets.datetime-tokens.ampm.lowercase"),
+          "example": "pm"
+        },
         // Timezone tokens
-        ListElement {
-          category: "Timezone"
-          token: "t"
-          description: I18n.tr("widgets.datetime-tokens.timezone.abbreviation")
-          example: "UTC"
-        }
-
+        {
+          "category": "Timezone",
+          "token": "t",
+          "description": I18n.tr("widgets.datetime-tokens.timezone.abbreviation"),
+          "example": "UTC"
+        },
         // Year tokens
-        ListElement {
-          category: "Year"
-          token: "yy"
-          description: I18n.tr("widgets.datetime-tokens.year.two-digit")
-          example: "23"
-        }
-        ListElement {
-          category: "Year"
-          token: "yyyy"
-          description: I18n.tr("widgets.datetime-tokens.year.four-digit")
-          example: "2023"
-        }
-
+        {
+          "category": "Year",
+          "token": "yy",
+          "description": I18n.tr("widgets.datetime-tokens.year.two-digit"),
+          "example": "23"
+        }, {
+          "category": "Year",
+          "token": "yyyy",
+          "description": I18n.tr("widgets.datetime-tokens.year.four-digit"),
+          "example": "2023"
+        },
         // Month tokens
-        ListElement {
-          category: "Month"
-          token: "M"
-          description: I18n.tr("widgets.datetime-tokens.month.number-no-zero")
-          example: "12"
-        }
-        ListElement {
-          category: "Month"
-          token: "MM"
-          description: I18n.tr("widgets.datetime-tokens.month.number-leading-zero")
-          example: "12"
-        }
-        ListElement {
-          category: "Month"
-          token: "MMM"
-          description: I18n.tr("widgets.datetime-tokens.month.abbreviated")
-          example: "Dec"
-        }
-        ListElement {
-          category: "Month"
-          token: "MMMM"
-          description: I18n.tr("widgets.datetime-tokens.month.full")
-          example: "December"
-        }
-
+        {
+          "category": "Month",
+          "token": "M",
+          "description": I18n.tr("widgets.datetime-tokens.month.number-no-zero"),
+          "example": "12"
+        }, {
+          "category": "Month",
+          "token": "MM",
+          "description": I18n.tr("widgets.datetime-tokens.month.number-leading-zero"),
+          "example": "12"
+        }, {
+          "category": "Month",
+          "token": "MMM",
+          "description": I18n.tr("widgets.datetime-tokens.month.abbreviated"),
+          "example": "Dec"
+        }, {
+          "category": "Month",
+          "token": "MMMM",
+          "description": I18n.tr("widgets.datetime-tokens.month.full"),
+          "example": "December"
+        },
         // Day tokens
-        ListElement {
-          category: "Day"
-          token: "d"
-          description: I18n.tr("widgets.datetime-tokens.day.no-leading-zero")
-          example: "25"
-        }
-        ListElement {
-          category: "Day"
-          token: "dd"
-          description: I18n.tr("widgets.datetime-tokens.day.leading-zero")
-          example: "25"
-        }
-        ListElement {
-          category: "Day"
-          token: "ddd"
-          description: I18n.tr("widgets.datetime-tokens.day.abbreviated")
-          example: "Mon"
-        }
-        ListElement {
-          category: "Day"
-          token: "dddd"
-          description: I18n.tr("widgets.datetime-tokens.day.full")
-          example: "Monday"
-        }
-      }
+        {
+          "category": "Day",
+          "token": "d",
+          "description": I18n.tr("widgets.datetime-tokens.day.no-leading-zero"),
+          "example": "25"
+        }, {
+          "category": "Day",
+          "token": "dd",
+          "description": I18n.tr("widgets.datetime-tokens.day.leading-zero"),
+          "example": "25"
+        }, {
+          "category": "Day",
+          "token": "ddd",
+          "description": I18n.tr("widgets.datetime-tokens.day.abbreviated"),
+          "example": "Mon"
+        }, {
+          "category": "Day",
+          "token": "dddd",
+          "description": I18n.tr("widgets.datetime-tokens.day.full"),
+          "example": "Monday"
+        }]
 
       delegate: Rectangle {
         id: tokenDelegate
@@ -227,10 +199,7 @@ Rectangle {
           cursorShape: Qt.PointingHandCursor
 
           onClicked: {
-            // Emit the signal with the token
-            root.tokenClicked(model.token)
-
-            // Visual feedback
+            root.tokenClicked(modelData.token)
             clickAnimation.start()
           }
         }
@@ -263,7 +232,7 @@ Rectangle {
             Layout.alignment: Qt.AlignVCenter
             width: 70 * scaling
             height: 22 * scaling
-            color: getCategoryColor(model.category)[0]
+            color: getCategoryColor(modelData.category)[0]
             radius: Style.radiusS * scaling
             opacity: tokenMouseArea.containsMouse ? 0.9 : 1.0
 
@@ -275,8 +244,8 @@ Rectangle {
 
             NText {
               anchors.centerIn: parent
-              text: model.category
-              color: getCategoryColor(model.category)[1]
+              text: modelData.category
+              color: getCategoryColor(modelData.category)[1]
               font.pointSize: Style.fontSizeXS * scaling
             }
           }
@@ -298,7 +267,7 @@ Rectangle {
 
             NText {
               anchors.centerIn: parent
-              text: model.token
+              text: modelData.token
               color: tokenMouseArea.containsMouse ? Color.mOnPrimary : Color.mSurface
               font.pointSize: Style.fontSizeS * scaling
               font.weight: Style.fontWeightBold
@@ -315,7 +284,7 @@ Rectangle {
           NText {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignVCenter // Added this line
-            text: model.description
+            text: modelData.description
             color: tokenMouseArea.containsMouse ? Color.mOnSurface : Color.mOnSurfaceVariant
             font.pointSize: Style.fontSizeS * scaling
             wrapMode: Text.WordWrap
@@ -351,7 +320,7 @@ Rectangle {
 
             NText {
               anchors.centerIn: parent
-              text: Qt.formatDateTime(root.sampleDate, model.token)
+              text: Qt.formatDateTime(root.sampleDate, modelData.token)
               color: tokenMouseArea.containsMouse ? Color.mOnPrimary : Color.mSurfaceVariant
               font.pointSize: Style.fontSizeS * scaling
 
