@@ -332,7 +332,6 @@
           "description": "Afficher les notifications au-dessus des fenêtres en plein écran et des autres applications."
         }
       },
-              
       "duration": {
         "section": {
           "label": "Durée des notifications",

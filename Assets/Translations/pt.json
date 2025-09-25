@@ -100,6 +100,10 @@
         "step-size": {
           "label": "Tamanho do passo do volume",
           "description": "Ajuste o tamanho do passo para alterações de volume (roda do mouse, atalhos de teclado)."
+        },
+        "volume-overdrive": {
+          "label": "Permitir volume acima de 100%",
+          "description": "Permite aumentar o volume para além dos 100%. Poderá não ser suportado por todo o hardware."
         }
       },
       "devices": {
@@ -768,7 +772,9 @@
         "search-placeholder": "Pesquisar widgets..."
       },
       "active-window": {
-        "show-app-icon": "Mostrar ícone do aplicativo"
+        "auto-hide": "Ocultar automaticamente",
+        "show-app-icon": "Mostrar ícone do aplicativo",
+        "scrolling-mode": "Modo de Rolagem"
       },
       "system-monitor": {
         "cpu-usage": "Uso de CPU",
@@ -859,6 +865,7 @@
         }
       },
       "media-mini": {
+        "auto-hide": "Ocultar automaticamente",
         "show-album-art": "Mostrar arte do álbum",
         "show-visualizer": "Mostrar visualizador",
         "visualizer-type": "Tipo de visualizador",
@@ -997,7 +1004,7 @@
     "night-light-forced": "Luz noturna forçada.\nClique esquerdo para alternar o modo.\nClique direito para acessar as configurações.",
     "click-to-start-recording": "Clique para iniciar a gravação",
     "click-to-stop-recording": "Clique para parar a gravação",
-    "open-side-panel": "Abrir painel lateral",
+    "open-control-center": "Abrir central de controle",
     "volume-at": "Volume em {volume}%\nClique esquerdo para silenciar. Clique direito para configurações.\nRole para modificar o volume.",
     "microphone-volume-at": "Volume do microfone em {volume}%\nClique esquerdo para silenciar. Clique direito para configurações.\nRole para modificar o volume.",
     "manage-wifi": "Gerenciar Wi-Fi",
@@ -1078,6 +1085,14 @@
       "mirrored": "Espelhado",
       "wave": "Onda"
     },
+    "scrolling-modes": {
+      "always": "Rolar Sempre",
+      "hover": "Rolar ao Passar o Mouse",
+      "never": "Nunca Rolar"
+    },
+    "frame-rates": {
+      "fps": "{fps} FPS"
+    },
     "screen-recording": {
       "sources": {
         "portal": "Portal",
@@ -1097,10 +1112,6 @@
         "system-output": "Saída do sistema",
         "microphone-input": "Entrada do microfone",
         "both": "Saída do sistema + entrada do microfone"
-      },
-      "audio-codecs": {
-        "opus": "Opus",
-        "aac": "AAC"
       }
     }
   },
