@@ -48,7 +48,7 @@ RowLayout {
 
     Rectangle {
       implicitWidth: Math.round((root.baseSize * 0.8) * scaling)
-      height: parent.height - (2 * scaling * 2)
+      height: parent.height - (4 * scaling)
       radius: height * 0.5
       color: root.checked ? Color.mOnPrimary : Color.mPrimary
       border.color: root.checked ? Color.mSurface : Color.mSurface
