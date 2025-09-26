@@ -15,6 +15,8 @@ Slider {
   readonly property real trackHeight: knobDiameter * 0.4
   readonly property real cutoutExtra: Math.round(Style.baseWidgetSize * 0.1 * scaling)
 
+  padding: cutoutExtra / 2
+
   snapMode: snapAlways ? Slider.SnapAlways : Slider.SnapOnRelease
   implicitHeight: Math.max(trackHeight, knobDiameter)
 
@@ -90,14 +92,14 @@ Slider {
       }
     }
 
-  // Circular cutout
+    // Circular cutout
     Rectangle {
       id: knobCutout
       width: knobDiameter + cutoutExtra
       height: knobDiameter + cutoutExtra
       radius: width / 2
       color: root.cutoutColor !== undefined ? root.cutoutColor : Color.mSurface
-      x: root.leftPadding + root.visualPosition * (root.availableWidth - root.knobDiameter) - cutoutExtra / 2
+      x: root.leftPadding + Math.round(root.visualPosition * (root.availableWidth - root.knobDiameter) - cutoutExtra)
       anchors.verticalCenter: parent.verticalCenter
     }
   }
