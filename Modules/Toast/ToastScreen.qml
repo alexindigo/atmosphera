@@ -53,7 +53,7 @@ Item {
   }
 
   function enqueueToast(toastData) {
-    Logger.log("ToastScreen", "Queuing:", toastData.message, toastData.description, toastData.type)
+    Logger.log("ToastScreen", "Queuing", toastData.type, ":", toastData.message, toastData.description.substr(100).replace(/\n/g, ""))
 
     if (replaceOnNew && isShowingToast) {
       // Cancel current toast and clear queue for latest toast
