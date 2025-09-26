@@ -86,9 +86,14 @@ Singleton {
       }
     }
 
-    // For translations, wait for i18n to be ready
+    translateModels()
+  }
+
+  // -------------------------------------------------
+  function translateModels() {
+    // Wait for i18n to be ready by retrying every time
     if (!I18n.isLoaded) {
-      Qt.callLater(init)
+      Qt.callLater(translateModels)
       return
     }
 
