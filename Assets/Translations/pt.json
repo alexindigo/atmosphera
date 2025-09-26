@@ -673,8 +673,43 @@
           "description": "• Hook de Papel de Parede: $1 = caminho do papel de parede, $2 = nome da tela\n• Hook de Alternância de Tema: $1 = true/false (estado do modo escuro)"
         }
       }
+    },
+    "osd": {
+      "title": "Exibição na tela",
+      "description": "Configure indicadores na tela, como volume e brilho.",
+      "section": {
+        "general": {
+          "label": "Geral",
+          "description": "Configurar visibilidade e comportamento da OSD."
+        }
+      },
+      "enabled": {
+        "label": "Ativar exibição na tela",
+        "description": "Mostrar alterações de volume e brilho em tempo real."
+      },
+      "location": {
+        "label": "Localização",
+        "description": "Onde a exibição na tela aparece."
+      },
+      "duration": {
+        "section": {
+          "label": "Tempo para ocultar",
+          "description": "Quanto tempo a OSD permanece visível antes de ocultar automaticamente."
+        },
+        "auto-hide": {
+          "label": "Ocultar após",
+          "description": "Ajusta o tempo antes da OSD desaparecer."
+        }
+      },
+      "monitors": {
+        "section": {
+          "label": "Exibição nos monitores",
+          "description": "Mostrar a OSD em monitores específicos. Padrão é todos se nenhum for escolhido."
+        }
+      }
     }
   },
+  
   "widgets": {
     "tooltip": {
       "placeholder": "Espaço reservado"
@@ -1045,6 +1080,31 @@
     "test": "Testar"
   },
   "options": {
+    "osd": {
+      "position": {
+        "top_left": "Superior esquerdo",
+        "top_right": "Superior direito",
+        "top_center": "Centro superior",
+        "bottom_left": "Inferior esquerdo",
+        "bottom_right": "Inferior direito",
+        "bottom_center": "Centro inferior",
+        "center_left": "Esquerda central",
+        "center_right": "Direita central"
+      }
+    },
+    "launcher": {
+      "position": {
+        "center": "Centro (padrão)",
+        "top_left": "Superior esquerdo",
+        "top_right": "Superior direito",
+        "bottom_left": "Inferior esquerdo",
+        "bottom_right": "Inferior direito",
+        "bottom_center": "Centro inferior",
+        "top_center": "Centro superior",
+        "center_left": "Esquerda central",
+        "center_right": "Direita central"
+      }
+    },
     "bar": {
       "position": {
         "top": "Topo",
@@ -1232,6 +1292,10 @@
     "battery": {
       "low": "Bateria Fraca",
       "low-desc": "A bateria está em {percent}%. Por favor, conecte o carregador."
+    },
+    "missing-control-center": {
+      "label": "Último widget da Central de Controle removido",
+      "description": "O widget da Central de Controle foi removido da barra. Para acessá-lo novamente pela barra, adicione o widget novamente."
     }
   },
   "weather": {

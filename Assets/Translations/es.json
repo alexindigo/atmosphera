@@ -361,6 +361,40 @@
         }
       }
     },
+    "osd": {
+      "title": "Visualización en pantalla",
+      "description": "Configura indicadores superpuestos como volumen y brillo.",
+      "section": {
+        "general": {
+          "label": "General",
+          "description": "Configura visibilidad y comportamiento del OSD."
+        }
+      },
+      "enabled": {
+        "label": "Activar visualización en pantalla",
+        "description": "Mostrar cambios de volumen y brillo en tiempo real."
+      },
+      "location": {
+        "label": "Ubicación",
+        "description": "Dónde aparece la visualización en pantalla."
+      },
+      "duration": {
+        "section": {
+          "label": "Tiempo de ocultación automática",
+          "description": "Cuánto tiempo permanece visible el OSD antes de ocultarse automáticamente."
+        },
+        "auto-hide": {
+          "label": "Ocultar después de",
+          "description": "Ajusta el tiempo antes de que el OSD desaparezca."
+        }
+      },
+      "monitors": {
+        "section": {
+          "label": "Visualización en monitores",
+          "description": "Mostrar el OSD en monitores específicos. Por defecto, en todos si no se elige ninguno."
+        }
+      }
+    },
     "wallpaper": {
       "title": "Fondo de pantalla",
       "settings": {
@@ -1066,7 +1100,21 @@
         "bottom_left": "Inferior izquierda",
         "bottom_right": "Inferior derecha",
         "bottom_center": "Inferior central",
-        "top_center": "Superior central"
+        "top_center": "Superior central",
+        "center_left": "Izquierda centrado",
+        "center_right": "Derecha centrado"
+      }
+    },
+    "osd": {
+      "position": {
+        "top_left": "Superior izquierda",
+        "top_right": "Superior derecha",
+        "top_center": "Superior central",
+        "bottom_left": "Inferior izquierda",
+        "bottom_right": "Inferior derecha",
+        "bottom_center": "Inferior central",
+        "center_left": "Izquierda centrado",
+        "center_right": "Derecha centrado"
       }
     },
     "display-mode": {
@@ -1232,6 +1280,10 @@
     "battery": {
       "low": "Batería baja",
       "low-desc": "La batería está al {percent}%. Por favor, conecta el cargador."
+    },
+    "missing-control-center": {
+      "label": "Se eliminó el último widget del Centro de control",
+      "description": "El widget del Centro de control se eliminó de la barra. Para acceder a él nuevamente desde la barra, debes volver a añadir el widget."
     }
   },
   "weather": {

@@ -1,5 +1,5 @@
 {
-  "settingsVersion": 6,
+  "settingsVersion": 8,
   "bar": {
     "position": "top",
     "backgroundOpacity": 1,
@@ -132,8 +132,13 @@
     "respectExpireTimeout": false,
     "lowUrgencyDuration": 3,
     "normalUrgencyDuration": 8,
-    "criticalUrgencyDuration": 15,
-    "enableOSD": true
+    "criticalUrgencyDuration": 15
+  },
+  "osd": {
+    "enabled": true,
+    "location": "top_right",
+    "monitors": [],
+    "autoHideMs": 2000
   },
   "audio": {
     "volumeStep": 5,

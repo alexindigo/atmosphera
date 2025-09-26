@@ -363,6 +363,40 @@
         }
       }
     },
+    "osd": {
+      "title": "On-Screen Display",
+      "description": "Configure on-screen indicators such as volume and brightness overlays.",
+      "section": {
+        "general": {
+          "label": "General",
+          "description": "Configure visibility and behavior of OSD."
+        }
+      },
+      "enabled": {
+        "label": "Enable on screen display",
+        "description": "Show volume and brightness changes in real-time."
+      },
+      "location": {
+        "label": "Location",
+        "description": "Where on-screen displays appear."
+      },
+      "duration": {
+        "section": {
+          "label": "Auto-hide timeout",
+          "description": "How long OSD remains visible before hiding automatically."
+        },
+        "auto-hide": {
+          "label": "Auto-hide after",
+          "description": "Adjust the time before OSD disappears."
+        }
+      },
+      "monitors": {
+        "section": {
+          "label": "Monitors display",
+          "description": "Show OSD on specific monitors. Defaults to all if none are chosen."
+        }
+      }
+    },
     "wallpaper": {
       "title": "Wallpaper",
       "settings": {
@@ -1069,7 +1103,21 @@
         "bottom_left": "Bottom left",
         "bottom_right": "Bottom right",
         "bottom_center": "Bottom center",
-        "top_center": "Top center"
+        "top_center": "Top center",
+        "center_left": "Left center",
+        "center_right": "Right center"
+      }
+    },
+    "osd": {
+      "position": {
+        "top_left": "Top left",
+        "top_right": "Top right",
+        "top_center": "Top center",
+        "bottom_left": "Bottom left",
+        "bottom_right": "Bottom right",
+        "bottom_center": "Bottom center",
+        "center_left": "Left center",
+        "center_right": "Right center"
       }
     },
     "display-mode": {

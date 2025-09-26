@@ -112,6 +112,7 @@ Singleton {
     "settings-screen-recorder": "video",
     "settings-hooks": "link",
     "settings-notifications": "bell",
+    "settings-osd": "picture-in-picture",
     "settings-about": "info-square-rounded",
     "bluetooth": "bluetooth",
     "bt-device-generic": "bluetooth",

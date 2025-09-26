@@ -363,6 +363,40 @@
         }
       }
     },
+    "osd": {
+      "title": "Bildschirmanzeige",
+      "description": "Bildschirm-Overlays wie Lautstärke- und Helligkeitsanzeigen konfigurieren.",
+      "section": {
+        "general": {
+          "label": "Allgemein",
+          "description": "Sichtbarkeit und Verhalten der OSD konfigurieren."
+        }
+      },
+      "enabled": {
+        "label": "Bildschirmanzeige aktivieren",
+        "description": "Lautstärke- und Helligkeitsänderungen in Echtzeit anzeigen."
+      },
+      "location": {
+        "label": "Position",
+        "description": "Wo Bildschirmanzeigen erscheinen."
+      },
+      "duration": {
+        "section": {
+          "label": "Automatisches Ausblenden",
+          "description": "Wie lange die OSD sichtbar bleibt, bevor sie automatisch ausgeblendet wird."
+        },
+        "auto-hide": {
+          "label": "Ausblenden nach",
+          "description": "Zeitspanne bis zum automatischen Ausblenden anpassen."
+        }
+      },
+      "monitors": {
+        "section": {
+          "label": "Monitor-Anzeige",
+          "description": "OSD auf bestimmten Monitoren anzeigen. Standard ist alle, wenn keine ausgewählt sind."
+        }
+      }
+    },
     "wallpaper": {
       "title": "Hintergrundbild",
       "settings": {
@@ -1086,7 +1120,21 @@
         "bottom_left": "Unten links",
         "bottom_right": "Unten rechts",
         "bottom_center": "Unten mittig",
-        "top_center": "Oben mittig"
+        "top_center": "Oben mittig",
+        "center_left": "Links mittig",
+        "center_right": "Rechts mittig"
+      }
+    },
+    "osd": {
+      "position": {
+        "top_left": "Oben links",
+        "top_right": "Oben rechts",
+        "top_center": "Oben mittig",
+        "bottom_left": "Unten links",
+        "bottom_right": "Unten rechts",
+        "bottom_center": "Unten mittig",
+        "center_left": "Links mittig",
+        "center_right": "Rechts mittig"
       }
     },
     "display-mode": {
@@ -1264,6 +1312,10 @@
     "battery": {
       "low": "Niedriger Batteriestand",
       "low-desc": "Batterie ist bei {percent}%. Bitte schließen Sie das Ladegerät an."
+    },
+    "missing-control-center": {
+      "label": "Letztes Control-Center-Widget entfernt",
+      "description": "Das Control-Center-Widget wurde aus der Leiste entfernt. Um es erneut über die Leiste zu öffnen, fügen Sie das Widget wieder hinzu."
     }
   }
 }

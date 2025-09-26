@@ -72,12 +72,7 @@ ColumnLayout {
       onToggled: checked => Settings.data.notifications.alwaysOnTop = checked
     }
 
-    NToggle {
-      label: I18n.tr("settings.notifications.settings.enable-osd.label")
-      description: I18n.tr("settings.notifications.settings.enable-osd.description")
-      checked: Settings.data.notifications.enableOSD
-      onToggled: checked => Settings.data.notifications.enableOSD = checked
-    }
+    // OSD settings moved to the dedicated OSD tab
   }
 
   NDivider {

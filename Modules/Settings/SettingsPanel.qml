@@ -29,6 +29,7 @@ NPanel {
     Audio,
     Bar,
     ColorScheme,
+    OSD,
     Display,
     Dock,
     General,
@@ -69,6 +70,10 @@ NPanel {
   Component {
     id: displayTab
     DisplayTab {}
+  }
+  Component {
+    id: osdTab
+    OsdTab {}
   }
   Component {
     id: networkTab
@@ -139,6 +144,11 @@ NPanel {
                      "label": "settings.display.title",
                      "icon": "settings-display",
                      "source": displayTab
+                   }, {
+                     "id": SettingsPanel.Tab.OSD,
+                     "label": "settings.osd.title",
+                     "icon": "settings-osd",
+                     "source": osdTab
                    }, {
                      "id": SettingsPanel.Tab.Notifications,
                      "label": "settings.notifications.title",

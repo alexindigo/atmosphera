@@ -114,7 +114,7 @@ Singleton {
   JsonAdapter {
     id: adapter
 
-    property int settingsVersion: 6
+    property int settingsVersion: 8
 
     // bar
     property JsonObject bar: JsonObject {
@@ -255,7 +255,14 @@ Singleton {
       property int lowUrgencyDuration: 3
       property int normalUrgencyDuration: 8
       property int criticalUrgencyDuration: 15
-      property bool enableOSD: true
+    }
+
+    // on-screen display
+    property JsonObject osd: JsonObject {
+      property bool enabled: true
+      property string location: "top_right"
+      property list<string> monitors: []
+      property int autoHideMs: 2000
     }
 
     // audio
