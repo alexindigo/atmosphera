@@ -25,7 +25,7 @@ Slider {
     implicitHeight: trackHeight
     width: root.availableWidth
     height: implicitHeight
-    radius: 0
+    radius: height / 2
     color: Qt.alpha(Color.mSurface, 0.5)
     border.color: Qt.alpha(Color.mOutline, 0.5)
     border.width: Math.max(1, Style.borderS * scaling)
