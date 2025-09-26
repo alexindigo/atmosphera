@@ -253,13 +253,6 @@ Popup {
           }
 
           NIconButton {
-            icon: filePickerPanel.viewMode ? "filepicker-list" : "filepicker-layout-grid"
-            tooltipText: filePickerPanel.viewMode ? "List View" : "Grid View"
-            baseSize: Style.baseWidgetSize * 0.8
-            onClicked: filePickerPanel.viewMode = !filePickerPanel.viewMode
-          }
-
-          NIconButton {
             icon: filePickerPanel.showSearchBar ? "filepicker-x" : "filepicker-search"
             tooltipText: filePickerPanel.showSearchBar ? "Close Search" : "Search"
             baseSize: Style.baseWidgetSize * 0.8
@@ -270,16 +263,6 @@ Popup {
                 filePickerPanel.filterText = ""
                 root.updateFilteredModel()
               }
-            }
-          }
-
-          NIconButton {
-            icon: root.showHiddenFiles ? "filepicker-eye-off" : "filepicker-eye"
-            tooltipText: root.showHiddenFiles ? "Hide Hidden Files" : "Show Hidden Files"
-            baseSize: Style.baseWidgetSize * 0.8
-            onClicked: {
-              root.showHiddenFiles = !root.showHiddenFiles
-              root.updateFilteredModel()
             }
           }
 
@@ -303,6 +286,22 @@ Popup {
                 if (!locationInput.activeFocus)
                   locationInput.text = root.currentPath
               }
+            }
+          }
+
+          NIconButton {
+            icon: filePickerPanel.viewMode ? "filepicker-list" : "filepicker-layout-grid"
+            tooltipText: filePickerPanel.viewMode ? "List View" : "Grid View"
+            baseSize: Style.baseWidgetSize * 0.8
+            onClicked: filePickerPanel.viewMode = !filePickerPanel.viewMode
+          }
+          NIconButton {
+            icon: root.showHiddenFiles ? "filepicker-eye-off" : "filepicker-eye"
+            tooltipText: root.showHiddenFiles ? "Hide Hidden Files" : "Show Hidden Files"
+            baseSize: Style.baseWidgetSize * 0.8
+            onClicked: {
+              root.showHiddenFiles = !root.showHiddenFiles
+              root.updateFilteredModel()
             }
           }
         }
