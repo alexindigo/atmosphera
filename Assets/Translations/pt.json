@@ -1126,7 +1126,9 @@
         "bottom_left": "Inferior esquerdo",
         "bottom_right": "Inferior direito",
         "bottom_center": "Centro inferior",
-        "top_center": "Centro superior"
+        "top_center": "Centro superior",
+        "center_left": "Centro à esquerda",
+        "center_right": "Centro à direita"
       }
     },
     "display-mode": {
