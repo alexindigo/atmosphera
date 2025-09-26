@@ -314,8 +314,13 @@ ColumnLayout {
   function _removeWidgetFromSection(section, index) {
     if (index >= 0 && index < Settings.data.bar.widgets[section].length) {
       var newArray = Settings.data.bar.widgets[section].slice()
-      newArray.splice(index, 1)
+      var removedWidgets = newArray.splice(index, 1)
       Settings.data.bar.widgets[section] = newArray
+
+      // Check that we still have a control center
+      if (removedWidgets[0].id === "ControlCenter" && BarService.lookupWidget("ControlCenter") === undefined) {
+        ToastService.showWarning(I18n.tr("toast.missing-control-center.label"), I18n.tr("toast.missing-control-center.description"), 12000)
+      }
     }
   }
 

@@ -771,7 +771,7 @@
       },
       "section-editor": {
         "placeholder": "Select a widget to add...",
-        "search-placeholder": "Search widgets..."
+        "search-placeholder": "Search widget..."
       },
       "active-window": {
         "auto-hide": "Hide automatically",
@@ -1233,8 +1233,12 @@
       "unmuted": "Unmuted"
     },
     "battery": {
-      "low": "Low Battery",
+      "low": "Low battery",
       "low-desc": "Battery is at {percent}%. Please connect the charger."
+    },
+    "missing-control-center": {
+      "label": "Last Control Center widget removed",
+      "description": "The Control Center widget has been removed from the bar. To access it from the bar again, you will need to re-add the widget."
     }
   },
   "weather": {
