@@ -63,6 +63,7 @@ Singleton {
     }
   }
 
+  // TODO Translate
   readonly property ListModel fillModeModel: ListModel {
     // Centers image without resizing
     // Pads with fillColor if image is smaller than screen

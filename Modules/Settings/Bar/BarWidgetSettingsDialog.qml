@@ -15,8 +15,6 @@ Popup {
   property var widgetData: null
   property string widgetId: ""
 
-  property bool isMasked: false
-
   // Center popup in parent
   x: (parent.width - width) * 0.5
   y: (parent.height - height) * 0.5
@@ -43,7 +41,6 @@ Popup {
   background: Rectangle {
     id: bgRect
 
-    opacity: widgetSettings.isMasked ? 0 : 1.0
     color: Color.mSurface
     radius: Style.radiusL * scaling
     border.color: Color.mPrimary
@@ -53,7 +50,6 @@ Popup {
   contentItem: ColumnLayout {
     id: content
 
-    opacity: widgetSettings.isMasked ? 0 : 1.0
     width: parent.width
     spacing: Style.marginM * scaling
 

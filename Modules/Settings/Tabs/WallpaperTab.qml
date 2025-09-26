@@ -340,15 +340,27 @@ ColumnLayout {
 
   NFilePicker {
     id: mainFolderPicker
-    pickerType: "folder"
+    selectFiles: false
+    selectFolders: true
     title: I18n.tr("settings.wallpaper.settings.select-folder")
-    onAccepted: paths => Settings.data.wallpaper.directory = paths[0]
+    initialPath: Settings.data.wallpaper.directory || Quickshell.env("HOME") + "/Pictures"
+    onAccepted: paths => {
+                  if (paths.length > 0) {
+                    Settings.data.wallpaper.directory = paths[0]
+                  }
+                }
   }
 
   NFilePicker {
     id: monitorFolderPicker
-    pickerType: "folder"
+    selectFiles: false
+    selectFolders: true
     title: I18n.tr("settings.wallpaper.settings.select-monitor-folder")
-    onAccepted: paths => WallpaperService.setMonitorDirectory(specificFolderMonitorName, paths[0])
+    initialPath: WallpaperService.getMonitorDirectory(specificFolderMonitorName) || Quickshell.env("HOME") + "/Pictures"
+    onAccepted: paths => {
+                  if (paths.length > 0) {
+                    WallpaperService.setMonitorDirectory(specificFolderMonitorName, paths[0])
+                  }
+                }
   }
 }

@@ -29,7 +29,7 @@ ColumnLayout {
       buttonIcon: "folder-open"
       buttonTooltip: I18n.tr("settings.screen-recorder.general.output-folder.tooltip")
       onInputEditingFinished: Settings.data.screenRecorder.directory = text
-      onButtonClicked: folderPicker.open()
+      onButtonClicked: folderPicker.openFilePicker()
     }
 
     // Show Cursor
@@ -229,9 +229,14 @@ ColumnLayout {
 
   NFilePicker {
     id: folderPicker
-    pickerType: "folder"
+    selectFiles: false
+    selectFolders: true
     title: I18n.tr("settings.screen-recorder.general.select-output-folder")
     initialPath: Settings.data.screenRecorder.directory || Quickshell.env("HOME") + "/Videos"
-    onAccepted: paths => Settings.data.screenRecorder.directory = paths[0]
+    onAccepted: paths => {
+                  if (paths.length > 0) {
+                    Settings.data.screenRecorder.directory = paths[0] // Use first selected file
+                  }
+                }
   }
 }

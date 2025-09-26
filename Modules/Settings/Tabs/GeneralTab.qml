@@ -41,18 +41,23 @@ ColumnLayout {
       buttonTooltip: "Browse for avatar image"
       onInputEditingFinished: Settings.data.general.avatarImage = text
       onButtonClicked: {
-        filePicker.open()
+        avatarPicker.openFilePicker()
       }
     }
   }
 
   NFilePicker {
-    id: filePicker
-    pickerType: "file"
+    id: avatarPicker
     title: I18n.tr("settings.general.profile.select-avatar")
+    selectFiles: true
+    selectFolders: true
     initialPath: Settings.data.general.avatarImage.substr(0, Settings.data.general.avatarImage.lastIndexOf("/")) || Quickshell.env("HOME")
-    nameFilters: ["Image files (*.jpg *.jpeg *.png *.gif *.pnm *.bmp *.face)", "All files (*)"]
-    onAccepted: paths => Settings.data.general.avatarImage = paths[0]
+    nameFilters: ["*.jpg", "*.jpeg", "*.png", "*.gif", "*.pnm", "*.bmp"]
+    onAccepted: paths => {
+                  if (paths.length > 0) {
+                    Settings.data.general.avatarImage = paths[0]
+                  }
+                }
   }
 
   NDivider {

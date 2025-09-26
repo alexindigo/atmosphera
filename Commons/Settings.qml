@@ -467,7 +467,9 @@ Singleton {
 
       if (!gotControlCenter) {
         //const obj = JSON.parse('{"id": "ControlCenter"}');
-        adapter.bar.widgets["right"].push(({"id": "ControlCenter"}))
+        adapter.bar.widgets["right"].push(({
+                                             "id": "ControlCenter"
+                                           }))
         Logger.warn("Settings", "Added a ControlCenter widget to the right section")
       }
     }

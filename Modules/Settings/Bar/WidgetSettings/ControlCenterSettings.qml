@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import Quickshell
 import qs.Commons
 import qs.Widgets
 import qs.Services
@@ -73,7 +74,7 @@ ColumnLayout {
     NButton {
       enabled: !valueUseDistroLogo
       text: I18n.tr("bar.widget-settings.control-center.browse-file")
-      onClicked: filePicker.open()
+      onClicked: imagePicker.openFilePicker()
     }
   }
 
@@ -87,8 +88,16 @@ ColumnLayout {
   }
 
   NFilePicker {
-    id: filePicker
+    id: imagePicker
     title: I18n.tr("bar.widget-settings.control-center.select-custom-icon")
-    onAccepted: paths => valueCustomIconPath = paths[0]
+    selectFiles: true
+    selectFolders: false
+    nameFilters: ["*.jpg", "*.jpeg", "*.png", "*.gif", "*.pnm", "*.bmp"]
+    initialPath: Quickshell.env("HOME")
+    onAccepted: paths => {
+                  if (paths.length > 0) {
+                    valueCustomIconPath = paths[0] // Use first selected file
+                  }
+                }
   }
 }
