@@ -105,16 +105,16 @@ Slider {
   }
 
   handle: Item {
-    width: knob.implicitWidth
-    height: knob.implicitHeight
+    width: knobDiameter
+    height: knobDiameter
     x: root.leftPadding + Math.round(root.visualPosition * (root.availableWidth - width))
-    y: root.topPadding + root.availableHeight / 2 - height / 2
+    y: root.topPadding + Math.round(root.availableHeight / 2 - height / 2)
 
     Rectangle {
       id: knob
       implicitWidth: knobDiameter
       implicitHeight: knobDiameter
-      radius: width * 0.5
+      radius: width / 2
       color: root.pressed ? Color.mTertiary : Color.mSurface
       border.color: Color.mPrimary
       border.width: Math.max(1, Style.borderL * scaling)
