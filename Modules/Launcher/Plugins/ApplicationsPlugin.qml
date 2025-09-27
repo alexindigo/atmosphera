@@ -137,10 +137,19 @@ Item {
             Quickshell.execDetached(["app2unit", "--", app.id + ".desktop"])
           else
             Quickshell.execDetached(["app2unit", "--"].concat(app.command))
-        } else if (app.execute) {
-          app.execute()
         } else {
-          Logger.log("ApplicationsPlugin", `Could not launch: ${app.name}`)
+          // Fallback logic when app2unit is not used
+          if (app.runInTerminal) {
+            // If app.execute() fails for terminal apps, we handle it manually.
+            Logger.log("ApplicationsPlugin", "Executing terminal app manually: " + app.name)
+            const command = ["kitty", "-e"].concat(app.command)
+            Quickshell.execDetached(command)
+          } else if (app.execute) {
+            // Default execution for GUI apps
+            app.execute()
+          } else {
+            Logger.log("ApplicationsPlugin", `Could not launch: ${app.name}. No valid launch method.`)
+          }
         }
       }
     }
