@@ -31,6 +31,10 @@
         "animation-speed": {
           "label": "Animation speed",
           "description": "Adjust global animation speed."
+        },
+        "animation-disable": {
+          "label": "Disable UI Animations",
+          "description": "Disable all animations for a faster, more responsive experience."
         }
       },
       "screen-corners": {

@@ -1,5 +1,5 @@
 {
-  "settingsVersion": 10,
+  "settingsVersion": 11,
   "bar": {
     "position": "top",
     "backgroundOpacity": 1,
@@ -67,7 +67,8 @@
     "forceBlackScreenCorners": false,
     "radiusRatio": 1,
     "screenRadiusRatio": 1,
-    "animationSpeed": 1
+    "animationSpeed": 1,
+    "animationDisabled": false
   },
   "location": {
     "name": "Tokyo",

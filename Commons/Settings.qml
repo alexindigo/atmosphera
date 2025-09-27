@@ -54,7 +54,7 @@ Singleton {
     // Then it should be commented out again, regular users don't need to generate
     // default settings on every start
     // TODO: automate this someday!
-    //generateDefaultSettings()
+    // generateDefaultSettings()
 
     // Patch-in the local default, resolved to user's home
     adapter.general.avatarImage = defaultAvatar
@@ -114,7 +114,7 @@ Singleton {
   JsonAdapter {
     id: adapter
 
-    property int settingsVersion: 10
+    property int settingsVersion: 11
 
     // bar
     property JsonObject bar: JsonObject {
@@ -175,6 +175,7 @@ Singleton {
       property real radiusRatio: 1.0
       property real screenRadiusRatio: 1.0
       property real animationSpeed: 1.0
+      property bool animationDisabled: false
     }
 
     // location

@@ -104,22 +104,35 @@ ColumnLayout {
 
     // Animation Speed
     ColumnLayout {
-      spacing: Style.marginXXS * scaling
+      spacing: Style.marginL * scaling
       Layout.fillWidth: true
 
-      NLabel {
-        label: I18n.tr("settings.general.ui.animation-speed.label")
-        description: I18n.tr("settings.general.ui.animation-speed.description")
+      NToggle {
+        label: I18n.tr("settings.general.ui.animation-disable.label")
+        description: I18n.tr("settings.general.ui.animation-disable.description")
+        checked: Settings.data.general.animationDisabled
+        onToggled: checked => Settings.data.general.animationDisabled = checked
       }
 
-      NValueSlider {
+      ColumnLayout {
+        spacing: Style.marginXXS * scaling
         Layout.fillWidth: true
-        from: 0.1
-        to: 2.0
-        stepSize: 0.01
-        value: Settings.data.general.animationSpeed
-        onMoved: value => Settings.data.general.animationSpeed = value
-        text: Math.round(Settings.data.general.animationSpeed * 100) + "%"
+        visible: !Settings.data.general.animationDisabled
+
+        NLabel {
+          label: I18n.tr("settings.general.ui.animation-speed.label")
+          description: I18n.tr("settings.general.ui.animation-speed.description")
+        }
+
+        NValueSlider {
+          Layout.fillWidth: true
+          from: 0.1
+          to: 2.0
+          stepSize: 0.01
+          value: Settings.data.general.animationSpeed
+          onMoved: value => Settings.data.general.animationSpeed = value
+          text: Math.round(Settings.data.general.animationSpeed * 100) + "%"
+        }
       }
     }
   }
