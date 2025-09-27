@@ -146,6 +146,7 @@ ColumnLayout {
     description: I18n.tr("settings.color-scheme.color-source.matugen-scheme-type.description")
     enabled: Settings.data.colorSchemes.useWallpaperColors
     opacity: Settings.data.colorSchemes.useWallpaperColors ? 1.0 : 0.6
+    visible: Settings.data.colorSchemes.useWallpaperColors
 
     model: [{
         "key": "scheme-content",
