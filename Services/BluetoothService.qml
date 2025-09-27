@@ -115,6 +115,7 @@ Singleton {
     if (!device)
       return false
 
+
     /*
       Paired
       Means you’ve successfully exchanged keys with the device.
