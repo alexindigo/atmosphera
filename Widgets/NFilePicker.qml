@@ -15,8 +15,7 @@ Popup {
   // Properties
   property string title: "File Picker"
   property string initialPath: Quickshell.env("HOME") || "/home"
-  property bool selectFiles: true
-  property bool selectFolders: true
+  property string selectionMode: "files" // "files" or "folders"
   property var nameFilters: ["*"]
   property bool showDirs: true
   property bool showHiddenFiles: false
@@ -117,8 +116,16 @@ Popup {
       const fileIsDir = folderModel.get(i, "fileIsDir")
       const fileSize = folderModel.get(i, "fileSize")
 
-      if (root.selectFolders && !root.selectFiles && !fileIsDir)
+      // Skip hidden items if showHiddenFiles is false
+      // This additional check ensures hidden files are properly filtered
+      if (!root.showHiddenFiles && fileName.startsWith(".")) {
         continue
+      }
+
+      // In folder mode, hide files
+      if (root.selectionMode === "folders" && !fileIsDir)
+        continue
+
       if (searchText === "" || fileName.toLowerCase().includes(searchText)) {
         filteredModel.append({
                                "fileName": fileName,
@@ -193,10 +200,28 @@ Popup {
           color: Color.mPrimary
           Layout.fillWidth: true
         }
+
+        // "Select Current" button only visible in folder selection mode
+        NButton {
+          text: "Select Current"
+          icon: "filepicker-folder-current"
+          visible: root.selectionMode === "folders"
+          onClicked: {
+            filePickerPanel.currentSelection = [root.currentPath]
+            root.confirmSelection()
+          }
+        }
+
         NIconButton {
           icon: "filepicker-refresh"
           tooltipText: "Refresh"
-          onClicked: folderModel.refresh()
+          onClicked: {
+            // Force a proper refresh by resetting the folder
+            const currentFolder = folderModel.folder
+            folderModel.folder = ""
+            folderModel.folder = currentFolder
+            Qt.callLater(root.updateFilteredModel)
+          }
         }
         NIconButton {
           icon: "filepicker-close"
@@ -301,7 +326,11 @@ Popup {
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: {
               root.showHiddenFiles = !root.showHiddenFiles
-              root.updateFilteredModel()
+              // Force model refresh by resetting the folder
+              const currentFolder = folderModel.folder
+              folderModel.folder = ""
+              folderModel.folder = currentFolder
+              Qt.callLater(root.updateFilteredModel)
             }
           }
         }
@@ -375,15 +404,20 @@ Popup {
         FolderListModel {
           id: folderModel
           folder: "file://" + root.currentPath
-          nameFilters: root.nameFilters
+          // Use wildcard filters including hidden files when showHiddenFiles is true
+          nameFilters: root.showHiddenFiles ? ["*", ".*"] : root.nameFilters
           showDirs: root.showDirs
-          showHidden: root.showHiddenFiles
+          showHidden: true // Always true, we'll filter in updateFilteredModel
+          showDotAndDotDot: false
           sortField: FolderListModel.Name
           sortReversed: false
+
           onFolderChanged: {
             root.currentPath = folder.toString().replace("file://", "")
             filePickerPanel.currentSelection = []
+            Qt.callLater(root.updateFilteredModel)
           }
+
           onStatusChanged: {
             if (status === FolderListModel.Error) {
               if (root.currentPath !== Quickshell.env("HOME")) {
@@ -393,6 +427,14 @@ Popup {
             } else if (status === FolderListModel.Ready) {
               root.updateFilteredModel()
             }
+          }
+        }
+
+        // Update nameFilters when showHiddenFiles changes
+        Connections {
+          target: root
+          function onShowHiddenFilesChanged() {
+            folderModel.nameFilters = root.showHiddenFiles ? ["*", ".*"] : root.nameFilters
           }
         }
 
@@ -618,15 +660,16 @@ Popup {
               onClicked: mouse => {
                            if (mouse.button === Qt.LeftButton) {
                              if (model.fileIsDir) {
-                               if (root.selectFolders && !root.selectFiles) {
+                               // In folder mode, single click selects the folder
+                               if (root.selectionMode === "folders") {
                                  filePickerPanel.currentSelection = [model.filePath]
-                               } else {
-                                 folderModel.folder = "file://" + model.filePath
-                                 root.currentPath = model.filePath
                                }
+                               // In file mode, single click on folder does nothing (must double-click to enter)
                              } else {
-                               if (root.selectFiles)
-                               filePickerPanel.currentSelection = [model.filePath]
+                               // Single click on file selects it (only in file mode)
+                               if (root.selectionMode === "files") {
+                                 filePickerPanel.currentSelection = [model.filePath]
+                               }
                              }
                            }
                          }
@@ -634,15 +677,12 @@ Popup {
               onDoubleClicked: mouse => {
                                  if (mouse.button === Qt.LeftButton) {
                                    if (model.fileIsDir) {
-                                     if (root.selectFolders && !root.selectFiles) {
-                                       filePickerPanel.currentSelection = [model.filePath]
-                                       root.confirmSelection()
-                                     } else {
-                                       folderModel.folder = "file://" + model.filePath
-                                       root.currentPath = model.filePath
-                                     }
+                                     // Double-click on folder always navigates into it
+                                     folderModel.folder = "file://" + model.filePath
+                                     root.currentPath = model.filePath
                                    } else {
-                                     if (root.selectFiles) {
+                                     // Double-click on file selects and confirms (only in file mode)
+                                     if (root.selectionMode === "files") {
                                        filePickerPanel.currentSelection = [model.filePath]
                                        root.confirmSelection()
                                      }
@@ -719,15 +759,16 @@ Popup {
               onClicked: mouse => {
                            if (mouse.button === Qt.LeftButton) {
                              if (model.fileIsDir) {
-                               if (root.selectFolders && !root.selectFiles) {
+                               // In folder mode, single click selects the folder
+                               if (root.selectionMode === "folders") {
                                  filePickerPanel.currentSelection = [model.filePath]
-                               } else {
-                                 folderModel.folder = "file://" + model.filePath
-                                 root.currentPath = model.filePath
                                }
+                               // In file mode, single click on folder does nothing (must double-click to enter)
                              } else {
-                               if (root.selectFiles)
-                               filePickerPanel.currentSelection = [model.filePath]
+                               // Single click on file selects it (only in file mode)
+                               if (root.selectionMode === "files") {
+                                 filePickerPanel.currentSelection = [model.filePath]
+                               }
                              }
                            }
                          }
@@ -735,15 +776,12 @@ Popup {
               onDoubleClicked: mouse => {
                                  if (mouse.button === Qt.LeftButton) {
                                    if (model.fileIsDir) {
-                                     if (root.selectFolders && !root.selectFiles) {
-                                       filePickerPanel.currentSelection = [model.filePath]
-                                       root.confirmSelection()
-                                     } else {
-                                       folderModel.folder = "file://" + model.filePath
-                                       root.currentPath = model.filePath
-                                     }
+                                     // Double-click on folder always navigates into it
+                                     folderModel.folder = "file://" + model.filePath
+                                     root.currentPath = model.filePath
                                    } else {
-                                     if (root.selectFiles) {
+                                     // Double-click on file selects and confirms (only in file mode)
+                                     if (root.selectionMode === "files") {
                                        filePickerPanel.currentSelection = [model.filePath]
                                        root.confirmSelection()
                                      }
@@ -765,7 +803,8 @@ Popup {
             if (filePickerPanel.searchText.length > 0) {
               return "Searching for: \"" + filePickerPanel.searchText + "\" (" + filteredModel.count + " matches)"
             } else if (filePickerPanel.currentSelection.length > 0) {
-              return filePickerPanel.currentSelection.length + " item(s) selected"
+              const selectedName = filePickerPanel.currentSelection[0].split('/').pop()
+              return "Selected: " + selectedName
             } else {
               return filteredModel.count + " items"
             }
@@ -785,14 +824,7 @@ Popup {
         }
 
         NButton {
-          text: {
-            if (root.selectFolders && !root.selectFiles)
-              return "Select Folder"
-            else if (root.selectFiles && !root.selectFolders)
-              return "Select File"
-            else
-              return "Select"
-          }
+          text: root.selectionMode === "folders" ? "Select Folder" : "Select File"
           icon: "filepicker-check"
           enabled: filePickerPanel.currentSelection.length > 0
           onClicked: root.confirmSelection()

@@ -229,8 +229,7 @@ ColumnLayout {
 
   NFilePicker {
     id: folderPicker
-    selectFiles: false
-    selectFolders: true
+    selectionMode: "folders"
     title: I18n.tr("settings.screen-recorder.general.select-output-folder")
     initialPath: Settings.data.screenRecorder.directory || Quickshell.env("HOME") + "/Videos"
     onAccepted: paths => {

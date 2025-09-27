@@ -49,8 +49,7 @@ ColumnLayout {
   NFilePicker {
     id: avatarPicker
     title: I18n.tr("settings.general.profile.select-avatar")
-    selectFiles: true
-    selectFolders: true
+    selectionMode: "files"
     initialPath: Settings.data.general.avatarImage.substr(0, Settings.data.general.avatarImage.lastIndexOf("/")) || Quickshell.env("HOME")
     nameFilters: ["*.jpg", "*.jpeg", "*.png", "*.gif", "*.pnm", "*.bmp"]
     onAccepted: paths => {
