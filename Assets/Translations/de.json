@@ -478,6 +478,10 @@
         "enable-matugen": {
           "label": "Matugen aktivieren",
           "description": "Automatisch Farben basierend auf Ihrem aktiven Hintergrundbild generieren."
+        },
+        "matugen-scheme-type": {
+          "label": "Matugen-Schema-Typ",
+          "description": "Wähle einen Farbstil für Matugen aus."
         }
       },
       "predefined": {

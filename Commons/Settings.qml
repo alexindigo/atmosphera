@@ -156,7 +156,7 @@ Singleton {
             "id": "Battery"
           }, {
             "id": "Volume"
-          },           {
+          }, {
             "id": "Brightness"
           }, {
             "id": "Clock"
@@ -291,6 +291,7 @@ Singleton {
       property bool useWallpaperColors: false
       property string predefinedScheme: "Noctalia (default)"
       property bool darkMode: true
+      property string matugenSchemeType: "scheme-fruit-salad"
     }
 
     // matugen templates toggles

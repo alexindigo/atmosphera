@@ -476,6 +476,10 @@
           "enable-matugen": {
             "label": "启用 Matugen",
             "description": "根据您的活动壁纸自动生成颜色。"
+          },
+          "matugen-scheme-type": {
+            "label": "Matugen 配色方案类型",
+            "description": "为 Matugen 选择配色方案生成算法。"
           }
         },
         "predefined": {

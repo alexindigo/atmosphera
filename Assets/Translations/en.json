@@ -478,6 +478,10 @@
         "enable-matugen": {
           "label": "Enable Matugen",
           "description": "Automatically generate colors based on your active wallpaper."
+        },
+        "matugen-scheme-type": {
+          "label": "Matugen scheme type",
+          "description": "Choose the color scheme generation algorithm for Matugen."
         }
       },
       "predefined": {

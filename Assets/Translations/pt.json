@@ -442,6 +442,10 @@
         "enable-matugen": {
           "label": "Ativar Matugen",
           "description": "Gera cores automaticamente com base no seu papel de parede ativo."
+        },
+        "matugen-scheme-type": {
+          "label": "Tipo de esquema Matugen",
+          "description": "Escolha o algoritmo de geração de esquema de cores para Matugen."
         }
       },
       "predefined": {
