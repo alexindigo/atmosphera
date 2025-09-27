@@ -18,6 +18,7 @@ Singleton {
   property bool fuzzelAvailable: false
   property bool vesktopAvailable: false
   property bool gpuScreenRecorderAvailable: false
+  property bool wlsunsetAvailable: false
 
   // Signal emitted when all checks are complete
   signal checksCompleted
@@ -31,7 +32,8 @@ Singleton {
                                             "footAvailable": ["which", "foot"],
                                             "fuzzelAvailable": ["which", "fuzzel"],
                                             "vesktopAvailable": ["which", "vesktop"],
-                                            "gpuScreenRecorderAvailable": ["sh", "-c", "command -v gpu-screen-recorder >/dev/null 2>&1 || (command -v flatpak >/dev/null 2>&1 && flatpak list --app | grep -q 'com.dec05eba.gpu_screen_recorder')"]
+                                            "gpuScreenRecorderAvailable": ["sh", "-c", "command -v gpu-screen-recorder >/dev/null 2>&1 || (command -v flatpak >/dev/null 2>&1 && flatpak list --app | grep -q 'com.dec05eba.gpu_screen_recorder')"],
+                                            "wlsunsetAvailable": ["which", "wlsunset"]
                                           })
 
   // Internal tracking

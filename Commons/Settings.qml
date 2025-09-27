@@ -114,7 +114,7 @@ Singleton {
   JsonAdapter {
     id: adapter
 
-    property int settingsVersion: 8
+    property int settingsVersion: 9
 
     // bar
     property JsonObject bar: JsonObject {
@@ -156,10 +156,8 @@ Singleton {
             "id": "Battery"
           }, {
             "id": "Volume"
-          }, {
+          },           {
             "id": "Brightness"
-          }, {
-            "id": "NightLight"
           }, {
             "id": "Clock"
           }, {

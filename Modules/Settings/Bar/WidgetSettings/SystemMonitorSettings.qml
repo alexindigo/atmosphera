@@ -62,6 +62,7 @@ ColumnLayout {
     label: I18n.tr("bar.widget-settings.system-monitor.memory-percentage")
     checked: valueShowMemoryAsPercent
     onToggled: checked => valueShowMemoryAsPercent = checked
+    visible: valueShowMemoryUsage
   }
 
   NToggle {
