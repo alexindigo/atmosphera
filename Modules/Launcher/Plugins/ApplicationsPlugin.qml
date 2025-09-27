@@ -142,7 +142,8 @@ Item {
           if (app.runInTerminal) {
             // If app.execute() fails for terminal apps, we handle it manually.
             Logger.log("ApplicationsPlugin", "Executing terminal app manually: " + app.name)
-            const command = ["kitty", "-e"].concat(app.command)
+            const terminal = Settings.data.appLauncher.terminalCommand.split(" ")
+            const command = terminal.concat(app.command)
             Quickshell.execDetached(command)
           } else if (app.execute) {
             // Default execution for GUI apps
