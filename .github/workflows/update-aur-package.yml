@@ -62,16 +62,17 @@ jobs:
       - name: Update PKGBUILD
         env:
           PKGVER: ${{ steps.vars.outputs.pkgver }}
+        working-directory: ${{ github.workspace }}/aur
         run: |
           set -euo pipefail
-          cd "$GITHUB_WORKSPACE/aur"
           sed -i "s/^pkgver=.*/pkgver=${PKGVER}/" PKGBUILD
           sed -i "s/^pkgrel=.*/pkgrel=1/" PKGBUILD
 
       - name: Refresh checksums and metadata
+        env:
+          AUR_DIR: ${{ github.workspace }}/aur
         run: |
           set -euo pipefail
-          AUR_DIR="$GITHUB_WORKSPACE/aur"
           chown -R builduser:builduser "$AUR_DIR"
           su - builduser -c "cd $AUR_DIR && updpkgsums"
           su - builduser -c "cd $AUR_DIR && makepkg --printsrcinfo > .SRCINFO"
@@ -79,9 +80,10 @@ jobs:
       - name: Commit and push changes
         env:
           PKGVER: ${{ steps.vars.outputs.pkgver }}
+        working-directory: ${{ github.workspace }}/aur
         run: |
           set -euo pipefail
-          cd "$GITHUB_WORKSPACE/aur"
+          git config --global --add safe.directory "$PWD"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           if [[ -n "$(git status --porcelain)" ]]; then
