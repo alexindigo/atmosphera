@@ -41,6 +41,9 @@ NIconButton {
     }
   }
   tooltipText: I18n.tr("tooltips.manage-wifi")
+  tooltipPositionAbove: Settings.data.bar.position === "bottom"
+  tooltipPositionLeft: Settings.data.bar.position === "right"
+  tooltipPositionRight: Settings.data.bar.position === "left"
   onClicked: PanelService.getPanel("wifiPanel")?.toggle(this)
   onRightClicked: PanelService.getPanel("wifiPanel")?.toggle(this)
 }

@@ -11,6 +11,9 @@ NIconButton {
 
   icon: "dark-mode"
   tooltipText: Settings.data.colorSchemes.darkMode ? I18n.tr("tooltips.switch-to-light-mode") : I18n.tr("tooltips.switch-to-dark-mode")
+  tooltipPositionAbove: Settings.data.bar.position === "bottom"
+  tooltipPositionLeft: Settings.data.bar.position === "right"
+  tooltipPositionRight: Settings.data.bar.position === "left"
   compact: (Settings.data.bar.density === "compact")
   baseSize: Style.capsuleHeight
   colorBg: Settings.data.colorSchemes.darkMode ? (Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent) : Color.mPrimary

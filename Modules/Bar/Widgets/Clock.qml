@@ -111,6 +111,8 @@ Rectangle {
     text: I18n.tr("clock.tooltip")
     target: clockContainer
     positionAbove: Settings.data.bar.position === "bottom"
+    positionLeft: barPosition === "right"
+    positionRight: barPosition === "left"
   }
 
   MouseArea {

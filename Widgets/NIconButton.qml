@@ -11,6 +11,9 @@ Rectangle {
 
   property string icon
   property string tooltipText
+  property bool tooltipPositionAbove: false
+  property bool tooltipPositionLeft: false
+  property bool tooltipPositionRight: false
   property bool enabled: true
   property bool allowClickWhenDisabled: false
   property bool hovering: false
@@ -65,7 +68,9 @@ Rectangle {
   NTooltip {
     id: tooltip
     target: root
-    positionAbove: Settings.data.bar.position === "bottom"
+    positionAbove: root.tooltipPositionAbove
+    positionLeft: root.tooltipPositionLeft
+    positionRight: root.tooltipPositionRight
     text: root.tooltipText
   }
 

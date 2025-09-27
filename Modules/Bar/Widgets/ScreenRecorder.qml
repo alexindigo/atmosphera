@@ -12,6 +12,9 @@ NIconButton {
 
   icon: "camera-video"
   tooltipText: ScreenRecorderService.isRecording ? I18n.tr("tooltips.click-to-stop-recording") : I18n.tr("tooltips.click-to-start-recording")
+  tooltipPositionAbove: Settings.data.bar.position === "bottom"
+  tooltipPositionLeft: Settings.data.bar.position === "right"
+  tooltipPositionRight: Settings.data.bar.position === "left"
   compact: (Settings.data.bar.density === "compact")
   baseSize: Style.capsuleHeight
   colorBg: ScreenRecorderService.isRecording ? Color.mPrimary : (Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent)

@@ -15,6 +15,9 @@ NIconButton {
   compact: (Settings.data.bar.density === "compact")
   icon: "wallpaper-selector"
   tooltipText: I18n.tr("tooltips.open-wallpaper-selector")
+  tooltipPositionAbove: Settings.data.bar.position === "bottom"
+  tooltipPositionLeft: Settings.data.bar.position === "right"
+  tooltipPositionRight: Settings.data.bar.position === "left"
   colorBg: (Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent)
   colorFg: Color.mOnSurface
   colorBorder: Color.transparent

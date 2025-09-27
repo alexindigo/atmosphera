@@ -53,6 +53,9 @@ NIconButton {
   compact: (Settings.data.bar.density === "compact")
   icon: Settings.data.notifications.doNotDisturb ? "bell-off" : "bell"
   tooltipText: Settings.data.notifications.doNotDisturb ? I18n.tr("tooltips.open-notification-history-disable-dnd") : I18n.tr("tooltips.open-notification-history-enable-dnd")
+  tooltipPositionAbove: Settings.data.bar.position === "bottom"
+  tooltipPositionLeft: Settings.data.bar.position === "right"
+  tooltipPositionRight: Settings.data.bar.position === "left"
   colorBg: (Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent)
   colorFg: Color.mOnSurface
   colorBorder: Color.transparent

@@ -242,7 +242,6 @@ Item {
     text: root.tooltipText
     positionLeft: barPosition === "right"
     positionRight: barPosition === "left"
-    positionAbove: Settings.data.bar.position === "bottom"
     delay: Style.tooltipDelayLong
   }
 
