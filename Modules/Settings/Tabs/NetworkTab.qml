@@ -23,7 +23,7 @@ ColumnLayout {
 
   NToggle {
     label: I18n.tr("settings.network.bluetooth.label")
-    checked: Settings.data.network.bluetoothEnabled
+    checked: BluetoothService.enabled
     onToggled: checked => BluetoothService.setBluetoothEnabled(checked)
   }
 

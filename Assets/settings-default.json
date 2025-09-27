@@ -1,5 +1,5 @@
 {
-  "settingsVersion": 11,
+  "settingsVersion": 12,
   "bar": {
     "position": "top",
     "backgroundOpacity": 1,
@@ -118,8 +118,7 @@
     "pinnedApps": []
   },
   "network": {
-    "wifiEnabled": true,
-    "bluetoothEnabled": true
+    "wifiEnabled": true
   },
   "notifications": {
     "doNotDisturb": false,

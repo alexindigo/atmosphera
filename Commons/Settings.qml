@@ -114,7 +114,7 @@ Singleton {
   JsonAdapter {
     id: adapter
 
-    property int settingsVersion: 11
+    property int settingsVersion: 12
 
     // bar
     property JsonObject bar: JsonObject {
@@ -240,7 +240,6 @@ Singleton {
     // network
     property JsonObject network: JsonObject {
       property bool wifiEnabled: true
-      property bool bluetoothEnabled: true
     }
 
     // notifications
