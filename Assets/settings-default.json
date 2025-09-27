@@ -1,5 +1,5 @@
 {
-  "settingsVersion": 9,
+  "settingsVersion": 10,
   "bar": {
     "position": "top",
     "backgroundOpacity": 1,
@@ -158,7 +158,8 @@
   "colorSchemes": {
     "useWallpaperColors": false,
     "predefinedScheme": "Noctalia (default)",
-    "darkMode": true
+    "darkMode": true,
+    "matugenSchemeType": "scheme-fruit-salad"
   },
   "matugen": {
     "gtk4": false,
