@@ -106,9 +106,9 @@ Rectangle {
           id: taskbarTooltip
           text: taskbarItem.modelData.title || taskbarItem.modelData.appId || "Unknown app."
           target: taskbarItem
-          positionAbove: barPosition === "bottom"
-          positionLeft: barPosition === "right"
-          positionRight: barPosition === "left"
+          positionAbove: Settings.data.bar.position === "bottom"
+          positionLeft: Settings.data.bar.position === "right"
+          positionRight: Settings.data.bar.position === "left"
         }
       }
     }
