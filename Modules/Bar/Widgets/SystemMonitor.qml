@@ -323,7 +323,7 @@ Rectangle {
           font.pointSize: textSize
           font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
-          Layout.preferredWidth: isVertical ? undefine : percentTextWidth
+          Layout.preferredWidth: isVertical ? -1 : percentTextWidth
           horizontalAlignment: isVertical ? Text.AlignHCenter : Text.AlignRight
           verticalAlignment: Text.AlignVCenter
           color: Color.mPrimary
