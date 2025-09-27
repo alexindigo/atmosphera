@@ -11,9 +11,9 @@ Slider {
   property bool snapAlways: true
   property real heightRatio: 0.7
 
-  readonly property real knobDiameter: Math.round(Style.baseWidgetSize * heightRatio * scaling)
-  readonly property real trackHeight: knobDiameter * 0.4
-  readonly property real cutoutExtra: Math.round(Style.baseWidgetSize * 0.1 * scaling)
+  readonly property real knobDiameter: Math.round((Style.baseWidgetSize * heightRatio * scaling) / 2) * 2
+  readonly property real trackHeight: Math.round((knobDiameter * 0.4) /2) * 2
+  readonly property real cutoutExtra: Math.round((Style.baseWidgetSize * 0.1 * scaling) / 2) * 2
 
   padding: cutoutExtra / 2
 
@@ -95,20 +95,20 @@ Slider {
     // Circular cutout
     Rectangle {
       id: knobCutout
-      width: knobDiameter + cutoutExtra
-      height: knobDiameter + cutoutExtra
+      implicitWidth: knobDiameter + cutoutExtra
+      implicitHeight: knobDiameter + cutoutExtra
       radius: width / 2
       color: root.cutoutColor !== undefined ? root.cutoutColor : Color.mSurface
-      x: root.leftPadding + Math.round(root.visualPosition * (root.availableWidth - root.knobDiameter) - cutoutExtra)
+      x: root.leftPadding + root.visualPosition * (root.availableWidth - root.knobDiameter) - cutoutExtra
       anchors.verticalCenter: parent.verticalCenter
     }
   }
 
   handle: Item {
-    width: knobDiameter
-    height: knobDiameter
-    x: root.leftPadding + Math.round(root.visualPosition * (root.availableWidth - width))
-    y: root.topPadding + Math.round(root.availableHeight / 2 - height / 2)
+    implicitWidth: knobDiameter
+    implicitHeight: knobDiameter
+    x: root.leftPadding + root.visualPosition * (root.availableWidth - width)
+    anchors.verticalCenter: parent.verticalCenter
 
     Rectangle {
       id: knob
