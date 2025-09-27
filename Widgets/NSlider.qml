@@ -12,7 +12,7 @@ Slider {
   property real heightRatio: 0.7
 
   readonly property real knobDiameter: Math.round((Style.baseWidgetSize * heightRatio * scaling) / 2) * 2
-  readonly property real trackHeight: Math.round((knobDiameter * 0.4) /2) * 2
+  readonly property real trackHeight: Math.round((knobDiameter * 0.4) / 2) * 2
   readonly property real cutoutExtra: Math.round((Style.baseWidgetSize * 0.1 * scaling) / 2) * 2
 
   padding: cutoutExtra / 2
