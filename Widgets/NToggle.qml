@@ -27,8 +27,8 @@ RowLayout {
   Rectangle {
     id: switcher
 
-    implicitWidth: Math.round(root.baseSize * 1.625 * scaling)
-    implicitHeight: Math.round(root.baseSize * scaling)
+    implicitWidth: Math.round(root.baseSize * .85 * scaling) * 2
+    implicitHeight: Math.round(root.baseSize * scaling * .5) * 2
     radius: height * 0.5
     color: root.checked ? Color.mPrimary : Color.mSurface
     border.color: Color.mOutline
@@ -47,8 +47,9 @@ RowLayout {
     }
 
     Rectangle {
-      implicitWidth: Math.round((root.baseSize * 0.8) * scaling)
-      implicitHeight: Math.round((root.baseSize * 0.8) * scaling)
+
+      implicitWidth: Math.round(root.baseSize * 0.4 * scaling) * 2
+      implicitHeight: Math.round(root.baseSize * 0.4 * scaling) * 2
       radius: height * 0.5
       color: root.checked ? Color.mOnPrimary : Color.mPrimary
       border.color: root.checked ? Color.mSurface : Color.mSurface
