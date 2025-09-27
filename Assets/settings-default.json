@@ -1,5 +1,5 @@
 {
-  "settingsVersion": 8,
+  "settingsVersion": 10,
   "bar": {
     "position": "top",
     "backgroundOpacity": 1,
@@ -50,9 +50,6 @@
         },
         {
           "id": "Brightness"
-        },
-        {
-          "id": "NightLight"
         },
         {
           "id": "Clock"
@@ -161,7 +158,8 @@
   "colorSchemes": {
     "useWallpaperColors": false,
     "predefinedScheme": "Noctalia (default)",
-    "darkMode": true
+    "darkMode": true,
+    "matugenSchemeType": "scheme-fruit-salad"
   },
   "matugen": {
     "gtk4": false,

@@ -140,6 +140,50 @@ ColumnLayout {
                }
   }
 
+  // Matugen Scheme Type Selection
+  NComboBox {
+    label: I18n.tr("settings.color-scheme.color-source.matugen-scheme-type.label")
+    description: I18n.tr("settings.color-scheme.color-source.matugen-scheme-type.description")
+    enabled: Settings.data.colorSchemes.useWallpaperColors
+    opacity: Settings.data.colorSchemes.useWallpaperColors ? 1.0 : 0.6
+    visible: Settings.data.colorSchemes.useWallpaperColors
+
+    model: [{
+        "key": "scheme-content",
+        "name": "Content"
+      }, {
+        "key": "scheme-expressive",
+        "name": "Expressive"
+      }, {
+        "key": "scheme-fidelity",
+        "name": "Fidelity"
+      }, {
+        "key": "scheme-fruit-salad",
+        "name": "Fruit Salad"
+      }, {
+        "key": "scheme-monochrome",
+        "name": "Monochrome"
+      }, {
+        "key": "scheme-neutral",
+        "name": "Neutral"
+      }, {
+        "key": "scheme-rainbow",
+        "name": "Rainbow"
+      }, {
+        "key": "scheme-tonal-spot",
+        "name": "Tonal Spot"
+      }]
+
+    currentKey: Settings.data.colorSchemes.matugenSchemeType
+
+    onSelected: key => {
+                  Settings.data.colorSchemes.matugenSchemeType = key
+                  if (Settings.data.colorSchemes.useWallpaperColors) {
+                    MatugenService.generateFromWallpaper()
+                  }
+                }
+  }
+
   NDivider {
     Layout.fillWidth: true
     Layout.topMargin: Style.marginXL * scaling

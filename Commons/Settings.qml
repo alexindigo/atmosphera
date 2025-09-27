@@ -114,7 +114,7 @@ Singleton {
   JsonAdapter {
     id: adapter
 
-    property int settingsVersion: 8
+    property int settingsVersion: 10
 
     // bar
     property JsonObject bar: JsonObject {
@@ -158,8 +158,6 @@ Singleton {
             "id": "Volume"
           }, {
             "id": "Brightness"
-          }, {
-            "id": "NightLight"
           }, {
             "id": "Clock"
           }, {
@@ -293,6 +291,7 @@ Singleton {
       property bool useWallpaperColors: false
       property string predefinedScheme: "Noctalia (default)"
       property bool darkMode: true
+      property string matugenSchemeType: "scheme-fruit-salad"
     }
 
     // matugen templates toggles

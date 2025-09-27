@@ -476,6 +476,10 @@
         "enable-matugen": {
           "label": "Activer Matugen",
           "description": "Générez automatiquement des couleurs en fonction de votre fond d'écran actif."
+        },
+        "matugen-scheme-type": {
+          "label": "Type de schéma Matugen",
+          "description": "Choisissez l'algorithme de génération de schéma de couleurs pour Matugen."
         }
       },
       "predefined": {

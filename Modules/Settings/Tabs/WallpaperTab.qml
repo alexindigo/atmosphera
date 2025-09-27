@@ -340,8 +340,7 @@ ColumnLayout {
 
   NFilePicker {
     id: mainFolderPicker
-    selectFiles: false
-    selectFolders: true
+    selectionMode: "folders"
     title: I18n.tr("settings.wallpaper.settings.select-folder")
     initialPath: Settings.data.wallpaper.directory || Quickshell.env("HOME") + "/Pictures"
     onAccepted: paths => {
@@ -353,8 +352,7 @@ ColumnLayout {
 
   NFilePicker {
     id: monitorFolderPicker
-    selectFiles: false
-    selectFolders: true
+    selectionMode: "folders"
     title: I18n.tr("settings.wallpaper.settings.select-monitor-folder")
     initialPath: WallpaperService.getMonitorDirectory(specificFolderMonitorName) || Quickshell.env("HOME") + "/Pictures"
     onAccepted: paths => {

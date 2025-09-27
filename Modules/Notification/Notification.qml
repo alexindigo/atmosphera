@@ -341,10 +341,13 @@ Variants {
                   }
 
                   // Notification actions
-                  RowLayout {
+                  Flow {
                     Layout.fillWidth: true
                     spacing: Style.marginS * scaling
                     Layout.topMargin: Style.marginM * scaling
+
+                    flow: Flow.LeftToRight
+                    layoutDirection: Qt.LeftToRight
 
                     // Store the notification ID for access in button delegates
                     property string parentNotificationId: notificationId
@@ -378,16 +381,11 @@ Variants {
                         textColor: hovered ? Color.mOnTertiary : Color.mOnPrimary
                         hoverColor: Color.mTertiary
                         outlined: false
-                        Layout.preferredHeight: 24 * scaling
+                        implicitHeight: 24 * scaling
                         onClicked: {
                           NotificationService.invokeAction(parent.parentNotificationId, actionData.identifier)
                         }
                       }
-                    }
-
-                    // Spacer to push buttons to the left
-                    Item {
-                      Layout.fillWidth: true
                     }
                   }
                 }

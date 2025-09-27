@@ -90,8 +90,7 @@ ColumnLayout {
   NFilePicker {
     id: imagePicker
     title: I18n.tr("bar.widget-settings.control-center.select-custom-icon")
-    selectFiles: true
-    selectFolders: false
+    selectionMode: "files"
     nameFilters: ["*.jpg", "*.jpeg", "*.png", "*.gif", "*.pnm", "*.bmp"]
     initialPath: Quickshell.env("HOME")
     onAccepted: paths => {
