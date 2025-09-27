@@ -16,6 +16,9 @@ Singleton {
     return monitors.find(m => m.modelData === screen)
   }
 
+  // Signal emitted when a specific monitor's brightness changes, includes monitor context
+  signal monitorBrightnessChanged(var monitor, real newBrightness)
+
   function getAvailableMethods(): list<string> {
     var methods = []
     if (monitors.some(m => m.isDdc))
@@ -128,17 +131,20 @@ Singleton {
             return
           }
 
-          var lines = dataText.split("
-")
+          var lines = dataText.split("\n")
           if (lines.length >= 2) {
             var current = parseInt(lines[0].trim())
             var max = parseInt(lines[1].trim())
             if (!isNaN(current) && !isNaN(max) && max > 0) {
               var newBrightness = current / max
-              // Update internal value to match system state
-              monitor.brightness = newBrightness
-              monitor.brightnessUpdated(monitor.brightness)
-              //Logger.log("Brightness", "Refreshed brightness from system:", monitor.modelData.name, monitor.brightness)
+              // Only update if it's actually different (avoid feedback loops)
+              if (Math.abs(newBrightness - monitor.brightness) > 0.01) {
+                // Update internal value to match system state
+                monitor.brightness = newBrightness
+                monitor.brightnessUpdated(monitor.brightness)
+                root.monitorBrightnessChanged(monitor, monitor.brightness)
+                //Logger.log("Brightness", "Refreshed brightness from system:", monitor.modelData.name, monitor.brightness)
+              }
             }
           }
         }
@@ -149,8 +155,8 @@ Singleton {
     function refreshBrightnessFromSystem() {
       if (!monitor.isDdc && !monitor.isAppleDisplay) {
         // For internal displays, query the system directly
-        refreshProc.command = ["sh", "-c", 
-          "cat " + monitor.brightnessPath + " && " + 
+        refreshProc.command = ["sh", "-c",
+          "cat " + monitor.brightnessPath + " && " +
           "cat " + monitor.maxBrightnessPath]
         refreshProc.running = true
       } else if (monitor.isDdc) {
@@ -226,6 +232,7 @@ Singleton {
 
           // Always update
           monitor.brightnessUpdated(monitor.brightness)
+          root.monitorBrightnessChanged(monitor, monitor.brightness)
         }
       }
     }
@@ -269,7 +276,7 @@ Singleton {
 
       // Update internal value and trigger UI feedback
       monitor.brightness = value
-      brightnessUpdated(monitor.brightness)
+      root.monitorBrightnessChanged(monitor, monitor.brightness)
 
       if (isAppleDisplay) {
         monitor.ignoreNextChange = true
