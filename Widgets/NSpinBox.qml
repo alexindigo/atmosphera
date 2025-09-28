@@ -80,12 +80,12 @@ RowLayout {
     Item {
       id: decreaseButton
       height:parent.height
-      width: height
+      width: leftSemicircle.width + (leftDiamondContainer.width / 2)
       anchors.top: parent.top
       anchors.bottom: parent.bottom
       anchors.left: parent.left
       opacity: root.enabled && root.value > root.from ? 1.0 : 0.3
-
+      clip: true
 
       Item {
         id: leftSemicircle
@@ -107,31 +107,59 @@ RowLayout {
           }
         }
 
-      Rectangle {
-        height: parent.height
-        width: parent.width - leftSemicircle.width
-        anchors.left: leftSemicircle.right
-        gradient: Gradient {
-          orientation: Gradient.Horizontal
-            GradientStop {
-              position: 0.0
-              color: decreaseArea.containsMouse ? Color.mTertiary : "transparent"
-              Behavior on color {
-                ColorAnimation {
-                  duration: Style.animationFast
-                }
+        // 1. A wrapper Item to define the final, pixel-perfect size.
+        Item {
+          id: leftDiamondContainer
+
+          // Make the container's height a guaranteed even number
+          height: Math.round(parent.height / 2) * 2
+          width: height * Math.sqrt(2) // Keep the final bounding box square
+          anchors.verticalCenter: parent.verticalCenter
+          anchors.horizontalCenter: leftSemicircle.right
+
+          // 2. The Rectangle to be rotated and scaled.
+          //    We give it a fixed base size (e.g., 100x100) to make calculations stable.
+          Rectangle {
+            id: leftDiamondVisual
+            width: 100
+            height: 100
+
+            // The radius is now based on the fixed size
+            radius: width / 4
+
+            color: decreaseArea.containsMouse ? Color.mTertiary : "transparent"
+            Behavior on color {
+              ColorAnimation {
+                duration: Style.animationFast
               }
             }
-            GradientStop {
-              position: 1.0
-              color: "transparent"
-            }
+
+            // Center the base shape in the container
+            anchors.centerIn: parent
+
+            // 3. Apply transforms: first rotate, then scale to fit.
+            transform: [
+              Rotation { angle: 45; origin.x: 50; origin.y: 50 },
+              Scale {
+                id: leftScaler
+                origin.x: 50
+                origin.y: 50
+
+                // This is the full formula for the height of the rotated, rounded square
+                readonly property real trueHeight: (leftDiamondVisual.width - 2 * leftDiamondVisual.radius) * Math.sqrt(2) + (2 * leftDiamondVisual.radius)
+
+                // The corrected scale factor
+                xScale: leftDiamondContainer.height / leftScaler.trueHeight
+                yScale: leftDiamondContainer.height / leftScaler.trueHeight
+              }
+            ]
           }
         }
 
+
         NIcon {
           anchors.centerIn: parent
-          icon: "chevron-left"
+          icon: "minus"
           font.pointSize: Style.fontSizeS * scaling
           color: decreaseArea.containsMouse ? Color.mOnPrimary : Color.mPrimary
         }
@@ -154,12 +182,12 @@ RowLayout {
     Item {
       id: increaseButton
       height: parent.height
-      width: height
+      width: rightSemicircle.width + (rightDiamondContainer.width / 2)
       anchors.top: parent.top
       anchors.bottom: parent.bottom
       anchors.right: parent.right
       opacity: root.enabled && root.value < root.to ? 1.0 : 0.3
-
+      clip: true
 
       Item {
         id: rightSemicircle
@@ -181,31 +209,74 @@ RowLayout {
         }
       }
 
-      Rectangle {
-        height: parent.height
-        width: parent.width - rightSemicircle.width
-        anchors.right: rightSemicircle.left
-        gradient: Gradient {
-          orientation: Gradient.Horizontal
-          GradientStop {
-            position: 1.0
-            color: increaseArea.containsMouse ? Color.mTertiary : "transparent"
-            Behavior on color {
-              ColorAnimation {
-                duration: Style.animationFast
-              }
+      Item {
+        id: rightDiamondContainer
+
+        // Make the container's height a guaranteed even number
+        height: Math.round(parent.height / 2) * 2
+        width: height * Math.sqrt(2) // Keep the final bounding box square
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.horizontalCenter: rightSemicircle.left
+
+        // 2. The Rectangle to be rotated and scaled.
+        //    We give it a fixed base size (e.g., 100x100) to make calculations stable.
+        Rectangle {
+          id: rightDiamondVisual
+          width: 100
+          height: 100
+
+          // The radius is now based on the fixed size
+          radius: width / 4
+
+          color: increaseArea.containsMouse ? Color.mTertiary : "transparent"
+          Behavior on color {
+            ColorAnimation {
+              duration: Style.animationFast
             }
           }
-          GradientStop {
-            position: 0.0
-            color: "transparent"
-          }
+
+          // Center the base shape in the container
+          anchors.centerIn: parent
+
+          // 3. Apply transforms: first rotate, then scale to fit.
+          transform: [
+            Rotation { angle: 45; origin.x: 50; origin.y: 50 },
+            Scale {
+              id: rightScaler
+              origin.x: 50
+              origin.y: 50
+
+              // This is the full formula for the height of the rotated, rounded square
+              readonly property real trueHeight: (rightDiamondVisual.width - 2 * rightDiamondVisual.radius) * Math.sqrt(2) + (2 * rightDiamondVisual.radius)
+
+              // The corrected scale factor
+              xScale: rightDiamondContainer.height / rightScaler.trueHeight
+              yScale: rightDiamondContainer.height / rightScaler.trueHeight
+            }
+          ]
         }
       }
 
+      //
+      // Rectangle {
+      //   height: (parent.height / Math.sqrt(2)) + (radius * (2 - Math.sqrt(2)))
+      //   width: height
+      //   radius: width / 4
+      //   anchors.verticalCenter: parent.verticalCenter
+      //   anchors.horizontalCenter: rightSemicircle.left
+      //   rotation: 45
+      //   color: increaseArea.containsMouse ? Color.mTertiary : "transparent"
+      //   Behavior on color {
+      //     ColorAnimation {
+      //       duration: Style.animationFast
+      //     }
+      //   }
+      // }
+
+
       NIcon {
         anchors.centerIn: parent
-        icon: "chevron-right"
+        icon: "plus"
         font.pointSize: Style.fontSizeS * scaling
         color: increaseArea.containsMouse ? Color.mOnPrimary : Color.mPrimary
       }
