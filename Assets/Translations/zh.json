@@ -29,7 +29,11 @@
           "animation-speed": {
             "label": "动画速度",
             "description": "调整全局动画速度。"
-          }
+          },
+          "animation-disable": {
+            "label": "关闭动画",
+            "description": "禁用所有动画效果，以获得更快速、更灵敏的体验。"
+        }
         },
         "screen-corners": {
           "section": {
@@ -226,7 +230,7 @@
           },
           "floating": {
             "label": "浮动状态栏",
-            "description": "将状态栏显示为浮动'药丸'。注意：这会将屏幕边角移动到边缘。"
+            "description": "将状态栏显示为浮动样式（类似于一个药丸）。注意：这会将屏幕边角移动到边缘。"
           },
           "margins": {
             "label": "边距",
