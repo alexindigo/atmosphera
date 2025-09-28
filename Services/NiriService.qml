@@ -94,12 +94,21 @@ Item {
           const windowsList = []
 
           for (const win of windowsData) {
+            var output = null
+            for (var i = 0; i < workspaces.count; i++) {
+              if (workspaces.get(i).id === win.workspace_id) {
+                output = workspaces.get(i).output
+                break
+              }
+            }
+            
             windowsList.push({
                                "id": win.id,
                                "title": win.title || "",
                                "appId": win.app_id || "",
                                "workspaceId": win.workspace_id || null,
-                               "isFocused": win.is_focused === true
+                               "isFocused": win.is_focused === true,
+                               "output": output
                              })
           }
 
@@ -161,13 +170,22 @@ Item {
     try {
       const windowData = eventData.window
       const existingIndex = windows.findIndex(w => w.id === windowData.id)
+      
+      var output = null
+      for (var i = 0; i < workspaces.count; i++) {
+        if (workspaces.get(i).id === windowData.workspace_id) {
+          output = workspaces.get(i).output
+          break
+        }
+      }
 
       const newWindow = {
         "id": windowData.id,
         "title": windowData.title || "",
         "appId": windowData.app_id || "",
         "workspaceId": windowData.workspace_id || null,
-        "isFocused": windowData.is_focused === true
+        "isFocused": windowData.is_focused === true,
+        "output": output
       }
 
       if (existingIndex >= 0) {
@@ -226,15 +244,24 @@ Item {
       const windowsList = []
 
       for (const win of windowsData) {
+        var output = ""
+        for (var i = 0; i < workspaces.count; i++) {
+          if (workspaces.get(i).id === win.workspace_id) {
+            output = workspaces.get(i).output
+            break
+          }
+        }
+        
         windowsList.push({
                            "id": win.id,
                            "title": win.title || "",
                            "appId": win.app_id || "",
                            "workspaceId": win.workspace_id || null,
-                           "isFocused": win.is_focused === true
+                           "isFocused": win.is_focused === true,
+                           "output": output,
                          })
       }
-
+      
       windowsList.sort((a, b) => a.id - b.id)
       windows = windowsList
       windowListChanged()
@@ -257,9 +284,18 @@ Item {
   function handleWindowFocusChanged(eventData) {
     try {
       const focusedId = eventData.id
+      
+      if (windows[focusedWindowIndex]) {
+        windows[focusedWindowIndex].isFocused = false
+      }
 
       if (focusedId) {
         const newIndex = windows.findIndex(w => w.id === focusedId)
+        
+        if (newIndex >= 0) {
+          windows[newIndex].isFocused = true
+        }
+        
         focusedWindowIndex = newIndex >= 0 ? newIndex : -1
       } else {
         focusedWindowIndex = -1
@@ -277,6 +313,22 @@ Item {
       Quickshell.execDetached(["niri", "msg", "action", "focus-workspace", workspaceId.toString()])
     } catch (e) {
       Logger.error("NiriService", "Failed to switch workspace:", e)
+    }
+  }
+  
+  function focusWindow(windowId) {
+    try {
+      Quickshell.execDetached(["niri", "msg", "action", "focus-window", "--id", windowId.toString()])
+    } catch (e) {
+      Logger.error("NiriService", "Failed to switch window:", e)
+    }
+  }
+  
+  function closeWindow(windowId) {
+    try {
+      Quickshell.execDetached(["niri", "msg", "action", "close-window", "--id", windowId.toString()])
+    } catch (e) {
+      Logger.error("NiriService", "Failed to close window:", e)
     }
   }
 

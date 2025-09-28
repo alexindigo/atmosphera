@@ -41,12 +41,13 @@ Rectangle {
     columnSpacing: isVerticalBar ? 0 : Style.marginXXS * root.scaling
 
     Repeater {
-      model: ToplevelManager && ToplevelManager.toplevels ? ToplevelManager.toplevels : []
+      model: CompositorService.windows
       delegate: Item {
         id: taskbarItem
-        required property Toplevel modelData
-        property Toplevel toplevel: modelData
-        property bool isActive: ToplevelManager.activeToplevel === modelData
+        required property var modelData
+        
+        // TODO: Make this configurable
+        visible: modelData.output == screen.name && CompositorService.getActiveWorkspaces().map(ws => ws.id).includes(modelData.workspaceId)
 
         Layout.preferredWidth: root.itemSize
         Layout.preferredHeight: root.itemSize
@@ -57,7 +58,7 @@ Rectangle {
           anchors.centerIn: parent
           width: parent.width
           height: parent.height
-          color: taskbarItem.isActive ? Color.mPrimary : root.color
+          color: modelData.isFocused ? Color.mPrimary : root.color
           border.width: 0
           radius: Math.round(Style.radiusXS * root.scaling)
           border.color: Color.transparent
@@ -86,13 +87,13 @@ Rectangle {
 
             if (mouse.button === Qt.LeftButton) {
               try {
-                taskbarItem.modelData.activate()
+                CompositorService.focusWindow(taskbarItem.modelData.id)
               } catch (error) {
                 Logger.error("Taskbar", "Failed to activate toplevel: " + error)
               }
             } else if (mouse.button === Qt.RightButton) {
               try {
-                taskbarItem.modelData.close()
+                CompositorService.closeWindow(taskbarItem.modelData.id)
               } catch (error) {
                 Logger.error("Taskbar", "Failed to close toplevel: " + error)
               }
