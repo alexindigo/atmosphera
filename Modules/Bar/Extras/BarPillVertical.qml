@@ -58,6 +58,15 @@ Item {
   width: buttonSize
   height: revealed ? (buttonSize + maxPillHeight - pillOverlap) : buttonSize
 
+  Connections {
+    target: root
+    function onTooltipTextChanged() {
+      if (PanelService.tooltip.visible) {
+        PanelService.tooltip.updateText(root.tooltipText)
+      }
+    }
+  }
+
   Rectangle {
     id: pill
     width: revealed ? maxPillWidth : 1
@@ -236,15 +245,6 @@ Item {
     }
   }
 
-  NTooltip {
-    id: tooltip
-    target: pill
-    text: root.tooltipText
-    positionLeft: barPosition === "right"
-    positionRight: barPosition === "left"
-    delay: Style.tooltipDelayLong
-  }
-
   Timer {
     id: showTimer
     interval: Style.pillDelay
@@ -262,7 +262,7 @@ Item {
     onEntered: {
       hovered = true
       root.entered()
-      tooltip.show()
+      PanelService.tooltip.show(pill, root.tooltipText, BarService.getTooltipDirection(), Style.tooltipDelayLong)
       if (disableOpen || forceClose) {
         return
       }
@@ -276,7 +276,7 @@ Item {
       if (!forceOpen && !forceClose) {
         hide()
       }
-      tooltip.hide()
+      PanelService.tooltip.hide()
     }
     onClicked: function (mouse) {
       if (mouse.button === Qt.LeftButton) {

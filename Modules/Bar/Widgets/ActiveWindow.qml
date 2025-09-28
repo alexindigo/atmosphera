@@ -328,27 +328,15 @@ Item {
         cursorShape: Qt.PointingHandCursor
         acceptedButtons: Qt.LeftButton
         onEntered: {
-          if (barPosition === "left" || barPosition === "right") {
-            tooltip.show()
-          } else if ((tooltip.text !== "") && (scrollingMode === "never")) {
-            tooltip.show()
+          if ((windowTitle !== "") && (barPosition === "left" || barPosition === "right") || (scrollingMode === "never")) {
+            PanelService.tooltip.show(root, windowTitle, BarService.getTooltipDirection())
           }
         }
         onExited: {
-          tooltip.hide()
+          PanelService.tooltip.hide()
         }
       }
     }
-  }
-
-  NTooltip {
-    id: tooltip
-    text: windowTitle
-    target: (barPosition === "left" || barPosition === "right") ? verticalLayout : windowActiveRect
-    positionLeft: barPosition === "right"
-    positionRight: barPosition === "left"
-    positionAbove: Settings.data.bar.position === "bottom"
-    delay: Style.tooltipDelay
   }
 
   Connections {

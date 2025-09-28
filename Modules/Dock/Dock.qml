@@ -373,14 +373,6 @@ Variants {
                       }
                     }
 
-                    // Individual tooltip for this app
-                    NTooltip {
-                      id: appTooltip
-                      target: appButton
-                      positionAbove: true
-                      visible: false
-                    }
-
                     Image {
                       id: appIcon
                       width: iconSize
@@ -481,8 +473,8 @@ Variants {
                       onEntered: {
                         anyAppHovered = true
                         const appName = appButton.appTitle || appButton.appId || "Unknown"
-                        appTooltip.text = appName.length > 40 ? appName.substring(0, 37) + "..." : appName
-                        appTooltip.isVisible = true
+                        const tooltipText = appName.length > 40 ? appName.substring(0, 37) + "..." : appName
+                        PanelService.tooltip.show(appButton, tooltipText, "top")
                         if (autoHide) {
                           showTimer.stop()
                           hideTimer.stop()
@@ -492,7 +484,7 @@ Variants {
 
                       onExited: {
                         anyAppHovered = false
-                        appTooltip.hide()
+                        PanelService.tooltip.hide()
                         if (autoHide && !dockHovered && !peekHovered && !menuHovered) {
                           hideTimer.restart()
                         }
@@ -508,7 +500,7 @@ Variants {
                           // Close any other existing context menu first
                           root.closeAllContextMenus()
                           // Hide tooltip when showing context menu
-                          appTooltip.hide()
+                          PanelService.tooltip.hide()
                           contextMenu.show(appButton, modelData.toplevel || modelData)
                           return
                         }

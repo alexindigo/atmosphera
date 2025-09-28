@@ -69,6 +69,7 @@ Popup {
 
       NIconButton {
         icon: "close"
+        tooltipText: "Close"
         onClicked: widgetSettings.close()
       }
     }
