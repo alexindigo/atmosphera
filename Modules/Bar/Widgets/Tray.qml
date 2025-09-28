@@ -102,7 +102,7 @@ Rectangle {
 
                          modelData.secondaryActivate && modelData.secondaryActivate()
                        } else if (mouse.button === Qt.RightButton) {
-                         TooltipService.hide()
+                         TooltipService.hideImmediately()
 
                          // Close the menu if it was visible
                          if (trayPanel && trayPanel.visible) {
@@ -135,7 +135,10 @@ Rectangle {
                          }
                        }
                      }
-          onEntered: TooltipService.show(trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection())
+          onEntered: {
+            trayPanel.close()
+            TooltipService.show(trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection())
+          }
           onExited: TooltipService.hide()
         }
       }
