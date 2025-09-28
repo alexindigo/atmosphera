@@ -102,7 +102,7 @@ Rectangle {
 
                          modelData.secondaryActivate && modelData.secondaryActivate()
                        } else if (mouse.button === Qt.RightButton) {
-                         trayTooltip.hide()
+                         TooltipService.hide()
 
                          // Close the menu if it was visible
                          if (trayPanel && trayPanel.visible) {
