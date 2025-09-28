@@ -1240,6 +1240,8 @@
     "click-again": "Clique novamente para executar imediatamente",
     "action-in-seconds": "{action} em {seconds} segundos...",
     "lock-subtitle": "Bloqueie sua sessão",
+    "lock-and-suspend": "Bloquear e Suspender",
+    "lock-and-suspend-subtitle": "Bloquear sessão e colocar o sistema em suspensão",
     "end-subtitle": "Encerre sua sessão",
     "lock": "Bloquear",
     "suspend": "Suspender",

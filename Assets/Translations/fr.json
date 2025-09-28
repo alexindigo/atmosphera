@@ -1240,6 +1240,8 @@
     "click-again": "Cliquez à nouveau pour exécuter immédiatement",
     "action-in-seconds": "{action} dans {seconds} secondes...",
     "lock-subtitle": "Verrouiller votre session",
+    "lock-and-suspend": "Verrouiller et Mettre en veille",
+    "lock-and-suspend-subtitle": "Verrouiller la session et mettre le système en veille",
     "end-subtitle": "Terminer votre session",
     "lock": "Verrouiller",
     "suspend": "Mettre en veille",

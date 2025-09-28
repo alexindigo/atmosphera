@@ -1240,6 +1240,8 @@
     "click-again": "再次点击立即执行",
     "action-in-seconds": "{seconds} 秒后{action}...",
     "lock-subtitle": "锁定您的会话",
+    "lock-and-suspend": "锁定并挂起",
+    "lock-and-suspend-subtitle": "锁定会话并将系统挂起",
     "end-subtitle": "结束您的会话",
     "lock": "锁定",
     "suspend": "挂起",
