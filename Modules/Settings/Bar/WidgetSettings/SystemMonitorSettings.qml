@@ -35,7 +35,8 @@ ColumnLayout {
   NToggle {
     id: showCpuUsage
     Layout.fillWidth: true
-    label: I18n.tr("bar.widget-settings.system-monitor.cpu-usage")
+    label: I18n.tr("bar.widget-settings.system-monitor.cpu-usage.label")
+    description: I18n.tr("bar.widget-settings.system-monitor.cpu-usage.description")
     checked: valueShowCpuUsage
     onToggled: checked => valueShowCpuUsage = checked
   }
@@ -43,7 +44,8 @@ ColumnLayout {
   NToggle {
     id: showCpuTemp
     Layout.fillWidth: true
-    label: I18n.tr("bar.widget-settings.system-monitor.cpu-temperature")
+    label: I18n.tr("bar.widget-settings.system-monitor.cpu-temperature.label")
+    description: I18n.tr("bar.widget-settings.system-monitor.cpu-temperature.description")
     checked: valueShowCpuTemp
     onToggled: checked => valueShowCpuTemp = checked
   }
@@ -51,7 +53,8 @@ ColumnLayout {
   NToggle {
     id: showMemoryUsage
     Layout.fillWidth: true
-    label: I18n.tr("bar.widget-settings.system-monitor.memory-usage")
+    label: I18n.tr("bar.widget-settings.system-monitor.memory-usage.label")
+    description: I18n.tr("bar.widget-settings.system-monitor.memory-usage.description")
     checked: valueShowMemoryUsage
     onToggled: checked => valueShowMemoryUsage = checked
   }
@@ -59,15 +62,18 @@ ColumnLayout {
   NToggle {
     id: showMemoryAsPercent
     Layout.fillWidth: true
-    label: I18n.tr("bar.widget-settings.system-monitor.memory-percentage")
+    label: I18n.tr("bar.widget-settings.system-monitor.memory-percentage.label")
+    description: I18n.tr("bar.widget-settings.system-monitor.memory-percentage.description")
     checked: valueShowMemoryAsPercent
     onToggled: checked => valueShowMemoryAsPercent = checked
+    visible: valueShowMemoryUsage
   }
 
   NToggle {
     id: showNetworkStats
     Layout.fillWidth: true
-    label: I18n.tr("bar.widget-settings.system-monitor.network-traffic")
+    label: I18n.tr("bar.widget-settings.system-monitor.network-traffic.label")
+    description: I18n.tr("bar.widget-settings.system-monitor.network-traffic.description")
     checked: valueShowNetworkStats
     onToggled: checked => valueShowNetworkStats = checked
   }
@@ -75,7 +81,8 @@ ColumnLayout {
   NToggle {
     id: showDiskUsage
     Layout.fillWidth: true
-    label: I18n.tr("bar.widget-settings.system-monitor.storage-usage")
+    label: I18n.tr("bar.widget-settings.system-monitor.storage-usage.label")
+    description: I18n.tr("bar.widget-settings.system-monitor.storage-usage.description")
     checked: valueShowDiskUsage
     onToggled: checked => valueShowDiskUsage = checked
   }

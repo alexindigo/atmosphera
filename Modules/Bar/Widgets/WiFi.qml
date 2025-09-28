@@ -19,7 +19,8 @@ NIconButton {
   colorFg: Color.mOnSurface
   colorBorder: Color.transparent
   colorBorderHover: Color.transparent
-
+  tooltipText: I18n.tr("tooltips.manage-wifi")
+  tooltipDirection: BarService.getTooltipDirection()
   icon: {
     try {
       if (NetworkService.ethernetConnected) {
@@ -40,7 +41,6 @@ NIconButton {
       return "signal_wifi_bad"
     }
   }
-  tooltipText: I18n.tr("tooltips.manage-wifi")
   onClicked: PanelService.getPanel("wifiPanel")?.toggle(this)
   onRightClicked: PanelService.getPanel("wifiPanel")?.toggle(this)
 }

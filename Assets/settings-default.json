@@ -1,5 +1,5 @@
 {
-  "settingsVersion": 8,
+  "settingsVersion": 12,
   "bar": {
     "position": "top",
     "backgroundOpacity": 1,
@@ -52,9 +52,6 @@
           "id": "Brightness"
         },
         {
-          "id": "NightLight"
-        },
-        {
           "id": "Clock"
         },
         {
@@ -70,7 +67,8 @@
     "forceBlackScreenCorners": false,
     "radiusRatio": 1,
     "screenRadiusRatio": 1,
-    "animationSpeed": 1
+    "animationSpeed": 1,
+    "animationDisabled": false
   },
   "location": {
     "name": "Tokyo",
@@ -120,8 +118,7 @@
     "pinnedApps": []
   },
   "network": {
-    "wifiEnabled": true,
-    "bluetoothEnabled": true
+    "wifiEnabled": true
   },
   "notifications": {
     "doNotDisturb": false,
@@ -161,7 +158,8 @@
   "colorSchemes": {
     "useWallpaperColors": false,
     "predefinedScheme": "Noctalia (default)",
-    "darkMode": true
+    "darkMode": true,
+    "matugenSchemeType": "scheme-fruit-salad"
   },
   "matugen": {
     "gtk4": false,

@@ -325,14 +325,20 @@ Singleton {
   // Helper function to format network speeds
   function formatSpeed(bytesPerSecond) {
     if (bytesPerSecond < 1024 * 1024) {
-      return (bytesPerSecond / 1024).toFixed(1) + "KB/s"
+      const kb = bytesPerSecond / 1024
+      if (kb < 10) {
+        return kb.toFixed(1) + "KB"
+      } else {
+        return Math.round(kb) + "KB"
+      }
     } else if (bytesPerSecond < 1024 * 1024 * 1024) {
-      return (bytesPerSecond / (1024 * 1024)).toFixed(1) + "MB/s"
+      return (bytesPerSecond / (1024 * 1024)).toFixed(1) + "MB"
     } else {
-      return (bytesPerSecond / (1024 * 1024 * 1024)).toFixed(1) + "GB/s"
+      return (bytesPerSecond / (1024 * 1024 * 1024)).toFixed(1) + "GB"
     }
   }
 
+  // -------------------------------------------------------
   // Compact speed formatter for vertical bar display
   function formatCompactSpeed(bytesPerSecond) {
     if (!bytesPerSecond || bytesPerSecond <= 0)

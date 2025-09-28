@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import qs.Commons
+import qs.Services
 
 Rectangle {
   id: root
@@ -126,13 +127,6 @@ Rectangle {
     }
   }
 
-  NTooltip {
-    id: tooltip
-    target: root
-    positionAbove: Settings.data.bar.position === "bottom"
-    text: root.tooltipText
-  }
-
   // Mouse interaction
   MouseArea {
     id: mouseArea
@@ -145,18 +139,18 @@ Rectangle {
     onEntered: {
       root.hovered = true
       if (tooltipText) {
-        tooltip.show()
+        PanelService.tooltip.show(root, root.tooltipText)
       }
     }
     onExited: {
       root.hovered = false
       if (tooltipText) {
-        tooltip.hide()
+        PanelService.tooltip.hide()
       }
     }
     onPressed: mouse => {
                  if (tooltipText) {
-                   tooltip.hide()
+                   PanelService.tooltip.hide()
                  }
                  if (mouse.button === Qt.LeftButton) {
                    root.clicked()
@@ -170,7 +164,7 @@ Rectangle {
     onCanceled: {
       root.hovered = false
       if (tooltipText) {
-        tooltip.hide()
+        PanelService.tooltip.hide()
       }
     }
   }

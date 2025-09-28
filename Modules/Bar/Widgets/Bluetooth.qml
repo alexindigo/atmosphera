@@ -19,9 +19,9 @@ NIconButton {
   colorFg: Color.mOnSurface
   colorBorder: Color.transparent
   colorBorderHover: Color.transparent
-
-  icon: Settings.data.network.bluetoothEnabled ? "bluetooth" : "bluetooth-off"
   tooltipText: I18n.tr("tooltips.bluetooth-devices")
+  tooltipDirection: BarService.getTooltipDirection()
+  icon: BluetoothService.enabled ? "bluetooth" : "bluetooth-off"
   onClicked: PanelService.getPanel("bluetoothPanel")?.toggle(this)
   onRightClicked: PanelService.getPanel("bluetoothPanel")?.toggle(this)
 }

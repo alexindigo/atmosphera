@@ -10,6 +10,9 @@ Singleton {
   // This is not a panel...
   property var lockScreen: null
 
+  // A ref. to our global tooltip
+  property var tooltip: null
+
   // Panels
   property var registeredPanels: ({})
   property var openedPanel: null

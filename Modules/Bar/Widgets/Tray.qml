@@ -135,15 +135,8 @@ Rectangle {
                          }
                        }
                      }
-          onEntered: trayTooltip.show()
-          onExited: trayTooltip.hide()
-        }
-
-        NTooltip {
-          id: trayTooltip
-          target: trayIcon
-          text: modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item"
-          positionAbove: Settings.data.bar.position === "bottom"
+          onEntered: PanelService.tooltip.show(trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection())
+          onExited: PanelService.tooltip.hide()
         }
       }
     }

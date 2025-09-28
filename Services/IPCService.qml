@@ -172,5 +172,15 @@ Item {
       }
       WallpaperService.changeWallpaper(path, screen)
     }
+
+    function toggleAutomation() {
+      Settings.data.wallpaper.randomEnabled = !Settings.data.wallpaper.randomEnabled
+    }
+    function disableAutomation() {
+      Settings.data.wallpaper.randomEnabled = false
+    }
+    function enableAutomation() {
+      Settings.data.wallpaper.randomEnabled = true
+    }
   }
 }
