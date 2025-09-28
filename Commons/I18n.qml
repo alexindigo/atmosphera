@@ -171,14 +171,14 @@ Singleton {
     // Detect user's favorite locale - languages
     for (var i = 0; i < Qt.locale().uiLanguages.length; i++) {
       const fullUserLang = Qt.locale().uiLanguages[i]
-      
+
       // Try full code match (such as zh CN, en US)
       if (availableLanguages.includes(fullUserLang)) {
         Logger.log("I18n", `Exact match found: "${fullUserLang}"`)
         setLanguage(fullUserLang)
         return
       }
-      
+
       // If full code match fails, try short code matching (such as zh, en)
       const shortUserLang = fullUserLang.substring(0, 2)
       if (availableLanguages.includes(shortUserLang)) {
@@ -186,7 +186,7 @@ Singleton {
         setLanguage(shortUserLang)
         return
       }
-      
+
       Logger.log("I18n", `No match for system language: "${fullUserLang}"`)
     }
 
