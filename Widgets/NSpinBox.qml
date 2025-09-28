@@ -158,7 +158,6 @@ RowLayout {
       anchors.top: parent.top
       anchors.bottom: parent.bottom
       anchors.right: parent.right
-      opacity: root.enabled && spinBox.value < spinBox.to ? 1.0 : 0.3
       opacity: root.enabled && root.value < root.to ? 1.0 : 0.3
 
 
