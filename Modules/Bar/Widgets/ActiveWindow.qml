@@ -329,11 +329,11 @@ Item {
         acceptedButtons: Qt.LeftButton
         onEntered: {
           if ((windowTitle !== "") && (barPosition === "left" || barPosition === "right") || (scrollingMode === "never")) {
-            PanelService.tooltip.show(root, windowTitle, BarService.getTooltipDirection())
+            TooltipService.show(root, windowTitle, BarService.getTooltipDirection())
           }
         }
         onExited: {
-          PanelService.tooltip.hide()
+          TooltipService.hide()
         }
       }
     }

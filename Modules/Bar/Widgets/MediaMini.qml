@@ -376,11 +376,11 @@ Item {
 
         onEntered: {
           if ((tooltipText !== "") && (barPosition === "left" || barPosition === "right") || (scrollingMode === "never")) {
-            PanelService.tooltip.show(root, tooltipText, BarService.getTooltipDirection())
+            TooltipService.show(root, tooltipText, BarService.getTooltipDirection())
           }
         }
         onExited: {
-          PanelService.tooltip.hide()
+          TooltipService.hide()
         }
       }
     }

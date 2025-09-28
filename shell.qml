@@ -51,10 +51,6 @@ ShellRoot {
   Bar {}
   Dock {}
 
-  Tooltip {
-    id: globalTooltip
-  }
-
   Notification {
     id: notification
   }
@@ -120,7 +116,6 @@ ShellRoot {
   Component.onCompleted: {
     // Save a ref. to our lockScreen so we can access it  easily
     PanelService.lockScreen = lockScreen
-    PanelService.tooltip = globalTooltip
 
     BarWidgetRegistry.init()
   }

@@ -14,7 +14,7 @@ PopupWindow {
   property int padding: Style.marginM
   property int delay: 0
   property int hideDelay: 0
-  property int maxWidth: 340
+  property int maxWidth: 320
   property real scaling: 1.0
   property int animationDuration: Style.animationFast
   property real animationScale: 0.85
@@ -25,7 +25,7 @@ PopupWindow {
   property real anchorY: 0
   property bool isPositioned: false
   property bool pendingShow: false
-  property bool animatingOut: false
+  property bool animatingOut: true
 
   visible: false
   color: Color.transparent
@@ -110,11 +110,7 @@ PopupWindow {
     if (!target || !tipText || tipText === "")
       return
 
-    if (showDelay !== undefined) {
-      delay = showDelay
-    } else {
-      delay = Style.tooltipDelay
-    }
+    delay = showDelay
 
     // Stop any running timers and animations
     hideTimer.stop()
@@ -144,8 +140,9 @@ PopupWindow {
 
   // Function to position and display the tooltip
   function positionAndShow() {
-    if (!targetItem || !pendingShow)
+    if (!targetItem || !targetItem.parent || !pendingShow) {
       return
+    }
 
     // Get screen dimensions - try multiple methods
     var screenWidth = Screen.width
@@ -393,6 +390,8 @@ PopupWindow {
         color: Color.mOnSurfaceVariant
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
+        wrapMode: Text.WordWrap
+        width: root.maxWidth
       }
     }
   }

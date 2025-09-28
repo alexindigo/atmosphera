@@ -114,14 +114,14 @@ Rectangle {
     hoverEnabled: true
     onEntered: {
       if (!PanelService.getPanel("calendarPanel")?.active) {
-        PanelService.tooltip.show(root, I18n.tr("clock.tooltip"), BarService.getTooltipDirection())
+        TooltipService.show(root, I18n.tr("clock.tooltip"), BarService.getTooltipDirection())
       }
     }
     onExited: {
-      PanelService.tooltip.hide()
+      TooltipService.hide()
     }
     onClicked: {
-      PanelService.tooltip.hide()
+      TooltipService.hide()
       PanelService.getPanel("calendarPanel")?.toggle(this)
     }
   }
