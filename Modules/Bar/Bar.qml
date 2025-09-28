@@ -55,6 +55,12 @@ Variants {
         right: Settings.data.bar.floating && Settings.data.bar.position !== "left" ? Settings.data.bar.marginHorizontal * Style.marginXL * scaling : 0
       }
 
+      Component.onCompleted: {
+        if (modelData && modelData.name) {
+          BarService.registerBar(modelData.name)
+        }
+      }
+
       Item {
         anchors.fill: parent
         clip: true

@@ -14,8 +14,19 @@ Variants {
 
   delegate: Item {
     id: root
+
     required property ShellScreen modelData
     property real scaling: ScalingService.getScreenScale(modelData)
+    property bool barIsReady: BarService.isBarReady(modelData.name)
+
+    Connections {
+      target: BarService
+      function onBarReadyChanged(screenName) {
+        if (screenName === modelData.name) {
+          barIsReady = true
+        }
+      }
+    }
 
     Connections {
       target: ScalingService
@@ -187,7 +198,7 @@ Variants {
 
     // PEEK WINDOW - Always visible when auto-hide is enabled
     Loader {
-      active: Settings.isLoaded && modelData && Settings.data.dock.monitors.includes(modelData.name) && autoHide
+      active: Settings.isLoaded && barIsReady && modelData && Settings.data.dock.monitors.includes(modelData.name) && autoHide
 
       sourceComponent: PanelWindow {
         id: peekWindow
@@ -233,7 +244,7 @@ Variants {
 
     // DOCK WINDOW
     Loader {
-      active: Settings.isLoaded && modelData && Settings.data.dock.monitors.includes(modelData.name) && dockLoaded && ToplevelManager && (dockApps.length > 0)
+      active: Settings.isLoaded && barIsReady && modelData && Settings.data.dock.monitors.includes(modelData.name) && dockLoaded && ToplevelManager && (dockApps.length > 0)
 
       sourceComponent: PanelWindow {
         id: dockWindow
