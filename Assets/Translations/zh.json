@@ -265,7 +265,7 @@
           },
           "exclusive-zone": {
             "label": "独占区域",
-            "description": "防止窗口重叠。"
+            "description": "可以防止窗口重叠。"
           },
           "background-opacity": {
             "label": "背景不透明度",
