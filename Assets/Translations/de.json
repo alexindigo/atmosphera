@@ -487,7 +487,7 @@
       "predefined": {
         "section": {
           "label": "Vordefinierte Farbschemata",
-          "description": "Um diese Farbschemata zu verwenden, müssen Sie Matugen ausschalten. Mit aktiviertem Matugen werden Farben automatisch aus Ihrem Hintergrundbild generiert."
+          "description": "Wählen Sie aus einer Sammlung vordefinierter Farbschemata."
         }
       },
       "matugen": {

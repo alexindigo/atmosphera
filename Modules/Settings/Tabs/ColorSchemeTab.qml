@@ -188,12 +188,14 @@ ColumnLayout {
     Layout.fillWidth: true
     Layout.topMargin: Style.marginXL * scaling
     Layout.bottomMargin: Style.marginXL * scaling
+    visible: !Settings.data.colorSchemes.useWallpaperColors
   }
 
   // Predefined Color Schemes
   ColumnLayout {
     spacing: Style.marginM * scaling
     Layout.fillWidth: true
+    visible: !Settings.data.colorSchemes.useWallpaperColors
 
     NHeader {
       label: I18n.tr("settings.color-scheme.predefined.section.label")

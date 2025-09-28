@@ -451,7 +451,7 @@
       "predefined": {
         "section": {
           "label": "Esquemas de cores predefinidos",
-          "description": "Para usar esses esquemas de cores, você deve desativar o Matugen. Com o Matugen ativado, as cores são geradas automaticamente a partir do seu papel de parede."
+          "description": "Escolha entre uma coleção de esquemas de cores predefinidos."
         }
       },
       "matugen": {

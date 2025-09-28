@@ -485,7 +485,7 @@
       "predefined": {
         "section": {
           "label": "Esquemas de colores predefinidos",
-          "description": "Para usar estos esquemas de colores, debes desactivar Matugen. Con Matugen activado, los colores se generan automáticamente a partir de tu fondo de pantalla."
+          "description": "Elige entre una colección de esquemas de colores predefinidos."
         }
       },
       "matugen": {

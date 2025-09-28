@@ -491,7 +491,7 @@
       "predefined": {
         "section": {
           "label": "Predefined color schemes",
-          "description": "To use these color schemes, you must turn off Matugen. With Matugen enabled, colors are automatically generated from your wallpaper."
+          "description": "Choose from a collection of predefined color schemes."
         }
       },
       "matugen": {

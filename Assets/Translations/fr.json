@@ -485,7 +485,7 @@
       "predefined": {
         "section": {
           "label": "Jeux de couleurs prédéfinis",
-          "description": "Pour utiliser ces jeux de couleurs, vous devez désactiver Matugen. Avec Matugen activé, les couleurs sont générées automatiquement à partir de votre fond d'écran."
+          "description": "Choisissez parmi une collection de jeux de couleurs prédéfinis."
         }
       },
       "matugen": {

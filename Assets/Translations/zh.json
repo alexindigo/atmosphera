@@ -489,7 +489,7 @@
         "predefined": {
           "section": {
             "label": "预定义配色方案",
-            "description": "要使用这些配色方案，您必须关闭 Matugen。启用 Matugen 后，颜色会根据您的壁纸自动生成。"
+            "description": "从预定义配色方案集合中选择。"
           }
         },
         "matugen": {
