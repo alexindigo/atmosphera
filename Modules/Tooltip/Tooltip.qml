@@ -34,9 +34,6 @@ PopupWindow {
   anchor.rect.x: anchorX
   anchor.rect.y: anchorY
 
-  implicitWidth: Math.min(tooltipText.implicitWidth + padding * 2 * scaling, maxWidth * scaling)
-  implicitHeight: tooltipText.implicitHeight + padding * 2 * scaling
-
   // Timer for showing tooltip after delay
   Timer {
     id: showTimer
@@ -164,8 +161,11 @@ PopupWindow {
     }
 
     // Calculate tooltip dimensions
-    const tipWidth = Math.min(tooltipText.implicitWidth + padding * 2 * scaling, maxWidth * scaling)
-    const tipHeight = tooltipText.implicitHeight + padding * 2 * scaling
+    const tipWidth = Math.min(tooltipText.implicitWidth + (padding * 2 * scaling), maxWidth * scaling)
+    root.implicitWidth = tipWidth
+
+    const tipHeight = tooltipText.implicitHeight + (padding * 2 * scaling)
+    root.implicitHeight = tipHeight
 
     // Get target's global position
     const targetGlobal = targetItem.mapToGlobal(0, 0)
@@ -311,16 +311,11 @@ PopupWindow {
   }
 
   function completeHide() {
-    // Hide the popup window
     visible = false
     animatingOut = false
     pendingShow = false
-
-    // Clear the text and reset state
     text = ""
     isPositioned = false
-
-    // Reset container state
     tooltipContainer.opacity = 1.0
     tooltipContainer.scale = 1.0
   }
@@ -384,7 +379,7 @@ PopupWindow {
       color: Color.mSurface
       border.color: Color.mOutline
       border.width: Math.max(1, Style.borderS * scaling)
-      radius: Style.radiusM * scaling
+      radius: Style.radiusS * scaling
 
       // Only show content when we have text
       visible: root.text !== ""
@@ -396,8 +391,6 @@ PopupWindow {
         text: root.text
         font.pointSize: Style.fontSizeS * scaling
         color: Color.mOnSurfaceVariant
-        wrapMode: Text.WordWrap
-        width: Math.min(implicitWidth, root.maxWidth * root.scaling - root.padding * 2 * root.scaling)
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
       }
