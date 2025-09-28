@@ -23,9 +23,7 @@ NIconButton {
 
   icon: Settings.data.nightLight.enabled ? (Settings.data.nightLight.forced ? "nightlight-forced" : "nightlight-on") : "nightlight-off"
   tooltipText: Settings.data.nightLight.enabled ? (Settings.data.nightLight.forced ? I18n.tr("tooltips.night-light-forced") : I18n.tr("tooltips.night-light-enabled")) : I18n.tr("tooltips.night-light-disabled")
-  tooltipPositionAbove: Settings.data.bar.position === "bottom"
-  tooltipPositionLeft: Settings.data.bar.position === "right"
-  tooltipPositionRight: Settings.data.bar.position === "left"
+  tooltipDirection: BarService.getTooltipDirection()
   onClicked: {
     // Check if wlsunset is available before enabling night light
     if (!ProgramCheckerService.wlsunsetAvailable) {

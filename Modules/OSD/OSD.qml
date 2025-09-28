@@ -410,10 +410,10 @@ Variants {
           // Make visible and animate in
           osdItem.visible = true
           // Use Qt.callLater to ensure the visible change is processed before animation
-          Qt.callLater(function () {
-            osdItem.opacity = 1
-            osdItem.scale = 1.0
-          })
+          Qt.callLater(() => {
+                         osdItem.opacity = 1
+                         osdItem.scale = 1.0
+                       })
 
           // Start the auto-hide timer
           hideTimer.start()
@@ -524,11 +524,11 @@ Variants {
         root.item.showOSD()
       } else {
         // If item not ready yet, wait for it
-        Qt.callLater(function () {
-          if (root.item) {
-            root.item.showOSD()
-          }
-        })
+        Qt.callLater(() => {
+                       if (root.item) {
+                         root.item.showOSD()
+                       }
+                     })
       }
     }
 

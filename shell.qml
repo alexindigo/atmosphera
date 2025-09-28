@@ -39,6 +39,7 @@ import qs.Modules.Notification
 import qs.Modules.OSD
 import qs.Modules.Settings
 import qs.Modules.Toast
+import qs.Modules.Tooltip
 import qs.Modules.Wallpaper
 
 ShellRoot {
@@ -49,6 +50,10 @@ ShellRoot {
   ScreenCorners {}
   Bar {}
   Dock {}
+
+  Tooltip {
+    id: globalTooltip
+  }
 
   Notification {
     id: notification
@@ -115,6 +120,7 @@ ShellRoot {
   Component.onCompleted: {
     // Save a ref. to our lockScreen so we can access it  easily
     PanelService.lockScreen = lockScreen
+    PanelService.tooltip = globalTooltip
 
     BarWidgetRegistry.init()
   }
