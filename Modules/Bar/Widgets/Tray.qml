@@ -135,8 +135,8 @@ Rectangle {
                          }
                        }
                      }
-          onEntered: PanelService.tooltip.show(trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection())
-          onExited: PanelService.tooltip.hide()
+          onEntered: TooltipService.show(trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection())
+          onExited: TooltipService.hide()
         }
       }
     }

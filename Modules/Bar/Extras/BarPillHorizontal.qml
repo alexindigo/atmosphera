@@ -49,9 +49,7 @@ Item {
   Connections {
     target: root
     function onTooltipTextChanged() {
-      if (PanelService.tooltip.visible) {
-        PanelService.tooltip.updateText(root.tooltipText)
-      }
+      TooltipService.updateText(root.tooltipText)
     }
   }
 
@@ -221,7 +219,7 @@ Item {
     onEntered: {
       hovered = true
       root.entered()
-      PanelService.tooltip.show(pill, root.tooltipText, BarService.getTooltipDirection(), Style.tooltipDelayLong)
+      TooltipService.show(pill, root.tooltipText, BarService.getTooltipDirection(), Style.tooltipDelayLong)
       if (disableOpen || forceClose) {
         return
       }
@@ -235,7 +233,7 @@ Item {
       if (!forceOpen && !forceClose) {
         hide()
       }
-      PanelService.tooltip.hide()
+      TooltipService.hide()
     }
     onClicked: function (mouse) {
       if (mouse.button === Qt.LeftButton) {
