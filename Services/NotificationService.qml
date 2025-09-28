@@ -115,7 +115,7 @@ Singleton {
       "id": id,
       "summary": (n.summary || ""),
       "body": stripTags(n.body || ""),
-      "appName": getAppName(n.appName || n.desktopEntry || ""),
+      "appName": getAppName(n.appName),
       "urgency": n.urgency < 0 || n.urgency > 2 ? 1 : n.urgency,
       "expireTimeout": n.expireTimeout,
       "timestamp": time,

@@ -251,10 +251,4 @@ ColumnLayout {
       }
     }
   }
-
-  NDivider {
-    Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
-  }
 }

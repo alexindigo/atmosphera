@@ -1243,6 +1243,8 @@
     "click-again": "Click again to execute immediately",
     "action-in-seconds": "{action} in {seconds} seconds...",
     "lock-subtitle": "Lock your session",
+    "lock-and-suspend": "Lock and Suspend",
+    "lock-and-suspend-subtitle": "Lock session and put system to sleep",
     "end-subtitle": "End your session",
     "lock": "Lock",
     "suspend": "Suspend", 
