@@ -36,9 +36,7 @@ NIconButton {
   // If we have a custom path or distro logo, don't use the theme icon.
   icon: (customIconPath === "" && !useDistroLogo) ? customIcon : ""
   tooltipText: I18n.tr("tooltips.open-control-center")
-  tooltipPositionAbove: Settings.data.bar.position === "bottom"
-  tooltipPositionLeft: Settings.data.bar.position === "right"
-  tooltipPositionRight: Settings.data.bar.position === "left"
+  tooltipDirection: BarService.getTooltipDirection()
   baseSize: Style.capsuleHeight
   compact: (Settings.data.bar.density === "compact")
   colorBg: (Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent)

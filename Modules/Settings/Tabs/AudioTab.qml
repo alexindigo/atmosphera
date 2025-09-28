@@ -150,6 +150,7 @@ ColumnLayout {
   // AudioService Devices
   ColumnLayout {
     spacing: Style.marginS * scaling
+    Layout.fillWidth: true
 
     NHeader {
       label: I18n.tr("settings.audio.devices.section.label")
@@ -175,14 +176,15 @@ ColumnLayout {
       Repeater {
         model: AudioService.sinks
         NRadioButton {
-          required property PwNode modelData
           ButtonGroup.group: sinks
+          required property PwNode modelData
+          text: modelData.description
           checked: AudioService.sink?.id === modelData.id
           onClicked: {
             AudioService.setAudioSink(modelData)
             localVolume = AudioService.volume
           }
-          text: modelData.description
+          Layout.fillWidth: true
         }
       }
     }
@@ -204,12 +206,14 @@ ColumnLayout {
 
       Repeater {
         model: AudioService.sources
+        //Layout.fillWidth: true
         NRadioButton {
-          required property PwNode modelData
           ButtonGroup.group: sources
+          required property PwNode modelData
+          text: modelData.description
           checked: AudioService.source?.id === modelData.id
           onClicked: AudioService.setAudioSource(modelData)
-          text: modelData.description
+          Layout.fillWidth: true
         }
       }
     }

@@ -58,7 +58,8 @@ ColumnLayout {
   NTextInput {
     id: leftClickExecInput
     Layout.fillWidth: true
-    label: I18n.tr("bar.widget-settings.custom-button.left-click")
+    label: I18n.tr("bar.widget-settings.custom-button.left-click.label")
+    description: I18n.tr("bar.widget-settings.custom-button.left-click.description")
     placeholderText: I18n.tr("placeholders.enter-command")
     text: widgetData?.leftClickExec || widgetMetadata.leftClickExec
   }
@@ -66,7 +67,8 @@ ColumnLayout {
   NTextInput {
     id: rightClickExecInput
     Layout.fillWidth: true
-    label: I18n.tr("bar.widget-settings.custom-button.right-click")
+    label: I18n.tr("bar.widget-settings.custom-button.right-click.label")
+    description: I18n.tr("bar.widget-settings.custom-button.right-click.description")
     placeholderText: I18n.tr("placeholders.enter-command")
     text: widgetData?.rightClickExec || widgetMetadata.rightClickExec
   }
@@ -74,7 +76,8 @@ ColumnLayout {
   NTextInput {
     id: middleClickExecInput
     Layout.fillWidth: true
-    label: I18n.tr("bar.widget-settings.custom-button.middle-click")
+    label: I18n.tr("bar.widget-settings.custom-button.middle-click.label")
+    description: I18n.tr("bar.widget-settings.custom-button.middle-click.description")
     placeholderText: I18n.tr("placeholders.enter-command")
     text: widgetData.middleClickExec || widgetMetadata.middleClickExec
   }

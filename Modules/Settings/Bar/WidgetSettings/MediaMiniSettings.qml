@@ -32,26 +32,30 @@ ColumnLayout {
 
   NToggle {
     Layout.fillWidth: true
-    label: I18n.tr("bar.widget-settings.media-mini.auto-hide")
+    label: I18n.tr("bar.widget-settings.media-mini.auto-hide.label")
+    description: I18n.tr("bar.widget-settings.media-mini.auto-hide.description")
     checked: root.valueAutoHide
     onToggled: checked => root.valueAutoHide = checked
   }
 
   NToggle {
-    label: I18n.tr("bar.widget-settings.media-mini.show-album-art")
+    label: I18n.tr("bar.widget-settings.media-mini.show-album-art.label")
+    description: I18n.tr("bar.widget-settings.media-mini.show-album-art.description")
     checked: valueShowAlbumArt
     onToggled: checked => valueShowAlbumArt = checked
   }
 
   NToggle {
-    label: I18n.tr("bar.widget-settings.media-mini.show-visualizer")
+    label: I18n.tr("bar.widget-settings.media-mini.show-visualizer.label")
+    description: I18n.tr("bar.widget-settings.media-mini.show-visualizer.description")
     checked: valueShowVisualizer
     onToggled: checked => valueShowVisualizer = checked
   }
 
   NComboBox {
     visible: valueShowVisualizer
-    label: I18n.tr("bar.widget-settings.media-mini.visualizer-type")
+    label: I18n.tr("bar.widget-settings.media-mini.visualizer-type.label")
+    description: I18n.tr("bar.widget-settings.media-mini.visualizer-type.description")
     model: [{
         "key": "linear",
         "name": I18n.tr("options.visualizer-types.linear")
@@ -68,7 +72,8 @@ ColumnLayout {
   }
 
   NComboBox {
-    label: I18n.tr("bar.widget-settings.media-mini.scrolling-mode")
+    label: I18n.tr("bar.widget-settings.media-mini.scrolling-mode.label")
+    description: I18n.tr("bar.widget-settings.media-mini.scrolling-mode.description")
     model: [{
         "key": "always",
         "name": I18n.tr("options.scrolling-modes.always")

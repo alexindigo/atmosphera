@@ -106,14 +106,6 @@ Rectangle {
       }
     }
   }
-  NTooltip {
-    id: tooltip
-    text: I18n.tr("clock.tooltip")
-    target: clockContainer
-    positionAbove: Settings.data.bar.position === "bottom"
-    positionLeft: barPosition === "right"
-    positionRight: barPosition === "left"
-  }
 
   MouseArea {
     id: clockMouseArea
@@ -122,14 +114,14 @@ Rectangle {
     hoverEnabled: true
     onEntered: {
       if (!PanelService.getPanel("calendarPanel")?.active) {
-        tooltip.show()
+        TooltipService.show(root, I18n.tr("clock.tooltip"), BarService.getTooltipDirection())
       }
     }
     onExited: {
-      tooltip.hide()
+      TooltipService.hide()
     }
     onClicked: {
-      tooltip.hide()
+      TooltipService.hide()
       PanelService.getPanel("calendarPanel")?.toggle(this)
     }
   }

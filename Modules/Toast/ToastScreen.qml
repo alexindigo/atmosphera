@@ -93,11 +93,11 @@ Item {
     // Activate the loader and show toast
     windowLoader.active = true
     // Need a small delay to ensure the window is created
-    Qt.callLater(function () {
-      if (windowLoader.item) {
-        windowLoader.item.showToast(data.message, data.description, data.type, data.duration)
-      }
-    })
+    Qt.callLater(() => {
+                   if (windowLoader.item) {
+                     windowLoader.item.showToast(data.message, data.description, data.type, data.duration)
+                   }
+                 })
   }
 
   function onToastHidden() {

@@ -28,7 +28,8 @@ ColumnLayout {
   }
 
   NToggle {
-    label: I18n.tr("bar.widget-settings.control-center.use-distro-logo")
+    label: I18n.tr("bar.widget-settings.control-center.use-distro-logo.label")
+    description: I18n.tr("bar.widget-settings.control-center.use-distro-logo.description")
     checked: valueUseDistroLogo
     onToggled: {
       valueUseDistroLogo = checked

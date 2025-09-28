@@ -19,9 +19,7 @@ NIconButton {
   tooltipText: I18n.tr("tooltips.power-profile", {
                          "profile": PowerProfileService.getName()
                        })
-  tooltipPositionAbove: Settings.data.bar.position === "bottom"
-  tooltipPositionLeft: Settings.data.bar.position === "right"
-  tooltipPositionRight: Settings.data.bar.position === "left"
+  tooltipDirection: BarService.getTooltipDirection()
   compact: (Settings.data.bar.density === "compact")
   colorBg: (PowerProfileService.profile === PowerProfile.Balanced) ? (Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent) : Color.mPrimary
   colorFg: (PowerProfileService.profile === PowerProfile.Balanced) ? Color.mOnSurface : Color.mOnPrimary

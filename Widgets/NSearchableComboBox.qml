@@ -255,11 +255,11 @@ RowLayout {
           // Ensure the model is filtered when popup opens
           filterModel()
           // Small delay to ensure the popup is fully rendered
-          Qt.callLater(function () {
-            if (searchInput && searchInput.inputItem) {
-              searchInput.inputItem.forceActiveFocus()
-            }
-          })
+          Qt.callLater(() => {
+                         if (searchInput && searchInput.inputItem) {
+                           searchInput.inputItem.forceActiveFocus()
+                         }
+                       })
         }
       }
     }

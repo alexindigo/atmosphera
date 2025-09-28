@@ -11,9 +11,7 @@ Rectangle {
 
   property string icon
   property string tooltipText
-  property bool tooltipPositionAbove: false
-  property bool tooltipPositionLeft: false
-  property bool tooltipPositionRight: false
+  property string tooltipDirection: "auto"
   property bool enabled: true
   property bool allowClickWhenDisabled: false
   property bool hovering: false
@@ -65,15 +63,6 @@ Rectangle {
     }
   }
 
-  NTooltip {
-    id: tooltip
-    target: root
-    positionAbove: root.tooltipPositionAbove
-    positionLeft: root.tooltipPositionLeft
-    positionRight: root.tooltipPositionRight
-    text: root.tooltipText
-  }
-
   MouseArea {
     // Always enabled to allow hover/tooltip even when the button is disabled
     enabled: true
@@ -84,20 +73,20 @@ Rectangle {
     onEntered: {
       hovering = root.enabled ? true : false
       if (tooltipText) {
-        tooltip.show()
+        TooltipService.show(parent, tooltipText, tooltipDirection)
       }
       root.entered()
     }
     onExited: {
       hovering = false
       if (tooltipText) {
-        tooltip.hide()
+        TooltipService.hide()
       }
       root.exited()
     }
     onClicked: function (mouse) {
       if (tooltipText) {
-        tooltip.hide()
+        TooltipService.hide()
       }
       if (!root.enabled && !allowClickWhenDisabled) {
         return

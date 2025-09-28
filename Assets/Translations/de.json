@@ -31,6 +31,10 @@
         "animation-speed": {
           "label": "Animationsgeschwindigkeit",
           "description": "Globale Animationsgeschwindigkeit anpassen."
+        },
+        "animation-disable": {
+          "label": "UI-Animationen deaktivieren",
+          "description": "Alle Animationen für eine schnellere, reaktionsschnellere Erfahrung deaktivieren."
         }
       },
       "screen-corners": {
@@ -829,21 +833,54 @@
         "search-placeholder": "Widgets suchen..."
       },
       "active-window": {
-        "auto-hide": "Automatisch ausblenden",
-        "scrolling-mode": "Scrollmodus",
-        "show-app-icon": "App-Symbol anzeigen"
+        "auto-hide": {
+          "label": "Automatisch ausblenden",
+          "description": "Widget automatisch ausblenden, wenn kein Fenster aktiv ist."
+        },
+        "show-app-icon": {
+          "label": "App-Symbol anzeigen",
+          "description": "Anwendungssymbol neben dem Fenstertitel anzeigen."
+        },
+        "scrolling-mode": {
+          "label": "Scrollmodus",
+          "description": "Steuern, wann Textscrolling für lange Fenstertitel aktiviert ist."
+        }
       },
       "system-monitor": {
-        "cpu-usage": "CPU-Auslastung",
-        "cpu-temperature": "CPU-Temperatur",
-        "memory-usage": "Speicherverbrauch",
-        "memory-percentage": "Speicher als Prozentsatz",
-        "network-traffic": "Netzwerkverkehr",
-        "storage-usage": "Speichernutzung"
+        "cpu-usage": {
+          "label": "CPU-Auslastung",
+          "description": "Aktuelle CPU-Auslastung in Prozent anzeigen."
+        },
+        "cpu-temperature": {
+          "label": "CPU-Temperatur",
+          "description": "CPU-Temperaturwerte anzeigen, falls verfügbar."
+        },
+        "memory-usage": {
+          "label": "Speicherverbrauch",
+          "description": "Aktuelle RAM-Nutzungsinformationen anzeigen."
+        },
+        "memory-percentage": {
+          "label": "Speicher als Prozentsatz",
+          "description": "Speicherverbrauch als Prozentsatz statt absolute Werte anzeigen."
+        },
+        "network-traffic": {
+          "label": "Netzwerkverkehr",
+          "description": "Upload- und Download-Geschwindigkeiten anzeigen."
+        },
+        "storage-usage": {
+          "label": "Speichernutzung",
+          "description": "Festplattenspeicher-Nutzungsinformationen anzeigen."
+        }
       },
       "notification-history": {
-        "show-unread-badge": "Badge für ungelesene Nachrichten anzeigen",
-        "hide-badge-when-zero": "Badge ausblenden, wenn null"
+        "show-unread-badge": {
+          "label": "Badge für ungelesene Nachrichten anzeigen",
+          "description": "Badge mit der Anzahl ungelesener Benachrichtigungen anzeigen."
+        },
+        "hide-badge-when-zero": {
+          "label": "Badge ausblenden, wenn null",
+          "description": "Benachrichtigungs-Badge ausblenden, wenn keine ungelesenen Benachrichtigungen vorhanden sind."
+        }
       },
       "battery": {
         "display-mode": {
@@ -856,7 +893,10 @@
         }
       },
       "control-center": {
-        "use-distro-logo": "Distro-Logo anstelle von Symbol verwenden",
+        "use-distro-logo": {
+          "label": "Distro-Logo anstelle von Symbol verwenden",
+          "description": "Logo Ihrer Distribution anstelle eines benutzerdefinierten Symbols verwenden."
+        },
         "icon": {
           "label": "Symbol",
           "description": "Symbol aus der Bibliothek oder eine benutzerdefinierte Datei auswählen."
@@ -878,7 +918,10 @@
         }
       },
       "workspace": {
-        "label-mode": "Beschriftungsmodus",
+        "label-mode": {
+          "label": "Beschriftungsmodus",
+          "description": "Wählen Sie, wie Arbeitsbereichs-Beschriftungen angezeigt werden."
+        },
         "hide-unoccupied": {
           "label": "Unbesetzte ausblenden",
           "description": "Arbeitsbereiche ohne Fenster nicht anzeigen."
@@ -908,9 +951,18 @@
           "description": "Symbol aus der Bibliothek auswählen."
         },
         "browse": "Durchsuchen",
-        "left-click": "Linksklick",
-        "right-click": "Rechtsklick",
-        "middle-click": "Mittelklick",
+        "left-click": {
+          "label": "Linksklick",
+          "description": "Befehl, der ausgeführt wird, wenn die Schaltfläche links angeklickt wird."
+        },
+        "right-click": {
+          "label": "Rechtsklick",
+          "description": "Befehl, der ausgeführt wird, wenn die Schaltfläche rechts angeklickt wird."
+        },
+        "middle-click": {
+          "label": "Mittelklick",
+          "description": "Befehl, der ausgeführt wird, wenn die Schaltfläche mit der mittleren Maustaste angeklickt wird."
+        },
         "dynamic-text": "Dynamischer Text",
         "display-command-output": {
           "label": "Befehlsausgabe anzeigen",
@@ -922,11 +974,26 @@
         }
       },
       "media-mini": {
-        "auto-hide": "Automatisch ausblenden",
-        "show-album-art": "Albumcover anzeigen",
-        "show-visualizer": "Visualizer anzeigen",
-        "visualizer-type": "Visualizer-Typ",
-        "scrolling-mode": "Scrollmodus"
+        "auto-hide": {
+          "label": "Automatisch ausblenden",
+          "description": "Widget automatisch ausblenden, wenn keine Medien abgespielt werden."
+        },
+        "show-album-art": {
+          "label": "Albumcover anzeigen",
+          "description": "Albumcover des aktuell abgespielten Tracks anzeigen."
+        },
+        "show-visualizer": {
+          "label": "Visualizer anzeigen",
+          "description": "Audio-Visualizer anzeigen, wenn Musik abgespielt wird."
+        },
+        "visualizer-type": {
+          "label": "Visualizer-Typ",
+          "description": "Stil des Audio-Visualizers auswählen."
+        },
+        "scrolling-mode": {
+          "label": "Scrollmodus",
+          "description": "Steuern, wann Textscrolling für lange Track-Titel aktiviert ist."
+        }
       },
       "clock": {
         "use-primary-color": {

@@ -39,6 +39,7 @@ import qs.Modules.Notification
 import qs.Modules.OSD
 import qs.Modules.Settings
 import qs.Modules.Toast
+import qs.Modules.Tooltip
 import qs.Modules.Wallpaper
 
 ShellRoot {

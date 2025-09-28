@@ -102,7 +102,7 @@ Rectangle {
 
                          modelData.secondaryActivate && modelData.secondaryActivate()
                        } else if (mouse.button === Qt.RightButton) {
-                         trayTooltip.hide()
+                         TooltipService.hideImmediately()
 
                          // Close the menu if it was visible
                          if (trayPanel && trayPanel.visible) {
@@ -135,15 +135,11 @@ Rectangle {
                          }
                        }
                      }
-          onEntered: trayTooltip.show()
-          onExited: trayTooltip.hide()
-        }
-
-        NTooltip {
-          id: trayTooltip
-          target: trayIcon
-          text: modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item"
-          positionAbove: Settings.data.bar.position === "bottom"
+          onEntered: {
+            trayPanel.close()
+            TooltipService.show(trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection())
+          }
+          onExited: TooltipService.hide()
         }
       }
     }

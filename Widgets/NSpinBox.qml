@@ -10,10 +10,10 @@ RowLayout {
   id: root
 
   // Public properties
-  property alias value: spinBox.value
-  property alias from: spinBox.from
-  property alias to: spinBox.to
-  property alias stepSize: spinBox.stepSize
+  property int value: 0
+  property int from: 0
+  property int to: 100
+  property int stepSize: 1
   property string suffix: ""
   property string prefix: ""
   property string label: ""
@@ -23,8 +23,8 @@ RowLayout {
   property int baseSize: Style.baseWidgetSize
 
   // Convenience properties for common naming
-  property alias minimum: spinBox.from
-  property alias maximum: spinBox.to
+  property alias minimum: root.from
+  property alias maximum: root.to
 
   signal entered
   signal exited
@@ -36,12 +36,12 @@ RowLayout {
     description: root.description
   }
 
-  // Value
+  // Main spinbox container
   Rectangle {
     id: spinBoxContainer
-    implicitWidth: 100 * scaling // Wider for better proportions
-    implicitHeight: (root.baseSize - 4) * scaling // Slightly shorter than toggle
-    radius: height / 2 // Fully rounded like toggle
+    implicitWidth: 120 * scaling
+    implicitHeight: (root.baseSize - 4) * scaling
+    radius: height * 0.5
     color: Color.mSurfaceVariant
     border.color: (root.hovering || decreaseArea.containsMouse || increaseArea.containsMouse) ? Color.mTertiary : Color.mOutline
     border.width: 1
@@ -52,7 +52,7 @@ RowLayout {
       }
     }
 
-    // Mouse area for scroll wheel and hover
+    // Mouse area for hover and scroll
     MouseArea {
       anchors.fill: parent
       acceptedButtons: Qt.NoButton
@@ -66,10 +66,12 @@ RowLayout {
         root.exited()
       }
       onWheel: wheel => {
-                 if (wheel.angleDelta.y > 0 && spinBox.value < spinBox.to) {
-                   spinBox.increase()
-                 } else if (wheel.angleDelta.y < 0 && spinBox.value > spinBox.from) {
-                   spinBox.decrease()
+                 if (wheel.angleDelta.y > 0 && root.value < root.to) {
+                   let newValue = Math.min(root.to, root.value + root.stepSize)
+                   root.value = newValue
+                 } else if (wheel.angleDelta.y < 0 && root.value > root.from) {
+                   let newValue = Math.max(root.from, root.value - root.stepSize)
+                   root.value = newValue
                  }
                }
     }
@@ -82,7 +84,8 @@ RowLayout {
       anchors.top: parent.top
       anchors.bottom: parent.bottom
       anchors.left: parent.left
-      opacity: root.enabled && spinBox.value > spinBox.from ? 1.0 : 0.3
+      opacity: root.enabled && root.value > root.from ? 1.0 : 0.3
+
 
       Item {
         id: leftSemicircle
@@ -133,14 +136,17 @@ RowLayout {
           color: decreaseArea.containsMouse ? Color.mOnPrimary : Color.mPrimary
         }
 
-        MouseArea {
-          id: decreaseArea
-          anchors.fill: parent
-          hoverEnabled: true
-          cursorShape: Qt.PointingHandCursor
-          enabled: root.enabled && spinBox.value > spinBox.from
-          onClicked: spinBox.decrease()
+      MouseArea {
+        id: decreaseArea
+        anchors.fill: parent
+        hoverEnabled: true
+        cursorShape: Qt.PointingHandCursor
+        enabled: root.enabled && root.value > root.from
+        onClicked: {
+          let newValue = Math.max(root.from, root.value - root.stepSize)
+          root.value = newValue
         }
+      }
     }
 
 
@@ -153,6 +159,8 @@ RowLayout {
       anchors.bottom: parent.bottom
       anchors.right: parent.right
       opacity: root.enabled && spinBox.value < spinBox.to ? 1.0 : 0.3
+      opacity: root.enabled && root.value < root.to ? 1.0 : 0.3
+
 
       Item {
         id: rightSemicircle
@@ -208,44 +216,96 @@ RowLayout {
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
-        enabled: root.enabled && spinBox.value < spinBox.to
-        onClicked: spinBox.increase()
+        enabled: root.enabled && root.value < root.to
+        onClicked: {
+          let newValue = Math.min(root.to, root.value + root.stepSize)
+          root.value = newValue
+        }
       }
     }
 
-    // Center value display
-    SpinBox {
-      id: spinBox
+    // Center value display with separate prefix, value, and suffix
+    Rectangle {
+      id: valueContainer
       anchors.left: decreaseButton.right
       anchors.right: increaseButton.left
       anchors.verticalCenter: parent.verticalCenter
       anchors.margins: 4 * scaling
       height: parent.height
+      color: "transparent"
 
-      background: Item {}
-      up.indicator: Item {}
-      down.indicator: Item {}
+      Row {
+        anchors.centerIn: parent
+        spacing: 0
 
-      font.pointSize: Style.fontSizeM * scaling
-      font.family: Settings.data.ui.fontDefault
-
-      from: 0
-      to: 100
-      stepSize: 1
-      editable: false // Only use buttons/scroll
-      enabled: root.enabled
-
-      contentItem: Item {
-        anchors.fill: parent
-
-        NText {
-          anchors.centerIn: parent
-          text: root.prefix + spinBox.value + root.suffix
+        // Prefix text (non-editable)
+        Text {
+          text: root.prefix
           font.family: Settings.data.ui.fontFixed
           font.pointSize: Style.fontSizeM * scaling
           font.weight: Style.fontWeightMedium
           color: Color.mOnSurface
-          horizontalAlignment: Text.AlignHCenter
+          verticalAlignment: Text.AlignVCenter
+          visible: root.prefix !== ""
+        }
+
+        // Editable number input
+        TextInput {
+          id: valueInput
+          text: root.value.toString()
+          font.family: Settings.data.ui.fontFixed
+          font.pointSize: Style.fontSizeM * scaling
+          font.weight: Style.fontWeightMedium
+          color: Color.mOnSurface
+          verticalAlignment: Text.AlignVCenter
+          selectByMouse: true
+          enabled: root.enabled
+
+          // Only allow numeric input within range
+          validator: IntValidator {
+            bottom: root.from
+            top: root.to
+          }
+
+          Keys.onReturnPressed: {
+            applyValue()
+            focus = false
+          }
+
+          Keys.onEscapePressed: {
+            text = root.value.toString()
+            focus = false
+          }
+
+          onFocusChanged: {
+            if (focus) {
+              selectAll()
+            } else {
+              applyValue()
+            }
+          }
+
+          function applyValue() {
+            let newValue = parseInt(text)
+            if (!isNaN(newValue)) {
+              newValue = Math.max(root.from, Math.min(root.to, newValue))
+              root.value = newValue
+              text = root.value.toString()
+            } else {
+              text = root.value.toString()
+            }
+          }
+        }
+
+        // Suffix text (non-editable)
+        Text {
+          text: root.suffix
+          font.family: Settings.data.ui.fontFixed
+          font.pointSize: Style.fontSizeM * scaling
+          font.weight: Style.fontWeightMedium
+          color: Color.mOnSurface
+          verticalAlignment: Text.AlignVCenter
+          visible: root.suffix !== ""
         }
       }
     }
