@@ -174,11 +174,11 @@
       },
       "night-light": {
         "section": {
-          "label": "夜灯",
+          "label": "夜间模式",
           "description": "减少蓝光发射，帮助您更好地睡眠并减轻眼睛疲劳。"
         },
         "enable": {
-          "label": "启用夜灯",
+          "label": "启用夜间模式",
           "description": "应用暖色滤镜以减少蓝光发射。"
         },
         "temperature": {
@@ -560,7 +560,7 @@
       "location": {
         "section": {
           "label": "您的位置",
-          "description": "通过设置您的位置获取准确的天气和夜灯调度。"
+          "description": "通过设置您的位置获取准确的天气和调度夜间模式。"
         },
         "search": {
           "label": "搜索位置",
@@ -1105,9 +1105,9 @@
     "set-power-profile": "设置\"{profile}\"电源模式",
     "switch-to-light-mode": "切换到浅色模式",
     "switch-to-dark-mode": "切换到深色模式",
-    "night-light-disabled": "夜灯已禁用。\n左键点击循环模式。\n右键点击访问设置。",
-    "night-light-enabled": "夜灯已启用。\n左键点击循环模式。\n右键点击访问设置。",
-    "night-light-forced": "夜灯已强制启用。\n左键点击循环模式。\n右键点击访问设置。",
+    "night-light-disabled": "夜间模式已禁用。\n左键点击循环模式。\n右键点击访问设置。",
+    "night-light-enabled": "夜间模式已启用。\n左键点击循环模式。\n右键点击访问设置。",
+    "night-light-forced": "夜间模式已强制启用。\n左键点击循环模式。\n右键点击访问设置。",
     "click-to-start-recording": "点击开始录制",
     "click-to-stop-recording": "点击停止录制",
     "open-control-center": "打开控制中心",
