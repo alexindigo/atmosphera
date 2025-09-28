@@ -816,21 +816,54 @@
         "search-placeholder": "Search widget..."
       },
       "active-window": {
-        "auto-hide": "Hide automatically",
-        "show-app-icon": "Show app icon",
-        "scrolling-mode": "Scrolling mode"
+        "auto-hide": {
+          "label": "Hide automatically",
+          "description": "Automatically hide the widget when no window is active."
+        },
+        "show-app-icon": {
+          "label": "Show app icon",
+          "description": "Display the application icon next to the window title."
+        },
+        "scrolling-mode": {
+          "label": "Scrolling mode",
+          "description": "Control when text scrolling is enabled for long window titles."
+        }
       },
       "system-monitor": {
-        "cpu-usage": "CPU usage",
-        "cpu-temperature": "CPU temperature",
-        "memory-usage": "Memory usage",
-        "memory-percentage": "Memory as percentage",
-        "network-traffic": "Network traffic",
-        "storage-usage": "Storage usage"
+        "cpu-usage": {
+          "label": "CPU usage",
+          "description": "Display current CPU usage percentage."
+        },
+        "cpu-temperature": {
+          "label": "CPU temperature",
+          "description": "Show CPU temperature readings if available."
+        },
+        "memory-usage": {
+          "label": "Memory usage",
+          "description": "Display current RAM usage information."
+        },
+        "memory-percentage": {
+          "label": "Memory as percentage",
+          "description": "Show memory usage as a percentage instead of absolute values."
+        },
+        "network-traffic": {
+          "label": "Network traffic",
+          "description": "Display network upload and download speeds."
+        },
+        "storage-usage": {
+          "label": "Storage usage",
+          "description": "Show disk space usage information."
+        }
       },
       "notification-history": {
-        "show-unread-badge": "Show unread badge",
-        "hide-badge-when-zero": "Hide badge when zero"
+        "show-unread-badge": {
+          "label": "Show unread badge",
+          "description": "Display a badge showing the number of unread notifications."
+        },
+        "hide-badge-when-zero": {
+          "label": "Hide badge when zero",
+          "description": "Hide the notification badge when there are no unread notifications."
+        }
       },
       "battery": {
         "display-mode": {
@@ -843,7 +876,10 @@
         }
       },
       "control-center": {
-        "use-distro-logo": "Use distro logo instead of icon",
+        "use-distro-logo": {
+          "label": "Use distro logo instead of icon",
+          "description": "Use your distribution's logo instead of a custom icon."
+        },
         "icon": {
           "label": "Icon",
           "description": "Select an icon from the library or a custom file."
@@ -865,7 +901,10 @@
         }
       },
       "workspace": {
-        "label-mode": "Label Mode",
+        "label-mode": {
+          "label": "Label Mode",
+          "description": "Choose how workspace labels are displayed."
+        },
         "hide-unoccupied": {
           "label": "Hide unoccupied",
           "description": "Don't display workspaces without windows."
@@ -895,9 +934,18 @@
           "description": "Select an icon from the library."
         },
         "browse": "Browse",
-        "left-click": "Left click",
-        "right-click": "Right click",
-        "middle-click": "Middle click",
+        "left-click": {
+          "label": "Left click",
+          "description": "Command to execute when the button is left-clicked."
+        },
+        "right-click": {
+          "label": "Right click",
+          "description": "Command to execute when the button is right-clicked."
+        },
+        "middle-click": {
+          "label": "Middle click",
+          "description": "Command to execute when the button is middle-clicked."
+        },
         "dynamic-text": "Dynamic text",
         "display-command-output": {
           "label": "Display Command Output",
@@ -909,11 +957,26 @@
         }
       },
       "media-mini": {
-        "auto-hide": "Hide automatically",
-        "show-album-art": "Show album art",
-        "show-visualizer": "Show visualizer",
-        "visualizer-type": "Visualizer type",
-        "scrolling-mode": "Scrolling mode"
+        "auto-hide": {
+          "label": "Hide automatically",
+          "description": "Automatically hide the widget when no media is playing."
+        },
+        "show-album-art": {
+          "label": "Show album art",
+          "description": "Display the album artwork for the currently playing track."
+        },
+        "show-visualizer": {
+          "label": "Show visualizer",
+          "description": "Display an audio visualizer when music is playing."
+        },
+        "visualizer-type": {
+          "label": "Visualizer type",
+          "description": "Choose the style of audio visualizer to display."
+        },
+        "scrolling-mode": {
+          "label": "Scrolling mode",
+          "description": "Control when text scrolling is enabled for long track titles."
+        }
       },
       "clock": {
         "use-primary-color": {
