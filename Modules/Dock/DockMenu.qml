@@ -14,8 +14,11 @@ PopupWindow {
   property var toplevel: null
   property Item anchorItem: null
   property real scaling: 1.0
-  property bool hovered: menuMouseArea.containsMouse || activateMouseArea.containsMouse || pinMouseArea.containsMouse || closeMouseArea.containsMouse
+  property bool hovered: menuMouseArea.containsMouse
   property var onAppClosed: null // Callback function for when an app is closed
+
+  // Track which menu item is hovered
+  property int hoveredItem: -1 // -1: none, 0: focus, 1: pin, 2: close
 
   signal requestClose
 
@@ -70,25 +73,64 @@ PopupWindow {
     visible = false
   }
 
-  // Close menu when clicking on background, track hover for the whole menu area
-  MouseArea {
-    id: menuMouseArea
-    anchors.fill: parent
-    hoverEnabled: true
-    acceptedButtons: Qt.LeftButton | Qt.RightButton
-    onClicked: function (mouse) {
-      if (mouse.button === Qt.RightButton) {
-        root.hide() // Close on right-click
-      } else {
-        root.hide() // Close when clicking on the background (outside menu content)
+  // Helper function to determine which menu item is under the mouse
+  function getHoveredItem(mouseY) {
+    const itemHeight = 32 * scaling
+    const startY = Style.marginM * scaling
+    const relativeY = mouseY - startY
+
+    if (relativeY < 0)
+      return -1
+
+    const itemIndex = Math.floor(relativeY / itemHeight)
+    return itemIndex >= 0 && itemIndex < 3 ? itemIndex : -1
+  }
+
+  // Handle menu item clicks
+  function handleItemClick(itemIndex) {
+    switch (itemIndex) {
+    case 0:
+      // Focus
+      if (root.toplevel?.activate) {
+        root.toplevel.activate()
       }
+      root.requestClose()
+      break
+    case 1:
+      // Pin/Unpin
+      if (root.toplevel?.appId) {
+        root.toggleAppPin(root.toplevel.appId)
+      }
+      root.requestClose()
+      break
+    case 2:
+      // Close
+      // Check if toplevel is still valid before trying to close it
+      const isValidToplevel = root.toplevel && ToplevelManager && ToplevelManager.toplevels.values.includes(root.toplevel)
+
+      if (isValidToplevel && root.toplevel.close) {
+        root.toplevel.close()
+        // Trigger immediate dock update callback if provided
+        if (root.onAppClosed && typeof root.onAppClosed === "function") {
+          Qt.callLater(root.onAppClosed)
+        }
+      } else {
+        Logger.warn("DockMenu", "Cannot close app - invalid toplevel reference")
+      }
+      root.hide()
+      root.requestClose()
+      break
     }
   }
 
-  Shortcut {
-    sequences: ["Escape"]
-    enabled: root.visible
-    onActivated: root.hide()
+  Timer {
+    id: closeTimer
+    interval: 500
+    repeat: false
+    running: false
+    onTriggered: {
+      root.hide()
+    }
   }
 
   Rectangle {
@@ -98,12 +140,32 @@ PopupWindow {
     border.color: Color.mOutline
     border.width: Math.max(1, Style.borderS * scaling)
 
-    // Prevent clicks inside the menu from closing it
+    // Single MouseArea to handle both auto-close and menu interactions
     MouseArea {
+      id: menuMouseArea
       anchors.fill: parent
-      onClicked: {
+      hoverEnabled: true
+      cursorShape: root.hoveredItem >= 0 ? Qt.PointingHandCursor : Qt.ArrowCursor
 
-      } // Do nothing, just consume the click
+      onEntered: {
+        closeTimer.stop()
+      }
+
+      onExited: {
+        root.hoveredItem = -1
+        closeTimer.start()
+      }
+
+      onPositionChanged: mouse => {
+                           root.hoveredItem = root.getHoveredItem(mouse.y)
+                         }
+
+      onClicked: mouse => {
+                   const clickedItem = root.getHoveredItem(mouse.y)
+                   if (clickedItem >= 0) {
+                     root.handleItemClick(clickedItem)
+                   }
+                 }
     }
 
     Column {
@@ -116,7 +178,7 @@ PopupWindow {
       Rectangle {
         width: parent.width
         height: 32 * scaling
-        color: activateMouseArea.containsMouse ? Color.mTertiary : Color.transparent
+        color: root.hoveredItem === 0 ? Color.mTertiary : Color.transparent
         radius: Style.radiusXS * scaling
 
         Row {
@@ -128,29 +190,15 @@ PopupWindow {
           NIcon {
             icon: "eye"
             font.pointSize: Style.fontSizeL * scaling
-            color: activateMouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurfaceVariant
+            color: root.hoveredItem === 0 ? Color.mOnTertiary : Color.mOnSurfaceVariant
             anchors.verticalCenter: parent.verticalCenter
           }
 
           NText {
             text: I18n.tr("dock.menu.focus")
             font.pointSize: Style.fontSizeS * scaling
-            color: activateMouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurfaceVariant
+            color: root.hoveredItem === 0 ? Color.mOnTertiary : Color.mOnSurfaceVariant
             anchors.verticalCenter: parent.verticalCenter
-          }
-        }
-
-        MouseArea {
-          id: activateMouseArea
-          anchors.fill: parent
-          hoverEnabled: true
-          cursorShape: Qt.PointingHandCursor
-
-          onClicked: {
-            if (root.toplevel?.activate) {
-              root.toplevel.activate()
-            }
-            root.requestClose()
           }
         }
       }
@@ -159,7 +207,7 @@ PopupWindow {
       Rectangle {
         width: parent.width
         height: 32 * scaling
-        color: pinMouseArea.containsMouse ? Color.mTertiary : Color.transparent
+        color: root.hoveredItem === 1 ? Color.mTertiary : Color.transparent
         radius: Style.radiusXS * scaling
 
         Row {
@@ -175,7 +223,7 @@ PopupWindow {
               return root.isAppPinned(root.toplevel.appId) ? "unpin" : "pin"
             }
             font.pointSize: Style.fontSizeL * scaling
-            color: pinMouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurfaceVariant
+            color: root.hoveredItem === 1 ? Color.mOnTertiary : Color.mOnSurfaceVariant
             anchors.verticalCenter: parent.verticalCenter
           }
 
@@ -186,23 +234,8 @@ PopupWindow {
               return root.isAppPinned(root.toplevel.appId) ? I18n.tr("dock.menu.unpin") : I18n.tr("dock.menu.pin")
             }
             font.pointSize: Style.fontSizeS * scaling
-            color: pinMouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurfaceVariant
+            color: root.hoveredItem === 1 ? Color.mOnTertiary : Color.mOnSurfaceVariant
             anchors.verticalCenter: parent.verticalCenter
-          }
-        }
-
-        MouseArea {
-          id: pinMouseArea
-          anchors.fill: parent
-          hoverEnabled: true
-          cursorShape: Qt.PointingHandCursor
-
-          onClicked: {
-            if (root.toplevel?.appId) {
-              root.toggleAppPin(root.toplevel.appId)
-            }
-            //root.hide()
-            root.requestClose()
           }
         }
       }
@@ -211,7 +244,7 @@ PopupWindow {
       Rectangle {
         width: parent.width
         height: 32 * scaling
-        color: closeMouseArea.containsMouse ? Color.mTertiary : Color.transparent
+        color: root.hoveredItem === 2 ? Color.mTertiary : Color.transparent
         radius: Style.radiusXS * scaling
 
         Row {
@@ -223,39 +256,15 @@ PopupWindow {
           NIcon {
             icon: "close"
             font.pointSize: Style.fontSizeL * scaling
-            color: closeMouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurfaceVariant
+            color: root.hoveredItem === 2 ? Color.mOnTertiary : Color.mOnSurfaceVariant
             anchors.verticalCenter: parent.verticalCenter
           }
 
           NText {
             text: I18n.tr("dock.menu.close")
             font.pointSize: Style.fontSizeS * scaling
-            color: closeMouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurfaceVariant
+            color: root.hoveredItem === 2 ? Color.mOnTertiary : Color.mOnSurfaceVariant
             anchors.verticalCenter: parent.verticalCenter
-          }
-        }
-
-        MouseArea {
-          id: closeMouseArea
-          anchors.fill: parent
-          hoverEnabled: true
-          cursorShape: Qt.PointingHandCursor
-
-          onClicked: {
-            // Check if toplevel is still valid before trying to close it
-            const isValidToplevel = root.toplevel && ToplevelManager && ToplevelManager.toplevels.values.includes(root.toplevel)
-
-            if (isValidToplevel && root.toplevel.close) {
-              root.toplevel.close()
-              // Trigger immediate dock update callback if provided
-              if (root.onAppClosed && typeof root.onAppClosed === "function") {
-                Qt.callLater(root.onAppClosed)
-              }
-            } else {
-              Logger.warn("DockMenu", "Cannot close app - invalid toplevel reference")
-            }
-            root.hide()
-            root.requestClose()
           }
         }
       }

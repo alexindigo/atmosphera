@@ -14,7 +14,7 @@ NPanel {
   id: root
 
   preferredWidth: 440
-  preferredHeight: 410
+  preferredHeight: 480
   panelAnchorHorizontalCenter: true
   panelAnchorVerticalCenter: true
   panelKeyboardFocus: true
@@ -32,6 +32,11 @@ NPanel {
       "icon": "lock",
       "title": I18n.tr("session-menu.lock"),
       "subtitle": I18n.tr("session-menu.lock-subtitle")
+    }, {
+      "action": "lockAndSuspend",
+      "icon": "lock-pause",
+      "title": I18n.tr("session-menu.lock-and-suspend"),
+      "subtitle": I18n.tr("session-menu.lock-and-suspend-subtitle")
     }, {
       "action": "suspend",
       "icon": "suspend",
@@ -96,6 +101,12 @@ NPanel {
       if (!lockScreen.active) {
         lockScreen.active = true
       }
+      break
+    case "lockAndSuspend":
+      if (!lockScreen.active) {
+        lockScreen.active = true
+      }
+      CompositorService.suspend()
       break
     case "suspend":
       CompositorService.suspend()

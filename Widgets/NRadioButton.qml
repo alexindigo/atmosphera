@@ -19,9 +19,8 @@ RadioButton {
     anchors.verticalCenter: parent.verticalCenter
 
     Rectangle {
-      anchors.centerIn: parent
-      implicitWidth: Style.marginS * scaling
-      implicitHeight: Style.marginS * scaling
+      anchors.fill: parent
+      anchors.margins: parent.width * 0.3
 
       radius: width * 0.5
       color: Qt.alpha(Color.mPrimary, root.checked ? 1 : 0)
@@ -45,6 +44,7 @@ RadioButton {
     font.pointSize: Style.fontSizeM * scaling
     anchors.verticalCenter: parent.verticalCenter
     anchors.left: outerCircle.right
+    anchors.right: parent.right
     anchors.leftMargin: Style.marginS * scaling
   }
 }

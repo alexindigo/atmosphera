@@ -29,6 +29,10 @@
         "animation-speed": {
           "label": "Velocidad de la animación",
           "description": "Ajusta la velocidad de la animación global."
+        },
+        "animation-disable": {
+          "label": "Desactivar animaciones de UI",
+          "description": "Desactivar todas las animaciones para una experiencia más rápida y responsiva."
         }
       },
       "screen-corners": {
@@ -480,12 +484,16 @@
         "enable-matugen": {
           "label": "Activar Matugen",
           "description": "Genera colores automáticamente basados en tu fondo de pantalla activo."
+        },
+        "matugen-scheme-type": {
+          "label": "Tipo de esquema Matugen",
+          "description": "Elige el algoritmo de generación de esquema de colores para Matugen."
         }
       },
       "predefined": {
         "section": {
           "label": "Esquemas de colores predefinidos",
-          "description": "Para usar estos esquemas de colores, debes desactivar Matugen. Con Matugen activado, los colores se generan automáticamente a partir de tu fondo de pantalla."
+          "description": "Elige entre una colección de esquemas de colores predefinidos."
         }
       },
       "matugen": {
@@ -810,21 +818,54 @@
         "search-placeholder": "Buscar widgets..."
       },
       "active-window": {
-        "auto-hide": "Ocultar automáticamente",
-        "show-app-icon": "Mostrar icono de la aplicación",
-        "scrolling-mode": "Modo de desplazamiento"
+        "auto-hide": {
+          "label": "Ocultar automáticamente",
+          "description": "Ocultar automáticamente el widget cuando no hay ventana activa."
+        },
+        "show-app-icon": {
+          "label": "Mostrar icono de la aplicación",
+          "description": "Mostrar el icono de la aplicación junto al título de la ventana."
+        },
+        "scrolling-mode": {
+          "label": "Modo de desplazamiento",
+          "description": "Controlar cuándo está habilitado el desplazamiento de texto para títulos de ventana largos."
+        }
       },
       "system-monitor": {
-        "cpu-usage": "Uso de CPU",
-        "cpu-temperature": "Temperatura de la CPU",
-        "memory-usage": "Uso de memoria",
-        "memory-percentage": "Memoria como porcentaje",
-        "network-traffic": "Tráfico de red",
-        "storage-usage": "Uso de almacenamiento"
+        "cpu-usage": {
+          "label": "Uso de CPU",
+          "description": "Mostrar el porcentaje actual de uso de CPU."
+        },
+        "cpu-temperature": {
+          "label": "Temperatura de la CPU",
+          "description": "Mostrar lecturas de temperatura de CPU si están disponibles."
+        },
+        "memory-usage": {
+          "label": "Uso de memoria",
+          "description": "Mostrar información actual del uso de RAM."
+        },
+        "memory-percentage": {
+          "label": "Memoria como porcentaje",
+          "description": "Mostrar el uso de memoria como porcentaje en lugar de valores absolutos."
+        },
+        "network-traffic": {
+          "label": "Tráfico de red",
+          "description": "Mostrar velocidades de carga y descarga de la red."
+        },
+        "storage-usage": {
+          "label": "Uso de almacenamiento",
+          "description": "Mostrar información del uso del espacio en disco."
+        }
       },
       "notification-history": {
-        "show-unread-badge": "Mostrar insignia de no leídos",
-        "hide-badge-when-zero": "Ocultar insignia cuando es cero"
+        "show-unread-badge": {
+          "label": "Mostrar insignia de no leídos",
+          "description": "Mostrar una insignia con el número de notificaciones no leídas."
+        },
+        "hide-badge-when-zero": {
+          "label": "Ocultar insignia cuando es cero",
+          "description": "Ocultar la insignia de notificaciones cuando no hay notificaciones no leídas."
+        }
       },
       "battery": {
         "display-mode": {
@@ -837,7 +878,10 @@
         }
       },
       "control-center": {
-        "use-distro-logo": "Usar logo de la distro en lugar del icono",
+        "use-distro-logo": {
+          "label": "Usar logo de la distribución en lugar de icono",
+          "description": "Usar el logo de tu distribución en lugar de un icono personalizado."
+        },
         "icon": {
           "label": "Icono",
           "description": "Selecciona un icono de la biblioteca o un archivo personalizado."
@@ -859,7 +903,10 @@
         }
       },
       "workspace": {
-        "label-mode": "Modo de etiqueta",
+        "label-mode": {
+          "label": "Modo de etiqueta",
+          "description": "Elegir cómo se muestran las etiquetas de los espacios de trabajo."
+        },
         "hide-unoccupied": {
           "label": "Ocultar desocupados",
           "description": "No mostrar espacios de trabajo sin ventanas."
@@ -889,9 +936,18 @@
           "description": "Selecciona un icono de la biblioteca."
         },
         "browse": "Explorar",
-        "left-click": "Clic izquierdo",
-        "right-click": "Clic derecho",
-        "middle-click": "Clic central",
+        "left-click": {
+          "label": "Clic izquierdo",
+          "description": "Comando a ejecutar cuando se hace clic izquierdo en el botón."
+        },
+        "right-click": {
+          "label": "Clic derecho",
+          "description": "Comando a ejecutar cuando se hace clic derecho en el botón."
+        },
+        "middle-click": {
+          "label": "Clic medio",
+          "description": "Comando a ejecutar cuando se hace clic medio en el botón."
+        },
         "dynamic-text": "Texto dinámico",
         "display-command-output": {
           "label": "Mostrar salida de comando",
@@ -903,11 +959,26 @@
         }
       },
       "media-mini": {
-        "auto-hide": "Ocultar automáticamente",
-        "show-album-art": "Mostrar carátula del álbum",
-        "show-visualizer": "Mostrar visualizador",
-        "visualizer-type": "Tipo de visualizador",
-        "scrolling-mode": "Modo de desplazamiento"
+        "auto-hide": {
+          "label": "Ocultar automáticamente",
+          "description": "Ocultar automáticamente el widget cuando no se está reproduciendo ningún medio."
+        },
+        "show-album-art": {
+          "label": "Mostrar arte del álbum",
+          "description": "Mostrar la portada del álbum de la pista que se está reproduciendo actualmente."
+        },
+        "show-visualizer": {
+          "label": "Mostrar visualizador",
+          "description": "Mostrar un visualizador de audio cuando se reproduce música."
+        },
+        "visualizer-type": {
+          "label": "Tipo de visualizador",
+          "description": "Elegir el estilo de visualizador de audio a mostrar."
+        },
+        "scrolling-mode": {
+          "label": "Modo de desplazamiento",
+          "description": "Controlar cuándo está habilitado el desplazamiento de texto para títulos de pista largos."
+        }
       },
       "clock": {
         "use-primary-color": {
@@ -1173,6 +1244,8 @@
     "click-again": "Haz clic de nuevo para ejecutar inmediatamente",
     "action-in-seconds": "{action} en {seconds} segundos...",
     "lock-subtitle": "Bloquea tu sesión",
+    "lock-and-suspend": "Bloquear y Suspender",
+    "lock-and-suspend-subtitle": "Bloquear sesión y poner el sistema en suspensión",
     "end-subtitle": "Finaliza tu sesión",
     "lock": "Bloquear",
     "suspend": "Suspender",

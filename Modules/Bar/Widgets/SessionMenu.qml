@@ -15,6 +15,7 @@ NIconButton {
   baseSize: Style.capsuleHeight
   icon: "power"
   tooltipText: I18n.tr("tooltips.session-menu")
+  tooltipDirection: BarService.getTooltipDirection()
   colorBg: (Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent)
   colorFg: Color.mError
   colorBorder: Color.transparent

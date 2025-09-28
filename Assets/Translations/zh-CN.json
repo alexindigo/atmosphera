@@ -29,6 +29,10 @@
         "animation-speed": {
           "label": "动画速度",
           "description": "调整全局动画速度。"
+        },
+        "animation-disable": {
+          "label": "关闭动画",
+          "description": "禁用所有动画效果，以获得更快速、更灵敏的体验。"
         }
       },
       "screen-corners": {
@@ -168,28 +172,13 @@
           "description": "调整亮度变化的步长（滚轮和键盘快捷键）。"
         }
       },
-      "color-scheme": {
-        "title": "配色方案",
-        "color-source": {
-          "section": {
-            "label": "颜色来源",
-            "description": "Noctalia 颜色的主要设置。"
-          },
-          "dark-mode": {
-            "label": "深色模式",
-            "description": "切换到更暗的主题，便于夜间观看。"
-          },
-          "enable-matugen": {
-            "label": "启用 Matugen",
-            "description": "根据您的活动壁纸自动生成颜色。"
-          },
-          "matugen-scheme-type": {
-            "label": "Matugen 配色方案类型",
-            "description": "为 Matugen 选择配色方案生成算法。"
-          }
+      "night-light": {
+        "section": {
+          "label": "夜间模式",
+          "description": "减少蓝光发射，帮助您更好地睡眠并减轻眼睛疲劳。"
         },
         "enable": {
-          "label": "启用夜灯",
+          "label": "启用夜间模式",
           "description": "应用暖色滤镜以减少蓝光发射。"
         },
         "temperature": {
@@ -241,7 +230,7 @@
         },
         "floating": {
           "label": "浮动状态栏",
-          "description": "将状态栏显示为浮动'药丸'。注意：这会将屏幕边角移动到边缘。"
+          "description": "将状态栏显示为浮动样式（类似于一个药丸）。注意：这会将屏幕边角移动到边缘。"
         },
         "margins": {
           "label": "边距",
@@ -276,7 +265,7 @@
         },
         "exclusive-zone": {
           "label": "独占区域",
-          "description": "防止窗口重叠。"
+          "description": "可以防止窗口重叠。"
         },
         "background-opacity": {
           "label": "背景不透明度",
@@ -320,10 +309,6 @@
         "use-app2unit": {
           "label": "使用 App2Unit 启动应用程序",
           "description": "使用替代启动方法以更好地管理应用程序进程并防止问题。"
-        },
-        "terminal-command": {
-          "label": "终端命令",
-          "description": "用于启动终端的命令。例如：'kitty -e' 或 'gnome-terminal --'。"
         }
       }
     },
@@ -495,12 +480,16 @@
         "enable-matugen": {
           "label": "启用 Matugen",
           "description": "根据您的活动壁纸自动生成颜色。"
+        },
+        "matugen-scheme-type": {
+          "label": "Matugen 配色方案类型",
+          "description": "为 Matugen 选择配色方案生成算法。"
         }
       },
       "predefined": {
         "section": {
           "label": "预定义配色方案",
-          "description": "要使用这些配色方案，您必须关闭 Matugen。启用 Matugen 后，颜色会根据您的壁纸自动生成。"
+          "description": "从预定义配色方案集合中选择。"
         }
       },
       "matugen": {
@@ -571,7 +560,7 @@
       "location": {
         "section": {
           "label": "您的位置",
-          "description": "通过设置您的位置获取准确的天气和夜灯调度。"
+          "description": "通过设置您的位置获取准确的天气和调度夜间模式。"
         },
         "search": {
           "label": "搜索位置",
@@ -825,21 +814,54 @@
         "search-placeholder": "搜索小部件..."
       },
       "active-window": {
-        "auto-hide": "自动隐藏",
-        "show-app-icon": "显示应用图标",
-        "scrolling-mode": "滚动模式"
+        "auto-hide": {
+          "label": "自动隐藏",
+          "description": "当没有活动窗口时自动隐藏小部件。"
+        },
+        "show-app-icon": {
+          "label": "显示应用图标",
+          "description": "在窗口标题旁边显示应用程序图标。"
+        },
+        "scrolling-mode": {
+          "label": "滚动模式",
+          "description": "控制何时为长窗口标题启用文本滚动。"
+        }
       },
       "system-monitor": {
-        "cpu-usage": "CPU 使用率",
-        "cpu-temperature": "CPU 温度",
-        "memory-usage": "内存使用率",
-        "memory-percentage": "内存百分比",
-        "network-traffic": "网络流量",
-        "storage-usage": "存储使用率"
+        "cpu-usage": {
+          "label": "CPU使用率",
+          "description": "显示当前CPU使用百分比。"
+        },
+        "cpu-temperature": {
+          "label": "CPU温度",
+          "description": "如果可用，显示CPU温度读数。"
+        },
+        "memory-usage": {
+          "label": "内存使用率",
+          "description": "显示当前RAM使用信息。"
+        },
+        "memory-percentage": {
+          "label": "内存百分比",
+          "description": "以百分比而不是绝对值显示内存使用情况。"
+        },
+        "network-traffic": {
+          "label": "网络流量",
+          "description": "显示网络上传和下载速度。"
+        },
+        "storage-usage": {
+          "label": "存储使用率",
+          "description": "显示磁盘空间使用信息。"
+        }
       },
       "notification-history": {
-        "show-unread-badge": "显示未读标记",
-        "hide-badge-when-zero": "为零时隐藏标记"
+        "show-unread-badge": {
+          "label": "显示未读徽章",
+          "description": "显示显示未读通知数量的徽章。"
+        },
+        "hide-badge-when-zero": {
+          "label": "零时隐藏徽章",
+          "description": "当没有未读通知时隐藏通知徽章。"
+        }
       },
       "battery": {
         "display-mode": {
@@ -852,7 +874,10 @@
         }
       },
       "control-center": {
-        "use-distro-logo": "使用发行版徽标代替图标",
+        "use-distro-logo": {
+          "label": "使用发行版徽标而不是图标",
+          "description": "使用您的发行版徽标而不是自定义图标。"
+        },
         "icon": {
           "label": "图标",
           "description": "从库中选择图标或自定义文件。"
@@ -874,7 +899,10 @@
         }
       },
       "workspace": {
-        "label-mode": "标签模式",
+        "label-mode": {
+          "label": "标签模式",
+          "description": "选择工作区标签的显示方式。"
+        },
         "hide-unoccupied": {
           "label": "隐藏未占用",
           "description": "不显示没有窗口的工作区。"
@@ -904,9 +932,18 @@
           "description": "从库中选择图标。"
         },
         "browse": "浏览",
-        "left-click": "左键点击",
-        "right-click": "右键点击",
-        "middle-click": "中键点击",
+        "left-click": {
+          "label": "左键点击",
+          "description": "左键点击按钮时执行的命令。"
+        },
+        "right-click": {
+          "label": "右键点击",
+          "description": "右键点击按钮时执行的命令。"
+        },
+        "middle-click": {
+          "label": "中键点击",
+          "description": "中键点击按钮时执行的命令。"
+        },
         "dynamic-text": "动态文本",
         "display-command-output": {
           "label": "显示命令输出",
@@ -918,11 +955,26 @@
         }
       },
       "media-mini": {
-        "auto-hide": "自动隐藏",
-        "show-album-art": "显示专辑封面",
-        "show-visualizer": "显示可视化器",
-        "visualizer-type": "可视化器类型",
-        "scrolling-mode": "滚动模式"
+        "auto-hide": {
+          "label": "自动隐藏",
+          "description": "当没有媒体播放时自动隐藏小部件。"
+        },
+        "show-album-art": {
+          "label": "显示专辑封面",
+          "description": "显示当前播放曲目的专辑封面。"
+        },
+        "show-visualizer": {
+          "label": "显示可视化器",
+          "description": "播放音乐时显示音频可视化器。"
+        },
+        "visualizer-type": {
+          "label": "可视化器类型",
+          "description": "选择要显示的音频可视化器样式。"
+        },
+        "scrolling-mode": {
+          "label": "滚动模式",
+          "description": "控制何时为长曲目标题启用文本滚动。"
+        }
       },
       "clock": {
         "use-primary-color": {
@@ -1053,9 +1105,9 @@
     "set-power-profile": "设置\"{profile}\"电源模式",
     "switch-to-light-mode": "切换到浅色模式",
     "switch-to-dark-mode": "切换到深色模式",
-    "night-light-disabled": "夜灯已禁用。\n左键点击循环模式。\n右键点击访问设置。",
-    "night-light-enabled": "夜灯已启用。\n左键点击循环模式。\n右键点击访问设置。",
-    "night-light-forced": "夜灯已强制启用。\n左键点击循环模式。\n右键点击访问设置。",
+    "night-light-disabled": "夜间模式已禁用。\n左键点击循环模式。\n右键点击访问设置。",
+    "night-light-enabled": "夜间模式已启用。\n左键点击循环模式。\n右键点击访问设置。",
+    "night-light-forced": "夜间模式已强制启用。\n左键点击循环模式。\n右键点击访问设置。",
     "click-to-start-recording": "点击开始录制",
     "click-to-stop-recording": "点击停止录制",
     "open-control-center": "打开控制中心",
@@ -1188,6 +1240,8 @@
     "click-again": "再次点击立即执行",
     "action-in-seconds": "{seconds} 秒后{action}...",
     "lock-subtitle": "锁定您的会话",
+    "lock-and-suspend": "锁定并挂起",
+    "lock-and-suspend-subtitle": "锁定会话并将系统挂起",
     "end-subtitle": "结束您的会话",
     "lock": "锁定",
     "suspend": "挂起",

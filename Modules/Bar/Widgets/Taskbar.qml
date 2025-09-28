@@ -98,15 +98,8 @@ Rectangle {
               }
             }
           }
-          onEntered: taskbarTooltip.show()
-          onExited: taskbarTooltip.hide()
-        }
-
-        NTooltip {
-          id: taskbarTooltip
-          text: taskbarItem.modelData.title || taskbarItem.modelData.appId || "Unknown app."
-          target: taskbarItem
-          positionAbove: Settings.data.bar.position === "bottom"
+          onEntered: TooltipService.show(taskbarItem, taskbarItem.modelData.title || taskbarItem.modelData.appId || "Unknown app.", BarService.getTooltipDirection())
+          onExited: TooltipService.hide()
         }
       }
     }

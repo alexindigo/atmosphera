@@ -44,13 +44,13 @@ NPanel {
 
         NToggle {
           id: bluetoothSwitch
-          checked: Settings.data.network.bluetoothEnabled
+          checked: BluetoothService.enabled
           onToggled: checked => BluetoothService.setBluetoothEnabled(checked)
           baseSize: Style.baseWidgetSize * 0.65 * scaling
         }
 
         NIconButton {
-          enabled: Settings.data.network.bluetoothEnabled
+          enabled: BluetoothService.enabled
           icon: BluetoothService.adapter && BluetoothService.adapter.discovering ? "stop" : "refresh"
           tooltipText: I18n.tr("tooltips.refresh-devices")
           baseSize: Style.baseWidgetSize * 0.8

@@ -60,10 +60,10 @@ Singleton {
   property real opacityFull: 1.0
 
   // Animation duration (ms)
-  property int animationFast: Math.round(150 / Settings.data.general.animationSpeed)
-  property int animationNormal: Math.round(300 / Settings.data.general.animationSpeed)
-  property int animationSlow: Math.round(450 / Settings.data.general.animationSpeed)
-  property int animationSlowest: Math.round(750 / Settings.data.general.animationSpeed)
+  property int animationFast: Settings.data.general.animationDisabled ? 0 : Math.round(150 / Settings.data.general.animationSpeed)
+  property int animationNormal: Settings.data.general.animationDisabled ? 0 : Math.round(300 / Settings.data.general.animationSpeed)
+  property int animationSlow: Settings.data.general.animationDisabled ? 0 : Math.round(450 / Settings.data.general.animationSpeed)
+  property int animationSlowest: Settings.data.general.animationDisabled ? 0 : Math.round(750 / Settings.data.general.animationSpeed)
 
   // Delays
   property int tooltipDelay: 300

@@ -29,6 +29,10 @@
         "animation-speed": {
           "label": "Velocidade da animação",
           "description": "Ajuste a velocidade global da animação."
+        },
+        "animation-disable": {
+          "label": "Desativar animações da interface",
+          "description": "Desativar todas as animações para uma experiência mais rápida e responsiva."
         }
       },
       "screen-corners": {
@@ -446,12 +450,16 @@
         "enable-matugen": {
           "label": "Ativar Matugen",
           "description": "Gera cores automaticamente com base no seu papel de parede ativo."
+        },
+        "matugen-scheme-type": {
+          "label": "Tipo de esquema Matugen",
+          "description": "Escolha o algoritmo de geração de esquema de cores para Matugen."
         }
       },
       "predefined": {
         "section": {
           "label": "Esquemas de cores predefinidos",
-          "description": "Para usar esses esquemas de cores, você deve desativar o Matugen. Com o Matugen ativado, as cores são geradas automaticamente a partir do seu papel de parede."
+          "description": "Escolha entre uma coleção de esquemas de cores predefinidos."
         }
       },
       "matugen": {
@@ -713,7 +721,6 @@
       }
     }
   },
-  
   "widgets": {
     "tooltip": {
       "placeholder": "Espaço reservado"
@@ -811,21 +818,54 @@
         "search-placeholder": "Pesquisar widgets..."
       },
       "active-window": {
-        "auto-hide": "Ocultar automaticamente",
-        "show-app-icon": "Mostrar ícone do aplicativo",
-        "scrolling-mode": "Modo de Rolagem"
+        "auto-hide": {
+          "label": "Ocultar automaticamente",
+          "description": "Ocultar automaticamente o widget quando nenhuma janela está ativa."
+        },
+        "show-app-icon": {
+          "label": "Mostrar ícone do aplicativo",
+          "description": "Exibir o ícone do aplicativo ao lado do título da janela."
+        },
+        "scrolling-mode": {
+          "label": "Modo de rolagem",
+          "description": "Controlar quando a rolagem de texto está habilitada para títulos de janela longos."
+        }
       },
       "system-monitor": {
-        "cpu-usage": "Uso de CPU",
-        "cpu-temperature": "Temperatura da CPU",
-        "memory-usage": "Uso de memória",
-        "memory-percentage": "Memória em porcentagem",
-        "network-traffic": "Tráfego de rede",
-        "storage-usage": "Uso de armazenamento"
+        "cpu-usage": {
+          "label": "Uso da CPU",
+          "description": "Exibir o percentual atual de uso da CPU."
+        },
+        "cpu-temperature": {
+          "label": "Temperatura da CPU",
+          "description": "Mostrar leituras de temperatura da CPU se disponíveis."
+        },
+        "memory-usage": {
+          "label": "Uso de memória",
+          "description": "Exibir informações atuais de uso da RAM."
+        },
+        "memory-percentage": {
+          "label": "Memória como percentual",
+          "description": "Mostrar o uso de memória como percentual em vez de valores absolutos."
+        },
+        "network-traffic": {
+          "label": "Tráfego de rede",
+          "description": "Exibir velocidades de upload e download da rede."
+        },
+        "storage-usage": {
+          "label": "Uso de armazenamento",
+          "description": "Mostrar informações de uso do espaço em disco."
+        }
       },
       "notification-history": {
-        "show-unread-badge": "Mostrar selo de não lidas",
-        "hide-badge-when-zero": "Ocultar selo quando for zero"
+        "show-unread-badge": {
+          "label": "Mostrar distintivo de não lidos",
+          "description": "Exibir um distintivo mostrando o número de notificações não lidas."
+        },
+        "hide-badge-when-zero": {
+          "label": "Ocultar distintivo quando zero",
+          "description": "Ocultar o distintivo de notificação quando não há notificações não lidas."
+        }
       },
       "battery": {
         "display-mode": {
@@ -838,7 +878,10 @@
         }
       },
       "control-center": {
-        "use-distro-logo": "Usar logo da distro em vez do ícone",
+        "use-distro-logo": {
+          "label": "Usar logo da distribuição em vez de ícone",
+          "description": "Usar o logo da sua distribuição em vez de um ícone personalizado."
+        },
         "icon": {
           "label": "Ícone",
           "description": "Selecione um ícone da biblioteca ou um arquivo personalizado."
@@ -860,7 +903,10 @@
         }
       },
       "workspace": {
-        "label-mode": "Modo de Rótulo",
+        "label-mode": {
+          "label": "Modo de rótulo",
+          "description": "Escolher como os rótulos de espaço de trabalho são exibidos."
+        },
         "hide-unoccupied": {
           "label": "Ocultar desocupados",
           "description": "Não exibir áreas de trabalho sem janelas."
@@ -890,9 +936,18 @@
           "description": "Selecione um ícone da biblioteca."
         },
         "browse": "Navegar",
-        "left-click": "Clique esquerdo",
-        "right-click": "Clique direito",
-        "middle-click": "Clique do meio",
+        "left-click": {
+          "label": "Clique esquerdo",
+          "description": "Comando a executar quando o botão é clicado com o botão esquerdo."
+        },
+        "right-click": {
+          "label": "Clique direito",
+          "description": "Comando a executar quando o botão é clicado com o botão direito."
+        },
+        "middle-click": {
+          "label": "Clique do meio",
+          "description": "Comando a executar quando o botão é clicado com o botão do meio."
+        },
         "dynamic-text": "Texto dinâmico",
         "display-command-output": {
           "label": "Exibir Saída de Comando",
@@ -904,11 +959,26 @@
         }
       },
       "media-mini": {
-        "auto-hide": "Ocultar automaticamente",
-        "show-album-art": "Mostrar arte do álbum",
-        "show-visualizer": "Mostrar visualizador",
-        "visualizer-type": "Tipo de visualizador",
-        "scrolling-mode": "Modo de rolagem"
+        "auto-hide": {
+          "label": "Ocultar automaticamente",
+          "description": "Ocultar automaticamente o widget quando nenhuma mídia está sendo reproduzida."
+        },
+        "show-album-art": {
+          "label": "Mostrar arte do álbum",
+          "description": "Exibir a arte do álbum da faixa atualmente sendo reproduzida."
+        },
+        "show-visualizer": {
+          "label": "Mostrar visualizador",
+          "description": "Exibir um visualizador de áudio quando música está sendo reproduzida."
+        },
+        "visualizer-type": {
+          "label": "Tipo de visualizador",
+          "description": "Escolher o estilo de visualizador de áudio a exibir."
+        },
+        "scrolling-mode": {
+          "label": "Modo de rolagem",
+          "description": "Controlar quando a rolagem de texto está habilitada para títulos de faixa longos."
+        }
       },
       "clock": {
         "use-primary-color": {
@@ -1105,8 +1175,8 @@
         "bottom_right": "Inferior direito",
         "bottom_center": "Centro inferior",
         "top_center": "Centro superior",
-        "center_left": "Esquerda central",
-        "center_right": "Direita central"
+        "center_left": "Centro à esquerda",
+        "center_right": "Centro à direita"
       }
     },
     "bar": {
@@ -1120,19 +1190,6 @@
         "compact": "Compacta",
         "default": "Padrão",
         "comfortable": "Confortável"
-      }
-    },
-    "launcher": {
-      "position": {
-        "center": "Centro (padrão)",
-        "top_left": "Superior esquerdo",
-        "top_right": "Superior direito",
-        "bottom_left": "Inferior esquerdo",
-        "bottom_right": "Inferior direito",
-        "bottom_center": "Centro inferior",
-        "top_center": "Centro superior",
-        "center_left": "Centro à esquerda",
-        "center_right": "Centro à direita"
       }
     },
     "display-mode": {
@@ -1187,6 +1244,8 @@
     "click-again": "Clique novamente para executar imediatamente",
     "action-in-seconds": "{action} em {seconds} segundos...",
     "lock-subtitle": "Bloqueie sua sessão",
+    "lock-and-suspend": "Bloquear e Suspender",
+    "lock-and-suspend-subtitle": "Bloquear sessão e colocar o sistema em suspensão",
     "end-subtitle": "Encerre sua sessão",
     "lock": "Bloquear",
     "suspend": "Suspender",

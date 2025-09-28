@@ -10,6 +10,7 @@ Singleton {
 
   readonly property BluetoothAdapter adapter: Bluetooth.defaultAdapter
   readonly property bool available: (adapter !== null)
+  readonly property bool enabled: adapter?.enabled ?? false
   readonly property bool discovering: (adapter && adapter.discovering) ?? false
   readonly property var devices: adapter ? adapter.devices : null
   readonly property var pairedDevices: {
@@ -20,6 +21,7 @@ Singleton {
                                            return dev && (dev.paired || dev.trusted)
                                          })
   }
+
   readonly property var allDevicesWithBattery: {
     if (!adapter || !adapter.devices) {
       return []
@@ -29,20 +31,8 @@ Singleton {
                                          })
   }
 
-  property bool lastAdapterState: false
-
   function init() {
     Logger.log("Bluetooth", "Service initialized")
-    syncStateTimer.running = true
-  }
-
-  Timer {
-    id: syncStateTimer
-    interval: 1000
-    repeat: false
-    onTriggered: {
-      lastAdapterState = Settings.data.network.bluetoothEnabled = adapter.enabled
-    }
   }
 
   Timer {
@@ -50,27 +40,6 @@ Singleton {
     interval: 1000
     repeat: false
     onTriggered: adapter.discovering = true
-  }
-
-  Timer {
-    id: stateDebounceTimer
-    interval: 200
-    repeat: false
-    onTriggered: {
-      if (!adapter) {
-        Logger.warn("Bluetooth", "State debouncer", "No adapter available")
-        return
-      }
-      if (lastAdapterState === adapter.enabled) {
-        return
-      }
-      lastAdapterState = adapter.enabled
-      if (adapter.enabled) {
-        ToastService.showNotice(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.enabled"))
-      } else {
-        ToastService.showNotice(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.disabled"))
-      }
-    }
   }
 
   Connections {
@@ -82,11 +51,11 @@ Singleton {
       }
 
       Logger.log("Bluetooth", "onEnableChanged", adapter.enabled)
-      Settings.data.network.bluetoothEnabled = adapter.enabled
-      stateDebounceTimer.restart()
       if (adapter.enabled) {
-        // Using a timer to give a little time so the adapter is really enabled
+        ToastService.showNotice(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.enabled"))
         discoveryTimer.running = true
+      } else {
+        ToastService.showNotice(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.disabled"))
       }
     }
   }
@@ -149,11 +118,8 @@ Singleton {
 
     /*
       Paired
-
       Means you’ve successfully exchanged keys with the device.
-
       The devices remember each other and can authenticate without repeating the pairing process.
-
       Example: once your headphones are paired, you don’t need to type a PIN every time.
       Hence, instead of !device.paired, should be device.connected
     */

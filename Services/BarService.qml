@@ -202,4 +202,17 @@ Singleton {
     }
     return false
   }
+
+  function getTooltipDirection() {
+    switch (Settings.data.bar.position) {
+    case "right":
+      return "left"
+    case "left":
+      return "right"
+    case "bottom":
+      return "top"
+    default:
+      return "bottom"
+    }
+  }
 }

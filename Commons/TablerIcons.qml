@@ -45,6 +45,7 @@ Singleton {
     "keyboard": "keyboard",
     "shutdown": "power",
     "lock": "lock",
+    "lock-pause": "lock-pause",
     "logout": "logout",
     "reboot": "refresh",
     "suspend": "player-pause",

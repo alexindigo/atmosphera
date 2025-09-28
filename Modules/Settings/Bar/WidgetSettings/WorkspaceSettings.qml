@@ -23,7 +23,8 @@ ColumnLayout {
   NComboBox {
     id: labelModeCombo
 
-    label: I18n.tr("bar.widget-settings.workspace.label-mode")
+    label: I18n.tr("bar.widget-settings.workspace.label-mode.label")
+    description: I18n.tr("bar.widget-settings.workspace.label-mode.description")
     model: [{
         "key": "none",
         "name": I18n.tr("options.workspace-labels.none")

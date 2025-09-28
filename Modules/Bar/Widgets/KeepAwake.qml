@@ -15,6 +15,7 @@ NIconButton {
   compact: (Settings.data.bar.density === "compact")
   icon: IdleInhibitorService.isInhibited ? "keep-awake-on" : "keep-awake-off"
   tooltipText: IdleInhibitorService.isInhibited ? I18n.tr("tooltips.disable-keep-awake") : I18n.tr("tooltips.enable-keep-awake")
+  tooltipDirection: BarService.getTooltipDirection()
   colorBg: IdleInhibitorService.isInhibited ? Color.mPrimary : (Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent)
   colorFg: IdleInhibitorService.isInhibited ? Color.mOnPrimary : Color.mOnSurface
   colorBorder: Color.transparent

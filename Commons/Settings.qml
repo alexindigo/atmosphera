@@ -54,7 +54,7 @@ Singleton {
     // Then it should be commented out again, regular users don't need to generate
     // default settings on every start
     // TODO: automate this someday!
-    //generateDefaultSettings()
+    // generateDefaultSettings()
 
     // Patch-in the local default, resolved to user's home
     adapter.general.avatarImage = defaultAvatar
@@ -114,7 +114,7 @@ Singleton {
   JsonAdapter {
     id: adapter
 
-    property int settingsVersion: 8
+    property int settingsVersion: 12
 
     // bar
     property JsonObject bar: JsonObject {
@@ -159,8 +159,6 @@ Singleton {
           }, {
             "id": "Brightness"
           }, {
-            "id": "NightLight"
-          }, {
             "id": "Clock"
           }, {
             "id": "ControlCenter"
@@ -177,6 +175,7 @@ Singleton {
       property real radiusRatio: 1.0
       property real screenRadiusRatio: 1.0
       property real animationSpeed: 1.0
+      property bool animationDisabled: false
     }
 
     // location
@@ -242,7 +241,6 @@ Singleton {
     // network
     property JsonObject network: JsonObject {
       property bool wifiEnabled: true
-      property bool bluetoothEnabled: true
     }
 
     // notifications
@@ -294,6 +292,7 @@ Singleton {
       property bool useWallpaperColors: false
       property string predefinedScheme: "Noctalia (default)"
       property bool darkMode: true
+      property string matugenSchemeType: "scheme-fruit-salad"
     }
 
     // matugen templates toggles

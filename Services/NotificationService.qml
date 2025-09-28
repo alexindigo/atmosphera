@@ -25,8 +25,6 @@ Singleton {
   property var activeMap: ({})
   property var imageQueue: []
   property var progressTimers: ({})
-
-  // Simple image cacher
   PanelWindow {
     implicitHeight: 1
     implicitWidth: 1
@@ -137,7 +135,6 @@ Singleton {
 
     const dest = Settings.cacheDirImagesNotifications + imageId + ".png"
 
-    // Skip if already queued
     for (const req of imageQueue) {
       if (req.imageId === imageId)
         return
@@ -149,7 +146,6 @@ Singleton {
                       "imageId": imageId
                     })
 
-    // If we have a single item in the queue, process it immediately
     if (imageQueue.length === 1)
       cacher.source = path
   }
@@ -262,7 +258,6 @@ Singleton {
         items.push(copy)
       }
       adapter.notifications = items
-      // Actually write the file
       historyFileView.writeAdapter()
     } catch (e) {
       Logger.error("Notifications", "Save history failed:", e)
@@ -275,10 +270,8 @@ Singleton {
       for (const item of adapter.notifications || []) {
         const time = new Date(item.timestamp)
 
-        // Check if we have a cached image and try to use it
         let cachedImage = item.cachedImage || ""
         if (item.originalImage && item.originalImage.startsWith("image://") && !cachedImage) {
-          // Try to generate the expected cached path
           const imageId = generateImageId(item, item.originalImage)
           if (imageId) {
             cachedImage = Settings.cacheDirImagesNotifications + imageId + ".png"
@@ -301,15 +294,54 @@ Singleton {
     }
   }
 
-  // Helpers
   function getAppName(name) {
-    if (!name?.includes("."))
-      return name || ""
-    const entries = DesktopEntries.byId(name)
-    if (entries?.length)
-      return entries[0].name || name
-    const parts = name.split(".")
-    return parts[parts.length - 1].charAt(0).toUpperCase() + parts[parts.length - 1].slice(1)
+    if (!name || name.trim() === "")
+      return "Unknown"
+
+    name = name.trim()
+
+    if (name.includes(".") && (name.startsWith("com.") || name.startsWith("org.") || name.startsWith("io.") || name.startsWith("net."))) {
+      const parts = name.split(".")
+      let appPart = parts[parts.length - 1]
+
+      if (!appPart || appPart === "app" || appPart === "desktop") {
+        appPart = parts[parts.length - 2] || parts[0]
+      }
+
+      if (appPart) {
+        name = appPart
+      }
+    }
+
+    if (name.includes(".")) {
+      const parts = name.split(".")
+      let displayName = parts[parts.length - 1]
+
+      if (!displayName || /^\d+$/.test(displayName)) {
+        displayName = parts[parts.length - 2] || parts[0]
+      }
+
+      if (displayName) {
+        displayName = displayName.charAt(0).toUpperCase() + displayName.slice(1)
+        displayName = displayName.replace(/([a-z])([A-Z])/g, '$1 $2')
+        displayName = displayName.replace(/app$/i, '').trim()
+        displayName = displayName.replace(/desktop$/i, '').trim()
+        displayName = displayName.replace(/flatpak$/i, '').trim()
+
+        if (!displayName) {
+          displayName = parts[parts.length - 1].charAt(0).toUpperCase() + parts[parts.length - 1].slice(1)
+        }
+      }
+
+      return displayName || name
+    }
+
+    let displayName = name.charAt(0).toUpperCase() + name.slice(1)
+    displayName = displayName.replace(/([a-z])([A-Z])/g, '$1 $2')
+    displayName = displayName.replace(/app$/i, '').trim()
+    displayName = displayName.replace(/desktop$/i, '').trim()
+
+    return displayName || name
   }
 
   function getIcon(icon) {
@@ -326,13 +358,10 @@ Singleton {
 
   function generateImageId(notification, image) {
     if (image && image.startsWith("image://")) {
-      // For qsimage URLs, try to use a combination that's unique per user
       if (image.startsWith("image://qsimage/")) {
-        // Try to use app name + summary for uniqueness (summary often contains username)
         const key = (notification.appName || "") + "|" + (notification.summary || "")
         return Checksum.sha256(key)
       }
-
       return Checksum.sha256(image)
     }
     return ""
@@ -368,7 +397,6 @@ Singleton {
     for (var i = 0; i < historyList.count; i++) {
       const notif = historyList.get(i)
       if (notif.id === notificationId) {
-        // Delete cached image if it exists
         if (notif.cachedImage && !notif.cachedImage.startsWith("image://")) {
           Quickshell.execDetached(["rm", "-f", notif.cachedImage])
         }
@@ -381,7 +409,6 @@ Singleton {
   }
 
   function clearHistory() {
-    // Remove all cached images
     try {
       Quickshell.execDetached(["sh", "-c", `rm -rf "${Settings.cacheDirImagesNotifications}"*`])
     } catch (e) {
