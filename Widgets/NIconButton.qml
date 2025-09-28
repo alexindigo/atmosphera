@@ -73,20 +73,20 @@ Rectangle {
     onEntered: {
       hovering = root.enabled ? true : false
       if (tooltipText) {
-        PanelService.tooltip.show(parent, tooltipText, tooltipDirection)
+        TooltipService.show(parent, tooltipText, tooltipDirection)
       }
       root.entered()
     }
     onExited: {
       hovering = false
       if (tooltipText) {
-        PanelService.tooltip.hide()
+        TooltipService.hide()
       }
       root.exited()
     }
     onClicked: function (mouse) {
       if (tooltipText) {
-        PanelService.tooltip.hide()
+        TooltipService.hide()
       }
       if (!root.enabled && !allowClickWhenDisabled) {
         return

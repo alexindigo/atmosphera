@@ -474,7 +474,7 @@ Variants {
                         anyAppHovered = true
                         const appName = appButton.appTitle || appButton.appId || "Unknown"
                         const tooltipText = appName.length > 40 ? appName.substring(0, 37) + "..." : appName
-                        PanelService.tooltip.show(appButton, tooltipText, "top")
+                        TooltipService.show(appButton, tooltipText, "top")
                         if (autoHide) {
                           showTimer.stop()
                           hideTimer.stop()
@@ -484,7 +484,7 @@ Variants {
 
                       onExited: {
                         anyAppHovered = false
-                        PanelService.tooltip.hide()
+                        TooltipService.hide()
                         if (autoHide && !dockHovered && !peekHovered && !menuHovered) {
                           hideTimer.restart()
                         }
@@ -500,7 +500,7 @@ Variants {
                           // Close any other existing context menu first
                           root.closeAllContextMenus()
                           // Hide tooltip when showing context menu
-                          PanelService.tooltip.hide()
+                          TooltipService.hide()
                           contextMenu.show(appButton, modelData.toplevel || modelData)
                           return
                         }

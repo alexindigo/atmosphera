@@ -894,7 +894,7 @@ Loader {
                   anchors.horizontalCenter: parent.horizontalCenter
                   anchors.bottom: parent.top
                   anchors.bottomMargin: Style.marginM * scaling
-                  radius: Style.radiusM * scaling
+                  radius: Style.radiusS * scaling
                   color: Color.mSurface
                   border.color: Color.mOutline
                   border.width: Math.max(1, Style.borderS * scaling)
@@ -905,7 +905,8 @@ Loader {
                     anchors.margins: Style.marginM * scaling
                     anchors.fill: parent
                     text: I18n.tr("lock-screen.shut-down")
-                    font.pointSize: Style.fontSizeM * scaling
+                    font.pointSize: Style.fontSizeS * scaling
+                    color: Color.mOnSurfaceVariant
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                   }
@@ -945,7 +946,7 @@ Loader {
                   anchors.horizontalCenter: parent.horizontalCenter
                   anchors.bottom: parent.top
                   anchors.bottomMargin: Style.marginM * scaling
-                  radius: Style.radiusM * scaling
+                  radius: Style.radiusS * scaling
                   color: Color.mSurface
                   border.color: Color.mOutline
                   border.width: Math.max(1, Style.borderS * scaling)
@@ -956,7 +957,8 @@ Loader {
                     anchors.margins: Style.marginM * scaling
                     anchors.fill: parent
                     text: I18n.tr("lock-screen.restart")
-                    font.pointSize: Style.fontSizeM * scaling
+                    font.pointSize: Style.fontSizeS * scaling
+                    color: Color.mOnSurfaceVariant
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                   }
@@ -997,7 +999,7 @@ Loader {
                   anchors.horizontalCenter: parent.horizontalCenter
                   anchors.bottom: parent.top
                   anchors.bottomMargin: Style.marginM * scaling
-                  radius: Style.radiusM * scaling
+                  radius: Style.radiusS * scaling
                   color: Color.mSurface
                   border.color: Color.mOutline
                   border.width: Math.max(1, Style.borderS * scaling)
@@ -1008,7 +1010,8 @@ Loader {
                     anchors.margins: Style.marginM * scaling
                     anchors.fill: parent
                     text: I18n.tr("lock-screen.suspend")
-                    font.pointSize: Style.fontSizeM * scaling
+                    font.pointSize: Style.fontSizeS * scaling
+                    color: Color.mOnSurfaceVariant
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                   }
