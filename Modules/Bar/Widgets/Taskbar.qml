@@ -12,10 +12,27 @@ Rectangle {
   id: root
   property ShellScreen screen
   property real scaling: 1.0
+  
+  // Widget properties passed from Bar.qml for per-instance settings
+  property string widgetId: ""
+  property string section: ""
+  property int sectionWidgetIndex: -1
+  property int sectionWidgetsCount: 0
 
   readonly property bool isVerticalBar: Settings.data.bar.position === "left" || Settings.data.bar.position === "right"
   readonly property bool compact: (Settings.data.bar.density === "compact")
   readonly property real itemSize: compact ? Style.capsuleHeight * 0.9 * scaling : Style.capsuleHeight * 0.8 * scaling
+  
+  property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
+  property var widgetSettings: {
+    if (section && sectionWidgetIndex >= 0) {
+      var widgets = Settings.data.bar.widgets[section]
+      if (widgets && sectionWidgetIndex < widgets.length) {
+        return widgets[sectionWidgetIndex]
+      }
+    }
+    return {}
+  }
 
   // Always visible when there are toplevels
   implicitWidth: isVerticalBar ? Math.round(Style.capsuleHeight * scaling) : taskbarLayout.implicitWidth + Style.marginM * scaling * 2
@@ -46,8 +63,8 @@ Rectangle {
         id: taskbarItem
         required property var modelData
         
-        // TODO: Make this configurable
-        visible: modelData.output == screen.name && CompositorService.getActiveWorkspaces().map(ws => ws.id).includes(modelData.workspaceId)
+        visible: (!widgetSettings.onlySameOutput || modelData.output == screen.name)
+          && (!widgetSettings.onlyActiveWorkspaces || CompositorService.getActiveWorkspaces().map(ws => ws.id).includes(modelData.workspaceId))
 
         Layout.preferredWidth: root.itemSize
         Layout.preferredHeight: root.itemSize

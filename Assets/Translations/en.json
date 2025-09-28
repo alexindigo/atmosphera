@@ -1000,6 +1000,16 @@
           "description": "Use a space to separate each part onto a new line."
         },
         "preview": "Preview"
+      },
+      "taskbar": {
+        "only-active-workspaces": {
+          "label": "Only from active workspaces",
+          "description": "Show only apps from active workspaces."
+        },
+        "only-same-output": {
+          "label": "Only from same output",
+          "description": "Show only apps from the output where the bar is located."
+        }
       }
     }
   },
