@@ -5,6 +5,7 @@ import qs.Commons
 import qs.Services
 import qs.Widgets
 
+
 RowLayout {
   id: root
 
@@ -38,12 +39,11 @@ RowLayout {
   // Value
   Rectangle {
     id: spinBoxContainer
-
     implicitWidth: 100 * scaling // Wider for better proportions
     implicitHeight: (root.baseSize - 4) * scaling // Slightly shorter than toggle
-    radius: height * 0.5 // Fully rounded like toggle
+    radius: height / 2 // Fully rounded like toggle
     color: Color.mSurfaceVariant
-    border.color: root.hovering ? Color.mPrimary : Color.mOutline
+    border.color: (root.hovering || decreaseArea.containsMouse || increaseArea.containsMouse) ? Color.mTertiary : Color.mOutline
     border.width: 1
 
     Behavior on border.color {
@@ -75,56 +75,124 @@ RowLayout {
     }
 
     // Decrease button (left)
-    Rectangle {
+    Item {
       id: decreaseButton
-      width: parent.height * 0.8 // Make it circular
-      height: parent.height * 0.8
-      anchors.verticalCenter: parent.verticalCenter
+      height:parent.height
+      width: height
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
       anchors.left: parent.left
-      anchors.leftMargin: parent.height * 0.1
-      radius: width * 0.5 // Perfect circle
-      color: decreaseArea.containsMouse ? Color.mPrimary : "transparent"
       opacity: root.enabled && spinBox.value > spinBox.from ? 1.0 : 0.3
 
-      Behavior on color {
-        ColorAnimation {
-          duration: Style.animationFast
-          easing.type: Easing.InOutCubic
+      Item {
+        id: leftSemicircle
+        width: Math.round(parent.height / 2)
+        height: parent.height
+        clip: true
+        anchors.left: parent.left
+        Rectangle {
+            width: Math.round(parent.height)
+            height: parent.height
+            radius: width / 2
+            anchors.left: parent.left
+            color: decreaseArea.containsMouse ? Color.mTertiary : "transparent"
+            Behavior on color {
+              ColorAnimation {
+                duration: Style.animationFast
+              }
+            }
+          }
+        }
+
+      Rectangle {
+        height: parent.height
+        width: parent.width - leftSemicircle.width
+        anchors.left: leftSemicircle.right
+        gradient: Gradient {
+          orientation: Gradient.Horizontal
+            GradientStop {
+              position: 0.0
+              color: decreaseArea.containsMouse ? Color.mTertiary : "transparent"
+              Behavior on color {
+                ColorAnimation {
+                  duration: Style.animationFast
+                }
+              }
+            }
+            GradientStop {
+              position: 1.0
+              color: "transparent"
+            }
+          }
+        }
+
+        NIcon {
+          anchors.centerIn: parent
+          icon: "chevron-left"
+          font.pointSize: Style.fontSizeS * scaling
+          color: decreaseArea.containsMouse ? Color.mOnPrimary : Color.mPrimary
+        }
+
+        MouseArea {
+          id: decreaseArea
+          anchors.fill: parent
+          hoverEnabled: true
+          cursorShape: Qt.PointingHandCursor
+          enabled: root.enabled && spinBox.value > spinBox.from
+          onClicked: spinBox.decrease()
+        }
+    }
+
+
+    // Increase button (right)
+    Item {
+      id: increaseButton
+      height: parent.height
+      width: height
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
+      anchors.right: parent.right
+      opacity: root.enabled && spinBox.value < spinBox.to ? 1.0 : 0.3
+
+      Item {
+        id: rightSemicircle
+        width: Math.round(parent.height / 2)
+        height: parent.height
+        clip: true
+        anchors.right: parent.right
+        Rectangle {
+          width: Math.round(parent.height)
+          height: parent.height
+          radius: width / 2
+          anchors.right: parent.right
+          color: increaseArea.containsMouse ? Color.mTertiary : "transparent"
+          Behavior on color {
+            ColorAnimation {
+              duration: Style.animationFast
+            }
+          }
         }
       }
 
-      NIcon {
-        anchors.centerIn: parent
-        icon: "chevron-left"
-        font.pointSize: Style.fontSizeS * scaling
-        color: decreaseArea.containsMouse ? Color.mOnPrimary : Color.mPrimary
-      }
-
-      MouseArea {
-        id: decreaseArea
-        anchors.fill: parent
-        hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
-        enabled: root.enabled && spinBox.value > spinBox.from
-        onClicked: spinBox.decrease()
-      }
-    }
-
-    // Increase button (right)
-    Rectangle {
-      id: increaseButton
-      width: parent.height * 0.8 // Make it circular
-      height: parent.height * 0.8
-      anchors.verticalCenter: parent.verticalCenter
-      anchors.right: parent.right
-      anchors.rightMargin: parent.height * 0.1
-      radius: width * 0.5 // Perfect circle
-      color: increaseArea.containsMouse ? Color.mPrimary : "transparent"
-      opacity: root.enabled && spinBox.value < spinBox.to ? 1.0 : 0.3
-
-      Behavior on color {
-        ColorAnimation {
-          duration: Style.animationFast
+      Rectangle {
+        height: parent.height
+        width: parent.width - rightSemicircle.width
+        anchors.right: rightSemicircle.left
+        gradient: Gradient {
+          orientation: Gradient.Horizontal
+          GradientStop {
+            position: 1.0
+            color: increaseArea.containsMouse ? Color.mTertiary : "transparent"
+            Behavior on color {
+              ColorAnimation {
+                duration: Style.animationFast
+              }
+            }
+          }
+          GradientStop {
+            position: 0.0
+            color: "transparent"
+          }
         }
       }
 
