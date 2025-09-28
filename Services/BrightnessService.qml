@@ -276,6 +276,7 @@ Singleton {
 
       // Update internal value and trigger UI feedback
       monitor.brightness = value
+      monitor.brightnessUpdated(value)
       root.monitorBrightnessChanged(monitor, monitor.brightness)
 
       if (isAppleDisplay) {
