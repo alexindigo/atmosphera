@@ -1136,6 +1136,10 @@
       "close": "关闭"
     }
   },
+  "launcher": {
+    "pin": "固定到 Dock",
+    "unpin": "从 Dock 取消固定"
+  },
   "placeholders": {
     "search-icons": "例如：noctalia, niri, battery, cloud",
     "profile-picture-path": "/home/user/.face",

@@ -302,11 +302,29 @@ NPanel {
             positionViewAtIndex(currentIndex, ListView.Contain)
           }
         }
+        onModelChanged: {}
 
         delegate: Rectangle {
           id: entry
 
           property bool isSelected: mouseArea.containsMouse || (index === selectedIndex)
+          // Accessor for app id
+          property string appId: (modelData && modelData.appId) ? String(modelData.appId) : ""
+
+          // Pin helpers
+          function togglePin(appId) {
+            if (!appId) return
+            let arr = (Settings.data.dock.pinnedApps || []).slice()
+            const idx = arr.indexOf(appId)
+            if (idx >= 0) arr.splice(idx, 1)
+            else arr.push(appId)
+            Settings.data.dock.pinnedApps = arr
+          }
+
+          function isPinned(appId) {
+            const arr = Settings.data.dock.pinnedApps || []
+            return appId && arr.indexOf(appId) >= 0
+          }
 
           // Property to reliably track the current item's ID.
           // This changes whenever the delegate is recycled for a new item.
@@ -321,7 +339,7 @@ NPanel {
           }
 
           width: resultsList.width - Style.marginS * scaling
-          height: entryHeight
+          implicitHeight: entryHeight
           radius: Style.radiusM * scaling
           color: entry.isSelected ? Color.mTertiary : Color.mSurface
 
@@ -332,136 +350,152 @@ NPanel {
             }
           }
 
-          RowLayout {
+          ColumnLayout {
+            id: contentLayout
             anchors.fill: parent
             anchors.margins: Style.marginM * scaling
             spacing: Style.marginM * scaling
 
-            // Icon badge or Image preview
-            Rectangle {
-              Layout.preferredWidth: badgeSize
-              Layout.preferredHeight: badgeSize
-              radius: Style.radiusM * scaling
-              color: Color.mSurfaceVariant
-              clip: true
+            // Top row - Main entry content with pin button
+            RowLayout {
+              Layout.fillWidth: true
+              spacing: Style.marginM * scaling
 
-              // Image preview for clipboard images
-              NImageRounded {
-                id: imagePreview
-                anchors.fill: parent
-                visible: modelData.isImage
-                imageRadius: Style.radiusM * scaling
-
-                // This property creates a dependency on the service's revision counter
-                readonly property int _rev: ClipboardService.revision
-
-                // Fetches from the service's cache.
-                // The dependency on `_rev` ensures this binding is re-evaluated when the cache is updated.
-                imagePath: {
-                  _rev
-                  return ClipboardService.getImageData(modelData.clipboardId) || ""
-                }
-
-                // Loading indicator
-                Rectangle {
-                  anchors.fill: parent
-                  visible: parent.status === Image.Loading
-                  color: Color.mSurfaceVariant
-
-                  BusyIndicator {
-                    anchors.centerIn: parent
-                    running: true
-                    width: Style.baseWidgetSize * 0.5 * scaling
-                    height: width
-                  }
-                }
-
-                // Error fallback
-                onStatusChanged: status => {
-                                   if (status === Image.Error) {
-                                     iconLoader.visible = true
-                                     imagePreview.visible = false
-                                   }
-                                 }
-              }
-
-              // Icon fallback
-              Loader {
-                id: iconLoader
-                anchors.fill: parent
-                anchors.margins: Style.marginXS * scaling
-
-                visible: !modelData.isImage || imagePreview.status === Image.Error
-                active: visible
-
-                sourceComponent: Component {
-                  IconImage {
-                    anchors.fill: parent
-                    source: modelData.icon ? ThemeIcons.iconFromName(modelData.icon, "application-x-executable") : ""
-                    visible: modelData.icon && source !== ""
-                    asynchronous: true
-                  }
-                }
-              }
-
-              // Fallback text if no icon and no image
-              NText {
-                anchors.centerIn: parent
-                visible: !imagePreview.visible && !iconLoader.visible
-                text: modelData.name ? modelData.name.charAt(0).toUpperCase() : "?"
-                font.pointSize: Style.fontSizeXXL * scaling
-                font.weight: Style.fontWeightBold
-                color: Color.mOnPrimary
-              }
-
-              // Image type indicator overlay
+              // Icon badge or Image preview
               Rectangle {
-                visible: modelData.isImage && imagePreview.visible
-                anchors.bottom: parent.bottom
-                anchors.right: parent.right
-                anchors.margins: 2 * scaling
-                width: formatLabel.width + 6 * scaling
-                height: formatLabel.height + 2 * scaling
+                Layout.preferredWidth: badgeSize
+                Layout.preferredHeight: badgeSize
                 radius: Style.radiusM * scaling
                 color: Color.mSurfaceVariant
+                clip: true
 
-                NText {
-                  id: formatLabel
-                  anchors.centerIn: parent
-                  text: {
-                    if (!modelData.isImage)
-                      return ""
-                    const desc = modelData.description || ""
-                    const parts = desc.split(" • ")
-                    return parts[0] || "IMG"
+                // Image preview for clipboard images
+                NImageRounded {
+                  id: imagePreview
+                  anchors.fill: parent
+                  visible: modelData.isImage
+                  imageRadius: Style.radiusM * scaling
+
+                  // This property creates a dependency on the service's revision counter
+                  readonly property int _rev: ClipboardService.revision
+
+                  // Fetches from the service's cache.
+                  // The dependency on `_rev` ensures this binding is re-evaluated when the cache is updated.
+                  imagePath: {
+                    _rev
+                    return ClipboardService.getImageData(modelData.clipboardId) || ""
                   }
-                  font.pointSize: Style.fontSizeXXS * scaling
-                  color: Color.mPrimary
+
+                  // Loading indicator
+                  Rectangle {
+                    anchors.fill: parent
+                    visible: parent.status === Image.Loading
+                    color: Color.mSurfaceVariant
+
+                    BusyIndicator {
+                      anchors.centerIn: parent
+                      running: true
+                      width: Style.baseWidgetSize * 0.5 * scaling
+                      height: width
+                    }
+                  }
+
+                  // Error fallback
+                  onStatusChanged: status => {
+                                     if (status === Image.Error) {
+                                       iconLoader.visible = true
+                                       imagePreview.visible = false
+                                     }
+                                   }
+                }
+
+                // Icon fallback
+                Loader {
+                  id: iconLoader
+                  anchors.fill: parent
+                  anchors.margins: Style.marginXS * scaling
+
+                  visible: !modelData.isImage || imagePreview.status === Image.Error
+                  active: visible
+
+                  sourceComponent: Component {
+                    IconImage {
+                      anchors.fill: parent
+                      source: modelData.icon ? ThemeIcons.iconFromName(modelData.icon, "application-x-executable") : ""
+                      visible: modelData.icon && source !== ""
+                      asynchronous: true
+                    }
+                  }
+                }
+
+                // Fallback text if no icon and no image
+                NText {
+                  anchors.centerIn: parent
+                  visible: !imagePreview.visible && !iconLoader.visible
+                  text: modelData.name ? modelData.name.charAt(0).toUpperCase() : "?"
+                  font.pointSize: Style.fontSizeXXL * scaling
+                  font.weight: Style.fontWeightBold
+                  color: Color.mOnPrimary
+                }
+
+                // Image type indicator overlay
+                Rectangle {
+                  visible: modelData.isImage && imagePreview.visible
+                  anchors.bottom: parent.bottom
+                  anchors.right: parent.right
+                  anchors.margins: 2 * scaling
+                  width: formatLabel.width + 6 * scaling
+                  height: formatLabel.height + 2 * scaling
+                  radius: Style.radiusM * scaling
+                  color: Color.mSurfaceVariant
+
+                  NText {
+                    id: formatLabel
+                    anchors.centerIn: parent
+                    text: {
+                      if (!modelData.isImage)
+                        return ""
+                      const desc = modelData.description || ""
+                      const parts = desc.split(" • ")
+                      return parts[0] || "IMG"
+                    }
+                    font.pointSize: Style.fontSizeXXS * scaling
+                    color: Color.mPrimary
+                  }
                 }
               }
-            }
 
-            // Text content
-            ColumnLayout {
-              Layout.fillWidth: true
-              spacing: 0 * scaling
-
-              NText {
-                text: modelData.name || "Unknown"
-                font.pointSize: Style.fontSizeL * scaling
-                font.weight: Style.fontWeightBold
-                color: entry.isSelected ? Color.mOnTertiary : Color.mOnSurface
-                elide: Text.ElideRight
+              // Text content
+              ColumnLayout {
                 Layout.fillWidth: true
+                spacing: 0 * scaling
+
+                NText {
+                  text: modelData.name || "Unknown"
+                  font.pointSize: Style.fontSizeL * scaling
+                  font.weight: Style.fontWeightBold
+                  color: entry.isSelected ? Color.mOnTertiary : Color.mOnSurface
+                  elide: Text.ElideRight
+                  Layout.fillWidth: true
+                }
+
+                NText {
+                  text: modelData.description || ""
+                  font.pointSize: Style.fontSizeS * scaling
+                  color: entry.isSelected ? Color.mOnTertiary : Color.mOnSurfaceVariant
+                  elide: Text.ElideRight
+                  Layout.fillWidth: true
+                  visible: text !== ""
+                }
               }
 
-              NText {
-                text: modelData.description || ""
-                font.pointSize: Style.fontSizeS * scaling
-                color: entry.isSelected ? Color.mOnTertiary : Color.mOnSurfaceVariant
-                elide: Text.ElideRight
-                Layout.fillWidth: true
-                visible: text !== ""
+              // Pin/Unpin action icon button
+              NIconButton {
+                visible: !!entry.appId && !modelData.isImage && entry.isSelected && (Settings.data.dock.monitors && Settings.data.dock.monitors.length > 0)
+                Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                icon: entry.isPinned(entry.appId) ? "unpin" : "pin"
+                tooltipText: entry.isPinned(entry.appId) ? I18n.tr("launcher.unpin") : I18n.tr("launcher.pin")
+                onClicked: entry.togglePin(entry.appId)
               }
             }
           }
@@ -469,12 +503,17 @@ NPanel {
           MouseArea {
             id: mouseArea
             anchors.fill: parent
+            z: -1
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
-            onClicked: {
-              selectedIndex = index
-              ui.activate()
+            onClicked: (mouse) => {
+              if (mouse.button === Qt.LeftButton) {
+                selectedIndex = index
+                ui.activate()
+                mouse.accepted = true
+              }
             }
+            acceptedButtons: Qt.LeftButton
           }
         }
       }

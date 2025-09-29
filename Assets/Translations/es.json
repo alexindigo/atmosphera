@@ -1136,6 +1136,10 @@
       "close": "Cerrar"
     }
   },
+  "launcher": {
+    "pin": "Anclar al dock",
+    "unpin": "Desanclar del dock"
+  },
   "placeholders": {
     "search-icons": "ej., noctalia, niri, battery, cloud",
     "profile-picture-path": "/home/usuario/.face",
