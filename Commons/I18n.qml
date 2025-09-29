@@ -215,7 +215,7 @@ Singleton {
     const filePath = `file://${Quickshell.shellDir}/Assets/Translations/${langCode}.json`
     fileView.path = filePath
     isLoaded = false
-    Logger.log("I18n", `Loading translations from: ${filePath}`)
+    Logger.log("I18n", `Loading translations: ${langCode}`)
 
     // Only load fallback translations if we are not using english and english is available
     if (langCode !== "en" && availableLanguages.includes("en")) {

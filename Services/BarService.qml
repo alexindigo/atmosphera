@@ -43,7 +43,7 @@ Singleton {
   function registerBar(screenName) {
     if (!readyBars[screenName]) {
       readyBars[screenName] = true
-      console.log("ShellStateService: Bar on screen '" + screenName + "' is ready.")
+      Logger.log("BarService", "Bar is ready on screen:", screenName)
       barReadyChanged(screenName)
     }
   }
