@@ -90,15 +90,10 @@ Singleton {
     }
     onLoaded: function () {
       if (!isLoaded) {
-        Logger.log("Settings", "----------------------------")
-        Logger.log("Settings", "Settings loaded successfully")
+        Logger.log("Settings", "Settings loaded")
 
         upgradeSettingsData()
-
         validateMonitorConfigurations()
-
-        kickOffServices()
-
         isLoaded = true
 
         // Emit the signal
@@ -514,18 +509,5 @@ Singleton {
     // Compare settings, to detect if something has been upgraded
     const widgetAfter = JSON.stringify(widget)
     return (widgetAfter !== widgetBefore)
-  }
-
-  // -----------------------------------------------------
-  // Kickoff essential services
-  function kickOffServices() {
-    LocationService.init()
-    NightLightService.apply()
-    ColorSchemeService.init()
-    MatugenService.init()
-    WallpaperService.init()
-    FontService.init()
-    HooksService.init()
-    BluetoothService.init()
   }
 }

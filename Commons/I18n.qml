@@ -53,9 +53,10 @@ Singleton {
       try {
         var data = JSON.parse(text())
         root.translations = data
+        Logger.log("I18n", `Loaded translations for "${root.langCode}"`)
+
         root.isLoaded = true
         root.translationsLoaded()
-        Logger.log("I18n", `Loaded translations for "${root.langCode}"`)
       } catch (e) {
         Logger.error("I18n", `Failed to parse translation file: ${e}`)
         setLanguage("en")

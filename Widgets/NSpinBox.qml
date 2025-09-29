@@ -251,7 +251,7 @@ RowLayout {
         anchors.verticalCenter: parent.verticalCenter
         icon: "chevron-right"
         font.pointSize: Style.fontSizeS * scaling
-        color: increaseArea.containsMouse ? Color.mOnTertiary: Color.mPrimary
+        color: increaseArea.containsMouse ? Color.mOnTertiary : Color.mPrimary
       }
 
       MouseArea {
