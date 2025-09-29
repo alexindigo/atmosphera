@@ -88,7 +88,7 @@ NBox {
           NText {
             text: {
               var weatherDate = new Date(LocationService.data.weather.daily.time[index].replace(/-/g, "/"))
-              return Qt.formatDateTime(weatherDate, "ddd")
+              return Qt.locale().toString(weatherDate, "ddd")
             }
             color: Color.mOnSurface
             Layout.alignment: Qt.AlignHCenter

@@ -27,12 +27,12 @@ Loader {
   }
 
   function formatTime() {
-    return Settings.data.location.use12hourFormat ? Qt.formatDateTime(new Date(), "h:mm A") : Qt.formatDateTime(new Date(), "HH:mm")
+    return Settings.data.location.use12hourFormat ? Qt.locale().toString(new Date(), "h:mm A") : Qt.locale().toString(new Date(), "HH:mm")
   }
 
   function formatDate() {
     // For full text date, day is always before month, so we use this format for everybody: Wednesday, September 17.
-    return Qt.formatDateTime(new Date(), "dddd, MMMM d")
+    return Qt.locale().toString(new Date(), "dddd, MMMM d")
   }
 
   function scheduleUnloadAfterUnlock() {
