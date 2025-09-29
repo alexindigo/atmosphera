@@ -233,7 +233,7 @@ Variants {
                        })
         }
       }
-      
+
       function setWallpaperInitial() {
         // On startup, defer assigning wallpaper until the service cache is ready, retries every tick
         if (!WallpaperService || !WallpaperService.isInitialized) {

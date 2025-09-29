@@ -60,14 +60,6 @@ Variants {
       }
     }
 
-    // Update when Settings are loaded
-    Connections {
-      target: Settings
-      function onSettingsLoaded() {
-        updateDockApps()
-      }
-    }
-
     // Shared properties between peek and dock windows
     readonly property bool autoHide: Settings.data.dock.autoHide
     readonly property int hideDelay: 500
