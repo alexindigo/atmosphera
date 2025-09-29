@@ -76,7 +76,8 @@ Item {
                                         // Favorites first
                                         const aFav = favoriteApps.includes(getAppKey(a))
                                         const bFav = favoriteApps.includes(getAppKey(b))
-                                        if (aFav !== bFav) return aFav ? -1 : 1
+                                        if (aFav !== bFav)
+                                        return aFav ? -1 : 1
                                         const ua = getUsageCount(a)
                                         const ub = getUsageCount(b)
                                         if (ub !== ua)
@@ -87,7 +88,8 @@ Item {
         sorted = entries.slice().sort((a, b) => {
                                         const aFav = favoriteApps.includes(getAppKey(a))
                                         const bFav = favoriteApps.includes(getAppKey(b))
-                                        if (aFav !== bFav) return aFav ? -1 : 1
+                                        if (aFav !== bFav)
+                                        return aFav ? -1 : 1
                                         return (a.name || "").toLowerCase().localeCompare((b.name || "").toLowerCase())
                                       })
       }
@@ -108,8 +110,10 @@ Item {
       const nonFav = []
       for (const r of fuzzyResults) {
         const app = r.obj
-        if (favoriteApps.includes(getAppKey(app))) fav.push(r)
-        else nonFav.push(r)
+        if (favoriteApps.includes(getAppKey(app)))
+          fav.push(r)
+        else
+          nonFav.push(r)
       }
       return fav.concat(nonFav).map(result => createResultEntry(result.obj))
     } else {

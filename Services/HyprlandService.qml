@@ -277,7 +277,7 @@ Item {
       Logger.error("HyprlandService", "Failed to switch workspace:", e)
     }
   }
-  
+
   function focusWindow(windowId) {
     try {
       Hyprland.dispatch(`focuswindow ${windowId}`)
@@ -285,7 +285,7 @@ Item {
       Logger.error("HyprlandService", "Failed to switch window:", e)
     }
   }
-  
+
   function closeWindow(windowId) {
     try {
       Hyprland.dispatch(`killwindow ${windowId}`)

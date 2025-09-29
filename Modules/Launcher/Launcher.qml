@@ -302,7 +302,9 @@ NPanel {
             positionViewAtIndex(currentIndex, ListView.Contain)
           }
         }
-        onModelChanged: {}
+        onModelChanged: {
+
+        }
 
         delegate: Rectangle {
           id: entry
@@ -313,11 +315,14 @@ NPanel {
 
           // Pin helpers
           function togglePin(appId) {
-            if (!appId) return
+            if (!appId)
+              return
             let arr = (Settings.data.dock.pinnedApps || []).slice()
             const idx = arr.indexOf(appId)
-            if (idx >= 0) arr.splice(idx, 1)
-            else arr.push(appId)
+            if (idx >= 0)
+              arr.splice(idx, 1)
+            else
+              arr.push(appId)
             Settings.data.dock.pinnedApps = arr
           }
 
@@ -506,13 +511,13 @@ NPanel {
             z: -1
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
-            onClicked: (mouse) => {
-              if (mouse.button === Qt.LeftButton) {
-                selectedIndex = index
-                ui.activate()
-                mouse.accepted = true
-              }
-            }
+            onClicked: mouse => {
+                         if (mouse.button === Qt.LeftButton) {
+                           selectedIndex = index
+                           ui.activate()
+                           mouse.accepted = true
+                         }
+                       }
             acceptedButtons: Qt.LeftButton
           }
         }

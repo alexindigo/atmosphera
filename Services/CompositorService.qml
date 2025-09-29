@@ -117,12 +117,12 @@ Singleton {
     // Emit signal to notify listeners that workspace list has been updated
     workspacesChanged()
   }
-  
+
   function syncWindows() {
     windows.clear()
     const ws = backend.windows
     for (var i = 0; i < ws.length; i++) {
-        windows.append(ws[i])
+      windows.append(ws[i])
     }
     // Emit signal to notify listeners that workspace list has been updated
     windowListChanged()
@@ -131,7 +131,7 @@ Singleton {
   // Get window title for focused window
   function getFocusedWindowTitle() {
     if (focusedWindowIndex >= 0 && focusedWindowIndex < windows.count) {
-      return windows[focusedWindowIndex].title || ""
+      return windows.get(focusedWindowIndex).title || ""
     }
     return ""
   }
@@ -155,7 +155,7 @@ Singleton {
     }
     return null
   }
-  
+
   // Get active workspaces
   function getActiveWorkspaces() {
     const activeWorkspaces = []
@@ -167,7 +167,7 @@ Singleton {
     }
     return activeWorkspaces
   }
-  
+
   // Set focused window
   function focusWindow(windowId) {
     if (backend && backend.focusWindow) {
@@ -184,7 +184,7 @@ Singleton {
     }
     return null
   }
-  
+
   // Close window
   function closeWindow(windowId) {
     if (backend && backend.closeWindow) {
