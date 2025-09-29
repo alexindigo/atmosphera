@@ -261,8 +261,12 @@ Variants {
           // We are interrupting a transition
           transitionAnimation.stop()
           transitionProgress = 0
-          currentWallpaper.source = nextWallpaper.source
+
+          const newCurrentSource = nextWallpaper.source
+          currentWallpaper.source = ""
           nextWallpaper.source = ""
+
+          currentWallpaper.source = newCurrentSource
         }
 
         nextWallpaper.source = source
