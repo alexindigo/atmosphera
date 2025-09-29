@@ -128,7 +128,15 @@ Singleton {
     windowListChanged()
   }
 
-  // Get window title for focused window
+  // Get focused window
+  function getFocusedWindow() {
+    if (focusedWindowIndex >= 0 && focusedWindowIndex < windows.count) {
+      return windows.get(focusedWindowIndex)
+    }
+    return null
+  }
+
+  // Get focused window title
   function getFocusedWindowTitle() {
     if (focusedWindowIndex >= 0 && focusedWindowIndex < windows.count) {
       return windows.get(focusedWindowIndex).title || ""
@@ -175,14 +183,6 @@ Singleton {
     } else {
       Logger.warn("Compositor", "No backend available for window focus")
     }
-  }
-
-  // Get focused window
-  function getFocusedWindow() {
-    if (focusedWindowIndex >= 0 && focusedWindowIndex < windows.count) {
-      return windows[focusedWindowIndex]
-    }
-    return null
   }
 
   // Close window
