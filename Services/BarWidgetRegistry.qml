@@ -109,6 +109,11 @@ Singleton {
                                     "showNetworkStats": false,
                                     "showDiskUsage": false
                                   },
+                                  "Taskbar": {
+                                    "allowUserSettings": true,
+                                    "onlySameOutput": true,
+                                    "onlyActiveWorkspaces": true
+                                  },
                                   "Workspace": {
                                     "allowUserSettings": true,
                                     "labelMode": "index",

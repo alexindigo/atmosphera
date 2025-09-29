@@ -133,7 +133,8 @@ Popup {
       "Spacer": "WidgetSettings/SpacerSettings.qml",
       "SystemMonitor": "WidgetSettings/SystemMonitorSettings.qml",
       "Volume": "WidgetSettings/VolumeSettings.qml",
-      "Workspace": "WidgetSettings/WorkspaceSettings.qml"
+      "Workspace": "WidgetSettings/WorkspaceSettings.qml",
+      "Taskbar": "WidgetSettings/TaskbarSettings.qml"
     }
 
     const source = widgetSettingsMap[widgetId]
