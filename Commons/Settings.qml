@@ -71,7 +71,13 @@ Singleton {
     id: saveTimer
     running: false
     interval: 1000
-    onTriggered: settingsFileView.writeAdapter()
+    onTriggered: {
+      settingsFileView.writeAdapter()
+      // Write to fallback location if set
+      if (Quickshell.env("NOCTALIA_SETTINGS_FALLBACK")) {
+        settingsFallbackFileView.writeAdapter()
+      }
+    }
   }
 
   FileView {
@@ -101,10 +107,24 @@ Singleton {
       }
     }
     onLoadFailed: function (error) {
-      if (error.toString().includes("No such file") || error === 2)
+      if (error.toString().includes("No such file") || error === 2) {
         // File doesn't exist, create it with default values
         writeAdapter()
+        // Also write to fallback if set
+        if (Quickshell.env("NOCTALIA_SETTINGS_FALLBACK")) {
+          settingsFallbackFileView.writeAdapter()
+        }
+      }
     }
+  }
+
+  // Fallback FileView for writing settings to alternate location
+  FileView {
+    id: settingsFallbackFileView
+    path: Quickshell.env("NOCTALIA_SETTINGS_FALLBACK") || ""
+    adapter: Quickshell.env("NOCTALIA_SETTINGS_FALLBACK") ? adapter : null
+    printErrors: false
+    watchChanges: false
   }
   JsonAdapter {
     id: adapter

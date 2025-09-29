@@ -277,7 +277,10 @@
                 RestartSec = 3;
                 TimeoutStartSec = 10;
                 TimeoutStopSec = 5;
-                Environment = [ "PATH=${config.system.path}/bin" ];
+                Environment = [
+                  "PATH=${config.system.path}/bin"
+                  "NOCTALIA_SETTINGS_FALLBACK=%h/.config/noctalia/gui-settings.json"
+                ];
               };
             };
 
