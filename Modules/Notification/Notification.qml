@@ -162,7 +162,7 @@ Variants {
               anchors.left: parent.left
               anchors.right: parent.right
               height: 2 * scaling
-              color: "transparent"
+              color: Color.transparent
 
               property real availableWidth: parent.width - (2 * parent.radius)
 

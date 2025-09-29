@@ -112,7 +112,7 @@ Popup {
           height: grid.cellHeight
           radius: Style.radiusS * scaling
           clip: true
-          color: (root.selectedIcon === modelData) ? Qt.alpha(Color.mPrimary, 0.15) : "transparent"
+          color: (root.selectedIcon === modelData) ? Qt.alpha(Color.mPrimary, 0.15) : Color.transparent
           border.color: (root.selectedIcon === modelData) ? Color.mPrimary : Qt.rgba(0, 0, 0, 0)
           border.width: (root.selectedIcon === modelData) ? Style.borderS * scaling : 0
 

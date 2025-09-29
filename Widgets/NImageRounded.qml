@@ -66,7 +66,7 @@ Rectangle {
       Rectangle {
         id: background
         anchors.fill: parent
-        color: "transparent"
+        color: Color.transparent
         z: -1
       }
     }
