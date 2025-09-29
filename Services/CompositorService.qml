@@ -167,4 +167,16 @@ Singleton {
   function suspend() {
     Quickshell.execDetached(["systemctl", "suspend"])
   }
+
+  function lockAndSuspend() {
+    try {
+      if (PanelService && PanelService.lockScreen && !PanelService.lockScreen.active) {
+        PanelService.lockScreen.active = true
+      }
+    } catch (e) {
+      Logger.warn("Compositor", "Failed to activate lock screen before suspend: " + e)
+    }
+    // Queue suspend to the next event loop cycle to allow lock UI to render
+    Qt.callLater(suspend)
+  }
 }

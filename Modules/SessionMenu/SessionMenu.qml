@@ -103,10 +103,7 @@ NPanel {
       }
       break
     case "lockAndSuspend":
-      if (!lockScreen.active) {
-        lockScreen.active = true
-      }
-      CompositorService.suspend()
+      CompositorService.lockAndSuspend()
       break
     case "suspend":
       CompositorService.suspend()
