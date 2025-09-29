@@ -243,7 +243,7 @@ Variants {
           Item {
             anchors.fill: parent
 
-            Row {
+            RowLayout {
               anchors.left: parent.left
               anchors.right: parent.right
               anchors.verticalCenter: parent.verticalCenter
@@ -254,7 +254,7 @@ Variants {
                 icon: root.getIcon()
                 color: root.getIconColor()
                 font.pointSize: Style.fontSizeXL * root.scaling
-                anchors.verticalCenter: parent.verticalCenter
+                Layout.alignment: Qt.AlignVCenter
 
                 Behavior on color {
                   ColorAnimation {
@@ -266,11 +266,11 @@ Variants {
 
               // Progress bar with calculated width
               Rectangle {
-                width: Math.round(220 * root.scaling)
+                Layout.preferredWidth: Math.round(220 * root.scaling)
                 height: panel.barThickness
                 radius: Math.round(panel.barThickness / 2)
                 color: Color.mSurfaceVariant
-                anchors.verticalCenter: parent.verticalCenter
+                Layout.alignment: Qt.AlignVCenter
 
                 Rectangle {
                   anchors.left: parent.left
@@ -301,10 +301,10 @@ Variants {
                 color: Color.mOnSurface
                 font.pointSize: Style.fontSizeS * root.scaling
                 font.family: Settings.data.ui.fontFixed
-                anchors.verticalCenter: parent.verticalCenter
+                Layout.alignment: Qt.AlignVCenter
                 horizontalAlignment: Text.AlignLeft
                 verticalAlignment: Text.AlignVCenter
-                width: Math.round(50 * root.scaling)
+                Layout.preferredWidth: Math.round(50 * root.scaling)
               }
             }
           }

@@ -23,7 +23,6 @@ ColumnLayout {
     settings.autoHide = valueAutoHide
     settings.showIcon = valueShowIcon
     settings.scrollingMode = valueScrollingMode
-    console.log(JSON.stringify(settings))
     return settings
   }
 

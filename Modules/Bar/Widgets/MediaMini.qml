@@ -269,7 +269,7 @@ Item {
             property real scrollX: 0
             x: scrollX
 
-            Row {
+            RowLayout {
               spacing: 50 * scaling // Gap between text copies
 
               NText {
