@@ -5,6 +5,7 @@ import qs.Commons
 import qs.Services
 import qs.Widgets
 
+
 RowLayout {
   id: root
 
@@ -42,7 +43,7 @@ RowLayout {
     implicitHeight: (root.baseSize - 4) * scaling
     radius: height * 0.5
     color: Color.mSurfaceVariant
-    border.color: root.hovering ? Color.mPrimary : Color.mOutline
+    border.color: (root.hovering || decreaseArea.containsMouse || increaseArea.containsMouse) ? Color.mTertiary : Color.mOutline
     border.width: 1
 
     Behavior on border.color {
@@ -76,30 +77,83 @@ RowLayout {
     }
 
     // Decrease button (left)
-    Rectangle {
+    Item {
       id: decreaseButton
-      width: parent.height * 0.8
-      height: parent.height * 0.8
-      anchors.verticalCenter: parent.verticalCenter
+      height:parent.height
+      width: leftSemicircle.width + (leftDiamondContainer.width / 2)
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
       anchors.left: parent.left
-      anchors.leftMargin: parent.height * 0.1
-      radius: width * 0.5
-      color: decreaseArea.containsMouse ? Color.mPrimary : "transparent"
       opacity: root.enabled && root.value > root.from ? 1.0 : 0.3
+      clip: true
 
-      Behavior on color {
-        ColorAnimation {
-          duration: Style.animationFast
-          easing.type: Easing.InOutCubic
+      Item {
+        id: leftSemicircle
+        width: Math.round(parent.height / 2)
+        height: parent.height
+        clip: true
+        anchors.left: parent.left
+        Rectangle {
+            width: Math.round(parent.height)
+            height: parent.height
+            radius: width / 2
+            anchors.left: parent.left
+            color: decreaseArea.containsMouse ? Color.mTertiary : "transparent"
+            Behavior on color {
+              ColorAnimation {
+                duration: Style.animationFast
+              }
+            }
+          }
         }
-      }
 
-      NIcon {
-        anchors.centerIn: parent
-        icon: "chevron-left"
-        font.pointSize: Style.fontSizeS * scaling
-        color: decreaseArea.containsMouse ? Color.mOnPrimary : Color.mPrimary
-      }
+        Item {
+          id: leftDiamondContainer
+
+          height: Math.round(parent.height / 2) * 2
+          width: height * Math.sqrt(2)
+          anchors.verticalCenter: parent.verticalCenter
+          anchors.horizontalCenter: leftSemicircle.right
+
+          Rectangle {
+            id: leftDiamondVisual
+            width: 100
+            height: 100
+            radius: width / 4
+
+            color: decreaseArea.containsMouse ? Color.mTertiary : "transparent"
+            Behavior on color {
+              ColorAnimation {
+                duration: Style.animationFast
+              }
+            }
+
+            anchors.centerIn: parent
+
+            transform: [
+              Rotation { angle: 45; origin.x: 50; origin.y: 50 },
+              Scale {
+                id: leftScaler
+                origin.x: 50
+                origin.y: 50
+
+                // This is the full formula for the height of the rotated, rounded square
+                readonly property real trueHeight: (leftDiamondVisual.width - 2 * leftDiamondVisual.radius) * Math.sqrt(2) + (2 * leftDiamondVisual.radius)
+                xScale: leftDiamondContainer.height / leftScaler.trueHeight
+                yScale: leftDiamondContainer.height / leftScaler.trueHeight
+              }
+            ]
+          }
+        }
+
+        NIcon {
+          anchors.left: parent.left
+          anchors.leftMargin: parent.width * 0.25
+          anchors.verticalCenter: parent.verticalCenter
+          icon: "chevron-left"
+          font.pointSize: Style.fontSizeS * scaling
+          color: decreaseArea.containsMouse ? Color.mOnPrimary : Color.mPrimary
+        }
 
       MouseArea {
         id: decreaseArea
@@ -115,25 +169,79 @@ RowLayout {
     }
 
     // Increase button (right)
-    Rectangle {
+    Item {
       id: increaseButton
-      width: parent.height * 0.8
-      height: parent.height * 0.8
-      anchors.verticalCenter: parent.verticalCenter
+      height: parent.height
+      width: rightSemicircle.width + (rightDiamondContainer.width / 2)
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
       anchors.right: parent.right
-      anchors.rightMargin: parent.height * 0.1
-      radius: width * 0.5
-      color: increaseArea.containsMouse ? Color.mPrimary : "transparent"
       opacity: root.enabled && root.value < root.to ? 1.0 : 0.3
+      clip: true
 
-      Behavior on color {
-        ColorAnimation {
-          duration: Style.animationFast
+      Item {
+        id: rightSemicircle
+        width: Math.round(parent.height / 2)
+        height: parent.height
+        clip: true
+        anchors.right: parent.right
+        Rectangle {
+          width: Math.round(parent.height)
+          height: parent.height
+          radius: width / 2
+          anchors.right: parent.right
+          color: increaseArea.containsMouse ? Color.mTertiary : "transparent"
+          Behavior on color {
+            ColorAnimation {
+              duration: Style.animationFast
+            }
+          }
+        }
+      }
+
+      Item {
+        id: rightDiamondContainer
+
+        height: Math.round(parent.height / 2) * 2
+        width: height * Math.sqrt(2)
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.horizontalCenter: rightSemicircle.left
+
+        Rectangle {
+          id: rightDiamondVisual
+          width: 100
+          height: 100
+          radius: width / 4
+
+          color: increaseArea.containsMouse ? Color.mTertiary : "transparent"
+          Behavior on color {
+            ColorAnimation {
+              duration: Style.animationFast
+            }
+          }
+
+          anchors.centerIn: parent
+
+          transform: [
+            Rotation { angle: 45; origin.x: 50; origin.y: 50 },
+            Scale {
+              id: rightScaler
+              origin.x: 50
+              origin.y: 50
+
+              // This is the full formula for the height of the rotated, rounded square
+              readonly property real trueHeight: (rightDiamondVisual.width - 2 * rightDiamondVisual.radius) * Math.sqrt(2) + (2 * rightDiamondVisual.radius)
+              xScale: rightDiamondContainer.height / rightScaler.trueHeight
+              yScale: rightDiamondContainer.height / rightScaler.trueHeight
+            }
+          ]
         }
       }
 
       NIcon {
-        anchors.centerIn: parent
+        anchors.right: parent.right
+        anchors.rightMargin: parent.width * 0.25
+        anchors.verticalCenter: parent.verticalCenter
         icon: "chevron-right"
         font.pointSize: Style.fontSizeS * scaling
         color: increaseArea.containsMouse ? Color.mOnPrimary : Color.mPrimary
