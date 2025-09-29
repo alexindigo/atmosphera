@@ -312,7 +312,7 @@ Rectangle {
 
             NText {
               anchors.centerIn: parent
-              text: Qt.formatDateTime(root.sampleDate, modelData.token)
+              text: Qt.locale().toString(root.sampleDate, modelData.token)
               color: tokenMouseArea.containsMouse ? Color.mOnPrimary : Color.mSurfaceVariant
               font.pointSize: Style.fontSizeS * scaling
 

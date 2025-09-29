@@ -61,7 +61,7 @@ Rectangle {
         spacing: Settings.data.bar.showCapsule ? -4 * scaling : -2 * scaling
         Repeater {
           id: repeater
-          model: Qt.formatDateTime(now, formatHorizontal.trim()).split("\\n")
+          model: Qt.locale().toString(now, formatHorizontal.trim()).split("\\n")
           NText {
             visible: text !== ""
             text: modelData
@@ -91,7 +91,7 @@ Rectangle {
         anchors.centerIn: parent
         spacing: -2 * scaling
         Repeater {
-          model: Qt.formatDateTime(now, formatVertical.trim()).split(" ")
+          model: Qt.locale().toString(now, formatVertical.trim()).split(" ")
           delegate: NText {
             visible: text !== ""
             text: modelData

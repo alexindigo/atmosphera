@@ -4,6 +4,7 @@ import QtQuick.Controls
 import Quickshell
 import Quickshell.Wayland
 import qs.Commons
+import qs.Modules.Settings
 import qs.Services
 import qs.Widgets
 import "../../Helpers/FuzzySort.js" as FuzzySort
@@ -61,6 +62,17 @@ NPanel {
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface
           Layout.fillWidth: true
+        }
+
+        NIconButton {
+          icon: "settings"
+          tooltipText: I18n.tr("settings.wallpaper.settings.section.label")
+          baseSize: Style.baseWidgetSize * 0.8
+          onClicked: {
+            var settingsPanel = PanelService.getPanel("settingsPanel")
+            settingsPanel.requestedTab = SettingsPanel.Tab.Wallpaper
+            settingsPanel.open()
+          }
         }
 
         NIconButton {

@@ -55,15 +55,7 @@ Variants {
 
     // Initial update when component is ready
     Component.onCompleted: {
-      if (Settings.isLoaded && ToplevelManager) {
-        updateDockApps()
-      }
-    }
-
-    // Update when Settings are loaded
-    Connections {
-      target: Settings
-      function onSettingsLoaded() {
+      if (ToplevelManager) {
         updateDockApps()
       }
     }
@@ -198,7 +190,7 @@ Variants {
 
     // PEEK WINDOW - Always visible when auto-hide is enabled
     Loader {
-      active: Settings.isLoaded && barIsReady && modelData && Settings.data.dock.monitors.includes(modelData.name) && autoHide
+      active: barIsReady && modelData && Settings.data.dock.monitors.includes(modelData.name) && autoHide
 
       sourceComponent: PanelWindow {
         id: peekWindow
@@ -244,7 +236,7 @@ Variants {
 
     // DOCK WINDOW
     Loader {
-      active: Settings.isLoaded && barIsReady && modelData && Settings.data.dock.monitors.includes(modelData.name) && dockLoaded && ToplevelManager && (dockApps.length > 0)
+      active: barIsReady && modelData && Settings.data.dock.monitors.includes(modelData.name) && dockLoaded && ToplevelManager && (dockApps.length > 0)
 
       sourceComponent: PanelWindow {
         id: dockWindow

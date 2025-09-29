@@ -182,7 +182,7 @@ ColumnLayout {
             // Horizontal
             Repeater {
               Layout.topMargin: Style.marginM * scaling
-              model: Qt.formatDateTime(now, valueFormatHorizontal.trim()).split("\\n")
+              model: Qt.locale().toString(now, valueFormatHorizontal.trim()).split("\\n")
               delegate: NText {
                 visible: text !== ""
                 text: modelData
@@ -213,7 +213,7 @@ ColumnLayout {
 
             Repeater {
               Layout.topMargin: Style.marginM * scaling
-              model: Qt.formatDateTime(now, valueFormatVertical.trim()).split(" ")
+              model: Qt.locale().toString(now, valueFormatVertical.trim()).split(" ")
               delegate: NText {
                 visible: text !== ""
                 text: modelData

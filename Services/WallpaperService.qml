@@ -26,6 +26,8 @@ Singleton {
   // Cache for current wallpapers - can be updated directly since we use signals for notifications
   property var currentWallpapers: ({})
 
+  property bool isInitialized: false
+
   // Signals for reactive UI updates
   signal wallpaperChanged(string screenName, string path)
   // Emitted when a wallpaper changes
@@ -75,6 +77,8 @@ Singleton {
   function init() {
     Logger.log("Wallpaper", "Service started")
 
+    translateModels()
+
     // Rebuild cache from persisted settings
     var monitors = Settings.data.wallpaper.monitors || []
     currentWallpapers = ({})
@@ -86,7 +90,7 @@ Singleton {
       }
     }
 
-    translateModels()
+    isInitialized = true
   }
 
   // -------------------------------------------------

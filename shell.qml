@@ -82,12 +82,12 @@ ShellRoot {
         PanelService.lockScreen = lockScreen
 
         Logger.log("Shell", "---------------------------")
+        WallpaperService.init()
+        MatugenService.init()
+        ColorSchemeService.init()
         BarWidgetRegistry.init()
         LocationService.init()
         NightLightService.apply()
-        ColorSchemeService.init()
-        MatugenService.init()
-        WallpaperService.init()
         FontService.init()
         HooksService.init()
         BluetoothService.init()
