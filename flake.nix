@@ -264,6 +264,7 @@
               after = [ cfg.target ];
               partOf = [ cfg.target ];
               wantedBy = [ cfg.target ];
+              restartTriggers = [ cfg.package ];
 
               unitConfig = {
                 StartLimitIntervalSec = 60;
