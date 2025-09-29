@@ -128,7 +128,7 @@ Item {
 
       screen: root.screen
 
-      readonly property string location: (Settings.isLoaded && Settings.data && Settings.data.notifications && Settings.data.notifications.location) ? Settings.data.notifications.location : "top_right"
+      readonly property string location: (Settings.data.notifications && Settings.data.notifications.location) ? Settings.data.notifications.location : "top_right"
       readonly property bool isTop: (location === "top") || (location.length >= 3 && location.substring(0, 3) === "top")
       readonly property bool isBottom: (location === "bottom") || (location.length >= 6 && location.substring(0, 6) === "bottom")
       readonly property bool isLeft: location.indexOf("_left") >= 0

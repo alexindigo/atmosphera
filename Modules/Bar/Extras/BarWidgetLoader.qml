@@ -29,7 +29,7 @@ Item {
     id: loader
 
     anchors.fill: parent
-    active: Settings.isLoaded && widgetId !== ""
+    active: widgetId !== ""
     sourceComponent: {
       if (!active) {
         return null

@@ -13,7 +13,7 @@ Variants {
 
     required property ShellScreen modelData
 
-    active: Settings.isLoaded && modelData && Settings.data.wallpaper.enabled
+    active: modelData && Settings.data.wallpaper.enabled
 
     sourceComponent: PanelWindow {
       id: root
@@ -41,29 +41,10 @@ Variants {
       property string futureWallpaper: ""
 
       // Fillmode default is "crop"
-      property real fillMode: 1.0
+      property real fillMode: WallpaperService.getFillModeUniform()
       property vector4d fillColor: Qt.vector4d(Settings.data.wallpaper.fillColor.r, Settings.data.wallpaper.fillColor.g, Settings.data.wallpaper.fillColor.b, 1.0)
 
-      // On startup, defer assigning wallpaper until the service cache is ready
-      function _startWallpaperOnceReady() {
-        if (!modelData) {
-          Qt.callLater(_startWallpaperOnceReady)
-          return
-        }
-
-        var cacheReady = WallpaperService && WallpaperService.currentWallpapers && Object.keys(WallpaperService.currentWallpapers).length > 0
-        if (!cacheReady) {
-          // Try again on the next tick until WallpaperService.init() populates cache
-          Qt.callLater(_startWallpaperOnceReady)
-          return
-        }
-
-        fillMode = WallpaperService.getFillModeUniform()
-        var path = WallpaperService.getWallpaper(modelData.name)
-        setWallpaperImmediate(path)
-      }
-
-      Component.onCompleted: _startWallpaperOnceReady()
+      Component.onCompleted: setWallpaperInitial()
 
       Connections {
         target: Settings.data.wallpaper
@@ -253,6 +234,16 @@ Variants {
                          currentWallpaper.asynchronous = true
                        })
         }
+      }
+      
+      function setWallpaperInitial() {
+        // On startup, defer assigning wallpaper until the service cache is ready, retries every tick
+        if (!WallpaperService || !WallpaperService.isInitialized) {
+          Qt.callLater(setWallpaperInitial)
+          return
+        }
+
+        setWallpaperImmediate(WallpaperService.getWallpaper(modelData.name))
       }
 
       function setWallpaperImmediate(source) {

@@ -10,7 +10,7 @@ Singleton {
   id: root
 
   // Public API
-  property bool active: Settings.isLoaded && Settings.data.appLauncher.enableClipboardHistory && cliphistAvailable
+  property bool active: Settings.data.appLauncher.enableClipboardHistory && cliphistAvailable
   property bool loading: false
   property var items: [] // [{id, preview, mime, isImage}]
 

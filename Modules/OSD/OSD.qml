@@ -22,7 +22,7 @@ Variants {
     property ListModel notificationModel: NotificationService.activeList
 
     // If no notification display activated in settings, then show them all
-    property bool canShowOnThisScreen: Settings.isLoaded && modelData && (Settings.data.osd.monitors.includes(modelData.name) || (Settings.data.osd.monitors.length === 0))
+    property bool canShowOnThisScreen: modelData && (Settings.data.osd.monitors.includes(modelData.name) || (Settings.data.osd.monitors.length === 0))
 
     // Loader is only active when actually showing something
     active: false
@@ -104,7 +104,7 @@ Variants {
       id: panel
       screen: modelData
 
-      readonly property string location: (Settings.isLoaded && Settings.data && Settings.data.osd && Settings.data.osd.location) ? Settings.data.osd.location : "top_right"
+      readonly property string location: (Settings.data.osd && Settings.data.osd.location) ? Settings.data.osd.location : "top_right"
       readonly property bool isTop: (location === "top") || (location.length >= 3 && location.substring(0, 3) === "top")
       readonly property bool isBottom: (location === "bottom") || (location.length >= 6 && location.substring(0, 6) === "bottom")
       readonly property bool isLeft: (location.indexOf("_left") >= 0) || (location === "left")
