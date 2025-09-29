@@ -227,6 +227,7 @@ Item {
 
         // Only emit activeWindowChanged if the focused window actually changed
         if (oldFocusedIndex !== focusedWindowIndex) {
+          windows[oldFocusedIndex].isFocused = false
           activeWindowChanged()
         }
       }
