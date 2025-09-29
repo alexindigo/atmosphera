@@ -5,7 +5,6 @@ import qs.Commons
 import qs.Services
 import qs.Widgets
 
-
 RowLayout {
   id: root
 
@@ -79,7 +78,7 @@ RowLayout {
     // Decrease button (left)
     Item {
       id: decreaseButton
-      height:parent.height
+      height: parent.height
       width: leftSemicircle.width + (leftDiamondContainer.width / 2)
       anchors.top: parent.top
       anchors.bottom: parent.bottom
@@ -94,66 +93,70 @@ RowLayout {
         clip: true
         anchors.left: parent.left
         Rectangle {
-            width: Math.round(parent.height)
-            height: parent.height
-            radius: width / 2
-            anchors.left: parent.left
-            color: decreaseArea.containsMouse ? Color.mTertiary : "transparent"
-            Behavior on color {
-              ColorAnimation {
-                duration: Style.animationFast
-              }
-            }
-          }
-        }
-
-        Item {
-          id: leftDiamondContainer
-
-          height: Math.round(parent.height / 2) * 2
-          width: height * Math.sqrt(2)
-          anchors.verticalCenter: parent.verticalCenter
-          anchors.horizontalCenter: leftSemicircle.right
-
-          Rectangle {
-            id: leftDiamondVisual
-            width: 100
-            height: 100
-            radius: width / 4
-
-            color: decreaseArea.containsMouse ? Color.mTertiary : "transparent"
-            Behavior on color {
-              ColorAnimation {
-                duration: Style.animationFast
-              }
-            }
-
-            anchors.centerIn: parent
-
-            transform: [
-              Rotation { angle: 45; origin.x: 50; origin.y: 50 },
-              Scale {
-                id: leftScaler
-                origin.x: 50
-                origin.y: 50
-
-                // This is the full formula for the height of the rotated, rounded square
-                readonly property real trueHeight: (leftDiamondVisual.width - 2 * leftDiamondVisual.radius) * Math.sqrt(2) + (2 * leftDiamondVisual.radius)
-                xScale: leftDiamondContainer.height / leftScaler.trueHeight
-                yScale: leftDiamondContainer.height / leftScaler.trueHeight
-              }
-            ]
-          }
-        }
-
-        NIcon {
+          width: Math.round(parent.height)
+          height: parent.height
+          radius: width / 2
           anchors.left: parent.left
-          anchors.leftMargin: parent.width * 0.25
-          anchors.verticalCenter: parent.verticalCenter
-          icon: "chevron-left"
-          font.pointSize: Style.fontSizeS * scaling
-          color: decreaseArea.containsMouse ? Color.mOnPrimary : Color.mPrimary
+          color: decreaseArea.containsMouse ? Color.mTertiary : Color.transparent
+          Behavior on color {
+            ColorAnimation {
+              duration: Style.animationFast
+            }
+          }
         }
+      }
+
+      Item {
+        id: leftDiamondContainer
+
+        height: Math.round(parent.height / 2) * 2
+        width: height * Math.sqrt(2)
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.horizontalCenter: leftSemicircle.right
+
+        Rectangle {
+          id: leftDiamondVisual
+          width: 100
+          height: 100
+          radius: width / 4
+
+          color: decreaseArea.containsMouse ? Color.mTertiary : Color.transparent
+          Behavior on color {
+            ColorAnimation {
+              duration: Style.animationFast
+            }
+          }
+
+          anchors.centerIn: parent
+
+          transform: [
+            Rotation {
+              angle: 45
+              origin.x: 50
+              origin.y: 50
+            },
+            Scale {
+              id: leftScaler
+              origin.x: 50
+              origin.y: 50
+
+              // This is the full formula for the height of the rotated, rounded square
+              readonly property real trueHeight: (leftDiamondVisual.width - 2 * leftDiamondVisual.radius) * Math.sqrt(2) + (2 * leftDiamondVisual.radius)
+              xScale: leftDiamondContainer.height / leftScaler.trueHeight
+              yScale: leftDiamondContainer.height / leftScaler.trueHeight
+            }
+          ]
+        }
+      }
+
+      NIcon {
+        anchors.left: parent.left
+        anchors.leftMargin: parent.width * 0.25
+        anchors.verticalCenter: parent.verticalCenter
+        icon: "chevron-left"
+        font.pointSize: Style.fontSizeS * scaling
+        color: decreaseArea.containsMouse ? Color.mOnTertiary : Color.mPrimary
+      }
 
       MouseArea {
         id: decreaseArea
@@ -190,7 +193,7 @@ RowLayout {
           height: parent.height
           radius: width / 2
           anchors.right: parent.right
-          color: increaseArea.containsMouse ? Color.mTertiary : "transparent"
+          color: increaseArea.containsMouse ? Color.mTertiary : Color.transparent
           Behavior on color {
             ColorAnimation {
               duration: Style.animationFast
@@ -213,7 +216,7 @@ RowLayout {
           height: 100
           radius: width / 4
 
-          color: increaseArea.containsMouse ? Color.mTertiary : "transparent"
+          color: increaseArea.containsMouse ? Color.mTertiary : Color.transparent
           Behavior on color {
             ColorAnimation {
               duration: Style.animationFast
@@ -223,7 +226,11 @@ RowLayout {
           anchors.centerIn: parent
 
           transform: [
-            Rotation { angle: 45; origin.x: 50; origin.y: 50 },
+            Rotation {
+              angle: 45
+              origin.x: 50
+              origin.y: 50
+            },
             Scale {
               id: rightScaler
               origin.x: 50
@@ -244,7 +251,7 @@ RowLayout {
         anchors.verticalCenter: parent.verticalCenter
         icon: "chevron-right"
         font.pointSize: Style.fontSizeS * scaling
-        color: increaseArea.containsMouse ? Color.mOnPrimary : Color.mPrimary
+        color: increaseArea.containsMouse ? Color.mOnTertiary: Color.mPrimary
       }
 
       MouseArea {
@@ -268,32 +275,34 @@ RowLayout {
       anchors.verticalCenter: parent.verticalCenter
       anchors.margins: 4 * scaling
       height: parent.height
-      color: "transparent"
+      color: Color.transparent
 
-      Row {
+      RowLayout {
         anchors.centerIn: parent
         spacing: 0
 
         // Prefix text (non-editable)
-        Text {
+        NText {
           text: root.prefix
           font.family: Settings.data.ui.fontFixed
           font.pointSize: Style.fontSizeM * scaling
           font.weight: Style.fontWeightMedium
           color: Color.mOnSurface
           verticalAlignment: Text.AlignVCenter
+          Layout.alignment: Qt.AlignVCenter
           visible: root.prefix !== ""
         }
 
         // Editable number input
         TextInput {
           id: valueInput
-          text: root.value.toString()
+          text: valueInput.focus ? valueInput.text : root.value.toString()
           font.family: Settings.data.ui.fontFixed
           font.pointSize: Style.fontSizeM * scaling
           font.weight: Style.fontWeightMedium
           color: Color.mOnSurface
           verticalAlignment: Text.AlignVCenter
+          Layout.alignment: Qt.AlignVCenter
           selectByMouse: true
           enabled: root.enabled
 
@@ -324,23 +333,22 @@ RowLayout {
           function applyValue() {
             let newValue = parseInt(text)
             if (!isNaN(newValue)) {
+              // Don't manually set text here - let the binding handle it
               newValue = Math.max(root.from, Math.min(root.to, newValue))
               root.value = newValue
-              text = root.value.toString()
-            } else {
-              text = root.value.toString()
             }
           }
         }
 
         // Suffix text (non-editable)
-        Text {
+        NText {
           text: root.suffix
           font.family: Settings.data.ui.fontFixed
           font.pointSize: Style.fontSizeM * scaling
           font.weight: Style.fontWeightMedium
           color: Color.mOnSurface
           verticalAlignment: Text.AlignVCenter
+          Layout.alignment: Qt.AlignVCenter
           visible: root.suffix !== ""
         }
       }
