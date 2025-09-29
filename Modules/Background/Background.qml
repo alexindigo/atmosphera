@@ -224,9 +224,7 @@ Variants {
         easing.type: Easing.InOutCubic
         onFinished: {
           // Swap images after transition completes
-          if (currentWallpaper.source !== "") {
-            currentWallpaper.source = ""
-          }
+          currentWallpaper.source = ""
           currentWallpaper.source = nextWallpaper.source
           nextWallpaper.source = ""
           transitionProgress = 0.0
@@ -249,9 +247,7 @@ Variants {
       function setWallpaperImmediate(source) {
         transitionAnimation.stop()
         transitionProgress = 0.0
-        if (currentWallpaper.source !== "") {
-          currentWallpaper.source = ""
-        }
+        currentWallpaper.source = ""
         currentWallpaper.source = source
         nextWallpaper.source = ""
       }
