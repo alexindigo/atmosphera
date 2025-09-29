@@ -44,13 +44,26 @@ Variants {
       property real fillMode: 1.0
       property vector4d fillColor: Qt.vector4d(Settings.data.wallpaper.fillColor.r, Settings.data.wallpaper.fillColor.g, Settings.data.wallpaper.fillColor.b, 1.0)
 
-      // On startup assign wallpaper immediately
-      Component.onCompleted: {
-        fillMode = WallpaperService.getFillModeUniform()
+      // On startup, defer assigning wallpaper until the service cache is ready
+      function _startWallpaperOnceReady() {
+        if (!modelData) {
+          Qt.callLater(_startWallpaperOnceReady)
+          return
+        }
 
-        var path = modelData ? WallpaperService.getWallpaper(modelData.name) : ""
+        var cacheReady = WallpaperService && WallpaperService.currentWallpapers && Object.keys(WallpaperService.currentWallpapers).length > 0
+        if (!cacheReady) {
+          // Try again on the next tick until WallpaperService.init() populates cache
+          Qt.callLater(_startWallpaperOnceReady)
+          return
+        }
+
+        fillMode = WallpaperService.getFillModeUniform()
+        var path = WallpaperService.getWallpaper(modelData.name)
         setWallpaperImmediate(path)
       }
+
+      Component.onCompleted: _startWallpaperOnceReady()
 
       Connections {
         target: Settings.data.wallpaper
