@@ -1017,6 +1017,16 @@
           "description": "Verwenden Sie ein Leerzeichen, um jeden Teil in eine neue Zeile zu trennen."
         },
         "preview": "Vorschau"
+      },
+      "taskbar": {
+        "only-active-workspaces": {
+          "label": "Nur von aktiven Arbeitsbereichen",
+          "description": "Zeige nur Apps von aktiven Arbeitsbereichen an."
+        },
+        "only-same-output": {
+          "label": "Nur vom gleichen Bildschirm",
+          "description": "Zeige nur Apps vom dem Bildschirm an, wo sich die Taskbar befindet."
+        }
       }
     }
   },
