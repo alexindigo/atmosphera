@@ -279,7 +279,7 @@ Item {
           Item {
             id: scrollContainer
             height: parent.height
-            width: hasActivePlayer ? childrenRect.width : parent.width
+            width: parent.width
 
             property real scrollX: 0
             x: hasActivePlayer ? scrollX : 0
