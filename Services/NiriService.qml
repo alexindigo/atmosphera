@@ -110,28 +110,28 @@ Item {
 
     stdout: SplitParser {
       onRead: data => {
-        try {
-          const event = JSON.parse(data.trim())
+                try {
+                  const event = JSON.parse(data.trim())
 
-          if (event.WorkspacesChanged) {
-            updateWorkspaces()
-          } else if (event.WindowOpenedOrChanged) {
-            handleWindowOpenedOrChanged(event.WindowOpenedOrChanged)
-          } else if (event.WindowClosed) {
-            handleWindowClosed(event.WindowClosed)
-          } else if (event.WindowsChanged) {
-            handleWindowsChanged(event.WindowsChanged)
-          } else if (event.WorkspaceActivated) {
-            updateWorkspaces()
-          } else if (event.WindowFocusChanged) {
-            handleWindowFocusChanged(event.WindowFocusChanged)
-          } else if (event.WindowLayoutsChanged) {
-            handleWindowLayoutsChanged(event.WindowLayoutsChanged)
-          }
-        } catch (e) {
-          Logger.error("NiriService", "Error parsing event stream:", e, data)
-        }
-      }
+                  if (event.WorkspacesChanged) {
+                    updateWorkspaces()
+                  } else if (event.WindowOpenedOrChanged) {
+                    handleWindowOpenedOrChanged(event.WindowOpenedOrChanged)
+                  } else if (event.WindowClosed) {
+                    handleWindowClosed(event.WindowClosed)
+                  } else if (event.WindowsChanged) {
+                    handleWindowsChanged(event.WindowsChanged)
+                  } else if (event.WorkspaceActivated) {
+                    updateWorkspaces()
+                  } else if (event.WindowFocusChanged) {
+                    handleWindowFocusChanged(event.WindowFocusChanged)
+                  } else if (event.WindowLayoutsChanged) {
+                    handleWindowLayoutsChanged(event.WindowLayoutsChanged)
+                  }
+                } catch (e) {
+                  Logger.error("NiriService", "Error parsing event stream:", e, data)
+                }
+              }
     }
   }
 
@@ -139,13 +139,13 @@ Item {
   function getWindowPosition(layout) {
     if (layout.pos_in_scrolling_layout) {
       return {
-        x: layout.pos_in_scrolling_layout[0],
-        y: layout.pos_in_scrolling_layout[1]
+        "x": layout.pos_in_scrolling_layout[0],
+        "y": layout.pos_in_scrolling_layout[1]
       }
     } else {
       return {
-        x: floatingWindowPosition,
-        y: floatingWindowPosition
+        "x": floatingWindowPosition,
+        "y": floatingWindowPosition
       }
     }
   }
@@ -182,7 +182,7 @@ Item {
     if (a.position.x !== b.position.x) {
       return a.position.x - b.position.x
     }
-    return  a.position.y - b.position.y
+    return a.position.y - b.position.y
   }
 
   function recollectWindows(windowsData) {
@@ -299,7 +299,9 @@ Item {
 
   function handleWindowLayoutsChanged(eventData) {
     try {
-      for (const [windowId, layout] of eventData.changes) {
+      for (const change of eventData.changes) {
+        const windowId = change[0]
+        const layout = change[1]
         const window = windows.find(w => w.id === windowId)
         if (window) {
           window.position = getWindowPosition(layout)
