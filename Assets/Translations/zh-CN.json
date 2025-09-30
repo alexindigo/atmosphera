@@ -54,6 +54,7 @@
         }
       },
       "fonts": {
+        "reset-scaling": "恢复默认缩放",
         "section": {
           "label": "字体",
           "description": "选择整个界面中使用的字体。"
@@ -62,13 +63,21 @@
           "label": "默认字体",
           "description": "整个界面使用的主要字体。",
           "placeholder": "选择默认字体...",
-          "search-placeholder": "搜索字体..."
+          "search-placeholder": "搜索字体...",
+          "scale": {
+            "label": "默认字体大小",
+            "description": "增大或减小标准文本的尺寸"
+          }
         },
         "monospace": {
           "label": "等宽字体",
           "description": "用于数字和统计信息显示的等宽字体。",
           "placeholder": "选择等宽字体...",
-          "search-placeholder": "搜索等宽字体..."
+          "search-placeholder": "搜索等宽字体...",
+          "scale": {
+            "label": "默认等宽字体大小",
+            "description": "增大或减小等宽文本的尺寸"
+          }
         }
       }
     },
@@ -992,6 +1001,16 @@
           "description": "使用空格将每个部分分隔到新行。"
         },
         "preview": "预览"
+      },
+      "taskbar": {
+        "only-active-workspaces": {
+            "label": "仅显示活动工作区",
+            "description": "仅显示来自活动工作区的应用程序"
+        },
+        "only-same-output": {
+            "label": "仅显示同屏幕",
+            "description": "仅显示任务栏所在屏幕上的应用程序"
+        }
       }
     }
   },
@@ -1237,15 +1256,18 @@
     "title": "会话菜单",
     "click-again": "再次点击立即执行",
     "action-in-seconds": "{seconds} 秒后{action}...",
+    "lock": "锁定",
     "lock-subtitle": "锁定您的会话",
     "lock-and-suspend": "锁定并挂起",
-    "lock-and-suspend-subtitle": "锁定会话并将系统挂起",
-    "end-subtitle": "结束您的会话",
-    "lock": "锁定",
+    "lock-and-suspend-subtitle": "锁定会话并使系统进入睡眠状态",
     "suspend": "挂起",
+    "suspend-subtitle": "使系统进入睡眠状态",
     "reboot": "重启",
+    "reboot-subtitle": "重新启动计算机",
     "logout": "注销",
-    "shutdown": "关机"
+    "logout-subtitle": "结束您的会话",
+    "shutdown": "关机",
+    "shutdown-subtitle": "关闭计算机"
   },
   "plugins": {
     "applications": "应用程序",
