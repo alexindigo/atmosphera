@@ -307,7 +307,7 @@ Variants {
                     NText {
                       text: `${model.appName || I18n.tr("system.unknown-app")} · ${Time.formatRelativeTime(model.timestamp)}`
                       color: Color.mSecondary
-                      font.pointSize: Style.fontSizeXS * scaling
+                      pointSize: Style.fontSizeXS * scaling
                     }
 
                     Item {
@@ -317,7 +317,7 @@ Variants {
 
                   NText {
                     text: model.summary || I18n.tr("general.no-summary")
-                    font.pointSize: Style.fontSizeL * scaling
+                    pointSize: Style.fontSizeL * scaling
                     font.weight: Style.fontWeightMedium
                     color: Color.mOnSurface
                     textFormat: Text.PlainText
@@ -330,7 +330,7 @@ Variants {
 
                   NText {
                     text: model.body || ""
-                    font.pointSize: Style.fontSizeM * scaling
+                    pointSize: Style.fontSizeM * scaling
                     color: Color.mOnSurface
                     textFormat: Text.PlainText
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere

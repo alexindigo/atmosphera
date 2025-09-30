@@ -41,7 +41,7 @@ RadioButton {
 
   contentItem: NText {
     text: root.text
-    font.pointSize: Style.fontSizeM * scaling
+    pointSize: Style.fontSizeM * scaling
     anchors.verticalCenter: parent.verticalCenter
     anchors.left: outerCircle.right
     anchors.right: parent.right

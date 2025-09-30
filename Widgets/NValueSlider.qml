@@ -40,9 +40,9 @@ RowLayout {
   NText {
     visible: root.text !== ""
     text: root.text
-    font.family: Settings.data.ui.fontFixed
+    family: Settings.data.ui.fontFixed
     Layout.alignment: Qt.AlignVCenter
-    Layout.preferredWidth: 40 * scaling
+    Layout.preferredWidth: 50 * scaling
     horizontalAlignment: Text.AlignRight
   }
 }

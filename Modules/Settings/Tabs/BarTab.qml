@@ -140,7 +140,7 @@ ColumnLayout {
 
         NText {
           text: I18n.tr("settings.bar.appearance.margins.vertical")
-          font.pointSize: Style.fontSizeXS * scaling
+          pointSize: Style.fontSizeXS * scaling
           color: Color.mOnSurfaceVariant
         }
 
@@ -160,7 +160,7 @@ ColumnLayout {
 
         NText {
           text: I18n.tr("settings.bar.appearance.margins.horizontal")
-          font.pointSize: Style.fontSizeXS * scaling
+          pointSize: Style.fontSizeXS * scaling
           color: Color.mOnSurfaceVariant
         }
 

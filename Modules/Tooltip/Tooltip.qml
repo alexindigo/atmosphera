@@ -386,7 +386,7 @@ PopupWindow {
         anchors.centerIn: parent
         anchors.margins: root.padding * root.scaling
         text: root.text
-        font.pointSize: Style.fontSizeS * root.scaling
+        pointSize: Style.fontSizeS * root.scaling
         color: Color.mOnSurfaceVariant
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter

@@ -70,7 +70,7 @@ NBox {
 
       NText {
         text: sectionName + " Section"
-        font.pointSize: Style.fontSizeL * scaling
+        pointSize: Style.fontSizeL * scaling
         font.weight: Style.fontWeightBold
         color: Color.mOnSurface
         Layout.alignment: Qt.AlignVCenter
@@ -225,7 +225,7 @@ NBox {
 
               NText {
                 text: modelData.id
-                font.pointSize: Style.fontSizeS * scaling
+                pointSize: Style.fontSizeS * scaling
                 color: root.getWidgetColor(modelData)[1]
                 horizontalAlignment: Text.AlignHCenter
                 elide: Text.ElideRight
@@ -312,10 +312,10 @@ NBox {
         z: 2000
         clip: false // Ensure ghost isn't clipped
 
-        Text {
+        NText {
           id: ghostText
           anchors.centerIn: parent
-          font.pointSize: Style.fontSizeS * scaling
+          pointSize: Style.fontSizeS * scaling
           color: Color.mOnPrimary
         }
       }

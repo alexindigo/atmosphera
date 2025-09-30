@@ -261,7 +261,7 @@ ColumnLayout {
                 var chunks = schemePath.replace(".json", "").split("/")
                 return chunks[chunks.length - 1]
               }
-              font.pointSize: Style.fontSizeM * scaling
+              pointSize: Style.fontSizeM * scaling
               font.weight: Style.fontWeightBold
               color: getSchemeColor(modelData, "mOnSurface")
               Layout.fillWidth: true

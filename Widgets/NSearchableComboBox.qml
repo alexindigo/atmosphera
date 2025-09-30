@@ -138,7 +138,7 @@ RowLayout {
     contentItem: NText {
       leftPadding: Style.marginL * scaling
       rightPadding: combo.indicator.width + Style.marginL * scaling
-      font.pointSize: Style.fontSizeM * scaling
+      pointSize: Style.fontSizeM * scaling
       verticalAlignment: Text.AlignVCenter
       elide: Text.ElideRight
       color: (combo.currentIndex >= 0 && combo.currentIndex < filteredModel.count) ? Color.mOnSurface : Color.mOnSurfaceVariant
@@ -206,7 +206,7 @@ RowLayout {
 
             contentItem: NText {
               text: name
-              font.pointSize: Style.fontSizeM * scaling
+              pointSize: Style.fontSizeM * scaling
               color: highlighted ? Color.mSurface : Color.mOnSurface
               verticalAlignment: Text.AlignVCenter
               elide: Text.ElideRight

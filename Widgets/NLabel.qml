@@ -15,7 +15,7 @@ ColumnLayout {
 
   NText {
     text: label
-    font.pointSize: Style.fontSizeL * scaling
+    pointSize: Style.fontSizeL * scaling
     font.weight: Style.fontWeightBold
     color: labelColor
     visible: label !== ""
@@ -24,7 +24,7 @@ ColumnLayout {
 
   NText {
     text: description
-    font.pointSize: Style.fontSizeS * scaling
+    pointSize: Style.fontSizeS * scaling
     color: descriptionColor
     wrapMode: Text.WordWrap
     visible: description !== ""

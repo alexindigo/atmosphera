@@ -138,13 +138,13 @@ Popup {
 
           NIcon {
             icon: "color-picker"
-            font.pointSize: Style.fontSizeXXL * scaling
+            pointSize: Style.fontSizeXXL * scaling
             color: Color.mPrimary
           }
 
           NText {
             text: I18n.tr("widgets.color-picker.title")
-            font.pointSize: Style.fontSizeXL * scaling
+            pointSize: Style.fontSizeXL * scaling
             font.weight: Style.fontWeightBold
             color: Color.mPrimary
           }
@@ -179,8 +179,8 @@ Popup {
 
           NText {
             text: root.selectedColor.toString().toUpperCase()
-            font.family: Settings.data.ui.fontFixed
-            font.pointSize: Style.fontSizeL * scaling
+            family: Settings.data.ui.fontFixed
+            pointSize: Style.fontSizeL * scaling
             font.weight: Font.Bold
             color: root.selectedColor.r + root.selectedColor.g + root.selectedColor.b > 1.5 ? "#000000" : "#FFFFFF"
             Layout.alignment: Qt.AlignHCenter
@@ -188,8 +188,8 @@ Popup {
 
           NText {
             text: "RGB(" + Math.round(root.selectedColor.r * 255) + ", " + Math.round(root.selectedColor.g * 255) + ", " + Math.round(root.selectedColor.b * 255) + ")"
-            font.family: Settings.data.ui.fontFixed
-            font.pointSize: Style.fontSizeM * scaling
+            family: Settings.data.ui.fontFixed
+            pointSize: Style.fontSizeM * scaling
             color: root.selectedColor.r + root.selectedColor.g + root.selectedColor.b > 1.5 ? "#000000" : "#FFFFFF"
             Layout.alignment: Qt.AlignHCenter
           }

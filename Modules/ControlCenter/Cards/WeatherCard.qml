@@ -36,7 +36,7 @@ NBox {
             const chunks = Settings.data.location.name.split(",")
             return chunks[0]
           }
-          font.pointSize: Style.fontSizeL * scaling
+          pointSize: Style.fontSizeL * scaling
           font.weight: Style.fontWeightBold
         }
 
@@ -56,13 +56,13 @@ NBox {
               temp = Math.round(temp)
               return `${temp}°${suffix}`
             }
-            font.pointSize: Style.fontSizeXL * scaling
+            pointSize: Style.fontSizeXL * scaling
             font.weight: Style.fontWeightBold
           }
 
           NText {
             text: weatherReady ? `(${LocationService.data.weather.timezone_abbreviation})` : ""
-            font.pointSize: Style.fontSizeXS * scaling
+            pointSize: Style.fontSizeXS * scaling
             color: Color.mOnSurfaceVariant
             visible: LocationService.data.weather
           }
@@ -112,7 +112,7 @@ NBox {
               min = Math.round(min)
               return `${max}°/${min}°`
             }
-            font.pointSize: Style.fontSizeXS * scaling
+            pointSize: Style.fontSizeXS * scaling
             color: Color.mOnSurfaceVariant
           }
         }

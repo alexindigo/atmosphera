@@ -275,7 +275,7 @@ Item {
               NText {
                 id: titleText
                 text: getTitle()
-                font.pointSize: Style.fontSizeS * scaling
+                pointSize: Style.fontSizeS * scaling
                 font.weight: Style.fontWeightMedium
                 verticalAlignment: Text.AlignVCenter
                 color: Color.mOnSurface

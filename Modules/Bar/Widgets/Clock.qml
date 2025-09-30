@@ -65,8 +65,8 @@ Rectangle {
           NText {
             visible: text !== ""
             text: modelData
-            font.family: useMonospacedFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault
-            font.pointSize: {
+            family: useMonospacedFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault
+            pointSize: {
               if (repeater.model.length == 1) {
                 return Style.fontSizeS * scaling
               } else {
@@ -95,8 +95,8 @@ Rectangle {
           delegate: NText {
             visible: text !== ""
             text: modelData
-            font.family: useMonospacedFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault
-            font.pointSize: Style.fontSizeS * scaling
+            family: useMonospacedFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault
+            pointSize: Style.fontSizeS * scaling
             font.weight: Style.fontWeightBold
             color: usePrimaryColor ? Color.mPrimary : Color.mOnSurface
             wrapMode: Text.WordWrap

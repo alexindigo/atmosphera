@@ -195,7 +195,7 @@ Popup {
         }
         NText {
           text: root.title
-          font.pointSize: Style.fontSizeXL * scaling
+          pointSize: Style.fontSizeXL * scaling
           font.weight: Style.fontWeightBold
           color: Color.mPrimary
           Layout.fillWidth: true
@@ -641,7 +641,7 @@ Popup {
                   else
                     return Color.mOnSurface
                 }
-                font.pointSize: Style.fontSizeS * scaling
+                pointSize: Style.fontSizeS * scaling
                 font.weight: isSelected ? Style.fontWeightBold : Style.fontWeightRegular
                 Layout.fillWidth: true
                 horizontalAlignment: Text.AlignHCenter
@@ -735,7 +735,7 @@ Popup {
               NText {
                 text: model.fileName
                 color: filePickerPanel.currentSelection.includes(model.filePath) ? Color.mOnSecondary : Color.mOnSurface
-                font.pointSize: Style.fontSizeM * scaling
+                pointSize: Style.fontSizeM * scaling
                 font.weight: filePickerPanel.currentSelection.includes(model.filePath) ? Style.fontWeightBold : Style.fontWeightRegular
                 Layout.fillWidth: true
                 elide: Text.ElideRight
@@ -744,7 +744,7 @@ Popup {
               NText {
                 text: model.fileIsDir ? "" : root.formatFileSize(model.fileSize)
                 color: filePickerPanel.currentSelection.includes(model.filePath) ? Color.mOnSecondary : Color.mOnSurfaceVariant
-                font.pointSize: Style.fontSizeS * scaling
+                pointSize: Style.fontSizeS * scaling
                 visible: !model.fileIsDir
                 Layout.preferredWidth: implicitWidth
               }
@@ -810,7 +810,7 @@ Popup {
             }
           }
           color: filePickerPanel.searchText.length > 0 ? Color.mPrimary : Color.mOnSurfaceVariant
-          font.pointSize: Style.fontSizeS * scaling
+          pointSize: Style.fontSizeS * scaling
           Layout.fillWidth: true
         }
 

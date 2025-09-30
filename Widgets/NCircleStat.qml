@@ -79,7 +79,7 @@ Rectangle {
         id: valueLabel
         anchors.centerIn: parent
         text: `${root.value}${root.suffix}`
-        font.pointSize: Style.fontSizeM * scaling * contentScale
+        pointSize: Style.fontSizeM * scaling * contentScale
         font.weight: Style.fontWeightBold
         color: Color.mOnSurface
         horizontalAlignment: Text.AlignHCenter

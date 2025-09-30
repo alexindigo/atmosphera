@@ -196,7 +196,7 @@ PopupWindow {
 
           NText {
             text: I18n.tr("dock.menu.focus")
-            font.pointSize: Style.fontSizeS * scaling
+            pointSize: Style.fontSizeS * scaling
             color: root.hoveredItem === 0 ? Color.mOnTertiary : Color.mOnSurfaceVariant
             Layout.alignment: Qt.AlignVCenter
           }
@@ -233,7 +233,7 @@ PopupWindow {
                 return I18n.tr("dock.menu.pin")
               return root.isAppPinned(root.toplevel.appId) ? I18n.tr("dock.menu.unpin") : I18n.tr("dock.menu.pin")
             }
-            font.pointSize: Style.fontSizeS * scaling
+            pointSize: Style.fontSizeS * scaling
             color: root.hoveredItem === 1 ? Color.mOnTertiary : Color.mOnSurfaceVariant
             Layout.alignment: Qt.AlignVCenter
           }
@@ -262,7 +262,7 @@ PopupWindow {
 
           NText {
             text: I18n.tr("dock.menu.close")
-            font.pointSize: Style.fontSizeS * scaling
+            pointSize: Style.fontSizeS * scaling
             color: root.hoveredItem === 2 ? Color.mOnTertiary : Color.mOnSurfaceVariant
             Layout.alignment: Qt.AlignVCenter
           }

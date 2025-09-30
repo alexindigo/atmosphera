@@ -148,7 +148,8 @@
   "ui": {
     "fontDefault": "Roboto",
     "fontFixed": "DejaVu Sans Mono",
-    "fontBillboard": "Inter",
+    "fontDefaultScale": 1,
+    "fontFixedScale": 1,
     "monitorsScaling": [],
     "idleInhibitorEnabled": false
   },

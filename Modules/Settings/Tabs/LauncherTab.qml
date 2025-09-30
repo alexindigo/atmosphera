@@ -53,14 +53,14 @@ ColumnLayout {
 
     NText {
       text: I18n.tr("settings.launcher.settings.background-opacity.label")
-      font.pointSize: Style.fontSizeL * scaling
+      pointSize: Style.fontSizeL * scaling
       font.weight: Style.fontWeightBold
       color: Color.mOnSurface
     }
 
     NText {
       text: I18n.tr("settings.launcher.settings.background-opacity.description")
-      font.pointSize: Style.fontSizeXS * scaling
+      pointSize: Style.fontSizeXS * scaling
       color: Color.mOnSurfaceVariant
       wrapMode: Text.WordWrap
       Layout.fillWidth: true

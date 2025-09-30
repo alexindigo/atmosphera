@@ -147,9 +147,8 @@ Loader {
                 NText {
                   id: timeText
                   text: formatTime()
-                  font.family: Settings.data.ui.fontBillboard
                   // Smaller time display when using longer 12 hour format
-                  font.pointSize: Settings.data.location.use12hourFormat ? Style.fontSizeXXXL * 4 * scaling : Style.fontSizeXXXL * 5 * scaling
+                  pointSize: Settings.data.location.use12hourFormat ? Style.fontSizeXXXL * 4 * scaling : Style.fontSizeXXXL * 5 * scaling
                   font.weight: Style.fontWeightBold
                   font.letterSpacing: -2 * scaling
                   color: Color.mOnSurface
@@ -174,8 +173,7 @@ Loader {
                 NText {
                   id: dateText
                   text: formatDate()
-                  font.family: Settings.data.ui.fontBillboard
-                  font.pointSize: Style.fontSizeXXL * scaling
+                  pointSize: Style.fontSizeXXL * scaling
                   font.weight: Font.Light
                   color: Color.mOnSurface
                   horizontalAlignment: Text.AlignHCenter
@@ -385,8 +383,8 @@ Loader {
                     NText {
                       text: I18n.tr("lock-screen.secure-terminal")
                       color: Color.mOnSurface
-                      font.family: Settings.data.ui.fontFixed
-                      font.pointSize: Style.fontSizeL * scaling
+                      family: Settings.data.ui.fontFixed
+                      pointSize: Style.fontSizeL * scaling
                       font.weight: Style.fontWeightBold
                       Layout.fillWidth: true
                     }
@@ -396,8 +394,8 @@ Loader {
                       NText {
                         text: keyboardLayout.currentLayout
                         color: Color.mOnSurface
-                        font.family: Settings.data.ui.fontFixed
-                        font.pointSize: Style.fontSizeM * scaling
+                        family: Settings.data.ui.fontFixed
+                        pointSize: Style.fontSizeM * scaling
                         font.weight: Style.fontWeightBold
                       }
                       NIcon {
@@ -419,8 +417,8 @@ Loader {
                       NText {
                         text: Math.round(batteryIndicator.percent) + "%"
                         color: Color.mOnSurface
-                        font.family: Settings.data.ui.fontFixed
-                        font.pointSize: Style.fontSizeM * scaling
+                        family: Settings.data.ui.fontFixed
+                        pointSize: Style.fontSizeM * scaling
                         font.weight: Style.fontWeightBold
                       }
                     }
@@ -443,8 +441,8 @@ Loader {
                     NText {
                       text: Quickshell.env("USER") + "@noctalia:~$"
                       color: Color.mPrimary
-                      font.family: Settings.data.ui.fontFixed
-                      font.pointSize: Style.fontSizeL * scaling
+                      family: Settings.data.ui.fontFixed
+                      pointSize: Style.fontSizeL * scaling
                       font.weight: Style.fontWeightBold
                     }
 
@@ -452,8 +450,8 @@ Loader {
                       id: welcomeText
                       text: ""
                       color: Color.mOnSurface
-                      font.family: Settings.data.ui.fontFixed
-                      font.pointSize: Style.fontSizeL * scaling
+                      family: Settings.data.ui.fontFixed
+                      pointSize: Style.fontSizeL * scaling
                       property int currentIndex: 0
                       property string fullText: I18n.tr("system.welcome-back", {
                                                           "user": Quickshell.env("USER")
@@ -482,16 +480,16 @@ Loader {
                     NText {
                       text: Quickshell.env("USER") + "@noctalia:~$"
                       color: Color.mPrimary
-                      font.family: Settings.data.ui.fontFixed
-                      font.pointSize: Style.fontSizeL * scaling
+                      family: Settings.data.ui.fontFixed
+                      pointSize: Style.fontSizeL * scaling
                       font.weight: Style.fontWeightBold
                     }
 
                     NText {
                       text: I18n.tr("lock-screen.unlock-command")
                       color: Color.mOnSurface
-                      font.family: Settings.data.ui.fontFixed
-                      font.pointSize: Style.fontSizeL * scaling
+                      family: Settings.data.ui.fontFixed
+                      pointSize: Style.fontSizeL * scaling
                     }
                   }
 
@@ -502,8 +500,8 @@ Loader {
                     NText {
                       text: I18n.tr("lock-screen.password")
                       color: Color.mPrimary
-                      font.family: Settings.data.ui.fontFixed
-                      font.pointSize: Style.fontSizeL * scaling
+                      family: Settings.data.ui.fontFixed
+                      pointSize: Style.fontSizeL * scaling
                       font.weight: Style.fontWeightBold
                     }
 
@@ -545,8 +543,8 @@ Loader {
                         id: asterisksText
                         text: "*".repeat(passwordInput.text.length)
                         color: Color.mOnSurface
-                        font.family: Settings.data.ui.fontFixed
-                        font.pointSize: Style.fontSizeL * scaling
+                        family: Settings.data.ui.fontFixed
+                        pointSize: Style.fontSizeL * scaling
                         visible: passwordInput.activeFocus && !lockContext.unlockInProgress
                         anchors.left: parent.left
                         anchors.verticalCenter: parent.verticalCenter
@@ -612,8 +610,7 @@ Loader {
                         return Color.mError
                       return Color.transparent
                     }
-                    font.family: "DejaVu Sans Mono"
-                    font.pointSize: Style.fontSizeL * scaling
+                    pointSize: Style.fontSizeL * scaling
                     Layout.fillWidth: true
 
                     SequentialAnimation on opacity {
@@ -647,8 +644,8 @@ Loader {
                         anchors.centerIn: parent
                         text: lockContext.unlockInProgress ? "EXECUTING" : "EXECUTE"
                         color: executeButtonArea.containsMouse ? Color.mOnPrimary : Color.mPrimary
-                        font.family: Settings.data.ui.fontFixed
-                        font.pointSize: Style.fontSizeM * scaling
+                        family: Settings.data.ui.fontFixed
+                        pointSize: Style.fontSizeM * scaling
                         font.weight: Style.fontWeightBold
                       }
 
@@ -767,8 +764,8 @@ Loader {
 
                   text: messages[index % messages.length]
                   color: Color.mError
-                  font.family: Settings.data.ui.fontFixed
-                  font.pointSize: Style.fontSizeXXL * scaling
+                  family: Settings.data.ui.fontFixed
+                  pointSize: Style.fontSizeXXL * scaling
                   font.weight: Style.fontWeightBold
 
                   x: baseX
@@ -905,7 +902,7 @@ Loader {
                     anchors.margins: Style.marginM * scaling
                     anchors.fill: parent
                     text: I18n.tr("lock-screen.shut-down")
-                    font.pointSize: Style.fontSizeS * scaling
+                    pointSize: Style.fontSizeS * scaling
                     color: Color.mOnSurfaceVariant
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
@@ -957,7 +954,7 @@ Loader {
                     anchors.margins: Style.marginM * scaling
                     anchors.fill: parent
                     text: I18n.tr("lock-screen.restart")
-                    font.pointSize: Style.fontSizeS * scaling
+                    pointSize: Style.fontSizeS * scaling
                     color: Color.mOnSurfaceVariant
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
@@ -1010,7 +1007,7 @@ Loader {
                     anchors.margins: Style.marginM * scaling
                     anchors.fill: parent
                     text: I18n.tr("lock-screen.suspend")
-                    font.pointSize: Style.fontSizeS * scaling
+                    pointSize: Style.fontSizeS * scaling
                     color: Color.mOnSurfaceVariant
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter

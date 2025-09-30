@@ -41,7 +41,7 @@ NPanel {
 
         NText {
           text: I18n.tr("wifi.panel.title")
-          font.pointSize: Style.fontSizeL * scaling
+          pointSize: Style.fontSizeL * scaling
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface
           Layout.fillWidth: true
@@ -99,7 +99,7 @@ NPanel {
           NText {
             text: NetworkService.lastError
             color: Color.mError
-            font.pointSize: Style.fontSizeS * scaling
+            pointSize: Style.fontSizeS * scaling
             wrapMode: Text.Wrap
             Layout.fillWidth: true
           }
@@ -137,14 +137,14 @@ NPanel {
 
           NText {
             text: I18n.tr("wifi.panel.disabled")
-            font.pointSize: Style.fontSizeL * scaling
+            pointSize: Style.fontSizeL * scaling
             color: Color.mOnSurfaceVariant
             Layout.alignment: Qt.AlignHCenter
           }
 
           NText {
             text: I18n.tr("wifi.panel.enable-message")
-            font.pointSize: Style.fontSizeS * scaling
+            pointSize: Style.fontSizeS * scaling
             color: Color.mOnSurfaceVariant
             Layout.alignment: Qt.AlignHCenter
           }
@@ -173,7 +173,7 @@ NPanel {
 
           NText {
             text: I18n.tr("wifi.panel.searching")
-            font.pointSize: Style.fontSizeNormal * scaling
+            pointSize: Style.fontSizeNormal * scaling
             color: Color.mOnSurfaceVariant
             Layout.alignment: Qt.AlignHCenter
           }
@@ -252,7 +252,7 @@ NPanel {
 
                       NText {
                         text: modelData.ssid
-                        font.pointSize: Style.fontSizeNormal * scaling
+                        pointSize: Style.fontSizeNormal * scaling
                         font.weight: modelData.connected ? Style.fontWeightBold : Style.fontWeightMedium
                         color: Color.mOnSurface
                         elide: Text.ElideRight
@@ -266,19 +266,19 @@ NPanel {
                           text: I18n.tr("system.signal-strength", {
                                           "signal": modelData.signal
                                         })
-                          font.pointSize: Style.fontSizeXXS * scaling
+                          pointSize: Style.fontSizeXXS * scaling
                           color: Color.mOnSurfaceVariant
                         }
 
                         NText {
                           text: "•"
-                          font.pointSize: Style.fontSizeXXS * scaling
+                          pointSize: Style.fontSizeXXS * scaling
                           color: Color.mOnSurfaceVariant
                         }
 
                         NText {
                           text: NetworkService.isSecured(modelData.security) ? modelData.security : "Open"
-                          font.pointSize: Style.fontSizeXXS * scaling
+                          pointSize: Style.fontSizeXXS * scaling
                           color: Color.mOnSurfaceVariant
                         }
 
@@ -298,7 +298,7 @@ NPanel {
                             id: connectedText
                             anchors.centerIn: parent
                             text: I18n.tr("wifi.panel.connected")
-                            font.pointSize: Style.fontSizeXXS * scaling
+                            pointSize: Style.fontSizeXXS * scaling
                             color: Color.mOnPrimary
                           }
                         }
@@ -314,7 +314,7 @@ NPanel {
                             id: disconnectingText
                             anchors.centerIn: parent
                             text: I18n.tr("wifi.panel.disconnecting")
-                            font.pointSize: Style.fontSizeXXS * scaling
+                            pointSize: Style.fontSizeXXS * scaling
                             color: Color.mOnPrimary
                           }
                         }
@@ -330,7 +330,7 @@ NPanel {
                             id: forgettingText
                             anchors.centerIn: parent
                             text: I18n.tr("wifi.panel.forgetting")
-                            font.pointSize: Style.fontSizeXXS * scaling
+                            pointSize: Style.fontSizeXXS * scaling
                             color: Color.mOnPrimary
                           }
                         }
@@ -348,7 +348,7 @@ NPanel {
                             id: savedText
                             anchors.centerIn: parent
                             text: I18n.tr("wifi.panel.saved")
-                            font.pointSize: Style.fontSizeXXS * scaling
+                            pointSize: Style.fontSizeXXS * scaling
                             color: Color.mOnSurfaceVariant
                           }
                         }
@@ -456,12 +456,12 @@ NPanel {
                             }
                           }
 
-                          Text {
+                          NText {
                             visible: parent.text.length === 0
                             anchors.verticalCenter: parent.verticalCenter
                             text: I18n.tr("wifi.panel.enter-password")
                             color: Color.mOnSurfaceVariant
-                            font.pointSize: Style.fontSizeS * scaling
+                            pointSize: Style.fontSizeS * scaling
                           }
                         }
                       }
@@ -514,7 +514,7 @@ NPanel {
 
                         NText {
                           text: I18n.tr("wifi.panel.forget-network")
-                          font.pointSize: Style.fontSizeS * scaling
+                          pointSize: Style.fontSizeS * scaling
                           color: Color.mError
                           Layout.fillWidth: true
                         }
@@ -564,7 +564,7 @@ NPanel {
 
           NText {
             text: I18n.tr("wifi.panel.no-networks")
-            font.pointSize: Style.fontSizeL * scaling
+            pointSize: Style.fontSizeL * scaling
             color: Color.mOnSurfaceVariant
             Layout.alignment: Qt.AlignHCenter
           }

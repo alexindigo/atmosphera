@@ -284,8 +284,8 @@ RowLayout {
         // Prefix text (non-editable)
         NText {
           text: root.prefix
-          font.family: Settings.data.ui.fontFixed
-          font.pointSize: Style.fontSizeM * scaling
+          family: Settings.data.ui.fontFixed
+          pointSize: Style.fontSizeM * scaling
           font.weight: Style.fontWeightMedium
           color: Color.mOnSurface
           verticalAlignment: Text.AlignVCenter
@@ -343,8 +343,8 @@ RowLayout {
         // Suffix text (non-editable)
         NText {
           text: root.suffix
-          font.family: Settings.data.ui.fontFixed
-          font.pointSize: Style.fontSizeM * scaling
+          family: Settings.data.ui.fontFixed
+          pointSize: Style.fontSizeM * scaling
           font.weight: Style.fontWeightMedium
           color: Color.mOnSurface
           verticalAlignment: Text.AlignVCenter

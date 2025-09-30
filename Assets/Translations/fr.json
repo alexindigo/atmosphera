@@ -69,12 +69,6 @@
           "description": "Police à chasse fixe utilisée pour l'affichage des chiffres et des statistiques.",
           "placeholder": "Sélectionner la police à chasse fixe...",
           "search-placeholder": "Rechercher des polices à chasse fixe..."
-        },
-        "accent": {
-          "label": "Police d'accentuation",
-          "description": "Grande police utilisée pour les affichages proéminents.",
-          "placeholder": "Sélectionner la police d'affichage...",
-          "search-placeholder": "Rechercher des polices d'affichage..."
         }
       }
     },

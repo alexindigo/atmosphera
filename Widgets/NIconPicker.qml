@@ -64,7 +64,7 @@ Popup {
       Layout.fillWidth: true
       NText {
         text: I18n.tr("widgets.icon-picker.title")
-        font.pointSize: Style.fontSizeL * scaling
+        pointSize: Style.fontSizeL * scaling
         font.weight: Style.fontWeightBold
         color: Color.mPrimary
         Layout.fillWidth: true
@@ -137,7 +137,7 @@ Popup {
             NIcon {
               Layout.alignment: Qt.AlignHCenter
               icon: modelData
-              font.pointSize: 42 * scaling
+              pointSize: 42 * scaling
             }
             NText {
               Layout.alignment: Qt.AlignHCenter
@@ -148,7 +148,7 @@ Popup {
               maximumLineCount: 1
               horizontalAlignment: Text.AlignHCenter
               color: Color.mOnSurfaceVariant
-              font.pointSize: Style.fontSizeXS * scaling
+              pointSize: Style.fontSizeXS * scaling
               text: modelData
             }
             Item {

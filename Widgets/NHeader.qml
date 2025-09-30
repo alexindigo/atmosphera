@@ -14,7 +14,7 @@ ColumnLayout {
 
   NText {
     text: root.label
-    font.pointSize: Style.fontSizeXL * scaling
+    pointSize: Style.fontSizeXL * scaling
     font.weight: Style.fontWeightBold
     color: Color.mSecondary
     visible: root.label !== ""
@@ -22,7 +22,7 @@ ColumnLayout {
 
   NText {
     text: root.description
-    font.pointSize: Style.fontSizeM * scaling
+    pointSize: Style.fontSizeM * scaling
     color: Color.mOnSurfaceVariant
     wrapMode: Text.WordWrap
     Layout.fillWidth: true

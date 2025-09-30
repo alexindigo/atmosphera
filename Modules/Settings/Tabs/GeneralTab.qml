@@ -187,6 +187,7 @@ ColumnLayout {
       }
     }
   }
+
   NDivider {
     Layout.fillWidth: true
     Layout.topMargin: Style.marginXL * scaling
@@ -236,17 +237,37 @@ ColumnLayout {
         }
       }
 
-      NSearchableComboBox {
-        label: I18n.tr("settings.general.fonts.accent.label")
-        description: I18n.tr("settings.general.fonts.accent.description")
-        model: FontService.displayFonts
-        currentKey: Settings.data.ui.fontBillboard
-        placeholder: I18n.tr("settings.general.fonts.accent.placeholder")
-        searchPlaceholder: I18n.tr("settings.general.fonts.accent.search-placeholder")
-        popupHeight: 320 * scaling
-        minimumWidth: 300 * scaling
-        onSelected: function (key) {
-          Settings.data.ui.fontBillboard = key
+      ColumnLayout {
+        NLabel {
+          label: I18n.tr("settings.general.fonts.default.scale.label")
+          description: I18n.tr("settings.general.fonts.default.scale.description")
+        }
+
+        NValueSlider {
+          Layout.fillWidth: true
+          from: 0.75
+          to: 1.25
+          stepSize: 0.01
+          value: Settings.data.ui.fontDefaultScale
+          onMoved: value => Settings.data.ui.fontDefaultScale = value
+          text: Math.floor(Settings.data.ui.fontDefaultScale * 100) + "%"
+        }
+      }
+
+      ColumnLayout {
+        NLabel {
+          label: I18n.tr("settings.general.fonts.monospace.scale.label")
+          description: I18n.tr("settings.general.fonts.monospace.scale.description")
+        }
+
+        NValueSlider {
+          Layout.fillWidth: true
+          from: 0.75
+          to: 1.25
+          stepSize: 0.01
+          value: Settings.data.ui.fontFixedScale
+          onMoved: value => Settings.data.ui.fontFixedScale = value
+          text: Math.floor(Settings.data.ui.fontFixedScale * 100) + "%"
         }
       }
     }

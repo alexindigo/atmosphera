@@ -299,8 +299,8 @@ Variants {
               NText {
                 text: root.getDisplayPercentage()
                 color: Color.mOnSurface
-                font.pointSize: Style.fontSizeS * root.scaling
-                font.family: Settings.data.ui.fontFixed
+                pointSize: Style.fontSizeS * root.scaling
+                family: Settings.data.ui.fontFixed
                 Layout.alignment: Qt.AlignVCenter
                 horizontalAlignment: Text.AlignLeft
                 verticalAlignment: Text.AlignVCenter
@@ -340,8 +340,8 @@ Variants {
                 id: percentText
                 text: root.getDisplayPercentage()
                 color: Color.mOnSurface
-                font.pointSize: Style.fontSizeS * root.scaling
-                font.family: Settings.data.ui.fontFixed
+                pointSize: Style.fontSizeS * root.scaling
+                family: Settings.data.ui.fontFixed
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
                 horizontalAlignment: Text.AlignHCenter

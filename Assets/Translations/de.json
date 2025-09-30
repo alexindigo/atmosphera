@@ -71,12 +71,6 @@
           "description": "Monospace-Schriftart für Zahlen und Statistik-Anzeigen.",
           "placeholder": "Monospace-Schriftart auswählen...",
           "search-placeholder": "Monospace-Schriftarten suchen..."
-        },
-        "accent": {
-          "label": "Akzent-Schriftart",
-          "description": "Große Schriftart für hervorgehobene Anzeigen.",
-          "placeholder": "Display-Schriftart auswählen...",
-          "search-placeholder": "Display-Schriftarten suchen..."
         }
       }
     },

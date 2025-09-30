@@ -403,7 +403,7 @@ NPanel {
                   NText {
                     text: I18n.tr(modelData.label)
                     color: tabTextColor
-                    font.pointSize: Style.fontSizeM * scaling
+                    pointSize: Style.fontSizeM * scaling
                     font.weight: Style.fontWeightBold
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignVCenter
@@ -462,7 +462,7 @@ NPanel {
               // Main title
               NText {
                 text: I18n.tr(root.tabsModel[currentTabIndex]?.label) || ""
-                font.pointSize: Style.fontSizeXL * scaling
+                pointSize: Style.fontSizeXL * scaling
                 font.weight: Style.fontWeightBold
                 color: Color.mPrimary
                 Layout.fillWidth: true

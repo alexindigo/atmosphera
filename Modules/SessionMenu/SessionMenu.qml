@@ -276,7 +276,7 @@ NPanel {
                                         "seconds": Math.ceil(timeRemaining / 1000)
                                       }) : I18n.tr("session-menu.title")
           font.weight: Style.fontWeightBold
-          font.pointSize: Style.fontSizeL * scaling
+          pointSize: Style.fontSizeL * scaling
           color: timerActive ? Color.mPrimary : Color.mOnSurface
           Layout.alignment: Qt.AlignVCenter
           verticalAlignment: Text.AlignVCenter
@@ -409,7 +409,7 @@ NPanel {
         NText {
           text: buttonRoot.title
           font.weight: Style.fontWeightMedium
-          font.pointSize: Style.fontSizeM * scaling
+          pointSize: Style.fontSizeM * scaling
           color: {
             if (buttonRoot.pending)
               return Color.mPrimary
@@ -434,7 +434,7 @@ NPanel {
             }
             return buttonRoot.subtitle
           }
-          font.pointSize: Style.fontSizeXS * scaling
+          pointSize: Style.fontSizeXS * scaling
           color: {
             if (buttonRoot.pending)
               return Color.mPrimary
@@ -464,7 +464,7 @@ NPanel {
         NText {
           anchors.centerIn: parent
           text: Math.ceil(timeRemaining / 1000)
-          font.pointSize: Style.fontSizeS * scaling
+          pointSize: Style.fontSizeS * scaling
           font.weight: Style.fontWeightBold
           color: Color.mOnPrimary
         }

@@ -61,7 +61,7 @@ Popup {
         text: I18n.tr("system.widget-settings-title", {
                         "widget": widgetSettings.widgetId
                       })
-        font.pointSize: Style.fontSizeL * scaling
+        pointSize: Style.fontSizeL * scaling
         font.weight: Style.fontWeightBold
         color: Color.mPrimary
         Layout.fillWidth: true

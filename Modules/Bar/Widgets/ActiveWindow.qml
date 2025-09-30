@@ -108,7 +108,7 @@ Item {
     id: fullTitleMetrics
     visible: false
     text: windowTitle
-    font.pointSize: Style.fontSizeS * scaling
+    pointSize: Style.fontSizeS * scaling
     font.weight: Style.fontWeightMedium
   }
 
@@ -245,7 +245,7 @@ Item {
               NText {
                 id: titleText
                 text: windowTitle
-                font.pointSize: Style.fontSizeS * scaling
+                pointSize: Style.fontSizeS * scaling
                 font.weight: Style.fontWeightMedium
                 verticalAlignment: Text.AlignVCenter
                 color: Color.mOnSurface

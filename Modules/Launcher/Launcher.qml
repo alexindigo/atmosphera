@@ -438,7 +438,7 @@ NPanel {
                   anchors.centerIn: parent
                   visible: !imagePreview.visible && !iconLoader.visible
                   text: modelData.name ? modelData.name.charAt(0).toUpperCase() : "?"
-                  font.pointSize: Style.fontSizeXXL * scaling
+                  pointSize: Style.fontSizeXXL * scaling
                   font.weight: Style.fontWeightBold
                   color: Color.mOnPrimary
                 }
@@ -464,7 +464,7 @@ NPanel {
                       const parts = desc.split(" • ")
                       return parts[0] || "IMG"
                     }
-                    font.pointSize: Style.fontSizeXXS * scaling
+                    pointSize: Style.fontSizeXXS * scaling
                     color: Color.mPrimary
                   }
                 }
@@ -477,7 +477,7 @@ NPanel {
 
                 NText {
                   text: modelData.name || "Unknown"
-                  font.pointSize: Style.fontSizeL * scaling
+                  pointSize: Style.fontSizeL * scaling
                   font.weight: Style.fontWeightBold
                   color: entry.isSelected ? Color.mOnTertiary : Color.mOnSurface
                   elide: Text.ElideRight
@@ -486,7 +486,7 @@ NPanel {
 
                 NText {
                   text: modelData.description || ""
-                  font.pointSize: Style.fontSizeS * scaling
+                  pointSize: Style.fontSizeS * scaling
                   color: entry.isSelected ? Color.mOnTertiary : Color.mOnSurfaceVariant
                   elide: Text.ElideRight
                   Layout.fillWidth: true
@@ -536,7 +536,7 @@ NPanel {
           const prefix = activePlugin?.name ? `${activePlugin.name}: ` : ""
           return prefix + `${results.length} result${results.length !== 1 ? 's' : ''}`
         }
-        font.pointSize: Style.fontSizeXS * scaling
+        pointSize: Style.fontSizeXS * scaling
         color: Color.mOnSurfaceVariant
         horizontalAlignment: Text.AlignCenter
       }

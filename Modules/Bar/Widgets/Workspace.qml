@@ -7,6 +7,7 @@ import Quickshell
 import Quickshell.Io
 import qs.Commons
 import qs.Services
+import qs.Widgets
 
 Item {
   id: root
@@ -274,7 +275,7 @@ Item {
           Loader {
             active: (labelMode !== "none")
             sourceComponent: Component {
-              Text {
+              NText {
                 x: (pill.width - width) / 2
                 y: (pill.height - height) / 2 + (height - contentHeight) / 2
                 text: {
@@ -284,9 +285,9 @@ Item {
                     return model.idx.toString()
                   }
                 }
-                font.pointSize: model.isFocused ? workspacePillContainer.height * 0.45 : workspacePillContainer.height * 0.42
+                family: Settings.data.ui.fontFixed
+                pointSize: model.isFocused ? workspacePillContainer.height * 0.45 : workspacePillContainer.height * 0.42
                 font.capitalization: Font.AllUppercase
-                font.family: Settings.data.ui.fontFixed
                 font.weight: Style.fontWeightBold
                 wrapMode: Text.Wrap
                 color: {
@@ -418,7 +419,7 @@ Item {
           Loader {
             active: (labelMode !== "none")
             sourceComponent: Component {
-              Text {
+              NText {
                 x: (pillVertical.width - width) / 2
                 y: (pillVertical.height - height) / 2 + (height - contentHeight) / 2
                 text: {
@@ -428,9 +429,9 @@ Item {
                     return model.idx.toString()
                   }
                 }
-                font.pointSize: model.isFocused ? workspacePillContainerVertical.width * 0.45 : workspacePillContainerVertical.width * 0.42
+                family: Settings.data.ui.fontFixed
+                pointSize: model.isFocused ? workspacePillContainerVertical.width * 0.45 : workspacePillContainerVertical.width * 0.42
                 font.capitalization: Font.AllUppercase
-                font.family: Settings.data.ui.fontFixed
                 font.weight: Style.fontWeightBold
                 wrapMode: Text.Wrap
                 color: {

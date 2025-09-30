@@ -58,7 +58,7 @@ NPanel {
 
         NText {
           text: I18n.tr("wallpaper.panel.title")
-          font.pointSize: Style.fontSizeL * scaling
+          pointSize: Style.fontSizeL * scaling
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface
           Layout.fillWidth: true
@@ -134,11 +134,11 @@ NPanel {
               }
             }
 
-            contentItem: Text {
+            contentItem: NText {
               text: parent.text
-              font.pointSize: Style.fontSizeL * scaling
+              pointSize: Style.fontSizeL * scaling
               font.weight: screenTabBar.currentIndex === index ? Style.fontWeightBold : Style.fontWeightRegular
-              font.family: Settings.data.ui.fontDefault
+              family: Settings.data.ui.fontDefault
               color: screenTabBar.currentIndex === index ? Color.mOnSecondary : Color.mOnSurfaceVariant
               horizontalAlignment: Text.AlignHCenter
               verticalAlignment: Text.AlignVCenter
@@ -189,7 +189,7 @@ NPanel {
         NText {
           text: I18n.tr("wallpaper.panel.search")
           color: Color.mOnSurface
-          font.pointSize: Style.fontSizeM * scaling
+          pointSize: Style.fontSizeM * scaling
           Layout.preferredWidth: implicitWidth
         }
 
@@ -405,7 +405,7 @@ NPanel {
                   text: filename
                   color: Color.mOnSurfaceVariant
                   opacity: 0.5
-                  font.pointSize: Style.fontSizeXS * scaling
+                  pointSize: Style.fontSizeXS * scaling
                   Layout.fillWidth: true
                   Layout.leftMargin: Style.marginS * scaling
                   Layout.rightMargin: Style.marginS * scaling

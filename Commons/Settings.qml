@@ -272,7 +272,8 @@ Singleton {
     property JsonObject ui: JsonObject {
       property string fontDefault: "Roboto"
       property string fontFixed: "DejaVu Sans Mono"
-      property string fontBillboard: "Inter"
+      property real fontDefaultScale: 1.0
+      property real fontFixedScale: 1.0
       property list<var> monitorsScaling: []
       property bool idleInhibitorEnabled: false
     }

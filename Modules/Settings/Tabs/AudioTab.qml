@@ -309,7 +309,7 @@ ColumnLayout {
               NText {
                 text: modelData
                 color: Color.mOnSurface
-                font.pointSize: Style.fontSizeS * scaling
+                pointSize: Style.fontSizeS * scaling
                 Layout.alignment: Qt.AlignVCenter
                 Layout.leftMargin: Style.marginS * scaling
               }

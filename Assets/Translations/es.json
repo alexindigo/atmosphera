@@ -69,12 +69,6 @@
           "description": "Fuente monoespaciada utilizada para la visualización de números y estadísticas.",
           "placeholder": "Seleccionar fuente monoespaciada...",
           "search-placeholder": "Buscar fuentes monoespaciadas..."
-        },
-        "accent": {
-          "label": "Fuente de acento",
-          "description": "Fuente grande utilizada para visualizaciones destacadas.",
-          "placeholder": "Seleccionar fuente de visualización...",
-          "search-placeholder": "Buscar fuentes de visualización..."
         }
       }
     },

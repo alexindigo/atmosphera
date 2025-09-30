@@ -69,12 +69,6 @@
           "description": "用于数字和统计信息显示的等宽字体。",
           "placeholder": "选择等宽字体...",
           "search-placeholder": "搜索等宽字体..."
-        },
-        "accent": {
-          "label": "强调字体",
-          "description": "用于突出显示内容的大字体。",
-          "placeholder": "选择标题字体...",
-          "search-placeholder": "搜索标题字体..."
         }
       }
     },

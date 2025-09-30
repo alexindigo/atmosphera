@@ -114,8 +114,8 @@ Rectangle {
 
         NText {
           text: `${Math.round(SystemStatService.cpuUsage)}%`
-          font.family: Settings.data.ui.fontFixed
-          font.pointSize: textSize
+          family: Settings.data.ui.fontFixed
+          pointSize: textSize
           font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
           Layout.preferredWidth: isVertical ? -1 : percentTextWidth
@@ -155,8 +155,8 @@ Rectangle {
 
         NText {
           text: `${Math.round(SystemStatService.cpuTemp)}°`
-          font.family: Settings.data.ui.fontFixed
-          font.pointSize: textSize
+          family: Settings.data.ui.fontFixed
+          pointSize: textSize
           font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
           Layout.preferredWidth: isVertical ? -1 : tempTextWidth
@@ -196,8 +196,8 @@ Rectangle {
 
         NText {
           text: showMemoryAsPercent ? `${Math.round(SystemStatService.memPercent)}%` : `${SystemStatService.memGb.toFixed(1)}G`
-          font.family: Settings.data.ui.fontFixed
-          font.pointSize: textSize
+          family: Settings.data.ui.fontFixed
+          pointSize: textSize
           font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
           Layout.preferredWidth: isVertical ? -1 : (showMemoryAsPercent ? percentTextWidth : memTextWidth)
@@ -237,8 +237,8 @@ Rectangle {
 
         NText {
           text: isVertical ? SystemStatService.formatCompactSpeed(SystemStatService.rxSpeed) : SystemStatService.formatSpeed(SystemStatService.rxSpeed)
-          font.family: Settings.data.ui.fontFixed
-          font.pointSize: textSize
+          family: Settings.data.ui.fontFixed
+          pointSize: textSize
           font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
           Layout.preferredWidth: isVertical ? -1 : memTextWidth
@@ -278,8 +278,8 @@ Rectangle {
 
         NText {
           text: isVertical ? SystemStatService.formatCompactSpeed(SystemStatService.txSpeed) : SystemStatService.formatSpeed(SystemStatService.txSpeed)
-          font.family: Settings.data.ui.fontFixed
-          font.pointSize: textSize
+          family: Settings.data.ui.fontFixed
+          pointSize: textSize
           font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
           Layout.preferredWidth: isVertical ? -1 : memTextWidth
@@ -319,8 +319,8 @@ Rectangle {
 
         NText {
           text: `${SystemStatService.diskPercent}%`
-          font.family: Settings.data.ui.fontFixed
-          font.pointSize: textSize
+          family: Settings.data.ui.fontFixed
+          pointSize: textSize
           font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
           Layout.preferredWidth: isVertical ? -1 : percentTextWidth
