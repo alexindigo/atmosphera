@@ -7,6 +7,7 @@ Text {
   id: root
 
   property string icon: Icons.defaultIcon
+  property real pointSize: Style.fontSizeL * scaling
 
   visible: (icon !== undefined) && (icon !== "")
   text: {
@@ -21,7 +22,7 @@ Text {
     return Icons.get(icon)
   }
   font.family: Icons.fontFamily
-  font.pointSize: textSize
+  font.pointSize: root.pointSize
   color: Color.mOnSurface
   verticalAlignment: Text.AlignVCenter
 }
