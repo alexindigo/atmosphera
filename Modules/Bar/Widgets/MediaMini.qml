@@ -160,10 +160,11 @@ Item {
         NIcon {
           id: windowIcon
           icon: hasActivePlayer ? (MediaService.isPlaying ? "media-pause" : "media-play") : "disc"
+          color: hasActivePlayer ? Color.mOnSurface : Color.mOnSurfaceVariant
           pointSize: Style.fontSizeL * scaling
           verticalAlignment: Text.AlignVCenter
           Layout.alignment: Qt.AlignVCenter
-          visible: !showAlbumArt && !trackArt.visible
+          visible: !hasActivePlayer || (!showAlbumArt && !trackArt.visible)
         }
 
         ColumnLayout {
@@ -210,7 +211,7 @@ Item {
           property bool isScrolling: false
           property bool isResetting: false
           property real textWidth: fullTitleMetrics.contentWidth
-          property real containerWidth: width
+          property real containerWidth: 0
           property bool needsScrolling: textWidth > containerWidth
 
           // Timer for "always" mode with delay
@@ -257,8 +258,15 @@ Item {
             }
           }
 
-          onWidthChanged: updateScrollingState()
-          Component.onCompleted: updateScrollingState()
+          onWidthChanged: {
+            containerWidth = width
+            updateScrollingState()
+          }
+
+          Component.onCompleted: {
+            containerWidth = width
+            updateScrollingState()
+          }
 
           Connections {
             target: mouseArea
@@ -350,6 +358,7 @@ Item {
             id: mediaIconVertical
             anchors.fill: parent
             icon: hasActivePlayer ? (MediaService.isPlaying ? "media-pause" : "media-play") : "disc"
+            color: hasActivePlayer ? Color.mOnSurface : Color.mOnSurfaceVariant
             pointSize: Style.fontSizeL * scaling
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
