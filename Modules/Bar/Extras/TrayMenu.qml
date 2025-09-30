@@ -175,7 +175,7 @@ PopupWindow {
 
               NIcon {
                 icon: modelData?.hasChildren ? "menu" : ""
-                pointSize: Style.fontSizeS * scaling
+                font.pointSize: Style.fontSizeS * scaling
                 verticalAlignment: Text.AlignVCenter
                 visible: modelData?.hasChildren ?? false
                 color: (mouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface)
