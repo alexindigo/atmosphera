@@ -987,7 +987,8 @@
         "scrolling-mode": {
           "label": "Scrollmodus",
           "description": "Steuern, wann Textscrolling für lange Track-Titel aktiviert ist."
-        }
+        },
+        "no-active-player": "Kein aktiver Player"
       },
       "clock": {
         "use-primary-color": {

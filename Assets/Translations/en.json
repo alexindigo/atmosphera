@@ -979,7 +979,8 @@
         "scrolling-mode": {
           "label": "Scrolling mode",
           "description": "Control when text scrolling is enabled for long track titles."
-        }
+        },
+        "no-active-player": "No active player"
       },
       "clock": {
         "use-primary-color": {

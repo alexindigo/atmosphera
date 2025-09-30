@@ -968,7 +968,8 @@
         "scrolling-mode": {
           "label": "Modo de rolagem",
           "description": "Controlar quando a rolagem de texto está habilitada para títulos de faixa longos."
-        }
+        },
+        "no-active-player": "Nenhum player ativo"
       },
       "clock": {
         "use-primary-color": {

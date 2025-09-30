@@ -968,7 +968,8 @@
         "auto-hide": {
           "label": "Masquer automatiquement",
           "description": "Masquer automatiquement le widget quand aucun média n'est en cours de lecture."
-        }
+        },
+        "no-active-player": "Aucun lecteur actif"
       },
       "clock": {
         "use-primary-color": {

@@ -968,7 +968,8 @@
         "scrolling-mode": {
           "label": "Modo de desplazamiento",
           "description": "Controlar cuándo está habilitado el desplazamiento de texto para títulos de pista largos."
-        }
+        },
+        "no-active-player": "Sin reproductor activo"
       },
       "clock": {
         "use-primary-color": {

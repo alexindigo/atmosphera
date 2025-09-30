@@ -977,7 +977,8 @@
         "scrolling-mode": {
           "label": "滚动模式",
           "description": "控制何时为长曲目标题启用文本滚动。"
-        }
+        },
+        "no-active-player": "无活动播放器"
       },
       "clock": {
         "use-primary-color": {
