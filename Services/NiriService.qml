@@ -227,7 +227,9 @@ Item {
 
         // Only emit activeWindowChanged if the focused window actually changed
         if (oldFocusedIndex !== focusedWindowIndex) {
-          windows[oldFocusedIndex].isFocused = false
+          if (oldFocusedIndex >= 0 && oldFocusedIndex < windows.length) {
+            windows[oldFocusedIndex].isFocused = false
+          }
           activeWindowChanged()
         }
       }
@@ -282,7 +284,7 @@ Item {
       if (focusedId) {
         const newIndex = windows.findIndex(w => w.id === focusedId)
 
-        if (newIndex >= 0) {
+        if (newIndex >= 0 && newIndex < windows.length) {
           windows[newIndex].isFocused = true
         }
 
