@@ -111,10 +111,7 @@ Variants {
       // Strategy: Maintain app positions as much as possible
       // 1. First pass: Add all running apps (both pinned and non-pinned) in their current order
       runningApps.forEach(toplevel => {
-                            if (
-                              toplevel && toplevel.appId
-                              && !(Settings.data.dock.onlySameOutput && toplevel.screens && !toplevel.screens.includes(modelData))
-                            ) {
+                            if (toplevel && toplevel.appId && !(Settings.data.dock.onlySameOutput && toplevel.screens && !toplevel.screens.includes(modelData))) {
                               const isPinned = pinnedApps.includes(toplevel.appId)
                               const appType = isPinned ? "pinned-running" : "running"
 
