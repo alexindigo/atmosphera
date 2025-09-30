@@ -1259,15 +1259,18 @@
     "title": "Session Menu",
     "click-again": "Click again to execute immediately",
     "action-in-seconds": "{action} in {seconds} seconds...",
+    "lock": "Lock",
     "lock-subtitle": "Lock your session",
     "lock-and-suspend": "Lock and Suspend",
     "lock-and-suspend-subtitle": "Lock session and put system to sleep",
-    "end-subtitle": "End your session",
-    "lock": "Lock",
     "suspend": "Suspend", 
+    "suspend-subtitle": "Put system to sleep",
     "reboot": "Reboot",
+    "reboot-subtitle": "Restart your computer",
     "logout": "Logout",
-    "shutdown": "Shutdown"
+    "logout-subtitle": "End your session",
+    "shutdown": "Shutdown",
+    "shutdown-subtitle": "Turn off your computer"
   },
   "plugins": {
     "applications": "Applications",

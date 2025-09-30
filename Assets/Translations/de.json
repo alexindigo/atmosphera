@@ -1268,14 +1268,14 @@
     "title": "Sitzungsmenü",
     "click-again": "Erneut klicken für sofortige Ausführung",
     "action-in-seconds": "{action} in {seconds} Sekunden...",
+    "lock": "Sperren",
     "lock-subtitle": "Sitzung sperren",
     "lock-and-suspend": "Sperren und Ruhezustand",
     "lock-and-suspend-subtitle": "Sitzung sperren und System in den Ruhezustand versetzen",
-    "end-subtitle": "Sitzung beenden",
-    "lock": "Sperren",
     "suspend": "Ruhezustand",
     "reboot": "Neu starten",
     "logout": "Abmelden",
+    "logout-subtitle": "Sitzung beenden",
     "shutdown": "Herunterfahren"
   },
   "plugins": {

@@ -41,22 +41,22 @@ NPanel {
       "action": "suspend",
       "icon": "suspend",
       "title": I18n.tr("session-menu.suspend"),
-      "subtitle": "Put the system to sleep"
+      "subtitle": I18n.tr("session-menu.suspend-subtitle")
     }, {
       "action": "reboot",
       "icon": "reboot",
       "title": I18n.tr("session-menu.reboot"),
-      "subtitle": "Restart the system"
+      "subtitle": I18n.tr("session-menu.reboot-subtitle")
     }, {
       "action": "logout",
       "icon": "logout",
       "title": I18n.tr("session-menu.logout"),
-      "subtitle": I18n.tr("session-menu.end-subtitle")
+      "subtitle": I18n.tr("session-menu.logout-subtitle")
     }, {
       "action": "shutdown",
       "icon": "shutdown",
       "title": I18n.tr("session-menu.shutdown"),
-      "subtitle": "Turn off the system",
+      "subtitle": I18n.tr("session-menu.shutdown-subtitle"),
       "isShutdown": true
     }]
 
