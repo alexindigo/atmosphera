@@ -196,7 +196,7 @@ Variants {
 
     // PEEK WINDOW - Always visible when auto-hide is enabled
     Loader {
-      active: barIsReady && modelData && Settings.data.dock.monitors.includes(modelData.name) && autoHide
+      active: (barIsReady || !hasBar) && modelData && Settings.data.dock.monitors.includes(modelData.name) && autoHide
 
       sourceComponent: PanelWindow {
         id: peekWindow
@@ -242,7 +242,7 @@ Variants {
 
     // DOCK WINDOW
     Loader {
-      active: barIsReady && modelData && Settings.data.dock.monitors.includes(modelData.name) && dockLoaded && ToplevelManager && (dockApps.length > 0)
+      active: (barIsReady || !hasBar) && modelData && Settings.data.dock.monitors.includes(modelData.name) && dockLoaded && ToplevelManager && (dockApps.length > 0)
 
       sourceComponent: PanelWindow {
         id: dockWindow
