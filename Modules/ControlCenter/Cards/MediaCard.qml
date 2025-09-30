@@ -28,7 +28,7 @@ NBox {
 
       NIcon {
         icon: "disc"
-        font.pointSize: Style.fontSizeXXXL * 3 * scaling
+        pointSize: Style.fontSizeXXXL * 3 * scaling
         color: Color.mPrimary
         Layout.alignment: Qt.AlignHCenter
       }
@@ -68,7 +68,7 @@ NBox {
 
           NIcon {
             icon: "caret-down"
-            font.pointSize: Style.fontSizeXXL * scaling
+            pointSize: Style.fontSizeXXL * scaling
             color: Color.mOnSurfaceVariant
           }
 
@@ -147,7 +147,7 @@ NBox {
           NIcon {
             icon: "disc"
             color: Color.mPrimary
-            font.pointSize: Style.fontSizeXXXL * 3 * scaling
+            pointSize: Style.fontSizeXXXL * 3 * scaling
             visible: !trackArt.visible
             anchors.centerIn: parent
           }

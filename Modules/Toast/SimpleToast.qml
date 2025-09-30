@@ -100,7 +100,7 @@ Rectangle {
           return Color.mOnSurface
         }
       }
-      font.pointSize: Style.fontSizeXXL * 1.5 * scaling
+      pointSize: Style.fontSizeXXL * 1.5 * scaling
       Layout.alignment: Qt.AlignVCenter
     }
 

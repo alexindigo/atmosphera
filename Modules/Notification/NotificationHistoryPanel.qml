@@ -32,7 +32,7 @@ NPanel {
 
         NIcon {
           icon: "bell"
-          font.pointSize: Style.fontSizeXXL * scaling
+          pointSize: Style.fontSizeXXL * scaling
           color: Color.mPrimary
         }
 
@@ -88,7 +88,7 @@ NPanel {
 
         NIcon {
           icon: "bell-off"
-          font.pointSize: 64 * scaling
+          pointSize: 64 * scaling
           color: Color.mOnSurfaceVariant
           Layout.alignment: Qt.AlignHCenter
         }

@@ -191,7 +191,7 @@ Popup {
         NIcon {
           icon: "filepicker-folder"
           color: Color.mPrimary
-          font.pointSize: Style.fontSizeXXL * scaling
+          pointSize: Style.fontSizeXXL * scaling
         }
         NText {
           text: root.title
@@ -357,7 +357,7 @@ Popup {
           NIcon {
             icon: "filepicker-search"
             color: Color.mOnSurfaceVariant
-            font.pointSize: Style.fontSizeS * scaling
+            pointSize: Style.fontSizeS * scaling
           }
           NTextInput {
             id: searchInput
@@ -588,7 +588,7 @@ Popup {
                     visible: thumbnail.status === Image.Loading
                     NIcon {
                       icon: "filepicker-photo"
-                      font.pointSize: Style.fontSizeL * scaling
+                      pointSize: Style.fontSizeL * scaling
                       color: Color.mOnSurfaceVariant
                       anchors.centerIn: parent
                     }
@@ -597,7 +597,7 @@ Popup {
 
                 NIcon {
                   icon: model.fileIsDir ? "filepicker-folder" : root.getFileIcon(model.fileName)
-                  font.pointSize: Style.fontSizeXXL * 2 * scaling
+                  pointSize: Style.fontSizeXXL * 2 * scaling
                   color: {
                     if (isSelected)
                       return Color.mSecondary
@@ -623,7 +623,7 @@ Popup {
                   visible: isSelected
                   NIcon {
                     icon: "filepicker-check"
-                    font.pointSize: Style.fontSizeS * scaling
+                    pointSize: Style.fontSizeS * scaling
                     font.weight: Style.fontWeightBold
                     color: Color.mOnSecondary
                     anchors.centerIn: parent
@@ -728,7 +728,7 @@ Popup {
 
               NIcon {
                 icon: model.fileIsDir ? "filepicker-folder" : root.getFileIcon(model.fileName)
-                font.pointSize: Style.fontSizeL * scaling
+                pointSize: Style.fontSizeL * scaling
                 color: model.fileIsDir ? (filePickerPanel.currentSelection.includes(model.filePath) ? Color.mOnSecondary : Color.mPrimary) : Color.mOnSurfaceVariant
               }
 

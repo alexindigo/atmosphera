@@ -396,7 +396,7 @@ NPanel {
                   NIcon {
                     icon: modelData.icon
                     color: tabTextColor
-                    font.pointSize: Style.fontSizeXL * scaling
+                    pointSize: Style.fontSizeXL * scaling
                   }
 
                   // Tab label
@@ -456,7 +456,7 @@ NPanel {
               NIcon {
                 icon: root.tabsModel[currentTabIndex]?.icon
                 color: Color.mPrimary
-                font.pointSize: Style.fontSizeXXL * scaling
+                pointSize: Style.fontSizeXXL * scaling
               }
 
               // Main title

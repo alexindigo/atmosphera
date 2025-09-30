@@ -100,7 +100,7 @@ RowLayout {
       x: combo.width - width - Style.marginM * scaling
       y: combo.topPadding + (combo.availableHeight - height) / 2
       icon: "caret-down"
-      font.pointSize: Style.fontSizeL * scaling
+      pointSize: Style.fontSizeL * scaling
     }
 
     popup: Popup {

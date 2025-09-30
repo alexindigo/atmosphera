@@ -30,7 +30,7 @@ NPanel {
 
         NIcon {
           icon: "bluetooth"
-          font.pointSize: Style.fontSizeXXL * scaling
+          pointSize: Style.fontSizeXXL * scaling
           color: Color.mPrimary
         }
 
@@ -88,7 +88,7 @@ NPanel {
 
           NIcon {
             icon: "bluetooth-off"
-            font.pointSize: 64 * scaling
+            pointSize: 64 * scaling
             color: Color.mOnSurfaceVariant
             Layout.alignment: Qt.AlignHCenter
           }
@@ -186,7 +186,7 @@ NPanel {
 
               NIcon {
                 icon: "refresh"
-                font.pointSize: Style.fontSizeXXL * 1.5 * scaling
+                pointSize: Style.fontSizeXXL * 1.5 * scaling
                 color: Color.mPrimary
 
                 RotationAnimation on rotation {

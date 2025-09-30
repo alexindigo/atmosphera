@@ -253,7 +253,7 @@ Variants {
               NIcon {
                 icon: root.getIcon()
                 color: root.getIconColor()
-                font.pointSize: Style.fontSizeXL * root.scaling
+                pointSize: Style.fontSizeXL * root.scaling
                 Layout.alignment: Qt.AlignVCenter
 
                 Behavior on color {
@@ -389,7 +389,7 @@ Variants {
             NIcon {
               icon: root.getIcon()
               color: root.getIconColor()
-              font.pointSize: Style.fontSizeXL * root.scaling
+              pointSize: Style.fontSizeXL * root.scaling
               Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
               Layout.bottomMargin: vMargin + Math.round(Style.marginM * root.scaling) + balanceDelta
               Behavior on color {

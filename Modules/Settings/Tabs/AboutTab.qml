@@ -91,7 +91,7 @@ ColumnLayout {
 
         NIcon {
           icon: "download"
-          font.pointSize: Style.fontSizeXXL * scaling
+          pointSize: Style.fontSizeXXL * scaling
           color: updateArea.containsMouse ? Color.mSurface : Color.mPrimary
         }
 

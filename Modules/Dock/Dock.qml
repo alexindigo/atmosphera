@@ -417,7 +417,7 @@ Variants {
                       anchors.centerIn: parent
                       visible: !appIcon.visible
                       icon: "question-mark"
-                      font.pointSize: iconSize * 0.7
+                      pointSize: iconSize * 0.7
                       color: appButton.isActive ? Color.mPrimary : Color.mOnSurfaceVariant
                       opacity: appButton.isRunning ? 1.0 : 0.6
                       scale: appButton.hovered ? 1.15 : 1.0

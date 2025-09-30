@@ -189,7 +189,7 @@ PopupWindow {
 
           NIcon {
             icon: "eye"
-            font.pointSize: Style.fontSizeL * scaling
+            pointSize: Style.fontSizeL * scaling
             color: root.hoveredItem === 0 ? Color.mOnTertiary : Color.mOnSurfaceVariant
             Layout.alignment: Qt.AlignVCenter
           }
@@ -222,7 +222,7 @@ PopupWindow {
                 return "pin"
               return root.isAppPinned(root.toplevel.appId) ? "unpin" : "pin"
             }
-            font.pointSize: Style.fontSizeL * scaling
+            pointSize: Style.fontSizeL * scaling
             color: root.hoveredItem === 1 ? Color.mOnTertiary : Color.mOnSurfaceVariant
             Layout.alignment: Qt.AlignVCenter
           }
@@ -255,7 +255,7 @@ PopupWindow {
 
           NIcon {
             icon: "close"
-            font.pointSize: Style.fontSizeL * scaling
+            pointSize: Style.fontSizeL * scaling
             color: root.hoveredItem === 2 ? Color.mOnTertiary : Color.mOnSurfaceVariant
             Layout.alignment: Qt.AlignVCenter
           }

@@ -24,7 +24,7 @@ NBox {
       NIcon {
         Layout.alignment: Qt.AlignVCenter
         icon: weatherReady ? LocationService.weatherSymbolFromCode(LocationService.data.weather.current_weather.weathercode) : ""
-        font.pointSize: Style.fontSizeXXXL * 1.75 * scaling
+        pointSize: Style.fontSizeXXXL * 1.75 * scaling
         color: Color.mPrimary
       }
 
@@ -96,7 +96,7 @@ NBox {
           NIcon {
             Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
             icon: LocationService.weatherSymbolFromCode(LocationService.data.weather.daily.weathercode[index])
-            font.pointSize: Style.fontSizeXXL * 1.6 * scaling
+            pointSize: Style.fontSizeXXL * 1.6 * scaling
             color: Color.mPrimary
           }
           NText {

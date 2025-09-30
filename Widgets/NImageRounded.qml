@@ -78,7 +78,7 @@ Rectangle {
       sourceComponent: NIcon {
         anchors.centerIn: parent
         icon: fallbackIcon
-        font.pointSize: fallbackIconSize
+        pointSize: fallbackIconSize
         z: 0
       }
     }

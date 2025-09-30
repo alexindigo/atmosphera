@@ -154,7 +154,7 @@ RowLayout {
         anchors.leftMargin: parent.width * 0.25
         anchors.verticalCenter: parent.verticalCenter
         icon: "chevron-left"
-        font.pointSize: Style.fontSizeS * scaling
+        pointSize: Style.fontSizeS * scaling
         color: decreaseArea.containsMouse ? Color.mOnTertiary : Color.mPrimary
       }
 
@@ -250,7 +250,7 @@ RowLayout {
         anchors.rightMargin: parent.width * 0.25
         anchors.verticalCenter: parent.verticalCenter
         icon: "chevron-right"
-        font.pointSize: Style.fontSizeS * scaling
+        pointSize: Style.fontSizeS * scaling
         color: increaseArea.containsMouse ? Color.mOnTertiary : Color.mPrimary
       }
 

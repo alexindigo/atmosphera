@@ -326,7 +326,7 @@ ColumnLayout {
 
             NIcon {
               icon: "check"
-              font.pointSize: Style.fontSizeM * scaling
+              pointSize: Style.fontSizeM * scaling
               font.weight: Style.fontWeightBold
               color: Color.mOnSecondary
               anchors.centerIn: parent

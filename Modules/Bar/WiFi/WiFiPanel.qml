@@ -35,7 +35,7 @@ NPanel {
 
         NIcon {
           icon: Settings.data.network.wifiEnabled ? "wifi" : "wifi-off"
-          font.pointSize: Style.fontSizeXXL * scaling
+          pointSize: Style.fontSizeXXL * scaling
           color: Settings.data.network.wifiEnabled ? Color.mPrimary : Color.mOnSurfaceVariant
         }
 
@@ -92,7 +92,7 @@ NPanel {
 
           NIcon {
             icon: "warning"
-            font.pointSize: Style.fontSizeL * scaling
+            pointSize: Style.fontSizeL * scaling
             color: Color.mError
           }
 
@@ -130,7 +130,7 @@ NPanel {
 
           NIcon {
             icon: "wifi-off"
-            font.pointSize: 64 * scaling
+            pointSize: 64 * scaling
             color: Color.mOnSurfaceVariant
             Layout.alignment: Qt.AlignHCenter
           }
@@ -242,7 +242,7 @@ NPanel {
 
                     NIcon {
                       icon: NetworkService.signalIcon(modelData.signal)
-                      font.pointSize: Style.fontSizeXXL * scaling
+                      pointSize: Style.fontSizeXXL * scaling
                       color: modelData.connected ? Color.mPrimary : Color.mOnSurface
                     }
 
@@ -439,6 +439,7 @@ NPanel {
                           anchors.verticalCenter: parent.verticalCenter
                           anchors.margins: Style.marginS * scaling
                           text: passwordInput
+                          font.family: Settings.data.ui.fontFixed
                           font.pointSize: Style.fontSizeS * scaling
                           color: Color.mOnSurface
                           echoMode: TextInput.Password
@@ -508,7 +509,7 @@ NPanel {
                       RowLayout {
                         NIcon {
                           icon: "trash"
-                          font.pointSize: Style.fontSizeL * scaling
+                          pointSize: Style.fontSizeL * scaling
                           color: Color.mError
                         }
 
@@ -557,7 +558,7 @@ NPanel {
 
           NIcon {
             icon: "search"
-            font.pointSize: 64 * scaling
+            pointSize: 64 * scaling
             color: Color.mOnSurfaceVariant
             Layout.alignment: Qt.AlignHCenter
           }

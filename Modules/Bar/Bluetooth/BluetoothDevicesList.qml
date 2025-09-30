@@ -67,7 +67,7 @@ ColumnLayout {
         // One device BT icon
         NIcon {
           icon: BluetoothService.getDeviceIcon(modelData)
-          font.pointSize: Style.fontSizeXXL * scaling
+          pointSize: Style.fontSizeXXL * scaling
           color: getContentColor(Color.mOnSurface)
           Layout.alignment: Qt.AlignVCenter
         }
@@ -110,7 +110,7 @@ ColumnLayout {
             NIcon {
               visible: modelData.signalStrength > 0 && !modelData.pairing && !modelData.blocked
               text: BluetoothService.getSignalIcon(modelData)
-              font.pointSize: Style.fontSizeXS * scaling
+              pointSize: Style.fontSizeXS * scaling
               color: getContentColor(Color.mOnSurface)
             }
 

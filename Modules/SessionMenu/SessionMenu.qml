@@ -385,7 +385,7 @@ NPanel {
             return Color.mOnTertiary
           return Color.mOnSurface
         }
-        font.pointSize: Style.fontSizeXXXL * scaling
+        pointSize: Style.fontSizeXXXL * scaling
         width: Style.baseWidgetSize * 0.6 * scaling
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter

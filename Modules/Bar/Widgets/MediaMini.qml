@@ -157,7 +157,7 @@ Item {
         NIcon {
           id: windowIcon
           icon: MediaService.isPlaying ? "media-pause" : "media-play"
-          font.pointSize: Style.fontSizeL * scaling
+          pointSize: Style.fontSizeL * scaling
           verticalAlignment: Text.AlignVCenter
           Layout.alignment: Qt.AlignVCenter
           visible: !showAlbumArt && getTitle() !== "" && !trackArt.visible
@@ -342,7 +342,7 @@ Item {
             id: mediaIconVertical
             anchors.fill: parent
             icon: MediaService.isPlaying ? "media-pause" : "media-play"
-            font.pointSize: Style.fontSizeL * scaling
+            pointSize: Style.fontSizeL * scaling
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
           }

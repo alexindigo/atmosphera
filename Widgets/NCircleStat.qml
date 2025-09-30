@@ -102,7 +102,7 @@ Rectangle {
           anchors.centerIn: parent
           icon: root.icon
           color: Color.mOnPrimary
-          font.pointSize: Style.fontSizeM * scaling
+          pointSize: Style.fontSizeM * scaling
           horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter
         }

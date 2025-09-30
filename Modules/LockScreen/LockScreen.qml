@@ -400,7 +400,7 @@ Loader {
                       }
                       NIcon {
                         icon: "keyboard"
-                        font.pointSize: Style.fontSizeM * scaling
+                        pointSize: Style.fontSizeM * scaling
                         color: Color.mOnSurface
                       }
                     }
@@ -410,7 +410,7 @@ Loader {
                       visible: batteryIndicator.batteryVisible
                       NIcon {
                         icon: BatteryService.getIcon(batteryIndicator.percent, batteryIndicator.charging, batteryIndicator.isReady)
-                        font.pointSize: Style.fontSizeM * scaling
+                        pointSize: Style.fontSizeM * scaling
                         color: batteryIndicator.charging ? Color.mPrimary : Color.mOnSurface
                         rotation: -90
                       }
@@ -882,7 +882,7 @@ Loader {
                   id: iconPower
                   anchors.centerIn: parent
                   icon: "shutdown"
-                  font.pointSize: Style.fontSizeXXXL * scaling
+                  pointSize: Style.fontSizeXXXL * scaling
                   color: powerButtonArea.containsMouse ? Color.mOnError : Color.mError
                 }
 
@@ -934,7 +934,7 @@ Loader {
                   id: iconReboot
                   anchors.centerIn: parent
                   icon: "reboot"
-                  font.pointSize: Style.fontSizeXXXL * scaling
+                  pointSize: Style.fontSizeXXXL * scaling
                   color: restartButtonArea.containsMouse ? Color.mOnPrimary : Color.mPrimary
                 }
 
@@ -987,7 +987,7 @@ Loader {
                   id: iconSuspend
                   anchors.centerIn: parent
                   icon: "suspend"
-                  font.pointSize: Style.fontSizeXXXL * scaling
+                  pointSize: Style.fontSizeXXXL * scaling
                   color: suspendButtonArea.containsMouse ? Color.mOnSecondary : Color.mSecondary
                 }
 

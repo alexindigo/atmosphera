@@ -52,7 +52,7 @@ NPanel {
 
         NIcon {
           icon: "settings-wallpaper-selector"
-          font.pointSize: Style.fontSizeXXL * scaling
+          pointSize: Style.fontSizeXXL * scaling
           color: Color.mPrimary
         }
 
@@ -367,7 +367,7 @@ NPanel {
 
                     NIcon {
                       icon: "check"
-                      font.pointSize: Style.fontSizeM * scaling
+                      pointSize: Style.fontSizeM * scaling
                       font.weight: Style.fontWeightBold
                       color: Color.mOnSecondary
                       anchors.centerIn: parent
@@ -443,7 +443,7 @@ NPanel {
               }
               NIcon {
                 icon: "folder-open"
-                font.pointSize: Style.fontSizeXXL * scaling
+                pointSize: Style.fontSizeXXL * scaling
                 color: Color.mOnSurface
                 Layout.alignment: Qt.AlignHCenter
               }

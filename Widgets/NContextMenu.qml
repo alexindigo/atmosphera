@@ -62,7 +62,7 @@ Popup {
         NIcon {
           visible: modelData.icon !== undefined
           icon: modelData.icon || ""
-          font.pointSize: Style.fontSizeM * scaling
+          pointSize: Style.fontSizeM * scaling
           color: menuItem.hovered && menuItem.enabled ? Color.mOnTertiary : Color.mOnSurface
           Layout.leftMargin: root.itemPadding
 

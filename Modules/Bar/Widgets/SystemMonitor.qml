@@ -106,7 +106,7 @@ Rectangle {
 
         NIcon {
           icon: "cpu-usage"
-          font.pointSize: iconSize
+          pointSize: iconSize
           Layout.alignment: Qt.AlignCenter
           Layout.row: isVertical ? 1 : 0
           Layout.column: 0
@@ -147,7 +147,7 @@ Rectangle {
 
         NIcon {
           icon: "cpu-temperature"
-          font.pointSize: iconSize
+          pointSize: iconSize
           Layout.alignment: Qt.AlignCenter
           Layout.row: isVertical ? 1 : 0
           Layout.column: 0
@@ -188,7 +188,7 @@ Rectangle {
 
         NIcon {
           icon: "memory"
-          font.pointSize: iconSize
+          pointSize: iconSize
           Layout.alignment: Qt.AlignCenter
           Layout.row: isVertical ? 1 : 0
           Layout.column: 0
@@ -229,7 +229,7 @@ Rectangle {
 
         NIcon {
           icon: "download-speed"
-          font.pointSize: iconSize
+          pointSize: iconSize
           Layout.alignment: Qt.AlignCenter
           Layout.row: isVertical ? 1 : 0
           Layout.column: 0
@@ -270,7 +270,7 @@ Rectangle {
 
         NIcon {
           icon: "upload-speed"
-          font.pointSize: iconSize
+          pointSize: iconSize
           Layout.alignment: Qt.AlignCenter
           Layout.row: isVertical ? 1 : 0
           Layout.column: 0
@@ -311,7 +311,7 @@ Rectangle {
 
         NIcon {
           icon: "storage"
-          font.pointSize: iconSize
+          pointSize: iconSize
           Layout.alignment: Qt.AlignCenter
           Layout.row: isVertical ? 1 : 0
           Layout.column: 0

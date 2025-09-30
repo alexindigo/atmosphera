@@ -79,7 +79,7 @@ Rectangle {
       Layout.alignment: Qt.AlignVCenter
       visible: root.icon !== ""
       icon: root.icon
-      font.pointSize: root.iconSize
+      pointSize: root.iconSize
       color: {
         if (!root.enabled)
           return Color.mOnSurfaceVariant

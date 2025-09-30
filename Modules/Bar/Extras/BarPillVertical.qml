@@ -151,7 +151,7 @@ Item {
 
     NIcon {
       icon: root.icon
-      font.pointSize: iconSize
+      pointSize: iconSize
       color: hovered ? Color.mOnTertiary : Color.mOnSurface
       // Center horizontally
       x: (iconCircle.width - width) / 2
