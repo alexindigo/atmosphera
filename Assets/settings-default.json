@@ -114,6 +114,7 @@
     "exclusive": false,
     "backgroundOpacity": 1,
     "floatingRatio": 1,
+    "onlySameOutput": true,
     "monitors": [],
     "pinnedApps": []
   },
