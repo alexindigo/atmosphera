@@ -53,7 +53,7 @@ Rectangle {
     id: percentMetrics
     font.family: Settings.data.ui.fontFixed
     font.weight: Style.fontWeightMedium
-    font.pointSize: textSize
+    font.pointSize: textSize * Settings.data.ui.fontFixedScale
     text: "99%" // Use the longest possible string for measurement
   }
 
@@ -61,7 +61,7 @@ Rectangle {
     id: tempMetrics
     font.family: Settings.data.ui.fontFixed
     font.weight: Style.fontWeightMedium
-    font.pointSize: textSize
+    font.pointSize: textSize * Settings.data.ui.fontFixedScale
     text: "99°" // Use the longest possible string for measurement
   }
 
@@ -69,7 +69,7 @@ Rectangle {
     id: memMetrics
     font.family: Settings.data.ui.fontFixed
     font.weight: Style.fontWeightMedium
-    font.pointSize: textSize
+    font.pointSize: textSize * Settings.data.ui.fontFixedScale
     text: "99.9K" // Longest value part of network speed
   }
 
