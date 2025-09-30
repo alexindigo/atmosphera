@@ -126,7 +126,7 @@ ColumnLayout {
 
               // Reset button container
               Item {
-                Layout.preferredWidth: 40 * scaling
+                Layout.preferredWidth: 30 * scaling
                 Layout.preferredHeight: 30 * scaling
 
                 NIconButton {
@@ -168,7 +168,7 @@ ColumnLayout {
 
               // Empty container to match scale row layout
               Item {
-                Layout.preferredWidth: 40 * scaling
+                Layout.preferredWidth: 30 * scaling
                 Layout.preferredHeight: 30 * scaling
 
                 // Method text positioned in the button area

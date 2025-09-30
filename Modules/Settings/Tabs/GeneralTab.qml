@@ -243,14 +243,34 @@ ColumnLayout {
           description: I18n.tr("settings.general.fonts.default.scale.description")
         }
 
-        NValueSlider {
+        RowLayout {
+          spacing: Style.marginL * scaling
           Layout.fillWidth: true
-          from: 0.75
-          to: 1.25
-          stepSize: 0.01
-          value: Settings.data.ui.fontDefaultScale
-          onMoved: value => Settings.data.ui.fontDefaultScale = value
-          text: Math.floor(Settings.data.ui.fontDefaultScale * 100) + "%"
+
+          NValueSlider {
+            Layout.fillWidth: true
+            from: 0.75
+            to: 1.25
+            stepSize: 0.01
+            value: Settings.data.ui.fontDefaultScale
+            onMoved: value => Settings.data.ui.fontDefaultScale = value
+            text: Math.floor(Settings.data.ui.fontDefaultScale * 100) + "%"
+          }
+
+          // Reset button container
+          Item {
+            Layout.preferredWidth: 30 * scaling
+            Layout.preferredHeight: 30 * scaling
+
+            NIconButton {
+              icon: "refresh"
+              baseSize: Style.baseWidgetSize * 0.9
+              tooltipText: I18n.tr("settings.general.fonts.reset-scaling")
+              onClicked: Settings.data.ui.fontDefaultScale = 1.0
+              anchors.right: parent.right
+              anchors.verticalCenter: parent.verticalCenter
+            }
+          }
         }
       }
 
@@ -260,14 +280,34 @@ ColumnLayout {
           description: I18n.tr("settings.general.fonts.monospace.scale.description")
         }
 
-        NValueSlider {
+        RowLayout {
+          spacing: Style.marginL * scaling
           Layout.fillWidth: true
-          from: 0.75
-          to: 1.25
-          stepSize: 0.01
-          value: Settings.data.ui.fontFixedScale
-          onMoved: value => Settings.data.ui.fontFixedScale = value
-          text: Math.floor(Settings.data.ui.fontFixedScale * 100) + "%"
+
+          NValueSlider {
+            Layout.fillWidth: true
+            from: 0.75
+            to: 1.25
+            stepSize: 0.01
+            value: Settings.data.ui.fontFixedScale
+            onMoved: value => Settings.data.ui.fontFixedScale = value
+            text: Math.floor(Settings.data.ui.fontFixedScale * 100) + "%"
+          }
+
+          // Reset button container
+          Item {
+            Layout.preferredWidth: 30 * scaling
+            Layout.preferredHeight: 30 * scaling
+
+            NIconButton {
+              icon: "refresh"
+              baseSize: Style.baseWidgetSize * 0.9
+              tooltipText: I18n.tr("settings.general.fonts.reset-scaling")
+              onClicked: Settings.data.ui.fontFixedScale = 1.0
+              anchors.right: parent.right
+              anchors.verticalCenter: parent.verticalCenter
+            }
+          }
         }
       }
     }

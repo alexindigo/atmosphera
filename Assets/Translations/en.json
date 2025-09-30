@@ -56,6 +56,7 @@
         }
       },
       "fonts": {
+        "reset-scaling": "Reset scaling",
         "section": {
           "label": "Fonts",
           "description": "Choose the fonts used throughout the interface."

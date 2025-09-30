@@ -42,7 +42,7 @@ RowLayout {
     text: root.text
     family: Settings.data.ui.fontFixed
     Layout.alignment: Qt.AlignVCenter
-    Layout.preferredWidth: 50 * scaling
+    Layout.preferredWidth: 45 * scaling
     horizontalAlignment: Text.AlignRight
   }
 }
