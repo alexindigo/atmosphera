@@ -21,7 +21,7 @@ Text {
     return Icons.get(icon)
   }
   font.family: Icons.fontFamily
-  font.pointSize: Style.fontSizeL * scaling
+  font.pointSize: textSize
   color: Color.mOnSurface
   verticalAlignment: Text.AlignVCenter
 }
