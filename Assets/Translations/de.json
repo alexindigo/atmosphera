@@ -2,7 +2,7 @@
   "settings": {
     "general": {
       "title": "Allgemein",
-      
+
       "profile": {
         "section": {
           "label": "Profil",
@@ -245,6 +245,10 @@
         "section": {
           "label": "Monitor-Anzeige",
           "description": "Statusleiste auf bestimmten Monitoren anzeigen. Standard ist alle, wenn keine ausgewählt sind."
+        },
+        "only-same-output": {
+          "label": "Nur Apps vom gleichen Bildschirm",
+          "description": "Zeige nur Apps vom dem Bildschirm an, wo sich das Dock befindet."
         }
       }
     },
@@ -1170,7 +1174,7 @@
     "enter-width-pixels": "Breite in Pixeln eingeben",
     "enter-command": "Befehl eingeben (App oder benutzerdefiniertes Skript)",
     "command-example": "echo \"Hallo Welt\"",
-    
+
     "search-wallpapers": "Zum Filtern von Hintergrundbildern eingeben...",
     "search-launcher": "Einträge suchen... oder > für Befehle verwenden",
     "search": "Suchen...",
@@ -1242,7 +1246,7 @@
     "frame-rates": {
       "fps": "{fps} FPS"
     },
-    
+
     "screen-recording": {
       "sources": {
         "portal": "Portal",
