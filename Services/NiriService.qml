@@ -164,7 +164,7 @@ Item {
       "id": win.id,
       "title": win.title || "",
       "appId": win.app_id || "",
-      "workspaceId": win.workspace_id || null,
+      "workspaceId": win.workspace_id || -1,
       "isFocused": win.is_focused === true,
       "output": getWindowOutput(win) || "",
       "position": getWindowPosition(win.layout)
