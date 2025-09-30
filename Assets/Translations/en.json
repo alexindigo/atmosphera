@@ -2,7 +2,7 @@
   "settings": {
     "general": {
       "title": "General",
-      
+
       "profile": {
         "section": {
           "label": "Profile",
@@ -285,6 +285,10 @@
         "section": {
           "label": "Monitor display",
           "description": "Choose which monitor to display the dock on."
+        },
+        "only-same-output": {
+          "label": "Only apps from same output",
+          "description": "Show only apps from the output where the dock is located."
         }
       }
     },
@@ -1162,7 +1166,7 @@
     "enter-width-pixels": "Enter width in pixels",
     "enter-command": "Enter command to execute (app or custom script)",
     "command-example": "echo \"Hello World\"",
-    
+
     "search-wallpapers": "Type to filter wallpapers...",
     "search-launcher": "Search entries... or use > for commands",
     "search": "Search...",
@@ -1264,7 +1268,7 @@
     "lock-subtitle": "Lock your session",
     "lock-and-suspend": "Lock and Suspend",
     "lock-and-suspend-subtitle": "Lock session and put system to sleep",
-    "suspend": "Suspend", 
+    "suspend": "Suspend",
     "suspend-subtitle": "Put system to sleep",
     "reboot": "Reboot",
     "reboot-subtitle": "Restart your computer",
@@ -1385,7 +1389,7 @@
   },
   "weather": {
     "clear-sky": "Clear sky",
-    "mainly-clear": "Mainly clear", 
+    "mainly-clear": "Mainly clear",
     "partly-cloudy": "Partly cloudy",
     "overcast": "Overcast",
     "fog": "Fog",
@@ -1395,7 +1399,7 @@
     "thunderstorm": "Thunderstorm",
     "unknown": "Unknown"
   },
-  
+
   "authentication": {
     "failed": "Authentication failed",
     "error": "Authentication error"
