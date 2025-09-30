@@ -217,8 +217,8 @@ Item {
       } else {
         // Add new window
         windows.push(newWindow)
-        windows.sort(compareWindows)
       }
+      windows.sort(compareWindows)
 
       // Update focused window index if this window is focused
       if (newWindow.isFocused) {
