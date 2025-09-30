@@ -247,6 +247,7 @@ Singleton {
       property bool exclusive: false
       property real backgroundOpacity: 1.0
       property real floatingRatio: 1.0
+      property bool onlySameOutput: true
       property list<string> monitors: []
       // Desktop entry IDs pinned to the dock (e.g., "org.kde.konsole", "firefox.desktop")
       property list<string> pinnedApps: []
