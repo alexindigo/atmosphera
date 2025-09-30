@@ -164,7 +164,7 @@
       "title": "显示",
       "monitors": {
         "section": {
-          "label": "每显示器设置",
+          "label": "显示器设置",
           "description": "调整每个显示器的缩放比例和亮度。"
         },
         "scale": "缩放比例",
@@ -228,8 +228,8 @@
           "description": "调整状态栏的背景不透明度。"
         },
         "show-capsule": {
-          "label": "显示胶囊",
-          "description": "显示小部件背景。"
+          "label": "显示组件背景",
+          "description": "为每个小部件添加背景。"
         },
         "floating": {
           "label": "浮动状态栏",
