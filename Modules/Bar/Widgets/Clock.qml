@@ -65,7 +65,7 @@ Rectangle {
           NText {
             visible: text !== ""
             text: modelData
-            family: useMonospacedFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault
+            family: Settings.data.ui.clockFont || (useMonospacedFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault)
             pointSize: {
               if (repeater.model.length == 1) {
                 return Style.fontSizeS * scaling
@@ -95,7 +95,7 @@ Rectangle {
           delegate: NText {
             visible: text !== ""
             text: modelData
-            family: useMonospacedFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault
+            family: Settings.data.ui.clockFont || (useMonospacedFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault)
             pointSize: Style.fontSizeS * scaling
             font.weight: Style.fontWeightBold
             color: usePrimaryColor ? Color.mPrimary : Color.mOnSurface
