@@ -316,6 +316,10 @@
         "use-app2unit": {
           "label": "使用 App2Unit 启动应用程序",
           "description": "使用替代启动方法以更好地管理应用程序进程并防止问题。"
+        },
+        "terminal-command": {
+          "description": "启动终端的命令。例如，“kitty -e”或“gnome-terminal --”。",
+          "label": "终端命令"
         }
       }
     },
