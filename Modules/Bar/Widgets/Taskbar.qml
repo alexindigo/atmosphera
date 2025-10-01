@@ -69,25 +69,25 @@ Rectangle {
         Layout.preferredHeight: root.itemSize
         Layout.alignment: Qt.AlignCenter
 
-        Rectangle {
-          id: iconBackground
-          anchors.centerIn: parent
+        IconImage {
+
+          id: appIcon
           width: parent.width
           height: parent.height
-          color: modelData.isFocused ? Color.mPrimary : root.color
-          border.width: 0
-          radius: Math.round(Style.radiusXS * root.scaling)
-          border.color: Color.transparent
-          z: -1
+          source: ThemeIcons.iconForAppId(taskbarItem.modelData.appId)
+          smooth: true
+          asynchronous: true
+          opacity: modelData.isFocused ? 1.0 : 0.5
 
-          IconImage {
-            id: appIcon
-            anchors.centerIn: parent
-            width: parent.width
-            height: parent.height
-            source: ThemeIcons.iconForAppId(taskbarItem.modelData.appId)
-            smooth: true
-            asynchronous: true
+          Rectangle {
+            anchors.bottomMargin: -2 * scaling
+            anchors.bottom: parent.bottom
+            anchors.horizontalCenter: parent.horizontalCenter
+            id: iconBackground
+            width: 4 * scaling
+            height: 4 * scaling
+            color: modelData.isFocused ? Color.mPrimary : Color.transparent
+            radius: width * 0.5
           }
         }
 
