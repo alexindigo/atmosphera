@@ -79,14 +79,12 @@ Singleton {
 
     translateModels()
 
-    // Rebuild cache from persisted settings
-    var monitors = Settings.data.wallpaper.monitors || []
+    // Rebuild cache from settings
     currentWallpapers = ({})
+    var monitors = Settings.data.wallpaper.monitors || []
     for (var i = 0; i < monitors.length; i++) {
       if (monitors[i].name && monitors[i].wallpaper) {
         currentWallpapers[monitors[i].name] = monitors[i].wallpaper
-        // Notify listeners so Background updates immediately after settings load
-        root.wallpaperChanged(monitors[i].name, monitors[i].wallpaper)
       }
     }
 

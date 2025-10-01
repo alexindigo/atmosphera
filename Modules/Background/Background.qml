@@ -58,7 +58,6 @@ Variants {
         target: WallpaperService
         function onWallpaperChanged(screenName, path) {
           if (screenName === modelData.name) {
-
             // Update wallpaper display
             // Set wallpaper immediately on startup
             futureWallpaper = path
