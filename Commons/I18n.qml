@@ -13,7 +13,6 @@ Singleton {
 
   property bool isLoaded: false
   property string langCode: ""
-  property string locale: ""
   property var availableLanguages: []
   property var translations: ({})
   property var fallbackTranslations: ({})
@@ -163,7 +162,7 @@ Singleton {
     if (debug && debugForceLanguage !== "") {
       Logger.log("I18n", `Debug mode: forcing language to "${debugForceLanguage}"`)
       if (availableLanguages.includes(debugForceLanguage)) {
-        setLanguage(debugForceLanguage, debugForceLanguage)
+        setLanguage(debugForceLanguage)
         return
       } else {
         Logger.warn("I18n", `Debug language "${debugForceLanguage}" not available in [${availableLanguages.join(', ')}]`)
@@ -177,7 +176,7 @@ Singleton {
       // Try full code match (such as zh CN, en US)
       if (availableLanguages.includes(fullUserLang)) {
         Logger.log("I18n", `Exact match found: "${fullUserLang}"`)
-        setLanguage(fullUserLang, fullUserLang)
+        setLanguage(fullUserLang)
         return
       }
 
@@ -185,7 +184,7 @@ Singleton {
       const shortUserLang = fullUserLang.substring(0, 2)
       if (availableLanguages.includes(shortUserLang)) {
         Logger.log("I18n", `Short code match found: "${shortUserLang}" from "${fullUserLang}"`)
-        setLanguage(shortUserLang, fullUserLang)
+        setLanguage(shortUserLang)
         return
       }
 
@@ -194,21 +193,14 @@ Singleton {
 
     // Fallback to first available language (preferably "en" if available)
     const fallbackLang = availableLanguages.includes("en") ? "en" : availableLanguages[0]
-    setLanguage(fallbackLang, fallbackLang)
+    setLanguage(fallbackLang)
   }
 
   // -------------------------------------------
-  function setLanguage(newLangCode, fullLocale) {
+  function setLanguage(newLangCode) {
     if (newLangCode !== langCode && availableLanguages.includes(newLangCode)) {
       langCode = newLangCode
-      if (fullLocale) {
-        locale = fullLocale.replace(/-/g, '_')
-      } else {
-        locale = newLangCode
-      }
-      Logger.log("I18n", `langCode: ${langCode}`)
-      Logger.log("I18n", `locale: ${locale}`)
-      Logger.log("I18n", `Language set to "${langCode}" (locale: "${locale}")`)
+      Logger.log("I18n", `Language set to "${langCode}"`)
       languageChanged(langCode)
       loadTranslations()
     } else if (!availableLanguages.includes(newLangCode)) {
