@@ -239,6 +239,7 @@ Singleton {
       property list<string> pinnedExecs: []
       property bool useApp2Unit: false
       property bool sortByMostUsed: true
+      property string terminalCommand: "xterm -e"
     }
 
     // dock
