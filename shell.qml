@@ -60,14 +60,14 @@ ShellRoot {
   }
 
   Connections {
-    target: I18n
+    target: I18n ? I18n : null
     function onTranslationsLoaded() {
       i18nLoaded = true
     }
   }
 
   Connections {
-    target: Settings
+    target: Settings ? Settings : null
     function onSettingsLoaded() {
       settingsLoaded = true
     }
