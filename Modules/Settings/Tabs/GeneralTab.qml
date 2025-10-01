@@ -237,6 +237,7 @@ ColumnLayout {
         }
       }
 
+
       ColumnLayout {
         NLabel {
           label: I18n.tr("settings.general.fonts.default.scale.label")

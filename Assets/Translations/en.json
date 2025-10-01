@@ -999,6 +999,16 @@
           "label": "Use monospaced font",
           "description": "When enabled, the clock will use the monospaced font."
         },
+        "use-custom-font": {
+          "label": "Use custom font",
+          "description": "Override the default font selection with a custom font for the clock."
+        },
+        "custom-font": {
+          "label": "Custom font",
+          "description": "Select a custom font for the clock display.",
+          "placeholder": "Select custom font...",
+          "search-placeholder": "Search fonts..."
+        },
         "clock-display": {
           "label": "Clock display",
           "description": "Customize your clock's display by adding tokens from the list below. To use the 12-hour format, you must include the 'AP' token."

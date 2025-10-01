@@ -37,6 +37,8 @@ Rectangle {
   // Resolve settings: try user settings or defaults from BarWidgetRegistry
   readonly property bool usePrimaryColor: widgetSettings.usePrimaryColor !== undefined ? widgetSettings.usePrimaryColor : widgetMetadata.usePrimaryColor
   property bool useMonospacedFont: widgetSettings.useMonospacedFont !== undefined ? widgetSettings.useMonospacedFont : widgetMetadata.useMonospacedFont
+  readonly property bool useCustomFont: widgetSettings.useCustomFont !== undefined ? widgetSettings.useCustomFont : widgetMetadata.useCustomFont
+  readonly property string customFont: widgetSettings.customFont !== undefined ? widgetSettings.customFont : widgetMetadata.customFont
   readonly property string formatHorizontal: widgetSettings.formatHorizontal !== undefined ? widgetSettings.formatHorizontal : widgetMetadata.formatHorizontal
   readonly property string formatVertical: widgetSettings.formatVertical !== undefined ? widgetSettings.formatVertical : widgetMetadata.formatVertical
 
@@ -65,7 +67,7 @@ Rectangle {
           NText {
             visible: text !== ""
             text: modelData
-            family: useMonospacedFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault
+            family: useCustomFont && customFont ? customFont : (useMonospacedFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault)
             pointSize: {
               if (repeater.model.length == 1) {
                 return Style.fontSizeS * scaling
@@ -95,7 +97,7 @@ Rectangle {
           delegate: NText {
             visible: text !== ""
             text: modelData
-            family: useMonospacedFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault
+            family: useCustomFont && customFont ? customFont : (useMonospacedFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault)
             pointSize: Style.fontSizeS * scaling
             font.weight: Style.fontWeightBold
             color: usePrimaryColor ? Color.mPrimary : Color.mOnSurface

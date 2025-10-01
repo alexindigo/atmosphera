@@ -17,6 +17,8 @@ ColumnLayout {
   // Local state
   property bool valueUsePrimaryColor: widgetData.usePrimaryColor !== undefined ? widgetData.usePrimaryColor : widgetMetadata.usePrimaryColor
   property bool valueUseMonospacedFont: widgetData.useMonospacedFont !== undefined ? widgetData.useMonospacedFont : widgetMetadata.useMonospacedFont
+  property bool valueUseCustomFont: widgetData.useCustomFont !== undefined ? widgetData.useCustomFont : widgetMetadata.useCustomFont
+  property string valueCustomFont: widgetData.customFont !== undefined ? widgetData.customFont : widgetMetadata.customFont
   property string valueFormatHorizontal: widgetData.formatHorizontal !== undefined ? widgetData.formatHorizontal : widgetMetadata.formatHorizontal
   property string valueFormatVertical: widgetData.formatVertical !== undefined ? widgetData.formatVertical : widgetMetadata.formatVertical
 
@@ -30,6 +32,8 @@ ColumnLayout {
     var settings = Object.assign({}, widgetData || {})
     settings.usePrimaryColor = valueUsePrimaryColor
     settings.useMonospacedFont = valueUseMonospacedFont
+    settings.useCustomFont = valueUseCustomFont
+    settings.customFont = valueCustomFont
     settings.formatHorizontal = valueFormatHorizontal.trim()
     settings.formatVertical = valueFormatVertical.trim()
     return settings
@@ -76,6 +80,30 @@ ColumnLayout {
     description: I18n.tr("bar.widget-settings.clock.use-monospaced-font.description")
     checked: valueUseMonospacedFont
     onToggled: checked => valueUseMonospacedFont = checked
+  }
+
+  NToggle {
+    Layout.fillWidth: true
+    label: I18n.tr("bar.widget-settings.clock.use-custom-font.label")
+    description: I18n.tr("bar.widget-settings.clock.use-custom-font.description")
+    checked: valueUseCustomFont
+    onToggled: checked => valueUseCustomFont = checked
+  }
+
+  NSearchableComboBox {
+    Layout.fillWidth: true
+    visible: valueUseCustomFont
+    label: I18n.tr("bar.widget-settings.clock.custom-font.label")
+    description: I18n.tr("bar.widget-settings.clock.custom-font.description")
+    model: FontService.availableFonts
+    currentKey: valueCustomFont
+    placeholder: I18n.tr("bar.widget-settings.clock.custom-font.placeholder")
+    searchPlaceholder: I18n.tr("bar.widget-settings.clock.custom-font.search-placeholder")
+    popupHeight: 420 * scaling
+    minimumWidth: 300 * scaling
+    onSelected: function (key) {
+      valueCustomFont = key
+    }
   }
 
   NDivider {
@@ -186,7 +214,7 @@ ColumnLayout {
               delegate: NText {
                 visible: text !== ""
                 text: modelData
-                family: valueUseMonospacedFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault
+                family: valueUseCustomFont && valueCustomFont ? valueCustomFont : (valueUseMonospacedFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault)
                 pointSize: Style.fontSizeM * scaling
                 font.weight: Style.fontWeightBold
                 color: valueUsePrimaryColor ? Color.mPrimary : Color.mOnSurface
@@ -217,7 +245,7 @@ ColumnLayout {
               delegate: NText {
                 visible: text !== ""
                 text: modelData
-                family: valueUseMonospacedFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault
+                family: valueUseCustomFont && valueCustomFont ? valueCustomFont : (valueUseMonospacedFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault)
                 pointSize: Style.fontSizeM * scaling
                 font.weight: Style.fontWeightBold
                 color: valueUsePrimaryColor ? Color.mPrimary : Color.mOnSurface
