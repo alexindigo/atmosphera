@@ -77,7 +77,7 @@ Rectangle {
           source: ThemeIcons.iconForAppId(taskbarItem.modelData.appId)
           smooth: true
           asynchronous: true
-          opacity: modelData.isFocused ? 1.0 : 0.5
+          opacity: modelData.isFocused ? Style.opacityFull : 0.6
 
           Rectangle {
             anchors.bottomMargin: -2 * scaling
