@@ -237,19 +237,6 @@ ColumnLayout {
         }
       }
 
-      NSearchableComboBox {
-        label: "Clock Font"
-        description: "Font used specifically for clock displays in the bar and widgets."
-        model: FontService.availableFonts
-        currentKey: Settings.data.ui.clockFont
-        placeholder: "Select clock font..."
-        searchPlaceholder: "Search fonts..."
-        popupHeight: 420 * scaling
-        minimumWidth: 300 * scaling
-        onSelected: function (key) {
-          Settings.data.ui.clockFont = key
-        }
-      }
 
       ColumnLayout {
         NLabel {
