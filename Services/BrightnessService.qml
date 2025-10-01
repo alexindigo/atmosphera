@@ -155,9 +155,7 @@ Singleton {
     function refreshBrightnessFromSystem() {
       if (!monitor.isDdc && !monitor.isAppleDisplay) {
         // For internal displays, query the system directly
-        refreshProc.command = ["sh", "-c",
-          "cat " + monitor.brightnessPath + " && " +
-          "cat " + monitor.maxBrightnessPath]
+        refreshProc.command = ["sh", "-c", "cat " + monitor.brightnessPath + " && " + "cat " + monitor.maxBrightnessPath]
         refreshProc.running = true
       } else if (monitor.isDdc) {
         // For DDC displays, get the current value
@@ -179,7 +177,7 @@ Singleton {
       onFileChanged: {
         // When a file change is detected, actively refresh from system
         // to ensure we get the most up-to-date value
-        Qt.callLater(function() {
+        Qt.callLater(() => {
           monitor.refreshBrightnessFromSystem()
         })
       }

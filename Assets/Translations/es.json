@@ -1009,7 +1009,17 @@
           "label": "Barra vertical",
           "description": "Usa un espacio para separar cada parte en una nueva línea."
         },
-        "preview": "Vista previa"
+        "preview": "Vista previa",
+        "custom-font": {
+          "description": "Seleccionar una fuente personalizada para la visualización del reloj.",
+          "label": "Fuente personalizada",
+          "placeholder": "Seleccionar fuente personalizada...",
+          "search-placeholder": "Buscar fuentes..."
+        },
+        "use-custom-font": {
+          "description": "Anular la selección de fuente predeterminada con una fuente personalizada para el reloj.",
+          "label": "Usar fuente personalizada"
+        }
       },
       "taskbar": {
         "only-active-workspaces": {

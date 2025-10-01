@@ -1030,7 +1030,17 @@
           "label": "Vertikale Statusleiste",
           "description": "Verwenden Sie ein Leerzeichen, um jeden Teil in eine neue Zeile zu trennen."
         },
-        "preview": "Vorschau"
+        "preview": "Vorschau",
+        "custom-font": {
+          "description": "Wähle eine benutzerdefinierte Schriftart für die Uhrenanzeige aus.",
+          "label": "Benutzerdefinierte Schriftart",
+          "placeholder": "Benutzerdefinierte Schriftart auswählen...",
+          "search-placeholder": "Schriftarten suchen..."
+        },
+        "use-custom-font": {
+          "description": "Überschreibe die Standard-Schriftauswahl mit einer benutzerdefinierten Schriftart für die Uhr.",
+          "label": "Benutzerdefinierte Schriftart verwenden"
+        }
       },
       "taskbar": {
         "only-active-workspaces": {

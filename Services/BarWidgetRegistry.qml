@@ -56,7 +56,6 @@ Singleton {
                                   "Clock": {
                                     "allowUserSettings": true,
                                     "usePrimaryColor": true,
-                                    "useMonospacedFont": true,
                                     "useCustomFont": false,
                                     "customFont": "",
                                     "formatHorizontal": "HH:mm ddd, MMM dd",

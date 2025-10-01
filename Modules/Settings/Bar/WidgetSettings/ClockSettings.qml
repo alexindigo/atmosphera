@@ -16,7 +16,6 @@ ColumnLayout {
 
   // Local state
   property bool valueUsePrimaryColor: widgetData.usePrimaryColor !== undefined ? widgetData.usePrimaryColor : widgetMetadata.usePrimaryColor
-  property bool valueUseMonospacedFont: widgetData.useMonospacedFont !== undefined ? widgetData.useMonospacedFont : widgetMetadata.useMonospacedFont
   property bool valueUseCustomFont: widgetData.useCustomFont !== undefined ? widgetData.useCustomFont : widgetMetadata.useCustomFont
   property string valueCustomFont: widgetData.customFont !== undefined ? widgetData.customFont : widgetMetadata.customFont
   property string valueFormatHorizontal: widgetData.formatHorizontal !== undefined ? widgetData.formatHorizontal : widgetMetadata.formatHorizontal
@@ -31,7 +30,6 @@ ColumnLayout {
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {})
     settings.usePrimaryColor = valueUsePrimaryColor
-    settings.useMonospacedFont = valueUseMonospacedFont
     settings.useCustomFont = valueUseCustomFont
     settings.customFont = valueCustomFont
     settings.formatHorizontal = valueFormatHorizontal.trim()
@@ -72,14 +70,6 @@ ColumnLayout {
     description: I18n.tr("bar.widget-settings.clock.use-primary-color.description")
     checked: valueUsePrimaryColor
     onToggled: checked => valueUsePrimaryColor = checked
-  }
-
-  NToggle {
-    Layout.fillWidth: true
-    label: I18n.tr("bar.widget-settings.clock.use-monospaced-font.label")
-    description: I18n.tr("bar.widget-settings.clock.use-monospaced-font.description")
-    checked: valueUseMonospacedFont
-    onToggled: checked => valueUseMonospacedFont = checked
   }
 
   NToggle {

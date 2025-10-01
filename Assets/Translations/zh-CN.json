@@ -1009,7 +1009,17 @@
           "label": "垂直栏",
           "description": "使用空格将每个部分分隔到新行。"
         },
-        "preview": "预览"
+        "preview": "预览",
+        "custom-font": {
+          "description": "选择时钟显示使用的自定义字体。",
+          "label": "自定义字体",
+          "placeholder": "选择自定义字体...",
+          "search-placeholder": "搜索字体..."
+        },
+        "use-custom-font": {
+          "description": "使用自定义字体覆盖时钟的默认字体选择。",
+          "label": "使用自定义字体"
+        }
       },
       "taskbar": {
         "only-active-workspaces": {

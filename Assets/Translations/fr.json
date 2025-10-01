@@ -1009,7 +1009,17 @@
           "label": "Barre verticale",
           "description": "Utilisez un espace pour séparer chaque partie sur une nouvelle ligne."
         },
-        "preview": "Aperçu"
+        "preview": "Aperçu",
+        "custom-font": {
+          "description": "Sélectionner une police personnalisée pour l'affichage de l'horloge.",
+          "label": "Police personnalisée",
+          "placeholder": "Sélectionner une police personnalisée...",
+          "search-placeholder": "Rechercher des polices..."
+        },
+        "use-custom-font": {
+          "description": "Remplacez la police par défaut par une police personnalisée pour l'horloge.",
+          "label": "Utiliser une police personnalisée."
+        }
       },
       "taskbar": {
         "only-active-workspaces": {
