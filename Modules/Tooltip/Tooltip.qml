@@ -154,6 +154,8 @@ PopupWindow {
         screenWidth = targetItem.screen.width
         screenHeight = targetItem.screen.height
         scaling = ScalingService.getScreenScale(targetItem.screen)
+      } else {
+        Logger.warn("Tooltip", "Could not get screen scale for targetItem:", targetItem)
       }
     }
 

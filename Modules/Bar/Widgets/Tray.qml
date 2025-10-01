@@ -53,6 +53,9 @@ Rectangle {
 
         IconImage {
           id: trayIcon
+
+          property ShellScreen screen: root.screen
+
           anchors.centerIn: parent
           width: Style.marginL * scaling
           height: Style.marginL * scaling

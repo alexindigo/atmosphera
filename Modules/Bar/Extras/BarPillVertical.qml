@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import Quickshell
 import qs.Commons
 import qs.Services
 import qs.Widgets
@@ -7,6 +8,7 @@ import qs.Widgets
 Item {
   id: root
 
+  property ShellScreen screen
   property string icon: ""
   property string text: ""
   property string suffix: ""
@@ -67,6 +69,9 @@ Item {
 
   Rectangle {
     id: pill
+
+    property ShellScreen screen: root.screen
+
     width: revealed ? maxPillWidth : 1
     height: revealed ? maxPillHeight : 1
 

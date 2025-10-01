@@ -1,11 +1,14 @@
 import QtQuick
 import QtQuick.Controls
+import Quickshell
 import qs.Commons
 import qs.Services
 import qs.Widgets
 
 Item {
   id: root
+
+  property ShellScreen screen
 
   property string icon: ""
   property string text: ""
@@ -43,6 +46,7 @@ Item {
     Component {
       id: verticalPillComponent
       BarPillVertical {
+        screen: root.screen
         icon: root.icon
         text: root.text
         suffix: root.suffix
@@ -68,6 +72,7 @@ Item {
     Component {
       id: horizontalPillComponent
       BarPillHorizontal {
+        screen: root.screen
         icon: root.icon
         text: root.text
         suffix: root.suffix

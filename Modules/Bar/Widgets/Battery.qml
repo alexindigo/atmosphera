@@ -87,6 +87,7 @@ Item {
   BarPill {
     id: pill
 
+    screen: root.screen
     compact: (Settings.data.bar.density === "compact")
     rightOpen: BarService.getPillDirection(root)
     icon: testMode ? BatteryService.getIcon(testPercent, testCharging, true) : BatteryService.getIcon(percent, charging, isReady)

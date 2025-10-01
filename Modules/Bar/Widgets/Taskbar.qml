@@ -62,6 +62,7 @@ Rectangle {
       delegate: Item {
         id: taskbarItem
         required property var modelData
+        property ShellScreen screen: root.screen
 
         visible: (!widgetSettings.onlySameOutput || modelData.output == screen.name) && (!widgetSettings.onlyActiveWorkspaces || CompositorService.getActiveWorkspaces().map(ws => ws.id).includes(modelData.workspaceId))
 

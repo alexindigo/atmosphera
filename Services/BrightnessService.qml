@@ -178,8 +178,8 @@ Singleton {
         // When a file change is detected, actively refresh from system
         // to ensure we get the most up-to-date value
         Qt.callLater(() => {
-          monitor.refreshBrightnessFromSystem()
-        })
+                       monitor.refreshBrightnessFromSystem()
+                     })
       }
     }
 

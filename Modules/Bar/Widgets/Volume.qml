@@ -75,6 +75,7 @@ Item {
   BarPill {
     id: pill
 
+    screen: root.screen
     compact: (Settings.data.bar.density === "compact")
     rightOpen: BarService.getPillDirection(root)
     icon: getIcon()
