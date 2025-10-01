@@ -191,19 +191,15 @@ Item {
         Item {
           id: titleContainer
           Layout.preferredWidth: {
-            if (!hasActivePlayer) {
-              // When no active player, take full width to center the placeholder
-              return mainContainer.width - Style.marginXXS * scaling * 2
-            }
             // Calculate available width based on other elements in the row
             var iconWidth = (windowIcon.visible ? (Style.fontSizeL * scaling + Style.marginS * scaling) : 0)
-            var albumArtWidth = (showAlbumArt ? (18 * scaling + Style.marginS * scaling) : 0)
+            var albumArtWidth = (hasActivePlayer && showAlbumArt ? (18 * scaling + Style.marginS * scaling) : 0)
             var totalMargins = Style.marginXXS * scaling * 2
             var availableWidth = mainContainer.width - iconWidth - albumArtWidth - totalMargins
             return Math.max(20 * scaling, availableWidth)
           }
           Layout.maximumWidth: Layout.preferredWidth
-          Layout.alignment: hasActivePlayer ? Qt.AlignVCenter : Qt.AlignCenter
+          Layout.alignment: Qt.AlignVCenter
           Layout.preferredHeight: titleText.height
 
           clip: true
@@ -282,7 +278,7 @@ Item {
             width: parent.width
 
             property real scrollX: 0
-            x: hasActivePlayer ? scrollX : 0
+            x: scrollX
 
             RowLayout {
               spacing: 50 * scaling // Gap between text copies
