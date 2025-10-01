@@ -191,11 +191,11 @@ Popup {
         NIcon {
           icon: "filepicker-folder"
           color: Color.mPrimary
-          font.pointSize: Style.fontSizeXXL * scaling
+          pointSize: Style.fontSizeXXL * scaling
         }
         NText {
           text: root.title
-          font.pointSize: Style.fontSizeXL * scaling
+          pointSize: Style.fontSizeXL * scaling
           font.weight: Style.fontWeightBold
           color: Color.mPrimary
           Layout.fillWidth: true
@@ -357,7 +357,7 @@ Popup {
           NIcon {
             icon: "filepicker-search"
             color: Color.mOnSurfaceVariant
-            font.pointSize: Style.fontSizeS * scaling
+            pointSize: Style.fontSizeS * scaling
           }
           NTextInput {
             id: searchInput
@@ -588,7 +588,7 @@ Popup {
                     visible: thumbnail.status === Image.Loading
                     NIcon {
                       icon: "filepicker-photo"
-                      font.pointSize: Style.fontSizeL * scaling
+                      pointSize: Style.fontSizeL * scaling
                       color: Color.mOnSurfaceVariant
                       anchors.centerIn: parent
                     }
@@ -597,7 +597,7 @@ Popup {
 
                 NIcon {
                   icon: model.fileIsDir ? "filepicker-folder" : root.getFileIcon(model.fileName)
-                  font.pointSize: Style.fontSizeXXL * 2 * scaling
+                  pointSize: Style.fontSizeXXL * 2 * scaling
                   color: {
                     if (isSelected)
                       return Color.mSecondary
@@ -623,7 +623,7 @@ Popup {
                   visible: isSelected
                   NIcon {
                     icon: "filepicker-check"
-                    font.pointSize: Style.fontSizeS * scaling
+                    pointSize: Style.fontSizeS * scaling
                     font.weight: Style.fontWeightBold
                     color: Color.mOnSecondary
                     anchors.centerIn: parent
@@ -641,7 +641,7 @@ Popup {
                   else
                     return Color.mOnSurface
                 }
-                font.pointSize: Style.fontSizeS * scaling
+                pointSize: Style.fontSizeS * scaling
                 font.weight: isSelected ? Style.fontWeightBold : Style.fontWeightRegular
                 Layout.fillWidth: true
                 horizontalAlignment: Text.AlignHCenter
@@ -728,14 +728,14 @@ Popup {
 
               NIcon {
                 icon: model.fileIsDir ? "filepicker-folder" : root.getFileIcon(model.fileName)
-                font.pointSize: Style.fontSizeL * scaling
+                pointSize: Style.fontSizeL * scaling
                 color: model.fileIsDir ? (filePickerPanel.currentSelection.includes(model.filePath) ? Color.mOnSecondary : Color.mPrimary) : Color.mOnSurfaceVariant
               }
 
               NText {
                 text: model.fileName
                 color: filePickerPanel.currentSelection.includes(model.filePath) ? Color.mOnSecondary : Color.mOnSurface
-                font.pointSize: Style.fontSizeM * scaling
+                pointSize: Style.fontSizeM * scaling
                 font.weight: filePickerPanel.currentSelection.includes(model.filePath) ? Style.fontWeightBold : Style.fontWeightRegular
                 Layout.fillWidth: true
                 elide: Text.ElideRight
@@ -744,7 +744,7 @@ Popup {
               NText {
                 text: model.fileIsDir ? "" : root.formatFileSize(model.fileSize)
                 color: filePickerPanel.currentSelection.includes(model.filePath) ? Color.mOnSecondary : Color.mOnSurfaceVariant
-                font.pointSize: Style.fontSizeS * scaling
+                pointSize: Style.fontSizeS * scaling
                 visible: !model.fileIsDir
                 Layout.preferredWidth: implicitWidth
               }
@@ -810,7 +810,7 @@ Popup {
             }
           }
           color: filePickerPanel.searchText.length > 0 ? Color.mPrimary : Color.mOnSurfaceVariant
-          font.pointSize: Style.fontSizeS * scaling
+          pointSize: Style.fontSizeS * scaling
           Layout.fillWidth: true
         }
 

@@ -108,7 +108,7 @@ Item {
     id: fullTitleMetrics
     visible: false
     text: windowTitle
-    font.pointSize: Style.fontSizeS * scaling
+    pointSize: Style.fontSizeS * scaling
     font.weight: Style.fontWeightMedium
   }
 
@@ -239,13 +239,13 @@ Item {
             property real scrollX: 0
             x: scrollX
 
-            Row {
+            RowLayout {
               spacing: 50 * scaling // Gap between text copies
 
               NText {
                 id: titleText
                 text: windowTitle
-                font.pointSize: Style.fontSizeS * scaling
+                pointSize: Style.fontSizeS * scaling
                 font.weight: Style.fontWeightMedium
                 verticalAlignment: Text.AlignVCenter
                 color: Color.mOnSurface

@@ -110,8 +110,11 @@ void main() {
     // Add extra range for smoothness to ensure complete coverage
     // Adjust smoothness for aspect ratio to maintain consistent visual appearance
     float adjustedSmoothness = mappedSmoothness * max(1.0, ubuf.aspectRatio);
-    float radius = ubuf.progress * (maxDist + adjustedSmoothness);
     
+    // Start the radius from -adjustedSmoothness, this ensures the disc is completely hidden when progress=0
+    float totalDistance = maxDist + 2.0 * adjustedSmoothness;
+    float radius = -adjustedSmoothness + ubuf.progress * totalDistance;
+
     // Use smoothstep for a smooth edge transition
     float factor = smoothstep(radius - adjustedSmoothness, radius + adjustedSmoothness, dist);
     

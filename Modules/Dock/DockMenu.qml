@@ -168,7 +168,7 @@ PopupWindow {
                  }
     }
 
-    Column {
+    ColumnLayout {
       id: contextMenuColumn
       anchors.fill: parent
       anchors.margins: Style.marginM * scaling
@@ -176,12 +176,12 @@ PopupWindow {
 
       // Focus item
       Rectangle {
-        width: parent.width
+        Layout.fillWidth: true
         height: 32 * scaling
         color: root.hoveredItem === 0 ? Color.mTertiary : Color.transparent
         radius: Style.radiusXS * scaling
 
-        Row {
+        RowLayout {
           anchors.left: parent.left
           anchors.leftMargin: Style.marginS * scaling
           anchors.verticalCenter: parent.verticalCenter
@@ -189,28 +189,28 @@ PopupWindow {
 
           NIcon {
             icon: "eye"
-            font.pointSize: Style.fontSizeL * scaling
+            pointSize: Style.fontSizeL * scaling
             color: root.hoveredItem === 0 ? Color.mOnTertiary : Color.mOnSurfaceVariant
-            anchors.verticalCenter: parent.verticalCenter
+            Layout.alignment: Qt.AlignVCenter
           }
 
           NText {
             text: I18n.tr("dock.menu.focus")
-            font.pointSize: Style.fontSizeS * scaling
+            pointSize: Style.fontSizeS * scaling
             color: root.hoveredItem === 0 ? Color.mOnTertiary : Color.mOnSurfaceVariant
-            anchors.verticalCenter: parent.verticalCenter
+            Layout.alignment: Qt.AlignVCenter
           }
         }
       }
 
       // Pin/Unpin item
       Rectangle {
-        width: parent.width
+        Layout.fillWidth: true
         height: 32 * scaling
         color: root.hoveredItem === 1 ? Color.mTertiary : Color.transparent
         radius: Style.radiusXS * scaling
 
-        Row {
+        RowLayout {
           anchors.left: parent.left
           anchors.leftMargin: Style.marginS * scaling
           anchors.verticalCenter: parent.verticalCenter
@@ -222,9 +222,9 @@ PopupWindow {
                 return "pin"
               return root.isAppPinned(root.toplevel.appId) ? "unpin" : "pin"
             }
-            font.pointSize: Style.fontSizeL * scaling
+            pointSize: Style.fontSizeL * scaling
             color: root.hoveredItem === 1 ? Color.mOnTertiary : Color.mOnSurfaceVariant
-            anchors.verticalCenter: parent.verticalCenter
+            Layout.alignment: Qt.AlignVCenter
           }
 
           NText {
@@ -233,21 +233,21 @@ PopupWindow {
                 return I18n.tr("dock.menu.pin")
               return root.isAppPinned(root.toplevel.appId) ? I18n.tr("dock.menu.unpin") : I18n.tr("dock.menu.pin")
             }
-            font.pointSize: Style.fontSizeS * scaling
+            pointSize: Style.fontSizeS * scaling
             color: root.hoveredItem === 1 ? Color.mOnTertiary : Color.mOnSurfaceVariant
-            anchors.verticalCenter: parent.verticalCenter
+            Layout.alignment: Qt.AlignVCenter
           }
         }
       }
 
       // Close item
       Rectangle {
-        width: parent.width
+        Layout.fillWidth: true
         height: 32 * scaling
         color: root.hoveredItem === 2 ? Color.mTertiary : Color.transparent
         radius: Style.radiusXS * scaling
 
-        Row {
+        RowLayout {
           anchors.left: parent.left
           anchors.leftMargin: Style.marginS * scaling
           anchors.verticalCenter: parent.verticalCenter
@@ -255,16 +255,16 @@ PopupWindow {
 
           NIcon {
             icon: "close"
-            font.pointSize: Style.fontSizeL * scaling
+            pointSize: Style.fontSizeL * scaling
             color: root.hoveredItem === 2 ? Color.mOnTertiary : Color.mOnSurfaceVariant
-            anchors.verticalCenter: parent.verticalCenter
+            Layout.alignment: Qt.AlignVCenter
           }
 
           NText {
             text: I18n.tr("dock.menu.close")
-            font.pointSize: Style.fontSizeS * scaling
+            pointSize: Style.fontSizeS * scaling
             color: root.hoveredItem === 2 ? Color.mOnTertiary : Color.mOnSurfaceVariant
-            anchors.verticalCenter: parent.verticalCenter
+            Layout.alignment: Qt.AlignVCenter
           }
         }
       }

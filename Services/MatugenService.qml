@@ -10,7 +10,7 @@ import qs.Services
 Singleton {
   id: root
 
-  property string dynamicConfigPath: Settings.isLoaded ? Settings.cacheDir + "matugen.dynamic.toml" : ""
+  property string dynamicConfigPath: Settings.cacheDir + "matugen.dynamic.toml"
 
   // External state management
   Connections {
@@ -47,11 +47,6 @@ Singleton {
 
   // Generate colors using current wallpaper and settings
   function generateFromWallpaper() {
-    if (!Settings.isLoaded) {
-      Logger.log("Matugen", "Settings not loaded yet, skipping wallpaper color generation")
-      return
-    }
-
     Logger.log("Matugen", "Generating from wallpaper on screen:", Screen.name)
     var wp = WallpaperService.getWallpaper(Screen.name).replace(/'/g, "'\\''")
     if (wp === "") {

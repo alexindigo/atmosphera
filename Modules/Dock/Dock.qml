@@ -14,8 +14,19 @@ Variants {
 
   delegate: Item {
     id: root
+
     required property ShellScreen modelData
     property real scaling: ScalingService.getScreenScale(modelData)
+    property bool barIsReady: BarService.isBarReady(modelData.name)
+
+    Connections {
+      target: BarService
+      function onBarReadyChanged(screenName) {
+        if (screenName === modelData.name) {
+          barIsReady = true
+        }
+      }
+    }
 
     Connections {
       target: ScalingService
@@ -40,19 +51,14 @@ Variants {
       function onPinnedAppsChanged() {
         updateDockApps()
       }
-    }
-
-    // Initial update when component is ready
-    Component.onCompleted: {
-      if (Settings.isLoaded && ToplevelManager) {
+      function onOnlySameOutputChanged() {
         updateDockApps()
       }
     }
 
-    // Update when Settings are loaded
-    Connections {
-      target: Settings
-      function onSettingsLoaded() {
+    // Initial update when component is ready
+    Component.onCompleted: {
+      if (ToplevelManager) {
         updateDockApps()
       }
     }
@@ -105,7 +111,7 @@ Variants {
       // Strategy: Maintain app positions as much as possible
       // 1. First pass: Add all running apps (both pinned and non-pinned) in their current order
       runningApps.forEach(toplevel => {
-                            if (toplevel && toplevel.appId) {
+                            if (toplevel && toplevel.appId && !(Settings.data.dock.onlySameOutput && toplevel.screens && !toplevel.screens.includes(modelData))) {
                               const isPinned = pinnedApps.includes(toplevel.appId)
                               const appType = isPinned ? "pinned-running" : "running"
 
@@ -187,7 +193,7 @@ Variants {
 
     // PEEK WINDOW - Always visible when auto-hide is enabled
     Loader {
-      active: Settings.isLoaded && modelData && Settings.data.dock.monitors.includes(modelData.name) && autoHide
+      active: (barIsReady || !hasBar) && modelData && Settings.data.dock.monitors.includes(modelData.name) && autoHide
 
       sourceComponent: PanelWindow {
         id: peekWindow
@@ -233,7 +239,7 @@ Variants {
 
     // DOCK WINDOW
     Loader {
-      active: Settings.isLoaded && modelData && Settings.data.dock.monitors.includes(modelData.name) && dockLoaded && ToplevelManager && (dockApps.length > 0)
+      active: (barIsReady || !hasBar) && modelData && Settings.data.dock.monitors.includes(modelData.name) && dockLoaded && ToplevelManager && (dockApps.length > 0)
 
       sourceComponent: PanelWindow {
         id: dockWindow
@@ -414,7 +420,7 @@ Variants {
                       anchors.centerIn: parent
                       visible: !appIcon.visible
                       icon: "question-mark"
-                      font.pointSize: iconSize * 0.7
+                      pointSize: iconSize * 0.7
                       color: appButton.isActive ? Color.mPrimary : Color.mOnSurfaceVariant
                       opacity: appButton.isRunning ? 1.0 : 0.6
                       scale: appButton.hovered ? 1.15 : 1.0

@@ -24,7 +24,7 @@ NBox {
       NIcon {
         Layout.alignment: Qt.AlignVCenter
         icon: weatherReady ? LocationService.weatherSymbolFromCode(LocationService.data.weather.current_weather.weathercode) : ""
-        font.pointSize: Style.fontSizeXXXL * 1.75 * scaling
+        pointSize: Style.fontSizeXXXL * 1.75 * scaling
         color: Color.mPrimary
       }
 
@@ -36,7 +36,7 @@ NBox {
             const chunks = Settings.data.location.name.split(",")
             return chunks[0]
           }
-          font.pointSize: Style.fontSizeL * scaling
+          pointSize: Style.fontSizeL * scaling
           font.weight: Style.fontWeightBold
         }
 
@@ -56,13 +56,13 @@ NBox {
               temp = Math.round(temp)
               return `${temp}°${suffix}`
             }
-            font.pointSize: Style.fontSizeXL * scaling
+            pointSize: Style.fontSizeXL * scaling
             font.weight: Style.fontWeightBold
           }
 
           NText {
             text: weatherReady ? `(${LocationService.data.weather.timezone_abbreviation})` : ""
-            font.pointSize: Style.fontSizeXS * scaling
+            pointSize: Style.fontSizeXS * scaling
             color: Color.mOnSurfaceVariant
             visible: LocationService.data.weather
           }
@@ -88,7 +88,7 @@ NBox {
           NText {
             text: {
               var weatherDate = new Date(LocationService.data.weather.daily.time[index].replace(/-/g, "/"))
-              return Qt.formatDateTime(weatherDate, "ddd")
+              return Qt.locale().toString(weatherDate, "ddd")
             }
             color: Color.mOnSurface
             Layout.alignment: Qt.AlignHCenter
@@ -96,7 +96,7 @@ NBox {
           NIcon {
             Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
             icon: LocationService.weatherSymbolFromCode(LocationService.data.weather.daily.weathercode[index])
-            font.pointSize: Style.fontSizeXXL * 1.6 * scaling
+            pointSize: Style.fontSizeXXL * 1.6 * scaling
             color: Color.mPrimary
           }
           NText {
@@ -112,7 +112,7 @@ NBox {
               min = Math.round(min)
               return `${max}°/${min}°`
             }
-            font.pointSize: Style.fontSizeXS * scaling
+            pointSize: Style.fontSizeXS * scaling
             color: Color.mOnSurfaceVariant
           }
         }

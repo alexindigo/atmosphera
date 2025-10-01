@@ -71,6 +71,8 @@ Singleton {
     "chevron-down": "chevron-down",
     "caret-up": "caret-up-filled",
     "caret-down": "caret-down-filled",
+    "star": "star",
+    "star-off": "star-off",
     "battery-exclamation": "battery-exclamation",
     "battery-charging": "battery-charging",
     "battery-4": "battery-4",

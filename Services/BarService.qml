@@ -9,6 +9,13 @@ Singleton {
 
   property bool hasAudioVisualizer: false
   property bool isVisible: true
+  property var readyBars: ({})
+
+  // Registry to store actual widget instances
+  // Key format: "screenName|section|widgetId|index"
+  property var widgetInstances: ({})
+
+  signal barReadyChanged(string screenName)
 
   // Simple timer that run once when the widget structure has changed
   // and determine if any MediaMini widget has the visualizer on
@@ -28,12 +35,22 @@ Singleton {
     }
   }
 
-  // Registry to store actual widget instances
-  // Key format: "screenName|section|widgetId|index"
-  property var widgetInstances: ({})
-
   Component.onCompleted: {
     Logger.log("BarService", "Service started")
+  }
+
+  // Function for the Bar to call when it's ready
+  function registerBar(screenName) {
+    if (!readyBars[screenName]) {
+      readyBars[screenName] = true
+      Logger.log("BarService", "Bar is ready on screen:", screenName)
+      barReadyChanged(screenName)
+    }
+  }
+
+  // Function for the Dock to check if the bar is ready
+  function isBarReady(screenName) {
+    return readyBars[screenName] || false
   }
 
   // Register a widget instance

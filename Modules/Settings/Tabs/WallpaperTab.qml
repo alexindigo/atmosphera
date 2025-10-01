@@ -77,7 +77,7 @@ ColumnLayout {
               text: (modelData.name || "Unknown")
               color: Color.mPrimary
               font.weight: Style.fontWeightBold
-              font.pointSize: Style.fontSizeM * scaling
+              pointSize: Style.fontSizeM * scaling
             }
 
             NTextInputButton {
@@ -327,7 +327,7 @@ ColumnLayout {
       id: chipLabel
       anchors.centerIn: parent
       text: parent.label
-      font.pointSize: Style.fontSizeS * scaling
+      pointSize: Style.fontSizeS * scaling
       color: parent.selected ? Color.mOnPrimary : Color.mOnSurface
     }
   }

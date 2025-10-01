@@ -69,12 +69,6 @@
           "description": "Fonte monoespaçada usada para exibição de números e estatísticas.",
           "placeholder": "Selecione a fonte monoespaçada...",
           "search-placeholder": "Pesquisar fontes monoespaçadas..."
-        },
-        "accent": {
-          "label": "Fonte de destaque",
-          "description": "Fonte grande usada para exibições proeminentes.",
-          "placeholder": "Selecione a fonte de exibição...",
-          "search-placeholder": "Pesquisar fontes de exibição..."
         }
       }
     },
@@ -978,7 +972,8 @@
         "scrolling-mode": {
           "label": "Modo de rolagem",
           "description": "Controlar quando a rolagem de texto está habilitada para títulos de faixa longos."
-        }
+        },
+        "no-active-player": "Nenhum player ativo"
       },
       "clock": {
         "use-primary-color": {
@@ -1140,6 +1135,10 @@
       "close": "Fechar"
     }
   },
+  "launcher": {
+    "pin": "Fixar no dock",
+    "unpin": "Desafixar do dock"
+  },
   "placeholders": {
     "search-icons": "ex., noctalia, niri, battery, cloud",
     "profile-picture-path": "/home/usuario/.face",
@@ -1243,14 +1242,14 @@
     "title": "Menu da Sessão",
     "click-again": "Clique novamente para executar imediatamente",
     "action-in-seconds": "{action} em {seconds} segundos...",
+    "lock": "Bloquear",
     "lock-subtitle": "Bloqueie sua sessão",
     "lock-and-suspend": "Bloquear e Suspender",
     "lock-and-suspend-subtitle": "Bloquear sessão e colocar o sistema em suspensão",
-    "end-subtitle": "Encerre sua sessão",
-    "lock": "Bloquear",
     "suspend": "Suspender",
     "reboot": "Reiniciar",
     "logout": "Sair",
+    "logout-subtitle": "Encerre sua sessão",
     "shutdown": "Desligar"
   },
   "plugins": {

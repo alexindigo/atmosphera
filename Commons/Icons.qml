@@ -50,7 +50,7 @@ Singleton {
   }
 
   function loadFontWithCacheBusting() {
-    Logger.log("Icons", "Loading font with cache busting:", cacheBustingPath)
+    Logger.log("Icons", "Loading font with cache busting")
 
     // Destroy old loader first
     if (currentFontLoader) {

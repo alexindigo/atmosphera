@@ -115,6 +115,7 @@
     "exclusive": false,
     "backgroundOpacity": 1,
     "floatingRatio": 1,
+    "onlySameOutput": true,
     "monitors": [],
     "pinnedApps": []
   },
@@ -149,7 +150,8 @@
   "ui": {
     "fontDefault": "Roboto",
     "fontFixed": "DejaVu Sans Mono",
-    "fontBillboard": "Inter",
+    "fontDefaultScale": 1,
+    "fontFixedScale": 1,
     "monitorsScaling": [],
     "idleInhibitorEnabled": false
   },

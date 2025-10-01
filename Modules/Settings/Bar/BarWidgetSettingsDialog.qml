@@ -61,7 +61,7 @@ Popup {
         text: I18n.tr("system.widget-settings-title", {
                         "widget": widgetSettings.widgetId
                       })
-        font.pointSize: Style.fontSizeL * scaling
+        pointSize: Style.fontSizeL * scaling
         font.weight: Style.fontWeightBold
         color: Color.mPrimary
         Layout.fillWidth: true
@@ -133,7 +133,8 @@ Popup {
       "Spacer": "WidgetSettings/SpacerSettings.qml",
       "SystemMonitor": "WidgetSettings/SystemMonitorSettings.qml",
       "Volume": "WidgetSettings/VolumeSettings.qml",
-      "Workspace": "WidgetSettings/WorkspaceSettings.qml"
+      "Workspace": "WidgetSettings/WorkspaceSettings.qml",
+      "Taskbar": "WidgetSettings/TaskbarSettings.qml"
     }
 
     const source = widgetSettingsMap[widgetId]

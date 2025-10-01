@@ -37,7 +37,7 @@ ColumnLayout {
     NIcon {
       Layout.alignment: Qt.AlignVCenter
       icon: valueIcon
-      font.pointSize: Style.fontSizeXL * scaling
+      pointSize: Style.fontSizeXL * scaling
       visible: valueIcon !== ""
     }
 

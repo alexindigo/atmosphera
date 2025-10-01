@@ -48,7 +48,7 @@ Rectangle {
 
   NIcon {
     icon: root.icon
-    font.pointSize: Math.max(1, root.compact ? root.width * 0.65 : root.width * 0.48)
+    pointSize: Math.max(1, root.compact ? root.width * 0.65 : root.width * 0.48)
     color: root.enabled && root.hovering ? colorFgHover : colorFg
     // Center horizontally
     x: (root.width - width) / 2

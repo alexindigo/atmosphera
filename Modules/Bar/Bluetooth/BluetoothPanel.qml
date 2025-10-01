@@ -30,13 +30,13 @@ NPanel {
 
         NIcon {
           icon: "bluetooth"
-          font.pointSize: Style.fontSizeXXL * scaling
+          pointSize: Style.fontSizeXXL * scaling
           color: Color.mPrimary
         }
 
         NText {
           text: I18n.tr("bluetooth.panel.title")
-          font.pointSize: Style.fontSizeL * scaling
+          pointSize: Style.fontSizeL * scaling
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface
           Layout.fillWidth: true
@@ -88,21 +88,21 @@ NPanel {
 
           NIcon {
             icon: "bluetooth-off"
-            font.pointSize: 64 * scaling
+            pointSize: 64 * scaling
             color: Color.mOnSurfaceVariant
             Layout.alignment: Qt.AlignHCenter
           }
 
           NText {
             text: I18n.tr("bluetooth.panel.disabled")
-            font.pointSize: Style.fontSizeL * scaling
+            pointSize: Style.fontSizeL * scaling
             color: Color.mOnSurfaceVariant
             Layout.alignment: Qt.AlignHCenter
           }
 
           NText {
             text: I18n.tr("bluetooth.panel.enable-message")
-            font.pointSize: Style.fontSizeS * scaling
+            pointSize: Style.fontSizeS * scaling
             color: Color.mOnSurfaceVariant
             Layout.alignment: Qt.AlignHCenter
           }
@@ -186,7 +186,7 @@ NPanel {
 
               NIcon {
                 icon: "refresh"
-                font.pointSize: Style.fontSizeXXL * 1.5 * scaling
+                pointSize: Style.fontSizeXXL * 1.5 * scaling
                 color: Color.mPrimary
 
                 RotationAnimation on rotation {
@@ -200,14 +200,14 @@ NPanel {
 
               NText {
                 text: I18n.tr("bluetooth.panel.scanning")
-                font.pointSize: Style.fontSizeL * scaling
+                pointSize: Style.fontSizeL * scaling
                 color: Color.mOnSurface
               }
             }
 
             NText {
               text: I18n.tr("bluetooth.panel.pairing-mode")
-              font.pointSize: Style.fontSizeM * scaling
+              pointSize: Style.fontSizeM * scaling
               color: Color.mOnSurfaceVariant
               Layout.alignment: Qt.AlignHCenter
             }

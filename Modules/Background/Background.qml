@@ -13,7 +13,7 @@ Variants {
 
     required property ShellScreen modelData
 
-    active: Settings.isLoaded && modelData && Settings.data.wallpaper.enabled
+    active: modelData && Settings.data.wallpaper.enabled
 
     sourceComponent: PanelWindow {
       id: root
@@ -41,16 +41,10 @@ Variants {
       property string futureWallpaper: ""
 
       // Fillmode default is "crop"
-      property real fillMode: 1.0
+      property real fillMode: WallpaperService.getFillModeUniform()
       property vector4d fillColor: Qt.vector4d(Settings.data.wallpaper.fillColor.r, Settings.data.wallpaper.fillColor.g, Settings.data.wallpaper.fillColor.b, 1.0)
 
-      // On startup assign wallpaper immediately
-      Component.onCompleted: {
-        fillMode = WallpaperService.getFillModeUniform()
-
-        var path = modelData ? WallpaperService.getWallpaper(modelData.name) : ""
-        setWallpaperImmediate(path)
-      }
+      Component.onCompleted: setWallpaperInitial()
 
       Connections {
         target: Settings.data.wallpaper
@@ -64,7 +58,6 @@ Variants {
         target: WallpaperService
         function onWallpaperChanged(screenName, path) {
           if (screenName === modelData.name) {
-
             // Update wallpaper display
             // Set wallpaper immediately on startup
             futureWallpaper = path
@@ -230,6 +223,7 @@ Variants {
         easing.type: Easing.InOutCubic
         onFinished: {
           // Swap images after transition completes
+          currentWallpaper.source = ""
           currentWallpaper.source = nextWallpaper.source
           nextWallpaper.source = ""
           transitionProgress = 0.0
@@ -239,9 +233,20 @@ Variants {
         }
       }
 
+      function setWallpaperInitial() {
+        // On startup, defer assigning wallpaper until the service cache is ready, retries every tick
+        if (!WallpaperService || !WallpaperService.isInitialized) {
+          Qt.callLater(setWallpaperInitial)
+          return
+        }
+
+        setWallpaperImmediate(WallpaperService.getWallpaper(modelData.name))
+      }
+
       function setWallpaperImmediate(source) {
         transitionAnimation.stop()
         transitionProgress = 0.0
+        currentWallpaper.source = ""
         currentWallpaper.source = source
         nextWallpaper.source = ""
       }
@@ -255,8 +260,12 @@ Variants {
           // We are interrupting a transition
           transitionAnimation.stop()
           transitionProgress = 0
-          currentWallpaper.source = nextWallpaper.source
+
+          const newCurrentSource = nextWallpaper.source
+          currentWallpaper.source = ""
           nextWallpaper.source = ""
+
+          currentWallpaper.source = newCurrentSource
         }
 
         nextWallpaper.source = source

@@ -60,7 +60,7 @@ RowLayout {
       anchors.horizontalCenterOffset: -1 * scaling
       icon: "check"
       color: root.activeOnColor
-      font.pointSize: Math.max(Style.fontSizeXS, root.baseSize * 0.5) * scaling
+      pointSize: Math.max(Style.fontSizeXS, root.baseSize * 0.5) * scaling
       font.weight: Style.fontWeightBold
     }
 

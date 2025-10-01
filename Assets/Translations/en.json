@@ -56,6 +56,7 @@
         }
       },
       "fonts": {
+        "reset-scaling": "Reset scaling",
         "section": {
           "label": "Fonts",
           "description": "Choose the fonts used throughout the interface."
@@ -64,19 +65,21 @@
           "label": "Default font",
           "description": "Main font used throughout the interface.",
           "placeholder": "Select default font...",
-          "search-placeholder": "Search fonts..."
+          "search-placeholder": "Search font...",
+          "scale": {
+            "label": "Default font size",
+            "description": "Increase or decrease the size of the standard text."
+          }
         },
         "monospace": {
           "label": "Monospaced font",
           "description": "Monospaced font used for numbers and stats display.",
           "placeholder": "Select monospace font...",
-          "search-placeholder": "Search monospace fonts..."
-        },
-        "accent": {
-          "label": "Accent font",
-          "description": "Large font used for prominent displays.",
-          "placeholder": "Select display font...",
-          "search-placeholder": "Search display fonts..."
+          "search-placeholder": "Search monospace font...",
+          "scale": {
+            "label": "Monospaced font size",
+            "description": "Increase or decrease the size of the monospaced text."
+          }
         }
       }
     },
@@ -282,6 +285,10 @@
         "section": {
           "label": "Monitor display",
           "description": "Choose which monitor to display the dock on."
+        },
+        "only-same-output": {
+          "label": "Only apps from same output",
+          "description": "Show only apps from the output where the dock is located."
         }
       }
     },
@@ -980,7 +987,8 @@
         "scrolling-mode": {
           "label": "Scrolling mode",
           "description": "Control when text scrolling is enabled for long track titles."
-        }
+        },
+        "no-active-player": "No active player"
       },
       "clock": {
         "use-primary-color": {
@@ -1004,6 +1012,16 @@
           "description": "Use a space to separate each part onto a new line."
         },
         "preview": "Preview"
+      },
+      "taskbar": {
+        "only-active-workspaces": {
+          "label": "Only from active workspaces",
+          "description": "Show only apps from active workspaces."
+        },
+        "only-same-output": {
+          "label": "Only from same output",
+          "description": "Show only apps from the output where the bar is located."
+        }
       }
     }
   },
@@ -1142,6 +1160,10 @@
       "close": "Close"
     }
   },
+  "launcher": {
+    "pin": "Pin to dock",
+    "unpin": "Unpin from dock"
+  },
   "placeholders": {
     "search-icons": "e.g., noctalia, niri, battery, cloud",
     "profile-picture-path": "/home/user/.face",
@@ -1246,15 +1268,18 @@
     "title": "Session Menu",
     "click-again": "Click again to execute immediately",
     "action-in-seconds": "{action} in {seconds} seconds...",
+    "lock": "Lock",
     "lock-subtitle": "Lock your session",
     "lock-and-suspend": "Lock and Suspend",
     "lock-and-suspend-subtitle": "Lock session and put system to sleep",
-    "end-subtitle": "End your session",
-    "lock": "Lock",
     "suspend": "Suspend",
+    "suspend-subtitle": "Put system to sleep",
     "reboot": "Reboot",
+    "reboot-subtitle": "Restart your computer",
     "logout": "Logout",
-    "shutdown": "Shutdown"
+    "logout-subtitle": "End your session",
+    "shutdown": "Shutdown",
+    "shutdown-subtitle": "Turn off your computer"
   },
   "plugins": {
     "applications": "Applications",

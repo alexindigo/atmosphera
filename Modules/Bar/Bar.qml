@@ -28,7 +28,7 @@ Variants {
       }
     }
 
-    active: Settings.isLoaded && BarService.isVisible && modelData && modelData.name ? (Settings.data.bar.monitors.includes(modelData.name) || (Settings.data.bar.monitors.length === 0)) : false
+    active: BarService.isVisible && modelData && modelData.name ? (Settings.data.bar.monitors.includes(modelData.name) || (Settings.data.bar.monitors.length === 0)) : false
 
     sourceComponent: PanelWindow {
       screen: modelData || null
@@ -53,6 +53,12 @@ Variants {
         bottom: Settings.data.bar.floating && Settings.data.bar.position !== "top" ? Settings.data.bar.marginVertical * Style.marginXL * scaling : 0
         left: Settings.data.bar.floating && Settings.data.bar.position !== "right" ? Settings.data.bar.marginHorizontal * Style.marginXL * scaling : 0
         right: Settings.data.bar.floating && Settings.data.bar.position !== "left" ? Settings.data.bar.marginHorizontal * Style.marginXL * scaling : 0
+      }
+
+      Component.onCompleted: {
+        if (modelData && modelData.name) {
+          BarService.registerBar(modelData.name)
+        }
       }
 
       Item {

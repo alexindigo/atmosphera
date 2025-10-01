@@ -98,8 +98,8 @@ Item {
         return offset
       }
       text: root.text + root.suffix
-      font.family: Settings.data.ui.fontFixed
-      font.pointSize: textSize
+      family: Settings.data.ui.fontFixed
+      pointSize: textSize
       font.weight: Style.fontWeightMedium
       horizontalAlignment: Text.AlignHCenter
       verticalAlignment: Text.AlignVCenter
@@ -151,7 +151,7 @@ Item {
 
     NIcon {
       icon: root.icon
-      font.pointSize: iconSize
+      pointSize: iconSize
       color: hovered ? Color.mOnTertiary : Color.mOnSurface
       // Center horizontally
       x: (iconCircle.width - width) / 2

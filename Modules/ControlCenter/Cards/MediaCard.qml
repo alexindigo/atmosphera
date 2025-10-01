@@ -28,7 +28,7 @@ NBox {
 
       NIcon {
         icon: "disc"
-        font.pointSize: Style.fontSizeXXXL * 3 * scaling
+        pointSize: Style.fontSizeXXXL * 3 * scaling
         color: Color.mPrimary
         Layout.alignment: Qt.AlignHCenter
       }
@@ -68,13 +68,13 @@ NBox {
 
           NIcon {
             icon: "caret-down"
-            font.pointSize: Style.fontSizeXXL * scaling
+            pointSize: Style.fontSizeXXL * scaling
             color: Color.mOnSurfaceVariant
           }
 
           NText {
             text: playerSelectorButton.currentPlayer ? playerSelectorButton.currentPlayer.identity : ""
-            font.pointSize: Style.fontSizeXS * scaling
+            pointSize: Style.fontSizeXS * scaling
             color: Color.mOnSurfaceVariant
             Layout.fillWidth: true
           }
@@ -147,7 +147,7 @@ NBox {
           NIcon {
             icon: "disc"
             color: Color.mPrimary
-            font.pointSize: Style.fontSizeXXXL * 3 * scaling
+            pointSize: Style.fontSizeXXXL * 3 * scaling
             visible: !trackArt.visible
             anchors.centerIn: parent
           }
@@ -162,7 +162,7 @@ NBox {
           NText {
             visible: MediaService.trackTitle !== ""
             text: MediaService.trackTitle
-            font.pointSize: Style.fontSizeM * scaling
+            pointSize: Style.fontSizeM * scaling
             font.weight: Style.fontWeightBold
             elide: Text.ElideRight
             wrapMode: Text.Wrap
@@ -174,7 +174,7 @@ NBox {
             visible: MediaService.trackArtist !== ""
             text: MediaService.trackArtist
             color: Color.mPrimary
-            font.pointSize: Style.fontSizeXS * scaling
+            pointSize: Style.fontSizeXS * scaling
             elide: Text.ElideRight
             Layout.fillWidth: true
           }
@@ -183,7 +183,7 @@ NBox {
             visible: MediaService.trackAlbum !== ""
             text: MediaService.trackAlbum
             color: Color.mOnSurface
-            font.pointSize: Style.fontSizeXS * scaling
+            pointSize: Style.fontSizeXS * scaling
             elide: Text.ElideRight
             Layout.fillWidth: true
           }

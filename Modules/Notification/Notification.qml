@@ -22,7 +22,7 @@ Variants {
     property ListModel notificationModel: NotificationService.activeList
 
     // If no notification display activated in settings, then show them all
-    active: Settings.isLoaded && modelData && (Settings.data.notifications.monitors.includes(modelData.name) || (Settings.data.notifications.monitors.length === 0))
+    active: modelData && (Settings.data.notifications.monitors.includes(modelData.name) || (Settings.data.notifications.monitors.length === 0))
 
     Connections {
       target: ScalingService
@@ -37,11 +37,11 @@ Variants {
       screen: modelData
 
       WlrLayershell.namespace: "noctalia-notifications"
-      WlrLayershell.layer: (Settings.isLoaded && Settings.data && Settings.data.notifications && Settings.data.notifications.alwaysOnTop) ? WlrLayer.Overlay : WlrLayer.Top
+      WlrLayershell.layer: (Settings.data.notifications && Settings.data.notifications.alwaysOnTop) ? WlrLayer.Overlay : WlrLayer.Top
 
       color: Color.transparent
 
-      readonly property string location: (Settings.isLoaded && Settings.data && Settings.data.notifications && Settings.data.notifications.location) ? Settings.data.notifications.location : "top_right"
+      readonly property string location: (Settings.data.notifications && Settings.data.notifications.location) ? Settings.data.notifications.location : "top_right"
       readonly property bool isTop: (location === "top") || (location.length >= 3 && location.substring(0, 3) === "top")
       readonly property bool isBottom: (location === "bottom") || (location.length >= 6 && location.substring(0, 6) === "bottom")
       readonly property bool isLeft: location.indexOf("_left") >= 0
@@ -162,7 +162,7 @@ Variants {
               anchors.left: parent.left
               anchors.right: parent.right
               height: 2 * scaling
-              color: "transparent"
+              color: Color.transparent
 
               property real availableWidth: parent.width - (2 * parent.radius)
 
@@ -307,7 +307,7 @@ Variants {
                     NText {
                       text: `${model.appName || I18n.tr("system.unknown-app")} · ${Time.formatRelativeTime(model.timestamp)}`
                       color: Color.mSecondary
-                      font.pointSize: Style.fontSizeXS * scaling
+                      pointSize: Style.fontSizeXS * scaling
                     }
 
                     Item {
@@ -317,7 +317,7 @@ Variants {
 
                   NText {
                     text: model.summary || I18n.tr("general.no-summary")
-                    font.pointSize: Style.fontSizeL * scaling
+                    pointSize: Style.fontSizeL * scaling
                     font.weight: Style.fontWeightMedium
                     color: Color.mOnSurface
                     textFormat: Text.PlainText
@@ -330,7 +330,7 @@ Variants {
 
                   NText {
                     text: model.body || ""
-                    font.pointSize: Style.fontSizeM * scaling
+                    pointSize: Style.fontSizeM * scaling
                     color: Color.mOnSurface
                     textFormat: Text.PlainText
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere

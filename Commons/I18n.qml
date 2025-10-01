@@ -53,9 +53,10 @@ Singleton {
       try {
         var data = JSON.parse(text())
         root.translations = data
+        Logger.log("I18n", `Loaded translations for "${root.langCode}"`)
+
         root.isLoaded = true
         root.translationsLoaded()
-        Logger.log("I18n", `Loaded translations for "${root.langCode}"`)
       } catch (e) {
         Logger.error("I18n", `Failed to parse translation file: ${e}`)
         setLanguage("en")
@@ -215,7 +216,7 @@ Singleton {
     const filePath = `file://${Quickshell.shellDir}/Assets/Translations/${langCode}.json`
     fileView.path = filePath
     isLoaded = false
-    Logger.log("I18n", `Loading translations from: ${filePath}`)
+    Logger.log("I18n", `Loading translations: ${langCode}`)
 
     // Only load fallback translations if we are not using english and english is available
     if (langCode !== "en" && availableLanguages.includes("en")) {

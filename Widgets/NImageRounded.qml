@@ -66,7 +66,7 @@ Rectangle {
       Rectangle {
         id: background
         anchors.fill: parent
-        color: "transparent"
+        color: Color.transparent
         z: -1
       }
     }
@@ -78,7 +78,7 @@ Rectangle {
       sourceComponent: NIcon {
         anchors.centerIn: parent
         icon: fallbackIcon
-        font.pointSize: fallbackIconSize
+        pointSize: fallbackIconSize
         z: 0
       }
     }

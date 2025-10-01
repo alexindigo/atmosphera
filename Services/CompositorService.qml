@@ -14,7 +14,7 @@ Singleton {
 
   // Generic workspace and window data
   property ListModel workspaces: ListModel {}
-  property var windows: []
+  property ListModel windows: ListModel {}
   property int focusedWindowIndex: -1
 
   // Generic events
@@ -82,10 +82,17 @@ Singleton {
                                        workspaceChanged()
                                      })
 
-    backend.activeWindowChanged.connect(activeWindowChanged)
+    backend.activeWindowChanged.connect(() => {
+                                          // Sync active window when it changes
+                                          // TODO: Avoid re-syncing all windows
+                                          syncWindows()
+                                          // Forward the signal
+                                          activeWindowChanged()
+                                        })
+
     backend.windowListChanged.connect(() => {
                                         // Sync windows when they change
-                                        windows = backend.windows
+                                        syncWindows()
                                         // Forward the signal
                                         windowListChanged()
                                       })
@@ -97,7 +104,7 @@ Singleton {
 
     // Initial sync
     syncWorkspaces()
-    windows = backend.windows
+    syncWindows()
     focusedWindowIndex = backend.focusedWindowIndex
   }
 
@@ -111,10 +118,28 @@ Singleton {
     workspacesChanged()
   }
 
-  // Get window title for focused window
+  function syncWindows() {
+    windows.clear()
+    const ws = backend.windows
+    for (var i = 0; i < ws.length; i++) {
+      windows.append(ws[i])
+    }
+    // Emit signal to notify listeners that workspace list has been updated
+    windowListChanged()
+  }
+
+  // Get focused window
+  function getFocusedWindow() {
+    if (focusedWindowIndex >= 0 && focusedWindowIndex < windows.count) {
+      return windows.get(focusedWindowIndex)
+    }
+    return null
+  }
+
+  // Get focused window title
   function getFocusedWindowTitle() {
-    if (focusedWindowIndex >= 0 && focusedWindowIndex < windows.length) {
-      return windows[focusedWindowIndex].title || ""
+    if (focusedWindowIndex >= 0 && focusedWindowIndex < windows.count) {
+      return windows.get(focusedWindowIndex).title || ""
     }
     return ""
   }
@@ -139,12 +164,34 @@ Singleton {
     return null
   }
 
-  // Get focused window
-  function getFocusedWindow() {
-    if (focusedWindowIndex >= 0 && focusedWindowIndex < windows.length) {
-      return windows[focusedWindowIndex]
+  // Get active workspaces
+  function getActiveWorkspaces() {
+    const activeWorkspaces = []
+    for (var i = 0; i < workspaces.count; i++) {
+      const ws = workspaces.get(i)
+      if (ws.isActive) {
+        activeWorkspaces.push(ws)
+      }
     }
-    return null
+    return activeWorkspaces
+  }
+
+  // Set focused window
+  function focusWindow(windowId) {
+    if (backend && backend.focusWindow) {
+      backend.focusWindow(windowId)
+    } else {
+      Logger.warn("Compositor", "No backend available for window focus")
+    }
+  }
+
+  // Close window
+  function closeWindow(windowId) {
+    if (backend && backend.closeWindow) {
+      backend.closeWindow(windowId)
+    } else {
+      Logger.warn("Compositor", "No backend available for window closing")
+    }
   }
 
   // Session management
@@ -166,5 +213,17 @@ Singleton {
 
   function suspend() {
     Quickshell.execDetached(["systemctl", "suspend"])
+  }
+
+  function lockAndSuspend() {
+    try {
+      if (PanelService && PanelService.lockScreen && !PanelService.lockScreen.active) {
+        PanelService.lockScreen.active = true
+      }
+    } catch (e) {
+      Logger.warn("Compositor", "Failed to activate lock screen before suspend: " + e)
+    }
+    // Queue suspend to the next event loop cycle to allow lock UI to render
+    Qt.callLater(suspend)
   }
 }

@@ -12,7 +12,7 @@ Variants {
   delegate: Loader {
     required property ShellScreen modelData
 
-    active: Settings.isLoaded && CompositorService.isNiri && modelData && Settings.data.wallpaper.enabled
+    active: CompositorService.isNiri && modelData && Settings.data.wallpaper.enabled
 
     property string wallpaper: ""
 

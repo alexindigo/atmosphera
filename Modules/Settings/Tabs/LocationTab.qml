@@ -46,7 +46,7 @@ ColumnLayout {
                       "name": LocationService.stableName,
                       "coordinates": LocationService.displayCoordinates
                     })
-      font.pointSize: Style.fontSizeS * scaling
+      pointSize: Style.fontSizeS * scaling
       color: Color.mOnSurfaceVariant
       verticalAlignment: Text.AlignVCenter
       horizontalAlignment: Text.AlignRight

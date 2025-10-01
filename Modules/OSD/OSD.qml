@@ -22,7 +22,7 @@ Variants {
     property ListModel notificationModel: NotificationService.activeList
 
     // If no notification display activated in settings, then show them all
-    property bool canShowOnThisScreen: Settings.isLoaded && modelData && (Settings.data.osd.monitors.includes(modelData.name) || (Settings.data.osd.monitors.length === 0))
+    property bool canShowOnThisScreen: modelData && (Settings.data.osd.monitors.includes(modelData.name) || (Settings.data.osd.monitors.length === 0))
 
     // Loader is only active when actually showing something
     active: false
@@ -104,7 +104,7 @@ Variants {
       id: panel
       screen: modelData
 
-      readonly property string location: (Settings.isLoaded && Settings.data && Settings.data.osd && Settings.data.osd.location) ? Settings.data.osd.location : "top_right"
+      readonly property string location: (Settings.data.osd && Settings.data.osd.location) ? Settings.data.osd.location : "top_right"
       readonly property bool isTop: (location === "top") || (location.length >= 3 && location.substring(0, 3) === "top")
       readonly property bool isBottom: (location === "bottom") || (location.length >= 6 && location.substring(0, 6) === "bottom")
       readonly property bool isLeft: (location.indexOf("_left") >= 0) || (location === "left")
@@ -243,7 +243,7 @@ Variants {
           Item {
             anchors.fill: parent
 
-            Row {
+            RowLayout {
               anchors.left: parent.left
               anchors.right: parent.right
               anchors.verticalCenter: parent.verticalCenter
@@ -253,8 +253,8 @@ Variants {
               NIcon {
                 icon: root.getIcon()
                 color: root.getIconColor()
-                font.pointSize: Style.fontSizeXL * root.scaling
-                anchors.verticalCenter: parent.verticalCenter
+                pointSize: Style.fontSizeXL * root.scaling
+                Layout.alignment: Qt.AlignVCenter
 
                 Behavior on color {
                   ColorAnimation {
@@ -266,11 +266,11 @@ Variants {
 
               // Progress bar with calculated width
               Rectangle {
-                width: Math.round(220 * root.scaling)
+                Layout.preferredWidth: Math.round(220 * root.scaling)
                 height: panel.barThickness
                 radius: Math.round(panel.barThickness / 2)
                 color: Color.mSurfaceVariant
-                anchors.verticalCenter: parent.verticalCenter
+                Layout.alignment: Qt.AlignVCenter
 
                 Rectangle {
                   anchors.left: parent.left
@@ -299,12 +299,12 @@ Variants {
               NText {
                 text: root.getDisplayPercentage()
                 color: Color.mOnSurface
-                font.pointSize: Style.fontSizeS * root.scaling
-                font.family: Settings.data.ui.fontFixed
-                anchors.verticalCenter: parent.verticalCenter
+                pointSize: Style.fontSizeS * root.scaling
+                family: Settings.data.ui.fontFixed
+                Layout.alignment: Qt.AlignVCenter
                 horizontalAlignment: Text.AlignLeft
                 verticalAlignment: Text.AlignVCenter
-                width: Math.round(50 * root.scaling)
+                Layout.preferredWidth: Math.round(50 * root.scaling)
               }
             }
           }
@@ -340,8 +340,8 @@ Variants {
                 id: percentText
                 text: root.getDisplayPercentage()
                 color: Color.mOnSurface
-                font.pointSize: Style.fontSizeS * root.scaling
-                font.family: Settings.data.ui.fontFixed
+                pointSize: Style.fontSizeS * root.scaling
+                family: Settings.data.ui.fontFixed
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
                 horizontalAlignment: Text.AlignHCenter
@@ -389,7 +389,7 @@ Variants {
             NIcon {
               icon: root.getIcon()
               color: root.getIconColor()
-              font.pointSize: Style.fontSizeXL * root.scaling
+              pointSize: Style.fontSizeXL * root.scaling
               Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
               Layout.bottomMargin: vMargin + Math.round(Style.marginM * root.scaling) + balanceDelta
               Behavior on color {

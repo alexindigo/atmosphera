@@ -238,7 +238,7 @@ Rectangle {
               anchors.centerIn: parent
               text: modelData.category
               color: getCategoryColor(modelData.category)[1]
-              font.pointSize: Style.fontSizeXS * scaling
+              pointSize: Style.fontSizeXS * scaling
             }
           }
 
@@ -261,7 +261,7 @@ Rectangle {
               anchors.centerIn: parent
               text: modelData.token
               color: tokenMouseArea.containsMouse ? Color.mOnPrimary : Color.mSurface
-              font.pointSize: Style.fontSizeS * scaling
+              pointSize: Style.fontSizeS * scaling
               font.weight: Style.fontWeightBold
 
               Behavior on color {
@@ -278,7 +278,7 @@ Rectangle {
             Layout.alignment: Qt.AlignVCenter // Added this line
             text: modelData.description
             color: tokenMouseArea.containsMouse ? Color.mOnSurface : Color.mOnSurfaceVariant
-            font.pointSize: Style.fontSizeS * scaling
+            pointSize: Style.fontSizeS * scaling
             wrapMode: Text.WordWrap
 
             Behavior on color {
@@ -312,9 +312,9 @@ Rectangle {
 
             NText {
               anchors.centerIn: parent
-              text: Qt.formatDateTime(root.sampleDate, modelData.token)
+              text: Qt.locale().toString(root.sampleDate, modelData.token)
               color: tokenMouseArea.containsMouse ? Color.mOnPrimary : Color.mSurfaceVariant
-              font.pointSize: Style.fontSizeS * scaling
+              pointSize: Style.fontSizeS * scaling
 
               Behavior on color {
                 ColorAnimation {

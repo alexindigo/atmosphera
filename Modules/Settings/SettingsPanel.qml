@@ -396,14 +396,14 @@ NPanel {
                   NIcon {
                     icon: modelData.icon
                     color: tabTextColor
-                    font.pointSize: Style.fontSizeXL * scaling
+                    pointSize: Style.fontSizeXL * scaling
                   }
 
                   // Tab label
                   NText {
                     text: I18n.tr(modelData.label)
                     color: tabTextColor
-                    font.pointSize: Style.fontSizeM * scaling
+                    pointSize: Style.fontSizeM * scaling
                     font.weight: Style.fontWeightBold
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignVCenter
@@ -456,13 +456,13 @@ NPanel {
               NIcon {
                 icon: root.tabsModel[currentTabIndex]?.icon
                 color: Color.mPrimary
-                font.pointSize: Style.fontSizeXXL * scaling
+                pointSize: Style.fontSizeXXL * scaling
               }
 
               // Main title
               NText {
                 text: I18n.tr(root.tabsModel[currentTabIndex]?.label) || ""
-                font.pointSize: Style.fontSizeXL * scaling
+                pointSize: Style.fontSizeXL * scaling
                 font.weight: Style.fontWeightBold
                 color: Color.mPrimary
                 Layout.fillWidth: true

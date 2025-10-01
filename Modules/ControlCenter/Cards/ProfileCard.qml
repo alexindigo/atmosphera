@@ -45,7 +45,7 @@ NBox {
         text: I18n.tr("system.uptime", {
                         "uptime": uptimeText
                       })
-        font.pointSize: Style.fontSizeS * scaling
+        pointSize: Style.fontSizeS * scaling
         color: Color.mOnSurfaceVariant
       }
     }

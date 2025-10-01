@@ -100,7 +100,7 @@ Rectangle {
           return Color.mOnSurface
         }
       }
-      font.pointSize: Style.fontSizeXXL * 1.5 * scaling
+      pointSize: Style.fontSizeXXL * 1.5 * scaling
       Layout.alignment: Qt.AlignVCenter
     }
 
@@ -114,7 +114,7 @@ Rectangle {
         Layout.fillWidth: true
         text: root.message
         color: Color.mOnSurface
-        font.pointSize: Style.fontSizeL * scaling
+        pointSize: Style.fontSizeL * scaling
         font.weight: Style.fontWeightBold
         wrapMode: Text.WordWrap
         visible: text.length > 0
@@ -124,7 +124,7 @@ Rectangle {
         Layout.fillWidth: true
         text: root.description
         color: Color.mOnSurface
-        font.pointSize: Style.fontSizeM * scaling
+        pointSize: Style.fontSizeM * scaling
         wrapMode: Text.WordWrap
         visible: text.length > 0
       }

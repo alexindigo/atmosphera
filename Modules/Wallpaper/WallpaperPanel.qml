@@ -4,6 +4,7 @@ import QtQuick.Controls
 import Quickshell
 import Quickshell.Wayland
 import qs.Commons
+import qs.Modules.Settings
 import qs.Services
 import qs.Widgets
 import "../../Helpers/FuzzySort.js" as FuzzySort
@@ -51,16 +52,27 @@ NPanel {
 
         NIcon {
           icon: "settings-wallpaper-selector"
-          font.pointSize: Style.fontSizeXXL * scaling
+          pointSize: Style.fontSizeXXL * scaling
           color: Color.mPrimary
         }
 
         NText {
           text: I18n.tr("wallpaper.panel.title")
-          font.pointSize: Style.fontSizeL * scaling
+          pointSize: Style.fontSizeL * scaling
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface
           Layout.fillWidth: true
+        }
+
+        NIconButton {
+          icon: "settings"
+          tooltipText: I18n.tr("settings.wallpaper.settings.section.label")
+          baseSize: Style.baseWidgetSize * 0.8
+          onClicked: {
+            var settingsPanel = PanelService.getPanel("settingsPanel")
+            settingsPanel.requestedTab = SettingsPanel.Tab.Wallpaper
+            settingsPanel.open()
+          }
         }
 
         NIconButton {
@@ -122,11 +134,11 @@ NPanel {
               }
             }
 
-            contentItem: Text {
+            contentItem: NText {
               text: parent.text
-              font.pointSize: Style.fontSizeL * scaling
+              pointSize: Style.fontSizeL * scaling
               font.weight: screenTabBar.currentIndex === index ? Style.fontWeightBold : Style.fontWeightRegular
-              font.family: Settings.data.ui.fontDefault
+              family: Settings.data.ui.fontDefault
               color: screenTabBar.currentIndex === index ? Color.mOnSecondary : Color.mOnSurfaceVariant
               horizontalAlignment: Text.AlignHCenter
               verticalAlignment: Text.AlignVCenter
@@ -177,7 +189,7 @@ NPanel {
         NText {
           text: I18n.tr("wallpaper.panel.search")
           color: Color.mOnSurface
-          font.pointSize: Style.fontSizeM * scaling
+          pointSize: Style.fontSizeM * scaling
           Layout.preferredWidth: implicitWidth
         }
 
@@ -355,7 +367,7 @@ NPanel {
 
                     NIcon {
                       icon: "check"
-                      font.pointSize: Style.fontSizeM * scaling
+                      pointSize: Style.fontSizeM * scaling
                       font.weight: Style.fontWeightBold
                       color: Color.mOnSecondary
                       anchors.centerIn: parent
@@ -393,7 +405,7 @@ NPanel {
                   text: filename
                   color: Color.mOnSurfaceVariant
                   opacity: 0.5
-                  font.pointSize: Style.fontSizeXS * scaling
+                  pointSize: Style.fontSizeXS * scaling
                   Layout.fillWidth: true
                   Layout.leftMargin: Style.marginS * scaling
                   Layout.rightMargin: Style.marginS * scaling
@@ -431,7 +443,7 @@ NPanel {
               }
               NIcon {
                 icon: "folder-open"
-                font.pointSize: Style.fontSizeXXL * scaling
+                pointSize: Style.fontSizeXXL * scaling
                 color: Color.mOnSurface
                 Layout.alignment: Qt.AlignHCenter
               }

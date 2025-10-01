@@ -69,12 +69,6 @@
           "description": "Police à chasse fixe utilisée pour l'affichage des chiffres et des statistiques.",
           "placeholder": "Sélectionner la police à chasse fixe...",
           "search-placeholder": "Rechercher des polices à chasse fixe..."
-        },
-        "accent": {
-          "label": "Police d'accentuation",
-          "description": "Grande police utilisée pour les affichages proéminents.",
-          "placeholder": "Sélectionner la police d'affichage...",
-          "search-placeholder": "Rechercher des polices d'affichage..."
         }
       }
     },
@@ -978,7 +972,8 @@
         "auto-hide": {
           "label": "Masquer automatiquement",
           "description": "Masquer automatiquement le widget quand aucun média n'est en cours de lecture."
-        }
+        },
+        "no-active-player": "Aucun lecteur actif"
       },
       "clock": {
         "use-primary-color": {
@@ -1140,6 +1135,10 @@
       "close": "Fermer"
     }
   },
+  "launcher": {
+    "pin": "Épingler au dock",
+    "unpin": "Retirer du dock"
+  },
   "placeholders": {
     "search-icons": "ex: noctalia, niri, batterie, nuage",
     "profile-picture-path": "/home/user/.face",
@@ -1243,14 +1242,14 @@
     "title": "Menu de session",
     "click-again": "Cliquez à nouveau pour exécuter immédiatement",
     "action-in-seconds": "{action} dans {seconds} secondes...",
+    "lock": "Verrouiller",
     "lock-subtitle": "Verrouiller votre session",
     "lock-and-suspend": "Verrouiller et Mettre en veille",
     "lock-and-suspend-subtitle": "Verrouiller la session et mettre le système en veille",
-    "end-subtitle": "Terminer votre session",
-    "lock": "Verrouiller",
     "suspend": "Mettre en veille",
     "reboot": "Redémarrer",
     "logout": "Déconnexion",
+    "logout-subtitle": "Terminer votre session",
     "shutdown": "Éteindre"
   },
   "plugins": {

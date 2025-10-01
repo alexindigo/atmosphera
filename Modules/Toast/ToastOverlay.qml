@@ -16,6 +16,6 @@ Variants {
     scaling: ScalingService.getScreenScale(modelData)
 
     // Only activate on enabled screens
-    active: Settings.isLoaded && modelData && (Settings.data.notifications.monitors.includes(modelData.name) || Settings.data.notifications.monitors.length === 0)
+    active: modelData && (Settings.data.notifications.monitors.includes(modelData.name) || Settings.data.notifications.monitors.length === 0)
   }
 }

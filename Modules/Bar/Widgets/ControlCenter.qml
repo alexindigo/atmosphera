@@ -54,7 +54,7 @@ NIconButton {
     height: width
     source: {
       if (customIconPath !== "")
-        return customIconPath
+        return customIconPath.startsWith("file://") ? customIconPath : "file://" + customIconPath
       if (useDistroLogo)
         return DistroLogoService.osLogo
       return ""

@@ -2,7 +2,7 @@
   "settings": {
     "general": {
       "title": "Allgemein",
-      
+
       "profile": {
         "section": {
           "label": "Profil",
@@ -71,12 +71,6 @@
           "description": "Monospace-Schriftart für Zahlen und Statistik-Anzeigen.",
           "placeholder": "Monospace-Schriftart auswählen...",
           "search-placeholder": "Monospace-Schriftarten suchen..."
-        },
-        "accent": {
-          "label": "Akzent-Schriftart",
-          "description": "Große Schriftart für hervorgehobene Anzeigen.",
-          "placeholder": "Display-Schriftart auswählen...",
-          "search-placeholder": "Display-Schriftarten suchen..."
         }
       }
     },
@@ -251,6 +245,10 @@
         "section": {
           "label": "Monitor-Anzeige",
           "description": "Statusleiste auf bestimmten Monitoren anzeigen. Standard ist alle, wenn keine ausgewählt sind."
+        },
+        "only-same-output": {
+          "label": "Nur Apps vom gleichen Bildschirm",
+          "description": "Zeige nur Apps vom dem Bildschirm an, wo sich das Dock befindet."
         }
       }
     },
@@ -997,7 +995,8 @@
         "scrolling-mode": {
           "label": "Scrollmodus",
           "description": "Steuern, wann Textscrolling für lange Track-Titel aktiviert ist."
-        }
+        },
+        "no-active-player": "Kein aktiver Player"
       },
       "clock": {
         "use-primary-color": {
@@ -1021,6 +1020,16 @@
           "description": "Verwenden Sie ein Leerzeichen, um jeden Teil in eine neue Zeile zu trennen."
         },
         "preview": "Vorschau"
+      },
+      "taskbar": {
+        "only-active-workspaces": {
+          "label": "Nur von aktiven Arbeitsbereichen",
+          "description": "Zeige nur Apps von aktiven Arbeitsbereichen an."
+        },
+        "only-same-output": {
+          "label": "Nur vom gleichen Bildschirm",
+          "description": "Zeige nur Apps vom dem Bildschirm an, wo sich die Taskbar befindet."
+        }
       }
     }
   },
@@ -1159,13 +1168,17 @@
       "close": "Schließen"
     }
   },
+  "launcher": {
+    "pin": "An das Dock anheften",
+    "unpin": "Vom Dock lösen"
+  },
   "placeholders": {
     "search-icons": "z.B. noctalia, niri, battery, cloud",
     "profile-picture-path": "/home/benutzer/.face",
     "enter-width-pixels": "Breite in Pixeln eingeben",
     "enter-command": "Befehl eingeben (App oder benutzerdefiniertes Skript)",
     "command-example": "echo \"Hallo Welt\"",
-    
+
     "search-wallpapers": "Zum Filtern von Hintergrundbildern eingeben...",
     "search-launcher": "Einträge suchen... oder > für Befehle verwenden",
     "search": "Suchen...",
@@ -1237,7 +1250,7 @@
     "frame-rates": {
       "fps": "{fps} FPS"
     },
-    
+
     "screen-recording": {
       "sources": {
         "portal": "Portal",
@@ -1264,14 +1277,14 @@
     "title": "Sitzungsmenü",
     "click-again": "Erneut klicken für sofortige Ausführung",
     "action-in-seconds": "{action} in {seconds} Sekunden...",
+    "lock": "Sperren",
     "lock-subtitle": "Sitzung sperren",
     "lock-and-suspend": "Sperren und Ruhezustand",
     "lock-and-suspend-subtitle": "Sitzung sperren und System in den Ruhezustand versetzen",
-    "end-subtitle": "Sitzung beenden",
-    "lock": "Sperren",
     "suspend": "Ruhezustand",
     "reboot": "Neu starten",
     "logout": "Abmelden",
+    "logout-subtitle": "Sitzung beenden",
     "shutdown": "Herunterfahren"
   },
   "plugins": {

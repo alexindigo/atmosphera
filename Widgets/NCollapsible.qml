@@ -82,7 +82,7 @@ ColumnLayout {
       NIcon {
         id: chevronIcon
         icon: "chevron-right"
-        font.pointSize: Style.fontSizeL * scaling
+        pointSize: Style.fontSizeL * scaling
         color: root.expanded ? Color.mOnSecondary : Color.mOnSurfaceVariant
         Layout.alignment: Qt.AlignVCenter
 
@@ -109,7 +109,7 @@ ColumnLayout {
 
         NText {
           text: root.label
-          font.pointSize: Style.fontSizeL * scaling
+          pointSize: Style.fontSizeL * scaling
           font.weight: Style.fontWeightSemiBold
           color: root.expanded ? Color.mOnSecondary : Color.mOnSurface
           Layout.fillWidth: true
@@ -124,7 +124,7 @@ ColumnLayout {
 
         NText {
           text: root.description
-          font.pointSize: Style.fontSizeS * scaling
+          pointSize: Style.fontSizeS * scaling
           font.weight: Style.fontWeightRegular
           color: root.expanded ? Color.mOnSecondary : Color.mOnSurfaceVariant
           Layout.fillWidth: true

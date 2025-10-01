@@ -6,6 +6,9 @@ import qs.Commons
 Item {
   id: root
 
+  // Sorts floating windows after scrolling ones
+  property int floatingWindowPosition: Number.MAX_SAFE_INTEGER
+
   // Properties that match the facade interface
   property ListModel workspaces: ListModel {}
   property var windows: []
@@ -91,32 +94,7 @@ Item {
       onRead: function (line) {
         try {
           const windowsData = JSON.parse(line)
-          const windowsList = []
-
-          for (const win of windowsData) {
-            windowsList.push({
-                               "id": win.id,
-                               "title": win.title || "",
-                               "appId": win.app_id || "",
-                               "workspaceId": win.workspace_id || null,
-                               "isFocused": win.is_focused === true
-                             })
-          }
-
-          windowsList.sort((a, b) => a.id - b.id)
-          windows = windowsList
-          windowListChanged()
-
-          // Update focused window index
-          focusedWindowIndex = -1
-          for (var i = 0; i < windowsList.length; i++) {
-            if (windowsList[i].isFocused) {
-              focusedWindowIndex = i
-              break
-            }
-          }
-
-          activeWindowChanged()
+          recollectWindows(windowsData)
         } catch (e) {
           Logger.error("NiriService", "Failed to parse windows:", e, line)
         }
@@ -147,8 +125,9 @@ Item {
                     updateWorkspaces()
                   } else if (event.WindowFocusChanged) {
                     handleWindowFocusChanged(event.WindowFocusChanged)
+                  } else if (event.WindowLayoutsChanged) {
+                    handleWindowLayoutsChanged(event.WindowLayoutsChanged)
                   }
-                  // Removed OverviewOpenedOrClosed handling
                 } catch (e) {
                   Logger.error("NiriService", "Error parsing event stream:", e, data)
                 }
@@ -156,19 +135,81 @@ Item {
     }
   }
 
+  // Utility functions
+  function getWindowPosition(layout) {
+    if (layout.pos_in_scrolling_layout) {
+      return {
+        "x": layout.pos_in_scrolling_layout[0],
+        "y": layout.pos_in_scrolling_layout[1]
+      }
+    } else {
+      return {
+        "x": floatingWindowPosition,
+        "y": floatingWindowPosition
+      }
+    }
+  }
+
+  function getWindowOutput(win) {
+    for (var i = 0; i < workspaces.count; i++) {
+      if (workspaces.get(i).id === win.workspace_id) {
+        return workspaces.get(i).output
+      }
+    }
+    return null
+  }
+
+  function getWindowData(win) {
+    return {
+      "id": win.id,
+      "title": win.title || "",
+      "appId": win.app_id || "",
+      "workspaceId": win.workspace_id || -1,
+      "isFocused": win.is_focused === true,
+      "output": getWindowOutput(win) || "",
+      "position": getWindowPosition(win.layout)
+    }
+  }
+
+  // Sort windows
+  // 1. by workspace ID
+  // 2. by position X
+  // 3. by position Y
+  function compareWindows(a, b) {
+    if (a.workspaceId !== b.workspaceId) {
+      return a.workspaceId - b.workspaceId
+    }
+    if (a.position.x !== b.position.x) {
+      return a.position.x - b.position.x
+    }
+    return a.position.y - b.position.y
+  }
+
+  function recollectWindows(windowsData) {
+    const windowsList = []
+    for (const win of windowsData) {
+      windowsList.push(getWindowData(win))
+    }
+    windowsList.sort(compareWindows)
+    windows = windowsList
+    windowListChanged()
+
+    focusedWindowIndex = -1
+    for (var i = 0; i < windowsList.length; i++) {
+      if (windowsList[i].isFocused) {
+        focusedWindowIndex = i
+        break
+      }
+    }
+    activeWindowChanged()
+  }
+
   // Event handlers
   function handleWindowOpenedOrChanged(eventData) {
     try {
       const windowData = eventData.window
       const existingIndex = windows.findIndex(w => w.id === windowData.id)
-
-      const newWindow = {
-        "id": windowData.id,
-        "title": windowData.title || "",
-        "appId": windowData.app_id || "",
-        "workspaceId": windowData.workspace_id || null,
-        "isFocused": windowData.is_focused === true
-      }
+      const newWindow = getWindowData(windowData)
 
       if (existingIndex >= 0) {
         // Update existing window
@@ -176,8 +217,8 @@ Item {
       } else {
         // Add new window
         windows.push(newWindow)
-        windows.sort((a, b) => a.id - b.id)
       }
+      windows.sort(compareWindows)
 
       // Update focused window index if this window is focused
       if (newWindow.isFocused) {
@@ -186,6 +227,9 @@ Item {
 
         // Only emit activeWindowChanged if the focused window actually changed
         if (oldFocusedIndex !== focusedWindowIndex) {
+          if (oldFocusedIndex >= 0 && oldFocusedIndex < windows.length) {
+            windows[oldFocusedIndex].isFocused = false
+          }
           activeWindowChanged()
         }
       }
@@ -223,32 +267,7 @@ Item {
   function handleWindowsChanged(eventData) {
     try {
       const windowsData = eventData.windows
-      const windowsList = []
-
-      for (const win of windowsData) {
-        windowsList.push({
-                           "id": win.id,
-                           "title": win.title || "",
-                           "appId": win.app_id || "",
-                           "workspaceId": win.workspace_id || null,
-                           "isFocused": win.is_focused === true
-                         })
-      }
-
-      windowsList.sort((a, b) => a.id - b.id)
-      windows = windowsList
-      windowListChanged()
-
-      // Update focused window index
-      focusedWindowIndex = -1
-      for (var i = 0; i < windowsList.length; i++) {
-        if (windowsList[i].isFocused) {
-          focusedWindowIndex = i
-          break
-        }
-      }
-
-      activeWindowChanged()
+      recollectWindows(windowsData)
     } catch (e) {
       Logger.error("NiriService", "Error handling WindowsChanged:", e)
     }
@@ -258,8 +277,17 @@ Item {
     try {
       const focusedId = eventData.id
 
+      if (windows[focusedWindowIndex]) {
+        windows[focusedWindowIndex].isFocused = false
+      }
+
       if (focusedId) {
         const newIndex = windows.findIndex(w => w.id === focusedId)
+
+        if (newIndex >= 0 && newIndex < windows.length) {
+          windows[newIndex].isFocused = true
+        }
+
         focusedWindowIndex = newIndex >= 0 ? newIndex : -1
       } else {
         focusedWindowIndex = -1
@@ -271,12 +299,47 @@ Item {
     }
   }
 
+  function handleWindowLayoutsChanged(eventData) {
+    try {
+      for (const change of eventData.changes) {
+        const windowId = change[0]
+        const layout = change[1]
+        const window = windows.find(w => w.id === windowId)
+        if (window) {
+          window.position = getWindowPosition(layout)
+        }
+      }
+
+      windows.sort(compareWindows)
+
+      windowListChanged()
+    } catch (e) {
+      Logger.error("NiriService", "Error handling WindowLayoutChanged:", e)
+    }
+  }
+
   // Public functions
   function switchToWorkspace(workspaceId) {
     try {
       Quickshell.execDetached(["niri", "msg", "action", "focus-workspace", workspaceId.toString()])
     } catch (e) {
       Logger.error("NiriService", "Failed to switch workspace:", e)
+    }
+  }
+
+  function focusWindow(windowId) {
+    try {
+      Quickshell.execDetached(["niri", "msg", "action", "focus-window", "--id", windowId.toString()])
+    } catch (e) {
+      Logger.error("NiriService", "Failed to switch window:", e)
+    }
+  }
+
+  function closeWindow(windowId) {
+    try {
+      Quickshell.execDetached(["niri", "msg", "action", "close-window", "--id", windowId.toString()])
+    } catch (e) {
+      Logger.error("NiriService", "Failed to close window:", e)
     }
   }
 

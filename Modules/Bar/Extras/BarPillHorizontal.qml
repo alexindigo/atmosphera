@@ -84,8 +84,8 @@ Item {
         return centerX + offset
       }
       text: root.text + root.suffix
-      font.family: Settings.data.ui.fontFixed
-      font.pointSize: textSize
+      family: Settings.data.ui.fontFixed
+      pointSize: textSize
       font.weight: Style.fontWeightBold
       color: forceOpen ? Color.mOnSurface : Color.mPrimary
       visible: revealed
@@ -126,7 +126,7 @@ Item {
 
     NIcon {
       icon: root.icon
-      font.pointSize: iconSize
+      pointSize: iconSize
       color: hovered ? Color.mOnTertiary : Color.mOnSurface
       // Center horizontally
       x: (iconCircle.width - width) / 2

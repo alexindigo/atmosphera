@@ -69,9 +69,15 @@ Item {
 
     if (!query || query.trim() === "") {
       // Return all apps, optionally sorted by usage
+      const favoriteApps = Settings.data.appLauncher.favoriteApps || []
       let sorted
       if (Settings.data.appLauncher.sortByMostUsed) {
         sorted = entries.slice().sort((a, b) => {
+                                        // Favorites first
+                                        const aFav = favoriteApps.includes(getAppKey(a))
+                                        const bFav = favoriteApps.includes(getAppKey(b))
+                                        if (aFav !== bFav)
+                                        return aFav ? -1 : 1
                                         const ua = getUsageCount(a)
                                         const ub = getUsageCount(b)
                                         if (ub !== ua)
@@ -79,7 +85,13 @@ Item {
                                         return (a.name || "").toLowerCase().localeCompare((b.name || "").toLowerCase())
                                       })
       } else {
-        sorted = entries.slice().sort((a, b) => (a.name || "").toLowerCase().localeCompare((b.name || "").toLowerCase()))
+        sorted = entries.slice().sort((a, b) => {
+                                        const aFav = favoriteApps.includes(getAppKey(a))
+                                        const bFav = favoriteApps.includes(getAppKey(b))
+                                        if (aFav !== bFav)
+                                        return aFav ? -1 : 1
+                                        return (a.name || "").toLowerCase().localeCompare((b.name || "").toLowerCase())
+                                      })
       }
       return sorted.map(app => createResultEntry(app))
     }
@@ -92,7 +104,18 @@ Item {
                                           "limit": 20
                                         })
 
-      return fuzzyResults.map(result => createResultEntry(result.obj))
+      // Sort favorites first within fuzzy results while preserving fuzzysort order otherwise
+      const favoriteApps = Settings.data.appLauncher.favoriteApps || []
+      const fav = []
+      const nonFav = []
+      for (const r of fuzzyResults) {
+        const app = r.obj
+        if (favoriteApps.includes(getAppKey(app)))
+          fav.push(r)
+        else
+          nonFav.push(r)
+      }
+      return fav.concat(nonFav).map(result => createResultEntry(result.obj))
     } else {
       // Fallback to simple search
       const searchTerm = query.toLowerCase()
@@ -118,6 +141,7 @@ Item {
 
   function createResultEntry(app) {
     return {
+      "appId": getAppKey(app),
       "name": app.name || "Unknown",
       "description": app.genericName || app.comment || "",
       "icon": app.icon || "application-x-executable",

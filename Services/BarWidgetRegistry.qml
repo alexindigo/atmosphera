@@ -41,7 +41,7 @@ Singleton {
                                   "ActiveWindow": {
                                     "allowUserSettings": true,
                                     "showIcon": true,
-                                    "autoHide": true,
+                                    "autoHide": false,
                                     "scrollingMode": "hover"
                                   },
                                   "Battery": {
@@ -81,7 +81,7 @@ Singleton {
                                   },
                                   "MediaMini": {
                                     "allowUserSettings": true,
-                                    "autoHide": true,
+                                    "autoHide": false,
                                     "scrollingMode": "hover",
                                     "showAlbumArt": false,
                                     "showVisualizer": false,
@@ -108,6 +108,11 @@ Singleton {
                                     "showMemoryAsPercent": false,
                                     "showNetworkStats": false,
                                     "showDiskUsage": false
+                                  },
+                                  "Taskbar": {
+                                    "allowUserSettings": true,
+                                    "onlySameOutput": true,
+                                    "onlyActiveWorkspaces": true
                                   },
                                   "Workspace": {
                                     "allowUserSettings": true,

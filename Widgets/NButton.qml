@@ -78,9 +78,8 @@ Rectangle {
     NIcon {
       Layout.alignment: Qt.AlignVCenter
       visible: root.icon !== ""
-
       icon: root.icon
-      font.pointSize: root.iconSize
+      pointSize: root.iconSize
       color: {
         if (!root.enabled)
           return Color.mOnSurfaceVariant
@@ -105,7 +104,7 @@ Rectangle {
       Layout.alignment: Qt.AlignVCenter
       visible: root.text !== ""
       text: root.text
-      font.pointSize: root.fontSize
+      pointSize: root.fontSize
       font.weight: root.fontWeight
       color: {
         if (!root.enabled)

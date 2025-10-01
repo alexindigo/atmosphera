@@ -22,7 +22,7 @@ ColumnLayout {
 
   NText {
     text: root.label
-    font.pointSize: Style.fontSizeL * scaling
+    pointSize: Style.fontSizeL * scaling
     color: Color.mSecondary
     font.weight: Style.fontWeightMedium
     Layout.fillWidth: true
@@ -67,7 +67,7 @@ ColumnLayout {
         // One device BT icon
         NIcon {
           icon: BluetoothService.getDeviceIcon(modelData)
-          font.pointSize: Style.fontSizeXXL * scaling
+          pointSize: Style.fontSizeXXL * scaling
           color: getContentColor(Color.mOnSurface)
           Layout.alignment: Qt.AlignVCenter
         }
@@ -79,7 +79,7 @@ ColumnLayout {
           // Device name
           NText {
             text: modelData.name || modelData.deviceName
-            font.pointSize: Style.fontSizeM * scaling
+            pointSize: Style.fontSizeM * scaling
             font.weight: Style.fontWeightMedium
             elide: Text.ElideRight
             color: getContentColor(Color.mOnSurface)
@@ -90,7 +90,7 @@ ColumnLayout {
           NText {
             text: BluetoothService.getStatusString(modelData)
             visible: text !== ""
-            font.pointSize: Style.fontSizeXS * scaling
+            pointSize: Style.fontSizeXS * scaling
             color: getContentColor(Color.mOnSurfaceVariant)
           }
 
@@ -103,21 +103,21 @@ ColumnLayout {
             // Device signal strength - "Unknown" when not connected
             NText {
               text: BluetoothService.getSignalStrength(modelData)
-              font.pointSize: Style.fontSizeXS * scaling
+              pointSize: Style.fontSizeXS * scaling
               color: getContentColor(Color.mOnSurfaceVariant)
             }
 
             NIcon {
               visible: modelData.signalStrength > 0 && !modelData.pairing && !modelData.blocked
               text: BluetoothService.getSignalIcon(modelData)
-              font.pointSize: Style.fontSizeXS * scaling
+              pointSize: Style.fontSizeXS * scaling
               color: getContentColor(Color.mOnSurface)
             }
 
             NText {
               visible: modelData.signalStrength > 0 && !modelData.pairing && !modelData.blocked
               text: (modelData.signalStrength !== undefined && modelData.signalStrength > 0) ? modelData.signalStrength + "%" : ""
-              font.pointSize: Style.fontSizeXS * scaling
+              pointSize: Style.fontSizeXS * scaling
               color: getContentColor(Color.mOnSurface)
             }
           }
@@ -126,7 +126,7 @@ ColumnLayout {
           NText {
             visible: modelData.batteryAvailable
             text: BluetoothService.getBattery(modelData)
-            font.pointSize: Style.fontSizeXS * scaling
+            pointSize: Style.fontSizeXS * scaling
             color: getContentColor(Color.mOnSurfaceVariant)
           }
         }

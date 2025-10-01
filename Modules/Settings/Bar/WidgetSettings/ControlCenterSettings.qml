@@ -59,7 +59,7 @@ ColumnLayout {
     NIcon {
       Layout.alignment: Qt.AlignVCenter
       icon: valueIcon
-      font.pointSize: Style.fontSizeXXL * 1.5 * scaling
+      pointSize: Style.fontSizeXXL * 1.5 * scaling
       visible: valueIcon !== "" && valueCustomIconPath === ""
     }
   }

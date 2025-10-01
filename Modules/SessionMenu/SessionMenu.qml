@@ -41,22 +41,22 @@ NPanel {
       "action": "suspend",
       "icon": "suspend",
       "title": I18n.tr("session-menu.suspend"),
-      "subtitle": "Put the system to sleep"
+      "subtitle": I18n.tr("session-menu.suspend-subtitle")
     }, {
       "action": "reboot",
       "icon": "reboot",
       "title": I18n.tr("session-menu.reboot"),
-      "subtitle": "Restart the system"
+      "subtitle": I18n.tr("session-menu.reboot-subtitle")
     }, {
       "action": "logout",
       "icon": "logout",
       "title": I18n.tr("session-menu.logout"),
-      "subtitle": I18n.tr("session-menu.end-subtitle")
+      "subtitle": I18n.tr("session-menu.logout-subtitle")
     }, {
       "action": "shutdown",
       "icon": "shutdown",
       "title": I18n.tr("session-menu.shutdown"),
-      "subtitle": "Turn off the system",
+      "subtitle": I18n.tr("session-menu.shutdown-subtitle"),
       "isShutdown": true
     }]
 
@@ -103,10 +103,7 @@ NPanel {
       }
       break
     case "lockAndSuspend":
-      if (!lockScreen.active) {
-        lockScreen.active = true
-      }
-      CompositorService.suspend()
+      CompositorService.lockAndSuspend()
       break
     case "suspend":
       CompositorService.suspend()
@@ -279,7 +276,7 @@ NPanel {
                                         "seconds": Math.ceil(timeRemaining / 1000)
                                       }) : I18n.tr("session-menu.title")
           font.weight: Style.fontWeightBold
-          font.pointSize: Style.fontSizeL * scaling
+          pointSize: Style.fontSizeL * scaling
           color: timerActive ? Color.mPrimary : Color.mOnSurface
           Layout.alignment: Qt.AlignVCenter
           verticalAlignment: Text.AlignVCenter
@@ -388,7 +385,7 @@ NPanel {
             return Color.mOnTertiary
           return Color.mOnSurface
         }
-        font.pointSize: Style.fontSizeXXXL * scaling
+        pointSize: Style.fontSizeXXXL * scaling
         width: Style.baseWidgetSize * 0.6 * scaling
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
@@ -412,7 +409,7 @@ NPanel {
         NText {
           text: buttonRoot.title
           font.weight: Style.fontWeightMedium
-          font.pointSize: Style.fontSizeM * scaling
+          pointSize: Style.fontSizeM * scaling
           color: {
             if (buttonRoot.pending)
               return Color.mPrimary
@@ -437,7 +434,7 @@ NPanel {
             }
             return buttonRoot.subtitle
           }
-          font.pointSize: Style.fontSizeXS * scaling
+          pointSize: Style.fontSizeXS * scaling
           color: {
             if (buttonRoot.pending)
               return Color.mPrimary
@@ -467,7 +464,7 @@ NPanel {
         NText {
           anchors.centerIn: parent
           text: Math.ceil(timeRemaining / 1000)
-          font.pointSize: Style.fontSizeS * scaling
+          pointSize: Style.fontSizeS * scaling
           font.weight: Style.fontWeightBold
           color: Color.mOnPrimary
         }

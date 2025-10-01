@@ -182,12 +182,12 @@ ColumnLayout {
             // Horizontal
             Repeater {
               Layout.topMargin: Style.marginM * scaling
-              model: Qt.formatDateTime(now, valueFormatHorizontal.trim()).split("\\n")
+              model: Qt.locale().toString(now, valueFormatHorizontal.trim()).split("\\n")
               delegate: NText {
                 visible: text !== ""
                 text: modelData
-                font.family: valueUseMonospacedFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault
-                font.pointSize: Style.fontSizeM * scaling
+                family: valueUseMonospacedFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault
+                pointSize: Style.fontSizeM * scaling
                 font.weight: Style.fontWeightBold
                 color: valueUsePrimaryColor ? Color.mPrimary : Color.mOnSurface
                 wrapMode: Text.WordWrap
@@ -213,12 +213,12 @@ ColumnLayout {
 
             Repeater {
               Layout.topMargin: Style.marginM * scaling
-              model: Qt.formatDateTime(now, valueFormatVertical.trim()).split(" ")
+              model: Qt.locale().toString(now, valueFormatVertical.trim()).split(" ")
               delegate: NText {
                 visible: text !== ""
                 text: modelData
-                font.family: valueUseMonospacedFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault
-                font.pointSize: Style.fontSizeM * scaling
+                family: valueUseMonospacedFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault
+                pointSize: Style.fontSizeM * scaling
                 font.weight: Style.fontWeightBold
                 color: valueUsePrimaryColor ? Color.mPrimary : Color.mOnSurface
                 wrapMode: Text.WordWrap

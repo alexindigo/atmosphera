@@ -91,14 +91,14 @@ ColumnLayout {
 
         NIcon {
           icon: "download"
-          font.pointSize: Style.fontSizeXXL * scaling
+          pointSize: Style.fontSizeXXL * scaling
           color: updateArea.containsMouse ? Color.mSurface : Color.mPrimary
         }
 
         NText {
           id: updateText
           text: I18n.tr("settings.about.noctalia.download-latest")
-          font.pointSize: Style.fontSizeL * scaling
+          pointSize: Style.fontSizeL * scaling
           color: updateArea.containsMouse ? Color.mSurface : Color.mPrimary
         }
       }
@@ -200,7 +200,7 @@ ColumnLayout {
 
           NText {
             text: (modelData.contributions || 0) + " " + ((modelData.contributions || 0) === 1 ? "commit" : "commits")
-            font.pointSize: Style.fontSizeXS * scaling
+            pointSize: Style.fontSizeXS * scaling
             color: contributorArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface
           }
         }

@@ -278,6 +278,22 @@ Item {
     }
   }
 
+  function focusWindow(windowId) {
+    try {
+      Hyprland.dispatch(`focuswindow ${windowId}`)
+    } catch (e) {
+      Logger.error("HyprlandService", "Failed to switch window:", e)
+    }
+  }
+
+  function closeWindow(windowId) {
+    try {
+      Hyprland.dispatch(`killwindow ${windowId}`)
+    } catch (e) {
+      Logger.error("HyprlandService", "Failed to close window:", e)
+    }
+  }
+
   function logout() {
     try {
       Quickshell.execDetached(["hyprctl", "dispatch", "exit"])

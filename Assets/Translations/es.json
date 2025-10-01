@@ -69,12 +69,6 @@
           "description": "Fuente monoespaciada utilizada para la visualización de números y estadísticas.",
           "placeholder": "Seleccionar fuente monoespaciada...",
           "search-placeholder": "Buscar fuentes monoespaciadas..."
-        },
-        "accent": {
-          "label": "Fuente de acento",
-          "description": "Fuente grande utilizada para visualizaciones destacadas.",
-          "placeholder": "Seleccionar fuente de visualización...",
-          "search-placeholder": "Buscar fuentes de visualización..."
         }
       }
     },
@@ -978,7 +972,8 @@
         "scrolling-mode": {
           "label": "Modo de desplazamiento",
           "description": "Controlar cuándo está habilitado el desplazamiento de texto para títulos de pista largos."
-        }
+        },
+        "no-active-player": "Sin reproductor activo"
       },
       "clock": {
         "use-primary-color": {
@@ -1140,6 +1135,10 @@
       "close": "Cerrar"
     }
   },
+  "launcher": {
+    "pin": "Anclar al dock",
+    "unpin": "Desanclar del dock"
+  },
   "placeholders": {
     "search-icons": "ej., noctalia, niri, battery, cloud",
     "profile-picture-path": "/home/usuario/.face",
@@ -1243,14 +1242,14 @@
     "title": "Menú de sesión",
     "click-again": "Haz clic de nuevo para ejecutar inmediatamente",
     "action-in-seconds": "{action} en {seconds} segundos...",
+    "lock": "Bloquear",
     "lock-subtitle": "Bloquea tu sesión",
     "lock-and-suspend": "Bloquear y Suspender",
     "lock-and-suspend-subtitle": "Bloquear sesión y poner el sistema en suspensión",
-    "end-subtitle": "Finaliza tu sesión",
-    "lock": "Bloquear",
     "suspend": "Suspender",
     "reboot": "Reiniciar",
     "logout": "Cerrar sesión",
+    "logout-subtitle": "Finaliza tu sesión",
     "shutdown": "Apagar"
   },
   "plugins": {

@@ -29,7 +29,6 @@ import qs.Modules.Bar
 import qs.Modules.Bar.Extras
 import qs.Modules.Bar.Bluetooth
 import qs.Modules.Bar.Calendar
-
 import qs.Modules.Bar.WiFi
 
 // Panels & UI Components
@@ -45,85 +44,122 @@ import qs.Modules.Wallpaper
 ShellRoot {
   id: shellRoot
 
-  Background {}
-  Overview {}
-  ScreenCorners {}
-  Bar {}
-  Dock {}
-
-  Notification {
-    id: notification
-  }
-
-  LockScreen {
-    id: lockScreen
-  }
-
-  ToastOverlay {}
-  OSD {}
-
-  // IPCService is treated as a service
-  // but it's actually an Item that needs to exists in the shell.
-  IPCService {}
-
-  // ------------------------------
-  // All the NPanels
-  Launcher {
-    id: launcherPanel
-    objectName: "launcherPanel"
-  }
-
-  ControlCenterPanel {
-    id: controlCenterPanel
-    objectName: "controlCenterPanel"
-  }
-
-  CalendarPanel {
-    id: calendarPanel
-    objectName: "calendarPanel"
-  }
-
-  SettingsPanel {
-    id: settingsPanel
-    objectName: "settingsPanel"
-  }
-
-  NotificationHistoryPanel {
-    id: notificationHistoryPanel
-    objectName: "notificationHistoryPanel"
-  }
-
-  SessionMenu {
-    id: sessionMenuPanel
-    objectName: "sessionMenuPanel"
-  }
-
-  WiFiPanel {
-    id: wifiPanel
-    objectName: "wifiPanel"
-  }
-
-  BluetoothPanel {
-    id: bluetoothPanel
-    objectName: "bluetoothPanel"
-  }
-
-  WallpaperPanel {
-    id: wallpaperPanel
-    objectName: "wallpaperPanel"
-  }
+  property bool i18nLoaded: false
+  property bool settingsLoaded: false
 
   Component.onCompleted: {
-    // Save a ref. to our lockScreen so we can access it  easily
-    PanelService.lockScreen = lockScreen
-
-    BarWidgetRegistry.init()
+    Logger.log("Shell", "---------------------------")
+    Logger.log("Shell", "Noctalia Hello!")
   }
 
   Connections {
     target: Quickshell
     function onReloadCompleted() {
       Quickshell.inhibitReloadPopup()
+    }
+  }
+
+  Connections {
+    target: I18n
+    function onTranslationsLoaded() {
+      i18nLoaded = true
+    }
+  }
+
+  Connections {
+    target: Settings
+    function onSettingsLoaded() {
+      settingsLoaded = true
+    }
+  }
+
+  LazyLoader {
+    active: i18nLoaded && settingsLoaded
+
+    Item {
+      Component.onCompleted: {
+        // Save a ref. to our lockScreen so we can access it  easily
+        PanelService.lockScreen = lockScreen
+
+        Logger.log("Shell", "---------------------------")
+        WallpaperService.init()
+        MatugenService.init()
+        ColorSchemeService.init()
+        BarWidgetRegistry.init()
+        LocationService.init()
+        NightLightService.apply()
+        FontService.init()
+        HooksService.init()
+        BluetoothService.init()
+      }
+
+      Background {}
+      Overview {}
+      ScreenCorners {}
+      Bar {}
+      Dock {}
+
+      Notification {
+        id: notification
+      }
+
+      LockScreen {
+        id: lockScreen
+      }
+
+      ToastOverlay {}
+      OSD {}
+
+      // IPCService is treated as a service
+      // but it's actually an Item that needs to exists in the shell.
+      IPCService {}
+
+      // ------------------------------
+      // All the NPanels
+      Launcher {
+        id: launcherPanel
+        objectName: "launcherPanel"
+      }
+
+      ControlCenterPanel {
+        id: controlCenterPanel
+        objectName: "controlCenterPanel"
+      }
+
+      CalendarPanel {
+        id: calendarPanel
+        objectName: "calendarPanel"
+      }
+
+      SettingsPanel {
+        id: settingsPanel
+        objectName: "settingsPanel"
+      }
+
+      NotificationHistoryPanel {
+        id: notificationHistoryPanel
+        objectName: "notificationHistoryPanel"
+      }
+
+      SessionMenu {
+        id: sessionMenuPanel
+        objectName: "sessionMenuPanel"
+      }
+
+      WiFiPanel {
+        id: wifiPanel
+        objectName: "wifiPanel"
+      }
+
+      BluetoothPanel {
+        id: bluetoothPanel
+        objectName: "bluetoothPanel"
+      }
+
+      WallpaperPanel {
+        id: wallpaperPanel
+        objectName: "wallpaperPanel"
+      }
     }
   }
 }

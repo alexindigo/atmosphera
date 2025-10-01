@@ -15,19 +15,13 @@ Singleton {
 
   Component.onCompleted: {
     Logger.log("Scaling", "Service started")
-  }
-
-  Connections {
-    target: Settings
-    function onSettingsLoaded() {
-      // Initialize cache from Settings once they are loaded on startup
-      var monitors = Settings.data.ui.monitorsScaling || []
-      for (var i = 0; i < monitors.length; i++) {
-        if (monitors[i].name && monitors[i].scale !== undefined) {
-          currentScales[monitors[i].name] = monitors[i].scale
-          root.scaleChanged(monitors[i].name, monitors[i].scale)
-          Logger.log("Scaling", "Caching scaling for", monitors[i].name, ":", monitors[i].scale)
-        }
+    // Initialize cache from Settings once they are loaded on startup
+    var monitors = Settings.data.ui.monitorsScaling || []
+    for (var i = 0; i < monitors.length; i++) {
+      if (monitors[i].name && monitors[i].scale !== undefined) {
+        currentScales[monitors[i].name] = monitors[i].scale
+        root.scaleChanged(monitors[i].name, monitors[i].scale)
+        Logger.log("Scaling", "Caching scaling for", monitors[i].name, ":", monitors[i].scale)
       }
     }
   }

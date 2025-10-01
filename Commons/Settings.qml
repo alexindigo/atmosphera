@@ -71,7 +71,13 @@ Singleton {
     id: saveTimer
     running: false
     interval: 1000
-    onTriggered: settingsFileView.writeAdapter()
+    onTriggered: {
+      settingsFileView.writeAdapter()
+      // Write to fallback location if set
+      if (Quickshell.env("NOCTALIA_SETTINGS_FALLBACK")) {
+        settingsFallbackFileView.writeAdapter()
+      }
+    }
   }
 
   FileView {
@@ -90,15 +96,10 @@ Singleton {
     }
     onLoaded: function () {
       if (!isLoaded) {
-        Logger.log("Settings", "----------------------------")
-        Logger.log("Settings", "Settings loaded successfully")
+        Logger.log("Settings", "Settings loaded")
 
         upgradeSettingsData()
-
         validateMonitorConfigurations()
-
-        kickOffServices()
-
         isLoaded = true
 
         // Emit the signal
@@ -106,10 +107,24 @@ Singleton {
       }
     }
     onLoadFailed: function (error) {
-      if (error.toString().includes("No such file") || error === 2)
+      if (error.toString().includes("No such file") || error === 2) {
         // File doesn't exist, create it with default values
         writeAdapter()
+        // Also write to fallback if set
+        if (Quickshell.env("NOCTALIA_SETTINGS_FALLBACK")) {
+          settingsFallbackFileView.writeAdapter()
+        }
+      }
     }
+  }
+
+  // Fallback FileView for writing settings to alternate location
+  FileView {
+    id: settingsFallbackFileView
+    path: Quickshell.env("NOCTALIA_SETTINGS_FALLBACK") || ""
+    adapter: Quickshell.env("NOCTALIA_SETTINGS_FALLBACK") ? adapter : null
+    printErrors: false
+    watchChanges: false
   }
   JsonAdapter {
     id: adapter
@@ -233,6 +248,7 @@ Singleton {
       property bool exclusive: false
       property real backgroundOpacity: 1.0
       property real floatingRatio: 1.0
+      property bool onlySameOutput: true
       property list<string> monitors: []
       // Desktop entry IDs pinned to the dock (e.g., "org.kde.konsole", "firefox.desktop")
       property list<string> pinnedApps: []
@@ -278,7 +294,8 @@ Singleton {
     property JsonObject ui: JsonObject {
       property string fontDefault: "Roboto"
       property string fontFixed: "DejaVu Sans Mono"
-      property string fontBillboard: "Inter"
+      property real fontDefaultScale: 1.0
+      property real fontFixedScale: 1.0
       property list<var> monitorsScaling: []
       property bool idleInhibitorEnabled: false
     }
@@ -515,18 +532,5 @@ Singleton {
     // Compare settings, to detect if something has been upgraded
     const widgetAfter = JSON.stringify(widget)
     return (widgetAfter !== widgetBefore)
-  }
-
-  // -----------------------------------------------------
-  // Kickoff essential services
-  function kickOffServices() {
-    LocationService.init()
-    NightLightService.apply()
-    ColorSchemeService.init()
-    MatugenService.init()
-    WallpaperService.init()
-    FontService.init()
-    HooksService.init()
-    BluetoothService.init()
   }
 }

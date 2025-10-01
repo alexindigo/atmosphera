@@ -375,8 +375,8 @@ PopupWindow {
       anchors.fill: parent
       color: Color.mSurface
       border.color: Color.mOutline
-      border.width: Math.max(1, Style.borderS * scaling)
-      radius: Style.radiusS * scaling
+      border.width: Math.max(1, Style.borderS * root.scaling)
+      radius: Style.radiusS * root.scaling
 
       // Only show content when we have text
       visible: root.text !== ""
@@ -386,12 +386,12 @@ PopupWindow {
         anchors.centerIn: parent
         anchors.margins: root.padding * root.scaling
         text: root.text
-        font.pointSize: Style.fontSizeS * scaling
+        pointSize: Style.fontSizeS * root.scaling
         color: Color.mOnSurfaceVariant
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         wrapMode: Text.WordWrap
-        width: root.maxWidth
+        width: root.maxWidth * root.scaling - (root.padding * 2 * root.scaling)
       }
     }
   }

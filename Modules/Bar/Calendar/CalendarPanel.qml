@@ -43,7 +43,7 @@ NPanel {
         text: grid.title
         Layout.fillWidth: true
         horizontalAlignment: Text.AlignHCenter
-        font.pointSize: Style.fontSizeM * scaling
+        pointSize: Style.fontSizeM * scaling
         font.weight: Style.fontWeightBold
         color: Color.mPrimary
       }
@@ -83,7 +83,7 @@ NPanel {
           anchors.centerIn: parent
           text: I18n.tr("calendar.panel.week")
           color: Color.mOutline
-          font.pointSize: Style.fontSizeXS * scaling
+          pointSize: Style.fontSizeXS * scaling
           font.weight: Style.fontWeightRegular
           horizontalAlignment: Text.AlignHCenter
         }
@@ -113,7 +113,7 @@ NPanel {
                 return Qt.locale().dayName(dayIndex, Locale.ShortFormat)
               }
               color: Color.mSecondary
-              font.pointSize: Style.fontSizeM * scaling
+              pointSize: Style.fontSizeM * scaling
               font.weight: Style.fontWeightBold
               horizontalAlignment: Text.AlignHCenter
             }
@@ -148,7 +148,7 @@ NPanel {
             NText {
               anchors.centerIn: parent
               color: Color.mOutline
-              font.pointSize: Style.fontSizeXS * scaling
+              pointSize: Style.fontSizeXS * scaling
               font.weight: Style.fontWeightBold
               text: {
                 // Calculate the date shown in the first column of this row
@@ -229,7 +229,7 @@ NPanel {
               text: model.day
               color: model.today ? Color.mOnPrimary : Color.mOnSurface
               opacity: model.month === grid.month ? Style.opacityHeavy : Style.opacityLight
-              font.pointSize: Style.fontSizeM * scaling
+              pointSize: Style.fontSizeM * scaling
               font.weight: model.today ? Style.fontWeightBold : Style.fontWeightRegular
             }
 

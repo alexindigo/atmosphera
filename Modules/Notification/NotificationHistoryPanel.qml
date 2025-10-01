@@ -32,13 +32,13 @@ NPanel {
 
         NIcon {
           icon: "bell"
-          font.pointSize: Style.fontSizeXXL * scaling
+          pointSize: Style.fontSizeXXL * scaling
           color: Color.mPrimary
         }
 
         NText {
           text: I18n.tr("notifications.panel.title")
-          font.pointSize: Style.fontSizeL * scaling
+          pointSize: Style.fontSizeL * scaling
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface
           Layout.fillWidth: true
@@ -88,21 +88,21 @@ NPanel {
 
         NIcon {
           icon: "bell-off"
-          font.pointSize: 64 * scaling
+          pointSize: 64 * scaling
           color: Color.mOnSurfaceVariant
           Layout.alignment: Qt.AlignHCenter
         }
 
         NText {
           text: I18n.tr("notifications.panel.no-notifications")
-          font.pointSize: Style.fontSizeL * scaling
+          pointSize: Style.fontSizeL * scaling
           color: Color.mOnSurfaceVariant
           Layout.alignment: Qt.AlignHCenter
         }
 
         NText {
           text: I18n.tr("notifications.panel.description")
-          font.pointSize: Style.fontSizeS * scaling
+          pointSize: Style.fontSizeS * scaling
           color: Color.mOnSurfaceVariant
           Layout.alignment: Qt.AlignHCenter
           Layout.fillWidth: true
@@ -199,13 +199,13 @@ NPanel {
 
                 NText {
                   text: model.appName || "Unknown App"
-                  font.pointSize: Style.fontSizeXS * scaling
+                  pointSize: Style.fontSizeXS * scaling
                   color: Color.mSecondary
                 }
 
                 NText {
                   text: Time.formatRelativeTime(model.timestamp)
-                  font.pointSize: Style.fontSizeXS * scaling
+                  pointSize: Style.fontSizeXS * scaling
                   color: Color.mSecondary
                 }
 
@@ -217,7 +217,7 @@ NPanel {
               // Summary
               NText {
                 text: model.summary || I18n.tr("general.no-summary")
-                font.pointSize: Style.fontSizeM * scaling
+                pointSize: Style.fontSizeM * scaling
                 font.weight: Font.Medium
                 color: Color.mOnSurface
                 textFormat: Text.PlainText
@@ -230,7 +230,7 @@ NPanel {
               // Body
               NText {
                 text: model.body || ""
-                font.pointSize: Style.fontSizeS * scaling
+                pointSize: Style.fontSizeS * scaling
                 color: Color.mOnSurfaceVariant
                 textFormat: Text.PlainText
                 wrapMode: Text.Wrap

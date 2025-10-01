@@ -126,7 +126,7 @@ ColumnLayout {
 
               // Reset button container
               Item {
-                Layout.preferredWidth: 40 * scaling
+                Layout.preferredWidth: 30 * scaling
                 Layout.preferredHeight: 30 * scaling
 
                 NIconButton {
@@ -168,13 +168,13 @@ ColumnLayout {
 
               // Empty container to match scale row layout
               Item {
-                Layout.preferredWidth: 40 * scaling
+                Layout.preferredWidth: 30 * scaling
                 Layout.preferredHeight: 30 * scaling
 
                 // Method text positioned in the button area
                 NText {
                   text: brightnessMonitor ? brightnessMonitor.method : ""
-                  font.pointSize: Style.fontSizeXS * scaling
+                  pointSize: Style.fontSizeXS * scaling
                   color: Color.mOnSurfaceVariant
                   anchors.right: parent.right
                   anchors.verticalCenter: parent.verticalCenter
@@ -186,22 +186,18 @@ ColumnLayout {
         }
       }
     }
-    // Brightness Step Section
-    ColumnLayout {
-      spacing: Style.marginS * scaling
-      Layout.fillWidth: true
 
-      NSpinBox {
-        Layout.fillWidth: true
-        label: I18n.tr("settings.display.monitors.brightness-step.label")
-        description: I18n.tr("settings.display.monitors.brightness-step.description")
-        minimum: 1
-        maximum: 50
-        value: Settings.data.brightness.brightnessStep
-        stepSize: 1
-        suffix: "%"
-        onValueChanged: Settings.data.brightness.brightnessStep = value
-      }
+    // Brightness Step
+    NSpinBox {
+      Layout.fillWidth: true
+      label: I18n.tr("settings.display.monitors.brightness-step.label")
+      description: I18n.tr("settings.display.monitors.brightness-step.description")
+      minimum: 1
+      maximum: 50
+      value: Settings.data.brightness.brightnessStep
+      stepSize: 1
+      suffix: "%"
+      onValueChanged: Settings.data.brightness.brightnessStep = value
     }
   }
 
@@ -258,7 +254,7 @@ ColumnLayout {
 
       NText {
         text: I18n.tr("settings.display.night-light.temperature.night")
-        font.pointSize: Style.fontSizeM * scaling
+        pointSize: Style.fontSizeM * scaling
         color: Color.mOnSurfaceVariant
         Layout.alignment: Qt.AlignVCenter
       }
@@ -280,7 +276,7 @@ ColumnLayout {
 
       NText {
         text: I18n.tr("settings.display.night-light.temperature.day")
-        font.pointSize: Style.fontSizeM * scaling
+        pointSize: Style.fontSizeM * scaling
         color: Color.mOnSurfaceVariant
         Layout.alignment: Qt.AlignVCenter
       }
@@ -327,7 +323,7 @@ ColumnLayout {
 
       NText {
         text: I18n.tr("settings.display.night-light.manual-schedule.sunrise")
-        font.pointSize: Style.fontSizeM * scaling
+        pointSize: Style.fontSizeM * scaling
         color: Color.mOnSurfaceVariant
       }
 
@@ -345,7 +341,7 @@ ColumnLayout {
 
       NText {
         text: I18n.tr("settings.display.night-light.manual-schedule.sunset")
-        font.pointSize: Style.fontSizeM * scaling
+        pointSize: Style.fontSizeM * scaling
         color: Color.mOnSurfaceVariant
       }
 
