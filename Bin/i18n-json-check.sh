@@ -8,6 +8,7 @@ set -euo pipefail
 # Configuration
 FOLDER_PATH="Assets/Translations"
 REFERENCE_FILE="en.json"
+TRANSLATE_MODE=false
 
 # Colors for terminal output
 RED='\033[0;31m'
@@ -31,6 +32,152 @@ check_dependencies() {
         print_color $YELLOW "On CentOS/RHEL: sudo yum install jq" >&2
         print_color $YELLOW "On macOS: brew install jq" >&2
         exit 1
+    fi
+    
+    if $TRANSLATE_MODE && ! command -v curl &> /dev/null; then
+        print_color $RED "Error: 'curl' is required for translation mode but not installed." >&2
+        exit 1
+    fi
+}
+
+# Function to get Gemini API key
+get_gemini_api_key() {
+    if [[ -z "${GEMINI_API_KEY:-}" ]]; then
+        print_color $RED "Error: GEMINI_API_KEY environment variable is not set" >&2
+        print_color $YELLOW "Please set it with: export GEMINI_API_KEY='your-api-key'" >&2
+        exit 1
+    fi
+    echo "$GEMINI_API_KEY"
+}
+
+# Function to get value from JSON using key path
+get_json_value() {
+    local json_file=$1
+    local key_path=$2
+    
+    # Convert dot-separated path to jq path
+    local jq_path=$(echo "$key_path" | sed 's/\./\.\["/g' | sed 's/$/"]/' | sed 's/^\.//')
+    local jq_query=".${jq_path}"
+    
+    # Use a more robust approach: split by dots and build path
+    local -a path_parts
+    IFS='.' read -ra path_parts <<< "$key_path"
+    
+    local jq_filter="."
+    for part in "${path_parts[@]}"; do
+        jq_filter="${jq_filter}[\"${part}\"]"
+    done
+    
+    jq -r "$jq_filter // empty" "$json_file" 2>/dev/null || echo ""
+}
+
+# Function to list available Gemini models
+list_gemini_models() {
+    local api_key=$(get_gemini_api_key)
+    
+    print_color $BLUE "Fetching available Gemini models..." >&2
+    echo "" >&2
+    
+    local response=$(curl -s -X GET \
+        "https://generativelanguage.googleapis.com/v1/models?key=${api_key}" \
+        -H "Content-Type: application/json" 2>/dev/null)
+    
+    # Parse and display models
+    echo "$response" | jq -r '.models[] | "- \(.name) (\(.displayName))"' 2>/dev/null || {
+        print_color $RED "Failed to parse models list" >&2
+        echo "$response" >&2
+        exit 1
+    }
+    
+    exit 0
+}
+
+# Function to translate text using Gemini API
+translate_text() {
+    local text=$1
+    local target_language=$2
+    local api_key=$3
+    
+    # Escape text for JSON
+    local escaped_text=$(echo "$text" | jq -Rs .)
+    
+    # Prepare the API request
+    local prompt="Translate the following English text to ${target_language}. Return ONLY the translation, no explanations or additional text:\n\n${text}"
+    local escaped_prompt=$(echo "$prompt" | jq -Rs .)
+    
+    local request_body=$(cat <<EOF
+{
+  "contents": [{
+    "parts": [{
+      "text": ${escaped_prompt}
+    }]
+  }],
+  "generationConfig": {
+    "temperature": 0.3,
+    "maxOutputTokens": 1000
+  }
+}
+EOF
+)
+    
+    # Make API call to Gemini
+    local api_url="https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${api_key}"
+    
+    print_color $BLUE "    API URL: $api_url" >&2
+    
+    local response=$(curl -s -X POST "$api_url" \
+        -H "Content-Type: application/json" \
+        -d "$request_body" 2>/dev/null)
+    
+    print_color $BLUE "    API Response: $response" >&2
+    
+    # Extract the translation from response - try multiple parsing approaches
+    local translation=$(echo "$response" | jq -r '.candidates[0].content.parts[0].text // .text // empty' 2>/dev/null | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+    
+    if [[ -z "$translation" ]]; then
+        print_color $RED "    Failed to parse translation. Full response:" >&2
+        echo "$response" | jq . >&2 2>/dev/null || echo "$response" >&2
+        echo ""
+        return 1
+    fi
+    
+    print_color $GREEN "    Parsed translation: $translation" >&2
+    
+    echo "$translation"
+}
+
+# Function to inject translation into JSON file using jq
+inject_translation() {
+    local json_file=$1
+    local key_path=$2
+    local value=$3
+    
+    # Split key path into array
+    local -a path_parts
+    IFS='.' read -ra path_parts <<< "$key_path"
+    
+    # Build jq path array
+    local jq_path="["
+    for i in "${!path_parts[@]}"; do
+        if [[ $i -gt 0 ]]; then
+            jq_path+=","
+        fi
+        jq_path+="\"${path_parts[$i]}\""
+    done
+    jq_path+="]"
+    
+    # Create a temporary file
+    local temp_file=$(mktemp)
+    
+    # Use jq to set the value at the path
+    jq --argjson path "$jq_path" --arg value "$value" 'setpath($path; $value)' "$json_file" > "$temp_file"
+    
+    if [[ $? -eq 0 ]]; then
+        mv "$temp_file" "$json_file"
+        return 0
+    else
+        rm -f "$temp_file"
+        return 1
     fi
 }
 
@@ -75,6 +222,9 @@ generate_header() {
     echo "Generated: $timestamp"
     echo "Reference file: $REFERENCE_FILE"
     echo "Folder: $(realpath "$FOLDER_PATH")"
+    if $TRANSLATE_MODE; then
+        echo "Mode: TRANSLATION ENABLED"
+    fi
     echo ""
     echo "Notes:"
     echo "- Keys are compared recursively through all nested JSON objects"
@@ -203,6 +353,49 @@ compare_language() {
         done
         rm -f "$temp_missing"
         echo ""
+        
+        # Translate missing keys if in translate mode
+        if $TRANSLATE_MODE; then
+            print_color $BLUE "Translating missing keys for $lang_name..." >&2
+            local api_key=$(get_gemini_api_key)
+            local translated_count=0
+            local failed_count=0
+            
+            while IFS= read -r key; do
+                if [[ -n "$key" ]]; then
+                    # Get English value
+                    local en_value=$(get_json_value "$ref_file_path" "$key")
+                    
+                    if [[ -n "$en_value" ]]; then
+                        print_color $YELLOW "  Translating: $key" >&2
+                        
+                        # Translate the value
+                        local translated_value=$(translate_text "$en_value" "$lang_name" "$api_key")
+                        
+                        if [[ -n "$translated_value" ]]; then
+                            # Inject translation into the file
+                            if inject_translation "$lang_file" "$key" "$translated_value"; then
+                                print_color $GREEN "    ✓ Translated: $key" >&2
+                                translated_count=$((translated_count + 1))
+                            else
+                                print_color $RED "    ✗ Failed to inject: $key" >&2
+                                failed_count=$((failed_count + 1))
+                            fi
+                        else
+                            print_color $RED "    ✗ Translation failed: $key" >&2
+                            failed_count=$((failed_count + 1))
+                        fi
+                        
+                        # Small delay to avoid rate limiting
+                        sleep 0.5
+                    fi
+                fi
+            done <<< "$missing_keys"
+            
+            echo ""
+            print_color $GREEN "Translation complete: $translated_count succeeded, $failed_count failed" >&2
+            echo ""
+        fi
     else
         echo "✅ No missing keys in $lang_name"
         echo ""
@@ -351,6 +544,9 @@ main() {
     if [[ -n "$target_language" ]]; then
         echo "Target language: $target_language"
     fi
+    if $TRANSLATE_MODE; then
+        echo "Translation mode: ENABLED"
+    fi
     echo "Report generated: $(date '+%Y-%m-%d %H:%M:%S')"
     echo ""
     echo "================================================================================"
@@ -367,11 +563,13 @@ main() {
 
 # Usage information
 show_usage() {
-    echo "Usage: $0 [language_code]" >&2
+    echo "Usage: $0 [--translate] [language_code]" >&2
     echo "" >&2
     echo "This script compares JSON language files in '$FOLDER_PATH' against the English reference." >&2
     echo "" >&2
     echo "Arguments:" >&2
+    echo "  --translate    Enable automatic translation of missing keys using Gemini API" >&2
+    echo "  --list-models  List all available Gemini models and exit" >&2
     echo "  language_code  Optional. Compare only the specified language (e.g., 'fr', 'es', 'de')" >&2
     echo "                 If not provided, all language files will be compared" >&2
     echo "" >&2
@@ -380,14 +578,18 @@ show_usage() {
     echo "  - Reference file: $REFERENCE_FILE" >&2
     echo "" >&2
     echo "Examples:" >&2
-    echo "  $0              # Compare all languages" >&2
-    echo "  $0 fr           # Compare only French (fr.json)" >&2
-    echo "  $0 es           # Compare only Spanish (es.json)" >&2
+    echo "  $0                    # Compare all languages" >&2
+    echo "  $0 fr                 # Compare only French (fr.json)" >&2
+    echo "  $0 --list-models      # List available Gemini models" >&2
+    echo "  $0 --translate        # Compare all and translate missing keys" >&2
+    echo "  $0 --translate fr     # Translate missing keys for French only" >&2
     echo "" >&2
     echo "Requirements:" >&2
     echo "  - jq must be installed" >&2
+    echo "  - curl must be installed (for --translate mode)" >&2
     echo "  - $REFERENCE_FILE must exist in $FOLDER_PATH" >&2
     echo "  - Target language file must exist if specified" >&2
+    echo "  - GEMINI_API_KEY environment variable must be set (for --translate mode)" >&2
     echo "" >&2
     echo "Output:" >&2
     echo "  - Comparison report is printed to stdout" >&2
@@ -396,29 +598,39 @@ show_usage() {
 }
 
 # Handle command line arguments
-if [[ $# -gt 1 ]]; then
-    echo "Error: Too many arguments. Only one language code is allowed." >&2
-    echo "" >&2
-    show_usage
-    exit 1
-fi
-
-if [[ $# -eq 1 ]]; then
-    if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-        show_usage
-        exit 0
-    else
-        # Validate language code format (basic check for reasonable filename)
-        if [[ ! "$1" =~ ^[a-zA-Z][a-zA-Z0-9_-]*$ ]]; then
-            echo "Error: Invalid language code format '$1'. Use alphanumeric characters, hyphens, and underscores only." >&2
-            echo "" >&2
+target_lang=""
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -h|--help)
             show_usage
-            exit 1
-        fi
-        # Run main function with target language
-        main "$1"
-    fi
-else
-    # Run main function for all languages
-    main ""
-fi
+            exit 0
+            ;;
+        --list-models)
+            list_gemini_models
+            ;;
+        --translate)
+            TRANSLATE_MODE=true
+            shift
+            ;;
+        *)
+            if [[ -n "$target_lang" ]]; then
+                echo "Error: Too many arguments. Only one language code is allowed." >&2
+                echo "" >&2
+                show_usage
+                exit 1
+            fi
+            # Validate language code format (basic check for reasonable filename)
+            if [[ ! "$1" =~ ^[a-zA-Z][a-zA-Z0-9_-]*$ ]]; then
+                echo "Error: Invalid language code format '$1'. Use alphanumeric characters, hyphens, and underscores only." >&2
+                echo "" >&2
+                show_usage
+                exit 1
+            fi
+            target_lang="$1"
+            shift
+            ;;
+    esac
+done
+
+# Run main function
+main "$target_lang"
