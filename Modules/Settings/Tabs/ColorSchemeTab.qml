@@ -202,6 +202,21 @@ ColumnLayout {
       description: I18n.tr("settings.color-scheme.predefined.section.description")
     }
 
+    // Generate templates for predefined schemes
+    NCheckbox {
+      Layout.fillWidth: true
+      label: I18n.tr("settings.color-scheme.predefined.generate-templates.label")
+      description: I18n.tr("settings.color-scheme.predefined.generate-templates.description")
+      checked: Settings.data.colorSchemes.generateTemplatesForPredefined
+      onToggled: checked => {
+                   Settings.data.colorSchemes.generateTemplatesForPredefined = checked
+                   // Re-generate templates if a predefined scheme is currently active
+                   if (!Settings.data.colorSchemes.useWallpaperColors && Settings.data.colorSchemes.predefinedScheme) {
+                     ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme)
+                   }
+                 }
+    }
+
     // Color Schemes Grid
     GridLayout {
       columns: 3

@@ -503,6 +503,10 @@
         "section": {
           "label": "Predefined color schemes",
           "description": "Choose from a collection of predefined color schemes."
+        },
+        "generate-templates": {
+          "label": "Generate templates for predefined schemes",
+          "description": "Generate Matugen templates (GTK, terminal themes, etc.) when using predefined color schemes."
         }
       },
       "matugen": {

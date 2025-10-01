@@ -310,6 +310,7 @@ Singleton {
       property string predefinedScheme: "Noctalia (default)"
       property bool darkMode: true
       property string matugenSchemeType: "scheme-fruit-salad"
+      property bool generateTemplatesForPredefined: true
     }
 
     // matugen templates toggles

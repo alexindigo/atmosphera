@@ -501,6 +501,10 @@
         "section": {
           "label": "Jeux de couleurs prédéfinis",
           "description": "Choisissez parmi une collection de jeux de couleurs prédéfinis."
+        },
+        "generate-templates": {
+          "label": "Générer des modèles pour les schémas prédéfinis",
+          "description": "Génère des modèles Matugen (GTK, thèmes de terminal, etc.) lors de l'utilisation de schémas de couleurs prédéfinis."
         }
       },
       "matugen": {

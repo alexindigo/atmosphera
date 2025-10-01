@@ -501,6 +501,10 @@
         "section": {
           "label": "Esquemas de colores predefinidos",
           "description": "Elige entre una colección de esquemas de colores predefinidos."
+        },
+        "generate-templates": {
+          "label": "Generar plantillas para esquemas predefinidos",
+          "description": "Genera plantillas de Matugen (GTK, temas de terminal, etc.) al usar esquemas de colores predefinidos."
         }
       },
       "matugen": {

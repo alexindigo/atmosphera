@@ -501,6 +501,10 @@
         "section": {
           "label": "预定义配色方案",
           "description": "从预定义配色方案集合中选择。"
+        },
+        "generate-templates": {
+          "label": "为预定义方案生成模板",
+          "description": "使用预定义配色方案时生成 Matugen 模板（GTK、终端主题等）。"
         }
       },
       "matugen": {

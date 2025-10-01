@@ -467,6 +467,10 @@
         "section": {
           "label": "Esquemas de cores predefinidos",
           "description": "Escolha entre uma coleção de esquemas de cores predefinidos."
+        },
+        "generate-templates": {
+          "label": "Gerar modelos para esquemas predefinidos",
+          "description": "Gera modelos Matugen (GTK, temas de terminal, etc.) ao usar esquemas de cores predefinidos."
         }
       },
       "matugen": {

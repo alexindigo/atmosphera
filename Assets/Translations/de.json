@@ -505,6 +505,10 @@
         "section": {
           "label": "Vordefinierte Farbschemata",
           "description": "Wählen Sie aus einer Sammlung vordefinierter Farbschemata."
+        },
+        "generate-templates": {
+          "label": "Templates für vordefinierte Schemata generieren",
+          "description": "Generiert Matugen-Templates (GTK, Terminal-Themes, etc.) bei der Verwendung vordefinierter Farbschemata."
         }
       },
       "matugen": {
