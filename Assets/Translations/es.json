@@ -62,14 +62,23 @@
           "label": "Fuente predeterminada",
           "description": "Fuente principal utilizada en toda la interfaz.",
           "placeholder": "Seleccionar fuente predeterminada...",
-          "search-placeholder": "Buscar fuentes..."
+          "search-placeholder": "Buscar fuentes...",
+          "scale": {
+            "description": "Aumentar o disminuir el tamaño del texto estándar.",
+            "label": "Tamaño de fuente predeterminado"
+          }
         },
         "monospace": {
           "label": "Fuente monoespaciada",
           "description": "Fuente monoespaciada utilizada para la visualización de números y estadísticas.",
           "placeholder": "Seleccionar fuente monoespaciada...",
-          "search-placeholder": "Buscar fuentes monoespaciadas..."
-        }
+          "search-placeholder": "Buscar fuentes monoespaciadas...",
+          "scale": {
+            "description": "Aumentar o disminuir el tamaño del texto monoespaciado.",
+            "label": "Tamaño de fuente monoespaciada"
+          }
+        },
+        "reset-scaling": "Restablecer la escala"
       }
     },
     "audio": {
@@ -274,6 +283,10 @@
         "section": {
           "label": "Visualización en monitor",
           "description": "Elige en qué monitor mostrar el dock."
+        },
+        "only-same-output": {
+          "description": "Mostrar solo las aplicaciones de la salida donde se encuentra el dock.",
+          "label": "Solo aplicaciones de la misma salida"
         }
       }
     },
@@ -993,6 +1006,16 @@
           "description": "Usa un espacio para separar cada parte en una nueva línea."
         },
         "preview": "Vista previa"
+      },
+      "taskbar": {
+        "only-active-workspaces": {
+          "description": "Mostrar solo las aplicaciones de los espacios de trabajo activos.",
+          "label": "Solo desde espacios de trabajo activos"
+        },
+        "only-same-output": {
+          "description": "Muestra solo las aplicaciones del resultado donde se encuentra la barra.",
+          "label": "Solo de la misma salida"
+        }
       }
     }
   },
@@ -1246,7 +1269,10 @@
     "reboot": "Reiniciar",
     "logout": "Cerrar sesión",
     "logout-subtitle": "Finaliza tu sesión",
-    "shutdown": "Apagar"
+    "shutdown": "Apagar",
+    "reboot-subtitle": "Reinicia tu computadora.",
+    "shutdown-subtitle": "Apaga tu computadora.",
+    "suspend-subtitle": "Poner el sistema en reposo"
   },
   "plugins": {
     "applications": "Aplicaciones",

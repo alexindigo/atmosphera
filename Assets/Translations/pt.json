@@ -62,14 +62,23 @@
           "label": "Fonte padrão",
           "description": "Fonte principal usada em toda a interface.",
           "placeholder": "Selecione a fonte padrão...",
-          "search-placeholder": "Pesquisar fontes..."
+          "search-placeholder": "Pesquisar fontes...",
+          "scale": {
+            "description": "Aumentar ou diminuir o tamanho do texto padrão.",
+            "label": "Tamanho de fonte padrão"
+          }
         },
         "monospace": {
           "label": "Fonte monoespaçada",
           "description": "Fonte monoespaçada usada para exibição de números e estatísticas.",
           "placeholder": "Selecione a fonte monoespaçada...",
-          "search-placeholder": "Pesquisar fontes monoespaçadas..."
-        }
+          "search-placeholder": "Pesquisar fontes monoespaçadas...",
+          "scale": {
+            "description": "Aumentar ou diminuir o tamanho do texto monoespaçado.",
+            "label": "Tamanho da fonte monoespaçada"
+          }
+        },
+        "reset-scaling": "Redefinir escala"
       }
     },
     "audio": {
@@ -274,6 +283,10 @@
         "section": {
           "label": "Exibição no monitor",
           "description": "Escolha em qual monitor exibir a dock."
+        },
+        "only-same-output": {
+          "description": "Mostrar apenas aplicativos da saída onde o dock está localizado.",
+          "label": "Apenas aplicativos da mesma saída"
         }
       }
     },
@@ -993,6 +1006,16 @@
           "description": "Use um espaço para separar cada parte em uma nova linha."
         },
         "preview": "Pré-visualização"
+      },
+      "taskbar": {
+        "only-active-workspaces": {
+          "description": "Mostrar apenas aplicativos de áreas de trabalho ativas.",
+          "label": "Apenas de espaços de trabalho ativos"
+        },
+        "only-same-output": {
+          "description": "Mostrar apenas os aplicativos da saída onde a barra está localizada.",
+          "label": "Apenas da mesma saída"
+        }
       }
     }
   },
@@ -1246,7 +1269,10 @@
     "reboot": "Reiniciar",
     "logout": "Sair",
     "logout-subtitle": "Encerre sua sessão",
-    "shutdown": "Desligar"
+    "shutdown": "Desligar",
+    "reboot-subtitle": "Reinicie o seu computador.",
+    "shutdown-subtitle": "Desligue o seu computador.",
+    "suspend-subtitle": "Colocar o sistema em suspensão."
   },
   "plugins": {
     "applications": "Aplicativos",

@@ -2,7 +2,6 @@
   "settings": {
     "general": {
       "title": "Allgemein",
-
       "profile": {
         "section": {
           "label": "Profil",
@@ -14,7 +13,6 @@
         },
         "select-avatar": "Avatar-Bild auswählen"
       },
-
       "ui": {
         "section": {
           "label": "Benutzeroberfläche",
@@ -64,14 +62,23 @@
           "label": "Standard-Schriftart",
           "description": "Hauptschriftart für die gesamte Benutzeroberfläche.",
           "placeholder": "Standard-Schriftart auswählen...",
-          "search-placeholder": "Schriftarten suchen..."
+          "search-placeholder": "Schriftarten suchen...",
+          "scale": {
+            "description": "Vergrößern oder verkleinern Sie die Größe des Standardtextes.",
+            "label": "Standardmäßige Schriftgröße"
+          }
         },
         "monospace": {
           "label": "Monospace-Schriftart",
           "description": "Monospace-Schriftart für Zahlen und Statistik-Anzeigen.",
           "placeholder": "Monospace-Schriftart auswählen...",
-          "search-placeholder": "Monospace-Schriftarten suchen..."
-        }
+          "search-placeholder": "Monospace-Schriftarten suchen...",
+          "scale": {
+            "description": "Die Größe des nichtproportionalen Textes vergrößern oder verkleinern.",
+            "label": "Schriftgröße mit fester Breite"
+          }
+        },
+        "reset-scaling": "Skalierung zurücksetzen"
       }
     },
     "audio": {
@@ -280,6 +287,10 @@
         "section": {
           "label": "Monitor-Anzeige",
           "description": "Monitor auswählen, auf dem das Dock angezeigt werden soll."
+        },
+        "only-same-output": {
+          "description": "Zeige nur Apps aus der Ausgabe an, bei denen sich das Dock befindet.",
+          "label": "Nur Apps von derselben Ausgabe"
         }
       }
     },
@@ -1174,7 +1185,6 @@
     "enter-width-pixels": "Breite in Pixeln eingeben",
     "enter-command": "Befehl eingeben (App oder benutzerdefiniertes Skript)",
     "command-example": "echo \"Hallo Welt\"",
-
     "search-wallpapers": "Zum Filtern von Hintergrundbildern eingeben...",
     "search-launcher": "Einträge suchen... oder > für Befehle verwenden",
     "search": "Suchen...",
@@ -1246,7 +1256,6 @@
     "frame-rates": {
       "fps": "{fps} FPS"
     },
-
     "screen-recording": {
       "sources": {
         "portal": "Portal",
@@ -1281,7 +1290,10 @@
     "reboot": "Neu starten",
     "logout": "Abmelden",
     "logout-subtitle": "Sitzung beenden",
-    "shutdown": "Herunterfahren"
+    "shutdown": "Herunterfahren",
+    "reboot-subtitle": "Starten Sie Ihren Computer neu.",
+    "shutdown-subtitle": "Schalte deinen Computer aus.",
+    "suspend-subtitle": "System in den Ruhezustand versetzen"
   },
   "plugins": {
     "applications": "Anwendungen",

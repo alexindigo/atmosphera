@@ -62,14 +62,23 @@
           "label": "Police par défaut",
           "description": "Police principale utilisée dans toute l'interface.",
           "placeholder": "Sélectionner la police par défaut...",
-          "search-placeholder": "Rechercher des polices..."
+          "search-placeholder": "Rechercher des polices...",
+          "scale": {
+            "description": "Augmenter ou diminuer la taille du texte standard.",
+            "label": "Taille de police par défaut"
+          }
         },
         "monospace": {
           "label": "Police à chasse fixe",
           "description": "Police à chasse fixe utilisée pour l'affichage des chiffres et des statistiques.",
           "placeholder": "Sélectionner la police à chasse fixe...",
-          "search-placeholder": "Rechercher des polices à chasse fixe..."
-        }
+          "search-placeholder": "Rechercher des polices à chasse fixe...",
+          "scale": {
+            "description": "Augmenter ou diminuer la taille du texte à chasse fixe.",
+            "label": "Taille de police à chasse fixe"
+          }
+        },
+        "reset-scaling": "Réinitialiser l'échelle"
       }
     },
     "audio": {
@@ -274,6 +283,10 @@
         "section": {
           "label": "Affichage sur les moniteur",
           "description": "Choisissez sur quels moniteurs afficher le dock."
+        },
+        "only-same-output": {
+          "description": "Afficher uniquement les applications de la sortie où le dock est situé.",
+          "label": "Seulement les applications de la même sortie"
         }
       }
     },
@@ -993,6 +1006,16 @@
           "description": "Utilisez un espace pour séparer chaque partie sur une nouvelle ligne."
         },
         "preview": "Aperçu"
+      },
+      "taskbar": {
+        "only-active-workspaces": {
+          "description": "Afficher uniquement les applications des espaces de travail actifs.",
+          "label": "Seulement depuis les espaces de travail actifs."
+        },
+        "only-same-output": {
+          "description": "Afficher uniquement les applications de la sortie où la barre est située.",
+          "label": "Seulement à partir de la même sortie"
+        }
       }
     }
   },
@@ -1246,7 +1269,10 @@
     "reboot": "Redémarrer",
     "logout": "Déconnexion",
     "logout-subtitle": "Terminer votre session",
-    "shutdown": "Éteindre"
+    "shutdown": "Éteindre",
+    "reboot-subtitle": "Redémarrez votre ordinateur.",
+    "shutdown-subtitle": "Éteignez votre ordinateur.",
+    "suspend-subtitle": "Mettre le système en veille"
   },
   "plugins": {
     "applications": "Applications",

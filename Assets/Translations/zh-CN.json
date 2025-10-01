@@ -283,6 +283,10 @@
         "section": {
           "label": "显示器显示",
           "description": "选择在哪个显示器上显示 Dock。"
+        },
+        "only-same-output": {
+          "description": "仅显示输出结果中dock所在位置的应用。",
+          "label": "仅来自相同输出的应用"
         }
       }
     },
@@ -1005,12 +1009,12 @@
       },
       "taskbar": {
         "only-active-workspaces": {
-            "label": "仅显示活动工作区",
-            "description": "仅显示来自活动工作区的应用程序"
+          "label": "仅显示活动工作区",
+          "description": "仅显示来自活动工作区的应用程序"
         },
         "only-same-output": {
-            "label": "仅显示同屏幕",
-            "description": "仅显示任务栏所在屏幕上的应用程序"
+          "label": "仅显示同屏幕",
+          "description": "仅显示任务栏所在屏幕上的应用程序"
         }
       }
     }
