@@ -9,9 +9,9 @@
         "mError": "#bf616a",
         "mOnError": "#2e3440",
         "mSurface": "#2e3440",
-        "mOnSurface": "#d8dee9",
+        "mOnSurface": "#eceff4",
         "mSurfaceVariant": "#3b4252",
-        "mOnSurfaceVariant": "#e5e9f0",
+        "mOnSurfaceVariant": "#d8dee9",
         "mOutline": "#505a70",
         "mShadow": "#2e3440"
     },
