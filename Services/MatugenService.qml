@@ -330,17 +330,6 @@ Singleton {
           "dark": {
             "color": ColorVariants.generateContainer(variant.mSurface)
           }
-        },
-        "surface_variant_container": {
-          "light": {
-            "color": ColorVariants.generateContainer(variant.mSurfaceVariant)
-          },
-          "default": {
-            "color": ColorVariants.generateContainer(variant.mSurfaceVariant)
-          },
-          "dark": {
-            "color": ColorVariants.generateContainer(variant.mSurfaceVariant)
-          }
         }
       }
     }
@@ -400,7 +389,7 @@ Singleton {
 
     // Build the script
     var script = ""
-    script += "cat > '" + pathEsc + "' << 'EOF'\n" + content + "\nEOF\n"
+    script += "cat > '" + pathEsc + "' << 'EOF'\n" + content + "EOF\n"
     script += "for d in '" + extraRepo + "' '" + extraUser + "'; do\n"
     script += "  if [ -d \"$d\" ]; then\n"
     script += "    for f in \"$d\"/*.toml; do\n"
