@@ -132,7 +132,7 @@ Singleton {
 
   // Check if any Matugen templates are enabled
   function hasEnabledMatugenTemplates() {
-    return Settings.data.matugen.gtk4 || Settings.data.matugen.gtk3 || Settings.data.matugen.qt6 || Settings.data.matugen.qt5 || Settings.data.matugen.kitty || Settings.data.matugen.ghostty || Settings.data.matugen.foot || Settings.data.matugen.fuzzel || Settings.data.matugen.vesktop || Settings.data.matugen.pywalfox
+    return Settings.data.matugen.gtk || Settings.data.matugen.qt || Settings.data.matugen.kitty || Settings.data.matugen.ghostty || Settings.data.matugen.foot || Settings.data.matugen.fuzzel || Settings.data.matugen.vesktop || Settings.data.matugen.pywalfox
   }
 
   // Writer to colors.json using a JsonAdapter for safety

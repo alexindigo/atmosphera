@@ -515,16 +515,10 @@
         "ui": {
           "label": "UI",
           "description": "Tematización del entorno de escritorio y de la interfaz de usuario.",
-          "gtk4": {
+          "gtk": {
             "description": "Escribir {filepath}"
           },
-          "gtk3": {
-            "description": "Escribir {filepath}"
-          },
-          "qt6": {
-            "description": "Escribir {filepath}"
-          },
-          "qt5": {
+          "qt": {
             "description": "Escribir {filepath}"
           }
         },

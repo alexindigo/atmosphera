@@ -165,10 +165,8 @@
     "matugenSchemeType": "scheme-fruit-salad"
   },
   "matugen": {
-    "gtk4": false,
-    "gtk3": false,
-    "qt6": false,
-    "qt5": false,
+    "gtk": false,
+    "qt": false,
     "kitty": false,
     "ghostty": false,
     "foot": false,

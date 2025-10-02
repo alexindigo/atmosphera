@@ -481,16 +481,10 @@
         "ui": {
           "label": "UI",
           "description": "Tematização do ambiente de desktop e kit de ferramentas de UI.",
-          "gtk4": {
+          "gtk": {
             "description": "Escrever {filepath}"
           },
-          "gtk3": {
-            "description": "Escrever {filepath}"
-          },
-          "qt6": {
-            "description": "Escrever {filepath}"
-          },
-          "qt5": {
+          "qt": {
             "description": "Escrever {filepath}"
           }
         },

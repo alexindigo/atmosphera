@@ -519,16 +519,10 @@
         "ui": {
           "label": "UI",
           "description": "Desktop-Umgebung und UI-Toolkit-Theming.",
-          "gtk4": {
+          "gtk": {
             "description": "Schreibt {filepath}"
           },
-          "gtk3": {
-            "description": "Schreibt {filepath}"
-          },
-          "qt6": {
-            "description": "Schreibt {filepath}"
-          },
-          "qt5": {
+          "qt": {
             "description": "Schreibt {filepath}"
           }
         },

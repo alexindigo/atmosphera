@@ -436,52 +436,26 @@ ColumnLayout {
       defaultExpanded: false
 
       NCheckbox {
-        label: "GTK 4 (libadwaita)"
-        description: I18n.tr("settings.color-scheme.matugen.ui.gtk4.description", {
-                               "filepath": "~/.config/gtk-4.0/gtk.css"
+        label: "GTK"
+        description: I18n.tr("settings.color-scheme.matugen.ui.gtk.description", {
+                               "filepath": "~/.config/gtk-3.0/gtk.css & ~/.config/gtk-4.0/gtk.css"
                              })
-        checked: Settings.data.matugen.gtk4
+        checked: Settings.data.matugen.gtk
         onToggled: checked => {
-                     Settings.data.matugen.gtk4 = checked
+                     Settings.data.matugen.gtk = checked
                      if (Settings.data.colorSchemes.useWallpaperColors)
                      MatugenService.generateFromWallpaper()
                    }
       }
 
       NCheckbox {
-        label: "GTK 3"
-        description: I18n.tr("settings.color-scheme.matugen.ui.gtk3.description", {
-                               "filepath": "~/.config/gtk-3.0/gtk.css"
+        label: "Qt"
+        description: I18n.tr("settings.color-scheme.matugen.ui.qt.description", {
+                               "filepath": "~/.config/qt5ct/colors/noctalia.conf & ~/.config/qt6ct/colors/noctalia.conf"
                              })
-        checked: Settings.data.matugen.gtk3
+        checked: Settings.data.matugen.qt
         onToggled: checked => {
-                     Settings.data.matugen.gtk3 = checked
-                     if (Settings.data.colorSchemes.useWallpaperColors)
-                     MatugenService.generateFromWallpaper()
-                   }
-      }
-
-      NCheckbox {
-        label: "Qt6ct"
-        description: I18n.tr("settings.color-scheme.matugen.ui.qt6.description", {
-                               "filepath": "~/.config/qt6ct/colors/noctalia.conf"
-                             })
-        checked: Settings.data.matugen.qt6
-        onToggled: checked => {
-                     Settings.data.matugen.qt6 = checked
-                     if (Settings.data.colorSchemes.useWallpaperColors)
-                     MatugenService.generateFromWallpaper()
-                   }
-      }
-
-      NCheckbox {
-        label: "Qt5ct"
-        description: I18n.tr("settings.color-scheme.matugen.ui.qt5.description", {
-                               "filepath": "~/.config/qt5ct/colors/noctalia.conf"
-                             })
-        checked: Settings.data.matugen.qt5
-        onToggled: checked => {
-                     Settings.data.matugen.qt5 = checked
+                     Settings.data.matugen.qt = checked
                      if (Settings.data.colorSchemes.useWallpaperColors)
                      MatugenService.generateFromWallpaper()
                    }

@@ -24,26 +24,26 @@ Singleton {
       lines.push('output_path = "' + Settings.configDir + 'colors.json"')
     }
 
-    if (Settings.data.matugen.gtk4) {
+    if (Settings.data.matugen.gtk) {
+      lines.push("\n[templates.gtk3]")
+      lines.push('input_path = "' + Quickshell.shellDir + '/Assets/Matugen/templates/gtk.css"')
+      lines.push('output_path = "~/.config/gtk-3.0/gtk.css"')
+
       lines.push("\n[templates.gtk4]")
-      lines.push('input_path = "' + Quickshell.shellDir + '/Assets/Matugen/templates/gtk4.css"')
+      lines.push('input_path = "' + Quickshell.shellDir + '/Assets/Matugen/templates/gtk.css"')
       lines.push('output_path = "~/.config/gtk-4.0/gtk.css"')
     }
-    if (Settings.data.matugen.gtk3) {
-      lines.push("\n[templates.gtk3]")
-      lines.push('input_path = "' + Quickshell.shellDir + '/Assets/Matugen/templates/gtk3.css"')
-      lines.push('output_path = "~/.config/gtk-3.0/gtk.css"')
-    }
-    if (Settings.data.matugen.qt6) {
+
+    if (Settings.data.matugen.qt) {
+      lines.push("\n[templates.qt5]")
+      lines.push('input_path = "' + Quickshell.shellDir + '/Assets/Matugen/templates/qtct.conf"')
+      lines.push('output_path = "~/.config/qt5ct/colors/noctalia.conf"')
+
       lines.push("\n[templates.qt6]")
       lines.push('input_path = "' + Quickshell.shellDir + '/Assets/Matugen/templates/qtct.conf"')
       lines.push('output_path = "~/.config/qt6ct/colors/noctalia.conf"')
     }
-    if (Settings.data.matugen.qt5) {
-      lines.push("\n[templates.qt5]")
-      lines.push('input_path = "' + Quickshell.shellDir + '/Assets/Matugen/templates/qtct.conf"')
-      lines.push('output_path = "~/.config/qt5ct/colors/noctalia.conf"')
-    }
+
     if (Settings.data.matugen.kitty) {
       lines.push("\n[templates.kitty]")
       lines.push('input_path = "' + Quickshell.shellDir + '/Assets/Matugen/templates/kitty.conf"')

@@ -515,16 +515,10 @@
         "ui": {
           "label": "用户界面",
           "description": "桌面环境和 UI 工具包主题。",
-          "gtk4": {
+          "gtk": {
             "description": "写入 {filepath}"
           },
-          "gtk3": {
-            "description": "写入 {filepath}"
-          },
-          "qt6": {
-            "description": "写入 {filepath}"
-          },
-          "qt5": {
+          "qt": {
             "description": "写入 {filepath}"
           }
         },
