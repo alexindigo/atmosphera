@@ -272,25 +272,25 @@ Item {
   }
 
   // Public functions
-  function switchToWorkspace(workspaceId) {
+  function switchToWorkspace(workspace) {
     try {
-      Hyprland.dispatch(`workspace ${workspaceId}`)
+      Hyprland.dispatch(`workspace ${workspace.idx}`)
     } catch (e) {
       Logger.error("HyprlandService", "Failed to switch workspace:", e)
     }
   }
 
-  function focusWindow(windowId) {
+  function focusWindow(window) {
     try {
-      Hyprland.dispatch(`focuswindow address:0x${windowId.toString()}`)
+      Hyprland.dispatch(`focuswindow address:0x${window.id.toString()}`)
     } catch (e) {
       Logger.error("HyprlandService", "Failed to switch window:", e)
     }
   }
 
-  function closeWindow(windowId) {
+  function closeWindow(window) {
     try {
-      Hyprland.dispatch(`killwindow address:0x${windowId}`)
+      Hyprland.dispatch(`killwindow address:0x${window.id}`)
     } catch (e) {
       Logger.error("HyprlandService", "Failed to close window:", e)
     }
