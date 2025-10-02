@@ -253,6 +253,94 @@ Singleton {
           "dark": {
             "color": ColorVariants.generateBright(variant.mSurfaceVariant)
           }
+        },
+        "primary_container": {
+          "light": {
+            "color": ColorVariants.generateContainer(variant.mPrimary)
+          },
+          "default": {
+            "color": ColorVariants.generateContainer(variant.mPrimary)
+          },
+          "dark": {
+            "color": ColorVariants.generateContainer(variant.mPrimary)
+          }
+        },
+        "secondary_container": {
+          "light": {
+            "color": ColorVariants.generateContainer(variant.mSecondary)
+          },
+          "default": {
+            "color": ColorVariants.generateContainer(variant.mSecondary)
+          },
+          "dark": {
+            "color": ColorVariants.generateContainer(variant.mSecondary)
+          }
+        },
+        "tertiary_container": {
+          "light": {
+            "color": ColorVariants.generateContainer(variant.mTertiary)
+          },
+          "default": {
+            "color": ColorVariants.generateContainer(variant.mTertiary)
+          },
+          "dark": {
+            "color": ColorVariants.generateContainer(variant.mTertiary)
+          }
+        },
+        "on_primary_container": {
+          "light": {
+            "color": ColorVariants.generateContainer(variant.mOnPrimary)
+          },
+          "default": {
+            "color": ColorVariants.generateContainer(variant.mOnPrimary)
+          },
+          "dark": {
+            "color": ColorVariants.generateContainer(variant.mOnPrimary)
+          }
+        },
+        "on_secondary_container": {
+          "light": {
+            "color": ColorVariants.generateContainer(variant.mOnSecondary)
+          },
+          "default": {
+            "color": ColorVariants.generateContainer(variant.mOnSecondary)
+          },
+          "dark": {
+            "color": ColorVariants.generateContainer(variant.mOnSecondary)
+          }
+        },
+        "on_tertiary_container": {
+          "light": {
+            "color": ColorVariants.generateContainer(variant.mOnTertiary)
+          },
+          "default": {
+            "color": ColorVariants.generateContainer(variant.mOnTertiary)
+          },
+          "dark": {
+            "color": ColorVariants.generateContainer(variant.mOnTertiary)
+          }
+        },
+        "surface_container": {
+          "light": {
+            "color": ColorVariants.generateContainer(variant.mSurface)
+          },
+          "default": {
+            "color": ColorVariants.generateContainer(variant.mSurface)
+          },
+          "dark": {
+            "color": ColorVariants.generateContainer(variant.mSurface)
+          }
+        },
+        "surface_variant_container": {
+          "light": {
+            "color": ColorVariants.generateContainer(variant.mSurfaceVariant)
+          },
+          "default": {
+            "color": ColorVariants.generateContainer(variant.mSurfaceVariant)
+          },
+          "dark": {
+            "color": ColorVariants.generateContainer(variant.mSurfaceVariant)
+          }
         }
       }
     }
