@@ -260,11 +260,6 @@ Singleton {
     return JSON.stringify(matugenColors)
   }
 
-  // Build TOML content based on settings
-  function buildConfigToml() {
-    return Matugen.buildConfigToml()
-  }
-
   // Generate colors using current wallpaper and settings
   function generateFromWallpaper() {
     Logger.log("Matugen", "Generating from wallpaper on screen:", Screen.name)
@@ -274,7 +269,7 @@ Singleton {
       return
     }
 
-    var content = buildConfigToml()
+    var content = Matugen.buildConfigToml()
     var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light"
     var pathEsc = dynamicConfigPath.replace(/'/g, "'\\''")
     var extraRepo = (Quickshell.shellDir + "/Assets/Matugen/extra").replace(/'/g, "'\\''")
@@ -301,7 +296,7 @@ Singleton {
   function generateFromPredefinedScheme(schemeData) {
     Logger.log("Matugen", "Generating templates from predefined color scheme")
 
-    var content = buildConfigToml()
+    var content = Matugen.buildConfigToml()
     var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light"
     var pathEsc = dynamicConfigPath.replace(/'/g, "'\\''")
     var extraRepo = (Quickshell.shellDir + "/Assets/Matugen/extra").replace(/'/g, "'\\''")
@@ -312,12 +307,9 @@ Singleton {
     var jsonPath = Settings.cacheDir + "matugen.import.json"
     var jsonPathEsc = jsonPath.replace(/'/g, "'\\''")
 
-    // Write JSON file first using a separate process
-    jsonWriter.path = jsonPath
-    jsonWriter.setText(matugenJson)
-
     // Build the script
-    var script = "cat > '" + pathEsc + "' << 'EOF'\n" + content + "EOF\n"
+    var script = ""
+    script += "cat > '" + pathEsc + "' << 'EOF'\n" + content + "EOF\n"
     script += "for d in '" + extraRepo + "' '" + extraUser + "'; do\n"
     script += "  if [ -d \"$d\" ]; then\n"
     script += "    for f in \"$d\"/*.toml; do\n"
@@ -336,7 +328,12 @@ Singleton {
     }
 
     script += "\n"
-    pendingMatugenCommand = script
+    generateProcess.command = ["bash", "-lc", script]
+
+    // Write JSON file with our custom colors
+    // once written matugen will be executed via 'generateProcess'
+    jsonWriter.path = jsonPath
+    jsonWriter.setText(matugenJson)
   }
 
   // File writer for JSON import file
@@ -345,25 +342,17 @@ Singleton {
     onSaved: {
       Logger.log("Matugen", "JSON import file written successfully")
       // Run matugen command after JSON file is written
-      if (pendingMatugenCommand) {
-        generateProcess.command = ["bash", "-lc", pendingMatugenCommand]
-        generateProcess.running = true
-        pendingMatugenCommand = ""
-      }
+      generateProcess.running = true
     }
     onSaveFailed: {
       Logger.error("Matugen", "Failed to write JSON import file:", error)
     }
   }
 
-  // Store the matugen command to run after JSON is written
-  property string pendingMatugenCommand: ""
-
   Process {
     id: generateProcess
     workingDirectory: Quickshell.shellDir
     running: false
-
     stderr: StdioCollector {
       onStreamFinished: {
         if (this.text !== "") {
@@ -372,6 +361,4 @@ Singleton {
       }
     }
   }
-
-  // No separate writer; the write happens inline via bash heredoc
 }

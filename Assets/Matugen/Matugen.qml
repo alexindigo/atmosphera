@@ -16,10 +16,13 @@ Singleton {
     var lines = []
     lines.push("[config]")
 
-    // Always include noctalia colors output for the shell
-    lines.push("[templates.noctalia]")
-    lines.push('input_path = "' + Quickshell.shellDir + '/Assets/Matugen/templates/noctalia.json"')
-    lines.push('output_path = "' + Settings.configDir + 'colors.json"')
+    if (Settings.data.colorSchemes.useWallpaperColors) {
+      // Only generate color for Noctalia if the colors are wallpaper based
+      // or this will conflict with our predefined colors
+      lines.push("[templates.noctalia]")
+      lines.push('input_path = "' + Quickshell.shellDir + '/Assets/Matugen/templates/noctalia.json"')
+      lines.push('output_path = "' + Settings.configDir + 'colors.json"')
+    }
 
     if (Settings.data.matugen.gtk4) {
       lines.push("\n[templates.gtk4]")
