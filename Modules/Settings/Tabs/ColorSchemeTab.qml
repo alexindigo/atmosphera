@@ -382,7 +382,6 @@ ColumnLayout {
   // Matugen template toggles organized by category
   ColumnLayout {
     Layout.fillWidth: true
-    visible: Settings.data.colorSchemes.useWallpaperColors
     spacing: Style.marginL * scaling
 
     NHeader {
