@@ -256,79 +256,79 @@ Singleton {
         },
         "primary_container": {
           "light": {
-            "color": ColorVariants.generateContainer(variant.mPrimary)
+            "color": ColorVariants.generateContainer(variant.mPrimary, false)
           },
           "default": {
-            "color": ColorVariants.generateContainer(variant.mPrimary)
+            "color": ColorVariants.generateContainer(variant.mPrimary, true)
           },
           "dark": {
-            "color": ColorVariants.generateContainer(variant.mPrimary)
+            "color": ColorVariants.generateContainer(variant.mPrimary, true)
           }
         },
         "secondary_container": {
           "light": {
-            "color": ColorVariants.generateContainer(variant.mSecondary)
+            "color": ColorVariants.generateContainer(variant.mSecondary, false)
           },
           "default": {
-            "color": ColorVariants.generateContainer(variant.mSecondary)
+            "color": ColorVariants.generateContainer(variant.mSecondary, true)
           },
           "dark": {
-            "color": ColorVariants.generateContainer(variant.mSecondary)
+            "color": ColorVariants.generateContainer(variant.mSecondary, true)
           }
         },
         "tertiary_container": {
           "light": {
-            "color": ColorVariants.generateContainer(variant.mTertiary)
+            "color": ColorVariants.generateContainer(variant.mTertiary, false)
           },
           "default": {
-            "color": ColorVariants.generateContainer(variant.mTertiary)
+            "color": ColorVariants.generateContainer(variant.mTertiary, true)
           },
           "dark": {
-            "color": ColorVariants.generateContainer(variant.mTertiary)
+            "color": ColorVariants.generateContainer(variant.mTertiary, true)
           }
         },
         "on_primary_container": {
           "light": {
-            "color": ColorVariants.generateContainer(variant.mOnPrimary)
+            "color": ColorVariants.generateContainer(variant.mOnPrimary, false)
           },
           "default": {
-            "color": ColorVariants.generateContainer(variant.mOnPrimary)
+            "color": ColorVariants.generateContainer(variant.mOnPrimary, true)
           },
           "dark": {
-            "color": ColorVariants.generateContainer(variant.mOnPrimary)
+            "color": ColorVariants.generateContainer(variant.mOnPrimary, true)
           }
         },
         "on_secondary_container": {
           "light": {
-            "color": ColorVariants.generateContainer(variant.mOnSecondary)
+            "color": ColorVariants.generateContainer(variant.mOnSecondary, false)
           },
           "default": {
-            "color": ColorVariants.generateContainer(variant.mOnSecondary)
+            "color": ColorVariants.generateContainer(variant.mOnSecondary, true)
           },
           "dark": {
-            "color": ColorVariants.generateContainer(variant.mOnSecondary)
+            "color": ColorVariants.generateContainer(variant.mOnSecondary, true)
           }
         },
         "on_tertiary_container": {
           "light": {
-            "color": ColorVariants.generateContainer(variant.mOnTertiary)
+            "color": ColorVariants.generateContainer(variant.mOnTertiary, false)
           },
           "default": {
-            "color": ColorVariants.generateContainer(variant.mOnTertiary)
+            "color": ColorVariants.generateContainer(variant.mOnTertiary, true)
           },
           "dark": {
-            "color": ColorVariants.generateContainer(variant.mOnTertiary)
+            "color": ColorVariants.generateContainer(variant.mOnTertiary, true)
           }
         },
         "surface_container": {
           "light": {
-            "color": ColorVariants.generateContainer(variant.mSurface)
+            "color": ColorVariants.generateContainer(variant.mSurface, false)
           },
           "default": {
-            "color": ColorVariants.generateContainer(variant.mSurface)
+            "color": ColorVariants.generateContainer(variant.mSurface, true)
           },
           "dark": {
-            "color": ColorVariants.generateContainer(variant.mSurface)
+            "color": ColorVariants.generateContainer(variant.mSurface, true)
           }
         }
       }

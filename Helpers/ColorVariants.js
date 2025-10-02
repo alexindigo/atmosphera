@@ -127,13 +127,21 @@ function generateBright(hexColor) {
  * Generate container variant (much lighter, desaturated version)
  * Material 3 container is typically used for backgrounds, much lighter with reduced saturation
  */
-function generateContainer(hexColor) {
+function generateContainer(hexColor, isDarkTheme = false) {
   const hsl = hexToHSL(hexColor);
   if (!hsl) return hexColor;
 
-  // Significantly increase lightness (aim for 85-90) and reduce saturation
-  const newL = Math.min(hsl.l + (90 - hsl.l) * 0.85, 90);
-  const newS = Math.max(hsl.s * 0.4, 10);
+  let newL, newS;
+  
+  if (isDarkTheme) {
+    // Dark theme: darken the color (aim for 10-20 lightness)
+    newL = Math.max(hsl.l - (hsl.l - 15) * 0.85, 10);
+    newS = Math.max(hsl.s * 0.4, 10);
+  } else {
+    // Light theme: lighten the color (aim for 85-90 lightness)
+    newL = Math.min(hsl.l + (90 - hsl.l) * 0.85, 90);
+    newS = Math.max(hsl.s * 0.4, 10);
+  }
 
   return hslToHex(hsl.h, newS, newL);
 }
