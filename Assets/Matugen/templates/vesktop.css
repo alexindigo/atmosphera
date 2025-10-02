@@ -41,9 +41,9 @@
 	--text-0: {{colors.surface.default.hex}};               /* text on colored elements */
 	--text-1: {{colors.on_surface.default.hex}};            /* other normally white text */
 	--text-2: {{colors.on_surface.default.hex}};            /* headings and important text */
-	--text-3: {{colors.on_surface_variant.default.hex}};    /* normal text */
+	--text-3: {{colors.on_surface.default.hex}};    				/* normal text */
 	--text-4: {{colors.on_surface_variant.default.hex}};    /* icon buttons and channels */
-	--text-5: {{colors.outline.default.hex}};               /* muted channels/chats and timestamps */
+	--text-5: {{colors.on_surface_variant.default.hex}};    /* muted channels/chats and timestamps */
 
 	/* background and dark colors */
     --bg-1: {{colors.primary.default.hex}};                             /* dark buttons when clicked */
