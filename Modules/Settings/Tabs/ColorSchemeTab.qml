@@ -217,6 +217,7 @@ ColumnLayout {
                      ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme)
                    }
                  }
+      Layout.bottomMargin: Style.marginL * scaling
     }
 
     // Color Schemes Grid
@@ -415,7 +416,6 @@ ColumnLayout {
     Layout.fillWidth: true
     Layout.topMargin: Style.marginXL * scaling
     Layout.bottomMargin: Style.marginXL * scaling
-    visible: Settings.data.colorSchemes.useWallpaperColors
   }
 
   // Matugen template toggles organized by category

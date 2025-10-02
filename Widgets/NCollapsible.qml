@@ -21,7 +21,7 @@ ColumnLayout {
   Rectangle {
     id: headerContainer
     Layout.fillWidth: true
-    Layout.preferredHeight: headerContent.implicitHeight + (Style.marginL * scaling * 2)
+    Layout.preferredHeight: headerContent.implicitHeight + (Style.marginM * scaling * 2)
 
     // Material 3 style background
     color: root.expanded ? Color.mSecondary : Color.mSurfaceVariant
@@ -75,7 +75,7 @@ ColumnLayout {
     RowLayout {
       id: headerContent
       anchors.fill: parent
-      anchors.margins: Style.marginL * scaling
+      anchors.margins: Style.marginM * scaling
       spacing: Style.marginM * scaling
 
       // Expand/collapse icon with rotation animation
@@ -102,17 +102,16 @@ ColumnLayout {
       }
 
       // Header text content - properly contained
-      ColumnLayout {
+      RowLayout {
         Layout.fillWidth: true
         Layout.alignment: Qt.AlignVCenter
-        spacing: Style.marginXXS * scaling
+        spacing: Style.marginL * scaling
 
         NText {
           text: root.label
           pointSize: Style.fontSizeL * scaling
           font.weight: Style.fontWeightSemiBold
           color: root.expanded ? Color.mOnSecondary : Color.mOnSurface
-          Layout.fillWidth: true
           wrapMode: Text.WordWrap
 
           Behavior on color {
