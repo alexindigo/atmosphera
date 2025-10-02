@@ -6,6 +6,7 @@ import Quickshell.Io
 import qs.Commons
 import qs.Assets.Matugen
 import qs.Services
+import "../Helpers/ColorVariants.js" as ColorVariants
 
 Singleton {
   id: root
@@ -165,15 +166,26 @@ Singleton {
             "color": variant.mOnSurface
           }
         },
-        "on_background": {
+        "surface_variant": {
           "light": {
-            "color": variant.mOnSurface
+            "color": variant.mSurfaceVariant
           },
           "default": {
-            "color": variant.mOnSurface
+            "color": variant.mSurfaceVariant
           },
           "dark": {
-            "color": variant.mOnSurface
+            "color": variant.mSurfaceVariant
+          }
+        },
+        "on_surface_variant": {
+          "light": {
+            "color": variant.mOnSurfaceVariant
+          },
+          "default": {
+            "color": variant.mOnSurfaceVariant
+          },
+          "dark": {
+            "color": variant.mOnSurfaceVariant
           }
         },
         "outline": {
@@ -187,103 +199,59 @@ Singleton {
             "color": variant.mOutline
           }
         },
-        "secondary_fixed_dim": {
-          "light": {
-            "color": variant.mSecondary
-          },
-          "default": {
-            "color": variant.mSecondary
-          },
-          "dark": {
-            "color": variant.mSecondary
-          }
-        },
-        "tertiary_container": {
-          "light": {
-            "color": variant.mTertiary
-          },
-          "default": {
-            "color": variant.mTertiary
-          },
-          "dark": {
-            "color": variant.mTertiary
-          }
-        },
-        "surface_container": {
-          "light": {
-            "color": variant.mSurfaceVariant
-          },
-          "default": {
-            "color": variant.mSurfaceVariant
-          },
-          "dark": {
-            "color": variant.mSurfaceVariant
-          }
-        },
-        "primary_container": {
-          "light": {
-            "color": variant.mPrimary
-          },
-          "default": {
-            "color": variant.mPrimary
-          },
-          "dark": {
-            "color": variant.mPrimary
-          }
-        },
-        "on_primary_container": {
-          "light": {
-            "color": variant.mOnPrimary
-          },
-          "default": {
-            "color": variant.mOnPrimary
-          },
-          "dark": {
-            "color": variant.mOnPrimary
-          }
-        },
-        "surface_variant": {
-          "light": {
-            "color": variant.mSurfaceVariant
-          },
-          "default": {
-            "color": variant.mSurfaceVariant
-          },
-          "dark": {
-            "color": variant.mSurfaceVariant
-          }
-        },
         "primary_fixed_dim": {
           "light": {
-            "color": variant.mError
+            "color": ColorVariants.generateFixedDim(variant.mPrimary)
           },
           "default": {
-            "color": variant.mError
+            "color": ColorVariants.generateFixedDim(variant.mPrimary)
           },
           "dark": {
-            "color": variant.mError
+            "color": ColorVariants.generateFixedDim(variant.mPrimary)
+          }
+        },
+        "secondary_fixed_dim": {
+          "light": {
+            "color": ColorVariants.generateFixedDim(variant.mSecondary)
+          },
+          "default": {
+            "color": ColorVariants.generateFixedDim(variant.mSecondary)
+          },
+          "dark": {
+            "color": ColorVariants.generateFixedDim(variant.mSecondary)
           }
         },
         "tertiary_fixed_dim": {
           "light": {
-            "color": variant.mOutline
+            "color": ColorVariants.generateFixedDim(variant.mTertiary)
           },
           "default": {
-            "color": variant.mOutline
+            "color": ColorVariants.generateFixedDim(variant.mTertiary)
           },
           "dark": {
-            "color": variant.mOutline
+            "color": ColorVariants.generateFixedDim(variant.mTertiary)
           }
         },
-        "surface_dim": {
+        "surface_bright": {
           "light": {
-            "color": variant.mOnSurfaceVariant
+            "color": ColorVariants.generateBright(variant.mSurface)
           },
           "default": {
-            "color": variant.mOnSurfaceVariant
+            "color": ColorVariants.generateBright(variant.mSurface)
           },
           "dark": {
-            "color": variant.mOnSurfaceVariant
+            "color": ColorVariants.generateBright(variant.mSurface)
+          }
+        },
+        "surface_variant_bright": {
+          "light": {
+            "color": ColorVariants.generateBright(variant.mSurfaceVariant)
+          },
+          "default": {
+            "color": ColorVariants.generateBright(variant.mSurfaceVariant)
+          },
+          "dark": {
+            "color": ColorVariants.generateBright(variant.mSurfaceVariant)
           }
         }
       }
