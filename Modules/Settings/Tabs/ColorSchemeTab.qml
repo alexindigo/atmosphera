@@ -1,6 +1,8 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import Qt5Compat.GraphicalEffects
+import QtQuick.Shapes
 import Quickshell.Io
 import qs.Commons
 import qs.Services
@@ -219,153 +221,190 @@ ColumnLayout {
 
     // Color Schemes Grid
     GridLayout {
-      columns: 3
-      rowSpacing: Style.marginM * scaling
-      columnSpacing: Style.marginM * scaling
+      columns: 6
+      rowSpacing: Style.marginL * scaling
+      columnSpacing: Style.marginL * scaling
       Layout.fillWidth: true
 
       Repeater {
         model: ColorSchemeService.schemes
 
-        Rectangle {
-          id: schemeCard
+        ColumnLayout {
+          id: schemeItem
 
           property string schemePath: modelData
 
-          Layout.fillWidth: true
-          Layout.preferredHeight: 120 * scaling
-          radius: Style.radiusM * scaling
-          color: getSchemeColor(modelData, "mSurface")
-          border.width: Math.max(1, Style.borderL * scaling)
-          border.color: (!Settings.data.colorSchemes.useWallpaperColors && (Settings.data.colorSchemes.predefinedScheme === modelData.split("/").pop().replace(".json", ""))) ? Color.mSecondary : Color.mOutline
-          scale: root.cardScaleLow
+          Layout.alignment: Qt.AlignHCenter
+          spacing: Style.marginS * scaling
 
-          // Mouse area for selection
-          MouseArea {
-            anchors.fill: parent
-            onClicked: {
-              // Disable useWallpaperColors when picking a predefined color scheme
-              Settings.data.colorSchemes.useWallpaperColors = false
-              Logger.log("ColorSchemeTab", "Disabled matugen setting")
+          // Circular color preview with surface background and accent dots
+          Rectangle {
+            id: circularPreview
 
-              Settings.data.colorSchemes.predefinedScheme = schemePath.split("/").pop().replace(".json", "")
-              ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme)
-            }
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
+            Layout.alignment: Qt.AlignHCenter
+            width: 80 * scaling
+            height: 80 * scaling
+            radius: width * 0.5
+            color: getSchemeColor(modelData, "mSurface")
+            border.width: Math.max(2, Style.borderL * scaling)
+            border.color: (!Settings.data.colorSchemes.useWallpaperColors && (Settings.data.colorSchemes.predefinedScheme === modelData.split("/").pop().replace(".json", ""))) ? Color.mSecondary : Color.mOutline
+            scale: root.cardScaleLow
 
-            onEntered: {
-              schemeCard.scale = root.cardScaleHigh
-            }
+            // Four small color dots arranged in a circle to show accent colors
+            Item {
+              id: colorDots
+              anchors.centerIn: parent
+              width: parent.width * 0.6
+              height: parent.height * 0.6
 
-            onExited: {
-              schemeCard.scale = root.cardScaleLow
-            }
-          }
+              // Rotation animation for the fidget spinner effect
+              rotation: 0
 
-          // Card content
-          ColumnLayout {
-            anchors.fill: parent
-            anchors.margins: Style.marginXL * scaling
-            spacing: Style.marginS * scaling
-
-            // Scheme name
-            NText {
-              text: {
-                // Remove json and the full path
-                var chunks = schemePath.replace(".json", "").split("/")
-                return chunks[chunks.length - 1]
+              Behavior on rotation {
+                NumberAnimation {
+                  duration: 3000
+                  easing.type: Easing.InOutQuad
+                }
               }
-              pointSize: Style.fontSizeM * scaling
-              font.weight: Style.fontWeightBold
-              color: getSchemeColor(modelData, "mOnSurface")
-              Layout.fillWidth: true
-              elide: Text.ElideRight
-              horizontalAlignment: Text.AlignHCenter
-            }
 
-            // Color swatches
-            RowLayout {
-              id: swatches
-
-              spacing: Style.marginS * scaling
-              Layout.fillWidth: true
-              Layout.alignment: Qt.AlignHCenter
-
-              readonly property int swatchSize: 20 * scaling
-
-              // Primary color swatch
+              // Primary color dot (top)
               Rectangle {
-                width: swatches.swatchSize
-                height: swatches.swatchSize
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: parent.top
+                anchors.topMargin: -2 * scaling
+                width: 18 * scaling
+                height: 18 * scaling
                 radius: width * 0.5
                 color: getSchemeColor(modelData, "mPrimary")
+                border.width: Math.max(1, Style.borderS * scaling)
+                border.color: getSchemeColor(modelData, "mSurface")
               }
 
-              // Secondary color swatch
+              // Secondary color dot (right)
               Rectangle {
-                width: swatches.swatchSize
-                height: swatches.swatchSize
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right: parent.right
+                anchors.rightMargin: -2 * scaling
+                width: 18 * scaling
+                height: 18 * scaling
                 radius: width * 0.5
                 color: getSchemeColor(modelData, "mSecondary")
+                border.width: Math.max(1, Style.borderS * scaling)
+                border.color: getSchemeColor(modelData, "mSurface")
               }
 
-              // Tertiary color swatch
+              // Tertiary color dot (bottom)
               Rectangle {
-                width: swatches.swatchSize
-                height: swatches.swatchSize
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: -2 * scaling
+                width: 18 * scaling
+                height: 18 * scaling
                 radius: width * 0.5
                 color: getSchemeColor(modelData, "mTertiary")
+                border.width: Math.max(1, Style.borderS * scaling)
+                border.color: getSchemeColor(modelData, "mSurface")
               }
 
-              // Error color swatch
+              // Error color dot (left)
               Rectangle {
-                width: swatches.swatchSize
-                height: swatches.swatchSize
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: parent.left
+                anchors.leftMargin: -2 * scaling
+                width: 18 * scaling
+                height: 18 * scaling
                 radius: width * 0.5
                 color: getSchemeColor(modelData, "mError")
+                border.width: Math.max(1, Style.borderS * scaling)
+                border.color: getSchemeColor(modelData, "mSurface")
+              }
+            }
+
+            MouseArea {
+              anchors.fill: parent
+              onClicked: {
+                Settings.data.colorSchemes.useWallpaperColors = false
+                Logger.log("ColorSchemeTab", "Disabled matugen setting")
+
+                Settings.data.colorSchemes.predefinedScheme = schemePath.split("/").pop().replace(".json", "")
+                ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme)
+              }
+              hoverEnabled: true
+              cursorShape: Qt.PointingHandCursor
+
+              onEntered: {
+                circularPreview.scale = root.cardScaleHigh
+                // circles go speen
+                colorDots.rotation += 360
+              }
+
+              onExited: {
+                circularPreview.scale = root.cardScaleLow
+                // circles don't go speen anymore :(
+                colorDots.rotation = 0
+              }
+            }
+
+            // Selection indicator
+            Rectangle {
+              visible: !Settings.data.colorSchemes.useWallpaperColors && (Settings.data.colorSchemes.predefinedScheme === schemePath.split("/").pop().replace(".json", ""))
+              anchors.right: parent.right
+              anchors.top: parent.top
+              anchors.rightMargin: 3 * scaling
+              anchors.topMargin: 3 * scaling
+              width: 20 * scaling
+              height: 20 * scaling
+              radius: width * 0.5
+              color: Color.mSecondary
+              border.width: Math.max(1, Style.borderS * scaling)
+              border.color: Color.mOnSecondary
+
+              NIcon {
+                icon: "check"
+                pointSize: Style.fontSizeXS * scaling
+                font.weight: Style.fontWeightBold
+                color: Color.mOnSecondary
+                anchors.centerIn: parent
+              }
+            }
+
+            // Smooth animations
+            Behavior on scale {
+              NumberAnimation {
+                duration: Style.animationNormal
+                easing.type: Easing.OutCubic
+              }
+            }
+
+            Behavior on border.color {
+              ColorAnimation {
+                duration: Style.animationNormal
+              }
+            }
+
+            Behavior on border.width {
+              NumberAnimation {
+                duration: Style.animationFast
               }
             }
           }
 
-          // Selection indicator (Checkmark)
-          Rectangle {
-            visible: !Settings.data.colorSchemes.useWallpaperColors && (Settings.data.colorSchemes.predefinedScheme === schemePath.split("/").pop().replace(".json", ""))
-            anchors.right: parent.right
-            anchors.top: parent.top
-            anchors.margins: Style.marginS * scaling
-            width: 28 * scaling
-            height: 28 * scaling
-            radius: width * 0.5
-            color: Color.mSecondary
-
-            NIcon {
-              icon: "check"
-              pointSize: Style.fontSizeM * scaling
-              font.weight: Style.fontWeightBold
-              color: Color.mOnSecondary
-              anchors.centerIn: parent
+          // Scheme name below the circle
+          NText {
+            text: {
+              // Remove json and the full path
+              var chunks = schemePath.replace(".json", "").split("/")
+              return chunks[chunks.length - 1]
             }
-          }
-
-          // Smooth animations
-          Behavior on scale {
-            NumberAnimation {
-              duration: Style.animationNormal
-              easing.type: Easing.OutCubic
-            }
-          }
-
-          Behavior on border.color {
-            ColorAnimation {
-              duration: Style.animationNormal
-            }
-          }
-
-          Behavior on border.width {
-            NumberAnimation {
-              duration: Style.animationFast
-            }
+            pointSize: Style.fontSizeS * scaling
+            font.weight: Style.fontWeightMedium
+            color: Color.mOnSurface
+            Layout.fillWidth: true
+            Layout.maximumWidth: 100 * scaling
+            elide: Text.ElideRight
+            horizontalAlignment: Text.AlignHCenter
+            wrapMode: Text.WordWrap
+            maximumLineCount: 2
           }
         }
       }

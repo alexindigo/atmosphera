@@ -376,7 +376,7 @@ Singleton {
     Logger.log("Matugen", "Generating templates from predefined color scheme")
 
     var content = Matugen.buildConfigToml()
-        console.log(content)
+    console.log(content)
     var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light"
     var pathEsc = dynamicConfigPath.replace(/'/g, "'\\''")
     var extraRepo = (Quickshell.shellDir + "/Assets/Matugen/extra").replace(/'/g, "'\\''")
