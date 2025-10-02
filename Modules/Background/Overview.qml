@@ -21,10 +21,6 @@ Variants {
         if (modelData) {
           Logger.log("Overview", "Loading Overview component for Niri on", modelData.name)
         }
-        updateWallpaper()
-      }
-
-      function updateWallpaper() {
         wallpaper = modelData ? WallpaperService.getWallpaper(modelData.name) : ""
       }
 
@@ -34,15 +30,6 @@ Variants {
         function onWallpaperChanged(screenName, path) {
           if (screenName === modelData.name) {
             wallpaper = path
-          }
-        }
-      }
-      
-      Connections {
-        target: WallpaperService
-        function onIsInitializedChanged() {
-          if (WallpaperService.isInitialized) {
-            updateWallpaper()
           }
         }
       }
