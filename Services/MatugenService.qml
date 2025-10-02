@@ -345,6 +345,8 @@ Singleton {
       }
     }
 
+    console.log(JSON.stringify(matugenColors))
+
     return JSON.stringify(matugenColors)
   }
 
@@ -385,6 +387,7 @@ Singleton {
     Logger.log("Matugen", "Generating templates from predefined color scheme")
 
     var content = Matugen.buildConfigToml()
+        console.log(content)
     var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light"
     var pathEsc = dynamicConfigPath.replace(/'/g, "'\\''")
     var extraRepo = (Quickshell.shellDir + "/Assets/Matugen/extra").replace(/'/g, "'\\''")
@@ -397,7 +400,7 @@ Singleton {
 
     // Build the script
     var script = ""
-    script += "cat > '" + pathEsc + "' << 'EOF'\n" + content + "EOF\n"
+    script += "cat > '" + pathEsc + "' << 'EOF'\n" + content + "\nEOF\n"
     script += "for d in '" + extraRepo + "' '" + extraUser + "'; do\n"
     script += "  if [ -d \"$d\" ]; then\n"
     script += "    for f in \"$d\"/*.toml; do\n"
@@ -416,6 +419,8 @@ Singleton {
     }
 
     script += "\n"
+    console.log("------")
+    console.log(script)
     generateProcess.command = ["bash", "-lc", script]
 
     // Write JSON file with our custom colors
