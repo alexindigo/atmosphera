@@ -488,9 +488,9 @@
           "label": "Modo oscuro",
           "description": "Cambia a un tema más oscuro para una visualización más fácil por la noche."
         },
-        "enable-matugen": {
-          "label": "Activar Matugen",
-          "description": "Genera colores automáticamente basados en tu fondo de pantalla activo."
+        "use-wallpaper-colors": {
+          "label": "Usar colores del fondo de pantalla",
+          "description": "Generar esquemas de color desde tu fondo de pantalla usando Matugen. Extrae automáticamente colores para crear un tema cohesivo."
         },
         "matugen-scheme-type": {
           "label": "Tipo de esquema Matugen",
@@ -1346,10 +1346,10 @@
       "enabled": "Activado",
       "disabled": "Desactivado"
     },
-    "matugen": {
-      "enabled": "Activado",
-      "disabled": "Desactivado",
-      "not-installed": "No instalado"
+    "wallpaper-colors": {
+      "enabled": "Colores del fondo de pantalla activados",
+      "disabled": "Colores del fondo de pantalla desactivados",
+      "not-installed": "Matugen no instalado - requerido para extraer colores del fondo de pantalla"
     },
     "recording": {
       "stopping": "Deteniendo grabación...",

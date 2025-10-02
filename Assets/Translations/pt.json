@@ -454,9 +454,9 @@
           "label": "Modo escuro",
           "description": "Muda para um tema mais escuro para facilitar a visualização à noite."
         },
-        "enable-matugen": {
-          "label": "Ativar Matugen",
-          "description": "Gera cores automaticamente com base no seu papel de parede ativo."
+        "use-wallpaper-colors": {
+          "label": "Usar cores do papel de parede",
+          "description": "Gerar esquemas de cores do seu papel de parede usando Matugen. Extrai automaticamente cores para criar um tema coeso."
         },
         "matugen-scheme-type": {
           "label": "Tipo de esquema Matugen",
@@ -1346,10 +1346,10 @@
       "enabled": "Ativado",
       "disabled": "Desativado"
     },
-    "matugen": {
-      "enabled": "Ativado",
-      "disabled": "Desativado",
-      "not-installed": "Não instalado"
+    "wallpaper-colors": {
+      "enabled": "Cores do papel de parede ativadas",
+      "disabled": "Cores do papel de parede desativadas",
+      "not-installed": "Matugen não instalado - necessário para extração de cores do papel de parede"
     },
     "recording": {
       "stopping": "Parando gravação…",

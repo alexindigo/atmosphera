@@ -492,9 +492,9 @@
           "label": "Dunkler Modus",
           "description": "Wechselt zu einem dunkleren Theme für einfachere Betrachtung bei Nacht."
         },
-        "enable-matugen": {
-          "label": "Matugen aktivieren",
-          "description": "Automatisch Farben basierend auf Ihrem aktiven Hintergrundbild generieren."
+        "use-wallpaper-colors": {
+          "label": "Hintergrundbild-Farben verwenden",
+          "description": "Farbschemata aus Ihrem Hintergrundbild mit Matugen generieren. Extrahiert automatisch Farben für ein kohärentes Design."
         },
         "matugen-scheme-type": {
           "label": "Matugen-Schema-Typ",
@@ -1378,10 +1378,10 @@
       "enabled": "Aktiviert",
       "disabled": "Deaktiviert"
     },
-    "matugen": {
-      "enabled": "Aktiviert",
-      "disabled": "Deaktiviert",
-      "not-installed": "Nicht installiert"
+    "wallpaper-colors": {
+      "enabled": "Hintergrundbild-Farben aktiviert",
+      "disabled": "Hintergrundbild-Farben deaktiviert",
+      "not-installed": "Matugen nicht installiert - erforderlich für Hintergrundbild-Farbextraktion"
     },
     "recording": {
       "stopping": "Aufnahme wird gestoppt…",

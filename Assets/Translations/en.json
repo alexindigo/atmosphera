@@ -490,9 +490,9 @@
           "label": "Dark mode",
           "description": "Switches to a darker theme for easier viewing at night."
         },
-        "enable-matugen": {
-          "label": "Enable Matugen",
-          "description": "Automatically generate colors based on your active wallpaper."
+        "use-wallpaper-colors": {
+          "label": "Use wallpaper colors",
+          "description": "Generate color schemes from your wallpaper using Matugen. Automatically extracts colors to create a cohesive theme."
         },
         "matugen-scheme-type": {
           "label": "Matugen scheme type",
@@ -1349,10 +1349,10 @@
       "enabled": "Enabled",
       "disabled": "Disabled"
     },
-    "matugen": {
-      "enabled": "Enabled",
-      "disabled": "Disabled",
-      "not-installed": "Not installed"
+    "wallpaper-colors": {
+      "enabled": "Wallpaper colors enabled",
+      "disabled": "Wallpaper colors disabled",
+      "not-installed": "Matugen not installed - required for wallpaper color extraction"
     },
     "recording": {
       "stopping": "Stopping recording…",

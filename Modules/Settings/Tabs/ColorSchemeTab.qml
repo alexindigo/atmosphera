@@ -67,10 +67,10 @@ ColumnLayout {
         // Matugen exists, enable it
         Settings.data.colorSchemes.useWallpaperColors = true
         MatugenService.generateFromWallpaper()
-        ToastService.showNotice(I18n.tr("settings.color-scheme.color-source.enable-matugen.label"), I18n.tr("toast.matugen.enabled"))
+        ToastService.showNotice(I18n.tr("settings.color-scheme.color-source.use-wallpaper-colors.label"), I18n.tr("toast.wallpaper-colors.enabled"))
       } else {
         // Matugen not found
-        ToastService.showWarning(I18n.tr("settings.color-scheme.color-source.enable-matugen.label"), I18n.tr("toast.matugen.not-installed"))
+        ToastService.showWarning(I18n.tr("settings.color-scheme.color-source.use-wallpaper-colors.label"), I18n.tr("toast.wallpaper-colors.not-installed"))
       }
     }
 
@@ -121,10 +121,10 @@ ColumnLayout {
     onToggled: checked => Settings.data.colorSchemes.darkMode = checked
   }
 
-  // Use Matugen
+  // Use Wallpaper Colors
   NToggle {
-    label: I18n.tr("settings.color-scheme.color-source.enable-matugen.label")
-    description: I18n.tr("settings.color-scheme.color-source.enable-matugen.description")
+    label: I18n.tr("settings.color-scheme.color-source.use-wallpaper-colors.label")
+    description: I18n.tr("settings.color-scheme.color-source.use-wallpaper-colors.description")
     checked: Settings.data.colorSchemes.useWallpaperColors
     onToggled: checked => {
                  if (checked) {
@@ -132,7 +132,7 @@ ColumnLayout {
                    matugenCheck.running = true
                  } else {
                    Settings.data.colorSchemes.useWallpaperColors = false
-                   ToastService.showNotice(I18n.tr("settings.color-scheme.color-source.enable-matugen.label"), I18n.tr("toast.matugen.disabled"))
+                   ToastService.showNotice(I18n.tr("settings.color-scheme.color-source.use-wallpaper-colors.label"), I18n.tr("toast.wallpaper-colors.disabled"))
 
                    if (Settings.data.colorSchemes.predefinedScheme) {
 
@@ -334,13 +334,13 @@ ColumnLayout {
 
               onEntered: {
                 circularPreview.scale = root.cardScaleHigh
-                // circles go speen
+                // circles go spin
                 colorDots.rotation += 360
               }
 
               onExited: {
                 circularPreview.scale = root.cardScaleLow
-                // circles don't go speen anymore :(
+                // circles don't go spin anymore :(
                 colorDots.rotation = 0
               }
             }
