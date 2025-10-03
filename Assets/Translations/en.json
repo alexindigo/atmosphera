@@ -1037,7 +1037,8 @@
     "panel": {
       "title": "Notifications",
       "no-notifications": "No notifications",
-      "description": "Your notifications will show up here as they arrive."
+      "description": "Your notifications will show up here as they arrive.",
+      "click-to-expand": "Click to expand"
     }
   },
   "wallpaper": {

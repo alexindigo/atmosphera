@@ -1035,7 +1035,8 @@
     "panel": {
       "title": "通知",
       "no-notifications": "无通知",
-      "description": "您的通知将在到达时显示在此处。"
+      "description": "您的通知将在到达时显示在此处。",
+      "click-to-expand": "点击展开"
     }
   },
   "wallpaper": {
