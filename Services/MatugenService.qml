@@ -448,10 +448,19 @@ Singleton {
 
   // --------------------------------
   function getTerminalColorsTemplate(terminal) {
-    const colorTermRoot = "Assets/ColorTemplates/Terminal"
-    const colorScheme = Settings.data.colorSchemes.predefinedScheme;
+    var colorScheme = Settings.data.colorSchemes.predefinedScheme;
     const darkLight = Settings.data.colorSchemes.darkMode ? 'dark' : 'light';
-    return `${Quickshell.shellDir}/${colorTermRoot}/${terminal}/${colorScheme}-${darkLight}`
+    
+    // Convert display names back to folder names
+    if (colorScheme === "Noctalia (default)") {
+      colorScheme = "Noctalia-default"
+    } else if (colorScheme === "Noctalia (legacy)") {
+      colorScheme = "Noctalia-legacy"
+    } else if (colorScheme === "Tokyo Night") {
+      colorScheme = "Tokyo-Night"
+    }
+    
+    return `${Quickshell.shellDir}/Assets/ColorScheme/${colorScheme}/terminal/${terminal}/${colorScheme}-${darkLight}`
   }
 
   // --------------------------------

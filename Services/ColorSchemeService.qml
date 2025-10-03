@@ -43,17 +43,26 @@ Singleton {
     Logger.log("ColorScheme", "Load colorScheme")
     scanning = true
     schemes = []
-    // Unsetting, then setting the folder will re-trigger the parsing!
-    folderModel.folder = ""
-    folderModel.folder = "file://" + schemesDirectory
+    // Use find command to locate all theme JSON files
+    findProcess.command = ["find", schemesDirectory, "-name", "*.json", "-type", "f"]
+    findProcess.running = true
   }
 
   function getBasename(path) {
     if (!path)
       return ""
     var chunks = path.split("/")
-    var last = chunks[chunks.length - 1]
-    return last.endsWith(".json") ? last.slice(0, -5) : last
+    // Get the parent directory name (scheme name) instead of the filename
+    var schemeDir = chunks[chunks.length - 2]
+    // Convert back to display names for special cases
+    if (schemeDir === "Noctalia-default") {
+      return "Noctalia (default)"
+    } else if (schemeDir === "Noctalia-legacy") {
+      return "Noctalia (legacy)"
+    } else if (schemeDir === "Tokyo-Night") {
+      return "Tokyo Night"
+    }
+    return schemeDir
   }
 
   function resolveSchemePath(nameOrPath) {
@@ -62,7 +71,16 @@ Singleton {
     if (nameOrPath.indexOf("/") !== -1) {
       return nameOrPath
     }
-    return schemesDirectory + "/" + nameOrPath.replace(".json", "") + ".json"
+    // Handle special cases for Noctalia schemes
+    var schemeName = nameOrPath.replace(".json", "")
+    if (schemeName === "Noctalia (default)") {
+      schemeName = "Noctalia-default"
+    } else if (schemeName === "Noctalia (legacy)") {
+      schemeName = "Noctalia-legacy"
+    } else if (schemeName === "Tokyo Night") {
+      schemeName = "Tokyo-Night"
+    }
+    return schemesDirectory + "/" + schemeName + "/" + schemeName + ".json"
   }
 
   function applyScheme(nameOrPath) {
@@ -72,18 +90,16 @@ Singleton {
     schemeReader.path = filePath
   }
 
-  FolderListModel {
-    id: folderModel
-    nameFilters: ["*.json"]
-    showDirs: false
-    sortField: FolderListModel.Name
-    onStatusChanged: {
-      if (status === FolderListModel.Ready) {
-        var files = []
-        for (var i = 0; i < count; i++) {
-          var filepath = schemesDirectory + "/" + get(i, "fileName")
-          files.push(filepath)
-        }
+  Process {
+    id: findProcess
+    running: false
+    
+    onExited: function(exitCode) {
+      if (exitCode === 0) {
+        var output = stdout.text.trim()
+        var files = output.split('\n').filter(function(line) {
+          return line.length > 0
+        })
         schemes = files
         scanning = false
         Logger.log("ColorScheme", "Listed", schemes.length, "schemes")
@@ -98,8 +114,15 @@ Singleton {
             applyScheme(basename)
           }
         }
+      } else {
+        Logger.error("ColorScheme", "Failed to find color scheme files")
+        schemes = []
+        scanning = false
       }
     }
+    
+    stdout: StdioCollector {}
+    stderr: StdioCollector {}
   }
 
   // Internal loader to read a scheme file

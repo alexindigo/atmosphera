@@ -19,10 +19,27 @@ ColumnLayout {
   property real cardScaleLow: 0.95
   property real cardScaleHigh: 1.0
 
+  // Helper function to extract scheme name from path
+  function extractSchemeName(schemePath) {
+    var pathParts = schemePath.split("/")
+    var schemeName = pathParts[pathParts.length - 2] // Get parent directory name
+    
+    // Convert folder names back to display names
+    if (schemeName === "Noctalia-default") {
+      schemeName = "Noctalia (default)"
+    } else if (schemeName === "Noctalia-legacy") {
+      schemeName = "Noctalia (legacy)"
+    } else if (schemeName === "Tokyo-Night") {
+      schemeName = "Tokyo Night"
+    }
+    
+    return schemeName
+  }
+
   // Helper function to get color from scheme file (supports dark/light variants)
   function getSchemeColor(schemePath, colorKey) {
     // Extract scheme name from path
-    var schemeName = schemePath.split("/").pop().replace(".json", "")
+    var schemeName = extractSchemeName(schemePath)
 
     // Try to get from cached data first
     if (schemeColorsCache[schemeName]) {
@@ -92,7 +109,9 @@ ColumnLayout {
           path: modelData
           blockLoading: true
           onLoaded: {
-            var schemeName = path.split("/").pop().replace(".json", "")
+            // Extract scheme name from path
+            var schemeName = extractSchemeName(path)
+            
             try {
               var jsonData = JSON.parse(text())
               root.schemeLoaded(schemeName, jsonData)
@@ -248,7 +267,7 @@ ColumnLayout {
             radius: width * 0.5
             color: getSchemeColor(modelData, "mSurface")
             border.width: Math.max(2, Style.borderL * scaling)
-            border.color: (!Settings.data.colorSchemes.useWallpaperColors && (Settings.data.colorSchemes.predefinedScheme === modelData.split("/").pop().replace(".json", ""))) ? Color.mSecondary : Color.mOutline
+            border.color: (!Settings.data.colorSchemes.useWallpaperColors && (Settings.data.colorSchemes.predefinedScheme === extractSchemeName(modelData))) ? Color.mSecondary : Color.mOutline
             scale: root.cardScaleLow
 
             // Four small color dots arranged in a circle to show accent colors
@@ -327,7 +346,7 @@ ColumnLayout {
                 Settings.data.colorSchemes.useWallpaperColors = false
                 Logger.log("ColorSchemeTab", "Disabled matugen setting")
 
-                Settings.data.colorSchemes.predefinedScheme = schemePath.split("/").pop().replace(".json", "")
+                Settings.data.colorSchemes.predefinedScheme = extractSchemeName(schemePath)
                 ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme)
               }
               hoverEnabled: true
@@ -348,7 +367,7 @@ ColumnLayout {
 
             // Selection indicator
             Rectangle {
-              visible: !Settings.data.colorSchemes.useWallpaperColors && (Settings.data.colorSchemes.predefinedScheme === schemePath.split("/").pop().replace(".json", ""))
+              visible: !Settings.data.colorSchemes.useWallpaperColors && (Settings.data.colorSchemes.predefinedScheme === extractSchemeName(schemePath))
               anchors.right: parent.right
               anchors.top: parent.top
               anchors.rightMargin: 3 * scaling
@@ -392,18 +411,16 @@ ColumnLayout {
 
           // Scheme name below the circle
           NText {
-            text: {
-              // Remove json and the full path
-              var chunks = schemePath.replace(".json", "").split("/")
-              return chunks[chunks.length - 1]
-            }
+            text: extractSchemeName(schemePath)
             pointSize: Style.fontSizeS * scaling
             font.weight: Style.fontWeightMedium
             color: Color.mOnSurface
             Layout.fillWidth: true
             Layout.maximumWidth: 100 * scaling
+            Layout.preferredHeight: 40 * scaling  // Fixed height for consistent alignment
             elide: Text.ElideRight
             horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
             wrapMode: Text.WordWrap
             maximumLineCount: 2
           }
