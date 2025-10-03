@@ -14,6 +14,7 @@ Singleton {
   // Build the base TOML using current settings
   function buildConfigToml() {
     var lines = []
+    var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light";
     lines.push("[config]")
 
     if (Settings.data.colorSchemes.useWallpaperColors) {
@@ -51,10 +52,12 @@ Singleton {
       lines.push("\n[templates.gtk3]")
       lines.push('input_path = "' + Quickshell.shellDir + '/Assets/MatugenTemplates/gtk.css"')
       lines.push('output_path = "~/.config/gtk-3.0/gtk.css"')
+      lines.push("post_hook = 'gsettings set org.gnome.desktop.interface color-scheme prefer-" + mode + "'");
 
       lines.push("\n[templates.gtk4]")
       lines.push('input_path = "' + Quickshell.shellDir + '/Assets/MatugenTemplates/gtk.css"')
       lines.push('output_path = "~/.config/gtk-4.0/gtk.css"')
+      lines.push("post_hook = 'gsettings set org.gnome.desktop.interface color-scheme prefer-" + mode + "'");
     }
 
     if (Settings.data.templates.qt) {
