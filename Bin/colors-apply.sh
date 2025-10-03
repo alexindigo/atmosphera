@@ -5,7 +5,7 @@
 if [ "$#" -ne 1 ]; then
     # Print usage information to standard error.
     echo "Error: No application specified." >&2
-    echo "Usage: $0 {kitty|foot|fuzzell|pywalfox}" >&2
+    echo "Usage: $0 {kitty|ghostty|foot|fuzzell|pywalfox}" >&2
     exit 1
 fi
 
@@ -16,6 +16,22 @@ case "$APP_NAME" in
     kitty)
         echo "🎨 Applying 'noctalia' theme to kitty..."
         kitty +kitten themes --reload-in=all noctalia
+        ;;
+
+    ghostty)
+        echo "🎨 Applying 'noctalia' theme to ghostty..."
+        CONFIG_FILE="$HOME/.config/ghostty/config"
+        # Check if the config file exists before trying to modify it.
+        if [ -f "$CONFIG_FILE" ]; then
+            # Remove any existing theme include line to prevent duplicates.
+            sed -i '/theme/d' "$CONFIG_FILE"
+            # Add the new theme include line to the end of the file.
+            echo "theme = noctalia" >> "$CONFIG_FILE"
+            pkill -SIGUSR2 ghostty
+        else
+            echo "Error: foot config file not found at $CONFIG_FILE" >&2
+            exit 1
+        fi
         ;;
 
     foot)

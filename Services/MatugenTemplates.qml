@@ -27,14 +27,14 @@ Singleton {
       // predefined color schemes use a different approach for better result
       if (Settings.data.templates.foot) {
         lines.push("\n[templates.foot]")
-        lines.push('input_path = "' + Quickshell.shellDir + '/Assets/ColorTemplates/Matugen/Terminal/foot.conf"')
+        lines.push('input_path = "' + Quickshell.shellDir + '/Assets/ColorTemplates/Matugen/Terminal/foot"')
         lines.push('output_path = "~/.config/foot/themes/noctalia"')
         lines.push(`post_hook = "${MatugenService.colorsApplyScript} foot"`)
       }
 
       if (Settings.data.templates.ghostty) {
         lines.push("\n[templates.ghostty]")
-        lines.push('input_path = "' + Quickshell.shellDir + '/Assets/ColorTemplates/Matugen/Terminal/ghostty.conf"')
+        lines.push('input_path = "' + Quickshell.shellDir + '/Assets/ColorTemplates/Matugen/Terminal/ghostty"')
         lines.push('output_path = "~/.config/ghostty/themes/noctalia"')
         lines.push(`post_hook = "${MatugenService.colorsApplyScript} ghostty"`)
       }

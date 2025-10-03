@@ -422,21 +422,23 @@ Singleton {
     var copyCmd = ""
     if (Settings.data.templates.foot) {
       if (copyCmd !== "") copyCmd += " ; "
-      copyCmd += `cp -f ${getTerminalColorsTemplate('foot')} ~/.config/foot/themes/noctalia.conf`;
+      copyCmd += `cp -f ${getTerminalColorsTemplate('foot')} ~/.config/foot/themes/noctalia`;
       copyCmd += ` ; ${colorsApplyScript} foot`
     }
 
     if (Settings.data.templates.ghostty) {
       if (copyCmd !== "") copyCmd += " ; "
-      copyCmd += `cp -f ${getTerminalColorsTemplate('ghostty')} ~/.config/ghostty/themes/noctalia.conf`;
+      copyCmd += `cp -f ${getTerminalColorsTemplate('ghostty')} ~/.config/ghostty/themes/noctalia`;
       copyCmd += ` ; ${colorsApplyScript} ghostty`
     }
     
     if (Settings.data.templates.kitty) {
       if (copyCmd !== "") copyCmd += " ; "
-      copyCmd += `cp -f ${getTerminalColorsTemplate('kitty')} ~/.config/kitty/themes/noctalia.conf`;
+      copyCmd += `cp -f ${getTerminalColorsTemplate('kitty')}.conf ~/.config/kitty/themes/noctalia.conf`;
       copyCmd += ` ; ${colorsApplyScript} kitty`
     }
+
+    // Finally execute all copies at once.
     if (copyCmd !== "") {
      //console.log(copyCmd)
       copyProcess.command = ["bash", "-lc", copyCmd]
@@ -449,7 +451,7 @@ Singleton {
     const colorTermRoot = "Assets/ColorTemplates/Terminal"
     const colorScheme = Settings.data.colorSchemes.predefinedScheme;
     const darkLight = Settings.data.colorSchemes.darkMode ? 'dark' : 'light';
-    return `${Quickshell.shellDir}/${colorTermRoot}/${terminal}/${colorScheme}-${darkLight}.conf`
+    return `${Quickshell.shellDir}/${colorTermRoot}/${terminal}/${colorScheme}-${darkLight}`
   }
 
   // --------------------------------
