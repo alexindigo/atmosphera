@@ -17,7 +17,7 @@ Variants {
 
     required property ShellScreen modelData
     property real scaling: ScalingService.getScreenScale(modelData)
-    property bool barIsReady: BarService.isBarReady(modelData.name)
+    property bool barIsReady: modelData ? BarService.isBarReady(modelData.name) : false
 
     Connections {
       target: BarService
@@ -74,7 +74,7 @@ Variants {
     readonly property int floatingMargin: Settings.data.dock.floatingRatio * Style.marginL * scaling
 
     // Bar detection and positioning properties
-    readonly property bool hasBar: modelData.name ? (Settings.data.bar.monitors.includes(modelData.name) || (Settings.data.bar.monitors.length === 0)) : false
+    readonly property bool hasBar: modelData && modelData.name ? (Settings.data.bar.monitors.includes(modelData.name) || (Settings.data.bar.monitors.length === 0)) : false
     readonly property bool barAtBottom: hasBar && Settings.data.bar.position === "bottom"
     readonly property int barHeight: Style.barHeight * scaling
 

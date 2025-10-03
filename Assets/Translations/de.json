@@ -492,9 +492,9 @@
           "label": "Dunkler Modus",
           "description": "Wechselt zu einem dunkleren Theme für einfachere Betrachtung bei Nacht."
         },
-        "enable-matugen": {
-          "label": "Matugen aktivieren",
-          "description": "Automatisch Farben basierend auf Ihrem aktiven Hintergrundbild generieren."
+        "use-wallpaper-colors": {
+          "label": "Hintergrundbild-Farben verwenden",
+          "description": "Farbschemata aus Ihrem Hintergrundbild mit Matugen generieren. Extrahiert automatisch Farben für ein kohärentes Design."
         },
         "matugen-scheme-type": {
           "label": "Matugen-Schema-Typ",
@@ -505,26 +505,20 @@
         "section": {
           "label": "Vordefinierte Farbschemata",
           "description": "Wählen Sie aus einer Sammlung vordefinierter Farbschemata."
+        },
+        "generate-templates": {
+          "label": "Templates für vordefinierte Schemata generieren",
+          "description": "Generiert Matugen-Templates (GTK, Terminal-Themes, etc.) bei der Verwendung vordefinierter Farbschemata."
         }
       },
-      "matugen": {
-        "section": {
-          "label": "Matugen-Vorlagen",
-          "description": "Farben auf externe Anwendungen anwenden."
-        },
+      "templates": {
         "ui": {
           "label": "UI",
           "description": "Desktop-Umgebung und UI-Toolkit-Theming.",
-          "gtk4": {
+          "gtk": {
             "description": "Schreibt {filepath}"
           },
-          "gtk3": {
-            "description": "Schreibt {filepath}"
-          },
-          "qt6": {
-            "description": "Schreibt {filepath}"
-          },
-          "qt5": {
+          "qt": {
             "description": "Schreibt {filepath}"
           }
         },
@@ -567,6 +561,10 @@
             "label": "Benutzer-Vorlagen",
             "description": "Benutzerdefinierte Matugen-Konfiguration aus ~/.config/matugen/config.toml aktivieren"
           }
+        },
+        "section": {
+          "description": "Farben auf externe Anwendungen anwenden.",
+          "label": "Vorlagen"
         }
       }
     },
@@ -1374,10 +1372,10 @@
       "enabled": "Aktiviert",
       "disabled": "Deaktiviert"
     },
-    "matugen": {
-      "enabled": "Aktiviert",
-      "disabled": "Deaktiviert",
-      "not-installed": "Nicht installiert"
+    "wallpaper-colors": {
+      "enabled": "Hintergrundbild-Farben aktiviert",
+      "disabled": "Hintergrundbild-Farben deaktiviert",
+      "not-installed": "Matugen nicht installiert - erforderlich für Hintergrundbild-Farbextraktion"
     },
     "recording": {
       "stopping": "Aufnahme wird gestoppt…",

@@ -488,9 +488,9 @@
           "label": "Mode sombre",
           "description": "Passe à un thème plus sombre pour une visualisation plus facile la nuit."
         },
-        "enable-matugen": {
-          "label": "Activer Matugen",
-          "description": "Générez automatiquement des couleurs en fonction de votre fond d'écran actif."
+        "use-wallpaper-colors": {
+          "label": "Utiliser les couleurs du fond d'écran",
+          "description": "Générer des schémas de couleurs à partir de votre fond d'écran avec Matugen. Extrait automatiquement les couleurs pour créer un thème cohérent."
         },
         "matugen-scheme-type": {
           "label": "Type de schéma Matugen",
@@ -501,27 +501,21 @@
         "section": {
           "label": "Jeux de couleurs prédéfinis",
           "description": "Choisissez parmi une collection de jeux de couleurs prédéfinis."
+        },
+        "generate-templates": {
+          "label": "Générer des modèles pour les schémas prédéfinis",
+          "description": "Génère des modèles Matugen (GTK, thèmes de terminal, etc.) lors de l'utilisation de schémas de couleurs prédéfinis."
         }
       },
-      "matugen": {
-        "section": {
-          "label": "Modèles Matugen",
-          "description": "Appliquez des couleurs aux applications externes."
-        },
+      "templates": {
         "ui": {
           "label": "UI",
           "description": "Thématisation de l'environnement de bureau et de la boîte à outils d'interface utilisateur.",
-          "gtk4": {
-            "description": "Écrire ~/.config/gtk-4.0/gtk.css"
+          "gtk": {
+            "description": "Écrire {filepath}"
           },
-          "gtk3": {
-            "description": "Écrire ~/.config/gtk-3.0/gtk.css"
-          },
-          "qt6": {
-            "description": "Écrire ~/.config/qt6ct/colors/noctalia.conf"
-          },
-          "qt5": {
-            "description": "Écrire ~/.config/qt5ct/colors/noctalia.conf"
+          "qt": {
+            "description": "Écrire {filepath}"
           }
         },
         "terminal": {
@@ -563,6 +557,10 @@
             "label": "Modèles utilisateur",
             "description": "Activer la configuration Matugen définie par l'utilisateur depuis ~/.config/matugen/config.toml"
           }
+        },
+        "section": {
+          "description": "Appliquer des couleurs aux applications externes.",
+          "label": "Modèles"
         }
       }
     },
@@ -1342,10 +1340,10 @@
       "enabled": "Activé",
       "disabled": "Désactivé"
     },
-    "matugen": {
-      "enabled": "Activé",
-      "disabled": "Désactivé",
-      "not-installed": "Non installé"
+    "wallpaper-colors": {
+      "enabled": "Couleurs du fond d'écran activées",
+      "disabled": "Couleurs du fond d'écran désactivées",
+      "not-installed": "Matugen non installé - requis pour l'extraction des couleurs du fond d'écran"
     },
     "recording": {
       "stopping": "Arrêt de l'enregistrement...",

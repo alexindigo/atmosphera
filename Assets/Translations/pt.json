@@ -454,9 +454,9 @@
           "label": "Modo escuro",
           "description": "Muda para um tema mais escuro para facilitar a visualização à noite."
         },
-        "enable-matugen": {
-          "label": "Ativar Matugen",
-          "description": "Gera cores automaticamente com base no seu papel de parede ativo."
+        "use-wallpaper-colors": {
+          "label": "Usar cores do papel de parede",
+          "description": "Gerar esquemas de cores do seu papel de parede usando Matugen. Extrai automaticamente cores para criar um tema coeso."
         },
         "matugen-scheme-type": {
           "label": "Tipo de esquema Matugen",
@@ -467,26 +467,20 @@
         "section": {
           "label": "Esquemas de cores predefinidos",
           "description": "Escolha entre uma coleção de esquemas de cores predefinidos."
+        },
+        "generate-templates": {
+          "label": "Gerar modelos para esquemas predefinidos",
+          "description": "Gera modelos Matugen (GTK, temas de terminal, etc.) ao usar esquemas de cores predefinidos."
         }
       },
-      "matugen": {
-        "section": {
-          "label": "Modelos Matugen",
-          "description": "Aplique cores a aplicativos externos."
-        },
+      "templates": {
         "ui": {
           "label": "UI",
           "description": "Tematização do ambiente de desktop e kit de ferramentas de UI.",
-          "gtk4": {
+          "gtk": {
             "description": "Escrever {filepath}"
           },
-          "gtk3": {
-            "description": "Escrever {filepath}"
-          },
-          "qt6": {
-            "description": "Escrever {filepath}"
-          },
-          "qt5": {
+          "qt": {
             "description": "Escrever {filepath}"
           }
         },
@@ -529,6 +523,10 @@
             "label": "Modelos do usuário",
             "description": "Ativa a configuração do Matugen definida pelo usuário em ~/.config/matugen/config.toml"
           }
+        },
+        "section": {
+          "description": "Aplicar cores a aplicações externas.",
+          "label": "Modelos"
         }
       }
     },
@@ -1342,10 +1340,10 @@
       "enabled": "Ativado",
       "disabled": "Desativado"
     },
-    "matugen": {
-      "enabled": "Ativado",
-      "disabled": "Desativado",
-      "not-installed": "Não instalado"
+    "wallpaper-colors": {
+      "enabled": "Cores do papel de parede ativadas",
+      "disabled": "Cores do papel de parede desativadas",
+      "not-installed": "Matugen não instalado - necessário para extração de cores do papel de parede"
     },
     "recording": {
       "stopping": "Parando gravação…",

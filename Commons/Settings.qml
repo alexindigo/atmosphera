@@ -310,15 +310,13 @@ Singleton {
       property string predefinedScheme: "Noctalia (default)"
       property bool darkMode: true
       property string matugenSchemeType: "scheme-fruit-salad"
+      property bool generateTemplatesForPredefined: true
     }
 
-    // matugen templates toggles
-    property JsonObject matugen: JsonObject {
-      // Per-template flags to control dynamic config generation
-      property bool gtk4: false
-      property bool gtk3: false
-      property bool qt6: false
-      property bool qt5: false
+    // templates toggles
+    property JsonObject templates: JsonObject {
+      property bool gtk: false
+      property bool qt: false
       property bool kitty: false
       property bool ghostty: false
       property bool foot: false

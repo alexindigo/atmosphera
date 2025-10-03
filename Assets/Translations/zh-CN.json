@@ -488,9 +488,9 @@
           "label": "深色模式",
           "description": "切换到更暗的主题，便于夜间观看。"
         },
-        "enable-matugen": {
-          "label": "启用 Matugen",
-          "description": "根据您的活动壁纸自动生成颜色。"
+        "use-wallpaper-colors": {
+          "label": "使用壁纸颜色",
+          "description": "使用 Matugen 从壁纸生成颜色方案。自动提取颜色以创建一致的主题。"
         },
         "matugen-scheme-type": {
           "label": "Matugen 配色方案类型",
@@ -501,26 +501,20 @@
         "section": {
           "label": "预定义配色方案",
           "description": "从预定义配色方案集合中选择。"
+        },
+        "generate-templates": {
+          "label": "为预定义方案生成模板",
+          "description": "使用预定义配色方案时生成 Matugen 模板（GTK、终端主题等）。"
         }
       },
-      "matugen": {
-        "section": {
-          "label": "Matugen 模板",
-          "description": "将颜色应用于外部应用程序。"
-        },
+      "templates": {
         "ui": {
           "label": "用户界面",
           "description": "桌面环境和 UI 工具包主题。",
-          "gtk4": {
+          "gtk": {
             "description": "写入 {filepath}"
           },
-          "gtk3": {
-            "description": "写入 {filepath}"
-          },
-          "qt6": {
-            "description": "写入 {filepath}"
-          },
-          "qt5": {
+          "qt": {
             "description": "写入 {filepath}"
           }
         },
@@ -563,6 +557,10 @@
             "label": "用户模板",
             "description": "启用来自 ~/.config/matugen/config.toml 的用户定义 Matugen 配置"
           }
+        },
+        "section": {
+          "description": "将颜色应用于外部应用程序。",
+          "label": "模板"
         }
       }
     },
@@ -1342,10 +1340,10 @@
       "enabled": "已启用",
       "disabled": "已禁用"
     },
-    "matugen": {
-      "enabled": "已启用",
-      "disabled": "已禁用",
-      "not-installed": "未安装"
+    "wallpaper-colors": {
+      "enabled": "壁纸颜色已启用",
+      "disabled": "壁纸颜色已禁用",
+      "not-installed": "Matugen 未安装 - 壁纸颜色提取所需"
     },
     "recording": {
       "stopping": "正在停止录制…",
