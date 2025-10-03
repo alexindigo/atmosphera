@@ -4,14 +4,16 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.Commons
-import qs.Assets.Matugen
 import qs.Services
 import "../Helpers/ColorVariants.js" as ColorVariants
 
 Singleton {
   id: root
 
+  readonly property string colorsApplyScript: Quickshell.shellDir + '/Bin/colors-apply.sh';
+
   property string dynamicConfigPath: Settings.cacheDir + "matugen.dynamic.toml"
+
 
   // External state management
   Connections {
@@ -41,6 +43,7 @@ Singleton {
     Logger.log("Matugen", "Service started")
   }
 
+  // --------------------------------
   // Convert predefined color scheme to Matugen format
   function convertPredefinedSchemeToMatugen(schemeData) {
     var variant = schemeData
@@ -334,11 +337,10 @@ Singleton {
       }
     }
 
-    console.log(JSON.stringify(matugenColors))
-
     return JSON.stringify(matugenColors)
   }
 
+  // --------------------------------
   // Generate colors using current wallpaper and settings
   function generateFromWallpaper() {
     Logger.log("Matugen", "Generating from wallpaper on screen:", Screen.name)
@@ -348,7 +350,7 @@ Singleton {
       return
     }
 
-    var content = Matugen.buildConfigToml()
+    var content = MatugenTemplates.buildConfigToml()
     var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light"
     var pathEsc = dynamicConfigPath.replace(/'/g, "'\\''")
     var extraRepo = (Quickshell.shellDir + "/Assets/Matugen/extra").replace(/'/g, "'\\''")
@@ -359,7 +361,7 @@ Singleton {
         + "done\n" + "matugen image '" + wp + "' --config '" + pathEsc + "' --mode " + mode + " --type " + Settings.data.colorSchemes.matugenSchemeType
 
     // Add user config execution if enabled
-    if (Settings.data.matugen.enableUserTemplates) {
+    if (Settings.data.templates.enableUserTemplates) {
       var userConfigDir = (Quickshell.env("HOME") + "/.config/matugen/").replace(/'/g, "'\\''")
       script += "\n# Execute user config if it exists\nif [ -f '" + userConfigDir + "config.toml' ]; then\n"
       script += "  matugen image '" + wp + "' --config '" + userConfigDir + "config.toml' --mode " + mode + " --type " + Settings.data.colorSchemes.matugenSchemeType + "\n"
@@ -371,12 +373,12 @@ Singleton {
     generateProcess.running = true
   }
 
+  // --------------------------------
   // Generate templates from predefined color scheme
   function generateFromPredefinedScheme(schemeData) {
     Logger.log("Matugen", "Generating templates from predefined color scheme")
 
-    var content = Matugen.buildConfigToml()
-    console.log(content)
+    var content = MatugenTemplates.buildConfigToml()
     var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light"
     var pathEsc = dynamicConfigPath.replace(/'/g, "'\\''")
     var extraRepo = (Quickshell.shellDir + "/Assets/Matugen/extra").replace(/'/g, "'\\''")
@@ -400,7 +402,7 @@ Singleton {
     script += "matugen image --import-json '" + jsonPathEsc + "' --config '" + pathEsc + "' --mode " + mode + " '" + Quickshell.shellDir + "/Assets/Wallpaper/noctalia.png'"
 
     // Add user config execution if enabled
-    if (Settings.data.matugen.enableUserTemplates) {
+    if (Settings.data.templates.enableUserTemplates) {
       var userConfigDir = (Quickshell.env("HOME") + "/.config/matugen/").replace(/'/g, "'\\''")
       script += "\n# Execute user config if it exists\nif [ -f '" + userConfigDir + "config.toml' ]; then\n"
       script += "  matugen image --import-json '" + jsonPathEsc + "' --config '" + userConfigDir + "config.toml' --mode " + mode + " '" + Quickshell.shellDir + "/Assets/Wallpaper/noctalia.png'\n"
@@ -408,16 +410,49 @@ Singleton {
     }
 
     script += "\n"
-    console.log("------")
-    console.log(script)
     generateProcess.command = ["bash", "-lc", script]
 
     // Write JSON file with our custom colors
     // once written matugen will be executed via 'generateProcess'
     jsonWriter.path = jsonPath
     jsonWriter.setText(matugenJson)
+
+    // -----
+    // For terminals simply copy the full color from theme from iTerm2 so everything looks super nice!
+    var copyCmd = ""
+    if (Settings.data.templates.foot) {
+      if (copyCmd !== "") copyCmd += " ; "
+      copyCmd += `cp -f ${getTerminalColorsTemplate('foot')} ~/.config/foot/themes/noctalia.conf`;
+      copyCmd += ` ; ${colorsApplyScript} foot`
+    }
+
+    if (Settings.data.templates.ghostty) {
+      if (copyCmd !== "") copyCmd += " ; "
+      copyCmd += `cp -f ${getTerminalColorsTemplate('ghostty')} ~/.config/ghostty/themes/noctalia.conf`;
+      copyCmd += ` ; ${colorsApplyScript} ghostty`
+    }
+    
+    if (Settings.data.templates.kitty) {
+      if (copyCmd !== "") copyCmd += " ; "
+      copyCmd += `cp -f ${getTerminalColorsTemplate('kitty')} ~/.config/kitty/themes/noctalia.conf`;
+      copyCmd += ` ; ${colorsApplyScript} kitty`
+    }
+    if (copyCmd !== "") {
+     //console.log(copyCmd)
+      copyProcess.command = ["bash", "-lc", copyCmd]
+      copyProcess.running = true
+    }
   }
 
+  // --------------------------------
+  function getTerminalColorsTemplate(terminal) {
+    const colorTermRoot = "Assets/ColorTemplates/Terminal"
+    const colorScheme = Settings.data.colorSchemes.predefinedScheme;
+    const darkLight = Settings.data.colorSchemes.darkMode ? 'dark' : 'light';
+    return `${Quickshell.shellDir}/${colorTermRoot}/${terminal}/${colorScheme}-${darkLight}.conf`
+  }
+
+  // --------------------------------
   // File writer for JSON import file
   FileView {
     id: jsonWriter
@@ -431,6 +466,7 @@ Singleton {
     }
   }
 
+  // --------------------------------
   Process {
     id: generateProcess
     workingDirectory: Quickshell.shellDir
@@ -438,7 +474,20 @@ Singleton {
     stderr: StdioCollector {
       onStreamFinished: {
         if (this.text !== "") {
-          Logger.warn("MatugenService", "Matugen stderr:", this.text)
+          Logger.warn("MatugenService", "GenerateProcess stderr:", this.text)
+        }
+      }
+    }
+  }
+
+  // --------------------------------
+  Process {
+    id: copyProcess
+    running: false
+    stderr: StdioCollector {
+      onStreamFinished: {
+        if (this.text !== "") {
+          Logger.warn("MatugenService", "CopyProcess stderr:", this.text)
         }
       }
     }

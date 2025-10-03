@@ -507,11 +507,7 @@
           "description": "使用预定义配色方案时生成 Matugen 模板（GTK、终端主题等）。"
         }
       },
-      "matugen": {
-        "section": {
-          "label": "Matugen 模板",
-          "description": "将颜色应用于外部应用程序。"
-        },
+      "templates": {
         "ui": {
           "label": "用户界面",
           "description": "桌面环境和 UI 工具包主题。",
@@ -561,6 +557,10 @@
             "label": "用户模板",
             "description": "启用来自 ~/.config/matugen/config.toml 的用户定义 Matugen 配置"
           }
+        },
+        "section": {
+          "description": "将颜色应用于外部应用程序。",
+          "label": "模板"
         }
       }
     },

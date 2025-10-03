@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env -S bash
 
 # JSON Language File Comparison Script
 # Compares language files against en.json reference and generates a report

@@ -509,9 +509,9 @@
           "description": "Generate Matugen templates (GTK, terminal themes, etc.) when using predefined color schemes."
         }
       },
-      "matugen": {
+      "templates": {
         "section": {
-          "label": "Matugen templates",
+          "label": "Templates",
           "description": "Apply colors to external applications."
         },
         "ui": {

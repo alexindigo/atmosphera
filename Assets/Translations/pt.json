@@ -473,11 +473,7 @@
           "description": "Gera modelos Matugen (GTK, temas de terminal, etc.) ao usar esquemas de cores predefinidos."
         }
       },
-      "matugen": {
-        "section": {
-          "label": "Modelos Matugen",
-          "description": "Aplique cores a aplicativos externos."
-        },
+      "templates": {
         "ui": {
           "label": "UI",
           "description": "Tematização do ambiente de desktop e kit de ferramentas de UI.",
@@ -527,6 +523,10 @@
             "label": "Modelos do usuário",
             "description": "Ativa a configuração do Matugen definida pelo usuário em ~/.config/matugen/config.toml"
           }
+        },
+        "section": {
+          "description": "Aplicar cores a aplicações externas.",
+          "label": "Modelos"
         }
       }
     },

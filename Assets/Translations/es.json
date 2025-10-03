@@ -507,11 +507,7 @@
           "description": "Genera plantillas de Matugen (GTK, temas de terminal, etc.) al usar esquemas de colores predefinidos."
         }
       },
-      "matugen": {
-        "section": {
-          "label": "Plantillas de Matugen",
-          "description": "Aplica colores a aplicaciones externas."
-        },
+      "templates": {
         "ui": {
           "label": "UI",
           "description": "Tematización del entorno de escritorio y de la interfaz de usuario.",
@@ -561,6 +557,10 @@
             "label": "Plantillas de usuario",
             "description": "Habilitar configuración de Matugen definida por el usuario desde ~/.config/matugen/config.toml"
           }
+        },
+        "section": {
+          "description": "Aplicar colores a aplicaciones externas.",
+          "label": "Plantillas"
         }
       }
     },

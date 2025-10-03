@@ -125,14 +125,14 @@ Singleton {
           MatugenService.generateFromPredefinedScheme(data)
         }
       } catch (e) {
-        Logger.error("ColorScheme", "Failed to parse scheme JSON:", e)
+        Logger.error("ColorScheme", "Failed to parse scheme JSON:", path, e)
       }
     }
   }
 
   // Check if any Matugen templates are enabled
   function hasEnabledMatugenTemplates() {
-    return Settings.data.matugen.gtk || Settings.data.matugen.qt || Settings.data.matugen.kitty || Settings.data.matugen.ghostty || Settings.data.matugen.foot || Settings.data.matugen.fuzzel || Settings.data.matugen.vesktop || Settings.data.matugen.pywalfox
+    return Settings.data.templates.gtk || Settings.data.templates.qt || Settings.data.templates.kitty || Settings.data.templates.ghostty || Settings.data.templates.foot || Settings.data.templates.fuzzel || Settings.data.templates.vesktop || Settings.data.templates.pywalfox
   }
 
   // Writer to colors.json using a JsonAdapter for safety

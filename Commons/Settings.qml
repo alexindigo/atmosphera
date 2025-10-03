@@ -313,9 +313,8 @@ Singleton {
       property bool generateTemplatesForPredefined: true
     }
 
-    // matugen templates toggles
-    property JsonObject matugen: JsonObject {
-      // Per-template flags to control dynamic config generation
+    // templates toggles
+    property JsonObject templates: JsonObject {
       property bool gtk: false
       property bool qt: false
       property bool kitty: false

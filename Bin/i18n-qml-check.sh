@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env -S bash
 
 # Comprehensive i18n checker for QML files
 # Finds hardcoded strings in various QML properties

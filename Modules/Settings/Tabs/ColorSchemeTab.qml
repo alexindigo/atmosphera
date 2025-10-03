@@ -418,31 +418,31 @@ ColumnLayout {
     Layout.bottomMargin: Style.marginXL * scaling
   }
 
-  // Matugen template toggles organized by category
+  // Template toggles organized by category
   ColumnLayout {
     Layout.fillWidth: true
     spacing: Style.marginL * scaling
 
     NHeader {
-      label: I18n.tr("settings.color-scheme.matugen.section.label")
-      description: I18n.tr("settings.color-scheme.matugen.section.description")
+      label: I18n.tr("settings.color-scheme.templates.section.label")
+      description: I18n.tr("settings.color-scheme.templates.section.description")
     }
 
     // UI Components
     NCollapsible {
       Layout.fillWidth: true
-      label: I18n.tr("settings.color-scheme.matugen.ui.label")
-      description: I18n.tr("settings.color-scheme.matugen.ui.description")
+      label: I18n.tr("settings.color-scheme.templates.ui.label")
+      description: I18n.tr("settings.color-scheme.templates.ui.description")
       defaultExpanded: false
 
       NCheckbox {
         label: "GTK"
-        description: I18n.tr("settings.color-scheme.matugen.ui.gtk.description", {
+        description: I18n.tr("settings.color-scheme.templates.ui.gtk.description", {
                                "filepath": "~/.config/gtk-3.0/gtk.css & ~/.config/gtk-4.0/gtk.css"
                              })
-        checked: Settings.data.matugen.gtk
+        checked: Settings.data.templates.gtk
         onToggled: checked => {
-                     Settings.data.matugen.gtk = checked
+                     Settings.data.templates.gtk = checked
                      if (Settings.data.colorSchemes.useWallpaperColors)
                      MatugenService.generateFromWallpaper()
                    }
@@ -450,12 +450,12 @@ ColumnLayout {
 
       NCheckbox {
         label: "Qt"
-        description: I18n.tr("settings.color-scheme.matugen.ui.qt.description", {
+        description: I18n.tr("settings.color-scheme.templates.ui.qt.description", {
                                "filepath": "~/.config/qt5ct/colors/noctalia.conf & ~/.config/qt6ct/colors/noctalia.conf"
                              })
-        checked: Settings.data.matugen.qt
+        checked: Settings.data.templates.qt
         onToggled: checked => {
-                     Settings.data.matugen.qt = checked
+                     Settings.data.templates.qt = checked
                      if (Settings.data.colorSchemes.useWallpaperColors)
                      MatugenService.generateFromWallpaper()
                    }
@@ -465,23 +465,23 @@ ColumnLayout {
     // Terminal Emulators
     NCollapsible {
       Layout.fillWidth: true
-      label: I18n.tr("settings.color-scheme.matugen.terminal.label")
-      description: I18n.tr("settings.color-scheme.matugen.terminal.description")
+      label: I18n.tr("settings.color-scheme.templates.terminal.label")
+      description: I18n.tr("settings.color-scheme.templates.terminal.description")
       defaultExpanded: false
 
       NCheckbox {
         label: "Kitty"
-        description: ProgramCheckerService.kittyAvailable ? I18n.tr("settings.color-scheme.matugen.terminal.kitty.description", {
+        description: ProgramCheckerService.kittyAvailable ? I18n.tr("settings.color-scheme.templates.terminal.kitty.description", {
                                                                       "filepath": "~/.config/kitty/themes/noctalia.conf"
-                                                                    }) : I18n.tr("settings.color-scheme.matugen.terminal.kitty.description-missing", {
+                                                                    }) : I18n.tr("settings.color-scheme.templates.terminal.kitty.description-missing", {
                                                                                    "app": "kitty"
                                                                                  })
-        checked: Settings.data.matugen.kitty
+        checked: Settings.data.templates.kitty
         enabled: ProgramCheckerService.kittyAvailable
         opacity: ProgramCheckerService.kittyAvailable ? 1.0 : 0.6
         onToggled: checked => {
                      if (ProgramCheckerService.kittyAvailable) {
-                       Settings.data.matugen.kitty = checked
+                       Settings.data.templates.kitty = checked
                        if (Settings.data.colorSchemes.useWallpaperColors)
                        MatugenService.generateFromWallpaper()
                      }
@@ -490,17 +490,17 @@ ColumnLayout {
 
       NCheckbox {
         label: "Ghostty"
-        description: ProgramCheckerService.ghosttyAvailable ? I18n.tr("settings.color-scheme.matugen.terminal.ghostty.description", {
+        description: ProgramCheckerService.ghosttyAvailable ? I18n.tr("settings.color-scheme.templates.terminal.ghostty.description", {
                                                                         "filepath": "~/.config/ghostty/themes/noctalia"
-                                                                      }) : I18n.tr("settings.color-scheme.matugen.terminal.ghostty.description-missing", {
+                                                                      }) : I18n.tr("settings.color-scheme.templates.terminal.ghostty.description-missing", {
                                                                                      "app": "ghostty"
                                                                                    })
-        checked: Settings.data.matugen.ghostty
+        checked: Settings.data.templates.ghostty
         enabled: ProgramCheckerService.ghosttyAvailable
         opacity: ProgramCheckerService.ghosttyAvailable ? 1.0 : 0.6
         onToggled: checked => {
                      if (ProgramCheckerService.ghosttyAvailable) {
-                       Settings.data.matugen.ghostty = checked
+                       Settings.data.templates.ghostty = checked
                        if (Settings.data.colorSchemes.useWallpaperColors)
                        MatugenService.generateFromWallpaper()
                      }
@@ -509,17 +509,17 @@ ColumnLayout {
 
       NCheckbox {
         label: "Foot"
-        description: ProgramCheckerService.footAvailable ? I18n.tr("settings.color-scheme.matugen.terminal.foot.description", {
+        description: ProgramCheckerService.footAvailable ? I18n.tr("settings.color-scheme.templates.terminal.foot.description", {
                                                                      "filepath": "~/.config/foot/themes/noctalia"
-                                                                   }) : I18n.tr("settings.color-scheme.matugen.terminal.foot.description-missing", {
+                                                                   }) : I18n.tr("settings.color-scheme.templates.terminal.foot.description-missing", {
                                                                                   "app": "foot"
                                                                                 })
-        checked: Settings.data.matugen.foot
+        checked: Settings.data.templates.foot
         enabled: ProgramCheckerService.footAvailable
         opacity: ProgramCheckerService.footAvailable ? 1.0 : 0.6
         onToggled: checked => {
                      if (ProgramCheckerService.footAvailable) {
-                       Settings.data.matugen.foot = checked
+                       Settings.data.templates.foot = checked
                        if (Settings.data.colorSchemes.useWallpaperColors)
                        MatugenService.generateFromWallpaper()
                      }
@@ -530,23 +530,23 @@ ColumnLayout {
     // Applications
     NCollapsible {
       Layout.fillWidth: true
-      label: I18n.tr("settings.color-scheme.matugen.programs.label")
-      description: I18n.tr("settings.color-scheme.matugen.programs.description")
+      label: I18n.tr("settings.color-scheme.templates.programs.label")
+      description: I18n.tr("settings.color-scheme.templates.programs.description")
       defaultExpanded: false
 
       NCheckbox {
         label: "Fuzzel"
-        description: ProgramCheckerService.fuzzelAvailable ? I18n.tr("settings.color-scheme.matugen.programs.fuzzel.description", {
+        description: ProgramCheckerService.fuzzelAvailable ? I18n.tr("settings.color-scheme.templates.programs.fuzzel.description", {
                                                                        "filepath": "~/.config/fuzzel/themes/noctalia"
-                                                                     }) : I18n.tr("settings.color-scheme.matugen.programs.fuzzel.description-missing", {
+                                                                     }) : I18n.tr("settings.color-scheme.templates.programs.fuzzel.description-missing", {
                                                                                     "app": "fuzzel"
                                                                                   })
-        checked: Settings.data.matugen.fuzzel
+        checked: Settings.data.templates.fuzzel
         enabled: ProgramCheckerService.fuzzelAvailable
         opacity: ProgramCheckerService.fuzzelAvailable ? 1.0 : 0.6
         onToggled: checked => {
                      if (ProgramCheckerService.fuzzelAvailable) {
-                       Settings.data.matugen.fuzzel = checked
+                       Settings.data.templates.fuzzel = checked
                        if (Settings.data.colorSchemes.useWallpaperColors)
                        MatugenService.generateFromWallpaper()
                      }
@@ -555,17 +555,17 @@ ColumnLayout {
 
       NCheckbox {
         label: "Vesktop"
-        description: ProgramCheckerService.vesktopAvailable ? I18n.tr("settings.color-scheme.matugen.programs.vesktop.description", {
+        description: ProgramCheckerService.vesktopAvailable ? I18n.tr("settings.color-scheme.templates.programs.vesktop.description", {
                                                                         "filepath": "~/.config/vesktop/themes/noctalia.theme.css"
-                                                                      }) : I18n.tr("settings.color-scheme.matugen.programs.vesktop.description-missing", {
+                                                                      }) : I18n.tr("settings.color-scheme.templates.programs.vesktop.description-missing", {
                                                                                      "app": "vesktop"
                                                                                    })
-        checked: Settings.data.matugen.vesktop
+        checked: Settings.data.templates.vesktop
         enabled: ProgramCheckerService.vesktopAvailable
         opacity: ProgramCheckerService.vesktopAvailable ? 1.0 : 0.6
         onToggled: checked => {
                      if (ProgramCheckerService.vesktopAvailable) {
-                       Settings.data.matugen.vesktop = checked
+                       Settings.data.templates.vesktop = checked
                        if (Settings.data.colorSchemes.useWallpaperColors)
                        MatugenService.generateFromWallpaper()
                      }
@@ -574,17 +574,17 @@ ColumnLayout {
 
       NCheckbox {
         label: "Pywalfox"
-        description: ProgramCheckerService.pywalfoxAvailable ? I18n.tr("settings.color-scheme.matugen.programs.pywalfox.description", {
+        description: ProgramCheckerService.pywalfoxAvailable ? I18n.tr("settings.color-scheme.templates.programs.pywalfox.description", {
                                                                          "filepath": "~/.cache/wal/colors.json"
-                                                                       }) : I18n.tr("settings.color-scheme.matugen.programs.pywalfox.description-missing", {
+                                                                       }) : I18n.tr("settings.color-scheme.templates.programs.pywalfox.description-missing", {
                                                                                       "app": "pywalfox"
                                                                                     })
-        checked: Settings.data.matugen.pywalfox
+        checked: Settings.data.templates.pywalfox
         enabled: ProgramCheckerService.pywalfoxAvailable
         opacity: ProgramCheckerService.pywalfoxAvailable ? 1.0 : 0.6
         onToggled: checked => {
                      if (ProgramCheckerService.pywalfoxAvailable) {
-                       Settings.data.matugen.pywalfox = checked
+                       Settings.data.templates.pywalfox = checked
                        if (Settings.data.colorSchemes.useWallpaperColors)
                        MatugenService.generateFromWallpaper()
                      }
@@ -595,16 +595,16 @@ ColumnLayout {
     // Miscellaneous
     NCollapsible {
       Layout.fillWidth: true
-      label: I18n.tr("settings.color-scheme.matugen.misc.label")
-      description: I18n.tr("settings.color-scheme.matugen.misc.description")
+      label: I18n.tr("settings.color-scheme.templates.misc.label")
+      description: I18n.tr("settings.color-scheme.templates.misc.description")
       defaultExpanded: false
 
       NCheckbox {
-        label: I18n.tr("settings.color-scheme.matugen.misc.user-templates.label")
-        description: I18n.tr("settings.color-scheme.matugen.misc.user-templates.description")
-        checked: Settings.data.matugen.enableUserTemplates
+        label: I18n.tr("settings.color-scheme.templates.misc.user-templates.label")
+        description: I18n.tr("settings.color-scheme.templates.misc.user-templates.description")
+        checked: Settings.data.templates.enableUserTemplates
         onToggled: checked => {
-                     Settings.data.matugen.enableUserTemplates = checked
+                     Settings.data.templates.enableUserTemplates = checked
                      if (Settings.data.colorSchemes.useWallpaperColors)
                      MatugenService.generateFromWallpaper()
                    }

@@ -507,11 +507,7 @@
           "description": "Génère des modèles Matugen (GTK, thèmes de terminal, etc.) lors de l'utilisation de schémas de couleurs prédéfinis."
         }
       },
-      "matugen": {
-        "section": {
-          "label": "Modèles Matugen",
-          "description": "Appliquez des couleurs aux applications externes."
-        },
+      "templates": {
         "ui": {
           "label": "UI",
           "description": "Thématisation de l'environnement de bureau et de la boîte à outils d'interface utilisateur.",
@@ -561,6 +557,10 @@
             "label": "Modèles utilisateur",
             "description": "Activer la configuration Matugen définie par l'utilisateur depuis ~/.config/matugen/config.toml"
           }
+        },
+        "section": {
+          "description": "Appliquer des couleurs aux applications externes.",
+          "label": "Modèles"
         }
       }
     },

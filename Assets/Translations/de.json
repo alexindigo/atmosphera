@@ -511,11 +511,7 @@
           "description": "Generiert Matugen-Templates (GTK, Terminal-Themes, etc.) bei der Verwendung vordefinierter Farbschemata."
         }
       },
-      "matugen": {
-        "section": {
-          "label": "Matugen-Vorlagen",
-          "description": "Farben auf externe Anwendungen anwenden."
-        },
+      "templates": {
         "ui": {
           "label": "UI",
           "description": "Desktop-Umgebung und UI-Toolkit-Theming.",
@@ -565,6 +561,10 @@
             "label": "Benutzer-Vorlagen",
             "description": "Benutzerdefinierte Matugen-Konfiguration aus ~/.config/matugen/config.toml aktivieren"
           }
+        },
+        "section": {
+          "description": "Farben auf externe Anwendungen anwenden.",
+          "label": "Vorlagen"
         }
       }
     },
