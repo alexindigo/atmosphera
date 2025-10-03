@@ -13,7 +13,7 @@ Variants {
 
     required property ShellScreen modelData
 
-    active: modelData && Settings.data.wallpaper.enabled
+    active: Settings.isLoaded && modelData && Settings.data.wallpaper.enabled
 
     sourceComponent: PanelWindow {
       id: root
@@ -41,10 +41,29 @@ Variants {
       property string futureWallpaper: ""
 
       // Fillmode default is "crop"
-      property real fillMode: WallpaperService.getFillModeUniform()
+      property real fillMode: 1.0
       property vector4d fillColor: Qt.vector4d(Settings.data.wallpaper.fillColor.r, Settings.data.wallpaper.fillColor.g, Settings.data.wallpaper.fillColor.b, 1.0)
 
-      Component.onCompleted: setWallpaperInitial()
+      // On startup, defer assigning wallpaper until the service cache is ready
+      function _startWallpaperOnceReady() {
+        if (!modelData) {
+          Qt.callLater(_startWallpaperOnceReady)
+          return
+        }
+
+        var cacheReady = WallpaperService && WallpaperService.currentWallpapers && Object.keys(WallpaperService.currentWallpapers).length > 0
+        if (!cacheReady) {
+          // Try again on the next tick until WallpaperService.init() populates cache
+          Qt.callLater(_startWallpaperOnceReady)
+          return
+        }
+
+        fillMode = WallpaperService.getFillModeUniform()
+        var path = WallpaperService.getWallpaper(modelData.name)
+        setWallpaperImmediate(path)
+      }
+
+      Component.onCompleted: _startWallpaperOnceReady()
 
       Connections {
         target: Settings.data.wallpaper
@@ -58,6 +77,7 @@ Variants {
         target: WallpaperService
         function onWallpaperChanged(screenName, path) {
           if (screenName === modelData.name) {
+
             // Update wallpaper display
             // Set wallpaper immediately on startup
             futureWallpaper = path
@@ -223,7 +243,9 @@ Variants {
         easing.type: Easing.InOutCubic
         onFinished: {
           // Swap images after transition completes
-          currentWallpaper.source = ""
+          if (currentWallpaper.source !== "") {
+            currentWallpaper.source = ""
+          }
           currentWallpaper.source = nextWallpaper.source
           nextWallpaper.source = ""
           transitionProgress = 0.0
@@ -233,20 +255,12 @@ Variants {
         }
       }
 
-      function setWallpaperInitial() {
-        // On startup, defer assigning wallpaper until the service cache is ready, retries every tick
-        if (!WallpaperService || !WallpaperService.isInitialized) {
-          Qt.callLater(setWallpaperInitial)
-          return
-        }
-
-        setWallpaperImmediate(WallpaperService.getWallpaper(modelData.name))
-      }
-
       function setWallpaperImmediate(source) {
         transitionAnimation.stop()
         transitionProgress = 0.0
-        currentWallpaper.source = ""
+        if (currentWallpaper.source !== "") {
+          currentWallpaper.source = ""
+        }
         currentWallpaper.source = source
         nextWallpaper.source = ""
       }
@@ -260,12 +274,8 @@ Variants {
           // We are interrupting a transition
           transitionAnimation.stop()
           transitionProgress = 0
-
-          const newCurrentSource = nextWallpaper.source
-          currentWallpaper.source = ""
+          currentWallpaper.source = nextWallpaper.source
           nextWallpaper.source = ""
-
-          currentWallpaper.source = newCurrentSource
         }
 
         nextWallpaper.source = source

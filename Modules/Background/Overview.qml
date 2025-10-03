@@ -12,7 +12,7 @@ Variants {
   delegate: Loader {
     required property ShellScreen modelData
 
-    active: CompositorService.isNiri && modelData && Settings.data.wallpaper.enabled
+    active: CompositorService.isNiri && CompositorService.niriOverviewActive && modelData && Settings.data.wallpaper.enabled
 
     property string wallpaper: ""
 
@@ -37,7 +37,7 @@ Variants {
           }
         }
       }
-      
+
       Connections {
         target: WallpaperService
         function onIsInitializedChanged() {

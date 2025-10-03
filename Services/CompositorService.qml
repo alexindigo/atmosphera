@@ -17,6 +17,9 @@ Singleton {
   property ListModel windows: ListModel {}
   property int focusedWindowIndex: -1
 
+  // Niri-specific properties
+  property bool niriOverviewActive: false
+
   // Generic events
   signal workspaceChanged
   signal activeWindowChanged
@@ -102,10 +105,20 @@ Singleton {
                                                 focusedWindowIndex = backend.focusedWindowIndex
                                               })
 
+    // Niri-specific property bindings
+    if (isNiri && backend.overviewActiveChanged) {
+      backend.overviewActiveChanged.connect(() => {
+                                              niriOverviewActive = backend.overviewActive
+                                            })
+    }
+
     // Initial sync
     syncWorkspaces()
     syncWindows()
     focusedWindowIndex = backend.focusedWindowIndex
+    if (isNiri && backend.overviewActive !== undefined) {
+      niriOverviewActive = backend.overviewActive
+    }
   }
 
   function syncWorkspaces() {
