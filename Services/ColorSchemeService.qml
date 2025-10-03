@@ -94,11 +94,11 @@ Singleton {
   Process {
     id: findProcess
     running: false
-    
-    onExited: function(exitCode) {
+
+    onExited: function (exitCode) {
       if (exitCode === 0) {
         var output = stdout.text.trim()
-        var files = output.split('\n').filter(function(line) {
+        var files = output.split('\n').filter(function (line) {
           return line.length > 0
         })
         schemes = files
@@ -121,7 +121,7 @@ Singleton {
         scanning = false
       }
     }
-    
+
     stdout: StdioCollector {}
     stderr: StdioCollector {}
   }

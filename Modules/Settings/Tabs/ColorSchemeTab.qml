@@ -24,7 +24,7 @@ ColumnLayout {
     var pathParts = schemePath.split("/")
     var filename = pathParts[pathParts.length - 1] // Get filename
     var schemeName = filename.replace(".json", "") // Remove .json extension
-    
+
     // Convert folder names back to display names
     if (schemeName === "Noctalia-default") {
       schemeName = "Noctalia (default)"
@@ -33,7 +33,7 @@ ColumnLayout {
     } else if (schemeName === "Tokyo-Night") {
       schemeName = "Tokyo Night"
     }
-    
+
     return schemeName
   }
 
@@ -112,7 +112,7 @@ ColumnLayout {
           onLoaded: {
             // Extract scheme name from path
             var schemeName = extractSchemeName(path)
-            
+
             try {
               var jsonData = JSON.parse(text())
               root.schemeLoaded(schemeName, jsonData)
@@ -418,7 +418,7 @@ ColumnLayout {
             color: Color.mOnSurface
             Layout.fillWidth: true
             Layout.maximumWidth: 100 * scaling
-            Layout.preferredHeight: 40 * scaling  // Fixed height for consistent alignment
+            Layout.preferredHeight: 40 * scaling // Fixed height for consistent alignment
             elide: Text.ElideRight
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter

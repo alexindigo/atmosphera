@@ -10,10 +10,9 @@ import "../Helpers/ColorVariants.js" as ColorVariants
 Singleton {
   id: root
 
-  readonly property string colorsApplyScript: Quickshell.shellDir + '/Bin/colors-apply.sh';
+  readonly property string colorsApplyScript: Quickshell.shellDir + '/Bin/colors-apply.sh'
 
   property string dynamicConfigPath: Settings.cacheDir + "matugen.dynamic.toml"
-
 
   // External state management
   Connections {
@@ -421,26 +420,29 @@ Singleton {
     // For terminals simply copy the full color from theme from iTerm2 so everything looks super nice!
     var copyCmd = ""
     if (Settings.data.templates.foot) {
-      if (copyCmd !== "") copyCmd += " ; "
-      copyCmd += `cp -f ${getTerminalColorsTemplate('foot')} ~/.config/foot/themes/noctalia`;
+      if (copyCmd !== "")
+        copyCmd += " ; "
+      copyCmd += `cp -f ${getTerminalColorsTemplate('foot')} ~/.config/foot/themes/noctalia`
       copyCmd += ` ; ${colorsApplyScript} foot`
     }
 
     if (Settings.data.templates.ghostty) {
-      if (copyCmd !== "") copyCmd += " ; "
-      copyCmd += `cp -f ${getTerminalColorsTemplate('ghostty')} ~/.config/ghostty/themes/noctalia`;
+      if (copyCmd !== "")
+        copyCmd += " ; "
+      copyCmd += `cp -f ${getTerminalColorsTemplate('ghostty')} ~/.config/ghostty/themes/noctalia`
       copyCmd += ` ; ${colorsApplyScript} ghostty`
     }
-    
+
     if (Settings.data.templates.kitty) {
-      if (copyCmd !== "") copyCmd += " ; "
-      copyCmd += `cp -f ${getTerminalColorsTemplate('kitty')}.conf ~/.config/kitty/themes/noctalia.conf`;
+      if (copyCmd !== "")
+        copyCmd += " ; "
+      copyCmd += `cp -f ${getTerminalColorsTemplate('kitty')}.conf ~/.config/kitty/themes/noctalia.conf`
       copyCmd += ` ; ${colorsApplyScript} kitty`
     }
 
     // Finally execute all copies at once.
     if (copyCmd !== "") {
-     //console.log(copyCmd)
+      //console.log(copyCmd)
       copyProcess.command = ["bash", "-lc", copyCmd]
       copyProcess.running = true
     }
@@ -448,9 +450,9 @@ Singleton {
 
   // --------------------------------
   function getTerminalColorsTemplate(terminal) {
-    var colorScheme = Settings.data.colorSchemes.predefinedScheme;
-    const darkLight = Settings.data.colorSchemes.darkMode ? 'dark' : 'light';
-    
+    var colorScheme = Settings.data.colorSchemes.predefinedScheme
+    const darkLight = Settings.data.colorSchemes.darkMode ? 'dark' : 'light'
+
     // Convert display names back to folder names
     if (colorScheme === "Noctalia (default)") {
       colorScheme = "Noctalia-default"
@@ -459,7 +461,7 @@ Singleton {
     } else if (colorScheme === "Tokyo Night") {
       colorScheme = "Tokyo-Night"
     }
-    
+
     return `${Quickshell.shellDir}/Assets/ColorScheme/${colorScheme}/terminal/${terminal}/${colorScheme}-${darkLight}`
   }
 

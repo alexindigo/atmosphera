@@ -6,7 +6,7 @@ import qs.Commons
 
 // Central place to define which templates we generate and where they write.
 // Users can extend it by dropping additional templates into:
-//  - Assets/ColorTemplates/Matugen/
+//  - Assets/MatugenTemplates/Matugen/
 //  - ~/.config/matugen/ (when enableUserTemplates is true)
 Singleton {
   id: root
@@ -20,28 +20,28 @@ Singleton {
       // Only generate colors for Noctalia if the colors are wallpaper based
       // or this will conflict with our predefined colors
       lines.push("[templates.noctalia]")
-      lines.push('input_path = "' + Quickshell.shellDir + '/Assets/ColorTemplates/Matugen/noctalia.json"')
+      lines.push('input_path = "' + Quickshell.shellDir + '/Assets/MatugenTemplates/Matugen/noctalia.json"')
       lines.push('output_path = "' + Settings.configDir + 'colors.json"')
 
       // Only generate colors for terminalk if the colors are wallpaper based
       // predefined color schemes use a different approach for better result
       if (Settings.data.templates.foot) {
         lines.push("\n[templates.foot]")
-        lines.push('input_path = "' + Quickshell.shellDir + '/Assets/ColorTemplates/Matugen/Terminal/foot"')
+        lines.push('input_path = "' + Quickshell.shellDir + '/Assets/MatugenTemplates/Matugen/Terminal/foot"')
         lines.push('output_path = "~/.config/foot/themes/noctalia"')
         lines.push(`post_hook = "${MatugenService.colorsApplyScript} foot"`)
       }
 
       if (Settings.data.templates.ghostty) {
         lines.push("\n[templates.ghostty]")
-        lines.push('input_path = "' + Quickshell.shellDir + '/Assets/ColorTemplates/Matugen/Terminal/ghostty"')
+        lines.push('input_path = "' + Quickshell.shellDir + '/Assets/MatugenTemplates/Matugen/Terminal/ghostty"')
         lines.push('output_path = "~/.config/ghostty/themes/noctalia"')
         lines.push(`post_hook = "${MatugenService.colorsApplyScript} ghostty"`)
       }
 
       if (Settings.data.templates.kitty) {
         lines.push("\n[templates.kitty]")
-        lines.push('input_path = "' + Quickshell.shellDir + '/Assets/ColorTemplates/Matugen/Terminal/kitty.conf"')
+        lines.push('input_path = "' + Quickshell.shellDir + '/Assets/MatugenTemplates/Matugen/Terminal/kitty.conf"')
         lines.push('output_path = "~/.config/kitty/themes/noctalia.conf"')
         lines.push(`post_hook = "${MatugenService.colorsApplyScript} kitty"`)
       }
@@ -49,41 +49,41 @@ Singleton {
 
     if (Settings.data.templates.gtk) {
       lines.push("\n[templates.gtk3]")
-      lines.push('input_path = "' + Quickshell.shellDir + '/Assets/ColorTemplates/Matugen/gtk.css"')
+      lines.push('input_path = "' + Quickshell.shellDir + '/Assets/MatugenTemplates/Matugen/gtk.css"')
       lines.push('output_path = "~/.config/gtk-3.0/gtk.css"')
 
       lines.push("\n[templates.gtk4]")
-      lines.push('input_path = "' + Quickshell.shellDir + '/Assets/ColorTemplates/Matugen/gtk.css"')
+      lines.push('input_path = "' + Quickshell.shellDir + '/Assets/MatugenTemplates/Matugen/gtk.css"')
       lines.push('output_path = "~/.config/gtk-4.0/gtk.css"')
     }
 
     if (Settings.data.templates.qt) {
       lines.push("\n[templates.qt5]")
-      lines.push('input_path = "' + Quickshell.shellDir + '/Assets/ColorTemplates/Matugen/qtct.conf"')
+      lines.push('input_path = "' + Quickshell.shellDir + '/Assets/MatugenTemplates/Matugen/qtct.conf"')
       lines.push('output_path = "~/.config/qt5ct/colors/noctalia.conf"')
 
       lines.push("\n[templates.qt6]")
-      lines.push('input_path = "' + Quickshell.shellDir + '/Assets/ColorTemplates/Matugen/qtct.conf"')
+      lines.push('input_path = "' + Quickshell.shellDir + '/Assets/MatugenTemplates/Matugen/qtct.conf"')
       lines.push('output_path = "~/.config/qt6ct/colors/noctalia.conf"')
     }
 
     if (Settings.data.templates.fuzzel) {
       lines.push("\n[templates.fuzzel]")
-      lines.push('input_path = "' + Quickshell.shellDir + '/Assets/ColorTemplates/Matugen/fuzzel.conf"')
+      lines.push('input_path = "' + Quickshell.shellDir + '/Assets/MatugenTemplates/Matugen/fuzzel.conf"')
       lines.push('output_path = "~/.config/fuzzel/themes/noctalia"')
       lines.push(`post_hook = "${MatugenService.colorsApplyScript} fuzzel"`)
     }
 
     if (Settings.data.templates.pywalfox) {
       lines.push("\n[templates.pywalfox]")
-      lines.push('input_path = "' + Quickshell.shellDir + '/Assets/ColorTemplates/Matugen/pywalfox.json"')
+      lines.push('input_path = "' + Quickshell.shellDir + '/Assets/MatugenTemplates/Matugen/pywalfox.json"')
       lines.push('output_path = "~/.cache/wal/colors.json"')
       lines.push(`post_hook = "${MatugenService.colorsApplyScript} pywalfox"`)
     }
 
     if (Settings.data.templates.vesktop) {
       lines.push("\n[templates.vesktop]")
-      lines.push('input_path = "' + Quickshell.shellDir + '/Assets/ColorTemplates/Matugen/vesktop.css"')
+      lines.push('input_path = "' + Quickshell.shellDir + '/Assets/MatugenTemplates/Matugen/vesktop.css"')
       lines.push('output_path = "~/.config/vesktop/themes/noctalia.theme.css"')
     }
 
