@@ -169,7 +169,7 @@ NPanel {
                 notificationList.expandedId = notificationId
               }
             }
-            cursorShape: Qt.PointingHandCursor
+            cursorShape: (summaryText.truncated || bodyText.truncated) ? Qt.PointingHandCursor : Qt.ArrowCursor
           }
 
           RowLayout {
