@@ -101,6 +101,11 @@ Singleton {
         var files = output.split('\n').filter(function (line) {
           return line.length > 0
         })
+        files.sort(function (a, b) {
+          var nameA = getBasename(a).toLowerCase()
+          var nameB = getBasename(b).toLowerCase()
+          return nameA.localeCompare(nameB)
+        })
         schemes = files
         scanning = false
         Logger.log("ColorScheme", "Listed", schemes.length, "schemes")
