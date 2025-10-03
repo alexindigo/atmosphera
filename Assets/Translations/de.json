@@ -1056,7 +1056,8 @@
     "panel": {
       "title": "Benachrichtigungen",
       "no-notifications": "Keine Benachrichtigungen",
-      "description": "Ihre Benachrichtigungen werden hier angezeigt, sobald sie eintreffen."
+      "description": "Ihre Benachrichtigungen werden hier angezeigt, sobald sie eintreffen.",
+      "click-to-expand": "Zum Erweitern klicken"
     }
   },
   "wallpaper": {

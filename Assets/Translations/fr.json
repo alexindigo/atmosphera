@@ -1035,7 +1035,8 @@
     "panel": {
       "title": "Notifications",
       "no-notifications": "Aucune notification",
-      "description": "Vos notifications apparaîtront ici à mesure qu'elles arriveront."
+      "description": "Vos notifications apparaîtront ici à mesure qu'elles arriveront.",
+      "click-to-expand": "Cliquez pour développer"
     }
   },
   "wallpaper": {
