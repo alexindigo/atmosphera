@@ -14,6 +14,8 @@ Item {
   property var windows: []
   property int focusedWindowIndex: -1
 
+  property bool overviewActive: false
+
   // Signals that match the facade interface
   signal workspaceChanged
   signal activeWindowChanged
@@ -127,6 +129,8 @@ Item {
                     handleWindowFocusChanged(event.WindowFocusChanged)
                   } else if (event.WindowLayoutsChanged) {
                     handleWindowLayoutsChanged(event.WindowLayoutsChanged)
+                  } else if (event.OverviewOpenedOrClosed) {
+                    handleOverviewOpenedOrClosed(event.OverviewOpenedOrClosed)
                   }
                 } catch (e) {
                   Logger.error("NiriService", "Error parsing event stream:", e, data)
@@ -315,6 +319,15 @@ Item {
       windowListChanged()
     } catch (e) {
       Logger.error("NiriService", "Error handling WindowLayoutChanged:", e)
+    }
+  }
+
+  function handleOverviewOpenedOrClosed(eventData) {
+    try {
+      overviewActive = eventData.is_open
+      Logger.log("NiriService", "Overview opened or closed:", eventData.is_open)
+    } catch (e) {
+      Logger.error("NiriService", "Error handling OverviewOpenedOrClosed:", e)
     }
   }
 
