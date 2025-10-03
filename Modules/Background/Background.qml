@@ -266,16 +266,14 @@ Variants {
         duration: transitionType == "stripes" ? Settings.data.wallpaper.transitionDuration * 1.6 : Settings.data.wallpaper.transitionDuration
         easing.type: Easing.InOutCubic
         onFinished: {
-          // Swap images while keeping shader active to prevent flickering
+          // Assign new image to current BEFORE clearing to prevent flicker
           const tempSource = nextWallpaper.source
-          nextWallpaper.source = ""
-          currentWallpaper.source = ""
+          currentWallpaper.source = tempSource
+          transitionProgress = 0.0
 
-          // Use Qt.callLater to allow GC to clean up before reassignment
+          // Now clear nextWallpaper after currentWallpaper has the new source
           Qt.callLater(() => {
-                         currentWallpaper.source = tempSource
-                         transitionProgress = 0.0
-
+                         nextWallpaper.source = ""
                          Qt.callLater(() => {
                                         currentWallpaper.asynchronous = true
                                       })
@@ -316,15 +314,13 @@ Variants {
           transitionAnimation.stop()
           transitionProgress = 0
 
+          // Assign nextWallpaper to currentWallpaper BEFORE clearing to prevent flicker
           const newCurrentSource = nextWallpaper.source
+          currentWallpaper.source = newCurrentSource
 
-          // Clear both properly while keeping shader active
-          currentWallpaper.source = ""
-          nextWallpaper.source = ""
-
-          // Defer the reassignment to allow cleanup
+          // Now clear nextWallpaper after current has the new source
           Qt.callLater(() => {
-                         currentWallpaper.source = newCurrentSource
+                         nextWallpaper.source = ""
 
                          // Now set the next wallpaper after a brief delay
                          Qt.callLater(() => {
