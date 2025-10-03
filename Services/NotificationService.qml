@@ -47,7 +47,6 @@ Singleton {
         const req = imageQueue[0]
 
         if (status === Image.Ready) {
-          Logger.log("Notification", "Caching image to:", req.dest)
           Quickshell.execDetached(["mkdir", "-p", Settings.cacheDirImagesNotifications])
           grabToImage(result => {
                         if (result.saveToFile(req.dest))
