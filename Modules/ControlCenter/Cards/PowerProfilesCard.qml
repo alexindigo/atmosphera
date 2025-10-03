@@ -10,6 +10,7 @@ import qs.Widgets
 // Power Profiles: performance, balanced, eco
 NBox {
 
+  property ShellScreen screen
   property real spacing: 0
 
   // Centralized service
@@ -26,6 +27,7 @@ NBox {
     // Performance
     NIconButton {
       icon: PowerProfileService.getIcon(PowerProfile.Performance)
+      screen: root.screen
       tooltipText: I18n.tr("tooltips.set-power-profile", {
                              "profile": PowerProfileService.getName(PowerProfile.Performance)
                            })
@@ -38,6 +40,7 @@ NBox {
     // Balanced
     NIconButton {
       icon: PowerProfileService.getIcon(PowerProfile.Balanced)
+      screen: root.screen
       tooltipText: I18n.tr("tooltips.set-power-profile", {
                              "profile": PowerProfileService.getName(PowerProfile.Balanced)
                            })
@@ -50,6 +53,7 @@ NBox {
     // Eco
     NIconButton {
       icon: PowerProfileService.getIcon(PowerProfile.PowerSaver)
+      screen: root.screen
       tooltipText: I18n.tr("tooltips.set-power-profile", {
                              "profile": PowerProfileService.getName(PowerProfile.PowerSaver)
                            })

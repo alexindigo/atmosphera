@@ -9,6 +9,7 @@ import qs.Widgets
 NBox {
   id: root
 
+  property ShellScreen screen
   readonly property bool weatherReady: (LocationService.data.weather !== null)
 
   ColumnLayout {

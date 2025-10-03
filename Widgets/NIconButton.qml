@@ -7,6 +7,7 @@ import qs.Services
 Rectangle {
   id: root
 
+  property ShellScreen screen
   property real baseSize: Style.baseWidgetSize
 
   property string icon

@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import Quickshell
 import qs.Commons
 import qs.Services
 import qs.Widgets
@@ -7,6 +8,8 @@ import qs.Widgets
 // Unified system card: monitors CPU, temp, memory, disk
 NBox {
   id: root
+
+  property ShellScreen screen
 
   ColumnLayout {
     id: content

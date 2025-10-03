@@ -14,6 +14,7 @@ import qs.Widgets
 NBox {
   id: root
 
+  property ShellScreen screen
   property string uptimeText: "--"
 
   RowLayout {
@@ -58,6 +59,7 @@ NBox {
       }
       NIconButton {
         icon: "settings"
+        screen: root.screen
         tooltipText: I18n.tr("tooltips.open-settings")
         onClicked: {
           settingsPanel.requestedTab = SettingsPanel.Tab.General
@@ -66,8 +68,8 @@ NBox {
       }
 
       NIconButton {
-        id: powerButton
         icon: "power"
+        screen: root.screen
         tooltipText: I18n.tr("tooltips.session-menu")
         onClicked: {
           sessionMenuPanel.open()
@@ -76,8 +78,8 @@ NBox {
       }
 
       NIconButton {
-        id: closeButton
         icon: "close"
+        screen: root.screen
         tooltipText: I18n.tr("tooltips.close")
         onClicked: {
           controlCenterPanel.close()
