@@ -46,6 +46,14 @@ Variants {
 
       Component.onCompleted: setWallpaperInitial()
 
+      Component.onDestruction: {
+        transitionAnimation.stop()
+        debounceTimer.stop()
+        shaderLoader.active = false
+        currentWallpaper.source = ""
+        nextWallpaper.source = ""
+      }
+
       Connections {
         target: Settings.data.wallpaper
         function onFillModeChanged() {
@@ -97,6 +105,11 @@ Variants {
         visible: false
         cache: false
         asynchronous: true
+        onStatusChanged: {
+          if (status === Image.Error) {
+            Logger.warn("Current wallpaper failed to load:", source)
+          }
+        }
       }
 
       Image {
@@ -107,108 +120,139 @@ Variants {
         visible: false
         cache: false
         asynchronous: true
+        onStatusChanged: {
+          if (status === Image.Error) {
+            Logger.warn("Next wallpaper failed to load:", source)
+          }
+        }
       }
 
-      // Fade or None transition shader
-      ShaderEffect {
-        id: fadeShader
+      // Dynamic shader loader - only loads the active transition shader
+      Loader {
+        id: shaderLoader
         anchors.fill: parent
-        visible: transitionType === "fade" || transitionType === "none"
+        active: true
 
-        property variant source1: currentWallpaper
-        property variant source2: nextWallpaper
-        property real progress: root.transitionProgress
-
-        // Fill mode properties
-        property real fillMode: root.fillMode
-        property vector4d fillColor: root.fillColor
-        property real imageWidth1: source1.sourceSize.width
-        property real imageHeight1: source1.sourceSize.height
-        property real imageWidth2: source2.sourceSize.width
-        property real imageHeight2: source2.sourceSize.height
-        property real screenWidth: width
-        property real screenHeight: height
-
-        fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/wp_fade.frag.qsb")
+        sourceComponent: {
+          switch (transitionType) {
+          case "wipe":
+            return wipeShaderComponent
+          case "disc":
+            return discShaderComponent
+          case "stripes":
+            return stripesShaderComponent
+          case "fade":
+          case "none":
+          default:
+            return fadeShaderComponent
+          }
+        }
       }
 
-      // Wipe transition shader
-      ShaderEffect {
-        id: wipeShader
-        anchors.fill: parent
-        visible: transitionType === "wipe"
+      // Fade or None transition shader component
+      Component {
+        id: fadeShaderComponent
+        ShaderEffect {
+          anchors.fill: parent
 
-        property variant source1: currentWallpaper
-        property variant source2: nextWallpaper
-        property real progress: root.transitionProgress
-        property real smoothness: root.edgeSmoothness
-        property real direction: root.wipeDirection
+          property variant source1: currentWallpaper
+          property variant source2: nextWallpaper
+          property real progress: root.transitionProgress
 
-        // Fill mode properties
-        property real fillMode: root.fillMode
-        property vector4d fillColor: root.fillColor
-        property real imageWidth1: source1.sourceSize.width
-        property real imageHeight1: source1.sourceSize.height
-        property real imageWidth2: source2.sourceSize.width
-        property real imageHeight2: source2.sourceSize.height
-        property real screenWidth: width
-        property real screenHeight: height
+          // Fill mode properties
+          property real fillMode: root.fillMode
+          property vector4d fillColor: root.fillColor
+          property real imageWidth1: source1.sourceSize.width
+          property real imageHeight1: source1.sourceSize.height
+          property real imageWidth2: source2.sourceSize.width
+          property real imageHeight2: source2.sourceSize.height
+          property real screenWidth: width
+          property real screenHeight: height
 
-        fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/wp_wipe.frag.qsb")
+          fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/wp_fade.frag.qsb")
+        }
       }
 
-      // Disc reveal transition shader
-      ShaderEffect {
-        id: discShader
-        anchors.fill: parent
-        visible: transitionType === "disc"
+      // Wipe transition shader component
+      Component {
+        id: wipeShaderComponent
+        ShaderEffect {
+          anchors.fill: parent
 
-        property variant source1: currentWallpaper
-        property variant source2: nextWallpaper
-        property real progress: root.transitionProgress
-        property real smoothness: root.edgeSmoothness
-        property real aspectRatio: root.width / root.height
-        property real centerX: root.discCenterX
-        property real centerY: root.discCenterY
+          property variant source1: currentWallpaper
+          property variant source2: nextWallpaper
+          property real progress: root.transitionProgress
+          property real smoothness: root.edgeSmoothness
+          property real direction: root.wipeDirection
 
-        // Fill mode properties
-        property real fillMode: root.fillMode
-        property vector4d fillColor: root.fillColor
-        property real imageWidth1: source1.sourceSize.width
-        property real imageHeight1: source1.sourceSize.height
-        property real imageWidth2: source2.sourceSize.width
-        property real imageHeight2: source2.sourceSize.height
-        property real screenWidth: width
-        property real screenHeight: height
+          // Fill mode properties
+          property real fillMode: root.fillMode
+          property vector4d fillColor: root.fillColor
+          property real imageWidth1: source1.sourceSize.width
+          property real imageHeight1: source1.sourceSize.height
+          property real imageWidth2: source2.sourceSize.width
+          property real imageHeight2: source2.sourceSize.height
+          property real screenWidth: width
+          property real screenHeight: height
 
-        fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/wp_disc.frag.qsb")
+          fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/wp_wipe.frag.qsb")
+        }
       }
 
-      // Diagonal stripes transition shader
-      ShaderEffect {
-        id: stripesShader
-        anchors.fill: parent
-        visible: transitionType === "stripes"
+      // Disc reveal transition shader component
+      Component {
+        id: discShaderComponent
+        ShaderEffect {
+          anchors.fill: parent
 
-        property variant source1: currentWallpaper
-        property variant source2: nextWallpaper
-        property real progress: root.transitionProgress
-        property real smoothness: root.edgeSmoothness
-        property real aspectRatio: root.width / root.height
-        property real stripeCount: root.stripesCount
-        property real angle: root.stripesAngle
+          property variant source1: currentWallpaper
+          property variant source2: nextWallpaper
+          property real progress: root.transitionProgress
+          property real smoothness: root.edgeSmoothness
+          property real aspectRatio: root.width / root.height
+          property real centerX: root.discCenterX
+          property real centerY: root.discCenterY
 
-        // Fill mode properties
-        property real fillMode: root.fillMode
-        property vector4d fillColor: root.fillColor
-        property real imageWidth1: source1.sourceSize.width
-        property real imageHeight1: source1.sourceSize.height
-        property real imageWidth2: source2.sourceSize.width
-        property real imageHeight2: source2.sourceSize.height
-        property real screenWidth: width
-        property real screenHeight: height
+          // Fill mode properties
+          property real fillMode: root.fillMode
+          property vector4d fillColor: root.fillColor
+          property real imageWidth1: source1.sourceSize.width
+          property real imageHeight1: source1.sourceSize.height
+          property real imageWidth2: source2.sourceSize.width
+          property real imageHeight2: source2.sourceSize.height
+          property real screenWidth: width
+          property real screenHeight: height
 
-        fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/wp_stripes.frag.qsb")
+          fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/wp_disc.frag.qsb")
+        }
+      }
+
+      // Diagonal stripes transition shader component
+      Component {
+        id: stripesShaderComponent
+        ShaderEffect {
+          anchors.fill: parent
+
+          property variant source1: currentWallpaper
+          property variant source2: nextWallpaper
+          property real progress: root.transitionProgress
+          property real smoothness: root.edgeSmoothness
+          property real aspectRatio: root.width / root.height
+          property real stripeCount: root.stripesCount
+          property real angle: root.stripesAngle
+
+          // Fill mode properties
+          property real fillMode: root.fillMode
+          property vector4d fillColor: root.fillColor
+          property real imageWidth1: source1.sourceSize.width
+          property real imageHeight1: source1.sourceSize.height
+          property real imageWidth2: source2.sourceSize.width
+          property real imageHeight2: source2.sourceSize.height
+          property real screenWidth: width
+          property real screenHeight: height
+
+          fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/wp_stripes.frag.qsb")
+        }
       }
 
       // Animation for the transition progress
@@ -222,13 +266,19 @@ Variants {
         duration: transitionType == "stripes" ? Settings.data.wallpaper.transitionDuration * 1.6 : Settings.data.wallpaper.transitionDuration
         easing.type: Easing.InOutCubic
         onFinished: {
-          // Swap images after transition completes
-          currentWallpaper.source = ""
-          currentWallpaper.source = nextWallpaper.source
+          // Swap images while keeping shader active to prevent flickering
+          const tempSource = nextWallpaper.source
           nextWallpaper.source = ""
-          transitionProgress = 0.0
+          currentWallpaper.source = ""
+
+          // Use Qt.callLater to allow GC to clean up before reassignment
           Qt.callLater(() => {
-                         currentWallpaper.asynchronous = true
+                         currentWallpaper.source = tempSource
+                         transitionProgress = 0.0
+
+                         Qt.callLater(() => {
+                                        currentWallpaper.asynchronous = true
+                                      })
                        })
         }
       }
@@ -246,9 +296,14 @@ Variants {
       function setWallpaperImmediate(source) {
         transitionAnimation.stop()
         transitionProgress = 0.0
-        currentWallpaper.source = ""
-        currentWallpaper.source = source
+
+        // Clear with proper delay to allow GC
         nextWallpaper.source = ""
+        currentWallpaper.source = ""
+
+        Qt.callLater(() => {
+                       currentWallpaper.source = source
+                     })
       }
 
       function setWallpaperWithTransition(source) {
@@ -257,15 +312,28 @@ Variants {
         }
 
         if (transitioning) {
-          // We are interrupting a transition
+          // We are interrupting a transition - handle cleanup properly
           transitionAnimation.stop()
           transitionProgress = 0
 
           const newCurrentSource = nextWallpaper.source
+
+          // Clear both properly while keeping shader active
           currentWallpaper.source = ""
           nextWallpaper.source = ""
 
-          currentWallpaper.source = newCurrentSource
+          // Defer the reassignment to allow cleanup
+          Qt.callLater(() => {
+                         currentWallpaper.source = newCurrentSource
+
+                         // Now set the next wallpaper after a brief delay
+                         Qt.callLater(() => {
+                                        nextWallpaper.source = source
+                                        currentWallpaper.asynchronous = false
+                                        transitionAnimation.start()
+                                      })
+                       })
+          return
         }
 
         nextWallpaper.source = source

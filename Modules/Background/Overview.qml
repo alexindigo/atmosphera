@@ -37,7 +37,7 @@ Variants {
           }
         }
       }
-      
+
       Connections {
         target: WallpaperService
         function onIsInitializedChanged() {
