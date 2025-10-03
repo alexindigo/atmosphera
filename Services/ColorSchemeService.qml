@@ -43,7 +43,7 @@ Singleton {
     Logger.log("ColorScheme", "Load colorScheme")
     scanning = true
     schemes = []
-    // Use find command to locate all theme JSON files
+    // Use find command to locate all scheme.json files
     findProcess.command = ["find", schemesDirectory, "-name", "*.json", "-type", "f"]
     findProcess.running = true
   }
@@ -52,17 +52,18 @@ Singleton {
     if (!path)
       return ""
     var chunks = path.split("/")
-    // Get the parent directory name (scheme name) instead of the filename
-    var schemeDir = chunks[chunks.length - 2]
+    // Get the filename without extension
+    var filename = chunks[chunks.length - 1]
+    var schemeName = filename.replace(".json", "")
     // Convert back to display names for special cases
-    if (schemeDir === "Noctalia-default") {
+    if (schemeName === "Noctalia-default") {
       return "Noctalia (default)"
-    } else if (schemeDir === "Noctalia-legacy") {
+    } else if (schemeName === "Noctalia-legacy") {
       return "Noctalia (legacy)"
-    } else if (schemeDir === "Tokyo-Night") {
+    } else if (schemeName === "Tokyo-Night") {
       return "Tokyo Night"
     }
-    return schemeDir
+    return schemeName
   }
 
   function resolveSchemePath(nameOrPath) {

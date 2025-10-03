@@ -22,7 +22,8 @@ ColumnLayout {
   // Helper function to extract scheme name from path
   function extractSchemeName(schemePath) {
     var pathParts = schemePath.split("/")
-    var schemeName = pathParts[pathParts.length - 2] // Get parent directory name
+    var filename = pathParts[pathParts.length - 1] // Get filename
+    var schemeName = filename.replace(".json", "") // Remove .json extension
     
     // Convert folder names back to display names
     if (schemeName === "Noctalia-default") {
