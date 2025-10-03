@@ -511,6 +511,9 @@ NPanel {
             z: -1
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
+            onEntered: {
+              selectedIndex = index
+            }
             onClicked: mouse => {
                          if (mouse.button === Qt.LeftButton) {
                            selectedIndex = index
