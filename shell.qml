@@ -73,10 +73,10 @@ ShellRoot {
     }
   }
 
-  LazyLoader {
+  Loader {
     active: i18nLoaded && settingsLoaded
 
-    Item {
+    sourceComponent: Item {
       Component.onCompleted: {
         // Save a ref. to our lockScreen so we can access it  easily
         PanelService.lockScreen = lockScreen
