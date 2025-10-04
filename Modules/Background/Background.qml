@@ -44,6 +44,19 @@ Variants {
       property real fillMode: WallpaperService.getFillModeUniform()
       property vector4d fillColor: Qt.vector4d(Settings.data.wallpaper.fillColor.r, Settings.data.wallpaper.fillColor.g, Settings.data.wallpaper.fillColor.b, 1.0)
 
+      property int monitoredWidth: modelData.width
+      property int monitoredHeight: modelData.height
+
+      onMonitoredWidthChanged: {
+        Logger.log("Background", "Screen width changed to:", monitoredWidth, "for", modelData.name)
+        recalculateImageSizes()
+      }
+
+      onMonitoredHeightChanged: {
+        Logger.log("Background", "Screen height changed to:", monitoredHeight, "for", modelData.name)
+        recalculateImageSizes()
+      }
+
       Component.onCompleted: setWallpaperInitial()
 
       Component.onDestruction: {
@@ -109,25 +122,26 @@ Variants {
         cache: false
         asynchronous: true
 
-        // Don't set sourceSize initially - will be set after we know aspect ratio
         onStatusChanged: {
           if (status === Image.Error) {
             Logger.warn("Current wallpaper failed to load:", source)
           } else if (status === Image.Ready && !dimensionsCalculated) {
-            // First load: get original dimensions
-            const aspectRatio = implicitWidth / implicitHeight
             dimensionsCalculated = true
-
-            // Now set sourceSize to screen width and calculated height
-            const w = Math.min(modelData.width, implicitWidth)
-            sourceSize = Qt.size(w, w / aspectRatio)
+            calculateSourceSize()
           }
         }
 
         onSourceChanged: {
-          // Reset for new image
           dimensionsCalculated = false
-          sourceSize = undefined // Clear sourceSize for initial load
+          sourceSize = undefined
+        }
+
+        function calculateSourceSize() {
+          if (implicitWidth > 0 && implicitHeight > 0) {
+            const aspectRatio = implicitWidth / implicitHeight
+            const w = Math.min(modelData.width, implicitWidth)
+            sourceSize = Qt.size(w, w / aspectRatio)
+          }
         }
       }
 
@@ -147,16 +161,22 @@ Variants {
           if (status === Image.Error) {
             Logger.warn("Next wallpaper failed to load:", source)
           } else if (status === Image.Ready && !dimensionsCalculated) {
-            const aspectRatio = implicitWidth / implicitHeight
             dimensionsCalculated = true
-            const w = Math.min(modelData.width, implicitWidth)
-            sourceSize = Qt.size(w, w / aspectRatio)
+            calculateSourceSize()
           }
         }
 
         onSourceChanged: {
           dimensionsCalculated = false
           sourceSize = undefined
+        }
+
+        function calculateSourceSize() {
+          if (implicitWidth > 0 && implicitHeight > 0) {
+            const aspectRatio = implicitWidth / implicitHeight
+            const w = Math.min(modelData.width, implicitWidth)
+            sourceSize = Qt.size(w, w / aspectRatio)
+          }
         }
       }
 
@@ -311,6 +331,15 @@ Variants {
                                         currentWallpaper.asynchronous = true
                                       })
                        })
+        }
+      }
+
+      function recalculateImageSizes() {
+        if (currentWallpaper.status === Image.Ready) {
+          currentWallpaper.calculateSourceSize()
+        }
+        if (nextWallpaper.status === Image.Ready) {
+          nextWallpaper.calculateSourceSize()
         }
       }
 
