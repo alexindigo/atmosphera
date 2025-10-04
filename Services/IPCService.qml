@@ -119,14 +119,6 @@ Item {
     }
   }
 
-  // TODO: delete in next major release
-  IpcHandler {
-    target: "powerPanel"
-    function toggle() {
-      sessionMenuPanel.toggle()
-      ToastService.showWarning("IPC", I18n.tr("toast.ipc.powerpanel-deprecated"), 8000)
-    }
-  }
   IpcHandler {
     target: "sessionMenu"
     function toggle() {
@@ -134,15 +126,6 @@ Item {
     }
   }
 
-  // TODO: delete in next major release
-  IpcHandler {
-    target: "sidePanel"
-    function toggle() {
-      // Will attempt to open the panel next to the bar button if any.
-      controlCenterPanel.toggle(null, "ControlCenter")
-      ToastService.showWarning("IPC", I18n.tr("toast.ipc.sidepanel-deprecated"), 8000)
-    }
-  }
   IpcHandler {
     target: "controlCenter"
     function toggle() {
