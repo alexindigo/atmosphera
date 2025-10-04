@@ -29,33 +29,6 @@ ColumnLayout {
     description: I18n.tr("settings.dock.appearance.section.description")
   }
 
-  ColumnLayout {
-    spacing: Style.marginXXS * scaling
-    Layout.fillWidth: true
-    NLabel {
-      label: I18n.tr("settings.dock.appearance.position.label")
-      description: I18n.tr("settings.dock.appearance.position.description")
-    }
-    NComboBox {
-      Layout.fillWidth: true
-      model: [{
-          "key": "bottom",
-          "name": I18n.tr("settings.dock.appearance.position.bottom")
-        }, {
-          "key": "top",
-          "name": I18n.tr("settings.dock.appearance.position.top")
-        }, {
-          "key": "left",
-          "name": I18n.tr("settings.dock.appearance.position.left")
-        }, {
-          "key": "right",
-          "name": I18n.tr("settings.dock.appearance.position.right")
-        }]
-      currentKey: Settings.data.dock.position || "bottom"
-      onSelected: key => Settings.data.dock.position = key
-    }
-  }
-
   NToggle {
     label: I18n.tr("settings.dock.appearance.auto-hide.label")
     description: I18n.tr("settings.dock.appearance.auto-hide.description")

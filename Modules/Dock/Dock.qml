@@ -76,19 +76,7 @@ Variants {
     // Bar detection and positioning properties
     readonly property bool hasBar: modelData && modelData.name ? (Settings.data.bar.monitors.includes(modelData.name) || (Settings.data.bar.monitors.length === 0)) : false
     readonly property bool barAtBottom: hasBar && Settings.data.bar.position === "bottom"
-    readonly property bool barAtTop: hasBar && Settings.data.bar.position === "top"
-    readonly property bool barAtLeft: hasBar && Settings.data.bar.position === "left"
-    readonly property bool barAtRight: hasBar && Settings.data.bar.position === "right"
     readonly property int barHeight: Style.barHeight * scaling
-
-    // Dock positioning properties
-    readonly property string dockPosition: Settings.data.dock.position || "bottom"
-    readonly property bool dockAtBottom: dockPosition === "bottom"
-    readonly property bool dockAtTop: dockPosition === "top"
-    readonly property bool dockAtLeft: dockPosition === "left"
-    readonly property bool dockAtRight: dockPosition === "right"
-    readonly property bool dockHorizontal: dockAtLeft || dockAtRight
-    readonly property bool dockVertical: dockAtTop || dockAtBottom
 
     // Shared state between windows
     property bool dockHovered: false
@@ -110,43 +98,6 @@ Variants {
     function closeAllContextMenus() {
       if (currentContextMenu && currentContextMenu.visible) {
         currentContextMenu.hide()
-      }
-    }
-
-    // Helper functions for margin calculations
-    function getBottomMargin() {
-      switch (Settings.data.bar.position) {
-      case "bottom":
-        return (Style.barHeight + Style.marginM) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL * scaling + floatingMargin : floatingMargin)
-      default:
-        return floatingMargin
-      }
-    }
-
-    function getTopMargin() {
-      switch (Settings.data.bar.position) {
-      case "top":
-        return (Style.barHeight + Style.marginM) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL * scaling + floatingMargin : floatingMargin)
-      default:
-        return floatingMargin
-      }
-    }
-
-    function getLeftMargin() {
-      switch (Settings.data.bar.position) {
-      case "left":
-        return (Style.barHeight + Style.marginM) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL * scaling + floatingMargin : floatingMargin)
-      default:
-        return floatingMargin
-      }
-    }
-
-    function getRightMargin() {
-      switch (Settings.data.bar.position) {
-      case "right":
-        return (Style.barHeight + Style.marginM) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL * scaling + floatingMargin : floatingMargin)
-      default:
-        return floatingMargin
       }
     }
 
@@ -248,22 +199,20 @@ Variants {
         id: peekWindow
 
         screen: modelData
-        anchors.bottom: dockAtBottom
-        anchors.top: dockAtTop
-        anchors.left: dockAtLeft
-        anchors.right: dockAtRight
+        anchors.bottom: true
+        anchors.left: true
+        anchors.right: true
         focusable: false
         color: Color.transparent
 
         WlrLayershell.namespace: "noctalia-dock-peek"
         WlrLayershell.exclusionMode: ExclusionMode.Auto // Always exclusive
 
-        implicitHeight: dockVertical ? peekHeight : undefined
-        implicitWidth: dockHorizontal ? peekHeight : undefined
+        implicitHeight: peekHeight
 
         Rectangle {
           anchors.fill: parent
-          color: (barAtBottom && dockAtBottom) || (barAtTop && dockAtTop) || (barAtLeft && dockAtLeft) || (barAtRight && dockAtRight) ? Qt.alpha(Color.mSurface, Settings.data.bar.backgroundOpacity) : Color.transparent
+          color: barAtBottom ? Qt.alpha(Color.mSurface, Settings.data.bar.backgroundOpacity) : Color.transparent
         }
 
         MouseArea {
@@ -307,16 +256,17 @@ Variants {
         implicitWidth: dockContainerWrapper.width
         implicitHeight: dockContainerWrapper.height
 
-        // Position dock based on settings
-        anchors.bottom: dockAtBottom
-        anchors.top: dockAtTop
-        anchors.left: dockAtLeft
-        anchors.right: dockAtRight
+        // Position above the bar if it's at bottom
+        anchors.bottom: true
 
-        margins.bottom: dockAtBottom ? getBottomMargin() : 0
-        margins.top: dockAtTop ? getTopMargin() : 0
-        margins.left: dockAtLeft ? getLeftMargin() : 0
-        margins.right: dockAtRight ? getRightMargin() : 0
+        margins.bottom: {
+          switch (Settings.data.bar.position) {
+          case "bottom":
+            return (Style.barHeight + Style.marginM) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL * scaling + floatingMargin : floatingMargin)
+          default:
+            return floatingMargin
+          }
+        }
 
         // Rectangle {
         //   anchors.fill: parent
@@ -329,12 +279,8 @@ Variants {
           id: dockContainerWrapper
           width: dockContainer.width
           height: dockContainer.height
-          anchors.horizontalCenter: dockVertical ? parent.horizontalCenter : undefined
-          anchors.verticalCenter: dockHorizontal ? parent.verticalCenter : undefined
-          anchors.bottom: dockAtBottom ? parent.bottom : undefined
-          anchors.top: dockAtTop ? parent.top : undefined
-          anchors.left: dockAtLeft ? parent.left : undefined
-          anchors.right: dockAtRight ? parent.right : undefined
+          anchors.horizontalCenter: parent.horizontalCenter
+          anchors.bottom: parent.bottom
 
           // Apply animations to this wrapper
           opacity: hidden ? 0 : 1
@@ -357,8 +303,8 @@ Variants {
 
           Rectangle {
             id: dockContainer
-            width: dockVertical ? dockLayout.implicitWidth + Style.marginM * scaling * 2 : dockLayoutHorizontal.implicitWidth + Style.marginM * scaling * 2
-            height: dockVertical ? dockLayout.implicitHeight + Style.marginM * scaling * 2 : dockLayoutHorizontal.implicitHeight + Style.marginM * scaling * 2
+            width: dockLayout.implicitWidth + Style.marginM * scaling * 2
+            height: Math.round(iconSize * 1.5)
             color: Qt.alpha(Color.mSurface, Settings.data.dock.backgroundOpacity)
             anchors.centerIn: parent
             radius: Style.radiusL * scaling
@@ -394,8 +340,8 @@ Variants {
 
             Item {
               id: dock
-              width: dockVertical ? dockLayout.implicitWidth : dockLayoutHorizontal.implicitWidth
-              height: dockVertical ? dockLayout.implicitHeight : dockLayoutHorizontal.implicitHeight
+              width: dockLayout.implicitWidth
+              height: parent.height - (Style.marginM * 2 * scaling)
               anchors.centerIn: parent
 
               function getAppIcon(appData): string {
@@ -407,10 +353,8 @@ Variants {
               RowLayout {
                 id: dockLayout
                 spacing: Style.marginM * scaling
+                Layout.preferredHeight: parent.height
                 anchors.centerIn: parent
-                visible: dockVertical
-                Layout.fillHeight: false
-                Layout.fillWidth: false
 
                 Repeater {
                   model: dockApps
@@ -501,7 +445,6 @@ Variants {
                     DockMenu {
                       id: contextMenu
                       scaling: root.scaling
-                      dockPosition: root.dockPosition
                       onHoveredChanged: menuHovered = hovered
                       onRequestClose: {
                         contextMenu.hide()
@@ -598,221 +541,6 @@ Variants {
                       radius: Style.radiusXS * scaling
                       anchors.top: parent.bottom
                       anchors.horizontalCenter: parent.horizontalCenter
-
-                      // Pulse animation for active indicator
-                      SequentialAnimation on opacity {
-                        running: isActive
-                        loops: Animation.Infinite
-                        NumberAnimation {
-                          to: 0.6
-                          duration: Style.animationSlowest
-                          easing.type: Easing.InOutQuad
-                        }
-                        NumberAnimation {
-                          to: 1.0
-                          duration: Style.animationSlowest
-                          easing.type: Easing.InOutQuad
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-
-              ColumnLayout {
-                id: dockLayoutHorizontal
-                spacing: Style.marginM * scaling
-                anchors.centerIn: parent
-                visible: dockHorizontal
-                Layout.fillHeight: false
-                Layout.fillWidth: false
-
-                Repeater {
-                  model: dockApps
-
-                  delegate: Item {
-                    id: appButtonHorizontal
-                    Layout.preferredWidth: iconSize
-                    Layout.preferredHeight: iconSize
-                    Layout.alignment: Qt.AlignCenter
-
-                    property bool isActive: modelData.toplevel && ToplevelManager.activeToplevel && ToplevelManager.activeToplevel === modelData.toplevel
-                    property bool hovered: appMouseAreaHorizontal.containsMouse
-                    property string appId: modelData ? modelData.appId : ""
-                    property string appTitle: modelData ? (modelData.title || modelData.appId) : ""
-                    property bool isRunning: modelData && (modelData.type === "running" || modelData.type === "pinned-running")
-
-                    // Listen for the toplevel being closed
-                    Connections {
-                      target: modelData?.toplevel
-                      function onClosed() {
-                        Qt.callLater(root.updateDockApps)
-                      }
-                    }
-
-                    Image {
-                      id: appIconHorizontal
-                      width: iconSize
-                      height: iconSize
-                      anchors.centerIn: parent
-                      source: dock.getAppIcon(modelData)
-                      visible: source.toString() !== ""
-                      sourceSize.width: iconSize * 2
-                      sourceSize.height: iconSize * 2
-                      smooth: true
-                      mipmap: true
-                      antialiasing: true
-                      fillMode: Image.PreserveAspectFit
-                      cache: true
-
-                      // Dim pinned apps that aren't running
-                      opacity: appButtonHorizontal.isRunning ? 1.0 : 0.6
-
-                      scale: appButtonHorizontal.hovered ? 1.15 : 1.0
-
-                      Behavior on scale {
-                        NumberAnimation {
-                          duration: Style.animationNormal
-                          easing.type: Easing.OutBack
-                          easing.overshoot: 1.2
-                        }
-                      }
-
-                      Behavior on opacity {
-                        NumberAnimation {
-                          duration: Style.animationFast
-                          easing.type: Easing.OutQuad
-                        }
-                      }
-                    }
-
-                    // Fall back if no icon
-                    NIcon {
-                      anchors.centerIn: parent
-                      visible: !appIconHorizontal.visible
-                      icon: "question-mark"
-                      pointSize: iconSize * 0.7
-                      color: appButtonHorizontal.isActive ? Color.mPrimary : Color.mOnSurfaceVariant
-                      opacity: appButtonHorizontal.isRunning ? 1.0 : 0.6
-                      scale: appButtonHorizontal.hovered ? 1.15 : 1.0
-
-                      Behavior on scale {
-                        NumberAnimation {
-                          duration: Style.animationFast
-                          easing.type: Easing.OutBack
-                          easing.overshoot: 1.2
-                        }
-                      }
-
-                      Behavior on opacity {
-                        NumberAnimation {
-                          duration: Style.animationFast
-                          easing.type: Easing.OutQuad
-                        }
-                      }
-                    }
-
-                    // Context menu popup
-                    DockMenu {
-                      id: contextMenuHorizontal
-                      scaling: root.scaling
-                      dockPosition: root.dockPosition
-                      onHoveredChanged: menuHovered = hovered
-                      onRequestClose: {
-                        contextMenuHorizontal.hide()
-                        // Restart hide timer after menu action if auto-hide is enabled
-                        if (autoHide && !dockHovered && !anyAppHovered && !peekHovered) {
-                          hideTimer.restart()
-                        }
-                      }
-                      onAppClosed: root.updateDockApps // Force immediate dock update when app is closed
-                      onVisibleChanged: {
-                        if (visible) {
-                          root.currentContextMenu = contextMenuHorizontal
-                        } else if (root.currentContextMenu === contextMenuHorizontal) {
-                          root.currentContextMenu = null
-                          // Reset menu hover state when menu becomes invisible
-                          menuHovered = false
-                          // Restart hide timer if conditions are met
-                          if (autoHide && !dockHovered && !anyAppHovered && !peekHovered) {
-                            hideTimer.restart()
-                          }
-                        }
-                      }
-                    }
-
-                    MouseArea {
-                      id: appMouseAreaHorizontal
-                      anchors.fill: parent
-                      hoverEnabled: true
-                      cursorShape: Qt.PointingHandCursor
-                      acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
-
-                      onEntered: {
-                        anyAppHovered = true
-                        const appName = appButtonHorizontal.appTitle || appButtonHorizontal.appId || "Unknown"
-                        const tooltipText = appName.length > 40 ? appName.substring(0, 37) + "..." : appName
-                        TooltipService.show(Screen, appButtonHorizontal, tooltipText, "top")
-                        if (autoHide) {
-                          showTimer.stop()
-                          hideTimer.stop()
-                          unloadTimer.stop() // Cancel unload if hovering app
-                        }
-                      }
-
-                      onExited: {
-                        anyAppHovered = false
-                        TooltipService.hide()
-                        if (autoHide && !dockHovered && !peekHovered && !menuHovered) {
-                          hideTimer.restart()
-                        }
-                      }
-
-                      onClicked: function (mouse) {
-                        if (mouse.button === Qt.RightButton) {
-                          // If right-clicking on the same app with an open context menu, close it
-                          if (root.currentContextMenu === contextMenuHorizontal && contextMenuHorizontal.visible) {
-                            root.closeAllContextMenus()
-                            return
-                          }
-                          // Close any other existing context menu first
-                          root.closeAllContextMenus()
-                          // Hide tooltip when showing context menu
-                          TooltipService.hide()
-                          contextMenuHorizontal.show(appButtonHorizontal, modelData.toplevel || modelData)
-                          return
-                        }
-
-                        // Close any existing context menu for non-right-click actions
-                        root.closeAllContextMenus()
-
-                        // Check if toplevel is still valid (not a stale reference)
-                        const isValidToplevel = modelData?.toplevel && ToplevelManager && ToplevelManager.toplevels.values.includes(modelData.toplevel)
-
-                        if (mouse.button === Qt.MiddleButton && isValidToplevel && modelData.toplevel.close) {
-                          modelData.toplevel.close()
-                          Qt.callLater(root.updateDockApps) // Force immediate dock update
-                        } else if (mouse.button === Qt.LeftButton) {
-                          if (isValidToplevel && modelData.toplevel.activate) {
-                            // Running app - activate it
-                            modelData.toplevel.activate()
-                          } else if (modelData?.appId) {
-                            // Pinned app not running - launch it
-                            Quickshell.execDetached(["gtk-launch", modelData.appId])
-                          }
-                        }
-                      }
-                    }
-
-                    // Active indicator
-                    Rectangle {
-                      visible: isActive
-                      width: iconSize * 0.1
-                      height: iconSize * 0.2
-                      color: Color.mPrimary
-                      radius: Style.radiusXS * scaling
-                      anchors.left: parent.right
-                      anchors.verticalCenter: parent.verticalCenter
 
                       // Pulse animation for active indicator
                       SequentialAnimation on opacity {

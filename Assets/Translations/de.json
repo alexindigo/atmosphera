@@ -281,14 +281,6 @@
         "floating-distance": {
           "label": "Dock-Schwebeabstand",
           "description": "Schwebeabstand vom Bildschirmrand anpassen."
-        },
-        "position": {
-          "label": "Position",
-          "description": "Wählen Sie, an welcher Bildschirmkante das Dock angezeigt werden soll.",
-          "bottom": "Unten",
-          "top": "Oben",
-          "left": "Links",
-          "right": "Rechts"
         }
       },
       "monitors": {
