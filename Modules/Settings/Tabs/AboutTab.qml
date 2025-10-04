@@ -23,7 +23,7 @@ ColumnLayout {
   }
 
   RowLayout {
-    spacing: Style.marginL * scaling
+    spacing: Style.marginXL * scaling
 
     // Versions
     GridLayout {
@@ -54,19 +54,8 @@ ColumnLayout {
       }
     }
 
-    Item {
-      Layout.fillWidth: true
-    }
-
     // Update button
-    Rectangle {
-      Layout.alignment: Qt.AlignRight
-      Layout.preferredWidth: Math.round(updateRow.implicitWidth + (Style.marginL * scaling * 2))
-      Layout.preferredHeight: Math.round(Style.barHeight * scaling)
-      radius: Style.radiusL * scaling
-      color: updateArea.containsMouse ? Color.mPrimary : Color.transparent
-      border.color: Color.mPrimary
-      border.width: Math.max(1, Style.borderS * scaling)
+    NButton {
       visible: {
         if (root.latestVersion === "Unknown")
           return false
@@ -84,35 +73,12 @@ ColumnLayout {
         }
         return false
       }
-
-      RowLayout {
-        id: updateRow
-        anchors.centerIn: parent
-        spacing: Style.marginS * scaling
-
-        NIcon {
-          icon: "download"
-          pointSize: Style.fontSizeXXL * scaling
-          color: updateArea.containsMouse ? Color.mSurface : Color.mPrimary
-        }
-
-        NText {
-          id: updateText
-          text: I18n.tr("settings.about.noctalia.download-latest")
-          pointSize: Style.fontSizeL * scaling
-          color: updateArea.containsMouse ? Color.mSurface : Color.mPrimary
-        }
-      }
-
-      MouseArea {
-        id: updateArea
-
-        anchors.fill: parent
-        hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
-        onClicked: {
-          Quickshell.execDetached(["xdg-open", "https://github.com/Ly-sec/Noctalia/releases/latest"])
-        }
+      icon: "download"
+      text: I18n.tr("settings.about.noctalia.download-latest")
+      outlined: !hovered
+      fontSize: Style.fontSizeXS * scaling
+      onClicked: {
+        Quickshell.execDetached(["xdg-open", "https://github.com/Ly-sec/Noctalia/releases/latest"])
       }
     }
   }
@@ -123,6 +89,7 @@ ColumnLayout {
     Layout.bottomMargin: Style.marginXL * scaling
   }
 
+  // Contributors
   NHeader {
     label: I18n.tr("settings.about.contributors.section.label")
     description: root.contributors.length === 1 ? I18n.tr("settings.about.contributors.section.description", {
