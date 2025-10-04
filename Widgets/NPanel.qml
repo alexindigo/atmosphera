@@ -84,22 +84,12 @@ Loader {
 
   // -----------------------------------------
   function open(buttonItem) {
+
     // Get the button position if provided
     if (buttonItem !== undefined && buttonItem !== null) {
       useButtonPosition = true
-      // Try to get the button's window
-      var buttonWindow = buttonItem.Window.window
-      if (buttonWindow) {
-        // Map to button's window coordinates
-        var itemPosInWindow = buttonItem.mapToItem(buttonWindow.contentItem, 0, 0)
-        // Then account for window position on screen
-        buttonPosition = Qt.point(buttonWindow.x + itemPosInWindow.x, buttonWindow.y + itemPosInWindow.y)
-      } else {
-        // Fallback to old method
-        var itemPos = buttonItem.mapToItem(null, 0, 0)
-        buttonPosition = Qt.point(itemPos.x, itemPos.y)
-        Logger.warn("NPanel", "Falling back to mapToItem null")
-      }
+      var itemPos = buttonItem.mapToItem(null, 0, 0)
+      buttonPosition = Qt.point(itemPos.x, itemPos.y)
       buttonWidth = buttonItem.width
       buttonHeight = buttonItem.height
     } else {
