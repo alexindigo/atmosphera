@@ -81,6 +81,16 @@
             "description": "Increase or decrease the size of the monospaced text."
           }
         }
+      },
+      "control-center": {
+        "section": {
+          "label": "Control Center",
+          "description": "Configure the Control Center panel positioning and behavior."
+        },
+        "position": {
+          "label": "Position",
+          "description": "Choose where the Control Center panel appears when opened."
+        }
       }
     },
     "audio": {
@@ -1214,6 +1224,17 @@
         "center_right": "Right center"
       }
     },
+    "control-center": {
+      "position": {
+        "close_to_bar_button": "Close to bar button",
+        "top_left": "Top left",
+        "top_right": "Top right",
+        "bottom_left": "Bottom left",
+        "bottom_right": "Bottom right",
+        "bottom_center": "Bottom center",
+        "top_center": "Top center"
+      }
+    },
     "osd": {
       "position": {
         "top_left": "Top left",
@@ -1400,7 +1421,7 @@
     },
     "missing-control-center": {
       "label": "Last Control Center widget removed",
-      "description": "The Control Center widget has been removed from the bar. To access it from the bar again, you will need to re-add the widget."
+      "description": "The Control Center widget has been removed from the bar. To access it from the bar again, you will need to re-add the widget. You can open it with right clicking on the bar too."
     }
   },
   "weather": {

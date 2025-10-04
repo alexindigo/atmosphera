@@ -79,6 +79,16 @@
           }
         },
         "reset-scaling": "Redefinir escala"
+      },
+      "control-center": {
+        "section": {
+          "label": "Centro de controle",
+          "description": "Configurar o posicionamento e comportamento do painel do centro de controle."
+        },
+        "position": {
+          "label": "Posição",
+          "description": "Escolha onde o painel do centro de controle aparece quando aberto."
+        }
       }
     },
     "audio": {
@@ -1210,6 +1220,17 @@
         "center_right": "Centro à direita"
       }
     },
+    "control-center": {
+      "position": {
+        "close_to_bar_button": "Perto do botão da barra",
+        "top_left": "Superior esquerdo",
+        "top_right": "Superior direito",
+        "bottom_left": "Inferior esquerdo",
+        "bottom_right": "Inferior direito",
+        "bottom_center": "Centro inferior",
+        "top_center": "Centro superior"
+      }
+    },
     "bar": {
       "position": {
         "top": "Topo",
@@ -1397,7 +1418,7 @@
     },
     "missing-control-center": {
       "label": "Último widget da Central de Controle removido",
-      "description": "O widget da Central de Controle foi removido da barra. Para acessá-lo novamente pela barra, adicione o widget novamente."
+      "description": "O widget da Central de Controle foi removido da barra. Para acessá-lo novamente pela barra, adicione o widget novamente. Você também pode abri-lo clicando com o botão direito na barra."
     }
   },
   "weather": {

@@ -79,6 +79,16 @@
           }
         },
         "reset-scaling": "Skalierung zurücksetzen"
+      },
+      "control-center": {
+        "section": {
+          "label": "Kontrollzentrum",
+          "description": "Konfigurieren Sie die Positionierung und das Verhalten des Kontrollzentrum-Panels."
+        },
+        "position": {
+          "label": "Position",
+          "description": "Wählen Sie, wo das Kontrollzentrum-Panel beim Öffnen erscheint."
+        }
       }
     },
     "audio": {
@@ -1232,6 +1242,17 @@
         "center_right": "Rechts mittig"
       }
     },
+    "control-center": {
+      "position": {
+        "close_to_bar_button": "Nah zur Leisten-Schaltfläche",
+        "top_left": "Oben links",
+        "top_right": "Oben rechts",
+        "bottom_left": "Unten links",
+        "bottom_right": "Unten rechts",
+        "bottom_center": "Unten mittig",
+        "top_center": "Oben mittig"
+      }
+    },
     "osd": {
       "position": {
         "top_left": "Oben links",
@@ -1429,7 +1450,7 @@
     },
     "missing-control-center": {
       "label": "Letztes Control-Center-Widget entfernt",
-      "description": "Das Control-Center-Widget wurde aus der Leiste entfernt. Um es erneut über die Leiste zu öffnen, fügen Sie das Widget wieder hinzu."
+      "description": "Das Control-Center-Widget wurde aus der Leiste entfernt. Um es erneut über die Leiste zu öffnen, fügen Sie das Widget wieder hinzu. Sie können es auch durch Rechtsklick auf die Leiste öffnen."
     }
   }
 }

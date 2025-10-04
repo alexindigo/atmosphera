@@ -1,5 +1,5 @@
 {
-  "settingsVersion": 13,
+  "settingsVersion": 14,
   "bar": {
     "position": "top",
     "backgroundOpacity": 1,
@@ -110,6 +110,9 @@
     "useApp2Unit": false,
     "sortByMostUsed": true,
     "terminalCommand": "xterm -e"
+  },
+  "controlCenter": {
+    "position": "close_to_bar_button"
   },
   "dock": {
     "autoHide": false,

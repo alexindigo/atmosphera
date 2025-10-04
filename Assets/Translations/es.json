@@ -79,6 +79,16 @@
           }
         },
         "reset-scaling": "Restablecer la escala"
+      },
+      "control-center": {
+        "section": {
+          "label": "Centro de control",
+          "description": "Configurar el posicionamiento y comportamiento del panel del centro de control."
+        },
+        "position": {
+          "label": "Posición",
+          "description": "Elige dónde aparece el panel del centro de control cuando se abre."
+        }
       }
     },
     "audio": {
@@ -1211,6 +1221,17 @@
         "center_right": "Derecha centrado"
       }
     },
+    "control-center": {
+      "position": {
+        "close_to_bar_button": "Cerca del botón de la barra",
+        "top_left": "Superior izquierda",
+        "top_right": "Superior derecha",
+        "bottom_left": "Inferior izquierda",
+        "bottom_right": "Inferior derecha",
+        "bottom_center": "Inferior central",
+        "top_center": "Superior central"
+      }
+    },
     "osd": {
       "position": {
         "top_left": "Superior izquierda",
@@ -1397,7 +1418,7 @@
     },
     "missing-control-center": {
       "label": "Se eliminó el último widget del Centro de control",
-      "description": "El widget del Centro de control se eliminó de la barra. Para acceder a él nuevamente desde la barra, debes volver a añadir el widget."
+      "description": "El widget del Centro de control se eliminó de la barra. Para acceder a él nuevamente desde la barra, debes volver a añadir el widget. También puedes abrirlo haciendo clic derecho en la barra."
     }
   },
   "weather": {

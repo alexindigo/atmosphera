@@ -194,6 +194,56 @@ ColumnLayout {
     Layout.bottomMargin: Style.marginXL * scaling
   }
 
+  // Control Center
+  ColumnLayout {
+    spacing: Style.marginL * scaling
+    Layout.fillWidth: true
+
+    NHeader {
+      label: I18n.tr("settings.general.control-center.section.label")
+      description: I18n.tr("settings.general.control-center.section.description")
+    }
+
+    NComboBox {
+      id: controlCenterPosition
+      label: I18n.tr("settings.general.control-center.position.label")
+      description: I18n.tr("settings.general.control-center.position.description")
+      Layout.fillWidth: true
+      model: [{
+          "key": "close_to_bar_button",
+          "name": I18n.tr("options.control-center.position.close_to_bar_button")
+        }, {
+          "key": "top_left",
+          "name": I18n.tr("options.control-center.position.top_left")
+        }, {
+          "key": "top_right",
+          "name": I18n.tr("options.control-center.position.top_right")
+        }, {
+          "key": "bottom_left",
+          "name": I18n.tr("options.control-center.position.bottom_left")
+        }, {
+          "key": "bottom_right",
+          "name": I18n.tr("options.control-center.position.bottom_right")
+        }, {
+          "key": "bottom_center",
+          "name": I18n.tr("options.control-center.position.bottom_center")
+        }, {
+          "key": "top_center",
+          "name": I18n.tr("options.control-center.position.top_center")
+        }]
+      currentKey: Settings.data.controlCenter.position
+      onSelected: function (key) {
+        Settings.data.controlCenter.position = key
+      }
+    }
+  }
+
+  NDivider {
+    Layout.fillWidth: true
+    Layout.topMargin: Style.marginXL * scaling
+    Layout.bottomMargin: Style.marginXL * scaling
+  }
+
   // Fonts
   ColumnLayout {
     spacing: Style.marginL * scaling
