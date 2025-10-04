@@ -277,6 +277,14 @@
         "floating-distance": {
           "label": "Dock 浮动距离",
           "description": "调整距离屏幕边缘的浮动距离。"
+        },
+        "position": {
+          "label": "位置",
+          "description": "选择在屏幕的哪一边显示 Dock。",
+          "bottom": "底部",
+          "top": "顶部",
+          "left": "左侧",
+          "right": "右侧"
         }
       },
       "monitors": {

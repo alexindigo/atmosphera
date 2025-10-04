@@ -279,6 +279,14 @@
         "floating-distance": {
           "label": "Dock floating distance",
           "description": "Adjust the floating distance from the screen edge."
+        },
+        "position": {
+          "label": "Position",
+          "description": "Choose which edge of the screen to display the dock on.",
+          "bottom": "Bottom",
+          "top": "Top",
+          "left": "Left",
+          "right": "Right"
         }
       },
       "monitors": {

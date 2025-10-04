@@ -16,6 +16,7 @@ PopupWindow {
   property real scaling: 1.0
   property bool hovered: menuMouseArea.containsMouse
   property var onAppClosed: null // Callback function for when an app is closed
+  property string dockPosition: Settings.data.dock.position || "bottom"
 
   // Track which menu item is hovered
   property int hoveredItem: -1 // -1: none, 0: focus, 1: pin, 2: close
@@ -55,8 +56,8 @@ PopupWindow {
   }
 
   anchor.item: anchorItem
-  anchor.rect.x: anchorItem ? (anchorItem.width - implicitWidth) / 2 : 0
-  anchor.rect.y: anchorItem ? -implicitHeight - (Style.marginM * scaling) : 0
+  anchor.rect.x: anchorItem ? getAnchorX() : 0
+  anchor.rect.y: anchorItem ? getAnchorY() : 0
 
   function show(item, toplevelData) {
     if (!item) {
@@ -71,6 +72,28 @@ PopupWindow {
 
   function hide() {
     visible = false
+  }
+
+  function getAnchorX() {
+    switch (dockPosition) {
+    case "left":
+      return anchorItem.width + (Style.marginM * scaling)
+    case "right":
+      return -implicitWidth - (Style.marginM * scaling)
+    default:
+      return (anchorItem.width - implicitWidth) / 2
+    }
+  }
+
+  function getAnchorY() {
+    switch (dockPosition) {
+    case "top":
+      return anchorItem.height + (Style.marginM * scaling)
+    case "bottom":
+      return -implicitHeight - (Style.marginM * scaling)
+    default:
+      return (anchorItem.height - implicitHeight) / 2
+    }
   }
 
   // Helper function to determine which menu item is under the mouse

@@ -1,5 +1,5 @@
 {
-  "settingsVersion": 13,
+  "settingsVersion": 14,
   "bar": {
     "position": "top",
     "backgroundOpacity": 1,
@@ -118,7 +118,8 @@
     "floatingRatio": 1,
     "onlySameOutput": true,
     "monitors": [],
-    "pinnedApps": []
+    "pinnedApps": [],
+    "position": "bottom"
   },
   "network": {
     "wifiEnabled": true

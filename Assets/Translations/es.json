@@ -277,6 +277,14 @@
         "floating-distance": {
           "label": "Distancia de flotación del dock",
           "description": "Ajusta la distancia de flotación desde el borde de la pantalla."
+        },
+        "position": {
+          "label": "Posición",
+          "description": "Elige en qué borde de la pantalla mostrar el dock.",
+          "bottom": "Inferior",
+          "top": "Superior",
+          "left": "Izquierda",
+          "right": "Derecha"
         }
       },
       "monitors": {
