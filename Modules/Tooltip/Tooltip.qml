@@ -167,14 +167,7 @@ PopupWindow {
     root.implicitHeight = tipHeight
 
     // Get target's global position
-    var targetGlobal
-    const targetWindow = targetItem.Window.window
-    if (targetWindow) {
-      targetGlobal = targetItem.mapToItem(targetWindow.contentItem, 0, 0)
-    } else {
-      targetGlobal = targetItem.mapToItem(null, 0, 0)
-    }
-
+    var targetGlobal = targetItem.mapToItem(null, 0, 0)
     const targetWidth = targetItem.width
     const targetHeight = targetItem.height
 

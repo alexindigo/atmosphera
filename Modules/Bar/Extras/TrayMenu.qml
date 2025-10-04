@@ -225,7 +225,7 @@ PopupWindow {
 
                   // Check bar position first
                   const barPosition = Settings.data.bar.position
-                  const globalPos = entry.mapToGlobal(0, 0)
+                  const globalPos = entry.mapToItem(null, 0, 0)
 
                   if (barPosition === "right") {
                     // Bar is on the right, prefer opening submenus to the left
