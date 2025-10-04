@@ -35,7 +35,7 @@ Item {
     target: "notifications"
     function toggleHistory() {
       // Will attempt to open the panel next to the bar button if any.
-      notificationHistoryPanel.toggle(BarService.lookupWidget("NotificationHistory"))
+      notificationHistoryPanel.toggle(null, "NotificationHistory")
     }
     function toggleDND() {
       Settings.data.notifications.doNotDisturb = !Settings.data.notifications.doNotDisturb
@@ -139,7 +139,7 @@ Item {
     target: "sidePanel"
     function toggle() {
       // Will attempt to open the panel next to the bar button if any.
-      controlCenterPanel.toggle(BarService.lookupWidget("ControlCenter"))
+      controlCenterPanel.toggle(null, "ControlCenter")
       ToastService.showWarning("IPC", I18n.tr("toast.ipc.sidepanel-deprecated"), 8000)
     }
   }
@@ -147,7 +147,7 @@ Item {
     target: "controlCenter"
     function toggle() {
       // Will attempt to open the panel next to the bar button if any.
-      controlCenterPanel.toggle(BarService.lookupWidget("ControlCenter"))
+      controlCenterPanel.toggle(null, "ControlCenter")
     }
   }
 
