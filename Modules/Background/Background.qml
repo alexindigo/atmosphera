@@ -99,33 +99,64 @@ Variants {
 
       Image {
         id: currentWallpaper
+
+        property bool dimensionsCalculated: false
+
         source: ""
         smooth: true
         mipmap: false
         visible: false
         cache: false
         asynchronous: true
-        sourceSize: Qt.size(modelData.width, modelData.height)
+
+        // Don't set sourceSize initially - will be set after we know aspect ratio
         onStatusChanged: {
           if (status === Image.Error) {
             Logger.warn("Current wallpaper failed to load:", source)
+          } else if (status === Image.Ready && !dimensionsCalculated) {
+            // First load: get original dimensions
+            const aspectRatio = implicitWidth / implicitHeight
+            dimensionsCalculated = true
+
+            // Now set sourceSize to screen width and calculated height
+            const w = Math.min(modelData.width, implicitWidth)
+            sourceSize = Qt.size(w, w / aspectRatio)
           }
+        }
+
+        onSourceChanged: {
+          // Reset for new image
+          dimensionsCalculated = false
+          sourceSize = undefined // Clear sourceSize for initial load
         }
       }
 
       Image {
         id: nextWallpaper
+
+        property bool dimensionsCalculated: false
+
         source: ""
         smooth: true
         mipmap: false
         visible: false
         cache: false
         asynchronous: true
-        sourceSize: Qt.size(modelData.width, modelData.height)
+
         onStatusChanged: {
           if (status === Image.Error) {
             Logger.warn("Next wallpaper failed to load:", source)
+          } else if (status === Image.Ready && !dimensionsCalculated) {
+            const aspectRatio = implicitWidth / implicitHeight
+            dimensionsCalculated = true
+            const w = Math.min(modelData.width, implicitWidth)
+            sourceSize = Qt.size(w, w / aspectRatio)
           }
+        }
+
+        onSourceChanged: {
+          dimensionsCalculated = false
+          sourceSize = undefined
         }
       }
 
