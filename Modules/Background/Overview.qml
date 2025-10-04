@@ -12,11 +12,47 @@ Variants {
   delegate: Loader {
     required property ShellScreen modelData
     property string wallpaper: ""
+    property bool shouldBeActive: CompositorService.isNiri && Settings.data.wallpaper.enabled && modelData && CompositorService.backend?.overviewActive
+    property bool isClosing: false
+    property Timer unloadTimer: Timer {
+      interval: 300  // Delay before actually unloading
+      repeat: false
+      onTriggered: {
+        if (!shouldBeActive && isClosing) {
+          parent.active = false
+        }
+      }
+    }
+    property Timer debounceTimer: Timer {
+      interval: 50  // Debounce rapid state changes
+      repeat: false
+      onTriggered: {
+        handleStateChange()
+      }
+    }
 
-    active: CompositorService.isNiri && Settings.data.wallpaper.enabled && modelData && CompositorService.backend?.overviewActive
+    active: shouldBeActive || isClosing
+
+    // Handle state transitions with debouncing
+    onShouldBeActiveChanged: {
+      debounceTimer.restart()
+    }
+
+    function handleStateChange() {
+      if (shouldBeActive && !isClosing) {
+        // Ensure it's active and not closing
+        isClosing = false
+        unloadTimer.stop()
+      } else if (!shouldBeActive && !isClosing && active) {
+        // Start fade out process
+        isClosing = true
+        unloadTimer.start()
+      }
+    }
 
     sourceComponent: PanelWindow {
       id: panelWindow
+      property bool isClosing: parent ? parent.isClosing : false
 
       Component.onCompleted: {
         if (modelData) {
@@ -74,6 +110,18 @@ Variants {
 
         Component.onCompleted: {
           opacity = 1
+        }
+
+        // Handle fade out when closing - use panelWindow's isClosing property
+        property bool loaderIsClosing: panelWindow.isClosing
+        
+        // Update opacity based on closing state
+        onLoaderIsClosingChanged: {
+          if (loaderIsClosing) {
+            opacity = 0
+          } else {
+            opacity = 1
+          }
         }
 
         Image {
