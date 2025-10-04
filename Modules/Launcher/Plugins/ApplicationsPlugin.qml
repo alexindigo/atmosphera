@@ -149,7 +149,7 @@ Item {
       "onActivate": function () {
         // Close the launcher/NPanel immediately without any animations.
         // Ensures we are not preventing the future focusing of the app
-        launcher.closeCompleted()
+        launcher.close()
 
         Logger.log("ApplicationsPlugin", `Launching: ${app.name}`)
         // Record usage and persist asynchronously

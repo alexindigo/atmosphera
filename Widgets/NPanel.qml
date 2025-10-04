@@ -43,8 +43,6 @@ Loader {
   property real opacityValue: originalOpacity
   property real dimmingOpacity: 0
 
-  property alias isClosing: hideTimer.running
-
   signal opened
   signal closed
 
@@ -75,7 +73,7 @@ Loader {
 
   // -----------------------------------------
   function toggle(buttonItem) {
-    if (!active || isClosing) {
+    if (!active) {
       open(buttonItem)
     } else {
       close()
@@ -96,13 +94,6 @@ Loader {
       useButtonPosition = false
     }
 
-    // Special case if currently closing/animating
-    if (isClosing) {
-      hideTimer.stop() // in case we were closing
-      scaleValue = 1.0
-      opacityValue = 1.0
-    }
-
     PanelService.willOpenPanel(root)
 
     backgroundClickEnabled = true
@@ -115,28 +106,11 @@ Loader {
     dimmingOpacity = 0
     scaleValue = originalScale
     opacityValue = originalOpacity
-    hideTimer.start()
-    PanelService.willClosePanel(root)
-  }
-
-  // -----------------------------------------
-  function closeCompleted() {
     root.closed()
     active = false
     useButtonPosition = false
     backgroundClickEnabled = true
     PanelService.closedPanel(root)
-  }
-
-  // -----------------------------------------
-  // Timer to disable the loader after the close animation is completed
-  Timer {
-    id: hideTimer
-    interval: Style.animationSlow
-    repeat: false
-    onTriggered: {
-      closeCompleted()
-    }
   }
 
   // -----------------------------------------
@@ -193,7 +167,7 @@ Loader {
 
       Behavior on color {
         ColorAnimation {
-          duration: Style.animationSlow
+          duration: Style.animationNormal
         }
       }
 
@@ -205,7 +179,7 @@ Loader {
       // Close any panel with Esc without requiring focus
       Shortcut {
         sequences: ["Escape"]
-        enabled: root.active && !root.isClosing
+        enabled: root.active
         onActivated: root.close()
         context: Qt.WindowShortcut
       }
@@ -403,7 +377,7 @@ Loader {
         // Animation behaviors
         Behavior on scale {
           NumberAnimation {
-            duration: Style.animationSlow
+            duration: Style.animationNormal
             easing.type: Easing.OutExpo
           }
         }

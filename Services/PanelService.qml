@@ -13,9 +13,7 @@ Singleton {
   // Panels
   property var registeredPanels: ({})
   property var openedPanel: null
-  property bool hasOpenedPanel: false
   signal willOpen
-  signal willClose
 
   // Currently opened popups, can have more than one.
   // ex: when opening an NIconPicker from a widget setting.
@@ -45,17 +43,9 @@ Singleton {
       openedPanel.close()
     }
     openedPanel = panel
-    hasOpenedPanel = true
 
     // emit signal
     willOpen()
-  }
-
-  function willClosePanel(panel) {
-    hasOpenedPanel = false
-
-    // emit signal
-    willClose()
   }
 
   function closedPanel(panel) {
