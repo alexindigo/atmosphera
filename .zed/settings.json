@@ -5,16 +5,7 @@
       "formatter": {
         "external": {
           "command": "qmlfmt",
-          "arguments": [
-            "-e",
-            "-b",
-            "360",
-            "-t",
-            "2",
-            "-i",
-            "2",
-            "{buffer_path}"
-          ]
+          "arguments": ["-e", "-b", "360", "-t", "2", "-i", "2"]
         }
       }
     }
