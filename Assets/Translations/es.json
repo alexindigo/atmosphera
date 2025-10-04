@@ -1306,7 +1306,7 @@
   },
   "system": {
     "uptime": "Tiempo de actividad: {uptime}",
-    "welcome-back": "¡Bienvenido de nuevo, {user}!",
+    "welcome-back": "¡Bienvenido de nuevo,",
     "monitor-description": "{model} ({width}x{height})",
     "scaling-percentage": "{percentage}%",
     "location-display": "{name} ({coordinates})",
@@ -1324,7 +1324,10 @@
   "lock-screen": {
     "secure-terminal": "TERMINAL SEGURA",
     "unlock-command": "sudo unlock-session",
-    "password": "Contraseña:",
+    "password": "Ingresa tu contraseña...",
+    "welcome-back": "¡Bienvenido de nuevo,",
+    "authenticating": "Autenticando...",
+    "authentication-failed": "Autenticación fallida",
     "shut-down": "Apagar",
     "restart": "Reiniciar",
     "suspend": "Suspender"

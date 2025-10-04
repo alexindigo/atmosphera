@@ -1309,7 +1309,7 @@
   },
   "system": {
     "uptime": "System uptime: {uptime}",
-    "welcome-back": "Welcome back, {user}!",
+    "welcome-back": "Welcome back,",
     "monitor-description": "{model} ({width}x{height})",
     "scaling-percentage": "{percentage}%",
     "location-display": "{name} ({coordinates})",
@@ -1327,7 +1327,10 @@
   "lock-screen": {
     "secure-terminal": "SECURE TERMINAL",
     "unlock-command": "sudo unlock-session",
-    "password": "Password:",
+    "password": "Enter your password...",
+    "welcome-back": "Welcome back,",
+    "authenticating": "Authenticating...",
+    "authentication-failed": "Authentication failed",
     "shut-down": "Shut down",
     "restart": "Restart",
     "suspend": "Suspend"

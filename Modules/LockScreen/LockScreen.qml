@@ -21,9 +21,7 @@ Loader {
     id: unloadAfterUnlockTimer
     interval: 250
     repeat: false
-    onTriggered: {
-      lockScreen.active = false
-    }
+    onTriggered: lockScreen.active = false
   }
 
   function formatTime() {
@@ -31,7 +29,6 @@ Loader {
   }
 
   function formatDate() {
-    // For full text date, day is always before month, so we use this format for everybody: Wednesday, September 17.
     return Qt.locale().toString(new Date(), "dddd, MMMM d")
   }
 
@@ -43,7 +40,6 @@ Loader {
     Item {
       id: lockContainer
 
-      // Create the lock context
       LockContext {
         id: lockContext
         onUnlocked: {
@@ -87,955 +83,643 @@ Loader {
           Rectangle {
             anchors.fill: parent
             gradient: Gradient {
-              GradientStop {
-                position: 0.0
-                color: Qt.rgba(0, 0, 0, 0.6)
-              }
-              GradientStop {
-                position: 0.3
-                color: Qt.rgba(0, 0, 0, 0.3)
-              }
-              GradientStop {
-                position: 0.7
-                color: Qt.rgba(0, 0, 0, 0.4)
-              }
-              GradientStop {
-                position: 1.0
-                color: Qt.rgba(0, 0, 0, 0.7)
-              }
-            }
-
-            Repeater {
-              model: 20
-              Rectangle {
-                width: Math.random() * 4 + 2
-                height: width
-                radius: width * 0.5
-                color: Qt.alpha(Color.mPrimary, 0.3)
-                x: Math.random() * parent.width
-                y: Math.random() * parent.height
-
-                SequentialAnimation on opacity {
-                  loops: Animation.Infinite
-                  NumberAnimation {
-                    to: 0.8
-                    duration: 2000 + Math.random() * 3000
-                  }
-                  NumberAnimation {
-                    to: 0.1
-                    duration: 2000 + Math.random() * 3000
-                  }
-                }
-              }
+              GradientStop { position: 0.0; color: Qt.rgba(0, 0, 0, 0.6) }
+              GradientStop { position: 0.3; color: Qt.rgba(0, 0, 0, 0.3) }
+              GradientStop { position: 0.7; color: Qt.rgba(0, 0, 0, 0.4) }
+              GradientStop { position: 1.0; color: Qt.rgba(0, 0, 0, 0.7) }
             }
           }
 
           Item {
             anchors.fill: parent
 
+            // Time and Date
             ColumnLayout {
+              anchors.horizontalCenter: parent.horizontalCenter
               anchors.top: parent.top
-              anchors.left: parent.left
-              anchors.right: parent.right
               anchors.topMargin: 80 * scaling
-              spacing: 40 * scaling
+              spacing: 8 * scaling
 
-              ColumnLayout {
-                spacing: Style.marginXS * scaling
+              NText {
+                id: timeText
+                text: lockScreen.formatTime()
                 Layout.alignment: Qt.AlignHCenter
+                pointSize: 64 * scaling
+                font.weight: Font.Medium
+                color: Color.mOnSurface
+                horizontalAlignment: Text.AlignHCenter
+                opacity: 0.95
 
-                NText {
-                  id: timeText
-                  text: formatTime()
-                  // Smaller time display when using longer 12 hour format
-                  pointSize: Settings.data.location.use12hourFormat ? Style.fontSizeXXXL * 4 * scaling : Style.fontSizeXXXL * 5 * scaling
-                  font.weight: Style.fontWeightBold
-                  font.letterSpacing: -2 * scaling
-                  color: Color.mOnSurface
-                  horizontalAlignment: Text.AlignHCenter
-                  Layout.alignment: Qt.AlignHCenter
-
-                  SequentialAnimation on scale {
-                    loops: Animation.Infinite
-                    NumberAnimation {
-                      to: 1.02
-                      duration: 2000
-                      easing.type: Easing.InOutQuad
-                    }
-                    NumberAnimation {
-                      to: 1.0
-                      duration: 2000
-                      easing.type: Easing.InOutQuad
-                    }
-                  }
-                }
-
-                NText {
-                  id: dateText
-                  text: formatDate()
-                  pointSize: Style.fontSizeXXL * scaling
-                  font.weight: Font.Light
-                  color: Color.mOnSurface
-                  horizontalAlignment: Text.AlignHCenter
-                  Layout.alignment: Qt.AlignHCenter
-                  Layout.preferredWidth: timeText.implicitWidth
+                SequentialAnimation on opacity {
+                  loops: Animation.Infinite
+                  NumberAnimation { to: 0.7; duration: 3000; easing.type: Easing.InOutQuad }
+                  NumberAnimation { to: 0.95; duration: 3000; easing.type: Easing.InOutQuad }
                 }
               }
 
-              ColumnLayout {
-                spacing: Style.marginM * scaling
+              NText {
+                id: dateText
+                text: lockScreen.formatDate()
                 Layout.alignment: Qt.AlignHCenter
-
-                Rectangle {
-                  Layout.preferredWidth: 108 * scaling
-                  Layout.preferredHeight: 108 * scaling
-                  Layout.alignment: Qt.AlignHCenter
-                  radius: width * 0.5
-                  color: Color.transparent
-                  border.color: Color.mPrimary
-                  border.width: Math.max(1, Style.borderL * scaling)
-                  z: 10
-
-                  Loader {
-                    active: Settings.data.audio.visualizerType == "linear"
-                    anchors.centerIn: parent
-                    width: 160 * scaling
-                    height: 160 * scaling
-                    sourceComponent: Item {
-                      Repeater {
-                        model: CavaService.values.length
-                        Rectangle {
-                          property real linearAngle: (index / CavaService.values.length) * 2 * Math.PI
-                          property real linearRadius: 70 * scaling
-                          property real linearBarLength: Math.max(2, CavaService.values[index] * 30 * scaling)
-                          property real linearBarWidth: 3 * scaling
-                          width: linearBarWidth
-                          height: linearBarLength
-                          color: Color.mPrimary
-                          radius: linearBarWidth * 0.5
-                          x: parent.width * 0.5 + Math.cos(linearAngle) * linearRadius - width * 0.5
-                          y: parent.height * 0.5 + Math.sin(linearAngle) * linearRadius - height * 0.5
-                          transform: Rotation {
-                            origin.x: linearBarWidth * 0.5
-                            origin.y: linearBarLength * 0.5
-                            angle: (linearAngle * 180 / Math.PI) + 90
-                          }
-                        }
-                      }
-                    }
-                  }
-
-                  Loader {
-                    active: Settings.data.audio.visualizerType == "mirrored"
-                    anchors.centerIn: parent
-                    width: 160 * scaling
-                    height: 160 * scaling
-                    sourceComponent: Item {
-                      Repeater {
-                        model: CavaService.values.length * 2
-                        Rectangle {
-                          property int mirroredValueIndex: index < CavaService.values.length ? index : (CavaService.values.length * 2 - 1 - index)
-                          property real mirroredAngle: (index / (CavaService.values.length * 2)) * 2 * Math.PI
-                          property real mirroredRadius: 70 * scaling
-                          property real mirroredBarLength: Math.max(2, CavaService.values[mirroredValueIndex] * 30 * scaling)
-                          property real mirroredBarWidth: 3 * scaling
-                          width: mirroredBarWidth
-                          height: mirroredBarLength
-                          color: Color.mPrimary
-                          radius: mirroredBarWidth * 0.5
-                          x: parent.width * 0.5 + Math.cos(mirroredAngle) * mirroredRadius - width * 0.5
-                          y: parent.height * 0.5 + Math.sin(mirroredAngle) * mirroredRadius - height * 0.5
-                          transform: Rotation {
-                            origin.x: mirroredBarWidth * 0.5
-                            origin.y: mirroredBarLength * 0.5
-                            angle: (mirroredAngle * 180 / Math.PI) + 90
-                          }
-                        }
-                      }
-                    }
-                  }
-
-                  Loader {
-                    active: Settings.data.audio.visualizerType == "wave"
-                    anchors.centerIn: parent
-                    width: 160 * scaling
-                    height: 160 * scaling
-                    sourceComponent: Item {
-                      Canvas {
-                        id: waveCanvas
-                        anchors.fill: parent
-                        antialiasing: true
-                        onPaint: {
-                          var ctx = getContext("2d")
-                          ctx.reset()
-                          if (CavaService.values.length === 0)
-                            return
-                          ctx.strokeStyle = Color.mPrimary
-                          ctx.lineWidth = 2 * scaling
-                          ctx.lineCap = "round"
-                          var centerX = width * 0.5
-                          var centerY = height * 0.5
-                          var baseRadius = 60 * scaling
-                          var maxAmplitude = 20 * scaling
-                          ctx.beginPath()
-                          for (var i = 0; i <= CavaService.values.length; i++) {
-                            var index = i % CavaService.values.length
-                            var angle = (i / CavaService.values.length) * 2 * Math.PI
-                            var amplitude = CavaService.values[index] * maxAmplitude
-                            var radius = baseRadius + amplitude
-                            var x = centerX + Math.cos(angle) * radius
-                            var y = centerY + Math.sin(angle) * radius
-                            if (i === 0)
-                              ctx.moveTo(x, y)
-                            else
-                              ctx.lineTo(x, y)
-                          }
-                          ctx.closePath()
-                          ctx.stroke()
-                        }
-                      }
-                      Timer {
-                        interval: 16
-                        running: true
-                        repeat: true
-                        onTriggered: waveCanvas.requestPaint()
-                      }
-                    }
-                  }
-
-                  NImageCircled {
-                    anchors.centerIn: parent
-                    width: 100 * scaling
-                    height: 100 * scaling
-                    imagePath: Settings.data.general.avatarImage
-                    fallbackIcon: "person"
-                  }
-
-                  MouseArea {
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    onEntered: parent.scale = 1.05
-                    onExited: parent.scale = 1.0
-                  }
-
-                  Behavior on scale {
-                    NumberAnimation {
-                      duration: Style.animationFast
-                      easing.type: Easing.OutBack
-                    }
-                  }
-                }
+                pointSize: Style.fontSizeL * scaling
+                font.weight: Font.Medium
+                color: Color.mOnSurface
+                horizontalAlignment: Text.AlignHCenter
+                opacity: 0.9
               }
             }
 
-            Item {
-              width: 720 * scaling
-              height: 280 * scaling
+            // User Profile
+            ColumnLayout {
               anchors.centerIn: parent
-              anchors.verticalCenterOffset: 50 * scaling
+              spacing: 6 * scaling
+              Layout.alignment: Qt.AlignHCenter
 
               Rectangle {
-                id: terminalBackground
-                anchors.fill: parent
-                clip: true
-                radius: Style.radiusM * scaling
-                color: Qt.alpha(Color.mSurface, 0.9)
-                border.color: Color.mPrimary
-                border.width: Math.max(1, Style.borderM * scaling)
-
-                Repeater {
-                  model: 20
-                  Rectangle {
-                    width: parent.width
-                    height: 1
-                    color: Qt.alpha(Color.mPrimary, 0.1)
-                    y: index * 10 * scaling
-                    opacity: Style.opacityMedium
-                    SequentialAnimation on opacity {
-                      loops: Animation.Infinite
-                      NumberAnimation {
-                        to: 0.6
-                        duration: 2000 + Math.random() * 1000
-                      }
-                      NumberAnimation {
-                        to: 0.1
-                        duration: 2000 + Math.random() * 1000
-                      }
-                    }
-                  }
-                }
-
-                Rectangle {
-                  width: parent.width
-                  height: 40 * scaling
-                  color: Qt.alpha(Color.mPrimary, 0.2)
-                  topLeftRadius: Style.radiusS * scaling
-                  topRightRadius: Style.radiusS * scaling
-
-                  RowLayout {
-                    anchors.fill: parent
-                    anchors.topMargin: Style.marginM * scaling
-                    anchors.bottomMargin: Style.marginM * scaling
-                    anchors.leftMargin: Style.marginL * scaling
-                    anchors.rightMargin: Style.marginL * scaling
-                    spacing: Style.marginL * scaling
-
-                    NText {
-                      text: I18n.tr("lock-screen.secure-terminal")
-                      color: Color.mOnSurface
-                      family: Settings.data.ui.fontFixed
-                      pointSize: Style.fontSizeL * scaling
-                      font.weight: Style.fontWeightBold
-                      Layout.fillWidth: true
-                    }
-
-                    RowLayout {
-                      spacing: Style.marginS * scaling
-                      NText {
-                        text: keyboardLayout.currentLayout
-                        color: Color.mOnSurface
-                        family: Settings.data.ui.fontFixed
-                        pointSize: Style.fontSizeM * scaling
-                        font.weight: Style.fontWeightBold
-                      }
-                      NIcon {
-                        icon: "keyboard"
-                        pointSize: Style.fontSizeM * scaling
-                        color: Color.mOnSurface
-                      }
-                    }
-
-                    RowLayout {
-                      spacing: Style.marginS * scaling
-                      visible: batteryIndicator.batteryVisible
-                      NIcon {
-                        icon: BatteryService.getIcon(batteryIndicator.percent, batteryIndicator.charging, batteryIndicator.isReady)
-                        pointSize: Style.fontSizeM * scaling
-                        color: batteryIndicator.charging ? Color.mPrimary : Color.mOnSurface
-                        rotation: -90
-                      }
-                      NText {
-                        text: Math.round(batteryIndicator.percent) + "%"
-                        color: Color.mOnSurface
-                        family: Settings.data.ui.fontFixed
-                        pointSize: Style.fontSizeM * scaling
-                        font.weight: Style.fontWeightBold
-                      }
-                    }
-                  }
-                }
-
-                ColumnLayout {
-                  anchors.top: parent.top
-                  anchors.left: parent.left
-                  anchors.right: parent.right
-                  anchors.bottom: parent.bottom
-                  anchors.margins: Style.marginL * scaling
-                  anchors.topMargin: 70 * scaling
-                  spacing: Style.marginM * scaling
-
-                  RowLayout {
-                    Layout.fillWidth: true
-                    spacing: Style.marginM * scaling
-
-                    NText {
-                      text: Quickshell.env("USER") + "@noctalia:~$"
-                      color: Color.mPrimary
-                      family: Settings.data.ui.fontFixed
-                      pointSize: Style.fontSizeL * scaling
-                      font.weight: Style.fontWeightBold
-                    }
-
-                    NText {
-                      id: welcomeText
-                      text: ""
-                      color: Color.mOnSurface
-                      family: Settings.data.ui.fontFixed
-                      pointSize: Style.fontSizeL * scaling
-                      property int currentIndex: 0
-                      property string fullText: I18n.tr("system.welcome-back", {
-                                                          "user": Quickshell.env("USER")
-                                                        })
-
-                      Timer {
-                        interval: Style.animationFast
-                        running: true
-                        repeat: true
-                        onTriggered: {
-                          if (parent.currentIndex < parent.fullText.length) {
-                            parent.text = parent.fullText.substring(0, parent.currentIndex + 1)
-                            parent.currentIndex++
-                          } else {
-                            running = false
-                          }
-                        }
-                      }
-                    }
-                  }
-
-                  RowLayout {
-                    Layout.fillWidth: true
-                    spacing: Style.marginM * scaling
-
-                    NText {
-                      text: Quickshell.env("USER") + "@noctalia:~$"
-                      color: Color.mPrimary
-                      family: Settings.data.ui.fontFixed
-                      pointSize: Style.fontSizeL * scaling
-                      font.weight: Style.fontWeightBold
-                    }
-
-                    NText {
-                      text: I18n.tr("lock-screen.unlock-command")
-                      color: Color.mOnSurface
-                      family: Settings.data.ui.fontFixed
-                      pointSize: Style.fontSizeL * scaling
-                    }
-                  }
-
-                  RowLayout {
-                    Layout.fillWidth: true
-                    spacing: Style.marginM * scaling
-
-                    NText {
-                      text: I18n.tr("lock-screen.password")
-                      color: Color.mPrimary
-                      family: Settings.data.ui.fontFixed
-                      pointSize: Style.fontSizeL * scaling
-                      font.weight: Style.fontWeightBold
-                    }
-
-                    TextInput {
-                      id: passwordInput
-                      width: 0
-                      height: 0
-                      visible: false
-                      enabled: !lockContext.unlockInProgress
-                      font.family: Settings.data.ui.fontFixed
-                      font.pointSize: Style.fontSizeL * scaling
-                      color: Color.mOnSurface
-                      echoMode: TextInput.Password
-                      passwordCharacter: "*"
-                      passwordMaskDelay: 0
-
-                      text: lockContext.currentText
-                      onTextChanged: {
-                        lockContext.currentText = text
-                      }
-
-                      Keys.onPressed: function (event) {
-                        if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-                          lockContext.tryUnlock()
-                        }
-                      }
-
-                      Component.onCompleted: {
-                        forceActiveFocus()
-                      }
-                    }
-
-                    // Container for asterisks and cursor to control positioning
-                    Item {
-                      Layout.fillWidth: true
-                      Layout.preferredHeight: asterisksText.implicitHeight
-
-                      NText {
-                        id: asterisksText
-                        text: "*".repeat(passwordInput.text.length)
-                        color: Color.mOnSurface
-                        family: Settings.data.ui.fontFixed
-                        pointSize: Style.fontSizeL * scaling
-                        visible: passwordInput.activeFocus && !lockContext.unlockInProgress
-                        anchors.left: parent.left
-                        anchors.verticalCenter: parent.verticalCenter
-                        wrapMode: Text.NoWrap
-                        maximumLineCount: 1
-                        elide: Text.ElideRight
-
-                        SequentialAnimation {
-                          id: typingEffect
-                          NumberAnimation {
-                            target: passwordInput
-                            property: "scale"
-                            to: 1.01
-                            duration: 50
-                          }
-                          NumberAnimation {
-                            target: passwordInput
-                            property: "scale"
-                            to: 1.0
-                            duration: 50
-                          }
-                        }
-                      }
-
-                      Rectangle {
-                        width: 8 * scaling
-                        height: 20 * scaling
-                        color: Color.mPrimary
-                        visible: passwordInput.activeFocus
-                        anchors.left: asterisksText.right
-                        anchors.leftMargin: Style.marginXS * scaling
-                        anchors.verticalCenter: parent.verticalCenter
-
-                        SequentialAnimation on opacity {
-                          loops: Animation.Infinite
-                          NumberAnimation {
-                            to: 1.0
-                            duration: 500
-                          }
-                          NumberAnimation {
-                            to: 0.0
-                            duration: 500
-                          }
-                        }
-                      }
-                    }
-                  }
-
-                  NText {
-                    text: {
-                      if (lockContext.unlockInProgress)
-                        return lockContext.infoMessage || "Authenticating..."
-                      if (lockContext.showFailure && lockContext.errorMessage)
-                        return lockContext.errorMessage
-                      if (lockContext.showFailure)
-                        return "Authentication failed."
-                      return ""
-                    }
-                    color: {
-                      if (lockContext.unlockInProgress)
-                        return Color.mPrimary
-                      if (lockContext.showFailure)
-                        return Color.mError
-                      return Color.transparent
-                    }
-                    pointSize: Style.fontSizeL * scaling
-                    Layout.fillWidth: true
-
-                    SequentialAnimation on opacity {
-                      running: lockContext.unlockInProgress
-                      loops: Animation.Infinite
-                      NumberAnimation {
-                        to: 1.0
-                        duration: 800
-                      }
-                      NumberAnimation {
-                        to: 0.5
-                        duration: 800
-                      }
-                    }
-                  }
-
-                  RowLayout {
-                    Layout.alignment: Qt.AlignRight
-                    Layout.bottomMargin: -10 * scaling
-                    Layout.fillWidth: true
-                    Rectangle {
-                      Layout.preferredWidth: 120 * scaling
-                      Layout.preferredHeight: 40 * scaling
-                      radius: Style.radiusS * scaling
-                      color: executeButtonArea.containsMouse ? Color.mPrimary : Qt.alpha(Color.mPrimary, 0.2)
-                      border.color: Color.mPrimary
-                      border.width: Math.max(1, Style.borderS * scaling)
-                      enabled: !lockContext.unlockInProgress
-
-                      NText {
-                        anchors.centerIn: parent
-                        text: lockContext.unlockInProgress ? "EXECUTING" : "EXECUTE"
-                        color: executeButtonArea.containsMouse ? Color.mOnPrimary : Color.mPrimary
-                        family: Settings.data.ui.fontFixed
-                        pointSize: Style.fontSizeM * scaling
-                        font.weight: Style.fontWeightBold
-                      }
-
-                      MouseArea {
-                        id: executeButtonArea
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        onClicked: {
-                          lockContext.tryUnlock()
-                        }
-
-                        SequentialAnimation on scale {
-                          running: executeButtonArea.containsMouse
-                          NumberAnimation {
-                            to: 1.05
-                            duration: Style.animationFast
-                            easing.type: Easing.OutCubic
-                          }
-                        }
-
-                        SequentialAnimation on scale {
-                          running: !executeButtonArea.containsMouse
-                          NumberAnimation {
-                            to: 1.0
-                            duration: Style.animationFast
-                            easing.type: Easing.OutCubic
-                          }
-                        }
-                      }
-
-                      SequentialAnimation on scale {
-                        loops: Animation.Infinite
-                        running: lockContext.unlockInProgress
-                        NumberAnimation {
-                          to: 1.02
-                          duration: 600
-                          easing.type: Easing.InOutQuad
-                        }
-                        NumberAnimation {
-                          to: 1.0
-                          duration: 600
-                          easing.type: Easing.InOutQuad
-                        }
-                      }
-                    }
-                  }
-                }
-
+                Layout.preferredWidth: 140 * scaling
+                Layout.preferredHeight: 140 * scaling
+                Layout.alignment: Qt.AlignHCenter
+                radius: width * 0.5
+                color: Color.transparent
+                
                 Rectangle {
                   anchors.fill: parent
                   radius: parent.radius
                   color: Color.transparent
                   border.color: Qt.alpha(Color.mPrimary, 0.3)
-                  border.width: Math.max(1, Style.borderS * scaling)
-                  z: -1
-
-                  SequentialAnimation on opacity {
+                  border.width: 2
+                  
+                  SequentialAnimation on border.color {
                     loops: Animation.Infinite
-                    NumberAnimation {
-                      to: 0.6
-                      duration: 2000
-                      easing.type: Easing.InOutQuad
-                    }
-                    NumberAnimation {
-                      to: 0.2
-                      duration: 2000
-                      easing.type: Easing.InOutQuad
-                    }
+                    ColorAnimation { to: Qt.alpha(Color.mPrimary, 0.6); duration: 2000; easing.type: Easing.InOutQuad }
+                    ColorAnimation { to: Qt.alpha(Color.mPrimary, 0.3); duration: 2000; easing.type: Easing.InOutQuad }
                   }
                 }
+
+                NImageCircled {
+                  anchors.centerIn: parent
+                  width: 120 * scaling
+                  height: 120 * scaling
+                  imagePath: Settings.data.general.avatarImage
+                  fallbackIcon: "person"
+                  
+                  SequentialAnimation on scale {
+                    loops: Animation.Infinite
+                    NumberAnimation { to: 1.02; duration: 4000; easing.type: Easing.InOutQuad }
+                    NumberAnimation { to: 1.0; duration: 4000; easing.type: Easing.InOutQuad }
+                  }
+                }
+              }
+
+              NText {
+                text: I18n.tr("lock-screen.welcome-back")
+                Layout.alignment: Qt.AlignHCenter
+                pointSize: Style.fontSizeL * scaling
+                font.weight: Font.Medium
+                color: Color.mOnSurface
+                horizontalAlignment: Text.AlignHCenter
+                opacity: 0.9
+              }
+
+              NText {
+                text: Quickshell.env("USER")
+                Layout.alignment: Qt.AlignHCenter
+                pointSize: Style.fontSizeXXXL * scaling
+                font.weight: Font.Medium
+                color: Color.mOnSurface
+                horizontalAlignment: Text.AlignHCenter
+                opacity: 0.9
               }
             }
 
-            // ALARMING Easter Egg for long passwords
-            Item {
-              id: easterEggContainer
-              anchors.fill: parent
-              z: 1000
+            // Bottom container with weather, password input and controls
+            Rectangle {
+              width: 700 * scaling
+              height: 200 * scaling
+              anchors.horizontalCenter: parent.horizontalCenter
+              anchors.bottom: parent.bottom
+              anchors.bottomMargin: 80 * scaling
+              radius: 30 * scaling
+              color: Qt.alpha(Color.mSurfaceContainerHighest, 0.9)
+              border.color: Qt.alpha(Color.mOutline, 0.2)
+              border.width: 1
 
-              property bool easterEggTriggered: false
+              ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: 12 * scaling
+                spacing: 12 * scaling
 
-              // Monitor password length
-              Connections {
-                target: passwordInput
-                function onTextChanged() {
-                  if (passwordInput.text.length >= 25) {
-                    easterEggContainer.easterEggTriggered = true
-                  }
-                }
-                function onActiveFocusChanged() {
-                  if (!passwordInput.activeFocus) {
-                    easterEggContainer.easterEggTriggered = false
-                  }
-                }
-              }
+                // Weather section
+                RowLayout {
+                  Layout.fillWidth: true
+                  Layout.preferredHeight: 60 * scaling
+                  spacing: 16 * scaling
+                  visible: LocationService.coordinatesReady && LocationService.data.weather !== null
 
-              // Also reset when authentication starts
-              Connections {
-                target: lockContext
-                function onUnlockInProgressChanged() {
-                  if (lockContext.unlockInProgress) {
-                    easterEggContainer.easterEggTriggered = false
-                  }
-                }
-              }
+                  // Media widget with visualizer
+                  Rectangle {
+                    Layout.preferredWidth: 220 * scaling
+                    Layout.preferredHeight: 50 * scaling
+                    radius: 25 * scaling
+                    color: Color.transparent
+                    clip: true
+                    visible: MediaService.currentPlayer && MediaService.canPlay
 
-              // Scattered warning messages (game-style pop-ups)
-              Repeater {
-                model: easterEggContainer.easterEggTriggered && passwordInput.activeFocus && !lockContext.unlockInProgress ? 12 : 0
-
-                NText {
-                  property var messages: ["BREACH DETECTED", "SECURITY ALERT", "SYSTEM COMPROMISED", "ANOMALY DETECTED", "FIREWALL BREACH", "DEFENSE FAILING", "16 // 16 // 16", "THE ATLAS SEES ALL", "SIMULATION DETECTED", "WAKE UP", "16 16 16 16 16", "KZZT... 16... KZZT", "ERROR ERROR ERROR", "THEY'RE WATCHING", "16 MINUTES REMAIN"]
-
-                  property real baseX: Math.random() * (parent.width - 300)
-                  property real baseY: Math.random() * (parent.height - 80)
-
-                  text: messages[index % messages.length]
-                  color: Color.mError
-                  family: Settings.data.ui.fontFixed
-                  pointSize: Style.fontSizeXXL * scaling
-                  font.weight: Style.fontWeightBold
-
-                  x: baseX
-                  y: baseY
-
-                  // Better random positioning avoiding center terminal
-                  Component.onCompleted: {
-                    var centerX = parent.width / 2
-                    var centerY = parent.height / 2
-                    var avoidRadius = 350 * scaling
-
-                    // If too close to center, push to random edge zones
-                    var distanceFromCenter = Math.sqrt((x - centerX) * (x - centerX) + (y - centerY) * (y - centerY))
-                    if (distanceFromCenter < avoidRadius) {
-                      // Pick a random edge zone
-                      var zone = Math.floor(Math.random() * 4)
-                      switch (zone) {
-                      case 0:
-                        // Top
-                        x = Math.random() * parent.width
-                        y = Math.random() * 100 * scaling
-                        break
-                      case 1:
-                        // Right
-                        x = parent.width - (50 + Math.random() * 200) * scaling
-                        y = Math.random() * parent.height
-                        break
-                      case 2:
-                        // Bottom
-                        x = Math.random() * parent.width
-                        y = parent.height - (50 + Math.random() * 100) * scaling
-                        break
-                      case 3:
-                        // Left
-                        x = Math.random() * 200 * scaling
-                        y = Math.random() * parent.height
-                        break
+                    Loader {
+                      anchors.fill: parent
+                      anchors.margins: 4 * scaling
+                      active: Settings.data.audio.visualizerType === "linear"
+                      z: 0
+                      sourceComponent: LinearSpectrum {
+                        anchors.fill: parent
+                        values: CavaService.values
+                        fillColor: Color.mPrimary
+                        opacity: 0.4
                       }
                     }
 
-                    // Add some random drift to make positioning more varied
-                    x += (Math.random() - 0.5) * 100 * scaling
-                    y += (Math.random() - 0.5) * 50 * scaling
+                    Loader {
+                      anchors.fill: parent
+                      anchors.margins: 4 * scaling
+                      active: Settings.data.audio.visualizerType === "mirrored"
+                      z: 0
+                      sourceComponent: MirroredSpectrum {
+                        anchors.fill: parent
+                        values: CavaService.values
+                        fillColor: Color.mPrimary
+                        opacity: 0.4
+                      }
+                    }
 
-                    // Ensure we stay within bounds
-                    x = Math.max(20 * scaling, Math.min(parent.width - 280 * scaling, x))
-                    y = Math.max(20 * scaling, Math.min(parent.height - 60 * scaling, y))
+                    Loader {
+                      anchors.fill: parent
+                      anchors.margins: 4 * scaling
+                      active: Settings.data.audio.visualizerType === "wave"
+                      z: 0
+                      sourceComponent: WaveSpectrum {
+                        anchors.fill: parent
+                        values: CavaService.values
+                        fillColor: Color.mPrimary
+                        opacity: 0.4
+                      }
+                    }
+
+                    RowLayout {
+                      anchors.fill: parent
+                      anchors.margins: 8 * scaling
+                      spacing: 8 * scaling
+                      z: 1
+
+                      Rectangle {
+                        Layout.preferredWidth: 34 * scaling
+                        Layout.preferredHeight: 34 * scaling
+                        radius: width * 0.5
+                        color: Color.transparent
+                        clip: true
+
+                        NImageCircled {
+                          anchors.fill: parent
+                          anchors.margins: 2 * scaling
+                          imagePath: MediaService.trackArtUrl
+                          fallbackIcon: "disc"
+                          fallbackIconSize: Style.fontSizeM * scaling
+                          borderColor: Color.mOutline
+                          borderWidth: Math.max(1, Style.borderS * scaling)
+                        }
+                      }
+
+                      ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 2 * scaling
+
+                        NText {
+                          text: MediaService.trackTitle || "No media"
+                          pointSize: Style.fontSizeS * scaling
+                          font.weight: Style.fontWeightMedium
+                          color: Color.mOnSurface
+                          Layout.fillWidth: true
+                          elide: Text.ElideRight
+                        }
+
+                        NText {
+                          text: MediaService.trackArtist || ""
+                          pointSize: Style.fontSizeXS * scaling
+                          color: Color.mOnSurfaceVariant
+                          Layout.fillWidth: true
+                          elide: Text.ElideRight
+                        }
+                      }
+                    }
                   }
 
-                  // Simple pop-in animation
-                  SequentialAnimation on scale {
-                    loops: Animation.Infinite
-                    PauseAnimation {
-                      duration: index * 400 + Math.random() * 1000
+                  Rectangle {
+                    Layout.preferredWidth: 1
+                    Layout.fillHeight: true
+                    Layout.rightMargin: 4 * scaling
+                    color: Qt.alpha(Color.mOutline, 0.3)
+                    visible: MediaService.currentPlayer && MediaService.canPlay
+                  }
+
+                  Item {
+                    Layout.preferredWidth: Style.marginM * scaling
+                    visible: !(MediaService.currentPlayer && MediaService.canPlay)
+                  }
+
+                  // Current weather
+                  RowLayout {
+                    Layout.preferredWidth: 180 * scaling
+                    spacing: 8 * scaling
+
+                    NIcon {
+                      Layout.alignment: Qt.AlignVCenter
+                      icon: LocationService.weatherSymbolFromCode(LocationService.data.weather.current_weather.weathercode)
+                      pointSize: Style.fontSizeXXXL * scaling
+                      color: Color.mPrimary
                     }
-                    NumberAnimation {
-                      from: 0
-                      to: 1.2
-                      duration: 300
-                      easing.type: Easing.OutBack
-                    }
-                    NumberAnimation {
-                      to: 1.0
-                      duration: 200
-                    }
-                    PauseAnimation {
-                      duration: 2000 + Math.random() * 3000
-                    }
-                    NumberAnimation {
-                      to: 0
-                      duration: 300
-                    }
-                    PauseAnimation {
-                      duration: 800 + Math.random() * 1200
+
+                    ColumnLayout {
+                      Layout.fillWidth: true
+                      spacing: 2 * scaling
+
+                      RowLayout {
+                        Layout.fillWidth: true
+                        spacing: 12 * scaling
+
+                        NText {
+                          text: Math.round(LocationService.data.weather.current_weather.temperature) + "°"
+                          pointSize: Style.fontSizeXL * scaling
+                          font.weight: Style.fontWeightBold
+                          color: Color.mOnSurface
+                        }
+
+                        NText {
+                          text: LocationService.data.weather.current_weather.windspeed + " km/h"
+                          pointSize: Style.fontSizeXS * scaling
+                          color: Color.mOnSurfaceVariant
+                          font.weight: Font.Normal
+                        }
+                      }
+
+                      RowLayout {
+                        Layout.fillWidth: true
+                        spacing: 8 * scaling
+
+                        NText {
+                          text: Settings.data.location.name.split(",")[0]
+                          pointSize: Style.fontSizeXS * scaling
+                          color: Color.mOnSurfaceVariant
+                        }
+
+                        NText {
+                          text: (LocationService.data.weather.current && LocationService.data.weather.current.relativehumidity_2m) ? LocationService.data.weather.current.relativehumidity_2m + "% humidity" : ""
+                          pointSize: Style.fontSizeXS * scaling
+                          color: Color.mOnSurfaceVariant
+                        }
+                      }
                     }
                   }
 
-                  // Gentle blinking effect
-                  SequentialAnimation on opacity {
-                    loops: Animation.Infinite
-                    PauseAnimation {
-                      duration: index * 200
+                  // 3-day forecast
+                  RowLayout {
+                    Layout.preferredWidth: 260 * scaling
+                    Layout.rightMargin: 8 * scaling
+                    spacing: 4 * scaling
+
+                    Repeater {
+                      model: 3
+                      delegate: ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 3 * scaling
+
+                        NText {
+                          text: Qt.locale().toString(new Date(LocationService.data.weather.daily.time[index].replace(/-/g, "/")), "ddd")
+                          pointSize: Style.fontSizeXS * scaling
+                          color: Color.mOnSurfaceVariant
+                          horizontalAlignment: Text.AlignHCenter
+                          Layout.fillWidth: true
+                        }
+
+                        NIcon {
+                          Layout.alignment: Qt.AlignHCenter
+                          icon: LocationService.weatherSymbolFromCode(LocationService.data.weather.daily.weathercode[index])
+                          pointSize: Style.fontSizeXL * scaling
+                          color: Color.mOnSurfaceVariant
+                        }
+
+                        NText {
+                          text: Math.round(LocationService.data.weather.daily.temperature_2m_max[index]) + "°/" + Math.round(LocationService.data.weather.daily.temperature_2m_min[index]) + "°"
+                          pointSize: Style.fontSizeXS * scaling
+                          font.weight: Style.fontWeightMedium
+                          color: Color.mOnSurface
+                          horizontalAlignment: Text.AlignHCenter
+                          Layout.fillWidth: true
+                        }
+                      }
                     }
-                    NumberAnimation {
-                      to: 0.6
-                      duration: 400 + Math.random() * 300
+                  }
+
+                  // Battery and Keyboard Layout
+                  ColumnLayout {
+                    Layout.preferredWidth: 60 * scaling
+                    spacing: 4 * scaling
+
+                    RowLayout {
+                      Layout.preferredWidth: 60 * scaling
+                      Layout.preferredHeight: 22 * scaling
+                      spacing: 4 * scaling
+                      visible: UPower.displayDevice && UPower.displayDevice.ready && UPower.displayDevice.isPresent
+
+                      NIcon {
+                        icon: BatteryService.getIcon(Math.round(UPower.displayDevice.percentage * 100), UPower.displayDevice.state === UPowerDeviceState.Charging, true)
+                        pointSize: Style.fontSizeS * scaling
+                        color: UPower.displayDevice.state === UPowerDeviceState.Charging ? Color.mPrimary : Color.mOnSurfaceVariant
+                      }
+
+                      NText {
+                        text: Math.round(UPower.displayDevice.percentage * 100) + "%"
+                        color: Color.mOnSurfaceVariant
+                        pointSize: Style.fontSizeXS * scaling
+                        font.weight: Font.Medium
+                      }
                     }
-                    NumberAnimation {
-                      to: 1.0
-                      duration: 300 + Math.random() * 200
+
+                    RowLayout {
+                      Layout.preferredWidth: 60 * scaling
+                      Layout.preferredHeight: 22 * scaling
+                      spacing: 4 * scaling
+
+                      NIcon {
+                        icon: "keyboard"
+                        pointSize: Style.fontSizeS * scaling
+                        color: Color.mOnSurfaceVariant
+                      }
+
+                      NText {
+                        text: keyboardLayout.currentLayout
+                        color: Color.mOnSurfaceVariant
+                        pointSize: Style.fontSizeXS * scaling
+                        font.weight: Font.Medium
+                      }
                     }
+                  }
+                }
+
+                // Password input
+                RowLayout {
+                  Layout.fillWidth: true
+                  spacing: 0
+
+                  Item { Layout.preferredWidth: Style.marginM * scaling }
+
+                  Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 44 * scaling
+                    radius: 22 * scaling
+                    color: Qt.alpha(Color.mSurfaceContainerHighest, 0.6)
+                    border.color: passwordInput.activeFocus ? Color.mPrimary : Qt.alpha(Color.mOutline, 0.3)
+                    border.width: passwordInput.activeFocus ? 2 : 1
+
+                    Row {
+                      anchors.left: parent.left
+                      anchors.leftMargin: 16 * scaling
+                      anchors.verticalCenter: parent.verticalCenter
+                      spacing: 12 * scaling
+
+                      NIcon {
+                        icon: "lock"
+                        pointSize: Style.fontSizeM * scaling
+                        color: passwordInput.activeFocus ? Color.mPrimary : Color.mOnSurfaceVariant
+                        anchors.verticalCenter: parent.verticalCenter
+                      }
+
+                      // Hidden input that receives actual text
+                      TextInput {
+                        id: passwordInput
+                        width: 0
+                        height: 0
+                        visible: false
+                        enabled: !lockContext.unlockInProgress
+                        font.pointSize: Style.fontSizeM * scaling
+                        color: Color.mOnSurface
+                        echoMode: TextInput.Password
+                        passwordCharacter: "•"
+                        passwordMaskDelay: 0
+                        text: lockContext.currentText
+                        onTextChanged: lockContext.currentText = text
+
+                        Keys.onPressed: function (event) {
+                          if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+                            lockContext.tryUnlock()
+                          }
+                        }
+
+                        Component.onCompleted: forceActiveFocus()
+                      }
+
+                      NText {
+                        text: passwordInput.text.length > 0 ? "•".repeat(passwordInput.text.length) : I18n.tr("lock-screen.password")
+                        color: passwordInput.text.length > 0 ? Color.mOnSurface : Color.mOnSurfaceVariant
+                        pointSize: Style.fontSizeL * scaling
+                        width: 560 * scaling
+                        opacity: passwordInput.text.length > 0 ? 1.0 : 0.6
+                      }
+                    }
+
+                    Rectangle {
+                      anchors.right: parent.right
+                      anchors.rightMargin: 8 * scaling
+                      anchors.verticalCenter: parent.verticalCenter
+                      width: 32 * scaling
+                      height: 32 * scaling
+                      radius: width * 0.5
+                      color: submitButtonArea.containsMouse ? Color.mPrimary : Qt.alpha(Color.mPrimary, 0.8)
+                      border.color: Color.mPrimary
+                      border.width: 1
+                      enabled: !lockContext.unlockInProgress
+
+                      NIcon {
+                        anchors.centerIn: parent
+                        icon: "arrow-forward"
+                        pointSize: Style.fontSizeS * scaling
+                        color: Color.mOnPrimary
+                      }
+
+                      MouseArea {
+                        id: submitButtonArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        onClicked: lockContext.tryUnlock()
+                      }
+                    }
+
+                    Behavior on border.color {
+                      ColorAnimation { duration: 200; easing.type: Easing.OutCubic }
+                    }
+                  }
+
+                  Item { Layout.preferredWidth: Style.marginM * scaling }
+                }
+
+                // System control buttons
+                RowLayout {
+                  Layout.fillWidth: true
+                  Layout.preferredHeight: 44 * scaling
+                  spacing: 8 * scaling
+
+                  Item {
+                    Layout.preferredWidth: Style.marginM * scaling
+                  }
+
+                  Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 44 * scaling
+                    radius: 22 * scaling
+                    color: logoutButtonArea.containsMouse ? Qt.alpha(Color.mSecondary, 0.2) : "transparent"
+
+                    RowLayout {
+                      anchors.centerIn: parent
+                      spacing: 6 * scaling
+
+                      NIcon {
+                        icon: "logout"
+                        pointSize: Style.fontSizeM * scaling
+                        color: Color.mOnSurfaceVariant
+                      }
+
+                      NText {
+                        text: I18n.tr("session-menu.logout")
+                        color: Color.mOnSurfaceVariant
+                        pointSize: Style.fontSizeS * scaling
+                        font.weight: Font.Medium
+                      }
+                    }
+
+                    MouseArea {
+                      id: logoutButtonArea
+                      anchors.fill: parent
+                      hoverEnabled: true
+                      onClicked: CompositorService.logout()
+                    }
+
+                    Behavior on color {
+                      ColorAnimation { duration: 200; easing.type: Easing.OutCubic }
+                    }
+                  }
+
+                  Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 44 * scaling
+                    radius: 22 * scaling
+                    color: rebootButtonArea.containsMouse ? Qt.alpha(Color.mPrimary, 0.2) : "transparent"
+
+                    RowLayout {
+                      anchors.centerIn: parent
+                      spacing: 6 * scaling
+
+                      NIcon {
+                        icon: "reboot"
+                        pointSize: Style.fontSizeM * scaling
+                        color: Color.mOnSurfaceVariant
+                      }
+
+                      NText {
+                        text: I18n.tr("session-menu.reboot")
+                        color: Color.mOnSurfaceVariant
+                        pointSize: Style.fontSizeS * scaling
+                        font.weight: Font.Medium
+                      }
+                    }
+
+                    MouseArea {
+                      id: rebootButtonArea
+                      anchors.fill: parent
+                      hoverEnabled: true
+                      onClicked: CompositorService.reboot()
+                    }
+
+                    Behavior on color {
+                      ColorAnimation { duration: 200; easing.type: Easing.OutCubic }
+                    }
+                  }
+
+                  Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 44 * scaling
+                    radius: 22 * scaling
+                    color: shutdownButtonArea.containsMouse ? Qt.alpha(Color.mError, 0.2) : "transparent"
+                    border.color: shutdownButtonArea.containsMouse ? Color.mError : Color.transparent
+                    border.width: 1
+
+                    RowLayout {
+                      anchors.centerIn: parent
+                      spacing: 6 * scaling
+
+                      NIcon {
+                        icon: "shutdown"
+                        pointSize: Style.fontSizeM * scaling
+                        color: Color.mOnSurfaceVariant
+                      }
+
+                      NText {
+                        text: I18n.tr("session-menu.shutdown")
+                        color: Color.mOnSurfaceVariant
+                        pointSize: Style.fontSizeS * scaling
+                        font.weight: Font.Medium
+                      }
+                    }
+
+                    MouseArea {
+                      id: shutdownButtonArea
+                      anchors.fill: parent
+                      hoverEnabled: true
+                      onClicked: CompositorService.shutdown()
+                    }
+
+                    Behavior on color {
+                      ColorAnimation { duration: 200; easing.type: Easing.OutCubic }
+                    }
+
+                    Behavior on border.color {
+                      ColorAnimation { duration: 200; easing.type: Easing.OutCubic }
+                    }
+                  }
+
+                  Item {
+                    Layout.preferredWidth: Style.marginM * scaling
                   }
                 }
               }
             }
 
-            // Power buttons at bottom right
-            RowLayout {
-              anchors.right: parent.right
+            // Status message
+            NText {
+              anchors.horizontalCenter: parent.horizontalCenter
               anchors.bottom: parent.bottom
-              anchors.margins: 50 * scaling
-              spacing: 20 * scaling
+              anchors.bottomMargin: 150 * scaling
+              text: {
+                if (lockContext.unlockInProgress)
+                  return lockContext.infoMessage || "Authenticating..."
+                if (lockContext.showFailure && lockContext.errorMessage)
+                  return lockContext.errorMessage
+                if (lockContext.showFailure)
+                  return "Authentication failed. Please try again."
+                return ""
+              }
+              color: lockContext.unlockInProgress ? Color.mPrimary : (lockContext.showFailure ? Color.mError : Color.transparent)
+              pointSize: Style.fontSizeS * scaling
+              horizontalAlignment: Text.AlignHCenter
+              opacity: text.length > 0 ? 1.0 : 0.0
 
-              // Shutdown
-              Rectangle {
-                Layout.preferredWidth: iconPower.implicitWidth + Style.marginXL * scaling
-                Layout.preferredHeight: Layout.preferredWidth
-                radius: width * 0.5
-                color: powerButtonArea.containsMouse ? Color.mError : Qt.alpha(Color.mError, 0.2)
-                border.color: Color.mError
-                border.width: Math.max(1, Style.borderM * scaling)
-
-                NIcon {
-                  id: iconPower
-                  anchors.centerIn: parent
-                  icon: "shutdown"
-                  pointSize: Style.fontSizeXXXL * scaling
-                  color: powerButtonArea.containsMouse ? Color.mOnError : Color.mError
-                }
-
-                // Tooltip (inline rectangle to avoid separate Window during lock)
-                Rectangle {
-                  anchors.horizontalCenter: parent.horizontalCenter
-                  anchors.bottom: parent.top
-                  anchors.bottomMargin: Style.marginM * scaling
-                  radius: Style.radiusS * scaling
-                  color: Color.mSurface
-                  border.color: Color.mOutline
-                  border.width: Math.max(1, Style.borderS * scaling)
-                  visible: powerButtonArea.containsMouse
-                  z: 1
-                  NText {
-                    id: shutdownTooltipText
-                    anchors.margins: Style.marginM * scaling
-                    anchors.fill: parent
-                    text: I18n.tr("lock-screen.shut-down")
-                    pointSize: Style.fontSizeS * scaling
-                    color: Color.mOnSurfaceVariant
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                  }
-                  implicitWidth: shutdownTooltipText.implicitWidth + Style.marginM * 2 * scaling
-                  implicitHeight: shutdownTooltipText.implicitHeight + Style.marginM * 2 * scaling
-                }
-
-                MouseArea {
-                  id: powerButtonArea
-                  anchors.fill: parent
-                  hoverEnabled: true
-                  onClicked: {
-                    CompositorService.shutdown()
-                  }
-                }
+              SequentialAnimation on opacity {
+                running: lockContext.unlockInProgress
+                loops: Animation.Infinite
+                NumberAnimation { to: 0.6; duration: 1000; easing.type: Easing.InOutQuad }
+                NumberAnimation { to: 1.0; duration: 1000; easing.type: Easing.InOutQuad }
               }
 
-              // Reboot
-              Rectangle {
-                Layout.preferredWidth: iconReboot.implicitWidth + Style.marginXL * scaling
-                Layout.preferredHeight: Layout.preferredWidth
-                radius: width * 0.5
-                color: restartButtonArea.containsMouse ? Color.mPrimary : Qt.alpha(Color.mPrimary, Style.opacityLight)
-                border.color: Color.mPrimary
-                border.width: Math.max(1, Style.borderM * scaling)
-
-                NIcon {
-                  id: iconReboot
-                  anchors.centerIn: parent
-                  icon: "reboot"
-                  pointSize: Style.fontSizeXXXL * scaling
-                  color: restartButtonArea.containsMouse ? Color.mOnPrimary : Color.mPrimary
-                }
-
-                // Tooltip
-                Rectangle {
-                  anchors.horizontalCenter: parent.horizontalCenter
-                  anchors.bottom: parent.top
-                  anchors.bottomMargin: Style.marginM * scaling
-                  radius: Style.radiusS * scaling
-                  color: Color.mSurface
-                  border.color: Color.mOutline
-                  border.width: Math.max(1, Style.borderS * scaling)
-                  visible: restartButtonArea.containsMouse
-                  z: 1
-                  NText {
-                    id: restartTooltipText
-                    anchors.margins: Style.marginM * scaling
-                    anchors.fill: parent
-                    text: I18n.tr("lock-screen.restart")
-                    pointSize: Style.fontSizeS * scaling
-                    color: Color.mOnSurfaceVariant
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                  }
-                  implicitWidth: restartTooltipText.implicitWidth + Style.marginM * 2 * scaling
-                  implicitHeight: restartTooltipText.implicitHeight + Style.marginM * 2 * scaling
-                }
-
-                MouseArea {
-                  id: restartButtonArea
-                  anchors.fill: parent
-                  hoverEnabled: true
-                  onClicked: {
-                    CompositorService.reboot()
-                  }
-                  // Tooltip handled via inline rectangle visibility
-                }
+              Behavior on opacity {
+                NumberAnimation { duration: 300; easing.type: Easing.OutCubic }
               }
-
-              // Suspend
-              Rectangle {
-                Layout.preferredWidth: iconSuspend.implicitWidth + Style.marginXL * scaling
-                Layout.preferredHeight: Layout.preferredWidth
-                radius: width * 0.5
-                color: suspendButtonArea.containsMouse ? Color.mSecondary : Qt.alpha(Color.mSecondary, 0.2)
-                border.color: Color.mSecondary
-                border.width: Math.max(1, Style.borderM * scaling)
-
-                NIcon {
-                  id: iconSuspend
-                  anchors.centerIn: parent
-                  icon: "suspend"
-                  pointSize: Style.fontSizeXXXL * scaling
-                  color: suspendButtonArea.containsMouse ? Color.mOnSecondary : Color.mSecondary
-                }
-
-                // Tooltip
-                Rectangle {
-                  anchors.horizontalCenter: parent.horizontalCenter
-                  anchors.bottom: parent.top
-                  anchors.bottomMargin: Style.marginM * scaling
-                  radius: Style.radiusS * scaling
-                  color: Color.mSurface
-                  border.color: Color.mOutline
-                  border.width: Math.max(1, Style.borderS * scaling)
-                  visible: suspendButtonArea.containsMouse
-                  z: 1
-                  NText {
-                    id: suspendTooltipText
-                    anchors.margins: Style.marginM * scaling
-                    anchors.fill: parent
-                    text: I18n.tr("lock-screen.suspend")
-                    pointSize: Style.fontSizeS * scaling
-                    color: Color.mOnSurfaceVariant
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                  }
-                  implicitWidth: suspendTooltipText.implicitWidth + Style.marginM * 2 * scaling
-                  implicitHeight: suspendTooltipText.implicitHeight + Style.marginM * 2 * scaling
-                }
-
-                MouseArea {
-                  id: suspendButtonArea
-                  anchors.fill: parent
-                  hoverEnabled: true
-                  onClicked: {
-                    CompositorService.suspend()
-                  }
-                  // Tooltip handled via inline rectangle visibility
-                }
-              }
-            }
-          }
-
-          Timer {
-            interval: 1000
-            running: true
-            repeat: true
-            onTriggered: {
-              timeText.text = formatTime()
-              dateText.text = formatDate()
             }
           }
         }

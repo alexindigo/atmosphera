@@ -1324,7 +1324,10 @@
   "lock-screen": {
     "secure-terminal": "TERMINAL SEGURO",
     "unlock-command": "sudo unlock-session",
-    "password": "Senha:",
+    "password": "Digite sua senha...",
+    "welcome-back": "Bem-vindo de volta,",
+    "authenticating": "Autenticando...",
+    "authentication-failed": "Falha na autenticação",
     "shut-down": "Desligar",
     "restart": "Reiniciar",
     "suspend": "Suspender"
