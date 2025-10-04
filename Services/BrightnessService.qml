@@ -79,7 +79,7 @@ Singleton {
         var displays = text.trim().split("\n\n")
         ddcProc.ddcMonitors = displays.map(d => {
 
-                                             var ddcModelMatch = d.match(/(This monitor does not support DDC\/CI|Invalid display)/);
+                                             var ddcModelMatch = d.match(/(This monitor does not support DDC\/CI|Invalid display)/)
                                              var modelMatch = d.match(/Model:\s*(.*)/)
                                              var busMatch = d.match(/I2C bus:[ ]*\/dev\/i2c-([0-9]+)/)
                                              var ddcModel = ddcModelMatch ? ddcModelMatch.length > 0 : false

@@ -7,7 +7,6 @@ import qs.Widgets
 NIconButton {
   id: root
 
-  
   property real scaling: 1.0
 
   icon: "camera-video"
