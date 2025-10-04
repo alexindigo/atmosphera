@@ -40,7 +40,10 @@ Variants {
           Qt.callLater(setWallpaperInitial)
           return
         }
-        wallpaper = WallpaperService.getWallpaper(modelData.name)
+        const wallpaperPath = WallpaperService.getWallpaper(modelData.name)
+        if (wallpaperPath && wallpaperPath !== wallpaper) {
+          wallpaper = wallpaperPath
+        }
       }
 
       color: Color.transparent
@@ -81,6 +84,8 @@ Variants {
           smooth: true
           mipmap: false
           cache: false
+          asynchronous: true
+          
         }
 
         MultiEffect {
