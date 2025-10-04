@@ -10,28 +10,154 @@ import qs.Widgets
 NPanel {
   id: root
 
-  preferredWidth: Settings.data.location.showWeekNumberInCalendar ? 320 : 300
-  preferredHeight: 300
+  preferredWidth: Settings.data.location.showWeekNumberInCalendar ? 340 : 320
+  preferredHeight: 380
 
-  // Main Column
   panelContent: ColumnLayout {
     id: content
     anchors.fill: parent
-    anchors.margins: Style.marginM * scaling
-    spacing: Style.marginXS * scaling
+    anchors.margins: Style.marginL * scaling
+    spacing: Style.marginM * scaling
 
     readonly property int firstDayOfWeek: Qt.locale().firstDayOfWeek
 
-    // Header: Month/Year with navigation
+    // Current day
+    Rectangle {
+      Layout.fillWidth: true
+      Layout.preferredHeight: 80 * scaling
+      radius: Style.radiusL * scaling
+      color: Color.mPrimary
+
+      RowLayout {
+        anchors.fill: parent
+        anchors.margins: Style.marginL * scaling
+        anchors.topMargin: 12 * scaling
+        spacing: Style.marginM * scaling
+
+        // Month, Year and Day
+        RowLayout {
+          Layout.alignment: Qt.AlignVCenter
+          Layout.fillHeight: true
+          spacing: Style.marginM * scaling
+
+          // Big day of the month
+          NText {
+            text: Time.date.getDate()
+            pointSize: Style.fontSizeXXXL * 1.5 * scaling
+            font.weight: Style.fontWeightBold
+            color: Color.mOnPrimary
+            visible: (Time.date.getMonth() == grid.month)
+            Layout.preferredWidth: visible ? implicitWidth : 0
+            Layout.fillHeight: true
+          }
+
+          // Month and Year
+          ColumnLayout {
+            spacing: 0
+
+            NText {
+              text: Qt.locale().monthName(grid.month, Locale.LongFormat).toUpperCase()
+              pointSize: Style.fontSizeL * scaling
+              font.weight: Style.fontWeightBold
+              color: Color.mOnPrimary
+            }
+
+            NText {
+              text: grid.year
+              pointSize: Style.fontSizeM * scaling
+              color: Qt.alpha(Color.mOnPrimary, 0.8)
+            }
+          }
+        }
+
+        Item {
+          Layout.fillWidth: true
+        }
+
+        // Digital clock with circular progress
+        Item {
+          width: Style.fontSizeXXXL * 2 * scaling
+          height: Style.fontSizeXXXL * 2 * scaling
+
+          // Seconds circular progress
+          Canvas {
+            id: secondsProgress
+            anchors.fill: parent
+
+            property real progress: (Time.date.getSeconds() + Time.date.getMilliseconds() / 1000) / 60
+
+            onProgressChanged: requestPaint()
+
+            onPaint: {
+              var ctx = getContext("2d")
+              var centerX = width / 2
+              var centerY = height / 2
+              var radius = Math.min(width, height) / 2 - 4 * scaling
+
+              ctx.reset()
+
+              // Background circle
+              ctx.beginPath()
+              ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI)
+              ctx.lineWidth = 3 * scaling
+              ctx.strokeStyle = Qt.alpha(Color.mOnPrimary, 0.15)
+              ctx.stroke()
+
+              // Progress arc
+              ctx.beginPath()
+              ctx.arc(centerX, centerY, radius, -Math.PI / 2, -Math.PI / 2 + progress * 2 * Math.PI)
+              ctx.lineWidth = 3 * scaling
+              ctx.strokeStyle = Color.mOnPrimary
+              ctx.lineCap = "round"
+              ctx.stroke()
+            }
+
+            Connections {
+              target: Time
+              function onDateChanged() {
+                secondsProgress.progress = (Time.date.getSeconds() + Time.date.getMilliseconds() / 1000) / 60
+              }
+            }
+          }
+
+          // Digital clock
+          ColumnLayout {
+            anchors.centerIn: parent
+            spacing: -2 * scaling
+
+            NText {
+              text: Qt.formatTime(Time.date, "HH")
+              pointSize: Style.fontSizeL * 0.7 * scaling
+              font.weight: Style.fontWeightBold
+              color: Color.mOnPrimary
+              family: Settings.data.ui.fontFixed
+              Layout.alignment: Qt.AlignHCenter
+            }
+
+            NText {
+              text: Qt.formatTime(Time.date, "mm")
+              pointSize: Style.fontSizeL * 0.7 * scaling
+              font.weight: Style.fontWeightBold
+              color: Color.mOnPrimary
+              family: Settings.data.ui.fontFixed
+              Layout.alignment: Qt.AlignHCenter
+            }
+          }
+        }
+      }
+    }
+
+    // Navigation and divider
     RowLayout {
       Layout.fillWidth: true
-      Layout.leftMargin: Style.marginM * scaling
-      Layout.rightMargin: Style.marginM * scaling
       spacing: Style.marginS * scaling
+
+      NDivider {
+        Layout.fillWidth: true
+      }
 
       NIconButton {
         icon: "chevron-left"
-        tooltipText: I18n.tr("tooltips.previous-month")
         onClicked: {
           let newDate = new Date(grid.year, grid.month - 1, 1)
           grid.year = newDate.getFullYear()
@@ -39,18 +165,16 @@ NPanel {
         }
       }
 
-      NText {
-        text: grid.title
-        Layout.fillWidth: true
-        horizontalAlignment: Text.AlignHCenter
-        pointSize: Style.fontSizeM * scaling
-        font.weight: Style.fontWeightBold
-        color: Color.mPrimary
+      NIconButton {
+        icon: "calendar"
+        onClicked: {
+          grid.month = Time.date.getMonth()
+          grid.year = Time.date.getFullYear()
+        }
       }
 
       NIconButton {
         icon: "chevron-right"
-        tooltipText: I18n.tr("tooltips.next-month")
         onClicked: {
           let newDate = new Date(grid.year, grid.month + 1, 1)
           grid.year = newDate.getFullYear()
@@ -59,40 +183,18 @@ NPanel {
       }
     }
 
-    // Divider between header and weekdays
-    NDivider {
-      Layout.fillWidth: true
-      Layout.topMargin: Style.marginS * scaling
-      Layout.bottomMargin: Style.marginL * scaling
-    }
-
-    // Columns label (respects locale's first day of week)
+    // Names of days of the week
     RowLayout {
       Layout.fillWidth: true
-      Layout.leftMargin: Style.marginS * scaling // Align with grid
-      Layout.rightMargin: Style.marginS * scaling
-      Layout.bottomMargin: Style.marginM * scaling
       spacing: 0
 
-      // Week header spacer or label (same width as week number column)
       Item {
         visible: Settings.data.location.showWeekNumberInCalendar
-        Layout.preferredWidth: visible ? Style.baseWidgetSize * scaling : 0
-
-        NText {
-          anchors.centerIn: parent
-          text: I18n.tr("calendar.panel.week")
-          color: Color.mOutline
-          pointSize: Style.fontSizeXS * scaling
-          font.weight: Style.fontWeightRegular
-          horizontalAlignment: Text.AlignHCenter
-        }
+        Layout.preferredWidth: visible ? Style.baseWidgetSize * 0.7 * scaling : 0
       }
 
-      // Day name headers - now properly aligned with calendar grid
       GridLayout {
         Layout.fillWidth: true
-        Layout.fillHeight: true
         columns: 7
         rows: 1
         columnSpacing: 0
@@ -103,17 +205,17 @@ NPanel {
 
           Item {
             Layout.fillWidth: true
-            Layout.fillHeight: true
-            Layout.preferredWidth: Style.baseWidgetSize * scaling
+            Layout.preferredHeight: Style.baseWidgetSize * 0.6 * scaling
 
             NText {
               anchors.centerIn: parent
               text: {
                 let dayIndex = (content.firstDayOfWeek + index) % 7
-                return Qt.locale().dayName(dayIndex, Locale.ShortFormat)
+                const dayNames = ["S", "M", "T", "W", "T", "F", "S"]
+                return dayNames[dayIndex]
               }
-              color: Color.mSecondary
-              pointSize: Style.fontSizeM * scaling
+              color: Color.mPrimary
+              pointSize: Style.fontSizeS * scaling
               font.weight: Style.fontWeightBold
               horizontalAlignment: Text.AlignHCenter
             }
@@ -122,82 +224,51 @@ NPanel {
       }
     }
 
-    // Grids: days with optional week numbers
+    // Grid with weeks and days
     RowLayout {
       Layout.fillWidth: true
       Layout.fillHeight: true
-      Layout.leftMargin: Style.marginS * scaling
-      Layout.rightMargin: Style.marginS * scaling
       spacing: 0
 
-      // Week numbers column (only visible when enabled)
+      // Columna de números de semana
       ColumnLayout {
         visible: Settings.data.location.showWeekNumberInCalendar
-        Layout.preferredWidth: visible ? Style.baseWidgetSize * scaling : 0
+        Layout.preferredWidth: visible ? Style.baseWidgetSize * 0.7 * scaling : 0
         Layout.fillHeight: true
         spacing: 0
 
         Repeater {
-          model: 6 // Maximum 6 weeks in a month view
+          model: 6
 
           Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.preferredHeight: Style.baseWidgetSize * scaling
 
             NText {
               anchors.centerIn: parent
               color: Color.mOutline
-              pointSize: Style.fontSizeXS * scaling
-              font.weight: Style.fontWeightBold
+              pointSize: Style.fontSizeXXS * scaling
+              font.weight: Style.fontWeightMedium
               text: {
-                // Calculate the date shown in the first column of this row
-                // MonthGrid always shows 42 days (6 weeks × 7 days)
-
-                // First, find the first day of the month
                 let firstOfMonth = new Date(grid.year, grid.month, 1)
-
-                // Calculate how many days before the 1st to start the grid
-                // This depends on the locale's first day of week
                 let firstDayOfWeek = content.firstDayOfWeek
                 let firstOfMonthDayOfWeek = firstOfMonth.getDay()
-
-                // Calculate offset: how many days before the 1st should the grid start?
                 let daysBeforeFirst = (firstOfMonthDayOfWeek - firstDayOfWeek + 7) % 7
-
-                // MonthGrid typically shows the previous month's days to fill the first week
-                // If the 1st is already on the first day of week, show the previous week
                 if (daysBeforeFirst === 0) {
                   daysBeforeFirst = 7
                 }
-
-                // Calculate the start date of the grid
                 let gridStartDate = new Date(grid.year, grid.month, 1 - daysBeforeFirst)
-
-                // Calculate the date for this specific row (week)
                 let rowStartDate = new Date(gridStartDate)
                 rowStartDate.setDate(gridStartDate.getDate() + (index * 7))
-
-                // For ISO week numbers, we need to find the Thursday of this week
-                // ISO 8601 week numbering: week with year's first Thursday is week 1
-                // The week number is determined by the Thursday
-
-                // Find the Thursday of this row's week
-                // If firstDayOfWeek is Monday (1), Thursday is +3 days
-                // If firstDayOfWeek is Sunday (0), we need to adjust
                 let thursday = new Date(rowStartDate)
                 if (firstDayOfWeek === 0) {
-                  // Sunday start: Thursday is 4 days after Sunday
                   thursday.setDate(rowStartDate.getDate() + 4)
                 } else if (firstDayOfWeek === 1) {
-                  // Monday start: Thursday is 3 days after Monday
                   thursday.setDate(rowStartDate.getDate() + 3)
                 } else {
-                  // Other start days: calculate offset to Thursday
                   let daysToThursday = (4 - firstDayOfWeek + 7) % 7
                   thursday.setDate(rowStartDate.getDate() + daysToThursday)
                 }
-
                 return `${getISOWeekNumber(thursday)}`
               }
             }
@@ -205,37 +276,67 @@ NPanel {
         }
       }
 
-      // The actual calendar grid
+      // Days Grid
       MonthGrid {
         id: grid
 
         Layout.fillWidth: true
         Layout.fillHeight: true
-        spacing: 0
+        spacing: Style.marginXXS * scaling
         month: Time.date.getMonth()
         year: Time.date.getFullYear()
         locale: Qt.locale()
 
         delegate: Item {
-
           Rectangle {
-            width: Style.baseWidgetSize * scaling
-            height: Style.baseWidgetSize * scaling
-            radius: width / 2
-            color: model.today ? Color.mPrimary : Color.transparent
+            width: Style.baseWidgetSize * 0.9 * scaling
+            height: Style.baseWidgetSize * 0.9 * scaling
+            anchors.centerIn: parent
+            radius: Style.radiusM * scaling
+
+            color: {
+              if (model.today)
+                return Color.mSecondary
+              return Color.transparent
+            }
 
             NText {
               anchors.centerIn: parent
               text: model.day
-              color: model.today ? Color.mOnPrimary : Color.mOnSurface
-              opacity: model.month === grid.month ? Style.opacityHeavy : Style.opacityLight
+              color: {
+                if (model.today)
+                  return Color.mOnSecondary
+                if (model.month === grid.month)
+                  return Color.mOnSurface
+                return Color.mOnSurfaceVariant
+              }
+              opacity: model.month === grid.month ? 1.0 : 0.4
               pointSize: Style.fontSizeM * scaling
-              font.weight: model.today ? Style.fontWeightBold : Style.fontWeightRegular
+              font.weight: model.today ? Style.fontWeightBold : Style.fontWeightMedium
             }
 
             Behavior on color {
               ColorAnimation {
                 duration: Style.animationFast
+              }
+            }
+
+            // Hover effect
+            MouseArea {
+              anchors.fill: parent
+              hoverEnabled: true
+              cursorShape: Qt.PointingHandCursor
+
+              onEntered: {
+                if (!model.today) {
+                  parent.color = Qt.alpha(Color.mSecondary, 0.2)
+                }
+              }
+
+              onExited: {
+                if (!model.today) {
+                  parent.color = Color.transparent
+                }
               }
             }
           }
@@ -244,27 +345,13 @@ NPanel {
     }
   }
 
-  // ISO 8601 week number calculation
-  // This is locale-independent and always uses Monday as first day of week
   function getISOWeekNumber(date) {
-    // Create a copy and set to nearest Thursday (current date + 4 - current day number)
-    // ISO week starts on Monday (1) to Sunday (7)
     const target = new Date(date.getTime())
     target.setHours(0, 0, 0, 0)
-
-    // Get day of week where Monday = 1, Sunday = 7
     const dayOfWeek = target.getDay() || 7
-
-    // Set to nearest Thursday (which determines the week number)
     target.setDate(target.getDate() + 4 - dayOfWeek)
-
-    // Get first day of year
     const yearStart = new Date(target.getFullYear(), 0, 1)
-
-    // Calculate full weeks between yearStart and target
-    // Add 1 because we're counting weeks, not week differences
     const weekNumber = Math.ceil(((target - yearStart) / 86400000 + 1) / 7)
-
     return weekNumber
   }
 }
