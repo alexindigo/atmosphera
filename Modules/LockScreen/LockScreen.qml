@@ -617,7 +617,7 @@ Loader {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 44 * scaling
                     radius: 22 * scaling
-                    color: logoutButtonArea.containsMouse ? Qt.alpha(Color.mSecondary, 0.2) : "transparent"
+                    color: logoutButtonArea.containsMouse ? Color.mTertiary : "transparent"
 
                     RowLayout {
                       anchors.centerIn: parent
@@ -626,12 +626,12 @@ Loader {
                       NIcon {
                         icon: "logout"
                         pointSize: Style.fontSizeL * scaling
-                        color: Color.mOnSurfaceVariant
+                        color: logoutButtonArea.containsMouse ? Color.mOnTertiary : Color.mOnSurfaceVariant
                       }
 
                       NText {
                         text: I18n.tr("session-menu.logout")
-                        color: Color.mOnSurfaceVariant
+                        color: logoutButtonArea.containsMouse ? Color.mOnTertiary : Color.mOnSurfaceVariant
                         pointSize: Style.fontSizeM * scaling
                         font.weight: Font.Medium
                       }
@@ -656,7 +656,7 @@ Loader {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 44 * scaling
                     radius: 22 * scaling
-                    color: rebootButtonArea.containsMouse ? Qt.alpha(Color.mPrimary, 0.2) : "transparent"
+                    color: rebootButtonArea.containsMouse ? Color.mTertiary : "transparent"
 
                     RowLayout {
                       anchors.centerIn: parent
@@ -665,12 +665,12 @@ Loader {
                       NIcon {
                         icon: "reboot"
                         pointSize: Style.fontSizeL * scaling
-                        color: Color.mOnSurfaceVariant
+                        color: rebootButtonArea.containsMouse ? Color.mOnTertiary : Color.mOnSurfaceVariant
                       }
 
                       NText {
                         text: I18n.tr("session-menu.reboot")
-                        color: Color.mOnSurfaceVariant
+                        color: rebootButtonArea.containsMouse ? Color.mOnTertiary : Color.mOnSurfaceVariant
                         pointSize: Style.fontSizeM * scaling
                         font.weight: Font.Medium
                       }
@@ -695,7 +695,7 @@ Loader {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 44 * scaling
                     radius: 22 * scaling
-                    color: shutdownButtonArea.containsMouse ? Qt.alpha(Color.mError, 0.2) : "transparent"
+                    color: shutdownButtonArea.containsMouse ? Color.mError : "transparent"
                     border.color: shutdownButtonArea.containsMouse ? Color.mError : Color.transparent
                     border.width: 1
 
@@ -706,12 +706,12 @@ Loader {
                       NIcon {
                         icon: "shutdown"
                         pointSize: Style.fontSizeL * scaling
-                        color: Color.mOnSurfaceVariant
+                        color: shutdownButtonArea.containsMouse ? Color.mOnError : Color.mOnSurfaceVariant
                       }
 
                       NText {
                         text: I18n.tr("session-menu.shutdown")
-                        color: Color.mOnSurfaceVariant
+                        color: shutdownButtonArea.containsMouse ? Color.mOnError : Color.mOnSurfaceVariant
                         pointSize: Style.fontSizeM * scaling
                         font.weight: Font.Medium
                       }
