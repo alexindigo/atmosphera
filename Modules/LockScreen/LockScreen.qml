@@ -136,8 +136,8 @@ Loader {
               Layout.alignment: Qt.AlignHCenter
 
               Rectangle {
-                Layout.preferredWidth: 140 * scaling
-                Layout.preferredHeight: 140 * scaling
+                Layout.preferredWidth: 130 * scaling
+                Layout.preferredHeight: 130 * scaling
                 Layout.alignment: Qt.AlignHCenter
                 radius: width * 0.5
                 color: Color.transparent
@@ -146,13 +146,13 @@ Loader {
                   anchors.fill: parent
                   radius: parent.radius
                   color: Color.transparent
-                  border.color: Qt.alpha(Color.mPrimary, 0.3)
-                  border.width: 2
+                  border.color: Qt.alpha(Color.mPrimary, 0.8)
+                  border.width: 3
                   
                   SequentialAnimation on border.color {
                     loops: Animation.Infinite
-                    ColorAnimation { to: Qt.alpha(Color.mPrimary, 0.6); duration: 2000; easing.type: Easing.InOutQuad }
-                    ColorAnimation { to: Qt.alpha(Color.mPrimary, 0.3); duration: 2000; easing.type: Easing.InOutQuad }
+                    ColorAnimation { to: Qt.alpha(Color.mPrimary, 1.0); duration: 2000; easing.type: Easing.InOutQuad }
+                    ColorAnimation { to: Qt.alpha(Color.mPrimary, 0.8); duration: 2000; easing.type: Easing.InOutQuad }
                   }
                 }
 
@@ -582,14 +582,14 @@ Loader {
 
                       NIcon {
                         icon: "logout"
-                        pointSize: Style.fontSizeM * scaling
+                        pointSize: Style.fontSizeL * scaling
                         color: Color.mOnSurfaceVariant
                       }
 
                       NText {
                         text: I18n.tr("session-menu.logout")
                         color: Color.mOnSurfaceVariant
-                        pointSize: Style.fontSizeS * scaling
+                        pointSize: Style.fontSizeM * scaling
                         font.weight: Font.Medium
                       }
                     }
@@ -618,14 +618,14 @@ Loader {
 
                       NIcon {
                         icon: "reboot"
-                        pointSize: Style.fontSizeM * scaling
+                        pointSize: Style.fontSizeL * scaling
                         color: Color.mOnSurfaceVariant
                       }
 
                       NText {
                         text: I18n.tr("session-menu.reboot")
                         color: Color.mOnSurfaceVariant
-                        pointSize: Style.fontSizeS * scaling
+                        pointSize: Style.fontSizeM * scaling
                         font.weight: Font.Medium
                       }
                     }
@@ -656,14 +656,14 @@ Loader {
 
                       NIcon {
                         icon: "shutdown"
-                        pointSize: Style.fontSizeM * scaling
+                        pointSize: Style.fontSizeL * scaling
                         color: Color.mOnSurfaceVariant
                       }
 
                       NText {
                         text: I18n.tr("session-menu.shutdown")
                         color: Color.mOnSurfaceVariant
-                        pointSize: Style.fontSizeS * scaling
+                        pointSize: Style.fontSizeM * scaling
                         font.weight: Font.Medium
                       }
                     }
