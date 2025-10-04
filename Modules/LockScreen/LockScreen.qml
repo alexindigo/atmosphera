@@ -83,10 +83,22 @@ Loader {
           Rectangle {
             anchors.fill: parent
             gradient: Gradient {
-              GradientStop { position: 0.0; color: Qt.rgba(0, 0, 0, 0.6) }
-              GradientStop { position: 0.3; color: Qt.rgba(0, 0, 0, 0.3) }
-              GradientStop { position: 0.7; color: Qt.rgba(0, 0, 0, 0.4) }
-              GradientStop { position: 1.0; color: Qt.rgba(0, 0, 0, 0.7) }
+              GradientStop {
+                position: 0.0
+                color: Qt.rgba(0, 0, 0, 0.6)
+              }
+              GradientStop {
+                position: 0.3
+                color: Qt.rgba(0, 0, 0, 0.3)
+              }
+              GradientStop {
+                position: 0.7
+                color: Qt.rgba(0, 0, 0, 0.4)
+              }
+              GradientStop {
+                position: 1.0
+                color: Qt.rgba(0, 0, 0, 0.7)
+              }
             }
           }
 
@@ -112,8 +124,16 @@ Loader {
 
                 SequentialAnimation on opacity {
                   loops: Animation.Infinite
-                  NumberAnimation { to: 0.7; duration: 3000; easing.type: Easing.InOutQuad }
-                  NumberAnimation { to: 0.95; duration: 3000; easing.type: Easing.InOutQuad }
+                  NumberAnimation {
+                    to: 0.7
+                    duration: 3000
+                    easing.type: Easing.InOutQuad
+                  }
+                  NumberAnimation {
+                    to: 0.95
+                    duration: 3000
+                    easing.type: Easing.InOutQuad
+                  }
                 }
               }
 
@@ -141,18 +161,26 @@ Loader {
                 Layout.alignment: Qt.AlignHCenter
                 radius: width * 0.5
                 color: Color.transparent
-                
+
                 Rectangle {
                   anchors.fill: parent
                   radius: parent.radius
                   color: Color.transparent
                   border.color: Qt.alpha(Color.mPrimary, 0.8)
                   border.width: 3
-                  
+
                   SequentialAnimation on border.color {
                     loops: Animation.Infinite
-                    ColorAnimation { to: Qt.alpha(Color.mPrimary, 1.0); duration: 2000; easing.type: Easing.InOutQuad }
-                    ColorAnimation { to: Qt.alpha(Color.mPrimary, 0.8); duration: 2000; easing.type: Easing.InOutQuad }
+                    ColorAnimation {
+                      to: Qt.alpha(Color.mPrimary, 1.0)
+                      duration: 2000
+                      easing.type: Easing.InOutQuad
+                    }
+                    ColorAnimation {
+                      to: Qt.alpha(Color.mPrimary, 0.8)
+                      duration: 2000
+                      easing.type: Easing.InOutQuad
+                    }
                   }
                 }
 
@@ -162,11 +190,19 @@ Loader {
                   height: 120 * scaling
                   imagePath: Settings.data.general.avatarImage
                   fallbackIcon: "person"
-                  
+
                   SequentialAnimation on scale {
                     loops: Animation.Infinite
-                    NumberAnimation { to: 1.02; duration: 4000; easing.type: Easing.InOutQuad }
-                    NumberAnimation { to: 1.0; duration: 4000; easing.type: Easing.InOutQuad }
+                    NumberAnimation {
+                      to: 1.02
+                      duration: 4000
+                      easing.type: Easing.InOutQuad
+                    }
+                    NumberAnimation {
+                      to: 1.0
+                      duration: 4000
+                      easing.type: Easing.InOutQuad
+                    }
                   }
                 }
               }
@@ -469,7 +505,9 @@ Loader {
                   Layout.fillWidth: true
                   spacing: 0
 
-                  Item { Layout.preferredWidth: Style.marginM * scaling }
+                  Item {
+                    Layout.preferredWidth: Style.marginM * scaling
+                  }
 
                   Rectangle {
                     Layout.fillWidth: true
@@ -553,11 +591,16 @@ Loader {
                     }
 
                     Behavior on border.color {
-                      ColorAnimation { duration: 200; easing.type: Easing.OutCubic }
+                      ColorAnimation {
+                        duration: 200
+                        easing.type: Easing.OutCubic
+                      }
                     }
                   }
 
-                  Item { Layout.preferredWidth: Style.marginM * scaling }
+                  Item {
+                    Layout.preferredWidth: Style.marginM * scaling
+                  }
                 }
 
                 // System control buttons
@@ -602,7 +645,10 @@ Loader {
                     }
 
                     Behavior on color {
-                      ColorAnimation { duration: 200; easing.type: Easing.OutCubic }
+                      ColorAnimation {
+                        duration: 200
+                        easing.type: Easing.OutCubic
+                      }
                     }
                   }
 
@@ -638,7 +684,10 @@ Loader {
                     }
 
                     Behavior on color {
-                      ColorAnimation { duration: 200; easing.type: Easing.OutCubic }
+                      ColorAnimation {
+                        duration: 200
+                        easing.type: Easing.OutCubic
+                      }
                     }
                   }
 
@@ -676,11 +725,17 @@ Loader {
                     }
 
                     Behavior on color {
-                      ColorAnimation { duration: 200; easing.type: Easing.OutCubic }
+                      ColorAnimation {
+                        duration: 200
+                        easing.type: Easing.OutCubic
+                      }
                     }
 
                     Behavior on border.color {
-                      ColorAnimation { duration: 200; easing.type: Easing.OutCubic }
+                      ColorAnimation {
+                        duration: 200
+                        easing.type: Easing.OutCubic
+                      }
                     }
                   }
 
@@ -713,12 +768,23 @@ Loader {
               SequentialAnimation on opacity {
                 running: lockContext.unlockInProgress
                 loops: Animation.Infinite
-                NumberAnimation { to: 0.6; duration: 1000; easing.type: Easing.InOutQuad }
-                NumberAnimation { to: 1.0; duration: 1000; easing.type: Easing.InOutQuad }
+                NumberAnimation {
+                  to: 0.6
+                  duration: 1000
+                  easing.type: Easing.InOutQuad
+                }
+                NumberAnimation {
+                  to: 1.0
+                  duration: 1000
+                  easing.type: Easing.InOutQuad
+                }
               }
 
               Behavior on opacity {
-                NumberAnimation { duration: 300; easing.type: Easing.OutCubic }
+                NumberAnimation {
+                  duration: 300
+                  easing.type: Easing.OutCubic
+                }
               }
             }
           }

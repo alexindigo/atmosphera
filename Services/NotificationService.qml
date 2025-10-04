@@ -189,18 +189,29 @@ Singleton {
         const elapsed = now - notif.timestamp.getTime()
         var expire = 0
 
-        if (Settings.data.notifications?.respectExpireTimeout)
-        expire = notif.expireTimeout > 0 ? notif.expireTimeout : durations[notif.urgency]
-        else
-        expire = durations[notif.urgency]
+        if (Settings.data.notifications?.respectExpireTimeout) {
+          if (notif.expireTimeout === 0) {
+            // Timeout of 0 means never expire (infinite)
+            continue
+          } else if (notif.expireTimeout > 0) {
+            expire = notif.expireTimeout
+          } else {
+            expire = durations[notif.urgency]
+          }
+        } else {
+          expire = durations[notif.urgency]
+        }
 
-        const progress = Math.max(1.0 - (elapsed / expire), 0.0)
-        updateModel(activeList, notif.id, "progress", progress)
+        // Only update progress and check expiration for notifications with finite timeout
+        if (expire > 0) {
+          const progress = Math.max(1.0 - (elapsed / expire), 0.0)
+          updateModel(activeList, notif.id, "progress", progress)
 
-        if (elapsed >= expire) {
-          animateAndRemove(notif.id)
-          delete progressTimers[notif.id]
-          break
+          if (elapsed >= expire) {
+            animateAndRemove(notif.id)
+            delete progressTimers[notif.id]
+            break
+          }
         }
       }
     }

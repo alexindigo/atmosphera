@@ -12,7 +12,6 @@ Item {
   property string section: widgetProps && widgetProps.section || ""
   property int sectionIndex: widgetProps && widgetProps.sectionWidgetIndex || 0
 
-
   // Don't reserve space unless the loaded widget is really visible
   implicitWidth: getImplicitSize(loader.item, "implicitWidth")
   implicitHeight: getImplicitSize(loader.item, "implicitHeight")
@@ -28,7 +27,7 @@ Item {
   }
 
   function getImplicitSize(item, prop) {
-      return (item && item.visible) ? item[prop] : 0
+    return (item && item.visible) ? item[prop] : 0
   }
 
   Loader {
