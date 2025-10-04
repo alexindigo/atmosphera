@@ -8,12 +8,18 @@ Item {
 
   property string widgetId: ""
   property var widgetProps: ({})
-  property string screenName: widgetProps.screen ? widgetProps.screen.name : ""
-  property string section: widgetProps.section || ""
-  property int sectionIndex: widgetProps.sectionWidgetIndex || 0
+  property string screenName: widgetProps && widgetProps.screen ? widgetProps.screen.name : ""
+  property string section: widgetProps && widgetProps.section || ""
+  property int sectionIndex: widgetProps && widgetProps.sectionWidgetIndex || 0
+
+
+  // Don't reserve space unless the loaded widget is really visible
+  implicitWidth: getImplicitSize(loader.item, "implicitWidth")
+  implicitHeight: getImplicitSize(loader.item, "implicitHeight")
 
   Connections {
     target: ScalingService
+    enabled: loader.item && (loader.item.screen !== undefined)
     function onScaleChanged(aScreenName, scale) {
       if (loader.item && loader.item.screen && aScreenName === screenName) {
         loader.item['scaling'] = scale
@@ -21,15 +27,15 @@ Item {
     }
   }
 
-  // Don't reserve space unless the loaded widget is really visible
-  implicitWidth: loader.item ? loader.item.visible ? loader.item.implicitWidth : 0 : 0
-  implicitHeight: loader.item ? loader.item.visible ? loader.item.implicitHeight : 0 : 0
+  function getImplicitSize(item, prop) {
+      return (item && item.visible) ? item[prop] : 0
+  }
 
   Loader {
     id: loader
-
     anchors.fill: parent
     active: widgetId !== ""
+    asynchronous: false
     sourceComponent: {
       if (!active) {
         return null
@@ -64,6 +70,8 @@ Item {
       if (screenName && section) {
         BarService.unregisterWidget(screenName, section, widgetId, sectionIndex)
       }
+      // Explicitly clear references
+      widgetProps = null
     }
   }
 
