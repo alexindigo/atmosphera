@@ -865,6 +865,10 @@
         "scrolling-mode": {
           "label": "Scrollmodus",
           "description": "Steuern, wann Textscrolling für lange Fenstertitel aktiviert ist."
+        },
+        "width": {
+          "description": "Steuert die horizontale Größe des Widgets.",
+          "label": "Widget-Breite"
         }
       },
       "system-monitor": {

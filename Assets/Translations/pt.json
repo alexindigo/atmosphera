@@ -844,6 +844,10 @@
         "scrolling-mode": {
           "label": "Modo de rolagem",
           "description": "Controlar quando a rolagem de texto está habilitada para títulos de janela longos."
+        },
+        "width": {
+          "description": "Controla o tamanho horizontal do widget.",
+          "label": "Largura do Widget"
         }
       },
       "system-monitor": {

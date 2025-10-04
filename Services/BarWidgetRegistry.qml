@@ -42,7 +42,8 @@ Singleton {
                                     "allowUserSettings": true,
                                     "showIcon": true,
                                     "autoHide": false,
-                                    "scrollingMode": "hover"
+                                    "scrollingMode": "hover",
+                                    "width": 145
                                   },
                                   "Battery": {
                                     "allowUserSettings": true,

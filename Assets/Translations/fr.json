@@ -844,6 +844,10 @@
         "auto-hide": {
           "label": "Masquer automatiquement",
           "description": "Masquer automatiquement le widget quand aucune fenêtre n'est active."
+        },
+        "width": {
+          "description": "Contrôle la taille horizontale du widget.",
+          "label": "Largeur du widget"
         }
       },
       "system-monitor": {

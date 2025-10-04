@@ -17,12 +17,14 @@ ColumnLayout {
   property bool valueShowIcon: widgetData.showIcon !== undefined ? widgetData.showIcon : widgetMetadata.showIcon
   property bool valueAutoHide: widgetData.autoHide !== undefined ? widgetData.autoHide : widgetMetadata.autoHide
   property string valueScrollingMode: widgetData.scrollingMode || widgetMetadata.scrollingMode
+  property int valueWidth: widgetData.width !== undefined ? widgetData.width : widgetMetadata.width
 
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {})
     settings.autoHide = valueAutoHide
     settings.showIcon = valueShowIcon
     settings.scrollingMode = valueScrollingMode
+    settings.width = parseInt(widthInput.text) || widgetMetadata.width
     return settings
   }
 
@@ -40,6 +42,15 @@ ColumnLayout {
     description: I18n.tr("bar.widget-settings.active-window.show-app-icon.description")
     checked: root.valueShowIcon
     onToggled: checked => root.valueShowIcon = checked
+  }
+
+  NTextInput {
+    id: widthInput
+    Layout.fillWidth: true
+    label: I18n.tr("bar.widget-settings.active-window.width.label")
+    description: I18n.tr("bar.widget-settings.active-window.width.description")
+    placeholderText: widgetMetadata.width
+    text: valueWidth
   }
 
   NComboBox {

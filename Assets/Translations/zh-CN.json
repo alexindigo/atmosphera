@@ -844,6 +844,10 @@
         "scrolling-mode": {
           "label": "滚动模式",
           "description": "控制何时为长窗口标题启用文本滚动。"
+        },
+        "width": {
+          "description": "控制小部件的水平尺寸。",
+          "label": "小部件宽度"
         }
       },
       "system-monitor": {

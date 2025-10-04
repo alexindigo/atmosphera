@@ -846,6 +846,10 @@
         "scrolling-mode": {
           "label": "Scrolling mode",
           "description": "Control when text scrolling is enabled for long window titles."
+        },
+        "width": {
+          "label": "Widget Width",
+          "description": "Controls the horizontal size of the widget."
         }
       },
       "system-monitor": {
