@@ -74,7 +74,7 @@ Item {
           continue
 
         const wsData = {
-          "id": i,
+          "id": ws.id,
           "idx": ws.id,
           "name": ws.name || "",
           "output": (ws.monitor && ws.monitor.name) ? ws.monitor.name : "",
@@ -182,13 +182,15 @@ Item {
       const title = safeGetProperty(toplevel, "title", "")
       const wsId = toplevel.workspace ? toplevel.workspace.id : null
       const focused = toplevel.activated === true
+      const output = toplevel.monitor?.name || ""
 
       return {
         "id": windowId,
         "title": title,
         "appId": appId,
         "workspaceId": wsId,
-        "isFocused": focused
+        "isFocused": focused,
+        "output": output
       }
     } catch (e) {
       return null
@@ -280,7 +282,7 @@ Item {
 
   function focusWindow(windowId) {
     try {
-      Hyprland.dispatch(`focuswindow ${windowId}`)
+      Hyprland.dispatch(`focuswindow address:0x${windowId.toString()}`)
     } catch (e) {
       Logger.error("HyprlandService", "Failed to switch window:", e)
     }
@@ -288,7 +290,7 @@ Item {
 
   function closeWindow(windowId) {
     try {
-      Hyprland.dispatch(`killwindow ${windowId}`)
+      Hyprland.dispatch(`killwindow address:0x${windowId}`)
     } catch (e) {
       Logger.error("HyprlandService", "Failed to close window:", e)
     }
