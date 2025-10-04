@@ -50,6 +50,12 @@ NBox {
 
       visible: MediaService.currentPlayer && MediaService.canPlay
       spacing: Style.marginM * scaling
+      Layout.alignment: Qt.AlignHCenter
+
+      Item {
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+      }
 
       // Player selector using NContextMenu
       Rectangle {
@@ -340,6 +346,11 @@ NBox {
         fillColor: Color.mPrimary
         Layout.alignment: Qt.AlignHCenter
       }
+    }
+
+    Item {
+      Layout.fillWidth: true
+      Layout.fillHeight: true
     }
   }
 }
