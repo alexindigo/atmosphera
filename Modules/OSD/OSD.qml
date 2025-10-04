@@ -10,7 +10,7 @@ import qs.Widgets
 // Unified OSD component
 // Loader activates only when showing OSD, deactivates when hidden to save resources
 Variants {
-  model: Quickshell.screens
+  model: Quickshell.screens.filter(screen => (Settings.data.osd.monitors.includes(screen.name) || (Settings.data.osd.monitors.length === 0)) && Settings.data.osd.enabled)
 
   delegate: Loader {
     id: root
@@ -20,9 +20,6 @@ Variants {
 
     // Access the notification model from the service
     property ListModel notificationModel: NotificationService.activeList
-
-    // If no notification display activated in settings, then show them all
-    property bool canShowOnThisScreen: modelData && (Settings.data.osd.monitors.includes(modelData.name) || (Settings.data.osd.monitors.length === 0))
 
     // Loader is only active when actually showing something
     active: false
@@ -118,6 +115,14 @@ Variants {
         const base = Math.max(6, Math.round(6 * root.scaling))
         return (base % 2 === 0) ? base : base + 1
       })()
+
+      Component.onCompleted: {
+        connectBrightnessMonitors()
+      }
+
+      Component.onDestruction: {
+        disconnectBrightnessMonitors()
+      }
 
       // Anchor selection based on location (window edges)
       anchors.top: isTop
@@ -484,8 +489,11 @@ Variants {
       }
     }
 
-    Component.onCompleted: {
-      connectBrightnessMonitors()
+    function disconnectBrightnessMonitors() {
+      for (var i = 0; i < BrightnessService.monitors.length; i++) {
+        let monitor = BrightnessService.monitors[i]
+        monitor.brightnessUpdated.disconnect(onBrightnessChanged)
+      }
     }
 
     function connectBrightnessMonitors() {
@@ -506,11 +514,6 @@ Variants {
     }
 
     function showOSD(type) {
-      // Check if OSD is enabled in settings and can show on this screen
-      if (!Settings.data.osd.enabled || !canShowOnThisScreen) {
-        return
-      }
-
       // Update the current OSD type
       currentOSDType = type
 
