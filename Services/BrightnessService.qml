@@ -73,7 +73,7 @@ Singleton {
   Process {
     id: ddcProc
     property list<var> ddcMonitors: []
-    command: ["ddcutil", "detect", "--sleep-multiplier=0.5", "--brief"]
+    command: ["ddcutil", "detect", "--sleep-multiplier=0.5"]
     stdout: StdioCollector {
       onStreamFinished: {
         var displays = text.trim().split("\n\n")
