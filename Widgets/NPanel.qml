@@ -98,6 +98,7 @@ Loader {
         // Fallback to old method
         var itemPos = buttonItem.mapToItem(null, 0, 0)
         buttonPosition = Qt.point(itemPos.x, itemPos.y)
+        Logger.warn("NPanel", "Falling back to mapToItem null")
       }
       buttonWidth = buttonItem.width
       buttonHeight = buttonItem.height
