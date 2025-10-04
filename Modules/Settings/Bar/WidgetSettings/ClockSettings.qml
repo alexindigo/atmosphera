@@ -204,7 +204,7 @@ ColumnLayout {
               delegate: NText {
                 visible: text !== ""
                 text: modelData
-                family: valueUseCustomFont && valueCustomFont ? valueCustomFont : (valueUseMonospacedFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault)
+                family: valueUseCustomFont && valueCustomFont ? valueCustomFont : Settings.data.ui.fontDefault
                 pointSize: Style.fontSizeM * scaling
                 font.weight: Style.fontWeightBold
                 color: valueUsePrimaryColor ? Color.mPrimary : Color.mOnSurface
@@ -235,7 +235,7 @@ ColumnLayout {
               delegate: NText {
                 visible: text !== ""
                 text: modelData
-                family: valueUseCustomFont && valueCustomFont ? valueCustomFont : (valueUseMonospacedFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault)
+                family: valueUseCustomFont && valueCustomFont ? valueCustomFont : Settings.data.ui.fontDefault
                 pointSize: Style.fontSizeM * scaling
                 font.weight: Style.fontWeightBold
                 color: valueUsePrimaryColor ? Color.mPrimary : Color.mOnSurface
