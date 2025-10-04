@@ -73,18 +73,16 @@ Singleton {
   Process {
     id: ddcProc
     property list<var> ddcMonitors: []
-    command: ["ddcutil", "detect", "--sleep-multiplier=0.5"]
+    command: ["ddcutil", "detect", "--sleep-multiplier=0.5", "--brief"]
     stdout: StdioCollector {
       onStreamFinished: {
-        // Do not filter out invalid displays. For some reason --brief returns some invalid which works fine
         var displays = text.trim().split("\n\n")
-
         ddcProc.ddcMonitors = displays.map(d => {
 
-                                             var ddcModelMatc = d.match(/This monitor does not support DDC\/CI/)
+                                             var ddcModelMatch = d.match(/(This monitor does not support DDC\/CI|Invalid display)/);
                                              var modelMatch = d.match(/Model:\s*(.*)/)
                                              var busMatch = d.match(/I2C bus:[ ]*\/dev\/i2c-([0-9]+)/)
-                                             var ddcModel = ddcModelMatc ? ddcModelMatc.length > 0 : false
+                                             var ddcModel = ddcModelMatch ? ddcModelMatch.length > 0 : false
                                              var model = modelMatch ? modelMatch[1] : "Unknown"
                                              var bus = busMatch ? busMatch[1] : "Unknown"
                                              Logger.log("Brigthness", "Detected DDC Monitor:", model, "on bus", bus, "is DDC:", !ddcModel)
