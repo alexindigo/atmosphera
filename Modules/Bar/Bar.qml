@@ -79,6 +79,8 @@ Variants {
         MouseArea {
           anchors.fill: parent
           acceptedButtons: Qt.RightButton
+          hoverEnabled: false
+          preventStealing: true
           onClicked: function (mouse) {
             if (mouse.button === Qt.RightButton) {
               // Important to pass the screen here so we get the right widget for the actual bar that was clicked.

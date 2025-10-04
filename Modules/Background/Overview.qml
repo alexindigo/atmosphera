@@ -13,7 +13,7 @@ Variants {
     required property ShellScreen modelData
     property string wallpaper: ""
 
-    active: CompositorService.isNiri && Settings.data.wallpaper.enabled && modelData && CompositorService.backend?.overviewActive
+    active: CompositorService.isNiri && Settings.data.wallpaper.enabled && modelData
 
     sourceComponent: PanelWindow {
       id: panelWindow
@@ -59,48 +59,28 @@ Variants {
         left: true
       }
 
-      // Wrap everything in an Item with opacity animation
-      Item {
-        id: contentContainer
+      Image {
+        id: bgImage
         anchors.fill: parent
-        opacity: 0
+        fillMode: Image.PreserveAspectCrop
+        source: wallpaper
+        smooth: true
+        mipmap: false
+        cache: false
+        asynchronous: true
+        // Image is heavily blurred, so might as well save a lot of memory here.
+        sourceSize: Qt.size(1280, 720)
+      }
 
-        Behavior on opacity {
-          NumberAnimation {
-            duration: 500
-            easing.type: Easing.OutCubic
-          }
-        }
-
-        Component.onCompleted: {
-          opacity = 1
-        }
-
-        Image {
-          id: bgImage
-          anchors.fill: parent
-          fillMode: Image.PreserveAspectCrop
-          source: wallpaper
-          smooth: true
-          mipmap: false
-          cache: false
-          asynchronous: true
-          
-        }
-
-        MultiEffect {
-          anchors.fill: parent
-          source: bgImage
-          autoPaddingEnabled: false
-          blurEnabled: true
-          blur: 0.48
-          blurMax: 128
-        }
-
-        Rectangle {
-          anchors.fill: parent
-          color: Settings.data.colorSchemes.darkMode ? Qt.alpha(Color.mSurface, Style.opacityMedium) : Qt.alpha(Color.mOnSurface, Style.opacityMedium)
-        }
+      MultiEffect {
+        anchors.fill: parent
+        source: bgImage
+        autoPaddingEnabled: false
+        blurEnabled: true
+        blur: 0.48
+        blurMax: 128
+        colorization: Style.opacityMedium
+        colorizationColor: Settings.data.colorSchemes.darkMode ? Color.mSurface : Color.mOnSurface
       }
     }
   }
