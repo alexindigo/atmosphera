@@ -105,6 +105,7 @@ Variants {
         visible: false
         cache: false
         asynchronous: true
+        sourceSize: Qt.size(modelData.width, modelData.height)
         onStatusChanged: {
           if (status === Image.Error) {
             Logger.warn("Current wallpaper failed to load:", source)
@@ -120,6 +121,7 @@ Variants {
         visible: false
         cache: false
         asynchronous: true
+        sourceSize: Qt.size(modelData.width, modelData.height)
         onStatusChanged: {
           if (status === Image.Error) {
             Logger.warn("Next wallpaper failed to load:", source)
