@@ -46,6 +46,7 @@ NPanel {
 
         NIconButton {
           icon: Settings.data.notifications.doNotDisturb ? "bell-off" : "bell"
+          screen: root.screen
           tooltipText: Settings.data.notifications.doNotDisturb ? I18n.tr("tooltips.do-not-disturb-enabled") : I18n.tr("tooltips.do-not-disturb-disabled")
           baseSize: Style.baseWidgetSize * 0.8
           onClicked: Settings.data.notifications.doNotDisturb = !Settings.data.notifications.doNotDisturb
@@ -53,6 +54,7 @@ NPanel {
 
         NIconButton {
           icon: "trash"
+          screen: root.screen
           tooltipText: I18n.tr("tooltips.clear-history")
           baseSize: Style.baseWidgetSize * 0.8
           onClicked: {
@@ -64,6 +66,7 @@ NPanel {
 
         NIconButton {
           icon: "close"
+          screen: root.screen
           tooltipText: I18n.tr("tooltips.close")
           baseSize: Style.baseWidgetSize * 0.8
           onClicked: root.close()
