@@ -10,7 +10,8 @@ import qs.Widgets
 
 // Simple notification popup - displays multiple notifications
 Variants {
-  model: Quickshell.screens
+  // If no notification display activated in settings, then show them all
+  model: Quickshell.screens.filter(screen => (Settings.data.osd.monitors.includes(screen.name) || (Settings.data.osd.monitors.length === 0)))
 
   delegate: Loader {
     id: root
@@ -21,8 +22,7 @@ Variants {
     // Access the notification model from the service - UPDATED NAME
     property ListModel notificationModel: NotificationService.activeList
 
-    // If no notification display activated in settings, then show them all
-    active: modelData && (Settings.data.notifications.monitors.includes(modelData.name) || (Settings.data.notifications.monitors.length === 0))
+    active: true
 
     Connections {
       target: ScalingService
@@ -236,7 +236,7 @@ Variants {
             // Animation behaviors
             Behavior on scale {
               NumberAnimation {
-                duration: Style.animationSlow
+                duration: Style.animationNormal
                 easing.type: Easing.OutExpo
               }
             }
