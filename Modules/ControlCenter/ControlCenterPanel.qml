@@ -29,13 +29,11 @@ NPanel {
 
       // Cards (consistent inter-card spacing via ColumnLayout spacing)
       ProfileCard {
-        screen: root.screen
         Layout.fillWidth: true
         Layout.preferredHeight: Math.max(64 * scaling)
       }
 
       WeatherCard {
-        screen: root.screen
         Layout.fillWidth: true
         Layout.preferredHeight: Math.max(220 * scaling)
       }
@@ -48,14 +46,12 @@ NPanel {
 
         // Media card
         MediaCard {
-          screen: root.screen
           Layout.fillWidth: true
           Layout.fillHeight: true
         }
 
         // System monitors combined in one card
         SystemMonitorCard {
-          screen: root.screen
           Layout.preferredWidth: Style.baseWidgetSize * 2.625 * scaling
           Layout.fillHeight: true
         }
@@ -69,7 +65,6 @@ NPanel {
 
         // Power Profiles switcher
         PowerProfilesCard {
-          screen: root.screen
           Layout.fillWidth: true
           Layout.fillHeight: true
           spacing: content.cardSpacing
@@ -77,7 +72,6 @@ NPanel {
 
         // Utilities buttons
         UtilitiesCard {
-          screen: root.screen
           Layout.fillWidth: true
           Layout.fillHeight: true
           spacing: content.cardSpacing

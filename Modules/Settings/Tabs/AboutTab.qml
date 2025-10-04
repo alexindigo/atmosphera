@@ -10,11 +10,12 @@ import qs.Widgets
 
 ColumnLayout {
   id: root
-  spacing: Style.marginL * scaling
 
   property string latestVersion: GitHubService.latestVersion
   property string currentVersion: UpdateService.currentVersion
   property var contributors: GitHubService.contributors
+
+  spacing: Style.marginL * scaling
 
   NHeader {
     label: I18n.tr("settings.about.noctalia.section.label")

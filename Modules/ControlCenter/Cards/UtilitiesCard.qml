@@ -10,7 +10,6 @@ import qs.Widgets
 // Utilities: record & wallpaper
 NBox {
 
-  property ShellScreen screen
   property real spacing: 0
 
   RowLayout {
@@ -24,7 +23,6 @@ NBox {
     // Screen Recorder
     NIconButton {
       icon: "camera-video"
-      screen: root.screen
       enabled: ScreenRecorderService.isAvailable
       tooltipText: ScreenRecorderService.isAvailable ? (ScreenRecorderService.isRecording ? I18n.tr("tooltips.stop-screen-recording") : I18n.tr("tooltips.start-screen-recording")) : I18n.tr("tooltips.screen-recorder-not-installed")
       colorBg: ScreenRecorderService.isRecording ? Color.mPrimary : Color.mSurfaceVariant
@@ -44,7 +42,6 @@ NBox {
     // Idle Inhibitor
     NIconButton {
       icon: IdleInhibitorService.isInhibited ? "keep-awake-on" : "keep-awake-off"
-      screen: root.screen
       tooltipText: IdleInhibitorService.isInhibited ? I18n.tr("tooltips.disable-keep-awake") : I18n.tr("tooltips.enable-keep-awake")
       colorBg: IdleInhibitorService.isInhibited ? Color.mPrimary : Color.mSurfaceVariant
       colorFg: IdleInhibitorService.isInhibited ? Color.mOnPrimary : Color.mPrimary
@@ -57,7 +54,6 @@ NBox {
     NIconButton {
       visible: Settings.data.wallpaper.enabled
       icon: "wallpaper-selector"
-      screen: root.screen
       tooltipText: I18n.tr("tooltips.wallpaper-selector")
       onClicked: PanelService.getPanel("wallpaperPanel")?.toggle(this)
       onRightClicked: WallpaperService.setRandomWallpaper()

@@ -15,9 +15,9 @@ Singleton {
     Tooltip {}
   }
 
-  function show(target, text, direction, delay) {
+  function show(screen, target, text, direction, delay) {
     // Don't create if no text
-    if (!target || !text) {
+    if (!screen || !target || !text) {
       Logger.log("Tooltip", "No target or text")
       return
     }
@@ -74,7 +74,7 @@ Singleton {
                                         })
 
       // Show the tooltip
-      newTooltip.show(target, text, direction || "auto", delay || Style.tooltipDelay)
+      newTooltip.show(screen, target, text, direction || "auto", delay || Style.tooltipDelay)
 
       return newTooltip
     } else {

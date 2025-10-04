@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import QtQuick.Shapes
 import Quickshell.Io
 import qs.Commons
 import qs.Services
@@ -9,7 +8,6 @@ import qs.Widgets
 
 ColumnLayout {
   id: root
-  spacing: Style.marginL * scaling
 
   // Cache for scheme JSON (can be flat or {dark, light})
   property var schemeColorsCache: ({})
@@ -17,6 +15,8 @@ ColumnLayout {
   // Scale properties for card animations
   property real cardScaleLow: 0.95
   property real cardScaleHigh: 1.0
+
+  spacing: Style.marginL * scaling
 
   // Helper function to extract scheme name from path
   function extractSchemeName(schemePath) {

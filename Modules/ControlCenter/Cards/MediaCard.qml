@@ -10,8 +10,6 @@ import qs.Widgets
 NBox {
   id: root
 
-  property ShellScreen screen
-
   ColumnLayout {
     anchors.fill: parent
     anchors.margins: Style.marginL * scaling
@@ -282,7 +280,6 @@ NBox {
         // Previous button
         NIconButton {
           icon: "media-prev"
-          screen: root.screen
           tooltipText: I18n.tr("tooltips.previous-media")
           visible: MediaService.canGoPrevious
           onClicked: MediaService.canGoPrevious ? MediaService.previous() : {}
@@ -291,7 +288,6 @@ NBox {
         // Play/Pause button
         NIconButton {
           icon: MediaService.isPlaying ? "media-pause" : "media-play"
-          screen: root.screen
           tooltipText: MediaService.isPlaying ? I18n.tr("tooltips.pause") : I18n.tr("tooltips.play")
           visible: (MediaService.canPlay || MediaService.canPause)
           onClicked: (MediaService.canPlay || MediaService.canPause) ? MediaService.playPause() : {}
@@ -300,7 +296,6 @@ NBox {
         // Next button
         NIconButton {
           icon: "media-next"
-          screen: root.screen
           tooltipText: I18n.tr("tooltips.next-media")
           visible: MediaService.canGoNext
           onClicked: MediaService.canGoNext ? MediaService.next() : {}

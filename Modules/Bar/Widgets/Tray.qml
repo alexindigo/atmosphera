@@ -140,7 +140,7 @@ Rectangle {
                      }
           onEntered: {
             trayPanel.close()
-            TooltipService.show(trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection())
+            TooltipService.show(Screen, trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection())
           }
           onExited: TooltipService.hide()
         }

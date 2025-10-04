@@ -106,7 +106,6 @@ NBox {
 
       NIconButton {
         icon: "add"
-
         colorBg: Color.mPrimary
         colorFg: Color.mOnPrimary
         colorBgHover: Color.mSecondary

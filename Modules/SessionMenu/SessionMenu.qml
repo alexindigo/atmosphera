@@ -288,7 +288,6 @@ NPanel {
 
         NIconButton {
           icon: timerActive ? "stop" : "close"
-          screen: root.screen
           tooltipText: timerActive ? I18n.tr("tooltips.cancel-timer") : I18n.tr("tooltips.close")
           Layout.alignment: Qt.AlignVCenter
           colorBg: timerActive ? Qt.alpha(Color.mError, 0.08) : Color.transparent

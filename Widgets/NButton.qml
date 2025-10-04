@@ -138,7 +138,7 @@ Rectangle {
     onEntered: {
       root.hovered = true
       if (tooltipText) {
-        TooltipService.show(root, root.tooltipText)
+        TooltipService.show(Screen, root, root.tooltipText)
       }
     }
     onExited: {

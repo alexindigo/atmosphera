@@ -8,7 +8,6 @@ import qs.Widgets
 Item {
   id: root
 
-  property ShellScreen screen
   property string icon: ""
   property string text: ""
   property string suffix: ""
@@ -69,8 +68,6 @@ Item {
 
   Rectangle {
     id: pill
-
-    property ShellScreen screen: root.screen
 
     width: revealed ? maxPillWidth : 1
     height: revealed ? maxPillHeight : 1
@@ -265,7 +262,7 @@ Item {
     onEntered: {
       hovered = true
       root.entered()
-      TooltipService.show(pill, root.tooltipText, BarService.getTooltipDirection(), Style.tooltipDelayLong)
+      TooltipService.show(Screen, pill, root.tooltipText, BarService.getTooltipDirection(), Style.tooltipDelayLong)
       if (disableOpen || forceClose) {
         return
       }

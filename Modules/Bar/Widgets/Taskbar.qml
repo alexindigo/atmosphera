@@ -117,7 +117,7 @@ Rectangle {
               }
             }
           }
-          onEntered: TooltipService.show(taskbarItem, taskbarItem.modelData.title || taskbarItem.modelData.appId || "Unknown app.", BarService.getTooltipDirection())
+          onEntered: TooltipService.show(Screen, taskbarItem, taskbarItem.modelData.title || taskbarItem.modelData.appId || "Unknown app.", BarService.getTooltipDirection())
           onExited: TooltipService.hide()
         }
       }

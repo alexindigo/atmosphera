@@ -42,7 +42,6 @@ Item {
   BarPill {
     id: pill
 
-    screen: root.screen
     anchors.verticalCenter: parent.verticalCenter
     compact: (Settings.data.bar.density === "compact")
     rightOpen: BarService.getPillDirection(root)

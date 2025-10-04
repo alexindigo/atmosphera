@@ -8,6 +8,7 @@ import qs.Widgets
 
 ColumnLayout {
   id: root
+
   spacing: Style.marginL * scaling
 
   // Helper functions to update arrays immutably

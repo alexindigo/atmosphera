@@ -9,9 +9,10 @@ import qs.Widgets
 
 ColumnLayout {
   id: root
-  spacing: Style.marginL * scaling
 
   property string specificFolderMonitorName: ""
+
+  spacing: Style.marginL * scaling
 
   NHeader {
     label: I18n.tr("settings.wallpaper.settings.section.label")

@@ -9,8 +9,6 @@ import qs.Widgets
 NBox {
   id: root
 
-  property ShellScreen screen
-
   ColumnLayout {
     id: content
     anchors.left: parent.left

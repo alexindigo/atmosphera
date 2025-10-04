@@ -8,6 +8,10 @@ import qs.Widgets
 PopupWindow {
   id: root
 
+  property real scaling: 1.0
+  property int screenWidth: 0
+  property int screenHeight: 0
+
   property string text: ""
   property string direction: "auto" // "auto", "left", "right", "top", "bottom"
   property int margin: Style.marginXS // distance from target
@@ -15,7 +19,7 @@ PopupWindow {
   property int delay: 0
   property int hideDelay: 0
   property int maxWidth: 320
-  property real scaling: 1.0
+
   property int animationDuration: Style.animationFast
   property real animationScale: 0.85
 
@@ -106,11 +110,15 @@ PopupWindow {
   }
 
   // Function to show tooltip
-  function show(target, tipText, customDirection, showDelay) {
-    if (!target || !tipText || tipText === "")
+  function show(screen, target, tipText, customDirection, showDelay) {
+    if (!screen || !target || !tipText || tipText === "")
       return
 
-    delay = showDelay
+    root.scaling = ScalingService.getScreenScaleByName(screen.name)
+    root.screenWidth = screen.width
+    root.screenHeight = screen.height
+
+    root.delay = showDelay
 
     // Stop any running timers and animations
     hideTimer.stop()
@@ -142,21 +150,6 @@ PopupWindow {
   function positionAndShow() {
     if (!targetItem || !targetItem.parent || !pendingShow) {
       return
-    }
-
-    // Get screen dimensions - try multiple methods
-    var screenWidth = Screen.width
-    var screenHeight = Screen.height
-
-    // Try to get screen from target item
-    if (targetItem) {
-      if (targetItem.screen) {
-        screenWidth = targetItem.screen.width
-        screenHeight = targetItem.screen.height
-        scaling = ScalingService.getScreenScale(targetItem.screen)
-      } else {
-        Logger.warn("Tooltip", "Could not get screen scale for targetItem:", targetItem)
-      }
     }
 
     // Calculate tooltip dimensions
