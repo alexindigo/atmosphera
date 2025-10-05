@@ -127,8 +127,6 @@ NPanel {
               ctx.lineCap = "round"
               ctx.stroke()
             }
-
-
           }
 
           // Digital clock
@@ -138,10 +136,10 @@ NPanel {
 
             NText {
               text: {
-                var t = Settings.data.location.use12hourFormat  ? Qt.locale().toString(new Date(), "hh AP") : Qt.locale().toString(new Date(), "HH")
+                var t = Settings.data.location.use12hourFormat ? Qt.locale().toString(new Date(), "hh AP") : Qt.locale().toString(new Date(), "HH")
                 return t.split(" ")[0]
               }
-              pointSize: Style.fontSizeS  * scaling
+              pointSize: Style.fontSizeS * scaling
               font.weight: Style.fontWeightBold
               color: Color.mOnPrimary
               family: Settings.data.ui.fontFixed
