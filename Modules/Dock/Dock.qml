@@ -64,7 +64,9 @@ Variants {
     }
 
     // Shared properties between peek and dock windows
-    readonly property bool autoHide: Settings.data.dock.autoHide
+    readonly property string displayMode: Settings.data.dock.displayMode
+    readonly property bool autoHide: displayMode === "auto_hide"
+    readonly property bool exclusive: displayMode === "exclusive"
     readonly property int hideDelay: 500
     readonly property int showDelay: 100
     readonly property int hideAnimationDuration: Style.animationFast
@@ -250,7 +252,7 @@ Variants {
         color: Color.transparent
 
         WlrLayershell.namespace: "noctalia-dock-main"
-        WlrLayershell.exclusionMode: Settings.data.dock.exclusive ? ExclusionMode.Auto : ExclusionMode.Ignore
+        WlrLayershell.exclusionMode: exclusive ? ExclusionMode.Auto : ExclusionMode.Ignore
 
         // Size to fit the dock container exactly
         implicitWidth: dockContainerWrapper.width

@@ -115,8 +115,7 @@
     "position": "close_to_bar_button"
   },
   "dock": {
-    "autoHide": false,
-    "exclusive": false,
+    "displayMode": "always_visible",
     "backgroundOpacity": 1,
     "floatingRatio": 1,
     "onlySameOutput": true,

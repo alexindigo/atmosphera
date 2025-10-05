@@ -272,13 +272,12 @@
           "label": "外观",
           "description": "自定义 Dock 的行为和外观。"
         },
-        "auto-hide": {
-          "label": "自动隐藏",
-          "description": "不使用时自动隐藏。"
-        },
-        "exclusive-zone": {
-          "label": "独占区域",
-          "description": "可以防止窗口重叠。"
+        "display": {
+          "label": "显示",
+          "description": "选择 Dock 的行为方式。",
+          "always-visible": "始终可见",
+          "auto-hide": "自动隐藏",
+          "exclusive": "独占"
         },
         "background-opacity": {
           "label": "背景不透明度",

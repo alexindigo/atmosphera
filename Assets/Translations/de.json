@@ -276,13 +276,12 @@
           "label": "Erscheinungsbild",
           "description": "Verhalten und Erscheinungsbild des Docks anpassen."
         },
-        "auto-hide": {
-          "label": "Automatisch ausblenden",
-          "description": "Automatisch ausblenden, wenn nicht in Gebrauch."
-        },
-        "exclusive-zone": {
-          "label": "Exklusive Zone",
-          "description": "Fensterüberlappung verhindern."
+        "display": {
+          "label": "Anzeige",
+          "description": "Wählen Sie, wie sich das Dock verhält.",
+          "always-visible": "Immer sichtbar",
+          "auto-hide": "Automatisch ausblenden",
+          "exclusive": "Exklusiv"
         },
         "background-opacity": {
           "label": "Hintergrund-Transparenz",

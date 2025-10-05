@@ -29,18 +29,30 @@ ColumnLayout {
     description: I18n.tr("settings.dock.appearance.section.description")
   }
 
-  NToggle {
-    label: I18n.tr("settings.dock.appearance.auto-hide.label")
-    description: I18n.tr("settings.dock.appearance.auto-hide.description")
-    checked: Settings.data.dock.autoHide
-    onToggled: checked => Settings.data.dock.autoHide = checked
-  }
-
-  NToggle {
-    label: I18n.tr("settings.dock.appearance.exclusive-zone.label")
-    description: I18n.tr("settings.dock.appearance.exclusive-zone.description")
-    checked: Settings.data.dock.exclusive
-    onToggled: checked => Settings.data.dock.exclusive = checked
+  ColumnLayout {
+    spacing: Style.marginXXS * scaling
+    Layout.fillWidth: true
+    NLabel {
+      label: I18n.tr("settings.dock.appearance.display.label")
+      description: I18n.tr("settings.dock.appearance.display.description")
+    }
+    NComboBox {
+      Layout.fillWidth: true
+      model: [{
+          "key": "always_visible",
+          "name": I18n.tr("settings.dock.appearance.display.always-visible")
+        }, {
+          "key": "auto_hide",
+          "name": I18n.tr("settings.dock.appearance.display.auto-hide")
+        }, {
+          "key": "exclusive",
+          "name": I18n.tr("settings.dock.appearance.display.exclusive")
+        }]
+      currentKey: Settings.data.dock.displayMode
+      onSelected: key => {
+                    Settings.data.dock.displayMode = key
+                  }
+    }
   }
 
   ColumnLayout {

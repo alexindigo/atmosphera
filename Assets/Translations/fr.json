@@ -272,13 +272,12 @@
           "label": "Apparence",
           "description": "Personnalisez le comportement et l'apparence du dock."
         },
-        "auto-hide": {
-          "label": "Masquer automatiquement",
-          "description": "Masquer automatiquement lorsqu'il n'est pas utilisé."
-        },
-        "exclusive-zone": {
-          "label": "Zone exclusive",
-          "description": "Empêcher le chevauchement des fenêtres."
+        "display": {
+          "label": "Affichage",
+          "description": "Choisissez comment le dock se comporte.",
+          "always-visible": "Toujours visible",
+          "auto-hide": "Masquer automatiquement",
+          "exclusive": "Exclusif"
         },
         "background-opacity": {
           "label": "Opacité de l'arrière-plan",
