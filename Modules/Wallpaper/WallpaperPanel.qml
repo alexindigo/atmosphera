@@ -308,7 +308,6 @@ NPanel {
       anchors.fill: parent
       spacing: Style.marginM * scaling
 
-      // Optimized GridView with native scrolling and recycling
       GridView {
         id: wallpaperGridView
 
@@ -316,7 +315,7 @@ NPanel {
         Layout.fillHeight: true
 
         visible: !WallpaperService.scanning
-        interactive: true // Enable delegate recycling and native scrolling
+        interactive: true
         clip: true
         focus: true
         keyNavigationEnabled: true
@@ -325,7 +324,7 @@ NPanel {
         model: filteredWallpapers
 
         property int columns: 4
-        property int itemSize: Math.floor((width - leftMargin - rightMargin - (columns * Style.marginS * scaling)) / columns)
+        property int itemSize: cellWidth
 
         cellWidth: Math.floor((width - leftMargin - rightMargin) / columns)
         cellHeight: Math.floor(itemSize * 0.7) + Style.marginXS * scaling + Style.fontSizeXS * scaling + Style.marginM * scaling
@@ -335,29 +334,19 @@ NPanel {
         topMargin: Style.marginS * scaling
         bottomMargin: Style.marginS * scaling
 
-        highlightFollowsCurrentItem: true
-        highlightMoveDuration: 150
-
-        highlight: Rectangle {
-          color: Color.mSecondary
-          opacity: 0.3
-          radius: Style.radiusS * scaling
-          z: 0
-        }
-
         onCurrentIndexChanged: {
           // Synchronize scroll with current item position
-          if (currentIndex >= 0 && scrollView.contentItem) {
+          if (currentIndex >= 0) {
             let row = Math.floor(currentIndex / columns)
             let itemY = row * cellHeight
-            let viewportTop = scrollView.contentItem.contentY
-            let viewportBottom = viewportTop + scrollView.height
+            let viewportTop = contentY
+            let viewportBottom = viewportTop + height
 
             // If item is out of view, scroll
             if (itemY < viewportTop) {
-              scrollView.contentItem.contentY = Math.max(0, itemY - cellHeight)
+              contentY = Math.max(0, itemY - cellHeight)
             } else if (itemY + cellHeight > viewportBottom) {
-              scrollView.contentItem.contentY = itemY + cellHeight - scrollView.height + cellHeight
+              contentY = itemY + cellHeight - height + cellHeight
             }
           }
         }
@@ -407,7 +396,15 @@ NPanel {
             Rectangle {
               anchors.fill: parent
               color: Color.transparent
-              border.color: isSelected ? Color.mSecondary : Color.mSurface
+              border.color: {
+                if (isSelected) {
+                  return Color.mSecondary
+                }
+                if (wallpaperGridView.currentIndex === index) {
+                  return Color.mTertiary
+                }
+                return Color.mSurface
+              }
               border.width: Math.max(1, Style.borderL * 1.5 * scaling)
             }
 
@@ -435,7 +432,7 @@ NPanel {
             Rectangle {
               anchors.fill: parent
               color: Color.mSurface
-              opacity: (hoverHandler.hovered || isSelected) ? 0 : 0.3
+              opacity: (hoverHandler.hovered || isSelected || wallpaperGridView.currentIndex === index) ? 0 : 0.3
               radius: parent.radius
               Behavior on opacity {
                 NumberAnimation {
@@ -463,8 +460,7 @@ NPanel {
 
           NText {
             text: filename
-            color: Color.mOnSurfaceVariant
-            opacity: 0.5
+            color: (hoverHandler.hovered || isSelected || wallpaperGridView.currentIndex === index) ? Color.mOnSurface : Color.mOnSurfaceVariant
             pointSize: Style.fontSizeXS * scaling
             Layout.fillWidth: true
             Layout.leftMargin: Style.marginS * scaling
