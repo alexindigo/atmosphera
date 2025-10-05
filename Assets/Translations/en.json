@@ -20,6 +20,10 @@
           "label": "User interface",
           "description": "Customize the look, feel, and behavior of the interface."
         },
+        "tooltips": {
+          "label": "Show tooltips",
+          "description": "Enable or disable tooltips throughout the interface."
+        },
         "dim-desktop": {
           "label": "Dim desktop",
           "description": "Dim the desktop when panels or menus are open."

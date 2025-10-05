@@ -1,5 +1,5 @@
 {
-  "settingsVersion": 14,
+  "settingsVersion": 15,
   "bar": {
     "position": "top",
     "backgroundOpacity": 1,
@@ -156,7 +156,8 @@
     "fontDefaultScale": 1,
     "fontFixedScale": 1,
     "monitorsScaling": [],
-    "idleInhibitorEnabled": false
+    "idleInhibitorEnabled": false,
+    "tooltipsEnabled": true
   },
   "brightness": {
     "brightnessStep": 5

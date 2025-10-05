@@ -128,7 +128,7 @@ Singleton {
   JsonAdapter {
     id: adapter
 
-    property int settingsVersion: 14
+    property int settingsVersion: 15
 
     // bar
     property JsonObject bar: JsonObject {
@@ -303,6 +303,7 @@ Singleton {
       property real fontFixedScale: 1.0
       property list<var> monitorsScaling: []
       property bool idleInhibitorEnabled: false
+      property bool tooltipsEnabled: true
     }
 
     // brightness

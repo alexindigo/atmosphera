@@ -18,6 +18,10 @@
           "label": "Interface do usuário",
           "description": "Personalize a aparência, a sensação e o comportamento da interface."
         },
+        "tooltips": {
+          "label": "Mostrar tooltips",
+          "description": "Ativar ou desativar tooltips em toda a interface."
+        },
         "dim-desktop": {
           "label": "Escurecer área de trabalho",
           "description": "Escurece a área de trabalho quando painéis ou menus estão abertos."

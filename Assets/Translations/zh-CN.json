@@ -18,6 +18,10 @@
           "label": "用户界面",
           "description": "自定义界面的外观、风格和行为。"
         },
+        "tooltips": {
+          "label": "显示工具提示",
+          "description": "在整个界面中启用或禁用工具提示。"
+        },
         "dim-desktop": {
           "label": "调暗桌面",
           "description": "当面板或菜单打开时调暗桌面。"

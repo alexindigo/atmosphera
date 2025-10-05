@@ -82,6 +82,13 @@ ColumnLayout {
       onToggled: checked => Settings.data.general.dimDesktop = checked
     }
 
+    NToggle {
+      label: I18n.tr("settings.general.ui.tooltips.label")
+      description: I18n.tr("settings.general.ui.tooltips.description")
+      checked: Settings.data.ui.tooltipsEnabled
+      onToggled: checked => Settings.data.ui.tooltipsEnabled = checked
+    }
+
     ColumnLayout {
       spacing: Style.marginXXS * scaling
       Layout.fillWidth: true

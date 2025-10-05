@@ -18,6 +18,10 @@
           "label": "Benutzeroberfläche",
           "description": "Passen Sie das Aussehen, die Haptik und das Verhalten der Oberfläche an."
         },
+        "tooltips": {
+          "label": "Tooltips anzeigen",
+          "description": "Tooltips in der gesamten Benutzeroberfläche aktivieren oder deaktivieren."
+        },
         "dim-desktop": {
           "label": "Desktop abdunkeln",
           "description": "Desktop abdunkeln, wenn Panels oder Menüs geöffnet sind."

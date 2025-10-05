@@ -16,6 +16,10 @@ Singleton {
   }
 
   function show(screen, target, text, direction, delay) {
+    if (!Settings.data.ui.tooltipsEnabled) {
+      return
+    }
+
     // Don't create if no text
     if (!screen || !target || !text) {
       Logger.log("Tooltip", "No target or text")

@@ -18,6 +18,10 @@
           "label": "Interface utilisateur",
           "description": "Personnalisez l'apparence, l'ergonomie et le comportement de l'interface."
         },
+        "tooltips": {
+          "label": "Afficher les tooltips",
+          "description": "Activer ou désactiver les tooltips dans toute l'interface."
+        },
         "dim-desktop": {
           "label": "Assombrir le bureau",
           "description": "Assombrir le bureau lorsque des panneaux ou des menus sont ouverts."

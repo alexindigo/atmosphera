@@ -18,6 +18,10 @@
           "label": "Interfaz de usuario",
           "description": "Personaliza la apariencia, sensación y comportamiento de la interfaz."
         },
+        "tooltips": {
+          "label": "Mostrar tooltips",
+          "description": "Activar o desactivar tooltips en toda la interfaz."
+        },
         "dim-desktop": {
           "label": "Atenuar escritorio",
           "description": "Atenúa el escritorio cuando los paneles o menús están abiertos."
