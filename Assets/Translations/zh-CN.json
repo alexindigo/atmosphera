@@ -607,7 +607,7 @@
         },
         "12hour-format": {
           "description": "开启为 AM/PM 格式（例如：8:00 PM），关闭为 24 小时制（例如：20:00）。",
-          "label": "使用 12 小时制时间格式。"
+          "label": "使用12小时制时间格式"
         },
         "week-numbers": {
           "label": "显示周数",
