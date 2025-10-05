@@ -109,14 +109,14 @@ Singleton {
         // Process ended while we were pending - likely cancelled or error
         isPending = false
         pendingTimer.running = false
-        
+
         // Check if gpu-screen-recorder is not installed
         const stdout = String(stdout.text || "").trim()
         if (stdout === "GPU_SCREEN_RECORDER_NOT_INSTALLED") {
           ToastService.showError(I18n.tr("toast.recording.not-installed"), I18n.tr("toast.recording.not-installed-desc"), 7000)
           return
         }
-        
+
         // If it failed to start, show a clear error toast with stderr
         if (exitCode !== 0) {
           const err = String(stderr.text || "").trim()

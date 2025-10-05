@@ -241,8 +241,8 @@ ColumnLayout {
           color: getSchemeColor(modelData, "mSurface")
           border.width: Math.max(1, Style.borderL * scaling)
           border.color: {
-            if  (Settings.data.colorSchemes.predefinedScheme === extractSchemeName(modelData)) {
-              return Color.mSecondary;
+            if (Settings.data.colorSchemes.predefinedScheme === extractSchemeName(modelData)) {
+              return Color.mSecondary
             }
             if (itemMouseArea.containsMouse) {
               return Color.mTertiary
@@ -343,7 +343,7 @@ ColumnLayout {
       }
     }
 
-        // Generate templates for predefined schemes
+    // Generate templates for predefined schemes
     NCheckbox {
       Layout.fillWidth: true
       label: I18n.tr("settings.color-scheme.predefined.generate-templates.label")

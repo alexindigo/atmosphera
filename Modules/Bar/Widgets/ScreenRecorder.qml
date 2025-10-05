@@ -18,7 +18,7 @@ NIconButton {
   colorFg: ScreenRecorderService.isRecording ? Color.mOnPrimary : Color.mOnSurface
   colorBorder: Color.transparent
   colorBorderHover: Color.transparent
-  
+
   function handleClick() {
     if (!ScreenRecorderService.isAvailable) {
       ToastService.showError(I18n.tr("toast.recording.not-installed"), I18n.tr("toast.recording.not-installed-desc"), 7000)
@@ -26,6 +26,6 @@ NIconButton {
     }
     ScreenRecorderService.toggleRecording()
   }
-  
+
   onClicked: handleClick()
 }

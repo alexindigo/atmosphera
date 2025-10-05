@@ -16,7 +16,7 @@ NPanel {
   preferredHeight: 480
   panelKeyboardFocus: true
 
-  onOpened: function() {
+  onOpened: function () {
     Settings.data.notifications.lastSeenTs = Time.timestamp * 1000
   }
 
