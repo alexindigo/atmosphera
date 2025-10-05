@@ -97,13 +97,21 @@ function hslToHex(h, s, l) {
  * Generate fixed_dim variant (darker, muted version)
  * Material 3 fixed_dim is typically 20-30% darker
  */
-function generateFixedDim(hexColor) {
+function generateFixedDim(hexColor, isDarkTheme = false) {
   const hsl = hexToHSL(hexColor);
   if (!hsl) return hexColor;
 
-  // Reduce lightness by 25-30% and slightly reduce saturation
-  const newL = Math.max(hsl.l * 0.7, 10);
-  const newS = Math.max(hsl.s * 0.85, 5);
+  let newL, newS;
+  
+  if (isDarkTheme) {
+    // Dark theme: make it dimmer but not too dark (aim for 15-25 lightness)
+    newL = Math.max(hsl.l * 0.6, 15);
+    newS = Math.max(hsl.s * 0.7, 15);
+  } else {
+    // Light theme: reduce lightness by 25-30% and slightly reduce saturation
+    newL = Math.max(hsl.l * 0.7, 10);
+    newS = Math.max(hsl.s * 0.85, 5);
+  }
 
   return hslToHex(hsl.h, newS, newL);
 }
@@ -112,13 +120,20 @@ function generateFixedDim(hexColor) {
  * Generate bright variant (lighter, more vibrant version)
  * Material 3 bright is typically 15-25% lighter with boosted saturation
  */
-function generateBright(hexColor) {
+function generateBright(hexColor, isDarkTheme = false) {
   const hsl = hexToHSL(hexColor);
   if (!hsl) return hexColor;
-
-  // Increase lightness by 20-25% and boost saturation
-  const newL = Math.min(hsl.l * 1.25, 90);
-  const newS = Math.min(hsl.s * 1.1, 100);
+  
+  let newL, newS;
+  if (isDarkTheme) {
+    // Dark theme: brighten significantly but cap to avoid washing out (aim for 40-60 lightness)
+    newL = Math.min(hsl.l * 1.5, 60);
+    newS = Math.min(hsl.s * 1.15, 100);
+  } else {
+    // Light theme: increase lightness by 20-25% and boost saturation
+    newL = Math.min(hsl.l * 1.25, 90);
+    newS = Math.min(hsl.s * 1.1, 100);
+  }
 
   return hslToHex(hsl.h, newS, newL);
 }
@@ -132,7 +147,6 @@ function generateContainer(hexColor, isDarkTheme = false) {
   if (!hsl) return hexColor;
 
   let newL, newS;
-  
   if (isDarkTheme) {
     // Dark theme: darken the color (aim for 10-20 lightness)
     newL = Math.max(hsl.l - (hsl.l - 15) * 0.85, 10);
