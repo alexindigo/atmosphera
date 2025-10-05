@@ -399,7 +399,6 @@ Popup {
         radius: Style.radiusM * scaling
         border.color: Color.mOutline
         border.width: Math.max(1, Style.borderS * scaling)
-        clip: true
 
         FolderListModel {
           id: folderModel
@@ -487,6 +486,7 @@ Popup {
           model: filteredModel
           visible: filePickerPanel.viewMode
           clip: true
+          reuseItems: true
 
           property int columns: Math.max(1, Math.floor(width / (120 * scaling)))
           property int itemSize: Math.floor((width - leftMargin - rightMargin - (columns * Style.marginS * scaling)) / columns)
@@ -639,13 +639,13 @@ Popup {
                   else if (mouseArea.containsMouse)
                     return Color.mOnTertiary
                   else
-                    return Color.mOnSurface
+                    return Color.mOnSurfaceVariant
                 }
                 pointSize: Style.fontSizeS * scaling
                 font.weight: isSelected ? Style.fontWeightBold : Style.fontWeightRegular
                 Layout.fillWidth: true
                 horizontalAlignment: Text.AlignHCenter
-                wrapMode: Text.WordWrap
+                wrapMode: Text.WrapAnywhere
                 elide: Text.ElideRight
                 maximumLineCount: 2
               }
@@ -700,7 +700,6 @@ Popup {
           anchors.margins: Style.marginS * scaling
           model: filteredModel
           visible: !filePickerPanel.viewMode
-          clip: true
 
           delegate: Rectangle {
             id: listItem

@@ -26,12 +26,11 @@ Popup {
     radius: Style.radiusM * scaling
   }
 
-  contentItem: ListView {
+  contentItem: NListView {
     id: listView
     implicitHeight: contentHeight
     spacing: Style.marginXXS * scaling
     interactive: contentHeight > root.height
-    clip: true
 
     delegate: ItemDelegate {
       id: menuItem

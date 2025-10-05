@@ -136,7 +136,6 @@ NBox {
           height: 90 * scaling
           radius: width * 0.5
           color: trackArt.visible ? Color.mPrimary : Color.transparent
-          clip: true
 
           // Can't use fallback icon here, as we have a big disc behind
           NImageCircled {

@@ -24,7 +24,6 @@ Rectangle {
   radius: Style.radiusS * scaling
   border.color: flat ? Color.transparent : Color.mSurfaceVariant
   border.width: flat ? 0 : Math.max(1, Style.borderS * scaling)
-  clip: true
 
   // Repaint gauge when the bound value changes
   onValueChanged: gauge.requestPaint()

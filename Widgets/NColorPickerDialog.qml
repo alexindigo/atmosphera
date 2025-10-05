@@ -123,7 +123,6 @@ Popup {
 
     verticalPolicy: ScrollBar.AlwaysOff
     horizontalPolicy: ScrollBar.AlwaysOff
-    clip: true
 
     ColumnLayout {
       width: scrollView.availableWidth

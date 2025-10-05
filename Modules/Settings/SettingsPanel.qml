@@ -438,7 +438,6 @@ NPanel {
           color: Color.mSurfaceVariant
           border.color: Color.mOutline
           border.width: Math.max(1, Style.borderS * scaling)
-          clip: true
 
           ColumnLayout {
             id: contentLayout
@@ -518,8 +517,6 @@ NPanel {
                       horizontalPolicy: ScrollBar.AlwaysOff
                       verticalPolicy: ScrollBar.AsNeeded
                       padding: Style.marginL * scaling
-                      clip: true
-
                       Component.onCompleted: {
                         root.activeScrollView = scrollView
                       }

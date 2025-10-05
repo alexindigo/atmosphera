@@ -84,7 +84,6 @@ RowLayout {
       anchors.bottom: parent.bottom
       anchors.left: parent.left
       opacity: root.enabled && root.value > root.from ? 1.0 : 0.3
-      clip: true
 
       Item {
         id: leftSemicircle
@@ -180,7 +179,6 @@ RowLayout {
       anchors.bottom: parent.bottom
       anchors.right: parent.right
       opacity: root.enabled && root.value < root.to ? 1.0 : 0.3
-      clip: true
 
       Item {
         id: rightSemicircle

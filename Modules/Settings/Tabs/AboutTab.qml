@@ -113,7 +113,6 @@ ColumnLayout {
     cellWidth: Style.baseWidgetSize * 7 * scaling
     cellHeight: Style.baseWidgetSize * 3 * scaling
     model: root.contributors
-    clip: true
 
     delegate: Rectangle {
       width: contributorsGrid.cellWidth - Style.marginM * scaling

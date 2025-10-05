@@ -305,11 +305,8 @@ NPanel {
         Layout.fillWidth: true
         Layout.fillHeight: true
         spacing: Style.marginXXS * scaling
-
         model: results
         currentIndex: selectedIndex
-
-        clip: true
         cacheBuffer: resultsList.height * 2
         onCurrentIndexChanged: {
           cancelFlick()
@@ -387,7 +384,6 @@ NPanel {
                 Layout.preferredHeight: badgeSize
                 radius: Style.radiusM * scaling
                 color: Color.mSurfaceVariant
-                clip: true
 
                 // Image preview for clipboard images
                 NImageRounded {

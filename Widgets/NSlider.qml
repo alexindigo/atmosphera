@@ -37,7 +37,6 @@ Slider {
       id: activeTrackContainer
       width: root.visualPosition * parent.width
       height: parent.height
-      clip: true
 
       // The rounded end cap made from a rounded rectangle
       Rectangle {

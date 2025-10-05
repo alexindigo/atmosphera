@@ -170,9 +170,6 @@ ColumnLayout {
       anchors.fill: parent
       anchors.margins: Style.marginL * scaling
       spacing: root.contentSpacing
-
-      // Clip content during animation
-      clip: true
     }
 
     // Fade in animation for content

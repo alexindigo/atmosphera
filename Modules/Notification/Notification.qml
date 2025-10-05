@@ -184,7 +184,6 @@ Variants {
             Layout.preferredHeight: notificationLayout.implicitHeight + (Style.marginL * 2 * cardScaling)
             Layout.maximumHeight: Layout.preferredHeight
 
-            clip: true
             radius: Style.radiusL * cardScaling
             border.color: Color.mOutline
             border.width: Math.max(1, Style.borderS * cardScaling)

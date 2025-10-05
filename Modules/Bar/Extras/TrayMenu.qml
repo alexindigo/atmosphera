@@ -108,7 +108,6 @@ PopupWindow {
     anchors.margins: Style.marginS * scaling
     contentHeight: columnLayout.implicitHeight
     interactive: true
-    clip: true
 
     // Use a ColumnLayout to handle menu item arrangement
     ColumnLayout {
