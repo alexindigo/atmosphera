@@ -11,10 +11,10 @@ Item {
 
   required property ShellScreen screen
   required property real scaling
-  property bool active: false
 
-  // Local queue for this screen only
+  // Local queue for this screen only (bounded to prevent memory issues)
   property var messageQueue: []
+  property int maxQueueSize: 10
   property bool isShowingToast: false
 
   // If true, immediately show new toasts
@@ -31,7 +31,6 @@ Item {
 
   Connections {
     target: ToastService
-    enabled: root.active
 
     function onNotify(message, description, type, duration) {
       root.enqueueToast({
@@ -53,7 +52,15 @@ Item {
   }
 
   function enqueueToast(toastData) {
-    Logger.log("ToastScreen", "Queuing", toastData.type, ":", toastData.message, toastData.description.substr(100).replace(/\n/g, ""))
+    // Safe logging - fix the substring bug
+    var descPreview = (toastData.description || "").substring(0, 100).replace(/\n/g, " ")
+    Logger.log("ToastScreen", "Queuing", toastData.type, ":", toastData.message, descPreview)
+
+    // Bounded queue to prevent unbounded memory growth
+    if (messageQueue.length >= maxQueueSize) {
+      Logger.log("ToastScreen", "Queue full, dropping oldest toast")
+      messageQueue.shift()
+    }
 
     if (replaceOnNew && isShowingToast) {
       // Cancel current toast and clear queue for latest toast
@@ -70,7 +77,7 @@ Item {
       isShowingToast = false
       quickSwitchTimer.restart()
     } else {
-      // Original behavior - queue the toast
+      // Queue the toast
       messageQueue.push(toastData)
       processQueue()
     }
@@ -83,27 +90,24 @@ Item {
   }
 
   function processQueue() {
-    if (!active || messageQueue.length === 0 || isShowingToast) {
+    if (messageQueue.length === 0 || isShowingToast) {
       return
     }
 
     var data = messageQueue.shift()
     isShowingToast = true
 
-    // Activate the loader and show toast
+    // Store the toast data for when loader is ready
+    windowLoader.pendingToast = data
+
+    // Activate the loader - onStatusChanged will handle showing the toast
     windowLoader.active = true
-    // Need a small delay to ensure the window is created
-    Qt.callLater(() => {
-                   if (windowLoader.item) {
-                     windowLoader.item.showToast(data.message, data.description, data.type, data.duration)
-                   }
-                 })
   }
 
   function onToastHidden() {
     isShowingToast = false
 
-    // Deactivate the loader to completely remove the window
+    // Deactivate the loader to completely remove the window and free memory
     windowLoader.active = false
 
     // Small delay before processing next toast
@@ -117,9 +121,21 @@ Item {
   }
 
   // The loader that creates/destroys the PanelWindow as needed
+  // This is good for RAM efficiency when toasts are infrequent
   Loader {
     id: windowLoader
     active: false // Only active when showing a toast
+
+    // Store pending toast data
+    property var pendingToast: null
+
+    onStatusChanged: {
+      // When loader becomes ready, show the pending toast
+      if (status === Loader.Ready && pendingToast !== null) {
+        item.showToast(pendingToast.message, pendingToast.description, pendingToast.type, pendingToast.duration)
+        pendingToast = null
+      }
+    }
 
     sourceComponent: PanelWindow {
       id: panel

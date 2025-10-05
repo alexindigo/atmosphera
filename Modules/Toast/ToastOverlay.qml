@@ -7,15 +7,12 @@ import qs.Services
 import qs.Widgets
 
 Variants {
-  model: Quickshell.screens
+  model: Quickshell.screens.filter(screen => (Settings.data.notifications.monitors.includes(screen.name) || (Settings.data.notifications.monitors.length === 0)))
 
   delegate: ToastScreen {
     required property ShellScreen modelData
 
     screen: modelData
     scaling: ScalingService.getScreenScale(modelData)
-
-    // Only activate on enabled screens
-    active: modelData && (Settings.data.notifications.monitors.includes(modelData.name) || Settings.data.notifications.monitors.length === 0)
   }
 }
