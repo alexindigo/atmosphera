@@ -95,8 +95,14 @@ NPanel {
             anchors.fill: parent
 
             property real progress: Time.date.getSeconds() / 60
-
             onProgressChanged: requestPaint()
+
+            Connections {
+              target: Time
+              function onDateChanged() {
+                secondsProgress.progress = Time.date.getSeconds() / 60
+              }
+            }
 
             onPaint: {
               var ctx = getContext("2d")
@@ -122,22 +128,20 @@ NPanel {
               ctx.stroke()
             }
 
-            Connections {
-              target: Time
-              function onDateChanged() {
-                secondsProgress.progress = (Time.date.getSeconds() + Time.date.getMilliseconds() / 1000) / 60
-              }
-            }
+
           }
 
           // Digital clock
           ColumnLayout {
             anchors.centerIn: parent
-            spacing: -2 * scaling
+            spacing: -3 * scaling
 
             NText {
-              text: Qt.formatTime(Time.date, "HH")
-              pointSize: Style.fontSizeL * 0.7 * scaling
+              text: {
+                var t = Settings.data.location.use12hourFormat  ? Qt.locale().toString(new Date(), "hh AP") : Qt.locale().toString(new Date(), "HH")
+                return t.split(" ")[0]
+              }
+              pointSize: Style.fontSizeS  * scaling
               font.weight: Style.fontWeightBold
               color: Color.mOnPrimary
               family: Settings.data.ui.fontFixed
@@ -146,7 +150,7 @@ NPanel {
 
             NText {
               text: Qt.formatTime(Time.date, "mm")
-              pointSize: Style.fontSizeL * 0.7 * scaling
+              pointSize: Style.fontSizeS * scaling
               font.weight: Style.fontWeightBold
               color: Color.mOnPrimary
               family: Settings.data.ui.fontFixed

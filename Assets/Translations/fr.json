@@ -606,7 +606,7 @@
           "description": "Personnalisez l'affichage de la date et de l'heure."
         },
         "12hour-format": {
-          "label": "Utiliser le format horaire de 12 heures sur l'écran de verrouillage",
+          "label": "Utiliser le format horaire de 12 heures",
           "description": "Activé pour le format AM/PM (ex: 8:00 PM), désactivé pour le format 24 heures (ex: 20:00)."
         },
         "week-numbers": {

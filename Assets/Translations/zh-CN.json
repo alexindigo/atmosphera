@@ -606,8 +606,8 @@
           "description": "自定义日期和时间的显示方式。"
         },
         "12hour-format": {
-          "label": "在锁屏上使用 12 小时制",
-          "description": "开启为 AM/PM 格式（例如：8:00 PM），关闭为 24 小时制（例如：20:00）。"
+          "description": "开启为 AM/PM 格式（例如：8:00 PM），关闭为 24 小时制（例如：20:00）。",
+          "label": "使用 12 小时制时间格式。"
         },
         "week-numbers": {
           "label": "显示周数",

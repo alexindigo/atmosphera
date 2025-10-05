@@ -608,7 +608,7 @@
           "description": "Customize how date and time appear."
         },
         "12hour-format": {
-          "label": "Use 12-hour time format on the lock screen",
+          "label": "Use 12-hour time format.",
           "description": "On for AM/PM format (e.g., 8:00 PM), off for 24-hour format (e.g., 20:00)."
         },
         "week-numbers": {

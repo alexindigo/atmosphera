@@ -610,8 +610,8 @@
           "description": "Anpassen, wie Datum und Zeit erscheinen."
         },
         "12hour-format": {
-          "label": "12-Stunden-Zeitformat auf dem Sperrbildschirm verwenden",
-          "description": "An für AM/PM-Format (z.B. 8:00 PM), aus für 24-Stunden-Format (z.B. 20:00)."
+          "description": "An für AM/PM-Format (z.B. 8:00 PM), aus für 24-Stunden-Format (z.B. 20:00).",
+          "label": "Benutze das 12-Stunden-Zeitformat."
         },
         "week-numbers": {
           "label": "Wochennummern anzeigen",
