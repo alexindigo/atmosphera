@@ -119,7 +119,7 @@ Loader {
                 id: timeText
                 text: lockScreen.formatTime()
                 Layout.alignment: Qt.AlignHCenter
-                pointSize: 80 * scaling
+                pointSize: 72 * scaling
                 font.weight: Font.Medium
                 color: Color.mOnSurface
                 horizontalAlignment: Text.AlignHCenter
@@ -159,8 +159,8 @@ Loader {
               Layout.alignment: Qt.AlignHCenter
 
               Rectangle {
-                Layout.preferredWidth: 160 * scaling
-                Layout.preferredHeight: 160 * scaling
+                Layout.preferredWidth: 140 * scaling
+                Layout.preferredHeight: 140 * scaling
                 Layout.alignment: Qt.AlignHCenter
                 radius: width * 0.5
                 color: Color.transparent
@@ -189,8 +189,8 @@ Loader {
 
                 NImageCircled {
                   anchors.centerIn: parent
-                  width: 150 * scaling
-                  height: 150 * scaling
+                  width: 130 * scaling
+                  height: 130 * scaling
                   imagePath: Settings.data.general.avatarImage
                   fallbackIcon: "person"
 
@@ -223,7 +223,7 @@ Loader {
               NText {
                 text: Quickshell.env("USER")
                 Layout.alignment: Qt.AlignHCenter
-                pointSize: Style.fontSizeXXXL * scaling * 1.2
+                pointSize: Style.fontSizeXXXL * scaling
                 font.weight: Font.Medium
                 color: Color.mOnSurface
                 horizontalAlignment: Text.AlignHCenter
@@ -274,26 +274,26 @@ Loader {
 
             // Bottom container with weather, password input and controls
             Rectangle {
-              width: 800 * scaling
-              height: 240 * scaling
+              width: 750 * scaling
+              height: 220 * scaling
               anchors.horizontalCenter: parent.horizontalCenter
               anchors.bottom: parent.bottom
               anchors.bottomMargin: 100 * scaling
-              radius: 35 * scaling
+              radius: 32 * scaling
               color: Qt.alpha(Color.mSurfaceContainerHighest, 0.9)
               border.color: Qt.alpha(Color.mOutline, 0.2)
               border.width: 1
 
               ColumnLayout {
                 anchors.fill: parent
-                anchors.margins: 16 * scaling
-                spacing: 16 * scaling
+                anchors.margins: 14 * scaling
+                spacing: 14 * scaling
 
                 // Weather section
                 RowLayout {
                   Layout.fillWidth: true
-                  Layout.preferredHeight: 70 * scaling
-                  spacing: 20 * scaling
+                  Layout.preferredHeight: 65 * scaling
+                  spacing: 18 * scaling
                   visible: LocationService.coordinatesReady && LocationService.data.weather !== null
 
                   // Media widget with visualizer
@@ -555,17 +555,17 @@ Loader {
 
                   Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 52 * scaling
-                    radius: 26 * scaling
+                    Layout.preferredHeight: 48 * scaling
+                    radius: 24 * scaling
                     color: Qt.alpha(Color.mSurfaceContainerHighest, 0.6)
                     border.color: passwordInput.activeFocus ? Color.mPrimary : Qt.alpha(Color.mOutline, 0.3)
                     border.width: passwordInput.activeFocus ? 2 : 1
 
                     Row {
                       anchors.left: parent.left
-                      anchors.leftMargin: 20 * scaling
+                      anchors.leftMargin: 18 * scaling
                       anchors.verticalCenter: parent.verticalCenter
-                      spacing: 16 * scaling
+                      spacing: 14 * scaling
 
                       NIcon {
                         icon: "lock"
@@ -654,10 +654,10 @@ Loader {
 
                     Rectangle {
                       anchors.right: parent.right
-                      anchors.rightMargin: 10 * scaling
+                      anchors.rightMargin: 8 * scaling
                       anchors.verticalCenter: parent.verticalCenter
-                      width: 38 * scaling
-                      height: 38 * scaling
+                      width: 36 * scaling
+                      height: 36 * scaling
                       radius: width * 0.5
                       color: submitButtonArea.containsMouse ? Color.mPrimary : Qt.alpha(Color.mPrimary, 0.8)
                       border.color: Color.mPrimary
@@ -695,8 +695,8 @@ Loader {
                 // System control buttons
                 RowLayout {
                   Layout.fillWidth: true
-                  Layout.preferredHeight: 52 * scaling
-                  spacing: 12 * scaling
+                  Layout.preferredHeight: 48 * scaling
+                  spacing: 10 * scaling
 
                   Item {
                     Layout.preferredWidth: Style.marginM * scaling
@@ -704,24 +704,24 @@ Loader {
 
                   Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 52 * scaling
-                    radius: 26 * scaling
+                    Layout.preferredHeight: 48 * scaling
+                    radius: 24 * scaling
                     color: logoutButtonArea.containsMouse ? Color.mTertiary : "transparent"
 
                     RowLayout {
                       anchors.centerIn: parent
-                      spacing: 8 * scaling
+                      spacing: 6 * scaling
 
                       NIcon {
                         icon: "logout"
-                        pointSize: Style.fontSizeXL * scaling
+                        pointSize: Style.fontSizeL * scaling
                         color: logoutButtonArea.containsMouse ? Color.mOnTertiary : Color.mOnSurfaceVariant
                       }
 
                       NText {
                         text: I18n.tr("session-menu.logout")
                         color: logoutButtonArea.containsMouse ? Color.mOnTertiary : Color.mOnSurfaceVariant
-                        pointSize: Style.fontSizeL * scaling
+                        pointSize: Style.fontSizeM * scaling
                         font.weight: Font.Medium
                       }
                     }
@@ -743,24 +743,24 @@ Loader {
 
                   Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 52 * scaling
-                    radius: 26 * scaling
+                    Layout.preferredHeight: 48 * scaling
+                    radius: 24 * scaling
                     color: rebootButtonArea.containsMouse ? Color.mTertiary : "transparent"
 
                     RowLayout {
                       anchors.centerIn: parent
-                      spacing: 8 * scaling
+                      spacing: 6 * scaling
 
                       NIcon {
                         icon: "reboot"
-                        pointSize: Style.fontSizeXL * scaling
+                        pointSize: Style.fontSizeL * scaling
                         color: rebootButtonArea.containsMouse ? Color.mOnTertiary : Color.mOnSurfaceVariant
                       }
 
                       NText {
                         text: I18n.tr("session-menu.reboot")
                         color: rebootButtonArea.containsMouse ? Color.mOnTertiary : Color.mOnSurfaceVariant
-                        pointSize: Style.fontSizeL * scaling
+                        pointSize: Style.fontSizeM * scaling
                         font.weight: Font.Medium
                       }
                     }
@@ -782,26 +782,26 @@ Loader {
 
                   Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 52 * scaling
-                    radius: 26 * scaling
+                    Layout.preferredHeight: 48 * scaling
+                    radius: 24 * scaling
                     color: shutdownButtonArea.containsMouse ? Color.mError : "transparent"
                     border.color: shutdownButtonArea.containsMouse ? Color.mError : Color.transparent
                     border.width: 1
 
                     RowLayout {
                       anchors.centerIn: parent
-                      spacing: 8 * scaling
+                      spacing: 6 * scaling
 
                       NIcon {
                         icon: "shutdown"
-                        pointSize: Style.fontSizeXL * scaling
+                        pointSize: Style.fontSizeL * scaling
                         color: shutdownButtonArea.containsMouse ? Color.mOnError : Color.mOnSurfaceVariant
                       }
 
                       NText {
                         text: I18n.tr("session-menu.shutdown")
                         color: shutdownButtonArea.containsMouse ? Color.mOnError : Color.mOnSurfaceVariant
-                        pointSize: Style.fontSizeL * scaling
+                        pointSize: Style.fontSizeM * scaling
                         font.weight: Font.Medium
                       }
                     }

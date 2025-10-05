@@ -1415,7 +1415,9 @@
       "failed-gpu": "gpu-screen-recorder unerwartet beendet.",
       "failed-general": "Der Rekorder wurde mit einem Fehler beendet.",
       "no-portals": "Desktop-Portale laufen nicht",
-      "no-portals-desc": "Starten Sie xdg-desktop-portal und ein Compositor-Portal (wlr/hyprland/gnome/kde)."
+      "no-portals-desc": "Starten Sie xdg-desktop-portal und ein Compositor-Portal (wlr/hyprland/gnome/kde).",
+      "not-installed": "gpu-screen-recorder nicht installiert",
+      "not-installed-desc": "Bitte installieren Sie gpu-screen-recorder, um Bildschirmaufnahme-Funktionen zu nutzen."
     },
     "clipboard": {
       "unavailable": "Zwischenablage-Verlauf nicht verfügbar",
