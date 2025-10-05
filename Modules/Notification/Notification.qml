@@ -19,10 +19,28 @@ Variants {
     required property ShellScreen modelData
     property real scaling: ScalingService.getScreenScale(modelData)
 
-    // Access the notification model from the service - UPDATED NAME
+    // Access the notification model from the service
     property ListModel notificationModel: NotificationService.activeList
 
-    active: true
+    // Loader is active when there are notifications
+    active: notificationModel.count > 0 || delayTimer.running
+
+    // Keep loader active briefly after last notification to allow animations to complete
+    Timer {
+      id: delayTimer
+      interval: Style.animationSlow + 200 // Animation duration + buffer
+      repeat: false
+    }
+
+    // Start delay timer when last notification is removed
+    Connections {
+      target: notificationModel
+      function onCountChanged() {
+        if (notificationModel.count === 0 && root.active) {
+          delayTimer.restart()
+        }
+      }
+    }
 
     Connections {
       target: ScalingService
@@ -47,6 +65,9 @@ Variants {
       readonly property bool isLeft: location.indexOf("_left") >= 0
       readonly property bool isRight: location.indexOf("_right") >= 0
       readonly property bool isCentered: (location === "top" || location === "bottom")
+
+      // Store connection for cleanup
+      property var animateConnection: null
 
       // Anchor selection based on location (window edges)
       anchors.top: isTop
@@ -103,9 +124,9 @@ Variants {
       implicitHeight: notificationStack.implicitHeight
       WlrLayershell.exclusionMode: ExclusionMode.Ignore
 
-      // Connect to animation signal from service - UPDATED TO USE ID
+      // Connect to animation signal from service
       Component.onCompleted: {
-        NotificationService.animateAndRemove.connect(function (notificationId) {
+        animateConnection = NotificationService.animateAndRemove.connect(function (notificationId) {
           // Find the delegate by notification ID
           var delegate = null
           if (notificationStack && notificationStack.children && notificationStack.children.length > 0) {
@@ -127,6 +148,14 @@ Variants {
         })
       }
 
+      // Disconnect when destroyed to prevent memory leaks
+      Component.onDestruction: {
+        if (animateConnection) {
+          NotificationService.animateAndRemove.disconnect(animateConnection)
+          animateConnection = null
+        }
+      }
+
       // Main notification container
       ColumnLayout {
         id: notificationStack
@@ -144,32 +173,44 @@ Variants {
         Repeater {
           model: notificationModel
           delegate: Rectangle {
-            // Store the notification ID for reference
-            property string notificationId: model.id
+            id: card
 
-            Layout.preferredWidth: 360 * scaling
-            Layout.preferredHeight: notificationLayout.implicitHeight + (Style.marginL * 2 * scaling)
+            // Store the notification ID and data for reference
+            property string notificationId: model.id
+            property var notificationData: model
+            property real cardScaling: root.scaling
+
+            Layout.preferredWidth: 360 * cardScaling
+            Layout.preferredHeight: notificationLayout.implicitHeight + (Style.marginL * 2 * cardScaling)
             Layout.maximumHeight: Layout.preferredHeight
+
             clip: true
-            radius: Style.radiusL * scaling
+            radius: Style.radiusL * cardScaling
             border.color: Color.mOutline
-            border.width: Math.max(1, Style.borderS * scaling)
+            border.width: Math.max(1, Style.borderS * cardScaling)
             color: Color.mSurface
 
+            // Optimized progress bar container
             Rectangle {
-              id: progressBar
+              id: progressBarContainer
               anchors.top: parent.top
               anchors.left: parent.left
               anchors.right: parent.right
-              height: 2 * scaling
+              height: 2 * cardScaling
               color: Color.transparent
 
-              property real availableWidth: parent.width - (2 * parent.radius)
+              // Pre-calculate available width for the progress bar
+              readonly property real availableWidth: parent.width - (2 * parent.radius)
 
+              // Actual progress bar - centered and symmetric
               Rectangle {
+                id: progressBar
+                height: parent.height
+
+                // Center the bar and make it shrink symmetrically
                 x: parent.parent.radius + (parent.availableWidth * (1 - model.progress)) / 2
                 width: parent.availableWidth * model.progress
-                height: parent.height
+
                 color: {
                   if (model.urgency === NotificationUrgency.Critical || model.urgency === 2)
                     return Color.mError
@@ -178,7 +219,25 @@ Variants {
                   else
                     return Color.mPrimary
                 }
+
                 antialiasing: true
+
+                // Smooth progress animation
+                Behavior on width {
+                  enabled: !card.isRemoving // Disable during removal animation
+                  NumberAnimation {
+                    duration: 100 // Quick but smooth
+                    easing.type: Easing.Linear
+                  }
+                }
+
+                Behavior on x {
+                  enabled: !card.isRemoving
+                  NumberAnimation {
+                    duration: 100
+                    easing.type: Easing.Linear
+                  }
+                }
               }
             }
 
@@ -210,6 +269,9 @@ Variants {
 
             // Animate out when being removed
             function animateOut() {
+              if (isRemoving)
+                return
+              // Prevent multiple animations
               isRemoving = true
               scaleValue = 0.8
               opacityValue = 0.0
@@ -221,7 +283,6 @@ Variants {
               interval: Style.animationSlow
               repeat: false
               onTriggered: {
-                // Use the new API method with notification ID
                 NotificationService.dismissActiveNotification(notificationId)
               }
             }
@@ -251,28 +312,28 @@ Variants {
             ColumnLayout {
               id: notificationLayout
               anchors.fill: parent
-              anchors.margins: Style.marginM * scaling
-              anchors.rightMargin: (Style.marginM + 32) * scaling // Leave space for close button
-              spacing: Style.marginM * scaling
+              anchors.margins: Style.marginM * cardScaling
+              anchors.rightMargin: (Style.marginM + 32) * cardScaling // Leave space for close button
+              spacing: Style.marginM * cardScaling
 
               // Main content section
               RowLayout {
                 Layout.fillWidth: true
-                spacing: Style.marginM * scaling
+                spacing: Style.marginM * cardScaling
 
                 ColumnLayout {
                   // For real-time notification always show the original image
                   // as the cached version is most likely still processing.
                   NImageCircled {
-                    Layout.preferredWidth: 40 * scaling
-                    Layout.preferredHeight: 40 * scaling
+                    Layout.preferredWidth: 40 * cardScaling
+                    Layout.preferredHeight: 40 * cardScaling
                     Layout.alignment: Qt.AlignTop
-                    Layout.topMargin: 30 * scaling
+                    Layout.topMargin: 30 * cardScaling
                     imagePath: model.originalImage || ""
                     borderColor: Color.transparent
                     borderWidth: 0
                     fallbackIcon: "bell"
-                    fallbackIconSize: 24 * scaling
+                    fallbackIconSize: 24 * cardScaling
                   }
                   Item {
                     Layout.fillHeight: true
@@ -282,17 +343,17 @@ Variants {
                 // Text content
                 ColumnLayout {
                   Layout.fillWidth: true
-                  spacing: Style.marginS * scaling
+                  spacing: Style.marginS * cardScaling
 
                   // Header section with app name and timestamp
                   RowLayout {
                     Layout.fillWidth: true
-                    spacing: Style.marginS * scaling
+                    spacing: Style.marginS * cardScaling
 
                     Rectangle {
-                      Layout.preferredWidth: 6 * scaling
-                      Layout.preferredHeight: 6 * scaling
-                      radius: Style.radiusXS * scaling
+                      Layout.preferredWidth: 6 * cardScaling
+                      Layout.preferredHeight: 6 * cardScaling
+                      radius: Style.radiusXS * cardScaling
                       color: {
                         if (model.urgency === NotificationUrgency.Critical || model.urgency === 2)
                           return Color.mError
@@ -307,7 +368,7 @@ Variants {
                     NText {
                       text: `${model.appName || I18n.tr("system.unknown-app")} · ${Time.formatRelativeTime(model.timestamp)}`
                       color: Color.mSecondary
-                      pointSize: Style.fontSizeXS * scaling
+                      pointSize: Style.fontSizeXS * cardScaling
                     }
 
                     Item {
@@ -317,7 +378,7 @@ Variants {
 
                   NText {
                     text: model.summary || I18n.tr("general.no-summary")
-                    pointSize: Style.fontSizeL * scaling
+                    pointSize: Style.fontSizeL * cardScaling
                     font.weight: Style.fontWeightMedium
                     color: Color.mOnSurface
                     textFormat: Text.PlainText
@@ -330,7 +391,7 @@ Variants {
 
                   NText {
                     text: model.body || ""
-                    pointSize: Style.fontSizeM * scaling
+                    pointSize: Style.fontSizeM * cardScaling
                     color: Color.mOnSurface
                     textFormat: Text.PlainText
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
@@ -343,8 +404,8 @@ Variants {
                   // Notification actions
                   Flow {
                     Layout.fillWidth: true
-                    spacing: Style.marginS * scaling
-                    Layout.topMargin: Style.marginM * scaling
+                    spacing: Style.marginS * cardScaling
+                    Layout.topMargin: Style.marginM * cardScaling
 
                     flow: Flow.LeftToRight
                     layoutDirection: Qt.LeftToRight
@@ -376,12 +437,12 @@ Variants {
                           }
                           return actionText
                         }
-                        fontSize: Style.fontSizeS * scaling
+                        fontSize: Style.fontSizeS * cardScaling
                         backgroundColor: Color.mPrimary
                         textColor: hovered ? Color.mOnTertiary : Color.mOnPrimary
                         hoverColor: Color.mTertiary
                         outlined: false
-                        implicitHeight: 24 * scaling
+                        implicitHeight: 24 * cardScaling
                         onClicked: {
                           NotificationService.invokeAction(parent.parentNotificationId, actionData.identifier)
                         }
@@ -398,9 +459,9 @@ Variants {
               tooltipText: I18n.tr("tooltips.close")
               baseSize: Style.baseWidgetSize * 0.6
               anchors.top: parent.top
-              anchors.topMargin: Style.marginM * scaling
+              anchors.topMargin: Style.marginM * cardScaling
               anchors.right: parent.right
-              anchors.rightMargin: Style.marginM * scaling
+              anchors.rightMargin: Style.marginM * cardScaling
 
               onClicked: {
                 animateOut()

@@ -162,6 +162,7 @@ NPanel {
             anchors.fill: parent
             // Don't capture clicks on the delete button
             anchors.rightMargin: 48 * scaling
+            enabled: (summaryText.truncated || bodyText.truncated)
             onClicked: {
               if (notificationList.expandedId === notificationId) {
                 notificationList.expandedId = ""
@@ -169,7 +170,7 @@ NPanel {
                 notificationList.expandedId = notificationId
               }
             }
-            cursorShape: (summaryText.truncated || bodyText.truncated) ? Qt.PointingHandCursor : Qt.ArrowCursor
+            cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
           }
 
           RowLayout {

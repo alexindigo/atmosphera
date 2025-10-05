@@ -24,7 +24,10 @@ Singleton {
   // Internal state
   property var activeMap: ({})
   property var imageQueue: []
-  property var progressTimers: ({})
+
+  // Performance optimization: Track notification metadata separately
+  property var notificationMetadata: ({}) // Stores timestamp and duration for each notification
+
   PanelWindow {
     implicitHeight: 1
     implicitWidth: 1
@@ -89,11 +92,34 @@ Singleton {
     notification.tracked = true
     notification.closed.connect(() => removeActive(data.id))
 
+    // Store metadata for efficient progress calculation
+    const durations = [Settings.data.notifications?.lowUrgencyDuration * 1000 || 3000, Settings.data.notifications?.normalUrgencyDuration * 1000 || 8000, Settings.data.notifications?.criticalUrgencyDuration * 1000 || 15000]
+
+    let expire = 0
+    if (Settings.data.notifications?.respectExpireTimeout) {
+      if (data.expireTimeout === 0) {
+        expire = -1 // Never expire
+      } else if (data.expireTimeout > 0) {
+        expire = data.expireTimeout
+      } else {
+        expire = durations[data.urgency]
+      }
+    } else {
+      expire = durations[data.urgency]
+    }
+
+    notificationMetadata[data.id] = {
+      "timestamp": data.timestamp.getTime(),
+      "duration": expire,
+      "urgency": data.urgency
+    }
+
     activeList.insert(0, data)
     while (activeList.count > maxVisible) {
       const last = activeList.get(activeList.count - 1)
       activeMap[last.id]?.dismiss()
       activeList.remove(activeList.count - 1)
+      delete notificationMetadata[last.id]
     }
   }
 
@@ -169,51 +195,56 @@ Singleton {
       if (activeList.get(i).id === id) {
         activeList.remove(i)
         delete activeMap[id]
-        delete progressTimers[id]
+        delete notificationMetadata[id]
         break
       }
     }
   }
 
-  // Auto-hide timer
+  // Optimized batch progress update
   Timer {
-    interval: 10
+    interval: 50 // Reduced from 10ms to 50ms (20 updates/sec instead of 100)
     repeat: true
     running: activeList.count > 0
-    onTriggered: {
-      const now = Date.now()
-      const durations = [Settings.data.notifications?.lowUrgencyDuration * 1000 || 3000, Settings.data.notifications?.normalUrgencyDuration * 1000 || 8000, Settings.data.notifications?.criticalUrgencyDuration * 1000 || 15000]
+    onTriggered: updateAllProgress()
+  }
 
-      for (var i = activeList.count - 1; i >= 0; i--) {
-        const notif = activeList.get(i)
-        const elapsed = now - notif.timestamp.getTime()
-        var expire = 0
+  function updateAllProgress() {
+    const now = Date.now()
+    const toRemove = []
+    const updates = [] // Batch updates
 
-        if (Settings.data.notifications?.respectExpireTimeout) {
-          if (notif.expireTimeout === 0) {
-            // Timeout of 0 means never expire (infinite)
-            continue
-          } else if (notif.expireTimeout > 0) {
-            expire = notif.expireTimeout
-          } else {
-            expire = durations[notif.urgency]
-          }
-        } else {
-          expire = durations[notif.urgency]
-        }
+    // Collect all updates first
+    for (var i = 0; i < activeList.count; i++) {
+      const notif = activeList.get(i)
+      const meta = notificationMetadata[notif.id]
 
-        // Only update progress and check expiration for notifications with finite timeout
-        if (expire > 0) {
-          const progress = Math.max(1.0 - (elapsed / expire), 0.0)
-          updateModel(activeList, notif.id, "progress", progress)
+      if (!meta || meta.duration === -1)
+        continue
 
-          if (elapsed >= expire) {
-            animateAndRemove(notif.id)
-            delete progressTimers[notif.id]
-            break
-          }
-        }
+      // Skip infinite notifications
+      const elapsed = now - meta.timestamp
+      const progress = Math.max(1.0 - (elapsed / meta.duration), 0.0)
+
+      if (progress <= 0) {
+        toRemove.push(notif.id)
+      } else if (Math.abs(notif.progress - progress) > 0.005) {
+        // Only update if change is significant
+        updates.push({
+                       "index": i,
+                       "progress": progress
+                     })
       }
+    }
+
+    // Apply batch updates
+    for (const update of updates) {
+      activeList.setProperty(update.index, "progress", update.progress)
+    }
+
+    // Remove expired notifications (one at a time to allow animation)
+    if (toRemove.length > 0) {
+      animateAndRemove(toRemove[0])
     }
   }
 
@@ -387,6 +418,7 @@ Singleton {
     Object.values(activeMap).forEach(n => n.dismiss())
     activeList.clear()
     activeMap = {}
+    notificationMetadata = {}
   }
 
   function invokeAction(id, actionId) {
