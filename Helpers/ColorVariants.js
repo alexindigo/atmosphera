@@ -104,13 +104,13 @@ function generateFixedDim(hexColor, isDarkTheme = false) {
   let newL, newS;
   
   if (isDarkTheme) {
-    // Dark theme: make it dimmer but not too dark (aim for 15-25 lightness)
-    newL = Math.max(hsl.l * 0.6, 15);
-    newS = Math.max(hsl.s * 0.7, 15);
-  } else {
-    // Light theme: reduce lightness by 25-30% and slightly reduce saturation
+    // Dark Theme: Reduce lightness by 25-30% and slightly reduce saturation
     newL = Math.max(hsl.l * 0.7, 10);
     newS = Math.max(hsl.s * 0.85, 5);
+  } else {
+    // Light Theme: Increase lightness by 20-25% and reduce saturation
+    newL = Math.min(hsl.l * 1.25, 90);
+    newS = Math.max(hsl.s * 0.85, 10);
   }
 
   return hslToHex(hsl.h, newS, newL);
@@ -123,16 +123,16 @@ function generateFixedDim(hexColor, isDarkTheme = false) {
 function generateBright(hexColor, isDarkTheme = false) {
   const hsl = hexToHSL(hexColor);
   if (!hsl) return hexColor;
-  
+
   let newL, newS;
   if (isDarkTheme) {
-    // Dark theme: brighten significantly but cap to avoid washing out (aim for 40-60 lightness)
-    newL = Math.min(hsl.l * 1.5, 60);
-    newS = Math.min(hsl.s * 1.15, 100);
-  } else {
-    // Light theme: increase lightness by 20-25% and boost saturation
+    // Increase lightness by 20-25% and boost saturation
     newL = Math.min(hsl.l * 1.25, 90);
     newS = Math.min(hsl.s * 1.1, 100);
+  } else {
+    // Light Theme: Decrease lightness by 15-20% and boost saturation
+    newL = Math.max(hsl.l * 0.8, 20);
+    newS = Math.min(hsl.s * 1.15, 100);
   }
 
   return hslToHex(hsl.h, newS, newL);
