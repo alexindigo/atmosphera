@@ -218,6 +218,13 @@ NPanel {
             searchDebounceTimer.restart()
           }
 
+          Keys.onDownPressed: {
+            let currentView = screenRepeater.itemAt(currentScreenIndex)
+            if (currentView && currentView.gridView) {
+              currentView.gridView.forceActiveFocus()
+            }
+          }
+
           Component.onCompleted: {
             if (searchInput.inputItem && searchInput.inputItem.visible) {
               searchInput.inputItem.forceActiveFocus()
@@ -231,6 +238,7 @@ NPanel {
   // Component for each screen's wallpaper view
   component WallpaperScreenView: Item {
     property var targetScreen
+    property alias gridView: wallpaperGridView
 
     // Local reactive state for this screen
     property list<string> wallpapersList: []
@@ -310,6 +318,9 @@ NPanel {
         visible: !WallpaperService.scanning
         interactive: true // Enable delegate recycling and native scrolling
         clip: true
+        focus: true
+        keyNavigationEnabled: true
+        keyNavigationWraps: false
 
         model: filteredWallpapers
 
@@ -323,6 +334,47 @@ NPanel {
         rightMargin: Style.marginS * scaling
         topMargin: Style.marginS * scaling
         bottomMargin: Style.marginS * scaling
+
+        highlightFollowsCurrentItem: true
+        highlightMoveDuration: 150
+
+        highlight: Rectangle {
+          color: Color.mSecondary
+          opacity: 0.3
+          radius: Style.radiusS * scaling
+          z: 0
+        }
+
+        onCurrentIndexChanged: {
+          // Synchronize scroll with current item position
+          if (currentIndex >= 0 && scrollView.contentItem) {
+            let row = Math.floor(currentIndex / columns)
+            let itemY = row * cellHeight
+            let viewportTop = scrollView.contentItem.contentY
+            let viewportBottom = viewportTop + scrollView.height
+
+            // If item is out of view, scroll
+            if (itemY < viewportTop) {
+              scrollView.contentItem.contentY = Math.max(0, itemY - cellHeight)
+            } else if (itemY + cellHeight > viewportBottom) {
+              scrollView.contentItem.contentY = itemY + cellHeight - scrollView.height + cellHeight
+            }
+          }
+        }
+
+        Keys.onPressed: event => {
+                          if (event.key === Qt.Key_Return || event.key === Qt.Key_Space) {
+                            if (currentIndex >= 0 && currentIndex < filteredWallpapers.length) {
+                              let path = filteredWallpapers[currentIndex]
+                              if (Settings.data.wallpaper.setWallpaperOnAllMonitors) {
+                                WallpaperService.changeWallpaper(path, undefined)
+                              } else {
+                                WallpaperService.changeWallpaper(path, targetScreen.name)
+                              }
+                            }
+                            event.accepted = true
+                          }
+                        }
 
         ScrollBar.vertical: ScrollBar {
           policy: ScrollBar.AsNeeded
@@ -399,6 +451,7 @@ NPanel {
 
             TapHandler {
               onTapped: {
+                wallpaperGridView.currentIndex = index
                 if (Settings.data.wallpaper.setWallpaperOnAllMonitors) {
                   WallpaperService.changeWallpaper(wallpaperPath, undefined)
                 } else {

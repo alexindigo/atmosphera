@@ -1347,8 +1347,6 @@
     "unknown-layout": "未知"
   },
   "lock-screen": {
-    "secure-terminal": "安全终端",
-    "unlock-command": "sudo unlock-session",
     "password": "请输入密码...",
     "welcome-back": "欢迎回来，",
     "authenticating": "正在验证...",

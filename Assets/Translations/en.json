@@ -1350,8 +1350,6 @@
     "unknown-layout": "Unknown"
   },
   "lock-screen": {
-    "secure-terminal": "SECURE TERMINAL",
-    "unlock-command": "sudo unlock-session",
     "password": "Enter your password...",
     "welcome-back": "Welcome back,",
     "authenticating": "Authenticating...",

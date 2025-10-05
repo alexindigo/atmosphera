@@ -47,6 +47,9 @@ Loader {
           lockScreen.scheduleUnloadAfterUnlock()
           lockContext.currentText = ""
         }
+        onFailed: {
+          lockContext.currentText = ""
+        }
       }
 
       WlSessionLock {
@@ -225,6 +228,47 @@ Loader {
                 color: Color.mOnSurface
                 horizontalAlignment: Text.AlignHCenter
                 opacity: 0.9
+              }
+            }
+
+            // Error notification
+            Rectangle {
+              width: 400 * scaling
+              height: 50 * scaling
+              anchors.horizontalCenter: parent.horizontalCenter
+              anchors.bottom: parent.bottom
+              anchors.bottomMargin: 300 * scaling
+              radius: 25 * scaling
+              color: Color.mError
+              border.color: Color.mError
+              border.width: 1
+              visible: lockContext.showFailure && lockContext.errorMessage
+              opacity: visible ? 1.0 : 0.0
+
+              RowLayout {
+                anchors.centerIn: parent
+                spacing: 8 * scaling
+
+                NIcon {
+                  icon: "alert-circle"
+                  pointSize: Style.fontSizeM * scaling
+                  color: Color.mOnError
+                }
+
+                NText {
+                  text: lockContext.errorMessage || "Authentication failed"
+                  color: Color.mOnError
+                  pointSize: Style.fontSizeM * scaling
+                  font.weight: Font.Medium
+                  horizontalAlignment: Text.AlignHCenter
+                }
+              }
+
+              Behavior on opacity {
+                NumberAnimation {
+                  duration: 300
+                  easing.type: Easing.OutCubic
+                }
               }
             }
 
@@ -554,12 +598,57 @@ Loader {
                         Component.onCompleted: forceActiveFocus()
                       }
 
-                      NText {
-                        text: passwordInput.text.length > 0 ? "•".repeat(passwordInput.text.length) : I18n.tr("lock-screen.password")
-                        color: passwordInput.text.length > 0 ? Color.mOnSurface : Color.mOnSurfaceVariant
-                        pointSize: Style.fontSizeL * scaling
-                        width: 560 * scaling
-                        opacity: passwordInput.text.length > 0 ? 1.0 : 0.6
+                      Row {
+                        spacing: 0
+
+                        Rectangle {
+                          width: 2 * scaling
+                          height: 20 * scaling
+                          color: Color.mPrimary
+                          visible: passwordInput.activeFocus && passwordInput.text.length === 0
+                          anchors.verticalCenter: parent.verticalCenter
+
+                          SequentialAnimation on opacity {
+                            loops: Animation.Infinite
+                            running: passwordInput.activeFocus && passwordInput.text.length === 0
+                            NumberAnimation {
+                              to: 0
+                              duration: 530
+                            }
+                            NumberAnimation {
+                              to: 1
+                              duration: 530
+                            }
+                          }
+                        }
+
+                        NText {
+                          text: passwordInput.text.length > 0 ? "•".repeat(passwordInput.text.length) : ""
+                          color: passwordInput.text.length > 0 ? Color.mOnSurface : Color.mOnSurfaceVariant
+                          pointSize: Style.fontSizeL * scaling
+                          opacity: passwordInput.text.length > 0 ? 1.0 : 0.6
+                        }
+
+                        Rectangle {
+                          width: 2 * scaling
+                          height: 20 * scaling
+                          color: Color.mPrimary
+                          visible: passwordInput.activeFocus && passwordInput.text.length > 0
+                          anchors.verticalCenter: parent.verticalCenter
+
+                          SequentialAnimation on opacity {
+                            loops: Animation.Infinite
+                            running: passwordInput.activeFocus && passwordInput.text.length > 0
+                            NumberAnimation {
+                              to: 0
+                              duration: 530
+                            }
+                            NumberAnimation {
+                              to: 1
+                              duration: 530
+                            }
+                          }
+                        }
                       }
                     }
 
@@ -742,48 +831,6 @@ Loader {
                   Item {
                     Layout.preferredWidth: Style.marginM * scaling
                   }
-                }
-              }
-            }
-
-            // Status message
-            NText {
-              anchors.horizontalCenter: parent.horizontalCenter
-              anchors.bottom: parent.bottom
-              anchors.bottomMargin: 150 * scaling
-              text: {
-                if (lockContext.unlockInProgress)
-                  return lockContext.infoMessage || "Authenticating..."
-                if (lockContext.showFailure && lockContext.errorMessage)
-                  return lockContext.errorMessage
-                if (lockContext.showFailure)
-                  return "Authentication failed. Please try again."
-                return ""
-              }
-              color: lockContext.unlockInProgress ? Color.mPrimary : (lockContext.showFailure ? Color.mError : Color.transparent)
-              pointSize: Style.fontSizeS * scaling
-              horizontalAlignment: Text.AlignHCenter
-              opacity: text.length > 0 ? 1.0 : 0.0
-
-              SequentialAnimation on opacity {
-                running: lockContext.unlockInProgress
-                loops: Animation.Infinite
-                NumberAnimation {
-                  to: 0.6
-                  duration: 1000
-                  easing.type: Easing.InOutQuad
-                }
-                NumberAnimation {
-                  to: 1.0
-                  duration: 1000
-                  easing.type: Easing.InOutQuad
-                }
-              }
-
-              Behavior on opacity {
-                NumberAnimation {
-                  duration: 300
-                  easing.type: Easing.OutCubic
                 }
               }
             }

@@ -1347,8 +1347,6 @@
     "unknown-layout": "Desconhecido"
   },
   "lock-screen": {
-    "secure-terminal": "TERMINAL SEGURO",
-    "unlock-command": "sudo unlock-session",
     "password": "Digite sua senha...",
     "welcome-back": "Bem-vindo de volta,",
     "authenticating": "Autenticando...",
