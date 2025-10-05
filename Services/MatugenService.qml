@@ -422,21 +422,24 @@ Singleton {
     if (Settings.data.templates.foot) {
       if (copyCmd !== "")
         copyCmd += " ; "
-      copyCmd += `cp -f ${getTerminalColorsTemplate('foot')} ~/.config/foot/themes/noctalia`
+      copyCmd += `mkdir -p ~/.config/foot/themes/`
+      copyCmd += `; cp -f ${getTerminalColorsTemplate('foot')} ~/.config/foot/themes/noctalia`
       copyCmd += ` ; ${colorsApplyScript} foot`
     }
 
     if (Settings.data.templates.ghostty) {
       if (copyCmd !== "")
         copyCmd += " ; "
-      copyCmd += `cp -f ${getTerminalColorsTemplate('ghostty')} ~/.config/ghostty/themes/noctalia`
+      copyCmd += `mkdir -p ~/.config/ghostty/themes/`
+      copyCmd += `; cp -f ${getTerminalColorsTemplate('ghostty')} ~/.config/ghostty/themes/noctalia`
       copyCmd += ` ; ${colorsApplyScript} ghostty`
     }
 
     if (Settings.data.templates.kitty) {
       if (copyCmd !== "")
         copyCmd += " ; "
-      copyCmd += `cp -f ${getTerminalColorsTemplate('kitty')}.conf ~/.config/kitty/themes/noctalia.conf`
+      copyCmd += `mkdir -p ~/.config/kitty/themes/`
+      copyCmd += `; cp -f ${getTerminalColorsTemplate('kitty')}.conf ~/.config/kitty/themes/noctalia.conf`
       copyCmd += ` ; ${colorsApplyScript} kitty`
     }
 
