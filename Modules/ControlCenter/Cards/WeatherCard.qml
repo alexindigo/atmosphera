@@ -18,6 +18,7 @@ NBox {
     anchors.top: parent.top
     anchors.margins: Style.marginM * scaling
     spacing: Style.marginM * scaling
+    clip: true
 
     RowLayout {
       spacing: Style.marginS * scaling
