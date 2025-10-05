@@ -36,7 +36,6 @@ Item {
     function toggleHistory() {
       // Will attempt to open the panel next to the bar button if any.
       notificationHistoryPanel.toggle(null, "NotificationHistory")
-      Settings.data.notifications.lastSeenTs = Time.timestamp * 1000
     }
     function toggleDND() {
       Settings.data.notifications.doNotDisturb = !Settings.data.notifications.doNotDisturb
