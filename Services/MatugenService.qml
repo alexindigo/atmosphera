@@ -332,6 +332,17 @@ Singleton {
           "dark": {
             "color": ColorVariants.generateContainer(variant.mSurface, true)
           }
+        },
+        "surface_container_highest": {
+          "light": {
+            "color": ColorVariants.generateBright(ColorVariants.generateContainer(variant.mSurface, false))
+          },
+          "default": {
+            "color": ColorVariants.generateBright(ColorVariants.generateContainer(variant.mSurface, true))
+          },
+          "dark": {
+            "color": ColorVariants.generateBright(ColorVariants.generateContainer(variant.mSurface, true))
+          }
         }
       }
     }
