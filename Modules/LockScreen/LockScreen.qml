@@ -490,7 +490,7 @@ Loader {
                           text: Math.round(LocationService.data.weather.daily.temperature_2m_max[index]) + "°/" + Math.round(LocationService.data.weather.daily.temperature_2m_min[index]) + "°"
                           pointSize: Style.fontSizeM * scaling
                           font.weight: Style.fontWeightMedium
-                          color: Color.mOnSurface
+                          color: Color.mOnSurfaceVariant
                           horizontalAlignment: Text.AlignHCenter
                           Layout.fillWidth: true
                         }
