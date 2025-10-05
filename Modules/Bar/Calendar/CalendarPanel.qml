@@ -20,6 +20,16 @@ NPanel {
     spacing: Style.marginM * scaling
 
     readonly property int firstDayOfWeek: Qt.locale().firstDayOfWeek
+    property bool isCurrentMonth: Time.date.getMonth() == grid.month
+
+    Connections {
+      target: Time
+      function onDateChanged() {
+        if (Time.date.getMonth() !== grid.month) {
+          isCurrentMonth = Time.date.getMonth() == grid.month
+        }
+      }
+    }
 
     // Current day
     Rectangle {
@@ -46,7 +56,7 @@ NPanel {
             pointSize: Style.fontSizeXXXL * 1.5 * scaling
             font.weight: Style.fontWeightBold
             color: Color.mOnPrimary
-            visible: (Time.date.getMonth() == grid.month)
+            visible: isCurrentMonth
             Layout.preferredWidth: visible ? implicitWidth : 0
             Layout.fillHeight: true
           }
@@ -84,7 +94,7 @@ NPanel {
             id: secondsProgress
             anchors.fill: parent
 
-            property real progress: (Time.date.getSeconds() + Time.date.getMilliseconds() / 1000) / 60
+            property real progress: Time.date.getSeconds() / 60
 
             onProgressChanged: requestPaint()
 
@@ -294,11 +304,7 @@ NPanel {
             anchors.centerIn: parent
             radius: Style.radiusM * scaling
 
-            color: {
-              if (model.today)
-                return Color.mSecondary
-              return Color.transparent
-            }
+            color: model.today ? Color.mSecondary : Color.transparent
 
             NText {
               anchors.centerIn: parent
@@ -318,25 +324,6 @@ NPanel {
             Behavior on color {
               ColorAnimation {
                 duration: Style.animationFast
-              }
-            }
-
-            // Hover effect
-            MouseArea {
-              anchors.fill: parent
-              hoverEnabled: true
-              cursorShape: Qt.PointingHandCursor
-
-              onEntered: {
-                if (!model.today) {
-                  parent.color = Qt.alpha(Color.mSecondary, 0.2)
-                }
-              }
-
-              onExited: {
-                if (!model.today) {
-                  parent.color = Color.transparent
-                }
               }
             }
           }
