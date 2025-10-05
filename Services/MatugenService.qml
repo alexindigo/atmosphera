@@ -417,31 +417,29 @@ Singleton {
     jsonWriter.setText(matugenJson)
 
     // -----
-    // For terminals simply copy the full color from theme from iTerm2 so everything looks super nice!
-    var copyCmd = ""
-    if (Settings.data.templates.foot) {
-      if (copyCmd !== "")
-        copyCmd += " ; "
-      copyCmd += `mkdir -p ~/.config/foot/themes/`
-      copyCmd += `; cp -f ${getTerminalColorsTemplate('foot')} ~/.config/foot/themes/noctalia`
-      copyCmd += ` ; ${colorsApplyScript} foot`
+    var terminals = {
+      foot: "~/.config/foot/themes/noctalia",
+      ghostty: "/.config/ghostty/themes/noctalia",
+      kitty: "~/.config/kitty/themes/noctalia.conf",
     }
 
-    if (Settings.data.templates.ghostty) {
-      if (copyCmd !== "")
-        copyCmd += " ; "
-      copyCmd += `mkdir -p ~/.config/ghostty/themes/`
-      copyCmd += `; cp -f ${getTerminalColorsTemplate('ghostty')} ~/.config/ghostty/themes/noctalia`
-      copyCmd += ` ; ${colorsApplyScript} ghostty`
-    }
-
-    if (Settings.data.templates.kitty) {
-      if (copyCmd !== "")
-        copyCmd += " ; "
-      copyCmd += `mkdir -p ~/.config/kitty/themes/`
-      copyCmd += `; cp -f ${getTerminalColorsTemplate('kitty')}.conf ~/.config/kitty/themes/noctalia.conf`
-      copyCmd += ` ; ${colorsApplyScript} kitty`
-    }
+    var copyCmd = Object.entries(terminals)
+      .filter(([terminal, colorsPath]) => Settings.data.templates[terminal])
+      .map(([terminal, colorsPath]) => {
+        // regex matches everything after last '/' in a string
+        var colorsPathParent = colorsPath.replace(/[^\/]*$/, "")
+        var terminalColorsTemplate = getTerminalColorsTemplate(terminal)
+        return [
+          // make sure intermediate theme directories are present
+          `mkdir -p ${colorsPathParent}`,
+          // copy theme file to terminal config directory
+          `cp -f ${terminalColorsTemplate} ${colorsPath}`,
+          // apply terminal
+          `${colorsApplyScript} ${terminal}`,
+        ]
+      })
+      .reduce((arr1, arr2) => arr1.concat(arr2), []) // can't use .flatMap in Qt's environment
+      .join("; ")
 
     // Finally execute all copies at once.
     if (copyCmd !== "") {
@@ -465,7 +463,9 @@ Singleton {
       colorScheme = "Tokyo-Night"
     }
 
-    return `${Quickshell.shellDir}/Assets/ColorScheme/${colorScheme}/terminal/${terminal}/${colorScheme}-${darkLight}`
+    var extension = terminal === 'kitty' ? ".conf" : ""
+
+    return `${Quickshell.shellDir}/Assets/ColorScheme/${colorScheme}/terminal/${terminal}/${colorScheme}-${darkLight}${extension}`
   }
 
   // --------------------------------
