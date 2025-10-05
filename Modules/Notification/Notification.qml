@@ -11,7 +11,7 @@ import qs.Widgets
 // Simple notification popup - displays multiple notifications
 Variants {
   // If no notification display activated in settings, then show them all
-  model: Quickshell.screens.filter(screen => (Settings.data.osd.monitors.includes(screen.name) || (Settings.data.osd.monitors.length === 0)))
+  model: Quickshell.screens.filter(screen => (Settings.data.notifications.monitors.includes(screen.name) || (Settings.data.notifications.monitors.length === 0)))
 
   delegate: Loader {
     id: root
