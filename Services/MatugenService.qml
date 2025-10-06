@@ -133,7 +133,7 @@ Singleton {
     const isDarkMode = Settings.data.colorSchemes.darkMode
     const colors = schemeData[isDarkMode ? "dark" : "light"]
 
-    const matugenColors = generatePalette(colors.mPrimary, colors.mSecondary, colors.mTertiary, colors.mSurface, isDarkMode)
+    const matugenColors = generatePalette(colors.mPrimary, colors.mSecondary, colors.mTertiary, colors.mError, colors.mSurface, isDarkMode)
 
     const mode = isDarkMode ? "dark" : "light"
     const script = processAllTemplates(matugenColors, mode)
@@ -142,7 +142,7 @@ Singleton {
     generateProcess.running = true
   }
 
-  function generatePalette(primaryColor, secondaryColor, tertiaryColor, backgroundColor, isDarkMode) {
+  function generatePalette(primaryColor, secondaryColor, tertiaryColor, errorColor, backgroundColor, outlineColor, isDarkMode) {
     const c = hex => ({
                         "default": {
                           "hex": hex
@@ -165,8 +165,7 @@ Singleton {
     const onTertiaryContainer = ColorsConvert.generateOnColor(tertiaryContainer, isDarkMode)
 
     // Generate error colors (standard red-based)
-    const errorColor = isDarkMode ? "#f2b8b5" : "#ba1a1a"
-    const errorContainer = isDarkMode ? "#8c1d18" : "#ffdad6"
+    const errorContainer = ColorsConvert.generateContainerColor(errorColor, isDarkMode)
     const onError = ColorsConvert.generateOnColor(errorColor, isDarkMode)
     const onErrorContainer = ColorsConvert.generateOnColor(errorContainer, isDarkMode)
 
