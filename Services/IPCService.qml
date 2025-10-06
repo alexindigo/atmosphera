@@ -166,4 +166,45 @@ Item {
       Settings.data.wallpaper.randomEnabled = true
     }
   }
+
+  IpcHandler {
+      target: "media"
+      function playPause() {
+        MediaService.playPause()
+      }
+
+      function play() {
+        MediaService.play()
+      }
+
+      function pause() {
+        MediaService.pause()
+      }
+      
+      function next() {
+        MediaService.next()
+      }
+
+      function previous() {
+        MediaService.previous()
+      }
+
+      function seek(position: string) {
+        var positionVal = parseFloat(position)
+        if (Number.isNaN(positionVal)) {
+            Logger.warn("Media", "Argument to ipc call 'media seek' must be a number")
+            return
+        }
+        MediaService.seek(positionVal)
+      }
+
+      function seekByRatio(position: string) {
+        var positionVal = parseFloat(position)
+        if (Number.isNaN(positionVal)) {
+            Logger.warn("Media", "Argument to ipc call 'media seekByRatio' must be a number")
+            return
+        }
+        MediaService.seekByRatio(positionVal)
+      }
+  }
 }
