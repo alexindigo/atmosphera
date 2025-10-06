@@ -220,7 +220,7 @@ ColumnLayout {
 
     // Color Schemes Grid
     GridLayout {
-      columns: 3
+      columns: Math.max(1, Math.floor((root.width + columnSpacing) / (222 * scaling + columnSpacing)))
       rowSpacing: Style.marginM * scaling
       columnSpacing: Style.marginM * scaling
       Layout.fillWidth: true
