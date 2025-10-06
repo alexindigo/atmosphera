@@ -46,7 +46,7 @@ Singleton {
   // Generate colors using current wallpaper and settings
   function generateFromWallpaper() {
     Logger.log("Matugen", "Generating from wallpaper on screen:", Screen.name)
-    
+
     var wp = WallpaperService.getWallpaper(Screen.name).replace(/'/g, "'\\''")
     if (wp === "") {
       Logger.error("Matugen", "No wallpaper was found")
@@ -60,10 +60,7 @@ Singleton {
 
     var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light"
     var pathEsc = dynamicConfigPath.replace(/'/g, "'\\''")
-
-    // Build the main script
     var script = buildMatugenScript(content, pathEsc, wp, mode)
-
     generateProcess.command = ["bash", "-lc", script]
     generateProcess.running = true
   }
@@ -71,7 +68,7 @@ Singleton {
   // --------------------------------
   function buildMatugenScript(content, pathEsc, wallpaper, mode) {
     var script = "cat > '" + pathEsc + "' << 'EOF'\n" + content + "EOF\n"
-    
+
     // Main matugen command
     script += "matugen image '" + wallpaper + "' --config '" + pathEsc + "' --mode " + mode + " --type " + Settings.data.colorSchemes.matugenSchemeType
 
@@ -92,7 +89,7 @@ Singleton {
     script += "if [ -f '" + userConfigPath + "' ]; then\n"
     script += "  matugen image '" + input + "' --config '" + userConfigPath + "' --mode " + mode + " --type " + Settings.data.colorSchemes.matugenSchemeType + "\n"
     script += "fi"
-    
+
     return script
   }
 
@@ -104,17 +101,16 @@ Singleton {
   // --------------------------------
   function selectVibrantColor(schemeData, mode) {
     var colors = []
-    colors.push(schemeData[mode]["mPrimary"]);
-    colors.push(schemeData[mode]["mSecondary"]);
-    colors.push(schemeData[mode]["mTertiary"]);
-
+    colors.push(schemeData[mode]["mPrimary"])
+    colors.push(schemeData[mode]["mSecondary"])
+    colors.push(schemeData[mode]["mTertiary"])
 
     var bestScore = 0
     var bestScoreIndex = -1
-    for (var i=0; i<colors.length; i++) {
+    for (var i = 0; i < colors.length; i++) {
       var hsl = ColorsConvert.hexToHSL(colors[i])
 
-      var score = hsl['s'];
+      var score = hsl['s']
       if (score > bestScore) {
         bestScore = score
         bestScoreIndex = i
@@ -129,33 +125,30 @@ Singleton {
   function generateFromPredefinedScheme(schemeData) {
     Logger.log("Matugen", "Generating templates from predefined color scheme")
 
+    // Handle terminal theme copying for predefined schemes
+    handleTerminalThemes()
+
     var content = MatugenTemplates.buildConfigToml()
     if (content === "") {
       return
     }
-    
+
     var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light"
     var pathEsc = dynamicConfigPath.replace(/'/g, "'\\''")
     const color = selectVibrantColor(schemeData, mode)
-
-    // Build the script
     var script = buildPredefinedSchemeScript(content, pathEsc, color, mode)
-
     generateProcess.command = ["bash", "-lc", script]
     generateProcess.running = true
-
-    // Handle terminal theme copying for predefined schemes
-    handleTerminalThemes()
   }
 
   // --------------------------------
   function buildPredefinedSchemeScript(content, pathEsc, color, mode) {
     var script = "cat > '" + pathEsc + "' << 'EOF'\n" + content + "EOF\n\n"
     script += "matugen color hex '" + color + "' --config '" + pathEsc + "' --mode " + mode + "\n"
-    
+
     // Add user template execution if enabled
     script += addUserTemplateExecutionForColor(color, mode)
-    
+
     return script
   }
 
@@ -170,31 +163,28 @@ Singleton {
     script += "if [ -f '" + userConfigPath + "' ]; then\n"
     script += "  matugen color hex '" + color + "' --config '" + userConfigPath + "' --mode " + mode + "\n"
     script += "fi"
-    
+
     return script
   }
 
   // --------------------------------
   function handleTerminalThemes() {
     var terminals = {
-      foot: "~/.config/foot/themes/noctalia",
-      ghostty: "~/.config/ghostty/themes/noctalia",
-      kitty: "~/.config/kitty/themes/noctalia.conf",
+      "foot": "~/.config/foot/themes/noctalia",
+      "ghostty": "~/.config/ghostty/themes/noctalia",
+      "kitty": "~/.config/kitty/themes/noctalia.conf"
     }
 
-    var copyCmd = Object.entries(terminals)
-      .filter(([terminal, colorsPath]) => Settings.data.templates[terminal])
-      .map(([terminal, colorsPath]) => {
-        var colorsPathParent = colorsPath.replace(/[^\/]*$/, "")
-        var terminalColorsTemplate = getTerminalColorsTemplate(terminal)
-        return [
-          `mkdir -p ${colorsPathParent}`,
-          `cp -f ${terminalColorsTemplate} ${colorsPath}`,
-          `${colorsApplyScript} ${terminal}`,
-        ]
-      })
-      .reduce((arr1, arr2) => arr1.concat(arr2), [])
-      .join("; ")
+    var copyCmd = Object.keys(terminals).filter(function (terminal) {
+      return Settings.data.templates[terminal]
+    }).map(function (terminal) {
+      var colorsPath = terminals[terminal]
+      var colorsPathParent = colorsPath.replace(/[^\/]*$/, "")
+      var terminalColorsTemplate = getTerminalColorsTemplate(terminal)
+      return ['mkdir -p ' + colorsPathParent, 'cp -f ' + terminalColorsTemplate + ' ' + colorsPath, colorsApplyScript + ' ' + terminal]
+    }).reduce(function (arr1, arr2) {
+      return arr1.concat(arr2)
+    }, []).join('; ')
 
     if (copyCmd !== "") {
       copyProcess.command = ["bash", "-lc", copyCmd]
@@ -213,7 +203,7 @@ Singleton {
       "Noctalia (legacy)": "Noctalia-legacy",
       "Tokyo Night": "Tokyo-Night"
     }
-    
+
     colorScheme = schemeMap[colorScheme] || colorScheme
     var extension = terminal === 'kitty' ? ".conf" : ""
 
