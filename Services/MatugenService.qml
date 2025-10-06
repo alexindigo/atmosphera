@@ -434,14 +434,13 @@ Singleton {
           `mkdir -p ${colorsPathParent}`,
           // copy theme file to terminal config directory
           `cp -f ${terminalColorsTemplate} ${colorsPath}`,
-          // apply terminal
+          // apply theme config
           `${colorsApplyScript} ${terminal}`,
         ]
       })
       .reduce((arr1, arr2) => arr1.concat(arr2), []) // can't use .flatMap in Qt's environment
       .join("; ")
 
-    // Finally execute all copies at once.
     if (copyCmd !== "") {
       //console.log(copyCmd)
       copyProcess.command = ["bash", "-lc", copyCmd]
