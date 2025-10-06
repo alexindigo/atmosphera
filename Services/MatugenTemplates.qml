@@ -8,7 +8,6 @@ import qs.Commons
 // Users can extend it by dropping additional templates into:
 //  - Assets/MatugenTemplates/ (built-in templates)
 //  - ~/.config/matugen/ (user-defined templates when enableUserTemplates is true)
-//
 // User templates are automatically executed after the main matugen command
 // if enableUserTemplates is enabled in settings.
 Singleton {
@@ -18,16 +17,19 @@ Singleton {
   function buildConfigToml() {
     var lines = []
     var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light"
-    
-    lines.push("[config]")
 
     if (Settings.data.colorSchemes.useWallpaperColors) {
       addWallpaperBasedTemplates(lines, mode)
     }
 
     addApplicationTemplates(lines, mode)
-    
-    return lines.join("\n") + "\n"
+
+    if (lines.length > 0) {
+      const config = ["[config]"].concat(lines)
+      return config.join("\n") + "\n"
+    }
+
+    return ""
   }
 
   // --------------------------------
@@ -43,13 +45,21 @@ Singleton {
 
   // --------------------------------
   function addTerminalTemplates(lines) {
-    var terminals = [
-      { name: "foot", path: "Terminal/foot", output: "~/.config/foot/themes/noctalia" },
-      { name: "ghostty", path: "Terminal/ghostty", output: "~/.config/ghostty/themes/noctalia" },
-      { name: "kitty", path: "Terminal/kitty.conf", output: "~/.config/kitty/themes/noctalia.conf" }
-    ]
+    var terminals = [{
+                       "name": "foot",
+                       "path": "Terminal/foot",
+                       "output": "~/.config/foot/themes/noctalia"
+                     }, {
+                       "name": "ghostty",
+                       "path": "Terminal/ghostty",
+                       "output": "~/.config/ghostty/themes/noctalia"
+                     }, {
+                       "name": "kitty",
+                       "path": "Terminal/kitty.conf",
+                       "output": "~/.config/kitty/themes/noctalia.conf"
+                     }]
 
-    terminals.forEach(function(terminal) {
+    terminals.forEach(function (terminal) {
       if (Settings.data.templates[terminal.name]) {
         lines.push("\n[templates." + terminal.name + "]")
         lines.push('input_path = "' + Quickshell.shellDir + '/Assets/MatugenTemplates/' + terminal.path + '"')
@@ -61,46 +71,55 @@ Singleton {
 
   // --------------------------------
   function addApplicationTemplates(lines, mode) {
-    var applications = [
-      { 
-        name: "gtk", 
-        templates: [
-          { version: "gtk3", output: "~/.config/gtk-3.0/gtk.css" },
-          { version: "gtk4", output: "~/.config/gtk-4.0/gtk.css" }
-        ],
-        input: "gtk.css",
-        postHook: "gsettings set org.gnome.desktop.interface color-scheme prefer-" + mode
-      },
-      {
-        name: "qt",
-        templates: [
-          { version: "qt5", output: "~/.config/qt5ct/colors/noctalia.conf" },
-          { version: "qt6", output: "~/.config/qt6ct/colors/noctalia.conf" }
-        ],
-        input: "qtct.conf"
-      },
-      {
-        name: "fuzzel",
-        templates: [{ version: "fuzzel", output: "~/.config/fuzzel/themes/noctalia" }],
-        input: "fuzzel.conf",
-        postHook: MatugenService.colorsApplyScript + " fuzzel"
-      },
-      {
-        name: "pywalfox",
-        templates: [{ version: "pywalfox", output: "~/.cache/wal/colors.json" }],
-        input: "pywalfox.json",
-        postHook: MatugenService.colorsApplyScript + " pywalfox"
-      },
-      {
-        name: "vesktop",
-        templates: [{ version: "vesktop", output: "~/.config/vesktop/themes/noctalia.theme.css" }],
-        input: "vesktop.css"
-      }
-    ]
+    var applications = [{
+                          "name": "gtk",
+                          "templates": [{
+                              "version": "gtk3",
+                              "output": "~/.config/gtk-3.0/gtk.css"
+                            }, {
+                              "version": "gtk4",
+                              "output": "~/.config/gtk-4.0/gtk.css"
+                            }],
+                          "input": "gtk.css",
+                          "postHook": "gsettings set org.gnome.desktop.interface color-scheme prefer-" + mode
+                        }, {
+                          "name": "qt",
+                          "templates": [{
+                              "version": "qt5",
+                              "output": "~/.config/qt5ct/colors/noctalia.conf"
+                            }, {
+                              "version": "qt6",
+                              "output": "~/.config/qt6ct/colors/noctalia.conf"
+                            }],
+                          "input": "qtct.conf"
+                        }, {
+                          "name": "fuzzel",
+                          "templates": [{
+                              "version": "fuzzel",
+                              "output": "~/.config/fuzzel/themes/noctalia"
+                            }],
+                          "input": "fuzzel.conf",
+                          "postHook": MatugenService.colorsApplyScript + " fuzzel"
+                        }, {
+                          "name": "pywalfox",
+                          "templates": [{
+                              "version": "pywalfox",
+                              "output": "~/.cache/wal/colors.json"
+                            }],
+                          "input": "pywalfox.json",
+                          "postHook": MatugenService.colorsApplyScript + " pywalfox"
+                        }, {
+                          "name": "vesktop",
+                          "templates": [{
+                              "version": "vesktop",
+                              "output": "~/.config/vesktop/themes/noctalia.theme.css"
+                            }],
+                          "input": "vesktop.css"
+                        }]
 
-    applications.forEach(function(app) {
+    applications.forEach(function (app) {
       if (Settings.data.templates[app.name]) {
-        app.templates.forEach(function(template) {
+        app.templates.forEach(function (template) {
           lines.push("\n[templates." + template.version + "]")
           lines.push('input_path = "' + Quickshell.shellDir + '/Assets/MatugenTemplates/' + app.input + '"')
           lines.push('output_path = "' + template.output + '"')
