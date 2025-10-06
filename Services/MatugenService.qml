@@ -12,47 +12,6 @@ Singleton {
 
   readonly property string colorsApplyScript: Quickshell.shellDir + '/Bin/colors-apply.sh'
   readonly property string dynamicConfigPath: Settings.cacheDir + "matugen.dynamic.toml"
-
-  readonly property var templateConfigs: ({
-                                            "gtk": {
-                                              "input": "gtk.css",
-                                              "outputs": [{
-                                                  "path": "~/.config/gtk-3.0/gtk.css"
-                                                }, {
-                                                  "path": "~/.config/gtk-4.0/gtk.css"
-                                                }],
-                                              "postProcess": mode => `gsettings set org.gnome.desktop.interface color-scheme prefer-${mode}\n`
-                                            },
-                                            "qt": {
-                                              "input": "qtct.conf",
-                                              "outputs": [{
-                                                  "path": "~/.config/qt5ct/colors/noctalia.conf"
-                                                }, {
-                                                  "path": "~/.config/qt6ct/colors/noctalia.conf"
-                                                }]
-                                            },
-                                            "fuzzel": {
-                                              "input": "fuzzel.conf",
-                                              "outputs": [{
-                                                  "path": "~/.config/fuzzel/themes/noctalia"
-                                                }],
-                                              "postProcess": () => `${colorsApplyScript} fuzzel\n`
-                                            },
-                                            "pywalfox": {
-                                              "input": "pywalfox.json",
-                                              "outputs": [{
-                                                  "path": "~/.cache/wal/colors.json"
-                                                }],
-                                              "postProcess": () => `${colorsApplyScript} pywalfox\n`
-                                            },
-                                            "vesktop": {
-                                              "input": "vesktop.css",
-                                              "outputs": [{
-                                                  "path": "~/.config/vesktop/themes/noctalia.theme.css"
-                                                }]
-                                            }
-                                          })
-
   readonly property var terminalPaths: ({
                                           "foot": "~/.config/foot/themes/noctalia",
                                           "ghostty": "~/.config/ghostty/themes/noctalia",
@@ -64,13 +23,50 @@ Singleton {
                                           "Noctalia (legacy)": "Noctalia-legacy",
                                           "Tokyo Night": "Tokyo-Night"
                                         })
+  readonly property var predefinedTemplateConfigs: ({
+                                                      "gtk": {
+                                                        "input": "gtk.css",
+                                                        "outputs": [{
+                                                            "path": "~/.config/gtk-3.0/gtk.css"
+                                                          }, {
+                                                            "path": "~/.config/gtk-4.0/gtk.css"
+                                                          }],
+                                                        "postProcess": mode => `gsettings set org.gnome.desktop.interface color-scheme prefer-${mode}\n`
+                                                      },
+                                                      "qt": {
+                                                        "input": "qtct.conf",
+                                                        "outputs": [{
+                                                            "path": "~/.config/qt5ct/colors/noctalia.conf"
+                                                          }, {
+                                                            "path": "~/.config/qt6ct/colors/noctalia.conf"
+                                                          }]
+                                                      },
+                                                      "fuzzel": {
+                                                        "input": "fuzzel.conf",
+                                                        "outputs": [{
+                                                            "path": "~/.config/fuzzel/themes/noctalia"
+                                                          }],
+                                                        "postProcess": () => `${colorsApplyScript} fuzzel\n`
+                                                      },
+                                                      "pywalfox": {
+                                                        "input": "pywalfox.json",
+                                                        "outputs": [{
+                                                            "path": "~/.cache/wal/colors.json"
+                                                          }],
+                                                        "postProcess": () => `${colorsApplyScript} pywalfox\n`
+                                                      },
+                                                      "vesktop": {
+                                                        "input": "vesktop.css",
+                                                        "outputs": [{
+                                                            "path": "~/.config/vesktop/themes/noctalia.theme.css"
+                                                          }]
+                                                      }
+                                                    })
 
-  // ===== Lifecycle =====
   function init() {
     Logger.log("Matugen", "Service started")
   }
 
-  // ===== External Connections =====
   Connections {
     target: WallpaperService
     function onWallpaperChanged(screenName, path) {
@@ -90,7 +86,9 @@ Singleton {
     }
   }
 
-  // ===== Wallpaper Generation =====
+  // --------------------------------------------------------------------------------
+  // Wallpaper Colors Generation
+  // --------------------------------------------------------------------------------
   function generateFromWallpaper() {
     Logger.log("Matugen", "Generating from wallpaper on screen:", Screen.name)
 
@@ -122,79 +120,126 @@ Singleton {
     return script + "\n"
   }
 
-  // ===== Predefined Scheme Generation =====
+  // --------------------------------------------------------------------------------
+  // Predefined Scheme Generation
+  //  For predefined color schemes, we bypass matugen's generation which do not gives good results.
+  //  Instead, we use 'sed' to apply a custom palette to the existing matugen templates.
+  // --------------------------------------------------------------------------------
   function generateFromPredefinedScheme(schemeData) {
     Logger.log("Matugen", "Generating templates from predefined color scheme")
 
     handleTerminalThemes()
 
-    const mode = Settings.data.colorSchemes.darkMode ? "dark" : "light"
-    const colors = schemeData[mode] || schemeData.dark || schemeData.light
-    const matugenColors = buildMatugenColorObject(colors)
+    const isDarkMode = Settings.data.colorSchemes.darkMode
+    const colors = schemeData[isDarkMode ? "dark" : "light"]
 
+    const matugenColors = generatePalette(colors.mPrimary, colors.mSecondary, colors.mTertiary, colors.mSurface, isDarkMode)
+
+    const mode = isDarkMode ? "dark" : "light"
     const script = processAllTemplates(matugenColors, mode)
 
     generateProcess.command = ["bash", "-lc", script]
     generateProcess.running = true
   }
 
-  function buildMatugenColorObject(colors) {
-    // Helper with fallback support
-    const c = (color, fallback) => ({
-                                      "default": {
-                                        "hex": colors[color] || colors[fallback] || "#000000"
-                                      }
-                                    })
+  function generatePalette(primaryColor, secondaryColor, tertiaryColor, backgroundColor, isDarkMode) {
+    const c = hex => ({
+                        "default": {
+                          "hex": hex
+                        }
+                      })
+
+    // Generate container colors
+    const primaryContainer = ColorsConvert.generateContainerColor(primaryColor, isDarkMode)
+    const secondaryContainer = ColorsConvert.generateContainerColor(secondaryColor, isDarkMode)
+    const tertiaryContainer = ColorsConvert.generateContainerColor(tertiaryColor, isDarkMode)
+
+    // Generate "on" colors (for text/icons)
+    const onPrimary = ColorsConvert.generateOnColor(primaryColor, isDarkMode)
+    const onSecondary = ColorsConvert.generateOnColor(secondaryColor, isDarkMode)
+    const onTertiary = ColorsConvert.generateOnColor(tertiaryColor, isDarkMode)
+    const onBackground = ColorsConvert.generateOnColor(backgroundColor, isDarkMode)
+
+    const onPrimaryContainer = ColorsConvert.generateOnColor(primaryContainer, isDarkMode)
+    const onSecondaryContainer = ColorsConvert.generateOnColor(secondaryContainer, isDarkMode)
+    const onTertiaryContainer = ColorsConvert.generateOnColor(tertiaryContainer, isDarkMode)
+
+    // Generate error colors (standard red-based)
+    const errorColor = isDarkMode ? "#f2b8b5" : "#ba1a1a"
+    const errorContainer = isDarkMode ? "#8c1d18" : "#ffdad6"
+    const onError = ColorsConvert.generateOnColor(errorColor, isDarkMode)
+    const onErrorContainer = ColorsConvert.generateOnColor(errorContainer, isDarkMode)
+
+    // Surface is same as background in Material Design 3
+    const surface = backgroundColor
+    const onSurface = onBackground
+
+    // Generate surface variant (slightly different tone)
+    const surfaceVariant = ColorsConvert.adjustLightness(backgroundColor, isDarkMode ? 5 : -3)
+    const onSurfaceVariant = ColorsConvert.generateOnColor(surfaceVariant, isDarkMode)
+
+    // Generate surface containers (progressive elevation)
+    const surfaceContainerLowest = ColorsConvert.generateSurfaceVariant(backgroundColor, 0, isDarkMode)
+    const surfaceContainerLow = ColorsConvert.generateSurfaceVariant(backgroundColor, 1, isDarkMode)
+    const surfaceContainer = ColorsConvert.generateSurfaceVariant(backgroundColor, 2, isDarkMode)
+    const surfaceContainerHigh = ColorsConvert.generateSurfaceVariant(backgroundColor, 3, isDarkMode)
+    const surfaceContainerHighest = ColorsConvert.generateSurfaceVariant(backgroundColor, 4, isDarkMode)
+
+    // Generate outline colors (for borders/dividers)
+    const outline = isDarkMode ? "#938f99" : "#79747e"
+    const outlineVariant = ColorsConvert.adjustLightness(outline, isDarkMode ? -10 : 10)
+
+    // Shadow is always very dark
+    const shadow = "#000000"
 
     return {
-      "primary": c("mPrimary"),
-      "on_primary": c("mOnPrimary"),
-      "primary_container": c("mPrimaryContainer", "mPrimary"),
-      "on_primary_container": c("mOnPrimaryContainer", "mOnPrimary"),
-      "secondary": c("mSecondary"),
-      "on_secondary": c("mOnSecondary"),
-      "secondary_container": c("mSecondaryContainer", "mSecondary"),
-      "on_secondary_container": c("mOnSecondaryContainer", "mOnSecondary"),
-      "tertiary": c("mTertiary"),
-      "on_tertiary": c("mOnTertiary"),
-      "tertiary_container": c("mTertiaryContainer", "mTertiary"),
-      "on_tertiary_container": c("mOnTertiaryContainer", "mOnTertiary"),
-      "error": c("mError"),
-      "on_error": c("mOnError"),
-      "error_container": c("mErrorContainer", "mError"),
-      "on_error_container": c("mOnErrorContainer", "mOnError"),
-      "background": c("mBackground", "mSurface"),
-      "on_background": c("mOnBackground", "mOnSurface"),
-      "surface": c("mSurface"),
-      "on_surface": c("mOnSurface"),
-      "surface_variant": c("mSurfaceVariant", "mSurface"),
-      "on_surface_variant": c("mOnSurfaceVariant", "mOnSurface"),
-      "surface_container_lowest": c("mSurfaceContainerLowest", "mSurface"),
-      "surface_container_low": c("mSurfaceContainerLow", "mSurface"),
-      "surface_container": c("mSurfaceContainer", "mSurfaceVariant"),
-      "surface_container_high": c("mSurfaceContainerHigh", "mSurfaceVariant"),
-      "surface_container_highest": c("mSurfaceContainerHighest", "mOutline"),
-      "outline": c("mOutline"),
-      "outline_variant": c("mOutlineVariant", "mOutline"),
-      "shadow": c("mShadow")
+      "primary": c(primaryColor),
+      "on_primary": c(onPrimary),
+      "primary_container": c(primaryContainer),
+      "on_primary_container": c(onPrimaryContainer),
+      "secondary": c(secondaryColor),
+      "on_secondary": c(onSecondary),
+      "secondary_container": c(secondaryContainer),
+      "on_secondary_container": c(onSecondaryContainer),
+      "tertiary": c(tertiaryColor),
+      "on_tertiary": c(onTertiary),
+      "tertiary_container": c(tertiaryContainer),
+      "on_tertiary_container": c(onTertiaryContainer),
+      "error": c(errorColor),
+      "on_error": c(onError),
+      "error_container": c(errorContainer),
+      "on_error_container": c(onErrorContainer),
+      "background": c(backgroundColor),
+      "on_background": c(onBackground),
+      "surface": c(surface),
+      "on_surface": c(onSurface),
+      "surface_variant": c(surfaceVariant),
+      "on_surface_variant": c(onSurfaceVariant),
+      "surface_container_lowest": c(surfaceContainerLowest),
+      "surface_container_low": c(surfaceContainerLow),
+      "surface_container": c(surfaceContainer),
+      "surface_container_high": c(surfaceContainerHigh),
+      "surface_container_highest": c(surfaceContainerHighest),
+      "outline": c(outline),
+      "outline_variant": c(outlineVariant),
+      "shadow": c(shadow)
     }
   }
-
   function processAllTemplates(colors, mode) {
     let script = ""
     const homeDir = Quickshell.env("HOME")
 
-    Object.keys(templateConfigs).forEach(appName => {
-                                           if (Settings.data.templates[appName]) {
-                                             script += processTemplate(appName, colors, mode, homeDir)
-                                           }
-                                         })
+    Object.keys(predefinedTemplateConfigs).forEach(appName => {
+                                                     if (Settings.data.templates[appName]) {
+                                                       script += processTemplate(appName, colors, mode, homeDir)
+                                                     }
+                                                   })
 
     return script
   }
 
   function processTemplate(appName, colors, mode, homeDir) {
-    const config = templateConfigs[appName]
+    const config = predefinedTemplateConfigs[appName]
     const templatePath = `${Quickshell.shellDir}/Assets/MatugenTemplates/${config.input}`
     let script = ""
 
@@ -224,7 +269,9 @@ Singleton {
     return script
   }
 
-  // ===== Terminal Themes =====
+  // --------------------------------------------------------------------------------
+  // Terminal Themes
+  // --------------------------------------------------------------------------------
   function handleTerminalThemes() {
     const commands = []
 
@@ -256,7 +303,9 @@ Singleton {
     return `${Quickshell.shellDir}/Assets/ColorScheme/${colorScheme}/terminal/${terminal}/${colorScheme}-${mode}${extension}`
   }
 
-  // ===== User Templates =====
+  // --------------------------------------------------------------------------------
+  // User Templates
+  // --------------------------------------------------------------------------------
   function buildUserTemplateCommand(input, mode) {
     if (!Settings.data.templates.enableUserTemplates) {
       return ""
@@ -275,25 +324,9 @@ Singleton {
     return (Quickshell.env("HOME") + "/.config/matugen/config.toml").replace(/'/g, "'\\''")
   }
 
-  // ===== Utilities =====
-  function selectVibrantColor(schemeData, mode) {
-    const colors = [schemeData[mode]["mPrimary"], schemeData[mode]["mSecondary"], schemeData[mode]["mTertiary"]]
-
-    let bestScore = 0
-    let bestIndex = 0
-
-    colors.forEach((color, i) => {
-                     const hsl = ColorsConvert.hexToHSL(color)
-                     if (hsl.s > bestScore) {
-                       bestScore = hsl.s
-                       bestIndex = i
-                     }
-                   })
-
-    return colors[bestIndex]
-  }
-
-  // ===== Processes =====
+  // --------------------------------------------------------------------------------
+  // Processes
+  // --------------------------------------------------------------------------------
   Process {
     id: generateProcess
     workingDirectory: Quickshell.shellDir
