@@ -67,7 +67,9 @@ Singleton {
 
   // --------------------------------
   function buildMatugenScript(content, pathEsc, wallpaper, mode) {
-    var script = "cat > '" + pathEsc + "' << 'EOF'\n" + content + "EOF\n"
+    // Use a unique delimiter to avoid conflicts with config content
+    var delimiter = "MATUGEN_CONFIG_EOF_" + Math.random().toString(36).substr(2, 9)
+    var script = "cat > '" + pathEsc + "' << '" + delimiter + "'\n" + content + "\n" + delimiter + "\n"
 
     // Main matugen command
     script += "matugen image '" + wallpaper + "' --config '" + pathEsc + "' --mode " + mode + " --type " + Settings.data.colorSchemes.matugenSchemeType
@@ -135,15 +137,388 @@ Singleton {
 
     var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light"
     var pathEsc = dynamicConfigPath.replace(/'/g, "'\\''")
-    const color = selectVibrantColor(schemeData, mode)
-    var script = buildPredefinedSchemeScript(content, pathEsc, color, mode)
+
+    // Use the full predefined color scheme instead of generating from a single color
+    var script = buildPredefinedSchemeScriptWithFullColors(content, pathEsc, schemeData, mode)
     generateProcess.command = ["bash", "-lc", script]
     generateProcess.running = true
   }
 
   // --------------------------------
+  function buildPredefinedSchemeScriptWithFullColors(content, pathEsc, schemeData, mode) {
+    // Instead of using matugen color generation, directly process templates with predefined colors
+    var colors = schemeData[mode] || schemeData.dark || schemeData.light
+    var script = ""
+
+    // Process each enabled template directly with predefined colors
+    script += processTemplatesWithPredefinedColors(colors, mode)
+
+    // Add user template execution if enabled
+    script += addUserTemplateExecutionForPredefinedColors(colors, mode)
+
+    return script
+  }
+
+  // --------------------------------
+  function processTemplatesWithPredefinedColors(colors, mode) {
+    var script = ""
+
+    // Create a colors object that matches matugen's expected format
+    var matugenColors = {
+      "primary": {
+        "default": {
+          "hex": colors.mPrimary
+        }
+      },
+      "on_primary": {
+        "default": {
+          "hex": colors.mOnPrimary
+        }
+      },
+      "primary_container": {
+        "default": {
+          "hex": colors.mPrimary
+        }
+      },
+      "on_primary_container": {
+        "default": {
+          "hex": colors.mOnPrimary
+        }
+      },
+      "secondary": {
+        "default": {
+          "hex": colors.mSecondary
+        }
+      },
+      "on_secondary": {
+        "default": {
+          "hex": colors.mOnSecondary
+        }
+      },
+      "secondary_container": {
+        "default": {
+          "hex": colors.mSecondary
+        }
+      },
+      "on_secondary_container": {
+        "default": {
+          "hex": colors.mOnSecondary
+        }
+      },
+      "tertiary": {
+        "default": {
+          "hex": colors.mTertiary
+        }
+      },
+      "on_tertiary": {
+        "default": {
+          "hex": colors.mOnTertiary
+        }
+      },
+      "tertiary_container": {
+        "default": {
+          "hex": colors.mTertiary
+        }
+      },
+      "on_tertiary_container": {
+        "default": {
+          "hex": colors.mOnTertiary
+        }
+      },
+      "error": {
+        "default": {
+          "hex": colors.mError
+        }
+      },
+      "on_error": {
+        "default": {
+          "hex": colors.mOnError
+        }
+      },
+      "error_container": {
+        "default": {
+          "hex": colors.mError
+        }
+      },
+      "on_error_container": {
+        "default": {
+          "hex": colors.mOnError
+        }
+      },
+      "background": {
+        "default": {
+          "hex": colors.mSurface
+        }
+      },
+      "on_background": {
+        "default": {
+          "hex": colors.mOnSurface
+        }
+      },
+      "surface": {
+        "default": {
+          "hex": colors.mSurface
+        }
+      },
+      "on_surface": {
+        "default": {
+          "hex": colors.mOnSurface
+        }
+      },
+      "surface_variant": {
+        "default": {
+          "hex": colors.mSurfaceVariant
+        }
+      },
+      "on_surface_variant": {
+        "default": {
+          "hex": colors.mOnSurfaceVariant
+        }
+      },
+      "outline": {
+        "default": {
+          "hex": colors.mOutline
+        }
+      },
+      "outline_variant": {
+        "default": {
+          "hex": colors.mOutline
+        }
+      },
+      "shadow": {
+        "default": {
+          "hex": colors.mShadow
+        }
+      },
+      "surface_container": {
+        "default": {
+          "hex": colors.mSurfaceVariant
+        }
+      },
+      "surface_container_low": {
+        "default": {
+          "hex": colors.mSurface
+        }
+      },
+      "surface_container_lowest": {
+        "default": {
+          "hex": colors.mSurface
+        }
+      },
+      "surface_container_high": {
+        "default": {
+          "hex": colors.mSurfaceVariant
+        }
+      },
+      "surface_container_highest": {
+        "default": {
+          "hex": colors.mOutline
+        }
+      }
+    }
+
+    // Process each enabled template using the same structure as MatugenTemplates
+    var applications = [{
+                          "name": "gtk",
+                          "templates": [{
+                              "version": "gtk3",
+                              "output": "gtk3"
+                            }, {
+                              "version": "gtk4",
+                              "output": "gtk4"
+                            }],
+                          "input": "gtk.css"
+                        }, {
+                          "name": "qt",
+                          "templates": [{
+                              "version": "qt5",
+                              "output": "qt5"
+                            }, {
+                              "version": "qt6",
+                              "output": "qt6"
+                            }],
+                          "input": "qtct.conf"
+                        }, {
+                          "name": "fuzzel",
+                          "templates": [{
+                              "version": "fuzzel",
+                              "output": "fuzzel"
+                            }],
+                          "input": "fuzzel.conf"
+                        }, {
+                          "name": "pywalfox",
+                          "templates": [{
+                              "version": "pywalfox",
+                              "output": "pywalfox"
+                            }],
+                          "input": "pywalfox.json"
+                        }, {
+                          "name": "vesktop",
+                          "templates": [{
+                              "version": "vesktop",
+                              "output": "vesktop"
+                            }],
+                          "input": "vesktop.css"
+                        }]
+
+    applications.forEach(function (app) {
+      if (Settings.data.templates[app.name]) {
+        script += processTemplateForApp(app.name, matugenColors, mode)
+      }
+    })
+
+    return script
+  }
+
+  // --------------------------------
+  function processTemplateForApp(appName, colors, mode) {
+    var script = ""
+
+    switch (appName) {
+    case "gtk":
+      script += processGtkTemplate(colors, mode)
+      break
+    case "qt":
+      script += processQtTemplate(colors, mode)
+      break
+    case "fuzzel":
+      script += processFuzzelTemplate(colors, mode)
+      break
+    case "pywalfox":
+      script += processPywalfoxTemplate(colors, mode)
+      break
+    case "vesktop":
+      script += processVesktopTemplate(colors, mode)
+      break
+    }
+
+    return script
+  }
+
+  // --------------------------------
+  function processGtkTemplate(colors, mode) {
+    var script = ""
+    var templatePath = Quickshell.shellDir + "/Assets/MatugenTemplates/gtk.css"
+    var homeDir = Quickshell.env("HOME")
+    var outputPath3 = homeDir + "/.config/gtk-3.0/gtk.css"
+    var outputPath4 = homeDir + "/.config/gtk-4.0/gtk.css"
+
+    // Process GTK3 template
+    script += "mkdir -p " + homeDir + "/.config/gtk-3.0\n"
+    script += "cp '" + templatePath + "' '" + outputPath3 + "'\n"
+    script += replaceColorsInFile(outputPath3, colors)
+
+    // Process GTK4 template
+    script += "mkdir -p " + homeDir + "/.config/gtk-4.0\n"
+    script += "cp '" + templatePath + "' '" + outputPath4 + "'\n"
+    script += replaceColorsInFile(outputPath4, colors)
+
+    script += "gsettings set org.gnome.desktop.interface color-scheme prefer-" + mode + "\n"
+
+    return script
+  }
+
+  // --------------------------------
+  function processQtTemplate(colors, mode) {
+    var script = ""
+    var templatePath = Quickshell.shellDir + "/Assets/MatugenTemplates/qtct.conf"
+    var homeDir = Quickshell.env("HOME")
+    var outputPath5 = homeDir + "/.config/qt5ct/colors/noctalia.conf"
+    var outputPath6 = homeDir + "/.config/qt6ct/colors/noctalia.conf"
+
+    // Process Qt5 template
+    script += "mkdir -p " + homeDir + "/.config/qt5ct/colors\n"
+    script += "cp '" + templatePath + "' '" + outputPath5 + "'\n"
+    script += replaceColorsInFile(outputPath5, colors)
+
+    // Process Qt6 template
+    script += "mkdir -p " + homeDir + "/.config/qt6ct/colors\n"
+    script += "cp '" + templatePath + "' '" + outputPath6 + "'\n"
+    script += replaceColorsInFile(outputPath6, colors)
+
+    return script
+  }
+
+  // --------------------------------
+  function processFuzzelTemplate(colors, mode) {
+    var script = ""
+    var templatePath = Quickshell.shellDir + "/Assets/MatugenTemplates/fuzzel.conf"
+    var homeDir = Quickshell.env("HOME")
+    var outputPath = homeDir + "/.config/fuzzel/themes/noctalia"
+
+    script += "mkdir -p " + homeDir + "/.config/fuzzel/themes\n"
+    script += "cp '" + templatePath + "' '" + outputPath + "'\n"
+    script += replaceColorsInFile(outputPath, colors)
+    script += MatugenService.colorsApplyScript + " fuzzel\n"
+
+    return script
+  }
+
+  // --------------------------------
+  function processPywalfoxTemplate(colors, mode) {
+    var script = ""
+    var templatePath = Quickshell.shellDir + "/Assets/MatugenTemplates/pywalfox.json"
+    var homeDir = Quickshell.env("HOME")
+    var outputPath = homeDir + "/.cache/wal/colors.json"
+
+    script += "mkdir -p " + homeDir + "/.cache/wal\n"
+    script += "cp '" + templatePath + "' '" + outputPath + "'\n"
+    script += replaceColorsInFile(outputPath, colors)
+    script += MatugenService.colorsApplyScript + " pywalfox\n"
+
+    return script
+  }
+
+  // --------------------------------
+  function processVesktopTemplate(colors, mode) {
+    var script = ""
+    var templatePath = Quickshell.shellDir + "/Assets/MatugenTemplates/vesktop.css"
+    var homeDir = Quickshell.env("HOME")
+    var outputPath = homeDir + "/.config/vesktop/themes/noctalia.theme.css"
+
+    script += "mkdir -p " + homeDir + "/.config/vesktop/themes\n"
+    script += "cp '" + templatePath + "' '" + outputPath + "'\n"
+    script += replaceColorsInFile(outputPath, colors)
+
+    return script
+  }
+
+  // --------------------------------
+  function replaceColorsInFile(filePath, colors) {
+    var script = ""
+
+    // Replace all color placeholders with actual colors
+    Object.keys(colors).forEach(function (colorKey) {
+      var colorValue = colors[colorKey].default.hex
+      // Escape special characters in the color value for sed
+      var escapedColor = colorValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      script += "sed -i 's/{{colors\\." + colorKey + "\\.default\\.hex}}/" + escapedColor + "/g' '" + filePath + "'\n"
+    })
+
+    return script
+  }
+
+  // --------------------------------
+  function addUserTemplateExecutionForPredefinedColors(colors, mode) {
+    if (!Settings.data.templates.enableUserTemplates) {
+      return ""
+    }
+
+    var userConfigPath = getUserConfigPath()
+    var script = "\n# Execute user config if it exists\n"
+    script += "if [ -f '" + userConfigPath + "' ]; then\n"
+    script += "  # Process user templates with predefined colors\n"
+    script += "  echo 'User templates processing not implemented for predefined colors yet'\n"
+    script += "fi"
+
+    return script
+  }
+
+  // --------------------------------
   function buildPredefinedSchemeScript(content, pathEsc, color, mode) {
-    var script = "cat > '" + pathEsc + "' << 'EOF'\n" + content + "EOF\n\n"
+    // Use a unique delimiter to avoid conflicts with config content
+    var delimiter = "MATUGEN_CONFIG_EOF_" + Math.random().toString(36).substr(2, 9)
+    var script = "cat > '" + pathEsc + "' << '" + delimiter + "'\n" + content + "\n" + delimiter + "\n\n"
     script += "matugen color hex '" + color + "' --config '" + pathEsc + "' --mode " + mode + "\n"
 
     // Add user template execution if enabled
