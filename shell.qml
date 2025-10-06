@@ -82,7 +82,7 @@ ShellRoot {
 
         Logger.log("Shell", "---------------------------")
         WallpaperService.init()
-        MatugenService.init()
+        AppThemeService.init()
         ColorSchemeService.init()
         BarWidgetRegistry.init()
         LocationService.init()

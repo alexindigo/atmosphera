@@ -64,7 +64,7 @@ Singleton {
         lines.push("\n[templates." + terminal.name + "]")
         lines.push('input_path = "' + Quickshell.shellDir + '/Assets/MatugenTemplates/' + terminal.path + '"')
         lines.push('output_path = "' + terminal.output + '"')
-        lines.push('post_hook = "' + MatugenService.colorsApplyScript + " " + terminal.name + '"')
+        lines.push('post_hook = "' + AppThemeService.colorsApplyScript + " " + terminal.name + '"')
       }
     })
   }
@@ -99,7 +99,7 @@ Singleton {
                               "output": "~/.config/fuzzel/themes/noctalia"
                             }],
                           "input": "fuzzel.conf",
-                          "postHook": MatugenService.colorsApplyScript + " fuzzel"
+                          "postHook": AppThemeService.colorsApplyScript + " fuzzel"
                         }, {
                           "name": "pywalfox",
                           "templates": [{
@@ -107,7 +107,7 @@ Singleton {
                               "output": "~/.cache/wal/colors.json"
                             }],
                           "input": "pywalfox.json",
-                          "postHook": MatugenService.colorsApplyScript + " pywalfox"
+                          "postHook": AppThemeService.colorsApplyScript + " pywalfox"
                         }, {
                           "name": "vesktop",
                           "templates": [{
