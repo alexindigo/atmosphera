@@ -110,7 +110,7 @@ Singleton {
     for (var i=0; i<colors.length; i++) {
       var hsl = ColorsConvert.hexToHSL(colors[i])
 
-      var score = hsl['s'];// + hsl['l'];
+      var score = hsl['s'] + hsl['l'];
       if (score > bestScore) {
         bestScore = score
         bestScoreIndex = i
