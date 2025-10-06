@@ -156,8 +156,11 @@ ColumnLayout {
                 Layout.preferredWidth: 80 * scaling
               }
 
-              NValueSlider {
+              Item {
                 Layout.fillWidth: true
+              }
+
+              NValueSlider {
                 from: 0
                 to: 1
                 value: brightnessMonitor ? brightnessMonitor.brightness : 0.5
@@ -166,20 +169,12 @@ ColumnLayout {
                 text: brightnessMonitor ? Math.round(brightnessMonitor.brightness * 100) + "%" : "N/A"
               }
 
-              // Empty container to match scale row layout
-              Item {
-                Layout.preferredWidth: 30 * scaling
-                Layout.preferredHeight: 30 * scaling
-
-                // Method text positioned in the button area
-                NText {
-                  text: brightnessMonitor ? brightnessMonitor.method : ""
-                  pointSize: Style.fontSizeXS * scaling
-                  color: Color.mOnSurfaceVariant
-                  anchors.right: parent.right
-                  anchors.verticalCenter: parent.verticalCenter
-                  horizontalAlignment: Text.AlignRight
-                }
+              NText {
+                text: brightnessMonitor ? "(" + brightnessMonitor.method + ")" : ""
+                pointSize: Style.fontSizeXS * scaling
+                color: Color.mOnSurfaceVariant
+                Layout.alignment: Qt.AlignVCenter
+                horizontalAlignment: Text.AlignRight
               }
             }
           }
