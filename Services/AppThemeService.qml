@@ -63,10 +63,6 @@ Singleton {
                                                       }
                                                     })
 
-  function init() {
-    Logger.log("AppThemeService", "Service started")
-  }
-
   Connections {
     target: WallpaperService
     function onWallpaperChanged(screenName, path) {
@@ -80,9 +76,20 @@ Singleton {
     target: Settings.data.colorSchemes
     function onDarkModeChanged() {
       Logger.log("AppThemeService", "Detected dark mode change")
-      if (Settings.data.colorSchemes.useWallpaperColors) {
-        generateFromWallpaper()
-      }
+      AppThemeService.generate()
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  function init() {
+    Logger.log("AppThemeService", "Service started")
+  }
+
+  function generate() {
+    if (Settings.data.colorSchemes.useWallpaperColors) {
+      generateFromWallpaper()
+    } else {
+      generateFromPredefinedScheme()
     }
   }
 
@@ -131,11 +138,10 @@ Singleton {
     handleTerminalThemes()
 
     const isDarkMode = Settings.data.colorSchemes.darkMode
-    const colors = schemeData[isDarkMode ? "dark" : "light"]
+    const mode = isDarkMode ? "dark" : "light"
+    const colors = schemeData[mode]
 
     const matugenColors = generatePalette(colors.mPrimary, colors.mSecondary, colors.mTertiary, colors.mError, colors.mSurface, isDarkMode)
-
-    const mode = isDarkMode ? "dark" : "light"
     const script = processAllTemplates(matugenColors, mode)
 
     generateProcess.command = ["bash", "-lc", script]
