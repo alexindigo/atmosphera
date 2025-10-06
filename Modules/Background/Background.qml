@@ -142,9 +142,8 @@ Variants {
             if (modelData.width >= modelData.height) {
               const w = Math.min(modelData.width, implicitWidth)
               sourceSize = Qt.size(w, w / imageAspectRatio)
-            }
-            else {
-               const h = Math.min(modelData.height, implicitHeight)
+            } else {
+              const h = Math.min(modelData.height, implicitHeight)
               sourceSize = Qt.size(h * imageAspectRatio, h)
             }
           }
@@ -183,9 +182,8 @@ Variants {
             if (modelData.width >= modelData.height) {
               const w = Math.min(modelData.width, implicitWidth)
               sourceSize = Qt.size(w, w / imageAspectRatio)
-            }
-            else {
-               const h = Math.min(modelData.height, implicitHeight)
+            } else {
+              const h = Math.min(modelData.height, implicitHeight)
               sourceSize = Qt.size(h * imageAspectRatio, h)
             }
           }
