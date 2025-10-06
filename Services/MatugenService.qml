@@ -46,6 +46,7 @@ Singleton {
   // Generate colors using current wallpaper and settings
   function generateFromWallpaper() {
     Logger.log("Matugen", "Generating from wallpaper on screen:", Screen.name)
+    
     var wp = WallpaperService.getWallpaper(Screen.name).replace(/'/g, "'\\''")
     if (wp === "") {
       Logger.error("Matugen", "No wallpaper was found")
@@ -55,24 +56,45 @@ Singleton {
     var content = MatugenTemplates.buildConfigToml()
     var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light"
     var pathEsc = dynamicConfigPath.replace(/'/g, "'\\''")
-    var extraRepo = (Quickshell.shellDir + "/Assets/Matugen/extra").replace(/'/g, "'\\''")
-    var extraUser = (Settings.configDir + "matugen.d").replace(/'/g, "'\\''")
 
     // Build the main script
-    var script = "cat > '" + pathEsc + "' << 'EOF'\n" + content + "EOF\n" + "for d in '" + extraRepo + "' '" + extraUser + "'; do\n" + "  if [ -d \"$d\" ]; then\n" + "    for f in \"$d\"/*.toml; do\n" + "      [ -f \"$f\" ] && { echo; echo \"# extra: $f\"; cat \"$f\"; } >> '" + pathEsc + "'\n" + "    done\n" + "  fi\n"
-        + "done\n" + "matugen image '" + wp + "' --config '" + pathEsc + "' --mode " + mode + " --type " + Settings.data.colorSchemes.matugenSchemeType
+    var script = buildMatugenScript(content, pathEsc, wp, mode)
 
-    // Add user config execution if enabled
-    if (Settings.data.templates.enableUserTemplates) {
-      var userConfigDir = (Quickshell.env("HOME") + "/.config/matugen/").replace(/'/g, "'\\''")
-      script += "\n# Execute user config if it exists\nif [ -f '" + userConfigDir + "config.toml' ]; then\n"
-      script += "  matugen image '" + wp + "' --config '" + userConfigDir + "config.toml' --mode " + mode + " --type " + Settings.data.colorSchemes.matugenSchemeType + "\n"
-      script += "fi"
-    }
-
-    script += "\n"
     generateProcess.command = ["bash", "-lc", script]
     generateProcess.running = true
+  }
+
+  // --------------------------------
+  function buildMatugenScript(content, pathEsc, wallpaper, mode) {
+    var script = "cat > '" + pathEsc + "' << 'EOF'\n" + content + "EOF\n"
+    
+    // Main matugen command
+    script += "matugen image '" + wallpaper + "' --config '" + pathEsc + "' --mode " + mode + " --type " + Settings.data.colorSchemes.matugenSchemeType
+
+    // Add user template execution if enabled
+    script += addUserTemplateExecution(wallpaper, mode)
+
+    return script + "\n"
+  }
+
+  // --------------------------------
+  function addUserTemplateExecution(input, mode) {
+    if (!Settings.data.templates.enableUserTemplates) {
+      return ""
+    }
+
+    var userConfigPath = getUserConfigPath()
+    var script = "\n# Execute user config if it exists\n"
+    script += "if [ -f '" + userConfigPath + "' ]; then\n"
+    script += "  matugen image '" + input + "' --config '" + userConfigPath + "' --mode " + mode + " --type " + Settings.data.colorSchemes.matugenSchemeType + "\n"
+    script += "fi"
+    
+    return script
+  }
+
+  // --------------------------------
+  function getUserConfigPath() {
+    return (Quickshell.env("HOME") + "/.config/matugen/config.toml").replace(/'/g, "'\\''")
   }
 
   // --------------------------------
@@ -106,63 +128,67 @@ Singleton {
     var content = MatugenTemplates.buildConfigToml()
     var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light"
     var pathEsc = dynamicConfigPath.replace(/'/g, "'\\''")
-    var extraRepo = (Quickshell.shellDir + "/Assets/Matugen/extra").replace(/'/g, "'\\''")
-    var extraUser = (Settings.configDir + "matugen.d").replace(/'/g, "'\\''")
     const color = selectVibrantColor(schemeData, mode)
 
     // Build the script
-    var script = ""
-    script += "cat > '" + pathEsc + "' << 'EOF'\n" + content + "EOF\n\n"
-    // script += "for d in '" + extraRepo + "' '" + extraUser + "'; do\n"
-    // script += "  if [ -d \"$d\" ]; then\n"
-    // script += "    for f in \"$d\"/*.toml; do\n"
-    // script += "      [ -f \"$f\" ] && { echo; echo \"# extra: $f\"; cat \"$f\"; } >> '" + pathEsc + "'\n"
-    // script += "    done\n"
-    // script += "  fi\n"
-    // script += "done\n\n"
-    script += "matugen color hex '" + color  + "' --config '" + pathEsc + "' --mode " + mode
+    var script = buildPredefinedSchemeScript(content, pathEsc, color, mode)
 
-    console.log(script)
-
-    // // Add user config execution if enabled
-    // if (Settings.data.templates.enableUserTemplates) {
-    //   var userConfigDir = (Quickshell.env("HOME") + "/.config/matugen/").replace(/'/g, "'\\''")
-    //   script += "\n# Execute user config if it exists\nif [ -f '" + userConfigDir + "config.toml' ]; then\n"
-    //   script += "  matugen color hex " + color  + " --config '" + userConfigDir + "config.toml' --mode " + mode
-    //   script += "fi"
-    // }
-
-    script += "\n"
     generateProcess.command = ["bash", "-lc", script]
     generateProcess.running = true
 
-    // -----
+    // Handle terminal theme copying for predefined schemes
+    handleTerminalThemes()
+  }
+
+  // --------------------------------
+  function buildPredefinedSchemeScript(content, pathEsc, color, mode) {
+    var script = "cat > '" + pathEsc + "' << 'EOF'\n" + content + "EOF\n\n"
+    script += "matugen color hex '" + color + "' --config '" + pathEsc + "' --mode " + mode + "\n"
+    
+    // Add user template execution if enabled
+    script += addUserTemplateExecutionForColor(color, mode)
+    
+    return script
+  }
+
+  // --------------------------------
+  function addUserTemplateExecutionForColor(color, mode) {
+    if (!Settings.data.templates.enableUserTemplates) {
+      return ""
+    }
+
+    var userConfigPath = getUserConfigPath()
+    var script = "\n# Execute user config if it exists\n"
+    script += "if [ -f '" + userConfigPath + "' ]; then\n"
+    script += "  matugen color hex '" + color + "' --config '" + userConfigPath + "' --mode " + mode + "\n"
+    script += "fi"
+    
+    return script
+  }
+
+  // --------------------------------
+  function handleTerminalThemes() {
     var terminals = {
       foot: "~/.config/foot/themes/noctalia",
-      ghostty: "/.config/ghostty/themes/noctalia",
+      ghostty: "~/.config/ghostty/themes/noctalia",
       kitty: "~/.config/kitty/themes/noctalia.conf",
     }
 
     var copyCmd = Object.entries(terminals)
       .filter(([terminal, colorsPath]) => Settings.data.templates[terminal])
       .map(([terminal, colorsPath]) => {
-        // regex matches everything after last '/' in a string
         var colorsPathParent = colorsPath.replace(/[^\/]*$/, "")
         var terminalColorsTemplate = getTerminalColorsTemplate(terminal)
         return [
-          // make sure intermediate theme directories are present
           `mkdir -p ${colorsPathParent}`,
-          // copy theme file to terminal config directory
           `cp -f ${terminalColorsTemplate} ${colorsPath}`,
-          // apply theme config
           `${colorsApplyScript} ${terminal}`,
         ]
       })
-      .reduce((arr1, arr2) => arr1.concat(arr2), []) // can't use .flatMap in Qt's environment
+      .reduce((arr1, arr2) => arr1.concat(arr2), [])
       .join("; ")
 
     if (copyCmd !== "") {
-      //console.log(copyCmd)
       copyProcess.command = ["bash", "-lc", copyCmd]
       copyProcess.running = true
     }
@@ -174,14 +200,13 @@ Singleton {
     const darkLight = Settings.data.colorSchemes.darkMode ? 'dark' : 'light'
 
     // Convert display names back to folder names
-    if (colorScheme === "Noctalia (default)") {
-      colorScheme = "Noctalia-default"
-    } else if (colorScheme === "Noctalia (legacy)") {
-      colorScheme = "Noctalia-legacy"
-    } else if (colorScheme === "Tokyo Night") {
-      colorScheme = "Tokyo-Night"
+    var schemeMap = {
+      "Noctalia (default)": "Noctalia-default",
+      "Noctalia (legacy)": "Noctalia-legacy",
+      "Tokyo Night": "Tokyo-Night"
     }
-
+    
+    colorScheme = schemeMap[colorScheme] || colorScheme
     var extension = terminal === 'kitty' ? ".conf" : ""
 
     return `${Quickshell.shellDir}/Assets/ColorScheme/${colorScheme}/terminal/${terminal}/${colorScheme}-${darkLight}${extension}`
