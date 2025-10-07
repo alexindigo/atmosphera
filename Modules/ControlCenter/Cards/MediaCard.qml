@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 import Quickshell
 import qs.Modules.Audio
 import qs.Commons
@@ -16,23 +16,11 @@ NBox {
     anchors.fill: parent
     clip: true
 
-    Image {
+    NImageRounded {
       id: bgArtImage
       anchors.fill: parent
-      source: MediaService.trackArtUrl
-      fillMode: Image.PreserveAspectCrop
-      smooth: true
-      visible: false
-    }
-
-    OpacityMask {
-      anchors.fill: parent
-      source: bgArtImage
-      maskSource: Rectangle {
-        width: root.width
-        height: root.height
-        radius: Style.radiusM * scaling
-      }
+      imagePath: MediaService.trackArtUrl
+      imageRadius: Style.radiusM * scaling
       visible: MediaService.trackArtUrl !== ""
     }
 
@@ -58,7 +46,7 @@ NBox {
   Item {
     id: visualizerContainer
     anchors.fill: parent
-    visible: false
+    visible: true
 
     Loader {
       anchors.fill: parent
@@ -83,6 +71,7 @@ NBox {
           anchors.fill: parent
           values: CavaService.values
           fillColor: Color.mPrimary
+          opacity: MediaService.trackArtUrl !== "" ? 0.4 : 0.8
         }
       }
 
@@ -92,6 +81,7 @@ NBox {
           anchors.fill: parent
           values: CavaService.values
           fillColor: Color.mPrimary
+          opacity: MediaService.trackArtUrl !== "" ? 0.4 : 0.8
         }
       }
 
@@ -101,19 +91,24 @@ NBox {
           anchors.fill: parent
           values: CavaService.values
           fillColor: Color.mPrimary
+          opacity: MediaService.trackArtUrl !== "" ? 0.4 : 0.8
         }
       }
     }
   }
 
-  OpacityMask {
+  MultiEffect {
     anchors.fill: parent
-    opacity: MediaService.trackArtUrl !== "" ? 0.35 : 1.0
     source: visualizerContainer
-    maskSource: Rectangle {
+    maskEnabled: true
+    maskSource: Item {
       width: root.width
       height: root.height
-      radius: Style.radiusM * scaling
+      Rectangle {
+        anchors.fill: parent
+        radius: Style.radiusM * scaling
+        color: "white"
+      }
     }
   }
 
