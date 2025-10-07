@@ -124,8 +124,8 @@ ColumnLayout {
 
               NText {
                 text: I18n.tr("system.scaling-percentage", {
-                  "percentage": Math.round(scaleSlider.value * 100)
-                })
+                                "percentage": Math.round(scaleSlider.value * 100)
+                              })
                 Layout.preferredWidth: 55 * scaling
                 horizontalAlignment: Text.AlignRight
                 Layout.alignment: Qt.AlignVCenter
