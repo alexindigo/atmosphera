@@ -1156,6 +1156,7 @@
     "night-light-disabled": "Luz noturna desativada.\nClique esquerdo para alternar o modo.\nClique direito para acessar as configurações.",
     "night-light-enabled": "Luz noturna ativada.\nClique esquerdo para alternar o modo.\nClique direito para acessar as configurações.",
     "night-light-forced": "Luz noturna forçada.\nClique esquerdo para alternar o modo.\nClique direito para acessar as configurações.",
+    "night-light-not-installed": "Luz noturna não disponível.\nwlsunset não está instalado.",
     "click-to-start-recording": "Clique para iniciar a gravação",
     "click-to-stop-recording": "Clique para parar a gravação",
     "open-control-center": "Abrir central de controle",

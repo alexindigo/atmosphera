@@ -1156,6 +1156,7 @@
     "night-light-disabled": "夜间模式已禁用。\n左键点击循环模式。\n右键点击访问设置。",
     "night-light-enabled": "夜间模式已启用。\n左键点击循环模式。\n右键点击访问设置。",
     "night-light-forced": "夜间模式已强制启用。\n左键点击循环模式。\n右键点击访问设置。",
+    "night-light-not-installed": "夜间模式不可用。\nwlsunset 未安装。",
     "click-to-start-recording": "点击开始录制",
     "click-to-stop-recording": "点击停止录制",
     "open-control-center": "打开控制中心",

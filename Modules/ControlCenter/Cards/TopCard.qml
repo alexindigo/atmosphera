@@ -114,12 +114,13 @@ NBox {
         NIconButton {
           baseSize: Style.baseWidgetSize * 0.8
           icon: "camera-video"
-          enabled: ScreenRecorderService.isAvailable
-          tooltipText: ScreenRecorderService.isAvailable ? (ScreenRecorderService.isRecording ? I18n.tr("tooltips.stop-screen-recording") : I18n.tr("tooltips.start-screen-recording")) : I18n.tr("tooltips.screen-recorder-not-installed")
+          enabled: ProgramCheckerService.gpuScreenRecorderAvailable
+          opacity: ProgramCheckerService.gpuScreenRecorderAvailable ? Style.opacityFull : Style.opacityMedium
+          tooltipText: ProgramCheckerService.gpuScreenRecorderAvailable ? (ScreenRecorderService.isRecording ? I18n.tr("tooltips.stop-screen-recording") : I18n.tr("tooltips.start-screen-recording")) : I18n.tr("tooltips.screen-recorder-not-installed")
           colorBg: ScreenRecorderService.isRecording ? Color.mPrimary : Color.mSurfaceVariant
           colorFg: ScreenRecorderService.isRecording ? Color.mOnPrimary : Color.mPrimary
           onClicked: {
-            if (!ScreenRecorderService.isAvailable)
+            if (!ProgramCheckerService.gpuScreenRecorderAvailable)
               return
             ScreenRecorderService.toggleRecording()
             // If we were not recording and we just initiated a start, close the panel
@@ -199,10 +200,12 @@ NBox {
         // Night Light
         NIconButton {
           baseSize: Style.baseWidgetSize * 0.8
+          enabled: ProgramCheckerService.wlsunsetAvailable
+          opacity: ProgramCheckerService.wlsunsetAvailable ? Style.opacityFull : Style.opacityMedium
           colorBg: Settings.data.nightLight.forced ? Color.mPrimary : Color.transparent
           colorFg: Settings.data.nightLight.forced ? Color.mOnPrimary : Color.mPrimary
           icon: Settings.data.nightLight.enabled ? (Settings.data.nightLight.forced ? "nightlight-forced" : "nightlight-on") : "nightlight-off"
-          tooltipText: Settings.data.nightLight.enabled ? (Settings.data.nightLight.forced ? I18n.tr("tooltips.night-light-forced") : I18n.tr("tooltips.night-light-enabled")) : I18n.tr("tooltips.night-light-disabled")
+          tooltipText: ProgramCheckerService.wlsunsetAvailable ? (Settings.data.nightLight.enabled ? (Settings.data.nightLight.forced ? I18n.tr("tooltips.night-light-forced") : I18n.tr("tooltips.night-light-enabled")) : I18n.tr("tooltips.night-light-disabled")) : I18n.tr("tooltips.night-light-not-installed")
           onClicked: {
             // Check if wlsunset is available before enabling night light
             if (!ProgramCheckerService.wlsunsetAvailable) {

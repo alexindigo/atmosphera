@@ -1177,6 +1177,7 @@
     "night-light-disabled": "Nachtlicht ist deaktiviert.\\nLinksklick zum Wechseln des Modus.\\nRechtsklick für Einstellungen.",
     "night-light-enabled": "Nachtlicht ist aktiviert.\\nLinksklick zum Wechseln des Modus.\\nRechtsklick für Einstellungen.",
     "night-light-forced": "Nachtlicht ist erzwungen.\\nLinksklick zum Wechseln des Modus.\\nRechtsklick für Einstellungen.",
+    "night-light-not-installed": "Nachtlicht ist nicht verfügbar.\\nwlsunset ist nicht installiert.",
     "click-to-start-recording": "Klicken zum Starten der Aufnahme",
     "click-to-stop-recording": "Klicken zum Stoppen der Aufnahme",
     "open-control-center": "Kontrollzentrum öffnen",

@@ -1158,6 +1158,7 @@
     "night-light-disabled": "Night light is disabled.\nLeft click to cycle mode.\nRight click to access settings.",
     "night-light-enabled": "Night light is enabled.\nLeft click to cycle mode.\nRight click to access settings.",
     "night-light-forced": "Night light is forced.\nLeft click to cycle mode.\nRight click to access settings.",
+    "night-light-not-installed": "Night light is not available.\nwlsunset is not installed.",
     "click-to-start-recording": "Click to start recording",
     "click-to-stop-recording": "Click to stop recording",
     "open-control-center": "Open control center",
