@@ -87,6 +87,8 @@ Loader {
     root.buttonItem = buttonItem
     root.buttonName = buttonName || ""
 
+    setPosition()
+
     PanelService.willOpenPanel(root)
 
     backgroundClickEnabled = true
@@ -104,6 +106,27 @@ Loader {
     useButtonPosition = false
     backgroundClickEnabled = true
     PanelService.closedPanel(root)
+  }
+
+  // -----------------------------------------
+  function setPosition() {
+    // If we have a button name, we are landing here from an IPC call.
+    // IPC calls have no idead on which screen they panel will spawn.
+    // Resolve the button name to a proper button item now that we have a screen.
+    if (buttonName !== "" && root.screen !== null) {
+      buttonItem = BarService.lookupWidget(buttonName, root.screen.name)
+    }
+
+    // Get the button position if provided
+    if (buttonItem !== undefined && buttonItem !== null) {
+      useButtonPosition = true
+      var itemPos = buttonItem.mapToItem(null, 0, 0)
+      buttonPosition = Qt.point(itemPos.x, itemPos.y)
+      buttonWidth = buttonItem.width
+      buttonHeight = buttonItem.height
+    } else {
+      useButtonPosition = false
+    }
   }
 
   // -----------------------------------------
@@ -143,24 +166,11 @@ Loader {
           panelContentLoader.active = false
           panelContentLoader.active = true
 
-          // If we have a button name, we are landing here from an IPC call.
-          // IPC calls have no idead on which screen they panel will spawn.
-          // Resolve the button name to a proper button item now that we have a screen.
-          if (buttonName !== "") {
-            buttonItem = BarService.lookupWidget(buttonName, root.screen.name)
+          // If called from IPC always reposition if screen is updated
+          if (buttonName) {
+            setPosition()
           }
-
-          // Get the button position if provided
-          if (buttonItem !== undefined && buttonItem !== null) {
-            useButtonPosition = true
-            var itemPos = buttonItem.mapToItem(null, 0, 0)
-            buttonPosition = Qt.point(itemPos.x, itemPos.y)
-            buttonWidth = buttonItem.width
-            buttonHeight = buttonItem.height
-          } else {
-            useButtonPosition = false
-          }
-          //Logger.log("NPanel", "OnScreenChanged", root.screen.name)
+          // Logger.log("NPanel", "OnScreenChanged", root.screen.name)
         }
       }
 

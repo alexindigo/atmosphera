@@ -11,7 +11,7 @@ NPanel {
   id: root
 
   preferredWidth: 460
-  preferredHeight: 734
+  preferredHeight: 688
   panelKeyboardFocus: true
 
   // Positioning
@@ -36,21 +36,22 @@ NPanel {
       width: parent.width - (2 * content.cardSpacing)
       spacing: content.cardSpacing
 
-      // Cards (consistent inter-card spacing via ColumnLayout spacing)
-      ProfileCard {
+      // Top Card: profile + utilities
+      TopCard {
         Layout.fillWidth: true
-        Layout.preferredHeight: Math.max(64 * scaling)
+        Layout.preferredHeight: Math.max(124 * scaling)
       }
 
+      // Weather
       WeatherCard {
         Layout.fillWidth: true
-        Layout.preferredHeight: Math.max(220 * scaling)
+        Layout.preferredHeight: Math.max(196 * scaling)
       }
 
-      // Middle section: media + stats column
+      // Media + stats column
       RowLayout {
         Layout.fillWidth: true
-        Layout.preferredHeight: Math.max(310 * scaling)
+        Layout.preferredHeight: Math.max(304 * scaling)
         spacing: content.cardSpacing
 
         // Media card
@@ -63,27 +64,6 @@ NPanel {
         SystemMonitorCard {
           Layout.preferredWidth: Style.baseWidgetSize * 2.625 * scaling
           Layout.fillHeight: true
-        }
-      }
-
-      // Bottom actions (two grouped rows of round buttons)
-      RowLayout {
-        Layout.fillWidth: true
-        Layout.preferredHeight: Math.max(60 * scaling)
-        spacing: content.cardSpacing
-
-        // Power Profiles switcher
-        PowerProfilesCard {
-          Layout.fillWidth: true
-          Layout.fillHeight: true
-          spacing: content.cardSpacing
-        }
-
-        // Utilities buttons
-        UtilitiesCard {
-          Layout.fillWidth: true
-          Layout.fillHeight: true
-          spacing: content.cardSpacing
         }
       }
     }

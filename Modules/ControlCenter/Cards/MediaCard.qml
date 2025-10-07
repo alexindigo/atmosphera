@@ -151,7 +151,7 @@ NBox {
               model: 3
               Rectangle {
                 anchors.centerIn: parent
-                width: parent.width * (1.0+ index * 0.2)
+                width: parent.width * (1.0 + index * 0.2)
                 height: width
                 radius: width / 2
                 color: "transparent"
