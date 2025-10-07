@@ -143,6 +143,14 @@ Singleton {
     }
   }
 
+  function seekRelative(offset) {
+    if (currentPlayer && currentPlayer.canSeek) {
+      var newPosition = currentPlayer.position + offset;
+      currentPlayer.position = newPosition;
+      currentPosition = newPosition;
+    }
+  }
+
   // Seek to position based on ratio (0.0 to 1.0)
   function seekByRatio(ratio) {
     if (currentPlayer && currentPlayer.canSeek && currentPlayer.length > 0) {

@@ -189,13 +189,13 @@ Item {
         MediaService.previous()
       }
 
-      function seek(position: string) {
-        var positionVal = parseFloat(position)
-        if (Number.isNaN(positionVal)) {
-            Logger.warn("Media", "Argument to ipc call 'media seek' must be a number")
+      function seekRelative(offset: string) {
+        var offsetVal = parseFloat(position)
+        if (Number.isNaN(offsetVal)) {
+            Logger.warn("Media", "Argument to ipc call 'media seekRelative' must be a number")
             return
         }
-        MediaService.seek(positionVal)
+        MediaService.seekRelative(offsetVal)
       }
 
       function seekByRatio(position: string) {
