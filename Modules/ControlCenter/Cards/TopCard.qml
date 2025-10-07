@@ -97,17 +97,11 @@ NBox {
       }
     }
 
-    NDivider {
-      Layout.fillWidth: true
-      Layout.topMargin: Style.marginS * scaling
-      Layout.bottomMargin: Style.marginXS * scaling
-    }
-
     RowLayout {
       id: utilitiesRow
-      spacing: Style.marginM * scaling
       Layout.alignment: Qt.AlignVCenter
-      Layout.topMargin: -(Style.marginXS * scaling)
+      Layout.topMargin: Style.marginM * scaling
+      Layout.bottomMargin: Style.marginM * scaling
       Layout.fillWidth: true
 
       // Left group - Media & Display
@@ -115,7 +109,7 @@ NBox {
         color: Color.mSurface
         radius: Style.radiusM * scaling
         Layout.preferredHeight: Style.baseWidgetSize * 1.2 * scaling
-        Layout.fillWidth: true
+        Layout.preferredWidth: childrenRect.width + (Style.marginS * scaling * 2)
 
         RowLayout {
           anchors.centerIn: parent
@@ -177,12 +171,17 @@ NBox {
         }
       }
 
+      // Spacer
+      Item {
+        Layout.fillWidth: true
+      }
+
       // Center group - Network & Caffeine
       Rectangle {
         color: Color.mSurface
         radius: Style.radiusM * scaling
         Layout.preferredHeight: Style.baseWidgetSize * 1.2 * scaling
-        Layout.fillWidth: true
+        Layout.preferredWidth: childrenRect.width + (Style.marginS * scaling * 2)
 
         RowLayout {
           anchors.centerIn: parent
@@ -240,12 +239,17 @@ NBox {
         }
       }
 
+      // Spacer
+      Item {
+        Layout.fillWidth: true
+      }
+
       // Right group - Power Profiles
       Rectangle {
         color: Color.mSurface
         radius: Style.radiusM * scaling
         Layout.preferredHeight: Style.baseWidgetSize * 1.2 * scaling
-        Layout.fillWidth: true
+        Layout.preferredWidth: childrenRect.width + (Style.marginS * scaling * 2)
 
         RowLayout {
           anchors.centerIn: parent

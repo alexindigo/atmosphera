@@ -626,10 +626,10 @@ Loader {
                           spacing: 6 * scaling
                           visible: passwordInput.text.length > 0
                           anchors.verticalCenter: parent.verticalCenter
-                          
+
                           Repeater {
                             model: passwordInput.text.length
-                            
+
                             NIcon {
                               icon: "circle-filled"
                               pointSize: Style.fontSizeS * scaling
