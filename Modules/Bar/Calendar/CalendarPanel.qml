@@ -20,14 +20,16 @@ NPanel {
     spacing: Style.marginM * scaling
 
     readonly property int firstDayOfWeek: Qt.locale().firstDayOfWeek
-    property bool isCurrentMonth: Time.date.getMonth() == grid.month
+    property bool isCurrentMonth: checkIsCurrentMonth()
+
+    function checkIsCurrentMonth() {
+      return (Time.date.getMonth() === grid.month) && (Time.date.getFullYear() === grid.year)
+    }
 
     Connections {
       target: Time
       function onDateChanged() {
-        if (Time.date.getMonth() !== grid.month) {
-          isCurrentMonth = Time.date.getMonth() == grid.month
-        }
+        isCurrentMonth = checkIsCurrentMonth()
       }
     }
 
@@ -174,6 +176,7 @@ NPanel {
           let newDate = new Date(grid.year, grid.month - 1, 1)
           grid.year = newDate.getFullYear()
           grid.month = newDate.getMonth()
+          content.isCurrentMonth = content.checkIsCurrentMonth()
         }
       }
 
@@ -182,6 +185,7 @@ NPanel {
         onClicked: {
           grid.month = Time.date.getMonth()
           grid.year = Time.date.getFullYear()
+          content.isCurrentMonth = true
         }
       }
 
@@ -191,6 +195,7 @@ NPanel {
           let newDate = new Date(grid.year, grid.month + 1, 1)
           grid.year = newDate.getFullYear()
           grid.month = newDate.getMonth()
+          content.isCurrentMonth = content.checkIsCurrentMonth()
         }
       }
     }
@@ -242,7 +247,7 @@ NPanel {
       Layout.fillHeight: true
       spacing: 0
 
-      // Columna de números de semana
+      // Column of week numbers
       ColumnLayout {
         visible: Settings.data.location.showWeekNumberInCalendar
         Layout.preferredWidth: visible ? Style.baseWidgetSize * 0.7 * scaling : 0
@@ -332,15 +337,15 @@ NPanel {
         }
       }
     }
-  }
 
-  function getISOWeekNumber(date) {
-    const target = new Date(date.getTime())
-    target.setHours(0, 0, 0, 0)
-    const dayOfWeek = target.getDay() || 7
-    target.setDate(target.getDate() + 4 - dayOfWeek)
-    const yearStart = new Date(target.getFullYear(), 0, 1)
-    const weekNumber = Math.ceil(((target - yearStart) / 86400000 + 1) / 7)
-    return weekNumber
+    function getISOWeekNumber(date) {
+      const target = new Date(date.getTime())
+      target.setHours(0, 0, 0, 0)
+      const dayOfWeek = target.getDay() || 7
+      target.setDate(target.getDate() + 4 - dayOfWeek)
+      const yearStart = new Date(target.getFullYear(), 0, 1)
+      const weekNumber = Math.ceil(((target - yearStart) / 86400000 + 1) / 7)
+      return weekNumber
+    }
   }
 }
