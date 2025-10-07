@@ -10,7 +10,7 @@ import qs.Widgets
 NPanel {
   id: root
 
-  preferredWidth: 460
+  preferredWidth: 480
   preferredHeight: 580
   panelKeyboardFocus: true
 
@@ -31,9 +31,8 @@ NPanel {
     // Layout content
     ColumnLayout {
       id: layout
-      x: content.cardSpacing
-      y: content.cardSpacing
-      width: parent.width - (2 * content.cardSpacing)
+      anchors.fill: parent
+      anchors.margins: content.cardSpacing
       spacing: content.cardSpacing
 
       // Top Card: profile + utilities
