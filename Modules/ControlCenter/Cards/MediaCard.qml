@@ -119,7 +119,7 @@ NBox {
 
   ColumnLayout {
     anchors.fill: parent
-    anchors.margins: Style.marginL * scaling
+    anchors.margins: Style.marginM * scaling
 
     // No media player detected
     ColumnLayout {
@@ -225,7 +225,7 @@ NBox {
       id: main
 
       visible: MediaService.currentPlayer && MediaService.canPlay
-      spacing: Style.marginM * scaling
+      spacing: Style.marginS * scaling
 
       // Player selector
       Rectangle {
@@ -296,7 +296,7 @@ NBox {
 
       // Spacer to push content down
       Item {
-        Layout.fillHeight: true
+        Layout.preferredHeight: Style.marginM * scaling
       }
 
       // Metadata at the bottom left
@@ -308,7 +308,7 @@ NBox {
         NText {
           visible: MediaService.trackTitle !== ""
           text: MediaService.trackTitle
-          pointSize: Style.fontSizeXL * scaling
+          pointSize: Style.fontSizeM * scaling
           font.weight: Style.fontWeightBold
           elide: Text.ElideRight
           wrapMode: Text.Wrap
@@ -320,7 +320,7 @@ NBox {
           visible: MediaService.trackArtist !== ""
           text: MediaService.trackArtist
           color: Color.mPrimary
-          pointSize: Style.fontSizeL * scaling
+          pointSize: Style.fontSizeS * scaling
           elide: Text.ElideRight
           Layout.fillWidth: true
         }
@@ -410,7 +410,7 @@ NBox {
 
       // Media controls
       RowLayout {
-        spacing: Style.marginM * scaling
+        spacing: Style.marginS * scaling
         Layout.fillWidth: true
         Layout.alignment: Qt.AlignHCenter
 
