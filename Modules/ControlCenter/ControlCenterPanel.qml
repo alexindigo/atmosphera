@@ -55,7 +55,7 @@ NPanel {
 
         // Media card
         MediaCard {
-          Layout.preferredWidth: Math.max(260 * scaling)
+          Layout.preferredWidth: Math.max(270 * scaling)
           Layout.fillHeight: true
         }
 
