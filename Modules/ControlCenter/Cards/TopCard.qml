@@ -113,11 +113,11 @@ NBox {
 
         RowLayout {
           anchors.centerIn: parent
-          spacing: root.spacing
+          spacing: Style.marginM * scaling
 
           // Screen Recorder
           NIconButton {
-            baseSize: Style.baseWidgetSize * 0.8
+            baseSize: Style.baseWidgetSize * 0.9
             icon: "camera-video"
             visible: ProgramCheckerService.gpuScreenRecorderAvailable
             tooltipText: ScreenRecorderService.isRecording ? I18n.tr("tooltips.stop-screen-recording") : I18n.tr("tooltips.start-screen-recording")
@@ -134,7 +134,7 @@ NBox {
 
           // Wallpaper
           NIconButton {
-            baseSize: Style.baseWidgetSize * 0.8
+            baseSize: Style.baseWidgetSize * 0.9
             visible: Settings.data.wallpaper.enabled
             icon: "wallpaper-selector"
             tooltipText: I18n.tr("tooltips.wallpaper-selector")
@@ -144,7 +144,7 @@ NBox {
 
           // Night Light
           NIconButton {
-            baseSize: Style.baseWidgetSize * 0.8
+            baseSize: Style.baseWidgetSize * 0.9
             visible: ProgramCheckerService.wlsunsetAvailable
             colorBg: Settings.data.nightLight.forced ? Color.mPrimary : Color.transparent
             colorFg: Settings.data.nightLight.forced ? Color.mOnPrimary : Color.mPrimary
@@ -185,12 +185,12 @@ NBox {
 
         RowLayout {
           anchors.centerIn: parent
-          spacing: root.spacing
+          spacing: Style.marginM * scaling
 
           // Wifi
           NIconButton {
             id: wifiButton
-            baseSize: Style.baseWidgetSize * 0.8
+            baseSize: Style.baseWidgetSize * 0.9
             tooltipText: I18n.tr("tooltips.manage-wifi")
             icon: {
               try {
@@ -218,7 +218,7 @@ NBox {
 
           // Bluetooth
           NIconButton {
-            baseSize: Style.baseWidgetSize * 0.8
+            baseSize: Style.baseWidgetSize * 0.9
             tooltipText: I18n.tr("tooltips.bluetooth-devices")
             icon: BluetoothService.enabled ? "bluetooth" : "bluetooth-off"
             onClicked: PanelService.getPanel("bluetoothPanel")?.toggle(this)
@@ -227,7 +227,7 @@ NBox {
 
           // Caffeine (Keep Awake)
           NIconButton {
-            baseSize: Style.baseWidgetSize * 0.8
+            baseSize: Style.baseWidgetSize * 0.9
             icon: IdleInhibitorService.isInhibited ? "keep-awake-on" : "keep-awake-off"
             tooltipText: IdleInhibitorService.isInhibited ? I18n.tr("tooltips.disable-keep-awake") : I18n.tr("tooltips.enable-keep-awake")
             colorBg: IdleInhibitorService.isInhibited ? Color.mPrimary : Color.mSurfaceVariant
@@ -253,11 +253,11 @@ NBox {
 
         RowLayout {
           anchors.centerIn: parent
-          spacing: root.spacing
+          spacing: Style.marginM * scaling
 
           // Performance
           NIconButton {
-            baseSize: Style.baseWidgetSize * 0.8
+            baseSize: Style.baseWidgetSize * 0.9
             icon: PowerProfileService.getIcon(PowerProfile.Performance)
             tooltipText: I18n.tr("tooltips.set-power-profile", {
                                    "profile": PowerProfileService.getName(PowerProfile.Performance)
@@ -271,7 +271,7 @@ NBox {
 
           // Balanced
           NIconButton {
-            baseSize: Style.baseWidgetSize * 0.8
+            baseSize: Style.baseWidgetSize * 0.9
             icon: PowerProfileService.getIcon(PowerProfile.Balanced)
             tooltipText: I18n.tr("tooltips.set-power-profile", {
                                    "profile": PowerProfileService.getName(PowerProfile.Balanced)
@@ -285,7 +285,7 @@ NBox {
 
           // Eco
           NIconButton {
-            baseSize: Style.baseWidgetSize * 0.8
+            baseSize: Style.baseWidgetSize * 0.9
             icon: PowerProfileService.getIcon(PowerProfile.PowerSaver)
             tooltipText: I18n.tr("tooltips.set-power-profile", {
                                    "profile": PowerProfileService.getName(PowerProfile.PowerSaver)
