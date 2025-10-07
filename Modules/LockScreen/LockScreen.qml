@@ -88,20 +88,171 @@ Loader {
             gradient: Gradient {
               GradientStop {
                 position: 0.0
-                color: Qt.rgba(0, 0, 0, 0.6)
+                color: Qt.alpha(Color.mShadow, 0.8)
               }
               GradientStop {
                 position: 0.3
-                color: Qt.rgba(0, 0, 0, 0.3)
+                color: Qt.alpha(Color.mShadow, 0.4)
               }
               GradientStop {
                 position: 0.7
-                color: Qt.rgba(0, 0, 0, 0.4)
+                color: Qt.alpha(Color.mShadow, 0.5)
               }
               GradientStop {
                 position: 1.0
-                color: Qt.rgba(0, 0, 0, 0.7)
+                color: Qt.alpha(Color.mShadow, 0.9)
               }
+            }
+          }
+
+          // Screen corners for lock screen
+          Item {
+            anchors.fill: parent
+            visible: Settings.data.general.showScreenCorners
+
+            property color cornerColor: Settings.data.general.forceBlackScreenCorners ? Qt.rgba(0, 0, 0, 1) : Qt.alpha(Color.mSurface, Settings.data.bar.backgroundOpacity)
+            property real cornerRadius: Style.screenRadius * scaling
+            property real cornerSize: Style.screenRadius * scaling
+            property real barHeight: Style.barHeight * scaling
+
+            // Top-left concave corner
+            Canvas {
+              anchors.top: parent.top
+              anchors.left: parent.left
+              anchors.topMargin: Settings.data.bar.position === "top" ? barHeight : 0
+              width: parent.cornerSize
+              height: parent.cornerSize
+              antialiasing: true
+              renderTarget: Canvas.FramebufferObject
+              smooth: false
+
+              onPaint: {
+                const ctx = getContext("2d")
+                if (!ctx)
+                  return
+
+                ctx.reset()
+                ctx.clearRect(0, 0, width, height)
+
+                ctx.fillStyle = parent.cornerColor
+                ctx.fillRect(0, 0, width, height)
+
+                ctx.globalCompositeOperation = "destination-out"
+                ctx.fillStyle = "#ffffff"
+                ctx.beginPath()
+                ctx.arc(width, height, parent.cornerRadius, 0, 2 * Math.PI)
+                ctx.fill()
+              }
+
+              onWidthChanged: if (available)
+                                requestPaint()
+              onHeightChanged: if (available)
+                                 requestPaint()
+            }
+
+            // Top-right concave corner
+            Canvas {
+              anchors.top: parent.top
+              anchors.right: parent.right
+              anchors.topMargin: Settings.data.bar.position === "top" ? barHeight : 0
+              width: parent.cornerSize
+              height: parent.cornerSize
+              antialiasing: true
+              renderTarget: Canvas.FramebufferObject
+              smooth: true
+
+              onPaint: {
+                const ctx = getContext("2d")
+                if (!ctx)
+                  return
+
+                ctx.reset()
+                ctx.clearRect(0, 0, width, height)
+
+                ctx.fillStyle = parent.cornerColor
+                ctx.fillRect(0, 0, width, height)
+
+                ctx.globalCompositeOperation = "destination-out"
+                ctx.fillStyle = "#ffffff"
+                ctx.beginPath()
+                ctx.arc(0, height, parent.cornerRadius, 0, 2 * Math.PI)
+                ctx.fill()
+              }
+
+              onWidthChanged: if (available)
+                                requestPaint()
+              onHeightChanged: if (available)
+                                 requestPaint()
+            }
+
+            // Bottom-left concave corner
+            Canvas {
+              anchors.bottom: parent.bottom
+              anchors.left: parent.left
+              anchors.bottomMargin: Settings.data.bar.position === "bottom" ? barHeight : 0
+              width: parent.cornerSize
+              height: parent.cornerSize
+              antialiasing: true
+              renderTarget: Canvas.FramebufferObject
+              smooth: true
+
+              onPaint: {
+                const ctx = getContext("2d")
+                if (!ctx)
+                  return
+
+                ctx.reset()
+                ctx.clearRect(0, 0, width, height)
+
+                ctx.fillStyle = parent.cornerColor
+                ctx.fillRect(0, 0, width, height)
+
+                ctx.globalCompositeOperation = "destination-out"
+                ctx.fillStyle = "#ffffff"
+                ctx.beginPath()
+                ctx.arc(width, 0, parent.cornerRadius, 0, 2 * Math.PI)
+                ctx.fill()
+              }
+
+              onWidthChanged: if (available)
+                                requestPaint()
+              onHeightChanged: if (available)
+                                 requestPaint()
+            }
+
+            // Bottom-right concave corner
+            Canvas {
+              anchors.bottom: parent.bottom
+              anchors.right: parent.right
+              anchors.bottomMargin: Settings.data.bar.position === "bottom" ? barHeight : 0
+              width: parent.cornerSize
+              height: parent.cornerSize
+              antialiasing: true
+              renderTarget: Canvas.FramebufferObject
+              smooth: true
+
+              onPaint: {
+                const ctx = getContext("2d")
+                if (!ctx)
+                  return
+
+                ctx.reset()
+                ctx.clearRect(0, 0, width, height)
+
+                ctx.fillStyle = parent.cornerColor
+                ctx.fillRect(0, 0, width, height)
+
+                ctx.globalCompositeOperation = "destination-out"
+                ctx.fillStyle = "#ffffff"
+                ctx.beginPath()
+                ctx.arc(0, 0, parent.cornerRadius, 0, 2 * Math.PI)
+                ctx.fill()
+              }
+
+              onWidthChanged: if (available)
+                                requestPaint()
+              onHeightChanged: if (available)
+                                 requestPaint()
             }
           }
 
@@ -280,7 +431,7 @@ Loader {
               anchors.bottom: parent.bottom
               anchors.bottomMargin: 100 * scaling
               radius: 32 * scaling
-              color: Qt.alpha(Color.mSurfaceContainerHighest, 0.9)
+              color: Color.mSurface
               border.color: Qt.alpha(Color.mOutline, 0.2)
               border.width: 1
 
@@ -557,7 +708,7 @@ Loader {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 48 * scaling
                     radius: 24 * scaling
-                    color: Qt.alpha(Color.mSurfaceContainerHighest, 0.6)
+                    color: Color.mSurface
                     border.color: passwordInput.activeFocus ? Color.mPrimary : Qt.alpha(Color.mOutline, 0.3)
                     border.width: passwordInput.activeFocus ? 2 : 1
 
@@ -582,7 +733,7 @@ Loader {
                         visible: false
                         enabled: !lockContext.unlockInProgress
                         font.pointSize: Style.fontSizeM * scaling
-                        color: Color.mOnSurface
+                        color: Color.mPrimary
                         echoMode: TextInput.Password
                         passwordCharacter: "•"
                         passwordMaskDelay: 0
@@ -633,7 +784,7 @@ Loader {
                             NIcon {
                               icon: "circle-filled"
                               pointSize: Style.fontSizeS * scaling
-                              color: Color.mOnSurface
+                              color: Color.mPrimary
                               opacity: 1.0
                             }
                           }
