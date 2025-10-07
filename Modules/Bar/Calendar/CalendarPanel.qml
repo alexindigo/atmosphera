@@ -90,6 +90,7 @@ NPanel {
 
           // Day number
           NText {
+            visible: content.isCurrentMonth
             Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
             text: `${Time.date.getDate()}`
             pointSize: Style.fontSizeXXXL * 1.4 * scaling
