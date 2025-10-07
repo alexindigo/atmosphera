@@ -64,11 +64,19 @@ Singleton {
   function findActivePlayer() {
     let availablePlayers = getAvailablePlayers()
     if (availablePlayers.length === 0) {
-      Logger.log("Media", "No active player found")
       return null
     }
 
-    // Preferred player logic (preferred > fallback)
+    // First, check if any player is currently playing
+    for (var i = 0; i < availablePlayers.length; i++) {
+      const p = availablePlayers[i]
+      if (p.isPlaying && p.playbackState === MprisPlaybackState.Playing) {
+        selectedPlayerIndex = i
+        return p
+      }
+    }
+
+    // If no player is playing, use preferred player logic
     const preferred = (Settings.data.audio.preferredPlayer || "")
     if (preferred !== "") {
       for (var i = 0; i < availablePlayers.length; i++) {
@@ -84,6 +92,7 @@ Singleton {
       }
     }
 
+    // Fallback to selected index or first player
     if (selectedPlayerIndex < availablePlayers.length) {
       return availablePlayers[selectedPlayerIndex]
     } else {
@@ -98,7 +107,6 @@ Singleton {
     if (newPlayer !== currentPlayer) {
       currentPlayer = newPlayer
       currentPosition = currentPlayer ? currentPlayer.position : 0
-      Logger.log("Media", "Switching player")
     }
   }
 
@@ -193,8 +201,21 @@ Singleton {
   Connections {
     target: Mpris.players
     function onValuesChanged() {
-      Logger.log("Media", "Players changed")
       updateCurrentPlayer()
+    }
+  }
+
+  // Monitor playback state changes across all players to switch to playing ones
+  Timer {
+    id: playerStateMonitor
+    interval: 2000 // Check every 2 seconds
+    repeat: true
+    running: true
+    onTriggered: {
+      // Only update if we don't have a playing player or if current player is paused
+      if (!currentPlayer || !currentPlayer.isPlaying || currentPlayer.playbackState !== MprisPlaybackState.Playing) {
+        updateCurrentPlayer()
+      }
     }
   }
 }
