@@ -46,7 +46,20 @@ NBox {
   Item {
     id: visualizerContainer
     anchors.fill: parent
-    visible: true
+    layer.enabled: true
+    layer.effect: MultiEffect {
+      maskEnabled: true
+      maskThresholdMin: 0.5
+      maskSpreadAtMin: 0.0
+      maskSource: ShaderEffectSource {
+        sourceItem: Rectangle {
+          width: root.width
+          height: root.height
+          radius: Style.radiusM * scaling
+          color: "white"
+        }
+      }
+    }
 
     Loader {
       anchors.fill: parent
@@ -93,21 +106,6 @@ NBox {
           fillColor: Color.mPrimary
           opacity: MediaService.trackArtUrl !== "" ? 0.4 : 0.8
         }
-      }
-    }
-  }
-
-  MultiEffect {
-    anchors.fill: parent
-    source: visualizerContainer
-    maskEnabled: true
-    maskSource: Item {
-      width: root.width
-      height: root.height
-      Rectangle {
-        anchors.fill: parent
-        radius: Style.radiusM * scaling
-        color: "white"
       }
     }
   }
