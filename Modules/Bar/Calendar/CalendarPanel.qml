@@ -10,8 +10,8 @@ import qs.Widgets
 NPanel {
   id: root
 
-  preferredWidth: Settings.data.location.showWeekNumberInCalendar ? 340 : 320
-  preferredHeight: 380
+  preferredWidth: Settings.data.location.showWeekNumberInCalendar ? 420 : 420
+  preferredHeight: 520
 
   panelContent: ColumnLayout {
     id: content
@@ -21,6 +21,7 @@ NPanel {
 
     readonly property int firstDayOfWeek: Qt.locale().firstDayOfWeek
     property bool isCurrentMonth: checkIsCurrentMonth()
+    readonly property bool weatherReady: (LocationService.data.weather !== null)
 
     function checkIsCurrentMonth() {
       return (Time.date.getMonth() === grid.month) && (Time.date.getFullYear() === grid.year)
@@ -33,132 +34,270 @@ NPanel {
       }
     }
 
-    // Current day
+    // Combined blue banner with date/time and weather summary
     Rectangle {
       Layout.fillWidth: true
       Layout.preferredHeight: 80 * scaling
       radius: Style.radiusL * scaling
       color: Color.mPrimary
 
-      RowLayout {
+      ColumnLayout {
         anchors.fill: parent
         anchors.margins: Style.marginL * scaling
-        anchors.topMargin: 12 * scaling
-        spacing: Style.marginM * scaling
+        spacing: 0
 
-        // Month, Year and Day
+        // Combined layout for weather icon, date, and weather text
         RowLayout {
-          Layout.alignment: Qt.AlignVCenter
-          Layout.fillHeight: true
-          spacing: Style.marginM * scaling
+          Layout.fillWidth: true
+          spacing: Style.marginXXS * scaling
 
-          // Big day of the month
+          // Weather icon and temperature
+          ColumnLayout {
+            Layout.alignment: Qt.AlignVCenter
+            spacing: Style.marginXXS * scaling
+
+            NIcon {
+              Layout.alignment: Qt.AlignHCenter
+              icon: weatherReady ? LocationService.weatherSymbolFromCode(LocationService.data.weather.current_weather.weathercode) : "cloud"
+              pointSize: Style.fontSizeXXL * scaling
+              color: Color.mOnPrimary
+            }
+
+            NText {
+              Layout.alignment: Qt.AlignHCenter
+              text: {
+                if (!weatherReady)
+                  return ""
+                var temp = LocationService.data.weather.current_weather.temperature
+                var suffix = "C"
+                if (Settings.data.location.useFahrenheit) {
+                  temp = LocationService.celsiusToFahrenheit(temp)
+                  suffix = "F"
+                }
+                temp = Math.round(temp)
+                return `${temp}°${suffix}`
+              }
+              pointSize: Style.fontSizeM * scaling
+              font.weight: Style.fontWeightBold
+              color: Color.mOnPrimary
+            }
+          }
+
+          // Small spacer between weather and day number
+          Item {
+            Layout.preferredWidth: Style.marginXS * scaling
+          }
+
+          // Day number
           NText {
-            text: Time.date.getDate()
-            pointSize: Style.fontSizeXXXL * 1.5 * scaling
+            Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+            text: `${Time.date.getDate()}`
+            pointSize: Style.fontSizeXXXL * 1.4 * scaling
             font.weight: Style.fontWeightBold
             color: Color.mOnPrimary
-            visible: isCurrentMonth
-            Layout.preferredWidth: visible ? implicitWidth : 0
-            Layout.fillHeight: true
           }
 
-          // Month and Year
+          // Date and weather text column
           ColumnLayout {
-            spacing: 0
+            Layout.fillWidth: false
+            Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+            spacing: -Style.marginXS * scaling
 
-            NText {
-              text: Qt.locale().monthName(grid.month, Locale.LongFormat).toUpperCase()
-              pointSize: Style.fontSizeL * scaling
-              font.weight: Style.fontWeightBold
-              color: Color.mOnPrimary
-            }
+            RowLayout {
+              spacing: 0
 
-            NText {
-              text: grid.year
-              pointSize: Style.fontSizeM * scaling
-              color: Qt.alpha(Color.mOnPrimary, 0.8)
-            }
-          }
-        }
+              NText {
+                text: Qt.locale().monthName(grid.month, Locale.LongFormat).toUpperCase()
+                pointSize: Style.fontSizeXL * 1.2 * scaling
+                font.weight: Style.fontWeightBold
+                color: Color.mOnPrimary
+                Layout.alignment: Qt.AlignBaseline
+                Layout.maximumWidth: 150 * scaling
+                elide: Text.ElideRight
+              }
 
-        Item {
-          Layout.fillWidth: true
-        }
-
-        // Digital clock with circular progress
-        Item {
-          width: Style.fontSizeXXXL * 2 * scaling
-          height: Style.fontSizeXXXL * 2 * scaling
-
-          // Seconds circular progress
-          Canvas {
-            id: secondsProgress
-            anchors.fill: parent
-
-            property real progress: Time.date.getSeconds() / 60
-            onProgressChanged: requestPaint()
-
-            Connections {
-              target: Time
-              function onDateChanged() {
-                secondsProgress.progress = Time.date.getSeconds() / 60
+              NText {
+                text: ` ${grid.year}`
+                pointSize: Style.fontSizeL * scaling
+                font.weight: Style.fontWeightBold
+                color: Qt.alpha(Color.mOnPrimary, 0.7)
+                Layout.alignment: Qt.AlignBaseline
               }
             }
 
-            onPaint: {
-              var ctx = getContext("2d")
-              var centerX = width / 2
-              var centerY = height / 2
-              var radius = Math.min(width, height) / 2 - 4 * scaling
+            RowLayout {
+              spacing: 0
 
-              ctx.reset()
+              NText {
+                text: {
+                  if (!weatherReady)
+                    return I18n.tr("calendar.weather.loading")
+                  const chunks = Settings.data.location.name.split(",")
+                  return chunks[0]
+                }
+                pointSize: Style.fontSizeM * scaling
+                font.weight: Style.fontWeightMedium
+                color: Color.mOnPrimary
+                Layout.maximumWidth: 150 * scaling
+                elide: Text.ElideRight
+              }
 
-              // Background circle
-              ctx.beginPath()
-              ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI)
-              ctx.lineWidth = 3 * scaling
-              ctx.strokeStyle = Qt.alpha(Color.mOnPrimary, 0.15)
-              ctx.stroke()
-
-              // Progress arc
-              ctx.beginPath()
-              ctx.arc(centerX, centerY, radius, -Math.PI / 2, -Math.PI / 2 + progress * 2 * Math.PI)
-              ctx.lineWidth = 3 * scaling
-              ctx.strokeStyle = Color.mOnPrimary
-              ctx.lineCap = "round"
-              ctx.stroke()
+              NText {
+                text: weatherReady ? ` (${LocationService.data.weather.timezone_abbreviation})` : ""
+                pointSize: Style.fontSizeXS * scaling
+                font.weight: Style.fontWeightMedium
+                color: Qt.alpha(Color.mOnPrimary, 0.7)
+              }
             }
           }
 
-          // Digital clock
-          ColumnLayout {
-            anchors.centerIn: parent
-            spacing: -3 * scaling
+          // Spacer between text and clock
+          Item {
+            Layout.fillWidth: true
+          }
 
-            NText {
-              text: {
-                var t = Settings.data.location.use12hourFormat ? Qt.locale().toString(new Date(), "hh AP") : Qt.locale().toString(new Date(), "HH")
-                return t.split(" ")[0]
+          // Spacer between date and clock
+          Item {
+            Layout.fillWidth: true
+          }
+
+          // Digital clock with circular progress
+          Item {
+            width: Style.fontSizeXXXL * 1.6 * scaling
+            height: Style.fontSizeXXXL * 1.6 * scaling
+            Layout.alignment: Qt.AlignVCenter
+
+            // Seconds circular progress
+            Canvas {
+              id: secondsProgress
+              anchors.fill: parent
+
+              property real progress: Time.date.getSeconds() / 60
+              onProgressChanged: requestPaint()
+
+              Connections {
+                target: Time
+                function onDateChanged() {
+                  secondsProgress.progress = Time.date.getSeconds() / 60
+                }
               }
-              pointSize: Style.fontSizeS * scaling
-              font.weight: Style.fontWeightBold
-              color: Color.mOnPrimary
-              family: Settings.data.ui.fontFixed
-              Layout.alignment: Qt.AlignHCenter
+
+              onPaint: {
+                var ctx = getContext("2d")
+                var centerX = width / 2
+                var centerY = height / 2
+                var radius = Math.min(width, height) / 2 - 3 * scaling
+
+                ctx.reset()
+
+                // Background circle
+                ctx.beginPath()
+                ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI)
+                ctx.lineWidth = 2.5 * scaling
+                ctx.strokeStyle = Qt.alpha(Color.mOnPrimary, 0.15)
+                ctx.stroke()
+
+                // Progress arc
+                ctx.beginPath()
+                ctx.arc(centerX, centerY, radius, -Math.PI / 2, -Math.PI / 2 + progress * 2 * Math.PI)
+                ctx.lineWidth = 2.5 * scaling
+                ctx.strokeStyle = Color.mOnPrimary
+                ctx.lineCap = "round"
+                ctx.stroke()
+              }
             }
 
-            NText {
-              text: Qt.formatTime(Time.date, "mm")
-              pointSize: Style.fontSizeS * scaling
-              font.weight: Style.fontWeightBold
-              color: Color.mOnPrimary
-              family: Settings.data.ui.fontFixed
-              Layout.alignment: Qt.AlignHCenter
+            // Digital clock
+            ColumnLayout {
+              anchors.centerIn: parent
+              spacing: -Style.marginXXS * scaling
+
+              NText {
+                text: {
+                  var t = Settings.data.location.use12hourFormat ? Qt.locale().toString(new Date(), "hh AP") : Qt.locale().toString(new Date(), "HH")
+                  return t.split(" ")[0]
+                }
+                pointSize: Style.fontSizeXXS * scaling
+                font.weight: Style.fontWeightBold
+                color: Color.mOnPrimary
+                family: Settings.data.ui.fontFixed
+                Layout.alignment: Qt.AlignHCenter
+              }
+
+              NText {
+                text: Qt.formatTime(Time.date, "mm")
+                pointSize: Style.fontSizeXXS * scaling
+                font.weight: Style.fontWeightBold
+                color: Color.mOnPrimary
+                family: Settings.data.ui.fontFixed
+                Layout.alignment: Qt.AlignHCenter
+              }
             }
           }
         }
       }
+    }
+
+    // 5-day forecast (outside blue banner)
+    RowLayout {
+      visible: weatherReady
+      Layout.fillWidth: true
+      Layout.alignment: Qt.AlignHCenter
+      spacing: Style.marginS * scaling
+
+      Repeater {
+        model: weatherReady ? Math.min(7, LocationService.data.weather.daily.time.length) : 0
+        delegate: ColumnLayout {
+          Layout.preferredWidth: 0
+          Layout.fillWidth: true
+          Layout.alignment: Qt.AlignHCenter
+          spacing: Style.marginXS * scaling
+
+          NText {
+            text: {
+              var weatherDate = new Date(LocationService.data.weather.daily.time[index].replace(/-/g, "/"))
+              return Qt.locale().toString(weatherDate, "ddd")
+            }
+            color: Qt.alpha(Color.mOnSurface, 0.8)
+            pointSize: Style.fontSizeS * scaling
+            font.weight: Style.fontWeightMedium
+            Layout.alignment: Qt.AlignHCenter
+          }
+
+          NIcon {
+            Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+            icon: LocationService.weatherSymbolFromCode(LocationService.data.weather.daily.weathercode[index])
+            pointSize: Style.fontSizeM * scaling
+            color: Color.mPrimary
+          }
+
+          NText {
+            Layout.alignment: Qt.AlignHCenter
+            text: {
+              var max = LocationService.data.weather.daily.temperature_2m_max[index]
+              var min = LocationService.data.weather.daily.temperature_2m_min[index]
+              if (Settings.data.location.useFahrenheit) {
+                max = LocationService.celsiusToFahrenheit(max)
+                min = LocationService.celsiusToFahrenheit(min)
+              }
+              max = Math.round(max)
+              min = Math.round(min)
+              return `${max}°/${min}°`
+            }
+            pointSize: Style.fontSizeXS * scaling
+            color: Qt.alpha(Color.mOnSurface, 0.8)
+            font.weight: Style.fontWeightMedium
+          }
+        }
+      }
+    }
+
+    // Loading indicator for weather
+    RowLayout {
+      visible: !weatherReady
+      Layout.fillWidth: true
+      Layout.alignment: Qt.AlignHCenter
+      NBusyIndicator {}
     }
 
     // Navigation and divider
