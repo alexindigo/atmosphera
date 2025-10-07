@@ -108,7 +108,7 @@ ColumnLayout {
 
               NText {
                 text: I18n.tr("settings.display.monitors.scale")
-                Layout.preferredWidth: 80 * scaling
+                Layout.preferredWidth: 90 * scaling
                 Layout.alignment: Qt.AlignVCenter
               }
 
@@ -132,11 +132,11 @@ ColumnLayout {
               }
 
               Item {
-                Layout.preferredWidth: 35 * scaling
+                Layout.preferredWidth: 30 * scaling
                 Layout.fillHeight: true
                 NIconButton {
                   icon: "refresh"
-                  baseSize: Style.baseWidgetSize * 0.9
+                  baseSize: Style.baseWidgetSize * 0.8
                   tooltipText: I18n.tr("settings.display.monitors.reset-scaling")
                   onClicked: ScalingService.setScreenScale(modelData, 1.0)
                   anchors.centerIn: parent
@@ -157,7 +157,7 @@ ColumnLayout {
 
               NText {
                 text: I18n.tr("settings.display.monitors.brightness")
-                Layout.preferredWidth: 80 * scaling
+                Layout.preferredWidth: 90 * scaling
                 Layout.alignment: Qt.AlignVCenter
               }
 
@@ -179,14 +179,11 @@ ColumnLayout {
               }
 
               Item {
-                Layout.preferredWidth: 35 * scaling
+                Layout.preferredWidth: 30 * scaling
                 Layout.fillHeight: true
-                NText {
-                  text: brightnessMonitor ? "(" + brightnessMonitor.method + ")" : ""
-                  pointSize: Style.fontSizeXS * scaling
-                  color: Color.mOnSurfaceVariant
+                NIcon {
+                  icon: brightnessMonitor.method == "internal" ? "device-laptop" : "device-desktop"
                   anchors.centerIn: parent
-                  horizontalAlignment: Text.AlignRight
                 }
               }
             }
