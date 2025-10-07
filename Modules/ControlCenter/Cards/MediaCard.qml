@@ -108,7 +108,7 @@ NBox {
 
   OpacityMask {
     anchors.fill: parent
-    opacity: 0.35
+    opacity: MediaService.trackArtUrl !== "" ? 0.35 : 1.0
     source: visualizerContainer
     maskSource: Rectangle {
       width: root.width
@@ -155,7 +155,7 @@ NBox {
                 height: width
                 radius: width / 2
                 color: "transparent"
-                border.color: Color.mPrimary
+                border.color: Color.mOnSurfaceVariant
                 border.width: 2
                 opacity: 0
 
@@ -194,7 +194,7 @@ NBox {
               anchors.centerIn: parent
               icon: "disc"
               pointSize: Style.fontSizeXXXL * 3 * scaling
-              color: Color.mPrimary
+              color: Color.mOnSurfaceVariant
 
               RotationAnimator on rotation {
                 from: 0
@@ -210,22 +210,6 @@ NBox {
           ColumnLayout {
             Layout.alignment: Qt.AlignHCenter
             spacing: Style.marginXS * scaling
-
-            NText {
-              Layout.alignment: Qt.AlignHCenter
-              text: "No music playing"
-              font.weight: Style.fontWeightBold
-              pointSize: Style.fontSizeL * scaling
-              color: Color.mOnSurface
-            }
-
-            NText {
-              Layout.alignment: Qt.AlignHCenter
-              text: "Start playing something to see it here"
-              pointSize: Style.fontSizeS * scaling
-              color: Color.mOnSurfaceVariant
-              opacity: 0.7
-            }
           }
         }
       }
