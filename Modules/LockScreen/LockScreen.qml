@@ -622,11 +622,21 @@ Loader {
                           }
                         }
 
-                        NText {
-                          text: passwordInput.text.length > 0 ? "•".repeat(passwordInput.text.length) : ""
-                          color: passwordInput.text.length > 0 ? Color.mOnSurface : Color.mOnSurfaceVariant
-                          pointSize: Style.fontSizeXL * scaling
-                          opacity: passwordInput.text.length > 0 ? 1.0 : 0.6
+                        Row {
+                          spacing: 6 * scaling
+                          visible: passwordInput.text.length > 0
+                          anchors.verticalCenter: parent.verticalCenter
+                          
+                          Repeater {
+                            model: passwordInput.text.length
+                            
+                            NIcon {
+                              icon: "circle-filled"
+                              pointSize: Style.fontSizeS * scaling
+                              color: Color.mOnSurface
+                              opacity: 1.0
+                            }
+                          }
                         }
 
                         Rectangle {
