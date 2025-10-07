@@ -112,6 +112,78 @@ NBox {
     }
   }
 
+  // Player selector - positioned at the very top
+  Rectangle {
+    id: playerSelectorButton
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.topMargin: Style.marginXS * scaling
+    anchors.leftMargin: Style.marginM * scaling
+    anchors.rightMargin: Style.marginM * scaling
+    height: Style.barHeight * scaling
+    visible: MediaService.getAvailablePlayers().length > 1
+    radius: Style.radiusM * scaling
+    color: Color.transparent
+
+    property var currentPlayer: MediaService.getAvailablePlayers()[MediaService.selectedPlayerIndex]
+
+    RowLayout {
+      anchors.fill: parent
+      spacing: Style.marginS * scaling
+
+      NIcon {
+        icon: "caret-down"
+        pointSize: Style.fontSizeXXL * scaling
+        color: Color.mOnSurfaceVariant
+      }
+
+      NText {
+        text: playerSelectorButton.currentPlayer ? playerSelectorButton.currentPlayer.identity : ""
+        pointSize: Style.fontSizeXS * scaling
+        color: Color.mOnSurfaceVariant
+        Layout.fillWidth: true
+      }
+    }
+
+    MouseArea {
+      id: playerSelectorMouseArea
+      anchors.fill: parent
+      hoverEnabled: true
+      cursorShape: Qt.PointingHandCursor
+
+      onClicked: {
+        var menuItems = []
+        var players = MediaService.getAvailablePlayers()
+        for (var i = 0; i < players.length; i++) {
+          menuItems.push({
+                           "label": players[i].identity,
+                           "action": i.toString(),
+                           "icon": "disc",
+                           "enabled": true,
+                           "visible": true
+                         })
+        }
+        playerContextMenu.model = menuItems
+        playerContextMenu.openAtItem(playerSelectorButton, playerSelectorButton.width - playerContextMenu.width, playerSelectorButton.height)
+      }
+    }
+
+    NContextMenu {
+      id: playerContextMenu
+      parent: root
+      width: 200 * scaling
+
+      onTriggered: function (action) {
+        var index = parseInt(action)
+        if (!isNaN(index)) {
+          MediaService.selectedPlayerIndex = index
+          MediaService.updateCurrentPlayer()
+        }
+      }
+    }
+  }
+
   ColumnLayout {
     anchors.fill: parent
     anchors.margins: Style.marginM * scaling
@@ -221,73 +293,6 @@ NBox {
 
       visible: MediaService.currentPlayer && MediaService.canPlay
       spacing: Style.marginS * scaling
-
-      // Player selector
-      Rectangle {
-        id: playerSelectorButton
-        Layout.fillWidth: true
-        Layout.preferredHeight: Style.barHeight * scaling
-        visible: MediaService.getAvailablePlayers().length > 1
-        radius: Style.radiusM * scaling
-        color: Color.transparent
-
-        property var currentPlayer: MediaService.getAvailablePlayers()[MediaService.selectedPlayerIndex]
-
-        RowLayout {
-          anchors.fill: parent
-          spacing: Style.marginS * scaling
-
-          NIcon {
-            icon: "caret-down"
-            pointSize: Style.fontSizeXXL * scaling
-            color: Color.mOnSurfaceVariant
-          }
-
-          NText {
-            text: playerSelectorButton.currentPlayer ? playerSelectorButton.currentPlayer.identity : ""
-            pointSize: Style.fontSizeXS * scaling
-            color: Color.mOnSurfaceVariant
-            Layout.fillWidth: true
-          }
-        }
-
-        MouseArea {
-          id: playerSelectorMouseArea
-          anchors.fill: parent
-          hoverEnabled: true
-          cursorShape: Qt.PointingHandCursor
-
-          onClicked: {
-            var menuItems = []
-            var players = MediaService.getAvailablePlayers()
-            for (var i = 0; i < players.length; i++) {
-              menuItems.push({
-                               "label": players[i].identity,
-                               "action": i.toString(),
-                               "icon": "disc",
-                               "enabled": true,
-                               "visible": true
-                             })
-            }
-            playerContextMenu.model = menuItems
-            playerContextMenu.openAtItem(playerSelectorButton, playerSelectorButton.width - playerContextMenu.width, playerSelectorButton.height)
-          }
-        }
-
-        NContextMenu {
-          id: playerContextMenu
-          parent: root
-          width: 200 * scaling
-
-          onTriggered: function (action) {
-            var index = parseInt(action)
-            if (!isNaN(index)) {
-              MediaService.selectedPlayerIndex = index
-              MediaService.updateCurrentPlayer()
-            }
-          }
-        }
-      }
 
       // Spacer to push content down
       Item {
@@ -401,6 +406,11 @@ NBox {
           value: progressWrapper.progressRatio
           when: !MediaService.isSeeking
         }
+      }
+
+      // Spacer to push media controls down
+      Item {
+        Layout.preferredHeight: Style.marginL * scaling
       }
 
       // Media controls
