@@ -220,7 +220,7 @@ ColumnLayout {
 
     // Color Schemes Grid
     GridLayout {
-      columns: Math.max(1, Math.floor((root.width + columnSpacing) / (222 * scaling + columnSpacing)))
+      columns: 3
       rowSpacing: Style.marginM * scaling
       columnSpacing: Style.marginM * scaling
       Layout.fillWidth: true
@@ -233,8 +233,8 @@ ColumnLayout {
 
           property string schemePath: modelData
 
+          Layout.fillWidth: true
           Layout.alignment: Qt.AlignHCenter
-          width: 222 * scaling
           height: 50 * scaling
           radius: Style.radiusS * scaling
           color: getSchemeColor(modelData, "mSurface")
