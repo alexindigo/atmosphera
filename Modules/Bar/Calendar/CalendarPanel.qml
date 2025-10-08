@@ -297,8 +297,7 @@ NPanel {
     }
 
     // Spacer
-    Item {
-    }
+    Item {}
 
     // Navigation and divider
     RowLayout {

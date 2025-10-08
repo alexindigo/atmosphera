@@ -155,7 +155,7 @@ Item {
     if (!toplevel)
       return ""
 
-    return toplevel.appId;
+    return toplevel.appId
   }
 
   // Safe property getter

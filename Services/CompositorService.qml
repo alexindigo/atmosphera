@@ -32,8 +32,14 @@ Singleton {
 
   function detectCompositor() {
     const hyprlandSignature = Quickshell.env("HYPRLAND_INSTANCE_SIGNATURE")
+    const niriSocket = Quickshell.env("NIRI_SOCKET")
     const swaySock = Quickshell.env("SWAYSOCK")
-    if (hyprlandSignature && hyprlandSignature.length > 0) {
+    if (niriSocket && niriSocket.length > 0) {
+      isHyprland = false
+      isNiri = true
+      isSway = false
+      backendLoader.sourceComponent = niriComponent
+    } else if (hyprlandSignature && hyprlandSignature.length > 0) {
       isHyprland = true
       isNiri = false
       isSway = false
@@ -44,7 +50,7 @@ Singleton {
       isSway = true
       backendLoader.sourceComponent = swayComponent
     } else {
-      // Default to Niri
+      // Always fallback to Niri
       isHyprland = false
       isNiri = true
       isSway = false
