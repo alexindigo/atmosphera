@@ -24,14 +24,6 @@ Loader {
     onTriggered: lockScreen.active = false
   }
 
-  function formatTime() {
-    return Settings.data.location.use12hourFormat ? Qt.locale().toString(new Date(), "h:mm A") : Qt.locale().toString(new Date(), "HH:mm")
-  }
-
-  function formatDate() {
-    return Qt.locale().toString(new Date(), "dddd, MMMM d")
-  }
-
   function scheduleUnloadAfterUnlock() {
     unloadAfterUnlockTimer.start()
   }
@@ -268,7 +260,7 @@ Loader {
 
               NText {
                 id: timeText
-                text: lockScreen.formatTime()
+                text: Qt.locale().toString(Time.date, Settings.data.location.use12hourFormat ? "h:mm A" : "HH:mm")
                 Layout.alignment: Qt.AlignHCenter
                 pointSize: 72 * scaling
                 font.weight: Font.Medium
@@ -293,7 +285,7 @@ Loader {
 
               NText {
                 id: dateText
-                text: lockScreen.formatDate()
+                text: Qt.locale().toString(Time.date, "dddd, MMMM d")
                 Layout.alignment: Qt.AlignHCenter
                 pointSize: Style.fontSizeXL * scaling
                 font.weight: Font.Medium
