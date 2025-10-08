@@ -32,46 +32,46 @@ Singleton {
 
   function getAvailablePlayers() {
     if (!Mpris.players || !Mpris.players.values) {
-      return [];
+      return []
     }
 
-    let allPlayers = Mpris.players.values;
-    let finalPlayers = [];
-    const genericBrowsers = ["firefox", "chromium", "chrome"];
+    let allPlayers = Mpris.players.values
+    let finalPlayers = []
+    const genericBrowsers = ["firefox", "chromium", "chrome"]
 
-    // 1. Separate players into specific and generic lists
-    let specificPlayers = [];
-    let genericPlayers = [];
+    // Separate players into specific and generic lists
+    let specificPlayers = []
+    let genericPlayers = []
     for (var i = 0; i < allPlayers.length; i++) {
-      const identity = String(allPlayers[i].identity || "").toLowerCase();
+      const identity = String(allPlayers[i].identity || "").toLowerCase()
       if (genericBrowsers.some(b => identity.includes(b))) {
-        genericPlayers.push(allPlayers[i]);
+        genericPlayers.push(allPlayers[i])
       } else {
-        specificPlayers.push(allPlayers[i]);
+        specificPlayers.push(allPlayers[i])
       }
     }
 
-    let matchedGenericIndices = {};
+    let matchedGenericIndices = {}
 
-    // 2. For each specific player, try to find and pair it with a generic partner
+    // For each specific player, try to find and pair it with a generic partner
     for (var i = 0; i < specificPlayers.length; i++) {
-      let specificPlayer = specificPlayers[i];
-      let title1 = String(specificPlayer.trackTitle || "").trim();
-      let wasMatched = false;
+      let specificPlayer = specificPlayers[i]
+      let title1 = String(specificPlayer.trackTitle || "").trim()
+      let wasMatched = false
 
       if (title1) {
         for (var j = 0; j < genericPlayers.length; j++) {
-          if (matchedGenericIndices[j]) continue;
-          let genericPlayer = genericPlayers[j];
-          let title2 = String(genericPlayer.trackTitle || "").trim();
+          if (matchedGenericIndices[j]) continue
+          let genericPlayer = genericPlayers[j]
+          let title2 = String(genericPlayer.trackTitle || "").trim()
 
           if (title2 && (title1.includes(title2) || title2.includes(title1))) {
-            let dataPlayer = genericPlayer;
-            let identityPlayer = specificPlayer;
+            let dataPlayer = genericPlayer
+            let identityPlayer = specificPlayer
 
-            let scoreSpecific = (specificPlayer.trackArtUrl ? 1 : 0);
-            let scoreGeneric = (genericPlayer.trackArtUrl ? 1 : 0);
-            if(scoreSpecific > scoreGeneric){ dataPlayer = specificPlayer; }
+            let scoreSpecific = (specificPlayer.trackArtUrl ? 1 : 0)
+            let scoreGeneric = (genericPlayer.trackArtUrl ? 1 : 0)
+            if(scoreSpecific > scoreGeneric){ dataPlayer = specificPlayer }
 
             let virtualPlayer = {
               identity: identityPlayer.identity,
@@ -92,35 +92,35 @@ Singleton {
               canControl: dataPlayer.canControl || false,
               _stateSource: dataPlayer,
               _controlTarget: identityPlayer
-            };
-            finalPlayers.push(virtualPlayer);
-            matchedGenericIndices[j] = true;
-            wasMatched = true;
-            break;
+            }
+            finalPlayers.push(virtualPlayer)
+            matchedGenericIndices[j] = true
+            wasMatched = true
+            break
           }
         }
       }
       if (!wasMatched) {
-        finalPlayers.push(specificPlayer);
+        finalPlayers.push(specificPlayer)
       }
     }
 
-    // 3. Add any generic players that were not matched
+    // Add any generic players that were not matched
     for (var i = 0; i < genericPlayers.length; i++) {
       if (!matchedGenericIndices[i]) {
-        finalPlayers.push(genericPlayers[i]);
+        finalPlayers.push(genericPlayers[i])
       }
     }
 
-    // 4. Filter for controllable players
-    let controllablePlayers = [];
+    // Filter for controllable players
+    let controllablePlayers = []
     for (var i = 0; i < finalPlayers.length; i++) {
-      let player = finalPlayers[i];
+      let player = finalPlayers[i]
       if (player && player.canControl) {
-        controllablePlayers.push(player);
+        controllablePlayers.push(player)
       }
     }
-    return controllablePlayers;
+    return controllablePlayers
   }
 
   function findActivePlayer() {
@@ -130,16 +130,16 @@ Singleton {
       return null
     }
 
-    // --- NEW: Prioritize the actively playing player ---
+    // Prioritize the actively playing player ---
     for (var i = 0; i < availablePlayers.length; i++) {
       if (availablePlayers[i] && availablePlayers[i].playbackState === MprisPlaybackState.Playing) {
-        Logger.log("Media", "Found actively playing player: " + availablePlayers[i].identity);
-        selectedPlayerIndex = i;
-        return availablePlayers[i];
+        Logger.log("Media", "Found actively playing player: " + availablePlayers[i].identity)
+        selectedPlayerIndex = i
+        return availablePlayers[i]
       }
     }
 
-    // --- OLD LOGIC (used as a fallback if nothing is playing) ---
+    // fallback if nothing is playing)
     const preferred = (Settings.data.audio.preferredPlayer || "")
     if (preferred !== "") {
       for (var i = 0; i < availablePlayers.length; i++) {
@@ -216,14 +216,6 @@ Singleton {
     if (target && target.canSeek) {
       target.position = position
       currentPosition = position
-    }
-  }
-
-  function seekRelative(offset) {
-    if (currentPlayer && currentPlayer.canSeek) {
-      var newPosition = currentPlayer.position + offset
-      currentPlayer.position = newPosition
-      currentPosition = newPosition
     }
   }
 
