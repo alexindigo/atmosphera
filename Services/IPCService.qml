@@ -168,43 +168,43 @@ Item {
   }
 
   IpcHandler {
-      target: "media"
-      function playPause() {
-        MediaService.playPause()
-      }
+    target: "media"
+    function playPause() {
+      MediaService.playPause()
+    }
 
-      function play() {
-        MediaService.play()
-      }
+    function play() {
+      MediaService.play()
+    }
 
-      function pause() {
-        MediaService.pause()
-      }
-      
-      function next() {
-        MediaService.next()
-      }
+    function pause() {
+      MediaService.pause()
+    }
 
-      function previous() {
-        MediaService.previous()
-      }
+    function next() {
+      MediaService.next()
+    }
 
-      function seekRelative(offset: string) {
-        var offsetVal = parseFloat(position)
-        if (Number.isNaN(offsetVal)) {
-            Logger.warn("Media", "Argument to ipc call 'media seekRelative' must be a number")
-            return
-        }
-        MediaService.seekRelative(offsetVal)
-      }
+    function previous() {
+      MediaService.previous()
+    }
 
-      function seekByRatio(position: string) {
-        var positionVal = parseFloat(position)
-        if (Number.isNaN(positionVal)) {
-            Logger.warn("Media", "Argument to ipc call 'media seekByRatio' must be a number")
-            return
-        }
-        MediaService.seekByRatio(positionVal)
+    function seekRelative(offset: string) {
+      var offsetVal = parseFloat(position)
+      if (Number.isNaN(offsetVal)) {
+        Logger.warn("Media", "Argument to ipc call 'media seekRelative' must be a number")
+        return
       }
+      MediaService.seekRelative(offsetVal)
+    }
+
+    function seekByRatio(position: string) {
+      var positionVal = parseFloat(position)
+      if (Number.isNaN(positionVal)) {
+        Logger.warn("Media", "Argument to ipc call 'media seekByRatio' must be a number")
+        return
+      }
+      MediaService.seekByRatio(positionVal)
+    }
   }
 }

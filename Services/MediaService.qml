@@ -153,9 +153,9 @@ Singleton {
 
   function seekRelative(offset) {
     if (currentPlayer && currentPlayer.canSeek) {
-      var newPosition = currentPlayer.position + offset;
-      currentPlayer.position = newPosition;
-      currentPosition = newPosition;
+      var newPosition = currentPlayer.position + offset
+      currentPlayer.position = newPosition
+      currentPosition = newPosition
     }
   }
 
