@@ -251,126 +251,196 @@ Loader {
           Item {
             anchors.fill: parent
 
-            // Time and Date
-            ColumnLayout {
+            // Time, Date, and User Profile Container
+            Rectangle {
+              width: Math.max(500 * scaling, contentRow.implicitWidth + 24 * scaling)
+              height: 120 * scaling
               anchors.horizontalCenter: parent.horizontalCenter
               anchors.top: parent.top
               anchors.topMargin: 100 * scaling
-              spacing: 12 * scaling
+              radius: 32 * scaling
+              color: Color.mSurface
+              border.color: Qt.alpha(Color.mOutline, 0.2)
+              border.width: 1
 
-              NText {
-                id: timeText
-                text: Qt.locale().toString(Time.date, Settings.data.location.use12hourFormat ? "h:mm A" : "HH:mm")
-                Layout.alignment: Qt.AlignHCenter
-                pointSize: 72 * scaling
-                font.weight: Font.Medium
-                color: Color.mOnSurface
-                horizontalAlignment: Text.AlignHCenter
-                opacity: 0.95
+              RowLayout {
+                id: contentRow
+                anchors.fill: parent
+                anchors.margins: 12 * scaling
+                spacing: 8 * scaling
 
-                SequentialAnimation on opacity {
-                  loops: Animation.Infinite
-                  NumberAnimation {
-                    to: 0.7
-                    duration: 3000
-                    easing.type: Easing.InOutQuad
-                  }
-                  NumberAnimation {
-                    to: 0.95
-                    duration: 3000
-                    easing.type: Easing.InOutQuad
-                  }
-                }
-              }
-
-              NText {
-                id: dateText
-                text: Qt.locale().toString(Time.date, "dddd, MMMM d")
-                Layout.alignment: Qt.AlignHCenter
-                pointSize: Style.fontSizeXL * scaling
-                font.weight: Font.Medium
-                color: Color.mOnSurface
-                horizontalAlignment: Text.AlignHCenter
-                opacity: 0.9
-              }
-            }
-
-            // User Profile
-            ColumnLayout {
-              anchors.centerIn: parent
-              spacing: 10 * scaling
-              Layout.alignment: Qt.AlignHCenter
-
-              Rectangle {
-                Layout.preferredWidth: 140 * scaling
-                Layout.preferredHeight: 140 * scaling
-                Layout.alignment: Qt.AlignHCenter
-                radius: width * 0.5
-                color: Color.transparent
-
+                // Left side: Avatar
                 Rectangle {
-                  anchors.fill: parent
-                  radius: parent.radius
+                  Layout.preferredWidth: 70 * scaling
+                  Layout.preferredHeight: 70 * scaling
+                  Layout.alignment: Qt.AlignVCenter
+                  radius: width * 0.5
                   color: Color.transparent
-                  border.color: Qt.alpha(Color.mPrimary, 0.8)
-                  border.width: 3
 
-                  SequentialAnimation on border.color {
-                    loops: Animation.Infinite
-                    ColorAnimation {
-                      to: Qt.alpha(Color.mPrimary, 1.0)
-                      duration: 2000
-                      easing.type: Easing.InOutQuad
+                  Rectangle {
+                    anchors.fill: parent
+                    radius: parent.radius
+                    color: Color.transparent
+                    border.color: Qt.alpha(Color.mPrimary, 0.8)
+                    border.width: 2
+
+                    SequentialAnimation on border.color {
+                      loops: Animation.Infinite
+                      ColorAnimation {
+                        to: Qt.alpha(Color.mPrimary, 1.0)
+                        duration: 2000
+                        easing.type: Easing.InOutQuad
+                      }
+                      ColorAnimation {
+                        to: Qt.alpha(Color.mPrimary, 0.8)
+                        duration: 2000
+                        easing.type: Easing.InOutQuad
+                      }
                     }
-                    ColorAnimation {
-                      to: Qt.alpha(Color.mPrimary, 0.8)
-                      duration: 2000
-                      easing.type: Easing.InOutQuad
+                  }
+
+                  NImageCircled {
+                    anchors.centerIn: parent
+                    width: 66 * scaling
+                    height: 66 * scaling
+                    imagePath: Settings.data.general.avatarImage
+                    fallbackIcon: "person"
+
+                    SequentialAnimation on scale {
+                      loops: Animation.Infinite
+                      NumberAnimation {
+                        to: 1.02
+                        duration: 4000
+                        easing.type: Easing.InOutQuad
+                      }
+                      NumberAnimation {
+                        to: 1.0
+                        duration: 4000
+                        easing.type: Easing.InOutQuad
+                      }
                     }
                   }
                 }
 
-                NImageCircled {
-                  anchors.centerIn: parent
-                  width: 130 * scaling
-                  height: 130 * scaling
-                  imagePath: Settings.data.general.avatarImage
-                  fallbackIcon: "person"
+                // Spacer to center the text section
+                Item {
+                  Layout.fillWidth: true
+                }
 
-                  SequentialAnimation on scale {
-                    loops: Animation.Infinite
-                    NumberAnimation {
-                      to: 1.02
-                      duration: 4000
-                      easing.type: Easing.InOutQuad
+                // Center: User Info Column (left-aligned text)
+                ColumnLayout {
+                  Layout.alignment: Qt.AlignVCenter
+                  spacing: 2 * scaling
+
+                  // Welcome back + Username on one line
+                  NText {
+                    text: I18n.tr("lock-screen.welcome-back") + " " + Quickshell.env("USER")
+                    pointSize: Style.fontSizeXXXL * scaling
+                    font.weight: Font.Medium
+                    color: Color.mOnSurface
+                    horizontalAlignment: Text.AlignLeft
+                  }
+
+                  // Date below
+                  NText {
+                    text: Qt.locale().toString(Time.date, "dddd, MMMM d")
+                    pointSize: Style.fontSizeXXL * scaling
+                    font.weight: Font.Medium
+                    color: Color.mOnSurfaceVariant
+                    horizontalAlignment: Text.AlignLeft
+                  }
+                }
+
+                // Spacer to push cool time to the right
+                Item {
+                  Layout.fillWidth: true
+                }
+
+                // Right side: Cool Time (from Calendar)
+                Item {
+                  Layout.preferredWidth: 70 * scaling
+                  Layout.preferredHeight: 70 * scaling
+                  Layout.alignment: Qt.AlignVCenter
+
+                  // Seconds circular progress
+                  Canvas {
+                    id: secondsProgress
+                    anchors.fill: parent
+
+                    property real progress: Time.date.getSeconds() / 60
+                    onProgressChanged: requestPaint()
+
+                    Connections {
+                      target: Time
+                      function onDateChanged() {
+                        secondsProgress.progress = Time.date.getSeconds() / 60
+                      }
                     }
-                    NumberAnimation {
-                      to: 1.0
-                      duration: 4000
-                      easing.type: Easing.InOutQuad
+
+                    onPaint: {
+                      var ctx = getContext("2d")
+                      var centerX = width / 2
+                      var centerY = height / 2
+                      var radius = Math.min(width, height) / 2 - 3 * scaling
+
+                      ctx.reset()
+
+                      // Background circle
+                      ctx.beginPath()
+                      ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI)
+                      ctx.lineWidth = 2.5 * scaling
+                      ctx.strokeStyle = Qt.alpha(Color.mOnSurface, 0.15)
+                      ctx.stroke()
+
+                      // Progress arc
+                      ctx.beginPath()
+                      ctx.arc(centerX, centerY, radius, -Math.PI / 2, -Math.PI / 2 + progress * 2 * Math.PI)
+                      ctx.lineWidth = 2.5 * scaling
+                      ctx.strokeStyle = Color.mPrimary
+                      ctx.lineCap = "round"
+                      ctx.stroke()
+                    }
+                  }
+
+                  // Digital clock
+                  ColumnLayout {
+                    anchors.centerIn: parent
+                    spacing: 0
+
+                    NText {
+                      text: {
+                        var t = Settings.data.location.use12hourFormat ? Qt.locale().toString(new Date(), "hh AP") : Qt.locale().toString(new Date(), "HH")
+                        return t
+                      }
+                      pointSize: Style.fontSizeXL * scaling
+                      font.weight: Style.fontWeightBold
+                      color: Color.mOnSurface
+                      horizontalAlignment: Text.AlignHCenter
+                      Layout.alignment: Qt.AlignHCenter
+
+                      Connections {
+                        target: Time
+                        function onDateChanged() {// Trigger text update
+                        }
+                      }
+                    }
+
+                    NText {
+                      text: Qt.formatTime(Time.date, "mm")
+                      pointSize: Style.fontSizeL * scaling
+                      font.weight: Style.fontWeightBold
+                      color: Color.mOnSurfaceVariant
+                      horizontalAlignment: Text.AlignHCenter
+                      Layout.alignment: Qt.AlignHCenter
+
+                      Connections {
+                        target: Time
+                        function onDateChanged() {// Trigger text update
+                        }
+                      }
                     }
                   }
                 }
-              }
-
-              NText {
-                text: I18n.tr("lock-screen.welcome-back")
-                Layout.alignment: Qt.AlignHCenter
-                pointSize: Style.fontSizeXL * scaling
-                font.weight: Font.Medium
-                color: Color.mOnSurface
-                horizontalAlignment: Text.AlignHCenter
-                opacity: 0.9
-              }
-
-              NText {
-                text: Quickshell.env("USER")
-                Layout.alignment: Qt.AlignHCenter
-                pointSize: Style.fontSizeXXXL * scaling
-                font.weight: Font.Medium
-                color: Color.mOnSurface
-                horizontalAlignment: Text.AlignHCenter
-                opacity: 0.9
               }
             }
 
