@@ -10,7 +10,7 @@ import qs.Widgets
 NPanel {
   id: root
 
-  preferredWidth: Settings.data.location.showWeekNumberInCalendar ? 420 : 420
+  preferredWidth: Settings.data.location.showWeekNumberInCalendar ? 400 : 380
   preferredHeight: 520
 
   panelContent: ColumnLayout {
@@ -37,19 +37,21 @@ NPanel {
     // Combined blue banner with date/time and weather summary
     Rectangle {
       Layout.fillWidth: true
-      Layout.preferredHeight: 80 * scaling
+      Layout.preferredHeight: blueColumn.implicitHeight + Style.marginM * scaling * 2
       radius: Style.radiusL * scaling
       color: Color.mPrimary
 
       ColumnLayout {
+        id: blueColumn
         anchors.fill: parent
-        anchors.margins: Style.marginL * scaling
+        anchors.margins: Style.marginM * scaling
         spacing: 0
 
         // Combined layout for weather icon, date, and weather text
         RowLayout {
           Layout.fillWidth: true
-          spacing: Style.marginXXS * scaling
+          Layout.preferredHeight: 60 * scaling
+          spacing: Style.marginS * scaling
 
           // Weather icon and temperature
           ColumnLayout {
@@ -83,22 +85,20 @@ NPanel {
             }
           }
 
-          // Small spacer between weather and day number
-          Item {
-            Layout.preferredWidth: Style.marginXS * scaling
-          }
-
-          // Day number
+          // Today day number
           NText {
             visible: content.isCurrentMonth
             Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-            text: `${Time.date.getDate()}`
-            pointSize: Style.fontSizeXXXL * 1.4 * scaling
+            text: Time.date.getDate()
+            pointSize: Style.fontSizeXXXL * 1.5 * scaling
             font.weight: Style.fontWeightBold
             color: Color.mOnPrimary
           }
+          Item {
+            visible: !content.isCurrentMonth
+          }
 
-          // Date and weather text column
+          // Month, year, location
           ColumnLayout {
             Layout.fillWidth: false
             Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
@@ -152,11 +152,6 @@ NPanel {
             }
           }
 
-          // Spacer between text and clock
-          Item {
-            Layout.fillWidth: true
-          }
-
           // Spacer between date and clock
           Item {
             Layout.fillWidth: true
@@ -164,8 +159,8 @@ NPanel {
 
           // Digital clock with circular progress
           Item {
-            width: Style.fontSizeXXXL * 1.6 * scaling
-            height: Style.fontSizeXXXL * 1.6 * scaling
+            width: Style.fontSizeXXXL * 1.9 * scaling
+            height: Style.fontSizeXXXL * 1.9 * scaling
             Layout.alignment: Qt.AlignVCenter
 
             // Seconds circular progress
@@ -218,7 +213,7 @@ NPanel {
                   var t = Settings.data.location.use12hourFormat ? Qt.locale().toString(new Date(), "hh AP") : Qt.locale().toString(new Date(), "HH")
                   return t.split(" ")[0]
                 }
-                pointSize: Style.fontSizeXXS * scaling
+                pointSize: Style.fontSizeXS * scaling
                 font.weight: Style.fontWeightBold
                 color: Color.mOnPrimary
                 family: Settings.data.ui.fontFixed
@@ -239,28 +234,28 @@ NPanel {
       }
     }
 
-    // 5-day forecast (outside blue banner)
+    // 6-day forecast (outside blue banner)
     RowLayout {
       visible: weatherReady
       Layout.fillWidth: true
       Layout.alignment: Qt.AlignHCenter
-      spacing: Style.marginS * scaling
+      spacing: Style.marginL * scaling
 
       Repeater {
-        model: weatherReady ? Math.min(7, LocationService.data.weather.daily.time.length) : 0
+        model: weatherReady ? Math.min(6, LocationService.data.weather.daily.time.length) : 0
         delegate: ColumnLayout {
           Layout.preferredWidth: 0
           Layout.fillWidth: true
           Layout.alignment: Qt.AlignHCenter
-          spacing: Style.marginXS * scaling
+          spacing: Style.marginS * scaling
 
           NText {
             text: {
               var weatherDate = new Date(LocationService.data.weather.daily.time[index].replace(/-/g, "/"))
               return Qt.locale().toString(weatherDate, "ddd")
             }
-            color: Qt.alpha(Color.mOnSurface, 0.8)
-            pointSize: Style.fontSizeS * scaling
+            color: Color.mOnSurfaceVariant
+            pointSize: Style.fontSizeM * scaling
             font.weight: Style.fontWeightMedium
             Layout.alignment: Qt.AlignHCenter
           }
@@ -268,7 +263,7 @@ NPanel {
           NIcon {
             Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
             icon: LocationService.weatherSymbolFromCode(LocationService.data.weather.daily.weathercode[index])
-            pointSize: Style.fontSizeM * scaling
+            pointSize: Style.fontSizeXXL * 1.5 * scaling
             color: Color.mPrimary
           }
 
@@ -286,7 +281,7 @@ NPanel {
               return `${max}°/${min}°`
             }
             pointSize: Style.fontSizeXS * scaling
-            color: Qt.alpha(Color.mOnSurface, 0.8)
+            color: Color.mOnSurfaceVariant
             font.weight: Style.fontWeightMedium
           }
         }
@@ -299,6 +294,10 @@ NPanel {
       Layout.fillWidth: true
       Layout.alignment: Qt.AlignHCenter
       NBusyIndicator {}
+    }
+
+    // Spacer
+    Item {
     }
 
     // Navigation and divider
