@@ -167,6 +167,11 @@ ColumnLayout {
                 to: 1
                 value: brightnessMonitor ? brightnessMonitor.brightness : 0.5
                 stepSize: 0.01
+                onMoved: (value) => {
+                  if (brightnessMonitor.method === "internal") {
+                    brightnessMonitor.setBrightness(value)
+                  }
+                }
                 onPressedChanged: (pressed, value) => brightnessMonitor.setBrightness(value)
                 Layout.fillWidth: true
               }
