@@ -163,10 +163,6 @@ Singleton {
           }, {
             "id": "NotificationHistory"
           }, {
-            "id": "WiFi"
-          }, {
-            "id": "Bluetooth"
-          }, {
             "id": "Battery"
           }, {
             "id": "Volume"
@@ -246,13 +242,17 @@ Singleton {
     property JsonObject controlCenter: JsonObject {
       // Position: close_to_bar_button, center, top_left, top_right, bottom_left, bottom_right, bottom_center, top_center
       property string position: "close_to_bar_button"
-      property string quickSettingsStyle: "modern" // "modern" or "classic"
+      property string quickSettingsStyle: "compact" // "modern", "classic", or "compact"
       property JsonObject widgets
       widgets: JsonObject {
         property list<var> quickSettings: [{
+            "id": "WiFi"
+          }, {
             "id": "Bluetooth"
           }, {
-            "id": "WiFi"
+            "id": "DoNotDisturb"
+          }, {
+            "id": "ScreenRecorder"
           }, {
             "id": "PowerProfile"
           }]

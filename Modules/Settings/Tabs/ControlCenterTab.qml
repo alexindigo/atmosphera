@@ -52,7 +52,7 @@ ColumnLayout {
           "key": "compact",
           "name": I18n.tr("options.control-center.quickSettingsStyle.compact")
         }]
-      currentKey: Settings.data.controlCenter.quickSettingsStyle || "modern"
+      currentKey: Settings.data.controlCenter.quickSettingsStyle || "compact"
       onSelected: function (key) {
         Settings.data.controlCenter.quickSettingsStyle = key
       }

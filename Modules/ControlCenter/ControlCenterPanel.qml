@@ -11,7 +11,7 @@ NPanel {
   id: root
 
   preferredWidth: 440
-  preferredHeight: topHeight + bottomHeight +  Math.round(Style.marginL * scaling  * 3)
+  preferredHeight: topHeight + bottomHeight + Math.round(Style.marginL * scaling * 3)
   panelKeyboardFocus: true
 
   readonly property int bottomHeight: Math.round(Math.max(196 * scaling))
@@ -19,14 +19,12 @@ NPanel {
     const columns = (Settings.data.controlCenter.quickSettingsStyle === "compact") ? 4 : 3
     const rowsCount = Math.ceil(Settings.data.controlCenter.widgets.quickSettings.length / columns)
 
-    var buttonHeight;
+    var buttonHeight
     if (Settings.data.controlCenter.quickSettingsStyle === "classic") {
       buttonHeight = Style.baseWidgetSize
-    }
-    else if (Settings.data.controlCenter.quickSettingsStyle === "compact") {
+    } else if (Settings.data.controlCenter.quickSettingsStyle === "compact") {
       buttonHeight = Style.baseWidgetSize * 0.8 // Smaller for compact
-    }
-    else {
+    } else {
       buttonHeight = 56
     }
 
