@@ -433,6 +433,40 @@ NPanel {
                                              })
       }
 
+      // Helper function to check if an event is all-day
+      function isAllDayEvent(event) {
+        const duration = event.end - event.start
+        const startDate = new Date(event.start * 1000)
+        const isAtMidnight = startDate.getHours() === 0 && startDate.getMinutes() === 0
+        return duration === 86400 && isAtMidnight
+      }
+
+      // Helper function to check if an event is multi-day
+      function isMultiDayEvent(event) {
+        if (isAllDayEvent(event)) {
+          return false
+        }
+
+        const startDate = new Date(event.start * 1000)
+        const endDate = new Date(event.end * 1000)
+
+        const startDateOnly = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate())
+        const endDateOnly = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate())
+
+        return startDateOnly.getTime() !== endDateOnly.getTime()
+      }
+
+      // Helper function to get color for a specific event
+      function getEventColor(event, isToday) {
+        if (isMultiDayEvent(event)) {
+          return isToday ? Color.mOnSecondary : Color.mTertiary
+        } else if (isAllDayEvent(event)) {
+          return isToday ? Color.mOnSecondary : Color.mSecondary
+        } else {
+          return isToday ? Color.mOnSecondary : Color.mPrimary
+        }
+      }
+
       // Column of week numbers
       ColumnLayout {
         visible: Settings.data.location.showWeekNumberInCalendar
@@ -514,16 +548,29 @@ NPanel {
               font.weight: model.today ? Style.fontWeightBold : Style.fontWeightMedium
             }
 
-            // Event indicator dot
-            Rectangle {
+            // Event indicator dots
+            Row {
               visible: parent.parent.parent.parent.parent.hasEventsOnDate(model.year, model.month, model.day)
-              width: 4 * scaling
-              height: 4 * scaling
-              radius: 2 * scaling
-              color: model.today ? Color.mOnSecondary : Color.mPrimary
+              spacing: 2 * scaling
               anchors.horizontalCenter: parent.horizontalCenter
               anchors.bottom: parent.bottom
               anchors.bottomMargin: Style.marginXS * scaling
+
+              readonly property int currentYear: model.year
+              readonly property int currentMonth: model.month
+              readonly property int currentDay: model.day
+              readonly property bool isToday: model.today
+
+              Repeater {
+                model: parent.parent.parent.parent.parent.parent.getEventsForDate(parent.currentYear, parent.currentMonth, parent.currentDay)
+
+                Rectangle {
+                  width: 4 * scaling
+                  height: 4 * scaling
+                  radius: 2 * scaling
+                  color: parent.parent.parent.parent.parent.parent.getEventColor(modelData, model.today)
+                }
+              }
             }
 
             MouseArea {
