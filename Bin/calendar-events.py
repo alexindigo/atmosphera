@@ -5,6 +5,7 @@ gi.require_version('EDataServer', '1.2')
 gi.require_version('ECal', '2.0')
 import json
 import sys
+import time
 from datetime import datetime, timezone
 
 from gi.repository import ECal, EDataServer
@@ -30,8 +31,8 @@ def safe_get_time(ical_time):
             return None
 
         if ical_time.is_date():
-            dt = datetime(year, month, day, 0, 0, 0, tzinfo=timezone.utc)
-            return int(dt.timestamp())
+            local_struct = time.struct_time((year, month, day, 0, 0, 0, 0, 0, -1))
+            return int(time.mktime(local_struct))
 
         hour = ical_time.get_hour()
         minute = ical_time.get_minute()

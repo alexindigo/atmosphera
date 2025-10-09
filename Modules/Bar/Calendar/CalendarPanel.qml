@@ -410,12 +410,12 @@ NPanel {
           return false
 
         const targetDate = new Date(year, month, day)
-        const targetStart = Math.floor(new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate()).getTime() / 1000)
+        const targetStart = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate()).getTime() / 1000
         const targetEnd = targetStart + 86400 // +24 hours
 
         return CalendarService.events.some(event => {
                                              // Check if event starts or overlaps with this day
-                                             return (event.start >= targetStart && event.start < targetEnd) || (event.end > targetStart && event.end < targetEnd) || (event.start <= targetStart && event.end >= targetEnd)
+                                             return (event.start >= targetStart && event.start < targetEnd) || (event.end > targetStart && event.end <= targetEnd) || (event.start < targetStart && event.end > targetEnd)
                                            })
       }
 
@@ -429,7 +429,7 @@ NPanel {
         const targetEnd = targetStart + 86400 // +24 hours
 
         return CalendarService.events.filter(event => {
-                                               return (event.start >= targetStart && event.start < targetEnd) || +(event.end > targetStart && event.end < targetEnd) || +(event.start <= targetStart && event.end >= targetEnd)
+                                               return (event.start >= targetStart && event.start < targetEnd) || (event.end > targetStart && event.end <= targetEnd) || (event.start < targetStart && event.end > targetEnd)
                                              })
       }
 
