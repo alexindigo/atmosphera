@@ -19,7 +19,51 @@ Rectangle {
   readonly property string barPosition: Settings.data.bar.position
   readonly property bool isVertical: barPosition === "left" || barPosition === "right"
   readonly property bool compact: (Settings.data.bar.density === "compact")
-  readonly property real itemSize: isVertical ? Math.round(width * 0.7) : Math.round(height * 0.7)
+  property real itemSize: isVertical ? Math.round(width * 0.7) : Math.round(height * 0.7)
+  property list<string> blacklist: Settings.data.bar.trayBlacklist || [] // Read from settings
+  property var filteredItems: []
+
+  function wildCardMatch(str, rule) {
+    return str.toLowerCase().includes(rule.toLowerCase()); // Simple substring match
+  }
+
+  function updateFilteredItems() {
+    if (!root.blacklist || root.blacklist.length === 0) {
+      if (SystemTray.items && SystemTray.items.values) {
+        filteredItems = SystemTray.items.values
+      } else {
+        filteredItems = []
+      }
+      return
+    }
+
+    let newItems = []
+    if (SystemTray.items && SystemTray.items.values) {
+      const trayItems = SystemTray.items.values
+      for (var i = 0; i < trayItems.length; i++) {
+        const item = trayItems[i]
+        if (!item) {
+          continue
+        }
+
+        const title = item.tooltipTitle || item.name || item.id || ""
+
+        let isBlacklisted = false
+        for (var j = 0; j < root.blacklist.length; j++) {
+          const rule = root.blacklist[j]
+          if (wildCardMatch(title, rule)) {
+            isBlacklisted = true
+            break
+          }
+        }
+
+        if (!isBlacklisted) {
+          newItems.push(item)
+        }
+      }
+    }
+    filteredItems = newItems
+  }
 
   function onLoaded() {
     // When the widget is fully initialized with its props set the screen for the trayMenu
@@ -28,7 +72,25 @@ Rectangle {
     }
   }
 
-  visible: SystemTray.items.values.length > 0
+  Connections {
+    target: SystemTray.items
+    function onValuesChanged() {
+      root.updateFilteredItems()
+    }
+  }
+
+  Connections {
+    target: Settings
+    function onSettingsSaved() {
+      root.updateFilteredItems()
+    }
+  }
+
+  Component.onCompleted: {
+    root.updateFilteredItems() // Initial update
+  }
+
+  visible: filteredItems.length > 0
   implicitWidth: isVertical ? Math.round(Style.capsuleHeight * scaling) : (trayFlow.implicitWidth + Style.marginS * scaling * 2)
   implicitHeight: isVertical ? (trayFlow.implicitHeight + Style.marginS * scaling * 2) : Math.round(Style.capsuleHeight * scaling)
   radius: Math.round(Style.radiusM * scaling)
@@ -44,7 +106,7 @@ Rectangle {
 
     Repeater {
       id: repeater
-      model: SystemTray.items
+      model: filteredItems
 
       delegate: Item {
         width: itemSize
