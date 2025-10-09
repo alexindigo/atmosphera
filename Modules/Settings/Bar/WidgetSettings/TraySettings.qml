@@ -30,10 +30,12 @@ ColumnLayout {
     Layout.fillWidth: true
     spacing: Style.marginS * scaling
 
-    NTextInput {
-      id: newRuleInput
-      Layout.fillWidth: true
-      placeholderText: I18n.tr("settings.bar.widget-settings.tray.blacklist.placeholder")
+  NTextInput {
+    id: newRuleInput
+    Layout.fillWidth: true
+    label: I18n.tr("settings.bar.tray.blacklist.label")
+    description: I18n.tr("settings.bar.tray.blacklist.description")
+    placeholderText: I18n.tr("settings.bar.tray.blacklist.placeholder")
     }
 
     NIconButton {
@@ -69,7 +71,7 @@ ColumnLayout {
         height: 40 * scaling
         color: Color.transparent // Make background transparent
         visible: model.rule !== undefined && model.rule !== "" // Only visible if rule exists
-        
+
         RowLayout {
             anchors.fill: parent
             anchors.leftMargin: Style.marginM * scaling
