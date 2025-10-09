@@ -47,19 +47,32 @@ Singleton {
     BatteryService.applyChargingMode()
   }
 
-  function applyChargingMode() {
+  function applyChargingMode(quiet = false) {
+    let command = [batteryTresholdScript]
+
+    if (quiet) {
+      command.push("-q")
+    }
+
     switch (BatteryService.chargingMode) {
     case BatteryService.ChargingMode.Full:
-      chargeLimitProcess.command = [batteryTresholdScript, "100"]
+      command.push("100")
       break
     case BatteryService.ChargingMode.Balanced:
-      chargeLimitProcess.command = [batteryTresholdScript, "80"]
+      command.push("80")
       break
     case BatteryService.ChargingMode.Conservative:
-      chargeLimitProcess.command = [batteryTresholdScript, "60"]
+      command.push("60")
       break
     }
+
+    chargeLimitProcess.command = command
     chargeLimitProcess.running = true
+  }
+
+  function init() {
+    BatteryService.applyChargingMode(true)
+    Logger.log("BatteryService", `Applied charging mode - ${BatteryService.chargingMode}`)
   }
 
   Process {
