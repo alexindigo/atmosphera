@@ -19,7 +19,7 @@ Rectangle {
   readonly property string barPosition: Settings.data.bar.position
   readonly property bool isVertical: barPosition === "left" || barPosition === "right"
   readonly property bool compact: (Settings.data.bar.density === "compact")
-  readonly property real itemSize: isVertical ? width * 0.75 : height * 0.85
+  readonly property real itemSize: isVertical ? Math.round(width * 0.7) : Math.round(height * 0.7)
 
   function onLoaded() {
     // When the widget is fully initialized with its props set the screen for the trayMenu
@@ -39,7 +39,7 @@ Rectangle {
   Flow {
     id: trayFlow
     anchors.centerIn: parent
-    spacing: Style.marginS * scaling
+    spacing: Style.marginM * scaling
     flow: isVertical ? Flow.TopToBottom : Flow.LeftToRight
 
     Repeater {
@@ -56,11 +56,10 @@ Rectangle {
 
           property ShellScreen screen: root.screen
 
-          anchors.centerIn: parent
-          width: Style.marginL * scaling
-          height: Style.marginL * scaling
-          smooth: false
+          anchors.fill: parent
           asynchronous: true
+          smooth: false
+          mipmap: true
           backer.fillMode: Image.PreserveAspectFit
           source: {
             let icon = modelData?.icon || ""
@@ -70,7 +69,6 @@ Rectangle {
 
             // Process icon path
             if (icon.includes("?path=")) {
-              // Seems qmlfmt does not support the following ES6 syntax: const[name, path] = icon.split
               const chunks = icon.split("?path=")
               const name = chunks[0]
               const path = chunks[1]
@@ -80,9 +78,8 @@ Rectangle {
             return icon
           }
           opacity: status === Image.Ready ? 1 : 0
-        }
 
-        MouseArea {
+                  MouseArea {
           anchors.fill: parent
           hoverEnabled: true
           cursorShape: Qt.PointingHandCursor
@@ -144,6 +141,9 @@ Rectangle {
           }
           onExited: TooltipService.hide()
         }
+        }
+
+
       }
     }
   }
