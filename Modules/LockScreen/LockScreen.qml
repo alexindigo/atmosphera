@@ -105,13 +105,11 @@ Loader {
             property color cornerColor: Settings.data.general.forceBlackScreenCorners ? Qt.rgba(0, 0, 0, 1) : Qt.alpha(Color.mSurface, Settings.data.bar.backgroundOpacity)
             property real cornerRadius: Style.screenRadius * scaling
             property real cornerSize: Style.screenRadius * scaling
-            property real barHeight: Style.barHeight * scaling
 
             // Top-left concave corner
             Canvas {
               anchors.top: parent.top
               anchors.left: parent.left
-              anchors.topMargin: Settings.data.bar.position === "top" ? barHeight : 0
               width: parent.cornerSize
               height: parent.cornerSize
               antialiasing: true
@@ -146,7 +144,6 @@ Loader {
             Canvas {
               anchors.top: parent.top
               anchors.right: parent.right
-              anchors.topMargin: Settings.data.bar.position === "top" ? barHeight : 0
               width: parent.cornerSize
               height: parent.cornerSize
               antialiasing: true
@@ -181,7 +178,6 @@ Loader {
             Canvas {
               anchors.bottom: parent.bottom
               anchors.left: parent.left
-              anchors.bottomMargin: Settings.data.bar.position === "bottom" ? barHeight : 0
               width: parent.cornerSize
               height: parent.cornerSize
               antialiasing: true
@@ -216,7 +212,6 @@ Loader {
             Canvas {
               anchors.bottom: parent.bottom
               anchors.right: parent.right
-              anchors.bottomMargin: Settings.data.bar.position === "bottom" ? barHeight : 0
               width: parent.cornerSize
               height: parent.cornerSize
               antialiasing: true
@@ -412,7 +407,7 @@ Loader {
                         var t = Settings.data.location.use12hourFormat ? Qt.locale().toString(new Date(), "hh AP") : Qt.locale().toString(new Date(), "HH")
                         return t
                       }
-                      pointSize: Style.fontSizeXL * scaling
+                      pointSize: Style.fontSizeL * scaling
                       font.weight: Style.fontWeightBold
                       color: Color.mOnSurface
                       horizontalAlignment: Text.AlignHCenter
