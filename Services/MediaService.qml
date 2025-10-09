@@ -14,7 +14,7 @@ Singleton {
   property bool isSeeking: false
   property int selectedPlayerIndex: 0
   property bool isPlaying: currentPlayer ? (currentPlayer.playbackState === MprisPlaybackState.Playing || currentPlayer.isPlaying) : false
-  property string trackTitle: currentPlayer ? (currentPlayer.trackTitle || "") : ""
+  property string trackTitle: currentPlayer ? (currentPlayer.trackTitle !== undefined ? currentPlayer.trackTitle.replace(/(\r\n|\n|\r)/g, "") : "") : ""
   property string trackArtist: currentPlayer ? (currentPlayer.trackArtist || "") : ""
   property string trackAlbum: currentPlayer ? (currentPlayer.trackAlbum || "") : ""
   property string trackArtUrl: currentPlayer ? (currentPlayer.trackArtUrl || "") : ""

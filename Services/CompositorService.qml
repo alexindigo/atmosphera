@@ -162,7 +162,11 @@ Singleton {
   // Get focused window title
   function getFocusedWindowTitle() {
     if (focusedWindowIndex >= 0 && focusedWindowIndex < windows.count) {
-      return windows.get(focusedWindowIndex).title || ""
+      var title = windows.get(focusedWindowIndex).title
+      if (title !== undefined) {
+        title = title.replace(/(\r\n|\n|\r)/g, "")
+      }
+      return title || ""
     }
     return ""
   }
