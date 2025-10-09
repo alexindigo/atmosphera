@@ -2,190 +2,133 @@
 import gi
 
 gi.require_version('EDataServer', '1.2')
+gi.require_version('ECal', '2.0')
 import json
-import re
-import sqlite3
 import sys
-from datetime import datetime
-from pathlib import Path
+from datetime import datetime, timezone
 
-from gi.repository import EDataServer
+from gi.repository import ECal, EDataServer
 
 start_time = int(sys.argv[1])
 end_time = int(sys.argv[2])
 
+print(f"Starting with time range: {start_time} to {end_time}", file=sys.stderr)
+
 all_events = []
 
-def safe_get_time(ical_time_str):
-    """Parse iCalendar time string"""
+def safe_get_time(ical_time):
+    """Safely get time from ICalTime object"""
+    if not ical_time:
+        return None
+
     try:
-        if not ical_time_str:
+        year = ical_time.get_year()
+        month = ical_time.get_month()
+        day = ical_time.get_day()
+
+        if year < 1970 or year > 2100 or month < 1 or month > 12 or day < 1 or day > 31:
             return None
 
-        ical_time_str = ical_time_str.strip().replace('\r', '').replace('\n', '')
-
-        # Check for TZID parameter (format: TZID=America/Los_Angeles:20240822T180000)
-        if 'TZID=' in ical_time_str:
-            # Split on the colon that comes after the TZID value
-            match = re.match(r'TZID=([^:]+):(.+)', ical_time_str)
-            if match:
-                ical_time_str = match.group(2)
-        elif ';' in ical_time_str and ':' in ical_time_str:
-            ical_time_str = ical_time_str.split(':', 1)[1]
-
-        ical_time_str = ical_time_str.strip()
-
-        if len(ical_time_str) == 8 and ical_time_str.isdigit():
-            dt = datetime.strptime(ical_time_str, '%Y%m%d')
+        if ical_time.is_date():
+            dt = datetime(year, month, day, 0, 0, 0, tzinfo=timezone.utc)
             return int(dt.timestamp())
 
-        # DateTime (YYYYMMDDTHHMMSS or YYYYMMDDTHHMMSSZ)
-        is_utc = ical_time_str.endswith('Z')
-        ical_time_str = ical_time_str.rstrip('Z')
-        dt = datetime.strptime(ical_time_str, '%Y%m%dT%H%M%S')
+        hour = ical_time.get_hour()
+        minute = ical_time.get_minute()
+        second = ical_time.get_second()
 
-        if not is_utc:
-            return int(dt.timestamp())
-
-        from datetime import timezone
-        dt = dt.replace(tzinfo=timezone.utc)
+        dt = datetime(year, month, day, hour, minute, second, tzinfo=timezone.utc)
         return int(dt.timestamp())
     except Exception:
         return None
 
-def parse_ical_component(ical_string, calendar_name):
-    """Parse an iCalendar component"""
-    try:
-        lines = ical_string.split('\n')
-        event = {}
-        current_key = None
-        current_value = []
-
-        for line in lines:
-            line = line.replace('\r', '')
-
-            if line.startswith(' ') and current_key:
-                current_value.append(line[1:])
-                continue
-
-            if current_key:
-                full_value = ''.join(current_value)
-                event[current_key] = full_value
-                current_value = []
-
-            if ':' in line:
-                key_part, value_part = line.split(':', 1)
-
-                key = key_part.split(';')[0]
-
-                current_key = key
-                current_value = [line]
-
-        if current_key:
-            event[current_key] = ''.join(current_value)
-
-        if 'DTSTART' not in event:
-            return None
-
-        dtstart_line = event.get('DTSTART', '')
-        if ':' in dtstart_line:
-            dtstart_value = dtstart_line.split('DTSTART', 1)[1]
-        else:
-            dtstart_value = dtstart_line
-
-        start_timestamp = safe_get_time(dtstart_value)
-        if not start_timestamp:
-            return None
-
-        if start_timestamp < start_time or start_timestamp > end_time:
-            return None
-
-        dtend_line = event.get('DTEND', '')
-        if dtend_line and ':' in dtend_line:
-            dtend_value = dtend_line.split('DTEND', 1)[1]
-            end_timestamp = safe_get_time(dtend_value)
-        else:
-            end_timestamp = None
-
-        if not end_timestamp or end_timestamp == start_timestamp:
-            end_timestamp = start_timestamp + 3600
-
-        summary_line = event.get('SUMMARY', '(No title)')
-        if 'SUMMARY:' in summary_line:
-            summary = summary_line.split('SUMMARY:', 1)[1].strip()
-        else:
-            summary = summary_line.strip() or '(No title)'
-
-        location_line = event.get('LOCATION', '')
-        if 'LOCATION:' in location_line:
-            location = location_line.split('LOCATION:', 1)[1].strip()
-        else:
-            location = location_line.strip()
-
-        desc_line = event.get('DESCRIPTION', '')
-        if 'DESCRIPTION:' in desc_line:
-            description = desc_line.split('DESCRIPTION:', 1)[1].strip()
-        else:
-            description = desc_line.strip()
-
-        return {
-            'summary': summary,
-            'start': start_timestamp,
-            'end': end_timestamp,
-            'location': location,
-            'description': description,
-            'calendar': calendar_name
-        }
-    except Exception:
-        return None
-
+print("Getting registry...", file=sys.stderr)
 registry = EDataServer.SourceRegistry.new_sync(None)
-sources = registry.list_sources(EDataServer.SOURCE_EXTENSION_CALENDAR)
+print("Registry obtained", file=sys.stderr)
 
-cache_base = Path.home() / ".cache/evolution/calendar"
+sources = registry.list_sources(EDataServer.SOURCE_EXTENSION_CALENDAR)
+print(f"Found {len(sources)} calendar sources", file=sys.stderr)
 
 for source in sources:
     if not source.get_enabled():
+        print(f"Skipping disabled calendar: {source.get_display_name()}", file=sys.stderr)
         continue
 
     calendar_name = source.get_display_name()
-    source_uid = source.get_uid()
-
-    cache_file = cache_base / source_uid / "cache.db"
-
-    if not cache_file.exists():
-        cache_file = Path.home() / ".local/share/evolution/calendar" / source_uid / "calendar.ics"
-        if cache_file.exists():
-            try:
-                with open(cache_file, 'r') as f:
-                    content = f.read()
-                    events = content.split('BEGIN:VEVENT')
-                    for event_str in events[1:]:
-                        event_str = 'BEGIN:VEVENT' + event_str.split('END:VEVENT')[0] + 'END:VEVENT'
-                        event = parse_ical_component(event_str, calendar_name)
-                        if event:
-                            all_events.append(event)
-            except Exception:
-                pass
-        continue
+    print(f"\nProcessing calendar: {calendar_name}", file=sys.stderr)
 
     try:
-        conn = sqlite3.connect(str(cache_file))
-        cursor = conn.cursor()
+        print(f"  Connecting to {calendar_name}...", file=sys.stderr)
+        client = ECal.Client.connect_sync(
+            source,
+            ECal.ClientSourceType.EVENTS,
+            30,
+            None
+        )
+        print(f"  Connected to {calendar_name}", file=sys.stderr)
 
-        cursor.execute("SELECT ECacheOBJ FROM ECacheObjects")
-        rows = cursor.fetchall()
+        start_dt = datetime.fromtimestamp(start_time, tz=timezone.utc)
+        end_dt = datetime.fromtimestamp(end_time, tz=timezone.utc)
 
-        for row in rows:
-            ical_string = row[0]
-            if ical_string and 'BEGIN:VEVENT' in str(ical_string):
-                event = parse_ical_component(str(ical_string), calendar_name)
-                if event:
-                    all_events.append(event)
+        start_str = start_dt.strftime("%Y%m%dT%H%M%SZ")
+        end_str = end_dt.strftime("%Y%m%dT%H%M%SZ")
 
-        conn.close()
+        query = f'(occur-in-time-range? (make-time "{start_str}") (make-time "{end_str}"))'
+        print(f"  Query: {query}", file=sys.stderr)
+
+        print(f"  Getting object list for {calendar_name}...", file=sys.stderr)
+        success, ical_objects = client.get_object_list_sync(query, None)
+        print(f"  Got object list for {calendar_name}: success={success}, count={len(ical_objects) if ical_objects else 0}", file=sys.stderr)
+
+        if not success or not ical_objects:
+            print(f"  No events found in {calendar_name}", file=sys.stderr)
+            continue
+
+        print(f"  Processing {len(ical_objects)} events from {calendar_name}...", file=sys.stderr)
+        for idx, ical_obj in enumerate(ical_objects):
+            try:
+                if hasattr(ical_obj, 'get_summary'):
+                    comp = ical_obj
+                else:
+                    comp = ECal.Component.new_from_string(ical_obj)
+
+                if not comp:
+                    continue
+
+                summary = comp.get_summary() or "(No title)"
+
+                start_timestamp = safe_get_time(comp.get_dtstart())
+                if start_timestamp is None:
+                    continue
+
+                end_timestamp = safe_get_time(comp.get_dtend())
+                if end_timestamp is None or end_timestamp == start_timestamp:
+                    end_timestamp = start_timestamp + 3600
+
+                location = comp.get_location() or ""
+                description = comp.get_description() or ""
+
+                all_events.append({
+                    'summary': summary,
+                    'start': start_timestamp,
+                    'end': end_timestamp,
+                    'location': location,
+                    'description': description,
+                    'calendar': calendar_name
+                })
+
+                if (idx + 1) % 10 == 0:
+                    print(f"  Processed {idx + 1} events from {calendar_name}...", file=sys.stderr)
+            except Exception as e:
+                print(f"  Error processing event {idx} in {calendar_name}: {e}", file=sys.stderr)
+                continue
+
+        print(f"  Finished processing {calendar_name}, found {len([e for e in all_events if e['calendar'] == calendar_name])} events", file=sys.stderr)
+
     except Exception as e:
-        print(f"Error processing {calendar_name}: {e}", file=sys.stderr)
+        print(f"  Error for {calendar_name}: {e}", file=sys.stderr)
 
+print(f"\nSorting {len(all_events)} total events...", file=sys.stderr)
 all_events.sort(key=lambda x: x['start'])
+print("Done! Outputting JSON...", file=sys.stderr)
 print(json.dumps(all_events))

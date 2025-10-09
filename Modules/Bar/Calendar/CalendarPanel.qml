@@ -410,12 +410,24 @@ NPanel {
           return false
 
         const targetDate = new Date(year, month, day)
-        const targetStart = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate()).getTime() / 1000
+        const targetStart = Math.floor(new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate()).getTime() / 1000)
         const targetEnd = targetStart + 86400 // +24 hours
+
+        if (year === 2025 && month === 9 && day === 8) {
+          Logger.log(`Checking ${year}-${month + 1}-${day}:`)
+          Logger.log(`  Target range: ${targetStart} to ${targetEnd}`)
+          Logger.log(`  Target dates: ${new Date(targetStart * 1000)} to ${new Date(targetEnd * 1000)}`)
+          Logger.log(`  Total events: ${CalendarService.events.length}`)
+          CalendarService.events.forEach(event => {
+                                           Logger.log(`  Event: "${event.summary}" start=${event.start} (${new Date(event.start * 1000)}) end=${event.end} (${new Date(event.end * 1000)})`)
+                                           const matches = (event.start >= targetStart && event.start < targetEnd) || (event.end > targetStart && event.end < targetEnd) || (event.start <= targetStart && event.end >= targetEnd)
+                                           Logger.log(`    Matches: ${matches}`)
+                                         })
+        }
 
         return CalendarService.events.some(event => {
                                              // Check if event starts or overlaps with this day
-                                             return (event.start >= targetStart && event.start < targetEnd) || (event.end > targetStart && event.end <= targetEnd) || (event.start < targetStart && event.end > targetEnd)
+                                             return (event.start >= targetStart && event.start < targetEnd) || (event.end > targetStart && event.end < targetEnd) || (event.start <= targetStart && event.end >= targetEnd)
                                            })
       }
 
@@ -425,11 +437,11 @@ NPanel {
           return []
 
         const targetDate = new Date(year, month, day)
-        const targetStart = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate()).getTime() / 1000
+        const targetStart = Math.floor(new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate()).getTime() / 1000)
         const targetEnd = targetStart + 86400 // +24 hours
 
         return CalendarService.events.filter(event => {
-                                               return (event.start >= targetStart && event.start < targetEnd) || (event.end > targetStart && event.end <= targetEnd) || (event.start < targetStart && event.end > targetEnd)
+                                               return (event.start >= targetStart && event.start < targetEnd) || +(event.end > targetStart && event.end < targetEnd) || +(event.start <= targetStart && event.end >= targetEnd)
                                              })
       }
 
