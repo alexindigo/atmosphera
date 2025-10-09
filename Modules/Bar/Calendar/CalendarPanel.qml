@@ -539,6 +539,11 @@ NPanel {
                 }
               }
 
+              onClicked: {
+                const dateWithSlashes = `${model.month.toString().padStart(2, '0')}/${model.day.toString().padStart(2, '0')}/${model.year.toString().substring(2)}`
+                Quickshell.execDetached(["gnome-calendar", "--date", dateWithSlashes])
+              }
+
               onExited: {
                 TooltipService.hide()
               }
