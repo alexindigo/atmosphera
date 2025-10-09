@@ -65,7 +65,18 @@ Rectangle {
     }
   }
 
-  function updateFilteredItems() {
+  // Debounce timer for updateFilteredItems to prevent excessive calls
+  // when multiple events (e.g., SystemTray changes, settings saves)
+  // trigger it in rapid succession, reducing redundant processing.
+  Timer {
+    id: updateDebounceTimer
+    interval: 100 // milliseconds
+    running: false
+    repeat: false
+    onTriggered: _performFilteredItemsUpdate()
+  }
+
+  function _performFilteredItemsUpdate() {
     if (!root.blacklist || root.blacklist.length === 0) {
       if (SystemTray.items && SystemTray.items.values) {
         filteredItems = SystemTray.items.values
@@ -101,6 +112,10 @@ Rectangle {
       }
     }
     filteredItems = newItems
+  }
+
+  function updateFilteredItems() {
+    updateDebounceTimer.restart()
   }
 
   function onLoaded() {
