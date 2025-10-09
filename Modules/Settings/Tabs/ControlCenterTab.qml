@@ -84,7 +84,7 @@ ColumnLayout {
 
       // Quick Settings
       SectionEditor {
-        sectionName: "Quick Settings"
+        sectionName: I18n.tr("settings.control-center.quickSettings.sectionName")
         sectionId: "quickSettings"
         settingsDialogComponent: ""
         widgetRegistry: ControlCenterWidgetRegistry

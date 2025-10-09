@@ -741,7 +741,95 @@
         }
       }
     },
-    "hooks": {
+    "quickSettings": {
+      "notifications": {
+        "label": "Notifications",
+        "tooltip": {
+          "enable": "Activer Ne pas déranger",
+          "disable": "Désactiver Ne pas déranger"
+        }
+      },
+      "wifi": {
+        "label": {
+          "wifi": "Wi-Fi",
+          "ethernet": "Réseau"
+        },
+        "tooltip": {
+          "wifi": {
+            "connected": "Wi-Fi connecté",
+            "disconnected": "Wi-Fi déconnecté"
+          },
+          "ethernet": {
+            "connected": "Ethernet connecté"
+          }
+        }
+      },
+      "bluetooth": {
+        "label": "Bluetooth",
+        "tooltip": {
+          "enabled": "Bluetooth activé",
+          "disabled": "Bluetooth désactivé"
+        }
+      },
+      "screenRecorder": {
+        "label": "Écran",
+        "tooltip": {
+          "start": "Démarrer l'enregistrement d'écran",
+          "stop": "Arrêter l'enregistrement"
+        }
+      },
+      "powerProfile": {
+        "tooltip": {
+          "current": "Actuel : {profile}",
+          "unavailable": "Profils d'alimentation non disponibles"
+        }
+      }
+  },
+  "quickSettings": {
+    "notifications": {
+      "label": "Notifications",
+      "tooltip": {
+        "enable": "Activer Ne pas déranger",
+        "disable": "Désactiver Ne pas déranger"
+      }
+    },
+    "wifi": {
+      "label": {
+        "wifi": "Wi-Fi",
+        "ethernet": "Réseau"
+      },
+      "tooltip": {
+        "wifi": {
+          "connected": "Wi-Fi connecté",
+          "disconnected": "Wi-Fi déconnecté"
+        },
+        "ethernet": {
+          "connected": "Ethernet connecté"
+        }
+      }
+    },
+    "bluetooth": {
+      "label": "Bluetooth",
+      "tooltip": {
+        "enabled": "Bluetooth activé",
+        "disabled": "Bluetooth désactivé"
+      }
+    },
+    "screenRecorder": {
+      "label": "Écran",
+      "tooltip": {
+        "start": "Démarrer l'enregistrement d'écran",
+        "stop": "Arrêter l'enregistrement"
+      }
+    },
+    "powerProfile": {
+      "tooltip": {
+        "current": "Actuel : {profile}",
+        "unavailable": "Profils d'alimentation non disponibles"
+      }
+    }
+  },
+  "hooks": {
       "title": "Hooks",
       "system-hooks": {
         "section": {
@@ -1399,6 +1487,78 @@
     "shut-down": "Éteindre",
     "restart": "Redémarrer",
     "suspend": "Mettre en veille"
+  },
+  "quickSettings": {
+    "notifications": {
+      "label": {
+        "enabled": "Notifications",
+        "disabled": "Ne pas déranger"
+      },
+      "tooltip": {
+        "action": "Clic gauche : Ouvrir l'historique des notifications\nClic droit : Basculer Ne pas déranger"
+      }
+    },
+    "screenRecorder": {
+      "label": {
+        "recording": "Arrêter",
+        "stopped": "Enregistrer"
+      },
+      "tooltip": {
+        "action": "Cliquer pour démarrer/arrêter l'enregistrement d'écran"
+      }
+    },
+    "powerProfile": {
+      "label": {
+        "unavailable": "Profil d'alimentation"
+      },
+      "tooltip": {
+        "action": "Cliquer pour changer de profil d'alimentation"
+      }
+    },
+    "wifi": {
+      "label": {
+        "ethernet": "Ethernet",
+        "wifi": "Wi-Fi",
+        "disconnected": "Wi-Fi déconnecté"
+      },
+      "tooltip": {
+        "action": "Cliquer pour gérer les connexions Wi-Fi"
+      }
+    },
+    "bluetooth": {
+      "label": {
+        "enabled": "Bluetooth",
+        "disabled": "Bluetooth"
+      },
+      "tooltip": {
+        "action": "Cliquer pour gérer les appareils Bluetooth"
+      }
+    },
+    "nightLight": {
+      "label": {
+        "enabled": "Lumière nocturne",
+        "forced": "Lumière nocturne",
+        "disabled": "Lumière nocturne"
+      },
+      "tooltip": {
+        "action": "Cliquer pour basculer le mode Lumière nocturne\nClic droit : Ouvrir les paramètres"
+      }
+    },
+    "wallpaperSelector": {
+      "label": "Fond d'écran",
+      "tooltip": {
+        "action": "Clic gauche : Ouvrir le sélecteur de fond d'écran\nClic droit : Définir un fond d'écran aléatoire"
+      }
+    },
+    "keepAwake": {
+      "label": {
+        "enabled": "Rester éveillé",
+        "disabled": "Rester éveillé"
+      },
+      "tooltip": {
+        "action": "Cliquer pour basculer le mode Rester éveillé"
+      }
+    }
   },
   "toast": {
     "night-light": {

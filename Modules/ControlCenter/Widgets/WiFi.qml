@@ -31,9 +31,16 @@ NQuickSetting {
 
   text: {
     if (NetworkService.ethernetConnected) {
-      return "Network"
+      return I18n.tr("quickSettings.wifi.label.ethernet")
     }
-    return "Wi-Fi"
+    let connected = false
+    for (const net in NetworkService.networks) {
+      if (NetworkService.networks[net].connected) {
+        connected = true
+        break
+      }
+    }
+    return connected ? I18n.tr("quickSettings.wifi.label.wifi") : I18n.tr("quickSettings.wifi.label.disconnected")
   }
 
   fontSize: Style.fontSizeS * scaling
@@ -56,19 +63,7 @@ NQuickSetting {
     }
   }
 
-  tooltipText: {
-    if (NetworkService.ethernetConnected) {
-      return "Ethernet connected"
-    }
-    let connected = false
-    for (const net in NetworkService.networks) {
-      if (NetworkService.networks[net].connected) {
-        connected = true
-        break
-      }
-    }
-    return connected ? "Wi-Fi connected" : "Wi-Fi disconnected"
-  }
+  tooltipText: I18n.tr("quickSettings.wifi.tooltip.action")
 
   onClicked: PanelService.getPanel("wifiPanel")?.toggle(this)
 }

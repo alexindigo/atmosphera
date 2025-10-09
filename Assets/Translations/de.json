@@ -744,8 +744,52 @@
           "description": "Konfigurieren und verwalten Sie Kontrollzentrum-Widgets und deren Anzeigeoptionen."
         }
       }
+  },
+  "quickSettings": {
+    "notifications": {
+      "label": "Benachrichtigungen",
+      "tooltip": {
+        "enable": "Nicht stören aktivieren",
+        "disable": "Nicht stören deaktivieren"
+      }
     },
-    "hooks": {
+    "wifi": {
+      "label": {
+        "wifi": "Wi-Fi",
+        "ethernet": "Netzwerk"
+      },
+      "tooltip": {
+        "wifi": {
+          "connected": "Wi-Fi verbunden",
+          "disconnected": "Wi-Fi getrennt"
+        },
+        "ethernet": {
+          "connected": "Ethernet verbunden"
+        }
+      }
+    },
+    "bluetooth": {
+      "label": "Bluetooth",
+      "tooltip": {
+        "enabled": "Bluetooth aktiviert",
+        "disabled": "Bluetooth deaktiviert"
+      }
+    },
+    "screenRecorder": {
+      "label": "Bildschirm",
+      "tooltip": {
+        "start": "Bildschirmaufnahme starten",
+        "stop": "Aufnahme beenden"
+      }
+    },
+    "powerProfile": {
+      "tooltip": {
+        "current": "Aktuell: {profile}",
+        "unavailable": "Energieprofile nicht verfügbar"
+      }
+    }
+  },
+  "hooks": {
       "title": "Hooks",
       "system-hooks": {
         "section": {
@@ -1431,6 +1475,78 @@
     "shut-down": "Herunterfahren",
     "restart": "Neu starten",
     "suspend": "Ruhezustand"
+  },
+  "quickSettings": {
+    "notifications": {
+      "label": {
+        "enabled": "Benachrichtigungen",
+        "disabled": "Nicht stören"
+      },
+      "tooltip": {
+        "action": "Linksklick: Benachrichtigungsverlauf öffnen\nRechtsklick: Nicht stören umschalten"
+      }
+    },
+    "screenRecorder": {
+      "label": {
+        "recording": "Stopp",
+        "stopped": "Aufnehmen"
+      },
+      "tooltip": {
+        "action": "Klicken zum Starten/Stoppen der Bildschirmaufnahme"
+      }
+    },
+    "powerProfile": {
+      "label": {
+        "unavailable": "Energieprofil"
+      },
+      "tooltip": {
+        "action": "Klicken zum Wechseln des Energieprofils"
+      }
+    },
+    "wifi": {
+      "label": {
+        "ethernet": "Ethernet",
+        "wifi": "Wi-Fi",
+        "disconnected": "Wi-Fi getrennt"
+      },
+      "tooltip": {
+        "action": "Klicken zum Verwalten der Wi-Fi-Verbindungen"
+      }
+    },
+    "bluetooth": {
+      "label": {
+        "enabled": "Bluetooth",
+        "disabled": "Bluetooth"
+      },
+      "tooltip": {
+        "action": "Klicken zum Verwalten der Bluetooth-Geräte"
+      }
+    },
+    "nightLight": {
+      "label": {
+        "enabled": "Nachtlicht",
+        "forced": "Nachtlicht",
+        "disabled": "Nachtlicht"
+      },
+      "tooltip": {
+        "action": "Klicken zum Wechseln des Nachtlicht-Modus\nRechtsklick: Einstellungen öffnen"
+      }
+    },
+    "wallpaperSelector": {
+      "label": "Hintergrundbild",
+      "tooltip": {
+        "action": "Linksklick: Hintergrundbildauswahl öffnen\nRechtsklick: Zufälliges Hintergrundbild setzen"
+      }
+    },
+    "keepAwake": {
+      "label": {
+        "enabled": "Wach halten",
+        "disabled": "Wach halten"
+      },
+      "tooltip": {
+        "action": "Klicken zum Umschalten des Wach-halten-Modus"
+      }
+    }
   },
   "toast": {
     "night-light": {

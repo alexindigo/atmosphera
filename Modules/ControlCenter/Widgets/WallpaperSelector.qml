@@ -10,11 +10,11 @@ NQuickSetting {
 
   enabled: Settings.data.wallpaper.enabled
   icon: "wallpaper-selector"
-  text: "Wallpaper"
+  text: I18n.tr("quickSettings.wallpaperSelector.label")
   fontSize: Style.fontSizeS * scaling
   fontWeight: Style.fontWeightMedium
   active: Settings.data.wallpaper.enabled
-  tooltipText: "Open wallpaper selector"
+  tooltipText: I18n.tr("quickSettings.wallpaperSelector.tooltip.action")
   style: Settings.data.controlCenter.quickSettingsStyle || "modern"
 
   onClicked: PanelService.getPanel("wallpaperPanel")?.toggle(this)

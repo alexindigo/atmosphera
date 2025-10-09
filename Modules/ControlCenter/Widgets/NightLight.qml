@@ -9,21 +9,13 @@ NQuickSetting {
   property real scaling: 1.0
 
   enabled: ProgramCheckerService.wlsunsetAvailable
-  text: "Night Light"
+  text: I18n.tr("quickSettings.nightLight.label.enabled")
   fontSize: Style.fontSizeS * scaling
   fontWeight: Style.fontWeightMedium
   icon: Settings.data.nightLight.enabled ? (Settings.data.nightLight.forced ? "nightlight-forced" : "nightlight-on") : "nightlight-off"
   active: Settings.data.nightLight.enabled
   style: Settings.data.controlCenter.quickSettingsStyle || "modern"
-  tooltipText: {
-    if (!Settings.data.nightLight.enabled) {
-      return "Turn on Night Light"
-    } else if (Settings.data.nightLight.forced) {
-      return "Night Light forced on"
-    } else {
-      return "Turn off Night Light"
-    }
-  }
+  tooltipText: I18n.tr("quickSettings.nightLight.tooltip.action")
 
   onClicked: {
     if (!Settings.data.nightLight.enabled) {

@@ -8,12 +8,12 @@ NQuickSetting {
   property ShellScreen screen
   property real scaling: 1.0
 
-  text: "Bluetooth"
+  text: I18n.tr("quickSettings.bluetooth.label.enabled")
   fontSize: Style.fontSizeS * scaling
   fontWeight: Style.fontWeightMedium
   icon: BluetoothService.enabled ? "bluetooth" : "bluetooth-off"
   active: BluetoothService.enabled
-  tooltipText: BluetoothService.enabled ? "Bluetooth enabled" : "Bluetooth disabled"
+  tooltipText: I18n.tr("quickSettings.bluetooth.tooltip.action")
   style: Settings.data.controlCenter.quickSettingsStyle || "modern"
 
   onClicked: PanelService.getPanel("bluetoothPanel")?.toggle(this)

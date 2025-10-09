@@ -706,8 +706,52 @@
           "description": "Configure e gerencie os widgets do centro de controle e suas opções de exibição."
         }
       }
+  },
+  "quickSettings": {
+    "notifications": {
+      "label": "Notificações",
+      "tooltip": {
+        "enable": "Ativar Não perturbe",
+        "disable": "Desativar Não perturbe"
+      }
     },
-    "hooks": {
+    "wifi": {
+      "label": {
+        "wifi": "Wi-Fi",
+        "ethernet": "Rede"
+      },
+      "tooltip": {
+        "wifi": {
+          "connected": "Wi-Fi conectado",
+          "disconnected": "Wi-Fi desconectado"
+        },
+        "ethernet": {
+          "connected": "Ethernet conectado"
+        }
+      }
+    },
+    "bluetooth": {
+      "label": "Bluetooth",
+      "tooltip": {
+        "enabled": "Bluetooth habilitado",
+        "disabled": "Bluetooth desabilitado"
+      }
+    },
+    "screenRecorder": {
+      "label": "Tela",
+      "tooltip": {
+        "start": "Iniciar gravação de tela",
+        "stop": "Parar gravação"
+      }
+    },
+    "powerProfile": {
+      "tooltip": {
+        "current": "Atual: {profile}",
+        "unavailable": "Perfis de energia não disponíveis"
+      }
+    }
+  },
+  "hooks": {
       "title": "Hooks",
       "system-hooks": {
         "section": {
@@ -1399,6 +1443,78 @@
     "shut-down": "Desligar",
     "restart": "Reiniciar",
     "suspend": "Suspender"
+  },
+  "quickSettings": {
+    "notifications": {
+      "label": {
+        "enabled": "Notificações",
+        "disabled": "Não perturbar"
+      },
+      "tooltip": {
+        "action": "Clique esquerdo: Abrir histórico de notificações\nClique direito: Alternar Não perturbar"
+      }
+    },
+    "screenRecorder": {
+      "label": {
+        "recording": "Parar",
+        "stopped": "Gravar"
+      },
+      "tooltip": {
+        "action": "Clique para iniciar/parar a gravação da tela"
+      }
+    },
+    "powerProfile": {
+      "label": {
+        "unavailable": "Perfil de energia"
+      },
+      "tooltip": {
+        "action": "Clique para alternar o perfil de energia"
+      }
+    },
+    "wifi": {
+      "label": {
+        "ethernet": "Ethernet",
+        "wifi": "Wi-Fi",
+        "disconnected": "Wi-Fi desconectado"
+      },
+      "tooltip": {
+        "action": "Clique para gerenciar conexões Wi-Fi"
+      }
+    },
+    "bluetooth": {
+      "label": {
+        "enabled": "Bluetooth",
+        "disabled": "Bluetooth"
+      },
+      "tooltip": {
+        "action": "Clique para gerenciar dispositivos Bluetooth"
+      }
+    },
+    "nightLight": {
+      "label": {
+        "enabled": "Luz noturna",
+        "forced": "Luz noturna",
+        "disabled": "Luz noturna"
+      },
+      "tooltip": {
+        "action": "Clique para alternar o modo Luz noturna\nClique direito: Abrir configurações"
+      }
+    },
+    "wallpaperSelector": {
+      "label": "Papel de parede",
+      "tooltip": {
+        "action": "Clique esquerdo: Abrir seletor de papel de parede\nClique direito: Definir papel de parede aleatório"
+      }
+    },
+    "keepAwake": {
+      "label": {
+        "enabled": "Manter acordado",
+        "disabled": "Manter acordado"
+      },
+      "tooltip": {
+        "action": "Clique para alternar o modo Manter acordado"
+      }
+    }
   },
   "toast": {
     "night-light": {

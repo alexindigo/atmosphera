@@ -11,7 +11,7 @@ Singleton {
   // Widget registry object mapping widget names to components
   property var widgets: ({
                            "Bluetooth": bluetoothComponent,
-                           "DoNotDisturb": doNotDisturbComponent,
+                           "Notifications": notificationsComponent,
                            "KeepAwake": keepAwakeComponent,
                            "NightLight": nightLightComponent,
                            "PowerProfile": powerProfileComponent,
@@ -26,8 +26,8 @@ Singleton {
   property Component bluetoothComponent: Component {
     Bluetooth {}
   }
-  property Component doNotDisturbComponent: Component {
-    DoNotDisturb {}
+  property Component notificationsComponent: Component {
+    Notifications {}
   }
   property Component keepAwakeComponent: Component {
     KeepAwake {}

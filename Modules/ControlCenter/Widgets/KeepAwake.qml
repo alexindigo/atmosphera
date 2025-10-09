@@ -8,12 +8,12 @@ NQuickSetting {
   property ShellScreen screen
   property real scaling: 1.0
 
-  text: "Keep-awake"
+  text: I18n.tr("quickSettings.keepAwake.label.enabled")
   fontSize: Style.fontSizeS * scaling
   fontWeight: Style.fontWeightMedium
   icon: IdleInhibitorService.isInhibited ? "keep-awake-on" : "keep-awake-off"
   active: IdleInhibitorService.isInhibited
-  tooltipText: IdleInhibitorService.isInhibited ? "Disable keep-awake" : "Enable keep-awake"
+  tooltipText: I18n.tr("quickSettings.keepAwake.tooltip.action")
   style: Settings.data.controlCenter.quickSettingsStyle || "modern"
 
   onClicked: IdleInhibitorService.manualToggle()

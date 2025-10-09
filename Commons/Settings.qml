@@ -250,7 +250,7 @@ Singleton {
           }, {
             "id": "Bluetooth"
           }, {
-            "id": "DoNotDisturb"
+            "id": "Notifications"
           }, {
             "id": "ScreenRecorder"
           }, {

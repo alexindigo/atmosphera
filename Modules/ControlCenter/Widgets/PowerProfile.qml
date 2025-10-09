@@ -12,12 +12,12 @@ NQuickSetting {
   readonly property bool hasPP: PowerProfileService.available
 
   enabled: hasPP
-  text: PowerProfileService.getName()
+  text: hasPP ? PowerProfileService.getName() : I18n.tr("quickSettings.powerProfile.label.unavailable")
   fontSize: Style.fontSizeS * scaling
   fontWeight: Style.fontWeightMedium
   icon: PowerProfileService.getIcon()
   active: hasPP
-  tooltipText: hasPP ? "Current: " + PowerProfileService.getName() : "Power profiles not available"
+  tooltipText: I18n.tr("quickSettings.powerProfile.tooltip.action")
   style: Settings.data.controlCenter.quickSettingsStyle || "modern"
 
   onClicked: {

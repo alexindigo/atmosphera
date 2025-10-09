@@ -741,6 +741,9 @@
           "label": "Widgets",
           "description": "Configure and manage Control Center widgets and their display options."
         }
+      },
+      "quickSettings": {
+        "sectionName": "Quick Settings"
       }
     },
     "hooks": {
@@ -1402,6 +1405,78 @@
     "shut-down": "Shut down",
     "restart": "Restart",
     "suspend": "Suspend"
+  },
+  "quickSettings": {
+    "notifications": {
+      "label": {
+        "enabled": "Notifications",
+        "disabled": "Do Not Disturb"
+      },
+      "tooltip": {
+        "action": "Left click: Open notification history\nRight click: Toggle Do Not Disturb"
+      }
+    },
+    "screenRecorder": {
+      "label": {
+        "recording": "Stop",
+        "stopped": "Record"
+      },
+      "tooltip": {
+        "action": "Click to start/stop screen recording"
+      }
+    },
+    "powerProfile": {
+      "label": {
+        "unavailable": "Power Profile"
+      },
+      "tooltip": {
+        "action": "Click to cycle power profile"
+      }
+    },
+    "wifi": {
+      "label": {
+        "ethernet": "Ethernet",
+        "wifi": "Wi-Fi",
+        "disconnected": "Wi-Fi Disconnected"
+      },
+      "tooltip": {
+        "action": "Click to manage Wi-Fi connections"
+      }
+    },
+    "bluetooth": {
+      "label": {
+        "enabled": "Bluetooth",
+        "disabled": "Bluetooth"
+      },
+      "tooltip": {
+        "action": "Click to manage Bluetooth devices"
+      }
+    },
+    "nightLight": {
+      "label": {
+        "enabled": "Night Light",
+        "forced": "Night Light",
+        "disabled": "Night Light"
+      },
+      "tooltip": {
+        "action": "Click to cycle Night Light mode\nRight click: Open settings"
+      }
+    },
+    "wallpaperSelector": {
+      "label": "Wallpaper",
+      "tooltip": {
+        "action": "Left click: Open wallpaper selector\nRight click: Set random wallpaper"
+      }
+    },
+    "keepAwake": {
+      "label": {
+        "enabled": "Keep Awake",
+        "disabled": "Keep Awake"
+      },
+      "tooltip": {
+        "action": "Click to toggle keep awake mode"
+      }
+    }
   },
   "toast": {
     "night-light": {

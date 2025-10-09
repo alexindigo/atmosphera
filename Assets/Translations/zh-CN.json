@@ -740,8 +740,52 @@
           "description": "配置和管理控制中心小部件及其显示选项。"
         }
       }
+  },
+  "quickSettings": {
+    "notifications": {
+      "label": "通知",
+      "tooltip": {
+        "enable": "开启勿扰模式",
+        "disable": "关闭勿扰模式"
+      }
     },
-    "hooks": {
+    "wifi": {
+      "label": {
+        "wifi": "Wi-Fi",
+        "ethernet": "网络"
+      },
+      "tooltip": {
+        "wifi": {
+          "connected": "Wi-Fi 已连接",
+          "disconnected": "Wi-Fi 已断开"
+        },
+        "ethernet": {
+          "connected": "以太网已连接"
+        }
+      }
+    },
+    "bluetooth": {
+      "label": "蓝牙",
+      "tooltip": {
+        "enabled": "蓝牙已启用",
+        "disabled": "蓝牙已禁用"
+      }
+    },
+    "screenRecorder": {
+      "label": "屏幕录制",
+      "tooltip": {
+        "start": "开始屏幕录制",
+        "stop": "停止录制"
+      }
+    },
+    "powerProfile": {
+      "tooltip": {
+        "current": "当前：{profile}",
+        "unavailable": "电源配置文件不可用"
+      }
+    }
+  },
+  "hooks": {
       "title": "钩子",
       "system-hooks": {
         "section": {
@@ -1399,6 +1443,78 @@
     "shut-down": "关机",
     "restart": "重启",
     "suspend": "挂起"
+  },
+  "quickSettings": {
+    "notifications": {
+      "label": {
+        "enabled": "通知",
+        "disabled": "勿扰模式"
+      },
+      "tooltip": {
+        "action": "左键：打开通知历史\n右键：切换勿扰模式"
+      }
+    },
+    "screenRecorder": {
+      "label": {
+        "recording": "停止",
+        "stopped": "录制"
+      },
+      "tooltip": {
+        "action": "点击开始/停止屏幕录制"
+      }
+    },
+    "powerProfile": {
+      "label": {
+        "unavailable": "电源模式"
+      },
+      "tooltip": {
+        "action": "点击切换电源模式"
+      }
+    },
+    "wifi": {
+      "label": {
+        "ethernet": "以太网",
+        "wifi": "Wi-Fi",
+        "disconnected": "Wi-Fi 已断开"
+      },
+      "tooltip": {
+        "action": "点击管理 Wi-Fi 连接"
+      }
+    },
+    "bluetooth": {
+      "label": {
+        "enabled": "蓝牙",
+        "disabled": "蓝牙"
+      },
+      "tooltip": {
+        "action": "点击管理蓝牙设备"
+      }
+    },
+    "nightLight": {
+      "label": {
+        "enabled": "夜间模式",
+        "forced": "夜间模式",
+        "disabled": "夜间模式"
+      },
+      "tooltip": {
+        "action": "点击切换夜间模式\n右键：打开设置"
+      }
+    },
+    "wallpaperSelector": {
+      "label": "壁纸",
+      "tooltip": {
+        "action": "左键：打开壁纸选择器\n右键：设置随机壁纸"
+      }
+    },
+    "keepAwake": {
+      "label": {
+        "enabled": "保持唤醒",
+        "disabled": "保持唤醒"
+      },
+      "tooltip": {
+        "action": "点击切换保持唤醒模式"
+      }
+    }
   },
   "toast": {
     "night-light": {
