@@ -27,6 +27,41 @@ ColumnLayout {
     }
   }
 
+  // Quick Settings Style Section
+  ColumnLayout {
+    spacing: Style.marginL * scaling
+    Layout.fillWidth: true
+
+    NHeader {
+      label: I18n.tr("settings.controlCenter.quickSettingsStyle.section.label")
+      description: I18n.tr("settings.controlCenter.quickSettingsStyle.section.description")
+    }
+
+    NComboBox {
+      id: quickSettingsStyle
+      label: I18n.tr("settings.controlCenter.quickSettingsStyle.style.label")
+      description: I18n.tr("settings.controlCenter.quickSettingsStyle.style.description")
+      Layout.fillWidth: true
+      model: [{
+          "key": "modern",
+          "name": I18n.tr("options.controlCenter.quickSettingsStyle.modern")
+        }, {
+          "key": "classic",
+          "name": I18n.tr("options.controlCenter.quickSettingsStyle.classic")
+        }]
+      currentKey: Settings.data.controlCenter.quickSettingsStyle || "modern"
+      onSelected: function (key) {
+        Settings.data.controlCenter.quickSettingsStyle = key
+      }
+    }
+  }
+
+  NDivider {
+    Layout.fillWidth: true
+    Layout.topMargin: Style.marginXL * scaling
+    Layout.bottomMargin: Style.marginXL * scaling
+  }
+
   // Widgets Management Section
   ColumnLayout {
     spacing: Style.marginXXS * scaling

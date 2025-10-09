@@ -4,12 +4,10 @@ import qs.Commons
 import qs.Services
 import qs.Widgets
 
-NButton {
+NQuickSetting {
   property ShellScreen screen
   property real scaling: 1.0
 
-
-  outlined: true
   icon: {
     try {
       if (NetworkService.ethernetConnected) {
@@ -30,13 +28,47 @@ NButton {
       return "signal_wifi_bad"
     }
   }
+
   text: {
     if (NetworkService.ethernetConnected) {
       return "Network"
     }
     return "Wi-Fi"
   }
+
   fontSize: Style.fontSizeS * scaling
-  fontWeight: Style.fontWeightRegular
+  fontWeight: Style.fontWeightMedium
+  style: Settings.data.controlCenter.quickSettingsStyle || "modern"
+
+  active: {
+    if (NetworkService.ethernetConnected) {
+      return true
+    }
+    try {
+      for (const net in NetworkService.networks) {
+        if (NetworkService.networks[net].connected) {
+          return true
+        }
+      }
+      return false
+    } catch (error) {
+      return false
+    }
+  }
+
+  tooltipText: {
+    if (NetworkService.ethernetConnected) {
+      return "Ethernet connected"
+    }
+    let connected = false
+    for (const net in NetworkService.networks) {
+      if (NetworkService.networks[net].connected) {
+        connected = true
+        break
+      }
+    }
+    return connected ? "Wi-Fi connected" : "Wi-Fi disconnected"
+  }
+
   onClicked: PanelService.getPanel("wifiPanel")?.toggle(this)
 }

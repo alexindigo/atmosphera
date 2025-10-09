@@ -106,8 +106,8 @@ NBox {
       id: grid
       Layout.fillWidth: true
       columns: 3
-      columnSpacing: Style.marginL * scaling
-      rowSpacing: Style.marginM * scaling
+      columnSpacing: Style.marginM * scaling
+      rowSpacing: Style.marginS * scaling
 
       Repeater {
         model: Settings.data.controlCenter.widgets.quickSettings

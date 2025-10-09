@@ -19,7 +19,7 @@ Rectangle {
   property int fontWeight: Style.fontWeightBold
   property real iconSize: Style.fontSizeL * scaling
   property bool outlined: false
-  property int horizontalAlignment: Qt.AlignHCenter 
+  property int horizontalAlignment: Qt.AlignHCenter
 
   // Signals
   signal clicked

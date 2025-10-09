@@ -95,6 +95,24 @@
           "label": "Position",
           "description": "Choose where the Control Center panel appears when opened."
         }
+      },
+      "controlCenter": {
+        "quickSettingsStyle": {
+          "section": {
+            "label": "Quick Settings Style",
+            "description": "Choose the visual style for quick settings buttons."
+          },
+          "style": {
+            "label": "Display Style",
+            "description": "Select between modern card-style buttons or classic icon buttons."
+          }
+        },
+        "widgets": {
+          "section": {
+            "label": "Widgets",
+            "description": "Manage and configure Control Center widgets."
+          }
+        }
       }
     },
     "audio": {
@@ -1241,6 +1259,10 @@
         "bottom_right": "Bottom right",
         "bottom_center": "Bottom center",
         "top_center": "Top center"
+      },
+      "quickSettingsStyle": {
+        "modern": "Modern Cards",
+        "classic": "Classic Icons"
       }
     },
     "osd": {

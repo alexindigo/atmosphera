@@ -112,7 +112,36 @@
     "terminalCommand": "xterm -e"
   },
   "controlCenter": {
-    "position": "close_to_bar_button"
+    "position": "close_to_bar_button",
+    "quickSettingsStyle": "modern",
+    "widgets": {
+      "quickSettings": [
+        {
+          "id": "WiFi"
+        },
+        {
+          "id": "Bluetooth"
+        },
+        {
+          "id": "DoNotDisturb"
+        },
+        {
+          "id": "NightLight"
+        },
+        {
+          "id": "KeepAwake"
+        },
+        {
+          "id": "PowerProfile"
+        },
+        {
+          "id": "ScreenRecorder"
+        },
+        {
+          "id": "WallpaperSelector"
+        }
+      ]
+    }
   },
   "dock": {
     "displayMode": "always_visible",
