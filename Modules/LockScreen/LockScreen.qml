@@ -329,7 +329,7 @@ Loader {
 
                   // Welcome back + Username on one line
                   NText {
-                    text: I18n.tr("lock-screen.welcome-back") + " " + Quickshell.env("USER")
+                    text: I18n.tr("lock-screen.welcome-back") + " " + Quickshell.env("USER") + "!"
                     pointSize: Style.fontSizeXXXL * scaling
                     font.weight: Font.Medium
                     color: Color.mOnSurface
