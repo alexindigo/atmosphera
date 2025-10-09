@@ -72,12 +72,7 @@ Singleton {
     running: false
     interval: 1000
     onTriggered: {
-      settingsFileView.writeAdapter()
-      // Write to fallback location if set
-      if (Quickshell.env("NOCTALIA_SETTINGS_FALLBACK")) {
-        settingsFallbackFileView.writeAdapter()
-      }
-      root.settingsSaved() // Emit signal after saving
+      root.saveImmediate()
     }
   }
 
