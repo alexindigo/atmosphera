@@ -368,7 +368,8 @@ Loader {
                     Connections {
                       target: Time
                       function onDateChanged() {
-                        secondsProgress.progress = Time.date.getSeconds() / 60
+                        const total = Time.date.getSeconds() * 1000 + Time.date.getMilliseconds()
+                        secondsProgress.progress = total / 60000
                       }
                     }
 
@@ -413,11 +414,11 @@ Loader {
                       horizontalAlignment: Text.AlignHCenter
                       Layout.alignment: Qt.AlignHCenter
 
-                      Connections {
-                        target: Time
-                        function onDateChanged() {// Trigger text update
-                        }
-                      }
+                      // Connections {
+                      //   target: Time
+                      //   function onDateChanged() {// Trigger text update
+                      //   }
+                      // }
                     }
 
                     NText {
@@ -428,11 +429,11 @@ Loader {
                       horizontalAlignment: Text.AlignHCenter
                       Layout.alignment: Qt.AlignHCenter
 
-                      Connections {
-                        target: Time
-                        function onDateChanged() {// Trigger text update
-                        }
-                      }
+                      // Connections {
+                      //   target: Time
+                      //   function onDateChanged() {// Trigger text update
+                      //   }
+                      // }
                     }
                   }
                 }
