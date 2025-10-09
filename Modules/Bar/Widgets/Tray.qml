@@ -19,7 +19,7 @@ Rectangle {
   readonly property string barPosition: Settings.data.bar.position
   readonly property bool isVertical: barPosition === "left" || barPosition === "right"
   readonly property bool compact: (Settings.data.bar.density === "compact")
-  property real itemSize: isVertical ? Math.round(width * 0.7) : Math.round(height * 0.7)
+  property real itemSize: Math.round(Style.capsuleHeight * 0.65 * scaling)
   property list<string> blacklist: Settings.data.bar.trayBlacklist || [] // Read from settings
   property var filteredItems: []
 
@@ -91,8 +91,8 @@ Rectangle {
   }
 
   visible: filteredItems.length > 0
-  implicitWidth: isVertical ? Math.round(Style.capsuleHeight * scaling) : (trayFlow.implicitWidth + Style.marginS * scaling * 2)
-  implicitHeight: isVertical ? (trayFlow.implicitHeight + Style.marginS * scaling * 2) : Math.round(Style.capsuleHeight * scaling)
+  implicitWidth: isVertical ? Math.round(Style.capsuleHeight * scaling) : (trayFlow.implicitWidth + Style.marginM * 2 * scaling)
+  implicitHeight: isVertical ? (trayFlow.implicitHeight + Style.marginM * 2 * scaling) : Math.round(Style.capsuleHeight * scaling)
   radius: Math.round(Style.radiusM * scaling)
   color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
