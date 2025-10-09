@@ -266,6 +266,19 @@ Singleton {
     }
   }
 
+  Timer {
+    id: playerStateMonitor
+    interval: 2000 // Check every 2 seconds
+    repeat: true
+    running: true
+    onTriggered: {
+      // Only update if we don't have a playing player or if current player is paused
+      if (!currentPlayer || !currentPlayer.isPlaying || currentPlayer.playbackState !== MprisPlaybackState.Playing) {
+        updateCurrentPlayer()
+      }
+    }
+  }
+
   // Update current player when available players change
   Connections {
     target: Mpris.players
