@@ -39,7 +39,7 @@ Item {
       if (!active) {
         return null
       }
-      return BarWidgetRegistry.getWidget(widgetId)
+      return ControlCenterWidgetRegistry.getWidget(widgetId)
     }
 
     onLoaded: {
@@ -52,23 +52,14 @@ Item {
         }
       }
 
-      // Register this widget instance with BarService
-      if (screenName && section) {
-        BarService.registerWidget(screenName, section, widgetId, sectionIndex, item)
-      }
-
       if (item.hasOwnProperty("onLoaded")) {
         item.onLoaded()
       }
 
-      //Logger.log("BarWidgetLoader", "Loaded", widgetId, "on screen", item.screen.name)
+      //Logger.log("ControlCenterWidgetLoader", "Loaded", widgetId, "on screen", item.screen.name)
     }
 
     Component.onDestruction: {
-      // Unregister when destroyed
-      if (screenName && section) {
-        BarService.unregisterWidget(screenName, section, widgetId, sectionIndex)
-      }
       // Explicitly clear references
       widgetProps = null
     }
@@ -76,8 +67,8 @@ Item {
 
   // Error handling
   onWidgetIdChanged: {
-    if (widgetId && !BarWidgetRegistry.hasWidget(widgetId)) {
-      Logger.warn("BarWidgetLoader", "Widget not found in registry:", widgetId)
+    if (widgetId && !ControlCenterWidgetRegistry.hasWidget(widgetId)) {
+      Logger.warn("ControlCenterWidgetLoader", "Widget not found in registry:", widgetId)
     }
   }
 }

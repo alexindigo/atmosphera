@@ -10,8 +10,8 @@ import qs.Widgets
 NPanel {
   id: root
 
-  preferredWidth: 480
-  preferredHeight: 580
+  preferredWidth: 440
+  preferredHeight: 540
   panelKeyboardFocus: true
 
   // Positioning
@@ -38,13 +38,7 @@ NPanel {
       // Top Card: profile + utilities
       TopCard {
         Layout.fillWidth: true
-        Layout.preferredHeight: Math.max(124 * scaling)
-      }
-
-      // Weather
-      WeatherCard {
-        Layout.fillWidth: true
-        Layout.preferredHeight: Math.max(196 * scaling)
+        Layout.preferredHeight: Math.max(280 * scaling)
       }
 
       // Media + stats column
@@ -55,13 +49,13 @@ NPanel {
 
         // Media card
         MediaCard {
-          Layout.preferredWidth: Math.max(270 * scaling)
-          Layout.fillHeight: true
+          Layout.preferredWidth: Math.max(250 * scaling)
+          Layout.preferredHeight: Math.max(196 * scaling)
         }
 
         // System monitors combined in one card
         SystemMonitorCard {
-          Layout.preferredWidth: Math.max(160 * scaling)
+          Layout.preferredWidth: Math.max(140 * scaling)
           Layout.preferredHeight: Math.max(196 * scaling)
         }
       }

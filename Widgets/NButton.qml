@@ -19,6 +19,7 @@ Rectangle {
   property int fontWeight: Style.fontWeightBold
   property real iconSize: Style.fontSizeL * scaling
   property bool outlined: false
+  property int horizontalAlignment: Qt.AlignHCenter 
 
   // Signals
   signal clicked
@@ -27,7 +28,6 @@ Rectangle {
 
   // Internal properties
   property bool hovered: false
-  property bool pressed: false
 
   // Dimensions
   implicitWidth: contentRow.implicitWidth + (Style.marginL * 2 * scaling)
@@ -47,7 +47,7 @@ Rectangle {
   border.color: {
     if (!enabled)
       return Color.mOutline
-    if (pressed || hovered)
+    if (hovered)
       return backgroundColor
     return outlined ? backgroundColor : Color.transparent
   }
@@ -71,7 +71,10 @@ Rectangle {
   // Content
   RowLayout {
     id: contentRow
-    anchors.centerIn: parent
+    anchors.verticalCenter: parent.verticalCenter
+    anchors.left: root.horizontalAlignment === Qt.AlignLeft ? parent.left : undefined
+    anchors.horizontalCenter: root.horizontalAlignment === Qt.AlignHCenter ? parent.horizontalCenter : undefined
+    anchors.leftMargin: root.horizontalAlignment === Qt.AlignLeft ? Style.marginL * scaling : 0
     spacing: Style.marginXS * scaling
 
     // Icon (optional)
@@ -84,8 +87,8 @@ Rectangle {
         if (!root.enabled)
           return Color.mOnSurfaceVariant
         if (root.outlined) {
-          if (root.pressed || root.hovered)
-            return root.backgroundColor
+          if (root.hovered)
+            return root.textColor
           return root.backgroundColor
         }
         return root.textColor

@@ -246,6 +246,16 @@ Singleton {
     property JsonObject controlCenter: JsonObject {
       // Position: close_to_bar_button, center, top_left, top_right, bottom_left, bottom_right, bottom_center, top_center
       property string position: "close_to_bar_button"
+      property JsonObject widgets
+      widgets: JsonObject {
+        property list<var> quickSettings: [{
+            "id": "Bluetooth"
+          }, {
+            "id": "WiFi"
+          }, {
+            "id": "PowerProfile"
+          }]
+      }
     }
 
     // dock
