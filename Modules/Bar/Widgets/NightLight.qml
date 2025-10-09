@@ -11,8 +11,8 @@ import qs.Widgets
 NIconButton {
   id: root
 
-  // NIconButton must only define screen, not scaling
   property ShellScreen screen
+  property real scaling: 1.0
 
   compact: (Settings.data.bar.density === "compact")
   baseSize: Style.capsuleHeight

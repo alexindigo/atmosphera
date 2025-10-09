@@ -12,9 +12,7 @@ NQuickSetting {
   fontSize: Style.fontSizeS * scaling
   fontWeight: Style.fontWeightMedium
   icon: BluetoothService.enabled ? "bluetooth" : "bluetooth-off"
-  active: BluetoothService.enabled
   tooltipText: I18n.tr("quickSettings.bluetooth.tooltip.action")
   style: Settings.data.controlCenter.quickSettingsStyle || "modern"
-
   onClicked: PanelService.getPanel("bluetoothPanel")?.toggle(this)
 }

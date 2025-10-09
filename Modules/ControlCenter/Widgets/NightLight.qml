@@ -13,7 +13,7 @@ NQuickSetting {
   fontSize: Style.fontSizeS * scaling
   fontWeight: Style.fontWeightMedium
   icon: Settings.data.nightLight.enabled ? (Settings.data.nightLight.forced ? "nightlight-forced" : "nightlight-on") : "nightlight-off"
-  active: Settings.data.nightLight.enabled
+  hot: !Settings.data.nightLight.enabled || Settings.data.nightLight.forced
   style: Settings.data.controlCenter.quickSettingsStyle || "modern"
   tooltipText: I18n.tr("quickSettings.nightLight.tooltip.action")
 

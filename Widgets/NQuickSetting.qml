@@ -13,8 +13,7 @@ Rectangle {
   property string icon: ""
   property string tooltipText: ""
   property bool enabled: true
-  property bool active: false
-  property bool compact: false
+  property bool hot: false
   property string style: "modern" // "modern", "classic", or "compact"
 
   // Styling properties
@@ -23,55 +22,53 @@ Rectangle {
   property real iconSize: Style.fontSizeL * scaling
   property real cornerRadius: Style.radiusM * scaling
 
+  // Internal properties
+  property bool hovered: false
+  property bool pressed: false
+
   // Colors - Style-dependent colors
   property color backgroundColor: {
+    if (pressed) {
+      return Color.mTertiary
+    }
+    if (hot) {
+      return Color.mPrimary
+    }
     if (style === "classic")
       return Color.mSurfaceVariant
     if (style === "compact")
       return Color.mSurface
     return Color.mSurface
   }
-  property color textColor: Color.mOnSurface
+  property color textColor: {
+    if (pressed) {
+      return Color.mOnTertiary
+    }
+    if (hot) {
+      return Color.mOnPrimary
+    }
+    return Color.mOnSurface
+  }
   property color iconColor: {
-    if (style === "classic")
+    if (pressed) {
+      return Color.mOnTertiary
+    }
+    if (hot) {
+      return Color.mOnPrimary
+    }
+    if (style !== "compact")
       return Color.mPrimary
-    if (style === "compact")
-      return active ? Color.mPrimary : Color.mOnSurface
-    return active ? Color.mPrimary : Color.mOnSurface
+    return Color.mOnSurface
   }
   property color borderColor: Color.mOutline
-  property color hoverColor: {
-    if (style === "classic")
-      return Color.mTertiary
-    if (style === "compact")
-      return Color.mPrimary
-    return Color.mPrimary
-  }
-  property color pressedColor: {
-    if (style === "classic")
-      return Color.mTertiary
-    if (style === "compact")
-      return Qt.darker(Color.mPrimary, 1.1)
-    return Qt.darker(Color.mPrimary, 1.1)
-  }
-  property color hoverTextColor: Color.mOnPrimary
-  property color hoverIconColor: {
-    if (style === "classic")
-      return Color.mOnTertiary
-    if (style === "compact")
-      return Color.mOnPrimary
-    return Color.mOnPrimary
-  }
+  property color hoverColor: Color.mTertiary
+  property color hoverTextColor: Color.mOnTertiary
+  property color hoverIconColor: Color.mOnTertiary
 
   // Signals
   signal clicked
   signal rightClicked
   signal middleClicked
-
-  // Internal properties
-  property bool hovered: false
-  property bool pressed: false
-  property real scaling: 1.0
 
   // Dimensions - Style-dependent sizing
   implicitWidth: {
@@ -81,7 +78,7 @@ Rectangle {
     if (style === "compact") {
       return Style.baseWidgetSize * 0.8 * scaling
     }
-    return compact ? Math.max(100 * scaling, contentRow.implicitWidth + (Style.marginL * scaling)) : Math.max(120 * scaling, contentRow.implicitWidth + (Style.marginL * scaling))
+    return Math.max(120 * scaling, contentRow.implicitWidth + (Style.marginL * scaling))
   }
   implicitHeight: {
     if (style === "classic") {
@@ -90,7 +87,7 @@ Rectangle {
     if (style === "compact") {
       return Style.baseWidgetSize * 0.8 * scaling
     }
-    return compact ? Math.max(48 * scaling, contentRow.implicitHeight + (Style.marginM * scaling)) : Math.max(56 * scaling, contentRow.implicitHeight + (Style.marginL * scaling))
+    return Math.max(48 * scaling, contentRow.implicitHeight + (Style.marginL * scaling))
   }
 
   // Appearance - Style-dependent styling
@@ -104,8 +101,6 @@ Rectangle {
   color: {
     if (!enabled)
       return Qt.lighter(Color.mSurface, 1.1)
-    if (pressed)
-      return pressedColor
     if (hovered)
       return hoverColor
     return backgroundColor
@@ -128,14 +123,14 @@ Rectangle {
 
   Behavior on color {
     ColorAnimation {
-      duration: style === "classic" ? Style.animationNormal : Style.animationFast
+      duration: Style.animationFast
       easing.type: style === "classic" ? Easing.InOutQuad : Easing.OutCubic
     }
   }
 
   Behavior on border.color {
     ColorAnimation {
-      duration: style === "classic" ? Style.animationNormal : Style.animationFast
+      duration: Style.animationFast
       easing.type: style === "classic" ? Easing.InOutQuad : Easing.OutCubic
     }
   }
@@ -144,25 +139,6 @@ Rectangle {
     NumberAnimation {
       duration: Style.animationFast
       easing.type: Easing.OutCubic
-    }
-  }
-
-  // Hover scale effect
-  scale: hovered ? 1.02 : 1.0
-
-  // Subtle shadow/elevation effect
-  Rectangle {
-    anchors.fill: parent
-    radius: parent.radius
-    color: Qt.rgba(0, 0, 0, 0.1)
-    visible: active
-    z: -1
-
-    Behavior on color {
-      ColorAnimation {
-        duration: Style.animationFast
-        easing.type: Easing.OutCubic
-      }
     }
   }
 
@@ -198,7 +174,7 @@ Rectangle {
     // Text content
     NText {
       Layout.alignment: Qt.AlignHCenter
-      visible: root.text !== "" && !compact
+      visible: root.text !== ""
       text: root.text
       pointSize: root.fontSize
       font.weight: root.fontWeight
@@ -315,22 +291,25 @@ Rectangle {
 
     onPressed: mouse => {
                  root.pressed = true
-                 root.scale = 0.95
+                 root.scale = 0.92
                  if (tooltipText) {
                    TooltipService.hide()
                  }
                }
 
     onReleased: mouse => {
-                  root.pressed = false
                   root.scale = 1.0
+                  root.pressed = false
 
-                  if (mouse.button === Qt.LeftButton) {
-                    root.clicked()
-                  } else if (mouse.button === Qt.RightButton) {
-                    root.rightClicked()
-                  } else if (mouse.button === Qt.MiddleButton) {
-                    root.middleClicked()
+                  // Only trigger actions if released while hovering
+                  if (root.hovered) {
+                    if (mouse.button === Qt.LeftButton) {
+                      root.clicked()
+                    } else if (mouse.button === Qt.RightButton) {
+                      root.rightClicked()
+                    } else if (mouse.button === Qt.MiddleButton) {
+                      root.middleClicked()
+                    }
                   }
                 }
 
@@ -341,57 +320,6 @@ Rectangle {
       if (tooltipText) {
         TooltipService.hide()
       }
-    }
-  }
-
-  Rectangle {
-    id: ripple
-    anchors.fill: parent
-    radius: parent.radius
-    color: Qt.rgba(1, 1, 1, 0.2)
-    scale: 0
-    opacity: 0
-    visible: false
-
-    SequentialAnimation {
-      id: rippleAnimation
-      running: false
-
-      ParallelAnimation {
-        NumberAnimation {
-          target: ripple
-          property: "scale"
-          from: 0
-          to: 1.2
-          duration: Style.animationNormal
-          easing.type: Easing.OutCubic
-        }
-        NumberAnimation {
-          target: ripple
-          property: "opacity"
-          from: 0.6
-          to: 0
-          duration: Style.animationNormal
-          easing.type: Easing.OutCubic
-        }
-      }
-    }
-  }
-
-  Connections {
-    target: root
-    function onClicked() {
-      ripple.visible = true
-      rippleAnimation.start()
-    }
-  }
-
-  Connections {
-    target: rippleAnimation
-    function onFinished() {
-      ripple.visible = false
-      ripple.scale = 0
-      ripple.opacity = 0
     }
   }
 }

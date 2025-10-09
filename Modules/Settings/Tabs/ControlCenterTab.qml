@@ -43,14 +43,14 @@ ColumnLayout {
       description: I18n.tr("settings.control-center.quickSettingsStyle.style.description")
       Layout.fillWidth: true
       model: [{
-          "key": "modern",
-          "name": I18n.tr("options.control-center.quickSettingsStyle.modern")
+          "key": "compact",
+          "name": I18n.tr("options.control-center.quickSettingsStyle.compact")
         }, {
           "key": "classic",
           "name": I18n.tr("options.control-center.quickSettingsStyle.classic")
         }, {
-          "key": "compact",
-          "name": I18n.tr("options.control-center.quickSettingsStyle.compact")
+          "key": "modern",
+          "name": I18n.tr("options.control-center.quickSettingsStyle.modern")
         }]
       currentKey: Settings.data.controlCenter.quickSettingsStyle || "compact"
       onSelected: function (key) {

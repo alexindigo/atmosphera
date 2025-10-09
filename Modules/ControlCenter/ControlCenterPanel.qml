@@ -11,12 +11,12 @@ NPanel {
   id: root
 
   preferredWidth: 440
-  preferredHeight: topHeight + bottomHeight + Math.round(Style.marginL * scaling * 3)
+  preferredHeight: topHeight + bottomHeight + Math.round(Style.marginL * 3)
   panelKeyboardFocus: true
 
-  readonly property int bottomHeight: Math.round(Math.max(196 * scaling))
+  readonly property int bottomHeight: 196
   readonly property int topHeight: {
-    const columns = (Settings.data.controlCenter.quickSettingsStyle === "compact") ? 4 : 3
+    const columns = (Settings.data.controlCenter.quickSettingsStyle === "compact") ? 5 : 3
     const rowsCount = Math.ceil(Settings.data.controlCenter.widgets.quickSettings.length / columns)
 
     var buttonHeight
@@ -28,7 +28,7 @@ NPanel {
       buttonHeight = 56
     }
 
-    return (rowsCount * buttonHeight) + (120 * scaling)
+    return (rowsCount * buttonHeight) + 120
   }
 
   // Positioning
@@ -56,26 +56,26 @@ NPanel {
       TopCard {
         id: topCard
         Layout.fillWidth: true
-        Layout.preferredHeight: topHeight
+        Layout.preferredHeight: topHeight * scaling
       }
 
       // Media + stats column
       RowLayout {
         id: bottomCard
         Layout.fillWidth: true
-        Layout.preferredHeight: bottomHeight
+        Layout.preferredHeight: bottomHeight * scaling
         spacing: content.cardSpacing
 
         // Media card
         MediaCard {
           Layout.preferredWidth: Math.max(250 * scaling)
-          Layout.preferredHeight: bottomHeight
+          Layout.preferredHeight: bottomHeight * scaling
         }
 
         // System monitors combined in one card
         SystemMonitorCard {
           Layout.preferredWidth: Math.max(140 * scaling)
-          Layout.preferredHeight: bottomHeight
+          Layout.preferredHeight: bottomHeight * scaling
         }
       }
     }

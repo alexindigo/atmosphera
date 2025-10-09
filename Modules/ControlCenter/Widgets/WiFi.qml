@@ -46,24 +46,6 @@ NQuickSetting {
   fontSize: Style.fontSizeS * scaling
   fontWeight: Style.fontWeightMedium
   style: Settings.data.controlCenter.quickSettingsStyle || "modern"
-
-  active: {
-    if (NetworkService.ethernetConnected) {
-      return true
-    }
-    try {
-      for (const net in NetworkService.networks) {
-        if (NetworkService.networks[net].connected) {
-          return true
-        }
-      }
-      return false
-    } catch (error) {
-      return false
-    }
-  }
-
   tooltipText: I18n.tr("quickSettings.wifi.tooltip.action")
-
   onClicked: PanelService.getPanel("wifiPanel")?.toggle(this)
 }

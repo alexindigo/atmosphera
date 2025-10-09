@@ -11,7 +11,6 @@ import qs.Modules.Bar.Extras
 Item {
   id: root
 
-  // Widget properties passed from Bar.qml
   property ShellScreen screen
   property real scaling: 1.0
 

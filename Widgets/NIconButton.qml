@@ -8,7 +8,6 @@ Rectangle {
   id: root
 
   property real baseSize: Style.baseWidgetSize
-  property real scaling: 1.0
 
   property string icon
   property string tooltipText

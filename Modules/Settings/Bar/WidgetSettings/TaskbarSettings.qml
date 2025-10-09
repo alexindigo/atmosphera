@@ -21,7 +21,6 @@ ColumnLayout {
     var settings = Object.assign({}, widgetData || {})
     settings.onlySameOutput = valueOnlySameOutput
     settings.onlyActiveWorkspaces = valueOnlyActiveWorkspaces
-    console.log(JSON.stringify(settings))
     return settings
   }
 

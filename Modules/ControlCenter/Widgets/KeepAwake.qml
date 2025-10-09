@@ -12,7 +12,7 @@ NQuickSetting {
   fontSize: Style.fontSizeS * scaling
   fontWeight: Style.fontWeightMedium
   icon: IdleInhibitorService.isInhibited ? "keep-awake-on" : "keep-awake-off"
-  active: IdleInhibitorService.isInhibited
+  hot: IdleInhibitorService.isInhibited
   tooltipText: I18n.tr("quickSettings.keepAwake.tooltip.action")
   style: Settings.data.controlCenter.quickSettingsStyle || "modern"
 

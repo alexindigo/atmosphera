@@ -16,7 +16,7 @@ NQuickSetting {
   fontSize: Style.fontSizeS * scaling
   fontWeight: Style.fontWeightMedium
   icon: PowerProfileService.getIcon()
-  active: hasPP
+  hot: !PowerProfileService.isDefault()
   tooltipText: I18n.tr("quickSettings.powerProfile.tooltip.action")
   style: Settings.data.controlCenter.quickSettingsStyle || "modern"
 

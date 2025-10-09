@@ -10,8 +10,8 @@ import qs.Widgets
 NIconButton {
   id: root
 
-  // NIconButton must only define screen, not scaling
   property ShellScreen screen
+  property real scaling: 1.0
 
   // Widget properties passed from Bar.qml for per-instance settings
   property string widgetId: ""

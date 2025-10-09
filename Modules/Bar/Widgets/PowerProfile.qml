@@ -9,8 +9,8 @@ import qs.Widgets
 NIconButton {
   id: root
 
-  // NIconButton must only define screen, not scaling
   property ShellScreen screen
+  property real scaling: 1.0
 
   baseSize: Style.capsuleHeight
   visible: PowerProfileService.available

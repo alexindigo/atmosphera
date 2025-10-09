@@ -31,7 +31,7 @@ NBox {
 
       NImageCircled {
         width: Style.baseWidgetSize * 1.25 * scaling
-        height: Style.baseWidgetSize * 1.25 * scaling
+        height: width
         imagePath: Settings.data.general.avatarImage
         fallbackIcon: "person"
         borderColor: Color.mPrimary
@@ -105,7 +105,7 @@ NBox {
     GridLayout {
       id: grid
       Layout.fillWidth: true
-      columns: (Settings.data.controlCenter.quickSettingsStyle === "compact") ? 4 : 3
+      columns: (Settings.data.controlCenter.quickSettingsStyle === "compact") ? 5 : 3
       columnSpacing: Style.marginM * scaling
       rowSpacing: Style.marginS * scaling
 

@@ -12,7 +12,7 @@ NQuickSetting {
   fontSize: Style.fontSizeS * scaling
   fontWeight: Style.fontWeightMedium
   icon: Settings.data.notifications.doNotDisturb ? "bell-off" : "bell"
-  active: Settings.data.notifications.doNotDisturb
+  hot: Settings.data.notifications.doNotDisturb
   tooltipText: I18n.tr("quickSettings.notifications.tooltip.action")
   style: Settings.data.controlCenter.quickSettingsStyle || "modern"
 

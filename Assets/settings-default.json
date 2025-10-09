@@ -37,12 +37,6 @@
           "id": "NotificationHistory"
         },
         {
-          "id": "WiFi"
-        },
-        {
-          "id": "Bluetooth"
-        },
-        {
           "id": "Battery"
         },
         {
@@ -113,7 +107,7 @@
   },
   "controlCenter": {
     "position": "close_to_bar_button",
-    "quickSettingsStyle": "modern",
+    "quickSettingsStyle": "compact",
     "widgets": {
       "quickSettings": [
         {
@@ -126,19 +120,10 @@
           "id": "Notifications"
         },
         {
-          "id": "NightLight"
-        },
-        {
-          "id": "KeepAwake"
-        },
-        {
-          "id": "PowerProfile"
-        },
-        {
           "id": "ScreenRecorder"
         },
         {
-          "id": "WallpaperSelector"
+          "id": "PowerProfile"
         }
       ]
     }
