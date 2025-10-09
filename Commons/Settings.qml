@@ -139,7 +139,7 @@ Singleton {
       property bool floating: false
       property real marginVertical: 0.25
       property real marginHorizontal: 0.25
-      property list<string> trayBlacklist: []
+
 
       // Widget configuration for modular bar system
       property JsonObject widgets

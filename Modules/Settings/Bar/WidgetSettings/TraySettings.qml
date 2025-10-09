@@ -10,7 +10,7 @@ ColumnLayout {
   property var widgetMetadata: ({}) // Expected by BarWidgetSettingsDialog
 
   // Local state for the blacklist
-  property var localBlacklist: widgetData.blacklist || Settings.data.bar.trayBlacklist || []
+  property var localBlacklist: widgetData.blacklist || []
 
   ListModel {
     id: blacklistModel

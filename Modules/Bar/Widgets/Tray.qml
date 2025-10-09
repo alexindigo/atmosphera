@@ -37,7 +37,7 @@ Rectangle {
   readonly property bool isVertical: barPosition === "left" || barPosition === "right"
   readonly property bool compact: (Settings.data.bar.density === "compact")
   property real itemSize: Math.round(Style.capsuleHeight * 0.65 * scaling)
-  property list<string> blacklist: widgetSettings.blacklist || Settings.data.bar.trayBlacklist || [] // Read from settings
+  property list<string> blacklist: widgetSettings.blacklist || widgetMetadata.blacklist || [] // Read from settings
   property var filteredItems: []
 
   function wildCardMatch(str, rule) {
