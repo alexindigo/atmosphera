@@ -127,7 +127,7 @@ Singleton {
   Process {
     id: availabilityCheckProcess
     running: false
-    command: ["sh", "-c", "command -v python3 >/dev/null 2>&1 && python3 " + root.checkCalendarAvailableScript + " || echo 'python3 unavailable'"]
+    command: ["sh", "-c", "command -v python3 >/dev/null 2>&1 && python3 " + root.checkCalendarAvailableScript + " || echo 'unavailable: python3 not installed'"]
 
     stdout: StdioCollector {
       onStreamFinished: {
