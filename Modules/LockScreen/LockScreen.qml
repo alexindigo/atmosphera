@@ -413,12 +413,6 @@ Loader {
                       color: Color.mOnSurface
                       horizontalAlignment: Text.AlignHCenter
                       Layout.alignment: Qt.AlignHCenter
-
-                      // Connections {
-                      //   target: Time
-                      //   function onDateChanged() {// Trigger text update
-                      //   }
-                      // }
                     }
 
                     NText {
@@ -428,12 +422,6 @@ Loader {
                       color: Color.mOnSurfaceVariant
                       horizontalAlignment: Text.AlignHCenter
                       Layout.alignment: Qt.AlignHCenter
-
-                      // Connections {
-                      //   target: Time
-                      //   function onDateChanged() {// Trigger text update
-                      //   }
-                      // }
                     }
                   }
                 }
