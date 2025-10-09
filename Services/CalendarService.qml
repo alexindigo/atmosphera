@@ -41,10 +41,15 @@ Singleton {
       cacheAdapter.cachedCalendars = ([])
       cacheAdapter.lastUpdate = ""
     }
+
+    onLoaded: {
+      loadFromCache()
+    }
   }
 
   Component.onCompleted: {
     Logger.log("Calendar", "Service initialized")
+    loadFromCache()
     checkAvailability()
   }
 
@@ -57,6 +62,23 @@ Singleton {
 
   function saveCache() {
     saveDebounce.restart()
+  }
+
+  // Load events and calendars from cache
+  function loadFromCache() {
+    if (cacheAdapter.cachedEvents && cacheAdapter.cachedEvents.length > 0) {
+      root.events = cacheAdapter.cachedEvents
+      Logger.log("Calendar", `Loaded ${cacheAdapter.cachedEvents.length} cached event(s)`)
+    }
+
+    if (cacheAdapter.cachedCalendars && cacheAdapter.cachedCalendars.length > 0) {
+      root.calendars = cacheAdapter.cachedCalendars
+      Logger.log("Calendar", `Loaded ${cacheAdapter.cachedCalendars.length} cached calendar(s)`)
+    }
+
+    if (cacheAdapter.lastUpdate) {
+      Logger.log("Calendar", `Cache last updated: ${cacheAdapter.lastUpdate}`)
+    }
   }
 
   // Auto-refresh timer (every 5 minutes)
@@ -150,7 +172,11 @@ Singleton {
           Logger.log("Calendar", `Found ${result.length} calendar(s)`)
 
           // Auto-load events after discovering calendars
-          if (result.length > 0) {
+          // Only load if we have calendars and no cached events
+          if (result.length > 0 && root.events.length === 0) {
+            loadEvents()
+          } else if (result.length > 0) {
+            // If we already have cached events, load in background
             loadEvents()
           }
         } catch (e) {
