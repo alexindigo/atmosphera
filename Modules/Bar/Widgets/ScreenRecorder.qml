@@ -7,7 +7,8 @@ import qs.Widgets
 NIconButton {
   id: root
 
-  property real scaling: 1.0
+  // NIconButton must only define screen, not scaling
+  property ShellScreen screen
 
   icon: "camera-video"
   tooltipText: ScreenRecorderService.isRecording ? I18n.tr("tooltips.click-to-stop-recording") : I18n.tr("tooltips.click-to-start-recording")

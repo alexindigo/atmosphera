@@ -9,7 +9,7 @@ Item {
   id: root
 
   // Widget properties passed from Bar.qml
-  property var screen
+  property ShellScreen screen
   property real scaling: 1.0
 
   // Widget properties passed from Bar.qml for per-instance settings

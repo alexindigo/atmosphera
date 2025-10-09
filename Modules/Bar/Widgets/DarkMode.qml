@@ -6,7 +6,8 @@ import qs.Services
 NIconButton {
   id: root
 
-  property real scaling: 1.0
+  // NIconButton must only define screen, not scaling
+  property ShellScreen screen
 
   icon: "dark-mode"
   tooltipText: Settings.data.colorSchemes.darkMode ? I18n.tr("tooltips.switch-to-light-mode") : I18n.tr("tooltips.switch-to-dark-mode")
