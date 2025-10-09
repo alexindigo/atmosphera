@@ -11,8 +11,23 @@ NPanel {
   id: root
 
   preferredWidth: 440
-  preferredHeight: 540
+  preferredHeight: topHeight + bottomHeight +  Math.round(Style.marginL * scaling  * 3)
   panelKeyboardFocus: true
+
+  readonly property int bottomHeight: Math.round(Math.max(196 * scaling))
+  readonly property int topHeight: {
+    const rowsCount = Math.ceil(Settings.data.controlCenter.widgets.quickSettings.length / 3)
+
+    var buttonHeight;
+    if (Settings.data.controlCenter.quickSettingsStyle === "classic") {
+      buttonHeight = Style.baseWidgetSize
+    }
+    else {
+      buttonHeight = 56
+    }
+
+    return (rowsCount * buttonHeight) + (120 * scaling)
+  }
 
   // Positioning
   readonly property string controlCenterPosition: Settings.data.controlCenter.position
@@ -37,26 +52,28 @@ NPanel {
 
       // Top Card: profile + utilities
       TopCard {
+        id: topCard
         Layout.fillWidth: true
-        Layout.preferredHeight: Math.max(230 * scaling)
+        Layout.preferredHeight: topHeight
       }
 
       // Media + stats column
       RowLayout {
+        id: bottomCard
         Layout.fillWidth: true
-        Layout.preferredHeight: Math.max(196 * scaling)
+        Layout.preferredHeight: bottomHeight
         spacing: content.cardSpacing
 
         // Media card
         MediaCard {
           Layout.preferredWidth: Math.max(250 * scaling)
-          Layout.preferredHeight: Math.max(196 * scaling)
+          Layout.preferredHeight: bottomHeight
         }
 
         // System monitors combined in one card
         SystemMonitorCard {
           Layout.preferredWidth: Math.max(140 * scaling)
-          Layout.preferredHeight: Math.max(196 * scaling)
+          Layout.preferredHeight: bottomHeight
         }
       }
     }
