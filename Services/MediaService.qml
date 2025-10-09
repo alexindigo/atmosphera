@@ -36,63 +36,123 @@ Singleton {
     }
 
     let allPlayers = Mpris.players.values
-    let controllablePlayers = []
+    let finalPlayers = []
+    const genericBrowsers = ["firefox", "chromium", "chrome"]
 
-    // Apply blacklist and controllable filter
-    const blacklist = (Settings.data.audio && Settings.data.audio.mprisBlacklist) ? Settings.data.audio.mprisBlacklist : []
+    // Separate players into specific and generic lists
+    let specificPlayers = []
+    let genericPlayers = []
     for (var i = 0; i < allPlayers.length; i++) {
-      let player = allPlayers[i]
-      if (!player)
-        continue
-      const identity = String(player.identity || "")
-      const busName = String(player.busName || "")
-      const desktop = String(player.desktopEntry || "")
-      const idKey = identity.toLowerCase()
-      const match = blacklist.find(b => {
-                                     const s = String(b || "").toLowerCase()
-                                     return s && (idKey.includes(s) || busName.toLowerCase().includes(s) || desktop.toLowerCase().includes(s))
-                                   })
-      if (match)
-        continue
-      if (player.canControl)
-        controllablePlayers.push(player)
+      const identity = String(allPlayers[i].identity || "").toLowerCase()
+      if (genericBrowsers.some(b => identity.includes(b))) {
+        genericPlayers.push(allPlayers[i])
+      } else {
+        specificPlayers.push(allPlayers[i])
+      }
     }
 
+    let matchedGenericIndices = {}
+
+    // For each specific player, try to find and pair it with a generic partner
+    for (var i = 0; i < specificPlayers.length; i++) {
+      let specificPlayer = specificPlayers[i]
+      let title1 = String(specificPlayer.trackTitle || "").trim()
+      let wasMatched = false
+
+      if (title1) {
+        for (var j = 0; j < genericPlayers.length; j++) {
+          if (matchedGenericIndices[j]) continue
+          let genericPlayer = genericPlayers[j]
+          let title2 = String(genericPlayer.trackTitle || "").trim()
+
+          if (title2 && (title1.includes(title2) || title2.includes(title1))) {
+            let dataPlayer = genericPlayer
+            let identityPlayer = specificPlayer
+
+            let scoreSpecific = (specificPlayer.trackArtUrl ? 1 : 0)
+            let scoreGeneric = (genericPlayer.trackArtUrl ? 1 : 0)
+            if(scoreSpecific > scoreGeneric){ dataPlayer = specificPlayer }
+
+            let virtualPlayer = {
+              identity: identityPlayer.identity,
+              desktopEntry: identityPlayer.desktopEntry,
+              trackTitle: dataPlayer.trackTitle,
+              trackArtist: dataPlayer.trackArtist,
+              trackAlbum: dataPlayer.trackAlbum,
+              trackArtUrl: dataPlayer.trackArtUrl,
+              length: dataPlayer.length || 0,
+              position: dataPlayer.position || 0,
+              playbackState: dataPlayer.playbackState,
+              isPlaying: dataPlayer.isPlaying || false,
+              canPlay: dataPlayer.canPlay || false,
+              canPause: dataPlayer.canPause || false,
+              canGoNext: dataPlayer.canGoNext || false,
+              canGoPrevious: dataPlayer.canGoPrevious || false,
+              canSeek: dataPlayer.canSeek || false,
+              canControl: dataPlayer.canControl || false,
+              _stateSource: dataPlayer,
+              _controlTarget: identityPlayer
+            }
+            finalPlayers.push(virtualPlayer)
+            matchedGenericIndices[j] = true
+            wasMatched = true
+            break
+          }
+        }
+      }
+      if (!wasMatched) {
+        finalPlayers.push(specificPlayer)
+      }
+    }
+
+    // Add any generic players that were not matched
+    for (var i = 0; i < genericPlayers.length; i++) {
+      if (!matchedGenericIndices[i]) {
+        finalPlayers.push(genericPlayers[i])
+      }
+    }
+
+    // Filter for controllable players
+    let controllablePlayers = []
+    for (var i = 0; i < finalPlayers.length; i++) {
+      let player = finalPlayers[i]
+      if (player && player.canControl) {
+        controllablePlayers.push(player)
+      }
+    }
     return controllablePlayers
   }
 
   function findActivePlayer() {
     let availablePlayers = getAvailablePlayers()
     if (availablePlayers.length === 0) {
+      Logger.log("Media", "No active player found")
       return null
     }
 
-    // First, check if any player is currently playing
+    // Prioritize the actively playing player ---
     for (var i = 0; i < availablePlayers.length; i++) {
-      const p = availablePlayers[i]
-      if (p.isPlaying && p.playbackState === MprisPlaybackState.Playing) {
+      if (availablePlayers[i] && availablePlayers[i].playbackState === MprisPlaybackState.Playing) {
+        Logger.log("Media", "Found actively playing player: " + availablePlayers[i].identity)
         selectedPlayerIndex = i
-        return p
+        return availablePlayers[i]
       }
     }
 
-    // If no player is playing, use preferred player logic
+    // fallback if nothing is playing)
     const preferred = (Settings.data.audio.preferredPlayer || "")
     if (preferred !== "") {
       for (var i = 0; i < availablePlayers.length; i++) {
         const p = availablePlayers[i]
         const identity = String(p.identity || "").toLowerCase()
-        const busName = String(p.busName || "").toLowerCase()
-        const desktop = String(p.desktopEntry || "").toLowerCase()
         const pref = preferred.toLowerCase()
-        if (identity.includes(pref) || busName.includes(pref) || desktop.includes(pref)) {
+        if (identity.includes(pref)) {
           selectedPlayerIndex = i
           return p
         }
       }
     }
 
-    // Fallback to selected index or first player
     if (selectedPlayerIndex < availablePlayers.length) {
       return availablePlayers[selectedPlayerIndex]
     } else {
@@ -107,63 +167,64 @@ Singleton {
     if (newPlayer !== currentPlayer) {
       currentPlayer = newPlayer
       currentPosition = currentPlayer ? currentPlayer.position : 0
+      Logger.log("Media", "Switching player")
     }
   }
 
   function playPause() {
     if (currentPlayer) {
-      if (currentPlayer.isPlaying) {
-        currentPlayer.pause()
+      let stateSource = currentPlayer._stateSource || currentPlayer
+      let controlTarget = currentPlayer._controlTarget || currentPlayer
+      if (stateSource.playbackState === MprisPlaybackState.Playing) {
+        controlTarget.pause()
       } else {
-        currentPlayer.play()
+        controlTarget.play()
       }
     }
   }
 
   function play() {
-    if (currentPlayer && currentPlayer.canPlay) {
-      currentPlayer.play()
+    let target = currentPlayer ? (currentPlayer._controlTarget || currentPlayer) : null
+    if (target && target.canPlay) {
+      target.play()
     }
   }
 
   function pause() {
-    if (currentPlayer && currentPlayer.canPause) {
-      currentPlayer.pause()
+    let target = currentPlayer ? (currentPlayer._controlTarget || currentPlayer) : null
+    if (target && target.canPause) {
+      target.pause()
     }
   }
 
   function next() {
-    if (currentPlayer && currentPlayer.canGoNext) {
-      currentPlayer.next()
+    let target = currentPlayer ? (currentPlayer._controlTarget || currentPlayer) : null
+    if (target && target.canGoNext) {
+      target.next()
     }
   }
 
   function previous() {
-    if (currentPlayer && currentPlayer.canGoPrevious) {
-      currentPlayer.previous()
+    let target = currentPlayer ? (currentPlayer._controlTarget || currentPlayer) : null
+    if (target && target.canGoPrevious) {
+      target.previous()
     }
   }
 
   function seek(position) {
-    if (currentPlayer && currentPlayer.canSeek) {
-      currentPlayer.position = position
+    let target = currentPlayer ? (currentPlayer._controlTarget || currentPlayer) : null
+    if (target && target.canSeek) {
+      target.position = position
       currentPosition = position
-    }
-  }
-
-  function seekRelative(offset) {
-    if (currentPlayer && currentPlayer.canSeek) {
-      var newPosition = currentPlayer.position + offset
-      currentPlayer.position = newPosition
-      currentPosition = newPosition
     }
   }
 
   // Seek to position based on ratio (0.0 to 1.0)
   function seekByRatio(ratio) {
-    if (currentPlayer && currentPlayer.canSeek && currentPlayer.length > 0) {
-      let seekPosition = ratio * currentPlayer.length
-      currentPlayer.position = seekPosition
+    let target = currentPlayer ? (currentPlayer._controlTarget || currentPlayer) : null
+    if (target && target.canSeek && target.length > 0) {
+      let seekPosition = ratio * target.length
+      target.position = seekPosition
       currentPosition = seekPosition
     }
   }
@@ -209,21 +270,8 @@ Singleton {
   Connections {
     target: Mpris.players
     function onValuesChanged() {
+      Logger.log("Media", "Players changed")
       updateCurrentPlayer()
-    }
-  }
-
-  // Monitor playback state changes across all players to switch to playing ones
-  Timer {
-    id: playerStateMonitor
-    interval: 2000 // Check every 2 seconds
-    repeat: true
-    running: true
-    onTriggered: {
-      // Only update if we don't have a playing player or if current player is paused
-      if (!currentPlayer || !currentPlayer.isPlaying || currentPlayer.playbackState !== MprisPlaybackState.Playing) {
-        updateCurrentPlayer()
-      }
     }
   }
 }
