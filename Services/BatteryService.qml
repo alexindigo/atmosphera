@@ -16,7 +16,7 @@ Singleton {
   }
 
   property int chargingMode: BatteryService.ChargingMode.Balanced
-  readonly property string batteryTresholdScript: Quickshell.shellDir + '/Bin/set-battery-treshold.sh'
+  readonly property string batteryTresholdScript: Quickshell.shellDir + '/Bin/battery-manager/set-battery-treshold.sh'
 
   // Choose icon based on charge and charging state
   function getIcon(percent, charging, isReady) {
@@ -67,6 +67,13 @@ Singleton {
       onStreamFinished: {
         if (this.text) {
           Logger.warn("BatteryService", "ChargeLimitProcess stderr:", this.text)
+        }
+      }
+    }
+    stdout: StdioCollector {
+      onStreamFinished: {
+        if (this.text) {
+          Logger.log("BatteryService", "ChargeLimitProcess stdout:", this.text)
         }
       }
     }
