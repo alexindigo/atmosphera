@@ -2,7 +2,6 @@
   "settings": {
     "general": {
       "title": "General",
-
       "profile": {
         "section": {
           "label": "Profile",
@@ -14,7 +13,6 @@
         },
         "select-avatar": "Select avatar image"
       },
-
       "ui": {
         "section": {
           "label": "User interface",
@@ -1197,7 +1195,6 @@
     "enter-width-pixels": "Enter width in pixels",
     "enter-command": "Enter command to execute (app or custom script)",
     "command-example": "echo \"Hello World\"",
-
     "search-wallpapers": "Type to filter wallpapers...",
     "search-launcher": "Search entries... or use > for commands",
     "search": "Search...",
@@ -1444,7 +1441,6 @@
     "thunderstorm": "Thunderstorm",
     "unknown": "Unknown"
   },
-
   "authentication": {
     "failed": "Authentication failed",
     "error": "Authentication error"
@@ -1459,6 +1455,13 @@
     "charging-rate": "Charging rate: {rate} W.",
     "discharging-rate": "Discharging rate: {rate} W.",
     "charging": "Charging.",
-    "discharging": "Discharging."
+    "discharging": "Discharging.",
+    "panel": {
+      "title": "Charging mode",
+      "full": "Full capacity",
+      "balanced": "Balanced",
+      "conservative": "Conservative",
+      "footer": "Charging treshold set to {limit}%"
+    }
   }
 }
