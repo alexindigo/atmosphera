@@ -271,6 +271,13 @@
           "label": "Nur Apps vom gleichen Bildschirm",
           "description": "Zeige nur Apps vom dem Bildschirm an, wo sich das Dock befindet."
         }
+      },
+      "tray": {
+        "blacklist": {
+          "label": "Ausschlussliste",
+          "description": "Füge Ausschlussregeln für die Tray-Symbolleiste hinzu, unterstützt Platzhalter (*).",
+          "placeholder": "z.B., nm-applet, Fcitx*"
+        }
       }
     },
     "dock": {
