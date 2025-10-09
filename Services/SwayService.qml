@@ -71,7 +71,7 @@ Item {
 
         const wsData = {
           "id": i,
-          "idx": ws.id,
+          "idx": ws.num,
           "name": ws.name || "",
           "output": (ws.monitor && ws.monitor.name) ? ws.monitor.name : "",
           "isActive": ws.active === true,
