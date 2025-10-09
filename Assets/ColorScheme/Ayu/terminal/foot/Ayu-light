@@ -1,6 +1,3 @@
-[cursor]
-color=f8f9fa ffaa33
-
 [colors]
 foreground=5c6166
 background=f8f9fa
@@ -22,3 +19,4 @@ bright6=4cbf99
 bright7=d1d1d1
 selection-foreground=f8f9fa
 selection-background=035bd6
+cursor=f8f9fa ffaa33
