@@ -91,6 +91,7 @@ ShellRoot {
         FontService.init()
         HooksService.init()
         BluetoothService.init()
+        BatteryService.init()
       }
 
       Background {}
