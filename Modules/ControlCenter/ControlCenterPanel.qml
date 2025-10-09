@@ -16,11 +16,15 @@ NPanel {
 
   readonly property int bottomHeight: Math.round(Math.max(196 * scaling))
   readonly property int topHeight: {
-    const rowsCount = Math.ceil(Settings.data.controlCenter.widgets.quickSettings.length / 3)
+    const columns = (Settings.data.controlCenter.quickSettingsStyle === "compact") ? 4 : 3
+    const rowsCount = Math.ceil(Settings.data.controlCenter.widgets.quickSettings.length / columns)
 
     var buttonHeight;
     if (Settings.data.controlCenter.quickSettingsStyle === "classic") {
       buttonHeight = Style.baseWidgetSize
+    }
+    else if (Settings.data.controlCenter.quickSettingsStyle === "compact") {
+      buttonHeight = Style.baseWidgetSize * 0.8 // Smaller for compact
     }
     else {
       buttonHeight = 56
