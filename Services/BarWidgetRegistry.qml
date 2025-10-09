@@ -116,6 +116,9 @@ Singleton {
                                     "onlySameOutput": true,
                                     "onlyActiveWorkspaces": true
                                   },
+                                  "Tray": {
+                                    "allowUserSettings": true
+                                  },
                                   "Workspace": {
                                     "allowUserSettings": true,
                                     "labelMode": "index",
