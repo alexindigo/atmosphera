@@ -98,14 +98,14 @@ NBox {
 
     NDivider {
       Layout.fillWidth: true
-      Layout.topMargin: Style.marginM * scaling
-      Layout.bottomMargin: Style.marginM * scaling
+      Layout.topMargin: Style.marginS * scaling
+      Layout.bottomMargin: Style.marginS * scaling
     }
 
     GridLayout {
       id: grid
       Layout.fillWidth: true
-      columns: 2
+      columns: 3
       columnSpacing: Style.marginL * scaling
       rowSpacing: Style.marginM * scaling
 
@@ -113,7 +113,6 @@ NBox {
         model: Settings.data.controlCenter.widgets.quickSettings
         delegate: ControlCenterWidgetLoader {
           Layout.fillWidth: true
-          Layout.preferredWidth: (grid.width - grid.columnSpacing) / 2
           widgetId: (modelData.id !== undefined ? modelData.id : "")
           widgetProps: {
             "screen": root.modelData || null,

@@ -38,7 +38,7 @@ NPanel {
       // Top Card: profile + utilities
       TopCard {
         Layout.fillWidth: true
-        Layout.preferredHeight: Math.max(280 * scaling)
+        Layout.preferredHeight: Math.max(230 * scaling)
       }
 
       // Media + stats column
