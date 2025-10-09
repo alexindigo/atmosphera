@@ -77,9 +77,6 @@ ShellRoot {
 
     sourceComponent: Item {
       Component.onCompleted: {
-        // Save a ref. to our lockScreen so we can access it  easily
-        PanelService.lockScreen = lockScreen
-
         Logger.log("Shell", "---------------------------")
         WallpaperService.init()
         AppThemeService.init()
@@ -104,6 +101,10 @@ ShellRoot {
 
       LockScreen {
         id: lockScreen
+        Component.onCompleted: {
+          // Save a ref. to our lockScreen so we can access it  easily
+          PanelService.lockScreen = lockScreen
+        }
       }
 
       ToastOverlay {}
