@@ -87,6 +87,7 @@
         }
       },
       "control-center": {
+        "title": "Control Center",
         "section": {
           "label": "Control Center",
           "description": "Configure the Control Center panel positioning and behavior."
@@ -94,23 +95,21 @@
         "position": {
           "label": "Position",
           "description": "Choose where the Control Center panel appears when opened."
-        }
-      },
-      "controlCenter": {
+        },
         "quickSettingsStyle": {
           "section": {
             "label": "Quick Settings Style",
-            "description": "Choose the visual style for quick settings buttons."
+            "description": "Customize the appearance and behavior of quick settings in the Control Center."
           },
           "style": {
-            "label": "Display Style",
-            "description": "Select between modern card-style buttons or classic icon buttons."
+            "label": "Quick Settings Style",
+            "description": "Choose the visual style for quick settings toggles and controls."
           }
         },
         "widgets": {
           "section": {
             "label": "Widgets",
-            "description": "Manage and configure Control Center widgets."
+            "description": "Configure and manage Control Center widgets and their display options."
           }
         }
       }
@@ -725,6 +724,25 @@
         }
       }
     },
+    "control-center": {
+      "title": "Control Center",
+      "quickSettingsStyle": {
+        "section": {
+          "label": "Quick Settings Style",
+          "description": "Customize the appearance and behavior of quick settings in the Control Center."
+        },
+        "style": {
+          "label": "Quick Settings Style",
+          "description": "Choose the visual style for quick settings toggles and controls."
+        }
+      },
+      "widgets": {
+        "section": {
+          "label": "Widgets",
+          "description": "Configure and manage Control Center widgets and their display options."
+        }
+      }
+    },
     "hooks": {
       "title": "Hooks",
       "system-hooks": {
@@ -1261,8 +1279,9 @@
         "top_center": "Top center"
       },
       "quickSettingsStyle": {
-        "modern": "Modern Cards",
-        "classic": "Classic Icons"
+        "modern": "Modern",
+        "classic": "Classic",
+        "compact": "Compact"
       }
     },
     "osd": {

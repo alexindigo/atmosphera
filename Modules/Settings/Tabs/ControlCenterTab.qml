@@ -33,21 +33,24 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      label: I18n.tr("settings.controlCenter.quickSettingsStyle.section.label")
-      description: I18n.tr("settings.controlCenter.quickSettingsStyle.section.description")
+      label: I18n.tr("settings.control-center.quickSettingsStyle.section.label")
+      description: I18n.tr("settings.control-center.quickSettingsStyle.section.description")
     }
 
     NComboBox {
       id: quickSettingsStyle
-      label: I18n.tr("settings.controlCenter.quickSettingsStyle.style.label")
-      description: I18n.tr("settings.controlCenter.quickSettingsStyle.style.description")
+      label: I18n.tr("settings.control-center.quickSettingsStyle.style.label")
+      description: I18n.tr("settings.control-center.quickSettingsStyle.style.description")
       Layout.fillWidth: true
       model: [{
           "key": "modern",
-          "name": I18n.tr("options.controlCenter.quickSettingsStyle.modern")
+          "name": I18n.tr("options.control-center.quickSettingsStyle.modern")
         }, {
           "key": "classic",
-          "name": I18n.tr("options.controlCenter.quickSettingsStyle.classic")
+          "name": I18n.tr("options.control-center.quickSettingsStyle.classic")
+        }, {
+          "key": "compact",
+          "name": I18n.tr("options.control-center.quickSettingsStyle.compact")
         }]
       currentKey: Settings.data.controlCenter.quickSettingsStyle || "modern"
       onSelected: function (key) {
@@ -68,8 +71,8 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NHeader {
-      label: I18n.tr("settings.controlCenter.widgets.section.label")
-      description: I18n.tr("settings.controlCenter.widgets.section.description")
+      label: I18n.tr("settings.control-center.widgets.section.label")
+      description: I18n.tr("settings.control-center.widgets.section.description")
     }
 
     // Bar Sections

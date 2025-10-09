@@ -85,6 +85,7 @@
         "reset-scaling": "Réinitialiser l'échelle"
       },
       "control-center": {
+        "title": "Centre de contrôle",
         "section": {
           "label": "Centre de contrôle",
           "description": "Configurer le positionnement et le comportement du panneau du centre de contrôle."
@@ -92,6 +93,22 @@
         "position": {
           "label": "Position",
           "description": "Choisissez où apparaît le panneau du centre de contrôle lors de l'ouverture."
+        },
+        "quickSettingsStyle": {
+          "section": {
+            "label": "Style des paramètres rapides",
+            "description": "Personnalisez l'apparence et le comportement des paramètres rapides dans le centre de contrôle."
+          },
+          "style": {
+            "label": "Style des paramètres rapides",
+            "description": "Choisissez le style visuel pour les commutateurs et contrôles des paramètres rapides."
+          }
+        },
+        "widgets": {
+          "section": {
+            "label": "Widgets",
+            "description": "Configurez et gérez les widgets du centre de contrôle et leurs options d'affichage."
+          }
         }
       }
     },
@@ -705,6 +722,25 @@
         }
       }
     },
+    "control-center": {
+      "title": "Centre de contrôle",
+      "quickSettingsStyle": {
+        "section": {
+          "label": "Style des paramètres rapides",
+          "description": "Personnalisez l'apparence et le comportement des paramètres rapides dans le centre de contrôle."
+        },
+        "style": {
+          "label": "Style des paramètres rapides",
+          "description": "Choisissez le style visuel pour les commutateurs et contrôles des paramètres rapides."
+        }
+      },
+      "widgets": {
+        "section": {
+          "label": "Widgets",
+          "description": "Configurez et gérez les widgets du centre de contrôle et leurs options d'affichage."
+        }
+      }
+    },
     "hooks": {
       "title": "Hooks",
       "system-hooks": {
@@ -1238,6 +1274,11 @@
         "bottom_right": "En bas à droite",
         "bottom_center": "En bas au centre",
         "top_center": "En haut au centre"
+      },
+      "quickSettingsStyle": {
+        "modern": "Moderne",
+        "classic": "Classique",
+        "compact": "Compact"
       }
     },
     "osd": {

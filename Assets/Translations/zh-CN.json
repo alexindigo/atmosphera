@@ -85,6 +85,7 @@
         }
       },
       "control-center": {
+        "title": "控制中心",
         "section": {
           "label": "控制中心",
           "description": "配置控制中心面板的定位和行为。"
@@ -92,6 +93,22 @@
         "position": {
           "label": "位置",
           "description": "选择控制中心面板打开时出现的位置。"
+        },
+        "quickSettingsStyle": {
+          "section": {
+            "label": "快速设置样式",
+            "description": "自定义控制中心中快速设置的外观和行为。"
+          },
+          "style": {
+            "label": "快速设置样式",
+            "description": "选择快速设置开关和控件的视觉样式。"
+          }
+        },
+        "widgets": {
+          "section": {
+            "label": "小部件",
+            "description": "配置和管理控制中心小部件及其显示选项。"
+          }
         }
       }
     },
@@ -705,6 +722,25 @@
         }
       }
     },
+    "control-center": {
+      "title": "控制中心",
+      "quickSettingsStyle": {
+        "section": {
+          "label": "快速设置样式",
+          "description": "自定义控制中心中快速设置的外观和行为。"
+        },
+        "style": {
+          "label": "快速设置样式",
+          "description": "选择快速设置开关和控件的视觉样式。"
+        }
+      },
+      "widgets": {
+        "section": {
+          "label": "小部件",
+          "description": "配置和管理控制中心小部件及其显示选项。"
+        }
+      }
+    },
     "hooks": {
       "title": "钩子",
       "system-hooks": {
@@ -1238,6 +1274,11 @@
         "bottom_right": "右下角",
         "bottom_center": "底部居中",
         "top_center": "顶部居中"
+      },
+      "quickSettingsStyle": {
+        "modern": "现代",
+        "classic": "经典",
+        "compact": "紧凑"
       }
     },
     "osd": {

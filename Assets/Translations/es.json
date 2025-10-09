@@ -85,6 +85,7 @@
         "reset-scaling": "Restablecer la escala"
       },
       "control-center": {
+        "title": "Centro de control",
         "section": {
           "label": "Centro de control",
           "description": "Configurar el posicionamiento y comportamiento del panel del centro de control."
@@ -92,6 +93,22 @@
         "position": {
           "label": "Posición",
           "description": "Elige dónde aparece el panel del centro de control cuando se abre."
+        },
+        "quickSettingsStyle": {
+          "section": {
+            "label": "Estilo de configuración rápida",
+            "description": "Personaliza la apariencia y el comportamiento de las configuraciones rápidas en el centro de control."
+          },
+          "style": {
+            "label": "Estilo de configuración rápida",
+            "description": "Elige el estilo visual para los interruptores y controles de configuración rápida."
+          }
+        },
+        "widgets": {
+          "section": {
+            "label": "Widgets",
+            "description": "Configura y gestiona los widgets del centro de control y sus opciones de visualización."
+          }
         }
       }
     },
@@ -705,6 +722,25 @@
         }
       }
     },
+    "control-center": {
+      "title": "Centro de control",
+      "quickSettingsStyle": {
+        "section": {
+          "label": "Estilo de configuración rápida",
+          "description": "Personaliza la apariencia y el comportamiento de las configuraciones rápidas en el centro de control."
+        },
+        "style": {
+          "label": "Estilo de configuración rápida",
+          "description": "Elige el estilo visual para los interruptores y controles de configuración rápida."
+        }
+      },
+      "widgets": {
+        "section": {
+          "label": "Widgets",
+          "description": "Configura y gestiona los widgets del centro de control y sus opciones de visualización."
+        }
+      }
+    },
     "hooks": {
       "title": "Hooks",
       "system-hooks": {
@@ -1238,6 +1274,11 @@
         "bottom_right": "Inferior derecha",
         "bottom_center": "Inferior central",
         "top_center": "Superior central"
+      },
+      "quickSettingsStyle": {
+        "modern": "Moderno",
+        "classic": "Clásico",
+        "compact": "Compacto"
       }
     },
     "osd": {

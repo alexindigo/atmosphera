@@ -85,6 +85,7 @@
         "reset-scaling": "Skalierung zurücksetzen"
       },
       "control-center": {
+        "title": "Kontrollzentrum",
         "section": {
           "label": "Kontrollzentrum",
           "description": "Konfigurieren Sie die Positionierung und das Verhalten des Kontrollzentrum-Panels."
@@ -92,6 +93,22 @@
         "position": {
           "label": "Position",
           "description": "Wählen Sie, wo das Kontrollzentrum-Panel beim Öffnen erscheint."
+        },
+        "quickSettingsStyle": {
+          "section": {
+            "label": "Schnelleinstellungen-Stil",
+            "description": "Passen Sie das Aussehen und Verhalten der Schnelleinstellungen im Kontrollzentrum an."
+          },
+          "style": {
+            "label": "Schnelleinstellungen-Stil",
+            "description": "Wählen Sie den visuellen Stil für Schnelleinstellungs-Schalter und -Steuerungen."
+          }
+        },
+        "widgets": {
+          "section": {
+            "label": "Widgets",
+            "description": "Konfigurieren und verwalten Sie Kontrollzentrum-Widgets und deren Anzeigeoptionen."
+          }
         }
       }
     },
@@ -709,6 +726,25 @@
         }
       }
     },
+    "control-center": {
+      "title": "Kontrollzentrum",
+      "quickSettingsStyle": {
+        "section": {
+          "label": "Schnelleinstellungen-Stil",
+          "description": "Passen Sie das Aussehen und Verhalten der Schnelleinstellungen im Kontrollzentrum an."
+        },
+        "style": {
+          "label": "Schnelleinstellungen-Stil",
+          "description": "Wählen Sie den visuellen Stil für Schnelleinstellungs-Schalter und -Steuerungen."
+        }
+      },
+      "widgets": {
+        "section": {
+          "label": "Widgets",
+          "description": "Konfigurieren und verwalten Sie Kontrollzentrum-Widgets und deren Anzeigeoptionen."
+        }
+      }
+    },
     "hooks": {
       "title": "Hooks",
       "system-hooks": {
@@ -1259,6 +1295,11 @@
         "bottom_right": "Unten rechts",
         "bottom_center": "Unten mittig",
         "top_center": "Oben mittig"
+      },
+      "quickSettingsStyle": {
+        "modern": "Modern",
+        "classic": "Klassisch",
+        "compact": "Kompakt"
       }
     },
     "osd": {

@@ -15,7 +15,7 @@ Rectangle {
   property bool enabled: true
   property bool active: false
   property bool compact: false
-  property string style: "modern" // "modern" or "classic"
+  property string style: "modern" // "modern", "classic", or "compact"
 
   // Styling properties
   property real fontSize: Style.fontSizeS * scaling
@@ -24,14 +24,44 @@ Rectangle {
   property real cornerRadius: Style.radiusM * scaling
 
   // Colors - Style-dependent colors
-  property color backgroundColor: style === "classic" ? Color.mSurfaceVariant : Color.mSurface
+  property color backgroundColor: {
+    if (style === "classic")
+      return Color.mSurfaceVariant
+    if (style === "compact")
+      return Color.mSurface
+    return Color.mSurface
+  }
   property color textColor: Color.mOnSurface
-  property color iconColor: style === "classic" ? Color.mPrimary : (active ? Color.mPrimary : Color.mOnSurface)
+  property color iconColor: {
+    if (style === "classic")
+      return Color.mPrimary
+    if (style === "compact")
+      return active ? Color.mPrimary : Color.mOnSurface
+    return active ? Color.mPrimary : Color.mOnSurface
+  }
   property color borderColor: Color.mOutline
-  property color hoverColor: style === "classic" ? Color.mTertiary : Color.mPrimary
-  property color pressedColor: style === "classic" ? Color.mTertiary : Qt.darker(Color.mPrimary, 1.1)
+  property color hoverColor: {
+    if (style === "classic")
+      return Color.mTertiary
+    if (style === "compact")
+      return Color.mPrimary
+    return Color.mPrimary
+  }
+  property color pressedColor: {
+    if (style === "classic")
+      return Color.mTertiary
+    if (style === "compact")
+      return Qt.darker(Color.mPrimary, 1.1)
+    return Qt.darker(Color.mPrimary, 1.1)
+  }
   property color hoverTextColor: Color.mOnPrimary
-  property color hoverIconColor: style === "classic" ? Color.mOnTertiary : Color.mOnPrimary
+  property color hoverIconColor: {
+    if (style === "classic")
+      return Color.mOnTertiary
+    if (style === "compact")
+      return Color.mOnPrimary
+    return Color.mOnPrimary
+  }
 
   // Signals
   signal clicked
@@ -48,17 +78,29 @@ Rectangle {
     if (style === "classic") {
       return Style.baseWidgetSize * scaling
     }
+    if (style === "compact") {
+      return Style.baseWidgetSize * 0.8 * scaling
+    }
     return compact ? Math.max(100 * scaling, contentRow.implicitWidth + (Style.marginL * scaling)) : Math.max(120 * scaling, contentRow.implicitWidth + (Style.marginL * scaling))
   }
   implicitHeight: {
     if (style === "classic") {
       return Style.baseWidgetSize * scaling
     }
+    if (style === "compact") {
+      return Style.baseWidgetSize * 0.8 * scaling
+    }
     return compact ? Math.max(48 * scaling, contentRow.implicitHeight + (Style.marginM * scaling)) : Math.max(56 * scaling, contentRow.implicitHeight + (Style.marginL * scaling))
   }
 
   // Appearance - Style-dependent styling
-  radius: style === "classic" ? width * 0.5 : cornerRadius
+  radius: {
+    if (style === "classic")
+      return width * 0.5
+    if (style === "compact")
+      return Style.radiusS * scaling // Smaller radius for compact
+    return cornerRadius
+  }
   color: {
     if (!enabled)
       return Qt.lighter(Color.mSurface, 1.1)
@@ -69,12 +111,21 @@ Rectangle {
     return backgroundColor
   }
 
-  border.width: style === "classic" ? Math.max(1, Style.borderS * scaling) : 0
-  border.color: style === "classic" ? borderColor : "transparent"
+  border.width: {
+    if (style === "classic")
+      return Math.max(1, Style.borderS * scaling)
+    if (style === "compact")
+      return 0
+    return 0
+  }
+  border.color: {
+    if (style === "classic")
+      return borderColor
+    return "transparent"
+  }
 
   opacity: enabled ? (style === "classic" ? Style.opacityFull : 1.0) : (style === "classic" ? Style.opacityMedium : 0.6)
 
-  // Smooth animations
   Behavior on color {
     ColorAnimation {
       duration: style === "classic" ? Style.animationNormal : Style.animationFast
@@ -120,7 +171,7 @@ Rectangle {
     id: contentRow
     anchors.centerIn: parent
     spacing: Style.marginXXS * scaling
-    visible: root.style !== "classic"
+    visible: root.style !== "classic" && root.style !== "compact"
 
     // Icon
     NIcon {
@@ -165,6 +216,29 @@ Rectangle {
           duration: Style.animationFast
           easing.type: Easing.OutCubic
         }
+      }
+    }
+  }
+
+  // Compact style - icon only, small square button
+  NIcon {
+    id: compactIcon
+    anchors.centerIn: parent
+    visible: root.style === "compact" && root.icon !== ""
+    icon: root.icon
+    pointSize: Style.fontSizeM * scaling // Smaller icon for compact
+    color: {
+      if (!root.enabled)
+        return Color.mOnSurfaceVariant
+      if (root.hovered)
+        return root.hoverIconColor
+      return root.iconColor
+    }
+
+    Behavior on color {
+      ColorAnimation {
+        duration: Style.animationFast
+        easing.type: Easing.OutCubic
       }
     }
   }
@@ -217,7 +291,6 @@ Rectangle {
     }
   }
 
-  // Mouse interaction with enhanced feedback
   MouseArea {
     id: mouseArea
     anchors.fill: parent
@@ -271,7 +344,6 @@ Rectangle {
     }
   }
 
-  // Ripple effect for M3-style interaction feedback
   Rectangle {
     id: ripple
     anchors.fill: parent
@@ -306,7 +378,6 @@ Rectangle {
     }
   }
 
-  // Trigger ripple effect on click
   Connections {
     target: root
     function onClicked() {
@@ -315,7 +386,6 @@ Rectangle {
     }
   }
 
-  // Clean up ripple after animation
   Connections {
     target: rippleAnimation
     function onFinished() {
