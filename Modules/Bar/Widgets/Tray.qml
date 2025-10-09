@@ -79,71 +79,69 @@ Rectangle {
           }
           opacity: status === Image.Ready ? 1 : 0
 
-                  MouseArea {
-          anchors.fill: parent
-          hoverEnabled: true
-          cursorShape: Qt.PointingHandCursor
-          acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
-          onClicked: mouse => {
-                       if (!modelData) {
-                         return
-                       }
-
-                       if (mouse.button === Qt.LeftButton) {
-                         // Close any open menu first
-                         trayPanel.close()
-
-                         if (!modelData.onlyMenu) {
-                           modelData.activate()
-                         }
-                       } else if (mouse.button === Qt.MiddleButton) {
-                         // Close any open menu first
-                         trayPanel.close()
-
-                         modelData.secondaryActivate && modelData.secondaryActivate()
-                       } else if (mouse.button === Qt.RightButton) {
-                         TooltipService.hideImmediately()
-
-                         // Close the menu if it was visible
-                         if (trayPanel && trayPanel.visible) {
-                           trayPanel.close()
+          MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+            onClicked: mouse => {
+                         if (!modelData) {
                            return
                          }
 
-                         if (modelData.hasMenu && modelData.menu && trayMenu.item) {
-                           trayPanel.open()
+                         if (mouse.button === Qt.LeftButton) {
+                           // Close any open menu first
+                           trayPanel.close()
 
-                           // Position menu based on bar position
-                           let menuX, menuY
-                           if (barPosition === "left") {
-                             // For left bar: position menu to the right of the bar
-                             menuX = width + Style.marginM * scaling
-                             menuY = 0
-                           } else if (barPosition === "right") {
-                             // For right bar: position menu to the left of the bar
-                             menuX = -trayMenu.item.width - Style.marginM * scaling
-                             menuY = 0
-                           } else {
-                             // For horizontal bars: center horizontally and position below
-                             menuX = (width / 2) - (trayMenu.item.width / 2)
-                             menuY = Math.round(Style.barHeight * scaling)
+                           if (!modelData.onlyMenu) {
+                             modelData.activate()
                            }
-                           trayMenu.item.menu = modelData.menu
-                           trayMenu.item.showAt(parent, menuX, menuY)
-                         } else {
-                           Logger.log("Tray", "No menu available for", modelData.id, "or trayMenu not set")
+                         } else if (mouse.button === Qt.MiddleButton) {
+                           // Close any open menu first
+                           trayPanel.close()
+
+                           modelData.secondaryActivate && modelData.secondaryActivate()
+                         } else if (mouse.button === Qt.RightButton) {
+                           TooltipService.hideImmediately()
+
+                           // Close the menu if it was visible
+                           if (trayPanel && trayPanel.visible) {
+                             trayPanel.close()
+                             return
+                           }
+
+                           if (modelData.hasMenu && modelData.menu && trayMenu.item) {
+                             trayPanel.open()
+
+                             // Position menu based on bar position
+                             let menuX, menuY
+                             if (barPosition === "left") {
+                               // For left bar: position menu to the right of the bar
+                               menuX = width + Style.marginM * scaling
+                               menuY = 0
+                             } else if (barPosition === "right") {
+                               // For right bar: position menu to the left of the bar
+                               menuX = -trayMenu.item.width - Style.marginM * scaling
+                               menuY = 0
+                             } else {
+                               // For horizontal bars: center horizontally and position below
+                               menuX = (width / 2) - (trayMenu.item.width / 2)
+                               menuY = Math.round(Style.barHeight * scaling)
+                             }
+                             trayMenu.item.menu = modelData.menu
+                             trayMenu.item.showAt(parent, menuX, menuY)
+                           } else {
+                             Logger.log("Tray", "No menu available for", modelData.id, "or trayMenu not set")
+                           }
                          }
                        }
-                     }
-          onEntered: {
-            trayPanel.close()
-            TooltipService.show(Screen, trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection())
+            onEntered: {
+              trayPanel.close()
+              TooltipService.show(Screen, trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection())
+            }
+            onExited: TooltipService.hide()
           }
-          onExited: TooltipService.hide()
         }
-        }
-
-
       }
     }
   }

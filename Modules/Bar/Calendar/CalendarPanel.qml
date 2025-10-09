@@ -174,7 +174,8 @@ NPanel {
               Connections {
                 target: Time
                 function onDateChanged() {
-                  secondsProgress.progress = Time.date.getSeconds() / 60
+                  const total = Time.date.getSeconds() * 1000 + Time.date.getMilliseconds()
+                  secondsProgress.progress = total / 60000
                 }
               }
 

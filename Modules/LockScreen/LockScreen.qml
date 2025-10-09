@@ -368,7 +368,8 @@ Loader {
                     Connections {
                       target: Time
                       function onDateChanged() {
-                        secondsProgress.progress = Time.date.getSeconds() / 60
+                        const total = Time.date.getSeconds() * 1000 + Time.date.getMilliseconds()
+                        secondsProgress.progress = total / 60000
                       }
                     }
 
@@ -412,12 +413,6 @@ Loader {
                       color: Color.mOnSurface
                       horizontalAlignment: Text.AlignHCenter
                       Layout.alignment: Qt.AlignHCenter
-
-                      Connections {
-                        target: Time
-                        function onDateChanged() {// Trigger text update
-                        }
-                      }
                     }
 
                     NText {
@@ -427,12 +422,6 @@ Loader {
                       color: Color.mOnSurfaceVariant
                       horizontalAlignment: Text.AlignHCenter
                       Layout.alignment: Qt.AlignHCenter
-
-                      Connections {
-                        target: Time
-                        function onDateChanged() {// Trigger text update
-                        }
-                      }
                     }
                   }
                 }
