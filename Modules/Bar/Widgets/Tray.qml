@@ -16,11 +16,28 @@ Rectangle {
   property ShellScreen screen
   property real scaling: 1.0
 
+  // Widget properties passed from Bar.qml for per-instance settings
+  property string widgetId: ""
+  property string section: ""
+  property int sectionWidgetIndex: -1
+  property int sectionWidgetsCount: 0
+
+  property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
+  property var widgetSettings: {
+    if (section && sectionWidgetIndex >= 0) {
+      var widgets = Settings.data.bar.widgets[section]
+      if (widgets && sectionWidgetIndex < widgets.length) {
+        return widgets[sectionWidgetIndex]
+      }
+    }
+    return {}
+  }
+
   readonly property string barPosition: Settings.data.bar.position
   readonly property bool isVertical: barPosition === "left" || barPosition === "right"
   readonly property bool compact: (Settings.data.bar.density === "compact")
   property real itemSize: Math.round(Style.capsuleHeight * 0.65 * scaling)
-  property list<string> blacklist: Settings.data.bar.trayBlacklist || [] // Read from settings
+  property list<string> blacklist: widgetSettings.blacklist || Settings.data.bar.trayBlacklist || [] // Read from settings
   property var filteredItems: []
 
   function wildCardMatch(str, rule) {

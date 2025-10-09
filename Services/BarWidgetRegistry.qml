@@ -117,7 +117,8 @@ Singleton {
                                     "onlyActiveWorkspaces": true
                                   },
                                   "Tray": {
-                                    "allowUserSettings": true
+                                    "allowUserSettings": true,
+                                    "blacklist": []
                                   },
                                   "Workspace": {
                                     "allowUserSettings": true,

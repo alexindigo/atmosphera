@@ -110,12 +110,7 @@ Popup {
         onClicked: {
           if (settingsLoader.item && settingsLoader.item.saveSettings) {
             var newSettings = settingsLoader.item.saveSettings()
-            if (widgetSettings.widgetId === "Tray") {
-              Settings.data.bar.trayBlacklist = newSettings.blacklist || []
-              Settings.saveImmediate()
-            } else {
-              root.updateWidgetSettings(sectionId, widgetSettings.widgetIndex, newSettings)
-            }
+            root.updateWidgetSettings(sectionId, widgetSettings.widgetIndex, newSettings)
             widgetSettings.close()
           }
         }
