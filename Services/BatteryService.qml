@@ -40,21 +40,24 @@ Singleton {
   }
 
   function setChargingMode(newMode) {
-    switch (newMode) {
+    if (newMode !== BatteryService.ChargingMode.Full && newMode !== BatteryService.ChargingMode.Balanced && newMode !== BatteryService.ChargingMode.Conservative) {
+      return
+    }
+    BatteryService.chargingMode = newMode
+    BatteryService.applyChargingMode()
+  }
+
+  function applyChargingMode() {
+    switch (BatteryService.chargingMode) {
     case BatteryService.ChargingMode.Full:
-      BatteryService.chargingMode = newMode
       chargeLimitProcess.command = [batteryTresholdScript, "100"]
       break
     case BatteryService.ChargingMode.Balanced:
-      BatteryService.chargingMode = newMode
       chargeLimitProcess.command = [batteryTresholdScript, "80"]
       break
     case BatteryService.ChargingMode.Conservative:
-      BatteryService.chargingMode = newMode
       chargeLimitProcess.command = [batteryTresholdScript, "60"]
       break
-    default:
-      return
     }
     chargeLimitProcess.running = true
   }
