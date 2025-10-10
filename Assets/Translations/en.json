@@ -354,10 +354,6 @@
           "label": "Use App2Unit to launch applications",
           "description": "Uses an alternative launch method to better manage app processes and prevent issues."
         },
-        "ignore-initial-mouse": {
-          "label": "Ignore initial mouse position",
-          "description": "When enabled, the launcher always defaults to the first item, ignoring where your mouse cursor is positioned. Selection only changes when you move the mouse."
-        },
         "terminal-command": {
           "label": "Terminal command",
           "description": "Command to launch a terminal. E.g., 'kitty -e' or 'gnome-terminal --'."

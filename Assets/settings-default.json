@@ -104,8 +104,7 @@
     "pinnedExecs": [],
     "useApp2Unit": false,
     "sortByMostUsed": true,
-    "terminalCommand": "xterm -e",
-    "ignoreInitialMousePosition": false
+    "terminalCommand": "xterm -e"
   },
   "controlCenter": {
     "position": "close_to_bar_button",

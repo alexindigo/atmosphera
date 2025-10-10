@@ -95,7 +95,7 @@ NPanel {
   // Lifecycle
   onOpened: {
     resultsReady = false
-    ignoreMouseHover = Settings.data.appLauncher.ignoreInitialMousePosition  // Use setting value
+    ignoreMouseHover = true
 
     // Notify plugins
     for (let plugin of plugins) {
@@ -112,7 +112,7 @@ NPanel {
   onClosed: {
     // Reset search text
     searchText = ""
-    ignoreMouseHover = Settings.data.appLauncher.ignoreInitialMousePosition  // Use setting value
+    ignoreMouseHover = true
 
     // Notify plugins
     for (let plugin of plugins) {
