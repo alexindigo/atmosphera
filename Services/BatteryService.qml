@@ -16,7 +16,7 @@ Singleton {
     Lifespan
   }
 
-  property int chargingMode: BatteryService.ChargingMode.Balanced
+  property int chargingMode: Settings.data.battery.chargingMode
   readonly property string batterySetterScript: Quickshell.shellDir + '/Bin/battery-manager/set-battery-treshold.sh'
   readonly property string batteryInstallerScript: Quickshell.shellDir + '/Bin/battery-manager/install-battery-manager.sh'
 
@@ -98,6 +98,7 @@ Singleton {
         Logger.log("BatteryService", "Battery threshold set successfully")
         if (!BatteryService.hideSuccessToast) {
           ToastService.showNotice("Battery Manager", `Battery threshold set to ${BatteryService.getThresholdValue(BatteryService.chargingMode)}%`)
+          Settings.data.battery.chargingMode = BatteryService.chargingMode
         }
       } else if (exitCode === 2) {
         // Initial setup required - show toast and run installer
