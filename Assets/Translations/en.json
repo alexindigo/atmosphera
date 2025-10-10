@@ -1457,11 +1457,10 @@
     "charging": "Charging.",
     "discharging": "Discharging.",
     "panel": {
-      "title": "Charging mode",
-      "full": "Full capacity",
-      "balanced": "Balanced",
-      "conservative": "Conservative",
-      "footer": "Charging threshold set to {limit}%"
+      "title": "Charge threshold",
+      "full": "Full capacity ({percentage}%)",
+      "balanced": "Balanced ({percentage}%)",
+      "lifespan": "Extended lifespan ({percentage}%)"
     }
   }
 }

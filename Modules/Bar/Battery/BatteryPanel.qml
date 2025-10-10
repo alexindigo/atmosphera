@@ -11,7 +11,7 @@ NPanel {
   id: root
 
   preferredWidth: 300
-  preferredHeight: 200
+  preferredHeight: 210
   panelKeyboardFocus: true
 
   property var optionsModel: []
@@ -27,7 +27,7 @@ NPanel {
                         "icon": "battery-3"
                       }, {
                         "id": BatteryService.ChargingMode.Conservative,
-                        "label": "battery.panel.conservative",
+                        "label": "battery.panel.lifespan",
                         "icon": "battery-2"
                       }]
     root.optionsModel = newOptions
@@ -49,12 +49,6 @@ NPanel {
       RowLayout {
         Layout.fillWidth: true
         spacing: Style.marginM * scaling
-
-        NIcon {
-          icon: optionsModel[BatteryService.chargingMode].icon
-          pointSize: Style.fontSizeXXL * scaling
-          color: Color.mPrimary
-        }
 
         NText {
           text: I18n.tr("battery.panel.title")
@@ -88,7 +82,9 @@ NPanel {
         NRadioButton {
           ButtonGroup.group: batteryGroup
           required property var modelData
-          text: I18n.tr(modelData.label)
+          text: I18n.tr(modelData.label, {
+                          "percentage": BatteryService.getThresholdValue(modelData.id)
+                        })
           checked: BatteryService.chargingMode === modelData.id
           onClicked: {
             BatteryService.setChargingMode(modelData.id)

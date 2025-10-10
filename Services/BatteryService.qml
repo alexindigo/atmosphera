@@ -43,8 +43,8 @@ Singleton {
     }
   }
 
-  function getThresholdValue() {
-    switch (BatteryService.chargingMode) {
+  function getThresholdValue(chargingMode) {
+    switch (chargingMode) {
     case BatteryService.ChargingMode.Full:
       return "100"
     case BatteryService.ChargingMode.Balanced:
@@ -69,7 +69,7 @@ Singleton {
     // uses toast messages so the flag is passed to supress notifs
     command.push("-q")
 
-    command.push(BatteryService.getThresholdValue())
+    command.push(BatteryService.getThresholdValue(BatteryService.chargingMode))
     BatteryService.hideSuccessToast = hideToast
 
     setterProcess.command = command
@@ -94,7 +94,7 @@ Singleton {
       if (exitCode === 0) {
         Logger.log("BatteryService", "Battery threshold set successfully")
         if (!BatteryService.hideSuccessToast) {
-          ToastService.showNotice("Battery Manager", `Battery threshold set to ${BatteryService.getThresholdValue()}%`)
+          ToastService.showNotice("Battery Manager", `Battery threshold set to ${BatteryService.getThresholdValue(BatteryService.chargingMode)}%`)
         }
       } else if (exitCode === 2) {
         // Initial setup required - show toast and run installer
