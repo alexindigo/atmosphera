@@ -571,9 +571,9 @@
             "description": "Schreibt {filepath} und lädt neu",
             "description-missing": "Erfordert fuzzel Starter"
           },
-          "vesktop": {
-            "description": "Schreibt {filepath}",
-            "description-missing": "Erfordert vesktop Discord-Client"
+          "discord": {
+            "description": "Schreibt {filepath} für {client}",
+            "description-missing": "Kein Discord-Client erkannt. Installieren Sie vesktop, webcord, armcord, equibop, lightcord oder dorion."
           },
           "pywalfox": {
             "description": "Schreibt {filepath} und führt pywalfox update aus",

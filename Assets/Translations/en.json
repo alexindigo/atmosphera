@@ -577,9 +577,9 @@
             "description": "Write {filepath} and reload",
             "description-missing": "Requires {app} to be installed"
           },
-          "vesktop": {
-            "description": "Write {filepath}",
-            "description-missing": "Requires {app} to be installed"
+          "discord": {
+            "description": "Write {filepath} for {client}",
+            "description-missing": "No Discord client detected. Install vesktop, webcord, armcord, equibop, lightcord, or dorion."
           },
           "pywalfox": {
             "description": "Write {filepath} and run pywalfox update",
