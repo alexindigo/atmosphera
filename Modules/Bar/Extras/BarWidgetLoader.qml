@@ -27,7 +27,7 @@ Item {
   }
 
   function getImplicitSize(item, prop) {
-    return (item && item.visible) ? item[prop] : 0
+    return (item && item.visible) ? Math.round(item[prop]) : 0
   }
 
   Loader {

@@ -145,8 +145,8 @@ Rectangle {
   }
 
   visible: filteredItems.length > 0
-  implicitWidth: isVertical ? Math.round(Style.capsuleHeight * scaling) : (trayFlow.implicitWidth + Style.marginM * 2 * scaling)
-  implicitHeight: isVertical ? (trayFlow.implicitHeight + Style.marginM * 2 * scaling) : Math.round(Style.capsuleHeight * scaling)
+  implicitWidth: isVertical ? Math.round(Style.capsuleHeight * scaling) : Math.round(trayFlow.implicitWidth + Style.marginM * 2 * scaling)
+  implicitHeight: isVertical ? Math.round(trayFlow.implicitHeight + Style.marginM * 2 * scaling) : Math.round(Style.capsuleHeight * scaling)
   radius: Math.round(Style.radiusM * scaling)
   color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
