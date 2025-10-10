@@ -1,5 +1,5 @@
 {
-  "settingsVersion": 15,
+  "settingsVersion": 16,
   "bar": {
     "position": "top",
     "backgroundOpacity": 1,
@@ -104,7 +104,8 @@
     "pinnedExecs": [],
     "useApp2Unit": false,
     "sortByMostUsed": true,
-    "terminalCommand": "xterm -e"
+    "terminalCommand": "xterm -e",
+    "ignoreInitialMousePosition": false
   },
   "controlCenter": {
     "position": "close_to_bar_button",

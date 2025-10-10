@@ -99,6 +99,13 @@ ColumnLayout {
     onToggled: checked => Settings.data.appLauncher.useApp2Unit = checked
   }
 
+  NToggle {
+    label: I18n.tr("settings.launcher.settings.ignore-initial-mouse.label")
+    description: I18n.tr("settings.launcher.settings.ignore-initial-mouse.description")
+    checked: Settings.data.appLauncher.ignoreInitialMousePosition
+    onToggled: checked => Settings.data.appLauncher.ignoreInitialMousePosition = checked
+  }
+
   NTextInput {
     label: I18n.tr("settings.launcher.settings.terminal-command.label")
     description: I18n.tr("settings.launcher.settings.terminal-command.description")

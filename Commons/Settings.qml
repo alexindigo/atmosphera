@@ -125,7 +125,7 @@ Singleton {
   JsonAdapter {
     id: adapter
 
-    property int settingsVersion: 15
+    property int settingsVersion: 16
 
     // bar
     property JsonObject bar: JsonObject {
@@ -233,6 +233,7 @@ Singleton {
       property bool useApp2Unit: false
       property bool sortByMostUsed: true
       property string terminalCommand: "xterm -e"
+      property bool ignoreInitialMousePosition: true
     }
 
     // control center
