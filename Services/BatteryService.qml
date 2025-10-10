@@ -10,6 +10,7 @@ Singleton {
   id: root
 
   enum ChargingMode {
+    Disabled = 0,
     Full,
     Balanced,
     Lifespan
