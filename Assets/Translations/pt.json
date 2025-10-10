@@ -520,9 +520,9 @@
             "description": "Escrever {filepath} e recarregar",
             "description-missing": "Requer que o {app} esteja instalado"
           },
-          "vesktop": {
-            "description": "Escrever {filepath}",
-            "description-missing": "Requer que o {app} esteja instalado"
+          "discord": {
+            "description": "Escrever {filepath} para {client}",
+            "description-missing": "Nenhum cliente Discord detectado. Instale vesktop, webcord, armcord, equibop, lightcord ou dorion."
           },
           "pywalfox": {
             "description": "Escrever {filepath} e executar pywalfox update",

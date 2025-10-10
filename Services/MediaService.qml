@@ -61,7 +61,8 @@ Singleton {
 
       if (title1) {
         for (var j = 0; j < genericPlayers.length; j++) {
-          if (matchedGenericIndices[j]) continue
+          if (matchedGenericIndices[j])
+            continue
           let genericPlayer = genericPlayers[j]
           let title2 = String(genericPlayer.trackTitle || "").trim()
 
@@ -71,27 +72,29 @@ Singleton {
 
             let scoreSpecific = (specificPlayer.trackArtUrl ? 1 : 0)
             let scoreGeneric = (genericPlayer.trackArtUrl ? 1 : 0)
-            if(scoreSpecific > scoreGeneric){ dataPlayer = specificPlayer }
+            if (scoreSpecific > scoreGeneric) {
+              dataPlayer = specificPlayer
+            }
 
             let virtualPlayer = {
-              identity: identityPlayer.identity,
-              desktopEntry: identityPlayer.desktopEntry,
-              trackTitle: dataPlayer.trackTitle,
-              trackArtist: dataPlayer.trackArtist,
-              trackAlbum: dataPlayer.trackAlbum,
-              trackArtUrl: dataPlayer.trackArtUrl,
-              length: dataPlayer.length || 0,
-              position: dataPlayer.position || 0,
-              playbackState: dataPlayer.playbackState,
-              isPlaying: dataPlayer.isPlaying || false,
-              canPlay: dataPlayer.canPlay || false,
-              canPause: dataPlayer.canPause || false,
-              canGoNext: dataPlayer.canGoNext || false,
-              canGoPrevious: dataPlayer.canGoPrevious || false,
-              canSeek: dataPlayer.canSeek || false,
-              canControl: dataPlayer.canControl || false,
-              _stateSource: dataPlayer,
-              _controlTarget: identityPlayer
+              "identity": identityPlayer.identity,
+              "desktopEntry": identityPlayer.desktopEntry,
+              "trackTitle": dataPlayer.trackTitle,
+              "trackArtist": dataPlayer.trackArtist,
+              "trackAlbum": dataPlayer.trackAlbum,
+              "trackArtUrl": dataPlayer.trackArtUrl,
+              "length": dataPlayer.length || 0,
+              "position": dataPlayer.position || 0,
+              "playbackState": dataPlayer.playbackState,
+              "isPlaying": dataPlayer.isPlaying || false,
+              "canPlay": dataPlayer.canPlay || false,
+              "canPause": dataPlayer.canPause || false,
+              "canGoNext": dataPlayer.canGoNext || false,
+              "canGoPrevious": dataPlayer.canGoPrevious || false,
+              "canSeek": dataPlayer.canSeek || false,
+              "canControl": dataPlayer.canControl || false,
+              "_stateSource": dataPlayer,
+              "_controlTarget": identityPlayer
             }
             finalPlayers.push(virtualPlayer)
             matchedGenericIndices[j] = true

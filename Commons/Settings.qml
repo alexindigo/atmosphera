@@ -327,7 +327,13 @@ Singleton {
       property bool ghostty: false
       property bool foot: false
       property bool fuzzel: false
-      property bool vesktop: false
+      property bool discord: false
+      property bool discord_vesktop: false
+      property bool discord_webcord: false
+      property bool discord_armcord: false
+      property bool discord_equibop: false
+      property bool discord_lightcord: false
+      property bool discord_dorion: false
       property bool pywalfox: false
       property bool enableUserTemplates: false
     }

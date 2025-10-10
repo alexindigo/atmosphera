@@ -554,9 +554,9 @@
             "description": "Écrire ~/.config/fuzzel/themes/noctalia et recharger",
             "description-missing": "Nécessite que le lanceur fuzzel soit installé"
           },
-          "vesktop": {
-            "description": "Écrire ~/.config/vesktop/themes/noctalia.theme.css",
-            "description-missing": "Nécessite que le client Discord vesktop soit installé"
+          "discord": {
+            "description": "Écrire {filepath} pour {client}",
+            "description-missing": "Aucun client Discord détecté. Installez vesktop, webcord, armcord, equibop, lightcord ou dorion."
           },
           "pywalfox": {
             "description": "Écrire ~/.cache/wal/colors.json et exécuter pywalfox update",
