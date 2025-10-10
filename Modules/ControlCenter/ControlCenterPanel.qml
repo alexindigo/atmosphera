@@ -11,7 +11,7 @@ NPanel {
   id: root
 
   preferredWidth: 400
-  preferredHeight: topHeight + midHeight + bottomHeight + Math.round(Style.marginL * 4)
+  preferredHeight: topHeight + midHeight + bottomHeight + audioHeight + Math.round(Style.marginL * 5)
   panelKeyboardFocus: true
 
   readonly property int topHeight: {
@@ -31,6 +31,7 @@ NPanel {
   }
   readonly property int midHeight: 220
   readonly property int bottomHeight: 80
+  readonly property int audioHeight: 120
 
   // Positioning
   readonly property string controlCenterPosition: Settings.data.controlCenter.position
@@ -58,6 +59,12 @@ NPanel {
         id: topCard
         Layout.fillWidth: true
         Layout.preferredHeight: topHeight * scaling
+      }
+
+      // Audio controls card
+      AudioCard {
+        Layout.fillWidth: true
+        Layout.preferredHeight: audioHeight * scaling
       }
 
       // Media card
