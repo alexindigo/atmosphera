@@ -26,7 +26,7 @@ NPanel {
                         "label": "battery.panel.balanced",
                         "icon": "battery-3"
                       }, {
-                        "id": BatteryService.ChargingMode.Conservative,
+                        "id": BatteryService.ChargingMode.Lifespan,
                         "label": "battery.panel.lifespan",
                         "icon": "battery-2"
                       }]

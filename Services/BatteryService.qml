@@ -12,7 +12,7 @@ Singleton {
   enum ChargingMode {
     Full,
     Balanced,
-    Conservative
+    Lifespan
   }
 
   property int chargingMode: BatteryService.ChargingMode.Balanced
@@ -49,13 +49,13 @@ Singleton {
       return "100"
     case BatteryService.ChargingMode.Balanced:
       return "80"
-    case BatteryService.ChargingMode.Conservative:
+    case BatteryService.ChargingMode.Lifespan:
       return "60"
     }
   }
 
   function setChargingMode(newMode) {
-    if (newMode !== BatteryService.ChargingMode.Full && newMode !== BatteryService.ChargingMode.Balanced && newMode !== BatteryService.ChargingMode.Conservative) {
+    if (newMode !== BatteryService.ChargingMode.Full && newMode !== BatteryService.ChargingMode.Balanced && newMode !== BatteryService.ChargingMode.Lifespan) {
       return
     }
     BatteryService.chargingMode = newMode
