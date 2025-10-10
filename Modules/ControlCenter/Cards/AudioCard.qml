@@ -93,27 +93,16 @@ NBox {
       }
 
       // Output Volume Slider
-      RowLayout {
+      NValueSlider {
         Layout.fillWidth: true
-        spacing: Style.marginXS * scaling
-
-        NSlider {
-          Layout.fillWidth: true
-          from: 0
-          to: Settings.data.audio.volumeOverdrive ? 1.5 : 1.0
-          value: localOutputVolume
-          stepSize: 0.01
-          onMoved: value => localOutputVolume = value
-        }
-
-        NText {
-          text: Math.round(AudioService.volume * 100) + "%"
-          pointSize: Style.fontSizeXS * scaling
-          color: Color.mOnSurfaceVariant
-          font.weight: Style.fontWeightMedium
-          verticalAlignment: Text.AlignVCenter
-          Layout.alignment: Qt.AlignVCenter
-        }
+        from: 0
+        to: Settings.data.audio.volumeOverdrive ? 1.5 : 1.0
+        value: localOutputVolume || 0
+        stepSize: 0.01
+        text: Math.round((AudioService.volume || 0) * 100) + "%"
+        textSize: Style.fontSizeXS * scaling
+        customHeightRatio: 0.6
+        onMoved: value => localOutputVolume = value
       }
     }
 
@@ -162,27 +151,16 @@ NBox {
       }
 
       // Input Volume Slider
-      RowLayout {
+      NValueSlider {
         Layout.fillWidth: true
-        spacing: Style.marginXS * scaling
-
-        NSlider {
-          Layout.fillWidth: true
-          from: 0
-          to: Settings.data.audio.volumeOverdrive ? 1.5 : 1.0
-          value: localInputVolume
-          stepSize: 0.01
-          onMoved: value => AudioService.setInputVolume(value)
-        }
-
-        NText {
-          text: Math.round(AudioService.inputVolume * 100) + "%"
-          pointSize: Style.fontSizeXS * scaling
-          color: Color.mOnSurfaceVariant
-          font.weight: Style.fontWeightMedium
-          verticalAlignment: Text.AlignVCenter
-          Layout.alignment: Qt.AlignVCenter
-        }
+        from: 0
+        to: Settings.data.audio.volumeOverdrive ? 1.5 : 1.0
+        value: AudioService.inputVolume || 0
+        stepSize: 0.01
+        text: Math.round((AudioService.inputVolume || 0) * 100) + "%"
+        textSize: Style.fontSizeXS * scaling
+        customHeightRatio: 0.6
+        onMoved: value => AudioService.setInputVolume(value)
       }
     }
   }
