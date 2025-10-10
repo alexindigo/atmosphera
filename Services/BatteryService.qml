@@ -83,8 +83,10 @@ Singleton {
   }
 
   function init() {
-    BatteryService.applyChargingMode(true)
-    Logger.log("BatteryService", `Applied charging mode - ${BatteryService.chargingMode}`)
+    if (BatteryService.chargingMode !== BatteryService.ChargingMode.Disabled) {
+      BatteryService.applyChargingMode(true)
+      Logger.log("BatteryService", `Applied charging mode - ${BatteryService.chargingMode}`)
+    }
   }
 
   Process {
