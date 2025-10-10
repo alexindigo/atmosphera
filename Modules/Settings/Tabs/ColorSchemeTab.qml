@@ -405,7 +405,7 @@ ColumnLayout {
                      AppThemeService.generate()
                    }
       }
-      
+
       NCheckbox {
         label: "KColorScheme"
         description: I18n.tr("settings.color-scheme.templates.ui.kcolorscheme.description", {

@@ -44,8 +44,8 @@ Singleton {
                                                       "kcolorscheme": {
                                                         "input": "kcolorscheme.colors",
                                                         "outputs": [{
-                                                            "path": "~/.local/share/color-schemes/noctalia.colors" 
-                                                        }],
+                                                            "path": "~/.local/share/color-schemes/noctalia.colors"
+                                                          }]
                                                       },
                                                       "fuzzel": {
                                                         "input": "fuzzel.conf",

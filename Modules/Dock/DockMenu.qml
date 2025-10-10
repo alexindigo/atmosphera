@@ -40,38 +40,46 @@ PopupWindow {
     if (isRunning) {
       // Focus item
       next.push({
-        "icon": "eye",
-        "text": I18n.tr("dock.menu.focus"),
-        "action": function() { handleFocus() }
-      })
+                  "icon": "eye",
+                  "text": I18n.tr("dock.menu.focus"),
+                  "action": function () {
+                    handleFocus()
+                  }
+                })
     }
 
     // Pin/Unpin item
     next.push({
-      "icon": !isPinned ? "pin" : "unpin",
-      "text": !isPinned ? I18n.tr("dock.menu.pin") : I18n.tr("dock.menu.unpin"),
-      "action": function() { handlePin() }
-    })
+                "icon": !isPinned ? "pin" : "unpin",
+                "text": !isPinned ? I18n.tr("dock.menu.pin") : I18n.tr("dock.menu.unpin"),
+                "action": function () {
+                  handlePin()
+                }
+              })
 
     if (isRunning) {
       // Close item
       next.push({
-        "icon": "close",
-        "text": I18n.tr("dock.menu.close"),
-        "action": function() { handleClose() }
-      })
+                  "icon": "close",
+                  "text": I18n.tr("dock.menu.close"),
+                  "action": function () {
+                    handleClose()
+                  }
+                })
     }
 
     // Create a menu entry for each app-specific action definied in its .desktop file
     if (typeof DesktopEntries !== 'undefined' && DesktopEntries.byId) {
       const entry = (DesktopEntries.heuristicLookup) ? DesktopEntries.heuristicLookup(appId) : DesktopEntries.byId(appId)
       if (entry != null) {
-        entry.actions.forEach(function(action) {
+        entry.actions.forEach(function (action) {
           next.push({
-            "icon": "",
-	    "text": action.name,
-	    "action": function() { action.execute() }
-          })
+                      "icon": "",
+                      "text": action.name,
+                      "action": function () {
+                        action.execute()
+                      }
+                    })
         })
       }
     }
@@ -225,34 +233,34 @@ PopupWindow {
       Repeater {
         model: root.items
 
-	Rectangle {
-	  Layout.fillWidth: true
-	  height: 32 * scaling
-	  color: root.hoveredItem === index ? Color.mTertiary : Color.transparent
-	  radius: Style.radiusXS * scaling
+        Rectangle {
+          Layout.fillWidth: true
+          height: 32 * scaling
+          color: root.hoveredItem === index ? Color.mTertiary : Color.transparent
+          radius: Style.radiusXS * scaling
 
-	  RowLayout {
-	    anchors.left: parent.left
-	    anchors.leftMargin: Style.marginS * scaling
-	    anchors.verticalCenter: parent.verticalCenter
-	    spacing: Style.marginS * scaling
+          RowLayout {
+            anchors.left: parent.left
+            anchors.leftMargin: Style.marginS * scaling
+            anchors.verticalCenter: parent.verticalCenter
+            spacing: Style.marginS * scaling
 
-	    NIcon {
-	      icon: modelData.icon
-	      pointSize: Style.fontSizeL * scaling
-	      color: root.hoveredItem === index ? Color.mOnTertiary : Color.mOnSurfaceVariant
-	      Layout.alignment: Qt.AlignVCenter
-	    }
-
-	    NText {
-	      text: modelData.text
-	      pointSize: Style.fontSizeS * scaling
-	      color: root.hoveredItem === index ? Color.mOnTertiary : Color.mOnSurfaceVariant
-	      Layout.alignment: Qt.AlignVCenter
-	      elide: Text.ElideRight
+            NIcon {
+              icon: modelData.icon
+              pointSize: Style.fontSizeL * scaling
+              color: root.hoveredItem === index ? Color.mOnTertiary : Color.mOnSurfaceVariant
+              Layout.alignment: Qt.AlignVCenter
             }
-    	  }
-  	}
+
+            NText {
+              text: modelData.text
+              pointSize: Style.fontSizeS * scaling
+              color: root.hoveredItem === index ? Color.mOnTertiary : Color.mOnSurfaceVariant
+              Layout.alignment: Qt.AlignVCenter
+              elide: Text.ElideRight
+            }
+          }
+        }
       }
     }
   }
