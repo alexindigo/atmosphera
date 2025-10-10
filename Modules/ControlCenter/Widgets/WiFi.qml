@@ -1,26 +1,13 @@
-import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls
 import Quickshell
-import Quickshell.Wayland
 import qs.Commons
 import qs.Services
 import qs.Widgets
 
-NIconButton {
-  id: root
-
+NQuickSetting {
   property ShellScreen screen
   property real scaling: 1.0
 
-  compact: (Settings.data.bar.density === "compact")
-  baseSize: Style.capsuleHeight
-  colorBg: (Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent)
-  colorFg: Color.mOnSurface
-  colorBorder: Color.transparent
-  colorBorderHover: Color.transparent
-  tooltipText: I18n.tr("tooltips.manage-wifi")
-  tooltipDirection: BarService.getTooltipDirection()
   icon: {
     try {
       if (NetworkService.ethernetConnected) {
@@ -41,6 +28,22 @@ NIconButton {
       return "signal_wifi_bad"
     }
   }
+
+  text: {
+    if (NetworkService.ethernetConnected) {
+      return I18n.tr("quickSettings.wifi.label.ethernet")
+    }
+    let connected = false
+    for (const net in NetworkService.networks) {
+      if (NetworkService.networks[net].connected) {
+        connected = true
+        break
+      }
+    }
+    return connected ? I18n.tr("quickSettings.wifi.label.wifi") : I18n.tr("quickSettings.wifi.label.disconnected")
+  }
+
+  style: Settings.data.controlCenter.quickSettingsStyle || "modern"
+  tooltipText: I18n.tr("quickSettings.wifi.tooltip.action")
   onClicked: PanelService.getPanel("wifiPanel")?.toggle(this)
-  onRightClicked: PanelService.getPanel("wifiPanel")?.toggle(this)
 }

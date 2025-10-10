@@ -37,12 +37,6 @@
           "id": "NotificationHistory"
         },
         {
-          "id": "WiFi"
-        },
-        {
-          "id": "Bluetooth"
-        },
-        {
           "id": "Battery"
         },
         {
@@ -112,7 +106,30 @@
     "terminalCommand": "xterm -e"
   },
   "controlCenter": {
-    "position": "close_to_bar_button"
+    "position": "close_to_bar_button",
+    "quickSettingsStyle": "compact",
+    "widgets": {
+      "quickSettings": [
+        {
+          "id": "WiFi"
+        },
+        {
+          "id": "Bluetooth"
+        },
+        {
+          "id": "Notifications"
+        },
+        {
+          "id": "ScreenRecorder"
+        },
+        {
+          "id": "PowerProfile"
+        },
+        {
+          "id": "WallpaperSelector"
+        }
+      ]
+    }
   },
   "dock": {
     "displayMode": "always_visible",

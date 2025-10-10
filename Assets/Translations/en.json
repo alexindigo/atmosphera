@@ -87,6 +87,7 @@
         }
       },
       "control-center": {
+        "title": "Control Center",
         "section": {
           "label": "Control Center",
           "description": "Configure the Control Center panel positioning and behavior."
@@ -94,6 +95,22 @@
         "position": {
           "label": "Position",
           "description": "Choose where the Control Center panel appears when opened."
+        },
+        "quickSettingsStyle": {
+          "section": {
+            "label": "Quick Settings Style",
+            "description": "Customize the appearance and behavior of quick settings in the Control Center."
+          },
+          "style": {
+            "label": "Quick Settings Style",
+            "description": "Choose the visual style for quick settings toggles and controls."
+          }
+        },
+        "widgets": {
+          "section": {
+            "label": "Widgets",
+            "description": "Configure and manage Control Center widgets and their display options."
+          }
         }
       }
     },
@@ -707,6 +724,28 @@
         }
       }
     },
+    "control-center": {
+      "title": "Control Center",
+      "quickSettingsStyle": {
+        "section": {
+          "label": "Quick Settings Style",
+          "description": "Customize the appearance and behavior of quick settings in the Control Center."
+        },
+        "style": {
+          "label": "Quick Settings Style",
+          "description": "Choose the visual style for quick settings toggles and controls."
+        }
+      },
+      "widgets": {
+        "section": {
+          "label": "Widgets",
+          "description": "Configure and manage Control Center widgets and their display options."
+        }
+      },
+      "quickSettings": {
+        "sectionName": "Quick Settings"
+      }
+    },
     "hooks": {
       "title": "Hooks",
       "system-hooks": {
@@ -746,8 +785,12 @@
       "placeholder": "Placeholder"
     },
     "file-picker": {
+      "title": "File Picker",
       "select-folder": "Select Folder",
-      "select-file": "Select File"
+      "select-file": "Select File",
+      "search-placeholder": "Search files and folders...",
+      "select-current": "Select Current",
+      "cancel": "Cancel"
     },
     "datetime-tokens": {
       "common": {
@@ -1241,6 +1284,11 @@
         "bottom_right": "Bottom right",
         "bottom_center": "Bottom center",
         "top_center": "Top center"
+      },
+      "quickSettingsStyle": {
+        "modern": "Modern",
+        "classic": "Classic",
+        "compact": "Compact"
       }
     },
     "osd": {
@@ -1337,7 +1385,7 @@
     "calculator-error": "Error"
   },
   "system": {
-    "uptime": "System uptime: {uptime}",
+    "uptime": "Uptime: {uptime}",
     "welcome-back": "Welcome back,",
     "monitor-description": "{model} ({width}x{height})",
     "scaling-percentage": "{percentage}%",
@@ -1361,6 +1409,78 @@
     "shut-down": "Shut down",
     "restart": "Restart",
     "suspend": "Suspend"
+  },
+  "quickSettings": {
+    "notifications": {
+      "label": {
+        "enabled": "Notifications",
+        "disabled": "Do Not Disturb"
+      },
+      "tooltip": {
+        "action": "Left click: Open notification history\nRight click: Toggle Do Not Disturb"
+      }
+    },
+    "screenRecorder": {
+      "label": {
+        "recording": "Stop",
+        "stopped": "Record"
+      },
+      "tooltip": {
+        "action": "Click to start/stop screen recording"
+      }
+    },
+    "powerProfile": {
+      "label": {
+        "unavailable": "Power Profile"
+      },
+      "tooltip": {
+        "action": "Click to cycle power profile"
+      }
+    },
+    "wifi": {
+      "label": {
+        "ethernet": "Ethernet",
+        "wifi": "Wi-Fi",
+        "disconnected": "Wi-Fi Disconnected"
+      },
+      "tooltip": {
+        "action": "Click to manage Wi-Fi connections"
+      }
+    },
+    "bluetooth": {
+      "label": {
+        "enabled": "Bluetooth",
+        "disabled": "Bluetooth"
+      },
+      "tooltip": {
+        "action": "Click to manage Bluetooth devices"
+      }
+    },
+    "nightLight": {
+      "label": {
+        "enabled": "Night Light",
+        "forced": "Night Light",
+        "disabled": "Night Light"
+      },
+      "tooltip": {
+        "action": "Click to cycle Night Light mode\nRight click: Open settings"
+      }
+    },
+    "wallpaperSelector": {
+      "label": "Wallpaper",
+      "tooltip": {
+        "action": "Left click: Open wallpaper selector\nRight click: Set random wallpaper"
+      }
+    },
+    "keepAwake": {
+      "label": {
+        "enabled": "Keep Awake",
+        "disabled": "Keep Awake"
+      },
+      "tooltip": {
+        "action": "Click to toggle keep awake mode"
+      }
+    }
   },
   "toast": {
     "night-light": {

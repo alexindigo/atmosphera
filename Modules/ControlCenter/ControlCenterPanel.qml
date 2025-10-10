@@ -10,9 +10,27 @@ import qs.Widgets
 NPanel {
   id: root
 
-  preferredWidth: 480
-  preferredHeight: 580
+  preferredWidth: 400
+  preferredHeight: topHeight + midHeight + bottomHeight + Math.round(Style.marginL * 4)
   panelKeyboardFocus: true
+
+  readonly property int topHeight: {
+    const columns = (Settings.data.controlCenter.quickSettingsStyle === "compact") ? 4 : 3
+    const rowsCount = Math.ceil(Settings.data.controlCenter.widgets.quickSettings.length / columns)
+
+    var buttonHeight
+    if (Settings.data.controlCenter.quickSettingsStyle === "classic") {
+      buttonHeight = Style.baseWidgetSize
+    } else if (Settings.data.controlCenter.quickSettingsStyle === "compact") {
+      buttonHeight = Style.baseWidgetSize * 0.8 // Smaller for compact
+    } else {
+      buttonHeight = 56
+    }
+
+    return (rowsCount * buttonHeight) + 120
+  }
+  readonly property int midHeight: 220
+  readonly property int bottomHeight: 80
 
   // Positioning
   readonly property string controlCenterPosition: Settings.data.controlCenter.position
@@ -37,33 +55,21 @@ NPanel {
 
       // Top Card: profile + utilities
       TopCard {
+        id: topCard
         Layout.fillWidth: true
-        Layout.preferredHeight: Math.max(124 * scaling)
+        Layout.preferredHeight: topHeight * scaling
       }
 
-      // Weather
-      WeatherCard {
+      // Media card
+      MediaCard {
         Layout.fillWidth: true
-        Layout.preferredHeight: Math.max(196 * scaling)
+        Layout.preferredHeight: midHeight * scaling
       }
 
-      // Media + stats column
-      RowLayout {
+      // System monitors combined in one card
+      SystemMonitorCard {
         Layout.fillWidth: true
-        Layout.preferredHeight: Math.max(196 * scaling)
-        spacing: content.cardSpacing
-
-        // Media card
-        MediaCard {
-          Layout.preferredWidth: Math.max(270 * scaling)
-          Layout.fillHeight: true
-        }
-
-        // System monitors combined in one card
-        SystemMonitorCard {
-          Layout.preferredWidth: Math.max(160 * scaling)
-          Layout.preferredHeight: Math.max(196 * scaling)
-        }
+        Layout.preferredHeight: bottomHeight * scaling
       }
     }
   }

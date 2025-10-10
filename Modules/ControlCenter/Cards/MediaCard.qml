@@ -84,7 +84,7 @@ NBox {
           anchors.fill: parent
           values: CavaService.values
           fillColor: Color.mPrimary
-          opacity: MediaService.trackArtUrl !== "" ? 0.4 : 0.8
+          opacity: MediaService.trackArtUrl !== "" ? 0.5 : 0.8
         }
       }
 
@@ -94,7 +94,7 @@ NBox {
           anchors.fill: parent
           values: CavaService.values
           fillColor: Color.mPrimary
-          opacity: MediaService.trackArtUrl !== "" ? 0.4 : 0.8
+          opacity: MediaService.trackArtUrl !== "" ? 0.5 : 0.8
         }
       }
 
@@ -104,7 +104,7 @@ NBox {
           anchors.fill: parent
           values: CavaService.values
           fillColor: Color.mPrimary
-          opacity: MediaService.trackArtUrl !== "" ? 0.4 : 0.8
+          opacity: MediaService.trackArtUrl !== "" ? 0.5 : 0.8
         }
       }
     }

@@ -85,6 +85,7 @@
         "reset-scaling": "Restablecer la escala"
       },
       "control-center": {
+        "title": "Centro de control",
         "section": {
           "label": "Centro de control",
           "description": "Configurar el posicionamiento y comportamiento del panel del centro de control."
@@ -92,6 +93,22 @@
         "position": {
           "label": "Posición",
           "description": "Elige dónde aparece el panel del centro de control cuando se abre."
+        },
+        "quickSettingsStyle": {
+          "section": {
+            "label": "Estilo de configuración rápida",
+            "description": "Personaliza la apariencia y el comportamiento de las configuraciones rápidas en el centro de control."
+          },
+          "style": {
+            "label": "Estilo de configuración rápida",
+            "description": "Elige el estilo visual para los interruptores y controles de configuración rápida."
+          }
+        },
+        "widgets": {
+          "section": {
+            "label": "Widgets",
+            "description": "Configura y gestiona los widgets del centro de control y sus opciones de visualización."
+          }
         }
       }
     },
@@ -705,6 +722,28 @@
         }
       }
     },
+    "control-center": {
+      "title": "Centro de control",
+      "quickSettingsStyle": {
+        "section": {
+          "label": "Estilo de configuración rápida",
+          "description": "Personaliza la apariencia y el comportamiento de las configuraciones rápidas en el centro de control."
+        },
+        "style": {
+          "label": "Estilo de configuración rápida",
+          "description": "Elige el estilo visual para los interruptores y controles de configuración rápida."
+        }
+      },
+      "widgets": {
+        "section": {
+          "label": "Widgets",
+          "description": "Configura y gestiona los widgets del centro de control y sus opciones de visualización."
+        }
+      },
+      "quickSettings": {
+        "sectionName": "Ajustes rápidos"
+      }
+    },
     "hooks": {
       "title": "Hooks",
       "system-hooks": {
@@ -745,7 +784,11 @@
     },
     "file-picker": {
       "select-folder": "Seleccionar carpeta",
-      "select-file": "Seleccionar archivo"
+      "select-file": "Seleccionar archivo",
+      "cancel": "Cancelar",
+      "search-placeholder": "Buscar archivos y carpetas...",
+      "select-current": "Seleccionar actual",
+      "title": "Selector de archivos"
     },
     "datetime-tokens": {
       "common": {
@@ -1238,6 +1281,11 @@
         "bottom_right": "Inferior derecha",
         "bottom_center": "Inferior central",
         "top_center": "Superior central"
+      },
+      "quickSettingsStyle": {
+        "modern": "Moderno",
+        "classic": "Clásico",
+        "compact": "Compacto"
       }
     },
     "osd": {
@@ -1334,7 +1382,7 @@
     "calculator-error": "Error"
   },
   "system": {
-    "uptime": "Tiempo de actividad: {uptime}",
+    "uptime": "Actividad: {uptime}",
     "welcome-back": "¡Bienvenido de nuevo,",
     "monitor-description": "{model} ({width}x{height})",
     "scaling-percentage": "{percentage}%",
@@ -1358,6 +1406,78 @@
     "shut-down": "Apagar",
     "restart": "Reiniciar",
     "suspend": "Suspender"
+  },
+  "quickSettings": {
+    "notifications": {
+      "label": {
+        "enabled": "Notificaciones",
+        "disabled": "No molestar"
+      },
+      "tooltip": {
+        "action": "Clic izquierdo: Abrir historial de notificaciones\nClic derecho: Alternar No molestar"
+      }
+    },
+    "screenRecorder": {
+      "label": {
+        "recording": "Detener",
+        "stopped": "Grabar"
+      },
+      "tooltip": {
+        "action": "Hacer clic para iniciar/detener la grabación de pantalla"
+      }
+    },
+    "powerProfile": {
+      "label": {
+        "unavailable": "Perfil de energía"
+      },
+      "tooltip": {
+        "action": "Hacer clic para cambiar el perfil de energía"
+      }
+    },
+    "wifi": {
+      "label": {
+        "ethernet": "Ethernet",
+        "wifi": "Wi-Fi",
+        "disconnected": "Wi-Fi desconectado"
+      },
+      "tooltip": {
+        "action": "Hacer clic para gestionar las conexiones Wi-Fi"
+      }
+    },
+    "bluetooth": {
+      "label": {
+        "enabled": "Bluetooth",
+        "disabled": "Bluetooth"
+      },
+      "tooltip": {
+        "action": "Hacer clic para gestionar los dispositivos Bluetooth"
+      }
+    },
+    "nightLight": {
+      "label": {
+        "enabled": "Luz nocturna",
+        "forced": "Luz nocturna",
+        "disabled": "Luz nocturna"
+      },
+      "tooltip": {
+        "action": "Hacer clic para alternar el modo Luz nocturna\nClic derecho: Abrir configuración"
+      }
+    },
+    "wallpaperSelector": {
+      "label": "Fondo de pantalla",
+      "tooltip": {
+        "action": "Clic izquierdo: Abrir selector de fondo de pantalla\nClic derecho: Establecer fondo de pantalla aleatorio"
+      }
+    },
+    "keepAwake": {
+      "label": {
+        "enabled": "Mantener despierto",
+        "disabled": "Mantener despierto"
+      },
+      "tooltip": {
+        "action": "Hacer clic para alternar el modo Mantener despierto"
+      }
+    }
   },
   "toast": {
     "night-light": {

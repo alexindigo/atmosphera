@@ -71,6 +71,12 @@ Singleton {
       setProfile(PowerProfile.Balanced)
   }
 
+  function isDefault() {
+    if (!available)
+      return true
+    return (profile === PowerProfile.Balanced)
+  }
+
   Connections {
     target: powerProfiles
     function onProfileChanged() {

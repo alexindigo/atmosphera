@@ -84,7 +84,7 @@ Rectangle {
         anchors.centerIn: parent
         anchors.verticalCenterOffset: -4 * scaling * contentScale
         text: `${root.value}${root.suffix}`
-        pointSize: Style.fontSizeM * scaling * contentScale
+        pointSize: Style.fontSizeM * scaling * contentScale * 0.9
         font.weight: Style.fontWeightBold
         color: Color.mOnSurface
         horizontalAlignment: Text.AlignHCenter

@@ -9,14 +9,11 @@ import qs.Widgets
 NBox {
   id: root
 
-  GridLayout {
+  RowLayout {
     id: content
     anchors.fill: parent
     anchors.margins: Style.marginXS * scaling
-    columns: 2
-    rows: 2
-    columnSpacing: Style.marginS * scaling
-    rowSpacing: Style.marginS * scaling
+    spacing: Style.marginS * scaling
 
     NCircleStat {
       value: SystemStatService.cpuUsage

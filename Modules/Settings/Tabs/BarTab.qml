@@ -5,7 +5,7 @@ import Quickshell
 import qs.Commons
 import qs.Services
 import qs.Widgets
-import qs.Modules.Settings.Bar
+import qs.Modules.Settings.Extras
 
 ColumnLayout {
   id: root
@@ -201,9 +201,11 @@ ColumnLayout {
       spacing: Style.marginM * scaling
 
       // Left Section
-      BarSectionEditor {
+      SectionEditor {
         sectionName: "Left"
         sectionId: "left"
+        settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Settings/Bar/BarWidgetSettingsDialog.qml")
+        widgetRegistry: BarWidgetRegistry
         widgetModel: Settings.data.bar.widgets.left
         availableWidgets: availableWidgets
         onAddWidget: (widgetId, section) => _addWidgetToSection(widgetId, section)
@@ -216,9 +218,11 @@ ColumnLayout {
       }
 
       // Center Section
-      BarSectionEditor {
+      SectionEditor {
         sectionName: "Center"
         sectionId: "center"
+        settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Settings/Bar/BarWidgetSettingsDialog.qml")
+        widgetRegistry: BarWidgetRegistry
         widgetModel: Settings.data.bar.widgets.center
         availableWidgets: availableWidgets
         onAddWidget: (widgetId, section) => _addWidgetToSection(widgetId, section)
@@ -231,9 +235,11 @@ ColumnLayout {
       }
 
       // Right Section
-      BarSectionEditor {
+      SectionEditor {
         sectionName: "Right"
         sectionId: "right"
+        settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Settings/Bar/BarWidgetSettingsDialog.qml")
+        widgetRegistry: BarWidgetRegistry
         widgetModel: Settings.data.bar.widgets.right
         availableWidgets: availableWidgets
         onAddWidget: (widgetId, section) => _addWidgetToSection(widgetId, section)

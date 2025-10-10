@@ -85,6 +85,7 @@
         "reset-scaling": "Réinitialiser l'échelle"
       },
       "control-center": {
+        "title": "Centre de contrôle",
         "section": {
           "label": "Centre de contrôle",
           "description": "Configurer le positionnement et le comportement du panneau du centre de contrôle."
@@ -92,6 +93,22 @@
         "position": {
           "label": "Position",
           "description": "Choisissez où apparaît le panneau du centre de contrôle lors de l'ouverture."
+        },
+        "quickSettingsStyle": {
+          "section": {
+            "label": "Style des paramètres rapides",
+            "description": "Personnalisez l'apparence et le comportement des paramètres rapides dans le centre de contrôle."
+          },
+          "style": {
+            "label": "Style des paramètres rapides",
+            "description": "Choisissez le style visuel pour les commutateurs et contrôles des paramètres rapides."
+          }
+        },
+        "widgets": {
+          "section": {
+            "label": "Widgets",
+            "description": "Configurez et gérez les widgets du centre de contrôle et leurs options d'affichage."
+          }
         }
       }
     },
@@ -705,6 +722,28 @@
         }
       }
     },
+    "control-center": {
+      "title": "Centre de contrôle",
+      "quickSettingsStyle": {
+        "section": {
+          "label": "Style des paramètres rapides",
+          "description": "Personnalisez l'apparence et le comportement des paramètres rapides dans le centre de contrôle."
+        },
+        "style": {
+          "label": "Style des paramètres rapides",
+          "description": "Choisissez le style visuel pour les commutateurs et contrôles des paramètres rapides."
+        }
+      },
+      "widgets": {
+        "section": {
+          "label": "Widgets",
+          "description": "Configurez et gérez les widgets du centre de contrôle et leurs options d'affichage."
+        }
+      },
+      "quickSettings": {
+        "sectionName": "Paramètres rapides"
+      }
+    },
     "hooks": {
       "title": "Hooks",
       "system-hooks": {
@@ -745,7 +784,11 @@
     },
     "file-picker": {
       "select-folder": "Sélectionner un dossier",
-      "select-file": "Sélectionner un fichier"
+      "select-file": "Sélectionner un fichier",
+      "cancel": "Annuler",
+      "search-placeholder": "Rechercher des fichiers et des dossiers...",
+      "select-current": "Sélectionner Actuel",
+      "title": "Sélecteur de fichiers"
     },
     "datetime-tokens": {
       "common": {
@@ -1238,6 +1281,11 @@
         "bottom_right": "En bas à droite",
         "bottom_center": "En bas au centre",
         "top_center": "En haut au centre"
+      },
+      "quickSettingsStyle": {
+        "modern": "Moderne",
+        "classic": "Classique",
+        "compact": "Compact"
       }
     },
     "osd": {
@@ -1334,7 +1382,6 @@
     "calculator-error": "Erreur"
   },
   "system": {
-    "uptime": "Temps d'activité : {uptime}",
     "welcome-back": "Bon retour,",
     "monitor-description": "{model} ({width}x{height})",
     "scaling-percentage": "{percentage}%",
@@ -1348,7 +1395,8 @@
     "user-requested": "Demandé par l'utilisateur",
     "unknown": "Inconnu",
     "unknown-version": "Inconnue",
-    "unknown-layout": "Inconnue"
+    "unknown-layout": "Inconnue",
+    "uptime": "Activité : {uptime}"
   },
   "lock-screen": {
     "password": "Entrez votre mot de passe...",
@@ -1358,6 +1406,78 @@
     "shut-down": "Éteindre",
     "restart": "Redémarrer",
     "suspend": "Mettre en veille"
+  },
+  "quickSettings": {
+    "notifications": {
+      "label": {
+        "enabled": "Notifications",
+        "disabled": "Ne pas déranger"
+      },
+      "tooltip": {
+        "action": "Clic gauche : Ouvrir l'historique des notifications\nClic droit : Basculer Ne pas déranger"
+      }
+    },
+    "screenRecorder": {
+      "label": {
+        "recording": "Arrêter",
+        "stopped": "Enregistrer"
+      },
+      "tooltip": {
+        "action": "Cliquer pour démarrer/arrêter l'enregistrement d'écran"
+      }
+    },
+    "powerProfile": {
+      "label": {
+        "unavailable": "Profil d'alimentation"
+      },
+      "tooltip": {
+        "action": "Cliquer pour changer de profil d'alimentation"
+      }
+    },
+    "wifi": {
+      "label": {
+        "ethernet": "Ethernet",
+        "wifi": "Wi-Fi",
+        "disconnected": "Wi-Fi déconnecté"
+      },
+      "tooltip": {
+        "action": "Cliquer pour gérer les connexions Wi-Fi"
+      }
+    },
+    "bluetooth": {
+      "label": {
+        "enabled": "Bluetooth",
+        "disabled": "Bluetooth"
+      },
+      "tooltip": {
+        "action": "Cliquer pour gérer les appareils Bluetooth"
+      }
+    },
+    "nightLight": {
+      "label": {
+        "enabled": "Lumière nocturne",
+        "forced": "Lumière nocturne",
+        "disabled": "Lumière nocturne"
+      },
+      "tooltip": {
+        "action": "Cliquer pour basculer le mode Lumière nocturne\nClic droit : Ouvrir les paramètres"
+      }
+    },
+    "wallpaperSelector": {
+      "label": "Fond d'écran",
+      "tooltip": {
+        "action": "Clic gauche : Ouvrir le sélecteur de fond d'écran\nClic droit : Définir un fond d'écran aléatoire"
+      }
+    },
+    "keepAwake": {
+      "label": {
+        "enabled": "Rester éveillé",
+        "disabled": "Rester éveillé"
+      },
+      "tooltip": {
+        "action": "Cliquer pour basculer le mode Rester éveillé"
+      }
+    }
   },
   "toast": {
     "night-light": {
