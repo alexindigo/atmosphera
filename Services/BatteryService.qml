@@ -144,8 +144,7 @@ Singleton {
       }
 
       if (exitCode !== 0) {
-        // TODO, reset do a null or smth
-        BatteryService.chargingMode = BatteryService.ChargingMode.Balanced
+        BatteryService.chargingMode = BatteryService.ChargingMode.Disabled
       }
     }
     stderr: StdioCollector {
