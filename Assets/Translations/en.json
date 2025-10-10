@@ -1424,6 +1424,16 @@
       "low": "Low battery",
       "low-desc": "Battery is at {percent}%. Please connect the charger."
     },
+    "battery-manager": {
+      "title": "Battery threshold",
+      "set-success-desc": "Battery threshold set to {percent}%",
+      "initial-setup": "Initial setup required",
+      "set-failed": "Failed to set battery threshold",
+      "install-success": "Installed successfully",
+      "install-missing": "Required files are missing",
+      "install-unsupported": "System is not supported",
+      "install-failed": "Installation failed"
+    },
     "missing-control-center": {
       "label": "Last Control Center widget removed",
       "description": "The Control Center widget has been removed from the bar. To access it from the bar again, you will need to re-add the widget. You can open it with right clicking on the bar too."

@@ -97,15 +97,16 @@ Singleton {
       if (exitCode === 0) {
         Logger.log("BatteryService", "Battery threshold set successfully")
         if (!BatteryService.hideSuccessToast) {
-          ToastService.showNotice("Battery Manager", `Battery threshold set to ${BatteryService.getThresholdValue(BatteryService.chargingMode)}%`)
+          ToastService.showNotice(I18n.tr("toast.battery-manager.title"), I18n.tr("toast.battery-manager.set-success-desc", {
+                                                                                    "percent": BatteryService.getThresholdValue(BatteryService.chargingMode)
+                                                                                  }))
           Settings.data.battery.chargingMode = BatteryService.chargingMode
         }
       } else if (exitCode === 2) {
-        // Initial setup required - show toast and run installer
-        ToastService.showWarning("Battery Manager", "Initial setup required")
+        ToastService.showWarning(I18n.tr("toast.battery-manager.title"), I18n.tr("toast.battery-manager.initial-setup"))
         BatteryService.runInstaller()
       } else {
-        ToastService.showError("Battery Manager", "Failed to set battery threshold")
+        ToastService.showError(I18n.tr("toast.battery-manager.title"), I18n.tr("toast.battery-manager.set-failed"))
         Logger.error("BatteryService", `Setter process failed with exit code: ${exitCode}`)
       }
     }
@@ -132,15 +133,14 @@ Singleton {
     running: false
     onExited: (exitCode, exitStatus) => {
       if (exitCode === 0) {
-        ToastService.showNotice("Battery Manager", "Installed successfully")
-        // Installation successful, retry setting the battery threshold
+        ToastService.showNotice(I18n.tr("toast.battery-manager.title"), I18n.tr("toast.battery-manager.install-success"))
         BatteryService.applyChargingMode()
       } else if (exitCode === 2) {
-        ToastService.showError("Battery Manager", "Required files are missing")
+        ToastService.showError(I18n.tr("toast.battery-manager.title"), I18n.tr("toast.battery-manager.install-missing"))
       } else if (exitCode === 3) {
-        ToastService.showError("Battery Manager", "System is not supported")
+        ToastService.showError(I18n.tr("toast.battery-manager.title"), I18n.tr("toast.battery-manager.install-unsupported"))
       } else {
-        ToastService.showError("Battery Manager", "Installation failed")
+        ToastService.showError(I18n.tr("toast.battery-manager.title"), I18n.tr("toast.battery-manager.install-failed"))
       }
 
       if (exitCode !== 0) {
