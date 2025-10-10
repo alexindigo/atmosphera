@@ -125,7 +125,7 @@ Singleton {
   JsonAdapter {
     id: adapter
 
-    property int settingsVersion: 16
+    property int settingsVersion: 15
 
     // bar
     property JsonObject bar: JsonObject {
