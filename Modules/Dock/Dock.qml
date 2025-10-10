@@ -482,7 +482,9 @@ Variants {
                         anyAppHovered = true
                         const appName = appButton.appTitle || appButton.appId || "Unknown"
                         const tooltipText = appName.length > 40 ? appName.substring(0, 37) + "..." : appName
-                        TooltipService.show(Screen, appButton, tooltipText, "top")
+                        if (!contextMenu.visible) {
+                          TooltipService.show(Screen, appButton, tooltipText, "top")
+                        }
                         if (autoHide) {
                           showTimer.stop()
                           hideTimer.stop()
@@ -508,7 +510,7 @@ Variants {
                           // Close any other existing context menu first
                           root.closeAllContextMenus()
                           // Hide tooltip when showing context menu
-                          TooltipService.hide()
+                          TooltipService.hideImmediately()
                           contextMenu.show(appButton, modelData.toplevel || modelData)
                           return
                         }

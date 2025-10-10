@@ -16,6 +16,7 @@ PopupWindow {
   property real scaling: 1.0
   property bool hovered: menuMouseArea.containsMouse
   property var onAppClosed: null // Callback function for when an app is closed
+  property bool canAutoClose: false
 
   // Track which menu item is hovered
   property int hoveredItem: -1 // -1: none, otherwise the index of the item in `items`
@@ -24,7 +25,7 @@ PopupWindow {
 
   signal requestClose
 
-  implicitWidth: 160 * scaling
+  implicitWidth: Math.max(160 * scaling, contextMenuColumn.implicitWidth)
   implicitHeight: contextMenuColumn.implicitHeight + (Style.marginM * scaling * 2)
   color: Color.transparent
   visible: false
@@ -128,6 +129,8 @@ PopupWindow {
     toplevel = toplevelData
     initItems()
     visible = true
+    canAutoClose = false
+    gracePeriodTimer.restart()
   }
 
   function hide() {
@@ -179,6 +182,19 @@ PopupWindow {
     root.requestClose()
   }
 
+  // Short delay to ignore spurious events
+  Timer {
+    id: gracePeriodTimer
+    interval: 1500
+    repeat: false
+    onTriggered: {
+      root.canAutoClose = true
+      if (!menuMouseArea.containsMouse) {
+        closeTimer.start()
+      }
+    }
+  }
+
   Timer {
     id: closeTimer
     interval: 500
@@ -209,7 +225,10 @@ PopupWindow {
 
       onExited: {
         root.hoveredItem = -1
-        closeTimer.start()
+        if (root.canAutoClose) {
+          // Only close if grace period has passed
+          closeTimer.start()
+        }
       }
 
       onPositionChanged: mouse => {
