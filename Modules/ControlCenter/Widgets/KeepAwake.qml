@@ -9,8 +9,6 @@ NQuickSetting {
   property real scaling: 1.0
 
   text: I18n.tr("quickSettings.keepAwake.label.enabled")
-  fontSize: Style.fontSizeS * scaling
-  fontWeight: Style.fontWeightMedium
   icon: IdleInhibitorService.isInhibited ? "keep-awake-on" : "keep-awake-off"
   hot: IdleInhibitorService.isInhibited
   tooltipText: I18n.tr("quickSettings.keepAwake.tooltip.action")

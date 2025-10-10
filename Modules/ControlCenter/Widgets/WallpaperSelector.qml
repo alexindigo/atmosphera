@@ -11,8 +11,6 @@ NQuickSetting {
   enabled: Settings.data.wallpaper.enabled
   icon: "wallpaper-selector"
   text: I18n.tr("quickSettings.wallpaperSelector.label")
-  fontSize: Style.fontSizeS * scaling
-  fontWeight: Style.fontWeightMedium
   tooltipText: I18n.tr("quickSettings.wallpaperSelector.tooltip.action")
   style: Settings.data.controlCenter.quickSettingsStyle || "modern"
 

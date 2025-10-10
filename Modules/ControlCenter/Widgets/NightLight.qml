@@ -10,8 +10,6 @@ NQuickSetting {
 
   enabled: ProgramCheckerService.wlsunsetAvailable
   text: I18n.tr("quickSettings.nightLight.label.enabled")
-  fontSize: Style.fontSizeS * scaling
-  fontWeight: Style.fontWeightMedium
   icon: Settings.data.nightLight.enabled ? (Settings.data.nightLight.forced ? "nightlight-forced" : "nightlight-on") : "nightlight-off"
   hot: !Settings.data.nightLight.enabled || Settings.data.nightLight.forced
   style: Settings.data.controlCenter.quickSettingsStyle || "modern"

@@ -106,7 +106,7 @@ NBox {
       id: grid
       Layout.fillWidth: true
       columns: (Settings.data.controlCenter.quickSettingsStyle === "compact") ? 4 : 3
-      columnSpacing: Style.marginM * scaling
+      columnSpacing: Style.marginS * scaling
       rowSpacing: Style.marginS * scaling
 
       Repeater {

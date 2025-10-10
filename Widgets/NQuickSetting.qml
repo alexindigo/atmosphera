@@ -17,7 +17,7 @@ Rectangle {
   property string style: "modern" // "modern", "classic", or "compact"
 
   // Styling properties
-  property real fontSize: Style.fontSizeS * scaling
+  property real fontSize: (style === "classic") ? Style.fontSizeXS * scaling : Style.fontSizeS * scaling
   property int fontWeight: Style.fontWeightMedium
   property real iconSize: Style.fontSizeL * scaling
   property real cornerRadius: Style.radiusM * scaling
@@ -171,7 +171,7 @@ Rectangle {
       }
     }
 
-    // Text content
+    // Modern - Text content
     NText {
       Layout.alignment: Qt.AlignHCenter
       visible: root.text !== ""
@@ -245,6 +245,7 @@ Rectangle {
       }
     }
 
+    // Classic - Text content
     NText {
       visible: root.text !== ""
       text: root.text

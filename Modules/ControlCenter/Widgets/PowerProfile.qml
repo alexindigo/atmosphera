@@ -13,8 +13,6 @@ NQuickSetting {
 
   enabled: hasPP
   text: hasPP ? PowerProfileService.getName() : I18n.tr("quickSettings.powerProfile.label.unavailable")
-  fontSize: Style.fontSizeS * scaling
-  fontWeight: Style.fontWeightMedium
   icon: PowerProfileService.getIcon()
   hot: !PowerProfileService.isDefault()
   tooltipText: I18n.tr("quickSettings.powerProfile.tooltip.action")

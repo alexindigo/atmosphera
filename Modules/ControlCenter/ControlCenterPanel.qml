@@ -10,7 +10,7 @@ import qs.Widgets
 NPanel {
   id: root
 
-  preferredWidth: 360
+  preferredWidth: 400
   preferredHeight: topHeight + midHeight + bottomHeight + Math.round(Style.marginL * 4)
   panelKeyboardFocus: true
 

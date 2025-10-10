@@ -11,8 +11,6 @@ NQuickSetting {
   enabled: ProgramCheckerService.gpuScreenRecorderAvailable
   icon: "camera-video"
   text: ScreenRecorderService.isRecording ? I18n.tr("quickSettings.screenRecorder.label.recording") : I18n.tr("quickSettings.screenRecorder.label.stopped")
-  fontSize: Style.fontSizeS * scaling
-  fontWeight: Style.fontWeightMedium
   hot: ScreenRecorderService.isRecording
   tooltipText: I18n.tr("quickSettings.screenRecorder.tooltip.action")
   style: Settings.data.controlCenter.quickSettingsStyle || "modern"

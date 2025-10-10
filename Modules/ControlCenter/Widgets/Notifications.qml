@@ -9,8 +9,6 @@ NQuickSetting {
   property real scaling: 1.0
 
   text: Settings.data.notifications.doNotDisturb ? I18n.tr("quickSettings.notifications.label.disabled") : I18n.tr("quickSettings.notifications.label.enabled")
-  fontSize: Style.fontSizeS * scaling
-  fontWeight: Style.fontWeightMedium
   icon: Settings.data.notifications.doNotDisturb ? "bell-off" : "bell"
   hot: Settings.data.notifications.doNotDisturb
   tooltipText: I18n.tr("quickSettings.notifications.tooltip.action")

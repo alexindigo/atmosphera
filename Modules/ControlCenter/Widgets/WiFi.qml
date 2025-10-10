@@ -43,8 +43,6 @@ NQuickSetting {
     return connected ? I18n.tr("quickSettings.wifi.label.wifi") : I18n.tr("quickSettings.wifi.label.disconnected")
   }
 
-  fontSize: Style.fontSizeS * scaling
-  fontWeight: Style.fontWeightMedium
   style: Settings.data.controlCenter.quickSettingsStyle || "modern"
   tooltipText: I18n.tr("quickSettings.wifi.tooltip.action")
   onClicked: PanelService.getPanel("wifiPanel")?.toggle(this)
