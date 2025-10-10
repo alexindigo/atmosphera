@@ -785,8 +785,12 @@
       "placeholder": "Placeholder"
     },
     "file-picker": {
+      "title": "File Picker",
       "select-folder": "Select Folder",
-      "select-file": "Select File"
+      "select-file": "Select File",
+      "search-placeholder": "Search files and folders...",
+      "select-current": "Select Current",
+      "cancel": "Cancel"
     },
     "datetime-tokens": {
       "common": {

@@ -784,7 +784,11 @@
     },
     "file-picker": {
       "select-folder": "选择文件夹",
-      "select-file": "选择文件"
+      "select-file": "选择文件",
+      "cancel": "取消",
+      "search-placeholder": "搜索文件和文件夹...",
+      "select-current": "选择当前",
+      "title": "文件选择器"
     },
     "datetime-tokens": {
       "common": {

@@ -784,7 +784,11 @@
     },
     "file-picker": {
       "select-folder": "Seleccionar carpeta",
-      "select-file": "Seleccionar archivo"
+      "select-file": "Seleccionar archivo",
+      "cancel": "Cancelar",
+      "search-placeholder": "Buscar archivos y carpetas...",
+      "select-current": "Seleccionar actual",
+      "title": "Selector de archivos"
     },
     "datetime-tokens": {
       "common": {

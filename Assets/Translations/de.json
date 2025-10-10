@@ -801,7 +801,11 @@
     },
     "file-picker": {
       "select-folder": "Ordner auswählen",
-      "select-file": "Datei auswählen"
+      "select-file": "Datei auswählen",
+      "cancel": "Abbrechen",
+      "search-placeholder": "Dateien und Ordner suchen...",
+      "select-current": "Aktuelle auswählen",
+      "title": "Dateiauswahl"
     },
     "datetime-tokens": {
       "common": {
