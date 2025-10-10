@@ -529,6 +529,9 @@
           },
           "qt": {
             "description": "写入 {filepath}"
+          },
+          "kcolorscheme": {
+            "description": "写入 {filepath}"
           }
         },
         "terminal": {

@@ -533,6 +533,9 @@
           },
           "qt": {
             "description": "Schreibt {filepath}"
+          },
+          "kcolorscheme": {
+            "description": "Schreibt {filepath}"
           }
         },
         "terminal": {

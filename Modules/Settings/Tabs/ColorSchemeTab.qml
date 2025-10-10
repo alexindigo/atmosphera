@@ -405,6 +405,18 @@ ColumnLayout {
                      AppThemeService.generate()
                    }
       }
+      
+      NCheckbox {
+        label: "KColorScheme"
+        description: I18n.tr("settings.color-scheme.templates.ui.kcolorscheme.description", {
+                               "filepath": "~/.local/share/color-schemes/noctalia.colors"
+                             })
+        checked: Settings.data.templates.kcolorscheme
+        onToggled: checked => {
+                     Settings.data.templates.kcolorscheme = checked
+                     AppThemeService.generate()
+                   }
+      }
     }
 
     // Terminal Emulators
