@@ -739,53 +739,56 @@
           "label": "小部件",
           "description": "配置和管理控制中心小部件及其显示选项。"
         }
-      }
-  },
-  "quickSettings": {
-    "notifications": {
-      "label": "通知",
-      "tooltip": {
-        "enable": "开启勿扰模式",
-        "disable": "关闭勿扰模式"
+      },
+      "quickSettings": {
+        "sectionName": "快速设置"
       }
     },
-    "wifi": {
-      "label": {
-        "wifi": "Wi-Fi",
-        "ethernet": "网络"
+    "quickSettings": {
+      "notifications": {
+        "label": "通知",
+        "tooltip": {
+          "enable": "开启勿扰模式",
+          "disable": "关闭勿扰模式"
+        }
       },
-      "tooltip": {
-        "wifi": {
-          "connected": "Wi-Fi 已连接",
-          "disconnected": "Wi-Fi 已断开"
+      "wifi": {
+        "label": {
+          "wifi": "Wi-Fi",
+          "ethernet": "网络"
         },
-        "ethernet": {
-          "connected": "以太网已连接"
+        "tooltip": {
+          "wifi": {
+            "connected": "Wi-Fi 已连接",
+            "disconnected": "Wi-Fi 已断开"
+          },
+          "ethernet": {
+            "connected": "以太网已连接"
+          }
+        }
+      },
+      "bluetooth": {
+        "label": "蓝牙",
+        "tooltip": {
+          "enabled": "蓝牙已启用",
+          "disabled": "蓝牙已禁用"
+        }
+      },
+      "screenRecorder": {
+        "label": "屏幕录制",
+        "tooltip": {
+          "start": "开始屏幕录制",
+          "stop": "停止录制"
+        }
+      },
+      "powerProfile": {
+        "tooltip": {
+          "current": "当前：{profile}",
+          "unavailable": "电源配置文件不可用"
         }
       }
     },
-    "bluetooth": {
-      "label": "蓝牙",
-      "tooltip": {
-        "enabled": "蓝牙已启用",
-        "disabled": "蓝牙已禁用"
-      }
-    },
-    "screenRecorder": {
-      "label": "屏幕录制",
-      "tooltip": {
-        "start": "开始屏幕录制",
-        "stop": "停止录制"
-      }
-    },
-    "powerProfile": {
-      "tooltip": {
-        "current": "当前：{profile}",
-        "unavailable": "电源配置文件不可用"
-      }
-    }
-  },
-  "hooks": {
+    "hooks": {
       "title": "钩子",
       "system-hooks": {
         "section": {

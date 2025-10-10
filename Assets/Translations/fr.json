@@ -739,6 +739,9 @@
           "label": "Widgets",
           "description": "Configurez et gérez les widgets du centre de contrôle et leurs options d'affichage."
         }
+      },
+      "quickSettings": {
+        "sectionName": "Paramètres rapides"
       }
     },
     "quickSettings": {
@@ -784,52 +787,8 @@
           "unavailable": "Profils d'alimentation non disponibles"
         }
       }
-  },
-  "quickSettings": {
-    "notifications": {
-      "label": "Notifications",
-      "tooltip": {
-        "enable": "Activer Ne pas déranger",
-        "disable": "Désactiver Ne pas déranger"
-      }
     },
-    "wifi": {
-      "label": {
-        "wifi": "Wi-Fi",
-        "ethernet": "Réseau"
-      },
-      "tooltip": {
-        "wifi": {
-          "connected": "Wi-Fi connecté",
-          "disconnected": "Wi-Fi déconnecté"
-        },
-        "ethernet": {
-          "connected": "Ethernet connecté"
-        }
-      }
-    },
-    "bluetooth": {
-      "label": "Bluetooth",
-      "tooltip": {
-        "enabled": "Bluetooth activé",
-        "disabled": "Bluetooth désactivé"
-      }
-    },
-    "screenRecorder": {
-      "label": "Écran",
-      "tooltip": {
-        "start": "Démarrer l'enregistrement d'écran",
-        "stop": "Arrêter l'enregistrement"
-      }
-    },
-    "powerProfile": {
-      "tooltip": {
-        "current": "Actuel : {profile}",
-        "unavailable": "Profils d'alimentation non disponibles"
-      }
-    }
-  },
-  "hooks": {
+    "hooks": {
       "title": "Hooks",
       "system-hooks": {
         "section": {
@@ -1463,7 +1422,6 @@
     "calculator-error": "Erreur"
   },
   "system": {
-    "uptime": "Temps d'activité : {uptime}",
     "welcome-back": "Bon retour,",
     "monitor-description": "{model} ({width}x{height})",
     "scaling-percentage": "{percentage}%",
@@ -1477,7 +1435,8 @@
     "user-requested": "Demandé par l'utilisateur",
     "unknown": "Inconnu",
     "unknown-version": "Inconnue",
-    "unknown-layout": "Inconnue"
+    "unknown-layout": "Inconnue",
+    "uptime": "Activité : {uptime}"
   },
   "lock-screen": {
     "password": "Entrez votre mot de passe...",

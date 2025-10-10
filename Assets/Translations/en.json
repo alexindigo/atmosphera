@@ -1381,7 +1381,7 @@
     "calculator-error": "Error"
   },
   "system": {
-    "uptime": "System uptime: {uptime}",
+    "uptime": "Uptime: {uptime}",
     "welcome-back": "Welcome back,",
     "monitor-description": "{model} ({width}x{height})",
     "scaling-percentage": "{percentage}%",

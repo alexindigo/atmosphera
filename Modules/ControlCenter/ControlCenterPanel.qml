@@ -10,11 +10,10 @@ import qs.Widgets
 NPanel {
   id: root
 
-  preferredWidth: 400
+  preferredWidth: 360
   preferredHeight: topHeight + midHeight + bottomHeight + Math.round(Style.marginL * 4)
   panelKeyboardFocus: true
 
-  
   readonly property int topHeight: {
     const columns = (Settings.data.controlCenter.quickSettingsStyle === "compact") ? 4 : 3
     const rowsCount = Math.ceil(Settings.data.controlCenter.widgets.quickSettings.length / columns)
@@ -32,7 +31,6 @@ NPanel {
   }
   readonly property int midHeight: 220
   readonly property int bottomHeight: 80
-
 
   // Positioning
   readonly property string controlCenterPosition: Settings.data.controlCenter.position

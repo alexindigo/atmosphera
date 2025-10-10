@@ -743,53 +743,56 @@
           "label": "Widgets",
           "description": "Konfigurieren und verwalten Sie Kontrollzentrum-Widgets und deren Anzeigeoptionen."
         }
-      }
-  },
-  "quickSettings": {
-    "notifications": {
-      "label": "Benachrichtigungen",
-      "tooltip": {
-        "enable": "Nicht stören aktivieren",
-        "disable": "Nicht stören deaktivieren"
+      },
+      "quickSettings": {
+        "sectionName": "Schnelleinstellungen"
       }
     },
-    "wifi": {
-      "label": {
-        "wifi": "Wi-Fi",
-        "ethernet": "Netzwerk"
+    "quickSettings": {
+      "notifications": {
+        "label": "Benachrichtigungen",
+        "tooltip": {
+          "enable": "Nicht stören aktivieren",
+          "disable": "Nicht stören deaktivieren"
+        }
       },
-      "tooltip": {
-        "wifi": {
-          "connected": "Wi-Fi verbunden",
-          "disconnected": "Wi-Fi getrennt"
+      "wifi": {
+        "label": {
+          "wifi": "Wi-Fi",
+          "ethernet": "Netzwerk"
         },
-        "ethernet": {
-          "connected": "Ethernet verbunden"
+        "tooltip": {
+          "wifi": {
+            "connected": "Wi-Fi verbunden",
+            "disconnected": "Wi-Fi getrennt"
+          },
+          "ethernet": {
+            "connected": "Ethernet verbunden"
+          }
+        }
+      },
+      "bluetooth": {
+        "label": "Bluetooth",
+        "tooltip": {
+          "enabled": "Bluetooth aktiviert",
+          "disabled": "Bluetooth deaktiviert"
+        }
+      },
+      "screenRecorder": {
+        "label": "Bildschirm",
+        "tooltip": {
+          "start": "Bildschirmaufnahme starten",
+          "stop": "Aufnahme beenden"
+        }
+      },
+      "powerProfile": {
+        "tooltip": {
+          "current": "Aktuell: {profile}",
+          "unavailable": "Energieprofile nicht verfügbar"
         }
       }
     },
-    "bluetooth": {
-      "label": "Bluetooth",
-      "tooltip": {
-        "enabled": "Bluetooth aktiviert",
-        "disabled": "Bluetooth deaktiviert"
-      }
-    },
-    "screenRecorder": {
-      "label": "Bildschirm",
-      "tooltip": {
-        "start": "Bildschirmaufnahme starten",
-        "stop": "Aufnahme beenden"
-      }
-    },
-    "powerProfile": {
-      "tooltip": {
-        "current": "Aktuell: {profile}",
-        "unavailable": "Energieprofile nicht verfügbar"
-      }
-    }
-  },
-  "hooks": {
+    "hooks": {
       "title": "Hooks",
       "system-hooks": {
         "section": {
@@ -1440,7 +1443,7 @@
     "calculator-error": "Fehler"
   },
   "system": {
-    "uptime": "System-Laufzeit: {uptime}",
+    "uptime": "Laufzeit: {uptime}",
     "welcome-back": "Willkommen zurück,",
     "monitor-description": "{model} ({width}x{height})",
     "scaling-percentage": "{percentage}%",
