@@ -376,7 +376,7 @@ NBox {
           stepSize: 0
           snapAlways: false
           enabled: MediaService.trackLength > 0 && MediaService.canSeek
-          heightRatio: 0.65
+          heightRatio: 0.6
 
           onMoved: {
             progressWrapper.localSeekRatio = value
