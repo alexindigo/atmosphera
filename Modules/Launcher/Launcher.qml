@@ -171,23 +171,23 @@ NPanel {
       property bool initialized: false
 
       onPositionChanged: mouse => {
-        // Store initial position
-        if (!initialized) {
-          lastX = mouse.x
-          lastY = mouse.y
-          initialized = true
-          return
-        }
+                           // Store initial position
+                           if (!initialized) {
+                             lastX = mouse.x
+                             lastY = mouse.y
+                             initialized = true
+                             return
+                           }
 
-        // Check if mouse actually moved
-        const deltaX = Math.abs(mouse.x - lastX)
-        const deltaY = Math.abs(mouse.y - lastY)
-        if (deltaX > 1 || deltaY > 1) {
-          root.ignoreMouseHover = false
-          lastX = mouse.x
-          lastY = mouse.y
-        }
-      }
+                           // Check if mouse actually moved
+                           const deltaX = Math.abs(mouse.x - lastX)
+                           const deltaY = Math.abs(mouse.y - lastY)
+                           if (deltaX > 1 || deltaY > 1) {
+                             root.ignoreMouseHover = false
+                             lastX = mouse.x
+                             lastY = mouse.y
+                           }
+                         }
 
       // Reset when launcher opens
       Connections {
