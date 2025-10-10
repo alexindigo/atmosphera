@@ -104,6 +104,7 @@ Singleton {
         }
       } else if (exitCode === 2) {
         ToastService.showWarning(I18n.tr("toast.battery-manager.title"), I18n.tr("toast.battery-manager.initial-setup"))
+        PanelService.getPanel("batteryPanel")?.toggle(this)
         BatteryService.runInstaller()
       } else {
         ToastService.showError(I18n.tr("toast.battery-manager.title"), I18n.tr("toast.battery-manager.set-failed"))
