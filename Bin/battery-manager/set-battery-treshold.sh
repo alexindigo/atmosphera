@@ -64,6 +64,10 @@ fi
 
 BATTERY_MANAGER_PATH="/usr/bin/battery-manager-$CURRENT_USER"
 
+SUCCESS=0
+MISSING_FILES=2
+UNSUPPORTED=3
+
 if [ ! -f "$BATTERY_MANAGER_PATH" ]; then
     print_error "Battery manager components missing for user $CURRENT_USER!"
     send_notification "critical" "Battery Manager Setup Required" \
@@ -71,16 +75,34 @@ if [ ! -f "$BATTERY_MANAGER_PATH" ]; then
 
     print_info "Running installer (authentication required)..."
 
-    if pkexec "$SCRIPT_DIR/install-battery-manager.sh"; then
-        print_info "Installation completed successfully!"
-        send_notification "normal" "Battery Manager Installed" \
-            "Battery manager has been set up successfully for $CURRENT_USER."
-    else
-        print_error "Installation failed or was cancelled"
-        send_notification "critical" "Installation Failed" \
-            "Battery manager installation failed or was cancelled."
-        exit 1
-    fi
+    pkexec "$SCRIPT_DIR/install-battery-manager.sh"
+    INSTALL_RESULT=$?
+
+    case $INSTALL_RESULT in
+        $SUCCESS)
+            print_info "Installation completed successfully!"
+            send_notification "normal" "Battery Manager Installed" \
+                "Battery manager has been set up successfully for $CURRENT_USER."
+            ;;
+        $MISSING_FILES)
+            print_error "Installation failed: Required files are missing"
+            send_notification "critical" "Installation Failed" \
+                "Battery manager installation failed: Missing required files"
+            exit $MISSING_FILES
+            ;;
+        $UNSUPPORTED)
+            print_error "Installation failed: System not supported"
+            send_notification "critical" "Installation Failed" \
+                "Battery manager installation failed: Your system is not supported"
+            exit $UNSUPPORTED
+            ;;
+        *)
+            print_error "Installation failed or was cancelled (error code: $INSTALL_RESULT)"
+            send_notification "critical" "Installation Failed" \
+                "Battery manager installation failed or was cancelled"
+            exit $INSTALL_RESULT
+            ;;
+    esac
 fi
 
 print_info "Setting battery charging threshold to $BATTERY_LEVEL% for user $CURRENT_USER..."
