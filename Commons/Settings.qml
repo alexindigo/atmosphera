@@ -140,7 +140,6 @@ Singleton {
       property real marginVertical: 0.25
       property real marginHorizontal: 0.25
 
-
       // Widget configuration for modular bar system
       property JsonObject widgets
       widgets: JsonObject {

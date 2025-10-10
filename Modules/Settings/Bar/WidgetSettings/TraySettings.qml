@@ -19,7 +19,9 @@ ColumnLayout {
   Component.onCompleted: {
     // Populate the ListModel from localBlacklist
     for (var i = 0; i < localBlacklist.length; i++) {
-      blacklistModel.append({"rule": localBlacklist[i]})
+      blacklistModel.append({
+                              "rule": localBlacklist[i]
+                            })
     }
   }
 
@@ -59,7 +61,9 @@ ColumnLayout {
               }
             }
             if (!exists) {
-              blacklistModel.append({"rule": newRule})
+              blacklistModel.append({
+                                      "rule": newRule
+                                    })
               newRuleInput.text = ""
             }
           }
@@ -77,47 +81,47 @@ ColumnLayout {
     clip: true
     model: blacklistModel
     delegate: Item {
-        width: ListView.width
-        height: 40 * scaling
+      width: ListView.width
+      height: 40 * scaling
 
-        Rectangle {
-            id: itemBackground
-            anchors.fill: parent
-            anchors.margins: Style.marginXS * scaling
-            color: Color.transparent // Make background transparent
-            border.color: Color.mOutline
-            border.width: Math.max(1, Style.borderS * scaling)
-            radius: Style.radiusS * scaling
-            visible: model.rule !== undefined && model.rule !== "" // Only visible if rule exists
+      Rectangle {
+        id: itemBackground
+        anchors.fill: parent
+        anchors.margins: Style.marginXS * scaling
+        color: Color.transparent // Make background transparent
+        border.color: Color.mOutline
+        border.width: Math.max(1, Style.borderS * scaling)
+        radius: Style.radiusS * scaling
+        visible: model.rule !== undefined && model.rule !== "" // Only visible if rule exists
+      }
+
+      Row {
+        anchors.fill: parent
+        anchors.leftMargin: Style.marginS * scaling
+        anchors.rightMargin: Style.marginS * scaling
+        spacing: Style.marginS * scaling
+
+        NText {
+          text: model.rule
+          elide: Text.ElideRight
+          verticalAlignment: Text.AlignVCenter
+          Layout.fillWidth: true
         }
 
-        Row {
-            anchors.fill: parent
-            anchors.leftMargin: Style.marginS * scaling
-            anchors.rightMargin: Style.marginS * scaling
-            spacing: Style.marginS * scaling
-
-            NText {
-                text: model.rule
-                elide: Text.ElideRight
-                verticalAlignment: Text.AlignVCenter
-                Layout.fillWidth: true
-            }
-
-            NIconButton {
-                width: 16 * scaling
-                height: 16 * scaling
-                icon: "close"
-                baseSize: 8 * scaling
-                colorBg: Color.mSurfaceVariant
-                colorFg: Color.mOnSurface
-                colorBgHover: Color.mError
-                colorFgHover: Color.mOnError
-                onClicked: {
-                    blacklistModel.remove(index)
-                }
-            }
+        NIconButton {
+          width: 16 * scaling
+          height: 16 * scaling
+          icon: "close"
+          baseSize: 8 * scaling
+          colorBg: Color.mSurfaceVariant
+          colorFg: Color.mOnSurface
+          colorBgHover: Color.mError
+          colorFgHover: Color.mOnError
+          onClicked: {
+            blacklistModel.remove(index)
+          }
         }
+      }
     }
   }
 

@@ -42,26 +42,27 @@ Rectangle {
 
   function wildCardMatch(str, rule) {
     if (!str || !rule) {
-      return false;
+      return false
     }
-    Logger.log("Tray", "wildCardMatch - Input str:", str, "rule:", rule);
+    Logger.log("Tray", "wildCardMatch - Input str:", str, "rule:", rule)
 
     // Escape all special regex characters in the rule
-    let escapedRule = rule.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    let escapedRule = rule.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
     // Convert '*' to '.*' for wildcard matching
-    let pattern = escapedRule.replace(/\\\*/g, '.*');
+    let pattern = escapedRule.replace(/\\\*/g, '.*')
     // Add ^ and $ to match the entire string
-    pattern = '^' + pattern + '$';
+    pattern = '^' + pattern + '$'
 
-    Logger.log("Tray", "wildCardMatch - Generated pattern:", pattern);
+    Logger.log("Tray", "wildCardMatch - Generated pattern:", pattern)
 
     try {
-      const regex = new RegExp(pattern, 'i'); // 'i' for case-insensitive
-      Logger.log("Tray", "wildCardMatch - Regex test result:", regex.test(str));
-      return regex.test(str);
+      const regex = new RegExp(pattern, 'i')
+      // 'i' for case-insensitive
+      Logger.log("Tray", "wildCardMatch - Regex test result:", regex.test(str))
+      return regex.test(str)
     } catch (e) {
-      Logger.warn("Tray", "Invalid regex pattern for wildcard match:", rule, e.message);
-      return false; // If regex is invalid, it won't match
+      Logger.warn("Tray", "Invalid regex pattern for wildcard match:", rule, e.message)
+      return false // If regex is invalid, it won't match
     }
   }
 
