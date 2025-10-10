@@ -121,6 +121,7 @@ Variants {
         visible: false
         cache: false
         asynchronous: true
+        sourceSize: undefined
 
         onStatusChanged: {
           if (status === Image.Error) {
@@ -137,6 +138,11 @@ Variants {
         }
 
         function calculateSourceSize() {
+          if (implicitWidth === modelData.width || implicitHeight === modelData.height) {
+            // Do not resize if one of the dimensions fits perfectly on the screen
+            return
+          }
+
           if (implicitWidth > 0 && implicitHeight > 0) {
             const imageAspectRatio = implicitWidth / implicitHeight
             if (modelData.width >= modelData.height) {
@@ -161,6 +167,7 @@ Variants {
         visible: false
         cache: false
         asynchronous: true
+        sourceSize: undefined
 
         onStatusChanged: {
           if (status === Image.Error) {
@@ -177,6 +184,11 @@ Variants {
         }
 
         function calculateSourceSize() {
+          if (implicitWidth === modelData.width || implicitHeight === modelData.height) {
+            // Do not resize if one of the dimensions fits perfectly on the screen
+            return
+          }
+
           if (implicitWidth > 0 && implicitHeight > 0) {
             const imageAspectRatio = implicitWidth / implicitHeight
             if (modelData.width >= modelData.height) {
