@@ -744,50 +744,6 @@
         "sectionName": "Paramètres rapides"
       }
     },
-    "quickSettings": {
-      "notifications": {
-        "label": "Notifications",
-        "tooltip": {
-          "enable": "Activer Ne pas déranger",
-          "disable": "Désactiver Ne pas déranger"
-        }
-      },
-      "wifi": {
-        "label": {
-          "wifi": "Wi-Fi",
-          "ethernet": "Réseau"
-        },
-        "tooltip": {
-          "wifi": {
-            "connected": "Wi-Fi connecté",
-            "disconnected": "Wi-Fi déconnecté"
-          },
-          "ethernet": {
-            "connected": "Ethernet connecté"
-          }
-        }
-      },
-      "bluetooth": {
-        "label": "Bluetooth",
-        "tooltip": {
-          "enabled": "Bluetooth activé",
-          "disabled": "Bluetooth désactivé"
-        }
-      },
-      "screenRecorder": {
-        "label": "Écran",
-        "tooltip": {
-          "start": "Démarrer l'enregistrement d'écran",
-          "stop": "Arrêter l'enregistrement"
-        }
-      },
-      "powerProfile": {
-        "tooltip": {
-          "current": "Actuel : {profile}",
-          "unavailable": "Profils d'alimentation non disponibles"
-        }
-      }
-    },
     "hooks": {
       "title": "Hooks",
       "system-hooks": {

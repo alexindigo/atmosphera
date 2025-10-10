@@ -710,50 +710,6 @@
         "sectionName": "Configurações rápidas"
       }
     },
-    "quickSettings": {
-      "notifications": {
-        "label": "Notificações",
-        "tooltip": {
-          "enable": "Ativar Não perturbe",
-          "disable": "Desativar Não perturbe"
-        }
-      },
-      "wifi": {
-        "label": {
-          "wifi": "Wi-Fi",
-          "ethernet": "Rede"
-        },
-        "tooltip": {
-          "wifi": {
-            "connected": "Wi-Fi conectado",
-            "disconnected": "Wi-Fi desconectado"
-          },
-          "ethernet": {
-            "connected": "Ethernet conectado"
-          }
-        }
-      },
-      "bluetooth": {
-        "label": "Bluetooth",
-        "tooltip": {
-          "enabled": "Bluetooth habilitado",
-          "disabled": "Bluetooth desabilitado"
-        }
-      },
-      "screenRecorder": {
-        "label": "Tela",
-        "tooltip": {
-          "start": "Iniciar gravação de tela",
-          "stop": "Parar gravação"
-        }
-      },
-      "powerProfile": {
-        "tooltip": {
-          "current": "Atual: {profile}",
-          "unavailable": "Perfis de energia não disponíveis"
-        }
-      }
-    },
     "hooks": {
       "title": "Hooks",
       "system-hooks": {

@@ -283,10 +283,6 @@
         "section": {
           "label": "Monitor-Anzeige",
           "description": "Statusleiste auf bestimmten Monitoren anzeigen. Standard ist alle, wenn keine ausgewählt sind."
-        },
-        "only-same-output": {
-          "label": "Nur Apps vom gleichen Bildschirm",
-          "description": "Zeige nur Apps vom dem Bildschirm an, wo sich das Dock befindet."
         }
       }
     },
@@ -746,50 +742,6 @@
       },
       "quickSettings": {
         "sectionName": "Schnelleinstellungen"
-      }
-    },
-    "quickSettings": {
-      "notifications": {
-        "label": "Benachrichtigungen",
-        "tooltip": {
-          "enable": "Nicht stören aktivieren",
-          "disable": "Nicht stören deaktivieren"
-        }
-      },
-      "wifi": {
-        "label": {
-          "wifi": "Wi-Fi",
-          "ethernet": "Netzwerk"
-        },
-        "tooltip": {
-          "wifi": {
-            "connected": "Wi-Fi verbunden",
-            "disconnected": "Wi-Fi getrennt"
-          },
-          "ethernet": {
-            "connected": "Ethernet verbunden"
-          }
-        }
-      },
-      "bluetooth": {
-        "label": "Bluetooth",
-        "tooltip": {
-          "enabled": "Bluetooth aktiviert",
-          "disabled": "Bluetooth deaktiviert"
-        }
-      },
-      "screenRecorder": {
-        "label": "Bildschirm",
-        "tooltip": {
-          "start": "Bildschirmaufnahme starten",
-          "stop": "Aufnahme beenden"
-        }
-      },
-      "powerProfile": {
-        "tooltip": {
-          "current": "Aktuell: {profile}",
-          "unavailable": "Energieprofile nicht verfügbar"
-        }
       }
     },
     "hooks": {

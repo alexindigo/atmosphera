@@ -744,50 +744,6 @@
         "sectionName": "Ajustes rápidos"
       }
     },
-    "quickSettings": {
-      "notifications": {
-        "label": "Notificaciones",
-        "tooltip": {
-          "enable": "Activar No molestar",
-          "disable": "Desactivar No molestar"
-        }
-      },
-      "wifi": {
-        "label": {
-          "wifi": "Wi-Fi",
-          "ethernet": "Red"
-        },
-        "tooltip": {
-          "wifi": {
-            "connected": "Wi-Fi conectado",
-            "disconnected": "Wi-Fi desconectado"
-          },
-          "ethernet": {
-            "connected": "Ethernet conectado"
-          }
-        }
-      },
-      "bluetooth": {
-        "label": "Bluetooth",
-        "tooltip": {
-          "enabled": "Bluetooth habilitado",
-          "disabled": "Bluetooth deshabilitado"
-        }
-      },
-      "screenRecorder": {
-        "label": "Pantalla",
-        "tooltip": {
-          "start": "Iniciar grabación de pantalla",
-          "stop": "Detener grabación"
-        }
-      },
-      "powerProfile": {
-        "tooltip": {
-          "current": "Actual: {profile}",
-          "unavailable": "Perfiles de energía no disponibles"
-        }
-      }
-    },
     "hooks": {
       "title": "Hooks",
       "system-hooks": {
