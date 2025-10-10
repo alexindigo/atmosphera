@@ -34,29 +34,51 @@ fi
 print_info "Installing for user: $ACTUAL_USER"
 echo
 
-print_info "Creating configuration directory..."
-mkdir -p /etc/battery-manager
-
 if [ -f "$SCRIPT_DIR/battery-paths.conf" ]; then
-    cp "$SCRIPT_DIR/battery-paths.conf" /etc/battery-manager/paths.conf
-    print_info "Paths configuration copied from $SCRIPT_DIR/battery-paths.conf"
+    print_info "Paths configuration loaded from $SCRIPT_DIR/battery-paths.conf"
 else
     print_error "battery-paths.conf not found in $SCRIPT_DIR"
     exit 1
 fi
 
-chmod 755 /etc/battery-manager
-chmod 644 /etc/battery-manager/paths.conf
-print_info "Configuration created at /etc/battery-manager/paths.conf"
+print_info "Checking battery paths..."
+BATTERY_PATHS=($(grep -v '^#' "$SCRIPT_DIR/battery-paths.conf" | grep -v '^$'))
+EXISTING_PATHS=()
+
+for path in "${BATTERY_PATHS[@]}"; do
+    if [ -f "$path" ]; then
+        EXISTING_PATHS+=("$path")
+    fi
+done
+
+if [ ${#EXISTING_PATHS[@]} -eq 0 ]; then
+    print_error "None of the battery control files exist. Please check your hardware compatibility."
+    exit 1
+fi
+
+print_info "Found ${#EXISTING_PATHS[@]} compatible battery control file(s)"
 
 print_info "Installing battery manager script..."
-
 BATTERY_MANAGER_PATH="/usr/bin/battery-manager-$ACTUAL_USER"
 
 if [ -f "$SCRIPT_DIR/battery-manager.sh" ]; then
-    cp "$SCRIPT_DIR/battery-manager.sh" "$BATTERY_MANAGER_PATH"
+    SHEBANG=$(head -n 1 "$SCRIPT_DIR/battery-manager.sh")
+
+    echo "$SHEBANG" > "$BATTERY_MANAGER_PATH"
+    echo "" >> "$BATTERY_MANAGER_PATH"
+
+    echo "BATTERY_PATHS=(" >> "$BATTERY_MANAGER_PATH"
+    for path in "${EXISTING_PATHS[@]}"; do
+        echo "    \"$path\"" >> "$BATTERY_MANAGER_PATH"
+    done
+    echo ")" >> "$BATTERY_MANAGER_PATH"
+
+    echo "" >> "$BATTERY_MANAGER_PATH"
+
+    tail -n +2 "$SCRIPT_DIR/battery-manager.sh" >> "$BATTERY_MANAGER_PATH"
+
     chmod +x "$BATTERY_MANAGER_PATH"
-    print_info "Battery manager script copied from $SCRIPT_DIR/battery-manager.sh"
+    print_info "Battery manager script created from $SCRIPT_DIR/battery-manager.sh with compatible paths"
 else
     print_error "battery-manager.sh not found in $SCRIPT_DIR"
     exit 1
@@ -74,8 +96,7 @@ print_info "Creating polkit policy..."
 POLICY_FILE="/usr/share/polkit-1/actions/com.local.battery-manager.$ACTUAL_USER.policy"
 
 if [ -f "$SCRIPT_DIR/battery-manager.policy" ]; then
-    sed -e "s|/home/damian/Projects/noctalia/battery-charging-treshold/Bin/install-battery-manager.sh|$SCRIPT_DIR/install-battery-manager.sh|g" \
-        -e "s/ACTUAL_USER_PLACEHOLDER/$ACTUAL_USER/g" \
+    sed -e "s/ACTUAL_USER_PLACEHOLDER/$ACTUAL_USER/g" \
         "$SCRIPT_DIR/battery-manager.policy" > "$POLICY_FILE"
     print_info "Polkit policy copied from $SCRIPT_DIR/battery-manager.policy"
 else
@@ -110,7 +131,6 @@ fi
 echo
 print_info "Installation complete!"
 echo
-print_info "Configuration file: /etc/battery-manager/paths.conf"
 print_info "Log file: /var/log/battery-manager.log"
 print_info "User-specific script: /usr/bin/battery-manager-$ACTUAL_USER"
 print_info "User-specific policy: /usr/share/polkit-1/actions/com.local.battery-manager.$ACTUAL_USER.policy"

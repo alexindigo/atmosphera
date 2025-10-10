@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-CONFIG_FILE="/etc/battery-manager/paths.conf"
 LOG_FILE="/var/log/battery-manager.log"
 
 log_message() {
@@ -21,16 +20,10 @@ if ! [[ "$BATTERY_LEVEL" =~ ^[0-9]+$ ]] || [ "$BATTERY_LEVEL" -gt 100 ] || [ "$B
     exit 1
 fi
 
-if [ ! -f "$CONFIG_FILE" ]; then
-    echo "Error: Config file not found: $CONFIG_FILE" >&2
-    log_message "ERROR: Config file not found"
-    exit 1
-fi
-
 SUCCESS_COUNT=0
 FAIL_COUNT=0
 
-while IFS= read -r path; do
+for path in "${BATTERY_PATHS[@]}"; do
     [[ -z "$path" || "$path" =~ ^# ]] && continue
 
     if [ -f "$path" ] && [ -w "$path" ]; then
@@ -47,7 +40,7 @@ while IFS= read -r path; do
         echo "Skipped (not found/writable): $path"
         log_message "INFO: Skipped $path (not found or not writable)"
     fi
-done < "$CONFIG_FILE"
+done
 
 log_message "SUMMARY: Updated $SUCCESS_COUNT file(s), failed $FAIL_COUNT, battery level: $BATTERY_LEVEL"
 
