@@ -137,16 +137,6 @@ ForegroundNormal={{colors.on_background.default.hex}}
 ForegroundPositive={{colors.tertiary_fixed.default.hex}}
 ForegroundVisited={{colors.on_secondary_container.default.hex}}
 
-[General]
-ColorScheme=Matugen
-Name=Matugen
-
-[Appearance]
-color_scheme=Matugen
-
-[KDE]
-contrast=4
-
 [WM]
 activeBackground={{colors.primary_container.default.hex}}
 activeBlend={{colors.on_primary_container.default.hex}}
