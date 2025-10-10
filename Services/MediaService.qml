@@ -126,7 +126,7 @@ Singleton {
   function findActivePlayer() {
     let availablePlayers = getAvailablePlayers()
     if (availablePlayers.length === 0) {
-      Logger.log("Media", "No active player found")
+      //Logger.log("Media", "No active player found")
       return null
     }
 
