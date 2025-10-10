@@ -286,6 +286,13 @@
           "label": "Monitors display",
           "description": "Show bar on specific monitors. Defaults to all if none are chosen."
         }
+      },
+      "tray": {
+        "blacklist": {
+          "label": "Blacklist",
+          "description": "Add tray exclusion rules, supports wildcards (*).",
+          "placeholder": "e.g., nm-applet, Fcitx*"
+        }
       }
     },
     "dock": {

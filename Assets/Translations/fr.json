@@ -281,8 +281,15 @@
       },
       "monitors": {
         "section": {
-          "label": "Affichage sur les moniteur",
+          "label": "Affichage sur les moniteurs",
           "description": "Afficher la barre sur des moniteurs spécifiques. Par défaut, sur tous si aucun n'est choisi."
+        }
+      },
+      "tray": {
+        "blacklist": {
+          "label": "Liste noire",
+          "description": "Ajouter des règles d'exclusion pour la boîte à miniatures, prend en charge les caractères génériques (*).",
+          "placeholder": "ex: nm-applet, Fcitx*"
         }
       }
     },

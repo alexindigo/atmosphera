@@ -284,6 +284,13 @@
           "label": "Visualización en monitores",
           "description": "Muestra la barra en monitores específicos. Por defecto, se muestra en todos si no se elige ninguno."
         }
+      },
+      "tray": {
+        "blacklist": {
+          "label": "Lista negra",
+          "description": "Agregar reglas de exclusión de la bandeja, admite comodines (*).",
+          "placeholder": "ej., nm-applet, Fcitx*"
+        }
       }
     },
     "dock": {

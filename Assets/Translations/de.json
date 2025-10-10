@@ -284,6 +284,13 @@
           "label": "Monitor-Anzeige",
           "description": "Statusleiste auf bestimmten Monitoren anzeigen. Standard ist alle, wenn keine ausgewählt sind."
         }
+      },
+      "tray": {
+        "blacklist": {
+          "label": "Ausschlussliste",
+          "description": "Füge Ausschlussregeln für die Tray-Symbolleiste hinzu, unterstützt Platzhalter (*).",
+          "placeholder": "z.B., nm-applet, Fcitx*"
+        }
       }
     },
     "dock": {

@@ -284,6 +284,13 @@
           "label": "显示器显示",
           "description": "在特定显示器上显示状态栏。如果未选择，则默认为全部。"
         }
+      },
+      "tray": {
+        "blacklist": {
+          "label": "黑名单",
+          "description": "添加托盘排除规则，支持通配符 (*)。",
+          "placeholder": "例如：nm-applet, Fcitx*"
+        }
       }
     },
     "dock": {
