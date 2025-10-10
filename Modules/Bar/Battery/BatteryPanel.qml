@@ -83,7 +83,7 @@ NPanel {
           ButtonGroup.group: batteryGroup
           required property var modelData
           text: I18n.tr(modelData.label, {
-                          "percentage": BatteryService.getThresholdValue(modelData.id)
+                          "percent": BatteryService.getThresholdValue(modelData.id)
                         })
           checked: BatteryService.chargingMode === modelData.id
           onClicked: {

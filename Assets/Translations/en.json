@@ -1458,9 +1458,9 @@
     "discharging": "Discharging.",
     "panel": {
       "title": "Charge threshold",
-      "full": "Full capacity ({percentage}%)",
-      "balanced": "Balanced ({percentage}%)",
-      "lifespan": "Extended lifespan ({percentage}%)"
+      "full": "Full capacity ({percent}%)",
+      "balanced": "Balanced ({percent}%)",
+      "lifespan": "Extended lifespan ({percent}%)"
     }
   }
 }
