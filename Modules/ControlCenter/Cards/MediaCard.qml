@@ -84,7 +84,7 @@ NBox {
           anchors.fill: parent
           values: CavaService.values
           fillColor: Color.mPrimary
-          opacity: MediaService.trackArtUrl !== "" ? 0.4 : 0.8
+          opacity: MediaService.trackArtUrl !== "" ? 0.5 : 0.8
         }
       }
 
@@ -94,7 +94,7 @@ NBox {
           anchors.fill: parent
           values: CavaService.values
           fillColor: Color.mPrimary
-          opacity: MediaService.trackArtUrl !== "" ? 0.4 : 0.8
+          opacity: MediaService.trackArtUrl !== "" ? 0.5 : 0.8
         }
       }
 
@@ -104,7 +104,7 @@ NBox {
           anchors.fill: parent
           values: CavaService.values
           fillColor: Color.mPrimary
-          opacity: MediaService.trackArtUrl !== "" ? 0.4 : 0.8
+          opacity: MediaService.trackArtUrl !== "" ? 0.5 : 0.8
         }
       }
     }
@@ -376,7 +376,7 @@ NBox {
           stepSize: 0
           snapAlways: false
           enabled: MediaService.trackLength > 0 && MediaService.canSeek
-          heightRatio: 0.65
+          heightRatio: 0.6
 
           onMoved: {
             progressWrapper.localSeekRatio = value

@@ -85,6 +85,7 @@
         "reset-scaling": "Redefinir escala"
       },
       "control-center": {
+        "title": "Centro de controle",
         "section": {
           "label": "Centro de controle",
           "description": "Configurar o posicionamento e comportamento do painel do centro de controle."
@@ -92,6 +93,22 @@
         "position": {
           "label": "Posição",
           "description": "Escolha onde o painel do centro de controle aparece quando aberto."
+        },
+        "quickSettingsStyle": {
+          "section": {
+            "label": "Estilo de configurações rápidas",
+            "description": "Personalize a aparência e o comportamento das configurações rápidas no centro de controle."
+          },
+          "style": {
+            "label": "Estilo de configurações rápidas",
+            "description": "Escolha o estilo visual para os interruptores e controles de configurações rápidas."
+          }
+        },
+        "widgets": {
+          "section": {
+            "label": "Widgets",
+            "description": "Configure e gerencie os widgets do centro de controle e suas opções de exibição."
+          }
         }
       }
     },
@@ -266,6 +283,13 @@
         "section": {
           "label": "Exibição nos monitores",
           "description": "Mostra a barra em monitores específicos. O padrão é todos, se nenhum for escolhido."
+        }
+      },
+      "tray": {
+        "blacklist": {
+          "label": "Lista Negra",
+          "description": "Adicione regras de exclusão para a bandeja do sistema, suporta curingas (*).",
+          "placeholder": "ex: nm-applet, Fcitx*"
         }
       }
     },
@@ -523,9 +547,9 @@
             "description": "Escrever {filepath} e recarregar",
             "description-missing": "Requer que o {app} esteja instalado"
           },
-          "vesktop": {
-            "description": "Escrever {filepath}",
-            "description-missing": "Requer que o {app} esteja instalado"
+          "discord": {
+            "description": "Escrever {filepath} para {client}",
+            "description-missing": "Nenhum cliente Discord detectado. Instale vesktop, webcord, armcord, equibop, lightcord ou dorion."
           },
           "pywalfox": {
             "description": "Escrever {filepath} e executar pywalfox update",
@@ -674,6 +698,28 @@
         }
       }
     },
+    "control-center": {
+      "title": "Centro de controle",
+      "quickSettingsStyle": {
+        "section": {
+          "label": "Estilo de configurações rápidas",
+          "description": "Personalize a aparência e o comportamento das configurações rápidas no centro de controle."
+        },
+        "style": {
+          "label": "Estilo de configurações rápidas",
+          "description": "Escolha o estilo visual para os interruptores e controles de configurações rápidas."
+        }
+      },
+      "widgets": {
+        "section": {
+          "label": "Widgets",
+          "description": "Configure e gerencie os widgets do centro de controle e suas opções de exibição."
+        }
+      },
+      "quickSettings": {
+        "sectionName": "Configurações rápidas"
+      }
+    },
     "hooks": {
       "title": "Hooks",
       "system-hooks": {
@@ -748,7 +794,11 @@
     },
     "file-picker": {
       "select-folder": "Selecionar Pasta",
-      "select-file": "Selecionar Arquivo"
+      "select-file": "Selecionar Arquivo",
+      "cancel": "Cancelar",
+      "search-placeholder": "Pesquisar arquivos e pastas...",
+      "select-current": "Selecionar Atual",
+      "title": "Seletor de Arquivos"
     },
     "datetime-tokens": {
       "common": {
@@ -1240,6 +1290,11 @@
         "bottom_right": "Inferior direito",
         "bottom_center": "Centro inferior",
         "top_center": "Centro superior"
+      },
+      "quickSettingsStyle": {
+        "modern": "Moderno",
+        "classic": "Clássico",
+        "compact": "Compacto"
       }
     },
     "bar": {
@@ -1337,7 +1392,7 @@
     "calculator-error": "Erro"
   },
   "system": {
-    "uptime": "Sistema ativo há: {uptime}",
+    "uptime": "Atividade: {uptime}",
     "welcome-back": "Bem-vindo(a) de volta, {user}!",
     "monitor-description": "{model} ({width}x{height})",
     "scaling-percentage": "{percentage}%",
@@ -1361,6 +1416,78 @@
     "shut-down": "Desligar",
     "restart": "Reiniciar",
     "suspend": "Suspender"
+  },
+  "quickSettings": {
+    "notifications": {
+      "label": {
+        "enabled": "Notificações",
+        "disabled": "Não perturbar"
+      },
+      "tooltip": {
+        "action": "Clique esquerdo: Abrir histórico de notificações\nClique direito: Alternar Não perturbar"
+      }
+    },
+    "screenRecorder": {
+      "label": {
+        "recording": "Parar",
+        "stopped": "Gravar"
+      },
+      "tooltip": {
+        "action": "Clique para iniciar/parar a gravação da tela"
+      }
+    },
+    "powerProfile": {
+      "label": {
+        "unavailable": "Perfil de energia"
+      },
+      "tooltip": {
+        "action": "Clique para alternar o perfil de energia"
+      }
+    },
+    "wifi": {
+      "label": {
+        "ethernet": "Ethernet",
+        "wifi": "Wi-Fi",
+        "disconnected": "Wi-Fi desconectado"
+      },
+      "tooltip": {
+        "action": "Clique para gerenciar conexões Wi-Fi"
+      }
+    },
+    "bluetooth": {
+      "label": {
+        "enabled": "Bluetooth",
+        "disabled": "Bluetooth"
+      },
+      "tooltip": {
+        "action": "Clique para gerenciar dispositivos Bluetooth"
+      }
+    },
+    "nightLight": {
+      "label": {
+        "enabled": "Luz noturna",
+        "forced": "Luz noturna",
+        "disabled": "Luz noturna"
+      },
+      "tooltip": {
+        "action": "Clique para alternar o modo Luz noturna\nClique direito: Abrir configurações"
+      }
+    },
+    "wallpaperSelector": {
+      "label": "Papel de parede",
+      "tooltip": {
+        "action": "Clique esquerdo: Abrir seletor de papel de parede\nClique direito: Definir papel de parede aleatório"
+      }
+    },
+    "keepAwake": {
+      "label": {
+        "enabled": "Manter acordado",
+        "disabled": "Manter acordado"
+      },
+      "tooltip": {
+        "action": "Clique para alternar o modo Manter acordado"
+      }
+    }
   },
   "toast": {
     "night-light": {

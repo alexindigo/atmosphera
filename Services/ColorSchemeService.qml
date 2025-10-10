@@ -161,7 +161,8 @@ Singleton {
 
   // Check if any Matugen templates are enabled
   function hasEnabledMatugenTemplates() {
-    return Settings.data.templates.gtk || Settings.data.templates.qt || Settings.data.templates.kitty || Settings.data.templates.ghostty || Settings.data.templates.foot || Settings.data.templates.fuzzel || Settings.data.templates.vesktop || Settings.data.templates.pywalfox
+    return Settings.data.templates.gtk || Settings.data.templates.qt || Settings.data.templates.kitty || Settings.data.templates.ghostty || Settings.data.templates.foot || Settings.data.templates.fuzzel || Settings.data.templates.discord || Settings.data.templates.discord_vesktop || Settings.data.templates.discord_webcord
+        || Settings.data.templates.discord_armcord || Settings.data.templates.discord_equibop || Settings.data.templates.discord_lightcord || Settings.data.templates.discord_dorion || Settings.data.templates.pywalfox
   }
 
   // Writer to colors.json using a JsonAdapter for safety

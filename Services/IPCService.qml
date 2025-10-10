@@ -112,10 +112,14 @@ Item {
     function muteOutput() {
       AudioService.setOutputMuted(!AudioService.muted)
     }
+    function increaseInput() {
+      AudioService.increaseInputVolume()
+    }
+    function decreaseInput() {
+      AudioService.decreaseInputVolume()
+    }
     function muteInput() {
-      if (AudioService.source?.ready && AudioService.source?.audio) {
-        AudioService.source.audio.muted = !AudioService.source.audio.muted
-      }
+      AudioService.setInputMuted(!AudioService.inputMuted)
     }
   }
 

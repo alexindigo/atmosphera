@@ -85,6 +85,7 @@
         }
       },
       "control-center": {
+        "title": "控制中心",
         "section": {
           "label": "控制中心",
           "description": "配置控制中心面板的定位和行为。"
@@ -92,6 +93,22 @@
         "position": {
           "label": "位置",
           "description": "选择控制中心面板打开时出现的位置。"
+        },
+        "quickSettingsStyle": {
+          "section": {
+            "label": "快速设置样式",
+            "description": "自定义控制中心中快速设置的外观和行为。"
+          },
+          "style": {
+            "label": "快速设置样式",
+            "description": "选择快速设置开关和控件的视觉样式。"
+          }
+        },
+        "widgets": {
+          "section": {
+            "label": "小部件",
+            "description": "配置和管理控制中心小部件及其显示选项。"
+          }
         }
       }
     },
@@ -266,6 +283,13 @@
         "section": {
           "label": "显示器显示",
           "description": "在特定显示器上显示状态栏。如果未选择，则默认为全部。"
+        }
+      },
+      "tray": {
+        "blacklist": {
+          "label": "黑名单",
+          "description": "添加托盘排除规则，支持通配符 (*)。",
+          "placeholder": "例如：nm-applet, Fcitx*"
         }
       }
     },
@@ -557,9 +581,9 @@
             "description": "写入 {filepath} 并重新加载",
             "description-missing": "需要安装 {app}"
           },
-          "vesktop": {
-            "description": "写入 {filepath}",
-            "description-missing": "需要安装 {app}"
+          "discord": {
+            "description": "为 {client} 写入 {filepath}",
+            "description-missing": "未检测到 Discord 客户端。请安装 vesktop、webcord、armcord、equibop、lightcord 或 dorion。"
           },
           "pywalfox": {
             "description": "写入 {filepath} 并运行 pywalfox update",
@@ -708,6 +732,28 @@
         }
       }
     },
+    "control-center": {
+      "title": "控制中心",
+      "quickSettingsStyle": {
+        "section": {
+          "label": "快速设置样式",
+          "description": "自定义控制中心中快速设置的外观和行为。"
+        },
+        "style": {
+          "label": "快速设置样式",
+          "description": "选择快速设置开关和控件的视觉样式。"
+        }
+      },
+      "widgets": {
+        "section": {
+          "label": "小部件",
+          "description": "配置和管理控制中心小部件及其显示选项。"
+        }
+      },
+      "quickSettings": {
+        "sectionName": "快速设置"
+      }
+    },
     "hooks": {
       "title": "钩子",
       "system-hooks": {
@@ -748,7 +794,11 @@
     },
     "file-picker": {
       "select-folder": "选择文件夹",
-      "select-file": "选择文件"
+      "select-file": "选择文件",
+      "cancel": "取消",
+      "search-placeholder": "搜索文件和文件夹...",
+      "select-current": "选择当前",
+      "title": "文件选择器"
     },
     "datetime-tokens": {
       "common": {
@@ -1241,6 +1291,11 @@
         "bottom_right": "右下角",
         "bottom_center": "底部居中",
         "top_center": "顶部居中"
+      },
+      "quickSettingsStyle": {
+        "modern": "现代",
+        "classic": "经典",
+        "compact": "紧凑"
       }
     },
     "osd": {
@@ -1361,6 +1416,78 @@
     "shut-down": "关机",
     "restart": "重启",
     "suspend": "挂起"
+  },
+  "quickSettings": {
+    "notifications": {
+      "label": {
+        "enabled": "通知",
+        "disabled": "勿扰模式"
+      },
+      "tooltip": {
+        "action": "左键：打开通知历史\n右键：切换勿扰模式"
+      }
+    },
+    "screenRecorder": {
+      "label": {
+        "recording": "停止",
+        "stopped": "录制"
+      },
+      "tooltip": {
+        "action": "点击开始/停止屏幕录制"
+      }
+    },
+    "powerProfile": {
+      "label": {
+        "unavailable": "电源模式"
+      },
+      "tooltip": {
+        "action": "点击切换电源模式"
+      }
+    },
+    "wifi": {
+      "label": {
+        "ethernet": "以太网",
+        "wifi": "Wi-Fi",
+        "disconnected": "Wi-Fi 已断开"
+      },
+      "tooltip": {
+        "action": "点击管理 Wi-Fi 连接"
+      }
+    },
+    "bluetooth": {
+      "label": {
+        "enabled": "蓝牙",
+        "disabled": "蓝牙"
+      },
+      "tooltip": {
+        "action": "点击管理蓝牙设备"
+      }
+    },
+    "nightLight": {
+      "label": {
+        "enabled": "夜间模式",
+        "forced": "夜间模式",
+        "disabled": "夜间模式"
+      },
+      "tooltip": {
+        "action": "点击切换夜间模式\n右键：打开设置"
+      }
+    },
+    "wallpaperSelector": {
+      "label": "壁纸",
+      "tooltip": {
+        "action": "左键：打开壁纸选择器\n右键：设置随机壁纸"
+      }
+    },
+    "keepAwake": {
+      "label": {
+        "enabled": "保持唤醒",
+        "disabled": "保持唤醒"
+      },
+      "tooltip": {
+        "action": "点击切换保持唤醒模式"
+      }
+    }
   },
   "toast": {
     "night-light": {

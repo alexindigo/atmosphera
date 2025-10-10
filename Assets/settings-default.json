@@ -9,6 +9,7 @@
     "floating": false,
     "marginVertical": 0.25,
     "marginHorizontal": 0.25,
+
     "widgets": {
       "left": [
         {
@@ -35,12 +36,6 @@
         },
         {
           "id": "NotificationHistory"
-        },
-        {
-          "id": "WiFi"
-        },
-        {
-          "id": "Bluetooth"
         },
         {
           "id": "Battery"
@@ -112,7 +107,30 @@
     "terminalCommand": "xterm -e"
   },
   "controlCenter": {
-    "position": "close_to_bar_button"
+    "position": "close_to_bar_button",
+    "quickSettingsStyle": "compact",
+    "widgets": {
+      "quickSettings": [
+        {
+          "id": "WiFi"
+        },
+        {
+          "id": "Bluetooth"
+        },
+        {
+          "id": "Notifications"
+        },
+        {
+          "id": "ScreenRecorder"
+        },
+        {
+          "id": "PowerProfile"
+        },
+        {
+          "id": "WallpaperSelector"
+        }
+      ]
+    }
   },
   "dock": {
     "displayMode": "always_visible",
@@ -176,7 +194,13 @@
     "ghostty": false,
     "foot": false,
     "fuzzel": false,
-    "vesktop": false,
+    "discord": false,
+    "discord_vesktop": false,
+    "discord_webcord": false,
+    "discord_armcord": false,
+    "discord_equibop": false,
+    "discord_lightcord": false,
+    "discord_dorion": false,
     "pywalfox": false,
     "enableUserTemplates": false
   },

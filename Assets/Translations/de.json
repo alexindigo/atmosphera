@@ -85,6 +85,7 @@
         "reset-scaling": "Skalierung zurücksetzen"
       },
       "control-center": {
+        "title": "Kontrollzentrum",
         "section": {
           "label": "Kontrollzentrum",
           "description": "Konfigurieren Sie die Positionierung und das Verhalten des Kontrollzentrum-Panels."
@@ -92,6 +93,22 @@
         "position": {
           "label": "Position",
           "description": "Wählen Sie, wo das Kontrollzentrum-Panel beim Öffnen erscheint."
+        },
+        "quickSettingsStyle": {
+          "section": {
+            "label": "Schnelleinstellungen-Stil",
+            "description": "Passen Sie das Aussehen und Verhalten der Schnelleinstellungen im Kontrollzentrum an."
+          },
+          "style": {
+            "label": "Schnelleinstellungen-Stil",
+            "description": "Wählen Sie den visuellen Stil für Schnelleinstellungs-Schalter und -Steuerungen."
+          }
+        },
+        "widgets": {
+          "section": {
+            "label": "Widgets",
+            "description": "Konfigurieren und verwalten Sie Kontrollzentrum-Widgets und deren Anzeigeoptionen."
+          }
         }
       }
     },
@@ -266,10 +283,13 @@
         "section": {
           "label": "Monitor-Anzeige",
           "description": "Statusleiste auf bestimmten Monitoren anzeigen. Standard ist alle, wenn keine ausgewählt sind."
-        },
-        "only-same-output": {
-          "label": "Nur Apps vom gleichen Bildschirm",
-          "description": "Zeige nur Apps vom dem Bildschirm an, wo sich das Dock befindet."
+        }
+      },
+      "tray": {
+        "blacklist": {
+          "label": "Ausschlussliste",
+          "description": "Füge Ausschlussregeln für die Tray-Symbolleiste hinzu, unterstützt Platzhalter (*).",
+          "placeholder": "z.B., nm-applet, Fcitx*"
         }
       }
     },
@@ -561,9 +581,9 @@
             "description": "Schreibt {filepath} und lädt neu",
             "description-missing": "Erfordert fuzzel Starter"
           },
-          "vesktop": {
-            "description": "Schreibt {filepath}",
-            "description-missing": "Erfordert vesktop Discord-Client"
+          "discord": {
+            "description": "Schreibt {filepath} für {client}",
+            "description-missing": "Kein Discord-Client erkannt. Installieren Sie vesktop, webcord, armcord, equibop, lightcord oder dorion."
           },
           "pywalfox": {
             "description": "Schreibt {filepath} und führt pywalfox update aus",
@@ -712,6 +732,28 @@
         }
       }
     },
+    "control-center": {
+      "title": "Kontrollzentrum",
+      "quickSettingsStyle": {
+        "section": {
+          "label": "Schnelleinstellungen-Stil",
+          "description": "Passen Sie das Aussehen und Verhalten der Schnelleinstellungen im Kontrollzentrum an."
+        },
+        "style": {
+          "label": "Schnelleinstellungen-Stil",
+          "description": "Wählen Sie den visuellen Stil für Schnelleinstellungs-Schalter und -Steuerungen."
+        }
+      },
+      "widgets": {
+        "section": {
+          "label": "Widgets",
+          "description": "Konfigurieren und verwalten Sie Kontrollzentrum-Widgets und deren Anzeigeoptionen."
+        }
+      },
+      "quickSettings": {
+        "sectionName": "Schnelleinstellungen"
+      }
+    },
     "hooks": {
       "title": "Hooks",
       "system-hooks": {
@@ -769,7 +811,11 @@
     },
     "file-picker": {
       "select-folder": "Ordner auswählen",
-      "select-file": "Datei auswählen"
+      "select-file": "Datei auswählen",
+      "cancel": "Abbrechen",
+      "search-placeholder": "Dateien und Ordner suchen...",
+      "select-current": "Aktuelle auswählen",
+      "title": "Dateiauswahl"
     },
     "datetime-tokens": {
       "common": {
@@ -1262,6 +1308,11 @@
         "bottom_right": "Unten rechts",
         "bottom_center": "Unten mittig",
         "top_center": "Oben mittig"
+      },
+      "quickSettingsStyle": {
+        "modern": "Modern",
+        "classic": "Klassisch",
+        "compact": "Kompakt"
       }
     },
     "osd": {
@@ -1358,7 +1409,7 @@
     "calculator-error": "Fehler"
   },
   "system": {
-    "uptime": "System-Laufzeit: {uptime}",
+    "uptime": "Laufzeit: {uptime}",
     "welcome-back": "Willkommen zurück,",
     "monitor-description": "{model} ({width}x{height})",
     "scaling-percentage": "{percentage}%",
@@ -1393,6 +1444,78 @@
     "shut-down": "Herunterfahren",
     "restart": "Neu starten",
     "suspend": "Ruhezustand"
+  },
+  "quickSettings": {
+    "notifications": {
+      "label": {
+        "enabled": "Benachrichtigungen",
+        "disabled": "Nicht stören"
+      },
+      "tooltip": {
+        "action": "Linksklick: Benachrichtigungsverlauf öffnen\nRechtsklick: Nicht stören umschalten"
+      }
+    },
+    "screenRecorder": {
+      "label": {
+        "recording": "Stopp",
+        "stopped": "Aufnehmen"
+      },
+      "tooltip": {
+        "action": "Klicken zum Starten/Stoppen der Bildschirmaufnahme"
+      }
+    },
+    "powerProfile": {
+      "label": {
+        "unavailable": "Energieprofil"
+      },
+      "tooltip": {
+        "action": "Klicken zum Wechseln des Energieprofils"
+      }
+    },
+    "wifi": {
+      "label": {
+        "ethernet": "Ethernet",
+        "wifi": "Wi-Fi",
+        "disconnected": "Wi-Fi getrennt"
+      },
+      "tooltip": {
+        "action": "Klicken zum Verwalten der Wi-Fi-Verbindungen"
+      }
+    },
+    "bluetooth": {
+      "label": {
+        "enabled": "Bluetooth",
+        "disabled": "Bluetooth"
+      },
+      "tooltip": {
+        "action": "Klicken zum Verwalten der Bluetooth-Geräte"
+      }
+    },
+    "nightLight": {
+      "label": {
+        "enabled": "Nachtlicht",
+        "forced": "Nachtlicht",
+        "disabled": "Nachtlicht"
+      },
+      "tooltip": {
+        "action": "Klicken zum Wechseln des Nachtlicht-Modus\nRechtsklick: Einstellungen öffnen"
+      }
+    },
+    "wallpaperSelector": {
+      "label": "Hintergrundbild",
+      "tooltip": {
+        "action": "Linksklick: Hintergrundbildauswahl öffnen\nRechtsklick: Zufälliges Hintergrundbild setzen"
+      }
+    },
+    "keepAwake": {
+      "label": {
+        "enabled": "Wach halten",
+        "disabled": "Wach halten"
+      },
+      "tooltip": {
+        "action": "Klicken zum Umschalten des Wach-halten-Modus"
+      }
+    }
   },
   "toast": {
     "night-light": {

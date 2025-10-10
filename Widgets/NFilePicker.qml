@@ -13,7 +13,7 @@ Popup {
   id: root
 
   // Properties
-  property string title: "File Picker"
+  property string title: I18n.tr("widget.file-picker.title")
   property string initialPath: Quickshell.env("HOME") || "/home"
   property string selectionMode: "files" // "files" or "folders"
   property var nameFilters: ["*"]
@@ -203,7 +203,7 @@ Popup {
 
         // "Select Current" button only visible in folder selection mode
         NButton {
-          text: "Select Current"
+          text: I18n.tr("widgets.file-picker.select-current")
           icon: "filepicker-folder-current"
           visible: root.selectionMode === "folders"
           onClicked: {
@@ -214,7 +214,7 @@ Popup {
 
         NIconButton {
           icon: "filepicker-refresh"
-          tooltipText: "Refresh"
+          tooltipText: I18n.tr("tooltips.refresh")
           onClicked: {
             // Force a proper refresh by resetting the folder
             const currentFolder = folderModel.folder
@@ -225,7 +225,7 @@ Popup {
         }
         NIconButton {
           icon: "filepicker-close"
-          tooltipText: "Close"
+          tooltipText: I18n.tr("tooltips.close")
           onClicked: {
             root.cancelled()
             root.close()
@@ -256,7 +256,7 @@ Popup {
 
           NIconButton {
             icon: "filepicker-arrow-up"
-            tooltipText: "Up"
+            tooltipText: I18n.tr("tooltips.up")
             baseSize: Style.baseWidgetSize * 0.8
             enabled: folderModel.folder.toString() !== "file:///"
             onClicked: {
@@ -268,7 +268,7 @@ Popup {
 
           NIconButton {
             icon: "filepicker-home"
-            tooltipText: "Home"
+            tooltipText: I18n.tr("tooltips.home")
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: {
               const homePath = Quickshell.env("HOME") || "/home"
@@ -361,7 +361,7 @@ Popup {
           }
           NTextInput {
             id: searchInput
-            placeholderText: "Search files and folders..."
+            placeholderText: I18n.tr("widget.file-picker.search-placeholder")
             Layout.fillWidth: true
             text: filePickerPanel.searchText
             onTextChanged: {
@@ -378,7 +378,7 @@ Popup {
           }
           NIconButton {
             icon: "filepicker-x"
-            tooltipText: "Clear"
+            tooltipText: I18n.tr("tooltips.clear")
             baseSize: Style.baseWidgetSize * 0.6
             visible: filePickerPanel.searchText.length > 0
             onClicked: {
@@ -814,7 +814,7 @@ Popup {
         }
 
         NButton {
-          text: "Cancel"
+          text: I18n.tr("widgets.file-picker.cancel")
           outlined: true
           onClicked: {
             root.cancelled()

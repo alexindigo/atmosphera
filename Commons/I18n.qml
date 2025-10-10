@@ -54,6 +54,9 @@ Singleton {
         var data = JSON.parse(text())
         root.translations = data
         Logger.log("I18n", `Loaded translations for "${root.langCode}"`)
+        if (debug) {
+          Logger.log("I18n", `Available root keys: ${Object.keys(data).join(", ")}`)
+        }
 
         root.isLoaded = true
         root.translationsLoaded()
@@ -279,9 +282,9 @@ Singleton {
       interpolations = {}
 
     if (!isLoaded) {
-      // if (debug) {
-      //   Logger.warn("I18n", "Translations not loaded yet")
-      // }
+      if (debug) {
+        Logger.warn("I18n", "Translations not loaded yet")
+      }
       return key
     }
 
@@ -291,12 +294,19 @@ Singleton {
     // Look-up translation in the active language
     var value = translations
     var notFound = false
+    if (debug) {
+      Logger.log("I18n", `Looking up key: "${key}"`)
+    }
     for (var i = 0; i < keys.length; i++) {
       if (value && typeof value === "object" && keys[i] in value) {
         value = value[keys[i]]
+        if (debug) {
+          Logger.log("I18n", `Found key part "${keys[i]}"`)
+        }
       } else {
         if (debug) {
-          Logger.warn("I18n", `Translation key "${key}" not found`)
+          Logger.warn("I18n", `Translation key "${key}" not found at part "${keys[i]}"`)
+          Logger.warn("I18n", `Available keys: ${Object.keys(value || {}).join(", ")}`)
         }
         notFound = true
         break

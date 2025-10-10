@@ -25,13 +25,19 @@ Variants {
     active: false
 
     // Current OSD display state
-    property string currentOSDType: "" // "volume", "brightness", or ""
+    property string currentOSDType: "" // "volume", "inputVolume", "brightness", or ""
 
     // Volume properties
     readonly property real currentVolume: AudioService.volume
     readonly property bool isMuted: AudioService.muted
     property bool volumeInitialized: false
     property bool muteInitialized: false
+
+    // Input volume properties
+    readonly property real currentInputVolume: AudioService.inputVolume
+    readonly property bool isInputMuted: AudioService.inputMuted
+    property bool inputVolumeInitialized: false
+    property bool inputMuteInitialized: false
 
     // Brightness properties
     property bool brightnessInitialized: false
@@ -49,6 +55,11 @@ Variants {
           return "volume-mute"
         }
         return (AudioService.volume <= Number.EPSILON) ? "volume-zero" : (AudioService.volume <= 0.5) ? "volume-low" : "volume-high"
+      } else if (currentOSDType === "inputVolume") {
+        if (AudioService.inputMuted) {
+          return "microphone-off"
+        }
+        return "microphone"
       } else if (currentOSDType === "brightness") {
         return currentBrightness <= 0.5 ? "brightness-low" : "brightness-high"
       }
@@ -59,6 +70,8 @@ Variants {
     function getCurrentValue() {
       if (currentOSDType === "volume") {
         return isMuted ? 0 : currentVolume
+      } else if (currentOSDType === "inputVolume") {
+        return isInputMuted ? 0 : currentInputVolume
       } else if (currentOSDType === "brightness") {
         return currentBrightness
       }
@@ -71,6 +84,11 @@ Variants {
         if (isMuted)
           return "0%"
         const pct = Math.round(Math.min(1.0, currentVolume) * 100)
+        return pct + "%"
+      } else if (currentOSDType === "inputVolume") {
+        if (isInputMuted)
+          return "0%"
+        const pct = Math.round(Math.min(1.0, currentInputVolume) * 100)
         return pct + "%"
       } else if (currentOSDType === "brightness") {
         const pct = Math.round(Math.min(1.0, currentBrightness) * 100)
@@ -85,13 +103,17 @@ Variants {
         if (isMuted)
           return Color.mError
         return Color.mPrimary
+      } else if (currentOSDType === "inputVolume") {
+        if (isInputMuted)
+          return Color.mError
+        return Color.mPrimary
       }
       return Color.mPrimary
     }
 
     // Get icon color
     function getIconColor() {
-      if (currentOSDType === "volume" && isMuted) {
+      if ((currentOSDType === "volume" && isMuted) || (currentOSDType === "inputVolume" && isInputMuted)) {
         return Color.mError
       }
       return Color.mOnSurface
@@ -467,6 +489,18 @@ Variants {
           showOSD("volume")
         }
       }
+
+      function onInputVolumeChanged() {
+        if (inputVolumeInitialized) {
+          showOSD("inputVolume")
+        }
+      }
+
+      function onInputMutedChanged() {
+        if (inputMuteInitialized) {
+          showOSD("inputVolume")
+        }
+      }
     }
 
     // Timer to initialize volume/mute flags after services are ready
@@ -477,6 +511,8 @@ Variants {
       onTriggered: {
         volumeInitialized = true
         muteInitialized = true
+        inputVolumeInitialized = true
+        inputMuteInitialized = true
       }
     }
 
