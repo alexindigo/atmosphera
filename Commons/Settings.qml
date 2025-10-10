@@ -255,6 +255,8 @@ Singleton {
             "id": "ScreenRecorder"
           }, {
             "id": "PowerProfile"
+          }, {
+            "id": "WallpaperSelector"
           }]
       }
     }

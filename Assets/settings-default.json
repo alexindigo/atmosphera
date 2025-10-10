@@ -124,6 +124,9 @@
         },
         {
           "id": "PowerProfile"
+        },
+        {
+          "id": "WallpaperSelector"
         }
       ]
     }
