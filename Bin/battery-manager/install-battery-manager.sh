@@ -22,10 +22,8 @@ echo
 
 if [ -n "$PKEXEC_UID" ]; then
     ACTUAL_USER=$(getent passwd "$PKEXEC_UID" | cut -d: -f1)
-    ACTUAL_HOME=$(getent passwd "$PKEXEC_UID" | cut -d: -f6)
 else
     ACTUAL_USER="$SUDO_USER"
-    ACTUAL_HOME="$HOME"
 fi
 
 if [ -z "$ACTUAL_USER" ]; then
