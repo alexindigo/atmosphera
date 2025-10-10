@@ -33,6 +33,7 @@ Singleton {
 
   // Signal emitted when settings are loaded after startupcale changes
   signal settingsLoaded
+  signal settingsSaved
 
   // -----------------------------------------------------
   // -----------------------------------------------------
@@ -71,11 +72,7 @@ Singleton {
     running: false
     interval: 1000
     onTriggered: {
-      settingsFileView.writeAdapter()
-      // Write to fallback location if set
-      if (Quickshell.env("NOCTALIA_SETTINGS_FALLBACK")) {
-        settingsFallbackFileView.writeAdapter()
-      }
+      root.saveImmediate()
     }
   }
 
@@ -142,6 +139,7 @@ Singleton {
       property bool floating: false
       property real marginVertical: 0.25
       property real marginHorizontal: 0.25
+
 
       // Widget configuration for modular bar system
       property JsonObject widgets
@@ -368,6 +366,17 @@ Singleton {
       property string wallpaperChange: ""
       property string darkModeChange: ""
     }
+  }
+
+  // -----------------------------------------------------
+  // Public function to trigger immediate settings saving
+  function saveImmediate() {
+    settingsFileView.writeAdapter()
+    // Write to fallback location if set
+    if (Quickshell.env("NOCTALIA_SETTINGS_FALLBACK")) {
+      settingsFallbackFileView.writeAdapter()
+    }
+    root.settingsSaved() // Emit signal after saving
   }
 
   // -----------------------------------------------------
