@@ -300,7 +300,7 @@ Rectangle {
     onReleased: mouse => {
                   root.scale = 1.0
                   root.pressed = false
-
+                  
                   // Only trigger actions if released while hovering
                   if (root.hovered) {
                     if (mouse.button === Qt.LeftButton) {

@@ -10,13 +10,13 @@ import qs.Widgets
 NPanel {
   id: root
 
-  preferredWidth: 440
-  preferredHeight: topHeight + bottomHeight + Math.round(Style.marginL * 3)
+  preferredWidth: 400
+  preferredHeight: topHeight + midHeight + bottomHeight + Math.round(Style.marginL * 4)
   panelKeyboardFocus: true
 
-  readonly property int bottomHeight: 196
+  
   readonly property int topHeight: {
-    const columns = (Settings.data.controlCenter.quickSettingsStyle === "compact") ? 5 : 3
+    const columns = (Settings.data.controlCenter.quickSettingsStyle === "compact") ? 4 : 3
     const rowsCount = Math.ceil(Settings.data.controlCenter.widgets.quickSettings.length / columns)
 
     var buttonHeight
@@ -30,6 +30,9 @@ NPanel {
 
     return (rowsCount * buttonHeight) + 120
   }
+  readonly property int midHeight: 220
+  readonly property int bottomHeight: 80
+
 
   // Positioning
   readonly property string controlCenterPosition: Settings.data.controlCenter.position
@@ -59,24 +62,16 @@ NPanel {
         Layout.preferredHeight: topHeight * scaling
       }
 
-      // Media + stats column
-      RowLayout {
-        id: bottomCard
+      // Media card
+      MediaCard {
+        Layout.fillWidth: true
+        Layout.preferredHeight: midHeight * scaling
+      }
+
+      // System monitors combined in one card
+      SystemMonitorCard {
         Layout.fillWidth: true
         Layout.preferredHeight: bottomHeight * scaling
-        spacing: content.cardSpacing
-
-        // Media card
-        MediaCard {
-          Layout.preferredWidth: Math.max(250 * scaling)
-          Layout.preferredHeight: bottomHeight * scaling
-        }
-
-        // System monitors combined in one card
-        SystemMonitorCard {
-          Layout.preferredWidth: Math.max(140 * scaling)
-          Layout.preferredHeight: bottomHeight * scaling
-        }
       }
     }
   }
