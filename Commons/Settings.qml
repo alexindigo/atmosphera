@@ -349,6 +349,11 @@ Singleton {
       property string wallpaperChange: ""
       property string darkModeChange: ""
     }
+
+    // battery
+    property JsonObject battery: JsonObject {
+      property int chargingMode: 0
+    }
   }
 
   // -----------------------------------------------------
