@@ -58,8 +58,6 @@ Rectangle {
 
           anchors.fill: parent
           asynchronous: true
-          smooth: false
-          mipmap: true
           backer.fillMode: Image.PreserveAspectFit
           source: {
             let icon = modelData?.icon || ""
