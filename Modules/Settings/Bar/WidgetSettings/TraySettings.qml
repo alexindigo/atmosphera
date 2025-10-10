@@ -25,37 +25,46 @@ ColumnLayout {
 
   spacing: Style.marginM * scaling
 
-  // Input for new blacklist items
-  RowLayout {
+  ColumnLayout {
     Layout.fillWidth: true
     spacing: Style.marginS * scaling
 
-  NTextInput {
-    id: newRuleInput
-    Layout.fillWidth: true
-    label: I18n.tr("settings.bar.tray.blacklist.label")
-    description: I18n.tr("settings.bar.tray.blacklist.description")
-    placeholderText: I18n.tr("settings.bar.tray.blacklist.placeholder")
+    NLabel {
+      label: I18n.tr("settings.bar.tray.blacklist.label")
+      description: I18n.tr("settings.bar.tray.blacklist.description")
     }
 
-    NIconButton {
-      icon: "add"
-      enabled: newRuleInput.text.length > 0
-      onClicked: {
-        if (newRuleInput.text.length > 0) {
-          var newRule = newRuleInput.text.trim()
-          var exists = false
-          for (var i = 0; i < blacklistModel.count; i++) {
-            if (blacklistModel.get(i).rule === newRule) {
-              exists = true
-              break
+    RowLayout {
+      Layout.fillWidth: true
+      spacing: Style.marginS * scaling
+
+      NTextInput {
+        id: newRuleInput
+        Layout.fillWidth: true
+        placeholderText: I18n.tr("settings.bar.tray.blacklist.placeholder")
+      }
+
+      NIconButton {
+        Layout.alignment: Qt.AlignVCenter
+        icon: "add"
+        baseSize: Style.baseWidgetSize * 0.8 * scaling
+        onClicked: {
+          if (newRuleInput.text.length > 0) {
+            var newRule = newRuleInput.text.trim()
+            var exists = false
+            for (var i = 0; i < blacklistModel.count; i++) {
+              if (blacklistModel.get(i).rule === newRule) {
+                exists = true
+                break
+              }
+            }
+            if (!exists) {
+              blacklistModel.append({"rule": newRule})
+              newRuleInput.text = ""
             }
           }
-          if (!exists) {
-            blacklistModel.append({"rule": newRule})
-            newRuleInput.text = ""
-          }
         }
+        enabled: newRuleInput.text.length > 0
       }
     }
   }
@@ -64,32 +73,46 @@ ColumnLayout {
   ListView {
     Layout.fillWidth: true
     Layout.preferredHeight: 150 * scaling
+    Layout.topMargin: Style.marginL * scaling // Increased top margin
     clip: true
     model: blacklistModel
-    delegate: Rectangle {
+    delegate: Item {
         width: ListView.width
         height: 40 * scaling
-        color: Color.transparent // Make background transparent
-        visible: model.rule !== undefined && model.rule !== "" // Only visible if rule exists
 
-        RowLayout {
+        Rectangle {
+            id: itemBackground
             anchors.fill: parent
-            anchors.leftMargin: Style.marginM * scaling
+            anchors.margins: Style.marginXS * scaling
+            color: Color.transparent // Make background transparent
+            border.color: Color.mOutline
+            border.width: Math.max(1, Style.borderS * scaling)
+            radius: Style.radiusS * scaling
+            visible: model.rule !== undefined && model.rule !== "" // Only visible if rule exists
+        }
+
+        Row {
+            anchors.fill: parent
+            anchors.leftMargin: Style.marginS * scaling
             anchors.rightMargin: Style.marginS * scaling
             spacing: Style.marginS * scaling
 
             NText {
-                Layout.fillWidth: true
                 text: model.rule
                 elide: Text.ElideRight
+                verticalAlignment: Text.AlignVCenter
+                Layout.fillWidth: true
             }
 
             NIconButton {
-                Layout.alignment: Qt.AlignRight
+                width: 16 * scaling
+                height: 16 * scaling
                 icon: "close"
-                baseSize: 24 * scaling
-                colorBg: Color.transparent
-                colorFg: Color.mError
+                baseSize: 8 * scaling
+                colorBg: Color.mSurfaceVariant
+                colorFg: Color.mOnSurface
+                colorBgHover: Color.mError
+                colorFgHover: Color.mOnError
                 onClicked: {
                     blacklistModel.remove(index)
                 }
