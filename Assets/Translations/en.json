@@ -1461,7 +1461,7 @@
       "full": "Full capacity",
       "balanced": "Balanced",
       "conservative": "Conservative",
-      "footer": "Charging treshold set to {limit}%"
+      "footer": "Charging threshold set to {limit}%"
     }
   }
 }
