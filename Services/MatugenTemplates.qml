@@ -91,7 +91,14 @@ Singleton {
           "output": "~/.config/qt6ct/colors/noctalia.conf"
         }],
       "input": "qtct.conf"
-    }, {
+    },{
+        "name": "kcolorscheme",
+        "templates":[{
+            "version": "kcolorscheme",
+            "output": "~/.local/share/color-schemes/noctalia.colors"
+         }],
+         "input":"kcolorscheme.colors"
+    },{
       "name": "fuzzel",
       "templates": [{
           "version": "fuzzel",

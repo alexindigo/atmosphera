@@ -519,6 +519,9 @@
           },
           "qt": {
             "description": "Escrever {filepath}"
+          },
+          "kcolorscheme": {
+            "description": "Escrever {filepath}"
           }
         },
         "terminal": {

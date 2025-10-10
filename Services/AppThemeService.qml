@@ -41,6 +41,12 @@ Singleton {
                                                             "path": "~/.config/qt6ct/colors/noctalia.conf"
                                                           }]
                                                       },
+                                                      "kcolorscheme": {
+                                                        "input": "kcolorscheme.colors",
+                                                        "outputs": [{
+                                                            "path": "~/.local/share/color-schemes/noctalia.colors" 
+                                                        }],
+                                                      },
                                                       "fuzzel": {
                                                         "input": "fuzzel.conf",
                                                         "outputs": [{

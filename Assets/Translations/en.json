@@ -2,7 +2,6 @@
   "settings": {
     "general": {
       "title": "General",
-
       "profile": {
         "section": {
           "label": "Profile",
@@ -14,7 +13,6 @@
         },
         "select-avatar": "Select avatar image"
       },
-
       "ui": {
         "section": {
           "label": "User interface",
@@ -558,6 +556,9 @@
             "description": "Write {filepath}"
           },
           "qt": {
+            "description": "Write {filepath}"
+          },
+          "kcolorscheme": {
             "description": "Write {filepath}"
           }
         },
@@ -1247,7 +1248,6 @@
     "enter-width-pixels": "Enter width in pixels",
     "enter-command": "Enter command to execute (app or custom script)",
     "command-example": "echo \"Hello World\"",
-
     "search-wallpapers": "Type to filter wallpapers...",
     "search-launcher": "Search entries... or use > for commands",
     "search": "Search...",
@@ -1571,7 +1571,6 @@
     "thunderstorm": "Thunderstorm",
     "unknown": "Unknown"
   },
-
   "authentication": {
     "failed": "Authentication failed",
     "error": "Authentication error"
