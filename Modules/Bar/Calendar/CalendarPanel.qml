@@ -142,8 +142,8 @@ NPanel {
                 text: {
                   if (!weatherReady)
                     return I18n.tr("calendar.weather.loading")
-                    const chunks = Settings.data.location.name.split(",")
-                    return chunks[0]
+                  const chunks = Settings.data.location.name.split(",")
+                  return chunks[0]
                 }
                 pointSize: Style.fontSizeM * scaling
                 font.weight: Style.fontWeightMedium
@@ -464,9 +464,9 @@ NPanel {
               color: {
                 if (model.today)
                   return Color.mOnSecondary
-                  if (model.month === grid.month)
-                    return Color.mOnSurface
-                    return Color.mOnSurfaceVariant
+                if (model.month === grid.month)
+                  return Color.mOnSurface
+                return Color.mOnSurfaceVariant
               }
               opacity: model.month === grid.month ? 1.0 : 0.4
               pointSize: Style.fontSizeM * scaling
