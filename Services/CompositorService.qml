@@ -2,6 +2,7 @@ pragma Singleton
 
 import QtQuick
 import Quickshell
+import Quickshell.Io
 import qs.Commons
 import qs.Services
 
@@ -18,6 +19,10 @@ Singleton {
   property ListModel windows: ListModel {}
   property int focusedWindowIndex: -1
 
+  // Display scale data
+  property var displayScales: ({})
+  property bool displayScalesLoaded: false
+
   // Generic events
   signal workspaceChanged
   signal activeWindowChanged
@@ -26,7 +31,18 @@ Singleton {
   // Backend service loader
   property var backend: null
 
+  // Cache file path
+  property string displayCachePath: ""
+
   Component.onCompleted: {
+    // Setup cache path (needs Settings to be available)
+    Qt.callLater(() => {
+                   if (typeof Settings !== 'undefined' && Settings.cacheDir) {
+                     displayCachePath = Settings.cacheDir + "display.json"
+                     displayCacheFileView.path = displayCachePath
+                   }
+                 })
+
     detectCompositor()
   }
 
@@ -66,6 +82,31 @@ Singleton {
         setupBackendConnections()
         backend.initialize()
       }
+    }
+  }
+
+  // Cache FileView for display scales
+  FileView {
+    id: displayCacheFileView
+    printErrors: false
+    watchChanges: false
+
+    adapter: JsonAdapter {
+      id: displayCacheAdapter
+      property var displays: ({})
+    }
+
+    onLoaded: {
+      // Load cached display scales
+      displayScales = displayCacheAdapter.displays || {}
+      displayScalesLoaded = true
+      // Logger.log("CompositorService", "Loaded display scales from cache:", JSON.stringify(displayScales))
+    }
+
+    onLoadFailed: {
+      // Cache doesn't exist yet, will be created on first update
+      displayScalesLoaded = true
+      // Logger.log("CompositorService", "No display cache found, will create on first update")
     }
   }
 
@@ -149,6 +190,50 @@ Singleton {
     }
     // Emit signal to notify listeners that workspace list has been updated
     windowListChanged()
+  }
+
+  // Update display scales from backend
+  function updateDisplayScales() {
+    if (!backend || !backend.queryDisplayScales) {
+      Logger.warn("CompositorService", "Backend does not support display scale queries")
+      return
+    }
+
+    backend.queryDisplayScales()
+  }
+
+  // Called by backend when display scales are ready
+  function onDisplayScalesUpdated(scales) {
+    displayScales = scales
+    saveDisplayScalesToCache()
+    displayScalesChanged()
+    Logger.log("CompositorService", "Display scales updated")
+  }
+
+  // Save display scales to cache
+  function saveDisplayScalesToCache() {
+    if (!displayCachePath) {
+      return
+    }
+
+    displayCacheAdapter.displays = displayScales
+    displayCacheFileView.writeAdapter()
+  }
+
+  // Public function to get scale for a specific display
+  function getDisplayScale(displayName) {
+    if (!displayName || !displayScales[displayName]) {
+      return 1.0
+    }
+    return displayScales[displayName].scale || 1.0
+  }
+
+  // Public function to get all display info for a specific display
+  function getDisplayInfo(displayName) {
+    if (!displayName || !displayScales[displayName]) {
+      return null
+    }
+    return displayScales[displayName]
   }
 
   // Get focused window

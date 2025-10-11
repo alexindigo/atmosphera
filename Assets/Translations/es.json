@@ -426,6 +426,10 @@
         "label": "Activar visualización en pantalla",
         "description": "Mostrar cambios de volumen y brillo en tiempo real."
       },
+      "always-on-top": {
+        "label": "Siempre encima",
+        "description": "Mostrar OSD por encima de ventanas de pantalla completa y otras capas."
+      },
       "location": {
         "label": "Ubicación",
         "description": "Dónde aparece la visualización en pantalla."
@@ -1394,7 +1398,7 @@
   "system": {
     "uptime": "Actividad: {uptime}",
     "welcome-back": "¡Bienvenido de nuevo,",
-    "monitor-description": "{model} ({width}x{height})",
+    "monitor-description": "{model} ({width}x{height} @ {scale}x)",
     "scaling-percentage": "{percentage}%",
     "location-display": "{name} ({coordinates})",
     "signal-strength": "{signal}%",

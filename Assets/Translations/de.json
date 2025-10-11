@@ -426,6 +426,10 @@
         "label": "Bildschirmanzeige aktivieren",
         "description": "Lautstärke- und Helligkeitsänderungen in Echtzeit anzeigen."
       },
+      "always-on-top": {
+        "label": "Immer im Vordergrund",
+        "description": "Bildschirmanzeige über Vollbildfenstern und anderen Ebenen anzeigen."
+      },
       "location": {
         "label": "Position",
         "description": "Wo Bildschirmanzeigen erscheinen."
@@ -1411,7 +1415,7 @@
   "system": {
     "uptime": "Laufzeit: {uptime}",
     "welcome-back": "Willkommen zurück,",
-    "monitor-description": "{model} ({width}x{height})",
+    "monitor-description": "{model} ({width}x{height} @ {scale}x)",
     "scaling-percentage": "{percentage}%",
     "location-display": "{name} ({coordinates})",
     "signal-strength": "{signal}%",

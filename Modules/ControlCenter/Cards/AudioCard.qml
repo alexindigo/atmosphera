@@ -9,6 +9,7 @@ import qs.Widgets
 NBox {
   id: root
 
+  property real scaling: 1.0
   property real localOutputVolume: AudioService.volume
   property real localInputVolume: AudioService.inputVolume
 
@@ -42,7 +43,7 @@ NBox {
   ColumnLayout {
     anchors.fill: parent
     anchors.margins: Style.marginM * scaling
-    spacing: Style.marginM * scaling
+    spacing: 0
 
     // Output Volume Section
     ColumnLayout {

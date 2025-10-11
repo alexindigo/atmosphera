@@ -61,7 +61,7 @@ Singleton {
                                                           }],
                                                         "postProcess": () => `${colorsApplyScript} pywalfox\n`
                                                       },
-                                                      "vesktop": {
+                                                      "discord_vesktop": {
                                                         "input": "vesktop.css",
                                                         "outputs": [{
                                                             "path": "~/.config/vesktop/themes/noctalia.theme.css"

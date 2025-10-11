@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell
 import Quickshell.I3
 import Quickshell.Wayland
+import Quickshell.Io
 import qs.Commons
 
 Item {
@@ -16,6 +17,7 @@ Item {
   signal workspaceChanged
   signal activeWindowChanged
   signal windowListChanged
+  signal displayScalesChanged
 
   // I3-specific properties
   property bool initialized: false
@@ -38,11 +40,72 @@ Item {
       Qt.callLater(() => {
                      safeUpdateWorkspaces()
                      safeUpdateWindows()
+                     queryDisplayScales()
                    })
       initialized = true
       Logger.log("SwayService", "Initialized successfully")
     } catch (e) {
       Logger.error("SwayService", "Failed to initialize:", e)
+    }
+  }
+
+  // Query display scales
+  function queryDisplayScales() {
+    swayOutputsProcess.running = true
+  }
+
+  // Sway outputs process for display scale detection
+  Process {
+    id: swayOutputsProcess
+    running: false
+    command: ["swaymsg", "-t", "get_outputs", "-r"]
+
+    property string accumulatedOutput: ""
+
+    stdout: SplitParser {
+      onRead: function (line) {
+        swayOutputsProcess.accumulatedOutput += line
+      }
+    }
+
+    onExited: function (exitCode) {
+      if (exitCode !== 0 || !accumulatedOutput) {
+        Logger.error("SwayService", "Failed to query outputs, exit code:", exitCode)
+        accumulatedOutput = ""
+        return
+      }
+
+      try {
+        const outputsData = JSON.parse(accumulatedOutput)
+        const scales = {}
+
+        for (const output of outputsData) {
+          if (output.name) {
+            scales[output.name] = {
+              "name": output.name,
+              "scale": output.scale || 1.0,
+              "width": output.current_mode ? output.current_mode.width : 0,
+              "height": output.current_mode ? output.current_mode.height : 0,
+              "refresh_rate": output.current_mode ? output.current_mode.refresh : 0,
+              "x": output.rect ? output.rect.x : 0,
+              "y": output.rect ? output.rect.y : 0,
+              "active": output.active || false,
+              "focused": output.focused || false,
+              "current_workspace": output.current_workspace || ""
+            }
+          }
+        }
+
+        // Notify CompositorService (it will emit displayScalesChanged)
+        if (CompositorService && CompositorService.onDisplayScalesUpdated) {
+          CompositorService.onDisplayScalesUpdated(scales)
+        }
+      } catch (e) {
+        Logger.error("SwayService", "Failed to parse outputs:", e)
+      } finally {
+        // Clear accumulated output for next query
+        accumulatedOutput = ""
+      }
     }
   }
 
@@ -197,6 +260,10 @@ Item {
       safeUpdateWorkspaces()
       workspaceChanged()
       updateTimer.restart()
+
+      if (event.type === "output") {
+        Qt.callLater(queryDisplayScales)
+      }
     }
   }
 

@@ -91,7 +91,7 @@ NPanel {
             }
           }
 
-          // Today day number
+          // Today day number - with simple, stable animation
           NText {
             opacity: content.isCurrentMonth ? 1.0 : 0.0
             Layout.preferredWidth: content.isCurrentMonth ? implicitWidth : 0
@@ -104,8 +104,17 @@ NPanel {
             font.weight: Style.fontWeightBold
             color: Color.mOnPrimary
 
-            Behavior on opacity { NumberAnimation { duration: Style.animationFast } }
-            Behavior on Layout.preferredWidth { NumberAnimation { duration: Style.animationFast; easing.type: Easing.InOutQuad } }
+            Behavior on opacity {
+              NumberAnimation {
+                duration: Style.animationFast
+              }
+            }
+            Behavior on Layout.preferredWidth {
+              NumberAnimation {
+                duration: Style.animationFast
+                easing.type: Easing.InOutQuad
+              }
+            }
           }
 
           // Month, year, location
@@ -163,7 +172,7 @@ NPanel {
             }
           }
 
-          // Spacer between date and clock
+          // Spacer to push content left
           Item {
             Layout.fillWidth: true
           }
@@ -227,6 +236,26 @@ NPanel {
               var t = Settings.data.location.use12hourFormat ? Qt.locale().toString(new Date(), "hh AP") : Qt.locale().toString(new Date(), "HH")
               return t.split(" ")[0]
             }
+          }
+          onPaint: {
+            var ctx = getContext("2d")
+            var centerX = width / 2
+            var centerY = height / 2
+            var radius = Math.min(width, height) / 2 - 3 * scaling
+            ctx.reset()
+            ctx.beginPath()
+            ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI)
+            ctx.lineWidth = 2.5 * scaling
+            ctx.strokeStyle = Qt.alpha(Color.mOnPrimary, 0.15)
+            ctx.stroke()
+            ctx.beginPath()
+            ctx.arc(centerX, centerY, radius, -Math.PI / 2, -Math.PI / 2 + progress * 2 * Math.PI)
+            ctx.lineWidth = 2.5 * scaling
+            ctx.strokeStyle = Color.mOnPrimary
+            ctx.lineCap = "round"
+            ctx.stroke()
+          }
+        }
 
             pointSize: Style.fontSizeXS * scaling
             font.weight: Style.fontWeightBold
@@ -247,13 +276,12 @@ NPanel {
       }
     }
 
-    // 6-day forecast (outside blue banner)
+    // ... (rest of the file is unchanged) ...
     RowLayout {
       visible: weatherReady
       Layout.fillWidth: true
       Layout.alignment: Qt.AlignHCenter
       spacing: Style.marginL * scaling
-
       Repeater {
         model: weatherReady ? Math.min(6, LocationService.data.weather.daily.time.length) : 0
         delegate: ColumnLayout {
@@ -261,7 +289,6 @@ NPanel {
           Layout.fillWidth: true
           Layout.alignment: Qt.AlignHCenter
           spacing: Style.marginS * scaling
-
           NText {
             text: {
               var weatherDate = new Date(LocationService.data.weather.daily.time[index].replace(/-/g, "/"))
@@ -272,14 +299,12 @@ NPanel {
             font.weight: Style.fontWeightMedium
             Layout.alignment: Qt.AlignHCenter
           }
-
           NIcon {
             Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
             icon: LocationService.weatherSymbolFromCode(LocationService.data.weather.daily.weathercode[index])
             pointSize: Style.fontSizeXXL * 1.5 * scaling
             color: Color.mPrimary
           }
-
           NText {
             Layout.alignment: Qt.AlignHCenter
             text: {
@@ -300,27 +325,19 @@ NPanel {
         }
       }
     }
-
-    // Loading indicator for weather
     RowLayout {
       visible: !weatherReady
       Layout.fillWidth: true
       Layout.alignment: Qt.AlignHCenter
       NBusyIndicator {}
     }
-
-    // Spacer
     Item {}
-
-    // Navigation and divider
     RowLayout {
       Layout.fillWidth: true
       spacing: Style.marginS * scaling
-
       NDivider {
         Layout.fillWidth: true
       }
-
       NIconButton {
         icon: "chevron-left"
         onClicked: {
@@ -330,7 +347,6 @@ NPanel {
           content.isCurrentMonth = content.checkIsCurrentMonth()
         }
       }
-
       NIconButton {
         icon: "calendar"
         onClicked: {
@@ -339,7 +355,6 @@ NPanel {
           content.isCurrentMonth = true
         }
       }
-
       NIconButton {
         icon: "chevron-right"
         onClicked: {
@@ -350,31 +365,24 @@ NPanel {
         }
       }
     }
-
-    // Names of days of the week
     RowLayout {
       Layout.fillWidth: true
       spacing: 0
-
       Item {
         visible: Settings.data.location.showWeekNumberInCalendar
         Layout.preferredWidth: visible ? Style.baseWidgetSize * 0.7 * scaling : 0
       }
-
       GridLayout {
         Layout.fillWidth: true
         columns: 7
         rows: 1
         columnSpacing: 0
         rowSpacing: 0
-
         Repeater {
           model: 7
-
           Item {
             Layout.fillWidth: true
             Layout.preferredHeight: Style.baseWidgetSize * 0.6 * scaling
-
             NText {
               anchors.centerIn: parent
               text: {
@@ -391,27 +399,20 @@ NPanel {
         }
       }
     }
-
-    // Grid with weeks and days
     RowLayout {
       Layout.fillWidth: true
       Layout.fillHeight: true
       spacing: 0
-
-      // Column of week numbers
       ColumnLayout {
         visible: Settings.data.location.showWeekNumberInCalendar
         Layout.preferredWidth: visible ? Style.baseWidgetSize * 0.7 * scaling : 0
         Layout.fillHeight: true
         spacing: 0
-
         Repeater {
           model: 6
-
           Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
-
             NText {
               anchors.centerIn: parent
               color: Color.mOutline
@@ -443,27 +444,21 @@ NPanel {
           }
         }
       }
-
-      // Days Grid
       MonthGrid {
         id: grid
-
         Layout.fillWidth: true
         Layout.fillHeight: true
         spacing: Style.marginXXS * scaling
         month: Time.date.getMonth()
         year: Time.date.getFullYear()
         locale: Qt.locale()
-
         delegate: Item {
           Rectangle {
             width: Style.baseWidgetSize * 0.9 * scaling
             height: Style.baseWidgetSize * 0.9 * scaling
             anchors.centerIn: parent
             radius: Style.radiusM * scaling
-
             color: model.today ? Color.mSecondary : Color.transparent
-
             NText {
               anchors.centerIn: parent
               text: model.day
@@ -478,7 +473,6 @@ NPanel {
               pointSize: Style.fontSizeM * scaling
               font.weight: model.today ? Style.fontWeightBold : Style.fontWeightMedium
             }
-
             Behavior on color {
               ColorAnimation {
                 duration: Style.animationFast
