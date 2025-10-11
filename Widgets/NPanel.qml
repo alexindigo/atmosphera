@@ -143,8 +143,9 @@ Loader {
       readonly property real verticalBarWidth: Math.round(Style.barHeight * scaling)
 
       Component.onCompleted: {
-        Logger.log("NPanel", "Opened", root.objectName)
+        Logger.log("NPanel", "Opened", root.objectName, "on", screen.name)
         dimmingOpacity = Style.opacityHeavy
+        root.scaling = scaling = ScalingService.getScreenScale(screen)
       }
 
       Connections {
