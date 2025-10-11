@@ -11,7 +11,7 @@ NPanel {
   id: root
 
   preferredWidth: 460
-  preferredHeight: 740
+  preferredHeight: 790
   panelKeyboardFocus: true
 
   // Positioning

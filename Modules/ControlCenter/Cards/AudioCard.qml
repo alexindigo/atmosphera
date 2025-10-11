@@ -42,7 +42,7 @@ NBox {
   ColumnLayout {
     anchors.fill: parent
     anchors.margins: Style.marginM * scaling
-    spacing: Style.marginM * scaling
+    spacing: 0
 
     // Output Volume Section
     ColumnLayout {
