@@ -236,26 +236,6 @@ NPanel {
               var t = Settings.data.location.use12hourFormat ? Qt.locale().toString(new Date(), "hh AP") : Qt.locale().toString(new Date(), "HH")
               return t.split(" ")[0]
             }
-          }
-          onPaint: {
-            var ctx = getContext("2d")
-            var centerX = width / 2
-            var centerY = height / 2
-            var radius = Math.min(width, height) / 2 - 3 * scaling
-            ctx.reset()
-            ctx.beginPath()
-            ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI)
-            ctx.lineWidth = 2.5 * scaling
-            ctx.strokeStyle = Qt.alpha(Color.mOnPrimary, 0.15)
-            ctx.stroke()
-            ctx.beginPath()
-            ctx.arc(centerX, centerY, radius, -Math.PI / 2, -Math.PI / 2 + progress * 2 * Math.PI)
-            ctx.lineWidth = 2.5 * scaling
-            ctx.strokeStyle = Color.mOnPrimary
-            ctx.lineCap = "round"
-            ctx.stroke()
-          }
-        }
 
             pointSize: Style.fontSizeXS * scaling
             font.weight: Style.fontWeightBold
