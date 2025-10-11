@@ -391,7 +391,7 @@ NPanel {
       Layout.fillWidth: true
       Layout.fillHeight: true
       spacing: 0
-      
+
       // Column of week numbers
       ColumnLayout {
         visible: Settings.data.location.showWeekNumberInCalendar
