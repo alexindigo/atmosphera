@@ -41,6 +41,7 @@ Variants {
 
     // Brightness properties
     property bool brightnessInitialized: false
+    property int brightnessChangeCount: 0
     readonly property real currentBrightness: {
       if (BrightnessService.monitors.length > 0) {
         return BrightnessService.monitors[0].brightness || 0
@@ -508,6 +509,8 @@ Variants {
         muteInitialized = true
         inputVolumeInitialized = true
         inputMuteInitialized = true
+        // Don't initialize brightness here - let it initialize on first change like volume
+        connectBrightnessMonitors()
       }
     }
 
@@ -528,6 +531,7 @@ Variants {
     }
 
     function connectBrightnessMonitors() {
+      brightnessChangeCount = 0 // Reset change count when reconnecting
       for (var i = 0; i < BrightnessService.monitors.length; i++) {
         let monitor = BrightnessService.monitors[i]
         // Disconnect first to avoid duplicate connections
@@ -537,7 +541,10 @@ Variants {
     }
 
     function onBrightnessChanged(newBrightness) {
-      if (!brightnessInitialized) {
+      brightnessChangeCount++
+
+      if (brightnessChangeCount <= BrightnessService.monitors.length) {
+        // This is likely the initial brightness value(s), don't show OSD
         brightnessInitialized = true
       } else {
         showOSD("brightness")
