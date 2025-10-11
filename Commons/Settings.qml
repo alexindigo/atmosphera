@@ -134,12 +134,14 @@ Singleton {
       property list<string> monitors: []
       property string density: "default" // "compact", "default", "comfortable"
       property bool showCapsule: true
-      property bool autoHide: false
 
       // Floating bar settings
       property bool floating: false
       property real marginVertical: 0.25
       property real marginHorizontal: 0.25
+
+      // auto hiding bar settings
+      property bool autoHide: false
 
       // Widget configuration for modular bar system
       property JsonObject widgets
