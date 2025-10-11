@@ -221,6 +221,7 @@ NPanel {
         ColumnLayout {
           anchors.centerIn: parent
           spacing: -Style.marginXXS * scaling
+
           NText {
             text: {
               var t = Settings.data.location.use12hourFormat ? Qt.locale().toString(new Date(), "hh AP") : Qt.locale().toString(new Date(), "HH")
