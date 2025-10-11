@@ -10,28 +10,9 @@ import qs.Widgets
 NPanel {
   id: root
 
-  preferredWidth: 400
-  preferredHeight: topHeight + midHeight + bottomHeight + audioHeight + Math.round(Style.marginL * 5)
+  preferredWidth: 460
+  preferredHeight: 734
   panelKeyboardFocus: true
-
-  readonly property int topHeight: {
-    const columns = (Settings.data.controlCenter.quickSettingsStyle === "compact") ? 4 : 3
-    const rowsCount = Math.ceil(Settings.data.controlCenter.widgets.quickSettings.length / columns)
-
-    var buttonHeight
-    if (Settings.data.controlCenter.quickSettingsStyle === "classic") {
-      buttonHeight = Style.baseWidgetSize
-    } else if (Settings.data.controlCenter.quickSettingsStyle === "compact") {
-      buttonHeight = Style.baseWidgetSize * 0.8 // Smaller for compact
-    } else {
-      buttonHeight = 56
-    }
-
-    return (rowsCount * buttonHeight) + 120
-  }
-  readonly property int midHeight: 220
-  readonly property int bottomHeight: 80
-  readonly property int audioHeight: 120
 
   // Positioning
   readonly property string controlCenterPosition: Settings.data.controlCenter.position
@@ -50,33 +31,60 @@ NPanel {
     // Layout content
     ColumnLayout {
       id: layout
-      anchors.fill: parent
-      anchors.margins: content.cardSpacing
+      x: content.cardSpacing
+      y: content.cardSpacing
+      width: parent.width - (2 * content.cardSpacing)
       spacing: content.cardSpacing
 
-      // Top Card: profile + utilities
-      TopCard {
-        id: topCard
+      // Cards (consistent inter-card spacing via ColumnLayout spacing)
+      ProfileCard {
         Layout.fillWidth: true
-        Layout.preferredHeight: topHeight * scaling
+        Layout.preferredHeight: Math.max(64 * scaling)
       }
 
-      // Audio controls card
-      AudioCard {
+      WeatherCard {
         Layout.fillWidth: true
-        Layout.preferredHeight: audioHeight * scaling
+        Layout.preferredHeight: Math.max(220 * scaling)
       }
 
-      // Media card
-      MediaCard {
+      // Middle section: media + stats column
+      RowLayout {
         Layout.fillWidth: true
-        Layout.preferredHeight: midHeight * scaling
+        Layout.preferredHeight: Math.max(310 * scaling)
+        spacing: content.cardSpacing
+
+        // Media card
+        MediaCard {
+          Layout.fillWidth: true
+          Layout.fillHeight: true
+        }
+
+        // System monitors combined in one card
+        SystemMonitorCard {
+          Layout.preferredWidth: Style.baseWidgetSize * 2.625 * scaling
+          Layout.fillHeight: true
+        }
       }
 
-      // System monitors combined in one card
-      SystemMonitorCard {
+      // Bottom actions (two grouped rows of round buttons)
+      RowLayout {
         Layout.fillWidth: true
-        Layout.preferredHeight: bottomHeight * scaling
+        Layout.preferredHeight: Math.max(60 * scaling)
+        spacing: content.cardSpacing
+
+        // Power Profiles switcher
+        PowerProfilesCard {
+          Layout.fillWidth: true
+          Layout.fillHeight: true
+          spacing: content.cardSpacing
+        }
+
+        // Utilities buttons
+        UtilitiesCard {
+          Layout.fillWidth: true
+          Layout.fillHeight: true
+          spacing: content.cardSpacing
+        }
       }
     }
   }

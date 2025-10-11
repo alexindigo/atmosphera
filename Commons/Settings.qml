@@ -160,6 +160,10 @@ Singleton {
           }, {
             "id": "NotificationHistory"
           }, {
+            "id": "WiFi"
+          }, {
+            "id": "Bluetooth"
+          }, {
             "id": "Battery"
           }, {
             "id": "Volume"
