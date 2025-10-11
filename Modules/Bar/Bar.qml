@@ -184,6 +184,24 @@ Variants {
           }
         }
 
+        // Mark bar hovered without stealing events from child widgets
+        HoverHandler {
+          id: barHoverHandler
+          onHoveredChanged: {
+            root.barHovered = hovered
+            if (!root.autoHide)
+              return
+            if (hovered) {
+              showTimer.stop()
+              hideTimer.stop()
+              root.barWindowVisible = true
+              root.hidden = false
+            } else if (!root.peekHovered) {
+              hideTimer.restart()
+            }
+          }
+        }
+
         // Background fill with shadow
         Rectangle {
           id: bar
@@ -198,28 +216,13 @@ Variants {
         MouseArea {
           anchors.fill: parent
           acceptedButtons: Qt.RightButton
-          hoverEnabled: true
+          hoverEnabled: false
           preventStealing: true
           onClicked: function (mouse) {
             if (mouse.button === Qt.RightButton) {
               // Important to pass the screen here so we get the right widget for the actual bar that was clicked.
               controlCenterPanel.toggle(BarService.lookupWidget("ControlCenter", screen.name))
               mouse.accepted = true
-            }
-          }
-          onEntered: {
-            root.barHovered = true
-            if (root.autoHide) {
-              showTimer.stop()
-              hideTimer.stop()
-              root.barWindowVisible = true
-              root.hidden = false
-            }
-          }
-          onExited: {
-            root.barHovered = false
-            if (root.autoHide && !root.peekHovered) {
-              hideTimer.restart()
             }
           }
         }
