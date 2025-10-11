@@ -119,9 +119,10 @@ NPanel {
 
           // Month, year, location
           ColumnLayout {
-            // Give the whole column a fixed width to stabilize the layout
             Layout.preferredWidth: 170 * scaling
             Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+            Layout.bottomMargin: Style.marginXXS * scaling
+            Layout.topMargin: -Style.marginXXS * scaling
             spacing: -Style.marginXS * scaling
 
             RowLayout {
@@ -129,7 +130,7 @@ NPanel {
 
               NText {
                 text: Qt.locale().monthName(grid.month, Locale.LongFormat).toUpperCase()
-                pointSize: Style.fontSizeXL * 1.2 * scaling
+                pointSize: Style.fontSizeXL * 1.1 * scaling
                 font.weight: Style.fontWeightBold
                 color: Color.mOnPrimary
                 Layout.alignment: Qt.AlignBaseline
@@ -138,7 +139,7 @@ NPanel {
 
               NText {
                 text: ` ${grid.year}`
-                pointSize: Style.fontSizeL * scaling
+                pointSize: Style.fontSizeM * scaling
                 font.weight: Style.fontWeightBold
                 color: Qt.alpha(Color.mOnPrimary, 0.7)
                 Layout.alignment: Qt.AlignBaseline
@@ -178,15 +179,17 @@ NPanel {
         }
       }
 
-      // The Clock, anchored separately for stability
+      // Digital clock with circular progress
       Item {
         id: clockItem
+        Layout.alignment: Qt.AlignVCenter
         anchors.right: parent.right
         anchors.rightMargin: Style.marginM * scaling
         anchors.verticalCenter: parent.verticalCenter
-        width: Style.fontSizeXXXL * 1.9 * scaling
-        height: Style.fontSizeXXXL * 1.9 * scaling
+        height: Math.round((Style.fontSizeXXXL * 1.9 * scaling) / 2) * 2
+        width: clockItem.height
 
+        // Seconds circular progress
         Canvas {
           id: secondsProgress
           anchors.fill: parent
@@ -205,11 +208,15 @@ NPanel {
             var centerY = height / 2
             var radius = Math.min(width, height) / 2 - 3 * scaling
             ctx.reset()
+
+            // Background circle
             ctx.beginPath()
             ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI)
             ctx.lineWidth = 2.5 * scaling
             ctx.strokeStyle = Qt.alpha(Color.mOnPrimary, 0.15)
             ctx.stroke()
+
+            // Progress arc
             ctx.beginPath()
             ctx.arc(centerX, centerY, radius, -Math.PI / 2, -Math.PI / 2 + progress * 2 * Math.PI)
             ctx.lineWidth = 2.5 * scaling
@@ -219,20 +226,24 @@ NPanel {
           }
         }
 
+        // Digital clock
         ColumnLayout {
           anchors.centerIn: parent
           spacing: -Style.marginXXS * scaling
+
           NText {
             text: {
               var t = Settings.data.location.use12hourFormat ? Qt.locale().toString(new Date(), "hh AP") : Qt.locale().toString(new Date(), "HH")
               return t.split(" ")[0]
             }
+
             pointSize: Style.fontSizeXS * scaling
             font.weight: Style.fontWeightBold
             color: Color.mOnPrimary
             family: Settings.data.ui.fontFixed
             Layout.alignment: Qt.AlignHCenter
           }
+
           NText {
             text: Qt.formatTime(Time.date, "mm")
             pointSize: Style.fontSizeXXS * scaling
