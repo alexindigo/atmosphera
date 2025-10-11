@@ -112,6 +112,8 @@ NPanel {
           ColumnLayout {
             Layout.preferredWidth: 170 * scaling
             Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+            Layout.bottomMargin: Style.marginXXS * scaling
+            Layout.topMargin: -Style.marginXXS * scaling
             spacing: -Style.marginXS * scaling
 
             RowLayout {
@@ -119,7 +121,7 @@ NPanel {
 
               NText {
                 text: Qt.locale().monthName(grid.month, Locale.LongFormat).toUpperCase()
-                pointSize: Style.fontSizeXL * 1.2 * scaling
+                pointSize: Style.fontSizeXL * 1.1 * scaling
                 font.weight: Style.fontWeightBold
                 color: Color.mOnPrimary
                 Layout.alignment: Qt.AlignBaseline
@@ -128,7 +130,7 @@ NPanel {
 
               NText {
                 text: ` ${grid.year}`
-                pointSize: Style.fontSizeL * scaling
+                pointSize: Style.fontSizeM * scaling
                 font.weight: Style.fontWeightBold
                 color: Qt.alpha(Color.mOnPrimary, 0.7)
                 Layout.alignment: Qt.AlignBaseline
@@ -171,11 +173,12 @@ NPanel {
       // Digital clock with circular progress
       Item {
         id: clockItem
+        Layout.alignment: Qt.AlignVCenter
         anchors.right: parent.right
         anchors.rightMargin: Style.marginM * scaling
         anchors.verticalCenter: parent.verticalCenter
-        width: Style.fontSizeXXXL * 1.9 * scaling
-        height: Style.fontSizeXXXL * 1.9 * scaling
+        height: Math.round((Style.fontSizeXXXL * 1.9 * scaling) / 2) * 2
+        width: clockItem.height
 
         // Seconds circular progress
         Canvas {
