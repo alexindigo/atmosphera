@@ -134,6 +134,7 @@ Singleton {
       property list<string> monitors: []
       property string density: "default" // "compact", "default", "comfortable"
       property bool showCapsule: true
+      property bool autoHide: false
 
       // Floating bar settings
       property bool floating: false
