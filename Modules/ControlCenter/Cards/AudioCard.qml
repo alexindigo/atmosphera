@@ -9,6 +9,7 @@ import qs.Widgets
 NBox {
   id: root
 
+  property real scaling: 1.0
   property real localOutputVolume: AudioService.volume
   property real localInputVolume: AudioService.inputVolume
 

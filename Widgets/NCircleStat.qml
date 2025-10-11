@@ -8,6 +8,7 @@ import qs.Widgets
 Rectangle {
   id: root
 
+  property real scaling: 1.0
   property real value: 0 // 0..100 (or any range visually mapped)
   property string icon: ""
   property string suffix: "%"

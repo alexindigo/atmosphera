@@ -63,6 +63,7 @@ NPanel {
         SystemMonitorCard {
           Layout.preferredWidth: Style.baseWidgetSize * 2.625 * scaling
           Layout.fillHeight: true
+          scaling: root.scaling
         }
       }
 
@@ -70,6 +71,7 @@ NPanel {
       AudioCard {
         Layout.fillWidth: true
         Layout.preferredHeight: Math.max(120 * scaling)
+        scaling: root.scaling
       }
 
       // Bottom actions (two grouped rows of round buttons)

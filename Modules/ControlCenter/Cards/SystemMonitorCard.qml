@@ -9,6 +9,8 @@ import qs.Widgets
 NBox {
   id: root
 
+  property real scaling: 1.0
+
   Item {
     id: content
     anchors.fill: parent
@@ -23,8 +25,8 @@ NBox {
         icon: "cpu-usage"
         flat: true
         contentScale: 0.8
-        width: 70 * scaling
         height: 65 * scaling
+        scaling: root.scaling
         Layout.alignment: Qt.AlignHCenter
       }
       NCircleStat {
@@ -33,8 +35,8 @@ NBox {
         icon: "cpu-temperature"
         flat: true
         contentScale: 0.8
-        width: 70 * scaling
         height: 65 * scaling
+        scaling: root.scaling
         Layout.alignment: Qt.AlignHCenter
       }
       NCircleStat {
@@ -42,8 +44,8 @@ NBox {
         icon: "memory"
         flat: true
         contentScale: 0.8
-        width: 70 * scaling
         height: 65 * scaling
+        scaling: root.scaling
         Layout.alignment: Qt.AlignHCenter
       }
       NCircleStat {
@@ -51,8 +53,8 @@ NBox {
         icon: "storage"
         flat: true
         contentScale: 0.8
-        width: 70 * scaling
         height: 65 * scaling
+        scaling: root.scaling
         Layout.alignment: Qt.AlignHCenter
       }
     }
