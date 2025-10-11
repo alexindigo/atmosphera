@@ -29,30 +29,24 @@ ColumnLayout {
     description: I18n.tr("settings.dock.appearance.section.description")
   }
 
-  ColumnLayout {
-    spacing: Style.marginXXS * scaling
+  NComboBox {
     Layout.fillWidth: true
-    NLabel {
-      label: I18n.tr("settings.dock.appearance.display.label")
-      description: I18n.tr("settings.dock.appearance.display.description")
-    }
-    NComboBox {
-      Layout.fillWidth: true
-      model: [{
-          "key": "always_visible",
-          "name": I18n.tr("settings.dock.appearance.display.always-visible")
-        }, {
-          "key": "auto_hide",
-          "name": I18n.tr("settings.dock.appearance.display.auto-hide")
-        }, {
-          "key": "exclusive",
-          "name": I18n.tr("settings.dock.appearance.display.exclusive")
-        }]
-      currentKey: Settings.data.dock.displayMode
-      onSelected: key => {
-                    Settings.data.dock.displayMode = key
-                  }
-    }
+    label: I18n.tr("settings.dock.appearance.display.label")
+    description: I18n.tr("settings.dock.appearance.display.description")
+    model: [{
+        "key": "always_visible",
+        "name": I18n.tr("settings.dock.appearance.display.always-visible")
+      }, {
+        "key": "auto_hide",
+        "name": I18n.tr("settings.dock.appearance.display.auto-hide")
+      }, {
+        "key": "exclusive",
+        "name": I18n.tr("settings.dock.appearance.display.exclusive")
+      }]
+    currentKey: Settings.data.dock.displayMode
+    onSelected: key => {
+                  Settings.data.dock.displayMode = key
+                }
   }
 
   ColumnLayout {
