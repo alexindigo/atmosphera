@@ -123,7 +123,7 @@ Variants {
     sourceComponent: PanelWindow {
       id: panel
       screen: modelData
-      
+
       // PanelWindow scaling
       property real scaling: ScalingService.getScreenScale(screen)
 
