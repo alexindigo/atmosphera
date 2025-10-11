@@ -40,14 +40,8 @@ Variants {
     property bool inputMuteInitialized: false
 
     // Brightness properties
-    property bool brightnessInitialized: false
-    property int brightnessChangeCount: 0
-    readonly property real currentBrightness: {
-      if (BrightnessService.monitors.length > 0) {
-        return BrightnessService.monitors[0].brightness || 0
-      }
-      return 0
-    }
+    property real lastUpdatedBrightness: 0
+    readonly property real currentBrightness: lastUpdatedBrightness
 
     // Get appropriate icon based on current OSD type
     function getIcon() {
@@ -144,7 +138,6 @@ Variants {
       })()
 
       Component.onCompleted: {
-        connectBrightnessMonitors()
       }
 
       Connections {
@@ -157,7 +150,6 @@ Variants {
       }
 
       Component.onDestruction: {
-        disconnectBrightnessMonitors()
       }
 
       // Anchor selection based on location (window edges)
@@ -545,7 +537,6 @@ Variants {
     }
 
     function connectBrightnessMonitors() {
-      brightnessChangeCount = 0 // Reset change count when reconnecting
       for (var i = 0; i < BrightnessService.monitors.length; i++) {
         let monitor = BrightnessService.monitors[i]
         // Disconnect first to avoid duplicate connections
@@ -555,14 +546,8 @@ Variants {
     }
 
     function onBrightnessChanged(newBrightness) {
-      brightnessChangeCount++
-
-      if (brightnessChangeCount <= BrightnessService.monitors.length) {
-        // This is likely the initial brightness value(s), don't show OSD
-        brightnessInitialized = true
-      } else {
-        showOSD("brightness")
-      }
+      root.lastUpdatedBrightness = newBrightness
+      showOSD("brightness")
     }
 
     function showOSD(type) {
