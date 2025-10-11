@@ -1394,7 +1394,7 @@
   "system": {
     "uptime": "系统运行时间：{uptime}",
     "welcome-back": "欢迎回来，",
-    "monitor-description": "{model} ({width}x{height})",
+    "monitor-description": "{model} ({width}x{height} @ {scale}x)",
     "scaling-percentage": "{percentage}%",
     "location-display": "{name} ({coordinates})",
     "signal-strength": "{signal}%",
