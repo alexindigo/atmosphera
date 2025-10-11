@@ -26,8 +26,9 @@ Variants {
     property bool peekHovered: false
     // Controls PanelWindow visibility while auto-hide is enabled
     property bool barWindowVisible: !autoHide
-    readonly property int hideDelay: 500
-    readonly property int showDelay: 120
+    // Respect global animation toggle: no delays when animations are disabled
+    readonly property int hideDelay: Settings.data.general.animationDisabled ? 0 : 500
+    readonly property int showDelay: Settings.data.general.animationDisabled ? 0 : 120
     readonly property int hideAnimationDuration: Style.animationNormal
     readonly property int showAnimationDuration: Style.animationNormal
 
