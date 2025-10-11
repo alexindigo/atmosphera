@@ -76,14 +76,14 @@ NPanel {
               text: {
                 if (!weatherReady)
                   return ""
-                  var temp = LocationService.data.weather.current_weather.temperature
-                  var suffix = "C"
-                  if (Settings.data.location.useFahrenheit) {
-                    temp = LocationService.celsiusToFahrenheit(temp)
-                    suffix = "F"
-                  }
-                  temp = Math.round(temp)
-                  return `${temp}°${suffix}`
+                var temp = LocationService.data.weather.current_weather.temperature
+                var suffix = "C"
+                if (Settings.data.location.useFahrenheit) {
+                  temp = LocationService.celsiusToFahrenheit(temp)
+                  suffix = "F"
+                }
+                temp = Math.round(temp)
+                return `${temp}°${suffix}`
               }
               pointSize: Style.fontSizeM * scaling
               font.weight: Style.fontWeightBold
