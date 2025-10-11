@@ -47,13 +47,7 @@ Item {
   implicitHeight: visible ? ((barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Math.round(Style.barHeight * scaling)) : 0
   implicitWidth: visible ? ((barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : (widgetWidth * scaling)) : 0
 
-  opacity: !autoHide || hasActiveWindow ? 1.0 : 0
-  Behavior on opacity {
-    NumberAnimation {
-      duration: Style.animationNormal
-      easing.type: Easing.OutCubic
-    }
-  }
+  visible: !autoHide || hasActiveWindow
 
   function calculatedVerticalHeight() {
     return Math.round(Style.baseWidgetSize * 0.8 * scaling)
