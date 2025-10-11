@@ -889,9 +889,9 @@
         "search-placeholder": "Search widget..."
       },
       "active-window": {
-        "auto-hide": {
-          "label": "Hide automatically",
-          "description": "Automatically hide the widget when no window is active."
+        "hide-mode": {
+          "label": "Hiding mode",
+          "description": "Controls how the widget behaves when no window is active."
         },
         "show-app-icon": {
           "label": "Show app icon",
@@ -1331,6 +1331,11 @@
       "always": "Scroll Always",
       "hover": "Scroll On Hover",
       "never": "Never Scroll"
+    },
+    "hide-modes": {
+      "visible": "Always Visible",
+      "hidden": "Hide When Empty",
+      "transparent": "Transparent When Empty"
     },
     "frame-rates": {
       "fps": "{fps} FPS"
