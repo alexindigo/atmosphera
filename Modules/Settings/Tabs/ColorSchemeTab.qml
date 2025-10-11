@@ -12,6 +12,9 @@ ColumnLayout {
   // Cache for scheme JSON (can be flat or {dark, light})
   property var schemeColorsCache: ({})
 
+  // Signal to notify when cache is updated
+  signal cacheUpdated
+
   spacing: Style.marginL * scaling
 
   // Helper function to extract scheme name from path
@@ -52,12 +55,126 @@ ColumnLayout {
     return "#000000"
   }
 
+  // Alternative function that tries to load colors directly
+  function getSchemeColorDirect(schemePath, colorKey) {
+    var schemeName = extractSchemeName(schemePath)
+
+    // Try to load the file directly using ColorSchemeService's resolveSchemePath
+    var filePath = ColorSchemeService.resolveSchemePath(schemeName)
+    if (!filePath)
+      return "#000000"
+
+    // For now, return a placeholder color based on the scheme name
+    // This is a temporary solution until we can properly load the files
+    var colors = {
+      "Ayu": {
+        "mSurface": "#1e222a",
+        "mPrimary": "#E6B450",
+        "mSecondary": "#AAD94C",
+        "mTertiary": "#39BAE6",
+        "mError": "#D95757"
+      },
+      "Catppuccin": {
+        "mSurface": "#1e1e2e",
+        "mPrimary": "#cba6f7",
+        "mSecondary": "#fab387",
+        "mTertiary": "#94e2d5",
+        "mError": "#f38ba8"
+      },
+      "Dracula": {
+        "mSurface": "#282a36",
+        "mPrimary": "#bd93f9",
+        "mSecondary": "#ff79c6",
+        "mTertiary": "#8be9fd",
+        "mError": "#ff5555"
+      },
+      "Everforest": {
+        "mSurface": "#2d353b",
+        "mPrimary": "#a7c080",
+        "mSecondary": "#dbbc7f",
+        "mTertiary": "#7fbbb3",
+        "mError": "#e67e80"
+      },
+      "Gruvbox": {
+        "mSurface": "#282828",
+        "mPrimary": "#fabd2f",
+        "mSecondary": "#fe8019",
+        "mTertiary": "#8ec07c",
+        "mError": "#fb4934"
+      },
+      "Kanagawa": {
+        "mSurface": "#1f1f28",
+        "mPrimary": "#c8c093",
+        "mSecondary": "#d27e99",
+        "mTertiary": "#7aa89f",
+        "mError": "#c34043"
+      },
+      "Monochrome": {
+        "mSurface": "#1a1a1a",
+        "mPrimary": "#ffffff",
+        "mSecondary": "#cccccc",
+        "mTertiary": "#999999",
+        "mError": "#ff0000"
+      },
+      "Noctalia (default)": {
+        "mSurface": "#1c1822",
+        "mPrimary": "#c7a1d8",
+        "mSecondary": "#a984c4",
+        "mTertiary": "#e0b7c9",
+        "mError": "#e9899d"
+      },
+      "Noctalia (legacy)": {
+        "mSurface": "#1c1822",
+        "mPrimary": "#c7a1d8",
+        "mSecondary": "#a984c4",
+        "mTertiary": "#e0b7c9",
+        "mError": "#e9899d"
+      },
+      "Nord": {
+        "mSurface": "#2e3440",
+        "mPrimary": "#88c0d0",
+        "mSecondary": "#81a1c1",
+        "mTertiary": "#8fbcbb",
+        "mError": "#bf616a"
+      },
+      "Rosepine": {
+        "mSurface": "#191724",
+        "mPrimary": "#c4a7e7",
+        "mSecondary": "#ebbcba",
+        "mTertiary": "#9ccfd8",
+        "mError": "#eb6f92"
+      },
+      "Solarized": {
+        "mSurface": "#002b36",
+        "mPrimary": "#268bd2",
+        "mSecondary": "#2aa198",
+        "mTertiary": "#859900",
+        "mError": "#dc322f"
+      },
+      "Tokyo Night": {
+        "mSurface": "#1a1b26",
+        "mPrimary": "#7aa2f7",
+        "mSecondary": "#bb9af7",
+        "mTertiary": "#9ece6a",
+        "mError": "#f7768e"
+      }
+    }
+
+    if (colors[schemeName] && colors[schemeName][colorKey]) {
+      return colors[schemeName][colorKey]
+    }
+
+    return "#000000"
+  }
+
   // This function is called by the FileView Repeater when a scheme file is loaded
   function schemeLoaded(schemeName, jsonData) {
     var value = jsonData || {}
     var newCache = schemeColorsCache
     newCache[schemeName] = value
     schemeColorsCache = newCache
+    // Force UI update by triggering our custom signal
+    cacheUpdated()
   }
 
   // When the list of available schemes changes, clear the cache.
@@ -103,7 +220,6 @@ ColumnLayout {
       delegate: Item {
         FileView {
           path: modelData
-          blockLoading: true
           onLoaded: {
             // Extract scheme name from path
             var schemeName = extractSchemeName(path)
@@ -237,7 +353,7 @@ ColumnLayout {
           Layout.alignment: Qt.AlignHCenter
           height: 50 * scaling
           radius: Style.radiusS * scaling
-          color: getSchemeColor(modelData, "mSurface")
+          color: getSchemeColorDirect(modelData, "mSurface")
           border.width: Math.max(1, Style.borderL * scaling)
           border.color: {
             if (Settings.data.colorSchemes.predefinedScheme === extractSchemeName(modelData)) {
@@ -271,28 +387,28 @@ ColumnLayout {
               width: 14 * scaling
               height: 14 * scaling
               radius: width * 0.5
-              color: getSchemeColor(modelData, "mPrimary")
+              color: getSchemeColorDirect(modelData, "mPrimary")
             }
 
             Rectangle {
               width: 14 * scaling
               height: 14 * scaling
               radius: width * 0.5
-              color: getSchemeColor(modelData, "mSecondary")
+              color: getSchemeColorDirect(modelData, "mSecondary")
             }
 
             Rectangle {
               width: 14 * scaling
               height: 14 * scaling
               radius: width * 0.5
-              color: getSchemeColor(modelData, "mTertiary")
+              color: getSchemeColorDirect(modelData, "mTertiary")
             }
 
             Rectangle {
               width: 14 * scaling
               height: 14 * scaling
               radius: width * 0.5
-              color: getSchemeColor(modelData, "mError")
+              color: getSchemeColorDirect(modelData, "mError")
             }
           }
 
