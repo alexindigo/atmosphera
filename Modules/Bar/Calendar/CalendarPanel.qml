@@ -87,15 +87,17 @@ NPanel {
 
           // Today day number
           NText {
-            visible: content.isCurrentMonth
+            opacity: content.isCurrentMonth ? 1.0 : 0.0
+            Layout.preferredWidth: content.isCurrentMonth ? implicitWidth : 0
             Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
             text: Time.date.getDate()
             pointSize: Style.fontSizeXXXL * 1.5 * scaling
             font.weight: Style.fontWeightBold
             color: Color.mOnPrimary
-          }
-          Item {
-            visible: !content.isCurrentMonth
+
+            Behavior on opacity {
+              NumberAnimation { duration: Style.animationFast }
+            }
           }
 
           // Month, year, location
