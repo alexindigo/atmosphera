@@ -163,7 +163,7 @@ NPanel {
             }
           }
 
-          // Spacer to push content left
+          // Spacer between date and clock
           Item {
             Layout.fillWidth: true
           }
@@ -226,12 +226,14 @@ NPanel {
               var t = Settings.data.location.use12hourFormat ? Qt.locale().toString(new Date(), "hh AP") : Qt.locale().toString(new Date(), "HH")
               return t.split(" ")[0]
             }
+
             pointSize: Style.fontSizeXS * scaling
             font.weight: Style.fontWeightBold
             color: Color.mOnPrimary
             family: Settings.data.ui.fontFixed
             Layout.alignment: Qt.AlignHCenter
           }
+
           NText {
             text: Qt.formatTime(Time.date, "mm")
             pointSize: Style.fontSizeXXS * scaling
