@@ -11,19 +11,16 @@ ColumnLayout {
 
   // Cache for scheme JSON (can be flat or {dark, light})
   property var schemeColorsCache: ({})
-
-  // Signal to notify when cache is updated
-  signal cacheUpdated
+  property int cacheVersion: 0 // Increment to trigger UI updates
 
   spacing: Style.marginL * scaling
 
   // Helper function to extract scheme name from path
   function extractSchemeName(schemePath) {
     var pathParts = schemePath.split("/")
-    var filename = pathParts[pathParts.length - 1] // Get filename
-    var schemeName = filename.replace(".json", "") // Remove .json extension
+    var filename = pathParts[pathParts.length - 1]
+    var schemeName = filename.replace(".json", "")
 
-    // Convert folder names back to display names
     if (schemeName === "Noctalia-default") {
       schemeName = "Noctalia (default)"
     } else if (schemeName === "Noctalia-legacy") {
@@ -36,153 +33,52 @@ ColumnLayout {
   }
 
   // Helper function to get color from scheme file (supports dark/light variants)
-  function getSchemeColor(schemePath, colorKey) {
-    // Extract scheme name from path
-    var schemeName = extractSchemeName(schemePath)
+  function getSchemeColor(schemeName, colorKey) {
+    // Access cache version to create dependency
+    var _ = cacheVersion
 
-    // Try to get from cached data first
     if (schemeColorsCache[schemeName]) {
       var entry = schemeColorsCache[schemeName]
       var variant = entry
+
+      // Check if scheme has dark/light variants
       if (entry.dark || entry.light) {
         variant = Settings.data.colorSchemes.darkMode ? (entry.dark || entry.light) : (entry.light || entry.dark)
       }
-      if (variant && variant[colorKey])
+
+      if (variant && variant[colorKey]) {
         return variant[colorKey]
-    }
-
-    // Return a default color if not cached yet
-    return "#000000"
-  }
-
-  // Alternative function that tries to load colors directly
-  function getSchemeColorDirect(schemePath, colorKey) {
-    var schemeName = extractSchemeName(schemePath)
-
-    // Try to load the file directly using ColorSchemeService's resolveSchemePath
-    var filePath = ColorSchemeService.resolveSchemePath(schemeName)
-    if (!filePath)
-      return "#000000"
-
-    // For now, return a placeholder color based on the scheme name
-    // This is a temporary solution until we can properly load the files
-    var colors = {
-      "Ayu": {
-        "mSurface": "#1e222a",
-        "mPrimary": "#E6B450",
-        "mSecondary": "#AAD94C",
-        "mTertiary": "#39BAE6",
-        "mError": "#D95757"
-      },
-      "Catppuccin": {
-        "mSurface": "#1e1e2e",
-        "mPrimary": "#cba6f7",
-        "mSecondary": "#fab387",
-        "mTertiary": "#94e2d5",
-        "mError": "#f38ba8"
-      },
-      "Dracula": {
-        "mSurface": "#282a36",
-        "mPrimary": "#bd93f9",
-        "mSecondary": "#ff79c6",
-        "mTertiary": "#8be9fd",
-        "mError": "#ff5555"
-      },
-      "Everforest": {
-        "mSurface": "#2d353b",
-        "mPrimary": "#a7c080",
-        "mSecondary": "#dbbc7f",
-        "mTertiary": "#7fbbb3",
-        "mError": "#e67e80"
-      },
-      "Gruvbox": {
-        "mSurface": "#282828",
-        "mPrimary": "#fabd2f",
-        "mSecondary": "#fe8019",
-        "mTertiary": "#8ec07c",
-        "mError": "#fb4934"
-      },
-      "Kanagawa": {
-        "mSurface": "#1f1f28",
-        "mPrimary": "#c8c093",
-        "mSecondary": "#d27e99",
-        "mTertiary": "#7aa89f",
-        "mError": "#c34043"
-      },
-      "Monochrome": {
-        "mSurface": "#1a1a1a",
-        "mPrimary": "#ffffff",
-        "mSecondary": "#cccccc",
-        "mTertiary": "#999999",
-        "mError": "#ff0000"
-      },
-      "Noctalia (default)": {
-        "mSurface": "#1c1822",
-        "mPrimary": "#c7a1d8",
-        "mSecondary": "#a984c4",
-        "mTertiary": "#e0b7c9",
-        "mError": "#e9899d"
-      },
-      "Noctalia (legacy)": {
-        "mSurface": "#1c1822",
-        "mPrimary": "#c7a1d8",
-        "mSecondary": "#a984c4",
-        "mTertiary": "#e0b7c9",
-        "mError": "#e9899d"
-      },
-      "Nord": {
-        "mSurface": "#2e3440",
-        "mPrimary": "#88c0d0",
-        "mSecondary": "#81a1c1",
-        "mTertiary": "#8fbcbb",
-        "mError": "#bf616a"
-      },
-      "Rosepine": {
-        "mSurface": "#191724",
-        "mPrimary": "#c4a7e7",
-        "mSecondary": "#ebbcba",
-        "mTertiary": "#9ccfd8",
-        "mError": "#eb6f92"
-      },
-      "Solarized": {
-        "mSurface": "#002b36",
-        "mPrimary": "#268bd2",
-        "mSecondary": "#2aa198",
-        "mTertiary": "#859900",
-        "mError": "#dc322f"
-      },
-      "Tokyo Night": {
-        "mSurface": "#1a1b26",
-        "mPrimary": "#7aa2f7",
-        "mSecondary": "#bb9af7",
-        "mTertiary": "#9ece6a",
-        "mError": "#f7768e"
       }
     }
 
-    if (colors[schemeName] && colors[schemeName][colorKey]) {
-      return colors[schemeName][colorKey]
-    }
-
-    return "#000000"
+    // Return visible defaults while loading
+    if (colorKey === "mSurface")
+      return Color.mSurfaceVariant
+    if (colorKey === "mPrimary")
+      return Color.mPrimary
+    if (colorKey === "mSecondary")
+      return Color.mSecondary
+    if (colorKey === "mTertiary")
+      return Color.mTertiary
+    if (colorKey === "mError")
+      return Color.mError
+    return Color.mOnSurfaceVariant
   }
 
   // This function is called by the FileView Repeater when a scheme file is loaded
   function schemeLoaded(schemeName, jsonData) {
     var value = jsonData || {}
-    var newCache = schemeColorsCache
-    newCache[schemeName] = value
-    schemeColorsCache = newCache
-    // Force UI update by triggering our custom signal
-    cacheUpdated()
+    schemeColorsCache[schemeName] = value
+    // Force UI update by incrementing cache version
+    cacheVersion++
   }
 
-  // When the list of available schemes changes, clear the cache.
-  // The Repeater below will automatically re-create the FileViews.
+  // When the list of available schemes changes, clear the cache
   Connections {
     target: ColorSchemeService
     function onSchemesChanged() {
       schemeColorsCache = {}
+      cacheVersion++
     }
   }
 
@@ -194,12 +90,10 @@ ColumnLayout {
 
     onExited: function (exitCode) {
       if (exitCode === 0) {
-        // Matugen exists, enable it
         Settings.data.colorSchemes.useWallpaperColors = true
         AppThemeService.generate()
         ToastService.showNotice(I18n.tr("settings.color-scheme.color-source.use-wallpaper-colors.label"), I18n.tr("toast.wallpaper-colors.enabled"))
       } else {
-        // Matugen not found
         ToastService.showWarning(I18n.tr("settings.color-scheme.color-source.use-wallpaper-colors.label"), I18n.tr("toast.wallpaper-colors.not-installed"))
       }
     }
@@ -208,7 +102,7 @@ ColumnLayout {
     stderr: StdioCollector {}
   }
 
-  // A non-visual Item to host the Repeater that loads the color scheme files.
+  // A non-visual Item to host the Repeater that loads the color scheme files
   Item {
     visible: false
     id: fileLoaders
@@ -216,20 +110,19 @@ ColumnLayout {
     Repeater {
       model: ColorSchemeService.schemes
 
-      // The delegate is a Component, which correctly wraps the non-visual FileView
       delegate: Item {
         FileView {
           path: modelData
+          blockLoading: false
           onLoaded: {
-            // Extract scheme name from path
-            var schemeName = extractSchemeName(path)
+            var schemeName = root.extractSchemeName(path)
 
             try {
               var jsonData = JSON.parse(text())
               root.schemeLoaded(schemeName, jsonData)
             } catch (e) {
               Logger.warn("ColorSchemeTab", "Failed to parse JSON for scheme:", schemeName, e)
-              root.schemeLoaded(schemeName, null) // Load defaults on parse error
+              root.schemeLoaded(schemeName, null)
             }
           }
         }
@@ -243,13 +136,16 @@ ColumnLayout {
     description: I18n.tr("settings.color-scheme.color-source.section.description")
   }
 
-  // Dark Mode Toggle (affects both Matugen and predefined schemes that provide variants)
+  // Dark Mode Toggle
   NToggle {
     label: I18n.tr("settings.color-scheme.color-source.dark-mode.label")
     description: I18n.tr("settings.color-scheme.color-source.dark-mode.description")
     checked: Settings.data.colorSchemes.darkMode
     enabled: true
-    onToggled: checked => Settings.data.colorSchemes.darkMode = checked
+    onToggled: checked => {
+                 Settings.data.colorSchemes.darkMode = checked
+                 root.cacheVersion++ // Force UI update for dark/light variants
+               }
   }
 
   // Use Wallpaper Colors
@@ -259,14 +155,12 @@ ColumnLayout {
     checked: Settings.data.colorSchemes.useWallpaperColors
     onToggled: checked => {
                  if (checked) {
-                   // Check if matugen is installed
                    matugenCheck.running = true
                  } else {
                    Settings.data.colorSchemes.useWallpaperColors = false
                    ToastService.showNotice(I18n.tr("settings.color-scheme.color-source.use-wallpaper-colors.label"), I18n.tr("toast.wallpaper-colors.disabled"))
 
                    if (Settings.data.colorSchemes.predefinedScheme) {
-
                      ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme)
                    }
                  }
@@ -311,7 +205,6 @@ ColumnLayout {
 
     onSelected: key => {
                   Settings.data.colorSchemes.matugenSchemeType = key
-
                   AppThemeService.generate()
                 }
   }
@@ -348,15 +241,16 @@ ColumnLayout {
           id: schemeItem
 
           property string schemePath: modelData
+          property string schemeName: root.extractSchemeName(modelData)
 
           Layout.fillWidth: true
           Layout.alignment: Qt.AlignHCenter
           height: 50 * scaling
           radius: Style.radiusS * scaling
-          color: getSchemeColorDirect(modelData, "mSurface")
+          color: root.getSchemeColor(schemeName, "mSurface")
           border.width: Math.max(1, Style.borderL * scaling)
           border.color: {
-            if (Settings.data.colorSchemes.predefinedScheme === extractSchemeName(modelData)) {
+            if (Settings.data.colorSchemes.predefinedScheme === schemeName) {
               return Color.mSecondary
             }
             if (itemMouseArea.containsMouse) {
@@ -371,12 +265,11 @@ ColumnLayout {
             spacing: Style.marginXS * scaling
 
             NText {
-              text: extractSchemeName(schemePath)
+              text: schemeItem.schemeName
               pointSize: Style.fontSizeS * scaling
               font.weight: Style.fontWeightMedium
               color: Color.mOnSurface
               Layout.fillWidth: true
-              // Layout.maximumWidth: 150 * scaling
               elide: Text.ElideRight
               verticalAlignment: Text.AlignVCenter
               wrapMode: Text.WordWrap
@@ -387,28 +280,28 @@ ColumnLayout {
               width: 14 * scaling
               height: 14 * scaling
               radius: width * 0.5
-              color: getSchemeColorDirect(modelData, "mPrimary")
+              color: root.getSchemeColor(schemeItem.schemeName, "mPrimary")
             }
 
             Rectangle {
               width: 14 * scaling
               height: 14 * scaling
               radius: width * 0.5
-              color: getSchemeColorDirect(modelData, "mSecondary")
+              color: root.getSchemeColor(schemeItem.schemeName, "mSecondary")
             }
 
             Rectangle {
               width: 14 * scaling
               height: 14 * scaling
               radius: width * 0.5
-              color: getSchemeColorDirect(modelData, "mTertiary")
+              color: root.getSchemeColor(schemeItem.schemeName, "mTertiary")
             }
 
             Rectangle {
               width: 14 * scaling
               height: 14 * scaling
               radius: width * 0.5
-              color: getSchemeColorDirect(modelData, "mError")
+              color: root.getSchemeColor(schemeItem.schemeName, "mError")
             }
           }
 
@@ -421,14 +314,14 @@ ColumnLayout {
               Settings.data.colorSchemes.useWallpaperColors = false
               Logger.log("ColorSchemeTab", "Disabled wallpaper colors")
 
-              Settings.data.colorSchemes.predefinedScheme = extractSchemeName(schemePath)
+              Settings.data.colorSchemes.predefinedScheme = schemeItem.schemeName
               ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme)
             }
           }
 
           // Selection indicator
           Rectangle {
-            visible: (Settings.data.colorSchemes.predefinedScheme === extractSchemeName(schemePath))
+            visible: (Settings.data.colorSchemes.predefinedScheme === schemeItem.schemeName)
             anchors.right: parent.right
             anchors.top: parent.top
             anchors.rightMargin: -3 * scaling
@@ -466,7 +359,6 @@ ColumnLayout {
       checked: Settings.data.colorSchemes.generateTemplatesForPredefined
       onToggled: checked => {
                    Settings.data.colorSchemes.generateTemplatesForPredefined = checked
-                   // Re-generate templates if a predefined scheme is currently active
                    if (!Settings.data.colorSchemes.useWallpaperColors && Settings.data.colorSchemes.predefinedScheme) {
                      ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme)
                    }
