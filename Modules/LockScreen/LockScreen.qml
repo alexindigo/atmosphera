@@ -405,7 +405,7 @@ Loader {
 
                     NText {
                       text: {
-                        var t = Settings.data.location.use12hourFormat ? Qt.locale().toString(new Date(), "hh AP") : Qt.locale().toString(new Date(), "HH")
+                        var t = Settings.data.location.use12hourFormat ? Qt.locale().toString(Time.date, "hh AP") : Qt.locale().toString(Time.date, "HH")
                         return t
                       }
                       pointSize: Style.fontSizeL * scaling
