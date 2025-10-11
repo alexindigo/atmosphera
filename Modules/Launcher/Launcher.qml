@@ -192,10 +192,8 @@ NPanel {
       // Reset when launcher opens
       Connections {
         target: root
-        function onOpenedChanged() {
-          if (root.opened) {
-            mouseMovementDetector.initialized = false
-          }
+        function onOpened() {
+          mouseMovementDetector.initialized = false
         }
       }
     }
