@@ -426,6 +426,10 @@
         "label": "Enable on screen display",
         "description": "Show volume and brightness changes in real-time."
       },
+      "always-on-top": {
+        "label": "Always on top",
+        "description": "Display OSD above fullscreen windows and other layers."
+      },
       "location": {
         "label": "Location",
         "description": "Where on-screen displays appear."

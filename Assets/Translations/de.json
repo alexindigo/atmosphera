@@ -426,6 +426,10 @@
         "label": "Bildschirmanzeige aktivieren",
         "description": "Lautstärke- und Helligkeitsänderungen in Echtzeit anzeigen."
       },
+      "always-on-top": {
+        "label": "Immer im Vordergrund",
+        "description": "Bildschirmanzeige über Vollbildfenstern und anderen Ebenen anzeigen."
+      },
       "location": {
         "label": "Position",
         "description": "Wo Bildschirmanzeigen erscheinen."

@@ -297,6 +297,7 @@ Singleton {
       property string location: "top_right"
       property list<string> monitors: []
       property int autoHideMs: 2000
+      property bool alwaysOnTop: false
     }
 
     // audio

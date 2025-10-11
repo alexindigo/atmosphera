@@ -426,6 +426,10 @@
         "label": "Activer l'affichage à l'écran",
         "description": "Afficher en temps réel les changements de volume et de luminosité."
       },
+      "always-on-top": {
+        "label": "Toujours au premier plan",
+        "description": "Afficher l'OSD au-dessus des fenêtres plein écran et autres couches."
+      },
       "location": {
         "label": "Emplacement",
         "description": "Emplacement des affichages à l'écran."

@@ -204,6 +204,7 @@ Variants {
       color: Color.transparent
 
       WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
+      WlrLayershell.layer: (Settings.data.osd && Settings.data.osd.alwaysOnTop) ? WlrLayer.Overlay : WlrLayer.Top
       exclusionMode: PanelWindow.ExclusionMode.Ignore
 
       Rectangle {

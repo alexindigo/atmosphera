@@ -426,6 +426,10 @@
         "label": "启用屏幕显示",
         "description": "实时显示音量与亮度变化。"
       },
+      "always-on-top": {
+        "label": "始终置顶",
+        "description": "在全屏窗口和其他图层之上显示OSD。"
+      },
       "location": {
         "label": "位置",
         "description": "屏幕显示出现的位置。"
