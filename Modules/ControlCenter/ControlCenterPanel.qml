@@ -11,7 +11,7 @@ NPanel {
   id: root
 
   preferredWidth: 460
-  preferredHeight: 734
+  preferredHeight: 740
   panelKeyboardFocus: true
 
   // Positioning
@@ -44,13 +44,13 @@ NPanel {
 
       WeatherCard {
         Layout.fillWidth: true
-        Layout.preferredHeight: Math.max(220 * scaling)
+        Layout.preferredHeight: Math.max(190 * scaling)
       }
 
       // Middle section: media + stats column
       RowLayout {
         Layout.fillWidth: true
-        Layout.preferredHeight: Math.max(310 * scaling)
+        Layout.preferredHeight: Math.max(260 * scaling)
         spacing: content.cardSpacing
 
         // Media card
@@ -64,6 +64,12 @@ NPanel {
           Layout.preferredWidth: Style.baseWidgetSize * 2.625 * scaling
           Layout.fillHeight: true
         }
+      }
+
+      // Audio card below media and system monitor
+      AudioCard {
+        Layout.fillWidth: true
+        Layout.preferredHeight: Math.max(120 * scaling)
       }
 
       // Bottom actions (two grouped rows of round buttons)

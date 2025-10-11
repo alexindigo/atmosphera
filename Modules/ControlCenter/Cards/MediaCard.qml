@@ -110,7 +110,7 @@ NBox {
     }
   }
 
-  // Player selector - positioned at the very top
+  // Player selector
   Rectangle {
     id: playerSelectorButton
     anchors.top: parent.top
@@ -306,7 +306,7 @@ NBox {
         NText {
           visible: MediaService.trackTitle !== ""
           text: MediaService.trackTitle
-          pointSize: Style.fontSizeM * scaling
+          pointSize: Style.fontSizeL * scaling
           font.weight: Style.fontWeightBold
           elide: Text.ElideRight
           wrapMode: Text.Wrap
