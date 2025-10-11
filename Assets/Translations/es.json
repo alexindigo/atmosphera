@@ -1394,7 +1394,7 @@
   "system": {
     "uptime": "Actividad: {uptime}",
     "welcome-back": "¡Bienvenido de nuevo,",
-    "monitor-description": "{model} ({width}x{height})",
+    "monitor-description": "{model} ({width}x{height} @ {scale}x)",
     "scaling-percentage": "{percentage}%",
     "location-display": "{name} ({coordinates})",
     "signal-strength": "{signal}%",

@@ -1393,7 +1393,7 @@
   },
   "system": {
     "welcome-back": "Bon retour,",
-    "monitor-description": "{model} ({width}x{height})",
+    "monitor-description": "{model} ({width}x{height} @ {scale}x)",
     "scaling-percentage": "{percentage}%",
     "location-display": "{name} ({coordinates})",
     "signal-strength": "{signal}%",
