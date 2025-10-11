@@ -42,7 +42,7 @@ Item {
   // Fixed width - no expansion
   readonly property real widgetWidth: Math.max(145, screen.width * 0.06)
 
-  readonly property bool hasActivePlayer: MediaService.currentPlayer !== null && getTitle() !== ""
+  readonly property bool hasActivePlayer: MediaService.currentPlayer !== null
   readonly property string placeholderText: I18n.tr("bar.widget-settings.media-mini.no-active-player")
 
   readonly property string tooltipText: {

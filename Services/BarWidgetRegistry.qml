@@ -41,7 +41,7 @@ Singleton {
                                   "ActiveWindow": {
                                     "allowUserSettings": true,
                                     "showIcon": true,
-                                    "autoHide": false,
+                                    "hideMode": "hidden", // "visible", "hidden", "transparent"
                                     "scrollingMode": "hover",
                                     "width": 145
                                   },
@@ -83,7 +83,7 @@ Singleton {
                                   },
                                   "MediaMini": {
                                     "allowUserSettings": true,
-                                    "autoHide": false,
+                                    "hideMode": "hidden", // "visible", "hidden", "transparent"
                                     "scrollingMode": "hover",
                                     "showAlbumArt": false,
                                     "showVisualizer": false,
