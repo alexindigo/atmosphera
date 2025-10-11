@@ -349,10 +349,10 @@ Variants {
             property int vMarginTop: Math.max(Math.round(osdItem.radius), Math.round(Style.marginS * root.scaling))
             property int balanceDelta: Math.round(Style.marginS * root.scaling)
             anchors.fill: parent
-            anchors.topMargin: vMarginTop
+            anchors.topMargin: vMargin
             anchors.leftMargin: vMargin
             anchors.rightMargin: vMargin
-            anchors.bottomMargin: 0
+            anchors.bottomMargin: vMargin
             spacing: Math.round(Style.marginS * root.scaling)
 
             // Percentage text at top
@@ -414,7 +414,6 @@ Variants {
               color: root.getIconColor()
               pointSize: Style.fontSizeXL * root.scaling
               Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
-              Layout.bottomMargin: Math.round(Style.marginS * root.scaling)
               Behavior on color {
                 ColorAnimation {
                   duration: Style.animationNormal
