@@ -56,6 +56,18 @@ Singleton {
     }
   }
 
+  function toggleEnabled(enabled) {
+    if (enabled) {
+      setChargingMode(BatteryService.ChargingMode.Full)
+    } else {
+      BatteryService.chargingMode = BatteryService.ChargingMode.Disabled
+      BatteryService.initialSetter = true
+      ToastService.showNotice(I18n.tr("toast.battery-manager.title"), I18n.tr("toast.battery-manager.uninstall-setup"))
+      PanelService.getPanel("batteryPanel")?.toggle(this)
+      uninstallerProcess.running = true
+    }
+  }
+
   function setChargingMode(newMode) {
     if (newMode !== BatteryService.ChargingMode.Full && newMode !== BatteryService.ChargingMode.Balanced && newMode !== BatteryService.ChargingMode.Lifespan) {
       Logger.warn("BatteryService", `Invalid charging mode set ${newMode}`)
