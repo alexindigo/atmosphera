@@ -83,6 +83,13 @@ ColumnLayout {
       onToggled: checked => Settings.data.osd.enabled = checked
     }
 
+    NToggle {
+      label: I18n.tr("settings.osd.always-on-top.label")
+      description: I18n.tr("settings.osd.always-on-top.description")
+      checked: Settings.data.osd.alwaysOnTop
+      onToggled: checked => Settings.data.osd.alwaysOnTop = checked
+    }
+
     NLabel {
       label: I18n.tr("settings.osd.duration.auto-hide.label")
       description: I18n.tr("settings.osd.duration.auto-hide.description")

@@ -143,8 +143,15 @@ Loader {
       readonly property real verticalBarWidth: Math.round(Style.barHeight * scaling)
 
       Component.onCompleted: {
-        Logger.log("NPanel", "Opened", root.objectName)
+        Logger.log("NPanel", "Opened", root.objectName, "on", screen.name)
         dimmingOpacity = Style.opacityHeavy
+        root.scaling = scaling = ScalingService.getScreenScale(screen)
+
+        // Force refresh panel content when scaling is applied
+        Qt.callLater(() => {
+                       panelContentLoader.active = false
+                       panelContentLoader.active = true
+                     })
       }
 
       Connections {
@@ -152,6 +159,12 @@ Loader {
         function onScaleChanged(screenName, scale) {
           if ((screen !== null) && (screenName === screen.name)) {
             root.scaling = scaling = scale
+
+            // Force refresh panel content when scaling changes
+            Qt.callLater(() => {
+                           panelContentLoader.active = false
+                           panelContentLoader.active = true
+                         })
           }
         }
       }

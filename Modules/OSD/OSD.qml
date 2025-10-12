@@ -25,7 +25,7 @@ Variants {
     active: false
 
     // Current OSD display state
-    property string currentOSDType: "" // "volume", "brightness", or ""
+    property string currentOSDType: "" // "volume", "inputVolume", "brightness", or ""
 
     // Volume properties
     readonly property real currentVolume: AudioService.volume
@@ -33,14 +33,16 @@ Variants {
     property bool volumeInitialized: false
     property bool muteInitialized: false
 
+    // Input volume properties
+    readonly property real currentInputVolume: AudioService.inputVolume
+    readonly property bool isInputMuted: AudioService.inputMuted
+    property bool inputVolumeInitialized: false
+    property bool inputMuteInitialized: false
+
     // Brightness properties
+    property real lastUpdatedBrightness: 0
+    readonly property real currentBrightness: lastUpdatedBrightness
     property bool brightnessInitialized: false
-    readonly property real currentBrightness: {
-      if (BrightnessService.monitors.length > 0) {
-        return BrightnessService.monitors[0].brightness || 0
-      }
-      return 0
-    }
 
     // Get appropriate icon based on current OSD type
     function getIcon() {
@@ -49,6 +51,11 @@ Variants {
           return "volume-mute"
         }
         return (AudioService.volume <= Number.EPSILON) ? "volume-zero" : (AudioService.volume <= 0.5) ? "volume-low" : "volume-high"
+      } else if (currentOSDType === "inputVolume") {
+        if (AudioService.inputMuted) {
+          return "microphone-off"
+        }
+        return "microphone"
       } else if (currentOSDType === "brightness") {
         return currentBrightness <= 0.5 ? "brightness-low" : "brightness-high"
       }
@@ -59,6 +66,8 @@ Variants {
     function getCurrentValue() {
       if (currentOSDType === "volume") {
         return isMuted ? 0 : currentVolume
+      } else if (currentOSDType === "inputVolume") {
+        return isInputMuted ? 0 : currentInputVolume
       } else if (currentOSDType === "brightness") {
         return currentBrightness
       }
@@ -71,6 +80,11 @@ Variants {
         if (isMuted)
           return "0%"
         const pct = Math.round(Math.min(1.0, currentVolume) * 100)
+        return pct + "%"
+      } else if (currentOSDType === "inputVolume") {
+        if (isInputMuted)
+          return "0%"
+        const pct = Math.round(Math.min(1.0, currentInputVolume) * 100)
         return pct + "%"
       } else if (currentOSDType === "brightness") {
         const pct = Math.round(Math.min(1.0, currentBrightness) * 100)
@@ -85,13 +99,17 @@ Variants {
         if (isMuted)
           return Color.mError
         return Color.mPrimary
+      } else if (currentOSDType === "inputVolume") {
+        if (isInputMuted)
+          return Color.mError
+        return Color.mPrimary
       }
       return Color.mPrimary
     }
 
     // Get icon color
     function getIconColor() {
-      if (currentOSDType === "volume" && isMuted) {
+      if ((currentOSDType === "volume" && isMuted) || (currentOSDType === "inputVolume" && isInputMuted)) {
         return Color.mError
       }
       return Color.mOnSurface
@@ -101,6 +119,9 @@ Variants {
       id: panel
       screen: modelData
 
+      // PanelWindow scaling
+      property real scaling: ScalingService.getScreenScale(screen)
+
       readonly property string location: (Settings.data.osd && Settings.data.osd.location) ? Settings.data.osd.location : "top_right"
       readonly property bool isTop: (location === "top") || (location.length >= 3 && location.substring(0, 3) === "top")
       readonly property bool isBottom: (location === "bottom") || (location.length >= 6 && location.substring(0, 6) === "bottom")
@@ -108,20 +129,30 @@ Variants {
       readonly property bool isRight: (location.indexOf("_right") >= 0) || (location === "right")
       readonly property bool isCentered: (location === "top" || location === "bottom")
       readonly property bool verticalMode: (location === "left" || location === "right")
-      readonly property int hWidth: Math.round(320 * root.scaling)
-      readonly property int hHeight: Math.round(64 * root.scaling)
+      readonly property int hWidth: Math.round(320 * scaling)
+      readonly property int hHeight: Math.round(64 * scaling)
+      readonly property int vHeight: Math.round(320 * scaling) // Vertical OSD height (matches horizontal width)
       // Ensure an even width to keep the vertical bar perfectly centered
       readonly property int barThickness: (function () {
-        const base = Math.max(6, Math.round(6 * root.scaling))
+        const base = Math.max(8, Math.round(8 * scaling))
         return (base % 2 === 0) ? base : base + 1
       })()
 
       Component.onCompleted: {
-        connectBrightnessMonitors()
+
+      }
+
+      Connections {
+        target: ScalingService
+        function onScaleChanged(screenName, scale) {
+          if ((screen !== null) && (screenName === screen.name)) {
+            scaling = scale
+          }
+        }
       }
 
       Component.onDestruction: {
-        disconnectBrightnessMonitors()
+
       }
 
       // Anchor selection based on location (window edges)
@@ -181,25 +212,26 @@ Variants {
       color: Color.transparent
 
       WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
+      WlrLayershell.layer: (Settings.data.osd && Settings.data.osd.alwaysOnTop) ? WlrLayer.Overlay : WlrLayer.Top
       exclusionMode: PanelWindow.ExclusionMode.Ignore
 
       Rectangle {
         id: osdItem
 
         width: parent.width
-        height: panel.verticalMode ? panel.hWidth : Math.round(64 * root.scaling)
-        radius: Style.radiusL * root.scaling
+        height: panel.verticalMode ? panel.vHeight : Math.round(64 * scaling)
+        radius: Style.radiusL * scaling
         color: Color.mSurface
         border.color: Color.mOutline
         border.width: (function () {
-          const bw = Math.max(2, Math.round(Style.borderM * root.scaling))
+          const bw = Math.max(2, Math.round(Style.borderM * scaling))
           return (bw % 2 === 0) ? bw : bw + 1
         })()
         visible: false
         opacity: 0
         scale: 0.85
 
-        anchors.horizontalCenter: verticalMode ? undefined : parent.horizontalCenter
+        anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: verticalMode ? parent.verticalCenter : undefined
 
         Behavior on opacity {
@@ -258,7 +290,7 @@ Variants {
               NIcon {
                 icon: root.getIcon()
                 color: root.getIconColor()
-                pointSize: Style.fontSizeXL * root.scaling
+                pointSize: Style.fontSizeXL * scaling
                 Layout.alignment: Qt.AlignVCenter
 
                 Behavior on color {
@@ -304,7 +336,7 @@ Variants {
               NText {
                 text: root.getDisplayPercentage()
                 color: Color.mOnSurface
-                pointSize: Style.fontSizeS * root.scaling
+                pointSize: Style.fontSizeS * scaling
                 family: Settings.data.ui.fontFixed
                 Layout.alignment: Qt.AlignVCenter
                 horizontalAlignment: Text.AlignLeft
@@ -320,22 +352,18 @@ Variants {
           ColumnLayout {
             // Ensure inner padding respects the rounded corners; avoid clipping the icon/text
             property int vMargin: (function () {
-              const styleMargin = Math.round(Style.marginL * root.scaling)
+              const styleMargin = Math.round(Style.marginL * scaling)
               const cornerGuard = Math.round(osdItem.radius)
               return Math.max(styleMargin, cornerGuard)
             })()
-            property int vMarginTop: Math.max(Math.round(osdItem.radius), Math.round(Style.marginS * root.scaling))
-            property int balanceDelta: Math.round(Style.marginS * root.scaling)
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            anchors.topMargin: vMarginTop
+            property int vMarginTop: Math.max(Math.round(osdItem.radius), Math.round(Style.marginS * scaling))
+            property int balanceDelta: Math.round(Style.marginS * scaling)
+            anchors.fill: parent
+            anchors.topMargin: vMargin
+            anchors.leftMargin: vMargin
+            anchors.rightMargin: vMargin
             anchors.bottomMargin: vMargin
-            width: (function () {
-              const w = parent.width - (vMargin * 2)
-              return (w % 2 === 0) ? w : w - 1
-            })()
-            spacing: Math.round(Style.marginS * root.scaling)
+            spacing: Math.round(Style.marginS * scaling)
 
             // Percentage text at top
             Item {
@@ -345,7 +373,7 @@ Variants {
                 id: percentText
                 text: root.getDisplayPercentage()
                 color: Color.mOnSurface
-                pointSize: Style.fontSizeS * root.scaling
+                pointSize: Style.fontSizeS * scaling
                 family: Settings.data.ui.fontFixed
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
@@ -357,7 +385,7 @@ Variants {
             // Progress bar
             Item {
               Layout.fillWidth: true
-              Layout.fillHeight: true
+              Layout.fillHeight: true // Fill remaining space between text and icon
               Rectangle {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
@@ -394,9 +422,8 @@ Variants {
             NIcon {
               icon: root.getIcon()
               color: root.getIconColor()
-              pointSize: Style.fontSizeXL * root.scaling
+              pointSize: Style.fontSizeXL * scaling
               Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
-              Layout.bottomMargin: vMargin + Math.round(Style.marginM * root.scaling) + balanceDelta
               Behavior on color {
                 ColorAnimation {
                   duration: Style.animationNormal
@@ -467,6 +494,18 @@ Variants {
           showOSD("volume")
         }
       }
+
+      function onInputVolumeChanged() {
+        if (inputVolumeInitialized) {
+          showOSD("inputVolume")
+        }
+      }
+
+      function onInputMutedChanged() {
+        if (inputMuteInitialized) {
+          showOSD("inputVolume")
+        }
+      }
     }
 
     // Timer to initialize volume/mute flags after services are ready
@@ -477,6 +516,10 @@ Variants {
       onTriggered: {
         volumeInitialized = true
         muteInitialized = true
+        inputVolumeInitialized = true
+        inputMuteInitialized = true
+        // Don't initialize brightness here - let it initialize on first change like volume
+        connectBrightnessMonitors()
       }
     }
 
@@ -506,11 +549,14 @@ Variants {
     }
 
     function onBrightnessChanged(newBrightness) {
+      root.lastUpdatedBrightness = newBrightness
+
       if (!brightnessInitialized) {
         brightnessInitialized = true
-      } else {
-        showOSD("brightness")
+        return
       }
+
+      showOSD("brightness")
     }
 
     function showOSD(type) {

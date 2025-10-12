@@ -10,8 +10,8 @@ import qs.Widgets
 NPanel {
   id: root
 
-  preferredWidth: 480
-  preferredHeight: 580
+  preferredWidth: 460
+  preferredHeight: 790
   panelKeyboardFocus: true
 
   // Positioning
@@ -31,38 +31,72 @@ NPanel {
     // Layout content
     ColumnLayout {
       id: layout
-      anchors.fill: parent
-      anchors.margins: content.cardSpacing
+      x: content.cardSpacing
+      y: content.cardSpacing
+      width: parent.width - (2 * content.cardSpacing)
       spacing: content.cardSpacing
 
-      // Top Card: profile + utilities
-      TopCard {
+      // Cards (consistent inter-card spacing via ColumnLayout spacing)
+      ProfileCard {
         Layout.fillWidth: true
-        Layout.preferredHeight: Math.max(124 * scaling)
+        Layout.preferredHeight: Math.max(64 * scaling)
+        scaling: root.scaling
       }
 
-      // Weather
       WeatherCard {
         Layout.fillWidth: true
-        Layout.preferredHeight: Math.max(196 * scaling)
+        Layout.preferredHeight: Math.max(190 * scaling)
+        scaling: root.scaling
       }
 
-      // Media + stats column
+      // Middle section: media + stats column
       RowLayout {
         Layout.fillWidth: true
-        Layout.preferredHeight: Math.max(196 * scaling)
+        Layout.preferredHeight: Math.max(260 * scaling)
         spacing: content.cardSpacing
 
         // Media card
         MediaCard {
-          Layout.preferredWidth: Math.max(270 * scaling)
+          Layout.fillWidth: true
           Layout.fillHeight: true
+          scaling: root.scaling
         }
 
         // System monitors combined in one card
         SystemMonitorCard {
-          Layout.preferredWidth: Math.max(160 * scaling)
-          Layout.preferredHeight: Math.max(196 * scaling)
+          Layout.preferredWidth: Style.baseWidgetSize * 2.625 * scaling
+          Layout.fillHeight: true
+          scaling: root.scaling
+        }
+      }
+
+      // Audio card below media and system monitor
+      AudioCard {
+        Layout.fillWidth: true
+        Layout.preferredHeight: Math.max(120 * scaling)
+        scaling: root.scaling
+      }
+
+      // Bottom actions (two grouped rows of round buttons)
+      RowLayout {
+        Layout.fillWidth: true
+        Layout.preferredHeight: Math.max(60 * scaling)
+        spacing: content.cardSpacing
+
+        // Power Profiles switcher
+        PowerProfilesCard {
+          Layout.fillWidth: true
+          Layout.fillHeight: true
+          spacing: content.cardSpacing
+          scaling: root.scaling
+        }
+
+        // Utilities buttons
+        UtilitiesCard {
+          Layout.fillWidth: true
+          Layout.fillHeight: true
+          spacing: content.cardSpacing
+          scaling: root.scaling
         }
       }
     }

@@ -111,6 +111,14 @@ Singleton {
     }
   }
 
+  function increaseInputVolume() {
+    setInputVolume(inputVolume + stepVolume)
+  }
+
+  function decreaseInputVolume() {
+    setInputVolume(inputVolume - stepVolume)
+  }
+
   function setInputVolume(newVolume: real) {
     if (source?.ready && source?.audio) {
       // Clamp it accordingly

@@ -69,7 +69,7 @@ Popup {
 
       NIconButton {
         icon: "close"
-        tooltipText: "Close"
+        tooltipText: I18n.tr("tooltips.close")
         onClicked: widgetSettings.close()
       }
     }
@@ -134,7 +134,8 @@ Popup {
       "SystemMonitor": "WidgetSettings/SystemMonitorSettings.qml",
       "Volume": "WidgetSettings/VolumeSettings.qml",
       "Workspace": "WidgetSettings/WorkspaceSettings.qml",
-      "Taskbar": "WidgetSettings/TaskbarSettings.qml"
+      "Taskbar": "WidgetSettings/TaskbarSettings.qml",
+      "Tray": "WidgetSettings/TraySettings.qml"
     }
 
     const source = widgetSettingsMap[widgetId]

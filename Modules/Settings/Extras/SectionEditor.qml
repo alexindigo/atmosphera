@@ -13,6 +13,10 @@ NBox {
   property string sectionId: ""
   property var widgetModel: []
   property var availableWidgets: []
+  property bool enableMoveBetweenSections: true
+
+  property var widgetRegistry: null
+  property string settingsDialogComponent: "BarWidgetSettingsDialog.qml"
 
   readonly property real miniButtonSize: Style.baseWidgetSize * 0.65
 
@@ -154,7 +158,7 @@ NBox {
             // Store the widget index for drag operations
             property int widgetIndex: index
             readonly property int buttonsWidth: Math.round(20 * scaling)
-            readonly property int buttonsCount: 1 + BarWidgetRegistry.widgetHasUserSettings(modelData.id)
+            readonly property int buttonsCount: 1 + (root.widgetRegistry ? root.widgetRegistry.widgetHasUserSettings(modelData.id) : 0)
 
             // Visual feedback during drag
             opacity: flowDragArea.draggedIndex === index ? 0.5 : 1.0
@@ -197,9 +201,10 @@ NBox {
               onTriggered: action => root.moveWidget(root.sectionId, index, action)
             }
 
-            // Update the MouseArea to use the new context menu
+            // MouseArea for the context menu
             MouseArea {
               id: contextMouseArea
+              enabled: enableMoveBetweenSections
               anchors.fill: parent
               acceptedButtons: Qt.RightButton
               z: -1 // Below the buttons but above background
@@ -209,9 +214,7 @@ NBox {
                              // Check if click is not on the buttons area
                              const localX = mouse.x
                              const buttonsStartX = parent.width - (parent.buttonsCount * parent.buttonsWidth)
-
                              if (localX < buttonsStartX) {
-                               // Use the helper function to open at mouse position
                                contextMenu.openAtItem(widgetItem, mouse.x, mouse.y)
                              }
                            }
@@ -236,7 +239,7 @@ NBox {
                 Layout.preferredWidth: buttonsCount * buttonsWidth
 
                 Loader {
-                  active: BarWidgetRegistry.widgetHasUserSettings(modelData.id)
+                  active: root.widgetRegistry && root.widgetRegistry.widgetHasUserSettings(modelData.id)
                   sourceComponent: NIconButton {
                     icon: "settings"
                     tooltipText: I18n.tr("tooltips.widget-settings")
@@ -247,7 +250,7 @@ NBox {
                     colorBgHover: Qt.alpha(Color.mOnPrimary, Style.opacityLight)
                     colorFgHover: Color.mOnPrimary
                     onClicked: {
-                      var component = Qt.createComponent(Qt.resolvedUrl("BarWidgetSettingsDialog.qml"))
+                      var component = Qt.createComponent(Qt.resolvedUrl(root.settingsDialogComponent))
                       function instantiateAndOpen() {
                         var dialog = component.createObject(root, {
                                                               "widgetIndex": index,
@@ -258,19 +261,19 @@ NBox {
                         if (dialog) {
                           dialog.open()
                         } else {
-                          Logger.error("BarSectionEditor", "Failed to create settings dialog instance")
+                          Logger.error("WidgetSectionEditor", "Failed to create settings dialog instance")
                         }
                       }
                       if (component.status === Component.Ready) {
                         instantiateAndOpen()
                       } else if (component.status === Component.Error) {
-                        Logger.error("BarSectionEditor", component.errorString())
+                        Logger.error("WidgetSectionEditor", component.errorString())
                       } else {
                         component.statusChanged.connect(function () {
                           if (component.status === Component.Ready) {
                             instantiateAndOpen()
                           } else if (component.status === Component.Error) {
-                            Logger.error("BarSectionEditor", component.errorString())
+                            Logger.error("WidgetSectionEditor", component.errorString())
                           }
                         })
                       }

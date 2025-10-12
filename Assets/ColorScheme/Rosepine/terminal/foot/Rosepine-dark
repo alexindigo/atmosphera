@@ -1,7 +1,4 @@
 
-[cursor]
-color=191724 e0def4
-
 [colors]
 foreground=e0def4
 background=191724
@@ -23,3 +20,4 @@ bright6=ebbcba
 bright7=e0def4
 selection-foreground=e0def4
 selection-background=403d52
+cursor=191724 e0def4

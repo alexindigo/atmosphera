@@ -44,19 +44,6 @@ Variants {
       property real fillMode: WallpaperService.getFillModeUniform()
       property vector4d fillColor: Qt.vector4d(Settings.data.wallpaper.fillColor.r, Settings.data.wallpaper.fillColor.g, Settings.data.wallpaper.fillColor.b, 1.0)
 
-      property int monitoredWidth: modelData.width
-      property int monitoredHeight: modelData.height
-
-      onMonitoredWidthChanged: {
-        Logger.log("Background", "Screen width changed to:", monitoredWidth, "for", modelData.name)
-        recalculateImageSizes()
-      }
-
-      onMonitoredHeightChanged: {
-        Logger.log("Background", "Screen height changed to:", monitoredHeight, "for", modelData.name)
-        recalculateImageSizes()
-      }
-
       Component.onCompleted: setWallpaperInitial()
 
       Component.onDestruction: {
@@ -84,6 +71,13 @@ Variants {
             futureWallpaper = path
             debounceTimer.restart()
           }
+        }
+      }
+
+      Connections {
+        target: CompositorService
+        function onDisplayScalesChanged() {
+          setWallpaperInitial()
         }
       }
 
@@ -121,32 +115,21 @@ Variants {
         visible: false
         cache: false
         asynchronous: true
-
+        sourceSize: undefined
         onStatusChanged: {
           if (status === Image.Error) {
             Logger.warn("Current wallpaper failed to load:", source)
           } else if (status === Image.Ready && !dimensionsCalculated) {
             dimensionsCalculated = true
-            calculateSourceSize()
+            const optimalSize = calculateOptimalWallpaperSize(implicitWidth, implicitHeight)
+            if (optimalSize !== false) {
+              sourceSize = optimalSize
+            }
           }
         }
-
         onSourceChanged: {
           dimensionsCalculated = false
           sourceSize = undefined
-        }
-
-        function calculateSourceSize() {
-          if (implicitWidth > 0 && implicitHeight > 0) {
-            const imageAspectRatio = implicitWidth / implicitHeight
-            if (modelData.width >= modelData.height) {
-              const w = Math.min(modelData.width, implicitWidth)
-              sourceSize = Qt.size(w, w / imageAspectRatio)
-            } else {
-              const h = Math.min(modelData.height, implicitHeight)
-              sourceSize = Qt.size(h * imageAspectRatio, h)
-            }
-          }
         }
       }
 
@@ -161,32 +144,21 @@ Variants {
         visible: false
         cache: false
         asynchronous: true
-
+        sourceSize: undefined
         onStatusChanged: {
           if (status === Image.Error) {
             Logger.warn("Next wallpaper failed to load:", source)
           } else if (status === Image.Ready && !dimensionsCalculated) {
             dimensionsCalculated = true
-            calculateSourceSize()
+            const optimalSize = calculateOptimalWallpaperSize(implicitWidth, implicitHeight)
+            if (optimalSize !== false) {
+              sourceSize = optimalSize
+            }
           }
         }
-
         onSourceChanged: {
           dimensionsCalculated = false
           sourceSize = undefined
-        }
-
-        function calculateSourceSize() {
-          if (implicitWidth > 0 && implicitHeight > 0) {
-            const imageAspectRatio = implicitWidth / implicitHeight
-            if (modelData.width >= modelData.height) {
-              const w = Math.min(modelData.width, implicitWidth)
-              sourceSize = Qt.size(w, w / imageAspectRatio)
-            } else {
-              const h = Math.min(modelData.height, implicitHeight)
-              sourceSize = Qt.size(h * imageAspectRatio, h)
-            }
-          }
         }
       }
 
@@ -344,6 +316,31 @@ Variants {
         }
       }
 
+      // ------------------------------------------------------
+      function calculateOptimalWallpaperSize(wpWidth, wpHeight) {
+        const compositorScale = CompositorService.getDisplayScale(modelData.name)
+        const screenWidth = modelData.width * compositorScale
+        const screenHeight = modelData.height * compositorScale
+        if (wpWidth <= screenWidth || wpHeight <= screenHeight || wpWidth <= 0 || wpHeight <= 0) {
+          // Do not resize if wallpaper is smaller than one of the screen dimension
+          return
+        }
+
+        const imageAspectRatio = wpWidth / wpHeight
+        var dim = Qt.size(0, 0)
+        if (screenWidth >= screenHeight) {
+          const w = Math.min(screenWidth, wpWidth)
+          dim = Qt.size(w, w / imageAspectRatio)
+        } else {
+          const h = Math.min(screenHeight, wpHeight)
+          dim = Qt.size(h * imageAspectRatio, h)
+        }
+
+        Logger.log("Background", `Wallpaper resized on ${modelData.name} ${screenWidth}x${screenHeight} @ ${compositorScale}x`, "src:", wpWidth, wpHeight, "dst:", dim.width, dim.height)
+        return dim
+      }
+
+      // ------------------------------------------------------
       function recalculateImageSizes() {
         if (currentWallpaper.status === Image.Ready) {
           currentWallpaper.calculateSourceSize()
@@ -353,6 +350,7 @@ Variants {
         }
       }
 
+      // ------------------------------------------------------
       function setWallpaperInitial() {
         // On startup, defer assigning wallpaper until the service cache is ready, retries every tick
         if (!WallpaperService || !WallpaperService.isInitialized) {
@@ -363,6 +361,7 @@ Variants {
         setWallpaperImmediate(WallpaperService.getWallpaper(modelData.name))
       }
 
+      // ------------------------------------------------------
       function setWallpaperImmediate(source) {
         transitionAnimation.stop()
         transitionProgress = 0.0
@@ -376,6 +375,7 @@ Variants {
                      })
       }
 
+      // ------------------------------------------------------
       function setWallpaperWithTransition(source) {
         if (source === currentWallpaper.source) {
           return
@@ -409,6 +409,7 @@ Variants {
         transitionAnimation.start()
       }
 
+      // ------------------------------------------------------
       // Main method that actually trigger the wallpaper change
       function changeWallpaper() {
         // Get the transitionType from the settings

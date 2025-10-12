@@ -26,6 +26,10 @@
           "label": "Desktop abdunkeln",
           "description": "Desktop abdunkeln, wenn Panels oder Menüs geöffnet sind."
         },
+        "compact-lockscreen": {
+          "label": "Kompakter Sperrbildschirm",
+          "description": "Zeigt nur die Anmeldeeingabe und Systemsteuerungen an, versteckt Wetter- und Medien-Widgets."
+        },
         "border-radius": {
           "label": "Eckenradius",
           "description": "Steuert die Rundung der Ecken von Fenstern, Buttons und anderen Elementen."
@@ -85,6 +89,7 @@
         "reset-scaling": "Skalierung zurücksetzen"
       },
       "control-center": {
+        "title": "Kontrollzentrum",
         "section": {
           "label": "Kontrollzentrum",
           "description": "Konfigurieren Sie die Positionierung und das Verhalten des Kontrollzentrum-Panels."
@@ -92,6 +97,22 @@
         "position": {
           "label": "Position",
           "description": "Wählen Sie, wo das Kontrollzentrum-Panel beim Öffnen erscheint."
+        },
+        "quickSettingsStyle": {
+          "section": {
+            "label": "Schnelleinstellungen-Stil",
+            "description": "Passen Sie das Aussehen und Verhalten der Schnelleinstellungen im Kontrollzentrum an."
+          },
+          "style": {
+            "label": "Schnelleinstellungen-Stil",
+            "description": "Wählen Sie den visuellen Stil für Schnelleinstellungs-Schalter und -Steuerungen."
+          }
+        },
+        "widgets": {
+          "section": {
+            "label": "Widgets",
+            "description": "Konfigurieren und verwalten Sie Kontrollzentrum-Widgets und deren Anzeigeoptionen."
+          }
         }
       }
     },
@@ -266,10 +287,13 @@
         "section": {
           "label": "Monitor-Anzeige",
           "description": "Statusleiste auf bestimmten Monitoren anzeigen. Standard ist alle, wenn keine ausgewählt sind."
-        },
-        "only-same-output": {
-          "label": "Nur Apps vom gleichen Bildschirm",
-          "description": "Zeige nur Apps vom dem Bildschirm an, wo sich das Dock befindet."
+        }
+      },
+      "tray": {
+        "blacklist": {
+          "label": "Ausschlussliste",
+          "description": "Füge Ausschlussregeln für die Tray-Symbolleiste hinzu, unterstützt Platzhalter (*).",
+          "placeholder": "z.B., nm-applet, Fcitx*"
         }
       }
     },
@@ -294,6 +318,10 @@
         "floating-distance": {
           "label": "Dock-Schwebeabstand",
           "description": "Schwebeabstand vom Bildschirmrand anpassen."
+        },
+        "colorize-icons": {
+          "label": "Symbole einfärben",
+          "description": "Theme-Farben auf Dock-App-Symbole anwenden (nur nicht fokussierte Apps)."
         }
       },
       "monitors": {
@@ -405,6 +433,10 @@
       "enabled": {
         "label": "Bildschirmanzeige aktivieren",
         "description": "Lautstärke- und Helligkeitsänderungen in Echtzeit anzeigen."
+      },
+      "always-on-top": {
+        "label": "Immer im Vordergrund",
+        "description": "Bildschirmanzeige über Vollbildfenstern und anderen Ebenen anzeigen."
       },
       "location": {
         "label": "Position",
@@ -533,6 +565,9 @@
           },
           "qt": {
             "description": "Schreibt {filepath}"
+          },
+          "kcolorscheme": {
+            "description": "Schreibt {filepath}"
           }
         },
         "terminal": {
@@ -558,9 +593,9 @@
             "description": "Schreibt {filepath} und lädt neu",
             "description-missing": "Erfordert fuzzel Starter"
           },
-          "vesktop": {
-            "description": "Schreibt {filepath}",
-            "description-missing": "Erfordert vesktop Discord-Client"
+          "discord": {
+            "description": "Schreibt {filepath} für {client}",
+            "description-missing": "Kein Discord-Client erkannt. Installieren Sie vesktop, webcord, armcord, equibop, lightcord oder dorion."
           },
           "pywalfox": {
             "description": "Schreibt {filepath} und führt pywalfox update aus",
@@ -709,6 +744,28 @@
         }
       }
     },
+    "control-center": {
+      "title": "Kontrollzentrum",
+      "quickSettingsStyle": {
+        "section": {
+          "label": "Schnelleinstellungen-Stil",
+          "description": "Passen Sie das Aussehen und Verhalten der Schnelleinstellungen im Kontrollzentrum an."
+        },
+        "style": {
+          "label": "Schnelleinstellungen-Stil",
+          "description": "Wählen Sie den visuellen Stil für Schnelleinstellungs-Schalter und -Steuerungen."
+        }
+      },
+      "widgets": {
+        "section": {
+          "label": "Widgets",
+          "description": "Konfigurieren und verwalten Sie Kontrollzentrum-Widgets und deren Anzeigeoptionen."
+        }
+      },
+      "quickSettings": {
+        "sectionName": "Schnelleinstellungen"
+      }
+    },
     "hooks": {
       "title": "Hooks",
       "system-hooks": {
@@ -766,7 +823,11 @@
     },
     "file-picker": {
       "select-folder": "Ordner auswählen",
-      "select-file": "Datei auswählen"
+      "select-file": "Datei auswählen",
+      "cancel": "Abbrechen",
+      "search-placeholder": "Dateien und Ordner suchen...",
+      "select-current": "Aktuelle auswählen",
+      "title": "Dateiauswahl"
     },
     "datetime-tokens": {
       "common": {
@@ -872,6 +933,10 @@
         "width": {
           "description": "Steuert die horizontale Größe des Widgets.",
           "label": "Widget-Breite"
+        },
+        "colorize-icons": {
+          "label": "Symbole einfärben",
+          "description": "Theme-Farben auf das aktive Fenster-Symbol anwenden."
         }
       },
       "system-monitor": {
@@ -1065,6 +1130,16 @@
         "only-same-output": {
           "label": "Nur vom gleichen Bildschirm",
           "description": "Zeige nur Apps vom dem Bildschirm an, wo sich die Taskbar befindet."
+        },
+        "colorize-icons": {
+          "label": "Symbole einfärben",
+          "description": "Theme-Farben auf Taskbar-Symbole anwenden."
+        }
+      },
+      "tray": {
+        "colorize-icons": {
+          "label": "Symbole einfärben",
+          "description": "Theme-Farben auf Tray-Symbole anwenden."
         }
       }
     }
@@ -1259,6 +1334,11 @@
         "bottom_right": "Unten rechts",
         "bottom_center": "Unten mittig",
         "top_center": "Oben mittig"
+      },
+      "quickSettingsStyle": {
+        "modern": "Modern",
+        "classic": "Klassisch",
+        "compact": "Kompakt"
       }
     },
     "osd": {
@@ -1355,9 +1435,9 @@
     "calculator-error": "Fehler"
   },
   "system": {
-    "uptime": "System-Laufzeit: {uptime}",
+    "uptime": "Laufzeit: {uptime}",
     "welcome-back": "Willkommen zurück,",
-    "monitor-description": "{model} ({width}x{height})",
+    "monitor-description": "{model} ({width}x{height} @ {scale}x)",
     "scaling-percentage": "{percentage}%",
     "location-display": "{name} ({coordinates})",
     "signal-strength": "{signal}%",
@@ -1390,6 +1470,78 @@
     "shut-down": "Herunterfahren",
     "restart": "Neu starten",
     "suspend": "Ruhezustand"
+  },
+  "quickSettings": {
+    "notifications": {
+      "label": {
+        "enabled": "Benachrichtigungen",
+        "disabled": "Nicht stören"
+      },
+      "tooltip": {
+        "action": "Linksklick: Benachrichtigungsverlauf öffnen\nRechtsklick: Nicht stören umschalten"
+      }
+    },
+    "screenRecorder": {
+      "label": {
+        "recording": "Stopp",
+        "stopped": "Aufnehmen"
+      },
+      "tooltip": {
+        "action": "Klicken zum Starten/Stoppen der Bildschirmaufnahme"
+      }
+    },
+    "powerProfile": {
+      "label": {
+        "unavailable": "Energieprofil"
+      },
+      "tooltip": {
+        "action": "Klicken zum Wechseln des Energieprofils"
+      }
+    },
+    "wifi": {
+      "label": {
+        "ethernet": "Ethernet",
+        "wifi": "Wi-Fi",
+        "disconnected": "Wi-Fi getrennt"
+      },
+      "tooltip": {
+        "action": "Klicken zum Verwalten der Wi-Fi-Verbindungen"
+      }
+    },
+    "bluetooth": {
+      "label": {
+        "enabled": "Bluetooth",
+        "disabled": "Bluetooth"
+      },
+      "tooltip": {
+        "action": "Klicken zum Verwalten der Bluetooth-Geräte"
+      }
+    },
+    "nightLight": {
+      "label": {
+        "enabled": "Nachtlicht",
+        "forced": "Nachtlicht",
+        "disabled": "Nachtlicht"
+      },
+      "tooltip": {
+        "action": "Klicken zum Wechseln des Nachtlicht-Modus\nRechtsklick: Einstellungen öffnen"
+      }
+    },
+    "wallpaperSelector": {
+      "label": "Hintergrundbild",
+      "tooltip": {
+        "action": "Linksklick: Hintergrundbildauswahl öffnen\nRechtsklick: Zufälliges Hintergrundbild setzen"
+      }
+    },
+    "keepAwake": {
+      "label": {
+        "enabled": "Wach halten",
+        "disabled": "Wach halten"
+      },
+      "tooltip": {
+        "action": "Klicken zum Umschalten des Wach-halten-Modus"
+      }
+    }
   },
   "toast": {
     "night-light": {

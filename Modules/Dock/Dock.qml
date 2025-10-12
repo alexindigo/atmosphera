@@ -401,6 +401,15 @@ Variants {
 
                       scale: appButton.hovered ? 1.15 : 1.0
 
+                      // Apply dock-specific colorization shader only to non-focused apps
+                      layer.enabled: !appButton.isActive && Settings.data.dock.colorizeIcons
+                      layer.effect: ShaderEffect {
+                        property color targetColor: Color.mOnSurface
+                        property real colorizeMode: 0.0 // Dock mode (grayscale)
+
+                        fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
+                      }
+
                       Behavior on scale {
                         NumberAnimation {
                           duration: Style.animationNormal
@@ -482,7 +491,9 @@ Variants {
                         anyAppHovered = true
                         const appName = appButton.appTitle || appButton.appId || "Unknown"
                         const tooltipText = appName.length > 40 ? appName.substring(0, 37) + "..." : appName
-                        TooltipService.show(Screen, appButton, tooltipText, "top")
+                        if (!contextMenu.visible) {
+                          TooltipService.show(Screen, appButton, tooltipText, "top")
+                        }
                         if (autoHide) {
                           showTimer.stop()
                           hideTimer.stop()
@@ -508,7 +519,7 @@ Variants {
                           // Close any other existing context menu first
                           root.closeAllContextMenus()
                           // Hide tooltip when showing context menu
-                          TooltipService.hide()
+                          TooltipService.hideImmediately()
                           contextMenu.show(appButton, modelData.toplevel || modelData)
                           return
                         }

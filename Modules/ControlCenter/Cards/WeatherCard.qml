@@ -9,6 +9,7 @@ import qs.Widgets
 NBox {
   id: root
 
+  property real scaling: 1.0
   readonly property bool weatherReady: (LocationService.data.weather !== null)
 
   ColumnLayout {
@@ -85,7 +86,7 @@ NBox {
         model: weatherReady ? LocationService.data.weather.daily.time : []
         delegate: ColumnLayout {
           Layout.alignment: Qt.AlignHCenter
-          spacing: Style.marginS * scaling
+          spacing: Style.marginXS * scaling
           NText {
             text: {
               var weatherDate = new Date(LocationService.data.weather.daily.time[index].replace(/-/g, "/"))

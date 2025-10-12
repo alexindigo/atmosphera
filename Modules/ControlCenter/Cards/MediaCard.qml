@@ -11,6 +11,8 @@ import qs.Widgets
 NBox {
   id: root
 
+  property real scaling: 1.0
+
   // Background artwork that covers everything
   Item {
     anchors.fill: parent
@@ -84,7 +86,7 @@ NBox {
           anchors.fill: parent
           values: CavaService.values
           fillColor: Color.mPrimary
-          opacity: MediaService.trackArtUrl !== "" ? 0.4 : 0.8
+          opacity: MediaService.trackArtUrl !== "" ? 0.5 : 0.8
         }
       }
 
@@ -94,7 +96,7 @@ NBox {
           anchors.fill: parent
           values: CavaService.values
           fillColor: Color.mPrimary
-          opacity: MediaService.trackArtUrl !== "" ? 0.4 : 0.8
+          opacity: MediaService.trackArtUrl !== "" ? 0.5 : 0.8
         }
       }
 
@@ -104,13 +106,13 @@ NBox {
           anchors.fill: parent
           values: CavaService.values
           fillColor: Color.mPrimary
-          opacity: MediaService.trackArtUrl !== "" ? 0.4 : 0.8
+          opacity: MediaService.trackArtUrl !== "" ? 0.5 : 0.8
         }
       }
     }
   }
 
-  // Player selector - positioned at the very top
+  // Player selector
   Rectangle {
     id: playerSelectorButton
     anchors.top: parent.top
@@ -306,7 +308,7 @@ NBox {
         NText {
           visible: MediaService.trackTitle !== ""
           text: MediaService.trackTitle
-          pointSize: Style.fontSizeM * scaling
+          pointSize: Style.fontSizeL * scaling
           font.weight: Style.fontWeightBold
           elide: Text.ElideRight
           wrapMode: Text.Wrap
@@ -376,7 +378,7 @@ NBox {
           stepSize: 0
           snapAlways: false
           enabled: MediaService.trackLength > 0 && MediaService.canSeek
-          heightRatio: 0.65
+          heightRatio: 0.6
 
           onMoved: {
             progressWrapper.localSeekRatio = value

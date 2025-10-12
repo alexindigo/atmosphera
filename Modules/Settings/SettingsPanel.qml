@@ -29,6 +29,7 @@ NPanel {
     Audio,
     Bar,
     ColorScheme,
+    ControlCenter,
     OSD,
     Display,
     Dock,
@@ -111,6 +112,10 @@ NPanel {
     id: notificationsTab
     NotificationsTab {}
   }
+  Component {
+    id: controlCenterTab
+    ControlCenterTab {}
+  }
 
   // Order *DOES* matter
   function updateTabsModel() {
@@ -124,7 +129,13 @@ NPanel {
                      "label": "settings.bar.title",
                      "icon": "settings-bar",
                      "source": barTab
-                   }, {
+                   }, //{
+                   // "id": SettingsPanel.Tab.ControlCenter,
+                   // "label": "settings.control-center.title",
+                   // "icon": "settings-bar",
+                   // "source": controlCenterTab
+                   //},
+                   {
                      "id": SettingsPanel.Tab.Dock,
                      "label": "settings.dock.title",
                      "icon": "settings-dock",

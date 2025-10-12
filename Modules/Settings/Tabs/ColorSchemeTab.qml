@@ -11,16 +11,16 @@ ColumnLayout {
 
   // Cache for scheme JSON (can be flat or {dark, light})
   property var schemeColorsCache: ({})
+  property int cacheVersion: 0 // Increment to trigger UI updates
 
   spacing: Style.marginL * scaling
 
   // Helper function to extract scheme name from path
   function extractSchemeName(schemePath) {
     var pathParts = schemePath.split("/")
-    var filename = pathParts[pathParts.length - 1] // Get filename
-    var schemeName = filename.replace(".json", "") // Remove .json extension
+    var filename = pathParts[pathParts.length - 1]
+    var schemeName = filename.replace(".json", "")
 
-    // Convert folder names back to display names
     if (schemeName === "Noctalia-default") {
       schemeName = "Noctalia (default)"
     } else if (schemeName === "Noctalia-legacy") {
@@ -33,39 +33,52 @@ ColumnLayout {
   }
 
   // Helper function to get color from scheme file (supports dark/light variants)
-  function getSchemeColor(schemePath, colorKey) {
-    // Extract scheme name from path
-    var schemeName = extractSchemeName(schemePath)
+  function getSchemeColor(schemeName, colorKey) {
+    // Access cache version to create dependency
+    var _ = cacheVersion
 
-    // Try to get from cached data first
     if (schemeColorsCache[schemeName]) {
       var entry = schemeColorsCache[schemeName]
       var variant = entry
+
+      // Check if scheme has dark/light variants
       if (entry.dark || entry.light) {
         variant = Settings.data.colorSchemes.darkMode ? (entry.dark || entry.light) : (entry.light || entry.dark)
       }
-      if (variant && variant[colorKey])
+
+      if (variant && variant[colorKey]) {
         return variant[colorKey]
+      }
     }
 
-    // Return a default color if not cached yet
-    return "#000000"
+    // Return visible defaults while loading
+    if (colorKey === "mSurface")
+      return Color.mSurfaceVariant
+    if (colorKey === "mPrimary")
+      return Color.mPrimary
+    if (colorKey === "mSecondary")
+      return Color.mSecondary
+    if (colorKey === "mTertiary")
+      return Color.mTertiary
+    if (colorKey === "mError")
+      return Color.mError
+    return Color.mOnSurfaceVariant
   }
 
   // This function is called by the FileView Repeater when a scheme file is loaded
   function schemeLoaded(schemeName, jsonData) {
     var value = jsonData || {}
-    var newCache = schemeColorsCache
-    newCache[schemeName] = value
-    schemeColorsCache = newCache
+    schemeColorsCache[schemeName] = value
+    // Force UI update by incrementing cache version
+    cacheVersion++
   }
 
-  // When the list of available schemes changes, clear the cache.
-  // The Repeater below will automatically re-create the FileViews.
+  // When the list of available schemes changes, clear the cache
   Connections {
     target: ColorSchemeService
     function onSchemesChanged() {
       schemeColorsCache = {}
+      cacheVersion++
     }
   }
 
@@ -77,12 +90,10 @@ ColumnLayout {
 
     onExited: function (exitCode) {
       if (exitCode === 0) {
-        // Matugen exists, enable it
         Settings.data.colorSchemes.useWallpaperColors = true
         AppThemeService.generate()
         ToastService.showNotice(I18n.tr("settings.color-scheme.color-source.use-wallpaper-colors.label"), I18n.tr("toast.wallpaper-colors.enabled"))
       } else {
-        // Matugen not found
         ToastService.showWarning(I18n.tr("settings.color-scheme.color-source.use-wallpaper-colors.label"), I18n.tr("toast.wallpaper-colors.not-installed"))
       }
     }
@@ -91,7 +102,7 @@ ColumnLayout {
     stderr: StdioCollector {}
   }
 
-  // A non-visual Item to host the Repeater that loads the color scheme files.
+  // A non-visual Item to host the Repeater that loads the color scheme files
   Item {
     visible: false
     id: fileLoaders
@@ -99,21 +110,19 @@ ColumnLayout {
     Repeater {
       model: ColorSchemeService.schemes
 
-      // The delegate is a Component, which correctly wraps the non-visual FileView
       delegate: Item {
         FileView {
           path: modelData
-          blockLoading: true
+          blockLoading: false
           onLoaded: {
-            // Extract scheme name from path
-            var schemeName = extractSchemeName(path)
+            var schemeName = root.extractSchemeName(path)
 
             try {
               var jsonData = JSON.parse(text())
               root.schemeLoaded(schemeName, jsonData)
             } catch (e) {
               Logger.warn("ColorSchemeTab", "Failed to parse JSON for scheme:", schemeName, e)
-              root.schemeLoaded(schemeName, null) // Load defaults on parse error
+              root.schemeLoaded(schemeName, null)
             }
           }
         }
@@ -127,13 +136,16 @@ ColumnLayout {
     description: I18n.tr("settings.color-scheme.color-source.section.description")
   }
 
-  // Dark Mode Toggle (affects both Matugen and predefined schemes that provide variants)
+  // Dark Mode Toggle
   NToggle {
     label: I18n.tr("settings.color-scheme.color-source.dark-mode.label")
     description: I18n.tr("settings.color-scheme.color-source.dark-mode.description")
     checked: Settings.data.colorSchemes.darkMode
     enabled: true
-    onToggled: checked => Settings.data.colorSchemes.darkMode = checked
+    onToggled: checked => {
+                 Settings.data.colorSchemes.darkMode = checked
+                 root.cacheVersion++ // Force UI update for dark/light variants
+               }
   }
 
   // Use Wallpaper Colors
@@ -143,14 +155,12 @@ ColumnLayout {
     checked: Settings.data.colorSchemes.useWallpaperColors
     onToggled: checked => {
                  if (checked) {
-                   // Check if matugen is installed
                    matugenCheck.running = true
                  } else {
                    Settings.data.colorSchemes.useWallpaperColors = false
                    ToastService.showNotice(I18n.tr("settings.color-scheme.color-source.use-wallpaper-colors.label"), I18n.tr("toast.wallpaper-colors.disabled"))
 
                    if (Settings.data.colorSchemes.predefinedScheme) {
-
                      ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme)
                    }
                  }
@@ -195,7 +205,6 @@ ColumnLayout {
 
     onSelected: key => {
                   Settings.data.colorSchemes.matugenSchemeType = key
-
                   AppThemeService.generate()
                 }
   }
@@ -232,15 +241,16 @@ ColumnLayout {
           id: schemeItem
 
           property string schemePath: modelData
+          property string schemeName: root.extractSchemeName(modelData)
 
           Layout.fillWidth: true
           Layout.alignment: Qt.AlignHCenter
           height: 50 * scaling
           radius: Style.radiusS * scaling
-          color: getSchemeColor(modelData, "mSurface")
+          color: root.getSchemeColor(schemeName, "mSurface")
           border.width: Math.max(1, Style.borderL * scaling)
           border.color: {
-            if (Settings.data.colorSchemes.predefinedScheme === extractSchemeName(modelData)) {
+            if (Settings.data.colorSchemes.predefinedScheme === schemeName) {
               return Color.mSecondary
             }
             if (itemMouseArea.containsMouse) {
@@ -255,12 +265,11 @@ ColumnLayout {
             spacing: Style.marginXS * scaling
 
             NText {
-              text: extractSchemeName(schemePath)
+              text: schemeItem.schemeName
               pointSize: Style.fontSizeS * scaling
               font.weight: Style.fontWeightMedium
               color: Color.mOnSurface
               Layout.fillWidth: true
-              // Layout.maximumWidth: 150 * scaling
               elide: Text.ElideRight
               verticalAlignment: Text.AlignVCenter
               wrapMode: Text.WordWrap
@@ -271,28 +280,28 @@ ColumnLayout {
               width: 14 * scaling
               height: 14 * scaling
               radius: width * 0.5
-              color: getSchemeColor(modelData, "mPrimary")
+              color: root.getSchemeColor(schemeItem.schemeName, "mPrimary")
             }
 
             Rectangle {
               width: 14 * scaling
               height: 14 * scaling
               radius: width * 0.5
-              color: getSchemeColor(modelData, "mSecondary")
+              color: root.getSchemeColor(schemeItem.schemeName, "mSecondary")
             }
 
             Rectangle {
               width: 14 * scaling
               height: 14 * scaling
               radius: width * 0.5
-              color: getSchemeColor(modelData, "mTertiary")
+              color: root.getSchemeColor(schemeItem.schemeName, "mTertiary")
             }
 
             Rectangle {
               width: 14 * scaling
               height: 14 * scaling
               radius: width * 0.5
-              color: getSchemeColor(modelData, "mError")
+              color: root.getSchemeColor(schemeItem.schemeName, "mError")
             }
           }
 
@@ -305,14 +314,14 @@ ColumnLayout {
               Settings.data.colorSchemes.useWallpaperColors = false
               Logger.log("ColorSchemeTab", "Disabled wallpaper colors")
 
-              Settings.data.colorSchemes.predefinedScheme = extractSchemeName(schemePath)
+              Settings.data.colorSchemes.predefinedScheme = schemeItem.schemeName
               ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme)
             }
           }
 
           // Selection indicator
           Rectangle {
-            visible: (Settings.data.colorSchemes.predefinedScheme === extractSchemeName(schemePath))
+            visible: (Settings.data.colorSchemes.predefinedScheme === schemeItem.schemeName)
             anchors.right: parent.right
             anchors.top: parent.top
             anchors.rightMargin: -3 * scaling
@@ -350,7 +359,6 @@ ColumnLayout {
       checked: Settings.data.colorSchemes.generateTemplatesForPredefined
       onToggled: checked => {
                    Settings.data.colorSchemes.generateTemplatesForPredefined = checked
-                   // Re-generate templates if a predefined scheme is currently active
                    if (!Settings.data.colorSchemes.useWallpaperColors && Settings.data.colorSchemes.predefinedScheme) {
                      ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme)
                    }
@@ -402,6 +410,18 @@ ColumnLayout {
         checked: Settings.data.templates.qt
         onToggled: checked => {
                      Settings.data.templates.qt = checked
+                     AppThemeService.generate()
+                   }
+      }
+
+      NCheckbox {
+        label: "KColorScheme"
+        description: I18n.tr("settings.color-scheme.templates.ui.kcolorscheme.description", {
+                               "filepath": "~/.local/share/color-schemes/noctalia.colors"
+                             })
+        checked: Settings.data.templates.kcolorscheme
+        onToggled: checked => {
+                     Settings.data.templates.kcolorscheme = checked
                      AppThemeService.generate()
                    }
       }
@@ -494,22 +514,29 @@ ColumnLayout {
                    }
       }
 
-      NCheckbox {
-        label: "Vesktop"
-        description: ProgramCheckerService.vesktopAvailable ? I18n.tr("settings.color-scheme.templates.programs.vesktop.description", {
-                                                                        "filepath": "~/.config/vesktop/themes/noctalia.theme.css"
-                                                                      }) : I18n.tr("settings.color-scheme.templates.programs.vesktop.description-missing", {
-                                                                                     "app": "vesktop"
-                                                                                   })
-        checked: Settings.data.templates.vesktop
-        enabled: ProgramCheckerService.vesktopAvailable
-        opacity: ProgramCheckerService.vesktopAvailable ? 1.0 : 0.6
-        onToggled: checked => {
-                     if (ProgramCheckerService.vesktopAvailable) {
-                       Settings.data.templates.vesktop = checked
+      // Show individual checkboxes for each detected Discord client
+      Repeater {
+        model: ProgramCheckerService.availableDiscordClients
+        delegate: NCheckbox {
+          label: modelData.name.charAt(0).toUpperCase() + modelData.name.slice(1)
+          description: I18n.tr("settings.color-scheme.templates.programs.discord.description", {
+                                 "client": modelData.name.charAt(0).toUpperCase() + modelData.name.slice(1),
+                                 "filepath": modelData.themePath
+                               })
+          checked: Settings.data.templates["discord_" + modelData.name] || false
+          onToggled: checked => {
+                       Settings.data.templates["discord_" + modelData.name] = checked
                        AppThemeService.generate()
                      }
-                   }
+        }
+      }
+
+      // Show message if no Discord clients detected
+      NText {
+        visible: ProgramCheckerService.availableDiscordClients.length === 0
+        text: I18n.tr("settings.color-scheme.templates.programs.discord.description-missing")
+        color: Color.mOnSurfaceVariant
+        pointSize: Style.fontSizeS * scaling
       }
 
       NCheckbox {

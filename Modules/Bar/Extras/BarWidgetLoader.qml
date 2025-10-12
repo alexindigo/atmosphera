@@ -27,7 +27,7 @@ Item {
   }
 
   function getImplicitSize(item, prop) {
-    return (item && item.visible) ? item[prop] : 0
+    return (item && item.visible) ? Math.round(item[prop]) : 0
   }
 
   Loader {
@@ -77,7 +77,7 @@ Item {
   // Error handling
   onWidgetIdChanged: {
     if (widgetId && !BarWidgetRegistry.hasWidget(widgetId)) {
-      Logger.warn("BarWidgetLoader", "Widget not found in bar registry:", widgetId)
+      Logger.warn("BarWidgetLoader", "Widget not found in registry:", widgetId)
     }
   }
 }

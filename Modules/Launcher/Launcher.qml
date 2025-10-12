@@ -35,6 +35,7 @@ NPanel {
   property var plugins: []
   property var activePlugin: null
   property bool resultsReady: false
+  property bool ignoreMouseHover: false
 
   readonly property int badgeSize: Math.round(Style.baseWidgetSize * 1.6 * scaling)
   readonly property int entryHeight: Math.round(badgeSize + Style.marginM * 2 * scaling)
@@ -94,6 +95,7 @@ NPanel {
   // Lifecycle
   onOpened: {
     resultsReady = false
+    ignoreMouseHover = true
 
     // Notify plugins
     for (let plugin of plugins) {
@@ -110,6 +112,7 @@ NPanel {
   onClosed: {
     // Reset search text
     searchText = ""
+    ignoreMouseHover = true
 
     // Notify plugins
     for (let plugin of plugins) {
@@ -153,6 +156,47 @@ NPanel {
     id: ui
     color: Color.transparent
     opacity: resultsReady ? 1.0 : 0.0
+
+    // Global MouseArea to detect mouse movement
+    MouseArea {
+      id: mouseMovementDetector
+      anchors.fill: parent
+      z: -999
+      hoverEnabled: true
+      propagateComposedEvents: true
+      acceptedButtons: Qt.NoButton
+
+      property real lastX: 0
+      property real lastY: 0
+      property bool initialized: false
+
+      onPositionChanged: mouse => {
+                           // Store initial position
+                           if (!initialized) {
+                             lastX = mouse.x
+                             lastY = mouse.y
+                             initialized = true
+                             return
+                           }
+
+                           // Check if mouse actually moved
+                           const deltaX = Math.abs(mouse.x - lastX)
+                           const deltaY = Math.abs(mouse.y - lastY)
+                           if (deltaX > 1 || deltaY > 1) {
+                             root.ignoreMouseHover = false
+                             lastX = mouse.x
+                             lastY = mouse.y
+                           }
+                         }
+
+      // Reset when launcher opens
+      Connections {
+        target: root
+        function onOpened() {
+          mouseMovementDetector.initialized = false
+        }
+      }
+    }
 
     Behavior on opacity {
       NumberAnimation {
@@ -321,7 +365,7 @@ NPanel {
         delegate: Rectangle {
           id: entry
 
-          property bool isSelected: mouseArea.containsMouse || (index === selectedIndex)
+          property bool isSelected: (!root.ignoreMouseHover && mouseArea.containsMouse) || (index === selectedIndex)
           // Accessor for app id
           property string appId: (modelData && modelData.appId) ? String(modelData.appId) : ""
 
@@ -523,7 +567,9 @@ NPanel {
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
             onEntered: {
-              selectedIndex = index
+              if (!root.ignoreMouseHover) {
+                selectedIndex = index
+              }
             }
             onClicked: mouse => {
                          if (mouse.button === Qt.LeftButton) {

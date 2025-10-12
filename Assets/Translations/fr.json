@@ -26,6 +26,10 @@
           "label": "Assombrir le bureau",
           "description": "Assombrir le bureau lorsque des panneaux ou des menus sont ouverts."
         },
+        "compact-lockscreen": {
+          "label": "Écran de verrouillage compact",
+          "description": "Affiche uniquement la saisie de connexion et les contrôles système, masquant les widgets météo et média."
+        },
         "border-radius": {
           "label": "Rayon de bordure",
           "description": "Contrôle l'arrondi des coins des fenêtres, des boutons et d'autres éléments."
@@ -85,6 +89,7 @@
         "reset-scaling": "Réinitialiser l'échelle"
       },
       "control-center": {
+        "title": "Centre de contrôle",
         "section": {
           "label": "Centre de contrôle",
           "description": "Configurer le positionnement et le comportement du panneau du centre de contrôle."
@@ -92,6 +97,22 @@
         "position": {
           "label": "Position",
           "description": "Choisissez où apparaît le panneau du centre de contrôle lors de l'ouverture."
+        },
+        "quickSettingsStyle": {
+          "section": {
+            "label": "Style des paramètres rapides",
+            "description": "Personnalisez l'apparence et le comportement des paramètres rapides dans le centre de contrôle."
+          },
+          "style": {
+            "label": "Style des paramètres rapides",
+            "description": "Choisissez le style visuel pour les commutateurs et contrôles des paramètres rapides."
+          }
+        },
+        "widgets": {
+          "section": {
+            "label": "Widgets",
+            "description": "Configurez et gérez les widgets du centre de contrôle et leurs options d'affichage."
+          }
         }
       }
     },
@@ -264,8 +285,15 @@
       },
       "monitors": {
         "section": {
-          "label": "Affichage sur les moniteur",
+          "label": "Affichage sur les moniteurs",
           "description": "Afficher la barre sur des moniteurs spécifiques. Par défaut, sur tous si aucun n'est choisi."
+        }
+      },
+      "tray": {
+        "blacklist": {
+          "label": "Liste noire",
+          "description": "Ajouter des règles d'exclusion pour la boîte à miniatures, prend en charge les caractères génériques (*).",
+          "placeholder": "ex: nm-applet, Fcitx*"
         }
       }
     },
@@ -290,6 +318,10 @@
         "floating-distance": {
           "label": "Distance de flottaison du dock",
           "description": "Ajustez la distance de flottaison par rapport au bord de l'écran."
+        },
+        "colorize-icons": {
+          "label": "Coloriser les icônes",
+          "description": "Appliquer les couleurs du thème aux icônes d'applications du dock (applications non focalisées uniquement)."
         }
       },
       "monitors": {
@@ -401,6 +433,10 @@
       "enabled": {
         "label": "Activer l'affichage à l'écran",
         "description": "Afficher en temps réel les changements de volume et de luminosité."
+      },
+      "always-on-top": {
+        "label": "Toujours au premier plan",
+        "description": "Afficher l'OSD au-dessus des fenêtres plein écran et autres couches."
       },
       "location": {
         "label": "Emplacement",
@@ -529,6 +565,9 @@
           },
           "qt": {
             "description": "Écrire {filepath}"
+          },
+          "kcolorscheme": {
+            "description": "Écrire {filepath}"
           }
         },
         "terminal": {
@@ -554,9 +593,9 @@
             "description": "Écrire ~/.config/fuzzel/themes/noctalia et recharger",
             "description-missing": "Nécessite que le lanceur fuzzel soit installé"
           },
-          "vesktop": {
-            "description": "Écrire ~/.config/vesktop/themes/noctalia.theme.css",
-            "description-missing": "Nécessite que le client Discord vesktop soit installé"
+          "discord": {
+            "description": "Écrire {filepath} pour {client}",
+            "description-missing": "Aucun client Discord détecté. Installez vesktop, webcord, armcord, equibop, lightcord ou dorion."
           },
           "pywalfox": {
             "description": "Écrire ~/.cache/wal/colors.json et exécuter pywalfox update",
@@ -705,6 +744,28 @@
         }
       }
     },
+    "control-center": {
+      "title": "Centre de contrôle",
+      "quickSettingsStyle": {
+        "section": {
+          "label": "Style des paramètres rapides",
+          "description": "Personnalisez l'apparence et le comportement des paramètres rapides dans le centre de contrôle."
+        },
+        "style": {
+          "label": "Style des paramètres rapides",
+          "description": "Choisissez le style visuel pour les commutateurs et contrôles des paramètres rapides."
+        }
+      },
+      "widgets": {
+        "section": {
+          "label": "Widgets",
+          "description": "Configurez et gérez les widgets du centre de contrôle et leurs options d'affichage."
+        }
+      },
+      "quickSettings": {
+        "sectionName": "Paramètres rapides"
+      }
+    },
     "hooks": {
       "title": "Hooks",
       "system-hooks": {
@@ -745,7 +806,11 @@
     },
     "file-picker": {
       "select-folder": "Sélectionner un dossier",
-      "select-file": "Sélectionner un fichier"
+      "select-file": "Sélectionner un fichier",
+      "cancel": "Annuler",
+      "search-placeholder": "Rechercher des fichiers et des dossiers...",
+      "select-current": "Sélectionner Actuel",
+      "title": "Sélecteur de fichiers"
     },
     "datetime-tokens": {
       "common": {
@@ -851,6 +916,10 @@
         "width": {
           "description": "Contrôle la taille horizontale du widget.",
           "label": "Largeur du widget"
+        },
+        "colorize-icons": {
+          "label": "Coloriser les icônes",
+          "description": "Appliquer les couleurs du thème à l'icône de la fenêtre active."
         }
       },
       "system-monitor": {
@@ -1044,6 +1113,16 @@
         "only-same-output": {
           "description": "Afficher uniquement les applications de la sortie où la barre est située.",
           "label": "Seulement à partir de la même sortie"
+        },
+        "colorize-icons": {
+          "label": "Coloriser les icônes",
+          "description": "Appliquer les couleurs du thème aux icônes de la barre des tâches."
+        }
+      },
+      "tray": {
+        "colorize-icons": {
+          "label": "Coloriser les icônes",
+          "description": "Appliquer les couleurs du thème aux icônes de la barre système."
         }
       }
     }
@@ -1238,6 +1317,11 @@
         "bottom_right": "En bas à droite",
         "bottom_center": "En bas au centre",
         "top_center": "En haut au centre"
+      },
+      "quickSettingsStyle": {
+        "modern": "Moderne",
+        "classic": "Classique",
+        "compact": "Compact"
       }
     },
     "osd": {
@@ -1334,9 +1418,8 @@
     "calculator-error": "Erreur"
   },
   "system": {
-    "uptime": "Temps d'activité : {uptime}",
     "welcome-back": "Bon retour,",
-    "monitor-description": "{model} ({width}x{height})",
+    "monitor-description": "{model} ({width}x{height} @ {scale}x)",
     "scaling-percentage": "{percentage}%",
     "location-display": "{name} ({coordinates})",
     "signal-strength": "{signal}%",
@@ -1348,7 +1431,8 @@
     "user-requested": "Demandé par l'utilisateur",
     "unknown": "Inconnu",
     "unknown-version": "Inconnue",
-    "unknown-layout": "Inconnue"
+    "unknown-layout": "Inconnue",
+    "uptime": "Activité : {uptime}"
   },
   "lock-screen": {
     "password": "Entrez votre mot de passe...",
@@ -1358,6 +1442,78 @@
     "shut-down": "Éteindre",
     "restart": "Redémarrer",
     "suspend": "Mettre en veille"
+  },
+  "quickSettings": {
+    "notifications": {
+      "label": {
+        "enabled": "Notifications",
+        "disabled": "Ne pas déranger"
+      },
+      "tooltip": {
+        "action": "Clic gauche : Ouvrir l'historique des notifications\nClic droit : Basculer Ne pas déranger"
+      }
+    },
+    "screenRecorder": {
+      "label": {
+        "recording": "Arrêter",
+        "stopped": "Enregistrer"
+      },
+      "tooltip": {
+        "action": "Cliquer pour démarrer/arrêter l'enregistrement d'écran"
+      }
+    },
+    "powerProfile": {
+      "label": {
+        "unavailable": "Profil d'alimentation"
+      },
+      "tooltip": {
+        "action": "Cliquer pour changer de profil d'alimentation"
+      }
+    },
+    "wifi": {
+      "label": {
+        "ethernet": "Ethernet",
+        "wifi": "Wi-Fi",
+        "disconnected": "Wi-Fi déconnecté"
+      },
+      "tooltip": {
+        "action": "Cliquer pour gérer les connexions Wi-Fi"
+      }
+    },
+    "bluetooth": {
+      "label": {
+        "enabled": "Bluetooth",
+        "disabled": "Bluetooth"
+      },
+      "tooltip": {
+        "action": "Cliquer pour gérer les appareils Bluetooth"
+      }
+    },
+    "nightLight": {
+      "label": {
+        "enabled": "Lumière nocturne",
+        "forced": "Lumière nocturne",
+        "disabled": "Lumière nocturne"
+      },
+      "tooltip": {
+        "action": "Cliquer pour basculer le mode Lumière nocturne\nClic droit : Ouvrir les paramètres"
+      }
+    },
+    "wallpaperSelector": {
+      "label": "Fond d'écran",
+      "tooltip": {
+        "action": "Clic gauche : Ouvrir le sélecteur de fond d'écran\nClic droit : Définir un fond d'écran aléatoire"
+      }
+    },
+    "keepAwake": {
+      "label": {
+        "enabled": "Rester éveillé",
+        "disabled": "Rester éveillé"
+      },
+      "tooltip": {
+        "action": "Cliquer pour basculer le mode Rester éveillé"
+      }
+    }
   },
   "toast": {
     "night-light": {

@@ -8,6 +8,7 @@ import qs.Widgets
 Rectangle {
   id: root
 
+  property real scaling: 1.0
   property real value: 0 // 0..100 (or any range visually mapped)
   property string icon: ""
   property string suffix: "%"
@@ -27,6 +28,13 @@ Rectangle {
   // Repaint gauge when the bound value changes
   onValueChanged: gauge.requestPaint()
 
+  // Force repaint when scaling changes
+  onScalingChanged: {
+    Qt.callLater(() => {
+                   gauge.requestPaint()
+                 })
+  }
+
   ColumnLayout {
     id: mainLayout
     anchors.fill: parent
@@ -45,7 +53,7 @@ Rectangle {
       Canvas {
         id: gauge
         anchors.fill: parent
-        renderStrategy: Canvas.Cooperative
+        renderStrategy: Canvas.Immediate
 
         onPaint: {
           const ctx = getContext("2d")
@@ -61,17 +69,31 @@ Rectangle {
           ctx.reset()
           ctx.lineWidth = 6 * scaling * contentScale
 
-          // Track uses surfaceVariant for stronger contrast
+          // Track uses surface for stronger contrast
           ctx.strokeStyle = Color.mSurface
           ctx.beginPath()
           ctx.arc(cx, cy, r, start, endBg)
           ctx.stroke()
 
-          // Value arc
+          // Value arc with gradient starting at 25%
           const ratio = Math.max(0, Math.min(1, root.value / 100))
           const end = start + (endBg - start) * ratio
 
-          ctx.strokeStyle = Color.mPrimary
+          // Calculate gradient start point (25% into the arc)
+          const gradientStartRatio = 0.25
+          const gradientStart = start + (endBg - start) * gradientStartRatio
+
+          // Create linear gradient
+          const startX = cx + r * Math.cos(gradientStart)
+          const startY = cy + r * Math.sin(gradientStart)
+          const endX = cx + r * Math.cos(endBg)
+          const endY = cy + r * Math.sin(endBg)
+
+          const gradient = ctx.createLinearGradient(startX, startY, endX, endY)
+          gradient.addColorStop(0, Color.mPrimary)
+          gradient.addColorStop(1, Color.mOnSurface)
+
+          ctx.strokeStyle = gradient
           ctx.beginPath()
           ctx.arc(cx, cy, r, start, end)
           ctx.stroke()
@@ -84,32 +106,22 @@ Rectangle {
         anchors.centerIn: parent
         anchors.verticalCenterOffset: -4 * scaling * contentScale
         text: `${root.value}${root.suffix}`
-        pointSize: Style.fontSizeM * scaling * contentScale
+        pointSize: Style.fontSizeM * scaling * contentScale * 0.9
         font.weight: Style.fontWeightBold
         color: Color.mOnSurface
         horizontalAlignment: Text.AlignHCenter
       }
 
-      // Tiny circular badge for the icon, positioned inside below the percentage
-      Rectangle {
-        id: iconBadge
-        width: iconText.implicitWidth + Style.marginXXS * scaling
-        height: width
-        radius: width / 2
-        color: Color.mPrimary
+      NIcon {
+        id: iconText
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: valueLabel.bottom
         anchors.topMargin: 8 * scaling * contentScale
-
-        NIcon {
-          id: iconText
-          anchors.centerIn: parent
-          icon: root.icon
-          color: Color.mOnPrimary
-          pointSize: Style.fontSizeS * scaling
-          horizontalAlignment: Text.AlignHCenter
-          verticalAlignment: Text.AlignVCenter
-        }
+        icon: root.icon
+        color: Color.mPrimary
+        pointSize: Style.fontSizeM * scaling
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
       }
     }
   }

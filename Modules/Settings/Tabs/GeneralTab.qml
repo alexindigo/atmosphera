@@ -89,6 +89,13 @@ ColumnLayout {
       onToggled: checked => Settings.data.ui.tooltipsEnabled = checked
     }
 
+    NToggle {
+      label: I18n.tr("settings.general.ui.compact-lockscreen.label")
+      description: I18n.tr("settings.general.ui.compact-lockscreen.description")
+      checked: Settings.data.general.compactLockScreen
+      onToggled: checked => Settings.data.general.compactLockScreen = checked
+    }
+
     ColumnLayout {
       spacing: Style.marginXXS * scaling
       Layout.fillWidth: true

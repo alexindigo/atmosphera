@@ -41,6 +41,12 @@ Singleton {
                                                             "path": "~/.config/qt6ct/colors/noctalia.conf"
                                                           }]
                                                       },
+                                                      "kcolorscheme": {
+                                                        "input": "kcolorscheme.colors",
+                                                        "outputs": [{
+                                                            "path": "~/.local/share/color-schemes/noctalia.colors"
+                                                          }]
+                                                      },
                                                       "fuzzel": {
                                                         "input": "fuzzel.conf",
                                                         "outputs": [{
@@ -55,7 +61,7 @@ Singleton {
                                                           }],
                                                         "postProcess": () => `${colorsApplyScript} pywalfox\n`
                                                       },
-                                                      "vesktop": {
+                                                      "discord_vesktop": {
                                                         "input": "vesktop.css",
                                                         "outputs": [{
                                                             "path": "~/.config/vesktop/themes/noctalia.theme.css"
