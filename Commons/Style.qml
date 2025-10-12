@@ -29,11 +29,11 @@ Singleton {
   property int fontWeightBold: 700
 
   // Radii
-  property int radiusXXS: 4 * Settings.data.general.radiusRatio
-  property int radiusXS: 8 * Settings.data.general.radiusRatio
-  property int radiusS: 12 * Settings.data.general.radiusRatio
-  property int radiusM: 16 * Settings.data.general.radiusRatio
-  property int radiusL: 20 * Settings.data.general.radiusRatio
+  property int radiusXXS: Math.round(4 * Settings.data.general.radiusRatio)
+  property int radiusXS: Math.round(8 * Settings.data.general.radiusRatio)
+  property int radiusS: Math.round(12 * Settings.data.general.radiusRatio)
+  property int radiusM: Math.round(16 * Settings.data.general.radiusRatio)
+  property int radiusL: Math.round(20 * Settings.data.general.radiusRatio)
 
   //screen Radii
   property int screenRadius: 20 * Settings.data.general.screenRadiusRatio
@@ -46,10 +46,10 @@ Singleton {
   // Margins (for margins and spacing)
   property int marginXXS: 2
   property int marginXS: 4
-  property int marginS: 8
-  property int marginM: 12
-  property int marginL: 16
-  property int marginXL: 24
+  property int marginS: 6
+  property int marginM: 9
+  property int marginL: 13
+  property int marginXL: 18
 
   // Opacity
   property real opacityNone: 0.0
