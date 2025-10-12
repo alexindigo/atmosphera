@@ -10,7 +10,7 @@ import qs.Widgets
 NPanel {
   id: root
 
-  preferredWidth: 300
+  preferredWidth: 350
   preferredHeight: 210
   panelKeyboardFocus: true
 
@@ -83,20 +83,53 @@ NPanel {
         id: batteryGroup
       }
 
-      Repeater {
-        model: optionsModel
+      Rectangle {
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        color: Color.transparent
 
-        NRadioButton {
-          ButtonGroup.group: batteryGroup
-          required property var modelData
-          text: I18n.tr(modelData.label, {
-                          "percent": BatteryService.getThresholdValue(modelData.id)
-                        })
-          checked: BatteryService.chargingMode === modelData.id
-          onClicked: {
-            BatteryService.setChargingMode(modelData.id)
+        ColumnLayout {
+          anchors.fill: parent
+          spacing: Style.marginM * scaling
+
+          Repeater {
+            model: optionsModel
+
+            NRadioButton {
+              visible: BatteryService.chargingMode !== BatteryService.ChargingMode.Disabled
+              ButtonGroup.group: batteryGroup
+              required property var modelData
+              text: I18n.tr(modelData.label, {
+                              "percent": BatteryService.getThresholdValue(modelData.id)
+                            })
+              checked: BatteryService.chargingMode === modelData.id
+              onClicked: {
+                BatteryService.setChargingMode(modelData.id)
+              }
+              Layout.fillWidth: true
+            }
           }
-          Layout.fillWidth: true
+        }
+
+        ColumnLayout {
+          visible: BatteryService.chargingMode === BatteryService.ChargingMode.Disabled
+          anchors.fill: parent
+          spacing: Style.marginM * scaling
+
+          Item {
+            Layout.fillHeight: true
+          }
+
+          NText {
+            text: I18n.tr("battery.panel.disabled")
+            pointSize: Style.fontSizeL * scaling
+            color: Color.mOnSurfaceVariant
+            Layout.alignment: Qt.AlignHCenter
+          }
+
+          Item {
+            Layout.fillHeight: true
+          }
         }
       }
     }
