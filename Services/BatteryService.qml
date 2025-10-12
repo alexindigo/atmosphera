@@ -21,8 +21,8 @@ Singleton {
   readonly property string batteryInstallerScript: Quickshell.shellDir + '/Bin/battery-manager/install-battery-manager.sh'
   readonly property string batteryUninstallerScript: Quickshell.shellDir + '/Bin/battery-manager/uninstall-battery-manager.sh'
 
-  // This is false when setter is started in init so that a toast isn't shown on every startup
-  property bool hideSuccessToast: true
+  // This is used to omit toast message and writing mode to settings on startup
+  property bool initialSetter: true
 
   // Choose icon based on charge and charging state
   function getIcon(percent, charging, isReady) {
@@ -71,7 +71,7 @@ Singleton {
     setChargingMode(nextMode)
   }
 
-  function applyChargingMode(hideToast = false) {
+  function applyChargingMode() {
     let command = [batterySetterScript]
 
     // Currently the script sends notifications by default but quickshell
@@ -79,7 +79,6 @@ Singleton {
     command.push("-q")
 
     command.push(BatteryService.getThresholdValue(BatteryService.chargingMode))
-    BatteryService.hideSuccessToast = hideToast
 
     setterProcess.command = command
     setterProcess.running = true
@@ -91,9 +90,8 @@ Singleton {
   }
 
   function init() {
-    if (BatteryService.chargingMode !== BatteryService.ChargingMode.Disabled) {
-      BatteryService.applyChargingMode(true)
-      Logger.log("BatteryService", `Applied charging mode - ${BatteryService.chargingMode}`)
+    if (BatteryService.chargingMode !== BatteryService.ChargingMode.Disabled && BatteryService.chargingMode !== BatteryService.ChargingMode.Full) {
+      BatteryService.applyChargingMode()
     }
   }
 
@@ -104,12 +102,14 @@ Singleton {
     onExited: (exitCode, exitStatus) => {
       if (exitCode === 0) {
         Logger.log("BatteryService", "Battery threshold set successfully")
-        if (!BatteryService.hideSuccessToast) {
-          ToastService.showNotice(I18n.tr("toast.battery-manager.title"), I18n.tr("toast.battery-manager.set-success-desc", {
-                                                                                    "percent": BatteryService.getThresholdValue(BatteryService.chargingMode)
-                                                                                  }))
-          Settings.data.battery.chargingMode = BatteryService.chargingMode
+        if (BatteryService.initialSetter) {
+          BatteryService.initialSetter = false
+          return
         }
+        ToastService.showNotice(I18n.tr("toast.battery-manager.title"), I18n.tr("toast.battery-manager.set-success-desc", {
+                                                                                  "percent": BatteryService.getThresholdValue(BatteryService.chargingMode)
+                                                                                }))
+        Settings.data.battery.chargingMode = BatteryService.chargingMode
       } else if (exitCode === 2) {
         ToastService.showWarning(I18n.tr("toast.battery-manager.title"), I18n.tr("toast.battery-manager.initial-setup"))
         PanelService.getPanel("batteryPanel")?.toggle(this)
