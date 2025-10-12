@@ -1473,7 +1473,8 @@
       "title": "Charge threshold",
       "full": "Full capacity ({percent}%)",
       "balanced": "Balanced ({percent}%)",
-      "lifespan": "Extended lifespan ({percent}%)"
+      "lifespan": "Extended lifespan ({percent}%)",
+      "disabled": "Battery manager disabled"
     }
   }
 }
