@@ -46,15 +46,15 @@ if [ ! -f "$SCRIPT_DIR/battery-paths.conf" ]; then
     MISSING_FILES_LIST+=("battery-paths.conf")
 fi
 
-if [ ! -f "$SCRIPT_DIR/battery-manager.sh" ]; then
+if [ ! -f "$SCRIPT_DIR/templates/battery-manager.sh" ]; then
     MISSING_FILES_LIST+=("battery-manager.sh")
 fi
 
-if [ ! -f "$SCRIPT_DIR/battery-manager.policy" ]; then
+if [ ! -f "$SCRIPT_DIR/templates/battery-manager.policy" ]; then
     MISSING_FILES_LIST+=("battery-manager.policy")
 fi
 
-if [ ! -f "$SCRIPT_DIR/battery-manager.rules" ]; then
+if [ ! -f "$SCRIPT_DIR/templates/battery-manager.rules" ]; then
     MISSING_FILES_LIST+=("battery-manager.rules")
 fi
 
@@ -86,26 +86,26 @@ fi
 print_info "Found ${#EXISTING_PATHS[@]} compatible battery control file(s)"
 
 print_info "Installing battery manager script..."
-BATTERY_MANAGER_PATH="/usr/bin/battery-manager-$ACTUAL_USER"
+BATTERY_MANAGER_SCRIPT="/usr/bin/battery-manager-$ACTUAL_USER"
 
-SHEBANG=$(head -n 1 "$SCRIPT_DIR/battery-manager.sh")
-echo "$SHEBANG" > "$BATTERY_MANAGER_PATH"
-echo "" >> "$BATTERY_MANAGER_PATH"
+SHEBANG=$(head -n 1 "$SCRIPT_DIR/templates/battery-manager.sh")
+echo "$SHEBANG" > "$BATTERY_MANAGER_SCRIPT"
+echo "" >> "$BATTERY_MANAGER_SCRIPT"
 
-echo "BATTERY_PATHS=(" >> "$BATTERY_MANAGER_PATH"
+echo "BATTERY_PATHS=(" >> "$BATTERY_MANAGER_SCRIPT"
 for path in "${EXISTING_PATHS[@]}"; do
-    echo "    \"$path\"" >> "$BATTERY_MANAGER_PATH"
+    echo "    \"$path\"" >> "$BATTERY_MANAGER_SCRIPT"
 done
-echo ")" >> "$BATTERY_MANAGER_PATH"
+echo ")" >> "$BATTERY_MANAGER_SCRIPT"
 
-echo "" >> "$BATTERY_MANAGER_PATH"
+echo "" >> "$BATTERY_MANAGER_SCRIPT"
 
-tail -n +2 "$SCRIPT_DIR/battery-manager.sh" >> "$BATTERY_MANAGER_PATH"
+tail -n +2 "$SCRIPT_DIR/templates/battery-manager.sh" >> "$BATTERY_MANAGER_SCRIPT"
 
-chmod +x "$BATTERY_MANAGER_PATH"
+chmod +x "$BATTERY_MANAGER_SCRIPT"
 
-print_info "Battery manager script created from $SCRIPT_DIR/battery-manager.sh with compatible paths"
-print_info "Script installed at $BATTERY_MANAGER_PATH"
+print_info "Battery manager script created from $SCRIPT_DIR/templates/battery-manager.sh with compatible paths"
+print_info "Script installed at $BATTERY_MANAGER_SCRIPT"
 
 print_info "Creating log file..."
 touch /var/log/battery-manager.log
@@ -117,18 +117,18 @@ print_info "Creating polkit policy..."
 POLICY_FILE="/usr/share/polkit-1/actions/com.local.battery-manager.$ACTUAL_USER.policy"
 
 sed -e "s/ACTUAL_USER_PLACEHOLDER/$ACTUAL_USER/g" \
-    "$SCRIPT_DIR/battery-manager.policy" > "$POLICY_FILE"
+    "$SCRIPT_DIR/templates/battery-manager.policy" > "$POLICY_FILE"
 
-print_info "Polkit policy copied from $SCRIPT_DIR/battery-manager.policy"
+print_info "Polkit policy copied from $SCRIPT_DIR/templates/battery-manager.policy"
 print_info "Polkit policy created at $POLICY_FILE"
 print_info "Creating polkit rule..."
 
 RULES_FILE="/etc/polkit-1/rules.d/50-battery-manager-$ACTUAL_USER.rules"
 
 sed "s/ACTUAL_USER_PLACEHOLDER/$ACTUAL_USER/g" \
-    "$SCRIPT_DIR/battery-manager.rules" > "$RULES_FILE"
+    "$SCRIPT_DIR/templates/battery-manager.rules" > "$RULES_FILE"
 
-print_info "Polkit rule copied from $SCRIPT_DIR/battery-manager.rules"
+print_info "Polkit rule copied from $SCRIPT_DIR/templates/battery-manager.rules"
 print_info "Polkit rule created for user: $ACTUAL_USER at $RULES_FILE"
 
 print_info "Restarting polkit..."
@@ -142,6 +142,6 @@ echo
 print_info "Installation complete!"
 echo
 print_info "Log file: /var/log/battery-manager.log"
-print_info "User-specific script: /usr/bin/battery-manager-$ACTUAL_USER"
-print_info "User-specific policy: /usr/share/polkit-1/actions/com.local.battery-manager.$ACTUAL_USER.policy"
-print_info "User-specific rules: /etc/polkit-1/rules.d/50-battery-manager-$ACTUAL_USER.rules"
+print_info "User-specific script: $BATTERY_MANAGER_SCRIPT"
+print_info "User-specific policy: $POLICY_FILE"
+print_info "User-specific rules: $RULES_FILE"
