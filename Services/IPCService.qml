@@ -45,10 +45,7 @@ Item {
     }
 
     function dismissOldest() {
-      if (NotificationService.activeList.count > 0) {
-        const lastNotif = NotificationService.activeList.get(NotificationService.activeList.count - 1)
-        NotificationService.dismissActiveNotification(lastNotif.id)
-      }
+      NotificationService.dismissOldestActive()
     }
 
     function dismissAll() {
