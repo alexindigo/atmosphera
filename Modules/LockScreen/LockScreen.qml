@@ -1020,6 +1020,54 @@ Loader {
                     Layout.fillWidth: true
                     Layout.preferredHeight: Settings.data.general.compactLockScreen ? 36 * scaling : 48 * scaling
                     radius: Settings.data.general.compactLockScreen ? 18 * scaling : 24 * scaling
+                    color: suspendButtonArea.containsMouse ? Color.mTertiary : "transparent"
+                    border.color: Color.mOutline
+                    border.width: 1
+
+                    RowLayout {
+                      anchors.centerIn: parent
+                      spacing: 6 * scaling
+
+                      NIcon {
+                        icon: "suspend"
+                        pointSize: Settings.data.general.compactLockScreen ? Style.fontSizeM * scaling : Style.fontSizeL * scaling
+                        color: suspendButtonArea.containsMouse ? Color.mOnTertiary : Color.mOnSurfaceVariant
+                      }
+
+                      NText {
+                        text: I18n.tr("session-menu.suspend")
+                        color: suspendButtonArea.containsMouse ? Color.mOnTertiary : Color.mOnSurfaceVariant
+                        pointSize: Settings.data.general.compactLockScreen ? Style.fontSizeS * scaling : Style.fontSizeM * scaling
+                        font.weight: Font.Medium
+                      }
+                    }
+
+                    MouseArea {
+                      id: suspendButtonArea
+                      anchors.fill: parent
+                      hoverEnabled: true
+                      onClicked: CompositorService.suspend()
+                    }
+
+                    Behavior on color {
+                      ColorAnimation {
+                        duration: 200
+                        easing.type: Easing.OutCubic
+                      }
+                    }
+
+                    Behavior on border.color {
+                      ColorAnimation {
+                        duration: 200
+                        easing.type: Easing.OutCubic
+                      }
+                    }
+                  }
+
+                  Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: Settings.data.general.compactLockScreen ? 36 * scaling : 48 * scaling
+                    radius: Settings.data.general.compactLockScreen ? 18 * scaling : 24 * scaling
                     color: rebootButtonArea.containsMouse ? Color.mTertiary : "transparent"
                     border.color: Color.mOutline
                     border.width: 1
