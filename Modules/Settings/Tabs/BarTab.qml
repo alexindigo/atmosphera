@@ -122,8 +122,8 @@ ColumnLayout {
 
   NToggle {
     Layout.fillWidth: true
-    label: "Auto Hide" 
-    description: "Automatically hide the bar when not in use." 
+    label: I18n.tr("settings.bar.appearance.auto-hide.label")
+    description: I18n.tr("settings.bar.appearance.auto-hide.description")
     checked: Settings.data.bar.autoHide
     onToggled: checked => Settings.data.bar.autoHide = checked
   }

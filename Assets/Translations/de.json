@@ -266,6 +266,10 @@
           "label": "Schwebende Statusleiste",
           "description": "Statusleiste als schwebende 'Pille' anzeigen. Hinweis: Dies verschiebt die Bildschirmecken an die Ränder."
         },
+        "auto-hide": {
+          "label": "Automatisch ausblenden",
+          "description": "Blendet die Leiste automatisch aus, wenn sie nicht verwendet wird."
+        },
         "margins": {
           "label": "Ränder",
           "description": "Ränder um die schwebende Statusleiste anpassen.",

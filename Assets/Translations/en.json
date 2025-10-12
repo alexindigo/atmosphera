@@ -266,6 +266,10 @@
           "label": "Floating bar",
           "description": "Displays the bar as a floating 'pill'. Note: This will move the screen corners to the edges."
         },
+        "auto-hide": {
+          "label": "Auto hide",
+          "description": "Automatically hide the bar when not in use."
+        },
         "margins": {
           "label": "Margins",
           "description": "Adjust the margins around the floating bar.",
