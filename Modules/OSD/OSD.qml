@@ -231,7 +231,7 @@ Variants {
         opacity: 0
         scale: 0.85
 
-        anchors.horizontalCenter: verticalMode ? undefined : parent.horizontalCenter
+        anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: verticalMode ? parent.verticalCenter : undefined
 
         Behavior on opacity {
