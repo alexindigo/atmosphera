@@ -42,6 +42,7 @@ Variants {
     // Brightness properties
     property real lastUpdatedBrightness: 0
     readonly property real currentBrightness: lastUpdatedBrightness
+    property bool brightnessInitialized: false
 
     // Get appropriate icon based on current OSD type
     function getIcon() {
@@ -547,6 +548,12 @@ Variants {
 
     function onBrightnessChanged(newBrightness) {
       root.lastUpdatedBrightness = newBrightness
+      
+      if (!brightnessInitialized) {
+        brightnessInitialized = true
+        return
+      }
+      
       showOSD("brightness")
     }
 
