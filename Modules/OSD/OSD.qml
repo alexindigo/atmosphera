@@ -139,6 +139,7 @@ Variants {
       })()
 
       Component.onCompleted: {
+
       }
 
       Connections {
@@ -151,6 +152,7 @@ Variants {
       }
 
       Component.onDestruction: {
+
       }
 
       // Anchor selection based on location (window edges)
@@ -548,12 +550,12 @@ Variants {
 
     function onBrightnessChanged(newBrightness) {
       root.lastUpdatedBrightness = newBrightness
-      
+
       if (!brightnessInitialized) {
         brightnessInitialized = true
         return
       }
-      
+
       showOSD("brightness")
     }
 

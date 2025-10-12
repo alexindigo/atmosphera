@@ -27,12 +27,12 @@ Rectangle {
 
   // Repaint gauge when the bound value changes
   onValueChanged: gauge.requestPaint()
-  
+
   // Force repaint when scaling changes
   onScalingChanged: {
     Qt.callLater(() => {
-      gauge.requestPaint()
-    })
+                   gauge.requestPaint()
+                 })
   }
 
   ColumnLayout {

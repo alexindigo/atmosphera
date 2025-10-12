@@ -50,6 +50,7 @@ Loader {
 
         WlSessionLockSurface {
           readonly property real scaling: ScalingService.dynamicScale(screen)
+          readonly property var now: Time.date
 
           Item {
             id: batteryIndicator
@@ -341,7 +342,6 @@ Loader {
                   }
                 }
 
-
                 // Spacer to push time to the right
                 Item {
                   Layout.fillWidth: true
@@ -469,7 +469,7 @@ Loader {
               width: {
                 var hasBattery = UPower.displayDevice && UPower.displayDevice.ready && UPower.displayDevice.isPresent
                 var hasKeyboard = keyboardLayout.currentLayout !== "Unknown"
-                
+
                 if (hasBattery && hasKeyboard) {
                   return 200 * scaling
                 } else if (hasBattery || hasKeyboard) {
@@ -729,7 +729,7 @@ Loader {
                         spacing: 3 * scaling
 
                         NText {
-                          text: Qt.locale().toString(new Date(LocationService.data.weather.daily.time[index].replace(/-/g, "/")), "ddd")
+                          text: Qt.locale().toString(now, "ddd")
                           pointSize: Style.fontSizeM * scaling
                           color: Color.mOnSurfaceVariant
                           horizontalAlignment: Text.AlignHCenter
@@ -798,9 +798,7 @@ Loader {
                       }
                     }
                   }
-
                 }
-
 
                 // Password input
                 RowLayout {
@@ -810,7 +808,6 @@ Loader {
                   Item {
                     Layout.preferredWidth: Style.marginM * scaling
                   }
-
 
                   Rectangle {
                     Layout.fillWidth: true
@@ -956,7 +953,6 @@ Loader {
                     }
                   }
 
-
                   Item {
                     Layout.preferredWidth: Style.marginM * scaling
                   }
@@ -965,7 +961,7 @@ Loader {
                 // System control buttons
                 RowLayout {
                   Layout.fillWidth: true
-                  Layout.preferredHeight: 48 * scaling
+                  Layout.preferredHeight: Settings.data.general.compactLockScreen ? 36 * scaling : 48 * scaling
                   spacing: 10 * scaling
 
                   Item {
@@ -974,9 +970,11 @@ Loader {
 
                   Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 48 * scaling
-                    radius: 24 * scaling
+                    Layout.preferredHeight: Settings.data.general.compactLockScreen ? 36 * scaling : 48 * scaling
+                    radius: Settings.data.general.compactLockScreen ? 18 * scaling : 24 * scaling
                     color: logoutButtonArea.containsMouse ? Color.mTertiary : "transparent"
+                    border.color: Color.mOutline
+                    border.width: 1
 
                     RowLayout {
                       anchors.centerIn: parent
@@ -984,14 +982,14 @@ Loader {
 
                       NIcon {
                         icon: "logout"
-                        pointSize: Style.fontSizeL * scaling
+                        pointSize: Settings.data.general.compactLockScreen ? Style.fontSizeM * scaling : Style.fontSizeL * scaling
                         color: logoutButtonArea.containsMouse ? Color.mOnTertiary : Color.mOnSurfaceVariant
                       }
 
                       NText {
                         text: I18n.tr("session-menu.logout")
                         color: logoutButtonArea.containsMouse ? Color.mOnTertiary : Color.mOnSurfaceVariant
-                        pointSize: Style.fontSizeM * scaling
+                        pointSize: Settings.data.general.compactLockScreen ? Style.fontSizeS * scaling : Style.fontSizeM * scaling
                         font.weight: Font.Medium
                       }
                     }
@@ -1009,13 +1007,22 @@ Loader {
                         easing.type: Easing.OutCubic
                       }
                     }
+
+                    Behavior on border.color {
+                      ColorAnimation {
+                        duration: 200
+                        easing.type: Easing.OutCubic
+                      }
+                    }
                   }
 
                   Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 48 * scaling
-                    radius: 24 * scaling
+                    Layout.preferredHeight: Settings.data.general.compactLockScreen ? 36 * scaling : 48 * scaling
+                    radius: Settings.data.general.compactLockScreen ? 18 * scaling : 24 * scaling
                     color: rebootButtonArea.containsMouse ? Color.mTertiary : "transparent"
+                    border.color: Color.mOutline
+                    border.width: 1
 
                     RowLayout {
                       anchors.centerIn: parent
@@ -1023,14 +1030,14 @@ Loader {
 
                       NIcon {
                         icon: "reboot"
-                        pointSize: Style.fontSizeL * scaling
+                        pointSize: Settings.data.general.compactLockScreen ? Style.fontSizeM * scaling : Style.fontSizeL * scaling
                         color: rebootButtonArea.containsMouse ? Color.mOnTertiary : Color.mOnSurfaceVariant
                       }
 
                       NText {
                         text: I18n.tr("session-menu.reboot")
                         color: rebootButtonArea.containsMouse ? Color.mOnTertiary : Color.mOnSurfaceVariant
-                        pointSize: Style.fontSizeM * scaling
+                        pointSize: Settings.data.general.compactLockScreen ? Style.fontSizeS * scaling : Style.fontSizeM * scaling
                         font.weight: Font.Medium
                       }
                     }
@@ -1048,14 +1055,21 @@ Loader {
                         easing.type: Easing.OutCubic
                       }
                     }
+
+                    Behavior on border.color {
+                      ColorAnimation {
+                        duration: 200
+                        easing.type: Easing.OutCubic
+                      }
+                    }
                   }
 
                   Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 48 * scaling
-                    radius: 24 * scaling
+                    Layout.preferredHeight: Settings.data.general.compactLockScreen ? 36 * scaling : 48 * scaling
+                    radius: Settings.data.general.compactLockScreen ? 18 * scaling : 24 * scaling
                     color: shutdownButtonArea.containsMouse ? Color.mError : "transparent"
-                    border.color: shutdownButtonArea.containsMouse ? Color.mError : Color.transparent
+                    border.color: shutdownButtonArea.containsMouse ? Color.mError : Color.mOutline
                     border.width: 1
 
                     RowLayout {
@@ -1064,14 +1078,14 @@ Loader {
 
                       NIcon {
                         icon: "shutdown"
-                        pointSize: Style.fontSizeL * scaling
+                        pointSize: Settings.data.general.compactLockScreen ? Style.fontSizeM * scaling : Style.fontSizeL * scaling
                         color: shutdownButtonArea.containsMouse ? Color.mOnError : Color.mOnSurfaceVariant
                       }
 
                       NText {
                         text: I18n.tr("session-menu.shutdown")
                         color: shutdownButtonArea.containsMouse ? Color.mOnError : Color.mOnSurfaceVariant
-                        pointSize: Style.fontSizeM * scaling
+                        pointSize: Settings.data.general.compactLockScreen ? Style.fontSizeS * scaling : Style.fontSizeM * scaling
                         font.weight: Font.Medium
                       }
                     }
