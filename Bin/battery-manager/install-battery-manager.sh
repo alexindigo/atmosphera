@@ -139,7 +139,7 @@ else
 fi
 
 print_info "Creating uninstall script..."
-UNINSTALL_SCRIPT="$SCRIPT_DIR/uninstall-battery-manager-$ACTUAL_USER.sh"
+UNINSTALL_SCRIPT="$SCRIPT_DIR/uninstall-battery-manager.sh"
 
 
 if [ -f "$SCRIPT_DIR/templates/uninstall-template" ]; then
