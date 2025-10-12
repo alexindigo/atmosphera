@@ -376,6 +376,23 @@ Singleton {
   }
 
   // -----------------------------------------------------
+  // Function to preprocess paths by expanding "~" to user's home directory
+  function preprocessPath(path) {
+    if (typeof path !== "string" || path === "") {
+      return path
+    }
+
+    // Expand "~" to user's home directory
+    if (path.startsWith("~/")) {
+      return Quickshell.env("HOME") + path.substring(1)
+    } else if (path === "~") {
+      return Quickshell.env("HOME")
+    }
+
+    return path
+  }
+
+  // -----------------------------------------------------
   // Public function to trigger immediate settings saving
   function saveImmediate() {
     settingsFileView.writeAdapter()

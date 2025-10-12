@@ -299,7 +299,7 @@ Loader {
                     anchors.centerIn: parent
                     width: 66 * scaling
                     height: 66 * scaling
-                    imagePath: Settings.data.general.avatarImage
+                    imagePath: Settings.preprocessPath(Settings.data.general.avatarImage)
                     fallbackIcon: "person"
 
                     SequentialAnimation on scale {
