@@ -13,8 +13,8 @@ import qs.Widgets
 NPanel {
   id: root
 
-  preferredWidth: 440
-  preferredHeight: 480
+  preferredWidth: 380 * Style.uiScaleRatio
+  preferredHeight: 440 * Style.uiScaleRatio
   panelAnchorHorizontalCenter: true
   panelAnchorVerticalCenter: true
   panelKeyboardFocus: true
@@ -345,7 +345,7 @@ NPanel {
 
     signal clicked
 
-    height: Style.baseWidgetSize * 1.6
+    height: Style.baseWidgetSize * 1.6 * Style.uiScaleRatio
     radius: Style.radiusS
     color: {
       if (pending) {
