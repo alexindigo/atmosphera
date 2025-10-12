@@ -318,6 +318,10 @@
         "floating-distance": {
           "label": "Dock floating distance",
           "description": "Adjust the floating distance from the screen edge."
+        },
+        "colorize-icons": {
+          "label": "Colorize Icons",
+          "description": "Apply theme colors to dock app icons (non-focused apps only)."
         }
       },
       "monitors": {
@@ -912,6 +916,10 @@
         "width": {
           "label": "Widget Width",
           "description": "Controls the horizontal size of the widget."
+        },
+        "colorize-icons": {
+          "label": "Colorize Icons",
+          "description": "Apply theme colors to active window icon."
         }
       },
       "system-monitor": {
@@ -1105,6 +1113,16 @@
         "only-same-output": {
           "label": "Only from same output",
           "description": "Show only apps from the output where the bar is located."
+        },
+        "colorize-icons": {
+          "label": "Colorize Icons",
+          "description": "Apply theme colors to taskbar icons."
+        }
+      },
+      "tray": {
+        "colorize-icons": {
+          "label": "Colorize Icons",
+          "description": "Apply theme colors to tray icons."
         }
       }
     }

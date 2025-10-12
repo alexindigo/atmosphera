@@ -272,6 +272,7 @@ Singleton {
       property list<string> monitors: []
       // Desktop entry IDs pinned to the dock (e.g., "org.kde.konsole", "firefox.desktop")
       property list<string> pinnedApps: []
+      property bool colorizeIcons: false
     }
 
     // network

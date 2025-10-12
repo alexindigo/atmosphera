@@ -138,7 +138,8 @@
     "floatingRatio": 1,
     "onlySameOutput": true,
     "monitors": [],
-    "pinnedApps": []
+    "pinnedApps": [],
+    "colorizeIcons": false
   },
   "network": {
     "wifiEnabled": true

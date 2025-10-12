@@ -43,7 +43,8 @@ Singleton {
                                     "showIcon": true,
                                     "autoHide": false,
                                     "scrollingMode": "hover",
-                                    "width": 145
+                                    "width": 145,
+                                    "colorizeIcons": false
                                   },
                                   "Battery": {
                                     "allowUserSettings": true,
@@ -114,11 +115,13 @@ Singleton {
                                   "Taskbar": {
                                     "allowUserSettings": true,
                                     "onlySameOutput": true,
-                                    "onlyActiveWorkspaces": true
+                                    "onlyActiveWorkspaces": true,
+                                    "colorizeIcons": false
                                   },
                                   "Tray": {
                                     "allowUserSettings": true,
-                                    "blacklist": []
+                                    "blacklist": [],
+                                    "colorizeIcons": false
                                   },
                                   "Workspace": {
                                     "allowUserSettings": true,
