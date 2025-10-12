@@ -63,6 +63,12 @@ Singleton {
     BatteryService.applyChargingMode()
   }
 
+  function cycleModes() {
+    // Cycles charging modes from full to lifespan while skipping disabled
+    const nextMode = (chargingMode % 3) + 1
+    setChargingMode(nextMode)
+  }
+
   function applyChargingMode(hideToast = false) {
     let command = [batterySetterScript]
 
