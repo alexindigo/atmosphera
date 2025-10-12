@@ -1432,7 +1432,10 @@
       "install-success": "Installed successfully",
       "install-missing": "Required files are missing",
       "install-unsupported": "System is not supported",
-      "install-failed": "Installation failed"
+      "install-failed": "Installation failed",
+      "uninstall-setup": "Uninstalling, authentication required",
+      "uninstall-success": "Uninstalled successfully",
+      "uninstall-failed": "Uninstallation failed"
     },
     "missing-control-center": {
       "label": "Last Control Center widget removed",
