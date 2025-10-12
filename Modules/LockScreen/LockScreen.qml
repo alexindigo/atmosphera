@@ -526,6 +526,7 @@ Loader {
                     color: Color.mOnSurfaceVariant
                     pointSize: Style.fontSizeM * scaling
                     font.weight: Font.Medium
+                    elide: Text.ElideRight
                   }
                 }
               }
@@ -683,14 +684,32 @@ Loader {
                         spacing: 12 * scaling
 
                         NText {
-                          text: Math.round(LocationService.data.weather.current_weather.temperature) + "°"
+                          text: {
+                            var temp = LocationService.data.weather.current_weather.temperature
+                            var suffix = "C"
+                            if (Settings.data.location.useFahrenheit) {
+                              temp = LocationService.celsiusToFahrenheit(temp)
+                              suffix = "F"
+                            }
+                            temp = Math.round(temp)
+                            return temp + "°" + suffix
+                          }
                           pointSize: Style.fontSizeXL * scaling
                           font.weight: Style.fontWeightBold
                           color: Color.mOnSurface
                         }
 
                         NText {
-                          text: LocationService.data.weather.current_weather.windspeed + " km/h"
+                          text: {
+                            var wind = LocationService.data.weather.current_weather.windspeed
+                            var unit = "km/h"
+                            if (Settings.data.location.useFahrenheit) {
+                              wind = wind * 0.621371 // Convert km/h to mph
+                              unit = "mph"
+                            }
+                            wind = Math.round(wind)
+                            return wind + " " + unit
+                          }
                           pointSize: Style.fontSizeM * scaling
                           color: Color.mOnSurfaceVariant
                           font.weight: Font.Normal
@@ -744,7 +763,17 @@ Loader {
                         }
 
                         NText {
-                          text: Math.round(LocationService.data.weather.daily.temperature_2m_max[index]) + "°/" + Math.round(LocationService.data.weather.daily.temperature_2m_min[index]) + "°"
+                          text: {
+                            var max = LocationService.data.weather.daily.temperature_2m_max[index]
+                            var min = LocationService.data.weather.daily.temperature_2m_min[index]
+                            if (Settings.data.location.useFahrenheit) {
+                              max = LocationService.celsiusToFahrenheit(max)
+                              min = LocationService.celsiusToFahrenheit(min)
+                            }
+                            max = Math.round(max)
+                            min = Math.round(min)
+                            return max + "°/" + min + "°"
+                          }
                           pointSize: Style.fontSizeM * scaling
                           font.weight: Style.fontWeightMedium
                           color: Color.mOnSurfaceVariant
@@ -756,9 +785,9 @@ Loader {
                   }
 
                   // Battery and Keyboard Layout (full mode only)
-                  RowLayout {
+                  ColumnLayout {
                     Layout.preferredWidth: 60 * scaling
-                    spacing: 4 * scaling
+                    spacing: 8 * scaling
 
                     // Battery
                     RowLayout {
@@ -776,6 +805,8 @@ Loader {
                         color: Color.mOnSurfaceVariant
                         pointSize: Style.fontSizeM * scaling
                         font.weight: Font.Medium
+                        elide: Text.ElideRight
+                        Layout.fillWidth: true
                       }
                     }
 
@@ -795,6 +826,8 @@ Loader {
                         color: Color.mOnSurfaceVariant
                         pointSize: Style.fontSizeM * scaling
                         font.weight: Font.Medium
+                        elide: Text.ElideRight
+                        Layout.fillWidth: true
                       }
                     }
                   }
