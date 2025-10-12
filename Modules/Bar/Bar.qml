@@ -24,6 +24,8 @@ Variants {
     property bool hidden: autoHide
     property bool barHovered: false
     property bool peekHovered: false
+    // Keep bar visible while any panel or popup from the bar is open (global)
+    readonly property bool holdOpen: PanelService.hasOpenedPopup || (PanelService.openedPanel && ((PanelService.openedPanel.visible === true) || (PanelService.openedPanel.active === true)))
     // Controls PanelWindow visibility while auto-hide is enabled
     property bool barWindowVisible: !autoHide
     // Respect global animation toggle: no delays when animations are disabled
@@ -63,7 +65,7 @@ Variants {
       interval: root.hideDelay
       repeat: false
       onTriggered: {
-        if (root.autoHide && !root.peekHovered && !root.barHovered) {
+        if (root.autoHide && !root.peekHovered && !root.barHovered && !root.holdOpen) {
           root.hidden = true
           unloadTimer.restart()
         }
@@ -76,7 +78,7 @@ Variants {
       interval: root.hideAnimationDuration
       repeat: false
       onTriggered: {
-        if (root.autoHide && !root.peekHovered && !root.barHovered) {
+        if (root.autoHide && !root.peekHovered && !root.barHovered && !root.holdOpen) {
           root.barWindowVisible = false
         }
       }
@@ -196,7 +198,7 @@ Variants {
               hideTimer.stop()
               root.barWindowVisible = true
               root.hidden = false
-            } else if (!root.peekHovered) {
+            } else if (!root.peekHovered && !root.holdOpen) {
               hideTimer.restart()
             }
           }
@@ -437,11 +439,72 @@ Variants {
           }
           onExited: {
             root.peekHovered = false
-            if (root.autoHide && !root.barHovered) {
+            if (root.autoHide && !root.barHovered && !root.holdOpen) {
               hideTimer.restart()
             }
           }
         }
+      }
+    }
+
+    // React to panel/popup lifecycle to keep the bar visible during interactions
+    Connections {
+      target: PanelService
+      // Any panel about to open -> show bar and cancel hides
+      function onWillOpen() {
+        if (!root.autoHide)
+          return
+        showTimer.stop()
+        hideTimer.stop()
+        root.barWindowVisible = true
+        root.hidden = false
+      }
+      // Popups opening/closing -> start/stop hide timer appropriately
+      function onPopupChanged() {
+        if (!root.autoHide)
+          return
+        if (PanelService.hasOpenedPopup) {
+          showTimer.stop()
+          hideTimer.stop()
+          root.barWindowVisible = true
+          root.hidden = false
+        } else if (!root.barHovered && !root.peekHovered && !root.holdOpen) {
+          hideTimer.restart()
+        }
+      }
+      // Track when the main panel closes (openedPanel becomes null)
+      function onOpenedPanelChanged() {
+        if (!root.autoHide)
+          return
+        if (PanelService.openedPanel !== null) {
+          showTimer.stop()
+          hideTimer.stop()
+          root.barWindowVisible = true
+          root.hidden = false
+        } else if (!root.barHovered && !root.peekHovered && !PanelService.hasOpenedPopup) {
+          hideTimer.restart()
+        }
+      }
+    }
+
+    // Also listen to the current panel's own visible/active changes
+    Connections {
+      target: PanelService.openedPanel
+      enabled: root.autoHide
+      function onVisibleChanged() {
+        if (!PanelService.openedPanel)
+          return
+        if ((PanelService.openedPanel.visible === true) || (PanelService.openedPanel.active === true)) {
+          showTimer.stop()
+          hideTimer.stop()
+          root.barWindowVisible = true
+          root.hidden = false
+        } else if (!root.barHovered && !root.peekHovered && !PanelService.hasOpenedPopup) {
+          hideTimer.restart()
+        }
+      }
+      function onActiveChanged() {
+        onVisibleChanged()
       }
     }
   }
