@@ -14,6 +14,7 @@ NPanel {
 
   preferredWidth: (Settings.data.location.showWeekNumberInCalendar ? 400 : 380) * Style.uiScaleRatio
   preferredHeight: 520 * Style.uiScaleRatio
+  panelKeyboardFocus: true
 
   panelContent: ColumnLayout {
     id: content
@@ -27,6 +28,20 @@ NPanel {
 
     function checkIsCurrentMonth() {
       return (Time.date.getMonth() === grid.month) && (Time.date.getFullYear() === grid.year)
+    }
+
+    Shortcut {
+      sequence: "Escape"
+      onActivated: {
+        if (timerActive) {
+          cancelTimer()
+        } else {
+          cancelTimer()
+          root.close()
+        }
+      }
+      context: Qt.WidgetShortcut
+      enabled: root.opened
     }
 
     Connections {
