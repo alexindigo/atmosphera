@@ -93,6 +93,20 @@ ColumnLayout {
     Layout.bottomMargin: Style.marginXL
   }
 
+  NToggle {
+    Layout.fillWidth: true
+    label: I18n.tr("settings.dock.appearance.colorize-icons.label")
+    description: I18n.tr("settings.dock.appearance.colorize-icons.description")
+    checked: Settings.data.dock.colorizeIcons
+    onToggled: checked => Settings.data.dock.colorizeIcons = checked
+  }
+
+  NDivider {
+    Layout.fillWidth: true
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
+  }
+
   // Monitor Configuration
   ColumnLayout {
     spacing: Style.marginM

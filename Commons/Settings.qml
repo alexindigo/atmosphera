@@ -273,6 +273,7 @@ Singleton {
       property list<string> monitors: []
       // Desktop entry IDs pinned to the dock (e.g., "org.kde.konsole", "firefox.desktop")
       property list<string> pinnedApps: []
+      property bool colorizeIcons: false
     }
 
     // network
@@ -372,6 +373,23 @@ Singleton {
       property string wallpaperChange: ""
       property string darkModeChange: ""
     }
+  }
+
+  // -----------------------------------------------------
+  // Function to preprocess paths by expanding "~" to user's home directory
+  function preprocessPath(path) {
+    if (typeof path !== "string" || path === "") {
+      return path
+    }
+
+    // Expand "~" to user's home directory
+    if (path.startsWith("~/")) {
+      return Quickshell.env("HOME") + path.substring(1)
+    } else if (path === "~") {
+      return Quickshell.env("HOME")
+    }
+
+    return path
   }
 
   // -----------------------------------------------------

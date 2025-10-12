@@ -324,6 +324,10 @@
         "floating-distance": {
           "label": "Dock 浮动距离",
           "description": "调整距离屏幕边缘的浮动距离。"
+        },
+        "colorize-icons": {
+          "label": "着色图标",
+          "description": "将主题颜色应用到 Dock 应用图标（仅限非聚焦应用）。"
         }
       },
       "monitors": {
@@ -918,6 +922,10 @@
         "width": {
           "description": "控制小部件的水平尺寸。",
           "label": "小部件宽度"
+        },
+        "colorize-icons": {
+          "label": "着色图标",
+          "description": "将主题颜色应用到活动窗口图标。"
         }
       },
       "system-monitor": {
@@ -1111,6 +1119,16 @@
         "only-same-output": {
           "label": "仅显示同屏幕",
           "description": "仅显示任务栏所在屏幕上的应用程序"
+        },
+        "colorize-icons": {
+          "label": "着色图标",
+          "description": "将主题颜色应用到任务栏图标。"
+        }
+      },
+      "tray": {
+        "colorize-icons": {
+          "label": "着色图标",
+          "description": "将主题颜色应用到系统托盘图标。"
         }
       }
     }

@@ -5,12 +5,14 @@ import qs.Commons
 import qs.Widgets
 
 ColumnLayout {
+  id: root
   // Properties to receive data from parent
   property var widgetData: ({}) // Expected by BarWidgetSettingsDialog
   property var widgetMetadata: ({}) // Expected by BarWidgetSettingsDialog
 
-  // Local state for the blacklist
+  // Local state
   property var localBlacklist: widgetData.blacklist || []
+  property bool valueColorizeIcons: widgetData.colorizeIcons !== undefined ? widgetData.colorizeIcons : widgetMetadata.colorizeIcons
 
   ListModel {
     id: blacklistModel
@@ -26,6 +28,14 @@ ColumnLayout {
   }
 
   spacing: Style.marginM
+
+  NToggle {
+    Layout.fillWidth: true
+    label: I18n.tr("bar.widget-settings.tray.colorize-icons.label")
+    description: I18n.tr("bar.widget-settings.tray.colorize-icons.description")
+    checked: root.valueColorizeIcons
+    onToggled: checked => root.valueColorizeIcons = checked
+  }
 
   ColumnLayout {
     Layout.fillWidth: true
@@ -135,6 +145,7 @@ ColumnLayout {
     // Return the updated settings for this widget instance
     var settings = Object.assign({}, widgetData || {})
     settings.blacklist = newBlacklist
+    settings.colorizeIcons = root.valueColorizeIcons
     return settings
   }
 }

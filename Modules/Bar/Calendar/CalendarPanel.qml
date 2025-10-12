@@ -10,6 +10,8 @@ import qs.Widgets
 NPanel {
   id: root
 
+  readonly property var now: Time.date
+
   preferredWidth: (Settings.data.location.showWeekNumberInCalendar ? 400 : 380) * Style.uiScaleRatio
   preferredHeight: 520 * Style.uiScaleRatio
 
@@ -193,12 +195,12 @@ NPanel {
         Canvas {
           id: secondsProgress
           anchors.fill: parent
-          property real progress: Time.date.getSeconds() / 60
+          property real progress: now.getSeconds() / 60
           onProgressChanged: requestPaint()
           Connections {
             target: Time
             function onDateChanged() {
-              const total = Time.date.getSeconds() * 1000 + Time.date.getMilliseconds()
+              const total = now.getSeconds() * 1000 + now.getMilliseconds()
               secondsProgress.progress = total / 60000
             }
           }
@@ -233,7 +235,7 @@ NPanel {
 
           NText {
             text: {
-              var t = Settings.data.location.use12hourFormat ? Qt.locale().toString(Time.date, "hh AP") : Qt.locale().toString(Time.date, "HH")
+              var t = Settings.data.location.use12hourFormat ? Qt.locale().toString(now, "hh AP") : Qt.locale().toString(now, "HH")
               return t.split(" ")[0]
             }
 
@@ -245,7 +247,7 @@ NPanel {
           }
 
           NText {
-            text: Qt.formatTime(Time.date, "mm")
+            text: Qt.formatTime(now, "mm")
             pointSize: Style.fontSizeXXS
             font.weight: Style.fontWeightBold
             color: Color.mOnPrimary

@@ -324,6 +324,10 @@
         "floating-distance": {
           "label": "Distancia de flotación del dock",
           "description": "Ajusta la distancia de flotación desde el borde de la pantalla."
+        },
+        "colorize-icons": {
+          "label": "Colorear iconos",
+          "description": "Aplicar colores del tema a los iconos de aplicaciones del dock (solo aplicaciones no enfocadas)."
         }
       },
       "monitors": {
@@ -918,6 +922,10 @@
         "width": {
           "description": "Controla el tamaño horizontal del widget.",
           "label": "Ancho del widget"
+        },
+        "colorize-icons": {
+          "label": "Colorear iconos",
+          "description": "Aplicar colores del tema al icono de la ventana activa."
         }
       },
       "system-monitor": {
@@ -1111,6 +1119,16 @@
         "only-same-output": {
           "description": "Muestra solo las aplicaciones del resultado donde se encuentra la barra.",
           "label": "Solo de la misma salida"
+        },
+        "colorize-icons": {
+          "label": "Colorear iconos",
+          "description": "Aplicar colores del tema a los iconos de la barra de tareas."
+        }
+      },
+      "tray": {
+        "colorize-icons": {
+          "label": "Colorear iconos",
+          "description": "Aplicar colores del tema a los iconos de la bandeja del sistema."
         }
       }
     }

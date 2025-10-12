@@ -18,6 +18,7 @@ ColumnLayout {
   property bool valueAutoHide: widgetData.autoHide !== undefined ? widgetData.autoHide : widgetMetadata.autoHide
   property string valueScrollingMode: widgetData.scrollingMode || widgetMetadata.scrollingMode
   property int valueWidth: widgetData.width !== undefined ? widgetData.width : widgetMetadata.width
+  property bool valueColorizeIcons: widgetData.colorizeIcons !== undefined ? widgetData.colorizeIcons : widgetMetadata.colorizeIcons
 
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {})
@@ -25,6 +26,7 @@ ColumnLayout {
     settings.showIcon = valueShowIcon
     settings.scrollingMode = valueScrollingMode
     settings.width = parseInt(widthInput.text) || widgetMetadata.width
+    settings.colorizeIcons = valueColorizeIcons
     return settings
   }
 
@@ -42,6 +44,14 @@ ColumnLayout {
     description: I18n.tr("bar.widget-settings.active-window.show-app-icon.description")
     checked: root.valueShowIcon
     onToggled: checked => root.valueShowIcon = checked
+  }
+
+  NToggle {
+    Layout.fillWidth: true
+    label: I18n.tr("bar.widget-settings.active-window.colorize-icons.label")
+    description: I18n.tr("bar.widget-settings.active-window.colorize-icons.description")
+    checked: root.valueColorizeIcons
+    onToggled: checked => root.valueColorizeIcons = checked
   }
 
   NTextInput {

@@ -21,9 +21,9 @@ ColumnLayout {
 
     // Avatar preview
     NImageCircled {
-      width: 108
-      height: 108
-      imagePath: Settings.data.general.avatarImage
+      width: 108 * Style.uiScaleRatio
+      height: 108 * Style.uiScaleRatio
+      imagePath: Settings.preprocessPath(Settings.data.general.avatarImage)
       fallbackIcon: "person"
       borderColor: Color.mPrimary
       borderWidth: Math.max(1, Style.borderM)
@@ -50,7 +50,7 @@ ColumnLayout {
     id: avatarPicker
     title: I18n.tr("settings.general.profile.select-avatar")
     selectionMode: "files"
-    initialPath: Settings.data.general.avatarImage.substr(0, Settings.data.general.avatarImage.lastIndexOf("/")) || Quickshell.env("HOME")
+    initialPath: Settings.preprocessPath(Settings.data.general.avatarImage).substr(0, Settings.preprocessPath(Settings.data.general.avatarImage).lastIndexOf("/")) || Quickshell.env("HOME")
     nameFilters: ["*.jpg", "*.jpeg", "*.png", "*.gif", "*.pnm", "*.bmp"]
     onAccepted: paths => {
                   if (paths.length > 0) {

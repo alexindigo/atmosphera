@@ -392,6 +392,15 @@ Variants {
 
                       scale: appButton.hovered ? 1.15 : 1.0
 
+                      // Apply dock-specific colorization shader only to non-focused apps
+                      layer.enabled: !appButton.isActive && Settings.data.dock.colorizeIcons
+                      layer.effect: ShaderEffect {
+                        property color targetColor: Color.mOnSurface
+                        property real colorizeMode: 0.0 // Dock mode (grayscale)
+
+                        fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
+                      }
+
                       Behavior on scale {
                         NumberAnimation {
                           duration: Style.animationNormal
