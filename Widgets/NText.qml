@@ -10,7 +10,7 @@ Text {
   property string family: Settings.data.ui.fontDefault
   property real pointSize: Style.fontSizeM
   property real fontScale: {
-    return (root.family === Settings.data.ui.fontDefault ? Settings.data.ui.fontDefaultScale : Settings.data.ui.fontFixedScale)
+    return (root.family === Settings.data.ui.fontDefault ? Settings.data.ui.fontDefaultScale * Style.uiScaleRatio: Settings.data.ui.fontFixedScale * Style.uiScaleRatio)
   }
 
   font.family: root.family

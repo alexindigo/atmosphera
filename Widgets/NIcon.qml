@@ -22,7 +22,7 @@ Text {
     return Icons.get(icon)
   }
   font.family: Icons.fontFamily
-  font.pointSize: root.pointSize
+  font.pointSize: root.pointSize * Style.uiScaleRatio
   color: Color.mOnSurface
   verticalAlignment: Text.AlignVCenter
 }

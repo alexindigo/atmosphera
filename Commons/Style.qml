@@ -36,7 +36,7 @@ Singleton {
   property int radiusL: Math.round(20 * Settings.data.general.radiusRatio)
 
   //screen Radii
-  property int screenRadius: 20 * Settings.data.general.screenRadiusRatio
+  property int screenRadius: Math.round(20 * Settings.data.general.screenRadiusRatio)
 
   // Border
   property int borderS: 1
@@ -44,12 +44,14 @@ Singleton {
   property int borderL: 3
 
   // Margins (for margins and spacing)
-  property int marginXXS: 2
-  property int marginXS: 4
-  property int marginS: 6
-  property int marginM: 9
-  property int marginL: 13
-  property int marginXL: 18
+  property int marginXXS: Math.round(2 * uiScaleRatio)
+  property int marginXS: Math.round(4 * uiScaleRatio)
+  property int marginS: Math.round(6 * uiScaleRatio)
+  property int marginM: Math.round(9 * uiScaleRatio)
+  property int marginL: Math.round(13 * uiScaleRatio)
+  property int marginXL: Math.round(18 * uiScaleRatio)
+
+  property real uiScaleRatio: 0.8
 
   // Opacity
   property real opacityNone: 0.0
@@ -76,25 +78,29 @@ Singleton {
 
   // Bar Dimensions
   property real barHeight: {
-    if (Settings.data.bar.density === "compact") {
+    switch (Settings.data.bar.density) {
+      case "mini":
+      return (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 22 : 20
+      case "compact":
       return (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 27 : 25
-    }
-    if (Settings.data.bar.density === "default") {
-      return (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 33 : 31
-    }
-    if (Settings.data.bar.density === "comfortable") {
+      case "comfortable":
       return (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 39 : 37
+      default:
+      case "default":
+      return (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 33 : 31
     }
   }
   property real capsuleHeight: {
-    if (Settings.data.bar.density === "compact") {
+    switch (Settings.data.bar.density) {
+      case "mini":
+      return barHeight * 1.0
+      case "compact":
       return barHeight * 0.85
-    }
-    if (Settings.data.bar.density === "default") {
-      return barHeight * 0.82
-    }
-    if (Settings.data.bar.density === "comfortable") {
+      case "comfortable":
       return barHeight * 0.73
+      default:
+      case "default":
+      return barHeight * 0.82
     }
   }
 }

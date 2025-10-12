@@ -7,7 +7,7 @@ import qs.Services
 Rectangle {
   id: root
 
-  property real baseSize: Style.baseWidgetSize
+  property real baseSize: Style.baseWidgetSize * Style.uiScaleRatio
 
   property string icon
   property string tooltipText

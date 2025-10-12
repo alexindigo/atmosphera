@@ -71,6 +71,9 @@ ColumnLayout {
     label: I18n.tr("settings.bar.appearance.density.label")
     description: I18n.tr("settings.bar.appearance.density.description")
     model: [{
+        "key": "mini",
+        "name": I18n.tr("options.bar.density.mini")
+      }, {
         "key": "compact",
         "name": I18n.tr("options.bar.density.compact")
       }, {

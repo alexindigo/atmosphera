@@ -17,20 +17,21 @@ NBox {
   property string uptimeText: "--"
 
   RowLayout {
-    id: content
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: parent.top
+    anchors.bottom: parent.bottom
     anchors.margins: Style.marginM
     spacing: Style.marginM
 
     NImageCircled {
-      width: Style.baseWidgetSize * 1.25
-      height: Style.baseWidgetSize * 1.25
+      width: Math.round(Style.baseWidgetSize * 1.25 * Style.uiScaleRatio)
+      height: width
       imagePath: Settings.data.general.avatarImage
       fallbackIcon: "person"
       borderColor: Color.mPrimary
       borderWidth: Math.max(1, Style.borderM)
+      
     }
 
     ColumnLayout {
@@ -83,6 +84,7 @@ NBox {
       }
     }
   }
+
 
   // ----------------------------------
   // Uptime
