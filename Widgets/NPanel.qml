@@ -38,7 +38,7 @@ Loader {
   property bool backgroundClickEnabled: true
 
   // Animation properties
-  readonly property real originalScale: 0.7
+  readonly property real originalScale: 0.5
   readonly property real originalOpacity: 0.0
   property real scaleValue: originalScale
   property real opacityValue: originalOpacity
@@ -142,22 +142,12 @@ Loader {
       Component.onCompleted: {
         Logger.log("NPanel", "Opened", root.objectName, "on", screen.name)
         dimmingOpacity = Style.opacityHeavy
-
-        // Force refresh panel content when scaling is applied
-        Qt.callLater(() => {
-                       panelContentLoader.active = false
-                       panelContentLoader.active = true
-                     })
       }
 
       Connections {
         target: panelWindow
         function onScreenChanged() {
           root.screen = screen
-
-          // It's mandatory to force refresh the subloader to ensure the scaling is properly dispatched
-          panelContentLoader.active = false
-          panelContentLoader.active = true
 
           // If called from IPC always reposition if screen is updated
           if (buttonName) {
