@@ -125,12 +125,12 @@ Variants {
       readonly property bool isRight: (location.indexOf("_right") >= 0) || (location === "right")
       readonly property bool isCentered: (location === "top" || location === "bottom")
       readonly property bool verticalMode: (location === "left" || location === "right")
-      readonly property int hWidth: Math.round(320)
-      readonly property int hHeight: Math.round(64)
-      readonly property int vHeight: Math.round(320) // Vertical OSD height (matches horizontal width)
+      readonly property int hWidth: Math.round(320 * Style.uiScaleRatio)
+      readonly property int hHeight: Math.round(64 * Style.uiScaleRatio)
+      readonly property int vHeight: hWidth // Vertical OSD height (matches horizontal width)
       // Ensure an even width to keep the vertical bar perfectly centered
       readonly property int barThickness: {
-        const base = Math.max(8, Math.round(8))
+        const base = Math.max(8, Math.round(8 * Style.uiScaleRatio))
         return (base % 2 === 0) ? base : base + 1
       }
 
@@ -146,8 +146,8 @@ Variants {
           return 0
         var base = Style.marginM
         if (Settings.data.bar.position === "top") {
-          var floatExtraV = Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL : 0
-          return (Style.barHeight) + base + floatExtraV
+          var floatExtraV = Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL  : 0
+          return Style.barHeight+ base + floatExtraV
         }
         return base
       }
@@ -158,7 +158,7 @@ Variants {
         var base = Style.marginM
         if (Settings.data.bar.position === "bottom") {
           var floatExtraV = Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL : 0
-          return (Style.barHeight) + base + floatExtraV
+          return Style.barHeight + base + floatExtraV
         }
         return base
       }
@@ -169,7 +169,7 @@ Variants {
         var base = Style.marginM
         if (Settings.data.bar.position === "left") {
           var floatExtraH = Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL : 0
-          return (Style.barHeight) + base + floatExtraH
+          return Style.barHeight + base + floatExtraH
         }
         return base
       }
@@ -180,7 +180,7 @@ Variants {
         var base = Style.marginM
         if (Settings.data.bar.position === "right") {
           var floatExtraH = Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL : 0
-          return (Style.barHeight) + base + floatExtraH
+          return Style.barHeight + base + floatExtraH
         }
         return base
       }
@@ -198,17 +198,17 @@ Variants {
         id: osdItem
 
         width: parent.width
-        height: panel.verticalMode ? panel.vHeight : Math.round(64)
+        height: panel.verticalMode ? panel.vHeight : Math.round(64 * Style.uiScaleRatio)
         radius: Style.radiusL
         color: Color.mSurface
         border.color: Color.mOutline
-        border.width: (function () {
-          const bw = Math.max(2, Math.round(Style.borderM))
+        border.width: {
+          const bw = Math.max(2, Style.borderM)
           return (bw % 2 === 0) ? bw : bw + 1
-        })()
+        }
         visible: false
         opacity: 0
-        scale: 0.85
+        scale: 0.85 // initial scale for a little zoom effect
 
         // Only horizontally center when the window itself is centered (top/bottom positions)
         // For left/right vertical mode, fill the parent width
@@ -265,7 +265,7 @@ Variants {
               anchors.left: parent.left
               anchors.right: parent.right
               anchors.verticalCenter: parent.verticalCenter
-              anchors.margins: Style.marginM
+              anchors.margins: Style.marginL
               spacing: Style.marginM
 
               NIcon {
@@ -284,7 +284,7 @@ Variants {
 
               // Progress bar with calculated width
               Rectangle {
-                Layout.preferredWidth: Math.round(220)
+                Layout.fillWidth: true
                 height: panel.barThickness
                 radius: Math.round(panel.barThickness / 2)
                 color: Color.mSurfaceVariant
@@ -319,10 +319,10 @@ Variants {
                 color: Color.mOnSurface
                 pointSize: Style.fontSizeS
                 family: Settings.data.ui.fontFixed
-                Layout.alignment: Qt.AlignVCenter
-                horizontalAlignment: Text.AlignLeft
+                Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
+                horizontalAlignment: Text.AlignRight
                 verticalAlignment: Text.AlignVCenter
-                Layout.preferredWidth: Math.round(50)
+                Layout.preferredWidth: Math.round(50 * Style.uiScaleRatio)
               }
             }
           }
@@ -335,31 +335,29 @@ Variants {
 
             ColumnLayout {
               // Ensure inner padding respects the rounded corners; avoid clipping the icon/text
-              property int vMargin: {
+              property int vMargin:{
                 const styleMargin = Style.marginL
                 const cornerGuard = Math.round(osdItem.radius)
                 return Math.max(styleMargin, cornerGuard)
               }
-              property int vMarginTop: Math.max(Math.round(osdItem.radius), Style.marginS)
+              property int vMarginTop: Math.round(Math.max(osdItem.radius, Style.marginS))
               property int balanceDelta: Style.marginS
               anchors.fill: parent
               anchors.topMargin: vMargin
-              anchors.leftMargin: vMargin
-              anchors.rightMargin: vMargin
               anchors.bottomMargin: vMargin
               spacing: Style.marginS
 
               // Percentage text at top
               Item {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 20
+                Layout.preferredHeight: Math.round(20 * Style.uiScaleRatio)
                 NText {
                   id: percentText
                   text: root.getDisplayPercentage()
                   color: Color.mOnSurface
                   pointSize: Style.fontSizeS
                   family: Settings.data.ui.fontFixed
-                  width: 50
+                  width: Math.round(50 * Style.uiScaleRatio)
                   height: parent.height
                   anchors.centerIn: parent
                   horizontalAlignment: Text.AlignHCenter
@@ -407,7 +405,7 @@ Variants {
               NIcon {
                 icon: root.getIcon()
                 color: root.getIconColor()
-                pointSize: Style.fontSizeXL
+                pointSize: Style.fontSizeL
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
                 Behavior on color {
                   ColorAnimation {
