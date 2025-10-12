@@ -43,6 +43,17 @@ Item {
     function clear() {
       NotificationService.clearHistory()
     }
+
+    function dismissOldest() {
+      if (NotificationService.activeList.count > 0) {
+        const lastNotif = NotificationService.activeList.get(NotificationService.activeList.count - 1)
+        NotificationService.dismissActiveNotification(lastNotif.id)
+      }
+    }
+
+    function dismissAll() {
+      NotificationService.dismissAllActive()
+    }
   }
 
   IpcHandler {
