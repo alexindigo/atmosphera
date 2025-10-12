@@ -10,8 +10,8 @@ import qs.Widgets
 NPanel {
   id: root
 
-  preferredWidth: 400
-  preferredHeight: 500
+  preferredWidth: 400 * Style.uiScaleRatio
+  preferredHeight: 500 * Style.uiScaleRatio
   panelKeyboardFocus: true
 
   property string passwordSsid: ""
@@ -173,7 +173,7 @@ NPanel {
 
           NText {
             text: I18n.tr("wifi.panel.searching")
-            pointSize: Style.fontSizeNormal
+            pointSize: Style.fontSizeM
             color: Color.mOnSurfaceVariant
             Layout.alignment: Qt.AlignHCenter
           }
@@ -252,7 +252,7 @@ NPanel {
 
                       NText {
                         text: modelData.ssid
-                        pointSize: Style.fontSizeNormal
+                        pointSize: Style.fontSizeM
                         font.weight: modelData.connected ? Style.fontWeightBold : Style.fontWeightMedium
                         color: Color.mOnSurface
                         elide: Text.ElideRight

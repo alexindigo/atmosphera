@@ -10,8 +10,8 @@ import qs.Widgets
 NPanel {
   id: root
 
-  preferredWidth: Settings.data.location.showWeekNumberInCalendar ? 400 : 380
-  preferredHeight: 520
+  preferredWidth: (Settings.data.location.showWeekNumberInCalendar ? 400 : 380) * Style.uiScaleRatio
+  preferredHeight: 520 * Style.uiScaleRatio
 
   panelContent: ColumnLayout {
     id: content
@@ -55,7 +55,7 @@ NPanel {
         // Combined layout for weather icon, date, and weather text
         RowLayout {
           Layout.fillWidth: true
-          height: 60
+          height: 60 * Style.uiScaleRatio
           clip: true
           spacing: Style.marginS
 
@@ -119,7 +119,7 @@ NPanel {
 
           // Month, year, location
           ColumnLayout {
-            Layout.preferredWidth: 170
+            Layout.preferredWidth: 170 * Style.uiScaleRatio
             Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
             Layout.bottomMargin: Style.marginXXS
             Layout.topMargin: -Style.marginXXS
@@ -186,7 +186,7 @@ NPanel {
         anchors.right: parent.right
         anchors.rightMargin: Style.marginM
         anchors.verticalCenter: parent.verticalCenter
-        height: Math.round((Style.fontSizeXXXL * 1.9) / 2) * 2
+        height: Math.round((Style.fontSizeXXXL * 1.9) / 2 * Style.uiScaleRatio) * 2 
         width: clockItem.height
 
         // Seconds circular progress

@@ -84,6 +84,7 @@ Item {
     visible: false
     text: titleText.text
     font: titleText.font
+    applyUiScale: false
   }
 
   Rectangle {
@@ -286,6 +287,7 @@ Item {
                 id: titleText
                 text: hasActivePlayer ? getTitle() : placeholderText
                 pointSize: Style.fontSizeS
+                applyUiScale: false
                 font.weight: Style.fontWeightMedium
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: hasActivePlayer ? Text.AlignLeft : Text.AlignHCenter
@@ -295,6 +297,7 @@ Item {
               NText {
                 text: hasActivePlayer ? getTitle() : placeholderText
                 font: titleText.font
+                applyUiScale: false
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: hasActivePlayer ? Text.AlignLeft : Text.AlignHCenter
                 color: hasActivePlayer ? Color.mOnSurface : Color.mOnSurfaceVariant

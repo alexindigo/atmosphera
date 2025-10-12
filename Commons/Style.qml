@@ -51,7 +51,7 @@ Singleton {
   property int marginL: Math.round(13 * uiScaleRatio)
   property int marginXL: Math.round(18 * uiScaleRatio)
 
-  property real uiScaleRatio: 0.8
+  property real uiScaleRatio: 1.2
 
   // Opacity
   property real opacityNone: 0.0

@@ -106,6 +106,7 @@ Rectangle {
         NIcon {
           icon: "cpu-usage"
           pointSize: iconSize
+          applyUiScale: false
           Layout.alignment: Qt.AlignCenter
           Layout.row: isVertical ? 1 : 0
           Layout.column: 0
@@ -115,6 +116,7 @@ Rectangle {
           text: `${Math.round(SystemStatService.cpuUsage)}%`
           family: Settings.data.ui.fontFixed
           pointSize: textSize
+          applyUiScale: false
           font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
           Layout.preferredWidth: isVertical ? -1 : percentTextWidth
@@ -147,6 +149,7 @@ Rectangle {
         NIcon {
           icon: "cpu-temperature"
           pointSize: iconSize
+          applyUiScale: false
           Layout.alignment: Qt.AlignCenter
           Layout.row: isVertical ? 1 : 0
           Layout.column: 0
@@ -156,6 +159,7 @@ Rectangle {
           text: `${Math.round(SystemStatService.cpuTemp)}°`
           family: Settings.data.ui.fontFixed
           pointSize: textSize
+          applyUiScale: false
           font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
           Layout.preferredWidth: isVertical ? -1 : tempTextWidth
@@ -188,6 +192,7 @@ Rectangle {
         NIcon {
           icon: "memory"
           pointSize: iconSize
+          applyUiScale: false
           Layout.alignment: Qt.AlignCenter
           Layout.row: isVertical ? 1 : 0
           Layout.column: 0
@@ -197,6 +202,7 @@ Rectangle {
           text: showMemoryAsPercent ? `${Math.round(SystemStatService.memPercent)}%` : `${SystemStatService.memGb.toFixed(1)}G`
           family: Settings.data.ui.fontFixed
           pointSize: textSize
+          applyUiScale: false
           font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
           Layout.preferredWidth: isVertical ? -1 : (showMemoryAsPercent ? percentTextWidth : memTextWidth)
@@ -229,6 +235,7 @@ Rectangle {
         NIcon {
           icon: "download-speed"
           pointSize: iconSize
+          applyUiScale: false
           Layout.alignment: Qt.AlignCenter
           Layout.row: isVertical ? 1 : 0
           Layout.column: 0
@@ -238,6 +245,7 @@ Rectangle {
           text: isVertical ? SystemStatService.formatCompactSpeed(SystemStatService.rxSpeed) : SystemStatService.formatSpeed(SystemStatService.rxSpeed)
           family: Settings.data.ui.fontFixed
           pointSize: textSize
+          applyUiScale: false
           font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
           Layout.preferredWidth: isVertical ? -1 : memTextWidth
@@ -270,6 +278,7 @@ Rectangle {
         NIcon {
           icon: "upload-speed"
           pointSize: iconSize
+          applyUiScale: false
           Layout.alignment: Qt.AlignCenter
           Layout.row: isVertical ? 1 : 0
           Layout.column: 0
@@ -279,6 +288,7 @@ Rectangle {
           text: isVertical ? SystemStatService.formatCompactSpeed(SystemStatService.txSpeed) : SystemStatService.formatSpeed(SystemStatService.txSpeed)
           family: Settings.data.ui.fontFixed
           pointSize: textSize
+          applyUiScale: false
           font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
           Layout.preferredWidth: isVertical ? -1 : memTextWidth
@@ -311,6 +321,7 @@ Rectangle {
         NIcon {
           icon: "storage"
           pointSize: iconSize
+          applyUiScale: false
           Layout.alignment: Qt.AlignCenter
           Layout.row: isVertical ? 1 : 0
           Layout.column: 0
@@ -320,6 +331,7 @@ Rectangle {
           text: `${SystemStatService.diskPercent}%`
           family: Settings.data.ui.fontFixed
           pointSize: textSize
+          applyUiScale: false
           font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
           Layout.preferredWidth: isVertical ? -1 : percentTextWidth

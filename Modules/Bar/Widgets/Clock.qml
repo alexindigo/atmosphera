@@ -73,6 +73,7 @@ Rectangle {
                 return (index == 0) ? Style.fontSizeXS : Style.fontSizeXXS
               }
             }
+            applyUiScale: false
             font.weight: Style.fontWeightBold
             color: usePrimaryColor ? Color.mPrimary : Color.mOnSurface
             wrapMode: Text.WordWrap
@@ -97,6 +98,7 @@ Rectangle {
             text: modelData
             family: useCustomFont && customFont ? customFont : Settings.data.ui.fontDefault
             pointSize: Style.fontSizeS
+            applyUiScale: false
             font.weight: Style.fontWeightBold
             color: usePrimaryColor ? Color.mPrimary : Color.mOnSurface
             wrapMode: Text.WordWrap

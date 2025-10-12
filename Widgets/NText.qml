@@ -9,8 +9,13 @@ Text {
 
   property string family: Settings.data.ui.fontDefault
   property real pointSize: Style.fontSizeM
+  property bool applyUiScale: true
   property real fontScale: {
-    return (root.family === Settings.data.ui.fontDefault ? Settings.data.ui.fontDefaultScale * Style.uiScaleRatio: Settings.data.ui.fontFixedScale * Style.uiScaleRatio)
+    const fontScale = (root.family === Settings.data.ui.fontDefault ? Settings.data.ui.fontDefaultScale : Settings.data.ui.fontFixedScale)
+    if (applyUiScale) {
+      return fontScale * Style.uiScaleRatio
+    }
+    return fontScale
   }
 
   font.family: root.family

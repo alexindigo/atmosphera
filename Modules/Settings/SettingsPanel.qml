@@ -11,8 +11,8 @@ import qs.Widgets
 NPanel {
   id: root
 
-  preferredWidth: 800
-  preferredHeight: 800
+  preferredWidth: 800 * Style.uiScaleRatio
+  preferredHeight: 800 * Style.uiScaleRatio
   preferredWidthRatio: 0.4
   preferredHeightRatio: 0.75
 

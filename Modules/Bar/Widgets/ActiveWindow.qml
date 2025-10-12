@@ -107,6 +107,7 @@ Item {
     visible: false
     text: windowTitle
     pointSize: Style.fontSizeS
+                applyUiScale: false
     font.weight: Style.fontWeightMedium
   }
 
@@ -244,6 +245,7 @@ Item {
                 id: titleText
                 text: windowTitle
                 pointSize: Style.fontSizeS
+                applyUiScale: false
                 font.weight: Style.fontWeightMedium
                 verticalAlignment: Text.AlignVCenter
                 color: Color.mOnSurface
@@ -253,6 +255,8 @@ Item {
               NText {
                 text: windowTitle
                 font: titleText.font
+                pointSize: Style.fontSizeS
+                applyUiScale: false
                 verticalAlignment: Text.AlignVCenter
                 color: Color.mOnSurface
                 visible: titleContainer.needsScrolling && titleContainer.isScrolling

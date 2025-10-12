@@ -286,6 +286,7 @@ Item {
                 }
                 family: Settings.data.ui.fontFixed
                 pointSize: model.isFocused ? workspacePillContainer.height * 0.45 : workspacePillContainer.height * 0.42
+                applyUiScale: false
                 font.capitalization: Font.AllUppercase
                 font.weight: Style.fontWeightBold
                 wrapMode: Text.Wrap
@@ -430,6 +431,7 @@ Item {
                 }
                 family: Settings.data.ui.fontFixed
                 pointSize: model.isFocused ? workspacePillContainerVertical.width * 0.45 : workspacePillContainerVertical.width * 0.42
+                applyUiScale: false
                 font.capitalization: Font.AllUppercase
                 font.weight: Style.fontWeightBold
                 wrapMode: Text.Wrap

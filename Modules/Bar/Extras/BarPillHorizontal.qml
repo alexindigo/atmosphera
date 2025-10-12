@@ -90,6 +90,7 @@ Item {
       text: root.text + root.suffix
       family: Settings.data.ui.fontFixed
       pointSize: textSize
+                  applyUiScale: false
       font.weight: Style.fontWeightBold
       color: forceOpen ? Color.mOnSurface : Color.mPrimary
       visible: revealed
