@@ -40,11 +40,13 @@ NPanel {
       ProfileCard {
         Layout.fillWidth: true
         Layout.preferredHeight: Math.max(64 * scaling)
+        scaling: root.scaling
       }
 
       WeatherCard {
         Layout.fillWidth: true
         Layout.preferredHeight: Math.max(190 * scaling)
+        scaling: root.scaling
       }
 
       // Middle section: media + stats column
@@ -57,6 +59,7 @@ NPanel {
         MediaCard {
           Layout.fillWidth: true
           Layout.fillHeight: true
+          scaling: root.scaling
         }
 
         // System monitors combined in one card
@@ -85,6 +88,7 @@ NPanel {
           Layout.fillWidth: true
           Layout.fillHeight: true
           spacing: content.cardSpacing
+          scaling: root.scaling
         }
 
         // Utilities buttons
@@ -92,6 +96,7 @@ NPanel {
           Layout.fillWidth: true
           Layout.fillHeight: true
           spacing: content.cardSpacing
+          scaling: root.scaling
         }
       }
     }

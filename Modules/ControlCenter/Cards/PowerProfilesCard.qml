@@ -10,6 +10,7 @@ import qs.Widgets
 // Power Profiles: performance, balanced, eco
 NBox {
 
+  property real scaling: 1.0
   property real spacing: 0
 
   // Centralized service

@@ -27,6 +27,13 @@ Rectangle {
 
   // Repaint gauge when the bound value changes
   onValueChanged: gauge.requestPaint()
+  
+  // Force repaint when scaling changes
+  onScalingChanged: {
+    Qt.callLater(() => {
+      gauge.requestPaint()
+    })
+  }
 
   ColumnLayout {
     id: mainLayout
@@ -46,7 +53,7 @@ Rectangle {
       Canvas {
         id: gauge
         anchors.fill: parent
-        renderStrategy: Canvas.Cooperative
+        renderStrategy: Canvas.Immediate
 
         onPaint: {
           const ctx = getContext("2d")

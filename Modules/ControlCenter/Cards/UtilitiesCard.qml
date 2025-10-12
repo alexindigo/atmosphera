@@ -10,6 +10,7 @@ import qs.Widgets
 // Utilities: record & wallpaper
 NBox {
 
+  property real scaling: 1.0
   property real spacing: 0
 
   RowLayout {

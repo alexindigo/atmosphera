@@ -9,6 +9,7 @@ import qs.Widgets
 NBox {
   id: root
 
+  property real scaling: 1.0
   readonly property bool weatherReady: (LocationService.data.weather !== null)
 
   ColumnLayout {

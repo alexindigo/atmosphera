@@ -11,6 +11,8 @@ import qs.Widgets
 NBox {
   id: root
 
+  property real scaling: 1.0
+
   // Background artwork that covers everything
   Item {
     anchors.fill: parent
