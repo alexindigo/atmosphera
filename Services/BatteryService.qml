@@ -57,6 +57,7 @@ Singleton {
 
   function setChargingMode(newMode) {
     if (newMode !== BatteryService.ChargingMode.Full && newMode !== BatteryService.ChargingMode.Balanced && newMode !== BatteryService.ChargingMode.Lifespan) {
+      Logger.warn("BatteryService", `Invalid charging mode set ${newMode}`)
       return
     }
     BatteryService.chargingMode = newMode
