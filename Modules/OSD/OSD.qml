@@ -231,8 +231,10 @@ Variants {
         opacity: 0
         scale: 0.85
 
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: verticalMode ? parent.verticalCenter : undefined
+        // Only horizontally center when the window itself is centered (top/bottom positions)
+        // For left/right vertical mode, fill the parent width
+        anchors.horizontalCenter: (!panel.verticalMode && panel.isCentered) ? parent.horizontalCenter : undefined
+        anchors.verticalCenter: panel.verticalMode ? parent.verticalCenter : undefined
 
         Behavior on opacity {
           NumberAnimation {
@@ -349,85 +351,90 @@ Variants {
 
         Component {
           id: verticalContent
-          ColumnLayout {
-            // Ensure inner padding respects the rounded corners; avoid clipping the icon/text
-            property int vMargin: (function () {
-              const styleMargin = Math.round(Style.marginL * scaling)
-              const cornerGuard = Math.round(osdItem.radius)
-              return Math.max(styleMargin, cornerGuard)
-            })()
-            property int vMarginTop: Math.max(Math.round(osdItem.radius), Math.round(Style.marginS * scaling))
-            property int balanceDelta: Math.round(Style.marginS * scaling)
+          Item {
             anchors.fill: parent
-            anchors.topMargin: vMargin
-            anchors.leftMargin: vMargin
-            anchors.rightMargin: vMargin
-            anchors.bottomMargin: vMargin
-            spacing: Math.round(Style.marginS * scaling)
 
-            // Percentage text at top
-            Item {
-              Layout.fillWidth: true
-              Layout.preferredHeight: percentText.implicitHeight
-              NText {
-                id: percentText
-                text: root.getDisplayPercentage()
-                color: Color.mOnSurface
-                pointSize: Style.fontSizeS * scaling
-                family: Settings.data.ui.fontFixed
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
+            ColumnLayout {
+              // Ensure inner padding respects the rounded corners; avoid clipping the icon/text
+              property int vMargin: (function () {
+                const styleMargin = Math.round(Style.marginL * scaling)
+                const cornerGuard = Math.round(osdItem.radius)
+                return Math.max(styleMargin, cornerGuard)
+              })()
+              property int vMarginTop: Math.max(Math.round(osdItem.radius), Math.round(Style.marginS * scaling))
+              property int balanceDelta: Math.round(Style.marginS * scaling)
+              anchors.fill: parent
+              anchors.topMargin: vMargin
+              anchors.leftMargin: vMargin
+              anchors.rightMargin: vMargin
+              anchors.bottomMargin: vMargin
+              spacing: Math.round(Style.marginS * scaling)
+
+              // Percentage text at top
+              Item {
+                Layout.fillWidth: true
+                Layout.preferredHeight: Math.round(20 * scaling)
+                NText {
+                  id: percentText
+                  text: root.getDisplayPercentage()
+                  color: Color.mOnSurface
+                  pointSize: Style.fontSizeS * scaling
+                  family: Settings.data.ui.fontFixed
+                  width: Math.round(50 * scaling)
+                  height: parent.height
+                  anchors.centerIn: parent
+                  horizontalAlignment: Text.AlignHCenter
+                  verticalAlignment: Text.AlignVCenter
+                }
               }
-            }
 
-            // Progress bar
-            Item {
-              Layout.fillWidth: true
-              Layout.fillHeight: true // Fill remaining space between text and icon
-              Rectangle {
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                width: panel.barThickness
-                radius: Math.round(panel.barThickness / 2)
-                color: Color.mSurfaceVariant
-
+              // Progress bar
+              Item {
+                Layout.fillWidth: true
+                Layout.fillHeight: true // Fill remaining space between text and icon
                 Rectangle {
-                  anchors.left: parent.left
-                  anchors.right: parent.right
+                  anchors.horizontalCenter: parent.horizontalCenter
+                  anchors.top: parent.top
                   anchors.bottom: parent.bottom
-                  height: parent.height * Math.min(1.0, root.getCurrentValue())
-                  radius: parent.radius
-                  color: root.getProgressColor()
+                  width: panel.barThickness
+                  radius: Math.round(panel.barThickness / 2)
+                  color: Color.mSurfaceVariant
 
-                  Behavior on height {
-                    NumberAnimation {
-                      duration: Style.animationNormal
-                      easing.type: Easing.InOutQuad
+                  Rectangle {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.bottom: parent.bottom
+                    height: parent.height * Math.min(1.0, root.getCurrentValue())
+                    radius: parent.radius
+                    color: root.getProgressColor()
+
+                    Behavior on height {
+                      NumberAnimation {
+                        duration: Style.animationNormal
+                        easing.type: Easing.InOutQuad
+                      }
                     }
-                  }
-                  Behavior on color {
-                    ColorAnimation {
-                      duration: Style.animationNormal
-                      easing.type: Easing.InOutQuad
+                    Behavior on color {
+                      ColorAnimation {
+                        duration: Style.animationNormal
+                        easing.type: Easing.InOutQuad
+                      }
                     }
                   }
                 }
               }
-            }
 
-            // Icon at bottom
-            NIcon {
-              icon: root.getIcon()
-              color: root.getIconColor()
-              pointSize: Style.fontSizeXL * scaling
-              Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
-              Behavior on color {
-                ColorAnimation {
-                  duration: Style.animationNormal
-                  easing.type: Easing.InOutQuad
+              // Icon at bottom
+              NIcon {
+                icon: root.getIcon()
+                color: root.getIconColor()
+                pointSize: Style.fontSizeXL * scaling
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
+                Behavior on color {
+                  ColorAnimation {
+                    duration: Style.animationNormal
+                    easing.type: Easing.InOutQuad
+                  }
                 }
               }
             }
