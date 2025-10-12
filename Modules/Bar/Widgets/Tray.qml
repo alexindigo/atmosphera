@@ -34,7 +34,7 @@ Rectangle {
 
   readonly property string barPosition: Settings.data.bar.position
   readonly property bool isVertical: barPosition === "left" || barPosition === "right"
-  readonly property bool compact: (Settings.data.bar.density === "compact")
+  readonly property bool compact: (Settings.data.bar.density === "compact") || (Settings.data.bar.density === "mini")
   property real itemSize: Math.round(Style.capsuleHeight * 0.65)
   property list<string> blacklist: widgetSettings.blacklist || widgetMetadata.blacklist || [] // Read from settings
   property var filteredItems: []

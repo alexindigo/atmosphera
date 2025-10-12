@@ -13,7 +13,7 @@ NIconButton {
 
   property ShellScreen screen
 
-  compact: (Settings.data.bar.density === "compact")
+  compact: (Settings.data.bar.density === "compact") || (Settings.data.bar.density === "mini")
   baseSize: Style.capsuleHeight
   colorBg: Settings.data.nightLight.forced ? Color.mPrimary : (Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent)
   colorFg: Settings.data.nightLight.forced ? Color.mOnPrimary : Color.mOnSurface

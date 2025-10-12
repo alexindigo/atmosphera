@@ -10,7 +10,7 @@ NIconButton {
 
   property ShellScreen screen
 
-  compact: (Settings.data.bar.density === "compact")
+  compact: (Settings.data.bar.density === "compact") || (Settings.data.bar.density === "mini")
   baseSize: Style.capsuleHeight
   icon: "power"
   tooltipText: I18n.tr("tooltips.session-menu")
