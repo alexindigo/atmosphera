@@ -138,6 +138,36 @@ else
     print_info "Could not restart polkit automatically, you may need to reboot"
 fi
 
+print_info "Creating uninstall script..."
+UNINSTALL_SCRIPT="$SCRIPT_DIR/uninstall-battery-manager-$ACTUAL_USER.sh"
+
+
+if [ -f "$SCRIPT_DIR/templates/uninstall-template" ]; then
+    SHEBANG=$(head -n 1 "$SCRIPT_DIR/templates/uninstall-template")
+else
+    SHEBANG="#!/usr/bin/env bash"
+fi
+echo "$SHEBANG" > "$UNINSTALL_SCRIPT"
+echo "" >> "$UNINSTALL_SCRIPT"
+
+cat >> "$UNINSTALL_SCRIPT" << EOF
+SCRIPT_PATH="$BATTERY_MANAGER_SCRIPT"
+POLICY_PATH="$POLICY_FILE"
+RULES_PATH="$RULES_FILE"
+LOG_PATH="/var/log/battery-manager.log"
+
+EOF
+
+if [ -f "$SCRIPT_DIR/templates/uninstall-template" ]; then
+    tail -n +2 "$SCRIPT_DIR/templates/uninstall-template" >> "$UNINSTALL_SCRIPT"
+fi
+
+chmod 744 "$UNINSTALL_SCRIPT"
+chown root:root "$UNINSTALL_SCRIPT"
+
+print_info "Uninstall script created at $UNINSTALL_SCRIPT"
+
+
 echo
 print_info "Installation complete!"
 echo
@@ -145,3 +175,4 @@ print_info "Log file: /var/log/battery-manager.log"
 print_info "User-specific script: $BATTERY_MANAGER_SCRIPT"
 print_info "User-specific policy: $POLICY_FILE"
 print_info "User-specific rules: $RULES_FILE"
+print_info "User-specific uninstall script: $UNINSTALL_SCRIPT"
