@@ -38,10 +38,10 @@ Loader {
       margins {
         // When bar is floating, corners should be at screen edges (no margins)
         // When bar is not floating, respect bar margins as before
-        top: !Settings.data.bar.floating && BarService.isVisible && ((modelData && Settings.data.bar.monitors.includes(modelData.name)) || (Settings.data.bar.monitors.length === 0)) && Settings.data.bar.position === "top" && Settings.data.bar.backgroundOpacity > 0 ? Math.round(Style.barHeight) : 0
-        bottom: !Settings.data.bar.floating && BarService.isVisible && ((modelData && Settings.data.bar.monitors.includes(modelData.name)) || (Settings.data.bar.monitors.length === 0)) && Settings.data.bar.position === "bottom" && Settings.data.bar.backgroundOpacity > 0 ? Math.round(Style.barHeight) : 0
-        left: !Settings.data.bar.floating && BarService.isVisible && ((modelData && Settings.data.bar.monitors.includes(modelData.name)) || (Settings.data.bar.monitors.length === 0)) && Settings.data.bar.position === "left" && Settings.data.bar.backgroundOpacity > 0 ? Math.round(Style.barHeight) : 0
-        right: !Settings.data.bar.floating && BarService.isVisible && ((modelData && Settings.data.bar.monitors.includes(modelData.name)) || (Settings.data.bar.monitors.length === 0)) && Settings.data.bar.position === "right" && Settings.data.bar.backgroundOpacity > 0 ? Math.round(Style.barHeight) : 0
+        top: !Settings.data.bar.floating && BarService.isVisible && ((modelData && Settings.data.bar.monitors.includes(modelData.name)) || (Settings.data.bar.monitors.length === 0)) && Settings.data.bar.position === "top" && Settings.data.bar.backgroundOpacity > 0 ? Style.barHeight : 0
+        bottom: !Settings.data.bar.floating && BarService.isVisible && ((modelData && Settings.data.bar.monitors.includes(modelData.name)) || (Settings.data.bar.monitors.length === 0)) && Settings.data.bar.position === "bottom" && Settings.data.bar.backgroundOpacity > 0 ? Style.barHeight : 0
+        left: !Settings.data.bar.floating && BarService.isVisible && ((modelData && Settings.data.bar.monitors.includes(modelData.name)) || (Settings.data.bar.monitors.length === 0)) && Settings.data.bar.position === "left" && Settings.data.bar.backgroundOpacity > 0 ? Style.barHeight : 0
+        right: !Settings.data.bar.floating && BarService.isVisible && ((modelData && Settings.data.bar.monitors.includes(modelData.name)) || (Settings.data.bar.monitors.length === 0)) && Settings.data.bar.position === "right" && Settings.data.bar.backgroundOpacity > 0 ? Style.barHeight : 0
       }
 
       mask: Region {}

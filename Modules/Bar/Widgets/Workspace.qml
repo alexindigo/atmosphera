@@ -62,8 +62,8 @@ Item {
 
   signal workspaceChanged(int workspaceId, color accentColor)
 
-  implicitWidth: isVertical ? Math.round(Style.barHeight) : computeWidth()
-  implicitHeight: isVertical ? computeHeight() : Math.round(Style.barHeight)
+  implicitWidth: isVertical ? Style.barHeight : computeWidth()
+  implicitHeight: isVertical ? computeHeight() : Style.barHeight
 
   function getWorkspaceWidth(ws) {
     const d = Style.capsuleHeight * root.baseDimensionRatio
@@ -202,9 +202,9 @@ Item {
 
   Rectangle {
     id: workspaceBackground
-    width: isVertical ? Math.round(Style.capsuleHeight) : parent.width
-    height: isVertical ? parent.height : Math.round(Style.capsuleHeight)
-    radius: Math.round(Style.radiusM)
+    width: isVertical ? Style.capsuleHeight : parent.width
+    height: isVertical ? parent.height : Style.capsuleHeight
+    radius: Style.radiusM
     color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
     anchors.horizontalCenter: parent.horizontalCenter

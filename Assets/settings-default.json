@@ -173,7 +173,6 @@
     "fontFixed": "DejaVu Sans Mono",
     "fontDefaultScale": 1,
     "fontFixedScale": 1,
-    "monitorsScaling": [],
     "idleInhibitorEnabled": false,
     "tooltipsEnabled": true
   },

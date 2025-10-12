@@ -18,7 +18,7 @@ PopupWindow {
 
   readonly property int menuWidth: 180
 
-  implicitWidth: Math.round(menuWidth)
+  implicitWidth: menuWidth
 
   // Use the content height of the Flickable for implicit height
   implicitHeight: Math.min(screen ? screen.height * 0.9 : Screen.height * 0.9, flickable.contentHeight + (Style.marginS * 2))

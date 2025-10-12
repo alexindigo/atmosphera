@@ -45,7 +45,7 @@ Item {
   property bool shouldAnimateHide: false
 
   // Sizing logic for vertical bars
-  readonly property int buttonSize: Math.round(Style.capsuleHeight)
+  readonly property int buttonSize: Style.capsuleHeight
   readonly property int pillHeight: buttonSize
   readonly property int pillPaddingVertical: 3 * 2 // Very precise adjustment don't replace by Style.margin
   readonly property int pillOverlap: buttonSize * 0.5

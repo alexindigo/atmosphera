@@ -144,9 +144,9 @@ Rectangle {
   }
 
   visible: filteredItems.length > 0
-  implicitWidth: isVertical ? Math.round(Style.capsuleHeight) : Math.round(trayFlow.implicitWidth + Style.marginM * 2)
-  implicitHeight: isVertical ? Math.round(trayFlow.implicitHeight + Style.marginM * 2) : Math.round(Style.capsuleHeight)
-  radius: Math.round(Style.radiusM)
+  implicitWidth: isVertical ? Style.capsuleHeight : Math.round(trayFlow.implicitWidth + Style.marginM * 2)
+  implicitHeight: isVertical ? Math.round(trayFlow.implicitHeight + Style.marginM * 2) : Style.capsuleHeight
+  radius: Style.radiusM
   color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
   Layout.alignment: Qt.AlignVCenter
@@ -239,7 +239,7 @@ Rectangle {
                              } else {
                                // For horizontal bars: center horizontally and position below
                                menuX = (width / 2) - (trayMenu.item.width / 2)
-                               menuY = Math.round(Style.barHeight)
+                               menuY = Style.barHeight
                              }
                              trayMenu.item.menu = modelData.menu
                              trayMenu.item.showAt(parent, menuX, menuY)

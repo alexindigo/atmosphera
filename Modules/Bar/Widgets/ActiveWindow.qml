@@ -43,7 +43,7 @@ Item {
   readonly property string scrollingMode: (widgetSettings.scrollingMode !== undefined) ? widgetSettings.scrollingMode : (widgetMetadata.scrollingMode !== undefined ? widgetMetadata.scrollingMode : "hover")
   readonly property int widgetWidth: (widgetSettings.width !== undefined) ? widgetSettings.width : Math.max(widgetMetadata.width, screen.width * 0.06)
 
-  implicitHeight: visible ? ((barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Math.round(Style.barHeight)) : 0
+  implicitHeight: visible ? ((barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Style.barHeight) : 0
   implicitWidth: visible ? ((barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8) : (widgetWidth)) : 0
 
   opacity: !autoHide || hasActiveWindow ? 1.0 : 0
@@ -116,8 +116,8 @@ Item {
     anchors.left: parent.left
     anchors.verticalCenter: parent.verticalCenter
     width: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8) : (widgetWidth)
-    height: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8) : Math.round(Style.capsuleHeight)
-    radius: (barPosition === "left" || barPosition === "right") ? width / 2 : Math.round(Style.radiusM)
+    height: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8) : Style.capsuleHeight
+    radius: (barPosition === "left" || barPosition === "right") ? width / 2 : Style.radiusM
     color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
     Item {
@@ -136,8 +136,8 @@ Item {
 
         // Window icon
         Item {
-          Layout.preferredWidth: Math.round(18)
-          Layout.preferredHeight: Math.round(18)
+          Layout.preferredWidth: 18
+          Layout.preferredHeight: 18
           Layout.alignment: Qt.AlignVCenter
           visible: showIcon
 

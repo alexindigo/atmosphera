@@ -73,9 +73,9 @@ Rectangle {
   }
 
   anchors.centerIn: parent
-  implicitWidth: isVertical ? Math.round(Style.capsuleHeight) : Math.round(mainGrid.implicitWidth + Style.marginM * 2)
-  implicitHeight: isVertical ? Math.round(mainGrid.implicitHeight + Style.marginM * 2) : Math.round(Style.capsuleHeight)
-  radius: Math.round(Style.radiusM)
+  implicitWidth: isVertical ? Style.capsuleHeight : Math.round(mainGrid.implicitWidth + Style.marginM * 2)
+  implicitHeight: isVertical ? Math.round(mainGrid.implicitHeight + Style.marginM * 2) : Style.capsuleHeight
+  radius: Style.radiusM
   color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
   GridLayout {
@@ -90,7 +90,7 @@ Rectangle {
     // CPU Usage Component
     Item {
       Layout.preferredWidth: isVertical ? root.width : iconSize + percentTextWidth + (Style.marginXXS)
-      Layout.preferredHeight: Math.round(Style.capsuleHeight)
+      Layout.preferredHeight: Style.capsuleHeight
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
       visible: showCpuUsage
 
@@ -131,7 +131,7 @@ Rectangle {
     // CPU Temperature Component
     Item {
       Layout.preferredWidth: isVertical ? root.width : (iconSize + tempTextWidth) + (Style.marginXXS)
-      Layout.preferredHeight: Math.round(Style.capsuleHeight)
+      Layout.preferredHeight: Style.capsuleHeight
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
       visible: showCpuTemp
 
@@ -172,7 +172,7 @@ Rectangle {
     // Memory Usage Component
     Item {
       Layout.preferredWidth: isVertical ? root.width : iconSize + (showMemoryAsPercent ? percentTextWidth : memTextWidth) + (Style.marginXXS)
-      Layout.preferredHeight: Math.round(Style.capsuleHeight)
+      Layout.preferredHeight: Style.capsuleHeight
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
       visible: showMemoryUsage
 
@@ -213,7 +213,7 @@ Rectangle {
     // Network Download Speed Component
     Item {
       Layout.preferredWidth: isVertical ? root.width : iconSize + memTextWidth + (Style.marginXXS)
-      Layout.preferredHeight: Math.round(Style.capsuleHeight)
+      Layout.preferredHeight: Style.capsuleHeight
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
       visible: showNetworkStats
 
@@ -254,7 +254,7 @@ Rectangle {
     // Network Upload Speed Component
     Item {
       Layout.preferredWidth: isVertical ? root.width : iconSize + memTextWidth + (Style.marginXXS)
-      Layout.preferredHeight: Math.round(Style.capsuleHeight)
+      Layout.preferredHeight: Style.capsuleHeight
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
       visible: showNetworkStats
 
@@ -295,7 +295,7 @@ Rectangle {
     // Disk Usage Component (primary drive)
     Item {
       Layout.preferredWidth: isVertical ? root.width : iconSize + percentTextWidth + (Style.marginXXS)
-      Layout.preferredHeight: Math.round(Style.capsuleHeight)
+      Layout.preferredHeight: Style.capsuleHeight
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
       visible: showDiskUsage
 

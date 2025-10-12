@@ -35,9 +35,9 @@ Rectangle {
   }
 
   // Always visible when there are toplevels
-  implicitWidth: isVerticalBar ? Math.round(Style.capsuleHeight) : Math.round(taskbarLayout.implicitWidth + Style.marginM * 2)
-  implicitHeight: isVerticalBar ? Math.round(taskbarLayout.implicitHeight + Style.marginM * 2) : Math.round(Style.capsuleHeight)
-  radius: Math.round(Style.radiusM)
+  implicitWidth: isVerticalBar ? Style.capsuleHeight : Math.round(taskbarLayout.implicitWidth + Style.marginM * 2)
+  implicitHeight: isVerticalBar ? Math.round(taskbarLayout.implicitHeight + Style.marginM * 2) : Style.capsuleHeight
+  radius: Style.radiusM
   color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
   GridLayout {

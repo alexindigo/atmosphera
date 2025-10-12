@@ -59,7 +59,7 @@ Item {
     return title
   }
 
-  implicitHeight: visible ? ((barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Math.round(Style.barHeight)) : 0
+  implicitHeight: visible ? ((barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Style.barHeight) : 0
   implicitWidth: visible ? ((barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8) : (widgetWidth)) : 0
 
   opacity: !autoHide || hasActivePlayer || (!hasActivePlayer && !autoHide) ? 1.0 : 0
@@ -92,8 +92,8 @@ Item {
     anchors.left: parent.left
     anchors.verticalCenter: parent.verticalCenter
     width: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8) : (widgetWidth)
-    height: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8) : Math.round(Style.capsuleHeight)
-    radius: (barPosition === "left" || barPosition === "right") ? width / 2 : Math.round(Style.radiusM)
+    height: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8) : Style.capsuleHeight
+    radius: (barPosition === "left" || barPosition === "right") ? width / 2 : Style.radiusM
     color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
     Item {
@@ -172,8 +172,8 @@ Item {
           spacing: 0
 
           Item {
-            Layout.preferredWidth: Math.round(21)
-            Layout.preferredHeight: Math.round(21)
+            Layout.preferredWidth: 21
+            Layout.preferredHeight: 21
 
             NImageCircled {
               id: trackArt

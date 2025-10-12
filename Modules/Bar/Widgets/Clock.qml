@@ -40,11 +40,11 @@ Rectangle {
   readonly property string formatHorizontal: widgetSettings.formatHorizontal !== undefined ? widgetSettings.formatHorizontal : widgetMetadata.formatHorizontal
   readonly property string formatVertical: widgetSettings.formatVertical !== undefined ? widgetSettings.formatVertical : widgetMetadata.formatVertical
 
-  implicitWidth: isBarVertical ? Math.round(Style.capsuleHeight) : Math.round((isBarVertical ? verticalLoader.implicitWidth : horizontalLoader.implicitWidth) + Style.marginM * 2)
+  implicitWidth: isBarVertical ? Style.capsuleHeight : Math.round((isBarVertical ? verticalLoader.implicitWidth : horizontalLoader.implicitWidth) + Style.marginM * 2)
 
-  implicitHeight: isBarVertical ? Math.round(verticalLoader.implicitHeight + Style.marginS * 2) : Math.round(Style.capsuleHeight)
+  implicitHeight: isBarVertical ? Math.round(verticalLoader.implicitHeight + Style.marginS * 2) : Style.capsuleHeight
 
-  radius: Math.round(Style.radiusS)
+  radius: Style.radiusS
   color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
   Item {

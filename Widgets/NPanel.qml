@@ -26,8 +26,6 @@ Loader {
   property bool panelAnchorLeft: false
   property bool panelAnchorRight: false
 
-  property bool isMasked: false
-
   // Properties to support positioning relative to the opener (button)
   property bool useButtonPosition: false
   property point buttonPosition: Qt.point(0, 0)
@@ -38,10 +36,8 @@ Loader {
   property bool backgroundClickEnabled: true
 
   // Animation properties
-  readonly property real originalScale: 0.5
-  readonly property real originalOpacity: 0.0
+  readonly property real originalScale: 0.0
   property real scaleValue: originalScale
-  property real opacityValue: originalOpacity
   property real dimmingOpacity: 0
 
   signal opened
@@ -99,7 +95,6 @@ Loader {
   function close() {
     dimmingOpacity = 0
     scaleValue = originalScale
-    opacityValue = originalOpacity
     root.closed()
     active = false
     useButtonPosition = false
@@ -137,7 +132,7 @@ Loader {
       readonly property string barPosition: Settings.data.bar.position
       readonly property bool isVertical: barPosition === "left" || barPosition === "right"
       readonly property bool barIsVisible: (screen !== null) && (Settings.data.bar.monitors.includes(screen.name) || (Settings.data.bar.monitors.length === 0))
-      readonly property real verticalBarWidth: Math.round(Style.barHeight)
+      readonly property real verticalBarWidth: Style.barHeight
 
       Component.onCompleted: {
         Logger.log("NPanel", "Opened", root.objectName, "on", screen.name)
@@ -158,13 +153,11 @@ Loader {
       }
 
       visible: true
-      color: Settings.data.general.dimDesktop && !root.isMasked ? Qt.alpha(Color.mShadow, dimmingOpacity) : Color.transparent
+      color: Settings.data.general.dimDesktop ? Qt.alpha(Color.mShadow, dimmingOpacity) : Color.transparent
 
       WlrLayershell.exclusionMode: ExclusionMode.Ignore
       WlrLayershell.namespace: "noctalia-panel"
       WlrLayershell.keyboardFocus: root.panelKeyboardFocus ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
-
-      mask: root.isMasked ? maskRegion : null
 
       Region {
         id: maskRegion
@@ -231,7 +224,6 @@ Loader {
         }
 
         scale: root.scaleValue
-        opacity: root.isMasked ? 0 : root.opacityValue
         x: isDragged ? manualX : calculatedX
         y: isDragged ? manualY : calculatedY
 
@@ -371,7 +363,6 @@ Loader {
         // Animate in when component is completed
         Component.onCompleted: {
           root.scaleValue = 1.0
-          root.opacityValue = 1.0
         }
 
         // Reset drag position when panel closes

@@ -38,7 +38,7 @@ Item {
   property bool showPill: false
   property bool shouldAnimateHide: false
 
-  readonly property int pillHeight: Math.round(Style.capsuleHeight)
+  readonly property int pillHeight: Style.capsuleHeight
   readonly property int pillPaddingHorizontal: Math.round(Style.capsuleHeight * 0.2)
   readonly property int pillOverlap: Math.round(Style.capsuleHeight * 0.5)
   readonly property int pillMaxWidth: Math.max(1, textItem.implicitWidth + pillPaddingHorizontal * 2 + pillOverlap)
