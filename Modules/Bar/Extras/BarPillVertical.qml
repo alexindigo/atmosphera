@@ -45,9 +45,9 @@ Item {
   property bool shouldAnimateHide: false
 
   // Sizing logic for vertical bars
-  readonly property int buttonSize: Math.round(Style.capsuleHeight * scaling)
+  readonly property int buttonSize: Math.round(Style.capsuleHeight)
   readonly property int pillHeight: buttonSize
-  readonly property int pillPaddingVertical: 3 * 2 * scaling // Very precise adjustment don't replace by Style.margin
+  readonly property int pillPaddingVertical: 3 * 2 // Very precise adjustment don't replace by Style.margin
   readonly property int pillOverlap: buttonSize * 0.5
   readonly property int maxPillWidth: buttonSize
   readonly property int maxPillHeight: Math.max(1, textItem.implicitHeight + pillPaddingVertical * 4)
@@ -95,7 +95,7 @@ Item {
         var offset = openDownward ? pillPaddingVertical * 0.75 : -pillPaddingVertical * 0.75
         if (forceOpen) {
           // If its force open, the icon disc background is the same color as the bg pill move text slightly
-          offset += rightOpen ? -Style.marginXXS * scaling : Style.marginXXS * scaling
+          offset += rightOpen ? -Style.marginXXS : Style.marginXXS
         }
         return offset
       }

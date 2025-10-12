@@ -10,12 +10,12 @@ RadioButton {
   indicator: Rectangle {
     id: outerCircle
 
-    implicitWidth: Style.baseWidgetSize * 0.625 * scaling
-    implicitHeight: Style.baseWidgetSize * 0.625 * scaling
+    implicitWidth: Style.baseWidgetSize * 0.625
+    implicitHeight: Style.baseWidgetSize * 0.625
     radius: width * 0.5
     color: Color.transparent
     border.color: root.checked ? Color.mPrimary : Color.mOnSurface
-    border.width: Math.max(1, Style.borderM * scaling)
+    border.width: Math.max(1, Style.borderM)
     anchors.verticalCenter: parent.verticalCenter
 
     Rectangle {
@@ -41,10 +41,10 @@ RadioButton {
 
   contentItem: NText {
     text: root.text
-    pointSize: Style.fontSizeM * scaling
+    pointSize: Style.fontSizeM
     anchors.verticalCenter: parent.verticalCenter
     anchors.left: outerCircle.right
     anchors.right: parent.right
-    anchors.leftMargin: Style.marginS * scaling
+    anchors.leftMargin: Style.marginS
   }
 }

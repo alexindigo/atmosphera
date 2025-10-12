@@ -7,7 +7,7 @@ import qs.Widgets
 
 ColumnLayout {
   id: contentColumn
-  spacing: Style.marginL * scaling
+  spacing: Style.marginL
   width: root.width
 
   NHeader {
@@ -25,7 +25,7 @@ ColumnLayout {
 
   ColumnLayout {
     visible: Settings.data.hooks.enabled
-    spacing: Style.marginL * scaling
+    spacing: Style.marginL
     Layout.fillWidth: true
 
     NDivider {
@@ -78,7 +78,7 @@ ColumnLayout {
 
     // Info section
     ColumnLayout {
-      spacing: Style.marginM * scaling
+      spacing: Style.marginM
       Layout.fillWidth: true
 
       NLabel {

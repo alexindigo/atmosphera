@@ -17,7 +17,6 @@ Variants {
     id: root
 
     required property ShellScreen modelData
-    property real scaling: ScalingService.getScreenScale(modelData)
 
     // Access the notification model from the service
     property ListModel notificationModel: NotificationService.activeList
@@ -38,15 +37,6 @@ Variants {
       function onCountChanged() {
         if (notificationModel.count === 0 && root.active) {
           delayTimer.restart()
-        }
-      }
-    }
-
-    Connections {
-      target: ScalingService
-      function onScaleChanged(screenName, scale) {
-        if (root.modelData && screenName === root.modelData.name) {
-          root.scaling = scale
         }
       }
     }
@@ -79,10 +69,10 @@ Variants {
       margins.top: {
         if (!(anchors.top))
           return 0
-        var base = Style.marginM * scaling
+        var base = Style.marginM
         if (Settings.data.bar.position === "top") {
-          var floatExtraV = Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL * scaling : 0
-          return (Style.barHeight * scaling) + base + floatExtraV
+          var floatExtraV = Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL : 0
+          return (Style.barHeight) + base + floatExtraV
         }
         return base
       }
@@ -90,10 +80,10 @@ Variants {
       margins.bottom: {
         if (!(anchors.bottom))
           return 0
-        var base = Style.marginM * scaling
+        var base = Style.marginM
         if (Settings.data.bar.position === "bottom") {
-          var floatExtraV = Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL * scaling : 0
-          return (Style.barHeight * scaling) + base + floatExtraV
+          var floatExtraV = Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL : 0
+          return (Style.barHeight) + base + floatExtraV
         }
         return base
       }
@@ -101,10 +91,10 @@ Variants {
       margins.left: {
         if (!(anchors.left))
           return 0
-        var base = Style.marginM * scaling
+        var base = Style.marginM
         if (Settings.data.bar.position === "left") {
-          var floatExtraH = Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL * scaling : 0
-          return (Style.barHeight * scaling) + base + floatExtraH
+          var floatExtraH = Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL : 0
+          return (Style.barHeight) + base + floatExtraH
         }
         return base
       }
@@ -112,15 +102,15 @@ Variants {
       margins.right: {
         if (!(anchors.right))
           return 0
-        var base = Style.marginM * scaling
+        var base = Style.marginM
         if (Settings.data.bar.position === "right") {
-          var floatExtraH = Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL * scaling : 0
-          return (Style.barHeight * scaling) + base + floatExtraH
+          var floatExtraH = Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL : 0
+          return (Style.barHeight) + base + floatExtraH
         }
         return base
       }
 
-      implicitWidth: 360 * scaling
+      implicitWidth: 360
       implicitHeight: notificationStack.implicitHeight
       WlrLayershell.exclusionMode: ExclusionMode.Ignore
 
@@ -165,8 +155,8 @@ Variants {
         anchors.left: parent.isLeft ? parent.left : undefined
         anchors.right: parent.isRight ? parent.right : undefined
         anchors.horizontalCenter: parent.isCentered ? parent.horizontalCenter : undefined
-        spacing: Style.marginS * scaling
-        width: 360 * scaling
+        spacing: Style.marginS
+        width: 360
         visible: true
 
         // Multiple notifications display
@@ -178,15 +168,14 @@ Variants {
             // Store the notification ID and data for reference
             property string notificationId: model.id
             property var notificationData: model
-            property real cardScaling: root.scaling
 
-            Layout.preferredWidth: 360 * cardScaling
-            Layout.preferredHeight: notificationLayout.implicitHeight + (Style.marginL * 2 * cardScaling)
+            Layout.preferredWidth: 360
+            Layout.preferredHeight: notificationLayout.implicitHeight + (Style.marginL * 2)
             Layout.maximumHeight: Layout.preferredHeight
 
-            radius: Style.radiusL * cardScaling
+            radius: Style.radiusL
             border.color: Color.mOutline
-            border.width: Math.max(1, Style.borderS * cardScaling)
+            border.width: Math.max(1, Style.borderS)
             color: Color.mSurface
 
             // Optimized progress bar container
@@ -195,7 +184,7 @@ Variants {
               anchors.top: parent.top
               anchors.left: parent.left
               anchors.right: parent.right
-              height: 2 * cardScaling
+              height: 2
               color: Color.transparent
 
               // Pre-calculate available width for the progress bar
@@ -311,28 +300,28 @@ Variants {
             ColumnLayout {
               id: notificationLayout
               anchors.fill: parent
-              anchors.margins: Style.marginM * cardScaling
-              anchors.rightMargin: (Style.marginM + 32) * cardScaling // Leave space for close button
-              spacing: Style.marginM * cardScaling
+              anchors.margins: Style.marginM
+              anchors.rightMargin: (Style.marginM + 32) // Leave space for close button
+              spacing: Style.marginM
 
               // Main content section
               RowLayout {
                 Layout.fillWidth: true
-                spacing: Style.marginM * cardScaling
+                spacing: Style.marginM
 
                 ColumnLayout {
                   // For real-time notification always show the original image
                   // as the cached version is most likely still processing.
                   NImageCircled {
-                    Layout.preferredWidth: 40 * cardScaling
-                    Layout.preferredHeight: 40 * cardScaling
+                    Layout.preferredWidth: 40
+                    Layout.preferredHeight: 40
                     Layout.alignment: Qt.AlignTop
-                    Layout.topMargin: 30 * cardScaling
+                    Layout.topMargin: 30
                     imagePath: model.originalImage || ""
                     borderColor: Color.transparent
                     borderWidth: 0
                     fallbackIcon: "bell"
-                    fallbackIconSize: 24 * cardScaling
+                    fallbackIconSize: 24
                   }
                   Item {
                     Layout.fillHeight: true
@@ -342,17 +331,17 @@ Variants {
                 // Text content
                 ColumnLayout {
                   Layout.fillWidth: true
-                  spacing: Style.marginS * cardScaling
+                  spacing: Style.marginS
 
                   // Header section with app name and timestamp
                   RowLayout {
                     Layout.fillWidth: true
-                    spacing: Style.marginS * cardScaling
+                    spacing: Style.marginS
 
                     Rectangle {
-                      Layout.preferredWidth: 6 * cardScaling
-                      Layout.preferredHeight: 6 * cardScaling
-                      radius: Style.radiusXS * cardScaling
+                      Layout.preferredWidth: 6
+                      Layout.preferredHeight: 6
+                      radius: Style.radiusXS
                       color: {
                         if (model.urgency === NotificationUrgency.Critical || model.urgency === 2)
                           return Color.mError
@@ -367,7 +356,7 @@ Variants {
                     NText {
                       text: `${model.appName || I18n.tr("system.unknown-app")} · ${Time.formatRelativeTime(model.timestamp)}`
                       color: Color.mSecondary
-                      pointSize: Style.fontSizeXS * cardScaling
+                      pointSize: Style.fontSizeXS
                     }
 
                     Item {
@@ -377,7 +366,7 @@ Variants {
 
                   NText {
                     text: model.summary || I18n.tr("general.no-summary")
-                    pointSize: Style.fontSizeL * cardScaling
+                    pointSize: Style.fontSizeL
                     font.weight: Style.fontWeightMedium
                     color: Color.mOnSurface
                     textFormat: Text.PlainText
@@ -390,7 +379,7 @@ Variants {
 
                   NText {
                     text: model.body || ""
-                    pointSize: Style.fontSizeM * cardScaling
+                    pointSize: Style.fontSizeM
                     color: Color.mOnSurface
                     textFormat: Text.PlainText
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
@@ -403,8 +392,8 @@ Variants {
                   // Notification actions
                   Flow {
                     Layout.fillWidth: true
-                    spacing: Style.marginS * cardScaling
-                    Layout.topMargin: Style.marginM * cardScaling
+                    spacing: Style.marginS
+                    Layout.topMargin: Style.marginM
 
                     flow: Flow.LeftToRight
                     layoutDirection: Qt.LeftToRight
@@ -436,12 +425,12 @@ Variants {
                           }
                           return actionText
                         }
-                        fontSize: Style.fontSizeS * cardScaling
+                        fontSize: Style.fontSizeS
                         backgroundColor: Color.mPrimary
                         textColor: hovered ? Color.mOnTertiary : Color.mOnPrimary
                         hoverColor: Color.mTertiary
                         outlined: false
-                        implicitHeight: 24 * cardScaling
+                        implicitHeight: 24
                         onClicked: {
                           NotificationService.invokeAction(parent.parentNotificationId, actionData.identifier)
                         }
@@ -458,9 +447,9 @@ Variants {
               tooltipText: I18n.tr("tooltips.close")
               baseSize: Style.baseWidgetSize * 0.6
               anchors.top: parent.top
-              anchors.topMargin: Style.marginM * cardScaling
+              anchors.topMargin: Style.marginM
               anchors.right: parent.right
-              anchors.rightMargin: Style.marginM * cardScaling
+              anchors.rightMargin: Style.marginM
 
               onClicked: {
                 animateOut()

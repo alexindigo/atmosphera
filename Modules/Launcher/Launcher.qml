@@ -37,8 +37,8 @@ NPanel {
   property bool resultsReady: false
   property bool ignoreMouseHover: false
 
-  readonly property int badgeSize: Math.round(Style.baseWidgetSize * 1.6 * scaling)
-  readonly property int entryHeight: Math.round(badgeSize + Style.marginM * 2 * scaling)
+  readonly property int badgeSize: Math.round(Style.baseWidgetSize * 1.6)
+  readonly property int entryHeight: Math.round(badgeSize + Style.marginM * 2)
 
   // Public API for plugins
   function setSearchText(text) {
@@ -293,14 +293,14 @@ NPanel {
 
     ColumnLayout {
       anchors.fill: parent
-      anchors.margins: Style.marginL * scaling
-      spacing: Style.marginM * scaling
+      anchors.margins: Style.marginL
+      spacing: Style.marginM
 
       NTextInput {
         id: searchInput
         Layout.fillWidth: true
 
-        fontSize: Style.fontSizeL * scaling
+        fontSize: Style.fontSizeL
         fontWeight: Style.fontWeightSemiBold
 
         text: searchText
@@ -348,7 +348,7 @@ NPanel {
 
         Layout.fillWidth: true
         Layout.fillHeight: true
-        spacing: Style.marginXXS * scaling
+        spacing: Style.marginXXS
         model: results
         currentIndex: selectedIndex
         cacheBuffer: resultsList.height * 2
@@ -399,9 +399,9 @@ NPanel {
             }
           }
 
-          width: resultsList.width - Style.marginS * scaling
+          width: resultsList.width - Style.marginS
           implicitHeight: entryHeight
-          radius: Style.radiusM * scaling
+          radius: Style.radiusM
           color: entry.isSelected ? Color.mTertiary : Color.mSurface
 
           Behavior on color {
@@ -414,19 +414,19 @@ NPanel {
           ColumnLayout {
             id: contentLayout
             anchors.fill: parent
-            anchors.margins: Style.marginM * scaling
-            spacing: Style.marginM * scaling
+            anchors.margins: Style.marginM
+            spacing: Style.marginM
 
             // Top row - Main entry content with pin button
             RowLayout {
               Layout.fillWidth: true
-              spacing: Style.marginM * scaling
+              spacing: Style.marginM
 
               // Icon badge or Image preview
               Rectangle {
                 Layout.preferredWidth: badgeSize
                 Layout.preferredHeight: badgeSize
-                radius: Style.radiusM * scaling
+                radius: Style.radiusM
                 color: Color.mSurfaceVariant
 
                 // Image preview for clipboard images
@@ -434,7 +434,7 @@ NPanel {
                   id: imagePreview
                   anchors.fill: parent
                   visible: modelData.isImage
-                  imageRadius: Style.radiusM * scaling
+                  imageRadius: Style.radiusM
 
                   // This property creates a dependency on the service's revision counter
                   readonly property int _rev: ClipboardService.revision
@@ -455,7 +455,7 @@ NPanel {
                     BusyIndicator {
                       anchors.centerIn: parent
                       running: true
-                      width: Style.baseWidgetSize * 0.5 * scaling
+                      width: Style.baseWidgetSize * 0.5
                       height: width
                     }
                   }
@@ -473,7 +473,7 @@ NPanel {
                 Loader {
                   id: iconLoader
                   anchors.fill: parent
-                  anchors.margins: Style.marginXS * scaling
+                  anchors.margins: Style.marginXS
 
                   visible: !modelData.isImage || imagePreview.status === Image.Error
                   active: visible
@@ -493,7 +493,7 @@ NPanel {
                   anchors.centerIn: parent
                   visible: !imagePreview.visible && !iconLoader.visible
                   text: modelData.name ? modelData.name.charAt(0).toUpperCase() : "?"
-                  pointSize: Style.fontSizeXXL * scaling
+                  pointSize: Style.fontSizeXXL
                   font.weight: Style.fontWeightBold
                   color: Color.mOnPrimary
                 }
@@ -503,10 +503,10 @@ NPanel {
                   visible: modelData.isImage && imagePreview.visible
                   anchors.bottom: parent.bottom
                   anchors.right: parent.right
-                  anchors.margins: 2 * scaling
-                  width: formatLabel.width + 6 * scaling
-                  height: formatLabel.height + 2 * scaling
-                  radius: Style.radiusM * scaling
+                  anchors.margins: 2
+                  width: formatLabel.width + 6
+                  height: formatLabel.height + 2
+                  radius: Style.radiusM
                   color: Color.mSurfaceVariant
 
                   NText {
@@ -519,7 +519,7 @@ NPanel {
                       const parts = desc.split(" • ")
                       return parts[0] || "IMG"
                     }
-                    pointSize: Style.fontSizeXXS * scaling
+                    pointSize: Style.fontSizeXXS
                     color: Color.mPrimary
                   }
                 }
@@ -528,11 +528,11 @@ NPanel {
               // Text content
               ColumnLayout {
                 Layout.fillWidth: true
-                spacing: 0 * scaling
+                spacing: 0
 
                 NText {
                   text: modelData.name || "Unknown"
-                  pointSize: Style.fontSizeL * scaling
+                  pointSize: Style.fontSizeL
                   font.weight: Style.fontWeightBold
                   color: entry.isSelected ? Color.mOnTertiary : Color.mOnSurface
                   elide: Text.ElideRight
@@ -541,7 +541,7 @@ NPanel {
 
                 NText {
                   text: modelData.description || ""
-                  pointSize: Style.fontSizeS * scaling
+                  pointSize: Style.fontSizeS
                   color: entry.isSelected ? Color.mOnTertiary : Color.mOnSurfaceVariant
                   elide: Text.ElideRight
                   Layout.fillWidth: true
@@ -596,7 +596,7 @@ NPanel {
           const prefix = activePlugin?.name ? `${activePlugin.name}: ` : ""
           return prefix + `${results.length} result${results.length !== 1 ? 's' : ''}`
         }
-        pointSize: Style.fontSizeXS * scaling
+        pointSize: Style.fontSizeXS
         color: Color.mOnSurfaceVariant
         horizontalAlignment: Text.AlignCenter
       }

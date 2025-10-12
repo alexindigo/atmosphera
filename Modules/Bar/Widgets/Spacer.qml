@@ -9,7 +9,6 @@ Item {
   id: root
 
   property ShellScreen screen
-  property real scaling: 1.0
 
   // Widget properties passed from Bar.qml for per-instance settings
   property string widgetId: ""
@@ -32,8 +31,8 @@ Item {
   readonly property int spacerWidth: widgetSettings.width !== undefined ? widgetSettings.width : widgetMetadata.width
 
   // Set the width based on user settings
-  implicitWidth: spacerWidth * scaling
-  implicitHeight: Style.barHeight * scaling
+  implicitWidth: spacerWidth
+  implicitHeight: Style.barHeight
   width: implicitWidth
   height: implicitHeight
 }

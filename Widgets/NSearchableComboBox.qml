@@ -9,8 +9,8 @@ import "../Helpers/FuzzySort.js" as Fuzzysort
 RowLayout {
   id: root
 
-  property real minimumWidth: 280 * scaling
-  property real popupHeight: 180 * scaling
+  property real minimumWidth: 280
+  property real popupHeight: 180
 
   property string label: ""
   property string description: ""
@@ -21,11 +21,11 @@ RowLayout {
   property string placeholder: ""
   property string searchPlaceholder: I18n.tr("placeholders.search")
 
-  readonly property real preferredHeight: Style.baseWidgetSize * 1.1 * scaling
+  readonly property real preferredHeight: Style.baseWidgetSize * 1.1
 
   signal selected(string key)
 
-  spacing: Style.marginL * scaling
+  spacing: Style.marginL
   Layout.fillWidth: true
 
   // Filtered model for search results
@@ -121,12 +121,12 @@ RowLayout {
     }
 
     background: Rectangle {
-      implicitWidth: Style.baseWidgetSize * 3.75 * scaling
+      implicitWidth: Style.baseWidgetSize * 3.75
       implicitHeight: preferredHeight
       color: Color.mSurface
       border.color: combo.activeFocus ? Color.mSecondary : Color.mOutline
-      border.width: Math.max(1, Style.borderS * scaling)
-      radius: Style.radiusM * scaling
+      border.width: Math.max(1, Style.borderS)
+      radius: Style.radiusM
 
       Behavior on border.color {
         ColorAnimation {
@@ -136,9 +136,9 @@ RowLayout {
     }
 
     contentItem: NText {
-      leftPadding: Style.marginL * scaling
-      rightPadding: combo.indicator.width + Style.marginL * scaling
-      pointSize: Style.fontSizeM * scaling
+      leftPadding: Style.marginL
+      rightPadding: combo.indicator.width + Style.marginL
+      pointSize: Style.fontSizeM
       verticalAlignment: Text.AlignVCenter
       elide: Text.ElideRight
       color: (combo.currentIndex >= 0 && combo.currentIndex < filteredModel.count) ? Color.mOnSurface : Color.mOnSurfaceVariant
@@ -146,17 +146,17 @@ RowLayout {
     }
 
     indicator: NIcon {
-      x: combo.width - width - Style.marginM * scaling
+      x: combo.width - width - Style.marginM
       y: combo.topPadding + (combo.availableHeight - height) / 2
       icon: "caret-down"
-      pointSize: Style.fontSizeL * scaling
+      pointSize: Style.fontSizeL
     }
 
     popup: Popup {
       y: combo.height
       width: combo.width
-      height: root.popupHeight + 60 * scaling
-      padding: Style.marginM * scaling
+      height: root.popupHeight + 60
+      padding: Style.marginM
 
       onOpened: {
         PanelService.willOpenPopup(root)
@@ -167,7 +167,7 @@ RowLayout {
       }
 
       contentItem: ColumnLayout {
-        spacing: Style.marginS * scaling
+        spacing: Style.marginS
 
         // Search input
         NTextInput {
@@ -176,7 +176,7 @@ RowLayout {
           placeholderText: root.searchPlaceholder
           text: root.searchText
           onTextChanged: root.searchText = text
-          fontSize: Style.fontSizeS * scaling
+          fontSize: Style.fontSizeS
         }
 
         NListView {
@@ -206,7 +206,7 @@ RowLayout {
 
             contentItem: NText {
               text: name
-              pointSize: Style.fontSizeM * scaling
+              pointSize: Style.fontSizeM
               color: highlighted ? Color.mSurface : Color.mOnSurface
               verticalAlignment: Text.AlignVCenter
               elide: Text.ElideRight
@@ -218,9 +218,9 @@ RowLayout {
             }
 
             background: Rectangle {
-              width: listView.width * scaling
+              width: listView.width
               color: highlighted ? Color.mTertiary : Color.transparent
-              radius: Style.radiusS * scaling
+              radius: Style.radiusS
               Behavior on color {
                 ColorAnimation {
                   duration: Style.animationFast
@@ -234,8 +234,8 @@ RowLayout {
       background: Rectangle {
         color: Color.mSurfaceVariant
         border.color: Color.mOutline
-        border.width: Math.max(1, Style.borderS * scaling)
-        radius: Style.radiusM * scaling
+        border.width: Math.max(1, Style.borderS)
+        radius: Style.radiusM
       }
     }
 

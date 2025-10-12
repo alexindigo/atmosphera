@@ -8,7 +8,7 @@ import qs.Services
 
 ColumnLayout {
   id: root
-  spacing: Style.marginM * scaling
+  spacing: Style.marginM
 
   property var widgetData: null
   property var widgetMetadata: null
@@ -27,7 +27,7 @@ ColumnLayout {
   }
 
   RowLayout {
-    spacing: Style.marginM * scaling
+    spacing: Style.marginM
 
     NLabel {
       label: I18n.tr("bar.widget-settings.custom-button.icon.label")
@@ -37,7 +37,7 @@ ColumnLayout {
     NIcon {
       Layout.alignment: Qt.AlignVCenter
       icon: valueIcon
-      pointSize: Style.fontSizeXL * scaling
+      pointSize: Style.fontSizeXL
       visible: valueIcon !== ""
     }
 

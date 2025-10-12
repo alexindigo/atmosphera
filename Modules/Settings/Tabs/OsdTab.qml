@@ -24,7 +24,7 @@ ColumnLayout {
 
   // Display
   ColumnLayout {
-    spacing: Style.marginL * scaling
+    spacing: Style.marginL
     Layout.fillWidth: true
 
     NComboBox {
@@ -62,13 +62,13 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
   }
 
   // General
   ColumnLayout {
-    spacing: Style.marginL * scaling
+    spacing: Style.marginL
     Layout.fillWidth: true
 
     NHeader {
@@ -108,13 +108,13 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
   }
 
   // Monitor Configuration
   ColumnLayout {
-    spacing: Style.marginL * scaling
+    spacing: Style.marginL
     Layout.fillWidth: true
 
     NHeader {

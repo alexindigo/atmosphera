@@ -259,16 +259,16 @@ NPanel {
 
     ColumnLayout {
       anchors.fill: parent
-      anchors.topMargin: Style.marginL * scaling
-      anchors.leftMargin: Style.marginL * scaling
-      anchors.rightMargin: Style.marginL * scaling
-      anchors.bottomMargin: Style.marginM * scaling
-      spacing: Style.marginS * scaling
+      anchors.topMargin: Style.marginL
+      anchors.leftMargin: Style.marginL
+      anchors.rightMargin: Style.marginL
+      anchors.bottomMargin: Style.marginM
+      spacing: Style.marginS
 
       // Header with title and close button
       RowLayout {
         Layout.fillWidth: true
-        Layout.preferredHeight: Style.baseWidgetSize * 0.8 * scaling
+        Layout.preferredHeight: Style.baseWidgetSize * 0.8
 
         NText {
           text: timerActive ? I18n.tr("session-menu.action-in-seconds", {
@@ -276,7 +276,7 @@ NPanel {
                                         "seconds": Math.ceil(timeRemaining / 1000)
                                       }) : I18n.tr("session-menu.title")
           font.weight: Style.fontWeightBold
-          pointSize: Style.fontSizeL * scaling
+          pointSize: Style.fontSizeL
           color: timerActive ? Color.mPrimary : Color.mOnSurface
           Layout.alignment: Qt.AlignVCenter
           verticalAlignment: Text.AlignVCenter
@@ -310,7 +310,7 @@ NPanel {
       // Power options
       ColumnLayout {
         Layout.fillWidth: true
-        spacing: Style.marginM * scaling
+        spacing: Style.marginM
 
         Repeater {
           model: powerOptions
@@ -345,8 +345,8 @@ NPanel {
 
     signal clicked
 
-    height: Style.baseWidgetSize * 1.6 * scaling
-    radius: Style.radiusS * scaling
+    height: Style.baseWidgetSize * 1.6
+    radius: Style.radiusS
     color: {
       if (pending) {
         return Qt.alpha(Color.mPrimary, 0.08)
@@ -357,7 +357,7 @@ NPanel {
       return Color.transparent
     }
 
-    border.width: pending ? Math.max(Style.borderM * scaling) : 0
+    border.width: pending ? Math.max(Style.borderM) : 0
     border.color: pending ? Color.mPrimary : Color.mOutline
 
     Behavior on color {
@@ -368,7 +368,7 @@ NPanel {
 
     Item {
       anchors.fill: parent
-      anchors.margins: Style.marginL * scaling
+      anchors.margins: Style.marginL
 
       // Icon on the left
       NIcon {
@@ -385,8 +385,8 @@ NPanel {
             return Color.mOnTertiary
           return Color.mOnSurface
         }
-        pointSize: Style.fontSizeXXXL * scaling
-        width: Style.baseWidgetSize * 0.6 * scaling
+        pointSize: Style.fontSizeXXXL
+        width: Style.baseWidgetSize * 0.6
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
 
@@ -402,14 +402,14 @@ NPanel {
         anchors.left: iconElement.right
         anchors.right: pendingIndicator.visible ? pendingIndicator.left : parent.right
         anchors.verticalCenter: parent.verticalCenter
-        anchors.leftMargin: Style.marginXL * scaling
-        anchors.rightMargin: pendingIndicator.visible ? Style.marginM * scaling : 0
+        anchors.leftMargin: Style.marginXL
+        anchors.rightMargin: pendingIndicator.visible ? Style.marginM : 0
         spacing: 0
 
         NText {
           text: buttonRoot.title
           font.weight: Style.fontWeightMedium
-          pointSize: Style.fontSizeM * scaling
+          pointSize: Style.fontSizeM
           color: {
             if (buttonRoot.pending)
               return Color.mPrimary
@@ -434,7 +434,7 @@ NPanel {
             }
             return buttonRoot.subtitle
           }
-          pointSize: Style.fontSizeXS * scaling
+          pointSize: Style.fontSizeXS
           color: {
             if (buttonRoot.pending)
               return Color.mPrimary
@@ -455,8 +455,8 @@ NPanel {
         id: pendingIndicator
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
-        width: 24 * scaling
-        height: 24 * scaling
+        width: 24
+        height: 24
         radius: width * 0.5
         color: Color.mPrimary
         visible: buttonRoot.pending
@@ -464,7 +464,7 @@ NPanel {
         NText {
           anchors.centerIn: parent
           text: Math.ceil(timeRemaining / 1000)
-          pointSize: Style.fontSizeS * scaling
+          pointSize: Style.fontSizeS
           font.weight: Style.fontWeightBold
           color: Color.mOnPrimary
         }

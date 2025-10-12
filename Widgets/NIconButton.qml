@@ -30,14 +30,14 @@ Rectangle {
   signal rightClicked
   signal middleClicked
 
-  implicitWidth: Math.round(baseSize * scaling)
-  implicitHeight: Math.round(baseSize * scaling)
+  implicitWidth: Math.round(baseSize)
+  implicitHeight: Math.round(baseSize)
 
   opacity: root.enabled ? Style.opacityFull : Style.opacityMedium
   color: root.enabled && root.hovering ? colorBgHover : colorBg
   radius: width * 0.5
   border.color: root.enabled && root.hovering ? colorBorderHover : colorBorder
-  border.width: Math.max(1, Style.borderS * scaling)
+  border.width: Math.max(1, Style.borderS)
 
   Behavior on color {
     ColorAnimation {

@@ -16,8 +16,8 @@ NPanel {
   panelContent: ColumnLayout {
     id: content
     anchors.fill: parent
-    anchors.margins: Style.marginL * scaling
-    spacing: Style.marginM * scaling
+    anchors.margins: Style.marginL
+    spacing: Style.marginM
 
     readonly property int firstDayOfWeek: Qt.locale().firstDayOfWeek
     property bool isCurrentMonth: checkIsCurrentMonth()
@@ -37,8 +37,8 @@ NPanel {
     // Combined blue banner with date/time and weather summary
     Rectangle {
       Layout.fillWidth: true
-      Layout.preferredHeight: blueColumn.implicitHeight + Style.marginM * scaling * 2
-      radius: Style.radiusL * scaling
+      Layout.preferredHeight: blueColumn.implicitHeight + Style.marginM * 2
+      radius: Style.radiusL
       color: Color.mPrimary
 
       ColumnLayout {
@@ -46,28 +46,28 @@ NPanel {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.bottom: parent.bottom
-        anchors.topMargin: Style.marginM * scaling
-        anchors.leftMargin: Style.marginM * scaling
-        anchors.bottomMargin: Style.marginM * scaling
-        anchors.rightMargin: clockItem.width + (Style.marginM * scaling * 2)
+        anchors.topMargin: Style.marginM
+        anchors.leftMargin: Style.marginM
+        anchors.bottomMargin: Style.marginM
+        anchors.rightMargin: clockItem.width + (Style.marginM * 2)
         spacing: 0
 
         // Combined layout for weather icon, date, and weather text
         RowLayout {
           Layout.fillWidth: true
-          height: 60 * scaling
+          height: 60
           clip: true
-          spacing: Style.marginS * scaling
+          spacing: Style.marginS
 
           // Weather icon and temperature
           ColumnLayout {
             Layout.alignment: Qt.AlignVCenter
-            spacing: Style.marginXXS * scaling
+            spacing: Style.marginXXS
 
             NIcon {
               Layout.alignment: Qt.AlignHCenter
               icon: weatherReady ? LocationService.weatherSymbolFromCode(LocationService.data.weather.current_weather.weathercode) : "cloud"
-              pointSize: Style.fontSizeXXL * scaling
+              pointSize: Style.fontSizeXXL
               color: Color.mOnPrimary
             }
 
@@ -85,7 +85,7 @@ NPanel {
                 temp = Math.round(temp)
                 return `${temp}°${suffix}`
               }
-              pointSize: Style.fontSizeM * scaling
+              pointSize: Style.fontSizeM
               font.weight: Style.fontWeightBold
               color: Color.mOnPrimary
             }
@@ -100,7 +100,7 @@ NPanel {
 
             Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
             text: Time.date.getDate()
-            pointSize: Style.fontSizeXXXL * 1.5 * scaling
+            pointSize: Style.fontSizeXXXL * 1.5
             font.weight: Style.fontWeightBold
             color: Color.mOnPrimary
 
@@ -119,18 +119,18 @@ NPanel {
 
           // Month, year, location
           ColumnLayout {
-            Layout.preferredWidth: 170 * scaling
+            Layout.preferredWidth: 170
             Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-            Layout.bottomMargin: Style.marginXXS * scaling
-            Layout.topMargin: -Style.marginXXS * scaling
-            spacing: -Style.marginXS * scaling
+            Layout.bottomMargin: Style.marginXXS
+            Layout.topMargin: -Style.marginXXS
+            spacing: -Style.marginXS
 
             RowLayout {
               spacing: 0
 
               NText {
                 text: Qt.locale().monthName(grid.month, Locale.LongFormat).toUpperCase()
-                pointSize: Style.fontSizeXL * 1.1 * scaling
+                pointSize: Style.fontSizeXL * 1.1
                 font.weight: Style.fontWeightBold
                 color: Color.mOnPrimary
                 Layout.alignment: Qt.AlignBaseline
@@ -139,7 +139,7 @@ NPanel {
 
               NText {
                 text: ` ${grid.year}`
-                pointSize: Style.fontSizeM * scaling
+                pointSize: Style.fontSizeM
                 font.weight: Style.fontWeightBold
                 color: Qt.alpha(Color.mOnPrimary, 0.7)
                 Layout.alignment: Qt.AlignBaseline
@@ -156,16 +156,16 @@ NPanel {
                   const chunks = Settings.data.location.name.split(",")
                   return chunks[0]
                 }
-                pointSize: Style.fontSizeM * scaling
+                pointSize: Style.fontSizeM
                 font.weight: Style.fontWeightMedium
                 color: Color.mOnPrimary
-                Layout.maximumWidth: 150 * scaling
+                Layout.maximumWidth: 150
                 elide: Text.ElideRight
               }
 
               NText {
                 text: weatherReady ? ` (${LocationService.data.weather.timezone_abbreviation})` : ""
-                pointSize: Style.fontSizeXS * scaling
+                pointSize: Style.fontSizeXS
                 font.weight: Style.fontWeightMedium
                 color: Qt.alpha(Color.mOnPrimary, 0.7)
               }
@@ -184,9 +184,9 @@ NPanel {
         id: clockItem
         Layout.alignment: Qt.AlignVCenter
         anchors.right: parent.right
-        anchors.rightMargin: Style.marginM * scaling
+        anchors.rightMargin: Style.marginM
         anchors.verticalCenter: parent.verticalCenter
-        height: Math.round((Style.fontSizeXXXL * 1.9 * scaling) / 2) * 2
+        height: Math.round((Style.fontSizeXXXL * 1.9) / 2) * 2
         width: clockItem.height
 
         // Seconds circular progress
@@ -206,20 +206,20 @@ NPanel {
             var ctx = getContext("2d")
             var centerX = width / 2
             var centerY = height / 2
-            var radius = Math.min(width, height) / 2 - 3 * scaling
+            var radius = Math.min(width, height) / 2 - 3
             ctx.reset()
 
             // Background circle
             ctx.beginPath()
             ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI)
-            ctx.lineWidth = 2.5 * scaling
+            ctx.lineWidth = 2.5
             ctx.strokeStyle = Qt.alpha(Color.mOnPrimary, 0.15)
             ctx.stroke()
 
             // Progress arc
             ctx.beginPath()
             ctx.arc(centerX, centerY, radius, -Math.PI / 2, -Math.PI / 2 + progress * 2 * Math.PI)
-            ctx.lineWidth = 2.5 * scaling
+            ctx.lineWidth = 2.5
             ctx.strokeStyle = Color.mOnPrimary
             ctx.lineCap = "round"
             ctx.stroke()
@@ -229,7 +229,7 @@ NPanel {
         // Digital clock
         ColumnLayout {
           anchors.centerIn: parent
-          spacing: -Style.marginXXS * scaling
+          spacing: -Style.marginXXS
 
           NText {
             text: {
@@ -237,7 +237,7 @@ NPanel {
               return t.split(" ")[0]
             }
 
-            pointSize: Style.fontSizeXS * scaling
+            pointSize: Style.fontSizeXS
             font.weight: Style.fontWeightBold
             color: Color.mOnPrimary
             family: Settings.data.ui.fontFixed
@@ -246,7 +246,7 @@ NPanel {
 
           NText {
             text: Qt.formatTime(Time.date, "mm")
-            pointSize: Style.fontSizeXXS * scaling
+            pointSize: Style.fontSizeXXS
             font.weight: Style.fontWeightBold
             color: Color.mOnPrimary
             family: Settings.data.ui.fontFixed
@@ -261,28 +261,28 @@ NPanel {
       visible: weatherReady
       Layout.fillWidth: true
       Layout.alignment: Qt.AlignHCenter
-      spacing: Style.marginL * scaling
+      spacing: Style.marginL
       Repeater {
         model: weatherReady ? Math.min(6, LocationService.data.weather.daily.time.length) : 0
         delegate: ColumnLayout {
           Layout.preferredWidth: 0
           Layout.fillWidth: true
           Layout.alignment: Qt.AlignHCenter
-          spacing: Style.marginS * scaling
+          spacing: Style.marginS
           NText {
             text: {
               var weatherDate = new Date(LocationService.data.weather.daily.time[index].replace(/-/g, "/"))
               return Qt.locale().toString(weatherDate, "ddd")
             }
             color: Color.mOnSurfaceVariant
-            pointSize: Style.fontSizeM * scaling
+            pointSize: Style.fontSizeM
             font.weight: Style.fontWeightMedium
             Layout.alignment: Qt.AlignHCenter
           }
           NIcon {
             Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
             icon: LocationService.weatherSymbolFromCode(LocationService.data.weather.daily.weathercode[index])
-            pointSize: Style.fontSizeXXL * 1.5 * scaling
+            pointSize: Style.fontSizeXXL * 1.5
             color: Color.mPrimary
           }
           NText {
@@ -298,7 +298,7 @@ NPanel {
               min = Math.round(min)
               return `${max}°/${min}°`
             }
-            pointSize: Style.fontSizeXS * scaling
+            pointSize: Style.fontSizeXS
             color: Color.mOnSurfaceVariant
             font.weight: Style.fontWeightMedium
           }
@@ -314,7 +314,7 @@ NPanel {
     Item {}
     RowLayout {
       Layout.fillWidth: true
-      spacing: Style.marginS * scaling
+      spacing: Style.marginS
       NDivider {
         Layout.fillWidth: true
       }
@@ -350,7 +350,7 @@ NPanel {
       spacing: 0
       Item {
         visible: Settings.data.location.showWeekNumberInCalendar
-        Layout.preferredWidth: visible ? Style.baseWidgetSize * 0.7 * scaling : 0
+        Layout.preferredWidth: visible ? Style.baseWidgetSize * 0.7 : 0
       }
       GridLayout {
         Layout.fillWidth: true
@@ -362,7 +362,7 @@ NPanel {
           model: 7
           Item {
             Layout.fillWidth: true
-            Layout.preferredHeight: Style.baseWidgetSize * 0.6 * scaling
+            Layout.preferredHeight: Style.baseWidgetSize * 0.6
             NText {
               anchors.centerIn: parent
               text: {
@@ -371,7 +371,7 @@ NPanel {
                 return dayNames[dayIndex]
               }
               color: Color.mPrimary
-              pointSize: Style.fontSizeS * scaling
+              pointSize: Style.fontSizeS
               font.weight: Style.fontWeightBold
               horizontalAlignment: Text.AlignHCenter
             }
@@ -385,7 +385,7 @@ NPanel {
       spacing: 0
       ColumnLayout {
         visible: Settings.data.location.showWeekNumberInCalendar
-        Layout.preferredWidth: visible ? Style.baseWidgetSize * 0.7 * scaling : 0
+        Layout.preferredWidth: visible ? Style.baseWidgetSize * 0.7 : 0
         Layout.fillHeight: true
         spacing: 0
         Repeater {
@@ -396,7 +396,7 @@ NPanel {
             NText {
               anchors.centerIn: parent
               color: Color.mOutline
-              pointSize: Style.fontSizeXXS * scaling
+              pointSize: Style.fontSizeXXS
               font.weight: Style.fontWeightMedium
               text: {
                 let firstOfMonth = new Date(grid.year, grid.month, 1)
@@ -428,16 +428,16 @@ NPanel {
         id: grid
         Layout.fillWidth: true
         Layout.fillHeight: true
-        spacing: Style.marginXXS * scaling
+        spacing: Style.marginXXS
         month: Time.date.getMonth()
         year: Time.date.getFullYear()
         locale: Qt.locale()
         delegate: Item {
           Rectangle {
-            width: Style.baseWidgetSize * 0.9 * scaling
-            height: Style.baseWidgetSize * 0.9 * scaling
+            width: Style.baseWidgetSize * 0.9
+            height: Style.baseWidgetSize * 0.9
             anchors.centerIn: parent
-            radius: Style.radiusM * scaling
+            radius: Style.radiusM
             color: model.today ? Color.mSecondary : Color.transparent
             NText {
               anchors.centerIn: parent
@@ -450,7 +450,7 @@ NPanel {
                 return Color.mOnSurfaceVariant
               }
               opacity: model.month === grid.month ? 1.0 : 0.4
-              pointSize: Style.fontSizeM * scaling
+              pointSize: Style.fontSizeM
               font.weight: model.today ? Style.fontWeightBold : Style.fontWeightMedium
             }
             Behavior on color {

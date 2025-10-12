@@ -9,7 +9,7 @@ import qs.Widgets
 ColumnLayout {
   id: root
 
-  spacing: Style.marginL * scaling
+  spacing: Style.marginL
 
   // Helper functions to update arrays immutably
   function addMonitor(list, name) {
@@ -50,7 +50,7 @@ ColumnLayout {
   }
 
   ColumnLayout {
-    spacing: Style.marginXXS * scaling
+    spacing: Style.marginXXS
     Layout.fillWidth: true
     NLabel {
       label: I18n.tr("settings.dock.appearance.background-opacity.label")
@@ -68,7 +68,7 @@ ColumnLayout {
   }
 
   ColumnLayout {
-    spacing: Style.marginXXS * scaling
+    spacing: Style.marginXXS
     Layout.fillWidth: true
 
     NLabel {
@@ -89,13 +89,13 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
   }
 
   // Monitor Configuration
   ColumnLayout {
-    spacing: Style.marginM * scaling
+    spacing: Style.marginM
     Layout.fillWidth: true
 
     NHeader {
@@ -134,7 +134,7 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
   }
 }

@@ -8,7 +8,6 @@ NIconButton {
   id: root
 
   property ShellScreen screen
-  property real scaling: 1.0
 
   icon: "camera-video"
   tooltipText: ScreenRecorderService.isRecording ? I18n.tr("tooltips.click-to-stop-recording") : I18n.tr("tooltips.click-to-start-recording")

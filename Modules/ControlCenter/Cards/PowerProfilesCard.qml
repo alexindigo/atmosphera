@@ -10,7 +10,6 @@ import qs.Widgets
 // Power Profiles: performance, balanced, eco
 NBox {
 
-  property real scaling: 1.0
   property real spacing: 0
 
   // Centralized service
@@ -19,7 +18,7 @@ NBox {
   RowLayout {
     id: powerRow
     anchors.fill: parent
-    anchors.margins: Style.marginS * scaling
+    anchors.margins: Style.marginS
     spacing: spacing
     Item {
       Layout.fillWidth: true

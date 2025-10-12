@@ -11,8 +11,6 @@ import qs.Widgets
 NBox {
   id: root
 
-  property real scaling: 1.0
-
   // Background artwork that covers everything
   Item {
     anchors.fill: parent
@@ -22,7 +20,7 @@ NBox {
       id: bgArtImage
       anchors.fill: parent
       imagePath: MediaService.trackArtUrl
-      imageRadius: Style.radiusM * scaling
+      imageRadius: Style.radiusM
       visible: MediaService.trackArtUrl !== ""
     }
 
@@ -31,7 +29,7 @@ NBox {
       anchors.fill: parent
       color: Color.mSurfaceVariant
       opacity: 0.85
-      radius: Style.radiusM * scaling
+      radius: Style.radiusM
     }
 
     // Border
@@ -40,7 +38,7 @@ NBox {
       color: Color.transparent
       border.color: Color.mOutline
       border.width: 1
-      radius: Style.radiusM * scaling
+      radius: Style.radiusM
     }
   }
 
@@ -57,7 +55,7 @@ NBox {
         sourceItem: Rectangle {
           width: root.width
           height: root.height
-          radius: Style.radiusM * scaling
+          radius: Style.radiusM
           color: "white"
         }
       }
@@ -118,29 +116,29 @@ NBox {
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.right: parent.right
-    anchors.topMargin: Style.marginXS * scaling
-    anchors.leftMargin: Style.marginM * scaling
-    anchors.rightMargin: Style.marginM * scaling
-    height: Style.barHeight * scaling
+    anchors.topMargin: Style.marginXS
+    anchors.leftMargin: Style.marginM
+    anchors.rightMargin: Style.marginM
+    height: Style.barHeight
     visible: MediaService.getAvailablePlayers().length > 1
-    radius: Style.radiusM * scaling
+    radius: Style.radiusM
     color: Color.transparent
 
     property var currentPlayer: MediaService.getAvailablePlayers()[MediaService.selectedPlayerIndex]
 
     RowLayout {
       anchors.fill: parent
-      spacing: Style.marginS * scaling
+      spacing: Style.marginS
 
       NIcon {
         icon: "caret-down"
-        pointSize: Style.fontSizeXXL * scaling
+        pointSize: Style.fontSizeXXL
         color: Color.mOnSurfaceVariant
       }
 
       NText {
         text: playerSelectorButton.currentPlayer ? playerSelectorButton.currentPlayer.identity : ""
-        pointSize: Style.fontSizeXS * scaling
+        pointSize: Style.fontSizeXS
         color: Color.mOnSurfaceVariant
         Layout.fillWidth: true
       }
@@ -172,7 +170,7 @@ NBox {
     NContextMenu {
       id: playerContextMenu
       parent: root
-      width: 200 * scaling
+      width: 200
 
       onTriggered: function (action) {
         var index = parseInt(action)
@@ -186,14 +184,14 @@ NBox {
 
   ColumnLayout {
     anchors.fill: parent
-    anchors.margins: Style.marginM * scaling
+    anchors.margins: Style.marginM
 
     // No media player detected
     ColumnLayout {
       id: fallback
 
       visible: !main.visible
-      spacing: Style.marginS * scaling
+      spacing: Style.marginS
 
       Item {
         Layout.fillWidth: true
@@ -206,12 +204,12 @@ NBox {
 
         ColumnLayout {
           anchors.centerIn: parent
-          spacing: Style.marginL * scaling
+          spacing: Style.marginL
 
           Item {
             Layout.alignment: Qt.AlignHCenter
-            Layout.preferredWidth: Style.fontSizeXXXL * 4 * scaling
-            Layout.preferredHeight: Style.fontSizeXXXL * 4 * scaling
+            Layout.preferredWidth: Style.fontSizeXXXL * 4
+            Layout.preferredHeight: Style.fontSizeXXXL * 4
 
             // Pulsating audio circles (background)
             Repeater {
@@ -260,7 +258,7 @@ NBox {
             NIcon {
               anchors.centerIn: parent
               icon: "disc"
-              pointSize: Style.fontSizeXXXL * 3 * scaling
+              pointSize: Style.fontSizeXXXL * 3
               color: Color.mOnSurfaceVariant
 
               RotationAnimator on rotation {
@@ -276,7 +274,7 @@ NBox {
           // Descriptive text
           ColumnLayout {
             Layout.alignment: Qt.AlignHCenter
-            spacing: Style.marginXS * scaling
+            spacing: Style.marginXS
           }
         }
       }
@@ -292,23 +290,23 @@ NBox {
       id: main
 
       visible: MediaService.currentPlayer && MediaService.canPlay
-      spacing: Style.marginS * scaling
+      spacing: Style.marginS
 
       // Spacer to push content down
       Item {
-        Layout.preferredHeight: Style.marginM * scaling
+        Layout.preferredHeight: Style.marginM
       }
 
       // Metadata at the bottom left
       ColumnLayout {
         Layout.fillWidth: true
         Layout.alignment: Qt.AlignLeft
-        spacing: Style.marginXS * scaling
+        spacing: Style.marginXS
 
         NText {
           visible: MediaService.trackTitle !== ""
           text: MediaService.trackTitle
-          pointSize: Style.fontSizeL * scaling
+          pointSize: Style.fontSizeL
           font.weight: Style.fontWeightBold
           elide: Text.ElideRight
           wrapMode: Text.Wrap
@@ -320,7 +318,7 @@ NBox {
           visible: MediaService.trackArtist !== ""
           text: MediaService.trackArtist
           color: Color.mPrimary
-          pointSize: Style.fontSizeS * scaling
+          pointSize: Style.fontSizeS
           elide: Text.ElideRight
           Layout.fillWidth: true
         }
@@ -329,7 +327,7 @@ NBox {
           visible: MediaService.trackAlbum !== ""
           text: MediaService.trackAlbum
           color: Color.mOnSurfaceVariant
-          pointSize: Style.fontSizeM * scaling
+          pointSize: Style.fontSizeM
           elide: Text.ElideRight
           Layout.fillWidth: true
         }
@@ -340,7 +338,7 @@ NBox {
         id: progressWrapper
         visible: (MediaService.currentPlayer && MediaService.trackLength > 0)
         Layout.fillWidth: true
-        height: Style.baseWidgetSize * 0.5 * scaling
+        height: Style.baseWidgetSize * 0.5
 
         property real localSeekRatio: -1
         property real lastSentSeekRatio: -1
@@ -410,12 +408,12 @@ NBox {
 
       // Spacer to push media controls down
       Item {
-        Layout.preferredHeight: Style.marginL * scaling
+        Layout.preferredHeight: Style.marginL
       }
 
       // Media controls
       RowLayout {
-        spacing: Style.marginS * scaling
+        spacing: Style.marginS
         Layout.fillWidth: true
         Layout.alignment: Qt.AlignHCenter
 

@@ -9,7 +9,6 @@ Rectangle {
   id: root
 
   property ShellScreen screen
-  property real scaling: 1.0
 
   // Widget properties passed from Bar.qml for per-instance settings
   property string widgetId: ""
@@ -41,11 +40,11 @@ Rectangle {
   readonly property string formatHorizontal: widgetSettings.formatHorizontal !== undefined ? widgetSettings.formatHorizontal : widgetMetadata.formatHorizontal
   readonly property string formatVertical: widgetSettings.formatVertical !== undefined ? widgetSettings.formatVertical : widgetMetadata.formatVertical
 
-  implicitWidth: isBarVertical ? Math.round(Style.capsuleHeight * scaling) : Math.round((isBarVertical ? verticalLoader.implicitWidth : horizontalLoader.implicitWidth) + Style.marginM * 2 * scaling)
+  implicitWidth: isBarVertical ? Math.round(Style.capsuleHeight) : Math.round((isBarVertical ? verticalLoader.implicitWidth : horizontalLoader.implicitWidth) + Style.marginM * 2)
 
-  implicitHeight: isBarVertical ? Math.round(verticalLoader.implicitHeight + Style.marginS * 2 * scaling) : Math.round(Style.capsuleHeight * scaling)
+  implicitHeight: isBarVertical ? Math.round(verticalLoader.implicitHeight + Style.marginS * 2) : Math.round(Style.capsuleHeight)
 
-  radius: Math.round(Style.radiusS * scaling)
+  radius: Math.round(Style.radiusS)
   color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
   Item {
@@ -59,7 +58,7 @@ Rectangle {
       anchors.centerIn: parent
       sourceComponent: ColumnLayout {
         anchors.centerIn: parent
-        spacing: Settings.data.bar.showCapsule ? -4 * scaling : -2 * scaling
+        spacing: Settings.data.bar.showCapsule ? -4 : -2
         Repeater {
           id: repeater
           model: Qt.locale().toString(now, formatHorizontal.trim()).split("\\n")
@@ -69,9 +68,9 @@ Rectangle {
             family: useCustomFont && customFont ? customFont : Settings.data.ui.fontDefault
             pointSize: {
               if (repeater.model.length == 1) {
-                return Style.fontSizeS * scaling
+                return Style.fontSizeS
               } else {
-                return (index == 0) ? Style.fontSizeXS * scaling : Style.fontSizeXXS * scaling
+                return (index == 0) ? Style.fontSizeXS : Style.fontSizeXXS
               }
             }
             font.weight: Style.fontWeightBold
@@ -90,14 +89,14 @@ Rectangle {
       anchors.centerIn: parent // Now this works without layout conflicts
       sourceComponent: ColumnLayout {
         anchors.centerIn: parent
-        spacing: -2 * scaling
+        spacing: -2
         Repeater {
           model: Qt.locale().toString(now, formatVertical.trim()).split(" ")
           delegate: NText {
             visible: text !== ""
             text: modelData
             family: useCustomFont && customFont ? customFont : Settings.data.ui.fontDefault
-            pointSize: Style.fontSizeS * scaling
+            pointSize: Style.fontSizeS
             font.weight: Style.fontWeightBold
             color: usePrimaryColor ? Color.mPrimary : Color.mOnSurface
             wrapMode: Text.WordWrap

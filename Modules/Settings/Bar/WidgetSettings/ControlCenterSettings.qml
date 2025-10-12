@@ -8,7 +8,7 @@ import qs.Services
 
 ColumnLayout {
   id: root
-  spacing: Style.marginM * scaling
+  spacing: Style.marginM
 
   // Properties to receive data from parent
   property var widgetData: null
@@ -41,7 +41,7 @@ ColumnLayout {
   }
 
   RowLayout {
-    spacing: Style.marginM * scaling
+    spacing: Style.marginM
 
     NLabel {
       label: I18n.tr("bar.widget-settings.control-center.icon.label")
@@ -52,20 +52,20 @@ ColumnLayout {
       Layout.alignment: Qt.AlignVCenter
       imagePath: valueCustomIconPath
       visible: valueCustomIconPath !== ""
-      width: Style.fontSizeXL * 2 * scaling
-      height: Style.fontSizeXL * 2 * scaling
+      width: Style.fontSizeXL * 2
+      height: Style.fontSizeXL * 2
     }
 
     NIcon {
       Layout.alignment: Qt.AlignVCenter
       icon: valueIcon
-      pointSize: Style.fontSizeXXL * 1.5 * scaling
+      pointSize: Style.fontSizeXXL * 1.5
       visible: valueIcon !== "" && valueCustomIconPath === ""
     }
   }
 
   RowLayout {
-    spacing: Style.marginM * scaling
+    spacing: Style.marginM
     NButton {
       enabled: !valueUseDistroLogo
       text: I18n.tr("bar.widget-settings.control-center.browse-library")

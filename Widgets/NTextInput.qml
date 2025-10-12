@@ -14,7 +14,7 @@ ColumnLayout {
   property color labelColor: Color.mOnSurface
   property color descriptionColor: Color.mOnSurfaceVariant
   property string fontFamily: Settings.data.ui.fontDefault
-  property real fontSize: Style.fontSizeS * scaling
+  property real fontSize: Style.fontSizeS
   property int fontWeight: Style.fontWeightRegular
 
   property alias text: input.text
@@ -24,7 +24,7 @@ ColumnLayout {
 
   signal editingFinished
 
-  spacing: Style.marginS * scaling
+  spacing: Style.marginS
 
   NLabel {
     label: root.label
@@ -40,8 +40,8 @@ ColumnLayout {
     id: frameControl
 
     Layout.fillWidth: true
-    Layout.minimumWidth: 80 * scaling
-    implicitHeight: Style.baseWidgetSize * 1.1 * scaling
+    Layout.minimumWidth: 80
+    implicitHeight: Style.baseWidgetSize * 1.1
 
     // This is important - makes the control accept focus
     focusPolicy: Qt.StrongFocus
@@ -50,10 +50,10 @@ ColumnLayout {
     background: Rectangle {
       id: frame
 
-      radius: Style.radiusM * scaling
+      radius: Style.radiusM
       color: Color.mSurface
       border.color: input.activeFocus ? Color.mSecondary : Color.mOutline
-      border.width: Math.max(1, Style.borderS * scaling)
+      border.width: Math.max(1, Style.borderS)
 
       Behavior on border.color {
         ColorAnimation {
@@ -79,7 +79,7 @@ ColumnLayout {
                      input.forceActiveFocus()
                      var inputPos = mapToItem(inputContainer, mouse.x, mouse.y)
                      if (inputPos.x >= 0 && inputPos.x <= inputContainer.width) {
-                       var textPos = inputPos.x - Style.marginM * scaling
+                       var textPos = inputPos.x - Style.marginM
                        if (textPos >= 0 && textPos <= input.width) {
                          input.cursorPosition = input.positionAt(textPos, input.height / 2)
                        }
@@ -105,8 +105,8 @@ ColumnLayout {
       Item {
         id: inputContainer
         anchors.fill: parent
-        anchors.leftMargin: Style.marginM * scaling
-        anchors.rightMargin: Style.marginM * scaling
+        anchors.leftMargin: Style.marginM
+        anchors.rightMargin: Style.marginM
         z: 1
 
         TextField {

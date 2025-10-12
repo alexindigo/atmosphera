@@ -12,11 +12,11 @@ Rectangle {
   property color borderColor: Color.transparent
   property real borderWidth: 0
   property string fallbackIcon: ""
-  property real fallbackIconSize: Style.fontSizeXXL * scaling
+  property real fallbackIconSize: Style.fontSizeXXL
 
   color: Color.transparent
   radius: parent.width * 0.5
-  anchors.margins: Style.marginXXS * scaling
+  anchors.margins: Style.marginXXS
 
   Rectangle {
     color: Color.transparent

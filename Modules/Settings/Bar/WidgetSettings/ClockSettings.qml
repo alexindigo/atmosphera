@@ -7,8 +7,8 @@ import qs.Services
 
 ColumnLayout {
   id: root
-  spacing: Style.marginM * scaling
-  width: 700 * scaling
+  spacing: Style.marginM
+  width: 700
 
   // Properties to receive data from parent
   property var widgetData: null
@@ -89,8 +89,8 @@ ColumnLayout {
     currentKey: valueCustomFont
     placeholder: I18n.tr("bar.widget-settings.clock.custom-font.placeholder")
     searchPlaceholder: I18n.tr("bar.widget-settings.clock.custom-font.search-placeholder")
-    popupHeight: 420 * scaling
-    minimumWidth: 300 * scaling
+    popupHeight: 420
+    minimumWidth: 300
     onSelected: function (key) {
       valueCustomFont = key
     }
@@ -108,12 +108,12 @@ ColumnLayout {
   RowLayout {
     id: main
 
-    spacing: Style.marginL * scaling
+    spacing: Style.marginL
     Layout.fillWidth: true
     Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
 
     ColumnLayout {
-      spacing: Style.marginM * scaling
+      spacing: Style.marginM
 
       Layout.fillWidth: true
       Layout.preferredWidth: 1 // Equal sizing hint
@@ -175,13 +175,13 @@ ColumnLayout {
       }
 
       Rectangle {
-        Layout.preferredWidth: 320 * scaling
-        Layout.preferredHeight: 160 * scaling // Fixed height instead of fillHeight
+        Layout.preferredWidth: 320
+        Layout.preferredHeight: 160 // Fixed height instead of fillHeight
 
         color: Color.mSurfaceVariant
-        radius: Style.radiusM * scaling
+        radius: Style.radiusM
         border.color: Color.mSecondary
-        border.width: Math.max(1, Style.borderS * scaling)
+        border.width: Math.max(1, Style.borderS)
 
         Behavior on border.color {
           ColorAnimation {
@@ -190,22 +190,22 @@ ColumnLayout {
         }
 
         ColumnLayout {
-          spacing: Style.marginM * scaling
+          spacing: Style.marginM
           anchors.centerIn: parent
 
           ColumnLayout {
-            spacing: -2 * scaling
+            spacing: -2
             Layout.alignment: Qt.AlignHCenter
 
             // Horizontal
             Repeater {
-              Layout.topMargin: Style.marginM * scaling
+              Layout.topMargin: Style.marginM
               model: Qt.locale().toString(now, valueFormatHorizontal.trim()).split("\\n")
               delegate: NText {
                 visible: text !== ""
                 text: modelData
                 family: valueUseCustomFont && valueCustomFont ? valueCustomFont : Settings.data.ui.fontDefault
-                pointSize: Style.fontSizeM * scaling
+                pointSize: Style.fontSizeM
                 font.weight: Style.fontWeightBold
                 color: valueUsePrimaryColor ? Color.mPrimary : Color.mOnSurface
                 wrapMode: Text.WordWrap
@@ -226,17 +226,17 @@ ColumnLayout {
 
           // Vertical
           ColumnLayout {
-            spacing: -2 * scaling
+            spacing: -2
             Layout.alignment: Qt.AlignHCenter
 
             Repeater {
-              Layout.topMargin: Style.marginM * scaling
+              Layout.topMargin: Style.marginM
               model: Qt.locale().toString(now, valueFormatVertical.trim()).split(" ")
               delegate: NText {
                 visible: text !== ""
                 text: modelData
                 family: valueUseCustomFont && valueCustomFont ? valueCustomFont : Settings.data.ui.fontDefault
-                pointSize: Style.fontSizeM * scaling
+                pointSize: Style.fontSizeM
                 font.weight: Style.fontWeightBold
                 color: valueUsePrimaryColor ? Color.mPrimary : Color.mOnSurface
                 wrapMode: Text.WordWrap
@@ -256,13 +256,13 @@ ColumnLayout {
   }
 
   NDivider {
-    Layout.topMargin: Style.marginM * scaling
-    Layout.bottomMargin: Style.marginM * scaling
+    Layout.topMargin: Style.marginM
+    Layout.bottomMargin: Style.marginM
   }
 
   NDateTimeTokens {
     Layout.fillWidth: true
-    height: 200 * scaling
+    height: 200
 
     // Connect to token clicked signal if NDateTimeTokens provides it
     onTokenClicked: token => root.insertToken(token)

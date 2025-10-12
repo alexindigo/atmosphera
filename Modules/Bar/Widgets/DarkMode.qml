@@ -7,7 +7,6 @@ NIconButton {
   id: root
 
   property ShellScreen screen
-  property real scaling: 1.0
 
   icon: "dark-mode"
   tooltipText: Settings.data.colorSchemes.darkMode ? I18n.tr("tooltips.switch-to-light-mode") : I18n.tr("tooltips.switch-to-dark-mode")

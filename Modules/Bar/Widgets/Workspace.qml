@@ -13,7 +13,6 @@ Item {
   id: root
 
   property ShellScreen screen
-  property real scaling: 1.0
 
   // Widget properties passed from Bar.qml for per-instance settings
   property string widgetId: ""
@@ -54,8 +53,8 @@ Item {
   property bool effectsActive: false
   property color effectColor: Color.mPrimary
 
-  property int horizontalPadding: Math.round(Style.marginS * scaling)
-  property int spacingBetweenPills: Math.round(Style.marginXS * scaling)
+  property int horizontalPadding: Math.round(Style.marginS)
+  property int spacingBetweenPills: Math.round(Style.marginXS)
 
   // Wheel scroll handling
   property int wheelAccumulatedDelta: 0
@@ -63,19 +62,19 @@ Item {
 
   signal workspaceChanged(int workspaceId, color accentColor)
 
-  implicitWidth: isVertical ? Math.round(Style.barHeight * scaling) : computeWidth()
-  implicitHeight: isVertical ? computeHeight() : Math.round(Style.barHeight * scaling)
+  implicitWidth: isVertical ? Math.round(Style.barHeight) : computeWidth()
+  implicitHeight: isVertical ? computeHeight() : Math.round(Style.barHeight)
 
   function getWorkspaceWidth(ws) {
     const d = Style.capsuleHeight * root.baseDimensionRatio
     const factor = ws.isFocused ? 2.2 : 1
-    return d * factor * scaling
+    return d * factor
   }
 
   function getWorkspaceHeight(ws) {
     const d = Style.capsuleHeight * root.baseDimensionRatio
     const factor = ws.isFocused ? 2.2 : 1
-    return d * factor * scaling
+    return d * factor
   }
 
   function computeWidth() {
@@ -203,9 +202,9 @@ Item {
 
   Rectangle {
     id: workspaceBackground
-    width: isVertical ? Math.round(Style.capsuleHeight * scaling) : parent.width
-    height: isVertical ? parent.height : Math.round(Style.capsuleHeight * scaling)
-    radius: Math.round(Style.radiusM * scaling)
+    width: isVertical ? Math.round(Style.capsuleHeight) : parent.width
+    height: isVertical ? parent.height : Math.round(Style.capsuleHeight)
+    radius: Math.round(Style.radiusM)
     color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
     anchors.horizontalCenter: parent.horizontalCenter
@@ -266,7 +265,7 @@ Item {
       Item {
         id: workspacePillContainer
         width: root.getWorkspaceWidth(model)
-        height: Style.capsuleHeight * root.baseDimensionRatio * scaling
+        height: Style.capsuleHeight * root.baseDimensionRatio
 
         Rectangle {
           id: pill
@@ -387,7 +386,7 @@ Item {
           radius: width / 2
           color: Color.transparent
           border.color: root.effectColor
-          border.width: Math.max(1, Math.round((2 + 6 * (1.0 - root.masterProgress)) * scaling))
+          border.width: Math.max(1, Math.round((2 + 6 * (1.0 - root.masterProgress))))
           opacity: root.effectsActive && model.isFocused ? (1.0 - root.masterProgress) * 0.7 : 0
           visible: root.effectsActive && model.isFocused
           z: 1
@@ -409,7 +408,7 @@ Item {
       model: localWorkspaces
       Item {
         id: workspacePillContainerVertical
-        width: Style.capsuleHeight * root.baseDimensionRatio * scaling
+        width: Style.capsuleHeight * root.baseDimensionRatio
         height: root.getWorkspaceHeight(model)
 
         Rectangle {
@@ -531,7 +530,7 @@ Item {
           radius: width / 2
           color: Color.transparent
           border.color: root.effectColor
-          border.width: Math.max(1, Math.round((2 + 6 * (1.0 - root.masterProgress)) * scaling))
+          border.width: Math.max(1, Math.round((2 + 6 * (1.0 - root.masterProgress))))
           opacity: root.effectsActive && model.isFocused ? (1.0 - root.masterProgress) * 0.7 : 0
           visible: root.effectsActive && model.isFocused
           z: 1

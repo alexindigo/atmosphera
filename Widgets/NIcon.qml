@@ -7,7 +7,7 @@ Text {
   id: root
 
   property string icon: Icons.defaultIcon
-  property real pointSize: Style.fontSizeL * scaling
+  property real pointSize: Style.fontSizeL
 
   visible: (icon !== undefined) && (icon !== "")
   text: {

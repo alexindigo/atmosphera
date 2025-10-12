@@ -16,11 +16,11 @@ NBox {
   id: root
 
   property string uptimeText: "--"
-  property real spacing: Style.marginS * scaling
+  property real spacing: Style.marginS
 
   ColumnLayout {
     anchors.fill: parent
-    anchors.margins: Style.marginM * scaling
+    anchors.margins: Style.marginM
 
     // Profile, Uptime, Settings, SessionMenu, Close
     RowLayout {
@@ -30,19 +30,19 @@ NBox {
       Layout.alignment: Qt.AlignVCenter
 
       NImageCircled {
-        width: Style.baseWidgetSize * 1.25 * scaling
+        width: Style.baseWidgetSize * 1.25
         height: width
         imagePath: Settings.data.general.avatarImage
         fallbackIcon: "person"
         borderColor: Color.mPrimary
-        borderWidth: Math.max(1, Style.borderM * scaling)
+        borderWidth: Math.max(1, Style.borderM)
         Layout.alignment: Qt.AlignVCenter
-        Layout.topMargin: Style.marginXS * scaling
+        Layout.topMargin: Style.marginXS
       }
 
       ColumnLayout {
         Layout.fillWidth: true
-        spacing: Style.marginXXS * scaling
+        spacing: Style.marginXXS
         NText {
           text: Quickshell.env("USER") || "user"
           font.weight: Style.fontWeightBold
@@ -52,7 +52,7 @@ NBox {
           text: I18n.tr("system.uptime", {
                           "uptime": uptimeText
                         })
-          pointSize: Style.fontSizeXS * scaling
+          pointSize: Style.fontSizeXS
           color: Color.mOnSurfaceVariant
         }
       }
@@ -98,16 +98,16 @@ NBox {
 
     NDivider {
       Layout.fillWidth: true
-      Layout.topMargin: Style.marginS * scaling
-      Layout.bottomMargin: Style.marginS * scaling
+      Layout.topMargin: Style.marginS
+      Layout.bottomMargin: Style.marginS
     }
 
     GridLayout {
       id: grid
       Layout.fillWidth: true
       columns: (Settings.data.controlCenter.quickSettingsStyle === "compact") ? 4 : 3
-      columnSpacing: Style.marginS * scaling
-      rowSpacing: Style.marginS * scaling
+      columnSpacing: Style.marginS
+      rowSpacing: Style.marginS
 
       Repeater {
         model: Settings.data.controlCenter.widgets.quickSettings
@@ -116,7 +116,6 @@ NBox {
           widgetId: (modelData.id !== undefined ? modelData.id : "")
           widgetProps: {
             "screen": root.modelData || null,
-            "scaling": ScalingService.getScreenScale(screen),
             "widgetId": modelData.id,
             "section": "quickSettings",
             "sectionWidgetIndex": index,

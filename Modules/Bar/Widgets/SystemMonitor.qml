@@ -9,7 +9,6 @@ Rectangle {
   id: root
 
   property ShellScreen screen
-  property real scaling: 1.0
 
   // Widget properties passed from Bar.qml for per-instance settings
   property string widgetId: ""
@@ -45,9 +44,9 @@ Rectangle {
     return Math.max(1, compact ? base * 0.43 : base * 0.33)
   }
 
-  readonly property int percentTextWidth: Math.ceil(percentMetrics.boundingRect.width + 3 * scaling)
-  readonly property int tempTextWidth: Math.ceil(tempMetrics.boundingRect.width + 3 * scaling)
-  readonly property int memTextWidth: Math.ceil(memMetrics.boundingRect.width + 3 * scaling)
+  readonly property int percentTextWidth: Math.ceil(percentMetrics.boundingRect.width + 3)
+  readonly property int tempTextWidth: Math.ceil(tempMetrics.boundingRect.width + 3)
+  readonly property int memTextWidth: Math.ceil(memMetrics.boundingRect.width + 3)
 
   TextMetrics {
     id: percentMetrics
@@ -74,9 +73,9 @@ Rectangle {
   }
 
   anchors.centerIn: parent
-  implicitWidth: isVertical ? Math.round(Style.capsuleHeight * scaling) : Math.round(mainGrid.implicitWidth + Style.marginM * 2 * scaling)
-  implicitHeight: isVertical ? Math.round(mainGrid.implicitHeight + Style.marginM * 2 * scaling) : Math.round(Style.capsuleHeight * scaling)
-  radius: Math.round(Style.radiusM * scaling)
+  implicitWidth: isVertical ? Math.round(Style.capsuleHeight) : Math.round(mainGrid.implicitWidth + Style.marginM * 2)
+  implicitHeight: isVertical ? Math.round(mainGrid.implicitHeight + Style.marginM * 2) : Math.round(Style.capsuleHeight)
+  radius: Math.round(Style.radiusM)
   color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
   GridLayout {
@@ -85,13 +84,13 @@ Rectangle {
     flow: isVertical ? GridLayout.TopToBottom : GridLayout.LeftToRight
     rows: isVertical ? -1 : 1
     columns: isVertical ? 1 : -1
-    rowSpacing: isVertical ? (Style.marginM * scaling) : 0
-    columnSpacing: isVertical ? 0 : (Style.marginM * scaling)
+    rowSpacing: isVertical ? (Style.marginM) : 0
+    columnSpacing: isVertical ? 0 : (Style.marginM)
 
     // CPU Usage Component
     Item {
-      Layout.preferredWidth: isVertical ? root.width : iconSize + percentTextWidth + (Style.marginXXS * scaling)
-      Layout.preferredHeight: Math.round(Style.capsuleHeight * scaling)
+      Layout.preferredWidth: isVertical ? root.width : iconSize + percentTextWidth + (Style.marginXXS)
+      Layout.preferredHeight: Math.round(Style.capsuleHeight)
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
       visible: showCpuUsage
 
@@ -101,8 +100,8 @@ Rectangle {
         flow: isVertical ? GridLayout.TopToBottom : GridLayout.LeftToRight
         rows: isVertical ? 2 : 1
         columns: isVertical ? 1 : 2
-        rowSpacing: Style.marginXXS * scaling
-        columnSpacing: Style.marginXXS * scaling
+        rowSpacing: Style.marginXXS
+        columnSpacing: Style.marginXXS
 
         NIcon {
           icon: "cpu-usage"
@@ -131,8 +130,8 @@ Rectangle {
 
     // CPU Temperature Component
     Item {
-      Layout.preferredWidth: isVertical ? root.width : (iconSize + tempTextWidth) + (Style.marginXXS * scaling)
-      Layout.preferredHeight: Math.round(Style.capsuleHeight * scaling)
+      Layout.preferredWidth: isVertical ? root.width : (iconSize + tempTextWidth) + (Style.marginXXS)
+      Layout.preferredHeight: Math.round(Style.capsuleHeight)
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
       visible: showCpuTemp
 
@@ -142,8 +141,8 @@ Rectangle {
         flow: isVertical ? GridLayout.TopToBottom : GridLayout.LeftToRight
         rows: isVertical ? 2 : 1
         columns: isVertical ? 1 : 2
-        rowSpacing: Style.marginXXS * scaling
-        columnSpacing: Style.marginXXS * scaling
+        rowSpacing: Style.marginXXS
+        columnSpacing: Style.marginXXS
 
         NIcon {
           icon: "cpu-temperature"
@@ -172,8 +171,8 @@ Rectangle {
 
     // Memory Usage Component
     Item {
-      Layout.preferredWidth: isVertical ? root.width : iconSize + (showMemoryAsPercent ? percentTextWidth : memTextWidth) + (Style.marginXXS * scaling)
-      Layout.preferredHeight: Math.round(Style.capsuleHeight * scaling)
+      Layout.preferredWidth: isVertical ? root.width : iconSize + (showMemoryAsPercent ? percentTextWidth : memTextWidth) + (Style.marginXXS)
+      Layout.preferredHeight: Math.round(Style.capsuleHeight)
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
       visible: showMemoryUsage
 
@@ -183,8 +182,8 @@ Rectangle {
         flow: isVertical ? GridLayout.TopToBottom : GridLayout.LeftToRight
         rows: isVertical ? 2 : 1
         columns: isVertical ? 1 : 2
-        rowSpacing: Style.marginXXS * scaling
-        columnSpacing: Style.marginXXS * scaling
+        rowSpacing: Style.marginXXS
+        columnSpacing: Style.marginXXS
 
         NIcon {
           icon: "memory"
@@ -213,8 +212,8 @@ Rectangle {
 
     // Network Download Speed Component
     Item {
-      Layout.preferredWidth: isVertical ? root.width : iconSize + memTextWidth + (Style.marginXXS * scaling)
-      Layout.preferredHeight: Math.round(Style.capsuleHeight * scaling)
+      Layout.preferredWidth: isVertical ? root.width : iconSize + memTextWidth + (Style.marginXXS)
+      Layout.preferredHeight: Math.round(Style.capsuleHeight)
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
       visible: showNetworkStats
 
@@ -224,8 +223,8 @@ Rectangle {
         flow: isVertical ? GridLayout.TopToBottom : GridLayout.LeftToRight
         rows: isVertical ? 2 : 1
         columns: isVertical ? 1 : 2
-        rowSpacing: Style.marginXXS * scaling
-        columnSpacing: Style.marginXXS * scaling
+        rowSpacing: Style.marginXXS
+        columnSpacing: Style.marginXXS
 
         NIcon {
           icon: "download-speed"
@@ -254,8 +253,8 @@ Rectangle {
 
     // Network Upload Speed Component
     Item {
-      Layout.preferredWidth: isVertical ? root.width : iconSize + memTextWidth + (Style.marginXXS * scaling)
-      Layout.preferredHeight: Math.round(Style.capsuleHeight * scaling)
+      Layout.preferredWidth: isVertical ? root.width : iconSize + memTextWidth + (Style.marginXXS)
+      Layout.preferredHeight: Math.round(Style.capsuleHeight)
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
       visible: showNetworkStats
 
@@ -265,8 +264,8 @@ Rectangle {
         flow: isVertical ? GridLayout.TopToBottom : GridLayout.LeftToRight
         rows: isVertical ? 2 : 1
         columns: isVertical ? 1 : 2
-        rowSpacing: Style.marginXXS * scaling
-        columnSpacing: Style.marginXXS * scaling
+        rowSpacing: Style.marginXXS
+        columnSpacing: Style.marginXXS
 
         NIcon {
           icon: "upload-speed"
@@ -295,8 +294,8 @@ Rectangle {
 
     // Disk Usage Component (primary drive)
     Item {
-      Layout.preferredWidth: isVertical ? root.width : iconSize + percentTextWidth + (Style.marginXXS * scaling)
-      Layout.preferredHeight: Math.round(Style.capsuleHeight * scaling)
+      Layout.preferredWidth: isVertical ? root.width : iconSize + percentTextWidth + (Style.marginXXS)
+      Layout.preferredHeight: Math.round(Style.capsuleHeight)
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
       visible: showDiskUsage
 
@@ -306,8 +305,8 @@ Rectangle {
         flow: isVertical ? GridLayout.TopToBottom : GridLayout.LeftToRight
         rows: isVertical ? 2 : 1
         columns: isVertical ? 1 : 2
-        rowSpacing: Style.marginXXS * scaling
-        columnSpacing: Style.marginXXS * scaling
+        rowSpacing: Style.marginXXS
+        columnSpacing: Style.marginXXS
 
         NIcon {
           icon: "storage"

@@ -24,7 +24,7 @@ ColumnLayout {
 
   // General Notification Settings
   ColumnLayout {
-    spacing: Style.marginL * scaling
+    spacing: Style.marginL
     Layout.fillWidth: true
 
     NHeader {
@@ -77,13 +77,13 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
   }
 
   // Duration
   ColumnLayout {
-    spacing: Style.marginL * scaling
+    spacing: Style.marginL
     Layout.fillWidth: true
 
     NHeader {
@@ -101,7 +101,7 @@ ColumnLayout {
 
     // Low Urgency Duration
     ColumnLayout {
-      spacing: Style.marginXXS * scaling
+      spacing: Style.marginXXS
       Layout.fillWidth: true
 
       NLabel {
@@ -122,7 +122,7 @@ ColumnLayout {
 
     // Normal Urgency Duration
     ColumnLayout {
-      spacing: Style.marginXXS * scaling
+      spacing: Style.marginXXS
       Layout.fillWidth: true
 
       NLabel {
@@ -143,7 +143,7 @@ ColumnLayout {
 
     // Critical Urgency Duration
     ColumnLayout {
-      spacing: Style.marginXXS * scaling
+      spacing: Style.marginXXS
       Layout.fillWidth: true
 
       NLabel {
@@ -164,8 +164,8 @@ ColumnLayout {
 
     NDivider {
       Layout.fillWidth: true
-      Layout.topMargin: Style.marginXL * scaling
-      Layout.bottomMargin: Style.marginXL * scaling
+      Layout.topMargin: Style.marginXL
+      Layout.bottomMargin: Style.marginXL
     }
 
     // Monitor Configuration
@@ -198,7 +198,7 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
   }
 }

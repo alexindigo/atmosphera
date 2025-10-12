@@ -33,14 +33,14 @@ NBox {
   Layout.minimumHeight: {
     var widgetCount = widgetModel.length
     if (widgetCount === 0)
-      return 140 * scaling
+      return 140
 
     var availableWidth = parent.width
-    var avgWidgetWidth = 150 * scaling
+    var avgWidgetWidth = 150
     var widgetsPerRow = Math.max(1, Math.floor(availableWidth / avgWidgetWidth))
     var rows = Math.ceil(widgetCount / widgetsPerRow)
 
-    return (50 + 20 + (rows * 48) + ((rows - 1) * Style.marginS) + 20) * scaling
+    return (50 + 20 + (rows * 48) + ((rows - 1) * Style.marginS) + 20)
   }
 
   // Generate widget color from name checksum
@@ -66,15 +66,15 @@ NBox {
 
   ColumnLayout {
     anchors.fill: parent
-    anchors.margins: Style.marginL * scaling
-    spacing: Style.marginM * scaling
+    anchors.margins: Style.marginL
+    spacing: Style.marginM
 
     RowLayout {
       Layout.fillWidth: true
 
       NText {
         text: sectionName + " Section"
-        pointSize: Style.fontSizeL * scaling
+        pointSize: Style.fontSizeL
         font.weight: Style.fontWeightBold
         color: Color.mOnSurface
         Layout.alignment: Qt.AlignVCenter
@@ -91,8 +91,8 @@ NBox {
         placeholder: I18n.tr("bar.widget-settings.section-editor.placeholder")
         searchPlaceholder: I18n.tr("bar.widget-settings.section-editor.search-placeholder")
         onSelected: key => comboBox.currentKey = key
-        popupHeight: 340 * scaling
-        minimumWidth: 200 * scaling
+        popupHeight: 340
+        minimumWidth: 200
 
         Layout.alignment: Qt.AlignVCenter
 
@@ -117,7 +117,7 @@ NBox {
         enabled: comboBox.currentKey !== ""
         tooltipText: I18n.tr("tooltips.add-widget")
         Layout.alignment: Qt.AlignVCenter
-        Layout.leftMargin: Style.marginS * scaling
+        Layout.leftMargin: Style.marginS
         onClicked: {
           if (comboBox.currentKey !== "") {
             addWidget(comboBox.currentKey, sectionId)
@@ -131,13 +131,13 @@ NBox {
     Item {
       Layout.fillWidth: true
       Layout.fillHeight: true
-      Layout.minimumHeight: 65 * scaling
+      Layout.minimumHeight: 65
       clip: false // Don't clip children so ghost can move freely
 
       Flow {
         id: widgetFlow
         anchors.fill: parent
-        spacing: Style.marginS * scaling
+        spacing: Style.marginS
         flow: Flow.LeftToRight
 
         Repeater {
@@ -148,16 +148,16 @@ NBox {
             required property int index
             required property var modelData
 
-            width: widgetContent.implicitWidth + Style.marginL * scaling
-            height: Style.baseWidgetSize * 1.15 * scaling
-            radius: Style.radiusL * scaling
+            width: widgetContent.implicitWidth + Style.marginL
+            height: Style.baseWidgetSize * 1.15
+            radius: Style.radiusL
             color: root.getWidgetColor(modelData)[0]
             border.color: Color.mOutline
-            border.width: Math.max(1, Style.borderS * scaling)
+            border.width: Math.max(1, Style.borderS)
 
             // Store the widget index for drag operations
             property int widgetIndex: index
-            readonly property int buttonsWidth: Math.round(20 * scaling)
+            readonly property int buttonsWidth: Math.round(20)
             readonly property int buttonsCount: 1 + (root.widgetRegistry ? root.widgetRegistry.widgetHasUserSettings(modelData.id) : 0)
 
             // Visual feedback during drag
@@ -180,7 +180,7 @@ NBox {
             NContextMenu {
               id: contextMenu
               parent: Overlay.overlay
-              width: 240 * scaling
+              width: 240
               model: [{
                   "label": I18n.tr("tooltips.move-to-left-section"),
                   "action": "left",
@@ -223,15 +223,15 @@ NBox {
             RowLayout {
               id: widgetContent
               anchors.centerIn: parent
-              spacing: Style.marginXXS * scaling
+              spacing: Style.marginXXS
 
               NText {
                 text: modelData.id
-                pointSize: Style.fontSizeS * scaling
+                pointSize: Style.fontSizeS
                 color: root.getWidgetColor(modelData)[1]
                 horizontalAlignment: Text.AlignHCenter
                 elide: Text.ElideRight
-                Layout.preferredWidth: 80 * scaling
+                Layout.preferredWidth: 80
               }
 
               RowLayout {
@@ -304,11 +304,11 @@ NBox {
       Rectangle {
         id: dragGhost
         width: 0
-        height: Style.baseWidgetSize * 1.15 * scaling
-        radius: Style.radiusL * scaling
+        height: Style.baseWidgetSize * 1.15
+        radius: Style.radiusL
         color: Color.transparent
         border.color: Color.mOutline
-        border.width: Math.max(1, Style.borderS * scaling)
+        border.width: Math.max(1, Style.borderS)
         opacity: 0.7
         visible: flowDragArea.dragStarted
         z: 2000
@@ -317,7 +317,7 @@ NBox {
         NText {
           id: ghostText
           anchors.centerIn: parent
-          pointSize: Style.fontSizeS * scaling
+          pointSize: Style.fontSizeS
           color: Color.mOnPrimary
         }
       }
@@ -325,8 +325,8 @@ NBox {
       // Drop indicator - visual feedback for where the widget will be inserted
       Rectangle {
         id: dropIndicator
-        width: 3 * scaling
-        height: Style.baseWidgetSize * 1.15 * scaling
+        width: 3
+        height: Style.baseWidgetSize * 1.15
         radius: width / 2
         color: Color.mPrimary
         opacity: 0
@@ -378,7 +378,7 @@ NBox {
         property bool dragStarted: false
         property bool potentialDrag: false // Track if we're in a potential drag interaction
         property int draggedIndex: -1
-        property real dragThreshold: 15 * scaling
+        property real dragThreshold: 15
         property Item draggedWidget: null
         property int dropTargetIndex: -1
         property var draggedModelData: null
@@ -413,13 +413,13 @@ NBox {
             if (leftDist < minDistance) {
               minDistance = leftDist
               bestIndex = i
-              bestPosition = Qt.point(widget.x - dropIndicator.width / 2 - Style.marginXS * scaling, widget.y)
+              bestPosition = Qt.point(widget.x - dropIndicator.width / 2 - Style.marginXS, widget.y)
             }
 
             if (rightDist < minDistance) {
               minDistance = rightDist
               bestIndex = i + 1
-              bestPosition = Qt.point(widget.x + widget.width + Style.marginXS * scaling - dropIndicator.width / 2, widget.y)
+              bestPosition = Qt.point(widget.x + widget.width + Style.marginXS - dropIndicator.width / 2, widget.y)
             }
           }
 
@@ -431,13 +431,13 @@ NBox {
               if (dist < minDistance && mouseX < firstWidget.x + firstWidget.width / 2) {
                 minDistance = dist
                 bestIndex = 0
-                bestPosition = Qt.point(Math.max(0, firstWidget.x - dropIndicator.width - Style.marginS * scaling), firstWidget.y)
+                bestPosition = Qt.point(Math.max(0, firstWidget.x - dropIndicator.width - Style.marginS), firstWidget.y)
               }
             }
           }
 
           // Only show indicator if we're close enough and it's a different position
-          if (minDistance < 80 * scaling && bestIndex !== -1) {
+          if (minDistance < 80 && bestIndex !== -1) {
             // Adjust index if we're moving forward
             let adjustedIndex = bestIndex
             if (bestIndex > draggedIndex) {

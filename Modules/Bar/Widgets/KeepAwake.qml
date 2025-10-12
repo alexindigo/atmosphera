@@ -9,7 +9,6 @@ NIconButton {
   id: root
 
   property ShellScreen screen
-  property real scaling: 1.0
 
   baseSize: Style.capsuleHeight
   compact: (Settings.data.bar.density === "compact")

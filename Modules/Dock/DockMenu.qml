@@ -13,7 +13,7 @@ PopupWindow {
 
   property var toplevel: null
   property Item anchorItem: null
-  property real scaling: 1.0
+
   property bool hovered: menuMouseArea.containsMouse
   property var onAppClosed: null // Callback function for when an app is closed
   property bool canAutoClose: false
@@ -25,8 +25,8 @@ PopupWindow {
 
   signal requestClose
 
-  implicitWidth: Math.max(160 * scaling, contextMenuColumn.implicitWidth)
-  implicitHeight: contextMenuColumn.implicitHeight + (Style.marginM * scaling * 2)
+  implicitWidth: Math.max(160, contextMenuColumn.implicitWidth)
+  implicitHeight: contextMenuColumn.implicitHeight + (Style.marginM * 2)
   color: Color.transparent
   visible: false
 
@@ -117,7 +117,7 @@ PopupWindow {
 
   anchor.item: anchorItem
   anchor.rect.x: anchorItem ? (anchorItem.width - implicitWidth) / 2 : 0
-  anchor.rect.y: anchorItem ? -implicitHeight - (Style.marginM * scaling) : 0
+  anchor.rect.y: anchorItem ? -implicitHeight - (Style.marginM) : 0
 
   function show(item, toplevelData) {
     if (!item) {
@@ -140,8 +140,8 @@ PopupWindow {
 
   // Helper function to determine which menu item is under the mouse
   function getHoveredItem(mouseY) {
-    const itemHeight = 32 * scaling
-    const startY = Style.marginM * scaling
+    const itemHeight = 32
+    const startY = Style.marginM
     const relativeY = mouseY - startY
 
     if (relativeY < 0)
@@ -208,9 +208,9 @@ PopupWindow {
   Rectangle {
     anchors.fill: parent
     color: Color.mSurfaceVariant
-    radius: Style.radiusS * scaling
+    radius: Style.radiusS
     border.color: Color.mOutline
-    border.width: Math.max(1, Style.borderS * scaling)
+    border.width: Math.max(1, Style.borderS)
 
     // Single MouseArea to handle both auto-close and menu interactions
     MouseArea {
@@ -246,7 +246,7 @@ PopupWindow {
     ColumnLayout {
       id: contextMenuColumn
       anchors.fill: parent
-      anchors.margins: Style.marginM * scaling
+      anchors.margins: Style.marginM
       spacing: 0
 
       Repeater {
@@ -254,26 +254,26 @@ PopupWindow {
 
         Rectangle {
           Layout.fillWidth: true
-          height: 32 * scaling
+          height: 32
           color: root.hoveredItem === index ? Color.mTertiary : Color.transparent
-          radius: Style.radiusXS * scaling
+          radius: Style.radiusXS
 
           RowLayout {
             anchors.left: parent.left
-            anchors.leftMargin: Style.marginS * scaling
+            anchors.leftMargin: Style.marginS
             anchors.verticalCenter: parent.verticalCenter
-            spacing: Style.marginS * scaling
+            spacing: Style.marginS
 
             NIcon {
               icon: modelData.icon
-              pointSize: Style.fontSizeL * scaling
+              pointSize: Style.fontSizeL
               color: root.hoveredItem === index ? Color.mOnTertiary : Color.mOnSurfaceVariant
               Layout.alignment: Qt.AlignVCenter
             }
 
             NText {
               text: modelData.text
-              pointSize: Style.fontSizeS * scaling
+              pointSize: Style.fontSizeS
               color: root.hoveredItem === index ? Color.mOnTertiary : Color.mOnSurfaceVariant
               Layout.alignment: Qt.AlignVCenter
               elide: Text.ElideRight

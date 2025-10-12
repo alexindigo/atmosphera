@@ -9,7 +9,7 @@ import qs.Modules.Settings.Extras
 
 ColumnLayout {
   id: root
-  spacing: Style.marginL * scaling
+  spacing: Style.marginL
 
   // Handler for drag start - disables panel background clicks
   function handleDragStart() {
@@ -29,7 +29,7 @@ ColumnLayout {
 
   // Quick Settings Style Section
   ColumnLayout {
-    spacing: Style.marginL * scaling
+    spacing: Style.marginL
     Layout.fillWidth: true
 
     NHeader {
@@ -61,13 +61,13 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
   }
 
   // Widgets Management Section
   ColumnLayout {
-    spacing: Style.marginXXS * scaling
+    spacing: Style.marginXXS
     Layout.fillWidth: true
 
     NHeader {
@@ -79,8 +79,8 @@ ColumnLayout {
     ColumnLayout {
       Layout.fillWidth: true
       Layout.fillHeight: true
-      Layout.topMargin: Style.marginM * scaling
-      spacing: Style.marginM * scaling
+      Layout.topMargin: Style.marginM
+      spacing: Style.marginM
 
       // Quick Settings
       SectionEditor {
@@ -103,8 +103,8 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
   }
 
   // ---------------------------------

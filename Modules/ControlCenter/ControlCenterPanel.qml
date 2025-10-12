@@ -26,7 +26,7 @@ NPanel {
   panelContent: Item {
     id: content
 
-    property real cardSpacing: Style.marginL * scaling
+    property real cardSpacing: Style.marginL
 
     // Layout content
     ColumnLayout {
@@ -39,48 +39,43 @@ NPanel {
       // Cards (consistent inter-card spacing via ColumnLayout spacing)
       ProfileCard {
         Layout.fillWidth: true
-        Layout.preferredHeight: Math.max(64 * scaling)
-        scaling: root.scaling
+        Layout.preferredHeight: Math.max(64)
       }
 
       WeatherCard {
         Layout.fillWidth: true
-        Layout.preferredHeight: Math.max(190 * scaling)
-        scaling: root.scaling
+        Layout.preferredHeight: Math.max(190)
       }
 
       // Middle section: media + stats column
       RowLayout {
         Layout.fillWidth: true
-        Layout.preferredHeight: Math.max(260 * scaling)
+        Layout.preferredHeight: Math.max(260)
         spacing: content.cardSpacing
 
         // Media card
         MediaCard {
           Layout.fillWidth: true
           Layout.fillHeight: true
-          scaling: root.scaling
         }
 
         // System monitors combined in one card
         SystemMonitorCard {
-          Layout.preferredWidth: Style.baseWidgetSize * 2.625 * scaling
+          Layout.preferredWidth: Style.baseWidgetSize * 2.625
           Layout.fillHeight: true
-          scaling: root.scaling
         }
       }
 
       // Audio card below media and system monitor
       AudioCard {
         Layout.fillWidth: true
-        Layout.preferredHeight: Math.max(120 * scaling)
-        scaling: root.scaling
+        Layout.preferredHeight: Math.max(120)
       }
 
       // Bottom actions (two grouped rows of round buttons)
       RowLayout {
         Layout.fillWidth: true
-        Layout.preferredHeight: Math.max(60 * scaling)
+        Layout.preferredHeight: Math.max(60)
         spacing: content.cardSpacing
 
         // Power Profiles switcher
@@ -88,7 +83,6 @@ NPanel {
           Layout.fillWidth: true
           Layout.fillHeight: true
           spacing: content.cardSpacing
-          scaling: root.scaling
         }
 
         // Utilities buttons
@@ -96,7 +90,6 @@ NPanel {
           Layout.fillWidth: true
           Layout.fillHeight: true
           spacing: content.cardSpacing
-          scaling: root.scaling
         }
       }
     }

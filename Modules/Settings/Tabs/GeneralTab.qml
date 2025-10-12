@@ -17,16 +17,16 @@ ColumnLayout {
   // Profile section
   RowLayout {
     Layout.fillWidth: true
-    spacing: Style.marginL * scaling
+    spacing: Style.marginL
 
     // Avatar preview
     NImageCircled {
-      width: 108 * scaling
-      height: 108 * scaling
+      width: 108
+      height: 108
       imagePath: Settings.data.general.avatarImage
       fallbackIcon: "person"
       borderColor: Color.mPrimary
-      borderWidth: Math.max(1, Style.borderM * scaling)
+      borderWidth: Math.max(1, Style.borderM)
       Layout.alignment: Qt.AlignTop
     }
 
@@ -61,13 +61,13 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
   }
 
   // User Interface
   ColumnLayout {
-    spacing: Style.marginL * scaling
+    spacing: Style.marginL
     Layout.fillWidth: true
 
     NHeader {
@@ -97,7 +97,7 @@ ColumnLayout {
     }
 
     ColumnLayout {
-      spacing: Style.marginXXS * scaling
+      spacing: Style.marginXXS
       Layout.fillWidth: true
 
       NLabel {
@@ -118,7 +118,7 @@ ColumnLayout {
 
     // Animation Speed
     ColumnLayout {
-      spacing: Style.marginL * scaling
+      spacing: Style.marginL
       Layout.fillWidth: true
 
       NToggle {
@@ -129,7 +129,7 @@ ColumnLayout {
       }
 
       ColumnLayout {
-        spacing: Style.marginXXS * scaling
+        spacing: Style.marginXXS
         Layout.fillWidth: true
         visible: !Settings.data.general.animationDisabled
 
@@ -153,13 +153,13 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
   }
 
   // Dock
   ColumnLayout {
-    spacing: Style.marginL * scaling
+    spacing: Style.marginL
     Layout.fillWidth: true
 
     NHeader {
@@ -182,7 +182,7 @@ ColumnLayout {
     }
 
     ColumnLayout {
-      spacing: Style.marginXXS * scaling
+      spacing: Style.marginXXS
       Layout.fillWidth: true
 
       NLabel {
@@ -204,13 +204,13 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
   }
 
   // Control Center
   ColumnLayout {
-    spacing: Style.marginL * scaling
+    spacing: Style.marginL
     Layout.fillWidth: true
 
     NHeader {
@@ -254,13 +254,13 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
   }
 
   // Fonts
   ColumnLayout {
-    spacing: Style.marginL * scaling
+    spacing: Style.marginL
     Layout.fillWidth: true
 
     NHeader {
@@ -270,7 +270,7 @@ ColumnLayout {
 
     // Font configuration section
     ColumnLayout {
-      spacing: Style.marginL * scaling
+      spacing: Style.marginL
       Layout.fillWidth: true
 
       NSearchableComboBox {
@@ -280,8 +280,8 @@ ColumnLayout {
         currentKey: Settings.data.ui.fontDefault
         placeholder: I18n.tr("settings.general.fonts.default.placeholder")
         searchPlaceholder: I18n.tr("settings.general.fonts.default.search-placeholder")
-        popupHeight: 420 * scaling
-        minimumWidth: 300 * scaling
+        popupHeight: 420
+        minimumWidth: 300
         onSelected: function (key) {
           Settings.data.ui.fontDefault = key
         }
@@ -294,8 +294,8 @@ ColumnLayout {
         currentKey: Settings.data.ui.fontFixed
         placeholder: I18n.tr("settings.general.fonts.monospace.placeholder")
         searchPlaceholder: I18n.tr("settings.general.fonts.monospace.search-placeholder")
-        popupHeight: 320 * scaling
-        minimumWidth: 300 * scaling
+        popupHeight: 320
+        minimumWidth: 300
         onSelected: function (key) {
           Settings.data.ui.fontFixed = key
         }
@@ -308,7 +308,7 @@ ColumnLayout {
         }
 
         RowLayout {
-          spacing: Style.marginL * scaling
+          spacing: Style.marginL
           Layout.fillWidth: true
 
           NValueSlider {
@@ -323,8 +323,8 @@ ColumnLayout {
 
           // Reset button container
           Item {
-            Layout.preferredWidth: 30 * scaling
-            Layout.preferredHeight: 30 * scaling
+            Layout.preferredWidth: 30
+            Layout.preferredHeight: 30
 
             NIconButton {
               icon: "refresh"
@@ -345,7 +345,7 @@ ColumnLayout {
         }
 
         RowLayout {
-          spacing: Style.marginL * scaling
+          spacing: Style.marginL
           Layout.fillWidth: true
 
           NValueSlider {
@@ -360,8 +360,8 @@ ColumnLayout {
 
           // Reset button container
           Item {
-            Layout.preferredWidth: 30 * scaling
-            Layout.preferredHeight: 30 * scaling
+            Layout.preferredWidth: 30
+            Layout.preferredHeight: 30
 
             NIconButton {
               icon: "refresh"

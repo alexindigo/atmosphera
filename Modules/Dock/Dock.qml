@@ -16,7 +16,7 @@ Variants {
     id: root
 
     required property ShellScreen modelData
-    property real scaling: ScalingService.getScreenScale(modelData)
+
     property bool barIsReady: modelData ? BarService.isBarReady(modelData.name) : false
 
     Connections {
@@ -24,15 +24,6 @@ Variants {
       function onBarReadyChanged(screenName) {
         if (screenName === modelData.name) {
           barIsReady = true
-        }
-      }
-    }
-
-    Connections {
-      target: ScalingService
-      function onScaleChanged(screenName, scale) {
-        if (screenName === modelData.name) {
-          scaling = scale
         }
       }
     }
@@ -71,14 +62,14 @@ Variants {
     readonly property int showDelay: 100
     readonly property int hideAnimationDuration: Style.animationFast
     readonly property int showAnimationDuration: Style.animationFast
-    readonly property int peekHeight: 1 // no scaling for peek
-    readonly property int iconSize: 36 * scaling
-    readonly property int floatingMargin: Settings.data.dock.floatingRatio * Style.marginL * scaling
+    readonly property int peekHeight: 1
+    readonly property int iconSize: 36
+    readonly property int floatingMargin: Settings.data.dock.floatingRatio * Style.marginL
 
     // Bar detection and positioning properties
     readonly property bool hasBar: modelData && modelData.name ? (Settings.data.bar.monitors.includes(modelData.name) || (Settings.data.bar.monitors.length === 0)) : false
     readonly property bool barAtBottom: hasBar && Settings.data.bar.position === "bottom"
-    readonly property int barHeight: Style.barHeight * scaling
+    readonly property int barHeight: Style.barHeight
 
     // Shared state between windows
     property bool dockHovered: false
@@ -264,7 +255,7 @@ Variants {
         margins.bottom: {
           switch (Settings.data.bar.position) {
           case "bottom":
-            return (Style.barHeight + Style.marginM) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL * scaling + floatingMargin : floatingMargin)
+            return (Style.barHeight + Style.marginM) + (Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL + floatingMargin : floatingMargin)
           default:
             return floatingMargin
           }
@@ -305,12 +296,12 @@ Variants {
 
           Rectangle {
             id: dockContainer
-            width: dockLayout.implicitWidth + Style.marginM * scaling * 2
+            width: dockLayout.implicitWidth + Style.marginM * 2
             height: Math.round(iconSize * 1.5)
             color: Qt.alpha(Color.mSurface, Settings.data.dock.backgroundOpacity)
             anchors.centerIn: parent
-            radius: Style.radiusL * scaling
-            border.width: Math.max(1, Style.borderS * scaling)
+            radius: Style.radiusL
+            border.width: Math.max(1, Style.borderS)
             border.color: Qt.alpha(Color.mOutline, Settings.data.dock.backgroundOpacity)
 
             MouseArea {
@@ -343,7 +334,7 @@ Variants {
             Item {
               id: dock
               width: dockLayout.implicitWidth
-              height: parent.height - (Style.marginM * 2 * scaling)
+              height: parent.height - (Style.marginM * 2)
               anchors.centerIn: parent
 
               function getAppIcon(appData): string {
@@ -354,7 +345,7 @@ Variants {
 
               RowLayout {
                 id: dockLayout
-                spacing: Style.marginM * scaling
+                spacing: Style.marginM
                 Layout.preferredHeight: parent.height
                 anchors.centerIn: parent
 
@@ -446,7 +437,6 @@ Variants {
                     // Context menu popup
                     DockMenu {
                       id: contextMenu
-                      scaling: root.scaling
                       onHoveredChanged: menuHovered = hovered
                       onRequestClose: {
                         contextMenu.hide()
@@ -542,7 +532,7 @@ Variants {
                       width: iconSize * 0.2
                       height: iconSize * 0.1
                       color: Color.mPrimary
-                      radius: Style.radiusXS * scaling
+                      radius: Style.radiusXS
                       anchors.top: parent.bottom
                       anchors.horizontalCenter: parent.horizontalCenter
 

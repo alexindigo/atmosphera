@@ -12,7 +12,6 @@ Rectangle {
   id: root
 
   property ShellScreen screen
-  property real scaling: 1.0
 
   // Widget properties passed from Bar.qml for per-instance settings
   property string widgetId: ""
@@ -22,7 +21,7 @@ Rectangle {
 
   readonly property bool isVerticalBar: Settings.data.bar.position === "left" || Settings.data.bar.position === "right"
   readonly property bool compact: (Settings.data.bar.density === "compact")
-  readonly property real itemSize: compact ? Style.capsuleHeight * 0.9 * scaling : Style.capsuleHeight * 0.8 * scaling
+  readonly property real itemSize: compact ? Style.capsuleHeight * 0.9 : Style.capsuleHeight * 0.8
 
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
@@ -36,27 +35,27 @@ Rectangle {
   }
 
   // Always visible when there are toplevels
-  implicitWidth: isVerticalBar ? Math.round(Style.capsuleHeight * scaling) : Math.round(taskbarLayout.implicitWidth + Style.marginM * scaling * 2)
-  implicitHeight: isVerticalBar ? Math.round(taskbarLayout.implicitHeight + Style.marginM * scaling * 2) : Math.round(Style.capsuleHeight * scaling)
-  radius: Math.round(Style.radiusM * scaling)
+  implicitWidth: isVerticalBar ? Math.round(Style.capsuleHeight) : Math.round(taskbarLayout.implicitWidth + Style.marginM * 2)
+  implicitHeight: isVerticalBar ? Math.round(taskbarLayout.implicitHeight + Style.marginM * 2) : Math.round(Style.capsuleHeight)
+  radius: Math.round(Style.radiusM)
   color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
   GridLayout {
     id: taskbarLayout
     anchors.fill: parent
     anchors {
-      leftMargin: isVerticalBar ? undefined : Style.marginM * scaling
-      rightMargin: isVerticalBar ? undefined : Style.marginM * scaling
-      topMargin: compact ? 0 : isVerticalBar ? Style.marginM * scaling : undefined
-      bottomMargin: compact ? 0 : isVerticalBar ? Style.marginM * scaling : undefined
+      leftMargin: isVerticalBar ? undefined : Style.marginM
+      rightMargin: isVerticalBar ? undefined : Style.marginM
+      topMargin: compact ? 0 : isVerticalBar ? Style.marginM : undefined
+      bottomMargin: compact ? 0 : isVerticalBar ? Style.marginM : undefined
     }
 
     // Configure GridLayout to behave like RowLayout or ColumnLayout
     rows: isVerticalBar ? -1 : 1 // -1 means unlimited
     columns: isVerticalBar ? 1 : -1 // -1 means unlimited
 
-    rowSpacing: isVerticalBar ? Style.marginXXS * root.scaling : 0
-    columnSpacing: isVerticalBar ? 0 : Style.marginXXS * root.scaling
+    rowSpacing: isVerticalBar ? Style.marginXXS : 0
+    columnSpacing: isVerticalBar ? 0 : Style.marginXXS
 
     Repeater {
       model: CompositorService.windows
@@ -82,12 +81,12 @@ Rectangle {
           opacity: modelData.isFocused ? Style.opacityFull : 0.6
 
           Rectangle {
-            anchors.bottomMargin: -2 * scaling
+            anchors.bottomMargin: -2
             anchors.bottom: parent.bottom
             anchors.horizontalCenter: parent.horizontalCenter
             id: iconBackground
-            width: 4 * scaling
-            height: 4 * scaling
+            width: 4
+            height: 4
             color: modelData.isFocused ? Color.mPrimary : Color.transparent
             radius: width * 0.5
           }

@@ -7,7 +7,7 @@ import qs.Services
 
 ColumnLayout {
   id: root
-  spacing: Style.marginM * scaling
+  spacing: Style.marginM
 
   // Properties to receive data from parent
   property var widgetData: null
@@ -68,6 +68,6 @@ ColumnLayout {
       }]
     currentKey: valueScrollingMode
     onSelected: key => valueScrollingMode = key
-    minimumWidth: 200 * scaling
+    minimumWidth: 200
   }
 }

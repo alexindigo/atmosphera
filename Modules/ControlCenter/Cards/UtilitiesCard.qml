@@ -10,13 +10,12 @@ import qs.Widgets
 // Utilities: record & wallpaper
 NBox {
 
-  property real scaling: 1.0
   property real spacing: 0
 
   RowLayout {
     id: utilRow
     anchors.fill: parent
-    anchors.margins: Style.marginS * scaling
+    anchors.margins: Style.marginS
     spacing: spacing
     Item {
       Layout.fillWidth: true

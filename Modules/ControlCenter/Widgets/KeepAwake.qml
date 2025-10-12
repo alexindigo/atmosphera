@@ -6,7 +6,6 @@ import qs.Widgets
 
 NQuickSetting {
   property ShellScreen screen
-  property real scaling: 1.0
 
   text: I18n.tr("quickSettings.keepAwake.label.enabled")
   icon: IdleInhibitorService.isInhibited ? "keep-awake-on" : "keep-awake-off"

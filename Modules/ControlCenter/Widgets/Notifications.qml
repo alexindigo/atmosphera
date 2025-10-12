@@ -6,7 +6,6 @@ import qs.Widgets
 
 NQuickSetting {
   property ShellScreen screen
-  property real scaling: 1.0
 
   text: Settings.data.notifications.doNotDisturb ? I18n.tr("quickSettings.notifications.label.disabled") : I18n.tr("quickSettings.notifications.label.enabled")
   icon: Settings.data.notifications.doNotDisturb ? "bell-off" : "bell"

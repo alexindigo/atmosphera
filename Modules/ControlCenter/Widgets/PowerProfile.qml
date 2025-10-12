@@ -8,7 +8,7 @@ import qs.Widgets
 // Performance
 NQuickSetting {
   property ShellScreen screen
-  property real scaling: 1.0
+
   readonly property bool hasPP: PowerProfileService.available
 
   enabled: hasPP

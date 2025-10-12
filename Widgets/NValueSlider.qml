@@ -16,7 +16,7 @@ RowLayout {
   property bool snapAlways: true
   property real heightRatio: 0.7
   property string text: ""
-  property real textSize: Style.fontSizeM * scaling
+  property real textSize: Style.fontSizeM
   property real customHeight: -1
   property real customHeightRatio: -1
 
@@ -24,7 +24,7 @@ RowLayout {
   signal moved(real value)
   signal pressedChanged(bool pressed, real value)
 
-  spacing: Style.marginL * scaling
+  spacing: Style.marginL
   implicitHeight: root.customHeight > 0 ? root.customHeight : slider.implicitHeight
 
   NSlider {
@@ -47,7 +47,7 @@ RowLayout {
     pointSize: root.textSize
     family: Settings.data.ui.fontFixed
     Layout.alignment: Qt.AlignVCenter
-    Layout.preferredWidth: 45 * scaling
+    Layout.preferredWidth: 45
     horizontalAlignment: Text.AlignRight
   }
 }

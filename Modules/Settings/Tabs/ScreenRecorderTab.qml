@@ -9,7 +9,7 @@ import qs.Widgets
 ColumnLayout {
   id: root
 
-  spacing: Style.marginL * scaling
+  spacing: Style.marginL
 
   NHeader {
     label: I18n.tr("settings.screen-recorder.general.section.label")
@@ -18,7 +18,7 @@ ColumnLayout {
 
   // Output Folder
   ColumnLayout {
-    spacing: Style.marginS * scaling
+    spacing: Style.marginS
     Layout.fillWidth: true
 
     NTextInputButton {
@@ -43,13 +43,13 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
   }
 
   // Video Settings
   ColumnLayout {
-    spacing: Style.marginL * scaling
+    spacing: Style.marginL
     Layout.fillWidth: true
 
     NHeader {
@@ -179,13 +179,13 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
   }
 
   // Audio Settings
   ColumnLayout {
-    spacing: Style.marginL * scaling
+    spacing: Style.marginL
     Layout.fillWidth: true
 
     NHeader {

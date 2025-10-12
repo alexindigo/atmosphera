@@ -6,7 +6,6 @@ import qs.Widgets
 
 NQuickSetting {
   property ShellScreen screen
-  property real scaling: 1.0
 
   enabled: ProgramCheckerService.wlsunsetAvailable
   text: I18n.tr("quickSettings.nightLight.label.enabled")

@@ -17,10 +17,10 @@ Rectangle {
   property string style: "modern" // "modern", "classic", or "compact"
 
   // Styling properties
-  property real fontSize: (style === "classic") ? Style.fontSizeXS * scaling : Style.fontSizeS * scaling
+  property real fontSize: (style === "classic") ? Style.fontSizeXS : Style.fontSizeS
   property int fontWeight: Style.fontWeightMedium
-  property real iconSize: Style.fontSizeL * scaling
-  property real cornerRadius: Style.radiusM * scaling
+  property real iconSize: Style.fontSizeL
+  property real cornerRadius: Style.radiusM
 
   // Internal properties
   property bool hovered: false
@@ -73,21 +73,21 @@ Rectangle {
   // Dimensions - Style-dependent sizing
   implicitWidth: {
     if (style === "classic") {
-      return Style.baseWidgetSize * scaling
+      return Style.baseWidgetSize
     }
     if (style === "compact") {
-      return Style.baseWidgetSize * 0.8 * scaling
+      return Style.baseWidgetSize * 0.8
     }
-    return Math.max(120 * scaling, contentRow.implicitWidth + (Style.marginL * scaling))
+    return Math.max(120, contentRow.implicitWidth + (Style.marginL))
   }
   implicitHeight: {
     if (style === "classic") {
-      return Style.baseWidgetSize * scaling
+      return Style.baseWidgetSize
     }
     if (style === "compact") {
-      return Style.baseWidgetSize * 0.8 * scaling
+      return Style.baseWidgetSize * 0.8
     }
-    return Math.max(48 * scaling, contentRow.implicitHeight + (Style.marginL * scaling))
+    return Math.max(48, contentRow.implicitHeight + (Style.marginL))
   }
 
   // Appearance - Style-dependent styling
@@ -95,7 +95,7 @@ Rectangle {
     if (style === "classic")
       return width * 0.5
     if (style === "compact")
-      return Style.radiusS * scaling // Smaller radius for compact
+      return Style.radiusS // Smaller radius for compact
     return cornerRadius
   }
   color: {
@@ -108,7 +108,7 @@ Rectangle {
 
   border.width: {
     if (style === "classic")
-      return Math.max(1, Style.borderS * scaling)
+      return Math.max(1, Style.borderS)
     if (style === "compact")
       return 0
     return 0
@@ -146,7 +146,7 @@ Rectangle {
   ColumnLayout {
     id: contentRow
     anchors.centerIn: parent
-    spacing: Style.marginXXS * scaling
+    spacing: Style.marginXXS
     visible: root.style !== "classic" && root.style !== "compact"
 
     // Icon
@@ -202,7 +202,7 @@ Rectangle {
     anchors.centerIn: parent
     visible: root.style === "compact" && root.icon !== ""
     icon: root.icon
-    pointSize: Style.fontSizeM * scaling // Smaller icon for compact
+    pointSize: Style.fontSizeM // Smaller icon for compact
     color: {
       if (!root.enabled)
         return Color.mOnSurfaceVariant
@@ -223,12 +223,12 @@ Rectangle {
   RowLayout {
     anchors.centerIn: parent
     visible: root.style === "classic"
-    spacing: Style.marginXS * scaling
+    spacing: Style.marginXS
 
     NIcon {
       visible: root.icon !== ""
       icon: root.icon
-      pointSize: Style.fontSizeM * scaling
+      pointSize: Style.fontSizeM
       color: {
         if (!root.enabled)
           return Color.mOnSurfaceVariant
