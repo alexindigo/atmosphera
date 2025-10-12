@@ -31,8 +31,8 @@ Rectangle {
   signal rightClicked
   signal middleClicked
 
-  implicitWidth: applyUiScale ? Math.round(baseSize * applyUiScale) :  Math.round(baseSize)
-  implicitHeight:  applyUiScale ? Math.round(baseSize * applyUiScale) :  Math.round(baseSize)
+  implicitWidth: applyUiScale ? Math.round(baseSize * Style.uiScaleRatio) : Math.round(baseSize)
+  implicitHeight: applyUiScale ? Math.round(baseSize * Style.uiScaleRatio) : Math.round(baseSize)
 
   opacity: root.enabled ? Style.opacityFull : Style.opacityMedium
   color: root.enabled && root.hovering ? colorBgHover : colorBg
