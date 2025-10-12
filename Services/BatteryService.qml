@@ -19,6 +19,7 @@ Singleton {
   property int chargingMode: Settings.data.battery.chargingMode
   readonly property string batterySetterScript: Quickshell.shellDir + '/Bin/battery-manager/set-battery-treshold.sh'
   readonly property string batteryInstallerScript: Quickshell.shellDir + '/Bin/battery-manager/install-battery-manager.sh'
+  readonly property string batteryUninstallerScript: Quickshell.shellDir + '/Bin/battery-manager/uninstall-battery-manager.sh'
 
   // This is false when setter is started in init so that a toast isn't shown on every startup
   property bool hideSuccessToast: true
@@ -166,6 +167,67 @@ Singleton {
       onStreamFinished: {
         if (this.text) {
           Logger.log("BatteryService", "InstallerProcess stdout:", this.text)
+        }
+      }
+    }
+  }
+
+  Process {
+    id: uninstallerProcess
+    workingDirectory: Quickshell.shellDir
+    command: ["pkexec", batteryUninstallerScript]
+    running: false
+    onExited: (exitCode, exitStatus) => {
+      if (exitCode === 0) {
+        Logger.log("BatteryService", "Battery Manager uninstalled successfully")
+        ToastService.showNotice(I18n.tr("toast.battery-manager.title"), I18n.tr("toast.battery-manager.uninstall-success"))
+        Settings.data.battery.chargingMode = BatteryService.chargingMode
+        cleanupProcess.running = true
+      } else {
+        ToastService.showError(I18n.tr("toast.battery-manager.title"), I18n.tr("toast.battery-manager.uninstall-failed"))
+        Logger.error("BatteryService", `Uninstaller process failed with exit code: ${exitCode}`)
+      }
+    }
+    stderr: StdioCollector {
+      onStreamFinished: {
+        if (this.text) {
+          Logger.warn("BatteryService", "UninstallerProcess stderr:", this.text)
+        }
+      }
+    }
+    stdout: StdioCollector {
+      onStreamFinished: {
+        if (this.text) {
+          Logger.log("BatteryService", "UninstallerProcess stdout:", this.text)
+        }
+      }
+    }
+  }
+
+  // Cleanup process - deletes uninstaller after it sucessfull ;
+  Process {
+    id: cleanupProcess
+    workingDirectory: Quickshell.shellDir
+    command: ["rm", "-rf", batteryUninstallerScript]
+    running: false
+    onExited: (exitCode, exitStatus) => {
+      if (exitCode === 0) {
+        Logger.log("BatteryService", "Battery Manager uninstalled successfully")
+      } else {
+        Logger.error("BatteryService", `Cleanup process failed with exit code: ${exitCode}`)
+      }
+    }
+    stderr: StdioCollector {
+      onStreamFinished: {
+        if (this.text) {
+          Logger.warn("BatteryService", "CleanupProcess stderr:", this.text)
+        }
+      }
+    }
+    stdout: StdioCollector {
+      onStreamFinished: {
+        if (this.text) {
+          Logger.log("BatteryService", "CleanupProcess stdout:", this.text)
         }
       }
     }
