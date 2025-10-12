@@ -32,15 +32,22 @@
         },
         "border-radius": {
           "label": "Radio del borde",
-          "description": "Controla la redondez de las esquinas de ventanas, botones y otros elementos."
+          "description": "Controla la redondez de las esquinas de ventanas, botones y otros elementos.",
+          "reset": "Restablecer el radio del borde"
         },
         "animation-speed": {
           "label": "Velocidad de la animación",
-          "description": "Ajusta la velocidad de la animación global."
+          "description": "Ajusta la velocidad de la animación global.",
+          "reset": "Restablecer la velocidad de la animación"
         },
         "animation-disable": {
           "label": "Desactivar animaciones de UI",
           "description": "Desactivar todas las animaciones para una experiencia más rápida y responsiva."
+        },
+        "scaling": {
+          "description": "Cambia el tamaño de la interfaz de usuario general, excluyendo la barra.",
+          "label": "Escalado de la interfaz",
+          "reset-scaling": "Restablecer la escala de la interfaz"
         }
       },
       "screen-corners": {
@@ -58,7 +65,8 @@
         },
         "radius": {
           "label": "Radio de las esquinas de la pantalla",
-          "description": "Ajusta las esquinas redondeadas de la pantalla."
+          "description": "Ajusta las esquinas redondeadas de la pantalla.",
+          "reset": "Restablecer el radio de las esquinas de la pantalla"
         }
       },
       "fonts": {
@@ -200,11 +208,9 @@
       "monitors": {
         "section": {
           "label": "Configuración por monitor",
-          "description": "Ajusta la escala y el brillo para cada pantalla."
+          "description": "Ajustar el brillo de la configuración para cada pantalla."
         },
-        "scale": "Escala",
         "brightness": "Brillo",
-        "reset-scaling": "Restablecer escala",
         "brightness-step": {
           "label": "Tamaño del paso de brillo",
           "description": "Ajusta el tamaño del paso para los cambios de brillo (rueda de desplazamiento y atajos de teclado)."

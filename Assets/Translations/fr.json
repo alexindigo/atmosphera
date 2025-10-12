@@ -32,15 +32,22 @@
         },
         "border-radius": {
           "label": "Rayon de bordure",
-          "description": "Contrôle l'arrondi des coins des fenêtres, des boutons et d'autres éléments."
+          "description": "Contrôle l'arrondi des coins des fenêtres, des boutons et d'autres éléments.",
+          "reset": "Réinitialiser le rayon de la bordure"
         },
         "animation-speed": {
           "label": "Vitesse d'animation",
-          "description": "Ajustez la vitesse globale des animations."
+          "description": "Ajustez la vitesse globale des animations.",
+          "reset": "Réinitialiser la vitesse de l'animation"
         },
         "animation-disable": {
           "label": "Désactiver les animations de l'interface",
           "description": "Désactiver toutes les animations pour une expérience plus rapide et réactive."
+        },
+        "scaling": {
+          "description": "Modifie la taille de l'interface utilisateur générale, à l'exception de la barre.",
+          "label": "Mise à l'échelle de l'interface",
+          "reset-scaling": "Réinitialiser l'échelle de l'interface"
         }
       },
       "screen-corners": {
@@ -58,7 +65,8 @@
         },
         "radius": {
           "label": "Rayon des coins de l'écran",
-          "description": "Ajustez l'arrondi des coins de l'écran."
+          "description": "Ajustez l'arrondi des coins de l'écran.",
+          "reset": "Réinitialiser le rayon des coins de l'écran"
         }
       },
       "fonts": {
@@ -200,11 +208,9 @@
       "monitors": {
         "section": {
           "label": "Paramètres par moniteur",
-          "description": "Ajustez la mise à l'échelle et la luminosité pour chaque écran."
+          "description": "Ajustez la luminosité pour chaque écran."
         },
-        "scale": "Mise à l'échelle",
         "brightness": "Luminosité",
-        "reset-scaling": "Réinitialiser la mise à l'échelle",
         "brightness-step": {
           "label": "Incrément de luminosité",
           "description": "Ajustez l'incrément pour les changements de luminosité (molette de la souris et raccourcis clavier)."

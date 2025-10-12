@@ -31,7 +31,6 @@ NBox {
       fallbackIcon: "person"
       borderColor: Color.mPrimary
       borderWidth: Math.max(1, Style.borderM)
-      
     }
 
     ColumnLayout {
@@ -84,7 +83,6 @@ NBox {
       }
     }
   }
-
 
   // ----------------------------------
   // Uptime

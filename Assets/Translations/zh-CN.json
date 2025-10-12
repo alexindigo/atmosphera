@@ -32,15 +32,22 @@
         },
         "border-radius": {
           "label": "边框圆角",
-          "description": "控制窗口、按钮及其他元素的边角圆度。"
+          "description": "控制窗口、按钮及其他元素的边角圆度。",
+          "reset": "重置边框半径"
         },
         "animation-speed": {
           "label": "动画速度",
-          "description": "调整全局动画速度。"
+          "description": "调整全局动画速度。",
+          "reset": "重置动画速度"
         },
         "animation-disable": {
           "label": "关闭动画",
           "description": "禁用所有动画效果，以获得更快速、更灵敏的体验。"
+        },
+        "scaling": {
+          "description": "更改常规用户界面（不包括栏）的大小。",
+          "label": "界面缩放",
+          "reset-scaling": "重置界面缩放"
         }
       },
       "screen-corners": {
@@ -58,7 +65,8 @@
         },
         "radius": {
           "label": "屏幕边角半径",
-          "description": "调整屏幕圆角的弧度。"
+          "description": "调整屏幕圆角的弧度。",
+          "reset": "重置屏幕圆角半径"
         }
       },
       "fonts": {
@@ -200,11 +208,9 @@
       "monitors": {
         "section": {
           "label": "显示器设置",
-          "description": "调整每个显示器的缩放比例和亮度。"
+          "description": "调整每个显示器的亮度设置。"
         },
-        "scale": "缩放比例",
         "brightness": "亮度",
-        "reset-scaling": "重置缩放",
         "brightness-step": {
           "label": "亮度步长",
           "description": "调整亮度变化的步长（滚轮和键盘快捷键）。"

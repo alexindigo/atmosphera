@@ -186,7 +186,7 @@ NPanel {
         anchors.right: parent.right
         anchors.rightMargin: Style.marginM
         anchors.verticalCenter: parent.verticalCenter
-        height: Math.round((Style.fontSizeXXXL * 1.9) / 2 * Style.uiScaleRatio) * 2 
+        height: Math.round((Style.fontSizeXXXL * 1.9) / 2 * Style.uiScaleRatio) * 2
         width: clockItem.height
 
         // Seconds circular progress

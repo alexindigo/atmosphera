@@ -35,7 +35,6 @@ Item {
   readonly property string fallbackIcon: "user-desktop"
 
   readonly property string barPosition: Settings.data.bar.position
-  readonly property bool compact: (Settings.data.bar.density === "compact")
 
   // Widget settings - matching MediaMini pattern
   readonly property bool showIcon: (widgetSettings.showIcon !== undefined) ? widgetSettings.showIcon : widgetMetadata.showIcon
@@ -107,7 +106,7 @@ Item {
     visible: false
     text: windowTitle
     pointSize: Style.fontSizeS
-                applyUiScale: false
+    applyUiScale: false
     font.weight: Style.fontWeightMedium
   }
 

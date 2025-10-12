@@ -32,15 +32,22 @@
         },
         "border-radius": {
           "label": "Raio da borda",
-          "description": "Controla o arredondamento dos cantos de janelas, botões e outros elementos."
+          "description": "Controla o arredondamento dos cantos de janelas, botões e outros elementos.",
+          "reset": "Redefinir raio da borda"
         },
         "animation-speed": {
           "label": "Velocidade da animação",
-          "description": "Ajuste a velocidade global da animação."
+          "description": "Ajuste a velocidade global da animação.",
+          "reset": "Redefinir velocidade da animação"
         },
         "animation-disable": {
           "label": "Desativar animações da interface",
           "description": "Desativar todas as animações para uma experiência mais rápida e responsiva."
+        },
+        "scaling": {
+          "description": "Altera o tamanho da interface geral do usuário, excluindo a barra.",
+          "label": "Escalonamento da Interface",
+          "reset-scaling": "Redefinir escala da interface"
         }
       },
       "screen-corners": {
@@ -58,7 +65,8 @@
         },
         "radius": {
           "label": "Raio dos cantos da tela",
-          "description": "Ajuste os cantos arredondados da tela."
+          "description": "Ajuste os cantos arredondados da tela.",
+          "reset": "Redefinir raio dos cantos da tela"
         }
       },
       "fonts": {
@@ -200,11 +208,9 @@
       "monitors": {
         "section": {
           "label": "Configurações por monitor",
-          "description": "Ajuste a escala e o brilho para cada tela."
+          "description": "Ajustar o brilho das configurações para cada tela."
         },
-        "scale": "Escala",
         "brightness": "Brilho",
-        "reset-scaling": "Redefinir escala",
         "brightness-step": {
           "label": "Tamanho do passo do brilho",
           "description": "Ajuste o tamanho do passo para alterações de brilho (roda do mouse e atalhos de teclado)."

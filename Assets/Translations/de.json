@@ -32,15 +32,22 @@
         },
         "border-radius": {
           "label": "Eckenradius",
-          "description": "Steuert die Rundung der Ecken von Fenstern, Buttons und anderen Elementen."
+          "description": "Steuert die Rundung der Ecken von Fenstern, Buttons und anderen Elementen.",
+          "reset": "Rahmenradius zurücksetzen"
         },
         "animation-speed": {
           "label": "Animationsgeschwindigkeit",
-          "description": "Globale Animationsgeschwindigkeit anpassen."
+          "description": "Globale Animationsgeschwindigkeit anpassen.",
+          "reset": "Animationsgeschwindigkeit zurücksetzen"
         },
         "animation-disable": {
           "label": "UI-Animationen deaktivieren",
           "description": "Alle Animationen für eine schnellere, reaktionsschnellere Erfahrung deaktivieren."
+        },
+        "scaling": {
+          "description": "Ändert die Größe der allgemeinen Benutzeroberfläche, mit Ausnahme der Leiste.",
+          "label": "Oberflächenskalierung",
+          "reset-scaling": "Schnittstellenskalierung zurücksetzen"
         }
       },
       "screen-corners": {
@@ -58,7 +65,8 @@
         },
         "radius": {
           "label": "Bildschirmecken-Radius",
-          "description": "Rundung der Bildschirmecken anpassen."
+          "description": "Rundung der Bildschirmecken anpassen.",
+          "reset": "Eckenradius des Bildschirms zurücksetzen"
         }
       },
       "fonts": {
@@ -200,11 +208,9 @@
       "monitors": {
         "section": {
           "label": "Monitor-spezifische Einstellungen",
-          "description": "Skalierung und Helligkeit für jeden Bildschirm anpassen."
+          "description": "Helligkeitseinstellungen für jedes Display anpassen."
         },
-        "scale": "Skalierung",
         "brightness": "Helligkeit",
-        "reset-scaling": "Skalierung zurücksetzen",
         "brightness-step": {
           "label": "Helligkeits-Schrittgröße",
           "description": "Schrittgröße für Helligkeitsänderungen anpassen (Mausrad und Tastenkombinationen)."

@@ -34,14 +34,12 @@ Singleton {
   property int radiusS: Math.round(12 * Settings.data.general.radiusRatio)
   property int radiusM: Math.round(16 * Settings.data.general.radiusRatio)
   property int radiusL: Math.round(20 * Settings.data.general.radiusRatio)
-
-  //screen Radii
   property int screenRadius: Math.round(20 * Settings.data.general.screenRadiusRatio)
 
   // Border
-  property int borderS: 1
-  property int borderM: 2
-  property int borderL: 3
+  property int borderS: Math.round(1 * uiScaleRatio)
+  property int borderM: Math.round(2 * uiScaleRatio)
+  property int borderL: Math.round(3 * uiScaleRatio)
 
   // Margins (for margins and spacing)
   property int marginXXS: Math.round(2 * uiScaleRatio)
@@ -50,8 +48,6 @@ Singleton {
   property int marginM: Math.round(9 * uiScaleRatio)
   property int marginL: Math.round(13 * uiScaleRatio)
   property int marginXL: Math.round(18 * uiScaleRatio)
-
-  property real uiScaleRatio: 1.2
 
   // Opacity
   property real opacityNone: 0.0
@@ -72,9 +68,11 @@ Singleton {
   property int tooltipDelayLong: 1200
   property int pillDelay: 500
 
-  // Settings widgets base size
+  // Widgets base size
   property real baseWidgetSize: 33
   property real sliderWidth: 200
+
+  property real uiScaleRatio: Settings.data.general.scaleRatio
 
   // Bar Dimensions
   property real barHeight: {
@@ -86,6 +84,7 @@ Singleton {
       case "comfortable":
       return (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 39 : 37
       default:
+
       case "default":
       return (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 33 : 31
     }
@@ -99,6 +98,7 @@ Singleton {
       case "comfortable":
       return barHeight * 0.73
       default:
+
       case "default":
       return barHeight * 0.82
     }

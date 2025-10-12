@@ -82,6 +82,46 @@ ColumnLayout {
       onToggled: checked => Settings.data.general.dimDesktop = checked
     }
 
+    ColumnLayout {
+      spacing: Style.marginXXS
+      Layout.fillWidth: true
+
+      NLabel {
+        label: I18n.tr("settings.general.ui.scaling.label")
+        description: I18n.tr("settings.general.ui.scaling.description")
+      }
+
+      RowLayout {
+        spacing: Style.marginL
+        Layout.fillWidth: true
+
+        NValueSlider {
+          Layout.fillWidth: true
+          from: 0.8
+          to: 1.2
+          stepSize: 0.1
+          value: Settings.data.general.scaleRatio
+          onMoved: value => Settings.data.general.scaleRatio = value
+          text: Math.floor(Settings.data.general.scaleRatio * 100) + "%"
+        }
+
+        // Reset button container
+        Item {
+          Layout.preferredWidth: 30 * Style.uiScaleRatio
+          Layout.preferredHeight: 30 * Style.uiScaleRatio
+
+          NIconButton {
+            icon: "refresh"
+            baseSize: Style.baseWidgetSize * 0.8
+            tooltipText: I18n.tr("settings.general.ui.scaling.reset-scaling")
+            onClicked: Settings.data.general.scaleRatio = 1.0
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+          }
+        }
+      }
+    }
+
     NToggle {
       label: I18n.tr("settings.general.ui.tooltips.label")
       description: I18n.tr("settings.general.ui.tooltips.description")
@@ -105,14 +145,34 @@ ColumnLayout {
         description: I18n.tr("settings.general.ui.border-radius.description")
       }
 
-      NValueSlider {
+      RowLayout {
+        spacing: Style.marginL
         Layout.fillWidth: true
-        from: 0
-        to: 1
-        stepSize: 0.01
-        value: Settings.data.general.radiusRatio
-        onMoved: value => Settings.data.general.radiusRatio = value
-        text: Math.floor(Settings.data.general.radiusRatio * 100) + "%"
+
+        NValueSlider {
+          Layout.fillWidth: true
+          from: 0
+          to: 1
+          stepSize: 0.01
+          value: Settings.data.general.radiusRatio
+          onMoved: value => Settings.data.general.radiusRatio = value
+          text: Math.floor(Settings.data.general.radiusRatio * 100) + "%"
+        }
+
+        // Reset button container
+        Item {
+          Layout.preferredWidth: 30 * Style.uiScaleRatio
+          Layout.preferredHeight: 30 * Style.uiScaleRatio
+
+          NIconButton {
+            icon: "refresh"
+            baseSize: Style.baseWidgetSize * 0.8
+            tooltipText: I18n.tr("settings.general.ui.border-radius.reset")
+            onClicked: Settings.data.general.radiusRatio = 1.0
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+          }
+        }
       }
     }
 
@@ -138,14 +198,34 @@ ColumnLayout {
           description: I18n.tr("settings.general.ui.animation-speed.description")
         }
 
-        NValueSlider {
+        RowLayout {
+          spacing: Style.marginL
           Layout.fillWidth: true
-          from: 0.1
-          to: 2.0
-          stepSize: 0.01
-          value: Settings.data.general.animationSpeed
-          onMoved: value => Settings.data.general.animationSpeed = value
-          text: Math.round(Settings.data.general.animationSpeed * 100) + "%"
+
+          NValueSlider {
+            Layout.fillWidth: true
+            from: 0.1
+            to: 2.0
+            stepSize: 0.01
+            value: Settings.data.general.animationSpeed
+            onMoved: value => Settings.data.general.animationSpeed = value
+            text: Math.round(Settings.data.general.animationSpeed * 100) + "%"
+          }
+
+          // Reset button container
+          Item {
+            Layout.preferredWidth: 30 * Style.uiScaleRatio
+            Layout.preferredHeight: 30 * Style.uiScaleRatio
+
+            NIconButton {
+              icon: "refresh"
+              baseSize: Style.baseWidgetSize * 0.8
+              tooltipText: I18n.tr("settings.general.ui.animation-speed.reset")
+              onClicked: Settings.data.general.animationSpeed = 1.0
+              anchors.right: parent.right
+              anchors.verticalCenter: parent.verticalCenter
+            }
+          }
         }
       }
     }
@@ -190,14 +270,34 @@ ColumnLayout {
         description: I18n.tr("settings.general.screen-corners.radius.description")
       }
 
-      NValueSlider {
+      RowLayout {
+        spacing: Style.marginL
         Layout.fillWidth: true
-        from: 0
-        to: 2
-        stepSize: 0.01
-        value: Settings.data.general.screenRadiusRatio
-        onMoved: value => Settings.data.general.screenRadiusRatio = value
-        text: Math.floor(Settings.data.general.screenRadiusRatio * 100) + "%"
+
+        NValueSlider {
+          Layout.fillWidth: true
+          from: 0
+          to: 2
+          stepSize: 0.01
+          value: Settings.data.general.screenRadiusRatio
+          onMoved: value => Settings.data.general.screenRadiusRatio = value
+          text: Math.floor(Settings.data.general.screenRadiusRatio * 100) + "%"
+        }
+
+        // Reset button container
+        Item {
+          Layout.preferredWidth: 30 * Style.uiScaleRatio
+          Layout.preferredHeight: 30 * Style.uiScaleRatio
+
+          NIconButton {
+            icon: "refresh"
+            baseSize: Style.baseWidgetSize * 0.8
+            tooltipText: I18n.tr("settings.general.screen-corners.radius.reset")
+            onClicked: Settings.data.general.screenRadiusRatio = 1.0
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+          }
+        }
       }
     }
   }
@@ -323,8 +423,8 @@ ColumnLayout {
 
           // Reset button container
           Item {
-            Layout.preferredWidth: 30
-            Layout.preferredHeight: 30
+            Layout.preferredWidth: 30 * Style.uiScaleRatio
+            Layout.preferredHeight: 30 * Style.uiScaleRatio
 
             NIconButton {
               icon: "refresh"
@@ -360,8 +460,8 @@ ColumnLayout {
 
           // Reset button container
           Item {
-            Layout.preferredWidth: 30
-            Layout.preferredHeight: 30
+            Layout.preferredWidth: 30 * Style.uiScaleRatio
+            Layout.preferredHeight: 30 * Style.uiScaleRatio
 
             NIconButton {
               icon: "refresh"

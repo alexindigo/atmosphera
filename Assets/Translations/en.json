@@ -22,6 +22,11 @@
           "label": "Show tooltips",
           "description": "Enable or disable tooltips throughout the interface."
         },
+        "scaling": {
+          "label": "Interface Scaling",
+          "description": "Changes the size of the general user interface, excluding the bar.",
+          "reset-scaling": "Reset interface scaling"
+        },
         "dim-desktop": {
           "label": "Dim desktop",
           "description": "Dim the desktop when panels or menus are open."
@@ -32,11 +37,13 @@
         },
         "border-radius": {
           "label": "Border radius",
-          "description": "Controls the corner roundness of windows, buttons, and other elements."
+          "description": "Controls the corner roundness of windows, buttons, and other elements.",
+          "reset": "Reset border radius"
         },
         "animation-speed": {
           "label": "Animation speed",
-          "description": "Adjust global animation speed."
+          "description": "Adjust global animation speed.",
+          "reset": "Reset animation speed"
         },
         "animation-disable": {
           "label": "Disable UI Animations",
@@ -58,7 +65,8 @@
         },
         "radius": {
           "label": "Screen corners radius",
-          "description": "Adjust the rounded corners of the screen."
+          "description": "Adjust the rounded corners of the screen.",
+          "reset": "Reset screen corners radius"
         }
       },
       "fonts": {
@@ -200,11 +208,9 @@
       "monitors": {
         "section": {
           "label": "Per-monitor settings",
-          "description": "Adjust scaling and brightness for each display."
+          "description": "Adjust settings brightness for each display."
         },
-        "scale": "Scale",
         "brightness": "Brightness",
-        "reset-scaling": "Reset scaling",
         "brightness-step": {
           "label": "Brightness step size",
           "description": "Adjust the step size for brightness changes (scroll wheel and keyboard shortcuts)."
@@ -1272,6 +1278,7 @@
         "right": "Right"
       },
       "density": {
+        "mini": "Mini",
         "compact": "Compact",
         "default": "Default",
         "comfortable": "Comfortable"
