@@ -26,6 +26,10 @@
           "label": "调暗桌面",
           "description": "当面板或菜单打开时调暗桌面。"
         },
+        "compact-lockscreen": {
+          "label": "紧凑锁屏",
+          "description": "仅显示登录输入和系统控件，隐藏天气和媒体小部件。"
+        },
         "border-radius": {
           "label": "边框圆角",
           "description": "控制窗口、按钮及其他元素的边角圆度。"

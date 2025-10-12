@@ -26,6 +26,10 @@
           "label": "Dim desktop",
           "description": "Dim the desktop when panels or menus are open."
         },
+        "compact-lockscreen": {
+          "label": "Compact lock screen",
+          "description": "Show only the login input and system controls, hiding weather and media widgets."
+        },
         "border-radius": {
           "label": "Border radius",
           "description": "Controls the corner roundness of windows, buttons, and other elements."

@@ -26,6 +26,10 @@
           "label": "Atenuar escritorio",
           "description": "Atenúa el escritorio cuando los paneles o menús están abiertos."
         },
+        "compact-lockscreen": {
+          "label": "Pantalla de bloqueo compacta",
+          "description": "Muestra solo la entrada de inicio de sesión y controles del sistema, ocultando widgets de clima y medios."
+        },
         "border-radius": {
           "label": "Radio del borde",
           "description": "Controla la redondez de las esquinas de ventanas, botones y otros elementos."

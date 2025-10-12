@@ -253,7 +253,7 @@ Loader {
               anchors.horizontalCenter: parent.horizontalCenter
               anchors.top: parent.top
               anchors.topMargin: 100 * scaling
-              radius: 32 * scaling
+              radius: Style.radiusL * scaling
               color: Color.mSurface
               border.color: Qt.alpha(Color.mOutline, 0.2)
               border.width: 1
@@ -317,11 +317,6 @@ Loader {
                   }
                 }
 
-                // Spacer to center the text section
-                Item {
-                  Layout.fillWidth: true
-                }
-
                 // Center: User Info Column (left-aligned text)
                 ColumnLayout {
                   Layout.alignment: Qt.AlignVCenter
@@ -346,12 +341,12 @@ Loader {
                   }
                 }
 
-                // Spacer to push cool time to the right
+
+                // Spacer to push time to the right
                 Item {
                   Layout.fillWidth: true
                 }
 
-                // Right side: Cool Time (from Calendar)
                 Item {
                   Layout.preferredWidth: 70 * scaling
                   Layout.preferredHeight: 70 * scaling
@@ -469,17 +464,82 @@ Loader {
               }
             }
 
+            // Compact status indicators container (compact mode only)
+            Rectangle {
+              width: {
+                var hasBattery = UPower.displayDevice && UPower.displayDevice.ready && UPower.displayDevice.isPresent
+                var hasKeyboard = keyboardLayout.currentLayout !== "Unknown"
+                
+                if (hasBattery && hasKeyboard) {
+                  return 200 * scaling
+                } else if (hasBattery || hasKeyboard) {
+                  return 120 * scaling
+                } else {
+                  return 0
+                }
+              }
+              height: 40 * scaling
+              anchors.horizontalCenter: parent.horizontalCenter
+              anchors.bottom: parent.bottom
+              anchors.bottomMargin: 96 * scaling + (Settings.data.general.compactLockScreen ? 116 * scaling : 220 * scaling)
+              topLeftRadius: Style.radiusL * scaling
+              topRightRadius: Style.radiusL * scaling
+              color: Color.mSurface
+              visible: Settings.data.general.compactLockScreen && ((UPower.displayDevice && UPower.displayDevice.ready && UPower.displayDevice.isPresent) || keyboardLayout.currentLayout !== "Unknown")
+
+              RowLayout {
+                anchors.centerIn: parent
+                spacing: 16 * scaling
+
+                // Battery indicator
+                RowLayout {
+                  spacing: 6 * scaling
+                  visible: UPower.displayDevice && UPower.displayDevice.ready && UPower.displayDevice.isPresent
+
+                  NIcon {
+                    icon: BatteryService.getIcon(Math.round(UPower.displayDevice.percentage * 100), UPower.displayDevice.state === UPowerDeviceState.Charging, true)
+                    pointSize: Style.fontSizeM * scaling
+                    color: UPower.displayDevice.state === UPowerDeviceState.Charging ? Color.mPrimary : Color.mOnSurfaceVariant
+                  }
+
+                  NText {
+                    text: Math.round(UPower.displayDevice.percentage * 100) + "%"
+                    color: Color.mOnSurfaceVariant
+                    pointSize: Style.fontSizeM * scaling
+                    font.weight: Font.Medium
+                  }
+                }
+
+                // Keyboard layout indicator
+                RowLayout {
+                  spacing: 6 * scaling
+                  visible: keyboardLayout.currentLayout !== "Unknown"
+
+                  NIcon {
+                    icon: "keyboard"
+                    pointSize: Style.fontSizeM * scaling
+                    color: Color.mOnSurfaceVariant
+                  }
+
+                  NText {
+                    text: keyboardLayout.currentLayout
+                    color: Color.mOnSurfaceVariant
+                    pointSize: Style.fontSizeM * scaling
+                    font.weight: Font.Medium
+                  }
+                }
+              }
+            }
+
             // Bottom container with weather, password input and controls
             Rectangle {
               width: 750 * scaling
-              height: 220 * scaling
+              height: Settings.data.general.compactLockScreen ? 120 * scaling : 220 * scaling
               anchors.horizontalCenter: parent.horizontalCenter
               anchors.bottom: parent.bottom
               anchors.bottomMargin: 100 * scaling
-              radius: 32 * scaling
+              radius: Style.radiusL * scaling
               color: Color.mSurface
-              border.color: Qt.alpha(Color.mOutline, 0.2)
-              border.width: 1
 
               ColumnLayout {
                 anchors.fill: parent
@@ -491,7 +551,7 @@ Loader {
                   Layout.fillWidth: true
                   Layout.preferredHeight: 65 * scaling
                   spacing: 18 * scaling
-                  visible: LocationService.coordinatesReady && LocationService.data.weather !== null
+                  visible: !Settings.data.general.compactLockScreen && LocationService.coordinatesReady && LocationService.data.weather !== null
 
                   // Media widget with visualizer
                   Rectangle {
@@ -695,14 +755,13 @@ Loader {
                     }
                   }
 
-                  // Battery and Keyboard Layout
-                  ColumnLayout {
+                  // Battery and Keyboard Layout (full mode only)
+                  RowLayout {
                     Layout.preferredWidth: 60 * scaling
                     spacing: 4 * scaling
 
+                    // Battery
                     RowLayout {
-                      Layout.preferredWidth: 60 * scaling
-                      Layout.preferredHeight: 22 * scaling
                       spacing: 4 * scaling
                       visible: UPower.displayDevice && UPower.displayDevice.ready && UPower.displayDevice.isPresent
 
@@ -720,10 +779,10 @@ Loader {
                       }
                     }
 
+                    // Keyboard Layout
                     RowLayout {
-                      Layout.preferredWidth: 60 * scaling
-                      Layout.preferredHeight: 22 * scaling
                       spacing: 4 * scaling
+                      visible: keyboardLayout.currentLayout !== "Unknown"
 
                       NIcon {
                         icon: "keyboard"
@@ -739,7 +798,9 @@ Loader {
                       }
                     }
                   }
+
                 }
+
 
                 // Password input
                 RowLayout {
@@ -749,6 +810,7 @@ Loader {
                   Item {
                     Layout.preferredWidth: Style.marginM * scaling
                   }
+
 
                   Rectangle {
                     Layout.fillWidth: true
@@ -893,6 +955,7 @@ Loader {
                       }
                     }
                   }
+
 
                   Item {
                     Layout.preferredWidth: Style.marginM * scaling

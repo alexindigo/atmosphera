@@ -26,6 +26,10 @@
           "label": "Assombrir le bureau",
           "description": "Assombrir le bureau lorsque des panneaux ou des menus sont ouverts."
         },
+        "compact-lockscreen": {
+          "label": "Écran de verrouillage compact",
+          "description": "Affiche uniquement la saisie de connexion et les contrôles système, masquant les widgets météo et média."
+        },
         "border-radius": {
           "label": "Rayon de bordure",
           "description": "Contrôle l'arrondi des coins des fenêtres, des boutons et d'autres éléments."

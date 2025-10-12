@@ -26,6 +26,10 @@
           "label": "Desktop abdunkeln",
           "description": "Desktop abdunkeln, wenn Panels oder Menüs geöffnet sind."
         },
+        "compact-lockscreen": {
+          "label": "Kompakter Sperrbildschirm",
+          "description": "Zeigt nur die Anmeldeeingabe und Systemsteuerungen an, versteckt Wetter- und Medien-Widgets."
+        },
         "border-radius": {
           "label": "Eckenradius",
           "description": "Steuert die Rundung der Ecken von Fenstern, Buttons und anderen Elementen."

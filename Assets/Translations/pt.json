@@ -26,6 +26,10 @@
           "label": "Escurecer área de trabalho",
           "description": "Escurece a área de trabalho quando painéis ou menus estão abertos."
         },
+        "compact-lockscreen": {
+          "label": "Tela de bloqueio compacta",
+          "description": "Mostra apenas a entrada de login e controles do sistema, ocultando widgets de clima e mídia."
+        },
         "border-radius": {
           "label": "Raio da borda",
           "description": "Controla o arredondamento dos cantos de janelas, botões e outros elementos."
