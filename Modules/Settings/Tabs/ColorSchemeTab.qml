@@ -261,7 +261,7 @@ ColumnLayout {
 
           RowLayout {
             anchors.fill: parent
-            anchors.margins: Style.marginM
+            anchors.margins: Style.marginL
             spacing: Style.marginXS
 
             NText {

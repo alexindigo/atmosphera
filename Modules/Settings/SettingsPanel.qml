@@ -377,7 +377,7 @@ NPanel {
               delegate: Rectangle {
                 id: tabItem
                 Layout.fillWidth: true
-                Layout.preferredHeight: tabEntryRow.implicitHeight + Style.marginS * 2
+                Layout.preferredHeight: tabEntryRow.implicitHeight + Style.marginM * 2
                 radius: Style.radiusS
                 color: selected ? Color.mPrimary : (tabItem.hovering ? Color.mTertiary : Color.transparent)
                 readonly property bool selected: index === currentTabIndex

@@ -317,7 +317,6 @@ Singleton {
       property string fontFixed: "DejaVu Sans Mono"
       property real fontDefaultScale: 1.0
       property real fontFixedScale: 1.0
-      property list<var> monitorsScaling: []
       property bool idleInhibitorEnabled: false
       property bool tooltipsEnabled: true
     }

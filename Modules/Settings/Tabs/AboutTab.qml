@@ -110,9 +110,10 @@ ColumnLayout {
       const rows = Math.ceil(root.contributors.length / columns)
       return rows * cellHeight
     }
-    cellWidth: Style.baseWidgetSize * 7
-    cellHeight: Style.baseWidgetSize * 3
+    cellWidth:  Math.round(Style.baseWidgetSize * 7)
+    cellHeight: Math.round(Style.baseWidgetSize * 2.5)
     model: root.contributors
+
 
     delegate: Rectangle {
       width: contributorsGrid.cellWidth - Style.marginM
