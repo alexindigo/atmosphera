@@ -46,7 +46,7 @@
         },
         "scaling": {
           "description": "Altera o tamanho da interface geral do usuário, excluindo a barra.",
-          "label": "Escalonamento da Interface",
+          "label": "Escalonamento da interface",
           "reset-scaling": "Redefinir escala da interface"
         }
       },

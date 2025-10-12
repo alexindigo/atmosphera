@@ -23,7 +23,7 @@
           "description": "Enable or disable tooltips throughout the interface."
         },
         "scaling": {
-          "label": "Interface Scaling",
+          "label": "Interface scaling",
           "description": "Changes the size of the general user interface, excluding the bar.",
           "reset-scaling": "Reset interface scaling"
         },

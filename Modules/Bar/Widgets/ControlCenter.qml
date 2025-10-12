@@ -37,6 +37,7 @@ NIconButton {
   tooltipText: I18n.tr("tooltips.open-control-center")
   tooltipDirection: BarService.getTooltipDirection()
   baseSize: Style.capsuleHeight
+  applyUiScale: false
   compact: (Settings.data.bar.density === "compact") || (Settings.data.bar.density === "mini")
   colorBg: (Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent)
   colorFg: Color.mOnSurface

@@ -11,6 +11,7 @@ NIconButton {
   property ShellScreen screen
 
   baseSize: Style.capsuleHeight
+  applyUiScale: false
   compact: (Settings.data.bar.density === "compact") || (Settings.data.bar.density === "mini")
   icon: "wallpaper-selector"
   tooltipText: I18n.tr("tooltips.open-wallpaper-selector")

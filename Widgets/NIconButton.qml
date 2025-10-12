@@ -7,7 +7,8 @@ import qs.Services
 Rectangle {
   id: root
 
-  property real baseSize: Style.baseWidgetSize * Style.uiScaleRatio
+  property real baseSize: Style.baseWidgetSize
+  property bool applyUiScale: true
 
   property string icon
   property string tooltipText
@@ -30,8 +31,8 @@ Rectangle {
   signal rightClicked
   signal middleClicked
 
-  implicitWidth: Math.round(baseSize)
-  implicitHeight: Math.round(baseSize)
+  implicitWidth: applyUiScale ? Math.round(baseSize * applyUiScale) :  Math.round(baseSize)
+  implicitHeight:  applyUiScale ? Math.round(baseSize * applyUiScale) :  Math.round(baseSize)
 
   opacity: root.enabled ? Style.opacityFull : Style.opacityMedium
   color: root.enabled && root.hovering ? colorBgHover : colorBg
@@ -49,6 +50,7 @@ Rectangle {
   NIcon {
     icon: root.icon
     pointSize: Math.max(1, root.compact ? root.width * 0.65 : root.width * 0.48)
+    applyUiScale: root.applyUiScale
     color: root.enabled && root.hovering ? colorFgHover : colorFg
     // Center horizontally
     x: (root.width - width) / 2
