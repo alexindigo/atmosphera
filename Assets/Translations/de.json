@@ -1297,7 +1297,8 @@
       "density": {
         "compact": "Kompakt",
         "default": "Standard",
-        "comfortable": "Bequem"
+        "comfortable": "Bequem",
+        "mini": "Mini"
       }
     },
     "launcher": {

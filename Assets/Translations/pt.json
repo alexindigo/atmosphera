@@ -1321,7 +1321,8 @@
       "density": {
         "compact": "Compacta",
         "default": "Padrão",
-        "comfortable": "Confortável"
+        "comfortable": "Confortável",
+        "mini": "Mini"
       }
     },
     "display-mode": {

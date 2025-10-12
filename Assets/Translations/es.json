@@ -1280,7 +1280,8 @@
       "density": {
         "compact": "Compacta",
         "default": "Predeterminada",
-        "comfortable": "Cómoda"
+        "comfortable": "Cómoda",
+        "mini": "Mini"
       }
     },
     "launcher": {

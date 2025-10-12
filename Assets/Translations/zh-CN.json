@@ -1280,7 +1280,8 @@
       "density": {
         "compact": "紧凑",
         "default": "默认",
-        "comfortable": "舒适"
+        "comfortable": "舒适",
+        "mini": "迷你"
       }
     },
     "launcher": {
