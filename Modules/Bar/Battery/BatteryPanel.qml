@@ -58,6 +58,13 @@ NPanel {
           Layout.fillWidth: true
         }
 
+        NToggle {
+          id: batteryManagerSwitch
+          checked: BatteryService.chargingMode !== BatteryService.ChargingMode.Disabled
+          onToggled: checked => BatteryService.toggleEnabled(checked)
+          baseSize: Style.baseWidgetSize * 0.65 * scaling
+        }
+
         NIconButton {
           icon: "close"
           tooltipText: I18n.tr("tooltips.close")
