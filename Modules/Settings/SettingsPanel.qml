@@ -336,7 +336,7 @@ NPanel {
       RowLayout {
         Layout.fillWidth: true
         Layout.fillHeight: true
-        spacing: Style.marginM
+        spacing: Style.marginL
 
         // Sidebar
         Rectangle {
