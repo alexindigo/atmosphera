@@ -27,7 +27,7 @@ NPanel {
   readonly property int weatherHeight: Math.round(190 * Style.uiScaleRatio)
   readonly property int mediaSysMonHeight: Math.round(260 * Style.uiScaleRatio)
   readonly property int audioHeight: Math.round(120 * Style.uiScaleRatio)
-  readonly property int bottomHeight: Math.round(60 * Style.uiScaleRatio)
+  readonly property int bottomHeight: Math.round(52 * Style.uiScaleRatio)
 
   panelContent: Item {
     id: content
