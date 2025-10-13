@@ -404,6 +404,7 @@ Loader {
                       }
                       pointSize: Style.fontSizeL
                       font.weight: Style.fontWeightBold
+                      family: Settings.data.ui.fontFixed
                       color: Color.mOnSurface
                       horizontalAlignment: Text.AlignHCenter
                       Layout.alignment: Qt.AlignHCenter
@@ -413,6 +414,7 @@ Loader {
                       text: Qt.formatTime(Time.date, "mm")
                       pointSize: Style.fontSizeL
                       font.weight: Style.fontWeightBold
+                      family: Settings.data.ui.fontFixed
                       color: Color.mOnSurfaceVariant
                       horizontalAlignment: Text.AlignHCenter
                       Layout.alignment: Qt.AlignHCenter
