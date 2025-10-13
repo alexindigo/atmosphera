@@ -6,7 +6,7 @@ import qs.Services
 import qs.Widgets
 
 // Performance
-NQuickSetting {
+NIconButtonHot {
   property ShellScreen screen
 
   readonly property bool hasPP: PowerProfileService.available

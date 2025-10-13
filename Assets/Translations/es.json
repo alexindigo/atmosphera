@@ -730,14 +730,16 @@
         "label": "Apariencia"
       },
       "title": "Centro de control",
-      "audio-controls": {
-        "description": "Ajusta instantáneamente diferentes volúmenes de audio desde el Centro de control.",
-        "label": "Deslizadores de volumen"
-      },
-      "quick-settings": {
+      "cards": {
         "section": {
-          "description": "Configurar y administrar los widgets de configuración rápida.",
-          "label": "Widgets de configuración rápida"
+          "description": "Personaliza qué controles aparecen en el Centro de control y en qué orden.",
+          "label": "Tarjetas"
+        }
+      },
+      "shortcuts": {
+        "section": {
+          "description": "Configurar y administrar los widgets de accesos directos.",
+          "label": "Widgets de accesos directos"
         },
         "sectionLeft": "Izquierda",
         "sectionRight": "Derecha"

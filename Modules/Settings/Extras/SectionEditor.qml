@@ -14,11 +14,13 @@ NBox {
   property var widgetModel: []
   property var availableWidgets: []
   property bool enableMoveBetweenSections: true
+  property int maxWidgets: -1  // -1 means unlimited
 
   property var widgetRegistry: null
   property string settingsDialogComponent: "BarWidgetSettingsDialog.qml"
 
   readonly property real miniButtonSize: Style.baseWidgetSize * 0.65
+  readonly property bool isAtMaxCapacity: maxWidgets > 0 && widgetModel.length >= maxWidgets
 
   signal addWidget(string widgetId, string section)
   signal removeWidget(string section, int index)
@@ -80,6 +82,16 @@ NBox {
         Layout.alignment: Qt.AlignVCenter
       }
 
+      // Widget count indicator (when max is set)
+      NText {
+        visible: root.maxWidgets > 0
+        text: "(" + widgetModel.length + "/" + root.maxWidgets + ")"
+        pointSize: Style.fontSizeS
+        color: root.isAtMaxCapacity ? Color.mError : Color.mOnSurfaceVariant
+        Layout.alignment: Qt.AlignVCenter
+        Layout.leftMargin: Style.marginXS
+      }
+
       Item {
         Layout.fillWidth: true
       }
@@ -93,6 +105,7 @@ NBox {
         onSelected: key => comboBox.currentKey = key
         popupHeight: 340
         minimumWidth: 200
+        enabled: !root.isAtMaxCapacity
 
         Layout.alignment: Qt.AlignVCenter
 
@@ -114,12 +127,14 @@ NBox {
         colorFg: Color.mOnPrimary
         colorBgHover: Color.mSecondary
         colorFgHover: Color.mOnSecondary
-        enabled: comboBox.currentKey !== ""
-        tooltipText: I18n.tr("tooltips.add-widget")
+        enabled: comboBox.currentKey !== "" && !root.isAtMaxCapacity
+        tooltipText: root.isAtMaxCapacity 
+                     ? I18n.tr("tooltips.max-widgets-reached") 
+                     : I18n.tr("tooltips.add-widget")
         Layout.alignment: Qt.AlignVCenter
         Layout.leftMargin: Style.marginS
         onClicked: {
-          if (comboBox.currentKey !== "") {
+          if (comboBox.currentKey !== "" && !root.isAtMaxCapacity) {
             addWidget(comboBox.currentKey, sectionId)
             comboBox.currentKey = ""
           }

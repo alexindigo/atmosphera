@@ -731,17 +731,19 @@
           "label": "Position",
           "description": "Choose where the Control Center panel appears when opened."
         },
-        "quick-settings": {
+        "cards": {
           "section": {
-            "label": "Quick settings widgets",
-            "description": "Configure and manage the quick settings widgets."
+            "label": "Cards",
+            "description": "Customize which controls appear in the Control Center and in what order."
+          }
+        },
+        "shortcuts": {
+          "section": {
+            "label": "Shortcuts widgets",
+            "description": "Configure and manage the shortcuts widgets."
           },
           "sectionLeft": "Left",
           "sectionRight": "Right"
-        },
-        "audio-controls": {
-          "label": "Volume sliders",
-          "description": "Instantly adjust different audio volumes from the Control Center."
         }
     },
     "user-interface": {
