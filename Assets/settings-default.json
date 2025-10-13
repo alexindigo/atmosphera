@@ -65,6 +65,7 @@
     "dimDesktop": true,
     "showScreenCorners": false,
     "forceBlackScreenCorners": false,
+    "scaleRatio": 1,
     "radiusRatio": 1,
     "screenRadiusRatio": 1,
     "animationSpeed": 1,
@@ -114,9 +115,9 @@
   },
   "controlCenter": {
     "position": "close_to_bar_button",
-    "quickSettingsStyle": "compact",
+    "audioControlsEnabled": true,
     "widgets": {
-      "quickSettings": [
+      "left": [
         {
           "id": "WiFi"
         },
@@ -125,7 +126,9 @@
         },
         {
           "id": "Notifications"
-        },
+        }
+      ],
+      "right": [
         {
           "id": "ScreenRecorder"
         },
