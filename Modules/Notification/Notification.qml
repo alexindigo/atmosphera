@@ -159,6 +159,16 @@ Variants {
         width: 360
         visible: true
 
+        // Animate when notifications are added/removed
+        Behavior on implicitHeight {
+          SpringAnimation {
+            spring: 2.0
+            damping: 0.4
+            epsilon: 0.01
+            mass: 0.8
+          }
+        }
+
         // Multiple notifications display
         Repeater {
           model: notificationModel
@@ -232,7 +242,11 @@ Variants {
             // Animation properties
             property real scaleValue: 0.8
             property real opacityValue: 0.0
+            property real slideOffset: 0
             property bool isRemoving: false
+
+            // Staggered animation delay based on index
+            readonly property int animationDelay: index * 100
 
             // Right-click to dismiss
             MouseArea {
@@ -245,14 +259,55 @@ Variants {
               }
             }
 
-            // Scale and fade-in animation
+            // Scale, fade, and slide animation
             scale: scaleValue
             opacity: opacityValue
 
+            // Slide animation based on notification position (vertical only for stacking)
+            y: slideOffset
+
+            // Calculate slide direction based on notification location
+            readonly property real slideDistance: 300
+            readonly property real slideInOffset: {
+              // For vertical stacking, always slide from top
+              if (parent.isTop)
+                return -slideDistance
+              if (parent.isBottom)
+                return slideDistance
+              return 0
+            }
+            readonly property real slideOutOffset: {
+              // Slide out in the same direction as slide in
+              if (parent.isTop)
+                return -slideDistance
+              if (parent.isBottom)
+                return slideDistance
+              return 0
+            }
+
             // Animate in when the item is created
             Component.onCompleted: {
-              scaleValue = 1.0
-              opacityValue = 1.0
+              // Start from slide position
+              slideOffset = slideInOffset
+              scaleValue = 0.8
+              opacityValue = 0.0
+
+              // Delay animation based on index for staggered effect
+              delayTimer.interval = animationDelay
+              delayTimer.start()
+            }
+
+            // Timer for staggered animation start
+            Timer {
+              id: delayTimer
+              interval: 0
+              repeat: false
+              onTriggered: {
+                // Animate to final position
+                slideOffset = 0
+                scaleValue = 1.0
+                opacityValue = 1.0
+              }
             }
 
             // Animate out when being removed
@@ -261,6 +316,7 @@ Variants {
                 return
               // Prevent multiple animations
               isRemoving = true
+              slideOffset = slideOutOffset
               scaleValue = 0.8
               opacityValue = 0.0
             }
@@ -282,18 +338,29 @@ Variants {
               }
             }
 
-            // Animation behaviors
+            // Animation behaviors with spring physics
             Behavior on scale {
-              NumberAnimation {
-                duration: Style.animationNormal
-                easing.type: Easing.OutExpo
+              SpringAnimation {
+                spring: 3
+                damping: 0.4
+                epsilon: 0.01
+                mass: 0.8
               }
             }
 
             Behavior on opacity {
               NumberAnimation {
                 duration: Style.animationNormal
-                easing.type: Easing.OutQuad
+                easing.type: Easing.OutCubic
+              }
+            }
+
+            Behavior on y {
+              SpringAnimation {
+                spring: 2.5
+                damping: 0.3
+                epsilon: 0.01
+                mass: 0.6
               }
             }
 

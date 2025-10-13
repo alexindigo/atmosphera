@@ -40,8 +40,7 @@ ColumnLayout {
     Layout.fillWidth: true
     label: I18n.tr("bar.widget-settings.media-mini.hide-mode.label")
     description: I18n.tr("bar.widget-settings.media-mini.hide-mode.description")
-    model: [
-      {
+    model: [{
         "key": "visible",
         "name": I18n.tr("options.hide-modes.visible")
       }, {
@@ -50,8 +49,7 @@ ColumnLayout {
       }, {
         "key": "transparent",
         "name": I18n.tr("options.hide-modes.transparent")
-      }
-    ]
+      }]
     currentKey: root.valueHideMode
     onSelected: key => root.valueHideMode = key
   }

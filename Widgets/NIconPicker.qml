@@ -15,16 +15,8 @@ Popup {
 
   signal iconSelected(string iconName)
 
-  width: {
-    var w = Math.round(Math.max(screen.width * 0.35, 900))
-    w = Math.min(w, screen.width - Style.marginL * 2)
-    return w
-  }
-  height: {
-    var h = Math.round(Math.max(screen.height * 0.65, 700))
-    h = Math.min(h, screen.height - Style.barHeight - Style.marginL * 2)
-    return h
-  }
+  width: 900 * Style.uiScaleRatio
+  height: 700 * Style.uiScaleRatio
   anchors.centerIn: Overlay.overlay
   padding: Style.marginXL
 
