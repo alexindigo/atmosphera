@@ -725,26 +725,22 @@
         "description": "Choisissez où le panneau du Centre de contrôle apparaît lorsqu'il est ouvert.",
         "label": "Position"
       },
-      "quickSettingsStyle": {
-        "section": {
-          "description": "Personnaliser l'apparence et le comportement des réglages rapides dans le Centre de contrôle.",
-          "label": "Style des paramètres rapides"
-        },
-        "style": {
-          "description": "Choisissez le style visuel des bascules et des commandes des paramètres rapides.",
-          "label": "Style des paramètres rapides"
-        }
-      },
       "section": {
         "description": "Configurer le positionnement et le comportement du panneau du Centre de contrôle.",
         "label": "Apparence"
       },
       "title": "Centre de contrôle",
-      "widgets": {
+      "audio-controls": {
+        "description": "Ajustez instantanément différents volumes audio depuis le Centre de contrôle.",
+        "label": "Curseurs de volume"
+      },
+      "quick-settings": {
         "section": {
-          "description": "Configurer et gérer les widgets du Centre de contrôle et leurs options d'affichage.",
-          "label": "Widgets"
-        }
+          "description": "Configurer et gérer les widgets des paramètres rapides.",
+          "label": "Widgets de paramètres rapides"
+        },
+        "sectionLeft": "Gauche",
+        "sectionRight": "Droite"
       }
     },
     "user-interface": {
@@ -1368,6 +1364,11 @@
         "microphone-input": "Entrée microphone",
         "both": "Sortie système + entrée microphone"
       }
+    },
+    "hide-modes": {
+      "hidden": "Masquer si vide",
+      "transparent": "Transparent quand vide",
+      "visible": "Toujours visible"
     }
   },
   "session-menu": {

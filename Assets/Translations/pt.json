@@ -725,26 +725,22 @@
         "description": "Escolha onde o painel da Central de Controle aparece quando aberto.",
         "label": "Posição"
       },
-      "quickSettingsStyle": {
-        "section": {
-          "description": "Personalize a aparência e o comportamento das configurações rápidas na Central de Controle.",
-          "label": "Estilo das Configurações Rápidas"
-        },
-        "style": {
-          "description": "Escolha o estilo visual para as opções e controles de configurações rápidas.",
-          "label": "Estilo das Configurações Rápidas"
-        }
-      },
       "section": {
         "description": "Configurar o posicionamento e o comportamento do painel da Central de Controle.",
         "label": "Aparência"
       },
       "title": "Central de Controle",
-      "widgets": {
+      "audio-controls": {
+        "description": "Ajuste instantaneamente diferentes volumes de áudio a partir da Central de Controle.",
+        "label": "Controles deslizantes de volume"
+      },
+      "quick-settings": {
         "section": {
-          "description": "Configure e gerencie widgets da Central de Controle e suas opções de exibição.",
-          "label": "Widgets"
-        }
+          "description": "Configure e gerencie os widgets de configurações rápidas.",
+          "label": "Widgets de configurações rápidas"
+        },
+        "sectionLeft": "Esquerda",
+        "sectionRight": "Direito/Certo/Correto"
       }
     },
     "user-interface": {
@@ -1368,6 +1364,11 @@
         "microphone-input": "Entrada do microfone",
         "both": "Saída do sistema + entrada do microfone"
       }
+    },
+    "hide-modes": {
+      "hidden": "Ocultar Quando Vazio",
+      "transparent": "Transparente quando vazio",
+      "visible": "Sempre Visível"
     }
   },
   "session-menu": {

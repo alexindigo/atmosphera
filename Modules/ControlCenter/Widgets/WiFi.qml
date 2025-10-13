@@ -28,21 +28,6 @@ NQuickSetting {
     }
   }
 
-  text: {
-    if (NetworkService.ethernetConnected) {
-      return I18n.tr("quickSettings.wifi.label.ethernet")
-    }
-    let connected = false
-    for (const net in NetworkService.networks) {
-      if (NetworkService.networks[net].connected) {
-        connected = true
-        break
-      }
-    }
-    return connected ? I18n.tr("quickSettings.wifi.label.wifi") : I18n.tr("quickSettings.wifi.label.disconnected")
-  }
-
-  style: Settings.data.controlCenter.quickSettingsStyle || "modern"
   tooltipText: I18n.tr("quickSettings.wifi.tooltip.action")
   onClicked: PanelService.getPanel("wifiPanel")?.toggle(this)
 }

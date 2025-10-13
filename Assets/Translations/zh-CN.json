@@ -725,26 +725,22 @@
         "description": "选择打开控制中心时面板出现的位置。",
         "label": "位置"
       },
-      "quickSettingsStyle": {
-        "section": {
-          "description": "自定义控制中心中快速设置的外观和行为。",
-          "label": "快速设置样式"
-        },
-        "style": {
-          "description": "选择快速设置开关和控件的视觉样式。",
-          "label": "快速设置样式"
-        }
-      },
       "section": {
         "description": "配置控制中心面板的位置和行为。",
         "label": "外观"
       },
       "title": "控制中心",
-      "widgets": {
+      "audio-controls": {
+        "description": "从控制中心即时调整不同的音频音量。",
+        "label": "音量滑块"
+      },
+      "quick-settings": {
         "section": {
-          "description": "配置和管理控制中心小组件及其显示选项。",
-          "label": "小部件"
-        }
+          "description": "配置和管理快速设置小部件。",
+          "label": "快速设置小部件"
+        },
+        "sectionLeft": "左",
+        "sectionRight": "右"
       }
     },
     "user-interface": {
@@ -1368,6 +1364,11 @@
         "microphone-input": "麦克风输入",
         "both": "系统输出 + 麦克风输入"
       }
+    },
+    "hide-modes": {
+      "hidden": "当为空时隐藏",
+      "transparent": "空时透明",
+      "visible": "始终可见"
     }
   },
   "session-menu": {

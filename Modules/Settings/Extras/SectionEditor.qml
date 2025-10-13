@@ -33,14 +33,14 @@ NBox {
   Layout.minimumHeight: {
     var widgetCount = widgetModel.length
     if (widgetCount === 0)
-      return 140
+      return 140 * Style.uiScaleRatio
 
     var availableWidth = parent.width
-    var avgWidgetWidth = 150
+    var avgWidgetWidth = 150 * Style.uiScaleRatio
     var widgetsPerRow = Math.max(1, Math.floor(availableWidth / avgWidgetWidth))
     var rows = Math.ceil(widgetCount / widgetsPerRow)
 
-    return (50 + 20 + (rows * 48) + ((rows - 1) * Style.marginS) + 20)
+    return ((50 + 20 + (rows * 48)) * Style.uiScaleRatio + ((rows - 1) * Style.marginS) + 20 * Style.uiScaleRatio)
   }
 
   // Generate widget color from name checksum
@@ -73,7 +73,7 @@ NBox {
       Layout.fillWidth: true
 
       NText {
-        text: sectionName + " Section"
+        text: sectionName
         pointSize: Style.fontSizeL
         font.weight: Style.fontWeightBold
         color: Color.mOnSurface
@@ -131,7 +131,7 @@ NBox {
     Item {
       Layout.fillWidth: true
       Layout.fillHeight: true
-      Layout.minimumHeight: 65
+      Layout.minimumHeight: 65 * Style.uiScaleRatio
       clip: false // Don't clip children so ghost can move freely
 
       Flow {
@@ -180,7 +180,7 @@ NBox {
             NContextMenu {
               id: contextMenu
               parent: Overlay.overlay
-              width: 240
+              width: 240 * Style.uiScaleRatio
               model: [{
                   "label": I18n.tr("tooltips.move-to-left-section"),
                   "action": "left",
@@ -227,16 +227,16 @@ NBox {
 
               NText {
                 text: modelData.id
-                pointSize: Style.fontSizeS
+                pointSize: Style.fontSizeXS
                 color: root.getWidgetColor(modelData)[1]
                 horizontalAlignment: Text.AlignHCenter
                 elide: Text.ElideRight
-                Layout.preferredWidth: 80
+                Layout.preferredWidth: 60 * Style.uiScaleRatio
               }
 
               RowLayout {
                 spacing: 0
-                Layout.preferredWidth: buttonsCount * buttonsWidth
+                Layout.preferredWidth: buttonsCount * buttonsWidth * Style.uiScaleRatio
 
                 Loader {
                   active: root.widgetRegistry && root.widgetRegistry.widgetHasUserSettings(modelData.id)
@@ -261,19 +261,19 @@ NBox {
                         if (dialog) {
                           dialog.open()
                         } else {
-                          Logger.error("WidgetSectionEditor", "Failed to create settings dialog instance")
+                          Logger.error("SectionEditor", "Failed to create settings dialog instance")
                         }
                       }
                       if (component.status === Component.Ready) {
                         instantiateAndOpen()
                       } else if (component.status === Component.Error) {
-                        Logger.error("WidgetSectionEditor", component.errorString())
+                        Logger.error("SectionEditor", component.errorString())
                       } else {
                         component.statusChanged.connect(function () {
                           if (component.status === Component.Ready) {
                             instantiateAndOpen()
                           } else if (component.status === Component.Error) {
-                            Logger.error("WidgetSectionEditor", component.errorString())
+                            Logger.error("SectionEditor", component.errorString())
                           }
                         })
                       }

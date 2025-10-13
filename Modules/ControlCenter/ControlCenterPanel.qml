@@ -10,9 +10,17 @@ import qs.Widgets
 NPanel {
   id: root
 
-  preferredWidth: Math.round(460 * Style.uiScaleRatio)
-  preferredHeight: (profileHeight + weatherHeight + mediaSysMonHeight + audioHeight + bottomHeight) + 6 * Style.marginL
   panelKeyboardFocus: true
+  preferredWidth: Math.round(460 * Style.uiScaleRatio)
+  preferredHeight: {
+    let height = profileHeight + weatherHeight + mediaSysMonHeight + utilsHeight
+    let count = 4
+    if (Settings.data.controlCenter.audioControlsEnabled) {
+      count++
+      height += audioHeight
+    }
+    return height + (count + 1) * Style.marginL
+  }
 
   // Positioning
   readonly property string controlCenterPosition: Settings.data.controlCenter.position
@@ -27,7 +35,7 @@ NPanel {
   readonly property int weatherHeight: Math.round(190 * Style.uiScaleRatio)
   readonly property int mediaSysMonHeight: Math.round(260 * Style.uiScaleRatio)
   readonly property int audioHeight: Math.round(120 * Style.uiScaleRatio)
-  readonly property int bottomHeight: Math.round(52 * Style.uiScaleRatio)
+  readonly property int utilsHeight: Math.round(52 * Style.uiScaleRatio)
 
   panelContent: Item {
     id: content
@@ -40,18 +48,47 @@ NPanel {
       width: parent.width - (Style.marginL * 2)
       spacing: Style.marginL
 
-      // Cards (consistent inter-card spacing via ColumnLayout spacing)
+      // Profile
       ProfileCard {
         Layout.fillWidth: true
         Layout.preferredHeight: profileHeight
       }
 
+      // Utils
+      RowLayout {
+        Layout.fillWidth: true
+        Layout.preferredHeight: utilsHeight
+        spacing: Style.marginL
+
+        // Power Profiles switcher
+        PowerProfilesCard {
+          Layout.fillWidth: true
+          Layout.fillHeight: true
+          spacing: Style.marginL
+        }
+
+        // Utilities buttons
+        UtilitiesCard {
+          Layout.fillWidth: true
+          Layout.fillHeight: true
+          spacing: Style.marginL
+        }
+      }
+
+      // Audio controls
+      AudioCard {
+        visible: Settings.data.controlCenter.audioControlsEnabled
+        Layout.fillWidth: true
+        Layout.preferredHeight: audioHeight
+      }
+
+      // Weather
       WeatherCard {
         Layout.fillWidth: true
         Layout.preferredHeight: weatherHeight
       }
 
-      // Middle section: media + stats column
+      // Media + SysMon
       RowLayout {
         Layout.fillWidth: true
         Layout.preferredHeight: mediaSysMonHeight
@@ -67,33 +104,6 @@ NPanel {
         SystemMonitorCard {
           Layout.preferredWidth: Math.round(Style.baseWidgetSize * 2.625)
           Layout.fillHeight: true
-        }
-      }
-
-      // Audio card below media and system monitor
-      AudioCard {
-        Layout.fillWidth: true
-        Layout.preferredHeight: audioHeight
-      }
-
-      // Bottom actions (two grouped rows of round buttons)
-      RowLayout {
-        Layout.fillWidth: true
-        Layout.preferredHeight: bottomHeight
-        spacing: Style.marginL
-
-        // Power Profiles switcher
-        PowerProfilesCard {
-          Layout.fillWidth: true
-          Layout.fillHeight: true
-          spacing: Style.marginL
-        }
-
-        // Utilities buttons
-        UtilitiesCard {
-          Layout.fillWidth: true
-          Layout.fillHeight: true
-          spacing: Style.marginL
         }
       }
     }

@@ -9,24 +9,20 @@ Rectangle {
   id: root
 
   // Public properties
-  property string text: ""
   property string icon: ""
   property string tooltipText: ""
   property bool enabled: true
   property bool hot: false
-  property string style: "modern" // "modern", "classic", or "compact"
 
   // Styling properties
-  property real fontSize: (style === "classic") ? Style.fontSizeXS : Style.fontSizeS
-  property int fontWeight: Style.fontWeightMedium
-  property real iconSize: Style.fontSizeL
-  property real cornerRadius: Style.radiusM
+  property real iconSize: Style.fontSizeM
+  property real cornerRadius: Style.radiusS
 
   // Internal properties
   property bool hovered: false
   property bool pressed: false
 
-  // Colors - Style-dependent colors
+  // Colors
   property color backgroundColor: {
     if (pressed) {
       return Color.mTertiary
@@ -34,20 +30,7 @@ Rectangle {
     if (hot) {
       return Color.mPrimary
     }
-    if (style === "classic")
-      return Color.mSurfaceVariant
-    if (style === "compact")
-      return Color.mSurface
     return Color.mSurface
-  }
-  property color textColor: {
-    if (pressed) {
-      return Color.mOnTertiary
-    }
-    if (hot) {
-      return Color.mOnPrimary
-    }
-    return Color.mOnSurface
   }
   property color iconColor: {
     if (pressed) {
@@ -56,13 +39,9 @@ Rectangle {
     if (hot) {
       return Color.mOnPrimary
     }
-    if (style !== "compact")
-      return Color.mPrimary
     return Color.mOnSurface
   }
-  property color borderColor: Color.mOutline
   property color hoverColor: Color.mTertiary
-  property color hoverTextColor: Color.mOnTertiary
   property color hoverIconColor: Color.mOnTertiary
 
   // Signals
@@ -70,34 +49,12 @@ Rectangle {
   signal rightClicked
   signal middleClicked
 
-  // Dimensions - Style-dependent sizing
-  implicitWidth: {
-    if (style === "classic") {
-      return Style.baseWidgetSize
-    }
-    if (style === "compact") {
-      return Style.baseWidgetSize * 0.8
-    }
-    return Math.max(120, contentRow.implicitWidth + (Style.marginL))
-  }
-  implicitHeight: {
-    if (style === "classic") {
-      return Style.baseWidgetSize
-    }
-    if (style === "compact") {
-      return Style.baseWidgetSize * 0.8
-    }
-    return Math.max(48, contentRow.implicitHeight + (Style.marginL))
-  }
+  // Dimensions
+  implicitWidth: Style.baseWidgetSize * 0.8
+  implicitHeight: Style.baseWidgetSize * 0.8
 
-  // Appearance - Style-dependent styling
-  radius: {
-    if (style === "classic")
-      return width * 0.5
-    if (style === "compact")
-      return Style.radiusS // Smaller radius for compact
-    return cornerRadius
-  }
+  // Appearance
+  radius: cornerRadius
   color: {
     if (!enabled)
       return Qt.lighter(Color.mSurface, 1.1)
@@ -106,32 +63,13 @@ Rectangle {
     return backgroundColor
   }
 
-  border.width: {
-    if (style === "classic")
-      return Math.max(1, Style.borderS)
-    if (style === "compact")
-      return 0
-    return 0
-  }
-  border.color: {
-    if (style === "classic")
-      return borderColor
-    return "transparent"
-  }
-
-  opacity: enabled ? (style === "classic" ? Style.opacityFull : 1.0) : (style === "classic" ? Style.opacityMedium : 0.6)
+  border.width: 0
+  opacity: enabled ? 1.0 : 0.6
 
   Behavior on color {
     ColorAnimation {
       duration: Style.animationFast
-      easing.type: style === "classic" ? Easing.InOutQuad : Easing.OutCubic
-    }
-  }
-
-  Behavior on border.color {
-    ColorAnimation {
-      duration: Style.animationFast
-      easing.type: style === "classic" ? Easing.InOutQuad : Easing.OutCubic
+      easing.type: Easing.OutCubic
     }
   }
 
@@ -142,67 +80,12 @@ Rectangle {
     }
   }
 
-  // Modern style - icon above text
-  ColumnLayout {
-    id: contentRow
-    anchors.centerIn: parent
-    spacing: Style.marginXXS
-    visible: root.style !== "classic" && root.style !== "compact"
-
-    // Icon
-    NIcon {
-      Layout.alignment: Qt.AlignHCenter
-      visible: root.icon !== ""
-      icon: root.icon
-      pointSize: root.iconSize
-      color: {
-        if (!root.enabled)
-          return Color.mOnSurfaceVariant
-        if (root.hovered)
-          return root.hoverIconColor
-        return root.iconColor
-      }
-
-      Behavior on color {
-        ColorAnimation {
-          duration: Style.animationFast
-          easing.type: Easing.OutCubic
-        }
-      }
-    }
-
-    // Modern - Text content
-    NText {
-      Layout.alignment: Qt.AlignHCenter
-      visible: root.text !== ""
-      text: root.text
-      pointSize: root.fontSize
-      font.weight: root.fontWeight
-      color: {
-        if (!root.enabled)
-          return Color.mOnSurfaceVariant
-        if (root.hovered)
-          return root.hoverTextColor
-        return root.textColor
-      }
-      elide: Text.ElideRight
-
-      Behavior on color {
-        ColorAnimation {
-          duration: Style.animationFast
-          easing.type: Easing.OutCubic
-        }
-      }
-    }
-  }
-
-  // Compact style - icon only, small square button
+  // Icon
   NIcon {
-    id: compactIcon
     anchors.centerIn: parent
-    visible: root.style === "compact" && root.icon !== ""
+    visible: root.icon !== ""
     icon: root.icon
-    pointSize: Style.fontSizeM // Smaller icon for compact
+    pointSize: root.iconSize
     color: {
       if (!root.enabled)
         return Color.mOnSurfaceVariant
@@ -215,55 +98,6 @@ Rectangle {
       ColorAnimation {
         duration: Style.animationFast
         easing.type: Easing.OutCubic
-      }
-    }
-  }
-
-  // Classic style - EXACTLY like NIconButton (icon + text)
-  RowLayout {
-    anchors.centerIn: parent
-    visible: root.style === "classic"
-    spacing: Style.marginXS
-
-    NIcon {
-      visible: root.icon !== ""
-      icon: root.icon
-      pointSize: Style.fontSizeM
-      color: {
-        if (!root.enabled)
-          return Color.mOnSurfaceVariant
-        if (root.hovered)
-          return root.hoverIconColor
-        return root.iconColor
-      }
-
-      Behavior on color {
-        ColorAnimation {
-          duration: Style.animationFast
-          easing.type: Easing.OutCubic
-        }
-      }
-    }
-
-    // Classic - Text content
-    NText {
-      visible: root.text !== ""
-      text: root.text
-      pointSize: root.fontSize
-      font.weight: root.fontWeight
-      color: {
-        if (!root.enabled)
-          return Color.mOnSurfaceVariant
-        if (root.hovered)
-          return root.hoverTextColor
-        return root.textColor
-      }
-
-      Behavior on color {
-        ColorAnimation {
-          duration: Style.animationFast
-          easing.type: Easing.OutCubic
-        }
       }
     }
   }

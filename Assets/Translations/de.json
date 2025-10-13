@@ -725,26 +725,22 @@
         "description": "Wählen Sie aus, wo das Kontrollzentrum angezeigt wird, wenn es geöffnet wird.",
         "label": "Position"
       },
-      "quickSettingsStyle": {
-        "section": {
-          "description": "Passen Sie das Aussehen und Verhalten der Schnelleinstellungen im Kontrollzentrum an.",
-          "label": "Schnelleinstellungen-Stil"
-        },
-        "style": {
-          "description": "Wählen Sie den visuellen Stil für Schnellzugriff-Umschalter und -Steuerelemente.",
-          "label": "Schnelleinstellungen-Stil"
-        }
-      },
       "section": {
         "description": "Konfigurieren Sie die Positionierung und das Verhalten des Control Center-Panels.",
         "label": "Aussehen"
       },
       "title": "Kontrollzentrum",
-      "widgets": {
+      "audio-controls": {
+        "description": "Verschiedene Audio-Lautstärken sofort über das Kontrollzentrum anpassen.",
+        "label": "Lautstärkeregler"
+      },
+      "quick-settings": {
         "section": {
-          "description": "Control Center Widgets und ihre Anzeigeoptionen konfigurieren und verwalten.",
-          "label": "Widgets"
-        }
+          "description": "Konfigurieren und verwalten Sie die Schnellzugriff-Widgets.",
+          "label": "Schnelleinstellungen-Widgets"
+        },
+        "sectionLeft": "Links",
+        "sectionRight": "Richtig"
       }
     },
     "user-interface": {
@@ -1385,6 +1381,11 @@
         "microphone-input": "Mikrofon-Eingabe",
         "both": "System-Ausgabe + Mikrofon-Eingabe"
       }
+    },
+    "hide-modes": {
+      "hidden": "Ausblenden, wenn leer",
+      "transparent": "Transparent, wenn leer",
+      "visible": "Immer sichtbar"
     }
   },
   "session-menu": {

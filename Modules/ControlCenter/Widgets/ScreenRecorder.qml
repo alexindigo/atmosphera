@@ -9,10 +9,8 @@ NQuickSetting {
 
   enabled: ProgramCheckerService.gpuScreenRecorderAvailable
   icon: "camera-video"
-  text: ScreenRecorderService.isRecording ? I18n.tr("quickSettings.screenRecorder.label.recording") : I18n.tr("quickSettings.screenRecorder.label.stopped")
   hot: ScreenRecorderService.isRecording
   tooltipText: I18n.tr("quickSettings.screenRecorder.tooltip.action")
-  style: Settings.data.controlCenter.quickSettingsStyle || "modern"
 
   // Force hover state when recording to get hover colors
   property bool originalHovered: hovered

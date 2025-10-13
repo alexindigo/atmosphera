@@ -245,16 +245,17 @@ Singleton {
     property JsonObject controlCenter: JsonObject {
       // Position: close_to_bar_button, center, top_left, top_right, bottom_left, bottom_right, bottom_center, top_center
       property string position: "close_to_bar_button"
-      property string quickSettingsStyle: "compact" // "compact", "classic", or "modern"
+      property bool audioControlsEnabled: true
       property JsonObject widgets
       widgets: JsonObject {
-        property list<var> quickSettings: [{
+        property list<var> left: [{
             "id": "WiFi"
           }, {
             "id": "Bluetooth"
           }, {
             "id": "Notifications"
-          }, {
+          }]
+        property list<var> right: [{
             "id": "ScreenRecorder"
           }, {
             "id": "PowerProfile"
