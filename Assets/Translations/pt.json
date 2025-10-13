@@ -646,7 +646,8 @@
           "description": "Agradecimentos ao nosso <b>incrível</b> colaborador!",
           "description_plural": "Agradecimentos aos nossos {count} <b>incríveis</b> colaboradores!"
         }
-      }
+      },
+      "support": "Apoie-nos"
     },
     "hooks": {
       "title": "Hooks",
@@ -1547,6 +1548,9 @@
     "bluetooth": {
       "enabled": "Ativado",
       "disabled": "Desativado"
+    },
+    "kofi": {
+      "opened": "Página do Ko-fi aberta no seu navegador"
     },
     "do-not-disturb": {
       "enabled": "'Não perturbe' ativado",

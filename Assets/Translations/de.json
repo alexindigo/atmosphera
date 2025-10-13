@@ -684,7 +684,8 @@
           "description": "Ein Dankeschön an unseren {count} <b>großartigen</b> Mitwirkenden!",
           "description_plural": "Ein Dankeschön an unsere {count} <b>großartigen</b> Mitwirkenden!"
         }
-      }
+      },
+      "support": "Unterstützen Sie uns"
     },
     "hooks": {
       "title": "Hooks",
@@ -1575,6 +1576,9 @@
     "bluetooth": {
       "enabled": "Aktiviert",
       "disabled": "Deaktiviert"
+    },
+    "kofi": {
+      "opened": "Ko-fi-Seite in Ihrem Browser geöffnet"
     },
     "do-not-disturb": {
       "enabled": "'Nicht stören' aktiviert",

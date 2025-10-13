@@ -685,7 +685,8 @@
           "description": "Shout-out to our {count} <b>awesome</b> contributor!",
           "description_plural": "Shout-out to our {count} <b>awesome</b> contributors!"
         }
-      }
+      },
+      "support": "Support us"
     },
     "hooks": {
       "title": "Hooks",
@@ -1548,6 +1549,9 @@
     "bluetooth": {
       "enabled": "Enabled",
       "disabled": "Disabled"
+    },
+    "kofi": {
+      "opened": "Ko-fi page opened in your browser"
     },
     "do-not-disturb": {
       "enabled": "'Do not disturb' enabled",

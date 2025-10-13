@@ -684,7 +684,8 @@
           "description": "向我们 {count} 位<b>超棒的</b>贡献者致敬！",
           "description_plural": "向我们 {count} 位<b>超棒的</b>贡献者致敬！"
         }
-      }
+      },
+      "support": "支持我们"
     },
     "hooks": {
       "title": "钩子",
@@ -1547,6 +1548,9 @@
     "bluetooth": {
       "enabled": "已启用",
       "disabled": "已禁用"
+    },
+    "kofi": {
+      "opened": "Ko-fi页面已在您的浏览器中打开"
     },
     "do-not-disturb": {
       "enabled": "'勿扰模式'已启用",

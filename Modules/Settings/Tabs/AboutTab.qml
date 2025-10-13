@@ -83,9 +83,58 @@ ColumnLayout {
     }
   }
 
+  // Ko-fi support button
+  Rectangle {
+    Layout.alignment: Qt.AlignHCenter
+    Layout.topMargin: Style.marginM
+    Layout.bottomMargin: Style.marginM
+    width: supportRow.implicitWidth + Style.marginXL
+    height: supportRow.implicitHeight + Style.marginM
+    radius: Style.radiusS
+    color: supportArea.containsMouse ? Qt.alpha(Color.mOnSurface, 0.05) : Color.transparent
+    border.width: 0
+
+    Behavior on color {
+      ColorAnimation {
+        duration: Style.animationFast
+      }
+    }
+
+    RowLayout {
+      id: supportRow
+      anchors.centerIn: parent
+      spacing: Style.marginS
+
+      NText {
+        text: I18n.tr("settings.about.support")
+        pointSize: Style.fontSizeXS
+        color: Color.mOnSurface
+        opacity: supportArea.containsMouse ? Style.opacityFull : Style.opacityMedium
+      }
+
+      NIcon {
+        icon: supportArea.containsMouse ? "heart-filled" : "heart"
+        pointSize: 14
+        color: Color.mOnSurface
+        opacity: supportArea.containsMouse ? Style.opacityFull : Style.opacityMedium
+      }
+    }
+
+    MouseArea {
+      id: supportArea
+      anchors.fill: parent
+      hoverEnabled: true
+      cursorShape: Qt.PointingHandCursor
+      onClicked: {
+        Quickshell.execDetached(["xdg-open", "https://ko-fi.com/lysec"])
+        ToastService.showNotice(I18n.tr("settings.about.support"), I18n.tr("toast.kofi.opened"), 3000)
+      }
+    }
+  }
+
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL
+    Layout.topMargin: Style.marginXXXL
     Layout.bottomMargin: Style.marginXL
   }
 
@@ -188,9 +237,5 @@ ColumnLayout {
         }
       }
     }
-  }
-
-  Item {
-    Layout.fillHeight: true
   }
 }

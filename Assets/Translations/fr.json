@@ -684,7 +684,8 @@
           "description": "Un grand merci à notre {count} <b>super</b> contributeur !",
           "description_plural": "Un grand merci à nos {count} <b>super</b> contributeurs !"
         }
-      }
+      },
+      "support": "Soutenez-nous"
     },
     "hooks": {
       "title": "Hooks",
@@ -1547,6 +1548,9 @@
     "bluetooth": {
       "enabled": "Activé",
       "disabled": "Désactivé"
+    },
+    "kofi": {
+      "opened": "Page Ko-fi ouverte dans votre navigateur"
     },
     "do-not-disturb": {
       "enabled": "'Ne pas déranger' activé",
