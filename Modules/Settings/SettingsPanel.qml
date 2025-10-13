@@ -11,8 +11,8 @@ import qs.Widgets
 NPanel {
   id: root
 
-  preferredWidth: 800 * Style.uiScaleRatio
-  preferredHeight: 900 * Style.uiScaleRatio
+  preferredWidth: 820 * Style.uiScaleRatio
+  preferredHeight: 940 * Style.uiScaleRatio
 
   panelAnchorHorizontalCenter: true
   panelAnchorVerticalCenter: true

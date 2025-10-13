@@ -904,9 +904,9 @@
         "search-placeholder": "Widgets suchen..."
       },
       "active-window": {
-        "auto-hide": {
-          "label": "Automatisch ausblenden",
-          "description": "Widget automatisch ausblenden, wenn kein Fenster aktiv ist."
+        "hide-mode": {
+          "label": "Ausblendmodus",
+          "description": "Steuert das Verhalten des Widgets, wenn kein Fenster aktiv ist."
         },
         "show-app-icon": {
           "label": "App-Symbol anzeigen",
@@ -1053,9 +1053,9 @@
         }
       },
       "media-mini": {
-        "auto-hide": {
-          "label": "Automatisch ausblenden",
-          "description": "Widget automatisch ausblenden, wenn keine Medien abgespielt werden."
+        "hide-mode": {
+          "label": "Ausblendmodus",
+          "description": "Steuert das Verhalten des Widgets, wenn keine Medien abgespielt werden."
         },
         "show-album-art": {
           "label": "Albumcover anzeigen",

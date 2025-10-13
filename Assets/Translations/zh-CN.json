@@ -887,9 +887,9 @@
         "search-placeholder": "搜索小部件..."
       },
       "active-window": {
-        "auto-hide": {
-          "label": "自动隐藏",
-          "description": "当没有活动窗口时自动隐藏小部件。"
+        "hide-mode": {
+          "label": "隐藏模式",
+          "description": "控制当没有活动窗口时小部件的行为。"
         },
         "show-app-icon": {
           "label": "显示应用图标",
@@ -1036,9 +1036,9 @@
         }
       },
       "media-mini": {
-        "auto-hide": {
-          "label": "自动隐藏",
-          "description": "当没有媒体播放时自动隐藏小部件。"
+        "hide-mode": {
+          "label": "隐藏模式",
+          "description": "控制当没有媒体播放时小部件的行为。"
         },
         "show-album-art": {
           "label": "显示专辑封面",
