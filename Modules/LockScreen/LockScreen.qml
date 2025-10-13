@@ -296,8 +296,8 @@ Loader {
 
                   NImageCircled {
                     anchors.centerIn: parent
-                    width: 66
-                    height: 66
+                    Layout.preferredWidth: 66
+                    Layout.preferredHeight: 66
                     imagePath: Settings.preprocessPath(Settings.data.general.avatarImage)
                     fallbackIcon: "person"
 

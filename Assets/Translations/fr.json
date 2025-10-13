@@ -13,43 +13,6 @@
         },
         "select-avatar": "Sélectionner une image d'avatar"
       },
-      "ui": {
-        "section": {
-          "label": "Interface utilisateur",
-          "description": "Personnalisez l'apparence, l'ergonomie et le comportement de l'interface."
-        },
-        "tooltips": {
-          "label": "Afficher les tooltips",
-          "description": "Activer ou désactiver les tooltips dans toute l'interface."
-        },
-        "dim-desktop": {
-          "label": "Assombrir le bureau",
-          "description": "Assombrir le bureau lorsque des panneaux ou des menus sont ouverts."
-        },
-        "compact-lockscreen": {
-          "label": "Écran de verrouillage compact",
-          "description": "Affiche uniquement la saisie de connexion et les contrôles système, masquant les widgets météo et média."
-        },
-        "border-radius": {
-          "label": "Rayon de bordure",
-          "description": "Contrôle l'arrondi des coins des fenêtres, des boutons et d'autres éléments.",
-          "reset": "Réinitialiser le rayon de la bordure"
-        },
-        "animation-speed": {
-          "label": "Vitesse d'animation",
-          "description": "Ajustez la vitesse globale des animations.",
-          "reset": "Réinitialiser la vitesse de l'animation"
-        },
-        "animation-disable": {
-          "label": "Désactiver les animations de l'interface",
-          "description": "Désactiver toutes les animations pour une expérience plus rapide et réactive."
-        },
-        "scaling": {
-          "description": "Modifie la taille de l'interface utilisateur générale, à l'exception de la barre.",
-          "label": "Mise à l'échelle de l'interface",
-          "reset-scaling": "Réinitialiser l'échelle de l'interface"
-        }
-      },
       "screen-corners": {
         "section": {
           "label": "Coins de l'écran",
@@ -95,33 +58,6 @@
           }
         },
         "reset-scaling": "Réinitialiser l'échelle"
-      },
-      "control-center": {
-        "title": "Centre de contrôle",
-        "section": {
-          "label": "Centre de contrôle",
-          "description": "Configurer le positionnement et le comportement du panneau du centre de contrôle."
-        },
-        "position": {
-          "label": "Position",
-          "description": "Choisissez où apparaît le panneau du centre de contrôle lors de l'ouverture."
-        },
-        "quickSettingsStyle": {
-          "section": {
-            "label": "Style des paramètres rapides",
-            "description": "Personnalisez l'apparence et le comportement des paramètres rapides dans le centre de contrôle."
-          },
-          "style": {
-            "label": "Style des paramètres rapides",
-            "description": "Choisissez le style visuel pour les commutateurs et contrôles des paramètres rapides."
-          }
-        },
-        "widgets": {
-          "section": {
-            "label": "Widgets",
-            "description": "Configurez et gérez les widgets du centre de contrôle et leurs options d'affichage."
-          }
-        }
       }
     },
     "audio": {
@@ -750,28 +686,6 @@
         }
       }
     },
-    "control-center": {
-      "title": "Centre de contrôle",
-      "quickSettingsStyle": {
-        "section": {
-          "label": "Style des paramètres rapides",
-          "description": "Personnalisez l'apparence et le comportement des paramètres rapides dans le centre de contrôle."
-        },
-        "style": {
-          "label": "Style des paramètres rapides",
-          "description": "Choisissez le style visuel pour les commutateurs et contrôles des paramètres rapides."
-        }
-      },
-      "widgets": {
-        "section": {
-          "label": "Widgets",
-          "description": "Configurez et gérez les widgets du centre de contrôle et leurs options d'affichage."
-        }
-      },
-      "quickSettings": {
-        "sectionName": "Paramètres rapides"
-      }
-    },
     "hooks": {
       "title": "Hooks",
       "system-hooks": {
@@ -803,6 +717,71 @@
           "label": "Paramètres disponibles",
           "description": "• Hook Fond d'écran : $1 = chemin du fond d'écran, $2 = nom de l'écran\n• Hook de bascule de thème : $1 = true/false (état du mode sombre)"
         }
+      }
+    },
+    "control-center": {
+      "position": {
+        "description": "Choisissez où le panneau du Centre de contrôle apparaît lorsqu'il est ouvert.",
+        "label": "Position"
+      },
+      "quickSettingsStyle": {
+        "section": {
+          "description": "Personnaliser l'apparence et le comportement des réglages rapides dans le Centre de contrôle.",
+          "label": "Style des paramètres rapides"
+        },
+        "style": {
+          "description": "Choisissez le style visuel des bascules et des commandes des paramètres rapides.",
+          "label": "Style des paramètres rapides"
+        }
+      },
+      "section": {
+        "description": "Configurer le positionnement et le comportement du panneau du Centre de contrôle.",
+        "label": "Apparence"
+      },
+      "title": "Centre de contrôle",
+      "widgets": {
+        "section": {
+          "description": "Configurer et gérer les widgets du Centre de contrôle et leurs options d'affichage.",
+          "label": "Widgets"
+        }
+      }
+    },
+    "user-interface": {
+      "animation-disable": {
+        "description": "Désactiver toutes les animations pour une expérience plus rapide et plus réactive.",
+        "label": "Désactiver les animations de l'interface utilisateur"
+      },
+      "animation-speed": {
+        "description": "Ajuster la vitesse globale de l'animation.",
+        "label": "Vitesse d'animation",
+        "reset": "Réinitialiser la vitesse de l'animation"
+      },
+      "border-radius": {
+        "description": "Contrôle l'arrondi des angles des fenêtres, des boutons et d'autres éléments.",
+        "label": "Rayon de bordure",
+        "reset": "Réinitialiser le rayon de la bordure"
+      },
+      "compact-lockscreen": {
+        "description": "Afficher uniquement le champ de saisie de connexion et les commandes système, en masquant les widgets météo et multimédia.",
+        "label": "Écran de verrouillage compact"
+      },
+      "dim-desktop": {
+        "description": "Atténuer le bureau lorsque des panneaux ou des menus sont ouverts.",
+        "label": "Dim bureau"
+      },
+      "scaling": {
+        "description": "Modifie la taille de l'interface utilisateur générale, à l'exception de la barre.",
+        "label": "Mise à l'échelle de l'interface",
+        "reset-scaling": "Réinitialiser l'échelle de l'interface"
+      },
+      "section": {
+        "description": "Personnaliser l'apparence, l'ergonomie et le comportement de l'interface.",
+        "label": "Apparence"
+      },
+      "title": "Interface utilisateur",
+      "tooltips": {
+        "description": "Activer ou désactiver les info-bulles dans toute l'interface.",
+        "label": "Afficher les infobulles"
       }
     }
   },

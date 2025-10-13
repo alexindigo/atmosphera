@@ -18,7 +18,6 @@ NPanel {
 
   panelAnchorHorizontalCenter: true
   panelAnchorVerticalCenter: true
-
   panelKeyboardFocus: true
 
   draggable: !PanelService.hasOpenedPopup
@@ -40,6 +39,7 @@ NPanel {
     Network,
     Notifications,
     ScreenRecorder,
+    UserInterface,
     Wallpaper
   }
 
@@ -116,7 +116,10 @@ NPanel {
     id: controlCenterTab
     ControlCenterTab {}
   }
-
+  Component {
+    id: userInterfaceTab
+    UserInterfaceTab {}
+  }
   // Order *DOES* matter
   function updateTabsModel() {
     let newTabs = [{
@@ -125,17 +128,21 @@ NPanel {
                      "icon": "settings-general",
                      "source": generalTab
                    }, {
+                     "id": SettingsPanel.Tab.UserInterface,
+                     "label": "settings.user-interface.title",
+                     "icon": "settings-user-interface",
+                     "source": userInterfaceTab
+                   }, {
                      "id": SettingsPanel.Tab.Bar,
                      "label": "settings.bar.title",
                      "icon": "settings-bar",
                      "source": barTab
-                   }, //{
-                   // "id": SettingsPanel.Tab.ControlCenter,
-                   // "label": "settings.control-center.title",
-                   // "icon": "settings-bar",
-                   // "source": controlCenterTab
-                   //},
-                   {
+                   }, {
+                     "id": SettingsPanel.Tab.ControlCenter,
+                     "label": "settings.control-center.title",
+                     "icon": "settings-control-center",
+                     "source": controlCenterTab
+                   }, {
                      "id": SettingsPanel.Tab.Dock,
                      "label": "settings.dock.title",
                      "icon": "settings-dock",

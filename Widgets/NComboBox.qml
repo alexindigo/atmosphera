@@ -8,8 +8,8 @@ import qs.Widgets
 RowLayout {
   id: root
 
-  property real minimumWidth: 280
-  property real popupHeight: 180
+  property real minimumWidth: 280 * Style.uiScaleRatio
+  property real popupHeight: 180 * Style.uiScaleRatio
 
   property string label: ""
   property string description: ""
@@ -17,7 +17,7 @@ RowLayout {
   property string currentKey: ""
   property string placeholder: ""
 
-  readonly property real preferredHeight: Style.baseWidgetSize * 1.1
+  readonly property real preferredHeight: Style.baseWidgetSize * 1.1 * Style.uiScaleRatio
 
   signal selected(string key)
 

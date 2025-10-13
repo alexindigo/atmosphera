@@ -25,8 +25,8 @@ NBox {
     spacing: Style.marginM
 
     NImageCircled {
-      width: Math.round(Style.baseWidgetSize * 1.25 * Style.uiScaleRatio)
-      height: width
+      Layout.preferredWidth: Math.round(Style.baseWidgetSize * 1.25 * Style.uiScaleRatio)
+      Layout.preferredHeight: Math.round(Style.baseWidgetSize * 1.25 * Style.uiScaleRatio)
       imagePath: Settings.preprocessPath(Settings.data.general.avatarImage)
       fallbackIcon: "person"
       borderColor: Color.mPrimary

@@ -185,8 +185,8 @@ NPanel {
 
             ColumnLayout {
               NImageCircled {
-                Layout.preferredWidth: 40
-                Layout.preferredHeight: 40
+                Layout.preferredWidth: Math.round(40 * Style.uiScaleRatio)
+                Layout.preferredHeight: Math.round(40 * Style.uiScaleRatio)
                 Layout.alignment: Qt.AlignTop
                 Layout.topMargin: 20
                 imagePath: model.cachedImage || model.originalImage || ""

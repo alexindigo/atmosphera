@@ -49,11 +49,11 @@ ColumnLayout {
     }
 
     NImageCircled {
+      Layout.preferredWidth: Style.fontSizeXL * 2
+      Layout.preferredHeight: Style.fontSizeXL * 2
       Layout.alignment: Qt.AlignVCenter
       imagePath: valueCustomIconPath
       visible: valueCustomIconPath !== ""
-      width: Style.fontSizeXL * 2
-      height: Style.fontSizeXL * 2
     }
 
     NIcon {

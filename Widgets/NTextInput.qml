@@ -40,8 +40,8 @@ ColumnLayout {
     id: frameControl
 
     Layout.fillWidth: true
-    Layout.minimumWidth: 80
-    implicitHeight: Style.baseWidgetSize * 1.1
+    Layout.minimumWidth: 80 * Style.uiScaleRatio
+    implicitHeight: Style.baseWidgetSize * 1.1 * Style.uiScaleRatio
 
     // This is important - makes the control accept focus
     focusPolicy: Qt.StrongFocus
@@ -131,7 +131,7 @@ ColumnLayout {
           background: null
 
           font.family: root.fontFamily
-          font.pointSize: root.fontSize
+          font.pointSize: root.fontSize * Style.uiScaleRatio
           font.weight: root.fontWeight
 
           onEditingFinished: root.editingFinished()

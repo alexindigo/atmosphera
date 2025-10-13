@@ -133,8 +133,8 @@ ColumnLayout {
 
         Item {
           Layout.alignment: Qt.AlignVCenter
-          Layout.preferredWidth: Style.baseWidgetSize * 2
-          Layout.preferredHeight: Style.baseWidgetSize * 2
+          Layout.preferredWidth: Style.baseWidgetSize * 2 * Style.uiScaleRatio
+          Layout.preferredHeight: Style.baseWidgetSize * 2 * Style.uiScaleRatio
 
           NImageCircled {
             imagePath: modelData.avatar_url || ""

@@ -146,8 +146,8 @@ Variants {
           return 0
         var base = Style.marginM
         if (Settings.data.bar.position === "top") {
-          var floatExtraV = Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL  : 0
-          return Style.barHeight+ base + floatExtraV
+          var floatExtraV = Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL : 0
+          return Style.barHeight + base + floatExtraV
         }
         return base
       }
@@ -335,7 +335,7 @@ Variants {
 
             ColumnLayout {
               // Ensure inner padding respects the rounded corners; avoid clipping the icon/text
-              property int vMargin:{
+              property int vMargin: {
                 const styleMargin = Style.marginL
                 const cornerGuard = Math.round(osdItem.radius)
                 return Math.max(styleMargin, cornerGuard)

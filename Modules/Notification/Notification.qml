@@ -313,8 +313,8 @@ Variants {
                   // For real-time notification always show the original image
                   // as the cached version is most likely still processing.
                   NImageCircled {
-                    Layout.preferredWidth: 40
-                    Layout.preferredHeight: 40
+                    Layout.preferredWidth: Math.round(40 * Style.uiScaleRatio)
+                    Layout.preferredHeight: Math.round(40 * Style.uiScaleRatio)
                     Layout.alignment: Qt.AlignTop
                     Layout.topMargin: 30
                     imagePath: model.originalImage || ""

@@ -13,43 +13,6 @@
         },
         "select-avatar": "Avatar-Bild auswählen"
       },
-      "ui": {
-        "section": {
-          "label": "Benutzeroberfläche",
-          "description": "Passen Sie das Aussehen, die Haptik und das Verhalten der Oberfläche an."
-        },
-        "tooltips": {
-          "label": "Tooltips anzeigen",
-          "description": "Tooltips in der gesamten Benutzeroberfläche aktivieren oder deaktivieren."
-        },
-        "dim-desktop": {
-          "label": "Desktop abdunkeln",
-          "description": "Desktop abdunkeln, wenn Panels oder Menüs geöffnet sind."
-        },
-        "compact-lockscreen": {
-          "label": "Kompakter Sperrbildschirm",
-          "description": "Zeigt nur die Anmeldeeingabe und Systemsteuerungen an, versteckt Wetter- und Medien-Widgets."
-        },
-        "border-radius": {
-          "label": "Eckenradius",
-          "description": "Steuert die Rundung der Ecken von Fenstern, Buttons und anderen Elementen.",
-          "reset": "Rahmenradius zurücksetzen"
-        },
-        "animation-speed": {
-          "label": "Animationsgeschwindigkeit",
-          "description": "Globale Animationsgeschwindigkeit anpassen.",
-          "reset": "Animationsgeschwindigkeit zurücksetzen"
-        },
-        "animation-disable": {
-          "label": "UI-Animationen deaktivieren",
-          "description": "Alle Animationen für eine schnellere, reaktionsschnellere Erfahrung deaktivieren."
-        },
-        "scaling": {
-          "description": "Ändert die Größe der allgemeinen Benutzeroberfläche, mit Ausnahme der Leiste.",
-          "label": "Oberflächenskalierung",
-          "reset-scaling": "Schnittstellenskalierung zurücksetzen"
-        }
-      },
       "screen-corners": {
         "section": {
           "label": "Bildschirmecken",
@@ -95,33 +58,6 @@
           }
         },
         "reset-scaling": "Skalierung zurücksetzen"
-      },
-      "control-center": {
-        "title": "Kontrollzentrum",
-        "section": {
-          "label": "Kontrollzentrum",
-          "description": "Konfigurieren Sie die Positionierung und das Verhalten des Kontrollzentrum-Panels."
-        },
-        "position": {
-          "label": "Position",
-          "description": "Wählen Sie, wo das Kontrollzentrum-Panel beim Öffnen erscheint."
-        },
-        "quickSettingsStyle": {
-          "section": {
-            "label": "Schnelleinstellungen-Stil",
-            "description": "Passen Sie das Aussehen und Verhalten der Schnelleinstellungen im Kontrollzentrum an."
-          },
-          "style": {
-            "label": "Schnelleinstellungen-Stil",
-            "description": "Wählen Sie den visuellen Stil für Schnelleinstellungs-Schalter und -Steuerungen."
-          }
-        },
-        "widgets": {
-          "section": {
-            "label": "Widgets",
-            "description": "Konfigurieren und verwalten Sie Kontrollzentrum-Widgets und deren Anzeigeoptionen."
-          }
-        }
       }
     },
     "audio": {
@@ -750,28 +686,6 @@
         }
       }
     },
-    "control-center": {
-      "title": "Kontrollzentrum",
-      "quickSettingsStyle": {
-        "section": {
-          "label": "Schnelleinstellungen-Stil",
-          "description": "Passen Sie das Aussehen und Verhalten der Schnelleinstellungen im Kontrollzentrum an."
-        },
-        "style": {
-          "label": "Schnelleinstellungen-Stil",
-          "description": "Wählen Sie den visuellen Stil für Schnelleinstellungs-Schalter und -Steuerungen."
-        }
-      },
-      "widgets": {
-        "section": {
-          "label": "Widgets",
-          "description": "Konfigurieren und verwalten Sie Kontrollzentrum-Widgets und deren Anzeigeoptionen."
-        }
-      },
-      "quickSettings": {
-        "sectionName": "Schnelleinstellungen"
-      }
-    },
     "hooks": {
       "title": "Hooks",
       "system-hooks": {
@@ -803,6 +717,71 @@
           "label": "Verfügbare Parameter",
           "description": "• Hintergrundbild-Hook: $1 = Hintergrundbild-Pfad, $2 = Bildschirmname\n• Theme-Wechsel-Hook: $1 = true/false (Dunkelmodus-Status)"
         }
+      }
+    },
+    "control-center": {
+      "position": {
+        "description": "Wählen Sie aus, wo das Kontrollzentrum angezeigt wird, wenn es geöffnet wird.",
+        "label": "Position"
+      },
+      "quickSettingsStyle": {
+        "section": {
+          "description": "Passen Sie das Aussehen und Verhalten der Schnelleinstellungen im Kontrollzentrum an.",
+          "label": "Schnelleinstellungen-Stil"
+        },
+        "style": {
+          "description": "Wählen Sie den visuellen Stil für Schnellzugriff-Umschalter und -Steuerelemente.",
+          "label": "Schnelleinstellungen-Stil"
+        }
+      },
+      "section": {
+        "description": "Konfigurieren Sie die Positionierung und das Verhalten des Control Center-Panels.",
+        "label": "Aussehen"
+      },
+      "title": "Kontrollzentrum",
+      "widgets": {
+        "section": {
+          "description": "Control Center Widgets und ihre Anzeigeoptionen konfigurieren und verwalten.",
+          "label": "Widgets"
+        }
+      }
+    },
+    "user-interface": {
+      "animation-disable": {
+        "description": "Deaktivieren Sie alle Animationen für eine schnellere und reaktionsfreudigere Erfahrung.",
+        "label": "UI-Animationen deaktivieren"
+      },
+      "animation-speed": {
+        "description": "Globale Animationsgeschwindigkeit anpassen.",
+        "label": "Animationsgeschwindigkeit",
+        "reset": "Animationsgeschwindigkeit zurücksetzen"
+      },
+      "border-radius": {
+        "description": "Steuert die Eckenrundung von Fenstern, Schaltflächen und anderen Elementen.",
+        "label": "Eckenradius",
+        "reset": "Rahmenradius zurücksetzen"
+      },
+      "compact-lockscreen": {
+        "description": "Zeige nur die Login-Eingabe und Systemsteuerung, blende Wetter- und Medien-Widgets aus.",
+        "label": "Kompakter Sperrbildschirm"
+      },
+      "dim-desktop": {
+        "description": "Den Desktop abdunkeln, wenn Bedienfelder oder Menüs geöffnet sind.",
+        "label": "Dim Desktop"
+      },
+      "scaling": {
+        "description": "Ändert die Größe der allgemeinen Benutzeroberfläche, mit Ausnahme der Leiste.",
+        "label": "Oberflächenskalierung",
+        "reset-scaling": "Schnittstellenskalierung zurücksetzen"
+      },
+      "section": {
+        "description": "Passen Sie das Aussehen, die Haptik und das Verhalten der Benutzeroberfläche an.",
+        "label": "Aussehen"
+      },
+      "title": "Benutzeroberfläche",
+      "tooltips": {
+        "description": "Tooltips in der gesamten Benutzeroberfläche aktivieren oder deaktivieren.",
+        "label": "Tooltips anzeigen"
       }
     }
   },

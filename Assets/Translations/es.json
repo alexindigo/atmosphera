@@ -13,43 +13,6 @@
         },
         "select-avatar": "Seleccionar imagen de avatar"
       },
-      "ui": {
-        "section": {
-          "label": "Interfaz de usuario",
-          "description": "Personaliza la apariencia, sensación y comportamiento de la interfaz."
-        },
-        "tooltips": {
-          "label": "Mostrar tooltips",
-          "description": "Activar o desactivar tooltips en toda la interfaz."
-        },
-        "dim-desktop": {
-          "label": "Atenuar escritorio",
-          "description": "Atenúa el escritorio cuando los paneles o menús están abiertos."
-        },
-        "compact-lockscreen": {
-          "label": "Pantalla de bloqueo compacta",
-          "description": "Muestra solo la entrada de inicio de sesión y controles del sistema, ocultando widgets de clima y medios."
-        },
-        "border-radius": {
-          "label": "Radio del borde",
-          "description": "Controla la redondez de las esquinas de ventanas, botones y otros elementos.",
-          "reset": "Restablecer el radio del borde"
-        },
-        "animation-speed": {
-          "label": "Velocidad de la animación",
-          "description": "Ajusta la velocidad de la animación global.",
-          "reset": "Restablecer la velocidad de la animación"
-        },
-        "animation-disable": {
-          "label": "Desactivar animaciones de UI",
-          "description": "Desactivar todas las animaciones para una experiencia más rápida y responsiva."
-        },
-        "scaling": {
-          "description": "Cambia el tamaño de la interfaz de usuario general, excluyendo la barra.",
-          "label": "Escalado de la interfaz",
-          "reset-scaling": "Restablecer la escala de la interfaz"
-        }
-      },
       "screen-corners": {
         "section": {
           "label": "Esquinas de la pantalla",
@@ -95,33 +58,6 @@
           }
         },
         "reset-scaling": "Restablecer la escala"
-      },
-      "control-center": {
-        "title": "Centro de control",
-        "section": {
-          "label": "Centro de control",
-          "description": "Configurar el posicionamiento y comportamiento del panel del centro de control."
-        },
-        "position": {
-          "label": "Posición",
-          "description": "Elige dónde aparece el panel del centro de control cuando se abre."
-        },
-        "quickSettingsStyle": {
-          "section": {
-            "label": "Estilo de configuración rápida",
-            "description": "Personaliza la apariencia y el comportamiento de las configuraciones rápidas en el centro de control."
-          },
-          "style": {
-            "label": "Estilo de configuración rápida",
-            "description": "Elige el estilo visual para los interruptores y controles de configuración rápida."
-          }
-        },
-        "widgets": {
-          "section": {
-            "label": "Widgets",
-            "description": "Configura y gestiona los widgets del centro de control y sus opciones de visualización."
-          }
-        }
       }
     },
     "audio": {
@@ -750,28 +686,6 @@
         }
       }
     },
-    "control-center": {
-      "title": "Centro de control",
-      "quickSettingsStyle": {
-        "section": {
-          "label": "Estilo de configuración rápida",
-          "description": "Personaliza la apariencia y el comportamiento de las configuraciones rápidas en el centro de control."
-        },
-        "style": {
-          "label": "Estilo de configuración rápida",
-          "description": "Elige el estilo visual para los interruptores y controles de configuración rápida."
-        }
-      },
-      "widgets": {
-        "section": {
-          "label": "Widgets",
-          "description": "Configura y gestiona los widgets del centro de control y sus opciones de visualización."
-        }
-      },
-      "quickSettings": {
-        "sectionName": "Ajustes rápidos"
-      }
-    },
     "hooks": {
       "title": "Hooks",
       "system-hooks": {
@@ -803,6 +717,71 @@
           "label": "Parámetros disponibles",
           "description": "• Hook de fondo de pantalla: $1 = ruta del fondo de pantalla, $2 = nombre de la pantalla\n• Hook de cambio de tema: $1 = true/false (estado del modo oscuro)"
         }
+      }
+    },
+    "control-center": {
+      "position": {
+        "description": "Elige dónde aparece el panel del Centro de control cuando se abre.",
+        "label": "Posición"
+      },
+      "quickSettingsStyle": {
+        "section": {
+          "description": "Personaliza la apariencia y el comportamiento de los ajustes rápidos en el Centro de control.",
+          "label": "Estilo de configuración rápida"
+        },
+        "style": {
+          "description": "Elige el estilo visual para los interruptores y controles de configuración rápida.",
+          "label": "Estilo de ajustes rápidos"
+        }
+      },
+      "section": {
+        "description": "Configurar el posicionamiento y el comportamiento del panel del Centro de control.",
+        "label": "Apariencia"
+      },
+      "title": "Centro de control",
+      "widgets": {
+        "section": {
+          "description": "Configurar y administrar los widgets del Centro de control y sus opciones de visualización.",
+          "label": "Widgets"
+        }
+      }
+    },
+    "user-interface": {
+      "animation-disable": {
+        "description": "Desactiva todas las animaciones para una experiencia más rápida y con mayor capacidad de respuesta.",
+        "label": "Desactivar animaciones de la interfaz de usuario"
+      },
+      "animation-speed": {
+        "description": "Ajustar la velocidad global de la animación.",
+        "label": "Velocidad de animación",
+        "reset": "Restablecer la velocidad de la animación"
+      },
+      "border-radius": {
+        "description": "Controla la redondez de las esquinas de las ventanas, los botones y otros elementos.",
+        "label": "Radio de borde",
+        "reset": "Restablecer el radio del borde"
+      },
+      "compact-lockscreen": {
+        "description": "Mostrar solo el campo de inicio de sesión y los controles del sistema, ocultando los widgets del clima y multimedia.",
+        "label": "Pantalla de bloqueo compacta"
+      },
+      "dim-desktop": {
+        "description": "Atenuar el escritorio cuando los paneles o menús estén abiertos.",
+        "label": "Dim escritorio"
+      },
+      "scaling": {
+        "description": "Cambia el tamaño de la interfaz de usuario general, excluyendo la barra.",
+        "label": "Escalado de la interfaz",
+        "reset-scaling": "Restablecer el escalado de la interfaz"
+      },
+      "section": {
+        "description": "Personaliza la apariencia, el ambiente y el comportamiento de la interfaz.",
+        "label": "Apariencia"
+      },
+      "title": "Interfaz de usuario",
+      "tooltips": {
+        "description": "Activar o desactivar los avisos emergentes en toda la interfaz.",
+        "label": "Mostrar sugerencias"
       }
     }
   },

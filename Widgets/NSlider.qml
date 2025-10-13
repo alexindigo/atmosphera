@@ -11,9 +11,9 @@ Slider {
   property bool snapAlways: true
   property real heightRatio: 0.7
 
-  readonly property real knobDiameter: Math.round((Style.baseWidgetSize * heightRatio) / 2) * 2
-  readonly property real trackHeight: Math.round((knobDiameter * 0.4) / 2) * 2
-  readonly property real cutoutExtra: Math.round((Style.baseWidgetSize * 0.1) / 2) * 2
+  readonly property real knobDiameter: Math.round((Style.baseWidgetSize * heightRatio * Style.uiScaleRatio) / 2) * 2
+  readonly property real trackHeight: Math.round((knobDiameter * 0.4 * Style.uiScaleRatio) / 2) * 2
+  readonly property real cutoutExtra: Math.round((Style.baseWidgetSize * 0.1 * Style.uiScaleRatio) / 2) * 2
 
   padding: cutoutExtra / 2
 

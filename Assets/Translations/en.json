@@ -13,43 +13,6 @@
         },
         "select-avatar": "Select avatar image"
       },
-      "ui": {
-        "section": {
-          "label": "User interface",
-          "description": "Customize the look, feel, and behavior of the interface."
-        },
-        "tooltips": {
-          "label": "Show tooltips",
-          "description": "Enable or disable tooltips throughout the interface."
-        },
-        "scaling": {
-          "label": "Interface scaling",
-          "description": "Changes the size of the general user interface, excluding the bar.",
-          "reset-scaling": "Reset interface scaling"
-        },
-        "dim-desktop": {
-          "label": "Dim desktop",
-          "description": "Dim the desktop when panels or menus are open."
-        },
-        "compact-lockscreen": {
-          "label": "Compact lock screen",
-          "description": "Show only the login input and system controls, hiding weather and media widgets."
-        },
-        "border-radius": {
-          "label": "Border radius",
-          "description": "Controls the corner roundness of windows, buttons, and other elements.",
-          "reset": "Reset border radius"
-        },
-        "animation-speed": {
-          "label": "Animation speed",
-          "description": "Adjust global animation speed.",
-          "reset": "Reset animation speed"
-        },
-        "animation-disable": {
-          "label": "Disable UI Animations",
-          "description": "Disable all animations for a faster, more responsive experience."
-        }
-      },
       "screen-corners": {
         "section": {
           "label": "Screen corners",
@@ -95,34 +58,8 @@
             "description": "Increase or decrease the size of the monospaced text."
           }
         }
-      },
-      "control-center": {
-        "title": "Control Center",
-        "section": {
-          "label": "Control Center",
-          "description": "Configure the Control Center panel positioning and behavior."
-        },
-        "position": {
-          "label": "Position",
-          "description": "Choose where the Control Center panel appears when opened."
-        },
-        "quickSettingsStyle": {
-          "section": {
-            "label": "Quick Settings Style",
-            "description": "Customize the appearance and behavior of quick settings in the Control Center."
-          },
-          "style": {
-            "label": "Quick Settings Style",
-            "description": "Choose the visual style for quick settings toggles and controls."
-          }
-        },
-        "widgets": {
-          "section": {
-            "label": "Widgets",
-            "description": "Configure and manage Control Center widgets and their display options."
-          }
-        }
       }
+      
     },
     "audio": {
       "title": "Audio",
@@ -750,28 +687,6 @@
         }
       }
     },
-    "control-center": {
-      "title": "Control Center",
-      "quickSettingsStyle": {
-        "section": {
-          "label": "Quick Settings Style",
-          "description": "Customize the appearance and behavior of quick settings in the Control Center."
-        },
-        "style": {
-          "label": "Quick Settings Style",
-          "description": "Choose the visual style for quick settings toggles and controls."
-        }
-      },
-      "widgets": {
-        "section": {
-          "label": "Widgets",
-          "description": "Configure and manage Control Center widgets and their display options."
-        }
-      },
-      "quickSettings": {
-        "sectionName": "Quick Settings"
-      }
-    },
     "hooks": {
       "title": "Hooks",
       "system-hooks": {
@@ -803,6 +718,71 @@
           "label": "Available Parameters",
           "description": "• Wallpaper Hook: $1 = wallpaper path, $2 = screen name\n• Theme Toggle Hook: $1 = true/false (dark mode state)"
         }
+      }
+    },
+    "control-center": {
+        "title": "Control Center",
+        "section": {
+          "label": "Appearance",
+          "description": "Configure the Control Center panel positioning and behavior."
+        },
+        "position": {
+          "label": "Position",
+          "description": "Choose where the Control Center panel appears when opened."
+        },
+        "quickSettingsStyle": {
+          "section": {
+            "label": "Quick Settings Style",
+            "description": "Customize the appearance and behavior of quick settings in the Control Center."
+          },
+          "style": {
+            "label": "Quick Settings Style",
+            "description": "Choose the visual style for quick settings toggles and controls."
+          }
+        },
+        "widgets": {
+          "section": {
+            "label": "Widgets",
+            "description": "Configure and manage Control Center widgets and their display options."
+          }
+        }
+    },
+    "user-interface": {
+      "title": "User interface",
+      "section": {
+        "label": "Appearance",
+        "description": "Customize the look, feel, and behavior of the interface."
+      },
+      "tooltips": {
+        "label": "Show tooltips",
+        "description": "Enable or disable tooltips throughout the interface."
+      },
+      "scaling": {
+        "label": "Interface scaling",
+        "description": "Changes the size of the general user interface, excluding the bar.",
+        "reset-scaling": "Reset interface scaling"
+      },
+      "dim-desktop": {
+        "label": "Dim desktop",
+        "description": "Dim the desktop when panels or menus are open."
+      },
+      "compact-lockscreen": {
+        "label": "Compact lock screen",
+        "description": "Show only the login input and system controls, hiding weather and media widgets."
+      },
+      "border-radius": {
+        "label": "Border radius",
+        "description": "Controls the corner roundness of windows, buttons, and other elements.",
+        "reset": "Reset border radius"
+      },
+      "animation-speed": {
+        "label": "Animation speed",
+        "description": "Adjust global animation speed.",
+        "reset": "Reset animation speed"
+      },
+      "animation-disable": {
+        "label": "Disable UI Animations",
+        "description": "Disable all animations for a faster, more responsive experience."
       }
     }
   },
