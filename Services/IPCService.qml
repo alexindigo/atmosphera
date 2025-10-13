@@ -43,6 +43,14 @@ Item {
     function clear() {
       NotificationService.clearHistory()
     }
+
+    function dismissOldest() {
+      NotificationService.dismissOldestActive()
+    }
+
+    function dismissAll() {
+      NotificationService.dismissAllActive()
+    }
   }
 
   IpcHandler {

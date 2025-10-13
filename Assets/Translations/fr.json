@@ -894,9 +894,9 @@
           "label": "Mode de défilement",
           "description": "Contrôler quand le défilement de texte est activé pour les titres de fenêtre longs."
         },
-        "auto-hide": {
-          "label": "Masquer automatiquement",
-          "description": "Masquer automatiquement le widget quand aucune fenêtre n'est active."
+        "hide-mode": {
+          "label": "Mode de masquage",
+          "description": "Contrôle le comportement du widget lorsqu'aucune fenêtre n'est active."
         },
         "width": {
           "description": "Contrôle la taille horizontale du widget.",
@@ -1051,9 +1051,9 @@
           "label": "Mode de défilement",
           "description": "Contrôler quand le défilement de texte est activé pour les titres de piste longs."
         },
-        "auto-hide": {
-          "label": "Masquer automatiquement",
-          "description": "Masquer automatiquement le widget quand aucun média n'est en cours de lecture."
+        "hide-mode": {
+          "label": "Mode de masquage",
+          "description": "Contrôle le comportement du widget lorsqu'aucun média n'est en cours de lecture."
         },
         "no-active-player": "Aucun lecteur actif"
       },

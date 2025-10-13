@@ -32,7 +32,7 @@ Item {
   readonly property string barPosition: Settings.data.bar.position
   readonly property bool compact: (Settings.data.bar.density === "compact") || (Settings.data.bar.density === "mini")
 
-  readonly property bool autoHide: (widgetSettings.autoHide !== undefined) ? widgetSettings.autoHide : widgetMetadata.autoHide
+  readonly property string hideMode: (widgetSettings.hideMode !== undefined) ? widgetSettings.hideMode : "hidden" // "visible", "hidden", "transparent"
   readonly property bool showAlbumArt: (widgetSettings.showAlbumArt !== undefined) ? widgetSettings.showAlbumArt : widgetMetadata.showAlbumArt
   readonly property bool showVisualizer: (widgetSettings.showVisualizer !== undefined) ? widgetSettings.showVisualizer : widgetMetadata.showVisualizer
   readonly property string visualizerType: (widgetSettings.visualizerType !== undefined && widgetSettings.visualizerType !== "") ? widgetSettings.visualizerType : widgetMetadata.visualizerType
@@ -41,7 +41,7 @@ Item {
   // Fixed width - no expansion
   readonly property real widgetWidth: Math.max(145, screen.width * 0.06)
 
-  readonly property bool hasActivePlayer: MediaService.currentPlayer !== null && getTitle() !== ""
+  readonly property bool hasActivePlayer: MediaService.currentPlayer !== null
   readonly property string placeholderText: I18n.tr("bar.widget-settings.media-mini.no-active-player")
 
   readonly property string tooltipText: {
@@ -62,7 +62,9 @@ Item {
   implicitHeight: visible ? ((barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Style.barHeight) : 0
   implicitWidth: visible ? ((barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8) : (widgetWidth)) : 0
 
-  opacity: !autoHide || hasActivePlayer || (!hasActivePlayer && !autoHide) ? 1.0 : 0
+  // "visible": Always Visible, "hidden": Hide When Empty, "transparent": Transparent When Empty
+  visible: hideMode !== "hidden" || hasActivePlayer
+  opacity: hideMode !== "transparent" || hasActivePlayer ? 1.0 : 0
   Behavior on opacity {
     NumberAnimation {
       duration: Style.animationNormal
