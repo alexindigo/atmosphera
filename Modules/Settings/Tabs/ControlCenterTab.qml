@@ -229,11 +229,12 @@ ColumnLayout {
         widgetRegistry: ControlCenterWidgetRegistry
         widgetModel: Settings.data.controlCenter.shortcuts["left"]
         availableWidgets: availableWidgets
-        enableMoveBetweenSections: false
+        availableSections: ["left", "right"]
         onAddWidget: (widgetId, section) => _addWidgetToSection(widgetId, section)
         onRemoveWidget: (section, index) => _removeWidgetFromSection(section, index)
         onReorderWidget: (section, fromIndex, toIndex) => _reorderWidgetInSection(section, fromIndex, toIndex)
         onUpdateWidgetSettings: (section, index, settings) => _updateWidgetSettingsInSection(section, index, settings)
+        onMoveWidget: (fromSection, index, toSection) => _moveWidgetBetweenSections(fromSection, index, toSection)
         onDragPotentialStarted: root.handleDragStart()
         onDragPotentialEnded: root.handleDragEnd()
       }
@@ -247,11 +248,12 @@ ColumnLayout {
         widgetRegistry: ControlCenterWidgetRegistry
         widgetModel: Settings.data.controlCenter.shortcuts["right"]
         availableWidgets: availableWidgets
-        enableMoveBetweenSections: false
+        availableSections: ["left", "right"]
         onAddWidget: (widgetId, section) => _addWidgetToSection(widgetId, section)
         onRemoveWidget: (section, index) => _removeWidgetFromSection(section, index)
         onReorderWidget: (section, fromIndex, toIndex) => _reorderWidgetInSection(section, fromIndex, toIndex)
         onUpdateWidgetSettings: (section, index, settings) => _updateWidgetSettingsInSection(section, index, settings)
+        onMoveWidget: (fromSection, index, toSection) => _moveWidgetBetweenSections(fromSection, index, toSection)
         onDragPotentialStarted: root.handleDragStart()
         onDragPotentialEnded: root.handleDragEnd()
       }
@@ -302,6 +304,25 @@ ColumnLayout {
       newArray.splice(toIndex, 0, item)
 
       Settings.data.controlCenter.shortcuts[section] = newArray
+    }
+  }
+
+  function _moveWidgetBetweenSections(fromSection, index, toSection) {
+    // Get the widget from the source section
+    if (index >= 0 && index < Settings.data.controlCenter.shortcuts[fromSection].length) {
+      var widget = Settings.data.controlCenter.shortcuts[fromSection][index]
+
+      // Remove from source section
+      var sourceArray = Settings.data.controlCenter.shortcuts[fromSection].slice()
+      sourceArray.splice(index, 1)
+      Settings.data.controlCenter.shortcuts[fromSection] = sourceArray
+
+      // Add to target section
+      var targetArray = Settings.data.controlCenter.shortcuts[toSection].slice()
+      targetArray.push(widget)
+      Settings.data.controlCenter.shortcuts[toSection] = targetArray
+
+      //Logger.log("BarTab", `Moved widget ${widget.id} from ${fromSection} to ${toSection}`)
     }
   }
 

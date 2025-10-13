@@ -247,8 +247,7 @@ Singleton {
             "id": "WiFi"
           }, {
             "id": "Bluetooth"
-          },
-          {
+          }, {
             "id": "ScreenRecorder"
           }, {
             "id": "WallpaperSelector"

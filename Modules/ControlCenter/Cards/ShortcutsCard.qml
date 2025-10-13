@@ -15,16 +15,16 @@ RowLayout {
   NBox {
     Layout.fillWidth: true
     Layout.preferredHeight: root.shortcutsHeight
-    
+
     RowLayout {
       id: leftContent
       anchors.fill: parent
       spacing: Style.marginS
-      
+
       Item {
         Layout.fillWidth: true
       }
-      
+
       Repeater {
         model: Settings.data.controlCenter.shortcuts.left
         delegate: ControlCenterWidgetLoader {
@@ -40,7 +40,7 @@ RowLayout {
           Layout.alignment: Qt.AlignVCenter
         }
       }
-      
+
       Item {
         Layout.fillWidth: true
       }
@@ -50,16 +50,16 @@ RowLayout {
   NBox {
     Layout.fillWidth: true
     Layout.preferredHeight: root.shortcutsHeight
-    
+
     RowLayout {
       id: rightContent
       anchors.fill: parent
       spacing: Style.marginS
-      
+
       Item {
         Layout.fillWidth: true
       }
-      
+
       Repeater {
         model: Settings.data.controlCenter.shortcuts.right
         delegate: ControlCenterWidgetLoader {
@@ -75,7 +75,7 @@ RowLayout {
           Layout.alignment: Qt.AlignVCenter
         }
       }
-      
+
       Item {
         Layout.fillWidth: true
       }

@@ -8,26 +8,22 @@ import qs.Services
 Rectangle {
   id: root
 
-  // Size properties (matching NIconButton)
+  // Public properties
   property real baseSize: Style.baseWidgetSize
   property bool applyUiScale: true
-
-  // Public properties
   property string icon: ""
   property string tooltipText: ""
   property string tooltipDirection: "auto"
   property bool enabled: true
   property bool allowClickWhenDisabled: false
   property bool compact: false
-
-  // Hot state (unique to NIconButtonHot)
   property bool hot: false
 
   // Internal properties
   property bool hovering: false
   property bool pressed: false
 
-  // Color properties (matching NIconButton structure)
+  // Color properties
   property color colorBg: Color.mSurfaceVariant
   property color colorFg: Color.mPrimary
   property color colorBgHover: Color.mTertiary
@@ -46,11 +42,11 @@ Rectangle {
   signal rightClicked
   signal middleClicked
 
-  // Dimensions (matching NIconButton)
+  // Dimensions
   implicitWidth: applyUiScale ? Math.round(baseSize * Style.uiScaleRatio) : Math.round(baseSize)
   implicitHeight: applyUiScale ? Math.round(baseSize * Style.uiScaleRatio) : Math.round(baseSize)
 
-  // Appearance (matching NIconButton)
+  // Appearance
   opacity: root.enabled ? Style.opacityFull : Style.opacityMedium
   color: {
     if (pressed) {
@@ -64,7 +60,7 @@ Rectangle {
     }
     return colorBg
   }
-  radius: width * 0.5  // Circular like NIconButton
+  radius: width * 0.5
   border.color: root.enabled && root.hovering ? colorBorderHover : colorBorder
   border.width: Math.max(1, Style.borderS)
 
@@ -82,7 +78,7 @@ Rectangle {
     }
   }
 
-  // Icon (matching NIconButton positioning and sizing)
+  // Icon
   NIcon {
     icon: root.icon
     pointSize: Math.max(1, root.compact ? root.width * 0.65 : root.width * 0.48)
