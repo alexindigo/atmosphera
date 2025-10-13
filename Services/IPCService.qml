@@ -128,6 +128,10 @@ Item {
     function toggle() {
       sessionMenuPanel.toggle()
     }
+
+    function lockAndSuspend() {
+      CompositorService.lockAndSuspend()
+    }
   }
 
   IpcHandler {
