@@ -730,14 +730,16 @@
         "label": "Aussehen"
       },
       "title": "Kontrollzentrum",
-      "audio-controls": {
-        "description": "Verschiedene Audio-Lautstärken sofort über das Kontrollzentrum anpassen.",
-        "label": "Lautstärkeregler"
-      },
-      "quick-settings": {
+      "cards": {
         "section": {
-          "description": "Konfigurieren und verwalten Sie die Schnellzugriff-Widgets.",
-          "label": "Schnelleinstellungen-Widgets"
+          "description": "Passen Sie an, welche Steuerelemente im Kontrollzentrum angezeigt werden und in welcher Reihenfolge.",
+          "label": "Karten"
+        }
+      },
+      "shortcuts": {
+        "section": {
+          "description": "Konfigurieren und verwalten Sie die Verknüpfungs-Widgets.",
+          "label": "Widgets für Kurzbefehle"
         },
         "sectionLeft": "Links",
         "sectionRight": "Richtig"

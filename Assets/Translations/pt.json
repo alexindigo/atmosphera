@@ -730,17 +730,19 @@
         "label": "Aparência"
       },
       "title": "Central de Controle",
-      "audio-controls": {
-        "description": "Ajuste instantaneamente diferentes volumes de áudio a partir da Central de Controle.",
-        "label": "Controles deslizantes de volume"
-      },
-      "quick-settings": {
+      "cards": {
         "section": {
-          "description": "Configure e gerencie os widgets de configurações rápidas.",
-          "label": "Widgets de configurações rápidas"
+          "description": "Personalize quais controles aparecem na Central de Controle e em que ordem.",
+          "label": "Cartas"
+        }
+      },
+      "shortcuts": {
+        "section": {
+          "description": "Configure e gerencie os widgets de atalhos.",
+          "label": "Widgets de atalhos"
         },
         "sectionLeft": "Esquerda",
-        "sectionRight": "Direito/Certo/Correto"
+        "sectionRight": "Direito/Certo/À direita"
       }
     },
     "user-interface": {

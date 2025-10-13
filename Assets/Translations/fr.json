@@ -730,14 +730,16 @@
         "label": "Apparence"
       },
       "title": "Centre de contrôle",
-      "audio-controls": {
-        "description": "Ajustez instantanément différents volumes audio depuis le Centre de contrôle.",
-        "label": "Curseurs de volume"
-      },
-      "quick-settings": {
+      "cards": {
         "section": {
-          "description": "Configurer et gérer les widgets des paramètres rapides.",
-          "label": "Widgets de paramètres rapides"
+          "description": "Personnalisez les commandes qui apparaissent dans le Centre de contrôle et leur ordre d'affichage.",
+          "label": "Cartes"
+        }
+      },
+      "shortcuts": {
+        "section": {
+          "description": "Configurer et gérer les widgets de raccourcis.",
+          "label": "Widgets de raccourcis"
         },
         "sectionLeft": "Gauche",
         "sectionRight": "Droite"

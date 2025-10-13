@@ -4,7 +4,7 @@ import qs.Commons
 import qs.Services
 import qs.Widgets
 
-NQuickSetting {
+NIconButtonHot {
   property ShellScreen screen
 
   enabled: Settings.data.wallpaper.enabled

@@ -730,14 +730,16 @@
         "label": "外观"
       },
       "title": "控制中心",
-      "audio-controls": {
-        "description": "从控制中心即时调整不同的音频音量。",
-        "label": "音量滑块"
-      },
-      "quick-settings": {
+      "cards": {
         "section": {
-          "description": "配置和管理快速设置小部件。",
-          "label": "快速设置小部件"
+          "description": "自定义在控制中心显示的控制项及其顺序。",
+          "label": "卡片"
+        }
+      },
+      "shortcuts": {
+        "section": {
+          "description": "配置和管理快捷方式小部件。",
+          "label": "快捷方式小部件"
         },
         "sectionLeft": "左",
         "sectionRight": "右"
