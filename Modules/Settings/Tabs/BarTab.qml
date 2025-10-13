@@ -87,26 +87,6 @@ ColumnLayout {
     onSelected: key => Settings.data.bar.density = key
   }
 
-  ColumnLayout {
-    spacing: Style.marginXXS
-    Layout.fillWidth: true
-
-    NLabel {
-      label: I18n.tr("settings.bar.appearance.background-opacity.label")
-      description: I18n.tr("settings.bar.appearance.background-opacity.description")
-    }
-
-    NValueSlider {
-      Layout.fillWidth: true
-      from: 0
-      to: 1
-      stepSize: 0.01
-      value: Settings.data.bar.backgroundOpacity
-      onMoved: value => Settings.data.bar.backgroundOpacity = value
-      text: Math.floor(Settings.data.bar.backgroundOpacity * 100) + "%"
-    }
-  }
-
   NToggle {
     Layout.fillWidth: true
     label: I18n.tr("settings.bar.appearance.show-capsule.label")
@@ -177,6 +157,26 @@ ColumnLayout {
           text: Math.round(Settings.data.bar.marginHorizontal * 100) + "%"
         }
       }
+    }
+  }
+
+  ColumnLayout {
+    spacing: Style.marginXXS
+    Layout.fillWidth: true
+
+    NLabel {
+      label: I18n.tr("settings.bar.appearance.background-opacity.label")
+      description: I18n.tr("settings.bar.appearance.background-opacity.description")
+    }
+
+    NValueSlider {
+      Layout.fillWidth: true
+      from: 0
+      to: 1
+      stepSize: 0.01
+      value: Settings.data.bar.backgroundOpacity
+      onMoved: value => Settings.data.bar.backgroundOpacity = value
+      text: Math.floor(Settings.data.bar.backgroundOpacity * 100) + "%"
     }
   }
 

@@ -87,10 +87,11 @@ ColumnLayout {
     }
   }
 
-  NDivider {
-    Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL
-    Layout.bottomMargin: Style.marginXL
+  NToggle {
+    label: I18n.tr("settings.dock.monitors.only-same-output.label")
+    description: I18n.tr("settings.dock.monitors.only-same-output.description")
+    checked: Settings.data.dock.onlySameOutput
+    onToggled: checked => Settings.data.dock.onlySameOutput = checked
   }
 
   NToggle {
@@ -137,13 +138,6 @@ ColumnLayout {
                    }
       }
     }
-  }
-
-  NToggle {
-    label: I18n.tr("settings.dock.monitors.only-same-output.label")
-    description: I18n.tr("settings.dock.monitors.only-same-output.description")
-    checked: Settings.data.dock.onlySameOutput
-    onToggled: checked => Settings.data.dock.onlySameOutput = checked
   }
 
   NDivider {
