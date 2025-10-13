@@ -9,8 +9,8 @@ import "../Helpers/FuzzySort.js" as Fuzzysort
 RowLayout {
   id: root
 
-  property real minimumWidth: 280
-  property real popupHeight: 180
+  property real minimumWidth: 280 * Style.uiScaleRatio
+  property real popupHeight: 180 * Style.uiScaleRatio
 
   property string label: ""
   property string description: ""
@@ -121,7 +121,7 @@ RowLayout {
     }
 
     background: Rectangle {
-      implicitWidth: Style.baseWidgetSize * 3.75
+      implicitWidth: Style.baseWidgetSize * 3.75 * Style.uiScaleRatio
       implicitHeight: preferredHeight
       color: Color.mSurface
       border.color: combo.activeFocus ? Color.mSecondary : Color.mOutline
@@ -207,7 +207,7 @@ RowLayout {
             contentItem: NText {
               text: name
               pointSize: Style.fontSizeM
-              color: highlighted ? Color.mSurface : Color.mOnSurface
+              color: highlighted ? Color.mOnTertiary : Color.mOnSurface
               verticalAlignment: Text.AlignVCenter
               elide: Text.ElideRight
               Behavior on color {
