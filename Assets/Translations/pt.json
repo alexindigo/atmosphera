@@ -886,9 +886,9 @@
         "search-placeholder": "Pesquisar widgets..."
       },
       "active-window": {
-        "auto-hide": {
-          "label": "Ocultar automaticamente",
-          "description": "Ocultar automaticamente o widget quando nenhuma janela está ativa."
+        "hide-mode": {
+          "label": "Modo de ocultação",
+          "description": "Controla o comportamento do widget quando nenhuma janela está ativa."
         },
         "show-app-icon": {
           "label": "Mostrar ícone do aplicativo",
@@ -1035,9 +1035,9 @@
         }
       },
       "media-mini": {
-        "auto-hide": {
-          "label": "Ocultar automaticamente",
-          "description": "Ocultar automaticamente o widget quando nenhuma mídia está sendo reproduzida."
+        "hide-mode": {
+          "label": "Modo de ocultação",
+          "description": "Controla o comportamento do widget quando nenhuma mídia está sendo reproduzida."
         },
         "show-album-art": {
           "label": "Mostrar arte do álbum",
