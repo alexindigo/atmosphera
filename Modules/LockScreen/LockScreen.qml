@@ -428,7 +428,7 @@ Loader {
               height: 60
               anchors.horizontalCenter: parent.horizontalCenter
               anchors.bottom: parent.bottom
-              anchors.bottomMargin: 300
+              anchors.bottomMargin: (Settings.data.general.compactLockScreen ? 240 : 320) * Style.uiScaleRatio
               radius: 30
               color: Color.mError
               border.color: Color.mError
