@@ -1424,6 +1424,19 @@
       "low": "Batería baja",
       "low-desc": "La batería está al {percent}%. Por favor, conecta el cargador."
     },
+    "battery-manager": {
+      "title": "Umbral de batería",
+      "set-success-desc": "Umbral de batería establecido en {percent}%",
+      "initial-setup": "Configuración inicial requerida",
+      "set-failed": "No se pudo establecer el umbral de batería",
+      "install-success": "Instalado correctamente",
+      "install-missing": "Faltan archivos requeridos",
+      "install-unsupported": "El sistema no es compatible",
+      "install-failed": "Error en la instalación",
+      "uninstall-setup": "Desinstalando, se requiere autenticación",
+      "uninstall-success": "Desinstalado correctamente",
+      "uninstall-failed": "Error en la desinstalación"
+    },
     "missing-control-center": {
       "label": "Se eliminó el último widget del Centro de control",
       "description": "El widget del Centro de control se eliminó de la barra. Para acceder a él nuevamente desde la barra, debes volver a añadir el widget. También puedes abrirlo haciendo clic derecho en la barra."
@@ -1455,6 +1468,13 @@
     "charging-rate": "Tasa de carga: {rate} W.",
     "discharging-rate": "Tasa de descarga: {rate} W.",
     "charging": "Cargando.",
-    "discharging": "Descargando."
+    "discharging": "Descargando.",
+    "panel": {
+      "title": "Umbral de carga",
+      "full": "Capacidad total ({percent}%)",
+      "balanced": "Equilibrado ({percent}%)",
+      "lifespan": "Vida útil prolongada ({percent}%)",
+      "disabled": "Administrador de batería deshabilitado"
+    }
   }
 }

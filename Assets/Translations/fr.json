@@ -1424,6 +1424,19 @@
       "low": "Batterie faible",
       "low-desc": "La batterie est à {percent}%. Veuillez brancher le chargeur."
     },
+    "battery-manager": {
+      "title": "Seuil de batterie",
+      "set-success-desc": "Seuil de batterie défini à {percent}%",
+      "initial-setup": "Configuration initiale requise",
+      "set-failed": "Échec de la définition du seuil de batterie",
+      "install-success": "Installation réussie",
+      "install-missing": "Fichiers requis manquants",
+      "install-unsupported": "Système non pris en charge",
+      "install-failed": "Échec de l'installation",
+      "uninstall-setup": "Désinstallation, authentification requise",
+      "uninstall-success": "Désinstallation réussie",
+      "uninstall-failed": "Échec de la désinstallation"
+    },
     "missing-control-center": {
       "label": "Dernier widget du Centre de contrôle supprimé",
       "description": "Le widget du Centre de contrôle a été retiré de la barre. Pour y accéder à nouveau depuis la barre, veuillez ré‑ajouter le widget. Vous pouvez aussi l'ouvrir en cliquant avec le bouton droit sur la barre."
@@ -1455,6 +1468,13 @@
     "charging-rate": "Taux de charge : {rate} W.",
     "discharging-rate": "Taux de décharge : {rate} W.",
     "charging": "En charge.",
-    "discharging": "En décharge."
+    "discharging": "En décharge.",
+    "panel": {
+      "title": "Seuil de charge",
+      "full": "Capacité totale ({percent}%)",
+      "balanced": "Équilibré ({percent}%)",
+      "lifespan": "Durée de vie prolongée ({percent}%)",
+      "disabled": "Gestionnaire de batterie désactivé"
+    }
   }
 }
