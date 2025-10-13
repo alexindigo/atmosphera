@@ -222,7 +222,7 @@
       "widgets": {
         "section": {
           "label": "Posicionamento dos widgets",
-          "description": "Arraste e solte os widgets para reordená-los em cada seção, ou use os botões de adicionar/remover para gerenciar os widgets."
+          "description": "Arraste e solte widgets para reordená-los. Os emblemas indicam o uso: [E]squerda, [C]entro, [D]ireita."
         }
       },
       "monitors": {
