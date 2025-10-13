@@ -324,7 +324,7 @@ Loader {
 
                   // Welcome back + Username on one line
                   NText {
-                    text: I18n.tr("lock-screen.welcome-back") + " " + Quickshell.env("USER") + "!"
+                    text: I18n.tr("lock-screen.welcome-back") + " " + (Quickshell.env("USER").charAt(0).toUpperCase() + Quickshell.env("USER").slice(1)) + "!"
                     pointSize: Style.fontSizeXXL
                     font.weight: Font.Medium
                     color: Color.mOnSurface
@@ -428,7 +428,7 @@ Loader {
               height: 60
               anchors.horizontalCenter: parent.horizontalCenter
               anchors.bottom: parent.bottom
-              anchors.bottomMargin: 300
+              anchors.bottomMargin: (Settings.data.general.compactLockScreen ? 240 : 320) * Style.uiScaleRatio
               radius: 30
               color: Color.mError
               border.color: Color.mError
