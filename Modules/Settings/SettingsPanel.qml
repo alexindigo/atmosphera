@@ -12,9 +12,7 @@ NPanel {
   id: root
 
   preferredWidth: 800 * Style.uiScaleRatio
-  preferredHeight: 800 * Style.uiScaleRatio
-  preferredWidthRatio: 0.4
-  preferredHeightRatio: 0.75
+  preferredHeight: 900 * Style.uiScaleRatio
 
   panelAnchorHorizontalCenter: true
   panelAnchorVerticalCenter: true
@@ -348,7 +346,7 @@ NPanel {
         // Sidebar
         Rectangle {
           id: sidebar
-          Layout.preferredWidth: 220
+          Layout.preferredWidth: 220 * Style.uiScaleRatio
           Layout.fillHeight: true
           Layout.alignment: Qt.AlignTop
           color: Color.mSurfaceVariant
