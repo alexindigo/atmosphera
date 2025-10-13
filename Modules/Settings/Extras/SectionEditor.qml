@@ -83,6 +83,7 @@ NBox {
       Item {
         Layout.fillWidth: true
       }
+
       NSearchableComboBox {
         id: comboBox
         model: availableWidgets

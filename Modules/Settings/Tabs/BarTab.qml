@@ -300,9 +300,7 @@ ColumnLayout {
     Layout.bottomMargin: Style.marginXL
   }
 
-  // ---------------------------------
   // Signal functions
-  // ---------------------------------
   function _addWidgetToSection(widgetId, section) {
     var newWidget = {
       "id": widgetId
@@ -372,19 +370,51 @@ ColumnLayout {
     }
   }
 
+  // Data model functions
+  function getWidgetLocations(widgetId) {
+    if (!BarService)
+      return []
+    const instances = BarService.getAllRegisteredWidgets()
+    const locations = {}
+    for (var i = 0; i < instances.length; i++) {
+      if (instances[i].widgetId === widgetId) {
+        const section = instances[i].section
+        if (section === "left")
+          locations["L"] = true
+        else if (section === "center")
+          locations["C"] = true
+        else if (section === "right")
+          locations["R"] = true
+      }
+    }
+    return Object.keys(locations).join('')
+  }
+
+  function updateAvailableWidgetsModel() {
+    availableWidgets.clear()
+    const widgets = BarWidgetRegistry.getAvailableWidgets()
+    widgets.forEach(entry => {
+      availableWidgets.append({
+                              "key": entry,
+                              "name": entry,
+                              "badgeLocations": getWidgetLocations(entry)
+                            })
+    })
+  }
+
   // Base list model for all combo boxes
   ListModel {
     id: availableWidgets
   }
 
   Component.onCompleted: {
-    // Fill out availableWidgets ListModel
-    availableWidgets.clear()
-    BarWidgetRegistry.getAvailableWidgets().forEach(entry => {
-                                                      availableWidgets.append({
-                                                                                "key": entry,
-                                                                                "name": entry
-                                                                              })
-                                                    })
+    updateAvailableWidgetsModel()
+  }
+
+  Connections {
+    target: BarService
+    function onActiveWidgetsChanged() {
+      updateAvailableWidgetsModel()
+    }
   }
 }
