@@ -402,7 +402,7 @@ Loader {
                         var t = Settings.data.location.use12hourFormat ? Qt.locale().toString(Time.date, "hh AP") : Qt.locale().toString(Time.date, "HH")
                         return t
                       }
-                      pointSize: Style.fontSizeL
+                      pointSize: Style.fontSizeM
                       font.weight: Style.fontWeightBold
                       family: Settings.data.ui.fontFixed
                       color: Color.mOnSurface
@@ -412,7 +412,7 @@ Loader {
 
                     NText {
                       text: Qt.formatTime(Time.date, "mm")
-                      pointSize: Style.fontSizeL
+                      pointSize: Style.fontSizeM
                       font.weight: Style.fontWeightBold
                       family: Settings.data.ui.fontFixed
                       color: Color.mOnSurfaceVariant
