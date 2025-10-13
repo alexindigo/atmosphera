@@ -414,6 +414,13 @@ Singleton {
     removeActive(id)
   }
 
+  function dismissOldestActive() {
+    if (activeList.count > 0) {
+      const lastNotif = activeList.get(activeList.count - 1)
+      dismissActiveNotification(lastNotif.id)
+    }
+  }
+
   function dismissAllActive() {
     Object.values(activeMap).forEach(n => n.dismiss())
     activeList.clear()
