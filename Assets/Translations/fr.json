@@ -222,7 +222,7 @@
       "widgets": {
         "section": {
           "label": "Positionnement des widgets",
-          "description": "Glissez-déposez les widgets pour les réorganiser dans chaque section, ou utilisez les boutons ajouter/supprimer pour gérer les widgets."
+          "description": "Faites glisser et déposez les widgets pour les réorganiser. Les badges indiquent l'utilisation : [G]auche, [C]entre, [D]roite."
         }
       },
       "monitors": {
