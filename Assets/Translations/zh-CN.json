@@ -222,7 +222,7 @@
       "widgets": {
         "section": {
           "label": "小部件定位",
-          "description": "拖放小部件以在每个部分内重新排序，或使用添加/删除按钮管理小部件。"
+          "description": "拖放小部件以重新排序。徽章表示使用情况：[L]左、[C]中、[R]右。"
         }
       },
       "monitors": {
