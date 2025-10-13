@@ -101,13 +101,16 @@ ColumnLayout {
 
   GridView {
     id: contributorsGrid
+
+    readonly property int columnsCount: 2
+
     Layout.alignment: Qt.AlignHCenter
-    Layout.preferredWidth: cellWidth * 3 // Fixed 3 columns
+    Layout.preferredWidth: cellWidth * columnsCount
     Layout.preferredHeight: {
       if (root.contributors.length === 0)
         return 0
-      const columns = 3
-      const rows = Math.ceil(root.contributors.length / columns)
+
+      const rows = Math.ceil(root.contributors.length / columnsCount)
       return rows * cellHeight
     }
     cellWidth: Math.round(Style.baseWidgetSize * 7)
@@ -168,7 +171,7 @@ ColumnLayout {
           NText {
             text: (modelData.contributions || 0) + " " + ((modelData.contributions || 0) === 1 ? "commit" : "commits")
             pointSize: Style.fontSizeXS
-            color: contributorArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface
+            color: contributorArea.containsMouse ? Color.mOnTertiary : Color.mOnSurfaceVariant
           }
         }
       }
