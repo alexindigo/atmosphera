@@ -5,7 +5,6 @@ import Quickshell
 import qs.Commons
 import qs.Services
 import qs.Widgets
-import qs.Modules.Settings.Extras
 
 ColumnLayout {
   id: root
@@ -204,7 +203,7 @@ ColumnLayout {
       spacing: Style.marginM
 
       // Left Section
-      SectionEditor {
+      NSectionEditor {
         sectionName: "Left"
         sectionId: "left"
         settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Settings/Bar/BarWidgetSettingsDialog.qml")
@@ -221,7 +220,7 @@ ColumnLayout {
       }
 
       // Center Section
-      SectionEditor {
+      NSectionEditor {
         sectionName: "Center"
         sectionId: "center"
         settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Settings/Bar/BarWidgetSettingsDialog.qml")
@@ -238,7 +237,7 @@ ColumnLayout {
       }
 
       // Right Section
-      SectionEditor {
+      NSectionEditor {
         sectionName: "Right"
         sectionId: "right"
         settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Settings/Bar/BarWidgetSettingsDialog.qml")

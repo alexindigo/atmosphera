@@ -285,19 +285,19 @@ NBox {
                         if (dialog) {
                           dialog.open()
                         } else {
-                          Logger.error("SectionEditor", "Failed to create settings dialog instance")
+                          Logger.error("NSectionEditor", "Failed to create settings dialog instance")
                         }
                       }
                       if (component.status === Component.Ready) {
                         instantiateAndOpen()
                       } else if (component.status === Component.Error) {
-                        Logger.error("SectionEditor", component.errorString())
+                        Logger.error("NSectionEditor", component.errorString())
                       } else {
                         component.statusChanged.connect(function () {
                           if (component.status === Component.Ready) {
                             instantiateAndOpen()
                           } else if (component.status === Component.Error) {
-                            Logger.error("SectionEditor", component.errorString())
+                            Logger.error("NSectionEditor", component.errorString())
                           }
                         })
                       }

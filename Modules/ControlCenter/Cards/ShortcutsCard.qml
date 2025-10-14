@@ -2,11 +2,11 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
-import qs.Modules.ControlCenter.Cards
 import qs.Commons
 import qs.Services
 import qs.Widgets
-import qs.Modules.ControlCenter.Extras
+import qs.Modules.ControlCenter
+import qs.Modules.ControlCenter.Cards
 
 RowLayout {
   Layout.fillWidth: true
