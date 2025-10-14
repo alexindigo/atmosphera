@@ -15,6 +15,8 @@ Singleton {
   // Key format: "screenName|section|widgetId|index"
   property var widgetInstances: ({})
 
+  signal activeWidgetsChanged()
+
   signal barReadyChanged(string screenName)
 
   // Simple timer that run once when the widget structure has changed
@@ -68,6 +70,7 @@ Singleton {
     timerCheckVisualizer.restart()
 
     Logger.log("BarService", "Registered widget:", key)
+    root.activeWidgetsChanged()
   }
 
   // Unregister a widget instance
@@ -75,6 +78,7 @@ Singleton {
     const key = [screenName, section, widgetId, index].join("|")
     delete widgetInstances[key]
     Logger.log("BarService", "Unregistered widget:", key)
+    root.activeWidgetsChanged()
   }
 
   // Lookup a specific widget instance (returns the actual QML instance)

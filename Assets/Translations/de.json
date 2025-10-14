@@ -222,7 +222,7 @@
       "widgets": {
         "section": {
           "label": "Widget-Positionierung",
-          "description": "Widgets per Drag & Drop innerhalb jeder Sektion neu anordnen oder Add/Remove-Buttons zum Verwalten verwenden."
+          "description": "Widgets per Drag & Drop neu anordnen. Abzeichen zeigen die Verwendung an: [L]inks, [M]itte, [R]echts."
         }
       },
       "monitors": {

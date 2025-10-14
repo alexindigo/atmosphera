@@ -223,7 +223,7 @@
       "widgets": {
         "section": {
           "label": "Widgets positioning",
-          "description": "Drag and drop widgets to reorder them within each section, or use the add/remove buttons to manage widgets."
+          "description": "Drag and drop widgets to reorder them. Badges indicate usage: [L]eft, [C]enter, [R]ight."
         }
       },
       "monitors": {
