@@ -272,6 +272,9 @@ Singleton {
           "id": "audio-card",
           "enabled": true
         }, {
+          "id": "weather-card",
+          "enabled": true
+        }, {
           "id": "media-sysmon-card",
           "enabled": true
         }]

@@ -23,13 +23,13 @@ ColumnLayout {
       "enabled": true,
       "required": false
     }, {
-      "id": "weather-card",
-      "text": "Weather",
+      "id": "audio-card",
+      "text": "Audio Sliders",
       "enabled": true,
       "required": false
     }, {
-      "id": "audio-card",
-      "text": "Audio Sliders",
+      "id": "weather-card",
+      "text": "Weather",
       "enabled": true,
       "required": false
     }, {
