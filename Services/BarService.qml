@@ -15,7 +15,7 @@ Singleton {
   // Key format: "screenName|section|widgetId|index"
   property var widgetInstances: ({})
 
-  signal activeWidgetsChanged()
+  signal activeWidgetsChanged
 
   signal barReadyChanged(string screenName)
 

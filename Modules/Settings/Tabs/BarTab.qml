@@ -397,12 +397,12 @@ ColumnLayout {
     availableWidgets.clear()
     const widgets = BarWidgetRegistry.getAvailableWidgets()
     widgets.forEach(entry => {
-      availableWidgets.append({
-                              "key": entry,
-                              "name": entry,
-                              "badgeLocations": getWidgetLocations(entry)
-                            })
-    })
+                      availableWidgets.append({
+                                                "key": entry,
+                                                "name": entry,
+                                                "badgeLocations": getWidgetLocations(entry)
+                                              })
+                    })
   }
 
   // Base list model for all combo boxes

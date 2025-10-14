@@ -210,49 +210,49 @@ RowLayout {
                 combo.popup.close()
               }
 
-                          contentItem: RowLayout {
-                            width: parent.width
-                            spacing: Style.marginM
-              
-                            NText {
-                              text: name
-                              pointSize: Style.fontSizeM
-                              color: highlighted ? Color.mOnTertiary : Color.mOnSurface
-                              verticalAlignment: Text.AlignVCenter
-                              elide: Text.ElideRight
-                              Layout.fillWidth: true
-                              Behavior on color {
-                                ColorAnimation {
-                                  duration: Style.animationFast
-                                }
-                              }
-                            }
-              
-                            RowLayout {
-                              spacing: Style.marginS
-                              Layout.alignment: Qt.AlignRight
-              
-                              Repeater {
-                                model: badgeLocations
-              
-                  delegate: NBox {
-                    width: Style.baseWidgetSize * 0.7
-                    height: Style.baseWidgetSize * 0.7
-                    color: "transparent"
-                    radius: Style.radiusS
-                    border.width: 0
+              contentItem: RowLayout {
+                width: parent.width
+                spacing: Style.marginM
 
-                    NText {
-                      anchors.centerIn: parent
-                      text: modelData
-                      pointSize: Style.fontSizeXXS
-                      font.weight: Style.fontWeightBold
-                      color: highlighted ? Color.mOnTertiary : Color.mOnSurface
+                NText {
+                  text: name
+                  pointSize: Style.fontSizeM
+                  color: highlighted ? Color.mOnTertiary : Color.mOnSurface
+                  verticalAlignment: Text.AlignVCenter
+                  elide: Text.ElideRight
+                  Layout.fillWidth: true
+                  Behavior on color {
+                    ColorAnimation {
+                      duration: Style.animationFast
+                    }
+                  }
+                }
+
+                RowLayout {
+                  spacing: Style.marginS
+                  Layout.alignment: Qt.AlignRight
+
+                  Repeater {
+                    model: badgeLocations
+
+                    delegate: NBox {
+                      width: Style.baseWidgetSize * 0.7
+                      height: Style.baseWidgetSize * 0.7
+                      color: "transparent"
+                      radius: Style.radiusS
+                      border.width: 0
+
+                      NText {
+                        anchors.centerIn: parent
+                        text: modelData
+                        pointSize: Style.fontSizeXXS
+                        font.weight: Style.fontWeightBold
+                        color: highlighted ? Color.mOnTertiary : Color.mOnSurface
+                      }
                     }
                   }
                 }
               }
-            }
               background: Rectangle {
                 width: listView.width
                 color: highlighted ? Color.mTertiary : Color.transparent
