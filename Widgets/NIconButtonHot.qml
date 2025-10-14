@@ -14,9 +14,9 @@ Rectangle {
   property string icon: ""
   property string tooltipText: ""
   property string tooltipDirection: "auto"
+  property string density: ""
   property bool enabled: true
   property bool allowClickWhenDisabled: false
-  property bool compact: false
   property bool hot: false
 
   // Internal properties
@@ -81,7 +81,7 @@ Rectangle {
   // Icon
   NIcon {
     icon: root.icon
-    pointSize: Math.max(1, root.compact ? root.width * 0.65 : root.width * 0.48)
+    pointSize: Math.max(1, Math.round(root.width * 0.48))
     applyUiScale: root.applyUiScale
     color: {
       if (pressed) {

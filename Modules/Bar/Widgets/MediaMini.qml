@@ -30,7 +30,7 @@ Item {
   }
 
   readonly property string barPosition: Settings.data.bar.position
-  readonly property bool compact: (Settings.data.bar.density === "compact") || (Settings.data.bar.density === "mini")
+  readonly property bool density: Settings.data.bar.density
 
   readonly property string hideMode: (widgetSettings.hideMode !== undefined) ? widgetSettings.hideMode : "hidden" // "visible", "hidden", "transparent"
   readonly property bool showAlbumArt: (widgetSettings.showAlbumArt !== undefined) ? widgetSettings.showAlbumArt : widgetMetadata.showAlbumArt

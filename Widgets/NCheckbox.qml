@@ -6,7 +6,7 @@ import qs.Commons
 RowLayout {
   id: root
 
-  // Public API (mirrors NToggle but compact)
+  // Public API
   property string label: ""
   property string description: ""
   property bool checked: false
