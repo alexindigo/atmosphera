@@ -1090,6 +1090,10 @@
         }
       },
       "taskbar": {
+        "hide-mode": {
+          "label": "Mode de masquage",
+          "description": "Contrôle le comportement du widget lorsqu'il n'y a pas de fenêtres correspondantes."
+        },
         "only-active-workspaces": {
           "description": "Afficher uniquement les applications des espaces de travail actifs.",
           "label": "Seulement depuis les espaces de travail actifs."

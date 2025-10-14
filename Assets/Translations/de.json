@@ -1107,6 +1107,10 @@
         }
       },
       "taskbar": {
+        "hide-mode": {
+          "label": "Ausblendmodus",
+          "description": "Steuert das Verhalten des Widgets, wenn keine übereinstimmenden Fenster vorhanden sind."
+        },
         "only-active-workspaces": {
           "label": "Nur von aktiven Arbeitsbereichen",
           "description": "Zeige nur Apps von aktiven Arbeitsbereichen an."

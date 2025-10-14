@@ -1090,6 +1090,10 @@
         }
       },
       "taskbar": {
+        "hide-mode": {
+          "label": "Modo de ocultación",
+          "description": "Controla cómo se comporta el widget cuando no hay ventanas coincidentes."
+        },
         "only-active-workspaces": {
           "description": "Mostrar solo las aplicaciones de los espacios de trabajo activos.",
           "label": "Solo desde espacios de trabajo activos"
