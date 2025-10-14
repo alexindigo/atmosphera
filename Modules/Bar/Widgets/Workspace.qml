@@ -67,13 +67,13 @@ Item {
 
   function getWorkspaceWidth(ws) {
     const d = Style.capsuleHeight * root.baseDimensionRatio
-    const factor = ws.isFocused ? 2.2 : 1
+    const factor = ws.isActive ? 2.2 : 1
     return d * factor
   }
 
   function getWorkspaceHeight(ws) {
     const d = Style.capsuleHeight * root.baseDimensionRatio
-    const factor = ws.isFocused ? 2.2 : 1
+    const factor = ws.isActive ? 2.2 : 1
     return d * factor
   }
 
@@ -285,7 +285,7 @@ Item {
                   }
                 }
                 family: Settings.data.ui.fontFixed
-                pointSize: model.isFocused ? workspacePillContainer.height * 0.45 : workspacePillContainer.height * 0.42
+                pointSize: model.isActive ? workspacePillContainer.height * 0.45 : workspacePillContainer.height * 0.42
                 applyUiScale: false
                 font.capitalization: Font.AllUppercase
                 font.weight: Style.fontWeightBold
@@ -295,7 +295,7 @@ Item {
                     return Color.mOnPrimary
                   if (model.isUrgent)
                     return Color.mOnError
-                  if (model.isActive || model.isOccupied)
+                  if (model.isOccupied)
                     return Color.mOnSecondary
 
                   return Color.mOnSecondary
@@ -310,12 +310,12 @@ Item {
               return Color.mPrimary
             if (model.isUrgent)
               return Color.mError
-            if (model.isActive || model.isOccupied)
+            if (model.isOccupied)
               return Color.mSecondary
 
             return Qt.alpha(Color.mSecondary, 0.3)
           }
-          scale: model.isFocused ? 1.0 : 0.9
+          scale: model.isActive ? 1.0 : 0.9
           z: 0
 
           MouseArea {
@@ -430,7 +430,7 @@ Item {
                   }
                 }
                 family: Settings.data.ui.fontFixed
-                pointSize: model.isFocused ? workspacePillContainerVertical.width * 0.45 : workspacePillContainerVertical.width * 0.42
+                pointSize: model.isActive ? workspacePillContainerVertical.width * 0.45 : workspacePillContainerVertical.width * 0.42
                 applyUiScale: false
                 font.capitalization: Font.AllUppercase
                 font.weight: Style.fontWeightBold
@@ -440,7 +440,7 @@ Item {
                     return Color.mOnPrimary
                   if (model.isUrgent)
                     return Color.mOnError
-                  if (model.isActive || model.isOccupied)
+                  if (model.isOccupied)
                     return Color.mOnSecondary
 
                   return Color.mOnSurface
@@ -455,12 +455,12 @@ Item {
               return Color.mPrimary
             if (model.isUrgent)
               return Color.mError
-            if (model.isActive || model.isOccupied)
+            if (model.isOccupied)
               return Color.mSecondary
 
             return Color.mOutline
           }
-          scale: model.isFocused ? 1.0 : 0.9
+          scale: model.isActive ? 1.0 : 0.9
           z: 0
 
           MouseArea {
