@@ -10,6 +10,9 @@ Slider {
   property var cutoutColor: Color.mSurface
   property bool snapAlways: true
   property real heightRatio: 0.7
+  property string tooltipText
+  property string tooltipDirection: "auto"
+  property bool hovering: false
 
   readonly property real knobDiameter: Math.round((Style.baseWidgetSize * heightRatio * Style.uiScaleRatio) / 2) * 2
   readonly property real trackHeight: Math.round((knobDiameter * 0.4 * Style.uiScaleRatio) / 2) * 2
@@ -123,6 +126,48 @@ Slider {
         ColorAnimation {
           duration: Style.animationFast
         }
+      }
+    }
+
+    MouseArea {
+      enabled: true
+      anchors.fill: parent
+      cursorShape: Qt.PointingHandCursor
+      hoverEnabled: true
+      // Pass through mouse events to the slider
+      propagateComposedEvents: true
+      preventStealing: false
+
+      onEntered: {
+        root.hovering = true
+        if (root.tooltipText) {
+          TooltipService.show(Screen, knob, root.tooltipText, root.tooltipDirection)
+        }
+      }
+
+      onExited: {
+        root.hovering = false
+        if (root.tooltipText) {
+          TooltipService.hide()
+        }
+      }
+
+      onPressed: function (mouse) {
+        if (root.tooltipText) {
+          TooltipService.hide()
+        }
+        // Pass the event through to the slider
+        mouse.accepted = false
+      }
+
+      onReleased: function (mouse) {
+        // Pass the event through to the slider
+        mouse.accepted = false
+      }
+
+      onPositionChanged: function (mouse) {
+        // Pass the event through to the slider
+        mouse.accepted = false
       }
     }
   }

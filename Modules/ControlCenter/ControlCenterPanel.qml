@@ -55,7 +55,7 @@ NPanel {
 
   readonly property int profileHeight: Math.round(64 * Style.uiScaleRatio)
   readonly property int shortcutsHeight: Math.round(52 * Style.uiScaleRatio)
-  readonly property int audioHeight: Math.round(120 * Style.uiScaleRatio)
+  readonly property int audioHeight: Math.round(60 * Style.uiScaleRatio)
   readonly property int weatherHeight: Math.round(190 * Style.uiScaleRatio)
   readonly property int mediaSysMonHeight: Math.round(260 * Style.uiScaleRatio)
 
