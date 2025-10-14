@@ -277,11 +277,15 @@ ColumnLayout {
       delegate: NCheckbox {
         Layout.fillWidth: true
         label: modelData.name || "Unknown"
-        description: I18n.tr("system.monitor-description", {
-                               "model": modelData.model,
-                               "width": modelData.width,
-                               "height": modelData.height
-                             })
+        description: {
+          const compositorScale = CompositorService.getDisplayScale(modelData.name)
+          I18n.tr("system.monitor-description", {
+                    "model": modelData.model,
+                    "width": modelData.width * compositorScale,
+                    "height": modelData.height * compositorScale,
+                    "scale": compositorScale
+                  })
+        }
         checked: (Settings.data.bar.monitors || []).indexOf(modelData.name) !== -1
         onToggled: checked => {
                      if (checked) {
