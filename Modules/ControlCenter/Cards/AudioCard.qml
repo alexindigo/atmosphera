@@ -9,10 +9,13 @@ import qs.Widgets
 NBox {
   id: root
 
-  property real localOutputVolume: AudioService.volume
-  property real localInputVolume: AudioService.inputVolume
+  property real localOutputVolume: AudioService.volume || 0
+  property bool localOutputVolumeChanging: false
 
-  // Timer to debounce volume changes (similar to AudioTab)
+  property real localInputVolume: AudioService.inputVolume || 0
+  property bool localInputVolumeChanging: false
+
+  // Timer to debounce volume changes
   Timer {
     interval: 100
     running: true
@@ -21,6 +24,9 @@ NBox {
       if (Math.abs(localOutputVolume - AudioService.volume) >= 0.01) {
         AudioService.setVolume(localOutputVolume)
       }
+      if (Math.abs(localInputVolume - AudioService.inputVolume) >= 0.01) {
+        AudioService.setInputVolume(localInputVolume)
+      }
     }
   }
 
@@ -28,14 +34,14 @@ NBox {
   Connections {
     target: AudioService.sink?.audio ? AudioService.sink?.audio : null
     function onVolumeChanged() {
-      localOutputVolume = AudioService.volume
+      if (!localOutputVolumeChanging) {
+        localOutputVolume = AudioService.volume
+      }
     }
-  }
-
-  Connections {
-    target: AudioService.source?.audio ? AudioService.source?.audio : null
-    function onVolumeChanged() {
-      localInputVolume = AudioService.inputVolume
+    function onInputVolumeChanged() {
+      if (!localInputVolumeChanging) {
+        localInputVolume = AudioService.inputVolume
+      }
     }
   }
 
@@ -85,11 +91,12 @@ NBox {
         Layout.fillWidth: true
         from: 0
         to: Settings.data.audio.volumeOverdrive ? 1.5 : 1.0
-        value: localOutputVolume || 0
+        value: localOutputVolume
         stepSize: 0.01
         heightRatio: 0.5
         onMoved: localOutputVolume = value
-        tooltipText: `${Math.round((AudioService.volume || 0) * 100)}%`
+        onPressedChanged: localOutputVolumeChanging = pressed
+        tooltipText: `${Math.round(localOutputVolume * 100)}%`
         tooltipDirection: "bottom"
       }
     }
@@ -131,11 +138,12 @@ NBox {
         Layout.fillWidth: true
         from: 0
         to: Settings.data.audio.volumeOverdrive ? 1.5 : 1.0
-        value: AudioService.inputVolume || 0
+        value: localInputVolume
         stepSize: 0.01
         heightRatio: 0.5
-        onMoved: AudioService.setInputVolume(value)
-        tooltipText: `${Math.round((AudioService.inputVolume || 0) * 100)}%`
+        onMoved: localInputVolume = value
+        onPressedChanged: localInputVolumeChanging = pressed
+        tooltipText: `${Math.round(localInputVolume * 100)}%`
         tooltipDirection: "bottom"
       }
     }
