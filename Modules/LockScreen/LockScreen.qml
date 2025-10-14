@@ -324,7 +324,7 @@ Loader {
 
                   // Welcome back + Username on one line
                   NText {
-                    text: I18n.tr("lock-screen.welcome-back") + " " + Quickshell.env("USER") + "!"
+                    text: I18n.tr("lock-screen.welcome-back") + " " + (Quickshell.env("USER").charAt(0).toUpperCase() + Quickshell.env("USER").slice(1)) + "!"
                     pointSize: Style.fontSizeXXL
                     font.weight: Font.Medium
                     color: Color.mOnSurface
@@ -402,8 +402,9 @@ Loader {
                         var t = Settings.data.location.use12hourFormat ? Qt.locale().toString(Time.date, "hh AP") : Qt.locale().toString(Time.date, "HH")
                         return t
                       }
-                      pointSize: Style.fontSizeL
+                      pointSize: Style.fontSizeM
                       font.weight: Style.fontWeightBold
+                      family: Settings.data.ui.fontFixed
                       color: Color.mOnSurface
                       horizontalAlignment: Text.AlignHCenter
                       Layout.alignment: Qt.AlignHCenter
@@ -411,8 +412,9 @@ Loader {
 
                     NText {
                       text: Qt.formatTime(Time.date, "mm")
-                      pointSize: Style.fontSizeL
+                      pointSize: Style.fontSizeM
                       font.weight: Style.fontWeightBold
+                      family: Settings.data.ui.fontFixed
                       color: Color.mOnSurfaceVariant
                       horizontalAlignment: Text.AlignHCenter
                       Layout.alignment: Qt.AlignHCenter
@@ -428,7 +430,7 @@ Loader {
               height: 60
               anchors.horizontalCenter: parent.horizontalCenter
               anchors.bottom: parent.bottom
-              anchors.bottomMargin: 300
+              anchors.bottomMargin: (Settings.data.general.compactLockScreen ? 240 : 320) * Style.uiScaleRatio
               radius: 30
               color: Color.mError
               border.color: Color.mError

@@ -30,20 +30,19 @@ Item {
     return {}
   }
 
-  readonly property bool hasFocusedWindow: CompositorService.getFocusedWindow() !== null
-  readonly property string windowTitle: CompositorService.getFocusedWindowTitle() || "No active window"
-  readonly property string fallbackIcon: "user-desktop"
-
-  readonly property string barPosition: Settings.data.bar.position
-
   // Widget settings - matching MediaMini pattern
   readonly property bool showIcon: (widgetSettings.showIcon !== undefined) ? widgetSettings.showIcon : widgetMetadata.showIcon
   readonly property string hideMode: (widgetSettings.hideMode !== undefined) ? widgetSettings.hideMode : widgetMetadata.hideMode
   readonly property string scrollingMode: (widgetSettings.scrollingMode !== undefined) ? widgetSettings.scrollingMode : (widgetMetadata.scrollingMode !== undefined ? widgetMetadata.scrollingMode : "hover")
   readonly property int widgetWidth: (widgetSettings.width !== undefined) ? widgetSettings.width : Math.max(widgetMetadata.width, screen.width * 0.06)
 
-  implicitHeight: visible ? ((barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Style.barHeight) : 0
-  implicitWidth: visible ? ((barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8) : (widgetWidth)) : 0
+  readonly property bool isVerticalBar: (Settings.data.bar.position === "left" || Settings.data.bar.position === "right")
+  readonly property bool hasFocusedWindow: CompositorService.getFocusedWindow() !== null
+  readonly property string windowTitle: CompositorService.getFocusedWindowTitle() || "No active window"
+  readonly property string fallbackIcon: "user-desktop"
+
+  implicitHeight: visible ? (isVerticalBar ? calculatedVerticalDimension() : Style.barHeight) : 0
+  implicitWidth: visible ? (isVerticalBar ? calculatedVerticalDimension() : widgetWidth) : 0
 
   // "visible": Always Visible, "hidden": Hide When Empty, "transparent": Transparent When Empty
   visible: hideMode !== "hidden" || hasFocusedWindow
@@ -55,8 +54,9 @@ Item {
     }
   }
 
-  function calculatedVerticalHeight() {
-    return Math.round(Style.baseWidgetSize * 0.8)
+  function calculatedVerticalDimension() {
+    const ratio = (Settings.data.bar.density === "mini") ? 0.67 : 0.8
+    return Math.round(Style.baseWidgetSize * ratio)
   }
 
   function getAppIcon() {
@@ -117,23 +117,23 @@ Item {
     visible: root.visible
     anchors.left: parent.left
     anchors.verticalCenter: parent.verticalCenter
-    width: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8) : (widgetWidth)
-    height: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8) : Style.capsuleHeight
-    radius: (barPosition === "left" || barPosition === "right") ? width / 2 : Style.radiusM
+    width: isVerticalBar ? root.width : widgetWidth
+    height: isVerticalBar ? width : Style.capsuleHeight
+    radius: isVerticalBar ? width / 2 : Style.radiusM
     color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
     Item {
       id: mainContainer
       anchors.fill: parent
-      anchors.leftMargin: (barPosition === "left" || barPosition === "right") ? 0 : Style.marginS
-      anchors.rightMargin: (barPosition === "left" || barPosition === "right") ? 0 : Style.marginS
+      anchors.leftMargin: isVerticalBar ? 0 : Style.marginS
+      anchors.rightMargin: isVerticalBar ? 0 : Style.marginS
 
       // Horizontal layout for top/bottom bars
       RowLayout {
         id: rowLayout
         anchors.verticalCenter: parent.verticalCenter
         spacing: Style.marginS
-        visible: barPosition === "top" || barPosition === "bottom"
+        visible: !isVerticalBar
         z: 1
 
         // Window icon
@@ -311,13 +311,13 @@ Item {
         anchors.centerIn: parent
         width: parent.width - Style.marginM * 2
         height: parent.height - Style.marginM * 2
-        visible: barPosition === "left" || barPosition === "right"
+        visible: isVerticalBar
         z: 1
 
         // Window icon
         Item {
           width: Style.baseWidgetSize * 0.5
-          height: Style.baseWidgetSize * 0.5
+          height: width
           anchors.centerIn: parent
           visible: windowTitle !== ""
 
@@ -349,7 +349,7 @@ Item {
         cursorShape: Qt.PointingHandCursor
         acceptedButtons: Qt.LeftButton
         onEntered: {
-          if ((windowTitle !== "") && (barPosition === "left" || barPosition === "right") || (scrollingMode === "never")) {
+          if ((windowTitle !== "") && isVerticalBar || (scrollingMode === "never")) {
             TooltipService.show(Screen, root, windowTitle, BarService.getTooltipDirection())
           }
         }

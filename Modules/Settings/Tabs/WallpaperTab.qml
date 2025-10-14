@@ -56,17 +56,16 @@ ColumnLayout {
       visible: Settings.data.wallpaper.enableMultiMonitorDirectories
 
       Layout.fillWidth: true
-      Layout.minimumWidth: 550
       radius: Style.radiusM
       color: Color.mSurfaceVariant
       border.color: Color.mOutline
       border.width: Math.max(1, Style.borderS)
-      implicitHeight: contentCol.implicitHeight + Style.marginXL * 2
+      implicitHeight: contentCol.implicitHeight + Style.marginL * 2
 
       ColumnLayout {
         id: contentCol
         anchors.fill: parent
-        anchors.margins: Style.marginXL
+        anchors.margins: Style.marginL
         spacing: Style.marginM
         Repeater {
           model: Quickshell.screens || []

@@ -12,13 +12,13 @@ Item {
   property string text: ""
   property string suffix: ""
   property string tooltipText: ""
+  property string density: ""
   property bool autoHide: false
   property bool forceOpen: false
   property bool forceClose: false
   property bool disableOpen: false
   property bool rightOpen: false
   property bool hovered: false
-  property bool compact: false
 
   // Bar position detection for pill direction
   readonly property string barPosition: Settings.data.bar.position
@@ -48,12 +48,27 @@ Item {
   readonly property int buttonSize: Style.capsuleHeight
   readonly property int pillHeight: buttonSize
   readonly property int pillPaddingVertical: 3 * 2 // Very precise adjustment don't replace by Style.margin
-  readonly property int pillOverlap: buttonSize * 0.5
+  readonly property int pillOverlap: Math.round(buttonSize * 0.5)
   readonly property int maxPillWidth: buttonSize
-  readonly property int maxPillHeight: Math.max(1, textItem.implicitHeight + pillPaddingVertical * 4)
+  readonly property int maxPillHeight: Math.max(1, Math.round(textItem.implicitHeight + pillPaddingVertical * 4))
 
-  readonly property real iconSize: Math.max(1, compact ? pillHeight * 0.65 : pillHeight * 0.48)
-  readonly property real textSize: Math.max(1, compact ? pillHeight * 0.38 : pillHeight * 0.33)
+  readonly property real iconSize: {
+    switch (root.density) {
+    case "compact":
+      return Math.max(1, Math.round(pillHeight * 0.65))
+    default:
+      return Math.max(1, Math.round(pillHeight * 0.48))
+    }
+  }
+
+  readonly property real textSize: {
+    switch (root.density) {
+    case "compact":
+      return Math.max(1, Math.round(pillHeight * 0.38))
+    default:
+      return Math.max(1, Math.round(pillHeight * 0.33))
+    }
+  }
 
   // For vertical bars: width is just icon size, height includes pill space
   width: buttonSize
@@ -79,11 +94,13 @@ Item {
     opacity: revealed ? Style.opacityFull : Style.opacityNone
     color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
+    readonly property int halfButtonSize: Math.round(buttonSize * 0.5)
+
     // Radius logic for vertical expansion - rounded on the side that connects to icon
-    topLeftRadius: openUpward ? buttonSize * 0.5 : 0
-    bottomLeftRadius: openDownward ? buttonSize * 0.5 : 0
-    topRightRadius: openUpward ? buttonSize * 0.5 : 0
-    bottomRightRadius: openDownward ? buttonSize * 0.5 : 0
+    topLeftRadius: openUpward ? halfButtonSize : 0
+    bottomLeftRadius: openDownward ? halfButtonSize : 0
+    topRightRadius: openUpward ? halfButtonSize : 0
+    bottomRightRadius: openDownward ? halfButtonSize : 0
 
     anchors.horizontalCenter: parent.horizontalCenter
 
@@ -92,7 +109,7 @@ Item {
       anchors.horizontalCenter: parent.horizontalCenter
       anchors.verticalCenter: parent.verticalCenter
       anchors.verticalCenterOffset: {
-        var offset = openDownward ? pillPaddingVertical * 0.75 : -pillPaddingVertical * 0.75
+        var offset = openDownward ? Math.round(pillPaddingVertical * 0.75) : -Math.round(pillPaddingVertical * 0.75)
         if (forceOpen) {
           // If its force open, the icon disc background is the same color as the bg pill move text slightly
           offset += rightOpen ? -Style.marginXXS : Style.marginXXS

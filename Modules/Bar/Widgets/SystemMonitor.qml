@@ -29,7 +29,7 @@ Rectangle {
 
   readonly property string barPosition: Settings.data.bar.position
   readonly property bool isVertical: barPosition === "left" || barPosition === "right"
-  readonly property bool compact: (Settings.data.bar.density === "compact") || (Settings.data.bar.density === "mini")
+  readonly property bool density: Settings.data.bar.density
 
   readonly property bool showCpuUsage: (widgetSettings.showCpuUsage !== undefined) ? widgetSettings.showCpuUsage : widgetMetadata.showCpuUsage
   readonly property bool showCpuTemp: (widgetSettings.showCpuTemp !== undefined) ? widgetSettings.showCpuTemp : widgetMetadata.showCpuTemp
@@ -41,7 +41,7 @@ Rectangle {
   readonly property real iconSize: textSize * 1.4
   readonly property real textSize: {
     var base = isVertical ? width * 0.82 : height
-    return Math.max(1, compact ? base * 0.43 : base * 0.33)
+    return Math.max(1, (density === "compact") ? base * 0.43 : base * 0.33)
   }
 
   readonly property int percentTextWidth: Math.ceil(percentMetrics.boundingRect.width + 3)

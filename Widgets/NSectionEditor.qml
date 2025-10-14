@@ -13,12 +13,14 @@ NBox {
   property string sectionId: ""
   property var widgetModel: []
   property var availableWidgets: []
-  property bool enableMoveBetweenSections: true
+  property var availableSections: ["left", "center", "right"]
+  property int maxWidgets: -1 // -1 means unlimited
 
   property var widgetRegistry: null
   property string settingsDialogComponent: "BarWidgetSettingsDialog.qml"
 
   readonly property real miniButtonSize: Style.baseWidgetSize * 0.65
+  readonly property bool isAtMaxCapacity: maxWidgets > 0 && widgetModel.length >= maxWidgets
 
   signal addWidget(string widgetId, string section)
   signal removeWidget(string section, int index)
@@ -31,16 +33,26 @@ NBox {
   color: Color.mSurface
   Layout.fillWidth: true
   Layout.minimumHeight: {
-    var widgetCount = widgetModel.length
-    if (widgetCount === 0)
-      return 140 * Style.uiScaleRatio
+    // header + minimal content area
+    var absoluteMin = (Style.marginL * 2) + (Style.fontSizeL * 2) + Style.marginM + (65 * Style.uiScaleRatio)
 
-    var availableWidth = parent.width
-    var avgWidgetWidth = 150 * Style.uiScaleRatio
+    var widgetCount = widgetModel.length
+    if (widgetCount === 0) {
+      return absoluteMin
+    }
+
+    // Calculate rows based on estimated widget layout
+    var availableWidth = parent.width - (Style.marginL * 2)
+    var avgWidgetWidth = 120 * Style.uiScaleRatio // More accurate estimate
     var widgetsPerRow = Math.max(1, Math.floor(availableWidth / avgWidgetWidth))
     var rows = Math.ceil(widgetCount / widgetsPerRow)
 
-    return ((50 + 20 + (rows * 48)) * Style.uiScaleRatio + ((rows - 1) * Style.marginS) + 20 * Style.uiScaleRatio)
+    // Header height + spacing + (rows * widget height) + (spacing between rows) + margins
+    var headerHeight = Style.fontSizeL * 2
+    var widgetHeight = Style.baseWidgetSize * 1.15 * Style.uiScaleRatio
+    var widgetAreaHeight = ((rows + 1) * widgetHeight) + ((rows - 1) * Style.marginS)
+
+    return Math.max(absoluteMin, (Style.marginL * 2) + headerHeight + Style.marginM + widgetAreaHeight)
   }
 
   // Generate widget color from name checksum
@@ -80,6 +92,16 @@ NBox {
         Layout.alignment: Qt.AlignVCenter
       }
 
+      // Widget count indicator (when max is set)
+      NText {
+        visible: root.maxWidgets > 0
+        text: "(" + widgetModel.length + "/" + root.maxWidgets + ")"
+        pointSize: Style.fontSizeS
+        color: root.isAtMaxCapacity ? Color.mError : Color.mOnSurfaceVariant
+        Layout.alignment: Qt.AlignVCenter
+        Layout.leftMargin: Style.marginXS
+      }
+
       Item {
         Layout.fillWidth: true
       }
@@ -92,8 +114,9 @@ NBox {
         placeholder: I18n.tr("bar.widget-settings.section-editor.placeholder")
         searchPlaceholder: I18n.tr("bar.widget-settings.section-editor.search-placeholder")
         onSelected: key => comboBox.currentKey = key
-        popupHeight: 340
-        minimumWidth: 200
+        popupHeight: 300 * Style.uiScaleRatio
+        minimumWidth: 200 * Style.uiScaleRatio
+        enabled: !root.isAtMaxCapacity
 
         Layout.alignment: Qt.AlignVCenter
 
@@ -115,12 +138,12 @@ NBox {
         colorFg: Color.mOnPrimary
         colorBgHover: Color.mSecondary
         colorFgHover: Color.mOnSecondary
-        enabled: comboBox.currentKey !== ""
-        tooltipText: I18n.tr("tooltips.add-widget")
+        enabled: comboBox.currentKey !== "" && !root.isAtMaxCapacity
+        tooltipText: root.isAtMaxCapacity ? I18n.tr("tooltips.max-widgets-reached") : I18n.tr("tooltips.add-widget")
         Layout.alignment: Qt.AlignVCenter
         Layout.leftMargin: Style.marginS
         onClicked: {
-          if (comboBox.currentKey !== "") {
+          if (comboBox.currentKey !== "" && !root.isAtMaxCapacity) {
             addWidget(comboBox.currentKey, sectionId)
             comboBox.currentKey = ""
           }
@@ -150,7 +173,7 @@ NBox {
             required property var modelData
 
             width: widgetContent.implicitWidth + Style.marginL
-            height: Style.baseWidgetSize * 1.15
+            height: Style.baseWidgetSize * 1.15 * Style.uiScaleRatio
             radius: Style.radiusL
             color: root.getWidgetColor(modelData)[0]
             border.color: Color.mOutline
@@ -186,17 +209,17 @@ NBox {
                   "label": I18n.tr("tooltips.move-to-left-section"),
                   "action": "left",
                   "icon": "arrow-bar-to-left",
-                  "visible": root.sectionId !== "left"
+                  "visible": root.availableSections.includes("left") && root.sectionId !== "left"
                 }, {
                   "label": I18n.tr("tooltips.move-to-center-section"),
                   "action": "center",
                   "icon": "layout-columns",
-                  "visible": root.sectionId !== "center"
+                  "visible": root.availableSections.includes("center") && root.sectionId !== "center"
                 }, {
                   "label": I18n.tr("tooltips.move-to-right-section"),
                   "action": "right",
                   "icon": "arrow-bar-to-right",
-                  "visible": root.sectionId !== "right"
+                  "visible": root.availableSections.includes("right") && root.sectionId !== "right"
                 }]
 
               onTriggered: action => root.moveWidget(root.sectionId, index, action)
@@ -205,7 +228,7 @@ NBox {
             // MouseArea for the context menu
             MouseArea {
               id: contextMouseArea
-              enabled: enableMoveBetweenSections
+              enabled: root.availableSections.length > 1 // Enable if there are other sections to move to
               anchors.fill: parent
               acceptedButtons: Qt.RightButton
               z: -1 // Below the buttons but above background
@@ -262,19 +285,19 @@ NBox {
                         if (dialog) {
                           dialog.open()
                         } else {
-                          Logger.error("SectionEditor", "Failed to create settings dialog instance")
+                          Logger.error("NSectionEditor", "Failed to create settings dialog instance")
                         }
                       }
                       if (component.status === Component.Ready) {
                         instantiateAndOpen()
                       } else if (component.status === Component.Error) {
-                        Logger.error("SectionEditor", component.errorString())
+                        Logger.error("NSectionEditor", component.errorString())
                       } else {
                         component.statusChanged.connect(function () {
                           if (component.status === Component.Ready) {
                             instantiateAndOpen()
                           } else if (component.status === Component.Error) {
-                            Logger.error("SectionEditor", component.errorString())
+                            Logger.error("NSectionEditor", component.errorString())
                           }
                         })
                       }

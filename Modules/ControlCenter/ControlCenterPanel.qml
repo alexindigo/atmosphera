@@ -13,11 +13,33 @@ NPanel {
   panelKeyboardFocus: true
   preferredWidth: Math.round(460 * Style.uiScaleRatio)
   preferredHeight: {
-    let height = profileHeight + weatherHeight + mediaSysMonHeight + utilsHeight
-    let count = 4
-    if (Settings.data.controlCenter.audioControlsEnabled) {
+    var height = 0
+    var count = 0
+    for (var i = 0; i < Settings.data.controlCenter.cards.length; i++) {
+      const card = Settings.data.controlCenter.cards[i]
+      if (!card.enabled) {
+        continue
+      }
       count++
-      height += audioHeight
+      switch (card.id) {
+      case "profile-card":
+        height += profileHeight
+        break
+      case "shortcuts-card":
+        height += shortcutsHeight
+        break
+      case "audio-card":
+        height += audioHeight
+        break
+      case "weather-card":
+        height += weatherHeight
+        break
+      case "media-sysmon-card":
+        height += mediaSysMonHeight
+        break
+      default:
+        break
+      }
     }
     return height + (count + 1) * Style.marginL
   }
@@ -32,15 +54,14 @@ NPanel {
   panelAnchorTop: controlCenterPosition !== "close_to_bar_button" && controlCenterPosition.startsWith("top_")
 
   readonly property int profileHeight: Math.round(64 * Style.uiScaleRatio)
+  readonly property int shortcutsHeight: Math.round(52 * Style.uiScaleRatio)
+  readonly property int audioHeight: Math.round(60 * Style.uiScaleRatio)
   readonly property int weatherHeight: Math.round(190 * Style.uiScaleRatio)
   readonly property int mediaSysMonHeight: Math.round(260 * Style.uiScaleRatio)
-  readonly property int audioHeight: Math.round(120 * Style.uiScaleRatio)
-  readonly property int utilsHeight: Math.round(52 * Style.uiScaleRatio)
 
   panelContent: Item {
     id: content
 
-    // Layout content
     ColumnLayout {
       id: layout
       x: Style.marginL
@@ -48,50 +69,69 @@ NPanel {
       width: parent.width - (Style.marginL * 2)
       spacing: Style.marginL
 
-      // Profile
-      ProfileCard {
-        Layout.fillWidth: true
-        Layout.preferredHeight: profileHeight
-      }
-
-      // Utils
-      RowLayout {
-        Layout.fillWidth: true
-        Layout.preferredHeight: utilsHeight
-        spacing: Style.marginL
-
-        // Power Profiles switcher
-        PowerProfilesCard {
+      Repeater {
+        model: Settings.data.controlCenter.cards
+        Loader {
+          active: modelData.enabled
+          visible: active
           Layout.fillWidth: true
-          Layout.fillHeight: true
-          spacing: Style.marginL
+          Layout.preferredHeight: {
+            switch (modelData.id) {
+            case "profile-card":
+              return profileHeight
+            case "shortcuts-card":
+              return shortcutsHeight
+            case "audio-card":
+              return audioHeight
+            case "weather-card":
+              return weatherHeight
+            case "media-sysmon-card":
+              return mediaSysMonHeight
+            default:
+              return 0
+            }
+          }
+          sourceComponent: {
+            switch (modelData.id) {
+            case "profile-card":
+              return profileCard
+            case "shortcuts-card":
+              return shortcutsCard
+            case "audio-card":
+              return audioCard
+            case "weather-card":
+              return weatherCard
+            case "media-sysmon-card":
+              return mediaSysMonCard
+            }
+          }
         }
-
-        // Utilities buttons
-        UtilitiesCard {
-          Layout.fillWidth: true
-          Layout.fillHeight: true
-          spacing: Style.marginL
-        }
       }
+    }
 
-      // Audio controls
-      AudioCard {
-        visible: Settings.data.controlCenter.audioControlsEnabled
-        Layout.fillWidth: true
-        Layout.preferredHeight: audioHeight
-      }
+    Component {
+      id: profileCard
+      ProfileCard {}
+    }
 
-      // Weather
-      WeatherCard {
-        Layout.fillWidth: true
-        Layout.preferredHeight: weatherHeight
-      }
+    Component {
+      id: shortcutsCard
+      ShortcutsCard {}
+    }
 
-      // Media + SysMon
+    Component {
+      id: audioCard
+      AudioCard {}
+    }
+
+    Component {
+      id: weatherCard
+      WeatherCard {}
+    }
+
+    Component {
+      id: mediaSysMonCard
       RowLayout {
-        Layout.fillWidth: true
-        Layout.preferredHeight: mediaSysMonHeight
         spacing: Style.marginL
 
         // Media card

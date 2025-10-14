@@ -50,7 +50,7 @@ NIconButton {
 
   baseSize: Style.capsuleHeight
   applyUiScale: false
-  compact: (Settings.data.bar.density === "compact") || (Settings.data.bar.density === "mini")
+  density: Settings.data.bar.density
   icon: Settings.data.notifications.doNotDisturb ? "bell-off" : "bell"
   tooltipText: Settings.data.notifications.doNotDisturb ? I18n.tr("tooltips.open-notification-history-disable-dnd") : I18n.tr("tooltips.open-notification-history-enable-dnd")
   tooltipDirection: BarService.getTooltipDirection()

@@ -160,10 +160,6 @@ Singleton {
           }, {
             "id": "NotificationHistory"
           }, {
-            "id": "WiFi"
-          }, {
-            "id": "Bluetooth"
-          }, {
             "id": "Battery"
           }, {
             "id": "Volume"
@@ -245,24 +241,43 @@ Singleton {
     property JsonObject controlCenter: JsonObject {
       // Position: close_to_bar_button, center, top_left, top_right, bottom_left, bottom_right, bottom_center, top_center
       property string position: "close_to_bar_button"
-      property bool audioControlsEnabled: true
-      property JsonObject widgets
-      widgets: JsonObject {
+      property JsonObject shortcuts
+      shortcuts: JsonObject {
         property list<var> left: [{
             "id": "WiFi"
           }, {
             "id": "Bluetooth"
           }, {
-            "id": "Notifications"
-          }]
-        property list<var> right: [{
             "id": "ScreenRecorder"
-          }, {
-            "id": "PowerProfile"
           }, {
             "id": "WallpaperSelector"
           }]
+        property list<var> right: [{
+            "id": "Notifications"
+          }, {
+            "id": "PowerProfile"
+          }, {
+            "id": "KeepAwake"
+          }, {
+            "id": "NightLight"
+          }]
       }
+      property list<var> cards: [{
+          "id": "profile-card",
+          "enabled": true
+        }, {
+          "id": "shortcuts-card",
+          "enabled": true
+        }, {
+          "id": "audio-card",
+          "enabled": true
+        }, {
+          "id": "weather-card",
+          "enabled": true
+        }, {
+          "id": "media-sysmon-card",
+          "enabled": true
+        }]
     }
 
     // dock

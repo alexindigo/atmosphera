@@ -13,7 +13,7 @@ NIconButton {
 
   baseSize: Style.capsuleHeight
   applyUiScale: false
-  compact: (Settings.data.bar.density === "compact") || (Settings.data.bar.density === "mini")
+  density: Settings.data.bar.density
   visible: PowerProfileService.available
   icon: PowerProfileService.getIcon()
   tooltipText: I18n.tr("tooltips.power-profile", {

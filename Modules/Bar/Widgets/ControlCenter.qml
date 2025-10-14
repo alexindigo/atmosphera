@@ -38,7 +38,7 @@ NIconButton {
   tooltipDirection: BarService.getTooltipDirection()
   baseSize: Style.capsuleHeight
   applyUiScale: false
-  compact: (Settings.data.bar.density === "compact") || (Settings.data.bar.density === "mini")
+  density: Settings.data.bar.density
   colorBg: (Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent)
   colorFg: Color.mOnSurface
   colorBgHover: useDistroLogo ? Color.mSurfaceVariant : Color.mTertiary

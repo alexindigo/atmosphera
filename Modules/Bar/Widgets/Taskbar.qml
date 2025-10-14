@@ -20,8 +20,8 @@ Rectangle {
   property int sectionWidgetsCount: 0
 
   readonly property bool isVerticalBar: Settings.data.bar.position === "left" || Settings.data.bar.position === "right"
-  readonly property bool compact: (Settings.data.bar.density === "compact") || (Settings.data.bar.density === "mini")
-  readonly property real itemSize: compact ? Style.capsuleHeight * 0.9 : Style.capsuleHeight * 0.8
+  readonly property bool density: Settings.data.bar.density
+  readonly property real itemSize: (density === "compact") ? Style.capsuleHeight * 0.9 : Style.capsuleHeight * 0.8
 
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
@@ -46,8 +46,8 @@ Rectangle {
     anchors {
       leftMargin: isVerticalBar ? undefined : Style.marginM
       rightMargin: isVerticalBar ? undefined : Style.marginM
-      topMargin: compact ? 0 : isVerticalBar ? Style.marginM : undefined
-      bottomMargin: compact ? 0 : isVerticalBar ? Style.marginM : undefined
+      topMargin: (density === "compact") ? 0 : isVerticalBar ? Style.marginM : undefined
+      bottomMargin: (density === "compact") ? 0 : isVerticalBar ? Style.marginM : undefined
     }
 
     // Configure GridLayout to behave like RowLayout or ColumnLayout

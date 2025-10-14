@@ -29,7 +29,7 @@ Rectangle {
 
   readonly property string barPosition: Settings.data.bar.position
   readonly property bool isBarVertical: barPosition === "left" || barPosition === "right"
-  readonly property bool compact: (Settings.data.bar.density === "compact") || (Settings.data.bar.density === "mini")
+  readonly property bool density: Settings.data.bar.density
 
   readonly property var now: Time.date
 
