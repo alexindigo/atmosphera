@@ -29,8 +29,8 @@ Item {
     return {}
   }
 
-  readonly property string barPosition: Settings.data.bar.position
-  readonly property bool density: Settings.data.bar.density
+
+  readonly property bool isVerticalBar: (Settings.data.bar.position === "left" || Settings.data.bar.position === "right")
 
   readonly property string hideMode: (widgetSettings.hideMode !== undefined) ? widgetSettings.hideMode : "hidden" // "visible", "hidden", "transparent"
   readonly property bool showAlbumArt: (widgetSettings.showAlbumArt !== undefined) ? widgetSettings.showAlbumArt : widgetMetadata.showAlbumArt
@@ -59,8 +59,8 @@ Item {
     return title
   }
 
-  implicitHeight: visible ? ((barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Style.barHeight) : 0
-  implicitWidth: visible ? ((barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8) : (widgetWidth)) : 0
+  implicitHeight: visible ? (isVerticalBar ? calculatedVerticalDimension() : Style.barHeight) : 0
+  implicitWidth: visible ? (isVerticalBar ? calculatedVerticalDimension() : widgetWidth) : 0
 
   // "visible": Always Visible, "hidden": Hide When Empty, "transparent": Transparent When Empty
   visible: hideMode !== "hidden" || hasActivePlayer
@@ -76,8 +76,9 @@ Item {
     return MediaService.trackTitle + (MediaService.trackArtist !== "" ? ` - ${MediaService.trackArtist}` : "")
   }
 
-  function calculatedVerticalHeight() {
-    return Math.round(Style.baseWidgetSize * 0.8)
+  function calculatedVerticalDimension() {
+    const ratio = (Settings.data.bar.density === "mini") ? 0.67 : 0.8
+    return Math.round(Style.baseWidgetSize * ratio)
   }
 
   //  A hidden text element to safely measure the full title width
@@ -94,16 +95,16 @@ Item {
     visible: root.visible
     anchors.left: parent.left
     anchors.verticalCenter: parent.verticalCenter
-    width: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8) : (widgetWidth)
-    height: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8) : Style.capsuleHeight
-    radius: (barPosition === "left" || barPosition === "right") ? width / 2 : Style.radiusM
+    width: isVerticalBar ? root.width : (widgetWidth)
+    height: isVerticalBar ? width : Style.capsuleHeight
+    radius: isVerticalBar ? width / 2 : Style.radiusM
     color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
     Item {
       id: mainContainer
       anchors.fill: parent
-      anchors.leftMargin: (barPosition === "left" || barPosition === "right") ? 0 : Style.marginS
-      anchors.rightMargin: (barPosition === "left" || barPosition === "right") ? 0 : Style.marginS
+      anchors.leftMargin: isVerticalBar ? 0 : Style.marginS
+      anchors.rightMargin: isVerticalBar ? 0 : Style.marginS
 
       Loader {
         anchors.verticalCenter: parent.verticalCenter
@@ -156,7 +157,7 @@ Item {
 
         anchors.verticalCenter: parent.verticalCenter
         spacing: Style.marginS
-        visible: (barPosition === "top" || barPosition === "bottom")
+        visible: !isVerticalBar
         z: 1 // Above the visualizer
 
         NIcon {
@@ -345,13 +346,13 @@ Item {
         anchors.centerIn: parent
         width: parent.width - Style.marginM * 2
         height: parent.height - Style.marginM * 2
-        visible: barPosition === "left" || barPosition === "right"
+        visible: isVerticalBar
         z: 1 // Above the visualizer
 
         // Media icon
         Item {
           width: Style.baseWidgetSize * 0.5
-          height: Style.baseWidgetSize * 0.5
+          height: width
           anchors.centerIn: parent
 
           NIcon {
@@ -391,7 +392,7 @@ Item {
 
         onEntered: {
           var textToShow = hasActivePlayer ? tooltipText : placeholderText
-          if ((textToShow !== "") && (barPosition === "left" || barPosition === "right") || (scrollingMode === "never")) {
+          if ((textToShow !== "") && isVerticalBar || (scrollingMode === "never")) {
             TooltipService.show(Screen, root, textToShow, BarService.getTooltipDirection())
           }
         }
