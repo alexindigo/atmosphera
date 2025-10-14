@@ -17,12 +17,12 @@ Rectangle {
   // outer width/height footprint of the component
   property real contentScale: 1.0
 
-  width: 68 * scaling
-  height: 92 * scaling
+  width: 68
+  height: 92
   color: flat ? Color.transparent : Color.mSurface
-  radius: Style.radiusS * scaling
+  radius: Style.radiusS
   border.color: flat ? Color.transparent : Color.mSurfaceVariant
-  border.width: flat ? 0 : Math.max(1, Style.borderS * scaling)
+  border.width: flat ? 0 : Math.max(1, Style.borderS)
 
   // Repaint gauge when the bound value changes
   onValueChanged: gauge.requestPaint()
@@ -30,7 +30,7 @@ Rectangle {
   ColumnLayout {
     id: mainLayout
     anchors.fill: parent
-    anchors.margins: Style.marginS * scaling * contentScale
+    anchors.margins: Style.marginS * contentScale
     spacing: 0
 
     // Main gauge container
@@ -39,19 +39,19 @@ Rectangle {
       Layout.fillWidth: true
       Layout.fillHeight: true
       Layout.alignment: Qt.AlignCenter
-      Layout.preferredWidth: 68 * scaling * contentScale
-      Layout.preferredHeight: 68 * scaling * contentScale
+      Layout.preferredWidth: 68 * contentScale
+      Layout.preferredHeight: 68 * contentScale
 
       Canvas {
         id: gauge
         anchors.fill: parent
-        renderStrategy: Canvas.Cooperative
+        renderStrategy: Canvas.Immediate
 
         onPaint: {
           const ctx = getContext("2d")
           const w = width, h = height
           const cx = w / 2, cy = h / 2
-          const r = Math.min(w, h) / 2 - 5 * scaling * contentScale
+          const r = Math.min(w, h) / 2 - 5 * contentScale
 
           // Rotated 90° to the right: gap at the bottom
           // Start at 150° and end at 390° (30°) → bottom opening
@@ -59,7 +59,7 @@ Rectangle {
           const endBg = Math.PI * 13 / 6 // 390° (equivalent to 30°)
 
           ctx.reset()
-          ctx.lineWidth = 6 * scaling * contentScale
+          ctx.lineWidth = 6 * contentScale
 
           // Track uses surface for stronger contrast
           ctx.strokeStyle = Color.mSurface
@@ -96,9 +96,9 @@ Rectangle {
       NText {
         id: valueLabel
         anchors.centerIn: parent
-        anchors.verticalCenterOffset: -4 * scaling * contentScale
+        anchors.verticalCenterOffset: -4 * contentScale
         text: `${root.value}${root.suffix}`
-        pointSize: Style.fontSizeM * scaling * contentScale * 0.9
+        pointSize: Style.fontSizeM * contentScale * 0.9
         font.weight: Style.fontWeightBold
         color: Color.mOnSurface
         horizontalAlignment: Text.AlignHCenter
@@ -108,10 +108,10 @@ Rectangle {
         id: iconText
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: valueLabel.bottom
-        anchors.topMargin: 8 * scaling * contentScale
+        anchors.topMargin: 8 * contentScale
         icon: root.icon
         color: Color.mPrimary
-        pointSize: Style.fontSizeM * scaling
+        pointSize: Style.fontSizeM
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
       }

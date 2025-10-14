@@ -15,18 +15,10 @@ Popup {
 
   signal iconSelected(string iconName)
 
-  width: {
-    var w = Math.round(Math.max(screen.width * 0.35, 900) * scaling)
-    w = Math.min(w, screen.width - Style.marginL * 2)
-    return w
-  }
-  height: {
-    var h = Math.round(Math.max(screen.height * 0.65, 700) * scaling)
-    h = Math.min(h, screen.height - Style.barHeight * scaling - Style.marginL * 2)
-    return h
-  }
+  width: 900 * Style.uiScaleRatio
+  height: 700 * Style.uiScaleRatio
   anchors.centerIn: Overlay.overlay
-  padding: Style.marginXL * scaling
+  padding: Style.marginXL
 
   property string query: ""
   property var allIcons: Object.keys(Icons.icons)
@@ -38,7 +30,7 @@ Popup {
   }
   readonly property int columns: 6
   readonly property int cellW: Math.floor(grid.width / columns)
-  readonly property int cellH: Math.round(cellW * 0.7 + 36 * scaling)
+  readonly property int cellH: Math.round(cellW * 0.7 + 36)
 
   onOpened: {
     selectedIcon = initialIcon
@@ -53,21 +45,21 @@ Popup {
 
   background: Rectangle {
     color: Color.mSurface
-    radius: Style.radiusL * scaling
+    radius: Style.radiusL
     border.color: Color.mPrimary
-    border.width: Style.borderM * scaling
+    border.width: Style.borderM
   }
 
   ColumnLayout {
     anchors.fill: parent
-    spacing: Style.marginM * scaling
+    spacing: Style.marginM
 
     // Title row
     RowLayout {
       Layout.fillWidth: true
       NText {
         text: I18n.tr("widgets.icon-picker.title")
-        pointSize: Style.fontSizeL * scaling
+        pointSize: Style.fontSizeL
         font.weight: Style.fontWeightBold
         color: Color.mPrimary
         Layout.fillWidth: true
@@ -84,7 +76,7 @@ Popup {
 
     RowLayout {
       Layout.fillWidth: true
-      spacing: Style.marginS * scaling
+      spacing: Style.marginS
       NTextInput {
         id: searchInput
         Layout.fillWidth: true
@@ -100,7 +92,7 @@ Popup {
       id: grid
       Layout.fillWidth: true
       Layout.fillHeight: true
-      Layout.margins: Style.marginM * scaling
+      Layout.margins: Style.marginM
       cellWidth: root.cellW
       cellHeight: root.cellH
       model: root.filteredIcons
@@ -109,11 +101,11 @@ Popup {
       delegate: Rectangle {
         width: grid.cellWidth
         height: grid.cellHeight
-        radius: Style.radiusS * scaling
+        radius: Style.radiusS
 
         color: (root.selectedIcon === modelData) ? Qt.alpha(Color.mPrimary, 0.15) : Color.transparent
         border.color: (root.selectedIcon === modelData) ? Color.mPrimary : Qt.rgba(0, 0, 0, 0)
-        border.width: (root.selectedIcon === modelData) ? Style.borderS * scaling : 0
+        border.width: (root.selectedIcon === modelData) ? Style.borderS : 0
 
         MouseArea {
           anchors.fill: parent
@@ -127,27 +119,27 @@ Popup {
 
         ColumnLayout {
           anchors.fill: parent
-          anchors.margins: Style.marginS * scaling
-          spacing: Style.marginS * scaling
+          anchors.margins: Style.marginS
+          spacing: Style.marginS
           Item {
             Layout.fillHeight: true
-            Layout.preferredHeight: 4 * scaling
+            Layout.preferredHeight: 4
           }
           NIcon {
             Layout.alignment: Qt.AlignHCenter
             icon: modelData
-            pointSize: 42 * scaling
+            pointSize: 42
           }
           NText {
             Layout.alignment: Qt.AlignHCenter
             Layout.fillWidth: true
-            Layout.topMargin: Style.marginXS * scaling
+            Layout.topMargin: Style.marginXS
             elide: Text.ElideRight
             wrapMode: Text.NoWrap
             maximumLineCount: 1
             horizontalAlignment: Text.AlignHCenter
             color: Color.mOnSurfaceVariant
-            pointSize: Style.fontSizeXS * scaling
+            pointSize: Style.fontSizeXS
             text: modelData
           }
           Item {
@@ -159,7 +151,7 @@ Popup {
 
     RowLayout {
       Layout.fillWidth: true
-      spacing: Style.marginM * scaling
+      spacing: Style.marginM
       Item {
         Layout.fillWidth: true
       }

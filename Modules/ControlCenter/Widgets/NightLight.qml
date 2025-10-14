@@ -4,15 +4,12 @@ import qs.Commons
 import qs.Services
 import qs.Widgets
 
-NQuickSetting {
+NIconButtonHot {
   property ShellScreen screen
-  property real scaling: 1.0
 
   enabled: ProgramCheckerService.wlsunsetAvailable
-  text: I18n.tr("quickSettings.nightLight.label.enabled")
   icon: Settings.data.nightLight.enabled ? (Settings.data.nightLight.forced ? "nightlight-forced" : "nightlight-on") : "nightlight-off"
   hot: !Settings.data.nightLight.enabled || Settings.data.nightLight.forced
-  style: Settings.data.controlCenter.quickSettingsStyle || "modern"
   tooltipText: I18n.tr("quickSettings.nightLight.tooltip.action")
 
   onClicked: {

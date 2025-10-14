@@ -12,7 +12,6 @@ Item {
   id: root
 
   property ShellScreen screen
-  property real scaling: 1.0
 
   // Widget properties passed from Bar.qml for per-instance settings
   property string widgetId: ""
@@ -49,7 +48,7 @@ Item {
     rightOpen: BarService.getPillDirection(root)
     icon: customIcon
     text: _dynamicText
-    compact: (Settings.data.bar.density === "compact")
+    density: Settings.data.bar.density
     autoHide: false
     forceOpen: _dynamicText !== ""
     forceClose: false

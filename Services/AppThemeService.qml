@@ -91,11 +91,13 @@ Singleton {
     Logger.log("AppThemeService", "Service started")
   }
 
+  // --------------------------------------------------------------------------------
   function generate() {
     if (Settings.data.colorSchemes.useWallpaperColors) {
       generateFromWallpaper()
     } else {
-      generateFromPredefinedScheme()
+      // Re-apply the scheme, this is the best way to regenerate all templates too.
+      ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme)
     }
   }
 

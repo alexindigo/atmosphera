@@ -11,7 +11,6 @@ NIconButton {
   id: root
 
   property ShellScreen screen
-  property real scaling: 1.0
 
   // Widget properties passed from Bar.qml for per-instance settings
   property string widgetId: ""
@@ -50,7 +49,8 @@ NIconButton {
   }
 
   baseSize: Style.capsuleHeight
-  compact: (Settings.data.bar.density === "compact")
+  applyUiScale: false
+  density: Settings.data.bar.density
   icon: Settings.data.notifications.doNotDisturb ? "bell-off" : "bell"
   tooltipText: Settings.data.notifications.doNotDisturb ? I18n.tr("tooltips.open-notification-history-disable-dnd") : I18n.tr("tooltips.open-notification-history-enable-dnd")
   tooltipDirection: BarService.getTooltipDirection()
@@ -69,14 +69,14 @@ NIconButton {
   Loader {
     anchors.right: parent.right
     anchors.top: parent.top
-    anchors.rightMargin: 2 * scaling
-    anchors.topMargin: 1 * scaling
+    anchors.rightMargin: 2
+    anchors.topMargin: 1
     z: 2
     active: showUnreadBadge && (!hideWhenZero || computeUnreadCount() > 0)
     sourceComponent: Rectangle {
       id: badge
       readonly property int count: computeUnreadCount()
-      height: 8 * scaling
+      height: 8
       width: height
       radius: height / 2
       color: Color.mError

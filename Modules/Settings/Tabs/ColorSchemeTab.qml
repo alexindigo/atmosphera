@@ -13,7 +13,7 @@ ColumnLayout {
   property var schemeColorsCache: ({})
   property int cacheVersion: 0 // Increment to trigger UI updates
 
-  spacing: Style.marginL * scaling
+  spacing: Style.marginL
 
   // Helper function to extract scheme name from path
   function extractSchemeName(schemePath) {
@@ -211,14 +211,14 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
     visible: !Settings.data.colorSchemes.useWallpaperColors
   }
 
   // Predefined Color Schemes
   ColumnLayout {
-    spacing: Style.marginM * scaling
+    spacing: Style.marginM
     Layout.fillWidth: true
     visible: !Settings.data.colorSchemes.useWallpaperColors
 
@@ -230,8 +230,8 @@ ColumnLayout {
     // Color Schemes Grid
     GridLayout {
       columns: 3
-      rowSpacing: Style.marginM * scaling
-      columnSpacing: Style.marginM * scaling
+      rowSpacing: Style.marginM
+      columnSpacing: Style.marginM
       Layout.fillWidth: true
 
       Repeater {
@@ -245,10 +245,10 @@ ColumnLayout {
 
           Layout.fillWidth: true
           Layout.alignment: Qt.AlignHCenter
-          height: 50 * scaling
-          radius: Style.radiusS * scaling
+          height: 50
+          radius: Style.radiusS
           color: root.getSchemeColor(schemeName, "mSurface")
-          border.width: Math.max(1, Style.borderL * scaling)
+          border.width: Math.max(1, Style.borderL)
           border.color: {
             if (Settings.data.colorSchemes.predefinedScheme === schemeName) {
               return Color.mSecondary
@@ -261,12 +261,12 @@ ColumnLayout {
 
           RowLayout {
             anchors.fill: parent
-            anchors.margins: Style.marginM * scaling
-            spacing: Style.marginXS * scaling
+            anchors.margins: Style.marginL
+            spacing: Style.marginXS
 
             NText {
               text: schemeItem.schemeName
-              pointSize: Style.fontSizeS * scaling
+              pointSize: Style.fontSizeS
               font.weight: Style.fontWeightMedium
               color: Color.mOnSurface
               Layout.fillWidth: true
@@ -277,29 +277,29 @@ ColumnLayout {
             }
 
             Rectangle {
-              width: 14 * scaling
-              height: 14 * scaling
+              width: 14
+              height: 14
               radius: width * 0.5
               color: root.getSchemeColor(schemeItem.schemeName, "mPrimary")
             }
 
             Rectangle {
-              width: 14 * scaling
-              height: 14 * scaling
+              width: 14
+              height: 14
               radius: width * 0.5
               color: root.getSchemeColor(schemeItem.schemeName, "mSecondary")
             }
 
             Rectangle {
-              width: 14 * scaling
-              height: 14 * scaling
+              width: 14
+              height: 14
               radius: width * 0.5
               color: root.getSchemeColor(schemeItem.schemeName, "mTertiary")
             }
 
             Rectangle {
-              width: 14 * scaling
-              height: 14 * scaling
+              width: 14
+              height: 14
               radius: width * 0.5
               color: root.getSchemeColor(schemeItem.schemeName, "mError")
             }
@@ -324,18 +324,18 @@ ColumnLayout {
             visible: (Settings.data.colorSchemes.predefinedScheme === schemeItem.schemeName)
             anchors.right: parent.right
             anchors.top: parent.top
-            anchors.rightMargin: -3 * scaling
-            anchors.topMargin: -3 * scaling
-            width: 20 * scaling
-            height: 20 * scaling
+            anchors.rightMargin: -3
+            anchors.topMargin: -3
+            width: 20
+            height: 20
             radius: width * 0.5
             color: Color.mSecondary
-            border.width: Math.max(1, Style.borderS * scaling)
+            border.width: Math.max(1, Style.borderS)
             border.color: Color.mOnSecondary
 
             NIcon {
               icon: "check"
-              pointSize: Style.fontSizeXS * scaling
+              pointSize: Style.fontSizeXS
               font.weight: Style.fontWeightBold
               color: Color.mOnSecondary
               anchors.centerIn: parent
@@ -363,20 +363,20 @@ ColumnLayout {
                      ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme)
                    }
                  }
-      Layout.topMargin: Style.marginL * scaling
+      Layout.topMargin: Style.marginL
     }
   }
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
   }
 
   // Template toggles organized by category
   ColumnLayout {
     Layout.fillWidth: true
-    spacing: Style.marginL * scaling
+    spacing: Style.marginL
 
     NHeader {
       label: I18n.tr("settings.color-scheme.templates.section.label")
@@ -536,7 +536,7 @@ ColumnLayout {
         visible: ProgramCheckerService.availableDiscordClients.length === 0
         text: I18n.tr("settings.color-scheme.templates.programs.discord.description-missing")
         color: Color.mOnSurfaceVariant
-        pointSize: Style.fontSizeS * scaling
+        pointSize: Style.fontSizeS
       }
 
       NCheckbox {

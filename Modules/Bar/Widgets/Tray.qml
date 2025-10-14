@@ -14,7 +14,6 @@ Rectangle {
   id: root
 
   property ShellScreen screen
-  property real scaling: 1.0
 
   // Widget properties passed from Bar.qml for per-instance settings
   property string widgetId: ""
@@ -35,8 +34,8 @@ Rectangle {
 
   readonly property string barPosition: Settings.data.bar.position
   readonly property bool isVertical: barPosition === "left" || barPosition === "right"
-  readonly property bool compact: (Settings.data.bar.density === "compact")
-  property real itemSize: Math.round(Style.capsuleHeight * 0.65 * scaling)
+  readonly property bool density: Settings.data.bar.density
+  property real itemSize: Math.round(Style.capsuleHeight * 0.65)
   property list<string> blacklist: widgetSettings.blacklist || widgetMetadata.blacklist || [] // Read from settings
   property var filteredItems: []
 
@@ -145,9 +144,9 @@ Rectangle {
   }
 
   visible: filteredItems.length > 0
-  implicitWidth: isVertical ? Math.round(Style.capsuleHeight * scaling) : Math.round(trayFlow.implicitWidth + Style.marginM * 2 * scaling)
-  implicitHeight: isVertical ? Math.round(trayFlow.implicitHeight + Style.marginM * 2 * scaling) : Math.round(Style.capsuleHeight * scaling)
-  radius: Math.round(Style.radiusM * scaling)
+  implicitWidth: isVertical ? Style.capsuleHeight : Math.round(trayFlow.implicitWidth + Style.marginM * 2)
+  implicitHeight: isVertical ? Math.round(trayFlow.implicitHeight + Style.marginM * 2) : Style.capsuleHeight
+  radius: Style.radiusM
   color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
   Layout.alignment: Qt.AlignVCenter
@@ -155,7 +154,7 @@ Rectangle {
   Flow {
     id: trayFlow
     anchors.centerIn: parent
-    spacing: Style.marginM * scaling
+    spacing: Style.marginM
     flow: isVertical ? Flow.TopToBottom : Flow.LeftToRight
 
     Repeater {
@@ -192,6 +191,14 @@ Rectangle {
             return icon
           }
           opacity: status === Image.Ready ? 1 : 0
+
+          layer.enabled: widgetSettings.colorizeIcons !== false
+          layer.effect: ShaderEffect {
+            property color targetColor: Color.mOnSurface
+            property real colorizeMode: 1.0 // Tray mode (intensity-based)
+
+            fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
+          }
 
           MouseArea {
             anchors.fill: parent
@@ -231,16 +238,16 @@ Rectangle {
                              let menuX, menuY
                              if (barPosition === "left") {
                                // For left bar: position menu to the right of the bar
-                               menuX = width + Style.marginM * scaling
+                               menuX = width + Style.marginM
                                menuY = 0
                              } else if (barPosition === "right") {
                                // For right bar: position menu to the left of the bar
-                               menuX = -trayMenu.item.width - Style.marginM * scaling
+                               menuX = -trayMenu.item.width - Style.marginM
                                menuY = 0
                              } else {
                                // For horizontal bars: center horizontally and position below
                                menuX = (width / 2) - (trayMenu.item.width / 2)
-                               menuY = Math.round(Style.barHeight * scaling)
+                               menuY = Style.barHeight
                              }
                              trayMenu.item.menu = modelData.menu
                              trayMenu.item.showAt(parent, menuX, menuY)

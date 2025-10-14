@@ -163,10 +163,6 @@ Singleton {
           }, {
             "id": "NotificationHistory"
           }, {
-            "id": "WiFi"
-          }, {
-            "id": "Bluetooth"
-          }, {
             "id": "Battery"
           }, {
             "id": "Volume"
@@ -186,10 +182,12 @@ Singleton {
       property bool dimDesktop: true
       property bool showScreenCorners: false
       property bool forceBlackScreenCorners: false
+      property real scaleRatio: 1.0
       property real radiusRatio: 1.0
       property real screenRadiusRatio: 1.0
       property real animationSpeed: 1.0
       property bool animationDisabled: false
+      property bool compactLockScreen: false
     }
 
     // location
@@ -246,23 +244,43 @@ Singleton {
     property JsonObject controlCenter: JsonObject {
       // Position: close_to_bar_button, center, top_left, top_right, bottom_left, bottom_right, bottom_center, top_center
       property string position: "close_to_bar_button"
-      property string quickSettingsStyle: "compact" // "compact", "classic", or "modern"
-      property JsonObject widgets
-      widgets: JsonObject {
-        property list<var> quickSettings: [{
+      property JsonObject shortcuts
+      shortcuts: JsonObject {
+        property list<var> left: [{
             "id": "WiFi"
           }, {
             "id": "Bluetooth"
           }, {
-            "id": "Notifications"
-          }, {
             "id": "ScreenRecorder"
-          }, {
-            "id": "PowerProfile"
           }, {
             "id": "WallpaperSelector"
           }]
+        property list<var> right: [{
+            "id": "Notifications"
+          }, {
+            "id": "PowerProfile"
+          }, {
+            "id": "KeepAwake"
+          }, {
+            "id": "NightLight"
+          }]
       }
+      property list<var> cards: [{
+          "id": "profile-card",
+          "enabled": true
+        }, {
+          "id": "shortcuts-card",
+          "enabled": true
+        }, {
+          "id": "audio-card",
+          "enabled": true
+        }, {
+          "id": "weather-card",
+          "enabled": true
+        }, {
+          "id": "media-sysmon-card",
+          "enabled": true
+        }]
     }
 
     // dock
@@ -274,6 +292,7 @@ Singleton {
       property list<string> monitors: []
       // Desktop entry IDs pinned to the dock (e.g., "org.kde.konsole", "firefox.desktop")
       property list<string> pinnedApps: []
+      property bool colorizeIcons: false
     }
 
     // network
@@ -300,6 +319,7 @@ Singleton {
       property string location: "top_right"
       property list<string> monitors: []
       property int autoHideMs: 2000
+      property bool alwaysOnTop: false
     }
 
     // audio
@@ -318,7 +338,6 @@ Singleton {
       property string fontFixed: "DejaVu Sans Mono"
       property real fontDefaultScale: 1.0
       property real fontFixedScale: 1.0
-      property list<var> monitorsScaling: []
       property bool idleInhibitorEnabled: false
       property bool tooltipsEnabled: true
     }
@@ -373,6 +392,23 @@ Singleton {
       property string wallpaperChange: ""
       property string darkModeChange: ""
     }
+  }
+
+  // -----------------------------------------------------
+  // Function to preprocess paths by expanding "~" to user's home directory
+  function preprocessPath(path) {
+    if (typeof path !== "string" || path === "") {
+      return path
+    }
+
+    // Expand "~" to user's home directory
+    if (path.startsWith("~/")) {
+      return Quickshell.env("HOME") + path.substring(1)
+    } else if (path === "~") {
+      return Quickshell.env("HOME")
+    }
+
+    return path
   }
 
   // -----------------------------------------------------

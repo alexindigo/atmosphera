@@ -41,12 +41,12 @@ NBox {
 
   ColumnLayout {
     anchors.fill: parent
-    anchors.margins: Style.marginM * scaling
+    anchors.margins: Style.marginM
     spacing: 0
 
     // Output Volume Section
     ColumnLayout {
-      spacing: Style.marginXXS * scaling
+      spacing: Style.marginXXS
       Layout.fillWidth: true
       opacity: AudioService.sink ? 1.0 : 0.5
       enabled: AudioService.sink
@@ -54,7 +54,7 @@ NBox {
       // Output Volume Header
       RowLayout {
         Layout.fillWidth: true
-        spacing: Style.marginXS * scaling
+        spacing: Style.marginXS
 
         NIconButton {
           icon: AudioService.muted ? "volume-off" : "volume-high"
@@ -71,19 +71,19 @@ NBox {
         }
 
         RowLayout {
-          spacing: Style.marginXXS * scaling
+          spacing: Style.marginXXS
           Layout.fillWidth: true
 
           NText {
             text: I18n.tr("settings.audio.volumes.output-volume.label")
-            pointSize: Style.fontSizeXS * scaling
+            pointSize: Style.fontSizeXS
             color: Color.mOnSurface
             font.weight: Style.fontWeightMedium
           }
 
           NText {
             text: AudioService.sink ? AudioService.sink.description : "No output device"
-            pointSize: Style.fontSizeXS * scaling
+            pointSize: Style.fontSizeXS
             color: Color.mOnSurfaceVariant
             font.weight: Style.fontWeightMedium
             elide: Text.ElideRight
@@ -100,7 +100,7 @@ NBox {
         value: localOutputVolume || 0
         stepSize: 0.01
         text: Math.round((AudioService.volume || 0) * 100) + "%"
-        textSize: Style.fontSizeXS * scaling
+        textSize: Style.fontSizeXS
         customHeightRatio: 0.6
         onMoved: value => localOutputVolume = value
       }
@@ -108,7 +108,7 @@ NBox {
 
     // Input Volume Section
     ColumnLayout {
-      spacing: Style.marginXXS * scaling
+      spacing: Style.marginXXS
       Layout.fillWidth: true
       opacity: AudioService.source ? 1.0 : 0.5
       enabled: AudioService.source
@@ -116,7 +116,7 @@ NBox {
       // Input Volume Header
       RowLayout {
         Layout.fillWidth: true
-        spacing: Style.marginXS * scaling
+        spacing: Style.marginXS
 
         NIconButton {
           icon: AudioService.inputMuted ? "microphone-off" : "microphone"
@@ -129,19 +129,19 @@ NBox {
         }
 
         RowLayout {
-          spacing: Style.marginXXS * scaling
+          spacing: Style.marginXXS
           Layout.fillWidth: true
 
           NText {
             text: I18n.tr("settings.audio.volumes.input-volume.label")
-            pointSize: Style.fontSizeXS * scaling
+            pointSize: Style.fontSizeXS
             color: Color.mOnSurface
             font.weight: Style.fontWeightMedium
           }
 
           NText {
             text: AudioService.source ? AudioService.source.description : "No input device"
-            pointSize: Style.fontSizeXS * scaling
+            pointSize: Style.fontSizeXS
             color: Color.mOnSurfaceVariant
             font.weight: Style.fontWeightMedium
             elide: Text.ElideRight
@@ -158,7 +158,7 @@ NBox {
         value: AudioService.inputVolume || 0
         stepSize: 0.01
         text: Math.round((AudioService.inputVolume || 0) * 100) + "%"
-        textSize: Style.fontSizeXS * scaling
+        textSize: Style.fontSizeXS
         customHeightRatio: 0.6
         onMoved: value => AudioService.setInputVolume(value)
       }

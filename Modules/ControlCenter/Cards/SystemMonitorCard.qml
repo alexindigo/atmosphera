@@ -12,7 +12,9 @@ NBox {
   Item {
     id: content
     anchors.fill: parent
-    anchors.margins: Style.marginS * scaling
+    anchors.margins: Style.marginS
+
+    property int widgetHeight: Math.round(65 * Style.uiScaleRatio)
 
     ColumnLayout {
       anchors.centerIn: parent
@@ -23,8 +25,7 @@ NBox {
         icon: "cpu-usage"
         flat: true
         contentScale: 0.8
-        width: 70 * scaling
-        height: 65 * scaling
+        height: content.widgetHeight
         Layout.alignment: Qt.AlignHCenter
       }
       NCircleStat {
@@ -33,8 +34,7 @@ NBox {
         icon: "cpu-temperature"
         flat: true
         contentScale: 0.8
-        width: 70 * scaling
-        height: 65 * scaling
+        height: content.widgetHeight
         Layout.alignment: Qt.AlignHCenter
       }
       NCircleStat {
@@ -42,8 +42,7 @@ NBox {
         icon: "memory"
         flat: true
         contentScale: 0.8
-        width: 70 * scaling
-        height: 65 * scaling
+        height: content.widgetHeight
         Layout.alignment: Qt.AlignHCenter
       }
       NCircleStat {
@@ -51,8 +50,7 @@ NBox {
         icon: "storage"
         flat: true
         contentScale: 0.8
-        width: 70 * scaling
-        height: 65 * scaling
+        height: content.widgetHeight
         Layout.alignment: Qt.AlignHCenter
       }
     }

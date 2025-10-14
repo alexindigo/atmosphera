@@ -6,7 +6,7 @@ import qs.Services
 
 Rectangle {
   width: parent.width
-  height: Math.max(1, Style.borderS * scaling)
+  height: Math.max(1, Style.borderS)
   gradient: Gradient {
     orientation: Gradient.Horizontal
     GradientStop {

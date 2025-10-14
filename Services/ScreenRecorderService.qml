@@ -49,7 +49,7 @@ Singleton {
 
   function launchRecorder() {
     var filename = Time.getFormattedTimestamp() + ".mp4"
-    var videoDir = settings.directory
+    var videoDir = Settings.preprocessPath(settings.directory)
     if (videoDir && !videoDir.endsWith("/")) {
       videoDir += "/"
     }

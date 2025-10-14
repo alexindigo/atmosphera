@@ -7,7 +7,7 @@ import qs.Services
 
 ColumnLayout {
   id: root
-  spacing: Style.marginM * scaling
+  spacing: Style.marginM
 
   // Properties to receive data from parent
   property var widgetData: null
@@ -37,7 +37,7 @@ ColumnLayout {
       }]
     currentKey: widgetData.labelMode || widgetMetadata.labelMode
     onSelected: key => labelModeCombo.currentKey = key
-    minimumWidth: 200 * scaling
+    minimumWidth: 200
   }
 
   NToggle {

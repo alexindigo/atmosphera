@@ -12,7 +12,7 @@ ColumnLayout {
 
   property string specificFolderMonitorName: ""
 
-  spacing: Style.marginL * scaling
+  spacing: Style.marginL
 
   NHeader {
     label: I18n.tr("settings.wallpaper.settings.section.label")
@@ -24,12 +24,12 @@ ColumnLayout {
     description: I18n.tr("settings.wallpaper.settings.enable-management.description")
     checked: Settings.data.wallpaper.enabled
     onToggled: checked => Settings.data.wallpaper.enabled = checked
-    Layout.bottomMargin: Style.marginL * scaling
+    Layout.bottomMargin: Style.marginL
   }
 
   ColumnLayout {
     visible: Settings.data.wallpaper.enabled
-    spacing: Style.marginL * scaling
+    spacing: Style.marginL
     Layout.fillWidth: true
 
     NTextInputButton {
@@ -56,29 +56,28 @@ ColumnLayout {
       visible: Settings.data.wallpaper.enableMultiMonitorDirectories
 
       Layout.fillWidth: true
-      Layout.minimumWidth: 550 * scaling
-      radius: Style.radiusM * scaling
+      radius: Style.radiusM
       color: Color.mSurfaceVariant
       border.color: Color.mOutline
-      border.width: Math.max(1, Style.borderS * scaling)
-      implicitHeight: contentCol.implicitHeight + Style.marginXL * 2 * scaling
+      border.width: Math.max(1, Style.borderS)
+      implicitHeight: contentCol.implicitHeight + Style.marginL * 2
 
       ColumnLayout {
         id: contentCol
         anchors.fill: parent
-        anchors.margins: Style.marginXL * scaling
-        spacing: Style.marginM * scaling
+        anchors.margins: Style.marginL
+        spacing: Style.marginM
         Repeater {
           model: Quickshell.screens || []
           delegate: ColumnLayout {
             Layout.fillWidth: true
-            spacing: Style.marginS * scaling
+            spacing: Style.marginS
 
             NText {
               text: (modelData.name || "Unknown")
               color: Color.mPrimary
               font.weight: Style.fontWeightBold
-              pointSize: Style.fontSizeM * scaling
+              pointSize: Style.fontSizeM
             }
 
             NTextInputButton {
@@ -101,13 +100,13 @@ ColumnLayout {
   NDivider {
     visible: Settings.data.wallpaper.enabled
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
   }
 
   ColumnLayout {
     visible: Settings.data.wallpaper.enabled
-    spacing: Style.marginL * scaling
+    spacing: Style.marginL
     Layout.fillWidth: true
 
     NHeader {
@@ -184,13 +183,13 @@ ColumnLayout {
   NDivider {
     visible: Settings.data.wallpaper.enabled
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
   }
 
   ColumnLayout {
     visible: Settings.data.wallpaper.enabled
-    spacing: Style.marginL * scaling
+    spacing: Style.marginL
     Layout.fillWidth: true
 
     NHeader {
@@ -225,7 +224,7 @@ ColumnLayout {
       // Preset chips using Repeater
       RowLayout {
         id: presetRow
-        spacing: Style.marginS * scaling
+        spacing: Style.marginS
 
         // Factorized presets data
         property var intervalPresets: [5 * 60, 10 * 60, 15 * 60, 30 * 60, 45 * 60, 60 * 60, 90 * 60, 120 * 60]
@@ -272,8 +271,8 @@ ColumnLayout {
       RowLayout {
         id: customRow
         visible: presetRow.customForcedVisible || !presetRow.isCurrentPreset
-        spacing: Style.marginS * scaling
-        Layout.topMargin: Style.marginS * scaling
+        spacing: Style.marginS
+        Layout.topMargin: Style.marginS
 
         NTextInput {
           label: I18n.tr("settings.wallpaper.automation.custom-interval.label")
@@ -313,8 +312,8 @@ ColumnLayout {
 
     radius: height * 0.5
     color: selected ? Color.mPrimary : Color.mSurfaceVariant
-    implicitHeight: Math.max(Style.baseWidgetSize * 0.55 * scaling, 24 * scaling)
-    implicitWidth: chipLabel.implicitWidth + Style.marginM * 1.5 * scaling
+    implicitHeight: Math.max(Style.baseWidgetSize * 0.55, 24)
+    implicitWidth: chipLabel.implicitWidth + Style.marginM * 1.5
     border.width: 1
     border.color: selected ? Color.transparent : Color.mOutline
 
@@ -328,15 +327,15 @@ ColumnLayout {
       id: chipLabel
       anchors.centerIn: parent
       text: parent.label
-      pointSize: Style.fontSizeS * scaling
+      pointSize: Style.fontSizeS
       color: parent.selected ? Color.mOnPrimary : Color.mOnSurface
     }
   }
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
   }
 
   NFilePicker {

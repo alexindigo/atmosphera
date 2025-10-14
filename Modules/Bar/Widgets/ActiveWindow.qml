@@ -12,7 +12,6 @@ Item {
   id: root
 
   property ShellScreen screen
-  property real scaling: 1.0
 
   // Widget properties passed from Bar.qml for per-instance settings
   property string widgetId: ""
@@ -31,23 +30,24 @@ Item {
     return {}
   }
 
-  readonly property bool hasActiveWindow: CompositorService.getFocusedWindowTitle() !== ""
+  readonly property bool hasFocusedWindow: CompositorService.getFocusedWindow() !== null
   readonly property string windowTitle: CompositorService.getFocusedWindowTitle() || "No active window"
   readonly property string fallbackIcon: "user-desktop"
 
   readonly property string barPosition: Settings.data.bar.position
-  readonly property bool compact: (Settings.data.bar.density === "compact")
 
   // Widget settings - matching MediaMini pattern
   readonly property bool showIcon: (widgetSettings.showIcon !== undefined) ? widgetSettings.showIcon : widgetMetadata.showIcon
-  readonly property bool autoHide: (widgetSettings.autoHide !== undefined) ? widgetSettings.autoHide : widgetMetadata.autoHide
+  readonly property string hideMode: (widgetSettings.hideMode !== undefined) ? widgetSettings.hideMode : widgetMetadata.hideMode
   readonly property string scrollingMode: (widgetSettings.scrollingMode !== undefined) ? widgetSettings.scrollingMode : (widgetMetadata.scrollingMode !== undefined ? widgetMetadata.scrollingMode : "hover")
   readonly property int widgetWidth: (widgetSettings.width !== undefined) ? widgetSettings.width : Math.max(widgetMetadata.width, screen.width * 0.06)
 
-  implicitHeight: visible ? ((barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Math.round(Style.barHeight * scaling)) : 0
-  implicitWidth: visible ? ((barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : (widgetWidth * scaling)) : 0
+  implicitHeight: visible ? ((barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Style.barHeight) : 0
+  implicitWidth: visible ? ((barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8) : (widgetWidth)) : 0
 
-  opacity: !autoHide || hasActiveWindow ? 1.0 : 0
+  // "visible": Always Visible, "hidden": Hide When Empty, "transparent": Transparent When Empty
+  visible: hideMode !== "hidden" || hasFocusedWindow
+  opacity: hideMode !== "transparent" || hasFocusedWindow ? 1.0 : 0
   Behavior on opacity {
     NumberAnimation {
       duration: Style.animationNormal
@@ -56,7 +56,7 @@ Item {
   }
 
   function calculatedVerticalHeight() {
-    return Math.round(Style.baseWidgetSize * 0.8 * scaling)
+    return Math.round(Style.baseWidgetSize * 0.8)
   }
 
   function getAppIcon() {
@@ -107,7 +107,8 @@ Item {
     id: fullTitleMetrics
     visible: false
     text: windowTitle
-    pointSize: Style.fontSizeS * scaling
+    pointSize: Style.fontSizeS
+    applyUiScale: false
     font.weight: Style.fontWeightMedium
   }
 
@@ -116,29 +117,29 @@ Item {
     visible: root.visible
     anchors.left: parent.left
     anchors.verticalCenter: parent.verticalCenter
-    width: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : (widgetWidth * scaling)
-    height: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : Math.round(Style.capsuleHeight * scaling)
-    radius: (barPosition === "left" || barPosition === "right") ? width / 2 : Math.round(Style.radiusM * scaling)
+    width: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8) : (widgetWidth)
+    height: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8) : Style.capsuleHeight
+    radius: (barPosition === "left" || barPosition === "right") ? width / 2 : Style.radiusM
     color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
     Item {
       id: mainContainer
       anchors.fill: parent
-      anchors.leftMargin: (barPosition === "left" || barPosition === "right") ? 0 : Style.marginS * scaling
-      anchors.rightMargin: (barPosition === "left" || barPosition === "right") ? 0 : Style.marginS * scaling
+      anchors.leftMargin: (barPosition === "left" || barPosition === "right") ? 0 : Style.marginS
+      anchors.rightMargin: (barPosition === "left" || barPosition === "right") ? 0 : Style.marginS
 
       // Horizontal layout for top/bottom bars
       RowLayout {
         id: rowLayout
         anchors.verticalCenter: parent.verticalCenter
-        spacing: Style.marginS * scaling
+        spacing: Style.marginS
         visible: barPosition === "top" || barPosition === "bottom"
         z: 1
 
         // Window icon
         Item {
-          Layout.preferredWidth: Math.round(18 * scaling)
-          Layout.preferredHeight: Math.round(18 * scaling)
+          Layout.preferredWidth: 18
+          Layout.preferredHeight: 18
           Layout.alignment: Qt.AlignVCenter
           visible: showIcon
 
@@ -149,6 +150,15 @@ Item {
             asynchronous: true
             smooth: true
             visible: source !== ""
+
+            // Apply dock shader to active window icon (always themed)
+            layer.enabled: widgetSettings.colorizeIcons !== false
+            layer.effect: ShaderEffect {
+              property color targetColor: Color.mOnSurface
+              property real colorizeMode: 0.0 // Dock mode (grayscale)
+
+              fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
+            }
           }
         }
 
@@ -157,10 +167,10 @@ Item {
           id: titleContainer
           Layout.preferredWidth: {
             // Calculate available width based on other elements
-            var iconWidth = (showIcon && windowIcon.visible ? (18 * scaling + Style.marginS * scaling) : 0)
-            var totalMargins = Style.marginXXS * scaling * 2
+            var iconWidth = (showIcon && windowIcon.visible ? (18 + Style.marginS) : 0)
+            var totalMargins = Style.marginXXS * 2
             var availableWidth = mainContainer.width - iconWidth - totalMargins
-            return Math.max(20 * scaling, availableWidth)
+            return Math.max(20, availableWidth)
           }
           Layout.maximumWidth: Layout.preferredWidth
           Layout.alignment: Qt.AlignVCenter
@@ -239,12 +249,13 @@ Item {
             x: scrollX
 
             RowLayout {
-              spacing: 50 * scaling // Gap between text copies
+              spacing: 50 // Gap between text copies
 
               NText {
                 id: titleText
                 text: windowTitle
-                pointSize: Style.fontSizeS * scaling
+                pointSize: Style.fontSizeS
+                applyUiScale: false
                 font.weight: Style.fontWeightMedium
                 verticalAlignment: Text.AlignVCenter
                 color: Color.mOnSurface
@@ -254,6 +265,8 @@ Item {
               NText {
                 text: windowTitle
                 font: titleText.font
+                pointSize: Style.fontSizeS
+                applyUiScale: false
                 verticalAlignment: Text.AlignVCenter
                 color: Color.mOnSurface
                 visible: titleContainer.needsScrolling && titleContainer.isScrolling
@@ -276,7 +289,7 @@ Item {
               id: infiniteScroll
               running: titleContainer.isScrolling && !titleContainer.isResetting
               from: 0
-              to: -(titleContainer.textWidth + 50 * scaling)
+              to: -(titleContainer.textWidth + 50)
               duration: Math.max(4000, windowTitle.length * 100)
               loops: Animation.Infinite
               easing.type: Easing.Linear
@@ -296,15 +309,15 @@ Item {
       Item {
         id: verticalLayout
         anchors.centerIn: parent
-        width: parent.width - Style.marginM * scaling * 2
-        height: parent.height - Style.marginM * scaling * 2
+        width: parent.width - Style.marginM * 2
+        height: parent.height - Style.marginM * 2
         visible: barPosition === "left" || barPosition === "right"
         z: 1
 
         // Window icon
         Item {
-          width: Style.baseWidgetSize * 0.5 * scaling
-          height: Style.baseWidgetSize * 0.5 * scaling
+          width: Style.baseWidgetSize * 0.5
+          height: Style.baseWidgetSize * 0.5
           anchors.centerIn: parent
           visible: windowTitle !== ""
 
@@ -315,6 +328,15 @@ Item {
             asynchronous: true
             smooth: true
             visible: source !== ""
+
+            // Apply dock shader to active window icon (always themed)
+            layer.enabled: widgetSettings.colorizeIcons !== false
+            layer.effect: ShaderEffect {
+              property color targetColor: Color.mOnSurface
+              property real colorizeMode: 0.0 // Dock mode (grayscale)
+
+              fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
+            }
           }
         }
       }

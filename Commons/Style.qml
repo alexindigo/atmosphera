@@ -29,27 +29,25 @@ Singleton {
   property int fontWeightBold: 700
 
   // Radii
-  property int radiusXXS: 4 * Settings.data.general.radiusRatio
-  property int radiusXS: 8 * Settings.data.general.radiusRatio
-  property int radiusS: 12 * Settings.data.general.radiusRatio
-  property int radiusM: 16 * Settings.data.general.radiusRatio
-  property int radiusL: 20 * Settings.data.general.radiusRatio
-
-  //screen Radii
-  property int screenRadius: 20 * Settings.data.general.screenRadiusRatio
+  property int radiusXXS: Math.round(4 * Settings.data.general.radiusRatio)
+  property int radiusXS: Math.round(8 * Settings.data.general.radiusRatio)
+  property int radiusS: Math.round(12 * Settings.data.general.radiusRatio)
+  property int radiusM: Math.round(16 * Settings.data.general.radiusRatio)
+  property int radiusL: Math.round(20 * Settings.data.general.radiusRatio)
+  property int screenRadius: Math.round(20 * Settings.data.general.screenRadiusRatio)
 
   // Border
-  property int borderS: 1
-  property int borderM: 2
-  property int borderL: 3
+  property int borderS: Math.round(1 * uiScaleRatio)
+  property int borderM: Math.round(2 * uiScaleRatio)
+  property int borderL: Math.round(3 * uiScaleRatio)
 
   // Margins (for margins and spacing)
-  property int marginXXS: 2
-  property int marginXS: 4
-  property int marginS: 8
-  property int marginM: 12
-  property int marginL: 16
-  property int marginXL: 24
+  property int marginXXS: Math.round(2 * uiScaleRatio)
+  property int marginXS: Math.round(4 * uiScaleRatio)
+  property int marginS: Math.round(6 * uiScaleRatio)
+  property int marginM: Math.round(9 * uiScaleRatio)
+  property int marginL: Math.round(13 * uiScaleRatio)
+  property int marginXL: Math.round(18 * uiScaleRatio)
 
   // Opacity
   property real opacityNone: 0.0
@@ -70,31 +68,39 @@ Singleton {
   property int tooltipDelayLong: 1200
   property int pillDelay: 500
 
-  // Settings widgets base size
+  // Widgets base size
   property real baseWidgetSize: 33
   property real sliderWidth: 200
 
+  property real uiScaleRatio: Settings.data.general.scaleRatio
+
   // Bar Dimensions
   property real barHeight: {
-    if (Settings.data.bar.density === "compact") {
+    switch (Settings.data.bar.density) {
+      case "mini":
+      return (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 22 : 20
+      case "compact":
       return (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 27 : 25
-    }
-    if (Settings.data.bar.density === "default") {
-      return (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 33 : 31
-    }
-    if (Settings.data.bar.density === "comfortable") {
+      case "comfortable":
       return (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 39 : 37
+      default:
+
+      case "default":
+      return (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 33 : 31
     }
   }
   property real capsuleHeight: {
-    if (Settings.data.bar.density === "compact") {
+    switch (Settings.data.bar.density) {
+      case "mini":
+      return barHeight * 1.0
+      case "compact":
       return barHeight * 0.85
-    }
-    if (Settings.data.bar.density === "default") {
-      return barHeight * 0.82
-    }
-    if (Settings.data.bar.density === "comfortable") {
+      case "comfortable":
       return barHeight * 0.73
+      default:
+
+      case "default":
+      return barHeight * 0.82
     }
   }
 }

@@ -15,23 +15,13 @@ PopupWindow {
   property bool isSubMenu: false
   property bool isHovered: rootMouseArea.containsMouse
   property ShellScreen screen
-  property real scaling: ScalingService.getScreenScale(screen)
-
-  Connections {
-    target: ScalingService
-    function onScaleChanged(screenName, scale) {
-      if ((screen != null) && (screenName === screen.name)) {
-        scaling = scale
-      }
-    }
-  }
 
   readonly property int menuWidth: 180
 
-  implicitWidth: Math.round(menuWidth * scaling)
+  implicitWidth: menuWidth
 
   // Use the content height of the Flickable for implicit height
-  implicitHeight: Math.min(screen ? screen.height * 0.9 : Screen.height * 0.9, flickable.contentHeight + (Style.marginS * 2 * scaling))
+  implicitHeight: Math.min(screen ? screen.height * 0.9 : Screen.height * 0.9, flickable.contentHeight + (Style.marginS * 2))
   visible: false
   color: Color.transparent
   anchor.item: anchorItem
@@ -98,14 +88,14 @@ PopupWindow {
     anchors.fill: parent
     color: Color.mSurface
     border.color: Color.mOutline
-    border.width: Math.max(1, Style.borderS * scaling)
-    radius: Style.radiusM * scaling
+    border.width: Math.max(1, Style.borderS)
+    radius: Style.radiusM
   }
 
   Flickable {
     id: flickable
     anchors.fill: parent
-    anchors.margins: Style.marginS * scaling
+    anchors.margins: Style.marginS
     contentHeight: columnLayout.implicitHeight
     interactive: true
 
@@ -125,11 +115,11 @@ PopupWindow {
           Layout.preferredWidth: parent.width
           Layout.preferredHeight: {
             if (modelData?.isSeparator) {
-              return 8 * scaling
+              return 8
             } else {
               // Calculate based on text content
-              const textHeight = text.contentHeight || (Style.fontSizeS * scaling * 1.2)
-              return Math.max(28 * scaling, textHeight + (Style.marginS * 2 * scaling))
+              const textHeight = text.contentHeight || (Style.fontSizeS * 1.2)
+              return Math.max(28, textHeight + (Style.marginS * 2))
             }
           }
 
@@ -138,35 +128,35 @@ PopupWindow {
 
           NDivider {
             anchors.centerIn: parent
-            width: parent.width - (Style.marginM * scaling * 2)
+            width: parent.width - (Style.marginM * 2)
             visible: modelData?.isSeparator ?? false
           }
 
           Rectangle {
             anchors.fill: parent
             color: mouseArea.containsMouse ? Color.mTertiary : Color.transparent
-            radius: Style.radiusS * scaling
+            radius: Style.radiusS
             visible: !(modelData?.isSeparator ?? false)
 
             RowLayout {
               anchors.fill: parent
-              anchors.leftMargin: Style.marginM * scaling
-              anchors.rightMargin: Style.marginM * scaling
-              spacing: Style.marginS * scaling
+              anchors.leftMargin: Style.marginM
+              anchors.rightMargin: Style.marginM
+              spacing: Style.marginS
 
               NText {
                 id: text
                 Layout.fillWidth: true
                 color: (modelData?.enabled ?? true) ? (mouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface) : Color.mOnSurfaceVariant
                 text: modelData?.text !== "" ? modelData?.text.replace(/[\n\r]+/g, ' ') : "..."
-                pointSize: Style.fontSizeS * scaling
+                pointSize: Style.fontSizeS
                 verticalAlignment: Text.AlignVCenter
                 wrapMode: Text.WordWrap
               }
 
               Image {
-                Layout.preferredWidth: Style.marginL * scaling
-                Layout.preferredHeight: Style.marginL * scaling
+                Layout.preferredWidth: Style.marginL
+                Layout.preferredHeight: Style.marginL
                 source: modelData?.icon ?? ""
                 visible: (modelData?.icon ?? "") !== ""
                 fillMode: Image.PreserveAspectFit
@@ -174,7 +164,8 @@ PopupWindow {
 
               NIcon {
                 icon: modelData?.hasChildren ? "menu" : ""
-                pointSize: Style.fontSizeS * scaling
+                pointSize: Style.fontSizeS
+                applyUiScale: false
                 verticalAlignment: Text.AlignVCenter
                 visible: modelData?.hasChildren ?? false
                 color: (mouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface)
@@ -216,8 +207,8 @@ PopupWindow {
                   }
 
                   // Need a slight overlap so that menu don't close when moving the mouse to a submenu
-                  const submenuWidth = menuWidth * scaling // Assuming a similar width as the parent
-                  const overlap = 4 * scaling // A small overlap to bridge the mouse path
+                  const submenuWidth = menuWidth // Assuming a similar width as the parent
+                  const overlap = 4 // A small overlap to bridge the mouse path
 
                   // Determine submenu opening direction based on bar position and available space
                   let openLeft = false

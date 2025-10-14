@@ -16,16 +16,6 @@ Item {
   implicitWidth: getImplicitSize(loader.item, "implicitWidth")
   implicitHeight: getImplicitSize(loader.item, "implicitHeight")
 
-  Connections {
-    target: ScalingService
-    enabled: loader.item && (loader.item.screen !== undefined)
-    function onScaleChanged(aScreenName, scale) {
-      if (loader.item && loader.item.screen && aScreenName === screenName) {
-        loader.item['scaling'] = scale
-      }
-    }
-  }
-
   function getImplicitSize(item, prop) {
     return (item && item.visible) ? Math.round(item[prop]) : 0
   }

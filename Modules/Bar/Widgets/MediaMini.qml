@@ -11,7 +11,6 @@ Item {
   id: root
 
   property ShellScreen screen
-  property real scaling: 1.0
 
   // Widget properties passed from Bar.qml for per-instance settings
   property string widgetId: ""
@@ -31,9 +30,9 @@ Item {
   }
 
   readonly property string barPosition: Settings.data.bar.position
-  readonly property bool compact: (Settings.data.bar.density === "compact")
+  readonly property bool density: Settings.data.bar.density
 
-  readonly property bool autoHide: (widgetSettings.autoHide !== undefined) ? widgetSettings.autoHide : widgetMetadata.autoHide
+  readonly property string hideMode: (widgetSettings.hideMode !== undefined) ? widgetSettings.hideMode : "hidden" // "visible", "hidden", "transparent"
   readonly property bool showAlbumArt: (widgetSettings.showAlbumArt !== undefined) ? widgetSettings.showAlbumArt : widgetMetadata.showAlbumArt
   readonly property bool showVisualizer: (widgetSettings.showVisualizer !== undefined) ? widgetSettings.showVisualizer : widgetMetadata.showVisualizer
   readonly property string visualizerType: (widgetSettings.visualizerType !== undefined && widgetSettings.visualizerType !== "") ? widgetSettings.visualizerType : widgetMetadata.visualizerType
@@ -42,7 +41,7 @@ Item {
   // Fixed width - no expansion
   readonly property real widgetWidth: Math.max(145, screen.width * 0.06)
 
-  readonly property bool hasActivePlayer: MediaService.currentPlayer !== null && getTitle() !== ""
+  readonly property bool hasActivePlayer: MediaService.currentPlayer !== null
   readonly property string placeholderText: I18n.tr("bar.widget-settings.media-mini.no-active-player")
 
   readonly property string tooltipText: {
@@ -60,10 +59,12 @@ Item {
     return title
   }
 
-  implicitHeight: visible ? ((barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Math.round(Style.barHeight * scaling)) : 0
-  implicitWidth: visible ? ((barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : (widgetWidth * scaling)) : 0
+  implicitHeight: visible ? ((barPosition === "left" || barPosition === "right") ? calculatedVerticalHeight() : Style.barHeight) : 0
+  implicitWidth: visible ? ((barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8) : (widgetWidth)) : 0
 
-  opacity: !autoHide || hasActivePlayer || (!hasActivePlayer && !autoHide) ? 1.0 : 0
+  // "visible": Always Visible, "hidden": Hide When Empty, "transparent": Transparent When Empty
+  visible: hideMode !== "hidden" || hasActivePlayer
+  opacity: hideMode !== "transparent" || hasActivePlayer ? 1.0 : 0
   Behavior on opacity {
     NumberAnimation {
       duration: Style.animationNormal
@@ -76,7 +77,7 @@ Item {
   }
 
   function calculatedVerticalHeight() {
-    return Math.round(Style.baseWidgetSize * 0.8 * scaling)
+    return Math.round(Style.baseWidgetSize * 0.8)
   }
 
   //  A hidden text element to safely measure the full title width
@@ -85,6 +86,7 @@ Item {
     visible: false
     text: titleText.text
     font: titleText.font
+    applyUiScale: false
   }
 
   Rectangle {
@@ -92,16 +94,16 @@ Item {
     visible: root.visible
     anchors.left: parent.left
     anchors.verticalCenter: parent.verticalCenter
-    width: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : (widgetWidth * scaling)
-    height: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8 * scaling) : Math.round(Style.capsuleHeight * scaling)
-    radius: (barPosition === "left" || barPosition === "right") ? width / 2 : Math.round(Style.radiusM * scaling)
+    width: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8) : (widgetWidth)
+    height: (barPosition === "left" || barPosition === "right") ? Math.round(Style.baseWidgetSize * 0.8) : Style.capsuleHeight
+    radius: (barPosition === "left" || barPosition === "right") ? width / 2 : Style.radiusM
     color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
     Item {
       id: mainContainer
       anchors.fill: parent
-      anchors.leftMargin: (barPosition === "left" || barPosition === "right") ? 0 : Style.marginS * scaling
-      anchors.rightMargin: (barPosition === "left" || barPosition === "right") ? 0 : Style.marginS * scaling
+      anchors.leftMargin: (barPosition === "left" || barPosition === "right") ? 0 : Style.marginS
+      anchors.rightMargin: (barPosition === "left" || barPosition === "right") ? 0 : Style.marginS
 
       Loader {
         anchors.verticalCenter: parent.verticalCenter
@@ -110,8 +112,8 @@ Item {
         z: 0
 
         sourceComponent: LinearSpectrum {
-          width: mainContainer.width - Style.marginS * scaling
-          height: 20 * scaling
+          width: mainContainer.width - Style.marginS
+          height: 20
           values: CavaService.values
           fillColor: Color.mPrimary
           opacity: 0.4
@@ -125,8 +127,8 @@ Item {
         z: 0
 
         sourceComponent: MirroredSpectrum {
-          width: mainContainer.width - Style.marginS * scaling
-          height: mainContainer.height - Style.marginS * scaling
+          width: mainContainer.width - Style.marginS
+          height: mainContainer.height - Style.marginS
           values: CavaService.values
           fillColor: Color.mPrimary
           opacity: 0.4
@@ -140,8 +142,8 @@ Item {
         z: 0
 
         sourceComponent: WaveSpectrum {
-          width: mainContainer.width - Style.marginS * scaling
-          height: mainContainer.height - Style.marginS * scaling
+          width: mainContainer.width - Style.marginS
+          height: mainContainer.height - Style.marginS
           values: CavaService.values
           fillColor: Color.mPrimary
           opacity: 0.4
@@ -153,7 +155,7 @@ Item {
         id: rowLayout
 
         anchors.verticalCenter: parent.verticalCenter
-        spacing: Style.marginS * scaling
+        spacing: Style.marginS
         visible: (barPosition === "top" || barPosition === "bottom")
         z: 1 // Above the visualizer
 
@@ -161,7 +163,7 @@ Item {
           id: windowIcon
           icon: hasActivePlayer ? (MediaService.isPlaying ? "media-pause" : "media-play") : "disc"
           color: hasActivePlayer ? Color.mOnSurface : Color.mOnSurfaceVariant
-          pointSize: Style.fontSizeL * scaling
+          pointSize: Style.fontSizeL
           verticalAlignment: Text.AlignVCenter
           Layout.alignment: Qt.AlignVCenter
           visible: !hasActivePlayer || (!showAlbumArt && !trackArt.visible)
@@ -173,15 +175,15 @@ Item {
           spacing: 0
 
           Item {
-            Layout.preferredWidth: Math.round(21 * scaling)
-            Layout.preferredHeight: Math.round(21 * scaling)
+            Layout.preferredWidth: Math.round(21 * Style.uiScaleRatio)
+            Layout.preferredHeight: Math.round(21 * Style.uiScaleRatio)
 
             NImageCircled {
               id: trackArt
               anchors.fill: parent
               imagePath: MediaService.trackArtUrl
               fallbackIcon: MediaService.isPlaying ? "media-pause" : "media-play"
-              fallbackIconSize: 10 * scaling
+              fallbackIconSize: 10
               borderWidth: 0
               border.color: Color.transparent
             }
@@ -192,11 +194,11 @@ Item {
           id: titleContainer
           Layout.preferredWidth: {
             // Calculate available width based on other elements in the row
-            var iconWidth = (windowIcon.visible ? (Style.fontSizeL * scaling + Style.marginS * scaling) : 0)
-            var albumArtWidth = (hasActivePlayer && showAlbumArt ? (18 * scaling + Style.marginS * scaling) : 0)
-            var totalMargins = Style.marginXXS * scaling * 2
+            var iconWidth = (windowIcon.visible ? (Style.fontSizeL + Style.marginS) : 0)
+            var albumArtWidth = (hasActivePlayer && showAlbumArt ? (18 + Style.marginS) : 0)
+            var totalMargins = Style.marginXXS * 2
             var availableWidth = mainContainer.width - iconWidth - albumArtWidth - totalMargins
-            return Math.max(20 * scaling, availableWidth)
+            return Math.max(20, availableWidth)
           }
           Layout.maximumWidth: Layout.preferredWidth
           Layout.alignment: Qt.AlignVCenter
@@ -281,12 +283,13 @@ Item {
             x: scrollX
 
             RowLayout {
-              spacing: 50 * scaling // Gap between text copies
+              spacing: 50 // Gap between text copies
 
               NText {
                 id: titleText
                 text: hasActivePlayer ? getTitle() : placeholderText
-                pointSize: Style.fontSizeS * scaling
+                pointSize: Style.fontSizeS
+                applyUiScale: false
                 font.weight: Style.fontWeightMedium
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: hasActivePlayer ? Text.AlignLeft : Text.AlignHCenter
@@ -296,6 +299,7 @@ Item {
               NText {
                 text: hasActivePlayer ? getTitle() : placeholderText
                 font: titleText.font
+                applyUiScale: false
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: hasActivePlayer ? Text.AlignLeft : Text.AlignHCenter
                 color: hasActivePlayer ? Color.mOnSurface : Color.mOnSurfaceVariant
@@ -319,7 +323,7 @@ Item {
               id: infiniteScroll
               running: titleContainer.isScrolling && !titleContainer.isResetting
               from: 0
-              to: -(titleContainer.textWidth + 50 * scaling) // Scroll one complete text width + gap
+              to: -(titleContainer.textWidth + 50) // Scroll one complete text width + gap
               duration: Math.max(4000, getTitle().length * 120)
               loops: Animation.Infinite
               easing.type: Easing.Linear
@@ -339,15 +343,15 @@ Item {
       Item {
         id: verticalLayout
         anchors.centerIn: parent
-        width: parent.width - Style.marginM * scaling * 2
-        height: parent.height - Style.marginM * scaling * 2
+        width: parent.width - Style.marginM * 2
+        height: parent.height - Style.marginM * 2
         visible: barPosition === "left" || barPosition === "right"
         z: 1 // Above the visualizer
 
         // Media icon
         Item {
-          width: Style.baseWidgetSize * 0.5 * scaling
-          height: Style.baseWidgetSize * 0.5 * scaling
+          width: Style.baseWidgetSize * 0.5
+          height: Style.baseWidgetSize * 0.5
           anchors.centerIn: parent
 
           NIcon {
@@ -355,7 +359,7 @@ Item {
             anchors.fill: parent
             icon: hasActivePlayer ? (MediaService.isPlaying ? "media-pause" : "media-play") : "disc"
             color: hasActivePlayer ? Color.mOnSurface : Color.mOnSurfaceVariant
-            pointSize: Style.fontSizeL * scaling
+            pointSize: Style.fontSizeL
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
           }

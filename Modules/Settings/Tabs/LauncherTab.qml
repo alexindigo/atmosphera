@@ -7,7 +7,7 @@ import qs.Widgets
 
 ColumnLayout {
   id: root
-  spacing: Style.marginL * scaling
+  spacing: Style.marginL
 
   NHeader {
     label: I18n.tr("settings.launcher.settings.section.label")
@@ -48,19 +48,19 @@ ColumnLayout {
   }
 
   ColumnLayout {
-    spacing: Style.marginXXS * scaling
+    spacing: Style.marginXXS
     Layout.fillWidth: true
 
     NText {
       text: I18n.tr("settings.launcher.settings.background-opacity.label")
-      pointSize: Style.fontSizeL * scaling
+      pointSize: Style.fontSizeL
       font.weight: Style.fontWeightBold
       color: Color.mOnSurface
     }
 
     NText {
       text: I18n.tr("settings.launcher.settings.background-opacity.description")
-      pointSize: Style.fontSizeXS * scaling
+      pointSize: Style.fontSizeXS
       color: Color.mOnSurfaceVariant
       wrapMode: Text.WordWrap
       Layout.fillWidth: true
@@ -111,7 +111,7 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
   }
 }

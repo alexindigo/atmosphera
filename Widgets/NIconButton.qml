@@ -8,14 +8,15 @@ Rectangle {
   id: root
 
   property real baseSize: Style.baseWidgetSize
+  property bool applyUiScale: true
 
   property string icon
   property string tooltipText
   property string tooltipDirection: "auto"
+  property string density: ""
   property bool enabled: true
   property bool allowClickWhenDisabled: false
   property bool hovering: false
-  property bool compact: false
 
   property color colorBg: Color.mSurfaceVariant
   property color colorFg: Color.mPrimary
@@ -30,14 +31,14 @@ Rectangle {
   signal rightClicked
   signal middleClicked
 
-  implicitWidth: Math.round(baseSize * scaling)
-  implicitHeight: Math.round(baseSize * scaling)
+  implicitWidth: applyUiScale ? Math.round(baseSize * Style.uiScaleRatio) : Math.round(baseSize)
+  implicitHeight: applyUiScale ? Math.round(baseSize * Style.uiScaleRatio) : Math.round(baseSize)
 
   opacity: root.enabled ? Style.opacityFull : Style.opacityMedium
   color: root.enabled && root.hovering ? colorBgHover : colorBg
   radius: width * 0.5
   border.color: root.enabled && root.hovering ? colorBorderHover : colorBorder
-  border.width: Math.max(1, Style.borderS * scaling)
+  border.width: Math.max(1, Style.borderS)
 
   Behavior on color {
     ColorAnimation {
@@ -48,7 +49,15 @@ Rectangle {
 
   NIcon {
     icon: root.icon
-    pointSize: Math.max(1, root.compact ? root.width * 0.65 : root.width * 0.48)
+    pointSize: {
+      switch (root.density) {
+      case "compact":
+        return Math.max(1, root.width * 0.65)
+      default:
+        return Math.max(1, root.width * 0.48)
+      }
+    }
+    applyUiScale: root.applyUiScale
     color: root.enabled && root.hovering ? colorFgHover : colorFg
     // Center horizontally
     x: (root.width - width) / 2

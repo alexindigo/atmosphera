@@ -17,25 +17,25 @@ NBox {
   property string uptimeText: "--"
 
   RowLayout {
-    id: content
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: parent.top
-    anchors.margins: Style.marginM * scaling
-    spacing: Style.marginM * scaling
+    anchors.bottom: parent.bottom
+    anchors.margins: Style.marginM
+    spacing: Style.marginM
 
     NImageCircled {
-      width: Style.baseWidgetSize * 1.25 * scaling
-      height: Style.baseWidgetSize * 1.25 * scaling
-      imagePath: Settings.data.general.avatarImage
+      Layout.preferredWidth: Math.round(Style.baseWidgetSize * 1.25 * Style.uiScaleRatio)
+      Layout.preferredHeight: Math.round(Style.baseWidgetSize * 1.25 * Style.uiScaleRatio)
+      imagePath: Settings.preprocessPath(Settings.data.general.avatarImage)
       fallbackIcon: "person"
       borderColor: Color.mPrimary
-      borderWidth: Math.max(1, Style.borderM * scaling)
+      borderWidth: Math.max(1, Style.borderM)
     }
 
     ColumnLayout {
       Layout.fillWidth: true
-      spacing: Style.marginXXS * scaling
+      spacing: Style.marginXXS
       NText {
         text: Quickshell.env("USER") || "user"
         font.weight: Style.fontWeightBold
@@ -45,13 +45,13 @@ NBox {
         text: I18n.tr("system.uptime", {
                         "uptime": uptimeText
                       })
-        pointSize: Style.fontSizeS * scaling
+        pointSize: Style.fontSizeS
         color: Color.mOnSurfaceVariant
       }
     }
 
     RowLayout {
-      spacing: Style.marginS * scaling
+      spacing: Style.marginS
       Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
       Item {
         Layout.fillWidth: true

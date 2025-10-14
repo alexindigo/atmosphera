@@ -10,8 +10,8 @@ Item {
   property color handleHoverColor: handleColor
   property color handlePressedColor: handleColor
   property color trackColor: Color.transparent
-  property real handleWidth: 6 * scaling
-  property real handleRadius: Style.radiusM * scaling
+  property real handleWidth: 6
+  property real handleRadius: Style.radiusM
   property int verticalPolicy: ScrollBar.AsNeeded
   property int horizontalPolicy: ScrollBar.AsNeeded
 

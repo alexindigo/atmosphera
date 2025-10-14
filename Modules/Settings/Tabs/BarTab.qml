@@ -9,7 +9,7 @@ import qs.Modules.Settings.Extras
 
 ColumnLayout {
   id: root
-  spacing: Style.marginL * scaling
+  spacing: Style.marginL
 
   // Helper functions to update arrays immutably
   function addMonitor(list, name) {
@@ -71,6 +71,9 @@ ColumnLayout {
     label: I18n.tr("settings.bar.appearance.density.label")
     description: I18n.tr("settings.bar.appearance.density.description")
     model: [{
+        "key": "mini",
+        "name": I18n.tr("options.bar.density.mini")
+      }, {
         "key": "compact",
         "name": I18n.tr("options.bar.density.compact")
       }, {
@@ -82,26 +85,6 @@ ColumnLayout {
       }]
     currentKey: Settings.data.bar.density
     onSelected: key => Settings.data.bar.density = key
-  }
-
-  ColumnLayout {
-    spacing: Style.marginXXS * scaling
-    Layout.fillWidth: true
-
-    NLabel {
-      label: I18n.tr("settings.bar.appearance.background-opacity.label")
-      description: I18n.tr("settings.bar.appearance.background-opacity.description")
-    }
-
-    NValueSlider {
-      Layout.fillWidth: true
-      from: 0
-      to: 1
-      stepSize: 0.01
-      value: Settings.data.bar.backgroundOpacity
-      onMoved: value => Settings.data.bar.backgroundOpacity = value
-      text: Math.floor(Settings.data.bar.backgroundOpacity * 100) + "%"
-    }
   }
 
   NToggle {
@@ -131,7 +114,7 @@ ColumnLayout {
   // Floating bar options - only show when floating is enabled
   ColumnLayout {
     visible: Settings.data.bar.floating
-    spacing: Style.marginS * scaling
+    spacing: Style.marginS
     Layout.fillWidth: true
 
     NLabel {
@@ -141,14 +124,14 @@ ColumnLayout {
 
     RowLayout {
       Layout.fillWidth: true
-      spacing: Style.marginL * scaling
+      spacing: Style.marginL
 
       ColumnLayout {
-        spacing: Style.marginXXS * scaling
+        spacing: Style.marginXXS
 
         NText {
           text: I18n.tr("settings.bar.appearance.margins.vertical")
-          pointSize: Style.fontSizeXS * scaling
+          pointSize: Style.fontSizeXS
           color: Color.mOnSurfaceVariant
         }
 
@@ -164,11 +147,11 @@ ColumnLayout {
       }
 
       ColumnLayout {
-        spacing: Style.marginXXS * scaling
+        spacing: Style.marginXXS
 
         NText {
           text: I18n.tr("settings.bar.appearance.margins.horizontal")
-          pointSize: Style.fontSizeXS * scaling
+          pointSize: Style.fontSizeXS
           color: Color.mOnSurfaceVariant
         }
 
@@ -185,15 +168,35 @@ ColumnLayout {
     }
   }
 
+  ColumnLayout {
+    spacing: Style.marginXXS
+    Layout.fillWidth: true
+
+    NLabel {
+      label: I18n.tr("settings.bar.appearance.background-opacity.label")
+      description: I18n.tr("settings.bar.appearance.background-opacity.description")
+    }
+
+    NValueSlider {
+      Layout.fillWidth: true
+      from: 0
+      to: 1
+      stepSize: 0.01
+      value: Settings.data.bar.backgroundOpacity
+      onMoved: value => Settings.data.bar.backgroundOpacity = value
+      text: Math.floor(Settings.data.bar.backgroundOpacity * 100) + "%"
+    }
+  }
+
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
   }
 
   // Widgets Management Section
   ColumnLayout {
-    spacing: Style.marginXXS * scaling
+    spacing: Style.marginXXS
     Layout.fillWidth: true
 
     NHeader {
@@ -205,8 +208,8 @@ ColumnLayout {
     ColumnLayout {
       Layout.fillWidth: true
       Layout.fillHeight: true
-      Layout.topMargin: Style.marginM * scaling
-      spacing: Style.marginM * scaling
+      Layout.topMargin: Style.marginM
+      spacing: Style.marginM
 
       // Left Section
       SectionEditor {
@@ -263,13 +266,13 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
   }
 
   // Monitor Configuration
   ColumnLayout {
-    spacing: Style.marginM * scaling
+    spacing: Style.marginM
     Layout.fillWidth: true
 
     NHeader {
@@ -282,11 +285,15 @@ ColumnLayout {
       delegate: NCheckbox {
         Layout.fillWidth: true
         label: modelData.name || "Unknown"
-        description: I18n.tr("system.monitor-description", {
-                               "model": modelData.model,
-                               "width": modelData.width,
-                               "height": modelData.height
-                             })
+        description: {
+          const compositorScale = CompositorService.getDisplayScale(modelData.name)
+          I18n.tr("system.monitor-description", {
+                    "model": modelData.model,
+                    "width": modelData.width * compositorScale,
+                    "height": modelData.height * compositorScale,
+                    "scale": compositorScale
+                  })
+        }
         checked: (Settings.data.bar.monitors || []).indexOf(modelData.name) !== -1
         onToggled: checked => {
                      if (checked) {
@@ -301,8 +308,8 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
   }
 
   // ---------------------------------

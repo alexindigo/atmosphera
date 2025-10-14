@@ -13,32 +13,6 @@
         },
         "select-avatar": "Sélectionner une image d'avatar"
       },
-      "ui": {
-        "section": {
-          "label": "Interface utilisateur",
-          "description": "Personnalisez l'apparence, l'ergonomie et le comportement de l'interface."
-        },
-        "tooltips": {
-          "label": "Afficher les tooltips",
-          "description": "Activer ou désactiver les tooltips dans toute l'interface."
-        },
-        "dim-desktop": {
-          "label": "Assombrir le bureau",
-          "description": "Assombrir le bureau lorsque des panneaux ou des menus sont ouverts."
-        },
-        "border-radius": {
-          "label": "Rayon de bordure",
-          "description": "Contrôle l'arrondi des coins des fenêtres, des boutons et d'autres éléments."
-        },
-        "animation-speed": {
-          "label": "Vitesse d'animation",
-          "description": "Ajustez la vitesse globale des animations."
-        },
-        "animation-disable": {
-          "label": "Désactiver les animations de l'interface",
-          "description": "Désactiver toutes les animations pour une expérience plus rapide et réactive."
-        }
-      },
       "screen-corners": {
         "section": {
           "label": "Coins de l'écran",
@@ -54,7 +28,8 @@
         },
         "radius": {
           "label": "Rayon des coins de l'écran",
-          "description": "Ajustez l'arrondi des coins de l'écran."
+          "description": "Ajustez l'arrondi des coins de l'écran.",
+          "reset": "Réinitialiser le rayon des coins de l'écran"
         }
       },
       "fonts": {
@@ -83,33 +58,6 @@
           }
         },
         "reset-scaling": "Réinitialiser l'échelle"
-      },
-      "control-center": {
-        "title": "Centre de contrôle",
-        "section": {
-          "label": "Centre de contrôle",
-          "description": "Configurer le positionnement et le comportement du panneau du centre de contrôle."
-        },
-        "position": {
-          "label": "Position",
-          "description": "Choisissez où apparaît le panneau du centre de contrôle lors de l'ouverture."
-        },
-        "quickSettingsStyle": {
-          "section": {
-            "label": "Style des paramètres rapides",
-            "description": "Personnalisez l'apparence et le comportement des paramètres rapides dans le centre de contrôle."
-          },
-          "style": {
-            "label": "Style des paramètres rapides",
-            "description": "Choisissez le style visuel pour les commutateurs et contrôles des paramètres rapides."
-          }
-        },
-        "widgets": {
-          "section": {
-            "label": "Widgets",
-            "description": "Configurez et gérez les widgets du centre de contrôle et leurs options d'affichage."
-          }
-        }
       }
     },
     "audio": {
@@ -196,11 +144,9 @@
       "monitors": {
         "section": {
           "label": "Paramètres par moniteur",
-          "description": "Ajustez la mise à l'échelle et la luminosité pour chaque écran."
+          "description": "Ajustez la luminosité pour chaque écran."
         },
-        "scale": "Mise à l'échelle",
         "brightness": "Luminosité",
-        "reset-scaling": "Réinitialiser la mise à l'échelle",
         "brightness-step": {
           "label": "Incrément de luminosité",
           "description": "Ajustez l'incrément pour les changements de luminosité (molette de la souris et raccourcis clavier)."
@@ -318,6 +264,10 @@
         "floating-distance": {
           "label": "Distance de flottaison du dock",
           "description": "Ajustez la distance de flottaison par rapport au bord de l'écran."
+        },
+        "colorize-icons": {
+          "label": "Coloriser les icônes",
+          "description": "Appliquer les couleurs du thème aux icônes d'applications du dock (applications non focalisées uniquement)."
         }
       },
       "monitors": {
@@ -429,6 +379,10 @@
       "enabled": {
         "label": "Activer l'affichage à l'écran",
         "description": "Afficher en temps réel les changements de volume et de luminosité."
+      },
+      "always-on-top": {
+        "label": "Toujours au premier plan",
+        "description": "Afficher l'OSD au-dessus des fenêtres plein écran et autres couches."
       },
       "location": {
         "label": "Emplacement",
@@ -734,29 +688,8 @@
           "description": "Un grand merci à notre {count} <b>super</b> contributeur !",
           "description_plural": "Un grand merci à nos {count} <b>super</b> contributeurs !"
         }
-      }
-    },
-    "control-center": {
-      "title": "Centre de contrôle",
-      "quickSettingsStyle": {
-        "section": {
-          "label": "Style des paramètres rapides",
-          "description": "Personnalisez l'apparence et le comportement des paramètres rapides dans le centre de contrôle."
-        },
-        "style": {
-          "label": "Style des paramètres rapides",
-          "description": "Choisissez le style visuel pour les commutateurs et contrôles des paramètres rapides."
-        }
       },
-      "widgets": {
-        "section": {
-          "label": "Widgets",
-          "description": "Configurez et gérez les widgets du centre de contrôle et leurs options d'affichage."
-        }
-      },
-      "quickSettings": {
-        "sectionName": "Paramètres rapides"
-      }
+      "support": "Soutenez-nous"
     },
     "hooks": {
       "title": "Hooks",
@@ -789,6 +722,69 @@
           "label": "Paramètres disponibles",
           "description": "• Hook Fond d'écran : $1 = chemin du fond d'écran, $2 = nom de l'écran\n• Hook de bascule de thème : $1 = true/false (état du mode sombre)"
         }
+      }
+    },
+    "control-center": {
+      "position": {
+        "description": "Choisissez où le panneau du Centre de contrôle apparaît lorsqu'il est ouvert.",
+        "label": "Position"
+      },
+      "section": {
+        "description": "Configurer le positionnement et le comportement du panneau du Centre de contrôle.",
+        "label": "Apparence"
+      },
+      "title": "Centre de contrôle",
+      "cards": {
+        "section": {
+          "description": "Personnalisez les commandes qui apparaissent dans le Centre de contrôle et leur ordre d'affichage.",
+          "label": "Cartes"
+        }
+      },
+      "shortcuts": {
+        "section": {
+          "description": "Configurer et gérer les widgets de raccourcis.",
+          "label": "Widgets de raccourcis"
+        },
+        "sectionLeft": "Gauche",
+        "sectionRight": "Droite"
+      }
+    },
+    "user-interface": {
+      "animation-disable": {
+        "description": "Désactiver toutes les animations pour une expérience plus rapide et plus réactive.",
+        "label": "Désactiver les animations de l'interface utilisateur"
+      },
+      "animation-speed": {
+        "description": "Ajuster la vitesse globale de l'animation.",
+        "label": "Vitesse d'animation",
+        "reset": "Réinitialiser la vitesse de l'animation"
+      },
+      "border-radius": {
+        "description": "Contrôle l'arrondi des angles des fenêtres, des boutons et d'autres éléments.",
+        "label": "Rayon de bordure",
+        "reset": "Réinitialiser le rayon de la bordure"
+      },
+      "compact-lockscreen": {
+        "description": "Afficher uniquement le champ de saisie de connexion et les commandes système, en masquant les widgets météo et multimédia.",
+        "label": "Écran de verrouillage compact"
+      },
+      "dim-desktop": {
+        "description": "Atténuer le bureau lorsque des panneaux ou des menus sont ouverts.",
+        "label": "Dim bureau"
+      },
+      "scaling": {
+        "description": "Modifie la taille de l'interface utilisateur générale, à l'exception de la barre.",
+        "label": "Mise à l'échelle de l'interface",
+        "reset-scaling": "Réinitialiser l'échelle de l'interface"
+      },
+      "section": {
+        "description": "Personnaliser l'apparence, l'ergonomie et le comportement de l'interface.",
+        "label": "Apparence"
+      },
+      "title": "Interface utilisateur",
+      "tooltips": {
+        "description": "Activer ou désactiver les info-bulles dans toute l'interface.",
+        "label": "Afficher les infobulles"
       }
     }
   },
@@ -901,13 +897,17 @@
           "label": "Mode de défilement",
           "description": "Contrôler quand le défilement de texte est activé pour les titres de fenêtre longs."
         },
-        "auto-hide": {
-          "label": "Masquer automatiquement",
-          "description": "Masquer automatiquement le widget quand aucune fenêtre n'est active."
+        "hide-mode": {
+          "label": "Mode de masquage",
+          "description": "Contrôle le comportement du widget lorsqu'aucune fenêtre n'est active."
         },
         "width": {
           "description": "Contrôle la taille horizontale du widget.",
           "label": "Largeur du widget"
+        },
+        "colorize-icons": {
+          "label": "Coloriser les icônes",
+          "description": "Appliquer les couleurs du thème à l'icône de la fenêtre active."
         }
       },
       "system-monitor": {
@@ -1054,9 +1054,9 @@
           "label": "Mode de défilement",
           "description": "Contrôler quand le défilement de texte est activé pour les titres de piste longs."
         },
-        "auto-hide": {
-          "label": "Masquer automatiquement",
-          "description": "Masquer automatiquement le widget quand aucun média n'est en cours de lecture."
+        "hide-mode": {
+          "label": "Mode de masquage",
+          "description": "Contrôle le comportement du widget lorsqu'aucun média n'est en cours de lecture."
         },
         "no-active-player": "Aucun lecteur actif"
       },
@@ -1101,6 +1101,16 @@
         "only-same-output": {
           "description": "Afficher uniquement les applications de la sortie où la barre est située.",
           "label": "Seulement à partir de la même sortie"
+        },
+        "colorize-icons": {
+          "label": "Coloriser les icônes",
+          "description": "Appliquer les couleurs du thème aux icônes de la barre des tâches."
+        }
+      },
+      "tray": {
+        "colorize-icons": {
+          "label": "Coloriser les icônes",
+          "description": "Appliquer les couleurs du thème aux icônes de la barre système."
         }
       }
     }
@@ -1270,7 +1280,8 @@
       "density": {
         "compact": "Compact",
         "default": "Défaut",
-        "comfortable": "Confortable"
+        "comfortable": "Confortable",
+        "mini": "Mini"
       }
     },
     "launcher": {
@@ -1359,6 +1370,11 @@
         "microphone-input": "Entrée microphone",
         "both": "Sortie système + entrée microphone"
       }
+    },
+    "hide-modes": {
+      "hidden": "Masquer si vide",
+      "transparent": "Transparent quand vide",
+      "visible": "Toujours visible"
     }
   },
   "session-menu": {
@@ -1539,6 +1555,9 @@
     "bluetooth": {
       "enabled": "Activé",
       "disabled": "Désactivé"
+    },
+    "kofi": {
+      "opened": "Page Ko-fi ouverte dans votre navigateur"
     },
     "do-not-disturb": {
       "enabled": "'Ne pas déranger' activé",

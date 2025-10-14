@@ -11,9 +11,9 @@ Slider {
   property bool snapAlways: true
   property real heightRatio: 0.7
 
-  readonly property real knobDiameter: Math.round((Style.baseWidgetSize * heightRatio * scaling) / 2) * 2
-  readonly property real trackHeight: Math.round((knobDiameter * 0.4) / 2) * 2
-  readonly property real cutoutExtra: Math.round((Style.baseWidgetSize * 0.1 * scaling) / 2) * 2
+  readonly property real knobDiameter: Math.round((Style.baseWidgetSize * heightRatio * Style.uiScaleRatio) / 2) * 2
+  readonly property real trackHeight: Math.round((knobDiameter * 0.4 * Style.uiScaleRatio) / 2) * 2
+  readonly property real cutoutExtra: Math.round((Style.baseWidgetSize * 0.1 * Style.uiScaleRatio) / 2) * 2
 
   padding: cutoutExtra / 2
 
@@ -30,7 +30,7 @@ Slider {
     radius: height / 2
     color: Qt.alpha(Color.mSurface, 0.5)
     border.color: Qt.alpha(Color.mOutline, 0.5)
-    border.width: Math.max(1, Style.borderS * scaling)
+    border.width: Math.max(1, Style.borderS)
 
     // A container composite shape that puts a semicircle on the end
     Item {
@@ -116,7 +116,7 @@ Slider {
       radius: width / 2
       color: root.pressed ? Color.mTertiary : Color.mSurface
       border.color: Color.mPrimary
-      border.width: Math.max(1, Style.borderL * scaling)
+      border.width: Math.max(1, Style.borderL)
       anchors.centerIn: parent
 
       Behavior on color {

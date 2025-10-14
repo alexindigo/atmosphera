@@ -10,6 +10,7 @@ Singleton {
   id: root
 
   readonly property ListModel fillModeModel: ListModel {}
+  readonly property string defaultDirectory: Settings.preprocessPath(Settings.data.wallpaper.directory)
 
   // All available wallpaper transitions
   readonly property ListModel transitionsModel: ListModel {}
@@ -44,7 +45,7 @@ Singleton {
       if (!Settings.data.wallpaper.enableMultiMonitorDirectories) {
         // All monitors use the main directory
         for (var i = 0; i < Quickshell.screens.length; i++) {
-          root.wallpaperDirectoryChanged(Quickshell.screens[i].name, Settings.data.wallpaper.directory)
+          root.wallpaperDirectoryChanged(Quickshell.screens[i].name, root.defaultDirectory)
         }
       } else {
         // Only monitors without custom directories are affected
@@ -52,7 +53,7 @@ Singleton {
           var screenName = Quickshell.screens[i].name
           var monitor = root.getMonitorConfig(screenName)
           if (!monitor || !monitor.directory) {
-            root.wallpaperDirectoryChanged(screenName, Settings.data.wallpaper.directory)
+            root.wallpaperDirectoryChanged(screenName, root.defaultDirectory)
           }
         }
       }
@@ -177,16 +178,16 @@ Singleton {
   // Get specific monitor directory
   function getMonitorDirectory(screenName) {
     if (!Settings.data.wallpaper.enableMultiMonitorDirectories) {
-      return Settings.data.wallpaper.directory
+      return root.defaultDirectory
     }
 
     var monitor = getMonitorConfig(screenName)
     if (monitor !== undefined && monitor.directory !== undefined) {
-      return monitor.directory
+      return Settings.preprocessPath(monitor.directory)
     }
 
     // Fall back to the main/single directory
-    return Settings.data.wallpaper.directory
+    return root.defaultDirectory
   }
 
   // -------------------------------------------------------------------
@@ -218,7 +219,7 @@ Singleton {
 
     // Update Settings with new array to ensure proper persistence
     Settings.data.wallpaper.monitors = newMonitors.slice()
-    root.wallpaperDirectoryChanged(screenName, directory)
+    root.wallpaperDirectoryChanged(screenName, Settings.preprocessPath(directory))
   }
 
   // -------------------------------------------------------------------
@@ -274,7 +275,7 @@ Singleton {
         found = true
         return {
           "name": screenName,
-          "directory": monitor.directory || getMonitorDirectory(screenName),
+          "directory": Settings.preprocessPath(monitor.directory) || getMonitorDirectory(screenName),
           "wallpaper": path
         }
       }

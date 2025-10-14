@@ -16,8 +16,8 @@ Rectangle {
   signal hidden
 
   width: parent.width
-  height: Math.round(contentLayout.implicitHeight + Style.marginL * 2 * scaling)
-  radius: Style.radiusL * scaling
+  height: Math.round(contentLayout.implicitHeight + Style.marginL * 2)
+  radius: Style.radiusL
   visible: false
   opacity: 0
   scale: initialScale
@@ -34,7 +34,7 @@ Rectangle {
       return Color.mOutline
     }
   }
-  border.width: Math.max(2, Style.borderM * scaling)
+  border.width: Math.max(2, Style.borderM)
 
   Behavior on opacity {
     NumberAnimation {
@@ -74,8 +74,8 @@ Rectangle {
   RowLayout {
     id: contentLayout
     anchors.fill: parent
-    anchors.margins: Style.marginL * scaling
-    spacing: Style.marginL * scaling
+    anchors.margins: Style.marginL
+    spacing: Style.marginL
 
     // Icon
     NIcon {
@@ -100,13 +100,13 @@ Rectangle {
           return Color.mOnSurface
         }
       }
-      pointSize: Style.fontSizeXXL * 1.5 * scaling
+      pointSize: Style.fontSizeXXL * 1.5
       Layout.alignment: Qt.AlignVCenter
     }
 
     // Label and description
     ColumnLayout {
-      spacing: Style.marginXXS * scaling
+      spacing: Style.marginXXS
       Layout.fillWidth: true
       Layout.alignment: Qt.AlignVCenter
 
@@ -114,7 +114,7 @@ Rectangle {
         Layout.fillWidth: true
         text: root.message
         color: Color.mOnSurface
-        pointSize: Style.fontSizeL * scaling
+        pointSize: Style.fontSizeL
         font.weight: Style.fontWeightBold
         wrapMode: Text.WordWrap
         visible: text.length > 0
@@ -124,7 +124,7 @@ Rectangle {
         Layout.fillWidth: true
         text: root.description
         color: Color.mOnSurface
-        pointSize: Style.fontSizeM * scaling
+        pointSize: Style.fontSizeM
         wrapMode: Text.WordWrap
         visible: text.length > 0
       }

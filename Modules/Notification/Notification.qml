@@ -17,7 +17,6 @@ Variants {
     id: root
 
     required property ShellScreen modelData
-    property real scaling: ScalingService.getScreenScale(modelData)
 
     // Access the notification model from the service
     property ListModel notificationModel: NotificationService.activeList
@@ -38,15 +37,6 @@ Variants {
       function onCountChanged() {
         if (notificationModel.count === 0 && root.active) {
           delayTimer.restart()
-        }
-      }
-    }
-
-    Connections {
-      target: ScalingService
-      function onScaleChanged(screenName, scale) {
-        if (root.modelData && screenName === root.modelData.name) {
-          root.scaling = scale
         }
       }
     }
@@ -79,10 +69,10 @@ Variants {
       margins.top: {
         if (!(anchors.top))
           return 0
-        var base = Style.marginM * scaling
+        var base = Style.marginM
         if (Settings.data.bar.position === "top") {
-          var floatExtraV = Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL * scaling : 0
-          return (Style.barHeight * scaling) + base + floatExtraV
+          var floatExtraV = Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL : 0
+          return (Style.barHeight) + base + floatExtraV
         }
         return base
       }
@@ -90,10 +80,10 @@ Variants {
       margins.bottom: {
         if (!(anchors.bottom))
           return 0
-        var base = Style.marginM * scaling
+        var base = Style.marginM
         if (Settings.data.bar.position === "bottom") {
-          var floatExtraV = Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL * scaling : 0
-          return (Style.barHeight * scaling) + base + floatExtraV
+          var floatExtraV = Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL : 0
+          return (Style.barHeight) + base + floatExtraV
         }
         return base
       }
@@ -101,10 +91,10 @@ Variants {
       margins.left: {
         if (!(anchors.left))
           return 0
-        var base = Style.marginM * scaling
+        var base = Style.marginM
         if (Settings.data.bar.position === "left") {
-          var floatExtraH = Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL * scaling : 0
-          return (Style.barHeight * scaling) + base + floatExtraH
+          var floatExtraH = Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL : 0
+          return (Style.barHeight) + base + floatExtraH
         }
         return base
       }
@@ -112,15 +102,15 @@ Variants {
       margins.right: {
         if (!(anchors.right))
           return 0
-        var base = Style.marginM * scaling
+        var base = Style.marginM
         if (Settings.data.bar.position === "right") {
-          var floatExtraH = Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL * scaling : 0
-          return (Style.barHeight * scaling) + base + floatExtraH
+          var floatExtraH = Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL : 0
+          return (Style.barHeight) + base + floatExtraH
         }
         return base
       }
 
-      implicitWidth: 360 * scaling
+      implicitWidth: 360
       implicitHeight: notificationStack.implicitHeight
       WlrLayershell.exclusionMode: ExclusionMode.Ignore
 
@@ -165,9 +155,19 @@ Variants {
         anchors.left: parent.isLeft ? parent.left : undefined
         anchors.right: parent.isRight ? parent.right : undefined
         anchors.horizontalCenter: parent.isCentered ? parent.horizontalCenter : undefined
-        spacing: Style.marginS * scaling
-        width: 360 * scaling
+        spacing: Style.marginS
+        width: 360
         visible: true
+
+        // Animate when notifications are added/removed
+        Behavior on implicitHeight {
+          SpringAnimation {
+            spring: 2.0
+            damping: 0.4
+            epsilon: 0.01
+            mass: 0.8
+          }
+        }
 
         // Multiple notifications display
         Repeater {
@@ -178,15 +178,14 @@ Variants {
             // Store the notification ID and data for reference
             property string notificationId: model.id
             property var notificationData: model
-            property real cardScaling: root.scaling
 
-            Layout.preferredWidth: 360 * cardScaling
-            Layout.preferredHeight: notificationLayout.implicitHeight + (Style.marginL * 2 * cardScaling)
+            Layout.preferredWidth: 360
+            Layout.preferredHeight: notificationLayout.implicitHeight + (Style.marginL * 2)
             Layout.maximumHeight: Layout.preferredHeight
 
-            radius: Style.radiusL * cardScaling
+            radius: Style.radiusL
             border.color: Color.mOutline
-            border.width: Math.max(1, Style.borderS * cardScaling)
+            border.width: Math.max(1, Style.borderS)
             color: Color.mSurface
 
             // Optimized progress bar container
@@ -195,7 +194,7 @@ Variants {
               anchors.top: parent.top
               anchors.left: parent.left
               anchors.right: parent.right
-              height: 2 * cardScaling
+              height: 2
               color: Color.transparent
 
               // Pre-calculate available width for the progress bar
@@ -243,7 +242,11 @@ Variants {
             // Animation properties
             property real scaleValue: 0.8
             property real opacityValue: 0.0
+            property real slideOffset: 0
             property bool isRemoving: false
+
+            // Staggered animation delay based on index
+            readonly property int animationDelay: index * 100
 
             // Right-click to dismiss
             MouseArea {
@@ -256,14 +259,55 @@ Variants {
               }
             }
 
-            // Scale and fade-in animation
+            // Scale, fade, and slide animation
             scale: scaleValue
             opacity: opacityValue
 
+            // Slide animation based on notification position (vertical only for stacking)
+            y: slideOffset
+
+            // Calculate slide direction based on notification location
+            readonly property real slideDistance: 300
+            readonly property real slideInOffset: {
+              // For vertical stacking, always slide from top
+              if (parent.isTop)
+                return -slideDistance
+              if (parent.isBottom)
+                return slideDistance
+              return 0
+            }
+            readonly property real slideOutOffset: {
+              // Slide out in the same direction as slide in
+              if (parent.isTop)
+                return -slideDistance
+              if (parent.isBottom)
+                return slideDistance
+              return 0
+            }
+
             // Animate in when the item is created
             Component.onCompleted: {
-              scaleValue = 1.0
-              opacityValue = 1.0
+              // Start from slide position
+              slideOffset = slideInOffset
+              scaleValue = 0.8
+              opacityValue = 0.0
+
+              // Delay animation based on index for staggered effect
+              delayTimer.interval = animationDelay
+              delayTimer.start()
+            }
+
+            // Timer for staggered animation start
+            Timer {
+              id: delayTimer
+              interval: 0
+              repeat: false
+              onTriggered: {
+                // Animate to final position
+                slideOffset = 0
+                scaleValue = 1.0
+                opacityValue = 1.0
+              }
             }
 
             // Animate out when being removed
@@ -272,6 +316,7 @@ Variants {
                 return
               // Prevent multiple animations
               isRemoving = true
+              slideOffset = slideOutOffset
               scaleValue = 0.8
               opacityValue = 0.0
             }
@@ -293,46 +338,57 @@ Variants {
               }
             }
 
-            // Animation behaviors
+            // Animation behaviors with spring physics
             Behavior on scale {
-              NumberAnimation {
-                duration: Style.animationNormal
-                easing.type: Easing.OutExpo
+              SpringAnimation {
+                spring: 3
+                damping: 0.4
+                epsilon: 0.01
+                mass: 0.8
               }
             }
 
             Behavior on opacity {
               NumberAnimation {
                 duration: Style.animationNormal
-                easing.type: Easing.OutQuad
+                easing.type: Easing.OutCubic
+              }
+            }
+
+            Behavior on y {
+              SpringAnimation {
+                spring: 2.5
+                damping: 0.3
+                epsilon: 0.01
+                mass: 0.6
               }
             }
 
             ColumnLayout {
               id: notificationLayout
               anchors.fill: parent
-              anchors.margins: Style.marginM * cardScaling
-              anchors.rightMargin: (Style.marginM + 32) * cardScaling // Leave space for close button
-              spacing: Style.marginM * cardScaling
+              anchors.margins: Style.marginM
+              anchors.rightMargin: (Style.marginM + 32) // Leave space for close button
+              spacing: Style.marginM
 
               // Main content section
               RowLayout {
                 Layout.fillWidth: true
-                spacing: Style.marginM * cardScaling
+                spacing: Style.marginM
 
                 ColumnLayout {
                   // For real-time notification always show the original image
                   // as the cached version is most likely still processing.
                   NImageCircled {
-                    Layout.preferredWidth: 40 * cardScaling
-                    Layout.preferredHeight: 40 * cardScaling
+                    Layout.preferredWidth: Math.round(40 * Style.uiScaleRatio)
+                    Layout.preferredHeight: Math.round(40 * Style.uiScaleRatio)
                     Layout.alignment: Qt.AlignTop
-                    Layout.topMargin: 30 * cardScaling
+                    Layout.topMargin: 30
                     imagePath: model.originalImage || ""
                     borderColor: Color.transparent
                     borderWidth: 0
                     fallbackIcon: "bell"
-                    fallbackIconSize: 24 * cardScaling
+                    fallbackIconSize: 24
                   }
                   Item {
                     Layout.fillHeight: true
@@ -342,17 +398,17 @@ Variants {
                 // Text content
                 ColumnLayout {
                   Layout.fillWidth: true
-                  spacing: Style.marginS * cardScaling
+                  spacing: Style.marginS
 
                   // Header section with app name and timestamp
                   RowLayout {
                     Layout.fillWidth: true
-                    spacing: Style.marginS * cardScaling
+                    spacing: Style.marginS
 
                     Rectangle {
-                      Layout.preferredWidth: 6 * cardScaling
-                      Layout.preferredHeight: 6 * cardScaling
-                      radius: Style.radiusXS * cardScaling
+                      Layout.preferredWidth: 6
+                      Layout.preferredHeight: 6
+                      radius: Style.radiusXS
                       color: {
                         if (model.urgency === NotificationUrgency.Critical || model.urgency === 2)
                           return Color.mError
@@ -367,7 +423,7 @@ Variants {
                     NText {
                       text: `${model.appName || I18n.tr("system.unknown-app")} · ${Time.formatRelativeTime(model.timestamp)}`
                       color: Color.mSecondary
-                      pointSize: Style.fontSizeXS * cardScaling
+                      pointSize: Style.fontSizeXS
                     }
 
                     Item {
@@ -377,7 +433,7 @@ Variants {
 
                   NText {
                     text: model.summary || I18n.tr("general.no-summary")
-                    pointSize: Style.fontSizeL * cardScaling
+                    pointSize: Style.fontSizeL
                     font.weight: Style.fontWeightMedium
                     color: Color.mOnSurface
                     textFormat: Text.PlainText
@@ -390,7 +446,7 @@ Variants {
 
                   NText {
                     text: model.body || ""
-                    pointSize: Style.fontSizeM * cardScaling
+                    pointSize: Style.fontSizeM
                     color: Color.mOnSurface
                     textFormat: Text.PlainText
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
@@ -403,8 +459,8 @@ Variants {
                   // Notification actions
                   Flow {
                     Layout.fillWidth: true
-                    spacing: Style.marginS * cardScaling
-                    Layout.topMargin: Style.marginM * cardScaling
+                    spacing: Style.marginS
+                    Layout.topMargin: Style.marginM
 
                     flow: Flow.LeftToRight
                     layoutDirection: Qt.LeftToRight
@@ -436,12 +492,12 @@ Variants {
                           }
                           return actionText
                         }
-                        fontSize: Style.fontSizeS * cardScaling
+                        fontSize: Style.fontSizeS
                         backgroundColor: Color.mPrimary
                         textColor: hovered ? Color.mOnTertiary : Color.mOnPrimary
                         hoverColor: Color.mTertiary
                         outlined: false
-                        implicitHeight: 24 * cardScaling
+                        implicitHeight: 24
                         onClicked: {
                           NotificationService.invokeAction(parent.parentNotificationId, actionData.identifier)
                         }
@@ -458,9 +514,9 @@ Variants {
               tooltipText: I18n.tr("tooltips.close")
               baseSize: Style.baseWidgetSize * 0.6
               anchors.top: parent.top
-              anchors.topMargin: Style.marginM * cardScaling
+              anchors.topMargin: Style.marginM
               anchors.right: parent.right
-              anchors.rightMargin: Style.marginM * cardScaling
+              anchors.rightMargin: Style.marginM
 
               onClicked: {
                 animateOut()

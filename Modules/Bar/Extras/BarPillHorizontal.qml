@@ -14,13 +14,13 @@ Item {
   property string text: ""
   property string suffix: ""
   property string tooltipText: ""
+  property string density: ""
   property bool autoHide: false
   property bool forceOpen: false
   property bool forceClose: false
   property bool disableOpen: false
   property bool rightOpen: false
   property bool hovered: false
-  property bool compact: false
 
   // Effective shown state (true if hovered/animated open or forced)
   readonly property bool revealed: !forceClose && (forceOpen || showPill)
@@ -38,13 +38,28 @@ Item {
   property bool showPill: false
   property bool shouldAnimateHide: false
 
-  readonly property int pillHeight: Math.round(Style.capsuleHeight * scaling)
-  readonly property int pillPaddingHorizontal: Math.round(Style.capsuleHeight * 0.2 * scaling)
-  readonly property int pillOverlap: Math.round(Style.capsuleHeight * 0.5 * scaling)
-  readonly property int pillMaxWidth: Math.max(1, textItem.implicitWidth + pillPaddingHorizontal * 2 + pillOverlap)
+  readonly property int pillHeight: Style.capsuleHeight
+  readonly property int pillPaddingHorizontal: Math.round(Style.capsuleHeight * 0.2)
+  readonly property int pillOverlap: Math.round(Style.capsuleHeight * 0.5)
+  readonly property int pillMaxWidth: Math.max(1, Math.round(textItem.implicitWidth + pillPaddingHorizontal * 2 + pillOverlap))
 
-  readonly property real iconSize: Math.max(1, compact ? pillHeight * 0.65 : pillHeight * 0.48)
-  readonly property real textSize: Math.max(1, compact ? pillHeight * 0.45 : pillHeight * 0.33)
+  readonly property real iconSize: {
+    switch (root.density) {
+    case "compact":
+      return Math.max(1, Math.round(pillHeight * 0.65))
+    default:
+      return Math.max(1, Math.round(pillHeight * 0.48))
+    }
+  }
+
+  readonly property real textSize: {
+    switch (root.density) {
+    case "compact":
+      return Math.max(1, Math.round(pillHeight * 0.45))
+    default:
+      return Math.max(1, Math.round(pillHeight * 0.33))
+    }
+  }
 
   width: pillHeight + Math.max(0, pill.width - pillOverlap)
   height: pillHeight
@@ -68,10 +83,12 @@ Item {
     opacity: revealed ? Style.opacityFull : Style.opacityNone
     color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
-    topLeftRadius: rightOpen ? 0 : pillHeight * 0.5
-    bottomLeftRadius: rightOpen ? 0 : pillHeight * 0.5
-    topRightRadius: rightOpen ? pillHeight * 0.5 : 0
-    bottomRightRadius: rightOpen ? pillHeight * 0.5 : 0
+    readonly property int halfPillHeight: Math.round(pillHeight * 0.5)
+
+    topLeftRadius: rightOpen ? 0 : halfPillHeight
+    bottomLeftRadius: rightOpen ? 0 : halfPillHeight
+    topRightRadius: rightOpen ? halfPillHeight : 0
+    bottomRightRadius: rightOpen ? halfPillHeight : 0
     anchors.verticalCenter: parent.verticalCenter
 
     NText {
@@ -80,16 +97,17 @@ Item {
       x: {
         // Better text horizontal centering
         var centerX = (parent.width - width) / 2
-        var offset = rightOpen ? Style.marginXS * scaling : -Style.marginXS * scaling
+        var offset = rightOpen ? Style.marginXS : -Style.marginXS
         if (forceOpen) {
           // If its force open, the icon disc background is the same color as the bg pill move text slightly
-          offset += rightOpen ? -Style.marginXXS * scaling : Style.marginXXS * scaling
+          offset += rightOpen ? -Style.marginXXS : Style.marginXXS
         }
         return centerX + offset
       }
       text: root.text + root.suffix
       family: Settings.data.ui.fontFixed
       pointSize: textSize
+      applyUiScale: false
       font.weight: Style.fontWeightBold
       color: forceOpen ? Color.mOnSurface : Color.mPrimary
       visible: revealed
@@ -131,6 +149,7 @@ Item {
     NIcon {
       icon: root.icon
       pointSize: iconSize
+      applyUiScale: false
       color: hovered ? Color.mOnTertiary : Color.mOnSurface
       // Center horizontally
       x: (iconCircle.width - width) / 2

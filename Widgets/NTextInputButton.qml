@@ -21,7 +21,7 @@ ColumnLayout {
   signal inputTextChanged(string text)
   signal inputEditingFinished
 
-  spacing: Style.marginS * scaling
+  spacing: Style.marginS
 
   // Label and description
   NLabel {
@@ -34,7 +34,7 @@ ColumnLayout {
   // Input field with button
   RowLayout {
     Layout.fillWidth: true
-    spacing: Style.marginM * scaling
+    spacing: Style.marginM
 
     NTextInput {
       id: input

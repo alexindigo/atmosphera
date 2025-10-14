@@ -105,8 +105,8 @@ Variants {
       // When auto-hide is enabled, actually toggle window visibility after animations
       visible: root.autoHide ? root.barWindowVisible : true
 
-      implicitHeight: (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? screen.height : Math.round(Style.barHeight * scaling)
-      implicitWidth: (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? Math.round(Style.barHeight * scaling) : screen.width
+      implicitHeight: (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? screen.height : Style.barHeight
+      implicitWidth: (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? Style.barHeight : screen.width
       color: Color.transparent
 
       anchors {
@@ -119,10 +119,10 @@ Variants {
       // Floating bar margins - only apply when floating is enabled
       // Also don't apply margin on the opposite side ot the bar orientation, ex: if bar is floating on top, margin is only applied on top, not bottom.
       margins {
-        top: Settings.data.bar.floating && Settings.data.bar.position !== "bottom" ? Settings.data.bar.marginVertical * Style.marginXL * scaling : 0
-        bottom: Settings.data.bar.floating && Settings.data.bar.position !== "top" ? Settings.data.bar.marginVertical * Style.marginXL * scaling : 0
-        left: Settings.data.bar.floating && Settings.data.bar.position !== "right" ? Settings.data.bar.marginHorizontal * Style.marginXL * scaling : 0
-        right: Settings.data.bar.floating && Settings.data.bar.position !== "left" ? Settings.data.bar.marginHorizontal * Style.marginXL * scaling : 0
+        top: Settings.data.bar.floating && Settings.data.bar.position !== "bottom" ? Settings.data.bar.marginVertical * Style.marginXL : 0
+        bottom: Settings.data.bar.floating && Settings.data.bar.position !== "top" ? Settings.data.bar.marginVertical * Style.marginXL : 0
+        left: Settings.data.bar.floating && Settings.data.bar.position !== "right" ? Settings.data.bar.marginHorizontal * Style.marginXL : 0
+        right: Settings.data.bar.floating && Settings.data.bar.position !== "left" ? Settings.data.bar.marginHorizontal * Style.marginXL : 0
       }
 
       Component.onCompleted: {
@@ -244,8 +244,8 @@ Variants {
             ColumnLayout {
               anchors.horizontalCenter: parent.horizontalCenter
               anchors.top: parent.top
-              anchors.topMargin: Style.marginM * root.scaling
-              spacing: Style.marginS * root.scaling
+              anchors.topMargin: Style.marginM
+              spacing: Style.marginS
 
               Repeater {
                 model: Settings.data.bar.widgets.left
@@ -253,7 +253,6 @@ Variants {
                   widgetId: (modelData.id !== undefined ? modelData.id : "")
                   widgetProps: {
                     "screen": root.modelData || null,
-                    "scaling": ScalingService.getScreenScale(screen),
                     "widgetId": modelData.id,
                     "section": "left",
                     "sectionWidgetIndex": index,
@@ -268,7 +267,7 @@ Variants {
             ColumnLayout {
               anchors.horizontalCenter: parent.horizontalCenter
               anchors.verticalCenter: parent.verticalCenter
-              spacing: Style.marginS * root.scaling
+              spacing: Style.marginS
 
               Repeater {
                 model: Settings.data.bar.widgets.center
@@ -276,7 +275,6 @@ Variants {
                   widgetId: (modelData.id !== undefined ? modelData.id : "")
                   widgetProps: {
                     "screen": root.modelData || null,
-                    "scaling": ScalingService.getScreenScale(screen),
                     "widgetId": modelData.id,
                     "section": "center",
                     "sectionWidgetIndex": index,
@@ -291,8 +289,8 @@ Variants {
             ColumnLayout {
               anchors.horizontalCenter: parent.horizontalCenter
               anchors.bottom: parent.bottom
-              anchors.bottomMargin: Style.marginM * root.scaling
-              spacing: Style.marginS * root.scaling
+              anchors.bottomMargin: Style.marginM
+              spacing: Style.marginS
 
               Repeater {
                 model: Settings.data.bar.widgets.right
@@ -300,7 +298,6 @@ Variants {
                   widgetId: (modelData.id !== undefined ? modelData.id : "")
                   widgetProps: {
                     "screen": root.modelData || null,
-                    "scaling": ScalingService.getScreenScale(screen),
                     "widgetId": modelData.id,
                     "section": "right",
                     "sectionWidgetIndex": index,
@@ -324,9 +321,9 @@ Variants {
               id: leftSection
               objectName: "leftSection"
               anchors.left: parent.left
-              anchors.leftMargin: Style.marginS * root.scaling
+              anchors.leftMargin: Style.marginS
               anchors.verticalCenter: parent.verticalCenter
-              spacing: Style.marginS * root.scaling
+              spacing: Style.marginS
 
               Repeater {
                 model: Settings.data.bar.widgets.left
@@ -334,7 +331,6 @@ Variants {
                   widgetId: (modelData.id !== undefined ? modelData.id : "")
                   widgetProps: {
                     "screen": root.modelData || null,
-                    "scaling": ScalingService.getScreenScale(screen),
                     "widgetId": modelData.id,
                     "section": "left",
                     "sectionWidgetIndex": index,
@@ -351,7 +347,7 @@ Variants {
               objectName: "centerSection"
               anchors.horizontalCenter: parent.horizontalCenter
               anchors.verticalCenter: parent.verticalCenter
-              spacing: Style.marginS * root.scaling
+              spacing: Style.marginS
 
               Repeater {
                 model: Settings.data.bar.widgets.center
@@ -359,7 +355,6 @@ Variants {
                   widgetId: (modelData.id !== undefined ? modelData.id : "")
                   widgetProps: {
                     "screen": root.modelData || null,
-                    "scaling": ScalingService.getScreenScale(screen),
                     "widgetId": modelData.id,
                     "section": "center",
                     "sectionWidgetIndex": index,
@@ -375,9 +370,9 @@ Variants {
               id: rightSection
               objectName: "rightSection"
               anchors.right: parent.right
-              anchors.rightMargin: Style.marginS * root.scaling
+              anchors.rightMargin: Style.marginS
               anchors.verticalCenter: parent.verticalCenter
-              spacing: Style.marginS * root.scaling
+              spacing: Style.marginS
 
               Repeater {
                 model: Settings.data.bar.widgets.right
@@ -385,7 +380,6 @@ Variants {
                   widgetId: (modelData.id !== undefined ? modelData.id : "")
                   widgetProps: {
                     "screen": root.modelData || null,
-                    "scaling": ScalingService.getScreenScale(screen),
                     "widgetId": modelData.id,
                     "section": "right",
                     "sectionWidgetIndex": index,

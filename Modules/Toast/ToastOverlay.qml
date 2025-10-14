@@ -11,8 +11,6 @@ Variants {
 
   delegate: ToastScreen {
     required property ShellScreen modelData
-
     screen: modelData
-    scaling: ScalingService.getScreenScale(modelData)
   }
 }

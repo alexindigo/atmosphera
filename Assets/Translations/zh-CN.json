@@ -13,32 +13,6 @@
         },
         "select-avatar": "选择头像图片"
       },
-      "ui": {
-        "section": {
-          "label": "用户界面",
-          "description": "自定义界面的外观、风格和行为。"
-        },
-        "tooltips": {
-          "label": "显示工具提示",
-          "description": "在整个界面中启用或禁用工具提示。"
-        },
-        "dim-desktop": {
-          "label": "调暗桌面",
-          "description": "当面板或菜单打开时调暗桌面。"
-        },
-        "border-radius": {
-          "label": "边框圆角",
-          "description": "控制窗口、按钮及其他元素的边角圆度。"
-        },
-        "animation-speed": {
-          "label": "动画速度",
-          "description": "调整全局动画速度。"
-        },
-        "animation-disable": {
-          "label": "关闭动画",
-          "description": "禁用所有动画效果，以获得更快速、更灵敏的体验。"
-        }
-      },
       "screen-corners": {
         "section": {
           "label": "屏幕边角",
@@ -54,7 +28,8 @@
         },
         "radius": {
           "label": "屏幕边角半径",
-          "description": "调整屏幕圆角的弧度。"
+          "description": "调整屏幕圆角的弧度。",
+          "reset": "重置屏幕圆角半径"
         }
       },
       "fonts": {
@@ -81,33 +56,6 @@
           "scale": {
             "label": "默认等宽字体大小",
             "description": "增大或减小等宽文本的尺寸"
-          }
-        }
-      },
-      "control-center": {
-        "title": "控制中心",
-        "section": {
-          "label": "控制中心",
-          "description": "配置控制中心面板的定位和行为。"
-        },
-        "position": {
-          "label": "位置",
-          "description": "选择控制中心面板打开时出现的位置。"
-        },
-        "quickSettingsStyle": {
-          "section": {
-            "label": "快速设置样式",
-            "description": "自定义控制中心中快速设置的外观和行为。"
-          },
-          "style": {
-            "label": "快速设置样式",
-            "description": "选择快速设置开关和控件的视觉样式。"
-          }
-        },
-        "widgets": {
-          "section": {
-            "label": "小部件",
-            "description": "配置和管理控制中心小部件及其显示选项。"
           }
         }
       }
@@ -196,11 +144,9 @@
       "monitors": {
         "section": {
           "label": "显示器设置",
-          "description": "调整每个显示器的缩放比例和亮度。"
+          "description": "调整每个显示器的亮度设置。"
         },
-        "scale": "缩放比例",
         "brightness": "亮度",
-        "reset-scaling": "重置缩放",
         "brightness-step": {
           "label": "亮度步长",
           "description": "调整亮度变化的步长（滚轮和键盘快捷键）。"
@@ -318,6 +264,10 @@
         "floating-distance": {
           "label": "Dock 浮动距离",
           "description": "调整距离屏幕边缘的浮动距离。"
+        },
+        "colorize-icons": {
+          "label": "着色图标",
+          "description": "将主题颜色应用到 Dock 应用图标（仅限非聚焦应用）。"
         }
       },
       "monitors": {
@@ -429,6 +379,10 @@
       "enabled": {
         "label": "启用屏幕显示",
         "description": "实时显示音量与亮度变化。"
+      },
+      "always-on-top": {
+        "label": "始终置顶",
+        "description": "在全屏窗口和其他图层之上显示OSD。"
       },
       "location": {
         "label": "位置",
@@ -734,29 +688,8 @@
           "description": "向我们 {count} 位<b>超棒的</b>贡献者致敬！",
           "description_plural": "向我们 {count} 位<b>超棒的</b>贡献者致敬！"
         }
-      }
-    },
-    "control-center": {
-      "title": "控制中心",
-      "quickSettingsStyle": {
-        "section": {
-          "label": "快速设置样式",
-          "description": "自定义控制中心中快速设置的外观和行为。"
-        },
-        "style": {
-          "label": "快速设置样式",
-          "description": "选择快速设置开关和控件的视觉样式。"
-        }
       },
-      "widgets": {
-        "section": {
-          "label": "小部件",
-          "description": "配置和管理控制中心小部件及其显示选项。"
-        }
-      },
-      "quickSettings": {
-        "sectionName": "快速设置"
-      }
+      "support": "支持我们"
     },
     "hooks": {
       "title": "钩子",
@@ -789,6 +722,69 @@
           "label": "可用参数",
           "description": "• 壁纸钩子: $1 = 壁纸路径, $2 = 屏幕名称\n• 主题切换钩子: $1 = true/false (深色模式状态)"
         }
+      }
+    },
+    "control-center": {
+      "position": {
+        "description": "选择打开控制中心时面板出现的位置。",
+        "label": "位置"
+      },
+      "section": {
+        "description": "配置控制中心面板的位置和行为。",
+        "label": "外观"
+      },
+      "title": "控制中心",
+      "cards": {
+        "section": {
+          "description": "自定义在控制中心显示的控制项及其顺序。",
+          "label": "卡片"
+        }
+      },
+      "shortcuts": {
+        "section": {
+          "description": "配置和管理快捷方式小部件。",
+          "label": "快捷方式小部件"
+        },
+        "sectionLeft": "左",
+        "sectionRight": "右"
+      }
+    },
+    "user-interface": {
+      "animation-disable": {
+        "description": "禁用所有动画以获得更快、更流畅的体验。",
+        "label": "禁用 UI 动画"
+      },
+      "animation-speed": {
+        "description": "调整全局动画速度。",
+        "label": "动画速度",
+        "reset": "重置动画速度"
+      },
+      "border-radius": {
+        "description": "控制窗口、按钮和其他元素的圆角程度。",
+        "label": "边框半径",
+        "reset": "重置边框半径"
+      },
+      "compact-lockscreen": {
+        "description": "仅显示登录输入和系统控制，隐藏天气和媒体小部件。",
+        "label": "紧凑型锁屏"
+      },
+      "dim-desktop": {
+        "description": "当面板或菜单打开时，桌面变暗。",
+        "label": "昏暗的桌面"
+      },
+      "scaling": {
+        "description": "更改通用用户界面大小，不包括栏。",
+        "label": "界面缩放",
+        "reset-scaling": "重置界面缩放"
+      },
+      "section": {
+        "description": "自定义界面的外观、感觉和行为。",
+        "label": "外观"
+      },
+      "title": "用户界面",
+      "tooltips": {
+        "description": "启用或禁用整个界面的工具提示。",
+        "label": "显示工具提示"
       }
     }
   },
@@ -893,9 +889,9 @@
         "search-placeholder": "搜索小部件..."
       },
       "active-window": {
-        "auto-hide": {
-          "label": "自动隐藏",
-          "description": "当没有活动窗口时自动隐藏小部件。"
+        "hide-mode": {
+          "label": "隐藏模式",
+          "description": "控制当没有活动窗口时小部件的行为。"
         },
         "show-app-icon": {
           "label": "显示应用图标",
@@ -908,6 +904,10 @@
         "width": {
           "description": "控制小部件的水平尺寸。",
           "label": "小部件宽度"
+        },
+        "colorize-icons": {
+          "label": "着色图标",
+          "description": "将主题颜色应用到活动窗口图标。"
         }
       },
       "system-monitor": {
@@ -1038,9 +1038,9 @@
         }
       },
       "media-mini": {
-        "auto-hide": {
-          "label": "自动隐藏",
-          "description": "当没有媒体播放时自动隐藏小部件。"
+        "hide-mode": {
+          "label": "隐藏模式",
+          "description": "控制当没有媒体播放时小部件的行为。"
         },
         "show-album-art": {
           "label": "显示专辑封面",
@@ -1101,6 +1101,16 @@
         "only-same-output": {
           "label": "仅显示同屏幕",
           "description": "仅显示任务栏所在屏幕上的应用程序"
+        },
+        "colorize-icons": {
+          "label": "着色图标",
+          "description": "将主题颜色应用到任务栏图标。"
+        }
+      },
+      "tray": {
+        "colorize-icons": {
+          "label": "着色图标",
+          "description": "将主题颜色应用到系统托盘图标。"
         }
       }
     }
@@ -1270,7 +1280,8 @@
       "density": {
         "compact": "紧凑",
         "default": "默认",
-        "comfortable": "舒适"
+        "comfortable": "舒适",
+        "mini": "迷你"
       }
     },
     "launcher": {
@@ -1359,6 +1370,11 @@
         "microphone-input": "麦克风输入",
         "both": "系统输出 + 麦克风输入"
       }
+    },
+    "hide-modes": {
+      "hidden": "当为空时隐藏",
+      "transparent": "空时透明",
+      "visible": "始终可见"
     }
   },
   "session-menu": {
@@ -1539,6 +1555,9 @@
     "bluetooth": {
       "enabled": "已启用",
       "disabled": "已禁用"
+    },
+    "kofi": {
+      "opened": "Ko-fi页面已在您的浏览器中打开"
     },
     "do-not-disturb": {
       "enabled": "'勿扰模式'已启用",

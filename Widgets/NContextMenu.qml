@@ -8,13 +8,13 @@ Popup {
   id: root
 
   property alias model: listView.model
-  property real itemHeight: 36 * scaling
-  property real itemPadding: Style.marginM * scaling
+  property real itemHeight: 36
+  property real itemPadding: Style.marginM
 
   signal triggered(string action)
 
-  width: 180 * scaling
-  padding: Style.marginS * scaling
+  width: 180
+  padding: Style.marginS
 
   onOpened: PanelService.willOpenPopup(root)
   onClosed: PanelService.willClosePopup(root)
@@ -22,14 +22,14 @@ Popup {
   background: Rectangle {
     color: Color.mSurfaceVariant
     border.color: Color.mOutline
-    border.width: Math.max(1, Style.borderS * scaling)
-    radius: Style.radiusM * scaling
+    border.width: Math.max(1, Style.borderS)
+    radius: Style.radiusM
   }
 
   contentItem: NListView {
     id: listView
     implicitHeight: contentHeight
-    spacing: Style.marginXXS * scaling
+    spacing: Style.marginXXS
     interactive: contentHeight > root.height
 
     delegate: ItemDelegate {
@@ -45,7 +45,7 @@ Popup {
 
       background: Rectangle {
         color: menuItem.hovered && menuItem.enabled ? Color.mTertiary : Color.transparent
-        radius: Style.radiusS * scaling
+        radius: Style.radiusS
 
         Behavior on color {
           ColorAnimation {
@@ -55,13 +55,13 @@ Popup {
       }
 
       contentItem: RowLayout {
-        spacing: Style.marginS * scaling
+        spacing: Style.marginS
 
         // Optional icon
         NIcon {
           visible: modelData.icon !== undefined
           icon: modelData.icon || ""
-          pointSize: Style.fontSizeM * scaling
+          pointSize: Style.fontSizeM
           color: menuItem.hovered && menuItem.enabled ? Color.mOnTertiary : Color.mOnSurface
           Layout.leftMargin: root.itemPadding
 
@@ -74,7 +74,7 @@ Popup {
 
         NText {
           text: modelData.label || modelData.text || ""
-          pointSize: Style.fontSizeM * scaling
+          pointSize: Style.fontSizeM
           color: menuItem.hovered && menuItem.enabled ? Color.mOnTertiary : Color.mOnSurface
           verticalAlignment: Text.AlignVCenter
           Layout.fillWidth: true
