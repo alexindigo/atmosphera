@@ -86,6 +86,7 @@ ShellRoot {
         BarWidgetRegistry.init()
         LocationService.init()
         NightLightService.apply()
+        DarkModeService.init()
         FontService.init()
         HooksService.init()
         BluetoothService.init()

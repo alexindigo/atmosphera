@@ -190,7 +190,7 @@ Singleton {
   // --------------------------------
   function _fetchWeather(latitude, longitude, errorCallback) {
     Logger.log("Location", "Fetching weather from api.open-meteo.com")
-    var url = "https://api.open-meteo.com/v1/forecast?latitude=" + latitude + "&longitude=" + longitude + "&current_weather=true&current=relativehumidity_2m,surface_pressure&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=auto"
+    var url = "https://api.open-meteo.com/v1/forecast?latitude=" + latitude + "&longitude=" + longitude + "&current_weather=true&current=relativehumidity_2m,surface_pressure&daily=temperature_2m_max,temperature_2m_min,weathercode,sunset,sunrise&timezone=auto"
     var xhr = new XMLHttpRequest()
     xhr.onreadystatechange = function () {
       if (xhr.readyState === XMLHttpRequest.DONE) {
