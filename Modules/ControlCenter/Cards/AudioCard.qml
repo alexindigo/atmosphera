@@ -38,7 +38,11 @@ NBox {
         localOutputVolume = AudioService.volume
       }
     }
-    function onInputVolumeChanged() {
+  }
+
+  Connections {
+    target: AudioService.source?.audio ? AudioService.source?.audio : null
+    function onVolumeChanged() {
       if (!localInputVolumeChanging) {
         localInputVolume = AudioService.inputVolume
       }
