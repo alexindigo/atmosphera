@@ -40,6 +40,7 @@ import qs.Modules.OSD
 import qs.Modules.Settings
 import qs.Modules.Toast
 import qs.Modules.Wallpaper
+import qs.Modules.SetupWizard
 
 ShellRoot {
   id: shellRoot
@@ -89,6 +90,10 @@ ShellRoot {
         HooksService.init()
         BluetoothService.init()
         BatteryService.init()
+
+        if (Settings && Settings.data && Settings.data.general && !Settings.data.general.setupCompleted) {
+          setupWizardLoader.active = true
+        }
       }
 
       Background {}
@@ -165,6 +170,27 @@ ShellRoot {
       BatteryPanel {
         id: batteryPanel
         objectName: "batteryPanel"
+      }
+
+      // Lazy-load Setup Wizard to save memory
+      Component {
+        id: setupWizardComponent
+        SetupWizard {
+          id: setupWizardPanel
+          objectName: "setupWizardPanel"
+        }
+      }
+
+      Loader {
+        id: setupWizardLoader
+        active: false
+        asynchronous: true
+        sourceComponent: setupWizardComponent
+        onLoaded: {
+          if (setupWizardLoader.item && setupWizardLoader.item.open) {
+            setupWizardLoader.item.open()
+          }
+        }
       }
     }
   }
