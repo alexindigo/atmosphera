@@ -1573,6 +1573,19 @@
       "low": "电量低",
       "low-desc": "电量为 {percent}%。请连接充电器。"
     },
+    "battery-manager": {
+      "title": "电池阈值",
+      "set-success-desc": "电池阈值已设置为 {percent}%",
+      "initial-setup": "需要初始设置",
+      "set-failed": "设置电池阈值失败",
+      "install-success": "安装成功",
+      "install-missing": "缺少必要文件",
+      "install-unsupported": "系统不受支持",
+      "install-failed": "安装失败",
+      "uninstall-setup": "正在卸载，需要身份验证",
+      "uninstall-success": "卸载成功",
+      "uninstall-failed": "卸载失败"
+    },
     "missing-control-center": {
       "label": "最后一个控制中心小部件已移除",
       "description": "控制中心小部件已从状态栏中移除。要再次从状态栏访问它，您需要重新添加小部件。您也可以通过右键点击状态栏来打开它。"
@@ -1604,6 +1617,13 @@
     "charging-rate": "充电速率：{rate} W。",
     "discharging-rate": "放电速率：{rate} W。",
     "charging": "正在充电。",
-    "discharging": "正在放电。"
+    "discharging": "正在放电。",
+    "panel": {
+      "title": "充电阈值",
+      "full": "完全容量 ({percent}%)",
+      "balanced": "平衡 ({percent}%)",
+      "lifespan": "延长寿命 ({percent}%)",
+      "disabled": "电池管理器已禁用"
+    }
   }
 }

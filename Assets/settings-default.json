@@ -249,5 +249,8 @@
     "enabled": false,
     "wallpaperChange": "",
     "darkModeChange": ""
+  },
+  "battery": {
+    "chargingMode": 0
   }
 }

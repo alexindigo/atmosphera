@@ -1573,6 +1573,19 @@
       "low": "Bateria Fraca",
       "low-desc": "A bateria está em {percent}%. Por favor, conecte o carregador."
     },
+    "battery-manager": {
+      "title": "Limite da bateria",
+      "set-success-desc": "Limite da bateria definido para {percent}%",
+      "initial-setup": "Configuração inicial necessária",
+      "set-failed": "Falha ao definir o limite da bateria",
+      "install-success": "Instalado com sucesso",
+      "install-missing": "Arquivos necessários ausentes",
+      "install-unsupported": "Sistema não suportado",
+      "install-failed": "Falha na instalação",
+      "uninstall-setup": "Desinstalando, autenticação necessária",
+      "uninstall-success": "Desinstalado com sucesso",
+      "uninstall-failed": "Falha na desinstalação"
+    },
     "missing-control-center": {
       "label": "Último widget da Central de Controle removido",
       "description": "O widget da Central de Controle foi removido da barra. Para acessá-lo novamente pela barra, adicione o widget novamente. Você também pode abri-lo clicando com o botão direito na barra."
@@ -1604,6 +1617,19 @@
     "charging-rate": "Taxa de carregamento: {rate} W.",
     "discharging-rate": "Taxa de descarregamento: {rate} W.",
     "charging": "Carregando.",
-    "discharging": "Descarregando."
+    "discharging": "Descarregando.",
+    "battery-manager": {
+      "title": "Limite da bateria",
+      "set-success-desc": "Limite da bateria definido para {percent}%",
+      "initial-setup": "Configuração inicial necessária",
+      "set-failed": "Falha ao definir o limite da bateria",
+      "install-success": "Instalado com sucesso",
+      "install-missing": "Arquivos necessários ausentes",
+      "install-unsupported": "Sistema não suportado",
+      "install-failed": "Falha na instalação",
+      "uninstall-setup": "Desinstalando, autenticação necessária",
+      "uninstall-success": "Desinstalado com sucesso",
+      "uninstall-failed": "Falha na desinstalação"
+    }
   }
 }

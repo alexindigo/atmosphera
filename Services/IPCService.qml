@@ -184,6 +184,28 @@ Item {
   }
 
   IpcHandler {
+    target: "batteryManager"
+
+    function cycle() {
+      BatteryService.cycleModes()
+    }
+
+    function set(mode: string) {
+      switch (mode) {
+      case "full":
+        BatteryService.setChargingMode(BatteryService.ChargingMode.Full)
+        break
+      case "balanced":
+        BatteryService.setChargingMode(BatteryService.ChargingMode.Balanced)
+        break
+      case "lifespan":
+        BatteryService.setChargingMode(BatteryService.ChargingMode.Lifespan)
+        break
+      }
+    }
+  }
+  
+  IpcHandler {
     target: "media"
     function playPause() {
       MediaService.playPause()

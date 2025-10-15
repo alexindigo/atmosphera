@@ -1446,7 +1446,14 @@
     "charging-rate": "Laderate: {rate} W.",
     "discharging-rate": "Entladerate: {rate} W.",
     "charging": "Wird geladen.",
-    "discharging": "Wird entladen."
+    "discharging": "Wird entladen.",
+    "panel": {
+      "title": "Ladeschwelle",
+      "full": "Volle Kapazität ({percent}%)",
+      "balanced": "Ausgeglichen ({percent}%)",
+      "lifespan": "Verlängerte Lebensdauer ({percent}%)",
+      "disabled": "Batteriemanager deaktiviert"
+    }
   },
   "authentication": {
     "failed": "Authentifizierung fehlgeschlagen",
@@ -1600,6 +1607,19 @@
     "battery": {
       "low": "Niedriger Batteriestand",
       "low-desc": "Batterie ist bei {percent}%. Bitte schließen Sie das Ladegerät an."
+    },
+    "battery-manager": {
+      "title": "Batterieschwelle",
+      "set-success-desc": "Batterieschwelle auf {percent}% gesetzt",
+      "initial-setup": "Ersteinrichtung erforderlich",
+      "set-failed": "Fehler beim Setzen der Batterieschwelle",
+      "install-success": "Erfolgreich installiert",
+      "install-missing": "Erforderliche Dateien fehlen",
+      "install-unsupported": "System wird nicht unterstützt",
+      "install-failed": "Installation fehlgeschlagen",
+      "uninstall-setup": "Deinstallation, Authentifizierung erforderlich",
+      "uninstall-success": "Erfolgreich deinstalliert",
+      "uninstall-failed": "Deinstallation fehlgeschlagen"
     },
     "missing-control-center": {
       "label": "Letztes Control-Center-Widget entfernt",
