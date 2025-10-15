@@ -212,6 +212,10 @@
           "label": "Barre flottante",
           "description": "Affiche la barre sous forme de 'pilule' flottante. Note : Ceci déplacera les coins de l'écran vers les bords."
         },
+        "auto-hide": {
+          "label": "Masquer automatiquement",
+          "description": "Masquer automatiquement la barre lorsqu’elle n’est pas utilisée."
+        },
         "margins": {
           "label": "Marges",
           "description": "Ajustez les marges autour de la barre flottante.",

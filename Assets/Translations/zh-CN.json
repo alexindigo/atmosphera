@@ -212,6 +212,10 @@
           "label": "浮动状态栏",
           "description": "将状态栏显示为浮动样式（类似于一个药丸）。注意：这会将屏幕边角移动到边缘。"
         },
+        "auto-hide": {
+          "label": "自动隐藏",
+          "description": "在不使用时自动隐藏状态栏。"
+        },
         "margins": {
           "label": "边距",
           "description": "调整浮动状态栏周围的边距。",
