@@ -204,7 +204,7 @@ Item {
       }
     }
   }
-  
+
   IpcHandler {
     target: "media"
     function playPause() {
