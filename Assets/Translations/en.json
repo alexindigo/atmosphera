@@ -1305,7 +1305,8 @@
         "bottom_left": "Bottom left",
         "bottom_right": "Bottom right",
         "bottom_center": "Bottom center",
-        "top_center": "Top center"
+        "top_center": "Top center",
+        "center": "Center"
       },
       "quickSettingsStyle": {
         "modern": "Modern",
