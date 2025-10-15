@@ -20,7 +20,7 @@ Rectangle {
   property int sectionWidgetsCount: 0
 
   readonly property bool isVerticalBar: Settings.data.bar.position === "left" || Settings.data.bar.position === "right"
-  readonly property bool density: Settings.data.bar.density
+  readonly property string density: Settings.data.bar.density
   readonly property real itemSize: (density === "compact") ? Style.capsuleHeight * 0.9 : Style.capsuleHeight * 0.8
 
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
@@ -34,9 +34,49 @@ Rectangle {
     return {}
   }
 
-  // Always visible when there are toplevels
-  implicitWidth: isVerticalBar ? Style.capsuleHeight : Math.round(taskbarLayout.implicitWidth + Style.marginM * 2)
-  implicitHeight: isVerticalBar ? Math.round(taskbarLayout.implicitHeight + Style.marginM * 2) : Style.capsuleHeight
+  readonly property string hideMode: (widgetSettings.hideMode !== undefined) ? widgetSettings.hideMode : widgetMetadata.hideMode
+
+  property bool hasWindow: false
+  readonly property bool onlySameOutput: (widgetSettings.onlySameOutput !== undefined) ? widgetSettings.onlySameOutput : (widgetMetadata.onlySameOutput !== undefined ? widgetMetadata.onlySameOutput : false)
+  readonly property bool onlyActiveWorkspaces: (widgetSettings.onlyActiveWorkspaces !== undefined) ? widgetSettings.onlyActiveWorkspaces : (widgetMetadata.onlyActiveWorkspaces !== undefined ? widgetMetadata.onlyActiveWorkspaces : false)
+
+  function updateHasWindow() {
+    try {
+      var total = CompositorService.windows.count || 0
+      var activeIds = CompositorService.getActiveWorkspaces().map(function(ws) { return ws.id })
+      var found = false
+      for (var i = 0; i < total; i++) {
+        var w = CompositorService.windows.get(i)
+        if (!w)
+          continue
+        var passOutput = (!onlySameOutput) || (w.output == screen.name)
+        var passWorkspace = (!onlyActiveWorkspaces) || (activeIds.includes(w.workspaceId))
+        if (passOutput && passWorkspace) {
+          found = true
+          break
+        }
+      }
+      hasWindow = found
+    } catch (e) {
+      hasWindow = false
+    }
+  }
+
+  Component.onCompleted: updateHasWindow()
+  Connections {
+    target: CompositorService
+    function onWindowListChanged() { updateHasWindow() }
+    function onWorkspaceChanged() { updateHasWindow() }
+  }
+  onScreenChanged: updateHasWindow()
+
+  // "visible": Always Visible, "hidden": Hide When Empty, "transparent": Transparent When Empty
+  visible: hideMode !== "hidden" || hasWindow
+  opacity: (hideMode !== "transparent" || hasWindow) ? 1.0 : 0
+  Behavior on opacity { NumberAnimation { duration: Style.animationNormal; easing.type: Easing.OutCubic } }
+
+  implicitWidth: visible ? (isVerticalBar ? Style.capsuleHeight : Math.round(taskbarLayout.implicitWidth + Style.marginM * 2)) : 0
+  implicitHeight: visible ? (isVerticalBar ? Math.round(taskbarLayout.implicitHeight + Style.marginM * 2) : Style.capsuleHeight) : 0
   radius: Style.radiusM
   color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
@@ -64,7 +104,7 @@ Rectangle {
         required property var modelData
         property ShellScreen screen: root.screen
 
-        visible: (!widgetSettings.onlySameOutput || modelData.output == screen.name) && (!widgetSettings.onlyActiveWorkspaces || CompositorService.getActiveWorkspaces().map(ws => ws.id).includes(modelData.workspaceId))
+    visible: (!onlySameOutput || modelData.output == screen.name) && (!onlyActiveWorkspaces || CompositorService.getActiveWorkspaces().map(function(ws){ return ws.id }).includes(modelData.workspaceId))
 
         Layout.preferredWidth: root.itemSize
         Layout.preferredHeight: root.itemSize

@@ -59,7 +59,6 @@
           }
         }
       }
-      
     },
     "audio": {
       "title": "Audio",
@@ -722,29 +721,29 @@
       }
     },
     "control-center": {
-        "title": "Control Center",
+      "title": "Control Center",
+      "section": {
+        "label": "Appearance",
+        "description": "Configure the Control Center panel positioning and behavior."
+      },
+      "position": {
+        "label": "Position",
+        "description": "Choose where the Control Center panel appears when opened."
+      },
+      "cards": {
         "section": {
-          "label": "Appearance",
-          "description": "Configure the Control Center panel positioning and behavior."
-        },
-        "position": {
-          "label": "Position",
-          "description": "Choose where the Control Center panel appears when opened."
-        },
-        "cards": {
-          "section": {
-            "label": "Cards",
-            "description": "Customize which controls appear in the Control Center and in what order."
-          }
-        },
-        "shortcuts": {
-          "section": {
-            "label": "Shortcuts widgets",
-            "description": "Configure and manage the shortcuts widgets."
-          },
-          "sectionLeft": "Left",
-          "sectionRight": "Right"
+          "label": "Cards",
+          "description": "Customize which controls appear in the Control Center and in what order."
         }
+      },
+      "shortcuts": {
+        "section": {
+          "label": "Shortcuts widgets",
+          "description": "Configure and manage the shortcuts widgets."
+        },
+        "sectionLeft": "Left",
+        "sectionRight": "Right"
+      }
     },
     "user-interface": {
       "title": "User interface",
@@ -1091,6 +1090,10 @@
         "preview": "Preview"
       },
       "taskbar": {
+        "hide-mode": {
+          "label": "Hiding mode",
+          "description": "Controls how the widget behaves when there are no matching windows."
+        },
         "only-active-workspaces": {
           "label": "Only from active workspaces",
           "description": "Show only apps from active workspaces."

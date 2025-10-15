@@ -1101,6 +1101,10 @@
         "colorize-icons": {
           "label": "Colorir ícones",
           "description": "Aplicar cores do tema aos ícones da barra de tarefas."
+        },
+        "hide-mode": {
+          "label": "Modo de ocultação",
+          "description": "Controla como o widget se comporta quando não há janelas correspondentes."
         }
       },
       "tray": {
