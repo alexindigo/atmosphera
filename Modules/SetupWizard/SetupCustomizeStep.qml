@@ -22,13 +22,15 @@ ColumnLayout {
   // Beautiful header with icon
   RowLayout {
     Layout.fillWidth: true
+    Layout.bottomMargin: Style.marginL
     spacing: Style.marginM
 
     Rectangle {
-      width: 28
-      height: 28
-      radius: Style.radiusM
-      color: Color.mSurface
+      width: 40
+      height: 40
+      radius: Style.radiusL
+      color: Color.mSurfaceVariant
+      opacity: 0.6
 
       NIcon {
         icon: "palette"
@@ -46,7 +48,7 @@ ColumnLayout {
         text: I18n.tr("setup.customize.header")
         pointSize: Style.fontSizeXL
         font.weight: Style.fontWeightBold
-        color: Color.mOnSurface
+        color: Color.mPrimary
       }
 
       NText {
@@ -111,11 +113,9 @@ ColumnLayout {
           }
         }
 
-        GridLayout {
+        RowLayout {
           Layout.fillWidth: true
-          columns: 2
-          rowSpacing: Style.marginS
-          columnSpacing: Style.marginS
+          spacing: Style.marginS
 
           Repeater {
             model: [{
@@ -137,7 +137,7 @@ ColumnLayout {
               }]
             delegate: Rectangle {
               Layout.fillWidth: true
-              Layout.preferredHeight: 48
+              Layout.preferredHeight: 40
               radius: Style.radiusM
               border.width: 1
 
@@ -308,7 +308,7 @@ ColumnLayout {
               radius: 16
               border.width: 1
               Layout.preferredHeight: 32
-              Layout.preferredWidth: Math.max(72, densityText.implicitWidth + Style.marginM)
+              Layout.preferredWidth: Math.max(90, densityText.implicitWidth + Style.marginXL * 2)
 
               property bool isActive: Settings.data.bar.density === modelData.key
 
@@ -403,31 +403,17 @@ ColumnLayout {
           }
         }
 
-        RowLayout {
+        NValueSlider {
           Layout.fillWidth: true
-          spacing: Style.marginM
-          NText {
-            text: "80%"
-            pointSize: Style.fontSizeS
-            color: Color.mOnSurfaceVariant
+          from: 0.8
+          to: 1.2
+          stepSize: 0.05
+          value: selectedScaleRatio
+          onMoved: function (value) {
+            selectedScaleRatio = value
+            scaleRatioChanged(value)
           }
-          NValueSlider {
-            Layout.fillWidth: true
-            from: 0.8
-            to: 1.2
-            stepSize: 0.05
-            value: selectedScaleRatio
-            onMoved: function (value) {
-              selectedScaleRatio = value
-              scaleRatioChanged(value)
-            }
-            text: Math.floor(selectedScaleRatio * 100) + "%"
-          }
-          NText {
-            text: "120%"
-            pointSize: Style.fontSizeS
-            color: Color.mOnSurfaceVariant
-          }
+          text: Math.floor(selectedScaleRatio * 100) + "%"
         }
       }
 

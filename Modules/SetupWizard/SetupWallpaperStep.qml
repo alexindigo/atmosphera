@@ -23,6 +23,7 @@ ColumnLayout {
   // Beautiful header with icon
   ColumnLayout {
     Layout.fillWidth: true
+    Layout.bottomMargin: Style.marginL
     spacing: Style.marginM
 
     RowLayout {
@@ -50,7 +51,7 @@ ColumnLayout {
           text: I18n.tr("setup.wallpaper.header")
           pointSize: Style.fontSizeXL
           font.weight: Style.fontWeightBold
-          color: Color.mOnSurface
+          color: Color.mPrimary
         }
 
         NText {

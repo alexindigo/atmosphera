@@ -346,7 +346,7 @@ NPanel {
             }
 
             NButton {
-              text: currentStep === totalSteps - 1 ? "🎉 All Done!" : "Continue →"
+              text: currentStep === totalSteps - 1 ? "All Done!" : "Continue →"
               Layout.preferredHeight: 44
               onClicked: {
                 if (currentStep < totalSteps - 1) {

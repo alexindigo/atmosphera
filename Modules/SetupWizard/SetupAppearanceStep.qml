@@ -51,13 +51,15 @@ ColumnLayout {
   // Beautiful header with icon
   RowLayout {
     Layout.fillWidth: true
+    Layout.bottomMargin: Style.marginL
     spacing: Style.marginM
 
     Rectangle {
-      width: 28
-      height: 28
-      radius: Style.radiusM
-      color: Color.mSurface
+      width: 40
+      height: 40
+      radius: Style.radiusL
+      color: Color.mSurfaceVariant
+      opacity: 0.6
 
       NIcon {
         icon: "palette"
@@ -75,7 +77,7 @@ ColumnLayout {
         text: I18n.tr("setup.appearance.header")
         pointSize: Style.fontSizeXL
         font.weight: Style.fontWeightBold
-        color: Color.mOnSurface
+        color: Color.mPrimary
       }
 
       NText {
@@ -443,7 +445,7 @@ ColumnLayout {
               Layout.alignment: Qt.AlignHCenter
               height: 50
               radius: Style.radiusS
-              color: (root.cacheVersion, root.getSchemeColor(schemeName, "mSurface"))
+              color: root.cacheVersion >= 0 ? root.getSchemeColor(schemeName, "mSurface") : root.getSchemeColor(schemeName, "mSurface")
               border.width: Math.max(1, Style.borderL)
               border.color: itemMouseArea.containsMouse ? Color.mTertiary : (Settings.data.colorSchemes.predefinedScheme === schemeName ? Color.mSecondary : Color.mOutline)
 
@@ -468,41 +470,41 @@ ColumnLayout {
                   width: 14
                   height: 14
                   radius: width * 0.5
-                  color: (root.cacheVersion, function () {
-                            var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light"
-                            var cached = root.schemeColorsCache[schemeItem.schemeName]
-                            return (cached && cached[mode] && cached[mode].mPrimary) || root.getSchemeColor(schemeItem.schemeName, "mPrimary")
-                          })()
+                  color: root.cacheVersion >= 0 ? (function () {
+                    var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light"
+                    var cached = root.schemeColorsCache[schemeItem.schemeName]
+                    return (cached && cached[mode] && cached[mode].mPrimary) || root.getSchemeColor(schemeItem.schemeName, "mPrimary")
+                  })() : Color.mPrimary
                 }
                 Rectangle {
                   width: 14
                   height: 14
                   radius: width * 0.5
-                  color: (root.cacheVersion, function () {
-                            var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light"
-                            var cached = root.schemeColorsCache[schemeItem.schemeName]
-                            return (cached && cached[mode] && cached[mode].mSecondary) || root.getSchemeColor(schemeItem.schemeName, "mSecondary")
-                          })()
+                  color: root.cacheVersion >= 0 ? (function () {
+                    var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light"
+                    var cached = root.schemeColorsCache[schemeItem.schemeName]
+                    return (cached && cached[mode] && cached[mode].mSecondary) || root.getSchemeColor(schemeItem.schemeName, "mSecondary")
+                  })() : Color.mSecondary
                 }
                 Rectangle {
                   width: 14
                   height: 14
                   radius: width * 0.5
-                  color: (root.cacheVersion, function () {
-                            var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light"
-                            var cached = root.schemeColorsCache[schemeItem.schemeName]
-                            return (cached && cached[mode] && cached[mode].mTertiary) || root.getSchemeColor(schemeItem.schemeName, "mTertiary")
-                          })()
+                  color: root.cacheVersion >= 0 ? (function () {
+                    var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light"
+                    var cached = root.schemeColorsCache[schemeItem.schemeName]
+                    return (cached && cached[mode] && cached[mode].mTertiary) || root.getSchemeColor(schemeItem.schemeName, "mTertiary")
+                  })() : Color.mTertiary
                 }
                 Rectangle {
                   width: 14
                   height: 14
                   radius: width * 0.5
-                  color: (root.cacheVersion, function () {
-                            var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light"
-                            var cached = root.schemeColorsCache[schemeItem.schemeName]
-                            return (cached && cached[mode] && cached[mode].mError) || root.getSchemeColor(schemeItem.schemeName, "mError")
-                          })()
+                  color: root.cacheVersion >= 0 ? (function () {
+                    var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light"
+                    var cached = root.schemeColorsCache[schemeItem.schemeName]
+                    return (cached && cached[mode] && cached[mode].mError) || root.getSchemeColor(schemeItem.schemeName, "mError")
+                  })() : Color.mError
                 }
               }
 
