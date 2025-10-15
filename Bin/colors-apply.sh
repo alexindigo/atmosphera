@@ -41,9 +41,15 @@ case "$APP_NAME" in
         # Check if the config file exists before trying to modify it.
         if [ -f "$CONFIG_FILE" ]; then
             # Remove any existing theme include line to prevent duplicates.
-            sed -i '/themes/d' "$CONFIG_FILE"
-            # Add the new theme include line to the end of the file.
-            echo "include=~/.config/foot/themes/noctalia" >> "$CONFIG_FILE"
+            sed -i '/include=.*themes/d' "$CONFIG_FILE"
+
+            if grep -q '^\[main\]' "$CONFIG_FILE"; then
+                # Insert the include line after the existing [main] section header
+                sed -i '/^\[main\]/a include=~/.config/foot/themes/noctalia' "$CONFIG_FILE"
+            else
+                # If [main] doesn't exist, create it at the beginning with the include
+                sed -i '1i [main]\ninclude=~/.config/foot/themes/noctalia\n' "$CONFIG_FILE"
+            fi
         else
             echo "Error: foot config file not found at $CONFIG_FILE" >&2
             exit 1
