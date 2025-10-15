@@ -443,7 +443,7 @@ ColumnLayout {
               Layout.alignment: Qt.AlignHCenter
               height: 50
               radius: Style.radiusS
-              color: (root.cacheVersionroot.getSchemeColor(schemeName, "mSurface"))
+              color: (root.cacheVersion, root.getSchemeColor(schemeName, "mSurface"))
               border.width: Math.max(1, Style.borderL)
               border.color: itemMouseArea.containsMouse ? Color.mTertiary : (Settings.data.colorSchemes.predefinedScheme === schemeName ? Color.mSecondary : Color.mOutline)
 
@@ -468,7 +468,7 @@ ColumnLayout {
                   width: 14
                   height: 14
                   radius: width * 0.5
-                  color: (root.cacheVersionfunction () {
+                  color: (root.cacheVersion, function () {
                             var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light"
                             var cached = root.schemeColorsCache[schemeItem.schemeName]
                             return (cached && cached[mode] && cached[mode].mPrimary) || root.getSchemeColor(schemeItem.schemeName, "mPrimary")
@@ -478,7 +478,7 @@ ColumnLayout {
                   width: 14
                   height: 14
                   radius: width * 0.5
-                  color: (root.cacheVersionfunction () {
+                  color: (root.cacheVersion, function () {
                             var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light"
                             var cached = root.schemeColorsCache[schemeItem.schemeName]
                             return (cached && cached[mode] && cached[mode].mSecondary) || root.getSchemeColor(schemeItem.schemeName, "mSecondary")
@@ -488,7 +488,7 @@ ColumnLayout {
                   width: 14
                   height: 14
                   radius: width * 0.5
-                  color: (root.cacheVersionfunction () {
+                  color: (root.cacheVersion, function () {
                             var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light"
                             var cached = root.schemeColorsCache[schemeItem.schemeName]
                             return (cached && cached[mode] && cached[mode].mTertiary) || root.getSchemeColor(schemeItem.schemeName, "mTertiary")
@@ -498,7 +498,7 @@ ColumnLayout {
                   width: 14
                   height: 14
                   radius: width * 0.5
-                  color: (root.cacheVersionfunction () {
+                  color: (root.cacheVersion, function () {
                             var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light"
                             var cached = root.schemeColorsCache[schemeItem.schemeName]
                             return (cached && cached[mode] && cached[mode].mError) || root.getSchemeColor(schemeItem.schemeName, "mError")
