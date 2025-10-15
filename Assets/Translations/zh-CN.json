@@ -1375,20 +1375,13 @@
   },
   "session-menu": {
     "title": "会话菜单",
-    "click-again": "再次点击立即执行",
-    "action-in-seconds": "{seconds} 秒后{action}...",
+    "action-in-seconds": "{action} in {seconds} seconds...",
     "lock": "锁定",
-    "lock-subtitle": "锁定您的会话",
     "lock-and-suspend": "锁定并挂起",
-    "lock-and-suspend-subtitle": "锁定会话并使系统进入睡眠状态",
     "suspend": "挂起",
-    "suspend-subtitle": "使系统进入睡眠状态",
     "reboot": "重启",
-    "reboot-subtitle": "重新启动计算机",
     "logout": "注销",
-    "logout-subtitle": "结束您的会话",
-    "shutdown": "关机",
-    "shutdown-subtitle": "关闭计算机"
+    "shutdown": "关机"
   },
   "plugins": {
     "applications": "应用程序",

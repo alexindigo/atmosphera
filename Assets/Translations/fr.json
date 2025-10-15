@@ -1375,20 +1375,13 @@
   },
   "session-menu": {
     "title": "Menu de session",
-    "click-again": "Cliquez à nouveau pour exécuter immédiatement",
     "action-in-seconds": "{action} dans {seconds} secondes...",
     "lock": "Verrouiller",
-    "lock-subtitle": "Verrouiller votre session",
     "lock-and-suspend": "Verrouiller et Mettre en veille",
-    "lock-and-suspend-subtitle": "Verrouiller la session et mettre le système en veille",
     "suspend": "Mettre en veille",
     "reboot": "Redémarrer",
     "logout": "Déconnexion",
-    "logout-subtitle": "Terminer votre session",
-    "shutdown": "Éteindre",
-    "reboot-subtitle": "Redémarrez votre ordinateur.",
-    "shutdown-subtitle": "Éteignez votre ordinateur.",
-    "suspend-subtitle": "Mettre le système en veille"
+    "shutdown": "Éteindre"
   },
   "plugins": {
     "applications": "Applications",

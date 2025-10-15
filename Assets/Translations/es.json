@@ -1375,20 +1375,13 @@
   },
   "session-menu": {
     "title": "Menú de sesión",
-    "click-again": "Haz clic de nuevo para ejecutar inmediatamente",
     "action-in-seconds": "{action} en {seconds} segundos...",
     "lock": "Bloquear",
-    "lock-subtitle": "Bloquea tu sesión",
     "lock-and-suspend": "Bloquear y Suspender",
-    "lock-and-suspend-subtitle": "Bloquear sesión y poner el sistema en suspensión",
     "suspend": "Suspender",
     "reboot": "Reiniciar",
     "logout": "Cerrar sesión",
-    "logout-subtitle": "Finaliza tu sesión",
-    "shutdown": "Apagar",
-    "reboot-subtitle": "Reinicia tu computadora.",
-    "shutdown-subtitle": "Apaga tu computadora.",
-    "suspend-subtitle": "Poner el sistema en reposo"
+    "shutdown": "Apagar"
   },
   "plugins": {
     "applications": "Aplicaciones",
