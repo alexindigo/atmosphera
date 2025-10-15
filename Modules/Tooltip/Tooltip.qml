@@ -8,7 +8,6 @@ import qs.Widgets
 PopupWindow {
   id: root
 
-  property real scaling: 1.0
   property int screenWidth: 0
   property int screenHeight: 0
 
@@ -114,7 +113,6 @@ PopupWindow {
     if (!screen || !target || !tipText || tipText === "")
       return
 
-    root.scaling = ScalingService.getScreenScaleByName(screen.name)
     root.screenWidth = screen.width
     root.screenHeight = screen.height
 
@@ -153,10 +151,10 @@ PopupWindow {
     }
 
     // Calculate tooltip dimensions
-    const tipWidth = Math.min(tooltipText.implicitWidth + (padding * 2 * scaling), maxWidth * scaling)
+    const tipWidth = Math.min(tooltipText.implicitWidth + (padding * 2), maxWidth)
     root.implicitWidth = tipWidth
 
-    const tipHeight = tooltipText.implicitHeight + (padding * 2 * scaling)
+    const tipHeight = tooltipText.implicitHeight + (padding * 2)
     root.implicitHeight = tipHeight
 
     // Get target's global position
@@ -179,26 +177,26 @@ PopupWindow {
                            "dir": "bottom",
                            "space": spaceBottom,
                            "x": (targetWidth - tipWidth) / 2,
-                           "y": targetHeight + margin * scaling,
-                           "fits": spaceBottom >= tipHeight + margin * scaling
+                           "y": targetHeight + margin,
+                           "fits": spaceBottom >= tipHeight + margin
                          }, {
                            "dir": "top",
                            "space": spaceTop,
                            "x": (targetWidth - tipWidth) / 2,
-                           "y": -tipHeight - margin * scaling,
-                           "fits": spaceTop >= tipHeight + margin * scaling
+                           "y": -tipHeight - margin,
+                           "fits": spaceTop >= tipHeight + margin
                          }, {
                            "dir": "right",
                            "space": spaceRight,
-                           "x": targetWidth + margin * scaling,
+                           "x": targetWidth + margin,
                            "y": (targetHeight - tipHeight) / 2,
-                           "fits": spaceRight >= tipWidth + margin * scaling
+                           "fits": spaceRight >= tipWidth + margin
                          }, {
                            "dir": "left",
                            "space": spaceLeft,
-                           "x": -tipWidth - margin * scaling,
+                           "x": -tipWidth - margin,
                            "y": (targetHeight - tipHeight) / 2,
-                           "fits": spaceLeft >= tipWidth + margin * scaling
+                           "fits": spaceLeft >= tipWidth + margin
                          }]
 
       // Find first position that fits
@@ -226,29 +224,29 @@ PopupWindow {
       if (direction === "auto") {
         const globalX = targetGlobal.x + newAnchorX
         if (globalX < 0) {
-          newAnchorX = -targetGlobal.x + margin * scaling
+          newAnchorX = -targetGlobal.x + margin
         } else if (globalX + tipWidth > screenWidth) {
-          newAnchorX = screenWidth - targetGlobal.x - tipWidth - margin * scaling
+          newAnchorX = screenWidth - targetGlobal.x - tipWidth - margin
         }
       }
     } else {
       // Manual direction positioning
       switch (direction) {
       case "left":
-        newAnchorX = -tipWidth - margin * scaling
+        newAnchorX = -tipWidth - margin
         newAnchorY = (targetHeight - tipHeight) / 2
         break
       case "right":
-        newAnchorX = targetWidth + margin * scaling
+        newAnchorX = targetWidth + margin
         newAnchorY = (targetHeight - tipHeight) / 2
         break
       case "top":
         newAnchorX = (targetWidth - tipWidth) / 2
-        newAnchorY = -tipHeight - margin * scaling
+        newAnchorY = -tipHeight - margin
         break
       case "bottom":
         newAnchorX = (targetWidth - tipWidth) / 2
-        newAnchorY = targetHeight + margin * scaling
+        newAnchorY = targetHeight + margin
         break
       }
     }
@@ -370,8 +368,8 @@ PopupWindow {
       anchors.fill: parent
       color: Color.mSurface
       border.color: Color.mOutline
-      border.width: Math.max(1, Style.borderS * root.scaling)
-      radius: Style.radiusS * root.scaling
+      border.width: Math.max(1, Style.borderS)
+      radius: Style.radiusS
 
       // Only show content when we have text
       visible: root.text !== ""
@@ -379,14 +377,14 @@ PopupWindow {
       NText {
         id: tooltipText
         anchors.centerIn: parent
-        anchors.margins: root.padding * root.scaling
+        anchors.margins: root.padding
         text: root.text
-        pointSize: Style.fontSizeS * root.scaling
+        pointSize: Style.fontSizeS
         color: Color.mOnSurfaceVariant
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         wrapMode: Text.WordWrap
-        width: root.maxWidth * root.scaling - (root.padding * 2 * root.scaling)
+        width: root.maxWidth - (root.padding * 2)
       }
     }
   }

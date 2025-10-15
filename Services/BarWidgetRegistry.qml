@@ -41,9 +41,11 @@ Singleton {
                                   "ActiveWindow": {
                                     "allowUserSettings": true,
                                     "showIcon": true,
-                                    "autoHide": false,
-                                    "scrollingMode": "hover",
-                                    "width": 145
+                                    "hideMode": "hidden",
+                                    "scrollingMode"// "visible", "hidden", "transparent"
+                                    : "hover",
+                                    "width": 145,
+                                    "colorizeIcons": false
                                   },
                                   "Battery": {
                                     "allowUserSettings": true,
@@ -83,8 +85,9 @@ Singleton {
                                   },
                                   "MediaMini": {
                                     "allowUserSettings": true,
-                                    "autoHide": false,
-                                    "scrollingMode": "hover",
+                                    "hideMode": "hidden",
+                                    "scrollingMode"// "visible", "hidden", "transparent"
+                                    : "hover",
                                     "showAlbumArt": false,
                                     "showVisualizer": false,
                                     "visualizerType": "linear"
@@ -114,7 +117,13 @@ Singleton {
                                   "Taskbar": {
                                     "allowUserSettings": true,
                                     "onlySameOutput": true,
-                                    "onlyActiveWorkspaces": true
+                                    "onlyActiveWorkspaces": true,
+                                    "colorizeIcons": false
+                                  },
+                                  "Tray": {
+                                    "allowUserSettings": true,
+                                    "blacklist": [],
+                                    "colorizeIcons": false
                                   },
                                   "Workspace": {
                                     "allowUserSettings": true,

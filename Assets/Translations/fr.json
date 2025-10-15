@@ -13,32 +13,6 @@
         },
         "select-avatar": "Sélectionner une image d'avatar"
       },
-      "ui": {
-        "section": {
-          "label": "Interface utilisateur",
-          "description": "Personnalisez l'apparence, l'ergonomie et le comportement de l'interface."
-        },
-        "tooltips": {
-          "label": "Afficher les tooltips",
-          "description": "Activer ou désactiver les tooltips dans toute l'interface."
-        },
-        "dim-desktop": {
-          "label": "Assombrir le bureau",
-          "description": "Assombrir le bureau lorsque des panneaux ou des menus sont ouverts."
-        },
-        "border-radius": {
-          "label": "Rayon de bordure",
-          "description": "Contrôle l'arrondi des coins des fenêtres, des boutons et d'autres éléments."
-        },
-        "animation-speed": {
-          "label": "Vitesse d'animation",
-          "description": "Ajustez la vitesse globale des animations."
-        },
-        "animation-disable": {
-          "label": "Désactiver les animations de l'interface",
-          "description": "Désactiver toutes les animations pour une expérience plus rapide et réactive."
-        }
-      },
       "screen-corners": {
         "section": {
           "label": "Coins de l'écran",
@@ -54,7 +28,8 @@
         },
         "radius": {
           "label": "Rayon des coins de l'écran",
-          "description": "Ajustez l'arrondi des coins de l'écran."
+          "description": "Ajustez l'arrondi des coins de l'écran.",
+          "reset": "Réinitialiser le rayon des coins de l'écran"
         }
       },
       "fonts": {
@@ -83,16 +58,6 @@
           }
         },
         "reset-scaling": "Réinitialiser l'échelle"
-      },
-      "control-center": {
-        "section": {
-          "label": "Centre de contrôle",
-          "description": "Configurer le positionnement et le comportement du panneau du centre de contrôle."
-        },
-        "position": {
-          "label": "Position",
-          "description": "Choisissez où apparaît le panneau du centre de contrôle lors de l'ouverture."
-        }
       }
     },
     "audio": {
@@ -179,11 +144,9 @@
       "monitors": {
         "section": {
           "label": "Paramètres par moniteur",
-          "description": "Ajustez la mise à l'échelle et la luminosité pour chaque écran."
+          "description": "Ajustez la luminosité pour chaque écran."
         },
-        "scale": "Mise à l'échelle",
         "brightness": "Luminosité",
-        "reset-scaling": "Réinitialiser la mise à l'échelle",
         "brightness-step": {
           "label": "Incrément de luminosité",
           "description": "Ajustez l'incrément pour les changements de luminosité (molette de la souris et raccourcis clavier)."
@@ -259,13 +222,20 @@
       "widgets": {
         "section": {
           "label": "Positionnement des widgets",
-          "description": "Glissez-déposez les widgets pour les réorganiser dans chaque section, ou utilisez les boutons ajouter/supprimer pour gérer les widgets."
+          "description": "Faites glisser et déposez les widgets pour les réorganiser. Les badges indiquent l'utilisation : [G]auche, [C]entre, [D]roite."
         }
       },
       "monitors": {
         "section": {
-          "label": "Affichage sur les moniteur",
+          "label": "Affichage sur les moniteurs",
           "description": "Afficher la barre sur des moniteurs spécifiques. Par défaut, sur tous si aucun n'est choisi."
+        }
+      },
+      "tray": {
+        "blacklist": {
+          "label": "Liste noire",
+          "description": "Ajouter des règles d'exclusion pour la boîte à miniatures, prend en charge les caractères génériques (*).",
+          "placeholder": "ex: nm-applet, Fcitx*"
         }
       }
     },
@@ -290,6 +260,10 @@
         "floating-distance": {
           "label": "Distance de flottaison du dock",
           "description": "Ajustez la distance de flottaison par rapport au bord de l'écran."
+        },
+        "colorize-icons": {
+          "label": "Coloriser les icônes",
+          "description": "Appliquer les couleurs du thème aux icônes d'applications du dock (applications non focalisées uniquement)."
         }
       },
       "monitors": {
@@ -401,6 +375,10 @@
       "enabled": {
         "label": "Activer l'affichage à l'écran",
         "description": "Afficher en temps réel les changements de volume et de luminosité."
+      },
+      "always-on-top": {
+        "label": "Toujours au premier plan",
+        "description": "Afficher l'OSD au-dessus des fenêtres plein écran et autres couches."
       },
       "location": {
         "label": "Emplacement",
@@ -529,6 +507,9 @@
           },
           "qt": {
             "description": "Écrire {filepath}"
+          },
+          "kcolorscheme": {
+            "description": "Écrire {filepath}"
           }
         },
         "terminal": {
@@ -554,9 +535,9 @@
             "description": "Écrire ~/.config/fuzzel/themes/noctalia et recharger",
             "description-missing": "Nécessite que le lanceur fuzzel soit installé"
           },
-          "vesktop": {
-            "description": "Écrire ~/.config/vesktop/themes/noctalia.theme.css",
-            "description-missing": "Nécessite que le client Discord vesktop soit installé"
+          "discord": {
+            "description": "Écrire {filepath} pour {client}",
+            "description-missing": "Aucun client Discord détecté. Installez vesktop, webcord, armcord, equibop, lightcord ou dorion."
           },
           "pywalfox": {
             "description": "Écrire ~/.cache/wal/colors.json et exécuter pywalfox update",
@@ -703,7 +684,8 @@
           "description": "Un grand merci à notre {count} <b>super</b> contributeur !",
           "description_plural": "Un grand merci à nos {count} <b>super</b> contributeurs !"
         }
-      }
+      },
+      "support": "Soutenez-nous"
     },
     "hooks": {
       "title": "Hooks",
@@ -737,6 +719,69 @@
           "description": "• Hook Fond d'écran : $1 = chemin du fond d'écran, $2 = nom de l'écran\n• Hook de bascule de thème : $1 = true/false (état du mode sombre)"
         }
       }
+    },
+    "control-center": {
+      "position": {
+        "description": "Choisissez où le panneau du Centre de contrôle apparaît lorsqu'il est ouvert.",
+        "label": "Position"
+      },
+      "section": {
+        "description": "Configurer le positionnement et le comportement du panneau du Centre de contrôle.",
+        "label": "Apparence"
+      },
+      "title": "Centre de contrôle",
+      "cards": {
+        "section": {
+          "description": "Personnalisez les commandes qui apparaissent dans le Centre de contrôle et leur ordre d'affichage.",
+          "label": "Cartes"
+        }
+      },
+      "shortcuts": {
+        "section": {
+          "description": "Configurer et gérer les widgets de raccourcis.",
+          "label": "Widgets de raccourcis"
+        },
+        "sectionLeft": "Gauche",
+        "sectionRight": "Droite"
+      }
+    },
+    "user-interface": {
+      "animation-disable": {
+        "description": "Désactiver toutes les animations pour une expérience plus rapide et plus réactive.",
+        "label": "Désactiver les animations de l'interface utilisateur"
+      },
+      "animation-speed": {
+        "description": "Ajuster la vitesse globale de l'animation.",
+        "label": "Vitesse d'animation",
+        "reset": "Réinitialiser la vitesse de l'animation"
+      },
+      "border-radius": {
+        "description": "Contrôle l'arrondi des angles des fenêtres, des boutons et d'autres éléments.",
+        "label": "Rayon de bordure",
+        "reset": "Réinitialiser le rayon de la bordure"
+      },
+      "compact-lockscreen": {
+        "description": "Afficher uniquement le champ de saisie de connexion et les commandes système, en masquant les widgets météo et multimédia.",
+        "label": "Écran de verrouillage compact"
+      },
+      "dim-desktop": {
+        "description": "Atténuer le bureau lorsque des panneaux ou des menus sont ouverts.",
+        "label": "Dim bureau"
+      },
+      "scaling": {
+        "description": "Modifie la taille de l'interface utilisateur générale, à l'exception de la barre.",
+        "label": "Mise à l'échelle de l'interface",
+        "reset-scaling": "Réinitialiser l'échelle de l'interface"
+      },
+      "section": {
+        "description": "Personnaliser l'apparence, l'ergonomie et le comportement de l'interface.",
+        "label": "Apparence"
+      },
+      "title": "Interface utilisateur",
+      "tooltips": {
+        "description": "Activer ou désactiver les info-bulles dans toute l'interface.",
+        "label": "Afficher les infobulles"
+      }
     }
   },
   "widgets": {
@@ -745,7 +790,11 @@
     },
     "file-picker": {
       "select-folder": "Sélectionner un dossier",
-      "select-file": "Sélectionner un fichier"
+      "select-file": "Sélectionner un fichier",
+      "cancel": "Annuler",
+      "search-placeholder": "Rechercher des fichiers et des dossiers...",
+      "select-current": "Sélectionner Actuel",
+      "title": "Sélecteur de fichiers"
     },
     "datetime-tokens": {
       "common": {
@@ -844,13 +893,17 @@
           "label": "Mode de défilement",
           "description": "Contrôler quand le défilement de texte est activé pour les titres de fenêtre longs."
         },
-        "auto-hide": {
-          "label": "Masquer automatiquement",
-          "description": "Masquer automatiquement le widget quand aucune fenêtre n'est active."
+        "hide-mode": {
+          "label": "Mode de masquage",
+          "description": "Contrôle le comportement du widget lorsqu'aucune fenêtre n'est active."
         },
         "width": {
           "description": "Contrôle la taille horizontale du widget.",
           "label": "Largeur du widget"
+        },
+        "colorize-icons": {
+          "label": "Coloriser les icônes",
+          "description": "Appliquer les couleurs du thème à l'icône de la fenêtre active."
         }
       },
       "system-monitor": {
@@ -997,9 +1050,9 @@
           "label": "Mode de défilement",
           "description": "Contrôler quand le défilement de texte est activé pour les titres de piste longs."
         },
-        "auto-hide": {
-          "label": "Masquer automatiquement",
-          "description": "Masquer automatiquement le widget quand aucun média n'est en cours de lecture."
+        "hide-mode": {
+          "label": "Mode de masquage",
+          "description": "Contrôle le comportement du widget lorsqu'aucun média n'est en cours de lecture."
         },
         "no-active-player": "Aucun lecteur actif"
       },
@@ -1044,6 +1097,16 @@
         "only-same-output": {
           "description": "Afficher uniquement les applications de la sortie où la barre est située.",
           "label": "Seulement à partir de la même sortie"
+        },
+        "colorize-icons": {
+          "label": "Coloriser les icônes",
+          "description": "Appliquer les couleurs du thème aux icônes de la barre des tâches."
+        }
+      },
+      "tray": {
+        "colorize-icons": {
+          "label": "Coloriser les icônes",
+          "description": "Appliquer les couleurs du thème aux icônes de la barre système."
         }
       }
     }
@@ -1213,7 +1276,8 @@
       "density": {
         "compact": "Compact",
         "default": "Défaut",
-        "comfortable": "Confortable"
+        "comfortable": "Confortable",
+        "mini": "Mini"
       }
     },
     "launcher": {
@@ -1238,6 +1302,11 @@
         "bottom_right": "En bas à droite",
         "bottom_center": "En bas au centre",
         "top_center": "En haut au centre"
+      },
+      "quickSettingsStyle": {
+        "modern": "Moderne",
+        "classic": "Classique",
+        "compact": "Compact"
       }
     },
     "osd": {
@@ -1297,6 +1366,11 @@
         "microphone-input": "Entrée microphone",
         "both": "Sortie système + entrée microphone"
       }
+    },
+    "hide-modes": {
+      "hidden": "Masquer si vide",
+      "transparent": "Transparent quand vide",
+      "visible": "Toujours visible"
     }
   },
   "session-menu": {
@@ -1334,9 +1408,8 @@
     "calculator-error": "Erreur"
   },
   "system": {
-    "uptime": "Temps d'activité : {uptime}",
     "welcome-back": "Bon retour,",
-    "monitor-description": "{model} ({width}x{height})",
+    "monitor-description": "{model} ({width}x{height} @ {scale}x)",
     "scaling-percentage": "{percentage}%",
     "location-display": "{name} ({coordinates})",
     "signal-strength": "{signal}%",
@@ -1348,7 +1421,8 @@
     "user-requested": "Demandé par l'utilisateur",
     "unknown": "Inconnu",
     "unknown-version": "Inconnue",
-    "unknown-layout": "Inconnue"
+    "unknown-layout": "Inconnue",
+    "uptime": "Activité : {uptime}"
   },
   "lock-screen": {
     "password": "Entrez votre mot de passe...",
@@ -1358,6 +1432,78 @@
     "shut-down": "Éteindre",
     "restart": "Redémarrer",
     "suspend": "Mettre en veille"
+  },
+  "quickSettings": {
+    "notifications": {
+      "label": {
+        "enabled": "Notifications",
+        "disabled": "Ne pas déranger"
+      },
+      "tooltip": {
+        "action": "Clic gauche : Ouvrir l'historique des notifications\nClic droit : Basculer Ne pas déranger"
+      }
+    },
+    "screenRecorder": {
+      "label": {
+        "recording": "Arrêter",
+        "stopped": "Enregistrer"
+      },
+      "tooltip": {
+        "action": "Cliquer pour démarrer/arrêter l'enregistrement d'écran"
+      }
+    },
+    "powerProfile": {
+      "label": {
+        "unavailable": "Profil d'alimentation"
+      },
+      "tooltip": {
+        "action": "Cliquer pour changer de profil d'alimentation"
+      }
+    },
+    "wifi": {
+      "label": {
+        "ethernet": "Ethernet",
+        "wifi": "Wi-Fi",
+        "disconnected": "Wi-Fi déconnecté"
+      },
+      "tooltip": {
+        "action": "Cliquer pour gérer les connexions Wi-Fi"
+      }
+    },
+    "bluetooth": {
+      "label": {
+        "enabled": "Bluetooth",
+        "disabled": "Bluetooth"
+      },
+      "tooltip": {
+        "action": "Cliquer pour gérer les appareils Bluetooth"
+      }
+    },
+    "nightLight": {
+      "label": {
+        "enabled": "Lumière nocturne",
+        "forced": "Lumière nocturne",
+        "disabled": "Lumière nocturne"
+      },
+      "tooltip": {
+        "action": "Cliquer pour basculer le mode Lumière nocturne\nClic droit : Ouvrir les paramètres"
+      }
+    },
+    "wallpaperSelector": {
+      "label": "Fond d'écran",
+      "tooltip": {
+        "action": "Clic gauche : Ouvrir le sélecteur de fond d'écran\nClic droit : Définir un fond d'écran aléatoire"
+      }
+    },
+    "keepAwake": {
+      "label": {
+        "enabled": "Rester éveillé",
+        "disabled": "Rester éveillé"
+      },
+      "tooltip": {
+        "action": "Cliquer pour basculer le mode Rester éveillé"
+      }
+    }
   },
   "toast": {
     "night-light": {
@@ -1405,6 +1551,9 @@
     "bluetooth": {
       "enabled": "Activé",
       "disabled": "Désactivé"
+    },
+    "kofi": {
+      "opened": "Page Ko-fi ouverte dans votre navigateur"
     },
     "do-not-disturb": {
       "enabled": "'Ne pas déranger' activé",

@@ -43,6 +43,14 @@ Item {
     function clear() {
       NotificationService.clearHistory()
     }
+
+    function dismissOldest() {
+      NotificationService.dismissOldestActive()
+    }
+
+    function dismissAll() {
+      NotificationService.dismissAllActive()
+    }
   }
 
   IpcHandler {
@@ -112,10 +120,14 @@ Item {
     function muteOutput() {
       AudioService.setOutputMuted(!AudioService.muted)
     }
+    function increaseInput() {
+      AudioService.increaseInputVolume()
+    }
+    function decreaseInput() {
+      AudioService.decreaseInputVolume()
+    }
     function muteInput() {
-      if (AudioService.source?.ready && AudioService.source?.audio) {
-        AudioService.source.audio.muted = !AudioService.source.audio.muted
-      }
+      AudioService.setInputMuted(!AudioService.inputMuted)
     }
   }
 
@@ -123,6 +135,10 @@ Item {
     target: "sessionMenu"
     function toggle() {
       sessionMenuPanel.toggle()
+    }
+
+    function lockAndSuspend() {
+      CompositorService.lockAndSuspend()
     }
   }
 
@@ -186,6 +202,47 @@ Item {
         BatteryService.setChargingMode(BatteryService.ChargingMode.Lifespan)
         break
       }
+    }
+  }
+  
+  IpcHandler {
+    target: "media"
+    function playPause() {
+      MediaService.playPause()
+    }
+
+    function play() {
+      MediaService.play()
+    }
+
+    function pause() {
+      MediaService.pause()
+    }
+
+    function next() {
+      MediaService.next()
+    }
+
+    function previous() {
+      MediaService.previous()
+    }
+
+    function seekRelative(offset: string) {
+      var offsetVal = parseFloat(position)
+      if (Number.isNaN(offsetVal)) {
+        Logger.warn("Media", "Argument to ipc call 'media seekRelative' must be a number")
+        return
+      }
+      MediaService.seekRelative(offsetVal)
+    }
+
+    function seekByRatio(position: string) {
+      var positionVal = parseFloat(position)
+      if (Number.isNaN(positionVal)) {
+        Logger.warn("Media", "Argument to ipc call 'media seekByRatio' must be a number")
+        return
+      }
+      MediaService.seekByRatio(positionVal)
     }
   }
 }

@@ -9,7 +9,7 @@ import qs.Services
 NIconButton {
   id: root
 
-  property real scaling: 1.0
+  property ShellScreen screen
 
   // Widget properties passed from Bar.qml for per-instance settings
   property string widgetId: ""
@@ -37,7 +37,8 @@ NIconButton {
   tooltipText: I18n.tr("tooltips.open-control-center")
   tooltipDirection: BarService.getTooltipDirection()
   baseSize: Style.capsuleHeight
-  compact: (Settings.data.bar.density === "compact")
+  applyUiScale: false
+  density: Settings.data.bar.density
   colorBg: (Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent)
   colorFg: Color.mOnSurface
   colorBgHover: useDistroLogo ? Color.mSurfaceVariant : Color.mTertiary

@@ -9,17 +9,17 @@ import qs.Widgets
 NIconButton {
   id: root
 
-  property real scaling: 1.0
+  property ShellScreen screen
 
   baseSize: Style.capsuleHeight
+  applyUiScale: false
+  density: Settings.data.bar.density
   visible: PowerProfileService.available
-
   icon: PowerProfileService.getIcon()
   tooltipText: I18n.tr("tooltips.power-profile", {
                          "profile": PowerProfileService.getName()
                        })
   tooltipDirection: BarService.getTooltipDirection()
-  compact: (Settings.data.bar.density === "compact")
   colorBg: (PowerProfileService.profile === PowerProfile.Balanced) ? (Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent) : Color.mPrimary
   colorFg: (PowerProfileService.profile === PowerProfile.Balanced) ? Color.mOnSurface : Color.mOnPrimary
   colorBorder: Color.transparent

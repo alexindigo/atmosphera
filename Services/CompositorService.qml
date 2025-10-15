@@ -2,6 +2,7 @@ pragma Singleton
 
 import QtQuick
 import Quickshell
+import Quickshell.Io
 import qs.Commons
 import qs.Services
 
@@ -11,11 +12,16 @@ Singleton {
   // Compositor detection
   property bool isHyprland: false
   property bool isNiri: false
+  property bool isSway: false
 
   // Generic workspace and window data
   property ListModel workspaces: ListModel {}
   property ListModel windows: ListModel {}
   property int focusedWindowIndex: -1
+
+  // Display scale data
+  property var displayScales: ({})
+  property bool displayScalesLoaded: false
 
   // Generic events
   signal workspaceChanged
@@ -25,20 +31,45 @@ Singleton {
   // Backend service loader
   property var backend: null
 
+  // Cache file path
+  property string displayCachePath: ""
+
   Component.onCompleted: {
+    // Setup cache path (needs Settings to be available)
+    Qt.callLater(() => {
+                   if (typeof Settings !== 'undefined' && Settings.cacheDir) {
+                     displayCachePath = Settings.cacheDir + "display.json"
+                     displayCacheFileView.path = displayCachePath
+                   }
+                 })
+
     detectCompositor()
   }
 
   function detectCompositor() {
     const hyprlandSignature = Quickshell.env("HYPRLAND_INSTANCE_SIGNATURE")
-    if (hyprlandSignature && hyprlandSignature.length > 0) {
-      isHyprland = true
-      isNiri = false
-      backendLoader.sourceComponent = hyprlandComponent
-    } else {
-      // Default to Niri
+    const niriSocket = Quickshell.env("NIRI_SOCKET")
+    const swaySock = Quickshell.env("SWAYSOCK")
+    if (niriSocket && niriSocket.length > 0) {
       isHyprland = false
       isNiri = true
+      isSway = false
+      backendLoader.sourceComponent = niriComponent
+    } else if (hyprlandSignature && hyprlandSignature.length > 0) {
+      isHyprland = true
+      isNiri = false
+      isSway = false
+      backendLoader.sourceComponent = hyprlandComponent
+    } else if (swaySock && swaySock.length > 0) {
+      isHyprland = false
+      isNiri = false
+      isSway = true
+      backendLoader.sourceComponent = swayComponent
+    } else {
+      // Always fallback to Niri
+      isHyprland = false
+      isNiri = true
+      isSway = false
       backendLoader.sourceComponent = niriComponent
     }
   }
@@ -51,6 +82,31 @@ Singleton {
         setupBackendConnections()
         backend.initialize()
       }
+    }
+  }
+
+  // Cache FileView for display scales
+  FileView {
+    id: displayCacheFileView
+    printErrors: false
+    watchChanges: false
+
+    adapter: JsonAdapter {
+      id: displayCacheAdapter
+      property var displays: ({})
+    }
+
+    onLoaded: {
+      // Load cached display scales
+      displayScales = displayCacheAdapter.displays || {}
+      displayScalesLoaded = true
+      // Logger.log("CompositorService", "Loaded display scales from cache:", JSON.stringify(displayScales))
+    }
+
+    onLoadFailed: {
+      // Cache doesn't exist yet, will be created on first update
+      displayScalesLoaded = true
+      // Logger.log("CompositorService", "No display cache found, will create on first update")
     }
   }
 
@@ -67,6 +123,14 @@ Singleton {
     id: niriComponent
     NiriService {
       id: niriBackend
+    }
+  }
+
+  // Sway backend component
+  Component {
+    id: swayComponent
+    SwayService {
+      id: swayBackend
     }
   }
 
@@ -128,6 +192,50 @@ Singleton {
     windowListChanged()
   }
 
+  // Update display scales from backend
+  function updateDisplayScales() {
+    if (!backend || !backend.queryDisplayScales) {
+      Logger.warn("CompositorService", "Backend does not support display scale queries")
+      return
+    }
+
+    backend.queryDisplayScales()
+  }
+
+  // Called by backend when display scales are ready
+  function onDisplayScalesUpdated(scales) {
+    displayScales = scales
+    saveDisplayScalesToCache()
+    displayScalesChanged()
+    Logger.log("CompositorService", "Display scales updated")
+  }
+
+  // Save display scales to cache
+  function saveDisplayScalesToCache() {
+    if (!displayCachePath) {
+      return
+    }
+
+    displayCacheAdapter.displays = displayScales
+    displayCacheFileView.writeAdapter()
+  }
+
+  // Public function to get scale for a specific display
+  function getDisplayScale(displayName) {
+    if (!displayName || !displayScales[displayName]) {
+      return 1.0
+    }
+    return displayScales[displayName].scale || 1.0
+  }
+
+  // Public function to get all display info for a specific display
+  function getDisplayInfo(displayName) {
+    if (!displayName || !displayScales[displayName]) {
+      return null
+    }
+    return displayScales[displayName]
+  }
+
   // Get focused window
   function getFocusedWindow() {
     if (focusedWindowIndex >= 0 && focusedWindowIndex < windows.count) {
@@ -139,15 +247,19 @@ Singleton {
   // Get focused window title
   function getFocusedWindowTitle() {
     if (focusedWindowIndex >= 0 && focusedWindowIndex < windows.count) {
-      return windows.get(focusedWindowIndex).title || ""
+      var title = windows.get(focusedWindowIndex).title
+      if (title !== undefined) {
+        title = title.replace(/(\r\n|\n|\r)/g, "")
+      }
+      return title || ""
     }
     return ""
   }
 
   // Generic workspace switching
-  function switchToWorkspace(workspaceId) {
+  function switchToWorkspace(workspace) {
     if (backend && backend.switchToWorkspace) {
-      backend.switchToWorkspace(workspaceId)
+      backend.switchToWorkspace(workspace)
     } else {
       Logger.warn("Compositor", "No backend available for workspace switching")
     }
@@ -177,18 +289,18 @@ Singleton {
   }
 
   // Set focused window
-  function focusWindow(windowId) {
+  function focusWindow(window) {
     if (backend && backend.focusWindow) {
-      backend.focusWindow(windowId)
+      backend.focusWindow(window)
     } else {
       Logger.warn("Compositor", "No backend available for window focus")
     }
   }
 
   // Close window
-  function closeWindow(windowId) {
+  function closeWindow(window) {
     if (backend && backend.closeWindow) {
-      backend.closeWindow(windowId)
+      backend.closeWindow(window)
     } else {
       Logger.warn("Compositor", "No backend available for window closing")
     }
@@ -197,6 +309,7 @@ Singleton {
   // Session management
   function logout() {
     if (backend && backend.logout) {
+      Logger.log("Compositor", "Logout requested")
       backend.logout()
     } else {
       Logger.warn("Compositor", "No backend available for logout")
@@ -204,18 +317,22 @@ Singleton {
   }
 
   function shutdown() {
+    Logger.log("Compositor", "Shutdown requested")
     Quickshell.execDetached(["shutdown", "-h", "now"])
   }
 
   function reboot() {
+    Logger.log("Compositor", "Reboot requested")
     Quickshell.execDetached(["reboot"])
   }
 
   function suspend() {
+    Logger.log("Compositor", "Suspend requested")
     Quickshell.execDetached(["systemctl", "suspend"])
   }
 
   function lockAndSuspend() {
+    Logger.log("Compositor", "Lock and suspend requested")
     try {
       if (PanelService && PanelService.lockScreen && !PanelService.lockScreen.active) {
         PanelService.lockScreen.active = true

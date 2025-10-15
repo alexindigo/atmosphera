@@ -19,9 +19,9 @@ Popup {
   x: (parent.width - width) * 0.5
   y: (parent.height - height) * 0.5
 
-  width: Math.max(content.implicitWidth + padding * 2, 500 * scaling)
+  width: Math.max(content.implicitWidth + padding * 2, 500)
   height: content.implicitHeight + padding * 2
-  padding: Style.marginXL * scaling
+  padding: Style.marginXL
   modal: true
 
   onOpened: {
@@ -42,16 +42,16 @@ Popup {
     id: bgRect
 
     color: Color.mSurface
-    radius: Style.radiusL * scaling
+    radius: Style.radiusL
     border.color: Color.mPrimary
-    border.width: Math.max(1, Style.borderM * scaling)
+    border.width: Math.max(1, Style.borderM)
   }
 
   contentItem: ColumnLayout {
     id: content
 
     width: parent.width
-    spacing: Style.marginM * scaling
+    spacing: Style.marginM
 
     // Title
     RowLayout {
@@ -61,7 +61,7 @@ Popup {
         text: I18n.tr("system.widget-settings-title", {
                         "widget": widgetSettings.widgetId
                       })
-        pointSize: Style.fontSizeL * scaling
+        pointSize: Style.fontSizeL
         font.weight: Style.fontWeightBold
         color: Color.mPrimary
         Layout.fillWidth: true
@@ -69,7 +69,7 @@ Popup {
 
       NIconButton {
         icon: "close"
-        tooltipText: "Close"
+        tooltipText: I18n.tr("tooltips.close")
         onClicked: widgetSettings.close()
       }
     }
@@ -91,8 +91,8 @@ Popup {
     // Action buttons
     RowLayout {
       Layout.fillWidth: true
-      Layout.topMargin: Style.marginM * scaling
-      spacing: Style.marginM * scaling
+      Layout.topMargin: Style.marginM
+      spacing: Style.marginM
 
       Item {
         Layout.fillWidth: true
@@ -134,7 +134,8 @@ Popup {
       "SystemMonitor": "WidgetSettings/SystemMonitorSettings.qml",
       "Volume": "WidgetSettings/VolumeSettings.qml",
       "Workspace": "WidgetSettings/WorkspaceSettings.qml",
-      "Taskbar": "WidgetSettings/TaskbarSettings.qml"
+      "Taskbar": "WidgetSettings/TaskbarSettings.qml",
+      "Tray": "WidgetSettings/TraySettings.qml"
     }
 
     const source = widgetSettingsMap[widgetId]

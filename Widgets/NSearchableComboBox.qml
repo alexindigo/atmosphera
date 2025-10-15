@@ -9,8 +9,8 @@ import "../Helpers/FuzzySort.js" as Fuzzysort
 RowLayout {
   id: root
 
-  property real minimumWidth: 280 * scaling
-  property real popupHeight: 180 * scaling
+  property real minimumWidth: 280 * Style.uiScaleRatio
+  property real popupHeight: 180 * Style.uiScaleRatio
 
   property string label: ""
   property string description: ""
@@ -20,12 +20,13 @@ RowLayout {
   property string currentKey: ""
   property string placeholder: ""
   property string searchPlaceholder: I18n.tr("placeholders.search")
+  property Component delegate: null
 
-  readonly property real preferredHeight: Style.baseWidgetSize * 1.1 * scaling
+  readonly property real preferredHeight: Style.baseWidgetSize * 1.1
 
   signal selected(string key)
 
-  spacing: Style.marginL * scaling
+  spacing: Style.marginL
   Layout.fillWidth: true
 
   // Filtered model for search results
@@ -121,12 +122,12 @@ RowLayout {
     }
 
     background: Rectangle {
-      implicitWidth: Style.baseWidgetSize * 3.75 * scaling
+      implicitWidth: Style.baseWidgetSize * 3.75 * Style.uiScaleRatio
       implicitHeight: preferredHeight
       color: Color.mSurface
       border.color: combo.activeFocus ? Color.mSecondary : Color.mOutline
-      border.width: Math.max(1, Style.borderS * scaling)
-      radius: Style.radiusM * scaling
+      border.width: Math.max(1, Style.borderS)
+      radius: Style.radiusM
 
       Behavior on border.color {
         ColorAnimation {
@@ -136,9 +137,9 @@ RowLayout {
     }
 
     contentItem: NText {
-      leftPadding: Style.marginL * scaling
-      rightPadding: combo.indicator.width + Style.marginL * scaling
-      pointSize: Style.fontSizeM * scaling
+      leftPadding: Style.marginL
+      rightPadding: combo.indicator.width + Style.marginL
+      pointSize: Style.fontSizeM
       verticalAlignment: Text.AlignVCenter
       elide: Text.ElideRight
       color: (combo.currentIndex >= 0 && combo.currentIndex < filteredModel.count) ? Color.mOnSurface : Color.mOnSurfaceVariant
@@ -146,17 +147,17 @@ RowLayout {
     }
 
     indicator: NIcon {
-      x: combo.width - width - Style.marginM * scaling
+      x: combo.width - width - Style.marginM
       y: combo.topPadding + (combo.availableHeight - height) / 2
       icon: "caret-down"
-      pointSize: Style.fontSizeL * scaling
+      pointSize: Style.fontSizeL
     }
 
     popup: Popup {
       y: combo.height
       width: combo.width
-      height: root.popupHeight + 60 * scaling
-      padding: Style.marginM * scaling
+      height: root.popupHeight + 60
+      padding: Style.marginM
 
       onOpened: {
         PanelService.willOpenPopup(root)
@@ -167,7 +168,7 @@ RowLayout {
       }
 
       contentItem: ColumnLayout {
-        spacing: Style.marginS * scaling
+        spacing: Style.marginS
 
         // Search input
         NTextInput {
@@ -176,7 +177,7 @@ RowLayout {
           placeholderText: root.searchPlaceholder
           text: root.searchText
           onTextChanged: root.searchText = text
-          fontSize: Style.fontSizeS * scaling
+          fontSize: Style.fontSizeS
         }
 
         NListView {
@@ -187,43 +188,79 @@ RowLayout {
           horizontalPolicy: ScrollBar.AlwaysOff
           verticalPolicy: ScrollBar.AsNeeded
 
-          delegate: ItemDelegate {
-            width: listView.width
-            hoverEnabled: true
-            highlighted: ListView.view.currentIndex === index
+          delegate: root.delegate ? root.delegate : defaultDelegate
 
-            onHoveredChanged: {
-              if (hovered) {
-                ListView.view.currentIndex = index
-              }
-            }
+          Component {
+            id: defaultDelegate
+            ItemDelegate {
+              id: delegateRoot
+              width: listView.width
+              hoverEnabled: true
+              highlighted: ListView.view.currentIndex === index
 
-            onClicked: {
-              root.selected(filteredModel.get(index).key)
-              combo.currentIndex = root.findIndexByKeyInFiltered(filteredModel.get(index).key)
-              combo.popup.close()
-            }
-
-            contentItem: NText {
-              text: name
-              pointSize: Style.fontSizeM * scaling
-              color: highlighted ? Color.mSurface : Color.mOnSurface
-              verticalAlignment: Text.AlignVCenter
-              elide: Text.ElideRight
-              Behavior on color {
-                ColorAnimation {
-                  duration: Style.animationFast
+              onHoveredChanged: {
+                if (hovered) {
+                  ListView.view.currentIndex = index
                 }
               }
-            }
 
-            background: Rectangle {
-              width: listView.width * scaling
-              color: highlighted ? Color.mTertiary : Color.transparent
-              radius: Style.radiusS * scaling
-              Behavior on color {
-                ColorAnimation {
-                  duration: Style.animationFast
+              onClicked: {
+                root.selected(filteredModel.get(index).key)
+                combo.currentIndex = root.findIndexByKeyInFiltered(filteredModel.get(index).key)
+                combo.popup.close()
+              }
+
+              contentItem: RowLayout {
+                width: parent.width
+                spacing: Style.marginM
+
+                NText {
+                  text: name
+                  pointSize: Style.fontSizeM
+                  color: highlighted ? Color.mOnTertiary : Color.mOnSurface
+                  verticalAlignment: Text.AlignVCenter
+                  elide: Text.ElideRight
+                  Layout.fillWidth: true
+                  Behavior on color {
+                    ColorAnimation {
+                      duration: Style.animationFast
+                    }
+                  }
+                }
+
+                RowLayout {
+                  spacing: Style.marginS
+                  Layout.alignment: Qt.AlignRight
+
+                  Repeater {
+                    model: badgeLocations
+
+                    delegate: NBox {
+                      width: Style.baseWidgetSize * 0.7
+                      height: Style.baseWidgetSize * 0.7
+                      color: "transparent"
+                      radius: Style.radiusS
+                      border.width: 0
+
+                      NText {
+                        anchors.centerIn: parent
+                        text: modelData
+                        pointSize: Style.fontSizeXXS
+                        font.weight: Style.fontWeightBold
+                        color: highlighted ? Color.mOnTertiary : Color.mOnSurface
+                      }
+                    }
+                  }
+                }
+              }
+              background: Rectangle {
+                width: listView.width
+                color: highlighted ? Color.mTertiary : Color.transparent
+                radius: Style.radiusS
+                Behavior on color {
+                  ColorAnimation {
+                    duration: Style.animationFast
+                  }
                 }
               }
             }
@@ -234,8 +271,8 @@ RowLayout {
       background: Rectangle {
         color: Color.mSurfaceVariant
         border.color: Color.mOutline
-        border.width: Math.max(1, Style.borderS * scaling)
-        radius: Style.radiusM * scaling
+        border.width: Math.max(1, Style.borderS)
+        radius: Style.radiusM
       }
     }
 

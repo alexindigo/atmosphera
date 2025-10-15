@@ -8,8 +8,8 @@ import qs.Widgets
 RowLayout {
   id: root
 
-  property real minimumWidth: 280 * scaling
-  property real popupHeight: 180 * scaling
+  property real minimumWidth: 280 * Style.uiScaleRatio
+  property real popupHeight: 180 * Style.uiScaleRatio
 
   property string label: ""
   property string description: ""
@@ -17,11 +17,11 @@ RowLayout {
   property string currentKey: ""
   property string placeholder: ""
 
-  readonly property real preferredHeight: Style.baseWidgetSize * 1.1 * scaling
+  readonly property real preferredHeight: Style.baseWidgetSize * 1.1 * Style.uiScaleRatio
 
   signal selected(string key)
 
-  spacing: Style.marginL * scaling
+  spacing: Style.marginL
   Layout.fillWidth: true
 
   function itemCount() {
@@ -72,12 +72,12 @@ RowLayout {
     }
 
     background: Rectangle {
-      implicitWidth: Style.baseWidgetSize * 3.75 * scaling
+      implicitWidth: Style.baseWidgetSize * 3.75
       implicitHeight: preferredHeight
       color: Color.mSurface
       border.color: combo.activeFocus ? Color.mSecondary : Color.mOutline
-      border.width: Math.max(1, Style.borderS * scaling)
-      radius: Style.radiusM * scaling
+      border.width: Math.max(1, Style.borderS)
+      radius: Style.radiusM
 
       Behavior on border.color {
         ColorAnimation {
@@ -87,9 +87,9 @@ RowLayout {
     }
 
     contentItem: NText {
-      leftPadding: Style.marginL * scaling
-      rightPadding: combo.indicator.width + Style.marginL * scaling
-      pointSize: Style.fontSizeM * scaling
+      leftPadding: Style.marginL
+      rightPadding: combo.indicator.width + Style.marginL
+      pointSize: Style.fontSizeM
       verticalAlignment: Text.AlignVCenter
       elide: Text.ElideRight
       color: (combo.currentIndex >= 0 && combo.currentIndex < itemCount()) ? Color.mOnSurface : Color.mOnSurfaceVariant
@@ -97,17 +97,17 @@ RowLayout {
     }
 
     indicator: NIcon {
-      x: combo.width - width - Style.marginM * scaling
+      x: combo.width - width - Style.marginM
       y: combo.topPadding + (combo.availableHeight - height) / 2
       icon: "caret-down"
-      pointSize: Style.fontSizeL * scaling
+      pointSize: Style.fontSizeL
     }
 
     popup: Popup {
       y: combo.height
-      implicitWidth: combo.width - Style.marginM * scaling
-      implicitHeight: Math.min(root.popupHeight, contentItem.implicitHeight + Style.marginM * scaling * 2)
-      padding: Style.marginM * scaling
+      implicitWidth: combo.width - Style.marginM
+      implicitHeight: Math.min(root.popupHeight, contentItem.implicitHeight + Style.marginM * 2)
+      padding: Style.marginM
 
       onOpened: {
         PanelService.willOpenPopup(root)
@@ -144,9 +144,9 @@ RowLayout {
           }
 
           background: Rectangle {
-            width: combo.width - Style.marginM * scaling * 3
+            width: combo.width - Style.marginM * 3
             color: highlighted ? Color.mTertiary : Color.transparent
-            radius: Style.radiusS * scaling
+            radius: Style.radiusS
             Behavior on color {
               ColorAnimation {
                 duration: Style.animationFast
@@ -159,7 +159,7 @@ RowLayout {
               var item = root.getItem(index)
               return item && item.name ? item.name : ""
             }
-            pointSize: Style.fontSizeM * scaling
+            pointSize: Style.fontSizeM
             color: highlighted ? Color.mOnTertiary : Color.mOnSurface
             verticalAlignment: Text.AlignVCenter
             elide: Text.ElideRight
@@ -175,8 +175,8 @@ RowLayout {
       background: Rectangle {
         color: Color.mSurfaceVariant
         border.color: Color.mOutline
-        border.width: Math.max(1, Style.borderS * scaling)
-        radius: Style.radiusM * scaling
+        border.width: Math.max(1, Style.borderS)
+        radius: Style.radiusM
       }
     }
 

@@ -12,13 +12,13 @@ Rectangle {
 
   signal colorSelected(color color)
 
-  implicitWidth: 150 * scaling
-  implicitHeight: Math.round(Style.baseWidgetSize * 1.1 * scaling)
+  implicitWidth: 150
+  implicitHeight: Math.round(Style.baseWidgetSize * 1.1)
 
-  radius: Style.radiusM * scaling
+  radius: Style.radiusM
   color: Color.mSurface
   border.color: Color.mOutline
-  border.width: Math.max(1, Style.borderS * scaling)
+  border.width: Math.max(1, Style.borderS)
 
   // Minimized Look
   MouseArea {
@@ -41,19 +41,19 @@ Rectangle {
     RowLayout {
       anchors.fill: parent
       anchors {
-        leftMargin: Style.marginL * scaling
-        rightMargin: Style.marginL * scaling
+        leftMargin: Style.marginL
+        rightMargin: Style.marginL
       }
-      spacing: Style.marginS * scaling
+      spacing: Style.marginS
 
       // Color preview circle
       Rectangle {
-        Layout.preferredWidth: root.height * 0.6 * scaling
-        Layout.preferredHeight: root.height * 0.6 * scaling
+        Layout.preferredWidth: root.height * 0.6
+        Layout.preferredHeight: root.height * 0.6
         radius: Layout.preferredWidth * 0.5
         color: root.selectedColor
         border.color: Color.mOutline
-        border.width: Math.max(1, Style.borderS * scaling)
+        border.width: Math.max(1, Style.borderS)
       }
 
       NText {

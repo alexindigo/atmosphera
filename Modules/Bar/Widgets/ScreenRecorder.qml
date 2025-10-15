@@ -7,13 +7,14 @@ import qs.Widgets
 NIconButton {
   id: root
 
-  property real scaling: 1.0
+  property ShellScreen screen
 
   icon: "camera-video"
   tooltipText: ScreenRecorderService.isRecording ? I18n.tr("tooltips.click-to-stop-recording") : I18n.tr("tooltips.click-to-start-recording")
   tooltipDirection: BarService.getTooltipDirection()
-  compact: (Settings.data.bar.density === "compact")
+  density: Settings.data.bar.density
   baseSize: Style.capsuleHeight
+  applyUiScale: false
   colorBg: ScreenRecorderService.isRecording ? Color.mPrimary : (Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent)
   colorFg: ScreenRecorderService.isRecording ? Color.mOnPrimary : Color.mOnSurface
   colorBorder: Color.transparent

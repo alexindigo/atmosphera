@@ -38,8 +38,8 @@ RowLayout {
   // Main spinbox container
   Rectangle {
     id: spinBoxContainer
-    implicitWidth: 120 * scaling
-    implicitHeight: (root.baseSize - 4) * scaling
+    implicitWidth: 120
+    implicitHeight: (root.baseSize - 4)
     radius: height * 0.5
     color: Color.mSurfaceVariant
     border.color: (root.hovering || decreaseArea.containsMouse || increaseArea.containsMouse) ? Color.mTertiary : Color.mOutline
@@ -153,7 +153,7 @@ RowLayout {
         anchors.leftMargin: parent.width * 0.25
         anchors.verticalCenter: parent.verticalCenter
         icon: "chevron-left"
-        pointSize: Style.fontSizeS * scaling
+        pointSize: Style.fontSizeS
         color: decreaseArea.containsMouse ? Color.mOnTertiary : Color.mPrimary
       }
 
@@ -248,7 +248,7 @@ RowLayout {
         anchors.rightMargin: parent.width * 0.25
         anchors.verticalCenter: parent.verticalCenter
         icon: "chevron-right"
-        pointSize: Style.fontSizeS * scaling
+        pointSize: Style.fontSizeS
         color: increaseArea.containsMouse ? Color.mOnTertiary : Color.mPrimary
       }
 
@@ -271,7 +271,7 @@ RowLayout {
       anchors.left: decreaseButton.right
       anchors.right: increaseButton.left
       anchors.verticalCenter: parent.verticalCenter
-      anchors.margins: 4 * scaling
+      anchors.margins: 4
       height: parent.height
       color: Color.transparent
 
@@ -283,7 +283,7 @@ RowLayout {
         NText {
           text: root.prefix
           family: Settings.data.ui.fontFixed
-          pointSize: Style.fontSizeM * scaling
+          pointSize: Style.fontSizeM
           font.weight: Style.fontWeightMedium
           color: Color.mOnSurface
           verticalAlignment: Text.AlignVCenter
@@ -296,7 +296,7 @@ RowLayout {
           id: valueInput
           text: valueInput.focus ? valueInput.text : root.value.toString()
           font.family: Settings.data.ui.fontFixed
-          font.pointSize: Style.fontSizeM * scaling
+          font.pointSize: Style.fontSizeM
           font.weight: Style.fontWeightMedium
           color: Color.mOnSurface
           verticalAlignment: Text.AlignVCenter
@@ -342,7 +342,7 @@ RowLayout {
         NText {
           text: root.suffix
           family: Settings.data.ui.fontFixed
-          pointSize: Style.fontSizeM * scaling
+          pointSize: Style.fontSizeM
           font.weight: Style.fontWeightMedium
           color: Color.mOnSurface
           verticalAlignment: Text.AlignVCenter

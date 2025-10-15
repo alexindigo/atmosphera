@@ -11,8 +11,8 @@ import qs.Widgets
 NPanel {
   id: root
 
-  preferredWidth: 380
-  preferredHeight: 500
+  preferredWidth: 380 * Style.uiScaleRatio
+  preferredHeight: 500 * Style.uiScaleRatio
   panelKeyboardFocus: true
 
   panelContent: Rectangle {
@@ -20,23 +20,23 @@ NPanel {
 
     ColumnLayout {
       anchors.fill: parent
-      anchors.margins: Style.marginL * scaling
-      spacing: Style.marginM * scaling
+      anchors.margins: Style.marginL
+      spacing: Style.marginM
 
       // HEADER
       RowLayout {
         Layout.fillWidth: true
-        spacing: Style.marginM * scaling
+        spacing: Style.marginM
 
         NIcon {
           icon: "bluetooth"
-          pointSize: Style.fontSizeXXL * scaling
+          pointSize: Style.fontSizeXXL
           color: Color.mPrimary
         }
 
         NText {
           text: I18n.tr("bluetooth.panel.title")
-          pointSize: Style.fontSizeL * scaling
+          pointSize: Style.fontSizeL
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface
           Layout.fillWidth: true
@@ -46,7 +46,7 @@ NPanel {
           id: bluetoothSwitch
           checked: BluetoothService.enabled
           onToggled: checked => BluetoothService.setBluetoothEnabled(checked)
-          baseSize: Style.baseWidgetSize * 0.65 * scaling
+          baseSize: Style.baseWidgetSize * 0.65
         }
 
         NIconButton {
@@ -84,25 +84,25 @@ NPanel {
         // Center the content within this rectangle
         ColumnLayout {
           anchors.centerIn: parent
-          spacing: Style.marginM * scaling
+          spacing: Style.marginM
 
           NIcon {
             icon: "bluetooth-off"
-            pointSize: 64 * scaling
+            pointSize: 64
             color: Color.mOnSurfaceVariant
             Layout.alignment: Qt.AlignHCenter
           }
 
           NText {
             text: I18n.tr("bluetooth.panel.disabled")
-            pointSize: Style.fontSizeL * scaling
+            pointSize: Style.fontSizeL
             color: Color.mOnSurfaceVariant
             Layout.alignment: Qt.AlignHCenter
           }
 
           NText {
             text: I18n.tr("bluetooth.panel.enable-message")
-            pointSize: Style.fontSizeS * scaling
+            pointSize: Style.fontSizeS
             color: Color.mOnSurfaceVariant
             Layout.alignment: Qt.AlignHCenter
           }
@@ -120,7 +120,7 @@ NPanel {
 
         ColumnLayout {
           width: parent.width
-          spacing: Style.marginM * scaling
+          spacing: Style.marginM
 
           // Connected devices
           BluetoothDevicesList {
@@ -168,7 +168,7 @@ NPanel {
           // Fallback - No devices, scanning
           ColumnLayout {
             Layout.alignment: Qt.AlignHCenter
-            spacing: Style.marginM * scaling
+            spacing: Style.marginM
             visible: {
               if (!BluetoothService.adapter || !BluetoothService.adapter.discovering || !Bluetooth.devices) {
                 return false
@@ -182,11 +182,11 @@ NPanel {
 
             RowLayout {
               Layout.alignment: Qt.AlignHCenter
-              spacing: Style.marginXS * scaling
+              spacing: Style.marginXS
 
               NIcon {
                 icon: "refresh"
-                pointSize: Style.fontSizeXXL * 1.5 * scaling
+                pointSize: Style.fontSizeXXL * 1.5
                 color: Color.mPrimary
 
                 RotationAnimation on rotation {
@@ -200,14 +200,14 @@ NPanel {
 
               NText {
                 text: I18n.tr("bluetooth.panel.scanning")
-                pointSize: Style.fontSizeL * scaling
+                pointSize: Style.fontSizeL
                 color: Color.mOnSurface
               }
             }
 
             NText {
               text: I18n.tr("bluetooth.panel.pairing-mode")
-              pointSize: Style.fontSizeM * scaling
+              pointSize: Style.fontSizeM
               color: Color.mOnSurfaceVariant
               Layout.alignment: Qt.AlignHCenter
             }

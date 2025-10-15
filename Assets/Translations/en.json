@@ -13,32 +13,6 @@
         },
         "select-avatar": "Select avatar image"
       },
-      "ui": {
-        "section": {
-          "label": "User interface",
-          "description": "Customize the look, feel, and behavior of the interface."
-        },
-        "tooltips": {
-          "label": "Show tooltips",
-          "description": "Enable or disable tooltips throughout the interface."
-        },
-        "dim-desktop": {
-          "label": "Dim desktop",
-          "description": "Dim the desktop when panels or menus are open."
-        },
-        "border-radius": {
-          "label": "Border radius",
-          "description": "Controls the corner roundness of windows, buttons, and other elements."
-        },
-        "animation-speed": {
-          "label": "Animation speed",
-          "description": "Adjust global animation speed."
-        },
-        "animation-disable": {
-          "label": "Disable UI Animations",
-          "description": "Disable all animations for a faster, more responsive experience."
-        }
-      },
       "screen-corners": {
         "section": {
           "label": "Screen corners",
@@ -54,7 +28,8 @@
         },
         "radius": {
           "label": "Screen corners radius",
-          "description": "Adjust the rounded corners of the screen."
+          "description": "Adjust the rounded corners of the screen.",
+          "reset": "Reset screen corners radius"
         }
       },
       "fonts": {
@@ -83,17 +58,8 @@
             "description": "Increase or decrease the size of the monospaced text."
           }
         }
-      },
-      "control-center": {
-        "section": {
-          "label": "Control Center",
-          "description": "Configure the Control Center panel positioning and behavior."
-        },
-        "position": {
-          "label": "Position",
-          "description": "Choose where the Control Center panel appears when opened."
-        }
       }
+      
     },
     "audio": {
       "title": "Audio",
@@ -179,11 +145,9 @@
       "monitors": {
         "section": {
           "label": "Per-monitor settings",
-          "description": "Adjust scaling and brightness for each display."
+          "description": "Adjust settings brightness for each display."
         },
-        "scale": "Scale",
         "brightness": "Brightness",
-        "reset-scaling": "Reset scaling",
         "brightness-step": {
           "label": "Brightness step size",
           "description": "Adjust the step size for brightness changes (scroll wheel and keyboard shortcuts)."
@@ -259,13 +223,20 @@
       "widgets": {
         "section": {
           "label": "Widgets positioning",
-          "description": "Drag and drop widgets to reorder them within each section, or use the add/remove buttons to manage widgets."
+          "description": "Drag and drop widgets to reorder them. Badges indicate usage: [L]eft, [C]enter, [R]ight."
         }
       },
       "monitors": {
         "section": {
           "label": "Monitors display",
           "description": "Show bar on specific monitors. Defaults to all if none are chosen."
+        }
+      },
+      "tray": {
+        "blacklist": {
+          "label": "Blacklist",
+          "description": "Add tray exclusion rules, supports wildcards (*).",
+          "placeholder": "e.g., nm-applet, Fcitx*"
         }
       }
     },
@@ -290,6 +261,10 @@
         "floating-distance": {
           "label": "Dock floating distance",
           "description": "Adjust the floating distance from the screen edge."
+        },
+        "colorize-icons": {
+          "label": "Colorize Icons",
+          "description": "Apply theme colors to dock app icons (non-focused apps only)."
         }
       },
       "monitors": {
@@ -401,6 +376,10 @@
       "enabled": {
         "label": "Enable on screen display",
         "description": "Show volume and brightness changes in real-time."
+      },
+      "always-on-top": {
+        "label": "Always on top",
+        "description": "Display OSD above fullscreen windows and other layers."
       },
       "location": {
         "label": "Location",
@@ -533,6 +512,9 @@
           },
           "qt": {
             "description": "Write {filepath}"
+          },
+          "kcolorscheme": {
+            "description": "Write {filepath}"
           }
         },
         "terminal": {
@@ -558,9 +540,9 @@
             "description": "Write {filepath} and reload",
             "description-missing": "Requires {app} to be installed"
           },
-          "vesktop": {
-            "description": "Write {filepath}",
-            "description-missing": "Requires {app} to be installed"
+          "discord": {
+            "description": "Write {filepath} for {client}",
+            "description-missing": "No Discord client detected. Install vesktop, webcord, armcord, equibop, lightcord, or dorion."
           },
           "pywalfox": {
             "description": "Write {filepath} and run pywalfox update",
@@ -703,7 +685,8 @@
           "description": "Shout-out to our {count} <b>awesome</b> contributor!",
           "description_plural": "Shout-out to our {count} <b>awesome</b> contributors!"
         }
-      }
+      },
+      "support": "Support us"
     },
     "hooks": {
       "title": "Hooks",
@@ -737,6 +720,69 @@
           "description": "• Wallpaper Hook: $1 = wallpaper path, $2 = screen name\n• Theme Toggle Hook: $1 = true/false (dark mode state)"
         }
       }
+    },
+    "control-center": {
+        "title": "Control Center",
+        "section": {
+          "label": "Appearance",
+          "description": "Configure the Control Center panel positioning and behavior."
+        },
+        "position": {
+          "label": "Position",
+          "description": "Choose where the Control Center panel appears when opened."
+        },
+        "cards": {
+          "section": {
+            "label": "Cards",
+            "description": "Customize which controls appear in the Control Center and in what order."
+          }
+        },
+        "shortcuts": {
+          "section": {
+            "label": "Shortcuts widgets",
+            "description": "Configure and manage the shortcuts widgets."
+          },
+          "sectionLeft": "Left",
+          "sectionRight": "Right"
+        }
+    },
+    "user-interface": {
+      "title": "User interface",
+      "section": {
+        "label": "Appearance",
+        "description": "Customize the look, feel, and behavior of the interface."
+      },
+      "tooltips": {
+        "label": "Show tooltips",
+        "description": "Enable or disable tooltips throughout the interface."
+      },
+      "scaling": {
+        "label": "Interface scaling",
+        "description": "Changes the size of the general user interface, excluding the bar.",
+        "reset-scaling": "Reset interface scaling"
+      },
+      "dim-desktop": {
+        "label": "Dim desktop",
+        "description": "Dim the desktop when panels or menus are open."
+      },
+      "compact-lockscreen": {
+        "label": "Compact lock screen",
+        "description": "Show only the login input and system controls, hiding weather and media widgets."
+      },
+      "border-radius": {
+        "label": "Border radius",
+        "description": "Controls the corner roundness of windows, buttons, and other elements.",
+        "reset": "Reset border radius"
+      },
+      "animation-speed": {
+        "label": "Animation speed",
+        "description": "Adjust global animation speed.",
+        "reset": "Reset animation speed"
+      },
+      "animation-disable": {
+        "label": "Disable UI Animations",
+        "description": "Disable all animations for a faster, more responsive experience."
+      }
     }
   },
   "widgets": {
@@ -744,8 +790,12 @@
       "placeholder": "Placeholder"
     },
     "file-picker": {
+      "title": "File Picker",
       "select-folder": "Select Folder",
-      "select-file": "Select File"
+      "select-file": "Select File",
+      "search-placeholder": "Search files and folders...",
+      "select-current": "Select Current",
+      "cancel": "Cancel"
     },
     "datetime-tokens": {
       "common": {
@@ -836,9 +886,9 @@
         "search-placeholder": "Search widget..."
       },
       "active-window": {
-        "auto-hide": {
-          "label": "Hide automatically",
-          "description": "Automatically hide the widget when no window is active."
+        "hide-mode": {
+          "label": "Hiding mode",
+          "description": "Controls how the widget behaves when no window is active."
         },
         "show-app-icon": {
           "label": "Show app icon",
@@ -851,6 +901,10 @@
         "width": {
           "label": "Widget Width",
           "description": "Controls the horizontal size of the widget."
+        },
+        "colorize-icons": {
+          "label": "Colorize Icons",
+          "description": "Apply theme colors to active window icon."
         }
       },
       "system-monitor": {
@@ -981,9 +1035,9 @@
         }
       },
       "media-mini": {
-        "auto-hide": {
-          "label": "Hide automatically",
-          "description": "Automatically hide the widget when no media is playing."
+        "hide-mode": {
+          "label": "Hiding mode",
+          "description": "Controls how the widget behaves when no media is playing."
         },
         "show-album-art": {
           "label": "Show album art",
@@ -1044,6 +1098,16 @@
         "only-same-output": {
           "label": "Only from same output",
           "description": "Show only apps from the output where the bar is located."
+        },
+        "colorize-icons": {
+          "label": "Colorize Icons",
+          "description": "Apply theme colors to taskbar icons."
+        }
+      },
+      "tray": {
+        "colorize-icons": {
+          "label": "Colorize Icons",
+          "description": "Apply theme colors to tray icons."
         }
       }
     }
@@ -1211,6 +1275,7 @@
         "right": "Right"
       },
       "density": {
+        "mini": "Mini",
         "compact": "Compact",
         "default": "Default",
         "comfortable": "Comfortable"
@@ -1238,6 +1303,11 @@
         "bottom_right": "Bottom right",
         "bottom_center": "Bottom center",
         "top_center": "Top center"
+      },
+      "quickSettingsStyle": {
+        "modern": "Modern",
+        "classic": "Classic",
+        "compact": "Compact"
       }
     },
     "osd": {
@@ -1273,6 +1343,11 @@
       "always": "Scroll Always",
       "hover": "Scroll On Hover",
       "never": "Never Scroll"
+    },
+    "hide-modes": {
+      "visible": "Always Visible",
+      "hidden": "Hide When Empty",
+      "transparent": "Transparent When Empty"
     },
     "frame-rates": {
       "fps": "{fps} FPS"
@@ -1334,9 +1409,9 @@
     "calculator-error": "Error"
   },
   "system": {
-    "uptime": "System uptime: {uptime}",
+    "uptime": "Uptime: {uptime}",
     "welcome-back": "Welcome back,",
-    "monitor-description": "{model} ({width}x{height})",
+    "monitor-description": "{model} ({width}x{height} @ {scale}x)",
     "scaling-percentage": "{percentage}%",
     "location-display": "{name} ({coordinates})",
     "signal-strength": "{signal}%",
@@ -1358,6 +1433,78 @@
     "shut-down": "Shut down",
     "restart": "Restart",
     "suspend": "Suspend"
+  },
+  "quickSettings": {
+    "notifications": {
+      "label": {
+        "enabled": "Notifications",
+        "disabled": "Do Not Disturb"
+      },
+      "tooltip": {
+        "action": "Left click: Open notification history\nRight click: Toggle Do Not Disturb"
+      }
+    },
+    "screenRecorder": {
+      "label": {
+        "recording": "Stop",
+        "stopped": "Record"
+      },
+      "tooltip": {
+        "action": "Click to start/stop screen recording"
+      }
+    },
+    "powerProfile": {
+      "label": {
+        "unavailable": "Power Profile"
+      },
+      "tooltip": {
+        "action": "Click to cycle power profile"
+      }
+    },
+    "wifi": {
+      "label": {
+        "ethernet": "Ethernet",
+        "wifi": "Wi-Fi",
+        "disconnected": "Wi-Fi Disconnected"
+      },
+      "tooltip": {
+        "action": "Click to manage Wi-Fi connections"
+      }
+    },
+    "bluetooth": {
+      "label": {
+        "enabled": "Bluetooth",
+        "disabled": "Bluetooth"
+      },
+      "tooltip": {
+        "action": "Click to manage Bluetooth devices"
+      }
+    },
+    "nightLight": {
+      "label": {
+        "enabled": "Night Light",
+        "forced": "Night Light",
+        "disabled": "Night Light"
+      },
+      "tooltip": {
+        "action": "Click to cycle Night Light mode\nRight click: Open settings"
+      }
+    },
+    "wallpaperSelector": {
+      "label": "Wallpaper",
+      "tooltip": {
+        "action": "Left click: Open wallpaper selector\nRight click: Set random wallpaper"
+      }
+    },
+    "keepAwake": {
+      "label": {
+        "enabled": "Keep Awake",
+        "disabled": "Keep Awake"
+      },
+      "tooltip": {
+        "action": "Click to toggle keep awake mode"
+      }
+    }
   },
   "toast": {
     "night-light": {
@@ -1405,6 +1552,9 @@
     "bluetooth": {
       "enabled": "Enabled",
       "disabled": "Disabled"
+    },
+    "kofi": {
+      "opened": "Ko-fi page opened in your browser"
     },
     "do-not-disturb": {
       "enabled": "'Do not disturb' enabled",

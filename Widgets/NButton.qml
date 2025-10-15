@@ -15,10 +15,11 @@ Rectangle {
   property color textColor: Color.mOnPrimary
   property color hoverColor: Color.mTertiary
   property bool enabled: true
-  property real fontSize: Style.fontSizeM * scaling
+  property real fontSize: Style.fontSizeM
   property int fontWeight: Style.fontWeightBold
-  property real iconSize: Style.fontSizeL * scaling
+  property real iconSize: Style.fontSizeL
   property bool outlined: false
+  property int horizontalAlignment: Qt.AlignHCenter
 
   // Signals
   signal clicked
@@ -27,14 +28,13 @@ Rectangle {
 
   // Internal properties
   property bool hovered: false
-  property bool pressed: false
 
   // Dimensions
-  implicitWidth: contentRow.implicitWidth + (Style.marginL * 2 * scaling)
-  implicitHeight: Math.max(Style.baseWidgetSize * scaling, contentRow.implicitHeight + (Style.marginM * scaling))
+  implicitWidth: contentRow.implicitWidth + (Style.marginL * 2)
+  implicitHeight: Math.max(Style.baseWidgetSize, contentRow.implicitHeight + (Style.marginM))
 
   // Appearance
-  radius: Style.radiusS * scaling
+  radius: Style.radiusS
   color: {
     if (!enabled)
       return outlined ? Color.transparent : Qt.lighter(Color.mSurfaceVariant, 1.2)
@@ -43,11 +43,11 @@ Rectangle {
     return outlined ? Color.transparent : backgroundColor
   }
 
-  border.width: outlined ? Math.max(1, Style.borderS * scaling) : 0
+  border.width: outlined ? Math.max(1, Style.borderS) : 0
   border.color: {
     if (!enabled)
       return Color.mOutline
-    if (pressed || hovered)
+    if (hovered)
       return backgroundColor
     return outlined ? backgroundColor : Color.transparent
   }
@@ -71,8 +71,11 @@ Rectangle {
   // Content
   RowLayout {
     id: contentRow
-    anchors.centerIn: parent
-    spacing: Style.marginXS * scaling
+    anchors.verticalCenter: parent.verticalCenter
+    anchors.left: root.horizontalAlignment === Qt.AlignLeft ? parent.left : undefined
+    anchors.horizontalCenter: root.horizontalAlignment === Qt.AlignHCenter ? parent.horizontalCenter : undefined
+    anchors.leftMargin: root.horizontalAlignment === Qt.AlignLeft ? Style.marginL : 0
+    spacing: Style.marginXS
 
     // Icon (optional)
     NIcon {
@@ -84,8 +87,8 @@ Rectangle {
         if (!root.enabled)
           return Color.mOnSurfaceVariant
         if (root.outlined) {
-          if (root.pressed || root.hovered)
-            return root.backgroundColor
+          if (root.hovered)
+            return root.textColor
           return root.backgroundColor
         }
         return root.textColor

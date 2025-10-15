@@ -14,12 +14,109 @@ Rectangle {
   id: root
 
   property ShellScreen screen
-  property real scaling: 1.0
+
+  // Widget properties passed from Bar.qml for per-instance settings
+  property string widgetId: ""
+  property string section: ""
+  property int sectionWidgetIndex: -1
+  property int sectionWidgetsCount: 0
+
+  property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
+  property var widgetSettings: {
+    if (section && sectionWidgetIndex >= 0) {
+      var widgets = Settings.data.bar.widgets[section]
+      if (widgets && sectionWidgetIndex < widgets.length) {
+        return widgets[sectionWidgetIndex]
+      }
+    }
+    return {}
+  }
 
   readonly property string barPosition: Settings.data.bar.position
   readonly property bool isVertical: barPosition === "left" || barPosition === "right"
-  readonly property bool compact: (Settings.data.bar.density === "compact")
-  readonly property real itemSize: isVertical ? width * 0.75 : height * 0.85
+  readonly property bool density: Settings.data.bar.density
+  property real itemSize: Math.round(Style.capsuleHeight * 0.65)
+  property list<string> blacklist: widgetSettings.blacklist || widgetMetadata.blacklist || [] // Read from settings
+  property var filteredItems: []
+
+  function wildCardMatch(str, rule) {
+    if (!str || !rule) {
+      return false
+    }
+    Logger.log("Tray", "wildCardMatch - Input str:", str, "rule:", rule)
+
+    // Escape all special regex characters in the rule
+    let escapedRule = rule.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    // Convert '*' to '.*' for wildcard matching
+    let pattern = escapedRule.replace(/\\\*/g, '.*')
+    // Add ^ and $ to match the entire string
+    pattern = '^' + pattern + '$'
+
+    Logger.log("Tray", "wildCardMatch - Generated pattern:", pattern)
+
+    try {
+      const regex = new RegExp(pattern, 'i')
+      // 'i' for case-insensitive
+      Logger.log("Tray", "wildCardMatch - Regex test result:", regex.test(str))
+      return regex.test(str)
+    } catch (e) {
+      Logger.warn("Tray", "Invalid regex pattern for wildcard match:", rule, e.message)
+      return false // If regex is invalid, it won't match
+    }
+  }
+
+  // Debounce timer for updateFilteredItems to prevent excessive calls
+  // when multiple events (e.g., SystemTray changes, settings saves)
+  // trigger it in rapid succession, reducing redundant processing.
+  Timer {
+    id: updateDebounceTimer
+    interval: 100 // milliseconds
+    running: false
+    repeat: false
+    onTriggered: _performFilteredItemsUpdate()
+  }
+
+  function _performFilteredItemsUpdate() {
+    if (!root.blacklist || root.blacklist.length === 0) {
+      if (SystemTray.items && SystemTray.items.values) {
+        filteredItems = SystemTray.items.values
+      } else {
+        filteredItems = []
+      }
+      return
+    }
+
+    let newItems = []
+    if (SystemTray.items && SystemTray.items.values) {
+      const trayItems = SystemTray.items.values
+      for (var i = 0; i < trayItems.length; i++) {
+        const item = trayItems[i]
+        if (!item) {
+          continue
+        }
+
+        const title = item.tooltipTitle || item.name || item.id || ""
+
+        let isBlacklisted = false
+        for (var j = 0; j < root.blacklist.length; j++) {
+          const rule = root.blacklist[j]
+          if (wildCardMatch(title, rule)) {
+            isBlacklisted = true
+            break
+          }
+        }
+
+        if (!isBlacklisted) {
+          newItems.push(item)
+        }
+      }
+    }
+    filteredItems = newItems
+  }
+
+  function updateFilteredItems() {
+    updateDebounceTimer.restart()
+  }
 
   function onLoaded() {
     // When the widget is fully initialized with its props set the screen for the trayMenu
@@ -28,10 +125,28 @@ Rectangle {
     }
   }
 
-  visible: SystemTray.items.values.length > 0
-  implicitWidth: isVertical ? Math.round(Style.capsuleHeight * scaling) : (trayFlow.implicitWidth + Style.marginS * scaling * 2)
-  implicitHeight: isVertical ? (trayFlow.implicitHeight + Style.marginS * scaling * 2) : Math.round(Style.capsuleHeight * scaling)
-  radius: Math.round(Style.radiusM * scaling)
+  Connections {
+    target: SystemTray.items
+    function onValuesChanged() {
+      root.updateFilteredItems()
+    }
+  }
+
+  Connections {
+    target: Settings
+    function onSettingsSaved() {
+      root.updateFilteredItems()
+    }
+  }
+
+  Component.onCompleted: {
+    root.updateFilteredItems() // Initial update
+  }
+
+  visible: filteredItems.length > 0
+  implicitWidth: isVertical ? Style.capsuleHeight : Math.round(trayFlow.implicitWidth + Style.marginM * 2)
+  implicitHeight: isVertical ? Math.round(trayFlow.implicitHeight + Style.marginM * 2) : Style.capsuleHeight
+  radius: Style.radiusM
   color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
   Layout.alignment: Qt.AlignVCenter
@@ -39,12 +154,12 @@ Rectangle {
   Flow {
     id: trayFlow
     anchors.centerIn: parent
-    spacing: Style.marginS * scaling
+    spacing: Style.marginM
     flow: isVertical ? Flow.TopToBottom : Flow.LeftToRight
 
     Repeater {
       id: repeater
-      model: SystemTray.items
+      model: filteredItems
 
       delegate: Item {
         width: itemSize
@@ -56,10 +171,7 @@ Rectangle {
 
           property ShellScreen screen: root.screen
 
-          anchors.centerIn: parent
-          width: Style.marginL * scaling
-          height: Style.marginL * scaling
-          smooth: false
+          anchors.fill: parent
           asynchronous: true
           backer.fillMode: Image.PreserveAspectFit
           source: {
@@ -70,7 +182,6 @@ Rectangle {
 
             // Process icon path
             if (icon.includes("?path=")) {
-              // Seems qmlfmt does not support the following ES6 syntax: const[name, path] = icon.split
               const chunks = icon.split("?path=")
               const name = chunks[0]
               const path = chunks[1]
@@ -80,69 +191,77 @@ Rectangle {
             return icon
           }
           opacity: status === Image.Ready ? 1 : 0
-        }
 
-        MouseArea {
-          anchors.fill: parent
-          hoverEnabled: true
-          cursorShape: Qt.PointingHandCursor
-          acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
-          onClicked: mouse => {
-                       if (!modelData) {
-                         return
-                       }
+          layer.enabled: widgetSettings.colorizeIcons !== false
+          layer.effect: ShaderEffect {
+            property color targetColor: Color.mOnSurface
+            property real colorizeMode: 1.0 // Tray mode (intensity-based)
 
-                       if (mouse.button === Qt.LeftButton) {
-                         // Close any open menu first
-                         trayPanel.close()
+            fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
+          }
 
-                         if (!modelData.onlyMenu) {
-                           modelData.activate()
-                         }
-                       } else if (mouse.button === Qt.MiddleButton) {
-                         // Close any open menu first
-                         trayPanel.close()
-
-                         modelData.secondaryActivate && modelData.secondaryActivate()
-                       } else if (mouse.button === Qt.RightButton) {
-                         TooltipService.hideImmediately()
-
-                         // Close the menu if it was visible
-                         if (trayPanel && trayPanel.visible) {
-                           trayPanel.close()
+          MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+            onClicked: mouse => {
+                         if (!modelData) {
                            return
                          }
 
-                         if (modelData.hasMenu && modelData.menu && trayMenu.item) {
-                           trayPanel.open()
+                         if (mouse.button === Qt.LeftButton) {
+                           // Close any open menu first
+                           trayPanel.close()
 
-                           // Position menu based on bar position
-                           let menuX, menuY
-                           if (barPosition === "left") {
-                             // For left bar: position menu to the right of the bar
-                             menuX = width + Style.marginM * scaling
-                             menuY = 0
-                           } else if (barPosition === "right") {
-                             // For right bar: position menu to the left of the bar
-                             menuX = -trayMenu.item.width - Style.marginM * scaling
-                             menuY = 0
-                           } else {
-                             // For horizontal bars: center horizontally and position below
-                             menuX = (width / 2) - (trayMenu.item.width / 2)
-                             menuY = Math.round(Style.barHeight * scaling)
+                           if (!modelData.onlyMenu) {
+                             modelData.activate()
                            }
-                           trayMenu.item.menu = modelData.menu
-                           trayMenu.item.showAt(parent, menuX, menuY)
-                         } else {
-                           Logger.log("Tray", "No menu available for", modelData.id, "or trayMenu not set")
+                         } else if (mouse.button === Qt.MiddleButton) {
+                           // Close any open menu first
+                           trayPanel.close()
+
+                           modelData.secondaryActivate && modelData.secondaryActivate()
+                         } else if (mouse.button === Qt.RightButton) {
+                           TooltipService.hideImmediately()
+
+                           // Close the menu if it was visible
+                           if (trayPanel && trayPanel.visible) {
+                             trayPanel.close()
+                             return
+                           }
+
+                           if (modelData.hasMenu && modelData.menu && trayMenu.item) {
+                             trayPanel.open()
+
+                             // Position menu based on bar position
+                             let menuX, menuY
+                             if (barPosition === "left") {
+                               // For left bar: position menu to the right of the bar
+                               menuX = width + Style.marginM
+                               menuY = 0
+                             } else if (barPosition === "right") {
+                               // For right bar: position menu to the left of the bar
+                               menuX = -trayMenu.item.width - Style.marginM
+                               menuY = 0
+                             } else {
+                               // For horizontal bars: center horizontally and position below
+                               menuX = (width / 2) - (trayMenu.item.width / 2)
+                               menuY = Style.barHeight
+                             }
+                             trayMenu.item.menu = modelData.menu
+                             trayMenu.item.showAt(parent, menuX, menuY)
+                           } else {
+                             Logger.log("Tray", "No menu available for", modelData.id, "or trayMenu not set")
+                           }
                          }
                        }
-                     }
-          onEntered: {
-            trayPanel.close()
-            TooltipService.show(Screen, trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection())
+            onEntered: {
+              trayPanel.close()
+              TooltipService.show(Screen, trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection())
+            }
+            onExited: TooltipService.hide()
           }
-          onExited: TooltipService.hide()
         }
       }
     }

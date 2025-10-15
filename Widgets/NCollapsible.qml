@@ -8,7 +8,7 @@ ColumnLayout {
   property string description: ""
   property bool expanded: false
   property bool defaultExpanded: false
-  property real contentSpacing: Style.marginM * scaling
+  property real contentSpacing: Style.marginM
   signal toggled(bool expanded)
 
   Layout.fillWidth: true
@@ -21,15 +21,15 @@ ColumnLayout {
   Rectangle {
     id: headerContainer
     Layout.fillWidth: true
-    Layout.preferredHeight: headerContent.implicitHeight + (Style.marginM * scaling * 2)
+    Layout.preferredHeight: headerContent.implicitHeight + (Style.marginM * 2)
 
     // Material 3 style background
     color: root.expanded ? Color.mSecondary : Color.mSurfaceVariant
-    radius: Style.radiusL * scaling
+    radius: Style.radiusL
 
     // Subtle border
     border.color: root.expanded ? Color.mOnSecondary : Color.mOutline
-    border.width: Math.max(1, Style.borderS * scaling)
+    border.width: Math.max(1, Style.borderS)
 
     // Smooth color transitions
     Behavior on color {
@@ -75,14 +75,14 @@ ColumnLayout {
     RowLayout {
       id: headerContent
       anchors.fill: parent
-      anchors.margins: Style.marginM * scaling
-      spacing: Style.marginM * scaling
+      anchors.margins: Style.marginM
+      spacing: Style.marginM
 
       // Expand/collapse icon with rotation animation
       NIcon {
         id: chevronIcon
         icon: "chevron-right"
-        pointSize: Style.fontSizeL * scaling
+        pointSize: Style.fontSizeL
         color: root.expanded ? Color.mOnSecondary : Color.mOnSurfaceVariant
         Layout.alignment: Qt.AlignVCenter
 
@@ -105,11 +105,11 @@ ColumnLayout {
       RowLayout {
         Layout.fillWidth: true
         Layout.alignment: Qt.AlignVCenter
-        spacing: Style.marginL * scaling
+        spacing: Style.marginL
 
         NText {
           text: root.label
-          pointSize: Style.fontSizeL * scaling
+          pointSize: Style.fontSizeL
           font.weight: Style.fontWeightSemiBold
           color: root.expanded ? Color.mOnSecondary : Color.mOnSurface
           wrapMode: Text.WordWrap
@@ -123,7 +123,7 @@ ColumnLayout {
 
         NText {
           text: root.description
-          pointSize: Style.fontSizeS * scaling
+          pointSize: Style.fontSizeS
           font.weight: Style.fontWeightRegular
           color: root.expanded ? Color.mOnSecondary : Color.mOnSurfaceVariant
           Layout.fillWidth: true
@@ -145,16 +145,16 @@ ColumnLayout {
   Rectangle {
     id: contentContainer
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginS * scaling
+    Layout.topMargin: Style.marginS
 
     visible: root.expanded
     color: Color.mSurface
-    radius: Style.radiusL * scaling
+    radius: Style.radiusL
     border.color: Color.mOutline
-    border.width: Math.max(1, Style.borderS * scaling)
+    border.width: Math.max(1, Style.borderS)
 
     // Dynamic height based on content
-    Layout.preferredHeight: visible ? contentLayout.implicitHeight + (Style.marginL * scaling * 2) : 0
+    Layout.preferredHeight: visible ? contentLayout.implicitHeight + (Style.marginL * 2) : 0
 
     // Smooth height animation
     Behavior on Layout.preferredHeight {
@@ -168,7 +168,7 @@ ColumnLayout {
     ColumnLayout {
       id: contentLayout
       anchors.fill: parent
-      anchors.margins: Style.marginL * scaling
+      anchors.margins: Style.marginL
       spacing: root.contentSpacing
     }
 

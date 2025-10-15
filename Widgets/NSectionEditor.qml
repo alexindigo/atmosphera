@@ -13,8 +13,14 @@ NBox {
   property string sectionId: ""
   property var widgetModel: []
   property var availableWidgets: []
+  property var availableSections: ["left", "center", "right"]
+  property int maxWidgets: -1 // -1 means unlimited
+
+  property var widgetRegistry: null
+  property string settingsDialogComponent: "BarWidgetSettingsDialog.qml"
 
   readonly property real miniButtonSize: Style.baseWidgetSize * 0.65
+  readonly property bool isAtMaxCapacity: maxWidgets > 0 && widgetModel.length >= maxWidgets
 
   signal addWidget(string widgetId, string section)
   signal removeWidget(string section, int index)
@@ -27,16 +33,26 @@ NBox {
   color: Color.mSurface
   Layout.fillWidth: true
   Layout.minimumHeight: {
-    var widgetCount = widgetModel.length
-    if (widgetCount === 0)
-      return 140 * scaling
+    // header + minimal content area
+    var absoluteMin = (Style.marginL * 2) + (Style.fontSizeL * 2) + Style.marginM + (65 * Style.uiScaleRatio)
 
-    var availableWidth = parent.width
-    var avgWidgetWidth = 150 * scaling
+    var widgetCount = widgetModel.length
+    if (widgetCount === 0) {
+      return absoluteMin
+    }
+
+    // Calculate rows based on estimated widget layout
+    var availableWidth = parent.width - (Style.marginL * 2)
+    var avgWidgetWidth = 120 * Style.uiScaleRatio // More accurate estimate
     var widgetsPerRow = Math.max(1, Math.floor(availableWidth / avgWidgetWidth))
     var rows = Math.ceil(widgetCount / widgetsPerRow)
 
-    return (50 + 20 + (rows * 48) + ((rows - 1) * Style.marginS) + 20) * scaling
+    // Header height + spacing + (rows * widget height) + (spacing between rows) + margins
+    var headerHeight = Style.fontSizeL * 2
+    var widgetHeight = Style.baseWidgetSize * 1.15 * Style.uiScaleRatio
+    var widgetAreaHeight = ((rows + 1) * widgetHeight) + ((rows - 1) * Style.marginS)
+
+    return Math.max(absoluteMin, (Style.marginL * 2) + headerHeight + Style.marginM + widgetAreaHeight)
   }
 
   // Generate widget color from name checksum
@@ -62,23 +78,34 @@ NBox {
 
   ColumnLayout {
     anchors.fill: parent
-    anchors.margins: Style.marginL * scaling
-    spacing: Style.marginM * scaling
+    anchors.margins: Style.marginL
+    spacing: Style.marginM
 
     RowLayout {
       Layout.fillWidth: true
 
       NText {
-        text: sectionName + " Section"
-        pointSize: Style.fontSizeL * scaling
+        text: sectionName
+        pointSize: Style.fontSizeL
         font.weight: Style.fontWeightBold
         color: Color.mOnSurface
         Layout.alignment: Qt.AlignVCenter
       }
 
+      // Widget count indicator (when max is set)
+      NText {
+        visible: root.maxWidgets > 0
+        text: "(" + widgetModel.length + "/" + root.maxWidgets + ")"
+        pointSize: Style.fontSizeS
+        color: root.isAtMaxCapacity ? Color.mError : Color.mOnSurfaceVariant
+        Layout.alignment: Qt.AlignVCenter
+        Layout.leftMargin: Style.marginXS
+      }
+
       Item {
         Layout.fillWidth: true
       }
+
       NSearchableComboBox {
         id: comboBox
         model: availableWidgets
@@ -87,8 +114,9 @@ NBox {
         placeholder: I18n.tr("bar.widget-settings.section-editor.placeholder")
         searchPlaceholder: I18n.tr("bar.widget-settings.section-editor.search-placeholder")
         onSelected: key => comboBox.currentKey = key
-        popupHeight: 340 * scaling
-        minimumWidth: 200 * scaling
+        popupHeight: 300 * Style.uiScaleRatio
+        minimumWidth: 200 * Style.uiScaleRatio
+        enabled: !root.isAtMaxCapacity
 
         Layout.alignment: Qt.AlignVCenter
 
@@ -110,12 +138,12 @@ NBox {
         colorFg: Color.mOnPrimary
         colorBgHover: Color.mSecondary
         colorFgHover: Color.mOnSecondary
-        enabled: comboBox.currentKey !== ""
-        tooltipText: I18n.tr("tooltips.add-widget")
+        enabled: comboBox.currentKey !== "" && !root.isAtMaxCapacity
+        tooltipText: root.isAtMaxCapacity ? I18n.tr("tooltips.max-widgets-reached") : I18n.tr("tooltips.add-widget")
         Layout.alignment: Qt.AlignVCenter
-        Layout.leftMargin: Style.marginS * scaling
+        Layout.leftMargin: Style.marginS
         onClicked: {
-          if (comboBox.currentKey !== "") {
+          if (comboBox.currentKey !== "" && !root.isAtMaxCapacity) {
             addWidget(comboBox.currentKey, sectionId)
             comboBox.currentKey = ""
           }
@@ -127,13 +155,13 @@ NBox {
     Item {
       Layout.fillWidth: true
       Layout.fillHeight: true
-      Layout.minimumHeight: 65 * scaling
+      Layout.minimumHeight: 65 * Style.uiScaleRatio
       clip: false // Don't clip children so ghost can move freely
 
       Flow {
         id: widgetFlow
         anchors.fill: parent
-        spacing: Style.marginS * scaling
+        spacing: Style.marginS
         flow: Flow.LeftToRight
 
         Repeater {
@@ -144,17 +172,17 @@ NBox {
             required property int index
             required property var modelData
 
-            width: widgetContent.implicitWidth + Style.marginL * scaling
-            height: Style.baseWidgetSize * 1.15 * scaling
-            radius: Style.radiusL * scaling
+            width: widgetContent.implicitWidth + Style.marginL
+            height: Style.baseWidgetSize * 1.15 * Style.uiScaleRatio
+            radius: Style.radiusL
             color: root.getWidgetColor(modelData)[0]
             border.color: Color.mOutline
-            border.width: Math.max(1, Style.borderS * scaling)
+            border.width: Math.max(1, Style.borderS)
 
             // Store the widget index for drag operations
             property int widgetIndex: index
-            readonly property int buttonsWidth: Math.round(20 * scaling)
-            readonly property int buttonsCount: 1 + BarWidgetRegistry.widgetHasUserSettings(modelData.id)
+            readonly property int buttonsWidth: Math.round(20)
+            readonly property int buttonsCount: 1 + (root.widgetRegistry ? root.widgetRegistry.widgetHasUserSettings(modelData.id) : 0)
 
             // Visual feedback during drag
             opacity: flowDragArea.draggedIndex === index ? 0.5 : 1.0
@@ -176,30 +204,31 @@ NBox {
             NContextMenu {
               id: contextMenu
               parent: Overlay.overlay
-              width: 240 * scaling
+              width: 240 * Style.uiScaleRatio
               model: [{
                   "label": I18n.tr("tooltips.move-to-left-section"),
                   "action": "left",
                   "icon": "arrow-bar-to-left",
-                  "visible": root.sectionId !== "left"
+                  "visible": root.availableSections.includes("left") && root.sectionId !== "left"
                 }, {
                   "label": I18n.tr("tooltips.move-to-center-section"),
                   "action": "center",
                   "icon": "layout-columns",
-                  "visible": root.sectionId !== "center"
+                  "visible": root.availableSections.includes("center") && root.sectionId !== "center"
                 }, {
                   "label": I18n.tr("tooltips.move-to-right-section"),
                   "action": "right",
                   "icon": "arrow-bar-to-right",
-                  "visible": root.sectionId !== "right"
+                  "visible": root.availableSections.includes("right") && root.sectionId !== "right"
                 }]
 
               onTriggered: action => root.moveWidget(root.sectionId, index, action)
             }
 
-            // Update the MouseArea to use the new context menu
+            // MouseArea for the context menu
             MouseArea {
               id: contextMouseArea
+              enabled: root.availableSections.length > 1 // Enable if there are other sections to move to
               anchors.fill: parent
               acceptedButtons: Qt.RightButton
               z: -1 // Below the buttons but above background
@@ -209,9 +238,7 @@ NBox {
                              // Check if click is not on the buttons area
                              const localX = mouse.x
                              const buttonsStartX = parent.width - (parent.buttonsCount * parent.buttonsWidth)
-
                              if (localX < buttonsStartX) {
-                               // Use the helper function to open at mouse position
                                contextMenu.openAtItem(widgetItem, mouse.x, mouse.y)
                              }
                            }
@@ -220,23 +247,23 @@ NBox {
             RowLayout {
               id: widgetContent
               anchors.centerIn: parent
-              spacing: Style.marginXXS * scaling
+              spacing: Style.marginXXS
 
               NText {
                 text: modelData.id
-                pointSize: Style.fontSizeS * scaling
+                pointSize: Style.fontSizeXS
                 color: root.getWidgetColor(modelData)[1]
                 horizontalAlignment: Text.AlignHCenter
                 elide: Text.ElideRight
-                Layout.preferredWidth: 80 * scaling
+                Layout.preferredWidth: 60 * Style.uiScaleRatio
               }
 
               RowLayout {
                 spacing: 0
-                Layout.preferredWidth: buttonsCount * buttonsWidth
+                Layout.preferredWidth: buttonsCount * buttonsWidth * Style.uiScaleRatio
 
                 Loader {
-                  active: BarWidgetRegistry.widgetHasUserSettings(modelData.id)
+                  active: root.widgetRegistry && root.widgetRegistry.widgetHasUserSettings(modelData.id)
                   sourceComponent: NIconButton {
                     icon: "settings"
                     tooltipText: I18n.tr("tooltips.widget-settings")
@@ -247,7 +274,7 @@ NBox {
                     colorBgHover: Qt.alpha(Color.mOnPrimary, Style.opacityLight)
                     colorFgHover: Color.mOnPrimary
                     onClicked: {
-                      var component = Qt.createComponent(Qt.resolvedUrl("BarWidgetSettingsDialog.qml"))
+                      var component = Qt.createComponent(Qt.resolvedUrl(root.settingsDialogComponent))
                       function instantiateAndOpen() {
                         var dialog = component.createObject(root, {
                                                               "widgetIndex": index,
@@ -258,19 +285,19 @@ NBox {
                         if (dialog) {
                           dialog.open()
                         } else {
-                          Logger.error("BarSectionEditor", "Failed to create settings dialog instance")
+                          Logger.error("NSectionEditor", "Failed to create settings dialog instance")
                         }
                       }
                       if (component.status === Component.Ready) {
                         instantiateAndOpen()
                       } else if (component.status === Component.Error) {
-                        Logger.error("BarSectionEditor", component.errorString())
+                        Logger.error("NSectionEditor", component.errorString())
                       } else {
                         component.statusChanged.connect(function () {
                           if (component.status === Component.Ready) {
                             instantiateAndOpen()
                           } else if (component.status === Component.Error) {
-                            Logger.error("BarSectionEditor", component.errorString())
+                            Logger.error("NSectionEditor", component.errorString())
                           }
                         })
                       }
@@ -301,11 +328,11 @@ NBox {
       Rectangle {
         id: dragGhost
         width: 0
-        height: Style.baseWidgetSize * 1.15 * scaling
-        radius: Style.radiusL * scaling
+        height: Style.baseWidgetSize * 1.15
+        radius: Style.radiusL
         color: Color.transparent
         border.color: Color.mOutline
-        border.width: Math.max(1, Style.borderS * scaling)
+        border.width: Math.max(1, Style.borderS)
         opacity: 0.7
         visible: flowDragArea.dragStarted
         z: 2000
@@ -314,7 +341,7 @@ NBox {
         NText {
           id: ghostText
           anchors.centerIn: parent
-          pointSize: Style.fontSizeS * scaling
+          pointSize: Style.fontSizeS
           color: Color.mOnPrimary
         }
       }
@@ -322,8 +349,8 @@ NBox {
       // Drop indicator - visual feedback for where the widget will be inserted
       Rectangle {
         id: dropIndicator
-        width: 3 * scaling
-        height: Style.baseWidgetSize * 1.15 * scaling
+        width: 3
+        height: Style.baseWidgetSize * 1.15
         radius: width / 2
         color: Color.mPrimary
         opacity: 0
@@ -375,7 +402,7 @@ NBox {
         property bool dragStarted: false
         property bool potentialDrag: false // Track if we're in a potential drag interaction
         property int draggedIndex: -1
-        property real dragThreshold: 15 * scaling
+        property real dragThreshold: 15
         property Item draggedWidget: null
         property int dropTargetIndex: -1
         property var draggedModelData: null
@@ -410,13 +437,13 @@ NBox {
             if (leftDist < minDistance) {
               minDistance = leftDist
               bestIndex = i
-              bestPosition = Qt.point(widget.x - dropIndicator.width / 2 - Style.marginXS * scaling, widget.y)
+              bestPosition = Qt.point(widget.x - dropIndicator.width / 2 - Style.marginXS, widget.y)
             }
 
             if (rightDist < minDistance) {
               minDistance = rightDist
               bestIndex = i + 1
-              bestPosition = Qt.point(widget.x + widget.width + Style.marginXS * scaling - dropIndicator.width / 2, widget.y)
+              bestPosition = Qt.point(widget.x + widget.width + Style.marginXS - dropIndicator.width / 2, widget.y)
             }
           }
 
@@ -428,13 +455,13 @@ NBox {
               if (dist < minDistance && mouseX < firstWidget.x + firstWidget.width / 2) {
                 minDistance = dist
                 bestIndex = 0
-                bestPosition = Qt.point(Math.max(0, firstWidget.x - dropIndicator.width - Style.marginS * scaling), firstWidget.y)
+                bestPosition = Qt.point(Math.max(0, firstWidget.x - dropIndicator.width - Style.marginS), firstWidget.y)
               }
             }
           }
 
           // Only show indicator if we're close enough and it's a different position
-          if (minDistance < 80 * scaling && bestIndex !== -1) {
+          if (minDistance < 80 && bestIndex !== -1) {
             // Adjust index if we're moving forward
             let adjustedIndex = bestIndex
             if (bestIndex > draggedIndex) {

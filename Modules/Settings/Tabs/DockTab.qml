@@ -9,7 +9,7 @@ import qs.Widgets
 ColumnLayout {
   id: root
 
-  spacing: Style.marginL * scaling
+  spacing: Style.marginL
 
   // Helper functions to update arrays immutably
   function addMonitor(list, name) {
@@ -29,34 +29,28 @@ ColumnLayout {
     description: I18n.tr("settings.dock.appearance.section.description")
   }
 
-  ColumnLayout {
-    spacing: Style.marginXXS * scaling
+  NComboBox {
     Layout.fillWidth: true
-    NLabel {
-      label: I18n.tr("settings.dock.appearance.display.label")
-      description: I18n.tr("settings.dock.appearance.display.description")
-    }
-    NComboBox {
-      Layout.fillWidth: true
-      model: [{
-          "key": "always_visible",
-          "name": I18n.tr("settings.dock.appearance.display.always-visible")
-        }, {
-          "key": "auto_hide",
-          "name": I18n.tr("settings.dock.appearance.display.auto-hide")
-        }, {
-          "key": "exclusive",
-          "name": I18n.tr("settings.dock.appearance.display.exclusive")
-        }]
-      currentKey: Settings.data.dock.displayMode
-      onSelected: key => {
-                    Settings.data.dock.displayMode = key
-                  }
-    }
+    label: I18n.tr("settings.dock.appearance.display.label")
+    description: I18n.tr("settings.dock.appearance.display.description")
+    model: [{
+        "key": "always_visible",
+        "name": I18n.tr("settings.dock.appearance.display.always-visible")
+      }, {
+        "key": "auto_hide",
+        "name": I18n.tr("settings.dock.appearance.display.auto-hide")
+      }, {
+        "key": "exclusive",
+        "name": I18n.tr("settings.dock.appearance.display.exclusive")
+      }]
+    currentKey: Settings.data.dock.displayMode
+    onSelected: key => {
+                  Settings.data.dock.displayMode = key
+                }
   }
 
   ColumnLayout {
-    spacing: Style.marginXXS * scaling
+    spacing: Style.marginXXS
     Layout.fillWidth: true
     NLabel {
       label: I18n.tr("settings.dock.appearance.background-opacity.label")
@@ -74,7 +68,7 @@ ColumnLayout {
   }
 
   ColumnLayout {
-    spacing: Style.marginXXS * scaling
+    spacing: Style.marginXXS
     Layout.fillWidth: true
 
     NLabel {
@@ -93,15 +87,30 @@ ColumnLayout {
     }
   }
 
+  NToggle {
+    label: I18n.tr("settings.dock.monitors.only-same-output.label")
+    description: I18n.tr("settings.dock.monitors.only-same-output.description")
+    checked: Settings.data.dock.onlySameOutput
+    onToggled: checked => Settings.data.dock.onlySameOutput = checked
+  }
+
+  NToggle {
+    Layout.fillWidth: true
+    label: I18n.tr("settings.dock.appearance.colorize-icons.label")
+    description: I18n.tr("settings.dock.appearance.colorize-icons.description")
+    checked: Settings.data.dock.colorizeIcons
+    onToggled: checked => Settings.data.dock.colorizeIcons = checked
+  }
+
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
   }
 
   // Monitor Configuration
   ColumnLayout {
-    spacing: Style.marginM * scaling
+    spacing: Style.marginM
     Layout.fillWidth: true
 
     NHeader {
@@ -114,11 +123,15 @@ ColumnLayout {
       delegate: NCheckbox {
         Layout.fillWidth: true
         label: modelData.name || "Unknown"
-        description: I18n.tr("system.monitor-description", {
-                               "model": modelData.model,
-                               "width": modelData.width,
-                               "height": modelData.height
-                             })
+        description: {
+          const compositorScale = CompositorService.getDisplayScale(modelData.name)
+          I18n.tr("system.monitor-description", {
+                    "model": modelData.model,
+                    "width": modelData.width * compositorScale,
+                    "height": modelData.height * compositorScale,
+                    "scale": compositorScale
+                  })
+        }
         checked: (Settings.data.dock.monitors || []).indexOf(modelData.name) !== -1
         onToggled: checked => {
                      if (checked) {
@@ -131,16 +144,9 @@ ColumnLayout {
     }
   }
 
-  NToggle {
-    label: I18n.tr("settings.dock.monitors.only-same-output.label")
-    description: I18n.tr("settings.dock.monitors.only-same-output.description")
-    checked: Settings.data.dock.onlySameOutput
-    onToggled: checked => Settings.data.dock.onlySameOutput = checked
-  }
-
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
   }
 }

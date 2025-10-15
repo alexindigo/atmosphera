@@ -54,7 +54,7 @@ Singleton {
     function onVolumeChanged() {
       var vol = (sink?.audio.volume ?? 0)
       if (isNaN(vol)) {
-        vol = 0
+        return
       }
       root._volume = vol
     }
@@ -72,7 +72,7 @@ Singleton {
     function onVolumeChanged() {
       var vol = (source?.audio.volume ?? 0)
       if (isNaN(vol)) {
-        vol = 0
+        return
       }
       root._inputVolume = vol
     }
@@ -109,6 +109,14 @@ Singleton {
     } else {
       Logger.warn("AudioService", "No sink available")
     }
+  }
+
+  function increaseInputVolume() {
+    setInputVolume(inputVolume + stepVolume)
+  }
+
+  function decreaseInputVolume() {
+    setInputVolume(inputVolume - stepVolume)
   }
 
   function setInputVolume(newVolume: real) {

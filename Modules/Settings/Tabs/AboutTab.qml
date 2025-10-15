@@ -15,7 +15,7 @@ ColumnLayout {
   property string currentVersion: UpdateService.currentVersion
   property var contributors: GitHubService.contributors
 
-  spacing: Style.marginL * scaling
+  spacing: Style.marginL
 
   NHeader {
     label: I18n.tr("settings.about.noctalia.section.label")
@@ -23,13 +23,13 @@ ColumnLayout {
   }
 
   RowLayout {
-    spacing: Style.marginXL * scaling
+    spacing: Style.marginXL
 
     // Versions
     GridLayout {
       columns: 2
-      rowSpacing: Style.marginXS * scaling
-      columnSpacing: Style.marginS * scaling
+      rowSpacing: Style.marginXS
+      columnSpacing: Style.marginS
 
       NText {
         text: I18n.tr("settings.about.noctalia.latest-version")
@@ -76,17 +76,66 @@ ColumnLayout {
       icon: "download"
       text: I18n.tr("settings.about.noctalia.download-latest")
       outlined: !hovered
-      fontSize: Style.fontSizeXS * scaling
+      fontSize: Style.fontSizeXS
       onClicked: {
         Quickshell.execDetached(["xdg-open", "https://github.com/Ly-sec/Noctalia/releases/latest"])
       }
     }
   }
 
+  // Ko-fi support button
+  Rectangle {
+    Layout.alignment: Qt.AlignHCenter
+    Layout.topMargin: Style.marginM
+    Layout.bottomMargin: Style.marginM
+    width: supportRow.implicitWidth + Style.marginXL
+    height: supportRow.implicitHeight + Style.marginM
+    radius: Style.radiusS
+    color: supportArea.containsMouse ? Qt.alpha(Color.mOnSurface, 0.05) : Color.transparent
+    border.width: 0
+
+    Behavior on color {
+      ColorAnimation {
+        duration: Style.animationFast
+      }
+    }
+
+    RowLayout {
+      id: supportRow
+      anchors.centerIn: parent
+      spacing: Style.marginS
+
+      NText {
+        text: I18n.tr("settings.about.support")
+        pointSize: Style.fontSizeXS
+        color: Color.mOnSurface
+        opacity: supportArea.containsMouse ? Style.opacityFull : Style.opacityMedium
+      }
+
+      NIcon {
+        icon: supportArea.containsMouse ? "heart-filled" : "heart"
+        pointSize: 14
+        color: Color.mOnSurface
+        opacity: supportArea.containsMouse ? Style.opacityFull : Style.opacityMedium
+      }
+    }
+
+    MouseArea {
+      id: supportArea
+      anchors.fill: parent
+      hoverEnabled: true
+      cursorShape: Qt.PointingHandCursor
+      onClicked: {
+        Quickshell.execDetached(["xdg-open", "https://ko-fi.com/lysec"])
+        ToastService.showNotice(I18n.tr("settings.about.support"), I18n.tr("toast.kofi.opened"), 3000)
+      }
+    }
+  }
+
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
+    Layout.topMargin: Style.marginXXXL
+    Layout.bottomMargin: Style.marginXL
   }
 
   // Contributors
@@ -101,23 +150,26 @@ ColumnLayout {
 
   GridView {
     id: contributorsGrid
+
+    readonly property int columnsCount: 2
+
     Layout.alignment: Qt.AlignHCenter
-    Layout.preferredWidth: cellWidth * 3 // Fixed 3 columns
+    Layout.preferredWidth: cellWidth * columnsCount
     Layout.preferredHeight: {
       if (root.contributors.length === 0)
         return 0
-      const columns = 3
-      const rows = Math.ceil(root.contributors.length / columns)
+
+      const rows = Math.ceil(root.contributors.length / columnsCount)
       return rows * cellHeight
     }
-    cellWidth: Style.baseWidgetSize * 7 * scaling
-    cellHeight: Style.baseWidgetSize * 3 * scaling
+    cellWidth: Math.round(Style.baseWidgetSize * 7)
+    cellHeight: Math.round(Style.baseWidgetSize * 2.5)
     model: root.contributors
 
     delegate: Rectangle {
-      width: contributorsGrid.cellWidth - Style.marginM * scaling
-      height: contributorsGrid.cellHeight - Style.marginM * scaling
-      radius: Style.radiusL * scaling
+      width: contributorsGrid.cellWidth - Style.marginM
+      height: contributorsGrid.cellHeight - Style.marginM
+      radius: Style.radiusL
       color: contributorArea.containsMouse ? Color.mTertiary : Color.transparent
 
       Behavior on color {
@@ -128,21 +180,21 @@ ColumnLayout {
 
       RowLayout {
         anchors.fill: parent
-        anchors.margins: Style.marginS * scaling
-        spacing: Style.marginM * scaling
+        anchors.margins: Style.marginS
+        spacing: Style.marginM
 
         Item {
           Layout.alignment: Qt.AlignVCenter
-          Layout.preferredWidth: Style.baseWidgetSize * 2 * scaling
-          Layout.preferredHeight: Style.baseWidgetSize * 2 * scaling
+          Layout.preferredWidth: Style.baseWidgetSize * 2 * Style.uiScaleRatio
+          Layout.preferredHeight: Style.baseWidgetSize * 2 * Style.uiScaleRatio
 
           NImageCircled {
             imagePath: modelData.avatar_url || ""
             anchors.fill: parent
-            anchors.margins: Style.marginXS * scaling
+            anchors.margins: Style.marginXS
             fallbackIcon: "person"
             borderColor: contributorArea.containsMouse ? Color.mOnTertiary : Color.mPrimary
-            borderWidth: Math.max(1, Style.borderM * scaling)
+            borderWidth: Math.max(1, Style.borderM)
 
             Behavior on borderColor {
               ColorAnimation {
@@ -153,7 +205,7 @@ ColumnLayout {
         }
 
         ColumnLayout {
-          spacing: Style.marginXS * scaling
+          spacing: Style.marginXS
           Layout.alignment: Qt.AlignVCenter
           Layout.fillWidth: true
 
@@ -167,8 +219,8 @@ ColumnLayout {
 
           NText {
             text: (modelData.contributions || 0) + " " + ((modelData.contributions || 0) === 1 ? "commit" : "commits")
-            pointSize: Style.fontSizeXS * scaling
-            color: contributorArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface
+            pointSize: Style.fontSizeXS
+            color: contributorArea.containsMouse ? Color.mOnTertiary : Color.mOnSurfaceVariant
           }
         }
       }
@@ -185,9 +237,5 @@ ColumnLayout {
         }
       }
     }
-  }
-
-  Item {
-    Layout.fillHeight: true
   }
 }

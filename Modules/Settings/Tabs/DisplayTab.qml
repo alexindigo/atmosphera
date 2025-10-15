@@ -49,7 +49,7 @@ ColumnLayout {
     stderr: StdioCollector {}
   }
 
-  spacing: Style.marginL * scaling
+  spacing: Style.marginL
 
   NHeader {
     label: I18n.tr("settings.display.monitors.section.label")
@@ -57,107 +57,53 @@ ColumnLayout {
   }
 
   ColumnLayout {
-    spacing: Style.marginL * scaling
+    spacing: Style.marginL
 
     Repeater {
       model: Quickshell.screens || []
       delegate: Rectangle {
         Layout.fillWidth: true
-        implicitHeight: contentCol.implicitHeight + Style.marginL * 2 * scaling
-        radius: Style.radiusM * scaling
+        implicitHeight: contentCol.implicitHeight + Style.marginL * 2
+        radius: Style.radiusM
         color: Color.mSurfaceVariant
         border.color: Color.mOutline
-        border.width: Math.max(1, Style.borderS * scaling)
+        border.width: Math.max(1, Style.borderS)
 
-        property real localScaling: ScalingService.getScreenScale(modelData)
         property var brightnessMonitor: BrightnessService.getMonitorForScreen(modelData)
-
-        Connections {
-          target: ScalingService
-          function onScaleChanged(screenName, scale) {
-            if (screenName === modelData.name) {
-              localScaling = scale
-            }
-          }
-        }
 
         ColumnLayout {
           id: contentCol
-          width: parent.width - 2 * Style.marginL * scaling
-          x: Style.marginL * scaling
-          y: Style.marginL * scaling
-          spacing: Style.marginXXS * scaling
+          width: parent.width - 2 * Style.marginL
+          x: Style.marginL
+          y: Style.marginL
+          spacing: Style.marginXXS
 
           NLabel {
             label: modelData.name || "Unknown"
-            description: I18n.tr("system.monitor-description", {
-                                   "model": modelData.model,
-                                   "width": modelData.width,
-                                   "height": modelData.height
-                                 })
-          }
-
-          // Scale
-          ColumnLayout {
-            spacing: Style.marginS * scaling
-            Layout.fillWidth: true
-
-            RowLayout {
-              spacing: Style.marginL * scaling
-              Layout.fillWidth: true
-
-              NText {
-                text: I18n.tr("settings.display.monitors.scale")
-                Layout.preferredWidth: 90 * scaling
-                Layout.alignment: Qt.AlignVCenter
-              }
-
-              NValueSlider {
-                id: scaleSlider
-                from: 0.7
-                to: 1.8
-                stepSize: 0.01
-                value: localScaling
-                onPressedChanged: (pressed, value) => ScalingService.setScreenScale(modelData, value)
-                Layout.fillWidth: true
-              }
-
-              NText {
-                text: I18n.tr("system.scaling-percentage", {
-                                "percentage": Math.round(scaleSlider.value * 100)
-                              })
-                Layout.preferredWidth: 55 * scaling
-                horizontalAlignment: Text.AlignRight
-                Layout.alignment: Qt.AlignVCenter
-              }
-
-              Item {
-                Layout.preferredWidth: 30 * scaling
-                Layout.fillHeight: true
-                NIconButton {
-                  icon: "refresh"
-                  baseSize: Style.baseWidgetSize * 0.8
-                  tooltipText: I18n.tr("settings.display.monitors.reset-scaling")
-                  onClicked: ScalingService.setScreenScale(modelData, 1.0)
-                  anchors.centerIn: parent
-                }
-              }
+            description: {
+              const compositorScale = CompositorService.getDisplayScale(modelData.name)
+              I18n.tr("system.monitor-description", {
+                        "model": modelData.model,
+                        "width": modelData.width * compositorScale,
+                        "height": modelData.height * compositorScale,
+                        "scale": compositorScale
+                      })
             }
           }
 
           // Brightness
           ColumnLayout {
-            spacing: Style.marginS * scaling
+            spacing: Style.marginS
             Layout.fillWidth: true
             visible: brightnessMonitor !== undefined && brightnessMonitor !== null
 
             RowLayout {
               Layout.fillWidth: true
-              spacing: Style.marginL * scaling
+              spacing: Style.marginL
 
               NText {
                 text: I18n.tr("settings.display.monitors.brightness")
-                Layout.preferredWidth: 90 * scaling
+                Layout.preferredWidth: 90
                 Layout.alignment: Qt.AlignVCenter
               }
 
@@ -167,19 +113,24 @@ ColumnLayout {
                 to: 1
                 value: brightnessMonitor ? brightnessMonitor.brightness : 0.5
                 stepSize: 0.01
+                onMoved: value => {
+                           if (brightnessMonitor.method === "internal") {
+                             brightnessMonitor.setBrightness(value)
+                           }
+                         }
                 onPressedChanged: (pressed, value) => brightnessMonitor.setBrightness(value)
                 Layout.fillWidth: true
               }
 
               NText {
                 text: brightnessMonitor ? Math.round(brightnessSlider.value * 100) + "%" : "N/A"
-                Layout.preferredWidth: 55 * scaling
+                Layout.preferredWidth: 55
                 horizontalAlignment: Text.AlignRight
                 Layout.alignment: Qt.AlignVCenter
               }
 
               Item {
-                Layout.preferredWidth: 30 * scaling
+                Layout.preferredWidth: 30
                 Layout.fillHeight: true
                 NIcon {
                   icon: brightnessMonitor.method == "internal" ? "device-laptop" : "device-desktop"
@@ -208,13 +159,13 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
   }
 
   // Night Light Section
   ColumnLayout {
-    spacing: Style.marginXS * scaling
+    spacing: Style.marginXS
     Layout.fillWidth: true
 
     NHeader {
@@ -242,7 +193,7 @@ ColumnLayout {
 
   // Temperature
   ColumnLayout {
-    spacing: Style.marginXS * scaling
+    spacing: Style.marginXS
     Layout.alignment: Qt.AlignVCenter
 
     NLabel {
@@ -252,14 +203,14 @@ ColumnLayout {
 
     RowLayout {
       visible: Settings.data.nightLight.enabled
-      spacing: Style.marginM * scaling
+      spacing: Style.marginM
       Layout.fillWidth: false
       Layout.fillHeight: true
       Layout.alignment: Qt.AlignVCenter
 
       NText {
         text: I18n.tr("settings.display.night-light.temperature.night")
-        pointSize: Style.fontSizeM * scaling
+        pointSize: Style.fontSizeM
         color: Color.mOnSurfaceVariant
         Layout.alignment: Qt.AlignVCenter
       }
@@ -281,7 +232,7 @@ ColumnLayout {
 
       NText {
         text: I18n.tr("settings.display.night-light.temperature.day")
-        pointSize: Style.fontSizeM * scaling
+        pointSize: Style.fontSizeM
         color: Color.mOnSurfaceVariant
         Layout.alignment: Qt.AlignVCenter
       }
@@ -314,7 +265,7 @@ ColumnLayout {
 
   // Manual scheduling
   ColumnLayout {
-    spacing: Style.marginS * scaling
+    spacing: Style.marginS
     visible: Settings.data.nightLight.enabled && !Settings.data.nightLight.autoSchedule && !Settings.data.nightLight.forced
 
     NLabel {
@@ -324,11 +275,11 @@ ColumnLayout {
 
     RowLayout {
       Layout.fillWidth: false
-      spacing: Style.marginS * scaling
+      spacing: Style.marginS
 
       NText {
         text: I18n.tr("settings.display.night-light.manual-schedule.sunrise")
-        pointSize: Style.fontSizeM * scaling
+        pointSize: Style.fontSizeM
         color: Color.mOnSurfaceVariant
       }
 
@@ -337,16 +288,16 @@ ColumnLayout {
         currentKey: Settings.data.nightLight.manualSunrise
         placeholder: I18n.tr("settings.display.night-light.manual-schedule.select-start")
         onSelected: key => Settings.data.nightLight.manualSunrise = key
-        minimumWidth: 120 * scaling
+        minimumWidth: 120
       }
 
       Item {
-        Layout.preferredWidth: 20 * scaling
+        Layout.preferredWidth: 20
       }
 
       NText {
         text: I18n.tr("settings.display.night-light.manual-schedule.sunset")
-        pointSize: Style.fontSizeM * scaling
+        pointSize: Style.fontSizeM
         color: Color.mOnSurfaceVariant
       }
 
@@ -355,7 +306,7 @@ ColumnLayout {
         currentKey: Settings.data.nightLight.manualSunset
         placeholder: I18n.tr("settings.display.night-light.manual-schedule.select-stop")
         onSelected: key => Settings.data.nightLight.manualSunset = key
-        minimumWidth: 120 * scaling
+        minimumWidth: 120
       }
     }
   }
@@ -379,7 +330,7 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
   }
 }

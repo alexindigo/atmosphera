@@ -8,7 +8,7 @@ import qs.Widgets
 
 ColumnLayout {
   id: root
-  spacing: Style.marginL * scaling
+  spacing: Style.marginL
 
   NHeader {
     label: I18n.tr("settings.audio.volumes.section.label")
@@ -26,7 +26,7 @@ ColumnLayout {
 
   // Master Volume
   ColumnLayout {
-    spacing: Style.marginXXS * scaling
+    spacing: Style.marginXXS
     Layout.fillWidth: true
 
     NLabel {
@@ -61,7 +61,7 @@ ColumnLayout {
 
   // Mute Toggle
   ColumnLayout {
-    spacing: Style.marginS * scaling
+    spacing: Style.marginS
     Layout.fillWidth: true
 
     NToggle {
@@ -78,7 +78,7 @@ ColumnLayout {
 
   // Input Volume
   ColumnLayout {
-    spacing: Style.marginXS * scaling
+    spacing: Style.marginXS
     Layout.fillWidth: true
 
     NLabel {
@@ -99,7 +99,7 @@ ColumnLayout {
 
   // Input Mute Toggle
   ColumnLayout {
-    spacing: Style.marginS * scaling
+    spacing: Style.marginS
     Layout.fillWidth: true
 
     NToggle {
@@ -112,7 +112,7 @@ ColumnLayout {
 
   // Volume Step Size
   ColumnLayout {
-    spacing: Style.marginS * scaling
+    spacing: Style.marginS
     Layout.fillWidth: true
 
     NSpinBox {
@@ -130,7 +130,7 @@ ColumnLayout {
 
   // Raise maximum volume above 100%
   ColumnLayout {
-    spacing: Style.marginS * scaling
+    spacing: Style.marginS
     Layout.fillWidth: true
 
     NToggle {
@@ -143,13 +143,13 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
   }
 
   // AudioService Devices
   ColumnLayout {
-    spacing: Style.marginS * scaling
+    spacing: Style.marginS
     Layout.fillWidth: true
 
     NHeader {
@@ -164,9 +164,9 @@ ColumnLayout {
     }
 
     ColumnLayout {
-      spacing: Style.marginXS * scaling
+      spacing: Style.marginXS
       Layout.fillWidth: true
-      Layout.bottomMargin: Style.marginL * scaling
+      Layout.bottomMargin: Style.marginL
 
       NLabel {
         label: I18n.tr("settings.audio.devices.output-device.label")
@@ -196,7 +196,7 @@ ColumnLayout {
     }
 
     ColumnLayout {
-      spacing: Style.marginXS * scaling
+      spacing: Style.marginXS
       Layout.fillWidth: true
 
       NLabel {
@@ -222,13 +222,13 @@ ColumnLayout {
   // Divider
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
   }
 
   // Media Player Preferences
   ColumnLayout {
-    spacing: Style.marginL * scaling
+    spacing: Style.marginL
 
     NHeader {
       label: I18n.tr("settings.audio.media.section.label")
@@ -249,11 +249,11 @@ ColumnLayout {
 
     // Blacklist editor
     ColumnLayout {
-      spacing: Style.marginS * scaling
+      spacing: Style.marginS
       Layout.fillWidth: true
 
       RowLayout {
-        spacing: Style.marginS * scaling
+        spacing: Style.marginS
         Layout.fillWidth: true
 
         NTextInput {
@@ -267,7 +267,7 @@ ColumnLayout {
         NIconButton {
           icon: "add"
           Layout.alignment: Qt.AlignBottom
-          Layout.bottomMargin: blacklistInput.description ? Style.marginS * scaling : 0
+          Layout.bottomMargin: blacklistInput.description ? Style.marginS : 0
           onClicked: {
             const val = (blacklistInput.text || "").trim()
             if (val !== "") {
@@ -285,40 +285,40 @@ ColumnLayout {
       // Current blacklist entries
       Flow {
         Layout.fillWidth: true
-        Layout.leftMargin: Style.marginS * scaling
-        spacing: Style.marginS * scaling
+        Layout.leftMargin: Style.marginS
+        spacing: Style.marginS
 
         Repeater {
           model: Settings.data.audio.mprisBlacklist
           delegate: Rectangle {
             required property string modelData
             // Padding around the inner row
-            property real pad: Style.marginS * scaling
+            property real pad: Style.marginS
             // Visuals
             color: Qt.alpha(Color.mOnSurface, 0.125)
             border.color: Qt.alpha(Color.mOnSurface, Style.opacityLight)
-            border.width: Math.max(1, Style.borderS * scaling)
+            border.width: Math.max(1, Style.borderS)
 
             // Content
             RowLayout {
               id: chipRow
-              spacing: Style.marginXS * scaling
+              spacing: Style.marginXS
               anchors.fill: parent
               anchors.margins: pad
 
               NText {
                 text: modelData
                 color: Color.mOnSurface
-                pointSize: Style.fontSizeS * scaling
+                pointSize: Style.fontSizeS
                 Layout.alignment: Qt.AlignVCenter
-                Layout.leftMargin: Style.marginS * scaling
+                Layout.leftMargin: Style.marginS
               }
 
               NIconButton {
                 icon: "close"
                 baseSize: Style.baseWidgetSize * 0.8
                 Layout.alignment: Qt.AlignVCenter
-                Layout.rightMargin: Style.marginXS * scaling
+                Layout.rightMargin: Style.marginXS
                 onClicked: {
                   const arr = (Settings.data.audio.mprisBlacklist || [])
                   const idx = arr.findIndex(x => String(x) === modelData)
@@ -333,8 +333,8 @@ ColumnLayout {
 
             // Intrinsic size derived from inner row + padding
             implicitWidth: chipRow.implicitWidth + pad * 2
-            implicitHeight: Math.max(chipRow.implicitHeight + pad * 2, Style.baseWidgetSize * 0.8 * scaling)
-            radius: Style.radiusM * scaling
+            implicitHeight: Math.max(chipRow.implicitHeight + pad * 2, Style.baseWidgetSize * 0.8)
+            radius: Style.radiusM
           }
         }
       }
@@ -407,7 +407,7 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
   }
 }

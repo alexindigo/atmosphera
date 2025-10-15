@@ -1,7 +1,4 @@
 
-[cursor]
-color=faf4ed 575279
-
 [colors]
 foreground=575279
 background=faf4ed
@@ -23,3 +20,4 @@ bright6=d7827e
 bright7=575279
 selection-foreground=575279
 selection-background=dfdad9
+cursor=faf4ed 575279

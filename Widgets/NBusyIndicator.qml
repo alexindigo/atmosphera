@@ -7,8 +7,8 @@ Item {
 
   property bool running: true
   property color color: Color.mPrimary
-  property int size: Style.baseWidgetSize * scaling
-  property int strokeWidth: Style.borderL * scaling
+  property int size: Style.baseWidgetSize
+  property int strokeWidth: Style.borderL
   property int duration: Style.animationSlow * 2
 
   implicitWidth: size

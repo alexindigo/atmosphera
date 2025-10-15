@@ -16,28 +16,28 @@ NBox {
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: parent.top
-    anchors.margins: Style.marginM * scaling
-    spacing: Style.marginM * scaling
+    anchors.margins: Style.marginM
+    spacing: Style.marginM
     clip: true
 
     RowLayout {
-      spacing: Style.marginS * scaling
+      spacing: Style.marginS
       NIcon {
         Layout.alignment: Qt.AlignVCenter
         icon: weatherReady ? LocationService.weatherSymbolFromCode(LocationService.data.weather.current_weather.weathercode) : ""
-        pointSize: Style.fontSizeXXXL * 1.75 * scaling
+        pointSize: Style.fontSizeXXXL * 1.75
         color: Color.mPrimary
       }
 
       ColumnLayout {
-        spacing: Style.marginXXS * scaling
+        spacing: Style.marginXXS
         NText {
           text: {
             // Ensure the name is not too long if one had to specify the country
             const chunks = Settings.data.location.name.split(",")
             return chunks[0]
           }
-          pointSize: Style.fontSizeL * scaling
+          pointSize: Style.fontSizeL
           font.weight: Style.fontWeightBold
         }
 
@@ -57,13 +57,13 @@ NBox {
               temp = Math.round(temp)
               return `${temp}°${suffix}`
             }
-            pointSize: Style.fontSizeXL * scaling
+            pointSize: Style.fontSizeXL
             font.weight: Style.fontWeightBold
           }
 
           NText {
             text: weatherReady ? `(${LocationService.data.weather.timezone_abbreviation})` : ""
-            pointSize: Style.fontSizeXS * scaling
+            pointSize: Style.fontSizeXS
             color: Color.mOnSurfaceVariant
             visible: LocationService.data.weather
           }
@@ -80,12 +80,12 @@ NBox {
       visible: weatherReady
       Layout.fillWidth: true
       Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
-      spacing: Style.marginL * scaling
+      spacing: Style.marginL
       Repeater {
         model: weatherReady ? LocationService.data.weather.daily.time : []
         delegate: ColumnLayout {
           Layout.alignment: Qt.AlignHCenter
-          spacing: Style.marginS * scaling
+          spacing: Style.marginXS
           NText {
             text: {
               var weatherDate = new Date(LocationService.data.weather.daily.time[index].replace(/-/g, "/"))
@@ -97,7 +97,7 @@ NBox {
           NIcon {
             Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
             icon: LocationService.weatherSymbolFromCode(LocationService.data.weather.daily.weathercode[index])
-            pointSize: Style.fontSizeXXL * 1.6 * scaling
+            pointSize: Style.fontSizeXXL * 1.6
             color: Color.mPrimary
           }
           NText {
@@ -113,7 +113,7 @@ NBox {
               min = Math.round(min)
               return `${max}°/${min}°`
             }
-            pointSize: Style.fontSizeXS * scaling
+            pointSize: Style.fontSizeXS
             color: Color.mOnSurfaceVariant
           }
         }

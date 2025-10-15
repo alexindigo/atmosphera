@@ -16,18 +16,8 @@ Item {
   implicitWidth: getImplicitSize(loader.item, "implicitWidth")
   implicitHeight: getImplicitSize(loader.item, "implicitHeight")
 
-  Connections {
-    target: ScalingService
-    enabled: loader.item && (loader.item.screen !== undefined)
-    function onScaleChanged(aScreenName, scale) {
-      if (loader.item && loader.item.screen && aScreenName === screenName) {
-        loader.item['scaling'] = scale
-      }
-    }
-  }
-
   function getImplicitSize(item, prop) {
-    return (item && item.visible) ? item[prop] : 0
+    return (item && item.visible) ? Math.round(item[prop]) : 0
   }
 
   Loader {
@@ -77,7 +67,7 @@ Item {
   // Error handling
   onWidgetIdChanged: {
     if (widgetId && !BarWidgetRegistry.hasWidget(widgetId)) {
-      Logger.warn("BarWidgetLoader", "Widget not found in bar registry:", widgetId)
+      Logger.warn("BarWidgetLoader", "Widget not found in registry:", widgetId)
     }
   }
 }

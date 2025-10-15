@@ -10,10 +10,11 @@ import qs.Widgets
 NIconButton {
   id: root
 
-  property real scaling: 1.0
+  property ShellScreen screen
 
-  compact: (Settings.data.bar.density === "compact")
+  density: Settings.data.bar.density
   baseSize: Style.capsuleHeight
+  applyUiScale: false
   colorBg: (Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent)
   colorFg: Color.mOnSurface
   colorBorder: Color.transparent

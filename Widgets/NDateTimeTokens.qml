@@ -7,8 +7,8 @@ Rectangle {
   id: root
   color: Color.mSurface
   border.color: Color.mOutline
-  border.width: Math.max(1, Style.borderS * scaling)
-  radius: Style.radiusM * scaling
+  border.width: Math.max(1, Style.borderS)
+  radius: Style.radiusM
 
   property date sampleDate: new Date() // Dec 25, 2023, 2:30:45.123 PM
 
@@ -18,8 +18,8 @@ Rectangle {
   ColumnLayout {
     id: column
     anchors.fill: parent
-    anchors.margins: Style.marginS * scaling
-    spacing: Style.marginS * scaling
+    anchors.margins: Style.marginS
+    spacing: Style.marginS
 
     NListView {
       id: tokensList
@@ -174,8 +174,8 @@ Rectangle {
       delegate: Rectangle {
         id: tokenDelegate
         width: tokensList.width
-        height: layout.implicitHeight + Style.marginS * scaling
-        radius: Style.radiusS * scaling
+        height: layout.implicitHeight + Style.marginS
+        radius: Style.radiusS
         color: {
           if (tokenMouseArea.containsMouse) {
             return Qt.alpha(Color.mPrimary, 0.1)
@@ -216,16 +216,16 @@ Rectangle {
         RowLayout {
           id: layout
           anchors.fill: parent
-          anchors.margins: Style.marginXS * scaling
-          spacing: Style.marginM * scaling
+          anchors.margins: Style.marginXS
+          spacing: Style.marginM
 
           // Category badge
           Rectangle {
             Layout.alignment: Qt.AlignVCenter
-            width: 70 * scaling
-            height: 22 * scaling
+            width: 70
+            height: 22
             color: getCategoryColor(modelData.category)[0]
-            radius: Style.radiusS * scaling
+            radius: Style.radiusS
             opacity: tokenMouseArea.containsMouse ? 0.9 : 1.0
 
             Behavior on opacity {
@@ -238,7 +238,7 @@ Rectangle {
               anchors.centerIn: parent
               text: modelData.category
               color: getCategoryColor(modelData.category)[1]
-              pointSize: Style.fontSizeXS * scaling
+              pointSize: Style.fontSizeXS
             }
           }
 
@@ -246,10 +246,10 @@ Rectangle {
           Rectangle {
             id: tokenButton
             Layout.alignment: Qt.AlignVCenter // Added this line
-            width: 100 * scaling
-            height: 22 * scaling
+            width: 100
+            height: 22
             color: tokenMouseArea.containsMouse ? Color.mPrimary : Color.mOnSurface
-            radius: Style.radiusS * scaling
+            radius: Style.radiusS
 
             Behavior on color {
               ColorAnimation {
@@ -261,7 +261,7 @@ Rectangle {
               anchors.centerIn: parent
               text: modelData.token
               color: tokenMouseArea.containsMouse ? Color.mOnPrimary : Color.mSurface
-              pointSize: Style.fontSizeS * scaling
+              pointSize: Style.fontSizeS
               font.weight: Style.fontWeightBold
 
               Behavior on color {
@@ -278,7 +278,7 @@ Rectangle {
             Layout.alignment: Qt.AlignVCenter // Added this line
             text: modelData.description
             color: tokenMouseArea.containsMouse ? Color.mOnSurface : Color.mOnSurfaceVariant
-            pointSize: Style.fontSizeS * scaling
+            pointSize: Style.fontSizeS
             wrapMode: Text.WordWrap
 
             Behavior on color {
@@ -291,12 +291,12 @@ Rectangle {
           // Live example
           Rectangle {
             Layout.alignment: Qt.AlignVCenter // Added this line
-            width: 90 * scaling
-            height: 22 * scaling
+            width: 90
+            height: 22
             color: tokenMouseArea.containsMouse ? Color.mPrimary : Color.mOnSurfaceVariant
-            radius: Style.radiusS * scaling
+            radius: Style.radiusS
             border.color: tokenMouseArea.containsMouse ? Color.mPrimary : Color.mOutline
-            border.width: Math.max(1, Style.borderS * scaling)
+            border.width: Math.max(1, Style.borderS)
 
             Behavior on color {
               ColorAnimation {
@@ -314,7 +314,7 @@ Rectangle {
               anchors.centerIn: parent
               text: Qt.locale().toString(root.sampleDate, modelData.token)
               color: tokenMouseArea.containsMouse ? Color.mOnPrimary : Color.mSurfaceVariant
-              pointSize: Style.fontSizeS * scaling
+              pointSize: Style.fontSizeS
 
               Behavior on color {
                 ColorAnimation {

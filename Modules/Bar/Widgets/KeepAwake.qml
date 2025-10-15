@@ -8,10 +8,11 @@ import qs.Widgets
 NIconButton {
   id: root
 
-  property real scaling: 1.0
+  property ShellScreen screen
 
   baseSize: Style.capsuleHeight
-  compact: (Settings.data.bar.density === "compact")
+  applyUiScale: false
+  density: Settings.data.bar.density
   icon: IdleInhibitorService.isInhibited ? "keep-awake-on" : "keep-awake-off"
   tooltipText: IdleInhibitorService.isInhibited ? I18n.tr("tooltips.disable-keep-awake") : I18n.tr("tooltips.enable-keep-awake")
   tooltipDirection: BarService.getTooltipDirection()

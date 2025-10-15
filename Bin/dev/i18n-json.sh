@@ -123,13 +123,13 @@ EOF
     # Make API call to Gemini
     local api_url="https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${api_key}"
     
-    print_color $BLUE "    API URL: $api_url" >&2
+    # print_color $BLUE "    API URL: $api_url" >&2
     
     local response=$(curl -s -X POST "$api_url" \
         -H "Content-Type: application/json" \
         -d "$request_body" 2>/dev/null)
     
-    print_color $BLUE "    API Response: $response" >&2
+    # print_color $BLUE "    API Response: $response" >&2
     
     # Extract the translation from response - try multiple parsing approaches
     local translation=$(echo "$response" | jq -r '.candidates[0].content.parts[0].text // .text // empty' 2>/dev/null | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
@@ -181,6 +181,40 @@ inject_translation() {
     fi
 }
 
+# Function to remove a key from JSON file using jq
+remove_json_key() {
+    local json_file=$1
+    local key_path=$2
+    
+    # Split key path into array
+    local -a path_parts
+    IFS='.' read -ra path_parts <<< "$key_path"
+    
+    # Build jq path array
+    local jq_path="["
+    for i in "${!path_parts[@]}"; do
+        if [[ $i -gt 0 ]]; then
+            jq_path+=","
+        fi
+        jq_path+="\"${path_parts[$i]}\""
+    done
+    jq_path+="]"
+    
+    # Create a temporary file
+    local temp_file=$(mktemp)
+    
+    # Use jq to delete the path
+    jq --argjson path "$jq_path" 'delpaths([$path])' "$json_file" > "$temp_file"
+    
+    if [[ $? -eq 0 ]]; then
+        mv "$temp_file" "$json_file"
+        return 0
+    else
+        rm -f "$temp_file"
+        return 1
+    fi
+}
+
 # Function to extract all keys from a JSON file recursively
 extract_keys() {
     local json_file=$1
@@ -207,6 +241,78 @@ extract_keys() {
     ' "$json_file" 2>/dev/null | sort
 }
 
+# Function to extract empty keys from a JSON file recursively
+extract_empty_keys() {
+    local json_file=$1
+    
+    if [[ ! -f "$json_file" ]]; then
+        echo "Error: File $json_file not found" >&2
+        return 1
+    fi
+    
+    # Extract all keys with empty string or null values recursively using jq
+    jq -r '
+        def empty_keys_recursive:
+            if type == "object" then
+                keys[] as $k |
+                if (.[$k] | type) == "object" then
+                    ($k + "." + (.[$k] | empty_keys_recursive))
+                elif (.[$k] == "" or .[$k] == null) then
+                    $k
+                else
+                    empty
+                end
+            else
+                empty
+            end;
+        empty_keys_recursive
+    ' "$json_file" 2>/dev/null | sort
+}
+
+# Function to remove empty objects recursively from JSON file
+remove_empty_objects() {
+    local json_file=$1
+    
+    # Create a temporary file
+    local temp_file=$(mktemp)
+    
+    # Use jq to recursively remove empty objects
+    # This function walks the entire JSON tree and removes any object that contains no leaf values
+    jq '
+        def remove_empty:
+            if type == "object" then
+                to_entries |
+                map(
+                    .value |= remove_empty
+                ) |
+                map(
+                    select(
+                        .value != {} and
+                        .value != [] and
+                        .value != null and
+                        .value != ""
+                    )
+                ) |
+                from_entries |
+                if length == 0 then empty else . end
+            elif type == "array" then
+                map(remove_empty) |
+                map(select(. != null and . != {} and . != [] and . != ""))
+            else
+                .
+            end;
+        remove_empty
+    ' "$json_file" > "$temp_file" 2>/dev/null
+    
+    if [[ $? -eq 0 ]]; then
+        mv "$temp_file" "$json_file"
+        return 0
+    else
+        rm -f "$temp_file"
+        return 1
+    fi
+}
+
 # Function to get language files
 get_language_files() {
     find "$FOLDER_PATH" -maxdepth 1 -name "*.json" -type f | sort
@@ -223,15 +329,20 @@ generate_header() {
     echo "Reference file: $REFERENCE_FILE"
     echo "Folder: $(realpath "$FOLDER_PATH")"
     if $TRANSLATE_MODE; then
-        echo "Mode: TRANSLATION ENABLED"
+        echo "Mode: TRANSLATION ENABLED (translates missing keys, removes extra/empty keys and empty objects)"
     fi
     echo ""
     echo "Notes:"
     echo "- Keys are compared recursively through all nested JSON objects"
     echo "- Missing keys indicate incomplete translations"
     echo "- Extra keys might indicate deprecated keys or translation-specific additions"
+    echo "- Empty keys are keys with empty string (\"\") or null values"
+    echo "- Empty objects are nested objects containing no actual values (only other empty objects)"
     echo "- Translation completion percentage is calculated based on English reference"
     echo "- Results are sorted by descending line numbers for easier editing"
+    if $TRANSLATE_MODE; then
+        echo "- In translation mode, extra keys, empty keys, and empty objects are automatically removed"
+    fi
     echo ""
     echo "This report compares all language JSON files against the English reference file"
     echo "and identifies missing keys and extra keys in each language."
@@ -427,9 +538,90 @@ compare_language() {
         done
         rm -f "$temp_extra"
         echo ""
+        
+        # Remove extra keys if in translate mode
+        if $TRANSLATE_MODE; then
+            print_color $BLUE "Removing extra keys from $lang_name..." >&2
+            local removed_count=0
+            local failed_removal_count=0
+            
+            while IFS= read -r key; do
+                if [[ -n "$key" ]]; then
+                    print_color $YELLOW "  Removing: $key" >&2
+                    
+                    if remove_json_key "$lang_file" "$key"; then
+                        print_color $GREEN "    ✓ Removed: $key" >&2
+                        removed_count=$((removed_count + 1))
+                    else
+                        print_color $RED "    ✗ Failed to remove: $key" >&2
+                        failed_removal_count=$((failed_removal_count + 1))
+                    fi
+                fi
+            done <<< "$extra_keys"
+            
+            echo ""
+            print_color $GREEN "Removal complete: $removed_count removed, $failed_removal_count failed" >&2
+            echo ""
+        fi
     else
         echo "✅ No extra keys in $lang_name"
         echo ""
+    fi
+    
+    # Handle empty keys in translate mode
+    if $TRANSLATE_MODE; then
+        local empty_keys=$(extract_empty_keys "$lang_file")
+        local empty_count=$(count_non_empty_lines "$empty_keys")
+        
+        if [[ $empty_count -gt 0 && -n "$empty_keys" ]]; then
+            echo "EMPTY KEYS IN $lang_name:"
+            
+            # Display empty keys
+            local counter=1
+            while IFS= read -r key; do
+                if [[ -n "$key" ]]; then
+                    local lang_line=$(find_key_line_number "$lang_file" "$key")
+                    printf "  %3d. %s (%s:%s)\n" "$counter" "$key" "$(basename "$lang_file")" "$lang_line"
+                    counter=$((counter + 1))
+                fi
+            done <<< "$empty_keys"
+            echo ""
+            
+            print_color $BLUE "Removing empty keys from $lang_name..." >&2
+            local removed_empty_count=0
+            local failed_empty_removal_count=0
+            
+            while IFS= read -r key; do
+                if [[ -n "$key" ]]; then
+                    print_color $YELLOW "  Removing empty key: $key" >&2
+                    
+                    if remove_json_key "$lang_file" "$key"; then
+                        print_color $GREEN "    ✓ Removed: $key" >&2
+                        removed_empty_count=$((removed_empty_count + 1))
+                    else
+                        print_color $RED "    ✗ Failed to remove: $key" >&2
+                        failed_empty_removal_count=$((failed_empty_removal_count + 1))
+                    fi
+                fi
+            done <<< "$empty_keys"
+            
+            echo ""
+            print_color $GREEN "Empty key removal complete: $removed_empty_count removed, $failed_empty_removal_count failed" >&2
+            echo ""
+        else
+            echo "✅ No empty keys in $lang_name"
+            echo ""
+        fi
+        
+        # Remove empty objects (nested objects with no actual values)
+        print_color $BLUE "Cleaning up empty objects in $lang_name..." >&2
+        if remove_empty_objects "$lang_file"; then
+            print_color $GREEN "✓ Successfully removed all empty objects" >&2
+            echo ""
+        else
+            print_color $RED "✗ Failed to clean up empty objects" >&2
+            echo ""
+        fi
     fi
     
     # Clean up
@@ -545,7 +737,7 @@ main() {
         echo "Target language: $target_language"
     fi
     if $TRANSLATE_MODE; then
-        echo "Translation mode: ENABLED"
+        echo "Translation mode: ENABLED (translated missing keys, removed extra keys, removed empty keys and objects)"
     fi
     echo "Report generated: $(date '+%Y-%m-%d %H:%M:%S')"
     echo ""
@@ -568,7 +760,9 @@ show_usage() {
     echo "This script compares JSON language files in '$FOLDER_PATH' against the English reference." >&2
     echo "" >&2
     echo "Arguments:" >&2
-    echo "  --translate    Enable automatic translation of missing keys using Gemini API" >&2
+    echo "  --translate    Enable automatic translation of missing keys, removal of extra keys," >&2
+    echo "                 removal of empty keys (empty strings or null values), and removal of" >&2
+    echo "                 empty objects (nested objects containing no actual values)" >&2
     echo "  --list-models  List all available Gemini models and exit" >&2
     echo "  language_code  Optional. Compare only the specified language (e.g., 'fr', 'es', 'de')" >&2
     echo "                 If not provided, all language files will be compared" >&2
@@ -581,8 +775,8 @@ show_usage() {
     echo "  $0                    # Compare all languages" >&2
     echo "  $0 fr                 # Compare only French (fr.json)" >&2
     echo "  $0 --list-models      # List available Gemini models" >&2
-    echo "  $0 --translate        # Compare all and translate missing keys" >&2
-    echo "  $0 --translate fr     # Translate missing keys for French only" >&2
+    echo "  $0 --translate        # Compare all, translate missing, remove extra/empty keys and objects" >&2
+    echo "  $0 --translate fr     # Translate and clean French only" >&2
     echo "" >&2
     echo "Requirements:" >&2
     echo "  - jq must be installed" >&2
@@ -595,6 +789,7 @@ show_usage() {
     echo "  - Comparison report is printed to stdout" >&2
     echo "  - Progress messages are printed to stderr" >&2
     echo "  - Results are sorted by descending line numbers for easier editing" >&2
+    echo "  - In translate mode, extra keys, empty keys, and empty objects are removed" >&2
 }
 
 # Handle command line arguments

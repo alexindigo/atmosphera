@@ -8,10 +8,11 @@ import qs.Widgets
 NIconButton {
   id: root
 
-  property real scaling: 1.0
+  property ShellScreen screen
 
-  compact: (Settings.data.bar.density === "compact")
+  density: Settings.data.bar.density
   baseSize: Style.capsuleHeight
+  applyUiScale: false
   icon: "power"
   tooltipText: I18n.tr("tooltips.session-menu")
   tooltipDirection: BarService.getTooltipDirection()

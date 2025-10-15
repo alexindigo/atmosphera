@@ -8,9 +8,7 @@ import qs.Widgets
 Item {
   id: root
 
-  // Widget properties passed from Bar.qml
-  property var screen
-  property real scaling: 1.0
+  property ShellScreen screen
 
   // Widget properties passed from Bar.qml for per-instance settings
   property string widgetId: ""
@@ -33,8 +31,8 @@ Item {
   readonly property int spacerWidth: widgetSettings.width !== undefined ? widgetSettings.width : widgetMetadata.width
 
   // Set the width based on user settings
-  implicitWidth: spacerWidth * scaling
-  implicitHeight: Style.barHeight * scaling
+  implicitWidth: spacerWidth
+  implicitHeight: Style.barHeight
   width: implicitWidth
   height: implicitHeight
 }

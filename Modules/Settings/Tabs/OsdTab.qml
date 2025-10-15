@@ -24,7 +24,7 @@ ColumnLayout {
 
   // Display
   ColumnLayout {
-    spacing: Style.marginL * scaling
+    spacing: Style.marginL
     Layout.fillWidth: true
 
     NComboBox {
@@ -62,13 +62,13 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
   }
 
   // General
   ColumnLayout {
-    spacing: Style.marginL * scaling
+    spacing: Style.marginL
     Layout.fillWidth: true
 
     NHeader {
@@ -81,6 +81,13 @@ ColumnLayout {
       description: I18n.tr("settings.osd.enabled.description")
       checked: Settings.data.osd.enabled
       onToggled: checked => Settings.data.osd.enabled = checked
+    }
+
+    NToggle {
+      label: I18n.tr("settings.osd.always-on-top.label")
+      description: I18n.tr("settings.osd.always-on-top.description")
+      checked: Settings.data.osd.alwaysOnTop
+      onToggled: checked => Settings.data.osd.alwaysOnTop = checked
     }
 
     NLabel {
@@ -101,13 +108,13 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
   }
 
   // Monitor Configuration
   ColumnLayout {
-    spacing: Style.marginL * scaling
+    spacing: Style.marginL
     Layout.fillWidth: true
 
     NHeader {
@@ -120,11 +127,15 @@ ColumnLayout {
       delegate: NCheckbox {
         Layout.fillWidth: true
         label: modelData.name || I18n.tr("system.unknown")
-        description: I18n.tr("system.monitor-description", {
-                               "model": modelData.model,
-                               "width": modelData.width,
-                               "height": modelData.height
-                             })
+        description: {
+          const compositorScale = CompositorService.getDisplayScale(modelData.name)
+          I18n.tr("system.monitor-description", {
+                    "model": modelData.model,
+                    "width": modelData.width * compositorScale,
+                    "height": modelData.height * compositorScale,
+                    "scale": compositorScale
+                  })
+        }
         checked: (Settings.data.osd.monitors || []).indexOf(modelData.name) !== -1
         onToggled: checked => {
                      if (checked) {
