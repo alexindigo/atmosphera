@@ -34,42 +34,45 @@ Rectangle {
     return {}
   }
 
-  readonly property string hideMode: (widgetSettings.hideMode !== undefined) ? widgetSettings.hideMode : (widgetMetadata.hideMode !== undefined ? widgetMetadata.hideMode : "hidden")
+  readonly property string hideMode: (widgetSettings.hideMode !== undefined) ? widgetSettings.hideMode : widgetMetadata.hideMode
 
-  property int __filteredCount: 0
-  readonly property bool __onlySameOutput: widgetSettings.onlySameOutput === undefined ? widgetMetadata.onlySameOutput : widgetSettings.onlySameOutput
-  readonly property bool __onlyActiveWorkspaces: widgetSettings.onlyActiveWorkspaces === undefined ? widgetMetadata.onlyActiveWorkspaces : widgetSettings.onlyActiveWorkspaces
-  function __updateFilteredCount() {
+  property bool hasWindow: false
+  readonly property bool onlySameOutput: (widgetSettings.onlySameOutput !== undefined) ? widgetSettings.onlySameOutput : (widgetMetadata.onlySameOutput !== undefined ? widgetMetadata.onlySameOutput : false)
+  readonly property bool onlyActiveWorkspaces: (widgetSettings.onlyActiveWorkspaces !== undefined) ? widgetSettings.onlyActiveWorkspaces : (widgetMetadata.onlyActiveWorkspaces !== undefined ? widgetMetadata.onlyActiveWorkspaces : false)
+
+  function updateHasWindow() {
     try {
-      var count = 0
       var total = CompositorService.windows.count || 0
       var activeIds = CompositorService.getActiveWorkspaces().map(function(ws) { return ws.id })
+      var found = false
       for (var i = 0; i < total; i++) {
         var w = CompositorService.windows.get(i)
         if (!w)
           continue
-        var passOutput = (!__onlySameOutput) || (w.output == screen.name)
-        var passWorkspace = (!__onlyActiveWorkspaces) || (activeIds.includes(w.workspaceId))
+        var passOutput = (!onlySameOutput) || (w.output == screen.name)
+        var passWorkspace = (!onlyActiveWorkspaces) || (activeIds.includes(w.workspaceId))
         if (passOutput && passWorkspace) {
-          count++
+          found = true
+          break
         }
       }
-      __filteredCount = count
+      hasWindow = found
     } catch (e) {
-      __filteredCount = 0
+      hasWindow = false
     }
   }
 
-  Component.onCompleted: __updateFilteredCount()
+  Component.onCompleted: updateHasWindow()
   Connections {
     target: CompositorService
-    function onWindowListChanged() { __updateFilteredCount() }
-    function onWorkspaceChanged() { __updateFilteredCount() }
+    function onWindowListChanged() { updateHasWindow() }
+    function onWorkspaceChanged() { updateHasWindow() }
   }
-  onScreenChanged: __updateFilteredCount()
+  onScreenChanged: updateHasWindow()
 
-  visible: hideMode !== "hidden" || __filteredCount > 0
-  opacity: (hideMode !== "transparent" || __filteredCount > 0) ? 1.0 : 0
+  // "visible": Always Visible, "hidden": Hide When Empty, "transparent": Transparent When Empty
+  visible: hideMode !== "hidden" || hasWindow
+  opacity: (hideMode !== "transparent" || hasWindow) ? 1.0 : 0
   Behavior on opacity { NumberAnimation { duration: Style.animationNormal; easing.type: Easing.OutCubic } }
 
   implicitWidth: visible ? (isVerticalBar ? Style.capsuleHeight : Math.round(taskbarLayout.implicitWidth + Style.marginM * 2)) : 0
@@ -101,7 +104,7 @@ Rectangle {
         required property var modelData
         property ShellScreen screen: root.screen
 
-  visible: (!__onlySameOutput || modelData.output == screen.name) && (!__onlyActiveWorkspaces || CompositorService.getActiveWorkspaces().map(function(ws){ return ws.id }).includes(modelData.workspaceId))
+    visible: (!onlySameOutput || modelData.output == screen.name) && (!onlyActiveWorkspaces || CompositorService.getActiveWorkspaces().map(function(ws){ return ws.id }).includes(modelData.workspaceId))
 
         Layout.preferredWidth: root.itemSize
         Layout.preferredHeight: root.itemSize
