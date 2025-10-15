@@ -1305,7 +1305,8 @@
         "bottom_left": "左下角",
         "bottom_right": "右下角",
         "bottom_center": "底部居中",
-        "top_center": "顶部居中"
+        "top_center": "顶部居中",
+        "center": "居中"
       },
       "quickSettingsStyle": {
         "modern": "现代",

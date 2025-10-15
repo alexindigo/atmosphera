@@ -1305,7 +1305,8 @@
         "bottom_left": "Inferior izquierda",
         "bottom_right": "Inferior derecha",
         "bottom_center": "Inferior central",
-        "top_center": "Superior central"
+        "top_center": "Superior central",
+        "center": "Centro"
       },
       "quickSettingsStyle": {
         "modern": "Moderno",

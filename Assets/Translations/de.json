@@ -1322,7 +1322,8 @@
         "bottom_left": "Unten links",
         "bottom_right": "Unten rechts",
         "bottom_center": "Unten mittig",
-        "top_center": "Oben mittig"
+        "top_center": "Oben mittig",
+        "center": "Mitte"
       },
       "quickSettingsStyle": {
         "modern": "Modern",
