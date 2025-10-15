@@ -212,10 +212,6 @@
           "label": "Barra flutuante",
           "description": "Exibe a barra como uma 'pílula' flutuante. Nota: Isso moverá os cantos da tela para as bordas."
         },
-        "auto-hide": {
-          "label": "Ocultar automaticamente",
-          "description": "Oculta automaticamente a barra quando não estiver em uso."
-        },
         "margins": {
           "label": "Margens",
           "description": "Ajuste as margens ao redor da barra flutuante.",

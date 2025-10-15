@@ -212,10 +212,6 @@
           "label": "Barra flotante",
           "description": "Muestra la barra como una 'píldora' flotante. Nota: Esto moverá las esquinas de la pantalla a los bordes."
         },
-        "auto-hide": {
-          "label": "Ocultar automáticamente",
-          "description": "Oculta automáticamente la barra cuando no esté en uso."
-        },
         "margins": {
           "label": "Márgenes",
           "description": "Ajusta los márgenes alrededor de la barra flotante.",
