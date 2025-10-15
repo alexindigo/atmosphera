@@ -92,7 +92,7 @@ NPanel {
                     anchors.centerIn: parent
                     width: 110
                     height: 110
-                    source: "https://assets.noctalia.dev/noctalia-logo.svg"
+                    source: Qt.resolvedUrl(Quickshell.shellDir + "/Assets/noctalia.svg")
                     fillMode: Image.PreserveAspectFit
                     smooth: true
 
