@@ -102,7 +102,7 @@ Singleton {
         // Emit the signal
         root.settingsLoaded()
 
-        // Last, update our local settings version
+        // Finally, update our local settings version
         adapter.settingsVersion = settingsVersion
       }
     }
