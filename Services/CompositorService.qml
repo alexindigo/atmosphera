@@ -309,6 +309,7 @@ Singleton {
   // Session management
   function logout() {
     if (backend && backend.logout) {
+      Logger.log("Compositor", "Logout requested")
       backend.logout()
     } else {
       Logger.warn("Compositor", "No backend available for logout")
@@ -316,18 +317,22 @@ Singleton {
   }
 
   function shutdown() {
+    Logger.log("Compositor", "Shutdown requested")
     Quickshell.execDetached(["shutdown", "-h", "now"])
   }
 
   function reboot() {
+    Logger.log("Compositor", "Reboot requested")
     Quickshell.execDetached(["reboot"])
   }
 
   function suspend() {
+    Logger.log("Compositor", "Suspend requested")
     Quickshell.execDetached(["systemctl", "suspend"])
   }
 
   function lockAndSuspend() {
+    Logger.log("Compositor", "Lock and suspend requested")
     try {
       if (PanelService && PanelService.lockScreen && !PanelService.lockScreen.active) {
         PanelService.lockScreen.active = true
