@@ -1623,5 +1623,34 @@
       "lifespan": "延长寿命 ({percent}%)",
       "disabled": "电池管理器已禁用"
     }
+  },
+  "setup": {
+    "customize": {
+      "header": "自定义体验",
+      "subheader": "调整状态栏位置、密度、缩放等。"
+    },
+    "appearance": {
+      "header": "外观",
+      "subheader": "选择深色模式与配色来源（Matugen 或预设）。"
+    },
+    "wallpaper": {
+      "header": "选择你的壁纸",
+      "subheader": "用精美壁纸营造氛围。",
+      "select-prompt": "在下方选择一张壁纸",
+      "preview-error": "图片加载失败",
+      "none-in-dir": "目录中未找到壁纸",
+      "no-dir": "未选择壁纸目录",
+      "no-valid": "在 {dir} 中未找到有效图片文件",
+      "choose-dir": "选择包含壁纸图片的目录",
+      "dir": {
+        "label": "壁纸目录",
+        "description": "选择存放壁纸的文件夹",
+        "browse": "浏览文件夹",
+        "select-title": "选择壁纸文件夹"
+      }
+    },
+    "welcome": {
+      "note": "先进行一些基础设置——更多选项可在“设置”中找到"
+    }
   }
 }

@@ -1623,5 +1623,34 @@
       "lifespan": "Vida útil prolongada ({percent}%)",
       "disabled": "Administrador de batería deshabilitado"
     }
+  },
+  "setup": {
+    "customize": {
+      "header": "Personaliza tu experiencia",
+      "subheader": "Ajusta la posición de la barra, densidad, escala y más."
+    },
+    "appearance": {
+      "header": "Apariencia",
+      "subheader": "Elige modo oscuro y fuentes de color (Matugen o predefinido)."
+    },
+    "wallpaper": {
+      "header": "Elige tu fondo",
+      "subheader": "Define el ambiente con un bonito fondo.",
+      "select-prompt": "Selecciona un fondo abajo",
+      "preview-error": "No se pudo cargar la imagen",
+      "none-in-dir": "No se encontraron fondos en el directorio",
+      "no-dir": "No se seleccionó un directorio de fondos",
+      "no-valid": "No se encontraron imágenes válidas en: {dir}",
+      "choose-dir": "Elige un directorio que contenga tus fondos",
+      "dir": {
+        "label": "Directorio de fondos",
+        "description": "Elige la carpeta que contiene tus fondos",
+        "browse": "Seleccionar carpeta",
+        "select-title": "Seleccionar carpeta de fondos"
+      }
+    },
+    "welcome": {
+      "note": "Solo algunos conceptos básicos para empezar: todas las opciones están en Configuración."
+    }
   }
 }

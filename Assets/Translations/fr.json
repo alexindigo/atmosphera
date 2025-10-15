@@ -1623,5 +1623,34 @@
       "lifespan": "Durée de vie prolongée ({percent}%)",
       "disabled": "Gestionnaire de batterie désactivé"
     }
+  },
+  "setup": {
+    "customize": {
+      "header": "Personnaliser votre expérience",
+      "subheader": "Ajustez la position de la barre, la densité, l'échelle et plus encore."
+    },
+    "appearance": {
+      "header": "Apparence",
+      "subheader": "Choisissez le mode sombre et la source des couleurs (Matugen ou prédéfinie)."
+    },
+    "wallpaper": {
+      "header": "Choisissez votre fond d'écran",
+      "subheader": "Définissez l'ambiance avec un joli fond.",
+      "select-prompt": "Sélectionnez un fond ci-dessous",
+      "preview-error": "Échec du chargement de l'image",
+      "none-in-dir": "Aucun fond d'écran trouvé dans le répertoire",
+      "no-dir": "Aucun répertoire de fonds d'écran sélectionné",
+      "no-valid": "Aucun fichier image valide trouvé dans : {dir}",
+      "choose-dir": "Choisissez un répertoire contenant vos fonds d'écran",
+      "dir": {
+        "label": "Répertoire des fonds d'écran",
+        "description": "Choisissez le dossier contenant vos fonds d'écran",
+        "browse": "Parcourir le dossier",
+        "select-title": "Sélectionner le dossier des fonds d'écran"
+      }
+    },
+    "welcome": {
+      "note": "Quelques réglages de base pour démarrer — toutes les options sont dans Paramètres"
+    }
   }
 }
