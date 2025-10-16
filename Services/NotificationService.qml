@@ -140,7 +140,7 @@ Singleton {
       "id": id,
       "summary": (n.summary || ""),
       "body": stripTags(n.body || ""),
-      "appName": getAppName(n.appName),
+      "appName": getAppName(n.appName || n.desktopEntry || ""),
       "urgency": n.urgency < 0 || n.urgency > 2 ? 1 : n.urgency,
       "expireTimeout": n.expireTimeout,
       "timestamp": time,
