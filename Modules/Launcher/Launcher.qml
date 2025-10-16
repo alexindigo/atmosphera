@@ -280,6 +280,18 @@ NPanel {
     }
 
     Shortcut {
+      sequence: "Tab"
+      onActivated: ui.selectNextWrapped()
+      enabled: root.opened && searchInput.inputItem && searchInput.inputItem.activeFocus
+    }
+
+    Shortcut {
+      sequence: "Shift+Tab"
+      onActivated: ui.selectPreviousWrapped()
+      enabled: root.opened && searchInput.inputItem && searchInput.inputItem.activeFocus
+    }
+
+    Shortcut {
       sequence: "PgDown" // or "PageDown"
       onActivated: ui.selectNextPage()
       enabled: root.opened && searchInput.inputItem && searchInput.inputItem.activeFocus
