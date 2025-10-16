@@ -437,10 +437,6 @@
           "label": "Fonte de cor",
           "description": "Configurações principais para as cores do Noctalia."
         },
-        "dark-mode": {
-          "label": "Modo escuro",
-          "description": "Muda para um tema mais escuro para facilitar a visualização à noite."
-        },
         "use-wallpaper-colors": {
           "label": "Usar cores do papel de parede",
           "description": "Gerar esquemas de cores do seu papel de parede usando Matugen. Extrai automaticamente cores para criar um tema coeso."
@@ -448,6 +444,12 @@
         "matugen-scheme-type": {
           "label": "Tipo de esquema Matugen",
           "description": "Escolha o algoritmo de geração de esquema de cores para Matugen."
+        }
+      },
+      "dark-mode": {
+        "switch": {
+          "label": "Modo escuro",
+          "description": "Muda para um tema mais escuro para facilitar a visualização à noite."
         }
       },
       "predefined": {

@@ -156,8 +156,8 @@ ColumnLayout {
 
   // Dark Mode Toggle
   NToggle {
-    label: I18n.tr("settings.color-scheme.color-source.dark-mode.label")
-    description: I18n.tr("settings.color-scheme.color-source.dark-mode.description")
+    label: I18n.tr("settings.color-scheme.dark-mode.switch.label")
+    description: I18n.tr("settings.color-scheme.dark-mode.switch.description")
     checked: Settings.data.colorSchemes.darkMode
     enabled: true
     onToggled: checked => {
@@ -167,17 +167,17 @@ ColumnLayout {
   }
 
   NComboBox {
-    label: "Dark Mode Schedule"
-    description: "Enables automatic switching between light and dark mode"
+    label: I18n.tr("settings.color-scheme.dark-mode.mode.label")
+    description: I18n.tr("settings.color-scheme.dark-mode.mode.description")
 
     model: [{
-        "name": "Off",
+        "name": I18n.tr("settings.color-scheme.dark-mode.mode.off"),
         "key": "off"
       }, {
-        "name": "Manual",
+        "name": I18n.tr("settings.color-scheme.dark-mode.mode.manual"),
         "key": "manual"
       }, {
-        "name": "Sunrise/Sunset",
+        "name": I18n.tr("settings.color-scheme.dark-mode.mode.location"),
         "key": "location"
       }]
 

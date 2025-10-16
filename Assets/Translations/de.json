@@ -475,10 +475,6 @@
           "label": "Farbquelle",
           "description": "Haupteinstellungen für Noctalias Farben."
         },
-        "dark-mode": {
-          "label": "Dunkler Modus",
-          "description": "Wechselt zu einem dunkleren Theme für einfachere Betrachtung bei Nacht."
-        },
         "use-wallpaper-colors": {
           "label": "Hintergrundbild-Farben verwenden",
           "description": "Farbschemata aus Ihrem Hintergrundbild mit Matugen generieren. Extrahiert automatisch Farben für ein kohärentes Design."
@@ -486,6 +482,19 @@
         "matugen-scheme-type": {
           "label": "Matugen-Schema-Typ",
           "description": "Wähle einen Farbstil für Matugen aus."
+        }
+      },
+      "dark-mode": {
+        "switch": {
+          "label": "Dunkler Modus",
+          "description": "Wechselt zu einem dunkleren Theme für einfachere Betrachtung bei Nacht."
+        },
+        "mode": {
+          "label": "Automatischer dunkler Modus",
+          "description": "Ermöglicht automatisches Wechseln zwischen dem hellen und dunklen Modus.",
+          "off": "Aus",
+          "manual": "Manuell",
+          "location": "Standort"
         }
       },
       "predefined": {

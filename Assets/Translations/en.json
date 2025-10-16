@@ -475,10 +475,6 @@
           "label": "Color source",
           "description": "Main settings for Noctalia's colors."
         },
-        "dark-mode": {
-          "label": "Dark mode",
-          "description": "Switches to a darker theme for easier viewing at night."
-        },
         "use-wallpaper-colors": {
           "label": "Use wallpaper colors",
           "description": "Generate color schemes from your wallpaper using Matugen. Automatically extracts colors to create a cohesive theme."
@@ -486,6 +482,19 @@
         "matugen-scheme-type": {
           "label": "Matugen scheme type",
           "description": "Choose the color scheme generation algorithm for Matugen."
+        }
+      },
+      "dark-mode": {
+        "switch": {
+          "label": "Dark mode",
+          "description": "Switches to a darker theme for easier viewing at night."
+        },
+        "mode": {
+          "label": "Dark mode schedule",
+          "description": "Enables automatic switching between light and dark mode.",
+          "off": "Off",
+          "manual": "Manual",
+          "location": "Location"
         }
       },
       "predefined": {
@@ -1187,7 +1196,7 @@
       "scan-again": "Scan again"
     }
   },
-  
+
   "tooltips": {
     "refresh": "Refresh",
     "close": "Close",
