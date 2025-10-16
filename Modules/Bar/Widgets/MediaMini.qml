@@ -86,6 +86,7 @@ Item {
     visible: false
     text: titleText.text
     font: titleText.font
+    applyUiScale: false
     pointSize: Style.fontSizeS * scaling
   }
 
@@ -299,6 +300,7 @@ Item {
               NText {
                 text: hasActivePlayer ? getTitle() : placeholderText
                 font: titleText.font
+                applyUiScale: false
                 pointSize: Style.fontSizeS * scaling
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: hasActivePlayer ? Text.AlignLeft : Text.AlignHCenter
