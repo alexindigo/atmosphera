@@ -11,6 +11,7 @@ Singleton {
   // Public properties
   property string osPretty: ""
   property string osLogo: ""
+  property bool isNixOS: false
 
   // Internal helpers
   function buildCandidates(name) {
@@ -75,11 +76,13 @@ Singleton {
           return l ? l.split("=")[1].replace(/"/g, "") : ""
         }
         root.osPretty = val("PRETTY_NAME") || val("NAME")
+        const osId = (val("ID") || "").toLowerCase()
+        root.isNixOS = osId === "nixos" || (root.osPretty || "").toLowerCase().includes("nixos")
         const logoName = val("LOGO")
         if (logoName)
         resolveLogo(logoName)
       } catch (e) {
-        Logger.warn("DistroLogoService", "failed to read os-release", e)
+        Logger.warn("DistroService", "failed to read os-release", e)
       }
     }
   }
@@ -90,10 +93,10 @@ Singleton {
       const p = String(stdout.text || "").trim()
       if (code === 0 && p) {
         root.osLogo = `file://${p}`
-        Logger.log("DistroLogoService", "found", root.osLogo)
+        Logger.log("DistroService", "found", root.osLogo)
       } else {
         root.osLogo = ""
-        Logger.warn("DistroLogoService", "none found")
+        Logger.warn("DistroService", "none found")
       }
     }
     stdout: StdioCollector {}

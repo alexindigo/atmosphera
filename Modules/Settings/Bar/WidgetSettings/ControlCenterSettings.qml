@@ -31,7 +31,7 @@ ColumnLayout {
     label: I18n.tr("bar.widget-settings.control-center.use-distro-logo.label")
     description: I18n.tr("bar.widget-settings.control-center.use-distro-logo.description")
     checked: valueUseDistroLogo
-    onToggled: {
+    onToggled: function (checked) {
       valueUseDistroLogo = checked
       if (checked) {
         valueCustomIconPath = ""

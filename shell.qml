@@ -189,6 +189,10 @@ ShellRoot {
     function onSettingsLoaded() {
       // Only open the setup wizard for new users
       if (!Settings.data.setupCompleted) {
+        if (DistroService && DistroService.isNixOS) {
+          Settings.data.setupCompleted = true
+          return
+        }
         if (Settings.data.settingsVersion >= Settings.settingsVersion) {
           setupWizardLoader.active = true
         } else {
