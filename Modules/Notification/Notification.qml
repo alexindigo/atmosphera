@@ -248,22 +248,38 @@ Variants {
             // Staggered animation delay based on index
             readonly property int animationDelay: index * 100
 
+            property int hoverCount: 0
+
+            onHoverCountChanged: {
+                if (hoverCount > 0) {
+                    resumeTimer.stop()
+                    NotificationService.pauseTimeout(notificationId)
+                } else {
+                    resumeTimer.start()
+                }
+            }
+
+            Timer {
+                id: resumeTimer
+                interval: 50
+                repeat: false
+                onTriggered: {
+                    if (hoverCount === 0) {
+                        NotificationService.resumeTimeout(notificationId)
+                    }
+                }
+            }
+
             // Right-click to dismiss
             MouseArea {
               anchors.fill: parent
               acceptedButtons: Qt.RightButton
               hoverEnabled: true
+              onEntered: parent.hoverCount++
+              onExited: parent.hoverCount--
               onClicked: {
                 if (mouse.button === Qt.RightButton) {
                   animateOut()
-                }
-              }
-
-              onContainsMouseChanged: {
-                if (containsMouse) {
-                  NotificationService.pauseTimeout(notificationId)
-                } else {
-                  NotificationService.resumeTimeout(notificationId)
                 }
               }
             }
@@ -492,6 +508,9 @@ Variants {
 
                       delegate: NButton {
                         property var actionData: modelData
+
+                        onEntered: card.hoverCount++
+                        onExited: card.hoverCount--
 
                         text: {
                           var actionText = actionData.text || "Open"
