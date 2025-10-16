@@ -99,10 +99,10 @@ ColumnLayout {
     enabled: ProgramCheckerService.app2unitAvailable
     opacity: ProgramCheckerService.app2unitAvailable ? 1.0 : 0.6
     onToggled: checked => {
-      if (ProgramCheckerService.app2unitAvailable) {
-        Settings.data.appLauncher.useApp2Unit = checked
-      }
-    }
+                 if (ProgramCheckerService.app2unitAvailable) {
+                   Settings.data.appLauncher.useApp2Unit = checked
+                 }
+               }
   }
 
   NTextInput {
