@@ -11,17 +11,39 @@ import qs.Widgets
 NBox {
   id: root
 
-  // Background artwork that covers everything
+  // Wrapper - rounded rect clipper
   Item {
     anchors.fill: parent
-    clip: true
+    layer.enabled: true
+    layer.effect: MultiEffect {
+      maskEnabled: true
+      maskThresholdMin: 0.5
+      maskSpreadAtMin: 0.0
+      maskSource: ShaderEffectSource {
+        sourceItem: Rectangle {
+          width: root.width
+          height: root.height
+          radius: Style.radiusM
+          color: "white"
+        }
+      }
+    }
 
-    NImageRounded {
-      id: bgArtImage
+    // Background image that covers everything
+    Image {
+      readonly property int dim: Math.round(256 * Style.uiScaleRatio)
+      id: bgImage
       anchors.fill: parent
-      imagePath: MediaService.trackArtUrl
-      imageRadius: Style.radiusM
-      visible: MediaService.trackArtUrl !== ""
+      source: MediaService.trackArtUrl || WallpaperService.getWallpaper(Screen.name)
+      sourceSize: Qt.size(dim, dim)
+      fillMode: Image.PreserveAspectCrop
+
+      layer.enabled: true
+      layer.effect: MultiEffect {
+        blurEnabled: true
+        blur: 0.25
+        blurMax: 16
+      }
     }
 
     // Dark overlay for readability
@@ -40,27 +62,9 @@ NBox {
       border.width: 1
       radius: Style.radiusM
     }
-  }
+    //}
 
-  // Background visualizer on top of the artwork
-  Item {
-    id: visualizerContainer
-    anchors.fill: parent
-    layer.enabled: true
-    layer.effect: MultiEffect {
-      maskEnabled: true
-      maskThresholdMin: 0.5
-      maskSpreadAtMin: 0.0
-      maskSource: ShaderEffectSource {
-        sourceItem: Rectangle {
-          width: root.width
-          height: root.height
-          radius: Style.radiusM
-          color: "white"
-        }
-      }
-    }
-
+    // Background visualizer on top of the artwork
     Loader {
       anchors.fill: parent
       active: Settings.data.audio.visualizerType !== "" && Settings.data.audio.visualizerType !== "none"
@@ -84,7 +88,7 @@ NBox {
           anchors.fill: parent
           values: CavaService.values
           fillColor: Color.mPrimary
-          opacity: MediaService.trackArtUrl !== "" ? 0.5 : 0.8
+          opacity: 0.5
         }
       }
 
@@ -94,7 +98,7 @@ NBox {
           anchors.fill: parent
           values: CavaService.values
           fillColor: Color.mPrimary
-          opacity: MediaService.trackArtUrl !== "" ? 0.5 : 0.8
+          opacity: 0.5
         }
       }
 
@@ -104,7 +108,7 @@ NBox {
           anchors.fill: parent
           values: CavaService.values
           fillColor: Color.mPrimary
-          opacity: MediaService.trackArtUrl !== "" ? 0.5 : 0.8
+          opacity: 0.5
         }
       }
     }
