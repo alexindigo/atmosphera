@@ -95,8 +95,14 @@ ColumnLayout {
   NToggle {
     label: I18n.tr("settings.launcher.settings.use-app2unit.label")
     description: I18n.tr("settings.launcher.settings.use-app2unit.description")
-    checked: Settings.data.appLauncher.useApp2Unit
-    onToggled: checked => Settings.data.appLauncher.useApp2Unit = checked
+    checked: Settings.data.appLauncher.useApp2Unit && ProgramCheckerService.app2unitAvailable
+    enabled: ProgramCheckerService.app2unitAvailable
+    opacity: ProgramCheckerService.app2unitAvailable ? 1.0 : 0.6
+    onToggled: checked => {
+      if (ProgramCheckerService.app2unitAvailable) {
+        Settings.data.appLauncher.useApp2Unit = checked
+      }
+    }
   }
 
   NTextInput {
