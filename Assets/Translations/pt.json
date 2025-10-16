@@ -1303,7 +1303,8 @@
         "bottom_left": "Inferior esquerdo",
         "bottom_right": "Inferior direito",
         "bottom_center": "Centro inferior",
-        "top_center": "Centro superior"
+        "top_center": "Centro superior",
+        "center": "Centro"
       },
       "quickSettingsStyle": {
         "modern": "Moderno",
@@ -1615,18 +1616,41 @@
     "discharging-rate": "Taxa de descarregamento: {rate} W.",
     "charging": "Carregando.",
     "discharging": "Descarregando.",
-    "battery-manager": {
-      "title": "Limite da bateria",
-      "set-success-desc": "Limite da bateria definido para {percent}%",
-      "initial-setup": "Configuração inicial necessária",
-      "set-failed": "Falha ao definir o limite da bateria",
-      "install-success": "Instalado com sucesso",
-      "install-missing": "Arquivos necessários ausentes",
-      "install-unsupported": "Sistema não suportado",
-      "install-failed": "Falha na instalação",
-      "uninstall-setup": "Desinstalando, autenticação necessária",
-      "uninstall-success": "Desinstalado com sucesso",
-      "uninstall-failed": "Falha na desinstalação"
+    "panel": {
+      "balanced": "Balanceado ({percent}%)",
+      "disabled": "Gerenciador de bateria desativado",
+      "full": "Capacidade máxima ({percent}%)",
+      "lifespan": "Vida útil prolongada ({percent}%)",
+      "title": "Limite de carga"
+    }
+  },
+  "setup": {
+    "customize": {
+      "header": "Personalizar a sua experiência",
+      "subheader": "Ajuste a posição da barra, densidade, escala e mais."
+    },
+    "appearance": {
+      "header": "Aparência",
+      "subheader": "Escolha o modo escuro e as fontes de cores (Matugen ou predefinidas)."
+    },
+    "wallpaper": {
+      "header": "Escolha o seu papel de parede",
+      "subheader": "Defina o ambiente com um belo fundo.",
+      "select-prompt": "Selecione um papel de parede abaixo",
+      "preview-error": "Falha ao carregar a imagem",
+      "none-in-dir": "Nenhum papel de parede encontrado no diretório",
+      "no-dir": "Nenhum diretório de papéis de parede selecionado",
+      "no-valid": "Nenhuma imagem válida encontrada em: {dir}",
+      "choose-dir": "Escolha um diretório contendo seus papéis de parede",
+      "dir": {
+        "label": "Diretório de papéis de parede",
+        "description": "Escolha a pasta que contém seus papéis de parede",
+        "browse": "Procurar pasta",
+        "select-title": "Selecionar pasta de papéis de parede"
+      }
+    },
+    "welcome": {
+      "note": "Apenas alguns ajustes básicos para começar - o restante está em Configurações"
     }
   }
 }

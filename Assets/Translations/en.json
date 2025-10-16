@@ -1305,7 +1305,8 @@
         "bottom_left": "Bottom left",
         "bottom_right": "Bottom right",
         "bottom_center": "Bottom center",
-        "top_center": "Top center"
+        "top_center": "Top center",
+        "center": "Center"
       },
       "quickSettingsStyle": {
         "modern": "Modern",
@@ -1621,6 +1622,35 @@
       "balanced": "Balanced ({percent}%)",
       "lifespan": "Extended lifespan ({percent}%)",
       "disabled": "Battery manager disabled"
+    }
+  },
+  "setup": {
+    "customize": {
+      "header": "Customize your experience",
+      "subheader": "Adjust bar position, density, scaling and more."
+    },
+    "appearance": {
+      "header": "Appearance",
+      "subheader": "Choose dark mode and color sources (Matugen or predefined)."
+    },
+    "wallpaper": {
+      "header": "Choose your wallpaper",
+      "subheader": "Set the mood with a beautiful background.",
+      "select-prompt": "Select a wallpaper below",
+      "preview-error": "Failed to load image",
+      "none-in-dir": "No wallpapers found in directory",
+      "no-dir": "No wallpaper directory selected",
+      "no-valid": "No valid image files found in: {dir}",
+      "choose-dir": "Choose a directory containing your wallpaper images",
+      "dir": {
+        "label": "Wallpaper directory",
+        "description": "Choose the folder containing your wallpapers",
+        "browse": "Browse for wallpaper folder",
+        "select-title": "Select wallpaper folder"
+      }
+    },
+    "welcome": {
+      "note": "Just a few basics to get you started - full options are in Settings"
     }
   }
 }
