@@ -221,6 +221,18 @@ NPanel {
       }
     }
 
+    function selectNextWrapped() {
+      if (results.length > 0) {
+        selectedIndex = (selectedIndex + 1) % results.length
+      }
+    }
+
+    function selectPreviousWrapped() {
+      if (results.length > 0) {
+        selectedIndex = (((selectedIndex - 1) % results.length) + results.length) % results.length
+      }
+    }
+
     function selectFirst() {
       selectedIndex = 0
     }
