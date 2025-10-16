@@ -266,8 +266,21 @@ Item {
     if (!toplevel)
       return ""
 
+    var appId = ""
+
+    // Try the wayland object first!
+    // From my (Lemmy) testing it works fine so we could probably get rid of all the other attempts below.
+    // Leaving them in for now, just in case...
+    try {
+      appId = toplevel.wayland.appId
+      console.lo
+      if (appId)
+          return appId
+    } catch (e) {
+    }
+
     // Try direct properties
-    var appId = safeGetProperty(toplevel, "class", "")
+    appId = safeGetProperty(toplevel, "class", "")
     if (appId)
       return appId
 
@@ -286,8 +299,6 @@ Item {
         return String(ipcData.class || ipcData.initialClass || ipcData.appId || ipcData.wm_class || "")
       }
     } catch (e) {
-
-      // Ignore IPC errors
     }
 
     return ""
@@ -329,7 +340,6 @@ Item {
     target: Hyprland
     enabled: initialized
     function onRawEvent(event) {
-      safeUpdateWorkspaces()
       workspaceChanged()
       updateTimer.restart()
 
