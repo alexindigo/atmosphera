@@ -13,6 +13,24 @@ ColumnLayout {
   property var schemeColorsCache: ({})
   property int cacheVersion: 0 // Increment to trigger UI updates
 
+  // Time dropdown options (00:00 .. 23:30)
+  ListModel {
+    id: timeOptions
+  }
+  Component.onCompleted: {
+    for (var h = 0; h < 24; h++) {
+      for (var m = 0; m < 60; m += 30) {
+        var hh = ("0" + h).slice(-2)
+        var mm = ("0" + m).slice(-2)
+        var key = hh + ":" + mm
+        timeOptions.append({
+                             "key": key,
+                             "name": key
+                           })
+      }
+    }
+  }
+
   spacing: Style.marginL
 
   // Helper function to extract scheme name from path
@@ -146,6 +164,77 @@ ColumnLayout {
                  Settings.data.colorSchemes.darkMode = checked
                  root.cacheVersion++ // Force UI update for dark/light variants
                }
+  }
+
+  NComboBox {
+    label: "Dark Mode Schedule"
+    description: "Enables automatic switching between light and dark mode"
+
+    model: [{
+        "name": "Off",
+        "key": "off"
+      }, {
+        "name": "Manual",
+        "key": "manual"
+      }, {
+        "name": "Sunrise/Sunset",
+        "key": "location"
+      }]
+
+    currentKey: Settings.data.colorSchemes.schedulingMode
+
+    onSelected: key => {
+                  Settings.data.colorSchemes.schedulingMode = key
+                  AppThemeService.generate()
+                }
+  }
+
+  // Manual scheduling
+  ColumnLayout {
+    spacing: Style.marginS
+    visible: Settings.data.colorSchemes.schedulingMode === "manual"
+
+    NLabel {
+      label: I18n.tr("settings.display.night-light.manual-schedule.label")
+      description: I18n.tr("settings.display.night-light.manual-schedule.description")
+    }
+
+    RowLayout {
+      Layout.fillWidth: false
+      spacing: Style.marginS
+
+      NText {
+        text: I18n.tr("settings.display.night-light.manual-schedule.sunrise")
+        pointSize: Style.fontSizeM
+        color: Color.mOnSurfaceVariant
+      }
+
+      NComboBox {
+        model: timeOptions
+        currentKey: Settings.data.colorSchemes.manualSunrise
+        placeholder: I18n.tr("settings.display.night-light.manual-schedule.select-start")
+        onSelected: key => Settings.data.colorSchemes.manualSunrise = key
+        minimumWidth: 120
+      }
+
+      Item {
+        Layout.preferredWidth: 20
+      }
+
+      NText {
+        text: I18n.tr("settings.display.night-light.manual-schedule.sunset")
+        pointSize: Style.fontSizeM
+        color: Color.mOnSurfaceVariant
+      }
+
+      NComboBox {
+        model: timeOptions
+        currentKey: Settings.data.colorSchemes.manualSunset
+        placeholder: I18n.tr("settings.display.night-light.manual-schedule.select-stop")
+        onSelected: key => Settings.data.colorSchemes.manualSunset = key
+        minimumWidth: 120
+      }
+    }
   }
 
   // Use Wallpaper Colors
