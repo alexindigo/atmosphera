@@ -119,18 +119,6 @@ NPanel {
   }
 
   // Navigation functions
-  function selectNext() {
-    if (powerOptions.length > 0) {
-      selectedIndex = Math.min(selectedIndex + 1, powerOptions.length - 1)
-    }
-  }
-
-  function selectPrevious() {
-    if (powerOptions.length > 0) {
-      selectedIndex = Math.max(selectedIndex - 1, 0)
-    }
-  }
-
   function selectNextWrapped() {
     if (powerOptions.length > 0) {
       selectedIndex = (selectedIndex + 1) % powerOptions.length
@@ -182,30 +170,24 @@ NPanel {
     // Keyboard shortcuts
     Shortcut {
       sequence: "Ctrl+K"
-      onActivated: ui.selectPrevious()
+      onActivated: ui.selectPreviousWrapped()
       enabled: root.opened
     }
 
     Shortcut {
       sequence: "Ctrl+J"
-      onActivated: ui.selectNext()
+      onActivated: ui.selectNextWrapped()
       enabled: root.opened
     }
 
     Shortcut {
       sequence: "Up"
-      onActivated: ui.selectPrevious()
+      onActivated: ui.selectPreviousWrapped()
       enabled: root.opened
     }
 
     Shortcut {
       sequence: "Down"
-      onActivated: ui.selectNext()
-      enabled: root.opened
-    }
-
-    Shortcut {
-      sequence: "Tab"
       onActivated: ui.selectNextWrapped()
       enabled: root.opened
     }
@@ -213,6 +195,12 @@ NPanel {
     Shortcut {
       sequence: "Shift+Tab"
       onActivated: ui.selectPreviousWrapped()
+      enabled: root.opened
+    }
+
+    Shortcut {
+      sequence: "Tab"
+      onActivated: ui.selectNextWrapped()
       enabled: root.opened
     }
 
@@ -255,14 +243,6 @@ NPanel {
     }
 
     // Navigation functions
-    function selectNext() {
-      root.selectNext()
-    }
-
-    function selectPrevious() {
-      root.selectPrevious()
-    }
-
     function selectFirst() {
       root.selectFirst()
     }
