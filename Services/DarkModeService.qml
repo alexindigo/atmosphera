@@ -60,7 +60,7 @@ Singleton {
   }
 
   function init() {
-    Logger.log("DarkModeService", "Service started")
+    Logger.i("DarkModeService", "Service started")
 
     if (Settings.data.colorSchemes.schedulingMode == "manual") {
       const changes = collectManualChanges()
@@ -152,7 +152,7 @@ Singleton {
 
     if (lastChange) {
       Settings.data.colorSchemes.darkMode = lastChange.darkMode
-      Logger.log("DarkModeService", `Reset: darkmode=${lastChange.darkMode}`)
+      Logger.d("DarkModeService", `Reset: darkmode=${lastChange.darkMode}`)
     }
   }
 
@@ -163,7 +163,7 @@ Singleton {
       root.nextDarkModeState = nextChange.darkMode
       timer.interval = nextChange.time - now
       timer.restart()
-      Logger.log("DarkModeService", `Scheduled: darkmode=${nextChange.darkMode} in ${timer.interval} ms`)
+      Logger.d("DarkModeService", `Scheduled: darkmode=${nextChange.darkMode} in ${timer.interval} ms`)
     }
   }
 }
