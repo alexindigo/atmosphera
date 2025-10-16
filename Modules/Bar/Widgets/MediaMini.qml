@@ -17,6 +17,7 @@ Item {
   property string section: ""
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
+  property real scaling: 1.0
 
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
@@ -76,8 +77,7 @@ Item {
   }
 
   function calculatedVerticalDimension() {
-    const ratio = (Settings.data.bar.density === "mini") ? 0.67 : 0.8
-    return Math.round(Style.baseWidgetSize * ratio)
+    return Math.round((Style.baseWidgetSize - 5) * scaling)
   }
 
   //  A hidden text element to safely measure the full title width
@@ -86,7 +86,7 @@ Item {
     visible: false
     text: titleText.text
     font: titleText.font
-    applyUiScale: false
+    pointSize: Style.fontSizeS * scaling
   }
 
   Rectangle {
@@ -102,8 +102,8 @@ Item {
     Item {
       id: mainContainer
       anchors.fill: parent
-      anchors.leftMargin: isVerticalBar ? 0 : Style.marginS
-      anchors.rightMargin: isVerticalBar ? 0 : Style.marginS
+      anchors.leftMargin: isVerticalBar ? 0 : Style.marginS * scaling
+      anchors.rightMargin: isVerticalBar ? 0 : Style.marginS * scaling
 
       Loader {
         anchors.verticalCenter: parent.verticalCenter
@@ -155,7 +155,7 @@ Item {
         id: rowLayout
 
         anchors.verticalCenter: parent.verticalCenter
-        spacing: Style.marginS
+        spacing: Style.marginS * scaling
         visible: !isVerticalBar
         z: 1 // Above the visualizer
 
@@ -163,7 +163,7 @@ Item {
           id: windowIcon
           icon: hasActivePlayer ? (MediaService.isPlaying ? "media-pause" : "media-play") : "disc"
           color: hasActivePlayer ? Color.mOnSurface : Color.mOnSurfaceVariant
-          pointSize: Style.fontSizeL
+          pointSize: Style.fontSizeL * scaling
           verticalAlignment: Text.AlignVCenter
           Layout.alignment: Qt.AlignVCenter
           visible: !hasActivePlayer || (!showAlbumArt && !trackArt.visible)
@@ -175,8 +175,8 @@ Item {
           spacing: 0
 
           Item {
-            Layout.preferredWidth: Math.round(21 * Style.uiScaleRatio)
-            Layout.preferredHeight: Math.round(21 * Style.uiScaleRatio)
+            Layout.preferredWidth: Math.round(21 * Style.uiScaleRatio * scaling)
+            Layout.preferredHeight: Math.round(21 * Style.uiScaleRatio * scaling)
 
             NImageCircled {
               id: trackArt
@@ -288,7 +288,7 @@ Item {
               NText {
                 id: titleText
                 text: hasActivePlayer ? getTitle() : placeholderText
-                pointSize: Style.fontSizeS
+                pointSize: Style.fontSizeS * scaling
                 applyUiScale: false
                 font.weight: Style.fontWeightMedium
                 verticalAlignment: Text.AlignVCenter
@@ -299,7 +299,7 @@ Item {
               NText {
                 text: hasActivePlayer ? getTitle() : placeholderText
                 font: titleText.font
-                applyUiScale: false
+                pointSize: Style.fontSizeS * scaling
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: hasActivePlayer ? Text.AlignLeft : Text.AlignHCenter
                 color: hasActivePlayer ? Color.mOnSurface : Color.mOnSurfaceVariant
@@ -359,7 +359,7 @@ Item {
             anchors.fill: parent
             icon: hasActivePlayer ? (MediaService.isPlaying ? "media-pause" : "media-play") : "disc"
             color: hasActivePlayer ? Color.mOnSurface : Color.mOnSurfaceVariant
-            pointSize: Style.fontSizeL
+            pointSize: Style.fontSizeL * scaling
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
           }
