@@ -1616,6 +1616,11 @@
     "discharging-rate": "Discharging rate: {rate} W.",
     "charging": "Charging.",
     "discharging": "Discharging.",
+    "plugged-in": "Plugged in.",
+    "idle": "Idle.",
+    "time-left": "Time left: {time}.",
+    "time-until-full": "Time until full: {time}.",
+    "health": "Health: {percent}%",
     "panel": {
       "title": "Charge threshold",
       "full": "Full capacity ({percent}%)",

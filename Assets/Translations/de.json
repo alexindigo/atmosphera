@@ -1445,6 +1445,11 @@
     "discharging-rate": "Entladerate: {rate} W.",
     "charging": "Wird geladen.",
     "discharging": "Wird entladen.",
+    "plugged-in": "Angeschlossen.",
+    "idle": "Leerlauf.",
+    "time-left": "Verbleibende Zeit: {time}.",
+    "time-until-full": "Zeit bis vollständig geladen: {time}.",
+    "health": "Zustand: {percent}%",
     "panel": {
       "title": "Ladeschwelle",
       "full": "Volle Kapazität ({percent}%)",

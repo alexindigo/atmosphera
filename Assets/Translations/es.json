@@ -1616,6 +1616,11 @@
     "discharging-rate": "Tasa de descarga: {rate} W.",
     "charging": "Cargando.",
     "discharging": "Descargando.",
+    "plugged-in": "Conectado.",
+    "idle": "Inactivo.",
+    "time-left": "Tiempo restante: {time}.",
+    "time-until-full": "Tiempo hasta carga completa: {time}.",
+    "health": "Salud: {percent}%",
     "panel": {
       "title": "Umbral de carga",
       "full": "Capacidad total ({percent}%)",

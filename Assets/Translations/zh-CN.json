@@ -1616,6 +1616,11 @@
     "discharging-rate": "放电速率：{rate} W。",
     "charging": "正在充电。",
     "discharging": "正在放电。",
+    "plugged-in": "已接通电源。",
+    "idle": "空闲。",
+    "time-left": "剩余时间：{time}。",
+    "time-until-full": "充满所需时间：{time}。",
+    "health": "健康状况：{percent}%",
     "panel": {
       "title": "充电阈值",
       "full": "完全容量 ({percent}%)",

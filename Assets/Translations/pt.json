@@ -1616,6 +1616,11 @@
     "discharging-rate": "Taxa de descarregamento: {rate} W.",
     "charging": "Carregando.",
     "discharging": "Descarregando.",
+    "plugged-in": "Conectado.",
+    "idle": "Ocioso.",
+    "time-left": "Tempo restante: {time}.",
+    "time-until-full": "Tempo até carga completa: {time}.",
+    "health": "Saúde: {percent}%",
     "panel": {
       "balanced": "Balanceado ({percent}%)",
       "disabled": "Gerenciador de bateria desativado",

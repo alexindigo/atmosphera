@@ -1616,6 +1616,11 @@
     "discharging-rate": "Taux de décharge : {rate} W.",
     "charging": "En charge.",
     "discharging": "En décharge.",
+    "plugged-in": "Branché.",
+    "idle": "Inactif.",
+    "time-left": "Temps restant : {time}.",
+    "time-until-full": "Temps jusqu'à charge complète : {time}.",
+    "health": "État : {percent}%",
     "panel": {
       "title": "Seuil de charge",
       "full": "Capacité totale ({percent}%)",
