@@ -69,6 +69,7 @@
   },
   "location": {
     "name": "Tokyo",
+    "weatherEnabled": true,
     "useFahrenheit": false,
     "use12hourFormat": false,
     "showWeekNumberInCalendar": false

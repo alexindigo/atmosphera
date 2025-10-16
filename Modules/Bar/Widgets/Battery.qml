@@ -106,17 +106,27 @@ Item {
         return I18n.tr("battery.no-battery-detected")
       }
       if (battery.timeToEmpty > 0) {
-        lines.push(I18n.tr("battery.time-left", {"time": Time.formatVagueHumanReadableDuration(battery.timeToEmpty)}))
+        lines.push(I18n.tr("battery.time-left", {
+                             "time": Time.formatVagueHumanReadableDuration(battery.timeToEmpty)
+                           }))
       }
       if (battery.timeToFull > 0) {
-        lines.push(I18n.tr("battery.time-until-full", {"time": Time.formatVagueHumanReadableDuration(battery.timeToFull)}))
+        lines.push(I18n.tr("battery.time-until-full", {
+                             "time": Time.formatVagueHumanReadableDuration(battery.timeToFull)
+                           }))
       }
       if (battery.changeRate !== undefined) {
         const rate = battery.changeRate
         if (rate > 0) {
-          lines.push(charging ? I18n.tr("battery.charging-rate", {"rate": rate.toFixed(2)}) : I18n.tr("battery.discharging-rate", {"rate": rate.toFixed(2)}))
+          lines.push(charging ? I18n.tr("battery.charging-rate", {
+                                          "rate": rate.toFixed(2)
+                                        }) : I18n.tr("battery.discharging-rate", {
+                                                       "rate": rate.toFixed(2)
+                                                     }))
         } else if (rate < 0) {
-          lines.push(I18n.tr("battery.discharging-rate", {"rate": Math.abs(rate).toFixed(2)}))
+          lines.push(I18n.tr("battery.discharging-rate", {
+                               "rate": Math.abs(rate).toFixed(2)
+                             }))
         } else {
           // Rate is 0 - check if plugged in (charging state) or idle
           lines.push(charging ? I18n.tr("battery.plugged-in") : I18n.tr("battery.idle"))
@@ -125,7 +135,9 @@ Item {
         lines.push(charging ? I18n.tr("battery.charging") : I18n.tr("battery.discharging"))
       }
       if (battery.healthPercentage !== undefined && battery.healthPercentage > 0) {
-        lines.push(I18n.tr("battery.health", {"percent": Math.round(battery.healthPercentage)}))
+        lines.push(I18n.tr("battery.health", {
+                             "percent": Math.round(battery.healthPercentage)
+                           }))
       }
       return lines.join("\n")
     }

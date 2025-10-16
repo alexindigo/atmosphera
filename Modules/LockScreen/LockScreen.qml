@@ -548,16 +548,18 @@ Loader {
                 anchors.margins: 14
                 spacing: 14
 
-                // Weather section
+                // Top info row
                 RowLayout {
                   Layout.fillWidth: true
                   Layout.preferredHeight: 65
                   spacing: 18
-                  visible: !Settings.data.general.compactLockScreen && LocationService.coordinatesReady && LocationService.data.weather !== null
+                  visible: !Settings.data.general.compactLockScreen
 
                   // Media widget with visualizer
                   Rectangle {
                     Layout.preferredWidth: 220
+                    // Expand to take remaining space when weather is hidden
+                    Layout.fillWidth: !(Settings.data.location.weatherEnabled && LocationService.data.weather !== null)
                     Layout.preferredHeight: 50
                     radius: 25
                     color: Color.transparent
@@ -666,6 +668,7 @@ Loader {
 
                   // Current weather
                   RowLayout {
+                    visible: Settings.data.location.weatherEnabled && LocationService.data.weather !== null
                     Layout.preferredWidth: 180
                     spacing: 8
 
@@ -738,6 +741,7 @@ Loader {
 
                   // 3-day forecast
                   RowLayout {
+                    visible: Settings.data.location.weatherEnabled && LocationService.data.weather !== null
                     Layout.preferredWidth: 260
                     Layout.rightMargin: 8
                     spacing: 4
@@ -785,9 +789,16 @@ Loader {
                     }
                   }
 
+                  Item {
+                    Layout.fillWidth: true
+                    visible: !(Settings.data.location.weatherEnabled && LocationService.data.weather !== null)
+                    Layout.preferredWidth: visible ? 1 : 0
+                  }
+
                   // Battery and Keyboard Layout (full mode only)
                   ColumnLayout {
                     Layout.preferredWidth: 60
+                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
                     spacing: 8
 
                     // Battery

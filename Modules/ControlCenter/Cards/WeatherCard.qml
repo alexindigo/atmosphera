@@ -9,7 +9,7 @@ import qs.Widgets
 NBox {
   id: root
 
-  readonly property bool weatherReady: (LocationService.data.weather !== null)
+  readonly property bool weatherReady: Settings.data.location.weatherEnabled && (LocationService.data.weather !== null)
 
   ColumnLayout {
     id: content

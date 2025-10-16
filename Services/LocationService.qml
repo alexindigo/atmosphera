@@ -69,7 +69,7 @@ Singleton {
   Timer {
     id: updateTimer
     interval: 20 * 1000
-    running: true
+    running: Settings.data.location.weatherEnabled
     repeat: true
     onTriggered: {
       updateWeather()
@@ -114,6 +114,10 @@ Singleton {
 
   // --------------------------------
   function updateWeather() {
+    if (!Settings.data.location.weatherEnabled) {
+      return
+    }
+
     if (isFetchingWeather) {
       Logger.warn("Location", "Weather is still fetching")
       return

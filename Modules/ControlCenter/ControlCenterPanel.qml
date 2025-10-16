@@ -17,9 +17,13 @@ NPanel {
     var count = 0
     for (var i = 0; i < Settings.data.controlCenter.cards.length; i++) {
       const card = Settings.data.controlCenter.cards[i]
-      if (!card.enabled) {
+      if (!card.enabled)
         continue
-      }
+
+      const contributes = (card.id !== "weather-card" || Settings.data.location.weatherEnabled)
+      if (!contributes)
+        continue
+
       count++
       switch (card.id) {
       case "profile-card":
@@ -72,7 +76,7 @@ NPanel {
       Repeater {
         model: Settings.data.controlCenter.cards
         Loader {
-          active: modelData.enabled
+          active: modelData.enabled && (modelData.id !== "weather-card" || Settings.data.location.weatherEnabled)
           visible: active
           Layout.fillWidth: true
           Layout.preferredHeight: {

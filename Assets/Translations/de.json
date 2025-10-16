@@ -576,6 +576,10 @@
           "label": "Wetter",
           "description": "Bevorzugte Temperatureinheit wählen."
         },
+        "enabled": {
+          "label": "Wetter aktivieren",
+          "description": "Wetterinformationen in der gesamten Benutzeroberfläche anzeigen und Wetterdaten abrufen. Wenn deaktiviert, werden alle Wetterelemente ausgeblendet und es werden keine Netzwerkanfragen gestellt."
+        },
         "fahrenheit": {
           "label": "Temperatur in Fahrenheit (°F) anzeigen",
           "description": "Temperatur in Fahrenheit statt Celsius anzeigen."
@@ -1203,6 +1207,9 @@
   "calendar": {
     "panel": {
       "week": "Woche"
+    },
+    "weather": {
+      "loading": "Wetter wird geladen…"
     }
   },
   "tooltips": {

@@ -576,6 +576,10 @@
           "label": "Weather",
           "description": "Choose your preferred temperature unit."
         },
+        "enabled": {
+          "label": "Enable weather",
+          "description": "Show weather information throughout the interface and fetch weather data. When disabled, all weather elements will be hidden and no network requests will be made."
+        },
         "fahrenheit": {
           "label": "Display temperature in Fahrenheit (°F)",
           "description": "Display temperature in Fahrenheit instead of Celsius."
@@ -1183,11 +1187,7 @@
       "scan-again": "Scan again"
     }
   },
-  "calendar": {
-    "panel": {
-      "week": "Week"
-    }
-  },
+  
   "tooltips": {
     "refresh": "Refresh",
     "close": "Close",
@@ -1243,6 +1243,14 @@
   },
   "clock": {
     "tooltip": "Open calendar"
+  },
+  "calendar": {
+    "panel": {
+      "week": "Week"
+    },
+    "weather": {
+      "loading": "Loading weather…"
+    }
   },
   "dock": {
     "menu": {

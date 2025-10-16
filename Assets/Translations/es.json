@@ -576,6 +576,10 @@
           "label": "Clima",
           "description": "Elige tu unidad de temperatura preferida."
         },
+        "enabled": {
+          "label": "Activar clima",
+          "description": "Mostrar información del clima en toda la interfaz y obtener datos meteorológicos. Cuando está desactivado, todos los elementos del clima estarán ocultos y no se realizarán solicitudes de red."
+        },
         "fahrenheit": {
           "label": "Mostrar temperatura en Fahrenheit (°F)",
           "description": "Muestra la temperatura en Fahrenheit en lugar de Celsius."
@@ -1186,6 +1190,9 @@
   "calendar": {
     "panel": {
       "week": "Semana"
+    },
+    "weather": {
+      "loading": "Cargando el clima…"
     }
   },
   "tooltips": {

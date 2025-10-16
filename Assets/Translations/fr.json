@@ -576,6 +576,10 @@
           "label": "Météo",
           "description": "Choisissez votre unité de température préférée."
         },
+        "enabled": {
+          "label": "Activer la météo",
+          "description": "Afficher les informations météorologiques dans toute l'interface et récupérer les données météo. Lorsque désactivé, tous les éléments météo seront masqués et aucune requête réseau ne sera effectuée."
+        },
         "fahrenheit": {
           "label": "Afficher la température en Fahrenheit (°F)",
           "description": "Afficher la température en Fahrenheit au lieu de Celsius."
@@ -1186,6 +1190,9 @@
   "calendar": {
     "panel": {
       "week": "Semaine"
+    },
+    "weather": {
+      "loading": "Chargement de la météo…"
     }
   },
   "tooltips": {

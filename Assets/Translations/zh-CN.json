@@ -576,6 +576,10 @@
           "label": "天气",
           "description": "选择您喜欢的温度单位。"
         },
+        "enabled": {
+          "label": "启用天气",
+          "description": "在整个界面中显示天气信息并获取天气数据。禁用后，所有天气元素将被隐藏，不会进行网络请求。"
+        },
         "fahrenheit": {
           "label": "以华氏度显示温度 (°F)",
           "description": "以华氏度而非摄氏度显示温度。"
@@ -1186,6 +1190,9 @@
   "calendar": {
     "panel": {
       "week": "周"
+    },
+    "weather": {
+      "loading": "正在加载天气…"
     }
   },
   "tooltips": {
