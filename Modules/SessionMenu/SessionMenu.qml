@@ -131,6 +131,18 @@ NPanel {
     }
   }
 
+  function selectNextWrapped() {
+    if (powerOptions.length > 0) {
+      selectedIndex = (selectedIndex + 1) % powerOptions.length
+    }
+  }
+
+  function selectPreviousWrapped() {
+    if (powerOptions.length > 0) {
+      selectedIndex = (((selectedIndex - 1) % powerOptions.length) + powerOptions.length) % powerOptions.length
+    }
+  }
+
   function selectFirst() {
     selectedIndex = 0
   }
