@@ -26,23 +26,23 @@ NPanel {
 
     ColumnLayout {
       anchors.fill: parent
-      anchors.margins: Style.marginL * scaling
-      spacing: Style.marginM * scaling
+      anchors.margins: Style.marginL
+      spacing: Style.marginM
 
       // Header section
       RowLayout {
         Layout.fillWidth: true
-        spacing: Style.marginM * scaling
+        spacing: Style.marginM
 
         NIcon {
           icon: "bell"
-          pointSize: Style.fontSizeXXL * scaling
+          pointSize: Style.fontSizeXXL
           color: Color.mPrimary
         }
 
         NText {
           text: I18n.tr("notifications.panel.title")
-          pointSize: Style.fontSizeL * scaling
+          pointSize: Style.fontSizeL
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface
           Layout.fillWidth: true
@@ -84,7 +84,7 @@ NPanel {
         Layout.fillHeight: true
         Layout.alignment: Qt.AlignHCenter
         visible: NotificationService.historyList.count === 0
-        spacing: Style.marginL * scaling
+        spacing: Style.marginL
 
         Item {
           Layout.fillHeight: true
@@ -92,21 +92,21 @@ NPanel {
 
         NIcon {
           icon: "bell-off"
-          pointSize: 64 * scaling
+          pointSize: 64
           color: Color.mOnSurfaceVariant
           Layout.alignment: Qt.AlignHCenter
         }
 
         NText {
           text: I18n.tr("notifications.panel.no-notifications")
-          pointSize: Style.fontSizeL * scaling
+          pointSize: Style.fontSizeL
           color: Color.mOnSurfaceVariant
           Layout.alignment: Qt.AlignHCenter
         }
 
         NText {
           text: I18n.tr("notifications.panel.description")
-          pointSize: Style.fontSizeS * scaling
+          pointSize: Style.fontSizeS
           color: Color.mOnSurfaceVariant
           Layout.alignment: Qt.AlignHCenter
           Layout.fillWidth: true
@@ -128,7 +128,7 @@ NPanel {
         verticalPolicy: ScrollBar.AsNeeded
 
         model: NotificationService.historyList
-        spacing: Style.marginM * scaling
+        spacing: Style.marginM
         clip: true
         boundsBehavior: Flickable.StopAtBounds
         visible: NotificationService.historyList.count > 0
@@ -141,11 +141,11 @@ NPanel {
           property bool isExpanded: notificationList.expandedId === notificationId
 
           width: notificationList.width
-          height: notificationLayout.implicitHeight + (Style.marginM * scaling * 2)
-          radius: Style.radiusM * scaling
+          height: notificationLayout.implicitHeight + (Style.marginM * 2)
+          radius: Style.radiusM
           color: Color.mSurfaceVariant
           border.color: Qt.alpha(Color.mOutline, Style.opacityMedium)
-          border.width: Math.max(1, Style.borderS * scaling)
+          border.width: Math.max(1, Style.borderS)
 
           Behavior on height {
             NumberAnimation {
@@ -165,7 +165,7 @@ NPanel {
           MouseArea {
             anchors.fill: parent
             // Don't capture clicks on the delete button
-            anchors.rightMargin: 48 * scaling
+            anchors.rightMargin: 48
             enabled: (summaryText.truncated || bodyText.truncated)
             onClicked: {
               if (notificationList.expandedId === notificationId) {
@@ -180,20 +180,20 @@ NPanel {
           RowLayout {
             id: notificationLayout
             anchors.fill: parent
-            anchors.margins: Style.marginM * scaling
-            spacing: Style.marginM * scaling
+            anchors.margins: Style.marginM
+            spacing: Style.marginM
 
             ColumnLayout {
               NImageCircled {
-                Layout.preferredWidth: 40 * scaling
-                Layout.preferredHeight: 40 * scaling
+                Layout.preferredWidth: Math.round(40 * Style.uiScaleRatio)
+                Layout.preferredHeight: Math.round(40 * Style.uiScaleRatio)
                 Layout.alignment: Qt.AlignTop
-                Layout.topMargin: 20 * scaling
+                Layout.topMargin: 20
                 imagePath: model.cachedImage || model.originalImage || ""
                 borderColor: Color.transparent
                 borderWidth: 0
                 fallbackIcon: "bell"
-                fallbackIconSize: 24 * scaling
+                fallbackIconSize: 24
               }
               Item {
                 Layout.fillHeight: true
@@ -204,20 +204,20 @@ NPanel {
             ColumnLayout {
               Layout.fillWidth: true
               Layout.alignment: Qt.AlignTop
-              spacing: Style.marginXS * scaling
-              Layout.rightMargin: -(Style.marginM + Style.baseWidgetSize * 0.6) * scaling
+              spacing: Style.marginXS
+              Layout.rightMargin: -(Style.marginM + Style.baseWidgetSize * 0.6)
 
               // Header row with app name and timestamp
               RowLayout {
                 Layout.fillWidth: true
-                spacing: Style.marginS * scaling
+                spacing: Style.marginS
 
                 // Urgency indicator
                 Rectangle {
-                  Layout.preferredWidth: 6 * scaling
-                  Layout.preferredHeight: 6 * scaling
+                  Layout.preferredWidth: 6
+                  Layout.preferredHeight: 6
                   Layout.alignment: Qt.AlignVCenter
-                  radius: 3 * scaling
+                  radius: 3
                   visible: model.urgency !== 1
                   color: {
                     if (model.urgency === 2)
@@ -231,13 +231,13 @@ NPanel {
 
                 NText {
                   text: model.appName || "Unknown App"
-                  pointSize: Style.fontSizeXS * scaling
+                  pointSize: Style.fontSizeXS
                   color: Color.mSecondary
                 }
 
                 NText {
                   text: Time.formatRelativeTime(model.timestamp)
-                  pointSize: Style.fontSizeXS * scaling
+                  pointSize: Style.fontSizeXS
                   color: Color.mSecondary
                 }
 
@@ -250,7 +250,7 @@ NPanel {
               NText {
                 id: summaryText
                 text: model.summary || I18n.tr("general.no-summary")
-                pointSize: Style.fontSizeM * scaling
+                pointSize: Style.fontSizeM
                 font.weight: Font.Medium
                 color: Color.mOnSurface
                 textFormat: Text.PlainText
@@ -264,7 +264,7 @@ NPanel {
               NText {
                 id: bodyText
                 text: model.body || ""
-                pointSize: Style.fontSizeS * scaling
+                pointSize: Style.fontSizeS
                 color: Color.mOnSurfaceVariant
                 textFormat: Text.PlainText
                 wrapMode: Text.Wrap
@@ -277,14 +277,14 @@ NPanel {
               // Spacer for expand indicator
               Item {
                 Layout.fillWidth: true
-                Layout.preferredHeight: (!isExpanded && (summaryText.truncated || bodyText.truncated)) ? (Style.marginS * scaling) : 0
+                Layout.preferredHeight: (!isExpanded && (summaryText.truncated || bodyText.truncated)) ? (Style.marginS) : 0
               }
 
               // Expand indicator
               RowLayout {
                 Layout.fillWidth: true
                 visible: !isExpanded && (summaryText.truncated || bodyText.truncated)
-                spacing: Style.marginXS * scaling
+                spacing: Style.marginXS
 
                 Item {
                   Layout.fillWidth: true
@@ -292,14 +292,14 @@ NPanel {
 
                 NText {
                   text: I18n.tr("notifications.panel.click-to-expand") || "Click to expand"
-                  pointSize: Style.fontSizeXS * scaling
+                  pointSize: Style.fontSizeXS
                   color: Color.mPrimary
                   font.weight: Font.Medium
                 }
 
                 NIcon {
                   icon: "chevron-down"
-                  pointSize: Style.fontSizeS * scaling
+                  pointSize: Style.fontSizeS
                   color: Color.mPrimary
                 }
               }

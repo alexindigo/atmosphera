@@ -12,7 +12,6 @@ Item {
   id: root
 
   property ShellScreen screen
-  property real scaling: 1.0
 
   // Widget properties passed from Bar.qml for per-instance settings
   property string widgetId: ""
@@ -43,7 +42,7 @@ Item {
     id: pill
 
     anchors.verticalCenter: parent.verticalCenter
-    compact: (Settings.data.bar.density === "compact")
+    density: Settings.data.bar.density
     rightOpen: BarService.getPillDirection(root)
     icon: "keyboard"
     autoHide: false // Important to be false so we can hover as long as we want

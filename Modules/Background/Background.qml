@@ -118,7 +118,7 @@ Variants {
         sourceSize: undefined
         onStatusChanged: {
           if (status === Image.Error) {
-            Logger.warn("Current wallpaper failed to load:", source)
+            Logger.w("Current wallpaper failed to load:", source)
           } else if (status === Image.Ready && !dimensionsCalculated) {
             dimensionsCalculated = true
             const optimalSize = calculateOptimalWallpaperSize(implicitWidth, implicitHeight)
@@ -147,7 +147,7 @@ Variants {
         sourceSize: undefined
         onStatusChanged: {
           if (status === Image.Error) {
-            Logger.warn("Next wallpaper failed to load:", source)
+            Logger.w("Next wallpaper failed to load:", source)
           } else if (status === Image.Ready && !dimensionsCalculated) {
             dimensionsCalculated = true
             const optimalSize = calculateOptimalWallpaperSize(implicitWidth, implicitHeight)
@@ -336,7 +336,7 @@ Variants {
           dim = Qt.size(h * imageAspectRatio, h)
         }
 
-        Logger.log("Background", `Wallpaper resized on ${modelData.name} ${screenWidth}x${screenHeight} @ ${compositorScale}x`, "src:", wpWidth, wpHeight, "dst:", dim.width, dim.height)
+        Logger.d("Background", `Wallpaper resized on ${modelData.name} ${screenWidth}x${screenHeight} @ ${compositorScale}x`, "src:", wpWidth, wpHeight, "dst:", dim.width, dim.height)
         return dim
       }
 
@@ -425,7 +425,7 @@ Variants {
           transitionType = "fade"
         }
 
-        //Logger.log("Background", "New wallpaper: ", futureWallpaper, "On:", modelData.name, "Transition:", transitionType)
+        //Logger.i("Background", "New wallpaper: ", futureWallpaper, "On:", modelData.name, "Transition:", transitionType)
         switch (transitionType) {
         case "none":
           setWallpaperImmediate(futureWallpaper)

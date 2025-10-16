@@ -26,7 +26,7 @@ Singleton {
 
   // -------------------------------------------
   function init() {
-    Logger.log("Font", "Service started")
+    Logger.i("Font", "Service started")
     loadFontconfigMonospaceFonts()
   }
 
@@ -39,7 +39,7 @@ Singleton {
     if (isLoading)
       return
 
-    Logger.log("Font", "Loading system fonts...")
+    Logger.d("Font", "Loading system fonts...")
     isLoading = true
 
     var fontFamilies = Qt.fontFamilies()
@@ -125,7 +125,7 @@ Singleton {
 
     fontsLoaded = true
     isLoading = false
-    Logger.log("Font", "Loaded", availableFonts.count, "fonts:", monospaceFonts.count, "monospace,", displayFonts.count, "display")
+    Logger.d("Font", "Loaded", availableFonts.count, "fonts:", monospaceFonts.count, "monospace,", displayFonts.count, "display")
   }
 
   function isMonospaceFont(fontName) {

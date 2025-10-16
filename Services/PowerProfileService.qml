@@ -55,7 +55,7 @@ Singleton {
     try {
       powerProfiles.profile = p
     } catch (e) {
-      Logger.error("PowerProfileService", "Failed to set profile:", e)
+      Logger.e("PowerProfileService", "Failed to set profile:", e)
     }
   }
 

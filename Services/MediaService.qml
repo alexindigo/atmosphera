@@ -38,12 +38,19 @@ Singleton {
     let allPlayers = Mpris.players.values
     let finalPlayers = []
     const genericBrowsers = ["firefox", "chromium", "chrome"]
+    const blacklist = (Settings.data.audio && Settings.data.audio.mprisBlacklist) ? Settings.data.audio.mprisBlacklist : []
 
     // Separate players into specific and generic lists
     let specificPlayers = []
     let genericPlayers = []
     for (var i = 0; i < allPlayers.length; i++) {
       const identity = String(allPlayers[i].identity || "").toLowerCase()
+      const match = blacklist.find(b => {
+                                     const s = String(b || "").toLowerCase()
+                                     return s && (identity.includes(s))
+                                   })
+      if (match)
+        continue
       if (genericBrowsers.some(b => identity.includes(b))) {
         genericPlayers.push(allPlayers[i])
       } else {
@@ -129,14 +136,14 @@ Singleton {
   function findActivePlayer() {
     let availablePlayers = getAvailablePlayers()
     if (availablePlayers.length === 0) {
-      //Logger.log("Media", "No active player found")
+      //Logger.i("Media", "No active player found")
       return null
     }
 
     // Prioritize the actively playing player ---
     for (var i = 0; i < availablePlayers.length; i++) {
       if (availablePlayers[i] && availablePlayers[i].playbackState === MprisPlaybackState.Playing) {
-        Logger.log("Media", "Found actively playing player: " + availablePlayers[i].identity)
+        Logger.d("Media", "Found actively playing player: " + availablePlayers[i].identity)
         selectedPlayerIndex = i
         return availablePlayers[i]
       }
@@ -170,7 +177,7 @@ Singleton {
     if (newPlayer !== currentPlayer) {
       currentPlayer = newPlayer
       currentPosition = currentPlayer ? currentPlayer.position : 0
-      Logger.log("Media", "Switching player")
+      Logger.d("Media", "Switching player")
     }
   }
 
@@ -286,7 +293,7 @@ Singleton {
   Connections {
     target: Mpris.players
     function onValuesChanged() {
-      Logger.log("Media", "Players changed")
+      Logger.d("Media", "Players changed")
       updateCurrentPlayer()
     }
   }

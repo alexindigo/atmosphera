@@ -10,7 +10,6 @@ NIconButton {
   id: root
 
   property ShellScreen screen
-  property real scaling: 1.0
 
   // Widget properties passed from Bar.qml for per-instance settings
   property string widgetId: ""
@@ -38,7 +37,8 @@ NIconButton {
   tooltipText: I18n.tr("tooltips.open-control-center")
   tooltipDirection: BarService.getTooltipDirection()
   baseSize: Style.capsuleHeight
-  compact: (Settings.data.bar.density === "compact")
+  applyUiScale: false
+  density: Settings.data.bar.density
   colorBg: (Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent)
   colorFg: Color.mOnSurface
   colorBgHover: useDistroLogo ? Color.mSurfaceVariant : Color.mTertiary
@@ -56,7 +56,7 @@ NIconButton {
       if (customIconPath !== "")
         return customIconPath.startsWith("file://") ? customIconPath : "file://" + customIconPath
       if (useDistroLogo)
-        return DistroLogoService.osLogo
+        return DistroService.osLogo
       return ""
     }
     visible: source !== ""

@@ -8,13 +8,13 @@ ColumnLayout {
   property string label: ""
   property string description: ""
 
-  spacing: Style.marginXXS * scaling
+  spacing: Style.marginXXS
   Layout.fillWidth: true
-  Layout.bottomMargin: Style.marginM * scaling
+  Layout.bottomMargin: Style.marginM
 
   NText {
     text: root.label
-    pointSize: Style.fontSizeXL * scaling
+    pointSize: Style.fontSizeXL
     font.weight: Style.fontWeightBold
     color: Color.mSecondary
     visible: root.label !== ""
@@ -22,7 +22,7 @@ ColumnLayout {
 
   NText {
     text: root.description
-    pointSize: Style.fontSizeM * scaling
+    pointSize: Style.fontSizeM
     color: Color.mOnSurfaceVariant
     wrapMode: Text.WordWrap
     Layout.fillWidth: true

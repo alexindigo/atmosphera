@@ -1,5 +1,6 @@
 {
-  "settingsVersion": 15,
+  "settingsVersion": 16,
+  "setupCompleted": false,
   "bar": {
     "position": "top",
     "backgroundOpacity": 1,
@@ -9,7 +10,6 @@
     "floating": false,
     "marginVertical": 0.25,
     "marginHorizontal": 0.25,
-
     "widgets": {
       "left": [
         {
@@ -60,13 +60,16 @@
     "dimDesktop": true,
     "showScreenCorners": false,
     "forceBlackScreenCorners": false,
+    "scaleRatio": 1,
     "radiusRatio": 1,
     "screenRadiusRatio": 1,
     "animationSpeed": 1,
-    "animationDisabled": false
+    "animationDisabled": false,
+    "compactLockScreen": false
   },
   "location": {
     "name": "Tokyo",
+    "weatherEnabled": true,
     "useFahrenheit": false,
     "use12hourFormat": false,
     "showWeekNumberInCalendar": false
@@ -108,9 +111,8 @@
   },
   "controlCenter": {
     "position": "close_to_bar_button",
-    "quickSettingsStyle": "compact",
-    "widgets": {
-      "quickSettings": [
+    "shortcuts": {
+      "left": [
         {
           "id": "WiFi"
         },
@@ -118,19 +120,49 @@
           "id": "Bluetooth"
         },
         {
-          "id": "Notifications"
+          "id": "ScreenRecorder"
         },
         {
-          "id": "ScreenRecorder"
+          "id": "WallpaperSelector"
+        }
+      ],
+      "right": [
+        {
+          "id": "Notifications"
         },
         {
           "id": "PowerProfile"
         },
         {
-          "id": "WallpaperSelector"
+          "id": "KeepAwake"
+        },
+        {
+          "id": "NightLight"
         }
       ]
-    }
+    },
+    "cards": [
+      {
+        "enabled": true,
+        "id": "profile-card"
+      },
+      {
+        "enabled": true,
+        "id": "shortcuts-card"
+      },
+      {
+        "enabled": true,
+        "id": "audio-card"
+      },
+      {
+        "enabled": true,
+        "id": "weather-card"
+      },
+      {
+        "enabled": true,
+        "id": "media-sysmon-card"
+      }
+    ]
   },
   "dock": {
     "displayMode": "always_visible",
@@ -159,7 +191,8 @@
     "enabled": true,
     "location": "top_right",
     "monitors": [],
-    "autoHideMs": 2000
+    "autoHideMs": 2000,
+    "alwaysOnTop": false
   },
   "audio": {
     "volumeStep": 5,
@@ -174,7 +207,6 @@
     "fontFixed": "DejaVu Sans Mono",
     "fontDefaultScale": 1,
     "fontFixedScale": 1,
-    "monitorsScaling": [],
     "idleInhibitorEnabled": false,
     "tooltipsEnabled": true
   },
@@ -191,6 +223,7 @@
   "templates": {
     "gtk": false,
     "qt": false,
+    "kcolorscheme": false,
     "kitty": false,
     "ghostty": false,
     "foot": false,
@@ -218,5 +251,8 @@
     "enabled": false,
     "wallpaperChange": "",
     "darkModeChange": ""
+  },
+  "battery": {
+    "chargingMode": 0
   }
 }

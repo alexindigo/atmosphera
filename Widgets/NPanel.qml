@@ -8,7 +8,6 @@ Loader {
   id: root
 
   property ShellScreen screen
-  property real scaling: 1.0
 
   property Component panelContent: null
   property real preferredWidth: 700
@@ -27,8 +26,6 @@ Loader {
   property bool panelAnchorLeft: false
   property bool panelAnchorRight: false
 
-  property bool isMasked: false
-
   // Properties to support positioning relative to the opener (button)
   property bool useButtonPosition: false
   property point buttonPosition: Qt.point(0, 0)
@@ -39,10 +36,8 @@ Loader {
   property bool backgroundClickEnabled: true
 
   // Animation properties
-  readonly property real originalScale: 0.7
-  readonly property real originalOpacity: 0.0
+  readonly property real originalScale: 0.0
   property real scaleValue: originalScale
-  property real opacityValue: originalOpacity
   property real dimmingOpacity: 0
 
   signal opened
@@ -100,7 +95,6 @@ Loader {
   function close() {
     dimmingOpacity = 0
     scaleValue = originalScale
-    opacityValue = originalOpacity
     root.closed()
     active = false
     useButtonPosition = false
@@ -131,70 +125,39 @@ Loader {
 
   // -----------------------------------------
   sourceComponent: Component {
+    // PanelWindow has its own screen property inherited of QsWindow
     PanelWindow {
       id: panelWindow
-
-      // PanelWindow has its own screen property inherited of QsWindow
-      property real scaling: ScalingService.getScreenScale(screen)
 
       readonly property string barPosition: Settings.data.bar.position
       readonly property bool isVertical: barPosition === "left" || barPosition === "right"
       readonly property bool barIsVisible: (screen !== null) && (Settings.data.bar.monitors.includes(screen.name) || (Settings.data.bar.monitors.length === 0))
-      readonly property real verticalBarWidth: Math.round(Style.barHeight * scaling)
+      readonly property real verticalBarWidth: Style.barHeight
 
       Component.onCompleted: {
-        Logger.log("NPanel", "Opened", root.objectName, "on", screen.name)
+        Logger.d("NPanel", "Opened", root.objectName, "on", screen.name)
         dimmingOpacity = Style.opacityHeavy
-        root.scaling = scaling = ScalingService.getScreenScale(screen)
-
-        // Force refresh panel content when scaling is applied
-        Qt.callLater(() => {
-                       panelContentLoader.active = false
-                       panelContentLoader.active = true
-                     })
-      }
-
-      Connections {
-        target: ScalingService
-        function onScaleChanged(screenName, scale) {
-          if ((screen !== null) && (screenName === screen.name)) {
-            root.scaling = scaling = scale
-
-            // Force refresh panel content when scaling changes
-            Qt.callLater(() => {
-                           panelContentLoader.active = false
-                           panelContentLoader.active = true
-                         })
-          }
-        }
       }
 
       Connections {
         target: panelWindow
         function onScreenChanged() {
           root.screen = screen
-          root.scaling = scaling = ScalingService.getScreenScale(screen)
-
-          // It's mandatory to force refresh the subloader to ensure the scaling is properly dispatched
-          panelContentLoader.active = false
-          panelContentLoader.active = true
 
           // If called from IPC always reposition if screen is updated
           if (buttonName) {
             setPosition()
           }
-          // Logger.log("NPanel", "OnScreenChanged", root.screen.name)
+          Logger.d("NPanel", "OnScreenChanged", root.screen.name)
         }
       }
 
       visible: true
-      color: Settings.data.general.dimDesktop && !root.isMasked ? Qt.alpha(Color.mShadow, dimmingOpacity) : Color.transparent
+      color: Settings.data.general.dimDesktop ? Qt.alpha(Color.mShadow, dimmingOpacity) : Color.transparent
 
       WlrLayershell.exclusionMode: ExclusionMode.Ignore
       WlrLayershell.namespace: "noctalia-panel"
       WlrLayershell.keyboardFocus: root.panelKeyboardFocus ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
-
-      mask: root.isMasked ? maskRegion : null
 
       Region {
         id: maskRegion
@@ -230,9 +193,9 @@ Loader {
       Rectangle {
         id: panelBackground
         color: panelBackgroundColor
-        radius: Style.radiusL * scaling
+        radius: Style.radiusL
         border.color: Color.mOutline
-        border.width: Math.max(1, Style.borderS * scaling)
+        border.width: Math.max(1, Style.borderS)
         // Dragging support
         property bool draggable: root.draggable
         property bool isDragged: false
@@ -241,9 +204,9 @@ Loader {
         width: {
           var w
           if (preferredWidthRatio !== undefined) {
-            w = Math.round(Math.max(screen?.width * preferredWidthRatio, preferredWidth) * scaling)
+            w = Math.round(Math.max(screen?.width * preferredWidthRatio, preferredWidth))
           } else {
-            w = preferredWidth * scaling
+            w = preferredWidth
           }
           // Clamp width so it is never bigger than the screen
           return Math.min(w, screen?.width - Style.marginL * 2)
@@ -251,17 +214,16 @@ Loader {
         height: {
           var h
           if (preferredHeightRatio !== undefined) {
-            h = Math.round(Math.max(screen?.height * preferredHeightRatio, preferredHeight) * scaling)
+            h = Math.round(Math.max(screen?.height * preferredHeightRatio, preferredHeight))
           } else {
-            h = preferredHeight * scaling
+            h = preferredHeight
           }
 
           // Clamp width so it is never bigger than the screen
-          return Math.min(h, screen?.height - Style.barHeight * scaling - Style.marginL * 2)
+          return Math.min(h, screen?.height - Style.barHeight - Style.marginL * 2)
         }
 
         scale: root.scaleValue
-        opacity: root.isMasked ? 0 : root.opacityValue
         x: isDragged ? manualX : calculatedX
         y: isDragged ? manualY : calculatedY
 
@@ -274,9 +236,9 @@ Loader {
           }
           switch (barPosition) {
           case "top":
-            return (Style.barHeight + Style.marginS) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL * scaling : 0)
+            return (Style.barHeight + Style.marginS) + (Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL : 0)
           default:
-            return Style.marginS * scaling
+            return Style.marginS
           }
         }
 
@@ -286,9 +248,9 @@ Loader {
           }
           switch (barPosition) {
           case "bottom":
-            return (Style.barHeight + Style.marginS) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL * scaling : 0)
+            return (Style.barHeight + Style.marginS) + (Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL : 0)
           default:
-            return Style.marginS * scaling
+            return Style.marginS
           }
         }
 
@@ -298,9 +260,9 @@ Loader {
           }
           switch (barPosition) {
           case "left":
-            return (Style.barHeight + Style.marginS) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL * scaling : 0)
+            return (Style.barHeight + Style.marginS) + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL : 0)
           default:
-            return Style.marginS * scaling
+            return Style.marginS
           }
         }
 
@@ -310,9 +272,9 @@ Loader {
           }
           switch (barPosition) {
           case "right":
-            return (Style.barHeight + Style.marginS) * scaling + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL * scaling : 0)
+            return (Style.barHeight + Style.marginS) + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL : 0)
           default:
-            return Style.marginS * scaling
+            return Style.marginS
           }
         }
 
@@ -401,7 +363,6 @@ Loader {
         // Animate in when component is completed
         Component.onCompleted: {
           root.scaleValue = 1.0
-          root.opacityValue = 1.0
         }
 
         // Reset drag position when panel closes
@@ -467,14 +428,14 @@ Loader {
             var ny = dragStartY + translation.y
 
             // Calculate gaps so we never overlap the bar on any side
-            var baseGap = Style.marginS * scaling
-            var floatExtraH = Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * 2 * Style.marginXL * scaling : 0
-            var floatExtraV = Settings.data.bar.floating ? Settings.data.bar.marginVertical * 2 * Style.marginXL * scaling : 0
+            var baseGap = Style.marginS
+            var floatExtraH = Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * 2 * Style.marginXL : 0
+            var floatExtraV = Settings.data.bar.floating ? Settings.data.bar.marginVertical * 2 * Style.marginXL : 0
 
-            var insetLeft = baseGap + ((barIsVisible && barPosition === "left") ? (Style.barHeight * scaling + floatExtraH) : 0)
-            var insetRight = baseGap + ((barIsVisible && barPosition === "right") ? (Style.barHeight * scaling + floatExtraH) : 0)
-            var insetTop = baseGap + ((barIsVisible && barPosition === "top") ? (Style.barHeight * scaling + floatExtraV) : 0)
-            var insetBottom = baseGap + ((barIsVisible && barPosition === "bottom") ? (Style.barHeight * scaling + floatExtraV) : 0)
+            var insetLeft = baseGap + ((barIsVisible && barPosition === "left") ? (Style.barHeight + floatExtraH) : 0)
+            var insetRight = baseGap + ((barIsVisible && barPosition === "right") ? (Style.barHeight + floatExtraH) : 0)
+            var insetTop = baseGap + ((barIsVisible && barPosition === "top") ? (Style.barHeight + floatExtraV) : 0)
+            var insetBottom = baseGap + ((barIsVisible && barPosition === "bottom") ? (Style.barHeight + floatExtraV) : 0)
 
             // Clamp within screen bounds accounting for insets
             var maxX = panelWindow.width - panelBackground.width - insetRight
@@ -493,7 +454,7 @@ Loader {
           anchors.margins: 0
           color: Color.transparent
           border.color: Color.mPrimary
-          border.width: Math.max(2, Style.borderL * scaling)
+          border.width: Math.max(2, Style.borderL)
           radius: parent.radius
           visible: panelBackground.isDragged && dragHandler.active
           opacity: 0.8
@@ -505,7 +466,7 @@ Loader {
             anchors.margins: 0
             color: Color.transparent
             border.color: Color.mPrimary
-            border.width: Math.max(1, Style.borderS * scaling)
+            border.width: Math.max(1, Style.borderS)
             radius: parent.radius
             opacity: 0.3
           }

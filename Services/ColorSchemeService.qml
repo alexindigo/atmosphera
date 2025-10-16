@@ -18,7 +18,7 @@ Singleton {
   Connections {
     target: Settings.data.colorSchemes
     function onDarkModeChanged() {
-      Logger.log("ColorScheme", "Detected dark mode change")
+      Logger.i("ColorScheme", "Detected dark mode change")
       if (!Settings.data.colorSchemes.useWallpaperColors && Settings.data.colorSchemes.predefinedScheme) {
         // Re-apply current scheme to pick the right variant
         applyScheme(Settings.data.colorSchemes.predefinedScheme)
@@ -35,12 +35,12 @@ Singleton {
   function init() {
     // does nothing but ensure the singleton is created
     // do not remove
-    Logger.log("ColorScheme", "Service started")
+    Logger.i("ColorScheme", "Service started")
     loadColorSchemes()
   }
 
   function loadColorSchemes() {
-    Logger.log("ColorScheme", "Load colorScheme")
+    Logger.d("ColorScheme", "Load colorScheme")
     scanning = true
     schemes = []
     // Use find command to locate all scheme.json files
@@ -108,7 +108,7 @@ Singleton {
         })
         schemes = files
         scanning = false
-        Logger.log("ColorScheme", "Listed", schemes.length, "schemes")
+        Logger.d("ColorScheme", "Listed", schemes.length, "schemes")
         // Normalize stored scheme to basename and re-apply if necessary
         var stored = Settings.data.colorSchemes.predefinedScheme
         if (stored) {
@@ -121,7 +121,7 @@ Singleton {
           }
         }
       } else {
-        Logger.error("ColorScheme", "Failed to find color scheme files")
+        Logger.e("ColorScheme", "Failed to find color scheme files")
         schemes = []
         scanning = false
       }
@@ -147,20 +147,20 @@ Singleton {
           }
         }
         writeColorsToDisk(variant)
-        Logger.log("ColorScheme", "Applying color scheme:", getBasename(path))
+        Logger.i("ColorScheme", "Applying color scheme:", getBasename(path))
 
         // Generate Matugen templates if any are enabled and setting allows it
-        if (Settings.data.colorSchemes.generateTemplatesForPredefined && hasEnabledMatugenTemplates()) {
+        if (Settings.data.colorSchemes.generateTemplatesForPredefined && hasEnabledTemplates()) {
           AppThemeService.generateFromPredefinedScheme(data)
         }
       } catch (e) {
-        Logger.error("ColorScheme", "Failed to parse scheme JSON:", path, e)
+        Logger.e("ColorScheme", "Failed to parse scheme JSON:", path, e)
       }
     }
   }
 
-  // Check if any Matugen templates are enabled
-  function hasEnabledMatugenTemplates() {
+  // Check if any templates are enabled
+  function hasEnabledTemplates() {
     return Settings.data.templates.gtk || Settings.data.templates.qt || Settings.data.templates.kitty || Settings.data.templates.ghostty || Settings.data.templates.foot || Settings.data.templates.fuzzel || Settings.data.templates.discord || Settings.data.templates.discord_vesktop || Settings.data.templates.discord_webcord
         || Settings.data.templates.discord_armcord || Settings.data.templates.discord_equibop || Settings.data.templates.discord_lightcord || Settings.data.templates.discord_dorion || Settings.data.templates.pywalfox
   }
@@ -171,7 +171,7 @@ Singleton {
     path: colorsJsonFilePath
     onSaved: {
 
-      // Logger.log("ColorScheme", "Colors saved")
+      // Logger.i("ColorScheme", "Colors saved")
     }
     JsonAdapter {
       id: out

@@ -11,7 +11,6 @@ Item {
   id: root
 
   property ShellScreen screen
-  property real scaling: 1.0
 
   // Widget properties passed from Bar.qml for per-instance settings
   property string widgetId: ""
@@ -87,7 +86,7 @@ Item {
   BarPill {
     id: pill
 
-    compact: (Settings.data.bar.density === "compact")
+    density: Settings.data.bar.density
     rightOpen: BarService.getPillDirection(root)
     icon: testMode ? BatteryService.getIcon(testPercent, testCharging, true) : BatteryService.getIcon(percent, charging, isReady)
     text: (isReady || testMode) ? Math.round(percent) : "-"
@@ -96,6 +95,7 @@ Item {
     forceOpen: isReady && (testMode || battery.isLaptopBattery) && displayMode === "alwaysShow"
     forceClose: displayMode === "alwaysHide"
     disableOpen: (!isReady || (!testMode && !battery.isLaptopBattery))
+    onClicked: PanelService.getPanel("batteryPanel")?.toggle(this)
     tooltipText: {
       let lines = []
       if (testMode) {
@@ -103,28 +103,41 @@ Item {
         return lines.join("\n")
       }
       if (!isReady || !battery.isLaptopBattery) {
-        return "No battery detected."
+        return I18n.tr("battery.no-battery-detected")
       }
       if (battery.timeToEmpty > 0) {
-        lines.push(`Time left: ${Time.formatVagueHumanReadableDuration(battery.timeToEmpty)}.`)
+        lines.push(I18n.tr("battery.time-left", {
+                             "time": Time.formatVagueHumanReadableDuration(battery.timeToEmpty)
+                           }))
       }
       if (battery.timeToFull > 0) {
-        lines.push(`Time until full: ${Time.formatVagueHumanReadableDuration(battery.timeToFull)}.`)
+        lines.push(I18n.tr("battery.time-until-full", {
+                             "time": Time.formatVagueHumanReadableDuration(battery.timeToFull)
+                           }))
       }
       if (battery.changeRate !== undefined) {
         const rate = battery.changeRate
         if (rate > 0) {
-          lines.push(charging ? "Charging rate: " + rate.toFixed(2) + " W." : "Discharging rate: " + rate.toFixed(2) + " W.")
+          lines.push(charging ? I18n.tr("battery.charging-rate", {
+                                          "rate": rate.toFixed(2)
+                                        }) : I18n.tr("battery.discharging-rate", {
+                                                       "rate": rate.toFixed(2)
+                                                     }))
         } else if (rate < 0) {
-          lines.push("Discharging rate: " + Math.abs(rate).toFixed(2) + " W.")
+          lines.push(I18n.tr("battery.discharging-rate", {
+                               "rate": Math.abs(rate).toFixed(2)
+                             }))
         } else {
-          lines.push("Estimating...")
+          // Rate is 0 - check if plugged in (charging state) or idle
+          lines.push(charging ? I18n.tr("battery.plugged-in") : I18n.tr("battery.idle"))
         }
       } else {
-        lines.push(charging ? "Charging." : "Discharging.")
+        lines.push(charging ? I18n.tr("battery.charging") : I18n.tr("battery.discharging"))
       }
       if (battery.healthPercentage !== undefined && battery.healthPercentage > 0) {
-        lines.push("Health: " + Math.round(battery.healthPercentage) + "%")
+        lines.push(I18n.tr("battery.health", {
+                             "percent": Math.round(battery.healthPercentage)
+                           }))
       }
       return lines.join("\n")
     }

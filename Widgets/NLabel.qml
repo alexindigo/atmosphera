@@ -10,12 +10,12 @@ ColumnLayout {
   property color labelColor: Color.mOnSurface
   property color descriptionColor: Color.mOnSurfaceVariant
 
-  spacing: Style.marginXXS * scaling
+  spacing: Style.marginXXS
   Layout.fillWidth: true
 
   NText {
     text: label
-    pointSize: Style.fontSizeL * scaling
+    pointSize: Style.fontSizeL
     font.weight: Style.fontWeightBold
     color: labelColor
     visible: label !== ""
@@ -24,7 +24,7 @@ ColumnLayout {
 
   NText {
     text: description
-    pointSize: Style.fontSizeS * scaling
+    pointSize: Style.fontSizeS
     color: descriptionColor
     wrapMode: Text.WordWrap
     visible: description !== ""

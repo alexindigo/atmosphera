@@ -15,6 +15,8 @@ Singleton {
   // Key format: "screenName|section|widgetId|index"
   property var widgetInstances: ({})
 
+  signal activeWidgetsChanged
+
   signal barReadyChanged(string screenName)
 
   // Simple timer that run once when the widget structure has changed
@@ -36,14 +38,14 @@ Singleton {
   }
 
   Component.onCompleted: {
-    Logger.log("BarService", "Service started")
+    Logger.d("BarService", "Service started")
   }
 
   // Function for the Bar to call when it's ready
   function registerBar(screenName) {
     if (!readyBars[screenName]) {
       readyBars[screenName] = true
-      Logger.log("BarService", "Bar is ready on screen:", screenName)
+      Logger.d("BarService", "Bar is ready on screen:", screenName)
       barReadyChanged(screenName)
     }
   }
@@ -67,14 +69,16 @@ Singleton {
 
     timerCheckVisualizer.restart()
 
-    Logger.log("BarService", "Registered widget:", key)
+    Logger.d("BarService", "Registered widget:", key)
+    root.activeWidgetsChanged()
   }
 
   // Unregister a widget instance
   function unregisterWidget(screenName, section, widgetId, index) {
     const key = [screenName, section, widgetId, index].join("|")
     delete widgetInstances[key]
-    Logger.log("BarService", "Unregistered widget:", key)
+    Logger.d("BarService", "Unregistered widget:", key)
+    root.activeWidgetsChanged()
   }
 
   // Lookup a specific widget instance (returns the actual QML instance)
@@ -215,7 +219,7 @@ Singleton {
         }
       }
     } catch (e) {
-      Logger.error(e)
+      Logger.e(e)
     }
     return false
   }

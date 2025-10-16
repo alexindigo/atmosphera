@@ -81,21 +81,23 @@ Singleton {
   Connections {
     target: Settings.data.colorSchemes
     function onDarkModeChanged() {
-      Logger.log("AppThemeService", "Detected dark mode change")
+      Logger.i("AppThemeService", "Detected dark mode change")
       AppThemeService.generate()
     }
   }
 
   // --------------------------------------------------------------------------------
   function init() {
-    Logger.log("AppThemeService", "Service started")
+    Logger.i("AppThemeService", "Service started")
   }
 
+  // --------------------------------------------------------------------------------
   function generate() {
     if (Settings.data.colorSchemes.useWallpaperColors) {
       generateFromWallpaper()
     } else {
-      generateFromPredefinedScheme()
+      // Re-apply the scheme, this is the best way to regenerate all templates too.
+      ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme)
     }
   }
 
@@ -103,11 +105,11 @@ Singleton {
   // Wallpaper Colors Generation
   // --------------------------------------------------------------------------------
   function generateFromWallpaper() {
-    Logger.log("AppThemeService", "Generating from wallpaper on screen:", Screen.name)
 
+    // Logger.i("AppThemeService", "Generating from wallpaper on screen:", Screen.name)
     const wp = WallpaperService.getWallpaper(Screen.name).replace(/'/g, "'\\''")
     if (!wp) {
-      Logger.error("AppThemeService", "No wallpaper found")
+      Logger.e("AppThemeService", "No wallpaper found")
       return
     }
 
@@ -139,7 +141,7 @@ Singleton {
   //  Instead, we use 'sed' to apply a custom palette to the existing matugen templates.
   // --------------------------------------------------------------------------------
   function generateFromPredefinedScheme(schemeData) {
-    Logger.log("AppThemeService", "Generating templates from predefined color scheme")
+    Logger.i("AppThemeService", "Generating templates from predefined color scheme")
 
     handleTerminalThemes()
 
@@ -271,11 +273,13 @@ Singleton {
   }
 
   function replaceColorsInFile(filePath, colors) {
+    // This handle both ".hex" and ".hex_stripped" the EXACT same way. Our predefined color schemes are
+    // always RRGGBB without alpha so this is fine and keeps compatibility with matugen.
     let script = ""
     Object.keys(colors).forEach(colorKey => {
                                   const colorValue = colors[colorKey].default.hex
                                   const escapedColor = colorValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-                                  script += `sed -i 's/{{colors\\.${colorKey}\\.default\\.hex}}/${escapedColor}/g' '${filePath}'\n`
+                                  script += `sed -i 's/{{colors\\.${colorKey}\\.default\\.hex\\(_stripped\\)\\?}}/${escapedColor}/g' '${filePath}'\n`
                                 })
     return script
   }
@@ -345,7 +349,7 @@ Singleton {
     stderr: StdioCollector {
       onStreamFinished: {
         if (this.text) {
-          Logger.warn("AppThemeService", "GenerateProcess stderr:", this.text)
+          Logger.w("AppThemeService", "GenerateProcess stderr:", this.text)
         }
       }
     }
@@ -357,7 +361,7 @@ Singleton {
     stderr: StdioCollector {
       onStreamFinished: {
         if (this.text) {
-          Logger.warn("AppThemeService", "CopyProcess stderr:", this.text)
+          Logger.w("AppThemeService", "CopyProcess stderr:", this.text)
         }
       }
     }

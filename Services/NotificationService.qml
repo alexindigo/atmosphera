@@ -140,7 +140,7 @@ Singleton {
       "id": id,
       "summary": (n.summary || ""),
       "body": stripTags(n.body || ""),
-      "appName": getAppName(n.appName),
+      "appName": getAppName(n.appName || n.desktopEntry || ""),
       "urgency": n.urgency < 0 || n.urgency > 2 ? 1 : n.urgency,
       "expireTimeout": n.expireTimeout,
       "timestamp": time,
@@ -301,7 +301,7 @@ Singleton {
       adapter.notifications = items
       historyFileView.writeAdapter()
     } catch (e) {
-      Logger.error("Notifications", "Save history failed:", e)
+      Logger.e("Notifications", "Save history failed:", e)
     }
   }
 
@@ -331,7 +331,7 @@ Singleton {
                            })
       }
     } catch (e) {
-      Logger.error("Notifications", "Load failed:", e)
+      Logger.e("Notifications", "Load failed:", e)
     }
   }
 
@@ -414,6 +414,13 @@ Singleton {
     removeActive(id)
   }
 
+  function dismissOldestActive() {
+    if (activeList.count > 0) {
+      const lastNotif = activeList.get(activeList.count - 1)
+      dismissActiveNotification(lastNotif.id)
+    }
+  }
+
   function dismissAllActive() {
     Object.values(activeMap).forEach(n => n.dismiss())
     activeList.clear()
@@ -454,7 +461,7 @@ Singleton {
     try {
       Quickshell.execDetached(["sh", "-c", `rm -rf "${Settings.cacheDirImagesNotifications}"*`])
     } catch (e) {
-      Logger.error("Notifications", "Failed to clear cache directory:", e)
+      Logger.e("Notifications", "Failed to clear cache directory:", e)
     }
 
     historyList.clear()

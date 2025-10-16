@@ -14,7 +14,6 @@ Rectangle {
   id: root
 
   property ShellScreen screen
-  property real scaling: 1.0
 
   // Widget properties passed from Bar.qml for per-instance settings
   property string widgetId: ""
@@ -35,8 +34,8 @@ Rectangle {
 
   readonly property string barPosition: Settings.data.bar.position
   readonly property bool isVertical: barPosition === "left" || barPosition === "right"
-  readonly property bool compact: (Settings.data.bar.density === "compact")
-  property real itemSize: Math.round(Style.capsuleHeight * 0.65 * scaling)
+  readonly property bool density: Settings.data.bar.density
+  property real itemSize: Math.round(Style.capsuleHeight * 0.65)
   property list<string> blacklist: widgetSettings.blacklist || widgetMetadata.blacklist || [] // Read from settings
   property var filteredItems: []
 
@@ -44,7 +43,7 @@ Rectangle {
     if (!str || !rule) {
       return false
     }
-    Logger.log("Tray", "wildCardMatch - Input str:", str, "rule:", rule)
+    Logger.i("Tray", "wildCardMatch - Input str:", str, "rule:", rule)
 
     // Escape all special regex characters in the rule
     let escapedRule = rule.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
@@ -53,15 +52,15 @@ Rectangle {
     // Add ^ and $ to match the entire string
     pattern = '^' + pattern + '$'
 
-    Logger.log("Tray", "wildCardMatch - Generated pattern:", pattern)
+    Logger.i("Tray", "wildCardMatch - Generated pattern:", pattern)
 
     try {
       const regex = new RegExp(pattern, 'i')
       // 'i' for case-insensitive
-      Logger.log("Tray", "wildCardMatch - Regex test result:", regex.test(str))
+      Logger.i("Tray", "wildCardMatch - Regex test result:", regex.test(str))
       return regex.test(str)
     } catch (e) {
-      Logger.warn("Tray", "Invalid regex pattern for wildcard match:", rule, e.message)
+      Logger.w("Tray", "Invalid regex pattern for wildcard match:", rule, e.message)
       return false // If regex is invalid, it won't match
     }
   }
@@ -145,9 +144,9 @@ Rectangle {
   }
 
   visible: filteredItems.length > 0
-  implicitWidth: isVertical ? Math.round(Style.capsuleHeight * scaling) : Math.round(trayFlow.implicitWidth + Style.marginM * 2 * scaling)
-  implicitHeight: isVertical ? Math.round(trayFlow.implicitHeight + Style.marginM * 2 * scaling) : Math.round(Style.capsuleHeight * scaling)
-  radius: Math.round(Style.radiusM * scaling)
+  implicitWidth: isVertical ? Style.capsuleHeight : Math.round(trayFlow.implicitWidth + Style.marginM * 2)
+  implicitHeight: isVertical ? Math.round(trayFlow.implicitHeight + Style.marginM * 2) : Style.capsuleHeight
+  radius: Style.radiusM
   color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
   Layout.alignment: Qt.AlignVCenter
@@ -155,7 +154,7 @@ Rectangle {
   Flow {
     id: trayFlow
     anchors.centerIn: parent
-    spacing: Style.marginM * scaling
+    spacing: Style.marginM
     flow: isVertical ? Flow.TopToBottom : Flow.LeftToRight
 
     Repeater {
@@ -239,21 +238,21 @@ Rectangle {
                              let menuX, menuY
                              if (barPosition === "left") {
                                // For left bar: position menu to the right of the bar
-                               menuX = width + Style.marginM * scaling
+                               menuX = width + Style.marginM
                                menuY = 0
                              } else if (barPosition === "right") {
                                // For right bar: position menu to the left of the bar
-                               menuX = -trayMenu.item.width - Style.marginM * scaling
+                               menuX = -trayMenu.item.width - Style.marginM
                                menuY = 0
                              } else {
                                // For horizontal bars: center horizontally and position below
                                menuX = (width / 2) - (trayMenu.item.width / 2)
-                               menuY = Math.round(Style.barHeight * scaling)
+                               menuY = Style.barHeight
                              }
                              trayMenu.item.menu = modelData.menu
                              trayMenu.item.showAt(parent, menuX, menuY)
                            } else {
-                             Logger.log("Tray", "No menu available for", modelData.id, "or trayMenu not set")
+                             Logger.i("Tray", "No menu available for", modelData.id, "or trayMenu not set")
                            }
                          }
                        }

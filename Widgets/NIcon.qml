@@ -7,7 +7,8 @@ Text {
   id: root
 
   property string icon: Icons.defaultIcon
-  property real pointSize: Style.fontSizeL * scaling
+  property real pointSize: Style.fontSizeL
+  property bool applyUiScale: true
 
   visible: (icon !== undefined) && (icon !== "")
   text: {
@@ -15,14 +16,14 @@ Text {
       return ""
     }
     if (Icons.get(icon) === undefined) {
-      Logger.warn("Icon", `"${icon}"`, "doesn't exist in the icons font")
+      Logger.w("Icon", `"${icon}"`, "doesn't exist in the icons font")
       Logger.callStack()
       return Icons.get(Icons.defaultIcon)
     }
     return Icons.get(icon)
   }
   font.family: Icons.fontFamily
-  font.pointSize: root.pointSize
+  font.pointSize: applyUiScale ? root.pointSize * Style.uiScaleRatio : root.pointSize
   color: Color.mOnSurface
   verticalAlignment: Text.AlignVCenter
 }

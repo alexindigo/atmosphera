@@ -58,23 +58,23 @@ NPanel {
 
     ColumnLayout {
       anchors.fill: parent
-      anchors.margins: Style.marginL * scaling
-      spacing: Style.marginM * scaling
+      anchors.margins: Style.marginL
+      spacing: Style.marginM
 
       // Header
       RowLayout {
         Layout.fillWidth: true
-        spacing: Style.marginM * scaling
+        spacing: Style.marginM
 
         NIcon {
           icon: "settings-wallpaper-selector"
-          pointSize: Style.fontSizeXXL * scaling
+          pointSize: Style.fontSizeXXL
           color: Color.mPrimary
         }
 
         NText {
           text: I18n.tr("wallpaper.panel.title")
-          pointSize: Style.fontSizeL * scaling
+          pointSize: Style.fontSizeL
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface
           Layout.fillWidth: true
@@ -125,7 +125,7 @@ NPanel {
         Layout.fillWidth: true
         currentIndex: currentScreenIndex
         onCurrentIndexChanged: currentScreenIndex = currentIndex
-        spacing: Style.marginM * scaling
+        spacing: Style.marginM
 
         background: Rectangle {
           color: Color.transparent
@@ -135,12 +135,12 @@ NPanel {
           model: Quickshell.screens
           delegate: TabButton {
             text: modelData.name || `Screen ${index + 1}`
-            width: implicitWidth + Style.marginS * 2 * scaling
+            width: implicitWidth + Style.marginS * 2
 
             background: Rectangle {
               color: screenTabBar.currentIndex === index ? Color.mSecondary : Color.transparent
-              radius: Style.radiusS * scaling
-              border.width: screenTabBar.currentIndex === index ? 0 : Math.max(1, Style.borderS * scaling)
+              radius: Style.radiusS
+              border.width: screenTabBar.currentIndex === index ? 0 : Math.max(1, Style.borderS)
               border.color: Color.mOutline
 
               Behavior on color {
@@ -152,7 +152,7 @@ NPanel {
 
             contentItem: NText {
               text: parent.text
-              pointSize: Style.fontSizeL * scaling
+              pointSize: Style.fontSizeL
               font.weight: screenTabBar.currentIndex === index ? Style.fontWeightBold : Style.fontWeightRegular
               family: Settings.data.ui.fontDefault
               color: screenTabBar.currentIndex === index ? Color.mOnSecondary : Color.mOnSurfaceVariant
@@ -169,7 +169,7 @@ NPanel {
               anchors.fill: parent
               color: Color.mOnSurface
               opacity: tabHover.hovered && screenTabBar.currentIndex !== index ? 0.08 : 0
-              radius: Style.radiusS * scaling
+              radius: Style.radiusS
 
               Behavior on opacity {
                 NumberAnimation {
@@ -200,12 +200,12 @@ NPanel {
       // Filter input
       RowLayout {
         Layout.fillWidth: true
-        spacing: Style.marginM * scaling
+        spacing: Style.marginM
 
         NText {
           text: I18n.tr("wallpaper.panel.search")
           color: Color.mOnSurface
-          pointSize: Style.fontSizeM * scaling
+          pointSize: Style.fontSizeM
           Layout.preferredWidth: implicitWidth
         }
 
@@ -306,7 +306,7 @@ NPanel {
 
     ColumnLayout {
       anchors.fill: parent
-      spacing: Style.marginM * scaling
+      spacing: Style.marginM
 
       GridView {
         id: wallpaperGridView
@@ -327,12 +327,12 @@ NPanel {
         property int itemSize: cellWidth
 
         cellWidth: Math.floor((width - leftMargin - rightMargin) / columns)
-        cellHeight: Math.floor(itemSize * 0.7) + Style.marginXS * scaling + Style.fontSizeXS * scaling + Style.marginM * scaling
+        cellHeight: Math.floor(itemSize * 0.7) + Style.marginXS + Style.fontSizeXS + Style.marginM
 
-        leftMargin: Style.marginS * scaling
-        rightMargin: Style.marginS * scaling
-        topMargin: Style.marginS * scaling
-        bottomMargin: Style.marginS * scaling
+        leftMargin: Style.marginS
+        rightMargin: Style.marginS
+        topMargin: Style.marginS
+        bottomMargin: Style.marginS
 
         onCurrentIndexChanged: {
           // Synchronize scroll with current item position
@@ -377,7 +377,7 @@ NPanel {
           property string filename: wallpaperPath.split('/').pop()
 
           width: wallpaperGridView.itemSize
-          spacing: Style.marginXS * scaling
+          spacing: Style.marginXS
 
           Rectangle {
             id: imageContainer
@@ -405,25 +405,24 @@ NPanel {
                 }
                 return Color.mSurface
               }
-              border.width: Math.max(1, Style.borderL * 1.5 * scaling)
+              border.width: Math.max(1, Style.borderL * 1.5)
             }
 
             Rectangle {
               anchors.top: parent.top
               anchors.right: parent.right
-              anchors.margins: Style.marginS * scaling
-              width: 28 * scaling
-              height: 28 * scaling
+              anchors.margins: Style.marginS
+              width: 28
+              height: 28
               radius: width / 2
               color: Color.mSecondary
               border.color: Color.mOutline
-              border.width: Math.max(1, Style.borderS * scaling)
+              border.width: Math.max(1, Style.borderS)
               visible: isSelected
 
               NIcon {
                 icon: "check"
-                pointSize: Style.fontSizeM * scaling
-                font.weight: Style.fontWeightBold
+                pointSize: Style.fontSizeM
                 color: Color.mOnSecondary
                 anchors.centerIn: parent
               }
@@ -461,10 +460,10 @@ NPanel {
           NText {
             text: filename
             color: (hoverHandler.hovered || isSelected || wallpaperGridView.currentIndex === index) ? Color.mOnSurface : Color.mOnSurfaceVariant
-            pointSize: Style.fontSizeXS * scaling
+            pointSize: Style.fontSizeXS
             Layout.fillWidth: true
-            Layout.leftMargin: Style.marginS * scaling
-            Layout.rightMargin: Style.marginS * scaling
+            Layout.leftMargin: Style.marginS
+            Layout.rightMargin: Style.marginS
             Layout.alignment: Qt.AlignHCenter
             horizontalAlignment: Text.AlignHCenter
             elide: Text.ElideRight
@@ -475,12 +474,12 @@ NPanel {
       // Empty / scanning state
       Rectangle {
         color: Color.mSurface
-        radius: Style.radiusM * scaling
+        radius: Style.radiusM
         border.color: Color.mOutline
-        border.width: Math.max(1, Style.borderS * scaling)
+        border.width: Math.max(1, Style.borderS)
         visible: (filteredWallpapers.length === 0 && !WallpaperService.scanning) || WallpaperService.scanning
         Layout.fillWidth: true
-        Layout.preferredHeight: 130 * scaling
+        Layout.preferredHeight: 130
 
         ColumnLayout {
           anchors.fill: parent
@@ -498,7 +497,7 @@ NPanel {
           }
           NIcon {
             icon: "folder-open"
-            pointSize: Style.fontSizeXXL * scaling
+            pointSize: Style.fontSizeXXL
             color: Color.mOnSurface
             Layout.alignment: Qt.AlignHCenter
           }

@@ -22,8 +22,7 @@ RowLayout {
   signal actionClicked
 
   // Internal properties
-  property real scaling: 1.0
-  spacing: Style.marginM * scaling
+  spacing: Style.marginM
 
   NTextInput {
     id: textInput

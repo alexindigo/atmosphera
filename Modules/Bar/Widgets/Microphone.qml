@@ -12,7 +12,6 @@ Item {
   id: root
 
   property ShellScreen screen
-  property real scaling: 1.0
 
   // Widget properties passed from Bar.qml for per-instance settings
   property string widgetId: ""
@@ -52,7 +51,7 @@ Item {
   Connections {
     target: AudioService.source?.audio ? AudioService.source?.audio : null
     function onVolumeChanged() {
-      // Logger.log("Bar:Microphone", "onInputVolumeChanged")
+      // Logger.i("Bar:Microphone", "onInputVolumeChanged")
       if (!firstInputVolumeReceived) {
         // Ignore the first volume change
         firstInputVolumeReceived = true
@@ -67,7 +66,7 @@ Item {
   Connections {
     target: AudioService.source?.audio ? AudioService.source?.audio : null
     function onMutedChanged() {
-      // Logger.log("Bar:Microphone", "onInputMutedChanged")
+      // Logger.i("Bar:Microphone", "onInputMutedChanged")
       if (!firstInputVolumeReceived) {
         // Ignore the first mute change
         firstInputVolumeReceived = true
@@ -92,7 +91,7 @@ Item {
 
     rightOpen: BarService.getPillDirection(root)
     icon: getIcon()
-    compact: (Settings.data.bar.density === "compact")
+    density: Settings.data.bar.density
     autoHide: false // Important to be false so we can hover as long as we want
     text: Math.round(AudioService.inputVolume * 100)
     suffix: "%"

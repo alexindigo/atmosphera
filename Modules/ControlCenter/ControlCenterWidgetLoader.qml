@@ -16,16 +16,6 @@ Item {
   implicitWidth: getImplicitSize(loader.item, "implicitWidth")
   implicitHeight: getImplicitSize(loader.item, "implicitHeight")
 
-  Connections {
-    target: ScalingService
-    enabled: loader.item && (loader.item.screen !== undefined)
-    function onScaleChanged(aScreenName, scale) {
-      if (loader.item && loader.item.screen && aScreenName === screenName) {
-        loader.item['scaling'] = scale
-      }
-    }
-  }
-
   function getImplicitSize(item, prop) {
     return (item && item.visible) ? item[prop] : 0
   }
@@ -56,7 +46,7 @@ Item {
         item.onLoaded()
       }
 
-      //Logger.log("ControlCenterWidgetLoader", "Loaded", widgetId, "on screen", item.screen.name)
+      //Logger.i("ControlCenterWidgetLoader", "Loaded", widgetId, "on screen", item.screen.name)
     }
 
     Component.onDestruction: {
@@ -68,7 +58,7 @@ Item {
   // Error handling
   onWidgetIdChanged: {
     if (widgetId && !ControlCenterWidgetRegistry.hasWidget(widgetId)) {
-      Logger.warn("ControlCenterWidgetLoader", "Widget not found in registry:", widgetId)
+      Logger.w("ControlCenterWidgetLoader", "Widget not found in registry:", widgetId)
     }
   }
 }

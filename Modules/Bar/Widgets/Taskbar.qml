@@ -12,7 +12,6 @@ Rectangle {
   id: root
 
   property ShellScreen screen
-  property real scaling: 1.0
 
   // Widget properties passed from Bar.qml for per-instance settings
   property string widgetId: ""
@@ -21,8 +20,8 @@ Rectangle {
   property int sectionWidgetsCount: 0
 
   readonly property bool isVerticalBar: Settings.data.bar.position === "left" || Settings.data.bar.position === "right"
-  readonly property bool compact: (Settings.data.bar.density === "compact")
-  readonly property real itemSize: compact ? Style.capsuleHeight * 0.9 * scaling : Style.capsuleHeight * 0.8 * scaling
+  readonly property string density: Settings.data.bar.density
+  readonly property real itemSize: (density === "compact") ? Style.capsuleHeight * 0.9 : Style.capsuleHeight * 0.8
 
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
@@ -35,28 +34,79 @@ Rectangle {
     return {}
   }
 
-  // Always visible when there are toplevels
-  implicitWidth: isVerticalBar ? Math.round(Style.capsuleHeight * scaling) : Math.round(taskbarLayout.implicitWidth + Style.marginM * scaling * 2)
-  implicitHeight: isVerticalBar ? Math.round(taskbarLayout.implicitHeight + Style.marginM * scaling * 2) : Math.round(Style.capsuleHeight * scaling)
-  radius: Math.round(Style.radiusM * scaling)
+  property bool hasWindow: false
+  readonly property string hideMode: (widgetSettings.hideMode !== undefined) ? widgetSettings.hideMode : widgetMetadata.hideMode
+  readonly property bool onlySameOutput: (widgetSettings.onlySameOutput !== undefined) ? widgetSettings.onlySameOutput : widgetMetadata.onlySameOutput
+  readonly property bool onlyActiveWorkspaces: (widgetSettings.onlyActiveWorkspaces !== undefined) ? widgetSettings.onlyActiveWorkspaces : widgetMetadata.onlyActiveWorkspaces
+
+  function updateHasWindow() {
+    try {
+      var total = CompositorService.windows.count || 0
+      var activeIds = CompositorService.getActiveWorkspaces().map(function (ws) {
+        return ws.id
+      })
+      var found = false
+      for (var i = 0; i < total; i++) {
+        var w = CompositorService.windows.get(i)
+        if (!w)
+          continue
+        var passOutput = (!onlySameOutput) || (w.output == screen.name)
+        var passWorkspace = (!onlyActiveWorkspaces) || (activeIds.includes(w.workspaceId))
+        if (passOutput && passWorkspace) {
+          found = true
+          break
+        }
+      }
+      hasWindow = found
+    } catch (e) {
+      hasWindow = false
+    }
+  }
+
+  Connections {
+    target: CompositorService
+    function onWindowListChanged() {
+      updateHasWindow()
+    }
+    function onWorkspaceChanged() {
+      updateHasWindow()
+    }
+  }
+
+  Component.onCompleted: updateHasWindow()
+  onScreenChanged: updateHasWindow()
+
+  // "visible": Always Visible, "hidden": Hide When Empty, "transparent": Transparent When Empty
+  visible: hideMode !== "hidden" || hasWindow
+  opacity: (hideMode !== "transparent" || hasWindow) ? 1.0 : 0
+  Behavior on opacity {
+    NumberAnimation {
+      duration: Style.animationNormal
+      easing.type: Easing.OutCubic
+    }
+  }
+
+  implicitWidth: visible ? (isVerticalBar ? Style.capsuleHeight : Math.round(taskbarLayout.implicitWidth + Style.marginM * 2)) : 0
+  implicitHeight: visible ? (isVerticalBar ? Math.round(taskbarLayout.implicitHeight + Style.marginM * 2) : Style.capsuleHeight) : 0
+  radius: Style.radiusM
   color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
   GridLayout {
     id: taskbarLayout
     anchors.fill: parent
     anchors {
-      leftMargin: isVerticalBar ? undefined : Style.marginM * scaling
-      rightMargin: isVerticalBar ? undefined : Style.marginM * scaling
-      topMargin: compact ? 0 : isVerticalBar ? Style.marginM * scaling : undefined
-      bottomMargin: compact ? 0 : isVerticalBar ? Style.marginM * scaling : undefined
+      leftMargin: isVerticalBar ? undefined : Style.marginM
+      rightMargin: isVerticalBar ? undefined : Style.marginM
+      topMargin: (density === "compact") ? 0 : isVerticalBar ? Style.marginM : undefined
+      bottomMargin: (density === "compact") ? 0 : isVerticalBar ? Style.marginM : undefined
     }
 
     // Configure GridLayout to behave like RowLayout or ColumnLayout
     rows: isVerticalBar ? -1 : 1 // -1 means unlimited
     columns: isVerticalBar ? 1 : -1 // -1 means unlimited
 
-    rowSpacing: isVerticalBar ? Style.marginXXS * root.scaling : 0
-    columnSpacing: isVerticalBar ? 0 : Style.marginXXS * root.scaling
+    rowSpacing: isVerticalBar ? Style.marginXXS : 0
+    columnSpacing: isVerticalBar ? 0 : Style.marginXXS
 
     Repeater {
       model: CompositorService.windows
@@ -65,7 +115,9 @@ Rectangle {
         required property var modelData
         property ShellScreen screen: root.screen
 
-        visible: (!widgetSettings.onlySameOutput || modelData.output == screen.name) && (!widgetSettings.onlyActiveWorkspaces || CompositorService.getActiveWorkspaces().map(ws => ws.id).includes(modelData.workspaceId))
+        visible: (!onlySameOutput || modelData.output == screen.name) && (!onlyActiveWorkspaces || CompositorService.getActiveWorkspaces().map(function (ws) {
+          return ws.id
+        }).includes(modelData.workspaceId))
 
         Layout.preferredWidth: root.itemSize
         Layout.preferredHeight: root.itemSize
@@ -91,12 +143,12 @@ Rectangle {
           }
 
           Rectangle {
-            anchors.bottomMargin: -2 * scaling
+            anchors.bottomMargin: -2
             anchors.bottom: parent.bottom
             anchors.horizontalCenter: parent.horizontalCenter
             id: iconBackground
-            width: 4 * scaling
-            height: 4 * scaling
+            width: 4
+            height: 4
             color: modelData.isFocused ? Color.mPrimary : Color.transparent
             radius: width * 0.5
           }
@@ -116,13 +168,13 @@ Rectangle {
               try {
                 CompositorService.focusWindow(taskbarItem.modelData)
               } catch (error) {
-                Logger.error("Taskbar", "Failed to activate toplevel: " + error)
+                Logger.e("Taskbar", "Failed to activate toplevel: " + error)
               }
             } else if (mouse.button === Qt.RightButton) {
               try {
                 CompositorService.closeWindow(taskbarItem.modelData)
               } catch (error) {
-                Logger.error("Taskbar", "Failed to close toplevel: " + error)
+                Logger.e("Taskbar", "Failed to close toplevel: " + error)
               }
             }
           }

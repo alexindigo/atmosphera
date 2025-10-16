@@ -7,7 +7,7 @@ import qs.Services
 
 ColumnLayout {
   id: root
-  spacing: Style.marginM * scaling
+  spacing: Style.marginM
 
   // Properties to receive data from parent
   property var widgetData: null
@@ -25,7 +25,7 @@ ColumnLayout {
   NComboBox {
     label: I18n.tr("bar.widget-settings.microphone.display-mode.label")
     description: I18n.tr("bar.widget-settings.microphone.display-mode.description")
-    minimumWidth: 134 * scaling
+    minimumWidth: 134
     model: [{
         "key": "onhover",
         "name": I18n.tr("options.display-mode.on-hover")

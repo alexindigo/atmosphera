@@ -41,8 +41,9 @@ Singleton {
                                   "ActiveWindow": {
                                     "allowUserSettings": true,
                                     "showIcon": true,
-                                    "autoHide": false,
-                                    "scrollingMode": "hover",
+                                    "hideMode": "hidden",
+                                    "scrollingMode"// "visible", "hidden", "transparent"
+                                    : "hover",
                                     "width": 145,
                                     "colorizeIcons": false
                                   },
@@ -84,8 +85,9 @@ Singleton {
                                   },
                                   "MediaMini": {
                                     "allowUserSettings": true,
-                                    "autoHide": false,
-                                    "scrollingMode": "hover",
+                                    "hideMode": "hidden",
+                                    "scrollingMode"// "visible", "hidden", "transparent"
+                                    : "hover",
                                     "showAlbumArt": false,
                                     "showVisualizer": false,
                                     "visualizerType": "linear"
@@ -116,6 +118,7 @@ Singleton {
                                     "allowUserSettings": true,
                                     "onlySameOutput": true,
                                     "onlyActiveWorkspaces": true,
+                                    "hideMode": "hidden",
                                     "colorizeIcons": false
                                   },
                                   "Tray": {
@@ -212,7 +215,7 @@ Singleton {
   }
 
   function init() {
-    Logger.log("BarWidgetRegistry", "Service started")
+    Logger.i("BarWidgetRegistry", "Service started")
   }
 
   // ------------------------------

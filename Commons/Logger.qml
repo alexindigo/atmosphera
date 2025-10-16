@@ -25,34 +25,45 @@ Singleton {
     }
   }
 
-  function log(...args) {
+  // Info log (always visible)
+  function i(...args) {
     var msg = _formatMessage(...args)
     console.log(msg)
   }
 
-  function warn(...args) {
+  // Debug log (only when Settings.isDebug is true)
+  function d(...args) {
+    if (Settings && Settings.isDebug) {
+      var msg = _formatMessage(...args)
+      console.log(msg)
+    }
+  }
+
+  // Warning log
+  function w(...args) {
     var msg = _formatMessage(...args)
     console.warn(msg)
   }
 
-  function error(...args) {
+  // Error log
+  function e(...args) {
     var msg = _formatMessage(...args)
     console.error(msg)
   }
 
   function callStack() {
     var stack = _getStackTrace()
-    Logger.log("Debug", "--------------------------")
-    Logger.log("Debug", "Current call stack")
+    Logger.i("Debug", "--------------------------")
+    Logger.i("Debug", "Current call stack")
     // Split the stack into lines and log each one
     var stackLines = stack.split('\n')
     for (var i = 0; i < stackLines.length; i++) {
       var line = stackLines[i].trim() // Remove leading/trailing whitespace
       if (line.length > 0) {
         // Only log non-empty lines
-        Logger.log("Debug", `- ${line}`)
+        Logger.i("Debug", `- ${line}`)
       }
     }
-    Logger.log("Debug", "--------------------------")
+    Logger.i("Debug", "--------------------------")
   }
 }

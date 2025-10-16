@@ -46,7 +46,7 @@ Singleton {
   reloadableId: "brightness"
 
   Component.onCompleted: {
-    Logger.log("Brightness", "Service started")
+    Logger.i("Brightness", "Service started")
   }
 
   onMonitorsChanged: {
@@ -85,7 +85,7 @@ Singleton {
                                              var ddcModel = ddcModelMatch ? ddcModelMatch.length > 0 : false
                                              var model = modelMatch ? modelMatch[1] : "Unknown"
                                              var bus = busMatch ? busMatch[1] : "Unknown"
-                                             Logger.log("Brigthness", "Detected DDC Monitor:", model, "on bus", bus, "is DDC:", !ddcModel)
+                                             Logger.i("Brigthness", "Detected DDC Monitor:", model, "on bus", bus, "is DDC:", !ddcModel)
                                              return {
                                                "model": model,
                                                "busNum": bus,
@@ -141,7 +141,7 @@ Singleton {
                 monitor.brightness = newBrightness
                 monitor.brightnessUpdated(monitor.brightness)
                 root.monitorBrightnessChanged(monitor, monitor.brightness)
-                //Logger.log("Brightness", "Refreshed brightness from system:", monitor.modelData.name, monitor.brightness)
+                //Logger.i("Brightness", "Refreshed brightness from system:", monitor.modelData.name, monitor.brightness)
               }
             }
           }
@@ -190,12 +190,12 @@ Singleton {
             return
           }
 
-          //Logger.log("Brightness", "Raw brightness data for", monitor.modelData.name + ":", dataText)
+          //Logger.i("Brightness", "Raw brightness data for", monitor.modelData.name + ":", dataText)
           if (monitor.isAppleDisplay) {
             var val = parseInt(dataText)
             if (!isNaN(val)) {
               monitor.brightness = val / 101
-              Logger.log("Brightness", "Apple display brightness:", monitor.brightness)
+              Logger.d("Brightness", "Apple display brightness:", monitor.brightness)
             }
           } else if (monitor.isDdc) {
             var parts = dataText.split(" ")
@@ -204,7 +204,7 @@ Singleton {
               var max = parseInt(parts[4])
               if (!isNaN(current) && !isNaN(max) && max > 0) {
                 monitor.brightness = current / max
-                Logger.log("Brightness", "DDC brightness:", current + "/" + max + " =", monitor.brightness)
+                Logger.d("Brightness", "DDC brightness:", current + "/" + max + " =", monitor.brightness)
               }
             }
           } else {
@@ -220,8 +220,8 @@ Singleton {
               if (!isNaN(current) && !isNaN(max) && max > 0) {
                 monitor.maxBrightness = max
                 monitor.brightness = current / max
-                Logger.log("Brightness", "Internal brightness:", current + "/" + max + " =", monitor.brightness)
-                Logger.log("Brightness", "Using backlight device:", monitor.backlightDevice)
+                Logger.d("Brightness", "Internal brightness:", current + "/" + max + " =", monitor.brightness)
+                Logger.d("Brightness", "Using backlight device:", monitor.backlightDevice)
               }
             }
           }

@@ -7,7 +7,7 @@ import qs.Widgets
 
 ColumnLayout {
   id: root
-  spacing: Style.marginL * scaling
+  spacing: Style.marginL
 
   NHeader {
     label: I18n.tr("settings.location.location.section.label")
@@ -17,7 +17,7 @@ ColumnLayout {
   // Location section
   RowLayout {
     Layout.fillWidth: true
-    spacing: Style.marginL * scaling
+    spacing: Style.marginL
 
     NTextInput {
       label: I18n.tr("settings.location.location.search.label")
@@ -37,7 +37,7 @@ ColumnLayout {
           LocationService.resetWeather()
         }
       }
-      Layout.maximumWidth: 420 * scaling
+      Layout.maximumWidth: 420
     }
 
     NText {
@@ -46,24 +46,24 @@ ColumnLayout {
                       "name": LocationService.stableName,
                       "coordinates": LocationService.displayCoordinates
                     })
-      pointSize: Style.fontSizeS * scaling
+      pointSize: Style.fontSizeS
       color: Color.mOnSurfaceVariant
       verticalAlignment: Text.AlignVCenter
       horizontalAlignment: Text.AlignRight
       Layout.alignment: Qt.AlignBottom
-      Layout.bottomMargin: Style.marginM * scaling
+      Layout.bottomMargin: Style.marginM
     }
   }
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
   }
 
   // Weather section
   ColumnLayout {
-    spacing: Style.marginM * scaling
+    spacing: Style.marginM
     Layout.fillWidth: true
 
     NHeader {
@@ -72,22 +72,31 @@ ColumnLayout {
     }
 
     NToggle {
+      label: I18n.tr("settings.location.weather.enabled.label")
+      description: I18n.tr("settings.location.weather.enabled.description")
+      checked: Settings.data.location.weatherEnabled
+      onToggled: checked => Settings.data.location.weatherEnabled = checked
+    }
+
+    NToggle {
       label: I18n.tr("settings.location.weather.fahrenheit.label")
       description: I18n.tr("settings.location.weather.fahrenheit.description")
       checked: Settings.data.location.useFahrenheit
       onToggled: checked => Settings.data.location.useFahrenheit = checked
+      enabled: Settings.data.location.weatherEnabled
+      opacity: Settings.data.location.weatherEnabled ? 1.0 : 0.5
     }
   }
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
   }
 
   // Date & time section
   ColumnLayout {
-    spacing: Style.marginM * scaling
+    spacing: Style.marginM
     Layout.fillWidth: true
 
     NHeader {
@@ -112,7 +121,7 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL * scaling
-    Layout.bottomMargin: Style.marginXL * scaling
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
   }
 }

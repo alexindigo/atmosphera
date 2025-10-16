@@ -123,13 +123,13 @@ EOF
     # Make API call to Gemini
     local api_url="https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${api_key}"
     
-    print_color $BLUE "    API URL: $api_url" >&2
+    # print_color $BLUE "    API URL: $api_url" >&2
     
     local response=$(curl -s -X POST "$api_url" \
         -H "Content-Type: application/json" \
         -d "$request_body" 2>/dev/null)
     
-    print_color $BLUE "    API Response: $response" >&2
+    # print_color $BLUE "    API Response: $response" >&2
     
     # Extract the translation from response - try multiple parsing approaches
     local translation=$(echo "$response" | jq -r '.candidates[0].content.parts[0].text // .text // empty' 2>/dev/null | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')

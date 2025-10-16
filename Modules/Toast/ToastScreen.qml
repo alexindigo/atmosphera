@@ -10,7 +10,6 @@ Item {
   id: root
 
   required property ShellScreen screen
-  required property real scaling
 
   // Local queue for this screen only (bounded to prevent memory issues)
   property var messageQueue: []
@@ -19,15 +18,6 @@ Item {
 
   // If true, immediately show new toasts
   property bool replaceOnNew: true
-
-  Connections {
-    target: ScalingService
-    function onScaleChanged(screenName, scale) {
-      if (screenName === root.screen.name) {
-        root.scaling = scale
-      }
-    }
-  }
 
   Connections {
     target: ToastService
@@ -54,11 +44,11 @@ Item {
   function enqueueToast(toastData) {
     // Safe logging - fix the substring bug
     var descPreview = (toastData.description || "").substring(0, 100).replace(/\n/g, " ")
-    Logger.log("ToastScreen", "Queuing", toastData.type, ":", toastData.message, descPreview)
+    Logger.i("ToastScreen", "Queuing", toastData.type, ":", toastData.message, descPreview)
 
     // Bounded queue to prevent unbounded memory growth
     if (messageQueue.length >= maxQueueSize) {
-      Logger.log("ToastScreen", "Queue full, dropping oldest toast")
+      Logger.i("ToastScreen", "Queue full, dropping oldest toast")
       messageQueue.shift()
     }
 
@@ -161,10 +151,10 @@ Item {
       margins.top: {
         if (!(anchors.top))
           return 0
-        var base = Style.marginM * scaling
+        var base = Style.marginM
         if (Settings.data.bar.position === "top") {
-          var floatExtraV = Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL * scaling : 0
-          return (Style.barHeight * scaling) + base + floatExtraV
+          var floatExtraV = Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL : 0
+          return (Style.barHeight) + base + floatExtraV
         }
         return base
       }
@@ -172,10 +162,10 @@ Item {
       margins.bottom: {
         if (!(anchors.bottom))
           return 0
-        var base = Style.marginM * scaling
+        var base = Style.marginM
         if (Settings.data.bar.position === "bottom") {
-          var floatExtraV = Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL * scaling : 0
-          return (Style.barHeight * scaling) + base + floatExtraV
+          var floatExtraV = Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL : 0
+          return (Style.barHeight) + base + floatExtraV
         }
         return base
       }
@@ -183,10 +173,10 @@ Item {
       margins.left: {
         if (!(anchors.left))
           return 0
-        var base = Style.marginM * scaling
+        var base = Style.marginM
         if (Settings.data.bar.position === "left") {
-          var floatExtraH = Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL * scaling : 0
-          return (Style.barHeight * scaling) + base + floatExtraH
+          var floatExtraH = Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL : 0
+          return (Style.barHeight) + base + floatExtraH
         }
         return base
       }
@@ -194,15 +184,15 @@ Item {
       margins.right: {
         if (!(anchors.right))
           return 0
-        var base = Style.marginM * scaling
+        var base = Style.marginM
         if (Settings.data.bar.position === "right") {
-          var floatExtraH = Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL * scaling : 0
-          return (Style.barHeight * scaling) + base + floatExtraH
+          var floatExtraH = Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL : 0
+          return (Style.barHeight) + base + floatExtraH
         }
         return base
       }
 
-      implicitWidth: 420 * root.scaling
+      implicitWidth: 420
       implicitHeight: toastItem.height
 
       color: Color.transparent

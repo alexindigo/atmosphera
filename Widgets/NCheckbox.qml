@@ -6,7 +6,7 @@ import qs.Commons
 RowLayout {
   id: root
 
-  // Public API (mirrors NToggle but compact)
+  // Public API
   property string label: ""
   property string description: ""
   property bool checked: false
@@ -35,12 +35,12 @@ RowLayout {
   Rectangle {
     id: box
 
-    implicitWidth: Math.round(root.baseSize * scaling)
-    implicitHeight: Math.round(root.baseSize * scaling)
-    radius: Style.radiusXS * scaling
+    implicitWidth: Math.round(root.baseSize)
+    implicitHeight: Math.round(root.baseSize)
+    radius: Style.radiusXS
     color: root.checked ? root.activeColor : Color.mSurface
     border.color: Color.mOutline
-    border.width: Math.max(1, Style.borderS * scaling)
+    border.width: Math.max(1, Style.borderS)
 
     Behavior on color {
       ColorAnimation {
@@ -57,11 +57,10 @@ RowLayout {
     NIcon {
       visible: root.checked
       anchors.centerIn: parent
-      anchors.horizontalCenterOffset: -1 * scaling
+      anchors.horizontalCenterOffset: -1
       icon: "check"
       color: root.activeOnColor
-      pointSize: Math.max(Style.fontSizeXS, root.baseSize * 0.5) * scaling
-      font.weight: Style.fontWeightBold
+      pointSize: Math.max(Style.fontSizeXS, root.baseSize * 0.5)
     }
 
     MouseArea {

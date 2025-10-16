@@ -45,9 +45,9 @@ Item {
                      queryDisplayScales()
                    })
       initialized = true
-      Logger.log("HyprlandService", "Initialized successfully")
+      Logger.i("HyprlandService", "Initialized successfully")
     } catch (e) {
-      Logger.error("HyprlandService", "Failed to initialize:", e)
+      Logger.e("HyprlandService", "Failed to initialize:", e)
     }
   }
 
@@ -74,7 +74,7 @@ Item {
 
     onExited: function (exitCode) {
       if (exitCode !== 0 || !accumulatedOutput) {
-        Logger.error("HyprlandService", "Failed to query monitors, exit code:", exitCode)
+        Logger.e("HyprlandService", "Failed to query monitors, exit code:", exitCode)
         accumulatedOutput = ""
         return
       }
@@ -105,7 +105,7 @@ Item {
           CompositorService.onDisplayScalesUpdated(scales)
         }
       } catch (e) {
-        Logger.error("HyprlandService", "Failed to parse monitors:", e)
+        Logger.e("HyprlandService", "Failed to parse monitors:", e)
       } finally {
         // Clear accumulated output for next query
         accumulatedOutput = ""
@@ -152,7 +152,7 @@ Item {
         workspaces.append(wsData)
       }
     } catch (e) {
-      Logger.error("HyprlandService", "Error updating workspaces:", e)
+      Logger.e("HyprlandService", "Error updating workspaces:", e)
     }
   }
 
@@ -227,7 +227,7 @@ Item {
         activeWindowChanged()
       }
     } catch (e) {
-      Logger.error("HyprlandService", "Error updating windows:", e)
+      Logger.e("HyprlandService", "Error updating windows:", e)
     }
   }
 
@@ -266,8 +266,21 @@ Item {
     if (!toplevel)
       return ""
 
+    var appId = ""
+
+    // Try the wayland object first!
+    // From my (Lemmy) testing it works fine so we could probably get rid of all the other attempts below.
+    // Leaving them in for now, just in case...
+    try {
+      appId = toplevel.wayland.appId
+      console.lo
+      if (appId)
+          return appId
+    } catch (e) {
+    }
+
     // Try direct properties
-    var appId = safeGetProperty(toplevel, "class", "")
+    appId = safeGetProperty(toplevel, "class", "")
     if (appId)
       return appId
 
@@ -286,8 +299,6 @@ Item {
         return String(ipcData.class || ipcData.initialClass || ipcData.appId || ipcData.wm_class || "")
       }
     } catch (e) {
-
-      // Ignore IPC errors
     }
 
     return ""
@@ -329,7 +340,6 @@ Item {
     target: Hyprland
     enabled: initialized
     function onRawEvent(event) {
-      safeUpdateWorkspaces()
       workspaceChanged()
       updateTimer.restart()
 
@@ -345,7 +355,7 @@ Item {
     try {
       Hyprland.dispatch(`workspace ${workspace.idx}`)
     } catch (e) {
-      Logger.error("HyprlandService", "Failed to switch workspace:", e)
+      Logger.e("HyprlandService", "Failed to switch workspace:", e)
     }
   }
 
@@ -353,7 +363,7 @@ Item {
     try {
       Hyprland.dispatch(`focuswindow address:0x${window.id.toString()}`)
     } catch (e) {
-      Logger.error("HyprlandService", "Failed to switch window:", e)
+      Logger.e("HyprlandService", "Failed to switch window:", e)
     }
   }
 
@@ -361,7 +371,7 @@ Item {
     try {
       Hyprland.dispatch(`killwindow address:0x${window.id}`)
     } catch (e) {
-      Logger.error("HyprlandService", "Failed to close window:", e)
+      Logger.e("HyprlandService", "Failed to close window:", e)
     }
   }
 
@@ -369,7 +379,7 @@ Item {
     try {
       Quickshell.execDetached(["hyprctl", "dispatch", "exit"])
     } catch (e) {
-      Logger.error("HyprlandService", "Failed to logout:", e)
+      Logger.e("HyprlandService", "Failed to logout:", e)
     }
   }
 }

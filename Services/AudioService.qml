@@ -54,14 +54,14 @@ Singleton {
     function onVolumeChanged() {
       var vol = (sink?.audio.volume ?? 0)
       if (isNaN(vol)) {
-        vol = 0
+        return
       }
       root._volume = vol
     }
 
     function onMutedChanged() {
       root._muted = (sink?.audio.muted ?? true)
-      Logger.log("AudioService", "OnMuteChanged:", root._muted)
+      Logger.i("AudioService", "OnMuteChanged:", root._muted)
       ToastService.showNotice(I18n.tr("settings.audio.devices.output-device.label"), root._muted ? I18n.tr("toast.audio.muted") : I18n.tr("toast.audio.unmuted"))
     }
   }
@@ -72,14 +72,14 @@ Singleton {
     function onVolumeChanged() {
       var vol = (source?.audio.volume ?? 0)
       if (isNaN(vol)) {
-        vol = 0
+        return
       }
       root._inputVolume = vol
     }
 
     function onMutedChanged() {
       root._inputMuted = (source?.audio.muted ?? true)
-      Logger.log("AudioService", "OnInputMuteChanged:", root._inputMuted)
+      Logger.i("AudioService", "OnInputMuteChanged:", root._inputMuted)
       ToastService.showNotice(I18n.tr("settings.audio.devices.input-device.label"), root._inputMuted ? I18n.tr("toast.audio.muted") : I18n.tr("toast.audio.unmuted"))
     }
   }
@@ -97,9 +97,9 @@ Singleton {
       // Clamp it accordingly
       sink.audio.muted = false
       sink.audio.volume = Math.max(0, Math.min(Settings.data.audio.volumeOverdrive ? 1.5 : 1.0, newVolume))
-      //Logger.log("AudioService", "SetVolume", sink.audio.volume);
+      //Logger.i("AudioService", "SetVolume", sink.audio.volume);
     } else {
-      Logger.warn("AudioService", "No sink available")
+      Logger.w("AudioService", "No sink available")
     }
   }
 
@@ -107,7 +107,7 @@ Singleton {
     if (sink?.ready && sink?.audio) {
       sink.audio.muted = muted
     } else {
-      Logger.warn("AudioService", "No sink available")
+      Logger.w("AudioService", "No sink available")
     }
   }
 
@@ -125,7 +125,7 @@ Singleton {
       source.audio.muted = false
       source.audio.volume = Math.max(0, Math.min(Settings.data.audio.volumeOverdrive ? 1.5 : 1.0, newVolume))
     } else {
-      Logger.warn("AudioService", "No source available")
+      Logger.w("AudioService", "No source available")
     }
   }
 
@@ -133,7 +133,7 @@ Singleton {
     if (source?.ready && source?.audio) {
       source.audio.muted = muted
     } else {
-      Logger.warn("AudioService", "No source available")
+      Logger.w("AudioService", "No source available")
     }
   }
 

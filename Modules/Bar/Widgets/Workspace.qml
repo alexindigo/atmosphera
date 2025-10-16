@@ -13,7 +13,6 @@ Item {
   id: root
 
   property ShellScreen screen
-  property real scaling: 1.0
 
   // Widget properties passed from Bar.qml for per-instance settings
   property string widgetId: ""
@@ -34,9 +33,9 @@ Item {
 
   readonly property string barPosition: Settings.data.bar.position
   readonly property bool isVertical: barPosition === "left" || barPosition === "right"
-  readonly property bool compact: (Settings.data.bar.density === "compact")
+  readonly property bool density: Settings.data.bar.density
   readonly property real baseDimensionRatio: {
-    const b = compact ? 0.85 : 0.65
+    const b = (density === "compact") ? 0.85 : 0.65
     if (widgetSettings.labelMode === "none") {
       return b * 0.75
     }
@@ -54,8 +53,8 @@ Item {
   property bool effectsActive: false
   property color effectColor: Color.mPrimary
 
-  property int horizontalPadding: Math.round(Style.marginS * scaling)
-  property int spacingBetweenPills: Math.round(Style.marginXS * scaling)
+  property int horizontalPadding: Math.round(Style.marginS)
+  property int spacingBetweenPills: Math.round(Style.marginXS)
 
   // Wheel scroll handling
   property int wheelAccumulatedDelta: 0
@@ -63,19 +62,19 @@ Item {
 
   signal workspaceChanged(int workspaceId, color accentColor)
 
-  implicitWidth: isVertical ? Math.round(Style.barHeight * scaling) : computeWidth()
-  implicitHeight: isVertical ? computeHeight() : Math.round(Style.barHeight * scaling)
+  implicitWidth: isVertical ? Style.barHeight : computeWidth()
+  implicitHeight: isVertical ? computeHeight() : Style.barHeight
 
   function getWorkspaceWidth(ws) {
     const d = Style.capsuleHeight * root.baseDimensionRatio
-    const factor = ws.isFocused ? 2.2 : 1
-    return d * factor * scaling
+    const factor = ws.isActive ? 2.2 : 1
+    return d * factor
   }
 
   function getWorkspaceHeight(ws) {
     const d = Style.capsuleHeight * root.baseDimensionRatio
-    const factor = ws.isFocused ? 2.2 : 1
-    return d * factor * scaling
+    const factor = ws.isActive ? 2.2 : 1
+    return d * factor
   }
 
   function computeWidth() {
@@ -203,9 +202,9 @@ Item {
 
   Rectangle {
     id: workspaceBackground
-    width: isVertical ? Math.round(Style.capsuleHeight * scaling) : parent.width
-    height: isVertical ? parent.height : Math.round(Style.capsuleHeight * scaling)
-    radius: Math.round(Style.radiusM * scaling)
+    width: isVertical ? Style.capsuleHeight : parent.width
+    height: isVertical ? parent.height : Style.capsuleHeight
+    radius: Style.radiusM
     color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
     anchors.horizontalCenter: parent.horizontalCenter
@@ -266,7 +265,7 @@ Item {
       Item {
         id: workspacePillContainer
         width: root.getWorkspaceWidth(model)
-        height: Style.capsuleHeight * root.baseDimensionRatio * scaling
+        height: Style.capsuleHeight * root.baseDimensionRatio
 
         Rectangle {
           id: pill
@@ -286,7 +285,8 @@ Item {
                   }
                 }
                 family: Settings.data.ui.fontFixed
-                pointSize: model.isFocused ? workspacePillContainer.height * 0.45 : workspacePillContainer.height * 0.42
+                pointSize: model.isActive ? workspacePillContainer.height * 0.45 : workspacePillContainer.height * 0.42
+                applyUiScale: false
                 font.capitalization: Font.AllUppercase
                 font.weight: Style.fontWeightBold
                 wrapMode: Text.Wrap
@@ -295,7 +295,7 @@ Item {
                     return Color.mOnPrimary
                   if (model.isUrgent)
                     return Color.mOnError
-                  if (model.isActive || model.isOccupied)
+                  if (model.isOccupied)
                     return Color.mOnSecondary
 
                   return Color.mOnSecondary
@@ -310,12 +310,12 @@ Item {
               return Color.mPrimary
             if (model.isUrgent)
               return Color.mError
-            if (model.isActive || model.isOccupied)
+            if (model.isOccupied)
               return Color.mSecondary
 
             return Qt.alpha(Color.mSecondary, 0.3)
           }
-          scale: model.isFocused ? 1.0 : 0.9
+          scale: model.isActive ? 1.0 : 0.9
           z: 0
 
           MouseArea {
@@ -387,7 +387,7 @@ Item {
           radius: width / 2
           color: Color.transparent
           border.color: root.effectColor
-          border.width: Math.max(1, Math.round((2 + 6 * (1.0 - root.masterProgress)) * scaling))
+          border.width: Math.max(1, Math.round((2 + 6 * (1.0 - root.masterProgress))))
           opacity: root.effectsActive && model.isFocused ? (1.0 - root.masterProgress) * 0.7 : 0
           visible: root.effectsActive && model.isFocused
           z: 1
@@ -409,7 +409,7 @@ Item {
       model: localWorkspaces
       Item {
         id: workspacePillContainerVertical
-        width: Style.capsuleHeight * root.baseDimensionRatio * scaling
+        width: Style.capsuleHeight * root.baseDimensionRatio
         height: root.getWorkspaceHeight(model)
 
         Rectangle {
@@ -430,7 +430,8 @@ Item {
                   }
                 }
                 family: Settings.data.ui.fontFixed
-                pointSize: model.isFocused ? workspacePillContainerVertical.width * 0.45 : workspacePillContainerVertical.width * 0.42
+                pointSize: model.isActive ? workspacePillContainerVertical.width * 0.45 : workspacePillContainerVertical.width * 0.42
+                applyUiScale: false
                 font.capitalization: Font.AllUppercase
                 font.weight: Style.fontWeightBold
                 wrapMode: Text.Wrap
@@ -439,7 +440,7 @@ Item {
                     return Color.mOnPrimary
                   if (model.isUrgent)
                     return Color.mOnError
-                  if (model.isActive || model.isOccupied)
+                  if (model.isOccupied)
                     return Color.mOnSecondary
 
                   return Color.mOnSurface
@@ -454,12 +455,12 @@ Item {
               return Color.mPrimary
             if (model.isUrgent)
               return Color.mError
-            if (model.isActive || model.isOccupied)
+            if (model.isOccupied)
               return Color.mSecondary
 
             return Color.mOutline
           }
-          scale: model.isFocused ? 1.0 : 0.9
+          scale: model.isActive ? 1.0 : 0.9
           z: 0
 
           MouseArea {
@@ -531,7 +532,7 @@ Item {
           radius: width / 2
           color: Color.transparent
           border.color: root.effectColor
-          border.width: Math.max(1, Math.round((2 + 6 * (1.0 - root.masterProgress)) * scaling))
+          border.width: Math.max(1, Math.round((2 + 6 * (1.0 - root.masterProgress))))
           opacity: root.effectsActive && model.isFocused ? (1.0 - root.masterProgress) * 0.7 : 0
           visible: root.effectsActive && model.isFocused
           z: 1

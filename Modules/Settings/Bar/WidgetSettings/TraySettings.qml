@@ -27,7 +27,7 @@ ColumnLayout {
     }
   }
 
-  spacing: Style.marginM * scaling
+  spacing: Style.marginM
 
   NToggle {
     Layout.fillWidth: true
@@ -39,7 +39,7 @@ ColumnLayout {
 
   ColumnLayout {
     Layout.fillWidth: true
-    spacing: Style.marginS * scaling
+    spacing: Style.marginS
 
     NLabel {
       label: I18n.tr("settings.bar.tray.blacklist.label")
@@ -48,7 +48,7 @@ ColumnLayout {
 
     RowLayout {
       Layout.fillWidth: true
-      spacing: Style.marginS * scaling
+      spacing: Style.marginS
 
       NTextInput {
         id: newRuleInput
@@ -59,7 +59,7 @@ ColumnLayout {
       NIconButton {
         Layout.alignment: Qt.AlignVCenter
         icon: "add"
-        baseSize: Style.baseWidgetSize * 0.8 * scaling
+        baseSize: Style.baseWidgetSize * 0.8
         onClicked: {
           if (newRuleInput.text.length > 0) {
             var newRule = newRuleInput.text.trim()
@@ -86,30 +86,30 @@ ColumnLayout {
   // List of current blacklist items
   ListView {
     Layout.fillWidth: true
-    Layout.preferredHeight: 150 * scaling
-    Layout.topMargin: Style.marginL * scaling // Increased top margin
+    Layout.preferredHeight: 150
+    Layout.topMargin: Style.marginL // Increased top margin
     clip: true
     model: blacklistModel
     delegate: Item {
       width: ListView.width
-      height: 40 * scaling
+      height: 40
 
       Rectangle {
         id: itemBackground
         anchors.fill: parent
-        anchors.margins: Style.marginXS * scaling
+        anchors.margins: Style.marginXS
         color: Color.transparent // Make background transparent
         border.color: Color.mOutline
-        border.width: Math.max(1, Style.borderS * scaling)
-        radius: Style.radiusS * scaling
+        border.width: Math.max(1, Style.borderS)
+        radius: Style.radiusS
         visible: model.rule !== undefined && model.rule !== "" // Only visible if rule exists
       }
 
       Row {
         anchors.fill: parent
-        anchors.leftMargin: Style.marginS * scaling
-        anchors.rightMargin: Style.marginS * scaling
-        spacing: Style.marginS * scaling
+        anchors.leftMargin: Style.marginS
+        anchors.rightMargin: Style.marginS
+        spacing: Style.marginS
 
         NText {
           text: model.rule
@@ -119,10 +119,10 @@ ColumnLayout {
         }
 
         NIconButton {
-          width: 16 * scaling
-          height: 16 * scaling
+          width: 16
+          height: 16
           icon: "close"
-          baseSize: 8 * scaling
+          baseSize: 8
           colorBg: Color.mSurfaceVariant
           colorFg: Color.mOnSurface
           colorBgHover: Color.mError

@@ -13,7 +13,7 @@ Rectangle {
   property real borderWidth: 0
   property real imageRadius: width * 0.5
   property string fallbackIcon: ""
-  property real fallbackIconSize: Style.fontSizeXXL * scaling
+  property real fallbackIconSize: Style.fontSizeXXL
 
   property real scaledRadius: imageRadius * Settings.data.general.radiusRatio
 
@@ -21,7 +21,7 @@ Rectangle {
 
   color: Color.transparent
   radius: scaledRadius
-  anchors.margins: Style.marginXXS * scaling
+  anchors.margins: Style.marginXXS
 
   Rectangle {
     color: Color.transparent

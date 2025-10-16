@@ -10,6 +10,7 @@ Singleton {
   id: root
 
   readonly property ListModel fillModeModel: ListModel {}
+  readonly property string defaultDirectory: Settings.preprocessPath(Settings.data.wallpaper.directory)
 
   // All available wallpaper transitions
   readonly property ListModel transitionsModel: ListModel {}
@@ -44,7 +45,7 @@ Singleton {
       if (!Settings.data.wallpaper.enableMultiMonitorDirectories) {
         // All monitors use the main directory
         for (var i = 0; i < Quickshell.screens.length; i++) {
-          root.wallpaperDirectoryChanged(Quickshell.screens[i].name, Settings.data.wallpaper.directory)
+          root.wallpaperDirectoryChanged(Quickshell.screens[i].name, root.defaultDirectory)
         }
       } else {
         // Only monitors without custom directories are affected
@@ -52,7 +53,7 @@ Singleton {
           var screenName = Quickshell.screens[i].name
           var monitor = root.getMonitorConfig(screenName)
           if (!monitor || !monitor.directory) {
-            root.wallpaperDirectoryChanged(screenName, Settings.data.wallpaper.directory)
+            root.wallpaperDirectoryChanged(screenName, root.defaultDirectory)
           }
         }
       }
@@ -75,7 +76,7 @@ Singleton {
 
   // -------------------------------------------------
   function init() {
-    Logger.log("Wallpaper", "Service started")
+    Logger.i("Wallpaper", "Service started")
 
     translateModels()
 
@@ -177,16 +178,16 @@ Singleton {
   // Get specific monitor directory
   function getMonitorDirectory(screenName) {
     if (!Settings.data.wallpaper.enableMultiMonitorDirectories) {
-      return Settings.data.wallpaper.directory
+      return root.defaultDirectory
     }
 
     var monitor = getMonitorConfig(screenName)
     if (monitor !== undefined && monitor.directory !== undefined) {
-      return monitor.directory
+      return Settings.preprocessPath(monitor.directory)
     }
 
     // Fall back to the main/single directory
-    return Settings.data.wallpaper.directory
+    return root.defaultDirectory
   }
 
   // -------------------------------------------------------------------
@@ -218,7 +219,7 @@ Singleton {
 
     // Update Settings with new array to ensure proper persistence
     Settings.data.wallpaper.monitors = newMonitors.slice()
-    root.wallpaperDirectoryChanged(screenName, directory)
+    root.wallpaperDirectoryChanged(screenName, Settings.preprocessPath(directory))
   }
 
   // -------------------------------------------------------------------
@@ -246,11 +247,11 @@ Singleton {
     }
 
     if (screenName === undefined) {
-      Logger.warn("Wallpaper", "setWallpaper", "no screen specified")
+      Logger.w("Wallpaper", "setWallpaper", "no screen specified")
       return
     }
 
-    //Logger.log("Wallpaper", "setWallpaper on", screenName, ": ", path)
+    //Logger.i("Wallpaper", "setWallpaper on", screenName, ": ", path)
 
     // Check if wallpaper actually changed
     var oldPath = currentWallpapers[screenName] || ""
@@ -274,7 +275,7 @@ Singleton {
         found = true
         return {
           "name": screenName,
-          "directory": monitor.directory || getMonitorDirectory(screenName),
+          "directory": Settings.preprocessPath(monitor.directory) || getMonitorDirectory(screenName),
           "wallpaper": path
         }
       }
@@ -302,7 +303,7 @@ Singleton {
 
   // -------------------------------------------------------------------
   function setRandomWallpaper() {
-    Logger.log("Wallpaper", "setRandomWallpaper")
+    Logger.d("Wallpaper", "setRandomWallpaper")
 
     if (Settings.data.wallpaper.enableMultiMonitorDirectories) {
       // Pick a random wallpaper per screen
@@ -330,7 +331,7 @@ Singleton {
 
   // -------------------------------------------------------------------
   function toggleRandomWallpaper() {
-    Logger.log("Wallpaper", "toggleRandomWallpaper")
+    Logger.d("Wallpaper", "toggleRandomWallpaper")
     if (Settings.data.wallpaper.randomEnabled) {
       restartRandomWallpaperTimer()
       setRandomWallpaper()
@@ -354,7 +355,7 @@ Singleton {
 
   // -------------------------------------------------------------------
   function refreshWallpapersList() {
-    Logger.log("Wallpaper", "refreshWallpapersList")
+    Logger.d("Wallpaper", "refreshWallpapersList")
     scanningCount = 0
 
     // Force refresh by toggling the folder property on each FolderListModel
@@ -428,7 +429,7 @@ Singleton {
           root.wallpaperLists[screenName] = files
 
           scanningCount--
-          Logger.log("Wallpaper", "List refreshed for", screenName, "count:", files.length)
+          Logger.d("Wallpaper", "List refreshed for", screenName, "count:", files.length)
           root.wallpaperListChanged(screenName, files.length)
         }
       }

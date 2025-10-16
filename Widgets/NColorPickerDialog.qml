@@ -14,12 +14,12 @@ Popup {
 
   signal colorSelected(color color)
 
-  width: 580 * scaling
+  width: 580
   height: {
     const h = scrollView.implicitHeight + padding * 2
-    Math.min(h, screen?.height - Style.barHeight * scaling - Style.marginL * 2)
+    Math.min(h, screen?.height - Style.barHeight - Style.marginL * 2)
   }
-  padding: Style.marginXL * scaling
+  padding: Style.marginXL
 
   // Center popup in parent
   x: (parent.width - width) * 0.5
@@ -112,9 +112,9 @@ Popup {
 
   background: Rectangle {
     color: Color.mSurface
-    radius: Style.radiusS * scaling
+    radius: Style.radiusS
     border.color: Color.mPrimary
-    border.width: Math.max(1, Style.borderM * scaling)
+    border.width: Math.max(1, Style.borderM)
   }
 
   contentItem: NScrollView {
@@ -126,24 +126,24 @@ Popup {
 
     ColumnLayout {
       width: scrollView.availableWidth
-      spacing: Style.marginL * scaling
+      spacing: Style.marginL
 
       // Header
       RowLayout {
         Layout.fillWidth: true
 
         RowLayout {
-          spacing: Style.marginS * scaling
+          spacing: Style.marginS
 
           NIcon {
             icon: "color-picker"
-            pointSize: Style.fontSizeXXL * scaling
+            pointSize: Style.fontSizeXXL
             color: Color.mPrimary
           }
 
           NText {
             text: I18n.tr("widgets.color-picker.title")
-            pointSize: Style.fontSizeXL * scaling
+            pointSize: Style.fontSizeXL
             font.weight: Style.fontWeightBold
             color: Color.mPrimary
           }
@@ -162,11 +162,11 @@ Popup {
       // Color preview section
       Rectangle {
         Layout.fillWidth: true
-        Layout.preferredHeight: 80 * scaling
-        radius: Style.radiusS * scaling
+        Layout.preferredHeight: 80
+        radius: Style.radiusS
         color: root.selectedColor
         border.color: Color.mOutline
-        border.width: Math.max(1, Style.borderS * scaling)
+        border.width: Math.max(1, Style.borderS)
 
         ColumnLayout {
           spacing: 0
@@ -179,7 +179,7 @@ Popup {
           NText {
             text: root.selectedColor.toString().toUpperCase()
             family: Settings.data.ui.fontFixed
-            pointSize: Style.fontSizeL * scaling
+            pointSize: Style.fontSizeL
             font.weight: Font.Bold
             color: root.selectedColor.r + root.selectedColor.g + root.selectedColor.b > 1.5 ? "#000000" : "#FFFFFF"
             Layout.alignment: Qt.AlignHCenter
@@ -188,7 +188,7 @@ Popup {
           NText {
             text: "RGB(" + Math.round(root.selectedColor.r * 255) + ", " + Math.round(root.selectedColor.g * 255) + ", " + Math.round(root.selectedColor.b * 255) + ")"
             family: Settings.data.ui.fontFixed
-            pointSize: Style.fontSizeM * scaling
+            pointSize: Style.fontSizeM
             color: root.selectedColor.r + root.selectedColor.g + root.selectedColor.b > 1.5 ? "#000000" : "#FFFFFF"
             Layout.alignment: Qt.AlignHCenter
           }
@@ -202,7 +202,7 @@ Popup {
       // Hex input
       RowLayout {
         Layout.fillWidth: true
-        spacing: Style.marginM * scaling
+        spacing: Style.marginM
 
         NLabel {
           label: I18n.tr("widgets.color-picker.hex.label")
@@ -225,13 +225,13 @@ Popup {
       // RGB sliders section
       NBox {
         Layout.fillWidth: true
-        Layout.preferredHeight: slidersSection.implicitHeight + Style.marginL * scaling * 2
+        Layout.preferredHeight: slidersSection.implicitHeight + Style.marginL * 2
 
         ColumnLayout {
           id: slidersSection
           anchors.fill: parent
-          anchors.margins: Style.marginL * scaling
-          spacing: Style.marginM * scaling
+          anchors.margins: Style.marginL
+          spacing: Style.marginM
 
           NLabel {
             label: I18n.tr("widgets.color-picker.rgb.label")
@@ -241,12 +241,12 @@ Popup {
 
           RowLayout {
             Layout.fillWidth: true
-            spacing: Style.marginM * scaling
+            spacing: Style.marginM
 
             NText {
               text: "R"
               font.weight: Font.Bold
-              Layout.preferredWidth: 20 * scaling
+              Layout.preferredWidth: 20
             }
 
             NValueSlider {
@@ -267,12 +267,12 @@ Popup {
 
           RowLayout {
             Layout.fillWidth: true
-            spacing: Style.marginM * scaling
+            spacing: Style.marginM
 
             NText {
               text: "G"
               font.weight: Font.Bold
-              Layout.preferredWidth: 20 * scaling
+              Layout.preferredWidth: 20
             }
 
             NValueSlider {
@@ -294,12 +294,12 @@ Popup {
 
           RowLayout {
             Layout.fillWidth: true
-            spacing: Style.marginM * scaling
+            spacing: Style.marginM
 
             NText {
               text: "B"
               font.weight: Font.Bold
-              Layout.preferredWidth: 20 * scaling
+              Layout.preferredWidth: 20
             }
 
             NValueSlider {
@@ -321,12 +321,12 @@ Popup {
 
           RowLayout {
             Layout.fillWidth: true
-            spacing: Style.marginM * scaling
+            spacing: Style.marginM
 
             NText {
               text: I18n.tr("widgets.color-picker.brightness")
               font.weight: Font.Bold
-              Layout.preferredWidth: 80 * scaling
+              Layout.preferredWidth: 80
             }
 
             NValueSlider {
@@ -361,13 +361,13 @@ Popup {
 
       NBox {
         Layout.fillWidth: true
-        Layout.preferredHeight: themePalette.implicitHeight + Style.marginL * scaling * 2
+        Layout.preferredHeight: themePalette.implicitHeight + Style.marginL * 2
 
         ColumnLayout {
           id: themePalette
           anchors.fill: parent
-          anchors.margins: Style.marginL * scaling
-          spacing: Style.marginS * scaling
+          anchors.margins: Style.marginL
+          spacing: Style.marginS
 
           NLabel {
             label: I18n.tr("widgets.color-picker.theme-colors.label")
@@ -376,7 +376,7 @@ Popup {
           }
 
           Flow {
-            spacing: 6 * scaling
+            spacing: 6
             Layout.fillWidth: true
             flow: Flow.LeftToRight
 
@@ -384,12 +384,12 @@ Popup {
               model: [Color.mPrimary, Color.mSecondary, Color.mTertiary, Color.mError, Color.mSurface, Color.mSurfaceVariant, Color.mOutline, "#FFFFFF", "#000000"]
 
               Rectangle {
-                width: 24 * scaling
-                height: 24 * scaling
-                radius: 4 * scaling
+                width: 24
+                height: 24
+                radius: 4
                 color: modelData
                 border.color: root.selectedColor === modelData ? Color.mPrimary : Color.mOutline
-                border.width: root.selectedColor === modelData ? 2 * scaling : 1 * scaling
+                border.width: root.selectedColor === modelData ? 2 : 1
 
                 MouseArea {
                   anchors.fill: parent
@@ -409,13 +409,13 @@ Popup {
 
       NBox {
         Layout.fillWidth: true
-        Layout.preferredHeight: genericPalette.implicitHeight + Style.marginL * scaling * 2
+        Layout.preferredHeight: genericPalette.implicitHeight + Style.marginL * 2
 
         ColumnLayout {
           id: genericPalette
           anchors.fill: parent
-          anchors.margins: Style.marginL * scaling
-          spacing: Style.marginS * scaling
+          anchors.margins: Style.marginL
+          spacing: Style.marginS
 
           NLabel {
             label: I18n.tr("widgets.color-picker.palette.label")
@@ -426,19 +426,19 @@ Popup {
           Flow {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            spacing: 6 * scaling
+            spacing: 6
             flow: Flow.LeftToRight
 
             Repeater {
               model: ["#F44336", "#E91E63", "#9C27B0", "#673AB7", "#3F51B5", "#2196F3", "#03A9F4", "#00BCD4", "#009688", "#4CAF50", "#8BC34A", "#CDDC39", "#FFEB3B", "#FFC107", "#FF9800", "#FF5722", "#795548", "#9E9E9E", "#E74C3C", "#E67E22", "#F1C40F", "#2ECC71", "#1ABC9C", "#3498DB", "#2980B9", "#9B59B6", "#34495E", "#2C3E50", "#95A5A6", "#7F8C8D", "#FFFFFF", "#000000"]
 
               Rectangle {
-                width: 24 * scaling
-                height: 24 * scaling
-                radius: Style.radiusXXS * scaling
+                width: 24
+                height: 24
+                radius: Style.radiusXXS
                 color: modelData
                 border.color: root.selectedColor === modelData ? Color.mPrimary : Color.mOutline
-                border.width: Math.max(1, root.selectedColor === modelData ? Style.borderM * scaling : Style.borderS * scaling)
+                border.width: Math.max(1, root.selectedColor === modelData ? Style.borderM : Style.borderS)
 
                 MouseArea {
                   anchors.fill: parent
@@ -458,9 +458,9 @@ Popup {
 
       RowLayout {
         Layout.fillWidth: true
-        Layout.topMargin: 20 * scaling
-        Layout.bottomMargin: 20 * scaling
-        spacing: 10 * scaling
+        Layout.topMargin: 20
+        Layout.bottomMargin: 20
+        spacing: 10
 
         Item {
           Layout.fillWidth: true

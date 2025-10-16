@@ -10,93 +10,144 @@ import qs.Widgets
 NPanel {
   id: root
 
-  preferredWidth: 460
-  preferredHeight: 790
   panelKeyboardFocus: true
+  preferredWidth: Math.round(460 * Style.uiScaleRatio)
+  preferredHeight: {
+    var height = 0
+    var count = 0
+    for (var i = 0; i < Settings.data.controlCenter.cards.length; i++) {
+      const card = Settings.data.controlCenter.cards[i]
+      if (!card.enabled)
+        continue
+
+      const contributes = (card.id !== "weather-card" || Settings.data.location.weatherEnabled)
+      if (!contributes)
+        continue
+
+      count++
+      switch (card.id) {
+      case "profile-card":
+        height += profileHeight
+        break
+      case "shortcuts-card":
+        height += shortcutsHeight
+        break
+      case "audio-card":
+        height += audioHeight
+        break
+      case "weather-card":
+        height += weatherHeight
+        break
+      case "media-sysmon-card":
+        height += mediaSysMonHeight
+        break
+      default:
+        break
+      }
+    }
+    return height + (count + 1) * Style.marginL
+  }
 
   // Positioning
   readonly property string controlCenterPosition: Settings.data.controlCenter.position
-  panelAnchorHorizontalCenter: controlCenterPosition !== "close_to_bar_button" && controlCenterPosition.endsWith("_center")
-  panelAnchorVerticalCenter: false
+  panelAnchorHorizontalCenter: controlCenterPosition !== "close_to_bar_button" && (controlCenterPosition.endsWith("_center") || controlCenterPosition === "center")
+  panelAnchorVerticalCenter: controlCenterPosition === "center"
   panelAnchorLeft: controlCenterPosition !== "close_to_bar_button" && controlCenterPosition.endsWith("_left")
   panelAnchorRight: controlCenterPosition !== "close_to_bar_button" && controlCenterPosition.endsWith("_right")
   panelAnchorBottom: controlCenterPosition !== "close_to_bar_button" && controlCenterPosition.startsWith("bottom_")
   panelAnchorTop: controlCenterPosition !== "close_to_bar_button" && controlCenterPosition.startsWith("top_")
 
+  readonly property int profileHeight: Math.round(64 * Style.uiScaleRatio)
+  readonly property int shortcutsHeight: Math.round(52 * Style.uiScaleRatio)
+  readonly property int audioHeight: Math.round(60 * Style.uiScaleRatio)
+  readonly property int weatherHeight: Math.round(190 * Style.uiScaleRatio)
+  readonly property int mediaSysMonHeight: Math.round(260 * Style.uiScaleRatio)
+
   panelContent: Item {
     id: content
 
-    property real cardSpacing: Style.marginL * scaling
-
-    // Layout content
     ColumnLayout {
       id: layout
-      x: content.cardSpacing
-      y: content.cardSpacing
-      width: parent.width - (2 * content.cardSpacing)
-      spacing: content.cardSpacing
+      x: Style.marginL
+      y: Style.marginL
+      width: parent.width - (Style.marginL * 2)
+      spacing: Style.marginL
 
-      // Cards (consistent inter-card spacing via ColumnLayout spacing)
-      ProfileCard {
-        Layout.fillWidth: true
-        Layout.preferredHeight: Math.max(64 * scaling)
-        scaling: root.scaling
+      Repeater {
+        model: Settings.data.controlCenter.cards
+        Loader {
+          active: modelData.enabled && (modelData.id !== "weather-card" || Settings.data.location.weatherEnabled)
+          visible: active
+          Layout.fillWidth: true
+          Layout.preferredHeight: {
+            switch (modelData.id) {
+            case "profile-card":
+              return profileHeight
+            case "shortcuts-card":
+              return shortcutsHeight
+            case "audio-card":
+              return audioHeight
+            case "weather-card":
+              return weatherHeight
+            case "media-sysmon-card":
+              return mediaSysMonHeight
+            default:
+              return 0
+            }
+          }
+          sourceComponent: {
+            switch (modelData.id) {
+            case "profile-card":
+              return profileCard
+            case "shortcuts-card":
+              return shortcutsCard
+            case "audio-card":
+              return audioCard
+            case "weather-card":
+              return weatherCard
+            case "media-sysmon-card":
+              return mediaSysMonCard
+            }
+          }
+        }
       }
+    }
 
-      WeatherCard {
-        Layout.fillWidth: true
-        Layout.preferredHeight: Math.max(190 * scaling)
-        scaling: root.scaling
-      }
+    Component {
+      id: profileCard
+      ProfileCard {}
+    }
 
-      // Middle section: media + stats column
+    Component {
+      id: shortcutsCard
+      ShortcutsCard {}
+    }
+
+    Component {
+      id: audioCard
+      AudioCard {}
+    }
+
+    Component {
+      id: weatherCard
+      WeatherCard {}
+    }
+
+    Component {
+      id: mediaSysMonCard
       RowLayout {
-        Layout.fillWidth: true
-        Layout.preferredHeight: Math.max(260 * scaling)
-        spacing: content.cardSpacing
+        spacing: Style.marginL
 
         // Media card
         MediaCard {
           Layout.fillWidth: true
           Layout.fillHeight: true
-          scaling: root.scaling
         }
 
         // System monitors combined in one card
         SystemMonitorCard {
-          Layout.preferredWidth: Style.baseWidgetSize * 2.625 * scaling
+          Layout.preferredWidth: Math.round(Style.baseWidgetSize * 2.625)
           Layout.fillHeight: true
-          scaling: root.scaling
-        }
-      }
-
-      // Audio card below media and system monitor
-      AudioCard {
-        Layout.fillWidth: true
-        Layout.preferredHeight: Math.max(120 * scaling)
-        scaling: root.scaling
-      }
-
-      // Bottom actions (two grouped rows of round buttons)
-      RowLayout {
-        Layout.fillWidth: true
-        Layout.preferredHeight: Math.max(60 * scaling)
-        spacing: content.cardSpacing
-
-        // Power Profiles switcher
-        PowerProfilesCard {
-          Layout.fillWidth: true
-          Layout.fillHeight: true
-          spacing: content.cardSpacing
-          scaling: root.scaling
-        }
-
-        // Utilities buttons
-        UtilitiesCard {
-          Layout.fillWidth: true
-          Layout.fillHeight: true
-          spacing: content.cardSpacing
-          scaling: root.scaling
         }
       }
     }

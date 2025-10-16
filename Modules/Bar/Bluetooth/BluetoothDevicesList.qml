@@ -18,11 +18,11 @@ ColumnLayout {
   }
 
   Layout.fillWidth: true
-  spacing: Style.marginM * scaling
+  spacing: Style.marginM
 
   NText {
     text: root.label
-    pointSize: Style.fontSizeL * scaling
+    pointSize: Style.fontSizeL
     color: Color.mSecondary
     font.weight: Style.fontWeightMedium
     Layout.fillWidth: true
@@ -51,35 +51,35 @@ ColumnLayout {
       }
 
       Layout.fillWidth: true
-      Layout.preferredHeight: deviceLayout.implicitHeight + (Style.marginM * scaling * 2)
-      radius: Style.radiusM * scaling
+      Layout.preferredHeight: deviceLayout.implicitHeight + (Style.marginM * 2)
+      radius: Style.radiusM
       color: Color.mSurface
-      border.width: Math.max(1, Style.borderS * scaling)
+      border.width: Math.max(1, Style.borderS)
       border.color: getContentColor(Color.mOutline)
 
       RowLayout {
         id: deviceLayout
         anchors.fill: parent
-        anchors.margins: Style.marginM * scaling
-        spacing: Style.marginM * scaling
+        anchors.margins: Style.marginM
+        spacing: Style.marginM
         Layout.alignment: Qt.AlignVCenter
 
         // One device BT icon
         NIcon {
           icon: BluetoothService.getDeviceIcon(modelData)
-          pointSize: Style.fontSizeXXL * scaling
+          pointSize: Style.fontSizeXXL
           color: getContentColor(Color.mOnSurface)
           Layout.alignment: Qt.AlignVCenter
         }
 
         ColumnLayout {
           Layout.fillWidth: true
-          spacing: Style.marginXXS * scaling
+          spacing: Style.marginXXS
 
           // Device name
           NText {
             text: modelData.name || modelData.deviceName
-            pointSize: Style.fontSizeM * scaling
+            pointSize: Style.fontSizeM
             font.weight: Style.fontWeightMedium
             elide: Text.ElideRight
             color: getContentColor(Color.mOnSurface)
@@ -90,7 +90,7 @@ ColumnLayout {
           NText {
             text: BluetoothService.getStatusString(modelData)
             visible: text !== ""
-            pointSize: Style.fontSizeXS * scaling
+            pointSize: Style.fontSizeXS
             color: getContentColor(Color.mOnSurfaceVariant)
           }
 
@@ -98,26 +98,26 @@ ColumnLayout {
           RowLayout {
             visible: modelData.signalStrength !== undefined
             Layout.fillWidth: true
-            spacing: Style.marginXS * scaling
+            spacing: Style.marginXS
 
             // Device signal strength - "Unknown" when not connected
             NText {
               text: BluetoothService.getSignalStrength(modelData)
-              pointSize: Style.fontSizeXS * scaling
+              pointSize: Style.fontSizeXS
               color: getContentColor(Color.mOnSurfaceVariant)
             }
 
             NIcon {
               visible: modelData.signalStrength > 0 && !modelData.pairing && !modelData.blocked
-              text: BluetoothService.getSignalIcon(modelData)
-              pointSize: Style.fontSizeXS * scaling
+              icon: BluetoothService.getSignalIcon(modelData)
+              pointSize: Style.fontSizeXS
               color: getContentColor(Color.mOnSurface)
             }
 
             NText {
               visible: modelData.signalStrength > 0 && !modelData.pairing && !modelData.blocked
               text: (modelData.signalStrength !== undefined && modelData.signalStrength > 0) ? modelData.signalStrength + "%" : ""
-              pointSize: Style.fontSizeXS * scaling
+              pointSize: Style.fontSizeXS
               color: getContentColor(Color.mOnSurface)
             }
           }
@@ -126,7 +126,7 @@ ColumnLayout {
           NText {
             visible: modelData.batteryAvailable
             text: BluetoothService.getBattery(modelData)
-            pointSize: Style.fontSizeXS * scaling
+            pointSize: Style.fontSizeXS
             color: getContentColor(Color.mOnSurfaceVariant)
           }
         }
@@ -142,7 +142,7 @@ ColumnLayout {
           visible: (modelData.state !== BluetoothDeviceState.Connecting)
           enabled: (canConnect || canDisconnect) && !isBusy
           outlined: !button.hovered
-          fontSize: Style.fontSizeXS * scaling
+          fontSize: Style.fontSizeXS
           fontWeight: Style.fontWeightMedium
           backgroundColor: {
             if (device.canDisconnect && !isBusy) {

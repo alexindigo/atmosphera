@@ -8,7 +8,7 @@ import qs.Services
 
 ColumnLayout {
   id: root
-  spacing: Style.marginM * scaling
+  spacing: Style.marginM
 
   // Properties to receive data from parent
   property var widgetData: null
@@ -31,7 +31,7 @@ ColumnLayout {
     label: I18n.tr("bar.widget-settings.control-center.use-distro-logo.label")
     description: I18n.tr("bar.widget-settings.control-center.use-distro-logo.description")
     checked: valueUseDistroLogo
-    onToggled: {
+    onToggled: function (checked) {
       valueUseDistroLogo = checked
       if (checked) {
         valueCustomIconPath = ""
@@ -41,7 +41,7 @@ ColumnLayout {
   }
 
   RowLayout {
-    spacing: Style.marginM * scaling
+    spacing: Style.marginM
 
     NLabel {
       label: I18n.tr("bar.widget-settings.control-center.icon.label")
@@ -49,23 +49,23 @@ ColumnLayout {
     }
 
     NImageCircled {
+      Layout.preferredWidth: Style.fontSizeXL * 2
+      Layout.preferredHeight: Style.fontSizeXL * 2
       Layout.alignment: Qt.AlignVCenter
       imagePath: valueCustomIconPath
       visible: valueCustomIconPath !== ""
-      width: Style.fontSizeXL * 2 * scaling
-      height: Style.fontSizeXL * 2 * scaling
     }
 
     NIcon {
       Layout.alignment: Qt.AlignVCenter
       icon: valueIcon
-      pointSize: Style.fontSizeXXL * 1.5 * scaling
+      pointSize: Style.fontSizeXXL * 1.5
       visible: valueIcon !== "" && valueCustomIconPath === ""
     }
   }
 
   RowLayout {
-    spacing: Style.marginM * scaling
+    spacing: Style.marginM
     NButton {
       enabled: !valueUseDistroLogo
       text: I18n.tr("bar.widget-settings.control-center.browse-library")
