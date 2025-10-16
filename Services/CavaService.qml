@@ -40,7 +40,7 @@ Singleton {
     running: root.shouldRun
     command: ["cava", "-p", "/dev/stdin"]
     onRunningChanged: {
-      Logger.log("Cava", "Process running:", running)
+      Logger.d("Cava", "Process running:", running)
     }
     onExited: {
       stdinEnabled = true

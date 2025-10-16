@@ -121,7 +121,7 @@ PopupWindow {
 
   function show(item, toplevelData) {
     if (!item) {
-      Logger.warn("DockMenu", "anchorItem is undefined, won't show menu.")
+      Logger.w("DockMenu", "anchorItem is undefined, won't show menu.")
       return
     }
 
@@ -176,7 +176,7 @@ PopupWindow {
         Qt.callLater(root.onAppClosed)
       }
     } else {
-      Logger.warn("DockMenu", "Cannot close app - invalid toplevel reference")
+      Logger.w("DockMenu", "Cannot close app - invalid toplevel reference")
     }
     root.hide()
     root.requestClose()

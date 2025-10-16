@@ -135,7 +135,7 @@ Loader {
       readonly property real verticalBarWidth: Style.barHeight
 
       Component.onCompleted: {
-        Logger.log("NPanel", "Opened", root.objectName, "on", screen.name)
+        Logger.d("NPanel", "Opened", root.objectName, "on", screen.name)
         dimmingOpacity = Style.opacityHeavy
       }
 
@@ -148,7 +148,7 @@ Loader {
           if (buttonName) {
             setPosition()
           }
-          Logger.log("NPanel", "OnScreenChanged", root.screen.name)
+          Logger.d("NPanel", "OnScreenChanged", root.screen.name)
         }
       }
 

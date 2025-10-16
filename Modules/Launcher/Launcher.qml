@@ -127,27 +127,27 @@ NPanel {
     const appsPlugin = Qt.createComponent("Plugins/ApplicationsPlugin.qml").createObject(this)
     if (appsPlugin) {
       registerPlugin(appsPlugin)
-      Logger.log("Launcher", "Registered: ApplicationsPlugin")
+      Logger.d("Launcher", "Registered: ApplicationsPlugin")
     } else {
-      Logger.error("Launcher", "Failed to load ApplicationsPlugin")
+      Logger.e("Launcher", "Failed to load ApplicationsPlugin")
     }
 
     // Load calculator plugin
     const calcPlugin = Qt.createComponent("Plugins/CalculatorPlugin.qml").createObject(this)
     if (calcPlugin) {
       registerPlugin(calcPlugin)
-      Logger.log("Launcher", "Registered: CalculatorPlugin")
+      Logger.d("Launcher", "Registered: CalculatorPlugin")
     } else {
-      Logger.error("Launcher", "Failed to load CalculatorPlugin")
+      Logger.e("Launcher", "Failed to load CalculatorPlugin")
     }
 
     // Load clipboard history plugin
     const clipboardPlugin = Qt.createComponent("Plugins/ClipboardPlugin.qml").createObject(this)
     if (clipboardPlugin) {
       registerPlugin(clipboardPlugin)
-      Logger.log("Launcher", "Registered: ClipboardPlugin")
+      Logger.d("Launcher", "Registered: ClipboardPlugin")
     } else {
-      Logger.error("Launcher", "Failed to load ClipboardPlugin")
+      Logger.e("Launcher", "Failed to load ClipboardPlugin")
     }
   }
 

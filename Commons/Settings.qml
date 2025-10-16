@@ -15,6 +15,7 @@ Singleton {
   property bool isLoaded: false
   property bool directoriesCreated: false
   property int settingsVersion: 16
+  property bool isDebug: Quickshell.env("NOCTALIA_DEBUG") === "1"
 
   // Define our app directories
   // Default config directory: ~/.config/noctalia
@@ -93,7 +94,7 @@ Singleton {
     }
     onLoaded: function () {
       if (!isLoaded) {
-        Logger.log("Settings", "Settings loaded")
+        Logger.i("Settings", "Settings loaded")
 
         upgradeSettingsData()
         validateMonitorConfigurations()
@@ -434,7 +435,7 @@ Singleton {
   // Generate default settings at the root of the repo
   function generateDefaultSettings() {
     try {
-      Logger.log("Settings", "Generating settings-default.json")
+      Logger.d("Settings", "Generating settings-default.json")
 
       // Prepare a clean JSON
       var plainAdapter = QtObj2JS.qtObjectToPlainObject(adapter)
@@ -446,7 +447,7 @@ Singleton {
       var base64Data = Qt.btoa(jsonData)
       Quickshell.execDetached(["sh", "-c", `echo "${base64Data}" | base64 -d > "${defaultPath}"`])
     } catch (error) {
-      Logger.error("Settings", "Failed to generate default settings file: " + error)
+      Logger.e("Settings", "Failed to generate default settings file: " + error)
     }
   }
 
@@ -458,8 +459,8 @@ Singleton {
       availableScreenNames.push(Quickshell.screens[i].name)
     }
 
-    Logger.log("Settings", "Available monitors: [" + availableScreenNames.join(", ") + "]")
-    Logger.log("Settings", "Configured bar monitors: [" + adapter.bar.monitors.join(", ") + "]")
+    Logger.d("Settings", "Available monitors: [" + availableScreenNames.join(", ") + "]")
+    Logger.d("Settings", "Configured bar monitors: [" + adapter.bar.monitors.join(", ") + "]")
 
     // Check bar monitors
     if (adapter.bar.monitors.length > 0) {
@@ -471,15 +472,15 @@ Singleton {
         }
       }
       if (!hasValidBarMonitor) {
-        Logger.warn("Settings", "No configured bar monitors found on system, clearing bar monitor list to show on all screens")
+        Logger.w("Settings", "No configured bar monitors found on system, clearing bar monitor list to show on all screens")
         adapter.bar.monitors = []
       } else {
 
-        //Logger.log("Settings", "Found valid bar monitors, keeping configuration")
+        //Logger.i("Settings", "Found valid bar monitors, keeping configuration")
       }
     } else {
 
-      //Logger.log("Settings", "Bar monitor list is empty, will show on all available screens")
+      //Logger.i("Settings", "Bar monitor list is empty, will show on all available screens")
     }
   }
 
@@ -489,7 +490,7 @@ Singleton {
   function upgradeSettingsData() {
     // Wait for BarWidgetRegistry to be ready
     if (!BarWidgetRegistry.widgets || Object.keys(BarWidgetRegistry.widgets).length === 0) {
-      Logger.warn("Settings", "BarWidgetRegistry not ready, deferring upgrade")
+      Logger.w("Settings", "BarWidgetRegistry not ready, deferring upgrade")
       Qt.callLater(upgradeSettingsData)
       return
     }
@@ -530,7 +531,7 @@ Singleton {
       for (var i = widgets.length - 1; i >= 0; i--) {
         var widget = widgets[i]
         if (!BarWidgetRegistry.hasWidget(widget.id)) {
-          Logger.warn(`Settings`, `Deleted invalid widget ${widget.id}`)
+          Logger.w(`Settings`, `Deleted invalid widget ${widget.id}`)
           widgets.splice(i, 1)
           removedWidget = true
         }
@@ -551,7 +552,7 @@ Singleton {
         }
 
         if (upgradeWidget(widget)) {
-          Logger.log("Settings", `Upgraded ${widget.id} widget:`, JSON.stringify(widget))
+          Logger.d("Settings", `Upgraded ${widget.id} widget:`, JSON.stringify(widget))
         }
       }
     }
@@ -577,7 +578,7 @@ Singleton {
         adapter.bar.widgets["right"].push(({
                                              "id": "ControlCenter"
                                            }))
-        Logger.warn("Settings", "Added a ControlCenter widget to the right section")
+        Logger.w("Settings", "Added a ControlCenter widget to the right section")
       }
     }
   }

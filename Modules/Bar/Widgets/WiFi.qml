@@ -37,7 +37,7 @@ NIconButton {
       }
       return connected ? NetworkService.signalIcon(signalStrength) : "wifi-off"
     } catch (error) {
-      Logger.error("Wi-Fi", "Error getting icon:", error)
+      Logger.e("Wi-Fi", "Error getting icon:", error)
       return "signal_wifi_bad"
     }
   }

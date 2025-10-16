@@ -136,14 +136,14 @@ Singleton {
   function findActivePlayer() {
     let availablePlayers = getAvailablePlayers()
     if (availablePlayers.length === 0) {
-      //Logger.log("Media", "No active player found")
+      //Logger.i("Media", "No active player found")
       return null
     }
 
     // Prioritize the actively playing player ---
     for (var i = 0; i < availablePlayers.length; i++) {
       if (availablePlayers[i] && availablePlayers[i].playbackState === MprisPlaybackState.Playing) {
-        Logger.log("Media", "Found actively playing player: " + availablePlayers[i].identity)
+        Logger.d("Media", "Found actively playing player: " + availablePlayers[i].identity)
         selectedPlayerIndex = i
         return availablePlayers[i]
       }
@@ -177,7 +177,7 @@ Singleton {
     if (newPlayer !== currentPlayer) {
       currentPlayer = newPlayer
       currentPosition = currentPlayer ? currentPlayer.position : 0
-      Logger.log("Media", "Switching player")
+      Logger.d("Media", "Switching player")
     }
   }
 
@@ -293,7 +293,7 @@ Singleton {
   Connections {
     target: Mpris.players
     function onValuesChanged() {
-      Logger.log("Media", "Players changed")
+      Logger.d("Media", "Players changed")
       updateCurrentPlayer()
     }
   }

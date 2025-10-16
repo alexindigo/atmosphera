@@ -56,7 +56,7 @@ Singleton {
   }
 
   Component.onCompleted: {
-    Logger.log("Network", "Service initialized")
+    Logger.i("Network", "Service initialized")
     syncWifiState()
     scan()
   }
@@ -105,7 +105,7 @@ Singleton {
 
     if (scanning) {
       // Mark current scan results to be ignored and schedule a new scan
-      Logger.log("Network", "Scan already in progress, will ignore results and rescan")
+      Logger.d("Network", "Scan already in progress, will ignore results and rescan")
       ignoreScanResults = true
       scanPending = true
       return
@@ -117,7 +117,7 @@ Singleton {
 
     // Get existing profiles first, then scan
     profileCheckProcess.running = true
-    Logger.log("Network", "Wi-Fi scan in progress...")
+    Logger.d("Network", "Wi-Fi scan in progress...")
   }
 
   function connect(ssid, password = "") {
@@ -229,7 +229,7 @@ Singleton {
                                                 })
         if (root.ethernetConnected !== connected) {
           root.ethernetConnected = connected
-          Logger.log("Network", "Ethernet connected:", root.ethernetConnected)
+          Logger.d("Network", "Ethernet connected:", root.ethernetConnected)
         }
       }
     }
@@ -245,7 +245,7 @@ Singleton {
     stdout: StdioCollector {
       onStreamFinished: {
         const enabled = text.trim() === "enabled"
-        Logger.log("Network", "Wi-Fi adapter was detect as enabled:", enabled)
+        Logger.d("Network", "Wi-Fi adapter was detect as enabled:", enabled)
         if (Settings.data.network.wifiEnabled !== enabled) {
           Settings.data.network.wifiEnabled = enabled
         }
@@ -261,7 +261,7 @@ Singleton {
 
     stdout: StdioCollector {
       onStreamFinished: {
-        Logger.log("Network", "Wi-Fi state change command executed.")
+        Logger.i("Network", "Wi-Fi state change command executed.")
         // Re-check the state to ensure it's in sync
         syncWifiState()
       }
@@ -270,7 +270,7 @@ Singleton {
     stderr: StdioCollector {
       onStreamFinished: {
         if (text.trim()) {
-          Logger.warn("Network", "Error changing Wi-Fi state: " + text)
+          Logger.w("Network", "Error changing Wi-Fi state: " + text)
         }
       }
     }
@@ -285,7 +285,7 @@ Singleton {
     stdout: StdioCollector {
       onStreamFinished: {
         if (root.ignoreScanResults) {
-          Logger.log("Network", "Ignoring profile check results (new scan requested)")
+          Logger.d("Network", "Ignoring profile check results (new scan requested)")
           root.scanning = false
 
           // Check if we need to start a new scan
@@ -318,7 +318,7 @@ Singleton {
     stdout: StdioCollector {
       onStreamFinished: {
         if (root.ignoreScanResults) {
-          Logger.log("Network", "Ignoring scan results (new scan requested)")
+          Logger.d("Network", "Ignoring scan results (new scan requested)")
           root.scanning = false
 
           // Check if we need to start a new scan
@@ -344,7 +344,7 @@ Singleton {
           // We know the last 3 fields, so everything else is SSID
           const lastColonIdx = line.lastIndexOf(":")
           if (lastColonIdx === -1) {
-            Logger.warn("Network", "Malformed nmcli output line:", line)
+            Logger.w("Network", "Malformed nmcli output line:", line)
             continue
           }
 
@@ -353,7 +353,7 @@ Singleton {
 
           const secondLastColonIdx = remainingLine.lastIndexOf(":")
           if (secondLastColonIdx === -1) {
-            Logger.warn("Network", "Malformed nmcli output line:", line)
+            Logger.w("Network", "Malformed nmcli output line:", line)
             continue
           }
 
@@ -362,7 +362,7 @@ Singleton {
 
           const thirdLastColonIdx = remainingLine2.lastIndexOf(":")
           if (thirdLastColonIdx === -1) {
-            Logger.warn("Network", "Malformed nmcli output line:", line)
+            Logger.w("Network", "Malformed nmcli output line:", line)
             continue
           }
 
@@ -410,15 +410,15 @@ Singleton {
 
         if (newNetworks.length > 0 || lostNetworks.length > 0) {
           if (newNetworks.length > 0) {
-            Logger.log("Network", "New Wi-Fi SSID discovered:", newNetworks.join(", "))
+            Logger.d("Network", "New Wi-Fi SSID discovered:", newNetworks.join(", "))
           }
           if (lostNetworks.length > 0) {
-            Logger.log("Network", "Wi-Fi SSID disappeared:", lostNetworks.join(", "))
+            Logger.d("Network", "Wi-Fi SSID disappeared:", lostNetworks.join(", "))
           }
-          Logger.log("Network", "Total Wi-Fi SSIDs:", Object.keys(networksMap).length)
+          Logger.d("Network", "Total Wi-Fi SSIDs:", Object.keys(networksMap).length)
         }
 
-        Logger.log("Network", "Wi-Fi scan completed")
+        Logger.d("Network", "Wi-Fi scan completed")
         root.networks = networksMap
         root.scanning = false
 
@@ -435,7 +435,7 @@ Singleton {
       onStreamFinished: {
         root.scanning = false
         if (text.trim()) {
-          Logger.warn("Network", "Scan error: " + text)
+          Logger.w("Network", "Scan error: " + text)
 
           // If scan fails, retry
           delayedScanTimer.interval = 5000
@@ -491,7 +491,7 @@ Singleton {
 
         root.connecting = false
         root.connectingTo = ""
-        Logger.log("Network", `Connected to network: '${connectProcess.ssid}'`)
+        Logger.i("Network", `Connected to network: '${connectProcess.ssid}'`)
         ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("toast.wifi.connected", {
                                                                        "ssid": connectProcess.ssid
                                                                      }))
@@ -520,7 +520,7 @@ Singleton {
             root.lastError = text.split("\n")[0].trim()
           }
 
-          Logger.warn("Network", "Connect error: " + text)
+          Logger.w("Network", "Connect error: " + text)
         }
       }
     }
@@ -534,7 +534,7 @@ Singleton {
 
     stdout: StdioCollector {
       onStreamFinished: {
-        Logger.log("Network", `Disconnected from network: '${disconnectProcess.ssid}'`)
+        Logger.i("Network", `Disconnected from network: '${disconnectProcess.ssid}'`)
         ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("toast.wifi.disconnected", {
                                                                        "ssid": disconnectProcess.ssid
                                                                      }))
@@ -553,7 +553,7 @@ Singleton {
       onStreamFinished: {
         root.disconnectingFrom = ""
         if (text.trim()) {
-          Logger.warn("Network", "Disconnect error: " + text)
+          Logger.w("Network", "Disconnect error: " + text)
         }
         // Still trigger a scan even on error
         delayedScanTimer.interval = 5000
@@ -599,8 +599,8 @@ Singleton {
 
     stdout: StdioCollector {
       onStreamFinished: {
-        Logger.log("Network", `Forget network: "${forgetProcess.ssid}"`)
-        Logger.log("Network", text.trim().replace(/[\r\n]/g, " "))
+        Logger.i("Network", `Forget network: "${forgetProcess.ssid}"`)
+        Logger.d("Network", text.trim().replace(/[\r\n]/g, " "))
 
         // Update both cached and existing status immediately
         let nets = root.networks
@@ -624,7 +624,7 @@ Singleton {
       onStreamFinished: {
         root.forgettingNetwork = ""
         if (text.trim() && !text.includes("No profiles found")) {
-          Logger.warn("Network", "Forget error: " + text)
+          Logger.w("Network", "Forget error: " + text)
         }
         // Still Trigger a scan even on error
         delayedScanTimer.interval = 5000

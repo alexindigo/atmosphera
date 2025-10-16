@@ -23,7 +23,7 @@ Image {
   onImagePathChanged: {
     if (imagePath) {
       imageHash = Checksum.sha256(imagePath)
-      // Logger.log("NImageCached", imagePath, imageHash)
+      // Logger.i("NImageCached", imagePath, imageHash)
     } else {
       source = ""
       imageHash = ""

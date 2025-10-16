@@ -112,7 +112,7 @@ Item {
   function onClicked() {
     if (leftClickExec) {
       Quickshell.execDetached(["sh", "-c", leftClickExec])
-      Logger.log("CustomButton", `Executing command: ${leftClickExec}`)
+      Logger.i("CustomButton", `Executing command: ${leftClickExec}`)
     } else if (!hasExec) {
       // No script was defined, open settings
       var settingsPanel = PanelService.getPanel("settingsPanel")
@@ -124,14 +124,14 @@ Item {
   function onRightClicked() {
     if (rightClickExec) {
       Quickshell.execDetached(["sh", "-c", rightClickExec])
-      Logger.log("CustomButton", `Executing command: ${rightClickExec}`)
+      Logger.i("CustomButton", `Executing command: ${rightClickExec}`)
     }
   }
 
   function onMiddleClicked() {
     if (middleClickExec) {
       Quickshell.execDetached(["sh", "-c", middleClickExec])
-      Logger.log("CustomButton", `Executing command: ${middleClickExec}`)
+      Logger.i("CustomButton", `Executing command: ${middleClickExec}`)
     }
   }
 }

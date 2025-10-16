@@ -121,7 +121,7 @@ ColumnLayout {
               var jsonData = JSON.parse(text())
               root.schemeLoaded(schemeName, jsonData)
             } catch (e) {
-              Logger.warn("ColorSchemeTab", "Failed to parse JSON for scheme:", schemeName, e)
+              Logger.w("ColorSchemeTab", "Failed to parse JSON for scheme:", schemeName, e)
               root.schemeLoaded(schemeName, null)
             }
           }
@@ -312,7 +312,7 @@ ColumnLayout {
             cursorShape: Qt.PointingHandCursor
             onClicked: {
               Settings.data.colorSchemes.useWallpaperColors = false
-              Logger.log("ColorSchemeTab", "Disabled wallpaper colors")
+              Logger.i("ColorSchemeTab", "Disabled wallpaper colors")
 
               Settings.data.colorSchemes.predefinedScheme = schemeItem.schemeName
               ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme)

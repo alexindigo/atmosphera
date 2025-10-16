@@ -81,14 +81,14 @@ Singleton {
   Connections {
     target: Settings.data.colorSchemes
     function onDarkModeChanged() {
-      Logger.log("AppThemeService", "Detected dark mode change")
+      Logger.i("AppThemeService", "Detected dark mode change")
       AppThemeService.generate()
     }
   }
 
   // --------------------------------------------------------------------------------
   function init() {
-    Logger.log("AppThemeService", "Service started")
+    Logger.i("AppThemeService", "Service started")
   }
 
   // --------------------------------------------------------------------------------
@@ -106,10 +106,10 @@ Singleton {
   // --------------------------------------------------------------------------------
   function generateFromWallpaper() {
 
-    // Logger.log("AppThemeService", "Generating from wallpaper on screen:", Screen.name)
+    // Logger.i("AppThemeService", "Generating from wallpaper on screen:", Screen.name)
     const wp = WallpaperService.getWallpaper(Screen.name).replace(/'/g, "'\\''")
     if (!wp) {
-      Logger.error("AppThemeService", "No wallpaper found")
+      Logger.e("AppThemeService", "No wallpaper found")
       return
     }
 
@@ -141,7 +141,7 @@ Singleton {
   //  Instead, we use 'sed' to apply a custom palette to the existing matugen templates.
   // --------------------------------------------------------------------------------
   function generateFromPredefinedScheme(schemeData) {
-    Logger.log("AppThemeService", "Generating templates from predefined color scheme")
+    Logger.i("AppThemeService", "Generating templates from predefined color scheme")
 
     handleTerminalThemes()
 
@@ -349,7 +349,7 @@ Singleton {
     stderr: StdioCollector {
       onStreamFinished: {
         if (this.text) {
-          Logger.warn("AppThemeService", "GenerateProcess stderr:", this.text)
+          Logger.w("AppThemeService", "GenerateProcess stderr:", this.text)
         }
       }
     }
@@ -361,7 +361,7 @@ Singleton {
     stderr: StdioCollector {
       onStreamFinished: {
         if (this.text) {
-          Logger.warn("AppThemeService", "CopyProcess stderr:", this.text)
+          Logger.w("AppThemeService", "CopyProcess stderr:", this.text)
         }
       }
     }

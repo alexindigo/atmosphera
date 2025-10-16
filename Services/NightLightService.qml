@@ -93,10 +93,10 @@ Singleton {
     id: runner
     running: false
     onStarted: {
-      Logger.log("NightLight", "Wlsunset started:", runner.command)
+      Logger.i("NightLight", "Wlsunset started:", runner.command)
     }
     onExited: function (code, status) {
-      Logger.log("NightLight", "Wlsunset exited:", code, status)
+      Logger.i("NightLight", "Wlsunset exited:", code, status)
     }
   }
 }

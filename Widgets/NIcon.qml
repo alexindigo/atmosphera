@@ -16,7 +16,7 @@ Text {
       return ""
     }
     if (Icons.get(icon) === undefined) {
-      Logger.warn("Icon", `"${icon}"`, "doesn't exist in the icons font")
+      Logger.w("Icon", `"${icon}"`, "doesn't exist in the icons font")
       Logger.callStack()
       return Icons.get(Icons.defaultIcon)
     }

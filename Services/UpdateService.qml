@@ -20,11 +20,11 @@ Singleton {
 
   function checkForUpdates() {
     // TODO: Implement update checking logic
-    Logger.log("UpdateService", "Checking for updates...")
+    Logger.i("UpdateService", "Checking for updates...")
   }
 
   function init() {
     // Ensure the singleton is created
-    Logger.log("UpdateService", "Version:", root.currentVersion)
+    Logger.i("UpdateService", "Version:", root.currentVersion)
   }
 }

@@ -72,7 +72,7 @@ Item {
             return iconResult
           }
         } catch (iconError) {
-          Logger.warn("ActiveWindow", "Error getting icon from CompositorService:", iconError)
+          Logger.w("ActiveWindow", "Error getting icon from CompositorService:", iconError)
         }
       }
 
@@ -90,14 +90,14 @@ Item {
               }
             }
           } catch (fallbackError) {
-            Logger.warn("ActiveWindow", "Error getting icon from ToplevelManager:", fallbackError)
+            Logger.w("ActiveWindow", "Error getting icon from ToplevelManager:", fallbackError)
           }
         }
       }
 
       return ThemeIcons.iconFromName(fallbackIcon)
     } catch (e) {
-      Logger.warn("ActiveWindow", "Error in getAppIcon:", e)
+      Logger.w("ActiveWindow", "Error in getAppIcon:", e)
       return ThemeIcons.iconFromName(fallbackIcon)
     }
   }
@@ -367,7 +367,7 @@ Item {
         windowIcon.source = Qt.binding(getAppIcon)
         windowIconVertical.source = Qt.binding(getAppIcon)
       } catch (e) {
-        Logger.warn("ActiveWindow", "Error in onActiveWindowChanged:", e)
+        Logger.w("ActiveWindow", "Error in onActiveWindowChanged:", e)
       }
     }
     function onWindowListChanged() {
@@ -375,7 +375,7 @@ Item {
         windowIcon.source = Qt.binding(getAppIcon)
         windowIconVertical.source = Qt.binding(getAppIcon)
       } catch (e) {
-        Logger.warn("ActiveWindow", "Error in onWindowListChanged:", e)
+        Logger.w("ActiveWindow", "Error in onWindowListChanged:", e)
       }
     }
   }

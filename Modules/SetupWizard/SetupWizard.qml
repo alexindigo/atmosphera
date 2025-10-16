@@ -363,7 +363,7 @@ NPanel {
   }
 
   function completeSetup() {
-    Logger.log("SetupWizard", "Completing setup with selected options")
+    Logger.i("SetupWizard", "Completing setup with selected options")
 
     if (selectedWallpaperDirectory !== Settings.data.wallpaper.directory) {
       Settings.data.wallpaper.directory = selectedWallpaperDirectory
@@ -380,7 +380,7 @@ NPanel {
     Settings.data.setupCompleted = true
 
     Settings.saveImmediate()
-    Logger.log("SetupWizard", "Setup completed successfully")
+    Logger.i("SetupWizard", "Setup completed successfully")
     root.close()
   }
 
@@ -402,7 +402,7 @@ NPanel {
   }
 
   Component.onCompleted: {
-    Logger.log("SetupWizard", "Setup wizard opened")
+    Logger.i("SetupWizard", "Setup wizard opened")
     // Initialize selections from existing settings to avoid overwriting user config
     if (Settings && Settings.data) {
       selectedScaleRatio = Settings.data.general.scaleRatio

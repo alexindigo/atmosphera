@@ -32,7 +32,7 @@ Singleton {
   }
 
   function init() {
-    Logger.log("Bluetooth", "Service initialized")
+    Logger.i("Bluetooth", "Service initialized")
   }
 
   Timer {
@@ -46,11 +46,11 @@ Singleton {
     target: adapter
     function onEnabledChanged() {
       if (!adapter) {
-        Logger.warn("Bluetooth", "onEnabledChanged", "No adapter available")
+        Logger.w("Bluetooth", "onEnabledChanged", "No adapter available")
         return
       }
 
-      Logger.log("Bluetooth", "onEnableChanged", adapter.enabled)
+      Logger.d("Bluetooth", "onEnableChanged", adapter.enabled)
       if (adapter.enabled) {
         ToastService.showNotice(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.enabled"))
         discoveryTimer.running = true
@@ -225,11 +225,11 @@ Singleton {
 
   function setBluetoothEnabled(state) {
     if (!adapter) {
-      Logger.warn("Bluetooth", "No adapter available")
+      Logger.w("Bluetooth", "No adapter available")
       return
     }
 
-    Logger.log("Bluetooth", "SetBluetoothEnabled", state)
+    Logger.i("Bluetooth", "SetBluetoothEnabled", state)
     adapter.enabled = state
   }
 }
