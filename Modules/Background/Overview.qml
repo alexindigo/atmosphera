@@ -77,8 +77,8 @@ Variants {
         source: bgImage
         autoPaddingEnabled: false
         blurEnabled: true
-        blur: 0.48
-        blurMax: 128
+        blur: 1.0
+        blurMax: 64
         colorization: Style.opacityMedium
         colorizationColor: Settings.data.colorSchemes.darkMode ? Color.mSurface : Color.mOnSurface
       }
