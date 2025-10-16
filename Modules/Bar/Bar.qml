@@ -102,6 +102,7 @@ Variants {
                 model: Settings.data.bar.widgets.left
                 delegate: BarWidgetLoader {
                   widgetId: (modelData.id !== undefined ? modelData.id : "")
+                  barDensity: Settings.data.bar.density
                   widgetProps: {
                     "screen": root.modelData || null,
                     "widgetId": modelData.id,
@@ -124,6 +125,7 @@ Variants {
                 model: Settings.data.bar.widgets.center
                 delegate: BarWidgetLoader {
                   widgetId: (modelData.id !== undefined ? modelData.id : "")
+                  barDensity: Settings.data.bar.density
                   widgetProps: {
                     "screen": root.modelData || null,
                     "widgetId": modelData.id,
@@ -147,6 +149,7 @@ Variants {
                 model: Settings.data.bar.widgets.right
                 delegate: BarWidgetLoader {
                   widgetId: (modelData.id !== undefined ? modelData.id : "")
+                  barDensity: Settings.data.bar.density
                   widgetProps: {
                     "screen": root.modelData || null,
                     "widgetId": modelData.id,
@@ -180,6 +183,7 @@ Variants {
                 model: Settings.data.bar.widgets.left
                 delegate: BarWidgetLoader {
                   widgetId: (modelData.id !== undefined ? modelData.id : "")
+                  barDensity: Settings.data.bar.density
                   widgetProps: {
                     "screen": root.modelData || null,
                     "widgetId": modelData.id,
@@ -204,6 +208,7 @@ Variants {
                 model: Settings.data.bar.widgets.center
                 delegate: BarWidgetLoader {
                   widgetId: (modelData.id !== undefined ? modelData.id : "")
+                  barDensity: Settings.data.bar.density
                   widgetProps: {
                     "screen": root.modelData || null,
                     "widgetId": modelData.id,
@@ -229,6 +234,7 @@ Variants {
                 model: Settings.data.bar.widgets.right
                 delegate: BarWidgetLoader {
                   widgetId: (modelData.id !== undefined ? modelData.id : "")
+                  barDensity: Settings.data.bar.density
                   widgetProps: {
                     "screen": root.modelData || null,
                     "widgetId": modelData.id,
