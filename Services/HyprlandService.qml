@@ -274,8 +274,9 @@ Item {
     try {
       appId = toplevel.wayland.appId
       if (appId)
-          return appId
+        return appId
     } catch (e) {
+
     }
 
     // Try direct properties
@@ -298,6 +299,7 @@ Item {
         return String(ipcData.class || ipcData.initialClass || ipcData.appId || ipcData.wm_class || "")
       }
     } catch (e) {
+
     }
 
     return ""

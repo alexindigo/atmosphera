@@ -1,0 +1,4 @@
+pre-commit:
+  jobs:
+    - name: format qml
+      run: ./Bin/dev/qmlfmt.sh && git update-index --again
