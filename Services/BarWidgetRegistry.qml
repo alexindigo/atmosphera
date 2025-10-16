@@ -215,7 +215,7 @@ Singleton {
   }
 
   function init() {
-    Logger.log("BarWidgetRegistry", "Service started")
+    Logger.i("BarWidgetRegistry", "Service started")
   }
 
   // ------------------------------

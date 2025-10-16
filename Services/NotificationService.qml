@@ -301,7 +301,7 @@ Singleton {
       adapter.notifications = items
       historyFileView.writeAdapter()
     } catch (e) {
-      Logger.error("Notifications", "Save history failed:", e)
+      Logger.e("Notifications", "Save history failed:", e)
     }
   }
 
@@ -331,7 +331,7 @@ Singleton {
                            })
       }
     } catch (e) {
-      Logger.error("Notifications", "Load failed:", e)
+      Logger.e("Notifications", "Load failed:", e)
     }
   }
 
@@ -461,7 +461,7 @@ Singleton {
     try {
       Quickshell.execDetached(["sh", "-c", `rm -rf "${Settings.cacheDirImagesNotifications}"*`])
     } catch (e) {
-      Logger.error("Notifications", "Failed to clear cache directory:", e)
+      Logger.e("Notifications", "Failed to clear cache directory:", e)
     }
 
     historyList.clear()

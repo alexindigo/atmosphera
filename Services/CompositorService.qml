@@ -100,13 +100,13 @@ Singleton {
       // Load cached display scales
       displayScales = displayCacheAdapter.displays || {}
       displayScalesLoaded = true
-      // Logger.log("CompositorService", "Loaded display scales from cache:", JSON.stringify(displayScales))
+      // Logger.i("CompositorService", "Loaded display scales from cache:", JSON.stringify(displayScales))
     }
 
     onLoadFailed: {
       // Cache doesn't exist yet, will be created on first update
       displayScalesLoaded = true
-      // Logger.log("CompositorService", "No display cache found, will create on first update")
+      // Logger.i("CompositorService", "No display cache found, will create on first update")
     }
   }
 
@@ -195,7 +195,7 @@ Singleton {
   // Update display scales from backend
   function updateDisplayScales() {
     if (!backend || !backend.queryDisplayScales) {
-      Logger.warn("CompositorService", "Backend does not support display scale queries")
+      Logger.w("CompositorService", "Backend does not support display scale queries")
       return
     }
 
@@ -207,7 +207,7 @@ Singleton {
     displayScales = scales
     saveDisplayScalesToCache()
     displayScalesChanged()
-    Logger.log("CompositorService", "Display scales updated")
+    Logger.i("CompositorService", "Display scales updated")
   }
 
   // Save display scales to cache
@@ -261,7 +261,7 @@ Singleton {
     if (backend && backend.switchToWorkspace) {
       backend.switchToWorkspace(workspace)
     } else {
-      Logger.warn("Compositor", "No backend available for workspace switching")
+      Logger.w("Compositor", "No backend available for workspace switching")
     }
   }
 
@@ -293,7 +293,7 @@ Singleton {
     if (backend && backend.focusWindow) {
       backend.focusWindow(window)
     } else {
-      Logger.warn("Compositor", "No backend available for window focus")
+      Logger.w("Compositor", "No backend available for window focus")
     }
   }
 
@@ -302,43 +302,43 @@ Singleton {
     if (backend && backend.closeWindow) {
       backend.closeWindow(window)
     } else {
-      Logger.warn("Compositor", "No backend available for window closing")
+      Logger.w("Compositor", "No backend available for window closing")
     }
   }
 
   // Session management
   function logout() {
     if (backend && backend.logout) {
-      Logger.log("Compositor", "Logout requested")
+      Logger.i("Compositor", "Logout requested")
       backend.logout()
     } else {
-      Logger.warn("Compositor", "No backend available for logout")
+      Logger.w("Compositor", "No backend available for logout")
     }
   }
 
   function shutdown() {
-    Logger.log("Compositor", "Shutdown requested")
+    Logger.i("Compositor", "Shutdown requested")
     Quickshell.execDetached(["shutdown", "-h", "now"])
   }
 
   function reboot() {
-    Logger.log("Compositor", "Reboot requested")
+    Logger.i("Compositor", "Reboot requested")
     Quickshell.execDetached(["reboot"])
   }
 
   function suspend() {
-    Logger.log("Compositor", "Suspend requested")
+    Logger.i("Compositor", "Suspend requested")
     Quickshell.execDetached(["systemctl", "suspend"])
   }
 
   function lockAndSuspend() {
-    Logger.log("Compositor", "Lock and suspend requested")
+    Logger.i("Compositor", "Lock and suspend requested")
     try {
       if (PanelService && PanelService.lockScreen && !PanelService.lockScreen.active) {
         PanelService.lockScreen.active = true
       }
     } catch (e) {
-      Logger.warn("Compositor", "Failed to activate lock screen before suspend: " + e)
+      Logger.w("Compositor", "Failed to activate lock screen before suspend: " + e)
     }
     // Queue suspend to the next event loop cycle to allow lock UI to render
     Qt.callLater(suspend)

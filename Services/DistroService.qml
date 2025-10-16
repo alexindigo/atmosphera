@@ -82,7 +82,7 @@ Singleton {
         if (logoName)
         resolveLogo(logoName)
       } catch (e) {
-        Logger.warn("DistroService", "failed to read os-release", e)
+        Logger.w("DistroService", "failed to read os-release", e)
       }
     }
   }
@@ -93,10 +93,10 @@ Singleton {
       const p = String(stdout.text || "").trim()
       if (code === 0 && p) {
         root.osLogo = `file://${p}`
-        Logger.log("DistroService", "found", root.osLogo)
+        Logger.i("DistroService", "found", root.osLogo)
       } else {
         root.osLogo = ""
-        Logger.warn("DistroService", "none found")
+        Logger.w("DistroService", "none found")
       }
     }
     stdout: StdioCollector {}

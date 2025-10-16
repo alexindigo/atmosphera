@@ -51,7 +51,7 @@ Item {
         item.onLoaded()
       }
 
-      //Logger.log("BarWidgetLoader", "Loaded", widgetId, "on screen", item.screen.name)
+      //Logger.i("BarWidgetLoader", "Loaded", widgetId, "on screen", item.screen.name)
     }
 
     Component.onDestruction: {
@@ -67,7 +67,7 @@ Item {
   // Error handling
   onWidgetIdChanged: {
     if (widgetId && !BarWidgetRegistry.hasWidget(widgetId)) {
-      Logger.warn("BarWidgetLoader", "Widget not found in registry:", widgetId)
+      Logger.w("BarWidgetLoader", "Widget not found in registry:", widgetId)
     }
   }
 }

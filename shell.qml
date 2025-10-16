@@ -49,8 +49,8 @@ ShellRoot {
   property bool settingsLoaded: false
 
   Component.onCompleted: {
-    Logger.log("Shell", "---------------------------")
-    Logger.log("Shell", "Noctalia Hello!")
+    Logger.i("Shell", "---------------------------")
+    Logger.i("Shell", "Noctalia Hello!")
   }
 
   Connections {
@@ -79,7 +79,7 @@ ShellRoot {
 
     sourceComponent: Item {
       Component.onCompleted: {
-        Logger.log("Shell", "---------------------------")
+        Logger.i("Shell", "---------------------------")
         WallpaperService.init()
         AppThemeService.init()
         ColorSchemeService.init()

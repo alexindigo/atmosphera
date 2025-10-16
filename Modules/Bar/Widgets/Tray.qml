@@ -43,7 +43,7 @@ Rectangle {
     if (!str || !rule) {
       return false
     }
-    Logger.log("Tray", "wildCardMatch - Input str:", str, "rule:", rule)
+    Logger.i("Tray", "wildCardMatch - Input str:", str, "rule:", rule)
 
     // Escape all special regex characters in the rule
     let escapedRule = rule.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
@@ -52,15 +52,15 @@ Rectangle {
     // Add ^ and $ to match the entire string
     pattern = '^' + pattern + '$'
 
-    Logger.log("Tray", "wildCardMatch - Generated pattern:", pattern)
+    Logger.i("Tray", "wildCardMatch - Generated pattern:", pattern)
 
     try {
       const regex = new RegExp(pattern, 'i')
       // 'i' for case-insensitive
-      Logger.log("Tray", "wildCardMatch - Regex test result:", regex.test(str))
+      Logger.i("Tray", "wildCardMatch - Regex test result:", regex.test(str))
       return regex.test(str)
     } catch (e) {
-      Logger.warn("Tray", "Invalid regex pattern for wildcard match:", rule, e.message)
+      Logger.w("Tray", "Invalid regex pattern for wildcard match:", rule, e.message)
       return false // If regex is invalid, it won't match
     }
   }
@@ -252,7 +252,7 @@ Rectangle {
                              trayMenu.item.menu = modelData.menu
                              trayMenu.item.showAt(parent, menuX, menuY)
                            } else {
-                             Logger.log("Tray", "No menu available for", modelData.id, "or trayMenu not set")
+                             Logger.i("Tray", "No menu available for", modelData.id, "or trayMenu not set")
                            }
                          }
                        }

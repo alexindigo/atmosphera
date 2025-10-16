@@ -22,7 +22,7 @@ Singleton {
 
     // Don't create if no text
     if (!screen || !target || !text) {
-      Logger.log("Tooltip", "No target or text")
+      Logger.i("Tooltip", "No target or text")
       return
     }
 
@@ -82,7 +82,7 @@ Singleton {
 
       return newTooltip
     } else {
-      Logger.error("Tooltip", "Failed to create tooltip instance")
+      Logger.e("Tooltip", "Failed to create tooltip instance")
     }
 
     return null

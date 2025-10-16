@@ -106,11 +106,11 @@ Singleton {
     printErrors: false
     watchChanges: true
     onFileChanged: {
-      Logger.log("Color", "Reloading colors from disk")
+      Logger.i("Color", "Reloading colors from disk")
       reload()
     }
     onAdapterUpdated: {
-      Logger.log("Color", "Writing colors to disk")
+      Logger.i("Color", "Writing colors to disk")
       writeAdapter()
     }
 

@@ -20,7 +20,7 @@ Variants {
 
       Component.onCompleted: {
         if (modelData) {
-          Logger.log("Overview", "Loading Overview component for Niri on", modelData.name)
+          Logger.d("Overview", "Loading Overview component for Niri on", modelData.name)
         }
         setWallpaperInitial()
       }

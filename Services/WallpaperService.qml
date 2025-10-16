@@ -76,7 +76,7 @@ Singleton {
 
   // -------------------------------------------------
   function init() {
-    Logger.log("Wallpaper", "Service started")
+    Logger.i("Wallpaper", "Service started")
 
     translateModels()
 
@@ -247,11 +247,11 @@ Singleton {
     }
 
     if (screenName === undefined) {
-      Logger.warn("Wallpaper", "setWallpaper", "no screen specified")
+      Logger.w("Wallpaper", "setWallpaper", "no screen specified")
       return
     }
 
-    //Logger.log("Wallpaper", "setWallpaper on", screenName, ": ", path)
+    //Logger.i("Wallpaper", "setWallpaper on", screenName, ": ", path)
 
     // Check if wallpaper actually changed
     var oldPath = currentWallpapers[screenName] || ""
@@ -303,7 +303,7 @@ Singleton {
 
   // -------------------------------------------------------------------
   function setRandomWallpaper() {
-    Logger.log("Wallpaper", "setRandomWallpaper")
+    Logger.d("Wallpaper", "setRandomWallpaper")
 
     if (Settings.data.wallpaper.enableMultiMonitorDirectories) {
       // Pick a random wallpaper per screen
@@ -331,7 +331,7 @@ Singleton {
 
   // -------------------------------------------------------------------
   function toggleRandomWallpaper() {
-    Logger.log("Wallpaper", "toggleRandomWallpaper")
+    Logger.d("Wallpaper", "toggleRandomWallpaper")
     if (Settings.data.wallpaper.randomEnabled) {
       restartRandomWallpaperTimer()
       setRandomWallpaper()
@@ -355,7 +355,7 @@ Singleton {
 
   // -------------------------------------------------------------------
   function refreshWallpapersList() {
-    Logger.log("Wallpaper", "refreshWallpapersList")
+    Logger.d("Wallpaper", "refreshWallpapersList")
     scanningCount = 0
 
     // Force refresh by toggling the folder property on each FolderListModel
@@ -429,7 +429,7 @@ Singleton {
           root.wallpaperLists[screenName] = files
 
           scanningCount--
-          Logger.log("Wallpaper", "List refreshed for", screenName, "count:", files.length)
+          Logger.d("Wallpaper", "List refreshed for", screenName, "count:", files.length)
           root.wallpaperListChanged(screenName, files.length)
         }
       }

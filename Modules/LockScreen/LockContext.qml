@@ -33,7 +33,7 @@ Scope {
     errorMessage = ""
     showFailure = false
 
-    Logger.log("LockContext", "Starting PAM authentication for user:", pam.user)
+    Logger.i("LockContext", "Starting PAM authentication for user:", pam.user)
     pam.start()
   }
 
@@ -43,7 +43,7 @@ Scope {
     user: Quickshell.env("USER")
 
     onPamMessage: {
-      Logger.log("LockContext", "PAM message:", message, "isError:", messageIsError, "responseRequired:", responseRequired)
+      Logger.i("LockContext", "PAM message:", message, "isError:", messageIsError, "responseRequired:", responseRequired)
 
       if (messageIsError) {
         errorMessage = message
@@ -52,26 +52,26 @@ Scope {
       }
 
       if (responseRequired) {
-        Logger.log("LockContext", "Responding to PAM with password")
+        Logger.i("LockContext", "Responding to PAM with password")
         respond(root.currentText)
       }
     }
 
     onResponseRequiredChanged: {
-      Logger.log("LockContext", "Response required changed:", responseRequired)
+      Logger.i("LockContext", "Response required changed:", responseRequired)
       if (responseRequired && root.unlockInProgress) {
-        Logger.log("LockContext", "Automatically responding to PAM")
+        Logger.i("LockContext", "Automatically responding to PAM")
         respond(root.currentText)
       }
     }
 
     onCompleted: result => {
-                   Logger.log("LockContext", "PAM completed with result:", result)
+                   Logger.i("LockContext", "PAM completed with result:", result)
                    if (result === PamResult.Success) {
-                     Logger.log("LockContext", "Authentication successful")
+                     Logger.i("LockContext", "Authentication successful")
                      root.unlocked()
                    } else {
-                     Logger.log("LockContext", "Authentication failed")
+                     Logger.i("LockContext", "Authentication failed")
                      errorMessage = "Authentication failed"
                      showFailure = true
                      root.failed()
@@ -80,7 +80,7 @@ Scope {
                  }
 
     onError: {
-      Logger.log("LockContext", "PAM error:", error, "message:", message)
+      Logger.i("LockContext", "PAM error:", error, "message:", message)
       errorMessage = message || "Authentication error"
       showFailure = true
       root.unlockInProgress = false

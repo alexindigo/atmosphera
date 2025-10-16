@@ -344,14 +344,14 @@ ColumnLayout {
       newArray.splice(toIndex, 0, item)
 
       Settings.data.bar.widgets[section] = newArray
-      //Logger.log("BarTab", "Widget reordered. New array:", JSON.stringify(newArray))
+      //Logger.i("BarTab", "Widget reordered. New array:", JSON.stringify(newArray))
     }
   }
 
   function _updateWidgetSettingsInSection(section, index, settings) {
     // Update the widget settings in the Settings data
     Settings.data.bar.widgets[section][index] = settings
-    //Logger.log("BarTab", `Updated widget settings for ${settings.id} in ${section} section`)
+    //Logger.i("BarTab", `Updated widget settings for ${settings.id} in ${section} section`)
   }
 
   function _moveWidgetBetweenSections(fromSection, index, toSection) {
@@ -369,7 +369,7 @@ ColumnLayout {
       targetArray.push(widget)
       Settings.data.bar.widgets[toSection] = targetArray
 
-      //Logger.log("BarTab", `Moved widget ${widget.id} from ${fromSection} to ${toSection}`)
+      //Logger.i("BarTab", `Moved widget ${widget.id} from ${fromSection} to ${toSection}`)
     }
   }
 

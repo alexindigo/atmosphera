@@ -38,9 +38,9 @@ Singleton {
       let command = script.replace(/\$1/g, wallpaperPath)
       command = command.replace(/\$2/g, screenName || "")
       Quickshell.execDetached(["sh", "-c", command])
-      Logger.log("HooksService", `Executed wallpaper hook: ${command}`)
+      Logger.d("HooksService", `Executed wallpaper hook: ${command}`)
     } catch (e) {
-      Logger.error("HooksService", `Failed to execute wallpaper hook: ${e}`)
+      Logger.e("HooksService", `Failed to execute wallpaper hook: ${e}`)
     }
   }
 
@@ -58,14 +58,14 @@ Singleton {
     try {
       const command = script.replace(/\$1/g, isDarkMode ? "true" : "false")
       Quickshell.execDetached(["sh", "-c", command])
-      Logger.log("HooksService", `Executed dark mode hook: ${command}`)
+      Logger.d("HooksService", `Executed dark mode hook: ${command}`)
     } catch (e) {
-      Logger.error("HooksService", `Failed to execute dark mode hook: ${e}`)
+      Logger.e("HooksService", `Failed to execute dark mode hook: ${e}`)
     }
   }
 
   // Initialize the service
   function init() {
-    Logger.log("HooksService", "Service initialized")
+    Logger.i("HooksService", "Service initialized")
   }
 }

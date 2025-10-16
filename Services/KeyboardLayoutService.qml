@@ -202,7 +202,7 @@ Singleton {
   }
 
   Component.onCompleted: {
-    Logger.log("KeyboardLayout", "Service started")
+    Logger.i("KeyboardLayout", "Service started")
     updateLayout()
   }
 

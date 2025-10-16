@@ -51,7 +51,7 @@ Item {
   Connections {
     target: AudioService.source?.audio ? AudioService.source?.audio : null
     function onVolumeChanged() {
-      // Logger.log("Bar:Microphone", "onInputVolumeChanged")
+      // Logger.i("Bar:Microphone", "onInputVolumeChanged")
       if (!firstInputVolumeReceived) {
         // Ignore the first volume change
         firstInputVolumeReceived = true
@@ -66,7 +66,7 @@ Item {
   Connections {
     target: AudioService.source?.audio ? AudioService.source?.audio : null
     function onMutedChanged() {
-      // Logger.log("Bar:Microphone", "onInputMutedChanged")
+      // Logger.i("Bar:Microphone", "onInputMutedChanged")
       if (!firstInputVolumeReceived) {
         // Ignore the first mute change
         firstInputVolumeReceived = true

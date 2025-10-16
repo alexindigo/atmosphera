@@ -36,13 +36,13 @@ ColumnLayout {
     var value = jsonData || {}
     schemeColorsCache[schemeName] = value
     cacheVersion++
-    Logger.log("SetupAppearanceStep", `Loaded scheme ${schemeName}`)
+    Logger.i("SetupAppearanceStep", `Loaded scheme ${schemeName}`)
   }
 
   Connections {
     target: ColorSchemeService
     function onSchemesChanged() {
-      Logger.log("SetupAppearanceStep", `Color schemes changed: ${ColorSchemeService.schemes.length}`)
+      Logger.i("SetupAppearanceStep", `Color schemes changed: ${ColorSchemeService.schemes.length}`)
       schemeColorsCache = {}
       cacheVersion++
     }

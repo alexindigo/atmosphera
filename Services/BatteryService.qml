@@ -69,7 +69,7 @@ Singleton {
 
   function setChargingMode(newMode) {
     if (newMode !== BatteryService.ChargingMode.Full && newMode !== BatteryService.ChargingMode.Balanced && newMode !== BatteryService.ChargingMode.Lifespan) {
-      Logger.warn("BatteryService", `Invalid charging mode set ${newMode}`)
+      Logger.w("BatteryService", `Invalid charging mode set ${newMode}`)
       return
     }
     BatteryService.chargingMode = newMode
@@ -112,7 +112,7 @@ Singleton {
     running: false
     onExited: (exitCode, exitStatus) => {
       if (exitCode === 0) {
-        Logger.log("BatteryService", "Battery threshold set successfully")
+        Logger.i("BatteryService", "Battery threshold set successfully")
         if (BatteryService.initialSetter) {
           BatteryService.initialSetter = false
           return
@@ -127,20 +127,20 @@ Singleton {
         BatteryService.runInstaller()
       } else {
         ToastService.showError(I18n.tr("toast.battery-manager.title"), I18n.tr("toast.battery-manager.set-failed"))
-        Logger.error("BatteryService", `Setter process failed with exit code: ${exitCode}`)
+        Logger.e("BatteryService", `Setter process failed with exit code: ${exitCode}`)
       }
     }
     stderr: StdioCollector {
       onStreamFinished: {
         if (this.text) {
-          Logger.warn("BatteryService", "SetterProcess stderr:", this.text)
+          Logger.w("BatteryService", "SetterProcess stderr:", this.text)
         }
       }
     }
     stdout: StdioCollector {
       onStreamFinished: {
         if (this.text) {
-          Logger.log("BatteryService", "SetterProcess stdout:", this.text)
+          Logger.i("BatteryService", "SetterProcess stdout:", this.text)
         }
       }
     }
@@ -170,14 +170,14 @@ Singleton {
     stderr: StdioCollector {
       onStreamFinished: {
         if (this.text) {
-          Logger.warn("BatteryService", "InstallerProcess stderr:", this.text)
+          Logger.w("BatteryService", "InstallerProcess stderr:", this.text)
         }
       }
     }
     stdout: StdioCollector {
       onStreamFinished: {
         if (this.text) {
-          Logger.log("BatteryService", "InstallerProcess stdout:", this.text)
+          Logger.i("BatteryService", "InstallerProcess stdout:", this.text)
         }
       }
     }
@@ -190,27 +190,27 @@ Singleton {
     running: false
     onExited: (exitCode, exitStatus) => {
       if (exitCode === 0) {
-        Logger.log("BatteryService", "Battery Manager uninstalled successfully")
+        Logger.i("BatteryService", "Battery Manager uninstalled successfully")
         ToastService.showNotice(I18n.tr("toast.battery-manager.title"), I18n.tr("toast.battery-manager.uninstall-success"))
         Settings.data.battery.chargingMode = BatteryService.chargingMode
         BatteryService.chargingMode = BatteryService.ChargingMode.Disabled
         cleanupProcess.running = true
       } else {
         ToastService.showError(I18n.tr("toast.battery-manager.title"), I18n.tr("toast.battery-manager.uninstall-failed"))
-        Logger.error("BatteryService", `Uninstaller process failed with exit code: ${exitCode}`)
+        Logger.e("BatteryService", `Uninstaller process failed with exit code: ${exitCode}`)
       }
     }
     stderr: StdioCollector {
       onStreamFinished: {
         if (this.text) {
-          Logger.warn("BatteryService", "UninstallerProcess stderr:", this.text)
+          Logger.w("BatteryService", "UninstallerProcess stderr:", this.text)
         }
       }
     }
     stdout: StdioCollector {
       onStreamFinished: {
         if (this.text) {
-          Logger.log("BatteryService", "UninstallerProcess stdout:", this.text)
+          Logger.i("BatteryService", "UninstallerProcess stdout:", this.text)
         }
       }
     }
@@ -224,22 +224,22 @@ Singleton {
     running: false
     onExited: (exitCode, exitStatus) => {
       if (exitCode === 0) {
-        Logger.log("BatteryService", "Battery Manager uninstalled successfully")
+        Logger.i("BatteryService", "Battery Manager uninstalled successfully")
       } else {
-        Logger.error("BatteryService", `Cleanup process failed with exit code: ${exitCode}`)
+        Logger.e("BatteryService", `Cleanup process failed with exit code: ${exitCode}`)
       }
     }
     stderr: StdioCollector {
       onStreamFinished: {
         if (this.text) {
-          Logger.warn("BatteryService", "CleanupProcess stderr:", this.text)
+          Logger.w("BatteryService", "CleanupProcess stderr:", this.text)
         }
       }
     }
     stdout: StdioCollector {
       onStreamFinished: {
         if (this.text) {
-          Logger.log("BatteryService", "CleanupProcess stdout:", this.text)
+          Logger.i("BatteryService", "CleanupProcess stdout:", this.text)
         }
       }
     }

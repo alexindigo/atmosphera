@@ -28,7 +28,7 @@ Item {
     updateWorkspaces()
     updateWindows()
     queryDisplayScales()
-    Logger.log("NiriService", "Initialized successfully")
+    Logger.i("NiriService", "Initialized successfully")
   }
 
   // Update workspaces
@@ -89,7 +89,7 @@ Item {
             CompositorService.onDisplayScalesUpdated(scales)
           }
         } catch (e) {
-          Logger.error("NiriService", "Failed to parse outputs:", e, line)
+          Logger.e("NiriService", "Failed to parse outputs:", e, line)
         }
       }
     }
@@ -136,7 +136,7 @@ Item {
 
           workspaceChanged()
         } catch (e) {
-          Logger.error("NiriService", "Failed to parse workspaces:", e, line)
+          Logger.e("NiriService", "Failed to parse workspaces:", e, line)
         }
       }
     }
@@ -154,7 +154,7 @@ Item {
           const windowsData = JSON.parse(line)
           recollectWindows(windowsData)
         } catch (e) {
-          Logger.error("NiriService", "Failed to parse windows:", e, line)
+          Logger.e("NiriService", "Failed to parse windows:", e, line)
         }
       }
     }
@@ -193,7 +193,7 @@ Item {
                     queryDisplayScales()
                   }
                 } catch (e) {
-                  Logger.error("NiriService", "Error parsing event stream:", e, data)
+                  Logger.e("NiriService", "Error parsing event stream:", e, data)
                 }
               }
     }
@@ -300,7 +300,7 @@ Item {
 
       windowListChanged()
     } catch (e) {
-      Logger.error("NiriService", "Error handling WindowOpenedOrChanged:", e)
+      Logger.e("NiriService", "Error handling WindowOpenedOrChanged:", e)
     }
   }
 
@@ -324,7 +324,7 @@ Item {
         windowListChanged()
       }
     } catch (e) {
-      Logger.error("NiriService", "Error handling WindowClosed:", e)
+      Logger.e("NiriService", "Error handling WindowClosed:", e)
     }
   }
 
@@ -333,7 +333,7 @@ Item {
       const windowsData = eventData.windows
       recollectWindows(windowsData)
     } catch (e) {
-      Logger.error("NiriService", "Error handling WindowsChanged:", e)
+      Logger.e("NiriService", "Error handling WindowsChanged:", e)
     }
   }
 
@@ -359,7 +359,7 @@ Item {
 
       activeWindowChanged()
     } catch (e) {
-      Logger.error("NiriService", "Error handling WindowFocusChanged:", e)
+      Logger.e("NiriService", "Error handling WindowFocusChanged:", e)
     }
   }
 
@@ -378,16 +378,16 @@ Item {
 
       windowListChanged()
     } catch (e) {
-      Logger.error("NiriService", "Error handling WindowLayoutChanged:", e)
+      Logger.e("NiriService", "Error handling WindowLayoutChanged:", e)
     }
   }
 
   function handleOverviewOpenedOrClosed(eventData) {
     try {
       overviewActive = eventData.is_open
-      Logger.log("NiriService", "Overview opened or closed:", eventData.is_open)
+      Logger.d("NiriService", "Overview opened or closed:", eventData.is_open)
     } catch (e) {
-      Logger.error("NiriService", "Error handling OverviewOpenedOrClosed:", e)
+      Logger.e("NiriService", "Error handling OverviewOpenedOrClosed:", e)
     }
   }
 
@@ -396,7 +396,7 @@ Item {
     try {
       Quickshell.execDetached(["niri", "msg", "action", "focus-workspace", workspace.idx.toString()])
     } catch (e) {
-      Logger.error("NiriService", "Failed to switch workspace:", e)
+      Logger.e("NiriService", "Failed to switch workspace:", e)
     }
   }
 
@@ -404,7 +404,7 @@ Item {
     try {
       Quickshell.execDetached(["niri", "msg", "action", "focus-window", "--id", window.id.toString()])
     } catch (e) {
-      Logger.error("NiriService", "Failed to switch window:", e)
+      Logger.e("NiriService", "Failed to switch window:", e)
     }
   }
 
@@ -412,7 +412,7 @@ Item {
     try {
       Quickshell.execDetached(["niri", "msg", "action", "close-window", "--id", window.id.toString()])
     } catch (e) {
-      Logger.error("NiriService", "Failed to close window:", e)
+      Logger.e("NiriService", "Failed to close window:", e)
     }
   }
 
@@ -420,7 +420,7 @@ Item {
     try {
       Quickshell.execDetached(["niri", "msg", "action", "quit", "--skip-confirmation"])
     } catch (e) {
-      Logger.error("NiriService", "Failed to logout:", e)
+      Logger.e("NiriService", "Failed to logout:", e)
     }
   }
 }
