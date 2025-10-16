@@ -273,7 +273,6 @@ Item {
     // Leaving them in for now, just in case...
     try {
       appId = toplevel.wayland.appId
-      console.lo
       if (appId)
           return appId
     } catch (e) {
