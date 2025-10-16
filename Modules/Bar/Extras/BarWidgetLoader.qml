@@ -13,17 +13,7 @@ Item {
   property int sectionIndex: widgetProps && widgetProps.sectionWidgetIndex || 0
 
   property string barDensity: "default"
-  readonly property real scaling: (function() {
-    switch (barDensity) {
-      case "mini":
-        return 0.8
-      case "compact":
-        return 0.9
-      case "comfortable":
-      default:
-        return 1.0
-    }
-  })()
+  readonly property real scaling: barDensity === "mini" ? 0.8 : (barDensity === "compact" ? 0.9 : 1.0)
 
   // Don't reserve space unless the loaded widget is really visible
   implicitWidth: getImplicitSize(loader.item, "implicitWidth")
