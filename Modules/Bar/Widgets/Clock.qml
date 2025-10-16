@@ -15,6 +15,7 @@ Rectangle {
   property string section: ""
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
+  property real scaling: 1.0
 
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
@@ -66,11 +67,13 @@ Rectangle {
             visible: text !== ""
             text: modelData
             family: useCustomFont && customFont ? customFont : Settings.data.ui.fontDefault
-            pointSize: {
-              if (repeater.model.length == 1) {
-                return Style.fontSizeS
-              } else {
-                return (index == 0) ? Style.fontSizeXS : Style.fontSizeXXS
+            Binding on pointSize {
+              value: {
+                if (repeater.model.length == 1) {
+                  return Style.fontSizeS * scaling
+                } else {
+                  return (index == 0) ? Style.fontSizeXS * scaling : Style.fontSizeXXS * scaling
+                }
               }
             }
             applyUiScale: false
@@ -97,8 +100,11 @@ Rectangle {
             visible: text !== ""
             text: modelData
             family: useCustomFont && customFont ? customFont : Settings.data.ui.fontDefault
-            pointSize: Style.fontSizeS
+            Binding on pointSize {
+              value: Style.fontSizeS * scaling
+            }
             applyUiScale: false
+
             font.weight: Style.fontWeightBold
             color: usePrimaryColor ? Color.mPrimary : Color.mOnSurface
             wrapMode: Text.WordWrap
