@@ -176,8 +176,8 @@ Item {
           spacing: 0
 
           Item {
-            Layout.preferredWidth: Math.round(21 * Style.uiScaleRatio * scaling)
-            Layout.preferredHeight: Math.round(21 * Style.uiScaleRatio * scaling)
+            Layout.preferredWidth: Math.round(21 * scaling)
+            Layout.preferredHeight: Math.round(21 * scaling)
 
             NImageCircled {
               id: trackArt
