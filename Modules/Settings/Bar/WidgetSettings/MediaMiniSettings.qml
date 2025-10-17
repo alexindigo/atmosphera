@@ -19,6 +19,7 @@ ColumnLayout {
   property bool valueShowVisualizer: widgetData.showVisualizer !== undefined ? widgetData.showVisualizer : widgetMetadata.showVisualizer
   property string valueVisualizerType: widgetData.visualizerType || widgetMetadata.visualizerType
   property string valueScrollingMode: widgetData.scrollingMode || widgetMetadata.scrollingMode
+  property int valueMaxWidth: widgetData.maxWidth !== undefined ? widgetData.maxWidth : widgetMetadata.maxWidth
 
   Component.onCompleted: {
     if (widgetData && widgetData.hideMode !== undefined) {
@@ -33,6 +34,7 @@ ColumnLayout {
     settings.showVisualizer = valueShowVisualizer
     settings.visualizerType = valueVisualizerType
     settings.scrollingMode = valueScrollingMode
+    settings.maxWidth = parseInt(widthInput.text) || widgetMetadata.maxWidth
     return settings
   }
 
@@ -85,6 +87,15 @@ ColumnLayout {
     currentKey: valueVisualizerType
     onSelected: key => valueVisualizerType = key
     minimumWidth: 200
+  }
+
+  NTextInput {
+    id: widthInput
+    Layout.fillWidth: true
+    label: I18n.tr("bar.widget-settings.media-mini.max-width.label")
+    description: I18n.tr("bar.widget-settings.media-mini.max-width.description")
+    placeholderText: widgetMetadata.maxWidth
+    text: valueMaxWidth
   }
 
   NComboBox {

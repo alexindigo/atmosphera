@@ -38,8 +38,8 @@ Item {
   readonly property string visualizerType: (widgetSettings.visualizerType !== undefined && widgetSettings.visualizerType !== "") ? widgetSettings.visualizerType : widgetMetadata.visualizerType
   readonly property string scrollingMode: (widgetSettings.scrollingMode !== undefined) ? widgetSettings.scrollingMode : widgetMetadata.scrollingMode
 
-  // Fixed width - no expansion
-  readonly property real widgetWidth: Math.max(145, screen.width * 0.06)
+  // Maximum widget width with user settings support
+  readonly property real maxWidth: (widgetSettings.maxWidth !== undefined) ? widgetSettings.maxWidth : Math.max(widgetMetadata.maxWidth, screen.width * 0.06)
 
   readonly property bool hasActivePlayer: MediaService.currentPlayer !== null
   readonly property string placeholderText: I18n.tr("bar.widget-settings.media-mini.no-active-player")
@@ -60,7 +60,7 @@ Item {
   }
 
   implicitHeight: visible ? (isVerticalBar ? calculatedVerticalDimension() : Style.barHeight) : 0
-  implicitWidth: visible ? (isVerticalBar ? calculatedVerticalDimension() : widgetWidth) : 0
+  implicitWidth: visible ? (isVerticalBar ? calculatedVerticalDimension() : dynamicWidth) : 0
 
   // "visible": Always Visible, "hidden": Hide When Empty, "transparent": Transparent When Empty
   visible: hideMode !== "hidden" || hasActivePlayer
@@ -80,6 +80,44 @@ Item {
     return Math.round((Style.baseWidgetSize - 5) * scaling)
   }
 
+  function calculateContentWidth() {
+    // Calculate the actual content width based on visible elements
+    var contentWidth = 0
+    var margins = Style.marginS * scaling * 2 // Left and right margins
+    
+    // Icon or album art width
+    if (!hasActivePlayer || !showAlbumArt) {
+      // Icon width
+      contentWidth += Style.fontSizeL * scaling
+    } else if (showAlbumArt && hasActivePlayer) {
+      // Album art width
+      contentWidth += 21 * scaling
+    }
+    
+    // Spacing between icon/art and text
+    contentWidth += Style.marginS * scaling
+    
+    // Text width (use the measured width)
+    contentWidth += fullTitleMetrics.contentWidth
+    
+    // Additional small margin for text
+    contentWidth += Style.marginXXS * 2
+    
+    // Add container margins
+    contentWidth += margins
+    
+    return Math.ceil(contentWidth)
+  }
+
+  // Dynamic width: adapt to content but respect maximum width setting
+  readonly property real dynamicWidth: {
+    if (!hasActivePlayer) {
+      return maxWidth
+    }
+    // Use content width but don't exceed user-set maximum width
+    return Math.min(calculateContentWidth(), maxWidth)
+  }
+
   //  A hidden text element to safely measure the full title width
   NText {
     id: fullTitleMetrics
@@ -95,10 +133,18 @@ Item {
     visible: root.visible
     anchors.left: parent.left
     anchors.verticalCenter: parent.verticalCenter
-    width: isVerticalBar ? root.width : (widgetWidth)
+    width: isVerticalBar ? root.width : dynamicWidth
     height: isVerticalBar ? width : Style.capsuleHeight
     radius: isVerticalBar ? width / 2 : Style.radiusM
     color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
+
+    // Smooth width transition
+    Behavior on width {
+      NumberAnimation {
+        duration: Style.animationNormal
+        easing.type: Easing.InOutCubic
+      }
+    }
 
     Item {
       id: mainContainer
