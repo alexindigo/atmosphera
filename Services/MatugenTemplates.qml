@@ -115,9 +115,9 @@ Singleton {
       "input": "pywalfox.json",
       "postHook": AppThemeService.colorsApplyScript + " pywalfox"
     }, {
-      "name": "discord_vesktop",
+      "name": "discord_vesktops",
       "templates": [{
-          "version": "discord_vesktop",
+          "version": "discord_vesktops",
           "output": "~/.config/vesktop/themes/noctalia.theme.css"
         }],
       "input": "vesktop.css"
@@ -156,6 +156,14 @@ Singleton {
           "output": "~/.config/dorion/themes/noctalia.theme.css"
         }],
       "input": "vesktop.css"
+    }, {
+      "name": "discord_vencord",
+      "templates": [{
+          "version": "discord_vencord",
+          "output": "~/.config/discord/themes/noctalia.theme.css"
+        }],
+      "input": "vesktop.css",
+      "requiresThemesFolder": true
     }]
 
   // --------------------------------
@@ -193,7 +201,8 @@ Singleton {
         clients.push({
                        "name": clientName,
                        "configPath": configPath,
-                       "themePath": themePath
+                       "themePath": themePath,
+                       "requiresThemesFolder": app.requiresThemesFolder || false
                      })
       }
     }

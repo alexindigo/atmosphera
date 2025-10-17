@@ -28,14 +28,25 @@ Singleton {
 
   // Function to detect Discord client by checking config directories
   function detectDiscordClient() {
-    // Build list of client names from MatugenTemplates
-    var clientNames = []
+    // Build shell script to check each client
+    var scriptParts = ["available_clients=\"\";"]
+
     for (var i = 0; i < MatugenTemplates.discordClients.length; i++) {
-      clientNames.push(MatugenTemplates.discordClients[i].name)
+      var client = MatugenTemplates.discordClients[i]
+      var clientName = client.name
+
+      // Check if this client requires themes folder to exist
+      if (client.requiresThemesFolder) {
+        scriptParts.push("if [ -d \"$HOME/.config/" + clientName + "/themes\" ]; then available_clients=\"$available_clients " + clientName + "\"; fi;")
+      } else {
+        scriptParts.push("if [ -d \"$HOME/.config/" + clientName + "\" ]; then available_clients=\"$available_clients " + clientName + "\"; fi;")
+      }
     }
 
+    scriptParts.push("echo \"$available_clients\"")
+
     // Use a Process to check directory existence for all clients
-    discordDetector.command = ["sh", "-c", "available_clients=\"\"; " + "for client in " + clientNames.join(" ") + "; do " + "  if [ -d \"$HOME/.config/$client\" ]; then " + "    available_clients=\"$available_clients $client\"; " + "  fi; " + "done; " + "echo \"$available_clients\""]
+    discordDetector.command = ["sh", "-c", scriptParts.join(" ")]
     discordDetector.running = true
   }
 

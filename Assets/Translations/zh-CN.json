@@ -537,7 +537,7 @@
           },
           "discord": {
             "description": "为 {client} 写入 {filepath}",
-            "description-missing": "未检测到 Discord 客户端。请安装 vesktop、webcord、armcord、equibop、lightcord 或 dorion。"
+            "description-missing": "未检测到 Discord 客户端。请安装 vencord、vesktop、webcord、armcord、equibop、lightcord 或 dorion。"
           },
           "pywalfox": {
             "description": "写入 {filepath} 并运行 pywalfox update",

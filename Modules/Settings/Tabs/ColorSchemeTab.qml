@@ -530,6 +530,8 @@ ColumnLayout {
             return "Detected: " + clientInfo.join(", ")
           }
         }
+        Layout.fillWidth: true
+        Layout.preferredWidth: -1
         checked: {
           // Check if any Discord client template is enabled
           var anyEnabled = false

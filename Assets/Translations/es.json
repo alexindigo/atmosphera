@@ -537,7 +537,7 @@
           },
           "discord": {
             "description": "Escribir {filepath} para {client}",
-            "description-missing": "No se detectó cliente de Discord. Instala vesktop, webcord, armcord, equibop, lightcord o dorion."
+            "description-missing": "No se detectó cliente de Discord. Instala vencord, vesktop, webcord, armcord, equibop, lightcord o dorion."
           },
           "pywalfox": {
             "description": "Escribir {filepath} y ejecutar pywalfox update",
