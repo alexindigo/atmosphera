@@ -480,15 +480,19 @@ Variants {
       }
 
       function onInputVolumeChanged() {
-        if (inputVolumeInitialized) {
-          showOSD("inputVolume")
+        if (!inputVolumeInitialized) {
+          inputVolumeInitialized = true
+          return
         }
+        showOSD("inputVolume")
       }
 
       function onInputMutedChanged() {
-        if (inputMuteInitialized) {
-          showOSD("inputVolume")
+        if (!inputMuteInitialized) {
+          inputMuteInitialized = true
+          return
         }
+        showOSD("inputVolume")
       }
     }
 
@@ -500,9 +504,7 @@ Variants {
       onTriggered: {
         volumeInitialized = true
         muteInitialized = true
-        inputVolumeInitialized = true
-        inputMuteInitialized = true
-        // Don't initialize brightness here - let it initialize on first change like volume
+        // Input volume/mute and brightness initialize on first change to avoid showing OSD on startup
         connectBrightnessMonitors()
       }
     }
