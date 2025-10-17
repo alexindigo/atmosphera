@@ -352,6 +352,8 @@ Item {
     target: Hyprland
     enabled: initialized
     function onRawEvent(event) {
+      Hyprland.refreshWorkspaces()
+      safeUpdateWorkspaces()
       workspaceChanged()
       updateTimer.restart()
 

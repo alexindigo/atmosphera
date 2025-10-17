@@ -251,23 +251,23 @@ Variants {
             property int hoverCount: 0
 
             onHoverCountChanged: {
-                if (hoverCount > 0) {
-                    resumeTimer.stop()
-                    NotificationService.pauseTimeout(notificationId)
-                } else {
-                    resumeTimer.start()
-                }
+              if (hoverCount > 0) {
+                resumeTimer.stop()
+                NotificationService.pauseTimeout(notificationId)
+              } else {
+                resumeTimer.start()
+              }
             }
 
             Timer {
-                id: resumeTimer
-                interval: 50
-                repeat: false
-                onTriggered: {
-                    if (hoverCount === 0) {
-                        NotificationService.resumeTimeout(notificationId)
-                    }
+              id: resumeTimer
+              interval: 50
+              repeat: false
+              onTriggered: {
+                if (hoverCount === 0) {
+                  NotificationService.resumeTimeout(notificationId)
                 }
+              }
             }
 
             // Right-click to dismiss
