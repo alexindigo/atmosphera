@@ -45,7 +45,9 @@ Item {
         }
         // Explicitly set scaling property
         if (item.hasOwnProperty("scaling")) {
-            item.scaling = Qt.binding(function() { return root.scaling; })
+          item.scaling = Qt.binding(function () {
+            return root.scaling
+          })
         }
       }
 
