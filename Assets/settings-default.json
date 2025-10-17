@@ -207,7 +207,6 @@
     "fontFixed": "DejaVu Sans Mono",
     "fontDefaultScale": 1,
     "fontFixedScale": 1,
-    "idleInhibitorEnabled": false,
     "tooltipsEnabled": true
   },
   "brightness": {

@@ -16,15 +16,9 @@ Singleton {
   // Different inhibitor strategies
   property string strategy: "systemd" // "systemd", "wayland", or "auto"
 
-  Component.onCompleted: {
-    Logger.i("IdleInhibitor", "Service started")
+  function init() {
+    Logger.d("IdleInhibitor", "Service started")
     detectStrategy()
-
-    // Restore previous state from settings
-    if (Settings.data.ui.idleInhibitorEnabled) {
-      addInhibitor("manual", "Restored from previous session")
-      Logger.d("IdleInhibitor", "Restored previous manual inhibition state")
-    }
   }
 
   // Auto-detect the best strategy
@@ -162,15 +156,13 @@ Singleton {
   function manualToggle() {
     if (activeInhibitors.includes("manual")) {
       removeInhibitor("manual")
-      Settings.data.ui.idleInhibitorEnabled = false
       ToastService.showNotice(I18n.tr("tooltips.keep-awake"), I18n.tr("toast.keep-awake.disabled"))
-      Logger.i("IdleInhibitor", "Manual inhibition disabled and saved to settings")
+      Logger.i("IdleInhibitor", "Manual inhibition disabled")
       return false
     } else {
       addInhibitor("manual", "Manually activated by user")
-      Settings.data.ui.idleInhibitorEnabled = true
       ToastService.showNotice(I18n.tr("tooltips.keep-awake"), I18n.tr("toast.keep-awake.enabled"))
-      Logger.i("IdleInhibitor", "Manual inhibition enabled and saved to settings")
+      Logger.i("IdleInhibitor", "Manual inhibition enabled (will reset on next session)")
       return true
     }
   }
