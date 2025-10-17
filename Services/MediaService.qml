@@ -200,6 +200,13 @@ Singleton {
     }
   }
 
+  function stop() {
+    let target = currentPlayer ? (currentPlayer._controlTarget || currentPlayer) : null
+    if (target) {
+      target.stop()
+    }
+  }
+
   function pause() {
     let target = currentPlayer ? (currentPlayer._controlTarget || currentPlayer) : null
     if (target && target.canPause) {

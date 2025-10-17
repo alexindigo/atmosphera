@@ -215,6 +215,10 @@ Item {
       MediaService.play()
     }
 
+    function stop() {
+      MediaService.stop()
+    }
+
     function pause() {
       MediaService.pause()
     }
