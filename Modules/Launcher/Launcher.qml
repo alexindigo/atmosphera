@@ -207,17 +207,15 @@ NPanel {
 
     // ---------------------
     // Navigation
-    function selectNext() {
+    function selectNextWrapped() {
       if (results.length > 0) {
-        // Clamp the index to not exceed the last item
-        selectedIndex = Math.min(selectedIndex + 1, results.length - 1)
+        selectedIndex = (selectedIndex + 1) % results.length
       }
     }
 
-    function selectPrevious() {
+    function selectPreviousWrapped() {
       if (results.length > 0) {
-        // Clamp the index to not go below the first item (0)
-        selectedIndex = Math.max(selectedIndex - 1, 0)
+        selectedIndex = (((selectedIndex - 1) % results.length) + results.length) % results.length
       }
     }
 
@@ -257,13 +255,25 @@ NPanel {
 
     Shortcut {
       sequence: "Ctrl+K"
-      onActivated: ui.selectPrevious()
+      onActivated: ui.selectPreviousWrapped()
       enabled: root.opened && searchInput.inputItem && searchInput.inputItem.activeFocus
     }
 
     Shortcut {
       sequence: "Ctrl+J"
-      onActivated: ui.selectNext()
+      onActivated: ui.selectNextWrapped()
+      enabled: root.opened && searchInput.inputItem && searchInput.inputItem.activeFocus
+    }
+
+    Shortcut {
+      sequence: "Tab"
+      onActivated: ui.selectNextWrapped()
+      enabled: root.opened && searchInput.inputItem && searchInput.inputItem.activeFocus
+    }
+
+    Shortcut {
+      sequence: "Shift+Tab"
+      onActivated: ui.selectPreviousWrapped()
       enabled: root.opened && searchInput.inputItem && searchInput.inputItem.activeFocus
     }
 
@@ -327,10 +337,10 @@ NPanel {
               }
             })
             searchInput.inputItem.Keys.onDownPressed.connect(function (event) {
-              ui.selectNext()
+              ui.selectNextWrapped()
             })
             searchInput.inputItem.Keys.onUpPressed.connect(function (event) {
-              ui.selectPrevious()
+              ui.selectPreviousWrapped()
             })
             searchInput.inputItem.Keys.onReturnPressed.connect(function (event) {
               ui.activate()

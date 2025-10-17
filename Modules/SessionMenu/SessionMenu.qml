@@ -119,15 +119,15 @@ NPanel {
   }
 
   // Navigation functions
-  function selectNext() {
+  function selectNextWrapped() {
     if (powerOptions.length > 0) {
-      selectedIndex = Math.min(selectedIndex + 1, powerOptions.length - 1)
+      selectedIndex = (selectedIndex + 1) % powerOptions.length
     }
   }
 
-  function selectPrevious() {
+  function selectPreviousWrapped() {
     if (powerOptions.length > 0) {
-      selectedIndex = Math.max(selectedIndex - 1, 0)
+      selectedIndex = (((selectedIndex - 1) % powerOptions.length) + powerOptions.length) % powerOptions.length
     }
   }
 
@@ -170,25 +170,37 @@ NPanel {
     // Keyboard shortcuts
     Shortcut {
       sequence: "Ctrl+K"
-      onActivated: ui.selectPrevious()
+      onActivated: ui.selectPreviousWrapped()
       enabled: root.opened
     }
 
     Shortcut {
       sequence: "Ctrl+J"
-      onActivated: ui.selectNext()
+      onActivated: ui.selectNextWrapped()
       enabled: root.opened
     }
 
     Shortcut {
       sequence: "Up"
-      onActivated: ui.selectPrevious()
+      onActivated: ui.selectPreviousWrapped()
       enabled: root.opened
     }
 
     Shortcut {
       sequence: "Down"
-      onActivated: ui.selectNext()
+      onActivated: ui.selectNextWrapped()
+      enabled: root.opened
+    }
+
+    Shortcut {
+      sequence: "Shift+Tab"
+      onActivated: ui.selectPreviousWrapped()
+      enabled: root.opened
+    }
+
+    Shortcut {
+      sequence: "Tab"
+      onActivated: ui.selectNextWrapped()
       enabled: root.opened
     }
 
@@ -231,20 +243,20 @@ NPanel {
     }
 
     // Navigation functions
-    function selectNext() {
-      root.selectNext()
-    }
-
-    function selectPrevious() {
-      root.selectPrevious()
-    }
-
     function selectFirst() {
       root.selectFirst()
     }
 
     function selectLast() {
       root.selectLast()
+    }
+
+    function selectNextWrapped() {
+      root.selectNextWrapped()
+    }
+
+    function selectPreviousWrapped() {
+      root.selectPreviousWrapped()
     }
 
     function activate() {
