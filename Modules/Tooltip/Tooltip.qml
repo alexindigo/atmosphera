@@ -321,13 +321,38 @@ PopupWindow {
     completeHide()
   }
 
-  // Update text function for binding support
-  function updateText(newText) {
-    if (visible && targetItem) {
-      text = newText
-      positionAndShow()
+// Update text function for binding support
+function updateText(newText) {
+  if (visible && targetItem) {
+    text = newText
+    
+    // Recalculate dimensions
+    const tipWidth = Math.min(tooltipText.implicitWidth + (padding * 2), maxWidth)
+    root.implicitWidth = tipWidth
+    
+    const tipHeight = tooltipText.implicitHeight + (padding * 2)
+    root.implicitHeight = tipHeight
+    
+    // Reposition if necessary
+    var targetGlobal = targetItem.mapToItem(null, 0, 0)
+    const targetWidth = targetItem.width
+    
+    // Adjust horizontal position to keep tooltip on screen if needed
+    const globalX = targetGlobal.x + anchorX
+    if (globalX < 0) {
+      anchorX = -targetGlobal.x + margin
+    } else if (globalX + tipWidth > screenWidth) {
+      anchorX = screenWidth - targetGlobal.x - tipWidth - margin
     }
+    
+    // Force anchor update
+    Qt.callLater(() => {
+      if (root.anchor && root.visible) {
+        root.anchor.updateAnchor()
+      }
+    })
   }
+}
 
   // Reset function to clean up state
   function reset() {
