@@ -198,7 +198,7 @@ Item {
 
     try {
       // Safely extract properties
-      const appId = extractAppId(toplevel)
+      const appId = getAppId(toplevel)
       const title = safeGetProperty(toplevel, "title", "")
       const focused = toplevel.activated === true
 
@@ -213,8 +213,7 @@ Item {
     }
   }
 
-  // Extract app ID from various possible sources
-  function extractAppId(toplevel) {
+  function getAppId(toplevel) {
     if (!toplevel)
       return ""
 

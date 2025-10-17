@@ -242,8 +242,8 @@ Item {
       if (!windowId)
         return null
 
-      const appId = extractAppId(toplevel)
-      const title = safeGetProperty(toplevel, "title", "")
+      const appId = getAppId(toplevel)
+      const title = getAppTitle(toplevel)
       const wsId = toplevel.workspace ? toplevel.workspace.id : null
       const focused = toplevel.activated === true
       const output = toplevel.monitor?.name || ""
@@ -261,8 +261,19 @@ Item {
     }
   }
 
-  // Extract app ID from various possible sources
-  function extractAppId(toplevel) {
+  function getAppTitle(toplevel) {
+    try {
+      var title = toplevel.wayland.title
+      if (title)
+        return title
+    } catch (e) {
+
+    }
+
+    return safeGetProperty(toplevel, "title", "")
+  }
+
+  function getAppId(toplevel) {
     if (!toplevel)
       return ""
 
