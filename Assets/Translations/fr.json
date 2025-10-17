@@ -901,9 +901,9 @@
           "label": "Mode de masquage",
           "description": "Contrôle le comportement du widget lorsqu'aucune fenêtre n'est active."
         },
-        "width": {
-          "description": "Contrôle la taille horizontale du widget.",
-          "label": "Largeur du widget"
+        "max-width": {
+          "label": "Largeur Maximale",
+          "description": "Définit la taille horizontale maximale du widget. Le widget se rétrécira pour s'adapter à un contenu plus court."
         },
         "colorize-icons": {
           "label": "Coloriser les icônes",

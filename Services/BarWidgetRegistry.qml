@@ -44,7 +44,7 @@ Singleton {
                                     "hideMode": "hidden",
                                     "scrollingMode"// "visible", "hidden", "transparent"
                                     : "hover",
-                                    "width": 145,
+                                    "maxWidth": 145,
                                     "colorizeIcons": false
                                   },
                                   "Battery": {

@@ -901,9 +901,9 @@
           "label": "滚动模式",
           "description": "控制何时为长窗口标题启用文本滚动。"
         },
-        "width": {
-          "description": "控制小部件的水平尺寸。",
-          "label": "小部件宽度"
+        "max-width": {
+          "label": "最大宽度",
+          "description": "设置小部件的最大水平尺寸。当内容较短时，小部件会自动收缩以适应内容。"
         },
         "colorize-icons": {
           "label": "着色图标",

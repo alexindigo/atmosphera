@@ -901,9 +901,9 @@
           "label": "Modo de rolagem",
           "description": "Controlar quando a rolagem de texto está habilitada para títulos de janela longos."
         },
-        "width": {
-          "description": "Controla o tamanho horizontal do widget.",
-          "label": "Largura do Widget"
+        "max-width": {
+          "label": "Largura Máxima",
+          "description": "Define o tamanho horizontal máximo do widget. O widget será reduzido para se adequar a conteúdo mais curto."
         },
         "colorize-icons": {
           "label": "Colorir ícones",
