@@ -862,6 +862,8 @@ Loader {
                     border.color: passwordInput.activeFocus ? Color.mPrimary : Qt.alpha(Color.mOutline, 0.3)
                     border.width: passwordInput.activeFocus ? 2 : 1
 
+                    property bool passwordVisible: false
+
                     Row {
                       anchors.left: parent.left
                       anchors.leftMargin: 18
@@ -884,7 +886,7 @@ Loader {
                         enabled: !lockContext.unlockInProgress
                         font.pointSize: Style.fontSizeM
                         color: Color.mPrimary
-                        echoMode: TextInput.Password
+                        echoMode: parent.parent.passwordVisible ? TextInput.Normal : TextInput.Password
                         passwordCharacter: "•"
                         passwordMaskDelay: 0
                         text: lockContext.currentText
@@ -923,21 +925,38 @@ Loader {
                           }
                         }
 
-                        Row {
-                          spacing: 6
-                          visible: passwordInput.text.length > 0
+                        // Password display - show dots or actual text based on passwordVisible
+                        Item {
+                          width: passwordDisplayContent.width
+                          height: 20
+                          visible: passwordInput.text.length > 0 && !parent.parent.parent.passwordVisible
                           anchors.verticalCenter: parent.verticalCenter
 
-                          Repeater {
-                            model: passwordInput.text.length
+                          Row {
+                            id: passwordDisplayContent
+                            spacing: 6
+                            anchors.verticalCenter: parent.verticalCenter
 
-                            NIcon {
-                              icon: "circle-filled"
-                              pointSize: Style.fontSizeS
-                              color: Color.mPrimary
-                              opacity: 1.0
+                            Repeater {
+                              model: passwordInput.text.length
+
+                              NIcon {
+                                icon: "circle-filled"
+                                pointSize: Style.fontSizeS
+                                color: Color.mPrimary
+                                opacity: 1.0
+                              }
                             }
                           }
+                        }
+
+                        NText {
+                          text: passwordInput.text
+                          color: Color.mPrimary
+                          pointSize: Style.fontSizeM
+                          font.weight: Font.Medium
+                          visible: passwordInput.text.length > 0 && parent.parent.parent.passwordVisible
+                          anchors.verticalCenter: parent.verticalCenter
                         }
 
                         Rectangle {
@@ -963,7 +982,43 @@ Loader {
                       }
                     }
 
+                    // Eye button to toggle password visibility
                     Rectangle {
+                      anchors.right: submitButton.left
+                      anchors.rightMargin: 4
+                      anchors.verticalCenter: parent.verticalCenter
+                      width: 36
+                      height: 36
+                      radius: width * 0.5
+                      color: eyeButtonArea.containsMouse ? Qt.alpha(Color.mOnSurface, 0.1) : "transparent"
+                      visible: passwordInput.text.length > 0
+                      enabled: !lockContext.unlockInProgress
+
+                      NIcon {
+                        anchors.centerIn: parent
+                        icon: parent.parent.passwordVisible ? "eye-off" : "eye"
+                        pointSize: Style.fontSizeM
+                        color: Color.mOnSurfaceVariant
+                      }
+
+                      MouseArea {
+                        id: eyeButtonArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        onClicked: parent.parent.passwordVisible = !parent.parent.passwordVisible
+                      }
+
+                      Behavior on color {
+                        ColorAnimation {
+                          duration: 200
+                          easing.type: Easing.OutCubic
+                        }
+                      }
+                    }
+
+                    // Submit button
+                    Rectangle {
+                      id: submitButton
                       anchors.right: parent.right
                       anchors.rightMargin: 8
                       anchors.verticalCenter: parent.verticalCenter
