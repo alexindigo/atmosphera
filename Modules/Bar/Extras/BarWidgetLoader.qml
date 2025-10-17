@@ -12,6 +12,9 @@ Item {
   property string section: widgetProps && widgetProps.section || ""
   property int sectionIndex: widgetProps && widgetProps.sectionWidgetIndex || 0
 
+  property string barDensity: "default"
+  readonly property real scaling: barDensity === "mini" ? 0.8 : (barDensity === "compact" ? 0.9 : 1.0)
+
   // Don't reserve space unless the loaded widget is really visible
   implicitWidth: getImplicitSize(loader.item, "implicitWidth")
   implicitHeight: getImplicitSize(loader.item, "implicitHeight")
@@ -39,6 +42,10 @@ Item {
           if (item.hasOwnProperty(prop)) {
             item[prop] = widgetProps[prop]
           }
+        }
+        // Explicitly set scaling property
+        if (item.hasOwnProperty("scaling")) {
+            item.scaling = Qt.binding(function() { return root.scaling; })
         }
       }
 
