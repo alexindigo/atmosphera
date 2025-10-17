@@ -25,6 +25,8 @@ Rectangle {
   signal clicked
   signal rightClicked
   signal middleClicked
+  signal entered
+  signal exited
 
   // Internal properties
   property bool hovered: false
@@ -140,12 +142,14 @@ Rectangle {
 
     onEntered: {
       root.hovered = true
+      root.entered()
       if (tooltipText) {
         TooltipService.show(Screen, root, root.tooltipText)
       }
     }
     onExited: {
       root.hovered = false
+      root.exited()
       if (tooltipText) {
         TooltipService.hide()
       }
