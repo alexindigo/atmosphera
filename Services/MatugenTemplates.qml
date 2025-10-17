@@ -115,9 +115,9 @@ Singleton {
       "input": "pywalfox.json",
       "postHook": AppThemeService.colorsApplyScript + " pywalfox"
     }, {
-      "name": "discord_vesktops",
+      "name": "discord_vesktop",
       "templates": [{
-          "version": "discord_vesktops",
+          "version": "discord_vesktop",
           "output": "~/.config/vesktop/themes/noctalia.theme.css"
         }],
       "input": "vesktop.css"
