@@ -77,7 +77,9 @@ Item {
   Connections {
     target: root
     function onTooltipTextChanged() {
-      TooltipService.updateText(root.tooltipText)
+      if (hovered) {
+        TooltipService.updateText(root.tooltipText)
+      }
     }
   }
 
