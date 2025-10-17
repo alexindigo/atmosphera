@@ -20,6 +20,7 @@ ColumnLayout {
   property string valueVisualizerType: widgetData.visualizerType || widgetMetadata.visualizerType
   property string valueScrollingMode: widgetData.scrollingMode || widgetMetadata.scrollingMode
   property int valueMaxWidth: widgetData.maxWidth !== undefined ? widgetData.maxWidth : widgetMetadata.maxWidth
+  property bool valueUseFixedWidth: widgetData.useFixedWidth !== undefined ? widgetData.useFixedWidth : widgetMetadata.useFixedWidth
 
   Component.onCompleted: {
     if (widgetData && widgetData.hideMode !== undefined) {
@@ -35,6 +36,7 @@ ColumnLayout {
     settings.visualizerType = valueVisualizerType
     settings.scrollingMode = valueScrollingMode
     settings.maxWidth = parseInt(widthInput.text) || widgetMetadata.maxWidth
+    settings.useFixedWidth = valueUseFixedWidth
     return settings
   }
 
@@ -96,6 +98,13 @@ ColumnLayout {
     description: I18n.tr("bar.widget-settings.media-mini.max-width.description")
     placeholderText: widgetMetadata.maxWidth
     text: valueMaxWidth
+  }
+
+  NToggle {
+    label: I18n.tr("bar.widget-settings.media-mini.use-fixed-width.label")
+    description: I18n.tr("bar.widget-settings.media-mini.use-fixed-width.description")
+    checked: valueUseFixedWidth
+    onToggled: checked => valueUseFixedWidth = checked
   }
 
   NComboBox {

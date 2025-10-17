@@ -1058,6 +1058,10 @@
           "label": "Ancho Máximo",
           "description": "Establece el tamaño horizontal máximo del widget. El widget se reducirá para adaptarse a contenido más corto."
         },
+        "use-fixed-width": {
+          "label": "Usar Ancho Fijo",
+          "description": "Cuando está activado, el widget siempre usará el ancho máximo en lugar de ajustarse dinámicamente al contenido."
+        },
         "scrolling-mode": {
           "label": "Modo de desplazamiento",
           "description": "Controlar cuándo está habilitado el desplazamiento de texto para títulos de pista largos."
