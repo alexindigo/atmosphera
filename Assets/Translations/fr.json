@@ -905,6 +905,10 @@
           "label": "Largeur Maximale",
           "description": "Définit la taille horizontale maximale du widget. Le widget se rétrécira pour s'adapter à un contenu plus court."
         },
+        "use-fixed-width": {
+          "label": "Utiliser une Largeur Fixe",
+          "description": "Lorsque activé, le widget utilisera toujours la largeur maximale au lieu de s'ajuster dynamiquement au contenu."
+        },
         "colorize-icons": {
           "label": "Coloriser les icônes",
           "description": "Appliquer les couleurs du thème à l'icône de la fenêtre active."

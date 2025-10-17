@@ -18,6 +18,7 @@ ColumnLayout {
   property string valueHideMode: "hidden" // Default to 'Hide When Empty'
   property string valueScrollingMode: widgetData.scrollingMode || widgetMetadata.scrollingMode
   property int valueMaxWidth: widgetData.maxWidth !== undefined ? widgetData.maxWidth : widgetMetadata.maxWidth
+  property bool valueUseFixedWidth: widgetData.useFixedWidth !== undefined ? widgetData.useFixedWidth : widgetMetadata.useFixedWidth
   property bool valueColorizeIcons: widgetData.colorizeIcons !== undefined ? widgetData.colorizeIcons : widgetMetadata.colorizeIcons
 
   Component.onCompleted: {
@@ -32,6 +33,7 @@ ColumnLayout {
     settings.showIcon = valueShowIcon
     settings.scrollingMode = valueScrollingMode
     settings.maxWidth = parseInt(widthInput.text) || widgetMetadata.maxWidth
+    settings.useFixedWidth = valueUseFixedWidth
     settings.colorizeIcons = valueColorizeIcons
     return settings
   }
@@ -77,6 +79,14 @@ ColumnLayout {
     description: I18n.tr("bar.widget-settings.active-window.max-width.description")
     placeholderText: widgetMetadata.maxWidth
     text: valueMaxWidth
+  }
+
+  NToggle {
+    Layout.fillWidth: true
+    label: I18n.tr("bar.widget-settings.active-window.use-fixed-width.label")
+    description: I18n.tr("bar.widget-settings.active-window.use-fixed-width.description")
+    checked: valueUseFixedWidth
+    onToggled: checked => valueUseFixedWidth = checked
   }
 
   NComboBox {

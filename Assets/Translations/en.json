@@ -905,6 +905,10 @@
           "label": "Maximum Width",
           "description": "Sets the maximum horizontal size of the widget. The widget will shrink to fit shorter content."
         },
+        "use-fixed-width": {
+          "label": "Use Fixed Width",
+          "description": "When enabled, the widget will always use the maximum width instead of dynamically adjusting to content."
+        },
         "colorize-icons": {
           "label": "Colorize Icons",
           "description": "Apply theme colors to active window icon."

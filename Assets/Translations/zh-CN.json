@@ -905,6 +905,10 @@
           "label": "最大宽度",
           "description": "设置小部件的最大水平尺寸。当内容较短时，小部件会自动收缩以适应内容。"
         },
+        "use-fixed-width": {
+          "label": "使用固定宽度",
+          "description": "启用后，小部件将始终使用最大宽度，而不根据内容动态调整。"
+        },
         "colorize-icons": {
           "label": "着色图标",
           "description": "将主题颜色应用到活动窗口图标。"

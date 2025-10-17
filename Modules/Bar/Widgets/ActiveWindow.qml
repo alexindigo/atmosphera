@@ -38,6 +38,7 @@ Item {
   
   // Maximum widget width with user settings support
   readonly property real maxWidth: (widgetSettings.maxWidth !== undefined) ? widgetSettings.maxWidth : Math.max(widgetMetadata.maxWidth, screen.width * 0.06)
+  readonly property bool useFixedWidth: (widgetSettings.useFixedWidth !== undefined) ? widgetSettings.useFixedWidth : widgetMetadata.useFixedWidth
 
   readonly property bool isVerticalBar: (Settings.data.bar.position === "left" || Settings.data.bar.position === "right")
   readonly property bool hasFocusedWindow: CompositorService.getFocusedWindow() !== null
@@ -86,6 +87,11 @@ Item {
 
   // Dynamic width: adapt to content but respect maximum width setting
   readonly property real dynamicWidth: {
+    // If using fixed width mode, always use maxWidth
+    if (useFixedWidth) {
+      return maxWidth
+    }
+    // Otherwise, adapt to content
     if (!hasFocusedWindow) {
       return maxWidth
     }
