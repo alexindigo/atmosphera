@@ -13,8 +13,8 @@ import qs.Widgets
 NPanel {
   id: root
 
-  preferredWidth: 320 * Style.uiScaleRatio
-  preferredHeight: 280 * Style.uiScaleRatio
+  preferredWidth: 400 * Style.uiScaleRatio
+  preferredHeight: 340 * Style.uiScaleRatio
   panelAnchorHorizontalCenter: true
   panelAnchorVerticalCenter: true
   panelKeyboardFocus: true
@@ -261,74 +261,77 @@ NPanel {
       root.activate()
     }
 
-    ColumnLayout {
+    NBox {
       anchors.fill: parent
-      anchors.topMargin: Style.marginM
-      anchors.leftMargin: Style.marginM
-      anchors.rightMargin: Style.marginM
-      anchors.bottomMargin: Style.marginS
-      spacing: Style.marginXS
+      anchors.margins: Style.marginL
 
-      // Header with title and close button
-      RowLayout {
-        Layout.fillWidth: true
-        Layout.preferredHeight: Style.baseWidgetSize * 0.6
+      ColumnLayout {
+        anchors.fill: parent
+        anchors.margins: Style.marginL
+        spacing: Style.marginL
 
-        NText {
-          text: timerActive ? I18n.tr("session-menu.action-in-seconds", {
-                                        "action": pendingAction.charAt(0).toUpperCase() + pendingAction.slice(1),
-                                        "seconds": Math.ceil(timeRemaining / 1000)
-                                      }) : I18n.tr("session-menu.title")
-          font.weight: Style.fontWeightBold
-          pointSize: Style.fontSizeM
-          color: timerActive ? Color.mPrimary : Color.mOnSurface
-          Layout.alignment: Qt.AlignVCenter
-          verticalAlignment: Text.AlignVCenter
-        }
-
-        Item {
+        // Header with title and close button
+        RowLayout {
           Layout.fillWidth: true
-        }
+          Layout.preferredHeight: Style.baseWidgetSize * 0.6
 
-        NIconButton {
-          icon: timerActive ? "stop" : "close"
-          tooltipText: timerActive ? I18n.tr("tooltips.cancel-timer") : I18n.tr("tooltips.close")
-          Layout.alignment: Qt.AlignVCenter
-          colorBg: timerActive ? Qt.alpha(Color.mError, 0.08) : Color.transparent
-          colorFg: timerActive ? Color.mError : Color.mOnSurface
-          onClicked: {
-            if (timerActive) {
-              cancelTimer()
-            } else {
-              cancelTimer()
-              root.close()
+          NText {
+            text: timerActive ? I18n.tr("session-menu.action-in-seconds", {
+                                          "action": pendingAction.charAt(0).toUpperCase() + pendingAction.slice(1),
+                                          "seconds": Math.ceil(timeRemaining / 1000)
+                                        }) : I18n.tr("session-menu.title")
+            font.weight: Style.fontWeightBold
+            pointSize: Style.fontSizeM
+            color: timerActive ? Color.mPrimary : Color.mOnSurface
+            Layout.alignment: Qt.AlignVCenter
+            verticalAlignment: Text.AlignVCenter
+          }
+
+          Item {
+            Layout.fillWidth: true
+          }
+
+          NIconButton {
+            icon: timerActive ? "stop" : "close"
+            tooltipText: timerActive ? I18n.tr("tooltips.cancel-timer") : I18n.tr("tooltips.close")
+            Layout.alignment: Qt.AlignVCenter
+            baseSize: Style.baseWidgetSize * 0.7
+            colorBg: timerActive ? Qt.alpha(Color.mError, 0.08) : Color.transparent
+            colorFg: timerActive ? Color.mError : Color.mOnSurface
+            onClicked: {
+              if (timerActive) {
+                cancelTimer()
+              } else {
+                cancelTimer()
+                root.close()
+              }
             }
           }
         }
-      }
 
-      NDivider {
-        Layout.fillWidth: true
-      }
+        NDivider {
+          Layout.fillWidth: true
+        }
 
-      // Power options
-      ColumnLayout {
-        Layout.fillWidth: true
-        spacing: Style.marginS
+        // Power options
+        ColumnLayout {
+          Layout.fillWidth: true
+          spacing: Style.marginS
 
-        Repeater {
-          model: powerOptions
-          delegate: PowerButton {
-            Layout.fillWidth: true
-            icon: modelData.icon
-            title: modelData.title
-            isShutdown: modelData.isShutdown || false
-            isSelected: index === selectedIndex
-            onClicked: {
-              selectedIndex = index
-              startTimer(modelData.action)
+          Repeater {
+            model: powerOptions
+            delegate: PowerButton {
+              Layout.fillWidth: true
+              icon: modelData.icon
+              title: modelData.title
+              isShutdown: modelData.isShutdown || false
+              isSelected: index === selectedIndex
+              onClicked: {
+                selectedIndex = index
+                startTimer(modelData.action)
+              }
+              pending: timerActive && pendingAction === modelData.action
             }
-            pending: timerActive && pendingAction === modelData.action
           }
         }
       }
@@ -347,7 +350,7 @@ NPanel {
 
     signal clicked
 
-    height: Style.baseWidgetSize * 1.2 * Style.uiScaleRatio
+    height: Style.baseWidgetSize * 1.3 * Style.uiScaleRatio
     radius: Style.radiusS
     color: {
       if (pending) {
