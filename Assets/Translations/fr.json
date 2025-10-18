@@ -271,6 +271,10 @@
           "label": "Distance de flottaison du dock",
           "description": "Ajustez la distance de flottaison par rapport au bord de l'écran."
         },
+        "icon-size": {
+          "label": "Taille du Dock",
+          "description": "Ajuster la taille globale du Dock."
+        },
         "colorize-icons": {
           "label": "Coloriser les icônes",
           "description": "Appliquer les couleurs du thème aux icônes d'applications du dock (applications non focalisées uniquement)."
@@ -911,9 +915,13 @@
           "label": "Mode de masquage",
           "description": "Contrôle le comportement du widget lorsqu'aucune fenêtre n'est active."
         },
-        "width": {
-          "description": "Contrôle la taille horizontale du widget.",
-          "label": "Largeur du widget"
+        "max-width": {
+          "label": "Largeur Maximale",
+          "description": "Définit la taille horizontale maximale du widget. Le widget se rétrécira pour s'adapter à un contenu plus court."
+        },
+        "use-fixed-width": {
+          "label": "Utiliser une Largeur Fixe",
+          "description": "Lorsque activé, le widget utilisera toujours la largeur maximale au lieu de s'ajuster dynamiquement au contenu."
         },
         "colorize-icons": {
           "label": "Coloriser les icônes",
@@ -1059,6 +1067,14 @@
         "visualizer-type": {
           "label": "Type de visualiseur",
           "description": "Choisir le style de visualiseur audio à afficher."
+        },
+        "max-width": {
+          "label": "Largeur Maximale",
+          "description": "Définit la taille horizontale maximale du widget. Le widget se rétrécira pour s'adapter à un contenu plus court."
+        },
+        "use-fixed-width": {
+          "label": "Utiliser une Largeur Fixe",
+          "description": "Lorsque activé, le widget utilisera toujours la largeur maximale au lieu de s'ajuster dynamiquement au contenu."
         },
         "scrolling-mode": {
           "label": "Mode de défilement",

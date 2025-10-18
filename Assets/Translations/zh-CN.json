@@ -271,6 +271,10 @@
           "label": "Dock 浮动距离",
           "description": "调整距离屏幕边缘的浮动距离。"
         },
+        "icon-size": {
+          "label": "Dock 大小",
+          "description": "调整 Dock 的整体大小。"
+        },
         "colorize-icons": {
           "label": "着色图标",
           "description": "将主题颜色应用到 Dock 应用图标（仅限非聚焦应用）。"
@@ -911,9 +915,13 @@
           "label": "滚动模式",
           "description": "控制何时为长窗口标题启用文本滚动。"
         },
-        "width": {
-          "description": "控制小部件的水平尺寸。",
-          "label": "小部件宽度"
+        "max-width": {
+          "label": "最大宽度",
+          "description": "设置小部件的最大水平尺寸。当内容较短时，小部件会自动收缩以适应内容。"
+        },
+        "use-fixed-width": {
+          "label": "使用固定宽度",
+          "description": "启用后，小部件将始终使用最大宽度，而不根据内容动态调整。"
         },
         "colorize-icons": {
           "label": "着色图标",
@@ -1063,6 +1071,14 @@
         "visualizer-type": {
           "label": "可视化器类型",
           "description": "选择要显示的音频可视化器样式。"
+        },
+        "max-width": {
+          "label": "最大宽度",
+          "description": "设置小部件的最大水平尺寸。当内容较短时，小部件会自动收缩以适应内容。"
+        },
+        "use-fixed-width": {
+          "label": "使用固定宽度",
+          "description": "启用后，小部件将始终使用最大宽度，而不根据内容动态调整。"
         },
         "scrolling-mode": {
           "label": "滚动模式",

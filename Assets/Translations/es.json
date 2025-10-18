@@ -271,6 +271,10 @@
           "label": "Distancia de flotación del dock",
           "description": "Ajusta la distancia de flotación desde el borde de la pantalla."
         },
+        "icon-size": {
+          "label": "Tamaño del Dock",
+          "description": "Ajusta el tamaño general del Dock."
+        },
         "colorize-icons": {
           "label": "Colorear iconos",
           "description": "Aplicar colores del tema a los iconos de aplicaciones del dock (solo aplicaciones no enfocadas)."
@@ -911,9 +915,13 @@
           "label": "Modo de desplazamiento",
           "description": "Controlar cuándo está habilitado el desplazamiento de texto para títulos de ventana largos."
         },
-        "width": {
-          "description": "Controla el tamaño horizontal del widget.",
-          "label": "Ancho del widget"
+        "max-width": {
+          "label": "Ancho Máximo",
+          "description": "Establece el tamaño horizontal máximo del widget. El widget se reducirá para adaptarse a contenido más corto."
+        },
+        "use-fixed-width": {
+          "label": "Usar Ancho Fijo",
+          "description": "Cuando está activado, el widget siempre usará el ancho máximo en lugar de ajustarse dinámicamente al contenido."
         },
         "colorize-icons": {
           "label": "Colorear iconos",
@@ -1063,6 +1071,14 @@
         "visualizer-type": {
           "label": "Tipo de visualizador",
           "description": "Elegir el estilo de visualizador de audio a mostrar."
+        },
+        "max-width": {
+          "label": "Ancho Máximo",
+          "description": "Establece el tamaño horizontal máximo del widget. El widget se reducirá para adaptarse a contenido más corto."
+        },
+        "use-fixed-width": {
+          "label": "Usar Ancho Fijo",
+          "description": "Cuando está activado, el widget siempre usará el ancho máximo en lugar de ajustarse dinámicamente al contenido."
         },
         "scrolling-mode": {
           "label": "Modo de desplazamiento",

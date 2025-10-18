@@ -63,7 +63,7 @@ Variants {
     readonly property int hideAnimationDuration: Style.animationFast
     readonly property int showAnimationDuration: Style.animationFast
     readonly property int peekHeight: 1
-    readonly property int iconSize: 36
+    readonly property int iconSize: Math.round(12 + 24 * (Settings.data.dock.size ?? 1))
     readonly property int floatingMargin: Settings.data.dock.floatingRatio * Style.marginL
 
     // Bar detection and positioning properties
