@@ -559,7 +559,7 @@
           "description": "Zusätzliche Konfigurationsoptionen.",
           "user-templates": {
             "label": "Benutzer-Vorlagen",
-            "description": "Benutzerdefinierte Matugen-Konfiguration aus ~/.config/matugen/config.toml aktivieren"
+            "description": "Benutzerdefinierte Matugen-Konfiguration aktivieren. Eine Vorlagendatei wird beim ersten Aktivieren unter ~/.config/noctalia/user-templates.toml erstellt"
           }
         },
         "section": {

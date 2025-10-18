@@ -559,7 +559,7 @@
           "description": "其他配置选项。",
           "user-templates": {
             "label": "用户模板",
-            "description": "启用来自 ~/.config/matugen/config.toml 的用户定义 Matugen 配置"
+            "description": "启用用户定义的 Matugen 配置。首次启用时将在 ~/.config/noctalia/user-templates.toml 创建模板文件"
           }
         },
         "section": {

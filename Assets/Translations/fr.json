@@ -559,7 +559,7 @@
           "description": "Options de configuration supplémentaires.",
           "user-templates": {
             "label": "Modèles utilisateur",
-            "description": "Activer la configuration Matugen définie par l'utilisateur depuis ~/.config/matugen/config.toml"
+            "description": "Activer la configuration Matugen définie par l'utilisateur. Un fichier modèle sera créé dans ~/.config/noctalia/user-templates.toml lors de la première activation"
           }
         },
         "section": {

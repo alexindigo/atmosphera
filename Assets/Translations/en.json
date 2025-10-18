@@ -563,7 +563,7 @@
           "description": "Additional configuration options.",
           "user-templates": {
             "label": "User templates",
-            "description": "Enable user-defined Matugen config from ~/.config/matugen/config.toml"
+            "description": "Enable user-defined Matugen config. A template file will be created at ~/.config/noctalia/user-templates.toml on first enable"
           }
         }
       }

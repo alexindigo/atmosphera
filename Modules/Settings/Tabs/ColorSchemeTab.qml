@@ -590,6 +590,9 @@ ColumnLayout {
         checked: Settings.data.templates.enableUserTemplates
         onToggled: checked => {
                      Settings.data.templates.enableUserTemplates = checked
+                     if (checked) {
+                       MatugenTemplates.writeUserTemplatesToml()
+                     }
                      AppThemeService.generate()
                    }
       }
