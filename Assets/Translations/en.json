@@ -76,7 +76,8 @@
         },
         "select": {
           "label": "Application Language",
-          "description": "Select the language used in the application's interface."
+          "description": "Select the language used in the application's interface.",
+          "auto-detect": "Automatic"
         }
       }
     },

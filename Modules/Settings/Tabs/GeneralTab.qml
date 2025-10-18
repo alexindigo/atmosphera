@@ -204,13 +204,19 @@ ColumnLayout {
       Layout.fillWidth: true
       label: I18n.tr("settings.general.language.select.label")
       description: I18n.tr("settings.general.language.select.description")
-      model: I18n.availableLanguages.map(function(langCode) {
+      model: [
+        { "key": "", "name": I18n.tr("settings.general.language.select.auto-detect") + " (" + I18n.systemDetectedLangCode + ")" }
+      ].concat(I18n.availableLanguages.map(function(langCode) {
         return { "key": langCode, "name": langCode }
-      })
-      currentKey: Settings.data.general.language !== "" ? Settings.data.general.language : I18n.langCode
+      }))
+      currentKey: Settings.data.general.language
       onSelected: key => {
         Settings.data.general.language = key
-        I18n.setLanguage(key)
+        if (key === "") {
+          I18n.detectLanguage() // Re-detect system language if "Automatic" is selected
+        } else {
+          I18n.setLanguage(key) // Set specific language
+        }
       }
     }
   }
