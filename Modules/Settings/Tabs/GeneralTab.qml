@@ -189,4 +189,28 @@ ColumnLayout {
     Layout.topMargin: Style.marginXL
     Layout.bottomMargin: Style.marginXL
   }
+
+  // Lock Screen
+  ColumnLayout {
+    spacing: Style.marginL
+    Layout.fillWidth: true
+
+    NHeader {
+      label: I18n.tr("settings.general.lockscreen.section.label")
+      description: I18n.tr("settings.general.lockscreen.section.description")
+    }
+
+    NToggle {
+      label: I18n.tr("settings.general.lockscreen.lock-on-suspend.label")
+      description: I18n.tr("settings.general.lockscreen.lock-on-suspend.description")
+      checked: Settings.data.general.lockOnSuspend
+      onToggled: Settings.data.general.lockOnSuspend = checked
+    }
+  }
+
+  NDivider {
+    Layout.fillWidth: true
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
+  }
 }

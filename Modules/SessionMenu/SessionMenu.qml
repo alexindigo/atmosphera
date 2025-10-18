@@ -14,7 +14,7 @@ NPanel {
   id: root
 
   preferredWidth: 320 * Style.uiScaleRatio
-  preferredHeight: 360 * Style.uiScaleRatio
+  preferredHeight: 280 * Style.uiScaleRatio
   panelAnchorHorizontalCenter: true
   panelAnchorVerticalCenter: true
   panelKeyboardFocus: true
@@ -31,10 +31,6 @@ NPanel {
       "action": "lock",
       "icon": "lock",
       "title": I18n.tr("session-menu.lock")
-    }, {
-      "action": "lockAndSuspend",
-      "icon": "lock-pause",
-      "title": I18n.tr("session-menu.lock-and-suspend")
     }, {
       "action": "suspend",
       "icon": "suspend",
@@ -96,11 +92,13 @@ NPanel {
         lockScreen.active = true
       }
       break
-    case "lockAndSuspend":
-      CompositorService.lockAndSuspend()
-      break
     case "suspend":
-      CompositorService.suspend()
+      // Check if we should lock before suspending
+      if (Settings.data.general.lockOnSuspend) {
+        CompositorService.lockAndSuspend()
+      } else {
+        CompositorService.suspend()
+      }
       break
     case "reboot":
       CompositorService.reboot()

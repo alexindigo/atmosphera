@@ -32,6 +32,16 @@
           "reset": "Reset screen corners radius"
         }
       },
+      "lockscreen": {
+        "section": {
+          "label": "Lock screen",
+          "description": "Configure lock screen behavior."
+        },
+        "lock-on-suspend": {
+          "label": "Lock on suspend",
+          "description": "Automatically lock the screen when suspending the system."
+        }
+      },
       "fonts": {
         "reset-scaling": "Reset scaling",
         "section": {
