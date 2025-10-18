@@ -500,10 +500,6 @@
           "label": "Source des couleurs",
           "description": "Paramètres principaux pour les couleurs de Noctalia."
         },
-        "dark-mode": {
-          "label": "Mode sombre",
-          "description": "Passe à un thème plus sombre pour une visualisation plus facile la nuit."
-        },
         "use-wallpaper-colors": {
           "label": "Utiliser les couleurs du fond d'écran",
           "description": "Générer des schémas de couleurs à partir de votre fond d'écran avec Matugen. Extrait automatiquement les couleurs pour créer un thème cohérent."
@@ -511,6 +507,12 @@
         "matugen-scheme-type": {
           "label": "Type de schéma Matugen",
           "description": "Choisissez l'algorithme de génération de schéma de couleurs pour Matugen."
+        }
+      },
+      "dark-mode": {
+        "switch": {
+          "label": "Mode sombre",
+          "description": "Passe à un thème plus sombre pour une visualisation plus facile la nuit."
         }
       },
       "predefined": {

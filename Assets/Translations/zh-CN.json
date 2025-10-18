@@ -500,10 +500,6 @@
           "label": "颜色来源",
           "description": "Noctalia 颜色的主要设置。"
         },
-        "dark-mode": {
-          "label": "深色模式",
-          "description": "切换到更暗的主题，便于夜间观看。"
-        },
         "use-wallpaper-colors": {
           "label": "使用壁纸颜色",
           "description": "使用 Matugen 从壁纸生成颜色方案。自动提取颜色以创建一致的主题。"
@@ -511,6 +507,12 @@
         "matugen-scheme-type": {
           "label": "Matugen 配色方案类型",
           "description": "为 Matugen 选择配色方案生成算法。"
+        }
+      },
+      "dark-mode": {
+        "switch": {
+          "label": "深色模式",
+          "description": "切换到更暗的主题，便于夜间观看。"
         }
       },
       "predefined": {
