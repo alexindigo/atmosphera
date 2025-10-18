@@ -26,14 +26,14 @@ Singleton {
   signal fontReloaded
 
   Component.onCompleted: {
-    Logger.log("Icons", "Service started")
+    Logger.i("Icons", "Service started")
     loadFontWithCacheBusting()
   }
 
   Connections {
     target: Quickshell
     function onReloadCompleted() {
-      Logger.log("Icons", "Quickshell reload completed - forcing font reload")
+      Logger.d("Icons", "Quickshell reload completed - forcing font reload")
       reloadFont()
     }
   }
@@ -50,7 +50,7 @@ Singleton {
   }
 
   function loadFontWithCacheBusting() {
-    Logger.log("Icons", "Loading font with cache busting")
+    Logger.d("Icons", "Loading font with cache busting")
 
     // Destroy old loader first
     if (currentFontLoader) {
@@ -69,16 +69,16 @@ Singleton {
     // Connect to the new loader's status changes
     currentFontLoader.statusChanged.connect(function () {
       if (currentFontLoader.status === FontLoader.Ready) {
-        Logger.log("Icons", "Font loaded successfully:", currentFontLoader.name, "(version " + fontVersion + ")")
+        Logger.d("Icons", "Font loaded successfully:", currentFontLoader.name, "(version " + fontVersion + ")")
         fontReloaded()
       } else if (currentFontLoader.status === FontLoader.Error) {
-        Logger.error("Icons", "Font failed to load (version " + fontVersion + ")")
+        Logger.e("Icons", "Font failed to load (version " + fontVersion + ")")
       }
     })
   }
 
   function reloadFont() {
-    Logger.log("Icons", "Forcing font reload...")
+    Logger.d("Icons", "Forcing font reload...")
     fontVersion++
     loadFontWithCacheBusting()
   }

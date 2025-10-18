@@ -32,6 +32,16 @@
           "reset": "Reset screen corners radius"
         }
       },
+      "lockscreen": {
+        "section": {
+          "label": "Lock screen",
+          "description": "Configure lock screen behavior."
+        },
+        "lock-on-suspend": {
+          "label": "Lock on suspend",
+          "description": "Automatically lock the screen when suspending the system."
+        }
+      },
       "fonts": {
         "reset-scaling": "Reset scaling",
         "section": {
@@ -57,6 +67,17 @@
             "label": "Monospaced font size",
             "description": "Increase or decrease the size of the monospaced text."
           }
+        }
+      },
+      "language": {
+        "section": {
+          "label": "Language",
+          "description": "Choose your preferred language for the application."
+        },
+        "select": {
+          "label": "Application Language",
+          "description": "Select the language used in the application's interface.",
+          "auto-detect": "Automatic"
         }
       }
     },
@@ -259,7 +280,11 @@
         },
         "floating-distance": {
           "label": "Dock floating distance",
-          "description": "Adjust the floating distance from the screen edge."
+          "description": "Set the distance between the dock and the edge of the screen."
+        },
+        "icon-size": {
+          "label": "Dock size",
+          "description": "Adjust the overall size of the dock."
         },
         "colorize-icons": {
           "label": "Colorize Icons",
@@ -475,10 +500,6 @@
           "label": "Color source",
           "description": "Main settings for Noctalia's colors."
         },
-        "dark-mode": {
-          "label": "Dark mode",
-          "description": "Switches to a darker theme for easier viewing at night."
-        },
         "use-wallpaper-colors": {
           "label": "Use wallpaper colors",
           "description": "Generate color schemes from your wallpaper using Matugen. Automatically extracts colors to create a cohesive theme."
@@ -486,6 +507,19 @@
         "matugen-scheme-type": {
           "label": "Matugen scheme type",
           "description": "Choose the color scheme generation algorithm for Matugen."
+        }
+      },
+      "dark-mode": {
+        "switch": {
+          "label": "Dark mode",
+          "description": "Switches to a darker theme for easier viewing at night."
+        },
+        "mode": {
+          "label": "Dark mode schedule",
+          "description": "Enables automatic switching between light and dark mode.",
+          "off": "Off",
+          "manual": "Manual",
+          "location": "Location"
         }
       },
       "predefined": {
@@ -541,7 +575,7 @@
           },
           "discord": {
             "description": "Write {filepath} for {client}",
-            "description-missing": "No Discord client detected. Install vesktop, webcord, armcord, equibop, lightcord, or dorion."
+            "description-missing": "No Discord client detected. Install vencord, vesktop, webcord, armcord, equibop, lightcord, or dorion."
           },
           "pywalfox": {
             "description": "Write {filepath} and run pywalfox update",
@@ -553,7 +587,7 @@
           "description": "Additional configuration options.",
           "user-templates": {
             "label": "User templates",
-            "description": "Enable user-defined Matugen config from ~/.config/matugen/config.toml"
+            "description": "Enable user-defined Matugen config. A template file will be created at ~/.config/noctalia/user-templates.toml on first enable"
           }
         }
       }
@@ -575,6 +609,10 @@
         "section": {
           "label": "Weather",
           "description": "Choose your preferred temperature unit."
+        },
+        "enabled": {
+          "label": "Enable weather",
+          "description": "Show weather information throughout the interface and fetch weather data. When disabled, all weather elements will be hidden and no network requests will be made."
         },
         "fahrenheit": {
           "label": "Display temperature in Fahrenheit (°F)",
@@ -897,9 +935,13 @@
           "label": "Scrolling mode",
           "description": "Control when text scrolling is enabled for long window titles."
         },
-        "width": {
-          "label": "Widget Width",
-          "description": "Controls the horizontal size of the widget."
+        "max-width": {
+          "label": "Maximum Width",
+          "description": "Sets the maximum horizontal size of the widget. The widget will shrink to fit shorter content."
+        },
+        "use-fixed-width": {
+          "label": "Use Fixed Width",
+          "description": "When enabled, the widget will always use the maximum width instead of dynamically adjusting to content."
         },
         "colorize-icons": {
           "label": "Colorize Icons",
@@ -1050,6 +1092,14 @@
           "label": "Visualizer type",
           "description": "Choose the style of audio visualizer to display."
         },
+        "max-width": {
+          "label": "Maximum Width",
+          "description": "Sets the maximum horizontal size of the widget. The widget will shrink to fit shorter content."
+        },
+        "use-fixed-width": {
+          "label": "Use Fixed Width",
+          "description": "When enabled, the widget will always use the maximum width instead of dynamically adjusting to content."
+        },
         "scrolling-mode": {
           "label": "Scrolling mode",
           "description": "Control when text scrolling is enabled for long track titles."
@@ -1183,11 +1233,7 @@
       "scan-again": "Scan again"
     }
   },
-  "calendar": {
-    "panel": {
-      "week": "Week"
-    }
-  },
+
   "tooltips": {
     "refresh": "Refresh",
     "close": "Close",
@@ -1243,6 +1289,14 @@
   },
   "clock": {
     "tooltip": "Open calendar"
+  },
+  "calendar": {
+    "panel": {
+      "week": "Week"
+    },
+    "weather": {
+      "loading": "Loading weather…"
+    }
   },
   "dock": {
     "menu": {
@@ -1305,7 +1359,8 @@
         "bottom_left": "Bottom left",
         "bottom_right": "Bottom right",
         "bottom_center": "Bottom center",
-        "top_center": "Top center"
+        "top_center": "Top center",
+        "center": "Center"
       },
       "quickSettingsStyle": {
         "modern": "Modern",
@@ -1615,12 +1670,46 @@
     "discharging-rate": "Discharging rate: {rate} W.",
     "charging": "Charging.",
     "discharging": "Discharging.",
+    "plugged-in": "Plugged in.",
+    "idle": "Idle.",
+    "time-left": "Time left: {time}.",
+    "time-until-full": "Time until full: {time}.",
+    "health": "Health: {percent}%",
     "panel": {
       "title": "Charge threshold",
       "full": "Full capacity ({percent}%)",
       "balanced": "Balanced ({percent}%)",
       "lifespan": "Extended lifespan ({percent}%)",
       "disabled": "Battery manager disabled"
+    }
+  },
+  "setup": {
+    "customize": {
+      "header": "Customize your experience",
+      "subheader": "Adjust bar position, density, scaling and more."
+    },
+    "appearance": {
+      "header": "Appearance",
+      "subheader": "Choose dark mode and color sources (Matugen or predefined)."
+    },
+    "wallpaper": {
+      "header": "Choose your wallpaper",
+      "subheader": "Set the mood with a beautiful background.",
+      "select-prompt": "Select a wallpaper below",
+      "preview-error": "Failed to load image",
+      "none-in-dir": "No wallpapers found in directory",
+      "no-dir": "No wallpaper directory selected",
+      "no-valid": "No valid image files found in: {dir}",
+      "choose-dir": "Choose a directory containing your wallpaper images",
+      "dir": {
+        "label": "Wallpaper directory",
+        "description": "Choose the folder containing your wallpapers",
+        "browse": "Browse for wallpaper folder",
+        "select-title": "Select wallpaper folder"
+      }
+    },
+    "welcome": {
+      "note": "Just a few basics to get you started - full options are in Settings"
     }
   }
 }

@@ -32,7 +32,7 @@ Singleton {
   }
 
   function init() {
-    Logger.log("Bluetooth", "Service initialized")
+    Logger.i("Bluetooth", "Service initialized")
   }
 
   Timer {
@@ -46,11 +46,11 @@ Singleton {
     target: adapter
     function onEnabledChanged() {
       if (!adapter) {
-        Logger.warn("Bluetooth", "onEnabledChanged", "No adapter available")
+        Logger.w("Bluetooth", "onEnabledChanged", "No adapter available")
         return
       }
 
-      Logger.log("Bluetooth", "onEnableChanged", adapter.enabled)
+      Logger.d("Bluetooth", "onEnableChanged", adapter.enabled)
       if (adapter.enabled) {
         ToastService.showNotice(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.enabled"))
         discoveryTimer.running = true
@@ -171,22 +171,22 @@ Singleton {
 
   function getSignalIcon(device) {
     if (!device || device.signalStrength === undefined || device.signalStrength <= 0) {
-      return "signal_cellular_null"
+      return "antenna-bars-off"
     }
     var signal = device.signalStrength
     if (signal >= 80) {
-      return "signal_cellular_4_bar"
+      return "antenna-bars-5"
     }
     if (signal >= 60) {
-      return "signal_cellular_3_bar"
+      return "antenna-bars-4"
     }
     if (signal >= 40) {
-      return "signal_cellular_2_bar"
+      return "antenna-bars-3"
     }
     if (signal >= 20) {
-      return "signal_cellular_1_bar"
+      return "antenna-bars-2"
     }
-    return "signal_cellular_0_bar"
+    return "antenna-bars-1"
   }
 
   function isDeviceBusy(device) {
@@ -225,11 +225,11 @@ Singleton {
 
   function setBluetoothEnabled(state) {
     if (!adapter) {
-      Logger.warn("Bluetooth", "No adapter available")
+      Logger.w("Bluetooth", "No adapter available")
       return
     }
 
-    Logger.log("Bluetooth", "SetBluetoothEnabled", state)
+    Logger.i("Bluetooth", "SetBluetoothEnabled", state)
     adapter.enabled = state
   }
 }

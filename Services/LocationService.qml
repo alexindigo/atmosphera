@@ -28,14 +28,14 @@ Singleton {
     printErrors: false
     onAdapterUpdated: saveTimer.start()
     onLoaded: {
-      Logger.log("Location", "Loaded cached data")
+      Logger.d("Location", "Loaded cached data")
       // Initialize stable properties on load
       if (adapter.latitude !== "" && adapter.longitude !== "" && adapter.weatherLastFetch > 0) {
         root.stableLatitude = adapter.latitude
         root.stableLongitude = adapter.longitude
         root.stableName = adapter.name
         root.coordinatesReady = true
-        Logger.log("Location", "Coordinates ready")
+        Logger.i("Location", "Coordinates ready")
       }
       updateWeather()
     }
@@ -69,7 +69,7 @@ Singleton {
   Timer {
     id: updateTimer
     interval: 20 * 1000
-    running: true
+    running: Settings.data.location.weatherEnabled || Settings.data.colorSchemes.schedulingMode == "location"
     repeat: true
     onTriggered: {
       updateWeather()
@@ -87,12 +87,12 @@ Singleton {
   function init() {
     // does nothing but ensure the singleton is created
     // do not remove
-    Logger.log("Location", "Service started")
+    Logger.i("Location", "Service started")
   }
 
   // --------------------------------
   function resetWeather() {
-    Logger.log("Location", "Resetting weather data")
+    Logger.i("Location", "Resetting weather data")
 
     // Mark as changing to prevent UI updates
     root.coordinatesReady = false
@@ -114,8 +114,12 @@ Singleton {
 
   // --------------------------------
   function updateWeather() {
+    if (!Settings.data.location.weatherEnabled) {
+      return
+    }
+
     if (isFetchingWeather) {
-      Logger.warn("Location", "Weather is still fetching")
+      Logger.w("Location", "Weather is still fetching")
       return
     }
 
@@ -132,13 +136,13 @@ Singleton {
     const locationChanged = data.name !== Settings.data.location.name
     if (locationChanged) {
       root.coordinatesReady = false
-      Logger.log("Location", "Location changed from", adapter.name, "to", Settings.data.location.name)
+      Logger.d("Location", "Location changed from", adapter.name, "to", Settings.data.location.name)
     }
 
     if ((adapter.latitude === "") || (adapter.longitude === "") || locationChanged) {
 
       _geocodeLocation(Settings.data.location.name, function (latitude, longitude, name, country) {
-        Logger.log("Location", "Geocoded", Settings.data.location.name, "to:", latitude, "/", longitude)
+        Logger.d("Location", "Geocoded", Settings.data.location.name, "to:", latitude, "/", longitude)
 
         // Save location name
         adapter.name = Settings.data.location.name
@@ -158,7 +162,7 @@ Singleton {
 
   // --------------------------------
   function _geocodeLocation(locationName, callback, errorCallback) {
-    Logger.log("Location", "Geocoding location name")
+    Logger.d("Location", "Geocoding location name")
     var geoUrl = "https://assets.noctalia.dev/geocode.php?city=" + encodeURIComponent(locationName) + "&language=en&format=json"
     var xhr = new XMLHttpRequest()
     xhr.onreadystatechange = function () {
@@ -185,8 +189,8 @@ Singleton {
 
   // --------------------------------
   function _fetchWeather(latitude, longitude, errorCallback) {
-    Logger.log("Location", "Fetching weather from api.open-meteo.com")
-    var url = "https://api.open-meteo.com/v1/forecast?latitude=" + latitude + "&longitude=" + longitude + "&current_weather=true&current=relativehumidity_2m,surface_pressure&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=auto"
+    Logger.d("Location", "Fetching weather from api.open-meteo.com")
+    var url = "https://api.open-meteo.com/v1/forecast?latitude=" + latitude + "&longitude=" + longitude + "&current_weather=true&current=relativehumidity_2m,surface_pressure&daily=temperature_2m_max,temperature_2m_min,weathercode,sunset,sunrise&timezone=auto"
     var xhr = new XMLHttpRequest()
     xhr.onreadystatechange = function () {
       if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -205,7 +209,7 @@ Singleton {
             root.coordinatesReady = true
 
             isFetchingWeather = false
-            Logger.log("Location", "Cached weather to disk - stable coordinates updated")
+            Logger.i("Location", "Cached weather to disk - stable coordinates updated")
           } catch (e) {
             errorCallback("Location", "Failed to parse weather data")
           }
@@ -220,7 +224,7 @@ Singleton {
 
   // --------------------------------
   function errorCallback(module, message) {
-    Logger.error(module, message)
+    Logger.e(module, message)
     isFetchingWeather = false
   }
 

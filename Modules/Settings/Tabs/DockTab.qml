@@ -87,6 +87,24 @@ ColumnLayout {
     }
   }
 
+  ColumnLayout {
+    spacing: Style.marginXXS
+    Layout.fillWidth: true
+    NLabel {
+      label: I18n.tr("settings.dock.appearance.icon-size.label")
+      description: I18n.tr("settings.dock.appearance.icon-size.description")
+    }
+    NValueSlider {
+      Layout.fillWidth: true
+      from: 0
+      to: 2
+      stepSize: 0.01
+      value: Settings.data.dock.size
+      onMoved: value => Settings.data.dock.size = value
+      text: Math.floor(Settings.data.dock.size * 100) + "%"
+    }
+  }
+
   NToggle {
     label: I18n.tr("settings.dock.monitors.only-same-output.label")
     description: I18n.tr("settings.dock.monitors.only-same-output.description")

@@ -17,6 +17,7 @@ Item {
   property string section: ""
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
+  property real scaling: 1.0
 
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
@@ -37,8 +38,9 @@ Item {
   readonly property string visualizerType: (widgetSettings.visualizerType !== undefined && widgetSettings.visualizerType !== "") ? widgetSettings.visualizerType : widgetMetadata.visualizerType
   readonly property string scrollingMode: (widgetSettings.scrollingMode !== undefined) ? widgetSettings.scrollingMode : widgetMetadata.scrollingMode
 
-  // Fixed width - no expansion
-  readonly property real widgetWidth: Math.max(145, screen.width * 0.06)
+  // Maximum widget width with user settings support
+  readonly property real maxWidth: (widgetSettings.maxWidth !== undefined) ? widgetSettings.maxWidth : Math.max(widgetMetadata.maxWidth, screen ? screen.width * 0.06 : 0)
+  readonly property bool useFixedWidth: (widgetSettings.useFixedWidth !== undefined) ? widgetSettings.useFixedWidth : widgetMetadata.useFixedWidth
 
   readonly property bool hasActivePlayer: MediaService.currentPlayer !== null
   readonly property string placeholderText: I18n.tr("bar.widget-settings.media-mini.no-active-player")
@@ -59,7 +61,7 @@ Item {
   }
 
   implicitHeight: visible ? (isVerticalBar ? calculatedVerticalDimension() : Style.barHeight) : 0
-  implicitWidth: visible ? (isVerticalBar ? calculatedVerticalDimension() : widgetWidth) : 0
+  implicitWidth: visible ? (isVerticalBar ? calculatedVerticalDimension() : dynamicWidth) : 0
 
   // "visible": Always Visible, "hidden": Hide When Empty, "transparent": Transparent When Empty
   visible: hideMode !== "hidden" || hasActivePlayer
@@ -76,8 +78,50 @@ Item {
   }
 
   function calculatedVerticalDimension() {
-    const ratio = (Settings.data.bar.density === "mini") ? 0.67 : 0.8
-    return Math.round(Style.baseWidgetSize * ratio)
+    return Math.round((Style.baseWidgetSize - 5) * scaling)
+  }
+
+  function calculateContentWidth() {
+    // Calculate the actual content width based on visible elements
+    var contentWidth = 0
+    var margins = Style.marginS * scaling * 2 // Left and right margins
+
+    // Icon or album art width
+    if (!hasActivePlayer || !showAlbumArt) {
+      // Icon width
+      contentWidth += Style.fontSizeL * scaling
+    } else if (showAlbumArt && hasActivePlayer) {
+      // Album art width
+      contentWidth += 21 * scaling
+    }
+
+    // Spacing between icon/art and text
+    contentWidth += Style.marginS * scaling
+
+    // Text width (use the measured width)
+    contentWidth += fullTitleMetrics.contentWidth
+
+    // Additional small margin for text
+    contentWidth += Style.marginXXS * 2
+
+    // Add container margins
+    contentWidth += margins
+
+    return Math.ceil(contentWidth)
+  }
+
+  // Dynamic width: adapt to content but respect maximum width setting
+  readonly property real dynamicWidth: {
+    // If using fixed width mode, always use maxWidth
+    if (useFixedWidth) {
+      return maxWidth
+    }
+    // Otherwise, adapt to content
+    if (!hasActivePlayer) {
+      return maxWidth
+    }
+    // Use content width but don't exceed user-set maximum width
+    return Math.min(calculateContentWidth(), maxWidth)
   }
 
   //  A hidden text element to safely measure the full title width
@@ -87,6 +131,7 @@ Item {
     text: titleText.text
     font: titleText.font
     applyUiScale: false
+    pointSize: Style.fontSizeS * scaling
   }
 
   Rectangle {
@@ -94,16 +139,24 @@ Item {
     visible: root.visible
     anchors.left: parent.left
     anchors.verticalCenter: parent.verticalCenter
-    width: isVerticalBar ? root.width : (widgetWidth)
+    width: isVerticalBar ? root.width : dynamicWidth
     height: isVerticalBar ? width : Style.capsuleHeight
     radius: isVerticalBar ? width / 2 : Style.radiusM
     color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
+    // Smooth width transition
+    Behavior on width {
+      NumberAnimation {
+        duration: Style.animationNormal
+        easing.type: Easing.InOutCubic
+      }
+    }
+
     Item {
       id: mainContainer
       anchors.fill: parent
-      anchors.leftMargin: isVerticalBar ? 0 : Style.marginS
-      anchors.rightMargin: isVerticalBar ? 0 : Style.marginS
+      anchors.leftMargin: isVerticalBar ? 0 : Style.marginS * scaling
+      anchors.rightMargin: isVerticalBar ? 0 : Style.marginS * scaling
 
       Loader {
         anchors.verticalCenter: parent.verticalCenter
@@ -155,7 +208,7 @@ Item {
         id: rowLayout
 
         anchors.verticalCenter: parent.verticalCenter
-        spacing: Style.marginS
+        spacing: Style.marginS * scaling
         visible: !isVerticalBar
         z: 1 // Above the visualizer
 
@@ -163,7 +216,7 @@ Item {
           id: windowIcon
           icon: hasActivePlayer ? (MediaService.isPlaying ? "media-pause" : "media-play") : "disc"
           color: hasActivePlayer ? Color.mOnSurface : Color.mOnSurfaceVariant
-          pointSize: Style.fontSizeL
+          pointSize: Style.fontSizeL * scaling
           verticalAlignment: Text.AlignVCenter
           Layout.alignment: Qt.AlignVCenter
           visible: !hasActivePlayer || (!showAlbumArt && !trackArt.visible)
@@ -175,8 +228,8 @@ Item {
           spacing: 0
 
           Item {
-            Layout.preferredWidth: Math.round(21 * Style.uiScaleRatio)
-            Layout.preferredHeight: Math.round(21 * Style.uiScaleRatio)
+            Layout.preferredWidth: Math.round(21 * scaling)
+            Layout.preferredHeight: Math.round(21 * scaling)
 
             NImageCircled {
               id: trackArt
@@ -288,7 +341,7 @@ Item {
               NText {
                 id: titleText
                 text: hasActivePlayer ? getTitle() : placeholderText
-                pointSize: Style.fontSizeS
+                pointSize: Style.fontSizeS * scaling
                 applyUiScale: false
                 font.weight: Style.fontWeightMedium
                 verticalAlignment: Text.AlignVCenter
@@ -300,6 +353,7 @@ Item {
                 text: hasActivePlayer ? getTitle() : placeholderText
                 font: titleText.font
                 applyUiScale: false
+                pointSize: Style.fontSizeS * scaling
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: hasActivePlayer ? Text.AlignLeft : Text.AlignHCenter
                 color: hasActivePlayer ? Color.mOnSurface : Color.mOnSurfaceVariant
@@ -359,7 +413,7 @@ Item {
             anchors.fill: parent
             icon: hasActivePlayer ? (MediaService.isPlaying ? "media-pause" : "media-play") : "disc"
             color: hasActivePlayer ? Color.mOnSurface : Color.mOnSurfaceVariant
-            pointSize: Style.fontSizeL
+            pointSize: Style.fontSizeL * scaling
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
           }

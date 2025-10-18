@@ -43,9 +43,9 @@ Item {
                      queryDisplayScales()
                    })
       initialized = true
-      Logger.log("SwayService", "Initialized successfully")
+      Logger.i("SwayService", "Initialized successfully")
     } catch (e) {
-      Logger.error("SwayService", "Failed to initialize:", e)
+      Logger.e("SwayService", "Failed to initialize:", e)
     }
   }
 
@@ -70,7 +70,7 @@ Item {
 
     onExited: function (exitCode) {
       if (exitCode !== 0 || !accumulatedOutput) {
-        Logger.error("SwayService", "Failed to query outputs, exit code:", exitCode)
+        Logger.e("SwayService", "Failed to query outputs, exit code:", exitCode)
         accumulatedOutput = ""
         return
       }
@@ -101,7 +101,7 @@ Item {
           CompositorService.onDisplayScalesUpdated(scales)
         }
       } catch (e) {
-        Logger.error("SwayService", "Failed to parse outputs:", e)
+        Logger.e("SwayService", "Failed to parse outputs:", e)
       } finally {
         // Clear accumulated output for next query
         accumulatedOutput = ""
@@ -147,7 +147,7 @@ Item {
         workspaces.append(wsData)
       }
     } catch (e) {
-      Logger.error("SwayService", "Error updating workspaces:", e)
+      Logger.e("SwayService", "Error updating workspaces:", e)
     }
   }
 
@@ -187,7 +187,7 @@ Item {
         activeWindowChanged()
       }
     } catch (e) {
-      Logger.error("SwayService", "Error updating windows:", e)
+      Logger.e("SwayService", "Error updating windows:", e)
     }
   }
 
@@ -198,7 +198,7 @@ Item {
 
     try {
       // Safely extract properties
-      const appId = extractAppId(toplevel)
+      const appId = getAppId(toplevel)
       const title = safeGetProperty(toplevel, "title", "")
       const focused = toplevel.activated === true
 
@@ -213,8 +213,7 @@ Item {
     }
   }
 
-  // Extract app ID from various possible sources
-  function extractAppId(toplevel) {
+  function getAppId(toplevel) {
     if (!toplevel)
       return ""
 
@@ -272,7 +271,7 @@ Item {
     try {
       workspace.handle.activate()
     } catch (e) {
-      Logger.error("SwayService", "Failed to switch workspace:", e)
+      Logger.e("SwayService", "Failed to switch workspace:", e)
     }
   }
 
@@ -280,7 +279,7 @@ Item {
     try {
       window.handle.activate()
     } catch (e) {
-      Logger.error("SwayService", "Failed to switch window:", e)
+      Logger.e("SwayService", "Failed to switch window:", e)
     }
   }
 
@@ -288,7 +287,7 @@ Item {
     try {
       window.handle.close()
     } catch (e) {
-      Logger.error("SwayService", "Failed to close window:", e)
+      Logger.e("SwayService", "Failed to close window:", e)
     }
   }
 
@@ -296,7 +295,7 @@ Item {
     try {
       Quickshell.execDetached(["swaymsg", "exit"])
     } catch (e) {
-      Logger.error("SwayService", "Failed to logout:", e)
+      Logger.e("SwayService", "Failed to logout:", e)
     }
   }
 }

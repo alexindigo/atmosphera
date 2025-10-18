@@ -44,11 +44,11 @@ Item {
   function enqueueToast(toastData) {
     // Safe logging - fix the substring bug
     var descPreview = (toastData.description || "").substring(0, 100).replace(/\n/g, " ")
-    Logger.log("ToastScreen", "Queuing", toastData.type, ":", toastData.message, descPreview)
+    Logger.i("ToastScreen", "Queuing", toastData.type, ":", toastData.message, descPreview)
 
     // Bounded queue to prevent unbounded memory growth
     if (messageQueue.length >= maxQueueSize) {
-      Logger.log("ToastScreen", "Queue full, dropping oldest toast")
+      Logger.i("ToastScreen", "Queue full, dropping oldest toast")
       messageQueue.shift()
     }
 

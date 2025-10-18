@@ -56,7 +56,7 @@ NIconButton {
       if (customIconPath !== "")
         return customIconPath.startsWith("file://") ? customIconPath : "file://" + customIconPath
       if (useDistroLogo)
-        return DistroLogoService.osLogo
+        return DistroService.osLogo
       return ""
     }
     visible: source !== ""

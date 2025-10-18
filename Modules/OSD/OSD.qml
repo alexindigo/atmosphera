@@ -35,8 +35,7 @@ Variants {
     // Input volume properties
     readonly property real currentInputVolume: AudioService.inputVolume
     readonly property bool isInputMuted: AudioService.inputMuted
-    property bool inputVolumeInitialized: false
-    property bool inputMuteInitialized: false
+    property bool inputAudioInitialized: false
 
     // Brightness properties
     property real lastUpdatedBrightness: 0
@@ -480,15 +479,17 @@ Variants {
       }
 
       function onInputVolumeChanged() {
-        if (inputVolumeInitialized) {
-          showOSD("inputVolume")
+        if (!inputAudioInitialized) {
+          return
         }
+        showOSD("inputVolume")
       }
 
       function onInputMutedChanged() {
-        if (inputMuteInitialized) {
-          showOSD("inputVolume")
+        if (!inputAudioInitialized) {
+          return
         }
+        showOSD("inputVolume")
       }
     }
 
@@ -500,9 +501,8 @@ Variants {
       onTriggered: {
         volumeInitialized = true
         muteInitialized = true
-        inputVolumeInitialized = true
-        inputMuteInitialized = true
-        // Don't initialize brightness here - let it initialize on first change like volume
+        inputAudioInitialized = true
+        // Brightness initializes on first change to avoid showing OSD on startup
         connectBrightnessMonitors()
       }
     }

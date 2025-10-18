@@ -51,7 +51,7 @@ Item {
   Connections {
     target: AudioService.sink?.audio ? AudioService.sink?.audio : null
     function onVolumeChanged() {
-      // Logger.log("Bar:Volume", "onVolumeChanged")
+      // Logger.i("Bar:Volume", "onVolumeChanged")
       if (!firstVolumeReceived) {
         // Ignore the first volume change
         firstVolumeReceived = true

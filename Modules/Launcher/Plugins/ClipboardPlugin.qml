@@ -40,7 +40,7 @@ Item {
 
   // Initialize plugin
   function init() {
-    Logger.log("ClipboardPlugin", "Initialized")
+    Logger.i("ClipboardPlugin", "Initialized")
     // Pre-load clipboard data if service is active
     if (ClipboardService.active) {
       ClipboardService.list(100)
@@ -189,7 +189,7 @@ Item {
                    })
     }
 
-    //Logger.log("ClipboardPlugin", `Returning ${results.length} results for query: "${query}"`)
+    //Logger.i("ClipboardPlugin", `Returning ${results.length} results for query: "${query}"`)
     return results
   }
 

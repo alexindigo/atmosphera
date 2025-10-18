@@ -53,11 +53,11 @@ Singleton {
   function loadFromCache() {
     const now = Time.timestamp
     if (!data.timestamp || (now >= data.timestamp + githubUpdateFrequency)) {
-      Logger.log("GitHub", "Cache expired or missing, fetching new data")
+      Logger.d("GitHub", "Cache expired or missing, fetching new data")
       fetchFromGitHub()
       return
     }
-    Logger.log("GitHub", "Loading cached GitHub data (age:", Math.round((now - data.timestamp) / 60), "minutes)")
+    Logger.d("GitHub", "Loading cached GitHub data (age:", Math.round((now - data.timestamp) / 60), "minutes)")
 
     if (data.version) {
       root.latestVersion = data.version
@@ -70,7 +70,7 @@ Singleton {
   // --------------------------------
   function fetchFromGitHub() {
     if (isFetchingData) {
-      Logger.warn("GitHub", "GitHub data is still fetching")
+      Logger.w("GitHub", "GitHub data is still fetching")
       return
     }
 
@@ -82,8 +82,8 @@ Singleton {
   // --------------------------------
   function saveData() {
     data.timestamp = Time.timestamp
-    Logger.log("GitHub", "Saving data to cache file:", githubDataFile)
-    Logger.log("GitHub", "Data to save - version:", data.version, "contributors:", data.contributors.length)
+    Logger.d("GitHub", "Saving data to cache file:", githubDataFile)
+    Logger.d("GitHub", "Data to save - version:", data.version, "contributors:", data.contributors.length)
 
     // Ensure cache directory exists
     Quickshell.execDetached(["mkdir", "-p", Settings.cacheDir])
@@ -91,7 +91,7 @@ Singleton {
     Qt.callLater(() => {
                    // Use direct ID reference to the FileView
                    githubDataFileView.writeAdapter()
-                   Logger.log("GitHub", "Cache file written successfully")
+                   Logger.d("GitHub", "Cache file written successfully")
                  })
   }
 
@@ -120,15 +120,15 @@ Singleton {
               const version = data.tag_name
               root.data.version = version
               root.latestVersion = version
-              Logger.log("GitHub", "Latest version fetched from GitHub:", version)
+              Logger.d("GitHub", "Latest version fetched from GitHub:", version)
             } else {
-              Logger.log("GitHub", "No tag_name in GitHub response")
+              Logger.w("GitHub", "No tag_name in GitHub response")
             }
           } else {
-            Logger.log("GitHub", "Empty response from GitHub API")
+            Logger.w("GitHub", "Empty response from GitHub API")
           }
         } catch (e) {
-          Logger.error("GitHub", "Failed to parse version:", e)
+          Logger.e("GitHub", "Failed to parse version:", e)
         }
 
         // Check if both processes are done
@@ -146,20 +146,20 @@ Singleton {
       onStreamFinished: {
         try {
           const response = text
-          Logger.log("GitHub", "Raw contributors response length:", response ? response.length : 0)
+          Logger.d("GitHub", "Raw contributors response length:", response ? response.length : 0)
           if (response && response.trim()) {
             const data = JSON.parse(response)
-            Logger.log("GitHub", "Parsed contributors data type:", typeof data, "length:", Array.isArray(data) ? data.length : "not array")
+            Logger.d("GitHub", "Parsed contributors data type:", typeof data, "length:", Array.isArray(data) ? data.length : "not array")
             root.data.contributors = data || []
             root.contributors = root.data.contributors
-            Logger.log("GitHub", "Contributors fetched from GitHub:", root.contributors.length)
+            Logger.d("GitHub", "Contributors fetched from GitHub:", root.contributors.length)
           } else {
-            Logger.log("GitHub", "Empty response from GitHub API for contributors")
+            Logger.w("GitHub", "Empty response from GitHub API for contributors")
             root.data.contributors = []
             root.contributors = []
           }
         } catch (e) {
-          Logger.error("GitHub", "Failed to parse contributors:", e)
+          Logger.e("GitHub", "Failed to parse contributors:", e)
           root.data.contributors = []
           root.contributors = []
         }

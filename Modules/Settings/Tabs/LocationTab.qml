@@ -72,10 +72,19 @@ ColumnLayout {
     }
 
     NToggle {
+      label: I18n.tr("settings.location.weather.enabled.label")
+      description: I18n.tr("settings.location.weather.enabled.description")
+      checked: Settings.data.location.weatherEnabled
+      onToggled: checked => Settings.data.location.weatherEnabled = checked
+    }
+
+    NToggle {
       label: I18n.tr("settings.location.weather.fahrenheit.label")
       description: I18n.tr("settings.location.weather.fahrenheit.description")
       checked: Settings.data.location.useFahrenheit
       onToggled: checked => Settings.data.location.useFahrenheit = checked
+      enabled: Settings.data.location.weatherEnabled
+      opacity: Settings.data.location.weatherEnabled ? 1.0 : 0.5
     }
   }
 

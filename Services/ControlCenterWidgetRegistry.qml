@@ -49,7 +49,7 @@ Singleton {
   }
 
   function init() {
-    Logger.log("ControlCenterWidgetRegistry", "Service started")
+    Logger.i("ControlCenterWidgetRegistry", "Service started")
   }
 
   // ------------------------------

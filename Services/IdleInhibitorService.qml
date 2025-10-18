@@ -16,15 +16,9 @@ Singleton {
   // Different inhibitor strategies
   property string strategy: "systemd" // "systemd", "wayland", or "auto"
 
-  Component.onCompleted: {
-    Logger.log("IdleInhibitor", "Service started")
+  function init() {
+    Logger.d("IdleInhibitor", "Service started")
     detectStrategy()
-
-    // Restore previous state from settings
-    if (Settings.data.ui.idleInhibitorEnabled) {
-      addInhibitor("manual", "Restored from previous session")
-      Logger.log("IdleInhibitor", "Restored previous manual inhibition state")
-    }
   }
 
   // Auto-detect the best strategy
@@ -34,7 +28,7 @@ Singleton {
       try {
         var systemdResult = Quickshell.execDetached(["which", "systemd-inhibit"])
         strategy = "systemd"
-        Logger.log("IdleInhibitor", "Using systemd-inhibit strategy")
+        Logger.d("IdleInhibitor", "Using systemd-inhibit strategy")
         return
       } catch (e) {
 
@@ -44,14 +38,14 @@ Singleton {
       try {
         var waylandResult = Quickshell.execDetached(["which", "wayhibitor"])
         strategy = "wayland"
-        Logger.log("IdleInhibitor", "Using wayhibitor strategy")
+        Logger.d("IdleInhibitor", "Using wayhibitor strategy")
         return
       } catch (e) {
 
         // wayhibitor not found
       }
 
-      Logger.warn("IdleInhibitor", "No suitable inhibitor found - will try systemd as fallback")
+      Logger.w("IdleInhibitor", "No suitable inhibitor found - will try systemd as fallback")
       strategy = "systemd" // Fallback to systemd even if not detected
     }
   }
@@ -59,13 +53,13 @@ Singleton {
   // Add an inhibitor
   function addInhibitor(id, reason = "Application request") {
     if (activeInhibitors.includes(id)) {
-      Logger.warn("IdleInhibitor", "Inhibitor already active:", id)
+      Logger.w("IdleInhibitor", "Inhibitor already active:", id)
       return false
     }
 
     activeInhibitors.push(id)
     updateInhibition(reason)
-    Logger.log("IdleInhibitor", "Added inhibitor:", id)
+    Logger.d("IdleInhibitor", "Added inhibitor:", id)
     return true
   }
 
@@ -73,13 +67,13 @@ Singleton {
   function removeInhibitor(id) {
     const index = activeInhibitors.indexOf(id)
     if (index === -1) {
-      Logger.warn("IdleInhibitor", "Inhibitor not found:", id)
+      Logger.w("IdleInhibitor", "Inhibitor not found:", id)
       return false
     }
 
     activeInhibitors.splice(index, 1)
     updateInhibition()
-    Logger.log("IdleInhibitor", "Removed inhibitor:", id)
+    Logger.d("IdleInhibitor", "Removed inhibitor:", id)
     return true
   }
 
@@ -108,12 +102,12 @@ Singleton {
     } else if (strategy === "wayland") {
       startWaylandInhibition()
     } else {
-      Logger.warn("IdleInhibitor", "No inhibition strategy available")
+      Logger.w("IdleInhibitor", "No inhibition strategy available")
       return
     }
 
     isInhibited = true
-    Logger.log("IdleInhibitor", "Started inhibition:", reason)
+    Logger.i("IdleInhibitor", "Started inhibition:", reason)
   }
 
   // Stop system inhibition
@@ -126,7 +120,7 @@ Singleton {
     }
 
     isInhibited = false
-    Logger.log("IdleInhibitor", "Stopped inhibition")
+    Logger.i("IdleInhibitor", "Stopped inhibition")
   }
 
   // Systemd inhibition using systemd-inhibit
@@ -148,13 +142,13 @@ Singleton {
 
     onExited: function (exitCode, exitStatus) {
       if (isInhibited) {
-        Logger.warn("IdleInhibitor", "Inhibitor process exited unexpectedly:", exitCode)
+        Logger.w("IdleInhibitor", "Inhibitor process exited unexpectedly:", exitCode)
         isInhibited = false
       }
     }
 
     onStarted: function () {
-      Logger.log("IdleInhibitor", "Inhibitor process started successfully")
+      Logger.d("IdleInhibitor", "Inhibitor process started successfully")
     }
   }
 
@@ -162,15 +156,13 @@ Singleton {
   function manualToggle() {
     if (activeInhibitors.includes("manual")) {
       removeInhibitor("manual")
-      Settings.data.ui.idleInhibitorEnabled = false
       ToastService.showNotice(I18n.tr("tooltips.keep-awake"), I18n.tr("toast.keep-awake.disabled"))
-      Logger.log("IdleInhibitor", "Manual inhibition disabled and saved to settings")
+      Logger.i("IdleInhibitor", "Manual inhibition disabled")
       return false
     } else {
       addInhibitor("manual", "Manually activated by user")
-      Settings.data.ui.idleInhibitorEnabled = true
       ToastService.showNotice(I18n.tr("tooltips.keep-awake"), I18n.tr("toast.keep-awake.enabled"))
-      Logger.log("IdleInhibitor", "Manual inhibition enabled and saved to settings")
+      Logger.i("IdleInhibitor", "Manual inhibition enabled (will reset on next session)")
       return true
     }
   }

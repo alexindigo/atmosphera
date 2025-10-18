@@ -24,7 +24,7 @@ Singleton {
   // Register this panel
   function registerPanel(panel) {
     registeredPanels[panel.objectName] = panel
-    Logger.log("PanelService", "Registered:", panel.objectName)
+    Logger.d("PanelService", "Registered:", panel.objectName)
   }
 
   // Returns a panel

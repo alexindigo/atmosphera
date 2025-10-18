@@ -111,7 +111,9 @@ Singleton {
     notificationMetadata[data.id] = {
       "timestamp": data.timestamp.getTime(),
       "duration": expire,
-      "urgency": data.urgency
+      "urgency": data.urgency,
+      "paused": false,
+      "pauseTime": 0
     }
 
     activeList.insert(0, data)
@@ -140,7 +142,7 @@ Singleton {
       "id": id,
       "summary": (n.summary || ""),
       "body": stripTags(n.body || ""),
-      "appName": getAppName(n.appName),
+      "appName": getAppName(n.appName || n.desktopEntry || ""),
       "urgency": n.urgency < 0 || n.urgency > 2 ? 1 : n.urgency,
       "expireTimeout": n.expireTimeout,
       "timestamp": time,
@@ -219,7 +221,7 @@ Singleton {
       const notif = activeList.get(i)
       const meta = notificationMetadata[notif.id]
 
-      if (!meta || meta.duration === -1)
+      if (!meta || meta.duration === -1 || meta.paused)
         continue
 
       // Skip infinite notifications
@@ -301,7 +303,7 @@ Singleton {
       adapter.notifications = items
       historyFileView.writeAdapter()
     } catch (e) {
-      Logger.error("Notifications", "Save history failed:", e)
+      Logger.e("Notifications", "Save history failed:", e)
     }
   }
 
@@ -331,7 +333,7 @@ Singleton {
                            })
       }
     } catch (e) {
-      Logger.error("Notifications", "Load failed:", e)
+      Logger.e("Notifications", "Load failed:", e)
     }
   }
 
@@ -408,6 +410,22 @@ Singleton {
     return ""
   }
 
+  function pauseTimeout(id) {
+    const meta = notificationMetadata[id]
+    if (meta && !meta.paused) {
+      meta.paused = true
+      meta.pauseTime = Date.now()
+    }
+  }
+
+  function resumeTimeout(id) {
+    const meta = notificationMetadata[id]
+    if (meta && meta.paused) {
+      meta.timestamp += Date.now() - meta.pauseTime
+      meta.paused = false
+    }
+  }
+
   // Public API
   function dismissActiveNotification(id) {
     activeMap[id]?.dismiss()
@@ -461,7 +479,7 @@ Singleton {
     try {
       Quickshell.execDetached(["sh", "-c", `rm -rf "${Settings.cacheDirImagesNotifications}"*`])
     } catch (e) {
-      Logger.error("Notifications", "Failed to clear cache directory:", e)
+      Logger.e("Notifications", "Failed to clear cache directory:", e)
     }
 
     historyList.clear()

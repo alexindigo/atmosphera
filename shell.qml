@@ -40,6 +40,7 @@ import qs.Modules.OSD
 import qs.Modules.Settings
 import qs.Modules.Toast
 import qs.Modules.Wallpaper
+import qs.Modules.SetupWizard
 
 ShellRoot {
   id: shellRoot
@@ -48,8 +49,8 @@ ShellRoot {
   property bool settingsLoaded: false
 
   Component.onCompleted: {
-    Logger.log("Shell", "---------------------------")
-    Logger.log("Shell", "Noctalia Hello!")
+    Logger.i("Shell", "---------------------------")
+    Logger.i("Shell", "Noctalia Hello!")
   }
 
   Connections {
@@ -78,17 +79,19 @@ ShellRoot {
 
     sourceComponent: Item {
       Component.onCompleted: {
-        Logger.log("Shell", "---------------------------")
+        Logger.i("Shell", "---------------------------")
         WallpaperService.init()
         AppThemeService.init()
         ColorSchemeService.init()
         BarWidgetRegistry.init()
         LocationService.init()
         NightLightService.apply()
+        DarkModeService.init()
         FontService.init()
         HooksService.init()
         BluetoothService.init()
         BatteryService.init()
+        IdleInhibitorService.init()
       }
 
       Background {}
@@ -166,6 +169,50 @@ ShellRoot {
         id: batteryPanel
         objectName: "batteryPanel"
       }
+    }
+  }
+
+  // ------------------------------
+  // Setup Wizard
+  Loader {
+    id: setupWizardLoader
+    active: false
+    asynchronous: true
+    sourceComponent: SetupWizard {}
+    onLoaded: {
+      if (setupWizardLoader.item && setupWizardLoader.item.open) {
+        setupWizardLoader.item.open()
+      }
+    }
+  }
+
+  Connections {
+    target: Settings
+    function onSettingsLoaded() {
+      // Only open the setup wizard for new users
+      if (!Settings.data.setupCompleted) {
+        checkSetupWizard()
+      }
+    }
+  }
+
+  function checkSetupWizard() {
+    // Wait for distro service
+    if (!DistroService.isReady) {
+      Qt.callLater(checkSetupWizard)
+      return
+    }
+
+    // No setup wizard on NixOS
+    if (DistroService.isNixOS) {
+      Settings.data.setupCompleted = true
+      return
+    }
+
+    if (Settings.data.settingsVersion >= Settings.settingsVersion) {
+      setupWizardLoader.active = true
+    } else {
+      Settings.data.setupCompleted = true
     }
   }
 }

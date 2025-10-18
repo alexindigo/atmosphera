@@ -54,7 +54,7 @@ Item {
 
   function loadApplications() {
     if (typeof DesktopEntries === 'undefined') {
-      Logger.warn("ApplicationsPlugin", "DesktopEntries service not available")
+      Logger.w("ApplicationsPlugin", "DesktopEntries service not available")
       return
     }
 
@@ -64,7 +64,7 @@ Item {
                                                                  app.executableName = getExecutableName(app)
                                                                  return app
                                                                })
-    Logger.log("ApplicationsPlugin", `Loaded ${entries.length} applications`)
+    Logger.d("ApplicationsPlugin", `Loaded ${entries.length} applications`)
   }
 
   function getExecutableName(app) {
@@ -198,12 +198,12 @@ Item {
         // Ensures we are not preventing the future focusing of the app
         launcher.close()
 
-        Logger.log("ApplicationsPlugin", `Launching: ${app.name}`)
+        Logger.d("ApplicationsPlugin", `Launching: ${app.name}`)
         // Record usage and persist asynchronously
         if (Settings.data.appLauncher.sortByMostUsed)
           recordUsage(app)
         if (Settings.data.appLauncher.useApp2Unit && app.id) {
-          Logger.log("ApplicationsPlugin", `Using app2unit for: ${app.id}`)
+          Logger.d("ApplicationsPlugin", `Using app2unit for: ${app.id}`)
           if (app.runInTerminal)
             Quickshell.execDetached(["app2unit", "--", app.id + ".desktop"])
           else
@@ -212,7 +212,7 @@ Item {
           // Fallback logic when app2unit is not used
           if (app.runInTerminal) {
             // If app.execute() fails for terminal apps, we handle it manually.
-            Logger.log("ApplicationsPlugin", "Executing terminal app manually: " + app.name)
+            Logger.d("ApplicationsPlugin", "Executing terminal app manually: " + app.name)
             const terminal = Settings.data.appLauncher.terminalCommand.split(" ")
             const command = terminal.concat(app.command)
             Quickshell.execDetached(command)
@@ -220,7 +220,7 @@ Item {
             // Default execution for GUI apps
             app.execute()
           } else {
-            Logger.log("ApplicationsPlugin", `Could not launch: ${app.name}. No valid launch method.`)
+            Logger.w("ApplicationsPlugin", `Could not launch: ${app.name}. No valid launch method.`)
           }
         }
       }

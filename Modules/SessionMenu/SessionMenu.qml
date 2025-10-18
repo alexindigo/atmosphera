@@ -13,8 +13,8 @@ import qs.Widgets
 NPanel {
   id: root
 
-  preferredWidth: 320 * Style.uiScaleRatio
-  preferredHeight: 360 * Style.uiScaleRatio
+  preferredWidth: 400 * Style.uiScaleRatio
+  preferredHeight: 340 * Style.uiScaleRatio
   panelAnchorHorizontalCenter: true
   panelAnchorVerticalCenter: true
   panelKeyboardFocus: true
@@ -31,10 +31,6 @@ NPanel {
       "action": "lock",
       "icon": "lock",
       "title": I18n.tr("session-menu.lock")
-    }, {
-      "action": "lockAndSuspend",
-      "icon": "lock-pause",
-      "title": I18n.tr("session-menu.lock-and-suspend")
     }, {
       "action": "suspend",
       "icon": "suspend",
@@ -96,11 +92,13 @@ NPanel {
         lockScreen.active = true
       }
       break
-    case "lockAndSuspend":
-      CompositorService.lockAndSuspend()
-      break
     case "suspend":
-      CompositorService.suspend()
+      // Check if we should lock before suspending
+      if (Settings.data.general.lockOnSuspend) {
+        CompositorService.lockAndSuspend()
+      } else {
+        CompositorService.suspend()
+      }
       break
     case "reboot":
       CompositorService.reboot()
@@ -119,15 +117,15 @@ NPanel {
   }
 
   // Navigation functions
-  function selectNext() {
+  function selectNextWrapped() {
     if (powerOptions.length > 0) {
-      selectedIndex = Math.min(selectedIndex + 1, powerOptions.length - 1)
+      selectedIndex = (selectedIndex + 1) % powerOptions.length
     }
   }
 
-  function selectPrevious() {
+  function selectPreviousWrapped() {
     if (powerOptions.length > 0) {
-      selectedIndex = Math.max(selectedIndex - 1, 0)
+      selectedIndex = (((selectedIndex - 1) % powerOptions.length) + powerOptions.length) % powerOptions.length
     }
   }
 
@@ -170,25 +168,37 @@ NPanel {
     // Keyboard shortcuts
     Shortcut {
       sequence: "Ctrl+K"
-      onActivated: ui.selectPrevious()
+      onActivated: ui.selectPreviousWrapped()
       enabled: root.opened
     }
 
     Shortcut {
       sequence: "Ctrl+J"
-      onActivated: ui.selectNext()
+      onActivated: ui.selectNextWrapped()
       enabled: root.opened
     }
 
     Shortcut {
       sequence: "Up"
-      onActivated: ui.selectPrevious()
+      onActivated: ui.selectPreviousWrapped()
       enabled: root.opened
     }
 
     Shortcut {
       sequence: "Down"
-      onActivated: ui.selectNext()
+      onActivated: ui.selectNextWrapped()
+      enabled: root.opened
+    }
+
+    Shortcut {
+      sequence: "Shift+Tab"
+      onActivated: ui.selectPreviousWrapped()
+      enabled: root.opened
+    }
+
+    Shortcut {
+      sequence: "Tab"
+      onActivated: ui.selectNextWrapped()
       enabled: root.opened
     }
 
@@ -231,14 +241,6 @@ NPanel {
     }
 
     // Navigation functions
-    function selectNext() {
-      root.selectNext()
-    }
-
-    function selectPrevious() {
-      root.selectPrevious()
-    }
-
     function selectFirst() {
       root.selectFirst()
     }
@@ -247,78 +249,89 @@ NPanel {
       root.selectLast()
     }
 
+    function selectNextWrapped() {
+      root.selectNextWrapped()
+    }
+
+    function selectPreviousWrapped() {
+      root.selectPreviousWrapped()
+    }
+
     function activate() {
       root.activate()
     }
 
-    ColumnLayout {
+    NBox {
       anchors.fill: parent
-      anchors.topMargin: Style.marginM
-      anchors.leftMargin: Style.marginM
-      anchors.rightMargin: Style.marginM
-      anchors.bottomMargin: Style.marginS
-      spacing: Style.marginXS
+      anchors.margins: Style.marginL
 
-      // Header with title and close button
-      RowLayout {
-        Layout.fillWidth: true
-        Layout.preferredHeight: Style.baseWidgetSize * 0.6
+      ColumnLayout {
+        anchors.fill: parent
+        anchors.margins: Style.marginL
+        spacing: Style.marginL
 
-        NText {
-          text: timerActive ? I18n.tr("session-menu.action-in-seconds", {
-                                        "action": pendingAction.charAt(0).toUpperCase() + pendingAction.slice(1),
-                                        "seconds": Math.ceil(timeRemaining / 1000)
-                                      }) : I18n.tr("session-menu.title")
-          font.weight: Style.fontWeightBold
-          pointSize: Style.fontSizeM
-          color: timerActive ? Color.mPrimary : Color.mOnSurface
-          Layout.alignment: Qt.AlignVCenter
-          verticalAlignment: Text.AlignVCenter
-        }
-
-        Item {
+        // Header with title and close button
+        RowLayout {
           Layout.fillWidth: true
-        }
+          Layout.preferredHeight: Style.baseWidgetSize * 0.6
 
-        NIconButton {
-          icon: timerActive ? "stop" : "close"
-          tooltipText: timerActive ? I18n.tr("tooltips.cancel-timer") : I18n.tr("tooltips.close")
-          Layout.alignment: Qt.AlignVCenter
-          colorBg: timerActive ? Qt.alpha(Color.mError, 0.08) : Color.transparent
-          colorFg: timerActive ? Color.mError : Color.mOnSurface
-          onClicked: {
-            if (timerActive) {
-              cancelTimer()
-            } else {
-              cancelTimer()
-              root.close()
+          NText {
+            text: timerActive ? I18n.tr("session-menu.action-in-seconds", {
+                                          "action": pendingAction.charAt(0).toUpperCase() + pendingAction.slice(1),
+                                          "seconds": Math.ceil(timeRemaining / 1000)
+                                        }) : I18n.tr("session-menu.title")
+            font.weight: Style.fontWeightBold
+            pointSize: Style.fontSizeM
+            color: timerActive ? Color.mPrimary : Color.mOnSurface
+            Layout.alignment: Qt.AlignVCenter
+            verticalAlignment: Text.AlignVCenter
+          }
+
+          Item {
+            Layout.fillWidth: true
+          }
+
+          NIconButton {
+            icon: timerActive ? "stop" : "close"
+            tooltipText: timerActive ? I18n.tr("tooltips.cancel-timer") : I18n.tr("tooltips.close")
+            Layout.alignment: Qt.AlignVCenter
+            baseSize: Style.baseWidgetSize * 0.7
+            colorBg: timerActive ? Qt.alpha(Color.mError, 0.08) : Color.transparent
+            colorFg: timerActive ? Color.mError : Color.mOnSurface
+            onClicked: {
+              if (timerActive) {
+                cancelTimer()
+              } else {
+                cancelTimer()
+                root.close()
+              }
             }
           }
         }
-      }
 
-      NDivider {
-        Layout.fillWidth: true
-      }
+        NDivider {
+          Layout.fillWidth: true
+        }
 
-      // Power options
-      ColumnLayout {
-        Layout.fillWidth: true
-        spacing: Style.marginS
+        // Power options
+        ColumnLayout {
+          Layout.fillWidth: true
+          spacing: Style.marginS
 
-        Repeater {
-          model: powerOptions
-          delegate: PowerButton {
-            Layout.fillWidth: true
-            icon: modelData.icon
-            title: modelData.title
-            isShutdown: modelData.isShutdown || false
-            isSelected: index === selectedIndex
-            onClicked: {
-              selectedIndex = index
-              startTimer(modelData.action)
+          Repeater {
+            model: powerOptions
+            delegate: PowerButton {
+              Layout.fillWidth: true
+              icon: modelData.icon
+              title: modelData.title
+              isShutdown: modelData.isShutdown || false
+              isSelected: index === selectedIndex
+              onClicked: {
+                selectedIndex = index
+                startTimer(modelData.action)
+              }
+              pending: timerActive && pendingAction === modelData.action
             }
-            pending: timerActive && pendingAction === modelData.action
           }
         }
       }
@@ -337,7 +350,7 @@ NPanel {
 
     signal clicked
 
-    height: Style.baseWidgetSize * 1.2 * Style.uiScaleRatio
+    height: Style.baseWidgetSize * 1.3 * Style.uiScaleRatio
     radius: Style.radiusS
     color: {
       if (pending) {

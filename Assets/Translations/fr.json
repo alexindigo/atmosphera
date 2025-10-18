@@ -32,6 +32,16 @@
           "reset": "Réinitialiser le rayon des coins de l'écran"
         }
       },
+      "lockscreen": {
+        "section": {
+          "label": "Écran de verrouillage",
+          "description": "Configurer le comportement de l'écran de verrouillage."
+        },
+        "lock-on-suspend": {
+          "label": "Verrouiller lors de la suspension",
+          "description": "Verrouiller automatiquement l'écran lors de la mise en veille du système."
+        }
+      },
       "fonts": {
         "section": {
           "label": "Polices",
@@ -58,6 +68,17 @@
           }
         },
         "reset-scaling": "Réinitialiser l'échelle"
+      },
+      "language": {
+        "section": {
+          "label": "Langue",
+          "description": "Choisissez votre langue préférée pour l'application."
+        },
+        "select": {
+          "label": "Langue de l'application",
+          "description": "Sélectionnez la langue utilisée dans l'interface de l'application.",
+          "auto-detect": "Automatique"
+        }
       }
     },
     "audio": {
@@ -260,6 +281,10 @@
         "floating-distance": {
           "label": "Distance de flottaison du dock",
           "description": "Ajustez la distance de flottaison par rapport au bord de l'écran."
+        },
+        "icon-size": {
+          "label": "Taille du Dock",
+          "description": "Ajuster la taille globale du Dock."
         },
         "colorize-icons": {
           "label": "Coloriser les icônes",
@@ -475,10 +500,6 @@
           "label": "Source des couleurs",
           "description": "Paramètres principaux pour les couleurs de Noctalia."
         },
-        "dark-mode": {
-          "label": "Mode sombre",
-          "description": "Passe à un thème plus sombre pour une visualisation plus facile la nuit."
-        },
         "use-wallpaper-colors": {
           "label": "Utiliser les couleurs du fond d'écran",
           "description": "Générer des schémas de couleurs à partir de votre fond d'écran avec Matugen. Extrait automatiquement les couleurs pour créer un thème cohérent."
@@ -486,6 +507,12 @@
         "matugen-scheme-type": {
           "label": "Type de schéma Matugen",
           "description": "Choisissez l'algorithme de génération de schéma de couleurs pour Matugen."
+        }
+      },
+      "dark-mode": {
+        "switch": {
+          "label": "Mode sombre",
+          "description": "Passe à un thème plus sombre pour une visualisation plus facile la nuit."
         }
       },
       "predefined": {
@@ -537,7 +564,7 @@
           },
           "discord": {
             "description": "Écrire {filepath} pour {client}",
-            "description-missing": "Aucun client Discord détecté. Installez vesktop, webcord, armcord, equibop, lightcord ou dorion."
+            "description-missing": "Aucun client Discord détecté. Installez vencord, vesktop, webcord, armcord, equibop, lightcord ou dorion."
           },
           "pywalfox": {
             "description": "Écrire ~/.cache/wal/colors.json et exécuter pywalfox update",
@@ -549,7 +576,7 @@
           "description": "Options de configuration supplémentaires.",
           "user-templates": {
             "label": "Modèles utilisateur",
-            "description": "Activer la configuration Matugen définie par l'utilisateur depuis ~/.config/matugen/config.toml"
+            "description": "Activer la configuration Matugen définie par l'utilisateur. Un fichier modèle sera créé dans ~/.config/noctalia/user-templates.toml lors de la première activation"
           }
         },
         "section": {
@@ -575,6 +602,10 @@
         "section": {
           "label": "Météo",
           "description": "Choisissez votre unité de température préférée."
+        },
+        "enabled": {
+          "label": "Activer la météo",
+          "description": "Afficher les informations météorologiques dans toute l'interface et récupérer les données météo. Lorsque désactivé, tous les éléments météo seront masqués et aucune requête réseau ne sera effectuée."
         },
         "fahrenheit": {
           "label": "Afficher la température en Fahrenheit (°F)",
@@ -897,9 +928,13 @@
           "label": "Mode de masquage",
           "description": "Contrôle le comportement du widget lorsqu'aucune fenêtre n'est active."
         },
-        "width": {
-          "description": "Contrôle la taille horizontale du widget.",
-          "label": "Largeur du widget"
+        "max-width": {
+          "label": "Largeur Maximale",
+          "description": "Définit la taille horizontale maximale du widget. Le widget se rétrécira pour s'adapter à un contenu plus court."
+        },
+        "use-fixed-width": {
+          "label": "Utiliser une Largeur Fixe",
+          "description": "Lorsque activé, le widget utilisera toujours la largeur maximale au lieu de s'ajuster dynamiquement au contenu."
         },
         "colorize-icons": {
           "label": "Coloriser les icônes",
@@ -1046,6 +1081,14 @@
           "label": "Type de visualiseur",
           "description": "Choisir le style de visualiseur audio à afficher."
         },
+        "max-width": {
+          "label": "Largeur Maximale",
+          "description": "Définit la taille horizontale maximale du widget. Le widget se rétrécira pour s'adapter à un contenu plus court."
+        },
+        "use-fixed-width": {
+          "label": "Utiliser une Largeur Fixe",
+          "description": "Lorsque activé, le widget utilisera toujours la largeur maximale au lieu de s'ajuster dynamiquement au contenu."
+        },
         "scrolling-mode": {
           "label": "Mode de défilement",
           "description": "Contrôler quand le défilement de texte est activé pour les titres de piste longs."
@@ -1186,6 +1229,9 @@
   "calendar": {
     "panel": {
       "week": "Semaine"
+    },
+    "weather": {
+      "loading": "Chargement de la météo…"
     }
   },
   "tooltips": {
@@ -1305,7 +1351,8 @@
         "bottom_left": "En bas à gauche",
         "bottom_right": "En bas à droite",
         "bottom_center": "En bas au centre",
-        "top_center": "En haut au centre"
+        "top_center": "En haut au centre",
+        "center": "Centre"
       },
       "quickSettingsStyle": {
         "modern": "Moderne",
@@ -1615,12 +1662,46 @@
     "discharging-rate": "Taux de décharge : {rate} W.",
     "charging": "En charge.",
     "discharging": "En décharge.",
+    "plugged-in": "Branché.",
+    "idle": "Inactif.",
+    "time-left": "Temps restant : {time}.",
+    "time-until-full": "Temps jusqu'à charge complète : {time}.",
+    "health": "État : {percent}%",
     "panel": {
       "title": "Seuil de charge",
       "full": "Capacité totale ({percent}%)",
       "balanced": "Équilibré ({percent}%)",
       "lifespan": "Durée de vie prolongée ({percent}%)",
       "disabled": "Gestionnaire de batterie désactivé"
+    }
+  },
+  "setup": {
+    "customize": {
+      "header": "Personnaliser votre expérience",
+      "subheader": "Ajustez la position de la barre, la densité, l'échelle et plus encore."
+    },
+    "appearance": {
+      "header": "Apparence",
+      "subheader": "Choisissez le mode sombre et la source des couleurs (Matugen ou prédéfinie)."
+    },
+    "wallpaper": {
+      "header": "Choisissez votre fond d'écran",
+      "subheader": "Définissez l'ambiance avec un joli fond.",
+      "select-prompt": "Sélectionnez un fond ci-dessous",
+      "preview-error": "Échec du chargement de l'image",
+      "none-in-dir": "Aucun fond d'écran trouvé dans le répertoire",
+      "no-dir": "Aucun répertoire de fonds d'écran sélectionné",
+      "no-valid": "Aucun fichier image valide trouvé dans : {dir}",
+      "choose-dir": "Choisissez un répertoire contenant vos fonds d'écran",
+      "dir": {
+        "label": "Répertoire des fonds d'écran",
+        "description": "Choisissez le dossier contenant vos fonds d'écran",
+        "browse": "Parcourir le dossier",
+        "select-title": "Sélectionner le dossier des fonds d'écran"
+      }
+    },
+    "welcome": {
+      "note": "Quelques réglages de base pour démarrer — toutes les options sont dans Paramètres"
     }
   }
 }

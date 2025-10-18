@@ -42,7 +42,7 @@ Singleton {
 
   // --------------------------------------------
   Component.onCompleted: {
-    Logger.log("SystemStat", "Service started with interval:", root.sleepDuration, "ms")
+    Logger.i("SystemStat", "Service started with interval:", root.sleepDuration, "ms")
 
     // Kickoff the cpu name detection for temperature
     cpuTempNameReader.checkNext()
@@ -121,11 +121,11 @@ Singleton {
     function checkNext() {
       if (currentIndex >= 16) {
         // Check up to hwmon10
-        Logger.warn("No supported temperature sensor found")
+        Logger.w("No supported temperature sensor found")
         return
       }
 
-      //Logger.log("SystemStat", "---- Probing: hwmon", currentIndex)
+      //Logger.i("SystemStat", "---- Probing: hwmon", currentIndex)
       cpuTempNameReader.path = `/sys/class/hwmon/hwmon${currentIndex}/name`
       cpuTempNameReader.reload()
     }
@@ -135,7 +135,7 @@ Singleton {
       if (root.supportedTempCpuSensorNames.includes(name)) {
         root.cpuTempSensorName = name
         root.cpuTempHwmonPath = `/sys/class/hwmon/hwmon${currentIndex}`
-        Logger.log("SystemStat", `Found ${root.cpuTempSensorName} CPU thermal sensor at ${root.cpuTempHwmonPath}`)
+        Logger.i("SystemStat", `Found ${root.cpuTempSensorName} CPU thermal sensor at ${root.cpuTempHwmonPath}`)
       } else {
         currentIndex++
         Qt.callLater(() => {
@@ -205,7 +205,7 @@ Singleton {
 
     if (memTotal > 0) {
       const usageKb = memTotal - memAvailable
-      root.memGb = (usageKb / 1000000).toFixed(1)
+      root.memGb = (usageKb / 1048576).toFixed(1) // 1024*1024 = 1048576
       root.memPercent = Math.round((usageKb / memTotal) * 100)
     }
   }
@@ -386,9 +386,9 @@ Singleton {
           sum += root.intelTempValues[i]
         }
         root.cpuTemp = Math.round(sum / root.intelTempValues.length)
-        //Logger.log("SystemStat", `Averaged ${root.intelTempValues.length} CPU thermal sensors: ${root.cpuTemp}°C`)
+        //Logger.i("SystemStat", `Averaged ${root.intelTempValues.length} CPU thermal sensors: ${root.cpuTemp}°C`)
       } else {
-        Logger.warn("SystemStat", "No temperature sensors found for coretemp")
+        Logger.w("SystemStat", "No temperature sensors found for coretemp")
         root.cpuTemp = 0
       }
       return

@@ -18,6 +18,7 @@ Singleton {
   property bool fuzzelAvailable: false
   property bool gpuScreenRecorderAvailable: false
   property bool wlsunsetAvailable: false
+  property bool app2unitAvailable: false
 
   // Discord client auto-detection
   property var availableDiscordClients: []
@@ -27,14 +28,25 @@ Singleton {
 
   // Function to detect Discord client by checking config directories
   function detectDiscordClient() {
-    // Build list of client names from MatugenTemplates
-    var clientNames = []
+    // Build shell script to check each client
+    var scriptParts = ["available_clients=\"\";"]
+
     for (var i = 0; i < MatugenTemplates.discordClients.length; i++) {
-      clientNames.push(MatugenTemplates.discordClients[i].name)
+      var client = MatugenTemplates.discordClients[i]
+      var clientName = client.name
+
+      // Check if this client requires themes folder to exist
+      if (client.requiresThemesFolder) {
+        scriptParts.push("if [ -d \"$HOME/.config/" + clientName + "/themes\" ]; then available_clients=\"$available_clients " + clientName + "\"; fi;")
+      } else {
+        scriptParts.push("if [ -d \"$HOME/.config/" + clientName + "\" ]; then available_clients=\"$available_clients " + clientName + "\"; fi;")
+      }
     }
 
+    scriptParts.push("echo \"$available_clients\"")
+
     // Use a Process to check directory existence for all clients
-    discordDetector.command = ["sh", "-c", "available_clients=\"\"; " + "for client in " + clientNames.join(" ") + "; do " + "  if [ -d \"$HOME/.config/$client\" ]; then " + "    available_clients=\"$available_clients $client\"; " + "  fi; " + "done; " + "echo \"$available_clients\""]
+    discordDetector.command = ["sh", "-c", scriptParts.join(" ")]
     discordDetector.running = true
   }
 
@@ -64,12 +76,12 @@ Singleton {
             }
           }
 
-          Logger.log("ProgramChecker", "Detected Discord clients:", detectedClients.join(", "))
+          Logger.i("ProgramChecker", "Detected Discord clients:", detectedClients.join(", "))
         }
       }
 
       if (availableDiscordClients.length === 0) {
-        Logger.log("ProgramChecker", "No Discord clients detected")
+        Logger.d("ProgramChecker", "No Discord clients detected")
       }
     }
 
@@ -85,6 +97,7 @@ Singleton {
                                             "ghosttyAvailable": ["which", "ghostty"],
                                             "footAvailable": ["which", "foot"],
                                             "fuzzelAvailable": ["which", "fuzzel"],
+                                            "app2unitAvailable": ["which", "app2unit"],
                                             "gpuScreenRecorderAvailable": ["sh", "-c", "command -v gpu-screen-recorder >/dev/null 2>&1 || (command -v flatpak >/dev/null 2>&1 && flatpak list --app | grep -q 'com.dec05eba.gpu_screen_recorder')"],
                                             "wlsunsetAvailable": ["which", "wlsunset"]
                                           })
@@ -159,7 +172,7 @@ Singleton {
   // Function to check a specific program
   function checkProgram(programProperty) {
     if (!programsToCheck.hasOwnProperty(programProperty)) {
-      Logger.warn("ProgramChecker", "Unknown program property:", programProperty)
+      Logger.w("ProgramChecker", "Unknown program property:", programProperty)
       return
     }
 
@@ -170,14 +183,14 @@ Singleton {
 
   // Manual function to test Discord detection (for debugging)
   function testDiscordDetection() {
-    Logger.log("ProgramChecker", "Testing Discord detection...")
-    Logger.log("ProgramChecker", "HOME:", Quickshell.env("HOME"))
+    Logger.d("ProgramChecker", "Testing Discord detection...")
+    Logger.d("ProgramChecker", "HOME:", Quickshell.env("HOME"))
 
     // Test each client directory
     for (var i = 0; i < MatugenTemplates.discordClients.length; i++) {
       var client = MatugenTemplates.discordClients[i]
       var configDir = client.configPath.replace("~", Quickshell.env("HOME"))
-      Logger.log("ProgramChecker", "Checking:", configDir)
+      Logger.d("ProgramChecker", "Checking:", configDir)
     }
 
     detectDiscordClient()

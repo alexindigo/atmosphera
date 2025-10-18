@@ -8,11 +8,10 @@ import qs.Commons
 Singleton {
   id: root
 
-  property bool debug: false
-  property string debugForceLanguage: ""
 
   property bool isLoaded: false
   property string langCode: ""
+  property string systemDetectedLangCode: ""
   property var availableLanguages: []
   property var translations: ({})
   property var fallbackTranslations: ({})
@@ -36,7 +35,7 @@ Singleton {
         var output = stdoutCollector.text || ""
         parseDirectoryListing(output)
       } else {
-        Logger.error("I18n", `Failed to scan translation directory`)
+        Logger.e("I18n", `Failed to scan translation directory`)
         // Fallback to default languages
         availableLanguages = ["en"]
         detectLanguage()
@@ -53,21 +52,19 @@ Singleton {
       try {
         var data = JSON.parse(text())
         root.translations = data
-        Logger.log("I18n", `Loaded translations for "${root.langCode}"`)
-        if (debug) {
-          Logger.log("I18n", `Available root keys: ${Object.keys(data).join(", ")}`)
-        }
+        Logger.i("I18n", `Loaded translations for "${root.langCode}"`)
+        Logger.d("I18n", `Available root keys: ${Object.keys(data).join(", ")}`)
 
         root.isLoaded = true
         root.translationsLoaded()
       } catch (e) {
-        Logger.error("I18n", `Failed to parse translation file: ${e}`)
+        Logger.e("I18n", `Failed to parse translation file: ${e}`)
         setLanguage("en")
       }
     }
     onLoadFailed: function (error) {
       setLanguage("en")
-      Logger.error("I18n", `Failed to load translation file: ${error}`)
+      Logger.e("I18n", `Failed to load translation file: ${error}`)
     }
   }
 
@@ -80,24 +77,24 @@ Singleton {
       try {
         var data = JSON.parse(text())
         root.fallbackTranslations = data
-        Logger.log("I18n", `Loaded english fallback translations`)
+        Logger.d("I18n", `Loaded english fallback translations`)
       } catch (e) {
-        Logger.error("I18n", `Failed to parse fallback translation file: ${e}`)
+        Logger.e("I18n", `Failed to parse fallback translation file: ${e}`)
       }
     }
     onLoadFailed: function (error) {
-      Logger.error("I18n", `Failed to load fallback translation file: ${error}`)
+      Logger.e("I18n", `Failed to load fallback translation file: ${error}`)
     }
   }
 
   Component.onCompleted: {
-    Logger.log("I18n", "Service started")
+    Logger.i("I18n", "Service started")
     scanAvailableLanguages()
   }
 
   // -------------------------------------------
   function scanAvailableLanguages() {
-    Logger.log("I18n", "Scanning for available translation files...")
+    Logger.d("I18n", "Scanning for available translation files...")
     directoryScanner.running = true
   }
 
@@ -107,7 +104,7 @@ Singleton {
 
     try {
       if (!output || output.trim() === "") {
-        Logger.warn("I18n", "Empty directory listing output")
+        Logger.w("I18n", "Empty directory listing output")
         availableLanguages = ["en"]
         detectLanguage()
         return
@@ -136,17 +133,17 @@ Singleton {
       }
 
       if (languages.length === 0) {
-        Logger.warn("I18n", "No translation files found, using fallback")
+        Logger.w("I18n", "No translation files found, using fallback")
         languages = ["en"] // Fallback
       }
 
       availableLanguages = languages
-      Logger.log("I18n", `Found ${languages.length} available languages: ${languages.join(', ')}`)
+      Logger.d("I18n", `Found ${languages.length} available languages: ${languages.join(', ')}`)
 
       // Detect language after scanning
       detectLanguage()
     } catch (e) {
-      Logger.error("I18n", `Failed to parse directory listing: ${e}`)
+      Logger.e("I18n", `Failed to parse directory listing: ${e}`)
       // Fallback to default languages
       availableLanguages = ["en"]
       detectLanguage()
@@ -155,59 +152,58 @@ Singleton {
 
   // -------------------------------------------
   function detectLanguage() {
-    Logger.log("I18n", `detectLanguage() called. Available languages: [${availableLanguages.join(', ')}]`)
+    Logger.d("I18n", `detectLanguage() called. Available languages: [${availableLanguages.join(', ')}]`)
 
     if (availableLanguages.length === 0) {
-      Logger.warn("I18n", "No available languages found")
+      Logger.w("I18n", "No available languages found")
       return
     }
 
-    if (debug && debugForceLanguage !== "") {
-      Logger.log("I18n", `Debug mode: forcing language to "${debugForceLanguage}"`)
-      if (availableLanguages.includes(debugForceLanguage)) {
-        setLanguage(debugForceLanguage)
-        return
-      } else {
-        Logger.warn("I18n", `Debug language "${debugForceLanguage}" not available in [${availableLanguages.join(', ')}]`)
-      }
-    }
+    var detectedLang = ""
 
-    // Detect user's favorite locale - languages
+    // First, determine the system's preferred language
     for (var i = 0; i < Qt.locale().uiLanguages.length; i++) {
       const fullUserLang = Qt.locale().uiLanguages[i]
 
-      // Try full code match (such as zh CN, en US)
       if (availableLanguages.includes(fullUserLang)) {
-        Logger.log("I18n", `Exact match found: "${fullUserLang}"`)
-        setLanguage(fullUserLang)
-        return
+        detectedLang = fullUserLang
+        break
       }
 
-      // If full code match fails, try short code matching (such as zh, en)
       const shortUserLang = fullUserLang.substring(0, 2)
       if (availableLanguages.includes(shortUserLang)) {
-        Logger.log("I18n", `Short code match found: "${shortUserLang}" from "${fullUserLang}"`)
-        setLanguage(shortUserLang)
-        return
+        detectedLang = shortUserLang
+        break
       }
-
-      Logger.log("I18n", `No match for system language: "${fullUserLang}"`)
     }
 
-    // Fallback to first available language (preferably "en" if available)
-    const fallbackLang = availableLanguages.includes("en") ? "en" : availableLanguages[0]
-    setLanguage(fallbackLang)
+    // If no system language is found among available languages, fallback
+    if (detectedLang === "") {
+      detectedLang = availableLanguages.includes("en") ? "en" : availableLanguages[0]
+    }
+
+    root.systemDetectedLangCode = detectedLang
+    Logger.d("I18n", `System detected language: "${root.systemDetectedLangCode}"`)
+
+    // Now, apply the language: user-defined, then system-detected
+    if (Settings.data.general.language !== "" && availableLanguages.includes(Settings.data.general.language)) {
+      Logger.d("I18n", `User-defined language found: "${Settings.data.general.language}"`)
+      setLanguage(Settings.data.general.language)
+    } else {
+      Logger.d("I18n", `No user-defined language, using system detected: "${root.systemDetectedLangCode}"`)
+      setLanguage(root.systemDetectedLangCode)
+    }
   }
 
   // -------------------------------------------
   function setLanguage(newLangCode) {
     if (newLangCode !== langCode && availableLanguages.includes(newLangCode)) {
       langCode = newLangCode
-      Logger.log("I18n", `Language set to "${langCode}"`)
+      Logger.i("I18n", `Language set to "${langCode}"`)
       languageChanged(langCode)
       loadTranslations()
     } else if (!availableLanguages.includes(newLangCode)) {
-      Logger.warn("I18n", `Language "${newLangCode}" is not available`)
+      Logger.w("I18n", `Language "${newLangCode}" is not available`)
     }
   }
 
@@ -219,7 +215,7 @@ Singleton {
     const filePath = `file://${Quickshell.shellDir}/Assets/Translations/${langCode}.json`
     fileView.path = filePath
     isLoaded = false
-    Logger.log("I18n", `Loading translations: ${langCode}`)
+    Logger.d("I18n", `Loading translations: ${langCode}`)
 
     // Only load fallback translations if we are not using english and english is available
     if (langCode !== "en" && availableLanguages.includes("en")) {
@@ -271,7 +267,7 @@ Singleton {
   // -------------------------------------------
   // Reload translations (useful for development)
   function reload() {
-    Logger.log("I18n", "Reloading translations")
+    Logger.d("I18n", "Reloading translations")
     loadTranslations()
   }
 
@@ -282,9 +278,7 @@ Singleton {
       interpolations = {}
 
     if (!isLoaded) {
-      if (debug) {
-        Logger.warn("I18n", "Translations not loaded yet")
-      }
+      Logger.d("I18n", "Translations not loaded yet")
       return key
     }
 
@@ -294,20 +288,12 @@ Singleton {
     // Look-up translation in the active language
     var value = translations
     var notFound = false
-    if (debug) {
-      Logger.log("I18n", `Looking up key: "${key}"`)
-    }
     for (var i = 0; i < keys.length; i++) {
       if (value && typeof value === "object" && keys[i] in value) {
         value = value[keys[i]]
-        if (debug) {
-          Logger.log("I18n", `Found key part "${keys[i]}"`)
-        }
       } else {
-        if (debug) {
-          Logger.warn("I18n", `Translation key "${key}" not found at part "${keys[i]}"`)
-          Logger.warn("I18n", `Available keys: ${Object.keys(value || {}).join(", ")}`)
-        }
+        Logger.d("I18n", `Translation key "${key}" not found at part "${keys[i]}"`)
+        Logger.d("I18n", `Available keys: ${Object.keys(value || {}).join(", ")}`)
         notFound = true
         break
       }
@@ -333,9 +319,7 @@ Singleton {
     }
 
     if (typeof value !== "string") {
-      if (debug) {
-        Logger.warn("I18n", `Translation key "${key}" is not a string`)
-      }
+      Logger.d("I18n", `Translation key "${key}" is not a string`)
       return key
     }
 

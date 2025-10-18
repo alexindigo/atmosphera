@@ -32,6 +32,16 @@
           "reset": "Eckenradius des Bildschirms zurücksetzen"
         }
       },
+      "lockscreen": {
+        "section": {
+          "label": "Sperrbildschirm",
+          "description": "Sperrbildschirm-Verhalten konfigurieren."
+        },
+        "lock-on-suspend": {
+          "label": "Beim Standby sperren",
+          "description": "Bildschirm automatisch sperren, wenn das System in den Standby-Modus wechselt."
+        }
+      },
       "fonts": {
         "section": {
           "label": "Schriftarten",
@@ -58,6 +68,17 @@
           }
         },
         "reset-scaling": "Skalierung zurücksetzen"
+      },
+      "language": {
+        "section": {
+          "label": "Sprache",
+          "description": "Wählen Sie Ihre bevorzugte Sprache für die Anwendung."
+        },
+        "select": {
+          "label": "Anwendungssprache",
+          "description": "Wählen Sie die in der Anwendungsoberfläche verwendete Sprache.",
+          "auto-detect": "Automatisch"
+        }
       }
     },
     "audio": {
@@ -260,6 +281,10 @@
         "floating-distance": {
           "label": "Dock-Schwebeabstand",
           "description": "Schwebeabstand vom Bildschirmrand anpassen."
+        },
+        "icon-size": {
+          "label": "Dock-Größe",
+          "description": "Gesamtgröße des Docks anpassen."
         },
         "colorize-icons": {
           "label": "Symbole einfärben",
@@ -475,10 +500,6 @@
           "label": "Farbquelle",
           "description": "Haupteinstellungen für Noctalias Farben."
         },
-        "dark-mode": {
-          "label": "Dunkler Modus",
-          "description": "Wechselt zu einem dunkleren Theme für einfachere Betrachtung bei Nacht."
-        },
         "use-wallpaper-colors": {
           "label": "Hintergrundbild-Farben verwenden",
           "description": "Farbschemata aus Ihrem Hintergrundbild mit Matugen generieren. Extrahiert automatisch Farben für ein kohärentes Design."
@@ -486,6 +507,19 @@
         "matugen-scheme-type": {
           "label": "Matugen-Schema-Typ",
           "description": "Wähle einen Farbstil für Matugen aus."
+        }
+      },
+      "dark-mode": {
+        "switch": {
+          "label": "Dunkler Modus",
+          "description": "Wechselt zu einem dunkleren Theme für einfachere Betrachtung bei Nacht."
+        },
+        "mode": {
+          "label": "Automatischer dunkler Modus",
+          "description": "Ermöglicht automatisches Wechseln zwischen dem hellen und dunklen Modus.",
+          "off": "Aus",
+          "manual": "Manuell",
+          "location": "Standort"
         }
       },
       "predefined": {
@@ -537,7 +571,7 @@
           },
           "discord": {
             "description": "Schreibt {filepath} für {client}",
-            "description-missing": "Kein Discord-Client erkannt. Installieren Sie vesktop, webcord, armcord, equibop, lightcord oder dorion."
+            "description-missing": "Kein Discord-Client erkannt. Installieren Sie vencord, vesktop, webcord, armcord, equibop, lightcord oder dorion."
           },
           "pywalfox": {
             "description": "Schreibt {filepath} und führt pywalfox update aus",
@@ -549,7 +583,7 @@
           "description": "Zusätzliche Konfigurationsoptionen.",
           "user-templates": {
             "label": "Benutzer-Vorlagen",
-            "description": "Benutzerdefinierte Matugen-Konfiguration aus ~/.config/matugen/config.toml aktivieren"
+            "description": "Benutzerdefinierte Matugen-Konfiguration aktivieren. Eine Vorlagendatei wird beim ersten Aktivieren unter ~/.config/noctalia/user-templates.toml erstellt"
           }
         },
         "section": {
@@ -575,6 +609,10 @@
         "section": {
           "label": "Wetter",
           "description": "Bevorzugte Temperatureinheit wählen."
+        },
+        "enabled": {
+          "label": "Wetter aktivieren",
+          "description": "Wetterinformationen in der gesamten Benutzeroberfläche anzeigen und Wetterdaten abrufen. Wenn deaktiviert, werden alle Wetterelemente ausgeblendet und es werden keine Netzwerkanfragen gestellt."
         },
         "fahrenheit": {
           "label": "Temperatur in Fahrenheit (°F) anzeigen",
@@ -742,7 +780,7 @@
           "label": "Widgets für Kurzbefehle"
         },
         "sectionLeft": "Links",
-        "sectionRight": "Richtig"
+        "sectionRight": "Rechts"
       }
     },
     "user-interface": {
@@ -914,9 +952,13 @@
           "label": "Scrollmodus",
           "description": "Steuern, wann Textscrolling für lange Fenstertitel aktiviert ist."
         },
-        "width": {
-          "description": "Steuert die horizontale Größe des Widgets.",
-          "label": "Widget-Breite"
+        "max-width": {
+          "label": "Maximale Breite",
+          "description": "Stellt die maximale Horizontalgröße des Widgets ein. Das Widget wird sich an kürzere Inhalte anpassen."
+        },
+        "use-fixed-width": {
+          "label": "Feste Breite verwenden",
+          "description": "Wenn aktiviert, verwendet das Widget immer die maximale Breite, anstatt sich dynamisch an den Inhalt anzupassen."
         },
         "colorize-icons": {
           "label": "Symbole einfärben",
@@ -1067,6 +1109,14 @@
           "label": "Visualizer-Typ",
           "description": "Stil des Audio-Visualizers auswählen."
         },
+        "max-width": {
+          "label": "Maximale Breite",
+          "description": "Stellt die maximale Horizontalgröße des Widgets ein. Das Widget wird sich an kürzere Inhalte anpassen."
+        },
+        "use-fixed-width": {
+          "label": "Feste Breite verwenden",
+          "description": "Wenn aktiviert, verwendet das Widget immer die maximale Breite, anstatt sich dynamisch an den Inhalt anzupassen."
+        },
         "scrolling-mode": {
           "label": "Scrollmodus",
           "description": "Steuern, wann Textscrolling für lange Track-Titel aktiviert ist."
@@ -1088,7 +1138,7 @@
         },
         "horizontal-bar": {
           "label": "Horizontale Statusleiste",
-          "description": "Tipp: Verwenden Sie \\n, um einen Zeilenumbruch zu erstellen."
+          "description": "Tipp: Verwenden Sie \n, um einen Zeilenumbruch zu erstellen."
         },
         "vertical-bar": {
           "label": "Vertikale Statusleiste",
@@ -1203,6 +1253,9 @@
   "calendar": {
     "panel": {
       "week": "Woche"
+    },
+    "weather": {
+      "loading": "Wetter wird geladen…"
     }
   },
   "tooltips": {
@@ -1230,26 +1283,26 @@
     "keep-awake": "Wach bleiben",
     "enable-keep-awake": "Wach bleiben aktivieren",
     "disable-keep-awake": "Wach bleiben deaktivieren",
-    "wallpaper-selector": "Linksklick: Hintergrundbild-Auswahl öffnen.\\nRechtsklick: Zufälliges Hintergrundbild setzen.",
+    "wallpaper-selector": "Linksklick: Hintergrundbild-Auswahl öffnen.\nRechtsklick: Zufälliges Hintergrundbild setzen.",
     "do-not-disturb-enabled": "'Nicht stören' aktiviert",
     "do-not-disturb-disabled": "'Nicht stören' deaktiviert",
     "connect-disconnect-devices": "Linksklick zum Verbinden. Rechtsklick zum Vergessen.",
     "set-power-profile": "'{profile}' Energieprofil setzen",
     "switch-to-light-mode": "Zum hellen Modus wechseln",
     "switch-to-dark-mode": "Zum dunklen Modus wechseln",
-    "night-light-disabled": "Nachtlicht ist deaktiviert.\\nLinksklick zum Wechseln des Modus.\\nRechtsklick für Einstellungen.",
-    "night-light-enabled": "Nachtlicht ist aktiviert.\\nLinksklick zum Wechseln des Modus.\\nRechtsklick für Einstellungen.",
-    "night-light-forced": "Nachtlicht ist erzwungen.\\nLinksklick zum Wechseln des Modus.\\nRechtsklick für Einstellungen.",
-    "night-light-not-installed": "Nachtlicht ist nicht verfügbar.\\nwlsunset ist nicht installiert.",
+    "night-light-disabled": "Nachtlicht ist deaktiviert.\nLinksklick zum Wechseln des Modus.\nRechtsklick für Einstellungen.",
+    "night-light-enabled": "Nachtlicht ist aktiviert.\nLinksklick zum Wechseln des Modus.\nRechtsklick für Einstellungen.",
+    "night-light-forced": "Nachtlicht ist erzwungen.\nLinksklick zum Wechseln des Modus.\nRechtsklick für Einstellungen.",
+    "night-light-not-installed": "Nachtlicht ist nicht verfügbar.\nwlsunset ist nicht installiert.",
     "click-to-start-recording": "Klicken zum Starten der Aufnahme",
     "click-to-stop-recording": "Klicken zum Stoppen der Aufnahme",
     "open-control-center": "Kontrollzentrum öffnen",
-    "volume-at": "Lautstärke bei {volume}%\\nLinksklick zum Stumm-/Lautschalten. Rechtsklick für Einstellungen.\\nScrollen zum Ändern der Lautstärke.",
-    "microphone-volume-at": "Mikrofon-Lautstärke bei {volume}%\\nLinksklick zum Stumm-/Lautschalten. Rechtsklick für Einstellungen.\\nScrollen zum Ändern der Lautstärke.",
+    "volume-at": "Lautstärke bei {volume}%\nLinksklick zum Stumm-/Lautschalten. Rechtsklick für Einstellungen.\nScrollen zum Ändern der Lautstärke.",
+    "microphone-volume-at": "Mikrofon-Lautstärke bei {volume}%\nLinksklick zum Stumm-/Lautschalten. Rechtsklick für Einstellungen.\nScrollen zum Ändern der Lautstärke.",
     "manage-wifi": "WLAN verwalten",
     "bluetooth-devices": "Bluetooth-Geräte",
-    "open-notification-history-enable-dnd": "Benachrichtigungsverlauf öffnen\\nRechtsklick um 'Nicht stören' zu aktivieren.",
-    "open-notification-history-disable-dnd": "Benachrichtigungsverlauf öffnen\\nRechtsklick um 'Nicht stören' zu deaktivieren.",
+    "open-notification-history-enable-dnd": "Benachrichtigungsverlauf öffnen\nRechtsklick um 'Nicht stören' zu aktivieren.",
+    "open-notification-history-disable-dnd": "Benachrichtigungsverlauf öffnen\nRechtsklick um 'Nicht stören' zu deaktivieren.",
     "open-wallpaper-selector": "Hintergrundbild-Auswahl öffnen",
     "previous-media": "Vorheriges Medium",
     "pause": "Pausieren",
@@ -1322,7 +1375,8 @@
         "bottom_left": "Unten links",
         "bottom_right": "Unten rechts",
         "bottom_center": "Unten mittig",
-        "top_center": "Oben mittig"
+        "top_center": "Oben mittig",
+        "center": "Mitte"
       },
       "quickSettingsStyle": {
         "modern": "Modern",
@@ -1444,6 +1498,11 @@
     "discharging-rate": "Entladerate: {rate} W.",
     "charging": "Wird geladen.",
     "discharging": "Wird entladen.",
+    "plugged-in": "Angeschlossen.",
+    "idle": "Leerlauf.",
+    "time-left": "Verbleibende Zeit: {time}.",
+    "time-until-full": "Zeit bis vollständig geladen: {time}.",
+    "health": "Zustand: {percent}%",
     "panel": {
       "title": "Ladeschwelle",
       "full": "Volle Kapazität ({percent}%)",
@@ -1621,6 +1680,35 @@
     "missing-control-center": {
       "label": "Letztes Control-Center-Widget entfernt",
       "description": "Das Control-Center-Widget wurde aus der Leiste entfernt. Um es erneut über die Leiste zu öffnen, fügen Sie das Widget wieder hinzu. Sie können es auch durch Rechtsklick auf die Leiste öffnen."
+    }
+  },
+  "setup": {
+    "customize": {
+      "header": "Erlebnis anpassen",
+      "subheader": "Leistenposition, Dichte, Skalierung und mehr einstellen."
+    },
+    "appearance": {
+      "header": "Erscheinungsbild",
+      "subheader": "Dunkelmodus und Farbquellen wählen (Matugen oder vordefiniert)."
+    },
+    "wallpaper": {
+      "header": "Wähle dein Hintergrundbild",
+      "subheader": "Bestimme die Stimmung mit einem schönen Hintergrund.",
+      "select-prompt": "Wähle unten ein Hintergrundbild",
+      "preview-error": "Bild konnte nicht geladen werden",
+      "none-in-dir": "Keine Hintergrundbilder im Verzeichnis gefunden",
+      "no-dir": "Kein Hintergrundbild-Verzeichnis ausgewählt",
+      "no-valid": "Keine gültigen Bilddateien gefunden in: {dir}",
+      "choose-dir": "Wähle ein Verzeichnis mit deinen Hintergrundbildern",
+      "dir": {
+        "label": "Hintergrundbild-Verzeichnis",
+        "description": "Wähle den Ordner mit deinen Hintergrundbildern",
+        "browse": "Ordner auswählen",
+        "select-title": "Hintergrundbild-Ordner wählen"
+      }
+    },
+    "welcome": {
+      "note": "Nur ein paar Grundeinstellungen – alle Optionen findest du in den Einstellungen"
     }
   }
 }

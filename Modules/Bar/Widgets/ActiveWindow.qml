@@ -18,6 +18,7 @@ Item {
   property string section: ""
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
+  property real scaling: 1.0
 
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
@@ -34,7 +35,10 @@ Item {
   readonly property bool showIcon: (widgetSettings.showIcon !== undefined) ? widgetSettings.showIcon : widgetMetadata.showIcon
   readonly property string hideMode: (widgetSettings.hideMode !== undefined) ? widgetSettings.hideMode : widgetMetadata.hideMode
   readonly property string scrollingMode: (widgetSettings.scrollingMode !== undefined) ? widgetSettings.scrollingMode : (widgetMetadata.scrollingMode !== undefined ? widgetMetadata.scrollingMode : "hover")
-  readonly property int widgetWidth: (widgetSettings.width !== undefined) ? widgetSettings.width : Math.max(widgetMetadata.width, screen.width * 0.06)
+
+  // Maximum widget width with user settings support
+  readonly property real maxWidth: (widgetSettings.maxWidth !== undefined) ? widgetSettings.maxWidth : Math.max(widgetMetadata.maxWidth, screen ? screen.width * 0.06 : 0)
+  readonly property bool useFixedWidth: (widgetSettings.useFixedWidth !== undefined) ? widgetSettings.useFixedWidth : widgetMetadata.useFixedWidth
 
   readonly property bool isVerticalBar: (Settings.data.bar.position === "left" || Settings.data.bar.position === "right")
   readonly property bool hasFocusedWindow: CompositorService.getFocusedWindow() !== null
@@ -42,7 +46,7 @@ Item {
   readonly property string fallbackIcon: "user-desktop"
 
   implicitHeight: visible ? (isVerticalBar ? calculatedVerticalDimension() : Style.barHeight) : 0
-  implicitWidth: visible ? (isVerticalBar ? calculatedVerticalDimension() : widgetWidth) : 0
+  implicitWidth: visible ? (isVerticalBar ? calculatedVerticalDimension() : dynamicWidth) : 0
 
   // "visible": Always Visible, "hidden": Hide When Empty, "transparent": Transparent When Empty
   visible: hideMode !== "hidden" || hasFocusedWindow
@@ -55,8 +59,44 @@ Item {
   }
 
   function calculatedVerticalDimension() {
-    const ratio = (Settings.data.bar.density === "mini") ? 0.67 : 0.8
-    return Math.round(Style.baseWidgetSize * ratio)
+    return Math.round((Style.baseWidgetSize - 5) * scaling)
+  }
+
+  function calculateContentWidth() {
+    // Calculate the actual content width based on visible elements
+    var contentWidth = 0
+    var margins = Style.marginS * scaling * 2 // Left and right margins
+
+    // Icon width (if visible)
+    if (showIcon) {
+      contentWidth += 18 * scaling
+      contentWidth += Style.marginS * scaling // Spacing after icon
+    }
+
+    // Text width (use the measured width)
+    contentWidth += fullTitleMetrics.contentWidth
+
+    // Additional small margin for text
+    contentWidth += Style.marginXXS * 2
+
+    // Add container margins
+    contentWidth += margins
+
+    return Math.ceil(contentWidth)
+  }
+
+  // Dynamic width: adapt to content but respect maximum width setting
+  readonly property real dynamicWidth: {
+    // If using fixed width mode, always use maxWidth
+    if (useFixedWidth) {
+      return maxWidth
+    }
+    // Otherwise, adapt to content
+    if (!hasFocusedWindow) {
+      return maxWidth
+    }
+    // Use content width but don't exceed user-set maximum width
+    return Math.min(calculateContentWidth(), maxWidth)
   }
 
   function getAppIcon() {
@@ -72,7 +112,7 @@ Item {
             return iconResult
           }
         } catch (iconError) {
-          Logger.warn("ActiveWindow", "Error getting icon from CompositorService:", iconError)
+          Logger.w("ActiveWindow", "Error getting icon from CompositorService:", iconError)
         }
       }
 
@@ -90,14 +130,14 @@ Item {
               }
             }
           } catch (fallbackError) {
-            Logger.warn("ActiveWindow", "Error getting icon from ToplevelManager:", fallbackError)
+            Logger.w("ActiveWindow", "Error getting icon from ToplevelManager:", fallbackError)
           }
         }
       }
 
       return ThemeIcons.iconFromName(fallbackIcon)
     } catch (e) {
-      Logger.warn("ActiveWindow", "Error in getAppIcon:", e)
+      Logger.w("ActiveWindow", "Error in getAppIcon:", e)
       return ThemeIcons.iconFromName(fallbackIcon)
     }
   }
@@ -107,7 +147,7 @@ Item {
     id: fullTitleMetrics
     visible: false
     text: windowTitle
-    pointSize: Style.fontSizeS
+    pointSize: Style.fontSizeS * scaling
     applyUiScale: false
     font.weight: Style.fontWeightMedium
   }
@@ -117,29 +157,37 @@ Item {
     visible: root.visible
     anchors.left: parent.left
     anchors.verticalCenter: parent.verticalCenter
-    width: isVerticalBar ? root.width : widgetWidth
+    width: isVerticalBar ? root.width : dynamicWidth
     height: isVerticalBar ? width : Style.capsuleHeight
     radius: isVerticalBar ? width / 2 : Style.radiusM
     color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
+    // Smooth width transition
+    Behavior on width {
+      NumberAnimation {
+        duration: Style.animationNormal
+        easing.type: Easing.InOutCubic
+      }
+    }
+
     Item {
       id: mainContainer
       anchors.fill: parent
-      anchors.leftMargin: isVerticalBar ? 0 : Style.marginS
-      anchors.rightMargin: isVerticalBar ? 0 : Style.marginS
+      anchors.leftMargin: isVerticalBar ? 0 : Style.marginS * scaling
+      anchors.rightMargin: isVerticalBar ? 0 : Style.marginS * scaling
 
       // Horizontal layout for top/bottom bars
       RowLayout {
         id: rowLayout
         anchors.verticalCenter: parent.verticalCenter
-        spacing: Style.marginS
+        spacing: Style.marginS * scaling
         visible: !isVerticalBar
         z: 1
 
         // Window icon
         Item {
-          Layout.preferredWidth: 18
-          Layout.preferredHeight: 18
+          Layout.preferredWidth: 18 * scaling
+          Layout.preferredHeight: 18 * scaling
           Layout.alignment: Qt.AlignVCenter
           visible: showIcon
 
@@ -254,7 +302,7 @@ Item {
               NText {
                 id: titleText
                 text: windowTitle
-                pointSize: Style.fontSizeS
+                pointSize: Style.fontSizeS * scaling
                 applyUiScale: false
                 font.weight: Style.fontWeightMedium
                 verticalAlignment: Text.AlignVCenter
@@ -265,7 +313,7 @@ Item {
               NText {
                 text: windowTitle
                 font: titleText.font
-                pointSize: Style.fontSizeS
+                pointSize: Style.fontSizeS * scaling
                 applyUiScale: false
                 verticalAlignment: Text.AlignVCenter
                 color: Color.mOnSurface
@@ -316,7 +364,7 @@ Item {
 
         // Window icon
         Item {
-          width: Style.baseWidgetSize * 0.5
+          width: Style.baseWidgetSize * 0.5 * scaling
           height: width
           anchors.centerIn: parent
           visible: windowTitle !== ""
@@ -367,7 +415,7 @@ Item {
         windowIcon.source = Qt.binding(getAppIcon)
         windowIconVertical.source = Qt.binding(getAppIcon)
       } catch (e) {
-        Logger.warn("ActiveWindow", "Error in onActiveWindowChanged:", e)
+        Logger.w("ActiveWindow", "Error in onActiveWindowChanged:", e)
       }
     }
     function onWindowListChanged() {
@@ -375,7 +423,7 @@ Item {
         windowIcon.source = Qt.binding(getAppIcon)
         windowIconVertical.source = Qt.binding(getAppIcon)
       } catch (e) {
-        Logger.warn("ActiveWindow", "Error in onWindowListChanged:", e)
+        Logger.w("ActiveWindow", "Error in onWindowListChanged:", e)
       }
     }
   }

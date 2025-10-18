@@ -32,6 +32,16 @@
           "reset": "重置屏幕圆角半径"
         }
       },
+      "lockscreen": {
+        "section": {
+          "label": "锁屏",
+          "description": "配置锁屏行为。"
+        },
+        "lock-on-suspend": {
+          "label": "挂起时锁定",
+          "description": "在系统挂起时自动锁定屏幕。"
+        }
+      },
       "fonts": {
         "reset-scaling": "恢复默认缩放",
         "section": {
@@ -57,6 +67,17 @@
             "label": "默认等宽字体大小",
             "description": "增大或减小等宽文本的尺寸"
           }
+        }
+      },
+      "language": {
+        "section": {
+          "label": "语言",
+          "description": "选择您偏好的应用程序语言。"
+        },
+        "select": {
+          "label": "应用程序语言",
+          "description": "选择应用程序界面中使用的语言。",
+          "auto-detect": "自动检测"
         }
       }
     },
@@ -260,6 +281,10 @@
         "floating-distance": {
           "label": "Dock 浮动距离",
           "description": "调整距离屏幕边缘的浮动距离。"
+        },
+        "icon-size": {
+          "label": "Dock 大小",
+          "description": "调整 Dock 的整体大小。"
         },
         "colorize-icons": {
           "label": "着色图标",
@@ -475,10 +500,6 @@
           "label": "颜色来源",
           "description": "Noctalia 颜色的主要设置。"
         },
-        "dark-mode": {
-          "label": "深色模式",
-          "description": "切换到更暗的主题，便于夜间观看。"
-        },
         "use-wallpaper-colors": {
           "label": "使用壁纸颜色",
           "description": "使用 Matugen 从壁纸生成颜色方案。自动提取颜色以创建一致的主题。"
@@ -486,6 +507,12 @@
         "matugen-scheme-type": {
           "label": "Matugen 配色方案类型",
           "description": "为 Matugen 选择配色方案生成算法。"
+        }
+      },
+      "dark-mode": {
+        "switch": {
+          "label": "深色模式",
+          "description": "切换到更暗的主题，便于夜间观看。"
         }
       },
       "predefined": {
@@ -537,7 +564,7 @@
           },
           "discord": {
             "description": "为 {client} 写入 {filepath}",
-            "description-missing": "未检测到 Discord 客户端。请安装 vesktop、webcord、armcord、equibop、lightcord 或 dorion。"
+            "description-missing": "未检测到 Discord 客户端。请安装 vencord、vesktop、webcord、armcord、equibop、lightcord 或 dorion。"
           },
           "pywalfox": {
             "description": "写入 {filepath} 并运行 pywalfox update",
@@ -549,7 +576,7 @@
           "description": "其他配置选项。",
           "user-templates": {
             "label": "用户模板",
-            "description": "启用来自 ~/.config/matugen/config.toml 的用户定义 Matugen 配置"
+            "description": "启用用户定义的 Matugen 配置。首次启用时将在 ~/.config/noctalia/user-templates.toml 创建模板文件"
           }
         },
         "section": {
@@ -575,6 +602,10 @@
         "section": {
           "label": "天气",
           "description": "选择您喜欢的温度单位。"
+        },
+        "enabled": {
+          "label": "启用天气",
+          "description": "在整个界面中显示天气信息并获取天气数据。禁用后，所有天气元素将被隐藏，不会进行网络请求。"
         },
         "fahrenheit": {
           "label": "以华氏度显示温度 (°F)",
@@ -897,9 +928,13 @@
           "label": "滚动模式",
           "description": "控制何时为长窗口标题启用文本滚动。"
         },
-        "width": {
-          "description": "控制小部件的水平尺寸。",
-          "label": "小部件宽度"
+        "max-width": {
+          "label": "最大宽度",
+          "description": "设置小部件的最大水平尺寸。当内容较短时，小部件会自动收缩以适应内容。"
+        },
+        "use-fixed-width": {
+          "label": "使用固定宽度",
+          "description": "启用后，小部件将始终使用最大宽度，而不根据内容动态调整。"
         },
         "colorize-icons": {
           "label": "着色图标",
@@ -1050,6 +1085,14 @@
           "label": "可视化器类型",
           "description": "选择要显示的音频可视化器样式。"
         },
+        "max-width": {
+          "label": "最大宽度",
+          "description": "设置小部件的最大水平尺寸。当内容较短时，小部件会自动收缩以适应内容。"
+        },
+        "use-fixed-width": {
+          "label": "使用固定宽度",
+          "description": "启用后，小部件将始终使用最大宽度，而不根据内容动态调整。"
+        },
         "scrolling-mode": {
           "label": "滚动模式",
           "description": "控制何时为长曲目标题启用文本滚动。"
@@ -1186,6 +1229,9 @@
   "calendar": {
     "panel": {
       "week": "周"
+    },
+    "weather": {
+      "loading": "正在加载天气…"
     }
   },
   "tooltips": {
@@ -1305,7 +1351,8 @@
         "bottom_left": "左下角",
         "bottom_right": "右下角",
         "bottom_center": "底部居中",
-        "top_center": "顶部居中"
+        "top_center": "顶部居中",
+        "center": "居中"
       },
       "quickSettingsStyle": {
         "modern": "现代",
@@ -1615,12 +1662,46 @@
     "discharging-rate": "放电速率：{rate} W。",
     "charging": "正在充电。",
     "discharging": "正在放电。",
+    "plugged-in": "已接通电源。",
+    "idle": "空闲。",
+    "time-left": "剩余时间：{time}。",
+    "time-until-full": "充满所需时间：{time}。",
+    "health": "健康状况：{percent}%",
     "panel": {
       "title": "充电阈值",
       "full": "完全容量 ({percent}%)",
       "balanced": "平衡 ({percent}%)",
       "lifespan": "延长寿命 ({percent}%)",
       "disabled": "电池管理器已禁用"
+    }
+  },
+  "setup": {
+    "customize": {
+      "header": "自定义体验",
+      "subheader": "调整状态栏位置、密度、缩放等。"
+    },
+    "appearance": {
+      "header": "外观",
+      "subheader": "选择深色模式与配色来源（Matugen 或预设）。"
+    },
+    "wallpaper": {
+      "header": "选择你的壁纸",
+      "subheader": "用精美壁纸营造氛围。",
+      "select-prompt": "在下方选择一张壁纸",
+      "preview-error": "图片加载失败",
+      "none-in-dir": "目录中未找到壁纸",
+      "no-dir": "未选择壁纸目录",
+      "no-valid": "在 {dir} 中未找到有效图片文件",
+      "choose-dir": "选择包含壁纸图片的目录",
+      "dir": {
+        "label": "壁纸目录",
+        "description": "选择存放壁纸的文件夹",
+        "browse": "浏览文件夹",
+        "select-title": "选择壁纸文件夹"
+      }
+    },
+    "welcome": {
+      "note": "先进行一些基础设置——更多选项可在“设置”中找到"
     }
   }
 }

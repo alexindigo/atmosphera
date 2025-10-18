@@ -143,6 +143,9 @@ ColumnLayout {
         }, {
           "key": "top_center",
           "name": I18n.tr("options.control-center.position.top_center")
+        }, {
+          "key": "center",
+          "name": I18n.tr("options.control-center.position.center")
         }]
       currentKey: Settings.data.controlCenter.position
       onSelected: function (key) {
@@ -177,7 +180,7 @@ ColumnLayout {
         root.handleDragEnd()
       }
       onItemToggled: function (index, enabled) {
-        //Logger.log("ControlCenterTab", "Item", index, "toggled to", enabled)
+        //Logger.i("ControlCenterTab", "Item", index, "toggled to", enabled)
         var newModel = cardsModel.slice()
         newModel[index] = Object.assign({}, newModel[index], {
                                           "enabled": enabled
@@ -186,7 +189,7 @@ ColumnLayout {
         saveCards()
       }
       onItemsReordered: function (fromIndex, toIndex) {
-        //Logger.log("ControlCenterTab", "Item moved from", fromIndex, "to", toIndex)
+        //Logger.i("ControlCenterTab", "Item moved from", fromIndex, "to", toIndex)
         var newModel = cardsModel.slice()
         var item = newModel.splice(fromIndex, 1)[0]
         newModel.splice(toIndex, 0, item)
@@ -321,7 +324,7 @@ ColumnLayout {
       targetArray.push(widget)
       Settings.data.controlCenter.shortcuts[toSection] = targetArray
 
-      //Logger.log("BarTab", `Moved widget ${widget.id} from ${fromSection} to ${toSection}`)
+      //Logger.i("BarTab", `Moved widget ${widget.id} from ${fromSection} to ${toSection}`)
     }
   }
 
