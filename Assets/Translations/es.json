@@ -68,6 +68,16 @@
           }
         },
         "reset-scaling": "Restablecer la escala"
+      },
+      "language": {
+        "section": {
+          "label": "Idioma",
+          "description": "Elige tu idioma preferido para la aplicación."
+        },
+        "select": {
+          "label": "Idioma de la aplicación",
+          "description": "Selecciona el idioma utilizado en la interfaz de la aplicación."
+        }
       }
     },
     "audio": {
