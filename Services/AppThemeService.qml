@@ -387,14 +387,14 @@ Singleton {
     stdout: StdioCollector {
       onStreamFinished: {
         if (this.text) {
-          Logger.i("AppThemeService", "GenerateProcess stdout:", this.text)
+          Logger.d("AppThemeService", "GenerateProcess stdout:", this.text)
         }
       }
     }
     stderr: StdioCollector {
       onStreamFinished: {
         if (this.text) {
-          Logger.w("AppThemeService", "GenerateProcess stderr:", this.text)
+          Logger.d("AppThemeService", "GenerateProcess stderr:", this.text)
         }
       }
     }
@@ -402,11 +402,12 @@ Singleton {
 
   Process {
     id: copyProcess
+    workingDirectory: Quickshell.shellDir
     running: false
     stderr: StdioCollector {
       onStreamFinished: {
         if (this.text) {
-          Logger.w("AppThemeService", "CopyProcess stderr:", this.text)
+          Logger.d("AppThemeService", "CopyProcess stderr:", this.text)
         }
       }
     }

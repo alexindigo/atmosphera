@@ -47,10 +47,9 @@ Singleton {
     lines.push("# post_hook = \"myapp --reload-theme\"")
     lines.push("")
     lines.push("# Remove this section and add your own templates")
-    lines.push("[templates.placeholder]")
-    lines.push("input_path = \"" + Quickshell.shellDir + "/Assets/MatugenTemplates/noctalia.json\"")
-    lines.push("output_path = \"" + Settings.cacheDir + "placeholder.json\"")
-    lines.push("post_hook = \"echo 'User templates enabled - replace this placeholder with your own templates'\"")
+    lines.push("#[templates.placeholder]")
+    lines.push("#input_path = \"" + Quickshell.shellDir + "/Assets/MatugenTemplates/noctalia.json\"")
+    lines.push("#output_path = \"" + Settings.cacheDir + "placeholder.json\"")
     lines.push("")
 
     return lines.join("\n") + "\n"
@@ -75,7 +74,7 @@ Singleton {
     // Write the config file
     Quickshell.execDetached(["sh", "-c", `echo '${configContent.replace(/'/g, "'\\''")}' > '${userConfigPath}'`])
 
-    Logger.i("MatugenTemplates", "User templates config written to:", userConfigPath)
+    Logger.d("MatugenTemplates", "User templates config written to:", userConfigPath)
   }
 
   // --------------------------------
