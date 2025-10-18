@@ -271,6 +271,10 @@
           "label": "Distancia de flotación del dock",
           "description": "Ajusta la distancia de flotación desde el borde de la pantalla."
         },
+        "icon-size": {
+          "label": "Tamaño del Dock",
+          "description": "Ajusta el tamaño general del Dock."
+        },
         "colorize-icons": {
           "label": "Colorear iconos",
           "description": "Aplicar colores del tema a los iconos de aplicaciones del dock (solo aplicaciones no enfocadas)."
