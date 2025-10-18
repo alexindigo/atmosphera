@@ -76,7 +76,8 @@
         },
         "select": {
           "label": "应用程序语言",
-          "description": "选择应用程序界面中使用的语言。"
+          "description": "选择应用程序界面中使用的语言。",
+          "auto-detect": "自动检测"
         }
       }
     },
