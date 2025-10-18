@@ -32,6 +32,16 @@
           "reset": "Restablecer el radio de las esquinas de la pantalla"
         }
       },
+      "lockscreen": {
+        "section": {
+          "label": "Pantalla de bloqueo",
+          "description": "Configura el comportamiento de la pantalla de bloqueo."
+        },
+        "lock-on-suspend": {
+          "label": "Bloquear al suspender",
+          "description": "Bloquear automáticamente la pantalla al suspender el sistema."
+        }
+      },
       "fonts": {
         "section": {
           "label": "Fuentes",

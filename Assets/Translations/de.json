@@ -32,6 +32,16 @@
           "reset": "Eckenradius des Bildschirms zurücksetzen"
         }
       },
+      "lockscreen": {
+        "section": {
+          "label": "Sperrbildschirm",
+          "description": "Sperrbildschirm-Verhalten konfigurieren."
+        },
+        "lock-on-suspend": {
+          "label": "Beim Standby sperren",
+          "description": "Bildschirm automatisch sperren, wenn das System in den Standby-Modus wechselt."
+        }
+      },
       "fonts": {
         "section": {
           "label": "Schriftarten",

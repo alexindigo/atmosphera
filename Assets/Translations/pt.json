@@ -32,6 +32,16 @@
           "reset": "Redefinir raio dos cantos da tela"
         }
       },
+      "lockscreen": {
+        "section": {
+          "label": "Tela de bloqueio",
+          "description": "Configure o comportamento da tela de bloqueio."
+        },
+        "lock-on-suspend": {
+          "label": "Bloquear ao suspender",
+          "description": "Bloquear automaticamente a tela ao suspender o sistema."
+        }
+      },
       "fonts": {
         "section": {
           "label": "Fontes",

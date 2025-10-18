@@ -32,6 +32,16 @@
           "reset": "Réinitialiser le rayon des coins de l'écran"
         }
       },
+      "lockscreen": {
+        "section": {
+          "label": "Écran de verrouillage",
+          "description": "Configurer le comportement de l'écran de verrouillage."
+        },
+        "lock-on-suspend": {
+          "label": "Verrouiller lors de la suspension",
+          "description": "Verrouiller automatiquement l'écran lors de la mise en veille du système."
+        }
+      },
       "fonts": {
         "section": {
           "label": "Polices",
