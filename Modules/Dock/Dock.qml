@@ -244,6 +244,7 @@ Variants {
 
         WlrLayershell.namespace: "noctalia-dock-main"
         WlrLayershell.exclusionMode: exclusive ? ExclusionMode.Auto : ExclusionMode.Ignore
+        exclusiveZone: 0
 
         // Size to fit the dock container exactly
         implicitWidth: dockContainerWrapper.width
