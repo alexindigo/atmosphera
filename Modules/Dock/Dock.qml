@@ -199,14 +199,8 @@ Variants {
         color: Color.transparent
 
         WlrLayershell.namespace: "noctalia-dock-peek"
-        WlrLayershell.exclusionMode: ExclusionMode.Auto // Always exclusive
-
+        WlrLayershell.exclusionMode: ExclusionMode.Ignore
         implicitHeight: peekHeight
-
-        Rectangle {
-          anchors.fill: parent
-          color: barAtBottom ? Qt.alpha(Color.mSurface, Settings.data.bar.backgroundOpacity) : Color.transparent
-        }
 
         MouseArea {
           id: peekArea
@@ -244,7 +238,6 @@ Variants {
 
         WlrLayershell.namespace: "noctalia-dock-main"
         WlrLayershell.exclusionMode: exclusive ? ExclusionMode.Auto : ExclusionMode.Ignore
-        exclusiveZone: 0
 
         // Size to fit the dock container exactly
         implicitWidth: dockContainerWrapper.width
@@ -261,12 +254,6 @@ Variants {
             return floatingMargin
           }
         }
-
-        // Rectangle {
-        //   anchors.fill: parent
-        //   color: "#000FF0"
-        //   z: -1
-        // }
 
         // Wrapper item for scale/opacity animations
         Item {
