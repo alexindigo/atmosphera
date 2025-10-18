@@ -76,7 +76,8 @@
         },
         "select": {
           "label": "Anwendungssprache",
-          "description": "Wählen Sie die in der Anwendungsoberfläche verwendete Sprache."
+          "description": "Wählen Sie die in der Anwendungsoberfläche verwendete Sprache.",
+          "auto-detect": "Automatisch"
         }
       }
     },
