@@ -93,6 +93,7 @@ While all donations are greatly appreciated, they are completely voluntary.
 * Gohma
 * DiscoCevapi
 * <a href="https://pika-os.com/" target="_blank">PikaOS</a>
+* LionHeartP
 
 
 ---
