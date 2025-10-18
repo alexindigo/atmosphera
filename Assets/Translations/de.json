@@ -1089,6 +1089,14 @@
           "label": "Visualizer-Typ",
           "description": "Stil des Audio-Visualizers auswählen."
         },
+        "max-width": {
+          "label": "Maximale Breite",
+          "description": "Stellt die maximale Horizontalgröße des Widgets ein. Das Widget wird sich an kürzere Inhalte anpassen."
+        },
+        "use-fixed-width": {
+          "label": "Feste Breite verwenden",
+          "description": "Wenn aktiviert, verwendet das Widget immer die maximale Breite, anstatt sich dynamisch an den Inhalt anzupassen."
+        },
         "scrolling-mode": {
           "label": "Scrollmodus",
           "description": "Steuern, wann Textscrolling für lange Track-Titel aktiviert ist."

@@ -1072,6 +1072,14 @@
           "label": "Visualizer type",
           "description": "Choose the style of audio visualizer to display."
         },
+        "max-width": {
+          "label": "Maximum Width",
+          "description": "Sets the maximum horizontal size of the widget. The widget will shrink to fit shorter content."
+        },
+        "use-fixed-width": {
+          "label": "Use Fixed Width",
+          "description": "When enabled, the widget will always use the maximum width instead of dynamically adjusting to content."
+        },
         "scrolling-mode": {
           "label": "Scrolling mode",
           "description": "Control when text scrolling is enabled for long track titles."

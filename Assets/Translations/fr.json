@@ -1068,6 +1068,14 @@
           "label": "Type de visualiseur",
           "description": "Choisir le style de visualiseur audio à afficher."
         },
+        "max-width": {
+          "label": "Largeur Maximale",
+          "description": "Définit la taille horizontale maximale du widget. Le widget se rétrécira pour s'adapter à un contenu plus court."
+        },
+        "use-fixed-width": {
+          "label": "Utiliser une Largeur Fixe",
+          "description": "Lorsque activé, le widget utilisera toujours la largeur maximale au lieu de s'ajuster dynamiquement au contenu."
+        },
         "scrolling-mode": {
           "label": "Mode de défilement",
           "description": "Contrôler quand le défilement de texte est activé pour les titres de piste longs."

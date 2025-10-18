@@ -89,6 +89,8 @@ Singleton {
                                     "hideMode": "hidden",
                                     "scrollingMode"// "visible", "hidden", "transparent"
                                     : "hover",
+                                    "maxWidth": 145,
+                                    "useFixedWidth": false,
                                     "showAlbumArt": false,
                                     "showVisualizer": false,
                                     "visualizerType": "linear"
