@@ -199,7 +199,7 @@ Variants {
         color: Color.transparent
 
         WlrLayershell.namespace: "noctalia-dock-peek"
-        WlrLayershell.exclusionMode: ExclusionMode.ignore
+        WlrLayershell.exclusionMode: ExclusionMode.Ignore
         implicitHeight: peekHeight
 
         MouseArea {
@@ -254,12 +254,6 @@ Variants {
             return floatingMargin
           }
         }
-
-        // Rectangle {
-        //   anchors.fill: parent
-        //   color: "#000FF0"
-        //   z: -1
-        // }
 
         // Wrapper item for scale/opacity animations
         Item {
