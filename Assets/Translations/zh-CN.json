@@ -271,6 +271,10 @@
           "label": "Dock 浮动距离",
           "description": "调整距离屏幕边缘的浮动距离。"
         },
+        "icon-size": {
+          "label": "Dock 大小",
+          "description": "调整 Dock 的整体大小。"
+        },
         "colorize-icons": {
           "label": "着色图标",
           "description": "将主题颜色应用到 Dock 应用图标（仅限非聚焦应用）。"

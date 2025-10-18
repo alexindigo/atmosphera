@@ -271,6 +271,10 @@
           "label": "Dock-Schwebeabstand",
           "description": "Schwebeabstand vom Bildschirmrand anpassen."
         },
+        "icon-size": {
+          "label": "Dock-Größe",
+          "description": "Gesamtgröße des Docks anpassen."
+        },
         "colorize-icons": {
           "label": "Symbole einfärben",
           "description": "Theme-Farben auf Dock-App-Symbole anwenden (nur nicht fokussierte Apps)."
