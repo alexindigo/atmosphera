@@ -233,7 +233,7 @@ RowLayout {
                   Layout.alignment: Qt.AlignRight
 
                   Repeater {
-                    model: badgeLocations
+                    model: typeof badgeLocations !== 'undefined' ? badgeLocations : []
 
                     delegate: NBox {
                       width: Style.baseWidgetSize * 0.7

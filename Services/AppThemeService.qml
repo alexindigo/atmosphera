@@ -162,7 +162,8 @@ Singleton {
   function generatePalette(primaryColor, secondaryColor, tertiaryColor, errorColor, backgroundColor, outlineColor, isDarkMode) {
     const c = hex => ({
                         "default": {
-                          "hex": hex
+                          "hex": hex,
+                          "hex_stripped": hex.replace(/^#/, "")
                         }
                       })
 
@@ -383,6 +384,13 @@ Singleton {
     id: generateProcess
     workingDirectory: Quickshell.shellDir
     running: false
+    stdout: StdioCollector {
+      onStreamFinished: {
+        if (this.text) {
+          Logger.i("AppThemeService", "GenerateProcess stdout:", this.text)
+        }
+      }
+    }
     stderr: StdioCollector {
       onStreamFinished: {
         if (this.text) {
