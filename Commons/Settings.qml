@@ -192,7 +192,7 @@ Singleton {
       property bool animationDisabled: false
       property bool compactLockScreen: false
       property bool lockOnSuspend: true
-      property string language: "en"
+      property string language: ""
     }
 
     // location
