@@ -68,6 +68,17 @@
             "description": "增大或减小等宽文本的尺寸"
           }
         }
+      },
+      "language": {
+        "section": {
+          "label": "语言",
+          "description": "选择您偏好的应用程序语言。"
+        },
+        "select": {
+          "label": "应用程序语言",
+          "description": "选择应用程序界面中使用的语言。",
+          "auto-detect": "自动检测"
+        }
       }
     },
     "audio": {

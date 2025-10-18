@@ -7,10 +7,11 @@ import qs.Commons
 
 Singleton {
   id: root
-  property string debugForceLanguage: ""
+
 
   property bool isLoaded: false
   property string langCode: ""
+  property string systemDetectedLangCode: ""
   property var availableLanguages: []
   property var translations: ({})
   property var fallbackTranslations: ({})
@@ -158,41 +159,40 @@ Singleton {
       return
     }
 
-    if (Settings.isDebug && debugForceLanguage !== "") {
-      Logger.d("I18n", `Debug mode: forcing language to "${debugForceLanguage}"`)
-      if (availableLanguages.includes(debugForceLanguage)) {
-        setLanguage(debugForceLanguage)
-        return
-      } else {
-        Logger.w("I18n", `Debug language "${debugForceLanguage}" not available in [${availableLanguages.join(', ')}]`)
-      }
-    }
+    var detectedLang = ""
 
-    // Detect user's favorite locale - languages
+    // First, determine the system's preferred language
     for (var i = 0; i < Qt.locale().uiLanguages.length; i++) {
       const fullUserLang = Qt.locale().uiLanguages[i]
 
-      // Try full code match (such as zh CN, en US)
       if (availableLanguages.includes(fullUserLang)) {
-        Logger.d("I18n", `Exact match found: "${fullUserLang}"`)
-        setLanguage(fullUserLang)
-        return
+        detectedLang = fullUserLang
+        break
       }
 
-      // If full code match fails, try short code matching (such as zh, en)
       const shortUserLang = fullUserLang.substring(0, 2)
       if (availableLanguages.includes(shortUserLang)) {
-        Logger.d("I18n", `Short code match found: "${shortUserLang}" from "${fullUserLang}"`)
-        setLanguage(shortUserLang)
-        return
+        detectedLang = shortUserLang
+        break
       }
-
-      Logger.d("I18n", `No match for system language: "${fullUserLang}"`)
     }
 
-    // Fallback to first available language (preferably "en" if available)
-    const fallbackLang = availableLanguages.includes("en") ? "en" : availableLanguages[0]
-    setLanguage(fallbackLang)
+    // If no system language is found among available languages, fallback
+    if (detectedLang === "") {
+      detectedLang = availableLanguages.includes("en") ? "en" : availableLanguages[0]
+    }
+
+    root.systemDetectedLangCode = detectedLang
+    Logger.d("I18n", `System detected language: "${root.systemDetectedLangCode}"`)
+
+    // Now, apply the language: user-defined, then system-detected
+    if (Settings.data.general.language !== "" && availableLanguages.includes(Settings.data.general.language)) {
+      Logger.d("I18n", `User-defined language found: "${Settings.data.general.language}"`)
+      setLanguage(Settings.data.general.language)
+    } else {
+      Logger.d("I18n", `No user-defined language, using system detected: "${root.systemDetectedLangCode}"`)
+      setLanguage(root.systemDetectedLangCode)
+    }
   }
 
   // -------------------------------------------
