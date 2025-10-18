@@ -68,6 +68,16 @@
             "description": "Increase or decrease the size of the monospaced text."
           }
         }
+      },
+      "language": {
+        "section": {
+          "label": "Language",
+          "description": "Choose your preferred language for the application."
+        },
+        "select": {
+          "label": "Application Language",
+          "description": "Select the language used in the application's interface."
+        }
       }
     },
     "audio": {
@@ -1197,7 +1207,7 @@
       "scan-again": "Scan again"
     }
   },
-  
+
   "tooltips": {
     "refresh": "Refresh",
     "close": "Close",

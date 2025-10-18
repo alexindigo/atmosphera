@@ -190,7 +190,36 @@ ColumnLayout {
     Layout.bottomMargin: Style.marginXL
   }
 
-  // Lock Screen
+  // Language selection
+  ColumnLayout {
+    spacing: Style.marginL
+    Layout.fillWidth: true
+
+    NHeader {
+      label: I18n.tr("settings.general.language.section.label")
+      description: I18n.tr("settings.general.language.section.description")
+    }
+
+    NComboBox {
+      Layout.fillWidth: true
+      label: I18n.tr("settings.general.language.select.label")
+      description: I18n.tr("settings.general.language.select.description")
+      model: I18n.availableLanguages.map(function(langCode) {
+        return { "key": langCode, "name": langCode }
+      })
+      currentKey: Settings.data.general.language !== "" ? Settings.data.general.language : I18n.langCode
+      onSelected: key => {
+        Settings.data.general.language = key
+        I18n.setLanguage(key)
+      }
+    }
+  }
+
+  NDivider {
+    Layout.fillWidth: true
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
+  }
   ColumnLayout {
     spacing: Style.marginL
     Layout.fillWidth: true

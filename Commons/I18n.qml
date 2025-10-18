@@ -168,6 +168,13 @@ Singleton {
       }
     }
 
+    // Check for user-defined language setting
+    if (Settings.data.general.language !== "" && availableLanguages.includes(Settings.data.general.language)) {
+      Logger.d("I18n", `User-defined language found: "${Settings.data.general.language}"`)
+      setLanguage(Settings.data.general.language)
+      return
+    }
+
     // Detect user's favorite locale - languages
     for (var i = 0; i < Qt.locale().uiLanguages.length; i++) {
       const fullUserLang = Qt.locale().uiLanguages[i]
