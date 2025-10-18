@@ -39,7 +39,7 @@ Item {
   readonly property string scrollingMode: (widgetSettings.scrollingMode !== undefined) ? widgetSettings.scrollingMode : widgetMetadata.scrollingMode
 
   // Maximum widget width with user settings support
-  readonly property real maxWidth: (widgetSettings.maxWidth !== undefined) ? widgetSettings.maxWidth : Math.max(widgetMetadata.maxWidth, screen.width * 0.06)
+  readonly property real maxWidth: (widgetSettings.maxWidth !== undefined) ? widgetSettings.maxWidth : Math.max(widgetMetadata.maxWidth, screen ? screen.width * 0.06 : 0)
   readonly property bool useFixedWidth: (widgetSettings.useFixedWidth !== undefined) ? widgetSettings.useFixedWidth : widgetMetadata.useFixedWidth
 
   readonly property bool hasActivePlayer: MediaService.currentPlayer !== null
@@ -85,7 +85,7 @@ Item {
     // Calculate the actual content width based on visible elements
     var contentWidth = 0
     var margins = Style.marginS * scaling * 2 // Left and right margins
-    
+
     // Icon or album art width
     if (!hasActivePlayer || !showAlbumArt) {
       // Icon width
@@ -94,19 +94,19 @@ Item {
       // Album art width
       contentWidth += 21 * scaling
     }
-    
+
     // Spacing between icon/art and text
     contentWidth += Style.marginS * scaling
-    
+
     // Text width (use the measured width)
     contentWidth += fullTitleMetrics.contentWidth
-    
+
     // Additional small margin for text
     contentWidth += Style.marginXXS * 2
-    
+
     // Add container margins
     contentWidth += margins
-    
+
     return Math.ceil(contentWidth)
   }
 

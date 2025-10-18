@@ -35,9 +35,9 @@ Item {
   readonly property bool showIcon: (widgetSettings.showIcon !== undefined) ? widgetSettings.showIcon : widgetMetadata.showIcon
   readonly property string hideMode: (widgetSettings.hideMode !== undefined) ? widgetSettings.hideMode : widgetMetadata.hideMode
   readonly property string scrollingMode: (widgetSettings.scrollingMode !== undefined) ? widgetSettings.scrollingMode : (widgetMetadata.scrollingMode !== undefined ? widgetMetadata.scrollingMode : "hover")
-  
+
   // Maximum widget width with user settings support
-  readonly property real maxWidth: (widgetSettings.maxWidth !== undefined) ? widgetSettings.maxWidth : Math.max(widgetMetadata.maxWidth, screen.width * 0.06)
+  readonly property real maxWidth: (widgetSettings.maxWidth !== undefined) ? widgetSettings.maxWidth : Math.max(widgetMetadata.maxWidth, screen ? screen.width * 0.06 : 0)
   readonly property bool useFixedWidth: (widgetSettings.useFixedWidth !== undefined) ? widgetSettings.useFixedWidth : widgetMetadata.useFixedWidth
 
   readonly property bool isVerticalBar: (Settings.data.bar.position === "left" || Settings.data.bar.position === "right")
@@ -66,22 +66,22 @@ Item {
     // Calculate the actual content width based on visible elements
     var contentWidth = 0
     var margins = Style.marginS * scaling * 2 // Left and right margins
-    
+
     // Icon width (if visible)
     if (showIcon) {
       contentWidth += 18 * scaling
       contentWidth += Style.marginS * scaling // Spacing after icon
     }
-    
+
     // Text width (use the measured width)
     contentWidth += fullTitleMetrics.contentWidth
-    
+
     // Additional small margin for text
     contentWidth += Style.marginXXS * 2
-    
+
     // Add container margins
     contentWidth += margins
-    
+
     return Math.ceil(contentWidth)
   }
 
