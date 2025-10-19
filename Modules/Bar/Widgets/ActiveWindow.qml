@@ -45,16 +45,30 @@ Item {
   readonly property string windowTitle: CompositorService.getFocusedWindowTitle() || "No active window"
   readonly property string fallbackIcon: "user-desktop"
 
-  implicitHeight: visible ? (isVerticalBar ? calculatedVerticalDimension() : Style.barHeight) : 0
-  implicitWidth: visible ? (isVerticalBar ? calculatedVerticalDimension() : dynamicWidth) : 0
+  implicitHeight: visible ? (isVerticalBar ? calculatedVerticalDimension() : Style.capsuleHeight) : 0
+  implicitWidth: visible ? (isVerticalBar ? calculatedVerticalDimension() : (((!hasFocusedWindow) && (hideMode === "transparent" || hideMode === "hidden")) ? 0 : dynamicWidth)) : 0
 
   // "visible": Always Visible, "hidden": Hide When Empty, "transparent": Transparent When Empty
-  visible: hideMode !== "hidden" || hasFocusedWindow
-  opacity: hideMode !== "transparent" || hasFocusedWindow ? 1.0 : 0
+  visible: (hideMode !== "hidden" || hasFocusedWindow) || opacity > 0
+  opacity: ((hideMode !== "hidden" || hasFocusedWindow) && (hideMode !== "transparent" || hasFocusedWindow)) ? 1.0 : 0.0
   Behavior on opacity {
     NumberAnimation {
       duration: Style.animationNormal
       easing.type: Easing.OutCubic
+    }
+  }
+
+  Behavior on implicitWidth {
+    NumberAnimation {
+      duration: Style.animationNormal
+      easing.type: Easing.InOutCubic
+    }
+  }
+
+  Behavior on implicitHeight {
+    NumberAnimation {
+      duration: Style.animationNormal
+      easing.type: Easing.InOutCubic
     }
   }
 
@@ -157,7 +171,7 @@ Item {
     visible: root.visible
     anchors.left: parent.left
     anchors.verticalCenter: parent.verticalCenter
-    width: isVerticalBar ? root.width : dynamicWidth
+    width: isVerticalBar ? root.width : (((!hasFocusedWindow) && (hideMode === "transparent" || hideMode === "hidden")) ? 0 : dynamicWidth)
     height: isVerticalBar ? width : Style.capsuleHeight
     radius: isVerticalBar ? width / 2 : Style.radiusM
     color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
