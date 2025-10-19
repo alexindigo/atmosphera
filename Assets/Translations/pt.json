@@ -475,13 +475,6 @@
         "switch": {
           "label": "Modo escuro",
           "description": "Muda para um tema mais escuro para facilitar a visualização à noite."
-        },
-        "mode": {
-          "label": "Modo escuro automático",
-          "description": "Ativa a troca automática entre o modo claro e escuro.",
-          "off": "Desativado",
-          "manual": "Manual",
-          "location": "Localização"
         }
       },
       "predefined": {
@@ -495,10 +488,6 @@
         }
       },
       "templates": {
-        "section": {
-          "label": "Modelos",
-          "description": "Aplicar cores a aplicações externas."
-        },
         "ui": {
           "label": "UI",
           "description": "Tematização do ambiente de desktop e kit de ferramentas de UI.",
@@ -551,6 +540,10 @@
             "label": "Modelos do usuário",
             "description": "Ativa a configuração do Matugen definida pelo usuário. Um arquivo de modelo será criado em ~/.config/noctalia/user-templates.toml na primeira ativação"
           }
+        },
+        "section": {
+          "description": "Aplicar cores a aplicações externas.",
+          "label": "Modelos"
         }
       }
     },

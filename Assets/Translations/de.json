@@ -533,10 +533,6 @@
         }
       },
       "templates": {
-        "section": {
-          "label": "Vorlagen",
-          "description": "Farben auf externe Anwendungen anwenden."
-        },
         "ui": {
           "label": "UI",
           "description": "Desktop-Umgebung und UI-Toolkit-Theming.",
@@ -589,6 +585,10 @@
             "label": "Benutzer-Vorlagen",
             "description": "Benutzerdefinierte Matugen-Konfiguration aktivieren. Eine Vorlagendatei wird beim ersten Aktivieren unter ~/.config/noctalia/user-templates.toml erstellt"
           }
+        },
+        "section": {
+          "description": "Farben auf externe Anwendungen anwenden.",
+          "label": "Vorlagen"
         }
       }
     },
