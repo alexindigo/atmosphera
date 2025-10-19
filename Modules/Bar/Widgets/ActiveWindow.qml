@@ -307,6 +307,14 @@ Item {
                 font.weight: Style.fontWeightMedium
                 verticalAlignment: Text.AlignVCenter
                 color: Color.mOnSurface
+                onTextChanged: {
+                  if (root.scrollingMode === "always") {
+                    titleContainer.isScrolling = false
+                    titleContainer.isResetting = false
+                    scrollContainer.scrollX = 0
+                    scrollStartTimer.restart()
+                  }
+                }
               }
 
               // Second copy for seamless scrolling
