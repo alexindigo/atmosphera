@@ -22,24 +22,7 @@ NPanel {
     anchors.margins: Style.marginL
     spacing: Style.marginM
 
-    readonly property int firstDayOfWeek: {
-      var setting = Settings.data.location.firstDayOfWeek
-      if (!setting)
-        return Qt.Monday
-
-      switch (setting) {
-      case "auto":
-        return Qt.locale().firstDayOfWeek
-      case "monday":
-        return Qt.Monday
-      case "saturday":
-        return 6 // Qt.Saturday
-      case "sunday":
-        return Qt.Sunday
-      default:
-        return Qt.Monday
-      }
-    }
+    readonly property int firstDayOfWeek: Qt.Monday // Always start week on Monday (use Qt.Sunday for Sunday, 6 for Saturday)
     property bool isCurrentMonth: checkIsCurrentMonth()
     readonly property bool weatherReady: Settings.data.location.weatherEnabled && (LocationService.data.weather !== null)
 
@@ -384,13 +367,19 @@ NPanel {
         }
       }
     }
+
+    // Day headers row
     RowLayout {
       Layout.fillWidth: true
       spacing: 0
+
+      // Empty space for week number column
       Item {
         visible: Settings.data.location.showWeekNumberInCalendar
         Layout.preferredWidth: visible ? Style.baseWidgetSize * 0.7 : 0
       }
+
+      // Day name headers
       GridLayout {
         Layout.fillWidth: true
         columns: 7
@@ -418,51 +407,63 @@ NPanel {
         }
       }
     }
+
+    // Calendar grid with week numbers
     RowLayout {
       Layout.fillWidth: true
       Layout.fillHeight: true
-      spacing: 0
-      ColumnLayout {
+      spacing: Style.marginS
+
+      // Week numbers column
+      Item {
         visible: Settings.data.location.showWeekNumberInCalendar
-        Layout.preferredWidth: visible ? Style.baseWidgetSize * 0.7 : 0
+        Layout.preferredWidth: Style.baseWidgetSize * 0.7
         Layout.fillHeight: true
-        spacing: 0
-        Repeater {
-          model: 6
-          Item {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            NText {
-              anchors.centerIn: parent
-              color: Color.mOutline
-              pointSize: Style.fontSizeXXS
-              font.weight: Style.fontWeightMedium
-              text: {
-                let firstOfMonth = new Date(grid.year, grid.month, 1)
-                let firstDayOfWeek = content.firstDayOfWeek
-                let firstOfMonthDayOfWeek = firstOfMonth.getDay()
-                let daysBeforeFirst = (firstOfMonthDayOfWeek - firstDayOfWeek + 7) % 7
-                if (daysBeforeFirst === 0) {
-                  daysBeforeFirst = 7
+
+        ColumnLayout {
+          anchors.fill: parent
+          spacing: Style.marginXXS
+
+          Repeater {
+            model: 6
+            Item {
+              Layout.fillWidth: true
+              Layout.fillHeight: true
+
+              NText {
+                anchors.centerIn: parent
+                color: Color.mOutline
+                pointSize: Style.fontSizeXXS
+                font.weight: Style.fontWeightMedium
+                text: {
+                  let firstOfMonth = new Date(grid.year, grid.month, 1)
+                  let firstDayOfWeek = content.firstDayOfWeek
+                  let firstOfMonthDayOfWeek = firstOfMonth.getDay()
+                  let daysBeforeFirst = (firstOfMonthDayOfWeek - firstDayOfWeek + 7) % 7
+                  if (daysBeforeFirst === 0) {
+                    daysBeforeFirst = 7
+                  }
+                  let gridStartDate = new Date(grid.year, grid.month, 1 - daysBeforeFirst)
+                  let rowStartDate = new Date(gridStartDate)
+                  rowStartDate.setDate(gridStartDate.getDate() + (index * 7))
+                  let thursday = new Date(rowStartDate)
+                  if (firstDayOfWeek === 0) {
+                    thursday.setDate(rowStartDate.getDate() + 4)
+                  } else if (firstDayOfWeek === 1) {
+                    thursday.setDate(rowStartDate.getDate() + 3)
+                  } else {
+                    let daysToThursday = (4 - firstDayOfWeek + 7) % 7
+                    thursday.setDate(rowStartDate.getDate() + daysToThursday)
+                  }
+                  return `${getISOWeekNumber(thursday)}`
                 }
-                let gridStartDate = new Date(grid.year, grid.month, 1 - daysBeforeFirst)
-                let rowStartDate = new Date(gridStartDate)
-                rowStartDate.setDate(gridStartDate.getDate() + (index * 7))
-                let thursday = new Date(rowStartDate)
-                if (firstDayOfWeek === 0) {
-                  thursday.setDate(rowStartDate.getDate() + 4)
-                } else if (firstDayOfWeek === 1) {
-                  thursday.setDate(rowStartDate.getDate() + 3)
-                } else {
-                  let daysToThursday = (4 - firstDayOfWeek + 7) % 7
-                  thursday.setDate(rowStartDate.getDate() + daysToThursday)
-                }
-                return `${getISOWeekNumber(thursday)}`
               }
             }
           }
         }
       }
+
+      // Calendar days grid
       GridLayout {
         id: grid
         Layout.fillWidth: true
@@ -536,9 +537,9 @@ NPanel {
                     return Color.mOnSurface
                   return Color.mOnSurfaceVariant
                 }
-                opacity: cellItem.isCurrentMonth ? 1.0 : 0.5
+                opacity: cellItem.isCurrentMonth ? 1.0 : 0.4
                 pointSize: Style.fontSizeM
-                font.weight: cellItem.isToday ? Style.fontWeightBold : Style.fontWeightSemiBold
+                font.weight: cellItem.isToday ? Style.fontWeightBold : Style.fontWeightMedium
               }
 
               Behavior on color {
