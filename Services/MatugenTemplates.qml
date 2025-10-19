@@ -152,6 +152,14 @@ Singleton {
       "input": "fuzzel.conf",
       "postHook": AppThemeService.colorsApplyScript + " fuzzel"
     }, {
+      "name": "vicinae",
+      "templates": [{
+          "version": "vicinae",
+          "output": "~/.local/share/vicinae/themes/matugen.toml"
+        }],
+      "input": "vicinae.toml",
+      "postHook": "cp -n " + Quickshell.shellDir + "/Assets/noctalia.svg ~/.local/share/vicinae/themes/noctalia.svg && " + AppThemeService.colorsApplyScript + " vicinae"
+    }, {
       "name": "pywalfox",
       "templates": [{
           "version": "pywalfox",

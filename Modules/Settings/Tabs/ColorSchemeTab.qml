@@ -664,6 +664,25 @@ ColumnLayout {
                      }
                    }
       }
+      NCheckbox {
+    label: "Vicinae"
+    description: ProgramCheckerService.vicinaeAvailable
+        ? I18n.tr("settings.color-scheme.templates.programs.vicinae.description", {
+            "filepath": "~/.local/share/vicinae/themes/matugen.toml"
+        })
+        : I18n.tr("settings.color-scheme.templates.programs.vicinae.description-missing", {
+            "app": "vicinae"
+        })
+    checked: Settings.data.templates.vicinae
+    enabled: ProgramCheckerService.vicinaeAvailable
+    opacity: ProgramCheckerService.vicinaeAvailable ? 1.0 : 0.6
+    onToggled: checked => {
+        if (ProgramCheckerService.vicinaeAvailable) {
+            Settings.data.templates.vicinae = checked
+            AppThemeService.generate()
+        }
+    }
+}
     }
 
     // Miscellaneous
