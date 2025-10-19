@@ -927,6 +927,9 @@
       },
       "cancel": "Abbrechen",
       "apply": "Anwenden"
+    },
+    "text-input": {
+      "clear": "Löschen"
     }
   },
   "bar": {

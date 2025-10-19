@@ -9,6 +9,7 @@ ColumnLayout {
 
   property string label: ""
   property string description: ""
+  property string inputIconName: ""
   property bool readOnly: false
   property bool enabled: true
   property color labelColor: Color.mOnSurface
@@ -106,74 +107,124 @@ ColumnLayout {
         id: inputContainer
         anchors.fill: parent
         anchors.leftMargin: Style.marginM
-        anchors.rightMargin: Style.marginM
+        // anchors.rightMargin: Style.marginM
+        clip: true
         z: 1
 
-        TextField {
-          id: input
-
+        RowLayout {
           anchors.fill: parent
-          verticalAlignment: TextInput.AlignVCenter
 
-          echoMode: TextInput.Normal
-          readOnly: root.readOnly
-          enabled: root.enabled
-          color: Color.mOnSurface
-          placeholderTextColor: Qt.alpha(Color.mOnSurfaceVariant, 0.6)
+          NIcon {
+            id: inputIcon
+            icon: root.inputIconName
 
-          selectByMouse: true
+            visible: root.inputIconName !== ""
+            enabled: false
 
-          topPadding: 0
-          bottomPadding: 0
-          leftPadding: 0
-          rightPadding: 0
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: parent.left
+            anchors.topMargin: 0
+            anchors.bottomMargin: 0
+            anchors.leftMargin: 0
+            anchors.rightMargin: 0
+          }
 
-          background: null
+          TextField {
+            id: input
 
-          font.family: root.fontFamily
-          font.pointSize: root.fontSize * Style.uiScaleRatio
-          font.weight: root.fontWeight
+            anchors.left: inputIcon.visible ? inputIcon.right : parent.left
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            anchors.right: clearButton.left
+            anchors.leftMargin: inputIcon.visible ? Style.marginS : 0
 
-          onEditingFinished: root.editingFinished()
+            verticalAlignment: TextInput.AlignVCenter
 
-          // Override mouse handling to prevent propagation
-          MouseArea {
-            id: textFieldMouse
-            anchors.fill: parent
-            acceptedButtons: Qt.AllButtons
-            preventStealing: true
-            propagateComposedEvents: false
-            cursorShape: Qt.IBeamCursor
+            echoMode: TextInput.Normal
+            readOnly: root.readOnly
+            enabled: root.enabled
+            color: Color.mOnSurface
+            placeholderTextColor: Qt.alpha(Color.mOnSurfaceVariant, 0.6)
 
-            property int selectionStart: 0
+            selectByMouse: true
 
-            onPressed: mouse => {
-                         mouse.accepted = true
-                         input.forceActiveFocus()
-                         var pos = input.positionAt(mouse.x, mouse.y)
-                         input.cursorPosition = pos
-                         selectionStart = pos
-                       }
+            topPadding: 0
+            bottomPadding: 0
+            leftPadding: 0
+            rightPadding: 0
 
-            onPositionChanged: mouse => {
-                                 if (mouse.buttons & Qt.LeftButton) {
-                                   mouse.accepted = true
-                                   var pos = input.positionAt(mouse.x, mouse.y)
-                                   input.select(selectionStart, pos)
-                                 }
-                               }
+            background: null
 
-            onDoubleClicked: mouse => {
-                               mouse.accepted = true
-                               input.selectAll()
-                             }
+            font.family: root.fontFamily
+            font.pointSize: root.fontSize * Style.uiScaleRatio
+            font.weight: root.fontWeight
 
-            onReleased: mouse => {
+            onEditingFinished: root.editingFinished()
+
+            // Override mouse handling to prevent propagation
+            MouseArea {
+              id: textFieldMouse
+              anchors.fill: parent
+              acceptedButtons: Qt.AllButtons
+              preventStealing: true
+              propagateComposedEvents: false
+              cursorShape: Qt.IBeamCursor
+
+              property int selectionStart: 0
+
+              onPressed: mouse => {
                           mouse.accepted = true
+                          input.forceActiveFocus()
+                          var pos = input.positionAt(mouse.x, mouse.y)
+                          input.cursorPosition = pos
+                          selectionStart = pos
                         }
-            onWheel: wheel => {
-                       wheel.accepted = true
-                     }
+
+              onPositionChanged: mouse => {
+                                  if (mouse.buttons & Qt.LeftButton) {
+                                    mouse.accepted = true
+                                    var pos = input.positionAt(mouse.x, mouse.y)
+                                    input.select(selectionStart, pos)
+                                  }
+                                }
+
+              onDoubleClicked: mouse => {
+                                mouse.accepted = true
+                                input.selectAll()
+                              }
+
+              onReleased: mouse => {
+                            mouse.accepted = true
+                          }
+              onWheel: wheel => {
+                        wheel.accepted = true
+                      }
+            }
+          }
+          NIconButton {
+            id: clearButton
+            icon: "x"
+            tooltipText: I18n.tr("widgets.text-input.clear")
+
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.right: parent.right
+            anchors.topMargin: 0
+            anchors.bottomMargin: 0
+            anchors.leftMargin: 0
+            anchors.rightMargin: 0
+            border.width: 0
+
+            colorBg: Color.transparent
+            colorBgHover: Color.transparent
+            colorFgHover: Color.mTertiary
+
+            visible: input.text.length > 0 && !root.readOnly
+            enabled: input.text.length > 0 && !root.readOnly
+
+            onClicked: {
+              input.clear()
+              input.forceActiveFocus()
+            }
           }
         }
       }

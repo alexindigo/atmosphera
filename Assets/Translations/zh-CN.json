@@ -903,6 +903,9 @@
       },
       "cancel": "取消",
       "apply": "应用"
+    },
+    "text-input": {
+      "clear": "清除"
     }
   },
   "bar": {

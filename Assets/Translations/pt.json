@@ -903,6 +903,9 @@
       },
       "cancel": "Cancelar",
       "apply": "Aplicar"
+    },
+    "text-input": {
+      "clear": "Limpar"
     }
   },
   "bar": {
