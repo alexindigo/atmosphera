@@ -7,7 +7,7 @@ import qs.Commons
 import qs.Services
 import qs.Widgets
 
-NPanel {
+NPanelOverlay {
   id: root
 
   // Panel configuration
