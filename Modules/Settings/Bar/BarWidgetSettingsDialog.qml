@@ -133,6 +133,7 @@ Popup {
       "Spacer": "WidgetSettings/SpacerSettings.qml",
       "SystemMonitor": "WidgetSettings/SystemMonitorSettings.qml",
       "Volume": "WidgetSettings/VolumeSettings.qml",
+      "WiFi": "WidgetSettings/WiFiSettings.qml",
       "Workspace": "WidgetSettings/WorkspaceSettings.qml",
       "Taskbar": "WidgetSettings/TaskbarSettings.qml",
       "Tray": "WidgetSettings/TraySettings.qml"
