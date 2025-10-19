@@ -46,7 +46,7 @@ Item {
   readonly property string fallbackIcon: "user-desktop"
 
   implicitHeight: visible ? (isVerticalBar ? calculatedVerticalDimension() : Style.capsuleHeight) : 0
-  implicitWidth: visible ? (isVerticalBar ? calculatedVerticalDimension() : (((!hasFocusedWindow) && (hideMode === "transparent" || hideMode === "hidden")) ? 0 : dynamicWidth)) : 0
+  implicitWidth: visible ? (isVerticalBar ? calculatedVerticalDimension() : (((!hasFocusedWindow) && hideMode === "hidden") ? 0 : dynamicWidth)) : 0
 
   // "visible": Always Visible, "hidden": Hide When Empty, "transparent": Transparent When Empty
   visible: (hideMode !== "hidden" || hasFocusedWindow) || opacity > 0
@@ -107,7 +107,7 @@ Item {
     }
     // Otherwise, adapt to content
     if (!hasFocusedWindow) {
-      return maxWidth
+      return Math.min(calculateContentWidth(), maxWidth)
     }
     // Use content width but don't exceed user-set maximum width
     return Math.min(calculateContentWidth(), maxWidth)
@@ -171,7 +171,7 @@ Item {
     visible: root.visible
     anchors.left: parent.left
     anchors.verticalCenter: parent.verticalCenter
-    width: isVerticalBar ? root.width : (((!hasFocusedWindow) && (hideMode === "transparent" || hideMode === "hidden")) ? 0 : dynamicWidth)
+    width: isVerticalBar ? root.width : (((!hasFocusedWindow) && hideMode === "hidden") ? 0 : dynamicWidth)
     height: isVerticalBar ? width : Style.capsuleHeight
     radius: isVerticalBar ? width / 2 : Style.radiusM
     color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
