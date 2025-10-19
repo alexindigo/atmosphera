@@ -120,6 +120,10 @@ Item {
     if (!hasActivePlayer) {
       return maxWidth
     }
+    // If there's an active player but no contenct, use a minimum height for rounded background
+    if (hasActivePlayer && fullTitleMetrics.contentWidth === 0) {
+      return Style.capsuleHeight + Style.marginS
+    }
     // Use content width but don't exceed user-set maximum width
     return Math.min(calculateContentWidth(), maxWidth)
   }
