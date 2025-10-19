@@ -513,6 +513,13 @@
         "switch": {
           "label": "Mode sombre",
           "description": "Passe à un thème plus sombre pour une visualisation plus facile la nuit."
+        },
+        "mode": {
+          "label": "Mode sombre automatique",
+          "description": "Active le passage automatique entre le mode clair et sombre.",
+          "off": "Désactivé",
+          "manual": "Manuel",
+          "location": "Emplacement"
         }
       },
       "predefined": {
@@ -526,6 +533,10 @@
         }
       },
       "templates": {
+        "section": {
+          "label": "Modèles",
+          "description": "Appliquer des couleurs aux applications externes."
+        },
         "ui": {
           "label": "UI",
           "description": "Thématisation de l'environnement de bureau et de la boîte à outils d'interface utilisateur.",
@@ -578,10 +589,6 @@
             "label": "Modèles utilisateur",
             "description": "Activer la configuration Matugen définie par l'utilisateur. Un fichier modèle sera créé dans ~/.config/noctalia/user-templates.toml lors de la première activation"
           }
-        },
-        "section": {
-          "description": "Appliquer des couleurs aux applications externes.",
-          "label": "Modèles"
         }
       }
     },
