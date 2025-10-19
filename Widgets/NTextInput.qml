@@ -75,31 +75,31 @@ ColumnLayout {
         propagateComposedEvents: false
 
         onPressed: mouse => {
-                     mouse.accepted = true
-                     // Focus the input and position cursor
-                     input.forceActiveFocus()
-                     var inputPos = mapToItem(inputContainer, mouse.x, mouse.y)
-                     if (inputPos.x >= 0 && inputPos.x <= inputContainer.width) {
-                       var textPos = inputPos.x - Style.marginM
-                       if (textPos >= 0 && textPos <= input.width) {
-                         input.cursorPosition = input.positionAt(textPos, input.height / 2)
-                       }
-                     }
-                   }
+          mouse.accepted = true
+          // Focus the input and position cursor
+          input.forceActiveFocus()
+          var inputPos = mapToItem(inputContainer, mouse.x, mouse.y)
+          if (inputPos.x >= 0 && inputPos.x <= inputContainer.width) {
+            var textPos = inputPos.x - Style.marginM
+            if (textPos >= 0 && textPos <= input.width) {
+              input.cursorPosition = input.positionAt(textPos, input.height / 2)
+            }
+          }
+        }
 
         onReleased: mouse => {
-                      mouse.accepted = true
-                    }
+          mouse.accepted = true
+        }
         onDoubleClicked: mouse => {
-                           mouse.accepted = true
-                           input.selectAll()
-                         }
+          mouse.accepted = true
+          input.selectAll()
+        }
         onPositionChanged: mouse => {
-                             mouse.accepted = true
-                           }
+          mouse.accepted = true
+        }
         onWheel: wheel => {
-                   wheel.accepted = true
-                 }
+          wheel.accepted = true
+        }
       }
 
       // Container for the actual text field
@@ -113,6 +113,7 @@ ColumnLayout {
 
         RowLayout {
           anchors.fill: parent
+          spacing: 0
 
           NIcon {
             id: inputIcon
@@ -121,22 +122,15 @@ ColumnLayout {
             visible: root.inputIconName !== ""
             enabled: false
 
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.left: parent.left
-            anchors.topMargin: 0
-            anchors.bottomMargin: 0
-            anchors.leftMargin: 0
-            anchors.rightMargin: 0
+            Layout.alignment: Qt.AlignVCenter
+            Layout.rightMargin: visible ? Style.marginS : 0
           }
 
           TextField {
             id: input
 
-            anchors.left: inputIcon.visible ? inputIcon.right : parent.left
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            anchors.right: clearButton.left
-            anchors.leftMargin: inputIcon.visible ? Style.marginS : 0
+            Layout.fillWidth: true
+            Layout.fillHeight: true
 
             verticalAlignment: TextInput.AlignVCenter
 
@@ -173,32 +167,32 @@ ColumnLayout {
               property int selectionStart: 0
 
               onPressed: mouse => {
-                          mouse.accepted = true
-                          input.forceActiveFocus()
-                          var pos = input.positionAt(mouse.x, mouse.y)
-                          input.cursorPosition = pos
-                          selectionStart = pos
-                        }
+                mouse.accepted = true
+                input.forceActiveFocus()
+                var pos = input.positionAt(mouse.x, mouse.y)
+                input.cursorPosition = pos
+                selectionStart = pos
+              }
 
               onPositionChanged: mouse => {
-                                  if (mouse.buttons & Qt.LeftButton) {
-                                    mouse.accepted = true
-                                    var pos = input.positionAt(mouse.x, mouse.y)
-                                    input.select(selectionStart, pos)
-                                  }
-                                }
+                if (mouse.buttons & Qt.LeftButton) {
+                  mouse.accepted = true
+                  var pos = input.positionAt(mouse.x, mouse.y)
+                  input.select(selectionStart, pos)
+                }
+              }
 
               onDoubleClicked: mouse => {
-                                mouse.accepted = true
-                                input.selectAll()
-                              }
+                mouse.accepted = true
+                input.selectAll()
+              }
 
               onReleased: mouse => {
-                            mouse.accepted = true
-                          }
+                mouse.accepted = true
+              }
               onWheel: wheel => {
-                        wheel.accepted = true
-                      }
+                wheel.accepted = true
+              }
             }
           }
           NIconButton {
@@ -206,12 +200,8 @@ ColumnLayout {
             icon: "x"
             tooltipText: I18n.tr("widgets.text-input.clear")
 
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.right: parent.right
-            anchors.topMargin: 0
-            anchors.bottomMargin: 0
-            anchors.leftMargin: 0
-            anchors.rightMargin: 0
+            Layout.alignment: Qt.AlignVCenter
+
             border.width: 0
 
             colorBg: Color.transparent
