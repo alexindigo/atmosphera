@@ -204,24 +204,20 @@ ColumnLayout {
       Layout.fillWidth: true
       label: I18n.tr("settings.general.language.select.label")
       description: I18n.tr("settings.general.language.select.description")
-      model: [{
-          "key": "",
-          "name": I18n.tr("settings.general.language.select.auto-detect") + " (" + I18n.systemDetectedLangCode + ")"
-        }].concat(I18n.availableLanguages.map(function (langCode) {
-          return {
-            "key": langCode,
-            "name": langCode
-          }
-        }))
+      model: [
+        { "key": "", "name": I18n.tr("settings.general.language.select.auto-detect") + " (" + I18n.systemDetectedLangCode + ")" }
+      ].concat(I18n.availableLanguages.map(function(langCode) {
+        return { "key": langCode, "name": langCode }
+      }))
       currentKey: Settings.data.general.language
       onSelected: key => {
-                    Settings.data.general.language = key
-                    if (key === "") {
-                      I18n.detectLanguage() // Re-detect system language if "Automatic" is selected
-                    } else {
-                      I18n.setLanguage(key) // Set specific language
-                    }
-                  }
+        Settings.data.general.language = key
+        if (key === "") {
+          I18n.detectLanguage() // Re-detect system language if "Automatic" is selected
+        } else {
+          I18n.setLanguage(key) // Set specific language
+        }
+      }
     }
   }
 

@@ -202,7 +202,6 @@ Singleton {
       property bool useFahrenheit: false
       property bool use12hourFormat: false
       property bool showWeekNumberInCalendar: false
-      property string firstDayOfWeek: "auto" // "auto", "monday", "saturday", "sunday"
     }
 
     // screen recorder

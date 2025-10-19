@@ -631,14 +631,6 @@
         "week-numbers": {
           "label": "Mostrar números de semana",
           "description": "Muestra la semana del año (ej., Semana 38) en el calendario."
-        },
-        "first-day-of-week": {
-          "label": "Primer día de la semana",
-          "description": "Elige qué día comienza la semana del calendario.",
-          "auto": "Predeterminado del sistema",
-          "monday": "Lunes",
-          "saturday": "Sábado",
-          "sunday": "Domingo"
         }
       }
     },

@@ -8,6 +8,7 @@ import qs.Commons
 Singleton {
   id: root
 
+
   property bool isLoaded: false
   property string langCode: ""
   property string systemDetectedLangCode: ""

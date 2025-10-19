@@ -631,14 +631,6 @@
         "week-numbers": {
           "label": "显示周数",
           "description": "在日历中显示一年中的第几周（例如：第 38 周）。"
-        },
-        "first-day-of-week": {
-          "label": "每周第一天",
-          "description": "选择日历每周的起始日。",
-          "auto": "系统默认",
-          "monday": "星期一",
-          "saturday": "星期六",
-          "sunday": "星期日"
         }
       }
     },

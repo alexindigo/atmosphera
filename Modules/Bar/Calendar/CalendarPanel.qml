@@ -22,7 +22,7 @@ NPanel {
     anchors.margins: Style.marginL
     spacing: Style.marginM
 
-    readonly property int firstDayOfWeek: Qt.Monday // Always start week on Monday (use Qt.Sunday for Sunday, 6 for Saturday)
+    readonly property int firstDayOfWeek: Qt.locale().firstDayOfWeek
     property bool isCurrentMonth: checkIsCurrentMonth()
     readonly property bool weatherReady: Settings.data.location.weatherEnabled && (LocationService.data.weather !== null)
 
@@ -278,7 +278,7 @@ NPanel {
       }
     }
 
-    // Weather forecast
+    // ... (rest of the file is unchanged) ...
     RowLayout {
       visible: weatherReady
       Layout.fillWidth: true
@@ -462,90 +462,38 @@ NPanel {
           }
         }
       }
-
-      // Calendar days grid
-      GridLayout {
+      MonthGrid {
         id: grid
         Layout.fillWidth: true
         Layout.fillHeight: true
-        columns: 7
-        rowSpacing: Style.marginXXS
-        columnSpacing: Style.marginXXS
-
-        property int month: Time.date.getMonth()
-        property int year: Time.date.getFullYear()
-
-        Repeater {
-          model: 42 // 6 rows × 7 days
-          delegate: Item {
-            id: cellItem
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-
-            required property int index
-
-            property int cellDay: {
-              let firstOfMonth = new Date(grid.year, grid.month, 1)
-              let firstDayOfWeek = content.firstDayOfWeek
-              let firstOfMonthDayOfWeek = firstOfMonth.getDay()
-              let daysBeforeFirst = (firstOfMonthDayOfWeek - firstDayOfWeek + 7) % 7
-              let startDate = new Date(grid.year, grid.month, 1 - daysBeforeFirst)
-              let currentDate = new Date(startDate)
-              currentDate.setDate(startDate.getDate() + cellItem.index)
-              return currentDate.getDate()
-            }
-
-            property int cellMonth: {
-              let firstOfMonth = new Date(grid.year, grid.month, 1)
-              let firstDayOfWeek = content.firstDayOfWeek
-              let firstOfMonthDayOfWeek = firstOfMonth.getDay()
-              let daysBeforeFirst = (firstOfMonthDayOfWeek - firstDayOfWeek + 7) % 7
-              let startDate = new Date(grid.year, grid.month, 1 - daysBeforeFirst)
-              let currentDate = new Date(startDate)
-              currentDate.setDate(startDate.getDate() + cellItem.index)
-              return currentDate.getMonth()
-            }
-
-            property int cellYear: {
-              let firstOfMonth = new Date(grid.year, grid.month, 1)
-              let firstDayOfWeek = content.firstDayOfWeek
-              let firstOfMonthDayOfWeek = firstOfMonth.getDay()
-              let daysBeforeFirst = (firstOfMonthDayOfWeek - firstDayOfWeek + 7) % 7
-              let startDate = new Date(grid.year, grid.month, 1 - daysBeforeFirst)
-              let currentDate = new Date(startDate)
-              currentDate.setDate(startDate.getDate() + cellItem.index)
-              return currentDate.getFullYear()
-            }
-
-            property bool isToday: cellDay === Time.date.getDate() && cellMonth === Time.date.getMonth() && cellYear === Time.date.getFullYear()
-            property bool isCurrentMonth: cellMonth === grid.month
-
-            Rectangle {
-              width: Style.baseWidgetSize * 0.9
-              height: Style.baseWidgetSize * 0.9
+        spacing: Style.marginXXS
+        month: Time.date.getMonth()
+        year: Time.date.getFullYear()
+        locale: Qt.locale()
+        delegate: Item {
+          Rectangle {
+            width: Style.baseWidgetSize * 0.9
+            height: Style.baseWidgetSize * 0.9
+            anchors.centerIn: parent
+            radius: Style.radiusM
+            color: model.today ? Color.mSecondary : Color.transparent
+            NText {
               anchors.centerIn: parent
-              radius: Style.radiusM
-              color: parent.isToday ? Color.mSecondary : Color.transparent
-
-              NText {
-                anchors.centerIn: parent
-                text: cellItem.cellDay
-                color: {
-                  if (cellItem.isToday)
-                    return Color.mOnSecondary
-                  if (cellItem.isCurrentMonth)
-                    return Color.mOnSurface
-                  return Color.mOnSurfaceVariant
-                }
-                opacity: cellItem.isCurrentMonth ? 1.0 : 0.4
-                pointSize: Style.fontSizeM
-                font.weight: cellItem.isToday ? Style.fontWeightBold : Style.fontWeightMedium
+              text: model.day
+              color: {
+                if (model.today)
+                  return Color.mOnSecondary
+                if (model.month === grid.month)
+                  return Color.mOnSurface
+                return Color.mOnSurfaceVariant
               }
-
-              Behavior on color {
-                ColorAnimation {
-                  duration: Style.animationFast
-                }
+              opacity: model.month === grid.month ? 1.0 : 0.4
+              pointSize: Style.fontSizeM
+              font.weight: model.today ? Style.fontWeightBold : Style.fontWeightMedium
+            }
+            Behavior on color {
+              ColorAnimation {
+                duration: Style.animationFast
               }
             }
           }

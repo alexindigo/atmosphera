@@ -117,27 +117,6 @@ ColumnLayout {
       checked: Settings.data.location.showWeekNumberInCalendar
       onToggled: checked => Settings.data.location.showWeekNumberInCalendar = checked
     }
-
-    NComboBox {
-      label: I18n.tr("settings.location.date-time.first-day-of-week.label")
-      description: I18n.tr("settings.location.date-time.first-day-of-week.description")
-      minimumWidth: 220 * Style.uiScaleRatio
-      model: [{
-          "key": "auto",
-          "name": I18n.tr("settings.location.date-time.first-day-of-week.auto")
-        }, {
-          "key": "monday",
-          "name": I18n.tr("settings.location.date-time.first-day-of-week.monday")
-        }, {
-          "key": "saturday",
-          "name": I18n.tr("settings.location.date-time.first-day-of-week.saturday")
-        }, {
-          "key": "sunday",
-          "name": I18n.tr("settings.location.date-time.first-day-of-week.sunday")
-        }]
-      currentKey: Settings.data.location.firstDayOfWeek
-      onSelected: key => Settings.data.location.firstDayOfWeek = key
-    }
   }
 
   NDivider {
