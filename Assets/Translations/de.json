@@ -5,13 +5,13 @@
       "profile": {
         "section": {
           "label": "Profil",
-          "description": "Bearbeiten Sie Ihre Benutzerdaten und Ihren Avatar."
+          "description": "Hier kannst du deinen Avatar ändern."
         },
         "picture": {
-          "label": "{user}s Profilbild",
-          "description": "Ihr Profilbild, das in der gesamten Benutzeroberfläche angezeigt wird."
+          "label": "{user}s Avatar",
+          "description": "Der Avatar, der in der gesamten Benutzeroberfläche angezeigt wird."
         },
-        "select-avatar": "Avatar-Bild auswählen"
+        "select-avatar": "Avatar auswählen"
       },
       "screen-corners": {
         "section": {
@@ -35,7 +35,7 @@
       "lockscreen": {
         "section": {
           "label": "Sperrbildschirm",
-          "description": "Sperrbildschirm-Verhalten konfigurieren."
+          "description": "Hier kannst du deinen Sperrbildschirm konfigurieren."
         },
         "lock-on-suspend": {
           "label": "Beim Standby sperren",
@@ -45,15 +45,15 @@
       "fonts": {
         "section": {
           "label": "Schriftarten",
-          "description": "Wählen Sie die in der Benutzeroberfläche verwendeten Schriftarten."
+          "description": "Wählen die Schriftart an die auf der Benutzeroberfläche angezgit wird."
         },
         "default": {
-          "label": "Standard-Schriftart",
+          "label": "Standard Schriftart",
           "description": "Hauptschriftart für die gesamte Benutzeroberfläche.",
           "placeholder": "Standard-Schriftart auswählen...",
           "search-placeholder": "Schriftarten suchen...",
           "scale": {
-            "description": "Vergrößern oder verkleinern Sie die Größe des Standardtextes.",
+            "description": "Hier kannst du die größe des Standardtextes ändern.",
             "label": "Standardmäßige Schriftgröße"
           }
         },
@@ -63,7 +63,7 @@
           "placeholder": "Monospace-Schriftart auswählen...",
           "search-placeholder": "Monospace-Schriftarten suchen...",
           "scale": {
-            "description": "Die Größe des nichtproportionalen Textes vergrößern oder verkleinern.",
+            "description": "Hier kannst du die größe des Monotextes ändern",
             "label": "Schriftgröße mit fester Breite"
           }
         },
@@ -72,11 +72,11 @@
       "language": {
         "section": {
           "label": "Sprache",
-          "description": "Wählen Sie Ihre bevorzugte Sprache für die Anwendung."
+          "description": "Hier kannst du die Sprache von Noctalia ändern."
         },
         "select": {
           "label": "Anwendungssprache",
-          "description": "Wählen Sie die in der Anwendungsoberfläche verwendete Sprache.",
+          "description": "Wählen die in der Anwendungsoberfläche verwendete Sprache.",
           "auto-detect": "Automatisch"
         }
       }
