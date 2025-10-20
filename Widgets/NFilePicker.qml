@@ -39,8 +39,8 @@ Popup {
   function openFilePicker() {
     if (!root.currentPath)
       root.currentPath = root.initialPath
-    shouldResetSelection = true
-    open()
+      shouldResetSelection = true
+      open()
   }
 
   function getFileIcon(fileName) {
@@ -92,18 +92,18 @@ Popup {
   function formatFileSize(bytes) {
     if (bytes === 0)
       return "0 B"
-    const k = 1024, sizes = ["B", "KB", "MB", "GB", "TB"]
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i]
+      const k = 1024, sizes = ["B", "KB", "MB", "GB", "TB"]
+      const i = Math.floor(Math.log(bytes) / Math.log(k))
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i]
   }
 
   function confirmSelection() {
     if (filePickerPanel.currentSelection.length === 0)
       return
 
-    root.selectedPaths = filePickerPanel.currentSelection
-    root.accepted(filePickerPanel.currentSelection)
-    root.close()
+      root.selectedPaths = filePickerPanel.currentSelection
+      root.accepted(filePickerPanel.currentSelection)
+      root.close()
   }
 
   function updateFilteredModel() {
@@ -126,14 +126,14 @@ Popup {
       if (root.selectionMode === "folders" && !fileIsDir)
         continue
 
-      if (searchText === "" || fileName.toLowerCase().includes(searchText)) {
-        filteredModel.append({
-                               "fileName": fileName,
-                               "filePath": filePath,
-                               "fileIsDir": fileIsDir,
-                               "fileSize": fileSize
-                             })
-      }
+        if (searchText === "" || fileName.toLowerCase().includes(searchText)) {
+          filteredModel.append({
+            "fileName": fileName,
+            "filePath": filePath,
+            "fileIsDir": fileIsDir,
+            "fileSize": fileSize
+          })
+        }
     }
   }
 
@@ -165,19 +165,19 @@ Popup {
     focus: true
 
     Keys.onPressed: event => {
-                      if (event.modifiers & Qt.ControlModifier && event.key === Qt.Key_F) {
-                        filePickerPanel.showSearchBar = !filePickerPanel.showSearchBar
-                        if (filePickerPanel.showSearchBar)
-                        Qt.callLater(() => searchInput.forceActiveFocus())
-                        event.accepted = true
-                      } else if (event.key === Qt.Key_Escape && filePickerPanel.showSearchBar) {
-                        filePickerPanel.showSearchBar = false
-                        filePickerPanel.searchText = ""
-                        filePickerPanel.filterText = ""
-                        root.updateFilteredModel()
-                        event.accepted = true
-                      }
-                    }
+      if (event.modifiers & Qt.ControlModifier && event.key === Qt.Key_F) {
+        filePickerPanel.showSearchBar = !filePickerPanel.showSearchBar
+        if (filePickerPanel.showSearchBar)
+          Qt.callLater(() => searchInput.forceActiveFocus())
+          event.accepted = true
+      } else if (event.key === Qt.Key_Escape && filePickerPanel.showSearchBar) {
+        filePickerPanel.showSearchBar = false
+        filePickerPanel.searchText = ""
+        filePickerPanel.filterText = ""
+        root.updateFilteredModel()
+        event.accepted = true
+      }
+    }
 
     ColumnLayout {
       anchors.fill: parent
@@ -296,6 +296,10 @@ Popup {
             text: root.currentPath
             placeholderText: "Enter path..."
             Layout.fillWidth: true
+
+            visible: !filePickerPanel.showSearchBar
+            enabled: !filePickerPanel.showSearchBar
+
             onEditingFinished: {
               const newPath = text.trim()
               if (newPath !== "" && newPath !== root.currentPath) {
@@ -311,6 +315,30 @@ Popup {
                 if (!locationInput.activeFocus)
                   locationInput.text = root.currentPath
               }
+            }
+          }
+
+          // Search bar
+          NTextInput {
+            id: searchInput
+            inputIconName: "search"
+            placeholderText: I18n.tr("widget.file-picker.search-placeholder")
+            Layout.fillWidth: true
+
+            visible: filePickerPanel.showSearchBar
+            enabled: filePickerPanel.showSearchBar
+
+            text: filePickerPanel.searchText
+            onTextChanged: {
+              filePickerPanel.searchText = text
+              filePickerPanel.filterText = text
+              root.updateFilteredModel()
+            }
+            Keys.onEscapePressed: {
+              filePickerPanel.showSearchBar = false
+              filePickerPanel.searchText = ""
+              filePickerPanel.filterText = ""
+              root.updateFilteredModel()
             }
           }
 
@@ -331,61 +359,6 @@ Popup {
               folderModel.folder = ""
               folderModel.folder = currentFolder
               Qt.callLater(root.updateFilteredModel)
-            }
-          }
-        }
-      }
-
-      // Search bar
-      Rectangle {
-        Layout.fillWidth: true
-        Layout.preferredHeight: 45
-        color: Color.mSurfaceVariant
-        radius: Style.radiusS
-        border.color: Color.mOutline
-        border.width: Math.max(1, Style.borderS)
-        visible: filePickerPanel.showSearchBar
-
-        RowLayout {
-          anchors.left: parent.left
-          anchors.right: parent.right
-          anchors.verticalCenter: parent.verticalCenter
-          anchors.leftMargin: Style.marginS
-          anchors.rightMargin: Style.marginS
-          spacing: Style.marginS
-
-          NIcon {
-            icon: "filepicker-search"
-            color: Color.mOnSurfaceVariant
-            pointSize: Style.fontSizeS
-          }
-          NTextInput {
-            id: searchInput
-            placeholderText: I18n.tr("widget.file-picker.search-placeholder")
-            Layout.fillWidth: true
-            text: filePickerPanel.searchText
-            onTextChanged: {
-              filePickerPanel.searchText = text
-              filePickerPanel.filterText = text
-              root.updateFilteredModel()
-            }
-            Keys.onEscapePressed: {
-              filePickerPanel.showSearchBar = false
-              filePickerPanel.searchText = ""
-              filePickerPanel.filterText = ""
-              root.updateFilteredModel()
-            }
-          }
-          NIconButton {
-            icon: "filepicker-x"
-            tooltipText: I18n.tr("tooltips.clear")
-            baseSize: Style.baseWidgetSize * 0.6
-            visible: filePickerPanel.searchText.length > 0
-            onClicked: {
-              searchInput.text = ""
-              filePickerPanel.searchText = ""
-              filePickerPanel.filterText = ""
-              root.updateFilteredModel()
             }
           }
         }
@@ -500,11 +473,11 @@ Popup {
           bottomMargin: Style.marginS
 
           ScrollBar.vertical: scrollBarComponent.createObject(gridView, {
-                                                                "parent": gridView,
-                                                                "x": gridView.mirrored ? 0 : gridView.width - width,
-                                                                "y": 0,
-                                                                "height": gridView.height
-                                                              })
+            "parent": gridView,
+            "x": gridView.mirrored ? 0 : gridView.width - width,
+            "y": 0,
+            "height": gridView.height
+          })
 
           delegate: Rectangle {
             id: gridItem
@@ -560,8 +533,8 @@ Popup {
                 property bool isImage: {
                   if (model.fileIsDir)
                     return false
-                  const ext = model.fileName.split('.').pop().toLowerCase()
-                  return ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg', 'ico'].includes(ext)
+                    const ext = model.fileName.split('.').pop().toLowerCase()
+                    return ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg', 'ico'].includes(ext)
                 }
 
                 Image {
@@ -601,10 +574,10 @@ Popup {
                   color: {
                     if (isSelected)
                       return Color.mSecondary
-                    else if (mouseArea.containsMouse)
-                      return model.fileIsDir ? Color.mOnTertiary : Color.mOnTertiary
-                    else
-                      return model.fileIsDir ? Color.mPrimary : Color.mOnSurfaceVariant
+                      else if (mouseArea.containsMouse)
+                        return model.fileIsDir ? Color.mOnTertiary : Color.mOnTertiary
+                        else
+                          return model.fileIsDir ? Color.mPrimary : Color.mOnSurfaceVariant
                   }
                   anchors.centerIn: parent
                   visible: !iconContainer.isImage || thumbnail.status !== Image.Ready
@@ -635,10 +608,10 @@ Popup {
                 color: {
                   if (isSelected)
                     return Color.mSecondary
-                  else if (mouseArea.containsMouse)
-                    return Color.mOnTertiary
-                  else
-                    return Color.mOnSurfaceVariant
+                    else if (mouseArea.containsMouse)
+                      return Color.mOnTertiary
+                      else
+                        return Color.mOnSurfaceVariant
                 }
                 pointSize: Style.fontSizeS
                 font.weight: isSelected ? Style.fontWeightBold : Style.fontWeightRegular
@@ -657,37 +630,37 @@ Popup {
               acceptedButtons: Qt.LeftButton | Qt.RightButton
 
               onClicked: mouse => {
-                           if (mouse.button === Qt.LeftButton) {
-                             if (model.fileIsDir) {
-                               // In folder mode, single click selects the folder
-                               if (root.selectionMode === "folders") {
-                                 filePickerPanel.currentSelection = [model.filePath]
-                               }
-                               // In file mode, single click on folder does nothing (must double-click to enter)
-                             } else {
-                               // Single click on file selects it (only in file mode)
-                               if (root.selectionMode === "files") {
-                                 filePickerPanel.currentSelection = [model.filePath]
-                               }
-                             }
-                           }
-                         }
+                if (mouse.button === Qt.LeftButton) {
+                  if (model.fileIsDir) {
+                    // In folder mode, single click selects the folder
+                    if (root.selectionMode === "folders") {
+                      filePickerPanel.currentSelection = [model.filePath]
+                    }
+                    // In file mode, single click on folder does nothing (must double-click to enter)
+                  } else {
+                    // Single click on file selects it (only in file mode)
+                    if (root.selectionMode === "files") {
+                      filePickerPanel.currentSelection = [model.filePath]
+                    }
+                  }
+                }
+              }
 
               onDoubleClicked: mouse => {
-                                 if (mouse.button === Qt.LeftButton) {
-                                   if (model.fileIsDir) {
-                                     // Double-click on folder always navigates into it
-                                     folderModel.folder = "file://" + model.filePath
-                                     root.currentPath = model.filePath
-                                   } else {
-                                     // Double-click on file selects and confirms (only in file mode)
-                                     if (root.selectionMode === "files") {
-                                       filePickerPanel.currentSelection = [model.filePath]
-                                       root.confirmSelection()
-                                     }
-                                   }
-                                 }
-                               }
+                if (mouse.button === Qt.LeftButton) {
+                  if (model.fileIsDir) {
+                    // Double-click on folder always navigates into it
+                    folderModel.folder = "file://" + model.filePath
+                    root.currentPath = model.filePath
+                  } else {
+                    // Double-click on file selects and confirms (only in file mode)
+                    if (root.selectionMode === "files") {
+                      filePickerPanel.currentSelection = [model.filePath]
+                      root.confirmSelection()
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -707,9 +680,9 @@ Popup {
             color: {
               if (filePickerPanel.currentSelection.includes(model.filePath))
                 return Color.mSecondary
-              if (mouseArea.containsMouse)
-                return Color.mTertiary
-              return Color.transparent
+                if (mouseArea.containsMouse)
+                  return Color.mTertiary
+                  return Color.transparent
             }
             radius: Style.radiusS
             Behavior on color {
@@ -755,37 +728,37 @@ Popup {
               acceptedButtons: Qt.LeftButton | Qt.RightButton
 
               onClicked: mouse => {
-                           if (mouse.button === Qt.LeftButton) {
-                             if (model.fileIsDir) {
-                               // In folder mode, single click selects the folder
-                               if (root.selectionMode === "folders") {
-                                 filePickerPanel.currentSelection = [model.filePath]
-                               }
-                               // In file mode, single click on folder does nothing (must double-click to enter)
-                             } else {
-                               // Single click on file selects it (only in file mode)
-                               if (root.selectionMode === "files") {
-                                 filePickerPanel.currentSelection = [model.filePath]
-                               }
-                             }
-                           }
-                         }
+                if (mouse.button === Qt.LeftButton) {
+                  if (model.fileIsDir) {
+                    // In folder mode, single click selects the folder
+                    if (root.selectionMode === "folders") {
+                      filePickerPanel.currentSelection = [model.filePath]
+                    }
+                    // In file mode, single click on folder does nothing (must double-click to enter)
+                  } else {
+                    // Single click on file selects it (only in file mode)
+                    if (root.selectionMode === "files") {
+                      filePickerPanel.currentSelection = [model.filePath]
+                    }
+                  }
+                }
+              }
 
               onDoubleClicked: mouse => {
-                                 if (mouse.button === Qt.LeftButton) {
-                                   if (model.fileIsDir) {
-                                     // Double-click on folder always navigates into it
-                                     folderModel.folder = "file://" + model.filePath
-                                     root.currentPath = model.filePath
-                                   } else {
-                                     // Double-click on file selects and confirms (only in file mode)
-                                     if (root.selectionMode === "files") {
-                                       filePickerPanel.currentSelection = [model.filePath]
-                                       root.confirmSelection()
-                                     }
-                                   }
-                                 }
-                               }
+                if (mouse.button === Qt.LeftButton) {
+                  if (model.fileIsDir) {
+                    // Double-click on folder always navigates into it
+                    folderModel.folder = "file://" + model.filePath
+                    root.currentPath = model.filePath
+                  } else {
+                    // Double-click on file selects and confirms (only in file mode)
+                    if (root.selectionMode === "files") {
+                      filePickerPanel.currentSelection = [model.filePath]
+                      root.confirmSelection()
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -843,7 +816,7 @@ Popup {
     Component.onCompleted: {
       if (!root.currentPath)
         root.currentPath = root.initialPath
-      folderModel.folder = "file://" + root.currentPath
+        folderModel.folder = "file://" + root.currentPath
     }
   }
 }
