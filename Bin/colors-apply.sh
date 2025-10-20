@@ -72,6 +72,13 @@ case "$APP_NAME" in
         fi
         ;;
 
+    vicinae)
+    echo "🎨 Applying 'matugen' theme to vicinae..."
+
+    # Apply the theme 
+    vicinae theme set matugen
+    ;;
+	
     pywalfox)
         echo "🎨 Updating pywalfox themes..."
         pywalfox update

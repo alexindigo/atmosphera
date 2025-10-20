@@ -2,6 +2,7 @@ pragma Singleton
 
 import QtQuick
 import Quickshell
+import Quickshell.Io
 import qs.Commons
 
 // Central place to define which templates we generate and where they write.
@@ -30,6 +31,50 @@ Singleton {
     }
 
     return ""
+  }
+
+  // Build user templates TOML for ~/.config/noctalia/user-templates.toml
+  function buildUserTemplatesToml() {
+    var lines = []
+    lines.push("[config]")
+    lines.push("")
+    lines.push("# User-defined templates")
+    lines.push("# Add your custom templates below")
+    lines.push("# Example:")
+    lines.push("# [templates.myapp]")
+    lines.push("# input_path = \"~/.config/noctalia/templates/myapp.css\"")
+    lines.push("# output_path = \"~/.config/myapp/theme.css\"")
+    lines.push("# post_hook = \"myapp --reload-theme\"")
+    lines.push("")
+    lines.push("# Remove this section and add your own templates")
+    lines.push("#[templates.placeholder]")
+    lines.push("#input_path = \"" + Quickshell.shellDir + "/Assets/MatugenTemplates/noctalia.json\"")
+    lines.push("#output_path = \"" + Settings.cacheDir + "placeholder.json\"")
+    lines.push("")
+
+    return lines.join("\n") + "\n"
+  }
+
+  // Write user templates TOML to ~/.config/noctalia/user-templates.toml
+  function writeUserTemplatesToml() {
+    var userConfigPath = Settings.configDir + "user-templates.toml"
+
+    // Check if file already exists
+    fileCheckProcess.command = ["test", "-f", userConfigPath]
+    fileCheckProcess.running = true
+  }
+
+  function doWriteUserTemplatesToml() {
+    var userConfigPath = Settings.configDir + "user-templates.toml"
+    var configContent = buildUserTemplatesToml()
+
+    // Ensure directory exists (should already exist but just in case)
+    Quickshell.execDetached(["mkdir", "-p", Settings.configDir])
+
+    // Write the config file
+    Quickshell.execDetached(["sh", "-c", `echo '${configContent.replace(/'/g, "'\\''")}' > '${userConfigPath}'`])
+
+    Logger.d("MatugenTemplates", "User templates config written to:", userConfigPath)
   }
 
   // --------------------------------
@@ -107,6 +152,14 @@ Singleton {
       "input": "fuzzel.conf",
       "postHook": AppThemeService.colorsApplyScript + " fuzzel"
     }, {
+      "name": "vicinae",
+      "templates": [{
+          "version": "vicinae",
+          "output": "~/.local/share/vicinae/themes/matugen.toml"
+        }],
+      "input": "vicinae.toml",
+      "postHook": "cp -n " + Quickshell.shellDir + "/Assets/noctalia.svg ~/.local/share/vicinae/themes/noctalia.svg && " + AppThemeService.colorsApplyScript + " vicinae"
+    }, {
       "name": "pywalfox",
       "templates": [{
           "version": "pywalfox",
@@ -115,9 +168,9 @@ Singleton {
       "input": "pywalfox.json",
       "postHook": AppThemeService.colorsApplyScript + " pywalfox"
     }, {
-      "name": "discord_vesktops",
+      "name": "discord_vesktop",
       "templates": [{
-          "version": "discord_vesktops",
+          "version": "discord_vesktop",
           "output": "~/.config/vesktop/themes/noctalia.theme.css"
         }],
       "input": "vesktop.css"
@@ -207,5 +260,21 @@ Singleton {
       }
     }
     return clients
+  }
+
+  // Process for checking if user templates file exists
+  Process {
+    id: fileCheckProcess
+    running: false
+
+    onExited: function (exitCode) {
+      if (exitCode === 0) {
+        // File exists, skip creation
+        Logger.d("MatugenTemplates", "User templates config already exists, skipping creation")
+      } else {
+        // File doesn't exist, create it
+        doWriteUserTemplatesToml()
+      }
+    }
   }
 }

@@ -5,13 +5,13 @@
       "profile": {
         "section": {
           "label": "Profil",
-          "description": "Bearbeiten Sie Ihre Benutzerdaten und Ihren Avatar."
+          "description": "Hier kannst du deinen Avatar ändern."
         },
         "picture": {
-          "label": "{user}s Profilbild",
-          "description": "Ihr Profilbild, das in der gesamten Benutzeroberfläche angezeigt wird."
+          "label": "{user}s Avatar",
+          "description": "Der Avatar, der in der gesamten Benutzeroberfläche angezeigt wird."
         },
-        "select-avatar": "Avatar-Bild auswählen"
+        "select-avatar": "Avatar auswählen"
       },
       "screen-corners": {
         "section": {
@@ -35,15 +35,15 @@
       "fonts": {
         "section": {
           "label": "Schriftarten",
-          "description": "Wählen Sie die in der Benutzeroberfläche verwendeten Schriftarten."
+          "description": "Wählen die Schriftart an die auf der Benutzeroberfläche angezgit wird."
         },
         "default": {
-          "label": "Standard-Schriftart",
+          "label": "Standard Schriftart",
           "description": "Hauptschriftart für die gesamte Benutzeroberfläche.",
           "placeholder": "Standard-Schriftart auswählen...",
           "search-placeholder": "Schriftarten suchen...",
           "scale": {
-            "description": "Vergrößern oder verkleinern Sie die Größe des Standardtextes.",
+            "description": "Hier kannst du die größe des Standardtextes ändern.",
             "label": "Standardmäßige Schriftgröße"
           }
         },
@@ -53,12 +53,24 @@
           "placeholder": "Monospace-Schriftart auswählen...",
           "search-placeholder": "Monospace-Schriftarten suchen...",
           "scale": {
-            "description": "Die Größe des nichtproportionalen Textes vergrößern oder verkleinern.",
+            "description": "Hier kannst du die größe des Monotextes ändern",
             "label": "Schriftgröße mit fester Breite"
           }
         },
         "reset-scaling": "Skalierung zurücksetzen"
-      }
+      },
+      "language": {
+        "section": {
+          "label": "Sprache",
+          "description": "Hier kannst du die Sprache von Noctalia ändern."
+        },
+        "select": {
+          "label": "Anwendungssprache",
+          "description": "Wählen die in der Anwendungsoberfläche verwendete Sprache.",
+          "auto-detect": "Automatisch"
+        }
+      },
+      "launch-setup-wizard": "Starte den Setup-Assistenten"
     },
     "audio": {
       "title": "Audio",
@@ -222,13 +234,13 @@
       "widgets": {
         "section": {
           "label": "Widget-Positionierung",
-          "description": "Widgets per Drag & Drop neu anordnen. Abzeichen zeigen die Verwendung an: [L]inks, [M]itte, [R]echts."
+          "description": "Widgets per Drag & Drop neu anordnen. Symoble zeigen die Verwendung an: [L]inks, [M]itte, [R]echts."
         }
       },
       "monitors": {
         "section": {
           "label": "Monitor-Anzeige",
-          "description": "Statusleiste auf bestimmten Monitoren anzeigen. Standard ist alle, wenn keine ausgewählt sind."
+          "description": "Leiste auf bestimmten Monitoren anzeigen. Standardmäßig auf allen."
         }
       },
       "tray": {
@@ -260,6 +272,10 @@
         "floating-distance": {
           "label": "Dock-Schwebeabstand",
           "description": "Schwebeabstand vom Bildschirmrand anpassen."
+        },
+        "icon-size": {
+          "label": "Dock-Größe",
+          "description": "Gesamtgröße des Docks anpassen."
         },
         "colorize-icons": {
           "label": "Symbole einfärben",
@@ -294,7 +310,7 @@
         },
         "clipboard-history": {
           "label": "Zwischenablage-Verlauf aktivieren",
-          "description": "Zugriff auf zuvor kopierte Elemente über den Starter."
+          "description": "Zugriff auf zuvor kopierte Elemente über den Launcher."
         },
         "sort-by-usage": {
           "label": "Nach Häufigkeit sortieren",
@@ -318,8 +334,8 @@
           "description": "Erscheinungsbild und Verhalten von Benachrichtigungen konfigurieren."
         },
         "do-not-disturb": {
-          "label": "Nicht stören",
-          "description": "Alle Benachrichtigungs-Popups deaktivieren, wenn aktiviert."
+          "label": "Bitte Nicht stören",
+          "description": "Alle Benachrichtigungs-Popups deaktivieren."
         },
         "enable-osd": {
           "label": "Bildschirmanzeige aktivieren",
@@ -359,35 +375,35 @@
       "monitors": {
         "section": {
           "label": "Monitor-Anzeige",
-          "description": "Benachrichtigungen auf bestimmten Monitoren anzeigen. Standard ist alle, wenn keine ausgewählt sind."
+          "description": "Benachrichtigungen auf bestimmten Monitoren anzeigen. Standardmäßig werden sie auf allen Monitoren angezeigt"
         }
       }
     },
     "osd": {
-      "title": "Bildschirmanzeige",
+      "title": "On-Screen Display",
       "description": "Bildschirm-Overlays wie Lautstärke- und Helligkeitsanzeigen konfigurieren.",
       "section": {
         "general": {
           "label": "Allgemein",
-          "description": "Sichtbarkeit und Verhalten der OSD konfigurieren."
+          "description": "Sichtbarkeit und Verhalten vom On-Screen Display konfigurieren."
         }
       },
       "enabled": {
-        "label": "Bildschirmanzeige aktivieren",
+        "label": "On-Screen Display aktivieren",
         "description": "Lautstärke- und Helligkeitsänderungen in Echtzeit anzeigen."
       },
       "always-on-top": {
         "label": "Immer im Vordergrund",
-        "description": "Bildschirmanzeige über Vollbildfenstern und anderen Ebenen anzeigen."
+        "description": "On-Screen Display über Vollbildfenstern und anderen Ebenen anzeigen."
       },
       "location": {
         "label": "Position",
-        "description": "Wo Bildschirmanzeigen erscheinen."
+        "description": "Wo On-Screen Displays erscheinen."
       },
       "duration": {
         "section": {
           "label": "Automatisches Ausblenden",
-          "description": "Wie lange die OSD sichtbar bleibt, bevor sie automatisch ausgeblendet wird."
+          "description": "Wie lange das On-Screen Display sichtbar bleibt, bevor es automatisch ausgeblendet wird."
         },
         "auto-hide": {
           "label": "Ausblenden nach",
@@ -397,7 +413,7 @@
       "monitors": {
         "section": {
           "label": "Monitor-Anzeige",
-          "description": "OSD auf bestimmten Monitoren anzeigen. Standard ist alle, wenn keine ausgewählt sind."
+          "description": "On-Screen Display auf bestimmten Monitoren anzeigen. Standardmäßig auf allen angezeigt."
         }
       }
     },
@@ -446,7 +462,7 @@
           "description": "Dauer der Übergangsanimationen in Sekunden."
         },
         "edge-smoothness": {
-          "label": "Übergangskante weichzeichnen",
+          "label": "Übergangseffect weichzeichnen",
           "description": "Wendet einen weichen, gefiederten Effekt auf die Kante von Übergängen an."
         }
       },
@@ -475,10 +491,6 @@
           "label": "Farbquelle",
           "description": "Haupteinstellungen für Noctalias Farben."
         },
-        "dark-mode": {
-          "label": "Dunkler Modus",
-          "description": "Wechselt zu einem dunkleren Theme für einfachere Betrachtung bei Nacht."
-        },
         "use-wallpaper-colors": {
           "label": "Hintergrundbild-Farben verwenden",
           "description": "Farbschemata aus Ihrem Hintergrundbild mit Matugen generieren. Extrahiert automatisch Farben für ein kohärentes Design."
@@ -486,6 +498,19 @@
         "matugen-scheme-type": {
           "label": "Matugen-Schema-Typ",
           "description": "Wähle einen Farbstil für Matugen aus."
+        }
+      },
+      "dark-mode": {
+        "switch": {
+          "label": "Dunkler Modus",
+          "description": "Wechselt zu einem dunkleren Theme für einfachere Betrachtung bei Nacht."
+        },
+        "mode": {
+          "label": "Automatischer dunkler Modus",
+          "description": "Ermöglicht automatisches Wechseln zwischen dem hellen und dunklen Modus.",
+          "off": "Aus",
+          "manual": "Manuell",
+          "location": "Standort"
         }
       },
       "predefined": {
@@ -517,15 +542,15 @@
           "description": "Terminal-Emulator-Theming.",
           "kitty": {
             "description": "Schreibt {filepath} und lädt neu",
-            "description-missing": "Erfordert kitty Terminal"
+            "description-missing": "Erfordert {app} Terminal"
           },
           "ghostty": {
             "description": "Schreibt {filepath} und lädt neu",
-            "description-missing": "Erfordert ghostty Terminal"
+            "description-missing": "Erfordert {app} Terminal"
           },
           "foot": {
             "description": "Schreibt {filepath} und lädt neu",
-            "description-missing": "Erfordert foot Terminal"
+            "description-missing": "Erfordert {app} Terminal"
           }
         },
         "programs": {
@@ -533,7 +558,11 @@
           "description": "Anwendungsspezifisches Theming.",
           "fuzzel": {
             "description": "Schreibt {filepath} und lädt neu",
-            "description-missing": "Erfordert fuzzel Starter"
+            "description-missing": "Erfordert die Installation von {app}"
+          },
+          "vicinae": {
+            "description": "Schreibt {filepath} und lädt neu",
+            "description-missing": "Erfordert die Installation von {app}"
           },
           "discord": {
             "description": "Schreibt {filepath} für {client}",
@@ -541,7 +570,7 @@
           },
           "pywalfox": {
             "description": "Schreibt {filepath} und führt pywalfox update aus",
-            "description-missing": "Erfordert pywalfox Paket"
+            "description-missing": "Erfordert die Installation von {app} "
           }
         },
         "misc": {
@@ -549,7 +578,7 @@
           "description": "Zusätzliche Konfigurationsoptionen.",
           "user-templates": {
             "label": "Benutzer-Vorlagen",
-            "description": "Benutzerdefinierte Matugen-Konfiguration aus ~/.config/matugen/config.toml aktivieren"
+            "description": "Benutzerdefinierte Matugen-Konfiguration aktivieren. Eine Vorlagendatei wird beim ersten Aktivieren unter ~/.config/noctalia/user-templates.toml erstellt"
           }
         },
         "section": {
@@ -567,7 +596,7 @@
         },
         "search": {
           "label": "Nach einem Standort suchen",
-          "description": "z.B. Berlin, Deutschland",
+          "description": "z.B. Dortmund, Deutschland",
           "placeholder": "Standortnamen eingeben"
         }
       },
@@ -596,7 +625,7 @@
         },
         "week-numbers": {
           "label": "Wochennummern anzeigen",
-          "description": "Zeigt die Woche des Jahres (z.B. Woche 38) im Kalender an."
+          "description": "Zeigt die Kalender Wochen an (z.B. Woche 38)"
         }
       }
     },
@@ -689,7 +718,7 @@
           "description_plural": "Ein Dankeschön an unsere {count} <b>großartigen</b> Mitwirkenden!"
         }
       },
-      "support": "Unterstützen Sie uns"
+      "support": "Unterstütz uns"
     },
     "hooks": {
       "title": "Hooks",
@@ -746,7 +775,7 @@
           "label": "Widgets für Kurzbefehle"
         },
         "sectionLeft": "Links",
-        "sectionRight": "Richtig"
+        "sectionRight": "Rechts"
       }
     },
     "user-interface": {
@@ -768,10 +797,6 @@
         "label": "Eckenradius",
         "reset": "Rahmenradius zurücksetzen"
       },
-      "compact-lockscreen": {
-        "description": "Zeige nur die Login-Eingabe und Systemsteuerung, blende Wetter- und Medien-Widgets aus.",
-        "label": "Kompakter Sperrbildschirm"
-      },
       "dim-desktop": {
         "description": "Den Desktop abdunkeln, wenn Bedienfelder oder Menüs geöffnet sind.",
         "label": "Dim Desktop"
@@ -790,6 +815,17 @@
         "description": "Tooltips in der gesamten Benutzeroberfläche aktivieren oder deaktivieren.",
         "label": "Tooltips anzeigen"
       }
+    },
+    "lock-screen": {
+      "compact-lockscreen": {
+        "description": "Zeige nur die Login-Eingabe und Systemsteuerung, blende Wetter- und Medien-Widgets aus.",
+        "label": "Kompakter Sperrbildschirm"
+      },
+      "lock-on-suspend": {
+        "description": "Den Bildschirm beim Suspendieren des Systems automatisch sperren.",
+        "label": "Sperren beim Ruhezustand"
+      },
+      "title": "Sperrbildschirm"
     }
   },
   "general": {
@@ -802,7 +838,7 @@
     "mainly-clear": "Überwiegend klar",
     "partly-cloudy": "Teilweise bewölkt",
     "overcast": "Bedeckt",
-    "fog": "Nebel",
+    "fog": "Nebelig",
     "drizzle": "Nieselregen",
     "snow": "Schnee",
     "rain-showers": "Regenschauer",
@@ -818,7 +854,7 @@
       "select-file": "Datei auswählen",
       "cancel": "Abbrechen",
       "search-placeholder": "Dateien und Ordner suchen...",
-      "select-current": "Aktuelle auswählen",
+      "select-current": "Aktuelles Objekt auswählen",
       "title": "Dateiauswahl"
     },
     "datetime-tokens": {
@@ -897,6 +933,9 @@
       },
       "cancel": "Abbrechen",
       "apply": "Anwenden"
+    },
+    "text-input": {
+      "clear": "Löschen"
     }
   },
   "bar": {
@@ -922,9 +961,13 @@
           "label": "Scrollmodus",
           "description": "Steuern, wann Textscrolling für lange Fenstertitel aktiviert ist."
         },
-        "width": {
-          "description": "Steuert die horizontale Größe des Widgets.",
-          "label": "Widget-Breite"
+        "max-width": {
+          "label": "Maximale Breite",
+          "description": "Stellt die maximale Horizontalgröße des Widgets ein. Das Widget wird sich an kürzere Inhalte anpassen."
+        },
+        "use-fixed-width": {
+          "label": "Feste Breite verwenden",
+          "description": "Wenn aktiviert, verwendet das Widget immer die maximale Breite, anstatt sich dynamisch an den Inhalt anzupassen."
         },
         "colorize-icons": {
           "label": "Symbole einfärben",
@@ -1075,6 +1118,14 @@
           "label": "Visualizer-Typ",
           "description": "Stil des Audio-Visualizers auswählen."
         },
+        "max-width": {
+          "label": "Maximale Breite",
+          "description": "Stellt die maximale Horizontalgröße des Widgets ein. Das Widget wird sich an kürzere Inhalte anpassen."
+        },
+        "use-fixed-width": {
+          "label": "Feste Breite verwenden",
+          "description": "Wenn aktiviert, verwendet das Widget immer die maximale Breite, anstatt sich dynamisch an den Inhalt anzupassen."
+        },
         "scrolling-mode": {
           "label": "Scrollmodus",
           "description": "Steuern, wann Textscrolling für lange Track-Titel aktiviert ist."
@@ -1219,6 +1270,8 @@
   "tooltips": {
     "refresh": "Aktualisieren",
     "close": "Schließen",
+    "up": "Nach oben",
+    "home": "Home",
     "refresh-wallpaper-list": "Hintergrundbild-Liste aktualisieren",
     "refresh-devices": "Geräte aktualisieren",
     "forget-network": "Netzwerk vergessen",

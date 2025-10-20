@@ -2,6 +2,7 @@
   "settings": {
     "general": {
       "title": "General",
+      "launch-setup-wizard": "Launch the setup wizard",
       "profile": {
         "section": {
           "label": "Profile",
@@ -57,6 +58,17 @@
             "label": "Monospaced font size",
             "description": "Increase or decrease the size of the monospaced text."
           }
+        }
+      },
+      "language": {
+        "section": {
+          "label": "Language",
+          "description": "Choose your preferred language for the application."
+        },
+        "select": {
+          "label": "Application Language",
+          "description": "Select the language used in the application's interface.",
+          "auto-detect": "Automatic"
         }
       }
     },
@@ -259,7 +271,11 @@
         },
         "floating-distance": {
           "label": "Dock floating distance",
-          "description": "Adjust the floating distance from the screen edge."
+          "description": "Set the distance between the dock and the edge of the screen."
+        },
+        "icon-size": {
+          "label": "Dock size",
+          "description": "Adjust the overall size of the dock."
         },
         "colorize-icons": {
           "label": "Colorize Icons",
@@ -475,10 +491,6 @@
           "label": "Color source",
           "description": "Main settings for Noctalia's colors."
         },
-        "dark-mode": {
-          "label": "Dark mode",
-          "description": "Switches to a darker theme for easier viewing at night."
-        },
         "use-wallpaper-colors": {
           "label": "Use wallpaper colors",
           "description": "Generate color schemes from your wallpaper using Matugen. Automatically extracts colors to create a cohesive theme."
@@ -486,6 +498,19 @@
         "matugen-scheme-type": {
           "label": "Matugen scheme type",
           "description": "Choose the color scheme generation algorithm for Matugen."
+        }
+      },
+      "dark-mode": {
+        "switch": {
+          "label": "Dark mode",
+          "description": "Switches to a darker theme for easier viewing at night."
+        },
+        "mode": {
+          "label": "Dark mode schedule",
+          "description": "Enables automatic switching between light and dark mode.",
+          "off": "Off",
+          "manual": "Manual",
+          "location": "Location"
         }
       },
       "predefined": {
@@ -539,6 +564,10 @@
             "description": "Write {filepath} and reload",
             "description-missing": "Requires {app} to be installed"
           },
+          "vicinae": {
+            "description": "Write {filepath} and reload",
+            "description-missing": "Requires {app} to be installed"
+          },
           "discord": {
             "description": "Write {filepath} for {client}",
             "description-missing": "No Discord client detected. Install vencord, vesktop, webcord, armcord, equibop, lightcord, or dorion."
@@ -553,7 +582,7 @@
           "description": "Additional configuration options.",
           "user-templates": {
             "label": "User templates",
-            "description": "Enable user-defined Matugen config from ~/.config/matugen/config.toml"
+            "description": "Enable user-defined Matugen config. A template file will be created at ~/.config/noctalia/user-templates.toml on first enable"
           }
         }
       }
@@ -768,10 +797,6 @@
         "label": "Dim desktop",
         "description": "Dim the desktop when panels or menus are open."
       },
-      "compact-lockscreen": {
-        "label": "Compact lock screen",
-        "description": "Show only the login input and system controls, hiding weather and media widgets."
-      },
       "border-radius": {
         "label": "Border radius",
         "description": "Controls the corner roundness of windows, buttons, and other elements.",
@@ -789,6 +814,17 @@
       "panels-overlay": {
         "label": "Open panels in overlay layer",
         "description": "Panels will appear above fullscreen windows"
+      }
+    },
+    "lock-screen": {
+      "title": "Lock screen",
+      "compact-lockscreen": {
+        "label": "Compact lock screen",
+        "description": "Show only the login input and system controls, hiding weather and media widgets."
+      },
+      "lock-on-suspend": {
+        "label": "Lock on suspend",
+        "description": "Automatically lock the screen when suspending the system."
       }
     }
   },
@@ -880,6 +916,9 @@
       },
       "cancel": "Cancel",
       "apply": "Apply"
+    },
+    "text-input": {
+      "clear": "Clear"
     }
   },
   "bar": {
@@ -905,9 +944,13 @@
           "label": "Scrolling mode",
           "description": "Control when text scrolling is enabled for long window titles."
         },
-        "width": {
-          "label": "Widget Width",
-          "description": "Controls the horizontal size of the widget."
+        "max-width": {
+          "label": "Maximum Width",
+          "description": "Sets the maximum horizontal size of the widget. The widget will shrink to fit shorter content."
+        },
+        "use-fixed-width": {
+          "label": "Use Fixed Width",
+          "description": "When enabled, the widget will always use the maximum width instead of dynamically adjusting to content."
         },
         "colorize-icons": {
           "label": "Colorize Icons",
@@ -1058,6 +1101,14 @@
           "label": "Visualizer type",
           "description": "Choose the style of audio visualizer to display."
         },
+        "max-width": {
+          "label": "Maximum Width",
+          "description": "Sets the maximum horizontal size of the widget. The widget will shrink to fit shorter content."
+        },
+        "use-fixed-width": {
+          "label": "Use Fixed Width",
+          "description": "When enabled, the widget will always use the maximum width instead of dynamically adjusting to content."
+        },
         "scrolling-mode": {
           "label": "Scrolling mode",
           "description": "Control when text scrolling is enabled for long track titles."
@@ -1191,10 +1242,11 @@
       "scan-again": "Scan again"
     }
   },
-
   "tooltips": {
     "refresh": "Refresh",
     "close": "Close",
+    "up": "Up",
+    "home": "Home",
     "refresh-wallpaper-list": "Refresh wallpaper list",
     "refresh-devices": "Refresh devices",
     "forget-network": "Forget network",

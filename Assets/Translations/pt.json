@@ -58,7 +58,19 @@
           }
         },
         "reset-scaling": "Redefinir escala"
-      }
+      },
+      "language": {
+        "section": {
+          "label": "Idioma",
+          "description": "Escolha o seu idioma preferido para a aplicação."
+        },
+        "select": {
+          "label": "Idioma da aplicação",
+          "description": "Selecione o idioma usado na interface da aplicação.",
+          "auto-detect": "Automático"
+        }
+      },
+      "launch-setup-wizard": "Iniciar o assistente de configuração"
     },
     "audio": {
       "title": "Áudio",
@@ -261,6 +273,10 @@
           "label": "Distância de flutuação da dock",
           "description": "Ajuste a distância de flutuação da borda da tela."
         },
+        "icon-size": {
+          "label": "Tamanho do Dock",
+          "description": "Ajustar o tamanho geral do Dock."
+        },
         "colorize-icons": {
           "label": "Colorir ícones",
           "description": "Aplicar cores do tema aos ícones de aplicativos da dock (apenas aplicativos não focados)."
@@ -437,10 +453,6 @@
           "label": "Fonte de cor",
           "description": "Configurações principais para as cores do Noctalia."
         },
-        "dark-mode": {
-          "label": "Modo escuro",
-          "description": "Muda para um tema mais escuro para facilitar a visualização à noite."
-        },
         "use-wallpaper-colors": {
           "label": "Usar cores do papel de parede",
           "description": "Gerar esquemas de cores do seu papel de parede usando Matugen. Extrai automaticamente cores para criar um tema coeso."
@@ -448,6 +460,19 @@
         "matugen-scheme-type": {
           "label": "Tipo de esquema Matugen",
           "description": "Escolha o algoritmo de geração de esquema de cores para Matugen."
+        }
+      },
+      "dark-mode": {
+        "switch": {
+          "label": "Modo escuro",
+          "description": "Muda para um tema mais escuro para facilitar a visualização à noite."
+        },
+        "mode": {
+          "description": "Ativa a mudança automática entre o modo claro e o modo escuro.",
+          "label": "Agendamento do modo escuro",
+          "location": "Localização",
+          "manual": "Manual",
+          "off": "Desligado"
         }
       },
       "predefined": {
@@ -497,6 +522,10 @@
             "description": "Escrever {filepath} e recarregar",
             "description-missing": "Requer que o {app} esteja instalado"
           },
+          "vicinae": {
+            "description": "Escrever {filepath} e recarregar",
+            "description-missing": "Requer que o {app} esteja instalado"
+          },
           "discord": {
             "description": "Escrever {filepath} para {client}",
             "description-missing": "Nenhum cliente Discord detectado. Instale vencord, vesktop, webcord, armcord, equibop, lightcord ou dorion."
@@ -511,7 +540,7 @@
           "description": "Opções de configuração adicionais.",
           "user-templates": {
             "label": "Modelos do usuário",
-            "description": "Ativa a configuração do Matugen definida pelo usuário em ~/.config/matugen/config.toml"
+            "description": "Ativa a configuração do Matugen definida pelo usuário. Um arquivo de modelo será criado em ~/.config/noctalia/user-templates.toml na primeira ativação"
           }
         },
         "section": {
@@ -768,10 +797,6 @@
         "label": "Raio da borda",
         "reset": "Redefinir raio da borda"
       },
-      "compact-lockscreen": {
-        "description": "Mostrar apenas a entrada de login e os controles do sistema, ocultando widgets de clima e mídia.",
-        "label": "Tela de bloqueio compacta"
-      },
       "dim-desktop": {
         "description": "Escurecer a área de trabalho quando painéis ou menus estiverem abertos.",
         "label": "Dim área de trabalho"
@@ -790,6 +815,17 @@
         "description": "Ativar ou desativar dicas de ferramentas em toda a interface.",
         "label": "Mostrar dicas de ferramenta"
       }
+    },
+    "lock-screen": {
+      "compact-lockscreen": {
+        "description": "Mostrar apenas a entrada de login e os controles do sistema, ocultando os widgets de clima e mídia.",
+        "label": "Tela de bloqueio compacta"
+      },
+      "lock-on-suspend": {
+        "description": "Bloquear a tela automaticamente ao suspender o sistema.",
+        "label": "Bloquear ao suspender"
+      },
+      "title": "Tela de bloqueio"
     }
   },
   "widgets": {
@@ -880,6 +916,9 @@
       },
       "cancel": "Cancelar",
       "apply": "Aplicar"
+    },
+    "text-input": {
+      "clear": "Limpar"
     }
   },
   "bar": {
@@ -905,9 +944,13 @@
           "label": "Modo de rolagem",
           "description": "Controlar quando a rolagem de texto está habilitada para títulos de janela longos."
         },
-        "width": {
-          "description": "Controla o tamanho horizontal do widget.",
-          "label": "Largura do Widget"
+        "max-width": {
+          "label": "Largura Máxima",
+          "description": "Define o tamanho horizontal máximo do widget. O widget será reduzido para se adequar a conteúdo mais curto."
+        },
+        "use-fixed-width": {
+          "label": "Usar Largura Fixa",
+          "description": "Quando ativado, o widget sempre usará a largura máxima em vez de ajustar dinamicamente ao conteúdo."
         },
         "colorize-icons": {
           "label": "Colorir ícones",
@@ -1058,6 +1101,14 @@
           "label": "Tipo de visualizador",
           "description": "Escolher o estilo de visualizador de áudio a exibir."
         },
+        "max-width": {
+          "label": "Largura Máxima",
+          "description": "Define o tamanho horizontal máximo do widget. O widget será reduzido para se adequar a conteúdo mais curto."
+        },
+        "use-fixed-width": {
+          "label": "Usar Largura Fixa",
+          "description": "Quando ativado, o widget sempre usará a largura máxima em vez de ajustar dinamicamente ao conteúdo."
+        },
         "scrolling-mode": {
           "label": "Modo de rolagem",
           "description": "Controlar quando a rolagem de texto está habilitada para títulos de faixa longos."
@@ -1202,6 +1253,8 @@
   "tooltips": {
     "refresh": "Atualizar",
     "close": "Fechar",
+    "up": "Acima",
+    "home": "Início",
     "refresh-wallpaper-list": "Atualizar lista de papéis de parede",
     "refresh-devices": "Atualizar dispositivos",
     "forget-network": "Esquecer rede",

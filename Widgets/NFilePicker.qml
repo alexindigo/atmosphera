@@ -296,6 +296,10 @@ Popup {
             text: root.currentPath
             placeholderText: "Enter path..."
             Layout.fillWidth: true
+
+            visible: !filePickerPanel.showSearchBar
+            enabled: !filePickerPanel.showSearchBar
+
             onEditingFinished: {
               const newPath = text.trim()
               if (newPath !== "" && newPath !== root.currentPath) {
@@ -311,6 +315,30 @@ Popup {
                 if (!locationInput.activeFocus)
                   locationInput.text = root.currentPath
               }
+            }
+          }
+
+          // Search bar
+          NTextInput {
+            id: searchInput
+            inputIconName: "search"
+            placeholderText: I18n.tr("placeholders.search")
+            Layout.fillWidth: true
+
+            visible: filePickerPanel.showSearchBar
+            enabled: filePickerPanel.showSearchBar
+
+            text: filePickerPanel.searchText
+            onTextChanged: {
+              filePickerPanel.searchText = text
+              filePickerPanel.filterText = text
+              root.updateFilteredModel()
+            }
+            Keys.onEscapePressed: {
+              filePickerPanel.showSearchBar = false
+              filePickerPanel.searchText = ""
+              filePickerPanel.filterText = ""
+              root.updateFilteredModel()
             }
           }
 
@@ -331,61 +359,6 @@ Popup {
               folderModel.folder = ""
               folderModel.folder = currentFolder
               Qt.callLater(root.updateFilteredModel)
-            }
-          }
-        }
-      }
-
-      // Search bar
-      Rectangle {
-        Layout.fillWidth: true
-        Layout.preferredHeight: 45
-        color: Color.mSurfaceVariant
-        radius: Style.radiusS
-        border.color: Color.mOutline
-        border.width: Math.max(1, Style.borderS)
-        visible: filePickerPanel.showSearchBar
-
-        RowLayout {
-          anchors.left: parent.left
-          anchors.right: parent.right
-          anchors.verticalCenter: parent.verticalCenter
-          anchors.leftMargin: Style.marginS
-          anchors.rightMargin: Style.marginS
-          spacing: Style.marginS
-
-          NIcon {
-            icon: "filepicker-search"
-            color: Color.mOnSurfaceVariant
-            pointSize: Style.fontSizeS
-          }
-          NTextInput {
-            id: searchInput
-            placeholderText: I18n.tr("widget.file-picker.search-placeholder")
-            Layout.fillWidth: true
-            text: filePickerPanel.searchText
-            onTextChanged: {
-              filePickerPanel.searchText = text
-              filePickerPanel.filterText = text
-              root.updateFilteredModel()
-            }
-            Keys.onEscapePressed: {
-              filePickerPanel.showSearchBar = false
-              filePickerPanel.searchText = ""
-              filePickerPanel.filterText = ""
-              root.updateFilteredModel()
-            }
-          }
-          NIconButton {
-            icon: "filepicker-x"
-            tooltipText: I18n.tr("tooltips.clear")
-            baseSize: Style.baseWidgetSize * 0.6
-            visible: filePickerPanel.searchText.length > 0
-            onClicked: {
-              searchInput.text = ""
-              filePickerPanel.searchText = ""
-              filePickerPanel.filterText = ""
-              root.updateFilteredModel()
             }
           }
         }

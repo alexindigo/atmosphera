@@ -205,7 +205,7 @@ Singleton {
 
     if (memTotal > 0) {
       const usageKb = memTotal - memAvailable
-      root.memGb = (usageKb / 1000000).toFixed(1)
+      root.memGb = (usageKb / 1048576).toFixed(1) // 1024*1024 = 1048576
       root.memPercent = Math.round((usageKb / memTotal) * 100)
     }
   }

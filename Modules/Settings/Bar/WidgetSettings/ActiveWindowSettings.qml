@@ -17,7 +17,8 @@ ColumnLayout {
   property bool valueShowIcon: widgetData.showIcon !== undefined ? widgetData.showIcon : widgetMetadata.showIcon
   property string valueHideMode: "hidden" // Default to 'Hide When Empty'
   property string valueScrollingMode: widgetData.scrollingMode || widgetMetadata.scrollingMode
-  property int valueWidth: widgetData.width !== undefined ? widgetData.width : widgetMetadata.width
+  property int valueMaxWidth: widgetData.maxWidth !== undefined ? widgetData.maxWidth : widgetMetadata.maxWidth
+  property bool valueUseFixedWidth: widgetData.useFixedWidth !== undefined ? widgetData.useFixedWidth : widgetMetadata.useFixedWidth
   property bool valueColorizeIcons: widgetData.colorizeIcons !== undefined ? widgetData.colorizeIcons : widgetMetadata.colorizeIcons
 
   Component.onCompleted: {
@@ -31,7 +32,8 @@ ColumnLayout {
     settings.hideMode = valueHideMode
     settings.showIcon = valueShowIcon
     settings.scrollingMode = valueScrollingMode
-    settings.width = parseInt(widthInput.text) || widgetMetadata.width
+    settings.maxWidth = parseInt(widthInput.text) || widgetMetadata.maxWidth
+    settings.useFixedWidth = valueUseFixedWidth
     settings.colorizeIcons = valueColorizeIcons
     return settings
   }
@@ -73,10 +75,18 @@ ColumnLayout {
   NTextInput {
     id: widthInput
     Layout.fillWidth: true
-    label: I18n.tr("bar.widget-settings.active-window.width.label")
-    description: I18n.tr("bar.widget-settings.active-window.width.description")
-    placeholderText: widgetMetadata.width
-    text: valueWidth
+    label: I18n.tr("bar.widget-settings.active-window.max-width.label")
+    description: I18n.tr("bar.widget-settings.active-window.max-width.description")
+    placeholderText: widgetMetadata.maxWidth
+    text: valueMaxWidth
+  }
+
+  NToggle {
+    Layout.fillWidth: true
+    label: I18n.tr("bar.widget-settings.active-window.use-fixed-width.label")
+    description: I18n.tr("bar.widget-settings.active-window.use-fixed-width.description")
+    checked: valueUseFixedWidth
+    onToggled: checked => valueUseFixedWidth = checked
   }
 
   NComboBox {

@@ -58,7 +58,19 @@
             "description": "增大或减小等宽文本的尺寸"
           }
         }
-      }
+      },
+      "language": {
+        "section": {
+          "label": "语言",
+          "description": "选择您偏好的应用程序语言。"
+        },
+        "select": {
+          "label": "应用程序语言",
+          "description": "选择应用程序界面中使用的语言。",
+          "auto-detect": "自动检测"
+        }
+      },
+      "launch-setup-wizard": "启动安装向导"
     },
     "audio": {
       "title": "音频",
@@ -260,6 +272,10 @@
         "floating-distance": {
           "label": "Dock 浮动距离",
           "description": "调整距离屏幕边缘的浮动距离。"
+        },
+        "icon-size": {
+          "label": "Dock 大小",
+          "description": "调整 Dock 的整体大小。"
         },
         "colorize-icons": {
           "label": "着色图标",
@@ -475,10 +491,6 @@
           "label": "颜色来源",
           "description": "Noctalia 颜色的主要设置。"
         },
-        "dark-mode": {
-          "label": "深色模式",
-          "description": "切换到更暗的主题，便于夜间观看。"
-        },
         "use-wallpaper-colors": {
           "label": "使用壁纸颜色",
           "description": "使用 Matugen 从壁纸生成颜色方案。自动提取颜色以创建一致的主题。"
@@ -486,6 +498,19 @@
         "matugen-scheme-type": {
           "label": "Matugen 配色方案类型",
           "description": "为 Matugen 选择配色方案生成算法。"
+        }
+      },
+      "dark-mode": {
+        "switch": {
+          "label": "深色模式",
+          "description": "切换到更暗的主题，便于夜间观看。"
+        },
+        "mode": {
+          "description": "启用自动切换浅色和深色模式。",
+          "label": "深色模式计划",
+          "location": "位置",
+          "manual": "手册",
+          "off": "关"
         }
       },
       "predefined": {
@@ -535,6 +560,10 @@
             "description": "写入 {filepath} 并重新加载",
             "description-missing": "需要安装 {app}"
           },
+          "vicinae": {
+            "description": "写入 {filepath} 并重新加载",
+            "description-missing": "需要安装 {app}"
+          },
           "discord": {
             "description": "为 {client} 写入 {filepath}",
             "description-missing": "未检测到 Discord 客户端。请安装 vencord、vesktop、webcord、armcord、equibop、lightcord 或 dorion。"
@@ -549,7 +578,7 @@
           "description": "其他配置选项。",
           "user-templates": {
             "label": "用户模板",
-            "description": "启用来自 ~/.config/matugen/config.toml 的用户定义 Matugen 配置"
+            "description": "启用用户定义的 Matugen 配置。首次启用时将在 ~/.config/noctalia/user-templates.toml 创建模板文件"
           }
         },
         "section": {
@@ -768,10 +797,6 @@
         "label": "边框半径",
         "reset": "重置边框半径"
       },
-      "compact-lockscreen": {
-        "description": "仅显示登录输入和系统控制，隐藏天气和媒体小部件。",
-        "label": "紧凑型锁屏"
-      },
       "dim-desktop": {
         "description": "当面板或菜单打开时，桌面变暗。",
         "label": "昏暗的桌面"
@@ -790,6 +815,17 @@
         "description": "启用或禁用整个界面的工具提示。",
         "label": "显示工具提示"
       }
+    },
+    "lock-screen": {
+      "compact-lockscreen": {
+        "description": "仅显示登录输入和系统控制，隐藏天气和媒体小部件。",
+        "label": "紧凑型锁屏"
+      },
+      "lock-on-suspend": {
+        "description": "系统挂起时自动锁定屏幕。",
+        "label": "挂起时锁定"
+      },
+      "title": "锁屏"
     }
   },
   "widgets": {
@@ -880,6 +916,9 @@
       },
       "cancel": "取消",
       "apply": "应用"
+    },
+    "text-input": {
+      "clear": "清除"
     }
   },
   "bar": {
@@ -905,9 +944,13 @@
           "label": "滚动模式",
           "description": "控制何时为长窗口标题启用文本滚动。"
         },
-        "width": {
-          "description": "控制小部件的水平尺寸。",
-          "label": "小部件宽度"
+        "max-width": {
+          "label": "最大宽度",
+          "description": "设置小部件的最大水平尺寸。当内容较短时，小部件会自动收缩以适应内容。"
+        },
+        "use-fixed-width": {
+          "label": "使用固定宽度",
+          "description": "启用后，小部件将始终使用最大宽度，而不根据内容动态调整。"
         },
         "colorize-icons": {
           "label": "着色图标",
@@ -1058,6 +1101,14 @@
           "label": "可视化器类型",
           "description": "选择要显示的音频可视化器样式。"
         },
+        "max-width": {
+          "label": "最大宽度",
+          "description": "设置小部件的最大水平尺寸。当内容较短时，小部件会自动收缩以适应内容。"
+        },
+        "use-fixed-width": {
+          "label": "使用固定宽度",
+          "description": "启用后，小部件将始终使用最大宽度，而不根据内容动态调整。"
+        },
         "scrolling-mode": {
           "label": "滚动模式",
           "description": "控制何时为长曲目标题启用文本滚动。"
@@ -1202,6 +1253,8 @@
   "tooltips": {
     "refresh": "刷新",
     "close": "关闭",
+    "up": "向上",
+    "home": "主目录",
     "refresh-wallpaper-list": "刷新壁纸列表",
     "refresh-devices": "刷新设备",
     "forget-network": "忘记网络",

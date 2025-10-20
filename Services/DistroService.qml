@@ -12,6 +12,7 @@ Singleton {
   property string osPretty: ""
   property string osLogo: ""
   property bool isNixOS: false
+  property bool isReady: false
 
   // Internal helpers
   function buildCandidates(name) {
@@ -79,8 +80,10 @@ Singleton {
         const osId = (val("ID") || "").toLowerCase()
         root.isNixOS = osId === "nixos" || (root.osPretty || "").toLowerCase().includes("nixos")
         const logoName = val("LOGO")
-        if (logoName)
-        resolveLogo(logoName)
+        if (logoName) {
+          resolveLogo(logoName)
+        }
+        root.isReady = true
       } catch (e) {
         Logger.w("DistroService", "failed to read os-release", e)
       }

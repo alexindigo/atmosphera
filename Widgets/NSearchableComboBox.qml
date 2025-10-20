@@ -173,6 +173,7 @@ RowLayout {
         // Search input
         NTextInput {
           id: searchInput
+          inputIconName: "search"
           Layout.fillWidth: true
           placeholderText: root.searchPlaceholder
           text: root.searchText
@@ -233,7 +234,7 @@ RowLayout {
                   Layout.alignment: Qt.AlignRight
 
                   Repeater {
-                    model: badgeLocations
+                    model: typeof badgeLocations !== 'undefined' ? badgeLocations : []
 
                     delegate: NBox {
                       width: Style.baseWidgetSize * 0.7

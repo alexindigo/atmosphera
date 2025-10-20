@@ -124,14 +124,14 @@ ColumnLayout {
           spacing: 2
 
           NText {
-            text: I18n.tr("settings.color-scheme.color-source.dark-mode.label")
+            text: I18n.tr("settings.color-scheme.dark-mode.switch.label")
             pointSize: Style.fontSizeL
             font.weight: Style.fontWeightBold
             color: Color.mOnSurface
           }
 
           NText {
-            text: I18n.tr("settings.color-scheme.color-source.dark-mode.description")
+            text: I18n.tr("settings.color-scheme.dark-mode.switch.description")
             pointSize: Style.fontSizeS
             color: Color.mOnSurfaceVariant
             wrapMode: Text.WordWrap
@@ -167,7 +167,7 @@ ColumnLayout {
           color: Color.mSurface
 
           NIcon {
-            icon: "color-picker"
+            icon: ProgramCheckerService.matugenAvailable ? "color-picker" : "alert-triangle"
             pointSize: Style.fontSizeL
             color: Color.mPrimary
             anchors.centerIn: parent
@@ -196,7 +196,6 @@ ColumnLayout {
 
         NToggle {
           enabled: ProgramCheckerService.matugenAvailable
-          opacity: ProgramCheckerService.matugenAvailable ? 1.0 : 0.6
           checked: Settings.data.colorSchemes.useWallpaperColors && ProgramCheckerService.matugenAvailable
           onToggled: checked => {
                        if (!ProgramCheckerService.matugenAvailable)
@@ -211,34 +210,6 @@ ColumnLayout {
                          }
                        }
                      }
-        }
-      }
-
-      // Matugen not available notice
-      RowLayout {
-        Layout.fillWidth: true
-        spacing: Style.marginS
-        visible: !ProgramCheckerService.matugenAvailable
-
-        Rectangle {
-          width: 28
-          height: 28
-          radius: Style.radiusM
-          color: Color.mSurface
-          NIcon {
-            icon: "alert-triangle"
-            pointSize: Style.fontSizeL
-            color: Color.mPrimary
-            anchors.centerIn: parent
-          }
-        }
-        NText {
-          text: I18n.tr("settings.color-scheme.color-source.use-wallpaper-colors.description")
-          // Reuse description; availability is visually indicated
-          pointSize: Style.fontSizeS
-          color: Color.mOnSurfaceVariant
-          wrapMode: Text.WordWrap
-          Layout.fillWidth: true
         }
       }
 

@@ -13,6 +13,24 @@ ColumnLayout {
   property var schemeColorsCache: ({})
   property int cacheVersion: 0 // Increment to trigger UI updates
 
+  // Time dropdown options (00:00 .. 23:30)
+  ListModel {
+    id: timeOptions
+  }
+  Component.onCompleted: {
+    for (var h = 0; h < 24; h++) {
+      for (var m = 0; m < 60; m += 30) {
+        var hh = ("0" + h).slice(-2)
+        var mm = ("0" + m).slice(-2)
+        var key = hh + ":" + mm
+        timeOptions.append({
+                             "key": key,
+                             "name": key
+                           })
+      }
+    }
+  }
+
   spacing: Style.marginL
 
   // Helper function to extract scheme name from path
@@ -138,20 +156,91 @@ ColumnLayout {
 
   // Dark Mode Toggle
   NToggle {
-    label: I18n.tr("settings.color-scheme.color-source.dark-mode.label")
-    description: I18n.tr("settings.color-scheme.color-source.dark-mode.description")
+    label: I18n.tr("settings.color-scheme.dark-mode.switch.label")
+    description: I18n.tr("settings.color-scheme.dark-mode.switch.description")
     checked: Settings.data.colorSchemes.darkMode
-    enabled: true
     onToggled: checked => {
                  Settings.data.colorSchemes.darkMode = checked
                  root.cacheVersion++ // Force UI update for dark/light variants
                }
   }
 
+  NComboBox {
+    label: I18n.tr("settings.color-scheme.dark-mode.mode.label")
+    description: I18n.tr("settings.color-scheme.dark-mode.mode.description")
+
+    model: [{
+        "name": I18n.tr("settings.color-scheme.dark-mode.mode.off"),
+        "key": "off"
+      }, {
+        "name": I18n.tr("settings.color-scheme.dark-mode.mode.manual"),
+        "key": "manual"
+      }, {
+        "name": I18n.tr("settings.color-scheme.dark-mode.mode.location"),
+        "key": "location"
+      }]
+
+    currentKey: Settings.data.colorSchemes.schedulingMode
+
+    onSelected: key => {
+                  Settings.data.colorSchemes.schedulingMode = key
+                  AppThemeService.generate()
+                }
+  }
+
+  // Manual scheduling
+  ColumnLayout {
+    spacing: Style.marginS
+    visible: Settings.data.colorSchemes.schedulingMode === "manual"
+
+    NLabel {
+      label: I18n.tr("settings.display.night-light.manual-schedule.label")
+      description: I18n.tr("settings.display.night-light.manual-schedule.description")
+    }
+
+    RowLayout {
+      Layout.fillWidth: false
+      spacing: Style.marginS
+
+      NText {
+        text: I18n.tr("settings.display.night-light.manual-schedule.sunrise")
+        pointSize: Style.fontSizeM
+        color: Color.mOnSurfaceVariant
+      }
+
+      NComboBox {
+        model: timeOptions
+        currentKey: Settings.data.colorSchemes.manualSunrise
+        placeholder: I18n.tr("settings.display.night-light.manual-schedule.select-start")
+        onSelected: key => Settings.data.colorSchemes.manualSunrise = key
+        minimumWidth: 120
+      }
+
+      Item {
+        Layout.preferredWidth: 20
+      }
+
+      NText {
+        text: I18n.tr("settings.display.night-light.manual-schedule.sunset")
+        pointSize: Style.fontSizeM
+        color: Color.mOnSurfaceVariant
+      }
+
+      NComboBox {
+        model: timeOptions
+        currentKey: Settings.data.colorSchemes.manualSunset
+        placeholder: I18n.tr("settings.display.night-light.manual-schedule.select-stop")
+        onSelected: key => Settings.data.colorSchemes.manualSunset = key
+        minimumWidth: 120
+      }
+    }
+  }
+
   // Use Wallpaper Colors
   NToggle {
     label: I18n.tr("settings.color-scheme.color-source.use-wallpaper-colors.label")
     description: I18n.tr("settings.color-scheme.color-source.use-wallpaper-colors.description")
+    enabled: ProgramCheckerService.matugenAvailable
     checked: Settings.data.colorSchemes.useWallpaperColors
     onToggled: checked => {
                  if (checked) {
@@ -575,6 +664,23 @@ ColumnLayout {
                      }
                    }
       }
+      NCheckbox {
+        label: "Vicinae"
+        description: ProgramCheckerService.vicinaeAvailable ? I18n.tr("settings.color-scheme.templates.programs.vicinae.description", {
+                                                                        "filepath": "~/.local/share/vicinae/themes/matugen.toml"
+                                                                      }) : I18n.tr("settings.color-scheme.templates.programs.vicinae.description-missing", {
+                                                                                     "app": "vicinae"
+                                                                                   })
+        checked: Settings.data.templates.vicinae
+        enabled: ProgramCheckerService.vicinaeAvailable
+        opacity: ProgramCheckerService.vicinaeAvailable ? 1.0 : 0.6
+        onToggled: checked => {
+                     if (ProgramCheckerService.vicinaeAvailable) {
+                       Settings.data.templates.vicinae = checked
+                       AppThemeService.generate()
+                     }
+                   }
+      }
     }
 
     // Miscellaneous
@@ -590,6 +696,9 @@ ColumnLayout {
         checked: Settings.data.templates.enableUserTemplates
         onToggled: checked => {
                      Settings.data.templates.enableUserTemplates = checked
+                     if (checked) {
+                       MatugenTemplates.writeUserTemplatesToml()
+                     }
                      AppThemeService.generate()
                    }
       }

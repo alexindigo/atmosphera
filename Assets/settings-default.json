@@ -65,7 +65,9 @@
     "screenRadiusRatio": 1,
     "animationSpeed": 1,
     "animationDisabled": false,
-    "compactLockScreen": false
+    "compactLockScreen": false,
+    "lockOnSuspend": true,
+    "language": ""
   },
   "location": {
     "name": "Tokyo",
@@ -171,7 +173,8 @@
     "onlySameOutput": true,
     "monitors": [],
     "pinnedApps": [],
-    "colorizeIcons": false
+    "colorizeIcons": false,
+    "size": 1
   },
   "network": {
     "wifiEnabled": true
