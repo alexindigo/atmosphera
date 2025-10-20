@@ -9,6 +9,8 @@ Loader {
 
   property ShellScreen screen
 
+  property bool useOverlay: Settings.data.ui.panelsOverlayLayer
+
   property Component panelContent: null
   property real preferredWidth: 700
   property real preferredHeight: 900
@@ -157,7 +159,7 @@ Loader {
 
       WlrLayershell.exclusionMode: ExclusionMode.Ignore
       WlrLayershell.namespace: "noctalia-panel"
-      WlrLayershell.layer: WlrLayer.Overlay
+      WlrLayershell.layer: useOverlay ? WlrLayer.Overlay : WlrLayer.Top
       WlrLayershell.keyboardFocus: root.panelKeyboardFocus ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
 
       Region {
