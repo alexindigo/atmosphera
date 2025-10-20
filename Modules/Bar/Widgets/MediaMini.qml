@@ -95,14 +95,16 @@ Item {
       contentWidth += 21 * scaling
     }
 
-    // Spacing between icon/art and text
-    contentWidth += Style.marginS * scaling
+    // Spacing between icon/art and text; only if there is text
+    if (fullTitleMetrics.contentWidth > 0) {
+      contentWidth += Style.marginS * scaling
 
-    // Text width (use the measured width)
-    contentWidth += fullTitleMetrics.contentWidth
+      // Text width (use the measured width)
+      contentWidth += fullTitleMetrics.contentWidth
 
-    // Additional small margin for text
-    contentWidth += Style.marginXXS * 2
+      // Additional small margin for text
+      contentWidth += Style.marginXXS * 2
+    }
 
     // Add container margins
     contentWidth += margins
@@ -248,7 +250,7 @@ Item {
           Layout.preferredWidth: {
             // Calculate available width based on other elements in the row
             var iconWidth = (windowIcon.visible ? (Style.fontSizeL + Style.marginS) : 0)
-            var albumArtWidth = (hasActivePlayer && showAlbumArt ? (18 + Style.marginS) : 0)
+            var albumArtWidth = (hasActivePlayer && showAlbumArt ? (18 * scaling + Style.marginS) : 0)
             var totalMargins = Style.marginXXS * 2
             var availableWidth = mainContainer.width - iconWidth - albumArtWidth - totalMargins
             return Math.max(20, availableWidth)
