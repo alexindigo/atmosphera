@@ -147,7 +147,7 @@ Singleton {
     stderr: StdioCollector {
       onStreamFinished: {
         if (text.trim()) {
-          //Logger.w("Calendar", "Availability check error: " + text)
+          Logger.d("Calendar", "Availability check error: " + text)
           root.available = false
           root.lastError = "Failed to check library availability"
         }
@@ -180,7 +180,7 @@ Singleton {
             loadEvents()
           }
         } catch (e) {
-          Logger.w("Calendar", "Failed to parse calendars: " + e)
+          Logger.d("Calendar", "Failed to parse calendars: " + e)
           root.lastError = "Failed to parse calendar list"
         }
       }
@@ -189,7 +189,7 @@ Singleton {
     stderr: StdioCollector {
       onStreamFinished: {
         if (text.trim()) {
-          Logger.w("Calendar", "List calendars error: " + text)
+          Logger.d("Calendar", "List calendars error: " + text)
           root.lastError = text.trim()
         }
       }
@@ -218,7 +218,7 @@ Singleton {
 
           Logger.i("Calendar", `Loaded ${result.length} event(s)`)
         } catch (e) {
-          Logger.w("Calendar", "Failed to parse events: " + e)
+          Logger.d("Calendar", "Failed to parse events: " + e)
           root.lastError = "Failed to parse events"
 
           // Fall back to cached events if available
@@ -235,7 +235,7 @@ Singleton {
         root.loading = false
 
         if (text.trim()) {
-          Logger.w("Calendar", "Load events error: " + text)
+          Logger.d("Calendar", "Load events error: " + text)
           root.lastError = text.trim()
 
           // Fall back to cached events if available
