@@ -385,13 +385,6 @@ Item {
               easing.type: Easing.Linear
             }
           }
-
-          Behavior on Layout.preferredWidth {
-            NumberAnimation {
-              duration: Style.animationSlow
-              easing.type: Easing.InOutCubic
-            }
-          }
         }
       }
 
