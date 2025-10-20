@@ -147,7 +147,7 @@ Singleton {
     stderr: StdioCollector {
       onStreamFinished: {
         if (text.trim()) {
-          Logger.w("Calendar", "Availability check error: " + text)
+          //Logger.w("Calendar", "Availability check error: " + text)
           root.available = false
           root.lastError = "Failed to check library availability"
         }
