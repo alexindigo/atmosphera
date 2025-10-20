@@ -562,6 +562,10 @@
             "description": "Écrire ~/.config/fuzzel/themes/noctalia et recharger",
             "description-missing": "Nécessite que le lanceur fuzzel soit installé"
           },
+          "vicinae": {
+            "description": "Écrire {filepath} et recharger",
+            "description-missing": "Nécessite que le lanceur {app} soit installé"
+          },
           "discord": {
             "description": "Écrire {filepath} pour {client}",
             "description-missing": "Aucun client Discord détecté. Installez vencord, vesktop, webcord, armcord, equibop, lightcord ou dorion."
