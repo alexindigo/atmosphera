@@ -129,6 +129,10 @@ Singleton {
                                     "blacklist": [],
                                     "colorizeIcons": false
                                   },
+                                  "WiFi": {
+                                    "allowUserSettings": true,
+                                    "displayMode": "onhover"
+                                  },
                                   "Workspace": {
                                     "allowUserSettings": true,
                                     "labelMode": "index",

@@ -1,46 +1,83 @@
 import QtQuick
-import QtQuick.Layouts
-import QtQuick.Controls
 import Quickshell
-import Quickshell.Wayland
 import qs.Commons
 import qs.Services
-import qs.Widgets
+import qs.Modules.Bar.Extras
 
-NIconButton {
+Item {
   id: root
 
   property ShellScreen screen
 
-  density: Settings.data.bar.density
-  baseSize: Style.capsuleHeight
-  applyUiScale: false
-  colorBg: (Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent)
-  colorFg: Color.mOnSurface
-  colorBorder: Color.transparent
-  colorBorderHover: Color.transparent
-  tooltipText: I18n.tr("tooltips.manage-wifi")
-  tooltipDirection: BarService.getTooltipDirection()
-  icon: {
-    try {
-      if (NetworkService.ethernetConnected) {
-        return "ethernet"
+  // Widget properties passed from Bar.qml for per-instance settings
+  property string widgetId: ""
+  property string section: ""
+  property int sectionWidgetIndex: -1
+  property int sectionWidgetsCount: 0
+
+  property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
+  property var widgetSettings: {
+    if (section && sectionWidgetIndex >= 0) {
+      var widgets = Settings.data.bar.widgets[section]
+      if (widgets && sectionWidgetIndex < widgets.length) {
+        return widgets[sectionWidgetIndex]
       }
-      let connected = false
-      let signalStrength = 0
-      for (const net in NetworkService.networks) {
-        if (NetworkService.networks[net].connected) {
-          connected = true
-          signalStrength = NetworkService.networks[net].signal
-          break
-        }
-      }
-      return connected ? NetworkService.signalIcon(signalStrength) : "wifi-off"
-    } catch (error) {
-      Logger.e("Wi-Fi", "Error getting icon:", error)
-      return "signal_wifi_bad"
     }
+    return {}
   }
-  onClicked: PanelService.getPanel("wifiPanel")?.toggle(this)
-  onRightClicked: PanelService.getPanel("wifiPanel")?.toggle(this)
+
+  readonly property bool isBarVertical: Settings.data.bar.position === "left" || Settings.data.bar.position === "right"
+  readonly property string displayMode: widgetSettings.displayMode !== undefined ? widgetSettings.displayMode : widgetMetadata.displayMode
+
+  implicitWidth: pill.width
+  implicitHeight: pill.height
+
+  BarPill {
+    id: pill
+
+    density: Settings.data.bar.density
+    rightOpen: BarService.getPillDirection(root)
+    icon: {
+      try {
+        if (NetworkService.ethernetConnected) {
+          return "ethernet"
+        }
+        let connected = false
+        let signalStrength = 0
+        for (const net in NetworkService.networks) {
+          if (NetworkService.networks[net].connected) {
+            connected = true
+            signalStrength = NetworkService.networks[net].signal
+            break
+          }
+        }
+        return connected ? NetworkService.signalIcon(signalStrength) : "wifi-off"
+      } catch (error) {
+        Logger.e("Wi-Fi", "Error getting icon:", error)
+        return "signal_wifi_bad"
+      }
+    }
+    text: {
+      try {
+        if (NetworkService.ethernetConnected) {
+          return ""
+        }
+        for (const net in NetworkService.networks) {
+          if (NetworkService.networks[net].connected) {
+            return net
+          }
+        }
+        return ""
+      } catch (error) {
+        Logger.e("Wi-Fi", "Error getting ssid:", error)
+        return "error"
+      }
+    }
+    autoHide: false
+    forceOpen: root.displayMode === "alwaysShow"
+    forceClose: root.displayMode === "alwaysHide" || !pill.text
+    onClicked: PanelService.getPanel("wifiPanel")?.toggle(this)
+    onRightClicked: PanelService.getPanel("wifiPanel")?.toggle(this)
+    tooltipText: I18n.tr("tooltips.manage-wifi")
+  }
 }
