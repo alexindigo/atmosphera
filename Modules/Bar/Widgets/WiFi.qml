@@ -76,7 +76,6 @@ Item {
     autoHide: false
     forceOpen: root.displayMode === "alwaysShow"
     forceClose: root.displayMode === "alwaysHide" || !pill.text
-    disableOpen: NetworkService.ethernetConnected
     onClicked: PanelService.getPanel("wifiPanel")?.toggle(this)
     onRightClicked: PanelService.getPanel("wifiPanel")?.toggle(this)
     tooltipText: I18n.tr("tooltips.manage-wifi")
