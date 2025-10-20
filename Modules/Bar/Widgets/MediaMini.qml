@@ -263,7 +263,7 @@ Item {
           property bool isResetting: false
           property real textWidth: fullTitleMetrics.contentWidth
           property real containerWidth: 0
-          property bool needsScrolling: textWidth > containerWidth && MediaService.isPlaying
+          property bool needsScrolling: textWidth > containerWidth
 
           // Timer for "always" mode with delay
           Timer {
