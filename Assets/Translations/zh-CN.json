@@ -1244,6 +1244,8 @@
   "tooltips": {
     "refresh": "刷新",
     "close": "关闭",
+    "up": "向上",
+    "home": "主目录",
     "refresh-wallpaper-list": "刷新壁纸列表",
     "refresh-devices": "刷新设备",
     "forget-network": "忘记网络",

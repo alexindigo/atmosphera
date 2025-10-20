@@ -1244,6 +1244,8 @@
   "tooltips": {
     "refresh": "Actualizar",
     "close": "Cerrar",
+    "up": "Arriba",
+    "home": "Inicio",
     "refresh-wallpaper-list": "Actualizar lista de fondos de pantalla",
     "refresh-devices": "Actualizar dispositivos",
     "forget-network": "Olvidar red",

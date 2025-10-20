@@ -1243,6 +1243,8 @@
   "tooltips": {
     "refresh": "Refresh",
     "close": "Close",
+    "up": "Up",
+    "home": "Home",
     "refresh-wallpaper-list": "Refresh wallpaper list",
     "refresh-devices": "Refresh devices",
     "forget-network": "Forget network",

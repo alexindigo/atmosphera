@@ -1268,6 +1268,8 @@
   "tooltips": {
     "refresh": "Aktualisieren",
     "close": "Schließen",
+    "up": "Nach oben",
+    "home": "Home",
     "refresh-wallpaper-list": "Hintergrundbild-Liste aktualisieren",
     "refresh-devices": "Geräte aktualisieren",
     "forget-network": "Netzwerk vergessen",
