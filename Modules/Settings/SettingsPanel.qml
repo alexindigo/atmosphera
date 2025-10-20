@@ -8,7 +8,7 @@ import qs.Commons
 import qs.Services
 import qs.Widgets
 
-NPanelOverlay {
+NPanel {
   id: root
 
   preferredWidth: 820 * Style.uiScaleRatio

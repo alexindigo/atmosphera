@@ -9,7 +9,7 @@ import qs.Services
 import qs.Widgets
 
 // Notification History panel
-NPanelOverlay {
+NPanel {
   id: root
 
   preferredWidth: 380
