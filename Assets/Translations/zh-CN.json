@@ -513,6 +513,13 @@
         "switch": {
           "label": "深色模式",
           "description": "切换到更暗的主题，便于夜间观看。"
+        },
+        "mode": {
+          "description": "启用自动切换浅色和深色模式。",
+          "label": "深色模式计划",
+          "location": "位置",
+          "manual": "手册",
+          "off": "关"
         }
       },
       "predefined": {

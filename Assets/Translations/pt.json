@@ -475,6 +475,13 @@
         "switch": {
           "label": "Modo escuro",
           "description": "Muda para um tema mais escuro para facilitar a visualização à noite."
+        },
+        "mode": {
+          "description": "Ativa a mudança automática entre o modo claro e o modo escuro.",
+          "label": "Agendamento do modo escuro",
+          "location": "Localização",
+          "manual": "Manual",
+          "off": "Desligado"
         }
       },
       "predefined": {

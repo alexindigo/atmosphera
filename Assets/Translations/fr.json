@@ -513,6 +513,13 @@
         "switch": {
           "label": "Mode sombre",
           "description": "Passe à un thème plus sombre pour une visualisation plus facile la nuit."
+        },
+        "mode": {
+          "description": "Active la commutation automatique entre le mode clair et le mode sombre.",
+          "label": "Programmation du mode sombre",
+          "location": "Emplacement",
+          "manual": "Manuel",
+          "off": "Éteint"
         }
       },
       "predefined": {
