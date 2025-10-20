@@ -53,6 +53,10 @@ Singleton {
                                     "displayMode": "onhover",
                                     "warningThreshold": 30
                                   },
+                                  "Bluetooth": {
+                                    "allowUserSettings": true,
+                                    "displayMode": "onhover"
+                                  },
                                   "Brightness": {
                                     "allowUserSettings": true,
                                     "displayMode": "onhover"
