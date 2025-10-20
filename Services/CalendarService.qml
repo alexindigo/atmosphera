@@ -48,7 +48,7 @@ Singleton {
   }
 
   Component.onCompleted: {
-    Logger.log("Calendar", "Service initialized")
+    Logger.i("Calendar", "Service initialized")
     loadFromCache()
     checkAvailability()
   }
@@ -68,16 +68,16 @@ Singleton {
   function loadFromCache() {
     if (cacheAdapter.cachedEvents && cacheAdapter.cachedEvents.length > 0) {
       root.events = cacheAdapter.cachedEvents
-      Logger.log("Calendar", `Loaded ${cacheAdapter.cachedEvents.length} cached event(s)`)
+      Logger.i("Calendar", `Loaded ${cacheAdapter.cachedEvents.length} cached event(s)`)
     }
 
     if (cacheAdapter.cachedCalendars && cacheAdapter.cachedCalendars.length > 0) {
       root.calendars = cacheAdapter.cachedCalendars
-      Logger.log("Calendar", `Loaded ${cacheAdapter.cachedCalendars.length} cached calendar(s)`)
+      Logger.i("Calendar", `Loaded ${cacheAdapter.cachedCalendars.length} cached calendar(s)`)
     }
 
     if (cacheAdapter.lastUpdate) {
-      Logger.log("Calendar", `Cache last updated: ${cacheAdapter.lastUpdate}`)
+      Logger.i("Calendar", `Cache last updated: ${cacheAdapter.lastUpdate}`)
     }
   }
 
@@ -114,7 +114,7 @@ Singleton {
     loadEventsProcess.endTime = Math.floor(endDate.getTime() / 1000)
     loadEventsProcess.running = true
 
-    Logger.log("Calendar", `Loading events (${daysBehind} days behind, ${daysAhead} days ahead): ${startDate.toLocaleDateString()} to ${endDate.toLocaleDateString()}`)
+    Logger.i("Calendar", `Loading events (${daysBehind} days behind, ${daysAhead} days ahead): ${startDate.toLocaleDateString()} to ${endDate.toLocaleDateString()}`)
   }
 
   // Helper to format date/time
@@ -135,10 +135,10 @@ Singleton {
         root.available = result === "available"
 
         if (root.available) {
-          Logger.log("Calendar", "EDS libraries available")
+          Logger.i("Calendar", "EDS libraries available")
           loadCalendars()
         } else {
-          Logger.warn("Calendar", "EDS libraries not available: " + result)
+          Logger.w("Calendar", "EDS libraries not available: " + result)
           root.lastError = "Evolution Data Server libraries not installed"
         }
       }
@@ -147,7 +147,7 @@ Singleton {
     stderr: StdioCollector {
       onStreamFinished: {
         if (text.trim()) {
-          Logger.warn("Calendar", "Availability check error: " + text)
+          Logger.w("Calendar", "Availability check error: " + text)
           root.available = false
           root.lastError = "Failed to check library availability"
         }
@@ -169,7 +169,7 @@ Singleton {
           cacheAdapter.cachedCalendars = result
           saveCache()
 
-          Logger.log("Calendar", `Found ${result.length} calendar(s)`)
+          Logger.i("Calendar", `Found ${result.length} calendar(s)`)
 
           // Auto-load events after discovering calendars
           // Only load if we have calendars and no cached events
@@ -180,7 +180,7 @@ Singleton {
             loadEvents()
           }
         } catch (e) {
-          Logger.warn("Calendar", "Failed to parse calendars: " + e)
+          Logger.w("Calendar", "Failed to parse calendars: " + e)
           root.lastError = "Failed to parse calendar list"
         }
       }
@@ -189,7 +189,7 @@ Singleton {
     stderr: StdioCollector {
       onStreamFinished: {
         if (text.trim()) {
-          Logger.warn("Calendar", "List calendars error: " + text)
+          Logger.w("Calendar", "List calendars error: " + text)
           root.lastError = text.trim()
         }
       }
@@ -216,15 +216,15 @@ Singleton {
           cacheAdapter.lastUpdate = new Date().toISOString()
           saveCache()
 
-          Logger.log("Calendar", `Loaded ${result.length} event(s)`)
+          Logger.i("Calendar", `Loaded ${result.length} event(s)`)
         } catch (e) {
-          Logger.warn("Calendar", "Failed to parse events: " + e)
+          Logger.w("Calendar", "Failed to parse events: " + e)
           root.lastError = "Failed to parse events"
 
           // Fall back to cached events if available
           if (cacheAdapter.cachedEvents.length > 0) {
             root.events = cacheAdapter.cachedEvents
-            Logger.log("Calendar", "Using cached events")
+            Logger.i("Calendar", "Using cached events")
           }
         }
       }
@@ -235,13 +235,13 @@ Singleton {
         root.loading = false
 
         if (text.trim()) {
-          Logger.warn("Calendar", "Load events error: " + text)
+          Logger.w("Calendar", "Load events error: " + text)
           root.lastError = text.trim()
 
           // Fall back to cached events if available
           if (cacheAdapter.cachedEvents.length > 0) {
             root.events = cacheAdapter.cachedEvents
-            Logger.log("Calendar", "Using cached events due to error")
+            Logger.i("Calendar", "Using cached events due to error")
           }
         }
       }

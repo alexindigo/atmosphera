@@ -562,10 +562,10 @@ NPanel {
             // Event indicator dots
             Row {
               visible: parent.parent.parent.parent.parent.hasEventsOnDate(model.year, model.month, model.day)
-              spacing: 2 * scaling
+              spacing: 2
               anchors.horizontalCenter: parent.horizontalCenter
               anchors.bottom: parent.bottom
-              anchors.bottomMargin: Style.marginXS * scaling
+              anchors.bottomMargin: Style.marginXS
 
               readonly property int currentYear: model.year
               readonly property int currentMonth: model.month
@@ -576,9 +576,9 @@ NPanel {
                 model: parent.parent.parent.parent.parent.parent.getEventsForDate(parent.currentYear, parent.currentMonth, parent.currentDay)
 
                 Rectangle {
-                  width: 4 * scaling
-                  height: 4 * scaling
-                  radius: 2 * scaling
+                  width: 4
+                  height: width
+                  radius: width / 2
                   color: parent.parent.parent.parent.parent.parent.getEventColor(modelData, model.today)
                 }
               }
