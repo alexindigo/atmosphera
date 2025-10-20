@@ -754,6 +754,10 @@
         "description": "Désactiver toutes les animations pour une expérience plus rapide et plus réactive.",
         "label": "Désactiver les animations de l'interface utilisateur"
       },
+      "panels-overlay": {
+        "label": "Ouvrir les panneaux en couche superposée",
+        "description": "Les panneaux apparaîtront au-dessus des fenêtres en plein écran"
+      },
       "animation-speed": {
         "description": "Ajuster la vitesse globale de l'animation.",
         "label": "Vitesse d'animation",

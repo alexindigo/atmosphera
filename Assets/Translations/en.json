@@ -785,6 +785,10 @@
       "animation-disable": {
         "label": "Disable UI Animations",
         "description": "Disable all animations for a faster, more responsive experience."
+      },
+      "panels-overlay": {
+        "label": "Open panels in overlay layer",
+        "description": "Panels will appear above fullscreen windows"
       }
     }
   },
@@ -1187,7 +1191,7 @@
       "scan-again": "Scan again"
     }
   },
-  
+
   "tooltips": {
     "refresh": "Refresh",
     "close": "Close",
