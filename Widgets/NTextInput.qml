@@ -206,6 +206,7 @@ ColumnLayout {
 
             colorBg: Color.transparent
             colorBgHover: Color.transparent
+            colorFg: Color.mOnSurface
             colorFgHover: Color.mTertiary
 
             visible: input.text.length > 0 && !root.readOnly
