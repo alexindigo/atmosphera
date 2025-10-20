@@ -122,6 +122,7 @@ Popup {
     const widgetSettingsMap = {
       "ActiveWindow": "WidgetSettings/ActiveWindowSettings.qml",
       "Battery": "WidgetSettings/BatterySettings.qml",
+      "Bluetooth": "WidgetSettings/BluetoothSettings.qml",
       "Brightness": "WidgetSettings/BrightnessSettings.qml",
       "Clock": "WidgetSettings/ClockSettings.qml",
       "ControlCenter": "WidgetSettings/ControlCenterSettings.qml",
