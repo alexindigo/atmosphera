@@ -30,6 +30,7 @@ Singleton {
                            "Spacer": spacerComponent,
                            "SystemMonitor": systemMonitorComponent,
                            "Taskbar": taskbarComponent,
+                           "TaskbarGrouped": taskbarGroupedComponent,
                            "Tray": trayComponent,
                            "Volume": volumeComponent,
                            "WiFi": wiFiComponent,
@@ -128,6 +129,9 @@ Singleton {
                                     "hideMode": "hidden",
                                     "colorizeIcons": false
                                   },
+                                  "TaskbarGrouped": {
+                                    "allowUserSettings": true
+                                  },
                                   "Tray": {
                                     "allowUserSettings": true,
                                     "blacklist": [],
@@ -223,6 +227,9 @@ Singleton {
   }
   property Component taskbarComponent: Component {
     Taskbar {}
+  }
+  property Component taskbarGroupedComponent: Component {
+    TaskbarGrouped {}
   }
 
   function init() {
