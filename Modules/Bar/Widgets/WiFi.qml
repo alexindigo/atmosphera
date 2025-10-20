@@ -60,21 +60,22 @@ Item {
     text: {
       try {
         if (NetworkService.ethernetConnected) {
-          return "ethernet"
+          return ""
         }
         for (const net in NetworkService.networks) {
           if (NetworkService.networks[net].connected) {
             return net
           }
         }
+        return ""
       } catch (error) {
         Logger.e("Wi-Fi", "Error getting ssid:", error)
+        return "error"
       }
-      return "unknown"
     }
     autoHide: false
     forceOpen: root.displayMode === "alwaysShow"
-    forceClose: root.displayMode === "alwaysHide"
+    forceClose: root.displayMode === "alwaysHide" || !pill.text
     disableOpen: NetworkService.ethernetConnected
     onClicked: PanelService.getPanel("wifiPanel")?.toggle(this)
     onRightClicked: PanelService.getPanel("wifiPanel")?.toggle(this)
