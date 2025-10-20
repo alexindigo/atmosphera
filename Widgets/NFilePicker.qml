@@ -322,7 +322,7 @@ Popup {
           NTextInput {
             id: searchInput
             inputIconName: "search"
-            placeholderText: I18n.tr("widget.file-picker.search-placeholder")
+            placeholderText: I18n.tr("placeholders.search")
             Layout.fillWidth: true
 
             visible: filePickerPanel.showSearchBar
