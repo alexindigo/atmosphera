@@ -569,6 +569,10 @@
             "description": "Schreibt {filepath} und lädt neu",
             "description-missing": "Erfordert fuzzel Starter"
           },
+          "vicinae": {
+            "description": "Schreibt {filepath} und lädt neu",
+            "description-missing": "Erfordert {app} Starter"
+          },
           "discord": {
             "description": "Schreibt {filepath} für {client}",
             "description-missing": "Kein Discord-Client erkannt. Installieren Sie vencord, vesktop, webcord, armcord, equibop, lightcord oder dorion."

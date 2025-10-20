@@ -16,6 +16,7 @@ Singleton {
   property bool ghosttyAvailable: false
   property bool footAvailable: false
   property bool fuzzelAvailable: false
+  property bool vicinaeAvailable: false
   property bool gpuScreenRecorderAvailable: false
   property bool wlsunsetAvailable: false
   property bool app2unitAvailable: false
@@ -96,7 +97,8 @@ Singleton {
                                             "kittyAvailable": ["which", "kitty"],
                                             "ghosttyAvailable": ["which", "ghostty"],
                                             "footAvailable": ["which", "foot"],
-                                            "fuzzelAvailable": ["which", "fuzzel"],
+					    "fuzzelAvailable": ["which", "fuzzel"],
+					    "vicinaeAvailable": ["which", "vicinae"],
                                             "app2unitAvailable": ["which", "app2unit"],
                                             "gpuScreenRecorderAvailable": ["sh", "-c", "command -v gpu-screen-recorder >/dev/null 2>&1 || (command -v flatpak >/dev/null 2>&1 && flatpak list --app | grep -q 'com.dec05eba.gpu_screen_recorder')"],
                                             "wlsunsetAvailable": ["which", "wlsunset"]
