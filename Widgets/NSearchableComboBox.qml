@@ -173,6 +173,7 @@ RowLayout {
         // Search input
         NTextInput {
           id: searchInput
+          inputIconName: "search"
           Layout.fillWidth: true
           placeholderText: root.searchPlaceholder
           text: root.searchText

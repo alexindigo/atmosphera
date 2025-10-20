@@ -914,6 +914,9 @@
       },
       "cancel": "Cancel",
       "apply": "Apply"
+    },
+    "text-input": {
+      "clear": "Clear"
     }
   },
   "bar": {
@@ -1237,7 +1240,6 @@
       "scan-again": "Scan again"
     }
   },
-
   "tooltips": {
     "refresh": "Refresh",
     "close": "Close",
