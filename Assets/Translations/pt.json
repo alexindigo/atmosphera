@@ -32,16 +32,6 @@
           "reset": "Redefinir raio dos cantos da tela"
         }
       },
-      "lockscreen": {
-        "section": {
-          "label": "Tela de bloqueio",
-          "description": "Configure o comportamento da tela de bloqueio."
-        },
-        "lock-on-suspend": {
-          "label": "Bloquear ao suspender",
-          "description": "Bloquear automaticamente a tela ao suspender o sistema."
-        }
-      },
       "fonts": {
         "section": {
           "label": "Fontes",
@@ -79,7 +69,8 @@
           "description": "Selecione o idioma usado na interface da aplicação.",
           "auto-detect": "Automático"
         }
-      }
+      },
+      "launch-setup-wizard": "Iniciar o assistente de configuração"
     },
     "audio": {
       "title": "Áudio",
@@ -802,10 +793,6 @@
         "label": "Raio da borda",
         "reset": "Redefinir raio da borda"
       },
-      "compact-lockscreen": {
-        "description": "Mostrar apenas a entrada de login e os controles do sistema, ocultando widgets de clima e mídia.",
-        "label": "Tela de bloqueio compacta"
-      },
       "dim-desktop": {
         "description": "Escurecer a área de trabalho quando painéis ou menus estiverem abertos.",
         "label": "Dim área de trabalho"
@@ -824,6 +811,17 @@
         "description": "Ativar ou desativar dicas de ferramentas em toda a interface.",
         "label": "Mostrar dicas de ferramenta"
       }
+    },
+    "lock-screen": {
+      "compact-lockscreen": {
+        "description": "Mostrar apenas a entrada de login e os controles do sistema, ocultando os widgets de clima e mídia.",
+        "label": "Tela de bloqueio compacta"
+      },
+      "lock-on-suspend": {
+        "description": "Bloquear a tela automaticamente ao suspender o sistema.",
+        "label": "Bloquear ao suspender"
+      },
+      "title": "Tela de bloqueio"
     }
   },
   "widgets": {

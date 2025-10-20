@@ -32,16 +32,6 @@
           "reset": "Réinitialiser le rayon des coins de l'écran"
         }
       },
-      "lockscreen": {
-        "section": {
-          "label": "Écran de verrouillage",
-          "description": "Configurer le comportement de l'écran de verrouillage."
-        },
-        "lock-on-suspend": {
-          "label": "Verrouiller lors de la suspension",
-          "description": "Verrouiller automatiquement l'écran lors de la mise en veille du système."
-        }
-      },
       "fonts": {
         "section": {
           "label": "Polices",
@@ -79,7 +69,8 @@
           "description": "Sélectionnez la langue utilisée dans l'interface de l'application.",
           "auto-detect": "Automatique"
         }
-      }
+      },
+      "launch-setup-wizard": "Lancer l'assistant d'installation"
     },
     "audio": {
       "title": "Audio",
@@ -802,10 +793,6 @@
         "label": "Rayon de bordure",
         "reset": "Réinitialiser le rayon de la bordure"
       },
-      "compact-lockscreen": {
-        "description": "Afficher uniquement le champ de saisie de connexion et les commandes système, en masquant les widgets météo et multimédia.",
-        "label": "Écran de verrouillage compact"
-      },
       "dim-desktop": {
         "description": "Atténuer le bureau lorsque des panneaux ou des menus sont ouverts.",
         "label": "Dim bureau"
@@ -824,6 +811,17 @@
         "description": "Activer ou désactiver les info-bulles dans toute l'interface.",
         "label": "Afficher les infobulles"
       }
+    },
+    "lock-screen": {
+      "compact-lockscreen": {
+        "description": "Afficher uniquement le champ de saisie de connexion et les commandes système, en masquant les widgets météo et multimédia.",
+        "label": "Écran de verrouillage compact"
+      },
+      "lock-on-suspend": {
+        "description": "Verrouiller automatiquement l'écran lors de la mise en veille du système.",
+        "label": "Verrouiller à la suspension"
+      },
+      "title": "Écran de verrouillage"
     }
   },
   "widgets": {

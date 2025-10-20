@@ -33,13 +33,6 @@ ColumnLayout {
       onToggled: checked => Settings.data.ui.tooltipsEnabled = checked
     }
 
-    NToggle {
-      label: I18n.tr("settings.user-interface.compact-lockscreen.label")
-      description: I18n.tr("settings.user-interface.compact-lockscreen.description")
-      checked: Settings.data.general.compactLockScreen
-      onToggled: checked => Settings.data.general.compactLockScreen = checked
-    }
-
     NDivider {
       Layout.fillWidth: true
       Layout.topMargin: Style.marginL

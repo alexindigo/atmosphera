@@ -119,6 +119,7 @@ Singleton {
     "settings-notifications": "bell",
     "settings-osd": "picture-in-picture",
     "settings-about": "info-square-rounded",
+    "settings-lock-screen": "lock",
     "bluetooth": "bluetooth",
     "bt-device-generic": "bluetooth",
     "bt-device-headphones": "headphones",

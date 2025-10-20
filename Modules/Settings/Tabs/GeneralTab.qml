@@ -230,26 +230,13 @@ ColumnLayout {
     Layout.topMargin: Style.marginXL
     Layout.bottomMargin: Style.marginXL
   }
-  ColumnLayout {
-    spacing: Style.marginL
-    Layout.fillWidth: true
 
-    NHeader {
-      label: I18n.tr("settings.general.lockscreen.section.label")
-      description: I18n.tr("settings.general.lockscreen.section.description")
+  NButton {
+    visible: !DistroService.isNixOS
+    text: I18n.tr("settings.general.launch-setup-wizard")
+    onClicked: {
+      setupWizardLoader.active = false
+      setupWizardLoader.active = true
     }
-
-    NToggle {
-      label: I18n.tr("settings.general.lockscreen.lock-on-suspend.label")
-      description: I18n.tr("settings.general.lockscreen.lock-on-suspend.description")
-      checked: Settings.data.general.lockOnSuspend
-      onToggled: Settings.data.general.lockOnSuspend = checked
-    }
-  }
-
-  NDivider {
-    Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL
-    Layout.bottomMargin: Style.marginXL
   }
 }

@@ -2,6 +2,7 @@
   "settings": {
     "general": {
       "title": "General",
+      "launch-setup-wizard": "Launch the setup wizard",
       "profile": {
         "section": {
           "label": "Profile",
@@ -30,16 +31,6 @@
           "label": "Screen corners radius",
           "description": "Adjust the rounded corners of the screen.",
           "reset": "Reset screen corners radius"
-        }
-      },
-      "lockscreen": {
-        "section": {
-          "label": "Lock screen",
-          "description": "Configure lock screen behavior."
-        },
-        "lock-on-suspend": {
-          "label": "Lock on suspend",
-          "description": "Automatically lock the screen when suspending the system."
         }
       },
       "fonts": {
@@ -806,10 +797,6 @@
         "label": "Dim desktop",
         "description": "Dim the desktop when panels or menus are open."
       },
-      "compact-lockscreen": {
-        "label": "Compact lock screen",
-        "description": "Show only the login input and system controls, hiding weather and media widgets."
-      },
       "border-radius": {
         "label": "Border radius",
         "description": "Controls the corner roundness of windows, buttons, and other elements.",
@@ -823,6 +810,17 @@
       "animation-disable": {
         "label": "Disable UI Animations",
         "description": "Disable all animations for a faster, more responsive experience."
+      }
+    },
+    "lock-screen": {
+      "title": "Lock screen",
+      "compact-lockscreen": {
+        "label": "Compact lock screen",
+        "description": "Show only the login input and system controls, hiding weather and media widgets."
+      },
+      "lock-on-suspend": {
+        "label": "Lock on suspend",
+        "description": "Automatically lock the screen when suspending the system."
       }
     }
   },

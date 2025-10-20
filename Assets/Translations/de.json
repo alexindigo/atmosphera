@@ -32,16 +32,6 @@
           "reset": "Eckenradius des Bildschirms zurücksetzen"
         }
       },
-      "lockscreen": {
-        "section": {
-          "label": "Sperrbildschirm",
-          "description": "Hier kannst du deinen Sperrbildschirm konfigurieren."
-        },
-        "lock-on-suspend": {
-          "label": "Beim Standby sperren",
-          "description": "Bildschirm automatisch sperren, wenn das System in den Standby-Modus wechselt."
-        }
-      },
       "fonts": {
         "section": {
           "label": "Schriftarten",
@@ -79,7 +69,8 @@
           "description": "Wählen die in der Anwendungsoberfläche verwendete Sprache.",
           "auto-detect": "Automatisch"
         }
-      }
+      },
+      "launch-setup-wizard": "Starte den Setup-Assistenten"
     },
     "audio": {
       "title": "Audio",
@@ -802,10 +793,6 @@
         "label": "Eckenradius",
         "reset": "Rahmenradius zurücksetzen"
       },
-      "compact-lockscreen": {
-        "description": "Zeige nur die Login-Eingabe und Systemsteuerung, blende Wetter- und Medien-Widgets aus.",
-        "label": "Kompakter Sperrbildschirm"
-      },
       "dim-desktop": {
         "description": "Den Desktop abdunkeln, wenn Bedienfelder oder Menüs geöffnet sind.",
         "label": "Dim Desktop"
@@ -824,6 +811,17 @@
         "description": "Tooltips in der gesamten Benutzeroberfläche aktivieren oder deaktivieren.",
         "label": "Tooltips anzeigen"
       }
+    },
+    "lock-screen": {
+      "compact-lockscreen": {
+        "description": "Zeige nur die Login-Eingabe und Systemsteuerung, blende Wetter- und Medien-Widgets aus.",
+        "label": "Kompakter Sperrbildschirm"
+      },
+      "lock-on-suspend": {
+        "description": "Den Bildschirm beim Suspendieren des Systems automatisch sperren.",
+        "label": "Sperren beim Ruhezustand"
+      },
+      "title": "Sperrbildschirm"
     }
   },
   "general": {
