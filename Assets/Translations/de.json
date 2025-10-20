@@ -243,13 +243,13 @@
       "widgets": {
         "section": {
           "label": "Widget-Positionierung",
-          "description": "Widgets per Drag & Drop neu anordnen. Abzeichen zeigen die Verwendung an: [L]inks, [M]itte, [R]echts."
+          "description": "Widgets per Drag & Drop neu anordnen. Symoble zeigen die Verwendung an: [L]inks, [M]itte, [R]echts."
         }
       },
       "monitors": {
         "section": {
           "label": "Monitor-Anzeige",
-          "description": "Statusleiste auf bestimmten Monitoren anzeigen. Standard ist alle, wenn keine ausgewählt sind."
+          "description": "Leiste auf bestimmten Monitoren anzeigen. Standardmäßig auf allen."
         }
       },
       "tray": {
@@ -319,7 +319,7 @@
         },
         "clipboard-history": {
           "label": "Zwischenablage-Verlauf aktivieren",
-          "description": "Zugriff auf zuvor kopierte Elemente über den Starter."
+          "description": "Zugriff auf zuvor kopierte Elemente über den Launcher."
         },
         "sort-by-usage": {
           "label": "Nach Häufigkeit sortieren",
@@ -343,8 +343,8 @@
           "description": "Erscheinungsbild und Verhalten von Benachrichtigungen konfigurieren."
         },
         "do-not-disturb": {
-          "label": "Nicht stören",
-          "description": "Alle Benachrichtigungs-Popups deaktivieren, wenn aktiviert."
+          "label": "Bitte Nicht stören",
+          "description": "Alle Benachrichtigungs-Popups deaktivieren."
         },
         "enable-osd": {
           "label": "Bildschirmanzeige aktivieren",
@@ -384,35 +384,35 @@
       "monitors": {
         "section": {
           "label": "Monitor-Anzeige",
-          "description": "Benachrichtigungen auf bestimmten Monitoren anzeigen. Standard ist alle, wenn keine ausgewählt sind."
+          "description": "Benachrichtigungen auf bestimmten Monitoren anzeigen. Standardmäßig werden sie auf allen Monitoren angezeigt"
         }
       }
     },
     "osd": {
-      "title": "Bildschirmanzeige",
+      "title": "On-Screen Display",
       "description": "Bildschirm-Overlays wie Lautstärke- und Helligkeitsanzeigen konfigurieren.",
       "section": {
         "general": {
           "label": "Allgemein",
-          "description": "Sichtbarkeit und Verhalten der OSD konfigurieren."
+          "description": "Sichtbarkeit und Verhalten vom On-Screen Display konfigurieren."
         }
       },
       "enabled": {
-        "label": "Bildschirmanzeige aktivieren",
+        "label": "On-Screen Display aktivieren",
         "description": "Lautstärke- und Helligkeitsänderungen in Echtzeit anzeigen."
       },
       "always-on-top": {
         "label": "Immer im Vordergrund",
-        "description": "Bildschirmanzeige über Vollbildfenstern und anderen Ebenen anzeigen."
+        "description": "On-Screen Display über Vollbildfenstern und anderen Ebenen anzeigen."
       },
       "location": {
         "label": "Position",
-        "description": "Wo Bildschirmanzeigen erscheinen."
+        "description": "Wo On-Screen Displays erscheinen."
       },
       "duration": {
         "section": {
           "label": "Automatisches Ausblenden",
-          "description": "Wie lange die OSD sichtbar bleibt, bevor sie automatisch ausgeblendet wird."
+          "description": "Wie lange das On-Screen Display sichtbar bleibt, bevor es automatisch ausgeblendet wird."
         },
         "auto-hide": {
           "label": "Ausblenden nach",
@@ -422,7 +422,7 @@
       "monitors": {
         "section": {
           "label": "Monitor-Anzeige",
-          "description": "OSD auf bestimmten Monitoren anzeigen. Standard ist alle, wenn keine ausgewählt sind."
+          "description": "On-Screen Display auf bestimmten Monitoren anzeigen. Standardmäßig auf allen angezeigt."
         }
       }
     },
@@ -471,7 +471,7 @@
           "description": "Dauer der Übergangsanimationen in Sekunden."
         },
         "edge-smoothness": {
-          "label": "Übergangskante weichzeichnen",
+          "label": "Übergangseffect weichzeichnen",
           "description": "Wendet einen weichen, gefiederten Effekt auf die Kante von Übergängen an."
         }
       },
@@ -551,15 +551,15 @@
           "description": "Terminal-Emulator-Theming.",
           "kitty": {
             "description": "Schreibt {filepath} und lädt neu",
-            "description-missing": "Erfordert kitty Terminal"
+            "description-missing": "Erfordert {app} Terminal"
           },
           "ghostty": {
             "description": "Schreibt {filepath} und lädt neu",
-            "description-missing": "Erfordert ghostty Terminal"
+            "description-missing": "Erfordert {app} Terminal"
           },
           "foot": {
             "description": "Schreibt {filepath} und lädt neu",
-            "description-missing": "Erfordert foot Terminal"
+            "description-missing": "Erfordert {app} Terminal"
           }
         },
         "programs": {
@@ -567,11 +567,11 @@
           "description": "Anwendungsspezifisches Theming.",
           "fuzzel": {
             "description": "Schreibt {filepath} und lädt neu",
-            "description-missing": "Erfordert fuzzel Starter"
+            "description-missing": "Erfordert die Installation von {app}"
           },
           "vicinae": {
             "description": "Schreibt {filepath} und lädt neu",
-            "description-missing": "Erfordert {app} Starter"
+            "description-missing": "Erfordert die Installation von {app}"
           },
           "discord": {
             "description": "Schreibt {filepath} für {client}",
@@ -579,7 +579,7 @@
           },
           "pywalfox": {
             "description": "Schreibt {filepath} und führt pywalfox update aus",
-            "description-missing": "Erfordert pywalfox Paket"
+            "description-missing": "Erfordert die Installation von {app} "
           }
         },
         "misc": {
@@ -605,7 +605,7 @@
         },
         "search": {
           "label": "Nach einem Standort suchen",
-          "description": "z.B. Berlin, Deutschland",
+          "description": "z.B. Dortmund, Deutschland",
           "placeholder": "Standortnamen eingeben"
         }
       },
@@ -634,7 +634,7 @@
         },
         "week-numbers": {
           "label": "Wochennummern anzeigen",
-          "description": "Zeigt die Woche des Jahres (z.B. Woche 38) im Kalender an."
+          "description": "Zeigt die Kalender Wochen an (z.B. Woche 38)"
         }
       }
     },
@@ -727,7 +727,7 @@
           "description_plural": "Ein Dankeschön an unsere {count} <b>großartigen</b> Mitwirkenden!"
         }
       },
-      "support": "Unterstützen Sie uns"
+      "support": "Unterstütz uns"
     },
     "hooks": {
       "title": "Hooks",
@@ -836,7 +836,7 @@
     "mainly-clear": "Überwiegend klar",
     "partly-cloudy": "Teilweise bewölkt",
     "overcast": "Bedeckt",
-    "fog": "Nebel",
+    "fog": "Nebelig",
     "drizzle": "Nieselregen",
     "snow": "Schnee",
     "rain-showers": "Regenschauer",
@@ -852,7 +852,7 @@
       "select-file": "Datei auswählen",
       "cancel": "Abbrechen",
       "search-placeholder": "Dateien und Ordner suchen...",
-      "select-current": "Aktuelle auswählen",
+      "select-current": "Aktuelles Objekt auswählen",
       "title": "Dateiauswahl"
     },
     "datetime-tokens": {
