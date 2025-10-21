@@ -159,7 +159,6 @@ ColumnLayout {
     label: I18n.tr("settings.color-scheme.dark-mode.switch.label")
     description: I18n.tr("settings.color-scheme.dark-mode.switch.description")
     checked: Settings.data.colorSchemes.darkMode
-    enabled: true
     onToggled: checked => {
                  Settings.data.colorSchemes.darkMode = checked
                  root.cacheVersion++ // Force UI update for dark/light variants
@@ -241,6 +240,7 @@ ColumnLayout {
   NToggle {
     label: I18n.tr("settings.color-scheme.color-source.use-wallpaper-colors.label")
     description: I18n.tr("settings.color-scheme.color-source.use-wallpaper-colors.description")
+    enabled: ProgramCheckerService.matugenAvailable
     checked: Settings.data.colorSchemes.useWallpaperColors
     onToggled: checked => {
                  if (checked) {
@@ -665,24 +665,22 @@ ColumnLayout {
                    }
       }
       NCheckbox {
-    label: "Vicinae"
-    description: ProgramCheckerService.vicinaeAvailable
-        ? I18n.tr("settings.color-scheme.templates.programs.vicinae.description", {
-            "filepath": "~/.local/share/vicinae/themes/matugen.toml"
-        })
-        : I18n.tr("settings.color-scheme.templates.programs.vicinae.description-missing", {
-            "app": "vicinae"
-        })
-    checked: Settings.data.templates.vicinae
-    enabled: ProgramCheckerService.vicinaeAvailable
-    opacity: ProgramCheckerService.vicinaeAvailable ? 1.0 : 0.6
-    onToggled: checked => {
-        if (ProgramCheckerService.vicinaeAvailable) {
-            Settings.data.templates.vicinae = checked
-            AppThemeService.generate()
-        }
-    }
-}
+        label: "Vicinae"
+        description: ProgramCheckerService.vicinaeAvailable ? I18n.tr("settings.color-scheme.templates.programs.vicinae.description", {
+                                                                        "filepath": "~/.local/share/vicinae/themes/matugen.toml"
+                                                                      }) : I18n.tr("settings.color-scheme.templates.programs.vicinae.description-missing", {
+                                                                                     "app": "vicinae"
+                                                                                   })
+        checked: Settings.data.templates.vicinae
+        enabled: ProgramCheckerService.vicinaeAvailable
+        opacity: ProgramCheckerService.vicinaeAvailable ? 1.0 : 0.6
+        onToggled: checked => {
+                     if (ProgramCheckerService.vicinaeAvailable) {
+                       Settings.data.templates.vicinae = checked
+                       AppThemeService.generate()
+                     }
+                   }
+      }
     }
 
     // Miscellaneous

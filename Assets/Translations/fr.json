@@ -32,16 +32,6 @@
           "reset": "Réinitialiser le rayon des coins de l'écran"
         }
       },
-      "lockscreen": {
-        "section": {
-          "label": "Écran de verrouillage",
-          "description": "Configurer le comportement de l'écran de verrouillage."
-        },
-        "lock-on-suspend": {
-          "label": "Verrouiller lors de la suspension",
-          "description": "Verrouiller automatiquement l'écran lors de la mise en veille du système."
-        }
-      },
       "fonts": {
         "section": {
           "label": "Polices",
@@ -79,7 +69,8 @@
           "description": "Sélectionnez la langue utilisée dans l'interface de l'application.",
           "auto-detect": "Automatique"
         }
-      }
+      },
+      "launch-setup-wizard": "Lancer l'assistant d'installation"
     },
     "audio": {
       "title": "Audio",
@@ -513,6 +504,13 @@
         "switch": {
           "label": "Mode sombre",
           "description": "Passe à un thème plus sombre pour une visualisation plus facile la nuit."
+        },
+        "mode": {
+          "description": "Active la commutation automatique entre le mode clair et le mode sombre.",
+          "label": "Programmation du mode sombre",
+          "location": "Emplacement",
+          "manual": "Manuel",
+          "off": "Éteint"
         }
       },
       "predefined": {
@@ -785,6 +783,10 @@
         "description": "Désactiver toutes les animations pour une expérience plus rapide et plus réactive.",
         "label": "Désactiver les animations de l'interface utilisateur"
       },
+      "panels-overlay": {
+        "label": "Ouvrir les panneaux en couche superposée",
+        "description": "Les panneaux apparaîtront au-dessus des fenêtres en plein écran"
+      },
       "animation-speed": {
         "description": "Ajuster la vitesse globale de l'animation.",
         "label": "Vitesse d'animation",
@@ -794,10 +796,6 @@
         "description": "Contrôle l'arrondi des angles des fenêtres, des boutons et d'autres éléments.",
         "label": "Rayon de bordure",
         "reset": "Réinitialiser le rayon de la bordure"
-      },
-      "compact-lockscreen": {
-        "description": "Afficher uniquement le champ de saisie de connexion et les commandes système, en masquant les widgets météo et multimédia.",
-        "label": "Écran de verrouillage compact"
       },
       "dim-desktop": {
         "description": "Atténuer le bureau lorsque des panneaux ou des menus sont ouverts.",
@@ -817,6 +815,17 @@
         "description": "Activer ou désactiver les info-bulles dans toute l'interface.",
         "label": "Afficher les infobulles"
       }
+    },
+    "lock-screen": {
+      "compact-lockscreen": {
+        "description": "Afficher uniquement le champ de saisie de connexion et les commandes système, en masquant les widgets météo et multimédia.",
+        "label": "Écran de verrouillage compact"
+      },
+      "lock-on-suspend": {
+        "description": "Verrouiller automatiquement l'écran lors de la mise en veille du système.",
+        "label": "Verrouiller à la suspension"
+      },
+      "title": "Écran de verrouillage"
     }
   },
   "widgets": {

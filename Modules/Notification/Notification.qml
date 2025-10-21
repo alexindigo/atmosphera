@@ -45,7 +45,7 @@ Variants {
       screen: modelData
 
       WlrLayershell.namespace: "noctalia-notifications"
-      WlrLayershell.layer: (Settings.data.notifications && Settings.data.notifications.alwaysOnTop) ? WlrLayer.Overlay : WlrLayer.Top
+      WlrLayershell.layer: (Settings.data.notifications && Settings.data.notifications.overlayLayer) ? WlrLayer.Overlay : WlrLayer.Top
 
       color: Color.transparent
 
@@ -161,6 +161,7 @@ Variants {
 
         // Animate when notifications are added/removed
         Behavior on implicitHeight {
+          enabled: !Settings.data.general.animationDisabled
           SpringAnimation {
             spring: 2.0
             damping: 0.4
@@ -196,6 +197,7 @@ Variants {
               anchors.right: parent.right
               height: 2
               color: Color.transparent
+              visible: !Settings.data.general.animationDisabled
 
               // Pre-calculate available width for the progress bar
               readonly property real availableWidth: parent.width - (2 * parent.radius)
@@ -222,7 +224,7 @@ Variants {
 
                 // Smooth progress animation
                 Behavior on width {
-                  enabled: !card.isRemoving // Disable during removal animation
+                  enabled: !card.isRemoving && !Settings.data.general.animationDisabled // Disable during removal animation or when animations disabled
                   NumberAnimation {
                     duration: 100 // Quick but smooth
                     easing.type: Easing.Linear
@@ -230,7 +232,7 @@ Variants {
                 }
 
                 Behavior on x {
-                  enabled: !card.isRemoving
+                  enabled: !card.isRemoving && !Settings.data.general.animationDisabled
                   NumberAnimation {
                     duration: 100
                     easing.type: Easing.Linear
@@ -312,14 +314,21 @@ Variants {
 
             // Animate in when the item is created
             Component.onCompleted: {
-              // Start from slide position
-              slideOffset = slideInOffset
-              scaleValue = 0.8
-              opacityValue = 0.0
+              if (Settings.data.general.animationDisabled) {
+                // No animation - set to final state immediately
+                slideOffset = 0
+                scaleValue = 1.0
+                opacityValue = 1.0
+              } else {
+                // Start from slide position
+                slideOffset = slideInOffset
+                scaleValue = 0.8
+                opacityValue = 0.0
 
-              // Delay animation based on index for staggered effect
-              delayTimer.interval = animationDelay
-              delayTimer.start()
+                // Delay animation based on index for staggered effect
+                delayTimer.interval = animationDelay
+                delayTimer.start()
+              }
             }
 
             // Timer for staggered animation start
@@ -341,9 +350,11 @@ Variants {
                 return
               // Prevent multiple animations
               isRemoving = true
-              slideOffset = slideOutOffset
-              scaleValue = 0.8
-              opacityValue = 0.0
+              if (!Settings.data.general.animationDisabled) {
+                slideOffset = slideOutOffset
+                scaleValue = 0.8
+                opacityValue = 0.0
+              }
             }
 
             // Timer for delayed removal after animation
@@ -365,6 +376,7 @@ Variants {
 
             // Animation behaviors with spring physics
             Behavior on scale {
+              enabled: !Settings.data.general.animationDisabled
               SpringAnimation {
                 spring: 3
                 damping: 0.4
@@ -374,6 +386,7 @@ Variants {
             }
 
             Behavior on opacity {
+              enabled: !Settings.data.general.animationDisabled
               NumberAnimation {
                 duration: Style.animationNormal
                 easing.type: Easing.OutCubic
@@ -381,6 +394,7 @@ Variants {
             }
 
             Behavior on y {
+              enabled: !Settings.data.general.animationDisabled
               SpringAnimation {
                 spring: 2.5
                 damping: 0.3

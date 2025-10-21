@@ -32,16 +32,6 @@
           "reset": "重置屏幕圆角半径"
         }
       },
-      "lockscreen": {
-        "section": {
-          "label": "锁屏",
-          "description": "配置锁屏行为。"
-        },
-        "lock-on-suspend": {
-          "label": "挂起时锁定",
-          "description": "在系统挂起时自动锁定屏幕。"
-        }
-      },
       "fonts": {
         "reset-scaling": "恢复默认缩放",
         "section": {
@@ -79,7 +69,8 @@
           "description": "选择应用程序界面中使用的语言。",
           "auto-detect": "自动检测"
         }
-      }
+      },
+      "launch-setup-wizard": "启动安装向导"
     },
     "audio": {
       "title": "音频",
@@ -513,6 +504,13 @@
         "switch": {
           "label": "深色模式",
           "description": "切换到更暗的主题，便于夜间观看。"
+        },
+        "mode": {
+          "description": "启用自动切换浅色和深色模式。",
+          "label": "深色模式计划",
+          "location": "位置",
+          "manual": "手册",
+          "off": "关"
         }
       },
       "predefined": {
@@ -785,6 +783,10 @@
         "description": "禁用所有动画以获得更快、更流畅的体验。",
         "label": "禁用 UI 动画"
       },
+      "panels-overlay": {
+        "label": "在覆盖层中打开面板",
+        "description": "面板将显示在全屏窗口上方"
+      },
       "animation-speed": {
         "description": "调整全局动画速度。",
         "label": "动画速度",
@@ -794,10 +796,6 @@
         "description": "控制窗口、按钮和其他元素的圆角程度。",
         "label": "边框半径",
         "reset": "重置边框半径"
-      },
-      "compact-lockscreen": {
-        "description": "仅显示登录输入和系统控制，隐藏天气和媒体小部件。",
-        "label": "紧凑型锁屏"
       },
       "dim-desktop": {
         "description": "当面板或菜单打开时，桌面变暗。",
@@ -817,6 +815,17 @@
         "description": "启用或禁用整个界面的工具提示。",
         "label": "显示工具提示"
       }
+    },
+    "lock-screen": {
+      "compact-lockscreen": {
+        "description": "仅显示登录输入和系统控制，隐藏天气和媒体小部件。",
+        "label": "紧凑型锁屏"
+      },
+      "lock-on-suspend": {
+        "description": "系统挂起时自动锁定屏幕。",
+        "label": "挂起时锁定"
+      },
+      "title": "锁屏"
     }
   },
   "widgets": {

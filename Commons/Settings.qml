@@ -312,8 +312,7 @@ Singleton {
       property bool doNotDisturb: false
       property list<string> monitors: []
       property string location: "top_right"
-      property bool alwaysOnTop: false
-      property real lastSeenTs: 0
+      property bool overlayLayer: true
       property bool respectExpireTimeout: false
       property int lowUrgencyDuration: 3
       property int normalUrgencyDuration: 8
@@ -326,7 +325,7 @@ Singleton {
       property string location: "top_right"
       property list<string> monitors: []
       property int autoHideMs: 2000
-      property bool alwaysOnTop: false
+      property bool overlayLayer: true
     }
 
     // audio
@@ -346,6 +345,7 @@ Singleton {
       property real fontDefaultScale: 1.0
       property real fontFixedScale: 1.0
       property bool tooltipsEnabled: true
+      property bool panelsOverlayLayer: true
     }
 
     // brightness

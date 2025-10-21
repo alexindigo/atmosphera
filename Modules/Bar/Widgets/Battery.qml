@@ -87,14 +87,13 @@ Item {
     id: pill
 
     density: Settings.data.bar.density
-    rightOpen: BarService.getPillDirection(root)
+    oppositeDirection: BarService.getPillDirection(root)
     icon: testMode ? BatteryService.getIcon(testPercent, testCharging, true) : BatteryService.getIcon(percent, charging, isReady)
     text: (isReady || testMode) ? Math.round(percent) : "-"
     suffix: "%"
     autoHide: false
     forceOpen: isReady && (testMode || battery.isLaptopBattery) && displayMode === "alwaysShow"
-    forceClose: displayMode === "alwaysHide"
-    disableOpen: (!isReady || (!testMode && !battery.isLaptopBattery))
+    forceClose: displayMode === "alwaysHide" || !isReady || (!testMode && !battery.isLaptopBattery)
     onClicked: PanelService.getPanel("batteryPanel")?.toggle(this)
     tooltipText: {
       let lines = []

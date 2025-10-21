@@ -30,6 +30,7 @@ Singleton {
                            "Spacer": spacerComponent,
                            "SystemMonitor": systemMonitorComponent,
                            "Taskbar": taskbarComponent,
+                           "TaskbarGrouped": taskbarGroupedComponent,
                            "Tray": trayComponent,
                            "Volume": volumeComponent,
                            "WiFi": wiFiComponent,
@@ -52,6 +53,10 @@ Singleton {
                                     "allowUserSettings": true,
                                     "displayMode": "onhover",
                                     "warningThreshold": 30
+                                  },
+                                  "Bluetooth": {
+                                    "allowUserSettings": true,
+                                    "displayMode": "onhover"
                                   },
                                   "Brightness": {
                                     "allowUserSettings": true,
@@ -124,10 +129,17 @@ Singleton {
                                     "hideMode": "hidden",
                                     "colorizeIcons": false
                                   },
+                                  "TaskbarGrouped": {
+                                    "allowUserSettings": true
+                                  },
                                   "Tray": {
                                     "allowUserSettings": true,
                                     "blacklist": [],
                                     "colorizeIcons": false
+                                  },
+                                  "WiFi": {
+                                    "allowUserSettings": true,
+                                    "displayMode": "onhover"
                                   },
                                   "Workspace": {
                                     "allowUserSettings": true,
@@ -215,6 +227,9 @@ Singleton {
   }
   property Component taskbarComponent: Component {
     Taskbar {}
+  }
+  property Component taskbarGroupedComponent: Component {
+    TaskbarGrouped {}
   }
 
   function init() {

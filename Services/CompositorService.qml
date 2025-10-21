@@ -256,6 +256,17 @@ Singleton {
     return ""
   }
 
+  function getWindowsForWorkspace(workspaceId) {
+    var windowsInWs = []
+    for (var i = 0; i < windows.count; i++) {
+      var window = windows.get(i)
+      if (window.workspaceId === workspaceId) {
+        windowsInWs.push(window)
+      }
+    }
+    return windowsInWs
+  }
+
   // Generic workspace switching
   function switchToWorkspace(workspace) {
     if (backend && backend.switchToWorkspace) {

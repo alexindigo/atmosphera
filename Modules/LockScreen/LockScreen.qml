@@ -17,11 +17,18 @@ Loader {
   id: lockScreen
   active: false
 
+  // Track if triggered via deprecated IPC call
+  property bool triggeredViaDeprecatedCall: false
+
   Timer {
     id: unloadAfterUnlockTimer
     interval: 250
     repeat: false
-    onTriggered: lockScreen.active = false
+    onTriggered: {
+      lockScreen.active = false
+      // Reset the deprecation flag when unlocking
+      lockScreen.triggeredViaDeprecatedCall = false
+    }
   }
 
   function scheduleUnloadAfterUnlock() {
@@ -420,6 +427,64 @@ Loader {
                       Layout.alignment: Qt.AlignHCenter
                     }
                   }
+                }
+              }
+            }
+
+            // Deprecation warning (shown above error notification)
+            Rectangle {
+              width: Math.min(650, parent.width - 40)
+              implicitHeight: deprecationContent.implicitHeight + 24
+              height: implicitHeight
+              anchors.horizontalCenter: parent.horizontalCenter
+              anchors.bottom: parent.bottom
+              anchors.bottomMargin: (Settings.data.general.compactLockScreen ? 320 : 400) * Style.uiScaleRatio
+              radius: Style.radiusL
+              color: Qt.alpha(Color.mTertiary, 0.95)
+              border.color: Color.mTertiary
+              border.width: 2
+              visible: lockScreen.triggeredViaDeprecatedCall
+              opacity: visible ? 1.0 : 0.0
+
+              ColumnLayout {
+                id: deprecationContent
+                anchors.fill: parent
+                anchors.margins: 12
+                spacing: 6
+
+                RowLayout {
+                  Layout.alignment: Qt.AlignHCenter
+                  spacing: 8
+
+                  NIcon {
+                    icon: "alert-triangle"
+                    pointSize: Style.fontSizeL
+                    color: Color.mOnTertiary
+                  }
+
+                  NText {
+                    text: "Deprecated IPC Call"
+                    color: Color.mOnTertiary
+                    pointSize: Style.fontSizeL
+                    font.weight: Font.Bold
+                  }
+                }
+
+                NText {
+                  text: "The 'lockScreen toggle' IPC call is deprecated. Use 'lockScreen lock' instead."
+                  color: Color.mOnTertiary
+                  pointSize: Style.fontSizeM
+                  horizontalAlignment: Text.AlignHCenter
+                  Layout.alignment: Qt.AlignHCenter
+                  Layout.fillWidth: true
+                  wrapMode: Text.WordWrap
+                }
+              }
+
+              Behavior on opacity {
+                NumberAnimation {
+                  duration: 300
+                  easing.type: Easing.OutCubic
                 }
               }
             }

@@ -32,16 +32,6 @@
           "reset": "Restablecer el radio de las esquinas de la pantalla"
         }
       },
-      "lockscreen": {
-        "section": {
-          "label": "Pantalla de bloqueo",
-          "description": "Configura el comportamiento de la pantalla de bloqueo."
-        },
-        "lock-on-suspend": {
-          "label": "Bloquear al suspender",
-          "description": "Bloquear automáticamente la pantalla al suspender el sistema."
-        }
-      },
       "fonts": {
         "section": {
           "label": "Fuentes",
@@ -79,7 +69,8 @@
           "description": "Selecciona el idioma utilizado en la interfaz de la aplicación.",
           "auto-detect": "Automático"
         }
-      }
+      },
+      "launch-setup-wizard": "Inicie el asistente de configuración"
     },
     "audio": {
       "title": "Audio",
@@ -513,6 +504,13 @@
         "switch": {
           "label": "Modo oscuro",
           "description": "Cambia a un tema más oscuro para una visualización más fácil por la noche."
+        },
+        "mode": {
+          "description": "Permite el cambio automático entre el modo claro y el modo oscuro.",
+          "label": "Programación del modo oscuro",
+          "location": "Ubicación",
+          "manual": "Manual",
+          "off": "Apagado"
         }
       },
       "predefined": {
@@ -785,6 +783,10 @@
         "description": "Desactiva todas las animaciones para una experiencia más rápida y con mayor capacidad de respuesta.",
         "label": "Desactivar animaciones de la interfaz de usuario"
       },
+      "panels-overlay": {
+        "label": "Abrir paneles en capa superpuesta",
+        "description": "Los paneles aparecerán sobre las ventanas en pantalla completa"
+      },
       "animation-speed": {
         "description": "Ajustar la velocidad global de la animación.",
         "label": "Velocidad de animación",
@@ -794,10 +796,6 @@
         "description": "Controla la redondez de las esquinas de las ventanas, los botones y otros elementos.",
         "label": "Radio de borde",
         "reset": "Restablecer el radio del borde"
-      },
-      "compact-lockscreen": {
-        "description": "Mostrar solo el campo de inicio de sesión y los controles del sistema, ocultando los widgets del clima y multimedia.",
-        "label": "Pantalla de bloqueo compacta"
       },
       "dim-desktop": {
         "description": "Atenuar el escritorio cuando los paneles o menús estén abiertos.",
@@ -817,6 +815,17 @@
         "description": "Activar o desactivar los avisos emergentes en toda la interfaz.",
         "label": "Mostrar sugerencias"
       }
+    },
+    "lock-screen": {
+      "compact-lockscreen": {
+        "description": "Mostrar solo el campo de inicio de sesión y los controles del sistema, ocultando los widgets del clima y multimedia.",
+        "label": "Pantalla de bloqueo compacta"
+      },
+      "lock-on-suspend": {
+        "description": "Bloquear la pantalla automáticamente al suspender el sistema.",
+        "label": "Bloquear al suspender"
+      },
+      "title": "Pantalla de bloqueo"
     }
   },
   "widgets": {

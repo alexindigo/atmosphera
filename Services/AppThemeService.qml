@@ -70,8 +70,8 @@ Singleton {
                                                       "vicinae": {
                                                         "input": "vicinae.toml",
                                                         "outputs": [{
-                                                          "path": "~/.local/share/vicinae/themes/matugen.toml"
-                                                        }],
+                                                            "path": "~/.local/share/vicinae/themes/matugen.toml"
+                                                          }],
                                                         "postProcess": () => `cp -n ${Quickshell.shellDir}/Assets/noctalia.svg ~/.local/share/vicinae/themes/noctalia.svg && ${colorsApplyScript} vicinae\n`
                                                       }
                                                     })

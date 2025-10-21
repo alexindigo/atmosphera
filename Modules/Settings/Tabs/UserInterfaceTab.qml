@@ -34,10 +34,10 @@ ColumnLayout {
     }
 
     NToggle {
-      label: I18n.tr("settings.user-interface.compact-lockscreen.label")
-      description: I18n.tr("settings.user-interface.compact-lockscreen.description")
-      checked: Settings.data.general.compactLockScreen
-      onToggled: checked => Settings.data.general.compactLockScreen = checked
+      label: I18n.tr("settings.user-interface.panels-overlay.label")
+      description: I18n.tr("settings.user-interface.panels-overlay.description")
+      checked: Settings.data.ui.panelsOverlayLayer
+      onToggled: checked => Settings.data.ui.panelsOverlayLayer = checked
     }
 
     NDivider {

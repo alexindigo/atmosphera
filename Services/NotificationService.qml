@@ -16,6 +16,10 @@ Singleton {
   property int maxVisible: 5
   property int maxHistory: 100
   property string historyFile: Quickshell.env("NOCTALIA_NOTIF_HISTORY_FILE") || (Settings.cacheDir + "notifications.json")
+  property string stateFile: Settings.cacheDir + "notifications-state.json"
+
+  // State
+  property real lastSeenTs: 0
 
   // Models
   property ListModel activeList: ListModel {}
@@ -264,7 +268,7 @@ Singleton {
     saveHistory()
   }
 
-  // Persistence
+  // Persistence - History
   FileView {
     id: historyFileView
     path: historyFile
@@ -278,6 +282,23 @@ Singleton {
     JsonAdapter {
       id: adapter
       property var notifications: []
+    }
+  }
+
+  // Persistence - State (lastSeenTs, etc.)
+  FileView {
+    id: stateFileView
+    path: stateFile
+    printErrors: false
+    onLoaded: loadState()
+    onLoadFailed: error => {
+      if (error === 2)
+      writeAdapter()
+    }
+
+    JsonAdapter {
+      id: stateAdapter
+      property real lastSeenTs: 0
     }
   }
 
@@ -335,6 +356,35 @@ Singleton {
     } catch (e) {
       Logger.e("Notifications", "Load failed:", e)
     }
+  }
+
+  function loadState() {
+    try {
+      root.lastSeenTs = stateAdapter.lastSeenTs || 0
+
+      // Migration: if state file is empty but settings has lastSeenTs, migrate it
+      if (root.lastSeenTs === 0 && Settings.data.notifications && Settings.data.notifications.lastSeenTs) {
+        root.lastSeenTs = Settings.data.notifications.lastSeenTs
+        saveState()
+        Logger.i("Notifications", "Migrated lastSeenTs from settings to state file")
+      }
+    } catch (e) {
+      Logger.e("Notifications", "Load state failed:", e)
+    }
+  }
+
+  function saveState() {
+    try {
+      stateAdapter.lastSeenTs = root.lastSeenTs
+      stateFileView.writeAdapter()
+    } catch (e) {
+      Logger.e("Notifications", "Save state failed:", e)
+    }
+  }
+
+  function updateLastSeenTs() {
+    root.lastSeenTs = Time.timestamp * 1000
+    saveState()
   }
 
   function getAppName(name) {

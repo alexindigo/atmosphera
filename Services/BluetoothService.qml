@@ -21,6 +21,12 @@ Singleton {
                                            return dev && (dev.paired || dev.trusted)
                                          })
   }
+  readonly property var connectedDevices: {
+    if (!adapter || !adapter.devices) {
+      return []
+    }
+    return adapter.devices.values.filter(dev => dev && dev.connected)
+  }
 
   readonly property var allDevicesWithBattery: {
     if (!adapter || !adapter.devices) {

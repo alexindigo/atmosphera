@@ -179,24 +179,23 @@
   "network": {
     "wifiEnabled": true
   },
-  "notifications": {
-    "doNotDisturb": false,
-    "monitors": [],
-    "location": "top_right",
-    "alwaysOnTop": false,
-    "lastSeenTs": 0,
-    "respectExpireTimeout": false,
-    "lowUrgencyDuration": 3,
-    "normalUrgencyDuration": 8,
-    "criticalUrgencyDuration": 15
-  },
-  "osd": {
-    "enabled": true,
-    "location": "top_right",
-    "monitors": [],
-    "autoHideMs": 2000,
-    "alwaysOnTop": false
-  },
+    "notifications": {
+      "doNotDisturb": false,
+      "monitors": [],
+      "location": "top_right",
+      "overlayLayer": true,
+      "respectExpireTimeout": false,
+      "lowUrgencyDuration": 3,
+      "normalUrgencyDuration": 8,
+      "criticalUrgencyDuration": 15
+    },
+    "osd": {
+      "enabled": true,
+      "location": "top_right",
+      "monitors": [],
+      "autoHideMs": 2000,
+      "overlayLayer": true
+    },
   "audio": {
     "volumeStep": 5,
     "volumeOverdrive": false,
@@ -210,7 +209,8 @@
     "fontFixed": "DejaVu Sans Mono",
     "fontDefaultScale": 1,
     "fontFixedScale": 1,
-    "tooltipsEnabled": true
+    "tooltipsEnabled": true,
+    "panelsOverlayLayer": true
   },
   "brightness": {
     "brightnessStep": 5

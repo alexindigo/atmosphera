@@ -17,7 +17,7 @@ NPanel {
   panelKeyboardFocus: true
 
   onOpened: function () {
-    Settings.data.notifications.lastSeenTs = Time.timestamp * 1000
+    NotificationService.updateLastSeenTs()
   }
 
   panelContent: Rectangle {
@@ -148,6 +148,7 @@ NPanel {
           border.width: Math.max(1, Style.borderS)
 
           Behavior on height {
+            enabled: !Settings.data.general.animationDisabled
             NumberAnimation {
               duration: Style.animationNormal
               easing.type: Easing.InOutQuad
@@ -156,6 +157,7 @@ NPanel {
 
           // Smooth color transition on hover
           Behavior on color {
+            enabled: !Settings.data.general.animationDisabled
             ColorAnimation {
               duration: Style.animationFast
             }

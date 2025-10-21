@@ -32,16 +32,6 @@
           "reset": "Redefinir raio dos cantos da tela"
         }
       },
-      "lockscreen": {
-        "section": {
-          "label": "Tela de bloqueio",
-          "description": "Configure o comportamento da tela de bloqueio."
-        },
-        "lock-on-suspend": {
-          "label": "Bloquear ao suspender",
-          "description": "Bloquear automaticamente a tela ao suspender o sistema."
-        }
-      },
       "fonts": {
         "section": {
           "label": "Fontes",
@@ -79,7 +69,8 @@
           "description": "Selecione o idioma usado na interface da aplicação.",
           "auto-detect": "Automático"
         }
-      }
+      },
+      "launch-setup-wizard": "Iniciar o assistente de configuração"
     },
     "audio": {
       "title": "Áudio",
@@ -475,6 +466,13 @@
         "switch": {
           "label": "Modo escuro",
           "description": "Muda para um tema mais escuro para facilitar a visualização à noite."
+        },
+        "mode": {
+          "description": "Ativa a mudança automática entre o modo claro e o modo escuro.",
+          "label": "Agendamento do modo escuro",
+          "location": "Localização",
+          "manual": "Manual",
+          "off": "Desligado"
         }
       },
       "predefined": {
@@ -785,6 +783,10 @@
         "description": "Desative todas as animações para uma experiência mais rápida e responsiva.",
         "label": "Desativar animações da interface do usuário"
       },
+      "panels-overlay": {
+        "label": "Abrir painéis na camada de sobreposição",
+        "description": "Os painéis aparecerão sobre janelas em tela cheia"
+      },
       "animation-speed": {
         "description": "Ajustar a velocidade global da animação.",
         "label": "Velocidade da animação",
@@ -794,10 +796,6 @@
         "description": "Controla o arredondamento dos cantos de janelas, botões e outros elementos.",
         "label": "Raio da borda",
         "reset": "Redefinir raio da borda"
-      },
-      "compact-lockscreen": {
-        "description": "Mostrar apenas a entrada de login e os controles do sistema, ocultando widgets de clima e mídia.",
-        "label": "Tela de bloqueio compacta"
       },
       "dim-desktop": {
         "description": "Escurecer a área de trabalho quando painéis ou menus estiverem abertos.",
@@ -817,6 +815,17 @@
         "description": "Ativar ou desativar dicas de ferramentas em toda a interface.",
         "label": "Mostrar dicas de ferramenta"
       }
+    },
+    "lock-screen": {
+      "compact-lockscreen": {
+        "description": "Mostrar apenas a entrada de login e os controles do sistema, ocultando os widgets de clima e mídia.",
+        "label": "Tela de bloqueio compacta"
+      },
+      "lock-on-suspend": {
+        "description": "Bloquear a tela automaticamente ao suspender o sistema.",
+        "label": "Bloquear ao suspender"
+      },
+      "title": "Tela de bloqueio"
     }
   },
   "widgets": {

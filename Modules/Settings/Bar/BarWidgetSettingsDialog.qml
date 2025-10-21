@@ -122,6 +122,7 @@ Popup {
     const widgetSettingsMap = {
       "ActiveWindow": "WidgetSettings/ActiveWindowSettings.qml",
       "Battery": "WidgetSettings/BatterySettings.qml",
+      "Bluetooth": "WidgetSettings/BluetoothSettings.qml",
       "Brightness": "WidgetSettings/BrightnessSettings.qml",
       "Clock": "WidgetSettings/ClockSettings.qml",
       "ControlCenter": "WidgetSettings/ControlCenterSettings.qml",
@@ -133,6 +134,7 @@ Popup {
       "Spacer": "WidgetSettings/SpacerSettings.qml",
       "SystemMonitor": "WidgetSettings/SystemMonitorSettings.qml",
       "Volume": "WidgetSettings/VolumeSettings.qml",
+      "WiFi": "WidgetSettings/WiFiSettings.qml",
       "Workspace": "WidgetSettings/WorkspaceSettings.qml",
       "Taskbar": "WidgetSettings/TaskbarSettings.qml",
       "Tray": "WidgetSettings/TraySettings.qml"
