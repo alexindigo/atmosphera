@@ -194,7 +194,7 @@ ColumnLayout {
             anchors.margins: Style.marginXS
             fallbackIcon: "person"
             borderColor: contributorArea.containsMouse ? Color.mOnTertiary : Color.mPrimary
-            borderWidth: Math.max(1, Style.borderM)
+            borderWidth: Style.borderM
 
             Behavior on borderColor {
               ColorAnimation {

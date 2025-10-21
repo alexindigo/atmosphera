@@ -114,7 +114,7 @@ Popup {
     color: Color.mSurface
     radius: Style.radiusS
     border.color: Color.mPrimary
-    border.width: Math.max(1, Style.borderM)
+    border.width: Style.borderM
   }
 
   contentItem: NScrollView {
@@ -166,7 +166,7 @@ Popup {
         radius: Style.radiusS
         color: root.selectedColor
         border.color: Color.mOutline
-        border.width: Math.max(1, Style.borderS)
+        border.width: Style.borderS
 
         ColumnLayout {
           spacing: 0

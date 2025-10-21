@@ -145,7 +145,7 @@ NPanel {
           radius: Style.radiusM
           color: Color.mSurfaceVariant
           border.color: Qt.alpha(Color.mOutline, Style.opacityMedium)
-          border.width: Math.max(1, Style.borderS)
+          border.width: Style.borderS
 
           Behavior on height {
             enabled: !Settings.data.general.animationDisabled

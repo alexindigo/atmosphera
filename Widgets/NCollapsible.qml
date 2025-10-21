@@ -29,7 +29,7 @@ ColumnLayout {
 
     // Subtle border
     border.color: root.expanded ? Color.mOnSecondary : Color.mOutline
-    border.width: Math.max(1, Style.borderS)
+    border.width: Style.borderS
 
     // Smooth color transitions
     Behavior on color {
@@ -151,7 +151,7 @@ ColumnLayout {
     color: Color.mSurface
     radius: Style.radiusL
     border.color: Color.mOutline
-    border.width: Math.max(1, Style.borderS)
+    border.width: Style.borderS
 
     // Dynamic height based on content
     Layout.preferredHeight: visible ? contentLayout.implicitHeight + (Style.marginL * 2) : 0

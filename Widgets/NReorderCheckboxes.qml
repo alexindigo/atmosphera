@@ -195,7 +195,7 @@ Item {
           radius: Style.radiusXS
           color: delegateItem.enabled ? root.activeColor : Color.mSurface
           border.color: delegateItem.required ? root.activeColor : Color.mOutline
-          border.width: Math.max(1, Style.borderS)
+          border.width: Style.borderS
           opacity: delegateItem.required ? 0.7 : 1.0
 
           Behavior on color {

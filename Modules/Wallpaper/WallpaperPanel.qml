@@ -140,7 +140,7 @@ NPanel {
             background: Rectangle {
               color: screenTabBar.currentIndex === index ? Color.mSecondary : Color.transparent
               radius: Style.radiusS
-              border.width: screenTabBar.currentIndex === index ? 0 : Math.max(1, Style.borderS)
+              border.width: screenTabBar.currentIndex === index ? 0 : Style.borderS
               border.color: Color.mOutline
 
               Behavior on color {
@@ -417,7 +417,7 @@ NPanel {
               radius: width / 2
               color: Color.mSecondary
               border.color: Color.mOutline
-              border.width: Math.max(1, Style.borderS)
+              border.width: Style.borderS
               visible: isSelected
 
               NIcon {
@@ -476,7 +476,7 @@ NPanel {
         color: Color.mSurface
         radius: Style.radiusM
         border.color: Color.mOutline
-        border.width: Math.max(1, Style.borderS)
+        border.width: Style.borderS
         visible: (filteredWallpapers.length === 0 && !WallpaperService.scanning) || WallpaperService.scanning
         Layout.fillWidth: true
         Layout.preferredHeight: 130

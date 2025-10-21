@@ -198,7 +198,7 @@ Loader {
         color: panelBackgroundColor
         radius: Style.radiusL
         border.color: Color.mOutline
-        border.width: Math.max(1, Style.borderS)
+        border.width: Style.borderS
         // Dragging support
         property bool draggable: root.draggable
         property bool isDragged: false
@@ -457,7 +457,7 @@ Loader {
           anchors.margins: 0
           color: Color.transparent
           border.color: Color.mPrimary
-          border.width: Math.max(2, Style.borderL)
+          border.width: Style.borderL
           radius: parent.radius
           visible: panelBackground.isDragged && dragHandler.active
           opacity: 0.8
@@ -469,7 +469,7 @@ Loader {
             anchors.margins: 0
             color: Color.transparent
             border.color: Color.mPrimary
-            border.width: Math.max(1, Style.borderS)
+            border.width: Style.borderS
             radius: parent.radius
             opacity: 0.3
           }

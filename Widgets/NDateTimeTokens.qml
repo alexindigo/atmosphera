@@ -7,7 +7,7 @@ Rectangle {
   id: root
   color: Color.mSurface
   border.color: Color.mOutline
-  border.width: Math.max(1, Style.borderS)
+  border.width: Style.borderS
   radius: Style.radiusM
 
   property date sampleDate: new Date() // Dec 25, 2023, 2:30:45.123 PM
@@ -296,7 +296,7 @@ Rectangle {
             color: tokenMouseArea.containsMouse ? Color.mPrimary : Color.mOnSurfaceVariant
             radius: Style.radiusS
             border.color: tokenMouseArea.containsMouse ? Color.mPrimary : Color.mOutline
-            border.width: Math.max(1, Style.borderS)
+            border.width: Style.borderS
 
             Behavior on color {
               ColorAnimation {

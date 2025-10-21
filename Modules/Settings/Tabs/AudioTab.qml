@@ -297,7 +297,7 @@ ColumnLayout {
             // Visuals
             color: Qt.alpha(Color.mOnSurface, 0.125)
             border.color: Qt.alpha(Color.mOnSurface, Style.opacityLight)
-            border.width: Math.max(1, Style.borderS)
+            border.width: Style.borderS
 
             // Content
             RowLayout {

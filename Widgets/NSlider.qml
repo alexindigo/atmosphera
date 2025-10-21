@@ -33,7 +33,7 @@ Slider {
     radius: height / 2
     color: Qt.alpha(Color.mSurface, 0.5)
     border.color: Qt.alpha(Color.mOutline, 0.5)
-    border.width: Math.max(1, Style.borderS)
+    border.width: Style.borderS
 
     // A container composite shape that puts a semicircle on the end
     Item {
@@ -119,7 +119,7 @@ Slider {
       radius: width / 2
       color: root.pressed ? Color.mTertiary : Color.mSurface
       border.color: Color.mPrimary
-      border.width: Math.max(1, Style.borderL)
+      border.width: Style.borderL
       anchors.centerIn: parent
 
       Behavior on color {

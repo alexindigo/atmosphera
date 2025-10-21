@@ -334,10 +334,10 @@ ColumnLayout {
 
           Layout.fillWidth: true
           Layout.alignment: Qt.AlignHCenter
-          height: 50
+          height: 50 * Style.uiScaleRatio
           radius: Style.radiusS
           color: root.getSchemeColor(schemeName, "mSurface")
-          border.width: Math.max(1, Style.borderL)
+          border.width: Style.borderL
           border.color: {
             if (Settings.data.colorSchemes.predefinedScheme === schemeName) {
               return Color.mSecondary
@@ -421,7 +421,7 @@ ColumnLayout {
             height: 20
             radius: width * 0.5
             color: Color.mSecondary
-            border.width: Math.max(1, Style.borderS)
+            border.width: Style.borderS
             border.color: Color.mOnSecondary
 
             NIcon {

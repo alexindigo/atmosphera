@@ -54,7 +54,7 @@ ColumnLayout {
       radius: Style.radiusM
       color: Color.mSurface
       border.color: input.activeFocus ? Color.mSecondary : Color.mOutline
-      border.width: Math.max(1, Style.borderS)
+      border.width: Style.borderS
 
       Behavior on border.color {
         ColorAnimation {

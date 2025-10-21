@@ -210,7 +210,7 @@ PopupWindow {
     color: Color.mSurfaceVariant
     radius: Style.radiusS
     border.color: Color.mOutline
-    border.width: Math.max(1, Style.borderS)
+    border.width: Style.borderS
 
     // Single MouseArea to handle both auto-close and menu interactions
     MouseArea {

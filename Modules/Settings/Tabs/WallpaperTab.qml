@@ -59,7 +59,7 @@ ColumnLayout {
       radius: Style.radiusM
       color: Color.mSurfaceVariant
       border.color: Color.mOutline
-      border.width: Math.max(1, Style.borderS)
+      border.width: Style.borderS
       implicitHeight: contentCol.implicitHeight + Style.marginL * 2
 
       ColumnLayout {

@@ -177,7 +177,7 @@ NBox {
             radius: Style.radiusL
             color: root.getWidgetColor(modelData)[0]
             border.color: Color.mOutline
-            border.width: Math.max(1, Style.borderS)
+            border.width: Style.borderS
 
             // Store the widget index for drag operations
             property int widgetIndex: index
@@ -332,7 +332,7 @@ NBox {
         radius: Style.radiusL
         color: Color.transparent
         border.color: Color.mOutline
-        border.width: Math.max(1, Style.borderS)
+        border.width: Style.borderS
         opacity: 0.7
         visible: flowDragArea.dragStarted
         z: 2000

@@ -186,7 +186,7 @@ Variants {
 
             radius: Style.radiusL
             border.color: Color.mOutline
-            border.width: Math.max(1, Style.borderS)
+            border.width: Style.borderS
             color: Color.mSurface
 
             // Optimized progress bar container

@@ -45,7 +45,7 @@ Rectangle {
     return outlined ? Color.transparent : backgroundColor
   }
 
-  border.width: outlined ? Math.max(1, Style.borderS) : 0
+  border.width: outlined ? Style.borderS : 0
   border.color: {
     if (!enabled)
       return Color.mOutline

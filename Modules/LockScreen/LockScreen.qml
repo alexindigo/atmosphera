@@ -690,7 +690,7 @@ Loader {
                           fallbackIcon: "disc"
                           fallbackIconSize: Style.fontSizeM
                           borderColor: Color.mOutline
-                          borderWidth: Math.max(1, Style.borderS)
+                          borderWidth: Style.borderS
                         }
                       }
 

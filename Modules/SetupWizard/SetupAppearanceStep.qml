@@ -417,7 +417,7 @@ ColumnLayout {
               height: 50
               radius: Style.radiusS
               color: root.cacheVersion >= 0 ? root.getSchemeColor(schemeName, "mSurface") : root.getSchemeColor(schemeName, "mSurface")
-              border.width: Math.max(1, Style.borderL)
+              border.width: Style.borderL
               border.color: itemMouseArea.containsMouse ? Color.mTertiary : (Settings.data.colorSchemes.predefinedScheme === schemeName ? Color.mSecondary : Color.mOutline)
 
               RowLayout {

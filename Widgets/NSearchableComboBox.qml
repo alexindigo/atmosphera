@@ -126,7 +126,7 @@ RowLayout {
       implicitHeight: preferredHeight
       color: Color.mSurface
       border.color: combo.activeFocus ? Color.mSecondary : Color.mOutline
-      border.width: Math.max(1, Style.borderS)
+      border.width: Style.borderS
       radius: Style.radiusM
 
       Behavior on border.color {
@@ -272,7 +272,7 @@ RowLayout {
       background: Rectangle {
         color: Color.mSurfaceVariant
         border.color: Color.mOutline
-        border.width: Math.max(1, Style.borderS)
+        border.width: Style.borderS
         radius: Style.radiusM
       }
     }

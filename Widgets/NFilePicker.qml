@@ -147,7 +147,7 @@ Popup {
     color: Color.mSurfaceVariant
     radius: Style.radiusL
     border.color: Color.mOutline
-    border.width: Math.max(1, Style.borderS)
+    border.width: Style.borderS
   }
 
   Rectangle {
@@ -244,7 +244,7 @@ Popup {
         color: Color.mSurfaceVariant
         radius: Style.radiusS
         border.color: Color.mOutline
-        border.width: Math.max(1, Style.borderS)
+        border.width: Style.borderS
 
         RowLayout {
           anchors.left: parent.left
@@ -371,7 +371,7 @@ Popup {
         color: Color.mSurface
         radius: Style.radiusM
         border.color: Color.mOutline
-        border.width: Math.max(1, Style.borderS)
+        border.width: Style.borderS
 
         FolderListModel {
           id: folderModel
@@ -493,7 +493,7 @@ Popup {
               color: Color.transparent
               radius: parent.radius
               border.color: isSelected ? Color.mSecondary : Color.mSurface
-              border.width: Math.max(1, Style.borderL)
+              border.width: Style.borderL
               Behavior on color {
                 ColorAnimation {
                   duration: Style.animationFast
@@ -506,7 +506,7 @@ Popup {
               color: (mouseArea.containsMouse && !isSelected) ? Color.mTertiary : Color.transparent
               radius: parent.radius
               border.color: (mouseArea.containsMouse && !isSelected) ? Color.mTertiary : Color.transparent
-              border.width: Math.max(1, Style.borderS)
+              border.width: Style.borderS
               Behavior on color {
                 ColorAnimation {
                   duration: Style.animationFast
@@ -592,7 +592,7 @@ Popup {
                   radius: width / 2
                   color: Color.mSecondary
                   border.color: Color.mOutline
-                  border.width: Math.max(1, Style.borderS)
+                  border.width: Style.borderS
                   visible: isSelected
                   NIcon {
                     icon: "filepicker-check"

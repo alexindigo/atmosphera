@@ -18,7 +18,7 @@ Rectangle {
   radius: Style.radiusM
   color: Color.mSurface
   border.color: Color.mOutline
-  border.width: Math.max(1, Style.borderS)
+  border.width: Style.borderS
 
   // Minimized Look
   MouseArea {
@@ -53,7 +53,7 @@ Rectangle {
         radius: Layout.preferredWidth * 0.5
         color: root.selectedColor
         border.color: Color.mOutline
-        border.width: Math.max(1, Style.borderS)
+        border.width: Style.borderS
       }
 
       NText {

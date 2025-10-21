@@ -62,7 +62,7 @@ Rectangle {
   }
   radius: width * 0.5
   border.color: root.enabled && root.hovering ? colorBorderHover : colorBorder
-  border.width: Math.max(1, Style.borderS)
+  border.width: Style.borderS
 
   Behavior on color {
     ColorAnimation {

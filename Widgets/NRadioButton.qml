@@ -15,7 +15,7 @@ RadioButton {
     radius: width * 0.5
     color: Color.transparent
     border.color: root.checked ? Color.mPrimary : Color.mOnSurface
-    border.width: Math.max(1, Style.borderM)
+    border.width: Style.borderM
     anchors.verticalCenter: parent.verticalCenter
 
     Rectangle {

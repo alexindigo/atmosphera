@@ -362,7 +362,7 @@ NPanel {
           Layout.alignment: Qt.AlignTop
           color: Color.mSurfaceVariant
           border.color: Color.mOutline
-          border.width: Math.max(1, Style.borderS)
+          border.width: Style.borderS
           radius: Style.radiusM
 
           MouseArea {
@@ -464,7 +464,7 @@ NPanel {
           radius: Style.radiusM
           color: Color.mSurfaceVariant
           border.color: Color.mOutline
-          border.width: Math.max(1, Style.borderS)
+          border.width: Style.borderS
 
           ColumnLayout {
             id: contentLayout

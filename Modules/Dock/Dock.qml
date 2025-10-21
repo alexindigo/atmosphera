@@ -289,7 +289,7 @@ Variants {
             color: Qt.alpha(Color.mSurface, Settings.data.dock.backgroundOpacity)
             anchors.centerIn: parent
             radius: Style.radiusL
-            border.width: Math.max(1, Style.borderS)
+            border.width: Style.borderS
             border.color: Qt.alpha(Color.mOutline, Settings.data.dock.backgroundOpacity)
 
             MouseArea {

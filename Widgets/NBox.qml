@@ -14,5 +14,5 @@ Rectangle {
   color: Color.mSurfaceVariant
   radius: Style.radiusM
   border.color: Color.mOutline
-  border.width: Math.max(1, Style.borderS)
+  border.width: Style.borderS
 }

@@ -181,7 +181,7 @@ ColumnLayout {
         color: Color.mSurfaceVariant
         radius: Style.radiusM
         border.color: Color.mSecondary
-        border.width: Math.max(1, Style.borderS)
+        border.width: Style.borderS
 
         Behavior on border.color {
           ColorAnimation {

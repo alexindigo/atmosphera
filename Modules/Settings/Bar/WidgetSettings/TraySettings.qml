@@ -100,7 +100,7 @@ ColumnLayout {
         anchors.margins: Style.marginXS
         color: Color.transparent // Make background transparent
         border.color: Color.mOutline
-        border.width: Math.max(1, Style.borderS)
+        border.width: Style.borderS
         radius: Style.radiusS
         visible: model.rule !== undefined && model.rule !== "" // Only visible if rule exists
       }

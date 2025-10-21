@@ -22,7 +22,7 @@ Rectangle {
   color: flat ? Color.transparent : Color.mSurface
   radius: Style.radiusS
   border.color: flat ? Color.transparent : Color.mSurfaceVariant
-  border.width: flat ? 0 : Math.max(1, Style.borderS)
+  border.width: flat ? 0 : Style.borderS
 
   // Repaint gauge when the bound value changes
   onValueChanged: gauge.requestPaint()

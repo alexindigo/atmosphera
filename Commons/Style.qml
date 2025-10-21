@@ -37,9 +37,9 @@ Singleton {
   property int screenRadius: Math.round(20 * Settings.data.general.screenRadiusRatio)
 
   // Border
-  property int borderS: Math.round(1 * uiScaleRatio)
-  property int borderM: Math.round(2 * uiScaleRatio)
-  property int borderL: Math.round(3 * uiScaleRatio)
+  property int borderS: Math.max(1, Math.round(1 * uiScaleRatio))
+  property int borderM: Math.max(1, Math.round(2 * uiScaleRatio))
+  property int borderL: Math.max(1, Math.round(3 * uiScaleRatio))
 
   // Margins (for margins and spacing)
   property int marginXXS: Math.round(2 * uiScaleRatio)

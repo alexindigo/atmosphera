@@ -79,9 +79,9 @@ NPanel {
         visible: NetworkService.lastError.length > 0
         Layout.fillWidth: true
         Layout.preferredHeight: errorRow.implicitHeight + (Style.marginM * 2)
-        color: Qt.rgba(Color.mError.r, Color.mError.g, Color.mError.b, 0.1)
+        color: Qt.alpha(Color.mError, 0.1)
         radius: Style.radiusS
-        border.width: Math.max(1, Style.borderS)
+        border.width: Style.borderS
         border.color: Color.mError
 
         RowLayout {
@@ -218,7 +218,7 @@ NPanel {
                 opacity: (NetworkService.disconnectingFrom === modelData.ssid || NetworkService.forgettingNetwork === modelData.ssid) ? 0.6 : 1.0
 
                 color: modelData.connected ? Qt.rgba(Color.mPrimary.r, Color.mPrimary.g, Color.mPrimary.b, 0.05) : Color.mSurface
-                border.width: Math.max(1, Style.borderS)
+                border.width: Style.borderS
                 border.color: modelData.connected ? Color.mPrimary : Color.mOutline
 
                 // Smooth opacity animation
@@ -339,7 +339,7 @@ NPanel {
                           visible: modelData.cached && !modelData.connected && NetworkService.forgettingNetwork !== modelData.ssid && NetworkService.disconnectingFrom !== modelData.ssid
                           color: Color.transparent
                           border.color: Color.mOutline
-                          border.width: Math.max(1, Style.borderS)
+                          border.width: Style.borderS
                           radius: height * 0.5
                           width: savedText.implicitWidth + (Style.marginS * 2)
                           height: savedText.implicitHeight + (Style.marginXXS * 2)
@@ -415,7 +415,7 @@ NPanel {
                     height: passwordRow.implicitHeight + Style.marginS * 2
                     color: Color.mSurfaceVariant
                     border.color: Color.mOutline
-                    border.width: Math.max(1, Style.borderS)
+                    border.width: Style.borderS
                     radius: Style.radiusS
 
                     RowLayout {
@@ -430,7 +430,7 @@ NPanel {
                         radius: Style.radiusXS
                         color: Color.mSurface
                         border.color: pwdInput.activeFocus ? Color.mSecondary : Color.mOutline
-                        border.width: Math.max(1, Style.borderS)
+                        border.width: Style.borderS
 
                         TextInput {
                           id: pwdInput
@@ -497,7 +497,7 @@ NPanel {
                     height: forgetRow.implicitHeight + Style.marginS * 2
                     color: Color.mSurfaceVariant
                     radius: Style.radiusS
-                    border.width: Math.max(1, Style.borderS)
+                    border.width: Style.borderS
                     border.color: Color.mOutline
 
                     RowLayout {

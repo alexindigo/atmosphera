@@ -40,7 +40,7 @@ RowLayout {
     radius: Style.radiusXS
     color: root.checked ? root.activeColor : Color.mSurface
     border.color: Color.mOutline
-    border.width: Math.max(1, Style.borderS)
+    border.width: Style.borderS
 
     Behavior on color {
       ColorAnimation {

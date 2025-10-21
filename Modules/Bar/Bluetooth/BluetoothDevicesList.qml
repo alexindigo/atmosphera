@@ -54,7 +54,7 @@ ColumnLayout {
       Layout.preferredHeight: deviceLayout.implicitHeight + (Style.marginM * 2)
       radius: Style.radiusM
       color: Color.mSurface
-      border.width: Math.max(1, Style.borderS)
+      border.width: Style.borderS
       border.color: getContentColor(Color.mOutline)
 
       RowLayout {

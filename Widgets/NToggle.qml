@@ -34,7 +34,7 @@ RowLayout {
     radius: height * 0.5
     color: root.checked ? Color.mPrimary : Color.mSurface
     border.color: Color.mOutline
-    border.width: Math.max(1, Style.borderS)
+    border.width: Style.borderS
 
     Behavior on color {
       ColorAnimation {
@@ -55,7 +55,7 @@ RowLayout {
       radius: height * 0.5
       color: root.checked ? Color.mOnPrimary : Color.mPrimary
       border.color: root.checked ? Color.mSurface : Color.mSurface
-      border.width: Math.max(1, Style.borderM)
+      border.width: Style.borderM
       anchors.verticalCenter: parent.verticalCenter
       anchors.verticalCenterOffset: 0
       x: root.checked ? switcher.width - width - 3 : 3

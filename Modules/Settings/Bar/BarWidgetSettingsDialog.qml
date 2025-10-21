@@ -44,7 +44,7 @@ Popup {
     color: Color.mSurface
     radius: Style.radiusL
     border.color: Color.mPrimary
-    border.width: Math.max(1, Style.borderM)
+    border.width: Style.borderM
   }
 
   contentItem: ColumnLayout {
