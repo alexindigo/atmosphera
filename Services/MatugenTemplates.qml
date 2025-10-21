@@ -102,8 +102,7 @@ Singleton {
                      }, {
                        "name": "kitty",
                        "path": "Terminal/kitty.conf",
-                       "output": "~/.config/kitty/themes/noctalia.conf",
-                       "post_hook": "kitten themes --reload-in=all noctalia"
+                       "output": "~/.config/kitty/themes/noctalia.conf"
                      }]
 
     terminals.forEach(function (terminal) {
