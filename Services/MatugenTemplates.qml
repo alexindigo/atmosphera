@@ -97,7 +97,8 @@ Singleton {
                      }, {
                        "name": "ghostty",
                        "path": "Terminal/ghostty",
-                       "output": "~/.config/ghostty/themes/noctalia"
+                       "output": "~/.config/ghostty/themes/noctalia",
+                       "post_hook": "pkill -SIGUSR2 ghostty"
                      }, {
                        "name": "kitty",
                        "path": "Terminal/kitty.conf",
