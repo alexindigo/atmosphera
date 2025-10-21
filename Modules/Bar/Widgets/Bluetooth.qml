@@ -36,7 +36,7 @@ Item {
     id: pill
 
     density: Settings.data.bar.density
-    rightOpen: BarService.getPillDirection(root)
+    oppositeDirection: BarService.getPillDirection(root)
     icon: BluetoothService.enabled ? "bluetooth" : "bluetooth-off"
     text: {
       if (BluetoothService.connectedDevices && BluetoothService.connectedDevices.length > 0) {
@@ -52,10 +52,15 @@ Item {
       return ""
     }
     autoHide: false
-    forceOpen: root.displayMode === "alwaysShow"
-    forceClose: root.displayMode === "alwaysHide" || BluetoothService.connectedDevices.length === 0
+    forceOpen: !isBarVertical && root.displayMode === "alwaysShow"
+    forceClose: isBarVertical || root.displayMode === "alwaysHide" || BluetoothService.connectedDevices.length === 0
     onClicked: PanelService.getPanel("bluetoothPanel")?.toggle(this)
     onRightClicked: PanelService.getPanel("bluetoothPanel")?.toggle(this)
-    tooltipText: I18n.tr("tooltips.bluetooth-devices")
+    tooltipText: {
+      if (pill.text !== "") {
+        return pill.text
+      }
+      return I18n.tr("tooltips.bluetooth-devices")
+    }
   }
 }

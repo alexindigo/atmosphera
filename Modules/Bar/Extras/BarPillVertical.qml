@@ -16,8 +16,7 @@ Item {
   property bool autoHide: false
   property bool forceOpen: false
   property bool forceClose: false
-  property bool disableOpen: false
-  property bool rightOpen: false
+  property bool oppositeDirection: false
   property bool hovered: false
 
   // Bar position detection for pill direction
@@ -25,8 +24,8 @@ Item {
   readonly property bool isVerticalBar: barPosition === "left" || barPosition === "right"
 
   // Determine pill direction based on section position
-  readonly property bool openDownward: rightOpen
-  readonly property bool openUpward: !rightOpen
+  readonly property bool openDownward: oppositeDirection
+  readonly property bool openUpward: !oppositeDirection
 
   // Effective shown state (true if animated open or forced, but not if force closed)
   readonly property bool revealed: !forceClose && (forceOpen || showPill)
@@ -114,7 +113,7 @@ Item {
         var offset = openDownward ? Math.round(pillPaddingVertical * 0.75) : -Math.round(pillPaddingVertical * 0.75)
         if (forceOpen) {
           // If its force open, the icon disc background is the same color as the bg pill move text slightly
-          offset += rightOpen ? -Style.marginXXS : Style.marginXXS
+          offset += oppositeDirection ? -Style.marginXXS : Style.marginXXS
         }
         return offset
       }
@@ -284,7 +283,7 @@ Item {
       hovered = true
       root.entered()
       TooltipService.show(Screen, pill, root.tooltipText, BarService.getTooltipDirection(), Style.tooltipDelayLong)
-      if (disableOpen || forceClose) {
+      if (forceClose) {
         return
       }
       if (!forceOpen) {

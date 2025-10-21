@@ -45,14 +45,13 @@ Item {
   BarPill {
     id: pill
 
-    rightOpen: BarService.getPillDirection(root)
+    oppositeDirection: BarService.getPillDirection(root)
     icon: customIcon
     text: _dynamicText
     density: Settings.data.bar.density
     autoHide: false
     forceOpen: _dynamicText !== ""
-    forceClose: false
-    disableOpen: true
+    forceClose: true
     tooltipText: {
       if (!hasExec) {
         return "Custom button, configure in settings."

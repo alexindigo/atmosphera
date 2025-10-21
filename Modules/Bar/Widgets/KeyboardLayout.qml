@@ -43,7 +43,7 @@ Item {
 
     anchors.verticalCenter: parent.verticalCenter
     density: Settings.data.bar.density
-    rightOpen: BarService.getPillDirection(root)
+    oppositeDirection: BarService.getPillDirection(root)
     icon: "keyboard"
     autoHide: false // Important to be false so we can hover as long as we want
     text: currentLayout.toUpperCase()

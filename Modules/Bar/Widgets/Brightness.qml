@@ -77,7 +77,7 @@ Item {
     id: pill
 
     density: Settings.data.bar.density
-    rightOpen: BarService.getPillDirection(root)
+    oppositeDirection: BarService.getPillDirection(root)
     icon: getIcon()
     autoHide: false // Important to be false so we can hover as long as we want
     text: {

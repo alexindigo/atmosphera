@@ -16,8 +16,7 @@ Item {
   property bool autoHide: false
   property bool forceOpen: false
   property bool forceClose: false
-  property bool disableOpen: false
-  property bool rightOpen: false
+  property bool oppositeDirection: false
   property bool hovered: false
 
   readonly property string barPosition: Settings.data.bar.position
@@ -51,8 +50,7 @@ Item {
         autoHide: root.autoHide
         forceOpen: root.forceOpen
         forceClose: root.forceClose
-        disableOpen: root.disableOpen
-        rightOpen: root.rightOpen
+        oppositeDirection: root.oppositeDirection
         hovered: root.hovered
         density: root.density
         onShown: root.shown()
@@ -76,8 +74,7 @@ Item {
         autoHide: root.autoHide
         forceOpen: root.forceOpen
         forceClose: root.forceClose
-        disableOpen: root.disableOpen
-        rightOpen: root.rightOpen
+        oppositeDirection: root.oppositeDirection
         hovered: root.hovered
         density: root.density
         onShown: root.shown()

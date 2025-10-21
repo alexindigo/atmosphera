@@ -36,7 +36,7 @@ Item {
     id: pill
 
     density: Settings.data.bar.density
-    rightOpen: BarService.getPillDirection(root)
+    oppositeDirection: BarService.getPillDirection(root)
     icon: {
       try {
         if (NetworkService.ethernetConnected) {
@@ -74,10 +74,15 @@ Item {
       }
     }
     autoHide: false
-    forceOpen: root.displayMode === "alwaysShow"
-    forceClose: root.displayMode === "alwaysHide" || !pill.text
+    forceOpen: !isBarVertical && root.displayMode === "alwaysShow"
+    forceClose: isBarVertical || root.displayMode === "alwaysHide" || !pill.text
     onClicked: PanelService.getPanel("wifiPanel")?.toggle(this)
     onRightClicked: PanelService.getPanel("wifiPanel")?.toggle(this)
-    tooltipText: I18n.tr("tooltips.manage-wifi")
+    tooltipText: {
+      if (pill.text !== "") {
+        return pill.text
+      }
+      return I18n.tr("tooltips.manage-wifi")
+    }
   }
 }

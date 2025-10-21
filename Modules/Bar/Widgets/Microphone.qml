@@ -89,7 +89,7 @@ Item {
   BarPill {
     id: pill
 
-    rightOpen: BarService.getPillDirection(root)
+    oppositeDirection: BarService.getPillDirection(root)
     icon: getIcon()
     density: Settings.data.bar.density
     autoHide: false // Important to be false so we can hover as long as we want

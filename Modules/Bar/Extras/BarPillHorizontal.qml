@@ -18,8 +18,7 @@ Item {
   property bool autoHide: false
   property bool forceOpen: false
   property bool forceClose: false
-  property bool disableOpen: false
-  property bool rightOpen: false
+  property bool oppositeDirection: false
   property bool hovered: false
 
   // Effective shown state (true if hovered/animated open or forced)
@@ -79,18 +78,18 @@ Item {
     width: revealed ? pillMaxWidth : 1
     height: pillHeight
 
-    x: rightOpen ? (iconCircle.x + iconCircle.width / 2) : // Opens right
-                   (iconCircle.x + iconCircle.width / 2) - width // Opens left
+    x: oppositeDirection ? (iconCircle.x + iconCircle.width / 2) : // Opens right
+                           (iconCircle.x + iconCircle.width / 2) - width // Opens left
 
     opacity: revealed ? Style.opacityFull : Style.opacityNone
     color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
     readonly property int halfPillHeight: Math.round(pillHeight * 0.5)
 
-    topLeftRadius: rightOpen ? 0 : halfPillHeight
-    bottomLeftRadius: rightOpen ? 0 : halfPillHeight
-    topRightRadius: rightOpen ? halfPillHeight : 0
-    bottomRightRadius: rightOpen ? halfPillHeight : 0
+    topLeftRadius: oppositeDirection ? 0 : halfPillHeight
+    bottomLeftRadius: oppositeDirection ? 0 : halfPillHeight
+    topRightRadius: oppositeDirection ? halfPillHeight : 0
+    bottomRightRadius: oppositeDirection ? halfPillHeight : 0
     anchors.verticalCenter: parent.verticalCenter
 
     NText {
@@ -99,10 +98,10 @@ Item {
       x: {
         // Better text horizontal centering
         var centerX = (parent.width - width) / 2
-        var offset = rightOpen ? Style.marginXS : -Style.marginXS
+        var offset = oppositeDirection ? Style.marginXS : -Style.marginXS
         if (forceOpen) {
           // If its force open, the icon disc background is the same color as the bg pill move text slightly
-          offset += rightOpen ? -Style.marginXXS : Style.marginXXS
+          offset += oppositeDirection ? -Style.marginXXS : Style.marginXXS
         }
         return centerX + offset
       }
@@ -139,7 +138,7 @@ Item {
     color: hovered ? Color.mTertiary : Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
     anchors.verticalCenter: parent.verticalCenter
 
-    x: rightOpen ? 0 : (parent.width - width)
+    x: oppositeDirection ? 0 : (parent.width - width)
 
     Behavior on color {
       ColorAnimation {
@@ -245,7 +244,7 @@ Item {
       hovered = true
       root.entered()
       TooltipService.show(Screen, pill, root.tooltipText, BarService.getTooltipDirection(), Style.tooltipDelayLong)
-      if (disableOpen || forceClose) {
+      if (forceClose) {
         return
       }
       if (!forceOpen) {
