@@ -68,8 +68,8 @@ ColumnLayout {
     NToggle {
       label: I18n.tr("settings.notifications.settings.always-on-top.label")
       description: I18n.tr("settings.notifications.settings.always-on-top.description")
-      checked: Settings.data.notifications.alwaysOnTop
-      onToggled: checked => Settings.data.notifications.alwaysOnTop = checked
+      checked: Settings.data.notifications.overlayLayer
+      onToggled: checked => Settings.data.notifications.overlayLayer = checked
     }
 
     // OSD settings moved to the dedicated OSD tab

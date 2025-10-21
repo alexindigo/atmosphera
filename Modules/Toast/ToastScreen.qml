@@ -197,7 +197,7 @@ Item {
 
       color: Color.transparent
 
-      WlrLayershell.layer: WlrLayer.Overlay
+      WlrLayershell.layer: (Settings.data.notifications && Settings.data.notifications.overlayLayer) ? WlrLayer.Overlay : WlrLayer.Top
       WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
       exclusionMode: PanelWindow.ExclusionMode.Ignore
 
