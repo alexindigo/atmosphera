@@ -89,7 +89,7 @@ Item {
     // Icon or album art width
     if (!hasActivePlayer || !showAlbumArt) {
       // Icon width
-      contentWidth += Style.fontSizeL * scaling
+      contentWidth += Math.round(18 * scaling)
     } else if (showAlbumArt && hasActivePlayer) {
       // Album art width
       contentWidth += 21 * scaling
@@ -250,8 +250,8 @@ Item {
           id: titleContainer
           Layout.preferredWidth: {
             // Calculate available width based on other elements in the row
-            var iconWidth = (windowIcon.visible ? (Style.fontSizeL + Style.marginS) : 0)
-            var albumArtWidth = (hasActivePlayer && showAlbumArt ? (18 * scaling + Style.marginS) : 0)
+            var iconWidth = (windowIcon.visible ? (18 * scaling + Style.marginS * scaling) : 0)
+            var albumArtWidth = (hasActivePlayer && showAlbumArt ? (21 * scaling + Style.marginS * scaling) : 0)
             var totalMargins = Style.marginXXS * 2
             var availableWidth = mainContainer.width - iconWidth - albumArtWidth - totalMargins
             return Math.max(20, availableWidth)
