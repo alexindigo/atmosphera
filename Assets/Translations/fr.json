@@ -626,6 +626,10 @@
         "week-numbers": {
           "label": "Afficher les numéros de semaine",
           "description": "Affiche la semaine de l'année (ex: Semaine 38) dans le calendrier."
+        },
+        "show-events": {
+          "label": "Afficher les événements du calendrier",
+          "description": "Afficher les événements dans le panneau du calendrier."
         }
       }
     },
