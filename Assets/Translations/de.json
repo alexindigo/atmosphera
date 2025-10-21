@@ -35,7 +35,7 @@
       "fonts": {
         "section": {
           "label": "Schriftarten",
-          "description": "Wählen die Schriftart an die auf der Benutzeroberfläche angezgit wird."
+          "description": "Wählen die Schriftart an die auf der Benutzeroberfläche angezeigt wird."
         },
         "default": {
           "label": "Standard Schriftart",
@@ -240,7 +240,7 @@
       "monitors": {
         "section": {
           "label": "Monitor-Anzeige",
-          "description": "Leiste auf bestimmten Monitoren anzeigen. Standardmäßig auf allen."
+          "description": "Statusleiste auf bestimmten Monitoren anzeigen. Standardmäßig auf allen."
         }
       },
       "tray": {
@@ -334,7 +334,7 @@
           "description": "Erscheinungsbild und Verhalten von Benachrichtigungen konfigurieren."
         },
         "do-not-disturb": {
-          "label": "Bitte Nicht stören",
+          "label": "Bitte nicht stören",
           "description": "Alle Benachrichtigungs-Popups deaktivieren."
         },
         "enable-osd": {
@@ -1299,8 +1299,8 @@
     "enable-keep-awake": "Wach bleiben aktivieren",
     "disable-keep-awake": "Wach bleiben deaktivieren",
     "wallpaper-selector": "Linksklick: Hintergrundbild-Auswahl öffnen.\nRechtsklick: Zufälliges Hintergrundbild setzen.",
-    "do-not-disturb-enabled": "'Nicht stören' aktiviert",
-    "do-not-disturb-disabled": "'Nicht stören' deaktiviert",
+    "do-not-disturb-enabled": "'Bitte nicht stören' aktiviert",
+    "do-not-disturb-disabled": "'Bitte nicht stören' deaktiviert",
     "connect-disconnect-devices": "Linksklick zum Verbinden. Rechtsklick zum Vergessen.",
     "set-power-profile": "'{profile}' Energieprofil setzen",
     "switch-to-light-mode": "Zum hellen Modus wechseln",
@@ -1309,8 +1309,8 @@
     "night-light-enabled": "Nachtlicht ist aktiviert.\nLinksklick zum Wechseln des Modus.\nRechtsklick für Einstellungen.",
     "night-light-forced": "Nachtlicht ist erzwungen.\nLinksklick zum Wechseln des Modus.\nRechtsklick für Einstellungen.",
     "night-light-not-installed": "Nachtlicht ist nicht verfügbar.\nwlsunset ist nicht installiert.",
-    "click-to-start-recording": "Klicken zum Starten der Aufnahme",
-    "click-to-stop-recording": "Klicken zum Stoppen der Aufnahme",
+    "click-to-start-recording": "Klicken zum Starten einer Bildschirm Aufnahme",
+    "click-to-stop-recording": "Klicken zum Stoppen einer Bildschirm Aufnahme",
     "open-control-center": "Kontrollzentrum öffnen",
     "volume-at": "Lautstärke bei {volume}%\nLinksklick zum Stumm-/Lautschalten. Rechtsklick für Einstellungen.\nScrollen zum Ändern der Lautstärke.",
     "microphone-volume-at": "Mikrofon-Lautstärke bei {volume}%\nLinksklick zum Stumm-/Lautschalten. Rechtsklick für Einstellungen.\nScrollen zum Ändern der Lautstärke.",
@@ -1555,7 +1555,7 @@
         "stopped": "Aufnehmen"
       },
       "tooltip": {
-        "action": "Klicken zum Starten/Stoppen der Bildschirmaufnahme"
+        "action": "Klicken zum Starten/Stoppen einer Bildschirmaufnahme"
       }
     },
     "powerProfile": {
