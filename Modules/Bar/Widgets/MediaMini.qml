@@ -376,7 +376,7 @@ Item {
                   titleContainer.isScrolling = false
                   titleContainer.isResetting = false
                   scrollContainer.scrollX = 0
-                  if (needsScrolling) {
+                  if (titleContainer.needsScrolling) {
                     scrollStartTimer.restart()
                   }
                 }
