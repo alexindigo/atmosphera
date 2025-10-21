@@ -202,6 +202,7 @@ Singleton {
       property bool useFahrenheit: false
       property bool use12hourFormat: false
       property bool showWeekNumberInCalendar: false
+      property bool showCalendarEvents: true
     }
 
     // screen recorder

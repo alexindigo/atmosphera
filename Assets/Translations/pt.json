@@ -588,6 +588,10 @@
         "week-numbers": {
           "label": "Mostrar números da semana",
           "description": "Exibe a semana do ano (ex., Semana 38) no calendário."
+        },
+        "show-events": {
+          "label": "Mostrar eventos do calendário",
+          "description": "Exibir eventos no painel do calendário."
         }
       }
     },
