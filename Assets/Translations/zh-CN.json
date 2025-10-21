@@ -626,6 +626,10 @@
         "week-numbers": {
           "label": "显示周数",
           "description": "在日历中显示一年中的第几周（例如：第 38 周）。"
+        },
+        "show-events": {
+          "label": "显示日历事件",
+          "description": "在日历面板中显示事件。"
         }
       }
     },
