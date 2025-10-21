@@ -45,16 +45,30 @@ Item {
   readonly property string windowTitle: CompositorService.getFocusedWindowTitle() || "No active window"
   readonly property string fallbackIcon: "user-desktop"
 
-  implicitHeight: visible ? (isVerticalBar ? calculatedVerticalDimension() : Style.barHeight) : 0
-  implicitWidth: visible ? (isVerticalBar ? calculatedVerticalDimension() : dynamicWidth) : 0
+  implicitHeight: visible ? (isVerticalBar ? (((!hasFocusedWindow) && hideMode === "hidden") ? 0 : calculatedVerticalDimension()) : Style.capsuleHeight) : 0
+  implicitWidth: visible ? (isVerticalBar ? (((!hasFocusedWindow) && hideMode === "hidden") ? 0 : calculatedVerticalDimension()) : (((!hasFocusedWindow) && hideMode === "hidden") ? 0 : dynamicWidth)) : 0
 
   // "visible": Always Visible, "hidden": Hide When Empty, "transparent": Transparent When Empty
-  visible: hideMode !== "hidden" || hasFocusedWindow
-  opacity: hideMode !== "transparent" || hasFocusedWindow ? 1.0 : 0
+  visible: (hideMode !== "hidden" || hasFocusedWindow) || opacity > 0
+  opacity: ((hideMode !== "hidden" || hasFocusedWindow) && (hideMode !== "transparent" || hasFocusedWindow)) ? 1.0 : 0.0
   Behavior on opacity {
     NumberAnimation {
       duration: Style.animationNormal
       easing.type: Easing.OutCubic
+    }
+  }
+
+  Behavior on implicitWidth {
+    NumberAnimation {
+      duration: Style.animationNormal
+      easing.type: Easing.InOutCubic
+    }
+  }
+
+  Behavior on implicitHeight {
+    NumberAnimation {
+      duration: Style.animationNormal
+      easing.type: Easing.InOutCubic
     }
   }
 
@@ -93,7 +107,7 @@ Item {
     }
     // Otherwise, adapt to content
     if (!hasFocusedWindow) {
-      return maxWidth
+      return Math.min(calculateContentWidth(), maxWidth)
     }
     // Use content width but don't exceed user-set maximum width
     return Math.min(calculateContentWidth(), maxWidth)
@@ -155,10 +169,9 @@ Item {
   Rectangle {
     id: windowActiveRect
     visible: root.visible
-    anchors.left: parent.left
     anchors.verticalCenter: parent.verticalCenter
-    width: isVerticalBar ? root.width : dynamicWidth
-    height: isVerticalBar ? width : Style.capsuleHeight
+    width: isVerticalBar ? ((!hasFocusedWindow) && hideMode === "hidden" ? 0 : calculatedVerticalDimension()) : ((!hasFocusedWindow) && (hideMode === "hidden") ? 0 : dynamicWidth)
+    height: isVerticalBar ? ((!hasFocusedWindow) && hideMode === "hidden" ? 0 : calculatedVerticalDimension()) : Style.capsuleHeight
     radius: isVerticalBar ? width / 2 : Style.radiusM
     color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
@@ -307,6 +320,14 @@ Item {
                 font.weight: Style.fontWeightMedium
                 verticalAlignment: Text.AlignVCenter
                 color: Color.mOnSurface
+                onTextChanged: {
+                  if (root.scrollingMode === "always") {
+                    titleContainer.isScrolling = false
+                    titleContainer.isResetting = false
+                    scrollContainer.scrollX = 0
+                    scrollStartTimer.restart()
+                  }
+                }
               }
 
               // Second copy for seamless scrolling
@@ -341,13 +362,6 @@ Item {
               duration: Math.max(4000, windowTitle.length * 100)
               loops: Animation.Infinite
               easing.type: Easing.Linear
-            }
-          }
-
-          Behavior on Layout.preferredWidth {
-            NumberAnimation {
-              duration: Style.animationSlow
-              easing.type: Easing.InOutCubic
             }
           }
         }

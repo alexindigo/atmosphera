@@ -69,7 +69,7 @@ Item {
   Behavior on opacity {
     NumberAnimation {
       duration: Style.animationNormal
-      easing.type: Easing.OutCubic
+      easing.type: Easing.InOutCubic
     }
   }
 
