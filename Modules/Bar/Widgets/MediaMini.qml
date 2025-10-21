@@ -350,6 +350,14 @@ Item {
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: hasActivePlayer ? Text.AlignLeft : Text.AlignHCenter
                 color: hasActivePlayer ? Color.mOnSurface : Color.mOnSurfaceVariant
+                onTextChanged: {
+                  titleContainer.isScrolling = false
+                  titleContainer.isResetting = false
+                  scrollContainer.scrollX = 0
+                  if (needsScrolling) {
+                    scrollStartTimer.restart()
+                  }
+                }
               }
 
               NText {
