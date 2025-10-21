@@ -33,6 +33,13 @@ ColumnLayout {
       onToggled: checked => Settings.data.ui.tooltipsEnabled = checked
     }
 
+    NToggle {
+      label: I18n.tr("settings.user-interface.panels-overlay.label")
+      description: I18n.tr("settings.user-interface.panels-overlay.description")
+      checked: Settings.data.ui.panelsOverlayLayer
+      onToggled: checked => Settings.data.ui.panelsOverlayLayer = checked
+    }
+
     NDivider {
       Layout.fillWidth: true
       Layout.topMargin: Style.marginL

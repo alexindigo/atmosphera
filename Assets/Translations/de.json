@@ -783,6 +783,10 @@
         "description": "Deaktivieren Sie alle Animationen für eine schnellere und reaktionsfreudigere Erfahrung.",
         "label": "UI-Animationen deaktivieren"
       },
+      "panels-overlay": {
+        "label": "Panels in Overlay-Ebene öffnen",
+        "description": "Panels werden über Vollbildfenstern angezeigt"
+      },
       "animation-speed": {
         "description": "Globale Animationsgeschwindigkeit anpassen.",
         "label": "Animationsgeschwindigkeit",

@@ -346,6 +346,7 @@ Singleton {
       property real fontDefaultScale: 1.0
       property real fontFixedScale: 1.0
       property bool tooltipsEnabled: true
+      property bool panelsOverlayLayer: true
     }
 
     // brightness

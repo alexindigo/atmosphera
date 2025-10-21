@@ -783,6 +783,10 @@
         "description": "Desative todas as animações para uma experiência mais rápida e responsiva.",
         "label": "Desativar animações da interface do usuário"
       },
+      "panels-overlay": {
+        "label": "Abrir painéis na camada de sobreposição",
+        "description": "Os painéis aparecerão sobre janelas em tela cheia"
+      },
       "animation-speed": {
         "description": "Ajustar a velocidade global da animação.",
         "label": "Velocidade da animação",
