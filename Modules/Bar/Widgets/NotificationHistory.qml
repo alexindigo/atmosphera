@@ -31,12 +31,8 @@ NIconButton {
   readonly property bool showUnreadBadge: (widgetSettings.showUnreadBadge !== undefined) ? widgetSettings.showUnreadBadge : widgetMetadata.showUnreadBadge
   readonly property bool hideWhenZero: (widgetSettings.hideWhenZero !== undefined) ? widgetSettings.hideWhenZero : widgetMetadata.hideWhenZero
 
-  function lastSeenTs() {
-    return Settings.data.notifications?.lastSeenTs || 0
-  }
-
   function computeUnreadCount() {
-    var since = lastSeenTs()
+    var since = NotificationService.lastSeenTs
     var count = 0
     var model = NotificationService.historyList
     for (var i = 0; i < model.count; i++) {

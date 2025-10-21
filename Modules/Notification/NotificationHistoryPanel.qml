@@ -17,7 +17,7 @@ NPanel {
   panelKeyboardFocus: true
 
   onOpened: function () {
-    Settings.data.notifications.lastSeenTs = Time.timestamp * 1000
+    NotificationService.updateLastSeenTs()
   }
 
   panelContent: Rectangle {
