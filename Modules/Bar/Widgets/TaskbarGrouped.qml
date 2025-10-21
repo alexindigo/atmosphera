@@ -35,17 +35,6 @@ Item {
   readonly property bool hideUnoccupied: (widgetSettings.hideUnoccupied !== undefined) ? widgetSettings.hideUnoccupied : false
   property ListModel localWorkspaces: ListModel {}
 
-  function getWindowsForWorkspace(workspaceId) {
-    var windowsInWs = []
-    for (var i = 0; i < CompositorService.windows.count; i++) {
-      var window = CompositorService.windows.get(i)
-      if (window.workspaceId === workspaceId) {
-        windowsInWs.push(window)
-      }
-    }
-    return windowsInWs
-  }
-
   function refreshWorkspaces() {
     localWorkspaces.clear()
     if (screen !== null) {
@@ -56,21 +45,10 @@ Item {
             continue
           }
 
-          var windowsInWs = getWindowsForWorkspace(ws.id)
-          var windowsModel = Qt.createQmlObject('import QtQuick 2.0; ListModel {}', root)
-          for (var j = 0; j < windowsInWs.length; j++) {
-            windowsModel.append(windowsInWs[j])
-          }
-          localWorkspaces.append({
-            "id": ws.id,
-            "name": ws.name,
-            "output": ws.output,
-            "isFocused": ws.isFocused,
-            "isOccupied": ws.isOccupied,
-            "isActive": ws.isActive,
-            "isUrgent": ws.isUrgent,
-            "windows": windowsModel
-          })
+          // Copy all properties from ws and add windows
+          var workspaceData = Object.assign({}, ws)
+          workspaceData.windows = CompositorService.getWindowsForWorkspace(ws.id)
+          localWorkspaces.append(workspaceData)
         }
       }
     }
