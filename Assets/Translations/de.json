@@ -626,6 +626,10 @@
         "week-numbers": {
           "label": "Wochennummern anzeigen",
           "description": "Zeigt die Kalender Wochen an (z.B. Woche 38)"
+        },
+        "show-events": {
+          "label": "Kalenderereignisse anzeigen",
+          "description": "Ereignisse im Kalenderpanel anzeigen."
         }
       }
     },
