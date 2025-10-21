@@ -74,7 +74,8 @@
     "weatherEnabled": true,
     "useFahrenheit": false,
     "use12hourFormat": false,
-    "showWeekNumberInCalendar": false
+    "showWeekNumberInCalendar": false,
+    "showCalendarEvents": true
   },
   "screenRecorder": {
     "directory": "",
