@@ -92,7 +92,11 @@ Singleton {
 
   // Core functions
   function checkAvailability() {
-    availabilityCheckProcess.running = true
+    if (Settings.data.location.showCalendarEvents) {
+      availabilityCheckProcess.running = true
+    } else {
+      root.available = false
+    }
   }
 
   function loadCalendars() {
@@ -100,6 +104,11 @@ Singleton {
   }
 
   function loadEvents(daysAhead = 31, daysBehind = 14) {
+    if (!Settings.data.location.showCalendarEvents) {
+      root.loading = false
+      root.events = []
+      return
+    }
     if (loading)
       return
 

@@ -117,6 +117,13 @@ ColumnLayout {
       checked: Settings.data.location.showWeekNumberInCalendar
       onToggled: checked => Settings.data.location.showWeekNumberInCalendar = checked
     }
+
+    NToggle {
+      label: I18n.tr("settings.location.date-time.show-events.label")
+      description: I18n.tr("settings.location.date-time.show-events.description")
+      checked: Settings.data.location.showCalendarEvents
+      onToggled: checked => Settings.data.location.showCalendarEvents = checked
+    }
   }
 
   NDivider {

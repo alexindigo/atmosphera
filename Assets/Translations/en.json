@@ -626,6 +626,10 @@
         "week-numbers": {
           "label": "Show week numbers",
           "description": "Displays the week of the year (e.g., Week 38) in the calendar."
+        },
+        "show-events": {
+          "label": "Show calendar events",
+          "description": "Display events in the calendar panel."
         }
       }
     },

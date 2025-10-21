@@ -561,7 +561,7 @@ NPanel {
 
             // Event indicator dots
             Row {
-              visible: parent.parent.parent.parent.parent.hasEventsOnDate(model.year, model.month, model.day)
+              visible: Settings.data.location.showCalendarEvents && parent.parent.parent.parent.parent.hasEventsOnDate(model.year, model.month, model.day)
               spacing: 2
               anchors.horizontalCenter: parent.horizontalCenter
               anchors.bottom: parent.bottom
@@ -587,6 +587,7 @@ NPanel {
             MouseArea {
               anchors.fill: parent
               hoverEnabled: true
+              enabled: Settings.data.location.showCalendarEvents
 
               onEntered: {
                 const events = parent.parent.parent.parent.parent.getEventsForDate(model.year, model.month, model.day)
