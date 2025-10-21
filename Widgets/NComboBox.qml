@@ -124,27 +124,29 @@ RowLayout {
         verticalPolicy: ScrollBar.AsNeeded
 
         delegate: ItemDelegate {
-          width: combo.width
+          property var parentComboBox: combo // Reference to the ComboBox
+          property int itemIndex: index // Explicitly capture index
+          width: parentComboBox ? parentComboBox.width : 0
           hoverEnabled: true
-          highlighted: ListView.view.currentIndex === index
+          highlighted: ListView.view.currentIndex === itemIndex
 
           onHoveredChanged: {
             if (hovered) {
-              ListView.view.currentIndex = index
+              ListView.view.currentIndex = itemIndex
             }
           }
 
           onClicked: {
-            var item = root.getItem(index)
-            if (item && item.key !== undefined) {
+            var item = root.getItem(itemIndex)
+            if (item && item.key !== undefined && parentComboBox) {
               root.selected(item.key)
-              combo.currentIndex = index
-              combo.popup.close()
+              parentComboBox.currentIndex = itemIndex
+              parentComboBox.popup.close()
             }
           }
 
           background: Rectangle {
-            width: combo.width - Style.marginM * 3
+            width: parentComboBox ? parentComboBox.width - Style.marginM * 3 : 0
             color: highlighted ? Color.mTertiary : Color.transparent
             radius: Style.radiusS
             Behavior on color {
