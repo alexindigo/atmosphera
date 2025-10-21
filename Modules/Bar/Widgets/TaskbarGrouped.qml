@@ -72,15 +72,6 @@ Item {
     }
   }
 
-  Rectangle {
-    anchors.left: parent.left
-    anchors.right: parent.right
-    y: isVerticalBar ? 0 : (parent.height - height) / 2
-    height: isVerticalBar ? parent.height : Style.capsuleHeight
-    radius: Style.radiusM
-    color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
-  }
-
   Component {
     id: workspaceRepeaterDelegate
 
@@ -90,13 +81,12 @@ Item {
       property var workspaceModel: model
       property bool hasWindows: workspaceModel.windows.count > 0
 
-      radius: Style.radiusM
-      color: "transparent"
+      radius: Style.radiusS
       border.color: workspaceModel.isFocused ? Color.mPrimary : Color.mOutline
       border.width: 1
-      // Dynamic sizing
       width: (hasWindows ? iconsFlow.implicitWidth : root.itemSize * 0.8) + Style.marginL
       height: (hasWindows ? iconsFlow.implicitHeight : root.itemSize * 0.8) + Style.marginXS
+      color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
       MouseArea {
         anchors.fill: parent
