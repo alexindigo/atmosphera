@@ -97,11 +97,13 @@ Singleton {
                      }, {
                        "name": "ghostty",
                        "path": "Terminal/ghostty",
-                       "output": "~/.config/ghostty/themes/noctalia"
+                       "output": "~/.config/ghostty/themes/noctalia",
+                       "post_hook": "pkill -SIGUSR2 ghostty"
                      }, {
                        "name": "kitty",
                        "path": "Terminal/kitty.conf",
-                       "output": "~/.config/kitty/themes/noctalia.conf"
+                       "output": "~/.config/kitty/themes/noctalia.conf",
+                       "post_hook": "kitten themes --reload-in=all noctalia"
                      }]
 
     terminals.forEach(function (terminal) {
