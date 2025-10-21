@@ -20,7 +20,7 @@ Item {
   property int sectionWidgetsCount: 0
 
   readonly property bool isVerticalBar: Settings.data.bar.position === "left" || Settings.data.bar.position === "right"
-  readonly property bool density: Settings.data.bar.density
+  readonly property string density: Settings.data.bar.density
   readonly property real itemSize: (density === "compact") ? Style.capsuleHeight * 0.9 : Style.capsuleHeight * 0.8
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
@@ -37,28 +37,35 @@ Item {
 
   function refreshWorkspaces() {
     localWorkspaces.clear()
-    if (screen !== null) {
-      for (var i = 0; i < CompositorService.workspaces.count; i++) {
-        const ws = CompositorService.workspaces.get(i)
-        if (ws.output.toLowerCase() === screen.name.toLowerCase()) {
-          if (hideUnoccupied && !ws.isOccupied && !ws.isFocused) {
-            continue
-          }
+    if (!screen)
+      return
 
-          // Copy all properties from ws and add windows
-          var workspaceData = Object.assign({}, ws)
-          workspaceData.windows = CompositorService.getWindowsForWorkspace(ws.id)
-          localWorkspaces.append(workspaceData)
-        }
-      }
+    const screenName = screen.name.toLowerCase()
+
+    for (var i = 0; i < CompositorService.workspaces.count; i++) {
+      const ws = CompositorService.workspaces.get(i)
+
+      if (ws.output.toLowerCase() !== screenName)
+        continue
+      if (hideUnoccupied && !ws.isOccupied && !ws.isFocused)
+        continue
+
+      // Copy all properties from ws and add windows
+      var workspaceData = Object.assign({}, ws)
+      workspaceData.windows = CompositorService.getWindowsForWorkspace(ws.id)
+
+      localWorkspaces.append(workspaceData)
     }
   }
 
   Component.onCompleted: {
     refreshWorkspaces()
   }
-  implicitWidth: isVerticalBar ? taskbarLayoutVertical.implicitWidth + Style.marginM * 2 : Math.round(taskbarLayoutHorizontal.implicitWidth + Style.marginM * 2)
-  implicitHeight: isVerticalBar ? Math.round(taskbarLayoutVertical.implicitHeight + Style.marginM * 2) : Style.barHeight
+
+  onScreenChanged: refreshWorkspaces()
+
+  implicitWidth: isVerticalBar ? taskbarGrid.implicitWidth + Style.marginM * 2 : Math.round(taskbarGrid.implicitWidth + Style.marginM * 2)
+  implicitHeight: isVerticalBar ? Math.round(taskbarGrid.implicitHeight + Style.marginM * 2) : Style.barHeight
 
   Connections {
     target: CompositorService
@@ -78,14 +85,15 @@ Item {
     Rectangle {
       id: container
 
+      required property var model
       property var workspaceModel: model
       property bool hasWindows: workspaceModel.windows.count > 0
 
       radius: Style.radiusS
       border.color: workspaceModel.isFocused ? Color.mPrimary : Color.mOutline
       border.width: 1
-      width: (hasWindows ? iconsFlow.implicitWidth : root.itemSize * 0.8) + Style.marginL
-      height: (hasWindows ? iconsFlow.implicitHeight : root.itemSize * 0.8) + Style.marginXS
+      width: (hasWindows ? iconsFlow.implicitWidth : root.itemSize * 0.8) + (root.isVerticalBar ? Style.marginXS : Style.marginL)
+      height: (hasWindows ? iconsFlow.implicitHeight : root.itemSize * 0.8) + (root.isVerticalBar ? Style.marginL : Style.marginXS)
       color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
       MouseArea {
@@ -111,8 +119,20 @@ Item {
           delegate: Item {
             id: taskbarItem
 
+            property bool itemHovered: false
+
             width: root.itemSize * 0.8
             height: root.itemSize * 0.8
+
+            // Smooth scale animation on hover
+            scale: itemHovered ? 1.1 : 1.0
+
+            Behavior on scale {
+              NumberAnimation {
+                duration: Style.animationNormal
+                easing.type: Easing.OutBack
+              }
+            }
 
             IconImage {
               id: appIcon
@@ -125,12 +145,20 @@ Item {
               opacity: model.isFocused ? Style.opacityFull : 0.6
               layer.enabled: widgetSettings.colorizeIcons === true
 
+              Behavior on opacity {
+                NumberAnimation {
+                  duration: Style.animationNormal
+                  easing.type: Easing.InOutCubic
+                }
+              }
+
               Rectangle {
+                id: focusIndicator
                 anchors.bottomMargin: -2
                 anchors.bottom: parent.bottom
                 anchors.horizontalCenter: parent.horizontalCenter
-                width: 4
-                height: 4
+                width: model.isFocused ? 4 : 0
+                height: model.isFocused ? 4 : 0
                 color: model.isFocused ? Color.mPrimary : Color.transparent
                 radius: width * 0.5
               }
@@ -138,7 +166,6 @@ Item {
               layer.effect: ShaderEffect {
                 property color targetColor: Color.mOnSurface
                 property real colorizeMode: 0
-
                 fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
               }
             }
@@ -155,66 +182,38 @@ Item {
                 }
 
                 if (mouse.button === Qt.LeftButton) {
-                  try {
-                    CompositorService.focusWindow(model)
-                  } catch (error) {
-                    Logger.error("TaskbarGrouped", "Failed to focus window: " + error)
-                  }
+                  CompositorService.focusWindow(model)
                 } else if (mouse.button === Qt.RightButton) {
-                  try {
-                    CompositorService.closeWindow(model)
-                  } catch (error) {
-                    Logger.error("TaskbarGrouped", "Failed to close window: " + error)
-                  }
+                  CompositorService.closeWindow(model)
                 }
               }
-              onEntered: TooltipService.show(Screen, taskbarItem, model.title || model.appId || "Unknown app.", BarService.getTooltipDirection())
-              onExited: TooltipService.hide()
+              onEntered: {
+                taskbarItem.itemHovered = true
+                TooltipService.show(Screen, taskbarItem, model.title || model.appId || "Unknown app.", BarService.getTooltipDirection())
+              }
+              onExited: {
+                taskbarItem.itemHovered = false
+                TooltipService.hide()
+              }
             }
           }
         }
       }
-
-      // Animate size changes for a smooth look
-      Behavior on width {
-        NumberAnimation {
-          duration: 200
-          easing.type: Easing.InOutCubic
-        }
-      }
-
-      Behavior on height {
-        NumberAnimation {
-          duration: 200
-          easing.type: Easing.InOutCubic
-        }
-      }
     }
   }
 
-  Row {
-    id: taskbarLayoutHorizontal
+  Flow {
+    id: taskbarGrid
 
-    anchors.verticalCenter: parent.verticalCenter
-    anchors.left: parent.left
-    anchors.leftMargin: Style.marginM
+    anchors.verticalCenter: isVerticalBar ? undefined : parent.verticalCenter
+    anchors.left: isVerticalBar ? undefined : parent.left
+    anchors.leftMargin: isVerticalBar ? 0 : Style.marginM
+    anchors.horizontalCenter: isVerticalBar ? parent.horizontalCenter : undefined
+    anchors.top: isVerticalBar ? parent.top : undefined
+    anchors.topMargin: isVerticalBar ? Style.marginM : 0
+
     spacing: Style.marginS
-    visible: !isVerticalBar
-
-    Repeater {
-      model: localWorkspaces
-      delegate: workspaceRepeaterDelegate
-    }
-  }
-
-  Column {
-    id: taskbarLayoutVertical
-
-    anchors.horizontalCenter: parent.horizontalCenter
-    anchors.top: parent.top
-    anchors.topMargin: Style.marginM
-    spacing: Style.marginS
-    visible: isVerticalBar
+    flow: isVerticalBar ? Flow.TopToBottom : Flow.LeftToRight
 
     Repeater {
       model: localWorkspaces
