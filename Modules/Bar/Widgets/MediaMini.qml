@@ -60,16 +60,29 @@ Item {
     return title
   }
 
-  implicitHeight: visible ? (isVerticalBar ? calculatedVerticalDimension() : Style.barHeight) : 0
-  implicitWidth: visible ? (isVerticalBar ? calculatedVerticalDimension() : dynamicWidth) : 0
+  implicitHeight: visible ? (isVerticalBar ? (((!hasActivePlayer) && (hideMode === "hidden" || hideMode === "transparent")) ? 0 : calculatedVerticalDimension()) : Style.capsuleHeight) : 0
+  implicitWidth: visible ? (isVerticalBar ? (((!hasActivePlayer) && (hideMode === "hidden" || hideMode === "transparent")) ? 0 : calculatedVerticalDimension()) : (((!hasActivePlayer) && (hideMode === "hidden" || hideMode === "transparent")) ? 0 : dynamicWidth)) : 0
 
   // "visible": Always Visible, "hidden": Hide When Empty, "transparent": Transparent When Empty
-  visible: hideMode !== "hidden" || hasActivePlayer
-  opacity: hideMode !== "transparent" || hasActivePlayer ? 1.0 : 0
+  visible: hideMode !== "hidden" || opacity > 0
+  opacity: ((hideMode !== "hidden" || hasActivePlayer) && (hideMode !== "transparent" || hasActivePlayer)) ? 1.0 : 0.0
   Behavior on opacity {
     NumberAnimation {
       duration: Style.animationNormal
-      easing.type: Easing.OutCubic
+      easing.type: Easing.InOutCubic
+    }
+  }
+
+  Behavior on implicitWidth {
+    NumberAnimation {
+      duration: Style.animationNormal
+      easing.type: Easing.InOutCubic
+    }
+  }
+  Behavior on implicitHeight {
+    NumberAnimation {
+      duration: Style.animationNormal
+      easing.type: Easing.InOutCubic
     }
   }
 
@@ -142,8 +155,8 @@ Item {
     visible: root.visible
     anchors.left: parent.left
     anchors.verticalCenter: parent.verticalCenter
-    width: isVerticalBar ? root.width : dynamicWidth
-    height: isVerticalBar ? width : Style.capsuleHeight
+    width: isVerticalBar ? (((!hasActivePlayer) && (hideMode === "hidden" || hideMode === "transparent")) ? 0 : calculatedVerticalDimension()) : (((!hasActivePlayer) && (hideMode === "hidden" || hideMode === "transparent")) ? 0 : dynamicWidth)
+    height: isVerticalBar ? (((!hasActivePlayer) && (hideMode === "hidden" || hideMode === "transparent")) ? 0 : calculatedVerticalDimension()) : Style.capsuleHeight
     radius: isVerticalBar ? width / 2 : Style.radiusM
     color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
@@ -155,11 +168,20 @@ Item {
       }
     }
 
+    // Smooth height transition for vertical bar
+    Behavior on height {
+      NumberAnimation {
+        duration: Style.animationNormal
+        easing.type: Easing.InOutCubic
+      }
+    }
+
     Item {
       id: mainContainer
       anchors.fill: parent
       anchors.leftMargin: isVerticalBar ? 0 : Style.marginS * scaling
       anchors.rightMargin: isVerticalBar ? 0 : Style.marginS * scaling
+      clip: true
 
       Loader {
         anchors.verticalCenter: parent.verticalCenter
