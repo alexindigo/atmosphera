@@ -120,7 +120,8 @@ Item {
     }
     // Otherwise, adapt to content
     if (!hasActivePlayer) {
-      return maxWidth
+      // Keep compact when no active player
+      return calculateContentWidth()
     }
     // Use content width but don't exceed user-set maximum width
     return Math.min(calculateContentWidth(), maxWidth)
