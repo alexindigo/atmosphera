@@ -276,13 +276,14 @@ NBox {
                     onClicked: {
                       var component = Qt.createComponent(Qt.resolvedUrl(root.settingsDialogComponent))
                       function instantiateAndOpen() {
-                        var dialog = component.createObject(root, {
+                        var dialog = component.createObject(Overlay.overlay, {
                                                               "widgetIndex": index,
                                                               "widgetData": modelData,
                                                               "widgetId": modelData.id,
-                                                              "parent": Overlay.overlay
+                                                              "sectionId": root.sectionId
                                                             })
                         if (dialog) {
+                          dialog.updateWidgetSettings.connect(root.updateWidgetSettings)
                           dialog.open()
                         } else {
                           Logger.e("NSectionEditor", "Failed to create settings dialog instance")

@@ -44,6 +44,7 @@ NPanel {
 
   property int requestedTab: SettingsPanel.Tab.General
   property int currentTabIndex: 0
+  property var requestedWidgetSettings: []
   property var tabsModel: []
   property var activeScrollView: null
 
@@ -220,6 +221,7 @@ NPanel {
 
     root.tabsModel = newTabs // Assign the generated list to the model
   }
+
   // When the panel opens, choose the appropriate tab
   onOpened: {
     updateTabsModel()
@@ -233,6 +235,7 @@ NPanel {
         }
       }
     }
+
     // Now that the UI is settled, set the current tab index.
     root.currentTabIndex = initialIndex
   }

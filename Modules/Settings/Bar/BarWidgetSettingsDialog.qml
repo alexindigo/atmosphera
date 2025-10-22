@@ -8,12 +8,14 @@ import qs.Services
 
 // Widget Settings Dialog Component
 Popup {
-  // Don't replace by root!
-  id: widgetSettings
+  id: root
 
   property int widgetIndex: -1
   property var widgetData: null
   property string widgetId: ""
+  property string sectionId: ""
+
+  signal updateWidgetSettings(string section, int index, var settings)
 
   // Center popup in parent
   x: (parent.width - width) * 0.5
@@ -26,7 +28,7 @@ Popup {
 
   onOpened: {
     // Mark this popup has opened in the PanelService
-    PanelService.willOpenPopup(widgetSettings)
+    PanelService.willOpenPopup(root)
 
     // Load settings when popup opens with data
     if (widgetData && widgetId) {
@@ -35,7 +37,7 @@ Popup {
   }
 
   onClosed: {
-    PanelService.willClosePopup(widgetSettings)
+    PanelService.willClosePopup(root)
   }
 
   background: Rectangle {
@@ -59,7 +61,7 @@ Popup {
 
       NText {
         text: I18n.tr("system.widget-settings-title", {
-                        "widget": widgetSettings.widgetId
+                        "widget": root.widgetId
                       })
         pointSize: Style.fontSizeL
         font.weight: Style.fontWeightBold
@@ -70,7 +72,7 @@ Popup {
       NIconButton {
         icon: "close"
         tooltipText: I18n.tr("tooltips.close")
-        onClicked: widgetSettings.close()
+        onClicked: root.close()
       }
     }
 
@@ -101,7 +103,7 @@ Popup {
       NButton {
         text: I18n.tr("bar.widget-settings.dialog.cancel")
         outlined: true
-        onClicked: widgetSettings.close()
+        onClicked: root.close()
       }
 
       NButton {
@@ -110,8 +112,8 @@ Popup {
         onClicked: {
           if (settingsLoader.item && settingsLoader.item.saveSettings) {
             var newSettings = settingsLoader.item.saveSettings()
-            root.updateWidgetSettings(sectionId, widgetSettings.widgetIndex, newSettings)
-            widgetSettings.close()
+            root.updateWidgetSettings(root.sectionId, root.widgetIndex, newSettings)
+            root.close()
           }
         }
       }

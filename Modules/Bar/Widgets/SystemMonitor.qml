@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import qs.Commons
+import qs.Modules.Settings
 import qs.Services
 import qs.Widgets
 
@@ -343,6 +344,22 @@ Rectangle {
           scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
         }
       }
+    }
+  }
+
+  MouseArea {
+    anchors.fill: parent
+    acceptedButtons: Qt.RightButton
+    onClicked: {
+      var settingsPanel = PanelService.getPanel("settingsPanel")
+      settingsPanel.requestedTab = SettingsPanel.Tab.Bar
+      settingsPanel.requestedWidgetSettings = {
+        "widgetIndex": root.sectionWidgetIndex,
+        "widgetData": root.widgetSettings,
+        "widgetId": root.widgetId,
+        "sectionId": root.section
+      }
+      settingsPanel.open()
     }
   }
 }
