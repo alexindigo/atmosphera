@@ -38,7 +38,7 @@ Item {
   readonly property string textCommand: widgetSettings.textCommand !== undefined ? widgetSettings.textCommand : (widgetMetadata.textCommand || "")
   readonly property bool textStream: widgetSettings.textStream !== undefined ? widgetSettings.textStream : (widgetMetadata.textStream || false)
   readonly property int textIntervalMs: widgetSettings.textIntervalMs !== undefined ? widgetSettings.textIntervalMs : (widgetMetadata.textIntervalMs || 3000)
-  readonly property string textCollapse: widgetSettings.textCollapse || widgetMetadata.textCollapse || ""
+  readonly property string textCollapse: widgetSettings.textCollapse !== undefined ? widgetSettings.textCollapse : (widgetMetadata.textCollapse || "")
   readonly property bool hasExec: (leftClickExec || rightClickExec || middleClickExec)
 
   implicitWidth: pill.width
@@ -101,7 +101,19 @@ Item {
     id: textStdoutSplit
     onRead: function(line) {
       var lineStr = String(line || "").trim()
-      if (textCollapse && textCollapse === lineStr) {
+      var shouldCollapse = false
+
+      if (textCollapse && textCollapse.length > 0) {
+        try {
+          var regex = new RegExp(textCollapse)
+          shouldCollapse = regex.test(lineStr)
+        } catch (e) {
+          // If it's not a valid regex, treat it as a plain string
+          shouldCollapse = (textCollapse === lineStr)
+        }
+      }
+
+      if (shouldCollapse) {
         _dynamicText = ""
       } else {
         _dynamicText = lineStr
@@ -116,7 +128,19 @@ Item {
                         if (out.indexOf("\n") !== -1) {
                           out = out.split("\n")[0]
                         }
-                        if (textCollapse && textCollapse === out) {
+                        var shouldCollapse = false
+
+                        if (textCollapse && textCollapse.length > 0) {
+                          try {
+                            var regex = new RegExp(textCollapse)
+                            shouldCollapse = regex.test(out)
+                          } catch (e) {
+                            // If it's not a valid regex, treat it as a plain string
+                            shouldCollapse = (textCollapse === out)
+                          }
+                        }
+
+                        if (shouldCollapse) {
                           _dynamicText = ""
                         } else {
                           _dynamicText = out

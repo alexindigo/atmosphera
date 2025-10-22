@@ -116,7 +116,7 @@ ColumnLayout {
     visible: valueTextStream
     label: I18n.tr("bar.widget-settings.custom-button.collapse-condition.label")
     description: I18n.tr("bar.widget-settings.custom-button.collapse-condition.description")
-    placeholderText: I18n.tr("placeholders.enter-text")
+    placeholderText: I18n.tr("placeholders.enter-text-to-collapse")
     text: widgetData?.textCollapse || widgetMetadata.textCollapse
   }
 

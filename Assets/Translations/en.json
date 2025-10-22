@@ -1339,7 +1339,7 @@
     "enter-width-pixels": "Enter width in pixels",
     "enter-command": "Enter command to execute (app or custom script)",
     "command-example": "echo \"Hello World\"",
-    "enter-text": "Enter text to collapse (e.g., 'nothing is playing')",
+    "enter-text-to-collapse": "Enter text or regex to collapse (e.g., 'nothing is playing' or '^nothing is playing')",
     "search-wallpapers": "Type to filter wallpapers...",
     "search-launcher": "Search entries... or use > for commands",
     "search": "Search...",
