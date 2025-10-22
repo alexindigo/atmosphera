@@ -104,11 +104,18 @@ Item {
       var shouldCollapse = false
 
       if (textCollapse && textCollapse.length > 0) {
-        try {
-          var regex = new RegExp(textCollapse)
-          shouldCollapse = regex.test(lineStr)
-        } catch (e) {
-          // If it's not a valid regex, treat it as a plain string
+        if (textCollapse.startsWith("/") && textCollapse.endsWith("/") && textCollapse.length > 1) {
+          // Treat as regex
+          var pattern = textCollapse.substring(1, textCollapse.length - 1)
+          try {
+            var regex = new RegExp(pattern)
+            shouldCollapse = regex.test(lineStr)
+          } catch (e) {
+            Logger.w("CustomButton", `Invalid regex for textCollapse: ${textCollapse} - ${e.message}`)
+            shouldCollapse = (textCollapse === lineStr) // Fallback to exact match on invalid regex
+          }
+        } else {
+          // Treat as plain string
           shouldCollapse = (textCollapse === lineStr)
         }
       }
@@ -131,11 +138,18 @@ Item {
                         var shouldCollapse = false
 
                         if (textCollapse && textCollapse.length > 0) {
-                          try {
-                            var regex = new RegExp(textCollapse)
-                            shouldCollapse = regex.test(out)
-                          } catch (e) {
-                            // If it's not a valid regex, treat it as a plain string
+                          if (textCollapse.startsWith("/") && textCollapse.endsWith("/") && textCollapse.length > 1) {
+                            // Treat as regex
+                            var pattern = textCollapse.substring(1, textCollapse.length - 1)
+                            try {
+                              var regex = new RegExp(pattern)
+                              shouldCollapse = regex.test(out)
+                            } catch (e) {
+                              Logger.w("CustomButton", `Invalid regex for textCollapse: ${textCollapse} - ${e.message}`)
+                              shouldCollapse = (textCollapse === out) // Fallback to exact match on invalid regex
+                            }
+                          } else {
+                            // Treat as plain string
                             shouldCollapse = (textCollapse === out)
                           }
                         }
