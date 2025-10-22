@@ -52,7 +52,6 @@ Item {
     density: Settings.data.bar.density
     autoHide: false
     forceOpen: _dynamicText !== ""
-    forceClose: true
     tooltipText: {
       if (!hasExec) {
         return "Custom button, configure in settings."
