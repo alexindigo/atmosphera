@@ -818,7 +818,10 @@ Loader {
                         spacing: 3
 
                         NText {
-                          text: Qt.locale().toString(now, "ddd")
+                          text: {
+                            var weatherDate = new Date(LocationService.data.weather.daily.time[index].replace(/-/g, "/"))
+                            return Qt.locale().toString(weatherDate, "ddd")
+                          }
                           pointSize: Style.fontSizeM
                           color: Color.mOnSurfaceVariant
                           horizontalAlignment: Text.AlignHCenter
