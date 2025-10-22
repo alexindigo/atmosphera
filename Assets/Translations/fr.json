@@ -1089,8 +1089,12 @@
           "description": "Intervalle en millisecondes."
         },
         "text-stream": {
-          "description": "Les lignes diffusées depuis la commande seront affichées sous forme de texte sur le bouton.",
-          "label": "Flux"
+          "label": "Flux",
+          "description": "Les lignes diffusées depuis la commande seront affichées sous forme de texte sur le bouton."
+        },
+        "collapse-condition": {
+          "label": "Condition d’effondrement",
+          "description": "Si le texte de sortie correspond à cette valeur, le bouton se repliera."
         }
       },
       "media-mini": {
@@ -1335,6 +1339,7 @@
     "enter-width-pixels": "Entrez la largeur en pixels",
     "enter-command": "Entrez la commande à exécuter (application ou script personnalisé)",
     "command-example": "echo \"Bonjour le monde\"",
+    "enter-text-to-collapse": "par ex., 'rien n’est en lecture'. Utilisez /regex/ pour les modèles.",
     "search-wallpapers": "Tapez pour filtrer les fonds d'écran...",
     "search-launcher": "Rechercher des entrées... ou utilisez > pour les commandes",
     "search": "Rechercher...",
