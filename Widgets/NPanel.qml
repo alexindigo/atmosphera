@@ -189,6 +189,7 @@ Loader {
       MouseArea {
         anchors.fill: parent
         enabled: root.backgroundClickEnabled
+        acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
         onClicked: root.close()
       }
 
