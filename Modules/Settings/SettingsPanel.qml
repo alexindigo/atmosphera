@@ -240,6 +240,17 @@ NPanel {
     root.currentTabIndex = initialIndex
   }
 
+  function openWidgetSettings(section, widgetIndex, widgetId, widgetData) {
+    settingsPanel.requestedWidgetSettings = {
+      "sectionId": section,
+      "widgetIndex": widgetIndex,
+      "widgetId": widgetId,
+      "widgetData": widgetData
+    }
+    settingsPanel.requestedTab = SettingsPanel.Tab.Bar
+    settingsPanel.open()
+  }
+
   // Add scroll functions
   function scrollDown() {
     if (activeScrollView && activeScrollView.ScrollBar.vertical) {
