@@ -1089,8 +1089,12 @@
           "description": "Intervalo en milisegundos."
         },
         "text-stream": {
-          "description": "Las líneas transmitidas desde el comando se mostrarán como texto en el botón.",
-          "label": "Transmisión"
+          "label": "Transmisión",
+          "description": "Las líneas transmitidas desde el comando se mostrarán como texto en el botón."
+        },
+        "collapse-condition": {
+          "label": "Condición de colapso",
+          "description": "Si el texto de salida coincide con este valor, el botón se colapsará."
         }
       },
       "media-mini": {
@@ -1335,6 +1339,7 @@
     "enter-width-pixels": "Ingresa el ancho en píxeles",
     "enter-command": "Ingresa el comando a ejecutar (aplicación o script personalizado)",
     "command-example": "echo \"Hola Mundo\"",
+    "enter-text-to-collapse": "por ejemplo, 'no se está reproduciendo nada'. Usa /regex/ para patrones.",
     "search-wallpapers": "Escribe para filtrar fondos de pantalla...",
     "search-launcher": "Buscar entradas... o usa > para comandos",
     "search": "Buscar...",
