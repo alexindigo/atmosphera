@@ -38,6 +38,7 @@ Item {
   readonly property string textCommand: widgetSettings.textCommand !== undefined ? widgetSettings.textCommand : (widgetMetadata.textCommand || "")
   readonly property bool textStream: widgetSettings.textStream !== undefined ? widgetSettings.textStream : (widgetMetadata.textStream || false)
   readonly property int textIntervalMs: widgetSettings.textIntervalMs !== undefined ? widgetSettings.textIntervalMs : (widgetMetadata.textIntervalMs || 3000)
+  readonly property string textCollapse: widgetSettings.textCollapse || widgetMetadata.textCollapse || ""
   readonly property bool hasExec: (leftClickExec || rightClickExec || middleClickExec)
 
   implicitWidth: pill.width
@@ -98,7 +99,14 @@ Item {
 
   SplitParser {
     id: textStdoutSplit
-    onRead: line => _dynamicText = String(line || "").trim()
+    onRead: function(line) {
+      var lineStr = String(line || "").trim()
+      if (textCollapse && textCollapse === lineStr) {
+        _dynamicText = ""
+      } else {
+        _dynamicText = lineStr
+      }
+    }
   }
 
   StdioCollector {
@@ -108,7 +116,11 @@ Item {
                         if (out.indexOf("\n") !== -1) {
                           out = out.split("\n")[0]
                         }
-                        _dynamicText = out
+                        if (textCollapse && textCollapse === out) {
+                          _dynamicText = ""
+                        } else {
+                          _dynamicText = out
+                        }
                       }
   }
 

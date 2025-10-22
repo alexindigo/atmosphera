@@ -23,6 +23,7 @@ ColumnLayout {
     settings.rightClickExec = rightClickExecInput.text
     settings.middleClickExec = middleClickExecInput.text
     settings.textCommand = textCommandInput.text
+    settings.textCollapse = textCollapseInput.text
     settings.textStream = valueTextStream
     settings.textIntervalMs = parseInt(textIntervalInput.text || textIntervalInput.placeholderText, 10)
     return settings
@@ -107,6 +108,16 @@ ColumnLayout {
     description: valueTextStream ? I18n.tr("bar.widget-settings.custom-button.display-command-output.stream-description") : I18n.tr("bar.widget-settings.custom-button.display-command-output.description")
     placeholderText: I18n.tr("placeholders.command-example")
     text: widgetData?.textCommand || widgetMetadata.textCommand
+  }
+
+  NTextInput {
+    id: textCollapseInput
+    Layout.fillWidth: true
+    visible: valueTextStream
+    label: I18n.tr("bar.widget-settings.custom-button.collapse-condition.label")
+    description: I18n.tr("bar.widget-settings.custom-button.collapse-condition.description")
+    placeholderText: I18n.tr("placeholders.enter-text")
+    text: widgetData?.textCollapse || widgetMetadata.textCollapse
   }
 
   NTextInput {
