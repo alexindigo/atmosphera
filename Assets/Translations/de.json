@@ -5,7 +5,7 @@
       "profile": {
         "section": {
           "label": "Profil",
-          "description": "Hier kannst du deinen Avatar ändern."
+          "description": "Ändern Sie Ihren Avatar."
         },
         "picture": {
           "label": "{user}s Avatar",
@@ -35,15 +35,15 @@
       "fonts": {
         "section": {
           "label": "Schriftarten",
-          "description": "Wählen die Schriftart an die auf der Benutzeroberfläche angezeigt wird."
+          "description": "Wählen Sie die Schriftart der Benutzeroberfläche."
         },
         "default": {
-          "label": "Standard Schriftart",
+          "label": "Standard-Schriftart",
           "description": "Hauptschriftart für die gesamte Benutzeroberfläche.",
           "placeholder": "Standard-Schriftart auswählen...",
           "search-placeholder": "Schriftarten suchen...",
           "scale": {
-            "description": "Hier kannst du die größe des Standardtextes ändern.",
+            "description": "Ändern Sie die Größe des Standardtextes.",
             "label": "Standardmäßige Schriftgröße"
           }
         },
@@ -53,7 +53,7 @@
           "placeholder": "Monospace-Schriftart auswählen...",
           "search-placeholder": "Monospace-Schriftarten suchen...",
           "scale": {
-            "description": "Hier kannst du die größe des Monotextes ändern",
+            "description": "Ändern Sie die Größe des Monotextes.",
             "label": "Schriftgröße mit fester Breite"
           }
         },
@@ -62,11 +62,11 @@
       "language": {
         "section": {
           "label": "Sprache",
-          "description": "Hier kannst du die Sprache von Noctalia ändern."
+          "description": "Ändern Sie die Sprache von Noctalia."
         },
         "select": {
           "label": "Anwendungssprache",
-          "description": "Wählen die in der Anwendungsoberfläche verwendete Sprache.",
+          "description": "Wählen Sie die Sprache der Anwendungsoberfläche.",
           "auto-detect": "Automatisch"
         }
       },
@@ -84,16 +84,16 @@
           "description": "Systemweite Lautstärke."
         },
         "mute-output": {
-          "label": "Audio-Ausgabe stumm schalten",
-          "description": "Die Haupt-Audio-Ausgabe des Systems stumm schalten."
+          "label": "Audio-Ausgabe stummschalten",
+          "description": "Die Haupt-Audio-Ausgabe des Systems stummschalten."
         },
         "input-volume": {
           "label": "Eingabe-Lautstärke",
           "description": "Mikrofon-Eingabe-Lautstärke."
         },
         "mute-input": {
-          "label": "Audio-Eingabe stumm schalten",
-          "description": "Die Standard-Audio-Eingabe (Mikrofon) stumm schalten."
+          "label": "Audio-Eingabe stummschalten",
+          "description": "Die Standard-Audio-Eingabe (Mikrofon) stummschalten."
         },
         "step-size": {
           "label": "Lautstärke-Schrittgröße",
@@ -125,7 +125,7 @@
         },
         "primary-player": {
           "label": "Hauptplayer",
-          "description": "Stichwort eingeben, um Ihren Hauptplayer zu identifizieren.",
+          "description": "Stichwort eingeben, um den Hauptplayer zu identifizieren.",
           "placeholder": "z.B. spotify, vlc, mpv"
         },
         "excluded-player": {
@@ -135,7 +135,7 @@
         },
         "visualizer-type": {
           "label": "Visualisierungstyp",
-          "description": "Visualisierungstyp für Medienwiedergabe wählen"
+          "description": "Visualisierungstyp für Medienwiedergabe wählen."
         },
         "frame-rate": {
           "label": "Bildrate",
@@ -143,11 +143,11 @@
         },
         "scrolling-title": {
           "label": "Scrollender Titel",
-          "description": "Kontinuierliches Scrollen für lange Medientitel aktivieren"
+          "description": "Kontinuierliches Scrollen für lange Medientitel aktivieren."
         },
         "scrolling-speed": {
           "label": "Scrollgeschwindigkeit",
-          "description": "Zeit in Sekunden, die der Titel zum Scrollen vom Anfang bis zum Ende benötigt"
+          "description": "Zeit in Sekunden, die der Titel zum Scrollen vom Anfang bis zum Ende benötigt."
         }
       }
     },
@@ -246,7 +246,7 @@
       "tray": {
         "blacklist": {
           "label": "Ausschlussliste",
-          "description": "Füge Ausschlussregeln für die Tray-Symbolleiste hinzu, unterstützt Platzhalter (*).",
+          "description": "Ausschlussregeln für die Tray-Symbolleiste hinzufügen, unterstützt Platzhalter (*).",
           "placeholder": "z.B., nm-applet, Fcitx*"
         }
       }
@@ -288,8 +288,8 @@
           "description": "Monitor auswählen, auf dem das Dock angezeigt werden soll."
         },
         "only-same-output": {
-          "description": "Zeige nur Apps aus der Ausgabe an, bei denen sich das Dock befindet.",
-          "label": "Nur Apps von derselben Ausgabe"
+          "description": "Zeige nur Apps von dem Bildschirm, auf dem sich das Dock befindet.",
+          "label": "Nur Apps vom gleichen Bildschirm"
         }
       }
     },
@@ -309,7 +309,7 @@
           "description": "Hintergrund-Transparenz des Starters anpassen."
         },
         "clipboard-history": {
-          "label": "Zwischenablage-Verlauf aktivieren",
+          "label": "Zwischenablageverlauf aktivieren",
           "description": "Zugriff auf zuvor kopierte Elemente über den Launcher."
         },
         "sort-by-usage": {
@@ -334,7 +334,7 @@
           "description": "Erscheinungsbild und Verhalten von Benachrichtigungen konfigurieren."
         },
         "do-not-disturb": {
-          "label": "Bitte nicht stören",
+          "label": "Nicht stören",
           "description": "Alle Benachrichtigungs-Popups deaktivieren."
         },
         "enable-osd": {
@@ -375,7 +375,7 @@
       "monitors": {
         "section": {
           "label": "Monitor-Anzeige",
-          "description": "Benachrichtigungen auf bestimmten Monitoren anzeigen. Standardmäßig werden sie auf allen Monitoren angezeigt"
+          "description": "Benachrichtigungen auf bestimmten Monitoren anzeigen. Standardmäßig werden sie auf allen Monitoren angezeigt."
         }
       }
     },
@@ -462,7 +462,7 @@
           "description": "Dauer der Übergangsanimationen in Sekunden."
         },
         "edge-smoothness": {
-          "label": "Übergangseffect weichzeichnen",
+          "label": "Übergangseffekt weichzeichnen",
           "description": "Wendet einen weichen, gefiederten Effekt auf die Kante von Übergängen an."
         }
       },
@@ -497,7 +497,7 @@
         },
         "matugen-scheme-type": {
           "label": "Matugen-Schema-Typ",
-          "description": "Wähle einen Farbstil für Matugen aus."
+          "description": "Wählen Sie einen Farbstil für Matugen aus."
         }
       },
       "dark-mode": {
@@ -507,7 +507,7 @@
         },
         "mode": {
           "label": "Automatischer dunkler Modus",
-          "description": "Ermöglicht automatisches Wechseln zwischen dem hellen und dunklen Modus.",
+          "description": "Ermöglicht einen automatischen Wechsel zwischen dem hellen und dunklen Modus.",
           "off": "Aus",
           "manual": "Manuell",
           "location": "Standort"
@@ -566,11 +566,11 @@
           },
           "discord": {
             "description": "Schreibt {filepath} für {client}",
-            "description-missing": "Kein Discord-Client erkannt. Installieren Sie vencord, vesktop, webcord, armcord, equibop, lightcord oder dorion."
+            "description-missing": "Kein Discord-Client erkannt. Installieren Sie vencord, vesktop, webcord, armcord, equibop, lightcord oder dorion"
           },
           "pywalfox": {
             "description": "Schreibt {filepath} und führt pywalfox update aus",
-            "description-missing": "Erfordert die Installation von {app} "
+            "description-missing": "Erfordert die Installation von {app}"
           }
         },
         "misc": {
@@ -621,15 +621,15 @@
         },
         "12hour-format": {
           "description": "An für AM/PM-Format (z.B. 8:00 PM), aus für 24-Stunden-Format (z.B. 20:00).",
-          "label": "Benutze das 12-Stunden-Zeitformat"
+          "label": "12-Stunden-Zeitformat benutzen"
         },
         "week-numbers": {
           "label": "Wochennummern anzeigen",
-          "description": "Zeigt die Kalender Wochen an (z.B. Woche 38)"
+          "description": "Zeigt die Kalenderwochen an (z.B. Woche 38)."
         },
         "show-events": {
           "label": "Kalenderereignisse anzeigen",
-          "description": "Ereignisse im Kalenderpanel anzeigen."
+          "description": "Ereignisse im Kalender-Panel anzeigen."
         }
       }
     },
@@ -722,7 +722,7 @@
           "description_plural": "Ein Dankeschön an unsere {count} <b>großartigen</b> Mitwirkenden!"
         }
       },
-      "support": "Unterstütz uns"
+      "support": "Unterstütze uns"
     },
     "hooks": {
       "title": "Hooks",
@@ -759,11 +759,11 @@
     },
     "control-center": {
       "position": {
-        "description": "Wählen Sie aus, wo das Kontrollzentrum angezeigt wird, wenn es geöffnet wird.",
+        "description": "Wählen Sie aus, wo das Kontrollzentrum-Panel angezeigt wird, wenn es geöffnet wird.",
         "label": "Position"
       },
       "section": {
-        "description": "Konfigurieren Sie die Positionierung und das Verhalten des Control Center-Panels.",
+        "description": "Konfigurieren Sie die Positionierung und das Verhalten des Kontrollzentrum-Panels.",
         "label": "Aussehen"
       },
       "title": "Kontrollzentrum",
@@ -789,7 +789,7 @@
       },
       "panels-overlay": {
         "label": "Panels in Overlay-Ebene öffnen",
-        "description": "Panels werden über Vollbildfenstern angezeigt"
+        "description": "Panels werden über Vollbildfenstern angezeigt."
       },
       "animation-speed": {
         "description": "Globale Animationsgeschwindigkeit anpassen.",
@@ -803,7 +803,7 @@
       },
       "dim-desktop": {
         "description": "Den Desktop abdunkeln, wenn Bedienfelder oder Menüs geöffnet sind.",
-        "label": "Dim Desktop"
+        "label": "Desktop abdunkeln"
       },
       "scaling": {
         "description": "Ändert die Größe der allgemeinen Benutzeroberfläche, mit Ausnahme der Leiste.",
@@ -1074,7 +1074,7 @@
       "spacer": {
         "width": {
           "label": "Breite",
-          "description": "Abstandsbreite in Pixeln"
+          "description": "Abstandsbreite in Pixeln."
         }
       },
       "custom-button": {
@@ -1151,7 +1151,7 @@
         },
         "horizontal-bar": {
           "label": "Horizontale Statusleiste",
-          "description": "Tipp: Verwenden Sie \n, um einen Zeilenumbruch zu erstellen."
+          "description": "Tipp: Verwenden Sie \\n, um einen Zeilenumbruch zu erstellen."
         },
         "vertical-bar": {
           "label": "Vertikale Statusleiste",
@@ -1159,13 +1159,13 @@
         },
         "preview": "Vorschau",
         "custom-font": {
-          "description": "Wähle eine benutzerdefinierte Schriftart für die Uhrenanzeige aus.",
+          "description": "Wählen Sie eine benutzerdefinierte Schriftart für die Uhrenanzeige aus.",
           "label": "Benutzerdefinierte Schriftart",
           "placeholder": "Benutzerdefinierte Schriftart auswählen...",
           "search-placeholder": "Schriftarten suchen..."
         },
         "use-custom-font": {
-          "description": "Überschreibe die Standard-Schriftauswahl mit einer benutzerdefinierten Schriftart für die Uhr.",
+          "description": "Überschreibt die Standard-Schriftart mit einer benutzerdefinierten Schriftart für die Uhr.",
           "label": "Benutzerdefinierte Schriftart verwenden"
         }
       },
@@ -1176,11 +1176,11 @@
         },
         "only-active-workspaces": {
           "label": "Nur von aktiven Arbeitsbereichen",
-          "description": "Zeige nur Apps von aktiven Arbeitsbereichen an."
+          "description": "Zeige nur Apps von aktiven Arbeitsbereichen."
         },
         "only-same-output": {
           "label": "Nur vom gleichen Bildschirm",
-          "description": "Zeige nur Apps vom dem Bildschirm an, wo sich die Taskbar befindet."
+          "description": "Zeige nur Apps von dem Bildschirm, auf dem sich die Taskbar befindet."
         },
         "colorize-icons": {
           "label": "Symbole einfärben",
@@ -1295,12 +1295,12 @@
     "start-screen-recording": "Bildschirmaufnahme starten",
     "stop-screen-recording": "Bildschirmaufnahme stoppen",
     "screen-recorder-not-installed": "Bildschirmrekorder ist nicht installiert",
-    "keep-awake": "Wach bleiben",
-    "enable-keep-awake": "Wach bleiben aktivieren",
-    "disable-keep-awake": "Wach bleiben deaktivieren",
+    "keep-awake": "Wach halten",
+    "enable-keep-awake": "Wach halten aktivieren",
+    "disable-keep-awake": "Wach halten deaktivieren",
     "wallpaper-selector": "Linksklick: Hintergrundbild-Auswahl öffnen.\nRechtsklick: Zufälliges Hintergrundbild setzen.",
-    "do-not-disturb-enabled": "'Bitte nicht stören' aktiviert",
-    "do-not-disturb-disabled": "'Bitte nicht stören' deaktiviert",
+    "do-not-disturb-enabled": "'Nicht stören' aktiviert",
+    "do-not-disturb-disabled": "'Nicht stören' deaktiviert",
     "connect-disconnect-devices": "Linksklick zum Verbinden. Rechtsklick zum Vergessen.",
     "set-power-profile": "'{profile}' Energieprofil setzen",
     "switch-to-light-mode": "Zum hellen Modus wechseln",
@@ -1309,8 +1309,8 @@
     "night-light-enabled": "Nachtlicht ist aktiviert.\nLinksklick zum Wechseln des Modus.\nRechtsklick für Einstellungen.",
     "night-light-forced": "Nachtlicht ist erzwungen.\nLinksklick zum Wechseln des Modus.\nRechtsklick für Einstellungen.",
     "night-light-not-installed": "Nachtlicht ist nicht verfügbar.\nwlsunset ist nicht installiert.",
-    "click-to-start-recording": "Klicken zum Starten einer Bildschirm Aufnahme",
-    "click-to-stop-recording": "Klicken zum Stoppen einer Bildschirm Aufnahme",
+    "click-to-start-recording": "Klicken zum Starten einer Bildschirmaufnahme",
+    "click-to-stop-recording": "Klicken zum Stoppen einer Bildschirmaufnahme",
     "open-control-center": "Kontrollzentrum öffnen",
     "volume-at": "Lautstärke bei {volume}%\nLinksklick zum Stumm-/Lautschalten. Rechtsklick für Einstellungen.\nScrollen zum Ändern der Lautstärke.",
     "microphone-volume-at": "Mikrofon-Lautstärke bei {volume}%\nLinksklick zum Stumm-/Lautschalten. Rechtsklick für Einstellungen.\nScrollen zum Ändern der Lautstärke.",
@@ -1475,15 +1475,15 @@
   },
   "plugins": {
     "applications": "Anwendungen",
-    "clipboard": "Zwischenablage-Verlauf",
+    "clipboard": "Zwischenablageverlauf",
     "calculator": "Rechner",
-    "clipboard-search-description": "Zwischenablage-Verlauf durchsuchen",
-    "clipboard-clear-description": "Gesamten Zwischenablage-Verlauf löschen",
-    "clipboard-history-disabled": "Zwischenablage-Verlauf deaktiviert",
-    "clipboard-history-disabled-description": "Zwischenablage-Verlauf in den Einstellungen aktivieren oder cliphist installieren",
-    "clipboard-clear-history": "Zwischenablage-Verlauf löschen",
-    "clipboard-clear-description-full": "Alle Elemente aus dem Zwischenablage-Verlauf entfernen",
-    "clipboard-loading": "Lade Zwischenablage-Verlauf...",
+    "clipboard-search-description": "Zwischenablageverlauf durchsuchen",
+    "clipboard-clear-description": "Gesamten Zwischenablageverlauf löschen",
+    "clipboard-history-disabled": "Zwischenablageverlauf deaktiviert",
+    "clipboard-history-disabled-description": "Zwischenablageverlauf in den Einstellungen aktivieren oder cliphist installieren",
+    "clipboard-clear-history": "Zwischenablageverlauf löschen",
+    "clipboard-clear-description-full": "Alle Elemente aus dem Zwischenablageverlauf entfernen",
+    "clipboard-loading": "Lade Zwischenablageverlauf...",
     "clipboard-loading-description": "Bitte warten",
     "calculator-description": "Rechner - mathematische Ausdrücke auswerten",
     "calculator-name": "Rechner",
@@ -1546,7 +1546,7 @@
         "disabled": "Nicht stören"
       },
       "tooltip": {
-        "action": "Linksklick: Benachrichtigungsverlauf öffnen\nRechtsklick: Nicht stören umschalten"
+        "action": "Linksklick: Benachrichtigungsverlauf öffnen\nRechtsklick: 'Nicht stören' umschalten"
       }
     },
     "screenRecorder": {
@@ -1569,11 +1569,11 @@
     "wifi": {
       "label": {
         "ethernet": "Ethernet",
-        "wifi": "Wi-Fi",
-        "disconnected": "Wi-Fi getrennt"
+        "wifi": "WLAN",
+        "disconnected": "WLAN getrennt"
       },
       "tooltip": {
-        "action": "Klicken zum Verwalten der Wi-Fi-Verbindungen"
+        "action": "Klicken zum Verwalten der WLAN-Verbindungen"
       }
     },
     "bluetooth": {
@@ -1607,7 +1607,7 @@
         "disabled": "Wach halten"
       },
       "tooltip": {
-        "action": "Klicken zum Umschalten des Wach-halten-Modus"
+        "action": "Klicken zum Umschalten des Wachmodus"
       }
     }
   },
@@ -1633,16 +1633,16 @@
       "started": "Aufnahme gestartet",
       "saved": "Aufnahme gespeichert",
       "failed-start": "Aufnahme konnte nicht gestartet werden",
-      "failed-gpu": "gpu-screen-recorder unerwartet beendet.",
-      "failed-general": "Der Rekorder wurde mit einem Fehler beendet.",
+      "failed-gpu": "gpu-screen-recorder wurde unerwartet beendet",
+      "failed-general": "Rekorder wurde mit einem Fehler beendet",
       "no-portals": "Desktop-Portale laufen nicht",
       "no-portals-desc": "Starten Sie xdg-desktop-portal und ein Compositor-Portal (wlr/hyprland/gnome/kde).",
       "not-installed": "gpu-screen-recorder nicht installiert",
       "not-installed-desc": "Bitte installieren Sie gpu-screen-recorder, um Bildschirmaufnahme-Funktionen zu nutzen."
     },
     "clipboard": {
-      "unavailable": "Zwischenablage-Verlauf nicht verfügbar",
-      "unavailable-desc": "Die 'cliphist' Anwendung ist nicht installiert. Bitte installieren Sie sie, um Zwischenablage-Verlauf-Features zu nutzen."
+      "unavailable": "Zwischenablageverlauf nicht verfügbar",
+      "unavailable-desc": "Die 'cliphist' Anwendung ist nicht installiert. Bitte installieren Sie sie, um Zwischenablageverlauf-Features zu nutzen."
     },
     "ipc": {
       "powerpanel-deprecated": "PowerPanel wurde in SessionMenu umbenannt, dieser IPC-Aufruf wird bald veraltet sein. Bitte verwenden Sie stattdessen \"ipc call sessionMenu toggle\".",
@@ -1693,8 +1693,8 @@
       "uninstall-failed": "Deinstallation fehlgeschlagen"
     },
     "missing-control-center": {
-      "label": "Letztes Control-Center-Widget entfernt",
-      "description": "Das Control-Center-Widget wurde aus der Leiste entfernt. Um es erneut über die Leiste zu öffnen, fügen Sie das Widget wieder hinzu. Sie können es auch durch Rechtsklick auf die Leiste öffnen."
+      "label": "Letztes Kontrollzentrum-Widget entfernt",
+      "description": "Das Kontrollzentrum-Widget wurde aus der Leiste entfernt. Um es erneut über die Leiste zu öffnen, fügen Sie das Widget wieder hinzu. Sie können es auch durch Rechtsklick auf die Leiste öffnen."
     }
   },
   "setup": {
@@ -1707,23 +1707,23 @@
       "subheader": "Dunkelmodus und Farbquellen wählen (Matugen oder vordefiniert)."
     },
     "wallpaper": {
-      "header": "Wähle dein Hintergrundbild",
-      "subheader": "Bestimme die Stimmung mit einem schönen Hintergrund.",
-      "select-prompt": "Wähle unten ein Hintergrundbild",
+      "header": "Wählen Sie Ihr Hintergrundbild",
+      "subheader": "Bestimmen Sie die Stimmung mit einem schönen Hintergrund.",
+      "select-prompt": "Wählen Sie unten ein Hintergrundbild",
       "preview-error": "Bild konnte nicht geladen werden",
       "none-in-dir": "Keine Hintergrundbilder im Verzeichnis gefunden",
       "no-dir": "Kein Hintergrundbild-Verzeichnis ausgewählt",
       "no-valid": "Keine gültigen Bilddateien gefunden in: {dir}",
-      "choose-dir": "Wähle ein Verzeichnis mit deinen Hintergrundbildern",
+      "choose-dir": "Wählen Sie ein Verzeichnis mit Ihren Hintergrundbildern",
       "dir": {
         "label": "Hintergrundbild-Verzeichnis",
-        "description": "Wähle den Ordner mit deinen Hintergrundbildern",
+        "description": "Wählen Sie den Ordner mit Ihren Hintergrundbildern",
         "browse": "Ordner auswählen",
         "select-title": "Hintergrundbild-Ordner wählen"
       }
     },
     "welcome": {
-      "note": "Nur ein paar Grundeinstellungen – alle Optionen findest du in den Einstellungen"
+      "note": "Nur ein paar Grundeinstellungen – alle Optionen befinden sich in den Einstellungen"
     }
   }
 }
