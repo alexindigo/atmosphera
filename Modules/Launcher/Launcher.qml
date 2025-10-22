@@ -11,9 +11,9 @@ NPanel {
   id: root
 
   // Panel configuration
-  preferredWidth: 500
+  preferredWidth: 500 * Style.uiScaleRatio
+  preferredHeight: 600 * Style.uiScaleRatio
   preferredWidthRatio: 0.3
-  preferredHeight: 600
   preferredHeightRatio: 0.5
 
   panelKeyboardFocus: true

@@ -12,8 +12,8 @@ import "../../Helpers/FuzzySort.js" as FuzzySort
 NPanel {
   id: root
 
-  preferredWidth: 640
-  preferredHeight: 480
+  preferredWidth: 640 * Style.uiScaleRatio
+  preferredHeight: 480 * Style.uiScaleRatio
   preferredWidthRatio: 0.4
   preferredHeightRatio: 0.52
   panelAnchorHorizontalCenter: true
