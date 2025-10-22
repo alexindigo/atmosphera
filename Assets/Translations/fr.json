@@ -1081,11 +1081,16 @@
         "dynamic-text": "Texte dynamique",
         "display-command-output": {
           "label": "Afficher la sortie de la commande",
-          "description": "Entrez une commande à exécuter à intervalle régulier. La première ligne de sa sortie sera affichée sous forme de texte."
+          "description": "Entrez une commande à exécuter à intervalle régulier. La première ligne de sa sortie sera affichée sous forme de texte.",
+          "stream-description": "Entrez une commande à exécuter en continu."
         },
         "refresh-interval": {
           "label": "Intervalle d'actualisation",
           "description": "Intervalle en millisecondes."
+        },
+        "text-stream": {
+          "description": "Les lignes diffusées depuis la commande seront affichées sous forme de texte sur le bouton.",
+          "label": "Flux"
         }
       },
       "media-mini": {

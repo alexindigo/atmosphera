@@ -1081,11 +1081,16 @@
         "dynamic-text": "动态文本",
         "display-command-output": {
           "label": "显示命令输出",
-          "description": "输入一个定期运行的命令。其输出的第一行将显示为文本。"
+          "description": "输入一个定期运行的命令。其输出的第一行将显示为文本。",
+          "stream-description": "输入一个要持续运行的命令。"
         },
         "refresh-interval": {
           "label": "刷新间隔",
           "description": "间隔时间（毫秒）。"
+        },
+        "text-stream": {
+          "description": "来自命令的流式输出行将作为文本显示在按钮上。",
+          "label": "流"
         }
       },
       "media-mini": {

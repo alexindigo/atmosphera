@@ -99,18 +99,18 @@ Item {
 
   SplitParser {
     id: textStdoutSplit
-    onRead: (line) => _dynamicText = String(line || "").trim()
+    onRead: line => _dynamicText = String(line || "").trim()
   }
 
   StdioCollector {
     id: textStdoutCollect
     onStreamFinished: () => {
-      var out = String(this.text || "").trim()
-      if (out.indexOf("\n") !== -1) {
-        out = out.split("\n")[0]
-      }
-      _dynamicText = out
-    }
+                        var out = String(this.text || "").trim()
+                        if (out.indexOf("\n") !== -1) {
+                          out = out.split("\n")[0]
+                        }
+                        _dynamicText = out
+                      }
   }
 
   Process {
@@ -118,11 +118,11 @@ Item {
     stdout: textStream ? textStdoutSplit : textStdoutCollect
     stderr: StdioCollector {}
     onExited: (exitCode, exitStatus) => {
-      if (textStream) {
-        Logger.w("CustomButton", `Streaming text command exited (code: ${exitCode}), restarting...`)
-        return
-      }
-    }
+                if (textStream) {
+                  Logger.w("CustomButton", `Streaming text command exited (code: ${exitCode}), restarting...`)
+                  return
+                }
+              }
   }
 
   function onClicked() {
@@ -153,9 +153,9 @@ Item {
 
   function runTextCommand() {
     if (!textCommand || textCommand.length === 0)
-        return
+      return
     if (textProc.running)
-        return
+      return
     textProc.command = ["sh", "-lc", textCommand]
     textProc.running = true
   }

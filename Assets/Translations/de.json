@@ -1098,11 +1098,16 @@
         "dynamic-text": "Dynamischer Text",
         "display-command-output": {
           "label": "Befehlsausgabe anzeigen",
-          "description": "Befehl eingeben, der in regelmäßigen Abständen ausgeführt wird. Die erste Zeile seiner Ausgabe wird als Text angezeigt."
+          "description": "Befehl eingeben, der in regelmäßigen Abständen ausgeführt wird. Die erste Zeile seiner Ausgabe wird als Text angezeigt.",
+          "stream-description": "Geben Sie einen Befehl ein, der kontinuierlich ausgeführt werden soll."
         },
         "refresh-interval": {
           "label": "Aktualisierungsintervall",
           "description": "Intervall in Millisekunden."
+        },
+        "text-stream": {
+          "description": "Gestreamte Zeilen aus dem Befehl werden als Text auf der Schaltfläche angezeigt.",
+          "label": "Strom"
         }
       },
       "media-mini": {

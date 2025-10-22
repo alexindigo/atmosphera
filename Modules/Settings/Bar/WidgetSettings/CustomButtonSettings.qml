@@ -104,9 +104,7 @@ ColumnLayout {
     id: textCommandInput
     Layout.fillWidth: true
     label: I18n.tr("bar.widget-settings.custom-button.display-command-output.label")
-    description: valueTextStream ?
-      I18n.tr("bar.widget-settings.custom-button.display-command-output.stream-description") :
-      I18n.tr("bar.widget-settings.custom-button.display-command-output.description")
+    description: valueTextStream ? I18n.tr("bar.widget-settings.custom-button.display-command-output.stream-description") : I18n.tr("bar.widget-settings.custom-button.display-command-output.description")
     placeholderText: I18n.tr("placeholders.command-example")
     text: widgetData?.textCommand || widgetMetadata.textCommand
   }
