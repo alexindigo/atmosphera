@@ -1089,8 +1089,12 @@
           "description": "Intervalo em milissegundos."
         },
         "text-stream": {
-          "description": "As linhas transmitidas do comando serão exibidas como texto no botão.",
-          "label": "Transmissão"
+          "label": "Transmissão",
+          "description": "As linhas transmitidas do comando serão exibidas como texto no botão."
+        },
+        "collapse-condition": {
+          "label": "Condição de recolhimento",
+          "description": "Se o texto de saída corresponder a este valor, o botão será recolhido."
         }
       },
       "media-mini": {
@@ -1335,6 +1339,7 @@
     "enter-width-pixels": "Digite a largura em pixels",
     "enter-command": "Digite o comando para executar (app ou script personalizado)",
     "command-example": "echo \"Olá Mundo\"",
+    "enter-text-to-collapse": "por exemplo, 'nada está sendo reproduzido'. Use /regex/ para padrões.",
     "search-wallpapers": "Digite para filtrar papéis de parede...",
     "search-launcher": "Pesquisar entradas... ou use > para comandos",
     "search": "Pesquisar...",
