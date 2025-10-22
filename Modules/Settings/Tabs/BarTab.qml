@@ -412,36 +412,6 @@ ColumnLayout {
 
   Component.onCompleted: {
     updateAvailableWidgetsModel()
-
-    // This code is only used when we open settings directly from the widget
-    // Check if there's a widget settings request
-    if (settingsPanel.requestedWidgetSettings && Object.keys(settingsPanel.requestedWidgetSettings).length > 0) {
-      Qt.callLater(() => {
-                     var component = Qt.createComponent(Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Settings/Bar/BarWidgetSettingsDialog.qml"))
-
-                     function instantiateAndOpen() {
-                       var dialog = component.createObject(Overlay.overlay, {
-                                                             "widgetIndex": settingsPanel.requestedWidgetSettings.widgetIndex,
-                                                             "widgetData": settingsPanel.requestedWidgetSettings.widgetData,
-                                                             "widgetId": settingsPanel.requestedWidgetSettings.widgetId,
-                                                             "sectionId": settingsPanel.requestedWidgetSettings.sectionId
-                                                           })
-                       if (dialog) {
-                         dialog.updateWidgetSettings.connect(_updateWidgetSettingsInSection)
-                         dialog.open()
-                       }
-                     }
-
-                     if (component.status === Component.Ready) {
-                       instantiateAndOpen()
-                     } else {
-                       component.statusChanged.connect(instantiateAndOpen)
-                     }
-
-                     // Clear the request after handling
-                     settingsPanel.requestedWidgetSettings = []
-                   })
-    }
   }
 
   Connections {

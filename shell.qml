@@ -141,6 +141,11 @@ ShellRoot {
         objectName: "settingsPanel"
       }
 
+      DirectWidgetSettingsPanel {
+        id: directWidgetSettingsPanel
+        objectName: "directWidgetSettingsPanel"
+      }
+
       NotificationHistoryPanel {
         id: notificationHistoryPanel
         objectName: "notificationHistoryPanel"

@@ -17,6 +17,7 @@ Loader {
   property real preferredWidthRatio
   property real preferredHeightRatio
   property color panelBackgroundColor: Color.mSurface
+  property color panelBorderColor: Color.mOutline
   property bool draggable: false
   property var buttonItem: null
   property string buttonName: ""
@@ -198,8 +199,9 @@ Loader {
         id: panelBackground
         color: panelBackgroundColor
         radius: Style.radiusL
-        border.color: Color.mOutline
+        border.color: panelBorderColor
         border.width: Style.borderS
+
         // Dragging support
         property bool draggable: root.draggable
         property bool isDragged: false

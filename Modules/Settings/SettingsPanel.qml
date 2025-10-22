@@ -44,7 +44,6 @@ NPanel {
 
   property int requestedTab: SettingsPanel.Tab.General
   property int currentTabIndex: 0
-  property var requestedWidgetSettings: []
   property var tabsModel: []
   property var activeScrollView: null
 
@@ -238,17 +237,6 @@ NPanel {
 
     // Now that the UI is settled, set the current tab index.
     root.currentTabIndex = initialIndex
-  }
-
-  function openWidgetSettings(section, widgetIndex, widgetId, widgetData) {
-    settingsPanel.requestedWidgetSettings = {
-      "sectionId": section,
-      "widgetIndex": widgetIndex,
-      "widgetId": widgetId,
-      "widgetData": widgetData
-    }
-    settingsPanel.requestedTab = SettingsPanel.Tab.Bar
-    settingsPanel.open()
   }
 
   // Add scroll functions
