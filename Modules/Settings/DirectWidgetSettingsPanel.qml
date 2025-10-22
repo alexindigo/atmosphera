@@ -11,6 +11,8 @@ import qs.Widgets
 NPanel {
   id: root
 
+  preferredWidth: 0
+  preferredHeight: 0
   panelBackgroundColor: Color.transparent
   panelBorderColor: Color.transparent
 
@@ -31,6 +33,7 @@ NPanel {
                                                            })
                        if (dialog) {
                          dialog.updateWidgetSettings.connect(updateWidgetSettingsInSection)
+                         dialog.onClosed.connect(closeWidgetSettings)
                          dialog.open()
                        }
                      }
@@ -54,11 +57,14 @@ NPanel {
       "widgetId": widgetId,
       "widgetData": widgetData
     }
-    open()
+    root.open()
   }
 
   function updateWidgetSettingsInSection(section, index, settings) {
     Settings.data.bar.widgets[section][index] = settings
-    close()
+  }
+
+  function closeWidgetSettings() {
+    root.close()
   }
 }
