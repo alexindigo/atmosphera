@@ -36,6 +36,7 @@ Item {
   readonly property string rightClickExec: widgetSettings.rightClickExec || widgetMetadata.rightClickExec
   readonly property string middleClickExec: widgetSettings.middleClickExec || widgetMetadata.middleClickExec
   readonly property string textCommand: widgetSettings.textCommand !== undefined ? widgetSettings.textCommand : (widgetMetadata.textCommand || "")
+  readonly property bool textStream: widgetSettings.textStream !== undefined ? widgetSettings.textStream : (widgetMetadata.textStream || false)
   readonly property int textIntervalMs: widgetSettings.textIntervalMs !== undefined ? widgetSettings.textIntervalMs : (widgetMetadata.textIntervalMs || 3000)
   readonly property bool hasExec: (leftClickExec || rightClickExec || middleClickExec)
 
@@ -83,29 +84,45 @@ Item {
     id: refreshTimer
     interval: Math.max(250, textIntervalMs)
     repeat: true
-    running: (textCommand && textCommand.length > 0)
+    running: !textStream && textCommand && textCommand.length > 0
     triggeredOnStart: true
-    onTriggered: {
-      if (!textCommand || textCommand.length === 0)
-        return
-      if (textProc.running)
-        return
-      textProc.command = ["sh", "-lc", textCommand]
-      textProc.running = true
+    onTriggered: root.runTextCommand()
+  }
+
+  // Restart exited text stream commands after a delay
+  Timer {
+    id: restartTimer
+    interval: 1000
+    running: textStream && !textProc.running
+    onTriggered: root.runTextCommand()
+  }
+
+  SplitParser {
+    id: textStdoutSplit
+    onRead: (line) => _dynamicText = String(line || "").trim()
+  }
+
+  StdioCollector {
+    id: textStdoutCollect
+    onStreamFinished: () => {
+      var out = String(this.text || "").trim()
+      if (out.indexOf("\n") !== -1) {
+        out = out.split("\n")[0]
+      }
+      _dynamicText = out
     }
   }
 
   Process {
     id: textProc
-    stdout: StdioCollector {}
+    stdout: textStream ? textStdoutSplit : textStdoutCollect
     stderr: StdioCollector {}
     onExited: (exitCode, exitStatus) => {
-                var out = String(stdout.text || "").trim()
-                if (out.indexOf("\n") !== -1) {
-                  out = out.split("\n")[0]
-                }
-                _dynamicText = out
-              }
+      if (textStream) {
+        Logger.w("CustomButton", `Streaming text command exited (code: ${exitCode}), restarting...`)
+        return
+      }
+    }
   }
 
   function onClicked() {
@@ -132,5 +149,14 @@ Item {
       Quickshell.execDetached(["sh", "-c", middleClickExec])
       Logger.i("CustomButton", `Executing command: ${middleClickExec}`)
     }
+  }
+
+  function runTextCommand() {
+    if (!textCommand || textCommand.length === 0)
+        return
+    if (textProc.running)
+        return
+    textProc.command = ["sh", "-lc", textCommand]
+    textProc.running = true
   }
 }

@@ -14,6 +14,7 @@ ColumnLayout {
   property var widgetMetadata: null
 
   property string valueIcon: widgetData.icon !== undefined ? widgetData.icon : widgetMetadata.icon
+  property bool valueTextStream: widgetData.textStream !== undefined ? widgetData.textStream : widgetMetadata.textStream
 
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {})
@@ -22,6 +23,7 @@ ColumnLayout {
     settings.rightClickExec = rightClickExecInput.text
     settings.middleClickExec = middleClickExecInput.text
     settings.textCommand = textCommandInput.text
+    settings.textStream = valueTextStream
     settings.textIntervalMs = parseInt(textIntervalInput.text || textIntervalInput.placeholderText, 10)
     return settings
   }
@@ -90,11 +92,21 @@ ColumnLayout {
     label: I18n.tr("bar.widget-settings.custom-button.dynamic-text")
   }
 
+  NToggle {
+    id: textStreamInput
+    label: I18n.tr("bar.widget-settings.custom-button.text-stream.label")
+    description: I18n.tr("bar.widget-settings.custom-button.text-stream.description")
+    checked: valueTextStream
+    onToggled: checked => valueTextStream = checked
+  }
+
   NTextInput {
     id: textCommandInput
     Layout.fillWidth: true
     label: I18n.tr("bar.widget-settings.custom-button.display-command-output.label")
-    description: I18n.tr("bar.widget-settings.custom-button.display-command-output.description")
+    description: valueTextStream ?
+      I18n.tr("bar.widget-settings.custom-button.display-command-output.stream-description") :
+      I18n.tr("bar.widget-settings.custom-button.display-command-output.description")
     placeholderText: I18n.tr("placeholders.command-example")
     text: widgetData?.textCommand || widgetMetadata.textCommand
   }
@@ -102,6 +114,7 @@ ColumnLayout {
   NTextInput {
     id: textIntervalInput
     Layout.fillWidth: true
+    visible: !valueTextStream
     label: I18n.tr("bar.widget-settings.custom-button.refresh-interval.label")
     description: I18n.tr("bar.widget-settings.custom-button.refresh-interval.description")
     placeholderText: String(widgetMetadata.textIntervalMs || 3000)

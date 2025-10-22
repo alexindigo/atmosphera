@@ -1079,9 +1079,14 @@
           "description": "Command to execute when the button is middle-clicked."
         },
         "dynamic-text": "Dynamic text",
+        "text-stream": {
+          "label": "Stream",
+          "description": "Streamed lines from the command will be displayed as text on the button."
+        },
         "display-command-output": {
           "label": "Display Command Output",
-          "description": "Enter a command to run at a regular interval. The first line of its output will be displayed as text."
+          "description": "Enter a command to run at a regular interval. The first line of its output will be displayed as text.",
+          "stream-description": "Enter a command to run continuously."
         },
         "refresh-interval": {
           "label": "Refresh interval",

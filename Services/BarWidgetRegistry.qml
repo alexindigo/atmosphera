@@ -83,6 +83,7 @@ Singleton {
                                     "rightClickExec": "",
                                     "middleClickExec": "",
                                     "textCommand": "",
+                                    "textStream": false,
                                     "textIntervalMs": 3000
                                   },
                                   "KeyboardLayout": {
