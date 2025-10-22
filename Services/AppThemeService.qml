@@ -67,6 +67,42 @@ Singleton {
                                                             "path": "~/.config/vesktop/themes/noctalia.theme.css"
                                                           }]
                                                       },
+                                                      "discord_webcord": {
+                                                        "input": "vesktop.css",
+                                                        "outputs": [{
+                                                            "path": "~/.config/webcord/themes/noctalia.theme.css"
+                                                          }]
+                                                      },
+                                                      "discord_armcord": {
+                                                        "input": "vesktop.css",
+                                                        "outputs": [{
+                                                            "path": "~/.config/armcord/themes/noctalia.theme.css"
+                                                          }]
+                                                      },
+                                                      "discord_equibop": {
+                                                        "input": "vesktop.css",
+                                                        "outputs": [{
+                                                            "path": "~/.config/equibop/themes/noctalia.theme.css"
+                                                          }]
+                                                      },
+                                                      "discord_lightcord": {
+                                                        "input": "vesktop.css",
+                                                        "outputs": [{
+                                                            "path": "~/.config/lightcord/themes/noctalia.theme.css"
+                                                          }]
+                                                      },
+                                                      "discord_dorion": {
+                                                        "input": "vesktop.css",
+                                                        "outputs": [{
+                                                            "path": "~/.config/dorion/themes/noctalia.theme.css"
+                                                          }]
+                                                      },
+                                                      "discord_vencord": {
+                                                        "input": "vesktop.css",
+                                                        "outputs": [{
+                                                            "path": "~/.config/discord/themes/noctalia.theme.css"
+                                                          }]
+                                                      },
                                                       "vicinae": {
                                                         "input": "vicinae.toml",
                                                         "outputs": [{
@@ -271,9 +307,21 @@ Singleton {
                              const outputPath = output.path.replace("~", homeDir)
                              const outputDir = outputPath.substring(0, outputPath.lastIndexOf('/'))
 
-                             script += `mkdir -p ${outputDir}\n`
-                             script += `cp '${templatePath}' '${outputPath}'\n`
-                             script += replaceColorsInFile(outputPath, colors)
+                             // For Discord clients, check if the base config directory exists
+                             if (appName.startsWith("discord_")) {
+                               const baseConfigDir = outputDir.replace("/themes", "")
+                               script += `if [ -d "${baseConfigDir}" ]; then\n`
+                               script += `  mkdir -p ${outputDir}\n`
+                               script += `  cp '${templatePath}' '${outputPath}'\n`
+                               script += `  ${replaceColorsInFile(outputPath, colors)}\n`
+                               script += `else\n`
+                               script += `  echo "Discord client ${appName} not found at ${baseConfigDir}, skipping theme generation"\n`
+                               script += `fi\n`
+                             } else {
+                               script += `mkdir -p ${outputDir}\n`
+                               script += `cp '${templatePath}' '${outputPath}'\n`
+                               script += replaceColorsInFile(outputPath, colors)
+                             }
                            })
 
     if (config.postProcess) {
