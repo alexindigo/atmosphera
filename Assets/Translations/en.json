@@ -497,7 +497,16 @@
         },
         "matugen-scheme-type": {
           "label": "Matugen scheme type",
-          "description": "Choose the color scheme generation algorithm for Matugen."
+            "description": {
+              "scheme-content": "Derives colors that closely match the underlying image`",
+	      "scheme-expressive": "Vibrant palette with playful saturation",
+	      "scheme-fidelity": "High-fidelity palette that preserves source hues",
+	      "scheme-fruit-salad": "Colorful mix of bright contrasting accents",
+	      "scheme-monochrome": "Minimal palette built around a single hue",
+	      "scheme-neutral": "Muted palette with subdued, calming tones",
+	      "scheme-rainbow": "Diverse palette spanning the full spectrum",
+	      "scheme-tonal-spot": "Balanced palette with focused accents"
+            }
         }
       },
       "dark-mode": {
