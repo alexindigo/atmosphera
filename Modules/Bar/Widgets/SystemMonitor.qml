@@ -329,7 +329,7 @@ Rectangle {
         }
 
         NText {
-          text: `${SystemStatService.diskPercent}%`
+          text: `${SystemStatService.diskPercents["/"]}%`
           family: Settings.data.ui.fontFixed
           pointSize: textSize
           applyUiScale: false

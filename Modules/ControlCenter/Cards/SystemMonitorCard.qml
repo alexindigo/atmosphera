@@ -46,7 +46,7 @@ NBox {
         Layout.alignment: Qt.AlignHCenter
       }
       NCircleStat {
-        value: SystemStatService.diskPercent
+        value: SystemStatService.diskPercents["/"]
         icon: "storage"
         flat: true
         contentScale: 0.8

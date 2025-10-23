@@ -9,17 +9,17 @@ import qs.Commons
 Singleton {
   id: root
 
+  // Configuration
+  property int sleepDuration: 3000
+
   // Public values
   property real cpuUsage: 0
   property real cpuTemp: 0
   property real memGb: 0
   property real memPercent: 0
-  property real diskPercent: 0
+  property var diskPercents: ({})
   property real rxSpeed: 0
   property real txSpeed: 0
-
-  // Configuration
-  property int sleepDuration: 3000
 
   // Internal state for CPU calculation
   property var prevCpuStats: null
@@ -94,15 +94,22 @@ Singleton {
   // Uses 'df' aka 'disk free'
   Process {
     id: dfProcess
-    command: ["df", "--output=pcent", "/"]
+    command: ["df", "--output=target,pcent"]
     running: false
     stdout: StdioCollector {
       onStreamFinished: {
         const lines = text.trim().split('\n')
-        if (lines.length >= 2) {
-          const percent = lines[1].replace(/[^0-9]/g, '')
-          root.diskPercent = parseInt(percent) || 0
+        const newPercents = {}
+        // Start from line 1 (skip header)
+        for (let i = 1; i < lines.length; i++) {
+          const parts = lines[i].trim().split(/\s+/)
+          if (parts.length >= 2) {
+            const target = parts[0]
+            const percent = parseInt(parts[1].replace(/[^0-9]/g, '')) || 0
+            newPercents[target] = percent
+          }
         }
+        root.diskPercents = newPercents
       }
     }
   }
