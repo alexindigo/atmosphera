@@ -253,7 +253,13 @@ Singleton {
 
     function increaseBrightness(): void {
       const value = !isNaN(monitor.queuedBrightness) ? monitor.queuedBrightness : monitor.brightness
-      setBrightnessDebounced(value + stepSize)
+      // Set to step size if currently at minimum brightness
+      if (value <= 0.01) {
+        setBrightnessDebounced(Math.max(stepSize, 0.01))
+      } else {
+        // Normal brightness increase
+        setBrightnessDebounced(value + stepSize)
+      }
     }
 
     function decreaseBrightness(): void {
@@ -262,7 +268,8 @@ Singleton {
     }
 
     function setBrightness(value: real): void {
-      value = Math.max(0, Math.min(1, value))
+      // Enforce a minimum brightness of 1% (0.01) to avoid completely turning off the backlight
+      value = Math.max(0.01, Math.min(1, value))
       var rounded = Math.round(value * 100)
 
       if (timer.running) {
