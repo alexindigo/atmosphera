@@ -12,6 +12,7 @@ ColumnLayout {
   property alias placeholderText: input.placeholderText
   property string label: ""
   property string description: ""
+  property string inputIconName: ""
   property alias buttonIcon: button.icon
   property alias buttonTooltip: button.tooltipText
   property alias buttonEnabled: button.enabled
@@ -38,6 +39,7 @@ ColumnLayout {
 
     NTextInput {
       id: input
+      inputIconName: root.inputIconName
       Layout.fillWidth: true
       Layout.alignment: Qt.AlignVCenter
       onTextChanged: root.inputTextChanged(text)
