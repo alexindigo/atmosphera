@@ -194,7 +194,7 @@ Rectangle {
 
           layer.enabled: widgetSettings.colorizeIcons !== false
           layer.effect: ShaderEffect {
-            property color targetColor: Color.mOnSurface
+            property color targetColor: Settings.data.colorSchemes.darkMode ? Color.mSurface : Color.mSurfaceVariant
             property real colorizeMode: 1.0 // Tray mode (intensity-based)
 
             fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
