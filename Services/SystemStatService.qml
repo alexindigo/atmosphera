@@ -101,7 +101,7 @@ Singleton {
         const lines = text.trim().split('\n')
         const newPercents = {}
         // Start from line 1 (skip header)
-        for (let i = 1; i < lines.length; i++) {
+        for (var i = 1; i < lines.length; i++) {
           const parts = lines[i].trim().split(/\s+/)
           if (parts.length >= 2) {
             const target = parts[0]

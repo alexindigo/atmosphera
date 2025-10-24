@@ -99,7 +99,7 @@ Item {
 
   SplitParser {
     id: textStdoutSplit
-    onRead: function(line) {
+    onRead: function (line) {
       var lineStr = String(line || "").trim()
       var shouldCollapse = false
 

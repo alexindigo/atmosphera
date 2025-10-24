@@ -136,7 +136,7 @@ Rectangle {
           // Apply dock shader to all taskbar icons
           layer.enabled: widgetSettings.colorizeIcons !== false
           layer.effect: ShaderEffect {
-            property color targetColor: Settings.data.colorSchemes.darkMode ? Color.mSurface : Color.mSurfaceVariant
+            property color targetColor: Settings.data.colorSchemes.darkMode ? Color.mOnSurface : Color.mSurfaceVariant
             property real colorizeMode: 0.0 // Dock mode (grayscale)
 
             fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
