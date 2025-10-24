@@ -252,35 +252,27 @@ ColumnLayout {
       spacing: Style.marginS
       Layout.fillWidth: true
 
-      RowLayout {
-        spacing: Style.marginS
+
+      NTextInputButton {
+        id: blacklistInput
+        label: I18n.tr("settings.audio.media.excluded-player.label")
+        description: I18n.tr("settings.audio.media.excluded-player.description")
+        placeholderText: I18n.tr("settings.audio.media.excluded-player.placeholder")
+        buttonIcon: "add"
         Layout.fillWidth: true
-
-        NTextInput {
-          id: blacklistInput
-          label: I18n.tr("settings.audio.media.excluded-player.label")
-          description: I18n.tr("settings.audio.media.excluded-player.description")
-          placeholderText: I18n.tr("settings.audio.media.excluded-player.placeholder")
-        }
-
-        // Button aligned to the center of the actual input field
-        NIconButton {
-          icon: "add"
-          Layout.alignment: Qt.AlignBottom
-          Layout.bottomMargin: blacklistInput.description ? Style.marginS : 0
-          onClicked: {
-            const val = (blacklistInput.text || "").trim()
-            if (val !== "") {
-              const arr = (Settings.data.audio.mprisBlacklist || [])
-              if (!arr.find(x => String(x).toLowerCase() === val.toLowerCase())) {
-                Settings.data.audio.mprisBlacklist = [...arr, val]
-                blacklistInput.text = ""
-                MediaService.updateCurrentPlayer()
-              }
+        onButtonClicked: {
+          const val = (blacklistInput.text || "").trim()
+          if (val !== "") {
+            const arr = (Settings.data.audio.mprisBlacklist || [])
+            if (!arr.find(x => String(x).toLowerCase() === val.toLowerCase())) {
+              Settings.data.audio.mprisBlacklist = [...arr, val]
+              blacklistInput.text = ""
+              MediaService.updateCurrentPlayer()
             }
           }
         }
       }
+
 
       // Current blacklist entries
       Flow {
