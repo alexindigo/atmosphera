@@ -383,7 +383,7 @@ Variants {
                       // Apply dock-specific colorization shader only to non-focused apps
                       layer.enabled: !appButton.isActive && Settings.data.dock.colorizeIcons
                       layer.effect: ShaderEffect {
-                        property color targetColor: Color.mOnSurface
+                        property color targetColor: Settings.data.colorSchemes.darkMode ? Color.mOnSurface : Color.mSurfaceVariant
                         property real colorizeMode: 0.0 // Dock mode (grayscale)
 
                         fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
