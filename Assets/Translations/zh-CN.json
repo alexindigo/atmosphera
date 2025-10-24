@@ -162,6 +162,10 @@
         "brightness-step": {
           "label": "亮度步长",
           "description": "调整亮度变化的步长（滚轮和键盘快捷键）。"
+        },
+        "enforce-minimum": {
+          "label": "限制最小亮度为 1%",
+          "description": "解决亮度为 0% 时部分显示器背光完全关闭的问题。"
         }
       },
       "night-light": {

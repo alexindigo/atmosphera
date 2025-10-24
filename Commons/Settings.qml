@@ -352,6 +352,7 @@ Singleton {
     // brightness
     property JsonObject brightness: JsonObject {
       property int brightnessStep: 5
+      property bool enforceMinimum: true
     }
 
     property JsonObject colorSchemes: JsonObject {

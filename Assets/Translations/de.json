@@ -162,6 +162,10 @@
         "brightness-step": {
           "label": "Helligkeits-Schrittgröße",
           "description": "Schrittgröße für Helligkeitsänderungen anpassen (Mausrad und Tastenkombinationen)."
+        },
+        "enforce-minimum": {
+          "label": "Mindesthelligkeit erzwingen (1%)",
+          "description": "Löst das Problem, dass die Hintergrundbeleuchtung auf einigen Displays bei 0% Helligkeit vollständig ausgeschaltet wird."
         }
       },
       "night-light": {
