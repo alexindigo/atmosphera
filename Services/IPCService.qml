@@ -222,8 +222,7 @@ Item {
     }
   }
   IpcHandler {
-    target: "PowerProfile"
-
+    target: "powerProfile"
     function cycle() {
        PowerProfileService.cycleProfile()
     } 
