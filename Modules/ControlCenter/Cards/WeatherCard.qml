@@ -16,13 +16,13 @@ NBox {
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: parent.top
-    anchors.margins: Style.marginM
+    anchors.margins: Style.marginXL
     spacing: Style.marginM
     clip: true
 
     RowLayout {
       id: weatherCurrent
-      anchors.left: weatherForecast.left
+      Layout.fillWidth: true
       spacing: Style.marginS
       NIcon {
         Layout.alignment: Qt.AlignVCenter
@@ -79,23 +79,26 @@ NBox {
     }
 
     RowLayout {
-      id: weatherForecast
       visible: weatherReady
       Layout.fillWidth: true
-      Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
-      spacing: Style.marginL
+      Layout.alignment: Qt.AlignVCenter
+      spacing: Style.marginM
+
       Repeater {
         model: weatherReady ? LocationService.data.weather.daily.time : []
         delegate: ColumnLayout {
-          Layout.alignment: Qt.AlignHCenter
+          Layout.fillWidth: true
           spacing: Style.marginXS
+          Item {
+            Layout.fillWidth: true
+          }
           NText {
+            Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
             text: {
               var weatherDate = new Date(LocationService.data.weather.daily.time[index].replace(/-/g, "/"))
               return Qt.locale().toString(weatherDate, "ddd")
             }
             color: Color.mOnSurface
-            Layout.alignment: Qt.AlignHCenter
           }
           NIcon {
             Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
