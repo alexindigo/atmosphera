@@ -225,9 +225,22 @@ Item {
     target: "powerProfile"
     function cycle() {
        PowerProfileService.cycleProfile()
-    } 
-  } 
+    }
 
+    function set(mode: string) {
+      switch (mode) {
+      case "performance":
+        PowerProfileService.setProfile(2)
+        break
+      case "balanced":
+        PowerProfileService.setProfile(1)
+        break
+      case "powersaver":
+        PowerProfileService.setProfile(0)
+        break
+      }
+    }
+  }
   IpcHandler {
     target: "media"
     function playPause() {
