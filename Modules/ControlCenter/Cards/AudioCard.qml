@@ -58,6 +58,7 @@ NBox {
     ColumnLayout {
       spacing: Style.marginXXS
       Layout.fillWidth: true
+      Layout.preferredWidth: 0
       opacity: AudioService.sink ? 1.0 : 0.5
       enabled: AudioService.sink
 
@@ -109,6 +110,7 @@ NBox {
     ColumnLayout {
       spacing: Style.marginXXS
       Layout.fillWidth: true
+      Layout.preferredWidth: 0
       opacity: AudioService.source ? 1.0 : 0.5
       enabled: AudioService.source
 
