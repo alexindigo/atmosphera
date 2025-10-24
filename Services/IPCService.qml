@@ -221,6 +221,12 @@ Item {
       }
     }
   }
+  IpcHandler {
+    target: "powerProfile"
+    function cycle() {
+       PowerProfileService.cycleProfile()
+    } 
+  } 
 
   IpcHandler {
     target: "media"
