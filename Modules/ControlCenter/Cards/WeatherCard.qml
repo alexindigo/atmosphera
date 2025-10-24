@@ -21,6 +21,8 @@ NBox {
     clip: true
 
     RowLayout {
+      id: weatherCurrent
+      anchors.left: weatherForecast.left
       spacing: Style.marginS
       NIcon {
         Layout.alignment: Qt.AlignVCenter
@@ -77,6 +79,7 @@ NBox {
     }
 
     RowLayout {
+      id: weatherForecast
       visible: weatherReady
       Layout.fillWidth: true
       Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
