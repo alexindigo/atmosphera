@@ -38,6 +38,7 @@ Item {
   readonly property string textCommand: widgetSettings.textCommand !== undefined ? widgetSettings.textCommand : (widgetMetadata.textCommand || "")
   readonly property bool textStream: widgetSettings.textStream !== undefined ? widgetSettings.textStream : (widgetMetadata.textStream || false)
   readonly property int textIntervalMs: widgetSettings.textIntervalMs !== undefined ? widgetSettings.textIntervalMs : (widgetMetadata.textIntervalMs || 3000)
+  readonly property string textCollapse: widgetSettings.textCollapse !== undefined ? widgetSettings.textCollapse : (widgetMetadata.textCollapse || "")
   readonly property bool hasExec: (leftClickExec || rightClickExec || middleClickExec)
 
   implicitWidth: pill.width
@@ -98,7 +99,33 @@ Item {
 
   SplitParser {
     id: textStdoutSplit
-    onRead: line => _dynamicText = String(line || "").trim()
+    onRead: function(line) {
+      var lineStr = String(line || "").trim()
+      var shouldCollapse = false
+
+      if (textCollapse && textCollapse.length > 0) {
+        if (textCollapse.startsWith("/") && textCollapse.endsWith("/") && textCollapse.length > 1) {
+          // Treat as regex
+          var pattern = textCollapse.substring(1, textCollapse.length - 1)
+          try {
+            var regex = new RegExp(pattern)
+            shouldCollapse = regex.test(lineStr)
+          } catch (e) {
+            Logger.w("CustomButton", `Invalid regex for textCollapse: ${textCollapse} - ${e.message}`)
+            shouldCollapse = (textCollapse === lineStr) // Fallback to exact match on invalid regex
+          }
+        } else {
+          // Treat as plain string
+          shouldCollapse = (textCollapse === lineStr)
+        }
+      }
+
+      if (shouldCollapse) {
+        _dynamicText = ""
+      } else {
+        _dynamicText = lineStr
+      }
+    }
   }
 
   StdioCollector {
@@ -108,7 +135,30 @@ Item {
                         if (out.indexOf("\n") !== -1) {
                           out = out.split("\n")[0]
                         }
-                        _dynamicText = out
+                        var shouldCollapse = false
+
+                        if (textCollapse && textCollapse.length > 0) {
+                          if (textCollapse.startsWith("/") && textCollapse.endsWith("/") && textCollapse.length > 1) {
+                            // Treat as regex
+                            var pattern = textCollapse.substring(1, textCollapse.length - 1)
+                            try {
+                              var regex = new RegExp(pattern)
+                              shouldCollapse = regex.test(out)
+                            } catch (e) {
+                              Logger.w("CustomButton", `Invalid regex for textCollapse: ${textCollapse} - ${e.message}`)
+                              shouldCollapse = (textCollapse === out) // Fallback to exact match on invalid regex
+                            }
+                          } else {
+                            // Treat as plain string
+                            shouldCollapse = (textCollapse === out)
+                          }
+                        }
+
+                        if (shouldCollapse) {
+                          _dynamicText = ""
+                        } else {
+                          _dynamicText = out
+                        }
                       }
   }
 

@@ -1091,6 +1091,10 @@
         "refresh-interval": {
           "label": "Refresh interval",
           "description": "Interval in milliseconds."
+        },
+        "collapse-condition": {
+          "label": "Collapse condition",
+          "description": "If the output text matches this value, the button will collapse."
         }
       },
       "media-mini": {
@@ -1335,6 +1339,7 @@
     "enter-width-pixels": "Enter width in pixels",
     "enter-command": "Enter command to execute (app or custom script)",
     "command-example": "echo \"Hello World\"",
+    "enter-text-to-collapse": "e.g., 'nothing is playing'. Use /regex/ for patterns.",
     "search-wallpapers": "Type to filter wallpapers...",
     "search-launcher": "Search entries... or use > for commands",
     "search": "Search...",

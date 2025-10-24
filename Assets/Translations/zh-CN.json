@@ -1089,8 +1089,12 @@
           "description": "间隔时间（毫秒）。"
         },
         "text-stream": {
-          "description": "来自命令的流式输出行将作为文本显示在按钮上。",
           "label": "流"
+          "description": "来自命令的流式输出行将作为文本显示在按钮上。",
+        },
+        "collapse-condition": {
+          "label": "折叠条件",
+          "description": "如果输出文本与此值匹配，按钮的文本将会折叠不去显示。"
         }
       },
       "media-mini": {
@@ -1335,6 +1339,7 @@
     "enter-width-pixels": "输入宽度（像素）",
     "enter-command": "输入要执行的命令（应用程序或自定义脚本）",
     "command-example": "echo \"Hello World\"",
+    "enter-text-to-collapse": "例如，“nothing is playing”。使用 /regex/ 表示匹配模式。",
     "search-wallpapers": "输入以筛选壁纸...",
     "search-launcher": "搜索条目...或使用 > 执行命令",
     "search": "搜索...",

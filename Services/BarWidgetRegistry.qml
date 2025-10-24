@@ -84,7 +84,8 @@ Singleton {
                                     "middleClickExec": "",
                                     "textCommand": "",
                                     "textStream": false,
-                                    "textIntervalMs": 3000
+                                    "textIntervalMs": 3000,
+                                    "textCollapse": ""
                                   },
                                   "KeyboardLayout": {
                                     "allowUserSettings": true,

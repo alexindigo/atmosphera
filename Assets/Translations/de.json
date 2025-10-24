@@ -1106,8 +1106,12 @@
           "description": "Intervall in Millisekunden."
         },
         "text-stream": {
-          "description": "Gestreamte Zeilen aus dem Befehl werden als Text auf der Schaltfläche angezeigt.",
-          "label": "Strom"
+          "label": "Strom",
+          "description": "Gestreamte Zeilen aus dem Befehl werden als Text auf der Schaltfläche angezeigt."
+        },
+        "collapse-condition": {
+          "label": "Collapse condition",
+          "description": "If the output text matches this value, the button will collapse."
         }
       },
       "media-mini": {
@@ -1352,6 +1356,7 @@
     "enter-width-pixels": "Breite in Pixeln eingeben",
     "enter-command": "Befehl eingeben (App oder benutzerdefiniertes Skript)",
     "command-example": "echo \"Hallo Welt\"",
+    "enter-text-to-collapse": "z.B. 'nothing is playing'. Verwenden Sie /regex/ für Muster.",
     "search-wallpapers": "Zum Filtern von Hintergrundbildern eingeben...",
     "search-launcher": "Einträge suchen... oder > für Befehle verwenden",
     "search": "Suchen...",
