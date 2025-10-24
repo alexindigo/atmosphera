@@ -17,6 +17,7 @@ ColumnLayout {
     var settings = Object.assign({}, widgetData || {})
     settings.labelMode = labelModeCombo.currentKey
     settings.hideUnoccupied = hideUnoccupiedToggle.checked
+    settings.characterCount = characterCountSpinBox.value
     return settings
   }
 
@@ -46,5 +47,23 @@ ColumnLayout {
     description: I18n.tr("bar.widget-settings.workspace.hide-unoccupied.description")
     checked: widgetData.hideUnoccupied
     onToggled: checked => hideUnoccupiedToggle.checked = checked
+  }
+
+  NSpinBox {
+    id: characterCountSpinBox
+    label: I18n.tr("bar.widget-settings.workspace.character-count.label")
+    description: I18n.tr("bar.widget-settings.workspace.character-count.description")
+    from: 1
+    to: 10
+    value: {
+      if (widgetData && widgetData.characterCount !== undefined) {
+        return widgetData.characterCount
+      }
+      if (widgetMetadata && widgetMetadata.characterCount !== undefined) {
+        return widgetMetadata.characterCount
+      }
+      return 2
+    }
+    visible: labelModeCombo.currentKey === "name"
   }
 }

@@ -24,7 +24,8 @@
       ],
       "center": [
         {
-          "id": "Workspace"
+          "id": "Workspace",
+          "characterCount": 2
         }
       ],
       "right": [

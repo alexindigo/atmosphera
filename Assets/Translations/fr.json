@@ -1040,6 +1040,10 @@
         "hide-unoccupied": {
           "label": "Masquer les inoccupés",
           "description": "Ne pas afficher les espaces de travail sans fenêtres."
+        },
+        "character-count": {
+          "label": "Nombre de caractères",
+          "description": "Nombre de caractères à afficher des noms d'espaces de travail (1-10)."
         }
       },
       "microphone": {

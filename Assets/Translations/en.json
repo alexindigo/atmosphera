@@ -1040,6 +1040,10 @@
         "hide-unoccupied": {
           "label": "Hide unoccupied",
           "description": "Don't display workspaces without windows."
+        },
+        "character-count": {
+          "label": "Character count",
+          "description": "Number of characters to display from workspace names (1-10)."
         }
       },
       "microphone": {

@@ -1040,6 +1040,10 @@
         "hide-unoccupied": {
           "label": "隐藏未占用",
           "description": "不显示没有窗口的工作区。"
+        },
+        "character-count": {
+          "label": "字符数量",
+          "description": "显示工作区名称的字符数量（1-10）。"
         }
       },
       "microphone": {

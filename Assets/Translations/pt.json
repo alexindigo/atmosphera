@@ -1040,6 +1040,10 @@
         "hide-unoccupied": {
           "label": "Ocultar desocupados",
           "description": "Não exibir áreas de trabalho sem janelas."
+        },
+        "character-count": {
+          "label": "Número de caracteres",
+          "description": "Número de caracteres a exibir dos nomes de espaços de trabalho (1-10)."
         }
       },
       "microphone": {

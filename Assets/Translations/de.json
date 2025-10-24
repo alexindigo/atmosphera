@@ -1057,6 +1057,10 @@
         "hide-unoccupied": {
           "label": "Unbesetzte ausblenden",
           "description": "Arbeitsbereiche ohne Fenster nicht anzeigen."
+        },
+        "character-count": {
+          "label": "Zeichenanzahl",
+          "description": "Anzahl der Zeichen, die von Arbeitsbereichsnamen angezeigt werden (1-10)."
         }
       },
       "microphone": {

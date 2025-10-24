@@ -44,6 +44,7 @@ Item {
 
   readonly property string labelMode: (widgetSettings.labelMode !== undefined) ? widgetSettings.labelMode : widgetMetadata.labelMode
   readonly property bool hideUnoccupied: (widgetSettings.hideUnoccupied !== undefined) ? widgetSettings.hideUnoccupied : widgetMetadata.hideUnoccupied
+  readonly property int characterCount: (widgetSettings.characterCount !== undefined) ? widgetSettings.characterCount : widgetMetadata.characterCount
 
   property bool isDestroying: false
   property bool hovered: false
@@ -68,6 +69,15 @@ Item {
   function getWorkspaceWidth(ws) {
     const d = Style.capsuleHeight * root.baseDimensionRatio
     const factor = ws.isActive ? 2.2 : 1
+
+    // For name mode, calculate width based on actual text content
+    if (labelMode === "name" && ws.name && ws.name.length > 0) {
+      const displayText = ws.name.substring(0, characterCount)
+      const textWidth = displayText.length * (d * 0.4) // Approximate width per character
+      const padding = d * 0.6 // Padding on both sides
+      return Math.max(d * factor, textWidth + padding)
+    }
+
     return d * factor
   }
 
@@ -279,7 +289,7 @@ Item {
                 y: (pill.height - height) / 2 + (height - contentHeight) / 2
                 text: {
                   if (labelMode === "name" && model.name && model.name.length > 0) {
-                    return model.name.substring(0, 2)
+                    return model.name.substring(0, characterCount)
                   } else {
                     return model.idx.toString()
                   }
@@ -424,7 +434,7 @@ Item {
                 y: (pillVertical.height - height) / 2 + (height - contentHeight) / 2
                 text: {
                   if (labelMode === "name" && model.name && model.name.length > 0) {
-                    return model.name.substring(0, 2)
+                    return model.name.substring(0, characterCount)
                   } else {
                     return model.idx.toString()
                   }
