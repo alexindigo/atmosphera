@@ -252,7 +252,6 @@ ColumnLayout {
       spacing: Style.marginS
       Layout.fillWidth: true
 
-
       NTextInputButton {
         id: blacklistInput
         label: I18n.tr("settings.audio.media.excluded-player.label")
@@ -272,7 +271,6 @@ ColumnLayout {
           }
         }
       }
-
 
       // Current blacklist entries
       Flow {

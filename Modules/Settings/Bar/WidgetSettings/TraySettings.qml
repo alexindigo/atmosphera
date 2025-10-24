@@ -67,8 +67,8 @@ ColumnLayout {
             }
             if (!exists) {
               blacklistModel.append({
-                "rule": newRule
-              })
+                                      "rule": newRule
+                                    })
               newRuleInput.text = ""
             }
           }
