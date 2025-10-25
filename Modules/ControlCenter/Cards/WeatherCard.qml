@@ -21,9 +21,11 @@ NBox {
     clip: true
 
     RowLayout {
-      id: weatherCurrent
       Layout.fillWidth: true
       spacing: Style.marginS
+      Item {
+        Layout.preferredWidth: 0
+      }
       NIcon {
         Layout.alignment: Qt.AlignVCenter
         icon: weatherReady ? LocationService.weatherSymbolFromCode(LocationService.data.weather.current_weather.weathercode) : ""
