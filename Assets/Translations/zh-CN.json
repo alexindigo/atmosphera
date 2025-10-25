@@ -1094,7 +1094,7 @@
         },
         "text-stream": {
           "label": "流",
-          "description": "来自命令的流式输出行将作为文本显示在按钮上。",
+          "description": "来自命令的流式输出行将作为文本显示在按钮上。"
         },
         "collapse-condition": {
           "label": "折叠条件",
