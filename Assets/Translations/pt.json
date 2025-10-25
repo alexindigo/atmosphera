@@ -592,6 +592,10 @@
         "show-events": {
           "label": "Mostrar eventos do calendário",
           "description": "Exibir eventos no painel do calendário."
+        },
+        "use-analog": {
+          "description": "Mostrar um relógio estilo analógico na tela do calendário.",
+          "label": "Use um relógio de estilo analógico."
         }
       }
     },
