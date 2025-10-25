@@ -38,6 +38,14 @@
 
     defaultPackage = eachSystem (system: self.packages.${system}.default);
 
+    devShells = eachSystem (
+      system: let
+        pkgs = nixpkgs.legacyPackages.${system};
+      in {
+        default = pkgs.callPackage ./shell.nix {};
+      }
+    );
+
     homeModules.default = {
       pkgs,
       lib,
