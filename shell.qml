@@ -91,8 +91,8 @@ ShellRoot {
         HooksService.init()
         BluetoothService.init()
         BatteryService.init()
-	IdleInhibitorService.init()
-	PowerProfileService.init()	
+        IdleInhibitorService.init()
+        PowerProfileService.init()
       }
 
       Background {}

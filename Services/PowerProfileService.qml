@@ -50,7 +50,7 @@ Singleton {
   }
 
   function init() {
-   Logger.d("PowerProfileService", "Service started")
+    Logger.d("PowerProfileService", "Service started")
   }
 
   function setProfile(p) {
