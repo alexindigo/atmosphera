@@ -630,6 +630,10 @@
         "show-events": {
           "label": "Kalenderereignisse anzeigen",
           "description": "Ereignisse im Kalender-Panel anzeigen."
+        },
+        "use-analog": {
+          "description": "Eine Analoguhr auf dem Kalenderbildschirm anzeigen.",
+          "label": "Analoge Uhr verwenden"
         }
       }
     },

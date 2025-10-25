@@ -124,6 +124,13 @@ ColumnLayout {
       checked: Settings.data.location.showCalendarEvents
       onToggled: checked => Settings.data.location.showCalendarEvents = checked
     }
+
+    NToggle {
+      label: I18n.tr("settings.location.date-time.use-analog.label")
+      description: I18n.tr("settings.location.date-time.use-analog.description")
+      checked: Settings.data.location.analogClockInCalendar
+      onToggled: checked => Settings.data.location.analogClockInCalendar = checked
+    }
   }
 
   NDivider {

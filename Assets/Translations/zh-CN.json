@@ -630,6 +630,10 @@
         "show-events": {
           "label": "显示日历事件",
           "description": "在日历面板中显示事件。"
+        },
+        "use-analog": {
+          "description": "在日历屏幕上显示一个模拟时钟。",
+          "label": "使用模拟时钟样式"
         }
       }
     },

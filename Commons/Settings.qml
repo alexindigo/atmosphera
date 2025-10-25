@@ -203,6 +203,7 @@ Singleton {
       property bool use12hourFormat: false
       property bool showWeekNumberInCalendar: false
       property bool showCalendarEvents: true
+      property bool analogClockInCalendar: false
     }
 
     // screen recorder
