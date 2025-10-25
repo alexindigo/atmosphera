@@ -323,6 +323,14 @@
         "terminal-command": {
           "label": "Comando do terminal",
           "description": "Comando para iniciar um terminal. Ex: 'kitty -e' ou 'gnome-terminal --'."
+        },
+        "custom-launch-prefix": {
+          "label": "Prefixo de inicialização personalizado",
+          "description": "Prefixar comandos com um inicializador personalizado (ex. 'runapp' para integração systemd)."
+        },
+        "custom-launch-prefix-enabled": {
+          "label": "Habilitar prefixo de inicialização personalizado",
+          "description": "Usar um prefixo personalizado para inicializar aplicativos em vez do método padrão."
         }
       }
     },

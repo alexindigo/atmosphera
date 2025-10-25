@@ -111,7 +111,9 @@
     "pinnedExecs": [],
     "useApp2Unit": false,
     "sortByMostUsed": true,
-    "terminalCommand": "xterm -e"
+    "terminalCommand": "xterm -e",
+    "customLaunchPrefixEnabled": false,
+    "customLaunchPrefix": ""
   },
   "controlCenter": {
     "position": "close_to_bar_button",

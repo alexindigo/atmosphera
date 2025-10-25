@@ -323,6 +323,14 @@
         "terminal-command": {
           "label": "Terminalbefehl",
           "description": "Befehl zum Starten eines Terminals. Z.B. 'kitty -e' oder 'gnome-terminal --'."
+        },
+        "custom-launch-prefix": {
+          "label": "Benutzerdefiniertes Start-Präfix",
+          "description": "Befehle mit einem benutzerdefinierten Launcher präfixieren (z.B. 'runapp' für systemd-Integration)."
+        },
+        "custom-launch-prefix-enabled": {
+          "label": "Benutzerdefiniertes Start-Präfix aktivieren",
+          "description": "Verwenden Sie ein benutzerdefiniertes Präfix zum Starten von Anwendungen anstelle der Standardmethode."
         }
       }
     },

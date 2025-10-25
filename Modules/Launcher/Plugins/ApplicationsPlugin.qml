@@ -202,7 +202,26 @@ Item {
         // Record usage and persist asynchronously
         if (Settings.data.appLauncher.sortByMostUsed)
           recordUsage(app)
-        if (Settings.data.appLauncher.useApp2Unit && app.id) {
+        if (Settings.data.appLauncher.customLaunchPrefixEnabled && Settings.data.appLauncher.customLaunchPrefix) {
+          // Use custom launch prefix
+          const prefix = Settings.data.appLauncher.customLaunchPrefix.split(" ")
+          
+          if (app.runInTerminal) {
+            // For terminal apps, use the app command directly
+            const command = prefix.concat(app.command)
+            Quickshell.execDetached(command)
+          } else if (app.id) {
+            // For GUI apps, try to use the app name/executable name instead of desktop file
+            // This works better with commands like "niri msg action spawn --"
+            const appName = app.executableName || app.name.toLowerCase().replace(/\s+/g, '-')
+            const command = prefix.concat([appName])
+            Quickshell.execDetached(command)
+          } else {
+            // Fallback to direct command execution
+            const command = prefix.concat(app.command)
+            Quickshell.execDetached(command)
+          }
+        } else if (Settings.data.appLauncher.useApp2Unit && app.id) {
           Logger.d("ApplicationsPlugin", `Using app2unit for: ${app.id}`)
           if (app.runInTerminal)
             Quickshell.execDetached(["app2unit", "--", app.id + ".desktop"])

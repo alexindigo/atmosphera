@@ -323,6 +323,14 @@
         "terminal-command": {
           "label": "Terminal command",
           "description": "Command to launch a terminal. E.g., 'kitty -e' or 'gnome-terminal --'."
+        },
+        "custom-launch-prefix": {
+          "label": "Custom launch prefix",
+          "description": "Prefix commands with a custom launcher (e.g., 'runapp' for systemd integration)."
+        },
+        "custom-launch-prefix-enabled": {
+          "label": "Enable custom launch prefix",
+          "description": "Use a custom prefix for launching applications instead of the default method."
         }
       }
     },

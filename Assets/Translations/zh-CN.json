@@ -321,8 +321,16 @@
           "description": "使用替代启动方法以更好地管理应用程序进程并防止问题。"
         },
         "terminal-command": {
-          "description": "启动终端的命令。例如，“kitty -e”或“gnome-terminal --”。",
+          "description": "启动终端的命令。例如，"kitty -e"或"gnome-terminal --"。",
           "label": "终端命令"
+        },
+        "custom-launch-prefix": {
+          "label": "自定义启动前缀",
+          "description": "使用自定义启动器前缀命令（例如，'runapp'用于systemd集成）。"
+        },
+        "custom-launch-prefix-enabled": {
+          "label": "启用自定义启动前缀",
+          "description": "使用自定义前缀启动应用程序，而不是默认方法。"
         }
       }
     },
