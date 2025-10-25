@@ -340,7 +340,17 @@ Loader {
 
                   // Date below
                   NText {
-                    text: Qt.locale().toString(Time.date, "dddd, MMMM d")
+                    text: {
+                      var lang = Qt.locale().name.split("_")[0]
+                      var formats = {
+                        "de": "dddd, d. MMMM",
+                        "es": "dddd, d 'de' MMMM",
+                        "fr": "dddd d MMMM",
+                        "pt": "dddd, d 'de' MMMM",
+                        "zh": "yyyy年M月d日 dddd"
+                      }
+                      return Qt.locale().toString(Time.date, formats[lang] || "dddd, MMMM d")
+                    }
                     pointSize: Style.fontSizeXL
                     font.weight: Font.Medium
                     color: Color.mOnSurfaceVariant
