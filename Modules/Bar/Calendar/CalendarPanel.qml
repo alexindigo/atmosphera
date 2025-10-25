@@ -17,6 +17,18 @@ NPanel {
   preferredHeight: 520 * Style.uiScaleRatio
   panelKeyboardFocus: true
 
+  // Helper function to calculate ISO week number
+  function getISOWeekNumber(date) {
+    const target = new Date(date.valueOf())
+    const dayNr = (date.getDay() + 6) % 7
+    target.setDate(target.getDate() - dayNr + 3)
+    const firstThursday = new Date(target.getFullYear(), 0, 4)
+    const diff = target - firstThursday
+    const oneWeek = 1000 * 60 * 60 * 24 * 7
+    const weekNumber = 1 + Math.round(diff / oneWeek)
+    return weekNumber
+  }
+
   panelContent: ColumnLayout {
     id: content
     anchors.fill: parent
@@ -95,16 +107,16 @@ NPanel {
               text: {
                 if (!Settings.data.location.weatherEnabled)
                   return ""
-                  if (!weatherReady)
-                    return ""
-                    var temp = LocationService.data.weather.current_weather.temperature
-                    var suffix = "C"
-                    if (Settings.data.location.useFahrenheit) {
-                      temp = LocationService.celsiusToFahrenheit(temp)
-                      suffix = "F"
-                    }
-                    temp = Math.round(temp)
-                    return `${temp}°${suffix}`
+                if (!weatherReady)
+                  return ""
+                var temp = LocationService.data.weather.current_weather.temperature
+                var suffix = "C"
+                if (Settings.data.location.useFahrenheit) {
+                  temp = LocationService.celsiusToFahrenheit(temp)
+                  suffix = "F"
+                }
+                temp = Math.round(temp)
+                return `${temp}°${suffix}`
               }
               pointSize: Style.fontSizeM
               font.weight: Style.fontWeightBold
@@ -174,10 +186,10 @@ NPanel {
                 text: {
                   if (!Settings.data.location.weatherEnabled)
                     return ""
-                    if (!weatherReady)
-                      return I18n.tr("calendar.weather.loading")
-                      const chunks = Settings.data.location.name.split(",")
-                      return chunks[0]
+                  if (!weatherReady)
+                    return I18n.tr("calendar.weather.loading")
+                  const chunks = Settings.data.location.name.split(",")
+                  return chunks[0]
                 }
                 pointSize: Style.fontSizeM
                 font.weight: Style.fontWeightMedium
@@ -224,16 +236,12 @@ NPanel {
           property color secondHandColor: {
             var defaultColor = Color.mError
             var backgroundL = Color.mPrimary.hslLightness
-            var hourMarkL = (Color.mOnPrimary.hslLightness * markAlpha) + (backgroundL *(1.0-markAlpha))
+            var hourMarkL = (Color.mOnPrimary.hslLightness * markAlpha) + (backgroundL * (1.0 - markAlpha))
 
             var bestWorstContrast = -1
             var bestColor = defaultColor
 
-            var candidates = [
-              Color.mSecondary,
-              Color.mTertiary,
-              Color.mError,
-            ]
+            var candidates = [Color.mSecondary, Color.mTertiary, Color.mError]
 
             for (var i = 0; i < candidates.length; i++) {
               var candidateColor = candidates[i]
@@ -557,14 +565,14 @@ NPanel {
         if (!CalendarService.available || CalendarService.events.length === 0)
           return false
 
-          const targetDate = new Date(year, month, day)
-          const targetStart = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate()).getTime() / 1000
-          const targetEnd = targetStart + 86400 // +24 hours
+        const targetDate = new Date(year, month, day)
+        const targetStart = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate()).getTime() / 1000
+        const targetEnd = targetStart + 86400 // +24 hours
 
-          return CalendarService.events.some(event => {
-            // Check if event starts or overlaps with this day
-            return (event.start >= targetStart && event.start < targetEnd) || (event.end > targetStart && event.end <= targetEnd) || (event.start < targetStart && event.end > targetEnd)
-          })
+        return CalendarService.events.some(event => {
+                                             // Check if event starts or overlaps with this day
+                                             return (event.start >= targetStart && event.start < targetEnd) || (event.end > targetStart && event.end <= targetEnd) || (event.start < targetStart && event.end > targetEnd)
+                                           })
       }
 
       // Helper function to get events for a specific date
@@ -572,13 +580,13 @@ NPanel {
         if (!CalendarService.available || CalendarService.events.length === 0)
           return []
 
-          const targetDate = new Date(year, month, day)
-          const targetStart = Math.floor(new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate()).getTime() / 1000)
-          const targetEnd = targetStart + 86400 // +24 hours
+        const targetDate = new Date(year, month, day)
+        const targetStart = Math.floor(new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate()).getTime() / 1000)
+        const targetEnd = targetStart + 86400 // +24 hours
 
-          return CalendarService.events.filter(event => {
-            return (event.start >= targetStart && event.start < targetEnd) || (event.end > targetStart && event.end <= targetEnd) || (event.start < targetStart && event.end > targetEnd)
-          })
+        return CalendarService.events.filter(event => {
+                                               return (event.start >= targetStart && event.start < targetEnd) || (event.end > targetStart && event.end <= targetEnd) || (event.start < targetStart && event.end > targetEnd)
+                                             })
       }
 
       // Helper function to check if an event is all-day
@@ -651,7 +659,7 @@ NPanel {
                   let daysToThursday = (4 - firstDayOfWeek + 7) % 7
                   thursday.setDate(rowStartDate.getDate() + daysToThursday)
                 }
-                return `${getISOWeekNumber(thursday)}`
+                return `${root.getISOWeekNumber(thursday)}`
               }
             }
           }
@@ -678,9 +686,9 @@ NPanel {
               color: {
                 if (model.today)
                   return Color.mOnSecondary
-                  if (model.month === grid.month)
-                    return Color.mOnSurface
-                    return Color.mOnSurfaceVariant
+                if (model.month === grid.month)
+                  return Color.mOnSurface
+                return Color.mOnSurfaceVariant
               }
               opacity: model.month === grid.month ? 1.0 : 0.4
               pointSize: Style.fontSizeM
@@ -747,4 +755,3 @@ NPanel {
     }
   }
 }
-
