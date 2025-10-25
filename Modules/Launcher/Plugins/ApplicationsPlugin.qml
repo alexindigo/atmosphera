@@ -205,7 +205,7 @@ Item {
         if (Settings.data.appLauncher.customLaunchPrefixEnabled && Settings.data.appLauncher.customLaunchPrefix) {
           // Use custom launch prefix
           const prefix = Settings.data.appLauncher.customLaunchPrefix.split(" ")
-          
+
           if (app.runInTerminal) {
             // For terminal apps, use the app command directly
             const command = prefix.concat(app.command)
