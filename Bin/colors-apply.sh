@@ -31,8 +31,8 @@ case "$APP_NAME" in
                 sed -i '/theme/d' "$CONFIG_FILE"
                 # Add the new theme include line to the end of the file.
                 echo "theme = noctalia" >> "$CONFIG_FILE"
-                pkill -SIGUSR2 ghostty
             fi
+            pkill -SIGUSR2 ghostty
         else
             echo "Error: ghostty config file not found at $CONFIG_FILE" >&2
             exit 1
