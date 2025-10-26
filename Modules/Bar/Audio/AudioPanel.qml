@@ -173,7 +173,7 @@ NPanel {
                 checked: AudioService.sink?.id === modelData.id
                 onClicked: {
                   AudioService.setAudioSink(modelData)
-                  localVolume = AudioService.volume
+                  localOutputVolume = AudioService.volume
                 }
                 Layout.fillWidth: true
               }
