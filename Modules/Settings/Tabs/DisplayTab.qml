@@ -156,13 +156,13 @@ ColumnLayout {
       onValueChanged: Settings.data.brightness.brightnessStep = value
     }
 
-      NToggle {
-        Layout.fillWidth: true
-        label: I18n.tr("settings.display.monitors.enforce-minimum.label")
-        description: I18n.tr("settings.display.monitors.enforce-minimum.description")
-        checked: Settings.data.brightness.enforceMinimum
-        onToggled: checked => Settings.data.brightness.enforceMinimum = checked
-      }
+    NToggle {
+      Layout.fillWidth: true
+      label: I18n.tr("settings.display.monitors.enforce-minimum.label")
+      description: I18n.tr("settings.display.monitors.enforce-minimum.description")
+      checked: Settings.data.brightness.enforceMinimum
+      onToggled: checked => Settings.data.brightness.enforceMinimum = checked
+    }
   }
 
   NDivider {

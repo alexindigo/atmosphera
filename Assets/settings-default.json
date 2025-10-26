@@ -24,8 +24,7 @@
       ],
       "center": [
         {
-          "id": "Workspace",
-          "characterCount": 2
+          "id": "Workspace"
         }
       ],
       "right": [
@@ -76,7 +75,8 @@
     "useFahrenheit": false,
     "use12hourFormat": false,
     "showWeekNumberInCalendar": false,
-    "showCalendarEvents": true
+    "showCalendarEvents": true,
+    "analogClockInCalendar": false
   },
   "screenRecorder": {
     "directory": "",
@@ -174,32 +174,32 @@
     "displayMode": "always_visible",
     "backgroundOpacity": 1,
     "floatingRatio": 1,
+    "size": 1,
     "onlySameOutput": true,
     "monitors": [],
     "pinnedApps": [],
-    "colorizeIcons": false,
-    "size": 1
+    "colorizeIcons": false
   },
   "network": {
     "wifiEnabled": true
   },
-    "notifications": {
-      "doNotDisturb": false,
-      "monitors": [],
-      "location": "top_right",
-      "overlayLayer": true,
-      "respectExpireTimeout": false,
-      "lowUrgencyDuration": 3,
-      "normalUrgencyDuration": 8,
-      "criticalUrgencyDuration": 15
-    },
-    "osd": {
-      "enabled": true,
-      "location": "top_right",
-      "monitors": [],
-      "autoHideMs": 2000,
-      "overlayLayer": true
-    },
+  "notifications": {
+    "doNotDisturb": false,
+    "monitors": [],
+    "location": "top_right",
+    "overlayLayer": true,
+    "respectExpireTimeout": false,
+    "lowUrgencyDuration": 3,
+    "normalUrgencyDuration": 8,
+    "criticalUrgencyDuration": 15
+  },
+  "osd": {
+    "enabled": true,
+    "location": "top_right",
+    "monitors": [],
+    "autoHideMs": 2000,
+    "overlayLayer": true
+  },
   "audio": {
     "volumeStep": 5,
     "volumeOverdrive": false,
@@ -217,12 +217,16 @@
     "panelsOverlayLayer": true
   },
   "brightness": {
-    "brightnessStep": 5
+    "brightnessStep": 5,
+    "enforceMinimum": true
   },
   "colorSchemes": {
     "useWallpaperColors": false,
     "predefinedScheme": "Noctalia (default)",
     "darkMode": true,
+    "schedulingMode": "off",
+    "manualSunrise": "06:30",
+    "manualSunset": "18:30",
     "matugenSchemeType": "scheme-fruit-salad",
     "generateTemplatesForPredefined": true
   },
@@ -242,6 +246,7 @@
     "discord_lightcord": false,
     "discord_dorion": false,
     "pywalfox": false,
+    "vicinae": false,
     "enableUserTemplates": false
   },
   "nightLight": {
