@@ -93,6 +93,7 @@ ShellRoot {
         BatteryService.init()
         IdleInhibitorService.init()
         PowerProfileService.init()
+        DistroService.init()
       }
 
       Background {}

@@ -14,6 +14,10 @@ Singleton {
   property bool isNixOS: false
   property bool isReady: false
 
+  function init() {
+    Logger.i("DistroService", "Service started")
+  }
+
   // Internal helpers
   function buildCandidates(name) {
     const n = (name || "").trim()
@@ -77,6 +81,8 @@ Singleton {
           return l ? l.split("=")[1].replace(/"/g, "") : ""
         }
         root.osPretty = val("PRETTY_NAME") || val("NAME")
+        Logger.i("DistroService", root.osPretty)
+
         const osId = (val("ID") || "").toLowerCase()
         root.isNixOS = osId === "nixos" || (root.osPretty || "").toLowerCase().includes("nixos")
         const logoName = val("LOGO")
