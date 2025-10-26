@@ -329,17 +329,17 @@ Singleton {
 
   function shutdown() {
     Logger.i("Compositor", "Shutdown requested")
-    Quickshell.execDetached(["systemctl", "poweroff"])
+    Quickshell.execDetached(["sh", "-c", "systemctl poweroff || loginctl poweroff"])
   }
 
   function reboot() {
     Logger.i("Compositor", "Reboot requested")
-    Quickshell.execDetached(["systemctl", "reboot"])
+    Quickshell.execDetached(["sh", "-c", "systemctl reboot || loginctl reboot"])
   }
 
   function suspend() {
     Logger.i("Compositor", "Suspend requested")
-    Quickshell.execDetached(["systemctl", "suspend"])
+    Quickshell.execDetached(["sh", "-c", "systemctl suspend || loginctl suspend"])
   }
 
   function lockAndSuspend() {
