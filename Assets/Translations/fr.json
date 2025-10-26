@@ -1657,10 +1657,6 @@
       "changed": "Profil d'alimentation changé",
       "profile-name": "\"{profile}\""
     },
-    "audio": {
-      "muted": "Son coupé",
-      "unmuted": "Son rétabli"
-    },
     "battery": {
       "low": "Batterie faible",
       "low-desc": "La batterie est à {percent}%. Veuillez brancher le chargeur."

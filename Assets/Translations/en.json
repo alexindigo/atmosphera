@@ -1657,10 +1657,6 @@
       "changed": "Power profile changed",
       "profile-name": "\"{profile}\""
     },
-    "audio": {
-      "muted": "Muted",
-      "unmuted": "Unmuted"
-    },
     "battery": {
       "low": "Low battery",
       "low-desc": "Battery is at {percent}%. Please connect the charger."

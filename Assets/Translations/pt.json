@@ -1657,10 +1657,6 @@
       "changed": "Perfil de energia alterado",
       "profile-name": "\"{profile}\""
     },
-    "audio": {
-      "muted": "Silenciado",
-      "unmuted": "Som ativado"
-    },
     "battery": {
       "low": "Bateria Fraca",
       "low-desc": "A bateria está em {percent}%. Por favor, conecte o carregador."
