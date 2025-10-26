@@ -40,13 +40,6 @@ Item {
   implicitWidth: pill.width
   implicitHeight: pill.height
 
-  function getIcon() {
-    if (AudioService.inputMuted) {
-      return "microphone-mute"
-    }
-    return (AudioService.inputVolume <= Number.EPSILON) ? "microphone-mute" : "microphone"
-  }
-
   // Connection used to open the pill when input volume changes
   Connections {
     target: AudioService.source?.audio ? AudioService.source?.audio : null
@@ -90,7 +83,7 @@ Item {
     id: pill
 
     oppositeDirection: BarService.getPillDirection(root)
-    icon: getIcon()
+    icon: AudioService.getInputIcon()
     density: Settings.data.bar.density
     autoHide: false // Important to be false so we can hover as long as we want
     text: Math.round(AudioService.inputVolume * 100)

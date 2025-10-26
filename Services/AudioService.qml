@@ -148,4 +148,18 @@ Singleton {
     root._inputVolume = newSource?.audio?.volume ?? 0
     root._inputMuted = !!newSource?.audio?.muted
   }
+
+  function getOutputIcon() {
+    if (muted) {
+      return "volume-mute"
+    }
+    return (volume <= Number.EPSILON) ? "volume-zero" : (volume <= 0.5) ? "volume-low" : "volume-high"
+  }
+
+  function getInputIcon() {
+    if (inputMuted) {
+      return "microphone-mute"
+    }
+    return (inputVolume <= Number.EPSILON) ? "microphone-mute" : "microphone"
+  }
 }
