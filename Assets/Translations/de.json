@@ -505,7 +505,16 @@
         },
         "matugen-scheme-type": {
           "label": "Matugen-Schema-Typ",
-          "description": "Wählen Sie einen Farbstil für Matugen aus."
+          "description": {
+            "scheme-content": "Leitet Farben ab, die eng mit dem zugrunde liegenden Bild übereinstimmen.",
+            "scheme-expressive": "Lebendige Farbpalette mit verspielter Sättigung",
+            "scheme-fidelity": "Farbtreue Palette, die die Originalfarbtöne beibehält",
+            "scheme-fruit-salad": "Farbenfroher Mix aus leuchtenden, kontrastreichen Akzenten",
+            "scheme-monochrome": "Minimale Farbpalette, die auf einem einzigen Farbton basiert.",
+            "scheme-neutral": "Gedämpfte Farbpalette mit dezenten und beruhigenden Tönen.",
+            "scheme-rainbow": "Vielfältige Palette, die das gesamte Spektrum abdeckt",
+            "scheme-tonal-spot": "Ausgewogene Farbpalette mit gezielten Akzenten"
+          }
         }
       },
       "dark-mode": {

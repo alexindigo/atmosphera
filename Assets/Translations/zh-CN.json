@@ -505,7 +505,16 @@
         },
         "matugen-scheme-type": {
           "label": "Matugen 配色方案类型",
-          "description": "为 Matugen 选择配色方案生成算法。"
+          "description": {
+            "scheme-content": "推导出与底层图像紧密匹配的颜色",
+            "scheme-expressive": "充满活力的调色板，色彩饱和度高",
+            "scheme-fidelity": "保留原始色调的高保真调色板",
+            "scheme-fruit-salad": "鲜艳对比色的缤纷组合",
+            "scheme-monochrome": "围绕单一色调构建的极简调色板",
+            "scheme-neutral": "柔和的色调，沉稳平静。",
+            "scheme-rainbow": "涵盖整个光谱的多元调色板",
+            "scheme-tonal-spot": "平衡的色调，重点突出"
+          }
         }
       },
       "dark-mode": {

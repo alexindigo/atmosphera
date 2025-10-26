@@ -505,7 +505,16 @@
         },
         "matugen-scheme-type": {
           "label": "Type de schéma Matugen",
-          "description": "Choisissez l'algorithme de génération de schéma de couleurs pour Matugen."
+          "description": {
+            "scheme-content": "Dérive des couleurs qui correspondent étroitement à l'image sous-jacente.",
+            "scheme-expressive": "Palette vibrante avec une saturation ludique.",
+            "scheme-fidelity": "Palette haute fidélité qui préserve les teintes sources.",
+            "scheme-fruit-salad": "Mélange coloré d'accents vifs et contrastés.",
+            "scheme-monochrome": "Palette minimaliste construite autour d'une seule teinte.",
+            "scheme-neutral": "Palette de couleurs atténuées aux tons doux et apaisants.",
+            "scheme-rainbow": "Palette diversifiée couvrant tout le spectre.",
+            "scheme-tonal-spot": "Palette équilibrée avec des accents ciblés."
+          }
         }
       },
       "dark-mode": {
