@@ -108,9 +108,7 @@ Item {
       AudioService.setInputMuted(!AudioService.inputMuted)
     }
     onRightClicked: {
-      var settingsPanel = PanelService.getPanel("settingsPanel")
-      settingsPanel.requestedTab = SettingsPanel.Tab.Audio
-      settingsPanel.open()
+      PanelService.getPanel("audioPanel")?.toggle(this)
     }
     onMiddleClicked: {
       Quickshell.execDetached(["pwvucontrol"])
