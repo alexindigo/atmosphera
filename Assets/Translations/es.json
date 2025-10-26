@@ -1657,10 +1657,6 @@
       "changed": "Perfil de energía cambiado",
       "profile-name": "\"{profile}\""
     },
-    "audio": {
-      "muted": "Silenciado",
-      "unmuted": "Sonido activado"
-    },
     "battery": {
       "low": "Batería baja",
       "low-desc": "La batería está al {percent}%. Por favor, conecta el cargador."

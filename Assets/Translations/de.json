@@ -1697,10 +1697,6 @@
       "changed": "Energieprofil geändert",
       "profile-name": "\"{profile}\""
     },
-    "audio": {
-      "muted": "Stummgeschaltet",
-      "unmuted": "Lautgeschaltet"
-    },
     "battery": {
       "low": "Niedriger Batteriestand",
       "low-desc": "Batterie ist bei {percent}%. Bitte schließen Sie das Ladegerät an."

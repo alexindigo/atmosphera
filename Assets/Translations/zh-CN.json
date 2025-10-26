@@ -1657,10 +1657,6 @@
       "changed": "电源模式已更改",
       "profile-name": "\"{profile}\""
     },
-    "audio": {
-      "muted": "已静音",
-      "unmuted": "已取消静音"
-    },
     "battery": {
       "low": "电量低",
       "low-desc": "电量为 {percent}%。请连接充电器。"
