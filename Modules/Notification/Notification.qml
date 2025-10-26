@@ -561,6 +561,7 @@ Variants {
               anchors.rightMargin: Style.marginM
 
               onClicked: {
+                NotificationService.removeFromHistory(model.id)
                 animateOut()
               }
             }
