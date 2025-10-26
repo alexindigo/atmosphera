@@ -162,6 +162,10 @@
         "brightness-step": {
           "label": "Incrément de luminosité",
           "description": "Ajustez l'incrément pour les changements de luminosité (molette de la souris et raccourcis clavier)."
+        },
+        "enforce-minimum": {
+          "label": "Imposer une luminosité minimale (1%)",
+          "description": "Résout le problème de l'extinction complète du rétroéclairage sur certains écrans à 0% de luminosité."
         }
       },
       "night-light": {

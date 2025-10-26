@@ -162,6 +162,10 @@
         "brightness-step": {
           "label": "Tamaño del paso de brillo",
           "description": "Ajusta el tamaño del paso para los cambios de brillo (rueda de desplazamiento y atajos de teclado)."
+        },
+        "enforce-minimum": {
+          "label": "Forzar brillo mínimo (1%)",
+          "description": "Resuelve el problema de la retroiluminación que se apaga completamente en algunas pantallas al 0% de brillo."
         }
       },
       "night-light": {

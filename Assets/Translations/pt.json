@@ -162,6 +162,10 @@
         "brightness-step": {
           "label": "Tamanho do passo do brilho",
           "description": "Ajuste o tamanho do passo para alterações de brilho (roda do mouse e atalhos de teclado)."
+        },
+        "enforce-minimum": {
+          "label": "Forçar brilho mínimo (1%)",
+          "description": "Resolve o problema da retroiluminação apagar completamente em alguns monitores com brilho em 0%."
         }
       },
       "night-light": {
