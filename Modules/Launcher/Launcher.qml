@@ -325,13 +325,17 @@ NPanel {
             // Override the TextField's default Home/End behavior
             searchInput.inputItem.Keys.priority = Keys.BeforeItem
             searchInput.inputItem.Keys.onPressed.connect(function (event) {
-              // Intercept Home and End BEFORE the TextField handles them
+              // Intercept Home, End, and Numpad Enter BEFORE the TextField handles them
               if (event.key === Qt.Key_Home) {
                 ui.selectFirst()
                 event.accepted = true
                 return
               } else if (event.key === Qt.Key_End) {
                 ui.selectLast()
+                event.accepted = true
+                return
+              } else if (event.key === Qt.Key_Enter) {
+                ui.activate()
                 event.accepted = true
                 return
               }
