@@ -256,10 +256,10 @@ ColumnLayout {
                }
   }
 
-  // Matugen Scheme Type Selection
+  // Matugen Scheme Type Selection [Descriptions sourced from DankMaterialShell]
   NComboBox {
     label: I18n.tr("settings.color-scheme.color-source.matugen-scheme-type.label")
-    description: I18n.tr("settings.color-scheme.color-source.matugen-scheme-type.description")
+    description: I18n.tr("settings.color-scheme.color-source.matugen-scheme-type.description." + Settings.data.colorSchemes.matugenSchemeType)
     enabled: Settings.data.colorSchemes.useWallpaperColors
     opacity: Settings.data.colorSchemes.useWallpaperColors ? 1.0 : 0.6
     visible: Settings.data.colorSchemes.useWallpaperColors
