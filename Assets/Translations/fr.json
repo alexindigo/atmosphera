@@ -1213,6 +1213,12 @@
           "label": "Coloriser les icônes",
           "description": "Appliquer les couleurs du thème aux icônes de la barre système."
         }
+      },
+      "audio-visualizer": {
+        "width": {
+          "label": "Largeur",
+          "description": "Largeur personnalisée du composant."
+        }
       }
     }
   },

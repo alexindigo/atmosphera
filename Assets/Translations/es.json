@@ -1213,6 +1213,12 @@
           "label": "Colorear iconos",
           "description": "Aplicar colores del tema a los iconos de la bandeja del sistema."
         }
+      },
+      "audio-visualizer": {
+        "width": {
+          "label": "Ancho",
+          "description": "Ancho del componente personalizado."
+        }
       }
     }
   },
