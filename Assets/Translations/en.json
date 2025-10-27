@@ -509,16 +509,16 @@
         },
         "matugen-scheme-type": {
           "label": "Matugen scheme type",
-            "description": {
-              "scheme-content": "Derives colors that closely match the underlying image",
-              "scheme-expressive": "Vibrant palette with playful saturation",
-              "scheme-fidelity": "High-fidelity palette that preserves source hues",
-              "scheme-fruit-salad": "Colorful mix of bright contrasting accents",
-              "scheme-monochrome": "Minimal palette built around a single hue",
-              "scheme-neutral": "Muted palette with subdued and calming tones",
-              "scheme-rainbow": "Diverse palette spanning the full spectrum",
-              "scheme-tonal-spot": "Balanced palette with focused accents"
-            }
+          "description": {
+            "scheme-content": "Derives colors that closely match the underlying image",
+            "scheme-expressive": "Vibrant palette with playful saturation",
+            "scheme-fidelity": "High-fidelity palette that preserves source hues",
+            "scheme-fruit-salad": "Colorful mix of bright contrasting accents",
+            "scheme-monochrome": "Minimal palette built around a single hue",
+            "scheme-neutral": "Muted palette with subdued and calming tones",
+            "scheme-rainbow": "Diverse palette spanning the full spectrum",
+            "scheme-tonal-spot": "Balanced palette with focused accents"
+          }
         }
       },
       "dark-mode": {
@@ -1337,7 +1337,9 @@
     "play": "Play",
     "next-media": "Next media",
     "power-profile": "'{profile}' power profile",
-    "keyboard-layout": "{layout} keyboard layout"
+    "keyboard-layout": "{layout} keyboard layout",
+    "output-muted": "Muted audio output",
+    "input-muted": "Muted audio input"
   },
   "clock": {
     "tooltip": "Open calendar"

@@ -1345,7 +1345,9 @@
     "play": "播放",
     "next-media": "下一媒体",
     "power-profile": "'{profile}' 电源模式",
-    "keyboard-layout": "{layout} 键盘布局"
+    "keyboard-layout": "{layout} 键盘布局",
+    "output-muted": "静音输出设备",
+    "input-muted": "静音输入设备"
   },
   "clock": {
     "tooltip": "打开日历"
