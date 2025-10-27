@@ -123,6 +123,7 @@ Popup {
   function loadWidgetSettings() {
     const widgetSettingsMap = {
       "ActiveWindow": "WidgetSettings/ActiveWindowSettings.qml",
+      "AudioVisualizer": "WidgetSettings/AudioVisualizerSettings.qml",
       "Battery": "WidgetSettings/BatterySettings.qml",
       "Bluetooth": "WidgetSettings/BluetoothSettings.qml",
       "Brightness": "WidgetSettings/BrightnessSettings.qml",
