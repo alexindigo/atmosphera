@@ -1345,7 +1345,9 @@
     "play": "Reproducir",
     "next-media": "Siguiente medio",
     "power-profile": "Perfil de energía '{profile}'",
-    "keyboard-layout": "Distribución de teclado {layout}"
+    "keyboard-layout": "Distribución de teclado {layout}",
+    "output-muted": "Silenciar salida de audio",
+    "input-muted": "Silenciar entrada de audio"
   },
   "clock": {
     "tooltip": "Abrir calendario"

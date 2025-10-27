@@ -1362,7 +1362,9 @@
     "play": "Wiedergeben",
     "next-media": "Nächstes Medium",
     "power-profile": "'{profile}' Energieprofil",
-    "keyboard-layout": "{layout} Tastaturlayout"
+    "keyboard-layout": "{layout} Tastaturlayout",
+    "output-muted": "Audio-Ausgabe stummschalten",
+    "input-muted": "Audio-Eingabe stummschalten"
   },
   "clock": {
     "tooltip": "Kalender öffnen"
