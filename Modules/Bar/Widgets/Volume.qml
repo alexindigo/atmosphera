@@ -96,7 +96,7 @@ Item {
       PanelService.getPanel("audioPanel")?.toggle(this)
     }
     onMiddleClicked: {
-      Quickshell.execDetached(["sh" "-c" "pwvucontrol || pavucontrol"])
+      Quickshell.execDetached(["sh", "-c", "pwvucontrol || pavucontrol"])
     }
   }
 }
