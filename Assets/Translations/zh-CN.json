@@ -445,6 +445,10 @@
           "description": "您的主壁纸文件夹路径。",
           "tooltip": "浏览壁纸文件夹"
         },
+        "recursive-search": {
+          "label": "搜索子文件夹",
+          "description": "同时在壁纸目录的子文件夹中搜索壁纸。"
+        },
         "monitor-specific": {
           "label": "显示器特定目录",
           "description": "为每个显示器设置不同的壁纸文件夹。",

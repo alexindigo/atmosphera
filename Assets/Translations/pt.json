@@ -407,6 +407,10 @@
           "description": "Caminho para a sua pasta principal de papéis de parede.",
           "tooltip": "Procurar pasta de papéis de parede"
         },
+        "recursive-search": {
+          "label": "Buscar em subpastas",
+          "description": "Também buscar papéis de parede em subpastas do diretório de papéis de parede."
+        },
         "monitor-specific": {
           "label": "Diretórios específicos por monitor",
           "description": "Defina uma pasta de papel de parede diferente para cada monitor.",

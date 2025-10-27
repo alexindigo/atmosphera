@@ -445,6 +445,10 @@
           "description": "Pfad zu Ihrem Haupt-Hintergrundbild-Ordner.",
           "tooltip": "Nach Hintergrundbild-Ordner suchen"
         },
+        "recursive-search": {
+          "label": "Unterordner durchsuchen",
+          "description": "Auch nach Hintergrundbildern in Unterordnern des Hintergrundbild-Verzeichnisses suchen."
+        },
         "monitor-specific": {
           "label": "Monitor-spezifische Verzeichnisse",
           "description": "Unterschiedlichen Hintergrundbild-Ordner für jeden Monitor festlegen.",

@@ -72,6 +72,9 @@ Singleton {
     function onRandomIntervalSecChanged() {
       root.restartRandomWallpaperTimer()
     }
+    function onRecursiveSearchChanged() {
+      root.refreshWallpapersList()
+    }
   }
 
   // -------------------------------------------------
@@ -355,18 +358,92 @@ Singleton {
 
   // -------------------------------------------------------------------
   function refreshWallpapersList() {
-    Logger.d("Wallpaper", "refreshWallpapersList")
+    Logger.d("Wallpaper", "refreshWallpapersList", "recursive:", Settings.data.wallpaper.recursiveSearch)
     scanningCount = 0
 
-    // Force refresh by toggling the folder property on each FolderListModel
-    for (var i = 0; i < wallpaperScanners.count; i++) {
-      var scanner = wallpaperScanners.objectAt(i)
-      if (scanner) {
-        var currentFolder = scanner.folder
-        scanner.folder = ""
-        scanner.folder = currentFolder
+    if (Settings.data.wallpaper.recursiveSearch) {
+      // Use Process-based recursive search for all screens
+      for (var i = 0; i < Quickshell.screens.length; i++) {
+        var screenName = Quickshell.screens[i].name
+        var directory = getMonitorDirectory(screenName)
+        scanDirectoryRecursive(screenName, directory)
+      }
+    } else {
+      // Use FolderListModel (non-recursive)
+      for (var i = 0; i < wallpaperScanners.count; i++) {
+        var scanner = wallpaperScanners.objectAt(i)
+        if (scanner) {
+          var currentFolder = scanner.folder
+          scanner.folder = ""
+          scanner.folder = currentFolder
+        }
       }
     }
+  }
+
+  // Process instances for recursive scanning (one per screen)
+  property var recursiveProcesses: ({})
+
+  // -------------------------------------------------------------------
+  function scanDirectoryRecursive(screenName, directory) {
+    if (!directory || directory === "") {
+      Logger.w("Wallpaper", "Empty directory for", screenName)
+      wallpaperLists[screenName] = []
+      wallpaperListChanged(screenName, 0)
+      return
+    }
+
+    scanningCount++
+    Logger.i("Wallpaper", "Starting recursive scan for", screenName, "in", directory)
+
+    // Create Process component inline
+    var processComponent = Qt.createComponent("", root)
+    var processString = `
+    import QtQuick
+    import Quickshell.Io
+    Process {
+    id: process
+    command: ["find", "` + directory + `", "-type", "f", "(", "-iname", "*.jpg", "-o", "-iname", "*.jpeg", "-o", "-iname", "*.png", "-o", "-iname", "*.gif", "-o", "-iname", "*.pnm", "-o", "-iname", "*.bmp", ")"]
+    stdout: StdioCollector {}
+    stderr: StdioCollector {}
+    }
+    `
+
+    var processObject = Qt.createQmlObject(processString, root, "RecursiveScan_" + screenName)
+
+    // Store reference to avoid garbage collection
+    recursiveProcesses[screenName] = processObject
+
+    var handler = function (exitCode) {
+      scanningCount--
+      Logger.d("Wallpaper", "Process exited with code", exitCode, "for", screenName)
+      if (exitCode === 0) {
+        var lines = processObject.stdout.text.split('\n')
+        var files = []
+        for (var i = 0; i < lines.length; i++) {
+          var line = lines[i].trim()
+          if (line !== '') {
+            files.push(line)
+          }
+        }
+        // Sort files for consistent ordering
+        files.sort()
+        wallpaperLists[screenName] = files
+        Logger.i("Wallpaper", "Recursive scan completed for", screenName, "found", files.length, "files")
+        wallpaperListChanged(screenName, files.length)
+      } else {
+        Logger.e("Wallpaper", "Recursive scan failed for", screenName, "exit code:", exitCode, "stderr:", processObject.stderr.text)
+        wallpaperLists[screenName] = []
+        wallpaperListChanged(screenName, 0)
+      }
+      // Clean up
+      delete recursiveProcesses[screenName]
+      processObject.destroy()
+    }
+
+    processObject.exited.connect(handler)
+    Logger.d("Wallpaper", "Starting process for", screenName)
+    processObject.running = true
   }
 
   // -------------------------------------------------------------------

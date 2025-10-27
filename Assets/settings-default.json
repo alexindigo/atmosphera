@@ -93,6 +93,7 @@
     "enabled": true,
     "directory": "",
     "enableMultiMonitorDirectories": false,
+    "recursiveSearch": false,
     "setWallpaperOnAllMonitors": true,
     "defaultWallpaper": "",
     "fillMode": "crop",

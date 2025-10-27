@@ -224,6 +224,7 @@ Singleton {
       property bool enabled: true
       property string directory: ""
       property bool enableMultiMonitorDirectories: false
+      property bool recursiveSearch: false
       property bool setWallpaperOnAllMonitors: true
       property string defaultWallpaper: ""
       property string fillMode: "crop"

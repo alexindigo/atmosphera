@@ -44,6 +44,14 @@ ColumnLayout {
       onButtonClicked: mainFolderPicker.open()
     }
 
+    // Recursive search
+    NToggle {
+      label: I18n.tr("settings.wallpaper.settings.recursive-search.label")
+      description: I18n.tr("settings.wallpaper.settings.recursive-search.description")
+      checked: Settings.data.wallpaper.recursiveSearch
+      onToggled: checked => Settings.data.wallpaper.recursiveSearch = checked
+    }
+
     // Monitor-specific directories
     NToggle {
       label: I18n.tr("settings.wallpaper.settings.monitor-specific.label")

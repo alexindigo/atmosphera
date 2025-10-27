@@ -445,6 +445,10 @@
           "description": "Chemin vers votre dossier principal de fonds d'écran.",
           "tooltip": "Parcourir le dossier des fonds d'écran"
         },
+        "recursive-search": {
+          "label": "Rechercher dans les sous-dossiers",
+          "description": "Rechercher également des fonds d'écran dans les sous-dossiers du répertoire des fonds d'écran."
+        },
         "monitor-specific": {
           "label": "Dossiers spécifiques au moniteur",
           "description": "Définissez un dossier de fond d'écran différent pour chaque moniteur.",

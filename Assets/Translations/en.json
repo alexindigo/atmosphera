@@ -445,6 +445,10 @@
           "description": "Path to your main wallpaper folder.",
           "tooltip": "Browse for wallpaper folder"
         },
+        "recursive-search": {
+          "label": "Search subfolders",
+          "description": "Also search for wallpapers in subfolders of the wallpaper directory."
+        },
         "monitor-specific": {
           "label": "Monitor-specific directories",
           "description": "Set a different wallpaper folder for each monitor.",

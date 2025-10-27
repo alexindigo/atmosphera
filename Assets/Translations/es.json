@@ -445,6 +445,10 @@
           "description": "Ruta a tu carpeta principal de fondos de pantalla.",
           "tooltip": "Buscar carpeta de fondos de pantalla"
         },
+        "recursive-search": {
+          "label": "Buscar en subcarpetas",
+          "description": "Buscar fondos de pantalla también en subcarpetas del directorio de fondos de pantalla."
+        },
         "monitor-specific": {
           "label": "Directorios específicos por monitor",
           "description": "Establece una carpeta de fondos de pantalla diferente para cada monitor.",
