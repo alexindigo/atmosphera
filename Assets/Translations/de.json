@@ -1230,6 +1230,12 @@
           "label": "Symbole einfärben",
           "description": "Theme-Farben auf Tray-Symbole anwenden."
         }
+      },
+      "audio-visualizer": {
+        "width": {
+          "label": "Breite",
+          "description": "Benutzerdefinierte Komponentenbreite."
+        }
       }
     }
   },

@@ -1213,6 +1213,12 @@
           "label": "着色图标",
           "description": "将主题颜色应用到系统托盘图标。"
         }
+      },
+      "audio-visualizer": {
+        "width": {
+          "label": "宽度",
+          "description": "自定义组件的宽度。"
+        }
       }
     }
   },
