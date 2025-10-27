@@ -1005,10 +1005,11 @@ Loader {
 
                         // Password display - show dots or actual text based on passwordVisible
                         Item {
-                          width: passwordDisplayContent.width
+                          width: Math.min(passwordDisplayContent.width, 550)
                           height: 20
                           visible: passwordInput.text.length > 0 && !parent.parent.parent.passwordVisible
                           anchors.verticalCenter: parent.verticalCenter
+                          clip: true
 
                           Row {
                             id: passwordDisplayContent
@@ -1035,6 +1036,8 @@ Loader {
                           font.weight: Font.Medium
                           visible: passwordInput.text.length > 0 && parent.parent.parent.passwordVisible
                           anchors.verticalCenter: parent.verticalCenter
+                          elide: Text.ElideRight
+                          width: Math.min(implicitWidth, 550)
                         }
 
                         Rectangle {
