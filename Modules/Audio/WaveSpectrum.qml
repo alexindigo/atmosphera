@@ -8,12 +8,18 @@ Item {
   property int strokeWidth: 0
   property var values: []
 
+  // Minimum signal properties
+  property bool showMinimumSignal: false
+  property real minimumSignalValue: 0.05 // Default to 5% of height
+
   // Redraw when necessary
   onWidthChanged: canvas.requestPaint()
   onHeightChanged: canvas.requestPaint()
   onValuesChanged: canvas.requestPaint()
   onFillColorChanged: canvas.requestPaint()
   onStrokeColorChanged: canvas.requestPaint()
+  onShowMinimumSignalChanged: canvas.requestPaint()
+  onMinimumSignalValueChanged: canvas.requestPaint()
 
   Canvas {
     id: canvas
@@ -28,9 +34,14 @@ Item {
         return
       }
 
+      // Apply minimum signal if enabled
+      var processedValues = values.map(function (v) {
+        return (root.showMinimumSignal && v === 0) ? root.minimumSignalValue : v
+      })
+
       // Create the mirrored values
-      const partToMirror = values.slice(1).reverse()
-      const mirroredValues = partToMirror.concat(values)
+      const partToMirror = processedValues.slice(1).reverse()
+      const mirroredValues = partToMirror.concat(processedValues)
 
       if (mirroredValues.length < 2) {
         return

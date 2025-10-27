@@ -89,18 +89,13 @@ Item {
     acceptedButtons: Qt.LeftButton
 
     onClicked: mouse => {
-                 console.log("CavaVisualizer clicked! Current type:", currentVisualizerType)
                  const types = ["linear", "mirrored", "wave"]
                  const currentIndex = types.indexOf(currentVisualizerType)
                  const nextIndex = (currentIndex + 1) % types.length
                  const newType = types[nextIndex]
 
-                 console.log("Switching from", currentVisualizerType, "to", newType)
-
                  // Update settings directly
                  Settings.data.audio.visualizerType = newType
-
-                 console.log("Settings saved")
                }
   }
 
@@ -116,6 +111,7 @@ Item {
     LinearSpectrum {
       anchors.fill: parent
       values: CavaService.values
+      showMinimumSignal: true
       fillColor: Color.mPrimary
     }
   }
@@ -125,6 +121,7 @@ Item {
     MirroredSpectrum {
       anchors.fill: parent
       values: CavaService.values
+      showMinimumSignal: true
       fillColor: Color.mPrimary
     }
   }
@@ -134,6 +131,7 @@ Item {
     WaveSpectrum {
       anchors.fill: parent
       values: CavaService.values
+      showMinimumSignal: true
       fillColor: Color.mPrimary
     }
   }
