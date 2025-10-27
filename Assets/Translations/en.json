@@ -1333,6 +1333,7 @@
     "open-control-center": "Open control center",
     "volume-at": "Volume at {volume}%\nLeft click to toggle mute. Right click for settings.\nScroll to modify volume.",
     "microphone-volume-at": "Microphone volume at {volume}%\nLeft click to toggle mute. Right click for settings.\nScroll to modify volume.",
+    "brightness-at": "Brightness: {brightness}%\nRight click for settings.\nScroll to modify brightness.",
     "manage-wifi": "Manage Wi-Fi",
     "bluetooth-devices": "Bluetooth devices",
     "open-notification-history-enable-dnd": "Open notification history\nRight-click to enable \"Do not disturb\".",

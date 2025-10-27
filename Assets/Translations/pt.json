@@ -1341,6 +1341,7 @@
     "open-control-center": "Abrir central de controle",
     "volume-at": "Volume em {volume}%\nClique esquerdo para silenciar. Clique direito para configurações.\nRole para modificar o volume.",
     "microphone-volume-at": "Volume do microfone em {volume}%\nClique esquerdo para silenciar. Clique direito para configurações.\nRole para modificar o volume.",
+    "brightness-at": "Brilho: {brightness}%\nClique direito para configurações.\nRole para modificar o brilho.",
     "manage-wifi": "Gerenciar Wi-Fi",
     "bluetooth-devices": "Dispositivos Bluetooth",
     "open-notification-history-enable-dnd": "Abrir histórico de notificações\nClique direito para ativar \"Não perturbe\".",
