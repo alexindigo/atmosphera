@@ -92,8 +92,8 @@ Item {
       if (!monitor)
         return ""
       return I18n.tr("tooltips.brightness-at", {
-                      "brightness": Math.round(monitor.brightness * 100)
-                    })
+                       "brightness": Math.round(monitor.brightness * 100)
+                     })
     }
 
     onWheel: function (angle) {
