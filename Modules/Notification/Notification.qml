@@ -185,9 +185,9 @@ Variants {
             Layout.maximumHeight: Layout.preferredHeight
 
             radius: Style.radiusL
-            border.color: Color.mOutline
+            border.color: Qt.alpha(Color.mOutline, Settings.data.notifications.backgroundOpacity || 1.0)
             border.width: Style.borderS
-            color: Color.mSurface
+            color: Qt.alpha(Color.mSurface, Settings.data.notifications.backgroundOpacity || 1.0)
 
             // Optimized progress bar container
             Rectangle {
@@ -212,12 +212,14 @@ Variants {
                 width: parent.availableWidth * model.progress
 
                 color: {
+                  var baseColor
                   if (model.urgency === NotificationUrgency.Critical || model.urgency === 2)
-                    return Color.mError
+                    baseColor = Color.mError
                   else if (model.urgency === NotificationUrgency.Low || model.urgency === 0)
-                    return Color.mOnSurface
+                    baseColor = Color.mOnSurface
                   else
-                    return Color.mPrimary
+                    baseColor = Color.mPrimary
+                  return Qt.alpha(baseColor, Settings.data.notifications.backgroundOpacity || 1.0)
                 }
 
                 antialiasing: true

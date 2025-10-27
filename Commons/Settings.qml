@@ -318,6 +318,7 @@ Singleton {
       property list<string> monitors: []
       property string location: "top_right"
       property bool overlayLayer: true
+      property real backgroundOpacity: 1.0
       property bool respectExpireTimeout: false
       property int lowUrgencyDuration: 3
       property int normalUrgencyDuration: 8

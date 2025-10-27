@@ -360,6 +360,10 @@
         "always-on-top": {
           "label": "Toujours au premier plan",
           "description": "Afficher les notifications au-dessus des fenêtres en plein écran et des autres applications."
+        },
+        "background-opacity": {
+          "label": "Opacité du fond",
+          "description": "Ajuster l'opacité des arrière-plans de notifications."
         }
       },
       "duration": {

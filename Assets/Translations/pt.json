@@ -360,6 +360,10 @@
         "always-on-top": {
           "label": "Sempre no topo",
           "description": "Exibe notificações acima de janelas em tela cheia e outras camadas."
+        },
+        "background-opacity": {
+          "label": "Opacidade do fundo",
+          "description": "Ajustar a opacidade dos fundos das notificações."
         }
       },
       "duration": {

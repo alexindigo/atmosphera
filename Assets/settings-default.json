@@ -189,6 +189,7 @@
     "monitors": [],
     "location": "top_right",
     "overlayLayer": true,
+    "backgroundOpacity": 1,
     "respectExpireTimeout": false,
     "lowUrgencyDuration": 3,
     "normalUrgencyDuration": 8,

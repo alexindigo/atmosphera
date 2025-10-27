@@ -360,6 +360,10 @@
         "always-on-top": {
           "label": "Siempre visible",
           "description": "Muestra las notificaciones sobre ventanas a pantalla completa y otras capas."
+        },
+        "background-opacity": {
+          "label": "Opacidad del fondo",
+          "description": "Ajustar la opacidad de los fondos de las notificaciones."
         }
       },
       "duration": {

@@ -360,6 +360,10 @@
         "always-on-top": {
           "label": "Always on top",
           "description": "Display notifications above fullscreen windows and other layers."
+        },
+        "background-opacity": {
+          "label": "Background opacity",
+          "description": "Adjust the opacity of notification backgrounds."
         }
       },
       "duration": {

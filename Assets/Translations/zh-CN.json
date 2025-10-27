@@ -360,6 +360,10 @@
         "always-on-top": {
           "label": "始终置顶",
           "description": "在全屏窗口和其他图层上方显示通知。"
+        },
+        "background-opacity": {
+          "label": "背景透明度",
+          "description": "调整通知背景的透明度。"
         }
       },
       "duration": {

@@ -360,6 +360,10 @@
         "always-on-top": {
           "label": "Immer im Vordergrund",
           "description": "Benachrichtigungen über Vollbildfenstern und anderen Ebenen anzeigen."
+        },
+        "background-opacity": {
+          "label": "Hintergrund-Transparenz",
+          "description": "Transparenz der Benachrichtigungshintergründe anpassen."
         }
       },
       "duration": {
