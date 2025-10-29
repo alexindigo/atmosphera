@@ -683,23 +683,23 @@ ColumnLayout {
                      }
                    }
       }
-      // NCheckbox {
-      //   label: "Walker"
-      //   description: ProgramCheckerService.walkerAvailable ? I18n.tr("settings.color-scheme.templates.programs.walker.description", {
-      //                                                                    "filepath": "~/.config/walker/style.css"
-      //                                                                  }) : I18n.tr("settings.color-scheme.templates.programs.walker.description-missing", {
-      //                                                                                 "app": "walker"
-      //                                                                               })
-      //   checked: Settings.data.templates.walker
-      //   enabled: ProgramCheckerService.walkerAvailable
-      //   opacity: ProgramCheckerService.walkerAvailable ? 1.0 : 0.6
-      //   onToggled: checked => {
-      //                if (ProgramCheckerService.walkerAvailable) {
-      //                  Settings.data.templates.walker = checked
-      //                  AppThemeService.generate()
-      //                }
-      //              }
-      // }
+      NCheckbox {
+        label: "Walker"
+        description: ProgramCheckerService.walkerAvailable ? I18n.tr("settings.color-scheme.templates.programs.walker.description", {
+                                                                         "filepath": "~/.config/walker/style.css"
+                                                                       }) : I18n.tr("settings.color-scheme.templates.programs.walker.description-missing", {
+                                                                                      "app": "walker"
+                                                                                    })
+        checked: Settings.data.templates.walker
+        enabled: ProgramCheckerService.walkerAvailable
+        opacity: ProgramCheckerService.walkerAvailable ? 1.0 : 0.6
+        onToggled: checked => {
+                     if (ProgramCheckerService.walkerAvailable) {
+                       Settings.data.templates.walker = checked
+                       AppThemeService.generate()
+                     }
+                   }
+      }
     }
 
     // Miscellaneous
