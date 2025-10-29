@@ -1136,6 +1136,10 @@
         "collapse-condition": {
           "label": "Condition d’effondrement",
           "description": "Si le texte de sortie correspond à cette valeur, le bouton se repliera."
+        },
+        "parse-json": {
+          "label": "Analyser la sortie en JSON",
+          "description": "Analyser la sortie de la commande en tant qu'objet JSON pour définir dynamiquement le texte et l'icône."
         }
       },
       "media-mini": {
