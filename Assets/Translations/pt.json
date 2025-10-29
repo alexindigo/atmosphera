@@ -1234,6 +1234,10 @@
         "width": {
           "label": "Largura",
           "description": "Largura do componente personalizado."
+        },
+        "hide-when-idle": {
+          "label": "Ocultar quando não houver reprodução",
+          "description": "Quando ativado, o visualizador fica oculto a menos que haja reprodução ativa."
         }
       }
     }

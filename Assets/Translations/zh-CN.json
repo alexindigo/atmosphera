@@ -1234,6 +1234,10 @@
         "width": {
           "label": "宽度",
           "description": "自定义组件的宽度。"
+        },
+        "hide-when-idle": {
+          "label": "无媒体播放时隐藏",
+          "description": "启用后，除非正在播放媒体，否则隐藏可视化显示。"
         }
       }
     }

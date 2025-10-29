@@ -1251,6 +1251,10 @@
         "width": {
           "label": "Breite",
           "description": "Benutzerdefinierte Komponentenbreite."
+        },
+        "hide-when-idle": {
+          "label": "Ausblenden, wenn keine Medien wiedergegeben werden",
+          "description": "Wenn aktiviert, wird der Visualizer ausgeblendet, sofern keine Wiedergabe läuft."
         }
       }
     }
