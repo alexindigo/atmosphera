@@ -669,10 +669,10 @@ ColumnLayout {
       NCheckbox {
         label: "Vicinae"
         description: ProgramCheckerService.vicinaeAvailable ? I18n.tr("settings.color-scheme.templates.programs.vicinae.description", {
-                                                                        "filepath": "~/.local/share/vicinae/themes/matugen.toml"
-                                                                      }) : I18n.tr("settings.color-scheme.templates.programs.vicinae.description-missing", {
-                                                                                     "app": "vicinae"
-                                                                                   })
+                                                                       "filepath": "~/.local/share/vicinae/themes/matugen.toml"
+                                                                     }) : I18n.tr("settings.color-scheme.templates.programs.vicinae.description-missing", {
+                                                                                    "app": "vicinae"
+                                                                                  })
         checked: Settings.data.templates.vicinae
         enabled: ProgramCheckerService.vicinaeAvailable
         opacity: ProgramCheckerService.vicinaeAvailable ? 1.0 : 0.6
@@ -683,6 +683,23 @@ ColumnLayout {
                      }
                    }
       }
+      // NCheckbox {
+      //   label: "Walker"
+      //   description: ProgramCheckerService.walkerAvailable ? I18n.tr("settings.color-scheme.templates.programs.walker.description", {
+      //                                                                    "filepath": "~/.config/walker/style.css"
+      //                                                                  }) : I18n.tr("settings.color-scheme.templates.programs.walker.description-missing", {
+      //                                                                                 "app": "walker"
+      //                                                                               })
+      //   checked: Settings.data.templates.walker
+      //   enabled: ProgramCheckerService.walkerAvailable
+      //   opacity: ProgramCheckerService.walkerAvailable ? 1.0 : 0.6
+      //   onToggled: checked => {
+      //                if (ProgramCheckerService.walkerAvailable) {
+      //                  Settings.data.templates.walker = checked
+      //                  AppThemeService.generate()
+      //                }
+      //              }
+      // }
     }
 
     // Miscellaneous

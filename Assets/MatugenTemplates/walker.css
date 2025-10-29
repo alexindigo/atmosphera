@@ -1,0 +1,188 @@
+@define-color surface {{colors.surface_variant.default.hex}};
+@define-color overlay {{colors.surface.default.hex}};
+@define-color text {{colors.on_surface.default.hex}};
+
+@define-color green {{colors.primary.default.hex}};
+@define-color yellow {{colors.secondary.default.hex}};
+@define-color red {{colors.error.default.hex}};
+@define-color blue {{colors.primary.default.hex}};
+
+@define-color outline {{colors.outline.default.hex}};
+
+* {
+  all: unset;
+}
+
+.normal-icons {
+  -gtk-icon-size: 16px;
+}
+
+.large-icons {
+  -gtk-icon-size: 36px;
+}
+
+scrollbar {
+  opacity: 0;
+}
+
+.box-wrapper {
+  box-shadow:
+    0 19px 38px rgba(0, 0, 0, 0.3),
+    0 15px 12px rgba(0, 0, 0, 0.22);
+  background: @surface;
+  padding: 12px;
+  border-radius: 20px;
+  border: 2px solid @outline;
+}
+
+.preview-box,
+.elephant-hint,
+.placeholder {
+  color: @text;
+}
+
+.box {
+  background: @overlay;
+  padding: 20px;
+  border-radius: 20px;
+  border: 2px solid @outline;
+}
+
+.search-container {
+  border-radius: 10px;
+  border: 2px solid @outline;
+}
+
+.input placeholder {
+  opacity: 0.5;
+}
+
+.input {
+  background: @surface;
+  color: @text;
+  caret-color: @text;
+  padding: 10px;
+}
+
+.input:focus,
+.input:active {
+}
+
+.content-container {
+}
+
+.placeholder {
+}
+
+.scroll {
+}
+
+.list {
+  color: @text;
+}
+
+child {
+}
+
+.item-box {
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.item-quick-activation {
+  background: @blue;
+  border-radius: 10px;
+  padding: 10px;
+  color: @surface;
+}
+
+child:hover .item-box,
+child:selected .item-box {
+ background: alpha(@blue, 0.4);
+}
+
+.item-text-box {
+}
+
+.item-subtext {
+  font-size: 12px;
+  opacity: 0.5;
+}
+
+.providerlist .item-subtext {
+  font-size: unset;
+  opacity: 0.75;
+}
+
+.item-image-text {
+  font-size: 28px;
+}
+
+.preview {
+  border-top: 1px solid @blue;
+  padding: 10px;
+  border-radius: 10px;
+  color: @text;
+}
+
+.calc .item-text {
+  font-size: 24px;
+}
+
+.calc .item-subtext {
+}
+
+.symbols .item-image {
+  font-size: 24px;
+}
+
+.todo.done .item-text-box {
+  opacity: 0.25;
+}
+
+.todo.urgent {
+  font-size: 24px;
+}
+
+.todo.active {
+  font-weight: bold;
+}
+
+.bluetooth.disconnected {
+  opacity: 0.5;
+}
+
+.preview .large-icons {
+  -gtk-icon-size: 64px;
+}
+
+.keybinds-wrapper {
+  border-top: 1px solid @blue;
+  font-size: 12px;
+  color: @blue;
+}
+
+.keybinds {
+}
+
+.keybind {
+}
+
+.keybind-bind {
+  font-weight: bold;
+  text-transform: lowercase;
+}
+
+.keybind-label {
+}
+
+.error {
+  padding: 10px;
+  background: @red;
+  color: @surface;
+}
+
+:not(.calc).current {
+  font-style: italic;
+}
+

@@ -593,6 +593,10 @@
             "description": "Escribir {filepath} y recargar",
             "description-missing": "Requiere que {app} esté instalado"
           },
+          "walker": {
+            "description": "Escribir {filepath}",
+            "description-missing": "Requiere que {app} esté instalado"
+          },
           "discord": {
             "description": "Escribir {filepath} para {client}",
             "description-missing": "No se detectó cliente de Discord. Instala vencord, vesktop, webcord, armcord, equibop, lightcord o dorion."

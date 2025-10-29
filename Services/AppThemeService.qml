@@ -109,6 +109,12 @@ Singleton {
                                                             "path": "~/.local/share/vicinae/themes/matugen.toml"
                                                           }],
                                                         "postProcess": () => `cp -n ${Quickshell.shellDir}/Assets/noctalia.svg ~/.local/share/vicinae/themes/noctalia.svg && ${colorsApplyScript} vicinae\n`
+                                                      },
+                                                      "walker": {
+                                                        "input": "walker.css",
+                                                        "outputs": [{
+                                                            "path": "~/.config/walker/themes/noctalia/style.css"
+                                                          }]
                                                       }
                                                     })
 
