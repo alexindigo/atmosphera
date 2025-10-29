@@ -198,7 +198,7 @@ Singleton {
     const mode = isDarkMode ? "dark" : "light"
     const colors = schemeData[mode]
 
-    const matugenColors = generatePalette(colors.mPrimary, colors.mSecondary, colors.mTertiary, colors.mError, colors.mSurface, isDarkMode)
+    const matugenColors = generatePalette(colors.mPrimary, colors.mSecondary, colors.mTertiary, colors.mError, colors.mSurface, colors.mOutline, isDarkMode)
     let script = processAllTemplates(matugenColors, mode)
 
     // Add user templates if enabled
@@ -252,7 +252,7 @@ Singleton {
     const surfaceContainerHighest = ColorsConvert.generateSurfaceVariant(backgroundColor, 4, isDarkMode)
 
     // Generate outline colors (for borders/dividers)
-    const outline = isDarkMode ? "#938f99" : "#79747e"
+    const outline = outlineColor
     const outlineVariant = ColorsConvert.adjustLightness(outline, isDarkMode ? -10 : 10)
 
     // Shadow is always very dark
@@ -410,7 +410,7 @@ Singleton {
     const colors = schemeData[mode]
 
     // Generate the matugen palette JSON
-    const matugenColors = generatePalette(colors.mPrimary, colors.mSecondary, colors.mTertiary, colors.mError, colors.mSurface, isDarkMode)
+    const matugenColors = generatePalette(colors.mPrimary, colors.mSecondary, colors.mTertiary, colors.mError, colors.mSurface, colors.mOutline, isDarkMode)
 
     // Create a temporary JSON file with the color palette
     const tempJsonPath = Settings.cacheDir + "predefined-colors.json"
