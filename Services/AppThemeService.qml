@@ -252,7 +252,7 @@ Singleton {
     const surfaceContainerHighest = ColorsConvert.generateSurfaceVariant(backgroundColor, 4, isDarkMode)
 
     // Generate outline colors (for borders/dividers)
-    const outline = outlineColor
+    const outline = isDarkMode ? "#938f99" : "#79747e"
     const outlineVariant = ColorsConvert.adjustLightness(outline, isDarkMode ? -10 : 10)
 
     // Shadow is always very dark
