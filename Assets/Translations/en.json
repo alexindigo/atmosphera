@@ -1132,6 +1132,10 @@
         "collapse-condition": {
           "label": "Collapse condition",
           "description": "If the output text matches this value, the button will collapse."
+        },
+        "parse-json": {
+          "label": "Parse output as JSON",
+          "description": "Parse the command output as a JSON object to dynamically set text and icon."
         }
       },
       "media-mini": {
