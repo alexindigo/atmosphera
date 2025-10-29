@@ -8,6 +8,10 @@ Item {
   property int strokeWidth: 0
   property var values: []
 
+  // Minimum signal properties
+  property bool showMinimumSignal: false
+  property real minimumSignalValue: 0.05 // Default to 5% of height
+
   // Pre-compute mirroring
   readonly property int valuesCount: values.length
   readonly property int totalBars: valuesCount * 2
@@ -24,7 +28,8 @@ Item {
       property int valueIndex: index < root.valuesCount ? root.valuesCount - 1 - index // Mirrored half
                                                         : index - root.valuesCount // Normal half
 
-      property real amp: root.values[valueIndex]
+      property real rawAmp: root.values[valueIndex]
+      property real amp: (root.showMinimumSignal && rawAmp === 0) ? root.minimumSignalValue : rawAmp
 
       property real barHeight: root.height * amp
 

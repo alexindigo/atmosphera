@@ -162,6 +162,10 @@
         "brightness-step": {
           "label": "Tamaño del paso de brillo",
           "description": "Ajusta el tamaño del paso para los cambios de brillo (rueda de desplazamiento y atajos de teclado)."
+        },
+        "enforce-minimum": {
+          "label": "Forzar brillo mínimo (1%)",
+          "description": "Resuelve el problema de la retroiluminación que se apaga completamente en algunas pantallas al 0% de brillo."
         }
       },
       "night-light": {
@@ -356,6 +360,10 @@
         "always-on-top": {
           "label": "Siempre visible",
           "description": "Muestra las notificaciones sobre ventanas a pantalla completa y otras capas."
+        },
+        "background-opacity": {
+          "label": "Opacidad del fondo",
+          "description": "Ajustar la opacidad de los fondos de las notificaciones."
         }
       },
       "duration": {
@@ -440,6 +448,10 @@
           "label": "Carpeta de fondos de pantalla",
           "description": "Ruta a tu carpeta principal de fondos de pantalla.",
           "tooltip": "Buscar carpeta de fondos de pantalla"
+        },
+        "recursive-search": {
+          "label": "Buscar en subcarpetas",
+          "description": "Buscar fondos de pantalla también en subcarpetas del directorio de fondos de pantalla."
         },
         "monitor-specific": {
           "label": "Directorios específicos por monitor",
@@ -1213,6 +1225,12 @@
           "label": "Colorear iconos",
           "description": "Aplicar colores del tema a los iconos de la bandeja del sistema."
         }
+      },
+      "audio-visualizer": {
+        "width": {
+          "label": "Ancho",
+          "description": "Ancho del componente personalizado."
+        }
       }
     }
   },
@@ -1335,6 +1353,7 @@
     "open-control-center": "Abrir el centro de control",
     "volume-at": "Volumen al {volume}%\nClic izquierdo para silenciar. Clic derecho para configuración.\nDesplaza para modificar el volumen.",
     "microphone-volume-at": "Volumen del micrófono al {volume}%\nClic izquierdo para silenciar. Clic derecho para configuración.\nDesplaza para modificar el volumen.",
+    "brightness-at": "Brillo: {brightness}%\nClic derecho para configuración.\nDesplaza para modificar el brillo.",
     "manage-wifi": "Gestionar Wi-Fi",
     "bluetooth-devices": "Dispositivos Bluetooth",
     "open-notification-history-enable-dnd": "Abrir historial de notificaciones\nClic derecho para activar \"No molestar\".",
@@ -1345,7 +1364,9 @@
     "play": "Reproducir",
     "next-media": "Siguiente medio",
     "power-profile": "Perfil de energía '{profile}'",
-    "keyboard-layout": "Distribución de teclado {layout}"
+    "keyboard-layout": "Distribución de teclado {layout}",
+    "output-muted": "Silenciar salida de audio",
+    "input-muted": "Silenciar entrada de audio"
   },
   "clock": {
     "tooltip": "Abrir calendario"

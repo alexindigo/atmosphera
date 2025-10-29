@@ -162,6 +162,10 @@
         "brightness-step": {
           "label": "Tamanho do passo do brilho",
           "description": "Ajuste o tamanho do passo para alterações de brilho (roda do mouse e atalhos de teclado)."
+        },
+        "enforce-minimum": {
+          "label": "Forçar brilho mínimo (1%)",
+          "description": "Resolve o problema da retroiluminação apagar completamente em alguns monitores com brilho em 0%."
         }
       },
       "night-light": {
@@ -356,6 +360,10 @@
         "always-on-top": {
           "label": "Sempre no topo",
           "description": "Exibe notificações acima de janelas em tela cheia e outras camadas."
+        },
+        "background-opacity": {
+          "label": "Opacidade do fundo",
+          "description": "Ajustar a opacidade dos fundos das notificações."
         }
       },
       "duration": {
@@ -402,6 +410,10 @@
           "label": "Pasta de papéis de parede",
           "description": "Caminho para a sua pasta principal de papéis de parede.",
           "tooltip": "Procurar pasta de papéis de parede"
+        },
+        "recursive-search": {
+          "label": "Buscar em subpastas",
+          "description": "Também buscar papéis de parede em subpastas do diretório de papéis de parede."
         },
         "monitor-specific": {
           "label": "Diretórios específicos por monitor",
@@ -1213,6 +1225,12 @@
           "label": "Colorir ícones",
           "description": "Aplicar cores do tema aos ícones da bandeja do sistema."
         }
+      },
+      "audio-visualizer": {
+        "width": {
+          "label": "Largura",
+          "description": "Largura do componente personalizado."
+        }
       }
     }
   },
@@ -1335,6 +1353,7 @@
     "open-control-center": "Abrir central de controle",
     "volume-at": "Volume em {volume}%\nClique esquerdo para silenciar. Clique direito para configurações.\nRole para modificar o volume.",
     "microphone-volume-at": "Volume do microfone em {volume}%\nClique esquerdo para silenciar. Clique direito para configurações.\nRole para modificar o volume.",
+    "brightness-at": "Brilho: {brightness}%\nClique direito para configurações.\nRole para modificar o brilho.",
     "manage-wifi": "Gerenciar Wi-Fi",
     "bluetooth-devices": "Dispositivos Bluetooth",
     "open-notification-history-enable-dnd": "Abrir histórico de notificações\nClique direito para ativar \"Não perturbe\".",
@@ -1345,7 +1364,9 @@
     "play": "Reproduzir",
     "next-media": "Próxima mídia",
     "power-profile": "Perfil de energia '{profile}'",
-    "keyboard-layout": "Layout de teclado {layout}"
+    "keyboard-layout": "Layout de teclado {layout}",
+    "output-muted": "Silenciar saída de áudio",
+    "input-muted": "Silenciar entrada de áudio"
   },
   "clock": {
     "tooltip": "Abrir calendário"

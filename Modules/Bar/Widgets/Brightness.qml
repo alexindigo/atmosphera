@@ -91,7 +91,9 @@ Item {
       var monitor = getMonitor()
       if (!monitor)
         return ""
-      return "Brightness: " + Math.round(monitor.brightness * 100) + "%\nRight click for settings.\nScroll to modify brightness."
+      return I18n.tr("tooltips.brightness-at", {
+                       "brightness": Math.round(monitor.brightness * 100)
+                     })
     }
 
     onWheel: function (angle) {

@@ -162,6 +162,10 @@
         "brightness-step": {
           "label": "亮度步长",
           "description": "调整亮度变化的步长（滚轮和键盘快捷键）。"
+        },
+        "enforce-minimum": {
+          "label": "限制最小亮度为 1%",
+          "description": "解决亮度为 0% 时部分显示器背光完全关闭的问题。"
         }
       },
       "night-light": {
@@ -356,6 +360,10 @@
         "always-on-top": {
           "label": "始终置顶",
           "description": "在全屏窗口和其他图层上方显示通知。"
+        },
+        "background-opacity": {
+          "label": "背景透明度",
+          "description": "调整通知背景的透明度。"
         }
       },
       "duration": {
@@ -440,6 +448,10 @@
           "label": "壁纸文件夹",
           "description": "您的主壁纸文件夹路径。",
           "tooltip": "浏览壁纸文件夹"
+        },
+        "recursive-search": {
+          "label": "搜索子文件夹",
+          "description": "同时在壁纸目录的子文件夹中搜索壁纸。"
         },
         "monitor-specific": {
           "label": "显示器特定目录",
@@ -1213,6 +1225,12 @@
           "label": "着色图标",
           "description": "将主题颜色应用到系统托盘图标。"
         }
+      },
+      "audio-visualizer": {
+        "width": {
+          "label": "宽度",
+          "description": "自定义组件的宽度。"
+        }
       }
     }
   },
@@ -1335,6 +1353,7 @@
     "open-control-center": "打开控制中心",
     "volume-at": "音量 {volume}%\n左键点击切换静音。右键点击进入设置。\n滚动调整音量。",
     "microphone-volume-at": "麦克风音量 {volume}%\n左键点击切换静音。右键点击进入设置。\n滚动调整音量。",
+    "brightness-at": "亮度：{brightness}%\n右键点击进入设置。\n滚动调整亮度。",
     "manage-wifi": "管理 Wi-Fi",
     "bluetooth-devices": "蓝牙设备",
     "open-notification-history-enable-dnd": "打开通知历史记录\n右键点击启用\"勿扰模式\"。",
@@ -1345,7 +1364,9 @@
     "play": "播放",
     "next-media": "下一媒体",
     "power-profile": "'{profile}' 电源模式",
-    "keyboard-layout": "{layout} 键盘布局"
+    "keyboard-layout": "{layout} 键盘布局",
+    "output-muted": "静音输出设备",
+    "input-muted": "静音输入设备"
   },
   "clock": {
     "tooltip": "打开日历"

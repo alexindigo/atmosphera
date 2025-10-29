@@ -83,7 +83,7 @@ NPanel {
 
         NIconButton {
           icon: AudioService.getOutputIcon()
-          tooltipText: I18n.tr("tooltips.output-devices")
+          tooltipText: I18n.tr("tooltips.output-muted")
           baseSize: Style.baseWidgetSize * 0.8
           onClicked: {
             AudioService.setOutputMuted(!AudioService.muted)
@@ -92,7 +92,7 @@ NPanel {
 
         NIconButton {
           icon: AudioService.getInputIcon()
-          tooltipText: I18n.tr("tooltips.refresh-devices")
+          tooltipText: I18n.tr("tooltips.input-muted")
           baseSize: Style.baseWidgetSize * 0.8
           onClicked: {
             AudioService.setInputMuted(!AudioService.inputMuted)

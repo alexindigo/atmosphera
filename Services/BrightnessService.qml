@@ -234,6 +234,7 @@ Singleton {
     }
 
     readonly property real stepSize: Settings.data.brightness.brightnessStep / 100.0
+    readonly property real minBrightnessValue: (Settings.data.brightness.enforceMinimum ? 0.01 : 0.0)
 
     // Timer for debouncing rapid changes
     readonly property Timer timer: Timer {
@@ -253,7 +254,13 @@ Singleton {
 
     function increaseBrightness(): void {
       const value = !isNaN(monitor.queuedBrightness) ? monitor.queuedBrightness : monitor.brightness
-      setBrightnessDebounced(value + stepSize)
+      // Enforce minimum brightness if enabled
+      if (Settings.data.brightness.enforceMinimum && value <= minBrightnessValue) {
+        setBrightnessDebounced(Math.max(stepSize, minBrightnessValue))
+      } else {
+        // Normal brightness increase
+        setBrightnessDebounced(value + stepSize)
+      }
     }
 
     function decreaseBrightness(): void {
@@ -262,7 +269,7 @@ Singleton {
     }
 
     function setBrightness(value: real): void {
-      value = Math.max(0, Math.min(1, value))
+      value = Math.max(minBrightnessValue, Math.min(1, value))
       var rounded = Math.round(value * 100)
 
       if (timer.running) {

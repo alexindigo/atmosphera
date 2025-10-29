@@ -224,6 +224,7 @@ Singleton {
       property bool enabled: true
       property string directory: ""
       property bool enableMultiMonitorDirectories: false
+      property bool recursiveSearch: false
       property bool setWallpaperOnAllMonitors: true
       property string defaultWallpaper: ""
       property string fillMode: "crop"
@@ -317,6 +318,7 @@ Singleton {
       property list<string> monitors: []
       property string location: "top_right"
       property bool overlayLayer: true
+      property real backgroundOpacity: 1.0
       property bool respectExpireTimeout: false
       property int lowUrgencyDuration: 3
       property int normalUrgencyDuration: 8
@@ -355,6 +357,7 @@ Singleton {
     // brightness
     property JsonObject brightness: JsonObject {
       property int brightnessStep: 5
+      property bool enforceMinimum: true
     }
 
     property JsonObject colorSchemes: JsonObject {

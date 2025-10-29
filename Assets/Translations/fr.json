@@ -162,6 +162,10 @@
         "brightness-step": {
           "label": "Incrément de luminosité",
           "description": "Ajustez l'incrément pour les changements de luminosité (molette de la souris et raccourcis clavier)."
+        },
+        "enforce-minimum": {
+          "label": "Imposer une luminosité minimale (1%)",
+          "description": "Résout le problème de l'extinction complète du rétroéclairage sur certains écrans à 0% de luminosité."
         }
       },
       "night-light": {
@@ -356,6 +360,10 @@
         "always-on-top": {
           "label": "Toujours au premier plan",
           "description": "Afficher les notifications au-dessus des fenêtres en plein écran et des autres applications."
+        },
+        "background-opacity": {
+          "label": "Opacité du fond",
+          "description": "Ajuster l'opacité des arrière-plans de notifications."
         }
       },
       "duration": {
@@ -440,6 +448,10 @@
           "label": "Dossier des fonds d'écran",
           "description": "Chemin vers votre dossier principal de fonds d'écran.",
           "tooltip": "Parcourir le dossier des fonds d'écran"
+        },
+        "recursive-search": {
+          "label": "Rechercher dans les sous-dossiers",
+          "description": "Rechercher également des fonds d'écran dans les sous-dossiers du répertoire des fonds d'écran."
         },
         "monitor-specific": {
           "label": "Dossiers spécifiques au moniteur",
@@ -1213,6 +1225,12 @@
           "label": "Coloriser les icônes",
           "description": "Appliquer les couleurs du thème aux icônes de la barre système."
         }
+      },
+      "audio-visualizer": {
+        "width": {
+          "label": "Largeur",
+          "description": "Largeur personnalisée du composant."
+        }
       }
     }
   },
@@ -1335,6 +1353,7 @@
     "open-control-center": "Ouvrir le centre de contrôle",
     "volume-at": "Volume à {volume}%\nClic gauche pour couper/rétablir le son. Clic droit pour les paramètres.\nFaites défiler pour modifier le volume.",
     "microphone-volume-at": "Volume du microphone à {volume}%\nClic gauche pour couper/rétablir le son. Clic droit pour les paramètres.\nFaites défiler pour modifier le volume.",
+    "brightness-at": "Luminosité : {brightness}%\nClic droit pour les paramètres.\nFaites défiler pour modifier la luminosité.",
     "manage-wifi": "Gérer le Wi-Fi",
     "bluetooth-devices": "Appareils Bluetooth",
     "open-notification-history-enable-dnd": "Ouvrir l'historique des notifications\nClic droit pour activer \"Ne pas déranger\".",
@@ -1345,7 +1364,9 @@
     "play": "Lecture",
     "next-media": "Média suivant",
     "power-profile": "Profil d'alimentation '{profile}'",
-    "keyboard-layout": "Disposition du clavier {layout}"
+    "keyboard-layout": "Disposition du clavier {layout}",
+    "output-muted": "Couper la sortie audio",
+    "input-muted": "Couper l'entrée audio"
   },
   "clock": {
     "tooltip": "Ouvrir le calendrier"

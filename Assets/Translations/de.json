@@ -162,6 +162,10 @@
         "brightness-step": {
           "label": "Helligkeits-Schrittgröße",
           "description": "Schrittgröße für Helligkeitsänderungen anpassen (Mausrad und Tastenkombinationen)."
+        },
+        "enforce-minimum": {
+          "label": "Mindesthelligkeit erzwingen (1%)",
+          "description": "Löst das Problem, dass die Hintergrundbeleuchtung auf einigen Displays bei 0% Helligkeit vollständig ausgeschaltet wird."
         }
       },
       "night-light": {
@@ -356,6 +360,10 @@
         "always-on-top": {
           "label": "Immer im Vordergrund",
           "description": "Benachrichtigungen über Vollbildfenstern und anderen Ebenen anzeigen."
+        },
+        "background-opacity": {
+          "label": "Hintergrund-Transparenz",
+          "description": "Transparenz der Benachrichtigungshintergründe anpassen."
         }
       },
       "duration": {
@@ -440,6 +448,10 @@
           "label": "Hintergrundbild-Ordner",
           "description": "Pfad zu Ihrem Haupt-Hintergrundbild-Ordner.",
           "tooltip": "Nach Hintergrundbild-Ordner suchen"
+        },
+        "recursive-search": {
+          "label": "Unterordner durchsuchen",
+          "description": "Auch nach Hintergrundbildern in Unterordnern des Hintergrundbild-Verzeichnisses suchen."
         },
         "monitor-specific": {
           "label": "Monitor-spezifische Verzeichnisse",
@@ -1230,6 +1242,12 @@
           "label": "Symbole einfärben",
           "description": "Theme-Farben auf Tray-Symbole anwenden."
         }
+      },
+      "audio-visualizer": {
+        "width": {
+          "label": "Breite",
+          "description": "Benutzerdefinierte Komponentenbreite."
+        }
       }
     }
   },
@@ -1352,6 +1370,7 @@
     "open-control-center": "Kontrollzentrum öffnen",
     "volume-at": "Lautstärke bei {volume}%\nLinksklick zum Stumm-/Lautschalten. Rechtsklick für Einstellungen.\nScrollen zum Ändern der Lautstärke.",
     "microphone-volume-at": "Mikrofon-Lautstärke bei {volume}%\nLinksklick zum Stumm-/Lautschalten. Rechtsklick für Einstellungen.\nScrollen zum Ändern der Lautstärke.",
+    "brightness-at": "Helligkeit: {brightness}%\nRechtsklick für Einstellungen.\nScrollen zum Ändern der Helligkeit.",
     "manage-wifi": "WLAN verwalten",
     "bluetooth-devices": "Bluetooth-Geräte",
     "open-notification-history-enable-dnd": "Benachrichtigungsverlauf öffnen\nRechtsklick um 'Nicht stören' zu aktivieren.",
@@ -1362,7 +1381,9 @@
     "play": "Wiedergeben",
     "next-media": "Nächstes Medium",
     "power-profile": "'{profile}' Energieprofil",
-    "keyboard-layout": "{layout} Tastaturlayout"
+    "keyboard-layout": "{layout} Tastaturlayout",
+    "output-muted": "Audio-Ausgabe stummschalten",
+    "input-muted": "Audio-Eingabe stummschalten"
   },
   "clock": {
     "tooltip": "Kalender öffnen"
