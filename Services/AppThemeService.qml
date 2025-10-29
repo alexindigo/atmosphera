@@ -213,7 +213,7 @@ Singleton {
                           "hex_stripped": hex.replace(/^#/, "")
                         }
                       })
-                      
+
     // Generate container colors
     const primaryContainer = ColorsConvert.generateContainerColor(colors.mPrimary, isDarkMode)
     const secondaryContainer = ColorsConvert.generateContainerColor(colors.mSecondary, isDarkMode)
@@ -238,7 +238,7 @@ Singleton {
     const onSurface = isStrict ? colors.mOnSurface : ColorsConvert.generateOnColor(colors.mSurface, isDarkMode)
 
     // Generate surface variant (slightly different tone)
-    const surfaceVariant =  isStrict ? colors.mSurfaceVariant : ColorsConvert.adjustLightness(colors.mSurface, isDarkMode ? 5 : -3)
+    const surfaceVariant = isStrict ? colors.mSurfaceVariant : ColorsConvert.adjustLightness(colors.mSurface, isDarkMode ? 5 : -3)
     const onSurfaceVariant = isStrict ? colors.mOnSurfaceVariant : ColorsConvert.generateOnColor(surfaceVariant, isDarkMode)
 
     // Generate surface containers (progressive elevation)
@@ -305,7 +305,6 @@ Singleton {
     const config = predefinedTemplateConfigs[appName]
     const templatePath = `${Quickshell.shellDir}/Assets/MatugenTemplates/${config.input}`
     let script = ""
-
 
     const palette = generatePalette(colors, Settings.data.colorSchemes.darkMode, config.strict || false)
 

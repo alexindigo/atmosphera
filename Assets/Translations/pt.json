@@ -556,7 +556,7 @@
             "description-missing": "Requer que o {app} esteja instalado"
           },
           "walker": {
-            "description": "Escrever {filepath}",
+            "description": "Escrever {filepath} e definir tema como noctalia",
             "description-missing": "Requer que o {app} esteja instalado"
           },
           "discord": {

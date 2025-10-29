@@ -101,7 +101,7 @@ Item {
 
   SplitParser {
     id: textStdoutSplit
-    onRead: (line) => root.parseDynamicContent(line)
+    onRead: line => root.parseDynamicContent(line)
   }
 
   StdioCollector {
@@ -142,6 +142,7 @@ Item {
         _dynamicIcon = parsed.icon || ""
         return
       } catch (e) {
+
         // Not a valid JSON, treat as plain text
       }
     }

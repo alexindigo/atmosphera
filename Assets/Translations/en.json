@@ -598,7 +598,7 @@
             "description-missing": "Requires {app} to be installed"
           },
           "walker": {
-            "description": "Write {filepath}",
+            "description": "Write {filepath} and set theme to noctalia",
             "description-missing": "Requires {app} to be installed"
           },
           "discord": {
