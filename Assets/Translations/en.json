@@ -293,7 +293,7 @@
       "monitors": {
         "section": {
           "label": "Monitor display",
-          "description": "Choose which monitor to display the dock on."
+          "description": "Show dock on specific monitors. Defaults to all if none are chosen."
         },
         "only-same-output": {
           "label": "Only apps from same output",

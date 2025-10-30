@@ -293,7 +293,7 @@
       "monitors": {
         "section": {
           "label": "Exibição no monitor",
-          "description": "Escolha em qual monitor exibir a dock."
+          "description": "Mostrar dock em monitores específicos. O padrão é todos se nenhum for escolhido."
         },
         "only-same-output": {
           "description": "Mostrar apenas aplicativos da saída onde o dock está localizado.",

@@ -293,7 +293,7 @@
       "monitors": {
         "section": {
           "label": "Monitor-Anzeige",
-          "description": "Monitor auswählen, auf dem das Dock angezeigt werden soll."
+          "description": "Dock auf bestimmten Monitoren anzeigen. Standardmäßig werden alle angezeigt, wenn keine ausgewählt wurden."
         },
         "only-same-output": {
           "description": "Zeige nur Apps von dem Bildschirm, auf dem sich das Dock befindet.",

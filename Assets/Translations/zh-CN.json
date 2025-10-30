@@ -293,7 +293,7 @@
       "monitors": {
         "section": {
           "label": "显示器显示",
-          "description": "选择在哪个显示器上显示 Dock。"
+          "description": "在特定显示器上显示 Dock。如果未选择任何显示器，则默认为全部。"
         },
         "only-same-output": {
           "description": "仅显示输出结果中dock所在位置的应用。",
