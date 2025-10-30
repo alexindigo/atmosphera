@@ -216,6 +216,7 @@ NPanel {
 
       // Analog clock
       ClockLoader {
+        id: clockItem
         anchors.right: parent.right
         anchors.rightMargin: Style.marginM
         anchors.verticalCenter: parent.verticalCenter
