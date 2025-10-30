@@ -296,6 +296,7 @@ Singleton {
 
     // dock
     property JsonObject dock: JsonObject {
+      property bool enabled: true
       property string displayMode: "always_visible" // "always_visible", "auto_hide", "exclusive"
       property real backgroundOpacity: 1.0
       property real floatingRatio: 1.0

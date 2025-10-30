@@ -257,6 +257,10 @@
     },
     "dock": {
       "title": "Dock",
+      "enabled": {
+        "label": "启用 Dock",
+        "description": "完全显示或隐藏 Dock"
+      },
       "appearance": {
         "section": {
           "label": "外观",

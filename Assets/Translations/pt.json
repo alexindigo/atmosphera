@@ -257,6 +257,10 @@
     },
     "dock": {
       "title": "Dock",
+      "enabled": {
+        "label": "Ativar dock",
+        "description": "Mostrar ou ocultar o dock completamente"
+      },
       "appearance": {
         "section": {
           "label": "Aparência",

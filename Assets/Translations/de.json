@@ -257,6 +257,10 @@
     },
     "dock": {
       "title": "Dock",
+      "enabled": {
+        "label": "Dock aktivieren",
+        "description": "Dock vollständig anzeigen oder ausblenden"
+      },
       "appearance": {
         "section": {
           "label": "Erscheinungsbild",

@@ -172,6 +172,7 @@
     ]
   },
   "dock": {
+    "enabled": true,
     "displayMode": "always_visible",
     "backgroundOpacity": 1,
     "floatingRatio": 1,
