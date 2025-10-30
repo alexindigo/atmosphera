@@ -675,6 +675,11 @@
         "use-analog": {
           "description": "在日历屏幕上显示一个模拟时钟。",
           "label": "使用模拟时钟样式"
+        },
+        "first-day-of-week": {
+          "automatic": "自动（使用系统区域设置）",
+          "description": "选择日历中一周的起始日。",
+          "label": "一周的第一天"
         }
       }
     },

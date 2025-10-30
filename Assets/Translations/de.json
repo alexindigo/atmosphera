@@ -675,6 +675,11 @@
         "use-analog": {
           "description": "Eine Analoguhr auf dem Kalenderbildschirm anzeigen.",
           "label": "Analoge Uhr verwenden"
+        },
+        "first-day-of-week": {
+          "automatic": "Automatisch (Systemgebietsschema verwenden)",
+          "description": "Wähle, welcher Tag die Woche im Kalender beginnen soll.",
+          "label": "Erster Tag der Woche"
         }
       }
     },

@@ -205,6 +205,7 @@ Singleton {
       property bool showCalendarEvents: true
       property bool showCalendarWeather: false
       property bool analogClockInCalendar: false
+      property int firstDayOfWeek: -1 // -1 = auto (use locale), 0 = Sunday, 1 = Monday, 6 = Saturday
     }
 
     // screen recorder

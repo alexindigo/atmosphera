@@ -637,6 +637,11 @@
         "use-analog": {
           "description": "Mostrar um relógio estilo analógico na tela do calendário.",
           "label": "Use um relógio de estilo analógico."
+        },
+        "first-day-of-week": {
+          "automatic": "Automático (usar localização do sistema)",
+          "description": "Escolha qual dia começa a semana no calendário.",
+          "label": "Primeiro dia da semana"
         }
       }
     },

@@ -15,7 +15,7 @@ NPanel {
   readonly property var now: Time.date
 
   preferredWidth: (Settings.data.location.showWeekNumberInCalendar ? 400 : 380) * Style.uiScaleRatio
-  preferredHeight: (Settings.data.location.weatherEnabled && Settings.data.location.showCalendarWeather ? 600 : 420) * Style.uiScaleRatio
+  preferredHeight: (Settings.data.location.weatherEnabled && Settings.data.location.showCalendarWeather ? 590 : 380) * Style.uiScaleRatio
   panelKeyboardFocus: true
 
   // Helper function to calculate ISO week number
@@ -36,7 +36,7 @@ NPanel {
     anchors.margins: Style.marginL
     spacing: Style.marginM
 
-    readonly property int firstDayOfWeek: Qt.locale().firstDayOfWeek
+    readonly property int firstDayOfWeek: Settings.data.location.firstDayOfWeek === -1 ? Qt.locale().firstDayOfWeek : Settings.data.location.firstDayOfWeek
     property bool isCurrentMonth: checkIsCurrentMonth()
     readonly property bool weatherReady: Settings.data.location.weatherEnabled && (LocationService.data.weather !== null)
 
@@ -62,6 +62,14 @@ NPanel {
       target: Time
       function onDateChanged() {
         isCurrentMonth = checkIsCurrentMonth()
+      }
+    }
+
+    Connections {
+      target: I18n
+      function onLanguageChanged() {
+        // Force update of day names when language changes
+        grid.month = grid.month
       }
     }
 
@@ -121,7 +129,7 @@ NPanel {
 
           // Month, year, location
           ColumnLayout {
-            Layout.preferredWidth: 170 * Style.uiScaleRatio
+            Layout.fillWidth: true
             Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
             Layout.bottomMargin: Style.marginXXS
             Layout.topMargin: -Style.marginXXS
@@ -198,9 +206,11 @@ NPanel {
     RowLayout {
       Layout.fillWidth: true
       spacing: Style.marginS
+
       NDivider {
         Layout.fillWidth: true
       }
+
       NIconButton {
         icon: "chevron-left"
         onClicked: {
@@ -218,6 +228,7 @@ NPanel {
           CalendarService.loadEvents(daysAhead + 30, daysBehind + 30)
         }
       }
+
       NIconButton {
         icon: "calendar"
         onClicked: {
@@ -227,6 +238,7 @@ NPanel {
           CalendarService.loadEvents()
         }
       }
+
       NIconButton {
         icon: "chevron-right"
         onClicked: {
@@ -245,13 +257,16 @@ NPanel {
         }
       }
     }
+
     RowLayout {
       Layout.fillWidth: true
       spacing: 0
+
       Item {
         visible: Settings.data.location.showWeekNumberInCalendar
         Layout.preferredWidth: visible ? Style.baseWidgetSize * 0.7 : 0
       }
+
       GridLayout {
         Layout.fillWidth: true
         columns: 7
@@ -267,8 +282,11 @@ NPanel {
               anchors.centerIn: parent
               text: {
                 let dayIndex = (content.firstDayOfWeek + index) % 7
-                const dayNames = ["S", "M", "T", "W", "T", "F", "S"]
-                return dayNames[dayIndex]
+                // Use localized day name based on I18n.langCode
+                const locale = I18n.langCode ? Qt.locale(I18n.langCode) : Qt.locale()
+                const dayName = locale.dayName(dayIndex, Locale.ShortFormat)
+                // Return first character (or two for some locales)
+                return dayName.substring(0, 1).toUpperCase()
               }
               color: Color.mPrimary
               pointSize: Style.fontSizeS
@@ -279,10 +297,9 @@ NPanel {
         }
       }
     }
+
     RowLayout {
       Layout.fillWidth: true
-      Layout.preferredHeight: 240 * Style.uiScaleRatio
-      Layout.maximumHeight: 240 * Style.uiScaleRatio
       spacing: 0
 
       // Helper function to check if a date has events
@@ -352,127 +369,207 @@ NPanel {
       ColumnLayout {
         visible: Settings.data.location.showWeekNumberInCalendar
         Layout.preferredWidth: visible ? Style.baseWidgetSize * 0.7 : 0
-        Layout.fillHeight: true
-        spacing: 0
+        spacing: Style.marginXXS
+
+        property var weekNumbers: {
+          if (!grid.daysModel || grid.daysModel.length === 0)
+            return []
+
+          const weeks = []
+          const numWeeks = Math.ceil(grid.daysModel.length / 7)
+
+          for (var i = 0; i < numWeeks; i++) {
+            const dayIndex = i * 7
+            if (dayIndex < grid.daysModel.length) {
+              const weekDay = grid.daysModel[dayIndex]
+              const date = new Date(weekDay.year, weekDay.month, weekDay.day)
+
+              // Get Thursday of this week for ISO week calculation
+              const firstDayOfWeek = content.firstDayOfWeek
+              let thursday = new Date(date)
+              if (firstDayOfWeek === 0) {
+                thursday.setDate(date.getDate() + 4)
+              } else if (firstDayOfWeek === 1) {
+                thursday.setDate(date.getDate() + 3)
+              } else {
+                let daysToThursday = (4 - firstDayOfWeek + 7) % 7
+                thursday.setDate(date.getDate() + daysToThursday)
+              }
+
+              weeks.push(root.getISOWeekNumber(thursday))
+            }
+          }
+          return weeks
+        }
+
         Repeater {
-          model: 6
+          model: parent.weekNumbers
           Item {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
+            Layout.preferredWidth: Style.baseWidgetSize * 0.7
+            Layout.preferredHeight: Style.baseWidgetSize * 0.9
             NText {
               anchors.centerIn: parent
               color: Color.mOutline
               pointSize: Style.fontSizeXXS
               font.weight: Style.fontWeightMedium
-              text: {
-                let firstOfMonth = new Date(grid.year, grid.month, 1)
-                let firstDayOfWeek = content.firstDayOfWeek
-                let firstOfMonthDayOfWeek = firstOfMonth.getDay()
-                let daysBeforeFirst = (firstOfMonthDayOfWeek - firstDayOfWeek + 7) % 7
-                if (daysBeforeFirst === 0) {
-                  daysBeforeFirst = 7
-                }
-                let gridStartDate = new Date(grid.year, grid.month, 1 - daysBeforeFirst)
-                let rowStartDate = new Date(gridStartDate)
-                rowStartDate.setDate(gridStartDate.getDate() + (index * 7))
-                let thursday = new Date(rowStartDate)
-                if (firstDayOfWeek === 0) {
-                  thursday.setDate(rowStartDate.getDate() + 4)
-                } else if (firstDayOfWeek === 1) {
-                  thursday.setDate(rowStartDate.getDate() + 3)
-                } else {
-                  let daysToThursday = (4 - firstDayOfWeek + 7) % 7
-                  thursday.setDate(rowStartDate.getDate() + daysToThursday)
-                }
-                return `${root.getISOWeekNumber(thursday)}`
-              }
+              text: modelData
             }
           }
         }
       }
-      MonthGrid {
+
+      GridLayout {
         id: grid
         Layout.fillWidth: true
-        Layout.fillHeight: true
-        spacing: Style.marginXXS
-        month: Time.date.getMonth()
-        year: Time.date.getFullYear()
-        locale: Qt.locale()
-        delegate: Item {
-          Rectangle {
-            width: Style.baseWidgetSize * 0.9
-            height: Style.baseWidgetSize * 0.9
-            anchors.centerIn: parent
-            radius: Style.radiusM
-            color: model.today ? Color.mSecondary : Color.transparent
-            NText {
+        Layout.maximumWidth: parent.width - (Settings.data.location.showWeekNumberInCalendar ? Style.baseWidgetSize * 0.7 : 0)
+        columns: 7
+        columnSpacing: Style.marginXXS
+        rowSpacing: Style.marginXXS
+
+        property int month: Time.date.getMonth()
+        property int year: Time.date.getFullYear()
+
+        // Calculate days to display
+        property var daysModel: {
+          const firstOfMonth = new Date(year, month, 1)
+          const lastOfMonth = new Date(year, month + 1, 0)
+          const daysInMonth = lastOfMonth.getDate()
+
+          // Get first day of week (0 = Sunday, 1 = Monday, etc.)
+          const firstDayOfWeek = content.firstDayOfWeek
+          const firstOfMonthDayOfWeek = firstOfMonth.getDay()
+
+          // Calculate days before first of month
+          let daysBefore = (firstOfMonthDayOfWeek - firstDayOfWeek + 7) % 7
+
+          // Calculate days after last of month to complete the week
+          const lastOfMonthDayOfWeek = lastOfMonth.getDay()
+          const daysAfter = (firstDayOfWeek - lastOfMonthDayOfWeek - 1 + 7) % 7
+
+          // Build array of day objects
+          const days = []
+          const today = new Date()
+
+          // Previous month days
+          const prevMonth = new Date(year, month, 0)
+          const prevMonthDays = prevMonth.getDate()
+          for (var i = daysBefore - 1; i >= 0; i--) {
+            const day = prevMonthDays - i
+            const date = new Date(year, month - 1, day)
+            days.push({
+                        "day": day,
+                        "month": month - 1,
+                        "year": month === 0 ? year - 1 : year,
+                        "today": false,
+                        "currentMonth": false
+                      })
+          }
+
+          // Current month days
+          for (var day = 1; day <= daysInMonth; day++) {
+            const date = new Date(year, month, day)
+            const isToday = date.getFullYear() === today.getFullYear() && date.getMonth() === today.getMonth() && date.getDate() === today.getDate()
+            days.push({
+                        "day": day,
+                        "month": month,
+                        "year": year,
+                        "today": isToday,
+                        "currentMonth": true
+                      })
+          }
+
+          // Next month days (only if needed to complete the week)
+          for (var i = 1; i <= daysAfter; i++) {
+            days.push({
+                        "day": i,
+                        "month": month + 1,
+                        "year": month === 11 ? year + 1 : year,
+                        "today": false,
+                        "currentMonth": false
+                      })
+          }
+
+          return days
+        }
+
+        Repeater {
+          model: grid.daysModel
+
+          Item {
+            Layout.fillWidth: true
+            Layout.preferredHeight: Style.baseWidgetSize * 0.9
+
+            Rectangle {
+              width: Style.baseWidgetSize * 0.9
+              height: Style.baseWidgetSize * 0.9
               anchors.centerIn: parent
-              text: model.day
-              color: {
-                if (model.today)
-                  return Color.mOnSecondary
-                if (model.month === grid.month)
-                  return Color.mOnSurface
-                return Color.mOnSurfaceVariant
-              }
-              opacity: model.month === grid.month ? 1.0 : 0.4
-              pointSize: Style.fontSizeM
-              font.weight: model.today ? Style.fontWeightBold : Style.fontWeightMedium
-            }
+              radius: Style.radiusM
+              color: modelData.today ? Color.mSecondary : Color.transparent
 
-            // Event indicator dots
-            Row {
-              visible: Settings.data.location.showCalendarEvents && parent.parent.parent.parent.parent.hasEventsOnDate(model.year, model.month, model.day)
-              spacing: 2
-              anchors.horizontalCenter: parent.horizontalCenter
-              anchors.bottom: parent.bottom
-              anchors.bottomMargin: Style.marginXS
-
-              readonly property int currentYear: model.year
-              readonly property int currentMonth: model.month
-              readonly property int currentDay: model.day
-              readonly property bool isToday: model.today
-
-              Repeater {
-                model: parent.parent.parent.parent.parent.parent.getEventsForDate(parent.currentYear, parent.currentMonth, parent.currentDay)
-
-                Rectangle {
-                  width: 4
-                  height: width
-                  radius: width / 2
-                  color: parent.parent.parent.parent.parent.parent.getEventColor(modelData, model.today)
+              NText {
+                anchors.centerIn: parent
+                text: modelData.day
+                color: {
+                  if (modelData.today)
+                    return Color.mOnSecondary
+                  if (modelData.currentMonth)
+                    return Color.mOnSurface
+                  return Color.mOnSurfaceVariant
                 }
+                opacity: modelData.currentMonth ? 1.0 : 0.4
+                pointSize: Style.fontSizeM
+                font.weight: modelData.today ? Style.fontWeightBold : Style.fontWeightMedium
               }
-            }
 
-            MouseArea {
-              anchors.fill: parent
-              hoverEnabled: true
-              enabled: Settings.data.location.showCalendarEvents
+              // Event indicator dots
+              Row {
+                visible: Settings.data.location.showCalendarEvents && parent.parent.parent.parent.hasEventsOnDate(modelData.year, modelData.month, modelData.day)
+                spacing: 2
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: Style.marginXS
 
-              onEntered: {
-                const events = parent.parent.parent.parent.parent.getEventsForDate(model.year, model.month, model.day)
-                if (events.length > 0) {
-                  const summaries = events.map(e => e.summary).join('\n')
-                  TooltipService.show(Screen, parent, summaries)
-                  TooltipService.updateText(summaries)
+                Repeater {
+                  model: parent.parent.parent.parent.parent.getEventsForDate(modelData.year, modelData.month, modelData.day)
+
+                  Rectangle {
+                    width: 4
+                    height: width
+                    radius: width / 2
+                    color: parent.parent.parent.parent.parent.getEventColor(modelData, modelData.today)
+                  }
                 }
               }
 
-              onClicked: {
-                const dateWithSlashes = `${model.month.toString().padStart(2, '0')}/${model.day.toString().padStart(2, '0')}/${model.year.toString().substring(2)}`
-                Quickshell.execDetached(["gnome-calendar", "--date", dateWithSlashes])
-                PanelService.getPanel("calendarPanel").toggle(null)
+              MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+                enabled: Settings.data.location.showCalendarEvents
+
+                onEntered: {
+                  const events = parent.parent.parent.parent.getEventsForDate(modelData.year, modelData.month, modelData.day)
+                  if (events.length > 0) {
+                    const summaries = events.map(e => e.summary).join('\n')
+                    TooltipService.show(Screen, parent, summaries)
+                    TooltipService.updateText(summaries)
+                  }
+                }
+
+                onClicked: {
+                  const dateWithSlashes = `${(modelData.month + 1).toString().padStart(2, '0')}/${modelData.day.toString().padStart(2, '0')}/${modelData.year.toString().substring(2)}`
+                  Quickshell.execDetached(["gnome-calendar", "--date", dateWithSlashes])
+                  PanelService.getPanel("calendarPanel").toggle(null)
+                }
+
+                onExited: {
+                  TooltipService.hide()
+                }
               }
 
-              onExited: {
-                TooltipService.hide()
-              }
-            }
-
-            Behavior on color {
-              ColorAnimation {
-                duration: Style.animationFast
+              Behavior on color {
+                ColorAnimation {
+                  duration: Style.animationFast
+                }
               }
             }
           }
@@ -480,7 +577,14 @@ NPanel {
       }
     }
 
+    // Spacer to push weather card to bottom when calendar has fewer weeks
+    Item {
+      Layout.fillHeight: true
+      Layout.minimumHeight: 0
+    }
+
     Loader {
+      id: weatherLoader
       active: Settings.data.location.weatherEnabled && Settings.data.location.showCalendarWeather
       Layout.fillWidth: true
 

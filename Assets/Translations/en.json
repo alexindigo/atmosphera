@@ -668,6 +668,11 @@
           "label": "Show week numbers",
           "description": "Displays the week of the year (e.g., Week 38) in the calendar."
         },
+        "first-day-of-week": {
+          "label": "First day of week",
+          "description": "Choose which day starts the week in the calendar.",
+          "automatic": "Automatic (use system locale)"
+        },
         "show-events": {
           "label": "Show calendar events",
           "description": "Display events in the calendar panel."

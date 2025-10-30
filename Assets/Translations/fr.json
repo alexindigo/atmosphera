@@ -292,7 +292,8 @@
       },
       "monitors": {
         "section": {
-          "label": "Affichage sur les moniteur"
+          "label": "Affichage sur les moniteur",
+          "description": "Afficher le dock sur des écrans spécifiques. Par défaut, il s'affiche sur tous les écrans si aucun n'est sélectionné."
         },
         "only-same-output": {
           "description": "Afficher uniquement les applications de la sortie où le dock est situé.",
@@ -648,6 +649,10 @@
         "fahrenheit": {
           "label": "Afficher la température en Fahrenheit (°F)",
           "description": "Afficher la température en Fahrenheit au lieu de Celsius."
+        },
+        "show-in-calendar": {
+          "description": "Afficher les prévisions météo quotidiennes directement dans votre vue calendrier.",
+          "label": "Afficher la météo dans le calendrier"
         }
       },
       "date-time": {
@@ -657,6 +662,7 @@
         },
         "12hour-format": {
           "label": "Utiliser le format horaire de 12 heures",
+          "description": "Affiche l'heure au format 12 heures sur l'écran de verrouillage et dans le calendrier. L'horloge de la barre possède ses propres paramètres."
         },
         "week-numbers": {
           "label": "Afficher les numéros de semaine",
@@ -669,6 +675,11 @@
         "use-analog": {
           "description": "Afficher une horloge de style analogique sur l'écran du calendrier.",
           "label": "Utiliser une horloge de style analogique."
+        },
+        "first-day-of-week": {
+          "automatic": "Automatique (utiliser les paramètres régionaux du système)",
+          "description": "Choisissez quel jour commence la semaine dans le calendrier.",
+          "label": "Premier jour de la semaine"
         }
       }
     },
