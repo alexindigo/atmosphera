@@ -84,7 +84,6 @@ ColumnLayout {
       checked: Settings.data.location.useFahrenheit
       onToggled: checked => Settings.data.location.useFahrenheit = checked
       enabled: Settings.data.location.weatherEnabled
-      opacity: Settings.data.location.weatherEnabled ? 1.0 : 0.5
     }
 
     NToggle {
@@ -93,7 +92,6 @@ ColumnLayout {
       checked: Settings.data.location.showCalendarWeather
       onToggled: checked => Settings.data.location.showCalendarWeather = checked
       enabled: Settings.data.location.weatherEnabled
-      opacity: Settings.data.location.weatherEnabled ? 1.0 : 0.5
     }
   }
 
