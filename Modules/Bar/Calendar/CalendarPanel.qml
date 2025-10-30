@@ -11,7 +11,6 @@ import qs.Widgets
 NPanel {
   id: root
 
-  property var locale: I18n.langCode ? Qt.locale(I18n.langCode) : Qt.locale()
   property ShellScreen screen
   readonly property var now: Time.date
 
@@ -41,7 +40,7 @@ NPanel {
       width: root.preferredWidth - Style.marginL * 2
       spacing: Style.marginM
 
-      readonly property int firstDayOfWeek: Settings.data.location.firstDayOfWeek === -1 ? locale.firstDayOfWeek : Settings.data.location.firstDayOfWeek
+      readonly property int firstDayOfWeek: Settings.data.location.firstDayOfWeek === -1 ? I18n.locale.firstDayOfWeek : Settings.data.location.firstDayOfWeek
       property bool isCurrentMonth: true
       readonly property bool weatherReady: Settings.data.location.weatherEnabled && (LocationService.data.weather !== null)
 
@@ -148,7 +147,7 @@ NPanel {
                 spacing: Style.marginS
 
                 NText {
-                  text: locale.monthName(grid.month, Locale.LongFormat).toUpperCase()
+                  text: I18n.locale.monthName(grid.month, Locale.LongFormat).toUpperCase()
                   pointSize: Style.fontSizeXL * 1.1
                   font.weight: Style.fontWeightBold
                   color: Color.mOnPrimary
@@ -291,7 +290,7 @@ NPanel {
                 anchors.centerIn: parent
                 text: {
                   let dayIndex = (content.firstDayOfWeek + index) % 7
-                  const dayName = locale.dayName(dayIndex, Locale.ShortFormat)
+                  const dayName = I18n.locale.dayName(dayIndex, Locale.ShortFormat)
                   return dayName.substring(0, 2).toUpperCase()
                 }
                 color: Color.mPrimary

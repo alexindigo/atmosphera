@@ -10,10 +10,12 @@ Singleton {
 
   property bool isLoaded: false
   property string langCode: ""
+  property var locale: Qt.locale()
   property string systemDetectedLangCode: ""
   property var availableLanguages: []
   property var translations: ({})
   property var fallbackTranslations: ({})
+
 
   // Signals for reactive updates
   signal languageChanged(string newLanguage)
@@ -198,6 +200,7 @@ Singleton {
   function setLanguage(newLangCode) {
     if (newLangCode !== langCode && availableLanguages.includes(newLangCode)) {
       langCode = newLangCode
+      locale = Qt.locale(langCode)
       Logger.i("I18n", `Language set to "${langCode}"`)
       languageChanged(langCode)
       loadTranslations()

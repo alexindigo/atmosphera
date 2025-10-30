@@ -9,8 +9,6 @@ ColumnLayout {
   id: root
   spacing: Style.marginL
 
-  property var locale: I18n.langCode ? Qt.locale(I18n.langCode) : Qt.locale()
-
   NHeader {
     label: I18n.tr("settings.location.location.section.label")
     description: I18n.tr("settings.location.location.section.description")
@@ -137,15 +135,15 @@ ColumnLayout {
           "name": I18n.tr("settings.location.date-time.first-day-of-week.automatic")
         }, {
           "key": "6",
-          "name": locale.dayName(6, Locale.LongFormat)
+          "name": I18n.locale.dayName(6, Locale.LongFormat)
         }, // Saturday
         {
           "key": "0",
-          "name": locale.dayName(0, Locale.LongFormat)
+          "name": I18n.locale.dayName(0, Locale.LongFormat)
         }, // Sunday
         {
           "key": "1",
-          "name": locale.dayName(1, Locale.LongFormat)
+          "name": I18n.locale.dayName(1, Locale.LongFormat)
         } // Monday
       ]
       onSelected: key => Settings.data.location.firstDayOfWeek = parseInt(key)

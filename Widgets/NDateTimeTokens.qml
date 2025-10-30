@@ -6,7 +6,6 @@ import qs.Commons
 Rectangle {
   id: root
 
-  property var locale: I18n.langCode ? Qt.locale(I18n.langCode) : Qt.locale()
   property date sampleDate: new Date() // Dec 25, 2023, 2:30:45.123 PM
 
   signal tokenClicked(string token)
@@ -313,7 +312,7 @@ Rectangle {
 
             NText {
               anchors.centerIn: parent
-              text: locale.toString(root.sampleDate, modelData.token)
+              text: I18n.locale.toString(root.sampleDate, modelData.token)
               color: tokenMouseArea.containsMouse ? Color.mOnPrimary : Color.mSurfaceVariant
               pointSize: Style.fontSizeS
 

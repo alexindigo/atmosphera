@@ -6,7 +6,6 @@ import Quickshell
 
 Item {
 
-  property var locale: I18n.langCode ? Qt.locale(I18n.langCode) : Qt.locale()
   property var now
   property color backgroundColor: Color.mPrimary
   property color clockColor: Color.mOnPrimary
@@ -58,7 +57,7 @@ Item {
 
     NText {
       text: {
-        var t = Settings.data.location.use12hourFormat ? locale.toString(now, "hh AP") : locale.toString(now, "HH")
+        var t = Settings.data.location.use12hourFormat ? I18n.locale.toString(now, "hh AP") : I18n.locale.toString(now, "HH")
         return t.split(" ")[0]
       }
 

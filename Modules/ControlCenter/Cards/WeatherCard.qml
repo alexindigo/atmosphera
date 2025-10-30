@@ -9,8 +9,6 @@ import qs.Widgets
 NBox {
   id: root
 
-  property var locale: I18n.langCode ? Qt.locale(I18n.langCode) : Qt.locale()
-
   property int forecastDays: 7
   readonly property bool weatherReady: Settings.data.location.weatherEnabled && (LocationService.data.weather !== null)
 
@@ -104,7 +102,7 @@ NBox {
             Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
             text: {
               var weatherDate = new Date(LocationService.data.weather.daily.time[index].replace(/-/g, "/"))
-              return locale.toString(weatherDate, "ddd")
+              return I18n.locale.toString(weatherDate, "ddd")
             }
             color: Color.mOnSurface
           }
