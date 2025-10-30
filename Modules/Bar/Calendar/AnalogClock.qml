@@ -7,7 +7,6 @@ Item {
   property color backgroundColor: Color.mPrimary
   property color clockColor: Color.mOnPrimary
   property color secondHandColor: Color.mError
-  property real markAlpha: 0.7
   anchors.fill: parent
 
   Canvas {
@@ -19,6 +18,7 @@ Item {
     property int seconds: now.getSeconds()
 
     onPaint: {
+      const markAlpha = 0.7
       var ctx = getContext("2d")
       ctx.reset()
       ctx.translate(width / 2, height / 2)
