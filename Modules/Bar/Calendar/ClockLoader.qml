@@ -25,7 +25,7 @@ Item {
 
   property color secondHandColor: {
     var defaultColor = Color.mError
-    var bestContrast = 1.0 // A contrast of 1.0 is "no contrast".
+    var bestContrast = 1.0 // 1.0 is "no contrast"
     var bestColor = defaultColor
     var candidates = [Color.mSecondary,
                       Color.mTertiary,
@@ -38,11 +38,11 @@ Item {
       var candidate = candidates[i]
       var contrastClock = getContrastRatio(candidate, clockColor)
       if (contrastClock < minContrast) {
-        continue // This color is terrible, don't even consider it.
+        continue
       }
       var contrastBg = getContrastRatio(candidate, backgroundColor)
       if (contrastBg < minContrast) {
-        continue // This color is terrible, don't even consider it.
+        continue
       }
 
       var currentWorstContrast = Math.min(contrastBg, contrastClock)
