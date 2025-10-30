@@ -378,34 +378,6 @@ Loader {
                   backgroundColor: Color.mSurface
                   clockColor: Color.mOnSurface
                 }
-                // ColumnLayout {
-                //   anchors.centerIn: parent
-                //   spacing: 0
-                //
-                //   NText {
-                //     text: {
-                //       var t = Settings.data.location.use12hourFormat ? Qt.locale().toString(Time.date, "hh AP") : Qt.locale().toString(Time.date, "HH")
-                //       return t
-                //     }
-                //     pointSize: Style.fontSizeM
-                //     font.weight: Style.fontWeightBold
-                //     family: Settings.data.ui.fontFixed
-                //     color: Color.mOnSurface
-                //     horizontalAlignment: Text.AlignHCenter
-                //     Layout.alignment: Qt.AlignHCenter
-                //   }
-                //
-                //   NText {
-                //     text: Qt.formatTime(Time.date, "mm")
-                //     pointSize: Style.fontSizeM
-                //     font.weight: Style.fontWeightBold
-                //     family: Settings.data.ui.fontFixed
-                //     color: Color.mOnSurfaceVariant
-                //     horizontalAlignment: Text.AlignHCenter
-                //     Layout.alignment: Qt.AlignHCenter
-                //   }
-                // }
-
               }
             }
 
