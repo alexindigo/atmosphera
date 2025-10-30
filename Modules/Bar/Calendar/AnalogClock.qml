@@ -7,6 +7,8 @@ Item {
     property var now
     property color backgroundColor: Color.mPrimary
     property color clockColor: Color.mOnPrimary
+    property color secondHandColor: Color.mError
+    property real markAlpha: 0.7
     anchors.fill: parent
 
     Canvas {
@@ -16,38 +18,6 @@ Item {
         property int hours: now.getHours()
         property int minutes: now.getMinutes()
         property int seconds: now.getSeconds()
-        property real markAlpha: 0.7
-        property color secondHandColor: {
-            var defaultColor = Color.mError
-            var backgroundL = backgroundColor.hslLightness
-            var hourMarkL = (clockColor.hslLightness * markAlpha) + (backgroundL *(1.0-markAlpha))
-
-            var bestWorstContrast = -1
-            var bestColor = defaultColor
-
-            var candidates = [
-                Color.mSecondary,
-                Color.mTertiary,
-                Color.mError,
-            ]
-
-            for (var i = 0; i < candidates.length; i++) {
-                var candidateColor = candidates[i]
-                var candidateL = candidateColor.hslLightness
-
-                var diffBackground = Math.abs(backgroundL - candidateL)
-                var diffHourMark = Math.abs(hourMarkL - candidateL)
-
-                var currentWorstContrast = Math.min(diffBackground, diffHourMark)
-
-                if (currentWorstContrast > bestWorstContrast) {
-                    bestWorstContrast = currentWorstContrast
-                    bestColor = candidateColor
-                }
-            }
-
-            return bestColor
-        }
 
         onPaint: {
             var ctx = getContext("2d")

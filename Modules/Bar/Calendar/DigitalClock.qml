@@ -1,5 +1,7 @@
 import QtQuick
+import QtQuick.Layouts
 import qs.Commons
+import qs.Widgets
 import Quickshell
 
 
@@ -7,12 +9,12 @@ Item {
     property var now
     property color backgroundColor: Color.mPrimary
     property color clockColor: Color.mOnPrimary
+    property color secondHandColor: Color.mError
     anchors.fill: parent
 
     // Digital clock's seconds circular progress
     Canvas {
         id: secondsProgress
-        visible: !Settings.data.location.analogClockInCalendar
         anchors.fill: parent
         property real progress: now.getSeconds() / 60
         onProgressChanged: requestPaint()
@@ -41,7 +43,7 @@ Item {
             ctx.beginPath()
             ctx.arc(centerX, centerY, radius, -Math.PI / 2, -Math.PI / 2 + progress * 2 * Math.PI)
             ctx.lineWidth = 2.5
-            ctx.strokeStyle = clockColor
+            ctx.strokeStyle = secondHandColor
             ctx.lineCap = "round"
             ctx.stroke()
         }
@@ -49,7 +51,6 @@ Item {
 
     // Digital clock
     ColumnLayout {
-        visible: !Settings.data.location.analogClockInCalendar
         anchors.centerIn: parent
         spacing: -Style.marginXXS
 
