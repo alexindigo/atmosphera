@@ -366,15 +366,10 @@ Loader {
 
                 // Clock
                 ClockLoader {
-                  // The 'now' property is available as Time.date
                   now: Time.date
-
-                  // Apply layout properties from the old Item
                   Layout.preferredWidth: 70
                   Layout.preferredHeight: 70
                   Layout.alignment: Qt.AlignVCenter
-
-                  // *** Override the colors to match the LockScreen style ***
                   backgroundColor: Color.mSurface
                   clockColor: Color.mOnSurface
                 }
