@@ -5,10 +5,13 @@ import qs.Widgets
 import Quickshell
 
 Item {
+
+  property var locale: I18n.langCode ? Qt.locale(I18n.langCode) : Qt.locale()
   property var now
   property color backgroundColor: Color.mPrimary
   property color clockColor: Color.mOnPrimary
   property color progressColor: Color.mError
+
   anchors.fill: parent
 
   // Digital clock's seconds circular progress
@@ -55,7 +58,7 @@ Item {
 
     NText {
       text: {
-        var t = Settings.data.location.use12hourFormat ? Qt.locale().toString(now, "hh AP") : Qt.locale().toString(now, "HH")
+        var t = Settings.data.location.use12hourFormat ? locale.toString(now, "hh AP") : locale.toString(now, "HH")
         return t.split(" ")[0]
       }
 

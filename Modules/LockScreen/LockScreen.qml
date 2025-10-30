@@ -18,6 +18,8 @@ Loader {
   id: lockScreen
   active: false
 
+  property var locale: I18n.langCode ? Qt.locale(I18n.langCode) : Qt.locale()
+
   // Track if triggered via deprecated IPC call
   property bool triggeredViaDeprecatedCall: false
 
@@ -342,7 +344,7 @@ Loader {
                   // Date below
                   NText {
                     text: {
-                      var lang = Qt.locale().name.split("_")[0]
+                      var lang = locale.name.split("_")[0]
                       var formats = {
                         "de": "dddd, d. MMMM",
                         "es": "dddd, d 'de' MMMM",
@@ -350,7 +352,7 @@ Loader {
                         "pt": "dddd, d 'de' MMMM",
                         "zh": "yyyy年M月d日 dddd"
                       }
-                      return Qt.locale().toString(Time.date, formats[lang] || "dddd, MMMM d")
+                      return locale.toString(Time.date, formats[lang] || "dddd, MMMM d")
                     }
                     pointSize: Style.fontSizeXL
                     font.weight: Font.Medium

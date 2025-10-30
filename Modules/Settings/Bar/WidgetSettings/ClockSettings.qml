@@ -10,6 +10,8 @@ ColumnLayout {
   spacing: Style.marginM
   width: 700
 
+  property var locale: I18n.langCode ? Qt.locale(I18n.langCode) : Qt.locale()
+
   // Properties to receive data from parent
   property var widgetData: null
   property var widgetMetadata: null
@@ -200,7 +202,7 @@ ColumnLayout {
             // Horizontal
             Repeater {
               Layout.topMargin: Style.marginM
-              model: Qt.locale().toString(now, valueFormatHorizontal.trim()).split("\\n")
+              model: locale.toString(now, valueFormatHorizontal.trim()).split("\\n")
               delegate: NText {
                 visible: text !== ""
                 text: modelData
@@ -231,7 +233,7 @@ ColumnLayout {
 
             Repeater {
               Layout.topMargin: Style.marginM
-              model: Qt.locale().toString(now, valueFormatVertical.trim()).split(" ")
+              model: locale.toString(now, valueFormatVertical.trim()).split(" ")
               delegate: NText {
                 visible: text !== ""
                 text: modelData

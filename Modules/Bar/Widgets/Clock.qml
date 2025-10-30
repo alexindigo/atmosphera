@@ -8,6 +8,7 @@ import qs.Widgets
 Rectangle {
   id: root
 
+  property var locale: I18n.langCode ? Qt.locale(I18n.langCode) : Qt.locale()
   property ShellScreen screen
 
   // Widget properties passed from Bar.qml for per-instance settings
@@ -62,7 +63,7 @@ Rectangle {
         spacing: Settings.data.bar.showCapsule ? -4 : -2
         Repeater {
           id: repeater
-          model: Qt.locale().toString(now, formatHorizontal.trim()).split("\\n")
+          model: locale.toString(now, formatHorizontal.trim()).split("\\n")
           NText {
             visible: text !== ""
             text: modelData
@@ -95,7 +96,7 @@ Rectangle {
         anchors.centerIn: parent
         spacing: -2
         Repeater {
-          model: Qt.locale().toString(now, formatVertical.trim()).split(" ")
+          model: locale.toString(now, formatVertical.trim()).split(" ")
           delegate: NText {
             visible: text !== ""
             text: modelData
