@@ -21,6 +21,7 @@ Singleton {
                            "DarkMode": darkMode,
                            "KeepAwake": keepAwakeComponent,
                            "KeyboardLayout": keyboardLayoutComponent,
+                           "LockKeys:": lockKeysComponent,
                            "MediaMini": mediaMiniComponent,
                            "Microphone": microphoneComponent,
                            "NightLight": nightLightComponent,
@@ -192,6 +193,9 @@ Singleton {
   }
   property Component keepAwakeComponent: Component {
     KeepAwake {}
+  }
+  property Component lockKeysComponent: Component {
+    LockKeys {}
   }
   property Component mediaMiniComponent: Component {
     MediaMini {}
