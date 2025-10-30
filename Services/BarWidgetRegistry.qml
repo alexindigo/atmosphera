@@ -99,6 +99,11 @@ Singleton {
                                     "allowUserSettings": true,
                                     "displayMode": "onhover"
                                   },
+                                  "LockKeys": {
+                                    "showCapsLock": true,
+                                    "showNumLock": true,
+                                    "showScrollLock": true
+                                  },
                                   "MediaMini": {
                                     "allowUserSettings": true,
                                     "hideMode": "hidden",
