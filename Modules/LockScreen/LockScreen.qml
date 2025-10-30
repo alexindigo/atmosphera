@@ -372,6 +372,7 @@ Loader {
                   Layout.alignment: Qt.AlignVCenter
                   backgroundColor: Color.mSurface
                   clockColor: Color.mOnSurface
+                  secondHandColor: Color.mPrimary
                 }
               }
             }
