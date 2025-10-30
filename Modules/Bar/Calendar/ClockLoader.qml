@@ -5,46 +5,57 @@ import Quickshell
 
 Item {
   id: clockRoot
-
   property var now
-
-  // Default colors
   property color backgroundColor: Color.mPrimary
   property color clockColor: Color.mOnPrimary
-  readonly property real markAlpha: 0.7 // alpha value of hour markers in AnalogClock
+
+  function getRelativeLuminance(color) {
+    return 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b
+  }
+
+  function getContrastRatio(color1, color2) {
+    var L1 = getRelativeLuminance(color1)
+    var L2 = getRelativeLuminance(color2)
+    if (L1 > L2) {
+      return (L1 + 0.05) / (L2 + 0.05)
+    } else {
+      return (L2 + 0.05) / (L1 + 0.05)
+    }
+  }
+
   property color secondHandColor: {
     var defaultColor = Color.mError
-    var backgroundL = backgroundColor.hslLightness
-    var hourMarkL
-
-    if (Settings.data.location.analogClockInCalendar) {
-      hourMarkL = (clockColor.hslLightness * markAlpha) + (backgroundL * (1.0 - markAlpha))
-    } else {
-      hourMarkL = backgroundL
-    }
-
-    var bestWorstContrast = -1
+    var bestContrast = 1.0 // A contrast of 1.0 is "no contrast".
     var bestColor = defaultColor
+    var candidates = [Color.mSecondary,
+                      Color.mTertiary,
+                      Color.mError,
+    ]
 
-    var candidates = [Color.mSecondary, Color.mTertiary, Color.mError]
+    const minContrast = 1.149
 
     for (var i = 0; i < candidates.length; i++) {
-      var candidateColor = candidates[i]
-      var candidateL = candidateColor.hslLightness
+      var candidate = candidates[i]
+      var contrastClock = getContrastRatio(candidate, clockColor)
+      if (contrastClock < minContrast) {
+        continue // This color is terrible, don't even consider it.
+      }
+      var contrastBg = getContrastRatio(candidate, backgroundColor)
+      if (contrastBg < minContrast) {
+        continue // This color is terrible, don't even consider it.
+      }
 
-      var diffBackground = Math.abs(backgroundL - candidateL)
-      var diffHourMark = Math.abs(hourMarkL - candidateL)
+      var currentWorstContrast = Math.min(contrastBg, contrastClock)
 
-      var currentWorstContrast = Math.min(diffBackground, diffHourMark)
-
-      if (currentWorstContrast > bestWorstContrast) {
-        bestWorstContrast = currentWorstContrast
-        bestColor = candidateColor
+      if (currentWorstContrast > bestContrast) {
+        bestContrast = currentWorstContrast
+        bestColor = candidate
       }
     }
 
     return bestColor
   }
+
   property color progressColor: clockRoot.secondHandColor
 
   height: Math.round((Style.fontSizeXXXL * 1.9) / 2 * Style.uiScaleRatio) * 2
@@ -74,11 +85,6 @@ Item {
       if (item.hasOwnProperty("progressColor")) {
         item.progressColor = Qt.binding(function () {
           return clockRoot.progressColor
-        })
-      }
-      if (item.hasOwnProperty("markAlpha")) {
-        item.markAlpha = Qt.binding(function () {
-          return clockRoot.markAlpha
         })
       }
     }
