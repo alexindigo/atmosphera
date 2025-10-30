@@ -5,6 +5,8 @@ import Quickshell
 
 Item {
     property var now
+    property color backgroundColor: Color.mPrimary
+    property color clockColor: Color.mOnPrimary
     anchors.fill: parent
 
     Canvas {
@@ -17,8 +19,8 @@ Item {
         property real markAlpha: 0.7
         property color secondHandColor: {
             var defaultColor = Color.mError
-            var backgroundL = Color.mPrimary.hslLightness
-            var hourMarkL = (Color.mOnPrimary.hslLightness * markAlpha) + (backgroundL *(1.0-markAlpha))
+            var backgroundL = backgroundColor.hslLightness
+            var hourMarkL = (clockColor.hslLightness * markAlpha) + (backgroundL *(1.0-markAlpha))
 
             var bestWorstContrast = -1
             var bestColor = defaultColor
@@ -54,7 +56,7 @@ Item {
             var radius = Math.min(width, height) / 2
 
             // Hour marks
-            ctx.strokeStyle = Qt.alpha(Color.mOnPrimary, markAlpha)
+            ctx.strokeStyle = Qt.alpha(clockColor, markAlpha)
             ctx.lineWidth = 2 * Style.uiScaleRatio
             var scaleFactor = 0.7
 
@@ -76,7 +78,7 @@ Item {
             ctx.save()
             var hourAngle = (hours % 12 + minutes / 60) * Math.PI / 6
             ctx.rotate(hourAngle)
-            ctx.strokeStyle = Color.mOnPrimary
+            ctx.strokeStyle = clockColor
             ctx.lineWidth = 3 * Style.uiScaleRatio
             ctx.lineCap = "round"
             ctx.beginPath()
@@ -89,7 +91,7 @@ Item {
             ctx.save()
             var minuteAngle = (minutes + seconds / 60) * Math.PI / 30
             ctx.rotate(minuteAngle)
-            ctx.strokeStyle = Color.mOnPrimary
+            ctx.strokeStyle = clockColor
             ctx.lineWidth = 2 * Style.uiScaleRatio
             ctx.lineCap = "round"
             ctx.beginPath()
@@ -114,7 +116,7 @@ Item {
             // Center dot
             ctx.beginPath()
             ctx.arc(0, 0, 3 * Style.uiScaleRatio, 0, 2 * Math.PI)
-            ctx.fillStyle = Color.mOnPrimary
+            ctx.fillStyle = clockColor
             ctx.fill()
         }
 

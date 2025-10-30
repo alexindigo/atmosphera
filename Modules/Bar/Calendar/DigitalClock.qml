@@ -5,6 +5,8 @@ import Quickshell
 
 Item {
     property var now
+    property color backgroundColor: Color.mPrimary
+    property color clockColor: Color.mOnPrimary
     anchors.fill: parent
 
     // Digital clock's seconds circular progress
@@ -32,14 +34,14 @@ Item {
             ctx.beginPath()
             ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI)
             ctx.lineWidth = 2.5
-            ctx.strokeStyle = Qt.alpha(Color.mOnPrimary, 0.15)
+            ctx.strokeStyle = Qt.alpha(clockColor, 0.15)
             ctx.stroke()
 
             // Progress arc
             ctx.beginPath()
             ctx.arc(centerX, centerY, radius, -Math.PI / 2, -Math.PI / 2 + progress * 2 * Math.PI)
             ctx.lineWidth = 2.5
-            ctx.strokeStyle = Color.mOnPrimary
+            ctx.strokeStyle = clockColor
             ctx.lineCap = "round"
             ctx.stroke()
         }
@@ -59,7 +61,7 @@ Item {
 
             pointSize: Style.fontSizeXS
             font.weight: Style.fontWeightBold
-            color: Color.mOnPrimary
+            color: clockColor
             family: Settings.data.ui.fontFixed
             Layout.alignment: Qt.AlignHCenter
         }
@@ -68,7 +70,7 @@ Item {
             text: Qt.formatTime(now, "mm")
             pointSize: Style.fontSizeXXS
             font.weight: Style.fontWeightBold
-            color: Color.mOnPrimary
+            color: clockColor
             family: Settings.data.ui.fontFixed
             Layout.alignment: Qt.AlignHCenter
         }

@@ -7,6 +7,8 @@ Item {
     id: clockRoot
 
     property var now
+    property color backgroundColor: Color.mPrimary
+    property color clockColor: Color.mOnPrimary
 
     height: Math.round((Style.fontSizeXXXL * 1.9) / 2 * Style.uiScaleRatio) * 2
     width: clockRoot.height
@@ -20,6 +22,8 @@ Item {
         onLoaded: {
             // Bind the loaded item's 'now' property to *this* component's 'now' property
             item.now = Qt.binding(function() { return clockRoot.now })
+            item.backgroundColor = Qt.binding(function() { return clockRoot.backgroundColor })
+            item.clockColor = Qt.binding(function() { return clockRoot.clockColor })
         }
     }
 }
