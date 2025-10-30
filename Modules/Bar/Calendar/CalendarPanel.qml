@@ -219,8 +219,8 @@ NPanel {
         anchors.right: parent.right
         anchors.rightMargin: Style.marginM
         anchors.verticalCenter: parent.verticalCenter
+        progressColor: Color.mOnPrimary
         Layout.alignment: Qt.AlignVCenter
-
         now: root.now
       }
     }

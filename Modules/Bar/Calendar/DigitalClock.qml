@@ -9,7 +9,7 @@ Item {
     property var now
     property color backgroundColor: Color.mPrimary
     property color clockColor: Color.mOnPrimary
-    property color secondHandColor: Color.mError
+    property color progressColor: Color.mError
     anchors.fill: parent
 
     // Digital clock's seconds circular progress
@@ -43,7 +43,7 @@ Item {
             ctx.beginPath()
             ctx.arc(centerX, centerY, radius, -Math.PI / 2, -Math.PI / 2 + progress * 2 * Math.PI)
             ctx.lineWidth = 2.5
-            ctx.strokeStyle = secondHandColor
+            ctx.strokeStyle = progressColor
             ctx.lineCap = "round"
             ctx.stroke()
         }

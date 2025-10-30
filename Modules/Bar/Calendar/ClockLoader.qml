@@ -49,6 +49,7 @@ Item {
 
         return bestColor
     }
+    property color progressColor: clockRoot.secondHandColor
 
 
     height: Math.round((Style.fontSizeXXXL * 1.9) / 2 * Style.uiScaleRatio) * 2
@@ -64,7 +65,12 @@ Item {
             item.now = Qt.binding(function() { return clockRoot.now })
             item.backgroundColor = Qt.binding(function() { return clockRoot.backgroundColor })
             item.clockColor = Qt.binding(function() { return clockRoot.clockColor })
-            item.secondHandColor = Qt.binding(function() { return clockRoot.secondHandColor })
+            if (item.hasOwnProperty("secondHandColor")) {
+                item.secondHandColor = Qt.binding(function() { return clockRoot.secondHandColor })
+            }
+            if (item.hasOwnProperty("progressColor")) {
+                item.progressColor = Qt.binding(function() { return clockRoot.progressColor })
+            }
             if (item.hasOwnProperty("markAlpha")) {
                 item.markAlpha = Qt.binding(function() { return clockRoot.markAlpha })
             }
