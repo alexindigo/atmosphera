@@ -30,18 +30,26 @@ NPanel {
     return weekNumber
   }
 
-  panelContent: ColumnLayout {
-    id: content
+  panelContent: Item {
     anchors.fill: parent
-    anchors.margins: Style.marginL
-    spacing: Style.marginM
 
-    readonly property int firstDayOfWeek: Settings.data.location.firstDayOfWeek === -1 ? Qt.locale().firstDayOfWeek : Settings.data.location.firstDayOfWeek
-    property bool isCurrentMonth: checkIsCurrentMonth()
+    ColumnLayout {
+      id: content
+      anchors.fill: parent
+      anchors.margins: Style.marginL
+      width: root.preferredWidth - Style.marginL * 2
+      spacing: Style.marginM
+
+      readonly property int firstDayOfWeek: Settings.data.location.firstDayOfWeek === -1 ? Qt.locale().firstDayOfWeek : Settings.data.location.firstDayOfWeek
+    property bool isCurrentMonth: true
     readonly property bool weatherReady: Settings.data.location.weatherEnabled && (LocationService.data.weather !== null)
 
     function checkIsCurrentMonth() {
       return (Time.date.getMonth() === grid.month) && (Time.date.getFullYear() === grid.year)
+    }
+
+    Component.onCompleted: {
+      isCurrentMonth = checkIsCurrentMonth()
     }
 
     Shortcut {
@@ -61,7 +69,7 @@ NPanel {
     Connections {
       target: Time
       function onDateChanged() {
-        isCurrentMonth = checkIsCurrentMonth()
+        content.isCurrentMonth = content.checkIsCurrentMonth()
       }
     }
 
@@ -163,7 +171,7 @@ NPanel {
                 text: {
                   if (!Settings.data.location.weatherEnabled)
                     return ""
-                  if (!weatherReady)
+                  if (!content.weatherReady)
                     return I18n.tr("calendar.weather.loading")
                   const chunks = Settings.data.location.name.split(",")
                   return chunks[0]
@@ -176,7 +184,7 @@ NPanel {
               }
 
               NText {
-                text: weatherReady ? ` (${LocationService.data.weather.timezone_abbreviation})` : ""
+                text: content.weatherReady ? ` (${LocationService.data.weather.timezone_abbreviation})` : ""
                 pointSize: Style.fontSizeXS
                 font.weight: Style.fontWeightMedium
                 color: Qt.alpha(Color.mOnPrimary, 0.7)
@@ -421,7 +429,6 @@ NPanel {
       GridLayout {
         id: grid
         Layout.fillWidth: true
-        Layout.maximumWidth: parent.width - (Settings.data.location.showWeekNumberInCalendar ? Style.baseWidgetSize * 0.7 : 0)
         columns: 7
         columnSpacing: Style.marginXXS
         rowSpacing: Style.marginXXS
@@ -593,6 +600,7 @@ NPanel {
         Layout.preferredHeight: implicitHeight
         forecastDays: 6
       }
+    }
     }
   }
 }
