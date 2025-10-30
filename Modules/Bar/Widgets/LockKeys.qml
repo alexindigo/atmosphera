@@ -3,10 +3,10 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
 import qs.Commons
+import qs.Modules.Settings
 import qs.Services
 import qs.Widgets
-import qs.Modules.Settings
-// import qs.Modules.Bar.Extras
+//import qs.Modules.Bar.Extras
 
 Rectangle {
   id: root
@@ -34,17 +34,6 @@ Rectangle {
   readonly property bool showNum: (widgetSettings.showNumLock !== undefined) ? widgetSettings.showNumLock : widgetMetadata.showNumLock
   readonly property bool showScroll: (widgetSettings.showScrollLock !== undefined) ? widgetSettings.showScrollLock : widgetMetadata.showScrollLock
 
-  property bool capsLockOn: LockKeysService.capsLockOn
-  property bool numLockOn: LockKeysService.numLockOn
-  property bool scrollLockOn: LockKeysService.scrollLockOn
-
-  Connections {
-    target: LockKeysService
-    function onCapsLockChanged(active) { root.capsLockOn = active }
-    function onNumLockChanged(active) { root.numLockOn = active }
-    function onScrollLockChanged(active) { root.scrollLockOn = active }
-  }
-
   implicitWidth: isVertical ? Style.capsuleHeight : Math.round(layout.implicitWidth + Style.marginM * 2)
   implicitHeight: isVertical ? Math.round(layout.implicitHeight + Style.marginM * 2) : Style.capsuleHeight
 
@@ -67,19 +56,19 @@ Rectangle {
       spacing: 0
 
       NIcon {
-        visible: showCaps
+        visible: root.showCaps
         icon: "letter-c"
-        color: root.capsLockOn ? Color.mTertiary : Qt.alpha(Color.mOnSurfaceVariant, 0.3)
+        color: LockKeysService.capsLockOn ? Color.mTertiary : Qt.alpha(Color.mOnSurfaceVariant, 0.3)
       }
       NIcon {
-        visible: showNum
+        visible: root.showNum
         icon: "letter-n"
-        color: root.numLockOn ? Color.mTertiary : Qt.alpha(Color.mOnSurfaceVariant, 0.3)
+        color: LockKeysService.numLockOn ? Color.mTertiary : Qt.alpha(Color.mOnSurfaceVariant, 0.3)
       }
       NIcon {
-        visible: showScroll
+        visible: root.showScroll
         icon: "letter-s"
-        color: root.scrollLockOn ? Color.mTertiary : Qt.alpha(Color.mOnSurfaceVariant, 0.3)
+        color: LockKeysService.scrollLockOn ? Color.mTertiary : Qt.alpha(Color.mOnSurfaceVariant, 0.3)
       }
     }
 
@@ -89,19 +78,19 @@ Rectangle {
       spacing: 0
 
       NIcon {
-        visible: showCaps
+        visible: root.showCaps
         icon: "letter-c"
-        color: root.capsLockOn ? Color.mTertiary : Qt.alpha(Color.mOnSurfaceVariant, 0.3)
+        color: LockKeysService.capsLockOn ? Color.mTertiary : Qt.alpha(Color.mOnSurfaceVariant, 0.3)
       }
       NIcon {
-        visible: showNum
+        visible: root.showNum
         icon: "letter-n"
-        color: root.numLockOn ? Color.mTertiary : Qt.alpha(Color.mOnSurfaceVariant, 0.3)
+        color: LockKeysService.numLockOn ? Color.mTertiary : Qt.alpha(Color.mOnSurfaceVariant, 0.3)
       }
       NIcon {
-        visible: showScroll
+        visible: root.showScroll
         icon: "letter-s"
-        color: root.scrollLockOn ? Color.mTertiary : Qt.alpha(Color.mOnSurfaceVariant, 0.3)
+        color: LockKeysService.scrollLockOn ? Color.mTertiary : Qt.alpha(Color.mOnSurfaceVariant, 0.3)
       }
     }
   }

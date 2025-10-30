@@ -21,7 +21,7 @@ Singleton {
                            "DarkMode": darkMode,
                            "KeepAwake": keepAwakeComponent,
                            "KeyboardLayout": keyboardLayoutComponent,
-                           "LockKeys:": lockKeysComponent,
+                           "LockKeys": lockKeysComponent,
                            "MediaMini": mediaMiniComponent,
                            "Microphone": microphoneComponent,
                            "NightLight": nightLightComponent,
@@ -100,6 +100,7 @@ Singleton {
                                     "displayMode": "onhover"
                                   },
                                   "LockKeys": {
+                                    "allowUserSettings": true,
                                     "showCapsLock": true,
                                     "showNumLock": true,
                                     "showScrollLock": true
