@@ -21,6 +21,7 @@ Popup {
   height: content.implicitHeight + padding * 2
   padding: Style.marginXL
   modal: true
+  anchors.centerIn: parent
 
   onOpened: {
     // Mark this popup has opened in the PanelService
