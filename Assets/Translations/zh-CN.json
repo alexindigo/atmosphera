@@ -649,6 +649,10 @@
         "fahrenheit": {
           "label": "以华氏度显示温度 (°F)",
           "description": "以华氏度而非摄氏度显示温度。"
+        },
+        "show-in-calendar": {
+          "description": "直接在您的日历视图中显示每日天气预报。",
+          "label": "在日历中显示天气"
         }
       },
       "date-time": {

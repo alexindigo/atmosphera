@@ -611,6 +611,10 @@
         "fahrenheit": {
           "label": "Exibir temperatura em Fahrenheit (°F)",
           "description": "Exibe a temperatura em Fahrenheit em vez de Celsius."
+        },
+        "show-in-calendar": {
+          "description": "Mostre a previsão do tempo diária diretamente na sua visualização de calendário.",
+          "label": "Exibir clima no calendário"
         }
       },
       "date-time": {

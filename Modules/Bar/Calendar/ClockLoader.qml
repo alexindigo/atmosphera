@@ -29,10 +29,7 @@ Item {
     var defaultColor = Color.mError
     var bestContrast = 1.0 // 1.0 is "no contrast"
     var bestColor = defaultColor
-    var candidates = [Color.mSecondary,
-                      Color.mTertiary,
-                      Color.mError,
-    ]
+    var candidates = [Color.mSecondary, Color.mTertiary, Color.mError]
 
     const minContrast = 1.149
 

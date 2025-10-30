@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
 import qs.Commons
+import qs.Modules.ControlCenter.Cards
 import qs.Services
 import qs.Widgets
 
@@ -14,7 +15,7 @@ NPanel {
   readonly property var now: Time.date
 
   preferredWidth: (Settings.data.location.showWeekNumberInCalendar ? 400 : 380) * Style.uiScaleRatio
-  preferredHeight: 520 * Style.uiScaleRatio
+  preferredHeight: (Settings.data.location.showCalendarWeather ? 600 : 480) * Style.uiScaleRatio
   panelKeyboardFocus: true
 
   // Helper function to calculate ISO week number
@@ -64,22 +65,25 @@ NPanel {
       }
     }
 
-    // Combined blue banner with date/time and weather summary
+    // Banner with date/time/clock
     Rectangle {
       Layout.fillWidth: true
-      Layout.preferredHeight: blueColumn.implicitHeight + Style.marginM * 2
+      Layout.preferredHeight: capsuleColumn.implicitHeight + Style.marginS * 2
+      Layout.bottomMargin: Style.marginM
       radius: Style.radiusL
       color: Color.mPrimary
 
       ColumnLayout {
-        id: blueColumn
+        id: capsuleColumn
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.bottom: parent.bottom
-        anchors.topMargin: Style.marginM
-        anchors.leftMargin: Style.marginM
-        anchors.bottomMargin: Style.marginM
-        anchors.rightMargin: clockItem.width + (Style.marginM * 2)
+
+        anchors.topMargin: Style.marginS
+        anchors.bottomMargin: Style.marginS
+        anchors.rightMargin: clockLoader.width + (Style.marginL * 2)
+        anchors.leftMargin: Style.marginL
+
         spacing: 0
 
         // Combined layout for weather icon, date, and weather text
@@ -88,41 +92,6 @@ NPanel {
           height: 60 * Style.uiScaleRatio
           clip: true
           spacing: Style.marginS
-
-          // Weather icon and temperature
-          ColumnLayout {
-            visible: Settings.data.location.weatherEnabled && weatherReady
-            Layout.alignment: Qt.AlignVCenter
-            spacing: Style.marginXXS
-
-            NIcon {
-              Layout.alignment: Qt.AlignHCenter
-              icon: Settings.data.location.weatherEnabled && weatherReady ? LocationService.weatherSymbolFromCode(LocationService.data.weather.current_weather.weathercode) : ""
-              pointSize: Style.fontSizeXXL
-              color: Color.mOnPrimary
-            }
-
-            NText {
-              Layout.alignment: Qt.AlignHCenter
-              text: {
-                if (!Settings.data.location.weatherEnabled)
-                  return ""
-                if (!weatherReady)
-                  return ""
-                var temp = LocationService.data.weather.current_weather.temperature
-                var suffix = "C"
-                if (Settings.data.location.useFahrenheit) {
-                  temp = LocationService.celsiusToFahrenheit(temp)
-                  suffix = "F"
-                }
-                temp = Math.round(temp)
-                return `${temp}°${suffix}`
-              }
-              pointSize: Style.fontSizeM
-              font.weight: Style.fontWeightBold
-              color: Color.mOnPrimary
-            }
-          }
 
           // Today day number - with simple, stable animation
           NText {
@@ -216,7 +185,7 @@ NPanel {
 
       // Analog clock
       ClockLoader {
-        id: clockItem
+        id: clockLoader
         anchors.right: parent.right
         anchors.rightMargin: Style.marginM
         anchors.verticalCenter: parent.verticalCenter
@@ -226,61 +195,6 @@ NPanel {
       }
     }
 
-    RowLayout {
-      visible: weatherReady
-      Layout.fillWidth: true
-      Layout.alignment: Qt.AlignHCenter
-      spacing: Style.marginL
-      Repeater {
-        model: weatherReady ? Math.min(6, LocationService.data.weather.daily.time.length) : 0
-        delegate: ColumnLayout {
-          Layout.preferredWidth: 0
-          Layout.fillWidth: true
-          Layout.alignment: Qt.AlignHCenter
-          spacing: Style.marginS
-          NText {
-            text: {
-              var weatherDate = new Date(LocationService.data.weather.daily.time[index].replace(/-/g, "/"))
-              return Qt.locale().toString(weatherDate, "ddd")
-            }
-            color: Color.mOnSurfaceVariant
-            pointSize: Style.fontSizeM
-            font.weight: Style.fontWeightMedium
-            Layout.alignment: Qt.AlignHCenter
-          }
-          NIcon {
-            Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
-            icon: LocationService.weatherSymbolFromCode(LocationService.data.weather.daily.weathercode[index])
-            pointSize: Style.fontSizeXXL * 1.5
-            color: Color.mPrimary
-          }
-          NText {
-            Layout.alignment: Qt.AlignHCenter
-            text: {
-              var max = LocationService.data.weather.daily.temperature_2m_max[index]
-              var min = LocationService.data.weather.daily.temperature_2m_min[index]
-              if (Settings.data.location.useFahrenheit) {
-                max = LocationService.celsiusToFahrenheit(max)
-                min = LocationService.celsiusToFahrenheit(min)
-              }
-              max = Math.round(max)
-              min = Math.round(min)
-              return `${max}°/${min}°`
-            }
-            pointSize: Style.fontSizeXS
-            color: Color.mOnSurfaceVariant
-            font.weight: Style.fontWeightMedium
-          }
-        }
-      }
-    }
-    RowLayout {
-      visible: Settings.data.location.weatherEnabled && !weatherReady
-      Layout.fillWidth: true
-      Layout.alignment: Qt.AlignHCenter
-      NBusyIndicator {}
-    }
-    Item {}
     RowLayout {
       Layout.fillWidth: true
       spacing: Style.marginS
@@ -367,7 +281,8 @@ NPanel {
     }
     RowLayout {
       Layout.fillWidth: true
-      Layout.fillHeight: true
+      Layout.preferredHeight: 240 * Style.uiScaleRatio
+      Layout.maximumHeight: 240 * Style.uiScaleRatio
       spacing: 0
 
       // Helper function to check if a date has events
@@ -563,6 +478,20 @@ NPanel {
           }
         }
       }
+    }
+
+    NDivider {
+      visible: Settings.data.location.showCalendarWeather
+      Layout.fillWidth: true
+      Layout.topMargin: Style.marginM
+      Layout.bottomMargin: Style.marginM
+    }
+
+    WeatherCard {
+      visible: Settings.data.location.showCalendarWeather
+      Layout.fillWidth: true
+      Layout.preferredHeight: implicitHeight
+      forecastDays: 6
     }
   }
 }

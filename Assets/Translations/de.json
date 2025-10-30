@@ -649,6 +649,10 @@
         "fahrenheit": {
           "label": "Temperatur in Fahrenheit (°F) anzeigen",
           "description": "Temperatur in Fahrenheit statt Celsius anzeigen."
+        },
+        "show-in-calendar": {
+          "description": "Zeige die tägliche Wettervorhersage direkt in deiner Kalenderansicht an.",
+          "label": "Wetter im Kalender anzeigen"
         }
       },
       "date-time": {

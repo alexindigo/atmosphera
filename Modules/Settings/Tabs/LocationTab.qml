@@ -86,6 +86,15 @@ ColumnLayout {
       enabled: Settings.data.location.weatherEnabled
       opacity: Settings.data.location.weatherEnabled ? 1.0 : 0.5
     }
+
+    NToggle {
+      label: I18n.tr("settings.location.weather.show-in-calendar.label")
+      description: I18n.tr("settings.location.weather.show-in-calendar.description")
+      checked: Settings.data.location.showCalendarWeather
+      onToggled: checked => Settings.data.location.showCalendarWeather = checked
+      enabled: Settings.data.location.weatherEnabled
+      opacity: Settings.data.location.weatherEnabled ? 1.0 : 0.5
+    }
   }
 
   NDivider {
