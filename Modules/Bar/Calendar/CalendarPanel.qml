@@ -15,7 +15,7 @@ NPanel {
   readonly property var now: Time.date
 
   preferredWidth: (Settings.data.location.showWeekNumberInCalendar ? 400 : 380) * Style.uiScaleRatio
-  preferredHeight: (Settings.data.location.showCalendarWeather ? 600 : 480) * Style.uiScaleRatio
+  preferredHeight: (Settings.data.location.weatherEnabled && Settings.data.location.showCalendarWeather ? 600 : 420) * Style.uiScaleRatio
   panelKeyboardFocus: true
 
   // Helper function to calculate ISO week number
@@ -480,18 +480,15 @@ NPanel {
       }
     }
 
-    NDivider {
-      visible: Settings.data.location.showCalendarWeather
+    Loader {
+      active: Settings.data.location.weatherEnabled && Settings.data.location.showCalendarWeather
       Layout.fillWidth: true
-      Layout.topMargin: Style.marginM
-      Layout.bottomMargin: Style.marginM
-    }
 
-    WeatherCard {
-      visible: Settings.data.location.showCalendarWeather
-      Layout.fillWidth: true
-      Layout.preferredHeight: implicitHeight
-      forecastDays: 6
+      sourceComponent: WeatherCard {
+        Layout.fillWidth: true
+        Layout.preferredHeight: implicitHeight
+        forecastDays: 6
+      }
     }
   }
 }
