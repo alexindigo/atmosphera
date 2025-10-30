@@ -17,10 +17,6 @@ Popup {
 
   signal updateWidgetSettings(string section, int index, var settings)
 
-  // Center popup in parent
-  x: (parent.width - width) * 0.5
-  y: (parent.height - height) * 0.5
-
   width: Math.max(content.implicitWidth + padding * 2, 500)
   height: content.implicitHeight + padding * 2
   padding: Style.marginXL
