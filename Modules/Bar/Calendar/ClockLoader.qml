@@ -6,6 +6,8 @@ import Quickshell
 Item {
   id: clockRoot
   property var now
+
+  // Default colors
   property color backgroundColor: Color.mPrimary
   property color clockColor: Color.mOnPrimary
 
