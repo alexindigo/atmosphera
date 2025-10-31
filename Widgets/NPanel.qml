@@ -60,8 +60,6 @@ Loader {
   readonly property bool effectivePanelAnchorLeft: panelAnchorLeft || (useButtonPosition && barPosition === "left")
   readonly property bool effectivePanelAnchorRight: panelAnchorRight || (useButtonPosition && barPosition === "right")
 
-
-
   signal opened
   signal closed
 

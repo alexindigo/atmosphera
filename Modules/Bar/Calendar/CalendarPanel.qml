@@ -44,25 +44,7 @@ NPanel {
       return numWeeks * rowHeight
     }
 
-    property real contentPreferredHeight: {
-      // Banner
-      const bannerHeight = 90 * Style.uiScaleRatio
-
-      // NBox (calendar grid container)
-      const navigationHeight = Style.baseWidgetSize // Navigation buttons row
-      const dayNamesHeight = Style.baseWidgetSize * 0.6 // Day names header row
-      const nboxInnerMargins = Style.marginM * 2 // Top and bottom margins inside NBox
-      const nboxHeight = navigationHeight + dayNamesHeight + calendarGridHeight + nboxInnerMargins
-
-      // Weather card
-      const weatherHeight = (Settings.data.location.weatherEnabled && Settings.data.location.showCalendarWeather ? 210 : 0) * Style.uiScaleRatio
-
-      // Main layout margins and spacing
-      const outerMargins = Style.marginM * 2 // Top and bottom margins of main ColumnLayout
-      const mainSpacing = Style.marginM * 2 // Spacing between banner and NBox, and NBox and weather (2 gaps)
-
-      return bannerHeight + nboxHeight + weatherHeight + outerMargins + mainSpacing
-    }
+    property real contentPreferredHeight: banner.height + calendar.height + weatherLoader.height + Style.marginM * 4 + (Settings.data.location.weatherEnabled && Settings.data.location.showCalendarWeather) * Style.marginM
 
     ColumnLayout {
       id: content
@@ -114,6 +96,7 @@ NPanel {
 
       // Banner with date/time/clock
       Rectangle {
+        id: banner
         Layout.fillWidth: true
         Layout.preferredHeight: capsuleColumn.implicitHeight + Style.marginM * 2
         radius: Style.radiusL
@@ -243,6 +226,7 @@ NPanel {
 
       // Calendar itself
       NBox {
+        id: calendar
         Layout.fillWidth: true
         Layout.preferredHeight: {
           const navigationHeight = Style.baseWidgetSize // Navigation buttons row
@@ -338,7 +322,7 @@ NPanel {
                 model: 7
                 Item {
                   Layout.fillWidth: true
-                  Layout.preferredHeight: Style.baseWidgetSize * 0.6
+                  Layout.preferredHeight: Style.fontSizeS * 2
                   NText {
                     anchors.centerIn: parent
                     text: {
