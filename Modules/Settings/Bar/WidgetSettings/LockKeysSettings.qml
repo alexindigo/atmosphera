@@ -33,30 +33,30 @@ ColumnLayout {
     label: I18n.tr("bar.widget-settings.lock-keys.indicator-style.label")
     description: I18n.tr("bar.widget-settings.lock-keys.indicator-style.description")
     model: [{
-      "key": "large",
-      "name": I18n.tr("bar.widget-settings.lock-keys.indicator-style.large")
-    }, {
-      "key": "small",
-      "name": I18n.tr("bar.widget-settings.lock-keys.indicator-style.small")
-    }, {
-      "key": "square",
-      "name": I18n.tr("bar.widget-settings.lock-keys.indicator-style.square")
-    }, {
-      "key": "square-round",
-      "name": I18n.tr("bar.widget-settings.lock-keys.indicator-style.square-round")
-    }, {
-      "key": "circle",
-      "name": I18n.tr("bar.widget-settings.lock-keys.indicator-style.circle")
-    }, {
-      "key": "circle-dash",
-      "name": I18n.tr("bar.widget-settings.lock-keys.indicator-style.circle-dash")
-    }, {
-      "key": "circle-dot",
-      "name": I18n.tr("bar.widget-settings.lock-keys.indicator-style.circle-dot")
-    }, {
-      "key": "hex",
-      "name": I18n.tr("bar.widget-settings.lock-keys.indicator-style.hex")
-    }]
+        "key": "large",
+        "name": I18n.tr("bar.widget-settings.lock-keys.indicator-style.large")
+      }, {
+        "key": "small",
+        "name": I18n.tr("bar.widget-settings.lock-keys.indicator-style.small")
+      }, {
+        "key": "square",
+        "name": I18n.tr("bar.widget-settings.lock-keys.indicator-style.square")
+      }, {
+        "key": "square-round",
+        "name": I18n.tr("bar.widget-settings.lock-keys.indicator-style.square-round")
+      }, {
+        "key": "circle",
+        "name": I18n.tr("bar.widget-settings.lock-keys.indicator-style.circle")
+      }, {
+        "key": "circle-dash",
+        "name": I18n.tr("bar.widget-settings.lock-keys.indicator-style.circle-dash")
+      }, {
+        "key": "circle-dot",
+        "name": I18n.tr("bar.widget-settings.lock-keys.indicator-style.circle-dot")
+      }, {
+        "key": "hex",
+        "name": I18n.tr("bar.widget-settings.lock-keys.indicator-style.hex")
+      }]
     currentKey: valueIndicatorStyle
     onSelected: key => valueIndicatorStyle = key
   }
