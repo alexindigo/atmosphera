@@ -1260,6 +1260,20 @@
           "label": "Masquer lorsqu'aucun média n'est en lecture",
           "description": "Si activé, le visualiseur est masqué sauf lorsqu'un lecteur est en lecture."
         }
+      },
+      "lock-keys": {
+        "show-caps-lock": {
+          "description": "Afficher l'état du verrouillage majuscule.",
+          "label": "Verr Maj"
+        },
+        "show-num-lock": {
+          "description": "Afficher l'état du verrouillage numérique.",
+          "label": "Verr Num"
+        },
+        "show-scroll-lock": {
+          "description": "Afficher l'état du verrouillage du défilement.",
+          "label": "Verr Maj"
+        }
       }
     }
   },
