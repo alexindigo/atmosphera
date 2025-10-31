@@ -10,6 +10,7 @@ NBox {
   id: root
 
   property int forecastDays: 7
+  property bool showLocation: true
   readonly property bool weatherReady: Settings.data.location.weatherEnabled && (LocationService.data.weather !== null)
 
   visible: Settings.data.location.weatherEnabled
@@ -47,6 +48,7 @@ NBox {
           }
           pointSize: Style.fontSizeL
           font.weight: Style.fontWeightBold
+          visible: showLocation
         }
 
         RowLayout {
@@ -73,7 +75,7 @@ NBox {
             text: weatherReady ? `(${LocationService.data.weather.timezone_abbreviation})` : ""
             pointSize: Style.fontSizeXS
             color: Color.mOnSurfaceVariant
-            visible: LocationService.data.weather
+            visible: LocationService.data.weather && showLocation
           }
         }
       }

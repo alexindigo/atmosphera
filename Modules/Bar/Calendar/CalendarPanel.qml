@@ -253,11 +253,11 @@ NPanel {
         }
 
         Behavior on Layout.preferredWidth {
-                NumberAnimation {
-                  duration: Style.animationFast
-                  easing.type: Easing.InOutQuad
-                }
-              }
+          NumberAnimation {
+            duration: Style.animationFast
+            easing.type: Easing.InOutQuad
+          }
+        }
 
         ColumnLayout {
           anchors.fill: parent
@@ -669,6 +669,7 @@ NPanel {
           Layout.fillWidth: true
           Layout.preferredHeight: implicitHeight
           forecastDays: 6
+          showLocation: false
         }
       }
     }
