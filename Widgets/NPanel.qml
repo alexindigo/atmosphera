@@ -218,7 +218,8 @@ Loader {
 
         // Top-left corner
         topLeftInverted: {
-          if (!attachedToBar) return false
+          if (!attachedToBar)
+            return false
 
           // Inverted if panel is anchored to top edge (bar is at top)
           if (effectivePanelAnchorTop)
@@ -232,7 +233,8 @@ Loader {
 
         // Top-right corner
         topRightInverted: {
-          if (!attachedToBar) return false
+          if (!attachedToBar)
+            return false
 
           // Inverted if panel is anchored to top edge (bar is at top)
           if (effectivePanelAnchorTop)
@@ -246,7 +248,8 @@ Loader {
 
         // Bottom-left corner
         bottomLeftInverted: {
-          if (!attachedToBar) return false
+          if (!attachedToBar)
+            return false
 
           // Inverted if panel is anchored to bottom edge (bar is at bottom)
           if (effectivePanelAnchorBottom)
@@ -260,7 +263,8 @@ Loader {
 
         // Bottom-right corner
         bottomRightInverted: {
-          if (!attachedToBar) return false
+          if (!attachedToBar)
+            return false
 
           // Inverted if panel is anchored to bottom edge (bar is at bottom)
           if (effectivePanelAnchorBottom)
