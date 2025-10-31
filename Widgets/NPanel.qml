@@ -223,10 +223,10 @@ Loader {
             }
 
             // The actual panel's content
-            NRectangleCurved {
+            NShapedRectangle {
                 id: panelBackground
 
-                backgroundColor: panelBackgroundColor
+                backgroundColor: panelBackgroundColor ? Qt.alpha(panelBackgroundColor, Settings.data.bar.backgroundOpacity) : panelBackgroundColor
 
                 topLeftRadius: Style.radiusL
                 topRightRadius: Style.radiusL
@@ -362,8 +362,8 @@ Loader {
                     switch (barPosition) {
                     case "top":
                         return (Style.barHeight + (attachedToBar ? 0 : Style.marginS))
-                                + (Settings.data.bar.floating ? Settings.data.bar.marginVertical
-                                                                * Style.marginXL : 0)
+                                + (Settings.data.bar.floating ? Math.round(Settings.data.bar.marginVertical
+                                                                * Style.marginXL) : 0)
                     default:
                         return attachedToBar ? 0 : Style.marginS
                     }
@@ -376,8 +376,8 @@ Loader {
                     switch (barPosition) {
                     case "bottom":
                         return (Style.barHeight + (attachedToBar ? 0 : Style.marginS))
-                                + (Settings.data.bar.floating ? Settings.data.bar.marginVertical
-                                                                * Style.marginXL : 0)
+                                + (Settings.data.bar.floating ? Math.round(Settings.data.bar.marginVertical
+                                                                * Style.marginXL) : 0)
                     default:
                         return attachedToBar ? 0 : Style.marginS
                     }
@@ -390,8 +390,8 @@ Loader {
                     switch (barPosition) {
                     case "left":
                         return (Style.barHeight + (attachedToBar ? 0 : Style.marginS))
-                                + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal
-                                                                * Style.marginXL : 0)
+                                + (Settings.data.bar.floating ? Math.round(Settings.data.bar.marginHorizontal
+                                                                * Style.marginXL) : 0)
                     default:
                         return attachedToBar ? 0 : Style.marginS
                     }
@@ -404,8 +404,8 @@ Loader {
                     switch (barPosition) {
                     case "right":
                         return (Style.barHeight + (attachedToBar ? 0 : Style.marginS))
-                                + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal
-                                                                * Style.marginXL : 0)
+                                + (Settings.data.bar.floating ? Math.round(Settings.data.bar.marginHorizontal
+                                                                * Style.marginXL) : 0)
                     default:
                         return attachedToBar ? 0 : Style.marginS
                     }
