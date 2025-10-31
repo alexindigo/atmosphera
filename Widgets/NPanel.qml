@@ -226,7 +226,7 @@ Loader {
             NShapedRectangle {
                 id: panelBackground
 
-                backgroundColor: panelBackgroundColor ? Qt.alpha(panelBackgroundColor, Settings.data.bar.backgroundOpacity) : panelBackgroundColor
+                backgroundColor: (attachedToBar && Settings.data.bar.backgroundOpacity > 0 && (topLeftInverted || topRightInverted || bottomLeftInverted || bottomRightInverted)) ? Qt.alpha(panelBackgroundColor, Settings.data.bar.backgroundOpacity) : panelBackgroundColor
 
                 topLeftRadius: Style.radiusL
                 topRightRadius: Style.radiusL
@@ -237,7 +237,7 @@ Loader {
 
                 // Top-left corner
                 topLeftInverted: {
-                    if (!attachedToBar)
+                    if (!attachedToBar || Settings.data.bar.backgroundOpacity <= 0) 
                         return false
 
                     // Inverted if panel is anchored to top edge (bar is at top)
@@ -252,7 +252,7 @@ Loader {
 
                 // Top-right corner
                 topRightInverted: {
-                    if (!attachedToBar)
+                    if (!attachedToBar || Settings.data.bar.backgroundOpacity <= 0) 
                         return false
 
                     // Inverted if panel is anchored to top edge (bar is at top)
@@ -267,7 +267,7 @@ Loader {
 
                 // Bottom-left corner
                 bottomLeftInverted: {
-                    if (!attachedToBar)
+                    if (!attachedToBar || Settings.data.bar.backgroundOpacity <= 0) 
                         return false
 
                     // Inverted if panel is anchored to bottom edge (bar is at bottom)
@@ -282,7 +282,7 @@ Loader {
 
                 // Bottom-right corner
                 bottomRightInverted: {
-                    if (!attachedToBar)
+                   if (!attachedToBar || Settings.data.bar.backgroundOpacity <= 0) 
                         return false
 
                     // Inverted if panel is anchored to bottom edge (bar is at bottom)
