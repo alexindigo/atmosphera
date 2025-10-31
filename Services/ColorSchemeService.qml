@@ -27,7 +27,7 @@ Singleton {
       const enabled = !!Settings.data.colorSchemes.darkMode
       const label = enabled ? "Dark mode" : "Light mode"
       const description = enabled ? "Enabled" : "Enabled"
-      ToastService.showNotice(label, description)
+      ToastService.showNotice(label, description, "dark-mode")
     }
   }
 
@@ -109,7 +109,7 @@ Singleton {
     if (schemeExists) {
       Settings.data.colorSchemes.predefinedScheme = basename
       applyScheme(schemeName)
-      ToastService.showNotice("Color Scheme", `Set to ${basename}`)
+      ToastService.showNotice("Color Scheme", `Set to ${basename}`, "settings-color-scheme")
     } else {
       Logger.e("ColorScheme", "Scheme not found:", schemeName)
       ToastService.showError("Color Scheme", `Scheme '${basename}' not found!`)

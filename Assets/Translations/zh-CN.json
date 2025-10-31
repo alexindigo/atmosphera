@@ -1721,6 +1721,14 @@
       "enabled": "已启用",
       "disabled": "已禁用"
     },
+    "airplane-mode": {
+      "title": "飞行模式",
+      "enabled": "已启用",
+      "disabled": "已禁用"
+    },
+    "internet": {
+      "limited": "已连接但无互联网"
+    },
     "kofi": {
       "opened": "Ko-fi页面已在您的浏览器中打开"
     },

@@ -1761,6 +1761,14 @@
       "enabled": "Aktiviert",
       "disabled": "Deaktiviert"
     },
+    "airplane-mode": {
+      "title": "Flugmodus",
+      "enabled": "Aktiviert",
+      "disabled": "Deaktiviert"
+    },
+    "internet": {
+      "limited": "Verbunden ohne Internet"
+    },
     "kofi": {
       "opened": "Ko-fi-Seite in Ihrem Browser geöffnet"
     },
