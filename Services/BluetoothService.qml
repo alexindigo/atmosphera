@@ -13,7 +13,7 @@ Singleton {
   property bool airplaneModeToggled: false
   property bool lastBluetoothBlocked: false
   readonly property BluetoothAdapter adapter: Bluetooth.defaultAdapter
-  readonly property int state: adapter?.state
+  readonly property int state: adapter?.state ?? 0
   readonly property bool available: (adapter !== null)
   readonly property bool enabled: adapter?.enabled ?? false
   readonly property bool blocked: (adapter?.state === BluetoothAdapterState.Blocked)
