@@ -11,11 +11,9 @@ ColumnLayout {
 
   property real selectedScaleRatio: 1.0
   property string selectedBarPosition: "top"
-  property bool selectedDimDesktop: true
 
   signal scaleRatioChanged(real ratio)
   signal barPositionChanged(string position)
-  signal dimDesktopChanged(bool dim)
 
   spacing: Style.marginM
 
@@ -212,32 +210,6 @@ ColumnLayout {
             pointSize: Style.fontSizeL
             color: Color.mPrimary
             anchors.centerIn: parent
-          }
-        }
-
-        ColumnLayout {
-          Layout.fillWidth: true
-          spacing: 2
-          NText {
-            text: I18n.tr("settings.user-interface.dim-desktop.label")
-            pointSize: Style.fontSizeL
-            font.weight: Style.fontWeightBold
-            color: Color.mOnSurface
-          }
-          NText {
-            text: I18n.tr("settings.user-interface.dim-desktop.description")
-            pointSize: Style.fontSizeS
-            color: Color.mOnSurfaceVariant
-            wrapMode: Text.WordWrap
-            Layout.fillWidth: true
-          }
-        }
-
-        NToggle {
-          checked: selectedDimDesktop
-          onToggled: function (checked) {
-            selectedDimDesktop = checked
-            dimDesktopChanged(checked)
           }
         }
       }
