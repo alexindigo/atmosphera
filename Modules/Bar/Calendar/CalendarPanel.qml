@@ -115,7 +115,7 @@ NPanel {
       // Banner with date/time/clock
       Rectangle {
         Layout.fillWidth: true
-        Layout.preferredHeight: capsuleColumn.implicitHeight + Style.marginS * 2
+        Layout.preferredHeight: capsuleColumn.implicitHeight + Style.marginM * 2
         radius: Style.radiusL
         color: Color.mPrimary
 
@@ -125,14 +125,14 @@ NPanel {
           anchors.left: parent.left
           anchors.bottom: parent.bottom
 
-          anchors.topMargin: Style.marginS
-          anchors.bottomMargin: Style.marginS
-          anchors.rightMargin: clockLoader.width + (Style.marginL * 2)
-          anchors.leftMargin: Style.marginL
+          anchors.topMargin: Style.marginM
+          anchors.bottomMargin: Style.marginM
+          anchors.rightMargin: clockLoader.width + (Style.marginXL * 2)
+          anchors.leftMargin: Style.marginXL
 
           spacing: 0
 
-          // Combined layout for weather icon, date, and weather text
+          // Combined layout for date, month year, locatio and time-zone
           RowLayout {
             Layout.fillWidth: true
             height: 60 * Style.uiScaleRatio
@@ -233,7 +233,7 @@ NPanel {
         ClockLoader {
           id: clockLoader
           anchors.right: parent.right
-          anchors.rightMargin: Style.marginM
+          anchors.rightMargin: Style.marginXL
           anchors.verticalCenter: parent.verticalCenter
           progressColor: Color.mOnPrimary
           Layout.alignment: Qt.AlignVCenter
@@ -667,7 +667,6 @@ NPanel {
 
         sourceComponent: WeatherCard {
           Layout.fillWidth: true
-          Layout.preferredHeight: implicitHeight
           forecastDays: 6
           showLocation: false
         }

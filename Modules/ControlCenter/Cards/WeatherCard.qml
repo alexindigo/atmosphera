@@ -67,7 +67,7 @@ NBox {
               temp = Math.round(temp)
               return `${temp}°${suffix}`
             }
-            pointSize: Style.fontSizeXL
+            pointSize: showLocation ? Style.fontSizeXL :  Style.fontSizeXL * 1.6
             font.weight: Style.fontWeightBold
           }
 
