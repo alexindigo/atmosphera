@@ -6,8 +6,8 @@ import qs.Commons
 import qs.Modules.Settings
 import qs.Services
 import qs.Widgets
-//import qs.Modules.Bar.Extras
 
+//import qs.Modules.Bar.Extras
 Rectangle {
   id: root
 
