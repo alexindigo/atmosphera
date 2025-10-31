@@ -1269,6 +1269,18 @@
         "show-scroll-lock": {
           "description": "Afficher l'état du verrouillage du défilement.",
           "label": "Verr Maj"
+        },
+        "indicator-style": {
+          "circle": "Lettres circulaires",
+          "circle-dash": "Lettres en cercle pointillé",
+          "circle-dot": "Lettres en pointillés dans un cercle",
+          "description": "Style d'icône pour les indicateurs de la touche de verrouillage",
+          "hex": "Lettres hexagonales",
+          "label": "Style d'indicateur",
+          "large": "Grandes lettres",
+          "small": "Petites lettres",
+          "square": "Lettres carrées",
+          "square-round": "Lettres carrées arrondies"
         }
       }
     }
