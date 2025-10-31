@@ -16,7 +16,6 @@ Singleton {
   property var translations: ({})
   property var fallbackTranslations: ({})
 
-
   // Signals for reactive updates
   signal languageChanged(string newLanguage)
   signal translationsLoaded

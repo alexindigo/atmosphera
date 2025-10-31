@@ -606,11 +606,15 @@
             "description-missing": "Requires {app} to be installed"
           },
           "discord": {
-            "description": "Write {filepath} for {client}",
+            "description": "Write {filepath} for {client}. Hyprluna theme needs to be activated manually.",
             "description-missing": "No Discord client detected. Install vencord, vesktop, webcord, armcord, equibop, lightcord, or dorion."
           },
           "pywalfox": {
             "description": "Write {filepath} and run pywalfox update",
+            "description-missing": "Requires {app} to be installed"
+          },
+          "code": {
+            "description": "Write {filepath}. Hyprluna theme needs to be installed and activated manually.",
             "description-missing": "Requires {app} to be installed"
           }
         },

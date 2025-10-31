@@ -608,6 +608,10 @@
           "pywalfox": {
             "description": "写入 {filepath} 并运行 pywalfox update",
             "description-missing": "需要安装 {app}"
+          },
+          "code": {
+            "description": "写入 {filepath}。Hyprluna 主题需要手动安装和激活。",
+            "description-missing": "需要安装 {app}"
           }
         },
         "misc": {

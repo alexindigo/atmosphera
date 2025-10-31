@@ -608,6 +608,10 @@
           "pywalfox": {
             "description": "Écrire ~/.cache/wal/colors.json et exécuter pywalfox update",
             "description-missing": "Nécessite que le paquet pywalfox soit installé"
+          },
+          "code": {
+            "description": "Écrire {filepath}. Le thème Hyprluna doit être installé et activé manuellement.",
+            "description-missing": "Nécessite l'installation de {app}"
           }
         },
         "misc": {

@@ -608,6 +608,10 @@
           "pywalfox": {
             "description": "Escribir {filepath} y ejecutar pywalfox update",
             "description-missing": "Requiere que {app} esté instalado"
+          },
+          "code": {
+            "description": "Escribe {filepath}. El tema Hyprluna debe ser instalado y activado manualmente.",
+            "description-missing": "Requiere que {app} esté instalado/a."
           }
         },
         "misc": {
