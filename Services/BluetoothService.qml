@@ -270,7 +270,7 @@ Singleton {
         } else if (!wifiBlocked && wifiBlocked === root.blocked) {
           root.airplaneModeToggled = true
           NetworkService.setWifiEnabled(true)
-          ToastService.showNotice(I18n.tr("toast.airplane-mode.title"), I18n.tr("toast.airplane-mode.disabled"), "plane")
+          ToastService.showNotice(I18n.tr("toast.airplane-mode.title"), I18n.tr("toast.airplane-mode.disabled"), "plane-off")
         } else if (adapter.enabled) {
           ToastService.showNotice(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.enabled"), "bluetooth")
           discoveryTimer.running = true
