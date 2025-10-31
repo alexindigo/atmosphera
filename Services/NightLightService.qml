@@ -68,7 +68,7 @@ Singleton {
     function onForcedChanged() {
       apply()
       if (Settings.data.nightLight.enabled) {
-        ToastService.showNotice(I18n.tr("settings.display.night-light.section.label"), Settings.data.nightLight.forced ? I18n.tr("toast.night-light.forced") : I18n.tr("toast.night-light.normal"), forced ? "nightlight-forced" : "nightlight-on")
+        ToastService.showNotice(I18n.tr("settings.display.night-light.section.label"), Settings.data.nightLight.forced ? I18n.tr("toast.night-light.forced") : I18n.tr("toast.night-light.normal"), Settings.data.nightLight.forced ? "nightlight-forced" : "nightlight-on")
       }
     }
     function onNightTempChanged() {

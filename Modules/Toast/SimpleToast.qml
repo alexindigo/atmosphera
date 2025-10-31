@@ -80,7 +80,6 @@ Rectangle {
 
     // Icon
     NIcon {
-      id: icon
       icon: if (root.icon !== "") {
               return root.icon
             } else if (type === "warning") {
