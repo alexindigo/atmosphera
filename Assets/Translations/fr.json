@@ -872,6 +872,10 @@
       "tooltips": {
         "description": "Activer ou désactiver les info-bulles dans toute l'interface.",
         "label": "Afficher les infobulles"
+      },
+      "panels-attached-to-bar": {
+        "description": "Lorsque cette option est activée, les panneaux seront attachés à la barre avec un design élégant de coin inversé.",
+        "label": "Fixer les panneaux à la barre."
       }
     },
     "lock-screen": {

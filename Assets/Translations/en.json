@@ -869,6 +869,10 @@
         "label": "Disable UI Animations",
         "description": "Disable all animations for a faster, more responsive experience."
       },
+      "panels-attached-to-bar": {
+        "label": "Attach panels to bar",
+        "description": "When enabled, panels will be attached to the bar with beautiful inverted corner design"
+      },
       "panels-overlay": {
         "label": "Open panels in overlay layer",
         "description": "Panels will appear above fullscreen windows"

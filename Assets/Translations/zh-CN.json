@@ -872,6 +872,10 @@
       "tooltips": {
         "description": "启用或禁用整个界面的工具提示。",
         "label": "显示工具提示"
+      },
+      "panels-attached-to-bar": {
+        "description": "启用后，面板将以美观的倒角设计附加到栏上。",
+        "label": "将面板连接到杆上"
       }
     },
     "lock-screen": {

@@ -9,6 +9,7 @@ Loader {
 
   property ShellScreen screen
 
+  property bool attachedToBar: Settings.data.ui.panelsAttachedToBar
   property bool useOverlay: Settings.data.ui.panelsOverlayLayer
 
   property Component panelContent: null
@@ -39,9 +40,19 @@ Loader {
   property bool backgroundClickEnabled: true
 
   // Animation properties
-  readonly property real originalScale: 0.0
-  property real scaleValue: originalScale
+  property real panelBackgroundOpacity: 0
+  property real panelContentOpacity: 0
   property real dimmingOpacity: 0
+
+  readonly property string barPosition: Settings.data.bar.position
+  readonly property bool barIsVertical: barPosition === "left" || barPosition === "right"
+  readonly property real verticalBarWidth: Style.barHeight
+
+  // Effective anchor properties - combines explicit anchors with implicit anchoring from useButtonPosition
+  readonly property bool effectivePanelAnchorTop: panelAnchorTop || (useButtonPosition && barPosition === "top")
+  readonly property bool effectivePanelAnchorBottom: panelAnchorBottom || (useButtonPosition && barPosition === "bottom")
+  readonly property bool effectivePanelAnchorLeft: panelAnchorLeft || (useButtonPosition && barPosition === "left")
+  readonly property bool effectivePanelAnchorRight: panelAnchorRight || (useButtonPosition && barPosition === "right")
 
   signal opened
   signal closed
@@ -97,7 +108,8 @@ Loader {
   // -----------------------------------------
   function close() {
     dimmingOpacity = 0
-    scaleValue = originalScale
+    panelBackgroundOpacity = 0
+    panelContentOpacity = 0
     root.closed()
     active = false
     useButtonPosition = false
@@ -132,10 +144,7 @@ Loader {
     PanelWindow {
       id: panelWindow
 
-      readonly property string barPosition: Settings.data.bar.position
-      readonly property bool isVertical: barPosition === "left" || barPosition === "right"
       readonly property bool barIsVisible: (screen !== null) && (Settings.data.bar.monitors.includes(screen.name) || (Settings.data.bar.monitors.length === 0))
-      readonly property real verticalBarWidth: Style.barHeight
 
       Component.onCompleted: {
         Logger.d("NPanel", "Opened", root.objectName, "on", screen.name)
@@ -195,12 +204,73 @@ Loader {
       }
 
       // The actual panel's content
-      Rectangle {
+      NRectangleCurved {
         id: panelBackground
-        color: panelBackgroundColor
-        radius: Style.radiusL
-        border.color: panelBorderColor
-        border.width: Style.borderS
+
+        backgroundColor: panelBackgroundColor
+
+        topLeftRadius: Style.radiusL
+        topRightRadius: Style.radiusL
+        bottomLeftRadius: Style.radiusL
+        bottomRightRadius: Style.radiusL
+
+        // Set inverted corners based on panel anchors and bar position
+
+        // Top-left corner
+        topLeftInverted: {
+          if (!attachedToBar) return false
+
+          // Inverted if panel is anchored to top edge (bar is at top)
+          if (effectivePanelAnchorTop)
+            return true
+          // Or if panel is anchored to left edge (bar is at left)
+          if (effectivePanelAnchorLeft)
+            return true
+          return false
+        }
+        topLeftInvertedDirection: effectivePanelAnchorTop ? "horizontal" : "vertical"
+
+        // Top-right corner
+        topRightInverted: {
+          if (!attachedToBar) return false
+
+          // Inverted if panel is anchored to top edge (bar is at top)
+          if (effectivePanelAnchorTop)
+            return true
+          // Or if panel is anchored to right edge (bar is at right)
+          if (effectivePanelAnchorRight)
+            return true
+          return false
+        }
+        topRightInvertedDirection: effectivePanelAnchorTop ? "horizontal" : "vertical"
+
+        // Bottom-left corner
+        bottomLeftInverted: {
+          if (!attachedToBar) return false
+
+          // Inverted if panel is anchored to bottom edge (bar is at bottom)
+          if (effectivePanelAnchorBottom)
+            return true
+          // Or if panel is anchored to left edge (bar is at left)
+          if (effectivePanelAnchorLeft)
+            return true
+          return false
+        }
+        bottomLeftInvertedDirection: effectivePanelAnchorBottom ? "horizontal" : "vertical"
+
+        // Bottom-right corner
+        bottomRightInverted: {
+          if (!attachedToBar) return false
+
+          // Inverted if panel is anchored to bottom edge (bar is at bottom)
+          if (effectivePanelAnchorBottom)
+            return true
+          // Or if panel is anchored to right edge (bar is at right)
+          if (effectivePanelAnchorRight)
+            return true
+          return false
+        }
+        bottomRightInvertedDirection: effectivePanelAnchorBottom ? "horizontal" : "vertical"
 
         // Dragging support
         property bool draggable: root.draggable
@@ -229,7 +299,7 @@ Loader {
           return Math.min(h, screen?.height - Style.barHeight - Style.marginL * 2)
         }
 
-        scale: root.scaleValue
+        opacity: root.panelBackgroundOpacity
         x: isDragged ? manualX : calculatedX
         y: isDragged ? manualY : calculatedY
 
@@ -240,11 +310,12 @@ Loader {
           if (!barIsVisible) {
             return 0
           }
+
           switch (barPosition) {
           case "top":
-            return (Style.barHeight + Style.marginS) + (Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL : 0)
+            return (Style.barHeight + (attachedToBar ? 0 : Style.marginS)) + (Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL : 0)
           default:
-            return Style.marginS
+            return attachedToBar ? 0 : Style.marginS
           }
         }
 
@@ -254,9 +325,9 @@ Loader {
           }
           switch (barPosition) {
           case "bottom":
-            return (Style.barHeight + Style.marginS) + (Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL : 0)
+            return (Style.barHeight + (attachedToBar ? 0 : Style.marginS)) + (Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL : 0)
           default:
-            return Style.marginS
+            return attachedToBar ? 0 : Style.marginS
           }
         }
 
@@ -266,9 +337,9 @@ Loader {
           }
           switch (barPosition) {
           case "left":
-            return (Style.barHeight + Style.marginS) + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL : 0)
+            return (Style.barHeight + (attachedToBar ? 0 : Style.marginS)) + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL : 0)
           default:
-            return Style.marginS
+            return attachedToBar ? 0 : Style.marginS
           }
         }
 
@@ -278,9 +349,9 @@ Loader {
           }
           switch (barPosition) {
           case "right":
-            return (Style.barHeight + Style.marginS) + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL : 0)
+            return (Style.barHeight + (attachedToBar ? 0 : Style.marginS)) + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL : 0)
           default:
-            return Style.marginS
+            return attachedToBar ? 0 : Style.marginS
           }
         }
 
@@ -300,7 +371,7 @@ Loader {
           }
 
           // No fixed anchoring
-          if (isVertical) {
+          if (barIsVertical) {
             // Vertical bar
             if (barPosition === "right") {
               // To the left of the right bar
@@ -341,7 +412,7 @@ Loader {
           }
 
           // No fixed anchoring
-          if (isVertical) {
+          if (barIsVertical) {
             // Vertical bar
             if (useButtonPosition) {
               // Position panel relative to button
@@ -368,7 +439,28 @@ Loader {
 
         // Animate in when component is completed
         Component.onCompleted: {
-          root.scaleValue = 1.0
+          // Start invisible
+          // Use a timer to delay the animation start, allowing QML to properly set up initial state
+          fadeInTimer.start()
+        }
+
+        Timer {
+          id: fadeInTimer
+          interval: 1
+          repeat: false
+          onTriggered: {
+            // Fade in background
+            root.panelBackgroundOpacity = 1.0
+          }
+        }
+
+        // Timer to fade in content after slide animation completes
+        Timer {
+          id: contentFadeInTimer
+          interval: Style.animationFast
+          repeat: false
+          running: true
+          onTriggered: root.panelContentOpacity = 1.0
         }
 
         // Reset drag position when panel closes
@@ -384,17 +476,10 @@ Loader {
           anchors.fill: parent
         }
 
-        // Animation behaviors
-        Behavior on scale {
-          NumberAnimation {
-            duration: Style.animationNormal
-            easing.type: Easing.OutExpo
-          }
-        }
-
+        // Animation behavior
         Behavior on opacity {
           NumberAnimation {
-            duration: Style.animationNormal
+            duration: Style.animationFast
             easing.type: Easing.OutQuad
           }
         }
@@ -403,6 +488,14 @@ Loader {
           id: panelContentLoader
           anchors.fill: parent
           sourceComponent: root.panelContent
+          opacity: root.panelContentOpacity
+
+          Behavior on opacity {
+            NumberAnimation {
+              duration: Style.animationFast
+              easing.type: Easing.OutQuad
+            }
+          }
         }
 
         // Handle drag move on the whole panel area
@@ -460,8 +553,7 @@ Loader {
           anchors.margins: 0
           color: Color.transparent
           border.color: Color.mPrimary
-          border.width: Style.borderL
-          radius: parent.radius
+          border.width: Style.borderM
           visible: panelBackground.isDragged && dragHandler.active
           opacity: 0.8
           z: 3000
@@ -473,7 +565,6 @@ Loader {
             color: Color.transparent
             border.color: Color.mPrimary
             border.width: Style.borderS
-            radius: parent.radius
             opacity: 0.3
           }
         }

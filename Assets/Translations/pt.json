@@ -872,6 +872,10 @@
       "tooltips": {
         "description": "Ativar ou desativar dicas de ferramentas em toda a interface.",
         "label": "Mostrar dicas de ferramenta"
+      },
+      "panels-attached-to-bar": {
+        "description": "Quando ativado, os painéis serão anexados à barra com um belo design de canto invertido.",
+        "label": "Anexar painéis à barra"
       }
     },
     "lock-screen": {

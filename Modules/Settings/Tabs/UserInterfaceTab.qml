@@ -34,6 +34,13 @@ ColumnLayout {
     }
 
     NToggle {
+      label: I18n.tr("settings.user-interface.panels-attached-to-bar.label")
+      description: I18n.tr("settings.user-interface.panels-attached-to-bar.description")
+      checked: Settings.data.ui.panelsAttachedToBar
+      onToggled: checked => Settings.data.ui.panelsAttachedToBar = checked
+    }
+
+    NToggle {
       label: I18n.tr("settings.user-interface.panels-overlay.label")
       description: I18n.tr("settings.user-interface.panels-overlay.description")
       checked: Settings.data.ui.panelsOverlayLayer

@@ -872,6 +872,10 @@
       "tooltips": {
         "description": "Tooltips in der gesamten Benutzeroberfläche aktivieren oder deaktivieren.",
         "label": "Tooltips anzeigen"
+      },
+      "panels-attached-to-bar": {
+        "description": "Wenn aktiviert, werden die Panels mit einem schönen, umgekehrten Eckdesign an der Leiste befestigt.",
+        "label": "Paneele an Stange befestigen"
       }
     },
     "lock-screen": {
