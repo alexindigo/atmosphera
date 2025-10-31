@@ -449,6 +449,11 @@ Loader {
                             // Keep panel within screen bounds
                             var maxX = panelWindow.width - panelBackground.width - marginRight
                             var minX = marginLeft
+
+                            if (Settings.data.bar.floating) {
+                                maxX -= Settings.data.bar.marginHorizontal * Style.marginXL * 10
+                                minX += Settings.data.bar.marginHorizontal * Style.marginXL * 10
+                            }
                             return Math.round(Math.max(minX,
                                                        Math.min(targetX, maxX)))
                         } else {
@@ -487,6 +492,12 @@ Loader {
                             // Keep panel within screen bounds
                             var maxY = panelWindow.height - panelBackground.height - marginBottom
                             var minY = marginTop
+
+                            if (Settings.data.bar.floating) {
+                                maxY -= Settings.data.bar.marginHorizontal * Style.marginXL * 10
+                                minY += Settings.data.bar.marginHorizontal * Style.marginXL * 10
+                            }
+
                             return Math.round(Math.max(minY,
                                                        Math.min(targetY, maxY)))
                         } else {
