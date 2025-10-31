@@ -1402,8 +1402,6 @@
     "click-to-start-recording": "Cliquez pour démarrer l'enregistrement",
     "click-to-stop-recording": "Cliquez pour arrêter l'enregistrement",
     "open-control-center": "Ouvrir le centre de contrôle",
-    "volume-at": "Volume à {volume}%\nClic gauche pour couper/rétablir le son. Clic droit pour les paramètres.\nFaites défiler pour modifier le volume.",
-    "microphone-volume-at": "Volume du microphone à {volume}%\nClic gauche pour couper/rétablir le son. Clic droit pour les paramètres.\nFaites défiler pour modifier le volume.",
     "brightness-at": "Luminosité : {brightness}%\nClic droit pour les paramètres.\nFaites défiler pour modifier la luminosité.",
     "manage-wifi": "Gérer le Wi-Fi",
     "bluetooth-devices": "Appareils Bluetooth",
@@ -1417,7 +1415,9 @@
     "power-profile": "Profil d'alimentation '{profile}'",
     "keyboard-layout": "Disposition du clavier {layout}",
     "output-muted": "Couper la sortie audio",
-    "input-muted": "Couper l'entrée audio"
+    "input-muted": "Couper l'entrée audio",
+    "microphone-volume-at": "Volume du microphone à {volume}%.\nClic gauche pour les paramètres. Clic droit pour activer/désactiver le mode muet.\nDéfilement pour modifier le volume.",
+    "volume-at": "Volume à {volume}%.\nClic gauche pour les paramètres. Clic droit pour activer/désactiver le mode muet.\nFaites défiler pour modifier le volume."
   },
   "clock": {
     "tooltip": "Ouvrir le calendrier"
