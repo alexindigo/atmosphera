@@ -554,6 +554,7 @@ Loader {
           color: Color.transparent
           border.color: Color.mPrimary
           border.width: Style.borderM
+          radius: Style.radiusL
           visible: panelBackground.isDragged && dragHandler.active
           opacity: 0.8
           z: 3000
@@ -565,6 +566,7 @@ Loader {
             color: Color.transparent
             border.color: Color.mPrimary
             border.width: Style.borderS
+            radius: Style.radiusL
             opacity: 0.3
           }
         }

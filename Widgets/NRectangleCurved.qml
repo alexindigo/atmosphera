@@ -42,6 +42,8 @@ Item {
     anchors.fill: parent
     color: root.backgroundColor
     radius: topLeftRadius // Use topLeftRadius as default
+    border.width: Style.borderS
+    border.color: Color.mOutline
     visible: !root.hasInvertedCorners
 
     topLeftRadius: root.topLeftRadius
