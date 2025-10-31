@@ -9,7 +9,8 @@ Loader {
 
   property ShellScreen screen
 
-  property bool attachedToBar: Settings.data.ui.panelsAttachedToBar
+  readonly property real opacityThreshold: 0.33
+  property bool attachedToBar: (Settings.data.ui.panelsAttachedToBar && Settings.data.bar.backgroundOpacity > opacityThreshold)
   property bool useOverlay: Settings.data.ui.panelsOverlayLayer
 
   property Component panelContent: null
@@ -58,6 +59,8 @@ Loader {
   readonly property bool effectivePanelAnchorBottom: panelAnchorBottom || (useButtonPosition && barPosition === "bottom")
   readonly property bool effectivePanelAnchorLeft: panelAnchorLeft || (useButtonPosition && barPosition === "left")
   readonly property bool effectivePanelAnchorRight: panelAnchorRight || (useButtonPosition && barPosition === "right")
+
+
 
   signal opened
   signal closed
@@ -211,10 +214,7 @@ Loader {
       NShapedRectangle {
         id: panelBackground
 
-        property real opacityThreshold: 0.33
-
-
-        backgroundColor: (attachedToBar && Settings.data.bar.backgroundOpacity > opacityThreshold && (topLeftInverted || topRightInverted || bottomLeftInverted || bottomRightInverted)) ? Qt.alpha(panelBackgroundColor, Settings.data.bar.backgroundOpacity) : panelBackgroundColor
+        backgroundColor: (attachedToBar && (topLeftInverted || topRightInverted || bottomLeftInverted || bottomRightInverted)) ? Qt.alpha(panelBackgroundColor, Settings.data.bar.backgroundOpacity) : panelBackgroundColor
 
         topLeftRadius: Style.radiusL
         topRightRadius: Style.radiusL
@@ -225,7 +225,7 @@ Loader {
 
         // Top-left corner
         topLeftInverted: {
-          if (!attachedToBar || Settings.data.bar.backgroundOpacity <= opacityThreshold)
+          if (!attachedToBar)
             return false
 
           // Inverted if panel is anchored to top edge (bar is at top)
@@ -240,7 +240,7 @@ Loader {
 
         // Top-right corner
         topRightInverted: {
-          if (!attachedToBar || Settings.data.bar.backgroundOpacity <= opacityThreshold)
+          if (!attachedToBar)
             return false
 
           // Inverted if panel is anchored to top edge (bar is at top)
@@ -255,7 +255,7 @@ Loader {
 
         // Bottom-left corner
         bottomLeftInverted: {
-          if (!attachedToBar || Settings.data.bar.backgroundOpacity <= opacityThreshold)
+          if (!attachedToBar)
             return false
 
           // Inverted if panel is anchored to bottom edge (bar is at bottom)
@@ -270,7 +270,7 @@ Loader {
 
         // Bottom-right corner
         bottomRightInverted: {
-          if (!attachedToBar || Settings.data.bar.backgroundOpacity <= opacityThreshold)
+          if (!attachedToBar)
             return false
 
           // Inverted if panel is anchored to bottom edge (bar is at bottom)
