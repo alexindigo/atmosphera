@@ -855,10 +855,6 @@
         "label": "边框半径",
         "reset": "重置边框半径"
       },
-      "dim-desktop": {
-        "description": "当面板或菜单打开时，桌面变暗。",
-        "label": "昏暗的桌面"
-      },
       "scaling": {
         "description": "更改通用用户界面大小，不包括栏。",
         "label": "界面缩放",

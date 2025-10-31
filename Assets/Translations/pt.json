@@ -855,10 +855,6 @@
         "label": "Raio da borda",
         "reset": "Redefinir raio da borda"
       },
-      "dim-desktop": {
-        "description": "Escurecer a área de trabalho quando painéis ou menus estiverem abertos.",
-        "label": "Dim área de trabalho"
-      },
       "scaling": {
         "description": "Altera o tamanho da interface geral do usuário, excluindo a barra.",
         "label": "Escalonamento da interface",

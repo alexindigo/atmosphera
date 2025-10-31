@@ -855,10 +855,6 @@
         "label": "Eckenradius",
         "reset": "Rahmenradius zurücksetzen"
       },
-      "dim-desktop": {
-        "description": "Den Desktop abdunkeln, wenn Bedienfelder oder Menüs geöffnet sind.",
-        "label": "Desktop abdunkeln"
-      },
       "scaling": {
         "description": "Ändert die Größe der allgemeinen Benutzeroberfläche, mit Ausnahme der Leiste.",
         "label": "Oberflächenskalierung",

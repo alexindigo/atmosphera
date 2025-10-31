@@ -855,10 +855,6 @@
         "label": "Radio de borde",
         "reset": "Restablecer el radio del borde"
       },
-      "dim-desktop": {
-        "description": "Atenuar el escritorio cuando los paneles o menús estén abiertos.",
-        "label": "Dim escritorio"
-      },
       "scaling": {
         "description": "Cambia el tamaño de la interfaz de usuario general, excluyendo la barra.",
         "label": "Escalado de la interfaz",

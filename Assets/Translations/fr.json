@@ -855,10 +855,6 @@
         "label": "Rayon de bordure",
         "reset": "Réinitialiser le rayon de la bordure"
       },
-      "dim-desktop": {
-        "description": "Atténuer le bureau lorsque des panneaux ou des menus sont ouverts.",
-        "label": "Dim bureau"
-      },
       "scaling": {
         "description": "Modifie la taille de l'interface utilisateur générale, à l'exception de la barre.",
         "label": "Mise à l'échelle de l'interface",

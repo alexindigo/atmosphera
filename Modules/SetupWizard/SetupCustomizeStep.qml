@@ -195,35 +195,6 @@ ColumnLayout {
         Layout.bottomMargin: Style.marginS
       }
 
-      // Dim Desktop section
-      RowLayout {
-        Layout.fillWidth: true
-        spacing: Style.marginM
-
-        Rectangle {
-          width: 32
-          height: 32
-          radius: Style.radiusM
-          color: Color.mSurface
-          NIcon {
-            icon: "moon"
-            pointSize: Style.fontSizeL
-            color: Color.mPrimary
-            anchors.centerIn: parent
-          }
-        }
-      }
-
-      // Divider
-      Rectangle {
-        Layout.fillWidth: true
-        Layout.preferredHeight: 1
-        color: Color.mOutline
-        opacity: 0.2
-        Layout.topMargin: Style.marginS
-        Layout.bottomMargin: Style.marginS
-      }
-
       // Bar Density section
       RowLayout {
         Layout.fillWidth: true
