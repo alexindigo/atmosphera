@@ -173,17 +173,16 @@ NPanel {
           NBox {
             Layout.fillWidth: true
             Layout.preferredHeight: columnScanning.implicitHeight + Style.marginM * 2
-              visible: {
-                if (!BluetoothService.adapter || !BluetoothService.adapter.discovering || !Bluetooth.devices) {
-                  return false
-                }
-
-                var availableCount = Bluetooth.devices.values.filter(dev => {
-                                                                       return dev && !dev.paired && !dev.pairing && !dev.blocked && (dev.signalStrength === undefined || dev.signalStrength > 0)
-                                                                     }).length
-                return (availableCount === 0)
+            visible: {
+              if (!BluetoothService.adapter || !BluetoothService.adapter.discovering || !Bluetooth.devices) {
+                return false
               }
 
+              var availableCount = Bluetooth.devices.values.filter(dev => {
+                                                                     return dev && !dev.paired && !dev.pairing && !dev.blocked && (dev.signalStrength === undefined || dev.signalStrength > 0)
+                                                                   }).length
+              return (availableCount === 0)
+            }
 
             ColumnLayout {
               id: columnScanning
