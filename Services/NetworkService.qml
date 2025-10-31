@@ -50,16 +50,16 @@ Singleton {
     target: Settings.data.network
     function onWifiEnabledChanged() {
       if (Settings.data.network.wifiEnabled) {
-        if (!BluetoothService.airplaneModeToggled)
+        if (!BluetoothService.airplaneModeToggled) {
           ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("toast.wifi.enabled"), "wifi")
-        
+        }
         // Perform a scan to update the UI
         delayedScanTimer.interval = 3000
         delayedScanTimer.restart()
       } else {
-        if (!BluetoothService.airplaneModeToggled)
+        if (!BluetoothService.airplaneModeToggled) {
           ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("toast.wifi.disabled"), "wifi-off")
-        
+        }
         // Clear networks so the widget icon changes
         root.networks = ({})
       }
