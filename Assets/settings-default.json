@@ -76,7 +76,9 @@
     "use12hourFormat": false,
     "showWeekNumberInCalendar": false,
     "showCalendarEvents": true,
-    "analogClockInCalendar": false
+    "showCalendarWeather": true,
+    "analogClockInCalendar": false,
+    "firstDayOfWeek": -1
   },
   "screenRecorder": {
     "directory": "",
@@ -252,6 +254,7 @@
     "pywalfox": false,
     "vicinae": false,
     "walker": false,
+    "code": false,
     "enableUserTemplates": false
   },
   "nightLight": {
