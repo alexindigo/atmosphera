@@ -68,7 +68,7 @@ stderr: StdioCollector {
 
     Timer {
         id: pollTimer
-        interval: 125
+        interval: 200
         running: true
         repeat: true
         onTriggered: {
