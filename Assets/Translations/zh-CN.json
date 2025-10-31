@@ -1273,6 +1273,18 @@
         "show-scroll-lock": {
           "description": "显示滚动锁定状态。",
           "label": "滚动锁定"
+        },
+        "indicator-style": {
+          "hex": "六边形字母",
+          "large": "大写字母",
+          "small": "小写字母",
+          "square": "方块字",
+          "square-round": "圆角方形字母",
+          "circle": "圆圈字母",
+          "circle-dash": "虚线圆圈字母",
+          "circle-dot": "虚线圆圈字母",
+          "description": "锁键指示器的图标样式",
+          "label": "指标样式"
         }
       }
     }
