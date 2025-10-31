@@ -127,7 +127,7 @@ ColumnLayout {
       cursorShape: Qt.PointingHandCursor
       onClicked: {
         Quickshell.execDetached(["xdg-open", "https://ko-fi.com/lysec"])
-        ToastService.showNotice(I18n.tr("settings.about.support"), I18n.tr("toast.kofi.opened"), 3000)
+        ToastService.showNotice(I18n.tr("settings.about.support"), I18n.tr("toast.kofi.opened"))
       }
     }
   }
