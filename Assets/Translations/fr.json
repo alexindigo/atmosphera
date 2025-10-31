@@ -1416,8 +1416,8 @@
     "keyboard-layout": "Disposition du clavier {layout}",
     "output-muted": "Couper la sortie audio",
     "input-muted": "Couper l'entrée audio",
-    "microphone-volume-at": "Volume du microphone à {volume}%.\nClic gauche pour les paramètres. Clic droit pour activer/désactiver le mode muet.\nDéfilement pour modifier le volume.",
-    "volume-at": "Volume à {volume}%.\nClic gauche pour les paramètres. Clic droit pour activer/désactiver le mode muet.\nFaites défiler pour modifier le volume."
+    "microphone-volume-at": "Volume du microphone à {volume}%.\nClic gauche pour les paramètres. Clic droit pour activer/désactiver le mode muet.\nFaites défiler pour modifier le volume.",
+    "volume-at": "Volume de sortie à {volume}%.\nClic gauche pour les paramètres. Clic droit pour activer/désactiver le mode muet.\nFaites défiler pour modifier le volume."
   },
   "clock": {
     "tooltip": "Ouvrir le calendrier"

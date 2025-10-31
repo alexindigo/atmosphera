@@ -1419,8 +1419,6 @@
     "click-to-start-recording": "Klicken zum Starten einer Bildschirmaufnahme",
     "click-to-stop-recording": "Klicken zum Stoppen einer Bildschirmaufnahme",
     "open-control-center": "Kontrollzentrum öffnen",
-    "volume-at": "Lautstärke bei {volume}%\nLinksklick zum Stumm-/Lautschalten. Rechtsklick für Einstellungen.\nScrollen zum Ändern der Lautstärke.",
-    "microphone-volume-at": "Mikrofon-Lautstärke bei {volume}%\nLinksklick zum Stumm-/Lautschalten. Rechtsklick für Einstellungen.\nScrollen zum Ändern der Lautstärke.",
     "brightness-at": "Helligkeit: {brightness}%\nRechtsklick für Einstellungen.\nScrollen zum Ändern der Helligkeit.",
     "manage-wifi": "WLAN verwalten",
     "bluetooth-devices": "Bluetooth-Geräte",
@@ -1434,7 +1432,9 @@
     "power-profile": "'{profile}' Energieprofil",
     "keyboard-layout": "{layout} Tastaturlayout",
     "output-muted": "Audio-Ausgabe stummschalten",
-    "input-muted": "Audio-Eingabe stummschalten"
+    "input-muted": "Audio-Eingabe stummschalten",
+    "microphone-volume-at": "Mikrofonlautstärke bei {volume}%.\nLinksklick für Einstellungen. Rechtsklick zum Stummschalten.\nScrollen zum Ändern der Lautstärke.",
+    "volume-at": "Lautstärke bei {volume}%.\nLinksklick für Einstellungen. Rechtsklick zum Stummschalten.\nScrollen zum Ändern der Lautstärke."
   },
   "clock": {
     "tooltip": "Kalender öffnen"

@@ -1416,8 +1416,8 @@
     "keyboard-layout": "Distribución de teclado {layout}",
     "output-muted": "Silenciar salida de audio",
     "input-muted": "Silenciar entrada de audio",
-    "microphone-volume-at": "Volumen del micrófono al {volume}%.\nClic izquierdo para ajustes. Clic derecho para activar/desactivar silencio.\nDesplázate para modificar el volumen.",
-    "volume-at": "Volumen al {volume}%.\nClic izquierdo para ajustes. Clic derecho para alternar silencio.\nDesplázate para modificar el volumen."
+    "microphone-volume-at": "Volumen del micrófono al {volume}%.\nClic izquierdo para ajustes. Clic derecho para activar/desactivar el silencio.\nDesplázate para modificar el volumen.",
+    "volume-at": "Volumen de salida al {volume}%.\nClic izquierdo para ajustes. Clic derecho para activar/desactivar el silencio.\nDesplázate para modificar el volumen."
   },
   "clock": {
     "tooltip": "Abrir calendario"
