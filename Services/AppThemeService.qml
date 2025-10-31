@@ -122,7 +122,8 @@ Singleton {
                                                         "input": "code.json",
                                                         "outputs": [{
                                                             "path": "~/.vscode/extensions/hyprluna.hyprluna-theme-1.0.2/themes/hyprluna.json"
-                                                          }]
+                                                          }],
+                                                        "strict": true
                                                       }
                                                     })
 
