@@ -305,7 +305,8 @@ Singleton {
     running: true
     onTriggered: {
       Logger.d("MediaService", "playerStateMonitor triggered. autoSwitchingPaused: " + root.autoSwitchingPaused)
-      if (autoSwitchingPaused) return
+      if (autoSwitchingPaused)
+      return
       // Only update if we don't have a playing player or if current player is paused
       if (!currentPlayer || !currentPlayer.isPlaying || currentPlayer.playbackState !== MprisPlaybackState.Playing) {
         updateCurrentPlayer()
