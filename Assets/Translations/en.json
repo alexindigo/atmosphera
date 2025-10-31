@@ -1256,6 +1256,20 @@
           "label": "Hide when no media is playing",
           "description": "When enabled, the visualizer is hidden unless a player is actively playing."
         }
+      },
+      "lock-keys": {
+        "show-caps-lock": {
+          "label": "Caps Lock",
+          "description": "Display caps lock status."
+        },
+        "show-num-lock": {
+          "label": "Num Lock",
+          "description": "Display num lock status."
+        },
+        "show-scroll-lock": {
+          "label": "Scroll Lock",
+          "description": "Display scroll lock status."
+        }
       }
     }
   },

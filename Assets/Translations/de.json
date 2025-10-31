@@ -1273,6 +1273,20 @@
           "label": "Ausblenden, wenn keine Medien wiedergegeben werden",
           "description": "Wenn aktiviert, wird der Visualizer ausgeblendet, sofern keine Wiedergabe läuft."
         }
+      },
+      "lock-keys": {
+        "show-caps-lock": {
+          "description": "Caps Lock Status anzeigen.",
+          "label": "Feststelltaste"
+        },
+        "show-num-lock": {
+          "description": "Num-Lock-Status anzeigen.",
+          "label": "Num-Taste"
+        },
+        "show-scroll-lock": {
+          "description": "Scroll-Lock-Status anzeigen.",
+          "label": "Rollenfeststelltaste"
+        }
       }
     }
   },

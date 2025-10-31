@@ -1256,6 +1256,20 @@
           "label": "无媒体播放时隐藏",
           "description": "启用后，除非正在播放媒体，否则隐藏可视化显示。"
         }
+      },
+      "lock-keys": {
+        "show-caps-lock": {
+          "description": "显示大写锁定状态。",
+          "label": "大写锁定"
+        },
+        "show-num-lock": {
+          "description": "显示数字锁定键状态。",
+          "label": "数字锁定"
+        },
+        "show-scroll-lock": {
+          "description": "显示滚动锁定状态。",
+          "label": "滚动锁定"
+        }
       }
     }
   },

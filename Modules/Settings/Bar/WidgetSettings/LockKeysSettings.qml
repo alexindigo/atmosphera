@@ -27,22 +27,22 @@ ColumnLayout {
   }
 
   NToggle {
-    label: "Caps Lock"
-    description: "Display caps lock status"
+    label: I18n.tr("bar.widget-settings.lock-keys.show-caps-lock.label")
+    description: I18n.tr("bar.widget-settings.lock-keys.show-caps-lock.description")
     checked: valueShowCapsLock
     onToggled: checked => valueShowCapsLock = checked
   }
 
   NToggle {
-    label: "Num Lock"
-    description: "Display num lock status"
+    label: I18n.tr("bar.widget-settings.lock-keys.show-num-lock.label")
+    description: I18n.tr("bar.widget-settings.lock-keys.show-num-lock.description")
     checked: valueShowNumLock
     onToggled: checked => valueShowNumLock = checked
   }
 
   NToggle {
-    label: "Scroll Lock"
-    description: "Display scroll lock status"
+    label: I18n.tr("bar.widget-settings.lock-keys.show-scroll-lock.label")
+    description: I18n.tr("bar.widget-settings.lock-keys.show-scroll-lock.description")
     checked: valueShowScrollLock
     onToggled: checked => valueShowScrollLock = checked
   }

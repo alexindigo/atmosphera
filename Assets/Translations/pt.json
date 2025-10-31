@@ -1256,6 +1256,20 @@
           "label": "Ocultar quando não houver reprodução",
           "description": "Quando ativado, o visualizador fica oculto a menos que haja reprodução ativa."
         }
+      },
+      "lock-keys": {
+        "show-caps-lock": {
+          "description": "Exibir o status do Caps Lock.",
+          "label": "Caps Lock"
+        },
+        "show-num-lock": {
+          "description": "Exibir o status do Num Lock.",
+          "label": "Bloq Num"
+        },
+        "show-scroll-lock": {
+          "description": "Exibir o status do Scroll Lock.",
+          "label": "Scroll Lock"
+        }
       }
     }
   },
