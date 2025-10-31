@@ -101,6 +101,7 @@ Singleton {
                                   },
                                   "LockKeys": {
                                     "allowUserSettings": true,
+                                    "indicatorStyle": "large",
                                     "showCapsLock": true,
                                     "showNumLock": true,
                                     "showScrollLock": true
