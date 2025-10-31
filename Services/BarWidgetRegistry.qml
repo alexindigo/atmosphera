@@ -21,6 +21,7 @@ Singleton {
                            "DarkMode": darkMode,
                            "KeepAwake": keepAwakeComponent,
                            "KeyboardLayout": keyboardLayoutComponent,
+                           "LockKeys": lockKeysComponent,
                            "MediaMini": mediaMiniComponent,
                            "Microphone": microphoneComponent,
                            "NightLight": nightLightComponent,
@@ -97,6 +98,12 @@ Singleton {
                                   "KeyboardLayout": {
                                     "allowUserSettings": true,
                                     "displayMode": "onhover"
+                                  },
+                                  "LockKeys": {
+                                    "allowUserSettings": true,
+                                    "showCapsLock": true,
+                                    "showNumLock": true,
+                                    "showScrollLock": true
                                   },
                                   "MediaMini": {
                                     "allowUserSettings": true,
@@ -192,6 +199,9 @@ Singleton {
   }
   property Component keepAwakeComponent: Component {
     KeepAwake {}
+  }
+  property Component lockKeysComponent: Component {
+    LockKeys {}
   }
   property Component mediaMiniComponent: Component {
     MediaMini {}

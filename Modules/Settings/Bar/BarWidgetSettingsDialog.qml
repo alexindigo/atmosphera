@@ -128,6 +128,7 @@ Popup {
       "ControlCenter": "WidgetSettings/ControlCenterSettings.qml",
       "CustomButton": "WidgetSettings/CustomButtonSettings.qml",
       "KeyboardLayout": "WidgetSettings/KeyboardLayoutSettings.qml",
+      "LockKeys": "WidgetSettings/LockKeysSettings.qml",
       "MediaMini": "WidgetSettings/MediaMiniSettings.qml",
       "Microphone": "WidgetSettings/MicrophoneSettings.qml",
       "NotificationHistory": "WidgetSettings/NotificationHistorySettings.qml",

@@ -1260,6 +1260,20 @@
           "label": "Ocultar cuando no se reproduce",
           "description": "Si está activado, el visualizador se oculta salvo que haya reproducción activa."
         }
+      },
+      "lock-keys": {
+        "show-caps-lock": {
+          "description": "Mostrar el estado de Bloq Mayús.",
+          "label": "Bloq Mayús"
+        },
+        "show-num-lock": {
+          "description": "Mostrar el estado de bloqueo numérico.",
+          "label": "Bloq Num"
+        },
+        "show-scroll-lock": {
+          "description": "Mostrar el estado de Bloq Despl.",
+          "label": "Bloq Despl"
+        }
       }
     }
   },
