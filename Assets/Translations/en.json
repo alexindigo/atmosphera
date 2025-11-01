@@ -1252,6 +1252,10 @@
           "label": "Width",
           "description": "Custom component width."
         },
+        "color-name": {
+          "label": "Fill Color",
+          "description": "Select the color for the visualizer."
+        },
         "hide-when-idle": {
           "label": "Hide when no media is playing",
           "description": "When enabled, the visualizer is hidden unless a player is actively playing."
@@ -1449,6 +1453,13 @@
     "test": "Test"
   },
   "options": {
+    "colors": {
+      "primary": "Primary",
+      "secondary": "Secondary",
+      "tertiary":  "Tertiary",
+      "error":  "Error",
+      "onSurface":  "On Surface"
+    },
     "bar": {
       "position": {
         "top": "Top",

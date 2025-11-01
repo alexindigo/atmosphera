@@ -45,8 +45,7 @@ Singleton {
                                     "allowUserSettings": true,
                                     "showIcon": true,
                                     "hideMode": "hidden",
-                                    "scrollingMode"// "visible", "hidden", "transparent"
-                                    : "hover",
+                                    "scrollingMode": "hover",
                                     "maxWidth": 145,
                                     "useFixedWidth": false,
                                     "colorizeIcons": false
@@ -54,6 +53,7 @@ Singleton {
                                   "AudioVisualizer": {
                                     "allowUserSettings": true,
                                     "width": 200,
+                                    "colorName": "primary",
                                     "hideWhenIdle": false
                                   },
                                   "Battery": {
@@ -109,8 +109,7 @@ Singleton {
                                   "MediaMini": {
                                     "allowUserSettings": true,
                                     "hideMode": "hidden",
-                                    "scrollingMode"// "visible", "hidden", "transparent"
-                                    : "hover",
+                                    "scrollingMode": "hover",
                                     "maxWidth": 145,
                                     "useFixedWidth": false,
                                     "showAlbumArt": false,

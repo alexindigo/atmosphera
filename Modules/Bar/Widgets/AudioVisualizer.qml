@@ -29,7 +29,25 @@ Item {
 
   // Resolve settings: try user settings or defaults from BarWidgetRegistry
   readonly property int visualizerWidth: widgetSettings.width !== undefined ? widgetSettings.width : widgetMetadata.width
-  readonly property bool hideWhenIdle: widgetSettings.hideWhenIdle !== undefined ? widgetSettings.hideWhenIdle : (widgetMetadata.hideWhenIdle !== undefined ? widgetMetadata.hideWhenIdle : false)
+  readonly property bool hideWhenIdle: widgetSettings.hideWhenIdle !== undefined ? widgetSettings.hideWhenIdle : widgetMetadata.hideWhenIdle
+  readonly property string colorName: widgetSettings.colorName !== undefined ? widgetSettings.colorName : widgetMetadata.colorName
+
+  readonly property color fillColor: {
+    switch (colorName) {
+    case "primary":
+      return Color.mPrimary
+    case "secondary":
+      return Color.mSecondary
+    case "tertiary":
+      return Color.mTertiary
+    case "error":
+      return Color.mError
+    case "onSurface":
+    default:
+      return Color.mOnSurface
+    }
+  }
+
   readonly property bool shouldShow: (currentVisualizerType !== "" && currentVisualizerType !== "none") && (!hideWhenIdle || MediaService.isPlaying)
 
   implicitWidth: shouldShow ? visualizerWidth : 0
@@ -108,8 +126,8 @@ Item {
     LinearSpectrum {
       anchors.fill: parent
       values: CavaService.values
+      fillColor: root.fillColor
       showMinimumSignal: true
-      fillColor: Color.mPrimary
     }
   }
 
@@ -118,8 +136,8 @@ Item {
     MirroredSpectrum {
       anchors.fill: parent
       values: CavaService.values
+      fillColor: root.fillColor
       showMinimumSignal: true
-      fillColor: Color.mPrimary
     }
   }
 
@@ -128,8 +146,8 @@ Item {
     WaveSpectrum {
       anchors.fill: parent
       values: CavaService.values
+      fillColor: root.fillColor
       showMinimumSignal: true
-      fillColor: Color.mPrimary
     }
   }
 }
