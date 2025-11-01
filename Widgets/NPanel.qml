@@ -220,6 +220,7 @@ Loader {
         bottomLeftRadius: Style.radiusL
         bottomRightRadius: Style.radiusL
 
+
         /*// Drop shadow effect
         layer.enabled: true
         layer.effect: MultiEffect {
