@@ -1710,6 +1710,10 @@
       "disabled": "Wallpaper colors disabled",
       "not-installed": "Matugen not installed - required for wallpaper color extraction"
     },
+    "matugen": {
+      "failed": "Matugen processing failed",
+      "failed-general": "Matugen encountered an error while processing templates"
+    },
     "recording": {
       "stopping": "Stopping recording…",
       "started": "Recording started",

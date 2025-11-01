@@ -1710,6 +1710,10 @@
       "disabled": "壁纸颜色已禁用",
       "not-installed": "Matugen 未安装 - 壁纸颜色提取所需"
     },
+    "matugen": {
+      "failed": "Matugen 处理失败",
+      "failed-general": "Matugen 在处理模板时遇到错误"
+    },
     "recording": {
       "stopping": "正在停止录制…",
       "started": "录制已开始",
