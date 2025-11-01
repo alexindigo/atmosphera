@@ -116,12 +116,11 @@ Item {
                  const nextIndex = (currentIndex + 1) % types.length
                  const newType = types[nextIndex]
 
-                 // Update settings directly
+                 // Update settings directly, maybe this should be a widget setting...
                  Settings.data.audio.visualizerType = newType
                }
   }
 
-  // No imperative activation needed; bound to shouldShow
   Component {
     id: linearComponent
     LinearSpectrum {
