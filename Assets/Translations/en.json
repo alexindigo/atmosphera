@@ -1412,8 +1412,8 @@
     "next-media": "Next media",
     "power-profile": "'{profile}' power profile",
     "keyboard-layout": "{layout} keyboard layout",
-    "output-muted": "Muted audio output",
-    "input-muted": "Muted audio input"
+    "output-muted": "Toggle output mute",
+    "input-muted": "Toggle input mute"
   },
   "clock": {
     "tooltip": "Open calendar"
