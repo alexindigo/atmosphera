@@ -220,7 +220,8 @@ Loader {
         bottomLeftRadius: Style.radiusL
         bottomRightRadius: Style.radiusL
 
-        layer.enabled: !attachedToBar
+        // Drop shadow effect
+        layer.enabled: true
         layer.effect: MultiEffect {
           shadowEnabled: true
           shadowBlur: 0.85
