@@ -314,8 +314,7 @@ Singleton {
 
           if (result === "limited" || result === "portal") {
             ToastService.showWarning(cachedLastConnected, "toast.internet.limited")
-          }
-          else {
+          } else {
             scan()
           }
         }
@@ -518,7 +517,7 @@ Singleton {
       }
     }
     environment: {
-     "LC_ALL": "C"
+      "LC_ALL": "C"
     }
 
     stdout: StdioCollector {

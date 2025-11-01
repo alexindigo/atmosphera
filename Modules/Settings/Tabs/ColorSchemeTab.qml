@@ -525,7 +525,7 @@ ColumnLayout {
       description: I18n.tr("settings.color-scheme.templates.terminal.description")
       defaultExpanded: false
 
-     NCheckbox {
+      NCheckbox {
         label: "Alacritty"
         description: ProgramCheckerService.footAvailable ? I18n.tr("settings.color-scheme.templates.terminal.alacritty.description", {
                                                                      "filepath": "~/.config/alacritty/themes/noctalia"
