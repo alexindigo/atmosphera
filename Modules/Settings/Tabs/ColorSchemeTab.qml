@@ -525,6 +525,24 @@ ColumnLayout {
       description: I18n.tr("settings.color-scheme.templates.terminal.description")
       defaultExpanded: false
 
+     NCheckbox {
+        label: "Alacritty"
+        description: ProgramCheckerService.footAvailable ? I18n.tr("settings.color-scheme.templates.terminal.alacritty.description", {
+                                                                     "filepath": "~/.config/alacritty/themes/noctalia"
+                                                                   }) : I18n.tr("settings.color-scheme.templates.terminal.alacritty.description-missing", {
+                                                                                  "app": "alacritty"
+                                                                                })
+        checked: Settings.data.templates.alacritty
+        enabled: ProgramCheckerService.alacrittyAvailable
+        opacity: ProgramCheckerService.alacrittyAvailable ? 1.0 : 0.6
+        onToggled: checked => {
+                     if (ProgramCheckerService.alacrittyAvailable) {
+                       Settings.data.templates.alacritty = checked
+                       AppThemeService.generate()
+                     }
+                   }
+      }
+
       NCheckbox {
         label: "Kitty"
         description: ProgramCheckerService.kittyAvailable ? I18n.tr("settings.color-scheme.templates.terminal.kitty.description", {

@@ -103,7 +103,13 @@ Singleton {
                        "name": "kitty",
                        "path": "Terminal/kitty.conf",
                        "output": "~/.config/kitty/themes/noctalia.conf"
-                     }]
+                     },
+                     {
+                       "name": "alacritty",
+                       "path": "Terminal/alacritty.toml",
+                       "output": "~/.config/alacritty/themes/noctalia.toml"
+                     }
+                     ]
 
     terminals.forEach(function (terminal) {
       if (Settings.data.templates[terminal.name]) {

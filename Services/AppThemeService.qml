@@ -15,7 +15,8 @@ Singleton {
   readonly property var terminalPaths: ({
                                           "foot": "~/.config/foot/themes/noctalia",
                                           "ghostty": "~/.config/ghostty/themes/noctalia",
-                                          "kitty": "~/.config/kitty/themes/noctalia.conf"
+                                          "kitty": "~/.config/kitty/themes/noctalia.conf",
+                                          "alacritty": "~/.config/alacritty/themes/noctalia.toml"
                                         })
 
   readonly property var schemeNameMap: ({
