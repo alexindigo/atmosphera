@@ -16,6 +16,8 @@ Item {
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
 
+  readonly property bool isVerticalBar: (Settings.data.bar.position === "left" || Settings.data.bar.position === "right")
+
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
     if (section && sectionWidgetIndex >= 0) {
@@ -50,8 +52,8 @@ Item {
 
   readonly property bool shouldShow: (currentVisualizerType !== "" && currentVisualizerType !== "none") && (!hideWhenIdle || MediaService.isPlaying)
 
-  implicitWidth: shouldShow ? visualizerWidth : 0
-  implicitHeight: shouldShow ? Style.capsuleHeight : 0
+  implicitWidth: !shouldShow ? 0 : isVerticalBar ? Style.capsuleHeight : visualizerWidth
+  implicitHeight: !shouldShow ? 0 : isVerticalBar ? visualizerWidth : Style.capsuleHeight
   visible: shouldShow
 
   Behavior on implicitWidth {
@@ -78,14 +80,13 @@ Item {
   readonly property string currentVisualizerType: Settings.data.audio.visualizerType
 
   // When visualizer type or playback changes, shouldShow updates automatically
-
   // The Loader dynamically loads the appropriate visualizer based on settings
   Loader {
     id: visualizerLoader
     anchors.fill: parent
     anchors.margins: Style.marginS
     active: shouldShow
-    asynchronous: false
+    asynchronous: true
 
     sourceComponent: {
       switch (currentVisualizerType) {
@@ -128,6 +129,7 @@ Item {
       values: CavaService.values
       fillColor: root.fillColor
       showMinimumSignal: true
+      vertical: root.isVerticalBar
     }
   }
 
@@ -138,6 +140,7 @@ Item {
       values: CavaService.values
       fillColor: root.fillColor
       showMinimumSignal: true
+      vertical: root.isVerticalBar
     }
   }
 
@@ -148,6 +151,7 @@ Item {
       values: CavaService.values
       fillColor: root.fillColor
       showMinimumSignal: true
+      vertical: root.isVerticalBar
     }
   }
 }
