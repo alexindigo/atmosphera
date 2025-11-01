@@ -114,7 +114,7 @@ Rectangle {
         }
 
         NText {
-          text: `${Math.round(SystemStatService.cpuUsage)}%`
+          text: `${Math.min(99, Math.round(SystemStatService.cpuUsage))}%`
           family: Settings.data.ui.fontFixed
           pointSize: textSize
           applyUiScale: false
