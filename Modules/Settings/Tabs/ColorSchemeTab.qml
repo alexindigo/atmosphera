@@ -344,7 +344,7 @@ ColumnLayout {
               return Color.mSecondary
             }
             if (itemMouseArea.containsMouse) {
-              return Color.mTertiary
+              return Color.mHover
             }
             return Color.mOutline
           }

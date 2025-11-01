@@ -608,7 +608,7 @@ Loader {
           anchors.fill: parent
           anchors.margins: 0
           color: Color.transparent
-          border.color: Color.mTertiary
+          border.color: Color.mPrimary
           border.width: Style.borderM
           radius: Style.radiusL
           visible: panelBackground.isDragged && dragHandler.active
@@ -620,7 +620,7 @@ Loader {
             anchors.fill: parent
             anchors.margins: 0
             color: Color.transparent
-            border.color: Color.mTertiary
+            border.color: Color.mPrimary
             border.width: Style.borderS
             radius: Style.radiusL
             opacity: 0.3
