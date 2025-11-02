@@ -107,22 +107,22 @@ EOF
         echo "🎨 Applying 'noctalia' theme to wezterm..."
         CONFIG_FILE="$HOME/.config/wezterm/wezterm.lua"
         # might need this, not sure yet.
-        THEME_FILE="$HOME/.config/wezterm/colors/noctalia.toml"
+        THEME_FILE="$HOME/.config/wezterm/colors/Noctalia.toml"
 
         # Check if the config file exists.
         if [ -f "$CONFIG_FILE" ]; then
             # Check if theme is already set
-            if grep -q '^\s*config\.color_scheme\s*=\s*["']noctalia["']' "$CONFIG_FILE"; then
+            if grep -q '^\s*config\.color_scheme\s*=\s*["']Noctalia["']' "$CONFIG_FILE"; then
                 echo "Theme already set to noctalia, skipping modification."
             else
                 # Check if config.color_scheme line exists
                 if grep -q '^\s*config\.color_scheme\s*=' "$CONFIG_FILE"; then
                     # Needs to replace config.color_scheme line with config.color_scheme = "Noctalia"
-                    sed -i 's/^\(\s*config\.color_scheme\s*=\s*\).*$/\1'"'"'noctalia'"'"'/' "$CONFIG_FILE"
+                    sed -i 's/^\(\s*config\.color_scheme\s*=\s*\).*$/\1'"'"'Noctalia'"'"'/' "$CONFIG_FILE"
                 else
                     # No color_scheme added yet.
                     # Just needs to add config.color_scheme = "Noctalia" somewhere after local config = wezterm.config_builder() and before the return config line
-                    sed -i '/^\s*return\s*config/i config.color_scheme = '"'"'noctalia'"'"'\n' "$CONFIG_FILE"
+                    sed -i '/^\s*return\s*config/i config.color_scheme = '"'"'Noctalia'"'"'\n' "$CONFIG_FILE"
                 fi
             fi
         else
