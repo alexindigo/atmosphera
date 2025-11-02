@@ -105,26 +105,21 @@ alacritty)
 wezterm)
     echo "🎨 Applying 'noctalia' theme to wezterm..."
     CONFIG_FILE="$HOME/.config/wezterm/wezterm.lua"
-    # might need this, not sure yet.
-    THEME_FILE="$HOME/.config/wezterm/colors/Noctalia.toml"
     local wezterm_scheme_line="config\.color\_scheme = \"Noctalia\""
 
     # Check if the config file exists.
     if [ -f "$CONFIG_FILE" ]; then
 
         # Check if theme is already set to Noctalia (matches 'Noctalia' or "Noctalia")
-        # We use "..." for the grep string and escape the internal [\"']
         if grep -q "^\s*config\.color\_scheme\s*\=\s*[\'\"]Noctalia[\'\"]\s*" "$CONFIG_FILE"; then
             echo "Theme already set to Noctalia, skipping modification."
         else
             # Not set to Noctalia. Check if *any* color_scheme line exists.
             if grep -q '^\s*config\.color\_scheme\s*\=' "$CONFIG_FILE"; then
-                # It exists, so we replace it with our desired (double-quoted) line.
+                # It exists, so we replace it with our desired line.
                 sed -i "s|^\(\s*config\.color_scheme\s*=\s*\).*$|\1$wezterm_scheme_line|" "$CONFIG_FILE"
             else
-                # It doesn't exist, so we add it.
-                # We must insert it before the 'return config' line.
-
+                # It doesn't exist, so we add it before the 'return config' line.
                 if grep -q '^\s*return\s*config' "$CONFIG_FILE"; then
                     # It exists. Insert the line before it.
                     sed -i "/^\s*return\s*config/i\\$wezterm_scheme_line" "$CONFIG_FILE"
@@ -135,6 +130,8 @@ wezterm)
                 fi
             fi
         fi
+        # touching the config file fools wezterm into reloading it
+        touch "$CONFIG_FILE"
     else
         echo "Error: wezterm config file not found at $CONFIG_FILE" >&2
         exit 1
