@@ -600,7 +600,7 @@ ColumnLayout {
       NCheckbox {
         label: "Wezterm"
         description: ProgramCheckerService.weztermAvailable ? I18n.tr("settings.color-scheme.templates.terminal.wezterm.description", {
-          "filepath": "~/.config/wezterm/colors/Noctalia.toml"
+          "filepath": "~/.config/wezterm/colors/noctalia.toml"
         }) : I18n.tr("settings.color-scheme.templates.terminal.wezterm.description-missing", {
           "app": "wezterm"
         })
