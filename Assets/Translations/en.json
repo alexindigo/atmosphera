@@ -833,7 +833,26 @@
           "description": "Configure and manage the shortcuts widgets."
         },
         "sectionLeft": "Left",
-        "sectionRight": "Right"
+        "sectionRight": "Right",
+        "custom-button": {
+          "icon": {
+            "label": "Icon",
+            "description": "Select an icon from the library."
+          },
+          "browse": "Browse",
+          "command": {
+            "label": "Command",
+            "description": "The command to execute when the button is clicked."
+          },
+          "tooltip": {
+            "label": "Tooltip",
+            "description": "The tooltip to show when hovering over the button."
+          }
+        },
+        "dialog": {
+          "cancel": "Cancel",
+          "apply": "Apply"
+        }
       }
     },
     "user-interface": {
@@ -1450,15 +1469,16 @@
     "search": "Search...",
     "select": "Select",
     "cancel": "Cancel",
-    "test": "Test"
+    "test": "Test",
+    "enter-tooltip": "Enter tooltip"
   },
   "options": {
     "colors": {
       "primary": "Primary",
       "secondary": "Secondary",
-      "tertiary":  "Tertiary",
-      "error":  "Error",
-      "onSurface":  "On Surface"
+      "tertiary": "Tertiary",
+      "error": "Error",
+      "onSurface": "On Surface"
     },
     "bar": {
       "position": {
