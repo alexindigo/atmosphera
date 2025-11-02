@@ -584,6 +584,10 @@
           "foot": {
             "description": "Écrire ~/.config/foot/themes/noctalia et recharger",
             "description-missing": "Nécessite que le terminal foot soit installé"
+          },
+          "wezterm": {
+            "description": "Écrire {filepath} et recharger.",
+            "description-missing": "Nécessite l'installation de {app}"
           }
         },
         "programs": {

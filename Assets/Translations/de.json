@@ -584,6 +584,10 @@
           "foot": {
             "description": "Schreibt {filepath} und lädt neu",
             "description-missing": "Erfordert {app} Terminal"
+          },
+          "wezterm": {
+            "description": "Schreibe {Dateipfad} und lade neu",
+            "description-missing": "Benötigt die Installation von {app}."
           }
         },
         "programs": {

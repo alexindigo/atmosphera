@@ -584,6 +584,10 @@
           "foot": {
             "description": "Escribir {filepath} y recargar",
             "description-missing": "Requiere que {app} esté instalado"
+          },
+          "wezterm": {
+            "description": "Escribe {filepath} y recarga",
+            "description-missing": "Requiere que {app} esté instalado/a."
           }
         },
         "programs": {
