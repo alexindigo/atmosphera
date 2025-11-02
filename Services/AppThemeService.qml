@@ -16,7 +16,8 @@ Singleton {
                                           "foot": "~/.config/foot/themes/noctalia",
                                           "ghostty": "~/.config/ghostty/themes/noctalia",
                                           "kitty": "~/.config/kitty/themes/noctalia.conf",
-                                          "alacritty": "~/.config/alacritty/themes/noctalia.toml"
+                                          "alacritty": "~/.config/alacritty/themes/noctalia.toml",
+                                          "wezterm": "~/.config/wezterm/colors/Noctalia.toml"
                                         })
 
   readonly property var schemeNameMap: ({
