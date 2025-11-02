@@ -1645,7 +1645,8 @@
         "unavailable": "电源模式"
       },
       "tooltip": {
-        "action": "点击切换电源模式"
+        "action": "点击切换电源模式",
+        "disabled": "安装 power-profiles-daemon 以使用电源模式"
       }
     },
     "wifi": {

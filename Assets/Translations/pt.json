@@ -1645,7 +1645,8 @@
         "unavailable": "Perfil de energia"
       },
       "tooltip": {
-        "action": "Clique para alternar o perfil de energia"
+        "action": "Clique para alternar o perfil de energia",
+        "disabled": "Instale power-profiles-daemon para usar perfis de energia"
       }
     },
     "wifi": {

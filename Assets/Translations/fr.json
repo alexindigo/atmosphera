@@ -1645,7 +1645,8 @@
         "unavailable": "Profil d'alimentation"
       },
       "tooltip": {
-        "action": "Cliquer pour changer de profil d'alimentation"
+        "action": "Cliquer pour changer de profil d'alimentation",
+        "disabled": "Installez power-profiles-daemon pour utiliser les profils d'alimentation"
       }
     },
     "wifi": {

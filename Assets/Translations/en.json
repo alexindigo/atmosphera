@@ -1645,7 +1645,8 @@
         "unavailable": "Power Profile"
       },
       "tooltip": {
-        "action": "Click to cycle power profile"
+        "action": "Click to cycle power profile",
+        "disabled": "Install power-profiles-daemon to use power profiles"
       }
     },
     "wifi": {

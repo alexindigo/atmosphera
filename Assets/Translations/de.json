@@ -1685,7 +1685,8 @@
         "unavailable": "Energieprofil"
       },
       "tooltip": {
-        "action": "Klicken zum Wechseln des Energieprofils"
+        "action": "Klicken zum Wechseln des Energieprofils",
+        "disabled": "Installiere power-profiles-daemon, um Energieprofile zu verwenden"
       }
     },
     "wifi": {
