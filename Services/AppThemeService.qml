@@ -388,7 +388,12 @@ Singleton {
     const mode = Settings.data.colorSchemes.darkMode ? 'dark' : 'light'
 
     colorScheme = schemeNameMap[colorScheme] || colorScheme
-    const extension = terminal === 'kitty' ? ".conf" : ""
+    let extension = ""
+    if (terminal === 'kitty') {
+      extension = ".conf"
+    } else if (terminal === 'wezterm') {
+      extension = ".toml"
+    }
 
     return `${Quickshell.shellDir}/Assets/ColorScheme/${colorScheme}/terminal/${terminal}/${colorScheme}-${mode}${extension}`
   }
