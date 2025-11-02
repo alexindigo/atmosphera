@@ -110,7 +110,8 @@ Singleton {
                      }, {
                        "name": "wezterm",
                        "path": "Terminal/wezterm.toml",
-                       "output": "~/.config/wezterm/colors/Noctalia.toml"
+                       "output": "~/.config/wezterm/colors/Noctalia.toml",
+                       "post_hook": "touch ~/.config/wezterm/wezterm.lua"
                      }]
 
     terminals.forEach(function (terminal) {
