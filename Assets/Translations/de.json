@@ -604,6 +604,10 @@
           "alacritty": {
             "description": "Schreibe {Dateipfad} und lade neu",
             "description-missing": "Benötigt die Installation von {app}"
+          },
+          "wezterm": {
+            "description": "Schreibe {Dateipfad} und lade neu.",
+            "description-missing": "Erfordert die Installation von {app}"
           }
         },
         "programs": {

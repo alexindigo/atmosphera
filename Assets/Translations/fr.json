@@ -604,6 +604,10 @@
           "alacritty": {
             "description": "Écrire {filepath} et recharger.",
             "description-missing": "Nécessite l'installation de {app}"
+          },
+          "wezterm": {
+            "description": "Écrire {filepath} et recharger.",
+            "description-missing": "Nécessite l'installation de {app}"
           }
         },
         "programs": {

@@ -608,6 +608,10 @@
           "alacritty": {
             "description": "Записати {filepath} та перезавантажити",
             "description-missing": "Потрібно встановити {app}"
+          },
+          "wezterm": {
+            "description": "Запишіть {filepath} та перезавантажте",
+            "description-missing": "Потрібно встановити {app}"
           }
         },
         "programs": {
@@ -1290,18 +1294,6 @@
         }
       },
       "lock-keys": {
-        "indicator-style": {
-          "label": "Стиль індикатора",
-          "description": "Стиль значків для індикаторів клавіш блокування",
-          "large": "Великі літери",
-          "small": "Малі літери",
-          "square": "Квадратні літери",
-          "square-round": "Заокруглені квадратні літери",
-          "circle": "Круглі літери",
-          "circle-dash": "Пунктирні круглі літери",
-          "circle-dot": "Точкові круглі літери",
-          "hex": "Шестикутні літери"
-        },
         "show-caps-lock": {
           "label": "Caps Lock",
           "description": "Відображати стан caps lock."
@@ -1313,7 +1305,8 @@
         "show-scroll-lock": {
           "label": "Scroll Lock",
           "description": "Відображати стан scroll lock."
-        }
+        },
+        "browse": "Перегляд"
       }
     }
   },

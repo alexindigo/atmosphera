@@ -566,6 +566,10 @@
           "alacritty": {
             "description": "Escreva {filepath} e recarregue.",
             "description-missing": "Requer que o {app} esteja instalado."
+          },
+          "wezterm": {
+            "description": "Escreva {filepath} e recarregue.",
+            "description-missing": "Requer que o {app} esteja instalado."
           }
         },
         "programs": {

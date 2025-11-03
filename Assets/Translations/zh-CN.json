@@ -604,6 +604,10 @@
           "alacritty": {
             "description": "写入 {filepath} 并重新加载",
             "description-missing": "需要安装 {app}"
+          },
+          "wezterm": {
+            "description": "写入 {filepath} 并重新加载",
+            "description-missing": "需要安装{app}"
           }
         },
         "programs": {
