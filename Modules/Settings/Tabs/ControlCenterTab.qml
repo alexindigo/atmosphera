@@ -329,8 +329,12 @@ ColumnLayout {
   }
 
   function _updateWidgetSettingsInSection(section, index, settings) {
-    // Update the widget settings in the Settings data
-    Settings.data.controlCenter.shortcuts[section][index] = settings
+    // Create a new array to trigger QML's change detection for persistence.
+    // This is crucial for Settings.data to detect the change and persist it.
+    var newSectionArray = Settings.data.controlCenter.shortcuts[section].slice()
+    newSectionArray[index] = settings
+    Settings.data.controlCenter.shortcuts[section] = newSectionArray
+    Settings.saveImmediate()
   }
 
   // Base list model for all combo boxes

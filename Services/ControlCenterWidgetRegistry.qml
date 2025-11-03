@@ -25,11 +25,10 @@ Singleton {
                                   "CustomButton": {
                                     "allowUserSettings": true,
                                     "icon": "heart",
-                                    "onStateIcon": "heart",
                                     "onClicked": "",
                                     "onRightClicked": "",
                                     "onMiddleClicked": "",
-                                    "onStateCommand": "",
+                                    "stateChecks": [],
                                     "generalTooltipText": "Custom Button",
                                     "enableOnStateLogic": false
                                   }
