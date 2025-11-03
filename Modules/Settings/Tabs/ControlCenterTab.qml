@@ -70,11 +70,11 @@ ColumnLayout {
     availableWidgets.clear()
     var sortedEntries = ControlCenterWidgetRegistry.getAvailableWidgets().slice().sort()
     sortedEntries.forEach(entry => {
-                              availableWidgets.append({
-                                                        "key": entry,
-                                                        "name": entry
-                                                      })
-                            })
+                            availableWidgets.append({
+                                                      "key": entry,
+                                                      "name": entry
+                                                    })
+                          })
     // Starts empty
     cardsModel = []
 

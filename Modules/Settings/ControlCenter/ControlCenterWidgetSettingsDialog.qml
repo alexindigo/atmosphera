@@ -50,7 +50,9 @@ Popup {
       Layout.fillWidth: true
 
       NText {
-        text: I18n.tr("system.widget-settings-title", { "widget": root.widgetId })
+        text: I18n.tr("system.widget-settings-title", {
+                        "widget": root.widgetId
+                      })
         pointSize: Style.fontSizeL
         font.weight: Style.fontWeightBold
         color: Color.mPrimary
@@ -82,7 +84,9 @@ Popup {
       Layout.topMargin: Style.marginM
       spacing: Style.marginM
 
-      Item { Layout.fillWidth: true }
+      Item {
+        Layout.fillWidth: true
+      }
 
       NButton {
         text: I18n.tr("settings.control-center.shortcuts.dialog.cancel", "Cancel")

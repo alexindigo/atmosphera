@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQml.Models // Import ListModel
+import QtQml.Models
 import qs.Commons
 import qs.Widgets
 
@@ -31,9 +31,9 @@ ColumnLayout {
             var item = initialChecks[i]
             if (item && typeof item === "object") {
               _settings._stateChecksListModel.append({
-                command: item.command || "",
-                icon: item.icon || ""
-              })
+                                                       "command": item.command || "",
+                                                       "icon": item.icon || ""
+                                                     })
             } else {
               console.warn("⚠️ Invalid stateChecks entry at index " + i + ":", item)
             }
@@ -53,14 +53,14 @@ ColumnLayout {
     _settings.stateChecksJson = JSON.stringify(savedStateChecksArray)
 
     return {
-      id: widgetData.id,
-      icon: _settings.icon,
-      onClicked: _settings.onClicked,
-      onRightClicked: _settings.onRightClicked,
-      onMiddleClicked: _settings.onMiddleClicked,
-      stateChecksJson: _settings.stateChecksJson,
-      generalTooltipText: _settings.generalTooltipText,
-      enableOnStateLogic: _settings.enableOnStateLogic
+      "id": widgetData.id,
+      "icon": _settings.icon,
+      "onClicked": _settings.onClicked,
+      "onRightClicked": _settings.onRightClicked,
+      "onMiddleClicked": _settings.onMiddleClicked,
+      "stateChecksJson": _settings.stateChecksJson,
+      "generalTooltipText": _settings.generalTooltipText,
+      "enableOnStateLogic": _settings.enableOnStateLogic
     }
   }
 
@@ -166,7 +166,10 @@ ColumnLayout {
             Layout.fillWidth: true
             placeholderText: I18n.tr("settings.control-center.shortcuts.custom-button.state-checks.command")
             text: model.command
-            onEditingFinished: _settings._stateChecksListModel.set(currentIndex, { "command": text, "icon": model.icon })
+            onEditingFinished: _settings._stateChecksListModel.set(currentIndex, {
+                                                                     "command": text,
+                                                                     "icon": model.icon
+                                                                   })
           }
 
           RowLayout {
@@ -186,16 +189,16 @@ ColumnLayout {
               onClicked: iconPickerDelegate.open()
             }
 
-             NIconButton {
-               icon: "close"
-               tooltipText: I18n.tr("settings.control-center.shortcuts.custom-button.state-checks.remove")
-               baseSize: Style?.buttonSizeS ?? 24
-               colorBorder: Qt.alpha(Color.mOutline, Style.opacityLight)
-               colorBg: Color.mError
-               colorFg: Color.mOnError
-               colorBgHover: Qt.alpha(Color.mError, Style.opacityMedium)
-               colorFgHover: Color.mOnError
-               onClicked: _settings._stateChecksListModel.remove(currentIndex)
+            NIconButton {
+              icon: "close"
+              tooltipText: I18n.tr("settings.control-center.shortcuts.custom-button.state-checks.remove")
+              baseSize: Style?.buttonSizeS ?? 24
+              colorBorder: Qt.alpha(Color.mOutline, Style.opacityLight)
+              colorBg: Color.mError
+              colorFg: Color.mOnError
+              colorBgHover: Qt.alpha(Color.mError, Style.opacityMedium)
+              colorFgHover: Color.mOnError
+              onClicked: _settings._stateChecksListModel.remove(currentIndex)
             }
           }
         }
@@ -204,14 +207,17 @@ ColumnLayout {
           id: iconPickerDelegate
           initialIcon: model.icon
           onIconSelected: function (iconName) {
-            _settings._stateChecksListModel.set(currentIndex, { "command": model.command, "icon": iconName })
+            _settings._stateChecksListModel.set(currentIndex, {
+                                                  "command": model.command,
+                                                  "icon": iconName
+                                                })
           }
         }
 
         NDivider {
           id: divider
           anchors.bottom: parent.bottom
-          visible: index < _settings._stateChecksListModel.count - 1  // Only show divider if not the last item
+          visible: index < _settings._stateChecksListModel.count - 1 // Only show divider if not the last item
         }
       }
     }
@@ -222,7 +228,10 @@ ColumnLayout {
 
       NButton {
         text: I18n.tr("settings.control-center.shortcuts.custom-button.state-checks.add")
-        onClicked: _settings._stateChecksListModel.append({ command: "", icon: "" })
+        onClicked: _settings._stateChecksListModel.append({
+                                                            "command": "",
+                                                            "icon": ""
+                                                          })
       }
 
       Item {
