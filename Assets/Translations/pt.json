@@ -1525,7 +1525,8 @@
     "search": "Pesquisar...",
     "select": "Selecionar",
     "cancel": "Cancelar",
-    "test": "Testar"
+    "test": "Testar",
+    "enter-tooltip": "Inserir dica de ferramenta"
   },
   "options": {
     "osd": {

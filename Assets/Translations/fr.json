@@ -1525,7 +1525,8 @@
     "search": "Rechercher...",
     "select": "Sélectionner",
     "cancel": "Annuler",
-    "test": "Tester"
+    "test": "Tester",
+    "enter-tooltip": "Entrer l'infobulle"
   },
   "options": {
     "bar": {

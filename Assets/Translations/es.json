@@ -1525,7 +1525,8 @@
     "search": "Buscar...",
     "select": "Seleccionar",
     "cancel": "Cancelar",
-    "test": "Probar"
+    "test": "Probar",
+    "enter-tooltip": "Introducir información sobre herramientas"
   },
   "options": {
     "bar": {

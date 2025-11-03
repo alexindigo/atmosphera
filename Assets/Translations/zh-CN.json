@@ -1525,7 +1525,8 @@
     "search": "搜索...",
     "select": "选择",
     "cancel": "取消",
-    "test": "测试"
+    "test": "测试",
+    "enter-tooltip": "输入工具提示"
   },
   "options": {
     "bar": {

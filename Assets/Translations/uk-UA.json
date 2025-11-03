@@ -1525,7 +1525,8 @@
     "search": "Пошук...",
     "select": "Вибрати",
     "cancel": "Скасувати",
-    "test": "Тест"
+    "test": "Тест",
+    "enter-tooltip": "Введіть підказку"
   },
   "options": {
     "colors": {
