@@ -437,7 +437,11 @@
           "tooltip": "Procurar pasta de papéis de parede"
         },
         "select-folder": "Selecionar pasta de papéis de parede",
-        "select-monitor-folder": "Selecionar pasta de papéis de parede do monitor"
+        "select-monitor-folder": "Selecionar pasta de papéis de parede do monitor",
+        "selector-position": {
+          "description": "Escolha onde o painel do seletor de papel de parede aparece.",
+          "label": "Posição"
+        }
       },
       "look-feel": {
         "section": {
@@ -1499,7 +1503,8 @@
         "bottom_center": "Centro inferior",
         "top_center": "Centro superior",
         "center_left": "Centro à esquerda",
-        "center_right": "Centro à direita"
+        "center_right": "Centro à direita",
+        "follow_bar": "Seguir barra (padrão)"
       }
     },
     "control-center": {

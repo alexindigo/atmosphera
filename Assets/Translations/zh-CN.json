@@ -475,7 +475,11 @@
           "tooltip": "浏览壁纸文件夹"
         },
         "select-folder": "选择壁纸文件夹",
-        "select-monitor-folder": "选择显示器壁纸文件夹"
+        "select-monitor-folder": "选择显示器壁纸文件夹",
+        "selector-position": {
+          "description": "选择壁纸选择面板的显示位置。",
+          "label": "职位"
+        }
       },
       "look-feel": {
         "section": {
@@ -1501,7 +1505,8 @@
         "bottom_center": "底部居中",
         "top_center": "顶部居中",
         "center_left": "左侧居中",
-        "center_right": "右侧居中"
+        "center_right": "右侧居中",
+        "follow_bar": "跟随栏（默认）"
       }
     },
     "control-center": {

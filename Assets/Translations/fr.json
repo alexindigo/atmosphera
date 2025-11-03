@@ -475,7 +475,11 @@
           "tooltip": "Parcourir le dossier des fonds d'écran"
         },
         "select-folder": "Sélectionner le dossier des fonds d'écran",
-        "select-monitor-folder": "Sélectionner le dossier des fonds d'écran du moniteur"
+        "select-monitor-folder": "Sélectionner le dossier des fonds d'écran du moniteur",
+        "selector-position": {
+          "description": "Choisissez l'emplacement d'affichage du panneau de sélection du fond d'écran.",
+          "label": "Position"
+        }
       },
       "look-feel": {
         "section": {
@@ -1501,7 +1505,8 @@
         "bottom_center": "En bas au centre",
         "top_center": "En haut au centre",
         "center_left": "Gauche centre",
-        "center_right": "Droite centre"
+        "center_right": "Droite centre",
+        "follow_bar": "Suivre la barre (par défaut)"
       }
     },
     "control-center": {

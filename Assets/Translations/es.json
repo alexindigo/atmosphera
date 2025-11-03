@@ -475,7 +475,11 @@
           "tooltip": "Buscar carpeta de fondos de pantalla"
         },
         "select-folder": "Seleccionar carpeta de fondos de pantalla",
-        "select-monitor-folder": "Seleccionar carpeta de fondos de pantalla del monitor"
+        "select-monitor-folder": "Seleccionar carpeta de fondos de pantalla del monitor",
+        "selector-position": {
+          "description": "Elige dónde aparece el panel selector de fondo de pantalla.",
+          "label": "Posición"
+        }
       },
       "look-feel": {
         "section": {
@@ -1501,7 +1505,8 @@
         "bottom_center": "Inferior central",
         "top_center": "Superior central",
         "center_left": "Izquierda centrado",
-        "center_right": "Derecha centrado"
+        "center_right": "Derecha centrado",
+        "follow_bar": "Seguir barra (predeterminado)"
       }
     },
     "control-center": {

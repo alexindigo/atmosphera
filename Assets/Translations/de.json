@@ -475,7 +475,11 @@
           "tooltip": "Nach Hintergrundbild-Ordner suchen"
         },
         "select-folder": "Hintergrundbild-Ordner auswählen",
-        "select-monitor-folder": "Monitor-Hintergrundbild-Ordner auswählen"
+        "select-monitor-folder": "Monitor-Hintergrundbild-Ordner auswählen",
+        "selector-position": {
+          "description": "Wählen Sie aus, wo das Hintergrundbildauswahlfeld angezeigt wird.",
+          "label": "Position"
+        }
       },
       "look-feel": {
         "section": {
@@ -1518,7 +1522,8 @@
         "bottom_center": "Unten mittig",
         "top_center": "Oben mittig",
         "center_left": "Links mittig",
-        "center_right": "Rechts mittig"
+        "center_right": "Rechts mittig",
+        "follow_bar": "Folge dem Balken (Standard)"
       }
     },
     "control-center": {
