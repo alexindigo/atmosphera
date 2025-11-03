@@ -1241,6 +1241,16 @@
           "description": "Aplicar colores del tema a los iconos de la barra de tareas."
         }
       },
+      "taskbar-grouped": {
+        "show-workspace-numbers": {
+          "label": "Mostrar números de espacio de trabajo",
+          "description": "Mostrar números de espacio de trabajo en la esquina superior izquierda de los grupos de tareas."
+        },
+        "show-numbers-only-when-occupied": {
+          "label": "Mostrar números solo cuando estén ocupados",
+          "description": "Mostrar números de espacio de trabajo solo para espacios de trabajo con ventanas abiertas."
+        }
+      },
       "tray": {
         "colorize-icons": {
           "label": "Colorear iconos",

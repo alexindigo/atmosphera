@@ -1241,6 +1241,16 @@
           "description": "Appliquer les couleurs du thème aux icônes de la barre des tâches."
         }
       },
+      "taskbar-grouped": {
+        "show-workspace-numbers": {
+          "label": "Afficher les numéros d'espace de travail",
+          "description": "Afficher les numéros d'espace de travail dans le coin supérieur gauche des groupes de tâches."
+        },
+        "show-numbers-only-when-occupied": {
+          "label": "Afficher les numéros seulement lorsqu'occupés",
+          "description": "Afficher les numéros d'espace de travail uniquement pour les espaces de travail avec des fenêtres ouvertes."
+        }
+      },
       "tray": {
         "colorize-icons": {
           "label": "Coloriser les icônes",

@@ -1241,6 +1241,16 @@
           "description": "将主题颜色应用到任务栏图标。"
         }
       },
+      "taskbar-grouped": {
+        "show-workspace-numbers": {
+          "label": "显示工作区编号",
+          "description": "在任务组左上角显示工作区编号"
+        },
+        "show-numbers-only-when-occupied": {
+          "label": "仅在有窗口时显示编号",
+          "description": "只为有打开窗口的工作区显示编号"
+        }
+      },
       "tray": {
         "colorize-icons": {
           "label": "着色图标",

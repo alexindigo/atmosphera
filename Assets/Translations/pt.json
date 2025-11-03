@@ -1241,6 +1241,16 @@
           "description": "Controla como o widget se comporta quando não há janelas correspondentes."
         }
       },
+      "taskbar-grouped": {
+        "show-workspace-numbers": {
+          "label": "Mostrar números do espaço de trabalho",
+          "description": "Exibir números do espaço de trabalho no canto superior esquerdo dos grupos de tarefas."
+        },
+        "show-numbers-only-when-occupied": {
+          "label": "Mostrar números apenas quando ocupados",
+          "description": "Mostrar números do espaço de trabalho apenas para espaços de trabalho com janelas abertas."
+        }
+      },
       "tray": {
         "colorize-icons": {
           "label": "Colorir ícones",
