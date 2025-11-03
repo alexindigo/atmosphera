@@ -12,10 +12,10 @@ NPanel {
   id: root
 
   property ShellScreen screen
-  readonly property var now: Time.date
+  readonly property var now: Time.now
 
-  preferredWidth: 500
-  preferredHeight: 700
+  preferredWidth: 500 * Style.uiScaleRatio
+  preferredHeight: 700 * Style.uiScaleRatio
 
   // Helper function to calculate ISO week number
   function getISOWeekNumber(date) {
@@ -60,7 +60,7 @@ NPanel {
       readonly property bool weatherReady: Settings.data.location.weatherEnabled && (LocationService.data.weather !== null)
 
       function checkIsCurrentMonth() {
-        return (Time.date.getMonth() === grid.month) && (Time.date.getFullYear() === grid.year)
+        return (now.getMonth() === grid.month) && (now.getFullYear() === grid.year)
       }
 
       Component.onCompleted: {
@@ -69,7 +69,7 @@ NPanel {
 
       Connections {
         target: Time
-        function onDateChanged() {
+        function onNowChanged() {
           content.isCurrentMonth = content.checkIsCurrentMonth()
         }
       }
@@ -118,7 +118,7 @@ NPanel {
               clip: true
 
               Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-              text: Time.date.getDate()
+              text: now.getDate()
               pointSize: Style.fontSizeXXXL * 1.5
               font.weight: Style.fontWeightBold
               color: Color.mOnPrimary
@@ -266,8 +266,8 @@ NPanel {
             NIconButton {
               icon: "calendar"
               onClicked: {
-                grid.month = Time.date.getMonth()
-                grid.year = Time.date.getFullYear()
+                grid.month = now.getMonth()
+                grid.year = now.getFullYear()
                 content.isCurrentMonth = true
                 CalendarService.loadEvents()
               }
@@ -473,8 +473,8 @@ NPanel {
               columnSpacing: Style.marginXXS
               rowSpacing: Style.marginXXS
 
-              property int month: Time.date.getMonth()
-              property int year: Time.date.getFullYear()
+              property int month: now.getMonth()
+              property int year: now.getFullYear()
 
               Behavior on Layout.preferredHeight {
                 NumberAnimation {

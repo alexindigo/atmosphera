@@ -57,7 +57,7 @@ Loader {
         locked: lockScreen.active
 
         WlSessionLockSurface {
-          readonly property var now: Time.date
+          readonly property var now: Time.now
 
           Item {
             id: batteryIndicator
@@ -350,7 +350,7 @@ Loader {
                         "pt": "dddd, d 'de' MMMM",
                         "zh": "yyyy年M月d日 dddd"
                       }
-                      return I18n.locale.toString(Time.date, formats[lang] || "dddd, MMMM d")
+                      return I18n.locale.toString(Time.now, formats[lang] || "dddd, MMMM d")
                     }
                     pointSize: Style.fontSizeXL
                     font.weight: Font.Medium
@@ -366,7 +366,7 @@ Loader {
 
                 // Clock
                 NClock {
-                  now: Time.date
+                  now: Time.now
                   clockStyle: Settings.data.location.analogClockInCalendar ? "analog" : "digital"
                   Layout.preferredWidth: 70
                   Layout.preferredHeight: 70

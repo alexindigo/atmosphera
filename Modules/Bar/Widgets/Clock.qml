@@ -32,7 +32,7 @@ Rectangle {
   readonly property bool isBarVertical: barPosition === "left" || barPosition === "right"
   readonly property bool density: Settings.data.bar.density
 
-  readonly property var now: Time.date
+  readonly property var now: Time.now
 
   // Resolve settings: try user settings or defaults from BarWidgetRegistry
   readonly property bool usePrimaryColor: widgetSettings.usePrimaryColor !== undefined ? widgetSettings.usePrimaryColor : widgetMetadata.usePrimaryColor

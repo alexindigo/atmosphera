@@ -9,7 +9,7 @@ import "../Helpers/ColorsConvert.js" as ColorsConvert
 Item {
   id: root
 
-  property var now: Time.date
+  property var now: Time.now
 
   // Style: "analog" or "digital"
   property string clockStyle: "analog"
@@ -94,11 +94,19 @@ Item {
       id: clockCanvas
       anchors.fill: parent
 
-      property int hours: now.getHours()
-      property int minutes: now.getMinutes()
-      property int seconds: now.getSeconds()
+      Connections {
+        target: Time
+        function onNowChanged() {
+          clockCanvas.requestPaint()
+        }
+      }
 
       onPaint: {
+        var currentTime = Time.now
+        var hours = currentTime.getHours()
+        var minutes = currentTime.getMinutes()
+        var seconds = currentTime.getSeconds()
+
         const markAlpha = 0.7
         var ctx = getContext("2d")
         ctx.reset()
@@ -170,18 +178,6 @@ Item {
         ctx.fill()
       }
 
-      Timer {
-        interval: 1000
-        running: true
-        repeat: true
-        onTriggered: {
-          clockCanvas.hours = now.getHours()
-          clockCanvas.minutes = now.getMinutes()
-          clockCanvas.seconds = now.getSeconds()
-          clockCanvas.requestPaint()
-        }
-      }
-
       Component.onCompleted: requestPaint()
     }
   }
@@ -203,7 +199,7 @@ Item {
       onProgressChanged: requestPaint()
       Connections {
         target: Time
-        function onDateChanged() {
+        function onNowChanged() {
           const total = now.getSeconds() * 1000 + now.getMilliseconds()
           secondsProgress.progress = total / 60000
         }
