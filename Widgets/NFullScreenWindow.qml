@@ -44,7 +44,7 @@ PanelWindow {
   // This ensures all keyboard shortcuts work reliably (Escape, etc.)
   // The centralized shortcuts in this window handle delegation to panels
   WlrLayershell.keyboardFocus: root.isPanelOpen ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
-  WlrLayershell.layer: WlrLayer.Top
+  WlrLayershell.layer: Settings.data.ui.panelsOverlayLayer ? WlrLayer.Overlay : WlrLayer.Top
   WlrLayershell.namespace: "noctalia-screen-" + (screen?.name || "unknown")
 
   anchors {

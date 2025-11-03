@@ -79,7 +79,7 @@
     "fontFixedScale": 1,
     "tooltipsEnabled": true,
     "panelsAttachedToBar": true,
-    "panelsOverlayLayer": true
+    "panelsOverlayLayer": false
   },
   "location": {
     "name": "Tokyo",
