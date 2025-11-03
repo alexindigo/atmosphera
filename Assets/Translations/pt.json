@@ -833,7 +833,61 @@
           "label": "Widgets de atalhos"
         },
         "sectionLeft": "Esquerda",
-        "sectionRight": "Direito/Certo/À direita"
+        "sectionRight": "Direito/Certo/À direita",
+        "custom-button": {
+          "icon": {
+            "label": "Ícone",
+            "description": "Selecione um ícone da biblioteca."
+          },
+          "browse": "Procurar",
+          "command": {
+            "label": "Comando",
+            "description": "O comando a ser executado quando o botão é clicado."
+          },
+          "tooltip": {
+            "label": "Dica de ferramenta",
+            "description": "A dica de ferramenta a ser exibida ao passar o mouse sobre o botão."
+          },
+          "on-state-icon": {
+            "label": "Ícone de estado ativado",
+            "description": "O ícone para o botão quando ele está no estado 'ligado'."
+          },
+          "on-clicked": {
+            "label": "Comando de clique esquerdo",
+            "description": "Comando a ser executado quando o botão é clicado com o botão esquerdo."
+          },
+          "on-right-clicked": {
+            "label": "Comando de clique direito",
+            "description": "Comando a ser executado quando o botão é clicado com o botão direito."
+          },
+          "on-middle-clicked": {
+            "label": "Comando de clique do meio",
+            "description": "Comando a ser executado quando o botão é clicado com o botão do meio."
+          },
+          "on-state-command": {
+            "label": "Comando de verificação de estado ativado",
+            "description": "Comando a ser executado para verificar se o botão deve estar no estado 'ligado'. Retorna 0 para ligado, diferente de zero para desligado."
+          },
+          "general-tooltip-text": {
+            "label": "Texto geral da dica de ferramenta",
+            "description": "Descrição geral para a dica de ferramenta do botão."
+          },
+          "enable-on-state-logic": {
+            "label": "Ativar lógica de estado ativado",
+            "description": "Ativa um segundo ícone e um estado 'quente' com base em um comando de verificação."
+          },
+          "state-checks": {
+            "label": "Verificações de estado",
+            "command": "Comando a ser executado para esta verificação de estado",
+            "browse-icon": "Procurar",
+            "remove": "Remover",
+            "add": "Adicionar verificação de estado"
+          }
+        },
+        "dialog": {
+          "cancel": "Cancelar",
+          "apply": "Aplicar"
+        }
       }
     },
     "user-interface": {
