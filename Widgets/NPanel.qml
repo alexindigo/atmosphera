@@ -18,7 +18,7 @@ Item {
   property bool attachedToBar: (Settings.data.ui.panelsAttachedToBar && Settings.data.bar.backgroundOpacity > opacityThreshold && !forceDetached)
 
   // Edge snapping: if panel is within this distance (in pixels) from a screen edge, snap
-  property real edgeSnapDistance: Style.radiusL
+  property real edgeSnapDistance: 50
 
   // Keyboard focus documentation (not currently used for focus mode)
   // Just for documentation: true for panels with text input
@@ -457,8 +457,19 @@ Item {
 
             // Edge snapping: snap to screen edges if close (only when attached and bar is not floating)
             if (root.attachedToBar && !root.barFloating && parent.width > 0 && width > 0) {
+              // Calculate edge positions accounting for bar position
+              // For vertical bars (left/right), we need to position panels AFTER the bar, not behind it
               var leftEdgePos = root.barMarginH
+              if (root.barPosition === "left") {
+                // Bar is on the left, so left edge is after the bar
+                leftEdgePos = root.barMarginH + Style.barHeight
+              }
+
               var rightEdgePos = parent.width - root.barMarginH - width
+              if (root.barPosition === "right") {
+                // Bar is on the right, so right edge is before the bar
+                rightEdgePos = parent.width - root.barMarginH - Style.barHeight - width
+              }
 
               // Snap to left edge if within snap distance
               if (Math.abs(calculatedX - leftEdgePos) <= root.edgeSnapDistance) {
@@ -601,8 +612,19 @@ Item {
 
             // Edge snapping: snap to screen edges if close (only when attached and bar is not floating)
             if (root.attachedToBar && !root.barFloating && parent.height > 0 && height > 0) {
+              // Calculate edge positions accounting for bar position
+              // For horizontal bars (top/bottom), we need to position panels AFTER the bar, not behind it
               var topEdgePos = root.barMarginV
+              if (root.barPosition === "top") {
+                // Bar is on the top, so top edge is after the bar
+                topEdgePos = root.barMarginV + Style.barHeight
+              }
+
               var bottomEdgePos = parent.height - root.barMarginV - height
+              if (root.barPosition === "bottom") {
+                // Bar is on the bottom, so bottom edge is before the bar
+                bottomEdgePos = parent.height - root.barMarginV - Style.barHeight - height
+              }
 
               // Snap to top edge if within snap distance
               if (Math.abs(calculatedY - topEdgePos) <= root.edgeSnapDistance) {
