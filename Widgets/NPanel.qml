@@ -206,6 +206,13 @@ Item {
 
           backgroundColor: root.attachedToBar ? Qt.alpha(root.panelBackgroundColor, Settings.data.bar.backgroundOpacity) : root.panelBackgroundColor
 
+          Behavior on backgroundColor {
+            ColorAnimation {
+              duration: Style.animationFast
+              easing.type: Easing.InOutQuad
+            }
+          }
+
           // Animation properties
           opacity: root.animationProgress
           scale: root.attachedToBar ? 1 : (0.95 + root.animationProgress * 0.05)
