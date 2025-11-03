@@ -82,11 +82,12 @@ PanelWindow {
     }
 
     // Add regions for each open panel
+    // Only include panels that are open AND not closing (to allow click-through during close animation)
     for (var i = 0; i < panelMaskRepeater.count; i++) {
       var wrapperItem = panelMaskRepeater.itemAt(i)
       if (wrapperItem && wrapperItem.maskRegion) {
         var panelItem = wrapperItem.panelItem
-        if (panelItem && panelItem.isPanelOpen) {
+        if (panelItem && panelItem.isPanelOpen && !panelItem.isClosing) {
           var panelRegion = panelItem.panelRegion
           // Update the mask region's coordinates from the panel's actual region
           if (panelRegion) {
@@ -111,7 +112,8 @@ PanelWindow {
       root.updateMask()
     }
     function onDidClose() {
-      root.updateMask()
+      // Delay mask update to ensure panel's isPanelOpen is updated first
+      Qt.callLater(() => root.updateMask())
     }
   }
 
@@ -156,6 +158,10 @@ PanelWindow {
       width: barRegion ? barRegion.width : 0
       height: barRegion ? barRegion.height : 0
       intersection: Intersection.Subtract
+
+      // Update mask when bar geometry changes
+      onWidthChanged: Qt.callLater(() => root.updateMask())
+      onHeightChanged: Qt.callLater(() => root.updateMask())
     }
   }
 
