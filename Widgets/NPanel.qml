@@ -18,7 +18,7 @@ Item {
   property bool attachedToBar: (Settings.data.ui.panelsAttachedToBar && Settings.data.bar.backgroundOpacity > opacityThreshold && !forceDetached)
 
   // Edge snapping: if panel is within this distance (in pixels) from a screen edge, snap
-  property real edgeSnapDistance: 40
+  property real edgeSnapDistance: Style.radiusL
 
   // Keyboard focus documentation (not currently used for focus mode)
   // Just for documentation: true for panels with text input
