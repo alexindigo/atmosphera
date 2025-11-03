@@ -875,6 +875,13 @@
           "enable-on-state-logic": {
             "label": "Enable On-State Logic",
             "description": "Enable a second icon and 'hot' state based on a check command."
+          },
+          "state-checks": {
+            "label": "State Checks",
+            "command": "Command to execute for this state check",
+            "browse-icon": "Browse",
+            "remove": "Remove",
+            "add": "Add State Check"
           }
         },
         "dialog": {

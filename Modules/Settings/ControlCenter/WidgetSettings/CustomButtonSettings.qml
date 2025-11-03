@@ -146,61 +146,88 @@ ColumnLayout {
     spacing: (Style?.marginM ?? 8) * 2
 
     NLabel {
-      label: "State Checks"
+      label: I18n.tr("settings.control-center.shortcuts.custom-button.state-checks.label")
     }
 
     Repeater {
       model: _settings._stateChecksListModel
-      delegate: ColumnLayout {
-        Layout.fillWidth: true
-        spacing: Style?.marginM ?? 8
+      delegate: Item {
         property int currentIndex: index
 
+        implicitHeight: contentRow.implicitHeight + ((divider.visible) ? divider.height : 0)
+        Layout.fillWidth: true
+
         RowLayout {
-          Layout.fillWidth: true
-          spacing: Style?.marginS ?? 4
+          id: contentRow
+          anchors.fill: parent
+          spacing: Style?.marginM ?? 8
 
           NTextInput {
             Layout.fillWidth: true
-            label: "Command"
+            placeholderText: I18n.tr("settings.control-center.shortcuts.custom-button.state-checks.command")
             text: model.command
             onEditingFinished: _settings._stateChecksListModel.set(currentIndex, { "command": text, "icon": model.icon })
           }
 
-          NIcon {
+          RowLayout {
             Layout.alignment: Qt.AlignVCenter
-            icon: model.icon
-            visible: model.icon !== undefined && model.icon !== ""
-          }
+            spacing: Style?.marginS ?? 4
 
-          NButton {
-            text: "Browse Icon"
-            Layout.preferredWidth: Style?.buttonWidthM ?? 100
-            onClicked: iconPickerDelegate.open()
-          }
-
-          NIconPicker {
-            id: iconPickerDelegate
-            initialIcon: model.icon
-            onIconSelected: function (iconName) {
-              _settings._stateChecksListModel.set(currentIndex, { "command": model.command, "icon": iconName })
+            NIcon {
+              icon: model.icon
+              pointSize: Style?.fontSizeL ?? 20
+              visible: model.icon !== undefined && model.icon !== ""
             }
-          }
 
-          NButton {
-            text: "Remove"
-            Layout.preferredWidth: Style?.buttonWidthM ?? 100
-            onClicked: _settings._stateChecksListModel.remove(currentIndex)
+            NIconButton {
+              icon: "folder"
+              tooltipText: I18n.tr("settings.control-center.shortcuts.custom-button.state-checks.browse-icon")
+              baseSize: Style?.buttonSizeS ?? 24
+              onClicked: iconPickerDelegate.open()
+            }
+
+             NIconButton {
+               icon: "close"
+               tooltipText: I18n.tr("settings.control-center.shortcuts.custom-button.state-checks.remove")
+               baseSize: Style?.buttonSizeS ?? 24
+               colorBorder: Qt.alpha(Color.mOutline, Style.opacityLight)
+               colorBg: Color.mError
+               colorFg: Color.mOnError
+               colorBgHover: Qt.alpha(Color.mError, Style.opacityMedium)
+               colorFgHover: Color.mOnError
+               onClicked: _settings._stateChecksListModel.remove(currentIndex)
+            }
           }
         }
 
-        NDivider {}
+        NIconPicker {
+          id: iconPickerDelegate
+          initialIcon: model.icon
+          onIconSelected: function (iconName) {
+            _settings._stateChecksListModel.set(currentIndex, { "command": model.command, "icon": iconName })
+          }
+        }
+
+        NDivider {
+          id: divider
+          anchors.bottom: parent.bottom
+          visible: index < _settings._stateChecksListModel.count - 1  // Only show divider if not the last item
+        }
       }
     }
 
-    NButton {
-      text: "Add State Check"
-      onClicked: _settings._stateChecksListModel.append({ command: "", icon: "" })
+    RowLayout {
+      Layout.fillWidth: true
+      spacing: Style?.marginM ?? 8
+
+      NButton {
+        text: I18n.tr("settings.control-center.shortcuts.custom-button.state-checks.add")
+        onClicked: _settings._stateChecksListModel.append({ command: "", icon: "" })
+      }
+
+      Item {
+        Layout.fillWidth: true
+      }
     }
   }
 
