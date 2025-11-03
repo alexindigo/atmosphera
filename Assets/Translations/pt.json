@@ -166,6 +166,14 @@
         "enforce-minimum": {
           "label": "Forçar brilho mínimo (1%)",
           "description": "Resolve o problema da retroiluminação apagar completamente em alguns monitores com brilho em 0%."
+        },
+        "external-brightness": {
+          "label": "Suporte de brilho externo",
+          "description": "Ativar suporte DDCUtil para controlar o brilho em monitores externos através do protocolo DDC/CI."
+        },
+        "brightness-unavailable": {
+          "ddc-disabled": "Controle de brilho indisponível. Ative \"Suporte de brilho externo\" para controlar o brilho desta tela.",
+          "generic": "O controle de brilho não está disponível para esta tela."
         }
       },
       "night-light": {
@@ -226,13 +234,17 @@
         },
         "floating": {
           "label": "Barra flutuante",
-          "description": "Exibe a barra como uma 'pílula' flutuante. Nota: Isso moverá os cantos da tela para as bordas."
+          "description": "Exibe a barra como uma 'pílula' flutuante."
         },
         "margins": {
           "label": "Margens",
           "description": "Ajuste as margens ao redor da barra flutuante.",
           "vertical": "Vertical",
           "horizontal": "Horizontal"
+        },
+        "outer-corners": {
+          "description": "Exibe cantos curvados para fora na barra.",
+          "label": "Cantos externos"
         }
       },
       "widgets": {
@@ -425,7 +437,11 @@
           "tooltip": "Procurar pasta de papéis de parede"
         },
         "select-folder": "Selecionar pasta de papéis de parede",
-        "select-monitor-folder": "Selecionar pasta de papéis de parede do monitor"
+        "select-monitor-folder": "Selecionar pasta de papéis de parede do monitor",
+        "selector-position": {
+          "description": "Escolha onde o painel do seletor de papel de parede aparece.",
+          "label": "Posição"
+        }
       },
       "look-feel": {
         "section": {
@@ -547,9 +563,9 @@
             "description": "Escrever {filepath} e recarregar",
             "description-missing": "Requer que o {app} esteja instalado"
           },
-          "wezterm": {
+          "alacritty": {
             "description": "Escreva {filepath} e recarregue.",
-            "description-missing": "Requer que o aplicativo {app} esteja instalado."
+            "description-missing": "Requer que o {app} esteja instalado."
           }
         },
         "programs": {
@@ -643,7 +659,7 @@
           "description": "Exibir eventos no painel do calendário."
         },
         "use-analog": {
-          "description": "Mostrar um relógio estilo analógico na tela do calendário.",
+          "description": "Mostrar um relógio estilo analógico na janela do calendário e na tela de bloqueio.",
           "label": "Use um relógio de estilo analógico."
         },
         "first-day-of-week": {
@@ -876,6 +892,14 @@
       "panels-attached-to-bar": {
         "description": "Quando ativado, os painéis serão anexados à barra com um belo design de canto invertido.",
         "label": "Anexar painéis à barra"
+      },
+      "dim-desktop": {
+        "description": "Escurecer a área de trabalho quando painéis ou menus estiverem abertos.",
+        "label": "Dim área de trabalho"
+      },
+      "shadows": {
+        "description": "Ativa sombras projetadas sob barras e painéis.",
+        "label": "Sombras projetadas"
       }
     },
     "lock-screen": {
@@ -1278,18 +1302,7 @@
           "description": "Exibir o status do Scroll Lock.",
           "label": "Scroll Lock"
         },
-        "indicator-style": {
-          "circle": "Letras Circulares",
-          "circle-dash": "Letras em Círculo Tracejadas",
-          "circle-dot": "Letras de Círculo Pontilhado",
-          "description": "Estilo de ícone para os indicadores da tecla de bloqueio.",
-          "hex": "Letras Hexagonais",
-          "label": "Estilo do Indicador",
-          "large": "Letras grandes",
-          "small": "Letras minúsculas",
-          "square": "Letras Quadradas",
-          "square-round": "Letras Quadradas Arredondadas"
-        }
+        "browse": "Navegar"
       }
     }
   },
@@ -1479,7 +1492,8 @@
         "bottom_center": "Centro inferior",
         "top_center": "Centro superior",
         "center_left": "Centro à esquerda",
-        "center_right": "Centro à direita"
+        "center_right": "Centro à direita",
+        "follow_bar": "Seguir barra (padrão)"
       }
     },
     "control-center": {

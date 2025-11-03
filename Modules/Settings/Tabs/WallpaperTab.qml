@@ -103,6 +103,41 @@ ColumnLayout {
         }
       }
     }
+
+    NComboBox {
+      label: I18n.tr("settings.wallpaper.settings.selector-position.label")
+      description: I18n.tr("settings.wallpaper.settings.selector-position.description")
+      Layout.fillWidth: true
+      model: [{
+          "key": "follow_bar",
+          "name": I18n.tr("options.launcher.position.follow_bar")
+        }, {
+          "key": "center",
+          "name": I18n.tr("options.launcher.position.center")
+        }, {
+          "key": "top_center",
+          "name": I18n.tr("options.launcher.position.top_center")
+        }, {
+          "key": "top_left",
+          "name": I18n.tr("options.launcher.position.top_left")
+        }, {
+          "key": "top_right",
+          "name": I18n.tr("options.launcher.position.top_right")
+        }, {
+          "key": "bottom_left",
+          "name": I18n.tr("options.launcher.position.bottom_left")
+        }, {
+          "key": "bottom_right",
+          "name": I18n.tr("options.launcher.position.bottom_right")
+        }, {
+          "key": "bottom_center",
+          "name": I18n.tr("options.launcher.position.bottom_center")
+        }]
+      currentKey: Settings.data.wallpaper.panelPosition
+      onSelected: function (key) {
+        Settings.data.wallpaper.panelPosition = key
+      }
+    }
   }
 
   NDivider {

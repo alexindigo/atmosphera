@@ -40,7 +40,7 @@ ColumnLayout {
 
   // Handler for drag start - disables panel background clicks
   function handleDragStart() {
-    var panel = PanelService.getPanel("settingsPanel")
+    var panel = PanelService.getPanel("settingsPanel", screen)
     if (panel && panel.disableBackgroundClick) {
       panel.disableBackgroundClick()
     }
@@ -48,7 +48,7 @@ ColumnLayout {
 
   // Handler for drag end - re-enables panel background clicks
   function handleDragEnd() {
-    var panel = PanelService.getPanel("settingsPanel")
+    var panel = PanelService.getPanel("settingsPanel", screen)
     if (panel && panel.enableBackgroundClick) {
       panel.enableBackgroundClick()
     }

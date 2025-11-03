@@ -10,6 +10,8 @@
     "floating": false,
     "marginVertical": 0.25,
     "marginHorizontal": 0.25,
+    "outerCorners": true,
+    "exclusive": true,
     "widgets": {
       "left": [
         {
@@ -57,6 +59,7 @@
   },
   "general": {
     "avatarImage": "",
+    "dimDesktop": true,
     "showScreenCorners": false,
     "forceBlackScreenCorners": false,
     "scaleRatio": 1,
@@ -66,7 +69,17 @@
     "animationDisabled": false,
     "compactLockScreen": false,
     "lockOnSuspend": true,
+    "enableShadows": true,
     "language": ""
+  },
+  "ui": {
+    "fontDefault": "Roboto",
+    "fontFixed": "DejaVu Sans Mono",
+    "fontDefaultScale": 1,
+    "fontFixedScale": 1,
+    "tooltipsEnabled": true,
+    "panelsAttachedToBar": true,
+    "panelsOverlayLayer": false
   },
   "location": {
     "name": "Tokyo",
@@ -104,11 +117,12 @@
     "transitionDuration": 1500,
     "transitionType": "random",
     "transitionEdgeSmoothness": 0.05,
-    "monitors": []
+    "monitors": [],
+    "selectorPosition": "follow_bar"
   },
   "appLauncher": {
     "enableClipboardHistory": false,
-    "position": "center",
+    "position": "follow_bar",
     "backgroundOpacity": 1,
     "pinnedExecs": [],
     "useApp2Unit": false,
@@ -212,18 +226,10 @@
     "mprisBlacklist": [],
     "preferredPlayer": ""
   },
-  "ui": {
-    "fontDefault": "Roboto",
-    "fontFixed": "DejaVu Sans Mono",
-    "fontDefaultScale": 1,
-    "fontFixedScale": 1,
-    "tooltipsEnabled": true,
-    "panelsAttachedToBar": true,
-    "panelsOverlayLayer": true
-  },
   "brightness": {
     "brightnessStep": 5,
-    "enforceMinimum": true
+    "enforceMinimum": true,
+    "enableDdcSupport": false
   },
   "colorSchemes": {
     "useWallpaperColors": false,
@@ -239,6 +245,7 @@
     "gtk": false,
     "qt": false,
     "kcolorscheme": false,
+    "alacritty": false,
     "kitty": false,
     "ghostty": false,
     "foot": false,

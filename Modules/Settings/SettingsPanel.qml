@@ -16,9 +16,6 @@ NPanel {
 
   panelAnchorHorizontalCenter: true
   panelAnchorVerticalCenter: true
-  panelKeyboardFocus: true
-
-  draggable: !PanelService.hasOpenedPopup
 
   // Tabs enumeration, order is NOT relevant
   enum Tab {
@@ -287,6 +284,39 @@ NPanel {
     }
   }
 
+  // Override keyboard handlers from NPanel
+  function onTabPressed() {
+    selectNextTab()
+  }
+
+  function onShiftTabPressed() {
+    selectPreviousTab()
+  }
+
+  function onUpPressed() {
+    scrollUp()
+  }
+
+  function onDownPressed() {
+    scrollDown()
+  }
+
+  function onPageUpPressed() {
+    scrollPageUp()
+  }
+
+  function onPageDownPressed() {
+    scrollPageDown()
+  }
+
+  function onCtrlJPressed() {
+    scrollDown()
+  }
+
+  function onCtrlKPressed() {
+    scrollUp()
+  }
+
   panelContent: Rectangle {
     color: Color.transparent
 
@@ -295,62 +325,6 @@ NPanel {
       anchors.fill: parent
       anchors.margins: Style.marginL
       spacing: 0
-
-      // Keyboard shortcuts container
-      Item {
-        Layout.preferredWidth: 0
-        Layout.preferredHeight: 0
-
-        // Scrolling via keyboard
-        Shortcut {
-          sequence: "Down"
-          onActivated: root.scrollDown()
-          enabled: root.opened
-        }
-
-        Shortcut {
-          sequence: "Up"
-          onActivated: root.scrollUp()
-          enabled: root.opened
-        }
-
-        Shortcut {
-          sequence: "Ctrl+J"
-          onActivated: root.scrollDown()
-          enabled: root.opened
-        }
-
-        Shortcut {
-          sequence: "Ctrl+K"
-          onActivated: root.scrollUp()
-          enabled: root.opened
-        }
-
-        Shortcut {
-          sequence: "PgDown"
-          onActivated: root.scrollPageDown()
-          enabled: root.opened
-        }
-
-        Shortcut {
-          sequence: "PgUp"
-          onActivated: root.scrollPageUp()
-          enabled: root.opened
-        }
-
-        // Changing tab via keyboard
-        Shortcut {
-          sequence: "Tab"
-          onActivated: root.selectNextTab()
-          enabled: root.opened
-        }
-
-        Shortcut {
-          sequence: "Shift+Tab"
-          onActivated: root.selectPreviousTab()
-          enabled: root.opened
-        }
-      }
 
       // Main content area
       RowLayout {

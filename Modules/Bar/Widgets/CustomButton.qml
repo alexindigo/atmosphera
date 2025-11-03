@@ -184,7 +184,7 @@ Item {
       Logger.i("CustomButton", `Executing command: ${leftClickExec}`)
     } else if (!hasExec) {
       // No script was defined, open settings
-      var settingsPanel = PanelService.getPanel("settingsPanel")
+      var settingsPanel = PanelService.getPanel("settingsPanel", screen)
       settingsPanel.requestedTab = SettingsPanel.Tab.Bar
       settingsPanel.open()
     }

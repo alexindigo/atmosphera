@@ -166,6 +166,14 @@
         "enforce-minimum": {
           "label": "Mindesthelligkeit erzwingen (1%)",
           "description": "Löst das Problem, dass die Hintergrundbeleuchtung auf einigen Displays bei 0% Helligkeit vollständig ausgeschaltet wird."
+        },
+        "external-brightness": {
+          "label": "Externe Helligkeitsunterstützung",
+          "description": "DDCUtil-Unterstützung zum Steuern der Helligkeit externer Displays über das DDC/CI-Protokoll aktivieren."
+        },
+        "brightness-unavailable": {
+          "ddc-disabled": "Helligkeitssteuerung nicht verfügbar. Aktivieren Sie \"Externe Helligkeitsunterstützung\", um die Helligkeit dieses Displays zu steuern.",
+          "generic": "Die Helligkeitssteuerung ist für dieses Display nicht verfügbar."
         }
       },
       "night-light": {
@@ -226,13 +234,17 @@
         },
         "floating": {
           "label": "Schwebende Statusleiste",
-          "description": "Statusleiste als schwebende 'Pille' anzeigen. Hinweis: Dies verschiebt die Bildschirmecken an die Ränder."
+          "description": "Statusleiste als schwebende 'Pille' anzeigen."
         },
         "margins": {
           "label": "Ränder",
           "description": "Ränder um die schwebende Statusleiste anpassen.",
           "vertical": "Vertikal",
           "horizontal": "Horizontal"
+        },
+        "outer-corners": {
+          "description": "Zeigt nach außen gewölbte Ecken auf der Leiste an.",
+          "label": "Äußere Ecken"
         }
       },
       "widgets": {
@@ -463,7 +475,11 @@
           "tooltip": "Nach Hintergrundbild-Ordner suchen"
         },
         "select-folder": "Hintergrundbild-Ordner auswählen",
-        "select-monitor-folder": "Monitor-Hintergrundbild-Ordner auswählen"
+        "select-monitor-folder": "Monitor-Hintergrundbild-Ordner auswählen",
+        "selector-position": {
+          "description": "Wählen Sie aus, wo das Hintergrundbildauswahlfeld angezeigt wird.",
+          "label": "Position"
+        }
       },
       "look-feel": {
         "section": {
@@ -585,9 +601,9 @@
             "description": "Schreibt {filepath} und lädt neu",
             "description-missing": "Erfordert {app} Terminal"
           },
-          "wezterm": {
+          "alacritty": {
             "description": "Schreibe {Dateipfad} und lade neu",
-            "description-missing": "Benötigt die Installation von {app}."
+            "description-missing": "Benötigt die Installation von {app}"
           }
         },
         "programs": {
@@ -681,7 +697,7 @@
           "description": "Ereignisse im Kalender-Panel anzeigen."
         },
         "use-analog": {
-          "description": "Eine Analoguhr auf dem Kalenderbildschirm anzeigen.",
+          "description": "Eine Analoguhr im Kalenderfenster und auf dem Sperrbildschirm anzeigen.",
           "label": "Analoge Uhr verwenden"
         },
         "first-day-of-week": {
@@ -876,6 +892,14 @@
       "panels-attached-to-bar": {
         "description": "Wenn aktiviert, werden die Panels mit einem schönen, umgekehrten Eckdesign an der Leiste befestigt.",
         "label": "Paneele an Stange befestigen"
+      },
+      "dim-desktop": {
+        "description": "Den Desktop abdunkeln, wenn Fenster oder Menüs geöffnet sind.",
+        "label": "Dimmer Schreibtisch"
+      },
+      "shadows": {
+        "description": "Aktiviert Schlagschatten unter Balken und Panels.",
+        "label": "Schlagschatten"
       }
     },
     "lock-screen": {
@@ -1295,18 +1319,7 @@
           "description": "Scroll-Lock-Status anzeigen.",
           "label": "Rollenfeststelltaste"
         },
-        "indicator-style": {
-          "circle": "Kreisbuchstaben",
-          "circle-dash": "Gestrichelte Kreisbuchstaben",
-          "circle-dot": "Punktierte Kreisbuchstaben",
-          "description": "Symbolstil für die Feststelltastenanzeigen",
-          "hex": "Sechseck-Buchstaben",
-          "label": "Indikatorstil",
-          "large": "Große Buchstaben",
-          "small": "Kleinbuchstaben",
-          "square": "Quadratische Buchstaben",
-          "square-round": "Abgerundete quadratische Buchstaben"
-        }
+        "browse": "Durchsuchen"
       }
     }
   },
@@ -1498,7 +1511,8 @@
         "bottom_center": "Unten mittig",
         "top_center": "Oben mittig",
         "center_left": "Links mittig",
-        "center_right": "Rechts mittig"
+        "center_right": "Rechts mittig",
+        "follow_bar": "Folge dem Balken (Standard)"
       }
     },
     "control-center": {

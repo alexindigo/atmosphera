@@ -166,6 +166,14 @@
         "enforce-minimum": {
           "label": "Forzar brillo mínimo (1%)",
           "description": "Resuelve el problema de la retroiluminación que se apaga completamente en algunas pantallas al 0% de brillo."
+        },
+        "external-brightness": {
+          "label": "Soporte de brillo externo",
+          "description": "Habilitar soporte DDCUtil para controlar el brillo en pantallas externas mediante el protocolo DDC/CI."
+        },
+        "brightness-unavailable": {
+          "ddc-disabled": "Control de brillo no disponible. Habilita \"Soporte de brillo externo\" para controlar el brillo de esta pantalla.",
+          "generic": "El control de brillo no está disponible para esta pantalla."
         }
       },
       "night-light": {
@@ -226,13 +234,17 @@
         },
         "floating": {
           "label": "Barra flotante",
-          "description": "Muestra la barra como una 'píldora' flotante. Nota: Esto moverá las esquinas de la pantalla a los bordes."
+          "description": "Muestra la barra como una 'píldora' flotante."
         },
         "margins": {
           "label": "Márgenes",
           "description": "Ajusta los márgenes alrededor de la barra flotante.",
           "vertical": "Vertical",
           "horizontal": "Horizontal"
+        },
+        "outer-corners": {
+          "description": "Muestra esquinas curvadas hacia afuera en la barra.",
+          "label": "Esquinas exteriores"
         }
       },
       "widgets": {
@@ -463,7 +475,11 @@
           "tooltip": "Buscar carpeta de fondos de pantalla"
         },
         "select-folder": "Seleccionar carpeta de fondos de pantalla",
-        "select-monitor-folder": "Seleccionar carpeta de fondos de pantalla del monitor"
+        "select-monitor-folder": "Seleccionar carpeta de fondos de pantalla del monitor",
+        "selector-position": {
+          "description": "Elige dónde aparece el panel selector de fondo de pantalla.",
+          "label": "Posición"
+        }
       },
       "look-feel": {
         "section": {
@@ -585,7 +601,7 @@
             "description": "Escribir {filepath} y recargar",
             "description-missing": "Requiere que {app} esté instalado"
           },
-          "wezterm": {
+          "alacritty": {
             "description": "Escribe {filepath} y recarga",
             "description-missing": "Requiere que {app} esté instalado/a."
           }
@@ -681,7 +697,7 @@
           "description": "Mostrar eventos en el panel del calendario."
         },
         "use-analog": {
-          "description": "Mostrar un reloj de estilo analógico en la pantalla del calendario.",
+          "description": "Mostrar un reloj de estilo analógico en la ventana del calendario y en la pantalla de bloqueo.",
           "label": "Usar reloj de estilo analógico"
         },
         "first-day-of-week": {
@@ -876,6 +892,14 @@
       "panels-attached-to-bar": {
         "description": "Cuando está habilitado, los paneles se adjuntarán a la barra con un hermoso diseño de esquina invertida.",
         "label": "Adjuntar paneles a la barra"
+      },
+      "dim-desktop": {
+        "description": "Atenuar el escritorio cuando los paneles o menús estén abiertos.",
+        "label": "Dim escritorio"
+      },
+      "shadows": {
+        "description": "Habilita sombras paralelas debajo de las barras y los paneles.",
+        "label": "Sombras paralelas"
       }
     },
     "lock-screen": {
@@ -1278,18 +1302,7 @@
           "description": "Mostrar el estado de Bloq Despl.",
           "label": "Bloq Despl"
         },
-        "indicator-style": {
-          "circle": "Letras circulares",
-          "circle-dash": "Letras de círculo discontinuo",
-          "circle-dot": "Letras de círculo punteado",
-          "description": "Estilo de icono para los indicadores de las teclas de bloqueo",
-          "hex": "Letras hexagonales",
-          "label": "Estilo del indicador",
-          "large": "Letras grandes",
-          "small": "Letras minúsculas",
-          "square": "Letras cuadradas",
-          "square-round": "Letras cuadradas redondeadas"
-        }
+        "browse": "Navegar"
       }
     }
   },
@@ -1481,7 +1494,8 @@
         "bottom_center": "Inferior central",
         "top_center": "Superior central",
         "center_left": "Izquierda centrado",
-        "center_right": "Derecha centrado"
+        "center_right": "Derecha centrado",
+        "follow_bar": "Seguir barra (predeterminado)"
       }
     },
     "control-center": {

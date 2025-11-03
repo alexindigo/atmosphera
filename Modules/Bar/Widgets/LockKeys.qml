@@ -30,10 +30,13 @@ Rectangle {
   readonly property string barPosition: Settings.data.bar.position
   readonly property bool isVertical: barPosition === "left" || barPosition === "right"
 
-  readonly property string iconStyle: (widgetSettings.indicatorStyle !== undefined) ? widgetSettings.indicatorStyle : widgetMetadata.indicatorStyle
   readonly property bool showCaps: (widgetSettings.showCapsLock !== undefined) ? widgetSettings.showCapsLock : widgetMetadata.showCapsLock
   readonly property bool showNum: (widgetSettings.showNumLock !== undefined) ? widgetSettings.showNumLock : widgetMetadata.showNumLock
   readonly property bool showScroll: (widgetSettings.showScrollLock !== undefined) ? widgetSettings.showScrollLock : widgetMetadata.showScrollLock
+
+  readonly property string capsIcon: widgetSettings.capsLockIcon !== undefined ? widgetSettings.capsLockIcon : widgetMetadata.capsLockIcon
+  readonly property string numIcon: widgetSettings.numLockIcon !== undefined ? widgetSettings.numLockIcon : widgetMetadata.numLockIcon
+  readonly property string scrollIcon: widgetSettings.scrollLockIcon !== undefined ? widgetSettings.scrollLockIcon : widgetMetadata.scrollLockIcon
 
   implicitWidth: isVertical ? Style.capsuleHeight : Math.round(layout.implicitWidth + Style.marginM * 2)
   implicitHeight: isVertical ? Math.round(layout.implicitHeight + Style.marginM * 2) : Style.capsuleHeight
@@ -51,8 +54,6 @@ Rectangle {
     implicitWidth: rowLayout.visible ? rowLayout.implicitWidth : colLayout.implicitWidth
     implicitHeight: rowLayout.visible ? rowLayout.implicitHeight : colLayout.implicitHeight
 
-    readonly property var indicatorStyle: root.getIndicatorStyle(root.iconStyle)
-
     RowLayout {
       id: rowLayout
       visible: !root.isVertical
@@ -60,17 +61,17 @@ Rectangle {
 
       NIcon {
         visible: root.showCaps
-        icon: layout.indicatorStyle[0]
+        icon: root.capsIcon
         color: LockKeysService.capsLockOn ? Color.mTertiary : Qt.alpha(Color.mOnSurfaceVariant, 0.3)
       }
       NIcon {
         visible: root.showNum
-        icon: layout.indicatorStyle[1]
+        icon: root.numIcon
         color: LockKeysService.numLockOn ? Color.mTertiary : Qt.alpha(Color.mOnSurfaceVariant, 0.3)
       }
       NIcon {
         visible: root.showScroll
-        icon: layout.indicatorStyle[2]
+        icon: root.scrollIcon
         color: LockKeysService.scrollLockOn ? Color.mTertiary : Qt.alpha(Color.mOnSurfaceVariant, 0.3)
       }
     }
@@ -82,42 +83,19 @@ Rectangle {
 
       NIcon {
         visible: root.showCaps
-        icon: layout.indicatorStyle[0]
+        icon: root.capsIcon
         color: LockKeysService.capsLockOn ? Color.mTertiary : Qt.alpha(Color.mOnSurfaceVariant, 0.3)
       }
       NIcon {
         visible: root.showNum
-        icon: layout.indicatorStyle[1]
+        icon: root.numIcon
         color: LockKeysService.numLockOn ? Color.mTertiary : Qt.alpha(Color.mOnSurfaceVariant, 0.3)
       }
       NIcon {
         visible: root.showScroll
-        icon: layout.indicatorStyle[2]
+        icon: root.scrollIcon
         color: LockKeysService.scrollLockOn ? Color.mTertiary : Qt.alpha(Color.mOnSurfaceVariant, 0.3)
       }
-    }
-  }
-
-  function getIndicatorStyle(styleName) {
-    switch (styleName) {
-    case "large":
-      return ["letter-c", "letter-n", "letter-s"]
-    case "small":
-      return ["letter-c-small", "letter-n-small", "letter-s-small"]
-    case "square":
-      return ["square-letter-c", "square-letter-n", "square-letter-s"]
-    case "square-round":
-      return ["square-rounded-letter-c", "square-rounded-letter-n", "square-rounded-letter-s"]
-    case "circle":
-      return ["circle-letter-c", "circle-letter-n", "circle-letter-s"]
-    case "circle-dash":
-      return ["circle-dashed-letter-c", "circle-dashed-letter-n", "circle-dashed-letter-s"]
-    case "circle-dot":
-      return ["circle-dotted-letter-c", "circle-dotted-letter-n", "circle-dotted-letter-s"]
-    case "hex":
-      return ["hexagon-letter-c", "hexagon-letter-n", "hexagon-letter-s"]
-    default:
-      return ["letter-c", "letter-n", "letter-s"]
     }
   }
 }

@@ -166,6 +166,14 @@
         "enforce-minimum": {
           "label": "Imposer une luminosité minimale (1%)",
           "description": "Résout le problème de l'extinction complète du rétroéclairage sur certains écrans à 0% de luminosité."
+        },
+        "external-brightness": {
+          "label": "Prise en charge de la luminosité externe",
+          "description": "Activer le support DDCUtil pour contrôler la luminosité des écrans externes via le protocole DDC/CI."
+        },
+        "brightness-unavailable": {
+          "ddc-disabled": "Contrôle de la luminosité indisponible. Activez \"Prise en charge de la luminosité externe\" pour contrôler la luminosité de cet écran.",
+          "generic": "Le contrôle de la luminosité n'est pas disponible pour cet écran."
         }
       },
       "night-light": {
@@ -226,13 +234,17 @@
         },
         "floating": {
           "label": "Barre flottante",
-          "description": "Affiche la barre sous forme de 'pilule' flottante. Note : Ceci déplacera les coins de l'écran vers les bords."
+          "description": "Affiche la barre sous forme de 'pilule' flottante."
         },
         "margins": {
           "label": "Marges",
           "description": "Ajustez les marges autour de la barre flottante.",
           "vertical": "Verticale",
           "horizontal": "Horizontale"
+        },
+        "outer-corners": {
+          "description": "Affiche des coins incurvés vers l'extérieur sur la barre.",
+          "label": "Coins extérieurs"
         }
       },
       "widgets": {
@@ -463,7 +475,11 @@
           "tooltip": "Parcourir le dossier des fonds d'écran"
         },
         "select-folder": "Sélectionner le dossier des fonds d'écran",
-        "select-monitor-folder": "Sélectionner le dossier des fonds d'écran du moniteur"
+        "select-monitor-folder": "Sélectionner le dossier des fonds d'écran du moniteur",
+        "selector-position": {
+          "description": "Choisissez l'emplacement d'affichage du panneau de sélection du fond d'écran.",
+          "label": "Position"
+        }
       },
       "look-feel": {
         "section": {
@@ -585,7 +601,7 @@
             "description": "Écrire ~/.config/foot/themes/noctalia et recharger",
             "description-missing": "Nécessite que le terminal foot soit installé"
           },
-          "wezterm": {
+          "alacritty": {
             "description": "Écrire {filepath} et recharger.",
             "description-missing": "Nécessite l'installation de {app}"
           }
@@ -681,7 +697,7 @@
           "description": "Afficher les événements dans le panneau du calendrier."
         },
         "use-analog": {
-          "description": "Afficher une horloge de style analogique sur l'écran du calendrier.",
+          "description": "Afficher une horloge de style analogique dans la fenêtre du calendrier et sur l'écran de verrouillage.",
           "label": "Utiliser une horloge de style analogique."
         },
         "first-day-of-week": {
@@ -876,6 +892,14 @@
       "panels-attached-to-bar": {
         "description": "Lorsque cette option est activée, les panneaux seront attachés à la barre avec un design élégant de coin inversé.",
         "label": "Fixer les panneaux à la barre."
+      },
+      "dim-desktop": {
+        "description": "Atténuer le bureau lorsque des panneaux ou des menus sont ouverts.",
+        "label": "Dim bureau"
+      },
+      "shadows": {
+        "description": "Active les ombres portées sous les barres et les panneaux.",
+        "label": "Ombres portées"
       }
     },
     "lock-screen": {
@@ -1278,18 +1302,7 @@
           "description": "Afficher l'état du verrouillage du défilement.",
           "label": "Verr Maj"
         },
-        "indicator-style": {
-          "circle": "Lettres circulaires",
-          "circle-dash": "Lettres en cercle pointillé",
-          "circle-dot": "Lettres en pointillés dans un cercle",
-          "description": "Style d'icône pour les indicateurs de la touche de verrouillage",
-          "hex": "Lettres hexagonales",
-          "label": "Style d'indicateur",
-          "large": "Grandes lettres",
-          "small": "Petites lettres",
-          "square": "Lettres carrées",
-          "square-round": "Lettres carrées arrondies"
-        }
+        "browse": "Parcourir"
       }
     }
   },
@@ -1481,7 +1494,8 @@
         "bottom_center": "En bas au centre",
         "top_center": "En haut au centre",
         "center_left": "Gauche centre",
-        "center_right": "Droite centre"
+        "center_right": "Droite centre",
+        "follow_bar": "Suivre la barre (par défaut)"
       }
     },
     "control-center": {

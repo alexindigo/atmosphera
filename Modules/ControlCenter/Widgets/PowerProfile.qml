@@ -14,7 +14,7 @@ NIconButtonHot {
   enabled: hasPP
   icon: PowerProfileService.getIcon()
   hot: !PowerProfileService.isDefault()
-  tooltipText: hasPP ? I18n.tr("quickSettings.powerProfile.tooltip.action") : I18n.tr("quickSettings.powerProfile.tooltip.disabled")
+  tooltipText: I18n.tr("quickSettings.powerProfile.tooltip.action")
   onClicked: {
     PowerProfileService.cycleProfile()
   }

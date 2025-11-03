@@ -15,13 +15,18 @@ ColumnLayout {
   }
 
   NComboBox {
-    id: launcherPosition
     label: I18n.tr("settings.launcher.settings.position.label")
     description: I18n.tr("settings.launcher.settings.position.description")
     Layout.fillWidth: true
     model: [{
+        "key": "follow_bar",
+        "name": I18n.tr("options.launcher.position.follow_bar")
+      }, {
         "key": "center",
         "name": I18n.tr("options.launcher.position.center")
+      }, {
+        "key": "top_center",
+        "name": I18n.tr("options.launcher.position.top_center")
       }, {
         "key": "top_left",
         "name": I18n.tr("options.launcher.position.top_left")
@@ -37,9 +42,6 @@ ColumnLayout {
       }, {
         "key": "bottom_center",
         "name": I18n.tr("options.launcher.position.bottom_center")
-      }, {
-        "key": "top_center",
-        "name": I18n.tr("options.launcher.position.top_center")
       }]
     currentKey: Settings.data.appLauncher.position
     onSelected: function (key) {

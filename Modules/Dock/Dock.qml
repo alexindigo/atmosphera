@@ -150,9 +150,16 @@ Variants {
       id: hideTimer
       interval: hideDelay
       onTriggered: {
+        // Force menuHovered to false if no menu is current or visible
+        if (!root.currentContextMenu || !root.currentContextMenu.visible) {
+          menuHovered = false
+        }
         if (autoHide && !dockHovered && !anyAppHovered && !peekHovered && !menuHovered) {
           hidden = true
           unloadTimer.restart() // Start unload timer when hiding
+        } else if (autoHide && !dockHovered && !peekHovered) {
+          // Restart timer if menu is closing (handles race condition)
+          restart()
         }
       }
     }
@@ -226,6 +233,7 @@ Variants {
 
     // DOCK WINDOW
     Loader {
+      id: dockWindowLoader
       active: Settings.data.dock.enabled && (barIsReady || !hasBar) && modelData && (Settings.data.dock.monitors.length === 0 || Settings.data.dock.monitors.includes(modelData.name)) && dockLoaded && ToplevelManager && (dockApps.length > 0)
 
       sourceComponent: PanelWindow {
@@ -434,24 +442,38 @@ Variants {
                     // Context menu popup
                     DockMenu {
                       id: contextMenu
-                      onHoveredChanged: menuHovered = hovered
-                      onRequestClose: {
-                        contextMenu.hide()
-                        // Restart hide timer after menu action if auto-hide is enabled
-                        if (autoHide && !dockHovered && !anyAppHovered && !peekHovered) {
-                          hideTimer.restart()
+                      onHoveredChanged: {
+                        // Only update menuHovered if this menu is current and visible
+                        if (root.currentContextMenu === contextMenu && contextMenu.visible) {
+                          menuHovered = hovered
+                        } else {
+                          menuHovered = false
+                        }
+                      }
+
+                      Connections {
+                        target: contextMenu
+                        function onRequestClose() {
+                          // Clear current menu immediately to prevent hover updates
+                          root.currentContextMenu = null
+                          hideTimer.stop()
+                          contextMenu.hide()
+                          menuHovered = false
+                          anyAppHovered = false
                         }
                       }
                       onAppClosed: root.updateDockApps // Force immediate dock update when app is closed
                       onVisibleChanged: {
                         if (visible) {
                           root.currentContextMenu = contextMenu
+                          anyAppHovered = false
                         } else if (root.currentContextMenu === contextMenu) {
                           root.currentContextMenu = null
-                          // Reset menu hover state when menu becomes invisible
+                          hideTimer.stop()
                           menuHovered = false
-                          // Restart hide timer if conditions are met
-                          if (autoHide && !dockHovered && !anyAppHovered && !peekHovered) {
+                          anyAppHovered = false
+                          // Restart hide timer after menu closes
+                          if (autoHide && !dockHovered && !anyAppHovered && !peekHovered && !menuHovered) {
                             hideTimer.restart()
                           }
                         }
@@ -460,6 +482,7 @@ Variants {
 
                     MouseArea {
                       id: appMouseArea
+                      objectName: "appMouseArea"
                       anchors.fill: parent
                       hoverEnabled: true
                       cursorShape: Qt.PointingHandCursor
@@ -482,6 +505,10 @@ Variants {
                       onExited: {
                         anyAppHovered = false
                         TooltipService.hide()
+                        // Clear menuHovered if no current menu or menu not visible
+                        if (!root.currentContextMenu || !root.currentContextMenu.visible) {
+                          menuHovered = false
+                        }
                         if (autoHide && !dockHovered && !peekHovered && !menuHovered) {
                           hideTimer.restart()
                         }

@@ -62,7 +62,7 @@ Singleton {
     } else {
       BatteryService.initialSetter = true
       ToastService.showNotice(I18n.tr("toast.battery-manager.title"), I18n.tr("toast.battery-manager.uninstall-setup"))
-      PanelService.getPanel("batteryPanel")?.toggle(this)
+      PanelService.getPanel("batteryPanel", screen)?.toggle(this)
       uninstallerProcess.running = true
     }
   }
@@ -123,7 +123,7 @@ Singleton {
         Settings.data.battery.chargingMode = BatteryService.chargingMode
       } else if (exitCode === 2) {
         ToastService.showWarning(I18n.tr("toast.battery-manager.title"), I18n.tr("toast.battery-manager.initial-setup"))
-        PanelService.getPanel("batteryPanel")?.toggle(this)
+        PanelService.getPanel("batteryPanel", screen)?.toggle(this)
         BatteryService.runInstaller()
       } else {
         ToastService.showError(I18n.tr("toast.battery-manager.title"), I18n.tr("toast.battery-manager.set-failed"))

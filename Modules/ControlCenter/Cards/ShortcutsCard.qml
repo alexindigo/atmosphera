@@ -28,10 +28,13 @@ RowLayout {
       Repeater {
         model: Settings.data.controlCenter.shortcuts.left
         delegate: ControlCenterWidgetLoader {
+          required property var modelData
+          required property int index
+
           Layout.fillWidth: false
           widgetId: (modelData.id !== undefined ? modelData.id : "")
+          widgetScreen: root.screen
           widgetProps: {
-            "screen": root.modelData || null,
             "widgetId": modelData.id,
             "section": "quickSettings",
             "sectionWidgetIndex": index,
@@ -63,10 +66,13 @@ RowLayout {
       Repeater {
         model: Settings.data.controlCenter.shortcuts.right
         delegate: ControlCenterWidgetLoader {
+          required property var modelData
+          required property int index
+
           Layout.fillWidth: false
           widgetId: (modelData.id !== undefined ? modelData.id : "")
+          widgetScreen: root.screen
           widgetProps: {
-            "screen": root.modelData || null,
             "widgetId": modelData.id,
             "section": "quickSettings",
             "sectionWidgetIndex": index,

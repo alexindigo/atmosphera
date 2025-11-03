@@ -166,6 +166,14 @@
         "enforce-minimum": {
           "label": "Enforce minimum brightness (1%)",
           "description": "Solves the problem of backlight completely turning off on some displays at 0% brightness."
+        },
+        "external-brightness": {
+          "label": "External brightness support",
+          "description": "Enable DDCUtil support for controlling brightness on external displays via DDC/CI protocol."
+        },
+        "brightness-unavailable": {
+          "ddc-disabled": "Brightness control unavailable. Enable \"External brightness support\" to control this display's brightness.",
+          "generic": "Brightness control is not available for this display."
         }
       },
       "night-light": {
@@ -226,7 +234,11 @@
         },
         "floating": {
           "label": "Floating bar",
-          "description": "Displays the bar as a floating 'pill'. Note: This will move the screen corners to the edges."
+          "description": "Displays the bar as a floating 'pill'."
+        },
+        "outer-corners": {
+          "label": "Outer corners",
+          "description": "Displays outwardly curved corners on the bar."
         },
         "margins": {
           "label": "Margins",
@@ -462,6 +474,10 @@
           "description": "Set a different wallpaper folder for each monitor.",
           "tooltip": "Browse for wallpaper folder"
         },
+        "selector-position": {
+          "label": "Position",
+          "description": "Choose where the wallpaper selector panel appears."
+        },
         "select-folder": "Select wallpaper folder",
         "select-monitor-folder": "Select monitor wallpaper folder"
       },
@@ -577,6 +593,10 @@
         "terminal": {
           "label": "Terminal",
           "description": "Terminal emulator theming.",
+          "alacritty": {
+            "description": "Write {filepath} and reload",
+            "description-missing": "Requires {app} to be installed"
+          },
           "kitty": {
             "description": "Write {filepath} and reload",
             "description-missing": "Requires {app} to be installed"
@@ -687,7 +707,7 @@
         },
         "use-analog": {
           "label": "Use analog style clock",
-          "description": "Show an analog style clock on the calendar screen."
+          "description": "Show an analog style clock on the calendar window and lock screen."
         }
       }
     },
@@ -854,6 +874,14 @@
         "label": "Interface scaling",
         "description": "Changes the size of the general user interface, excluding the bar.",
         "reset-scaling": "Reset interface scaling"
+      },
+      "shadows": {
+        "label": "Drop shadows",
+        "description": "Enables drop shadows under bars and panels."
+      },
+      "dim-desktop": {
+        "label": "Dim desktop",
+        "description": "Dim the desktop when panels or menus are open."
       },
       "border-radius": {
         "label": "Border radius",
@@ -1266,18 +1294,6 @@
         }
       },
       "lock-keys": {
-        "indicator-style": {
-          "label": "Indicator Style",
-          "description": "Icon style for the lock key indicators",
-          "large": "Large Letters",
-          "small": "Small Letters",
-          "square": "Square Letters",
-          "square-round": "Rounded Squre Letters",
-          "circle": "Circle Letters",
-          "circle-dash": "Dashed Circle Letters",
-          "circle-dot": "Dotted Circle Letters",
-          "hex": "Hexagon Letters"
-        },
         "show-caps-lock": {
           "label": "Caps Lock",
           "description": "Display caps lock status."
@@ -1289,7 +1305,8 @@
         "show-scroll-lock": {
           "label": "Scroll Lock",
           "description": "Display scroll lock status."
-        }
+        },
+        "browse": "Browse"
       }
     }
   },
@@ -1480,7 +1497,8 @@
     },
     "launcher": {
       "position": {
-        "center": "Center (default)",
+        "follow_bar": "Follow bar (default)",
+        "center": "Center",
         "top_left": "Top left",
         "top_right": "Top right",
         "bottom_left": "Bottom left",
