@@ -146,3 +146,55 @@ span[class*="timestamp"]:hover time {
     color: var(--text-3) !important;
     opacity: 0.85 !important;
 }
+
+[class*="postTitleText"],
+[class*="postTitleText"] span,
+h3[class*="postTitleText"],
+[class*="heading-lg"][class*="postTitleText"],
+[data-text-variant*="heading"] [class*="postTitleText"] {
+    color: var(--text-2) !important;
+    opacity: 0.9 !important;
+}
+
+[class*="postTitleText"]:hover,
+[class*="postTitleText"]:hover span,
+h3[class*="postTitleText"]:hover {
+    color: var(--text-2) !important;
+    opacity: 1 !important;
+}
+
+[class*="messageContent"],
+[class*="markup"] {
+    line-height: 1.35 !important;
+    color: var(--text-3) !important;
+    opacity: 0.85 !important;
+}
+
+[class*="messageContent"][class*="deleted"],
+[class*="text-sm"][class*="messageContent"][class*="deleted"],
+[data-text-variant*="text-sm"][class*="messageContent"][class*="deleted"] {
+    color: var(--text-3) !important;
+    opacity: 0.85 !important;
+}
+
+[class*="messageContent"][class*="deleted"]:hover,
+[class*="messageContent"][class*="deleted"]:hover span {
+    color: var(--text-2) !important;
+    opacity: 1 !important;
+}
+
+/* Improve tooltip readability */
+[class*="tooltip"],
+[class*="tooltip"] *,
+[role="tooltip"],
+[role="tooltip"] * {
+    color: var(--text-2) !important;
+}
+
+[class*="tooltipText"],
+[class*="tooltipContent"],
+[class*="tooltip"] span,
+[class*="tooltip"] div {
+    color: var(--text-2) !important;
+    opacity: 1 !important;
+}

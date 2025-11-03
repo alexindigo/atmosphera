@@ -99,7 +99,16 @@ ColumnLayout {
     label: I18n.tr("settings.bar.appearance.floating.label")
     description: I18n.tr("settings.bar.appearance.floating.description")
     checked: Settings.data.bar.floating
-    onToggled: checked => Settings.data.bar.floating = checked
+    onToggled: checked => {
+                 Settings.data.bar.floating = checked
+                 if (checked) {
+                   // Disable outer corners when floating is enabled
+                   Settings.data.bar.outerCorners = false
+                 } else {
+                   // Enable outer corners when floating is disabled
+                   Settings.data.bar.outerCorners = true
+                 }
+               }
   }
 
   NToggle {
@@ -107,6 +116,7 @@ ColumnLayout {
     label: I18n.tr("settings.bar.appearance.outer-corners.label")
     description: I18n.tr("settings.bar.appearance.outer-corners.description")
     checked: Settings.data.bar.outerCorners
+    visible: !Settings.data.bar.floating
     onToggled: checked => Settings.data.bar.outerCorners = checked
   }
 
