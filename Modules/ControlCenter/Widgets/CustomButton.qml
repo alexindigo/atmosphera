@@ -5,10 +5,8 @@ import qs.Commons
 import qs.Services
 import qs.Widgets
 
-
 Item {
   id: root
-
 
   property string widgetId: "CustomButton"
   property var widgetSettings: null
@@ -24,6 +22,12 @@ Item {
   property string _currentIcon: "heart" // Default icon
   property bool _isHot: false
   property var _parsedStateChecks: [] // Local array for parsed state checks
+
+  property int _currentStateCheckIndex: -1
+  property string _activeStateIcon: ""
+
+  implicitWidth: button.implicitWidth
+  implicitHeight: button.implicitHeight
 
   Connections {
     target: root
@@ -56,14 +60,11 @@ Item {
     }
   }
 
-  property int _currentStateCheckIndex: -1
-  property string _activeStateIcon: ""
-
   Process {
     id: stateCheckProcessExecutor
     running: false
     command: _currentStateCheckIndex !== -1 && _parsedStateChecks.length > _currentStateCheckIndex ? ["sh", "-c", _parsedStateChecks[_currentStateCheckIndex].command] : []
-    onExited: function(exitCode, stdout, stderr) {
+    onExited: function (exitCode, stdout, stderr) {
       var currentCheckItem = _parsedStateChecks[_currentStateCheckIndex]
       var currentCommand = currentCheckItem.command
       if (exitCode === 0) {
@@ -112,52 +113,50 @@ Item {
 
   function updateState() {
     if (!enableOnStateLogic || _parsedStateChecks.length === 0) {
-      _isHot = false;
-      _activeStateIcon = widgetSettings.icon || "heart";
-      return;
+      _isHot = false
+      _activeStateIcon = widgetSettings.icon || "heart"
+      return
     }
-    stateUpdateTimer.restart();
-  }  
-    function _buildTooltipText() {
-      let tooltip = generalTooltipText
+    stateUpdateTimer.restart()
+  }
+
+  function _buildTooltipText() {
+    let tooltip = generalTooltipText
+    if (onClickedCommand) {
+      tooltip += `\nLeft click: ${onClickedCommand}`
+    }
+    if (onRightClickedCommand) {
+      tooltip += `\nRight click: ${onRightClickedCommand}`
+    }
+    if (onMiddleClickedCommand) {
+      tooltip += `\nMiddle click: ${onMiddleClickedCommand}`
+    }
+
+    return tooltip
+  }
+
+  NIconButtonHot {
+    id: button
+    icon: _activeStateIcon
+    hot: _isHot
+    tooltipText: _buildTooltipText()
+    onClicked: {
       if (onClickedCommand) {
-        tooltip += `\nLeft click: ${onClickedCommand}`
+        Quickshell.execDetached(["sh", "-c", onClickedCommand])
+        updateState()
       }
+    }
+    onRightClicked: {
       if (onRightClickedCommand) {
-        tooltip += `\nRight click: ${onRightClickedCommand}`
+        Quickshell.execDetached(["sh", "-c", onRightClickedCommand])
+        updateState()
       }
+    }
+    onMiddleClicked: {
       if (onMiddleClickedCommand) {
-        tooltip += `\nMiddle click: ${onMiddleClickedCommand}`
-      }
-  
-      return tooltip
-    }
-  
-    implicitWidth: button.implicitWidth
-    implicitHeight: button.implicitHeight
-  
-    NIconButtonHot {
-      id: button
-      icon: _activeStateIcon
-      hot: _isHot
-      tooltipText: _buildTooltipText()
-      onClicked: {
-        if (onClickedCommand) {
-          Quickshell.execDetached(["sh", "-c", onClickedCommand])
-          updateState()
-        }
-      }
-      onRightClicked: {
-        if (onRightClickedCommand) {
-          Quickshell.execDetached(["sh", "-c", onRightClickedCommand])
-          updateState()
-        }
-      }
-      onMiddleClicked: {
-        if (onMiddleClickedCommand) {
-          Quickshell.execDetached(["sh", "-c", onMiddleClickedCommand])
-          updateState()
-        }
+        Quickshell.execDetached(["sh", "-c", onMiddleClickedCommand])
+        updateState()
       }
     }
+  }
 }
