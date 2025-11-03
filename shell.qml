@@ -138,6 +138,11 @@ ShellRoot {
   }
 
   Component {
+    id: setupWizardComponent
+    SetupWizard {}
+  }
+
+  Component {
     id: barComp
     Bar {}
   }
@@ -267,6 +272,9 @@ ShellRoot {
             }, {
               "id": "batteryPanel",
               "component": batteryComponent
+            }, {
+              "id": "setupWizardPanel",
+              "component": setupWizardComponent
             }]
 
           // Bar component
@@ -287,20 +295,6 @@ ShellRoot {
         onLoaded: {
           Logger.d("Shell", "BarExclusionZone created for", modelData?.name)
         }
-      }
-    }
-  }
-
-  // ------------------------------
-  // Setup Wizard
-  Loader {
-    id: setupWizardLoader
-    active: false
-    asynchronous: true
-    sourceComponent: SetupWizard {}
-    onLoaded: {
-      if (setupWizardLoader.item && setupWizardLoader.item.open) {
-        setupWizardLoader.item.open()
       }
     }
   }
@@ -329,7 +323,21 @@ ShellRoot {
     }
 
     if (Settings.data.settingsVersion >= Settings.settingsVersion) {
-      setupWizardLoader.active = true
+      // Open Setup Wizard as a panel in the same windowing system as Settings/ControlCenter
+      if (Quickshell.screens.length > 0) {
+        var targetScreen = Quickshell.screens[0]
+        var setupPanel = PanelService.getPanel("setupWizardPanel", targetScreen)
+        if (setupPanel) {
+          setupPanel.open()
+        } else {
+          // If not yet loaded, ensure it loads and try again shortly
+          Qt.callLater(() => {
+                         var sp = PanelService.getPanel("setupWizardPanel", targetScreen)
+                         if (sp)
+                         sp.open()
+                       })
+        }
+      }
     } else {
       Settings.data.setupCompleted = true
     }

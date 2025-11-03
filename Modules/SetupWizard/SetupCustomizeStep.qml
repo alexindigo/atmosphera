@@ -442,6 +442,108 @@ ColumnLayout {
         }
       }
 
+      // Divider
+      Rectangle {
+        Layout.fillWidth: true
+        Layout.preferredHeight: 1
+        color: Color.mOutline
+        opacity: 0.2
+        Layout.topMargin: Style.marginS
+        Layout.bottomMargin: Style.marginS
+      }
+
+      // Dim Desktop toggle
+      RowLayout {
+        Layout.fillWidth: true
+        spacing: Style.marginM
+        Rectangle {
+          width: 32
+          height: 32
+          radius: Style.radiusM
+          color: Color.mSurface
+          NIcon {
+            icon: "screen-share"
+            pointSize: Style.fontSizeL
+            color: Color.mPrimary
+            anchors.centerIn: parent
+          }
+        }
+        ColumnLayout {
+          Layout.fillWidth: true
+          spacing: 2
+          NText {
+            text: I18n.tr("settings.user-interface.dim-desktop.label")
+            pointSize: Style.fontSizeL
+            font.weight: Style.fontWeightBold
+            color: Color.mOnSurface
+          }
+          NText {
+            text: I18n.tr("settings.user-interface.dim-desktop.description")
+            pointSize: Style.fontSizeS
+            color: Color.mOnSurfaceVariant
+            wrapMode: Text.WordWrap
+            Layout.fillWidth: true
+          }
+        }
+        NToggle {
+          checked: Settings.data.general.dimDesktop
+          onToggled: function (checked) {
+            Settings.data.general.dimDesktop = checked
+          }
+        }
+      }
+
+      // Divider
+      Rectangle {
+        Layout.fillWidth: true
+        Layout.preferredHeight: 1
+        color: Color.mOutline
+        opacity: 0.2
+        Layout.topMargin: Style.marginS
+        Layout.bottomMargin: Style.marginS
+      }
+
+      // Drop Shadows toggle
+      RowLayout {
+        Layout.fillWidth: true
+        spacing: Style.marginM
+        Rectangle {
+          width: 32
+          height: 32
+          radius: Style.radiusM
+          color: Color.mSurface
+          NIcon {
+            icon: "shadow"
+            pointSize: Style.fontSizeL
+            color: Color.mPrimary
+            anchors.centerIn: parent
+          }
+        }
+        ColumnLayout {
+          Layout.fillWidth: true
+          spacing: 2
+          NText {
+            text: I18n.tr("settings.user-interface.shadows.label")
+            pointSize: Style.fontSizeL
+            font.weight: Style.fontWeightBold
+            color: Color.mOnSurface
+          }
+          NText {
+            text: I18n.tr("settings.user-interface.shadows.description")
+            pointSize: Style.fontSizeS
+            color: Color.mOnSurfaceVariant
+            wrapMode: Text.WordWrap
+            Layout.fillWidth: true
+          }
+        }
+        NToggle {
+          checked: Settings.data.general.enableShadows
+          onToggled: function (checked) {
+            Settings.data.general.enableShadows = checked
+          }
+        }
+      }
+
       Item {
         Layout.fillWidth: true
         Layout.preferredHeight: Style.marginL
