@@ -1319,18 +1319,7 @@
           "description": "Scroll-Lock-Status anzeigen.",
           "label": "Rollenfeststelltaste"
         },
-        "indicator-style": {
-          "circle": "Kreisbuchstaben",
-          "circle-dash": "Gestrichelte Kreisbuchstaben",
-          "circle-dot": "Punktierte Kreisbuchstaben",
-          "description": "Symbolstil für die Feststelltastenanzeigen",
-          "hex": "Sechseck-Buchstaben",
-          "label": "Indikatorstil",
-          "large": "Große Buchstaben",
-          "small": "Kleinbuchstaben",
-          "square": "Quadratische Buchstaben",
-          "square-round": "Abgerundete quadratische Buchstaben"
-        }
+        "browse": "Durchsuchen"
       }
     }
   },

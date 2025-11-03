@@ -1290,18 +1290,6 @@
         }
       },
       "lock-keys": {
-        "indicator-style": {
-          "label": "Indicator Style",
-          "description": "Icon style for the lock key indicators",
-          "large": "Large Letters",
-          "small": "Small Letters",
-          "square": "Square Letters",
-          "square-round": "Rounded Squre Letters",
-          "circle": "Circle Letters",
-          "circle-dash": "Dashed Circle Letters",
-          "circle-dot": "Dotted Circle Letters",
-          "hex": "Hexagon Letters"
-        },
         "show-caps-lock": {
           "label": "Caps Lock",
           "description": "Display caps lock status."
@@ -1313,7 +1301,8 @@
         "show-scroll-lock": {
           "label": "Scroll Lock",
           "description": "Display scroll lock status."
-        }
+        },
+        "browse": "Browse"
       }
     }
   },
@@ -1484,9 +1473,9 @@
     "colors": {
       "primary": "Primary",
       "secondary": "Secondary",
-      "tertiary":  "Tertiary",
-      "error":  "Error",
-      "onSurface":  "On Surface"
+      "tertiary": "Tertiary",
+      "error": "Error",
+      "onSurface": "On Surface"
     },
     "bar": {
       "position": {

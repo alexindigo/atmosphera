@@ -1302,18 +1302,7 @@
           "description": "Exibir o status do Scroll Lock.",
           "label": "Scroll Lock"
         },
-        "indicator-style": {
-          "circle": "Letras Circulares",
-          "circle-dash": "Letras em Círculo Tracejadas",
-          "circle-dot": "Letras de Círculo Pontilhado",
-          "description": "Estilo de ícone para os indicadores da tecla de bloqueio.",
-          "hex": "Letras Hexagonais",
-          "label": "Estilo do Indicador",
-          "large": "Letras grandes",
-          "small": "Letras minúsculas",
-          "square": "Letras Quadradas",
-          "square-round": "Letras Quadradas Arredondadas"
-        }
+        "browse": "Navegar"
       }
     }
   },
