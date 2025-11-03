@@ -226,13 +226,17 @@
         },
         "floating": {
           "label": "Barre flottante",
-          "description": "Affiche la barre sous forme de 'pilule' flottante. Note : Ceci déplacera les coins de l'écran vers les bords."
+          "description": "Affiche la barre sous forme de 'pilule' flottante."
         },
         "margins": {
           "label": "Marges",
           "description": "Ajustez les marges autour de la barre flottante.",
           "vertical": "Verticale",
           "horizontal": "Horizontale"
+        },
+        "outer-corners": {
+          "description": "Affiche des coins incurvés vers l'extérieur sur la barre.",
+          "label": "Coins extérieurs"
         }
       },
       "widgets": {
@@ -584,6 +588,10 @@
           "foot": {
             "description": "Écrire ~/.config/foot/themes/noctalia et recharger",
             "description-missing": "Nécessite que le terminal foot soit installé"
+          },
+          "alacritty": {
+            "description": "Écrire {filepath} et recharger.",
+            "description-missing": "Nécessite l'installation de {app}"
           }
         },
         "programs": {
@@ -872,6 +880,10 @@
       "panels-attached-to-bar": {
         "description": "Lorsque cette option est activée, les panneaux seront attachés à la barre avec un design élégant de coin inversé.",
         "label": "Fixer les panneaux à la barre."
+      },
+      "dim-desktop": {
+        "description": "Atténuer le bureau lorsque des panneaux ou des menus sont ouverts.",
+        "label": "Dim bureau"
       }
     },
     "lock-screen": {

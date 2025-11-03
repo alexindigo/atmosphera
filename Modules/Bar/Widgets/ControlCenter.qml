@@ -44,8 +44,8 @@ NIconButton {
   colorBgHover: useDistroLogo ? Color.mSurfaceVariant : Color.mHover
   colorBorder: Color.transparent
   colorBorderHover: useDistroLogo ? Color.mHover : Color.transparent
-  onClicked: PanelService.getPanel("controlCenterPanel")?.toggle(this)
-  onRightClicked: PanelService.getPanel("settingsPanel")?.toggle()
+  onClicked: PanelService.getPanel("controlCenterPanel", screen)?.toggle(this)
+  onRightClicked: PanelService.getPanel("settingsPanel", screen)?.toggle()
 
   IconImage {
     id: customOrDistroLogo

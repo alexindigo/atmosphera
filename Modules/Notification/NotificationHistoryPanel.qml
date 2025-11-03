@@ -12,9 +12,8 @@ import qs.Widgets
 NPanel {
   id: root
 
-  preferredWidth: 380
-  preferredHeight: 480
-  panelKeyboardFocus: true
+  preferredWidth: 380 * Style.uiScaleRatio
+  preferredHeight: 480 * Style.uiScaleRatio
 
   onOpened: function () {
     NotificationService.updateLastSeenTs()

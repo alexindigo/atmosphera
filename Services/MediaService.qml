@@ -304,7 +304,7 @@ Singleton {
     repeat: true
     running: true
     onTriggered: {
-      Logger.d("MediaService", "playerStateMonitor triggered. autoSwitchingPaused: " + root.autoSwitchingPaused)
+      //Logger.d("MediaService", "playerStateMonitor triggered. autoSwitchingPaused: " + root.autoSwitchingPaused)
       if (autoSwitchingPaused)
       return
       // Only update if we don't have a playing player or if current player is paused

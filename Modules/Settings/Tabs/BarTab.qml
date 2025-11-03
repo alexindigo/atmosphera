@@ -25,7 +25,7 @@ ColumnLayout {
 
   // Handler for drag start - disables panel background clicks
   function handleDragStart() {
-    var panel = PanelService.getPanel("settingsPanel")
+    var panel = PanelService.getPanel("settingsPanel", screen)
     if (panel && panel.disableBackgroundClick) {
       panel.disableBackgroundClick()
     }
@@ -33,7 +33,7 @@ ColumnLayout {
 
   // Handler for drag end - re-enables panel background clicks
   function handleDragEnd() {
-    var panel = PanelService.getPanel("settingsPanel")
+    var panel = PanelService.getPanel("settingsPanel", screen)
     if (panel && panel.enableBackgroundClick) {
       panel.enableBackgroundClick()
     }
@@ -100,6 +100,14 @@ ColumnLayout {
     description: I18n.tr("settings.bar.appearance.floating.description")
     checked: Settings.data.bar.floating
     onToggled: checked => Settings.data.bar.floating = checked
+  }
+
+  NToggle {
+    Layout.fillWidth: true
+    label: I18n.tr("settings.bar.appearance.outer-corners.label")
+    description: I18n.tr("settings.bar.appearance.outer-corners.description")
+    checked: Settings.data.bar.outerCorners
+    onToggled: checked => Settings.data.bar.outerCorners = checked
   }
 
   // Floating bar options - only show when floating is enabled

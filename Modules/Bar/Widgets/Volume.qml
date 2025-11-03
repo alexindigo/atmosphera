@@ -90,7 +90,7 @@ Item {
       }
     }
     onClicked: {
-      PanelService.getPanel("audioPanel")?.toggle(this)
+      PanelService.getPanel("audioPanel", screen)?.toggle(this)
     }
     onRightClicked: {
       AudioService.setOutputMuted(!AudioService.muted)

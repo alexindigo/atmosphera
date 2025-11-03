@@ -27,6 +27,13 @@ ColumnLayout {
     }
 
     NToggle {
+      label: I18n.tr("settings.user-interface.dim-desktop.label")
+      description: I18n.tr("settings.user-interface.dim-desktop.description")
+      checked: Settings.data.general.dimDesktop
+      onToggled: checked => Settings.data.general.dimDesktop = checked
+    }
+
+    NToggle {
       label: I18n.tr("settings.user-interface.panels-attached-to-bar.label")
       description: I18n.tr("settings.user-interface.panels-attached-to-bar.description")
       checked: Settings.data.ui.panelsAttachedToBar

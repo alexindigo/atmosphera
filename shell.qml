@@ -75,6 +75,73 @@ ShellRoot {
     }
   }
 
+  // ------------------------------
+  // Define panel components (must be at ShellRoot level for NFullScreenWindow access)
+  Component {
+    id: launcherComponent
+    Launcher {}
+  }
+
+  Component {
+    id: controlCenterComponent
+    ControlCenterPanel {}
+  }
+
+  Component {
+    id: calendarComponent
+    CalendarPanel {}
+  }
+
+  Component {
+    id: settingsComponent
+    SettingsPanel {}
+  }
+
+  Component {
+    id: directWidgetSettingsComponent
+    DirectWidgetSettingsPanel {}
+  }
+
+  Component {
+    id: notificationHistoryComponent
+    NotificationHistoryPanel {}
+  }
+
+  Component {
+    id: sessionMenuComponent
+    SessionMenu {}
+  }
+
+  Component {
+    id: wifiComponent
+    WiFiPanel {}
+  }
+
+  Component {
+    id: bluetoothComponent
+    BluetoothPanel {}
+  }
+
+  Component {
+    id: audioComponent
+    AudioPanel {}
+  }
+
+  Component {
+    id: wallpaperComponent
+    WallpaperPanel {}
+  }
+
+  Component {
+    id: batteryComponent
+    BatteryPanel {}
+  }
+
+  Component {
+    id: barComp
+    Bar {}
+  }
+
   Loader {
     active: i18nLoaded && settingsLoaded
 
@@ -99,8 +166,7 @@ ShellRoot {
 
       Background {}
       Overview {}
-      ScreenCorners {}
-      Bar {}
+
       Dock {}
 
       Notification {
@@ -121,67 +187,118 @@ ShellRoot {
       // IPCService is treated as a service
       // but it's actually an Item that needs to exists in the shell.
       IPCService {}
+    }
+  }
 
-      // ------------------------------
-      // All the NPanels
-      Launcher {
-        id: launcherPanel
-        objectName: "launcherPanel"
+  // ------------------------------
+  // NFullScreenWindow for each screen (manages bar + all panels)
+  // Wrapped in Loader to optimize memory - only loads when screen needs it
+  Variants {
+    model: Quickshell.screens
+    delegate: Item {
+      required property ShellScreen modelData
+
+      property bool shouldBeActive: {
+        if (!i18nLoaded || !settingsLoaded)
+          return false
+        if (!BarService.isVisible)
+          return false
+        if (!modelData || !modelData.name)
+          return false
+
+        var monitors = Settings.data.bar.monitors || []
+        var result = monitors.length === 0 || monitors.includes(modelData.name)
+
+        Logger.d("Shell", "NFullScreenWindow Loader for", modelData?.name, "- shouldBeActive:", result, "- monitors:", JSON.stringify(monitors))
+        return result
       }
 
-      ControlCenterPanel {
-        id: controlCenterPanel
-        objectName: "controlCenterPanel"
+      property bool windowLoaded: false
+
+      Loader {
+        id: windowLoader
+        active: parent.shouldBeActive
+        asynchronous: false
+
+        property ShellScreen loaderScreen: modelData
+
+        onLoaded: {
+          // Signal that window is loaded so exclusion zone can be created
+          parent.windowLoaded = true
+        }
+
+        sourceComponent: NFullScreenWindow {
+          screen: windowLoader.loaderScreen
+
+          // Register all panel components
+          panelComponents: [{
+              "id": "launcherPanel",
+              "component": launcherComponent,
+              "zIndex": 50
+            }, {
+              "id": "controlCenterPanel",
+              "component": controlCenterComponent,
+              "zIndex": 50
+            }, {
+              "id": "calendarPanel",
+              "component": calendarComponent,
+              "zIndex": 50
+            }, {
+              "id": "settingsPanel",
+              "component": settingsComponent,
+              "zIndex": 50
+            }, {
+              "id": "directWidgetSettingsPanel",
+              "component": directWidgetSettingsComponent,
+              "zIndex": 50
+            }, {
+              "id": "notificationHistoryPanel",
+              "component": notificationHistoryComponent,
+              "zIndex": 50
+            }, {
+              "id": "sessionMenuPanel",
+              "component": sessionMenuComponent,
+              "zIndex": 50
+            }, {
+              "id": "wifiPanel",
+              "component": wifiComponent,
+              "zIndex": 50
+            }, {
+              "id": "bluetoothPanel",
+              "component": bluetoothComponent,
+              "zIndex": 50
+            }, {
+              "id": "audioPanel",
+              "component": audioComponent,
+              "zIndex": 50
+            }, {
+              "id": "wallpaperPanel",
+              "component": wallpaperComponent,
+              "zIndex": 50
+            }, {
+              "id": "batteryPanel",
+              "component": batteryComponent,
+              "zIndex": 50
+            }]
+
+          // Bar component
+          barComponent: barComp
+        }
       }
 
-      CalendarPanel {
-        id: calendarPanel
-        objectName: "calendarPanel"
-      }
+      // BarExclusionZone - created after NFullScreenWindow has fully loaded
+      // Must also be disabled when bar is disabled (follows shouldBeActive)
+      Loader {
+        active: parent.windowLoaded && parent.shouldBeActive
+        asynchronous: false
 
-      SettingsPanel {
-        id: settingsPanel
-        objectName: "settingsPanel"
-      }
+        sourceComponent: BarExclusionZone {
+          screen: modelData
+        }
 
-      DirectWidgetSettingsPanel {
-        id: directWidgetSettingsPanel
-        objectName: "directWidgetSettingsPanel"
-      }
-
-      NotificationHistoryPanel {
-        id: notificationHistoryPanel
-        objectName: "notificationHistoryPanel"
-      }
-
-      SessionMenu {
-        id: sessionMenuPanel
-        objectName: "sessionMenuPanel"
-      }
-
-      WiFiPanel {
-        id: wifiPanel
-        objectName: "wifiPanel"
-      }
-
-      BluetoothPanel {
-        id: bluetoothPanel
-        objectName: "bluetoothPanel"
-      }
-
-      AudioPanel {
-        id: audioPanel
-        objectName: "audioPanel"
-      }
-
-      WallpaperPanel {
-        id: wallpaperPanel
-        objectName: "wallpaperPanel"
-      }
-
-      BatteryPanel {
-        id: batteryPanel
-        objectName: "batteryPanel"
+        onLoaded: {
+          Logger.d("Shell", "BarExclusionZone created for", modelData?.name)
+        }
       }
     }
   }

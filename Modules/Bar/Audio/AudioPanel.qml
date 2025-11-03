@@ -18,7 +18,6 @@ NPanel {
 
   preferredWidth: 380 * Style.uiScaleRatio
   preferredHeight: 500 * Style.uiScaleRatio
-  panelKeyboardFocus: true
 
   // Connections to update local volumes when AudioService changes
   Connections {

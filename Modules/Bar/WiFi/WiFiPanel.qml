@@ -12,7 +12,6 @@ NPanel {
 
   preferredWidth: 420 * Style.uiScaleRatio
   preferredHeight: 500 * Style.uiScaleRatio
-  panelKeyboardFocus: true
 
   property string passwordSsid: ""
   property string passwordInput: ""

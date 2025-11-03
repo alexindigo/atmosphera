@@ -226,13 +226,17 @@
         },
         "floating": {
           "label": "Schwebende Statusleiste",
-          "description": "Statusleiste als schwebende 'Pille' anzeigen. Hinweis: Dies verschiebt die Bildschirmecken an die Ränder."
+          "description": "Statusleiste als schwebende 'Pille' anzeigen."
         },
         "margins": {
           "label": "Ränder",
           "description": "Ränder um die schwebende Statusleiste anpassen.",
           "vertical": "Vertikal",
           "horizontal": "Horizontal"
+        },
+        "outer-corners": {
+          "description": "Zeigt nach außen gewölbte Ecken auf der Leiste an.",
+          "label": "Äußere Ecken"
         }
       },
       "widgets": {
@@ -584,6 +588,10 @@
           "foot": {
             "description": "Schreibt {filepath} und lädt neu",
             "description-missing": "Erfordert {app} Terminal"
+          },
+          "alacritty": {
+            "description": "Schreibe {Dateipfad} und lade neu",
+            "description-missing": "Benötigt die Installation von {app}"
           }
         },
         "programs": {
@@ -872,6 +880,10 @@
       "panels-attached-to-bar": {
         "description": "Wenn aktiviert, werden die Panels mit einem schönen, umgekehrten Eckdesign an der Leiste befestigt.",
         "label": "Paneele an Stange befestigen"
+      },
+      "dim-desktop": {
+        "description": "Den Desktop abdunkeln, wenn Fenster oder Menüs geöffnet sind.",
+        "label": "Dimmer Schreibtisch"
       }
     },
     "lock-screen": {

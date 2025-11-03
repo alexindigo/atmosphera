@@ -146,6 +146,12 @@ Singleton {
       property real marginVertical: 0.25
       property real marginHorizontal: 0.25
 
+      // Bar outer corners (inverted/concave corners at bar edges when not floating)
+      property bool outerCorners: true
+
+      // Reserves space with compositor
+      property bool exclusive: true
+
       // Widget configuration for modular bar system
       property JsonObject widgets
       widgets: JsonObject {
@@ -182,6 +188,7 @@ Singleton {
     // general
     property JsonObject general: JsonObject {
       property string avatarImage: ""
+      property bool dimDesktop: true
       property bool showScreenCorners: false
       property bool forceBlackScreenCorners: false
       property real scaleRatio: 1.0

@@ -226,7 +226,11 @@
         },
         "floating": {
           "label": "Floating bar",
-          "description": "Displays the bar as a floating 'pill'. Note: This will move the screen corners to the edges."
+          "description": "Displays the bar as a floating 'pill'."
+        },
+        "outer-corners": {
+          "label": "Outer corners",
+          "description": "Displays outwardly curved corners on the bar."
         },
         "margins": {
           "label": "Margins",
@@ -577,6 +581,10 @@
         "terminal": {
           "label": "Terminal",
           "description": "Terminal emulator theming.",
+          "alacritty": {
+            "description": "Write {filepath} and reload",
+            "description-missing": "Requires {app} to be installed"
+          },
           "kitty": {
             "description": "Write {filepath} and reload",
             "description-missing": "Requires {app} to be installed"
@@ -850,6 +858,10 @@
         "label": "Interface scaling",
         "description": "Changes the size of the general user interface, excluding the bar.",
         "reset-scaling": "Reset interface scaling"
+      },
+      "dim-desktop": {
+        "label": "Dim desktop",
+        "description": "Dim the desktop when panels or menus are open."
       },
       "border-radius": {
         "label": "Border radius",

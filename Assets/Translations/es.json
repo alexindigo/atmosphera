@@ -226,13 +226,17 @@
         },
         "floating": {
           "label": "Barra flotante",
-          "description": "Muestra la barra como una 'píldora' flotante. Nota: Esto moverá las esquinas de la pantalla a los bordes."
+          "description": "Muestra la barra como una 'píldora' flotante."
         },
         "margins": {
           "label": "Márgenes",
           "description": "Ajusta los márgenes alrededor de la barra flotante.",
           "vertical": "Vertical",
           "horizontal": "Horizontal"
+        },
+        "outer-corners": {
+          "description": "Muestra esquinas curvadas hacia afuera en la barra.",
+          "label": "Esquinas exteriores"
         }
       },
       "widgets": {
@@ -584,6 +588,10 @@
           "foot": {
             "description": "Escribir {filepath} y recargar",
             "description-missing": "Requiere que {app} esté instalado"
+          },
+          "alacritty": {
+            "description": "Escribe {filepath} y recarga",
+            "description-missing": "Requiere que {app} esté instalado/a."
           }
         },
         "programs": {
@@ -872,6 +880,10 @@
       "panels-attached-to-bar": {
         "description": "Cuando está habilitado, los paneles se adjuntarán a la barra con un hermoso diseño de esquina invertida.",
         "label": "Adjuntar paneles a la barra"
+      },
+      "dim-desktop": {
+        "description": "Atenuar el escritorio cuando los paneles o menús estén abiertos.",
+        "label": "Dim escritorio"
       }
     },
     "lock-screen": {

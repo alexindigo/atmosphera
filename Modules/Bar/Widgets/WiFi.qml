@@ -76,8 +76,8 @@ Item {
     autoHide: false
     forceOpen: !isBarVertical && root.displayMode === "alwaysShow"
     forceClose: isBarVertical || root.displayMode === "alwaysHide" || !pill.text
-    onClicked: PanelService.getPanel("wifiPanel")?.toggle(this)
-    onRightClicked: PanelService.getPanel("wifiPanel")?.toggle(this)
+    onClicked: PanelService.getPanel("wifiPanel", screen)?.toggle(this)
+    onRightClicked: PanelService.getPanel("wifiPanel", screen)?.toggle(this)
     tooltipText: {
       if (pill.text !== "") {
         return pill.text

@@ -25,27 +25,27 @@ Singleton {
     }
   }
 
-  // Info log (always visible)
-  function i(...args) {
-    var msg = _formatMessage(...args)
-    console.log(msg)
-  }
-
   // Debug log (only when Settings.isDebug is true)
   function d(...args) {
     if (Settings && Settings.isDebug) {
       var msg = _formatMessage(...args)
-      console.log(msg)
+      console.debug(msg)
     }
   }
 
-  // Warning log
+  // Info log (always visible)
+  function i(...args) {
+    var msg = _formatMessage(...args)
+    console.info(msg)
+  }
+
+  // Warning log (always visible)
   function w(...args) {
     var msg = _formatMessage(...args)
     console.warn(msg)
   }
 
-  // Error log
+  // Error log (always visible)
   function e(...args) {
     var msg = _formatMessage(...args)
     console.error(msg)

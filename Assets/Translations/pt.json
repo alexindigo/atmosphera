@@ -226,13 +226,17 @@
         },
         "floating": {
           "label": "Barra flutuante",
-          "description": "Exibe a barra como uma 'pílula' flutuante. Nota: Isso moverá os cantos da tela para as bordas."
+          "description": "Exibe a barra como uma 'pílula' flutuante."
         },
         "margins": {
           "label": "Margens",
           "description": "Ajuste as margens ao redor da barra flutuante.",
           "vertical": "Vertical",
           "horizontal": "Horizontal"
+        },
+        "outer-corners": {
+          "description": "Exibe cantos curvados para fora na barra.",
+          "label": "Cantos externos"
         }
       },
       "widgets": {
@@ -546,6 +550,10 @@
           "foot": {
             "description": "Escrever {filepath} e recarregar",
             "description-missing": "Requer que o {app} esteja instalado"
+          },
+          "alacritty": {
+            "description": "Escreva {filepath} e recarregue.",
+            "description-missing": "Requer que o {app} esteja instalado."
           }
         },
         "programs": {
@@ -872,6 +880,10 @@
       "panels-attached-to-bar": {
         "description": "Quando ativado, os painéis serão anexados à barra com um belo design de canto invertido.",
         "label": "Anexar painéis à barra"
+      },
+      "dim-desktop": {
+        "description": "Escurecer a área de trabalho quando painéis ou menus estiverem abertos.",
+        "label": "Dim área de trabalho"
       }
     },
     "lock-screen": {

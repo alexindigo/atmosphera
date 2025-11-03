@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
+import Quickshell.Widgets
 import qs.Commons
 import qs.Services
 
@@ -27,7 +28,10 @@ Item {
   IpcHandler {
     target: "settings"
     function toggle() {
-      settingsPanel.toggle()
+      root.withTargetScreen(screen => {
+                              var settingsPanel = PanelService.getPanel("settingsPanel", screen)
+                              settingsPanel.toggle()
+                            })
     }
   }
 
@@ -35,7 +39,10 @@ Item {
     target: "notifications"
     function toggleHistory() {
       // Will attempt to open the panel next to the bar button if any.
-      notificationHistoryPanel.toggle(null, "NotificationHistory")
+      root.withTargetScreen(screen => {
+                              var notificationHistoryPanel = PanelService.getPanel("notificationHistoryPanel", screen)
+                              notificationHistoryPanel.toggle(null, "NotificationHistory")
+                            })
     }
     function toggleDND() {
       Settings.data.notifications.doNotDisturb = !Settings.data.notifications.doNotDisturb
@@ -63,15 +70,24 @@ Item {
   IpcHandler {
     target: "launcher"
     function toggle() {
-      launcherPanel.toggle()
+      root.withTargetScreen(screen => {
+                              var launcherPanel = PanelService.getPanel("launcherPanel", screen)
+                              launcherPanel.toggle()
+                            })
     }
     function clipboard() {
-      launcherPanel.setSearchText(">clip ")
-      launcherPanel.toggle()
+      root.withTargetScreen(screen => {
+                              var launcherPanel = PanelService.getPanel("launcherPanel", screen)
+                              launcherPanel.setSearchText(">clip ")
+                              launcherPanel.toggle()
+                            })
     }
     function calculator() {
-      launcherPanel.setSearchText(">calc ")
-      launcherPanel.toggle()
+      root.withTargetScreen(screen => {
+                              var launcherPanel = PanelService.getPanel("launcherPanel", screen)
+                              launcherPanel.setSearchText(">calc ")
+                              launcherPanel.toggle()
+                            })
     }
   }
 
@@ -158,7 +174,10 @@ Item {
   IpcHandler {
     target: "sessionMenu"
     function toggle() {
-      sessionMenuPanel.toggle()
+      root.withTargetScreen(screen => {
+                              var sessionMenuPanel = PanelService.getPanel("sessionMenuPanel", screen)
+                              sessionMenuPanel.toggle()
+                            })
     }
 
     function lockAndSuspend() {
@@ -170,7 +189,10 @@ Item {
     target: "controlCenter"
     function toggle() {
       // Will attempt to open the panel next to the bar button if any.
-      controlCenterPanel.toggle(null, "ControlCenter")
+      root.withTargetScreen(screen => {
+                              var controlCenterPanel = PanelService.getPanel("controlCenterPanel", screen)
+                              controlCenterPanel.toggle(null, "ControlCenter")
+                            })
     }
   }
 
@@ -179,7 +201,10 @@ Item {
     target: "wallpaper"
     function toggle() {
       if (Settings.data.wallpaper.enabled) {
-        wallpaperPanel.toggle()
+        root.withTargetScreen(screen => {
+                                var wallpaperPanel = PanelService.getPanel("wallpaperPanel", screen)
+                                wallpaperPanel.toggle()
+                              })
       }
     }
 
@@ -228,6 +253,7 @@ Item {
       }
     }
   }
+
   IpcHandler {
     target: "powerProfile"
     function cycle() {
@@ -248,6 +274,7 @@ Item {
       }
     }
   }
+
   IpcHandler {
     target: "media"
     function playPause() {
@@ -290,6 +317,85 @@ Item {
         return
       }
       MediaService.seekByRatio(positionVal)
+    }
+  }
+
+  // Queue an IPC panel operation - will execute when screen is detected
+  function withTargetScreen(callback) {
+    if (pendingCallback) {
+      Logger.w("IPC", "Another IPC call is pending, ignoring new call")
+      return
+    }
+
+    // Single monitor setup can execute immediately
+    if (Quickshell.screens.length === 1) {
+      pendingCallback(Quickshell.screens[0])
+    } else {
+      // Multi-monitors setup needs to start async detection
+      detectedScreen = null
+      pendingCallback = callback
+      screenDetectorLoader.active = true
+    }
+  }
+
+
+  /**
+   * For IPC calls on multi-monitors setup that will open panels on screen,
+   * we need to open a QS PanelWindow and wait for it's "screen" property to stabilize.
+  */
+  property ShellScreen detectedScreen: null
+  property var pendingCallback: null
+
+  Timer {
+    id: screenDetectorDebounce
+    running: false
+    interval: 20
+    onTriggered: {
+      Logger.d("IPC", "Screen debounced to:", detectedScreen?.name || "null")
+
+      // Execute pending callback if any
+      if (pendingCallback) {
+        // Verify we have a NFullScreenWindow for this screen
+        var monitors = Settings.data.bar.monitors || []
+        if (!(monitors.length === 0 || monitors.includes(detectedScreen.name))) {
+          // Fall back to first enabled screen as we can NOT show a panel on a screen without a Bar/NFullScreenWindow
+          if (monitors.length === 0 && Quickshell.screens.length > 0) {
+            detectedScreen = Quickshell.screens[0]
+          } else {
+            for (var i = 0; i < Quickshell.screens.length; i++) {
+              if (monitors.includes(Quickshell.screens[i].name)) {
+                detectedScreen = Quickshell.screens[i]
+                break
+              }
+            }
+          }
+        }
+        Logger.d("IPC", "Executing pending IPC callback on screen:", detectedScreen.name)
+        pendingCallback(detectedScreen)
+        pendingCallback = null
+      }
+
+      // Clean up
+      screenDetectorLoader.active = false
+    }
+  }
+
+  // Invisible dummy PanelWindow to detect which screen should receive IPC calls
+  Loader {
+    id: screenDetectorLoader
+    active: false
+
+    sourceComponent: PanelWindow {
+      implicitWidth: 0
+      implicitHeight: 0
+      color: Color.transparent
+      WlrLayershell.exclusionMode: ExclusionMode.Ignore
+      mask: Region {}
+
+      onScreenChanged: {
+        detectedScreen = screen
+        screenDetectorDebounce.restart()
+      }
     }
   }
 }
