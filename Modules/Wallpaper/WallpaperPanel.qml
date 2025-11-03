@@ -15,7 +15,7 @@ NPanel {
   preferredWidth: 800 * Style.uiScaleRatio
   preferredHeight: 600 * Style.uiScaleRatio
   preferredWidthRatio: 0.5
-  preferredHeightRatio: 0.52
+  preferredHeightRatio: 0.45
 
   // Positioning - Use launcher position. This saves a setting...
   readonly property string launcherPosition: Settings.data.appLauncher.position
