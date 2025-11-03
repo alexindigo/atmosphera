@@ -147,11 +147,9 @@ Item {
             ctx.quadraticCurveTo(x, y + h, x, y + h - bottomLeftRadius)
           } else {
             // Curves downward
-            ctx.lineTo(x, y + h)
+            ctx.lineTo(x + bottomLeftRadius, y + h)
+            ctx.quadraticCurveTo(x, y + h, x, y + h + bottomLeftRadius)
             ctx.lineTo(x, y + h + bottomLeftRadius)
-            ctx.quadraticCurveTo(x, y + h, x + bottomLeftRadius, y + h)
-            ctx.lineTo(x, y + h)
-            ctx.lineTo(x, y + h - bottomLeftRadius)
           }
         } else {
           ctx.lineTo(x + bottomLeftRadius, y + h)
