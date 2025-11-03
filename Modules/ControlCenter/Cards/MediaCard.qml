@@ -62,7 +62,6 @@ NBox {
       border.width: 1
       radius: Style.radiusM
     }
-    //}
 
     // Background visualizer on top of the artwork
     Loader {
@@ -248,7 +247,7 @@ NBox {
                     duration: index * 600
                   }
                   NumberAnimation {
-                    from: 0.5
+                    from: 0.6
                     to: 1.2
                     duration: 2000
                     easing.type: Easing.OutQuad
@@ -263,14 +262,6 @@ NBox {
               icon: "disc"
               pointSize: Style.fontSizeXXXL * 3
               color: Color.mOnSurfaceVariant
-
-              RotationAnimator on rotation {
-                from: 0
-                to: 360
-                duration: 8000
-                loops: Animation.Infinite
-                running: true
-              }
             }
           }
 
