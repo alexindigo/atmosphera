@@ -655,7 +655,7 @@
           "description": "Exibir eventos no painel do calendário."
         },
         "use-analog": {
-          "description": "Mostrar um relógio estilo analógico na tela do calendário.",
+          "description": "Mostrar um relógio estilo analógico na janela do calendário e na tela de bloqueio.",
           "label": "Use um relógio de estilo analógico."
         },
         "first-day-of-week": {

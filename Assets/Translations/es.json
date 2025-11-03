@@ -693,7 +693,7 @@
           "description": "Mostrar eventos en el panel del calendario."
         },
         "use-analog": {
-          "description": "Mostrar un reloj de estilo analógico en la pantalla del calendario.",
+          "description": "Mostrar un reloj de estilo analógico en la ventana del calendario y en la pantalla de bloqueo.",
           "label": "Usar reloj de estilo analógico"
         },
         "first-day-of-week": {

@@ -201,11 +201,12 @@ NPanel {
         }
 
         // Analog clock
-        ClockLoader {
+        NClock {
           id: clockLoader
           anchors.right: parent.right
           anchors.rightMargin: Style.marginXL
           anchors.verticalCenter: parent.verticalCenter
+          clockStyle: Settings.data.location.analogClockInCalendar ? "analog" : "digital"
           progressColor: Color.mOnPrimary
           Layout.alignment: Qt.AlignVCenter
           now: root.now

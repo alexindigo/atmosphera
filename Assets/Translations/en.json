@@ -699,7 +699,7 @@
         },
         "use-analog": {
           "label": "Use analog style clock",
-          "description": "Show an analog style clock on the calendar screen."
+          "description": "Show an analog style clock on the calendar window and lock screen."
         }
       }
     },

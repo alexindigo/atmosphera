@@ -365,8 +365,9 @@ Loader {
                 }
 
                 // Clock
-                ClockLoader {
+                NClock {
                   now: Time.date
+                  clockStyle: Settings.data.location.analogClockInCalendar ? "analog" : "digital"
                   Layout.preferredWidth: 70
                   Layout.preferredHeight: 70
                   Layout.alignment: Qt.AlignVCenter

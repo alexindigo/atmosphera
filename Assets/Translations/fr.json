@@ -693,7 +693,7 @@
           "description": "Afficher les événements dans le panneau du calendrier."
         },
         "use-analog": {
-          "description": "Afficher une horloge de style analogique sur l'écran du calendrier.",
+          "description": "Afficher une horloge de style analogique dans la fenêtre du calendrier et sur l'écran de verrouillage.",
           "label": "Utiliser une horloge de style analogique."
         },
         "first-day-of-week": {

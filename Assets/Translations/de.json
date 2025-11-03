@@ -693,7 +693,7 @@
           "description": "Ereignisse im Kalender-Panel anzeigen."
         },
         "use-analog": {
-          "description": "Eine Analoguhr auf dem Kalenderbildschirm anzeigen.",
+          "description": "Eine Analoguhr im Kalenderfenster und auf dem Sperrbildschirm anzeigen.",
           "label": "Analoge Uhr verwenden"
         },
         "first-day-of-week": {
