@@ -117,11 +117,12 @@
     "transitionDuration": 1500,
     "transitionType": "random",
     "transitionEdgeSmoothness": 0.05,
-    "monitors": []
+    "monitors": [],
+    "selectorPosition": "follow_bar"
   },
   "appLauncher": {
     "enableClipboardHistory": false,
-    "position": "center",
+    "position": "follow_bar",
     "backgroundOpacity": 1,
     "pinnedExecs": [],
     "useApp2Unit": false,

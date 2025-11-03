@@ -17,6 +17,9 @@ Item {
   property bool forceDetached: false // Force panel to be detached regardless of settings
   property bool attachedToBar: (Settings.data.ui.panelsAttachedToBar && Settings.data.bar.backgroundOpacity > opacityThreshold && !forceDetached)
 
+  // Edge snapping: if panel is within this distance (in pixels) from a screen edge, snap
+  property real edgeSnapDistance: 40
+
   // Keyboard focus documentation (not currently used for focus mode)
   // Just for documentation: true for panels with text input
   // NFullScreenWindow always uses Exclusive focus when any panel is open
@@ -343,6 +346,8 @@ Item {
           // Position the panel using explicit x/y coordinates (no anchors)
           // This makes coordinates clearer for the click-through mask system
           x: {
+            var calculatedX
+
             // If useButtonPosition is enabled, align panel X with button
             // Note: We check useButtonPosition, not buttonItem, because buttonItem may become invalid
             // after the source panel (e.g., ControlCenter) closes, but we still have valid position data
@@ -357,7 +362,7 @@ Item {
                     // Panel sits right at bar edge (inverted corners curve up/down)
                     // Slide from the bar when opening
                     // Shift left by 1px to eliminate any gap between bar and panel
-                    return leftBarEdge - slideOffset - 1
+                    calculatedX = leftBarEdge - slideOffset - 1
                   } else {
                     // right
                     // Panel to the left of right bar
@@ -365,14 +370,14 @@ Item {
                     // Panel sits right at bar edge (inverted corners curve up/down)
                     // Slide from the bar when opening
                     // Shift right by 1px to eliminate any gap between bar and panel
-                    return rightBarEdge - width + slideOffset + 1
+                    calculatedX = rightBarEdge - width + slideOffset + 1
                   }
                 } else {
                   // Detached panels: center on button X position
                   var panelX = root.buttonPosition.x + root.buttonWidth / 2 - width / 2
                   // Clamp to screen bounds with margins
                   panelX = Math.max(Style.marginL, Math.min(panelX, parent.width - width - Style.marginL))
-                  return panelX
+                  calculatedX = panelX
                 }
               } else {
                 // For horizontal bars, center panel on button X position
@@ -389,56 +394,87 @@ Item {
                 } else {
                   panelX = Math.max(Style.marginL, Math.min(panelX, parent.width - width - Style.marginL))
                 }
-                return panelX
+                calculatedX = panelX
               }
-            }
-
-            // Standard anchor positioning
-            Logger.d("NPanel", "Fallback to standard anchor positioning")
-
-            if (root.panelAnchorHorizontalCenter) {
-              Logger.d("NPanel", "  -> Horizontal center")
-              return (parent.width - width) / 2
-            } else if (root.effectivePanelAnchorRight) {
-              Logger.d("NPanel", "  -> Right anchor")
-              return parent.width - width - Style.marginL
-            } else if (root.effectivePanelAnchorLeft) {
-              Logger.d("NPanel", "  -> Left anchor")
-              return Style.marginL
             } else {
-              // No explicit anchor: default to centering on bar
-              Logger.d("NPanel", "  -> Default to center (no explicit anchor)")
 
-              // For horizontal bars: center horizontally
-              // For vertical bars: center horizontally in available space
-              if (root.barIsVertical) {
-                // Center in the space not occupied by the bar
-                if (root.barPosition === "left") {
-                  var availableStart = root.barMarginH + Style.barHeight
-                  var availableWidth = parent.width - availableStart - Style.marginL
-                  return availableStart + (availableWidth - width) / 2
+              // Standard anchor positioning
+              Logger.d("NPanel", "Fallback to standard anchor positioning")
+
+              if (root.panelAnchorHorizontalCenter) {
+                Logger.d("NPanel", "  -> Horizontal center")
+                calculatedX = (parent.width - width) / 2
+              } else if (root.effectivePanelAnchorRight) {
+                Logger.d("NPanel", "  -> Right anchor")
+                // When attached to right vertical bar, position next to bar (like useButtonPosition does)
+                if (root.attachedToBar && root.barIsVertical && root.barPosition === "right") {
+                  var rightBarEdge = parent.width - root.barMarginH - Style.barHeight
+                  calculatedX = rightBarEdge - width + 1 // +1 to eliminate gap
                 } else {
-                  // right
-                  var availableWidth = parent.width - root.barMarginH - Style.barHeight - Style.marginL
-                  return Style.marginL + (availableWidth - width) / 2
+                  calculatedX = parent.width - width - Style.marginL
+                }
+              } else if (root.effectivePanelAnchorLeft) {
+                Logger.d("NPanel", "  -> Left anchor")
+                // When attached to left vertical bar, position next to bar (like useButtonPosition does)
+                if (root.attachedToBar && root.barIsVertical && root.barPosition === "left") {
+                  var leftBarEdge = root.barMarginH + Style.barHeight
+                  calculatedX = leftBarEdge - 1 // -1 to eliminate gap
+                } else {
+                  calculatedX = Style.marginL
                 }
               } else {
-                // For horizontal bars: center horizontally, respect bar margins if attached
-                if (root.attachedToBar) {
-                  // When attached, respect bar bounds (like button position does)
-                  var cornerInset = Style.radiusL + (root.barFloating ? Style.radiusL : 0)
-                  var barLeftEdge = root.barMarginH + cornerInset
-                  var barRightEdge = parent.width - root.barMarginH - cornerInset
-                  var centeredX = (parent.width - width) / 2
-                  return Math.max(barLeftEdge, Math.min(centeredX, barRightEdge - width))
+                // No explicit anchor: default to centering on bar
+                Logger.d("NPanel", "  -> Default to center (no explicit anchor)")
+
+                // For horizontal bars: center horizontally
+                // For vertical bars: center horizontally in available space
+                if (root.barIsVertical) {
+                  // Center in the space not occupied by the bar
+                  if (root.barPosition === "left") {
+                    var availableStart = root.barMarginH + Style.barHeight
+                    var availableWidth = parent.width - availableStart - Style.marginL
+                    calculatedX = availableStart + (availableWidth - width) / 2
+                  } else {
+                    // right
+                    var availableWidth = parent.width - root.barMarginH - Style.barHeight - Style.marginL
+                    calculatedX = Style.marginL + (availableWidth - width) / 2
+                  }
                 } else {
-                  return (parent.width - width) / 2
+                  // For horizontal bars: center horizontally, respect bar margins if attached
+                  if (root.attachedToBar) {
+                    // When attached, respect bar bounds (like button position does)
+                    var cornerInset = Style.radiusL + (root.barFloating ? Style.radiusL : 0)
+                    var barLeftEdge = root.barMarginH + cornerInset
+                    var barRightEdge = parent.width - root.barMarginH - cornerInset
+                    var centeredX = (parent.width - width) / 2
+                    calculatedX = Math.max(barLeftEdge, Math.min(centeredX, barRightEdge - width))
+                  } else {
+                    calculatedX = (parent.width - width) / 2
+                  }
                 }
               }
             }
+
+            // Edge snapping: snap to screen edges if close (only when attached and bar is not floating)
+            if (root.attachedToBar && !root.barFloating && parent.width > 0 && width > 0) {
+              var leftEdgePos = root.barMarginH
+              var rightEdgePos = parent.width - root.barMarginH - width
+
+              // Snap to left edge if within snap distance
+              if (Math.abs(calculatedX - leftEdgePos) <= root.edgeSnapDistance) {
+                calculatedX = leftEdgePos
+              } // Snap to right edge if within snap distance
+              else if (Math.abs(calculatedX - rightEdgePos) <= root.edgeSnapDistance) {
+                calculatedX = rightEdgePos
+              }
+            }
+
+            return calculatedX
           }
 
           y: {
+            var calculatedY
+
             // If useButtonPosition is enabled, position panel relative to bar
             // Note: We check useButtonPosition, not buttonItem, because buttonItem may become invalid
             // after the source panel (e.g., ControlCenter) closes, but we still have valid position data
@@ -450,9 +486,9 @@ Item {
                   // Panel sits right at bar edge (inverted corners curve to the sides)
                   // Slide from the bar when opening
                   // Shift up by 1px to eliminate any gap between bar and panel
-                  return topBarEdge - slideOffset - 1
+                  calculatedY = topBarEdge - slideOffset - 1
                 } else {
-                  return topBarEdge + Style.marginM
+                  calculatedY = topBarEdge + Style.marginM
                 }
               } else if (root.barPosition === "bottom") {
                 // Panel above bottom bar
@@ -461,9 +497,9 @@ Item {
                   // Panel sits right at bar edge (inverted corners curve to the sides)
                   // Slide from the bar when opening
                   // Shift down by 1px to eliminate any gap between bar and panel
-                  return bottomBarEdge - height + slideOffset + 1
+                  calculatedY = bottomBarEdge - height + slideOffset + 1
                 } else {
-                  return bottomBarEdge - height - Style.marginM
+                  calculatedY = bottomBarEdge - height - Style.marginM
                 }
               } else if (root.barIsVertical) {
                 // For vertical bars, center panel on button Y position
@@ -481,83 +517,103 @@ Item {
                 } else {
                   panelY = Math.max(Style.marginL + extraPadding, Math.min(panelY, parent.height - height - Style.marginL - extraPadding))
                 }
-                return panelY
-              }
-            }
-
-            // Standard anchor positioning
-            // Calculate bar offset for detached panels - they should never overlap the bar
-            var barOffset = 0
-            if (!root.attachedToBar) {
-              // For detached panels, always account for bar position
-              if (root.barPosition === "top") {
-                barOffset = root.barMarginV + Style.barHeight + Style.marginM
-              } else if (root.barPosition === "bottom") {
-                barOffset = root.barMarginV + Style.barHeight + Style.marginM
+                calculatedY = panelY
               }
             } else {
-              // For attached panels with explicit anchors
-              if (root.effectivePanelAnchorTop && root.barPosition === "top") {
-                // When attached to top bar: position right at bar edge (like useButtonPosition does)
-                // Shift up by 1px to eliminate gap between bar and panel
-                return root.barMarginV + Style.barHeight - slideOffset - 1
-              } else if (root.effectivePanelAnchorBottom && root.barPosition === "bottom") {
-                // When attached to bottom bar: position right at bar edge
-                // Shift down by 1px to eliminate gap between bar and panel
-                return parent.height - root.barMarginV - Style.barHeight - height + slideOffset + 1
-              } else if (!root.hasExplicitVerticalAnchor) {
-                // No explicit vertical anchor AND attached: default to attaching to bar edge
+
+              // Standard anchor positioning
+              // Calculate bar offset for detached panels - they should never overlap the bar
+              var barOffset = 0
+              if (!root.attachedToBar) {
+                // For detached panels, always account for bar position
                 if (root.barPosition === "top") {
-                  // Attach to top bar
-                  return root.barMarginV + Style.barHeight - slideOffset - 1
+                  barOffset = root.barMarginV + Style.barHeight + Style.marginM
                 } else if (root.barPosition === "bottom") {
-                  // Attach to bottom bar
-                  return parent.height - root.barMarginV - Style.barHeight - height + slideOffset + 1
-                }
-                // For vertical bars with no explicit anchor: center vertically on bar
-                // This is handled in the else block below
-              }
-            }
-
-            if (root.panelAnchorVerticalCenter) {
-              return (parent.height - height) / 2
-            } else if (root.effectivePanelAnchorTop) {
-              return barOffset + Style.marginL
-            } else if (root.effectivePanelAnchorBottom) {
-              return parent.height - height - barOffset - Style.marginL
-            } else {
-              // No explicit vertical anchor
-              if (root.barIsVertical) {
-                // For vertical bars: center vertically on bar
-                if (root.attachedToBar) {
-                  // When attached, respect bar bounds
-                  var cornerInset = root.barFloating ? Style.radiusL * 2 : 0
-                  var barTopEdge = root.barMarginV + cornerInset
-                  var barBottomEdge = parent.height - root.barMarginV - cornerInset
-                  var centeredY = (parent.height - height) / 2
-                  return Math.max(barTopEdge, Math.min(centeredY, barBottomEdge - height))
-                } else {
-                  return (parent.height - height) / 2
+                  barOffset = root.barMarginV + Style.barHeight + Style.marginM
                 }
               } else {
-                // For horizontal bars: attach to bar edge by default
-                if (root.attachedToBar) {
+                // For attached panels with explicit anchors
+                if (root.effectivePanelAnchorTop && root.barPosition === "top") {
+                  // When attached to top bar: position right at bar edge (like useButtonPosition does)
+                  // Shift up by 1px to eliminate gap between bar and panel
+                  calculatedY = root.barMarginV + Style.barHeight - slideOffset - 1
+                } else if (root.effectivePanelAnchorBottom && root.barPosition === "bottom") {
+                  // When attached to bottom bar: position right at bar edge
+                  // Shift down by 1px to eliminate gap between bar and panel
+                  calculatedY = parent.height - root.barMarginV - Style.barHeight - height + slideOffset + 1
+                } else if (!root.hasExplicitVerticalAnchor) {
+                  // No explicit vertical anchor AND attached: default to attaching to bar edge
                   if (root.barPosition === "top") {
-                    return root.barMarginV + Style.barHeight - slideOffset - 1
+                    // Attach to top bar
+                    calculatedY = root.barMarginV + Style.barHeight - slideOffset - 1
                   } else if (root.barPosition === "bottom") {
-                    return parent.height - root.barMarginV - Style.barHeight - height + slideOffset + 1
+                    // Attach to bottom bar
+                    calculatedY = parent.height - root.barMarginV - Style.barHeight - height + slideOffset + 1
                   }
+                  // For vertical bars with no explicit anchor: fall through to center vertically on bar
                 }
-                // Detached or no bar position: use default positioning
-                if (root.barPosition === "top") {
-                  return barOffset + Style.marginL
-                } else if (root.barPosition === "bottom") {
-                  return Style.marginL
+              }
+
+              // Continue if calculatedY was already set above, or proceed with anchor positioning
+              if (calculatedY === undefined) {
+                if (root.panelAnchorVerticalCenter) {
+                  calculatedY = (parent.height - height) / 2
+                } else if (root.effectivePanelAnchorTop) {
+                  calculatedY = barOffset + Style.marginL
+                } else if (root.effectivePanelAnchorBottom) {
+                  calculatedY = parent.height - height - barOffset - Style.marginL
                 } else {
-                  return Style.marginL
+                  // No explicit vertical anchor
+                  if (root.barIsVertical) {
+                    // For vertical bars: center vertically on bar
+                    if (root.attachedToBar) {
+                      // When attached, respect bar bounds
+                      var cornerInset = root.barFloating ? Style.radiusL * 2 : 0
+                      var barTopEdge = root.barMarginV + cornerInset
+                      var barBottomEdge = parent.height - root.barMarginV - cornerInset
+                      var centeredY = (parent.height - height) / 2
+                      calculatedY = Math.max(barTopEdge, Math.min(centeredY, barBottomEdge - height))
+                    } else {
+                      calculatedY = (parent.height - height) / 2
+                    }
+                  } else {
+                    // For horizontal bars: attach to bar edge by default
+                    if (root.attachedToBar && !root.barIsVertical) {
+                      if (root.barPosition === "top") {
+                        calculatedY = root.barMarginV + Style.barHeight - slideOffset - 1
+                      } else if (root.barPosition === "bottom") {
+                        calculatedY = parent.height - root.barMarginV - Style.barHeight - height + slideOffset + 1
+                      }
+                    } else {
+                      // Detached or no bar position: use default positioning
+                      if (root.barPosition === "top") {
+                        calculatedY = barOffset + Style.marginL
+                      } else if (root.barPosition === "bottom") {
+                        calculatedY = Style.marginL
+                      } else {
+                        calculatedY = Style.marginL
+                      }
+                    }
+                  }
                 }
               }
             }
+
+            // Edge snapping: snap to screen edges if close (only when attached and bar is not floating)
+            if (root.attachedToBar && !root.barFloating && parent.height > 0 && height > 0) {
+              var topEdgePos = root.barMarginV
+              var bottomEdgePos = parent.height - root.barMarginV - height
+
+              // Snap to top edge if within snap distance
+              if (Math.abs(calculatedY - topEdgePos) <= root.edgeSnapDistance) {
+                calculatedY = topEdgePos
+              } // Snap to bottom edge if within snap distance
+              else if (Math.abs(calculatedY - bottomEdgePos) <= root.edgeSnapDistance) {
+                calculatedY = bottomEdgePos
+              }
+            }
+
+            return calculatedY
           }
 
           // MouseArea to catch clicks on the panel and prevent them from reaching the background

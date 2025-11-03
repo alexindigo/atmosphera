@@ -14,7 +14,7 @@ Singleton {
   readonly property alias data: adapter
   property bool isLoaded: false
   property bool directoriesCreated: false
-  property int settingsVersion: 16
+  property int settingsVersion: 17
   property bool isDebug: Quickshell.env("NOCTALIA_DEBUG") === "1"
 
   // Define our app directories
@@ -256,6 +256,7 @@ Singleton {
       property string transitionType: "random"
       property real transitionEdgeSmoothness: 0.05
       property list<var> monitors: []
+      property string panelPosition: "folow_bar"
     }
 
     // applauncher

@@ -15,11 +15,13 @@ ColumnLayout {
   }
 
   NComboBox {
-    id: launcherPosition
     label: I18n.tr("settings.launcher.settings.position.label")
     description: I18n.tr("settings.launcher.settings.position.description")
     Layout.fillWidth: true
     model: [{
+        "key": "follow_bar",
+        "name": I18n.tr("options.launcher.position.follow_bar")
+      }, {
         "key": "center",
         "name": I18n.tr("options.launcher.position.center")
       }, {

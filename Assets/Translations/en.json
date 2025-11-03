@@ -474,6 +474,10 @@
           "description": "Set a different wallpaper folder for each monitor.",
           "tooltip": "Browse for wallpaper folder"
         },
+        "selector-position": {
+          "label": "Position",
+          "description": "Choose where the wallpaper selector panel appears."
+        },
         "select-folder": "Select wallpaper folder",
         "select-monitor-folder": "Select monitor wallpaper folder"
       },
@@ -1500,7 +1504,8 @@
     },
     "launcher": {
       "position": {
-        "center": "Center (default)",
+        "follow_bar": "Follow bar (default)",
+        "center": "Center",
         "top_left": "Top left",
         "top_right": "Top right",
         "bottom_left": "Bottom left",

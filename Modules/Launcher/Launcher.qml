@@ -20,13 +20,23 @@ NPanel {
   panelKeyboardFocus: true // Needs Exclusive focus for text input
 
   // Positioning
-  readonly property string launcherPosition: Settings.data.appLauncher.position
-  panelAnchorHorizontalCenter: launcherPosition === "center" || launcherPosition.endsWith("_center")
-  panelAnchorVerticalCenter: launcherPosition === "center"
-  panelAnchorLeft: launcherPosition !== "center" && launcherPosition.endsWith("_left")
-  panelAnchorRight: launcherPosition !== "center" && launcherPosition.endsWith("_right")
-  panelAnchorBottom: launcherPosition.startsWith("bottom_")
-  panelAnchorTop: launcherPosition.startsWith("top_")
+  readonly property string panelPosition: {
+    if (Settings.data.appLauncher.position === "follow_bar") {
+      if (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") {
+        return `center_${Settings.data.bar.position}`
+      } else {
+        return `${Settings.data.bar.position}_center`
+      }
+    } else {
+      return Settings.data.appLauncher.position
+    }
+  }
+  panelAnchorHorizontalCenter: panelPosition === "center" || panelPosition.endsWith("_center")
+  panelAnchorVerticalCenter: panelPosition === "center"
+  panelAnchorLeft: panelPosition !== "center" && panelPosition.endsWith("_left")
+  panelAnchorRight: panelPosition !== "center" && panelPosition.endsWith("_right")
+  panelAnchorBottom: panelPosition.startsWith("bottom_")
+  panelAnchorTop: panelPosition.startsWith("top_")
 
   // Core state
   property string searchText: ""
