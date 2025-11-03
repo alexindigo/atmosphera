@@ -8,7 +8,15 @@ import qs.Commons
 Singleton {
   id: root
 
-  property bool shouldRun: BarService.hasAudioVisualizer || (PanelService.getPanel("controlCenterPanel") === PanelService.openedPanel) || PanelService.lockScreen.active
+
+  /**
+   * Cava runs if:
+   *   - Bar has an audio visualizer
+   *   - LockScreen is opened
+   *   - A control center is open
+   */
+  property bool shouldRun: BarService.hasAudioVisualizer || PanelService.lockScreen.active || (PanelService.openedPanel && PanelService.openedPanel.objectName.startsWith("controlCenterPanel"))
+
   property var values: Array(barsCount).fill(0)
   property int barsCount: 48
   property var config: ({

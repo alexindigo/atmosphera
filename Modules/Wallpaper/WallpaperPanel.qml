@@ -12,15 +12,87 @@ import "../../Helpers/FuzzySort.js" as FuzzySort
 NPanel {
   id: root
 
-  preferredWidth: 640 * Style.uiScaleRatio
-  preferredHeight: 480 * Style.uiScaleRatio
-  preferredWidthRatio: 0.4
-  preferredHeightRatio: 0.52
-  panelAnchorHorizontalCenter: true
-  panelAnchorVerticalCenter: true
-  panelKeyboardFocus: true
+  preferredWidth: 800 * Style.uiScaleRatio
+  preferredHeight: 600 * Style.uiScaleRatio
+  preferredWidthRatio: 0.5
+  preferredHeightRatio: 0.45
 
-  draggable: !PanelService.hasOpenedPopup
+  // Positioning - Use launcher position. This saves a setting...
+  readonly property string launcherPosition: Settings.data.appLauncher.position
+  panelAnchorHorizontalCenter: launcherPosition === "center" || launcherPosition.endsWith("_center")
+  panelAnchorVerticalCenter: launcherPosition === "center"
+  panelAnchorLeft: launcherPosition !== "center" && launcherPosition.endsWith("_left")
+  panelAnchorRight: launcherPosition !== "center" && launcherPosition.endsWith("_right")
+  panelAnchorBottom: launcherPosition.startsWith("bottom_")
+  panelAnchorTop: launcherPosition.startsWith("top_")
+
+  // panelAnchorHorizontalCenter: true
+  // panelAnchorVerticalCenter: true
+  panelKeyboardFocus: true // Needs Exclusive focus for text input (search)
+
+  // Store direct reference to content for instant access
+  property var contentItem: null
+
+  // Override keyboard handlers to enable grid navigation
+  function onDownPressed() {
+    if (!contentItem)
+      return
+    let view = contentItem.screenRepeater.itemAt(contentItem.currentScreenIndex)
+    if (view?.gridView) {
+      if (!view.gridView.activeFocus) {
+        view.gridView.forceActiveFocus()
+        if (view.gridView.currentIndex < 0) {
+          view.gridView.currentIndex = 0
+        }
+      } else {
+        view.gridView.moveCurrentIndexDown()
+      }
+    }
+  }
+
+  function onUpPressed() {
+    if (!contentItem)
+      return
+    let view = contentItem.screenRepeater.itemAt(contentItem.currentScreenIndex)
+    if (view?.gridView?.activeFocus) {
+      view.gridView.moveCurrentIndexUp()
+    }
+  }
+
+  function onLeftPressed() {
+    if (!contentItem)
+      return
+    let view = contentItem.screenRepeater.itemAt(contentItem.currentScreenIndex)
+    if (view?.gridView?.activeFocus) {
+      view.gridView.moveCurrentIndexLeft()
+    }
+  }
+
+  function onRightPressed() {
+    if (!contentItem)
+      return
+    let view = contentItem.screenRepeater.itemAt(contentItem.currentScreenIndex)
+    if (view?.gridView?.activeFocus) {
+      view.gridView.moveCurrentIndexRight()
+    }
+  }
+
+  function onReturnPressed() {
+    if (!contentItem)
+      return
+    let view = contentItem.screenRepeater.itemAt(contentItem.currentScreenIndex)
+    if (view?.gridView?.activeFocus) {
+      let gridView = view.gridView
+      if (gridView.currentIndex >= 0 && gridView.currentIndex < gridView.model.length) {
+        let path = gridView.model[gridView.currentIndex]
+        if (Settings.data.wallpaper.setWallpaperOnAllMonitors) {
+          WallpaperService.changeWallpaper(path, undefined)
+        } else {
+          WallpaperService.changeWallpaper(path, view.targetScreen.name)
+        }
+      }
+    }
+  }
 
   panelContent: Rectangle {
     id: wallpaperPanel
@@ -37,8 +109,30 @@ NPanel {
     }
     property var currentScreen: Quickshell.screens[currentScreenIndex]
     property string filterText: ""
+    property alias screenRepeater: screenRepeater
+
+    Component.onCompleted: {
+      root.contentItem = wallpaperPanel
+    }
 
     color: Color.transparent
+
+    // Focus management
+    Connections {
+      target: root
+      function onOpened() {
+        // Ensure contentItem is set
+        if (!root.contentItem) {
+          root.contentItem = wallpaperPanel
+        }
+        // Give initial focus to search input
+        Qt.callLater(() => {
+                       if (searchInput.inputItem) {
+                         searchInput.inputItem.forceActiveFocus()
+                       }
+                     })
+      }
+    }
 
     // Debounce timer for search
     Timer {
@@ -85,7 +179,7 @@ NPanel {
           tooltipText: I18n.tr("settings.wallpaper.settings.section.label")
           baseSize: Style.baseWidgetSize * 0.8
           onClicked: {
-            var settingsPanel = PanelService.getPanel("settingsPanel")
+            var settingsPanel = PanelService.getPanel("settingsPanel", screen)
             settingsPanel.requestedTab = SettingsPanel.Tab.Wallpaper
             settingsPanel.open()
           }
@@ -324,7 +418,7 @@ NPanel {
 
         model: filteredWallpapers
 
-        property int columns: 4
+        property int columns: 5
         property int itemSize: cellWidth
 
         cellWidth: Math.floor((width - leftMargin - rightMargin) / columns)

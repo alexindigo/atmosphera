@@ -166,6 +166,14 @@
         "enforce-minimum": {
           "label": "限制最小亮度为 1%",
           "description": "解决亮度为 0% 时部分显示器背光完全关闭的问题。"
+        },
+        "external-brightness": {
+          "label": "外部亮度支持",
+          "description": "启用 DDCUtil 支持，通过 DDC/CI 协议控制外部显示器的亮度。"
+        },
+        "brightness-unavailable": {
+          "ddc-disabled": "亮度控制不可用。启用“外部亮度支持”以控制此显示器的亮度。",
+          "generic": "此显示器无法使用亮度控制。"
         }
       },
       "night-light": {
@@ -226,13 +234,17 @@
         },
         "floating": {
           "label": "浮动状态栏",
-          "description": "将状态栏显示为浮动样式（类似于一个药丸）。注意：这会将屏幕边角移动到边缘。"
+          "description": "将工具栏显示为浮动的“药丸”形状。"
         },
         "margins": {
           "label": "边距",
           "description": "调整浮动状态栏周围的边距。",
           "vertical": "垂直",
           "horizontal": "水平"
+        },
+        "outer-corners": {
+          "description": "在栏上显示向外弯曲的角。",
+          "label": "外角"
         }
       },
       "widgets": {
@@ -584,6 +596,10 @@
           "foot": {
             "description": "写入 {filepath} 并重新加载",
             "description-missing": "需要安装 {app}"
+          },
+          "alacritty": {
+            "description": "写入 {filepath} 并重新加载",
+            "description-missing": "需要安装 {app}"
           }
         },
         "programs": {
@@ -677,7 +693,7 @@
           "description": "在日历面板中显示事件。"
         },
         "use-analog": {
-          "description": "在日历屏幕上显示一个模拟时钟。",
+          "description": "在日历窗口和锁定屏幕上显示模拟时钟。",
           "label": "使用模拟时钟样式"
         },
         "first-day-of-week": {
@@ -872,6 +888,14 @@
       "panels-attached-to-bar": {
         "description": "启用后，面板将以美观的倒角设计附加到栏上。",
         "label": "将面板连接到杆上"
+      },
+      "dim-desktop": {
+        "description": "当面板或菜单打开时，桌面变暗。",
+        "label": "昏暗的桌面"
+      },
+      "shadows": {
+        "description": "启用条形图和面板下的阴影。",
+        "label": "阴影"
       }
     },
     "lock-screen": {

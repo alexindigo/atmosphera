@@ -20,5 +20,5 @@ NIconButton {
   colorFg: Color.mOnSurface
   colorBorder: Color.transparent
   colorBorderHover: Color.transparent
-  onClicked: PanelService.getPanel("wallpaperPanel")?.toggle(this)
+  onClicked: PanelService.getPanel("wallpaperPanel", screen)?.toggle(this)
 }

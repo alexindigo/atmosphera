@@ -56,7 +56,7 @@ NIconButton {
   colorBorderHover: Color.transparent
 
   onClicked: {
-    var panel = PanelService.getPanel("notificationHistoryPanel")
+    var panel = PanelService.getPanel("notificationHistoryPanel", screen)
     panel?.toggle(this)
   }
 

@@ -10,7 +10,6 @@ import qs.Widgets
 NPanel {
   id: root
 
-  panelKeyboardFocus: true
   preferredWidth: Math.round(460 * Style.uiScaleRatio)
   preferredHeight: {
     var height = 0

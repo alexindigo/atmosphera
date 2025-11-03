@@ -6,9 +6,10 @@ import qs.Commons
 Item {
   id: root
 
-  property string widgetId: ""
-  property var widgetProps: ({})
-  property string screenName: widgetProps && widgetProps.screen ? widgetProps.screen.name : ""
+  required property string widgetId
+  required property var widgetScreen
+  required property var widgetProps
+
   property string section: widgetProps && widgetProps.section || ""
   property int sectionIndex: widgetProps && widgetProps.sectionWidgetIndex || 0
 
@@ -23,30 +24,29 @@ Item {
   Loader {
     id: loader
     anchors.fill: parent
-    active: widgetId !== ""
     asynchronous: false
-    sourceComponent: {
-      if (!active) {
-        return null
-      }
-      return ControlCenterWidgetRegistry.getWidget(widgetId)
-    }
+    sourceComponent: ControlCenterWidgetRegistry.getWidget(widgetId)
 
     onLoaded: {
-      if (item && widgetProps) {
-        // Apply properties to loaded widget
-        for (var prop in widgetProps) {
-          if (item.hasOwnProperty(prop)) {
-            item[prop] = widgetProps[prop]
-          }
+      if (!item)
+        return
+
+      // Apply properties to loaded widget
+      for (var prop in widgetProps) {
+        if (item.hasOwnProperty(prop)) {
+          item[prop] = widgetProps[prop]
         }
       }
 
+      // Set screen property
+      if (item.hasOwnProperty("screen")) {
+        item.screen = widgetScreen
+      }
+
+      // Call custom onLoaded if it exists
       if (item.hasOwnProperty("onLoaded")) {
         item.onLoaded()
       }
-
-      //Logger.i("ControlCenterWidgetLoader", "Loaded", widgetId, "on screen", item.screen.name)
     }
 
     Component.onDestruction: {
@@ -56,8 +56,8 @@ Item {
   }
 
   // Error handling
-  onWidgetIdChanged: {
-    if (widgetId && !ControlCenterWidgetRegistry.hasWidget(widgetId)) {
+  Component.onCompleted: {
+    if (!ControlCenterWidgetRegistry.hasWidget(widgetId)) {
       Logger.w("ControlCenterWidgetLoader", "Widget not found in registry:", widgetId)
     }
   }

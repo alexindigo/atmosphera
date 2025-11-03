@@ -29,5 +29,5 @@ NIconButtonHot {
   }
 
   tooltipText: I18n.tr("quickSettings.wifi.tooltip.action")
-  onClicked: PanelService.getPanel("wifiPanel")?.toggle(this)
+  onClicked: PanelService.getPanel("wifiPanel", screen)?.toggle(this)
 }

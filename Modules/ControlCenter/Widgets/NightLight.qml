@@ -25,7 +25,7 @@ NIconButtonHot {
   }
 
   onRightClicked: {
-    var settingsPanel = PanelService.getPanel("settingsPanel")
+    var settingsPanel = PanelService.getPanel("settingsPanel", screen)
     settingsPanel.requestedTab = SettingsPanel.Tab.Display
     settingsPanel.open()
   }

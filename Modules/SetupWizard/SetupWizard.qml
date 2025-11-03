@@ -14,16 +14,16 @@ NPanel {
   preferredHeight: 600 * Style.uiScaleRatio
   preferredWidthRatio: 0.4
   preferredHeightRatio: 0.6
+
   panelAnchorHorizontalCenter: true
   panelAnchorVerticalCenter: true
-  panelKeyboardFocus: true
-
-  // Prevent closing during setup
-  backgroundClickEnabled: false
-  draggable: false
 
   property int currentStep: 0
   property int totalSteps: 5
+
+  // Override Escape handler to prevent closing the setup wizard
+  function onEscapePressed() {// Do nothing - prevent ESC from closing the setup wizard
+  }
 
   // Setup wizard data
   property string selectedWallpaperDirectory: Settings.defaultWallpapersDirectory
@@ -41,17 +41,6 @@ NPanel {
         anchors.fill: parent
         anchors.margins: Style.marginXL
         spacing: Style.marginL
-
-        // Override ESC key to prevent closing during setup
-        Shortcut {
-          sequences: ["Escape"]
-          enabled: root.active
-          onActivated: {
-
-            // Do nothing - prevent ESC from closing the setup wizard
-          }
-          context: Qt.WindowShortcut
-        }
 
         // Step content - takes most of the space
         Item {

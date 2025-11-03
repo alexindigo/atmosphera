@@ -13,7 +13,6 @@ NPanel {
 
   preferredWidth: 420 * Style.uiScaleRatio
   preferredHeight: 500 * Style.uiScaleRatio
-  panelKeyboardFocus: true
 
   panelContent: Rectangle {
     color: Color.transparent

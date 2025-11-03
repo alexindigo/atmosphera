@@ -75,6 +75,78 @@ ShellRoot {
     }
   }
 
+  // ------------------------------
+  // Define panel components (must be at ShellRoot level for NFullScreenWindow access)
+  Component {
+    id: launcherComponent
+    Launcher {}
+  }
+
+  Component {
+    id: controlCenterComponent
+    ControlCenterPanel {}
+  }
+
+  Component {
+    id: calendarComponent
+    CalendarPanel {}
+  }
+
+  Component {
+    id: settingsComponent
+    SettingsPanel {}
+  }
+
+  Component {
+    id: directWidgetSettingsComponent
+    DirectWidgetSettingsPanel {}
+  }
+
+  Component {
+    id: notificationHistoryComponent
+    NotificationHistoryPanel {}
+  }
+
+  Component {
+    id: sessionMenuComponent
+    SessionMenu {}
+  }
+
+  Component {
+    id: wifiComponent
+    WiFiPanel {}
+  }
+
+  Component {
+    id: bluetoothComponent
+    BluetoothPanel {}
+  }
+
+  Component {
+    id: audioComponent
+    AudioPanel {}
+  }
+
+  Component {
+    id: wallpaperComponent
+    WallpaperPanel {}
+  }
+
+  Component {
+    id: batteryComponent
+    BatteryPanel {}
+  }
+
+  Component {
+    id: setupWizardComponent
+    SetupWizard {}
+  }
+
+  Component {
+    id: barComp
+    Bar {}
+  }
+
   Loader {
     active: i18nLoaded && settingsLoaded
 
@@ -99,8 +171,7 @@ ShellRoot {
 
       Background {}
       Overview {}
-      ScreenCorners {}
-      Bar {}
+
       Dock {}
 
       Notification {
@@ -121,81 +192,109 @@ ShellRoot {
       // IPCService is treated as a service
       // but it's actually an Item that needs to exists in the shell.
       IPCService {}
-
-      // ------------------------------
-      // All the NPanels
-      Launcher {
-        id: launcherPanel
-        objectName: "launcherPanel"
-      }
-
-      ControlCenterPanel {
-        id: controlCenterPanel
-        objectName: "controlCenterPanel"
-      }
-
-      CalendarPanel {
-        id: calendarPanel
-        objectName: "calendarPanel"
-      }
-
-      SettingsPanel {
-        id: settingsPanel
-        objectName: "settingsPanel"
-      }
-
-      DirectWidgetSettingsPanel {
-        id: directWidgetSettingsPanel
-        objectName: "directWidgetSettingsPanel"
-      }
-
-      NotificationHistoryPanel {
-        id: notificationHistoryPanel
-        objectName: "notificationHistoryPanel"
-      }
-
-      SessionMenu {
-        id: sessionMenuPanel
-        objectName: "sessionMenuPanel"
-      }
-
-      WiFiPanel {
-        id: wifiPanel
-        objectName: "wifiPanel"
-      }
-
-      BluetoothPanel {
-        id: bluetoothPanel
-        objectName: "bluetoothPanel"
-      }
-
-      AudioPanel {
-        id: audioPanel
-        objectName: "audioPanel"
-      }
-
-      WallpaperPanel {
-        id: wallpaperPanel
-        objectName: "wallpaperPanel"
-      }
-
-      BatteryPanel {
-        id: batteryPanel
-        objectName: "batteryPanel"
-      }
     }
   }
 
   // ------------------------------
-  // Setup Wizard
-  Loader {
-    id: setupWizardLoader
-    active: false
-    asynchronous: true
-    sourceComponent: SetupWizard {}
-    onLoaded: {
-      if (setupWizardLoader.item && setupWizardLoader.item.open) {
-        setupWizardLoader.item.open()
+  // NFullScreenWindow for each screen (manages bar + all panels)
+  // Wrapped in Loader to optimize memory - only loads when screen needs it
+  Variants {
+    model: Quickshell.screens
+    delegate: Item {
+      required property ShellScreen modelData
+
+      property bool shouldBeActive: {
+        if (!i18nLoaded || !settingsLoaded)
+          return false
+        if (!BarService.isVisible)
+          return false
+        if (!modelData || !modelData.name)
+          return false
+
+        var monitors = Settings.data.bar.monitors || []
+        var result = monitors.length === 0 || monitors.includes(modelData.name)
+
+        Logger.d("Shell", "NFullScreenWindow Loader for", modelData?.name, "- shouldBeActive:", result, "- monitors:", JSON.stringify(monitors))
+        return result
+      }
+
+      property bool windowLoaded: false
+
+      Loader {
+        id: windowLoader
+        active: parent.shouldBeActive
+        asynchronous: false
+
+        property ShellScreen loaderScreen: modelData
+
+        onLoaded: {
+          // Signal that window is loaded so exclusion zone can be created
+          parent.windowLoaded = true
+        }
+
+        sourceComponent: NFullScreenWindow {
+          screen: windowLoader.loaderScreen
+
+          // Register all panel components
+          panelComponents: [{
+              "id": "launcherPanel",
+              "component": launcherComponent
+            }, {
+              "id": "controlCenterPanel",
+              "component": controlCenterComponent
+            }, {
+              "id": "calendarPanel",
+              "component": calendarComponent
+            }, {
+              "id": "settingsPanel",
+              "component": settingsComponent
+            }, {
+              "id": "directWidgetSettingsPanel",
+              "component": directWidgetSettingsComponent
+            }, {
+              "id": "notificationHistoryPanel",
+              "component": notificationHistoryComponent
+            }, {
+              "id": "sessionMenuPanel",
+              "component": sessionMenuComponent
+            }, {
+              "id": "wifiPanel",
+              "component": wifiComponent
+            }, {
+              "id": "bluetoothPanel",
+              "component": bluetoothComponent
+            }, {
+              "id": "audioPanel",
+              "component": audioComponent
+            }, {
+              "id": "wallpaperPanel",
+              "component": wallpaperComponent
+            }, {
+              "id": "batteryPanel",
+              "component": batteryComponent
+            }, {
+              "id": "setupWizardPanel",
+              "component": setupWizardComponent
+            }]
+
+          // Bar component
+          barComponent: barComp
+        }
+      }
+
+      // BarExclusionZone - created after NFullScreenWindow has fully loaded
+      // Must also be disabled when bar is disabled (follows shouldBeActive)
+      Loader {
+        active: parent.windowLoaded && parent.shouldBeActive
+        asynchronous: false
+
+        sourceComponent: BarExclusionZone {
+          screen: modelData
+        }
+
+        onLoaded: {
+          Logger.d("Shell", "BarExclusionZone created for", modelData?.name)
+        }
       }
     }
   }
@@ -224,7 +323,21 @@ ShellRoot {
     }
 
     if (Settings.data.settingsVersion >= Settings.settingsVersion) {
-      setupWizardLoader.active = true
+      // Open Setup Wizard as a panel in the same windowing system as Settings/ControlCenter
+      if (Quickshell.screens.length > 0) {
+        var targetScreen = Quickshell.screens[0]
+        var setupPanel = PanelService.getPanel("setupWizardPanel", targetScreen)
+        if (setupPanel) {
+          setupPanel.open()
+        } else {
+          // If not yet loaded, ensure it loads and try again shortly
+          Qt.callLater(() => {
+                         var sp = PanelService.getPanel("setupWizardPanel", targetScreen)
+                         if (sp)
+                         sp.open()
+                       })
+        }
+      }
     } else {
       Settings.data.setupCompleted = true
     }

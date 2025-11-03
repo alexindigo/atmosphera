@@ -279,7 +279,6 @@ Rectangle {
 
     function open() {
       visible = true
-      PanelService.willOpenPanel(trayPanel)
     }
 
     function close() {

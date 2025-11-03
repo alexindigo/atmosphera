@@ -166,6 +166,14 @@
         "enforce-minimum": {
           "label": "Forzar brillo mínimo (1%)",
           "description": "Resuelve el problema de la retroiluminación que se apaga completamente en algunas pantallas al 0% de brillo."
+        },
+        "external-brightness": {
+          "label": "Soporte de brillo externo",
+          "description": "Habilitar soporte DDCUtil para controlar el brillo en pantallas externas mediante el protocolo DDC/CI."
+        },
+        "brightness-unavailable": {
+          "ddc-disabled": "Control de brillo no disponible. Habilita \"Soporte de brillo externo\" para controlar el brillo de esta pantalla.",
+          "generic": "El control de brillo no está disponible para esta pantalla."
         }
       },
       "night-light": {
@@ -226,13 +234,17 @@
         },
         "floating": {
           "label": "Barra flotante",
-          "description": "Muestra la barra como una 'píldora' flotante. Nota: Esto moverá las esquinas de la pantalla a los bordes."
+          "description": "Muestra la barra como una 'píldora' flotante."
         },
         "margins": {
           "label": "Márgenes",
           "description": "Ajusta los márgenes alrededor de la barra flotante.",
           "vertical": "Vertical",
           "horizontal": "Horizontal"
+        },
+        "outer-corners": {
+          "description": "Muestra esquinas curvadas hacia afuera en la barra.",
+          "label": "Esquinas exteriores"
         }
       },
       "widgets": {
@@ -584,6 +596,10 @@
           "foot": {
             "description": "Escribir {filepath} y recargar",
             "description-missing": "Requiere que {app} esté instalado"
+          },
+          "alacritty": {
+            "description": "Escribe {filepath} y recarga",
+            "description-missing": "Requiere que {app} esté instalado/a."
           }
         },
         "programs": {
@@ -677,7 +693,7 @@
           "description": "Mostrar eventos en el panel del calendario."
         },
         "use-analog": {
-          "description": "Mostrar un reloj de estilo analógico en la pantalla del calendario.",
+          "description": "Mostrar un reloj de estilo analógico en la ventana del calendario y en la pantalla de bloqueo.",
           "label": "Usar reloj de estilo analógico"
         },
         "first-day-of-week": {
@@ -872,6 +888,14 @@
       "panels-attached-to-bar": {
         "description": "Cuando está habilitado, los paneles se adjuntarán a la barra con un hermoso diseño de esquina invertida.",
         "label": "Adjuntar paneles a la barra"
+      },
+      "dim-desktop": {
+        "description": "Atenuar el escritorio cuando los paneles o menús estén abiertos.",
+        "label": "Dim escritorio"
+      },
+      "shadows": {
+        "description": "Habilita sombras paralelas debajo de las barras y los paneles.",
+        "label": "Sombras paralelas"
       }
     },
     "lock-screen": {
