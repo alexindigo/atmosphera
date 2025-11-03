@@ -329,7 +329,7 @@ Item {
 
     // Single monitor setup can execute immediately
     if (Quickshell.screens.length === 1) {
-      pendingCallback(Quickshell.screens[0])
+      callback(Quickshell.screens[0])
     } else {
       // Multi-monitors setup needs to start async detection
       detectedScreen = null
