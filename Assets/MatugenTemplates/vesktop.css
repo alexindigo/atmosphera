@@ -182,3 +182,19 @@ h3[class*="postTitleText"]:hover {
     color: var(--text-2) !important;
     opacity: 1 !important;
 }
+
+/* Improve tooltip readability */
+[class*="tooltip"],
+[class*="tooltip"] *,
+[role="tooltip"],
+[role="tooltip"] * {
+    color: var(--text-2) !important;
+}
+
+[class*="tooltipText"],
+[class*="tooltipContent"],
+[class*="tooltip"] span,
+[class*="tooltip"] div {
+    color: var(--text-2) !important;
+    opacity: 1 !important;
+}
