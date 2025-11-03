@@ -117,12 +117,6 @@ PanelWindow {
     }
   }
 
-  // Also update mask when isPanelOpen changes (defensive)
-  onIsPanelOpenChanged: {
-    Logger.d("NFullScreenWindow", "isPanelOpen changed to:", isPanelOpen)
-    Qt.callLater(() => root.updateMask())
-  }
-
   // Background region - for closing panels when clicking outside (separate from mask)
   Region {
     id: backgroundMaskRegion

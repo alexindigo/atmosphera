@@ -236,18 +236,64 @@ Item {
 
           // Inverted corners based on bar attachment
           // When attached to bar AND effectively anchored to it, the corner(s) touching the bar should be inverted
-          topLeftInverted: root.attachedToBar && ((root.barPosition === "top" && !root.barIsVertical && root.effectivePanelAnchorTop) || (root.barPosition === "left" && root.barIsVertical && root.effectivePanelAnchorLeft))
-          topRightInverted: root.attachedToBar && ((root.barPosition === "top" && !root.barIsVertical && root.effectivePanelAnchorTop) || (root.barPosition === "right" && root.barIsVertical && root.effectivePanelAnchorRight))
-          bottomLeftInverted: root.attachedToBar && ((root.barPosition === "bottom" && !root.barIsVertical && root.effectivePanelAnchorBottom) || (root.barPosition === "left" && root.barIsVertical && root.effectivePanelAnchorLeft))
-          bottomRightInverted: root.attachedToBar && ((root.barPosition === "bottom" && !root.barIsVertical && root.effectivePanelAnchorBottom) || (root.barPosition === "right" && root.barIsVertical && root.effectivePanelAnchorRight))
+          // Also invert corners when touching screen edges (non-floating bar only)
+          topLeftInverted: {
+            // Bar attachment
+            var barInverted = root.attachedToBar && ((root.barPosition === "top" && !root.barIsVertical && root.effectivePanelAnchorTop) || (root.barPosition === "left" && root.barIsVertical && root.effectivePanelAnchorLeft))
+            // Edge contact: top-left corner inverts when touching left edge (for horizontal bars) or top edge (for vertical bars)
+            var edgeInverted = (touchingLeftEdge && !root.barIsVertical) || (touchingTopEdge && root.barIsVertical)
+            return barInverted || edgeInverted
+          }
+          topRightInverted: {
+            var barInverted = root.attachedToBar && ((root.barPosition === "top" && !root.barIsVertical && root.effectivePanelAnchorTop) || (root.barPosition === "right" && root.barIsVertical && root.effectivePanelAnchorRight))
+            // Edge contact: top-right corner inverts when touching right edge (for horizontal bars) or top edge (for vertical bars)
+            var edgeInverted = (touchingRightEdge && !root.barIsVertical) || (touchingTopEdge && root.barIsVertical)
+            return barInverted || edgeInverted
+          }
+          bottomLeftInverted: {
+            var barInverted = root.attachedToBar && ((root.barPosition === "bottom" && !root.barIsVertical && root.effectivePanelAnchorBottom) || (root.barPosition === "left" && root.barIsVertical && root.effectivePanelAnchorLeft))
+            // Edge contact: bottom-left corner inverts when touching left edge (for horizontal bars) or bottom edge (for vertical bars)
+            var edgeInverted = (touchingLeftEdge && !root.barIsVertical) || (touchingBottomEdge && root.barIsVertical)
+            return barInverted || edgeInverted
+          }
+          bottomRightInverted: {
+            var barInverted = root.attachedToBar && ((root.barPosition === "bottom" && !root.barIsVertical && root.effectivePanelAnchorBottom) || (root.barPosition === "right" && root.barIsVertical && root.effectivePanelAnchorRight))
+            // Edge contact: bottom-right corner inverts when touching right edge (for horizontal bars) or bottom edge (for vertical bars)
+            var edgeInverted = (touchingRightEdge && !root.barIsVertical) || (touchingBottomEdge && root.barIsVertical)
+            return barInverted || edgeInverted
+          }
 
-          // Set inverted corner direction based on which edge touches the bar
-          // For horizontal bars (top/bottom): left/right edges touch bar → horizontal curves
-          // For vertical bars (left/right): top/bottom edges touch bar → vertical curves
-          topLeftInvertedDirection: root.barIsVertical ? "vertical" : "horizontal"
-          topRightInvertedDirection: root.barIsVertical ? "vertical" : "horizontal"
-          bottomLeftInvertedDirection: root.barIsVertical ? "vertical" : "horizontal"
-          bottomRightInvertedDirection: root.barIsVertical ? "vertical" : "horizontal"
+          // Set inverted corner direction based on which edge touches
+          // Bar edges: horizontal bars → horizontal curves, vertical bars → vertical curves
+          // Screen edges: opposite - left/right edges → vertical curves, top/bottom edges → horizontal curves
+          topLeftInvertedDirection: {
+            if (touchingLeftEdge && !root.barIsVertical)
+              return "vertical"
+            if (touchingTopEdge && root.barIsVertical)
+              return "horizontal"
+            return root.barIsVertical ? "vertical" : "horizontal"
+          }
+          topRightInvertedDirection: {
+            if (touchingRightEdge && !root.barIsVertical)
+              return "vertical"
+            if (touchingTopEdge && root.barIsVertical)
+              return "horizontal"
+            return root.barIsVertical ? "vertical" : "horizontal"
+          }
+          bottomLeftInvertedDirection: {
+            if (touchingLeftEdge && !root.barIsVertical)
+              return "vertical"
+            if (touchingBottomEdge && root.barIsVertical)
+              return "horizontal"
+            return root.barIsVertical ? "vertical" : "horizontal"
+          }
+          bottomRightInvertedDirection: {
+            if (touchingRightEdge && !root.barIsVertical)
+              return "vertical"
+            if (touchingBottomEdge && root.barIsVertical)
+              return "horizontal"
+            return root.barIsVertical ? "vertical" : "horizontal"
+          }
           width: {
             var w
             // Priority 1: Content-driven size (dynamic)
@@ -280,6 +326,12 @@ Item {
 
           // Animation offset for slide effect on bar-attached panels
           readonly property real slideOffset: root.attachedToBar ? (1 - root.animationProgress) * 40 : 0
+
+          // Detect if panel is touching screen edges (only when bar is not floating)
+          readonly property bool touchingLeftEdge: !root.barFloating && root.attachedToBar && x <= (root.barMarginH + 1)
+          readonly property bool touchingRightEdge: !root.barFloating && root.attachedToBar && (x + width) >= (parent.width - root.barMarginH - 1)
+          readonly property bool touchingTopEdge: !root.barFloating && root.attachedToBar && y <= (root.barMarginV + 1)
+          readonly property bool touchingBottomEdge: !root.barFloating && root.attachedToBar && (y + height) >= (parent.height - root.barMarginV - 1)
 
           // Position the panel using explicit x/y coordinates (no anchors)
           // This makes coordinates clearer for the click-through mask system
@@ -322,8 +374,8 @@ Item {
                 // When attached, panel should not extend beyond bar edges
                 if (root.attachedToBar) {
                   // Inverted corners with horizontal direction extend left/right by radiusL
-                  // When bar is floating, it also has rounded corners, so we need extra inset
-                  var cornerInset = Style.radiusL + (root.barFloating ? Style.radiusL : 0)
+                  // When bar is floating, it also has rounded corners, so we need extra insets
+                  var cornerInset = root.barFloating ? Style.radiusL * 2 : 0
                   var barLeftEdge = root.barMarginH + cornerInset
                   var barRightEdge = parent.width - root.barMarginH - cornerInset
                   panelX = Math.max(barLeftEdge, Math.min(panelX, barRightEdge - width))
@@ -410,7 +462,7 @@ Item {
                 // For vertical bars, center panel on button Y position
                 var panelY = root.buttonPosition.y + root.buttonHeight / 2 - height / 2
                 // Clamp to bar bounds (account for floating bar margins and inverted corners)
-                var extraPadding = root.attachedToBar ? Style.radiusL : 0
+                var extraPadding = (root.attachedToBar && root.barFloating) ? Style.radiusL : 0
                 if (root.attachedToBar) {
                   // When attached, panel should not extend beyond bar edges (accounting for floating margins)
                   // Inverted corners with vertical direction extend up/down by radiusL
@@ -472,7 +524,7 @@ Item {
                 // For vertical bars: center vertically on bar
                 if (root.attachedToBar) {
                   // When attached, respect bar bounds
-                  var cornerInset = Style.radiusL + (root.barFloating ? Style.radiusL : 0)
+                  var cornerInset = root.barFloating ? Style.radiusL * 2 : 0
                   var barTopEdge = root.barMarginV + cornerInset
                   var barBottomEdge = parent.height - root.barMarginV - cornerInset
                   var centeredY = (parent.height - height) / 2
