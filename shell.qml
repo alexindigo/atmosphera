@@ -233,52 +233,40 @@ ShellRoot {
           // Register all panel components
           panelComponents: [{
               "id": "launcherPanel",
-              "component": launcherComponent,
-              "zIndex": 50
+              "component": launcherComponent
             }, {
               "id": "controlCenterPanel",
-              "component": controlCenterComponent,
-              "zIndex": 50
+              "component": controlCenterComponent
             }, {
               "id": "calendarPanel",
-              "component": calendarComponent,
-              "zIndex": 50
+              "component": calendarComponent
             }, {
               "id": "settingsPanel",
-              "component": settingsComponent,
-              "zIndex": 50
+              "component": settingsComponent
             }, {
               "id": "directWidgetSettingsPanel",
-              "component": directWidgetSettingsComponent,
-              "zIndex": 50
+              "component": directWidgetSettingsComponent
             }, {
               "id": "notificationHistoryPanel",
-              "component": notificationHistoryComponent,
-              "zIndex": 50
+              "component": notificationHistoryComponent
             }, {
               "id": "sessionMenuPanel",
-              "component": sessionMenuComponent,
-              "zIndex": 50
+              "component": sessionMenuComponent
             }, {
               "id": "wifiPanel",
-              "component": wifiComponent,
-              "zIndex": 50
+              "component": wifiComponent
             }, {
               "id": "bluetoothPanel",
-              "component": bluetoothComponent,
-              "zIndex": 50
+              "component": bluetoothComponent
             }, {
               "id": "audioPanel",
-              "component": audioComponent,
-              "zIndex": 50
+              "component": audioComponent
             }, {
               "id": "wallpaperPanel",
-              "component": wallpaperComponent,
-              "zIndex": 50
+              "component": wallpaperComponent
             }, {
               "id": "batteryPanel",
-              "component": batteryComponent,
-              "zIndex": 50
+              "component": batteryComponent
             }]
 
           // Bar component

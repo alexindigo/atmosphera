@@ -49,7 +49,7 @@ Item {
     sourceComponent: Item {
       anchors.fill: parent
 
-      // Background fill with shadow
+      // Background fill
       NShapedRectangle {
         id: bar
 
@@ -79,24 +79,6 @@ Item {
 
         // No border on the bar
         borderWidth: 0
-
-        // Shadow configuration
-        shadowEnabled: true
-        shadowBlur: 0.5
-        // Fade shadow progressively when a panel is attached to the bar to avoid visual disconnection
-        // shadowOpacity: {
-        //   if (PanelService.openedPanel && PanelService.openedPanel.attachedToBar) {
-        //     // Fade shadow out as panel opens (animationProgress goes from 0 to 1)
-        //     return 1.0 - PanelService.openedPanel.animationProgress
-        //   }
-        //   return 1.0
-        // }
-        Behavior on shadowOpacity {
-          NumberAnimation {
-            duration: Style.animationFast
-            easing.type: Easing.OutCubic
-          }
-        }
 
         MouseArea {
           anchors.fill: parent

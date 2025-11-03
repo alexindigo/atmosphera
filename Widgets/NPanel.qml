@@ -266,7 +266,7 @@ Item {
           }
 
           // Animation offset for slide effect on bar-attached panels
-          readonly property real slideOffset: root.attachedToBar ? (1 - root.animationProgress) * 20 : 0
+          readonly property real slideOffset: root.attachedToBar ? (1 - root.animationProgress) * 40 : 0
 
           // Position the panel using explicit x/y coordinates (no anchors)
           // This makes coordinates clearer for the click-through mask system

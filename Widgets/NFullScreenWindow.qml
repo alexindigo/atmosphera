@@ -15,6 +15,16 @@ PanelWindow {
   required property var barComponent
   required property var panelComponents
 
+  // Shadow properties
+  property bool shadowEnabled: true
+  property real shadowOpacity: 1.0
+  property real shadowBlur: 1.0
+  property real shadowHorizontalOffset: 2
+  property real shadowVerticalOffset: 3
+
+  property color black: "#000000"
+  property color white: "#ffffff"
+
   Component.onCompleted: {
     Logger.d("NFullScreenWindow", "Initialized for screen:", screen?.name, "- Dimensions:", screen?.width, "x", screen?.height, "- Position:", screen?.x, ",", screen?.y)
   }
@@ -182,6 +192,23 @@ PanelWindow {
     width: root.width
     height: root.height
 
+    // Apply shadow effect
+    layer.enabled: root.shadowEnabled
+    layer.smooth: true
+    // layer.textureSize: {
+    //   var dpr = CompositorService.getDisplayScale(screen.name)
+    //   return Qt.size(width * dpr, height * dpr)
+    // }
+    layer.effect: MultiEffect {
+      shadowEnabled: root.shadowEnabled
+      shadowOpacity: root.shadowOpacity
+      shadowHorizontalOffset: root.shadowHorizontalOffset
+      shadowVerticalOffset: root.shadowVerticalOffset
+      shadowColor: black
+      blur: root.shadowBlur
+      blurMax: 32
+    }
+
     // Screen corners (integrated to avoid separate PanelWindow)
     // Always positioned at actual screen edges
     Loader {
@@ -195,7 +222,7 @@ PanelWindow {
         id: cornersRoot
         anchors.fill: parent
 
-        property color cornerColor: Settings.data.general.forceBlackScreenCorners ? Qt.rgba(0, 0, 0, 1) : Qt.alpha(Color.mSurface, Settings.data.bar.backgroundOpacity)
+        property color cornerColor: Settings.data.general.forceBlackScreenCorners ? black : Qt.alpha(Color.mSurface, Settings.data.bar.backgroundOpacity)
         property real cornerRadius: Style.screenRadius
         property real cornerSize: Style.screenRadius
 
@@ -220,7 +247,7 @@ PanelWindow {
             ctx.fillStyle = Qt.rgba(cornersRoot.cornerColor.r, cornersRoot.cornerColor.g, cornersRoot.cornerColor.b, cornersRoot.cornerColor.a)
             ctx.fillRect(0, 0, width, height)
             ctx.globalCompositeOperation = "destination-out"
-            ctx.fillStyle = "#ffffff"
+            ctx.fillStyle = white
             ctx.beginPath()
             ctx.arc(width, height, cornersRoot.cornerRadius, 0, 2 * Math.PI)
             ctx.fill()
@@ -253,7 +280,7 @@ PanelWindow {
             ctx.fillStyle = Qt.rgba(cornersRoot.cornerColor.r, cornersRoot.cornerColor.g, cornersRoot.cornerColor.b, cornersRoot.cornerColor.a)
             ctx.fillRect(0, 0, width, height)
             ctx.globalCompositeOperation = "destination-out"
-            ctx.fillStyle = "#ffffff"
+            ctx.fillStyle = white
             ctx.beginPath()
             ctx.arc(0, height, cornersRoot.cornerRadius, 0, 2 * Math.PI)
             ctx.fill()
@@ -286,7 +313,7 @@ PanelWindow {
             ctx.fillStyle = Qt.rgba(cornersRoot.cornerColor.r, cornersRoot.cornerColor.g, cornersRoot.cornerColor.b, cornersRoot.cornerColor.a)
             ctx.fillRect(0, 0, width, height)
             ctx.globalCompositeOperation = "destination-out"
-            ctx.fillStyle = "#ffffff"
+            ctx.fillStyle = white
             ctx.beginPath()
             ctx.arc(width, 0, cornersRoot.cornerRadius, 0, 2 * Math.PI)
             ctx.fill()
@@ -319,7 +346,7 @@ PanelWindow {
             ctx.fillStyle = Qt.rgba(cornersRoot.cornerColor.r, cornersRoot.cornerColor.g, cornersRoot.cornerColor.b, cornersRoot.cornerColor.a)
             ctx.fillRect(0, 0, width, height)
             ctx.globalCompositeOperation = "destination-out"
-            ctx.fillStyle = "#ffffff"
+            ctx.fillStyle = white
             ctx.beginPath()
             ctx.arc(0, 0, cornersRoot.cornerRadius, 0, 2 * Math.PI)
             ctx.fill()
@@ -411,14 +438,8 @@ PanelWindow {
           if (item) {
             // Set unique objectName per screen BEFORE registration: "calendarPanel-DP-1"
             item.objectName = panelId + "-" + (panelScreen?.name || "unknown")
-
-            // Set z-order for panels
-            item.z = panelZIndex
             item.screen = panelScreen
-
-            // Now register with PanelService (after objectName is set)
             PanelService.registerPanel(item)
-
             Logger.d("NFullScreenWindow", "Panel loaded with objectName:", item.objectName, "on screen:", panelScreen?.name)
           }
         }
@@ -439,14 +460,11 @@ PanelWindow {
       onLoaded: {
         Logger.d("NFullScreenWindow", "Bar loaded:", item !== null)
         if (item) {
-          Logger.d("NFullScreenWindow", "Bar size:", item.width, "x", item.height)
-          // Bar always has highest z-index
-          item.z = 100
+          Logger.d("NFullScreenWindow", "Bar screen", item.screen?.name, "size:", item.width, "x", item.height)
           // Bind screen to bar component (use binding for reactivity)
           item.screen = Qt.binding(function () {
             return barLoader.screen
           })
-          Logger.d("NFullScreenWindow", "Bar screen set to:", item.screen?.name)
         }
       }
     }

@@ -30,13 +30,6 @@ Item {
   property color borderColor: Color.mOutline
   property int borderWidth: Style.borderS
 
-  // Shadow properties
-  property bool shadowEnabled: true
-  property real shadowOpacity: 1.0 // 0.0 to 1.0
-  property real shadowBlur: 0.9
-  property real shadowHorizontalOffset: 3
-  property real shadowVerticalOffset: 3
-
   // Check if any corner is inverted
   readonly property bool hasInvertedCorners: topLeftInverted || topRightInverted || bottomLeftInverted || bottomRightInverted
 
@@ -46,25 +39,11 @@ Item {
   readonly property real leftPadding: Math.max((topLeftInverted && topLeftInvertedDirection === "horizontal") ? topLeftRadius : 0, (bottomLeftInverted && bottomLeftInvertedDirection === "horizontal") ? bottomLeftRadius : 0)
   readonly property real rightPadding: Math.max((topRightInverted && topRightInvertedDirection === "horizontal") ? topRightRadius : 0, (bottomRightInverted && bottomRightInvertedDirection === "horizontal") ? bottomRightRadius : 0)
 
-  // Background layer: shape with shadow effects (layer.enabled)
+  // Background layer
   Item {
-    id: shadowLayer
+    id: backgroundLayer
     anchors.fill: parent
     z: 0
-
-    // Apply shadow effect to this layer only
-    layer.enabled: root.shadowEnabled
-    layer.smooth: true
-    // layer.textureSize: Qt.size(width * Screen.devicePixelRatio, height * Screen.devicePixelRatio)
-    layer.effect: MultiEffect {
-      shadowEnabled: root.shadowEnabled
-      shadowOpacity: root.shadowOpacity
-      shadowColor: "#000000"
-      shadowHorizontalOffset: root.shadowHorizontalOffset
-      shadowVerticalOffset: root.shadowVerticalOffset
-      blur: root.shadowBlur
-      blurMax: 32
-    }
 
     // Simple rectangle for non-inverted corners (better performance)
     Rectangle {
@@ -205,8 +184,7 @@ Item {
     }
   }
 
-  // Content layer: for child elements (NO layer effects - keeps text sharp)
-  // Child components can be added here and will render on top without blur
+  // Content layer: for child elements
   default property alias contentChildren: contentLayer.data
   Item {
     id: contentLayer
