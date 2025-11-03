@@ -833,7 +833,61 @@
           "label": "快捷方式小部件"
         },
         "sectionLeft": "左",
-        "sectionRight": "右"
+        "sectionRight": "右",
+        "custom-button": {
+          "icon": {
+            "label": "图标",
+            "description": "从库中选择一个图标。"
+          },
+          "browse": "浏览",
+          "command": {
+            "label": "命令",
+            "description": "单击按钮时执行的命令。"
+          },
+          "tooltip": {
+            "label": "工具提示",
+            "description": "悬停在按钮上时显示的工具提示。"
+          },
+          "on-state-icon": {
+            "label": "开启状态图标",
+            "description": "按钮处于“开启”状态时的图标。"
+          },
+          "on-clicked": {
+            "label": "左键单击命令",
+            "description": "左键单击按钮时执行的命令。"
+          },
+          "on-right-clicked": {
+            "label": "右键单击命令",
+            "description": "右键单击按钮时执行的命令。"
+          },
+          "on-middle-clicked": {
+            "label": "中键单击命令",
+            "description": "中键单击按钮时执行的命令。"
+          },
+          "on-state-command": {
+            "label": "开启状态检查命令",
+            "description": "执行以检查按钮是否应处于“开启”状态的命令。返回 0 表示开启，非零表示关闭。"
+          },
+          "general-tooltip-text": {
+            "label": "常规工具提示文本",
+            "description": "按钮工具提示的常规说明。"
+          },
+          "enable-on-state-logic": {
+            "label": "启用开启状态逻辑",
+            "description": "根据检查命令启用第二个图标和“高亮”状态。"
+          },
+          "state-checks": {
+            "label": "状态检查",
+            "command": "要为此状态检查执行的命令",
+            "browse-icon": "浏览",
+            "remove": "移除",
+            "add": "添加状态检查"
+          }
+        },
+        "dialog": {
+          "cancel": "取消",
+          "apply": "应用"
+        }
       }
     },
     "user-interface": {
