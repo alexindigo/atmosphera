@@ -14,71 +14,121 @@ ColumnLayout {
   property var widgetMetadata: null
 
   // Local state
-  property string valueIndicatorStyle: widgetData.indicatorStyle !== undefined ? widgetData.indicatorStyle : widgetMetadata.indicatorStyle
   property bool valueShowCapsLock: widgetData.showCapsLock !== undefined ? widgetData.showCapsLock : widgetMetadata.showCapsLock
   property bool valueShowNumLock: widgetData.showNumLock !== undefined ? widgetData.showNumLock : widgetMetadata.showNumLock
   property bool valueShowScrollLock: widgetData.showScrollLock !== undefined ? widgetData.showScrollLock : widgetMetadata.showScrollLock
 
+  property string capsIcon: widgetData.capsLockIcon !== undefined ? widgetData.capsLockIcon : widgetMetadata.capsLockIcon
+  property string numIcon: widgetData.numLockIcon !== undefined ? widgetData.numLockIcon : widgetMetadata.numLockIcon
+  property string scrollIcon: widgetData.scrollLockIcon !== undefined ? widgetData.scrollLockIcon : widgetMetadata.scrollLockIcon
+
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {})
-    settings.indicatorStyle = valueIndicatorStyle
     settings.showCapsLock = valueShowCapsLock
     settings.showNumLock = valueShowNumLock
     settings.showScrollLock = valueShowScrollLock
+    settings.capsLockIcon = capsIcon
+    settings.numLockIcon = numIcon
+    settings.scrollLockIcon = scrollIcon
     return settings
   }
 
-  NComboBox {
-    Layout.fillWidth: true
-    label: I18n.tr("bar.widget-settings.lock-keys.indicator-style.label")
-    description: I18n.tr("bar.widget-settings.lock-keys.indicator-style.description")
-    model: [{
-        "key": "large",
-        "name": I18n.tr("bar.widget-settings.lock-keys.indicator-style.large")
-      }, {
-        "key": "small",
-        "name": I18n.tr("bar.widget-settings.lock-keys.indicator-style.small")
-      }, {
-        "key": "square",
-        "name": I18n.tr("bar.widget-settings.lock-keys.indicator-style.square")
-      }, {
-        "key": "square-round",
-        "name": I18n.tr("bar.widget-settings.lock-keys.indicator-style.square-round")
-      }, {
-        "key": "circle",
-        "name": I18n.tr("bar.widget-settings.lock-keys.indicator-style.circle")
-      }, {
-        "key": "circle-dash",
-        "name": I18n.tr("bar.widget-settings.lock-keys.indicator-style.circle-dash")
-      }, {
-        "key": "circle-dot",
-        "name": I18n.tr("bar.widget-settings.lock-keys.indicator-style.circle-dot")
-      }, {
-        "key": "hex",
-        "name": I18n.tr("bar.widget-settings.lock-keys.indicator-style.hex")
-      }]
-    currentKey: valueIndicatorStyle
-    onSelected: key => valueIndicatorStyle = key
+  RowLayout {
+    spacing: Style.marginM
+
+    NToggle {
+      label: I18n.tr("bar.widget-settings.lock-keys.show-caps-lock.label")
+      description: I18n.tr("bar.widget-settings.lock-keys.show-caps-lock.description")
+      checked: valueShowCapsLock
+      onToggled: checked => valueShowCapsLock = checked
+    }
+
+    NIcon {
+      Layout.alignment: Qt.AlignVCenter
+      icon: capsIcon
+      pointSize: Style.fontSizeXL
+      visible: capsIcon !== ""
+    }
+
+    NButton {
+      text: I18n.tr("bar.widget-settings.custom-button.browse")
+      onClicked: capsPicker.open()
+      enabled: valueShowCapsLock
+    }
   }
 
-  NToggle {
-    label: I18n.tr("bar.widget-settings.lock-keys.show-caps-lock.label")
-    description: I18n.tr("bar.widget-settings.lock-keys.show-caps-lock.description")
-    checked: valueShowCapsLock
-    onToggled: checked => valueShowCapsLock = checked
+  NIconPicker {
+    id: capsPicker
+    initialIcon: capsIcon
+    query: "letter-c"
+    onIconSelected: function (iconName) {
+      capsIcon = iconName
+    }
   }
 
-  NToggle {
-    label: I18n.tr("bar.widget-settings.lock-keys.show-num-lock.label")
-    description: I18n.tr("bar.widget-settings.lock-keys.show-num-lock.description")
-    checked: valueShowNumLock
-    onToggled: checked => valueShowNumLock = checked
+  RowLayout {
+    spacing: Style.marginM
+
+    NToggle {
+      label: I18n.tr("bar.widget-settings.lock-keys.show-num-lock.label")
+      description: I18n.tr("bar.widget-settings.lock-keys.show-num-lock.description")
+      checked: valueShowNumLock
+      onToggled: checked => valueShowNumLock = checked
+    }
+
+    NIcon {
+      Layout.alignment: Qt.AlignVCenter
+      icon: numIcon
+      pointSize: Style.fontSizeXL
+      visible: numIcon !== ""
+    }
+
+    NButton {
+      text: I18n.tr("bar.widget-settings.custom-button.browse")
+      onClicked: numPicker.open()
+      enabled: valueShowNumLock
+    }
   }
 
-  NToggle {
-    label: I18n.tr("bar.widget-settings.lock-keys.show-scroll-lock.label")
-    description: I18n.tr("bar.widget-settings.lock-keys.show-scroll-lock.description")
-    checked: valueShowScrollLock
-    onToggled: checked => valueShowScrollLock = checked
+  NIconPicker {
+    id: numPicker
+    initialIcon: numIcon
+    query: "letter-n"
+    onIconSelected: function (iconName) {
+      numIcon = iconName
+    }
+  }
+
+  RowLayout {
+    spacing: Style.marginM
+
+    NToggle {
+      label: I18n.tr("bar.widget-settings.lock-keys.show-scroll-lock.label")
+      description: I18n.tr("bar.widget-settings.lock-keys.show-scroll-lock.description")
+      checked: valueShowScrollLock
+      onToggled: checked => valueShowScrollLock = checked
+    }
+
+    NIcon {
+      Layout.alignment: Qt.AlignVCenter
+      icon: scrollIcon
+      pointSize: Style.fontSizeXL
+      visible: scrollIcon !== ""
+    }
+
+    NButton {
+      text: I18n.tr("bar.widget-settings.custom-button.browse")
+      onClicked: scrollPicker.open()
+      enabled: valueShowScrollLock
+    }
+  }
+
+  NIconPicker {
+    id: scrollPicker
+    initialIcon: scrollIcon
+    query: "letter-s"
+    onIconSelected: function (iconName) {
+      scrollIcon = iconName
+    }
   }
 }

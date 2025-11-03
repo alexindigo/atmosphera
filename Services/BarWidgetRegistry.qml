@@ -101,10 +101,12 @@ Singleton {
                                   },
                                   "LockKeys": {
                                     "allowUserSettings": true,
-                                    "indicatorStyle": "large",
                                     "showCapsLock": true,
                                     "showNumLock": true,
-                                    "showScrollLock": true
+                                    "showScrollLock": true,
+                                    "capsLockIcon": "letter-c",
+                                    "numLockIcon": "letter-n",
+                                    "scrollLockIcon": "letter-s",
                                   },
                                   "MediaMini": {
                                     "allowUserSettings": true,
