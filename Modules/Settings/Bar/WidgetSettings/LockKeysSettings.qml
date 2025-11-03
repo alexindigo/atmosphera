@@ -51,7 +51,7 @@ ColumnLayout {
     }
 
     NButton {
-      text: I18n.tr("bar.widget-settings.custom-button.browse")
+      text: I18n.tr("bar.widget-settings.lock-keys.browsedd")
       onClicked: capsPicker.open()
       enabled: valueShowCapsLock
     }
@@ -84,7 +84,7 @@ ColumnLayout {
     }
 
     NButton {
-      text: I18n.tr("bar.widget-settings.custom-button.browse")
+      text: I18n.tr("bar.widget-settings.lock-keys.browse")
       onClicked: numPicker.open()
       enabled: valueShowNumLock
     }
@@ -117,7 +117,7 @@ ColumnLayout {
     }
 
     NButton {
-      text: I18n.tr("bar.widget-settings.custom-button.browse")
+      text: I18n.tr("bar.widget-settings.lock-keys.browse")
       onClicked: scrollPicker.open()
       enabled: valueShowScrollLock
     }

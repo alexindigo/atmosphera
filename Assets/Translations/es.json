@@ -1274,18 +1274,7 @@
           "description": "Mostrar el estado de Bloq Despl.",
           "label": "Bloq Despl"
         },
-        "indicator-style": {
-          "circle": "Letras circulares",
-          "circle-dash": "Letras de círculo discontinuo",
-          "circle-dot": "Letras de círculo punteado",
-          "description": "Estilo de icono para los indicadores de las teclas de bloqueo",
-          "hex": "Letras hexagonales",
-          "label": "Estilo del indicador",
-          "large": "Letras grandes",
-          "small": "Letras minúsculas",
-          "square": "Letras cuadradas",
-          "square-round": "Letras cuadradas redondeadas"
-        }
+        "browse": "Navegar"
       }
     }
   },
