@@ -121,19 +121,20 @@ wezterm)
             else
                 # It doesn't exist, so we add it before the 'return config' line.
                 if grep -q '^\s*return\s*config' "$CONFIG_FILE"; then
-                    # It exists. Insert the line before it.
+                    # 'return config' exists. Insert the line before it.
                     sed -i "/^\s*return\s*config/i\\$wezterm_scheme_line" "$CONFIG_FILE"
                 else
                     # This is a problem. We can't find the insertion point.
                     echo "Warning: 'config.color_scheme' not set and 'return config' line not found." >&2
-                    echo "         Please add '$wezterm_scheme_line' to $CONFIG_FILE manually." >&2
+                    echo "         Make sure $CONFIG_FILE is correct: https://wezterm.org/config/files.html" >&2
                 fi
             fi
         fi
         # touching the config file fools wezterm into reloading it
         touch "$CONFIG_FILE"
     else
-        echo "Error: wezterm config file not found at $CONFIG_FILE" >&2
+        echo "Error: wezterm.lua not found at $CONFIG_FILE" >&2
+        echo "Instructions to create it: https://wezterm.org/config/files.html" >&2
         exit 1
     fi
     ;;
