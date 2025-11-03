@@ -833,7 +833,61 @@
           "label": "Widgets de accesos directos"
         },
         "sectionLeft": "Izquierda",
-        "sectionRight": "Derecha"
+        "sectionRight": "Derecha",
+        "custom-button": {
+          "icon": {
+            "label": "Icono",
+            "description": "Selecciona un icono de la biblioteca."
+          },
+          "browse": "Explorar",
+          "command": {
+            "label": "Comando",
+            "description": "El comando a ejecutar cuando se hace clic en el botón."
+          },
+          "tooltip": {
+            "label": "Tooltip",
+            "description": "El tooltip a mostrar al pasar el cursor sobre el botón."
+          },
+          "on-state-icon": {
+            "label": "Icono de estado activado",
+            "description": "El icono para el botón cuando está en el estado 'encendido'."
+          },
+          "on-clicked": {
+            "label": "Comando de clic izquierdo",
+            "description": "Comando a ejecutar cuando se hace clic izquierdo en el botón."
+          },
+          "on-right-clicked": {
+            "label": "Comando de clic derecho",
+            "description": "Comando a ejecutar cuando se hace clic derecho en el botón."
+          },
+          "on-middle-clicked": {
+            "label": "Comando de clic central",
+            "description": "Comando a ejecutar cuando se hace clic central en el botón."
+          },
+          "on-state-command": {
+            "label": "Comando de comprobación de estado activado",
+            "description": "Comando a ejecutar para comprobar si el botón debe estar en el estado 'encendido'. Devuelve 0 para encendido, no cero para apagado."
+          },
+          "general-tooltip-text": {
+            "label": "Texto de tooltip general",
+            "description": "Descripción general para el tooltip del botón."
+          },
+          "enable-on-state-logic": {
+            "label": "Habilitar lógica de estado activado",
+            "description": "Habilita un segundo icono y un estado 'caliente' basado en un comando de comprobación."
+          },
+          "state-checks": {
+            "label": "Comprobaciones de estado",
+            "command": "Comando a ejecutar para esta comprobación de estado",
+            "browse-icon": "Explorar",
+            "remove": "Eliminar",
+            "add": "Añadir comprobación de estado"
+          }
+        },
+        "dialog": {
+          "cancel": "Cancelar",
+          "apply": "Aplicar"
+        }
       }
     },
     "user-interface": {
