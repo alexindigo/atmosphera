@@ -134,9 +134,8 @@ Slider {
       anchors.fill: parent
       cursorShape: Qt.PointingHandCursor
       hoverEnabled: true
-      // Pass through mouse events to the slider
+      acceptedButtons: Qt.NoButton // Don't accept any mouse buttons - only hover
       propagateComposedEvents: true
-      preventStealing: false
 
       onEntered: {
         root.hovering = true
@@ -151,23 +150,15 @@ Slider {
           TooltipService.hide()
         }
       }
+    }
 
-      onPressed: function (mouse) {
-        if (root.tooltipText) {
+    // Hide tooltip when slider is pressed (anywhere on the slider)
+    Connections {
+      target: root
+      function onPressedChanged() {
+        if (root.pressed && root.tooltipText) {
           TooltipService.hide()
         }
-        // Pass the event through to the slider
-        mouse.accepted = false
-      }
-
-      onReleased: function (mouse) {
-        // Pass the event through to the slider
-        mouse.accepted = false
-      }
-
-      onPositionChanged: function (mouse) {
-        // Pass the event through to the slider
-        mouse.accepted = false
       }
     }
   }
