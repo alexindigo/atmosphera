@@ -857,7 +857,61 @@
           "description": "Configure and manage the shortcuts widgets."
         },
         "sectionLeft": "Left",
-        "sectionRight": "Right"
+        "sectionRight": "Right",
+        "custom-button": {
+          "icon": {
+            "label": "Icon",
+            "description": "Select an icon from the library."
+          },
+          "browse": "Browse",
+          "command": {
+            "label": "Command",
+            "description": "The command to execute when the button is clicked."
+          },
+          "tooltip": {
+            "label": "Tooltip",
+            "description": "The tooltip to show when hovering over the button."
+          },
+          "on-state-icon": {
+            "label": "On State Icon",
+            "description": "The icon for the button when it's in the 'on' state."
+          },
+          "on-clicked": {
+            "label": "Left Click Command",
+            "description": "Command to execute when the button is left-clicked."
+          },
+          "on-right-clicked": {
+            "label": "Right Click Command",
+            "description": "Command to execute when the button is right-clicked."
+          },
+          "on-middle-clicked": {
+            "label": "Middle Click Command",
+            "description": "Command to execute when the button is middle-clicked."
+          },
+          "on-state-command": {
+            "label": "On State Check Command",
+            "description": "Command to execute to check if the button should be in the 'on' state. Returns 0 for on, non-zero for off."
+          },
+          "general-tooltip-text": {
+            "label": "General Tooltip Text",
+            "description": "General description for the button's tooltip."
+          },
+          "enable-on-state-logic": {
+            "label": "Enable On-State Logic",
+            "description": "Enable a second icon and 'hot' state based on a check command."
+          },
+          "state-checks": {
+            "label": "State Checks",
+            "command": "Command to execute for this state check",
+            "browse-icon": "Browse",
+            "remove": "Remove",
+            "add": "Add State Check"
+          }
+        },
+        "dialog": {
+          "cancel": "Cancel",
+          "apply": "Apply"
+        }
       }
     },
     "user-interface": {
@@ -1471,7 +1525,8 @@
     "search": "Search...",
     "select": "Select",
     "cancel": "Cancel",
-    "test": "Test"
+    "test": "Test",
+    "enter-tooltip": "Enter tooltip"
   },
   "options": {
     "colors": {

@@ -17,10 +17,22 @@ Singleton {
                            "PowerProfile": powerProfileComponent,
                            "ScreenRecorder": screenRecorderComponent,
                            "WiFi": wiFiComponent,
-                           "WallpaperSelector": wallpaperSelectorComponent
+                           "WallpaperSelector": wallpaperSelectorComponent,
+                           "CustomButton": customButtonComponent
                          })
 
-  property var widgetMetadata: ({})
+  property var widgetMetadata: ({
+                                  "CustomButton": {
+                                    "allowUserSettings": true,
+                                    "icon": "heart",
+                                    "onClicked": "",
+                                    "onRightClicked": "",
+                                    "onMiddleClicked": "",
+                                    "stateChecks": [],
+                                    "generalTooltipText": "Custom Button",
+                                    "enableOnStateLogic": false
+                                  }
+                                })
 
   // Component definitions - these are loaded once at startup
   property Component bluetoothComponent: Component {
@@ -46,6 +58,9 @@ Singleton {
   }
   property Component wallpaperSelectorComponent: Component {
     WallpaperSelector {}
+  }
+  property Component customButtonComponent: Component {
+    CustomButton {}
   }
 
   function init() {

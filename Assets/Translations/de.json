@@ -857,7 +857,61 @@
           "label": "Widgets für Kurzbefehle"
         },
         "sectionLeft": "Links",
-        "sectionRight": "Rechts"
+        "sectionRight": "Rechts",
+        "custom-button": {
+          "icon": {
+            "label": "Symbol",
+            "description": "Wählen Sie ein Symbol aus der Bibliothek."
+          },
+          "browse": "Durchsuchen",
+          "command": {
+            "label": "Befehl",
+            "description": "Der Befehl, der ausgeführt werden soll, wenn die Schaltfläche geklickt wird."
+          },
+          "tooltip": {
+            "label": "Tooltip",
+            "description": "Der Tooltip, der angezeigt wird, wenn Sie mit der Maus über die Schaltfläche fahren."
+          },
+          "on-state-icon": {
+            "label": "Symbol im Aktiv-Zustand",
+            "description": "Das Symbol für die Schaltfläche, wenn sie sich im 'aktiv' Zustand befindet."
+          },
+          "on-clicked": {
+            "label": "Linksklick-Befehl",
+            "description": "Befehl, der ausgeführt wird, wenn die Schaltfläche links geklickt wird."
+          },
+          "on-right-clicked": {
+            "label": "Rechtsklick-Befehl",
+            "description": "Befehl, der ausgeführt wird, wenn die Schaltfläche rechts geklickt wird."
+          },
+          "on-middle-clicked": {
+            "label": "Mittelklick-Befehl",
+            "description": "Befehl, der ausgeführt wird, wenn die Schaltfläche mit der mittleren Maustaste geklickt wird."
+          },
+          "on-state-command": {
+            "label": "Befehl für Aktiv-Zustand-Prüfung",
+            "description": "Befehl, der ausgeführt wird, um zu prüfen, ob sich die Schaltfläche im 'aktiv' Zustand befinden soll. Gibt 0 für aktiv, ungleich 0 für inaktiv zurück."
+          },
+          "general-tooltip-text": {
+            "label": "Allgemeiner Tooltip-Text",
+            "description": "Allgemeine Beschreibung für den Tooltip der Schaltfläche."
+          },
+          "enable-on-state-logic": {
+            "label": "Aktiv-Zustand-Logik aktivieren",
+            "description": "Aktiviert ein zweites Symbol und 'aktiv' Zustand basierend auf einem Prüfbefehl."
+          },
+          "state-checks": {
+            "label": "Zustandsprüfungen",
+            "command": "Befehl, der für diese Zustandsprüfung ausgeführt werden soll",
+            "browse-icon": "Durchsuchen",
+            "remove": "Entfernen",
+            "add": "Zustandsprüfung hinzufügen"
+          }
+        },
+        "dialog": {
+          "cancel": "Abbrechen",
+          "apply": "Anwenden"
+        }
       }
     },
     "user-interface": {

@@ -857,7 +857,61 @@
           "label": "Widgets de raccourcis"
         },
         "sectionLeft": "Gauche",
-        "sectionRight": "Droite"
+        "sectionRight": "Droite",
+        "custom-button": {
+          "icon": {
+            "label": "Icône",
+            "description": "Sélectionnez une icône dans la bibliothèque."
+          },
+          "browse": "Parcourir",
+          "command": {
+            "label": "Commande",
+            "description": "La commande à exécuter lorsque le bouton est cliqué."
+          },
+          "tooltip": {
+            "label": "Info-bulle",
+            "description": "L'info-bulle à afficher lors du survol du bouton."
+          },
+          "on-state-icon": {
+            "label": "Icône d'état activé",
+            "description": "L'icône du bouton lorsqu'il est dans l'état 'activé'."
+          },
+          "on-clicked": {
+            "label": "Commande de clic gauche",
+            "description": "Commande à exécuter lorsque le bouton est cliqué avec le bouton gauche."
+          },
+          "on-right-clicked": {
+            "label": "Commande de clic droit",
+            "description": "Commande à exécuter lorsque le bouton est cliqué avec le bouton droit."
+          },
+          "on-middle-clicked": {
+            "label": "Commande de clic central",
+            "description": "Commande à exécuter lorsque le bouton est cliqué avec le bouton du milieu."
+          },
+          "on-state-command": {
+            "label": "Commande de vérification de l'état activé",
+            "description": "Commande à exécuter pour vérifier si le bouton doit être dans l'état 'activé'. Retourne 0 pour activé, non-zéro pour désactivé."
+          },
+          "general-tooltip-text": {
+            "label": "Texte de l'info-bulle générale",
+            "description": "Description générale de l'info-bulle du bouton."
+          },
+          "enable-on-state-logic": {
+            "label": "Activer la logique d'état activé",
+            "description": "Active une deuxième icône et un état 'chaud' basés sur une commande de vérification."
+          },
+          "state-checks": {
+            "label": "Vérifications d'état",
+            "command": "Commande à exécuter pour cette vérification d'état",
+            "browse-icon": "Parcourir",
+            "remove": "Supprimer",
+            "add": "Ajouter une vérification d'état"
+          }
+        },
+        "dialog": {
+          "cancel": "Annuler",
+          "apply": "Appliquer"
+        }
       }
     },
     "user-interface": {

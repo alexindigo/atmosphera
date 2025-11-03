@@ -38,7 +38,8 @@ RowLayout {
             "widgetId": modelData.id,
             "section": "quickSettings",
             "sectionWidgetIndex": index,
-            "sectionWidgetsCount": Settings.data.controlCenter.shortcuts.left.length
+            "sectionWidgetsCount": Settings.data.controlCenter.shortcuts.left.length,
+            "widgetSettings": modelData
           }
           Layout.alignment: Qt.AlignVCenter
         }
@@ -76,7 +77,8 @@ RowLayout {
             "widgetId": modelData.id,
             "section": "quickSettings",
             "sectionWidgetIndex": index,
-            "sectionWidgetsCount": Settings.data.controlCenter.shortcuts.right.length
+            "sectionWidgetsCount": Settings.data.controlCenter.shortcuts.right.length,
+            "widgetSettings": modelData
           }
           Layout.alignment: Qt.AlignVCenter
         }
