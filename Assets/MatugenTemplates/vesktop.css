@@ -121,3 +121,28 @@ span[class*="timestamp"]:hover time {
     color: var(--text-2) !important; /* Use heading color on hover */
     opacity: 1 !important;
 }
+
+/* Improve slowmode cooldown and typing indicator readability */
+[class*="cooldownText"],
+[class*="cooldownWrapper"],
+[class*="cooldownText"] svg,
+.cooldownText_b21699,
+.cooldownWrapper_b21699 {
+    color: var(--text-3) !important; /* Use normal text color for better contrast */
+    opacity: 0.85 !important; /* Slightly muted but still readable */
+}
+
+/* Slowmode icon color */
+[class*="slowModeIcon"],
+.slowModeIcon_b21699 {
+    color: var(--text-3) !important;
+    opacity: 0.85 !important;
+}
+
+/* Typing indicator text */
+[class*="typing"] [class*="text"],
+[class*="typingDots"] [class*="text"],
+.typing_b88801 .text_b88801 {
+    color: var(--text-3) !important;
+    opacity: 0.85 !important;
+}
