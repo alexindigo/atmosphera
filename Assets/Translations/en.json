@@ -608,6 +608,10 @@
           "foot": {
             "description": "Write {filepath} and reload",
             "description-missing": "Requires {app} to be installed"
+          },
+          "wezterm": {
+            "description": "Write {filepath} and reload",
+            "description-missing": "Requires {app} to be installed"
           }
         },
         "programs": {

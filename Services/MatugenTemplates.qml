@@ -107,6 +107,11 @@ Singleton {
                        "name": "alacritty",
                        "path": "Terminal/alacritty.toml",
                        "output": "~/.config/alacritty/themes/noctalia.toml"
+                     }, {
+                       "name": "wezterm",
+                       "path": "Terminal/wezterm.toml",
+                       "output": "~/.config/wezterm/colors/Noctalia.toml",
+                       "post_hook": "touch ~/.config/wezterm/wezterm.lua"
                      }]
 
     terminals.forEach(function (terminal) {

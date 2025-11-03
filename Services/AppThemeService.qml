@@ -16,7 +16,8 @@ Singleton {
                                           "foot": "~/.config/foot/themes/noctalia",
                                           "ghostty": "~/.config/ghostty/themes/noctalia",
                                           "kitty": "~/.config/kitty/themes/noctalia.conf",
-                                          "alacritty": "~/.config/alacritty/themes/noctalia.toml"
+                                          "alacritty": "~/.config/alacritty/themes/noctalia.toml",
+                                          "wezterm": "~/.config/wezterm/colors/Noctalia.toml"
                                         })
 
   readonly property var schemeNameMap: ({
@@ -387,7 +388,12 @@ Singleton {
     const mode = Settings.data.colorSchemes.darkMode ? 'dark' : 'light'
 
     colorScheme = schemeNameMap[colorScheme] || colorScheme
-    const extension = terminal === 'kitty' ? ".conf" : ""
+    let extension = ""
+    if (terminal === 'kitty') {
+      extension = ".conf"
+    } else if (terminal === 'wezterm') {
+      extension = ".toml"
+    }
 
     return `${Quickshell.shellDir}/Assets/ColorScheme/${colorScheme}/terminal/${terminal}/${colorScheme}-${mode}${extension}`
   }
