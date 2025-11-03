@@ -159,18 +159,6 @@
         }
       },
       "lock-keys": {
-        "indicator-style": {
-          "circle": "Daire Harfler",
-          "circle-dash": "Kesikli Daire Harfler",
-          "circle-dot": "Noktalı Daire Harfler",
-          "description": "Kilit tuşu indikatörleri için ikon stili",
-          "hex": "Altıgen Harfler",
-          "label": "İndikatör Stili",
-          "large": "Büyük Harfler",
-          "small": "Küçük Harfler",
-          "square": "Kare Harfler",
-          "square-round": "Yuvarlak Kare Harfler"
-        },
         "show-caps-lock": {
           "description": "Caps Lock durumunu göster.",
           "label": "Caps Lock"
@@ -182,7 +170,8 @@
         "show-scroll-lock": {
           "description": "Scroll Lock durumunu göster.",
           "label": "Scroll Lock"
-        }
+        },
+        "browse": "Göz at"
       },
       "media-mini": {
         "hide-mode": {
@@ -452,7 +441,8 @@
         "center_right": "Sağ merkez",
         "top_center": "Üst merkez",
         "top_left": "Sol üst",
-        "top_right": "Sağ üst"
+        "top_right": "Sağ üst",
+        "follow_bar": "Çubuğu takip et (varsayılan)"
       }
     },
     "osd": {
@@ -517,7 +507,8 @@
     "search-launcher": "Girişleri arayın... veya > komutları için kullanın",
     "search-wallpapers": "Duvar kağıtlarını filtrelemek için yazın...",
     "select": "Seç",
-    "test": "Test"
+    "test": "Test",
+    "enter-tooltip": "Araç ipucunu girin"
   },
   "plugins": {
     "applications": "Uygulamalar",
@@ -750,6 +741,10 @@
         "show-capsule": {
           "description": "Widget arka planlarını göster.",
           "label": "Kapsülü göster"
+        },
+        "outer-corners": {
+          "description": "Çubuğun dışa doğru kavisli köşelerini görüntüler.",
+          "label": "Dış köşeler"
         }
       },
       "monitors": {
@@ -875,7 +870,15 @@
             "description": "{filepath} dosyasına yaz ve yeniden yükle",
             "description-missing": "Kurulum için {app} gereklidir"
           },
-          "label": "Terminal"
+          "label": "Terminal",
+          "alacritty": {
+            "description": "{filepath} yaz ve yeniden yükle",
+            "description-missing": "{app} uygulamasının yüklü olmasını gerektirir"
+          },
+          "wezterm": {
+            "description": "{filepath} yaz ve yeniden yükle",
+            "description-missing": "{app} uygulamasının yüklü olmasını gerektirir"
+          }
         },
         "ui": {
           "description": "Masaüstü ortamı ve UI araç seti temalandırma.",
@@ -914,7 +917,61 @@
           "label": "Kısayut widget'ları"
         },
         "sectionLeft": "Sol",
-        "sectionRight": "Sağ"
+        "sectionRight": "Sağ",
+        "custom-button": {
+          "browse": "Göz at",
+          "command": {
+            "description": "Düğmeye tıklandığında çalıştırılacak komut.",
+            "label": "Komut"
+          },
+          "enable-on-state-logic": {
+            "description": "Bir kontrol komutuna bağlı olarak ikinci bir simgeyi ve 'etkin' durumunu etkinleştir.",
+            "label": "Açık Durum Mantığını Etkinleştir"
+          },
+          "general-tooltip-text": {
+            "description": "Düğme araç ipucu için genel açıklama.",
+            "label": "Genel Araç İpucu Metni"
+          },
+          "icon": {
+            "description": "Kütüphaneden bir simge seçin.",
+            "label": "Simge"
+          },
+          "on-clicked": {
+            "description": "Düğmeye sol tıklandığında yürütülecek komut.",
+            "label": "Sol Tık Komutu"
+          },
+          "on-middle-clicked": {
+            "description": "Orta tuşa tıklandığında çalıştırılacak komut.",
+            "label": "Orta Tıklama Komutu"
+          },
+          "on-right-clicked": {
+            "description": "Düğmeye sağ tıklandığında çalıştırılacak komut.",
+            "label": "Sağ Tık Komutu"
+          },
+          "on-state-command": {
+            "description": "Düğmenin 'açık' durumda olup olmadığını kontrol etmek için çalıştırılacak komut. Açık için 0, kapalı için sıfır olmayan bir değer döndürür.",
+            "label": "Durum Kontrol Komutu"
+          },
+          "on-state-icon": {
+            "description": "Düğme 'açık' durumdayken kullanılan simge.",
+            "label": "Durum Simgesinde"
+          },
+          "state-checks": {
+            "add": "Durum Kontrolü Ekle",
+            "browse-icon": "Göz at",
+            "command": "Bu durum kontrolü için yürütülecek komut",
+            "label": "Durum Kontrolleri",
+            "remove": "Kaldır"
+          },
+          "tooltip": {
+            "description": "Düğme üzerine gelindiğinde gösterilecek araç ipucu.",
+            "label": "Araç ipucu"
+          }
+        },
+        "dialog": {
+          "apply": "Uygula",
+          "cancel": "İptal"
+        }
       },
       "title": "Kontrol Merkezi"
     },
@@ -932,6 +989,14 @@
         "section": {
           "description": "Her ekran için parlaklık ayarlarını yapın.",
           "label": "Ekran başına ayarlar"
+        },
+        "brightness-unavailable": {
+          "ddc-disabled": "Parlaklık kontrolü kullanılamıyor. Bu ekranın parlaklığını kontrol etmek için \"Harici parlaklık desteği\"ni etkinleştirin.",
+          "generic": "Bu ekran için parlaklık kontrolü mevcut değil."
+        },
+        "external-brightness": {
+          "description": "Harici ekranlarda parlaklığı DDC/CI protokolü üzerinden kontrol etmek için DDCUtil desteğini etkinleştir.",
+          "label": "Harici parlaklık desteği"
         }
       },
       "night-light": {
@@ -1432,6 +1497,14 @@
       "tooltips": {
         "description": "Arayüz genelindeki ipuçlarını etkinleştirin veya devre dışı bırakın.",
         "label": "İpuçlarını göster"
+      },
+      "dim-desktop": {
+        "description": "Paneller veya menüler açıkken masaüstünü karart.",
+        "label": "Masaüstünü karart"
+      },
+      "shadows": {
+        "description": "Çubukların ve panellerin altında gölgelerin etkinleştirilmesini sağlar.",
+        "label": "Gölge efektleri"
       }
     },
     "wallpaper": {
@@ -1501,7 +1574,11 @@
           "label": "Duvar kağıdı ayarları"
         },
         "select-folder": "Duvar kağıdı klasörünü seç",
-        "select-monitor-folder": "Ekran duvar kağıdı klasörünü seç"
+        "select-monitor-folder": "Ekran duvar kağıdı klasörünü seç",
+        "selector-position": {
+          "description": "Duvar kağıdı seçici panelinin nerede görüneceğini seçin.",
+          "label": "Pozisyon"
+        }
       },
       "title": "Duvar kağıdı"
     }
