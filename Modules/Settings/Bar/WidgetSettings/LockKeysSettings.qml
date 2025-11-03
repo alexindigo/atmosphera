@@ -51,7 +51,7 @@ ColumnLayout {
     }
 
     NButton {
-      text: I18n.tr("bar.widget-settings.lock-keys.browsedd")
+      text: I18n.tr("bar.widget-settings.lock-keys.browse")
       onClicked: capsPicker.open()
       enabled: valueShowCapsLock
     }
