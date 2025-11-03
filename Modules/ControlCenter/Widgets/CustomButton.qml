@@ -5,15 +5,15 @@ import qs.Commons
 import qs.Services
 import qs.Widgets
 
-// Dummy comment to force re-evaluation
+
 Item {
   id: root
 
-  // Widget properties
-  property string widgetId: "CustomButton"
-  property var widgetSettings
 
-  // Use settings or provide defaults
+  property string widgetId: "CustomButton"
+  property var widgetSettings: null
+
+
   property string onClickedCommand: ""
   property string onRightClickedCommand: ""
   property string onMiddleClickedCommand: ""
@@ -23,13 +23,18 @@ Item {
   property string generalTooltipText: "Custom Button"
   property bool enableOnStateLogic: false
 
-  // Internal state
+
   property string _currentIcon: initialIcon
   property bool _isHot: false
 
   Connections {
     target: root
     function _updatePropertiesFromSettings() {
+
+      if (!widgetSettings) {
+        return
+      }
+
       onClickedCommand = widgetSettings.onClicked || ""
       onRightClickedCommand = widgetSettings.onRightClicked || ""
       onMiddleClickedCommand = widgetSettings.onMiddleClicked || ""
@@ -41,33 +46,57 @@ Item {
 
       updateState()
     }
-    function onWidgetSettingsChanged() { _updatePropertiesFromSettings() }
+
+
+    function onWidgetSettingsChanged() {
+      if (widgetSettings) {
+        _updatePropertiesFromSettings()
+      }
+    }
   }
 
   Process {
     id: onStateCheckProcess
+
     running: false
     command: ["sh", "-c", onStateCommand]
     onExited: function(exitCode, stdout, stderr) {
-      if (exitCode === 0) {
-        _isHot = true
-        _currentIcon = onStateIcon || initialIcon
+      if (enableOnStateLogic && onStateCommand) {
+        if (exitCode === 0) {
+          _isHot = true
+          _currentIcon = onStateIcon
+        } else {
+          _isHot = false
+          _currentIcon = initialIcon
+        }
       } else {
         _isHot = false
         _currentIcon = initialIcon
       }
+    }
+  }
 
+  Timer {
+    id: stateUpdateTimer
+    interval: 200
+    running: false
+    repeat: false
+    onTriggered: {
+      if (enableOnStateLogic && onStateCommand && !onStateCheckProcess.running) {
+        onStateCheckProcess.running = true
+      }
     }
   }
 
   function updateState() {
-    if (enableOnStateLogic && onStateCommand) {
-      onStateCheckProcess.running = true // Start the process
-    } else {
-      _isHot = false
-      _currentIcon = initialIcon
+    if (!enableOnStateLogic || !onStateCommand) {
+      _isHot = false;
+      _currentIcon = initialIcon;
+      return;
     }
+    stateUpdateTimer.restart();
   }
+
 
   function _buildTooltipText() {
     let tooltip = generalTooltipText
