@@ -68,12 +68,13 @@ ColumnLayout {
   Component.onCompleted: {
     // Fill out availableWidgets ListModel
     availableWidgets.clear()
-    ControlCenterWidgetRegistry.getAvailableWidgets().forEach(entry => {
-                                                                availableWidgets.append({
-                                                                                          "key": entry,
-                                                                                          "name": entry
-                                                                                        })
-                                                              })
+    var sortedEntries = ControlCenterWidgetRegistry.getAvailableWidgets().slice().sort()
+    sortedEntries.forEach(entry => {
+                              availableWidgets.append({
+                                                        "key": entry,
+                                                        "name": entry
+                                                      })
+                            })
     // Starts empty
     cardsModel = []
 
