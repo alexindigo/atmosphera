@@ -21,7 +21,7 @@ Singleton {
 
   function getAvailableMethods(): list<string> {
     var methods = []
-    if (monitors.some(m => m.isDdc))
+    if (Settings.data.brightness.enableDdcSupport && monitors.some(m => m.isDdc))
       methods.push("ddcutil")
     if (monitors.some(m => !m.isDdc))
       methods.push("internal")
@@ -47,11 +47,30 @@ Singleton {
 
   Component.onCompleted: {
     Logger.i("Brightness", "Service started")
+    if (Settings.data.brightness.enableDdcSupport) {
+      ddcProc.running = true
+    }
   }
 
   onMonitorsChanged: {
     ddcMonitors = []
-    ddcProc.running = true
+    if (Settings.data.brightness.enableDdcSupport) {
+      ddcProc.running = true
+    }
+  }
+
+  Connections {
+    target: Settings.data.brightness
+    function onEnableDdcSupportChanged() {
+      if (Settings.data.brightness.enableDdcSupport) {
+        // Re-detect DDC monitors when enabled
+        ddcMonitors = []
+        ddcProc.running = true
+      } else {
+        // Clear DDC monitors when disabled
+        ddcMonitors = []
+      }
+    }
   }
 
   Variants {
@@ -101,10 +120,20 @@ Singleton {
     id: monitor
 
     required property ShellScreen modelData
-    readonly property bool isDdc: root.ddcMonitors.some(m => m.model === modelData.model)
+    readonly property bool isDdc: Settings.data.brightness.enableDdcSupport && root.ddcMonitors.some(m => m.model === modelData.model)
     readonly property string busNum: root.ddcMonitors.find(m => m.model === modelData.model)?.busNum ?? ""
     readonly property bool isAppleDisplay: root.appleDisplayPresent && modelData.model.startsWith("StudioDisplay")
     readonly property string method: isAppleDisplay ? "apple" : (isDdc ? "ddcutil" : "internal")
+
+    // Check if brightness control is available for this monitor
+    readonly property bool brightnessControlAvailable: {
+      if (isAppleDisplay)
+      return true
+      if (isDdc)
+      return true
+      // For internal displays, check if we have a brightness path
+      return brightnessPath !== ""
+    }
 
     property real brightness
     property real lastBrightness: 0

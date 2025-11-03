@@ -370,6 +370,7 @@ Singleton {
     property JsonObject brightness: JsonObject {
       property int brightnessStep: 5
       property bool enforceMinimum: true
+      property bool enableDdcSupport: false
     }
 
     property JsonObject colorSchemes: JsonObject {

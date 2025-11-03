@@ -227,7 +227,8 @@
   },
   "brightness": {
     "brightnessStep": 5,
-    "enforceMinimum": true
+    "enforceMinimum": true,
+    "enableDdcSupport": false
   },
   "colorSchemes": {
     "useWallpaperColors": false,

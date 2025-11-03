@@ -166,6 +166,14 @@
         "enforce-minimum": {
           "label": "Mindesthelligkeit erzwingen (1%)",
           "description": "Löst das Problem, dass die Hintergrundbeleuchtung auf einigen Displays bei 0% Helligkeit vollständig ausgeschaltet wird."
+        },
+        "external-brightness": {
+          "label": "Externe Helligkeitsunterstützung",
+          "description": "DDCUtil-Unterstützung zum Steuern der Helligkeit externer Displays über das DDC/CI-Protokoll aktivieren."
+        },
+        "brightness-unavailable": {
+          "ddc-disabled": "Helligkeitssteuerung nicht verfügbar. Aktivieren Sie \"Externe Helligkeitsunterstützung\", um die Helligkeit dieses Displays zu steuern.",
+          "generic": "Die Helligkeitssteuerung ist für dieses Display nicht verfügbar."
         }
       },
       "night-light": {

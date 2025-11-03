@@ -166,6 +166,14 @@
         "enforce-minimum": {
           "label": "Forçar brilho mínimo (1%)",
           "description": "Resolve o problema da retroiluminação apagar completamente em alguns monitores com brilho em 0%."
+        },
+        "external-brightness": {
+          "label": "Suporte de brilho externo",
+          "description": "Ativar suporte DDCUtil para controlar o brilho em monitores externos através do protocolo DDC/CI."
+        },
+        "brightness-unavailable": {
+          "ddc-disabled": "Controle de brilho indisponível. Ative \"Suporte de brilho externo\" para controlar o brilho desta tela.",
+          "generic": "O controle de brilho não está disponível para esta tela."
         }
       },
       "night-light": {

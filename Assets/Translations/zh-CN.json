@@ -166,6 +166,14 @@
         "enforce-minimum": {
           "label": "限制最小亮度为 1%",
           "description": "解决亮度为 0% 时部分显示器背光完全关闭的问题。"
+        },
+        "external-brightness": {
+          "label": "外部亮度支持",
+          "description": "启用 DDCUtil 支持，通过 DDC/CI 协议控制外部显示器的亮度。"
+        },
+        "brightness-unavailable": {
+          "ddc-disabled": "亮度控制不可用。启用“外部亮度支持”以控制此显示器的亮度。",
+          "generic": "此显示器无法使用亮度控制。"
         }
       },
       "night-light": {

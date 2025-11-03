@@ -166,6 +166,14 @@
         "enforce-minimum": {
           "label": "Enforce minimum brightness (1%)",
           "description": "Solves the problem of backlight completely turning off on some displays at 0% brightness."
+        },
+        "external-brightness": {
+          "label": "External brightness support",
+          "description": "Enable DDCUtil support for controlling brightness on external displays via DDC/CI protocol."
+        },
+        "brightness-unavailable": {
+          "ddc-disabled": "Brightness control unavailable. Enable \"External brightness support\" to control this display's brightness.",
+          "generic": "Brightness control is not available for this display."
         }
       },
       "night-light": {

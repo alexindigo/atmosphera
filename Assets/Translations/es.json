@@ -166,6 +166,14 @@
         "enforce-minimum": {
           "label": "Forzar brillo mínimo (1%)",
           "description": "Resuelve el problema de la retroiluminación que se apaga completamente en algunas pantallas al 0% de brillo."
+        },
+        "external-brightness": {
+          "label": "Soporte de brillo externo",
+          "description": "Habilitar soporte DDCUtil para controlar el brillo en pantallas externas mediante el protocolo DDC/CI."
+        },
+        "brightness-unavailable": {
+          "ddc-disabled": "Control de brillo no disponible. Habilita \"Soporte de brillo externo\" para controlar el brillo de esta pantalla.",
+          "generic": "El control de brillo no está disponible para esta pantalla."
         }
       },
       "night-light": {
