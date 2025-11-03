@@ -146,3 +146,36 @@ span[class*="timestamp"]:hover time {
     color: var(--text-3) !important;
     opacity: 0.85 !important;
 }
+
+[class*="postTitleText"],
+[class*="postTitleText"] span,
+h3[class*="postTitleText"],
+[class*="heading-lg"][class*="postTitleText"],
+[data-text-variant*="heading"] [class*="postTitleText"] {
+    color: var(--text-2) !important;
+    opacity: 0.9 !important;
+}
+
+[class*="postTitleText"]:hover,
+[class*="postTitleText"]:hover span,
+h3[class*="postTitleText"]:hover {
+    color: var(--text-2) !important;
+    opacity: 1 !important;
+}
+
+/* Improve deleted message content readability */
+/* Target deleted message content with various selector patterns to work across Discord versions */
+[class*="messageContent"],
+[class*="messageContent"] span,
+[class*="text-sm"][class*="messageContent"],
+[data-text-variant*="text-sm"][class*="messageContent"] {
+    color: var(--text-3) !important; /* Use normal text color for better contrast */
+    opacity: 0.85 !important; /* Slightly muted but still readable */
+}
+
+/* Hover state for deleted message content - make them fully visible */
+[class*="messageContent"]:hover,
+[class*="messageContent"]:hover span {
+    color: var(--text-2) !important; /* Use heading color on hover */
+    opacity: 1 !important;
+}
