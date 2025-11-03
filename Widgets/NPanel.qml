@@ -78,8 +78,8 @@ Item {
 
   Behavior on animationProgress {
     NumberAnimation {
-      duration: Style.animationFast
-      easing.type: Easing.OutCubic
+      duration: Style.animationNormal
+      easing.type: Easing.OutQuint
       onRunningChanged: {
         // When close animation finishes, actually hide the panel
         if (!running && root.isClosing) {
@@ -216,18 +216,32 @@ Item {
             }
           }
 
+          // Check if panel has any inverted corners
+          readonly property bool hasInvertedCorners: topLeftInverted || topRightInverted || bottomLeftInverted || bottomRightInverted
+
+          // Animation offset for slide effect on panels with inverted corners
+          // Use panel height for horizontal bars (top/bottom), width for vertical bars (left/right)
+          readonly property real slideOffset: {
+            if (!hasInvertedCorners)
+              return 0
+            var distance = root.barIsVertical ? width : height
+            return Math.round((1 - root.animationProgress) * distance)
+          }
+
           // Animation properties
-          opacity: root.animationProgress
-          scale: root.attachedToBar ? 1 : (0.95 + root.animationProgress * 0.05)
+          // Panels with inverted corners: slide in with no opacity/scale change
+          // Panels without inverted corners: fade in + slight scale up
+          opacity: hasInvertedCorners ? 1.0 : root.animationProgress
+          scale: hasInvertedCorners ? 1 : (0.8 + root.animationProgress * 0.2)
 
           // Transform origin for scale animation
           transformOrigin: {
-            // For detached panels, scale from center
-            if (!root.attachedToBar) {
+            // For panels without inverted corners, scale from center
+            if (!hasInvertedCorners) {
               return Item.Center
             }
 
-            // For bar-attached panels, scale from the edge touching the bar
+            // For panels with inverted corners, scale from the edge touching the bar
             if (root.barPosition === "top")
               return Item.Top
             if (root.barPosition === "bottom")
@@ -237,6 +251,28 @@ Item {
             if (root.barPosition === "right")
               return Item.Right
             return Item.Center
+          }
+
+          // Slide animation using transform instead of position offset
+          transform: Translate {
+            x: {
+              if (!panelBackground.hasInvertedCorners)
+                return 0
+              if (root.barPosition === "left")
+                return -panelBackground.slideOffset
+              if (root.barPosition === "right")
+                return panelBackground.slideOffset
+              return 0
+            }
+            y: {
+              if (!panelBackground.hasInvertedCorners)
+                return 0
+              if (root.barPosition === "top")
+                return -panelBackground.slideOffset
+              if (root.barPosition === "bottom")
+                return panelBackground.slideOffset
+              return 0
+            }
           }
 
           topLeftRadius: Style.radiusL
@@ -334,9 +370,6 @@ Item {
             return Math.min(h, (parent.height || 1080) - Style.barHeight - Style.marginL * 2)
           }
 
-          // Animation offset for slide effect on bar-attached panels
-          readonly property real slideOffset: root.attachedToBar ? (1 - root.animationProgress) * 40 : 0
-
           // Detect if panel is touching screen edges (only when bar is not floating)
           readonly property bool touchingLeftEdge: !root.barFloating && root.attachedToBar && x <= (root.barMarginH + 1)
           readonly property bool touchingRightEdge: !root.barFloating && root.attachedToBar && (x + width) >= (parent.width - root.barMarginH - 1)
@@ -360,23 +393,31 @@ Item {
                     // Panel to the right of left bar
                     var leftBarEdge = root.barMarginH + Style.barHeight
                     // Panel sits right at bar edge (inverted corners curve up/down)
-                    // Slide from the bar when opening
                     // Shift left by 1px to eliminate any gap between bar and panel
-                    calculatedX = leftBarEdge - slideOffset - 1
+                    calculatedX = leftBarEdge - 1
                   } else {
                     // right
                     // Panel to the left of right bar
                     var rightBarEdge = parent.width - root.barMarginH - Style.barHeight
                     // Panel sits right at bar edge (inverted corners curve up/down)
-                    // Slide from the bar when opening
                     // Shift right by 1px to eliminate any gap between bar and panel
-                    calculatedX = rightBarEdge - width + slideOffset + 1
+                    calculatedX = rightBarEdge - width + 1
                   }
                 } else {
                   // Detached panels: center on button X position
                   var panelX = root.buttonPosition.x + root.buttonWidth / 2 - width / 2
-                  // Clamp to screen bounds with margins
-                  panelX = Math.max(Style.marginL, Math.min(panelX, parent.width - width - Style.marginL))
+                  // Clamp to screen bounds with margins, accounting for bar position
+                  var minX = Style.marginL
+                  var maxX = parent.width - width - Style.marginL
+
+                  // Account for vertical bar taking up space
+                  if (root.barPosition === "left") {
+                    minX = root.barMarginH + Style.barHeight + Style.marginL
+                  } else if (root.barPosition === "right") {
+                    maxX = parent.width - root.barMarginH - Style.barHeight - width - Style.marginL
+                  }
+
+                  panelX = Math.max(minX, Math.min(panelX, maxX))
                   calculatedX = panelX
                 }
               } else {
@@ -495,9 +536,8 @@ Item {
                 var topBarEdge = root.barMarginV + Style.barHeight
                 if (root.attachedToBar) {
                   // Panel sits right at bar edge (inverted corners curve to the sides)
-                  // Slide from the bar when opening
                   // Shift up by 1px to eliminate any gap between bar and panel
-                  calculatedY = topBarEdge - slideOffset - 1
+                  calculatedY = topBarEdge - 1
                 } else {
                   calculatedY = topBarEdge + Style.marginM
                 }
@@ -506,9 +546,8 @@ Item {
                 var bottomBarEdge = parent.height - root.barMarginV - Style.barHeight
                 if (root.attachedToBar) {
                   // Panel sits right at bar edge (inverted corners curve to the sides)
-                  // Slide from the bar when opening
                   // Shift down by 1px to eliminate any gap between bar and panel
-                  calculatedY = bottomBarEdge - height + slideOffset + 1
+                  calculatedY = bottomBarEdge - height + 1
                 } else {
                   calculatedY = bottomBarEdge - height - Style.marginM
                 }
@@ -547,19 +586,19 @@ Item {
                 if (root.effectivePanelAnchorTop && root.barPosition === "top") {
                   // When attached to top bar: position right at bar edge (like useButtonPosition does)
                   // Shift up by 1px to eliminate gap between bar and panel
-                  calculatedY = root.barMarginV + Style.barHeight - slideOffset - 1
+                  calculatedY = root.barMarginV + Style.barHeight - 1
                 } else if (root.effectivePanelAnchorBottom && root.barPosition === "bottom") {
                   // When attached to bottom bar: position right at bar edge
                   // Shift down by 1px to eliminate gap between bar and panel
-                  calculatedY = parent.height - root.barMarginV - Style.barHeight - height + slideOffset + 1
+                  calculatedY = parent.height - root.barMarginV - Style.barHeight - height + 1
                 } else if (!root.hasExplicitVerticalAnchor) {
                   // No explicit vertical anchor AND attached: default to attaching to bar edge
                   if (root.barPosition === "top") {
                     // Attach to top bar
-                    calculatedY = root.barMarginV + Style.barHeight - slideOffset - 1
+                    calculatedY = root.barMarginV + Style.barHeight - 1
                   } else if (root.barPosition === "bottom") {
                     // Attach to bottom bar
-                    calculatedY = parent.height - root.barMarginV - Style.barHeight - height + slideOffset + 1
+                    calculatedY = parent.height - root.barMarginV - Style.barHeight - height + 1
                   }
                   // For vertical bars with no explicit anchor: fall through to center vertically on bar
                 }
@@ -591,9 +630,9 @@ Item {
                     // For horizontal bars: attach to bar edge by default
                     if (root.attachedToBar && !root.barIsVertical) {
                       if (root.barPosition === "top") {
-                        calculatedY = root.barMarginV + Style.barHeight - slideOffset - 1
+                        calculatedY = root.barMarginV + Style.barHeight - 1
                       } else if (root.barPosition === "bottom") {
-                        calculatedY = parent.height - root.barMarginV - Style.barHeight - height + slideOffset + 1
+                        calculatedY = parent.height - root.barMarginV - Style.barHeight - height + 1
                       }
                     } else {
                       // Detached or no bar position: use default positioning
