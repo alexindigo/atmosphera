@@ -884,6 +884,10 @@
       "dim-desktop": {
         "description": "Den Desktop abdunkeln, wenn Fenster oder Menüs geöffnet sind.",
         "label": "Dimmer Schreibtisch"
+      },
+      "shadows": {
+        "description": "Aktiviert Schlagschatten unter Balken und Panels.",
+        "label": "Schlagschatten"
       }
     },
     "lock-screen": {

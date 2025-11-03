@@ -54,8 +54,9 @@ Singleton {
     // This should only be activated once when the settings structure has changed
     // Then it should be commented out again, regular users don't need to generate
     // default settings on every start
-    // TODO: automate this someday!
-    //generateDefaultSettings()
+    if (isDebug) {
+      generateDefaultSettings()
+    }
 
     // Patch-in the local default, resolved to user's home
     adapter.general.avatarImage = defaultAvatar
@@ -198,7 +199,19 @@ Singleton {
       property bool animationDisabled: false
       property bool compactLockScreen: false
       property bool lockOnSuspend: true
+      property bool enableShadows: true
       property string language: ""
+    }
+
+    // ui
+    property JsonObject ui: JsonObject {
+      property string fontDefault: "Roboto"
+      property string fontFixed: "DejaVu Sans Mono"
+      property real fontDefaultScale: 1.0
+      property real fontFixedScale: 1.0
+      property bool tooltipsEnabled: true
+      property bool panelsAttachedToBar: true
+      property bool panelsOverlayLayer: true
     }
 
     // location
@@ -351,17 +364,6 @@ Singleton {
       property string visualizerType: "linear"
       property list<string> mprisBlacklist: []
       property string preferredPlayer: ""
-    }
-
-    // ui
-    property JsonObject ui: JsonObject {
-      property string fontDefault: "Roboto"
-      property string fontFixed: "DejaVu Sans Mono"
-      property real fontDefaultScale: 1.0
-      property real fontFixedScale: 1.0
-      property bool tooltipsEnabled: true
-      property bool panelsAttachedToBar: true
-      property bool panelsOverlayLayer: true
     }
 
     // brightness

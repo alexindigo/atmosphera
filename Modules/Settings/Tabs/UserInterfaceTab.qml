@@ -41,6 +41,13 @@ ColumnLayout {
     }
 
     NToggle {
+      label: I18n.tr("settings.user-interface.shadows.label")
+      description: I18n.tr("settings.user-interface.shadows.description")
+      checked: Settings.data.general.enableShadows
+      onToggled: checked => Settings.data.general.enableShadows = checked
+    }
+
+    NToggle {
       label: I18n.tr("settings.user-interface.panels-overlay.label")
       description: I18n.tr("settings.user-interface.panels-overlay.description")
       checked: Settings.data.ui.panelsOverlayLayer

@@ -884,6 +884,10 @@
       "dim-desktop": {
         "description": "Atenuar el escritorio cuando los paneles o menús estén abiertos.",
         "label": "Dim escritorio"
+      },
+      "shadows": {
+        "description": "Habilita sombras paralelas debajo de las barras y los paneles.",
+        "label": "Sombras paralelas"
       }
     },
     "lock-screen": {

@@ -859,6 +859,10 @@
         "description": "Changes the size of the general user interface, excluding the bar.",
         "reset-scaling": "Reset interface scaling"
       },
+      "shadows": {
+        "label": "Drop shadows",
+        "description": "Enables drop shadows under bars and panels."
+      },
       "dim-desktop": {
         "label": "Dim desktop",
         "description": "Dim the desktop when panels or menus are open."

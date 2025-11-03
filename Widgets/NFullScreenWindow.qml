@@ -16,7 +16,6 @@ PanelWindow {
   required property var panelComponents
 
   // Shadow properties
-  property bool shadowEnabled: true
   property real shadowOpacity: 1.0
   property real shadowBlur: 1.0
   property real shadowHorizontalOffset: 2
@@ -193,14 +192,14 @@ PanelWindow {
     height: root.height
 
     // Apply shadow effect
-    layer.enabled: root.shadowEnabled
+    layer.enabled: Settings.data.general.enableShadows
     layer.smooth: true
     // layer.textureSize: {
     //   var dpr = CompositorService.getDisplayScale(screen.name)
     //   return Qt.size(width * dpr, height * dpr)
     // }
     layer.effect: MultiEffect {
-      shadowEnabled: root.shadowEnabled
+      shadowEnabled: true
       shadowOpacity: root.shadowOpacity
       shadowHorizontalOffset: root.shadowHorizontalOffset
       shadowVerticalOffset: root.shadowVerticalOffset
@@ -213,7 +212,7 @@ PanelWindow {
     // Always positioned at actual screen edges
     Loader {
       id: screenCornersLoader
-      active: Settings.data.general.showScreenCorners && (!Settings.data.ui.panelsAttachedToBar || Settings.data.bar.backgroundOpacity >= 1 || Settings.data.bar.floating)
+      active: Settings.data.general.showScreenCorners
 
       anchors.fill: parent
       z: 1000 // Very high z-index to be on top of everything

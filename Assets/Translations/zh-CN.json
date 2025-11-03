@@ -884,6 +884,10 @@
       "dim-desktop": {
         "description": "当面板或菜单打开时，桌面变暗。",
         "label": "昏暗的桌面"
+      },
+      "shadows": {
+        "description": "启用条形图和面板下的阴影。",
+        "label": "阴影"
       }
     },
     "lock-screen": {

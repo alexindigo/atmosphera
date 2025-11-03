@@ -884,6 +884,10 @@
       "dim-desktop": {
         "description": "Atténuer le bureau lorsque des panneaux ou des menus sont ouverts.",
         "label": "Dim bureau"
+      },
+      "shadows": {
+        "description": "Active les ombres portées sous les barres et les panneaux.",
+        "label": "Ombres portées"
       }
     },
     "lock-screen": {

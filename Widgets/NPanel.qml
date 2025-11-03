@@ -52,6 +52,7 @@ Item {
 
   // Animation properties
   property real animationProgress: 0
+  property bool isClosing: false
 
   // Keyboard event handlers - override these in specific panels to handle shortcuts
   // These are called from NFullScreenWindow's centralized shortcuts
@@ -76,6 +77,13 @@ Item {
     NumberAnimation {
       duration: Style.animationFast
       easing.type: Easing.OutCubic
+      onRunningChanged: {
+        // When close animation finishes, actually hide the panel
+        if (!running && root.isClosing) {
+          root.isClosing = false
+          root.isPanelOpen = false
+        }
+      }
     }
   }
 
@@ -106,7 +114,8 @@ Item {
   signal closed
 
   // Panel visibility and sizing
-  visible: isPanelOpen
+  // Keep visible during close animation
+  visible: isPanelOpen || isClosing
   width: parent ? parent.width : 0
   height: parent ? parent.height : 0
 
@@ -156,15 +165,18 @@ Item {
   }
 
   function close() {
-    isPanelOpen = false
+    // Start close animation
+    isClosing = true
     animationProgress = 0
 
-    // Notify PanelService
+    // Notify PanelService immediately
     PanelService.closedPanel(root)
 
+    // Emit closed signal
     closed()
 
-    Logger.d("NPanel", "Closed panel", objectName)
+    Logger.d("NPanel", "Closing panel with animation", objectName)
+    // isPanelOpen will be set to false when animation completes
   }
 
   function setPosition() {// Position calculation will be handled here
@@ -175,7 +187,8 @@ Item {
   Loader {
     id: panelContentContainer
     anchors.fill: parent
-    active: root.isPanelOpen
+    // Keep active during close animation
+    active: root.isPanelOpen || root.isClosing
     asynchronous: false
 
     sourceComponent: Item {

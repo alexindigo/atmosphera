@@ -884,6 +884,10 @@
       "dim-desktop": {
         "description": "Escurecer a área de trabalho quando painéis ou menus estiverem abertos.",
         "label": "Dim área de trabalho"
+      },
+      "shadows": {
+        "description": "Ativa sombras projetadas sob barras e painéis.",
+        "label": "Sombras projetadas"
       }
     },
     "lock-screen": {
