@@ -17,7 +17,7 @@ Singleton {
   property string strategy: "systemd" // "systemd", "wayland", or "auto"
 
   function init() {
-    Logger.d("IdleInhibitor", "Service started")
+    Logger.i("IdleInhibitor", "Service started")
     detectStrategy()
   }
 

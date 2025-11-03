@@ -46,7 +46,7 @@ Singleton {
   }
 
   Component.onCompleted: {
-    Logger.d("BarService", "Service started")
+    Logger.i("BarService", "Service started")
   }
 
   // Function for the Bar to call when it's ready
