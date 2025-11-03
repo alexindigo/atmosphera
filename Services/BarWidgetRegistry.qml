@@ -106,7 +106,7 @@ Singleton {
                                     "showScrollLock": true,
                                     "capsLockIcon": "letter-c",
                                     "numLockIcon": "letter-n",
-                                    "scrollLockIcon": "letter-s",
+                                    "scrollLockIcon": "letter-s"
                                   },
                                   "MediaMini": {
                                     "allowUserSettings": true,
