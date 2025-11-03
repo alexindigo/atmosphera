@@ -74,7 +74,7 @@ ColumnLayout {
     Layout.fillWidth: true
     label: I18n.tr("settings.control-center.shortcuts.custom-button.general-tooltip-text.label")
     description: I18n.tr("settings.control-center.shortcuts.custom-button.general-tooltip-text.description")
-    placeholderText: I18n.tr("placeholders.enter-text")
+    placeholderText: I18n.tr("placeholders.enter-tooltip")
     text: _settings.generalTooltipText
     onTextChanged: _settings.generalTooltipText = text
   }
