@@ -86,6 +86,10 @@ ColumnLayout {
         if (settingCard.id === cardsDefault[j].id) {
           var card = cardsDefault[j]
           card.enabled = settingCard.enabled
+          // Auto-disable weather card if weather is disabled
+          if (card.id === "weather-card" && !Settings.data.location.weatherEnabled) {
+            card.enabled = false
+          }
           cardsModel.push(card)
         }
       }
@@ -102,7 +106,12 @@ ColumnLayout {
       }
 
       if (!found) {
-        cardsModel.push(cardsDefault[i])
+        var card = cardsDefault[i]
+        // Auto-disable weather card if weather is disabled
+        if (card.id === "weather-card" && !Settings.data.location.weatherEnabled) {
+          card.enabled = false
+        }
+        cardsModel.push(card)
       }
     }
 
@@ -171,6 +180,24 @@ ColumnLayout {
       description: I18n.tr("settings.control-center.cards.section.description")
     }
 
+    Connections {
+      target: Settings.data.location
+      function onWeatherEnabledChanged() {
+        // Auto-disable weather card when weather is disabled
+        var newModel = cardsModel.slice()
+        for (var i = 0; i < newModel.length; i++) {
+          if (newModel[i].id === "weather-card") {
+            newModel[i] = Object.assign({}, newModel[i], {
+                                          "enabled": Settings.data.location.weatherEnabled
+                                        })
+            cardsModel = newModel
+            saveCards()
+            break
+          }
+        }
+      }
+    }
+
     NReorderCheckboxes {
       Layout.fillWidth: true
       model: cardsModel
@@ -181,6 +208,10 @@ ColumnLayout {
         root.handleDragEnd()
       }
       onItemToggled: function (index, enabled) {
+        // Prevent toggling weather card when weather is disabled
+        if (cardsModel[index].id === "weather-card" && !Settings.data.location.weatherEnabled) {
+          return
+        }
         //Logger.i("ControlCenterTab", "Item", index, "toggled to", enabled)
         var newModel = cardsModel.slice()
         newModel[index] = Object.assign({}, newModel[index], {
@@ -190,6 +221,10 @@ ColumnLayout {
         saveCards()
       }
       onItemsReordered: function (fromIndex, toIndex) {
+        // Prevent reordering weather card when weather is disabled
+        if (cardsModel[fromIndex].id === "weather-card" && !Settings.data.location.weatherEnabled) {
+          return
+        }
         //Logger.i("ControlCenterTab", "Item moved from", fromIndex, "to", toIndex)
         var newModel = cardsModel.slice()
         var item = newModel.splice(fromIndex, 1)[0]

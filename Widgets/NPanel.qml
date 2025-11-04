@@ -242,14 +242,14 @@ Item {
             // If touching screen edges, fall through to the distance-based calculation below
             // var touchingAnyScreenEdge = touchingLeftEdge || touchingRightEdge || touchingTopEdge || touchingBottomEdge
             // if (!touchingAnyScreenEdge) {
-              if (touchingTopBar && root.barPosition === "top")
-                return "top"
-              if (touchingBottomBar && root.barPosition === "bottom")
-                return "bottom"
-              if (touchingLeftBar && root.barPosition === "left")
-                return "left"
-              if (touchingRightBar && root.barPosition === "right")
-                return "right"
+            if (touchingTopBar && root.barPosition === "top")
+              return "top"
+            if (touchingBottomBar && root.barPosition === "bottom")
+              return "bottom"
+            if (touchingLeftBar && root.barPosition === "left")
+              return "left"
+            if (touchingRightBar && root.barPosition === "right")
+              return "right"
             //}
 
             // Use panel's center point (barycenter) as reference
