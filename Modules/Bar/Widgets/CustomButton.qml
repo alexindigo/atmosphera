@@ -30,7 +30,8 @@ Item {
     return {}
   }
 
-  // Use settings or defaults from BarWidgetRegistry
+  readonly property bool isVerticalBar: Settings.data.bar.position === "left" || Settings.data.bar.position === "right"
+
   readonly property string customIcon: widgetSettings.icon || widgetMetadata.icon
   readonly property string leftClickExec: widgetSettings.leftClickExec || widgetMetadata.leftClickExec
   readonly property string rightClickExec: widgetSettings.rightClickExec || widgetMetadata.rightClickExec
@@ -40,7 +41,10 @@ Item {
   readonly property int textIntervalMs: widgetSettings.textIntervalMs !== undefined ? widgetSettings.textIntervalMs : (widgetMetadata.textIntervalMs || 3000)
   readonly property string textCollapse: widgetSettings.textCollapse !== undefined ? widgetSettings.textCollapse : (widgetMetadata.textCollapse || "")
   readonly property bool parseJson: widgetSettings.parseJson !== undefined ? widgetSettings.parseJson : (widgetMetadata.parseJson || false)
+  readonly property bool hideTextInVerticalBar: widgetSettings.hideTextInVerticalBar !== undefined ? widgetSettings.hideTextInVerticalBar : (widgetMetadata.hideTextInVerticalBar || false)
   readonly property bool hasExec: (leftClickExec || rightClickExec || middleClickExec)
+
+  readonly property bool shouldShowText: !isVerticalBar || !hideTextInVerticalBar
 
   implicitWidth: pill.width
   implicitHeight: pill.height
@@ -50,7 +54,7 @@ Item {
 
     oppositeDirection: BarService.getPillDirection(root)
     icon: _dynamicIcon !== "" ? _dynamicIcon : customIcon
-    text: _dynamicText
+    text: shouldShowText ? _dynamicText : ""
     density: Settings.data.bar.density
     autoHide: false
     forceOpen: _dynamicText !== ""
@@ -86,7 +90,7 @@ Item {
     id: refreshTimer
     interval: Math.max(250, textIntervalMs)
     repeat: true
-    running: !textStream && textCommand && textCommand.length > 0
+    running: shouldShowText && !textStream && textCommand && textCommand.length > 0
     triggeredOnStart: true
     onTriggered: root.runTextCommand()
   }
@@ -95,7 +99,7 @@ Item {
   Timer {
     id: restartTimer
     interval: 1000
-    running: textStream && !textProc.running
+    running: shouldShowText && textStream && !textProc.running
     onTriggered: root.runTextCommand()
   }
 

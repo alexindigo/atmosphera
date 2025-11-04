@@ -119,6 +119,10 @@
           "stream-description": "Enter a command to run continuously."
         },
         "dynamic-text": "Dynamic text",
+        "hide-vertical": {
+          "description": "If enabled, the text from the command output will not be shown when the bar is in a vertical layout (left or right).",
+          "label": "Hide text in vertical bar"
+        },
         "icon": {
           "description": "Select an icon from the library.",
           "label": "Icon"
