@@ -136,26 +136,26 @@ ColumnLayout {
           "key": "close_to_bar_button",
           "name": I18n.tr("options.control-center.position.close_to_bar_button")
         }, {
+          "key": "center",
+          "name": I18n.tr("options.control-center.position.center")
+        }, {
+          "key": "top_center",
+          "name": I18n.tr("options.control-center.position.top_center")
+        }, {
           "key": "top_left",
           "name": I18n.tr("options.control-center.position.top_left")
         }, {
           "key": "top_right",
           "name": I18n.tr("options.control-center.position.top_right")
         }, {
+          "key": "bottom_center",
+          "name": I18n.tr("options.control-center.position.bottom_center")
+        }, {
           "key": "bottom_left",
           "name": I18n.tr("options.control-center.position.bottom_left")
         }, {
           "key": "bottom_right",
           "name": I18n.tr("options.control-center.position.bottom_right")
-        }, {
-          "key": "bottom_center",
-          "name": I18n.tr("options.control-center.position.bottom_center")
-        }, {
-          "key": "top_center",
-          "name": I18n.tr("options.control-center.position.top_center")
-        }, {
-          "key": "center",
-          "name": I18n.tr("options.control-center.position.center")
         }]
       currentKey: Settings.data.controlCenter.position
       onSelected: function (key) {

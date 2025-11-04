@@ -188,10 +188,14 @@ Item {
   IpcHandler {
     target: "controlCenter"
     function toggle() {
-      // Will attempt to open the panel next to the bar button if any.
       root.withTargetScreen(screen => {
                               var controlCenterPanel = PanelService.getPanel("controlCenterPanel", screen)
-                              controlCenterPanel.toggle(null, "ControlCenter")
+                              if (Settings.data.controlCenter.position === "close_to_bar_button") {
+                                // Will attempt to open the panel next to the bar button if any.
+                                controlCenterPanel.toggle(null, "ControlCenter")
+                              } else {
+                                controlCenterPanel.toggle()
+                              }
                             })
     }
   }
