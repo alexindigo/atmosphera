@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
-import qs.Modules.Audio
+import qs.Modules.AudioSpectrum
 import qs.Commons
 import qs.Services
 import qs.Widgets
