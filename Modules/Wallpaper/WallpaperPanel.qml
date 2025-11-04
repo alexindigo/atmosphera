@@ -36,8 +36,6 @@ NPanel {
   panelAnchorBottom: panelPosition.startsWith("bottom_")
   panelAnchorTop: panelPosition.startsWith("top_")
 
-  panelKeyboardFocus: true // Needs Exclusive focus for text input (search)
-
   // Store direct reference to content for instant access
   property var contentItem: null
 

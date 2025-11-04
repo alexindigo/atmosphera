@@ -17,7 +17,6 @@ NPanel {
   preferredHeightRatio: 0.5
 
   panelBackgroundColor: Qt.alpha(Color.mSurface, Settings.data.appLauncher.backgroundOpacity)
-  panelKeyboardFocus: true // Needs Exclusive focus for text input
 
   // Positioning
   readonly property string panelPosition: {
