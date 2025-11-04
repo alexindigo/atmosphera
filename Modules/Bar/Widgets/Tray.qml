@@ -303,31 +303,37 @@ Rectangle {
       }
     }
 
-    // Dropdown opener
-    NIconButton {
-      id: dropdownButton
+    // Dropdown opener - wrapped in Item for proper alignment
+    Item {
       visible: dropdownItems.length > 0
-      width: Math.round(itemSize * 1.4)
-      height: Math.round(itemSize * 1.4)
-      icon: {
-        if (barPosition === "top")
-          return "chevron-down"
-        else if (barPosition === "bottom")
-          return "chevron-up"
-        else if (barPosition === "left")
-          return "chevron-right"
-        else if (barPosition === "right")
-          return "chevron-left"
-        else
-          return "chevron-down" // default fallback
-      }
-      tooltipText: I18n.tr("open-control-center") // reuse generic tooltip text
-      onClicked: {
-        const panel = PanelService.getPanel("trayDropdownPanel", root.screen)
-        if (panel) {
-          panel.widgetSection = root.section
-          panel.widgetIndex = root.sectionWidgetIndex
-          panel.toggle(this)
+      width: itemSize
+      height: itemSize
+
+      NIconButton {
+        id: dropdownButton
+        anchors.centerIn: parent
+        width: itemSize
+        height: itemSize
+        icon: {
+          if (barPosition === "top")
+            return "chevron-down"
+          else if (barPosition === "bottom")
+            return "chevron-up"
+          else if (barPosition === "left")
+            return "chevron-right"
+          else if (barPosition === "right")
+            return "chevron-left"
+          else
+            return "chevron-down" // default fallback
+        }
+        tooltipText: I18n.tr("open-control-center") // reuse generic tooltip text
+        onClicked: {
+          const panel = PanelService.getPanel("trayDropdownPanel", root.screen)
+          if (panel) {
+            panel.widgetSection = root.section
+            panel.widgetIndex = root.sectionWidgetIndex
+            panel.toggle(this)
+          }
         }
       }
     }
