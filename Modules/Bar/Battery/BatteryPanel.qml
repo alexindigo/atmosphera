@@ -14,15 +14,15 @@ NPanel {
 
   function updateOptionsModel() {
     let newOptions = [{
-      "id": BatteryService.ChargingMode.Full,
-      "label": "battery.panel.full"
-    }, {
-      "id": BatteryService.ChargingMode.Balanced,
-      "label": "battery.panel.balanced"
-    }, {
-      "id": BatteryService.ChargingMode.Lifespan,
-      "label": "battery.panel.lifespan"
-    }]
+                        "id": BatteryService.ChargingMode.Full,
+                        "label": "battery.panel.full"
+                      }, {
+                        "id": BatteryService.ChargingMode.Balanced,
+                        "label": "battery.panel.balanced"
+                      }, {
+                        "id": BatteryService.ChargingMode.Lifespan,
+                        "label": "battery.panel.lifespan"
+                      }]
     root.optionsModel = newOptions
   }
 
@@ -44,8 +44,8 @@ NPanel {
           ButtonGroup.group: batteryGroup
           required property var modelData
           text: I18n.tr(modelData.label, {
-            "percent": BatteryService.getThresholdValue(modelData.id)
-          })
+                          "percent": BatteryService.getThresholdValue(modelData.id)
+                        })
           checked: BatteryService.chargingMode === modelData.id
           onClicked: {
             BatteryService.setChargingMode(modelData.id)
