@@ -47,7 +47,17 @@ Item {
   Loader {
     id: barContentLoader
     anchors.fill: parent
-    active: root.screen !== null && root.screen !== undefined
+    active: {
+      if (root.screen === null || root.screen === undefined) {
+        return false
+      }
+
+      var monitors = Settings.data.bar.monitors || []
+      var result = monitors.length === 0 || monitors.includes(root.screen.name)
+
+      Logger.d("Shell", "NFullScreenWindow Loader for", root.screen?.name, "- shouldBeActive:", result, "- monitors:", JSON.stringify(monitors))
+      return result
+    }
 
     sourceComponent: Item {
       anchors.fill: parent
@@ -61,13 +71,13 @@ Item {
         x: {
           var baseX = (root.barPosition === "right") ? (parent.width - Style.barHeight - root.barMarginH) : root.barMarginH
           if (root.barPosition === "right")
-            return baseX + root.attachmentOverlap
+            return baseX - root.attachmentOverlap // Extend left towards panels
           return baseX
         }
         y: {
           var baseY = (root.barPosition === "bottom") ? (parent.height - Style.barHeight - root.barMarginV) : root.barMarginV
           if (root.barPosition === "bottom")
-            return baseY + root.attachmentOverlap
+            return baseY - root.attachmentOverlap // Extend up towards panels
           return baseY
         }
         width: {
