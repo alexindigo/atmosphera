@@ -127,7 +127,7 @@ Item {
             id: dragHandleMouseArea
 
             anchors.fill: parent
-            cursorShape: (delegateItem.required || delegateItem.isDisabled) ? Qt.ForbiddenCursor : Qt.SizeVerCursor
+            cursorShape: (!delegateItem.required && !delegateItem.isDisabled) ? Qt.SizeVerCursor : Qt.ArrowCursor
             hoverEnabled: true
             preventStealing: false
             enabled: !delegateItem.required && !delegateItem.isDisabled
@@ -229,7 +229,7 @@ Item {
 
           MouseArea {
             anchors.fill: parent
-            cursorShape: (delegateItem.required || delegateItem.isDisabled) ? Qt.ForbiddenCursor : Qt.PointingHandCursor
+            cursorShape: (!delegateItem.required && !delegateItem.isDisabled) ? Qt.PointingHandCursor : Qt.ArrowCursor
             enabled: !delegateItem.required && !delegateItem.isDisabled
 
             onClicked: {
