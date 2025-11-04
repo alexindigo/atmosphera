@@ -55,7 +55,6 @@ Item {
       var monitors = Settings.data.bar.monitors || []
       var result = monitors.length === 0 || monitors.includes(root.screen.name)
 
-      Logger.d("Shell", "NFullScreenWindow Loader for", root.screen?.name, "- shouldBeActive:", result, "- monitors:", JSON.stringify(monitors))
       return result
     }
 

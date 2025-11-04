@@ -15,7 +15,16 @@ Item {
 
   // A panel can only be a attached to the bar of screen edges if
   property bool couldAttach: Settings.data.ui.panelsAttachedToBar
-  property bool couldAttachToBar: (Settings.data.ui.panelsAttachedToBar && Settings.data.bar.backgroundOpacity >= 1.0)
+  property bool couldAttachToBar: {
+    if (!Settings.data.ui.panelsAttachedToBar || Settings.data.bar.backgroundOpacity < 1.0) {
+      return false
+    }
+
+    // A panel can only be attached to a bar if there is a bar on that screen
+    var monitors = Settings.data.bar.monitors || []
+    var result = monitors.length === 0 || monitors.includes(screen.name)
+    return result
+  }
 
   // Edge snapping: if panel is within this distance (in pixels) from a screen edge, snap
   property real edgeSnapDistance: 50
