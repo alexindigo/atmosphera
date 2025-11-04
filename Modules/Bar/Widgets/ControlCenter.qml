@@ -44,7 +44,15 @@ NIconButton {
   colorBgHover: useDistroLogo ? Color.mSurfaceVariant : Color.mHover
   colorBorder: Color.transparent
   colorBorderHover: useDistroLogo ? Color.mHover : Color.transparent
-  onClicked: PanelService.getPanel("controlCenterPanel", screen)?.toggle(this)
+  onClicked: {
+    var controlCenterPanel = PanelService.getPanel("controlCenterPanel", screen)
+    if (Settings.data.controlCenter.position === "close_to_bar_button") {
+      // Willopen the panel next to the bar button.
+      controlCenterPanel.toggle(this)
+    } else {
+      controlCenterPanel.toggle()
+    }
+  }
   onRightClicked: PanelService.getPanel("settingsPanel", screen)?.toggle()
 
   IconImage {
