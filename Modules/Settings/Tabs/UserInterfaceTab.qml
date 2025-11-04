@@ -116,7 +116,7 @@ ColumnLayout {
         NValueSlider {
           Layout.fillWidth: true
           from: 0
-          to: 1
+          to: 2
           stepSize: 0.01
           value: Settings.data.general.radiusRatio
           onMoved: value => Settings.data.general.radiusRatio = value
