@@ -259,7 +259,7 @@ Singleton {
       property string transitionType: "random"
       property real transitionEdgeSmoothness: 0.05
       property list<var> monitors: []
-      property string panelPosition: "folow_bar"
+      property string panelPosition: "follow_bar"
     }
 
     // applauncher
