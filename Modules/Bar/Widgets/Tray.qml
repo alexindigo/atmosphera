@@ -317,15 +317,15 @@ Rectangle {
         anchors.centerIn: parent
         icon: {
           if (barPosition === "top")
-            return "chevron-down"
+            return "caret-down"
           else if (barPosition === "bottom")
-            return "chevron-up"
+            return "caret-up"
           else if (barPosition === "left")
-            return "chevron-right"
+            return "caret-right"
           else if (barPosition === "right")
-            return "chevron-left"
+            return "caret-left"
           else
-            return "chevron-down" // default fallback
+            return "caret-down" // default fallback
         }
         pointSize: Math.round(itemSize * 0.65)
         color: dropdownButton.hovered ? Color.mPrimary : Color.mOnSurface
