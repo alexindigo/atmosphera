@@ -338,7 +338,7 @@ PopupWindow {
             spacing: Style.marginS
 
             NIcon {
-              icon: addToFavoriteEntry.isFavorite ? "star" : "star-outline"
+              icon: addToFavoriteEntry.isFavorite ? "star" : "star-off"
               pointSize: Style.fontSizeS
               applyUiScale: false
               verticalAlignment: Text.AlignVCenter
