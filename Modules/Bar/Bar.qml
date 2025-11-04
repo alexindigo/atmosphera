@@ -47,7 +47,16 @@ Item {
   Loader {
     id: barContentLoader
     anchors.fill: parent
-    active: root.screen !== null && root.screen !== undefined
+    active: {
+      if (root.screen === null || root.screen === undefined) {
+        return false
+      }
+
+      var monitors = Settings.data.bar.monitors || []
+      var result = monitors.length === 0 || monitors.includes(root.screen.name)
+
+      return result
+    }
 
     sourceComponent: Item {
       anchors.fill: parent
@@ -61,20 +70,20 @@ Item {
         x: {
           var baseX = (root.barPosition === "right") ? (parent.width - Style.barHeight - root.barMarginH) : root.barMarginH
           if (root.barPosition === "right")
-            return baseX + root.attachmentOverlap
+            return baseX - root.attachmentOverlap // Extend left towards panels
           return baseX
         }
         y: {
           var baseY = (root.barPosition === "bottom") ? (parent.height - Style.barHeight - root.barMarginV) : root.barMarginV
           if (root.barPosition === "bottom")
-            return baseY + root.attachmentOverlap
+            return baseY - root.attachmentOverlap // Extend up towards panels
           return baseY
         }
         width: {
           var baseWidth = root.barIsVertical ? Style.barHeight : (parent.width - root.barMarginH * 2)
           if (!root.barIsVertical)
             return baseWidth // Horizontal bars extend via height, not width
-          return baseWidth + root.attachmentOverlap
+          return baseWidth + root.attachmentOverlap + 1
         }
         height: {
           var baseHeight = root.barIsVertical ? (parent.height - root.barMarginV * 2) : Style.barHeight
