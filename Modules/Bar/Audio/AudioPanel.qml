@@ -56,7 +56,11 @@ NPanel {
   panelContent: Rectangle {
     color: Color.transparent
 
+    // Use implicitHeight from content + margins to avoid binding loops
+    property real contentPreferredHeight: mainColumn.implicitHeight + Style.marginL * 2
+
     ColumnLayout {
+      id: mainColumn
       anchors.fill: parent
       anchors.margins: Style.marginL
       spacing: Style.marginM
