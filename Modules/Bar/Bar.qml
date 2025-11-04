@@ -83,7 +83,7 @@ Item {
           var baseWidth = root.barIsVertical ? Style.barHeight : (parent.width - root.barMarginH * 2)
           if (!root.barIsVertical)
             return baseWidth // Horizontal bars extend via height, not width
-          return baseWidth + root.attachmentOverlap
+          return baseWidth + root.attachmentOverlap + 1
         }
         height: {
           var baseHeight = root.barIsVertical ? (parent.height - root.barMarginV * 2) : Style.barHeight
