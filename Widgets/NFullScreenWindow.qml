@@ -46,6 +46,7 @@ PanelWindow {
   WlrLayershell.keyboardFocus: root.isPanelOpen ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
   WlrLayershell.layer: Settings.data.ui.panelsOverlayLayer ? WlrLayer.Overlay : WlrLayer.Top
   WlrLayershell.namespace: "noctalia-screen-" + (screen?.name || "unknown")
+  WlrLayershell.exclusionMode: ExclusionMode.Ignore // Don't reserve space - BarExclusionZone handles that
 
   anchors {
     top: true
