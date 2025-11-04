@@ -18,7 +18,7 @@ Singleton {
                            "Clock": clockComponent,
                            "ControlCenter": controlCenterComponent,
                            "CustomButton": customButtonComponent,
-                           "DarkMode": darkMode,
+                           "DarkMode": darkModeComponent,
                            "KeepAwake": keepAwakeComponent,
                            "KeyboardLayout": keyboardLayoutComponent,
                            "LockKeys": lockKeysComponent,
@@ -194,7 +194,7 @@ Singleton {
   property Component customButtonComponent: Component {
     CustomButton {}
   }
-  property Component darkMode: Component {
+  property Component darkModeComponent: Component {
     DarkMode {}
   }
   property Component keyboardLayoutComponent: Component {
