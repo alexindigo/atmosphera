@@ -771,7 +771,9 @@
           "description": "Adicione regras de exclusão para a bandeja do sistema, suporta curingas (*).",
           "label": "Lista Negra",
           "placeholder": "ex: nm-applet, Fcitx*"
-        }
+        },
+        "pin-application": "Fixar Aplicativo",
+        "unpin-application": "Desfixar Aplicativo"
       },
       "widgets": {
         "section": {

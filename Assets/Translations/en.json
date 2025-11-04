@@ -772,8 +772,8 @@
           "label": "Blacklist",
           "placeholder": "e.g., nm-applet, Fcitx*"
         },
-        "add-as-favorite": "Add as Favorite",
-        "remove-from-favorites": "Remove from Favorites"
+        "pin-application": "Pin Application",
+        "unpin-application": "Unpin Application"
       },
       "widgets": {
         "section": {

@@ -109,7 +109,7 @@ Rectangle {
     }
 
     // Build inline (favorites) and dropdown (non-favorites) lists
-    // If favorites list is empty, all items are inline
+    // If favorites list is empty, all items go to dropdown (none inline)
     // If favorites list has items, favorites are inline, rest go to dropdown
     if (favorites && favorites.length > 0) {
       let fav = []
@@ -132,15 +132,19 @@ Rectangle {
         const cand = newItems[v]
         let isFavorite = false
         for (var f = 0; f < filteredItems.length; f++) {
-          if (filteredItems[f] === cand) { isFavorite = true; break }
+          if (filteredItems[f] === cand) {
+            isFavorite = true
+            break
+          }
         }
-        if (!isFavorite) nonFav.push(cand)
+        if (!isFavorite)
+          nonFav.push(cand)
       }
       dropdownItems = nonFav
     } else {
-      // No favorites: all items are inline
-      filteredItems = newItems
-      dropdownItems = []
+      // No favorites: all items go to dropdown (none inline)
+      filteredItems = []
+      dropdownItems = newItems
     }
   }
 
@@ -303,9 +307,20 @@ Rectangle {
     NIconButton {
       id: dropdownButton
       visible: dropdownItems.length > 0
-      width: itemSize
-      height: itemSize
-      icon: isVertical ? (barPosition === "left" ? "chevron-right" : "chevron-left") : "chevron-down"
+      width: Math.round(itemSize * 1.4)
+      height: Math.round(itemSize * 1.4)
+      icon: {
+        if (barPosition === "top")
+          return "chevron-down"
+        else if (barPosition === "bottom")
+          return "chevron-up"
+        else if (barPosition === "left")
+          return "chevron-right"
+        else if (barPosition === "right")
+          return "chevron-left"
+        else
+          return "chevron-down" // default fallback
+      }
       tooltipText: I18n.tr("open-control-center") // reuse generic tooltip text
       onClicked: {
         const panel = PanelService.getPanel("trayDropdownPanel", root.screen)

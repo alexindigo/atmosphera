@@ -771,7 +771,9 @@
           "description": "添加托盘排除规则，支持通配符 (*)。",
           "label": "黑名单",
           "placeholder": "例如：nm-applet, Fcitx*"
-        }
+        },
+        "pin-application": "固定应用程序",
+        "unpin-application": "取消固定应用程序"
       },
       "widgets": {
         "section": {

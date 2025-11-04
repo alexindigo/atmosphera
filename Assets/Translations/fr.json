@@ -771,7 +771,9 @@
           "description": "Ajouter des règles d'exclusion pour la boîte à miniatures, prend en charge les caractères génériques (*).",
           "label": "Liste noire",
           "placeholder": "ex: nm-applet, Fcitx*"
-        }
+        },
+        "pin-application": "Épingler l'Application",
+        "unpin-application": "Désépingler l'Application"
       },
       "widgets": {
         "section": {

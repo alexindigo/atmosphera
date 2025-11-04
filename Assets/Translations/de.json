@@ -771,7 +771,9 @@
           "description": "Ausschlussregeln für die Tray-Symbolleiste hinzufügen, unterstützt Platzhalter (*).",
           "label": "Ausschlussliste",
           "placeholder": "z.B., nm-applet, Fcitx*"
-        }
+        },
+        "pin-application": "Anwendung anheften",
+        "unpin-application": "Anheftung aufheben"
       },
       "widgets": {
         "section": {

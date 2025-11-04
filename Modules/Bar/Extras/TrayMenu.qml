@@ -303,18 +303,23 @@ PopupWindow {
 
         // Check if item is already a favorite
         readonly property bool isFavorite: {
-          if (!root.trayItem || root.widgetSection === "" || root.widgetIndex < 0) return false
+          if (!root.trayItem || root.widgetSection === "" || root.widgetIndex < 0)
+            return false
           const itemName = root.trayItem.tooltipTitle || root.trayItem.name || root.trayItem.id || ""
-          if (!itemName) return false
-          
+          if (!itemName)
+            return false
+
           var widgets = Settings.data.bar.widgets[root.widgetSection]
-          if (!widgets || root.widgetIndex >= widgets.length) return false
+          if (!widgets || root.widgetIndex >= widgets.length)
+            return false
           var widgetSettings = widgets[root.widgetIndex]
-          if (!widgetSettings || widgetSettings.id !== "Tray") return false
-          
+          if (!widgetSettings || widgetSettings.id !== "Tray")
+            return false
+
           var favorites = widgetSettings.favorites || []
           for (var i = 0; i < favorites.length; i++) {
-            if (favorites[i] === itemName) return true
+            if (favorites[i] === itemName)
+              return true
           }
           return false
         }
@@ -343,7 +348,7 @@ PopupWindow {
             NText {
               Layout.fillWidth: true
               color: Color.mPrimary
-              text: addToFavoriteEntry.isFavorite ? I18n.tr("settings.bar.tray.remove-from-favorites") : I18n.tr("settings.bar.tray.add-as-favorite")
+              text: addToFavoriteEntry.isFavorite ? I18n.tr("settings.bar.tray.unpin-application") : I18n.tr("settings.bar.tray.pin-application")
               pointSize: Style.fontSizeS
               font.weight: Font.Medium
               verticalAlignment: Text.AlignVCenter
@@ -414,6 +419,14 @@ PopupWindow {
     Settings.saveImmediate()
 
     Logger.i("TrayMenu", "Added", itemName, "as favorite")
+
+    // Close the tray dropdown panel after pinning
+    if (root.screen) {
+      const panel = PanelService.getPanel("trayDropdownPanel", root.screen)
+      if (panel) {
+        panel.close()
+      }
+    }
   }
 
   function removeFromFavorites() {

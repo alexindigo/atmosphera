@@ -771,7 +771,9 @@
           "description": "Додайте правила виключення з трея, підтримує шаблони (*).",
           "label": "Чорний список",
           "placeholder": "напр., nm-applet, Fcitx*"
-        }
+        },
+        "pin-application": "Закріпити Застосунок",
+        "unpin-application": "Відкріпити Застосунок"
       },
       "widgets": {
         "section": {

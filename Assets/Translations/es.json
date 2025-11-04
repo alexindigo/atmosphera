@@ -771,7 +771,9 @@
           "description": "Agregar reglas de exclusión de la bandeja, admite comodines (*).",
           "label": "Lista negra",
           "placeholder": "ej., nm-applet, Fcitx*"
-        }
+        },
+        "pin-application": "Fijar Aplicación",
+        "unpin-application": "Desfijar Aplicación"
       },
       "widgets": {
         "section": {

@@ -16,7 +16,7 @@ NPanel {
   // Widget info for menu functionality
   property string widgetSection: ""
   property int widgetIndex: -1
-  
+
   // Trigger refresh when settings change
   property int settingsVersion: 0
 
@@ -24,26 +24,36 @@ NPanel {
   readonly property var favoritesList: {
     // Reference settingsVersion to force recalculation when it changes
     var _ = root.settingsVersion
-    if (widgetSection === "" || widgetIndex < 0) return []
+    if (widgetSection === "" || widgetIndex < 0)
+      return []
     var widgets = Settings.data.bar.widgets[widgetSection]
-    if (!widgets || widgetIndex >= widgets.length) return []
+    if (!widgets || widgetIndex >= widgets.length)
+      return []
     var widgetSettings = widgets[widgetIndex]
-    if (!widgetSettings || widgetSettings.id !== "Tray") return []
+    if (!widgetSettings || widgetSettings.id !== "Tray")
+      return []
     return widgetSettings.favorites || []
   }
 
   function wildCardMatch(str, rule) {
-    if (!str || !rule) return false
+    if (!str || !rule)
+      return false
     let escaped = rule.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
     let pattern = '^' + escaped.replace(/\\\*/g, '.*') + '$'
-    try { return new RegExp(pattern, 'i').test(str) } catch(e) { return false }
+    try {
+      return new RegExp(pattern, 'i').test(str)
+    } catch (e) {
+      return false
+    }
   }
 
   function isFavorite(item) {
-    if (!favoritesList || favoritesList.length === 0) return false
+    if (!favoritesList || favoritesList.length === 0)
+      return false
     const title = item?.tooltipTitle || item?.name || item?.id || ""
     for (var i = 0; i < favoritesList.length; i++) {
-      if (wildCardMatch(title, favoritesList[i])) return true
+      if (wildCardMatch(title, favoritesList[i]))
+        return true
     }
     return false
   }
@@ -51,7 +61,9 @@ NPanel {
   // Dynamic sizing based on item count
   // Show items that are NOT favorites (non-favorites go to dropdown)
   readonly property var trayValuesAll: (SystemTray.items && SystemTray.items.values) ? SystemTray.items.values : []
-  readonly property var trayValues: trayValuesAll.filter(function(it){ return !root.isFavorite(it) })
+  readonly property var trayValues: trayValuesAll.filter(function (it) {
+    return !root.isFavorite(it)
+  })
   readonly property int itemCount: trayValues.length
   readonly property int maxColumns: 8
   readonly property real cellSize: Math.round(Style.capsuleHeight * 0.65)
@@ -126,32 +138,34 @@ NPanel {
               hoverEnabled: true
               acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
 
-              onClicked: (mouse) => {
-                if (!modelData)
-                  return
-                if (mouse.button === Qt.RightButton && modelData.hasMenu && modelData.menu && trayMenu.item) {
-                  trayMenu.item.menu = modelData.menu
-                  trayMenu.item.screen = root.screen
-                  trayMenu.item.trayItem = modelData
-                  trayMenu.item.widgetSection = root.widgetSection
-                  trayMenu.item.widgetIndex = root.widgetIndex
-                  const menuX = (root.columns > 1) ? (trayIcon.width / 2) : 0
-                  const menuY = trayIcon.height
-                  trayMenu.item.showAt(trayIcon, menuX, menuY)
-                } else if (mouse.button === Qt.LeftButton) {
-                  modelData.activate?.()
-                  // Close the dropdown after activation
-                  PanelService.getPanel("trayDropdownPanel", root.screen)?.close()
-                } else if (mouse.button === Qt.MiddleButton) {
-                  modelData.secondaryActivate?.()
-                  PanelService.getPanel("trayDropdownPanel", root.screen)?.close()
-                }
-              }
+              onClicked: mouse => {
+                           if (!modelData)
+                           return
+                           if (mouse.button === Qt.RightButton && modelData.hasMenu && modelData.menu && trayMenu.item) {
+                             trayMenu.item.menu = modelData.menu
+                             trayMenu.item.screen = root.screen
+                             trayMenu.item.trayItem = modelData
+                             trayMenu.item.widgetSection = root.widgetSection
+                             trayMenu.item.widgetIndex = root.widgetIndex
+                             const menuX = (root.columns > 1) ? (trayIcon.width / 2) : 0
+                             const menuY = trayIcon.height
+                             trayMenu.item.showAt(trayIcon, menuX, menuY)
+                           } else if (mouse.button === Qt.LeftButton) {
+                             modelData.activate()
+                             // Close the dropdown after activation
+                             PanelService.getPanel("trayDropdownPanel", root.screen)?.close()
+                           } else if (mouse.button === Qt.MiddleButton) {
+                             modelData.secondaryActivate()
+                             PanelService.getPanel("trayDropdownPanel", root.screen)?.close()
+                           }
+                         }
 
-              onWheel: (wheel) => {
-                if (wheel.angleDelta.y > 0) modelData?.scrollUp?.()
-                else if (wheel.angleDelta.y < 0) modelData?.scrollDown?.()
-              }
+              onWheel: wheel => {
+                         if (wheel.angleDelta.y > 0)
+                         modelData?.scrollUp()
+                         else if (wheel.angleDelta.y < 0)
+                         modelData?.scrollDown()
+                       }
 
               onEntered: TooltipService.show(Screen, trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection())
               onExited: TooltipService.hide()
@@ -169,4 +183,4 @@ NPanel {
       source: "TrayMenu.qml"
     }
   }
-} 
+}
