@@ -219,12 +219,43 @@ Item {
           // Check if panel has any inverted corners
           readonly property bool hasInvertedCorners: topLeftInverted || topRightInverted || bottomLeftInverted || bottomRightInverted
 
+          // Determine closest screen edge to slide from
+          readonly property string slideDirection: {
+            if (!hasInvertedCorners)
+              return "none"
+
+            // Use panel's center point (barycenter) as reference
+            var centerX = x + width / 2
+            var centerY = y + height / 2
+
+            // Calculate actual travel distances (barycenter to screen edge)
+            // This represents how far the panel needs to slide from each direction
+            var travelFromTop = y + height / 2 // Center needs to travel from top edge
+            var travelFromBottom = parent.height - (y + height / 2) // Center needs to travel from bottom edge
+            var travelFromLeft = x + width / 2 // Center needs to travel from left edge
+            var travelFromRight = parent.width - (x + width / 2) // Center needs to travel from right edge
+
+            // Find minimum travel distance
+            var minTravel = Math.min(travelFromTop, travelFromBottom, travelFromLeft, travelFromRight)
+
+            // Return the direction with least travel distance
+            if (minTravel === travelFromTop)
+              return "top"
+            if (minTravel === travelFromBottom)
+              return "bottom"
+            if (minTravel === travelFromLeft)
+              return "left"
+            if (minTravel === travelFromRight)
+              return "right"
+            return "none"
+          }
+
           // Animation offset for slide effect on panels with inverted corners
-          // Use panel height for horizontal bars (top/bottom), width for vertical bars (left/right)
           readonly property real slideOffset: {
             if (!hasInvertedCorners)
               return 0
-            var distance = root.barIsVertical ? width : height
+            // Use width for left/right slides, height for top/bottom slides
+            var distance = (slideDirection === "left" || slideDirection === "right") ? width : height
             return Math.round((1 - root.animationProgress) * distance)
           }
 
@@ -232,23 +263,22 @@ Item {
           // Panels with inverted corners: slide in with no opacity/scale change
           // Panels without inverted corners: fade in + slight scale up
           opacity: hasInvertedCorners ? 1.0 : root.animationProgress
-          scale: hasInvertedCorners ? 1 : (0.8 + root.animationProgress * 0.2)
+          scale: hasInvertedCorners ? 1 : (0.9 + root.animationProgress * 0.1)
 
           // Transform origin for scale animation
           transformOrigin: {
-            // For panels without inverted corners, scale from center
             if (!hasInvertedCorners) {
               return Item.Center
             }
 
-            // For panels with inverted corners, scale from the edge touching the bar
-            if (root.barPosition === "top")
+            // For panels with inverted corners, scale from the closest edge
+            if (slideDirection === "top")
               return Item.Top
-            if (root.barPosition === "bottom")
+            if (slideDirection === "bottom")
               return Item.Bottom
-            if (root.barPosition === "left")
+            if (slideDirection === "left")
               return Item.Left
-            if (root.barPosition === "right")
+            if (slideDirection === "right")
               return Item.Right
             return Item.Center
           }
@@ -258,18 +288,18 @@ Item {
             x: {
               if (!panelBackground.hasInvertedCorners)
                 return 0
-              if (root.barPosition === "left")
+              if (panelBackground.slideDirection === "left")
                 return -panelBackground.slideOffset
-              if (root.barPosition === "right")
+              if (panelBackground.slideDirection === "right")
                 return panelBackground.slideOffset
               return 0
             }
             y: {
               if (!panelBackground.hasInvertedCorners)
                 return 0
-              if (root.barPosition === "top")
+              if (panelBackground.slideDirection === "top")
                 return -panelBackground.slideOffset
-              if (root.barPosition === "bottom")
+              if (panelBackground.slideDirection === "bottom")
                 return panelBackground.slideOffset
               return 0
             }
