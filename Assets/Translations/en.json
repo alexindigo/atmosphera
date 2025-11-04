@@ -771,7 +771,9 @@
           "description": "Add tray exclusion rules, supports wildcards (*).",
           "label": "Blacklist",
           "placeholder": "e.g., nm-applet, Fcitx*"
-        }
+        },
+        "add-as-favorite": "Add as Favorite",
+        "remove-from-favorites": "Remove from Favorites"
       },
       "widgets": {
         "section": {

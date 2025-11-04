@@ -15,8 +15,12 @@ PopupWindow {
   property bool isSubMenu: false
   property bool isHovered: rootMouseArea.containsMouse
   property ShellScreen screen
+  // Properties for adding tray item to favorites
+  property var trayItem: null
+  property string widgetSection: ""
+  property int widgetIndex: -1
 
-  readonly property int menuWidth: 180
+  readonly property int menuWidth: 240
 
   implicitWidth: menuWidth
 
@@ -117,9 +121,7 @@ PopupWindow {
             if (modelData?.isSeparator) {
               return 8
             } else {
-              // Calculate based on text content
-              const textHeight = text.contentHeight || (Style.fontSizeS * 1.2)
-              return Math.max(28, textHeight + (Style.marginS * 2))
+              return 28
             }
           }
 
@@ -151,7 +153,7 @@ PopupWindow {
                 text: modelData?.text !== "" ? modelData?.text.replace(/[\n\r]+/g, ' ') : "..."
                 pointSize: Style.fontSizeS
                 verticalAlignment: Text.AlignVCenter
-                wrapMode: Text.WordWrap
+                elide: Text.ElideRight
               }
 
               Image {
@@ -276,6 +278,190 @@ PopupWindow {
           }
         }
       }
+
+      // Separator before custom menu item
+      Rectangle {
+        visible: !root.isSubMenu && root.trayItem !== null && root.widgetSection !== "" && root.widgetIndex >= 0
+        Layout.preferredWidth: parent.width
+        Layout.preferredHeight: visible ? 8 : 0
+        color: Color.transparent
+
+        NDivider {
+          anchors.centerIn: parent
+          width: parent.width - (Style.marginM * 2)
+          visible: parent.visible
+        }
+      }
+
+      // Custom "Add/Remove Favorite" menu item (only for non-submenus with tray item info)
+      Rectangle {
+        id: addToFavoriteEntry
+        visible: !root.isSubMenu && root.trayItem !== null && root.widgetSection !== "" && root.widgetIndex >= 0
+        Layout.preferredWidth: parent.width
+        Layout.preferredHeight: visible ? 28 : 0
+        color: Color.transparent
+
+        // Check if item is already a favorite
+        readonly property bool isFavorite: {
+          if (!root.trayItem || root.widgetSection === "" || root.widgetIndex < 0) return false
+          const itemName = root.trayItem.tooltipTitle || root.trayItem.name || root.trayItem.id || ""
+          if (!itemName) return false
+          
+          var widgets = Settings.data.bar.widgets[root.widgetSection]
+          if (!widgets || root.widgetIndex >= widgets.length) return false
+          var widgetSettings = widgets[root.widgetIndex]
+          if (!widgetSettings || widgetSettings.id !== "Tray") return false
+          
+          var favorites = widgetSettings.favorites || []
+          for (var i = 0; i < favorites.length; i++) {
+            if (favorites[i] === itemName) return true
+          }
+          return false
+        }
+
+        Rectangle {
+          anchors.fill: parent
+          color: addToFavoriteMouseArea.containsMouse ? Qt.alpha(Color.mPrimary, 0.2) : Qt.alpha(Color.mPrimary, 0.08)
+          radius: Style.radiusS
+          border.color: Qt.alpha(Color.mPrimary, addToFavoriteMouseArea.containsMouse ? 0.4 : 0.2)
+          border.width: Style.borderS
+
+          RowLayout {
+            anchors.fill: parent
+            anchors.leftMargin: Style.marginM
+            anchors.rightMargin: Style.marginM
+            spacing: Style.marginS
+
+            NIcon {
+              icon: addToFavoriteEntry.isFavorite ? "star" : "star-outline"
+              pointSize: Style.fontSizeS
+              applyUiScale: false
+              verticalAlignment: Text.AlignVCenter
+              color: Color.mPrimary
+            }
+
+            NText {
+              Layout.fillWidth: true
+              color: Color.mPrimary
+              text: addToFavoriteEntry.isFavorite ? I18n.tr("settings.bar.tray.remove-from-favorites") : I18n.tr("settings.bar.tray.add-as-favorite")
+              pointSize: Style.fontSizeS
+              font.weight: Font.Medium
+              verticalAlignment: Text.AlignVCenter
+              elide: Text.ElideRight
+            }
+          }
+
+          MouseArea {
+            id: addToFavoriteMouseArea
+            anchors.fill: parent
+            hoverEnabled: true
+            enabled: root.visible
+
+            onClicked: {
+              if (addToFavoriteEntry.isFavorite) {
+                root.removeFromFavorites()
+              } else {
+                root.addToFavorites()
+              }
+              root.hideMenu()
+            }
+          }
+        }
+      }
     }
+  }
+
+  function addToFavorites() {
+    if (!trayItem || widgetSection === "" || widgetIndex < 0) {
+      Logger.w("TrayMenu", "Cannot add as favorite: missing tray item or widget info")
+      return
+    }
+
+    // Get the tray item name
+    const itemName = trayItem.tooltipTitle || trayItem.name || trayItem.id || ""
+    if (!itemName) {
+      Logger.w("TrayMenu", "Cannot add as favorite: tray item has no name")
+      return
+    }
+
+    // Get current widget settings
+    var widgets = Settings.data.bar.widgets[widgetSection]
+    if (!widgets || widgetIndex >= widgets.length) {
+      Logger.w("TrayMenu", "Cannot add as favorite: invalid widget index")
+      return
+    }
+
+    var widgetSettings = widgets[widgetIndex]
+    if (!widgetSettings || widgetSettings.id !== "Tray") {
+      Logger.w("TrayMenu", "Cannot add as favorite: widget is not a Tray widget")
+      return
+    }
+
+    // Get current favorites list
+    var favorites = widgetSettings.favorites || []
+
+    // Add to favorites
+    var newFavorites = favorites.slice()
+    newFavorites.push(itemName)
+
+    // Update widget settings
+    var newSettings = Object.assign({}, widgetSettings)
+    newSettings.favorites = newFavorites
+
+    // Update settings
+    widgets[widgetIndex] = newSettings
+    Settings.data.bar.widgets[widgetSection] = widgets
+    Settings.saveImmediate()
+
+    Logger.i("TrayMenu", "Added", itemName, "as favorite")
+  }
+
+  function removeFromFavorites() {
+    if (!trayItem || widgetSection === "" || widgetIndex < 0) {
+      Logger.w("TrayMenu", "Cannot remove from favorites: missing tray item or widget info")
+      return
+    }
+
+    // Get the tray item name
+    const itemName = trayItem.tooltipTitle || trayItem.name || trayItem.id || ""
+    if (!itemName) {
+      Logger.w("TrayMenu", "Cannot remove from favorites: tray item has no name")
+      return
+    }
+
+    // Get current widget settings
+    var widgets = Settings.data.bar.widgets[widgetSection]
+    if (!widgets || widgetIndex >= widgets.length) {
+      Logger.w("TrayMenu", "Cannot remove from favorites: invalid widget index")
+      return
+    }
+
+    var widgetSettings = widgets[widgetIndex]
+    if (!widgetSettings || widgetSettings.id !== "Tray") {
+      Logger.w("TrayMenu", "Cannot remove from favorites: widget is not a Tray widget")
+      return
+    }
+
+    // Get current favorites list
+    var favorites = widgetSettings.favorites || []
+
+    // Remove from favorites
+    var newFavorites = []
+    for (var i = 0; i < favorites.length; i++) {
+      if (favorites[i] !== itemName) {
+        newFavorites.push(favorites[i])
+      }
+    }
+
+    // Update widget settings
+    var newSettings = Object.assign({}, widgetSettings)
+    newSettings.favorites = newFavorites
+
+    // Update settings
+    widgets[widgetIndex] = newSettings
+    Settings.data.bar.widgets[widgetSection] = widgets
+    Settings.saveImmediate()
+
+    Logger.i("TrayMenu", "Removed", itemName, "from favorites")
   }
 }

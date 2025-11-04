@@ -37,7 +37,9 @@ Rectangle {
   readonly property bool density: Settings.data.bar.density
   property real itemSize: Math.round(Style.capsuleHeight * 0.65)
   property list<string> blacklist: widgetSettings.blacklist || widgetMetadata.blacklist || [] // Read from settings
-  property var filteredItems: []
+  property list<string> favorites: widgetSettings.favorites || widgetMetadata.favorites || []
+  property var filteredItems: [] // Items to show inline (favorites)
+  property var dropdownItems: [] // Items to show in dropdown (non-favorites)
 
   function wildCardMatch(str, rule) {
     if (!str || !rule) {
@@ -77,15 +79,6 @@ Rectangle {
   }
 
   function _performFilteredItemsUpdate() {
-    if (!root.blacklist || root.blacklist.length === 0) {
-      if (SystemTray.items && SystemTray.items.values) {
-        filteredItems = SystemTray.items.values
-      } else {
-        filteredItems = []
-      }
-      return
-    }
-
     let newItems = []
     if (SystemTray.items && SystemTray.items.values) {
       const trayItems = SystemTray.items.values
@@ -97,12 +90,15 @@ Rectangle {
 
         const title = item.tooltipTitle || item.name || item.id || ""
 
+        // Check if blacklisted
         let isBlacklisted = false
-        for (var j = 0; j < root.blacklist.length; j++) {
-          const rule = root.blacklist[j]
-          if (wildCardMatch(title, rule)) {
-            isBlacklisted = true
-            break
+        if (root.blacklist && root.blacklist.length > 0) {
+          for (var j = 0; j < root.blacklist.length; j++) {
+            const rule = root.blacklist[j]
+            if (wildCardMatch(title, rule)) {
+              isBlacklisted = true
+              break
+            }
           }
         }
 
@@ -111,7 +107,41 @@ Rectangle {
         }
       }
     }
-    filteredItems = newItems
+
+    // Build inline (favorites) and dropdown (non-favorites) lists
+    // If favorites list is empty, all items are inline
+    // If favorites list has items, favorites are inline, rest go to dropdown
+    if (favorites && favorites.length > 0) {
+      let fav = []
+      for (var k = 0; k < newItems.length; k++) {
+        const item2 = newItems[k]
+        const title2 = item2.tooltipTitle || item2.name || item2.id || ""
+        for (var m = 0; m < favorites.length; m++) {
+          const rule2 = favorites[m]
+          if (wildCardMatch(title2, rule2)) {
+            fav.push(item2)
+            break
+          }
+        }
+      }
+      filteredItems = fav
+
+      // Non-favorites go to dropdown
+      let nonFav = []
+      for (var v = 0; v < newItems.length; v++) {
+        const cand = newItems[v]
+        let isFavorite = false
+        for (var f = 0; f < filteredItems.length; f++) {
+          if (filteredItems[f] === cand) { isFavorite = true; break }
+        }
+        if (!isFavorite) nonFav.push(cand)
+      }
+      dropdownItems = nonFav
+    } else {
+      // No favorites: all items are inline
+      filteredItems = newItems
+      dropdownItems = []
+    }
   }
 
   function updateFilteredItems() {
@@ -143,7 +173,7 @@ Rectangle {
     root.updateFilteredItems() // Initial update
   }
 
-  visible: filteredItems.length > 0
+  visible: filteredItems.length > 0 || dropdownItems.length > 0
   implicitWidth: isVertical ? Style.capsuleHeight : Math.round(trayFlow.implicitWidth + Style.marginM * 2)
   implicitHeight: isVertical ? Math.round(trayFlow.implicitHeight + Style.marginM * 2) : Style.capsuleHeight
   radius: Style.radiusM
@@ -250,6 +280,9 @@ Rectangle {
                                menuY = Style.barHeight
                              }
                              trayMenu.item.menu = modelData.menu
+                             trayMenu.item.trayItem = modelData
+                             trayMenu.item.widgetSection = root.section
+                             trayMenu.item.widgetIndex = root.sectionWidgetIndex
                              trayMenu.item.showAt(parent, menuX, menuY)
                            } else {
                              Logger.i("Tray", "No menu available for", modelData.id, "or trayMenu not set")
@@ -262,6 +295,24 @@ Rectangle {
             }
             onExited: TooltipService.hide()
           }
+        }
+      }
+    }
+
+    // Dropdown opener
+    NIconButton {
+      id: dropdownButton
+      visible: dropdownItems.length > 0
+      width: itemSize
+      height: itemSize
+      icon: isVertical ? (barPosition === "left" ? "chevron-right" : "chevron-left") : "chevron-down"
+      tooltipText: I18n.tr("open-control-center") // reuse generic tooltip text
+      onClicked: {
+        const panel = PanelService.getPanel("trayDropdownPanel", root.screen)
+        if (panel) {
+          panel.widgetSection = root.section
+          panel.widgetIndex = root.sectionWidgetIndex
+          panel.toggle(this)
         }
       }
     }

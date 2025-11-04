@@ -154,7 +154,8 @@ Singleton {
                                   "Tray": {
                                     "allowUserSettings": true,
                                     "blacklist": [],
-                                    "colorizeIcons": false
+                                    "colorizeIcons": false,
+                                    "favorites": []
                                   },
                                   "WiFi": {
                                     "allowUserSettings": true,

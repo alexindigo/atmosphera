@@ -88,6 +88,11 @@ ShellRoot {
   }
 
   Component {
+    id: trayDropdownComponent
+    TrayDropdownPanel {}
+  }
+
+  Component {
     id: calendarComponent
     CalendarPanel {}
   }
@@ -240,6 +245,9 @@ ShellRoot {
             }, {
               "id": "controlCenterPanel",
               "component": controlCenterComponent
+            }, {
+              "id": "trayDropdownPanel",
+              "component": trayDropdownComponent
             }, {
               "id": "calendarPanel",
               "component": calendarComponent

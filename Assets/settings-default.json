@@ -1,5 +1,5 @@
 {
-  "settingsVersion": 16,
+  "settingsVersion": 18,
   "setupCompleted": false,
   "bar": {
     "position": "top",
@@ -70,6 +70,9 @@
     "compactLockScreen": false,
     "lockOnSuspend": true,
     "enableShadows": true,
+    "shadowDirection": "bottom_right",
+    "shadowOffsetX": 2,
+    "shadowOffsetY": 3,
     "language": ""
   },
   "ui": {
@@ -118,11 +121,11 @@
     "transitionType": "random",
     "transitionEdgeSmoothness": 0.05,
     "monitors": [],
-    "selectorPosition": "follow_bar"
+    "panelPosition": "folow_bar"
   },
   "appLauncher": {
     "enableClipboardHistory": false,
-    "position": "follow_bar",
+    "position": "center",
     "backgroundOpacity": 1,
     "pinnedExecs": [],
     "useApp2Unit": false,
@@ -249,6 +252,7 @@
     "kitty": false,
     "ghostty": false,
     "foot": false,
+    "wezterm": false,
     "fuzzel": false,
     "discord": false,
     "discord_vesktop": false,
