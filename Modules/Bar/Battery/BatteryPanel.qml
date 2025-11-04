@@ -10,8 +10,6 @@ import qs.Widgets
 NPanel {
   id: root
 
-  panelKeyboardFocus: true
-
   property var optionsModel: []
 
   function updateOptionsModel() {
