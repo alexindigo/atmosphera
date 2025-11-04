@@ -503,7 +503,24 @@ Item {
 
               if (root.panelAnchorHorizontalCenter) {
                 Logger.d("NPanel", "  -> Horizontal center")
-                calculatedX = (parent.width - width) / 2
+                // Center horizontally, accounting for bar position and margins
+                if (root.barIsVertical) {
+                  // For vertical bars, center in the available space not occupied by the bar
+                  if (root.barPosition === "left") {
+                    var availableStart = root.barMarginH + Style.barHeight
+                    var availableWidth = parent.width - availableStart
+                    calculatedX = availableStart + (availableWidth - width) / 2
+                  } else if (root.barPosition === "right") {
+                    var availableWidth = parent.width - root.barMarginH - Style.barHeight
+                    calculatedX = (availableWidth - width) / 2
+                  } else {
+                    // No vertical bar, center normally
+                    calculatedX = (parent.width - width) / 2
+                  }
+                } else {
+                  // For horizontal bars or no bar, center normally
+                  calculatedX = (parent.width - width) / 2
+                }
               } else if (root.effectivePanelAnchorRight) {
                 Logger.d("NPanel", "  -> Right anchor")
                 // When attached to right vertical bar, position next to bar (like useButtonPosition does)
@@ -674,7 +691,24 @@ Item {
               // Continue if calculatedY was already set above, or proceed with anchor positioning
               if (calculatedY === undefined) {
                 if (root.panelAnchorVerticalCenter) {
-                  calculatedY = (parent.height - height) / 2
+                  // Center vertically, accounting for bar position and margins
+                  if (!root.barIsVertical) {
+                    // For horizontal bars, center in the available space not occupied by the bar
+                    if (root.barPosition === "top") {
+                      var availableStart = root.barMarginV + Style.barHeight
+                      var availableHeight = parent.height - availableStart
+                      calculatedY = availableStart + (availableHeight - height) / 2
+                    } else if (root.barPosition === "bottom") {
+                      var availableHeight = parent.height - root.barMarginV - Style.barHeight
+                      calculatedY = (availableHeight - height) / 2
+                    } else {
+                      // No horizontal bar, center normally
+                      calculatedY = (parent.height - height) / 2
+                    }
+                  } else {
+                    // For vertical bars or no bar, center normally
+                    calculatedY = (parent.height - height) / 2
+                  }
                 } else if (root.effectivePanelAnchorTop) {
                   // When couldAttach=true, attach to top screen edge; otherwise use margin
                   if (root.couldAttach) {
