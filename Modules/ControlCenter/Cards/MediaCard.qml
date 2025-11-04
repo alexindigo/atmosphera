@@ -174,6 +174,7 @@ NBox {
       id: playerContextMenu
       parent: root
       width: 200
+      verticalPolicy: ScrollBar.AlwaysOff
 
       onTriggered: function (action) {
         var index = parseInt(action)
