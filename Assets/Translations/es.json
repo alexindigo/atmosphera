@@ -1773,6 +1773,7 @@
     "night-light-forced": "Luz nocturna forzada.\nClic izquierdo para cambiar de modo.\nClic derecho para acceder a la configuración.",
     "night-light-not-installed": "Luz nocturna no disponible.\nwlsunset no está instalado.",
     "open-control-center": "Abrir el centro de control",
+    "open-tray-dropdown": "Abrir menú desplegable de bandeja",
     "open-notification-history-disable-dnd": "Abrir historial de notificaciones\nClic derecho para desactivar \"No molestar\".",
     "open-notification-history-enable-dnd": "Abrir historial de notificaciones\nClic derecho para activar \"No molestar\".",
     "open-settings": "Abrir configuración",

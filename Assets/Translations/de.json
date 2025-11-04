@@ -1773,6 +1773,7 @@
     "night-light-forced": "Nachtlicht ist erzwungen.\nLinksklick zum Wechseln des Modus.\nRechtsklick für Einstellungen.",
     "night-light-not-installed": "Nachtlicht ist nicht verfügbar.\nwlsunset ist nicht installiert.",
     "open-control-center": "Kontrollzentrum öffnen",
+    "open-tray-dropdown": "Tray-Dropdown öffnen",
     "open-notification-history-disable-dnd": "Benachrichtigungsverlauf öffnen\nRechtsklick um 'Nicht stören' zu deaktivieren.",
     "open-notification-history-enable-dnd": "Benachrichtigungsverlauf öffnen\nRechtsklick um 'Nicht stören' zu aktivieren.",
     "open-settings": "Einstellungen öffnen",

@@ -1773,6 +1773,7 @@
     "night-light-forced": "L'éclairage nocturne est forcé.\nClic gauche pour changer de mode.\nClic droit pour accéder aux paramètres.",
     "night-light-not-installed": "L'éclairage nocturne n'est pas disponible.\nwlsunset n'est pas installé.",
     "open-control-center": "Ouvrir le centre de contrôle",
+    "open-tray-dropdown": "Ouvrir le menu déroulant de la barre d'état",
     "open-notification-history-disable-dnd": "Ouvrir l'historique des notifications\nClic droit pour désactiver \"Ne pas déranger\".",
     "open-notification-history-enable-dnd": "Ouvrir l'historique des notifications\nClic droit pour activer \"Ne pas déranger\".",
     "open-settings": "Ouvrir les paramètres",

@@ -1773,6 +1773,7 @@
     "night-light-forced": "Gece ışığı zorla.\nMod arasında geçiş yapmak için sol tık.\nAyarlara erişmek için sağ tık.",
     "night-light-not-installed": "Gece ışığı mevcut değil.\nwlsunset yüklü değil.",
     "open-control-center": "Kontrol merkezini aç",
+    "open-tray-dropdown": "Tepsi açılır menüsünü aç",
     "open-notification-history-disable-dnd": "Bildirim geçmişini aç\n\"Rahatsız etmeyi\" devre dışı bırakmak için sağ tık.",
     "open-notification-history-enable-dnd": "Bildirim geçmişini aç\n\"Rahatsız etmeyi\" etkinleştirmek için sağ tık.",
     "open-settings": "Ayarları aç",

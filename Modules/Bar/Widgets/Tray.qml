@@ -303,17 +303,18 @@ Rectangle {
       }
     }
 
-    // Dropdown opener - wrapped in Item for proper alignment
+    // Dropdown opener - simple icon with hover effect
     Item {
+      id: dropdownButton
       visible: dropdownItems.length > 0
       width: itemSize
       height: itemSize
 
-      NIconButton {
-        id: dropdownButton
+      property bool hovered: false
+
+      NIcon {
+        id: chevronIcon
         anchors.centerIn: parent
-        width: itemSize
-        height: itemSize
         icon: {
           if (barPosition === "top")
             return "chevron-down"
@@ -326,13 +327,36 @@ Rectangle {
           else
             return "chevron-down" // default fallback
         }
-        tooltipText: I18n.tr("open-control-center") // reuse generic tooltip text
+        pointSize: Math.round(itemSize * 0.65)
+        color: dropdownButton.hovered ? Color.mPrimary : Color.mOnSurface
+
+        Behavior on color {
+          ColorAnimation {
+            duration: Style.animationFast
+            easing.type: Easing.InOutQuad
+          }
+        }
+      }
+
+      MouseArea {
+        anchors.fill: parent
+        hoverEnabled: true
+        cursorShape: Qt.PointingHandCursor
+        onEntered: {
+          dropdownButton.hovered = true
+          TooltipService.show(Screen, dropdownButton, I18n.tr("tooltips.open-tray-dropdown"), BarService.getTooltipDirection())
+        }
+        onExited: {
+          dropdownButton.hovered = false
+          TooltipService.hide()
+        }
         onClicked: {
+          TooltipService.hideImmediately()
           const panel = PanelService.getPanel("trayDropdownPanel", root.screen)
           if (panel) {
             panel.widgetSection = root.section
             panel.widgetIndex = root.sectionWidgetIndex
-            panel.toggle(this)
+            panel.toggle(dropdownButton)
           }
         }
       }

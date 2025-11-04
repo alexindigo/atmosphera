@@ -1773,6 +1773,7 @@
     "night-light-forced": "夜间模式已强制启用。\n左键点击循环模式。\n右键点击访问设置。",
     "night-light-not-installed": "夜间模式不可用。\nwlsunset 未安装。",
     "open-control-center": "打开控制中心",
+    "open-tray-dropdown": "打开系统托盘下拉菜单",
     "open-notification-history-disable-dnd": "打开通知历史记录\n右键点击禁用\"勿扰模式\"。",
     "open-notification-history-enable-dnd": "打开通知历史记录\n右键点击启用\"勿扰模式\"。",
     "open-settings": "打开设置",

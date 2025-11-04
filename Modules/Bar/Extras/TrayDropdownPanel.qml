@@ -20,20 +20,23 @@ NPanel {
   // Trigger refresh when settings change
   property int settingsVersion: 0
 
-  // Read favorites directly from settings for reactivity
-  readonly property var favoritesList: {
+  // Read widget settings for reactivity
+  readonly property var widgetSettings: {
     // Reference settingsVersion to force recalculation when it changes
     var _ = root.settingsVersion
     if (widgetSection === "" || widgetIndex < 0)
-      return []
+      return {}
     var widgets = Settings.data.bar.widgets[widgetSection]
     if (!widgets || widgetIndex >= widgets.length)
-      return []
-    var widgetSettings = widgets[widgetIndex]
-    if (!widgetSettings || widgetSettings.id !== "Tray")
-      return []
-    return widgetSettings.favorites || []
+      return {}
+    var settings = widgets[widgetIndex]
+    if (!settings || settings.id !== "Tray")
+      return {}
+    return settings
   }
+
+  // Read favorites directly from settings for reactivity
+  readonly property var favoritesList: widgetSettings.favorites || []
 
   function wildCardMatch(str, rule) {
     if (!str || !rule)
@@ -126,7 +129,7 @@ NPanel {
               return icon
             }
 
-            layer.enabled: true
+            layer.enabled: root.widgetSettings.colorizeIcons !== false
             layer.effect: ShaderEffect {
               property color targetColor: Settings.data.colorSchemes.darkMode ? Color.mOnSurface : Color.mSurfaceVariant
               property real colorizeMode: 1.0

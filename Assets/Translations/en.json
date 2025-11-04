@@ -1773,6 +1773,7 @@
     "night-light-forced": "Night light is forced.\nLeft click to cycle mode.\nRight click to access settings.",
     "night-light-not-installed": "Night light is not available.\nwlsunset is not installed.",
     "open-control-center": "Open control center",
+    "open-tray-dropdown": "Open tray dropdown",
     "open-notification-history-disable-dnd": "Open notification history\nRight-click to disable \"Do not disturb\".",
     "open-notification-history-enable-dnd": "Open notification history\nRight-click to enable \"Do not disturb\".",
     "open-settings": "Open settings",
