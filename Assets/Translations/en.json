@@ -1494,11 +1494,11 @@
       },
       "panels-attached-to-bar": {
         "description": "Panels lock to the bar and screen edges, creating a seamless look with stylish inverted corners.",
-        "label": "Snap Panels to Edges"
+        "label": "Snap panels to edges"
       },
       "panels-overlay": {
         "description": "Ensures panels and the bar remain visible, even over fullscreen applications.",
-        "label": "Keep Panels & Bar on Top"
+        "label": "Keep panels & bar on top"
       },
       "scaling": {
         "description": "Changes the size of the general user interface, excluding the bar.",
