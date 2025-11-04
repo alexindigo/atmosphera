@@ -58,6 +58,7 @@ NPanel {
 
     // Use implicitHeight from content + margins to avoid binding loops
     property real contentPreferredHeight: mainColumn.implicitHeight + Style.marginL * 2
+    // property real contentPreferredHeight: Math.min(screen.height * 0.42, mainColumn.implicitHeight) + Style.marginL * 2
 
     ColumnLayout {
       id: mainColumn
