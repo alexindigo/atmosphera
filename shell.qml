@@ -206,8 +206,6 @@ ShellRoot {
       property bool shouldBeActive: {
         if (!i18nLoaded || !settingsLoaded)
           return false
-        if (!BarService.isVisible)
-          return false
         if (!modelData || !modelData.name)
           return false
 
@@ -283,9 +281,9 @@ ShellRoot {
       }
 
       // BarExclusionZone - created after NFullScreenWindow has fully loaded
-      // Must also be disabled when bar is disabled (follows shouldBeActive)
+      // Must also be disabled when bar is hidden
       Loader {
-        active: parent.windowLoaded && parent.shouldBeActive
+        active: parent.windowLoaded && parent.shouldBeActive && BarService.isVisible
         asynchronous: false
 
         sourceComponent: BarExclusionZone {

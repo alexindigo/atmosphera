@@ -451,6 +451,9 @@ PanelWindow {
       id: barLoader
       asynchronous: false
       sourceComponent: root.barComponent
+      // Keep bar loaded but hide it when BarService.isVisible is false
+      // This allows panels to remain accessible via IPC
+      visible: BarService.isVisible
 
       // Fill parent to provide dimensions for Bar to reference
       anchors.fill: parent
