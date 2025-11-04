@@ -602,7 +602,7 @@
     }
   },
   "session-menu": {
-    "action-in-seconds": "{action} in {seconds} seconds...",
+    "action-in-seconds": "在 {seconds} 后将 {action}...",
     "lock": "锁定",
     "lock-and-suspend": "锁定并挂起",
     "logout": "注销",
@@ -1324,7 +1324,7 @@
         },
         "respect-expire": {
           "description": "使用通知中设置的过期超时。",
-          "label": "尊重过期超时"
+          "label": "启用过期超时"
         },
         "section": {
           "description": "根据紧急级别配置通知保持可见的时间。",
@@ -1352,7 +1352,7 @@
         },
         "enable-osd": {
           "description": "实时显示音量和亮度变化。",
-          "label": "启用屏幕显示"
+          "label": "启用屏显菜单"
         },
         "location": {
           "description": "通知在屏幕上出现的位置。",
@@ -1373,35 +1373,35 @@
       "description": "配置屏幕叠加指示器，例如音量和亮度。",
       "duration": {
         "auto-hide": {
-          "description": "调整屏幕显示消失前的时间。",
-          "label": "在此之后隐藏"
+          "description": "调整屏显菜单消失前的时间。",
+          "label": "自动隐藏超时"
         },
         "section": {
-          "description": "屏幕显示自动隐藏前保持可见的时长。",
+          "description": "屏显菜单自动隐藏前保持可见的时长。",
           "label": "自动隐藏超时"
         }
       },
       "enabled": {
         "description": "实时显示音量与亮度变化。",
-        "label": "启用屏幕显示"
+        "label": "启用屏显菜单"
       },
       "location": {
-        "description": "屏幕显示出现的位置。",
+        "description": "屏显菜单出现的位置。",
         "label": "位置"
       },
       "monitors": {
         "section": {
-          "description": "在特定显示器上显示屏幕显示。若未选择，则默认全部。",
+          "description": "在特定显示器上显示屏显菜单。若未选择，则默认全部。",
           "label": "显示器显示"
         }
       },
       "section": {
         "general": {
-          "description": "配置屏幕显示（OSD）的可见性与行为。",
+          "description": "配置屏显菜单（OSD）的可见性与行为。",
           "label": "常规"
         }
       },
-      "title": "屏幕显示"
+      "title": "屏显菜单"
     },
     "screen-recorder": {
       "audio": {
@@ -1578,7 +1578,7 @@
         "select-monitor-folder": "选择显示器壁纸文件夹",
         "selector-position": {
           "description": "选择壁纸选择面板的显示位置。",
-          "label": "职位"
+          "label": "显示位置"
         }
       },
       "title": "壁纸"
