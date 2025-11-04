@@ -48,8 +48,8 @@ Item {
   readonly property int pillHeight: buttonSize
   readonly property int pillPaddingVertical: 3 * 2 // Very precise adjustment don't replace by Style.margin
   readonly property int pillOverlap: Math.round(buttonSize * 0.5)
-  readonly property int maxPillWidth: buttonSize
-  readonly property int maxPillHeight: Math.max(1, Math.round(textItem.implicitHeight + pillPaddingVertical * 4))
+  readonly property int maxPillWidth: Math.max(buttonSize, Math.round(textItem.implicitHeight + pillPaddingVertical * 2))
+  readonly property int maxPillHeight: Math.max(1, Math.round(textItem.implicitWidth + pillPaddingVertical * 2 + Math.round(iconCircle.height / 4)))
 
   readonly property real iconSize: {
     switch (root.density) {
@@ -109,14 +109,8 @@ Item {
       id: textItem
       anchors.horizontalCenter: parent.horizontalCenter
       anchors.verticalCenter: parent.verticalCenter
-      anchors.verticalCenterOffset: {
-        var offset = openDownward ? Math.round(pillPaddingVertical * 0.75) : -Math.round(pillPaddingVertical * 0.75)
-        if (forceOpen) {
-          // If its force open, the icon disc background is the same color as the bg pill move text slightly
-          offset += oppositeDirection ? -Style.marginXXS : Style.marginXXS
-        }
-        return offset
-      }
+      anchors.verticalCenterOffset: Math.round(iconCircle.height / 4)
+      rotation: -90
       text: root.text + root.suffix
       family: Settings.data.ui.fontFixed
       pointSize: textSize
@@ -127,7 +121,6 @@ Item {
       color: forceOpen ? Color.mOnSurface : Color.mPrimary
       visible: revealed
     }
-
     Behavior on width {
       enabled: showAnim.running || hideAnim.running
       NumberAnimation {
