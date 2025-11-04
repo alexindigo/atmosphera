@@ -428,6 +428,7 @@
     },
     "hide-modes": {
       "hidden": "Ocultar Quando Vazio",
+      "idle": "Ocultar quando inativo",
       "transparent": "Transparente quando vazio",
       "visible": "Sempre Visível"
     },

@@ -428,6 +428,7 @@
     },
     "hide-modes": {
       "hidden": "Boşken Gizle",
+      "idle": "Boştayken gizle",
       "transparent": "Boşken Şeffaf",
       "visible": "Her zaman Görünür"
     },

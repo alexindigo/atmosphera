@@ -428,6 +428,7 @@
     },
     "hide-modes": {
       "hidden": "当为空时隐藏",
+      "idle": "空闲时隐藏",
       "transparent": "空时透明",
       "visible": "始终可见"
     },
