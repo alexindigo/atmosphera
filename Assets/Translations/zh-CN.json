@@ -613,7 +613,7 @@
     }
   },
   "session-menu": {
-    "action-in-seconds": "在 {seconds} 后将 {action}...",
+    "action-in-seconds": "在 {seconds} 秒后将{action}...",
     "lock": "锁定",
     "lock-and-suspend": "锁定并挂起",
     "logout": "注销",
@@ -1335,7 +1335,7 @@
         },
         "respect-expire": {
           "description": "使用通知中设置的过期超时。",
-          "label": "启用过期超时"
+          "label": "尊重过期超时"
         },
         "section": {
           "description": "根据紧急级别配置通知保持可见的时间。",
@@ -1593,7 +1593,7 @@
         "select-monitor-folder": "选择显示器壁纸文件夹",
         "selector-position": {
           "description": "选择壁纸选择面板的显示位置。",
-          "label": "显示位置"
+          "label": "选择器位置"
         }
       },
       "title": "壁纸"
