@@ -490,6 +490,17 @@
       "none": "Aucun",
       "wave": "Vague"
     },
+    "shadow-direction": {
+      "bottom": "En bas",
+      "bottom_left": "En bas à gauche",
+      "bottom_right": "En bas à droite",
+      "center": "Au centre",
+      "left": "Gauche",
+      "right": "Droite",
+      "top": "En haut",
+      "top_left": "En haut à gauche",
+      "top_right": "En haut à droite"
+    },
     "workspace-labels": {
       "index": "Index",
       "name": "Nom",
@@ -1500,7 +1511,11 @@
       },
       "shadows": {
         "description": "Active les ombres portées sous les barres et les panneaux.",
-        "label": "Ombres portées"
+        "label": "Ombres portées",
+        "direction": {
+          "description": "Choisissez d’où vient l’ombre.",
+          "label": "Direction de l’ombre"
+        }
       },
       "title": "Interface utilisateur",
       "tooltips": {

@@ -490,6 +490,17 @@
       "none": "None",
       "wave": "Wave"
     },
+    "shadow-direction": {
+      "bottom": "Below",
+      "bottom_left": "Bottom left",
+      "bottom_right": "Bottom right",
+      "center": "Overhead",
+      "left": "Left",
+      "right": "Right",
+      "top": "Above",
+      "top_left": "Top left",
+      "top_right": "Top right"
+    },
     "workspace-labels": {
       "index": "Index",
       "name": "Name",
@@ -1500,7 +1511,11 @@
       },
       "shadows": {
         "description": "Enables drop shadows under bars and panels.",
-        "label": "Drop shadows"
+        "label": "Drop shadows",
+        "direction": {
+          "description": "Choose where the shadow is cast from.",
+          "label": "Shadow direction"
+        }
       },
       "title": "User interface",
       "tooltips": {

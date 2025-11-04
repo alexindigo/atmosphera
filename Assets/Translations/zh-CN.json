@@ -490,6 +490,17 @@
       "none": "无",
       "wave": "波形"
     },
+    "shadow-direction": {
+      "bottom": "下方",
+      "bottom_left": "左下",
+      "bottom_right": "右下",
+      "center": "居中",
+      "left": "左侧",
+      "right": "右侧",
+      "top": "上方",
+      "top_left": "左上",
+      "top_right": "右上"
+    },
     "workspace-labels": {
       "index": "索引",
       "name": "名称",
@@ -1500,7 +1511,11 @@
       },
       "shadows": {
         "description": "启用条形图和面板下的阴影。",
-        "label": "阴影"
+        "label": "阴影",
+        "direction": {
+          "description": "选择阴影投射的方向。",
+          "label": "阴影方向"
+        }
       },
       "title": "用户界面",
       "tooltips": {

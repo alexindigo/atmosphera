@@ -490,6 +490,17 @@
       "none": "Nenhum",
       "wave": "Onda"
     },
+    "shadow-direction": {
+      "bottom": "Inferior",
+      "bottom_left": "Inferior esquerda",
+      "bottom_right": "Inferior direita",
+      "center": "Centro",
+      "left": "Esquerda",
+      "right": "Direita",
+      "top": "Superior",
+      "top_left": "Superior esquerda",
+      "top_right": "Superior direita"
+    },
     "workspace-labels": {
       "index": "Índice",
       "name": "Nome",
@@ -1500,7 +1511,11 @@
       },
       "shadows": {
         "description": "Ativa sombras projetadas sob barras e painéis.",
-        "label": "Sombras projetadas"
+        "label": "Sombras projetadas",
+        "direction": {
+          "description": "Escolha de onde a sombra é projetada.",
+          "label": "Direção da sombra"
+        }
       },
       "title": "Interface do usuário",
       "tooltips": {

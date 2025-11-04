@@ -490,6 +490,17 @@
       "none": "Hiçbiri",
       "wave": "Dalga"
     },
+    "shadow-direction": {
+      "bottom": "Alt",
+      "bottom_left": "Sol alt",
+      "bottom_right": "Sağ alt",
+      "center": "Merkez",
+      "left": "Sol",
+      "right": "Sağ",
+      "top": "Üst",
+      "top_left": "Sol üst",
+      "top_right": "Sağ üst"
+    },
     "workspace-labels": {
       "index": "İndeks",
       "name": "İsim",
@@ -1500,7 +1511,11 @@
       },
       "shadows": {
         "description": "Çubukların ve panellerin altında gölgelerin etkinleştirilmesini sağlar.",
-        "label": "Gölge efektleri"
+        "label": "Gölge efektleri",
+        "direction": {
+          "description": "Gölgenin hangi yönden verileceğini seçin.",
+          "label": "Gölge yönü"
+        }
       },
       "title": "Kullanıcı arayüzü",
       "tooltips": {

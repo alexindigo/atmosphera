@@ -200,6 +200,9 @@ Singleton {
       property bool compactLockScreen: false
       property bool lockOnSuspend: true
       property bool enableShadows: true
+      property string shadowDirection: "bottom_right"
+      property int shadowOffsetX: 2
+      property int shadowOffsetY: 3
       property string language: ""
     }
 

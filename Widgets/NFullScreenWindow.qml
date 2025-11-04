@@ -18,8 +18,8 @@ PanelWindow {
   // Shadow properties
   property real shadowOpacity: 1.0
   property real shadowBlur: 1.0
-  property real shadowHorizontalOffset: 2
-  property real shadowVerticalOffset: 3
+  property real shadowHorizontalOffset: Settings.data.general.shadowOffsetX
+  property real shadowVerticalOffset: Settings.data.general.shadowOffsetY
 
   property color black: "#000000"
   property color white: "#ffffff"

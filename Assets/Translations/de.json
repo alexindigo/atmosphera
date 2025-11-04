@@ -490,6 +490,17 @@
       "none": "Keine",
       "wave": "Welle"
     },
+    "shadow-direction": {
+      "bottom": "Unten",
+      "bottom_left": "Unten links",
+      "bottom_right": "Unten rechts",
+      "center": "Zentriert",
+      "left": "Links",
+      "right": "Rechts",
+      "top": "Oben",
+      "top_left": "Oben links",
+      "top_right": "Oben rechts"
+    },
     "workspace-labels": {
       "index": "Index",
       "name": "Name",
@@ -1500,7 +1511,11 @@
       },
       "shadows": {
         "description": "Aktiviert Schlagschatten unter Balken und Panels.",
-        "label": "Schlagschatten"
+        "label": "Schlagschatten",
+        "direction": {
+          "description": "Wählen, aus welcher Richtung der Schatten fällt.",
+          "label": "Schattenrichtung"
+        }
       },
       "title": "Benutzeroberfläche",
       "tooltips": {
