@@ -9,6 +9,7 @@ Item {
 
   // Public API
   property var model: []
+  property var disabledIds: []
   property color activeColor: Color.mPrimary
   property color activeOnColor: Color.mOnPrimary
   property color dragHandleColor: Color.mOutline
@@ -76,15 +77,9 @@ Item {
       required property var modelData
 
       property string text: modelData.text || ""
-      property bool enabled: {
-        // Override enabled for weather card based on weatherEnabled setting
-        if (modelData.id === "weather-card") {
-          return (modelData.enabled || false) && Settings.data.location.weatherEnabled
-        }
-        return modelData.enabled || false
-      }
+      property bool enabled: modelData.enabled || false
       property bool required: modelData.required || false
-      readonly property bool isWeatherCardDisabled: modelData.id === "weather-card" && !Settings.data.location.weatherEnabled
+      readonly property bool isDisabled: (root.disabledIds || []).indexOf(modelData.id) !== -1
       property bool dragging: false
       property int dragStartY: 0
       property int dragStartIndex: -1
@@ -96,7 +91,7 @@ Item {
 
         width: parent.width
         spacing: Style.marginS
-        opacity: (modelData.id === "weather-card" && !Settings.data.location.weatherEnabled) ? 0.5 : 1.0
+        opacity: isDisabled ? 0.5 : 1.0
 
         // Drag handle
         Rectangle {
@@ -132,14 +127,14 @@ Item {
             id: dragHandleMouseArea
 
             anchors.fill: parent
-            cursorShape: (delegateItem.required || delegateItem.isWeatherCardDisabled) ? Qt.ForbiddenCursor : Qt.SizeVerCursor
+            cursorShape: (delegateItem.required || delegateItem.isDisabled) ? Qt.ForbiddenCursor : Qt.SizeVerCursor
             hoverEnabled: true
             preventStealing: false
-            enabled: !delegateItem.required && !delegateItem.isWeatherCardDisabled
+            enabled: !delegateItem.required && !delegateItem.isDisabled
             z: 1000
 
             onPressed: mouse => {
-                         if (delegateItem.required || delegateItem.isWeatherCardDisabled) {
+                         if (delegateItem.required || delegateItem.isDisabled) {
                            return
                          }
                          delegateItem.dragStartIndex = delegateItem.index
@@ -234,11 +229,11 @@ Item {
 
           MouseArea {
             anchors.fill: parent
-            cursorShape: (delegateItem.required || delegateItem.isWeatherCardDisabled) ? Qt.ForbiddenCursor : Qt.PointingHandCursor
-            enabled: !delegateItem.required && !delegateItem.isWeatherCardDisabled
+            cursorShape: (delegateItem.required || delegateItem.isDisabled) ? Qt.ForbiddenCursor : Qt.PointingHandCursor
+            enabled: !delegateItem.required && !delegateItem.isDisabled
 
             onClicked: {
-              if (!delegateItem.required && !delegateItem.isWeatherCardDisabled) {
+              if (!delegateItem.required && !delegateItem.isDisabled) {
                 root.toggleItem(delegateItem.index)
               }
             }

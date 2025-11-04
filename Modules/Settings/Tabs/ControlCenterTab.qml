@@ -201,6 +201,7 @@ ColumnLayout {
     NReorderCheckboxes {
       Layout.fillWidth: true
       model: cardsModel
+      disabledIds: Settings.data.location.weatherEnabled ? [] : ["weather-card"]
       onDragPotentialStarted: {
         root.handleDragStart()
       }
@@ -208,10 +209,6 @@ ColumnLayout {
         root.handleDragEnd()
       }
       onItemToggled: function (index, enabled) {
-        // Prevent toggling weather card when weather is disabled
-        if (cardsModel[index].id === "weather-card" && !Settings.data.location.weatherEnabled) {
-          return
-        }
         //Logger.i("ControlCenterTab", "Item", index, "toggled to", enabled)
         var newModel = cardsModel.slice()
         newModel[index] = Object.assign({}, newModel[index], {
@@ -221,10 +218,6 @@ ColumnLayout {
         saveCards()
       }
       onItemsReordered: function (fromIndex, toIndex) {
-        // Prevent reordering weather card when weather is disabled
-        if (cardsModel[fromIndex].id === "weather-card" && !Settings.data.location.weatherEnabled) {
-          return
-        }
         //Logger.i("ControlCenterTab", "Item moved from", fromIndex, "to", toIndex)
         var newModel = cardsModel.slice()
         var item = newModel.splice(fromIndex, 1)[0]
