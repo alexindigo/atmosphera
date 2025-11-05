@@ -48,7 +48,7 @@ Singleton {
   }
 
   Component.onCompleted: {
-    Logger.i("Calendar", "Service initialized")
+    Logger.i("Calendar", "Service started")
     loadFromCache()
     checkAvailability()
   }

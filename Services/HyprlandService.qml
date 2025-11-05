@@ -45,7 +45,7 @@ Item {
                      queryDisplayScales()
                    })
       initialized = true
-      Logger.i("HyprlandService", "Initialized successfully")
+      Logger.i("HyprlandService", "Service started")
     } catch (e) {
       Logger.e("HyprlandService", "Failed to initialize:", e)
     }

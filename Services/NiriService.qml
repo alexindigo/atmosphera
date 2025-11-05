@@ -28,7 +28,7 @@ Item {
     updateWorkspaces()
     updateWindows()
     queryDisplayScales()
-    Logger.i("NiriService", "Initialized successfully")
+    Logger.i("NiriService", "Service started")
   }
 
   // Update workspaces

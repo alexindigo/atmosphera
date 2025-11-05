@@ -43,7 +43,7 @@ Item {
                      queryDisplayScales()
                    })
       initialized = true
-      Logger.i("SwayService", "Initialized successfully")
+      Logger.i("SwayService", "Service started")
     } catch (e) {
       Logger.e("SwayService", "Failed to initialize:", e)
     }

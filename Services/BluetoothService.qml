@@ -44,7 +44,7 @@ Singleton {
   }
 
   function init() {
-    Logger.i("Bluetooth", "Service initialized")
+    Logger.i("Bluetooth", "Service started")
   }
 
   Timer {

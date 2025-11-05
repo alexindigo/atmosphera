@@ -66,6 +66,6 @@ Singleton {
 
   // Initialize the service
   function init() {
-    Logger.i("HooksService", "Service initialized")
+    Logger.i("HooksService", "Service started")
   }
 }

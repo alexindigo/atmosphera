@@ -67,7 +67,7 @@ Singleton {
   }
 
   Component.onCompleted: {
-    Logger.i("Network", "Service initialized")
+    Logger.i("Network", "Service started")
     syncWifiState()
     scan()
   }
