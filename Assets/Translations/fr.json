@@ -484,12 +484,6 @@
       "hover": "Défiler au Survol",
       "never": "Ne Jamais Défiler"
     },
-    "visualizer-types": {
-      "linear": "Linéaire",
-      "mirrored": "Miroir",
-      "none": "Aucun",
-      "wave": "Vague"
-    },
     "shadow-direction": {
       "bottom": "En bas",
       "bottom_left": "En bas à gauche",
@@ -500,6 +494,12 @@
       "top": "En haut",
       "top_left": "En haut à gauche",
       "top_right": "En haut à droite"
+    },
+    "visualizer-types": {
+      "linear": "Linéaire",
+      "mirrored": "Miroir",
+      "none": "Aucun",
+      "wave": "Vague"
     },
     "workspace-labels": {
       "index": "Index",
@@ -1513,11 +1513,11 @@
       },
       "shadows": {
         "description": "Active les ombres portées sous les barres et les panneaux.",
-        "label": "Ombres portées",
         "direction": {
           "description": "Choisissez d’où vient l’ombre.",
           "label": "Direction de l’ombre"
-        }
+        },
+        "label": "Ombres portées"
       },
       "title": "Interface utilisateur",
       "tooltips": {
@@ -1572,6 +1572,10 @@
         "enable-management": {
           "description": "Gérez les fonds d'écran avec Noctalia. Décochez si vous préférez utiliser une autre application.",
           "label": "Activer la gestion des fonds d'écran"
+        },
+        "enable-overview": {
+          "description": "Applique un fond d'écran flou et atténué à l'écran de présentation.",
+          "label": "Activer le fond d'écran de l'aperçu"
         },
         "folder": {
           "description": "Chemin vers votre dossier principal de fonds d'écran.",
@@ -1773,10 +1777,10 @@
     "night-light-forced": "L'éclairage nocturne est forcé.\nClic gauche pour changer de mode.\nClic droit pour accéder aux paramètres.",
     "night-light-not-installed": "L'éclairage nocturne n'est pas disponible.\nwlsunset n'est pas installé.",
     "open-control-center": "Ouvrir le centre de contrôle",
-    "open-tray-dropdown": "Ouvrir le menu déroulant de la barre d'état",
     "open-notification-history-disable-dnd": "Ouvrir l'historique des notifications\nClic droit pour désactiver \"Ne pas déranger\".",
     "open-notification-history-enable-dnd": "Ouvrir l'historique des notifications\nClic droit pour activer \"Ne pas déranger\".",
     "open-settings": "Ouvrir les paramètres",
+    "open-tray-dropdown": "Ouvrir le menu déroulant de la barre d'état",
     "open-wallpaper-selector": "Ouvrir le sélecteur de fond d'écran",
     "output-muted": "Couper la sortie audio",
     "pause": "Pause",

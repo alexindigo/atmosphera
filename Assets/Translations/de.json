@@ -484,12 +484,6 @@
       "hover": "Beim Hover Scrollen",
       "never": "Nie Scrollen"
     },
-    "visualizer-types": {
-      "linear": "Linear",
-      "mirrored": "Gespiegelt",
-      "none": "Keine",
-      "wave": "Welle"
-    },
     "shadow-direction": {
       "bottom": "Unten",
       "bottom_left": "Unten links",
@@ -500,6 +494,12 @@
       "top": "Oben",
       "top_left": "Oben links",
       "top_right": "Oben rechts"
+    },
+    "visualizer-types": {
+      "linear": "Linear",
+      "mirrored": "Gespiegelt",
+      "none": "Keine",
+      "wave": "Welle"
     },
     "workspace-labels": {
       "index": "Index",
@@ -1513,11 +1513,11 @@
       },
       "shadows": {
         "description": "Aktiviert Schlagschatten unter Balken und Panels.",
-        "label": "Schlagschatten",
         "direction": {
           "description": "Wählen, aus welcher Richtung der Schatten fällt.",
           "label": "Schattenrichtung"
-        }
+        },
+        "label": "Schlagschatten"
       },
       "title": "Benutzeroberfläche",
       "tooltips": {
@@ -1572,6 +1572,10 @@
         "enable-management": {
           "description": "Hintergrundbilder mit Noctalia verwalten. Deaktivieren, wenn Sie eine andere Anwendung bevorzugen.",
           "label": "Hintergrundbild-Verwaltung aktivieren"
+        },
+        "enable-overview": {
+          "description": "Wendet ein verschwommenes und abgedunkeltes Hintergrundbild auf den Übersichts-Bildschirm an.",
+          "label": "Übersichtshintergrund aktivieren"
         },
         "folder": {
           "description": "Pfad zu Ihrem Haupt-Hintergrundbild-Ordner.",
@@ -1773,10 +1777,10 @@
     "night-light-forced": "Nachtlicht ist erzwungen.\nLinksklick zum Wechseln des Modus.\nRechtsklick für Einstellungen.",
     "night-light-not-installed": "Nachtlicht ist nicht verfügbar.\nwlsunset ist nicht installiert.",
     "open-control-center": "Kontrollzentrum öffnen",
-    "open-tray-dropdown": "Tray-Dropdown öffnen",
     "open-notification-history-disable-dnd": "Benachrichtigungsverlauf öffnen\nRechtsklick um 'Nicht stören' zu deaktivieren.",
     "open-notification-history-enable-dnd": "Benachrichtigungsverlauf öffnen\nRechtsklick um 'Nicht stören' zu aktivieren.",
     "open-settings": "Einstellungen öffnen",
+    "open-tray-dropdown": "Tray-Dropdown öffnen",
     "open-wallpaper-selector": "Hintergrundbild-Auswahl öffnen",
     "output-muted": "Audio-Ausgabe stummschalten",
     "pause": "Pausieren",

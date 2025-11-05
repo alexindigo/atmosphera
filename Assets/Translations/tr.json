@@ -484,12 +484,6 @@
       "hover": "Üzerine Gelince Kaydır",
       "never": "Asla Kaydırma"
     },
-    "visualizer-types": {
-      "linear": "Doğrusal",
-      "mirrored": "Yansıtılmış",
-      "none": "Hiçbiri",
-      "wave": "Dalga"
-    },
     "shadow-direction": {
       "bottom": "Alt",
       "bottom_left": "Sol alt",
@@ -500,6 +494,12 @@
       "top": "Üst",
       "top_left": "Sol üst",
       "top_right": "Sağ üst"
+    },
+    "visualizer-types": {
+      "linear": "Doğrusal",
+      "mirrored": "Yansıtılmış",
+      "none": "Hiçbiri",
+      "wave": "Dalga"
     },
     "workspace-labels": {
       "index": "İndeks",
@@ -1513,11 +1513,11 @@
       },
       "shadows": {
         "description": "Çubukların ve panellerin altında gölgelerin etkinleştirilmesini sağlar.",
-        "label": "Gölge efektleri",
         "direction": {
           "description": "Gölgenin hangi yönden verileceğini seçin.",
           "label": "Gölge yönü"
-        }
+        },
+        "label": "Gölge efektleri"
       },
       "title": "Kullanıcı arayüzü",
       "tooltips": {
@@ -1572,6 +1572,10 @@
         "enable-management": {
           "description": "Duvar kağıtlarını Noctalia ile yönetin. Başka bir uygulamayı kullanmayı tercih ediyorsanız işareti kaldırın.",
           "label": "Duvar kağıdı yönetimini etkinleştir"
+        },
+        "enable-overview": {
+          "description": "Genel bakış ekranına bulanık ve karartılmış bir duvar kağıdı uygular.",
+          "label": "Genel bakış duvar kağıdını etkinleştir"
         },
         "folder": {
           "description": "Ana duvar kağıdı klasörünüzün yolu.",
@@ -1773,10 +1777,10 @@
     "night-light-forced": "Gece ışığı zorla.\nMod arasında geçiş yapmak için sol tık.\nAyarlara erişmek için sağ tık.",
     "night-light-not-installed": "Gece ışığı mevcut değil.\nwlsunset yüklü değil.",
     "open-control-center": "Kontrol merkezini aç",
-    "open-tray-dropdown": "Tepsi açılır menüsünü aç",
     "open-notification-history-disable-dnd": "Bildirim geçmişini aç\n\"Rahatsız etmeyi\" devre dışı bırakmak için sağ tık.",
     "open-notification-history-enable-dnd": "Bildirim geçmişini aç\n\"Rahatsız etmeyi\" etkinleştirmek için sağ tık.",
     "open-settings": "Ayarları aç",
+    "open-tray-dropdown": "Tepsi açılır menüsünü aç",
     "open-wallpaper-selector": "Duvar kağıdı seçiciyi aç",
     "output-muted": "Çıkış sessizliğini değiştir",
     "pause": "Duraklat",

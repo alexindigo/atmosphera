@@ -27,6 +27,22 @@ ColumnLayout {
     Layout.bottomMargin: Style.marginL
   }
 
+  NToggle {
+    visible: Settings.data.wallpaper.enabled && CompositorService.isNiri
+    label: I18n.tr("settings.wallpaper.settings.enable-overview.label")
+    description: I18n.tr("settings.wallpaper.settings.enable-overview.description")
+    checked: Settings.data.wallpaper.overviewEnabled
+    onToggled: checked => Settings.data.wallpaper.overviewEnabled = checked
+    Layout.bottomMargin: Style.marginL
+  }
+
+  NDivider {
+    visible: Settings.data.wallpaper.enabled
+    Layout.fillWidth: true
+    Layout.topMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginXL
+  }
+
   ColumnLayout {
     visible: Settings.data.wallpaper.enabled
     spacing: Style.marginL

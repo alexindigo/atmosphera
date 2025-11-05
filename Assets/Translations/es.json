@@ -484,12 +484,6 @@
       "hover": "Desplazar al Pasar",
       "never": "Nunca Desplazar"
     },
-    "visualizer-types": {
-      "linear": "Lineal",
-      "mirrored": "Espejado",
-      "none": "Ninguno",
-      "wave": "Onda"
-    },
     "shadow-direction": {
       "bottom": "Inferior",
       "bottom_left": "Inferior izquierda",
@@ -500,6 +494,12 @@
       "top": "Superior",
       "top_left": "Superior izquierda",
       "top_right": "Superior derecha"
+    },
+    "visualizer-types": {
+      "linear": "Lineal",
+      "mirrored": "Espejado",
+      "none": "Ninguno",
+      "wave": "Onda"
     },
     "workspace-labels": {
       "index": "Índice",
@@ -1513,11 +1513,11 @@
       },
       "shadows": {
         "description": "Habilita sombras paralelas debajo de las barras y los paneles.",
-        "label": "Sombras paralelas",
         "direction": {
           "description": "Elige desde dónde se proyecta la sombra.",
           "label": "Dirección de la sombra"
-        }
+        },
+        "label": "Sombras paralelas"
       },
       "title": "Interfaz de usuario",
       "tooltips": {
@@ -1572,6 +1572,10 @@
         "enable-management": {
           "description": "Gestiona fondos de pantalla con Noctalia. Desmarca si prefieres usar otra aplicación.",
           "label": "Activar gestión de fondos de pantalla"
+        },
+        "enable-overview": {
+          "description": "Aplica un fondo de pantalla difuminado y atenuado a la pantalla de vista general.",
+          "label": "Activar fondo de pantalla de vista general"
         },
         "folder": {
           "description": "Ruta a tu carpeta principal de fondos de pantalla.",
@@ -1773,10 +1777,10 @@
     "night-light-forced": "Luz nocturna forzada.\nClic izquierdo para cambiar de modo.\nClic derecho para acceder a la configuración.",
     "night-light-not-installed": "Luz nocturna no disponible.\nwlsunset no está instalado.",
     "open-control-center": "Abrir el centro de control",
-    "open-tray-dropdown": "Abrir menú desplegable de bandeja",
     "open-notification-history-disable-dnd": "Abrir historial de notificaciones\nClic derecho para desactivar \"No molestar\".",
     "open-notification-history-enable-dnd": "Abrir historial de notificaciones\nClic derecho para activar \"No molestar\".",
     "open-settings": "Abrir configuración",
+    "open-tray-dropdown": "Abrir menú desplegable de bandeja",
     "open-wallpaper-selector": "Abrir selector de fondos de pantalla",
     "output-muted": "Silenciar salida de audio",
     "pause": "Pausa",

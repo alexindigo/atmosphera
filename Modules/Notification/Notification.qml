@@ -44,7 +44,7 @@ Variants {
     sourceComponent: PanelWindow {
       screen: modelData
 
-      WlrLayershell.namespace: "noctalia-notifications"
+      WlrLayershell.namespace: "noctalia-notifications-" + (screen?.name || "unknown")
       WlrLayershell.layer: (Settings.data.notifications && Settings.data.notifications.overlayLayer) ? WlrLayer.Overlay : WlrLayer.Top
 
       color: Color.transparent

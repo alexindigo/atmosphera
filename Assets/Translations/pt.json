@@ -484,12 +484,6 @@
       "hover": "Rolar ao Passar o Mouse",
       "never": "Nunca Rolar"
     },
-    "visualizer-types": {
-      "linear": "Linear",
-      "mirrored": "Espelhado",
-      "none": "Nenhum",
-      "wave": "Onda"
-    },
     "shadow-direction": {
       "bottom": "Inferior",
       "bottom_left": "Inferior esquerda",
@@ -500,6 +494,12 @@
       "top": "Superior",
       "top_left": "Superior esquerda",
       "top_right": "Superior direita"
+    },
+    "visualizer-types": {
+      "linear": "Linear",
+      "mirrored": "Espelhado",
+      "none": "Nenhum",
+      "wave": "Onda"
     },
     "workspace-labels": {
       "index": "Índice",
@@ -1513,11 +1513,11 @@
       },
       "shadows": {
         "description": "Ativa sombras projetadas sob barras e painéis.",
-        "label": "Sombras projetadas",
         "direction": {
           "description": "Escolha de onde a sombra é projetada.",
           "label": "Direção da sombra"
-        }
+        },
+        "label": "Sombras projetadas"
       },
       "title": "Interface do usuário",
       "tooltips": {
@@ -1572,6 +1572,10 @@
         "enable-management": {
           "description": "Gerencie papéis de parede com o Noctalia. Desmarque se preferir usar outro aplicativo.",
           "label": "Ativar gerenciamento de papel de parede"
+        },
+        "enable-overview": {
+          "description": "Aplica um papel de parede desfocado e escurecido à tela de visão geral.",
+          "label": "Ativar papel de parede de visão geral"
         },
         "folder": {
           "description": "Caminho para a sua pasta principal de papéis de parede.",
@@ -1773,10 +1777,10 @@
     "night-light-forced": "Luz noturna forçada.\nClique esquerdo para alternar o modo.\nClique direito para acessar as configurações.",
     "night-light-not-installed": "Luz noturna não disponível.\nwlsunset não está instalado.",
     "open-control-center": "Abrir central de controle",
-    "open-tray-dropdown": "Abrir menu suspenso da bandeja",
     "open-notification-history-disable-dnd": "Abrir histórico de notificações\nClique direito para desativar \"Não perturbe\".",
     "open-notification-history-enable-dnd": "Abrir histórico de notificações\nClique direito para ativar \"Não perturbe\".",
     "open-settings": "Abrir configurações",
+    "open-tray-dropdown": "Abrir menu suspenso da bandeja",
     "open-wallpaper-selector": "Abrir seletor de papel de parede",
     "output-muted": "Silenciar saída de áudio",
     "pause": "Pausar",

@@ -205,7 +205,7 @@ Variants {
         focusable: false
         color: Color.transparent
 
-        WlrLayershell.namespace: "noctalia-dock-peek"
+        WlrLayershell.namespace: "noctalia-dock-peek-" + (screen?.name || "unknown")
         WlrLayershell.exclusionMode: ExclusionMode.Ignore
         implicitHeight: peekHeight
 
@@ -244,7 +244,7 @@ Variants {
         focusable: false
         color: Color.transparent
 
-        WlrLayershell.namespace: "noctalia-dock-main"
+        WlrLayershell.namespace: "noctalia-dock-" + (screen?.name || "unknown")
         WlrLayershell.exclusionMode: exclusive ? ExclusionMode.Auto : ExclusionMode.Ignore
 
         // Size to fit the dock container exactly

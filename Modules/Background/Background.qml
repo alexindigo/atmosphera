@@ -85,7 +85,7 @@ Variants {
       screen: modelData
       WlrLayershell.layer: WlrLayer.Background
       WlrLayershell.exclusionMode: ExclusionMode.Ignore
-      WlrLayershell.namespace: "quickshell-wallpaper"
+      WlrLayershell.namespace: "noctalia-wallpaper-" + (screen?.name || "unknown")
 
       anchors {
         bottom: true

@@ -108,6 +108,7 @@
   },
   "wallpaper": {
     "enabled": true,
+    "overviewEnabled": true,
     "directory": "",
     "enableMultiMonitorDirectories": false,
     "recursiveSearch": false,
@@ -121,7 +122,7 @@
     "transitionType": "random",
     "transitionEdgeSmoothness": 0.05,
     "monitors": [],
-    "panelPosition": "folow_bar"
+    "panelPosition": "follow_bar"
   },
   "appLauncher": {
     "enableClipboardHistory": false,

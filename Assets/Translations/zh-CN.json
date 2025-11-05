@@ -484,12 +484,6 @@
       "hover": "悬停时滚动",
       "never": "从不滚动"
     },
-    "visualizer-types": {
-      "linear": "线性",
-      "mirrored": "镜像",
-      "none": "无",
-      "wave": "波形"
-    },
     "shadow-direction": {
       "bottom": "下方",
       "bottom_left": "左下",
@@ -500,6 +494,12 @@
       "top": "上方",
       "top_left": "左上",
       "top_right": "右上"
+    },
+    "visualizer-types": {
+      "linear": "线性",
+      "mirrored": "镜像",
+      "none": "无",
+      "wave": "波形"
     },
     "workspace-labels": {
       "index": "索引",
@@ -1513,11 +1513,11 @@
       },
       "shadows": {
         "description": "启用条形图和面板下的阴影。",
-        "label": "阴影",
         "direction": {
           "description": "选择阴影投射的方向。",
           "label": "阴影方向"
-        }
+        },
+        "label": "阴影"
       },
       "title": "用户界面",
       "tooltips": {
@@ -1572,6 +1572,10 @@
         "enable-management": {
           "description": "使用 Noctalia 管理壁纸。如果您更喜欢使用其他应用程序，请取消选中。",
           "label": "启用壁纸管理"
+        },
+        "enable-overview": {
+          "description": "将模糊且变暗的壁纸应用于概览屏幕。",
+          "label": "启用概览壁纸"
         },
         "folder": {
           "description": "您的主壁纸文件夹路径。",
@@ -1773,10 +1777,10 @@
     "night-light-forced": "夜间模式已强制启用。\n左键点击循环模式。\n右键点击访问设置。",
     "night-light-not-installed": "夜间模式不可用。\nwlsunset 未安装。",
     "open-control-center": "打开控制中心",
-    "open-tray-dropdown": "打开系统托盘下拉菜单",
     "open-notification-history-disable-dnd": "打开通知历史记录\n右键点击禁用\"勿扰模式\"。",
     "open-notification-history-enable-dnd": "打开通知历史记录\n右键点击启用\"勿扰模式\"。",
     "open-settings": "打开设置",
+    "open-tray-dropdown": "打开系统托盘下拉菜单",
     "open-wallpaper-selector": "打开壁纸选择器",
     "output-muted": "静音输出设备",
     "pause": "暂停",

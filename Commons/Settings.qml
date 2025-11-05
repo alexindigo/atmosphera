@@ -246,6 +246,7 @@ Singleton {
     // wallpaper
     property JsonObject wallpaper: JsonObject {
       property bool enabled: true
+      property bool overviewEnabled: true
       property string directory: ""
       property bool enableMultiMonitorDirectories: false
       property bool recursiveSearch: false

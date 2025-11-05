@@ -6,21 +6,21 @@ import qs.Commons
 import qs.Services
 import qs.Widgets
 
-Variants {
-  model: Quickshell.screens
+Loader {
+  active: CompositorService.isNiri && Settings.data.wallpaper.enabled && Settings.data.wallpaper.overviewEnabled
 
-  delegate: Loader {
-    required property ShellScreen modelData
-    property string wallpaper: ""
+  sourceComponent: Variants {
+    model: Quickshell.screens
 
-    active: CompositorService.isNiri && Settings.data.wallpaper.enabled && modelData
-
-    sourceComponent: PanelWindow {
+    delegate: PanelWindow {
       id: panelWindow
+
+      required property ShellScreen modelData
+      property string wallpaper: ""
 
       Component.onCompleted: {
         if (modelData) {
-          Logger.d("Overview", "Loading Overview component for Niri on", modelData.name)
+          Logger.d("Overview", "Loading overview for Niri on", modelData.name)
         }
         setWallpaperInitial()
       }
@@ -50,7 +50,7 @@ Variants {
       screen: modelData
       WlrLayershell.layer: WlrLayer.Background
       WlrLayershell.exclusionMode: ExclusionMode.Ignore
-      WlrLayershell.namespace: "quickshell-overview"
+      WlrLayershell.namespace: "noctalia-overview-" + (screen?.name || "unknown")
 
       anchors {
         top: true

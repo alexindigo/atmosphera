@@ -484,12 +484,6 @@
       "hover": "Scroll On Hover",
       "never": "Never Scroll"
     },
-    "visualizer-types": {
-      "linear": "Linear",
-      "mirrored": "Mirrored",
-      "none": "None",
-      "wave": "Wave"
-    },
     "shadow-direction": {
       "bottom": "Below",
       "bottom_left": "Bottom left",
@@ -500,6 +494,12 @@
       "top": "Above",
       "top_left": "Top left",
       "top_right": "Top right"
+    },
+    "visualizer-types": {
+      "linear": "Linear",
+      "mirrored": "Mirrored",
+      "none": "None",
+      "wave": "Wave"
     },
     "workspace-labels": {
       "index": "Index",
@@ -1513,11 +1513,11 @@
       },
       "shadows": {
         "description": "Enables drop shadows under bars and panels.",
-        "label": "Drop shadows",
         "direction": {
           "description": "Choose where the shadow is cast from.",
           "label": "Shadow direction"
-        }
+        },
+        "label": "Drop shadows"
       },
       "title": "User interface",
       "tooltips": {
@@ -1572,6 +1572,10 @@
         "enable-management": {
           "description": "Manage wallpapers with Noctalia. Uncheck if you prefer using another application.",
           "label": "Enable wallpaper management"
+        },
+        "enable-overview": {
+          "description": "Applies a blurred and dimmed wallpaper to the overview screen.",
+          "label": "Enable overview wallpaper"
         },
         "folder": {
           "description": "Path to your main wallpaper folder.",
@@ -1773,10 +1777,10 @@
     "night-light-forced": "Night light is forced.\nLeft click to cycle mode.\nRight click to access settings.",
     "night-light-not-installed": "Night light is not available.\nwlsunset is not installed.",
     "open-control-center": "Open control center",
-    "open-tray-dropdown": "Open tray dropdown",
     "open-notification-history-disable-dnd": "Open notification history\nRight-click to disable \"Do not disturb\".",
     "open-notification-history-enable-dnd": "Open notification history\nRight-click to enable \"Do not disturb\".",
     "open-settings": "Open settings",
+    "open-tray-dropdown": "Open tray dropdown",
     "open-wallpaper-selector": "Open wallpaper selector",
     "output-muted": "Toggle output mute",
     "pause": "Pause",
