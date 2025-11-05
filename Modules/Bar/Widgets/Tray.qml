@@ -192,7 +192,7 @@ Rectangle {
 
     Repeater {
       id: repeater
-      model: filteredItems
+      model: SystemTray.items
 
       delegate: Item {
         width: itemSize
@@ -303,63 +303,63 @@ Rectangle {
     }
 
     // Dropdown opener - simple icon with hover effect
-    Item {
-      id: dropdownButton
-      visible: dropdownItems.length > 0
-      width: itemSize
-      height: itemSize
+    // Item {
+    //   id: dropdownButton
+    //   visible: dropdownItems.length > 0
+    //   width: itemSize
+    //   height: itemSize
 
-      property bool hovered: false
+    //   property bool hovered: false
 
-      NIcon {
-        id: chevronIcon
-        anchors.centerIn: parent
-        icon: {
-          if (barPosition === "top")
-            return "caret-down"
-          else if (barPosition === "bottom")
-            return "caret-up"
-          else if (barPosition === "left")
-            return "caret-right"
-          else if (barPosition === "right")
-            return "caret-left"
-          else
-            return "caret-down" // default fallback
-        }
-        pointSize: Math.round(itemSize * 0.65)
-        color: dropdownButton.hovered ? Color.mPrimary : Color.mOnSurface
+    //   NIcon {
+    //     id: chevronIcon
+    //     anchors.centerIn: parent
+    //     icon: {
+    //       if (barPosition === "top")
+    //         return "caret-down"
+    //       else if (barPosition === "bottom")
+    //         return "caret-up"
+    //       else if (barPosition === "left")
+    //         return "caret-right"
+    //       else if (barPosition === "right")
+    //         return "caret-left"
+    //       else
+    //         return "caret-down" // default fallback
+    //     }
+    //     pointSize: Math.round(itemSize * 0.65)
+    //     color: dropdownButton.hovered ? Color.mPrimary : Color.mOnSurface
 
-        Behavior on color {
-          ColorAnimation {
-            duration: Style.animationFast
-            easing.type: Easing.InOutQuad
-          }
-        }
-      }
+    //     Behavior on color {
+    //       ColorAnimation {
+    //         duration: Style.animationFast
+    //         easing.type: Easing.InOutQuad
+    //       }
+    //     }
+    //   }
 
-      MouseArea {
-        anchors.fill: parent
-        hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
-        onEntered: {
-          dropdownButton.hovered = true
-          TooltipService.show(Screen, dropdownButton, I18n.tr("tooltips.open-tray-dropdown"), BarService.getTooltipDirection())
-        }
-        onExited: {
-          dropdownButton.hovered = false
-          TooltipService.hide()
-        }
-        onClicked: {
-          TooltipService.hideImmediately()
-          const panel = PanelService.getPanel("trayDropdownPanel", root.screen)
-          if (panel) {
-            panel.widgetSection = root.section
-            panel.widgetIndex = root.sectionWidgetIndex
-            panel.toggle(dropdownButton)
-          }
-        }
-      }
-    }
+    //   MouseArea {
+    //     anchors.fill: parent
+    //     hoverEnabled: true
+    //     cursorShape: Qt.PointingHandCursor
+    //     onEntered: {
+    //       dropdownButton.hovered = true
+    //       TooltipService.show(Screen, dropdownButton, I18n.tr("tooltips.open-tray-dropdown"), BarService.getTooltipDirection())
+    //     }
+    //     onExited: {
+    //       dropdownButton.hovered = false
+    //       TooltipService.hide()
+    //     }
+    //     onClicked: {
+    //       TooltipService.hideImmediately()
+    //       const panel = PanelService.getPanel("trayDropdownPanel", root.screen)
+    //       if (panel) {
+    //         panel.widgetSection = root.section
+    //         panel.widgetIndex = root.sectionWidgetIndex
+    //         panel.toggle(dropdownButton)
+    //       }
+    //     }
+    //   }
+    // }
   }
 
   PanelWindow {
