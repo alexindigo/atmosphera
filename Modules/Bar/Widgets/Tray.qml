@@ -45,7 +45,7 @@ Rectangle {
     if (!str || !rule) {
       return false
     }
-    Logger.i("Tray", "wildCardMatch - Input str:", str, "rule:", rule)
+    //Logger.d("Tray", "wildCardMatch - Input str:", str, "rule:", rule)
 
     // Escape all special regex characters in the rule
     let escapedRule = rule.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
@@ -54,12 +54,11 @@ Rectangle {
     // Add ^ and $ to match the entire string
     pattern = '^' + pattern + '$'
 
-    Logger.i("Tray", "wildCardMatch - Generated pattern:", pattern)
-
+    //Logger.d("Tray", "wildCardMatch - Generated pattern:", pattern)
     try {
       const regex = new RegExp(pattern, 'i')
       // 'i' for case-insensitive
-      Logger.i("Tray", "wildCardMatch - Regex test result:", regex.test(str))
+      //Logger.d("Tray", "wildCardMatch - Regex test result:", regex.test(str))
       return regex.test(str)
     } catch (e) {
       Logger.w("Tray", "Invalid regex pattern for wildcard match:", rule, e.message)
