@@ -43,6 +43,8 @@ Singleton {
   property color mShadow: customColors.mShadow
 
   property color transparent: "transparent"
+  property color black: "#000000"
+  property color white: "#ffffff"
 
   // Extra colors that are auto generated
   readonly property color mHover: Settings.data.colorSchemes.darkMode ? Qt.darker(mOnSurface, 1.25) : Qt.lighter(mOnSurface, 1.25)

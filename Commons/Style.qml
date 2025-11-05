@@ -57,6 +57,13 @@ Singleton {
   property real opacityAlmost: 0.95
   property real opacityFull: 1.0
 
+  // Shadows
+  property real shadowOpacity: 0.85
+  property real shadowBlur: 1.0
+  property int shadowBlurMax: 23
+  property real shadowHorizontalOffset: Settings.data.general.shadowOffsetX
+  property real shadowVerticalOffset: Settings.data.general.shadowOffsetY
+
   // Animation duration (ms)
   property int animationFast: Settings.data.general.animationDisabled ? 0 : Math.round(150 / Settings.data.general.animationSpeed)
   property int animationNormal: Settings.data.general.animationDisabled ? 0 : Math.round(300 / Settings.data.general.animationSpeed)

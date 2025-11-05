@@ -15,15 +15,6 @@ PanelWindow {
   required property var barComponent
   required property var panelComponents
 
-  // Shadow properties
-  property real shadowOpacity: 1.0
-  property real shadowBlur: 1.0
-  property real shadowHorizontalOffset: Settings.data.general.shadowOffsetX
-  property real shadowVerticalOffset: Settings.data.general.shadowOffsetY
-
-  property color black: "#000000"
-  property color white: "#ffffff"
-
   Component.onCompleted: {
     Logger.d("NFullScreenWindow", "Initialized for screen:", screen?.name, "- Dimensions:", screen?.width, "x", screen?.height, "- Position:", screen?.x, ",", screen?.y)
   }
@@ -195,18 +186,14 @@ PanelWindow {
     // Apply shadow effect
     layer.enabled: Settings.data.general.enableShadows
     layer.smooth: true
-    // layer.textureSize: {
-    //   var dpr = CompositorService.getDisplayScale(screen.name)
-    //   return Qt.size(width * dpr, height * dpr)
-    // }
     layer.effect: MultiEffect {
       shadowEnabled: true
-      shadowOpacity: root.shadowOpacity
-      shadowHorizontalOffset: root.shadowHorizontalOffset
-      shadowVerticalOffset: root.shadowVerticalOffset
-      shadowColor: black
-      blur: root.shadowBlur
-      blurMax: 32
+      shadowOpacity: Style.shadowOpacity
+      shadowHorizontalOffset: Style.shadowHorizontalOffset
+      shadowVerticalOffset: Style.shadowVerticalOffset
+      shadowColor: Color.black
+      blur: Style.shadowBlur
+      blurMax: Style.shadowBlurMax
     }
 
     // Screen corners (integrated to avoid separate PanelWindow)
@@ -222,7 +209,7 @@ PanelWindow {
         id: cornersRoot
         anchors.fill: parent
 
-        property color cornerColor: Settings.data.general.forceBlackScreenCorners ? black : Qt.alpha(Color.mSurface, Settings.data.bar.backgroundOpacity)
+        property color cornerColor: Settings.data.general.forceBlackScreenCorners ? Color.black : Qt.alpha(Color.mSurface, Settings.data.bar.backgroundOpacity)
         property real cornerRadius: Style.screenRadius
         property real cornerSize: Style.screenRadius
 
@@ -247,7 +234,7 @@ PanelWindow {
             ctx.fillStyle = Qt.rgba(cornersRoot.cornerColor.r, cornersRoot.cornerColor.g, cornersRoot.cornerColor.b, cornersRoot.cornerColor.a)
             ctx.fillRect(0, 0, width, height)
             ctx.globalCompositeOperation = "destination-out"
-            ctx.fillStyle = white
+            ctx.fillStyle = Color.white
             ctx.beginPath()
             ctx.arc(width, height, cornersRoot.cornerRadius, 0, 2 * Math.PI)
             ctx.fill()
@@ -280,7 +267,7 @@ PanelWindow {
             ctx.fillStyle = Qt.rgba(cornersRoot.cornerColor.r, cornersRoot.cornerColor.g, cornersRoot.cornerColor.b, cornersRoot.cornerColor.a)
             ctx.fillRect(0, 0, width, height)
             ctx.globalCompositeOperation = "destination-out"
-            ctx.fillStyle = white
+            ctx.fillStyle = Color.white
             ctx.beginPath()
             ctx.arc(0, height, cornersRoot.cornerRadius, 0, 2 * Math.PI)
             ctx.fill()
@@ -313,7 +300,7 @@ PanelWindow {
             ctx.fillStyle = Qt.rgba(cornersRoot.cornerColor.r, cornersRoot.cornerColor.g, cornersRoot.cornerColor.b, cornersRoot.cornerColor.a)
             ctx.fillRect(0, 0, width, height)
             ctx.globalCompositeOperation = "destination-out"
-            ctx.fillStyle = white
+            ctx.fillStyle = Color.white
             ctx.beginPath()
             ctx.arc(width, 0, cornersRoot.cornerRadius, 0, 2 * Math.PI)
             ctx.fill()
@@ -346,7 +333,7 @@ PanelWindow {
             ctx.fillStyle = Qt.rgba(cornersRoot.cornerColor.r, cornersRoot.cornerColor.g, cornersRoot.cornerColor.b, cornersRoot.cornerColor.a)
             ctx.fillRect(0, 0, width, height)
             ctx.globalCompositeOperation = "destination-out"
-            ctx.fillStyle = white
+            ctx.fillStyle = Color.white
             ctx.beginPath()
             ctx.arc(0, 0, cornersRoot.cornerRadius, 0, 2 * Math.PI)
             ctx.fill()
