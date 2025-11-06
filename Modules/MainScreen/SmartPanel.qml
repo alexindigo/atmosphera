@@ -48,6 +48,13 @@ Item {
   // Track actual visibility (delayed until content is loaded and sized)
   property bool isPanelVisible: false
 
+  // Track size animation completion for sequential opacity animation
+  property bool sizeAnimationComplete: false
+
+  // Track close animation state: fade opacity first, then shrink size
+  property bool isClosing: false
+  property bool opacityFadeComplete: false
+
   // Keyboard event handlers - override these in specific panels to handle shortcuts
   // These are called from MainScreen's centralized shortcuts
   function onEscapePressed() {
@@ -137,13 +144,35 @@ Item {
   }
 
   function close() {
-    // Set visibility to false - state transition will animate
+    // Start close sequence: fade opacity first
+    isClosing = true
+    sizeAnimationComplete = false
+
+    // Stop the open animation timer if it's still running
+    opacityTrigger.stop()
+
+    // If opacity is already 0 (closed during open animation before fade-in),
+    // skip directly to size animation
+    if (root.opacity === 0.0) {
+      opacityFadeComplete = true
+    } else {
+      opacityFadeComplete = false
+    }
+
+    // Opacity will fade out, then size will shrink, then finalizeClose() will complete
+    Logger.d("SmartPanel", "Closing panel", objectName)
+  }
+
+  function finalizeClose() {
+    // Complete the close sequence after animations finish
     isPanelVisible = false
     isPanelOpen = false
+    isClosing = false
+    opacityFadeComplete = false
     PanelService.closedPanel(root)
     closed()
 
-    Logger.d("SmartPanel", "Closing panel", objectName)
+    Logger.d("SmartPanel", "Panel close finalized", objectName)
   }
 
   function setPosition() {
@@ -174,9 +203,9 @@ Item {
     }
     var panelHeight = Math.min(h, (root.height || 1080) - Style.barHeight - Style.marginL * 2)
 
-    // Update panelBackground size
-    panelBackground.width = panelWidth
-    panelBackground.height = panelHeight
+    // Update panelBackground target size (will be animated)
+    panelBackground.targetWidth = panelWidth
+    panelBackground.targetHeight = panelHeight
 
     // Calculate position
     var calculatedX
@@ -437,9 +466,9 @@ Item {
       }
     }
 
-    // Apply calculated positions
-    panelBackground.x = calculatedX
-    panelBackground.y = calculatedY
+    // Apply calculated positions (set targets for animation)
+    panelBackground.targetX = calculatedX
+    panelBackground.targetY = calculatedY
 
     Logger.d("SmartPanel", "Position calculated:", calculatedX, calculatedY)
     Logger.d("SmartPanel", "  Panel size:", panelWidth, "x", panelHeight)
@@ -463,13 +492,41 @@ Item {
     }
   }
 
-  // Simple opacity-based animation
-  opacity: isPanelVisible ? 1.0 : 0.0
+  // Opacity animation
+  // Opening: fade in after size animation reaches 75%
+  // Closing: fade out immediately
+  opacity: {
+    if (isClosing)
+      return 0.0 // Fade out when closing
+    if (isPanelVisible && sizeAnimationComplete)
+      return 1.0 // Fade in when opening
+    return 0.0
+  }
 
   Behavior on opacity {
     NumberAnimation {
-      duration: Style.animationNormal
+      id: opacityAnimation
+      duration: Style.animationFast
       easing.type: Easing.OutQuad
+
+      onRunningChanged: {
+        // When opacity fade completes during close, trigger size animation
+        if (!running && isClosing && root.opacity === 0.0) {
+          opacityFadeComplete = true
+        }
+      }
+    }
+  }
+
+  // Timer to trigger opacity fade at 50% of size animation
+  Timer {
+    id: opacityTrigger
+    interval: Style.animationNormal * 0.5
+    repeat: false
+    onTriggered: {
+      if (isPanelVisible) {
+        sizeAnimationComplete = true
+      }
     }
   }
 
@@ -510,10 +567,93 @@ Item {
     // The actual panel background - provides geometry for PanelBackground rendering
     Item {
       id: panelBackground
-      x: root.x
-      y: root.y
-      width: root.preferredWidth
-      height: root.preferredHeight
+
+      // Store target dimensions (set by setPosition())
+      property real targetWidth: root.preferredWidth
+      property real targetHeight: root.preferredHeight
+      property real targetX: root.x
+      property real targetY: root.y
+
+      property var bezierCurve: [0.05, 0, 0.133, 0.06, 0.166, 0.4, 0.208, 0.82, 0.25, 1, 1, 1]
+
+      // Animate based on bar orientation:
+      // - Horizontal bars (top/bottom): animate height only (slide out from bar)
+      // - Vertical bars (left/right): animate width only (slide out from bar)
+      // When closing: wait for opacity fade to complete before shrinking
+      x: targetX
+      y: targetY
+      width: {
+        // When closing and opacity fade complete, start shrinking
+        if (isClosing && opacityFadeComplete) {
+          return root.barIsVertical ? 0 : targetWidth
+        }
+        // When closing but opacity hasn't completed, or when open, keep full size
+        if (isClosing || isPanelVisible)
+          return targetWidth
+        // Default: shrink based on bar orientation
+        return root.barIsVertical ? 0 : targetWidth
+      }
+      height: {
+        // When closing and opacity fade complete, start shrinking
+        if (isClosing && opacityFadeComplete) {
+          return root.barIsVertical ? targetHeight : 0
+        }
+        // When closing but opacity hasn't completed, or when open, keep full size
+        if (isClosing || isPanelVisible)
+          return targetHeight
+        // Default: shrink based on bar orientation
+        return root.barIsVertical ? targetHeight : 0
+      }
+
+      Behavior on width {
+        enabled: root.barIsVertical // Only animate width for vertical bars
+        NumberAnimation {
+          id: widthCloseAnimation
+          duration: Style.animationNormal
+          easing.type: Easing.BezierSpline
+          easing.bezierCurve: panelBackground.bezierCurve
+
+          onRunningChanged: {
+            // When width shrink completes during close, finalize
+            if (!running && isClosing && panelBackground.width === 0 && root.barIsVertical) {
+              finalizeClose()
+            }
+          }
+        }
+      }
+
+      Behavior on height {
+        enabled: !root.barIsVertical // Only animate height for horizontal bars
+        NumberAnimation {
+          id: heightCloseAnimation
+          duration: Style.animationNormal
+          easing.type: Easing.BezierSpline
+          easing.bezierCurve: panelBackground.bezierCurve
+
+          onRunningChanged: {
+            // When height shrink completes during close, finalize
+            if (!running && isClosing && panelBackground.height === 0 && !root.barIsVertical) {
+              finalizeClose()
+            }
+          }
+        }
+      }
+
+      Behavior on x {
+        NumberAnimation {
+          duration: isPanelVisible ? Style.animationNormal : 0 // Instant when not visible to prevent (0,0) slide
+          easing.type: Easing.BezierSpline
+          easing.bezierCurve: panelBackground.bezierCurve
+        }
+      }
+
+      Behavior on y {
+        NumberAnimation {
+          duration: isPanelVisible ? Style.animationNormal : 0 // Instant when not visible to prevent (0,0) slide
+          easing.type: Easing.BezierSpline
+          easing.bezierCurve: panelBackground.bezierCurve
+        }
+      }
 
       // Corner states for PanelBackground to read
       // State -1: No radius (flat/square corner)
@@ -616,15 +756,18 @@ Item {
       height: panelBackground.height
       sourceComponent: root.panelContent
 
-      // When content finishes loading, make visible then calculate position
+      // When content finishes loading, calculate position then make visible
       onLoaded: {
-        // Make panel visible FIRST so corner state bindings have valid context
-        // This happens in the same frame, so no visual flicker
+        // Calculate position FIRST so targetX/targetY are set before animation starts
+        // This prevents the panel from animating from (0,0) on first open
+        setPosition()
+
+        // THEN make panel visible to start the animation from the correct position
+        // Corner state bindings will have valid context
         isPanelVisible = true
 
-        // Calculate position with content-driven sizes if available
-        // When position updates, corner state bindings re-evaluate with panel visible
-        setPosition()
+        // Start timer to trigger opacity fade at 75% of size animation
+        opacityTrigger.start()
 
         // Emit opened signal
         opened()
