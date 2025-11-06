@@ -15,6 +15,9 @@
     "widgets": {
       "left": [
         {
+          "id": "ControlCenter"
+        },
+        {
           "id": "SystemMonitor"
         },
         {
@@ -50,9 +53,6 @@
         },
         {
           "id": "Clock"
-        },
-        {
-          "id": "ControlCenter"
         }
       ]
     }

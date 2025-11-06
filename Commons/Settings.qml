@@ -157,6 +157,8 @@ Singleton {
       property JsonObject widgets
       widgets: JsonObject {
         property list<var> left: [{
+            "id": "ControlCenter"
+          }, {
             "id": "SystemMonitor"
           }, {
             "id": "ActiveWindow"
@@ -180,8 +182,6 @@ Singleton {
             "id": "Brightness"
           }, {
             "id": "Clock"
-          }, {
-            "id": "ControlCenter"
           }]
       }
     }
