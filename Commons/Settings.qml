@@ -14,7 +14,7 @@ Singleton {
   readonly property alias data: adapter
   property bool isLoaded: false
   property bool directoriesCreated: false
-  property int settingsVersion: 18
+  property int settingsVersion: 19
   property bool isDebug: Quickshell.env("NOCTALIA_DEBUG") === "1"
 
   // Define our app directories
@@ -246,7 +246,7 @@ Singleton {
     // wallpaper
     property JsonObject wallpaper: JsonObject {
       property bool enabled: true
-      property bool overviewEnabled: true
+      property bool overviewEnabled: false
       property string directory: ""
       property bool enableMultiMonitorDirectories: false
       property bool recursiveSearch: false

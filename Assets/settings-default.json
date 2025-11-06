@@ -1,5 +1,5 @@
 {
-  "settingsVersion": 18,
+  "settingsVersion": 19,
   "setupCompleted": false,
   "bar": {
     "position": "top",
@@ -108,7 +108,7 @@
   },
   "wallpaper": {
     "enabled": true,
-    "overviewEnabled": true,
+    "overviewEnabled": false,
     "directory": "",
     "enableMultiMonitorDirectories": false,
     "recursiveSearch": false,

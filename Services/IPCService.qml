@@ -78,14 +78,14 @@ Item {
     function clipboard() {
       root.withTargetScreen(screen => {
                               var launcherPanel = PanelService.getPanel("launcherPanel", screen)
-                              launcherPanel.setSearchText(">clip ")
+                              launcherPanel?.setSearchText(">clip ")
                               launcherPanel?.toggle()
                             })
     }
     function calculator() {
       root.withTargetScreen(screen => {
                               var launcherPanel = PanelService.getPanel("launcherPanel", screen)
-                              launcherPanel.setSearchText(">calc ")
+                              launcherPanel?.setSearchText(">calc ")
                               launcherPanel?.toggle()
                             })
     }

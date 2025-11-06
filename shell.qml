@@ -83,13 +83,9 @@ ShellRoot {
       Overview {}
       Background {}
       Dock {}
-
       ToastOverlay {}
       OSD {}
-
-      Notification {
-        id: notification
-      }
+      Notification {}
 
       LockScreen {
         id: lockScreen

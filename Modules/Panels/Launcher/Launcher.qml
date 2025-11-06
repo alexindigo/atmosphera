@@ -197,8 +197,10 @@ SmartPanel {
   ClipboardPlugin {
     id: clipPlugin
     Component.onCompleted: {
-      registerPlugin(this)
-      Logger.d("Launcher", "Registered: ClipboardPlugin")
+      if (Settings.data.appLauncher.enableClipboardHistory) {
+        registerPlugin(this)
+        Logger.d("Launcher", "Registered: ClipboardPlugin")
+      }
     }
   }
 
