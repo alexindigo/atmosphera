@@ -18,30 +18,14 @@ import qs.Commons
 import qs.Services
 import qs.Widgets
 
-// Core Modules
+// Panel Windows
 import qs.Modules.Background
 import qs.Modules.Dock
+import qs.Modules.MainScreen
 import qs.Modules.LockScreen
-import qs.Modules.SessionMenu
-
-// Bar & Bar Components
-import qs.Modules.Bar
-import qs.Modules.Bar.Extras
-import qs.Modules.Bar.Audio
-import qs.Modules.Bar.Bluetooth
-import qs.Modules.Bar.Battery
-import qs.Modules.Bar.Calendar
-import qs.Modules.Bar.WiFi
-
-// Panels & UI Components
-import qs.Modules.ControlCenter
-import qs.Modules.Launcher
 import qs.Modules.Notification
 import qs.Modules.OSD
-import qs.Modules.Settings
 import qs.Modules.Toast
-import qs.Modules.Wallpaper
-import qs.Modules.SetupWizard
 
 ShellRoot {
   id: shellRoot
@@ -74,89 +58,6 @@ ShellRoot {
       settingsLoaded = true
     }
   }
-
-  // ------------------------------
-  // Define panel components (must be at ShellRoot level for NFullScreenWindow access)
-  Component {
-    id: launcherComponent
-    Launcher {}
-  }
-
-  Component {
-    id: controlCenterComponent
-    ControlCenterPanel {}
-  }
-
-  Component {
-    id: trayDropdownComponent
-    TrayDropdownPanel {}
-  }
-
-  Component {
-    id: trayMenuComponent
-    TrayMenu {}
-  }
-
-  Component {
-    id: calendarComponent
-    CalendarPanel {}
-  }
-
-  Component {
-    id: settingsComponent
-    SettingsPanel {}
-  }
-
-  Component {
-    id: directWidgetSettingsComponent
-    DirectWidgetSettingsPanel {}
-  }
-
-  Component {
-    id: notificationHistoryComponent
-    NotificationHistoryPanel {}
-  }
-
-  Component {
-    id: sessionMenuComponent
-    SessionMenu {}
-  }
-
-  Component {
-    id: wifiComponent
-    WiFiPanel {}
-  }
-
-  Component {
-    id: bluetoothComponent
-    BluetoothPanel {}
-  }
-
-  Component {
-    id: audioComponent
-    AudioPanel {}
-  }
-
-  Component {
-    id: wallpaperComponent
-    WallpaperPanel {}
-  }
-
-  Component {
-    id: batteryComponent
-    BatteryPanel {}
-  }
-
-  Component {
-    id: setupWizardComponent
-    SetupWizard {}
-  }
-
-  Component {
-    id: barComp
-    Bar {}
-  }
-
   Loader {
     active: i18nLoaded && settingsLoaded
 
@@ -179,10 +80,12 @@ ShellRoot {
         DistroService.init()
       }
 
-      Background {}
       Overview {}
-
+      Background {}
       Dock {}
+
+      ToastOverlay {}
+      OSD {}
 
       Notification {
         id: notification
@@ -196,9 +99,6 @@ ShellRoot {
         }
       }
 
-      ToastOverlay {}
-      OSD {}
-
       // IPCService is treated as a service
       // but it's actually an Item that needs to exists in the shell.
       IPCService {}
@@ -206,7 +106,7 @@ ShellRoot {
   }
 
   // ------------------------------
-  // NFullScreenWindow for each screen (manages bar + all panels)
+  // MainScreen for each screen (manages bar + all panels)
   // Wrapped in Loader to optimize memory - only loads when screen needs it
   Variants {
     model: Quickshell.screens
@@ -214,12 +114,8 @@ ShellRoot {
       required property ShellScreen modelData
 
       property bool shouldBeActive: {
-        if (!i18nLoaded || !settingsLoaded)
-          return false
-        if (!modelData || !modelData.name)
-          return false
-
-        Logger.d("Shell", "NFullScreenWindow activated for", modelData?.name)
+        if (!i18nLoaded || !settingsLoaded || !modelData || !modelData.name)
+          Logger.d("Shell", "MainScreen activated for", modelData?.name)
         return true
       }
 
@@ -237,63 +133,12 @@ ShellRoot {
           parent.windowLoaded = true
         }
 
-        sourceComponent: NFullScreenWindow {
+        sourceComponent: MainScreen {
           screen: windowLoader.loaderScreen
-
-          // Register all panel components
-          panelComponents: [{
-              "id": "launcherPanel",
-              "component": launcherComponent
-            }, {
-              "id": "controlCenterPanel",
-              "component": controlCenterComponent
-            }, {
-              "id": "trayDropdownPanel",
-              "component": trayDropdownComponent
-            }, {
-              "id": "trayMenu",
-              "component": trayMenuComponent
-            }, {
-              "id": "calendarPanel",
-              "component": calendarComponent
-            }, {
-              "id": "settingsPanel",
-              "component": settingsComponent
-            }, {
-              "id": "directWidgetSettingsPanel",
-              "component": directWidgetSettingsComponent
-            }, {
-              "id": "notificationHistoryPanel",
-              "component": notificationHistoryComponent
-            }, {
-              "id": "sessionMenuPanel",
-              "component": sessionMenuComponent
-            }, {
-              "id": "wifiPanel",
-              "component": wifiComponent
-            }, {
-              "id": "bluetoothPanel",
-              "component": bluetoothComponent
-            }, {
-              "id": "audioPanel",
-              "component": audioComponent
-            }, {
-              "id": "wallpaperPanel",
-              "component": wallpaperComponent
-            }, {
-              "id": "batteryPanel",
-              "component": batteryComponent
-            }, {
-              "id": "setupWizardPanel",
-              "component": setupWizardComponent
-            }]
-
-          // Bar component
-          barComponent: barComp
         }
       }
 
-      // BarExclusionZone - created after NFullScreenWindow has fully loaded
+      // BarExclusionZone - created after MainScreen has fully loaded
       // Disabled when bar is hidden or not configured for this screen
       Loader {
         active: {

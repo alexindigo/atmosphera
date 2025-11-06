@@ -11,8 +11,7 @@ import Quickshell.Widgets
 import qs.Commons
 import qs.Services
 import qs.Widgets
-import qs.Modules.AudioSpectrum
-import qs.Modules.Bar.Calendar
+import qs.Widgets.AudioSpectrum
 
 Loader {
   id: lockScreen

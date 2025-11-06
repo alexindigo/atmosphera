@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import qs.Commons
-import qs.Modules.Settings
+import qs.Modules.Panels.Settings
 import qs.Services
 import qs.Widgets
 
@@ -353,13 +353,4 @@ Rectangle {
       }
     }
   }
-
-  // MouseArea {
-  //   anchors.fill: parent
-  //   acceptedButtons: Qt.RightButton
-  //   onClicked: {
-  //     var directPanel = PanelService.getPanel("directWidgetSettingsPanel")
-  //     directPanel.openWidgetSettings(root.section, root.sectionWidgetIndex, root.widgetId, root.widgetSettings)
-  //   }
-  // }
 }

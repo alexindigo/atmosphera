@@ -346,28 +346,28 @@ Rectangle {
     }
   }
 
-  PanelWindow {
-    id: trayPanel
-    anchors.top: true
-    anchors.left: true
-    anchors.right: true
-    anchors.bottom: true
-    visible: false
-    color: Color.transparent
-    screen: screen
+  // PanelWindow {
+  //   id: trayPanel
+  //   anchors.top: true
+  //   anchors.left: true
+  //   anchors.right: true
+  //   anchors.bottom: true
+  //   visible: false
+  //   color: Color.transparent
+  //   screen: screen
 
-    function open() {
-      visible = true
-    }
+  //   function open() {
+  //     visible = true
+  //   }
 
-    function close() {
-      visible = false
-    }
+  //   function close() {
+  //     visible = false
+  //   }
 
-    // Clicking outside of the rectangle to close
-    MouseArea {
-      anchors.fill: parent
-      onClicked: trayPanel.close()
-    }
-  }
+  //   // Clicking outside of the rectangle to close
+  //   MouseArea {
+  //     anchors.fill: parent
+  //     onClicked: trayPanel.close()
+  //   }
+  // }
 }
