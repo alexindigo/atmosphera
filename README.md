@@ -99,6 +99,7 @@ While all donations are greatly appreciated, they are completely voluntary.
 * <a href="https://pika-os.com/" target="_blank">PikaOS</a>
 * LionHeartP
 * Nyxion ツ
+* RockDuck
 * MrDowntempo
 * Tempus Thales
 * Raine
