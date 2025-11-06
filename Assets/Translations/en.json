@@ -278,6 +278,10 @@
         "colorize-icons": {
           "description": "Apply theme colors to tray icons.",
           "label": "Colorize Icons"
+        },
+        "drawer-enabled": {
+          "description": "When enabled, unpinned tray items are shown in a drawer panel. When disabled, all tray items are shown inline.",
+          "label": "Enable Drawer"
         }
       },
       "volume": {

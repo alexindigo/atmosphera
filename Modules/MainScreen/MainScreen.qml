@@ -40,7 +40,7 @@ PanelWindow {
   readonly property alias sessionMenuPanel: sessionMenuPanel
   readonly property alias settingsPanel: settingsPanel
   readonly property alias setupWizardPanel: setupWizardPanel
-  readonly property alias trayDropdownPanel: trayDropdownPanel
+  readonly property alias trayDrawerPanel: trayDrawerPanel
   readonly property alias trayMenuPanel: trayMenuPanel
   readonly property alias wallpaperPanel: wallpaperPanel
   readonly property alias wifiPanel: wifiPanel
@@ -306,13 +306,13 @@ PanelWindow {
     }
 
     TrayDropdownPanel {
-      id: trayDropdownPanel
+      id: trayDrawerPanel
       screen: root.screen
       z: 50
 
       Component.onCompleted: {
-        objectName = "trayDropdownPanel-" + (screen?.name || "unknown")
-        PanelService.registerPanel(trayDropdownPanel)
+        objectName = "trayDrawerPanel-" + (screen?.name || "unknown")
+        PanelService.registerPanel(trayDrawerPanel)
         Logger.d("MainScreen", "Panel registered:", objectName, "on screen:", screen?.name)
       }
     }
@@ -324,7 +324,7 @@ PanelWindow {
 
       Component.onCompleted: {
         objectName = "trayMenuPanel-" + (screen?.name || "unknown")
-        PanelService.registerPanel(trayDropdownPanel)
+        PanelService.registerPanel(trayMenuPanel)
         Logger.d("MainScreen", "Panel registered:", objectName, "on screen:", screen?.name)
       }
     }

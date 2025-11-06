@@ -278,6 +278,10 @@
         "colorize-icons": {
           "description": "将主题颜色应用到系统托盘图标。",
           "label": "着色图标"
+        },
+        "drawer-enabled": {
+          "description": "启用时，未固定的托盘项显示在抽屉面板中。禁用时，所有托盘项都内联显示。",
+          "label": "启用抽屉"
         }
       },
       "volume": {

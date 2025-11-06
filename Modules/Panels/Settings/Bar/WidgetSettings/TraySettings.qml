@@ -13,6 +13,7 @@ ColumnLayout {
   // Local state
   property var localBlacklist: widgetData.blacklist || []
   property bool valueColorizeIcons: widgetData.colorizeIcons !== undefined ? widgetData.colorizeIcons : widgetMetadata.colorizeIcons
+  property bool valueDrawerEnabled: widgetData.drawerEnabled !== undefined ? widgetData.drawerEnabled : (widgetMetadata.drawerEnabled !== undefined ? widgetMetadata.drawerEnabled : true)
 
   ListModel {
     id: blacklistModel
@@ -35,6 +36,14 @@ ColumnLayout {
     description: I18n.tr("bar.widget-settings.tray.colorize-icons.description")
     checked: root.valueColorizeIcons
     onToggled: checked => root.valueColorizeIcons = checked
+  }
+
+  NToggle {
+    Layout.fillWidth: true
+    label: I18n.tr("bar.widget-settings.tray.drawer-enabled.label")
+    description: I18n.tr("bar.widget-settings.tray.drawer-enabled.description")
+    checked: root.valueDrawerEnabled
+    onToggled: checked => root.valueDrawerEnabled = checked
   }
 
   ColumnLayout {
@@ -140,6 +149,7 @@ ColumnLayout {
     var settings = Object.assign({}, widgetData || {})
     settings.blacklist = newBlacklist
     settings.colorizeIcons = root.valueColorizeIcons
+    settings.drawerEnabled = root.valueDrawerEnabled
     return settings
   }
 }

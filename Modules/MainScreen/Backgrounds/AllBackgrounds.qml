@@ -117,9 +117,9 @@ Item {
       shapeContainer: backgroundsShape
     }
 
-    // TrayDropdown
+    // TrayDrawer
     PanelBackground {
-      panel: root.windowRoot.trayDropdownPanel
+      panel: root.windowRoot.trayDrawerPanel
       shapeContainer: backgroundsShape
     }
 

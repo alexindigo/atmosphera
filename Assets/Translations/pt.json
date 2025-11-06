@@ -278,6 +278,10 @@
         "colorize-icons": {
           "description": "Aplicar cores do tema aos ícones da bandeja do sistema.",
           "label": "Colorir ícones"
+        },
+        "drawer-enabled": {
+          "description": "Quando habilitado, os itens da bandeja não fixados são exibidos em um painel gaveta. Quando desabilitado, todos os itens da bandeja são exibidos inline.",
+          "label": "Habilitar gaveta"
         }
       },
       "volume": {

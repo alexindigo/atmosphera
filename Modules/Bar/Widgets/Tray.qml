@@ -37,9 +37,10 @@ Rectangle {
   readonly property bool density: Settings.data.bar.density
   property real itemSize: Math.round(Style.capsuleHeight * 0.65)
   property list<string> blacklist: widgetSettings.blacklist || widgetMetadata.blacklist || [] // Read from settings
-  property list<string> favorites: widgetSettings.favorites || widgetMetadata.favorites || []
-  property var filteredItems: [] // Items to show inline (favorites)
-  property var dropdownItems: [] // Items to show in dropdown (non-favorites)
+  property list<string> favorites: widgetSettings.favorites || widgetMetadata.favorites || [] // Pinned items (shown inline)
+  property bool drawerEnabled: widgetSettings.drawerEnabled !== undefined ? widgetSettings.drawerEnabled : (widgetMetadata.drawerEnabled !== undefined ? widgetMetadata.drawerEnabled : true) // Enable drawer panel
+  property var filteredItems: [] // Items to show inline (pinned/favorites)
+  property var dropdownItems: [] // Items to show in drawer (unpinned/non-favorites)
 
   function wildCardMatch(str, rule) {
     if (!str || !rule) {
@@ -107,43 +108,49 @@ Rectangle {
       }
     }
 
-    // Build inline (favorites) and dropdown (non-favorites) lists
-    // If favorites list is empty, all items go to dropdown (none inline)
-    // If favorites list has items, favorites are inline, rest go to dropdown
-    if (favorites && favorites.length > 0) {
-      let fav = []
-      for (var k = 0; k < newItems.length; k++) {
-        const item2 = newItems[k]
-        const title2 = item2.tooltipTitle || item2.name || item2.id || ""
-        for (var m = 0; m < favorites.length; m++) {
-          const rule2 = favorites[m]
-          if (wildCardMatch(title2, rule2)) {
-            fav.push(item2)
-            break
-          }
-        }
-      }
-      filteredItems = fav
-
-      // Non-favorites go to dropdown
-      let nonFav = []
-      for (var v = 0; v < newItems.length; v++) {
-        const cand = newItems[v]
-        let isFavorite = false
-        for (var f = 0; f < filteredItems.length; f++) {
-          if (filteredItems[f] === cand) {
-            isFavorite = true
-            break
-          }
-        }
-        if (!isFavorite)
-          nonFav.push(cand)
-      }
-      dropdownItems = nonFav
+    // If drawer is disabled, show all items inline
+    if (!root.drawerEnabled) {
+      filteredItems = newItems
+      dropdownItems = []
     } else {
-      // No favorites: all items go to dropdown (none inline)
-      filteredItems = []
-      dropdownItems = newItems
+      // Build inline (pinned/favorites) and drawer (unpinned/non-favorites) lists
+      // If favorites list is empty, all items go to drawer (none inline)
+      // If favorites list has items, favorites are inline, rest go to drawer
+      if (favorites && favorites.length > 0) {
+        let fav = []
+        for (var k = 0; k < newItems.length; k++) {
+          const item2 = newItems[k]
+          const title2 = item2.tooltipTitle || item2.name || item2.id || ""
+          for (var m = 0; m < favorites.length; m++) {
+            const rule2 = favorites[m]
+            if (wildCardMatch(title2, rule2)) {
+              fav.push(item2)
+              break
+            }
+          }
+        }
+        filteredItems = fav
+
+        // Non-favorites (unpinned) go to drawer
+        let nonFav = []
+        for (var v = 0; v < newItems.length; v++) {
+          const cand = newItems[v]
+          let isFavorite = false
+          for (var f = 0; f < filteredItems.length; f++) {
+            if (filteredItems[f] === cand) {
+              isFavorite = true
+              break
+            }
+          }
+          if (!isFavorite)
+            nonFav.push(cand)
+        }
+        dropdownItems = nonFav
+      } else {
+        // No favorites (pinned): all items go to drawer (none inline)
+        filteredItems = []
+        dropdownItems = newItems
+      }
     }
   }
 
@@ -188,7 +195,7 @@ Rectangle {
 
     Repeater {
       id: repeater
-      model: SystemTray.items
+      model: root.filteredItems
 
       delegate: Item {
         width: itemSize
@@ -241,27 +248,28 @@ Rectangle {
 
                          if (mouse.button === Qt.LeftButton) {
                            // Close any open menu first
-                           trayPanel.close()
+                           PanelService.getPanel("trayMenuPanel", root.screen)?.close()
 
                            if (!modelData.onlyMenu) {
                              modelData.activate()
                            }
                          } else if (mouse.button === Qt.MiddleButton) {
                            // Close any open menu first
-                           trayPanel.close()
+                           PanelService.getPanel("trayMenuPanel", root.screen)?.close()
 
                            modelData.secondaryActivate && modelData.secondaryActivate()
                          } else if (mouse.button === Qt.RightButton) {
                            TooltipService.hideImmediately()
 
                            // Close the menu if it was visible
-                           if (trayPanel && trayPanel.visible) {
-                             trayPanel.close()
+                           const menuPanel = PanelService.getPanel("trayMenuPanel", root.screen)
+                           if (menuPanel && menuPanel.visible) {
+                             menuPanel.close()
                              return
                            }
 
                            if (modelData.hasMenu && modelData.menu) {
-                             const panel = PanelService.getPanel("trayMenu", root.screen)
+                             const panel = PanelService.getPanel("trayMenuPanel", root.screen)
                              if (panel) {
                                panel.menu = modelData.menu
                                panel.trayItem = modelData
@@ -277,7 +285,7 @@ Rectangle {
                          }
                        }
             onEntered: {
-              trayPanel.close()
+              PanelService.getPanel("trayMenuPanel", root.screen)?.close()
               TooltipService.show(Screen, trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection())
             }
             onExited: TooltipService.hide()
@@ -286,10 +294,10 @@ Rectangle {
       }
     }
 
-    // Dropdown opener - simple icon with hover effect
+    // Drawer opener - simple icon with hover effect
     Item {
       id: dropdownButton
-      visible: dropdownItems.length > 0
+      visible: root.drawerEnabled && dropdownItems.length > 0
       width: itemSize
       height: itemSize
 
@@ -335,7 +343,7 @@ Rectangle {
         }
         onClicked: {
           TooltipService.hideImmediately()
-          const panel = PanelService.getPanel("trayDropdownPanel", root.screen)
+          const panel = PanelService.getPanel("trayDrawerPanel", root.screen)
           if (panel) {
             panel.widgetSection = root.section
             panel.widgetIndex = root.sectionWidgetIndex

@@ -278,6 +278,10 @@
         "colorize-icons": {
           "description": "Appliquer les couleurs du thème aux icônes de la barre système.",
           "label": "Coloriser les icônes"
+        },
+        "drawer-enabled": {
+          "description": "Lorsqu'elle est activée, les éléments de la barre système non épinglés sont affichés dans un panneau tiroir. Lorsqu'elle est désactivée, tous les éléments de la barre système sont affichés en ligne.",
+          "label": "Activer le tiroir"
         }
       },
       "volume": {

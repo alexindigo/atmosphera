@@ -21,6 +21,7 @@ Popup {
   height: content.implicitHeight + padding * 2
   padding: Style.marginXL
   modal: true
+  dim: false
   anchors.centerIn: parent
 
   onOpened: {

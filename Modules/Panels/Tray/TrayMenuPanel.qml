@@ -575,7 +575,7 @@ SmartPanel {
     Settings.data.bar.widgets[widgetSection] = widgets
     Settings.saveImmediate()
     if (root.screen) {
-      const panel = PanelService.getPanel("trayDropdownPanel", root.screen)
+      const panel = PanelService.getPanel("trayDrawerPanel", root.screen)
       if (panel)
         panel.close()
     }

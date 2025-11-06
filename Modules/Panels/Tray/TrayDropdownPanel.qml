@@ -61,7 +61,7 @@ SmartPanel {
   }
 
   // Dynamic sizing based on item count
-  // Show items that are NOT favorites (non-favorites go to dropdown)
+  // Show items that are NOT favorites (unpinned items go to drawer)
   readonly property var trayValuesAll: (SystemTray.items && SystemTray.items.values) ? SystemTray.items.values : []
   readonly property var trayValues: trayValuesAll.filter(function (it) {
     return !root.isFavorite(it)
@@ -144,7 +144,7 @@ SmartPanel {
                            if (!modelData)
                            return
                            if (mouse.button === Qt.RightButton && modelData.hasMenu && modelData.menu) {
-                             const panel = PanelService.getPanel("trayMenu", root.screen)
+                             const panel = PanelService.getPanel("trayMenuPanel", root.screen)
                              if (panel) {
                                panel.menu = modelData.menu
                                panel.trayItem = modelData
@@ -154,11 +154,11 @@ SmartPanel {
                              }
                            } else if (mouse.button === Qt.LeftButton) {
                              modelData.activate()
-                             // Close the dropdown after activation
-                             PanelService.getPanel("trayDropdownPanel", root.screen)?.close()
+                             // Close the drawer after activation
+                             PanelService.getPanel("trayDrawerPanel", root.screen)?.close()
                            } else if (mouse.button === Qt.MiddleButton) {
                              modelData.secondaryActivate()
-                             PanelService.getPanel("trayDropdownPanel", root.screen)?.close()
+                             PanelService.getPanel("trayDrawerPanel", root.screen)?.close()
                            }
                          }
 

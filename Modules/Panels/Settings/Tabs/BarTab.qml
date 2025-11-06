@@ -224,7 +224,7 @@ ColumnLayout {
       NSectionEditor {
         sectionName: "Left"
         sectionId: "left"
-        settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Settings/Bar/BarWidgetSettingsDialog.qml")
+        settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Panels/Settings/Bar/BarWidgetSettingsDialog.qml")
         widgetRegistry: BarWidgetRegistry
         widgetModel: Settings.data.bar.widgets.left
         availableWidgets: availableWidgets
@@ -241,7 +241,7 @@ ColumnLayout {
       NSectionEditor {
         sectionName: "Center"
         sectionId: "center"
-        settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Settings/Bar/BarWidgetSettingsDialog.qml")
+        settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Panels/Settings/Bar/BarWidgetSettingsDialog.qml")
         widgetRegistry: BarWidgetRegistry
         widgetModel: Settings.data.bar.widgets.center
         availableWidgets: availableWidgets
@@ -258,7 +258,7 @@ ColumnLayout {
       NSectionEditor {
         sectionName: "Right"
         sectionId: "right"
-        settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Settings/Bar/BarWidgetSettingsDialog.qml")
+        settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Panels/Settings/Bar/BarWidgetSettingsDialog.qml")
         widgetRegistry: BarWidgetRegistry
         widgetModel: Settings.data.bar.widgets.right
         availableWidgets: availableWidgets

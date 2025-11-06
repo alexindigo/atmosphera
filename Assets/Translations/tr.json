@@ -278,6 +278,10 @@
         "colorize-icons": {
           "description": "Tepsi ikonlarına tema renklerini uygula.",
           "label": "İkonları Renklendir"
+        },
+        "drawer-enabled": {
+          "description": "Etkinleştirildiğinde, sabitlenmemiş tepsi öğeleri bir çekmece panelinde gösterilir. Devre dışı bırakıldığında, tüm tepsi öğeleri satır içi gösterilir.",
+          "label": "Çekmeceyi Etkinleştir"
         }
       },
       "volume": {
