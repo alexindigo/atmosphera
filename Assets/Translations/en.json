@@ -777,7 +777,8 @@
           "placeholder": "e.g., nm-applet, Fcitx*"
         },
         "pin-application": "Pin Application",
-        "unpin-application": "Unpin Application"
+        "unpin-application": "Unpin Application",
+        "back": "Back"
       },
       "widgets": {
         "section": {

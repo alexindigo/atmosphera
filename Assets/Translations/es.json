@@ -777,7 +777,8 @@
           "placeholder": "ej., nm-applet, Fcitx*"
         },
         "pin-application": "Fijar Aplicación",
-        "unpin-application": "Desfijar Aplicación"
+        "unpin-application": "Desfijar Aplicación",
+        "back": "Atrás"
       },
       "widgets": {
         "section": {

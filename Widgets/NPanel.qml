@@ -47,6 +47,11 @@ Item {
   // Animation properties
   property real animationProgress: 0
   property bool isClosing: false
+  // Per-panel animation overrides
+  property bool disableScaleAnimation: false
+  property bool disableSlideAnimation: false
+  // If >= 0, use this pixel distance for slide instead of default
+  property int customSlideDistance: -1
 
   // Keyboard event handlers - override these in specific panels to handle shortcuts
   // These are called from NFullScreenWindow's centralized shortcuts
@@ -289,6 +294,11 @@ Item {
 
           // Animation offset calculation
           readonly property real slideOffset: {
+            if (root.disableSlideAnimation)
+              return 0
+            if (root.customSlideDistance >= 0) {
+              return (1 - root.animationProgress) * root.customSlideDistance
+            }
             // Full slide for non-floating attached panels
             if (isAttachedToNonFloating) {
               var distance = (slideDirection === "left" || slideDirection === "right") ? width : height
@@ -305,6 +315,8 @@ Item {
           // Animation properties
           opacity: isAttachedToNonFloating ? Math.min(1, root.animationProgress * 5) : root.animationProgress
           scale: {
+            if (root.disableScaleAnimation)
+              return 1
             if (isAttachedToNonFloating)
               return 1 // No scale for full slide animation
             if (isAttachedToFloatingBar)

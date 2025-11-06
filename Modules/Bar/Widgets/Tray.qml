@@ -151,11 +151,7 @@ Rectangle {
     updateDebounceTimer.restart()
   }
 
-  function onLoaded() {
-    // When the widget is fully initialized with its props set the screen for the trayMenu
-    if (trayMenu.item) {
-      trayMenu.item.screen = screen
-    }
+  function onLoaded() {// Widget initialization
   }
 
   Connections {
@@ -264,29 +260,17 @@ Rectangle {
                              return
                            }
 
-                           if (modelData.hasMenu && modelData.menu && trayMenu.item) {
-                             trayPanel.open()
-
-                             // Position menu based on bar position
-                             let menuX, menuY
-                             if (barPosition === "left") {
-                               // For left bar: position menu to the right of the bar
-                               menuX = width + Style.marginM
-                               menuY = 0
-                             } else if (barPosition === "right") {
-                               // For right bar: position menu to the left of the bar
-                               menuX = -trayMenu.item.width - Style.marginM
-                               menuY = 0
+                           if (modelData.hasMenu && modelData.menu) {
+                             const panel = PanelService.getPanel("trayMenu", root.screen)
+                             if (panel) {
+                               panel.menu = modelData.menu
+                               panel.trayItem = modelData
+                               panel.widgetSection = root.section
+                               panel.widgetIndex = root.sectionWidgetIndex
+                               panel.openAt(parent)
                              } else {
-                               // For horizontal bars: center horizontally and position below
-                               menuX = (width / 2) - (trayMenu.item.width / 2)
-                               menuY = Style.barHeight
+                               Logger.i("Tray", "TrayMenu not available")
                              }
-                             trayMenu.item.menu = modelData.menu
-                             trayMenu.item.trayItem = modelData
-                             trayMenu.item.widgetSection = root.section
-                             trayMenu.item.widgetIndex = root.sectionWidgetIndex
-                             trayMenu.item.showAt(parent, menuX, menuY)
                            } else {
                              Logger.i("Tray", "No menu available for", modelData.id, "or trayMenu not set")
                            }
@@ -303,63 +287,63 @@ Rectangle {
     }
 
     // Dropdown opener - simple icon with hover effect
-    // Item {
-    //   id: dropdownButton
-    //   visible: dropdownItems.length > 0
-    //   width: itemSize
-    //   height: itemSize
+    Item {
+      id: dropdownButton
+      visible: dropdownItems.length > 0
+      width: itemSize
+      height: itemSize
 
-    //   property bool hovered: false
+      property bool hovered: false
 
-    //   NIcon {
-    //     id: chevronIcon
-    //     anchors.centerIn: parent
-    //     icon: {
-    //       if (barPosition === "top")
-    //         return "caret-down"
-    //       else if (barPosition === "bottom")
-    //         return "caret-up"
-    //       else if (barPosition === "left")
-    //         return "caret-right"
-    //       else if (barPosition === "right")
-    //         return "caret-left"
-    //       else
-    //         return "caret-down" // default fallback
-    //     }
-    //     pointSize: Math.round(itemSize * 0.65)
-    //     color: dropdownButton.hovered ? Color.mPrimary : Color.mOnSurface
+      NIcon {
+        id: chevronIcon
+        anchors.centerIn: parent
+        icon: {
+          if (barPosition === "top")
+            return "caret-down"
+          else if (barPosition === "bottom")
+            return "caret-up"
+          else if (barPosition === "left")
+            return "caret-right"
+          else if (barPosition === "right")
+            return "caret-left"
+          else
+            return "caret-down" // default fallback
+        }
+        pointSize: Math.round(itemSize * 0.65)
+        color: dropdownButton.hovered ? Color.mPrimary : Color.mOnSurface
 
-    //     Behavior on color {
-    //       ColorAnimation {
-    //         duration: Style.animationFast
-    //         easing.type: Easing.InOutQuad
-    //       }
-    //     }
-    //   }
+        Behavior on color {
+          ColorAnimation {
+            duration: Style.animationFast
+            easing.type: Easing.InOutQuad
+          }
+        }
+      }
 
-    //   MouseArea {
-    //     anchors.fill: parent
-    //     hoverEnabled: true
-    //     cursorShape: Qt.PointingHandCursor
-    //     onEntered: {
-    //       dropdownButton.hovered = true
-    //       TooltipService.show(Screen, dropdownButton, I18n.tr("tooltips.open-tray-dropdown"), BarService.getTooltipDirection())
-    //     }
-    //     onExited: {
-    //       dropdownButton.hovered = false
-    //       TooltipService.hide()
-    //     }
-    //     onClicked: {
-    //       TooltipService.hideImmediately()
-    //       const panel = PanelService.getPanel("trayDropdownPanel", root.screen)
-    //       if (panel) {
-    //         panel.widgetSection = root.section
-    //         panel.widgetIndex = root.sectionWidgetIndex
-    //         panel.toggle(dropdownButton)
-    //       }
-    //     }
-    //   }
-    // }
+      MouseArea {
+        anchors.fill: parent
+        hoverEnabled: true
+        cursorShape: Qt.PointingHandCursor
+        onEntered: {
+          dropdownButton.hovered = true
+          TooltipService.show(Screen, dropdownButton, I18n.tr("tooltips.open-tray-dropdown"), BarService.getTooltipDirection())
+        }
+        onExited: {
+          dropdownButton.hovered = false
+          TooltipService.hide()
+        }
+        onClicked: {
+          TooltipService.hideImmediately()
+          const panel = PanelService.getPanel("trayDropdownPanel", root.screen)
+          if (panel) {
+            panel.widgetSection = root.section
+            panel.widgetIndex = root.sectionWidgetIndex
+            panel.toggle(dropdownButton)
+          }
+        }
+      }
+    }
   }
 
   PanelWindow {
@@ -378,20 +362,12 @@ Rectangle {
 
     function close() {
       visible = false
-      if (trayMenu.item) {
-        trayMenu.item.hideMenu()
-      }
     }
 
     // Clicking outside of the rectangle to close
     MouseArea {
       anchors.fill: parent
       onClicked: trayPanel.close()
-    }
-
-    Loader {
-      id: trayMenu
-      source: "../Extras/TrayMenu.qml"
     }
   }
 }

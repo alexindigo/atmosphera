@@ -144,15 +144,15 @@ NPanel {
               onClicked: mouse => {
                            if (!modelData)
                            return
-                           if (mouse.button === Qt.RightButton && modelData.hasMenu && modelData.menu && trayMenu.item) {
-                             trayMenu.item.menu = modelData.menu
-                             trayMenu.item.screen = root.screen
-                             trayMenu.item.trayItem = modelData
-                             trayMenu.item.widgetSection = root.widgetSection
-                             trayMenu.item.widgetIndex = root.widgetIndex
-                             const menuX = (root.columns > 1) ? (trayIcon.width / 2) : 0
-                             const menuY = trayIcon.height
-                             trayMenu.item.showAt(trayIcon, menuX, menuY)
+                           if (mouse.button === Qt.RightButton && modelData.hasMenu && modelData.menu) {
+                             const panel = PanelService.getPanel("trayMenu", root.screen)
+                             if (panel) {
+                               panel.menu = modelData.menu
+                               panel.trayItem = modelData
+                               panel.widgetSection = root.widgetSection
+                               panel.widgetIndex = root.widgetIndex
+                               panel.openAt(trayIcon)
+                             }
                            } else if (mouse.button === Qt.LeftButton) {
                              modelData.activate()
                              // Close the dropdown after activation
@@ -178,12 +178,6 @@ NPanel {
       }
     }
 
-    // Tray menu host
-    Loader {
-      id: trayMenu
-      asynchronous: false
-      active: true
-      source: "TrayMenu.qml"
-    }
+    // (Tray menu now uses dedicated TrayMenu via PanelService)
   }
 }

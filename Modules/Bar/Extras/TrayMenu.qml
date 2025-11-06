@@ -6,374 +6,568 @@ import qs.Commons
 import qs.Services
 import qs.Widgets
 
-PopupWindow {
+NPanel {
   id: root
+
+  objectName: "trayMenu"
+
+  // Avoid bouncy feel: keep fade but disable scale/slide transforms
+  disableScaleAnimation: true
+  disableSlideAnimation: false
+  customSlideDistance: 100
+
+  // Inputs
   property QsMenuHandle menu
-  property var anchorItem: null
-  property real anchorX
-  property real anchorY
-  property bool isSubMenu: false
-  property bool isHovered: rootMouseArea.containsMouse
-  property ShellScreen screen
-  // Properties for adding tray item to favorites
   property var trayItem: null
   property string widgetSection: ""
   property int widgetIndex: -1
 
+  // Internal
   readonly property int menuWidth: 240
+  preferredWidth: menuWidth
+  // Height is content-driven via panelContent
 
-  implicitWidth: menuWidth
-
-  // Use the content height of the Flickable for implicit height
-  implicitHeight: Math.min(screen ? screen.height * 0.9 : Screen.height * 0.9, flickable.contentHeight + (Style.marginS * 2))
-  visible: false
-  color: Color.transparent
-  anchor.item: anchorItem
-  anchor.rect.x: anchorX
-  anchor.rect.y: anchorY - (isSubMenu ? 0 : 4)
-
-  function showAt(item, x, y) {
-    if (!item) {
-      Logger.w("TrayMenu", "anchorItem is undefined, won't show menu.")
-      return
-    }
-
-    if (!opener.children || opener.children.values.length === 0) {
-      //Logger.w("TrayMenu", "Menu not ready, delaying show")
-      Qt.callLater(() => showAt(item, x, y))
-      return
-    }
-
-    anchorItem = item
-    anchorX = x
-    anchorY = y
-
-    visible = true
-    forceActiveFocus()
-
-    // Force update after showing.
-    Qt.callLater(() => {
-                   root.anchor.updateAnchor()
-                 })
+  // Open positioned relative to button
+  function openAt(buttonItem) {
+    open(buttonItem)
   }
 
-  function hideMenu() {
-    visible = false
+  panelContent: Item {
+    id: content
 
-    // Clean up all submenus recursively
-    for (var i = 0; i < columnLayout.children.length; i++) {
-      const child = columnLayout.children[i]
-      if (child?.subMenu) {
-        child.subMenu.hideMenu()
-        child.subMenu.destroy()
-        child.subMenu = null
+    // Track currently open submenu
+    property var activeSubMenu: null
+    property var activeSubMenuEntry: null
+    property bool subMenuOpenLeft: false
+    // If true, show submenu in place (replace main menu) instead of side-by-side
+    property bool inPlaceSubmenu: true
+
+    // Let NPanel size to our content
+    readonly property real contentPreferredWidth: root.menuWidth + ((activeSubMenu && !inPlaceSubmenu) ? root.menuWidth : 0)
+    readonly property real contentPreferredHeight: {
+      // If showing submenu in-place, size to the submenu's flickable content height
+      if (activeSubMenu && inPlaceSubmenu) {
+        const subFlickable = inPlaceSubMenuLoader.item?.children[1] // Flickable is the second child (after MouseArea)
+        const subHeight = subFlickable?.contentHeight || 0
+        return Math.min(root.screen ? root.screen.height * 0.9 : Screen.height * 0.9, subHeight + (Style.marginS * 2))
       }
+
+      const mainHeight = mainFlickable.contentHeight
+      let subHeight = 0
+      if (activeSubMenu && !inPlaceSubmenu) {
+        const subLoader = subMenuOpenLeft ? leftSubMenuLoader : rightSubMenuLoader
+        const subFlickable = subLoader.item?.children[1] // Flickable is the second child (after MouseArea)
+        subHeight = subFlickable?.contentHeight || 0
+      }
+      return Math.min(root.screen ? root.screen.height * 0.9 : Screen.height * 0.9, Math.max(mainHeight, subHeight) + (Style.marginS * 2))
     }
-  }
 
-  // Full-sized, transparent MouseArea to track the mouse.
-  MouseArea {
-    id: rootMouseArea
-    anchors.fill: parent
-    hoverEnabled: true
-  }
+    // Expose mask region for click-through
+    property alias maskRegion: background
 
-  Item {
-    anchors.fill: parent
-    Keys.onEscapePressed: root.hideMenu()
-  }
+    Rectangle {
+      id: background
+      x: 0
+      y: 0
+      width: content.contentPreferredWidth
+      height: content.contentPreferredHeight
+      color: Color.mSurface
+      radius: Style.radiusM
+    }
 
-  QsMenuOpener {
-    id: opener
-    menu: root.menu
-  }
+    QsMenuOpener {
+      id: opener
+      menu: root.menu
+    }
 
-  Rectangle {
-    anchors.fill: parent
-    color: Color.mSurface
-    border.color: Color.mOutline
-    border.width: Style.borderS
-    radius: Style.radiusM
-  }
+    // Submenu component (reusable for left/right placement)
+    Component {
+      id: subMenuComponent
 
-  Flickable {
-    id: flickable
-    anchors.fill: parent
-    anchors.margins: Style.marginS
-    contentHeight: columnLayout.implicitHeight
-    interactive: true
+      Item {
+        id: subMenuContainer
 
-    // Use a ColumnLayout to handle menu item arrangement
-    ColumnLayout {
-      id: columnLayout
-      width: flickable.width
-      spacing: 0
-
-      Repeater {
-        model: opener.children ? [...opener.children.values] : []
-
-        delegate: Rectangle {
-          id: entry
-          required property var modelData
-
-          Layout.preferredWidth: parent.width
-          Layout.preferredHeight: {
-            if (modelData?.isSeparator) {
-              return 8
-            } else {
-              return 28
-            }
+        // MouseArea to track hover for submenu (covers entire submenu area)
+        MouseArea {
+          id: subMenuMouseArea
+          anchors.fill: parent
+          hoverEnabled: true
+          enabled: content.activeSubMenu !== null && !content.inPlaceSubmenu
+          visible: !content.inPlaceSubmenu
+          z: 1
+          acceptedButtons: Qt.NoButton // Don't intercept clicks, just track hover
+          onExited: {
+            if (content.inPlaceSubmenu)
+              return
+            Qt.callLater(() => {
+                           if (!subMenuMouseArea.containsMouse && content.activeSubMenuEntry) {
+                             // Find the mouseArea in the entry (it's in the second Rectangle's MouseArea)
+                             let entryMouseArea = null
+                             for (var i = 0; i < content.activeSubMenuEntry.children.length; i++) {
+                               const child = content.activeSubMenuEntry.children[i]
+                               if (child && child.children && child.children.length > 0) {
+                                 for (var j = 0; j < child.children.length; j++) {
+                                   const grandchild = child.children[j]
+                                   if (grandchild && grandchild.hoverEnabled !== undefined) {
+                                     entryMouseArea = grandchild
+                                     break
+                                   }
+                                 }
+                               }
+                               if (entryMouseArea)
+                               break
+                             }
+                             if (!entryMouseArea || !entryMouseArea.containsMouse) {
+                               content.activeSubMenu = null
+                               content.activeSubMenuEntry = null
+                             }
+                           }
+                         })
           }
+        }
 
-          color: Color.transparent
-          property var subMenu: null
+        Flickable {
+          id: subMenuFlickable
+          anchors.fill: parent
+          contentHeight: subMenuColumnLayout.implicitHeight
+          interactive: true
+          z: 0
 
-          NDivider {
-            anchors.centerIn: parent
-            width: parent.width - (Style.marginM * 2)
-            visible: modelData?.isSeparator ?? false
-          }
+          ColumnLayout {
+            id: subMenuColumnLayout
+            width: subMenuFlickable.width
+            spacing: 0
 
-          Rectangle {
-            anchors.fill: parent
-            color: mouseArea.containsMouse ? Color.mHover : Color.transparent
-            radius: Style.radiusS
-            visible: !(modelData?.isSeparator ?? false)
-
-            RowLayout {
-              anchors.fill: parent
-              anchors.leftMargin: Style.marginM
-              anchors.rightMargin: Style.marginM
-              spacing: Style.marginS
-
-              NText {
-                id: text
-                Layout.fillWidth: true
-                color: (modelData?.enabled ?? true) ? (mouseArea.containsMouse ? Color.mOnHover : Color.mOnSurface) : Color.mOnSurfaceVariant
-                text: modelData?.text !== "" ? modelData?.text.replace(/[\n\r]+/g, ' ') : "..."
-                pointSize: Style.fontSizeS
-                verticalAlignment: Text.AlignVCenter
-                elide: Text.ElideRight
-              }
-
-              Image {
-                Layout.preferredWidth: Style.marginL
-                Layout.preferredHeight: Style.marginL
-                source: modelData?.icon ?? ""
-                visible: (modelData?.icon ?? "") !== ""
-                fillMode: Image.PreserveAspectFit
-              }
-
-              NIcon {
-                icon: modelData?.hasChildren ? "menu" : ""
-                pointSize: Style.fontSizeS
-                applyUiScale: false
-                verticalAlignment: Text.AlignVCenter
-                visible: modelData?.hasChildren ?? false
-                color: (mouseArea.containsMouse ? Color.mOnHover : Color.mOnSurface)
-              }
+            QsMenuOpener {
+              id: subMenuOpener
+              menu: content.activeSubMenu
             }
 
-            MouseArea {
-              id: mouseArea
-              anchors.fill: parent
-              hoverEnabled: true
-              enabled: (modelData?.enabled ?? true) && !(modelData?.isSeparator ?? false) && root.visible
+            // Back button (only shown when submenu is in-place)
+            Rectangle {
+              id: backEntry
+              visible: content.inPlaceSubmenu
+              Layout.preferredWidth: parent.width
+              Layout.preferredHeight: visible ? 28 : 0
+              color: Color.transparent
 
-              onClicked: {
-                if (modelData && !modelData.isSeparator && !modelData.hasChildren) {
-                  modelData.triggered()
-                  root.hideMenu()
-                }
-              }
+              Rectangle {
+                anchors.fill: parent
+                color: backMouseArea.containsMouse ? Color.mHover : Color.transparent
+                radius: Style.radiusS
 
-              onEntered: {
-                if (!root.visible)
-                  return
+                RowLayout {
+                  anchors.fill: parent
+                  anchors.leftMargin: Style.marginM
+                  anchors.rightMargin: Style.marginM
+                  spacing: Style.marginS
 
-                // Close all sibling submenus
-                for (var i = 0; i < columnLayout.children.length; i++) {
-                  const sibling = columnLayout.children[i]
-                  if (sibling !== entry && sibling?.subMenu) {
-                    sibling.subMenu.hideMenu()
-                    sibling.subMenu.destroy()
-                    sibling.subMenu = null
+                  NIcon {
+                    icon: "arrow-left"
+                    pointSize: Style.fontSizeS
+                    applyUiScale: false
+                    verticalAlignment: Text.AlignVCenter
+                    color: backMouseArea.containsMouse ? Color.mOnHover : Color.mOnSurface
+                  }
+
+                  NText {
+                    Layout.fillWidth: true
+                    color: backMouseArea.containsMouse ? Color.mOnHover : Color.mOnSurface
+                    text: I18n.tr("settings.bar.tray.back")
+                    pointSize: Style.fontSizeS
+                    verticalAlignment: Text.AlignVCenter
+                    elide: Text.ElideRight
                   }
                 }
 
-                // Create submenu if needed
-                if (modelData?.hasChildren) {
-                  if (entry.subMenu) {
-                    entry.subMenu.hideMenu()
-                    entry.subMenu.destroy()
+                MouseArea {
+                  id: backMouseArea
+                  anchors.fill: parent
+                  hoverEnabled: true
+
+                  onClicked: {
+                    content.activeSubMenu = null
+                    content.activeSubMenuEntry = null
                   }
+                }
+              }
+            }
 
-                  // Need a slight overlap so that menu don't close when moving the mouse to a submenu
-                  const submenuWidth = menuWidth // Assuming a similar width as the parent
-                  const overlap = 4 // A small overlap to bridge the mouse path
+            Rectangle {
+              visible: content.inPlaceSubmenu
+              Layout.preferredWidth: parent.width
+              Layout.preferredHeight: visible ? 8 : 0
+              color: Color.transparent
 
-                  // Determine submenu opening direction based on bar position and available space
-                  let openLeft = false
+              NDivider {
+                anchors.centerIn: parent
+                width: parent.width - (Style.marginM * 2)
+                visible: parent.visible
+              }
+            }
 
-                  // Check bar position first
-                  const barPosition = Settings.data.bar.position
-                  const globalPos = entry.mapToItem(null, 0, 0)
+            Repeater {
+              model: subMenuOpener.children ? [...subMenuOpener.children.values] : []
 
-                  if (barPosition === "right") {
-                    // Bar is on the right, prefer opening submenus to the left
-                    openLeft = true
-                  } else if (barPosition === "left") {
-                    // Bar is on the left, prefer opening submenus to the right
-                    openLeft = false
+              delegate: Rectangle {
+                id: subEntry
+                required property var modelData
+
+                Layout.preferredWidth: parent.width
+                Layout.preferredHeight: {
+                  if (modelData?.isSeparator) {
+                    return 8
                   } else {
-                    // Bar is horizontal (top/bottom) or undefined, use space-based logic
-                    openLeft = (globalPos.x + entry.width + submenuWidth > screen.width)
+                    return 28
+                  }
+                }
 
-                    // Secondary check: ensure we don't open off-screen
-                    if (openLeft && globalPos.x - submenuWidth < 0) {
-                      // Would open off the left edge, force right opening
-                      openLeft = false
-                    } else if (!openLeft && globalPos.x + entry.width + submenuWidth > screen.width) {
-                      // Would open off the right edge, force left opening
-                      openLeft = true
+                color: Color.transparent
+
+                NDivider {
+                  anchors.centerIn: parent
+                  width: parent.width - (Style.marginM * 2)
+                  visible: modelData?.isSeparator ?? false
+                }
+
+                Rectangle {
+                  anchors.fill: parent
+                  color: subMouseArea.containsMouse ? Color.mHover : Color.transparent
+                  radius: Style.radiusS
+                  visible: !(modelData?.isSeparator ?? false)
+
+                  RowLayout {
+                    anchors.fill: parent
+                    anchors.leftMargin: Style.marginM
+                    anchors.rightMargin: Style.marginM
+                    spacing: Style.marginS
+
+                    NText {
+                      Layout.fillWidth: true
+                      color: (modelData?.enabled ?? true) ? (subMouseArea.containsMouse ? Color.mOnHover : Color.mOnSurface) : Color.mOnSurfaceVariant
+                      text: modelData?.text !== "" ? modelData?.text.replace(/[\n\r]+/g, ' ') : "..."
+                      pointSize: Style.fontSizeS
+                      verticalAlignment: Text.AlignVCenter
+                      elide: Text.ElideRight
+                    }
+
+                    Image {
+                      Layout.preferredWidth: Style.marginL
+                      Layout.preferredHeight: Style.marginL
+                      source: modelData?.icon ?? ""
+                      visible: (modelData?.icon ?? "") !== ""
+                      fillMode: Image.PreserveAspectFit
+                    }
+
+                    NIcon {
+                      icon: modelData?.hasChildren ? "menu" : ""
+                      pointSize: Style.fontSizeS
+                      applyUiScale: false
+                      verticalAlignment: Text.AlignVCenter
+                      visible: modelData?.hasChildren ?? false
+                      color: (subMouseArea.containsMouse ? Color.mOnHover : Color.mOnSurface)
                     }
                   }
 
-                  // Position with overlap
-                  const anchorX = openLeft ? -submenuWidth + overlap : entry.width - overlap
+                  MouseArea {
+                    id: subMouseArea
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    enabled: (modelData?.enabled ?? true) && !(modelData?.isSeparator ?? false)
 
-                  // Create submenu
-                  entry.subMenu = Qt.createComponent("TrayMenu.qml").createObject(root, {
-                                                                                    "menu": modelData,
-                                                                                    "anchorItem": entry,
-                                                                                    "anchorX": anchorX,
-                                                                                    "anchorY": 0,
-                                                                                    "isSubMenu": true,
-                                                                                    "screen": screen
-                                                                                  })
+                    onClicked: {
+                      if (!modelData || modelData.isSeparator)
+                        return
 
-                  if (entry.subMenu) {
-                    entry.subMenu.showAt(entry, anchorX, 0)
+                      if (modelData.hasChildren) {
+                        // Toggle nested submenu on click
+                        if (content.activeSubMenu === modelData) {
+                          // If already open, close it on second click
+                          content.activeSubMenu = null
+                          content.activeSubMenuEntry = null
+                          return
+                        }
+
+                        // Open nested submenu in place
+                        content.activeSubMenu = modelData
+                        content.activeSubMenuEntry = null // No entry for nested submenus
+                        content.inPlaceSubmenu = true
+                      } else {
+                        modelData.triggered()
+                        root.close()
+                      }
+                    }
                   }
                 }
               }
-
-              onExited: {
-                Qt.callLater(() => {
-                               if (entry.subMenu && !entry.subMenu.isHovered) {
-                                 entry.subMenu.hideMenu()
-                                 entry.subMenu.destroy()
-                                 entry.subMenu = null
-                               }
-                             })
-              }
-            }
-          }
-
-          Component.onDestruction: {
-            if (subMenu) {
-              subMenu.destroy()
-              subMenu = null
-            }
-          }
-        }
-      }
-
-      // Separator before custom menu item
-      Rectangle {
-        visible: !root.isSubMenu && root.trayItem !== null && root.widgetSection !== "" && root.widgetIndex >= 0
-        Layout.preferredWidth: parent.width
-        Layout.preferredHeight: visible ? 8 : 0
-        color: Color.transparent
-
-        NDivider {
-          anchors.centerIn: parent
-          width: parent.width - (Style.marginM * 2)
-          visible: parent.visible
-        }
-      }
-
-      // Custom "Add/Remove Favorite" menu item (only for non-submenus with tray item info)
-      Rectangle {
-        id: addToFavoriteEntry
-        visible: !root.isSubMenu && root.trayItem !== null && root.widgetSection !== "" && root.widgetIndex >= 0
-        Layout.preferredWidth: parent.width
-        Layout.preferredHeight: visible ? 28 : 0
-        color: Color.transparent
-
-        // Check if item is already a favorite
-        readonly property bool isFavorite: {
-          if (!root.trayItem || root.widgetSection === "" || root.widgetIndex < 0)
-            return false
-          const itemName = root.trayItem.tooltipTitle || root.trayItem.name || root.trayItem.id || ""
-          if (!itemName)
-            return false
-
-          var widgets = Settings.data.bar.widgets[root.widgetSection]
-          if (!widgets || root.widgetIndex >= widgets.length)
-            return false
-          var widgetSettings = widgets[root.widgetIndex]
-          if (!widgetSettings || widgetSettings.id !== "Tray")
-            return false
-
-          var favorites = widgetSettings.favorites || []
-          for (var i = 0; i < favorites.length; i++) {
-            if (favorites[i] === itemName)
-              return true
-          }
-          return false
-        }
-
-        Rectangle {
-          anchors.fill: parent
-          color: addToFavoriteMouseArea.containsMouse ? Qt.alpha(Color.mPrimary, 0.2) : Qt.alpha(Color.mPrimary, 0.08)
-          radius: Style.radiusS
-          border.color: Qt.alpha(Color.mPrimary, addToFavoriteMouseArea.containsMouse ? 0.4 : 0.2)
-          border.width: Style.borderS
-
-          RowLayout {
-            anchors.fill: parent
-            anchors.leftMargin: Style.marginM
-            anchors.rightMargin: Style.marginM
-            spacing: Style.marginS
-
-            NIcon {
-              icon: addToFavoriteEntry.isFavorite ? "star" : "star-off"
-              pointSize: Style.fontSizeS
-              applyUiScale: false
-              verticalAlignment: Text.AlignVCenter
-              color: Color.mPrimary
-            }
-
-            NText {
-              Layout.fillWidth: true
-              color: Color.mPrimary
-              text: addToFavoriteEntry.isFavorite ? I18n.tr("settings.bar.tray.unpin-application") : I18n.tr("settings.bar.tray.pin-application")
-              pointSize: Style.fontSizeS
-              font.weight: Font.Medium
-              verticalAlignment: Text.AlignVCenter
-              elide: Text.ElideRight
-            }
-          }
-
-          MouseArea {
-            id: addToFavoriteMouseArea
-            anchors.fill: parent
-            hoverEnabled: true
-            enabled: root.visible
-
-            onClicked: {
-              if (addToFavoriteEntry.isFavorite) {
-                root.removeFromFavorites()
-              } else {
-                root.addToFavorites()
-              }
-              root.hideMenu()
             }
           }
         }
       }
     }
+
+    // Main menu and submenu side by side
+    RowLayout {
+      id: rowLayout
+      anchors.fill: background
+      anchors.margins: Style.marginS
+      spacing: 0
+
+      // Submenu on the left (when subMenuOpenLeft is true and not replacing)
+      Loader {
+        id: leftSubMenuLoader
+        Layout.preferredWidth: (content.activeSubMenu && content.subMenuOpenLeft && !content.inPlaceSubmenu) ? root.menuWidth : 0
+        Layout.fillHeight: true
+        visible: content.activeSubMenu !== null && content.subMenuOpenLeft && !content.inPlaceSubmenu
+        sourceComponent: subMenuComponent
+      }
+
+      // Submenu replacing main menu (in-place)
+      Loader {
+        id: inPlaceSubMenuLoader
+        Layout.preferredWidth: (content.activeSubMenu && content.inPlaceSubmenu) ? root.menuWidth : 0
+        Layout.fillHeight: true
+        visible: content.activeSubMenu !== null && content.inPlaceSubmenu
+        sourceComponent: subMenuComponent
+      }
+
+      // Main menu
+      Flickable {
+        id: mainFlickable
+        Layout.preferredWidth: root.menuWidth
+        Layout.fillHeight: true
+        contentHeight: mainColumnLayout.implicitHeight
+        interactive: true
+        visible: !(content.activeSubMenu !== null && content.inPlaceSubmenu)
+
+        ColumnLayout {
+          id: mainColumnLayout
+          width: mainFlickable.width
+          spacing: 0
+
+          Repeater {
+            model: opener.children ? [...opener.children.values] : []
+
+            delegate: Rectangle {
+              id: entry
+              required property var modelData
+
+              Layout.preferredWidth: parent.width
+              Layout.preferredHeight: {
+                if (modelData?.isSeparator) {
+                  return 8
+                } else {
+                  return 28
+                }
+              }
+
+              color: Color.transparent
+
+              NDivider {
+                anchors.centerIn: parent
+                width: parent.width - (Style.marginM * 2)
+                visible: modelData?.isSeparator ?? false
+              }
+
+              Rectangle {
+                anchors.fill: parent
+                color: mouseArea.containsMouse ? Color.mHover : Color.transparent
+                radius: Style.radiusS
+                visible: !(modelData?.isSeparator ?? false)
+
+                RowLayout {
+                  anchors.fill: parent
+                  anchors.leftMargin: Style.marginM
+                  anchors.rightMargin: Style.marginM
+                  spacing: Style.marginS
+
+                  NText {
+                    id: text
+                    Layout.fillWidth: true
+                    color: (modelData?.enabled ?? true) ? (mouseArea.containsMouse ? Color.mOnHover : Color.mOnSurface) : Color.mOnSurfaceVariant
+                    text: modelData?.text !== "" ? modelData?.text.replace(/[\n\r]+/g, ' ') : "..."
+                    pointSize: Style.fontSizeS
+                    verticalAlignment: Text.AlignVCenter
+                    elide: Text.ElideRight
+                  }
+
+                  Image {
+                    Layout.preferredWidth: Style.marginL
+                    Layout.preferredHeight: Style.marginL
+                    source: modelData?.icon ?? ""
+                    visible: (modelData?.icon ?? "") !== ""
+                    fillMode: Image.PreserveAspectFit
+                  }
+
+                  NIcon {
+                    icon: modelData?.hasChildren ? "menu" : ""
+                    pointSize: Style.fontSizeS
+                    applyUiScale: false
+                    verticalAlignment: Text.AlignVCenter
+                    visible: modelData?.hasChildren ?? false
+                    color: (mouseArea.containsMouse ? Color.mOnHover : Color.mOnSurface)
+                  }
+                }
+
+                MouseArea {
+                  id: mouseArea
+                  anchors.fill: parent
+                  hoverEnabled: true
+                  enabled: (modelData?.enabled ?? true) && !(modelData?.isSeparator ?? false)
+
+                  onClicked: {
+                    if (!modelData || modelData.isSeparator)
+                      return
+
+                    if (modelData.hasChildren) {
+                      // Toggle submenu on click
+                      if (content.activeSubMenuEntry === entry && content.inPlaceSubmenu) {
+                        // If already open in-place, close it on second click
+                        content.activeSubMenu = null
+                        content.activeSubMenuEntry = null
+                        return
+                      }
+
+                      // Close any other open submenu
+                      if (content.activeSubMenuEntry && content.activeSubMenuEntry !== entry) {
+                        content.activeSubMenu = null
+                        content.activeSubMenuEntry = null
+                      }
+
+                      // Open submenu in place (replace main menu)
+                      content.activeSubMenu = modelData
+                      content.activeSubMenuEntry = entry
+                      content.inPlaceSubmenu = true
+                    } else {
+                      modelData.triggered()
+                      root.close()
+                    }
+                  }
+
+                  onExited: {
+                    if (content.inPlaceSubmenu)
+                      return
+                    // Don't close immediately - let submenu handle its own hover
+                    Qt.callLater(() => {
+                                   // Only close if mouse is not in submenu area
+                                   if (content.activeSubMenuEntry === entry) {
+                                     const subMenuLoader = content.subMenuOpenLeft ? leftSubMenuLoader : rightSubMenuLoader
+                                     // The MouseArea is the first child of the Item (subMenuContainer)
+                                     const subMenuMouseArea = subMenuLoader.item?.children[0]
+                                     if (!subMenuMouseArea || !subMenuMouseArea.containsMouse) {
+                                       content.activeSubMenu = null
+                                       content.activeSubMenuEntry = null
+                                     }
+                                   }
+                                 })
+                  }
+                }
+              }
+            }
+          }
+
+          Rectangle {
+            visible: root.trayItem !== null && root.widgetSection !== "" && root.widgetIndex >= 0
+            Layout.preferredWidth: parent.width
+            Layout.preferredHeight: visible ? 8 : 0
+            color: Color.transparent
+
+            NDivider {
+              anchors.centerIn: parent
+              width: parent.width - (Style.marginM * 2)
+              visible: parent.visible
+            }
+          }
+
+          Rectangle {
+            id: addToFavoriteEntry
+            visible: root.trayItem !== null && root.widgetSection !== "" && root.widgetIndex >= 0
+            Layout.preferredWidth: parent.width
+            Layout.preferredHeight: visible ? 28 : 0
+            color: Color.transparent
+
+            readonly property bool isFavorite: {
+              if (!root.trayItem || root.widgetSection === "" || root.widgetIndex < 0)
+                return false
+              const itemName = root.trayItem.tooltipTitle || root.trayItem.name || root.trayItem.id || ""
+              if (!itemName)
+                return false
+              var widgets = Settings.data.bar.widgets[root.widgetSection]
+              if (!widgets || root.widgetIndex >= widgets.length)
+                return false
+              var widgetSettings = widgets[root.widgetIndex]
+              if (!widgetSettings || widgetSettings.id !== "Tray")
+                return false
+              var favorites = widgetSettings.favorites || []
+              for (var i = 0; i < favorites.length; i++) {
+                if (favorites[i] === itemName)
+                  return true
+              }
+              return false
+            }
+
+            Rectangle {
+              anchors.fill: parent
+              color: addToFavoriteMouseArea.containsMouse ? Qt.alpha(Color.mPrimary, 0.2) : Qt.alpha(Color.mPrimary, 0.08)
+              radius: Style.radiusS
+              border.color: Qt.alpha(Color.mPrimary, addToFavoriteMouseArea.containsMouse ? 0.4 : 0.2)
+              border.width: Style.borderS
+
+              RowLayout {
+                anchors.fill: parent
+                anchors.leftMargin: Style.marginM
+                anchors.rightMargin: Style.marginM
+                spacing: Style.marginS
+
+                NIcon {
+                  icon: addToFavoriteEntry.isFavorite ? "star" : "star-off"
+                  pointSize: Style.fontSizeS
+                  applyUiScale: false
+                  verticalAlignment: Text.AlignVCenter
+                  color: Color.mPrimary
+                }
+
+                NText {
+                  Layout.fillWidth: true
+                  color: Color.mPrimary
+                  text: addToFavoriteEntry.isFavorite ? I18n.tr("settings.bar.tray.unpin-application") : I18n.tr("settings.bar.tray.pin-application")
+                  pointSize: Style.fontSizeS
+                  font.weight: Font.Medium
+                  verticalAlignment: Text.AlignVCenter
+                  elide: Text.ElideRight
+                }
+              }
+
+              MouseArea {
+                id: addToFavoriteMouseArea
+                anchors.fill: parent
+                hoverEnabled: true
+
+                onClicked: {
+                  if (addToFavoriteEntry.isFavorite) {
+                    root.removeFromFavorites()
+                  } else {
+                    root.addToFavorites()
+                  }
+                  root.close()
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // Submenu on the right (when subMenuOpenLeft is false and not replacing)
+      Loader {
+        id: rightSubMenuLoader
+        Layout.preferredWidth: (content.activeSubMenu && !content.subMenuOpenLeft && !content.inPlaceSubmenu) ? root.menuWidth : 0
+        Layout.fillHeight: true
+        visible: content.activeSubMenu !== null && !content.subMenuOpenLeft && !content.inPlaceSubmenu
+        sourceComponent: subMenuComponent
+      }
+    }
+
+    Keys.onEscapePressed: root.close()
   }
 
   function addToFavorites() {
@@ -381,51 +575,33 @@ PopupWindow {
       Logger.w("TrayMenu", "Cannot add as favorite: missing tray item or widget info")
       return
     }
-
-    // Get the tray item name
     const itemName = trayItem.tooltipTitle || trayItem.name || trayItem.id || ""
     if (!itemName) {
       Logger.w("TrayMenu", "Cannot add as favorite: tray item has no name")
       return
     }
-
-    // Get current widget settings
     var widgets = Settings.data.bar.widgets[widgetSection]
     if (!widgets || widgetIndex >= widgets.length) {
       Logger.w("TrayMenu", "Cannot add as favorite: invalid widget index")
       return
     }
-
     var widgetSettings = widgets[widgetIndex]
     if (!widgetSettings || widgetSettings.id !== "Tray") {
       Logger.w("TrayMenu", "Cannot add as favorite: widget is not a Tray widget")
       return
     }
-
-    // Get current favorites list
     var favorites = widgetSettings.favorites || []
-
-    // Add to favorites
     var newFavorites = favorites.slice()
     newFavorites.push(itemName)
-
-    // Update widget settings
     var newSettings = Object.assign({}, widgetSettings)
     newSettings.favorites = newFavorites
-
-    // Update settings
     widgets[widgetIndex] = newSettings
     Settings.data.bar.widgets[widgetSection] = widgets
     Settings.saveImmediate()
-
-    Logger.i("TrayMenu", "Added", itemName, "as favorite")
-
-    // Close the tray dropdown panel after pinning
     if (root.screen) {
       const panel = PanelService.getPanel("trayDropdownPanel", root.screen)
-      if (panel) {
+      if (panel)
         panel.close()
-      }
     }
   }
 
@@ -434,47 +610,32 @@ PopupWindow {
       Logger.w("TrayMenu", "Cannot remove from favorites: missing tray item or widget info")
       return
     }
-
-    // Get the tray item name
     const itemName = trayItem.tooltipTitle || trayItem.name || trayItem.id || ""
     if (!itemName) {
       Logger.w("TrayMenu", "Cannot remove from favorites: tray item has no name")
       return
     }
-
-    // Get current widget settings
     var widgets = Settings.data.bar.widgets[widgetSection]
     if (!widgets || widgetIndex >= widgets.length) {
       Logger.w("TrayMenu", "Cannot remove from favorites: invalid widget index")
       return
     }
-
     var widgetSettings = widgets[widgetIndex]
     if (!widgetSettings || widgetSettings.id !== "Tray") {
       Logger.w("TrayMenu", "Cannot remove from favorites: widget is not a Tray widget")
       return
     }
-
-    // Get current favorites list
     var favorites = widgetSettings.favorites || []
-
-    // Remove from favorites
     var newFavorites = []
     for (var i = 0; i < favorites.length; i++) {
       if (favorites[i] !== itemName) {
         newFavorites.push(favorites[i])
       }
     }
-
-    // Update widget settings
     var newSettings = Object.assign({}, widgetSettings)
     newSettings.favorites = newFavorites
-
-    // Update settings
     widgets[widgetIndex] = newSettings
     Settings.data.bar.widgets[widgetSection] = widgets
     Settings.saveImmediate()
-
-    Logger.i("TrayMenu", "Removed", itemName, "from favorites")
   }
 }

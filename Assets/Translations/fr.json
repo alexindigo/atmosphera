@@ -777,7 +777,8 @@
           "placeholder": "ex: nm-applet, Fcitx*"
         },
         "pin-application": "Épingler l'Application",
-        "unpin-application": "Désépingler l'Application"
+        "unpin-application": "Désépingler l'Application",
+        "back": "Retour"
       },
       "widgets": {
         "section": {

@@ -777,7 +777,8 @@
           "placeholder": "z.B., nm-applet, Fcitx*"
         },
         "pin-application": "Anwendung anheften",
-        "unpin-application": "Anheftung aufheben"
+        "unpin-application": "Anheftung aufheben",
+        "back": "Zurück"
       },
       "widgets": {
         "section": {

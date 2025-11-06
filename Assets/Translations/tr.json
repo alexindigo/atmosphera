@@ -777,7 +777,8 @@
           "placeholder": "örn., nm-applet, Fcitx*"
         },
         "pin-application": "Uygulamayı Sabitle",
-        "unpin-application": "Sabitlemeyi Kaldır"
+        "unpin-application": "Sabitlemeyi Kaldır",
+        "back": "Geri"
       },
       "widgets": {
         "section": {

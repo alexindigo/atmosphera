@@ -777,7 +777,8 @@
           "placeholder": "ex: nm-applet, Fcitx*"
         },
         "pin-application": "Fixar Aplicativo",
-        "unpin-application": "Desfixar Aplicativo"
+        "unpin-application": "Desfixar Aplicativo",
+        "back": "Voltar"
       },
       "widgets": {
         "section": {

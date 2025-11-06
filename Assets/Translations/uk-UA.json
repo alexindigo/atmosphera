@@ -777,7 +777,8 @@
           "placeholder": "напр., nm-applet, Fcitx*"
         },
         "pin-application": "Закріпити Застосунок",
-        "unpin-application": "Відкріпити Застосунок"
+        "unpin-application": "Відкріпити Застосунок",
+        "back": "Назад"
       },
       "widgets": {
         "section": {
