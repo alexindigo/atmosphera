@@ -81,7 +81,7 @@ PanelWindow {
   property bool isPanelOpen: PanelService.openedPanel !== null
   color: {
     if (dimDesktop && isPanelOpen) {
-      return Qt.alpha(Color.mSurfaceVariant, Style.opacityHeavy)
+      return Qt.alpha(Color.mShadow, 0.8)
     }
     return Color.transparent
   }
