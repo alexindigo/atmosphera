@@ -328,17 +328,17 @@
   "bluetooth": {
     "panel": {
       "available-devices": "Доступні пристрої",
+      "blocked": "Заблоковано",
+      "connect": "Підключити",
       "connected-devices": "Підключені пристрої",
       "disabled": "Bluetooth вимкнено",
+      "disconnect": "Відключити",
       "enable-message": "Увімкніть Bluetooth, щоб побачити доступні пристрої.",
       "known-devices": "Відомі пристрої",
+      "pairing": "Спарювання...",
       "pairing-mode": "Переконайтеся, що ваш пристрій у режимі з'єднання.",
       "scanning": "Сканування пристроїв...",
-      "title": "Bluetooth",
-      "pairing": "Спарювання...",
-      "blocked": "Заблоковано",
-      "disconnect": "Відключити",
-      "connect": "Підключити"
+      "title": "Bluetooth"
     }
   },
   "calendar": {
@@ -775,14 +775,14 @@
       },
       "title": "Панель",
       "tray": {
+        "back": "Назад",
         "blacklist": {
           "description": "Додайте правила виключення з трея, підтримує шаблони (*).",
           "label": "Чорний список",
           "placeholder": "напр., nm-applet, Fcitx*"
         },
         "pin-application": "Закріпити Застосунок",
-        "unpin-application": "Відкріпити Застосунок",
-        "back": "Назад"
+        "unpin-application": "Відкріпити Застосунок"
       },
       "widgets": {
         "section": {

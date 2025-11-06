@@ -328,17 +328,17 @@
   "bluetooth": {
     "panel": {
       "available-devices": "Verfügbare Geräte",
+      "blocked": "Blockiert",
+      "connect": "Verbinden",
       "connected-devices": "Verbundene Geräte",
       "disabled": "Bluetooth ist deaktiviert",
+      "disconnect": "Trennen",
       "enable-message": "Aktivieren Sie Bluetooth, um verfügbare Geräte zu sehen.",
       "known-devices": "Bekannte Geräte",
+      "pairing": "Koppeln...",
       "pairing-mode": "Stellen Sie sicher, dass sich Ihr Gerät im Kopplungsmodus befindet.",
       "scanning": "Scannen nach Geräten...",
-      "title": "Bluetooth",
-      "pairing": "Koppeln...",
-      "blocked": "Blockiert",
-      "disconnect": "Trennen",
-      "connect": "Verbinden"
+      "title": "Bluetooth"
     }
   },
   "calendar": {
@@ -775,14 +775,14 @@
       },
       "title": "Statusleiste",
       "tray": {
+        "back": "Zurück",
         "blacklist": {
           "description": "Ausschlussregeln für die Tray-Symbolleiste hinzufügen, unterstützt Platzhalter (*).",
           "label": "Ausschlussliste",
           "placeholder": "z.B., nm-applet, Fcitx*"
         },
         "pin-application": "Anwendung anheften",
-        "unpin-application": "Anheftung aufheben",
-        "back": "Zurück"
+        "unpin-application": "Anheftung aufheben"
       },
       "widgets": {
         "section": {

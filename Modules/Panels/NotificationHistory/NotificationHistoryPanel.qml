@@ -123,221 +123,221 @@ SmartPanel {
       }
 
       // Notification list
-      // NListView {
-      //   id: notificationList
-      //   Layout.fillWidth: true
-      //   Layout.fillHeight: true
-      //   horizontalPolicy: ScrollBar.AlwaysOff
-      //   verticalPolicy: ScrollBar.AsNeeded
+      NListView {
+        id: notificationList
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        horizontalPolicy: ScrollBar.AlwaysOff
+        verticalPolicy: ScrollBar.AsNeeded
 
-      //   model: NotificationService.historyList
-      //   spacing: Style.marginM
-      //   clip: true
-      //   boundsBehavior: Flickable.StopAtBounds
-      //   visible: NotificationService.historyList.count > 0
+        model: NotificationService.historyList
+        spacing: Style.marginM
+        clip: true
+        boundsBehavior: Flickable.StopAtBounds
+        visible: NotificationService.historyList.count > 0
 
-      //   // Track which notification is expanded
-      //   property string expandedId: ""
+        // Track which notification is expanded
+        property string expandedId: ""
 
-      //   delegate: Item {
-      //     property string notificationId: model.id
-      //     property bool isExpanded: notificationList.expandedId === notificationId
+        delegate: Item {
+          property string notificationId: model.id
+          property bool isExpanded: notificationList.expandedId === notificationId
 
-      //     width: notificationList.width
-      //     height: notificationLayoutWrapper.height + (Style.marginM * 2)
+          width: notificationList.width
+          height: notificationLayoutWrapper.height + (Style.marginM * 2)
 
-      //     Behavior on height {
-      //       enabled: !Settings.data.general.animationDisabled
-      //       NumberAnimation {
-      //         duration: Style.animationNormal
-      //         easing.type: Easing.InOutQuad
-      //       }
-      //     }
+          Behavior on height {
+            enabled: !Settings.data.general.animationDisabled
+            NumberAnimation {
+              duration: Style.animationNormal
+              easing.type: Easing.InOutQuad
+            }
+          }
 
-      //     Rectangle {
-      //       anchors.fill: parent
-      //       radius: Style.radiusM
-      //       color: Color.mSurfaceVariant
-      //       border.color: Qt.alpha(Color.mOutline, Style.opacityMedium)
-      //       border.width: Style.borderS
+          Rectangle {
+            anchors.fill: parent
+            radius: Style.radiusM
+            color: Color.mSurfaceVariant
+            border.color: Qt.alpha(Color.mOutline, Style.opacityMedium)
+            border.width: Style.borderS
 
-      //       // Smooth color transition on hover
-      //       Behavior on color {
-      //         enabled: !Settings.data.general.animationDisabled
-      //         ColorAnimation {
-      //           duration: Style.animationFast
-      //         }
-      //       }
-      //     }
+            // Smooth color transition on hover
+            Behavior on color {
+              enabled: !Settings.data.general.animationDisabled
+              ColorAnimation {
+                duration: Style.animationFast
+              }
+            }
+          }
 
-      //     // Click to expand/collapse
-      //     MouseArea {
-      //       anchors.fill: parent
-      //       // Don't capture clicks on the delete button
-      //       anchors.rightMargin: 48
-      //       enabled: (summaryText.truncated || bodyText.truncated)
-      //       onClicked: {
-      //         if (notificationList.expandedId === notificationId) {
-      //           notificationList.expandedId = ""
-      //         } else {
-      //           notificationList.expandedId = notificationId
-      //         }
-      //       }
-      //       cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-      //     }
+          // Click to expand/collapse
+          MouseArea {
+            anchors.fill: parent
+            // Don't capture clicks on the delete button
+            anchors.rightMargin: 48
+            enabled: (summaryText.truncated || bodyText.truncated)
+            onClicked: {
+              if (notificationList.expandedId === notificationId) {
+                notificationList.expandedId = ""
+              } else {
+                notificationList.expandedId = notificationId
+              }
+            }
+            cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+          }
 
-      //     Item {
-      //       id: notificationLayoutWrapper
-      //       anchors.left: parent.left
-      //       anchors.right: parent.right
-      //       anchors.top: parent.top
-      //       anchors.margins: Style.marginM
-      //       height: notificationLayout.implicitHeight
+          Item {
+            id: notificationLayoutWrapper
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.margins: Style.marginM
+            height: notificationLayout.implicitHeight
 
-      //       RowLayout {
-      //         id: notificationLayout
-      //         width: parent.width
-      //         spacing: Style.marginM
+            RowLayout {
+              id: notificationLayout
+              width: parent.width
+              spacing: Style.marginM
 
-      //         // Icon column - use simple Item instead of ColumnLayout to avoid polish loop
-      //         Item {
-      //           Layout.preferredWidth: Math.round(40 * Style.uiScaleRatio)
-      //           Layout.alignment: Qt.AlignTop
+              // Icon column - use simple Item instead of ColumnLayout to avoid polish loop
+              Item {
+                Layout.preferredWidth: Math.round(40 * Style.uiScaleRatio)
+                Layout.alignment: Qt.AlignTop
 
-      //           NImageCircled {
-      //             anchors.top: parent.top
-      //             anchors.topMargin: 20
-      //             width: Math.round(40 * Style.uiScaleRatio)
-      //             height: Math.round(40 * Style.uiScaleRatio)
-      //             imagePath: model.cachedImage || model.originalImage || ""
-      //             borderColor: Color.transparent
-      //             borderWidth: 0
-      //             fallbackIcon: "bell"
-      //             fallbackIconSize: 24
-      //           }
-      //         }
+                NImageCircled {
+                  anchors.top: parent.top
+                  anchors.topMargin: 20
+                  width: Math.round(40 * Style.uiScaleRatio)
+                  height: Math.round(40 * Style.uiScaleRatio)
+                  imagePath: model.cachedImage || model.originalImage || ""
+                  borderColor: Color.transparent
+                  borderWidth: 0
+                  fallbackIcon: "bell"
+                  fallbackIconSize: 24
+                }
+              }
 
-      //         // Notification content column
-      //         ColumnLayout {
-      //           Layout.fillWidth: true
-      //           Layout.alignment: Qt.AlignTop
-      //           spacing: Style.marginXS
-      //           Layout.rightMargin: -(Style.marginM + Style.baseWidgetSize * 0.6)
+              // Notification content column
+              ColumnLayout {
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignTop
+                spacing: Style.marginXS
+                Layout.rightMargin: -(Style.marginM + Style.baseWidgetSize * 0.6)
 
-      //           // Header row with app name and timestamp
-      //           RowLayout {
-      //             Layout.fillWidth: true
-      //             spacing: Style.marginS
+                // Header row with app name and timestamp
+                RowLayout {
+                  Layout.fillWidth: true
+                  spacing: Style.marginS
 
-      //             // Urgency indicator
-      //             Rectangle {
-      //               Layout.preferredWidth: 6
-      //               Layout.preferredHeight: 6
-      //               Layout.alignment: Qt.AlignVCenter
-      //               radius: 3
-      //               visible: model.urgency !== 1
-      //               color: {
-      //                 if (model.urgency === 2)
-      //                   return Color.mError
-      //                 else if (model.urgency === 0)
-      //                   return Color.mOnSurfaceVariant
-      //                 else
-      //                   return Color.transparent
-      //               }
-      //             }
+                  // Urgency indicator
+                  Rectangle {
+                    Layout.preferredWidth: 6
+                    Layout.preferredHeight: 6
+                    Layout.alignment: Qt.AlignVCenter
+                    radius: 3
+                    visible: model.urgency !== 1
+                    color: {
+                      if (model.urgency === 2)
+                        return Color.mError
+                      else if (model.urgency === 0)
+                        return Color.mOnSurfaceVariant
+                      else
+                        return Color.transparent
+                    }
+                  }
 
-      //             NText {
-      //               text: model.appName || "Unknown App"
-      //               pointSize: Style.fontSizeXS
-      //               color: Color.mSecondary
-      //             }
+                  NText {
+                    text: model.appName || "Unknown App"
+                    pointSize: Style.fontSizeXS
+                    color: Color.mSecondary
+                  }
 
-      //             NText {
-      //               text: Time.formatRelativeTime(model.timestamp)
-      //               pointSize: Style.fontSizeXS
-      //               color: Color.mSecondary
-      //             }
+                  NText {
+                    text: Time.formatRelativeTime(model.timestamp)
+                    pointSize: Style.fontSizeXS
+                    color: Color.mSecondary
+                  }
 
-      //             Item {
-      //               Layout.fillWidth: true
-      //             }
-      //           }
+                  Item {
+                    Layout.fillWidth: true
+                  }
+                }
 
-      //           // Summary
-      //           NText {
-      //             id: summaryText
-      //             text: model.summary || I18n.tr("general.no-summary")
-      //             pointSize: Style.fontSizeM
-      //             font.weight: Font.Medium
-      //             color: Color.mOnSurface
-      //             textFormat: Text.PlainText
-      //             wrapMode: Text.Wrap
-      //             Layout.fillWidth: true
-      //             maximumLineCount: isExpanded ? 999 : 2
-      //             elide: Text.ElideRight
-      //           }
+                // Summary
+                NText {
+                  id: summaryText
+                  text: model.summary || I18n.tr("general.no-summary")
+                  pointSize: Style.fontSizeM
+                  font.weight: Font.Medium
+                  color: Color.mOnSurface
+                  textFormat: Text.PlainText
+                  wrapMode: Text.Wrap
+                  Layout.fillWidth: true
+                  maximumLineCount: isExpanded ? 999 : 2
+                  elide: Text.ElideRight
+                }
 
-      //           // Body
-      //           NText {
-      //             id: bodyText
-      //             text: model.body || ""
-      //             pointSize: Style.fontSizeS
-      //             color: Color.mOnSurfaceVariant
-      //             textFormat: Text.PlainText
-      //             wrapMode: Text.Wrap
-      //             Layout.fillWidth: true
-      //             maximumLineCount: isExpanded ? 999 : 3
-      //             elide: Text.ElideRight
-      //             visible: text.length > 0
-      //           }
+                // Body
+                NText {
+                  id: bodyText
+                  text: model.body || ""
+                  pointSize: Style.fontSizeS
+                  color: Color.mOnSurfaceVariant
+                  textFormat: Text.PlainText
+                  wrapMode: Text.Wrap
+                  Layout.fillWidth: true
+                  maximumLineCount: isExpanded ? 999 : 3
+                  elide: Text.ElideRight
+                  visible: text.length > 0
+                }
 
-      //           // Spacer for expand indicator
-      //           Item {
-      //             Layout.fillWidth: true
-      //             Layout.preferredHeight: (!isExpanded && (summaryText.truncated || bodyText.truncated)) ? (Style.marginS) : 0
-      //           }
+                // Spacer for expand indicator
+                Item {
+                  Layout.fillWidth: true
+                  Layout.preferredHeight: (!isExpanded && (summaryText.truncated || bodyText.truncated)) ? (Style.marginS) : 0
+                }
 
-      //           // Expand indicator
-      //           RowLayout {
-      //             Layout.fillWidth: true
-      //             visible: !isExpanded && (summaryText.truncated || bodyText.truncated)
-      //             spacing: Style.marginXS
+                // Expand indicator
+                RowLayout {
+                  Layout.fillWidth: true
+                  visible: !isExpanded && (summaryText.truncated || bodyText.truncated)
+                  spacing: Style.marginXS
 
-      //             Item {
-      //               Layout.fillWidth: true
-      //             }
+                  Item {
+                    Layout.fillWidth: true
+                  }
 
-      //             NText {
-      //               text: I18n.tr("notifications.panel.click-to-expand") || "Click to expand"
-      //               pointSize: Style.fontSizeXS
-      //               color: Color.mPrimary
-      //               font.weight: Font.Medium
-      //             }
+                  NText {
+                    text: I18n.tr("notifications.panel.click-to-expand") || "Click to expand"
+                    pointSize: Style.fontSizeXS
+                    color: Color.mPrimary
+                    font.weight: Font.Medium
+                  }
 
-      //             NIcon {
-      //               icon: "chevron-down"
-      //               pointSize: Style.fontSizeS
-      //               color: Color.mPrimary
-      //             }
-      //           }
-      //         }
+                  NIcon {
+                    icon: "chevron-down"
+                    pointSize: Style.fontSizeS
+                    color: Color.mPrimary
+                  }
+                }
+              }
 
-      //         // Delete button
-      //         NIconButton {
-      //           icon: "trash"
-      //           tooltipText: I18n.tr("tooltips.delete-notification")
-      //           baseSize: Style.baseWidgetSize * 0.7
-      //           Layout.alignment: Qt.AlignTop
+              // Delete button
+              NIconButton {
+                icon: "trash"
+                tooltipText: I18n.tr("tooltips.delete-notification")
+                baseSize: Style.baseWidgetSize * 0.7
+                Layout.alignment: Qt.AlignTop
 
-      //           onClicked: {
-      //             // Remove from history using the service API
-      //             NotificationService.removeFromHistory(notificationId)
-      //           }
-      //         }
-      //       }
-      //     }
-      //   }
-      // }
+                onClicked: {
+                  // Remove from history using the service API
+                  NotificationService.removeFromHistory(notificationId)
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
