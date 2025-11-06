@@ -330,7 +330,12 @@
       "known-devices": "Відомі пристрої",
       "pairing-mode": "Переконайтеся, що ваш пристрій у режимі з'єднання.",
       "scanning": "Сканування пристроїв...",
-      "title": "Bluetooth"
+      "title": "Bluetooth",
+      "title": "Bluetooth",
+      "pairing": "Спарювання...",
+      "blocked": "Заблоковано",
+      "disconnect": "Відключити",
+      "connect": "Підключити"
     }
   },
   "calendar": {

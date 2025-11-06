@@ -330,7 +330,11 @@
       "known-devices": "Bekannte Geräte",
       "pairing-mode": "Stellen Sie sicher, dass sich Ihr Gerät im Kopplungsmodus befindet.",
       "scanning": "Scannen nach Geräten...",
-      "title": "Bluetooth"
+      "title": "Bluetooth",
+      "pairing": "Koppeln...",
+      "blocked": "Blockiert",
+      "disconnect": "Trennen",
+      "connect": "Verbinden"
     }
   },
   "calendar": {

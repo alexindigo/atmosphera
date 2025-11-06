@@ -330,7 +330,11 @@
       "known-devices": "已知设备",
       "pairing-mode": "确保您的设备处于配对模式。",
       "scanning": "正在扫描设备...",
-      "title": "蓝牙"
+      "title": "蓝牙",
+      "pairing": "配对...",
+      "blocked": "已阻止",
+      "disconnect": "断开",
+      "connect": "连接"
     }
   },
   "calendar": {

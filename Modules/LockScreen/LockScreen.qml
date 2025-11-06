@@ -348,7 +348,9 @@ Loader {
                         "es": "dddd, d 'de' MMMM",
                         "fr": "dddd d MMMM",
                         "pt": "dddd, d 'de' MMMM",
-                        "zh": "yyyy年M月d日 dddd"
+                        "zh": "yyyy年M月d日 dddd",
+                        "uk": "dddd, d MMMM",
+                        "tr": "dddd, d MMMM"
                       }
                       return I18n.locale.toString(Time.now, formats[lang] || "dddd, MMMM d")
                     }
