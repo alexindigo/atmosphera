@@ -21,26 +21,22 @@ ShapePath {
   required property var bar
 
   // Corner configuration
-  readonly property color cornerColor: Settings.data.general.forceBlackScreenCorners ? Color.black : Qt.alpha(Color.mSurface, Settings.data.bar.backgroundOpacity)
+  readonly property color cornerColor: Settings.data.general.forceBlackScreenCorners ? Color.black : Color.mSurface
   readonly property real cornerRadius: Style.screenRadius
   readonly property real cornerSize: Style.screenRadius
 
-  // Helper properties for margin calculations
-  readonly property bool barOnThisMonitor: BarService.isVisible && Settings.data.bar.backgroundOpacity > 0
-  readonly property real barMargin: !Settings.data.bar.floating && barOnThisMonitor ? Style.barHeight : 0
-
   // Determine margins based on bar position
-  readonly property real topMargin: Settings.data.bar.position === "top" ? barMargin : 0
-  readonly property real bottomMargin: Settings.data.bar.position === "bottom" ? barMargin : 0
-  readonly property real leftMargin: Settings.data.bar.position === "left" ? barMargin : 0
-  readonly property real rightMargin: Settings.data.bar.position === "right" ? barMargin : 0
+  readonly property real topMargin: 0
+  readonly property real bottomMargin: 0
+  readonly property real leftMargin: 0
+  readonly property real rightMargin: 0
 
   // Screen dimensions
   readonly property real screenWidth: shapeContainer ? shapeContainer.width : 0
   readonly property real screenHeight: shapeContainer ? shapeContainer.height : 0
 
   // Only show screen corners if enabled and appropriate conditions are met
-  readonly property bool shouldShow: Settings.data.general.showScreenCorners && (!Settings.data.ui.panelsAttachedToBar || Settings.data.bar.backgroundOpacity >= 1 || Settings.data.bar.floating)
+  readonly property bool shouldShow: Settings.data.general.showScreenCorners
 
   // ShapePath configuration
   strokeWidth: -1 // No stroke, fill only
