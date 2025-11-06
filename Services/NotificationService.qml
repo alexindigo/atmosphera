@@ -76,12 +76,46 @@ Singleton {
     }
   }
 
-  // Notification server
-  NotificationServer {
-    keepOnReload: false
-    imageSupported: true
-    actionsSupported: true
-    onNotification: notification => handleNotification(notification)
+  // Notification server - only created when notifications are enabled
+  property var notificationServerLoader: null
+
+  Component {
+    id: notificationServerComponent
+    NotificationServer {
+      keepOnReload: false
+      imageSupported: true
+      actionsSupported: true
+      onNotification: notification => handleNotification(notification)
+    }
+  }
+
+  function updateNotificationServer() {
+    // Destroy existing server if it exists
+    if (notificationServerLoader) {
+      notificationServerLoader.destroy()
+      notificationServerLoader = null
+    }
+
+    // Create server only if enabled
+    if (Settings.isLoaded && Settings.data.notifications.enabled !== false) {
+      notificationServerLoader = notificationServerComponent.createObject(root)
+    }
+  }
+
+  Component.onCompleted: {
+    if (Settings.isLoaded) {
+      updateNotificationServer()
+    }
+  }
+
+  Connections {
+    target: Settings
+    function onSettingsLoaded() {
+      updateNotificationServer()
+    }
+    function onSettingsSaved() {
+      updateNotificationServer()
+    }
   }
 
   // Main handler

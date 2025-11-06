@@ -1368,6 +1368,10 @@
           "description": "Ajuster l'opacité des arrière-plans de notifications.",
           "label": "Opacité du fond"
         },
+        "enabled": {
+          "description": "Activer ou désactiver le démon de notifications, nécessite un redémarrage de noctalia-shell.",
+          "label": "Activer les notifications"
+        },
         "do-not-disturb": {
           "description": "Désactive toutes les fenêtres de notification lorsque cette option est activée.",
           "label": "Ne pas déranger"

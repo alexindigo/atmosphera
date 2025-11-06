@@ -1368,6 +1368,10 @@
           "description": "Ajustar la opacidad de los fondos de las notificaciones.",
           "label": "Opacidad del fondo"
         },
+        "enabled": {
+          "description": "Activar o desactivar el demonio de notificaciones, requiere reiniciar noctalia-shell.",
+          "label": "Activar notificaciones"
+        },
         "do-not-disturb": {
           "description": "Desactiva todas las ventanas emergentes de notificación cuando está activado.",
           "label": "No molestar"

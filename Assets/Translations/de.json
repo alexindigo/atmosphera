@@ -1368,6 +1368,10 @@
           "description": "Transparenz der Benachrichtigungshintergründe anpassen.",
           "label": "Hintergrund-Transparenz"
         },
+        "enabled": {
+          "description": "Benachrichtigungs-Daemon aktivieren oder deaktivieren, erfordert einen Neustart von noctalia-shell.",
+          "label": "Benachrichtigungen aktivieren"
+        },
         "do-not-disturb": {
           "description": "Alle Benachrichtigungs-Popups deaktivieren.",
           "label": "Nicht stören"

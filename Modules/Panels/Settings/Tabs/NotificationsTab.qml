@@ -33,6 +33,13 @@ ColumnLayout {
     }
 
     NToggle {
+      label: I18n.tr("settings.notifications.settings.enabled.label")
+      description: I18n.tr("settings.notifications.settings.enabled.description")
+      checked: Settings.data.notifications.enabled !== false
+      onToggled: checked => Settings.data.notifications.enabled = checked
+    }
+
+    NToggle {
       label: I18n.tr("settings.notifications.settings.do-not-disturb.label")
       description: I18n.tr("settings.notifications.settings.do-not-disturb.description")
       checked: Settings.data.notifications.doNotDisturb

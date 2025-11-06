@@ -1368,6 +1368,10 @@
           "description": "Bildirim arka planlarının opaklığını ayarlayın.",
           "label": "Arka plan opaklığı"
         },
+        "enabled": {
+          "description": "Bildirim arka plan programını etkinleştir veya devre dışı bırak, noctalia-shell'in yeniden başlatılmasını gerektirir.",
+          "label": "Bildirimleri etkinleştir"
+        },
         "do-not-disturb": {
           "description": "Etkinleştirildiğinde tüm bildirim açılır pencerelerini devre dışı bırakır.",
           "label": "Rahatsız etme"

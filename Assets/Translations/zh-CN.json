@@ -1368,6 +1368,10 @@
           "description": "调整通知背景的透明度。",
           "label": "背景透明度"
         },
+        "enabled": {
+          "description": "启用或禁用通知守护进程，需要重启 noctalia-shell。",
+          "label": "启用通知"
+        },
         "do-not-disturb": {
           "description": "启用后禁用所有通知弹出窗口。",
           "label": "勿扰模式"

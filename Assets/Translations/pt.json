@@ -1368,6 +1368,10 @@
           "description": "Ajustar a opacidade dos fundos das notificações.",
           "label": "Opacidade do fundo"
         },
+        "enabled": {
+          "description": "Ativar ou desativar o daemon de notificações, requer reiniciar o noctalia-shell.",
+          "label": "Ativar notificações"
+        },
         "do-not-disturb": {
           "description": "Desativa todos os pop-ups de notificação quando ativado.",
           "label": "Não perturbe"
