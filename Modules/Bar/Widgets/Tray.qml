@@ -187,6 +187,27 @@ Rectangle {
 
   Layout.alignment: Qt.AlignVCenter
 
+  // Right-click on tray widget to open drawer
+  MouseArea {
+    anchors.fill: parent
+    acceptedButtons: Qt.RightButton
+    propagateComposedEvents: true
+    onClicked: mouse => {
+                 if (root.drawerEnabled && dropdownItems.length > 0) {
+                   TooltipService.hideImmediately()
+                   const panel = PanelService.getPanel("trayDrawerPanel", root.screen)
+                   if (panel) {
+                     panel.widgetSection = root.section
+                     panel.widgetIndex = root.sectionWidgetIndex
+                     // Open drawer at the click position or center of tray
+                     panel.toggle(dropdownButton)
+                   }
+                 } else {
+                   mouse.accepted = false
+                 }
+               }
+  }
+
   Flow {
     id: trayFlow
     anchors.centerIn: parent
