@@ -161,15 +161,15 @@ NBox {
             tooltipText: root.tooltipText
             text: {
               if (modelData.pairing) {
-                return "Pairing..."
+                return I18n.tr("bluetooth.panel.pairing")
               }
               if (modelData.blocked) {
-                return "Blocked"
+                return I18n.tr("bluetooth.panel.blocked")
               }
               if (modelData.connected) {
-                return "Disconnect"
+                return I18n.tr("bluetooth.panel.disconnect")
               }
-              return "Connect"
+              return I18n.tr("bluetooth.panel.connect")
             }
             icon: (isBusy ? "busy" : null)
             onClicked: {

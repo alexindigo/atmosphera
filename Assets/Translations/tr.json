@@ -330,7 +330,11 @@
       "known-devices": "Bilinen cihazlar",
       "pairing-mode": "Cihazınızın eşleştirme modunda olduğundan emin olun.",
       "scanning": "Cihazlar tarınıyor...",
-      "title": "Bluetooth"
+      "title": "Bluetooth",
+      "pairing": "Eşleştiriliyor...",
+      "blocked": "Engellendi",
+      "disconnect": "Bağlantıyı Kes",
+      "connect": "Bağlan"
     }
   },
   "calendar": {
