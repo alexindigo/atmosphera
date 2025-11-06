@@ -17,9 +17,6 @@ ShapePath {
   // Required reference to AllBackgrounds shapeContainer
   required property var shapeContainer
 
-  // Required reference to the bar
-  required property var bar
-
   // Corner configuration
   readonly property color cornerColor: Settings.data.general.forceBlackScreenCorners ? Color.black : Color.mSurface
   readonly property real cornerRadius: Style.screenRadius

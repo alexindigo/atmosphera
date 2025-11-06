@@ -141,19 +141,12 @@ Item {
       shapeContainer: backgroundsShape
     }
 
-    // // Tray Dropdown
-    // PanelBackground {
-    //   panel: root.windowRoot.trayDropdownPanel
-    //   shapeContainer: backgroundsShape
-    // }
-
 
     /**
      *  Screen Corners
      */
     ScreenCornersBackground {
       shapeContainer: backgroundsShape
-      bar: root.bar
     }
   }
 
