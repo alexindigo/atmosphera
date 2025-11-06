@@ -101,6 +101,7 @@ While all donations are greatly appreciated, they are completely voluntary.
 * Nyxion ツ
 * MrDowntempo
 * Tempus Thales
+* Raine
 
 ---
 
