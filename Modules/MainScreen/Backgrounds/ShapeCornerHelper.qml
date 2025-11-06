@@ -2,6 +2,7 @@ pragma Singleton
 
 import QtQuick
 import QtQuick.Shapes
+import Quickshell
 
 
 /**
@@ -16,7 +17,7 @@ import QtQuick.Shapes
  * The key technique: Using PathArc direction control (Clockwise vs Counterclockwise)
  * combined with multipliers to create both inner and outer corner curves.
  */
-QtObject {
+Singleton {
   id: root
 
 
@@ -55,24 +56,6 @@ QtObject {
     const multX = getMultX(cornerState)
     const multY = getMultY(cornerState)
     return getArcDirection(multX, multY)
-  }
-
-
-  /**
-   * Calculate the starting X position for a shape, accounting for top-left corner
-   * This is used to set ShapePath's startX position
-   */
-  function getStartX(x, radius, topLeftState) {
-    return x + radius * getMultX(topLeftState)
-  }
-
-
-  /**
-   * Calculate the starting Y position for a shape
-   * In most cases this is just the y position, but can be adjusted for special cases
-   */
-  function getStartY(y) {
-    return y
   }
 
 

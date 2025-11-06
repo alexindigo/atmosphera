@@ -146,6 +146,15 @@ Item {
     //   panel: root.windowRoot.trayDropdownPanel
     //   shapeContainer: backgroundsShape
     // }
+
+
+    /**
+     *  Screen Corners
+     */
+    ScreenCornersBackground {
+      shapeContainer: backgroundsShape
+      bar: root.bar
+    }
   }
 
   // Unified shadow system  (one MultiEffect for all backgrounds)

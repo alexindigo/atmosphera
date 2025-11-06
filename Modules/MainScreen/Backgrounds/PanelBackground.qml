@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Shapes
 import qs.Commons
+import qs.Modules.MainScreen.Backgrounds
 
 
 /**
@@ -38,19 +39,10 @@ ShapePath {
   readonly property real panelHeight: panelBg ? panelBg.height : 0
 
   // Flatten corners if panel is too small
-  readonly property bool shouldFlatten: panelBg ? (panelWidth < radius * 2 || panelHeight < radius * 2) : false
-  readonly property real effectiveRadius: shouldFlatten ? Math.min(panelWidth / 2, panelHeight / 2) : radius
+  readonly property bool shouldFlatten: panelBg ? ShapeCornerHelper.shouldFlatten(panelWidth, panelHeight, radius) : false
+  readonly property real effectiveRadius: shouldFlatten ? ShapeCornerHelper.getFlattenedRadius(Math.min(panelWidth, panelHeight), radius) : radius
 
-  // Helper functions (inlined from ShapeCornerHelper)
-  function getMultX(cornerState) {
-    return cornerState === 1 ? -1 : 1
-  }
-  function getMultY(cornerState) {
-    return cornerState === 2 ? -1 : 1
-  }
-  function getArcDirection(multX, multY) {
-    return ((multX < 0) !== (multY < 0)) ? PathArc.Counterclockwise : PathArc.Clockwise
-  }
+  // Helper function for getting corner radius based on state
   function getCornerRadius(cornerState) {
     // State -1 = no radius (flat corner)
     if (cornerState === -1)
@@ -60,20 +52,20 @@ ShapePath {
   }
 
   // Per-corner multipliers and radii based on panelBg's corner states
-  readonly property real tlMultX: panelBg ? getMultX(panelBg.topLeftCornerState) : 1
-  readonly property real tlMultY: panelBg ? getMultY(panelBg.topLeftCornerState) : 1
+  readonly property real tlMultX: panelBg ? ShapeCornerHelper.getMultX(panelBg.topLeftCornerState) : 1
+  readonly property real tlMultY: panelBg ? ShapeCornerHelper.getMultY(panelBg.topLeftCornerState) : 1
   readonly property real tlRadius: panelBg ? getCornerRadius(panelBg.topLeftCornerState) : 0
 
-  readonly property real trMultX: panelBg ? getMultX(panelBg.topRightCornerState) : 1
-  readonly property real trMultY: panelBg ? getMultY(panelBg.topRightCornerState) : 1
+  readonly property real trMultX: panelBg ? ShapeCornerHelper.getMultX(panelBg.topRightCornerState) : 1
+  readonly property real trMultY: panelBg ? ShapeCornerHelper.getMultY(panelBg.topRightCornerState) : 1
   readonly property real trRadius: panelBg ? getCornerRadius(panelBg.topRightCornerState) : 0
 
-  readonly property real brMultX: panelBg ? getMultX(panelBg.bottomRightCornerState) : 1
-  readonly property real brMultY: panelBg ? getMultY(panelBg.bottomRightCornerState) : 1
+  readonly property real brMultX: panelBg ? ShapeCornerHelper.getMultX(panelBg.bottomRightCornerState) : 1
+  readonly property real brMultY: panelBg ? ShapeCornerHelper.getMultY(panelBg.bottomRightCornerState) : 1
   readonly property real brRadius: panelBg ? getCornerRadius(panelBg.bottomRightCornerState) : 0
 
-  readonly property real blMultX: panelBg ? getMultX(panelBg.bottomLeftCornerState) : 1
-  readonly property real blMultY: panelBg ? getMultY(panelBg.bottomLeftCornerState) : 1
+  readonly property real blMultX: panelBg ? ShapeCornerHelper.getMultX(panelBg.bottomLeftCornerState) : 1
+  readonly property real blMultY: panelBg ? ShapeCornerHelper.getMultY(panelBg.bottomLeftCornerState) : 1
   readonly property real blRadius: panelBg ? getCornerRadius(panelBg.bottomLeftCornerState) : 0
 
   // DEBUG: Log panel state changes
@@ -124,7 +116,7 @@ ShapePath {
     relativeY: root.trRadius * root.trMultY
     radiusX: root.trRadius
     radiusY: root.trRadius
-    direction: root.getArcDirection(root.trMultX, root.trMultY)
+    direction: ShapeCornerHelper.getArcDirection(root.trMultX, root.trMultY)
   }
 
   // Right edge (moving down)
@@ -139,7 +131,7 @@ ShapePath {
     relativeY: root.brRadius * root.brMultY
     radiusX: root.brRadius
     radiusY: root.brRadius
-    direction: root.getArcDirection(root.brMultX, root.brMultY)
+    direction: ShapeCornerHelper.getArcDirection(root.brMultX, root.brMultY)
   }
 
   // Bottom edge (moving left)
@@ -154,7 +146,7 @@ ShapePath {
     relativeY: -root.blRadius * root.blMultY
     radiusX: root.blRadius
     radiusY: root.blRadius
-    direction: root.getArcDirection(root.blMultX, root.blMultY)
+    direction: ShapeCornerHelper.getArcDirection(root.blMultX, root.blMultY)
   }
 
   // Left edge (moving up) - closes the path back to start
@@ -169,6 +161,6 @@ ShapePath {
     relativeY: -root.tlRadius * root.tlMultY
     radiusX: root.tlRadius
     radiusY: root.tlRadius
-    direction: root.getArcDirection(root.tlMultX, root.tlMultY)
+    direction: ShapeCornerHelper.getArcDirection(root.tlMultX, root.tlMultY)
   }
 }
