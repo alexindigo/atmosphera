@@ -14,6 +14,7 @@ ColumnLayout {
   property var widgetMetadata: null
 
   // Local, editable state for checkboxes
+  property bool valueUsePrimaryColor: widgetData.usePrimaryColor !== undefined ? widgetData.usePrimaryColor : widgetMetadata.usePrimaryColor
   property bool valueShowCpuUsage: widgetData.showCpuUsage !== undefined ? widgetData.showCpuUsage : widgetMetadata.showCpuUsage
   property bool valueShowCpuTemp: widgetData.showCpuTemp !== undefined ? widgetData.showCpuTemp : widgetMetadata.showCpuTemp
   property bool valueShowMemoryUsage: widgetData.showMemoryUsage !== undefined ? widgetData.showMemoryUsage : widgetMetadata.showMemoryUsage
@@ -23,6 +24,7 @@ ColumnLayout {
 
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {})
+    settings.usePrimaryColor = valueUsePrimaryColor
     settings.showCpuUsage = valueShowCpuUsage
     settings.showCpuTemp = valueShowCpuTemp
     settings.showMemoryUsage = valueShowMemoryUsage
@@ -30,6 +32,14 @@ ColumnLayout {
     settings.showNetworkStats = valueShowNetworkStats
     settings.showDiskUsage = valueShowDiskUsage
     return settings
+  }
+
+  NToggle {
+    Layout.fillWidth: true
+    label: I18n.tr("bar.widget-settings.clock.use-primary-color.label")
+    description: I18n.tr("bar.widget-settings.clock.use-primary-color.description")
+    checked: valueUsePrimaryColor
+    onToggled: checked => valueUsePrimaryColor = checked
   }
 
   NToggle {
