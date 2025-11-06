@@ -324,17 +324,17 @@
   "bluetooth": {
     "panel": {
       "available-devices": "Available devices",
+      "blocked": "Blocked",
+      "connect": "Connect",
       "connected-devices": "Connected devices",
       "disabled": "Bluetooth is disabled",
+      "disconnect": "Disconnect",
       "enable-message": "Enable Bluetooth to see available devices.",
       "known-devices": "Known devices",
+      "pairing": "Pairing...",
       "pairing-mode": "Make sure your device is in pairing mode.",
       "scanning": "Scanning for devices...",
-      "title": "Bluetooth",
-      "pairing": "Pairing...",
-      "blocked": "Blocked",
-      "disconnect": "Disconnect",
-      "connect": "Connect"
+      "title": "Bluetooth"
     }
   },
   "calendar": {
@@ -771,14 +771,14 @@
       },
       "title": "Bar",
       "tray": {
+        "back": "Back",
         "blacklist": {
           "description": "Add tray exclusion rules, supports wildcards (*).",
           "label": "Blacklist",
           "placeholder": "e.g., nm-applet, Fcitx*"
         },
         "pin-application": "Pin Application",
-        "unpin-application": "Unpin Application",
-        "back": "Back"
+        "unpin-application": "Unpin Application"
       },
       "widgets": {
         "section": {

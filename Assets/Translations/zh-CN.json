@@ -324,17 +324,17 @@
   "bluetooth": {
     "panel": {
       "available-devices": "可用设备",
+      "blocked": "已阻止",
+      "connect": "连接",
       "connected-devices": "已连接设备",
       "disabled": "蓝牙已禁用",
+      "disconnect": "断开",
       "enable-message": "启用蓝牙以查看可用设备。",
       "known-devices": "已知设备",
+      "pairing": "配对...",
       "pairing-mode": "确保您的设备处于配对模式。",
       "scanning": "正在扫描设备...",
-      "title": "蓝牙",
-      "pairing": "配对...",
-      "blocked": "已阻止",
-      "disconnect": "断开",
-      "connect": "连接"
+      "title": "蓝牙"
     }
   },
   "calendar": {
@@ -771,14 +771,14 @@
       },
       "title": "状态栏",
       "tray": {
+        "back": "返回",
         "blacklist": {
           "description": "添加托盘排除规则，支持通配符 (*)。",
           "label": "黑名单",
           "placeholder": "例如：nm-applet, Fcitx*"
         },
         "pin-application": "固定应用程序",
-        "unpin-application": "取消固定应用程序",
-        "back": "返回"
+        "unpin-application": "取消固定应用程序"
       },
       "widgets": {
         "section": {

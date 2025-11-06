@@ -324,17 +324,17 @@
   "bluetooth": {
     "panel": {
       "available-devices": "Appareils disponibles",
+      "blocked": "Bloqué",
+      "connect": "Connecter",
       "connected-devices": "Appareils connectés",
       "disabled": "Le Bluetooth est désactivé",
+      "disconnect": "Déconnecter",
       "enable-message": "Activez le Bluetooth pour voir les appareils disponibles.",
       "known-devices": "Appareils connus",
+      "pairing": "Appairage...",
       "pairing-mode": "Assurez-vous que votre appareil est en mode d'appairage.",
       "scanning": "Recherche d'appareils en cours...",
-      "title": "Bluetooth",
-      "pairing": "Appairage...",
-      "blocked": "Bloqué",
-      "disconnect": "Déconnecter",
-      "connect": "Connecter"
+      "title": "Bluetooth"
     }
   },
   "calendar": {
@@ -771,14 +771,14 @@
       },
       "title": "Barre",
       "tray": {
+        "back": "Retour",
         "blacklist": {
           "description": "Ajouter des règles d'exclusion pour la boîte à miniatures, prend en charge les caractères génériques (*).",
           "label": "Liste noire",
           "placeholder": "ex: nm-applet, Fcitx*"
         },
         "pin-application": "Épingler l'Application",
-        "unpin-application": "Désépingler l'Application",
-        "back": "Retour"
+        "unpin-application": "Désépingler l'Application"
       },
       "widgets": {
         "section": {

@@ -324,17 +324,17 @@
   "bluetooth": {
     "panel": {
       "available-devices": "Mevcut cihazlar",
+      "blocked": "Engellendi",
+      "connect": "Bağlan",
       "connected-devices": "Bağlı cihazlar",
       "disabled": "Bluetooth devre dışı",
+      "disconnect": "Bağlantıyı Kes",
       "enable-message": "Mevcut cihazları görmek için Bluetooth'u etkinleştirin.",
       "known-devices": "Bilinen cihazlar",
+      "pairing": "Eşleştiriliyor...",
       "pairing-mode": "Cihazınızın eşleştirme modunda olduğundan emin olun.",
       "scanning": "Cihazlar tarınıyor...",
-      "title": "Bluetooth",
-      "pairing": "Eşleştiriliyor...",
-      "blocked": "Engellendi",
-      "disconnect": "Bağlantıyı Kes",
-      "connect": "Bağlan"
+      "title": "Bluetooth"
     }
   },
   "calendar": {
@@ -771,14 +771,14 @@
       },
       "title": "Bar",
       "tray": {
+        "back": "Geri",
         "blacklist": {
           "description": "Tepsi hariç tutma kuralları ekleyin, joker karakterleri destekler (*).",
           "label": "Kara liste",
           "placeholder": "örn., nm-applet, Fcitx*"
         },
         "pin-application": "Uygulamayı Sabitle",
-        "unpin-application": "Sabitlemeyi Kaldır",
-        "back": "Geri"
+        "unpin-application": "Sabitlemeyi Kaldır"
       },
       "widgets": {
         "section": {
