@@ -57,8 +57,8 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL
-    Layout.bottomMargin: Style.marginXL
+    Layout.topMargin: Style.marginL
+    Layout.bottomMargin: Style.marginL
   }
 
   // Weather section
@@ -97,8 +97,8 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL
-    Layout.bottomMargin: Style.marginXL
+    Layout.topMargin: Style.marginL
+    Layout.bottomMargin: Style.marginL
   }
 
   // Date & time section
@@ -166,7 +166,7 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL
-    Layout.bottomMargin: Style.marginXL
+    Layout.topMargin: Style.marginL
+    Layout.bottomMargin: Style.marginL
   }
 }

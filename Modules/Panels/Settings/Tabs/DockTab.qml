@@ -137,8 +137,8 @@ ColumnLayout {
   NDivider {
     visible: Settings.data.dock.enabled
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL
-    Layout.bottomMargin: Style.marginXL
+    Layout.topMargin: Style.marginL
+    Layout.bottomMargin: Style.marginL
   }
 
   // Monitor Configuration
@@ -181,7 +181,7 @@ ColumnLayout {
   NDivider {
     visible: Settings.data.dock.enabled
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL
-    Layout.bottomMargin: Style.marginXL
+    Layout.topMargin: Style.marginL
+    Layout.bottomMargin: Style.marginL
   }
 }

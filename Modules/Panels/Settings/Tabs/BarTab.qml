@@ -199,8 +199,8 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL
-    Layout.bottomMargin: Style.marginXL
+    Layout.topMargin: Style.marginL
+    Layout.bottomMargin: Style.marginL
   }
 
   // Widgets Management Section
@@ -275,8 +275,8 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL
-    Layout.bottomMargin: Style.marginXL
+    Layout.topMargin: Style.marginL
+    Layout.bottomMargin: Style.marginL
   }
 
   // Monitor Configuration
@@ -317,8 +317,8 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL
-    Layout.bottomMargin: Style.marginXL
+    Layout.topMargin: Style.marginL
+    Layout.bottomMargin: Style.marginL
   }
 
   // Signal functions

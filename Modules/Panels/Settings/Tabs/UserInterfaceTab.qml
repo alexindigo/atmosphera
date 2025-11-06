@@ -112,13 +112,6 @@ ColumnLayout {
       }
     }
 
-    NToggle {
-      label: I18n.tr("settings.user-interface.panels-overlay.label")
-      description: I18n.tr("settings.user-interface.panels-overlay.description")
-      checked: Settings.data.ui.panelsOverlayLayer
-      onToggled: checked => Settings.data.ui.panelsOverlayLayer = checked
-    }
-
     NDivider {
       Layout.fillWidth: true
       Layout.topMargin: Style.marginL
@@ -262,8 +255,8 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL
-    Layout.bottomMargin: Style.marginXL
+    Layout.topMargin: Style.marginL
+    Layout.bottomMargin: Style.marginL
   }
 
   // Dock
@@ -333,7 +326,7 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginXL
-    Layout.bottomMargin: Style.marginXL
+    Layout.topMargin: Style.marginL
+    Layout.bottomMargin: Style.marginL
   }
 }

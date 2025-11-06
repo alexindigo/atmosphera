@@ -214,7 +214,6 @@ Singleton {
       property real fontFixedScale: 1.0
       property bool tooltipsEnabled: true
       property bool panelsAttachedToBar: true
-      property bool panelsOverlayLayer: false
     }
 
     // location
@@ -529,18 +528,6 @@ Singleton {
       Logger.w("Settings", "BarWidgetRegistry not ready, deferring upgrade")
       Qt.callLater(upgradeSettingsData)
       return
-    }
-
-    // TEMP - disable Open panels on overlay which used to be true by default.
-    if (adapter.settingsVersion < 18) {
-      try {
-        if (adapter.ui.panelsOverlayLayer) {
-          adapter.ui.panelsOverlayLayer = false
-          Logger.i("Settings", "Upgraded panelsOverlayLayer to false by default")
-        }
-      } catch (e) {
-
-      }
     }
 
     const sections = ["left", "center", "right"]

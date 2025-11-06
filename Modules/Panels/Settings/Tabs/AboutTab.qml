@@ -135,7 +135,7 @@ ColumnLayout {
   NDivider {
     Layout.fillWidth: true
     Layout.topMargin: Style.marginXXXL
-    Layout.bottomMargin: Style.marginXL
+    Layout.bottomMargin: Style.marginL
   }
 
   // Contributors
