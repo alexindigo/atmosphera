@@ -23,7 +23,7 @@ NPanel {
   property int widgetIndex: -1
 
   // Internal
-  readonly property int menuWidth: 240
+  readonly property int menuWidth: 280
   preferredWidth: menuWidth
   // Height is content-driven via panelContent
 
@@ -38,12 +38,11 @@ NPanel {
     // Track currently open submenu
     property var activeSubMenu: null
     property var activeSubMenuEntry: null
-    property bool subMenuOpenLeft: false
-    // If true, show submenu in place (replace main menu) instead of side-by-side
+    // Only show submenu in place (replace main menu)
     property bool inPlaceSubmenu: true
 
     // Let NPanel size to our content
-    readonly property real contentPreferredWidth: root.menuWidth + ((activeSubMenu && !inPlaceSubmenu) ? root.menuWidth : 0)
+    readonly property real contentPreferredWidth: root.menuWidth
     readonly property real contentPreferredHeight: {
       // If showing submenu in-place, size to the submenu's flickable content height
       if (activeSubMenu && inPlaceSubmenu) {
@@ -53,13 +52,7 @@ NPanel {
       }
 
       const mainHeight = mainFlickable.contentHeight
-      let subHeight = 0
-      if (activeSubMenu && !inPlaceSubmenu) {
-        const subLoader = subMenuOpenLeft ? leftSubMenuLoader : rightSubMenuLoader
-        const subFlickable = subLoader.item?.children[1] // Flickable is the second child (after MouseArea)
-        subHeight = subFlickable?.contentHeight || 0
-      }
-      return Math.min(root.screen ? root.screen.height * 0.9 : Screen.height * 0.9, Math.max(mainHeight, subHeight) + (Style.marginS * 2))
+      return Math.min(root.screen ? root.screen.height * 0.9 : Screen.height * 0.9, mainHeight + (Style.marginS * 2))
     }
 
     // Expose mask region for click-through
@@ -80,7 +73,6 @@ NPanel {
       menu: root.menu
     }
 
-    // Submenu component (reusable for left/right placement)
     Component {
       id: subMenuComponent
 
@@ -152,7 +144,12 @@ NPanel {
               color: Color.transparent
 
               Rectangle {
-                anchors.fill: parent
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                anchors.topMargin: 0
+                anchors.bottomMargin: 0
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: parent.width - (Style.marginM * 2)
                 color: backMouseArea.containsMouse ? Color.mHover : Color.transparent
                 radius: Style.radiusS
 
@@ -231,7 +228,12 @@ NPanel {
                 }
 
                 Rectangle {
-                  anchors.fill: parent
+                  anchors.top: parent.top
+                  anchors.bottom: parent.bottom
+                  anchors.topMargin: 0
+                  anchors.bottomMargin: 0
+                  anchors.horizontalCenter: parent.horizontalCenter
+                  width: parent.width - (Style.marginM * 2)
                   color: subMouseArea.containsMouse ? Color.mHover : Color.transparent
                   radius: Style.radiusS
                   visible: !(modelData?.isSeparator ?? false)
@@ -265,6 +267,7 @@ NPanel {
                       applyUiScale: false
                       verticalAlignment: Text.AlignVCenter
                       visible: modelData?.hasChildren ?? false
+                      Layout.rightMargin: Style.marginL
                       color: (subMouseArea.containsMouse ? Color.mOnHover : Color.mOnSurface)
                     }
                   }
@@ -306,21 +309,12 @@ NPanel {
       }
     }
 
-    // Main menu and submenu side by side
+    // Main menu and in-place submenu
     RowLayout {
       id: rowLayout
       anchors.fill: background
       anchors.margins: Style.marginS
       spacing: 0
-
-      // Submenu on the left (when subMenuOpenLeft is true and not replacing)
-      Loader {
-        id: leftSubMenuLoader
-        Layout.preferredWidth: (content.activeSubMenu && content.subMenuOpenLeft && !content.inPlaceSubmenu) ? root.menuWidth : 0
-        Layout.fillHeight: true
-        visible: content.activeSubMenu !== null && content.subMenuOpenLeft && !content.inPlaceSubmenu
-        sourceComponent: subMenuComponent
-      }
 
       // Submenu replacing main menu (in-place)
       Loader {
@@ -365,12 +359,17 @@ NPanel {
 
               NDivider {
                 anchors.centerIn: parent
-                width: parent.width - (Style.marginM * 2)
+                width: parent.width - Style.marginL
                 visible: modelData?.isSeparator ?? false
               }
 
               Rectangle {
-                anchors.fill: parent
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                anchors.topMargin: 0
+                anchors.bottomMargin: 0
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: parent.width - (Style.marginM * 2)
                 color: mouseArea.containsMouse ? Color.mHover : Color.transparent
                 radius: Style.radiusS
                 visible: !(modelData?.isSeparator ?? false)
@@ -405,6 +404,7 @@ NPanel {
                     applyUiScale: false
                     verticalAlignment: Text.AlignVCenter
                     visible: modelData?.hasChildren ?? false
+                    Layout.rightMargin: Style.marginS
                     color: (mouseArea.containsMouse ? Color.mOnHover : Color.mOnSurface)
                   }
                 }
@@ -445,21 +445,7 @@ NPanel {
                   }
 
                   onExited: {
-                    if (content.inPlaceSubmenu)
-                      return
-                    // Don't close immediately - let submenu handle its own hover
-                    Qt.callLater(() => {
-                                   // Only close if mouse is not in submenu area
-                                   if (content.activeSubMenuEntry === entry) {
-                                     const subMenuLoader = content.subMenuOpenLeft ? leftSubMenuLoader : rightSubMenuLoader
-                                     // The MouseArea is the first child of the Item (subMenuContainer)
-                                     const subMenuMouseArea = subMenuLoader.item?.children[0]
-                                     if (!subMenuMouseArea || !subMenuMouseArea.containsMouse) {
-                                       content.activeSubMenu = null
-                                       content.activeSubMenuEntry = null
-                                     }
-                                   }
-                                 })
+
                   }
                 }
               }
@@ -474,7 +460,7 @@ NPanel {
 
             NDivider {
               anchors.centerIn: parent
-              width: parent.width - (Style.marginM * 2)
+              width: parent.width - Style.marginL
               visible: parent.visible
             }
           }
@@ -507,7 +493,12 @@ NPanel {
             }
 
             Rectangle {
-              anchors.fill: parent
+              anchors.top: parent.top
+              anchors.bottom: parent.bottom
+              anchors.topMargin: 0
+              anchors.bottomMargin: 0
+              anchors.horizontalCenter: parent.horizontalCenter
+              width: parent.width - (Style.marginM * 2)
               color: addToFavoriteMouseArea.containsMouse ? Qt.alpha(Color.mPrimary, 0.2) : Qt.alpha(Color.mPrimary, 0.08)
               radius: Style.radiusS
               border.color: Qt.alpha(Color.mPrimary, addToFavoriteMouseArea.containsMouse ? 0.4 : 0.2)
@@ -555,15 +546,6 @@ NPanel {
             }
           }
         }
-      }
-
-      // Submenu on the right (when subMenuOpenLeft is false and not replacing)
-      Loader {
-        id: rightSubMenuLoader
-        Layout.preferredWidth: (content.activeSubMenu && !content.subMenuOpenLeft && !content.inPlaceSubmenu) ? root.menuWidth : 0
-        Layout.fillHeight: true
-        visible: content.activeSubMenu !== null && !content.subMenuOpenLeft && !content.inPlaceSubmenu
-        sourceComponent: subMenuComponent
       }
     }
 
