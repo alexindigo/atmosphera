@@ -35,7 +35,8 @@ Rectangle {
   readonly property string barPosition: Settings.data.bar.position
   readonly property bool isVertical: barPosition === "left" || barPosition === "right"
   readonly property bool density: Settings.data.bar.density
-  property real itemSize: Math.round(Style.capsuleHeight * 0.65)
+  readonly property real iconSize: Math.round(Style.capsuleHeight * 0.65)
+
   property list<string> blacklist: widgetSettings.blacklist || widgetMetadata.blacklist || [] // Read from settings
   property list<string> favorites: widgetSettings.favorites || widgetMetadata.favorites || [] // Pinned items (shown inline)
   property bool drawerEnabled: widgetSettings.drawerEnabled !== undefined ? widgetSettings.drawerEnabled : (widgetMetadata.drawerEnabled !== undefined ? widgetMetadata.drawerEnabled : true) // Enable drawer panel
@@ -194,8 +195,7 @@ Rectangle {
 
   Flow {
     id: trayFlow
-    anchors.centerIn: parent
-    spacing: Style.marginM
+    spacing: Style.marginXS
     flow: isVertical ? Flow.TopToBottom : Flow.LeftToRight
 
     Repeater {
@@ -203,14 +203,15 @@ Rectangle {
       model: root.filteredItems
 
       delegate: Item {
-        width: itemSize
-        height: itemSize
+        width: Style.capsuleHeight
+        height: Style.capsuleHeight
         visible: modelData
 
         IconImage {
           id: trayIcon
-
-          anchors.fill: parent
+          width: iconSize
+          height: iconSize
+          anchors.centerIn: parent
           asynchronous: true
           backer.fillMode: Image.PreserveAspectFit
           source: {
