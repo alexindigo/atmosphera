@@ -95,13 +95,13 @@ Variants {
       property var animateConnection: null
 
       Component.onCompleted: {
-        animateConnection = NotificationService.animateAndRemove.connect(function (notificationId) {
+        animateConnection = function (notificationId) {
           var delegate = null
-          if (notificationStack?.children) {
-            for (var i = 0; i < notificationStack.children.length; i++) {
-              var child = notificationStack.children[i]
-              if (child?.notificationId === notificationId) {
-                delegate = child
+          if (notificationRepeater) {
+            for (var i = 0; i < notificationRepeater.count; i++) {
+              var item = notificationRepeater.itemAt(i)
+              if (item?.notificationId === notificationId) {
+                delegate = item
                 break
               }
             }
@@ -112,7 +112,9 @@ Variants {
           } else {
             NotificationService.dismissActiveNotification(notificationId)
           }
-        })
+        }
+
+        NotificationService.animateAndRemove.connect(animateConnection)
       }
 
       Component.onDestruction: {
@@ -147,6 +149,7 @@ Variants {
         }
 
         Repeater {
+          id: notificationRepeater
           model: notificationModel
 
           delegate: Item {
@@ -171,7 +174,9 @@ Variants {
 
             scale: scaleValue
             opacity: opacityValue
-            y: slideOffset
+            transform: Translate {
+              y: card.slideOffset
+            }
 
             readonly property real slideInOffset: notifWindow.isTop ? -slideDistance : slideDistance
             readonly property real slideOutOffset: slideInOffset
@@ -270,25 +275,37 @@ Variants {
             }
 
             // Animation setup
-            Component.onCompleted: {
+            function triggerEntryAnimation() {
+              animInDelayTimer.stop()
+              removalTimer.stop()
+              resumeTimer.stop()
+              isRemoving = false
+              hoverCount = 0
               if (Settings.data.general.animationDisabled) {
                 slideOffset = 0
                 scaleValue = 1.0
                 opacityValue = 1.0
-              } else {
-                slideOffset = slideInOffset
-                scaleValue = 0.8
-                opacityValue = 0.0
-                animInDelayTimer.interval = animationDelay
-                animInDelayTimer.start()
+                return
               }
+
+              slideOffset = slideInOffset
+              scaleValue = 0.8
+              opacityValue = 0.0
+              animInDelayTimer.interval = animationDelay
+              animInDelayTimer.start()
             }
+
+            Component.onCompleted: triggerEntryAnimation()
+
+            onNotificationIdChanged: triggerEntryAnimation()
 
             Timer {
               id: animInDelayTimer
               interval: 0
               repeat: false
               onTriggered: {
+                if (card.isRemoving)
+                  return
                 slideOffset = 0
                 scaleValue = 1.0
                 opacityValue = 1.0
@@ -298,6 +315,8 @@ Variants {
             function animateOut() {
               if (isRemoving)
                 return
+              animInDelayTimer.stop()
+              resumeTimer.stop()
               isRemoving = true
               if (!Settings.data.general.animationDisabled) {
                 slideOffset = slideOutOffset
@@ -339,7 +358,7 @@ Variants {
               }
             }
 
-            Behavior on y {
+            Behavior on slideOffset {
               enabled: !Settings.data.general.animationDisabled
               SpringAnimation {
                 spring: 2.5
