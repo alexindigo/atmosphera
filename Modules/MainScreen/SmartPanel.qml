@@ -506,7 +506,7 @@ Item {
   Behavior on opacity {
     NumberAnimation {
       id: opacityAnimation
-      duration: Style.animationFast
+      duration: isClosing ? Style.animationFaster : Style.animationFast
       easing.type: Easing.OutQuad
 
       onRunningChanged: {
@@ -634,7 +634,11 @@ Item {
       Behavior on width {
         NumberAnimation {
           id: widthAnimation
-          duration: root.barIsVertical ? Style.animationNormal : 0
+          duration: {
+            if (!root.barIsVertical)
+              return 0
+            return root.isClosing ? Style.animationFast : Style.animationNormal
+          }
           easing.type: Easing.BezierSpline
           easing.bezierCurve: panelBackground.bezierCurve
 
@@ -650,7 +654,11 @@ Item {
       Behavior on height {
         NumberAnimation {
           id: heightAnimation
-          duration: !root.barIsVertical ? Style.animationNormal : 0
+          duration: {
+            if (root.barIsVertical)
+              return 0
+            return root.isClosing ? Style.animationFast : Style.animationNormal
+          }
           easing.type: Easing.BezierSpline
           easing.bezierCurve: panelBackground.bezierCurve
 

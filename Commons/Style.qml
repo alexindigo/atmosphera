@@ -65,6 +65,7 @@ Singleton {
   property real shadowVerticalOffset: Settings.data.general.shadowOffsetY
 
   // Animation duration (ms)
+  property int animationFaster: Settings.data.general.animationDisabled ? 0 : Math.round(75 / Settings.data.general.animationSpeed)
   property int animationFast: Settings.data.general.animationDisabled ? 0 : Math.round(150 / Settings.data.general.animationSpeed)
   property int animationNormal: Settings.data.general.animationDisabled ? 0 : Math.round(300 / Settings.data.general.animationSpeed)
   property int animationSlow: Settings.data.general.animationDisabled ? 0 : Math.round(450 / Settings.data.general.animationSpeed)
