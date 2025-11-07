@@ -305,7 +305,7 @@ PanelWindow {
       }
     }
 
-    TrayDropdownPanel {
+    TrayDrawerPanel {
       id: trayDrawerPanel
       screen: root.screen
       z: 50
