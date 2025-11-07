@@ -49,19 +49,6 @@ SmartPanel {
       return Math.min(root.screen ? root.screen.height * 0.9 : Screen.height * 0.9, mainHeight + (Style.marginS * 2))
     }
 
-    // Expose mask region for click-through
-    property alias maskRegion: background
-
-    Rectangle {
-      id: background
-      x: 0
-      y: 0
-      width: content.contentPreferredWidth
-      height: content.contentPreferredHeight
-      color: Color.mSurface
-      radius: Style.radiusM
-    }
-
     QsMenuOpener {
       id: opener
       menu: root.menu
