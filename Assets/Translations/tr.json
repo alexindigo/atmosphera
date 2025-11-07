@@ -1511,6 +1511,10 @@
         "description": "Paneller çubuğa ve ekran kenarlarına kilitlenerek şık ters köşelerle kusursuz bir görünüm oluşturur.",
         "label": "Kenarları Yakala"
       },
+      "settings-panel-attached-to-bar": {
+        "description": "Ayarlar penceresini çubukla hizalayarak tutarlı bir görünüm sağlayın.",
+        "label": "Ayarlar penceresini çubuğa hizala"
+      },
       "panels-overlay": {
         "description": "Panellerin ve çubuğun, tam ekran uygulamalarda bile görünür kalmasını sağlar.",
         "label": "Panelleri ve Çubuğu Üstte Tut"

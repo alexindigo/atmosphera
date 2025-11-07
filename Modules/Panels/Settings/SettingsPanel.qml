@@ -14,9 +14,23 @@ SmartPanel {
 
   preferredWidth: 820 * Style.uiScaleRatio
   preferredHeight: 900 * Style.uiScaleRatio
+  readonly property bool attachToBar: Settings.data.ui.settingsPanelAttachToBar
+  readonly property string barPosition: Settings.data.bar.position
 
-  panelAnchorHorizontalCenter: true
-  panelAnchorVerticalCenter: true
+  forceAttachToBar: attachToBar
+
+  panelAnchorHorizontalCenter: attachToBar ? (barPosition === "top" || barPosition === "bottom") : true
+  panelAnchorVerticalCenter: attachToBar ? (barPosition === "left" || barPosition === "right") : true
+  panelAnchorTop: attachToBar && barPosition === "top"
+  panelAnchorBottom: attachToBar && barPosition === "bottom"
+  panelAnchorLeft: attachToBar && barPosition === "left"
+  panelAnchorRight: attachToBar && barPosition === "right"
+
+  onAttachToBarChanged: {
+    if (isPanelOpen) {
+      Qt.callLater(root.setPosition)
+    }
+  }
 
   // Tabs enumeration, order is NOT relevant
   enum Tab {

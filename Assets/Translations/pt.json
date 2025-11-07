@@ -1511,6 +1511,10 @@
         "description": "Os painéis travam na barra e nas bordas da tela, criando uma aparência perfeita com cantos invertidos elegantes.",
         "label": "Ajustar Painéis às Bordas"
       },
+      "settings-panel-attached-to-bar": {
+        "description": "Mantenha a janela de Configurações alinhada com a barra para um visual uniforme.",
+        "label": "Ajustar Configurações à barra"
+      },
       "panels-overlay": {
         "description": "Garante que os painéis e a barra permaneçam visíveis, mesmo sobre aplicativos em tela cheia.",
         "label": "Manter Painéis e Barra no Topo"

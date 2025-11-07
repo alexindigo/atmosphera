@@ -41,6 +41,14 @@ ColumnLayout {
     }
 
     NToggle {
+      label: I18n.tr("settings.user-interface.settings-panel-attached-to-bar.label")
+      description: I18n.tr("settings.user-interface.settings-panel-attached-to-bar.description")
+      checked: Settings.data.ui.settingsPanelAttachToBar
+      enabled: Settings.data.ui.panelsAttachedToBar
+      onToggled: checked => Settings.data.ui.settingsPanelAttachToBar = checked
+    }
+
+    NToggle {
       label: I18n.tr("settings.user-interface.shadows.label")
       description: I18n.tr("settings.user-interface.shadows.description")
       checked: Settings.data.general.enableShadows

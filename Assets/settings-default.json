@@ -1,5 +1,5 @@
 {
-  "settingsVersion": 19,
+  "settingsVersion": 20,
   "setupCompleted": false,
   "bar": {
     "position": "top",
@@ -81,7 +81,8 @@
     "fontDefaultScale": 1,
     "fontFixedScale": 1,
     "tooltipsEnabled": true,
-    "panelsAttachedToBar": true
+    "panelsAttachedToBar": true,
+    "settingsPanelAttachToBar": false
   },
   "location": {
     "name": "Tokyo",

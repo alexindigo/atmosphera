@@ -1511,6 +1511,10 @@
         "description": "Panels lock to the bar and screen edges, creating a seamless look with stylish inverted corners.",
         "label": "Snap panels to edges"
       },
+      "settings-panel-attached-to-bar": {
+        "description": "Keep the Settings window aligned with the bar for a unified look.",
+        "label": "Snap Settings window to bar"
+      },
       "panels-overlay": {
         "description": "Ensures panels and the bar remain visible, even over fullscreen applications.",
         "label": "Keep panels & bar on top"

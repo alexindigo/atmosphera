@@ -24,6 +24,7 @@ Item {
   property color panelBackgroundColor: Color.mSurface
   property color panelBorderColor: Color.mOutline
   property var buttonItem: null
+  property bool forceAttachToBar: false
 
   // Anchoring properties
   property bool panelAnchorHorizontalCenter: false
@@ -546,9 +547,9 @@ Item {
     anchors.fill: parent
 
     // Screen-dependent attachment properties
-    readonly property bool couldAttach: Settings.data.ui.panelsAttachedToBar
+    readonly property bool couldAttach: Settings.data.ui.panelsAttachedToBar || root.forceAttachToBar
     readonly property bool couldAttachToBar: {
-      if (!Settings.data.ui.panelsAttachedToBar || Settings.data.bar.backgroundOpacity < 1.0) {
+      if (!(Settings.data.ui.panelsAttachedToBar || root.forceAttachToBar) || Settings.data.bar.backgroundOpacity < 1.0) {
         return false
       }
 

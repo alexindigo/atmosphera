@@ -1511,6 +1511,10 @@
         "description": "面板锁定到边栏和屏幕边缘，形成无缝外观，并具有时尚的倒角。",
         "label": "将面板对齐到边缘"
       },
+      "settings-panel-attached-to-bar": {
+        "description": "使设置窗口与边栏保持对齐，实现统一的外观。",
+        "label": "将设置窗口贴合边栏"
+      },
       "panels-overlay": {
         "description": "确保面板和栏保持可见，即使在全屏应用程序上也是如此。",
         "label": "将面板和栏保持在顶部"

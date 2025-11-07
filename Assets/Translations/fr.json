@@ -1511,6 +1511,10 @@
         "description": "Les panneaux se verrouillent sur la barre et les bords de l'écran, créant un aspect homogène avec d'élégants coins inversés.",
         "label": "Aligner les panneaux aux bords"
       },
+      "settings-panel-attached-to-bar": {
+        "description": "Alignez la fenêtre des paramètres sur la barre pour un rendu cohérent.",
+        "label": "Aligner la fenêtre des paramètres sur la barre"
+      },
       "panels-overlay": {
         "description": "Garantit que les panneaux et la barre restent visibles, même au-dessus des applications en plein écran.",
         "label": "Garder les panneaux et la barre en haut."

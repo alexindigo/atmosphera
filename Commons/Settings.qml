@@ -14,7 +14,7 @@ Singleton {
   readonly property alias data: adapter
   property bool isLoaded: false
   property bool directoriesCreated: false
-  property int settingsVersion: 19
+  property int settingsVersion: 20
   property bool isDebug: Quickshell.env("NOCTALIA_DEBUG") === "1"
 
   // Define our app directories
@@ -214,6 +214,7 @@ Singleton {
       property real fontFixedScale: 1.0
       property bool tooltipsEnabled: true
       property bool panelsAttachedToBar: true
+      property bool settingsPanelAttachToBar: false
     }
 
     // location
