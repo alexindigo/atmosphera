@@ -492,7 +492,7 @@ SmartPanel {
                 spacing: Style.marginS
 
                 NIcon {
-                  icon: addToFavoriteEntry.isFavorite ? "star" : "star-off"
+                  icon: addToFavoriteEntry.isFavorite ? "unpin" : "pin"
                   pointSize: Style.fontSizeS
                   applyUiScale: false
                   verticalAlignment: Text.AlignVCenter
