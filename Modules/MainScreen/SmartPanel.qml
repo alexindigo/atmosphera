@@ -55,6 +55,11 @@ Item {
   // Track close animation state: fade opacity first, then shrink size
   property bool isClosing: false
   property bool opacityFadeComplete: false
+  property bool closeFinalized: false // Prevent double-finalization
+
+  // Safety: Watchdog timers to prevent stuck states
+  property bool closeWatchdogActive: false
+  property bool openWatchdogActive: false
 
   // Keyboard event handlers - override these in specific panels to handle shortcuts
   // These are called from MainScreen's centralized shortcuts
@@ -148,9 +153,16 @@ Item {
     // Start close sequence: fade opacity first
     isClosing = true
     sizeAnimationComplete = false
+    closeFinalized = false
 
     // Stop the open animation timer if it's still running
     opacityTrigger.stop()
+    openWatchdogActive = false
+    openWatchdogTimer.stop()
+
+    // Start close watchdog timer
+    closeWatchdogActive = true
+    closeWatchdogTimer.restart()
 
     // If opacity is already 0 (closed during open animation before fade-in),
     // skip directly to size animation
@@ -165,11 +177,21 @@ Item {
   }
 
   function finalizeClose() {
+    // Prevent double-finalization
+    if (root.closeFinalized) {
+      Logger.w("SmartPanel", "finalizeClose called but already finalized - ignoring", objectName)
+      return
+    }
+
     // Complete the close sequence after animations finish
-    isPanelVisible = false
-    isPanelOpen = false
-    isClosing = false
-    opacityFadeComplete = false
+    root.closeFinalized = true
+    root.closeWatchdogActive = false
+    closeWatchdogTimer.stop()
+
+    root.isPanelVisible = false
+    root.isPanelOpen = false
+    root.isClosing = false
+    root.opacityFadeComplete = false
     PanelService.closedPanel(root)
     closed()
 
@@ -530,22 +552,43 @@ Item {
   Behavior on opacity {
     NumberAnimation {
       id: opacityAnimation
-      duration: isClosing ? Style.animationFaster : Style.animationFast
+      duration: root.isClosing ? Style.animationFaster : Style.animationFast
       easing.type: Easing.OutQuad
 
       onRunningChanged: {
+        // Safety: If animation didn't run (zero duration), handle immediately
+        if (!running && duration === 0) {
+          if (root.isClosing && root.opacity === 0.0) {
+            root.opacityFadeComplete = true
+            var shouldFinalizeNow = panelContent.maskRegion && !panelContent.maskRegion.shouldAnimateWidth && !panelContent.maskRegion.shouldAnimateHeight
+            if (shouldFinalizeNow) {
+              Logger.d("SmartPanel", "Zero-duration opacity + no size animation - finalizing", root.objectName)
+              Qt.callLater(root.finalizeClose)
+            }
+          } else if (root.isPanelVisible && root.opacity === 1.0) {
+            // Open completed with zero duration
+            root.openWatchdogActive = false
+            openWatchdogTimer.stop()
+          }
+          return
+        }
+
         // When opacity fade completes during close, trigger size animation
-        if (!running && isClosing && root.opacity === 0.0) {
-          opacityFadeComplete = true
+        if (!running && root.isClosing && root.opacity === 0.0) {
+          root.opacityFadeComplete = true
           // If no size animation will run (centered attached panels only), finalize immediately
           // Detached panels (allowAttach === false) should always animate from top
           var shouldFinalizeNow = panelContent.maskRegion && !panelContent.maskRegion.shouldAnimateWidth && !panelContent.maskRegion.shouldAnimateHeight
           if (shouldFinalizeNow) {
-            Logger.d("SmartPanel", "No animation - finalizing immediately", objectName)
-            finalizeClose()
+            Logger.d("SmartPanel", "No animation - finalizing immediately", root.objectName)
+            Qt.callLater(root.finalizeClose)
           } else {
-            Logger.d("SmartPanel", "Animation will run - waiting for size animation", objectName, "shouldAnimateHeight:", panelContent.maskRegion.shouldAnimateHeight, "shouldAnimateWidth:", panelContent.maskRegion.shouldAnimateWidth)
+            Logger.d("SmartPanel", "Animation will run - waiting for size animation", root.objectName, "shouldAnimateHeight:", panelContent.maskRegion.shouldAnimateHeight, "shouldAnimateWidth:", panelContent.maskRegion.shouldAnimateWidth)
           }
+        } // When opacity fade completes during open, stop watchdog
+        else if (!running && root.isPanelVisible && root.opacity === 1.0) {
+          root.openWatchdogActive = false
+          openWatchdogTimer.stop()
         }
       }
     }
@@ -557,8 +600,40 @@ Item {
     interval: Style.animationNormal * 0.5
     repeat: false
     onTriggered: {
-      if (isPanelVisible) {
-        sizeAnimationComplete = true
+      if (root.isPanelVisible) {
+        root.sizeAnimationComplete = true
+      }
+    }
+  }
+
+  // Watchdog timer for open sequence (safety mechanism)
+  Timer {
+    id: openWatchdogTimer
+    interval: Style.animationNormal * 3 // 3x normal animation time
+    repeat: false
+    onTriggered: {
+      if (root.openWatchdogActive) {
+        Logger.w("SmartPanel", "Open watchdog timeout - forcing panel visible state", root.objectName)
+        root.openWatchdogActive = false
+        // Force completion of open sequence
+        if (root.isPanelOpen && !root.isPanelVisible) {
+          root.isPanelVisible = true
+          root.sizeAnimationComplete = true
+        }
+      }
+    }
+  }
+
+  // Watchdog timer for close sequence (safety mechanism)
+  Timer {
+    id: closeWatchdogTimer
+    interval: Style.animationFast * 3 // 3x fast animation time
+    repeat: false
+    onTriggered: {
+      if (root.closeWatchdogActive && !root.closeFinalized) {
+        Logger.w("SmartPanel", "Close watchdog timeout - forcing panel close", root.objectName)
+        // Force finalization
+        Qt.callLater(root.finalizeClose)
       }
     }
   }
@@ -804,9 +879,18 @@ Item {
           easing.bezierCurve: panelBackground.bezierCurve
 
           onRunningChanged: {
+            // Safety: Zero-duration animation handling
+            if (!running && duration === 0) {
+              if (root.isClosing && panelBackground.width === 0 && panelBackground.shouldAnimateWidth) {
+                Logger.d("SmartPanel", "Zero-duration width animation - finalizing", root.objectName)
+                Qt.callLater(root.finalizeClose)
+              }
+              return
+            }
+
             // When width shrink completes during close, finalize
-            if (!running && isClosing && panelBackground.width === 0 && panelBackground.shouldAnimateWidth) {
-              finalizeClose()
+            if (!running && root.isClosing && panelBackground.width === 0 && panelBackground.shouldAnimateWidth) {
+              Qt.callLater(root.finalizeClose)
             }
           }
         }
@@ -824,9 +908,18 @@ Item {
           easing.bezierCurve: panelBackground.bezierCurve
 
           onRunningChanged: {
+            // Safety: Zero-duration animation handling
+            if (!running && duration === 0) {
+              if (root.isClosing && panelBackground.height === 0 && panelBackground.shouldAnimateHeight) {
+                Logger.d("SmartPanel", "Zero-duration height animation - finalizing", root.objectName)
+                Qt.callLater(root.finalizeClose)
+              }
+              return
+            }
+
             // When height shrink completes during close, finalize
-            if (!running && isClosing && panelBackground.height === 0 && panelBackground.shouldAnimateHeight) {
-              finalizeClose()
+            if (!running && root.isClosing && panelBackground.height === 0 && panelBackground.shouldAnimateHeight) {
+              Qt.callLater(root.finalizeClose)
             }
           }
         }
@@ -950,8 +1043,13 @@ Item {
         // THEN make panel visible on the next frame to ensure all bindings have updated
         // Qt.callLater defers execution until all current bindings are evaluated
         Qt.callLater(function () {
-          isPanelVisible = true
+          root.isPanelVisible = true
           opacityTrigger.start()
+
+          // Start open watchdog timer
+          root.openWatchdogActive = true
+          openWatchdogTimer.start()
+
           opened()
         })
       }
