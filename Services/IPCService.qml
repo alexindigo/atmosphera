@@ -36,6 +36,16 @@ Item {
   }
 
   IpcHandler {
+    target: "calendar"
+    function toggle() {
+      root.withTargetScreen(screen => {
+                              var calendarPanel = PanelService.getPanel("calendarPanel", screen)
+                              calendarPanel.toggle(null, "Clock")
+                            })
+    }
+  }
+
+  IpcHandler {
     target: "notifications"
     function toggleHistory() {
       // Will attempt to open the panel next to the bar button if any.
