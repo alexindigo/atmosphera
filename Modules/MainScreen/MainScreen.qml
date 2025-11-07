@@ -378,6 +378,12 @@ PanelWindow {
         }
       }
     }
+
+
+    /**
+     *  Screen Corners
+     */
+    ScreenCorners {}
   }
 
   // Centralized keyboard shortcuts - delegate to opened panel

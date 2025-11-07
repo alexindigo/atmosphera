@@ -140,14 +140,6 @@ Item {
       panel: root.windowRoot.wifiPanel
       shapeContainer: backgroundsShape
     }
-
-
-    /**
-     *  Screen Corners
-     */
-    ScreenCornersBackground {
-      shapeContainer: backgroundsShape
-    }
   }
 
   NDropShadows {
