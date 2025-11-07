@@ -99,15 +99,15 @@ Singleton {
   property real capsuleHeight: {
     switch (Settings.data.bar.density) {
       case "mini":
-      return barHeight * 1.0
+      return Math.round(barHeight * 1.0)
       case "compact":
-      return barHeight * 0.85
+      return Math.round(barHeight * 0.85)
       case "comfortable":
-      return barHeight * 0.73
+      return Math.round(barHeight * 0.73)
       default:
 
       case "default":
-      return barHeight * 0.82
+      return Math.round(barHeight * 0.82)
     }
   }
 }
