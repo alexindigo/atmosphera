@@ -12,13 +12,13 @@ import qs.Modules.MainScreen
 SmartPanel {
   id: root
 
-  preferredWidth: 820 * Style.uiScaleRatio
-  preferredHeight: 900 * Style.uiScaleRatio
+  preferredWidth: Math.round(820 * Style.uiScaleRatio)
+  preferredHeight: Math.round(900 * Style.uiScaleRatio)
+
   readonly property bool attachToBar: Settings.data.ui.settingsPanelAttachToBar
   readonly property string barPosition: Settings.data.bar.position
 
   forceAttachToBar: attachToBar
-
   panelAnchorHorizontalCenter: attachToBar ? (barPosition === "top" || barPosition === "bottom") : true
   panelAnchorVerticalCenter: attachToBar ? (barPosition === "left" || barPosition === "right") : true
   panelAnchorTop: attachToBar && barPosition === "top"
