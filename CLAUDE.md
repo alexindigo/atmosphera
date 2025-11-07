@@ -218,13 +218,10 @@ All panels use z-index layering and component-based loading.
 
 ```bash
 # Run the shell (requires Quickshell to be installed)
-quickshell -p shell.qml
-
-# Or use the shorthand
 qs -p .
 
 # Run with verbose output for debugging
-qs -v -p shell.qml
+env NOCTALIA_DEBUG=1 qs -v -p .
 
 # Code formatting and linting
 qmlfmt -e -b 360 -t 2 -i 2 -w /path/to/file.qml    # Format a QML file (requires qmlfmt, do not use qmlformat)
