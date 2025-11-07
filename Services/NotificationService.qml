@@ -123,7 +123,7 @@ Singleton {
     const data = createData(notification)
     addToHistory(data)
 
-    if (Settings.data.notifications?.doNotDisturb)
+    if (Settings.data.notifications?.doNotDisturb || PowerProfileService.noctaliaPerformanceMode)
       return
 
     activeMap[data.id] = notification

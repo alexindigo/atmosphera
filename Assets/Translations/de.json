@@ -1511,10 +1511,6 @@
         "description": "Die Paneele rasten an der Stange und den Bildschirmrändern ein und sorgen so für ein nahtloses Erscheinungsbild mit stilvollen, umgekehrten Ecken.",
         "label": "Paneele an Kanten ausrichten"
       },
-      "settings-panel-attached-to-bar": {
-        "description": "Richten Sie das Einstellungsfenster an der Leiste aus, um ein einheitliches Erscheinungsbild zu erhalten.",
-        "label": "Einstellungsfenster an Leiste ausrichten"
-      },
       "panels-overlay": {
         "description": "Stellt sicher, dass Panels und die Leiste sichtbar bleiben, auch über Vollbildanwendungen.",
         "label": "Panels & Leiste oben behalten"
@@ -1527,6 +1523,10 @@
       "section": {
         "description": "Passen Sie das Aussehen, die Haptik und das Verhalten der Benutzeroberfläche an.",
         "label": "Aussehen"
+      },
+      "settings-panel-attached-to-bar": {
+        "description": "Richten Sie das Einstellungsfenster an der Leiste aus, um ein einheitliches Erscheinungsbild zu erhalten.",
+        "label": "Einstellungsfenster an Leiste ausrichten"
       },
       "shadows": {
         "description": "Aktiviert Schlagschatten unter Balken und Panels.",
@@ -1733,6 +1733,11 @@
       "forced": "Aktivierung erzwungen",
       "normal": "Normaler Modus",
       "not-installed": "wlsunset nicht installiert"
+    },
+    "noctalia-performance": {
+      "disabled": "Leistungsmodus deaktiviert",
+      "enabled": "Leistungsmodus aktiviert",
+      "label": "Noctalia-Aufführung"
     },
     "power-profile": {
       "changed": "Energieprofil geändert",

@@ -1511,10 +1511,6 @@
         "description": "面板锁定到边栏和屏幕边缘，形成无缝外观，并具有时尚的倒角。",
         "label": "将面板对齐到边缘"
       },
-      "settings-panel-attached-to-bar": {
-        "description": "使设置窗口与边栏保持对齐，实现统一的外观。",
-        "label": "将设置窗口贴合边栏"
-      },
       "panels-overlay": {
         "description": "确保面板和栏保持可见，即使在全屏应用程序上也是如此。",
         "label": "将面板和栏保持在顶部"
@@ -1527,6 +1523,10 @@
       "section": {
         "description": "自定义界面的外观、感觉和行为。",
         "label": "外观"
+      },
+      "settings-panel-attached-to-bar": {
+        "description": "使设置窗口与边栏保持对齐，实现统一的外观。",
+        "label": "将设置窗口贴合边栏"
       },
       "shadows": {
         "description": "启用条形图和面板下的阴影。",
@@ -1733,6 +1733,11 @@
       "forced": "强制激活",
       "normal": "正常模式",
       "not-installed": "未安装 wlsunset"
+    },
+    "noctalia-performance": {
+      "disabled": "性能模式已禁用",
+      "enabled": "已启用性能模式",
+      "label": "夜之颂演出"
     },
     "power-profile": {
       "changed": "电源模式已更改",
