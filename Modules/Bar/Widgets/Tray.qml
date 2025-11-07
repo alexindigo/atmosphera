@@ -214,6 +214,9 @@ Rectangle {
           anchors.centerIn: parent
           asynchronous: true
           backer.fillMode: Image.PreserveAspectFit
+
+          property bool menuJustOpened: false
+
           source: {
             let icon = modelData?.icon || ""
             if (!icon) {
@@ -280,6 +283,8 @@ Rectangle {
                                panel.widgetSection = root.section
                                panel.widgetIndex = root.sectionWidgetIndex
                                panel.openAt(parent)
+                               // Prevent onEntered from immediately closing the panel
+                               trayIcon.menuJustOpened = true
                              } else {
                                Logger.i("Tray", "TrayMenu not available")
                              }
@@ -289,7 +294,15 @@ Rectangle {
                          }
                        }
             onEntered: {
-              PanelService.getPanel("trayMenuPanel", root.screen)?.close()
+              // Don't close menu immediately after opening it
+              if (!trayIcon.menuJustOpened) {
+                // Only close the menu if we're hovering over a DIFFERENT tray icon
+                const menuPanel = PanelService.getPanel("trayMenuPanel", root.screen)
+                if (menuPanel && menuPanel.trayItem !== modelData) {
+                  menuPanel.close()
+                }
+              }
+              trayIcon.menuJustOpened = false
               TooltipService.show(Screen, trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection())
             }
             onExited: TooltipService.hide()

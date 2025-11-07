@@ -293,8 +293,8 @@ SmartPanel {
     // Main menu and in-place submenu
     RowLayout {
       id: rowLayout
-      anchors.fill: background
-      anchors.margins: Style.marginS
+      anchors.fill: parent
+      anchors.topMargin: Style.marginS
       spacing: 0
 
       // Submenu replacing main menu (in-place)

@@ -137,6 +137,7 @@ SmartPanel {
 
             MouseArea {
               anchors.fill: parent
+              cursorShape: Qt.PointingHandCursor
               hoverEnabled: true
               acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
 

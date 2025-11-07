@@ -78,9 +78,8 @@ ShapePath {
   onPanelBgChanged: {
     Logger.d("PanelBackground", "=== panelBg changed:", panelBg)
     if (panelBg) {
-      Logger.d("PanelBackground", "  Geometry:", panelX, panelY, panelWidth, "x", panelHeight)
+      Logger.d("PanelBackground", "  Geometry:", panelX, panelY, panelWidth, panelHeight)
       Logger.d("PanelBackground", "  startX:", startX, "startY:", startY)
-      Logger.d("PanelBackground", "  fillColor:", fillColor)
     }
   }
 
