@@ -430,7 +430,6 @@ SmartPanel {
           x: wallpaperGridView.mirrored ? 0 : wallpaperGridView.width - width
           y: 0
           height: wallpaperGridView.height
-          active: wallpaperGridView.ScrollBar.horizontal.active
 
           property color handleColor: Qt.alpha(Color.mHover, 0.8)
           property color handleHoverColor: handleColor

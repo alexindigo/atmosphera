@@ -345,8 +345,6 @@ Variants {
                 horizontalAlignment: Text.AlignRight
                 verticalAlignment: Text.AlignVCenter
                 Layout.preferredWidth: Math.round(50 * Style.uiScaleRatio)
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: 0
               }
             }
           }
