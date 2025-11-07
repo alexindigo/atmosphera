@@ -178,11 +178,13 @@ Item {
           preventStealing: true
           onClicked: function (mouse) {
             if (mouse.button === Qt.RightButton) {
-              // Look up for any ControlCenter button on this bar
-              var widget = BarService.lookupWidget("ControlCenter", root.screen.name)
-
-              // Open the panel near the button if any
-              PanelService.getPanel("controlCenterPanel", root.screen)?.toggle(widget)
+              var controlCenterPanel = PanelService.getPanel("controlCenterPanel", screen)
+              if (Settings.data.controlCenter.position === "close_to_bar_button") {
+                // Will attempt to open the panel next to the bar button if any.
+                controlCenterPanel?.toggle(null, "ControlCenter")
+              } else {
+                controlCenterPanel?.toggle()
+              }
               mouse.accepted = true
             }
           }

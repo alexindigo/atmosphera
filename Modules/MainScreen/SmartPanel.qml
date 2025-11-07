@@ -286,7 +286,14 @@ Item {
           var rightBarEdge = root.width - root.barMarginH - Style.barHeight
           calculatedX = rightBarEdge - panelWidth
         } else if (panelContent.couldAttach) {
-          calculatedX = root.width - panelWidth
+          // Account for corner inset when bar is floating, horizontal, AND panel is on same edge as bar
+          var panelOnSameEdgeAsBar = (root.barPosition === "top" && root.effectivePanelAnchorTop) || (root.barPosition === "bottom" && root.effectivePanelAnchorBottom)
+          if (!root.barIsVertical && root.barFloating && panelOnSameEdgeAsBar) {
+            var rightCornerInset = Style.radiusL * 2
+            calculatedX = root.width - root.barMarginH - rightCornerInset - panelWidth
+          } else {
+            calculatedX = root.width - panelWidth
+          }
         } else {
           calculatedX = root.width - panelWidth - Style.marginL
         }
@@ -295,7 +302,14 @@ Item {
           var leftBarEdge = root.barMarginH + Style.barHeight
           calculatedX = leftBarEdge
         } else if (panelContent.couldAttach) {
-          calculatedX = 0
+          // Account for corner inset when bar is floating, horizontal, AND panel is on same edge as bar
+          var panelOnSameEdgeAsBar = (root.barPosition === "top" && root.effectivePanelAnchorTop) || (root.barPosition === "bottom" && root.effectivePanelAnchorBottom)
+          if (!root.barIsVertical && root.barFloating && panelOnSameEdgeAsBar) {
+            var leftCornerInset = Style.radiusL * 2
+            calculatedX = root.barMarginH + leftCornerInset
+          } else {
+            calculatedX = 0
+          }
         } else {
           calculatedX = Style.marginL
         }
