@@ -1,5 +1,5 @@
 {
-  "settingsVersion": 18,
+  "settingsVersion": 19,
   "setupCompleted": false,
   "bar": {
     "position": "top",
@@ -14,6 +14,9 @@
     "exclusive": true,
     "widgets": {
       "left": [
+        {
+          "id": "ControlCenter"
+        },
         {
           "id": "SystemMonitor"
         },
@@ -50,9 +53,6 @@
         },
         {
           "id": "Clock"
-        },
-        {
-          "id": "ControlCenter"
         }
       ]
     }
@@ -81,8 +81,7 @@
     "fontDefaultScale": 1,
     "fontFixedScale": 1,
     "tooltipsEnabled": true,
-    "panelsAttachedToBar": true,
-    "panelsOverlayLayer": false
+    "panelsAttachedToBar": true
   },
   "location": {
     "name": "Tokyo",
@@ -108,7 +107,7 @@
   },
   "wallpaper": {
     "enabled": true,
-    "overviewEnabled": true,
+    "overviewEnabled": false,
     "directory": "",
     "enableMultiMonitorDirectories": false,
     "recursiveSearch": false,
@@ -205,6 +204,7 @@
     "wifiEnabled": true
   },
   "notifications": {
+    "enabled": true,
     "doNotDisturb": false,
     "monitors": [],
     "location": "top_right",
