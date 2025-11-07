@@ -583,17 +583,23 @@ Item {
 
       // Current animated width/height (referenced by x/y for right/bottom positioning)
       readonly property real currentWidth: {
-        if (isClosing && opacityFadeComplete)
+        // When closing and opacity fade complete, shrink width (only for vertical bars)
+        if (isClosing && opacityFadeComplete && root.barIsVertical)
           return 0
+        // When visible or closing (before opacity fade), keep full width
         if (isClosing || isPanelVisible)
           return targetWidth
+        // Initial state: width starts at 0 for vertical bars, full for horizontal bars
         return root.barIsVertical ? 0 : targetWidth
       }
       readonly property real currentHeight: {
-        if (isClosing && opacityFadeComplete)
+        // When closing and opacity fade complete, shrink height (only for horizontal bars)
+        if (isClosing && opacityFadeComplete && !root.barIsVertical)
           return 0
+        // When visible or closing (before opacity fade), keep full height
         if (isClosing || isPanelVisible)
           return targetHeight
+        // Initial state: height starts at 0 for horizontal bars, full for vertical bars
         return root.barIsVertical ? targetHeight : 0
       }
 
@@ -601,39 +607,34 @@ Item {
       height: currentHeight
 
       x: {
-        // Don't apply animation offset until panel is visible and targetX is properly set
-        if (!isPanelVisible) {
-          return targetX
-        }
-
         // For right bar: offset x to make panel grow/shrink from the right edge
         // Keep the RIGHT edge fixed at its target position
         if (root.barPosition === "right" && root.barIsVertical) {
-          var targetRightEdge = targetX + targetWidth
-          return targetRightEdge - width
+          // Only apply offset when panel is visible or closing (not before first open)
+          if (isPanelVisible || isClosing) {
+            var targetRightEdge = targetX + targetWidth
+            return targetRightEdge - width
+          }
         }
         return targetX
       }
       y: {
-        // Don't apply animation offset until panel is visible and targetY is properly set
-        if (!isPanelVisible) {
-          return targetY
-        }
-
         // For bottom bar: offset y to make panel grow/shrink from the bottom edge
         // Keep the BOTTOM edge fixed at its target position
         if (root.barPosition === "bottom" && !root.barIsVertical) {
-          var targetBottomEdge = targetY + targetHeight
-          return targetBottomEdge - height
+          // Only apply offset when panel is visible or closing (not before first open)
+          if (isPanelVisible || isClosing) {
+            var targetBottomEdge = targetY + targetHeight
+            return targetBottomEdge - height
+          }
         }
         return targetY
       }
 
       Behavior on width {
-        enabled: root.barIsVertical // Only animate width for vertical bars
         NumberAnimation {
-          id: widthCloseAnimation
-          duration: Style.animationNormal
+          id: widthAnimation
+          duration: root.barIsVertical ? Style.animationNormal : 0
           easing.type: Easing.BezierSpline
           easing.bezierCurve: panelBackground.bezierCurve
 
@@ -647,10 +648,9 @@ Item {
       }
 
       Behavior on height {
-        enabled: !root.barIsVertical // Only animate height for horizontal bars
         NumberAnimation {
-          id: heightCloseAnimation
-          duration: Style.animationNormal
+          id: heightAnimation
+          duration: !root.barIsVertical ? Style.animationNormal : 0
           easing.type: Easing.BezierSpline
           easing.bezierCurve: panelBackground.bezierCurve
 
