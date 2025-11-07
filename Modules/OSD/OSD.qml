@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Effects
 import Quickshell
 import Quickshell.Wayland
 import qs.Commons
@@ -124,9 +125,9 @@ Variants {
       readonly property bool isRight: (location.indexOf("_right") >= 0) || (location === "right")
       readonly property bool isCentered: (location === "top" || location === "bottom")
       readonly property bool verticalMode: (location === "left" || location === "right")
-      readonly property int hWidth: Math.round(320 * Style.uiScaleRatio)
-      readonly property int hHeight: Math.round(64 * Style.uiScaleRatio)
-      readonly property int vHeight: hWidth // Vertical OSD height (matches horizontal width)
+      readonly property int hWidth: Math.round(380 * Style.uiScaleRatio)
+      readonly property int hHeight: Math.round(72 * Style.uiScaleRatio)
+
       // Ensure an even width to keep the vertical bar perfectly centered
       readonly property int barThickness: {
         const base = Math.max(8, Math.round(8 * Style.uiScaleRatio))
@@ -193,18 +194,12 @@ Variants {
       WlrLayershell.layer: (Settings.data.osd && Settings.data.osd.overlayLayer) ? WlrLayer.Overlay : WlrLayer.Top
       exclusionMode: PanelWindow.ExclusionMode.Ignore
 
-      Rectangle {
+      Item {
         id: osdItem
 
-        width: parent.width
-        height: panel.verticalMode ? panel.vHeight : Math.round(64 * Style.uiScaleRatio)
-        radius: Style.radiusL
-        color: Color.mSurface
-        border.color: Color.mOutline
-        border.width: {
-          const bw = Math.max(2, Style.borderM)
-          return (bw % 2 === 0) ? bw : bw + 1
-        }
+        width: parent.width + Style.marginL * 2
+        height: (panel.verticalMode ? hWidth : hHeight) + Style.marginL * 2
+
         visible: false
         opacity: 0
         scale: 0.85 // initial scale for a little zoom effect
@@ -248,11 +243,38 @@ Variants {
           }
         }
 
+        // Background rectangle (source for the effect)
+        Rectangle {
+          id: background
+          anchors.fill: parent
+          anchors.margins: Style.marginL * 2
+          radius: Style.radiusL
+          color: Color.mSurface
+          border.color: Color.mOutline
+          border.width: {
+            const bw = Math.max(2, Style.borderM)
+            return (bw % 2 === 0) ? bw : bw + 1
+          }
+        }
+
+        // MultiEffect applied to background only
+        MultiEffect {
+          anchors.fill: background
+          source: background
+          shadowEnabled: true
+          shadowBlur: Style.shadowBlur
+          shadowColor: Color.black
+          shadowHorizontalOffset: Settings.data.general.shadowOffsetX
+          shadowVerticalOffset: Settings.data.general.shadowOffsetY
+        }
+
+        // Content loader on top of the background (not affected by MultiEffect)
         Loader {
           id: contentLoader
           anchors.fill: parent
+          anchors.margins: Style.marginL * 2
           active: true
-          sourceComponent: verticalMode ? verticalContent : horizontalContent
+          sourceComponent: panel.verticalMode ? verticalContent : horizontalContent
         }
 
         Component {
