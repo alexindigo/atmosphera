@@ -299,6 +299,8 @@ Variants {
                 radius: Math.round(panel.barThickness / 2)
                 color: Color.mSurfaceVariant
                 Layout.alignment: Qt.AlignVCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: parent.width * 0.6
 
                 Rectangle {
                   anchors.left: parent.left
@@ -333,6 +335,8 @@ Variants {
                 horizontalAlignment: Text.AlignRight
                 verticalAlignment: Text.AlignVCenter
                 Layout.preferredWidth: Math.round(50 * Style.uiScaleRatio)
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: 0
               }
             }
           }
