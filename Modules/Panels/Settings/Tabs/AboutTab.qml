@@ -179,8 +179,8 @@ ColumnLayout {
       }
 
       RowLayout {
-        anchors.fill: parent
-        anchors.margins: Style.marginS
+        anchors.centerIn: parent
+        width: parent.width - (Style.marginS * 2)
         spacing: Style.marginM
 
         Item {
