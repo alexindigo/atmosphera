@@ -11,8 +11,8 @@ import qs.Modules.MainScreen
 SmartPanel {
   id: root
 
-  preferredWidth: 520 * Style.uiScaleRatio
-  preferredHeight: 600 * Style.uiScaleRatio
+  preferredWidth: Math.round(520 * Style.uiScaleRatio)
+  preferredHeight: Math.round(600 * Style.uiScaleRatio)
   preferredWidthRatio: 0.4
   preferredHeightRatio: 0.6
 
@@ -47,7 +47,7 @@ SmartPanel {
         Item {
           Layout.fillWidth: true
           Layout.fillHeight: true
-          Layout.minimumHeight: 300
+          Layout.minimumHeight: Math.round(300 * Style.uiScaleRatio)
 
           StackLayout {
             id: stepStack
@@ -58,7 +58,7 @@ SmartPanel {
             Item {
               ColumnLayout {
                 anchors.centerIn: parent
-                width: Math.min(parent.width - Style.marginXL * 2, 420)
+                width: Math.round(Math.min(parent.width - Style.marginXL * 2, 420))
                 spacing: Style.marginXL
 
                 // Logo with subtle glow effect
