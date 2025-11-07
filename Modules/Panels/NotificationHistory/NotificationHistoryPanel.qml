@@ -200,22 +200,16 @@ SmartPanel {
               width: parent.width
               spacing: Style.marginM
 
-              // Icon column - use simple Item instead of ColumnLayout to avoid polish loop
-              Item {
+              // Icon - properly centered vertically
+              NImageCircled {
                 Layout.preferredWidth: Math.round(40 * Style.uiScaleRatio)
-                Layout.alignment: Qt.AlignTop
-
-                NImageCircled {
-                  anchors.top: parent.top
-                  anchors.topMargin: 20
-                  width: Math.round(40 * Style.uiScaleRatio)
-                  height: Math.round(40 * Style.uiScaleRatio)
-                  imagePath: model.cachedImage || model.originalImage || ""
-                  borderColor: Color.transparent
-                  borderWidth: 0
-                  fallbackIcon: "bell"
-                  fallbackIconSize: 24
-                }
+                Layout.preferredHeight: Math.round(40 * Style.uiScaleRatio)
+                Layout.alignment: Qt.AlignVCenter
+                imagePath: model.cachedImage || model.originalImage || ""
+                borderColor: Color.transparent
+                borderWidth: 0
+                fallbackIcon: "bell"
+                fallbackIconSize: 24
               }
 
               // Notification content column
