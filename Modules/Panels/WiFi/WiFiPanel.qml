@@ -11,8 +11,8 @@ import qs.Modules.MainScreen
 SmartPanel {
   id: root
 
-  preferredWidth: 420 * Style.uiScaleRatio
-  preferredHeight: 500 * Style.uiScaleRatio
+  preferredWidth: Math.round(340 * Style.uiScaleRatio)
+  preferredHeight: Math.round(500 * Style.uiScaleRatio)
 
   property string passwordSsid: ""
   property string passwordInput: ""
@@ -23,7 +23,10 @@ SmartPanel {
   panelContent: Rectangle {
     color: Color.transparent
 
+    property real contentPreferredHeight: Math.min(preferredHeight, Math.max(240, mainColumn.implicitHeight + Style.marginL * 2))
+
     ColumnLayout {
+      id: mainColumn
       anchors.fill: parent
       anchors.margins: Style.marginL
       spacing: Style.marginM
@@ -131,7 +134,7 @@ SmartPanel {
 
           NIcon {
             icon: "wifi-off"
-            pointSize: 64
+            pointSize: 48
             color: Color.mOnSurfaceVariant
             Layout.alignment: Qt.AlignHCenter
           }

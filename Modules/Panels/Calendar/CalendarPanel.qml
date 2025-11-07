@@ -14,8 +14,8 @@ SmartPanel {
 
   readonly property var now: Time.now
 
-  preferredWidth: 500 * Style.uiScaleRatio
-  preferredHeight: 700 * Style.uiScaleRatio
+  preferredWidth: Math.round(440 * Style.uiScaleRatio)
+  preferredHeight: Math.round(700 * Style.uiScaleRatio)
 
   // Helper function to calculate ISO week number
   function getISOWeekNumber(date) {
@@ -641,7 +641,7 @@ SmartPanel {
 
         sourceComponent: WeatherCard {
           Layout.fillWidth: true
-          forecastDays: 6
+          forecastDays: 5
           showLocation: false
         }
       }

@@ -17,8 +17,8 @@ SmartPanel {
   property real localInputVolume: AudioService.inputVolume || 0
   property bool localInputVolumeChanging: false
 
-  preferredWidth: 380 * Style.uiScaleRatio
-  preferredHeight: 420 * Style.uiScaleRatio
+  preferredWidth: Math.round(340 * Style.uiScaleRatio)
+  preferredHeight: Math.round(420 * Style.uiScaleRatio)
 
   // Connections to update local volumes when AudioService changes
   Connections {

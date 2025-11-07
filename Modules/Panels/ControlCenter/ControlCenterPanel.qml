@@ -14,7 +14,7 @@ SmartPanel {
   panelAnchorHorizontalCenter: true
   panelAnchorVerticalCenter: true
 
-  preferredWidth: Math.round(460 * Style.uiScaleRatio)
+  preferredWidth: Math.round(440 * Style.uiScaleRatio)
   preferredHeight: {
     var height = 0
     var count = 0

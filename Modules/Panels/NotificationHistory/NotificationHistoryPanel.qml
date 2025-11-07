@@ -13,8 +13,8 @@ import qs.Modules.MainScreen
 SmartPanel {
   id: root
 
-  preferredWidth: 380 * Style.uiScaleRatio
-  preferredHeight: 480 * Style.uiScaleRatio
+  preferredWidth: Math.round(340 * Style.uiScaleRatio)
+  preferredHeight: Math.round(420 * Style.uiScaleRatio)
 
   onOpened: function () {
     NotificationService.updateLastSeenTs()
@@ -25,6 +25,7 @@ SmartPanel {
     color: Color.transparent
 
     ColumnLayout {
+      id: mainColumn
       anchors.fill: parent
       anchors.margins: Style.marginL
       spacing: Style.marginM
@@ -95,7 +96,7 @@ SmartPanel {
 
         NIcon {
           icon: "bell-off"
-          pointSize: 64
+          pointSize: 48
           color: Color.mOnSurfaceVariant
           Layout.alignment: Qt.AlignHCenter
         }

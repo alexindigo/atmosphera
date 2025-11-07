@@ -9,7 +9,7 @@ import qs.Widgets
 NBox {
   id: root
 
-  property int forecastDays: 7
+  property int forecastDays: 6
   property bool showLocation: true
   readonly property bool weatherReady: Settings.data.location.weatherEnabled && (LocationService.data.weather !== null)
 

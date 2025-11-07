@@ -14,8 +14,8 @@ import qs.Modules.MainScreen
 SmartPanel {
   id: root
 
-  preferredWidth: 400 * Style.uiScaleRatio
-  preferredHeight: 340 * Style.uiScaleRatio
+  preferredWidth: Math.round(400 * Style.uiScaleRatio)
+  preferredHeight: Math.round(340 * Style.uiScaleRatio)
 
   panelAnchorHorizontalCenter: true
   panelAnchorVerticalCenter: true
