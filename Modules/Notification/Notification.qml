@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Effects
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
@@ -56,6 +57,8 @@ Variants {
       readonly property bool isRight: location.indexOf("_right") >= 0
       readonly property bool isCentered: (location === "top" || location === "bottom")
 
+      readonly property int baseWidth: Math.round(460 * Style.uiScaleRatio)
+
       // Store connection for cleanup
       property var animateConnection: null
 
@@ -110,7 +113,7 @@ Variants {
         return base
       }
 
-      implicitWidth: 360
+      implicitWidth: baseWidth
       implicitHeight: notificationStack.implicitHeight
       WlrLayershell.exclusionMode: ExclusionMode.Ignore
 
@@ -155,8 +158,8 @@ Variants {
         anchors.left: parent.isLeft ? parent.left : undefined
         anchors.right: parent.isRight ? parent.right : undefined
         anchors.horizontalCenter: parent.isCentered ? parent.horizontalCenter : undefined
-        spacing: Style.marginS
-        width: 360
+        spacing: -Style.marginS
+        width: baseWidth
         visible: true
 
         // Animate when notifications are added/removed
@@ -173,74 +176,94 @@ Variants {
         // Multiple notifications display
         Repeater {
           model: notificationModel
-          delegate: Rectangle {
+          delegate: Item {
             id: card
 
             // Store the notification ID and data for reference
             property string notificationId: model.id
             property var notificationData: model
 
-            Layout.preferredWidth: 360
-            Layout.preferredHeight: notificationLayout.implicitHeight + (Style.marginL * 2)
+            Layout.preferredWidth: baseWidth
+            Layout.preferredHeight: notificationLayout.implicitHeight + Style.marginL * 2
             Layout.maximumHeight: Layout.preferredHeight
 
-            radius: Style.radiusL
-            border.color: Qt.alpha(Color.mOutline, Settings.data.notifications.backgroundOpacity || 1.0)
-            border.width: Style.borderS
-            color: Qt.alpha(Color.mSurface, Settings.data.notifications.backgroundOpacity || 1.0)
-
-            // Optimized progress bar container
+            // Background rectangle (source for shadow effect)
             Rectangle {
-              id: progressBarContainer
-              anchors.top: parent.top
-              anchors.left: parent.left
-              anchors.right: parent.right
-              height: 2
-              color: Color.transparent
-              visible: true
+              id: cardBackground
+              anchors.fill: parent
+              anchors.leftMargin: Style.marginM
+              anchors.rightMargin: Style.marginXL
+              anchors.topMargin: Style.marginM
+              anchors.bottomMargin: Style.marginM
+              radius: Style.radiusL
+              border.color: Qt.alpha(Color.mOutline, Settings.data.notifications.backgroundOpacity || 1.0)
+              border.width: Style.borderS
+              color: Qt.alpha(Color.mSurface, Settings.data.notifications.backgroundOpacity || 1.0)
 
-              // Pre-calculate available width for the progress bar
-              readonly property real availableWidth: parent.width - (2 * parent.radius)
-
-              // Actual progress bar - centered and symmetric
+              // Optimized progress bar container (on top of background)
               Rectangle {
-                id: progressBar
-                height: parent.height
+                id: progressBarContainer
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+                height: 2
+                color: Color.transparent
+                visible: true
 
-                // Center the bar and make it shrink symmetrically
-                x: parent.parent.radius + (parent.availableWidth * (1 - model.progress)) / 2
-                width: parent.availableWidth * model.progress
+                // Pre-calculate available width for the progress bar
+                readonly property real availableWidth: parent.width - (2 * cardBackground.radius)
 
-                color: {
-                  var baseColor
-                  if (model.urgency === NotificationUrgency.Critical || model.urgency === 2)
-                    baseColor = Color.mError
-                  else if (model.urgency === NotificationUrgency.Low || model.urgency === 0)
-                    baseColor = Color.mOnSurface
-                  else
-                    baseColor = Color.mPrimary
-                  return Qt.alpha(baseColor, Settings.data.notifications.backgroundOpacity || 1.0)
-                }
+                // Actual progress bar - centered and symmetric
+                Rectangle {
+                  id: progressBar
+                  height: parent.height
 
-                antialiasing: true
+                  // Center the bar and make it shrink symmetrically
+                  x: cardBackground.radius + (parent.availableWidth * (1 - model.progress)) / 2
+                  width: parent.availableWidth * model.progress
 
-                // Smooth progress animation
-                Behavior on width {
-                  enabled: !card.isRemoving
-                  NumberAnimation {
-                    duration: 100 // Quick but smooth
-                    easing.type: Easing.Linear
+                  color: {
+                    var baseColor
+                    if (model.urgency === NotificationUrgency.Critical || model.urgency === 2)
+                      baseColor = Color.mError
+                    else if (model.urgency === NotificationUrgency.Low || model.urgency === 0)
+                      baseColor = Color.mOnSurface
+                    else
+                      baseColor = Color.mPrimary
+                    return Qt.alpha(baseColor, Settings.data.notifications.backgroundOpacity || 1.0)
                   }
-                }
 
-                Behavior on x {
-                  enabled: !card.isRemoving
-                  NumberAnimation {
-                    duration: 100
-                    easing.type: Easing.Linear
+                  antialiasing: true
+
+                  // Smooth progress animation
+                  Behavior on width {
+                    enabled: !card.isRemoving
+                    NumberAnimation {
+                      duration: 100 // Quick but smooth
+                      easing.type: Easing.Linear
+                    }
+                  }
+
+                  Behavior on x {
+                    enabled: !card.isRemoving
+                    NumberAnimation {
+                      duration: 100
+                      easing.type: Easing.Linear
+                    }
                   }
                 }
               }
+            }
+
+            // MultiEffect applied to background only
+            MultiEffect {
+              anchors.fill: cardBackground
+              source: cardBackground
+              shadowEnabled: true
+              shadowBlur: Style.shadowBlur
+              shadowColor: Color.black
+              shadowHorizontalOffset: Settings.data.general.shadowOffsetX
+              shadowVerticalOffset: Settings.data.general.shadowOffsetY
             }
 
             // Animation properties
@@ -328,14 +351,14 @@ Variants {
                 opacityValue = 0.0
 
                 // Delay animation based on index for staggered effect
-                delayTimer.interval = animationDelay
-                delayTimer.start()
+                animInDelayTimer.interval = animationDelay
+                animInDelayTimer.start()
               }
             }
 
             // Timer for staggered animation start
             Timer {
-              id: delayTimer
+              id: animInDelayTimer
               interval: 0
               repeat: false
               onTriggered: {
@@ -408,14 +431,17 @@ Variants {
             ColumnLayout {
               id: notificationLayout
               anchors.fill: parent
-              anchors.margins: Style.marginM
-              anchors.rightMargin: (Style.marginM + 32) // Leave space for close button
+              anchors.leftMargin: Style.marginM
+              anchors.rightMargin: Style.marginXL
+              anchors.topMargin: Style.marginM
+              anchors.bottomMargin: Style.marginM
               spacing: Style.marginM
 
               // Main content section
               RowLayout {
                 Layout.fillWidth: true
-                spacing: Style.marginM
+                spacing: Style.marginL
+                Layout.margins: Style.marginM
 
                 ColumnLayout {
                   // For real-time notification always show the original image
@@ -558,9 +584,9 @@ Variants {
               tooltipText: I18n.tr("tooltips.close")
               baseSize: Style.baseWidgetSize * 0.6
               anchors.top: parent.top
-              anchors.topMargin: Style.marginM
+              anchors.topMargin: Style.marginXL
               anchors.right: parent.right
-              anchors.rightMargin: Style.marginM
+              anchors.rightMargin: Style.marginXL * 1.5
 
               onClicked: {
                 NotificationService.removeFromHistory(model.id)
