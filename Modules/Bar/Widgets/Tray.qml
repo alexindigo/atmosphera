@@ -42,31 +42,6 @@ Rectangle {
   property var filteredItems: [] // Items to show inline (pinned/favorites)
   property var dropdownItems: [] // Items to show in drawer (unpinned/non-favorites)
 
-  function wildCardMatch(str, rule) {
-    if (!str || !rule) {
-      return false
-    }
-    //Logger.d("Tray", "wildCardMatch - Input str:", str, "rule:", rule)
-
-    // Escape all special regex characters in the rule
-    let escapedRule = rule.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-    // Convert '*' to '.*' for wildcard matching
-    let pattern = escapedRule.replace(/\\\*/g, '.*')
-    // Add ^ and $ to match the entire string
-    pattern = '^' + pattern + '$'
-
-    //Logger.d("Tray", "wildCardMatch - Generated pattern:", pattern)
-    try {
-      const regex = new RegExp(pattern, 'i')
-      // 'i' for case-insensitive
-      //Logger.d("Tray", "wildCardMatch - Regex test result:", regex.test(str))
-      return regex.test(str)
-    } catch (e) {
-      Logger.w("Tray", "Invalid regex pattern for wildcard match:", rule, e.message)
-      return false // If regex is invalid, it won't match
-    }
-  }
-
   // Debounce timer for updateFilteredItems to prevent excessive calls
   // when multiple events (e.g., SystemTray changes, settings saves)
   // trigger it in rapid succession, reducing redundant processing.
@@ -158,7 +133,39 @@ Rectangle {
     updateDebounceTimer.restart()
   }
 
-  function onLoaded() {// Widget initialization
+  function wildCardMatch(str, rule) {
+    if (!str || !rule) {
+      return false
+    }
+    //Logger.d("Tray", "wildCardMatch - Input str:", str, "rule:", rule)
+
+    // Escape all special regex characters in the rule
+    let escapedRule = rule.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    // Convert '*' to '.*' for wildcard matching
+    let pattern = escapedRule.replace(/\\\*/g, '.*')
+    // Add ^ and $ to match the entire string
+    pattern = '^' + pattern + '$'
+
+    //Logger.d("Tray", "wildCardMatch - Generated pattern:", pattern)
+    try {
+      const regex = new RegExp(pattern, 'i')
+      // 'i' for case-insensitive
+      //Logger.d("Tray", "wildCardMatch - Regex test result:", regex.test(str))
+      return regex.test(str)
+    } catch (e) {
+      Logger.w("Tray", "Invalid regex pattern for wildcard match:", rule, e.message)
+      return false // If regex is invalid, it won't match
+    }
+  }
+
+  function toggleDrawer(button) {
+    TooltipService.hideImmediately()
+    const panel = PanelService.getPanel("trayDrawerPanel", root.screen)
+    if (panel) {
+      panel.widgetSection = root.section
+      panel.widgetIndex = root.sectionWidgetIndex
+      panel.toggle(this)
+    }
   }
 
   Connections {
@@ -180,33 +187,10 @@ Rectangle {
   }
 
   visible: filteredItems.length > 0 || dropdownItems.length > 0
-  implicitWidth: isVertical ? Style.capsuleHeight : Math.round(trayFlow.implicitWidth + Style.marginM * 2)
-  implicitHeight: isVertical ? Math.round(trayFlow.implicitHeight + Style.marginM * 2) : Style.capsuleHeight
+  implicitWidth: isVertical ? Style.capsuleHeight : Math.round(trayFlow.implicitWidth)
+  implicitHeight: isVertical ? Math.round(trayFlow.implicitHeight) : Style.capsuleHeight
   radius: Style.radiusM
   color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
-
-  Layout.alignment: Qt.AlignVCenter
-
-  // Right-click on tray widget to open drawer
-  MouseArea {
-    anchors.fill: parent
-    acceptedButtons: Qt.RightButton
-    propagateComposedEvents: true
-    onClicked: mouse => {
-                 if (root.drawerEnabled && dropdownItems.length > 0) {
-                   TooltipService.hideImmediately()
-                   const panel = PanelService.getPanel("trayDrawerPanel", root.screen)
-                   if (panel) {
-                     panel.widgetSection = root.section
-                     panel.widgetIndex = root.sectionWidgetIndex
-                     // Open drawer at the click position or center of tray
-                     panel.toggle(dropdownButton)
-                   }
-                 } else {
-                   mouse.accepted = false
-                 }
-               }
-  }
 
   Flow {
     id: trayFlow
@@ -225,8 +209,6 @@ Rectangle {
 
         IconImage {
           id: trayIcon
-
-          property ShellScreen screen: root.screen
 
           anchors.fill: parent
           asynchronous: true
@@ -315,88 +297,38 @@ Rectangle {
       }
     }
 
-    // Drawer opener - simple icon with hover effect
-    Item {
-      id: dropdownButton
+    // Drawer opener
+    NIconButton {
+      id: chevronIcon
       visible: root.drawerEnabled && dropdownItems.length > 0
-      width: itemSize
-      height: itemSize
-
-      property bool hovered: false
-
-      NIcon {
-        id: chevronIcon
-        anchors.centerIn: parent
-        icon: {
-          if (barPosition === "top")
-            return "caret-down"
-          else if (barPosition === "bottom")
-            return "caret-up"
-          else if (barPosition === "left")
-            return "caret-right"
-          else if (barPosition === "right")
-            return "caret-left"
-          else
-            return "caret-down" // default fallback
-        }
-        pointSize: Math.round(itemSize * 0.65)
-        color: dropdownButton.hovered ? Color.mPrimary : Color.mOnSurface
-
-        Behavior on color {
-          ColorAnimation {
-            duration: Style.animationFast
-            easing.type: Easing.InOutQuad
-          }
+      tooltipText: I18n.tr("tooltips.open-tray-dropdown")
+      tooltipDirection: BarService.getTooltipDirection()
+      density: Settings.data.bar.density
+      baseSize: Style.capsuleHeight
+      applyUiScale: false
+      colorBg: Settings.data.colorSchemes.darkMode ? (Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent) : Color.mPrimary
+      colorFg: Settings.data.colorSchemes.darkMode ? Color.mOnSurface : Color.mOnPrimary
+      colorBorder: Color.transparent
+      colorBorderHover: Color.transparent
+      icon: {
+        switch (barPosition) {
+        case "bottom":
+          return "caret-up"
+        case "left":
+          return "caret-right"
+        case "right":
+          return "caret-left"
+        case "top":
+        default:
+          return "caret-down"
         }
       }
-
-      MouseArea {
-        anchors.fill: parent
-        hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
-        onEntered: {
-          dropdownButton.hovered = true
-          TooltipService.show(Screen, dropdownButton, I18n.tr("tooltips.open-tray-dropdown"), BarService.getTooltipDirection())
-        }
-        onExited: {
-          dropdownButton.hovered = false
-          TooltipService.hide()
-        }
-        onClicked: {
-          TooltipService.hideImmediately()
-          const panel = PanelService.getPanel("trayDrawerPanel", root.screen)
-          if (panel) {
-            panel.widgetSection = root.section
-            panel.widgetIndex = root.sectionWidgetIndex
-            panel.toggle(dropdownButton)
-          }
-        }
+      onClicked: {
+        toggleDrawer(this)
+      }
+      onRightClicked: {
+        toggleDrawer(this)
       }
     }
   }
-
-  // PanelWindow {
-  //   id: trayPanel
-  //   anchors.top: true
-  //   anchors.left: true
-  //   anchors.right: true
-  //   anchors.bottom: true
-  //   visible: false
-  //   color: Color.transparent
-  //   screen: screen
-
-  //   function open() {
-  //     visible = true
-  //   }
-
-  //   function close() {
-  //     visible = false
-  //   }
-
-  //   // Clicking outside of the rectangle to close
-  //   MouseArea {
-  //     anchors.fill: parent
-  //     onClicked: trayPanel.close()
-  //   }
-  // }
 }
