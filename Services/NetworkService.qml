@@ -313,7 +313,7 @@ Singleton {
           Logger.i("Network", "Internet connectivity:", result)
 
           if (result === "limited" || result === "portal") {
-            ToastService.showWarning(cachedLastConnected, "toast.internet.limited")
+            ToastService.showWarning(cachedLastConnected, I18n.tr("toast.internet.limited"))
           } else {
             scan()
           }
