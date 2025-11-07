@@ -126,7 +126,9 @@ Variants {
       readonly property bool isCentered: (location === "top" || location === "bottom")
       readonly property bool verticalMode: (location === "left" || location === "right")
       readonly property int hWidth: Math.round(380 * Style.uiScaleRatio)
-      readonly property int hHeight: Math.round(72 * Style.uiScaleRatio)
+      readonly property int hHeight: Math.round(64 * Style.uiScaleRatio)
+      readonly property int vWidth: Math.round(72 * Style.uiScaleRatio)
+      readonly property int vHeight: Math.round(380 * Style.uiScaleRatio)
 
       // Ensure an even width to keep the vertical bar perfectly centered
       readonly property int barThickness: {
@@ -185,8 +187,8 @@ Variants {
         return base
       }
 
-      implicitWidth: verticalMode ? hHeight : hWidth
-      implicitHeight: osdItem.height
+      implicitWidth: verticalMode ? vWidth : hWidth
+      implicitHeight: verticalMode ? vHeight : hHeight
 
       color: Color.transparent
 
@@ -196,18 +198,10 @@ Variants {
 
       Item {
         id: osdItem
-
-        width: parent.width + Style.marginL * 2
-        height: (panel.verticalMode ? hWidth : hHeight) + Style.marginL * 2
-
+        anchors.fill: parent
         visible: false
         opacity: 0
         scale: 0.85 // initial scale for a little zoom effect
-
-        // Only horizontally center when the window itself is centered (top/bottom positions)
-        // For left/right vertical mode, fill the parent width
-        anchors.horizontalCenter: (!panel.verticalMode && panel.isCentered) ? parent.horizontalCenter : undefined
-        anchors.verticalCenter: panel.verticalMode ? parent.verticalCenter : undefined
 
         Behavior on opacity {
           NumberAnimation {
@@ -247,7 +241,7 @@ Variants {
         Rectangle {
           id: background
           anchors.fill: parent
-          anchors.margins: Style.marginL * 2
+          anchors.margins: Style.marginS * 2
           radius: Style.radiusL
           color: Color.mSurface
           border.color: Color.mOutline
