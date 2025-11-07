@@ -106,6 +106,16 @@ Item {
   signal opened
   signal closed
 
+  Connections {
+    target: Style
+
+    function onUiScaleRatioChanged() {
+      if (root.isPanelOpen && root.isPanelVisible) {
+        root.setPosition()
+      }
+    }
+  }
+
   // Panel visibility and sizing
   visible: isPanelVisible
   width: parent ? parent.width : 0
