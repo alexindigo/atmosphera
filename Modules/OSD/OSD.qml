@@ -73,17 +73,29 @@ Variants {
       return 0
     }
 
+    // Get maximum value for current OSD type
+    function getMaxValue() {
+      if (currentOSDType === "volume" || currentOSDType === "inputVolume") {
+        return Settings.data.audio.volumeOverdrive ? 1.5 : 1.0
+      } else if (currentOSDType === "brightness") {
+        return 1.0
+      }
+      return 1.0
+    }
+
     // Get display percentage
     function getDisplayPercentage() {
       if (currentOSDType === "volume") {
         if (isMuted)
           return "0%"
-        const pct = Math.round(Math.min(1.0, currentVolume) * 100)
+        const max = getMaxValue()
+        const pct = Math.round(Math.min(max, currentVolume) * 100)
         return pct + "%"
       } else if (currentOSDType === "inputVolume") {
         if (isInputMuted)
           return "0%"
-        const pct = Math.round(Math.min(1.0, currentInputVolume) * 100)
+        const max = getMaxValue()
+        const pct = Math.round(Math.min(max, currentInputVolume) * 100)
         return pct + "%"
       } else if (currentOSDType === "brightness") {
         const pct = Math.round(Math.min(1.0, currentBrightness) * 100)
@@ -304,7 +316,7 @@ Variants {
                   anchors.left: parent.left
                   anchors.top: parent.top
                   anchors.bottom: parent.bottom
-                  width: parent.width * Math.min(1.0, root.getCurrentValue())
+                  width: parent.width * Math.min(1.0, root.getCurrentValue() / root.getMaxValue())
                   radius: parent.radius
                   color: root.getProgressColor()
 
@@ -333,8 +345,6 @@ Variants {
                 horizontalAlignment: Text.AlignRight
                 verticalAlignment: Text.AlignVCenter
                 Layout.preferredWidth: Math.round(50 * Style.uiScaleRatio)
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: 0
               }
             }
           }
@@ -393,7 +403,7 @@ Variants {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.bottom: parent.bottom
-                    height: parent.height * Math.min(1.0, root.getCurrentValue())
+                    height: parent.height * Math.min(1.0, root.getCurrentValue() / root.getMaxValue())
                     radius: parent.radius
                     color: root.getProgressColor()
 

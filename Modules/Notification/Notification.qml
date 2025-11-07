@@ -86,8 +86,8 @@ Variants {
       // Margins for PanelWindow (not anchors.topMargin!)
       margins.top: isTop ? Style.marginM + barOffset : 0
       margins.bottom: isBottom ? Style.marginM + barOffset : 0
-      margins.left: isLeft ? -Style.marginXL * 1.65 + barOffset : 0
-      margins.right: isRight ? -Style.marginXL * 1.65 + barOffset : 0
+      margins.left: isLeft ? Style.marginM + barOffset : 0
+      margins.right: isRight ? Style.marginM + barOffset : 0
 
       implicitWidth: notifWidth
       implicitHeight: notificationStack.implicitHeight + Style.marginL
