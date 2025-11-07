@@ -426,6 +426,51 @@ SmartPanel {
 
         ScrollBar.vertical: ScrollBar {
           policy: ScrollBar.AsNeeded
+          parent: wallpaperGridView
+          x: wallpaperGridView.mirrored ? 0 : wallpaperGridView.width - width
+          y: 0
+          height: wallpaperGridView.height
+          active: wallpaperGridView.ScrollBar.horizontal.active
+
+          property color handleColor: Qt.alpha(Color.mHover, 0.8)
+          property color handleHoverColor: handleColor
+          property color handlePressedColor: handleColor
+          property real handleWidth: 6
+          property real handleRadius: Style.radiusM
+
+          contentItem: Rectangle {
+            implicitWidth: parent.handleWidth
+            implicitHeight: 100
+            radius: parent.handleRadius
+            color: parent.pressed ? parent.handlePressedColor : parent.hovered ? parent.handleHoverColor : parent.handleColor
+            opacity: parent.policy === ScrollBar.AlwaysOn || parent.active ? 1.0 : 0.0
+
+            Behavior on opacity {
+              NumberAnimation {
+                duration: Style.animationFast
+              }
+            }
+
+            Behavior on color {
+              ColorAnimation {
+                duration: Style.animationFast
+              }
+            }
+          }
+
+          background: Rectangle {
+            implicitWidth: parent.handleWidth
+            implicitHeight: 100
+            color: Color.transparent
+            opacity: parent.policy === ScrollBar.AlwaysOn || parent.active ? 0.3 : 0.0
+            radius: parent.handleRadius / 2
+
+            Behavior on opacity {
+              NumberAnimation {
+                duration: Style.animationFast
+              }
+            }
+          }
         }
 
         delegate: ColumnLayout {

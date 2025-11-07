@@ -85,6 +85,7 @@ ColumnLayout {
       border.color: Color.mOutline
       border.width: Style.borderS
       implicitHeight: contentCol.implicitHeight + Style.marginL * 2
+      clip: true
 
       ColumnLayout {
         id: contentCol
