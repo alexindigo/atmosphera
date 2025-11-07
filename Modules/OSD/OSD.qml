@@ -298,8 +298,6 @@ Variants {
                 height: panel.barThickness
                 radius: Math.round(panel.barThickness / 2)
                 color: Color.mSurfaceVariant
-                Layout.alignment: Qt.AlignVCenter
-                anchors.horizontalCenter: parent.horizontalCenter
                 width: parent.width * 0.6
 
                 Rectangle {
