@@ -580,29 +580,53 @@ Item {
       // - Horizontal bars (top/bottom): animate height only (slide out from bar)
       // - Vertical bars (left/right): animate width only (slide out from bar)
       // When closing: wait for opacity fade to complete before shrinking
-      x: targetX
-      y: targetY
-      width: {
-        // When closing and opacity fade complete, start shrinking
-        if (isClosing && opacityFadeComplete) {
-          return root.barIsVertical ? 0 : targetWidth
-        }
-        // When closing but opacity hasn't completed, or when open, keep full size
+
+      // Current animated width/height (referenced by x/y for right/bottom positioning)
+      readonly property real currentWidth: {
+        if (isClosing && opacityFadeComplete)
+          return 0
         if (isClosing || isPanelVisible)
           return targetWidth
-        // Default: shrink based on bar orientation
         return root.barIsVertical ? 0 : targetWidth
       }
-      height: {
-        // When closing and opacity fade complete, start shrinking
-        if (isClosing && opacityFadeComplete) {
-          return root.barIsVertical ? targetHeight : 0
-        }
-        // When closing but opacity hasn't completed, or when open, keep full size
+      readonly property real currentHeight: {
+        if (isClosing && opacityFadeComplete)
+          return 0
         if (isClosing || isPanelVisible)
           return targetHeight
-        // Default: shrink based on bar orientation
         return root.barIsVertical ? targetHeight : 0
+      }
+
+      width: currentWidth
+      height: currentHeight
+
+      x: {
+        // Don't apply animation offset until panel is visible and targetX is properly set
+        if (!isPanelVisible) {
+          return targetX
+        }
+
+        // For right bar: offset x to make panel grow/shrink from the right edge
+        // Keep the RIGHT edge fixed at its target position
+        if (root.barPosition === "right" && root.barIsVertical) {
+          var targetRightEdge = targetX + targetWidth
+          return targetRightEdge - width
+        }
+        return targetX
+      }
+      y: {
+        // Don't apply animation offset until panel is visible and targetY is properly set
+        if (!isPanelVisible) {
+          return targetY
+        }
+
+        // For bottom bar: offset y to make panel grow/shrink from the bottom edge
+        // Keep the BOTTOM edge fixed at its target position
+        if (root.barPosition === "bottom" && !root.barIsVertical) {
+          var targetBottomEdge = targetY + targetHeight
+          return targetBottomEdge - height
+        }
+        return targetY
       }
 
       Behavior on width {
@@ -640,19 +664,11 @@ Item {
       }
 
       Behavior on x {
-        NumberAnimation {
-          duration: isPanelVisible ? Style.animationNormal : 0 // Instant when not visible to prevent (0,0) slide
-          easing.type: Easing.BezierSpline
-          easing.bezierCurve: panelBackground.bezierCurve
-        }
+        enabled: false // Disable x animation - x adjusts based on width animation for right bar
       }
 
       Behavior on y {
-        NumberAnimation {
-          duration: isPanelVisible ? Style.animationNormal : 0 // Instant when not visible to prevent (0,0) slide
-          easing.type: Easing.BezierSpline
-          easing.bezierCurve: panelBackground.bezierCurve
-        }
+        enabled: false // Disable y animation - y adjusts based on height animation for bottom bar
       }
 
       // Corner states for PanelBackground to read
@@ -762,15 +778,13 @@ Item {
         // This prevents the panel from animating from (0,0) on first open
         setPosition()
 
-        // THEN make panel visible to start the animation from the correct position
-        // Corner state bindings will have valid context
-        isPanelVisible = true
-
-        // Start timer to trigger opacity fade at 75% of size animation
-        opacityTrigger.start()
-
-        // Emit opened signal
-        opened()
+        // THEN make panel visible on the next frame to ensure all bindings have updated
+        // Qt.callLater defers execution until all current bindings are evaluated
+        Qt.callLater(function () {
+          isPanelVisible = true
+          opacityTrigger.start()
+          opened()
+        })
       }
     }
   }
