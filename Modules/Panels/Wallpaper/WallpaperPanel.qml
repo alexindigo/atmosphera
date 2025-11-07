@@ -220,7 +220,7 @@ SmartPanel {
       }
 
       // Monitor tabs
-      TabBar {
+      NTabBar {
         id: screenTabBar
         visible: !Settings.data.wallpaper.setWallpaperOnAllMonitors || Settings.data.wallpaper.enableMultiMonitorDirectories
         Layout.fillWidth: true
@@ -228,60 +228,17 @@ SmartPanel {
         onCurrentIndexChanged: currentScreenIndex = currentIndex
         spacing: Style.marginM
 
-        background: Rectangle {
-          color: Color.transparent
-        }
-
         Repeater {
           model: Quickshell.screens
-          delegate: TabButton {
+          NTabButton {
+            required property var modelData
+            required property int index
             text: modelData.name || `Screen ${index + 1}`
-            width: implicitWidth + Style.marginS * 2
-
-            background: Rectangle {
-              color: screenTabBar.currentIndex === index ? Color.mSecondary : Color.transparent
-              radius: Style.radiusS
-              border.width: screenTabBar.currentIndex === index ? 0 : Style.borderS
-              border.color: Color.mOutline
-
-              Behavior on color {
-                ColorAnimation {
-                  duration: Style.animationFast
-                }
-              }
-            }
-
-            contentItem: NText {
-              text: parent.text
-              pointSize: Style.fontSizeL
-              font.weight: screenTabBar.currentIndex === index ? Style.fontWeightBold : Style.fontWeightRegular
-              family: Settings.data.ui.fontDefault
-              color: screenTabBar.currentIndex === index ? Color.mOnSecondary : Color.mOnSurfaceVariant
-              horizontalAlignment: Text.AlignHCenter
-              verticalAlignment: Text.AlignVCenter
-            }
-
-            // Add hover effect
-            HoverHandler {
-              id: tabHover
-            }
-
-            Rectangle {
-              anchors.fill: parent
-              color: Color.mOnSurface
-              opacity: tabHover.hovered && screenTabBar.currentIndex !== index ? 0.08 : 0
-              radius: Style.radiusS
-
-              Behavior on opacity {
-                NumberAnimation {
-                  duration: Style.animationFast
-                }
-              }
-            }
+            tabIndex: index
+            checked: screenTabBar.currentIndex === index
           }
         }
       }
-
       // StackLayout for each screen's wallpaper content
       StackLayout {
         id: screenStack
