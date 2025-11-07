@@ -584,7 +584,7 @@ Loader {
                       anchors.margins: 4
                       active: Settings.data.audio.visualizerType === "linear"
                       z: 0
-                      sourceComponent: LinearSpectrum {
+                      sourceComponent: NLinearSpectrum {
                         anchors.fill: parent
                         values: CavaService.values
                         fillColor: Color.mPrimary
@@ -597,7 +597,7 @@ Loader {
                       anchors.margins: 4
                       active: Settings.data.audio.visualizerType === "mirrored"
                       z: 0
-                      sourceComponent: MirroredSpectrum {
+                      sourceComponent: NMirroredSpectrum {
                         anchors.fill: parent
                         values: CavaService.values
                         fillColor: Color.mPrimary
@@ -610,7 +610,7 @@ Loader {
                       anchors.margins: 4
                       active: Settings.data.audio.visualizerType === "wave"
                       z: 0
-                      sourceComponent: WaveSpectrum {
+                      sourceComponent: NWaveSpectrum {
                         anchors.fill: parent
                         values: CavaService.values
                         fillColor: Color.mPrimary

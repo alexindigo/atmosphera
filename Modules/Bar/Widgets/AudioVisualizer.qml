@@ -123,7 +123,7 @@ Item {
 
   Component {
     id: linearComponent
-    LinearSpectrum {
+    NLinearSpectrum {
       anchors.fill: parent
       values: CavaService.values
       fillColor: root.fillColor
@@ -134,7 +134,7 @@ Item {
 
   Component {
     id: mirroredComponent
-    MirroredSpectrum {
+    NMirroredSpectrum {
       anchors.fill: parent
       values: CavaService.values
       fillColor: root.fillColor
@@ -145,7 +145,7 @@ Item {
 
   Component {
     id: waveComponent
-    WaveSpectrum {
+    NWaveSpectrum {
       anchors.fill: parent
       values: CavaService.values
       fillColor: root.fillColor

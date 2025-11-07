@@ -83,7 +83,7 @@ NBox {
 
       Component {
         id: linearComponent
-        LinearSpectrum {
+        NLinearSpectrum {
           anchors.fill: parent
           values: CavaService.values
           fillColor: Color.mPrimary
@@ -93,7 +93,7 @@ NBox {
 
       Component {
         id: mirroredComponent
-        MirroredSpectrum {
+        NMirroredSpectrum {
           anchors.fill: parent
           values: CavaService.values
           fillColor: Color.mPrimary
@@ -103,7 +103,7 @@ NBox {
 
       Component {
         id: waveComponent
-        WaveSpectrum {
+        NWaveSpectrum {
           anchors.fill: parent
           values: CavaService.values
           fillColor: Color.mPrimary
