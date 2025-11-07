@@ -1368,10 +1368,6 @@
           "description": "Adjust the opacity of notification backgrounds.",
           "label": "Background opacity"
         },
-        "enabled": {
-          "description": "Enable or disable the notification daemon, requires a restart of noctalia-shell.",
-          "label": "Enable notifications"
-        },
         "do-not-disturb": {
           "description": "Disable all notification popups when enabled.",
           "label": "Do not disturb"
@@ -1379,6 +1375,10 @@
         "enable-osd": {
           "description": "Show volume and brightness changes in real-time.",
           "label": "Enable on screen display"
+        },
+        "enabled": {
+          "description": "Enable or disable the notification daemon, requires a restart of noctalia-shell.",
+          "label": "Enable notifications"
         },
         "location": {
           "description": "Where notifications appear on screen.",

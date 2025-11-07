@@ -1368,10 +1368,6 @@
           "description": "Ajustar a opacidade dos fundos das notificações.",
           "label": "Opacidade do fundo"
         },
-        "enabled": {
-          "description": "Ativar ou desativar o daemon de notificações, requer reiniciar o noctalia-shell.",
-          "label": "Ativar notificações"
-        },
         "do-not-disturb": {
           "description": "Desativa todos os pop-ups de notificação quando ativado.",
           "label": "Não perturbe"
@@ -1379,6 +1375,10 @@
         "enable-osd": {
           "description": "Mostra alterações de volume e brilho em tempo real.",
           "label": "Ativar exibição na tela"
+        },
+        "enabled": {
+          "description": "Ativar ou desativar o daemon de notificações, requer reiniciar o noctalia-shell.",
+          "label": "Ativar notificações"
         },
         "location": {
           "description": "Onde as notificações aparecem na tela.",
