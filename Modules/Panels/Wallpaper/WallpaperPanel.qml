@@ -349,7 +349,7 @@ SmartPanel {
         return
       }
       wallpapersList = WallpaperService.getWallpapersList(targetScreen.name)
-      Logger.i("WallpaperPanel", "Got", wallpapersList.length, "wallpapers for screen", targetScreen.name)
+      Logger.d("WallpaperPanel", "Got", wallpapersList.length, "wallpapers for screen", targetScreen.name)
 
       // Pre-compute basenames once for better performance
       wallpapersWithNames = wallpapersList.map(function (p) {
