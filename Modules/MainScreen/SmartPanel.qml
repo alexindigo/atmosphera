@@ -176,6 +176,15 @@ Item {
   }
 
   function setPosition() {
+    // Don't calculate position if parent dimensions aren't available yet
+    // This prevents centering around (0,0) when width/height are still 0
+    if (!root.width || !root.height) {
+      Logger.d("SmartPanel", "Skipping setPosition - dimensions not ready:", root.width, "x", root.height)
+      // Retry on next frame when dimensions should be available
+      Qt.callLater(setPosition)
+      return
+    }
+
     // Calculate panel dimensions first (needed for positioning)
     var w
     // Priority 1: Content-driven size (dynamic)
@@ -183,12 +192,12 @@ Item {
       w = contentLoader.item.contentPreferredWidth
     } // Priority 2: Ratio-based size
     else if (root.preferredWidthRatio !== undefined) {
-      w = Math.round(Math.max((root.width || 1920) * root.preferredWidthRatio, root.preferredWidth))
+      w = Math.round(Math.max(root.width * root.preferredWidthRatio, root.preferredWidth))
     } // Priority 3: Static preferred width
     else {
       w = root.preferredWidth
     }
-    var panelWidth = Math.min(w, (root.width || 1920) - Style.marginL * 2)
+    var panelWidth = Math.min(w, root.width - Style.marginL * 2)
 
     var h
     // Priority 1: Content-driven size (dynamic)
@@ -196,12 +205,12 @@ Item {
       h = contentLoader.item.contentPreferredHeight
     } // Priority 2: Ratio-based size
     else if (root.preferredHeightRatio !== undefined) {
-      h = Math.round(Math.max((root.height || 1080) * root.preferredHeightRatio, root.preferredHeight))
+      h = Math.round(Math.max(root.height * root.preferredHeightRatio, root.preferredHeight))
     } // Priority 3: Static preferred height
     else {
       h = root.preferredHeight
     }
-    var panelHeight = Math.min(h, (root.height || 1080) - Style.barHeight - Style.marginL * 2)
+    var panelHeight = Math.min(h, root.height - Style.barHeight - Style.marginL * 2)
 
     // Update panelBackground target size (will be animated)
     panelBackground.targetWidth = panelWidth
