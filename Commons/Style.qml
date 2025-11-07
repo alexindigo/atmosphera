@@ -60,7 +60,7 @@ Singleton {
   // Shadows
   property real shadowOpacity: 0.85
   property real shadowBlur: 1.0
-  property int shadowBlurMax: 23
+  property int shadowBlurMax: 22
   property real shadowHorizontalOffset: Settings.data.general.shadowOffsetX
   property real shadowVerticalOffset: Settings.data.general.shadowOffsetY
 

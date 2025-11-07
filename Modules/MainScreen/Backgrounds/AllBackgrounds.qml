@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Shapes
-import QtQuick.Effects
 import qs.Commons
+import qs.Widgets
 
 
 /**
@@ -150,14 +150,8 @@ Item {
     }
   }
 
-  // Unified shadow system  (one MultiEffect for all backgrounds)
-  MultiEffect {
+  NDropShadows {
+    anchors.fill: parent
     source: backgroundsShape
-    anchors.fill: backgroundsShape
-    shadowEnabled: true
-    shadowBlur: Style.shadowBlur
-    shadowColor: Color.black
-    shadowHorizontalOffset: Settings.data.general.shadowOffsetX
-    shadowVerticalOffset: Settings.data.general.shadowOffsetY
   }
 }

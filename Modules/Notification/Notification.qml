@@ -256,14 +256,9 @@ Variants {
             }
 
             // MultiEffect applied to background only
-            MultiEffect {
+            NDropShadows {
               anchors.fill: cardBackground
               source: cardBackground
-              shadowEnabled: true
-              shadowBlur: Style.shadowBlur
-              shadowColor: Color.black
-              shadowHorizontalOffset: Settings.data.general.shadowOffsetX
-              shadowVerticalOffset: Settings.data.general.shadowOffsetY
             }
 
             // Animation properties

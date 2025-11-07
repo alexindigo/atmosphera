@@ -252,14 +252,9 @@ Variants {
         }
 
         // MultiEffect applied to background only
-        MultiEffect {
+        NDropShadows {
           anchors.fill: background
           source: background
-          shadowEnabled: true
-          shadowBlur: Style.shadowBlur
-          shadowColor: Color.black
-          shadowHorizontalOffset: Settings.data.general.shadowOffsetX
-          shadowVerticalOffset: Settings.data.general.shadowOffsetY
         }
 
         // Content loader on top of the background (not affected by MultiEffect)
