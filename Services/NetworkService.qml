@@ -222,8 +222,8 @@ Singleton {
   }
 
   // Helper functions
-  function signalIcon(signal) {
-    if (root.internetConnectivity === "limited" || root.internetConnectivity === "portal")
+  function signalIcon(signal, isConnected = false) {
+    if (isConnected && (root.internetConnectivity === "limited" || root.internetConnectivity === "portal"))
       return "world-off"
     if (signal >= 80)
       return "wifi"

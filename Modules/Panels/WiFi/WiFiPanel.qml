@@ -23,7 +23,7 @@ SmartPanel {
   panelContent: Rectangle {
     color: Color.transparent
 
-    property real contentPreferredHeight: Math.min(preferredHeight, Math.max(240, mainColumn.implicitHeight + Style.marginL * 2))
+    property real contentPreferredHeight: Math.min(preferredHeight, Math.max(280 * Style.uiScaleRatio, mainColumn.implicitHeight + Style.marginL * 2))
 
     ColumnLayout {
       id: mainColumn
@@ -247,7 +247,7 @@ SmartPanel {
                     spacing: Style.marginS
 
                     NIcon {
-                      icon: NetworkService.signalIcon(modelData.signal)
+                      icon: NetworkService.signalIcon(modelData.signal, modelData.connected)
                       pointSize: Style.fontSizeXXL
                       color: modelData.connected ? Color.mPrimary : Color.mOnSurface
                     }
