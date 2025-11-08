@@ -26,11 +26,9 @@ Singleton {
   property ListModel historyList: ListModel {}
 
   // Internal state
-  property var activeMap: ({})
+  property var activeNotifications: ({}) // Maps internal ID to {notification, watcher, metadata}
+  property var quickshellIdToInternalId: ({})
   property var imageQueue: []
-
-  // Performance optimization: Track notification metadata separately
-  property var notificationMetadata: ({}) // Stores timestamp and duration for each notification
 
   PanelWindow {
     implicitHeight: 1
@@ -76,7 +74,7 @@ Singleton {
     }
   }
 
-  // Notification server - only created when notifications are enabled
+  // Notification server
   property var notificationServerLoader: null
 
   Component {
@@ -89,14 +87,43 @@ Singleton {
     }
   }
 
+  Component {
+    id: notificationWatcherComponent
+    Connections {
+      property var targetNotification
+      property var targetDataId
+      target: targetNotification
+
+      function onSummaryChanged() {
+        updateNotificationFromObject(targetDataId)
+      }
+      function onBodyChanged() {
+        updateNotificationFromObject(targetDataId)
+      }
+      function onAppNameChanged() {
+        updateNotificationFromObject(targetDataId)
+      }
+      function onUrgencyChanged() {
+        updateNotificationFromObject(targetDataId)
+      }
+      function onAppIconChanged() {
+        updateNotificationFromObject(targetDataId)
+      }
+      function onImageChanged() {
+        updateNotificationFromObject(targetDataId)
+      }
+      function onActionsChanged() {
+        updateNotificationFromObject(targetDataId)
+      }
+    }
+  }
+
   function updateNotificationServer() {
-    // Destroy existing server if it exists
     if (notificationServerLoader) {
       notificationServerLoader.destroy()
       notificationServerLoader = null
     }
 
-    // Create server only if enabled
     if (Settings.isLoaded && Settings.data.notifications.enabled !== false) {
       notificationServerLoader = notificationServerComponent.createObject(root)
     }
@@ -118,7 +145,7 @@ Singleton {
     }
   }
 
-  // Helper function to generate content-based ID for deduplication (without timestamp)
+  // Helper function to generate content-based ID for deduplication
   function getContentId(summary, body, appName) {
     return Checksum.sha256(JSON.stringify({
                                             "summary": summary || "",
@@ -129,67 +156,124 @@ Singleton {
 
   // Main handler
   function handleNotification(notification) {
+    const quickshellId = notification.id
     const data = createData(notification)
     addToHistory(data)
 
     if (Settings.data.notifications?.doNotDisturb || PowerProfileService.noctaliaPerformanceMode)
       return
 
-    // Check for duplicate notification (same content)
-    const normalizedAppName = getAppName(notification.appName || notification.desktopEntry || "")
-    const contentId = getContentId(notification.summary || "", notification.body || "", normalizedAppName)
-    let duplicateIndex = -1
-    for (var i = 0; i < activeList.count; i++) {
-      const existing = activeList.get(i)
-      const existingContentId = getContentId(existing.summary || "", existing.body || "", existing.appName || "")
-      if (existingContentId === contentId) {
-        duplicateIndex = i
-        break
-      }
+    // Check if this is a replacement notification
+    const existingInternalId = quickshellIdToInternalId[quickshellId]
+    if (existingInternalId && activeNotifications[existingInternalId]) {
+      updateExistingNotification(existingInternalId, notification, data)
+      return
     }
 
-    // If duplicate found, remove the old one
-    if (duplicateIndex >= 0) {
-      const oldNotif = activeList.get(duplicateIndex)
-      activeMap[oldNotif.id]?.dismiss()
-      removeActive(oldNotif.id)
+    // Check for duplicate content
+    const duplicateId = findDuplicateNotification(data)
+    if (duplicateId) {
+      removeNotification(duplicateId)
     }
 
-    activeMap[data.id] = notification
+    // Add new notification
+    addNewNotification(quickshellId, notification, data)
+  }
+
+  function updateExistingNotification(internalId, notification, data) {
+    const index = findNotificationIndex(internalId)
+    if (index < 0)
+      return
+
+    const existing = activeList.get(index)
+    const oldTimestamp = existing.timestamp
+    const oldProgress = existing.progress
+
+    // Update properties (keeping original timestamp and progress)
+    activeList.setProperty(index, "summary", data.summary)
+    activeList.setProperty(index, "body", data.body)
+    activeList.setProperty(index, "appName", data.appName)
+    activeList.setProperty(index, "urgency", data.urgency)
+    activeList.setProperty(index, "expireTimeout", data.expireTimeout)
+    activeList.setProperty(index, "originalImage", data.originalImage)
+    activeList.setProperty(index, "cachedImage", data.cachedImage)
+    activeList.setProperty(index, "actionsJson", data.actionsJson)
+    activeList.setProperty(index, "timestamp", oldTimestamp)
+    activeList.setProperty(index, "progress", oldProgress)
+
+    // Update stored notification object
+    const notifData = activeNotifications[internalId]
+    notifData.notification = notification
     notification.tracked = true
-    notification.closed.connect(() => removeActive(data.id))
+    notification.closed.connect(() => removeNotification(internalId))
 
-    // Store metadata for efficient progress calculation
-    const durations = [Settings.data.notifications?.lowUrgencyDuration * 1000 || 3000, Settings.data.notifications?.normalUrgencyDuration * 1000 || 8000, Settings.data.notifications?.criticalUrgencyDuration * 1000 || 15000]
+    // Update metadata
+    notifData.metadata.urgency = data.urgency
+    notifData.metadata.duration = calculateDuration(data)
+  }
 
-    let expire = 0
-    if (Settings.data.notifications?.respectExpireTimeout) {
-      if (data.expireTimeout === 0) {
-        expire = -1 // Never expire
-      } else if (data.expireTimeout > 0) {
-        expire = data.expireTimeout
-      } else {
-        expire = durations[data.urgency]
+  function addNewNotification(quickshellId, notification, data) {
+    // Map IDs
+    quickshellIdToInternalId[quickshellId] = data.id
+
+    // Create watcher
+    const watcher = notificationWatcherComponent.createObject(root, {
+                                                                "targetNotification": notification,
+                                                                "targetDataId": data.id
+                                                              })
+
+    // Store notification data
+    activeNotifications[data.id] = {
+      "notification": notification,
+      "watcher": watcher,
+      "metadata": {
+        "timestamp": data.timestamp.getTime(),
+        "duration": calculateDuration(data),
+        "urgency": data.urgency,
+        "paused": false,
+        "pauseTime": 0
       }
-    } else {
-      expire = durations[data.urgency]
     }
 
-    notificationMetadata[data.id] = {
-      "timestamp": data.timestamp.getTime(),
-      "duration": expire,
-      "urgency": data.urgency,
-      "paused": false,
-      "pauseTime": 0
-    }
+    notification.tracked = true
+    notification.closed.connect(() => removeNotification(data.id))
 
+    // Add to list
     activeList.insert(0, data)
+
+    // Remove overflow
     while (activeList.count > maxVisible) {
       const last = activeList.get(activeList.count - 1)
-      activeMap[last.id]?.dismiss()
+      activeNotifications[last.id]?.notification?.dismiss()
       activeList.remove(activeList.count - 1)
-      delete notificationMetadata[last.id]
+      cleanupNotification(last.id)
     }
+  }
+
+  function findDuplicateNotification(data) {
+    const contentId = getContentId(data.summary, data.body, data.appName)
+
+    for (var i = 0; i < activeList.count; i++) {
+      const existing = activeList.get(i)
+      const existingContentId = getContentId(existing.summary, existing.body, existing.appName)
+      if (existingContentId === contentId) {
+        return existing.id
+      }
+    }
+    return null
+  }
+
+  function calculateDuration(data) {
+    const durations = [Settings.data.notifications?.lowUrgencyDuration * 1000 || 3000, Settings.data.notifications?.normalUrgencyDuration * 1000 || 8000, Settings.data.notifications?.criticalUrgencyDuration * 1000 || 15000]
+
+    if (Settings.data.notifications?.respectExpireTimeout) {
+      if (data.expireTimeout === 0)
+        return -1 // Never expire
+      if (data.expireTimeout > 0)
+        return data.expireTimeout
+    }
+
+    return durations[data.urgency]
   }
 
   function createData(n) {
@@ -207,7 +291,7 @@ Singleton {
 
     return {
       "id": id,
-      "summary": (n.summary || ""),
+      "summary": n.summary || "",
       "body": stripTags(n.body || ""),
       "appName": getAppName(n.appName || n.desktopEntry || ""),
       "urgency": n.urgency < 0 || n.urgency > 2 ? 1 : n.urgency,
@@ -223,6 +307,104 @@ Singleton {
     }
   }
 
+  function findNotificationIndex(internalId) {
+    for (var i = 0; i < activeList.count; i++) {
+      if (activeList.get(i).id === internalId) {
+        return i
+      }
+    }
+    return -1
+  }
+
+  function updateNotificationFromObject(internalId) {
+    const notifData = activeNotifications[internalId]
+    if (!notifData)
+      return
+
+    const index = findNotificationIndex(internalId)
+    if (index < 0)
+      return
+
+    const data = createData(notifData.notification)
+    const existing = activeList.get(index)
+
+    // Update properties (keeping timestamp and progress)
+    activeList.setProperty(index, "summary", data.summary)
+    activeList.setProperty(index, "body", data.body)
+    activeList.setProperty(index, "appName", data.appName)
+    activeList.setProperty(index, "urgency", data.urgency)
+    activeList.setProperty(index, "expireTimeout", data.expireTimeout)
+    activeList.setProperty(index, "originalImage", data.originalImage)
+    activeList.setProperty(index, "cachedImage", data.cachedImage)
+    activeList.setProperty(index, "actionsJson", data.actionsJson)
+
+    // Update metadata
+    notifData.metadata.urgency = data.urgency
+    notifData.metadata.duration = calculateDuration(data)
+  }
+
+  function removeNotification(id) {
+    const index = findNotificationIndex(id)
+    if (index >= 0) {
+      activeList.remove(index)
+    }
+    cleanupNotification(id)
+  }
+
+  function cleanupNotification(id) {
+    const notifData = activeNotifications[id]
+    if (notifData) {
+      notifData.watcher?.destroy()
+      delete activeNotifications[id]
+    }
+
+    // Clean up quickshell ID mapping
+    for (const qsId in quickshellIdToInternalId) {
+      if (quickshellIdToInternalId[qsId] === id) {
+        delete quickshellIdToInternalId[qsId]
+        break
+      }
+    }
+  }
+
+  // Progress updates
+  Timer {
+    interval: 50
+    repeat: true
+    running: activeList.count > 0
+    onTriggered: updateAllProgress()
+  }
+
+  function updateAllProgress() {
+    const now = Date.now()
+    const toRemove = []
+
+    for (var i = 0; i < activeList.count; i++) {
+      const notif = activeList.get(i)
+      const notifData = activeNotifications[notif.id]
+      if (!notifData)
+        continue
+
+      const meta = notifData.metadata
+      if (meta.duration === -1 || meta.paused)
+        continue
+
+      const elapsed = now - meta.timestamp
+      const progress = Math.max(1.0 - (elapsed / meta.duration), 0.0)
+
+      if (progress <= 0) {
+        toRemove.push(notif.id)
+      } else if (Math.abs(notif.progress - progress) > 0.005) {
+        activeList.setProperty(i, "progress", progress)
+      }
+    }
+
+    if (toRemove.length > 0) {
+      animateAndRemove(toRemove[0])
+    }
+  }
+
+  // Image handling
   function queueImage(path, imageId) {
     if (!path || !path.startsWith("image://") || !imageId)
       return
@@ -259,64 +441,6 @@ Singleton {
     }
   }
 
-  function removeActive(id) {
-    for (var i = 0; i < activeList.count; i++) {
-      if (activeList.get(i).id === id) {
-        activeList.remove(i)
-        delete activeMap[id]
-        delete notificationMetadata[id]
-        break
-      }
-    }
-  }
-
-  // Optimized batch progress update
-  Timer {
-    interval: 50 // Reduced from 10ms to 50ms (20 updates/sec instead of 100)
-    repeat: true
-    running: activeList.count > 0
-    onTriggered: updateAllProgress()
-  }
-
-  function updateAllProgress() {
-    const now = Date.now()
-    const toRemove = []
-    const updates = [] // Batch updates
-
-    // Collect all updates first
-    for (var i = 0; i < activeList.count; i++) {
-      const notif = activeList.get(i)
-      const meta = notificationMetadata[notif.id]
-
-      if (!meta || meta.duration === -1 || meta.paused)
-        continue
-
-      // Skip infinite notifications
-      const elapsed = now - meta.timestamp
-      const progress = Math.max(1.0 - (elapsed / meta.duration), 0.0)
-
-      if (progress <= 0) {
-        toRemove.push(notif.id)
-      } else if (Math.abs(notif.progress - progress) > 0.005) {
-        // Only update if change is significant
-        updates.push({
-                       "index": i,
-                       "progress": progress
-                     })
-      }
-    }
-
-    // Apply batch updates
-    for (const update of updates) {
-      activeList.setProperty(update.index, "progress", update.progress)
-    }
-
-    // Remove expired notifications (one at a time to allow animation)
-    if (toRemove.length > 0) {
-      animateAndRemove(toRemove[0])
-    }
-  }
-
   // History management
   function addToHistory(data) {
     historyList.insert(0, data)
@@ -348,7 +472,7 @@ Singleton {
     }
   }
 
-  // Persistence - State (lastSeenTs, etc.)
+  // Persistence - State
   FileView {
     id: stateFileView
     path: stateFile
@@ -425,7 +549,6 @@ Singleton {
     try {
       root.lastSeenTs = stateAdapter.lastSeenTs || 0
 
-      // Migration: if state file is empty but settings has lastSeenTs, migrate it
       if (root.lastSeenTs === 0 && Settings.data.notifications && Settings.data.notifications.lastSeenTs) {
         root.lastSeenTs = Settings.data.notifications.lastSeenTs
         saveState()
@@ -450,10 +573,10 @@ Singleton {
     saveState()
   }
 
+  // Utility functions
   function getAppName(name) {
     if (!name || name.trim() === "")
       return "Unknown"
-
     name = name.trim()
 
     if (name.includes(".") && (name.startsWith("com.") || name.startsWith("org.") || name.startsWith("io.") || name.startsWith("net."))) {
@@ -464,9 +587,8 @@ Singleton {
         appPart = parts[parts.length - 2] || parts[0]
       }
 
-      if (appPart) {
+      if (appPart)
         name = appPart
-      }
     }
 
     if (name.includes(".")) {
@@ -524,25 +646,25 @@ Singleton {
   }
 
   function pauseTimeout(id) {
-    const meta = notificationMetadata[id]
-    if (meta && !meta.paused) {
-      meta.paused = true
-      meta.pauseTime = Date.now()
+    const notifData = activeNotifications[id]
+    if (notifData && !notifData.metadata.paused) {
+      notifData.metadata.paused = true
+      notifData.metadata.pauseTime = Date.now()
     }
   }
 
   function resumeTimeout(id) {
-    const meta = notificationMetadata[id]
-    if (meta && meta.paused) {
-      meta.timestamp += Date.now() - meta.pauseTime
-      meta.paused = false
+    const notifData = activeNotifications[id]
+    if (notifData && notifData.metadata.paused) {
+      notifData.metadata.timestamp += Date.now() - notifData.metadata.pauseTime
+      notifData.metadata.paused = false
     }
   }
 
   // Public API
   function dismissActiveNotification(id) {
-    activeMap[id]?.dismiss()
-    removeActive(id)
+    activeNotifications[id]?.notification?.dismiss()
+    removeNotification(id)
   }
 
   function dismissOldestActive() {
@@ -553,18 +675,21 @@ Singleton {
   }
 
   function dismissAllActive() {
-    Object.values(activeMap).forEach(n => n.dismiss())
+    for (const id in activeNotifications) {
+      activeNotifications[id].notification?.dismiss()
+      activeNotifications[id].watcher?.destroy()
+    }
     activeList.clear()
-    activeMap = {}
-    notificationMetadata = {}
+    activeNotifications = {}
+    quickshellIdToInternalId = {}
   }
 
   function invokeAction(id, actionId) {
-    const n = activeMap[id]
-    if (!n?.actions)
+    const notifData = activeNotifications[id]
+    if (!notifData?.notification?.actions)
       return false
 
-    for (const action of n.actions) {
+    for (const action of notifData.notification.actions) {
       if (action.identifier === actionId && action.invoke) {
         action.invoke()
         return true
@@ -599,7 +724,7 @@ Singleton {
     saveHistory()
   }
 
-  // Signals & connections
+  // Signals
   signal animateAndRemove(string notificationId)
 
   Connections {
