@@ -101,7 +101,7 @@ ShellRoot {
       IPCService {}
 
       // MainScreen for each screen (manages bar + all panels)
-      MainScreens {}
+      AllScreens {}
     }
   }
 
