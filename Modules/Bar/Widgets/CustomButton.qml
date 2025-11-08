@@ -56,6 +56,7 @@ Item {
     icon: _dynamicIcon !== "" ? _dynamicIcon : customIcon
     text: shouldShowText ? _dynamicText : ""
     density: Settings.data.bar.density
+    rotateText: isVerticalBar && !hideTextInVerticalBar
     autoHide: false
     forceOpen: _dynamicText !== ""
     tooltipText: {
