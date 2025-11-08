@@ -11,8 +11,8 @@ import qs.Modules.MainScreen
 SmartPanel {
   id: root
 
-  preferredWidth: Math.round(520 * Style.uiScaleRatio)
-  preferredHeight: Math.round(600 * Style.uiScaleRatio)
+  preferredWidth: Math.round(preferredWidthRatio * 2560 * Style.uiScaleRatio)
+  preferredHeight: Math.round(preferredHeightRatio * 1440 * Style.uiScaleRatio)
   preferredWidthRatio: 0.4
   preferredHeightRatio: 0.6
 

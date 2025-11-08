@@ -78,7 +78,9 @@ PanelWindow {
 
   // Desktop dimming when panels are open
   property bool dimDesktop: Settings.data.general.dimDesktop
-  property bool isPanelOpen: PanelService.openedPanel !== null
+  property bool isPanelOpen: (PanelService.openedPanel !== null) && (PanelService.openedPanel.screen === screen)
+  property bool isPanelClosing: (PanelService.openedPanel !== null) && PanelService.openedPanel.isClosing
+
   color: {
     if (dimDesktop && isPanelOpen) {
       return Qt.alpha(Color.mShadow, 0.8)
@@ -124,30 +126,8 @@ PanelWindow {
       id: backgroundMaskRegion
       x: 0
       y: 0
-      width: root.isPanelOpen ? root.width : 0
-      height: root.isPanelOpen ? root.height : 0
-      intersection: Intersection.Subtract
-    }
-  }
-
-  // Variants for panel regions
-  Variants {
-    id: panelRegions
-
-    // Model is the list of open panels (filters out closed ones)
-    model: [audioPanel, controlCenterPanel, calendarPanel].filter(function (p) {
-      return p && p.isPanelOpen
-    })
-
-    Region {
-      required property var modelData
-      property var panelBg: modelData.panelRegion
-
-      // Direct bindings
-      x: panelBg?.x ?? 0
-      y: panelBg?.y ?? 0
-      width: panelBg?.width ?? 0
-      height: panelBg?.height ?? 0
+      width: root.isPanelOpen && !isPanelClosing ? root.width : 0
+      height: root.isPanelOpen && !isPanelClosing ? root.height : 0
       intersection: Intersection.Subtract
     }
   }
@@ -174,11 +154,12 @@ PanelWindow {
     MouseArea {
       anchors.fill: parent
       enabled: root.isPanelOpen
-      onClicked: {
-        if (PanelService.openedPanel) {
-          PanelService.openedPanel.close()
-        }
-      }
+      acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+      onClicked: mouse => {
+                   if (PanelService.openedPanel) {
+                     PanelService.openedPanel.close()
+                   }
+                 }
       z: 0 // Behind panels and bar
     }
 

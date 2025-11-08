@@ -74,6 +74,11 @@ ShellRoot {
         IdleInhibitorService.init()
         PowerProfileService.init()
         DistroService.init()
+
+        // Only open the setup wizard for new users
+        if (!Settings.data.setupCompleted) {
+          checkSetupWizard()
+        }
       }
 
       Overview {}
@@ -96,18 +101,7 @@ ShellRoot {
       IPCService {}
 
       // MainScreen for each screen (manages bar + all panels)
-      MainScreens {}
-    }
-  }
-
-  // Setup Wizard - Auto Kick start
-  Connections {
-    target: Settings
-    function onSettingsLoaded() {
-      // Only open the setup wizard for new users
-      if (!Settings.data.setupCompleted) {
-        checkSetupWizard()
-      }
+      AllScreens {}
     }
   }
 
@@ -125,23 +119,25 @@ ShellRoot {
     }
 
     if (Settings.data.settingsVersion >= Settings.settingsVersion) {
-      // Open Setup Wizard as a panel in the same windowing system as Settings/ControlCenter
-      if (Quickshell.screens.length > 0) {
-        var targetScreen = Quickshell.screens[0]
-        var setupPanel = PanelService.getPanel("setupWizardPanel", targetScreen)
-        if (setupPanel) {
-          setupPanel.open()
-        } else {
-          // If not yet loaded, ensure it loads and try again shortly
-          Qt.callLater(() => {
-                         var sp = PanelService.getPanel("setupWizardPanel", targetScreen)
-                         if (sp)
-                         sp.open()
-                       })
-        }
-      }
+      showSetupWizard()
     } else {
       Settings.data.setupCompleted = true
+    }
+  }
+
+  function showSetupWizard() {
+    // Open Setup Wizard as a panel in the same windowing system as Settings/ControlCenter
+    if (Quickshell.screens.length > 0) {
+      var targetScreen = Quickshell.screens[0]
+      var setupPanel = PanelService.getPanel("setupWizardPanel", targetScreen)
+      if (setupPanel) {
+        setupPanel.open()
+      } else {
+        // If not yet loaded, ensure it loads and try again shortly
+        Qt.callLater(() => {
+                       showSetupWizard()
+                     })
+      }
     }
   }
 }

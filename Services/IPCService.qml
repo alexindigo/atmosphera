@@ -40,7 +40,7 @@ Item {
     function toggle() {
       root.withTargetScreen(screen => {
                               var calendarPanel = PanelService.getPanel("calendarPanel", screen)
-                              calendarPanel.toggle(null, "Clock")
+                              calendarPanel?.toggle(null, "Clock")
                             })
     }
   }
@@ -286,6 +286,18 @@ Item {
         PowerProfileService.setProfile(0)
         break
       }
+    }
+
+    function toggleNoctaliaPerformance() {
+      PowerProfileService.toggleNoctaliaPerformance()
+    }
+
+    function enableNoctaliaPerformance() {
+      PowerProfileService.setNoctaliaPerformance(true)
+    }
+
+    function disableNoctaliaPerformance() {
+      PowerProfileService.setNoctaliaPerformance(false)
     }
   }
 

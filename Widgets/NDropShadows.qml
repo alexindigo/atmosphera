@@ -1,13 +1,14 @@
 import QtQuick
 import QtQuick.Effects
 import qs.Commons
+import qs.Services
 
 // Unified shadow system
 Item {
   id: root
   required property var source
 
-  layer.enabled: Settings.data.general.enableShadows
+  layer.enabled: Settings.data.general.enableShadows && !PowerProfileService.noctaliaPerformanceMode
   layer.effect: MultiEffect {
     source: root.source
     shadowEnabled: true

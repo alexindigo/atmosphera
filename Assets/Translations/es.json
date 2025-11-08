@@ -1511,10 +1511,6 @@
         "description": "Los paneles se fijan a la barra y a los bordes de la pantalla, creando una apariencia impecable con elegantes esquinas invertidas.",
         "label": "Ajustar paneles a los bordes"
       },
-      "settings-panel-attached-to-bar": {
-        "description": "Mantén la ventana de Configuración alineada con la barra para un aspecto unificado.",
-        "label": "Ajustar Configuración a la barra"
-      },
       "panels-overlay": {
         "description": "Garantiza que los paneles y la barra permanezcan visibles, incluso sobre aplicaciones en pantalla completa.",
         "label": "Mantener paneles y barra en la parte superior"
@@ -1527,6 +1523,10 @@
       "section": {
         "description": "Personaliza la apariencia, el ambiente y el comportamiento de la interfaz.",
         "label": "Apariencia"
+      },
+      "settings-panel-attached-to-bar": {
+        "description": "Mantén la ventana de Configuración alineada con la barra para un aspecto unificado.",
+        "label": "Ajustar Configuración a la barra"
       },
       "shadows": {
         "description": "Habilita sombras paralelas debajo de las barras y los paneles.",
@@ -1733,6 +1733,11 @@
       "forced": "Activación forzada",
       "normal": "Modo normal",
       "not-installed": "wlsunset no está instalado"
+    },
+    "noctalia-performance": {
+      "disabled": "Modo de rendimiento desactivado",
+      "enabled": "Modo de rendimiento activado",
+      "label": "Actuación de Noctalia"
     },
     "power-profile": {
       "changed": "Perfil de energía cambiado",

@@ -54,8 +54,8 @@ Item {
   property bool effectsActive: false
   property color effectColor: Color.mPrimary
 
-  property int horizontalPadding: Math.round(Style.marginS)
-  property int spacingBetweenPills: Math.round(Style.marginXS)
+  property int horizontalPadding: Style.marginS
+  property int spacingBetweenPills: Style.marginXS
 
   // Wheel scroll handling
   property int wheelAccumulatedDelta: 0

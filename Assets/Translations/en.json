@@ -1511,10 +1511,6 @@
         "description": "Panels lock to the bar and screen edges, creating a seamless look with stylish inverted corners.",
         "label": "Snap panels to edges"
       },
-      "settings-panel-attached-to-bar": {
-        "description": "Keep the Settings window aligned with the bar for a unified look.",
-        "label": "Snap Settings window to bar"
-      },
       "panels-overlay": {
         "description": "Ensures panels and the bar remain visible, even over fullscreen applications.",
         "label": "Keep panels & bar on top"
@@ -1527,6 +1523,10 @@
       "section": {
         "description": "Customize the look, feel, and behavior of the interface.",
         "label": "Appearance"
+      },
+      "settings-panel-attached-to-bar": {
+        "description": "Keep the Settings window aligned with the bar for a unified look.",
+        "label": "Snap Settings window to bar"
       },
       "shadows": {
         "description": "Enables drop shadows under bars and panels.",
@@ -1733,6 +1733,11 @@
       "forced": "Forced activation",
       "normal": "Normal mode",
       "not-installed": "wlsunset not installed"
+    },
+    "noctalia-performance": {
+      "disabled": "Performance mode disabled",
+      "enabled": "Performance mode enabled",
+      "label": "Noctalia performance"
     },
     "power-profile": {
       "changed": "Power profile changed",

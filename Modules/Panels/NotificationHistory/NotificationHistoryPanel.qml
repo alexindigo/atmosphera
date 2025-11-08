@@ -144,16 +144,14 @@ SmartPanel {
           property string notificationId: model.id
           property bool isExpanded: notificationList.expandedId === notificationId
 
-          width: notificationList.width
-          height: notificationLayoutWrapper.height + (Style.marginM * 2)
+          // Cache the content height to break binding loops
+          property real contentHeight: notificationLayout.implicitHeight
 
-          Behavior on height {
-            enabled: !Settings.data.general.animationDisabled
-            NumberAnimation {
-              duration: Style.animationNormal
-              easing.type: Easing.InOutQuad
-            }
-          }
+          // Cache truncation state to avoid binding to truncated property during polish
+          property bool hasTextTruncated: false
+
+          width: notificationList.width
+          height: contentHeight + (Style.marginM * 2)
 
           Rectangle {
             anchors.fill: parent
@@ -176,7 +174,7 @@ SmartPanel {
             anchors.fill: parent
             // Don't capture clicks on the delete button
             anchors.rightMargin: 48
-            enabled: (summaryText.truncated || bodyText.truncated)
+            enabled: hasTextTruncated
             onClicked: {
               if (notificationList.expandedId === notificationId) {
                 notificationList.expandedId = ""
@@ -185,6 +183,25 @@ SmartPanel {
               }
             }
             cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+          }
+
+          // Update truncation state asynchronously
+          Connections {
+            target: summaryText
+            function onTruncatedChanged() {
+              hasTextTruncated = summaryText.truncated || bodyText.truncated
+            }
+          }
+
+          Connections {
+            target: bodyText
+            function onTruncatedChanged() {
+              hasTextTruncated = summaryText.truncated || bodyText.truncated
+            }
+          }
+
+          Component.onCompleted: {
+            hasTextTruncated = summaryText.truncated || bodyText.truncated
           }
 
           Item {
@@ -200,22 +217,16 @@ SmartPanel {
               width: parent.width
               spacing: Style.marginM
 
-              // Icon column - use simple Item instead of ColumnLayout to avoid polish loop
-              Item {
+              // Icon - properly centered vertically
+              NImageCircled {
                 Layout.preferredWidth: Math.round(40 * Style.uiScaleRatio)
-                Layout.alignment: Qt.AlignTop
-
-                NImageCircled {
-                  anchors.top: parent.top
-                  anchors.topMargin: 20
-                  width: Math.round(40 * Style.uiScaleRatio)
-                  height: Math.round(40 * Style.uiScaleRatio)
-                  imagePath: model.cachedImage || model.originalImage || ""
-                  borderColor: Color.transparent
-                  borderWidth: 0
-                  fallbackIcon: "bell"
-                  fallbackIconSize: 24
-                }
+                Layout.preferredHeight: Math.round(40 * Style.uiScaleRatio)
+                Layout.alignment: Qt.AlignVCenter
+                imagePath: model.cachedImage || model.originalImage || ""
+                borderColor: Color.transparent
+                borderWidth: 0
+                fallbackIcon: "bell"
+                fallbackIconSize: 24
               }
 
               // Notification content column
@@ -276,6 +287,11 @@ SmartPanel {
                   Layout.fillWidth: true
                   maximumLineCount: isExpanded ? 999 : 2
                   elide: Text.ElideRight
+
+                  // Smooth transition without triggering layout recalculation
+                  Behavior on maximumLineCount {
+                    enabled: false // Disable animation on this to avoid polish loops
+                  }
                 }
 
                 // Body
@@ -290,18 +306,24 @@ SmartPanel {
                   maximumLineCount: isExpanded ? 999 : 3
                   elide: Text.ElideRight
                   visible: text.length > 0
+
+                  // Smooth transition without triggering layout recalculation
+                  Behavior on maximumLineCount {
+                    enabled: false // Disable animation on this to avoid polish loops
+                  }
                 }
 
                 // Spacer for expand indicator
                 Item {
                   Layout.fillWidth: true
-                  Layout.preferredHeight: (!isExpanded && (summaryText.truncated || bodyText.truncated)) ? (Style.marginS) : 0
+                  Layout.preferredHeight: Style.marginS
+                  visible: !isExpanded && hasTextTruncated
                 }
 
                 // Expand indicator
                 RowLayout {
                   Layout.fillWidth: true
-                  visible: !isExpanded && (summaryText.truncated || bodyText.truncated)
+                  visible: !isExpanded && hasTextTruncated
                   spacing: Style.marginXS
 
                   Item {

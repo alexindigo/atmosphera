@@ -134,11 +134,10 @@ NBox {
       }
     }
 
-    RowLayout {
-      visible: !weatherReady
-      Layout.fillWidth: true
-      Layout.alignment: Qt.AlignHCenter
-      NBusyIndicator {}
+    Loader {
+      active: !weatherReady
+      Layout.alignment: Qt.AlignCenter
+      sourceComponent: NBusyIndicator {}
     }
   }
 }

@@ -38,6 +38,8 @@ Singleton {
     var lines = []
     lines.push("[config]")
     lines.push("")
+    lines.push("[templates]")
+    lines.push("")
     lines.push("# User-defined templates")
     lines.push("# Add your custom templates below")
     lines.push("# Example:")

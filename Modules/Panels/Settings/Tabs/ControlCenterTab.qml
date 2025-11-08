@@ -255,7 +255,7 @@ ColumnLayout {
       NSectionEditor {
         sectionName: I18n.tr("settings.control-center.shortcuts.sectionLeft")
         sectionId: "left"
-        settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Settings/ControlCenter/ControlCenterWidgetSettingsDialog.qml")
+        settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Panels/Settings/ControlCenter/ControlCenterWidgetSettingsDialog.qml")
         maxWidgets: 5
         widgetRegistry: ControlCenterWidgetRegistry
         widgetModel: Settings.data.controlCenter.shortcuts["left"]
@@ -274,7 +274,7 @@ ColumnLayout {
       NSectionEditor {
         sectionName: I18n.tr("settings.control-center.shortcuts.sectionRight")
         sectionId: "right"
-        settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Settings/ControlCenter/ControlCenterWidgetSettingsDialog.qml")
+        settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Panels/Settings/ControlCenter/ControlCenterWidgetSettingsDialog.qml")
         maxWidgets: 5
         widgetRegistry: ControlCenterWidgetRegistry
         widgetModel: Settings.data.controlCenter.shortcuts["right"]
