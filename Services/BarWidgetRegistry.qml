@@ -134,7 +134,7 @@ Singleton {
                                   },
                                   "SystemMonitor": {
                                     "allowUserSettings": true,
-                                    "usePrimaryColor": true,
+                                    "usePrimaryColor": false,
                                     "showCpuUsage": true,
                                     "showCpuTemp": true,
                                     "showMemoryUsage": true,
