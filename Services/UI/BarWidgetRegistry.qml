@@ -12,7 +12,8 @@ Singleton {
   property var widgets: ({
                            "ActiveWindow": activeWindowComponent,
                            "AudioVisualizer": audioVisualizerComponent,
-                           "Battery": batteryComponent,
+                           "Battery"// HEAVY
+                           : batteryComponent,
                            "Bluetooth": bluetoothComponent,
                            "Brightness": brightnessComponent,
                            "Clock": clockComponent,
@@ -27,18 +28,21 @@ Singleton {
                            "NightLight": nightLightComponent,
                            "NoctaliaPerformance": noctaliaPerformanceComponent,
                            "NotificationHistory": notificationHistoryComponent,
-                           "PowerProfile": powerProfileComponent,
+                           "PowerProfile"// HEAVY
+                           : powerProfileComponent,
                            "ScreenRecorder": screenRecorderComponent,
                            "SessionMenu": sessionMenuComponent,
                            "Spacer": spacerComponent,
                            "SystemMonitor": systemMonitorComponent,
-                           "Taskbar": taskbarComponent,
+                           "Taskbar"// HEAVY
+                           : taskbarComponent,
                            "TaskbarGrouped": taskbarGroupedComponent,
                            "Tray": trayComponent,
-                           "Volume": volumeComponent,
+                           "Volume"// A BIT HEAVY ?
+                           : volumeComponent,
                            "WiFi": wiFiComponent,
                            "WallpaperSelector": wallpaperSelectorComponent,
-                           "Workspace": workspaceComponent
+                           "Workspace": workspaceComponent // HEAVY
                          })
 
   property var widgetMetadata: ({

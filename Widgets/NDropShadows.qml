@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Effects
 import qs.Commons
-import qs.Services
+import qs.Services.Power
 
 // Unified shadow system
 Item {

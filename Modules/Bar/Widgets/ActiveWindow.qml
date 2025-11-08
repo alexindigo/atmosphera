@@ -1,11 +1,9 @@
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Wayland
 import Quickshell.Widgets
 import qs.Commons
-import qs.Services
+import qs.Services.UI
 import qs.Widgets
 
 Item {

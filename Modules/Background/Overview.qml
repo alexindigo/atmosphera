@@ -3,7 +3,8 @@ import Quickshell
 import QtQuick.Effects
 import Quickshell.Wayland
 import qs.Commons
-import qs.Services
+import qs.Services.Compositor
+import qs.Services.UI
 
 Loader {
   active: CompositorService.isNiri && Settings.data.wallpaper.enabled && Settings.data.wallpaper.overviewEnabled

@@ -7,7 +7,7 @@ import Quickshell.Services.SystemTray
 import Quickshell.Widgets
 import qs.Commons
 import qs.Modules.Bar.Extras
-import qs.Services
+import qs.Services.UI
 import qs.Widgets
 
 Rectangle {

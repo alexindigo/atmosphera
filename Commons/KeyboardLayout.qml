@@ -2,6 +2,7 @@ pragma Singleton
 
 import QtQuick
 
+// TODO:  Move to KeyboardLayoutService.
 QtObject {
   id: root
 

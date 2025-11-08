@@ -5,7 +5,6 @@ import Quickshell
 import Quickshell.Bluetooth
 import Quickshell.Io
 import qs.Commons
-import qs.Services
 
 Singleton {
   id: root

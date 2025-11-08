@@ -2,7 +2,8 @@ import QtQuick
 import Quickshell
 import Quickshell.Wayland
 import qs.Commons
-import qs.Services
+import qs.Services.Compositor
+import qs.Services.UI
 
 Variants {
   id: backgroundVariants
@@ -109,7 +110,7 @@ Variants {
         property bool dimensionsCalculated: false
 
         source: ""
-        smooth: true
+        smooth: false
         mipmap: false
         visible: false
         cache: false
@@ -138,7 +139,7 @@ Variants {
         property bool dimensionsCalculated: false
 
         source: ""
-        smooth: true
+        smooth: false
         mipmap: false
         visible: false
         cache: false

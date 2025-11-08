@@ -2,7 +2,7 @@ pragma Singleton
 
 import QtQuick
 import Quickshell
-import "../Helpers/ColorsConvert.js" as ColorsConvert
+import "../../Helpers/ColorsConvert.js" as ColorsConvert
 
 Singleton {
   id: root

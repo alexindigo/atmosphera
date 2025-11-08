@@ -1,6 +1,8 @@
 import Quickshell
 import qs.Commons
-import qs.Services
+import qs.Services.UI
+import qs.Services.Media
+import qs.Services.System
 import qs.Widgets
 
 // Screen Recording Indicator

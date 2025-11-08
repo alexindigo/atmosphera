@@ -3,10 +3,11 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Effects
 import Quickshell
-import qs.Widgets.AudioSpectrum
 import qs.Commons
-import qs.Services
+import qs.Services.Media
+import qs.Services.UI
 import qs.Widgets
+import qs.Widgets.AudioSpectrum
 
 NBox {
   id: root

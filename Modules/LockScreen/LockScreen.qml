@@ -9,7 +9,6 @@ import Quickshell.Services.UPower
 import Quickshell.Io
 import Quickshell.Widgets
 import qs.Commons
-import qs.Services
 import qs.Widgets
 import qs.Widgets.AudioSpectrum
 

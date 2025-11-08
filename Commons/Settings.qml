@@ -4,7 +4,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.Commons
-import qs.Services
+import qs.Services.UI
 import "../Helpers/QtObj2JS.js" as QtObj2JS
 
 Singleton {

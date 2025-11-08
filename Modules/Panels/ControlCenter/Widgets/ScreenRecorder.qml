@@ -1,7 +1,7 @@
 import QtQuick.Layouts
 import Quickshell
 import qs.Commons
-import qs.Services
+import qs.Services.UI
 import qs.Widgets
 
 NIconButtonHot {
@@ -14,8 +14,7 @@ NIconButtonHot {
   onClicked: {
     ScreenRecorderService.toggleRecording()
     if (!ScreenRecorderService.isRecording) {
-      var panel = PanelService.getPanel("controlCenterPanel", screen)
-      panel?.close()
+      PanelService.getPanel("controlCenterPanel", screen)?.close
     }
   }
 }

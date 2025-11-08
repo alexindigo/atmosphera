@@ -4,7 +4,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Services.UPower
 import qs.Commons
-import qs.Services
+import qs.Services.UI
 
 Singleton {
   id: root

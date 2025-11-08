@@ -2,12 +2,11 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Wayland
 import qs.Modules.Panels.Settings.Tabs
 import qs.Commons
-import qs.Services
-import qs.Widgets
 import qs.Modules.MainScreen
+import qs.Services.System
+import qs.Widgets
 
 SmartPanel {
   id: root

@@ -3,9 +3,9 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import Quickshell
 import Quickshell.Bluetooth
-import Quickshell.Wayland
 import qs.Commons
-import qs.Services
+import qs.Services.UI
+import qs.Services.Networking
 import qs.Widgets
 import qs.Modules.MainScreen
 
@@ -13,7 +13,7 @@ SmartPanel {
   id: root
 
   preferredWidth: Math.round(340 * Style.uiScaleRatio)
-  preferredHeight: 500 * Style.uiScaleRatio
+  preferredHeight: Math.round(500 * Style.uiScaleRatio)
 
   panelContent: Rectangle {
     color: Color.transparent

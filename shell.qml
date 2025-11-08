@@ -12,7 +12,14 @@ import Quickshell
 
 // Commons & Services
 import qs.Commons
-import qs.Services
+import qs.Services.Control
+import qs.Services.DynamicTheming
+import qs.Services.Hardware
+import qs.Services.Location
+import qs.Services.Networking
+import qs.Services.Power
+import qs.Services.System
+import qs.Services.UI
 
 // Modules
 import qs.Modules.Background
@@ -63,11 +70,9 @@ ShellRoot {
         WallpaperService.init()
         AppThemeService.init()
         ColorSchemeService.init()
-        BarWidgetRegistry.init()
         LocationService.init()
         NightLightService.apply()
         DarkModeService.init()
-        FontService.init()
         HooksService.init()
         BluetoothService.init()
         BatteryService.init()

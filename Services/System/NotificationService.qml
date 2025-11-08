@@ -6,8 +6,8 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Services.Notifications
 import qs.Commons
-import qs.Services
-import "../Helpers/sha256.js" as Checksum
+import qs.Services.Power
+import "../../Helpers/sha256.js" as Checksum
 
 Singleton {
   id: root

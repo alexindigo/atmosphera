@@ -51,7 +51,7 @@ Singleton {
         }, {
           "path": "~/.config/gtk-4.0/gtk.css"
         }],
-      "postProcess": mode => `gsettings set org.gnome.desktop.interface color-scheme prefer-${mode}\n`
+      "postProcess": mode => `gsettings set org.gnome.desktop.interface color-scheme prefer-${mode}`
     }, {
       "id": "qt",
       "name": "Qt",
@@ -78,7 +78,7 @@ Singleton {
       "outputs": [{
           "path": "~/.config/fuzzel/themes/noctalia"
         }],
-      "postProcess": () => `${colorsApplyScript} fuzzel\n`
+      "postProcess": () => `${colorsApplyScript} fuzzel`
     }, {
       "id": "vicinae",
       "name": "Vicinae",
@@ -87,7 +87,7 @@ Singleton {
       "outputs": [{
           "path": "~/.local/share/vicinae/themes/matugen.toml"
         }],
-      "postProcess": () => `cp -n ${Quickshell.shellDir}/Assets/noctalia.svg ~/.local/share/vicinae/themes/noctalia.svg && ${colorsApplyScript} vicinae\n`
+      "postProcess": () => `cp -n ${Quickshell.shellDir}/Assets/noctalia.svg ~/.local/share/vicinae/themes/noctalia.svg && ${colorsApplyScript} vicinae`
     }, {
       "id": "walker",
       "name": "Walker",
@@ -96,7 +96,7 @@ Singleton {
       "outputs": [{
           "path": "~/.config/walker/themes/noctalia/style.css"
         }],
-      "postProcess": () => `${colorsApplyScript} walker\n`,
+      "postProcess": () => `${colorsApplyScript} walker`,
       "strict": true // Use strict mode for palette generation (preserves custom surface/outline values)
     }, {
       "id": "pywalfox",
@@ -106,8 +106,8 @@ Singleton {
       "outputs": [{
           "path": "~/.cache/wal/colors.json"
         }],
-      "postProcess": () => `${colorsApplyScript} pywalfox\n`
-    }, // CONSOLIDATED DISCORD CLIENTS (requirement #2)
+      "postProcess": () => `${colorsApplyScript} pywalfox`
+    }, // CONSOLIDATED DISCORD CLIENTS
     {
       "id": "discord",
       "name": "Discord",

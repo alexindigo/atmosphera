@@ -4,7 +4,7 @@ import QtQuick.Layouts
 import QtQuick.Window
 import qs.Commons
 import qs.Widgets
-import qs.Services
+import qs.Services.UI
 
 Popup {
   id: root
@@ -15,8 +15,8 @@ Popup {
 
   signal iconSelected(string iconName)
 
-  width: 900 * Style.uiScaleRatio
-  height: 700 * Style.uiScaleRatio
+  width: Math.round(900 * Style.uiScaleRatio)
+  height: Math.round(700 * Style.uiScaleRatio)
   anchors.centerIn: Overlay.overlay
   padding: Style.marginXL
 

@@ -3,7 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell.Services.Pipewire
 import qs.Commons
-import qs.Services
+import qs.Services.Media
 import qs.Widgets
 
 ColumnLayout {

@@ -3,7 +3,7 @@ import QtQuick.Effects
 import Quickshell
 import Quickshell.Wayland
 import qs.Commons
-import qs.Services
+import qs.Services.UI
 import "Backgrounds" as Backgrounds
 
 // All panels
@@ -47,17 +47,6 @@ PanelWindow {
 
   Component.onCompleted: {
     Logger.d("MainScreen", "Initialized for screen:", screen?.name, "- Dimensions:", screen?.width, "x", screen?.height, "- Position:", screen?.x, ",", screen?.y)
-  }
-
-  // Debug: Log mask region changes
-  onMaskChanged: {
-    Logger.d("MainScreen", "Mask changed!")
-    Logger.d("MainScreen", "  Bar region:", barLoader.item?.barRegion)
-    Logger.d("MainScreen", "  Panel count:", panelsRepeater.count)
-    for (var i = 0; i < panelsRepeater.count; i++) {
-      var panelItem = panelsRepeater.itemAt(i)?.item
-      Logger.d("MainScreen", "  Panel", i, "- open:", panelItem?.isPanelOpen, "- region:", panelItem?.panelRegion)
-    }
   }
 
   // Wayland

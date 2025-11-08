@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Shapes
 import qs.Commons
-import qs.Services
 
 
 /**

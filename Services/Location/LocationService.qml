@@ -4,7 +4,6 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.Commons
-import qs.Services
 
 // Weather logic and caching with stable UI properties
 Singleton {
