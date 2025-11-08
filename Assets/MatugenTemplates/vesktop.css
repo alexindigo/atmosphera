@@ -170,6 +170,27 @@ h3[class*="postTitleText"]:hover {
     opacity: 0.85 !important;
 }
 
+/* Improve message input/editor text readability */
+[class*="editor"] [class*="markup"],
+[class*="slateTextArea"] [class*="markup"],
+[class*="slateTextArea"],
+[role="textbox"][class*="markup"],
+[role="textbox"][class*="editor"],
+[class*="editor"] [class*="slateTextArea"],
+[data-slate-editor="true"] {
+    color: var(--text-3) !important;
+    opacity: 0.4 !important;
+    line-height: 1.4 !important;
+}
+
+/* Empty/placeholder text in message input */
+[class*="emptyText"],
+[class*="emptyText"] span,
+[data-slate-zero-width] {
+    color: var(--text-4) !important;
+    opacity: 0.7 !important;
+}
+
 [class*="messageContent"][class*="deleted"],
 [class*="text-sm"][class*="messageContent"][class*="deleted"],
 [data-text-variant*="text-sm"][class*="messageContent"][class*="deleted"] {
