@@ -110,8 +110,8 @@
       "custom-button": {
         "browse": "Durchsuchen",
         "collapse-condition": {
-          "description": "If the output text matches this value, the button will collapse.",
-          "label": "Collapse condition"
+          "description": "Wenn der Ausgabetext diesem Wert entspricht, wird die Schaltfläche eingeklappt.",
+          "label": "Einklappbedingung"
         },
         "display-command-output": {
           "description": "Befehl eingeben, der in regelmäßigen Abständen ausgeführt wird. Die erste Zeile seiner Ausgabe wird als Text angezeigt.",
@@ -145,7 +145,7 @@
         },
         "text-stream": {
           "description": "Gestreamte Zeilen aus dem Befehl werden als Text auf der Schaltfläche angezeigt.",
-          "label": "Strom"
+          "label": "Stream"
         }
       },
       "dialog": {
@@ -161,7 +161,7 @@
       "lock-keys": {
         "browse": "Durchsuchen",
         "show-caps-lock": {
-          "description": "Caps Lock Status anzeigen.",
+          "description": "Caps-Lock-Status anzeigen.",
           "label": "Feststelltaste"
         },
         "show-num-lock": {
@@ -796,13 +796,13 @@
         "matugen-scheme-type": {
           "description": {
             "scheme-content": "Leitet Farben ab, die eng mit dem zugrunde liegenden Bild übereinstimmen.",
-            "scheme-expressive": "Lebendige Farbpalette mit verspielter Sättigung",
-            "scheme-fidelity": "Farbtreue Palette, die die Originalfarbtöne beibehält",
-            "scheme-fruit-salad": "Farbenfroher Mix aus leuchtenden, kontrastreichen Akzenten",
+            "scheme-expressive": "Lebendige Farbpalette mit verspielter Sättigung.",
+            "scheme-fidelity": "Farbtreue Palette, die die Originalfarbtöne beibehält.",
+            "scheme-fruit-salad": "Farbenfroher Mix aus leuchtenden, kontrastreichen Akzenten.",
             "scheme-monochrome": "Minimale Farbpalette, die auf einem einzigen Farbton basiert.",
             "scheme-neutral": "Gedämpfte Farbpalette mit dezenten und beruhigenden Tönen.",
-            "scheme-rainbow": "Vielfältige Palette, die das gesamte Spektrum abdeckt",
-            "scheme-tonal-spot": "Ausgewogene Farbpalette mit gezielten Akzenten"
+            "scheme-rainbow": "Vielfältige Palette, die das gesamte Spektrum abdeckt.",
+            "scheme-tonal-spot": "Ausgewogene Farbpalette mit gezielten Akzenten."
           },
           "label": "Matugen-Schema-Typ"
         },
@@ -849,7 +849,7 @@
         },
         "programs": {
           "code": {
-            "description": "Schreibe {Dateipfad}. Das Hyprluna-Theme muss manuell installiert und aktiviert werden.",
+            "description": "Schreibe {Dateipfad}. Das Hyprluna-Theme muss manuell installiert und aktiviert werden",
             "description-missing": "Benötigt die Installation von {app}"
           },
           "description": "Anwendungsspezifisches Theming.",
@@ -871,7 +871,7 @@
             "description-missing": "Erfordert die Installation von {app}"
           },
           "walker": {
-            "description": "Schreibt {filepath} und setzt das Theme auf noctalia",
+            "description": "Schreibt {filepath} und setzt das Theme auf Noctalia",
             "description-missing": "Erfordert die Installation von {app}"
           }
         },
@@ -899,7 +899,7 @@
           },
           "label": "Terminal",
           "wezterm": {
-            "description": "Schreibe {Dateipfad} und lade neu.",
+            "description": "Schreibe {Dateipfad} und lade neu",
             "description-missing": "Erfordert die Installation von {app}"
           }
         },
@@ -942,7 +942,7 @@
             "label": "Befehl"
           },
           "enable-on-state-logic": {
-            "description": "Aktiviert ein zweites Symbol und 'aktiv' Zustand basierend auf einem Prüfbefehl.",
+            "description": "Aktiviert ein zweites Symbol und 'Aktiv'-Zustand basierend auf einem Prüfbefehl.",
             "label": "Aktiv-Zustand-Logik aktivieren"
           },
           "general-tooltip-text": {
@@ -966,11 +966,11 @@
             "label": "Rechtsklick-Befehl"
           },
           "on-state-command": {
-            "description": "Befehl, der ausgeführt wird, um zu prüfen, ob sich die Schaltfläche im 'aktiv' Zustand befinden soll. Gibt 0 für aktiv, ungleich 0 für inaktiv zurück.",
+            "description": "Befehl, der ausgeführt wird, um zu prüfen, ob sich die Schaltfläche im 'Aktiv'-Zustand befinden soll. Gibt 0 für aktiv, ungleich 0 für inaktiv zurück.",
             "label": "Befehl für Aktiv-Zustand-Prüfung"
           },
           "on-state-icon": {
-            "description": "Das Symbol für die Schaltfläche, wenn sie sich im 'aktiv' Zustand befindet.",
+            "description": "Das Symbol für die Schaltfläche, wenn sie sich im 'Aktiv'-Zustand befindet.",
             "label": "Symbol im Aktiv-Zustand"
           },
           "state-checks": {
@@ -1087,7 +1087,7 @@
         }
       },
       "enabled": {
-        "description": "Dock vollständig anzeigen oder ausblenden",
+        "description": "Dock vollständig anzeigen oder ausblenden.",
         "label": "Dock aktivieren"
       },
       "monitors": {
@@ -1377,7 +1377,7 @@
           "label": "Bildschirmanzeige aktivieren"
         },
         "enabled": {
-          "description": "Benachrichtigungs-Daemon aktivieren oder deaktivieren, erfordert einen Neustart von noctalia-shell.",
+          "description": "Benachrichtigungs-Daemon aktivieren oder deaktivieren, erfordert einen Neustart von Noctalia Shell.",
           "label": "Benachrichtigungen aktivieren"
         },
         "location": {
@@ -1505,7 +1505,7 @@
       },
       "dim-desktop": {
         "description": "Den Desktop abdunkeln, wenn Fenster oder Menüs geöffnet sind.",
-        "label": "Dimmer Schreibtisch"
+        "label": "Desktop abdunkeln"
       },
       "panels-attached-to-bar": {
         "description": "Die Paneele rasten an der Stange und den Bildschirmrändern ein und sorgen so für ein nahtloses Erscheinungsbild mit stilvollen, umgekehrten Ecken.",

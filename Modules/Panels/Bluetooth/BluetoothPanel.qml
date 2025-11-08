@@ -13,12 +13,12 @@ SmartPanel {
   id: root
 
   preferredWidth: Math.round(340 * Style.uiScaleRatio)
-  preferredHeight: 500 * Style.uiScaleRatio
+  preferredHeight: Math.round(500 * Style.uiScaleRatio)
 
   panelContent: Rectangle {
     color: Color.transparent
 
-    property real contentPreferredHeight: Math.min(preferredHeight, Math.max(240, mainColumn.implicitHeight + Style.marginL * 2))
+    property real contentPreferredHeight: Math.min(preferredHeight, Math.max(280 * Style.uiScaleRatio, mainColumn.implicitHeight + Style.marginL * 2))
 
     ColumnLayout {
       id: mainColumn
@@ -29,13 +29,12 @@ SmartPanel {
       // Header
       NBox {
         Layout.fillWidth: true
-        implicitHeight: headerRow.implicitHeight + (Style.marginM * 2)
+        Layout.preferredHeight: headerRow.implicitHeight + Style.marginM * 2
 
         RowLayout {
           id: headerRow
           anchors.fill: parent
-          anchors.leftMargin: Style.marginM
-          anchors.rightMargin: Style.marginM
+          anchors.margins: Style.marginM
           spacing: Style.marginM
 
           NIcon {
@@ -90,9 +89,13 @@ SmartPanel {
 
         // Center the content within this rectangle
         ColumnLayout {
-          anchors.centerIn: parent
+          anchors.fill: parent
           spacing: Style.marginM
 
+          Item {
+            Layout.fillHeight: true
+          }
+          
           NIcon {
             icon: "bluetooth-off"
             pointSize: 48
@@ -111,7 +114,13 @@ SmartPanel {
             text: I18n.tr("bluetooth.panel.enable-message")
             pointSize: Style.fontSizeS
             color: Color.mOnSurfaceVariant
-            Layout.alignment: Qt.AlignHCenter
+            horizontalAlignment: Text.AlignHCenter
+            Layout.fillWidth: true
+            wrapMode: Text.WordWrap
+          }
+          
+          Item {
+            Layout.fillHeight: true
           }
         }
       }

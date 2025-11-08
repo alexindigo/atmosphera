@@ -150,7 +150,9 @@ SmartPanel {
             text: I18n.tr("wifi.panel.enable-message")
             pointSize: Style.fontSizeS
             color: Color.mOnSurfaceVariant
-            Layout.alignment: Qt.AlignHCenter
+            horizontalAlignment: Text.AlignHCenter
+            Layout.fillWidth: true
+            wrapMode: Text.WordWrap
           }
 
           Item {
