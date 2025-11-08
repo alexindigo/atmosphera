@@ -24,8 +24,27 @@ Rectangle {
   border.color: flat ? Color.transparent : Color.mSurfaceVariant
   border.width: flat ? 0 : Style.borderS
 
-  // Repaint gauge when the bound value changes
-  onValueChanged: gauge.requestPaint()
+  // Animated value for smooth transitions - reduces repaint frequency
+  property real animatedValue: value
+
+  Behavior on animatedValue {
+    enabled: !Settings.data.general.animationDisabled
+    NumberAnimation {
+      duration: Style.animationNormal
+      easing.type: Easing.OutCubic
+    }
+  }
+
+  // Repaint gauge when animated value changes (throttled by animation)
+  onAnimatedValueChanged: repaintTimer.restart()
+
+  // Debounce timer to limit repaint frequency during rapid value changes
+  Timer {
+    id: repaintTimer
+    interval: 16 // ~60 FPS max
+    repeat: false
+    onTriggered: gauge.requestPaint()
+  }
 
   ColumnLayout {
     id: mainLayout
@@ -45,7 +64,18 @@ Rectangle {
       Canvas {
         id: gauge
         anchors.fill: parent
-        renderStrategy: Canvas.Immediate
+
+        // Optimized Canvas settings for better GPU performance
+        renderStrategy: Canvas.Cooperative // Better performance than Immediate
+        renderTarget: Canvas.FramebufferObject // GPU texture rendering
+
+        // Enable layer caching - critical for performance!
+        layer.enabled: true
+        layer.smooth: true
+
+        Component.onCompleted: {
+          requestPaint()
+        }
 
         onPaint: {
           const ctx = getContext("2d")
@@ -68,7 +98,7 @@ Rectangle {
           ctx.stroke()
 
           // Value arc with gradient starting at 25%
-          const ratio = Math.max(0, Math.min(1, root.value / 100))
+          const ratio = Math.max(0, Math.min(1, root.animatedValue / 100))
           const end = start + (endBg - start) * ratio
 
           // Calculate gradient start point (25% into the arc)
@@ -97,7 +127,7 @@ Rectangle {
         id: valueLabel
         anchors.centerIn: parent
         anchors.verticalCenterOffset: -4 * contentScale
-        text: `${root.value}${root.suffix}`
+        text: `${Math.round(root.value)}${root.suffix}`
         pointSize: Style.fontSizeM * contentScale * 0.9
         font.weight: Style.fontWeightBold
         color: Color.mOnSurface
