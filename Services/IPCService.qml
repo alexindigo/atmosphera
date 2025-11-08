@@ -57,6 +57,12 @@ Item {
     function toggleDND() {
       Settings.data.notifications.doNotDisturb = !Settings.data.notifications.doNotDisturb
     }
+    function enableDND() {
+      Settings.data.notifications.doNotDisturb = true
+    }
+    function disableDND() {
+      Settings.data.notifications.doNotDisturb = false
+    }
     function clear() {
       NotificationService.clearHistory()
     }
