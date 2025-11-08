@@ -25,6 +25,7 @@ RowLayout {
   NLabel {
     label: root.label
     description: root.description
+    visible: root.label !== "" || root.description !== ""
   }
 
   Rectangle {
