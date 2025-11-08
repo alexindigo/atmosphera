@@ -48,6 +48,7 @@ Item {
       I18n.tr("tooltips.enable-keep-awake")
     onClicked: IdleInhibitorService.manualToggle()
     forceOpen: IdleInhibitorService.timeout !== null
+    forceClose: IdleInhibitorService.timeout == null
     onWheel: function (delta) {
       var sign = delta > 0 ? 1 : -1
       // the offset makes scrolling down feel symmetrical to scrolling up
