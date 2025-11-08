@@ -118,6 +118,15 @@ Singleton {
     }
   }
 
+  // Helper function to generate content-based ID for deduplication (without timestamp)
+  function getContentId(summary, body, appName) {
+    return Checksum.sha256(JSON.stringify({
+                                            "summary": summary || "",
+                                            "body": body || "",
+                                            "app": appName || ""
+                                          }))
+  }
+
   // Main handler
   function handleNotification(notification) {
     const data = createData(notification)
@@ -125,6 +134,26 @@ Singleton {
 
     if (Settings.data.notifications?.doNotDisturb || PowerProfileService.noctaliaPerformanceMode)
       return
+
+    // Check for duplicate notification (same content)
+    const normalizedAppName = getAppName(notification.appName || notification.desktopEntry || "")
+    const contentId = getContentId(notification.summary || "", notification.body || "", normalizedAppName)
+    let duplicateIndex = -1
+    for (var i = 0; i < activeList.count; i++) {
+      const existing = activeList.get(i)
+      const existingContentId = getContentId(existing.summary || "", existing.body || "", existing.appName || "")
+      if (existingContentId === contentId) {
+        duplicateIndex = i
+        break
+      }
+    }
+
+    // If duplicate found, remove the old one
+    if (duplicateIndex >= 0) {
+      const oldNotif = activeList.get(duplicateIndex)
+      activeMap[oldNotif.id]?.dismiss()
+      removeActive(oldNotif.id)
+    }
 
     activeMap[data.id] = notification
     notification.tracked = true
