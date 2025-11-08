@@ -179,7 +179,7 @@ h3[class*="postTitleText"]:hover {
 [class*="editor"] [class*="slateTextArea"],
 [data-slate-editor="true"] {
     color: var(--text-3) !important;
-    opacity: 0.4 !important;
+    opacity: 0.9 !important;
     line-height: 1.4 !important;
 }
 
