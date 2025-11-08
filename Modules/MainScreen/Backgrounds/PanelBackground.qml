@@ -68,21 +68,6 @@ ShapePath {
   readonly property real blMultY: panelBg ? ShapeCornerHelper.getMultY(panelBg.bottomLeftCornerState) : 1
   readonly property real blRadius: panelBg ? getCornerRadius(panelBg.bottomLeftCornerState) : 0
 
-  // DEBUG: Log panel state changes
-  onPanelChanged: {
-    Logger.d("PanelBackground", "=== panel changed:", panel)
-    Logger.d("PanelBackground", "  panel.visible:", panel ? panel.visible : "null")
-    Logger.d("PanelBackground", "  panel.panelRegion:", panel ? panel.panelRegion : "null")
-  }
-
-  onPanelBgChanged: {
-    Logger.d("PanelBackground", "=== panelBg changed:", panelBg)
-    if (panelBg) {
-      Logger.d("PanelBackground", "  Geometry:", panelX, panelY, panelWidth, panelHeight)
-      Logger.d("PanelBackground", "  startX:", startX, "startY:", startY)
-    }
-  }
-
   // ShapePath configuration
   strokeWidth: -1 // No stroke, fill only
 
@@ -91,13 +76,6 @@ ShapePath {
   startY: panelY
 
   fillColor: Color.mSurface
-
-  // Smooth color animation
-  Behavior on fillColor {
-    ColorAnimation {
-      duration: Style.animationFast
-    }
-  }
 
   // ========== PATH DEFINITION ==========
   // Draws a rectangle with potentially inverted corners

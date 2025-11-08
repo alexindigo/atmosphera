@@ -49,15 +49,6 @@ Singleton {
       return registeredPanels[panelKey]
     }
 
-    // Panel not loaded yet - try to load it via the loader
-    if (registeredPanelLoaders[panelKey]) {
-      Logger.d("PanelService", "Loading panel on-demand:", panelKey)
-      registeredPanelLoaders[panelKey].ensureLoaded()
-      // After ensureLoaded(), the panel should register itself via registerPanel()
-      // Return it if it registered synchronously
-      return registeredPanels[panelKey] || null
-    }
-
     Logger.w("PanelService", "Panel not found:", panelKey)
     return null
   }

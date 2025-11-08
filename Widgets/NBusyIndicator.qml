@@ -1,6 +1,5 @@
 import QtQuick
 import qs.Commons
-import qs.Services
 
 Item {
   id: root
