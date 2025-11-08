@@ -59,20 +59,31 @@ Item {
     autoHide: false
     forceOpen: _dynamicText !== ""
     tooltipText: {
-      if (!hasExec) {
-        return "Custom button, configure in settings."
-      } else {
-        var lines = []
+      var tooltipLines = []
+
+      if (hasExec) {
         if (leftClickExec !== "") {
-          lines.push(`Left click: ${leftClickExec}.`)
+          tooltipLines.push(`Left click: ${leftClickExec}.`)
         }
         if (rightClickExec !== "") {
-          lines.push(`Right click: ${rightClickExec}.`)
+          tooltipLines.push(`Right click: ${rightClickExec}.`)
         }
         if (middleClickExec !== "") {
-          lines.push(`Middle click: ${middleClickExec}.`)
+          tooltipLines.push(`Middle click: ${middleClickExec}.`)
         }
-        return lines.join("\n")
+      }
+
+      if (_dynamicTooltip !== "") {
+        if (tooltipLines.length > 0) {
+          tooltipLines.push("")
+        }
+        tooltipLines.push(_dynamicTooltip)
+      }
+
+      if (tooltipLines.length === 0) {
+        return "Custom button, configure in settings."
+      } else {
+        return tooltipLines.join("\n")
       }
     }
 
@@ -84,6 +95,7 @@ Item {
   // Internal state for dynamic text
   property string _dynamicText: ""
   property string _dynamicIcon: ""
+  property string _dynamicTooltip: ""
 
   // Periodically run the text command (if set)
   Timer {
@@ -127,38 +139,49 @@ Item {
 
   function parseDynamicContent(content) {
     var contentStr = String(content || "").trim()
-    if (contentStr.indexOf("\n") !== -1) {
-      contentStr = contentStr.split("\n")[0]
-    }
 
     if (parseJson) {
+      var lineToParse = contentStr
+
+      if (!textStream && contentStr.includes('\n')) {
+        const lines = contentStr.split('\n').filter(line => line.trim() !== '')
+        if (lines.length > 0) {
+          lineToParse = lines[lines.length - 1]
+        }
+      }
+
       try {
-        var parsed = JSON.parse(contentStr)
-        var text = parsed.text || ""
+        const parsed = JSON.parse(lineToParse)
+        const text = parsed.text || ""
+        const icon = parsed.icon || ""
+        const tooltip = parsed.tooltip || ""
 
         if (checkCollapse(text)) {
           _dynamicText = ""
           _dynamicIcon = ""
+          _dynamicTooltip = ""
           return
         }
 
         _dynamicText = text
-        _dynamicIcon = parsed.icon || ""
+        _dynamicIcon = icon
+        _dynamicTooltip = tooltip
         return
       } catch (e) {
-
-        // Not a valid JSON, treat as plain text
+        Logger.w("CustomButton", `Failed to parse JSON. Content: "${lineToParse}"`)
       }
     }
 
     if (checkCollapse(contentStr)) {
       _dynamicText = ""
       _dynamicIcon = ""
+      _dynamicTooltip = ""
       return
     }
 
     _dynamicText = contentStr
     _dynamicIcon = ""
+    _dynamicTooltip = ""
   }
 
   function checkCollapse(text) {
