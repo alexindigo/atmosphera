@@ -771,7 +771,7 @@ ColumnLayout {
         onToggled: checked => {
                      Settings.data.templates.enableUserTemplates = checked
                      if (checked) {
-                       MatugenTemplates.writeUserTemplatesToml()
+                       TemplateRegistry.writeUserTemplatesToml()
                      }
                      AppThemeService.generate()
                    }

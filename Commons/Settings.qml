@@ -14,7 +14,7 @@ Singleton {
   readonly property alias data: adapter
   property bool isLoaded: false
   property bool directoriesCreated: false
-  property int settingsVersion: 20
+  property int settingsVersion: 21
   property bool isDebug: Quickshell.env("NOCTALIA_DEBUG") === "1"
 
   // Define our app directories
@@ -616,6 +616,28 @@ Singleton {
                                            }))
         Logger.w("Settings", "Added a ControlCenter widget to the right section")
       }
+    }
+
+    // -----------------
+    // 5th. Migrate Discord templates (version 20 → 21)
+    // Consolidate individual discord_* properties into unified discord property
+    if (adapter.settingsVersion < 21) {
+      var anyDiscordEnabled = false
+
+      // Check if any Discord client was enabled
+      const discordClients = ["discord_vesktop", "discord_webcord", "discord_armcord", "discord_equibop", "discord_lightcord", "discord_dorion"]
+
+      for (var i = 0; i < discordClients.length; i++) {
+        if (adapter.templates[discordClients[i]]) {
+          anyDiscordEnabled = true
+          break
+        }
+      }
+
+      // Set unified discord property
+      adapter.templates.discord = anyDiscordEnabled
+
+      Logger.i("Settings", "Migrated Discord templates to unified 'discord' property (enabled:", anyDiscordEnabled + ")")
     }
   }
 
