@@ -1798,6 +1798,8 @@
     "night-light-enabled": "Gece ışığı etkin.\nMod arasında geçiş yapmak için sol tık.\nAyarlara erişmek için sağ tık.",
     "night-light-forced": "Gece ışığı zorla.\nMod arasında geçiş yapmak için sol tık.\nAyarlara erişmek için sağ tık.",
     "night-light-not-installed": "Gece ışığı mevcut değil.\nwlsunset yüklü değil.",
+    "noctalia-performance-disabled": "Noctalia performans modu devre dışı.\nEtkinleştirmek için sol tıklayın.",
+    "noctalia-performance-enabled": "Noctalia performans modu etkin.\nDevre dışı bırakmak için sol tıklayın.",
     "open-control-center": "Kontrol merkezini aç",
     "open-notification-history-disable-dnd": "Bildirim geçmişini aç\n\"Rahatsız etmeyi\" devre dışı bırakmak için sağ tık.",
     "open-notification-history-enable-dnd": "Bildirim geçmişini aç\n\"Rahatsız etmeyi\" etkinleştirmek için sağ tık.",

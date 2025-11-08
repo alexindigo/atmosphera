@@ -25,6 +25,7 @@ Singleton {
                            "MediaMini": mediaMiniComponent,
                            "Microphone": microphoneComponent,
                            "NightLight": nightLightComponent,
+                           "NoctaliaPerformance": noctaliaPerformanceComponent,
                            "NotificationHistory": notificationHistoryComponent,
                            "PowerProfile": powerProfileComponent,
                            "ScreenRecorder": screenRecorderComponent,
@@ -217,6 +218,9 @@ Singleton {
   }
   property Component nightLightComponent: Component {
     NightLight {}
+  }
+  property Component noctaliaPerformanceComponent: Component {
+    NoctaliaPerformance {}
   }
   property Component notificationHistoryComponent: Component {
     NotificationHistory {}

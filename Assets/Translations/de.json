@@ -1798,6 +1798,8 @@
     "night-light-enabled": "Nachtlicht ist aktiviert.\nLinksklick zum Wechseln des Modus.\nRechtsklick für Einstellungen.",
     "night-light-forced": "Nachtlicht ist erzwungen.\nLinksklick zum Wechseln des Modus.\nRechtsklick für Einstellungen.",
     "night-light-not-installed": "Nachtlicht ist nicht verfügbar.\nwlsunset ist nicht installiert.",
+    "noctalia-performance-disabled": "Noctalia-Leistungsmodus ist deaktiviert.\nLinksklick zum Aktivieren.",
+    "noctalia-performance-enabled": "Noctalia-Leistungsmodus ist aktiviert.\nLinksklick zum Deaktivieren.",
     "open-control-center": "Kontrollzentrum öffnen",
     "open-notification-history-disable-dnd": "Benachrichtigungsverlauf öffnen\nRechtsklick um 'Nicht stören' zu deaktivieren.",
     "open-notification-history-enable-dnd": "Benachrichtigungsverlauf öffnen\nRechtsklick um 'Nicht stören' zu aktivieren.",

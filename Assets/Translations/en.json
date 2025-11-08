@@ -1798,6 +1798,8 @@
     "night-light-enabled": "Night light is enabled.\nLeft click to cycle mode.\nRight click to access settings.",
     "night-light-forced": "Night light is forced.\nLeft click to cycle mode.\nRight click to access settings.",
     "night-light-not-installed": "Night light is not available.\nwlsunset is not installed.",
+    "noctalia-performance-disabled": "Noctalia performance mode is disabled.\nLeft click to enable.",
+    "noctalia-performance-enabled": "Noctalia performance mode is enabled.\nLeft click to disable.",
     "open-control-center": "Open control center",
     "open-notification-history-disable-dnd": "Open notification history\nRight-click to disable \"Do not disturb\".",
     "open-notification-history-enable-dnd": "Open notification history\nRight-click to enable \"Do not disturb\".",

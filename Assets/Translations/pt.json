@@ -1798,6 +1798,8 @@
     "night-light-enabled": "Luz noturna ativada.\nClique esquerdo para alternar o modo.\nClique direito para acessar as configurações.",
     "night-light-forced": "Luz noturna forçada.\nClique esquerdo para alternar o modo.\nClique direito para acessar as configurações.",
     "night-light-not-installed": "Luz noturna não disponível.\nwlsunset não está instalado.",
+    "noctalia-performance-disabled": "O modo de desempenho Noctalia está desativado.\nClique esquerdo para ativar.",
+    "noctalia-performance-enabled": "O modo de desempenho Noctalia está ativado.\nClique esquerdo para desativar.",
     "open-control-center": "Abrir central de controle",
     "open-notification-history-disable-dnd": "Abrir histórico de notificações\nClique direito para desativar \"Não perturbe\".",
     "open-notification-history-enable-dnd": "Abrir histórico de notificações\nClique direito para ativar \"Não perturbe\".",

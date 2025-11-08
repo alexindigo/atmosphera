@@ -112,9 +112,9 @@ Singleton {
 
   onNoctaliaPerformanceModeChanged: {
     if (noctaliaPerformanceMode) {
-      ToastService.showNotice(I18n.tr("toast.noctalia-performance.label"), I18n.tr("toast.noctalia-performance.enabled"), "seedling")
+      ToastService.showNotice(I18n.tr("toast.noctalia-performance.label"), I18n.tr("toast.noctalia-performance.enabled"), "rocket")
     } else {
-      ToastService.showNotice(I18n.tr("toast.noctalia-performance.label"), I18n.tr("toast.noctalia-performance.disabled"), "seedling-off")
+      ToastService.showNotice(I18n.tr("toast.noctalia-performance.label"), I18n.tr("toast.noctalia-performance.disabled"), "rocket-off")
     }
   }
 }
