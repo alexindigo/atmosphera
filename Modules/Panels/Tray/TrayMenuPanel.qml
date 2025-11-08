@@ -18,38 +18,14 @@ SmartPanel {
 
   // Internal
   property int menuWidth: 280
-  readonly property int maxMenuWidth: 400 // Maximum width before text elides
+  readonly property int minMenuWidth: 280
+  readonly property int maxMenuWidth: 600
   preferredWidth: menuWidth
   // Height is content-driven via panelContent
 
   // Open positioned relative to button
   function openAt(buttonItem) {
     open(buttonItem)
-    // Recalculate width when opening
-    Qt.callLater(() => {
-                   if (panelContent) {
-                     const calculatedWidth = panelContent.calculateMaxEntryWidth()
-                     if (calculatedWidth > 0) {
-                       // Remove outer padding to get entry width
-                       panelContent.maxEntryWidth = Math.max(0, calculatedWidth - (Style.marginM * 2))
-                     }
-                   }
-                 })
-  }
-
-  // Recalculate width when panel becomes visible
-  onVisibleChanged: {
-    if (visible) {
-      Qt.callLater(() => {
-                     if (panelContent) {
-                       const calculatedWidth = panelContent.calculateMaxEntryWidth()
-                       if (calculatedWidth > 0) {
-                         // Remove outer padding to get entry width
-                         panelContent.maxEntryWidth = Math.max(0, calculatedWidth - (Style.marginM * 2))
-                       }
-                     }
-                   })
-    }
   }
 
   panelContent: Item {
@@ -60,74 +36,6 @@ SmartPanel {
     property var activeSubMenuEntry: null
     // Only show submenu in place (replace main menu)
     property bool inPlaceSubmenu: true
-
-    // TextMetrics for measuring text widths
-    TextMetrics {
-      id: textMetrics
-      font.pointSize: Style.fontSizeS
-    }
-
-    // Track maximum entry width
-    property real maxEntryWidth: 280
-
-    // Calculate maximum entry width
-    function calculateMaxEntryWidth() {
-      if (!opener || !opener.children) {
-        return 280 // fallback
-      }
-
-      let maxWidth = 0
-      const entries = [...opener.children.values]
-
-      for (var i = 0; i < entries.length; i++) {
-        const entry = entries[i]
-        if (!entry || entry.isSeparator)
-          continue
-
-        // Calculate entry width
-        let entryWidth = 0
-
-        // Left margin
-        entryWidth += Style.marginM
-
-        // Text width
-        const text = entry.text !== "" ? entry.text.replace(/[\n\r]+/g, ' ') : "..."
-        textMetrics.text = text
-        entryWidth += textMetrics.width
-
-        // Spacing
-        entryWidth += Style.marginS
-
-        // Icon (if visible)
-        if (entry.icon && entry.icon !== "") {
-          entryWidth += Style.marginL
-          entryWidth += Style.marginS
-        }
-
-        // Menu icon (if has children)
-        if (entry.hasChildren) {
-          // Approximate icon width based on font size
-          entryWidth += Style.fontSizeS * 1.2 // Approximate icon width
-          entryWidth += Style.marginS
-        }
-
-        // Right margin
-        entryWidth += Style.marginM
-
-        if (entryWidth > maxWidth) {
-          maxWidth = entryWidth
-        }
-      }
-
-      // Add outer padding (Style.marginM * 2)
-      return Math.max(280, maxWidth + (Style.marginM * 2))
-    }
-
-    // Update menu width when maxEntryWidth changes
-    onMaxEntryWidthChanged: {
-      const calculatedWidth = maxEntryWidth + (Style.marginM * 2)
-      root.menuWidth = Math.min(root.maxMenuWidth, Math.max(280, calculatedWidth))
-    }
 
     // Let Panel size to our content
     readonly property real contentPreferredWidth: root.menuWidth
@@ -146,32 +54,109 @@ SmartPanel {
     QsMenuOpener {
       id: opener
       menu: root.menu
+      onChildrenChanged: Qt.callLater(() => calculateMenuWidth(opener))
+    }
 
-      // Update menu width when children change
-      onChildrenChanged: {
+    // Text metrics for measuring text widths
+    TextMetrics {
+      id: textMetrics
+      font.pointSize: Style.fontSizeS
+    }
+
+    // Watch for submenu changes
+    onActiveSubMenuChanged: {
+      if (activeSubMenu && inPlaceSubmenu) {
         Qt.callLater(() => {
-                       const calculatedWidth = content.calculateMaxEntryWidth()
-                       if (calculatedWidth > 0) {
-                         // Remove outer padding to get entry width
-                         content.maxEntryWidth = Math.max(0, calculatedWidth - (Style.marginM * 2))
+                       // Find the subMenuOpener in the loaded component
+                       if (inPlaceSubMenuLoader.item) {
+                         const flickable = inPlaceSubMenuLoader.item.children[1] // Flickable
+                         if (flickable && flickable.children.length > 0) {
+                           const columnLayout = flickable.children[0]
+                           if (columnLayout && columnLayout.children.length > 0) {
+                             const subOpener = columnLayout.children[0]
+                             if (subOpener) {
+                               calculateMenuWidth(subOpener)
+                             }
+                           }
+                         }
                        }
                      })
+      } else if (!activeSubMenu) {
+        // Reset to main menu width when submenu closes
+        Qt.callLater(() => calculateMenuWidth(opener))
       }
     }
 
-    // Update width when menu changes
-    Connections {
-      target: root
-      function onMenuChanged() {
-        Qt.callLater(() => {
-                       const calculatedWidth = content.calculateMaxEntryWidth()
-                       if (calculatedWidth > 0) {
-                         // Remove outer padding to get entry width
-                         content.maxEntryWidth = Math.max(0, calculatedWidth - (Style.marginM * 2))
-                       }
-                     })
+    // Calculate required menu width based on menu entries
+    function calculateMenuWidth(menuOpener) {
+      let maxWidth = root.minMenuWidth
+
+      // For submenus, also measure the "Back" button
+      if (menuOpener !== opener && content.inPlaceSubmenu) {
+        textMetrics.text = I18n.tr("settings.bar.tray.back")
+        const backWidth = (Style.marginM * 4) + Style.fontSizeS + Style.marginS + textMetrics.width
+        maxWidth = Math.max(maxWidth, backWidth)
       }
+
+      // Check all menu entries
+      if (menuOpener && menuOpener.children) {
+        try {
+          const entries = menuOpener.children.values ? [...menuOpener.children.values] : []
+
+          for (var i = 0; i < entries.length; i++) {
+            const entry = entries[i]
+            if (!entry || entry.isSeparator)
+              continue
+
+            const text = entry.text || ""
+            if (text === "")
+              continue
+
+            // Measure the text
+            textMetrics.text = text.replace(/[\n\r]+/g, ' ')
+            const textWidth = textMetrics.width
+
+            // Calculate total width:
+            // - Outer inset: Style.marginM * 2 (parent width reduction)
+            // - RowLayout margins: Style.marginM * 2 (left + right)
+            // - Text width
+            // - Spacing: Style.marginS
+            // - Icon: Style.marginL (if present)
+            // - Submenu arrow: ~20px (if present)
+            let requiredWidth = (Style.marginM * 4) + textWidth
+
+            if (entry.icon && entry.icon !== "") {
+              requiredWidth += Style.marginS + Style.marginL
+            }
+
+            if (entry.hasChildren) {
+              requiredWidth += Style.marginS + 20
+            }
+
+            maxWidth = Math.max(maxWidth, requiredWidth)
+          }
+        } catch (e) {
+          // Silently ignore errors during width calculation
+        }
+      }
+
+      // Check pin/unpin button (only for main menu)
+      if (menuOpener === opener && root.trayItem !== null && root.widgetSection !== "" && root.widgetIndex >= 0) {
+        textMetrics.text = I18n.tr("settings.bar.tray.pin-application")
+        let pinWidth = (Style.marginM * 4) + textMetrics.width + Style.marginS + 20
+        maxWidth = Math.max(maxWidth, pinWidth)
+
+        textMetrics.text = I18n.tr("settings.bar.tray.unpin-application")
+        let unpinWidth = (Style.marginM * 4) + textMetrics.width + Style.marginS + 20
+        maxWidth = Math.max(maxWidth, unpinWidth)
+      }
+
+      // Clamp to min/max and apply
+      const finalWidth = Math.min(root.maxMenuWidth, Math.max(root.minMenuWidth, Math.ceil(maxWidth)))
+      root.menuWidth = finalWidth
     }
+
+    Component.onCompleted: Qt.callLater(() => calculateMenuWidth(opener))
 
     Component {
       id: subMenuComponent
@@ -233,6 +218,7 @@ SmartPanel {
             QsMenuOpener {
               id: subMenuOpener
               menu: content.activeSubMenu
+              onChildrenChanged: Qt.callLater(() => content.calculateMenuWidth(subMenuOpener))
             }
 
             // Back button (only shown when submenu is in-place)
@@ -320,46 +306,6 @@ SmartPanel {
                 }
 
                 color: Color.transparent
-
-                // Calculate and update max entry width
-                Component.onCompleted: {
-                  if (!modelData?.isSeparator) {
-                    Qt.callLater(() => {
-                                   let entryWidth = 0
-
-                                   // Left margin
-                                   entryWidth += Style.marginM
-
-                                   // Text width
-                                   const text = modelData?.text !== "" ? modelData.text.replace(/[\n\r]+/g, ' ') : "..."
-                                   content.textMetrics.text = text
-                                   entryWidth += content.textMetrics.width
-
-                                   // Spacing
-                                   entryWidth += Style.marginS
-
-                                   // Icon (if visible)
-                                   if (modelData?.icon && modelData.icon !== "") {
-                                     entryWidth += Style.marginL
-                                     entryWidth += Style.marginS
-                                   }
-
-                                   // Menu icon (if has children)
-                                   if (modelData?.hasChildren) {
-                                     entryWidth += Style.fontSizeS * 1.2 // Approximate icon width
-                                     entryWidth += Style.marginL // Submenu uses marginL for right margin on icon
-                                   }
-
-                                   // Right margin
-                                   entryWidth += Style.marginM
-
-                                   // Update maxEntryWidth if this entry is wider
-                                   if (entryWidth > content.maxEntryWidth) {
-                                     content.maxEntryWidth = entryWidth
-                                   }
-                                 })
-                  }
-                }
 
                 NDivider {
                   anchors.centerIn: parent
@@ -497,46 +443,6 @@ SmartPanel {
 
               color: Color.transparent
 
-              // Calculate and update max entry width
-              Component.onCompleted: {
-                if (!modelData?.isSeparator) {
-                  Qt.callLater(() => {
-                                 let entryWidth = 0
-
-                                 // Left margin
-                                 entryWidth += Style.marginM
-
-                                 // Text width
-                                 const text = modelData?.text !== "" ? modelData.text.replace(/[\n\r]+/g, ' ') : "..."
-                                 content.textMetrics.text = text
-                                 entryWidth += content.textMetrics.width
-
-                                 // Spacing
-                                 entryWidth += Style.marginS
-
-                                 // Icon (if visible)
-                                 if (modelData?.icon && modelData.icon !== "") {
-                                   entryWidth += Style.marginL
-                                   entryWidth += Style.marginS
-                                 }
-
-                                 // Menu icon (if has children)
-                                 if (modelData?.hasChildren) {
-                                   entryWidth += Style.fontSizeS * 1.2 // Approximate icon width
-                                   entryWidth += Style.marginS
-                                 }
-
-                                 // Right margin
-                                 entryWidth += Style.marginM
-
-                                 // Update maxEntryWidth if this entry is wider
-                                 if (entryWidth > content.maxEntryWidth) {
-                                   content.maxEntryWidth = entryWidth
-                                 }
-                               })
-                }
-              }
-
               NDivider {
                 anchors.centerIn: parent
                 width: parent.width - Style.marginL
@@ -651,37 +557,6 @@ SmartPanel {
             Layout.preferredWidth: parent.width
             Layout.preferredHeight: visible ? 28 : 0
             color: Color.transparent
-
-            // Calculate and update max entry width
-            Component.onCompleted: {
-              if (visible) {
-                Qt.callLater(() => {
-                               let entryWidth = 0
-
-                               // Left margin
-                               entryWidth += Style.marginM
-
-                               // Icon width
-                               entryWidth += Style.fontSizeS * 1.2 // Approximate icon width
-
-                               // Spacing
-                               entryWidth += Style.marginS
-
-                               // Text width
-                               const text = isFavorite ? I18n.tr("settings.bar.tray.unpin-application") : I18n.tr("settings.bar.tray.pin-application")
-                               content.textMetrics.text = text
-                               entryWidth += content.textMetrics.width
-
-                               // Right margin
-                               entryWidth += Style.marginM
-
-                               // Update maxEntryWidth if this entry is wider
-                               if (entryWidth > content.maxEntryWidth) {
-                                 content.maxEntryWidth = entryWidth
-                               }
-                             })
-              }
-            }
 
             readonly property bool isFavorite: {
               if (!root.trayItem || root.widgetSection === "" || root.widgetIndex < 0)
