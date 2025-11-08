@@ -18,7 +18,7 @@ SmartPanel {
   panelContent: Rectangle {
     color: Color.transparent
 
-    property real contentPreferredHeight: Math.min(preferredHeight, Math.max(280 * Style.uiScaleRatio, mainColumn.implicitHeight + Style.marginL * 2))
+    property real contentPreferredHeight: !(BluetoothService.adapter && BluetoothService.adapter.enabled) ? Math.min(preferredHeight, Math.max(280 * Style.uiScaleRatio, mainColumn.implicitHeight + Style.marginL * 2)) : (mainColumn.implicitHeight + Style.marginL * 2)
 
     ColumnLayout {
       id: mainColumn
