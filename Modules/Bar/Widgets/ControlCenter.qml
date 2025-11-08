@@ -54,6 +54,7 @@ NIconButton {
     }
   }
   onRightClicked: PanelService.getPanel("settingsPanel", screen)?.toggle()
+  onMiddleClicked: PanelService.getPanel("launcherPanel", screen)?.toggle()
 
   IconImage {
     id: customOrDistroLogo
