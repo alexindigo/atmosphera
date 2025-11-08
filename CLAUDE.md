@@ -134,8 +134,8 @@ Common components used throughout the shell:
 - **Input**: NButton, NIconButton, NIconButtonHot, NTextInput, NSlider, NSpinBox, NToggle, NCheckbox, NRadioButton, NComboBox, NSearchableComboBox
 - **Display**: NLabel, NText, NIcon, NHeader, NImageCached, NImageCircled, NImageRounded
 - **Dialogs**: NColorPickerDialog, NFilePicker
-- **Special**: NContextMenu, NColorPicker, NIconPicker, NCircleStat, NCollapsible, NSectionEditor, NReorderCheckboxes, NDateTimeTokens, NBusyIndicator, NShapedRectangle
-- **System**: NFullScreenWindow, BarExclusionZone
+- **Special**: NContextMenu, NColorPicker, NIconPicker, NCircleStat, NCollapsible, NSectionEditor, NReorderCheckboxes, NDateTimeTokens, NBusyIndicator
+- **System**: MainScreen, BarExclusionZone
 
 #### `/Helpers/` - JavaScript Utilities
 Helper JavaScript modules:
