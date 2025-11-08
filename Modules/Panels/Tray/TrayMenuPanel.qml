@@ -103,7 +103,7 @@ SmartPanel {
           id: subMenuFlickable
           anchors.fill: parent
           contentHeight: subMenuColumnLayout.implicitHeight
-          interactive: true
+          interactive: false
           z: 0
 
           ColumnLayout {
@@ -312,7 +312,7 @@ SmartPanel {
         Layout.preferredWidth: root.menuWidth
         Layout.fillHeight: true
         contentHeight: mainColumnLayout.implicitHeight
-        interactive: true
+        interactive: false
         visible: !(content.activeSubMenu !== null && content.inPlaceSubmenu)
 
         ColumnLayout {
