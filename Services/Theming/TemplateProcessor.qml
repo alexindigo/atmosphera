@@ -352,7 +352,7 @@ Singleton {
       onStreamFinished: {
         if (this.text) {
           const description = generateProcess.showError()
-          Logger.e("TemplateProcessor", "Process failed with exit code", exitCode, description)
+          Logger.e("TemplateProcessor", "Process failed", description)
         }
       }
     }
