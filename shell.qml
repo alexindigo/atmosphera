@@ -112,6 +112,18 @@ ShellRoot {
     }
   }
 
+  // ---------------------------------------------
+  // Setup Wizard
+  // ---------------------------------------------
+  Timer {
+    id: setupWizardTimer
+    running: false
+    interval: 1000
+    onTriggered: {
+      showSetupWizard()
+    }
+  }
+
   function checkSetupWizard() {
     // Wait for distro service
     if (!DistroService.isReady) {
@@ -126,7 +138,7 @@ ShellRoot {
     }
 
     if (Settings.data.settingsVersion >= Settings.settingsVersion) {
-      showSetupWizard()
+      setupWizardTimer.start()
     } else {
       Settings.data.setupCompleted = true
     }
@@ -141,9 +153,7 @@ ShellRoot {
         setupPanel.open()
       } else {
         // If not yet loaded, ensure it loads and try again shortly
-        Qt.callLater(() => {
-                       showSetupWizard()
-                     })
+        setupWizardTimer.restart()
       }
     }
   }
