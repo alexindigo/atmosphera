@@ -61,7 +61,7 @@ Variants {
       readonly property string barPos: Settings.data.bar.position
       readonly property bool isFloating: Settings.data.bar.floating
 
-      readonly property int notifWidth: Math.round(420 * Style.uiScaleRatio)
+      readonly property int notifWidth: Math.round(400 * Style.uiScaleRatio)
 
       // Calculate bar offsets for each edge separately
       readonly property int barOffsetTop: {
@@ -99,10 +99,10 @@ Variants {
       anchors.right: isRight
 
       // Margins for PanelWindow - only apply bar offset for the specific edge where the bar is
-      margins.top: isTop ? Style.marginM + barOffsetTop : 0
-      margins.bottom: isBottom ? Style.marginM + barOffsetBottom : 0
-      margins.left: isLeft ? Style.marginM + barOffsetLeft : 0
-      margins.right: isRight ? Style.marginM + barOffsetRight : 0
+      margins.top: isTop ? barOffsetTop : 0
+      margins.bottom: isBottom ? barOffsetBottom : 0
+      margins.left: isLeft ? barOffsetLeft : 0
+      margins.right: isRight ? barOffsetRight : 0
 
       implicitWidth: notifWidth
       implicitHeight: notificationStack.implicitHeight + Style.marginL
@@ -251,6 +251,7 @@ Variants {
             NDropShadows {
               anchors.fill: cardBackground
               source: cardBackground
+              autoPaddingEnabled: true
             }
 
             // Hover handling
