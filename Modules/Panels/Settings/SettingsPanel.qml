@@ -16,6 +16,7 @@ SmartPanel {
 
   readonly property bool attachToBar: Settings.data.ui.settingsPanelAttachToBar
   readonly property string barPosition: Settings.data.bar.position
+  readonly property bool barFloating: Settings.data.bar.floating
 
   forceAttachToBar: attachToBar
   panelAnchorHorizontalCenter: attachToBar ? (barPosition === "top" || barPosition === "bottom") : true
@@ -33,6 +34,12 @@ SmartPanel {
 
   onBarPositionChanged: {
     if (isPanelOpen) {
+      Qt.callLater(root.setPosition)
+    }
+  }
+
+  onBarFloatingChanged: {
+    if (isPanelOpen && attachToBar) {
       Qt.callLater(root.setPosition)
     }
   }
