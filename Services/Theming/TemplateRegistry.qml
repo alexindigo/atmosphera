@@ -87,7 +87,7 @@ Singleton {
       "outputs": [{
           "path": "~/.local/share/vicinae/themes/matugen.toml"
         }],
-      "postProcess": () => `cp -n ${Quickshell.shellDir}/Assets/noctalia.svg ~/.local/share/vicinae/themes/noctalia.svg && ${colorsApplyScript} vicinae`
+      "postProcess": () => `cp --update=none ${Quickshell.shellDir}/Assets/noctalia.svg ~/.local/share/vicinae/themes/noctalia.svg && ${colorsApplyScript} vicinae`
     }, {
       "id": "walker",
       "name": "Walker",
