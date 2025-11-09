@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import Quickshell
 import qs.Commons
+import qs.Services.Compositor
 import qs.Widgets
 
 ColumnLayout {
