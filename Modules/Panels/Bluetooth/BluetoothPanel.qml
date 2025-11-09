@@ -95,7 +95,7 @@ SmartPanel {
           Item {
             Layout.fillHeight: true
           }
-          
+
           NIcon {
             icon: "bluetooth-off"
             pointSize: 48
@@ -118,7 +118,7 @@ SmartPanel {
             Layout.fillWidth: true
             wrapMode: Text.WordWrap
           }
-          
+
           Item {
             Layout.fillHeight: true
           }
