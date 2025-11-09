@@ -503,6 +503,10 @@
       "top_left": "Oben links",
       "top_right": "Oben rechts"
     },
+    "visualizer-quality": {
+      "high": "Hoch",
+      "low": "Niedrig"
+    },
     "visualizer-types": {
       "linear": "Linear",
       "mirrored": "Gespiegelt",
@@ -692,6 +696,10 @@
         "section": {
           "description": "Bevorzugte und ignorierte Medienanwendungen festlegen.",
           "label": "Medienplayer"
+        },
+        "visualizer-quality": {
+          "description": "Hohe Qualität verbraucht mehr GPU-Ressourcen.",
+          "label": "Visualisierungsqualität"
         },
         "visualizer-type": {
           "description": "Visualisierungstyp für Medienwiedergabe wählen.",
@@ -1759,6 +1767,7 @@
     "wallpaper-colors": {
       "disabled": "Hintergrundbild-Farben deaktiviert",
       "enabled": "Hintergrundbild-Farben aktiviert",
+      "label": "Hintergrundfarbengenerierung",
       "not-installed": "Matugen nicht installiert - erforderlich für Hintergrundbild-Farbextraktion"
     },
     "wifi": {

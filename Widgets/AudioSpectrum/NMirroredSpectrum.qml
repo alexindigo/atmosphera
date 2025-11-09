@@ -17,7 +17,7 @@ Item {
   readonly property int valuesCount: (values && Array.isArray(values)) ? values.length : 0
   readonly property int totalBars: valuesCount * 2
   readonly property real barSlotSize: totalBars > 0 ? (vertical ? height : width) / totalBars : 0
-
+  readonly property bool highQuality: (Settings.data.audio.visualizerType === "low") ? false : true
   readonly property real centerY: height / 2
   readonly property real centerX: width / 2
 
@@ -38,7 +38,8 @@ Item {
       color: root.fillColor
       border.color: root.strokeColor
       border.width: root.strokeWidth
-      antialiasing: true
+      antialiasing: root.highQuality
+      smooth: root.highQuality
 
       width: vertical ? barSize : root.barSlotSize * 0.8
       height: vertical ? root.barSlotSize * 0.8 : barSize

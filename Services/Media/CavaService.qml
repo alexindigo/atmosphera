@@ -19,12 +19,20 @@ Singleton {
   property bool shouldRun: BarService.hasAudioVisualizer || PanelService.lockScreen?.active || (PanelService.openedPanel && PanelService.openedPanel.objectName.startsWith("controlCenterPanel"))
 
   property var values: Array(barsCount).fill(0)
-  property int barsCount: 48
+  property int barsCount: 32
 
   // Idle detection to reduce GPU usage when there's no audio
   property bool isIdle: true
   property int idleFrameCount: 0
   readonly property int idleThreshold: 30 // Frames of silence before considered idle (0.5s at 60fps)
+
+  // Frame skipping for GPU optimization - skip every Nth frame when playing
+  property int frameCounter: 0
+  readonly property int frameSkip: 1 // Update every N frames (1 = no skip, 2 = every other frame, etc)
+
+  // Change detection - only update if values changed significantly
+  property var lastValues: Array(barsCount).fill(0)
+  readonly property real changeThreshold: 0.005 // Minimum change (1%) to trigger update
   property var config: ({
                           "general": {
                             "bars": barsCount,
@@ -35,8 +43,9 @@ Singleton {
                             "higher_cutoff_freq": 12000
                           },
                           "smoothing": {
-                            "monstercat": 0,
-                            "noise_reduction": 77
+                            "monstercat": 1,
+                            "noise_reduction"// Enable monstercat smoothing for less jittery animation
+                            : 77
                           },
                           "output": {
                             "method": "raw",
@@ -92,6 +101,7 @@ Singleton {
               root.isIdle = true
               // Set all values to 0 one final time
               root.values = Array(root.barsCount).fill(0)
+              root.lastValues = Array(root.barsCount).fill(0)
               Logger.d("Cava", "Idle detected - stopped rendering")
             }
             // Don't update values while idle
@@ -106,8 +116,28 @@ Singleton {
           }
         }
 
-        // Update values (only when not idle)
-        root.values = newValues
+        // Frame skipping optimization - skip frames to reduce GPU load
+        root.frameCounter++
+        if (root.frameSkip > 1 && root.frameCounter % root.frameSkip !== 0) {
+          // Skip this frame
+          return
+        }
+
+        // Change detection - only update if values changed significantly
+        let hasSignificantChange = false
+        for (var i = 0; i < newValues.length; i++) {
+          const delta = Math.abs(newValues[i] - root.lastValues[i])
+          if (delta > root.changeThreshold) {
+            hasSignificantChange = true
+            break
+          }
+        }
+
+        // Update values only if there's a significant change
+        if (hasSignificantChange) {
+          root.lastValues = newValues.slice() // Copy array
+          root.values = newValues
+        }
       }
     }
     stderr: StdioCollector {

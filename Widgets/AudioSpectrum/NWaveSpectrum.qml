@@ -46,7 +46,9 @@ Item {
   Canvas {
     id: canvas
     anchors.fill: parent
-    antialiasing: true
+    antialiasing: false // Disable for better performance - shape is smooth enough without it
+    renderStrategy: Canvas.Threaded // Render in separate thread to reduce main thread load
+    renderTarget: Canvas.FramebufferObject // Use FBO for better performance
 
     onPaint: {
       var ctx = getContext("2d")

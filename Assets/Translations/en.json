@@ -503,6 +503,10 @@
       "top_left": "Top left",
       "top_right": "Top right"
     },
+    "visualizer-quality": {
+      "high": "High",
+      "low": "Low"
+    },
     "visualizer-types": {
       "linear": "Linear",
       "mirrored": "Mirrored",
@@ -682,19 +686,23 @@
           "placeholder": "e.g. spotify, vlc, mpv"
         },
         "scrolling-speed": {
-          "description": "Time in seconds for the title to scroll from start to end",
+          "description": "Time in seconds for the title to scroll from start to end.",
           "label": "Scrolling speed"
         },
         "scrolling-title": {
-          "description": "Enable continuous scrolling for long media titles",
+          "description": "Enable continuous scrolling for long media titles.",
           "label": "Scrolling title"
         },
         "section": {
           "description": "Set your preferred and ignored media applications.",
           "label": "Media players"
         },
+        "visualizer-quality": {
+          "description": "High quality use more GPU ressources.",
+          "label": "Visualization quality"
+        },
         "visualizer-type": {
-          "description": "Choose a visualization type for media playback",
+          "description": "Choose a visualization type for media playback.",
           "label": "Visualization type"
         }
       },
@@ -1757,9 +1765,9 @@
       "title-predefined": "Predefined color cheme processing failed"
     },
     "wallpaper-colors": {
-      "label": "Wallpaper colors generation",
       "disabled": "Wallpaper colors disabled",
       "enabled": "Wallpaper colors enabled",
+      "label": "Wallpaper colors generation",
       "not-installed": "Matugen not installed - required for wallpaper color extraction"
     },
     "wifi": {

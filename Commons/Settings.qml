@@ -368,6 +368,7 @@ Singleton {
       property bool volumeOverdrive: false
       property int cavaFrameRate: 30
       property string visualizerType: "linear"
+      property string visualizerQuality: "high"
       property list<string> mprisBlacklist: []
       property string preferredPlayer: ""
     }

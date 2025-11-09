@@ -503,6 +503,10 @@
       "top_left": "En haut à gauche",
       "top_right": "En haut à droite"
     },
+    "visualizer-quality": {
+      "high": "Haut/Haute",
+      "low": "Bas"
+    },
     "visualizer-types": {
       "linear": "Linéaire",
       "mirrored": "Miroir",
@@ -692,6 +696,10 @@
         "section": {
           "description": "Définissez vos applications multimédias préférées et ignorées.",
           "label": "Lecteurs multimédias"
+        },
+        "visualizer-quality": {
+          "description": "L'utilisation de haute qualité nécessite plus de ressources GPU.",
+          "label": "Qualité de la visualisation"
         },
         "visualizer-type": {
           "description": "Choisissez un type de visualisation pour la lecture multimédia.",
@@ -1759,6 +1767,7 @@
     "wallpaper-colors": {
       "disabled": "Couleurs du fond d'écran désactivées",
       "enabled": "Couleurs du fond d'écran activées",
+      "label": "Génération de couleurs pour fonds d'écran",
       "not-installed": "Matugen non installé - requis pour l'extraction des couleurs du fond d'écran"
     },
     "wifi": {
