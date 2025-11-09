@@ -38,7 +38,8 @@ Item {
   onRenderingActiveChanged: {
     if (!renderingActive) {
       var ctx = canvas.getContext("2d")
-      ctx.reset()
+      if (ctx)
+        ctx.reset()
       canvas.requestPaint()
     }
   }
