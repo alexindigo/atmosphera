@@ -26,14 +26,6 @@ Popup {
 
   modal: true
 
-  onOpened: {
-    PanelService.willOpenPopup(root)
-  }
-
-  onClosed: {
-    PanelService.willClosePopup(root)
-  }
-
   function rgbToHsv(r, g, b) {
     r /= 255
     g /= 255

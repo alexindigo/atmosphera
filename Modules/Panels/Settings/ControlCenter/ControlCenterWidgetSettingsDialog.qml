@@ -23,14 +23,9 @@ Popup {
   anchors.centerIn: parent
 
   onOpened: {
-    PanelService.willOpenPopup(root)
     if (widgetData && widgetId) {
       loadWidgetSettings()
     }
-  }
-
-  onClosed: {
-    PanelService.willClosePopup(root)
   }
 
   background: Rectangle {

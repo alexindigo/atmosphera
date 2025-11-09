@@ -27,14 +27,6 @@ Popup {
   signal accepted(var paths)
   signal cancelled
 
-  onOpened: {
-    PanelService.willOpenPopup(root)
-  }
-
-  onClosed: {
-    PanelService.willClosePopup(root)
-  }
-
   function openFilePicker() {
     if (!root.currentPath)
       root.currentPath = root.initialPath

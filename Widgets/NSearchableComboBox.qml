@@ -158,14 +158,6 @@ RowLayout {
       height: root.popupHeight + 60
       padding: Style.marginM
 
-      onOpened: {
-        PanelService.willOpenPopup(root)
-      }
-
-      onClosed: {
-        PanelService.willClosePopup(root)
-      }
-
       contentItem: ColumnLayout {
         spacing: Style.marginS
 

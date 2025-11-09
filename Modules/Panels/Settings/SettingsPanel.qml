@@ -12,7 +12,7 @@ SmartPanel {
   id: root
 
   preferredWidth: Math.round(820 * Style.uiScaleRatio)
-  preferredHeight: Math.round(900 * Style.uiScaleRatio)
+  preferredHeight: Math.round(910 * Style.uiScaleRatio)
 
   readonly property bool attachToBar: Settings.data.ui.settingsPanelAttachToBar
   readonly property string barPosition: Settings.data.bar.position

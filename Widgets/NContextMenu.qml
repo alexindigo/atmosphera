@@ -17,9 +17,6 @@ Popup {
   width: 180
   padding: Style.marginS
 
-  onOpened: PanelService.willOpenPopup(root)
-  onClosed: PanelService.willClosePopup(root)
-
   background: Rectangle {
     color: Color.mSurfaceVariant
     border.color: Color.mOutline

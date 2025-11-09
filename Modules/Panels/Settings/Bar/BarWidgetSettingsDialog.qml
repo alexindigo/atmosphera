@@ -25,17 +25,10 @@ Popup {
   anchors.centerIn: parent
 
   onOpened: {
-    // Mark this popup has opened in the PanelService
-    PanelService.willOpenPopup(root)
-
     // Load settings when popup opens with data
     if (widgetData && widgetId) {
       loadWidgetSettings()
     }
-  }
-
-  onClosed: {
-    PanelService.willClosePopup(root)
   }
 
   background: Rectangle {

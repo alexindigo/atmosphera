@@ -4,7 +4,6 @@ import QtQuick.Layouts
 import QtQuick.Window
 import qs.Commons
 import qs.Widgets
-import qs.Services.UI
 
 Popup {
   id: root
@@ -36,11 +35,6 @@ Popup {
     selectedIcon = initialIcon
     query = initialIcon
     searchInput.forceActiveFocus()
-    PanelService.willOpenPopup(root)
-  }
-
-  onClosed: {
-    PanelService.willClosePopup(root)
   }
 
   background: Rectangle {
