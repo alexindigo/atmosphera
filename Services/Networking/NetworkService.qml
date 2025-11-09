@@ -516,9 +516,9 @@ Singleton {
         return cmd
       }
     }
-    environment: {
-      "LC_ALL": "C"
-    }
+    environment: ({
+                    "LC_ALL": "C"
+                  })
 
     stdout: StdioCollector {
       onStreamFinished: {
