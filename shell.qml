@@ -79,6 +79,7 @@ ShellRoot {
         IdleInhibitorService.init()
         PowerProfileService.init()
         DistroService.init()
+        FontService.init()
 
         // Only open the setup wizard for new users
         if (!Settings.data.setupCompleted) {
