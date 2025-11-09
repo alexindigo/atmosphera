@@ -15,8 +15,10 @@ Variants {
     required property ShellScreen modelData
 
     property bool shouldBeActive: {
-      if (!modelData || !modelData.name)
-        Logger.d("Shell", "MainScreen activated for", modelData?.name)
+      if (!modelData || !modelData.name) {
+        return false
+      }
+      Logger.d("Shell", "MainScreen activated for", modelData?.name)
       return true
     }
 

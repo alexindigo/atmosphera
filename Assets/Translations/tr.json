@@ -1719,10 +1719,6 @@
     "kofi": {
       "opened": "Ko-fi sayfası tarayıcınızda açıldı"
     },
-    "matugen": {
-      "failed": "Matugen işlemi başarısız oldu",
-      "failed-general": "Matugen şablonları işlerken bir hata ile karşılaştı"
-    },
     "missing-control-center": {
       "description": "Kontrol Merkezi widget'ı çubuktan kaldırıldı. Çubuktan tekrar erişmek için widget'ı yeniden eklemeniz gerekecek. Çubuğa sağ tıklayarak da açabilirsiniz.",
       "label": "Son Kontrol Merkezi widget'ı kaldırıldı"
@@ -1754,6 +1750,11 @@
       "saved": "Kayıt kaydedildi",
       "started": "Kayıt başladı",
       "stopping": "Kayıt durduruluyor..."
+    },
+    "theming-processor-failed": {
+      "desc-generic": "Şablonlar işlenirken bir hatayla karşılaşıldı.",
+      "title-matugen": "Matugen şablon işleme başarısız oldu.",
+      "title-predefined": "Önceden tanımlanmış renk şeması işleme başarısız oldu."
     },
     "wallpaper-colors": {
       "disabled": "Duvar kağıdı renkleri devre dışı",

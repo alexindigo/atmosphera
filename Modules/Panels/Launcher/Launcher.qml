@@ -4,8 +4,10 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
 import qs.Commons
-import qs.Widgets
 import qs.Modules.MainScreen
+import qs.Services.Keyboard
+import qs.Widgets
+
 import "Plugins"
 
 SmartPanel {

@@ -24,7 +24,7 @@ NIconButton {
 
   function handleClick() {
     if (!ScreenRecorderService.isAvailable) {
-      ToastService.showError(I18n.tr("toast.recording.not-installed"), I18n.tr("toast.recording.not-installed-desc"), 7000)
+      ToastService.showError(I18n.tr("toast.recording.not-installed"), I18n.tr("toast.recording.not-installed-desc"))
       return
     }
     ScreenRecorderService.toggleRecording()

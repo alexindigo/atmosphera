@@ -1719,10 +1719,6 @@
     "kofi": {
       "opened": "Ko-fi-Seite in Ihrem Browser geöffnet"
     },
-    "matugen": {
-      "failed": "Matugen-Verarbeitung fehlgeschlagen",
-      "failed-general": "Matugen ist beim Verarbeiten der Vorlagen auf einen Fehler gestoßen"
-    },
     "missing-control-center": {
       "description": "Das Kontrollzentrum-Widget wurde aus der Leiste entfernt. Um es erneut über die Leiste zu öffnen, fügen Sie das Widget wieder hinzu. Sie können es auch durch Rechtsklick auf die Leiste öffnen.",
       "label": "Letztes Kontrollzentrum-Widget entfernt"
@@ -1754,6 +1750,11 @@
       "saved": "Aufnahme gespeichert",
       "started": "Aufnahme gestartet",
       "stopping": "Aufnahme wird gestoppt…"
+    },
+    "theming-processor-failed": {
+      "desc-generic": "Beim Verarbeiten von Vorlagen ist ein Fehler aufgetreten.",
+      "title-matugen": "Matugen-Templating-Verarbeitung fehlgeschlagen",
+      "title-predefined": "Die Verarbeitung des vordefinierten Farbschemas ist fehlgeschlagen."
     },
     "wallpaper-colors": {
       "disabled": "Hintergrundbild-Farben deaktiviert",

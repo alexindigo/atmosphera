@@ -332,10 +332,10 @@ Variants {
         var dim = Qt.size(0, 0)
         if (screenWidth >= screenHeight) {
           const w = Math.min(screenWidth, wpWidth)
-          dim = Qt.size(w, w / imageAspectRatio)
+          dim = Qt.size(Math.round(w), Math.round(w / imageAspectRatio))
         } else {
           const h = Math.min(screenHeight, wpHeight)
-          dim = Qt.size(h * imageAspectRatio, h)
+          dim = Qt.size(Math.round(h * imageAspectRatio), Math.round(h))
         }
 
         Logger.d("Background", `Wallpaper resized on ${modelData.name} ${screenWidth}x${screenHeight} @ ${compositorScale}x`, "src:", wpWidth, wpHeight, "dst:", dim.width, dim.height)

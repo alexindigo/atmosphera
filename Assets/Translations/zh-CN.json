@@ -1719,10 +1719,6 @@
     "kofi": {
       "opened": "Ko-fi页面已在您的浏览器中打开"
     },
-    "matugen": {
-      "failed": "Matugen 处理失败",
-      "failed-general": "Matugen 在处理模板时遇到错误"
-    },
     "missing-control-center": {
       "description": "控制中心小部件已从状态栏中移除。要再次从状态栏访问它，您需要重新添加小部件。您也可以通过右键点击状态栏来打开它。",
       "label": "最后一个控制中心小部件已移除"
@@ -1754,6 +1750,11 @@
       "saved": "录制已保存",
       "started": "录制已开始",
       "stopping": "正在停止录制…"
+    },
+    "theming-processor-failed": {
+      "desc-generic": "处理模板时遇到错误",
+      "title-matugen": "Matugen模板处理失败",
+      "title-predefined": "预定义的颜色方案处理失败"
     },
     "wallpaper-colors": {
       "disabled": "壁纸颜色已禁用",

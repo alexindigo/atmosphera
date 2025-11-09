@@ -402,17 +402,18 @@ Singleton {
       property bool wezterm: false
       property bool fuzzel: false
       property bool discord: false
-      property bool discord_vesktop: false
-      property bool discord_webcord: false
-      property bool discord_armcord: false
-      property bool discord_equibop: false
-      property bool discord_lightcord: false
-      property bool discord_dorion: false
       property bool pywalfox: false
       property bool vicinae: false
       property bool walker: false
       property bool code: false
       property bool enableUserTemplates: false
+
+      property bool discord_vesktop: false // To be deleted soon
+      property bool discord_webcord: false // To be deleted soon
+      property bool discord_armcord: false // To be deleted soon
+      property bool discord_equibop: false // To be deleted soon
+      property bool discord_lightcord: false // To be deleted soon
+      property bool discord_dorion: false // To be deleted soon
     }
 
     // night light

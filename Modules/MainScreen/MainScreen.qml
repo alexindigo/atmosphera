@@ -163,7 +163,6 @@ PanelWindow {
       Component.onCompleted: {
         objectName = "audioPanel-" + (screen?.name || "unknown")
         PanelService.registerPanel(audioPanel)
-        Logger.d("MainScreen", "Panel registered:", objectName, "on screen:", screen?.name)
       }
     }
 
@@ -175,7 +174,6 @@ PanelWindow {
       Component.onCompleted: {
         objectName = "batteryPanel-" + (screen?.name || "unknown")
         PanelService.registerPanel(batteryPanel)
-        Logger.d("MainScreen", "Panel registered:", objectName, "on screen:", screen?.name)
       }
     }
 
@@ -187,7 +185,6 @@ PanelWindow {
       Component.onCompleted: {
         objectName = "bluetoothPanel-" + (screen?.name || "unknown")
         PanelService.registerPanel(bluetoothPanel)
-        Logger.d("MainScreen", "Panel registered:", objectName, "on screen:", screen?.name)
       }
     }
 
@@ -199,7 +196,6 @@ PanelWindow {
       Component.onCompleted: {
         objectName = "controlCenterPanel-" + (screen?.name || "unknown")
         PanelService.registerPanel(controlCenterPanel)
-        Logger.d("MainScreen", "Panel registered:", objectName, "on screen:", screen?.name)
       }
     }
 
@@ -211,7 +207,6 @@ PanelWindow {
       Component.onCompleted: {
         objectName = "calendarPanel-" + (screen?.name || "unknown")
         PanelService.registerPanel(calendarPanel)
-        Logger.d("MainScreen", "Panel registered:", objectName, "on screen:", screen?.name)
       }
     }
 
@@ -223,7 +218,6 @@ PanelWindow {
       Component.onCompleted: {
         objectName = "launcherPanel-" + (screen?.name || "unknown")
         PanelService.registerPanel(launcherPanel)
-        Logger.d("MainScreen", "Panel registered:", objectName, "on screen:", screen?.name)
       }
     }
 
@@ -235,7 +229,6 @@ PanelWindow {
       Component.onCompleted: {
         objectName = "notificationHistoryPanel-" + (screen?.name || "unknown")
         PanelService.registerPanel(notificationHistoryPanel)
-        Logger.d("MainScreen", "Panel registered:", objectName, "on screen:", screen?.name)
       }
     }
 
@@ -247,7 +240,6 @@ PanelWindow {
       Component.onCompleted: {
         objectName = "sessionMenuPanel-" + (screen?.name || "unknown")
         PanelService.registerPanel(sessionMenuPanel)
-        Logger.d("MainScreen", "Panel registered:", objectName, "on screen:", screen?.name)
       }
     }
 
@@ -259,7 +251,6 @@ PanelWindow {
       Component.onCompleted: {
         objectName = "settingsPanel-" + (screen?.name || "unknown")
         PanelService.registerPanel(settingsPanel)
-        Logger.d("MainScreen", "Panel registered:", objectName, "on screen:", screen?.name)
       }
     }
 
@@ -271,7 +262,6 @@ PanelWindow {
       Component.onCompleted: {
         objectName = "setupWizardPanel-" + (screen?.name || "unknown")
         PanelService.registerPanel(setupWizardPanel)
-        Logger.d("MainScreen", "Panel registered:", objectName, "on screen:", screen?.name)
       }
     }
 
@@ -283,7 +273,6 @@ PanelWindow {
       Component.onCompleted: {
         objectName = "trayDrawerPanel-" + (screen?.name || "unknown")
         PanelService.registerPanel(trayDrawerPanel)
-        Logger.d("MainScreen", "Panel registered:", objectName, "on screen:", screen?.name)
       }
     }
 
@@ -295,7 +284,6 @@ PanelWindow {
       Component.onCompleted: {
         objectName = "trayMenuPanel-" + (screen?.name || "unknown")
         PanelService.registerPanel(trayMenuPanel)
-        Logger.d("MainScreen", "Panel registered:", objectName, "on screen:", screen?.name)
       }
     }
 
@@ -307,7 +295,6 @@ PanelWindow {
       Component.onCompleted: {
         objectName = "wallpaperPanel-" + (screen?.name || "unknown")
         PanelService.registerPanel(wallpaperPanel)
-        Logger.d("MainScreen", "Panel registered:", objectName, "on screen:", screen?.name)
       }
     }
 
@@ -319,7 +306,6 @@ PanelWindow {
       Component.onCompleted: {
         objectName = "wifiPanel-" + (screen?.name || "unknown")
         PanelService.registerPanel(wifiPanel)
-        Logger.d("MainScreen", "Panel registered:", objectName, "on screen:", screen?.name)
       }
     }
 
@@ -338,9 +324,8 @@ PanelWindow {
       property ShellScreen screen: root.screen
 
       onLoaded: {
-        Logger.d("MainScreen", "Bar loaded:", item !== null)
         if (item) {
-          Logger.d("MainScreen", "Bar screen", item.screen?.name, "size:", item.width, "x", item.height)
+          Logger.d("MainScreen", "Bar loaded with screen", item.screen?.name)
           // Bind screen to bar component (use binding for reactivity)
           item.screen = Qt.binding(function () {
             return barLoader.screen

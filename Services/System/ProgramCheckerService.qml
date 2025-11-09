@@ -4,7 +4,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.Commons
-import qs.Services.DynamicTheming
+import qs.Services.Theming
 
 // Service to check if various programs are available on the system
 Singleton {

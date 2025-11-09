@@ -8,15 +8,15 @@ import qs.Services.UI
 Singleton {
   id: root
 
-  // PUBLIC API - maintain compatibility with existing code
   readonly property string colorsApplyScript: Quickshell.shellDir + '/Bin/colors-apply.sh'
 
-  // Connections to trigger regeneration
   Connections {
     target: WallpaperService
+
+    // When the wallpaper changes, regenerate with Matugen if necessary
     function onWallpaperChanged(screenName, path) {
       if (screenName === Screen.name && Settings.data.colorSchemes.useWallpaperColors) {
-        generate()
+        generateFromWallpaper()
       }
     }
   }
@@ -39,6 +39,7 @@ Singleton {
       generateFromWallpaper()
     } else {
       ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme)
+      generateFromPredefinedScheme()
     }
   }
 

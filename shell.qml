@@ -13,7 +13,7 @@ import Quickshell
 // Commons & Services
 import qs.Commons
 import qs.Services.Control
-import qs.Services.DynamicTheming
+import qs.Services.Theming
 import qs.Services.Hardware
 import qs.Services.Location
 import qs.Services.Networking

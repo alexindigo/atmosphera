@@ -25,7 +25,7 @@ Singleton {
   // Register this panel (called after panel is loaded)
   function registerPanel(panel) {
     registeredPanels[panel.objectName] = panel
-    Logger.i("PanelService", "Registered panel:", panel.objectName)
+    Logger.d("PanelService", "Registered panel:", panel.objectName)
   }
 
   // Returns a panel (loads it on-demand if not yet loaded)

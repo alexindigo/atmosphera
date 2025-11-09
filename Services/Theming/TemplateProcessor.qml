@@ -29,7 +29,7 @@ Singleton {
 
   /**
    * Process wallpaper colors using matugen CLI
-   * Requirement #4: Dual-path architecture (wallpaper uses matugen CLI)
+   * Dual-path architecture (wallpaper uses matugen CLI)
    */
   function processWallpaperColors(wallpaperPath, mode) {
     const content = buildMatugenConfig()
@@ -39,6 +39,7 @@ Singleton {
     const wp = wallpaperPath.replace(/'/g, "'\\''")
     const script = buildMatugenScript(content, wp, mode)
 
+    generateProcess.generator = "matugen"
     generateProcess.command = ["bash", "-lc", script]
     generateProcess.running = true
   }
@@ -46,7 +47,7 @@ Singleton {
 
   /**
    * Process predefined color scheme using sed scripts
-   * Requirement #4: Dual-path architecture (predefined uses sed scripts)
+   * Dual-path architecture (predefined uses sed scripts)
    */
   function processPredefinedScheme(schemeData, mode) {
     handleTerminalThemes(mode)
@@ -57,6 +58,7 @@ Singleton {
     // Add user templates if enabled (requirement #1)
     script += buildUserTemplateCommandForPredefined(schemeData, mode)
 
+    generateProcess.generator = "predefined"
     generateProcess.command = ["bash", "-lc", script]
     generateProcess.running = true
   }
@@ -167,7 +169,6 @@ Singleton {
                                               }
                                             }
                                           })
-
     return script
   }
 
@@ -184,6 +185,7 @@ Singleton {
                                  const outputDir = outputPath.substring(0, outputPath.lastIndexOf('/'))
                                  const baseConfigDir = outputDir.replace("/themes", "")
 
+                                 script += `\n`
                                  script += `if [ -d "${baseConfigDir}" ]; then\n`
                                  script += `  mkdir -p ${outputDir}\n`
                                  script += `  cp '${templatePath}' '${outputPath}'\n`
@@ -205,9 +207,11 @@ Singleton {
                           const outputPath = output.path.replace("~", homeDir)
                           const outputDir = outputPath.substring(0, outputPath.lastIndexOf('/'))
 
+                          script += `\n`
                           script += `mkdir -p ${outputDir}\n`
                           script += `cp '${templatePath}' '${outputPath}'\n`
                           script += replaceColorsInFile(outputPath, palette)
+                          script += `\n`
                         })
 
     if (app.postProcess) {
@@ -269,7 +273,7 @@ Singleton {
   }
 
   // ================================================================================
-  // USER TEMPLATES
+  // USER TEMPLATES, advanced usage
   // ================================================================================
   function buildUserTemplateCommand(input, mode) {
     if (!Settings.data.templates.enableUserTemplates)
@@ -320,17 +324,21 @@ Singleton {
     workingDirectory: Quickshell.shellDir
     running: false
 
+    // Error reporting helpers
+    property string generator: ""
+    function showError() {
+      const description = (stderr.text && stderr.text.trim() !== "") ? stderr.text.trim() : ((stdout.text && stdout.text.trim() !== "") ? stdout.text.trim() : I18n.tr("toast.theming-processor-failed.desc-generic"))
+      const title = I18n.tr(`toast.theming-processor-failed.title-${generator}`)
+
+      // Give a bit more time to the user to read, as it can contains important information for debugging user's templates.
+      ToastService.showError(title, description, 8000)
+      return description
+    }
+
     onExited: function (exitCode) {
       if (exitCode !== 0) {
-        const errorMsg = (stderr.text && stderr.text.trim() !== "") ? stderr.text.trim() : ((stdout.text && stdout.text.trim() !== "") ? stdout.text.trim() : I18n.tr("toast.matugen.failed-general"))
-        Logger.e("TemplateProcessor", "Process failed with exit code:", exitCode)
-        if (stderr.text && stderr.text.trim() !== "") {
-          Logger.e("TemplateProcessor", "stderr:", stderr.text)
-        }
-        if (stdout.text && stdout.text.trim() !== "") {
-          Logger.e("TemplateProcessor", "stdout:", stdout.text)
-        }
-        ToastService.showError(I18n.tr("toast.matugen.failed"), errorMsg, 6000)
+        const description = generateProcess.showError()
+        Logger.e("TemplateProcessor", "Process failed with exit code", exitCode, description)
       }
     }
 
@@ -342,8 +350,10 @@ Singleton {
     }
     stderr: StdioCollector {
       onStreamFinished: {
-        if (this.text)
-        Logger.d("TemplateProcessor", "stderr:", this.text)
+        if (this.text) {
+          const description = generateProcess.showError()
+          Logger.e("TemplateProcessor", "Process failed with exit code", exitCode, description)
+        }
       }
     }
   }

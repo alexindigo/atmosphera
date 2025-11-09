@@ -1719,10 +1719,6 @@
     "kofi": {
       "opened": "Página do Ko-fi aberta no seu navegador"
     },
-    "matugen": {
-      "failed": "Falha no processamento do Matugen",
-      "failed-general": "Matugen encontrou um erro ao processar os modelos"
-    },
     "missing-control-center": {
       "description": "O widget da Central de Controle foi removido da barra. Para acessá-lo novamente pela barra, adicione o widget novamente. Você também pode abri-lo clicando com o botão direito na barra.",
       "label": "Último widget da Central de Controle removido"
@@ -1754,6 +1750,11 @@
       "saved": "Gravação salva",
       "started": "Gravação iniciada",
       "stopping": "Parando gravação…"
+    },
+    "theming-processor-failed": {
+      "desc-generic": "Ocorreu um erro ao processar os templates.",
+      "title-matugen": "Falha no processamento do template Matugen",
+      "title-predefined": "O processamento do esquema de cores predefinido falhou."
     },
     "wallpaper-colors": {
       "disabled": "Cores do papel de parede desativadas",

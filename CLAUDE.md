@@ -327,7 +327,7 @@ BarWidgetRegistry and ControlCenterWidgetRegistry:
 Services in Quickshell use the `pragma Singleton` directive:
 - Add `pragma Singleton` at the top of the QML file (before imports)
 - No qmldir needed - Quickshell handles singleton resolution automatically
-- Import with standard path: `import qs.Services` or `import qs.Services.DynamicTheming`
+- Import with standard path: `import qs.Services` or `import qs.Services.Theming`
 - Access via singleton name: `AppThemeService.generate()`
 
 Example:
@@ -346,7 +346,7 @@ Singleton {
 }
 ```
 
-### DynamicTheming Architecture
+### Theming Architecture
 The theming system was refactored (Jan 2025) into 4 focused services in `Services/`:
 
 **AppThemeService.qml** (~60 lines) - Main facade
