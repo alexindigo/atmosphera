@@ -20,6 +20,11 @@ Singleton {
 
   property var values: Array(barsCount).fill(0)
   property int barsCount: 48
+
+  // Idle detection to reduce GPU usage when there's no audio
+  property bool isIdle: true
+  property int idleFrameCount: 0
+  readonly property int idleThreshold: 30 // Frames of silence before considered idle (0.5s at 60fps)
   property var config: ({
                           "general": {
                             "bars": barsCount,
@@ -74,7 +79,35 @@ Singleton {
     }
     stdout: SplitParser {
       onRead: data => {
-        root.values = data.slice(0, -1).split(";").map(v => parseInt(v, 10) / 100)
+        const newValues = data.slice(0, -1).split(";").map(v => parseInt(v, 10) / 100)
+
+        // Check if all values are effectively zero (< 0.01)
+        const allZero = newValues.every(v => v < 0.01)
+
+        if (allZero) {
+          root.idleFrameCount++
+          if (root.idleFrameCount >= root.idleThreshold) {
+            // We're idle - stop updating values to save GPU
+            if (!root.isIdle) {
+              root.isIdle = true
+              // Set all values to 0 one final time
+              root.values = Array(root.barsCount).fill(0)
+              Logger.d("Cava", "Idle detected - stopped rendering")
+            }
+            // Don't update values while idle
+            return
+          }
+        } else {
+          // Audio detected - resume updates
+          root.idleFrameCount = 0
+          if (root.isIdle) {
+            root.isIdle = false
+            Logger.d("Cava", "Audio detected - resumed rendering")
+          }
+        }
+
+        // Update values (only when not idle)
+        root.values = newValues
       }
     }
     stderr: StdioCollector {

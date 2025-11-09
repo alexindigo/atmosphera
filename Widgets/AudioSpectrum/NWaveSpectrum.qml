@@ -13,15 +13,35 @@ Item {
   property bool showMinimumSignal: false
   property real minimumSignalValue: 0.05 // Default to 5% of height
 
-  // Redraw when necessary
-  onWidthChanged: canvas.requestPaint()
-  onHeightChanged: canvas.requestPaint()
-  onValuesChanged: canvas.requestPaint()
-  onFillColorChanged: canvas.requestPaint()
-  onStrokeColorChanged: canvas.requestPaint()
-  onShowMinimumSignalChanged: canvas.requestPaint()
-  onMinimumSignalValueChanged: canvas.requestPaint()
-  onVerticalChanged: canvas.requestPaint()
+  // Rendering active state - only redraw when visible and values are changing
+  property bool renderingActive: visible && values && values.length > 0
+
+  // Redraw when necessary - only if rendering is active
+  onWidthChanged: if (renderingActive)
+                    canvas.requestPaint()
+  onHeightChanged: if (renderingActive)
+                     canvas.requestPaint()
+  onValuesChanged: if (renderingActive)
+                     canvas.requestPaint()
+  onFillColorChanged: if (renderingActive)
+                        canvas.requestPaint()
+  onStrokeColorChanged: if (renderingActive)
+                          canvas.requestPaint()
+  onShowMinimumSignalChanged: if (renderingActive)
+                                canvas.requestPaint()
+  onMinimumSignalValueChanged: if (renderingActive)
+                                 canvas.requestPaint()
+  onVerticalChanged: if (renderingActive)
+                       canvas.requestPaint()
+
+  // Clear canvas when not rendering
+  onRenderingActiveChanged: {
+    if (!renderingActive) {
+      var ctx = canvas.getContext("2d")
+      ctx.reset()
+      canvas.requestPaint()
+    }
+  }
 
   Canvas {
     id: canvas

@@ -35,10 +35,14 @@ Item {
       border.width: root.strokeWidth
       antialiasing: true
 
+      // Only update when value actually changes - reduces GPU load
       width: vertical ? root.width * amp : root.barSlotSize * 0.5
       height: vertical ? root.barSlotSize * 0.5 : root.height * amp
       x: vertical ? root.width - width : index * root.barSlotSize + (root.barSlotSize * 0.25)
       y: vertical ? index * root.barSlotSize + (root.barSlotSize * 0.25) : root.height - height
+
+      // Disable updates when invisible to save GPU
+      visible: root.visible
     }
   }
 }
