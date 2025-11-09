@@ -566,22 +566,6 @@ Loader {
                         radius: Style.radiusXS
                         anchors.top: parent.bottom
                         anchors.horizontalCenter: parent.horizontalCenter
-
-                        // Pulse animation for active indicator
-                        SequentialAnimation on opacity {
-                          running: isActive
-                          loops: Animation.Infinite
-                          NumberAnimation {
-                            to: 0.6
-                            duration: Style.animationSlowest
-                            easing.type: Easing.InOutQuad
-                          }
-                          NumberAnimation {
-                            to: 1.0
-                            duration: Style.animationSlowest
-                            easing.type: Easing.InOutQuad
-                          }
-                        }
                       }
                     }
                   }
