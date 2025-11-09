@@ -29,8 +29,10 @@ ShapePath {
   // Required reference to windowRoot for screen access
   required property var windowRoot
 
+  required property color backgroundColor
+
   // Check if bar should be visible on this screen
-  readonly property bool shouldShowBar: {
+  readonly property bool shouldShow: {
     // Check global bar visibility
     if (!BarService.isVisible)
       return false
@@ -83,7 +85,7 @@ ShapePath {
 
   // ShapePath configuration
   strokeWidth: -1 // No stroke, fill only
-  fillColor: shouldShowBar ? Qt.alpha(Color.mSurface, Settings.data.bar.backgroundOpacity) : Color.transparent
+  fillColor: shouldShow ? backgroundColor : Color.transparent
 
   // Starting position (top-left corner, after the arc)
   // Use mapped coordinates relative to the Shape container

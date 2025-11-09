@@ -57,6 +57,7 @@ Item {
         bar: root.bar
         shapeContainer: backgroundsShape
         windowRoot: root.windowRoot
+        backgroundColor: Qt.alpha(Color.mSurface, Settings.data.bar.backgroundOpacity)
       }
 
 
@@ -68,84 +69,98 @@ Item {
       PanelBackground {
         panel: root.windowRoot.audioPanel
         shapeContainer: backgroundsShape
+        backgroundColor: Color.mSurface
       }
 
       // Battery
       PanelBackground {
         panel: root.windowRoot.batteryPanel
         shapeContainer: backgroundsShape
+        backgroundColor: Color.mSurface
       }
 
       // Bluetooth
       PanelBackground {
         panel: root.windowRoot.bluetoothPanel
         shapeContainer: backgroundsShape
+        backgroundColor: Color.mSurface
       }
 
       // Calendar
       PanelBackground {
         panel: root.windowRoot.calendarPanel
         shapeContainer: backgroundsShape
+        backgroundColor: Color.mSurface
       }
 
       // Control Center
       PanelBackground {
         panel: root.windowRoot.controlCenterPanel
         shapeContainer: backgroundsShape
+        backgroundColor: Color.mSurface
       }
 
       // Launcher
       PanelBackground {
         panel: root.windowRoot.launcherPanel
         shapeContainer: backgroundsShape
+        backgroundColor: Qt.alpha(Color.mSurface, Settings.data.appLauncher.backgroundOpacity)
       }
 
       // Notification History
       PanelBackground {
         panel: root.windowRoot.notificationHistoryPanel
         shapeContainer: backgroundsShape
+        backgroundColor: Color.mSurface
       }
 
       // Session Menu
       PanelBackground {
         panel: root.windowRoot.sessionMenuPanel
         shapeContainer: backgroundsShape
+        backgroundColor: Color.mSurface
       }
 
       // Settings
       PanelBackground {
         panel: root.windowRoot.settingsPanel
         shapeContainer: backgroundsShape
+        backgroundColor: Color.mSurface
       }
 
       // Setup Wizard
       PanelBackground {
         panel: root.windowRoot.setupWizardPanel
         shapeContainer: backgroundsShape
+        backgroundColor: Color.mSurface
       }
 
       // TrayDrawer
       PanelBackground {
         panel: root.windowRoot.trayDrawerPanel
         shapeContainer: backgroundsShape
+        backgroundColor: Color.mSurface
       }
 
       // TrayMenu
       PanelBackground {
         panel: root.windowRoot.trayMenuPanel
         shapeContainer: backgroundsShape
+        backgroundColor: Color.mSurface
       }
 
       // Wallpaper
       PanelBackground {
         panel: root.windowRoot.wallpaperPanel
         shapeContainer: backgroundsShape
+        backgroundColor: Color.mSurface
       }
 
       // WiFi
       PanelBackground {
         panel: root.windowRoot.wifiPanel
         shapeContainer: backgroundsShape
+        backgroundColor: Color.mSurface
       }
     }
 

@@ -28,6 +28,8 @@ ShapePath {
   // Corner radius (from Style)
   readonly property real radius: Style.radiusL
 
+  required property color backgroundColor
+
   // Get the actual panelBackground Item from SmartPanel
   // Only access panelRegion if panel exists and is visible
   readonly property var panelBg: (panel && panel.visible) ? panel.panelRegion : null
@@ -75,7 +77,7 @@ ShapePath {
   startX: panelX + tlRadius * tlMultX
   startY: panelY
 
-  fillColor: Color.mSurface
+  fillColor: (panel && panel.visible) ? backgroundColor : Color.transparent
 
   // ========== PATH DEFINITION ==========
   // Draws a rectangle with potentially inverted corners
