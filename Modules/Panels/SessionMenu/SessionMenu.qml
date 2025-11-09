@@ -8,6 +8,7 @@ import Quickshell.Widgets
 import Quickshell.Wayland
 import qs.Commons
 import qs.Services.Compositor
+import qs.Services.UI
 import qs.Widgets
 import qs.Modules.MainScreen
 

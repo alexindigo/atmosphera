@@ -32,7 +32,7 @@ Item {
       var ctx = getContext("2d")
       ctx.reset()
 
-      if (values.length === 0) {
+      if (!values || !Array.isArray(values) || values.length === 0) {
         return
       }
 
