@@ -3,7 +3,13 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Widgets
+
 import qs.Commons
+import qs.Services.Hardware
+import qs.Services.Media
+import qs.Services.Power
+import qs.Services.System
+import qs.Services.Theming
 import qs.Services.UI
 
 Item {
