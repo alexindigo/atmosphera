@@ -2,6 +2,7 @@ import QtQuick.Layouts
 import Quickshell
 import qs.Commons
 import qs.Services.Media
+import qs.Services.System
 import qs.Services.UI
 import qs.Widgets
 
