@@ -53,7 +53,9 @@ Variants {
       }
       asynchronous: false
 
-      sourceComponent: BarContentWindow {}
+      sourceComponent: BarContentWindow {
+        screen: modelData
+      }
 
       onLoaded: {
         Logger.d("Shell", "BarContentWindow created for", modelData?.name)

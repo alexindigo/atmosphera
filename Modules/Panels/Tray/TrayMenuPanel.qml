@@ -135,6 +135,7 @@ SmartPanel {
             maxWidth = Math.max(maxWidth, requiredWidth)
           }
         } catch (e) {
+
           // Silently ignore errors during width calculation
         }
       }
