@@ -303,6 +303,10 @@ Loader {
               border.width: Style.borderS
               border.color: Qt.alpha(Color.mOutline, Settings.data.dock.backgroundOpacity)
 
+              // Enable layer caching to reduce GPU usage from continuous animations
+              // (pulse animations on active indicators run infinitely)
+              layer.enabled: true
+
               MouseArea {
                 id: dockMouseArea
                 anchors.fill: parent
