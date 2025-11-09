@@ -6,7 +6,7 @@ import Quickshell.Widgets
 import Quickshell.Wayland
 import Quickshell.Services.Notifications
 import qs.Commons
-import qs.Services
+import qs.Services.System
 import qs.Widgets
 
 // Simple notification popup - displays multiple notifications

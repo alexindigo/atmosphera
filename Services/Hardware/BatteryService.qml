@@ -4,7 +4,7 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Services.UPower
 import qs.Commons
-import qs.Services
+import qs.Services.UI
 
 Singleton {
   id: root
@@ -123,7 +123,7 @@ Singleton {
         Settings.data.battery.chargingMode = BatteryService.chargingMode
       } else if (exitCode === 2) {
         ToastService.showWarning(I18n.tr("toast.battery-manager.title"), I18n.tr("toast.battery-manager.initial-setup"))
-        PanelService.getPanel("batteryPanel", screen)?.toggle(this)
+        PanelService.getPanel("batteryPanel", null)?.toggle(this)
         BatteryService.runInstaller()
       } else {
         ToastService.showError(I18n.tr("toast.battery-manager.title"), I18n.tr("toast.battery-manager.set-failed"))

@@ -1,10 +1,8 @@
 import QtQuick
-import QtQuick.Controls
 import Quickshell
 import Quickshell.Wayland
 import qs.Commons
-import qs.Services
-import qs.Widgets
+import qs.Services.UI
 
 Item {
   id: root
@@ -200,8 +198,9 @@ Item {
 
       WlrLayershell.layer: (Settings.data.notifications && Settings.data.notifications.overlayLayer) ? WlrLayer.Overlay : WlrLayer.Top
       WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
-      exclusionMode: PanelWindow.ExclusionMode.Ignore
+      WlrLayershell.exclusionMode: ExclusionMode.Ignore
 
+      //mask: Region {}
       function showToast(message, description, icon, type, duration) {
         toastItem.show(message, description, icon, type, duration)
       }

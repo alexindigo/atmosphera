@@ -5,8 +5,10 @@ import QtQuick.Effects
 import Quickshell
 import Quickshell.Wayland
 import qs.Commons
-import qs.Services
 import qs.Widgets
+import qs.Services.Hardware
+import qs.Services.Media
+import qs.Services.System
 
 // Unified OSD component
 // Loader activates only when showing OSD, deactivates when hidden to save resources

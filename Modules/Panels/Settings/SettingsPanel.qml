@@ -2,21 +2,21 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Wayland
 import qs.Modules.Panels.Settings.Tabs
 import qs.Commons
-import qs.Services
-import qs.Widgets
 import qs.Modules.MainScreen
+import qs.Services.System
+import qs.Widgets
 
 SmartPanel {
   id: root
 
   preferredWidth: Math.round(820 * Style.uiScaleRatio)
-  preferredHeight: Math.round(900 * Style.uiScaleRatio)
+  preferredHeight: Math.round(910 * Style.uiScaleRatio)
 
   readonly property bool attachToBar: Settings.data.ui.settingsPanelAttachToBar
   readonly property string barPosition: Settings.data.bar.position
+  readonly property bool barFloating: Settings.data.bar.floating
 
   forceAttachToBar: attachToBar
   panelAnchorHorizontalCenter: attachToBar ? (barPosition === "top" || barPosition === "bottom") : true
@@ -27,6 +27,18 @@ SmartPanel {
   panelAnchorRight: attachToBar && barPosition === "right"
 
   onAttachToBarChanged: {
+    if (isPanelOpen) {
+      Qt.callLater(root.setPosition)
+    }
+  }
+
+  onBarPositionChanged: {
+    if (isPanelOpen) {
+      Qt.callLater(root.setPosition)
+    }
+  }
+
+  onBarFloatingChanged: {
     if (isPanelOpen) {
       Qt.callLater(root.setPosition)
     }

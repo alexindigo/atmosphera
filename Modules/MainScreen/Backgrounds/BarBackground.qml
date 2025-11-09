@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Shapes
 import qs.Commons
+import qs.Services.UI
 import qs.Modules.MainScreen.Backgrounds
 
 
@@ -24,6 +25,24 @@ ShapePath {
 
   // Required reference to AllBackgrounds shapeContainer
   required property var shapeContainer
+
+  // Required reference to windowRoot for screen access
+  required property var windowRoot
+
+  // Check if bar should be visible on this screen
+  readonly property bool shouldShowBar: {
+    // Check global bar visibility
+    if (!BarService.isVisible)
+      return false
+
+    // Check screen-specific configuration
+    var monitors = Settings.data.bar.monitors || []
+    var screenName = windowRoot?.screen?.name || ""
+
+    // If no monitors specified, show on all screens
+    // If monitors specified, only show if this screen is in the list
+    return monitors.length === 0 || monitors.includes(screenName)
+  }
 
   // Corner radius (from Style)
   readonly property real radius: Style.radiusL
@@ -64,7 +83,7 @@ ShapePath {
 
   // ShapePath configuration
   strokeWidth: -1 // No stroke, fill only
-  fillColor: Qt.alpha(Color.mSurface, Settings.data.bar.backgroundOpacity)
+  fillColor: shouldShowBar ? Qt.alpha(Color.mSurface, Settings.data.bar.backgroundOpacity) : Color.transparent
 
   // Starting position (top-left corner, after the arc)
   // Use mapped coordinates relative to the Shape container

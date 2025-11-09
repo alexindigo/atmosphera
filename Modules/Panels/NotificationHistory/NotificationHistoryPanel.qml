@@ -5,7 +5,7 @@ import Quickshell
 import Quickshell.Wayland
 import Quickshell.Services.Notifications
 import qs.Commons
-import qs.Services
+import qs.Services.System
 import qs.Widgets
 import qs.Modules.MainScreen
 

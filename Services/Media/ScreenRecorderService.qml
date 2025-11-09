@@ -4,7 +4,8 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.Commons
-import qs.Services
+import qs.Services.System
+import qs.Services.UI
 
 Singleton {
   id: root
@@ -113,7 +114,7 @@ Singleton {
         // Check if gpu-screen-recorder is not installed
         const stdout = String(recorderProcess.stdout.text || "").trim()
         if (stdout === "GPU_SCREEN_RECORDER_NOT_INSTALLED") {
-          ToastService.showError(I18n.tr("toast.recording.not-installed"), I18n.tr("toast.recording.not-installed-desc"), 7000)
+          ToastService.showError(I18n.tr("toast.recording.not-installed"), I18n.tr("toast.recording.not-installed-desc"))
           return
         }
 
@@ -121,9 +122,9 @@ Singleton {
         if (exitCode !== 0) {
           const err = String(recorderProcess.stderr.text || "").trim()
           if (err.length > 0)
-            ToastService.showError(I18n.tr("toast.recording.failed-start"), err, 7000)
+            ToastService.showError(I18n.tr("toast.recording.failed-start"), err)
           else
-            ToastService.showError(I18n.tr("toast.recording.failed-start"), I18n.tr("toast.recording.failed-gpu"), 7000)
+            ToastService.showError(I18n.tr("toast.recording.failed-start"), I18n.tr("toast.recording.failed-gpu"))
         }
       } else if (isRecording) {
         // Process ended normally while recording
@@ -135,9 +136,9 @@ Singleton {
         } else {
           const err2 = String(recorderProcess.stderr.text || "").trim()
           if (err2.length > 0)
-            ToastService.showError(I18n.tr("toast.recording.failed-start"), err2, 7000)
+            ToastService.showError(I18n.tr("toast.recording.failed-start"), err2)
           else
-            ToastService.showError(I18n.tr("toast.recording.failed-start"), I18n.tr("toast.recording.failed-general"), 7000)
+            ToastService.showError(I18n.tr("toast.recording.failed-start"), I18n.tr("toast.recording.failed-general"))
         }
       }
     }
@@ -153,7 +154,7 @@ Singleton {
       } else {
         isPending = false
         hasActiveRecording = false
-        ToastService.showError(I18n.tr("toast.recording.no-portals"), I18n.tr("toast.recording.no-portals-desc"), 8000)
+        ToastService.showError(I18n.tr("toast.recording.no-portals"), I18n.tr("toast.recording.no-portals-desc"))
       }
     }
   }

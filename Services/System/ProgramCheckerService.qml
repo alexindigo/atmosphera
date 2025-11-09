@@ -4,6 +4,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.Commons
+import qs.Services.Theming
 
 // Service to check if various programs are available on the system
 Singleton {
@@ -37,8 +38,8 @@ Singleton {
     // Build shell script to check each client
     var scriptParts = ["available_clients=\"\";"]
 
-    for (var i = 0; i < MatugenTemplates.discordClients.length; i++) {
-      var client = MatugenTemplates.discordClients[i]
+    for (var i = 0; i < TemplateRegistry.discordClients.length; i++) {
+      var client = TemplateRegistry.discordClients[i]
       var clientName = client.name
 
       // Check if this client requires themes folder to exist
@@ -73,8 +74,8 @@ Singleton {
           // Build list of available clients
           for (var i = 0; i < detectedClients.length; i++) {
             var clientName = detectedClients[i]
-            for (var j = 0; j < MatugenTemplates.discordClients.length; j++) {
-              var client = MatugenTemplates.discordClients[j]
+            for (var j = 0; j < TemplateRegistry.discordClients.length; j++) {
+              var client = TemplateRegistry.discordClients[j]
               if (client.name === clientName) {
                 availableDiscordClients.push(client)
                 break
@@ -199,8 +200,8 @@ Singleton {
     Logger.d("ProgramChecker", "HOME:", Quickshell.env("HOME"))
 
     // Test each client directory
-    for (var i = 0; i < MatugenTemplates.discordClients.length; i++) {
-      var client = MatugenTemplates.discordClients[i]
+    for (var i = 0; i < TemplateRegistry.discordClients.length; i++) {
+      var client = TemplateRegistry.discordClients[i]
       var configDir = client.configPath.replace("~", Quickshell.env("HOME"))
       Logger.d("ProgramChecker", "Checking:", configDir)
     }

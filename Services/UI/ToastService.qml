@@ -18,7 +18,7 @@ Singleton {
     notify(message, description, "", "warning", duration)
   }
 
-  function showError(message, description = "", duration = 5000) {
+  function showError(message, description = "", duration = 6000) {
     notify(message, description, "", "error", duration)
   }
 }

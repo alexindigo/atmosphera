@@ -503,6 +503,10 @@
       "top_left": "Sol üst",
       "top_right": "Sağ üst"
     },
+    "visualizer-quality": {
+      "high": "Yüksek",
+      "low": "Düşük"
+    },
     "visualizer-types": {
       "linear": "Doğrusal",
       "mirrored": "Yansıtılmış",
@@ -692,6 +696,10 @@
         "section": {
           "description": "Tercih ettiğiniz ve yoksayacağınız medya uygulamalarını ayarlayın.",
           "label": "Medya oynatıcılar"
+        },
+        "visualizer-quality": {
+          "description": "Yüksek kalite daha fazla GPU kaynağı kullanır.",
+          "label": "Görselleştirme kalitesi"
         },
         "visualizer-type": {
           "description": "Medya oynatımı için bir görselleştirme türü seçin",
@@ -1719,10 +1727,6 @@
     "kofi": {
       "opened": "Ko-fi sayfası tarayıcınızda açıldı"
     },
-    "matugen": {
-      "failed": "Matugen işlemi başarısız oldu",
-      "failed-general": "Matugen şablonları işlerken bir hata ile karşılaştı"
-    },
     "missing-control-center": {
       "description": "Kontrol Merkezi widget'ı çubuktan kaldırıldı. Çubuktan tekrar erişmek için widget'ı yeniden eklemeniz gerekecek. Çubuğa sağ tıklayarak da açabilirsiniz.",
       "label": "Son Kontrol Merkezi widget'ı kaldırıldı"
@@ -1755,9 +1759,15 @@
       "started": "Kayıt başladı",
       "stopping": "Kayıt durduruluyor..."
     },
+    "theming-processor-failed": {
+      "desc-generic": "Şablonlar işlenirken bir hatayla karşılaşıldı.",
+      "title-matugen": "Matugen şablon işleme başarısız oldu.",
+      "title-predefined": "Önceden tanımlanmış renk şeması işleme başarısız oldu."
+    },
     "wallpaper-colors": {
       "disabled": "Duvar kağıdı renkleri devre dışı",
       "enabled": "Duvar kağıdı renkleri etkin",
+      "label": "Duvar kağıdı renkleri oluşturma",
       "not-installed": "Matugen kurulu değil - duvar kağıdı renk çıkarmak için gerekli"
     },
     "wifi": {

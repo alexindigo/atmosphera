@@ -503,6 +503,10 @@
       "top_left": "Superior izquierda",
       "top_right": "Superior derecha"
     },
+    "visualizer-quality": {
+      "high": "Alto/Alta",
+      "low": "Bajo"
+    },
     "visualizer-types": {
       "linear": "Lineal",
       "mirrored": "Espejado",
@@ -692,6 +696,10 @@
         "section": {
           "description": "Establece tus aplicaciones multimedia preferidas e ignoradas.",
           "label": "Reproductores multimedia"
+        },
+        "visualizer-quality": {
+          "description": "Alta calidad usa más recursos de la GPU.",
+          "label": "Calidad de visualización"
         },
         "visualizer-type": {
           "description": "Elige un tipo de visualización para la reproducción de medios.",
@@ -1719,10 +1727,6 @@
     "kofi": {
       "opened": "Página de Ko-fi abierta en tu navegador"
     },
-    "matugen": {
-      "failed": "Error en el procesamiento de Matugen",
-      "failed-general": "Matugen encontró un error al procesar las plantillas"
-    },
     "missing-control-center": {
       "description": "El widget del Centro de control se eliminó de la barra. Para acceder a él nuevamente desde la barra, debes volver a añadir el widget. También puedes abrirlo haciendo clic derecho en la barra.",
       "label": "Se eliminó el último widget del Centro de control"
@@ -1755,9 +1759,15 @@
       "started": "Grabación iniciada",
       "stopping": "Deteniendo grabación..."
     },
+    "theming-processor-failed": {
+      "desc-generic": "Se encontró un error al procesar las plantillas.",
+      "title-matugen": "Falló el procesamiento de la plantilla Matugen.",
+      "title-predefined": "Falló el procesamiento del esquema de color predefinido."
+    },
     "wallpaper-colors": {
       "disabled": "Colores del fondo de pantalla desactivados",
       "enabled": "Colores del fondo de pantalla activados",
+      "label": "Generación de colores para fondos de pantalla",
       "not-installed": "Matugen no instalado - requerido para extraer colores del fondo de pantalla"
     },
     "wifi": {

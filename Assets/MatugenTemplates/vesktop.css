@@ -219,3 +219,38 @@ h3[class*="postTitleText"]:hover {
     color: var(--text-2) !important;
     opacity: 1 !important;
 }
+
+/* Improve link readability - ONLY target link callout containers (not channels or other UI) */
+/* Override CSS variables only within link callout containers */
+div[class*="linkCalloutContainer"] {
+    --text-muted: var(--text-3) !important;
+    --text-default: var(--accent-1) !important;
+}
+
+/* Make muted parts (protocol, path) more readable - only direct child spans in link containers */
+div[class*="linkCalloutContainer"] > span[class*="normal"][data-text-variant*="normal"][style*="--text-muted"],
+div[class*="linkCalloutContainer"] > span[class*="normal"][style*="color: var(--text-muted)"] {
+    color: var(--text-3) !important;
+    opacity: 0.9 !important;
+}
+
+/* Make the domain (semibold part) stand out with accent color - only direct child spans in link containers */
+div[class*="linkCalloutContainer"] > span[class*="semibold"],
+div[class*="linkCalloutContainer"] > span[data-text-variant*="semibold"],
+div[class*="linkCalloutContainer"] > span[style*="color: var(--text-default)"] {
+    color: var(--accent-1) !important;
+    font-weight: 600 !important;
+    opacity: 1 !important;
+}
+
+/* Hover state for link containers - only affects spans inside link containers */
+div[class*="linkCalloutContainer"]:hover > span[class*="normal"][data-text-variant*="normal"] {
+    color: var(--text-2) !important;
+    opacity: 1 !important;
+}
+
+div[class*="linkCalloutContainer"]:hover > span[class*="semibold"],
+div[class*="linkCalloutContainer"]:hover > span[data-text-variant*="semibold"] {
+    color: var(--accent-1) !important;
+    opacity: 1 !important;
+}

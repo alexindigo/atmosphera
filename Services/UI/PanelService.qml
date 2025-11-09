@@ -16,23 +16,16 @@ Singleton {
   signal willOpen
   signal didClose
 
-  // Currently opened popups, can have more than one.
-  // ex: when opening an NIconPicker from a widget setting.
-  property var openedPopups: []
-  property bool hasOpenedPopup: false
-  signal popupChanged
-
   // Register this panel (called after panel is loaded)
   function registerPanel(panel) {
     registeredPanels[panel.objectName] = panel
-    Logger.i("PanelService", "Registered panel:", panel.objectName)
+    Logger.d("PanelService", "Registered panel:", panel.objectName)
   }
 
   // Returns a panel (loads it on-demand if not yet loaded)
   function getPanel(name, screen) {
     if (!screen) {
-      Logger.w("PanelService", "missing screen for getPanel:", name)
-      Logger.callStack()
+      Logger.d("PanelService", "missing screen for getPanel:", name)
       // If no screen specified, return the first matching panel
       for (var key in registeredPanels) {
         if (key.startsWith(name + "-")) {
@@ -76,18 +69,5 @@ Singleton {
 
     // emit signal
     didClose()
-  }
-
-  // Popups
-  function willOpenPopup(popup) {
-    openedPopups.push(popup)
-    hasOpenedPopup = (openedPopups.length !== 0)
-    popupChanged()
-  }
-
-  function willClosePopup(popup) {
-    openedPopups = openedPopups.filter(p => p !== popup)
-    hasOpenedPopup = (openedPopups.length !== 0)
-    popupChanged()
   }
 }

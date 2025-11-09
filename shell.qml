@@ -12,10 +12,18 @@ import Quickshell
 
 // Commons & Services
 import qs.Commons
-import qs.Services
+import qs.Services.Control
+import qs.Services.Theming
+import qs.Services.Hardware
+import qs.Services.Location
+import qs.Services.Networking
+import qs.Services.Power
+import qs.Services.System
+import qs.Services.UI
 
 // Modules
 import qs.Modules.Background
+import qs.Modules.Bar
 import qs.Modules.Dock
 import qs.Modules.MainScreen
 import qs.Modules.LockScreen
@@ -63,17 +71,16 @@ ShellRoot {
         WallpaperService.init()
         AppThemeService.init()
         ColorSchemeService.init()
-        BarWidgetRegistry.init()
         LocationService.init()
         NightLightService.apply()
         DarkModeService.init()
-        FontService.init()
         HooksService.init()
         BluetoothService.init()
         BatteryService.init()
         IdleInhibitorService.init()
         PowerProfileService.init()
         DistroService.init()
+        FontService.init()
 
         // Only open the setup wizard for new users
         if (!Settings.data.setupCompleted) {
@@ -100,7 +107,7 @@ ShellRoot {
       // Item that needs to exists in the shell.
       IPCService {}
 
-      // MainScreen for each screen (manages bar + all panels)
+      // MainScreen for each screen
       AllScreens {}
     }
   }
