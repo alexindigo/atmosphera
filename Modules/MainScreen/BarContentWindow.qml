@@ -44,9 +44,18 @@ PanelWindow {
     left: barPosition === "left" || !barIsVertical
     right: barPosition === "right" || !barIsVertical
   }
-  // Set to FULL screen dimensions - margins will reduce the actual window size
-  implicitWidth: (barIsVertical ? (Style.barHeight + 1) : barWindow.screen.width) + barMarginH
-  implicitHeight: (barIsVertical ? barWindow.screen.height : Style.barHeight) + barMarginV
+
+  // Handle floating margins
+  margins {
+    top: barPosition === "top" || barIsVertical ? barMarginV : 0
+    bottom: barPosition === "bottom" || barIsVertical ? barMarginV : 0
+    left: barPosition === "left" || !barIsVertical ? barMarginH : 0
+    right: barPosition === "right" || !barIsVertical ? barMarginH : 0
+  }
+
+  // Set a tight window size
+  implicitWidth: barIsVertical ? Style.barHeight : barWindow.screen.width
+  implicitHeight: barIsVertical ? barWindow.screen.height : Style.barHeight
 
   // Bar content - just the widgets, no background
   Bar {
