@@ -123,12 +123,11 @@ Common components used throughout the shell:
 - `I18n.qml` - Internationalization/translations
 - `Color.qml` - Color utilities and helpers
 - `Icons.qml` - Icon management
-- `TablerIcons.qml` - Tabler icon set (207KB icon definitions)
+- `IconsTabler.qml` - Tabler icon set (207KB icon definitions)
 - `ThemeIcons.qml` - Theme-specific icons
 - `Logger.qml` - Logging utility
 - `Style.qml` - Shared styling definitions
 - `Time.qml` - Time utilities
-- `KeyboardLayout.qml` - Keyboard layout definitions
 
 #### `/Widgets/` - Reusable UI Components
 40+ custom QML widgets with the "N" prefix (Noctalia):
