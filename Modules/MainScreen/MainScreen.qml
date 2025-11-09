@@ -101,12 +101,11 @@ PanelWindow {
     // Bar region - subtract bar area from mask
     Region {
       id: barMaskRegion
-      property var barRegion: barLoader.item?.barRegion
 
-      x: barRegion?.x ?? 0
-      y: barRegion?.y ?? 0
-      width: barRegion?.width ?? 0
-      height: barRegion?.height ?? 0
+      x: barPlaceholder.x
+      y: barPlaceholder.y
+      width: barPlaceholder.width
+      height: barPlaceholder.height
       intersection: Intersection.Subtract
     }
 
@@ -133,7 +132,7 @@ PanelWindow {
     Backgrounds.AllBackgrounds {
       id: unifiedBackgrounds
       anchors.fill: parent
-      bar: barLoader.item?.barItem || null
+      bar: barPlaceholder.barItem || null
       windowRoot: root
       z: 0 // Behind all content
     }
@@ -309,28 +308,108 @@ PanelWindow {
       }
     }
 
-    // Bar (always on top - rendered last in tree, so naturally on top)
-    Loader {
-      id: barLoader
-      asynchronous: false
-      sourceComponent: Bar {}
-      // Keep bar loaded but hide it when BarService.isVisible is false
-      // This allows panels to remain accessible via IPC
-      visible: BarService.isVisible
+    // Bar placeholder - just for background positioning (actual bar content is in BarContentWindow)
+    Item {
+      id: barPlaceholder
 
-      // Fill parent to provide dimensions for Bar to reference
-      anchors.fill: parent
+      // Expose self as barItem for AllBackgrounds compatibility
+      readonly property var barItem: barPlaceholder
 
+      // Screen reference
       property ShellScreen screen: root.screen
 
-      onLoaded: {
-        if (item) {
-          Logger.d("MainScreen", "Bar loaded with screen", item.screen?.name)
-          // Bind screen to bar component (use binding for reactivity)
-          item.screen = Qt.binding(function () {
-            return barLoader.screen
-          })
+      // Bar positioning properties (match Bar.qml logic)
+      readonly property string barPosition: Settings.data.bar.position || "top"
+      readonly property bool barIsVertical: barPosition === "left" || barPosition === "right"
+      readonly property bool barFloating: Settings.data.bar.floating || false
+      readonly property real barMarginH: barFloating ? Settings.data.bar.marginHorizontal * Style.marginXL : 0
+      readonly property real barMarginV: barFloating ? Settings.data.bar.marginVertical * Style.marginXL : 0
+
+      // Expose bar dimensions directly on this Item for BarBackground
+      // Use screen dimensions directly
+      x: {
+        if (barPosition === "right")
+          return screen.width - Style.barHeight - barMarginH
+        return barMarginH
+      }
+      y: {
+        if (barPosition === "bottom")
+          return screen.height - Style.barHeight - barMarginV
+        return barMarginV
+      }
+      width: {
+        if (barIsVertical) {
+          return Style.barHeight + 1
         }
+        return screen.width - barMarginH * 2
+      }
+      height: {
+        if (barIsVertical) {
+          return screen.height - barMarginV * 2
+        }
+        return Style.barHeight
+      }
+
+      // Corner states (same as Bar.qml)
+      readonly property int topLeftCornerState: {
+        if (barFloating)
+          return 0
+        if (barPosition === "top")
+          return -1
+        if (barPosition === "left")
+          return -1
+        if (Settings.data.bar.outerCorners && (barPosition === "bottom" || barPosition === "right")) {
+          return barIsVertical ? 1 : 2
+        }
+        return -1
+      }
+
+      readonly property int topRightCornerState: {
+        if (barFloating)
+          return 0
+        if (barPosition === "top")
+          return -1
+        if (barPosition === "right")
+          return -1
+        if (Settings.data.bar.outerCorners && (barPosition === "bottom" || barPosition === "left")) {
+          return barIsVertical ? 1 : 2
+        }
+        return -1
+      }
+
+      readonly property int bottomLeftCornerState: {
+        if (barFloating)
+          return 0
+        if (barPosition === "bottom")
+          return -1
+        if (barPosition === "left")
+          return -1
+        if (Settings.data.bar.outerCorners && (barPosition === "top" || barPosition === "right")) {
+          return barIsVertical ? 1 : 2
+        }
+        return -1
+      }
+
+      readonly property int bottomRightCornerState: {
+        if (barFloating)
+          return 0
+        if (barPosition === "bottom")
+          return -1
+        if (barPosition === "right")
+          return -1
+        if (Settings.data.bar.outerCorners && (barPosition === "top" || barPosition === "left")) {
+          return barIsVertical ? 1 : 2
+        }
+        return -1
+      }
+
+      Component.onCompleted: {
+        Logger.d("MainScreen", "===== Bar placeholder loaded =====")
+        Logger.d("MainScreen", "  Screen:", screen?.name, "Size:", screen?.width, "x", screen?.height)
+        Logger.d("MainScreen", "  Bar position:", barPosition, "| isVertical:", barIsVertical)
+        Logger.d("MainScreen", "  Bar dimensions: x=" + x, "y=" + y, "width=" + width, "height=" + height)
+        Logger.d("MainScreen", "  Style.barHeight =", Style.barHeight)
+        Logger.d("MainScreen", "  Margins: H=" + barMarginH, "V=" + barMarginV, "| Floating:", barFloating)
       }
     }
 

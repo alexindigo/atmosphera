@@ -56,6 +56,7 @@ Item {
       BarBackground {
         bar: root.bar
         shapeContainer: backgroundsShape
+        windowRoot: root.windowRoot
       }
 
 

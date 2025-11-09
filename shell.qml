@@ -23,6 +23,7 @@ import qs.Services.UI
 
 // Modules
 import qs.Modules.Background
+import qs.Modules.Bar
 import qs.Modules.Dock
 import qs.Modules.MainScreen
 import qs.Modules.LockScreen
@@ -106,7 +107,7 @@ ShellRoot {
       // Item that needs to exists in the shell.
       IPCService {}
 
-      // MainScreen for each screen (manages bar + all panels)
+      // MainScreen for each screen
       AllScreens {}
     }
   }

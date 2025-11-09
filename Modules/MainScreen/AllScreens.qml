@@ -41,6 +41,25 @@ Variants {
       }
     }
 
+    // Bar content in separate windows to prevent fullscreen redraws
+    Loader {
+      active: {
+        if (!parent.windowLoaded || !parent.shouldBeActive || !BarService.isVisible)
+          return false
+
+        // Check if bar is configured for this screen
+        var monitors = Settings.data.bar.monitors || []
+        return monitors.length === 0 || monitors.includes(modelData?.name)
+      }
+      asynchronous: false
+
+      sourceComponent: BarContentWindow {}
+
+      onLoaded: {
+        Logger.d("Shell", "BarContentWindow created for", modelData?.name)
+      }
+    }
+
     // BarExclusionZone - created after MainScreen has fully loaded
     // Disabled when bar is hidden or not configured for this screen
     Loader {
