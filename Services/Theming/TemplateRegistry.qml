@@ -206,12 +206,16 @@ Singleton {
   function doWriteUserTemplatesToml() {
     var userConfigPath = Settings.configDir + "user-templates.toml"
     var configContent = buildUserTemplatesToml()
+    var userConfigPathEsc = userConfigPath.replace(/'/g, "'\\''")
 
     // Ensure directory exists (should already exist but just in case)
     Quickshell.execDetached(["mkdir", "-p", Settings.configDir])
 
-    // Write the config file
-    Quickshell.execDetached(["sh", "-c", `echo '${configContent.replace(/'/g, "'\\''")}' > '${userConfigPath}'`])
+    // Write the config file using heredoc to avoid escaping issues
+    var script = `cat > '${userConfigPathEsc}' << 'EOF'\n`
+    script += configContent
+    script += "EOF\n"
+    Quickshell.execDetached(["sh", "-c", script])
 
     Logger.d("TemplateRegistry", "User templates config written to:", userConfigPath)
   }
