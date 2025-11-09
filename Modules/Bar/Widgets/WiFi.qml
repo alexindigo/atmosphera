@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import qs.Commons
+import qs.Services.Networking
 import qs.Services.UI
 import qs.Modules.Bar.Extras
 
