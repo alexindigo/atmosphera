@@ -528,6 +528,7 @@ Item {
 
     Logger.d("SmartPanel", "Position calculated:", calculatedX, calculatedY)
     Logger.d("SmartPanel", "  Panel size:", panelWidth, "x", panelHeight)
+    Logger.d("SmartPanel", "  Parent size:", root.width, "x", root.height)
   }
 
   // Watch for changes in content-driven sizes and update position
