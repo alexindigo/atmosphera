@@ -31,6 +31,12 @@ SmartPanel {
     }
   }
 
+  onBarPositionChanged: {
+    if (isPanelOpen) {
+      Qt.callLater(root.setPosition)
+    }
+  }
+
   // Tabs enumeration, order is NOT relevant
   enum Tab {
     About,
