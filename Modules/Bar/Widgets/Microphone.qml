@@ -5,6 +5,7 @@ import Quickshell.Services.Pipewire
 import qs.Commons
 import qs.Modules.Bar.Extras
 import qs.Modules.Panels.Settings
+import qs.Services.Media
 import qs.Services.UI
 import qs.Widgets
 

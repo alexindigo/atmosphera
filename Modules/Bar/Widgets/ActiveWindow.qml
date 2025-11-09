@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
 import qs.Commons
+import qs.Services.Compositor
 import qs.Services.UI
 import qs.Widgets
 

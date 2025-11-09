@@ -25,8 +25,7 @@ Singleton {
   // Returns a panel (loads it on-demand if not yet loaded)
   function getPanel(name, screen) {
     if (!screen) {
-      Logger.w("PanelService", "missing screen for getPanel:", name)
-      Logger.callStack()
+      Logger.d("PanelService", "missing screen for getPanel:", name)
       // If no screen specified, return the first matching panel
       for (var key in registeredPanels) {
         if (key.startsWith(name + "-")) {
