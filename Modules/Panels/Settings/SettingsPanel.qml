@@ -39,7 +39,7 @@ SmartPanel {
   }
 
   onBarFloatingChanged: {
-    if (isPanelOpen && attachToBar) {
+    if (isPanelOpen) {
       Qt.callLater(root.setPosition)
     }
   }
