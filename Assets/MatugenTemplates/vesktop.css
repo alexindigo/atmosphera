@@ -220,70 +220,37 @@ h3[class*="postTitleText"]:hover {
     opacity: 1 !important;
 }
 
-/* Improve link readability - target Discord's link callout containers */
-[class*="linkCalloutContainer"] {
+/* Improve link readability - ONLY target link callout containers (not channels or other UI) */
+/* Override CSS variables only within link callout containers */
+div[class*="linkCalloutContainer"] {
     --text-muted: var(--text-3) !important;
     --text-default: var(--accent-1) !important;
 }
 
-[class*="linkCalloutContainer"],
-[class*="linkCalloutContainer"] * {
-    opacity: 1 !important;
-}
-
-/* Override Discord's text-muted variable for links (protocol and path parts) */
-[class*="linkCalloutContainer"] [style*="--text-muted"],
-[class*="linkCalloutContainer"] [style*="color: var(--text-muted)"],
-[class*="linkCalloutContainer"] [class*="normal"]:not([class*="semibold"]),
-[class*="linkCalloutContainer"] [data-text-variant*="normal"]:not([data-text-variant*="semibold"]) {
+/* Make muted parts (protocol, path) more readable - only direct child spans in link containers */
+div[class*="linkCalloutContainer"] > span[class*="normal"][data-text-variant*="normal"][style*="--text-muted"],
+div[class*="linkCalloutContainer"] > span[class*="normal"][style*="color: var(--text-muted)"] {
     color: var(--text-3) !important;
-    opacity: 0.85 !important;
-}
-
-/* Make the domain (semibold part) stand out with accent color */
-[class*="linkCalloutContainer"] [class*="semibold"],
-[class*="linkCalloutContainer"] [data-text-variant*="semibold"],
-[class*="linkCalloutContainer"] [style*="--text-default"],
-[class*="linkCalloutContainer"] [style*="color: var(--text-default)"] {
-    color: var(--accent-1) !important;
-    font-weight: 600 !important;
-    opacity: 1 !important;
-}
-
-/* Hover state for links - make entire link brighter */
-[class*="linkCalloutContainer"]:hover,
-[class*="linkCalloutContainer"]:hover * {
-    opacity: 1 !important;
-}
-
-[class*="linkCalloutContainer"]:hover [class*="semibold"],
-[class*="linkCalloutContainer"]:hover [data-text-variant*="semibold"] {
-    color: var(--accent-1) !important;
-    opacity: 1 !important;
-    font-weight: 600 !important;
-}
-
-[class*="linkCalloutContainer"]:hover [class*="normal"]:not([class*="semibold"]) {
-    color: var(--text-2) !important;
     opacity: 0.9 !important;
 }
 
-/* General link styling for embedded links */
-a[href],
-[class*="embed"] a,
-[class*="embed"] [class*="link"],
-[class*="embedDescription"] a {
+/* Make the domain (semibold part) stand out with accent color - only direct child spans in link containers */
+div[class*="linkCalloutContainer"] > span[class*="semibold"],
+div[class*="linkCalloutContainer"] > span[data-text-variant*="semibold"],
+div[class*="linkCalloutContainer"] > span[style*="color: var(--text-default)"] {
     color: var(--accent-1) !important;
+    font-weight: 600 !important;
     opacity: 1 !important;
-    text-decoration: underline !important;
-    text-decoration-color: var(--accent-1) !important;
-    text-underline-offset: 2px !important;
 }
 
-a[href]:hover,
-[class*="embed"] a:hover,
-[class*="embed"] [class*="link"]:hover {
+/* Hover state for link containers - only affects spans inside link containers */
+div[class*="linkCalloutContainer"]:hover > span[class*="normal"][data-text-variant*="normal"] {
+    color: var(--text-2) !important;
+    opacity: 1 !important;
+}
+
+div[class*="linkCalloutContainer"]:hover > span[class*="semibold"],
+div[class*="linkCalloutContainer"]:hover > span[data-text-variant*="semibold"] {
     color: var(--accent-1) !important;
     opacity: 1 !important;
-    text-decoration-thickness: 2px !important;
 }
