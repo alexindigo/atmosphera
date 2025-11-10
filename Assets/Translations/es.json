@@ -860,6 +860,10 @@
             "description": "Escribe {filepath}. El tema Hyprluna debe ser instalado y activado manualmente.",
             "description-missing": "Requiere que {app} esté instalado/a."
           },
+          "spicetify": {
+            "description": "Escribe {filepath}. El tema Comfy debe ser instalado y activado manualmente.",
+            "description-missing": "Requiere que {app} esté instalado/a."
+          },
           "description": "Tematización específica de aplicaciones.",
           "discord": {
             "description": "Escribir {filepath} para {client}",

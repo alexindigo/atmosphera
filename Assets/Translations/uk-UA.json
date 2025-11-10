@@ -860,6 +860,10 @@
             "description": "Записати {filepath}. Тему Hyprluna потрібно встановити та активувати вручну.",
             "description-missing": "Потрібна установка {app}"
           },
+          "spicetify": {
+            "description": "Записати {filepath}. Тему Comfy потрібно встановити та активувати вручну.",
+            "description-missing": "Потрібна установка {app}"
+          },
           "description": "Оформлення окремих програм.",
           "discord": {
             "description": "Записати {filepath} для {client}. Тему Hyprluna потрібно активувати вручну.",

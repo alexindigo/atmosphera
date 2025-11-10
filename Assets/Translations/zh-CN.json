@@ -860,6 +860,10 @@
             "description": "写入 {filepath}。Hyprluna 主题需要手动安装和激活。",
             "description-missing": "需要安装 {app}"
           },
+          "spicetify": {
+            "description": "写入 {filepath}。Comfy 主题需要手动安装和激活。",
+            "description-missing": "需要安装 {app}"
+          },
           "description": "应用程序特定主题。",
           "discord": {
             "description": "为 {client} 写入 {filepath}",
