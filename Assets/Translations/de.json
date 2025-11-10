@@ -105,6 +105,10 @@
         "use-distro-logo": {
           "description": "Logo Ihrer Distribution anstelle eines benutzerdefinierten Symbols verwenden.",
           "label": "Distro-Logo anstelle von Symbol verwenden"
+        },
+        "colorize-distro-logo": {
+          "description": "Wende die Designfarben auf das Logo deiner Distribution an.",
+          "label": "Distro-Logo einfärben"
         }
       },
       "custom-button": {

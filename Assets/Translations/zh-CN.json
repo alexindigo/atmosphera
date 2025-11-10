@@ -105,6 +105,10 @@
         "use-distro-logo": {
           "description": "使用您的发行版徽标而不是自定义图标。",
           "label": "使用发行版徽标而不是图标"
+        },
+        "colorize-distro-logo": {
+          "description": "将主题颜色应用到您的发行版徽标。",
+          "label": "为发行版徽标着色"
         }
       },
       "custom-button": {

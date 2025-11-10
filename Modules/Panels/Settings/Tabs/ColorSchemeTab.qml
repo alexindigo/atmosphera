@@ -761,10 +761,10 @@ ColumnLayout {
       NCheckbox {
         label: "Spicetify"
         description: ProgramCheckerService.spicetifyAvailable ? I18n.tr("settings.color-scheme.templates.programs.spicetify.description", {
-                                                                     "filepath": "~/.config/spicetify/Themes/Comfy/color.ini"
-                                                                   }) : I18n.tr("settings.color-scheme.templates.programs.spicetify.description-missing", {
-                                                                                  "app": "spicetify"
-                                                                                })
+                                                                          "filepath": "~/.config/spicetify/Themes/Comfy/color.ini"
+                                                                        }) : I18n.tr("settings.color-scheme.templates.programs.spicetify.description-missing", {
+                                                                                       "app": "spicetify"
+                                                                                     })
         checked: Settings.data.templates.spicetify
         enabled: ProgramCheckerService.spicetifyAvailable
         opacity: ProgramCheckerService.spicetifyAvailable ? 1.0 : 0.6

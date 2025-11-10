@@ -105,6 +105,10 @@
         "use-distro-logo": {
           "description": "Use your distribution's logo instead of a custom icon.",
           "label": "Use distro logo instead of icon"
+        },
+        "colorize-distro-logo": {
+          "description": "Apply theme colors to your distribution logo.",
+          "label": "Colorize distro logo"
         }
       },
       "custom-button": {

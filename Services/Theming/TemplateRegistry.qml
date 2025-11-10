@@ -151,16 +151,15 @@ Singleton {
       "outputs": [{
           "path": "~/.vscode/extensions/hyprluna.hyprluna-theme-1.0.2/themes/hyprluna.json"
         }]
-    },
-    {
-        "id": "spicetify",
-        "name": "Spicetify",
-        "category": "applications",
-        "input": "spicetify.ini",
-        "outputs": [{
-            "path": "~/.config/spicetify/Themes/Comfy/color.ini"
+    }, {
+      "id": "spicetify",
+      "name": "Spicetify",
+      "category": "applications",
+      "input": "spicetify.ini",
+      "outputs": [{
+          "path": "~/.config/spicetify/Themes/Comfy/color.ini"
         }],
-        "postProcess": () => `spicetify -q apply --no-restart`
+      "postProcess": () => `spicetify -q apply --no-restart`
     }]
 
   // Extract Discord clients for ProgramCheckerService compatibility

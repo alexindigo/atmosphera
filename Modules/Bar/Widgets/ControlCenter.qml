@@ -32,6 +32,11 @@ NIconButton {
   readonly property string customIcon: widgetSettings.icon || widgetMetadata.icon
   readonly property bool useDistroLogo: (widgetSettings.useDistroLogo !== undefined) ? widgetSettings.useDistroLogo : widgetMetadata.useDistroLogo
   readonly property string customIconPath: widgetSettings.customIconPath || ""
+  readonly property bool colorizeDistroLogo: {
+    if (widgetSettings.colorizeDistroLogo !== undefined)
+      return widgetSettings.colorizeDistroLogo
+    return widgetMetadata.colorizeDistroLogo !== undefined ? widgetMetadata.colorizeDistroLogo : false
+  }
 
   // If we have a custom path or distro logo, don't use the theme icon.
   icon: (customIconPath === "" && !useDistroLogo) ? customIcon : ""
@@ -72,5 +77,12 @@ NIconButton {
     visible: source !== ""
     smooth: true
     asynchronous: true
+    layer.enabled: useDistroLogo && colorizeDistroLogo
+    layer.effect: ShaderEffect {
+      property color targetColor: Settings.data.colorSchemes.darkMode ? Color.mOnSurface : Color.mSurfaceVariant
+      property real colorizeMode: 1.0
+
+      fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
+    }
   }
 }

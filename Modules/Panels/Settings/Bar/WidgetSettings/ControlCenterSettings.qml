@@ -17,12 +17,14 @@ ColumnLayout {
   property string valueIcon: widgetData.icon !== undefined ? widgetData.icon : widgetMetadata.icon
   property bool valueUseDistroLogo: widgetData.useDistroLogo !== undefined ? widgetData.useDistroLogo : widgetMetadata.useDistroLogo
   property string valueCustomIconPath: widgetData.customIconPath !== undefined ? widgetData.customIconPath : ""
+  property bool valueColorizeDistroLogo: widgetData.colorizeDistroLogo !== undefined ? widgetData.colorizeDistroLogo : (widgetMetadata.colorizeDistroLogo !== undefined ? widgetMetadata.colorizeDistroLogo : false)
 
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {})
     settings.icon = valueIcon
     settings.useDistroLogo = valueUseDistroLogo
     settings.customIconPath = valueCustomIconPath
+    settings.colorizeDistroLogo = valueColorizeDistroLogo
     return settings
   }
 
@@ -36,6 +38,16 @@ ColumnLayout {
         valueCustomIconPath = ""
         valueIcon = ""
       }
+    }
+  }
+
+  NToggle {
+    visible: valueUseDistroLogo
+    label: I18n.tr("bar.widget-settings.control-center.colorize-distro-logo.label")
+    description: I18n.tr("bar.widget-settings.control-center.colorize-distro-logo.description")
+    checked: valueColorizeDistroLogo
+    onToggled: function (checked) {
+      valueColorizeDistroLogo = checked
     }
   }
 

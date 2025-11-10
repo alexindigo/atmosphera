@@ -86,7 +86,8 @@ Singleton {
                                     "allowUserSettings": true,
                                     "useDistroLogo": false,
                                     "icon": "noctalia",
-                                    "customIconPath": ""
+                                    "customIconPath": "",
+                                    "colorizeDistroLogo": false
                                   },
                                   "CustomButton": {
                                     "allowUserSettings": true,

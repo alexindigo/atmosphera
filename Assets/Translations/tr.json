@@ -105,6 +105,10 @@
         "use-distro-logo": {
           "description": "Özel ikon yerine dağıtımınızın logosunu kullanın.",
           "label": "Dağıtım logosunu ikon yerine kullan"
+        },
+        "colorize-distro-logo": {
+          "description": "Dağıtım logonuza tema renklerini uygula.",
+          "label": "Dağıtım logosunu renklendir"
         }
       },
       "custom-button": {
