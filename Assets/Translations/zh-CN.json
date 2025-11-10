@@ -402,11 +402,11 @@
       }
     },
     "colors": {
-      "error": "错误",
-      "onSurface": "表面之上",
-      "primary": "主要的",
-      "secondary": "次要的",
-      "tertiary": "第三纪"
+      "error": "错误色",
+      "onSurface": "表层对应色",
+      "primary": "主要色",
+      "secondary": "次要色",
+      "tertiary": "第三色"
     },
     "control-center": {
       "position": {
@@ -820,7 +820,7 @@
           "description": "启用自动切换浅色和深色模式。",
           "label": "深色模式计划",
           "location": "位置",
-          "manual": "手册",
+          "manual": "手动",
           "off": "关"
         },
         "switch": {
@@ -1177,7 +1177,7 @@
     "hooks": {
       "info": {
         "command-info": {
-          "description": "• 命令通过 shell 执行 (sh -c)\n• 命令在后台运行（分离）\n• 测试按钮使用当前值执行",
+          "description": "• 命令通过 shell 执行 gsh -c)\n• 命令在后台运行（分离）\n• 测试按钮使用当前值执行",
           "label": "钩子命令信息"
         },
         "parameters": {
@@ -1574,7 +1574,7 @@
           "label": "填充模式"
         },
         "section": {
-          "label": "外观和感觉"
+          "label": "外观与体验"
         },
         "transition-duration": {
           "description": "过渡动画的持续时间（秒）。",
@@ -1717,7 +1717,7 @@
       "enabled": "已启用"
     },
     "kofi": {
-      "opened": "Ko-fi页面已在您的浏览器中打开"
+      "opened": "Ko-fi 页面已在您的浏览器中打开"
     },
     "matugen": {
       "failed": "Matugen 处理失败",
