@@ -224,18 +224,18 @@ Singleton {
   function replaceColorsInFile(filePath, colors) {
     let script = ""
     Object.keys(colors).forEach(colorKey => {
-      const hexValue = colors[colorKey].default.hex
-      const hexStrippedValue = colors[colorKey].default.hex_stripped
-    
-      const escapedHex = hexValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-      const escapedHexStripped = hexStrippedValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-    
-    // replace hex_stripped
-      script += `sed -i 's/{{colors\\.${colorKey}\\.default\\.hex_stripped}}/${escapedHexStripped}/g' '${filePath}'\n`
-    
-    // replace hex
-      script += `sed -i 's/{{colors\\.${colorKey}\\.default\\.hex}}/${escapedHex}/g' '${filePath}'\n`
-    })
+                                  const hexValue = colors[colorKey].default.hex
+                                  const hexStrippedValue = colors[colorKey].default.hex_stripped
+
+                                  const escapedHex = hexValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+                                  const escapedHexStripped = hexStrippedValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+                                  // replace hex_stripped
+                                  script += `sed -i 's/{{colors\\.${colorKey}\\.default\\.hex_stripped}}/${escapedHexStripped}/g' '${filePath}'\n`
+
+                                  // replace hex
+                                  script += `sed -i 's/{{colors\\.${colorKey}\\.default\\.hex}}/${escapedHex}/g' '${filePath}'\n`
+                                })
     return script
   }
 
