@@ -80,7 +80,7 @@ NIconButton {
     layer.enabled: useDistroLogo && colorizeDistroLogo
     layer.effect: ShaderEffect {
       property color targetColor: Settings.data.colorSchemes.darkMode ? Color.mOnSurface : Color.mSurfaceVariant
-      property real colorizeMode: 1.0
+      property real colorizeMode: 2.0
 
       fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
     }
