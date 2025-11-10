@@ -5,6 +5,7 @@ import QtQuick.Effects
 import qs.Commons
 import qs.Widgets
 import qs.Services.UI
+import qs.Services.System
 
 NIconButton {
   id: root
