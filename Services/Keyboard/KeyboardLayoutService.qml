@@ -25,24 +25,6 @@ Singleton {
     }
   }
 
-  // Process to get current keyboard layout using niri msg (Wayland native)
-  Process {
-    id: niriLayoutProcess
-    running: false
-    command: ["niri", "msg", "-j", "keyboard-layouts"]
-    stdout: StdioCollector {
-      onStreamFinished: {
-        try {
-          const data = JSON.parse(text)
-          const layoutName = data.names[data.current_idx]
-          root.currentLayout = extractLayoutCode(layoutName)
-        } catch (e) {
-          root.currentLayout = I18n.tr("system.unknown-layout")
-        }
-      }
-    }
-  }
-
   // Process to get current keyboard layout using hyprctl (Hyprland)
   Process {
     id: hyprlandLayoutProcess
@@ -170,6 +152,11 @@ Singleton {
     localectlProcess.running = true
   }
 
+  // Updates current layout from various format strings. Called by compositors
+  function setCurrentLayout(layoutString) {
+    root.currentLayout = extractLayoutCode(layoutString)
+  }
+
   // Extract layout code from various format strings using Commons data
   function extractLayoutCode(layoutString) {
     if (!layoutString)
@@ -244,7 +231,7 @@ Singleton {
     if (CompositorService.isHyprland) {
       hyprlandLayoutProcess.running = true
     } else if (CompositorService.isNiri) {
-      niriLayoutProcess.running = true
+      // do nothing, niri calls setCurrentLayout
     } else {
       // Try detection methods in order of preference
       if (Qt.platform.os === "linux") {
