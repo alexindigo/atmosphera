@@ -46,7 +46,7 @@ https://github.com/user-attachments/assets/72c6d6dc-48b0-48a0-bd8b-c7e70990edc4
 
 ## ⚠️ BREAKING CHANGE ⚠️
 
-With the release of `v3.0.0` we introduced a small breaking change. This is solely for niri users, we reworked how we handle the wallpaper / overview. Please read [the docs](https://docs.noctalia.dev/getting-started/compositor-settings/#niri-wallpaper-and-overview-setup) to adapt your niri config.
+With the release of `v3.0.0` we introduced a small breaking change. This is solely for niri users, we reworked how we handle the wallpaper & overview. Please read [the docs](https://docs.noctalia.dev/getting-started/compositor-settings/#niri-wallpaper-and-overview-setup) to adapt your niri config.
 
 ---
 
