@@ -93,7 +93,7 @@ Loader {
         anchors.fill: parent
         fillMode: Image.PreserveAspectCrop
         source: wallpaper
-        smooth: false
+        smooth: true
         mipmap: false
         cache: false
         asynchronous: true

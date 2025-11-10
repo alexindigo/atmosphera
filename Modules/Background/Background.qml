@@ -115,7 +115,7 @@ Variants {
         property bool dimensionsCalculated: false
 
         source: ""
-        smooth: false
+        smooth: true
         mipmap: false
         visible: false
         cache: false
@@ -144,7 +144,7 @@ Variants {
         property bool dimensionsCalculated: false
 
         source: ""
-        smooth: false
+        smooth: true
         mipmap: false
         visible: false
         cache: false
