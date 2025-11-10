@@ -21,7 +21,7 @@ Singleton {
       "name": "Ghostty",
       "matugenPath": "Terminal/ghostty",
       "outputPath": "~/.config/ghostty/themes/noctalia",
-      "postHook": "pgrep -x ghostty >/dev/null && pkill -SIGUSR2 ghostty; true"
+      "postHook": "bash -c 'pgrep -f ghostty >/dev/null && pkill -SIGUSR2 ghostty || true'"
     }, {
       "id": "kitty",
       "name": "Kitty",
