@@ -332,18 +332,16 @@ Singleton {
 
     // Error reporting helpers
     property string generator: ""
-    function showWarning() {
+
+    function buildErrorMessage() {
       const description = (stderr.text && stderr.text.trim() !== "") ? stderr.text.trim() : ((stdout.text && stdout.text.trim() !== "") ? stdout.text.trim() : I18n.tr("toast.theming-processor-failed.desc-generic"))
       const title = I18n.tr(`toast.theming-processor-failed.title-${generator}`)
-
-      // Give a bit more time to the user to read, as it can contains important information for debugging user's templates.
-      ToastService.showWarning(title, description, 8000)
       return description
     }
 
     onExited: function (exitCode) {
       if (exitCode !== 0) {
-        const description = generateProcess.showWarning()
+        const description = generateProcess.buildErrorMessage()
         Logger.e("TemplateProcessor", "Process failed with exit code", exitCode, description)
       }
     }
@@ -354,24 +352,27 @@ Singleton {
         Logger.d("TemplateProcessor", "stdout:", this.text)
       }
     }
+
     stderr: StdioCollector {
       onStreamFinished: {
         if (this.text) {
-          const description = generateProcess.showWarning()
+          const description = generateProcess.buildErrorMessage()
           Logger.e("TemplateProcessor", "Process failed", description)
         }
       }
     }
   }
 
+  // ------------
   Process {
     id: copyProcess
     workingDirectory: Quickshell.shellDir
     running: false
     stderr: StdioCollector {
       onStreamFinished: {
-        if (this.text)
-        Logger.d("TemplateProcessor", "copyProcess stderr:", this.text)
+        if (this.text) {
+          Logger.e("TemplateProcessor", "copyProcess stderr:", this.text)
+        }
       }
     }
   }
