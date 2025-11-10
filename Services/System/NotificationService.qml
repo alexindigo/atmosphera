@@ -7,6 +7,7 @@ import Quickshell.Io
 import Quickshell.Services.Notifications
 import qs.Commons
 import qs.Services.Power
+import qs.Services.UI
 import "../../Helpers/sha256.js" as Checksum
 
 Singleton {
