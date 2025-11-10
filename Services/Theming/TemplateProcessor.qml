@@ -222,14 +222,20 @@ Singleton {
   }
 
   function replaceColorsInFile(filePath, colors) {
-    // This handles both ".hex" and ".hex_stripped" the EXACT same way. Our predefined color schemes are
-    // always RRGGBB without alpha so this is fine and keeps compatibility with matugen.
     let script = ""
     Object.keys(colors).forEach(colorKey => {
-                                  const colorValue = colors[colorKey].default.hex
-                                  const escapedColor = colorValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-                                  script += `sed -i 's/{{colors\\.${colorKey}\\.default\\.hex\\(_stripped\\)\\?}}/${escapedColor}/g' '${filePath}'\n`
-                                })
+      const hexValue = colors[colorKey].default.hex
+      const hexStrippedValue = colors[colorKey].default.hex_stripped
+    
+      const escapedHex = hexValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      const escapedHexStripped = hexStrippedValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    
+    // replace hex_stripped
+      script += `sed -i 's/{{colors\\.${colorKey}\\.default\\.hex_stripped}}/${escapedHexStripped}/g' '${filePath}'\n`
+    
+    // replace hex
+      script += `sed -i 's/{{colors\\.${colorKey}\\.default\\.hex}}/${escapedHex}/g' '${filePath}'\n`
+    })
     return script
   }
 
