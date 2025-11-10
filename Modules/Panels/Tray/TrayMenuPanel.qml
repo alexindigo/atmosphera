@@ -5,6 +5,7 @@ import Quickshell
 import qs.Commons
 import qs.Widgets
 import qs.Modules.MainScreen
+import qs.Services.UI
 
 SmartPanel {
   id: root
