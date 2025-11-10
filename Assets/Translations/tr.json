@@ -282,6 +282,16 @@
           "label": "Sadece aynı çıktıdan"
         }
       },
+      "taskbar-grouped": {
+        "show-workspace-numbers": {
+          "label": "Çalışma alanı numaralarını göster",
+          "description": "Görev gruplarının sol üst köşesinde çalışma alanı numaralarını göster."
+        },
+        "show-numbers-only-when-occupied": {
+          "label": "Yalnızca dolu olduğunda numaraları göster",
+          "description": "Çalışma alanı numaralarını yalnızca açık pencereleri olan çalışma alanları için göster."
+        }
+      },
       "tray": {
         "colorize-icons": {
           "description": "Tepsi ikonlarına tema renklerini uygula.",

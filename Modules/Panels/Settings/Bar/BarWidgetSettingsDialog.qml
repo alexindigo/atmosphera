@@ -128,6 +128,7 @@ Popup {
       "NotificationHistory": "WidgetSettings/NotificationHistorySettings.qml",
       "Spacer": "WidgetSettings/SpacerSettings.qml",
       "SystemMonitor": "WidgetSettings/SystemMonitorSettings.qml",
+      "TaskbarGrouped": "WidgetSettings/TaskbarGroupedSettings.qml",
       "Volume": "WidgetSettings/VolumeSettings.qml",
       "WiFi": "WidgetSettings/WiFiSettings.qml",
       "Workspace": "WidgetSettings/WorkspaceSettings.qml",

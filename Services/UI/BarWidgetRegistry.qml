@@ -157,7 +157,9 @@ Singleton {
                                     "colorizeIcons": false
                                   },
                                   "TaskbarGrouped": {
-                                    "allowUserSettings": true
+                                    "allowUserSettings": true,
+                                    "showWorkspaceNumbers": true,
+                                    "showNumbersOnlyWhenOccupied": true
                                   },
                                   "Tray": {
                                     "allowUserSettings": true,

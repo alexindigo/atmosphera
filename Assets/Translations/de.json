@@ -282,6 +282,16 @@
           "label": "Nur vom gleichen Bildschirm"
         }
       },
+      "taskbar-grouped": {
+        "show-workspace-numbers": {
+          "label": "Arbeitsbereichsnummern anzeigen",
+          "description": "Arbeitsbereichsnummern in der oberen linken Ecke der Task-Gruppen anzeigen."
+        },
+        "show-numbers-only-when-occupied": {
+          "label": "Nur bei belegten Arbeitsbereichen anzeigen",
+          "description": "Arbeitsbereichsnummern nur für Arbeitsbereiche mit geöffneten Fenstern anzeigen."
+        }
+      },
       "tray": {
         "colorize-icons": {
           "description": "Theme-Farben auf Tray-Symbole anwenden.",

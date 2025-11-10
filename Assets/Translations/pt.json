@@ -282,6 +282,16 @@
           "label": "Apenas da mesma saída"
         }
       },
+      "taskbar-grouped": {
+        "show-workspace-numbers": {
+          "label": "Mostrar números do espaço de trabalho",
+          "description": "Exibir números do espaço de trabalho no canto superior esquerdo dos grupos de tarefas."
+        },
+        "show-numbers-only-when-occupied": {
+          "label": "Mostrar números apenas quando ocupados",
+          "description": "Mostrar números do espaço de trabalho apenas para espaços de trabalho com janelas abertas."
+        }
+      },
       "tray": {
         "colorize-icons": {
           "description": "Aplicar cores do tema aos ícones da bandeja do sistema.",
