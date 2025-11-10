@@ -123,6 +123,10 @@
           "stream-description": "Introduce un comando para ejecutar continuamente."
         },
         "dynamic-text": "Texto dinámico",
+        "hide-vertical": {
+          "description": "Si está activado, el texto de la salida del comando no se mostrará cuando la barra esté en un diseño vertical (izquierda o derecha).",
+          "label": "Ocultar texto en barra vertical"
+        },
         "icon": {
           "description": "Selecciona un icono de la biblioteca.",
           "label": "Icono"

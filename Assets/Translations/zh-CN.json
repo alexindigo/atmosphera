@@ -123,6 +123,10 @@
           "stream-description": "输入一个要持续运行的命令。"
         },
         "dynamic-text": "动态文本",
+        "hide-vertical": {
+          "description": "如果启用，当栏处于垂直布局（左或右）时，将不显示命令输出的文本。",
+          "label": "在垂直栏中隐藏文本"
+        },
         "icon": {
           "description": "从库中选择图标。",
           "label": "图标"

@@ -30,7 +30,8 @@ Item {
     return {}
   }
 
-  // Use settings or defaults from BarWidgetRegistry
+  readonly property bool isVerticalBar: Settings.data.bar.position === "left" || Settings.data.bar.position === "right"
+
   readonly property string customIcon: widgetSettings.icon || widgetMetadata.icon
   readonly property string leftClickExec: widgetSettings.leftClickExec || widgetMetadata.leftClickExec
   readonly property string rightClickExec: widgetSettings.rightClickExec || widgetMetadata.rightClickExec
@@ -40,7 +41,10 @@ Item {
   readonly property int textIntervalMs: widgetSettings.textIntervalMs !== undefined ? widgetSettings.textIntervalMs : (widgetMetadata.textIntervalMs || 3000)
   readonly property string textCollapse: widgetSettings.textCollapse !== undefined ? widgetSettings.textCollapse : (widgetMetadata.textCollapse || "")
   readonly property bool parseJson: widgetSettings.parseJson !== undefined ? widgetSettings.parseJson : (widgetMetadata.parseJson || false)
+  readonly property bool hideTextInVerticalBar: widgetSettings.hideTextInVerticalBar !== undefined ? widgetSettings.hideTextInVerticalBar : (widgetMetadata.hideTextInVerticalBar || false)
   readonly property bool hasExec: (leftClickExec || rightClickExec || middleClickExec)
+
+  readonly property bool shouldShowText: !isVerticalBar || !hideTextInVerticalBar
 
   implicitWidth: pill.width
   implicitHeight: pill.height
@@ -50,25 +54,37 @@ Item {
 
     oppositeDirection: BarService.getPillDirection(root)
     icon: _dynamicIcon !== "" ? _dynamicIcon : customIcon
-    text: _dynamicText
+    text: shouldShowText ? _dynamicText : ""
     density: Settings.data.bar.density
+    rotateText: isVerticalBar && !hideTextInVerticalBar
     autoHide: false
     forceOpen: _dynamicText !== ""
     tooltipText: {
-      if (!hasExec) {
-        return "Custom button, configure in settings."
-      } else {
-        var lines = []
+      var tooltipLines = []
+
+      if (hasExec) {
         if (leftClickExec !== "") {
-          lines.push(`Left click: ${leftClickExec}.`)
+          tooltipLines.push(`Left click: ${leftClickExec}.`)
         }
         if (rightClickExec !== "") {
-          lines.push(`Right click: ${rightClickExec}.`)
+          tooltipLines.push(`Right click: ${rightClickExec}.`)
         }
         if (middleClickExec !== "") {
-          lines.push(`Middle click: ${middleClickExec}.`)
+          tooltipLines.push(`Middle click: ${middleClickExec}.`)
         }
-        return lines.join("\n")
+      }
+
+      if (_dynamicTooltip !== "") {
+        if (tooltipLines.length > 0) {
+          tooltipLines.push("")
+        }
+        tooltipLines.push(_dynamicTooltip)
+      }
+
+      if (tooltipLines.length === 0) {
+        return "Custom button, configure in settings."
+      } else {
+        return tooltipLines.join("\n")
       }
     }
 
@@ -80,13 +96,14 @@ Item {
   // Internal state for dynamic text
   property string _dynamicText: ""
   property string _dynamicIcon: ""
+  property string _dynamicTooltip: ""
 
   // Periodically run the text command (if set)
   Timer {
     id: refreshTimer
     interval: Math.max(250, textIntervalMs)
     repeat: true
-    running: !textStream && textCommand && textCommand.length > 0
+    running: shouldShowText && !textStream && textCommand && textCommand.length > 0
     triggeredOnStart: true
     onTriggered: root.runTextCommand()
   }
@@ -95,7 +112,7 @@ Item {
   Timer {
     id: restartTimer
     interval: 1000
-    running: textStream && !textProc.running
+    running: shouldShowText && textStream && !textProc.running
     onTriggered: root.runTextCommand()
   }
 
@@ -123,38 +140,49 @@ Item {
 
   function parseDynamicContent(content) {
     var contentStr = String(content || "").trim()
-    if (contentStr.indexOf("\n") !== -1) {
-      contentStr = contentStr.split("\n")[0]
-    }
 
     if (parseJson) {
+      var lineToParse = contentStr
+
+      if (!textStream && contentStr.includes('\n')) {
+        const lines = contentStr.split('\n').filter(line => line.trim() !== '')
+        if (lines.length > 0) {
+          lineToParse = lines[lines.length - 1]
+        }
+      }
+
       try {
-        var parsed = JSON.parse(contentStr)
-        var text = parsed.text || ""
+        const parsed = JSON.parse(lineToParse)
+        const text = parsed.text || ""
+        const icon = parsed.icon || ""
+        const tooltip = parsed.tooltip || ""
 
         if (checkCollapse(text)) {
           _dynamicText = ""
           _dynamicIcon = ""
+          _dynamicTooltip = ""
           return
         }
 
         _dynamicText = text
-        _dynamicIcon = parsed.icon || ""
+        _dynamicIcon = icon
+        _dynamicTooltip = tooltip
         return
       } catch (e) {
-
-        // Not a valid JSON, treat as plain text
+        Logger.w("CustomButton", `Failed to parse JSON. Content: "${lineToParse}"`)
       }
     }
 
     if (checkCollapse(contentStr)) {
       _dynamicText = ""
       _dynamicIcon = ""
+      _dynamicTooltip = ""
       return
     }
 
     _dynamicText = contentStr
     _dynamicIcon = ""
+    _dynamicTooltip = ""
   }
 
   function checkCollapse(text) {

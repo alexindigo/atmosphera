@@ -123,6 +123,10 @@
           "stream-description": "Geben Sie einen Befehl ein, der kontinuierlich ausgeführt werden soll."
         },
         "dynamic-text": "Dynamischer Text",
+        "hide-vertical": {
+          "description": "Wenn aktiviert, wird der Text aus der Befehlsausgabe nicht angezeigt, wenn sich die Leiste in einem vertikalen Layout befindet (links oder rechts).",
+          "label": "Text in vertikaler Leiste ausblenden"
+        },
         "icon": {
           "description": "Symbol aus der Bibliothek auswählen.",
           "label": "Symbol"

@@ -123,6 +123,10 @@
           "stream-description": "Sürekli çalıştırılacak bir komut girin."
         },
         "dynamic-text": "Dinamik metin",
+        "hide-vertical": {
+          "description": "Etkinleştirilirse, komut çıktısındaki metin, çubuk dikey düzende (sol veya sağ) olduğunda gösterilmeyecektir.",
+          "label": "Dikey çubukta metni gizle"
+        },
         "icon": {
           "description": "Kütüphaneden bir ikon seçin.",
           "label": "İkon"
