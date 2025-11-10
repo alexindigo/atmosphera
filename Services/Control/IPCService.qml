@@ -5,6 +5,7 @@ import Quickshell.Wayland
 import Quickshell.Widgets
 
 import qs.Commons
+import qs.Services.Compositor
 import qs.Services.Hardware
 import qs.Services.Media
 import qs.Services.Power
