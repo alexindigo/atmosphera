@@ -1037,11 +1037,11 @@ Item {
       // This prevents closing the panel when clicking inside it
       MouseArea {
         anchors.fill: parent
+        acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
         z: -1 // Behind content, but on the panel background
-        onClicked: {
-
-          // Accept and ignore - prevents propagation to background
-        }
+        onClicked: mouse => {
+                     mouse.accepted = true // Accept and ignore - prevents propagation to background
+                   }
       }
     }
 
