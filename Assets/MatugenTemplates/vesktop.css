@@ -103,3 +103,154 @@
     --purple-4: {{colors.on_secondary_container.default.hex}};
     --purple-5: {{colors.secondary.default.hex}};
 }
+
+/* Improve timestamp/clock readability */
+/* Target timestamps with various selector patterns to work across Discord versions */
+[class*="timestamp"] time,
+[class*="timestamp"] time[id*="message-timestamp"],
+[id*="message-timestamp"] time,
+span[class*="timestamp"] time {
+    color: var(--text-3) !important; /* Use normal text color for better contrast */
+    opacity: 0.85 !important; /* Slightly muted but still readable */
+}
+
+/* Hover state for timestamps - make them fully visible */
+[class*="timestamp"]:hover time,
+[id*="message-timestamp"]:hover time,
+span[class*="timestamp"]:hover time {
+    color: var(--text-2) !important; /* Use heading color on hover */
+    opacity: 1 !important;
+}
+
+/* Improve slowmode cooldown and typing indicator readability */
+[class*="cooldownText"],
+[class*="cooldownWrapper"],
+[class*="cooldownText"] svg,
+.cooldownText_b21699,
+.cooldownWrapper_b21699 {
+    color: var(--text-3) !important; /* Use normal text color for better contrast */
+    opacity: 0.85 !important; /* Slightly muted but still readable */
+}
+
+/* Slowmode icon color */
+[class*="slowModeIcon"],
+.slowModeIcon_b21699 {
+    color: var(--text-3) !important;
+    opacity: 0.85 !important;
+}
+
+/* Typing indicator text */
+[class*="typing"] [class*="text"],
+[class*="typingDots"] [class*="text"],
+.typing_b88801 .text_b88801 {
+    color: var(--text-3) !important;
+    opacity: 0.85 !important;
+}
+
+[class*="postTitleText"],
+[class*="postTitleText"] span,
+h3[class*="postTitleText"],
+[class*="heading-lg"][class*="postTitleText"],
+[data-text-variant*="heading"] [class*="postTitleText"] {
+    color: var(--text-2) !important;
+    opacity: 0.9 !important;
+}
+
+[class*="postTitleText"]:hover,
+[class*="postTitleText"]:hover span,
+h3[class*="postTitleText"]:hover {
+    color: var(--text-2) !important;
+    opacity: 1 !important;
+}
+
+[class*="messageContent"],
+[class*="markup"] {
+    line-height: 1.35 !important;
+    color: var(--text-3) !important;
+    opacity: 0.85 !important;
+}
+
+/* Improve message input/editor text readability */
+[class*="editor"] [class*="markup"],
+[class*="slateTextArea"] [class*="markup"],
+[class*="slateTextArea"],
+[role="textbox"][class*="markup"],
+[role="textbox"][class*="editor"],
+[class*="editor"] [class*="slateTextArea"],
+[data-slate-editor="true"] {
+    color: var(--text-3) !important;
+    opacity: 0.9 !important;
+    line-height: 1.4 !important;
+}
+
+/* Empty/placeholder text in message input */
+[class*="emptyText"],
+[class*="emptyText"] span,
+[data-slate-zero-width] {
+    color: var(--text-4) !important;
+    opacity: 0.7 !important;
+}
+
+[class*="messageContent"][class*="deleted"],
+[class*="text-sm"][class*="messageContent"][class*="deleted"],
+[data-text-variant*="text-sm"][class*="messageContent"][class*="deleted"] {
+    color: var(--text-3) !important;
+    opacity: 0.85 !important;
+}
+
+[class*="messageContent"][class*="deleted"]:hover,
+[class*="messageContent"][class*="deleted"]:hover span {
+    color: var(--text-2) !important;
+    opacity: 1 !important;
+}
+
+/* Improve tooltip readability */
+[class*="tooltip"],
+[class*="tooltip"] *,
+[role="tooltip"],
+[role="tooltip"] * {
+    color: var(--text-2) !important;
+}
+
+[class*="tooltipText"],
+[class*="tooltipContent"],
+[class*="tooltip"] span,
+[class*="tooltip"] div {
+    color: var(--text-2) !important;
+    opacity: 1 !important;
+}
+
+/* Improve link readability - ONLY target link callout containers (not channels or other UI) */
+/* Override CSS variables only within link callout containers */
+div[class*="linkCalloutContainer"] {
+    --text-muted: var(--text-3) !important;
+    --text-default: var(--accent-1) !important;
+}
+
+/* Make muted parts (protocol, path) more readable - only direct child spans in link containers */
+div[class*="linkCalloutContainer"] > span[class*="normal"][data-text-variant*="normal"][style*="--text-muted"],
+div[class*="linkCalloutContainer"] > span[class*="normal"][style*="color: var(--text-muted)"] {
+    color: var(--text-3) !important;
+    opacity: 0.9 !important;
+}
+
+/* Make the domain (semibold part) stand out with accent color - only direct child spans in link containers */
+div[class*="linkCalloutContainer"] > span[class*="semibold"],
+div[class*="linkCalloutContainer"] > span[data-text-variant*="semibold"],
+div[class*="linkCalloutContainer"] > span[style*="color: var(--text-default)"] {
+    color: var(--accent-1) !important;
+    font-weight: 600 !important;
+    opacity: 1 !important;
+}
+
+/* Hover state for link containers - only affects spans inside link containers */
+div[class*="linkCalloutContainer"]:hover > span[class*="normal"][data-text-variant*="normal"] {
+    color: var(--text-2) !important;
+    opacity: 1 !important;
+}
+
+div[class*="linkCalloutContainer"]:hover > span[class*="semibold"],
+div[class*="linkCalloutContainer"]:hover > span[data-text-variant*="semibold"] {
+    color: var(--accent-1) !important;
+    opacity: 1 !important;
+}

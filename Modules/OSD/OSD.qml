@@ -1,11 +1,14 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Effects
 import Quickshell
 import Quickshell.Wayland
 import qs.Commons
-import qs.Services
 import qs.Widgets
+import qs.Services.Hardware
+import qs.Services.Media
+import qs.Services.System
 
 // Unified OSD component
 // Loader activates only when showing OSD, deactivates when hidden to save resources
@@ -72,17 +75,29 @@ Variants {
       return 0
     }
 
+    // Get maximum value for current OSD type
+    function getMaxValue() {
+      if (currentOSDType === "volume" || currentOSDType === "inputVolume") {
+        return Settings.data.audio.volumeOverdrive ? 1.5 : 1.0
+      } else if (currentOSDType === "brightness") {
+        return 1.0
+      }
+      return 1.0
+    }
+
     // Get display percentage
     function getDisplayPercentage() {
       if (currentOSDType === "volume") {
         if (isMuted)
           return "0%"
-        const pct = Math.round(Math.min(1.0, currentVolume) * 100)
+        const max = getMaxValue()
+        const pct = Math.round(Math.min(max, currentVolume) * 100)
         return pct + "%"
       } else if (currentOSDType === "inputVolume") {
         if (isInputMuted)
           return "0%"
-        const pct = Math.round(Math.min(1.0, currentInputVolume) * 100)
+        const max = getMaxValue()
+        const pct = Math.round(Math.min(max, currentInputVolume) * 100)
         return pct + "%"
       } else if (currentOSDType === "brightness") {
         const pct = Math.round(Math.min(1.0, currentBrightness) * 100)
@@ -125,8 +140,10 @@ Variants {
       readonly property bool isCentered: (location === "top" || location === "bottom")
       readonly property bool verticalMode: (location === "left" || location === "right")
       readonly property int hWidth: Math.round(320 * Style.uiScaleRatio)
-      readonly property int hHeight: Math.round(64 * Style.uiScaleRatio)
-      readonly property int vHeight: hWidth // Vertical OSD height (matches horizontal width)
+      readonly property int hHeight: Math.round(72 * Style.uiScaleRatio)
+      readonly property int vWidth: Math.round(72 * Style.uiScaleRatio)
+      readonly property int vHeight: Math.round(280 * Style.uiScaleRatio)
+
       // Ensure an even width to keep the vertical bar perfectly centered
       readonly property int barThickness: {
         const base = Math.max(8, Math.round(8 * Style.uiScaleRatio))
@@ -184,8 +201,8 @@ Variants {
         return base
       }
 
-      implicitWidth: verticalMode ? hHeight : hWidth
-      implicitHeight: osdItem.height
+      implicitWidth: verticalMode ? vWidth : hWidth
+      implicitHeight: verticalMode ? vHeight : hHeight
 
       color: Color.transparent
 
@@ -193,26 +210,16 @@ Variants {
       WlrLayershell.layer: (Settings.data.osd && Settings.data.osd.overlayLayer) ? WlrLayer.Overlay : WlrLayer.Top
       exclusionMode: PanelWindow.ExclusionMode.Ignore
 
-      Rectangle {
+      // Rectangle {
+      //   anchors.fill: parent
+      //   color: "#4400FF00"
+      // }
+      Item {
         id: osdItem
-
-        width: parent.width
-        height: panel.verticalMode ? panel.vHeight : Math.round(64 * Style.uiScaleRatio)
-        radius: Style.radiusL
-        color: Color.mSurface
-        border.color: Color.mOutline
-        border.width: {
-          const bw = Math.max(2, Style.borderM)
-          return (bw % 2 === 0) ? bw : bw + 1
-        }
+        anchors.fill: parent
         visible: false
         opacity: 0
         scale: 0.85 // initial scale for a little zoom effect
-
-        // Only horizontally center when the window itself is centered (top/bottom positions)
-        // For left/right vertical mode, fill the parent width
-        anchors.horizontalCenter: (!panel.verticalMode && panel.isCentered) ? parent.horizontalCenter : undefined
-        anchors.verticalCenter: panel.verticalMode ? parent.verticalCenter : undefined
 
         Behavior on opacity {
           NumberAnimation {
@@ -248,11 +255,33 @@ Variants {
           }
         }
 
+        // Background rectangle (source for the effect)
+        Rectangle {
+          id: background
+          anchors.fill: parent
+          anchors.margins: Style.marginM * 1.5
+          radius: Style.radiusL
+          color: Color.mSurface
+          border.color: Color.mOutline
+          border.width: {
+            const bw = Math.max(2, Style.borderM)
+            return (bw % 2 === 0) ? bw : bw + 1
+          }
+        }
+
+        NDropShadows {
+          anchors.fill: background
+          source: background
+          autoPaddingEnabled: true
+        }
+
+        // Content loader on top of the background (not affected by MultiEffect)
         Loader {
           id: contentLoader
-          anchors.fill: parent
+          anchors.fill: background
+          anchors.margins: Style.marginM
           active: true
-          sourceComponent: verticalMode ? verticalContent : horizontalContent
+          sourceComponent: panel.verticalMode ? verticalContent : horizontalContent
         }
 
         Component {
@@ -287,13 +316,13 @@ Variants {
                 height: panel.barThickness
                 radius: Math.round(panel.barThickness / 2)
                 color: Color.mSurfaceVariant
-                Layout.alignment: Qt.AlignVCenter
+                width: parent.width * 0.6
 
                 Rectangle {
                   anchors.left: parent.left
                   anchors.top: parent.top
                   anchors.bottom: parent.bottom
-                  width: parent.width * Math.min(1.0, root.getCurrentValue())
+                  width: parent.width * Math.min(1.0, root.getCurrentValue() / root.getMaxValue())
                   radius: parent.radius
                   color: root.getProgressColor()
 
@@ -380,7 +409,7 @@ Variants {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.bottom: parent.bottom
-                    height: parent.height * Math.min(1.0, root.getCurrentValue())
+                    height: parent.height * Math.min(1.0, root.getCurrentValue() / root.getMaxValue())
                     radius: parent.radius
                     color: root.getProgressColor()
 

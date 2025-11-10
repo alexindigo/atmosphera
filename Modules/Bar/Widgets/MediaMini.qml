@@ -2,9 +2,10 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
-import qs.Modules.Audio
+import qs.Widgets.AudioSpectrum
 import qs.Commons
-import qs.Services
+import qs.Services.Media
+import qs.Services.UI
 import qs.Widgets
 
 Item {
@@ -32,7 +33,9 @@ Item {
 
   readonly property bool isVerticalBar: (Settings.data.bar.position === "left" || Settings.data.bar.position === "right")
 
-  readonly property string hideMode: (widgetSettings.hideMode !== undefined) ? widgetSettings.hideMode : "hidden" // "visible", "hidden", "transparent"
+  readonly property string hideMode: (widgetSettings.hideMode !== undefined) ? widgetSettings.hideMode : "hidden" // "visible", "hidden", "transparent", "idle"
+  // Backward compatibility: honor legacy hideWhenIdle setting if present
+  readonly property bool hideWhenIdle: (widgetSettings.hideWhenIdle !== undefined) ? widgetSettings.hideWhenIdle : (widgetMetadata.hideWhenIdle !== undefined ? widgetMetadata.hideWhenIdle : false)
   readonly property bool showAlbumArt: (widgetSettings.showAlbumArt !== undefined) ? widgetSettings.showAlbumArt : widgetMetadata.showAlbumArt
   readonly property bool showVisualizer: (widgetSettings.showVisualizer !== undefined) ? widgetSettings.showVisualizer : widgetMetadata.showVisualizer
   readonly property string visualizerType: (widgetSettings.visualizerType !== undefined && widgetSettings.visualizerType !== "") ? widgetSettings.visualizerType : widgetMetadata.visualizerType
@@ -60,12 +63,16 @@ Item {
     return title
   }
 
-  implicitHeight: visible ? (isVerticalBar ? (((!hasActivePlayer) && (hideMode === "hidden" || hideMode === "transparent")) ? 0 : calculatedVerticalDimension()) : Style.capsuleHeight) : 0
-  implicitWidth: visible ? (isVerticalBar ? (((!hasActivePlayer) && (hideMode === "hidden" || hideMode === "transparent")) ? 0 : calculatedVerticalDimension()) : (((!hasActivePlayer) && (hideMode === "hidden" || hideMode === "transparent")) ? 0 : dynamicWidth)) : 0
+  // Hide conditions
+  readonly property bool shouldHideIdle: ((hideMode === "idle") || hideWhenIdle) && !MediaService.isPlaying
+  readonly property bool isEmptyForHideMode: (!hasActivePlayer) && (hideMode === "hidden" || hideMode === "transparent")
 
-  // "visible": Always Visible, "hidden": Hide When Empty, "transparent": Transparent When Empty
-  visible: hideMode !== "hidden" || opacity > 0
-  opacity: ((hideMode !== "hidden" || hasActivePlayer) && (hideMode !== "transparent" || hasActivePlayer)) ? 1.0 : 0.0
+  implicitHeight: visible ? (isVerticalBar ? ((shouldHideIdle || isEmptyForHideMode) ? 0 : calculatedVerticalDimension()) : Style.capsuleHeight) : 0
+  implicitWidth: visible ? (isVerticalBar ? ((shouldHideIdle || isEmptyForHideMode) ? 0 : calculatedVerticalDimension()) : ((shouldHideIdle || isEmptyForHideMode) ? 0 : dynamicWidth)) : 0
+
+  // "visible": Always Visible, "hidden": Hide When Empty, "transparent": Transparent When Empty, "idle": Hide When Idle (not playing)
+  visible: shouldHideIdle ? false : (hideMode !== "hidden" || opacity > 0)
+  opacity: shouldHideIdle ? 0.0 : (((hideMode !== "hidden" || hasActivePlayer) && (hideMode !== "transparent" || hasActivePlayer)) ? 1.0 : 0.0)
   Behavior on opacity {
     NumberAnimation {
       duration: Style.animationNormal
@@ -155,8 +162,8 @@ Item {
     visible: root.visible
     anchors.left: parent.left
     anchors.verticalCenter: parent.verticalCenter
-    width: isVerticalBar ? (((!hasActivePlayer) && (hideMode === "hidden" || hideMode === "transparent")) ? 0 : calculatedVerticalDimension()) : (((!hasActivePlayer) && (hideMode === "hidden" || hideMode === "transparent")) ? 0 : dynamicWidth)
-    height: isVerticalBar ? (((!hasActivePlayer) && (hideMode === "hidden" || hideMode === "transparent")) ? 0 : calculatedVerticalDimension()) : Style.capsuleHeight
+    width: isVerticalBar ? ((shouldHideIdle || isEmptyForHideMode) ? 0 : calculatedVerticalDimension()) : ((shouldHideIdle || isEmptyForHideMode) ? 0 : dynamicWidth)
+    height: isVerticalBar ? ((shouldHideIdle || isEmptyForHideMode) ? 0 : calculatedVerticalDimension()) : Style.capsuleHeight
     radius: isVerticalBar ? width / 2 : Style.radiusM
     color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
@@ -189,7 +196,7 @@ Item {
         active: showVisualizer && visualizerType == "linear"
         z: 0
 
-        sourceComponent: LinearSpectrum {
+        sourceComponent: NLinearSpectrum {
           width: mainContainer.width - Style.marginS
           height: 20
           values: CavaService.values
@@ -204,7 +211,7 @@ Item {
         active: showVisualizer && visualizerType == "mirrored"
         z: 0
 
-        sourceComponent: MirroredSpectrum {
+        sourceComponent: NMirroredSpectrum {
           width: mainContainer.width - Style.marginS
           height: mainContainer.height - Style.marginS
           values: CavaService.values
@@ -219,7 +226,7 @@ Item {
         active: showVisualizer && visualizerType == "wave"
         z: 0
 
-        sourceComponent: WaveSpectrum {
+        sourceComponent: NWaveSpectrum {
           width: mainContainer.width - Style.marginS
           height: mainContainer.height - Style.marginS
           values: CavaService.values

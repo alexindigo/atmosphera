@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import qs.Commons
-import qs.Services
+import qs.Services.UI
 import qs.Widgets
 
 NIconButton {
@@ -20,5 +20,5 @@ NIconButton {
   colorFg: Color.mError
   colorBorder: Color.transparent
   colorBorderHover: Color.transparent
-  onClicked: PanelService.getPanel("sessionMenuPanel")?.toggle()
+  onClicked: PanelService.getPanel("sessionMenuPanel", screen)?.toggle()
 }

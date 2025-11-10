@@ -1,0 +1,429 @@
+# Noctalia Shell
+
+**A beautiful, minimal desktop shell for Wayland that actually gets out of your way.**
+
+Noctalia is a desktop shell built on Quickshell (Qt/QML framework) with a warm lavender aesthetic. It provides a complete desktop environment experience with panels, dock, notifications, lock screen, and extensive customization options.
+
+## AI Guidance
+
+* After receiving tool results, carefully reflect on their quality and determine optimal next steps before proceeding. Use your thinking to plan and iterate based on this new information, and then take the best next action.
+* For maximum efficiency, whenever you need to perform multiple independent operations, invoke all relevant tools simultaneously rather than sequentially.
+* Before you finish, please verify your solution
+* Do what has been asked; nothing more, nothing less.
+* NEVER create files unless they're absolutely necessary for achieving your goal.
+* ALWAYS prefer editing an existing file to creating a new one.
+* NEVER proactively create documentation files (*.md) or README files. Only create documentation files if explicitly requested by the User.
+
+## Project Overview
+
+- **Primary Language**: QML (Qt Quick)
+- **Framework**: Quickshell (Wayland-native shell framework)
+- **Supported Compositors**: Niri, Hyprland, Sway (with support for other Wayland compositors)
+- **License**: MIT
+- **Design Philosophy**: "quiet by design" - minimal, non-intrusive UI
+
+## Architecture
+
+### Core Entry Point
+- [shell.qml](shell.qml) - Main shell root that orchestrates all components
+  - Initializes services in a specific order
+  - Manages screen-specific instances of bars and panels
+  - Uses lazy loading with QML Loaders for memory optimization
+  - Implements MainScreen for each screen to manage bar + panels
+
+### Directory Structure
+
+#### `/Modules/` - UI Components
+Core visual modules and panels:
+- **Bar/** - Top/bottom bar with multiple widgets
+  - Bar.qml - Main bar component
+  - Widgets/ - Bar widget components
+  - Extras/ - Additional bar functionality
+- **Panels/** - Overlay panels (13 panel types)
+  - Audio/ - Audio device panel
+  - Battery/ - Battery status panel
+  - Bluetooth/ - Bluetooth device panel
+  - Calendar/ - Calendar panel
+  - ControlCenter/ - Quick settings panel
+  - Launcher/ - Application launcher/search
+  - NotificationHistory/ - Notification history panel
+  - SessionMenu/ - Power menu (logout, shutdown, etc.)
+  - Settings/ - Shell configuration UI
+  - SetupWizard/ - First-run setup experience
+  - Tray/ - System tray panel
+  - Wallpaper/ - Wallpaper management panel
+  - WiFi/ - WiFi network panel
+- **Background/** - Background/wallpaper rendering
+- **Dock/** - Application dock/launcher
+- **LockScreen/** - Screen locking functionality
+- **MainScreen/** - Main screen window management
+- **Notification/** - Notification system
+- **OSD/** - On-screen display for volume, brightness, etc.
+- **Toast/** - Toast notifications
+- **Tooltip/** - Tooltip system
+
+#### `/Services/` - Business Logic
+Core services that power the shell (40+ services):
+
+**System Integration:**
+- `CompositorService.qml` - Compositor-agnostic API
+- `HyprlandService.qml` - Hyprland-specific integration
+- `NiriService.qml` - Niri-specific integration
+- `SwayService.qml` - Sway-specific integration
+- `IPCService.qml` - Inter-process communication
+
+**Hardware & System:**
+- `AudioService.qml` - Audio control and monitoring
+- `BatteryService.qml` - Battery status and management
+- `BluetoothService.qml` - Bluetooth device management
+- `BrightnessService.qml` - Screen brightness control
+- `NetworkService.qml` - Network connection management
+- `PowerProfileService.qml` - Power profile management
+- `SystemStatService.qml` - System resource monitoring
+
+**UI & Theming:**
+- `AppThemeService.qml` - Main theming facade/orchestrator
+- `ColorPaletteGenerator.qml` - Material Design 3 palette generation
+- `TemplateRegistry.qml` - Template configurations (apps, terminals, Discord)
+- `TemplateProcessor.qml` - Matugen CLI + sed script execution
+- `ColorSchemeService.qml` - Color scheme management
+- `DarkModeService.qml` - Dark/light mode switching
+- `FontService.qml` - Font management
+- `WallpaperService.qml` - Wallpaper handling (with Matugen integration)
+- `NightLightService.qml` - Blue light filter
+
+**Features:**
+- `NotificationService.qml` - Notification daemon
+- `MediaService.qml` - Media player control (MPRIS)
+- `CalendarService.qml` - Calendar integration
+- `ClipboardService.qml` - Clipboard management
+- `LocationService.qml` - Geolocation for weather, etc.
+- `ScreenRecorderService.qml` - Screen recording functionality
+- `IdleInhibitorService.qml` - Prevent screen idle/sleep
+- `KeyboardLayoutService.qml` - Keyboard layout switching
+- `LockKeysService.qml` - Caps/Num lock status
+
+**Infrastructure:**
+- `BarService.qml` - Bar visibility and state management
+- `BarWidgetRegistry.qml` - Registry for bar widgets
+- `ControlCenterWidgetRegistry.qml` - Registry for control center widgets
+- `PanelService.qml` - Panel state management
+- `ToastService.qml` - Toast notification service
+- `TooltipService.qml` - Tooltip service
+- `HooksService.qml` - Custom hook execution
+- `ProgramCheckerService.qml` - Check for installed programs
+- `DistroService.qml` - Linux distribution detection
+- `GitHubService.qml` - GitHub API integration
+- `UpdateService.qml` - Update checking
+- `CavaService.qml` - Audio visualization (Cava integration)
+
+#### `/Commons/` - Shared Utilities
+Common components used throughout the shell:
+- `Settings.qml` - Centralized settings management
+- `I18n.qml` - Internationalization/translations
+- `Color.qml` - Color utilities and helpers
+- `Icons.qml` - Icon management
+- `IconsTabler.qml` - Tabler icon set (207KB icon definitions)
+- `ThemeIcons.qml` - Theme-specific icons
+- `Logger.qml` - Logging utility
+- `Style.qml` - Shared styling definitions
+- `Time.qml` - Time utilities
+
+#### `/Widgets/` - Reusable UI Components
+40+ custom QML widgets with the "N" prefix (Noctalia):
+- **Layout**: NBox, NPanel, NScrollView, NListView, NDivider
+- **Input**: NButton, NIconButton, NIconButtonHot, NTextInput, NSlider, NSpinBox, NToggle, NCheckbox, NRadioButton, NComboBox, NSearchableComboBox
+- **Display**: NLabel, NText, NIcon, NHeader, NImageCached, NImageCircled, NImageRounded
+- **Dialogs**: NColorPickerDialog, NFilePicker
+- **Special**: NContextMenu, NColorPicker, NIconPicker, NCircleStat, NCollapsible, NSectionEditor, NReorderCheckboxes, NDateTimeTokens, NBusyIndicator
+- **System**: MainScreen, BarExclusionZone
+
+#### `/Helpers/` - JavaScript Utilities
+Helper JavaScript modules:
+- `AdvancedMath.js` - Advanced mathematical functions
+- `ColorsConvert.js` - Color conversion utilities
+- `FuzzySort.js` - Fuzzy search implementation
+- `QtObj2JS.js` - Qt object to JavaScript conversion
+- `sha256.js` - SHA-256 hashing
+- `Debug.js` - Debug utilities
+
+#### `/Assets/` - Resources
+- Screenshots, icons, logos, themes
+- Default wallpapers
+- Theme resources
+
+#### `/Shaders/` - Graphics Shaders
+Custom shader effects for visual polish
+
+#### `/Bin/` - Executable Scripts
+Helper scripts and utilities
+
+## Key Features
+
+### 1. Multi-Monitor Support
+- Per-monitor bar configuration (TODO)
+- Screen-specific panel instances
+- Exclusion zones for proper compositor integration
+
+### 2. Theming System
+- Material You color generation (Matugen integration)
+- Dark/light mode support
+- Customizable color schemes
+- Font customization
+- Per-app theming capabilities
+
+### 3. Compositor Integration
+- Native support for Niri, Hyprland, Sway
+- Compositor-agnostic service layer
+- Workspace management
+- Window control
+
+### 4. Panel System
+Advanced panel management via MainScreen (13 panel types):
+- Audio panel
+- Battery panel
+- Bluetooth panel
+- Calendar panel
+- Control Center panel
+- Launcher panel
+- Notification history panel
+- Session menu panel
+- Settings panel
+- Setup wizard panel
+- Tray panel
+- Wallpaper panel
+- WiFi panel
+
+All panels use z-index layering and component-based loading.
+
+### 5. Customization
+- Setup wizard for first-time users
+- Extensive settings interface
+- Widget registry system for adding custom widgets
+- Hook system for custom scripts
+- Reorderable UI elements
+
+### 6. Audio Features
+- Multiple visualization types (Mirrored, Wave, Linear spectrum)
+- MPRIS media player integration
+- Audio device switching
+- Volume OSD
+
+### 7. Notifications
+- Custom notification daemon
+- Notification history
+- Do Not Disturb mode
+- Per-app notification settings
+
+## Development Setup
+
+```bash
+# Run the shell (requires Quickshell to be installed)
+qs -p .
+
+# Run with verbose output for debugging
+env NOCTALIA_DEBUG=1 qs -v -p .
+
+# Code formatting and linting
+qmlfmt -e -b 360 -t 2 -i 2 -w /path/to/file.qml    # Format a QML file (requires qmlfmt, do not use qmlformat)
+qmllint **/*.qml         # Lint all QML files for syntax errors
+```
+
+### Nix/NixOS (Recommended)
+```bash
+# Enter development shell
+nix develop
+
+# Or use the legacy shell
+nix-shell
+```
+
+The dev shell includes:
+- Quickshell with required features
+- Development utilities
+- Required environment variables
+
+### Package Structure
+- Nix flake with NixOS and Home Manager modules
+- Quickshell dependency (with X11 disabled, i3 enabled, hyprland enabled)
+- App2unit integration for .desktop file management
+
+## Configuration
+
+Settings are managed through `Commons/Settings.qml`:
+- Persistent configuration storage
+- Settings versioning
+- Migration handling
+- Type-safe settings access
+
+## Service Initialization Order
+
+From [shell.qml:150-164](shell.qml#L150-L164):
+1. WallpaperService
+2. AppThemeService
+3. ColorSchemeService
+4. BarWidgetRegistry
+5. LocationService
+6. NightLightService
+7. DarkModeService
+8. FontService
+9. HooksService
+10. BluetoothService
+11. BatteryService
+12. IdleInhibitorService
+13. PowerProfileService
+14. DistroService
+
+This order is critical - services depend on previously initialized services.
+
+## Component Lifecycle
+
+1. **Shell Root Initialization**
+   - Wait for I18n to load translations
+   - Wait for Settings to load configuration
+
+2. **Service Initialization**
+   - Services initialize in dependency order
+   - Each service may depend on Settings, I18n, or other services
+
+3. **Screen Components**
+   - MainScreen created per screen
+   - Bar and panel components loaded lazily
+   - Exclusion zones created after window loads
+
+4. **Background Components**
+   - Background/wallpaper
+   - Overview (workspace overview)
+   - Screen corners
+   - Dock
+   - Notifications
+   - Lock screen
+   - Toast overlay
+   - OSD
+
+## Special Patterns
+
+### Lazy Loading
+Components use QML Loaders extensively:
+- `active` property controls when components load
+- `asynchronous` for non-blocking loads
+- Memory optimization for unused screens/panels
+
+### Panel Management
+MainScreen pattern:
+- Single fullscreen window per screen
+- Manages bar + all overlay panels
+- Z-index based layering (panels at z-index 50)
+- Component-based architecture for panels
+
+### Registry Pattern
+BarWidgetRegistry and ControlCenterWidgetRegistry:
+- Centralized widget registration
+- Dynamic widget loading
+- Easy extension point for custom widgets
+
+### Singleton Pattern (Quickshell)
+Services in Quickshell use the `pragma Singleton` directive:
+- Add `pragma Singleton` at the top of the QML file (before imports)
+- No qmldir needed - Quickshell handles singleton resolution automatically
+- Import with standard path: `import qs.Services` or `import qs.Services.Theming`
+- Access via singleton name: `AppThemeService.generate()`
+
+Example:
+```qml
+pragma Singleton
+
+import QtQuick
+import qs.Commons
+
+Singleton {
+  id: root
+
+  function doSomething() {
+    // singleton logic
+  }
+}
+```
+
+### Theming Architecture
+The theming system was refactored (Jan 2025) into 4 focused services in `Services/`:
+
+**AppThemeService.qml** (~60 lines) - Main facade
+- Public API: `init()`, `generate()`, `generateFromWallpaper()`, `generateFromPredefinedScheme()`
+- Orchestrates theme generation based on wallpaper vs predefined schemes
+- Maintains backward compatibility with existing code
+
+**ColorPaletteGenerator.qml** (~100 lines) - Pure color logic
+- Single function: `generatePalette(colors, isDarkMode, isStrict)`
+- Generates complete Material Design 3 palette from base colors
+- No dependencies on other services (pure computation)
+
+**TemplateRegistry.qml** (~230 lines) - Configuration source of truth
+- Defines all application templates (`applications` array)
+- Defines terminal templates (`terminals` array)
+- Consolidated Discord clients (7 variants in single config)
+- Provides `discordClients` array for ProgramCheckerService
+- User template TOML generation
+
+**TemplateProcessor.qml** (~370 lines) - Template execution
+- Dual-path architecture:
+  - Wallpaper colors: Uses matugen CLI for color extraction + template processing
+  - Predefined schemes: Uses sed scripts to apply colors to templates
+- Handles terminal themes (copies pre-rendered files for predefined schemes)
+- User template support (matugen json/image subcommands)
+
+**Adding new application templates:**
+1. Add entry to `TemplateRegistry.applications` array in `Services/TemplateRegistry.qml`
+2. Create template file in `/Assets/MatugenTemplates/`
+3. Add Settings toggle in `Commons/Settings.qml` (templates.yourapp)
+4. Template will automatically work for both wallpaper and predefined paths
+
+**Discord client handling:**
+All Discord clients use the same template (`vesktop.css`) but different output paths.
+Auto-detected by ProgramCheckerService, enabled via single `Settings.data.templates.discord` toggle.
+
+## Git Hooks
+Uses `lefthook` for git hooks (see lefthook.yml)
+
+## Community Resources
+- Documentation: https://docs.noctalia.dev
+- Discord: https://discord.noctalia.dev
+- GitHub: https://github.com/noctalia-dev/noctalia-shell
+
+## Contributing
+See [development guidelines](https://docs.noctalia.dev/development/guideline)
+
+## Notes for AI Assistants
+
+### Code Style
+- QML component names use PascalCase
+- Service names end with "Service.qml"
+- Widget names start with "N" prefix (e.g., NButton, NPanel)
+- JavaScript helpers in Helpers/ directory
+
+### Common Tasks
+1. **Adding a new bar widget**: Register in BarWidgetRegistry
+2. **Adding a control center widget**: Register in ControlCenterWidgetRegistry
+3. **Creating a service**: Follow the Service pattern, add to init order if needed
+4. **Modifying theming**: Check AppThemeService and ColorSchemeService
+5. **Panel work**: Edit in Modules/Panels/, ensure proper z-index in shell.qml
+
+### Important Files to Check
+- Settings schema: `Commons/Settings.qml`
+- Service initialization: `shell.qml` (Component.onCompleted)
+- Panel registration: `shell.qml` (panelComponents array)
+- Theme system: `Services/AppThemeService.qml`
+- Template configurations: `Services/TemplateRegistry.qml`
+- Palette generation: `Services/ColorPaletteGenerator.qml`
+- Template processing: `Services/TemplateProcessor.qml`
+
+### Testing
+- Test on target compositors: Niri, Hyprland, Sway
+- Check multi-monitor scenarios
+- Verify lazy loading doesn't break functionality
+- Test settings persistence across restarts
+
+### Debugging
+- Use `Logger.qml` for logging (Logger.i, Logger.d, Logger.w, Logger.e)
+- Check console output for service initialization messages
+- Verify service initialization order if adding dependencies

@@ -1,19 +1,21 @@
 import QtQuick
 import Quickshell
-import qs.Services
+import qs.Services.UI
 import qs.Commons
 
 Item {
   id: root
 
-  property string widgetId: ""
-  property var widgetProps: ({})
-  property string screenName: widgetProps && widgetProps.screen ? widgetProps.screen.name : ""
-  property string section: widgetProps && widgetProps.section || ""
-  property int sectionIndex: widgetProps && widgetProps.sectionWidgetIndex || 0
+  required property string widgetId
+  required property var widgetScreen
+  required property var widgetProps
 
   property string barDensity: "default"
   readonly property real scaling: barDensity === "mini" ? 0.8 : (barDensity === "compact" ? 0.9 : 1.0)
+
+  // Extract section info from widgetProps
+  readonly property string section: widgetProps.section || ""
+  readonly property int sectionIndex: widgetProps.sectionWidgetIndex || 0
 
   // Don't reserve space unless the loaded widget is really visible
   implicitWidth: getImplicitSize(loader.item, "implicitWidth")
@@ -26,56 +28,54 @@ Item {
   Loader {
     id: loader
     anchors.fill: parent
-    active: widgetId !== ""
     asynchronous: false
-    sourceComponent: {
-      if (!active) {
-        return null
-      }
-      return BarWidgetRegistry.getWidget(widgetId)
-    }
+    sourceComponent: BarWidgetRegistry.getWidget(widgetId)
 
     onLoaded: {
-      if (item && widgetProps) {
-        // Apply properties to loaded widget
-        for (var prop in widgetProps) {
-          if (item.hasOwnProperty(prop)) {
-            item[prop] = widgetProps[prop]
-          }
+      if (!item)
+        return
+
+      Logger.d("BarWidgetLoader", "Loading widget", widgetId, "on screen:", widgetScreen.name)
+
+      // Apply properties to loaded widget
+      for (var prop in widgetProps) {
+        if (item.hasOwnProperty(prop)) {
+          item[prop] = widgetProps[prop]
         }
-        // Explicitly set scaling property
-        if (item.hasOwnProperty("scaling")) {
-          item.scaling = Qt.binding(function () {
-            return root.scaling
-          })
-        }
+      }
+
+      // Set screen property
+      if (item.hasOwnProperty("screen")) {
+        item.screen = widgetScreen
+      }
+
+      // Set scaling property
+      if (item.hasOwnProperty("scaling")) {
+        item.scaling = Qt.binding(function () {
+          return root.scaling
+        })
       }
 
       // Register this widget instance with BarService
-      if (screenName && section) {
-        BarService.registerWidget(screenName, section, widgetId, sectionIndex, item)
-      }
+      BarService.registerWidget(widgetScreen.name, section, widgetId, sectionIndex, item)
 
+      // Call custom onLoaded if it exists
       if (item.hasOwnProperty("onLoaded")) {
         item.onLoaded()
       }
-
-      //Logger.i("BarWidgetLoader", "Loaded", widgetId, "on screen", item.screen.name)
     }
 
     Component.onDestruction: {
       // Unregister when destroyed
-      if (screenName && section) {
-        BarService.unregisterWidget(screenName, section, widgetId, sectionIndex)
+      if (widgetScreen && section) {
+        BarService.unregisterWidget(widgetScreen.name, section, widgetId, sectionIndex)
       }
-      // Explicitly clear references
-      widgetProps = null
     }
   }
 
   // Error handling
-  onWidgetIdChanged: {
-    if (widgetId && !BarWidgetRegistry.hasWidget(widgetId)) {
+  Component.onCompleted: {
+    if (!BarWidgetRegistry.hasWidget(widgetId)) {
       Logger.w("BarWidgetLoader", "Widget not found in registry:", widgetId)
     }
   }

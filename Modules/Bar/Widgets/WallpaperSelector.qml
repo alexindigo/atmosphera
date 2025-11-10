@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import qs.Commons
-import qs.Services
+import qs.Services.UI
 import qs.Widgets
 
 NIconButton {
@@ -20,5 +20,5 @@ NIconButton {
   colorFg: Color.mOnSurface
   colorBorder: Color.transparent
   colorBorderHover: Color.transparent
-  onClicked: PanelService.getPanel("wallpaperPanel")?.toggle(this)
+  onClicked: PanelService.getPanel("wallpaperPanel", screen)?.toggle(this)
 }

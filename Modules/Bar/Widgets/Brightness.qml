@@ -2,8 +2,9 @@ import QtQuick
 import Quickshell
 import qs.Commons
 import qs.Modules.Bar.Extras
-import qs.Modules.Settings
-import qs.Services
+import qs.Modules.Panels.Settings
+import qs.Services.Hardware
+import qs.Services.UI
 import qs.Widgets
 
 Item {
@@ -108,13 +109,13 @@ Item {
     }
 
     onClicked: {
-      var settingsPanel = PanelService.getPanel("settingsPanel")
+      var settingsPanel = PanelService.getPanel("settingsPanel", screen)
       settingsPanel.requestedTab = SettingsPanel.Tab.Display
       settingsPanel.open()
     }
 
     onRightClicked: {
-      var settingsPanel = PanelService.getPanel("settingsPanel")
+      var settingsPanel = PanelService.getPanel("settingsPanel", screen)
       settingsPanel.requestedTab = SettingsPanel.Tab.Display
       settingsPanel.open()
     }

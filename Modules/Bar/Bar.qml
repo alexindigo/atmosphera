@@ -5,65 +5,166 @@ import Quickshell
 import Quickshell.Wayland
 import Quickshell.Services.UPower
 import qs.Commons
-import qs.Services
+import qs.Services.UI
 import qs.Widgets
 import qs.Modules.Notification
 import qs.Modules.Bar.Extras
 
-Variants {
-  model: Quickshell.screens
+// Bar Component
+Item {
+  id: root
 
-  delegate: Loader {
-    id: root
+  // This property will be set by MainScreen
+  property ShellScreen screen: null
 
-    required property ShellScreen modelData
+  // Expose bar region for click-through mask
+  readonly property var barRegion: barContentLoader.item?.children[0] || null
 
-    active: BarService.isVisible && modelData && modelData.name ? (Settings.data.bar.monitors.includes(modelData.name) || (Settings.data.bar.monitors.length === 0)) : false
+  // Expose the actual bar Item for unified background system
+  readonly property var barItem: barRegion
 
-    sourceComponent: PanelWindow {
-      screen: modelData || null
+  // Bar positioning properties
+  readonly property string barPosition: Settings.data.bar.position || "top"
+  readonly property bool barIsVertical: barPosition === "left" || barPosition === "right"
+  readonly property bool barFloating: Settings.data.bar.floating || false
+  readonly property real barMarginH: 0 //barFloating ? Settings.data.bar.marginHorizontal * Style.marginXL : 0
+  readonly property real barMarginV: 0 //barFloating ? Settings.data.bar.marginVertical * Style.marginXL : 0
 
-      WlrLayershell.namespace: "noctalia-bar"
+  // Fill the parent (the Loader)
+  anchors.fill: parent
 
-      implicitHeight: (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? screen.height : Style.barHeight
-      implicitWidth: (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? Style.barHeight : screen.width
-      color: Color.transparent
+  // Register bar when screen becomes available
+  onScreenChanged: {
+    if (screen && screen.name) {
+      Logger.d("Bar", "Bar screen set to:", screen.name)
+      Logger.d("Bar", "  Position:", barPosition, "Floating:", barFloating)
+      Logger.d("Bar", "  Margins - H:", barMarginH, "V:", barMarginV)
+      BarService.registerBar(screen.name)
+    }
+  }
 
-      anchors {
-        top: Settings.data.bar.position === "top" || Settings.data.bar.position === "left" || Settings.data.bar.position === "right"
-        bottom: Settings.data.bar.position === "bottom" || Settings.data.bar.position === "left" || Settings.data.bar.position === "right"
-        left: Settings.data.bar.position === "left" || Settings.data.bar.position === "top" || Settings.data.bar.position === "bottom"
-        right: Settings.data.bar.position === "right" || Settings.data.bar.position === "top" || Settings.data.bar.position === "bottom"
+  // Wait for screen to be set before loading bar content
+  Loader {
+    id: barContentLoader
+    anchors.fill: parent
+    active: {
+      if (root.screen === null || root.screen === undefined) {
+        return false
       }
 
-      // Floating bar margins - only apply when floating is enabled
-      // Also don't apply margin on the opposite side ot the bar orientation, ex: if bar is floating on top, margin is only applied on top, not bottom.
-      margins {
-        top: Settings.data.bar.floating && Settings.data.bar.position !== "bottom" ? Settings.data.bar.marginVertical * Style.marginXL : 0
-        bottom: Settings.data.bar.floating && Settings.data.bar.position !== "top" ? Settings.data.bar.marginVertical * Style.marginXL : 0
-        left: Settings.data.bar.floating && Settings.data.bar.position !== "right" ? Settings.data.bar.marginHorizontal * Style.marginXL : 0
-        right: Settings.data.bar.floating && Settings.data.bar.position !== "left" ? Settings.data.bar.marginHorizontal * Style.marginXL : 0
-      }
+      var monitors = Settings.data.bar.monitors || []
+      var result = monitors.length === 0 || monitors.includes(root.screen.name)
+      return result
+    }
 
-      Component.onCompleted: {
-        if (modelData && modelData.name) {
-          BarService.registerBar(modelData.name)
-        }
-      }
+    sourceComponent: Item {
+      anchors.fill: parent
 
+      // Bar container (background rendered by AllBackgrounds)
       Item {
-        anchors.fill: parent
-        clip: true
+        id: bar
 
-        // Background fill with shadow
-        Rectangle {
-          id: bar
+        // Position and size the bar based on orientation and floating margins
+        x: {
+          var baseX = (root.barPosition === "right") ? (parent.width - Style.barHeight - root.barMarginH) : root.barMarginH
+          if (root.barPosition === "right")
+            return baseX // Extend left towards panels
+          return baseX
+        }
+        y: {
+          var baseY = (root.barPosition === "bottom") ? (parent.height - Style.barHeight - root.barMarginV) : root.barMarginV
+          if (root.barPosition === "bottom")
+            return baseY // Extend up towards panels
+          return baseY
+        }
+        width: {
+          var baseWidth = root.barIsVertical ? Style.barHeight : (parent.width - root.barMarginH * 2)
+          if (!root.barIsVertical)
+            return baseWidth // Horizontal bars extend via height, not width
+          return baseWidth + 1
+        }
+        height: {
+          var baseHeight = root.barIsVertical ? (parent.height - root.barMarginV * 2) : Style.barHeight
+          if (!root.barIsVertical)
+            return baseHeight
+          return baseHeight // Vertical bars extend via width, not height
+        }
 
-          anchors.fill: parent
-          color: Qt.alpha(Color.mSurface, Settings.data.bar.backgroundOpacity)
+        // Corner states for new unified background system
+        // State -1: No radius (flat/square corner)
+        // State 0: Normal (inner curve)
+        // State 1: Horizontal inversion (outer curve on X-axis)
+        // State 2: Vertical inversion (outer curve on Y-axis)
+        readonly property int topLeftCornerState: {
+          // Floating bar: always simple rounded corners
+          if (barFloating)
+            return 0
+          // Top bar: top corners against screen edge = no radius
+          if (barPosition === "top")
+            return -1
+          // Left bar: top-left against screen edge = no radius
+          if (barPosition === "left")
+            return -1
+          // Bottom/Right bar with outerCorners: inverted corner
+          if (Settings.data.bar.outerCorners && (barPosition === "bottom" || barPosition === "right")) {
+            return barIsVertical ? 1 : 2 // horizontal invert for vertical bars, vertical invert for horizontal
+          }
+          // No outerCorners = square
+          return -1
+        }
 
-          // Floating bar rounded corners
-          radius: Settings.data.bar.floating ? Style.radiusL : 0
+        readonly property int topRightCornerState: {
+          // Floating bar: always simple rounded corners
+          if (barFloating)
+            return 0
+          // Top bar: top corners against screen edge = no radius
+          if (barPosition === "top")
+            return -1
+          // Right bar: top-right against screen edge = no radius
+          if (barPosition === "right")
+            return -1
+          // Bottom/Left bar with outerCorners: inverted corner
+          if (Settings.data.bar.outerCorners && (barPosition === "bottom" || barPosition === "left")) {
+            return barIsVertical ? 1 : 2
+          }
+          // No outerCorners = square
+          return -1
+        }
+
+        readonly property int bottomLeftCornerState: {
+          // Floating bar: always simple rounded corners
+          if (barFloating)
+            return 0
+          // Bottom bar: bottom corners against screen edge = no radius
+          if (barPosition === "bottom")
+            return -1
+          // Left bar: bottom-left against screen edge = no radius
+          if (barPosition === "left")
+            return -1
+          // Top/Right bar with outerCorners: inverted corner
+          if (Settings.data.bar.outerCorners && (barPosition === "top" || barPosition === "right")) {
+            return barIsVertical ? 1 : 2
+          }
+          // No outerCorners = square
+          return -1
+        }
+
+        readonly property int bottomRightCornerState: {
+          // Floating bar: always simple rounded corners
+          if (barFloating)
+            return 0
+          // Bottom bar: bottom corners against screen edge = no radius
+          if (barPosition === "bottom")
+            return -1
+          // Right bar: bottom-right against screen edge = no radius
+          if (barPosition === "right")
+            return -1
+          // Top/Left bar with outerCorners: inverted corner
+          if (Settings.data.bar.outerCorners && (barPosition === "top" || barPosition === "left")) {
+            return barIsVertical ? 1 : 2
+          }
+          // No outerCorners = square
+          return -1
         }
 
         MouseArea {
@@ -73,8 +174,13 @@ Variants {
           preventStealing: true
           onClicked: function (mouse) {
             if (mouse.button === Qt.RightButton) {
-              // Important to pass the screen here so we get the right widget for the actual bar that was clicked.
-              controlCenterPanel.toggle(BarService.lookupWidget("ControlCenter", screen.name))
+              var controlCenterPanel = PanelService.getPanel("controlCenterPanel", screen)
+              if (Settings.data.controlCenter.position === "close_to_bar_button") {
+                // Will attempt to open the panel next to the bar button if any.
+                controlCenterPanel?.toggle(null, "ControlCenter")
+              } else {
+                controlCenterPanel?.toggle()
+              }
               mouse.accepted = true
             }
           }
@@ -84,168 +190,188 @@ Variants {
           anchors.fill: parent
           sourceComponent: (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? verticalBarComponent : horizontalBarComponent
         }
+      }
+    }
+  }
 
-        // For vertical bars
-        Component {
-          id: verticalBarComponent
-          Item {
-            anchors.fill: parent
+  // For vertical bars
+  Component {
+    id: verticalBarComponent
+    Item {
+      anchors.fill: parent
+      clip: true
 
-            // Top section (left widgets)
-            ColumnLayout {
-              anchors.horizontalCenter: parent.horizontalCenter
-              anchors.top: parent.top
-              anchors.topMargin: Style.marginM
-              spacing: Style.marginS
+      // Top section (left widgets)
+      ColumnLayout {
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: parent.top
+        anchors.topMargin: Style.marginM
+        spacing: Style.marginS
 
-              Repeater {
-                model: Settings.data.bar.widgets.left
-                delegate: BarWidgetLoader {
-                  widgetId: (modelData.id !== undefined ? modelData.id : "")
-                  barDensity: Settings.data.bar.density
-                  widgetProps: {
-                    "screen": root.modelData || null,
-                    "widgetId": modelData.id,
-                    "section": "left",
-                    "sectionWidgetIndex": index,
-                    "sectionWidgetsCount": Settings.data.bar.widgets.left.length
-                  }
-                  Layout.alignment: Qt.AlignHCenter
-                }
-              }
-            }
+        Repeater {
+          model: Settings.data.bar.widgets.left
+          delegate: BarWidgetLoader {
+            required property var modelData
+            required property int index
 
-            // Center section (center widgets)
-            ColumnLayout {
-              anchors.horizontalCenter: parent.horizontalCenter
-              anchors.verticalCenter: parent.verticalCenter
-              spacing: Style.marginS
-
-              Repeater {
-                model: Settings.data.bar.widgets.center
-                delegate: BarWidgetLoader {
-                  widgetId: (modelData.id !== undefined ? modelData.id : "")
-                  barDensity: Settings.data.bar.density
-                  widgetProps: {
-                    "screen": root.modelData || null,
-                    "widgetId": modelData.id,
-                    "section": "center",
-                    "sectionWidgetIndex": index,
-                    "sectionWidgetsCount": Settings.data.bar.widgets.center.length
-                  }
-                  Layout.alignment: Qt.AlignHCenter
-                }
-              }
-            }
-
-            // Bottom section (right widgets)
-            ColumnLayout {
-              anchors.horizontalCenter: parent.horizontalCenter
-              anchors.bottom: parent.bottom
-              anchors.bottomMargin: Style.marginM
-              spacing: Style.marginS
-
-              Repeater {
-                model: Settings.data.bar.widgets.right
-                delegate: BarWidgetLoader {
-                  widgetId: (modelData.id !== undefined ? modelData.id : "")
-                  barDensity: Settings.data.bar.density
-                  widgetProps: {
-                    "screen": root.modelData || null,
-                    "widgetId": modelData.id,
-                    "section": "right",
-                    "sectionWidgetIndex": index,
-                    "sectionWidgetsCount": Settings.data.bar.widgets.right.length
-                  }
-                  Layout.alignment: Qt.AlignHCenter
-                }
-              }
-            }
+            widgetId: modelData.id || ""
+            barDensity: Settings.data.bar.density
+            widgetScreen: root.screen
+            widgetProps: ({
+                            "widgetId": modelData.id,
+                            "section": "left",
+                            "sectionWidgetIndex": index,
+                            "sectionWidgetsCount": Settings.data.bar.widgets.left.length
+                          })
+            Layout.alignment: Qt.AlignHCenter
           }
         }
+      }
 
-        // For horizontal bars
-        Component {
-          id: horizontalBarComponent
-          Item {
-            anchors.fill: parent
+      // Center section (center widgets)
+      ColumnLayout {
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        spacing: Style.marginS
 
-            // Left Section
-            RowLayout {
-              id: leftSection
-              objectName: "leftSection"
-              anchors.left: parent.left
-              anchors.leftMargin: Style.marginS
-              anchors.verticalCenter: parent.verticalCenter
-              spacing: Style.marginS
+        Repeater {
+          model: Settings.data.bar.widgets.center
+          delegate: BarWidgetLoader {
+            required property var modelData
+            required property int index
 
-              Repeater {
-                model: Settings.data.bar.widgets.left
-                delegate: BarWidgetLoader {
-                  widgetId: (modelData.id !== undefined ? modelData.id : "")
-                  barDensity: Settings.data.bar.density
-                  widgetProps: {
-                    "screen": root.modelData || null,
-                    "widgetId": modelData.id,
-                    "section": "left",
-                    "sectionWidgetIndex": index,
-                    "sectionWidgetsCount": Settings.data.bar.widgets.left.length
-                  }
-                  Layout.alignment: Qt.AlignVCenter
-                }
-              }
-            }
+            widgetId: modelData.id || ""
+            barDensity: Settings.data.bar.density
+            widgetScreen: root.screen
+            widgetProps: ({
+                            "widgetId": modelData.id,
+                            "section": "center",
+                            "sectionWidgetIndex": index,
+                            "sectionWidgetsCount": Settings.data.bar.widgets.center.length
+                          })
+            Layout.alignment: Qt.AlignHCenter
+          }
+        }
+      }
 
-            // Center Section
-            RowLayout {
-              id: centerSection
-              objectName: "centerSection"
-              anchors.horizontalCenter: parent.horizontalCenter
-              anchors.verticalCenter: parent.verticalCenter
-              spacing: Style.marginS
+      // Bottom section (right widgets)
+      ColumnLayout {
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: Style.marginM
+        spacing: Style.marginS
 
-              Repeater {
-                model: Settings.data.bar.widgets.center
-                delegate: BarWidgetLoader {
-                  widgetId: (modelData.id !== undefined ? modelData.id : "")
-                  barDensity: Settings.data.bar.density
-                  widgetProps: {
-                    "screen": root.modelData || null,
-                    "widgetId": modelData.id,
-                    "section": "center",
-                    "sectionWidgetIndex": index,
-                    "sectionWidgetsCount": Settings.data.bar.widgets.center.length
-                  }
-                  Layout.alignment: Qt.AlignVCenter
-                }
-              }
-            }
+        Repeater {
+          model: Settings.data.bar.widgets.right
+          delegate: BarWidgetLoader {
+            required property var modelData
+            required property int index
 
-            // Right Section
-            RowLayout {
-              id: rightSection
-              objectName: "rightSection"
-              anchors.right: parent.right
-              anchors.rightMargin: Style.marginS
-              anchors.verticalCenter: parent.verticalCenter
-              spacing: Style.marginS
+            widgetId: modelData.id || ""
+            barDensity: Settings.data.bar.density
+            widgetScreen: root.screen
+            widgetProps: ({
+                            "widgetId": modelData.id,
+                            "section": "right",
+                            "sectionWidgetIndex": index,
+                            "sectionWidgetsCount": Settings.data.bar.widgets.right.length
+                          })
+            Layout.alignment: Qt.AlignHCenter
+          }
+        }
+      }
+    }
+  }
 
-              Repeater {
-                model: Settings.data.bar.widgets.right
-                delegate: BarWidgetLoader {
-                  widgetId: (modelData.id !== undefined ? modelData.id : "")
-                  barDensity: Settings.data.bar.density
-                  widgetProps: {
-                    "screen": root.modelData || null,
-                    "widgetId": modelData.id,
-                    "section": "right",
-                    "sectionWidgetIndex": index,
-                    "sectionWidgetsCount": Settings.data.bar.widgets.right.length
-                  }
-                  Layout.alignment: Qt.AlignVCenter
-                }
-              }
-            }
+  // For horizontal bars
+  Component {
+    id: horizontalBarComponent
+    Item {
+      anchors.fill: parent
+      clip: true
+
+      // Left Section
+      RowLayout {
+        id: leftSection
+        objectName: "leftSection"
+        anchors.left: parent.left
+        anchors.leftMargin: Style.marginS
+        anchors.verticalCenter: parent.verticalCenter
+        spacing: Style.marginS
+
+        Repeater {
+          model: Settings.data.bar.widgets.left
+          delegate: BarWidgetLoader {
+            required property var modelData
+            required property int index
+
+            widgetId: modelData.id || ""
+            barDensity: Settings.data.bar.density
+            widgetScreen: root.screen
+            widgetProps: ({
+                            "widgetId": modelData.id,
+                            "section": "left",
+                            "sectionWidgetIndex": index,
+                            "sectionWidgetsCount": Settings.data.bar.widgets.left.length
+                          })
+            Layout.alignment: Qt.AlignVCenter
+          }
+        }
+      }
+
+      // Center Section
+      RowLayout {
+        id: centerSection
+        objectName: "centerSection"
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        spacing: Style.marginS
+
+        Repeater {
+          model: Settings.data.bar.widgets.center
+          delegate: BarWidgetLoader {
+            required property var modelData
+            required property int index
+
+            widgetId: modelData.id || ""
+            barDensity: Settings.data.bar.density
+            widgetScreen: root.screen
+            widgetProps: ({
+                            "widgetId": modelData.id,
+                            "section": "center",
+                            "sectionWidgetIndex": index,
+                            "sectionWidgetsCount": Settings.data.bar.widgets.center.length
+                          })
+            Layout.alignment: Qt.AlignVCenter
+          }
+        }
+      }
+
+      // Right Section
+      RowLayout {
+        id: rightSection
+        objectName: "rightSection"
+        anchors.right: parent.right
+        anchors.rightMargin: Style.marginS
+        anchors.verticalCenter: parent.verticalCenter
+        spacing: Style.marginS
+
+        Repeater {
+          model: Settings.data.bar.widgets.right
+          delegate: BarWidgetLoader {
+            required property var modelData
+            required property int index
+
+            widgetId: modelData.id || ""
+            barDensity: Settings.data.bar.density
+            widgetScreen: root.screen
+            widgetProps: ({
+                            "widgetId": modelData.id,
+                            "section": "right",
+                            "sectionWidgetIndex": index,
+                            "sectionWidgetsCount": Settings.data.bar.widgets.right.length
+                          })
+            Layout.alignment: Qt.AlignVCenter
           }
         }
       }

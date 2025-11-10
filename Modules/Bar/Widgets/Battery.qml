@@ -3,7 +3,8 @@ import Quickshell
 import Quickshell.Services.UPower
 import QtQuick.Layouts
 import qs.Commons
-import qs.Services
+import qs.Services.UI
+import qs.Services.Hardware
 import qs.Widgets
 import qs.Modules.Bar.Extras
 
@@ -94,7 +95,7 @@ Item {
     autoHide: false
     forceOpen: isReady && (testMode || battery.isLaptopBattery) && displayMode === "alwaysShow"
     forceClose: displayMode === "alwaysHide" || !isReady || (!testMode && !battery.isLaptopBattery)
-    onClicked: PanelService.getPanel("batteryPanel")?.toggle(this)
+    onClicked: PanelService.getPanel("batteryPanel", screen)?.toggle(this)
     tooltipText: {
       let lines = []
       if (testMode) {

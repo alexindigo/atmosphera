@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import qs.Commons
-import qs.Services
+import qs.Services.UI
 import qs.Widgets
 
 Rectangle {
@@ -32,7 +32,7 @@ Rectangle {
   readonly property bool isBarVertical: barPosition === "left" || barPosition === "right"
   readonly property bool density: Settings.data.bar.density
 
-  readonly property var now: Time.date
+  readonly property var now: Time.now
 
   // Resolve settings: try user settings or defaults from BarWidgetRegistry
   readonly property bool usePrimaryColor: widgetSettings.usePrimaryColor !== undefined ? widgetSettings.usePrimaryColor : widgetMetadata.usePrimaryColor
@@ -121,7 +121,7 @@ Rectangle {
     cursorShape: Qt.PointingHandCursor
     hoverEnabled: true
     onEntered: {
-      if (!PanelService.getPanel("calendarPanel")?.active) {
+      if (!PanelService.getPanel("calendarPanel", screen)?.active) {
         TooltipService.show(Screen, root, I18n.tr("clock.tooltip"), BarService.getTooltipDirection())
       }
     }
@@ -130,7 +130,7 @@ Rectangle {
     }
     onClicked: {
       TooltipService.hide()
-      PanelService.getPanel("calendarPanel")?.toggle(this)
+      PanelService.getPanel("calendarPanel", screen)?.toggle(this)
     }
   }
 }

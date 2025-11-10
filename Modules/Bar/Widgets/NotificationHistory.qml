@@ -4,7 +4,8 @@ import QtQuick.Controls
 import Quickshell
 import Quickshell.Wayland
 import qs.Commons
-import qs.Services
+import qs.Services.UI
+import qs.Services.System
 import qs.Widgets
 
 NIconButton {
@@ -47,8 +48,8 @@ NIconButton {
   baseSize: Style.capsuleHeight
   applyUiScale: false
   density: Settings.data.bar.density
-  icon: Settings.data.notifications.doNotDisturb ? "bell-off" : "bell"
-  tooltipText: Settings.data.notifications.doNotDisturb ? I18n.tr("tooltips.open-notification-history-disable-dnd") : I18n.tr("tooltips.open-notification-history-enable-dnd")
+  icon: NotificationService.doNotDisturb ? "bell-off" : "bell"
+  tooltipText: NotificationService.doNotDisturb ? I18n.tr("tooltips.open-notification-history-disable-dnd") : I18n.tr("tooltips.open-notification-history-enable-dnd")
   tooltipDirection: BarService.getTooltipDirection()
   colorBg: (Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent)
   colorFg: Color.mOnSurface
@@ -56,11 +57,11 @@ NIconButton {
   colorBorderHover: Color.transparent
 
   onClicked: {
-    var panel = PanelService.getPanel("notificationHistoryPanel")
+    var panel = PanelService.getPanel("notificationHistoryPanel", screen)
     panel?.toggle(this)
   }
 
-  onRightClicked: Settings.data.notifications.doNotDisturb = !Settings.data.notifications.doNotDisturb
+  onRightClicked: NotificationService.doNotDisturb = !NotificationService.doNotDisturb
 
   Loader {
     anchors.right: parent.right

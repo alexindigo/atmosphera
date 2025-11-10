@@ -9,10 +9,13 @@ import Quickshell.Services.UPower
 import Quickshell.Io
 import Quickshell.Widgets
 import qs.Commons
-import qs.Services
+import qs.Services.Hardware
+import qs.Services.Location
+import qs.Services.Media
+import qs.Services.Compositor
+import qs.Services.UI
 import qs.Widgets
-import qs.Modules.Audio
-import qs.Modules.Bar.Calendar
+import qs.Widgets.AudioSpectrum
 
 Loader {
   id: lockScreen
@@ -57,7 +60,7 @@ Loader {
         locked: lockScreen.active
 
         WlSessionLockSurface {
-          readonly property var now: Time.date
+          readonly property var now: Time.now
 
           Item {
             id: batteryIndicator
@@ -110,7 +113,7 @@ Loader {
             anchors.fill: parent
             visible: Settings.data.general.showScreenCorners
 
-            property color cornerColor: Settings.data.general.forceBlackScreenCorners ? Qt.rgba(0, 0, 0, 1) : Qt.alpha(Color.mSurface, Settings.data.bar.backgroundOpacity)
+            property color cornerColor: Settings.data.general.forceBlackScreenCorners ? Color.black : Qt.alpha(Color.mSurface, Settings.data.bar.backgroundOpacity)
             property real cornerRadius: Style.screenRadius
             property real cornerSize: Style.screenRadius
 
@@ -348,9 +351,11 @@ Loader {
                         "es": "dddd, d 'de' MMMM",
                         "fr": "dddd d MMMM",
                         "pt": "dddd, d 'de' MMMM",
-                        "zh": "yyyy年M月d日 dddd"
+                        "zh": "yyyy年M月d日 dddd",
+                        "uk": "dddd, d MMMM",
+                        "tr": "dddd, d MMMM"
                       }
-                      return I18n.locale.toString(Time.date, formats[lang] || "dddd, MMMM d")
+                      return I18n.locale.toString(Time.now, formats[lang] || "dddd, MMMM d")
                     }
                     pointSize: Style.fontSizeXL
                     font.weight: Font.Medium
@@ -365,8 +370,9 @@ Loader {
                 }
 
                 // Clock
-                ClockLoader {
-                  now: Time.date
+                NClock {
+                  now: Time.now
+                  clockStyle: Settings.data.location.analogClockInCalendar ? "analog" : "digital"
                   Layout.preferredWidth: 70
                   Layout.preferredHeight: 70
                   Layout.alignment: Qt.AlignVCenter
@@ -582,7 +588,7 @@ Loader {
                       anchors.margins: 4
                       active: Settings.data.audio.visualizerType === "linear"
                       z: 0
-                      sourceComponent: LinearSpectrum {
+                      sourceComponent: NLinearSpectrum {
                         anchors.fill: parent
                         values: CavaService.values
                         fillColor: Color.mPrimary
@@ -595,7 +601,7 @@ Loader {
                       anchors.margins: 4
                       active: Settings.data.audio.visualizerType === "mirrored"
                       z: 0
-                      sourceComponent: MirroredSpectrum {
+                      sourceComponent: NMirroredSpectrum {
                         anchors.fill: parent
                         values: CavaService.values
                         fillColor: Color.mPrimary
@@ -608,7 +614,7 @@ Loader {
                       anchors.margins: 4
                       active: Settings.data.audio.visualizerType === "wave"
                       z: 0
-                      sourceComponent: WaveSpectrum {
+                      sourceComponent: NWaveSpectrum {
                         anchors.fill: parent
                         values: CavaService.values
                         fillColor: Color.mPrimary

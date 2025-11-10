@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import Quickshell
 import qs.Commons
-import qs.Services
+import qs.Services.UI
 import qs.Widgets
 
 Item {
@@ -18,6 +18,7 @@ Item {
   property bool forceClose: false
   property bool oppositeDirection: false
   property bool hovered: false
+  property bool rotateText: false
 
   // Bar position detection for pill direction
   readonly property string barPosition: Settings.data.bar.position
@@ -48,8 +49,8 @@ Item {
   readonly property int pillHeight: buttonSize
   readonly property int pillPaddingVertical: 3 * 2 // Very precise adjustment don't replace by Style.margin
   readonly property int pillOverlap: Math.round(buttonSize * 0.5)
-  readonly property int maxPillWidth: buttonSize
-  readonly property int maxPillHeight: Math.max(1, Math.round(textItem.implicitHeight + pillPaddingVertical * 4))
+  readonly property int maxPillWidth: rotateText ? Math.max(buttonSize, Math.round(textItem.implicitHeight + pillPaddingVertical * 2)) : buttonSize
+  readonly property int maxPillHeight: rotateText ? Math.max(1, Math.round(textItem.implicitWidth + pillPaddingVertical * 2 + Math.round(iconCircle.height / 4))) : Math.max(1, Math.round(textItem.implicitHeight + pillPaddingVertical * 4))
 
   readonly property real iconSize: {
     switch (root.density) {
@@ -109,14 +110,8 @@ Item {
       id: textItem
       anchors.horizontalCenter: parent.horizontalCenter
       anchors.verticalCenter: parent.verticalCenter
-      anchors.verticalCenterOffset: {
-        var offset = openDownward ? Math.round(pillPaddingVertical * 0.75) : -Math.round(pillPaddingVertical * 0.75)
-        if (forceOpen) {
-          // If its force open, the icon disc background is the same color as the bg pill move text slightly
-          offset += oppositeDirection ? -Style.marginXXS : Style.marginXXS
-        }
-        return offset
-      }
+      anchors.verticalCenterOffset: rotateText ? Math.round(iconCircle.height / 4) : getVerticalCenterOffset()
+      rotation: rotateText ? -90 : 0
       text: root.text + root.suffix
       family: Settings.data.ui.fontFixed
       pointSize: textSize
@@ -126,8 +121,15 @@ Item {
       verticalAlignment: Text.AlignVCenter
       color: forceOpen ? Color.mOnSurface : Color.mPrimary
       visible: revealed
-    }
 
+      function getVerticalCenterOffset() {
+        var offset = openDownward ? Math.round(pillPaddingVertical * 0.75) : -Math.round(pillPaddingVertical * 0.75)
+        if (forceOpen) {
+          offset += oppositeDirection ? -Style.marginXXS : Style.marginXXS
+        }
+        return offset
+      }
+    }
     Behavior on width {
       enabled: showAnim.running || hideAnim.running
       NumberAnimation {

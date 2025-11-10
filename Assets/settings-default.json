@@ -1,5 +1,5 @@
 {
-  "settingsVersion": 16,
+  "settingsVersion": 21,
   "setupCompleted": false,
   "bar": {
     "position": "top",
@@ -10,8 +10,13 @@
     "floating": false,
     "marginVertical": 0.25,
     "marginHorizontal": 0.25,
+    "outerCorners": true,
+    "exclusive": true,
     "widgets": {
       "left": [
+        {
+          "id": "ControlCenter"
+        },
         {
           "id": "SystemMonitor"
         },
@@ -48,15 +53,13 @@
         },
         {
           "id": "Clock"
-        },
-        {
-          "id": "ControlCenter"
         }
       ]
     }
   },
   "general": {
     "avatarImage": "",
+    "dimDesktop": true,
     "showScreenCorners": false,
     "forceBlackScreenCorners": false,
     "scaleRatio": 1,
@@ -66,7 +69,20 @@
     "animationDisabled": false,
     "compactLockScreen": false,
     "lockOnSuspend": true,
+    "enableShadows": true,
+    "shadowDirection": "bottom_right",
+    "shadowOffsetX": 2,
+    "shadowOffsetY": 3,
     "language": ""
+  },
+  "ui": {
+    "fontDefault": "Roboto",
+    "fontFixed": "DejaVu Sans Mono",
+    "fontDefaultScale": 1,
+    "fontFixedScale": 1,
+    "tooltipsEnabled": true,
+    "panelsAttachedToBar": true,
+    "settingsPanelAttachToBar": false
   },
   "location": {
     "name": "Tokyo",
@@ -92,6 +108,7 @@
   },
   "wallpaper": {
     "enabled": true,
+    "overviewEnabled": false,
     "directory": "",
     "enableMultiMonitorDirectories": false,
     "recursiveSearch": false,
@@ -104,7 +121,8 @@
     "transitionDuration": 1500,
     "transitionType": "random",
     "transitionEdgeSmoothness": 0.05,
-    "monitors": []
+    "monitors": [],
+    "panelPosition": "follow_bar"
   },
   "appLauncher": {
     "enableClipboardHistory": false,
@@ -187,7 +205,7 @@
     "wifiEnabled": true
   },
   "notifications": {
-    "doNotDisturb": false,
+    "enabled": true,
     "monitors": [],
     "location": "top_right",
     "overlayLayer": true,
@@ -207,23 +225,16 @@
   "audio": {
     "volumeStep": 5,
     "volumeOverdrive": false,
-    "cavaFrameRate": 60,
+    "cavaFrameRate": 30,
     "visualizerType": "linear",
+    "visualizerQuality": "high",
     "mprisBlacklist": [],
     "preferredPlayer": ""
   },
-  "ui": {
-    "fontDefault": "Roboto",
-    "fontFixed": "DejaVu Sans Mono",
-    "fontDefaultScale": 1,
-    "fontFixedScale": 1,
-    "tooltipsEnabled": true,
-    "panelsAttachedToBar": true,
-    "panelsOverlayLayer": true
-  },
   "brightness": {
     "brightnessStep": 5,
-    "enforceMinimum": true
+    "enforceMinimum": true,
+    "enableDdcSupport": false
   },
   "colorSchemes": {
     "useWallpaperColors": false,
@@ -239,22 +250,25 @@
     "gtk": false,
     "qt": false,
     "kcolorscheme": false,
+    "alacritty": false,
     "kitty": false,
     "ghostty": false,
     "foot": false,
+    "wezterm": false,
     "fuzzel": false,
     "discord": false,
+    "pywalfox": false,
+    "vicinae": false,
+    "walker": false,
+    "code": false,
+    "spicetify": false,
+    "enableUserTemplates": false,
     "discord_vesktop": false,
     "discord_webcord": false,
     "discord_armcord": false,
     "discord_equibop": false,
     "discord_lightcord": false,
-    "discord_dorion": false,
-    "pywalfox": false,
-    "vicinae": false,
-    "walker": false,
-    "code": false,
-    "enableUserTemplates": false
+    "discord_dorion": false
   },
   "nightLight": {
     "enabled": false,

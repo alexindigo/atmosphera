@@ -1,8 +1,9 @@
 import QtQuick
 import Quickshell
 import qs.Commons
-import qs.Services
 import qs.Modules.Bar.Extras
+import qs.Services.Networking
+import qs.Services.UI
 
 Item {
   id: root
@@ -54,8 +55,8 @@ Item {
     autoHide: false
     forceOpen: !isBarVertical && root.displayMode === "alwaysShow"
     forceClose: isBarVertical || root.displayMode === "alwaysHide" || BluetoothService.connectedDevices.length === 0
-    onClicked: PanelService.getPanel("bluetoothPanel")?.toggle(this)
-    onRightClicked: PanelService.getPanel("bluetoothPanel")?.toggle(this)
+    onClicked: PanelService.getPanel("bluetoothPanel", screen)?.toggle(this)
+    onRightClicked: PanelService.getPanel("bluetoothPanel", screen)?.toggle(this)
     tooltipText: {
       if (pill.text !== "") {
         return pill.text

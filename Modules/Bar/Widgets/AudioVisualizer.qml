@@ -1,9 +1,10 @@
 import QtQuick
 import Quickshell
 import qs.Commons
-import qs.Modules.Audio
-import qs.Services
+import qs.Services.UI
+import qs.Services.Media
 import qs.Widgets
+import qs.Widgets.AudioSpectrum
 
 Item {
   id: root
@@ -123,7 +124,7 @@ Item {
 
   Component {
     id: linearComponent
-    LinearSpectrum {
+    NLinearSpectrum {
       anchors.fill: parent
       values: CavaService.values
       fillColor: root.fillColor
@@ -134,7 +135,7 @@ Item {
 
   Component {
     id: mirroredComponent
-    MirroredSpectrum {
+    NMirroredSpectrum {
       anchors.fill: parent
       values: CavaService.values
       fillColor: root.fillColor
@@ -145,7 +146,7 @@ Item {
 
   Component {
     id: waveComponent
-    WaveSpectrum {
+    NWaveSpectrum {
       anchors.fill: parent
       values: CavaService.values
       fillColor: root.fillColor

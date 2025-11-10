@@ -4,7 +4,6 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.Commons
-import qs.Services
 
 
 /*
@@ -42,11 +41,13 @@ Singleton {
   property color mOutline: customColors.mOutline
   property color mShadow: customColors.mShadow
 
-  property color transparent: "transparent"
+  property color mHover: customColors.mHover
+  property color mOnHover: customColors.mOnHover
 
-  // Extra colors that are auto generated
-  readonly property color mHover: Settings.data.colorSchemes.darkMode ? Qt.darker(mOnSurface, 1.25) : Qt.lighter(mOnSurface, 1.25)
-  readonly property color mOnHover: Settings.data.colorSchemes.darkMode ? Qt.darker(mSurface, 1.25) : Qt.lighter(mSurface, 1.25)
+  // --- Absolute Colors
+  property color transparent: "transparent"
+  property color black: "#000000"
+  property color white: "#ffffff"
 
   // --------------------------------
   // Default colors: RosePine
@@ -73,6 +74,9 @@ Singleton {
 
     property color mOutline: "#342c42"
     property color mShadow: "#120f18"
+
+    property color mHover: "#e0b7c9"
+    property color mOnHover: "#20161f"
   }
 
   // ----------------------------------------------------------------
@@ -101,6 +105,9 @@ Singleton {
 
     property color mOutline: customColorsData.mOutline
     property color mShadow: customColorsData.mShadow
+
+    property color mHover: customColorsData.mHover
+    property color mOnHover: customColorsData.mOnHover
   }
 
   // FileView to load custom colors data from colors.json
@@ -153,6 +160,9 @@ Singleton {
 
       property color mOutline: defaultColors.mOutline
       property color mShadow: defaultColors.mShadow
+
+      property color mHover: defaultColors.mHover
+      property color mOnHover: defaultColors.mOnHover
     }
   }
 }

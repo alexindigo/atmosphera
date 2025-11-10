@@ -2,8 +2,8 @@ import QtQuick
 import Quickshell
 import Quickshell.Wayland
 import qs.Commons
-import qs.Services
-import qs.Widgets
+import qs.Services.Compositor
+import qs.Services.UI
 
 Variants {
   id: backgroundVariants
@@ -21,6 +21,7 @@ Variants {
       // Internal state management
       property string transitionType: "fade"
       property real transitionProgress: 0
+      property bool isStartupTransition: true
 
       readonly property real edgeSmoothness: Settings.data.wallpaper.transitionEdgeSmoothness
       readonly property var allTransitions: WallpaperService.allTransitions
@@ -77,7 +78,11 @@ Variants {
       Connections {
         target: CompositorService
         function onDisplayScalesChanged() {
-          setWallpaperInitial()
+          // Recalculate image sizes without interrupting startup transition
+          if (isStartupTransition) {
+            return
+          }
+          recalculateImageSizes()
         }
       }
 
@@ -85,7 +90,7 @@ Variants {
       screen: modelData
       WlrLayershell.layer: WlrLayer.Background
       WlrLayershell.exclusionMode: ExclusionMode.Ignore
-      WlrLayershell.namespace: "quickshell-wallpaper"
+      WlrLayershell.namespace: "noctalia-wallpaper-" + (screen?.name || "unknown")
 
       anchors {
         bottom: true
@@ -110,7 +115,7 @@ Variants {
         property bool dimensionsCalculated: false
 
         source: ""
-        smooth: true
+        smooth: false
         mipmap: false
         visible: false
         cache: false
@@ -139,7 +144,7 @@ Variants {
         property bool dimensionsCalculated: false
 
         source: ""
-        smooth: true
+        smooth: false
         mipmap: false
         visible: false
         cache: false
@@ -307,8 +312,10 @@ Variants {
           transitionProgress = 0.0
 
           // Now clear nextWallpaper after currentWallpaper has the new source
+          // Force complete cleanup to free texture memory (~18-25MB per monitor)
           Qt.callLater(() => {
                          nextWallpaper.source = ""
+                         nextWallpaper.sourceSize = undefined
                          Qt.callLater(() => {
                                         currentWallpaper.asynchronous = true
                                       })
@@ -330,10 +337,10 @@ Variants {
         var dim = Qt.size(0, 0)
         if (screenWidth >= screenHeight) {
           const w = Math.min(screenWidth, wpWidth)
-          dim = Qt.size(w, w / imageAspectRatio)
+          dim = Qt.size(Math.round(w), Math.round(w / imageAspectRatio))
         } else {
           const h = Math.min(screenHeight, wpHeight)
-          dim = Qt.size(h * imageAspectRatio, h)
+          dim = Qt.size(Math.round(h * imageAspectRatio), Math.round(h))
         }
 
         Logger.d("Background", `Wallpaper resized on ${modelData.name} ${screenWidth}x${screenHeight} @ ${compositorScale}x`, "src:", wpWidth, wpHeight, "dst:", dim.width, dim.height)
@@ -342,11 +349,23 @@ Variants {
 
       // ------------------------------------------------------
       function recalculateImageSizes() {
+        // Re-evaluate and apply optimal sourceSize for both images when ready
         if (currentWallpaper.status === Image.Ready) {
-          currentWallpaper.calculateSourceSize()
+          const optimal = calculateOptimalWallpaperSize(currentWallpaper.implicitWidth, currentWallpaper.implicitHeight)
+          if (optimal !== undefined && optimal !== false) {
+            currentWallpaper.sourceSize = optimal
+          } else {
+            currentWallpaper.sourceSize = undefined
+          }
         }
+
         if (nextWallpaper.status === Image.Ready) {
-          nextWallpaper.calculateSourceSize()
+          const optimal2 = calculateOptimalWallpaperSize(nextWallpaper.implicitWidth, nextWallpaper.implicitHeight)
+          if (optimal2 !== undefined && optimal2 !== false) {
+            nextWallpaper.sourceSize = optimal2
+          } else {
+            nextWallpaper.sourceSize = undefined
+          }
         }
       }
 
@@ -358,7 +377,10 @@ Variants {
           return
         }
 
-        setWallpaperImmediate(WallpaperService.getWallpaper(modelData.name))
+        const wallpaperPath = WallpaperService.getWallpaper(modelData.name)
+
+        futureWallpaper = wallpaperPath
+        performStartupTransition()
       }
 
       // ------------------------------------------------------
@@ -366,8 +388,10 @@ Variants {
         transitionAnimation.stop()
         transitionProgress = 0.0
 
-        // Clear with proper delay to allow GC
+        // Clear nextWallpaper completely to free texture memory
         nextWallpaper.source = ""
+        nextWallpaper.sourceSize = undefined
+
         currentWallpaper.source = ""
 
         Qt.callLater(() => {
@@ -448,6 +472,52 @@ Variants {
           setWallpaperWithTransition(futureWallpaper)
           break
         }
+      }
+
+      // ------------------------------------------------------
+      // Dedicated function for startup animation
+      function performStartupTransition() {
+        // Get the transitionType from the settings
+        transitionType = Settings.data.wallpaper.transitionType
+
+        if (transitionType == "random") {
+          var index = Math.floor(Math.random() * allTransitions.length)
+          transitionType = allTransitions[index]
+        }
+
+        // Ensure the transition type really exists
+        if (transitionType !== "none" && !allTransitions.includes(transitionType)) {
+          transitionType = "fade"
+        }
+
+        // Apply transitionType so the shader loader picks the correct shader
+        this.transitionType = transitionType
+
+        switch (transitionType) {
+        case "none":
+          setWallpaperImmediate(futureWallpaper)
+          break
+        case "wipe":
+          wipeDirection = Math.random() * 4
+          setWallpaperWithTransition(futureWallpaper)
+          break
+        case "disc":
+          // Force center origin for elegant startup animation
+          discCenterX = 0.5
+          discCenterY = 0.5
+          setWallpaperWithTransition(futureWallpaper)
+          break
+        case "stripes":
+          stripesCount = Math.round(Math.random() * 20 + 4)
+          stripesAngle = Math.random() * 360
+          setWallpaperWithTransition(futureWallpaper)
+          break
+        default:
+          setWallpaperWithTransition(futureWallpaper)
+          break
+        }
+        // Mark startup transition complete
+        isStartupTransition = false
       }
     }
   }

@@ -9,39 +9,28 @@
 // Qt & Quickshell Core
 import QtQuick
 import Quickshell
-import Quickshell.Io
-import Quickshell.Services.Pipewire
-import Quickshell.Widgets
+import Quickshell.Services.SystemTray
 
 // Commons & Services
 import qs.Commons
-import qs.Services
-import qs.Widgets
+import qs.Services.Control
+import qs.Services.Theming
+import qs.Services.Hardware
+import qs.Services.Location
+import qs.Services.Networking
+import qs.Services.Power
+import qs.Services.System
+import qs.Services.UI
 
-// Core Modules
+// Modules
 import qs.Modules.Background
-import qs.Modules.Dock
-import qs.Modules.LockScreen
-import qs.Modules.SessionMenu
-
-// Bar & Bar Components
 import qs.Modules.Bar
-import qs.Modules.Bar.Extras
-import qs.Modules.Bar.Audio
-import qs.Modules.Bar.Bluetooth
-import qs.Modules.Bar.Battery
-import qs.Modules.Bar.Calendar
-import qs.Modules.Bar.WiFi
-
-// Panels & UI Components
-import qs.Modules.ControlCenter
-import qs.Modules.Launcher
+import qs.Modules.Dock
+import qs.Modules.MainScreen
+import qs.Modules.LockScreen
 import qs.Modules.Notification
 import qs.Modules.OSD
-import qs.Modules.Settings
 import qs.Modules.Toast
-import qs.Modules.Wallpaper
-import qs.Modules.SetupWizard
 
 ShellRoot {
   id: shellRoot
@@ -74,38 +63,39 @@ ShellRoot {
       settingsLoaded = true
     }
   }
-
   Loader {
     active: i18nLoaded && settingsLoaded
 
     sourceComponent: Item {
       Component.onCompleted: {
         Logger.i("Shell", "---------------------------")
+        SystemTrayService.init()
         WallpaperService.init()
         AppThemeService.init()
         ColorSchemeService.init()
-        BarWidgetRegistry.init()
         LocationService.init()
         NightLightService.apply()
         DarkModeService.init()
-        FontService.init()
         HooksService.init()
         BluetoothService.init()
         BatteryService.init()
         IdleInhibitorService.init()
         PowerProfileService.init()
         DistroService.init()
+        FontService.init()
+
+        // Only open the setup wizard for new users
+        if (!Settings.data.setupCompleted) {
+          checkSetupWizard()
+        }
       }
 
-      Background {}
       Overview {}
-      ScreenCorners {}
-      Bar {}
+      Background {}
       Dock {}
-
-      Notification {
-        id: notification
-      }
+      ToastOverlay {}
+      OSD {}
+      Notification {}
 
       LockScreen {
         id: lockScreen
@@ -115,98 +105,24 @@ ShellRoot {
         }
       }
 
-      ToastOverlay {}
-      OSD {}
-
-      // IPCService is treated as a service
-      // but it's actually an Item that needs to exists in the shell.
+      // IPCService is treated as a service but it's actually an
+      // Item that needs to exists in the shell.
       IPCService {}
 
-      // ------------------------------
-      // All the NPanels
-      Launcher {
-        id: launcherPanel
-        objectName: "launcherPanel"
-      }
-
-      ControlCenterPanel {
-        id: controlCenterPanel
-        objectName: "controlCenterPanel"
-      }
-
-      CalendarPanel {
-        id: calendarPanel
-        objectName: "calendarPanel"
-      }
-
-      SettingsPanel {
-        id: settingsPanel
-        objectName: "settingsPanel"
-      }
-
-      DirectWidgetSettingsPanel {
-        id: directWidgetSettingsPanel
-        objectName: "directWidgetSettingsPanel"
-      }
-
-      NotificationHistoryPanel {
-        id: notificationHistoryPanel
-        objectName: "notificationHistoryPanel"
-      }
-
-      SessionMenu {
-        id: sessionMenuPanel
-        objectName: "sessionMenuPanel"
-      }
-
-      WiFiPanel {
-        id: wifiPanel
-        objectName: "wifiPanel"
-      }
-
-      BluetoothPanel {
-        id: bluetoothPanel
-        objectName: "bluetoothPanel"
-      }
-
-      AudioPanel {
-        id: audioPanel
-        objectName: "audioPanel"
-      }
-
-      WallpaperPanel {
-        id: wallpaperPanel
-        objectName: "wallpaperPanel"
-      }
-
-      BatteryPanel {
-        id: batteryPanel
-        objectName: "batteryPanel"
-      }
+      // MainScreen for each screen
+      AllScreens {}
     }
   }
 
-  // ------------------------------
+  // ---------------------------------------------
   // Setup Wizard
-  Loader {
-    id: setupWizardLoader
-    active: false
-    asynchronous: true
-    sourceComponent: SetupWizard {}
-    onLoaded: {
-      if (setupWizardLoader.item && setupWizardLoader.item.open) {
-        setupWizardLoader.item.open()
-      }
-    }
-  }
-
-  Connections {
-    target: Settings
-    function onSettingsLoaded() {
-      // Only open the setup wizard for new users
-      if (!Settings.data.setupCompleted) {
-        checkSetupWizard()
-      }
+  // ---------------------------------------------
+  Timer {
+    id: setupWizardTimer
+    running: false
+    interval: 1000
+    onTriggered: {
+      showSetupWizard()
     }
   }
 
@@ -224,9 +140,23 @@ ShellRoot {
     }
 
     if (Settings.data.settingsVersion >= Settings.settingsVersion) {
-      setupWizardLoader.active = true
+      setupWizardTimer.start()
     } else {
       Settings.data.setupCompleted = true
+    }
+  }
+
+  function showSetupWizard() {
+    // Open Setup Wizard as a panel in the same windowing system as Settings/ControlCenter
+    if (Quickshell.screens.length > 0) {
+      var targetScreen = Quickshell.screens[0]
+      var setupPanel = PanelService.getPanel("setupWizardPanel", targetScreen)
+      if (setupPanel) {
+        setupPanel.open()
+      } else {
+        // If not yet loaded, ensure it loads and try again shortly
+        setupWizardTimer.restart()
+      }
     }
   }
 }

@@ -15,7 +15,10 @@ Mark the relevant option with an "x".
 
 ## Testing
 Describe how you tested your changes and mark the relevant items.
-- [ ] Tested on compositor: (e.g., Hyprland, Sway, Niri)
+
+- [ ] Tested on niri
+- [ ] Tested on Hyprland
+- [ ] Tested on sway
 - [ ] Tested with different bar positions and density settings
 - [ ] Tested with multiple monitors (if applicable)
 

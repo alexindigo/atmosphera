@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Controls
 import Quickshell
 import qs.Commons
-import qs.Services
 import qs.Widgets
 
 Item {
@@ -18,6 +17,7 @@ Item {
   property bool forceClose: false
   property bool oppositeDirection: false
   property bool hovered: false
+  property bool rotateText: false
 
   readonly property string barPosition: Settings.data.bar.position
   readonly property bool isVerticalBar: barPosition === "left" || barPosition === "right"
@@ -53,6 +53,7 @@ Item {
         oppositeDirection: root.oppositeDirection
         hovered: root.hovered
         density: root.density
+        rotateText: root.rotateText
         onShown: root.shown()
         onHidden: root.hidden()
         onEntered: root.entered()

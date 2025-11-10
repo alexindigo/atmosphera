@@ -3,10 +3,11 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Services.Pipewire
 import qs.Commons
-import qs.Modules.Settings
-import qs.Services
-import qs.Widgets
 import qs.Modules.Bar.Extras
+import qs.Modules.Panels.Settings
+import qs.Services.UI
+import qs.Services.Media
+import qs.Widgets
 
 Item {
   id: root
@@ -90,7 +91,7 @@ Item {
       }
     }
     onClicked: {
-      PanelService.getPanel("audioPanel")?.toggle(this)
+      PanelService.getPanel("audioPanel", screen)?.toggle(this)
     }
     onRightClicked: {
       AudioService.setOutputMuted(!AudioService.muted)

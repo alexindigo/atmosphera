@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import qs.Commons
-import qs.Services
 
 Popup {
   id: root
@@ -10,14 +9,13 @@ Popup {
   property alias model: listView.model
   property real itemHeight: 36
   property real itemPadding: Style.marginM
+  property int verticalPolicy: ScrollBar.AsNeeded
+  property int horizontalPolicy: ScrollBar.AsNeeded
 
   signal triggered(string action)
 
   width: 180
   padding: Style.marginS
-
-  onOpened: PanelService.willOpenPopup(root)
-  onClosed: PanelService.willClosePopup(root)
 
   background: Rectangle {
     color: Color.mSurfaceVariant
@@ -31,6 +29,8 @@ Popup {
     implicitHeight: contentHeight
     spacing: Style.marginXXS
     interactive: contentHeight > root.height
+    verticalPolicy: root.verticalPolicy
+    horizontalPolicy: root.horizontalPolicy
 
     delegate: ItemDelegate {
       id: menuItem

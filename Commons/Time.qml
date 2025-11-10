@@ -3,24 +3,46 @@ pragma Singleton
 import Quickshell
 import QtQuick
 import qs.Commons
-import qs.Services
 
 Singleton {
   id: root
 
   // Current date
-  property var date: new Date()
+  property var now: new Date()
 
   // Returns a Unix Timestamp (in seconds)
   readonly property int timestamp: {
-    return Math.floor(date / 1000)
+    return Math.floor(root.now / 1000)
   }
 
   Timer {
+    id: updateTimer
     interval: 1000
     repeat: true
     running: true
-    onTriggered: root.date = new Date()
+    triggeredOnStart: false
+    onTriggered: {
+      var newTime = new Date()
+      root.now = newTime
+
+      // Adjust next interval to sync with the start of the next second
+      var msIntoSecond = newTime.getMilliseconds()
+      if (msIntoSecond > 100) {
+        // If we're more than 100ms into the second, adjust for next time
+        updateTimer.interval = 1000 - msIntoSecond + 10 // +10ms buffer
+        updateTimer.restart()
+      } else {
+        updateTimer.interval = 1000
+      }
+    }
+  }
+
+  Component.onCompleted: {
+    // Start by syncing to the next second boundary
+    var now = new Date()
+    var msUntilNextSecond = 1000 - now.getMilliseconds()
+    updateTimer.interval = msUntilNextSecond + 10 // +10ms buffer
+    updateTimer.restart()
   }
 
   // Formats a Date object into a YYYYMMDD-HHMMSS string.
