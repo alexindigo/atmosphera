@@ -1736,6 +1736,9 @@
       "disabled": "Devre dışı",
       "enabled": "Etkin"
     },
+    "keyboard-layout": {
+      "changed": "Klavye düzeni {layout} olarak değiştirildi"
+    },
     "kofi": {
       "opened": "Ko-fi sayfası tarayıcınızda açıldı"
     },
