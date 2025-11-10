@@ -349,11 +349,23 @@ Variants {
 
       // ------------------------------------------------------
       function recalculateImageSizes() {
+        // Re-evaluate and apply optimal sourceSize for both images when ready
         if (currentWallpaper.status === Image.Ready) {
-          currentWallpaper.calculateSourceSize()
+          const optimal = calculateOptimalWallpaperSize(currentWallpaper.implicitWidth, currentWallpaper.implicitHeight)
+          if (optimal !== undefined && optimal !== false) {
+            currentWallpaper.sourceSize = optimal
+          } else {
+            currentWallpaper.sourceSize = undefined
+          }
         }
+
         if (nextWallpaper.status === Image.Ready) {
-          nextWallpaper.calculateSourceSize()
+          const optimal2 = calculateOptimalWallpaperSize(nextWallpaper.implicitWidth, nextWallpaper.implicitHeight)
+          if (optimal2 !== undefined && optimal2 !== false) {
+            nextWallpaper.sourceSize = optimal2
+          } else {
+            nextWallpaper.sourceSize = undefined
+          }
         }
       }
 
