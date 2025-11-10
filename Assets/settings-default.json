@@ -120,6 +120,7 @@
     "randomIntervalSec": 300,
     "transitionDuration": 1500,
     "transitionType": "random",
+    "startupTransitionType": "disc",
     "transitionEdgeSmoothness": 0.05,
     "monitors": [],
     "panelPosition": "follow_bar"

@@ -258,6 +258,7 @@ Singleton {
       property int randomIntervalSec: 300 // 5 min
       property int transitionDuration: 1500 // 1500 ms
       property string transitionType: "random"
+      property string startupTransitionType: "disc"
       property real transitionEdgeSmoothness: 0.05
       property list<var> monitors: []
       property string panelPosition: "follow_bar"

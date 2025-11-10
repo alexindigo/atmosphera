@@ -205,6 +205,15 @@ ColumnLayout {
       onSelected: key => Settings.data.wallpaper.transitionType = key
     }
 
+    // Startup Transition Type
+    NComboBox {
+      label: I18n.tr("settings.wallpaper.look-feel.startup-transition-type.label")
+      description: I18n.tr("settings.wallpaper.look-feel.startup-transition-type.description")
+      model: WallpaperService.transitionsModel
+      currentKey: Settings.data.wallpaper.startupTransitionType
+      onSelected: key => Settings.data.wallpaper.startupTransitionType = key
+    }
+
     // Transition Duration
     ColumnLayout {
       NLabel {

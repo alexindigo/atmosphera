@@ -21,6 +21,7 @@ Variants {
       // Internal state management
       property string transitionType: "fade"
       property real transitionProgress: 0
+      property bool isStartupTransition: true
 
       readonly property real edgeSmoothness: Settings.data.wallpaper.transitionEdgeSmoothness
       readonly property var allTransitions: WallpaperService.allTransitions
@@ -77,7 +78,11 @@ Variants {
       Connections {
         target: CompositorService
         function onDisplayScalesChanged() {
-          setWallpaperInitial()
+          // Recalculate image sizes without interrupting startup transition
+          if (isStartupTransition) {
+            return
+          }
+          recalculateImageSizes()
         }
       }
 
@@ -360,7 +365,10 @@ Variants {
           return
         }
 
-        setWallpaperImmediate(WallpaperService.getWallpaper(modelData.name))
+        const wallpaperPath = WallpaperService.getWallpaper(modelData.name)
+        
+        futureWallpaper = wallpaperPath
+        performStartupTransition()
       }
 
       // ------------------------------------------------------
@@ -452,6 +460,53 @@ Variants {
           setWallpaperWithTransition(futureWallpaper)
           break
         }
+      }
+
+      // ------------------------------------------------------
+      // Dedicated function for startup animation
+      function performStartupTransition() {
+        // Get the transitionType from the settings
+        var transitionSettingType = Settings.data.wallpaper.startupTransitionType
+
+        if (transitionSettingType == "random") {
+          var idx = Math.floor(Math.random() * allTransitions.length)
+          transitionSettingType = allTransitions[idx]
+        }
+
+        // Ensure the transition type really exists
+        if (transitionSettingType !== "none" && !allTransitions.includes(transitionSettingType)) {
+          transitionSettingType = "fade"
+        }
+
+        // Apply transitionType so the shader loader picks the correct shader
+        this.transitionType = transitionSettingType
+
+        // Perform the chosen transition; for startup prefer centered disc when disc selected
+        switch (transitionSettingType) {
+        case "none":
+          setWallpaperImmediate(futureWallpaper)
+          break
+        case "wipe":
+          wipeDirection = Math.random() * 4
+          setWallpaperWithTransition(futureWallpaper)
+          break
+        case "disc":
+          // Force center origin for elegant startup animation
+          discCenterX = 0.5
+          discCenterY = 0.5
+          setWallpaperWithTransition(futureWallpaper)
+          break
+        case "stripes":
+          stripesCount = Math.round(Math.random() * 20 + 4)
+          stripesAngle = Math.random() * 360
+          setWallpaperWithTransition(futureWallpaper)
+          break
+        default:
+          setWallpaperWithTransition(futureWallpaper)
+          break
+        }
+        // Mark startup transition complete
+        isStartupTransition = false
       }
     }
   }
