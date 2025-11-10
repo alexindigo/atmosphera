@@ -122,13 +122,13 @@ Item {
       color: forceOpen ? Color.mOnSurface : Color.mPrimary
       visible: revealed
 
-    function getVerticalCenterOffset() {
-      var offset = openDownward ? Math.round(pillPaddingVertical * 0.75) : -Math.round(pillPaddingVertical * 0.75)
-      if (forceOpen) {
-        offset += oppositeDirection ? -Style.marginXXS : Style.marginXXS
+      function getVerticalCenterOffset() {
+        var offset = openDownward ? Math.round(pillPaddingVertical * 0.75) : -Math.round(pillPaddingVertical * 0.75)
+        if (forceOpen) {
+          offset += oppositeDirection ? -Style.marginXXS : Style.marginXXS
+        }
+        return offset
       }
-      return offset
-    }
     }
     Behavior on width {
       enabled: showAnim.running || hideAnim.running
