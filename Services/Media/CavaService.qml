@@ -26,13 +26,7 @@ Singleton {
   property int idleFrameCount: 0
   readonly property int idleThreshold: 30 // Frames of silence before considered idle (0.5s at 60fps)
 
-  // Frame skipping for GPU optimization - skip every Nth frame when playing
-  property int frameCounter: 0
-  readonly property int frameSkip: 1 // Update every N frames (1 = no skip, 2 = every other frame, etc)
-
-  // Change detection - only update if values changed significantly
-  property var lastValues: Array(barsCount).fill(0)
-  readonly property real changeThreshold: 0.005 // Minimum change (1%) to trigger update
+  // Simple config
   property var config: ({
                           "general": {
                             "bars": barsCount,
@@ -101,7 +95,6 @@ Singleton {
               root.isIdle = true
               // Set all values to 0 one final time
               root.values = Array(root.barsCount).fill(0)
-              root.lastValues = Array(root.barsCount).fill(0)
               Logger.d("Cava", "Idle detected - stopped rendering")
             }
             // Don't update values while idle
@@ -116,26 +109,8 @@ Singleton {
           }
         }
 
-        // Frame skipping optimization - skip frames to reduce GPU load
-        root.frameCounter++
-        if (root.frameSkip > 1 && root.frameCounter % root.frameSkip !== 0) {
-          // Skip this frame
-          return
-        }
-
-        // Change detection - only update if values changed significantly
-        let hasSignificantChange = false
-        for (var i = 0; i < newValues.length; i++) {
-          const delta = Math.abs(newValues[i] - root.lastValues[i])
-          if (delta > root.changeThreshold) {
-            hasSignificantChange = true
-            break
-          }
-        }
-
         // Update values only if there's a significant change
-        if (hasSignificantChange) {
-          root.lastValues = newValues.slice() // Copy array
+        if (!isIdle) {
           root.values = newValues
         }
       }
