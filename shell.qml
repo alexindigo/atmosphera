@@ -9,6 +9,7 @@
 // Qt & Quickshell Core
 import QtQuick
 import Quickshell
+import Quickshell.Services.SystemTray
 
 // Commons & Services
 import qs.Commons
@@ -68,6 +69,7 @@ ShellRoot {
     sourceComponent: Item {
       Component.onCompleted: {
         Logger.i("Shell", "---------------------------")
+        SystemTrayService.init()
         WallpaperService.init()
         AppThemeService.init()
         ColorSchemeService.init()
