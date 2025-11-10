@@ -1591,6 +1591,10 @@
         "transition-type": {
           "description": "切换壁纸时的动画类型。",
           "label": "过渡类型"
+        },
+        "startup-transition-type": {
+          "description": "在 Noctalia 启动时使用的壁纸过渡动画类型。",
+          "label": "启动时过渡类型"
         }
       },
       "settings": {

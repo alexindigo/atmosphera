@@ -1591,6 +1591,10 @@
         "transition-type": {
           "description": "Тип анімації при перемиканні між шпалерами.",
           "label": "Тип переходу"
+        },
+        "startup-transition-type": {
+          "description": "Тип анімації переходу шпалер, що використовується при запуску Noctalia.",
+          "label": "Тип переходу при запуску"
         }
       },
       "settings": {

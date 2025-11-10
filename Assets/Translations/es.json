@@ -1591,6 +1591,10 @@
         "transition-type": {
           "description": "Tipo de animación al cambiar entre fondos de pantalla.",
           "label": "Tipo de transición"
+        },
+        "startup-transition-type": {
+          "description": "Tipo de animación de transición de fondo de pantalla que se usa cuando se inicia Noctalia.",
+          "label": "Tipo de transición al iniciar"
         }
       },
       "settings": {
