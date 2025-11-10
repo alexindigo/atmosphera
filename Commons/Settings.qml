@@ -407,6 +407,7 @@ Singleton {
       property bool vicinae: false
       property bool walker: false
       property bool code: false
+      property bool spicetify: false
       property bool enableUserTemplates: false
 
       property bool discord_vesktop: false // To be deleted soon

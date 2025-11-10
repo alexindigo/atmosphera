@@ -26,6 +26,7 @@ Singleton {
   property bool app2unitAvailable: false
   property bool codeAvailable: false
   property bool gnomeCalendarAvailable: false
+  property bool spicetifyAvailable: false
 
   // Discord client auto-detection
   property var availableDiscordClients: []
@@ -112,7 +113,8 @@ Singleton {
                                             "gpuScreenRecorderAvailable": ["sh", "-c", "command -v gpu-screen-recorder >/dev/null 2>&1 || (command -v flatpak >/dev/null 2>&1 && flatpak list --app | grep -q 'com.dec05eba.gpu_screen_recorder')"],
                                             "wlsunsetAvailable": ["which", "wlsunset"],
                                             "codeAvailable": ["which", "code"],
-                                            "gnomeCalendarAvailable": ["which", "gnome-calendar"]
+                                            "gnomeCalendarAvailable": ["which", "gnome-calendar"],
+                                            "spicetifyAvailable": ["which", "spicetify"]
                                           })
 
   // Internal tracking
