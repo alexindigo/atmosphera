@@ -158,7 +158,7 @@ Item {
       Item {
         id: workspaceNumberContainer
 
-        visible: root.showWorkspaceNumbers && (!root.showNumbersOnlyWhenOccupied || hasWindows)
+        visible: root.showWorkspaceNumbers && (!root.showNumbersOnlyWhenOccupied || container.hasWindows)
 
         anchors {
           left: parent.left
