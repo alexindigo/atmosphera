@@ -77,7 +77,7 @@ ShapePath {
   startX: panelX + tlRadius * tlMultX
   startY: panelY
 
-  fillColor: (panel && panel.visible) ? backgroundColor : Color.transparent
+  fillColor: backgroundColor
 
   // ========== PATH DEFINITION ==========
   // Draws a rectangle with potentially inverted corners
