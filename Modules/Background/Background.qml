@@ -21,6 +21,7 @@ Variants {
       // Internal state management
       property string transitionType: "fade"
       property real transitionProgress: 0
+      property bool isStartupTransition: true
 
       readonly property real edgeSmoothness: Settings.data.wallpaper.transitionEdgeSmoothness
       readonly property var allTransitions: WallpaperService.allTransitions
@@ -77,7 +78,11 @@ Variants {
       Connections {
         target: CompositorService
         function onDisplayScalesChanged() {
-          setWallpaperInitial()
+          // Recalculate image sizes without interrupting startup transition
+          if (isStartupTransition) {
+            return
+          }
+          recalculateImageSizes()
         }
       }
 
@@ -344,11 +349,23 @@ Variants {
 
       // ------------------------------------------------------
       function recalculateImageSizes() {
+        // Re-evaluate and apply optimal sourceSize for both images when ready
         if (currentWallpaper.status === Image.Ready) {
-          currentWallpaper.calculateSourceSize()
+          const optimal = calculateOptimalWallpaperSize(currentWallpaper.implicitWidth, currentWallpaper.implicitHeight)
+          if (optimal !== undefined && optimal !== false) {
+            currentWallpaper.sourceSize = optimal
+          } else {
+            currentWallpaper.sourceSize = undefined
+          }
         }
+
         if (nextWallpaper.status === Image.Ready) {
-          nextWallpaper.calculateSourceSize()
+          const optimal2 = calculateOptimalWallpaperSize(nextWallpaper.implicitWidth, nextWallpaper.implicitHeight)
+          if (optimal2 !== undefined && optimal2 !== false) {
+            nextWallpaper.sourceSize = optimal2
+          } else {
+            nextWallpaper.sourceSize = undefined
+          }
         }
       }
 
@@ -360,7 +377,10 @@ Variants {
           return
         }
 
-        setWallpaperImmediate(WallpaperService.getWallpaper(modelData.name))
+        const wallpaperPath = WallpaperService.getWallpaper(modelData.name)
+        
+        futureWallpaper = wallpaperPath
+        performStartupTransition()
       }
 
       // ------------------------------------------------------
@@ -452,6 +472,52 @@ Variants {
           setWallpaperWithTransition(futureWallpaper)
           break
         }
+      }
+
+      // ------------------------------------------------------
+      // Dedicated function for startup animation
+      function performStartupTransition() {
+        // Get the transitionType from the settings
+        transitionType = Settings.data.wallpaper.transitionType
+
+        if (transitionType == "random") {
+          var index = Math.floor(Math.random() * allTransitions.length)
+          transitionType = allTransitions[index]
+        }
+
+        // Ensure the transition type really exists
+        if (transitionType !== "none" && !allTransitions.includes(transitionType)) {
+          transitionType = "fade"
+        }
+
+        // Apply transitionType so the shader loader picks the correct shader
+        this.transitionType = transitionType
+
+        switch (transitionType) {
+        case "none":
+          setWallpaperImmediate(futureWallpaper)
+          break
+        case "wipe":
+          wipeDirection = Math.random() * 4
+          setWallpaperWithTransition(futureWallpaper)
+          break
+        case "disc":
+          // Force center origin for elegant startup animation
+          discCenterX = 0.5
+          discCenterY = 0.5
+          setWallpaperWithTransition(futureWallpaper)
+          break
+        case "stripes":
+          stripesCount = Math.round(Math.random() * 20 + 4)
+          stripesAngle = Math.random() * 360
+          setWallpaperWithTransition(futureWallpaper)
+          break
+        default:
+          setWallpaperWithTransition(futureWallpaper)
+          break
+        }
+        // Mark startup transition complete
+        isStartupTransition = false
       }
     }
   }
