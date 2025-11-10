@@ -56,10 +56,10 @@ SmartPanel {
           }
 
           NIconButton {
-            icon: Settings.data.notifications.doNotDisturb ? "bell-off" : "bell"
-            tooltipText: Settings.data.notifications.doNotDisturb ? I18n.tr("tooltips.do-not-disturb-enabled") : I18n.tr("tooltips.do-not-disturb-disabled")
+            icon: NotificationService.doNotDisturb ? "bell-off" : "bell"
+            tooltipText: NotificationService.doNotDisturb ? I18n.tr("tooltips.do-not-disturb-enabled") : I18n.tr("tooltips.do-not-disturb-disabled")
             baseSize: Style.baseWidgetSize * 0.8
-            onClicked: Settings.data.notifications.doNotDisturb = !Settings.data.notifications.doNotDisturb
+            onClicked: NotificationService.doNotDisturb = !NotificationService.doNotDisturb
           }
 
           NIconButton {

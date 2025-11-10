@@ -342,7 +342,6 @@ Singleton {
     // notifications
     property JsonObject notifications: JsonObject {
       property bool enabled: true
-      property bool doNotDisturb: false
       property list<string> monitors: []
       property string location: "top_right"
       property bool overlayLayer: true

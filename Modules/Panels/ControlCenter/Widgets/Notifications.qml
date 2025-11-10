@@ -8,9 +8,9 @@ import qs.Widgets
 NIconButtonHot {
   property ShellScreen screen
 
-  icon: Settings.data.notifications.doNotDisturb ? "bell-off" : "bell"
-  hot: Settings.data.notifications.doNotDisturb
+  icon: NotificationService.doNotDisturb ? "bell-off" : "bell"
+  hot: NotificationService.doNotDisturb
   tooltipText: I18n.tr("quickSettings.notifications.tooltip.action")
   onClicked: PanelService.getPanel("notificationHistoryPanel", screen)?.toggle(this)
-  onRightClicked: Settings.data.notifications.doNotDisturb = !Settings.data.notifications.doNotDisturb
+  onRightClicked: NotificationService.doNotDisturb = !NotificationService.doNotDisturb
 }

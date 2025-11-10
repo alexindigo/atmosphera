@@ -206,7 +206,6 @@
   },
   "notifications": {
     "enabled": true,
-    "doNotDisturb": false,
     "monitors": [],
     "location": "top_right",
     "overlayLayer": true,
