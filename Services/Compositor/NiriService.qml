@@ -49,7 +49,6 @@ Item {
     niriOutputsProcess.running = true
   }
 
-
   // Niri outputs process for display scale detection
   Process {
     id: niriOutputsProcess
@@ -452,6 +451,4 @@ Item {
       Logger.e("NiriService", "Failed to logout:", e)
     }
   }
-
-
 }

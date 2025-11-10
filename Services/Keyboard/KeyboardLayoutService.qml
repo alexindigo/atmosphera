@@ -25,29 +25,6 @@ Singleton {
     }
   }
 
-  // Process to get current keyboard layout using hyprctl (Hyprland)
-  Process {
-    id: hyprlandLayoutProcess
-    running: false
-    command: ["hyprctl", "-j", "devices"]
-    stdout: StdioCollector {
-      onStreamFinished: {
-        try {
-          const data = JSON.parse(text)
-          // Find the main keyboard and get its active keymap
-          const mainKeyboard = data.keyboards.find(kb => kb.main === true)
-          if (mainKeyboard && mainKeyboard.active_keymap) {
-            root.currentLayout = extractLayoutCode(mainKeyboard.active_keymap)
-          } else {
-            root.currentLayout = I18n.tr("system.unknown-layout")
-          }
-        } catch (e) {
-          root.currentLayout = I18n.tr("system.unknown-layout")
-        }
-      }
-    }
-  }
-
   // Process for X11 systems using setxkbmap
   Process {
     id: x11LayoutProcess
@@ -229,9 +206,9 @@ Singleton {
   function updateLayout() {
     // Try compositor-specific methods first
     if (CompositorService.isHyprland) {
-      hyprlandLayoutProcess.running = true
+
     } else if (CompositorService.isNiri) {
-      // do nothing, niri calls setCurrentLayout
+
     } else {
       // Try detection methods in order of preference
       if (Qt.platform.os === "linux") {
