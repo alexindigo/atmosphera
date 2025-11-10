@@ -478,23 +478,22 @@ Variants {
       // Dedicated function for startup animation
       function performStartupTransition() {
         // Get the transitionType from the settings
-        var transitionSettingType = Settings.data.wallpaper.startupTransitionType
+        transitionType = Settings.data.wallpaper.transitionType
 
-        if (transitionSettingType == "random") {
-          var idx = Math.floor(Math.random() * allTransitions.length)
-          transitionSettingType = allTransitions[idx]
+        if (transitionType == "random") {
+          var index = Math.floor(Math.random() * allTransitions.length)
+          transitionType = allTransitions[index]
         }
 
         // Ensure the transition type really exists
-        if (transitionSettingType !== "none" && !allTransitions.includes(transitionSettingType)) {
-          transitionSettingType = "fade"
+        if (transitionType !== "none" && !allTransitions.includes(transitionType)) {
+          transitionType = "fade"
         }
 
         // Apply transitionType so the shader loader picks the correct shader
-        this.transitionType = transitionSettingType
+        this.transitionType = transitionType
 
-        // Perform the chosen transition; for startup prefer centered disc when disc selected
-        switch (transitionSettingType) {
+        switch (transitionType) {
         case "none":
           setWallpaperImmediate(futureWallpaper)
           break
