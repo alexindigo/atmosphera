@@ -38,8 +38,8 @@ Singleton {
     if (Settings.data.colorSchemes.useWallpaperColors) {
       generateFromWallpaper()
     } else {
+      // applyScheme will trigger template generation via schemeReader.onLoaded
       ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme)
-      generateFromPredefinedScheme()
     }
   }
 
