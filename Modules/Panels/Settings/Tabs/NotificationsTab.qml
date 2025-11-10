@@ -42,8 +42,8 @@ ColumnLayout {
     NToggle {
       label: I18n.tr("settings.notifications.settings.do-not-disturb.label")
       description: I18n.tr("settings.notifications.settings.do-not-disturb.description")
-      checked: Settings.data.notifications.doNotDisturb
-      onToggled: checked => Settings.data.notifications.doNotDisturb = checked
+      checked: NotificationService.doNotDisturb
+      onToggled: checked => NotificationService.doNotDisturb = checked
     }
 
     NComboBox {

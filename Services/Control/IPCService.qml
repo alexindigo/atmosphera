@@ -62,13 +62,13 @@ Item {
                             })
     }
     function toggleDND() {
-      Settings.data.notifications.doNotDisturb = !Settings.data.notifications.doNotDisturb
+      NotificationService.doNotDisturb = !NotificationService.doNotDisturb
     }
     function enableDND() {
-      Settings.data.notifications.doNotDisturb = true
+      NotificationService.doNotDisturb = true
     }
     function disableDND() {
-      Settings.data.notifications.doNotDisturb = false
+      NotificationService.doNotDisturb = false
     }
     function clear() {
       NotificationService.clearHistory()

@@ -555,6 +555,26 @@ PanelWindow {
   }
 
   Shortcut {
+    sequence: "Ctrl+N"
+    enabled: root.isPanelOpen
+    onActivated: {
+      if (PanelService.openedPanel && PanelService.openedPanel.onCtrlNPressed) {
+        PanelService.openedPanel.onCtrlNPressed()
+      }
+    }
+  }
+
+  Shortcut {
+    sequence: "Ctrl+P"
+    enabled: root.isPanelOpen
+    onActivated: {
+      if (PanelService.openedPanel && PanelService.openedPanel.onCtrlPPressed) {
+        PanelService.openedPanel.onCtrlPPressed()
+      }
+    }
+  }
+
+  Shortcut {
     sequence: "Left"
     enabled: root.isPanelOpen
     onActivated: {

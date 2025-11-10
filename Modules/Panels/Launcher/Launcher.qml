@@ -97,6 +97,14 @@ SmartPanel {
     selectPreviousWrapped()
   }
 
+  function onCtrlNPressed() {
+    selectNextWrapped()
+  }
+
+  function onCtrlPPressed() {
+    selectPreviousWrapped()
+  }
+
   // Public API for plugins
   function setSearchText(text) {
     searchText = text
