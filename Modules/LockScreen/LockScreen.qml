@@ -12,6 +12,7 @@ import qs.Commons
 import qs.Services.Hardware
 import qs.Services.Location
 import qs.Services.Media
+import qs.Services.Compositor
 import qs.Services.UI
 import qs.Widgets
 import qs.Widgets.AudioSpectrum
