@@ -155,6 +155,100 @@ Item {
         }
       }
 
+      Flow {
+        id: iconsFlow
+
+        anchors.centerIn: parent
+        spacing: 4
+        flow: root.isVerticalBar ? Flow.TopToBottom : Flow.LeftToRight
+
+        Repeater {
+          model: workspaceModel.windows
+
+          delegate: Item {
+            id: taskbarItem
+
+            property bool itemHovered: false
+
+            width: root.itemSize * 0.8
+            height: root.itemSize * 0.8
+
+            // Smooth scale animation on hover
+            scale: itemHovered ? 1.1 : 1.0
+
+            Behavior on scale {
+              NumberAnimation {
+                duration: Style.animationNormal
+                easing.type: Easing.OutBack
+              }
+            }
+
+            IconImage {
+              id: appIcon
+
+              width: parent.width
+              height: parent.height
+              source: ThemeIcons.iconForAppId(model.appId)
+              smooth: true
+              asynchronous: true
+              opacity: model.isFocused ? Style.opacityFull : 0.6
+              layer.enabled: widgetSettings.colorizeIcons === true
+
+              Behavior on opacity {
+                NumberAnimation {
+                  duration: Style.animationNormal
+                  easing.type: Easing.InOutCubic
+                }
+              }
+
+              Rectangle {
+                id: focusIndicator
+                anchors.bottomMargin: -2
+                anchors.bottom: parent.bottom
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: model.isFocused ? 4 : 0
+                height: model.isFocused ? 4 : 0
+                color: model.isFocused ? Color.mPrimary : Color.transparent
+                radius: width * 0.5
+              }
+
+              layer.effect: ShaderEffect {
+                property color targetColor: Settings.data.colorSchemes.darkMode ? Color.mOnSurface : Color.mSurfaceVariant
+                property real colorizeMode: 0
+                fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
+              }
+            }
+
+            MouseArea {
+              anchors.fill: parent
+              hoverEnabled: true
+              cursorShape: Qt.PointingHandCursor
+              acceptedButtons: Qt.LeftButton | Qt.RightButton
+
+              onPressed: function (mouse) {
+                if (!model) {
+                  return
+                }
+
+                if (mouse.button === Qt.LeftButton) {
+                  CompositorService.focusWindow(model)
+                } else if (mouse.button === Qt.RightButton) {
+                  CompositorService.closeWindow(model)
+                }
+              }
+              onEntered: {
+                taskbarItem.itemHovered = true
+                TooltipService.show(Screen, taskbarItem, model.title || model.appId || "Unknown app.", BarService.getTooltipDirection())
+              }
+              onExited: {
+                taskbarItem.itemHovered = false
+                TooltipService.hide()
+              }
+            }
+          }
+        }
+      }
+
       Item {
         id: workspaceNumberContainer
 
@@ -268,100 +362,6 @@ Item {
           NumberAnimation {
             duration: Style.animationFast
             easing.type: Easing.InOutCubic
-          }
-        }
-      }
-
-      Flow {
-        id: iconsFlow
-
-        anchors.centerIn: parent
-        spacing: 4
-        flow: root.isVerticalBar ? Flow.TopToBottom : Flow.LeftToRight
-
-        Repeater {
-          model: workspaceModel.windows
-
-          delegate: Item {
-            id: taskbarItem
-
-            property bool itemHovered: false
-
-            width: root.itemSize * 0.8
-            height: root.itemSize * 0.8
-
-            // Smooth scale animation on hover
-            scale: itemHovered ? 1.1 : 1.0
-
-            Behavior on scale {
-              NumberAnimation {
-                duration: Style.animationNormal
-                easing.type: Easing.OutBack
-              }
-            }
-
-            IconImage {
-              id: appIcon
-
-              width: parent.width
-              height: parent.height
-              source: ThemeIcons.iconForAppId(model.appId)
-              smooth: true
-              asynchronous: true
-              opacity: model.isFocused ? Style.opacityFull : 0.6
-              layer.enabled: widgetSettings.colorizeIcons === true
-
-              Behavior on opacity {
-                NumberAnimation {
-                  duration: Style.animationNormal
-                  easing.type: Easing.InOutCubic
-                }
-              }
-
-              Rectangle {
-                id: focusIndicator
-                anchors.bottomMargin: -2
-                anchors.bottom: parent.bottom
-                anchors.horizontalCenter: parent.horizontalCenter
-                width: model.isFocused ? 4 : 0
-                height: model.isFocused ? 4 : 0
-                color: model.isFocused ? Color.mPrimary : Color.transparent
-                radius: width * 0.5
-              }
-
-              layer.effect: ShaderEffect {
-                property color targetColor: Settings.data.colorSchemes.darkMode ? Color.mOnSurface : Color.mSurfaceVariant
-                property real colorizeMode: 0
-                fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
-              }
-            }
-
-            MouseArea {
-              anchors.fill: parent
-              hoverEnabled: true
-              cursorShape: Qt.PointingHandCursor
-              acceptedButtons: Qt.LeftButton | Qt.RightButton
-
-              onPressed: function (mouse) {
-                if (!model) {
-                  return
-                }
-
-                if (mouse.button === Qt.LeftButton) {
-                  CompositorService.focusWindow(model)
-                } else if (mouse.button === Qt.RightButton) {
-                  CompositorService.closeWindow(model)
-                }
-              }
-              onEntered: {
-                taskbarItem.itemHovered = true
-                TooltipService.show(Screen, taskbarItem, model.title || model.appId || "Unknown app.", BarService.getTooltipDirection())
-              }
-              onExited: {
-                taskbarItem.itemHovered = false
-                TooltipService.hide()
-              }
-            }
           }
         }
       }
