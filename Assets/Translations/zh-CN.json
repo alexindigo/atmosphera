@@ -1177,7 +1177,7 @@
     "hooks": {
       "info": {
         "command-info": {
-          "description": "• 命令通过 shell 执行 gsh -c)\n• 命令在后台运行（分离）\n• 测试按钮使用当前值执行",
+          "description": "• 命令通过 shell 执行 (sh -c)\n• 命令在后台运行（分离）\n• 测试按钮使用当前值执行",
           "label": "钩子命令信息"
         },
         "parameters": {
