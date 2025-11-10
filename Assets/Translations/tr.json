@@ -105,6 +105,10 @@
         "use-distro-logo": {
           "description": "Özel ikon yerine dağıtımınızın logosunu kullanın.",
           "label": "Dağıtım logosunu ikon yerine kullan"
+        },
+        "colorize-distro-logo": {
+          "description": "Dağıtım logonuza tema renklerini uygula.",
+          "label": "Dağıtım logosunu renklendir"
         }
       },
       "custom-button": {
@@ -119,6 +123,10 @@
           "stream-description": "Sürekli çalıştırılacak bir komut girin."
         },
         "dynamic-text": "Dinamik metin",
+        "hide-vertical": {
+          "description": "Etkinleştirilirse, komut çıktısındaki metin, çubuk dikey düzende (sol veya sağ) olduğunda gösterilmeyecektir.",
+          "label": "Dikey çubukta metni gizle"
+        },
         "icon": {
           "description": "Kütüphaneden bir ikon seçin.",
           "label": "İkon"
@@ -503,6 +511,10 @@
       "top_left": "Sol üst",
       "top_right": "Sağ üst"
     },
+    "visualizer-quality": {
+      "high": "Yüksek",
+      "low": "Düşük"
+    },
     "visualizer-types": {
       "linear": "Doğrusal",
       "mirrored": "Yansıtılmış",
@@ -693,6 +705,10 @@
           "description": "Tercih ettiğiniz ve yoksayacağınız medya uygulamalarını ayarlayın.",
           "label": "Medya oynatıcılar"
         },
+        "visualizer-quality": {
+          "description": "Yüksek kalite daha fazla GPU kaynağı kullanır.",
+          "label": "Görselleştirme kalitesi"
+        },
         "visualizer-type": {
           "description": "Medya oynatımı için bir görselleştirme türü seçin",
           "label": "Görselleştirme türü"
@@ -850,6 +866,10 @@
         "programs": {
           "code": {
             "description": "{filepath} dosyasına yaz. Hyprluna temasının kurulu ve manuel olarak etkinleştirilmiş olması gerekir.",
+            "description-missing": "Kurulum için {app} gereklidir"
+          },
+          "spicetify": {
+            "description": "{filepath} dosyasına yaz. Comfy temasının kurulu ve manuel olarak etkinleştirilmiş olması gerekir.",
             "description-missing": "Kurulum için {app} gereklidir"
           },
           "description": "Uygulamaya özel temalandırma.",
@@ -1719,10 +1739,6 @@
     "kofi": {
       "opened": "Ko-fi sayfası tarayıcınızda açıldı"
     },
-    "matugen": {
-      "failed": "Matugen işlemi başarısız oldu",
-      "failed-general": "Matugen şablonları işlerken bir hata ile karşılaştı"
-    },
     "missing-control-center": {
       "description": "Kontrol Merkezi widget'ı çubuktan kaldırıldı. Çubuktan tekrar erişmek için widget'ı yeniden eklemeniz gerekecek. Çubuğa sağ tıklayarak da açabilirsiniz.",
       "label": "Son Kontrol Merkezi widget'ı kaldırıldı"
@@ -1755,9 +1771,15 @@
       "started": "Kayıt başladı",
       "stopping": "Kayıt durduruluyor..."
     },
+    "theming-processor-failed": {
+      "desc-generic": "Şablonlar işlenirken bir hatayla karşılaşıldı.",
+      "title-matugen": "Matugen şablon işleme başarısız oldu.",
+      "title-predefined": "Önceden tanımlanmış renk şeması işleme başarısız oldu."
+    },
     "wallpaper-colors": {
       "disabled": "Duvar kağıdı renkleri devre dışı",
       "enabled": "Duvar kağıdı renkleri etkin",
+      "label": "Duvar kağıdı renkleri oluşturma",
       "not-installed": "Matugen kurulu değil - duvar kağıdı renk çıkarmak için gerekli"
     },
     "wifi": {
@@ -1798,6 +1820,8 @@
     "night-light-enabled": "Gece ışığı etkin.\nMod arasında geçiş yapmak için sol tık.\nAyarlara erişmek için sağ tık.",
     "night-light-forced": "Gece ışığı zorla.\nMod arasında geçiş yapmak için sol tık.\nAyarlara erişmek için sağ tık.",
     "night-light-not-installed": "Gece ışığı mevcut değil.\nwlsunset yüklü değil.",
+    "noctalia-performance-disabled": "Noctalia performans modu devre dışı.\nEtkinleştirmek için sol tıklayın.",
+    "noctalia-performance-enabled": "Noctalia performans modu etkin.\nDevre dışı bırakmak için sol tıklayın.",
     "open-control-center": "Kontrol merkezini aç",
     "open-notification-history-disable-dnd": "Bildirim geçmişini aç\n\"Rahatsız etmeyi\" devre dışı bırakmak için sağ tık.",
     "open-notification-history-enable-dnd": "Bildirim geçmişini aç\n\"Rahatsız etmeyi\" etkinleştirmek için sağ tık.",

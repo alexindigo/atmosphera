@@ -9,13 +9,22 @@
 // Qt & Quickshell Core
 import QtQuick
 import Quickshell
+import Quickshell.Services.SystemTray
 
 // Commons & Services
 import qs.Commons
-import qs.Services
+import qs.Services.Control
+import qs.Services.Theming
+import qs.Services.Hardware
+import qs.Services.Location
+import qs.Services.Networking
+import qs.Services.Power
+import qs.Services.System
+import qs.Services.UI
 
 // Modules
 import qs.Modules.Background
+import qs.Modules.Bar
 import qs.Modules.Dock
 import qs.Modules.MainScreen
 import qs.Modules.LockScreen
@@ -60,20 +69,20 @@ ShellRoot {
     sourceComponent: Item {
       Component.onCompleted: {
         Logger.i("Shell", "---------------------------")
+        SystemTrayService.init()
         WallpaperService.init()
         AppThemeService.init()
         ColorSchemeService.init()
-        BarWidgetRegistry.init()
         LocationService.init()
         NightLightService.apply()
         DarkModeService.init()
-        FontService.init()
         HooksService.init()
         BluetoothService.init()
         BatteryService.init()
         IdleInhibitorService.init()
         PowerProfileService.init()
         DistroService.init()
+        FontService.init()
 
         // Only open the setup wizard for new users
         if (!Settings.data.setupCompleted) {
@@ -100,8 +109,20 @@ ShellRoot {
       // Item that needs to exists in the shell.
       IPCService {}
 
-      // MainScreen for each screen (manages bar + all panels)
+      // MainScreen for each screen
       AllScreens {}
+    }
+  }
+
+  // ---------------------------------------------
+  // Setup Wizard
+  // ---------------------------------------------
+  Timer {
+    id: setupWizardTimer
+    running: false
+    interval: 1000
+    onTriggered: {
+      showSetupWizard()
     }
   }
 
@@ -119,7 +140,7 @@ ShellRoot {
     }
 
     if (Settings.data.settingsVersion >= Settings.settingsVersion) {
-      showSetupWizard()
+      setupWizardTimer.start()
     } else {
       Settings.data.setupCompleted = true
     }
@@ -134,9 +155,7 @@ ShellRoot {
         setupPanel.open()
       } else {
         // If not yet loaded, ensure it loads and try again shortly
-        Qt.callLater(() => {
-                       showSetupWizard()
-                     })
+        setupWizardTimer.restart()
       }
     }
   }

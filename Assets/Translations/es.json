@@ -105,6 +105,10 @@
         "use-distro-logo": {
           "description": "Usar el logo de tu distribución en lugar de un icono personalizado.",
           "label": "Usar logo de la distribución en lugar de icono"
+        },
+        "colorize-distro-logo": {
+          "description": "Aplica los colores del tema a tu logotipo de distribución.",
+          "label": "Colorear logotipo de la distribución"
         }
       },
       "custom-button": {
@@ -119,6 +123,10 @@
           "stream-description": "Introduce un comando para ejecutar continuamente."
         },
         "dynamic-text": "Texto dinámico",
+        "hide-vertical": {
+          "description": "Si está activado, el texto de la salida del comando no se mostrará cuando la barra esté en un diseño vertical (izquierda o derecha).",
+          "label": "Ocultar texto en barra vertical"
+        },
         "icon": {
           "description": "Selecciona un icono de la biblioteca.",
           "label": "Icono"
@@ -503,6 +511,10 @@
       "top_left": "Superior izquierda",
       "top_right": "Superior derecha"
     },
+    "visualizer-quality": {
+      "high": "Alto/Alta",
+      "low": "Bajo"
+    },
     "visualizer-types": {
       "linear": "Lineal",
       "mirrored": "Espejado",
@@ -693,6 +705,10 @@
           "description": "Establece tus aplicaciones multimedia preferidas e ignoradas.",
           "label": "Reproductores multimedia"
         },
+        "visualizer-quality": {
+          "description": "Alta calidad usa más recursos de la GPU.",
+          "label": "Calidad de visualización"
+        },
         "visualizer-type": {
           "description": "Elige un tipo de visualización para la reproducción de medios.",
           "label": "Tipo de visualización"
@@ -850,6 +866,10 @@
         "programs": {
           "code": {
             "description": "Escribe {filepath}. El tema Hyprluna debe ser instalado y activado manualmente.",
+            "description-missing": "Requiere que {app} esté instalado/a."
+          },
+          "spicetify": {
+            "description": "Escribe {filepath}. El tema Comfy debe ser instalado y activado manualmente.",
             "description-missing": "Requiere que {app} esté instalado/a."
           },
           "description": "Tematización específica de aplicaciones.",
@@ -1719,10 +1739,6 @@
     "kofi": {
       "opened": "Página de Ko-fi abierta en tu navegador"
     },
-    "matugen": {
-      "failed": "Error en el procesamiento de Matugen",
-      "failed-general": "Matugen encontró un error al procesar las plantillas"
-    },
     "missing-control-center": {
       "description": "El widget del Centro de control se eliminó de la barra. Para acceder a él nuevamente desde la barra, debes volver a añadir el widget. También puedes abrirlo haciendo clic derecho en la barra.",
       "label": "Se eliminó el último widget del Centro de control"
@@ -1755,9 +1771,15 @@
       "started": "Grabación iniciada",
       "stopping": "Deteniendo grabación..."
     },
+    "theming-processor-failed": {
+      "desc-generic": "Se encontró un error al procesar las plantillas.",
+      "title-matugen": "Falló el procesamiento de la plantilla Matugen.",
+      "title-predefined": "Falló el procesamiento del esquema de color predefinido."
+    },
     "wallpaper-colors": {
       "disabled": "Colores del fondo de pantalla desactivados",
       "enabled": "Colores del fondo de pantalla activados",
+      "label": "Generación de colores para fondos de pantalla",
       "not-installed": "Matugen no instalado - requerido para extraer colores del fondo de pantalla"
     },
     "wifi": {
@@ -1798,6 +1820,8 @@
     "night-light-enabled": "Luz nocturna activada.\nClic izquierdo para cambiar de modo.\nClic derecho para acceder a la configuración.",
     "night-light-forced": "Luz nocturna forzada.\nClic izquierdo para cambiar de modo.\nClic derecho para acceder a la configuración.",
     "night-light-not-installed": "Luz nocturna no disponible.\nwlsunset no está instalado.",
+    "noctalia-performance-disabled": "El modo de rendimiento de Noctalia está desactivado.\nClic izquierdo para activar.",
+    "noctalia-performance-enabled": "El modo de rendimiento de Noctalia está activado.\nClic izquierdo para desactivar.",
     "open-control-center": "Abrir el centro de control",
     "open-notification-history-disable-dnd": "Abrir historial de notificaciones\nClic derecho para desactivar \"No molestar\".",
     "open-notification-history-enable-dnd": "Abrir historial de notificaciones\nClic derecho para activar \"No molestar\".",

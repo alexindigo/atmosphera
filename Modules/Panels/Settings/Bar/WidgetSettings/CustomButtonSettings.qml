@@ -4,7 +4,6 @@ import QtQuick.Layouts
 import QtQuick.Window
 import qs.Commons
 import qs.Widgets
-import qs.Services
 
 ColumnLayout {
   id: root
@@ -16,6 +15,7 @@ ColumnLayout {
   property string valueIcon: widgetData.icon !== undefined ? widgetData.icon : widgetMetadata.icon
   property bool valueTextStream: widgetData.textStream !== undefined ? widgetData.textStream : widgetMetadata.textStream
   property bool valueParseJson: widgetData.parseJson !== undefined ? widgetData.parseJson : widgetMetadata.parseJson
+  property bool valueHideTextInVerticalBar: widgetData.hideTextInVerticalBar !== undefined ? widgetData.hideTextInVerticalBar : widgetMetadata.hideTextInVerticalBar
 
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {})
@@ -27,6 +27,7 @@ ColumnLayout {
     settings.textCollapse = textCollapseInput.text
     settings.textStream = valueTextStream
     settings.parseJson = valueParseJson
+    settings.hideTextInVerticalBar = valueHideTextInVerticalBar
     settings.textIntervalMs = parseInt(textIntervalInput.text || textIntervalInput.placeholderText, 10)
     return settings
   }
@@ -93,6 +94,13 @@ ColumnLayout {
 
   NHeader {
     label: I18n.tr("bar.widget-settings.custom-button.dynamic-text")
+  }
+
+  NToggle {
+    label: I18n.tr("bar.widget-settings.custom-button.hide-vertical.label", "Hide text in vertical bar")
+    description: I18n.tr("bar.widget-settings.custom-button.hide-vertical.description", "If enabled, the text from the command output will not be shown when the bar is in a vertical layout (left or right).")
+    checked: valueHideTextInVerticalBar
+    onToggled: checked => valueHideTextInVerticalBar = checked
   }
 
   NToggle {

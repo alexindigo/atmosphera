@@ -3,10 +3,11 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Effects
 import Quickshell
-import qs.Widgets.AudioSpectrum
 import qs.Commons
-import qs.Services
+import qs.Services.Media
+import qs.Services.UI
 import qs.Widgets
+import qs.Widgets.AudioSpectrum
 
 NBox {
   id: root
@@ -182,61 +183,28 @@ NBox {
     }
   }
 
-  ColumnLayout {
+  // Content container that adjusts for player selector
+  Item {
     anchors.fill: parent
-    anchors.margins: Style.marginM
+    anchors.topMargin: playerSelectorButton.visible ? (playerSelectorButton.height + Style.marginXS + Style.marginM) : Style.marginM
+    anchors.leftMargin: Style.marginM
+    anchors.rightMargin: Style.marginM
+    anchors.bottomMargin: Style.marginM
 
-    // No media player detected - use Loader for performance
-    Loader {
-      id: fallbackLoader
-      Layout.fillWidth: true
-      Layout.fillHeight: true
-      active: !root.hasActivePlayer
-
-      sourceComponent: ColumnLayout {
-        spacing: Style.marginS
-
-        Item {
-          Layout.fillWidth: true
-          Layout.fillHeight: true
-        }
-
-        Item {
-          Layout.fillWidth: true
-
-          ColumnLayout {
-            anchors.centerIn: parent
-            spacing: Style.marginL
-
-            Item {
-              Layout.alignment: Qt.AlignHCenter
-              Layout.preferredWidth: Style.fontSizeXXXL * 4
-              Layout.preferredHeight: Style.fontSizeXXXL * 4
-
-              // Center icon (static, no animation to avoid GPU cost)
-              NIcon {
-                anchors.centerIn: parent
-                icon: "disc"
-                pointSize: Style.fontSizeXXXL * 3
-                color: Color.mOnSurfaceVariant
-                opacity: 1.0
-              }
-            }
-          }
-        }
-
-        Item {
-          Layout.fillWidth: true
-          Layout.fillHeight: true
-        }
-      }
+    // No media player detected - centered disc icon
+    NIcon {
+      anchors.centerIn: parent
+      visible: !root.hasActivePlayer
+      icon: "disc"
+      pointSize: Style.fontSizeXXXL * 3
+      color: Color.mOnSurfaceVariant
+      opacity: 1.0
     }
 
     // MediaPlayer Main Content - use Loader for performance
     Loader {
       id: mainLoader
-      Layout.fillWidth: true
-      Layout.fillHeight: true
+      anchors.fill: parent
       active: root.hasActivePlayer
 
       sourceComponent: ColumnLayout {

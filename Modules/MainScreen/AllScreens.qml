@@ -3,7 +3,7 @@ import Quickshell
 import Quickshell.Wayland
 
 import qs.Commons
-import qs.Services
+import qs.Services.UI
 import qs.Modules.MainScreen
 
 // ------------------------------
@@ -15,8 +15,10 @@ Variants {
     required property ShellScreen modelData
 
     property bool shouldBeActive: {
-      if (!modelData || !modelData.name)
-        Logger.d("Shell", "MainScreen activated for", modelData?.name)
+      if (!modelData || !modelData.name) {
+        return false
+      }
+      Logger.d("Shell", "MainScreen activated for", modelData?.name)
       return true
     }
 
@@ -36,6 +38,27 @@ Variants {
 
       sourceComponent: MainScreen {
         screen: windowLoader.loaderScreen
+      }
+    }
+
+    // Bar content in separate windows to prevent fullscreen redraws
+    Loader {
+      active: {
+        if (!parent.windowLoaded || !parent.shouldBeActive || !BarService.isVisible)
+          return false
+
+        // Check if bar is configured for this screen
+        var monitors = Settings.data.bar.monitors || []
+        return monitors.length === 0 || monitors.includes(modelData?.name)
+      }
+      asynchronous: false
+
+      sourceComponent: BarContentWindow {
+        screen: modelData
+      }
+
+      onLoaded: {
+        Logger.d("Shell", "BarContentWindow created for", modelData?.name)
       }
     }
 

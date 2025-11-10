@@ -2,12 +2,11 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 import Quickshell
-import Quickshell.Wayland
 import qs.Commons
-import qs.Modules.Panels.Settings
-import qs.Services
-import qs.Widgets
 import qs.Modules.MainScreen
+import qs.Modules.Panels.Settings
+import qs.Services.UI
+import qs.Widgets
 import "../../../Helpers/FuzzySort.js" as FuzzySort
 
 SmartPanel {
