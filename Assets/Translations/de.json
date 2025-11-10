@@ -1591,10 +1591,6 @@
         "transition-type": {
           "description": "Animationstyp beim Wechsel zwischen Hintergrundbildern.",
           "label": "Übergangstyp"
-        },
-        "startup-transition-type": {
-          "description": "Animationstyp der Hintergrundbildübergänge, der beim Start von Noctalia verwendet wird.",
-          "label": "Startup-Übergangstyp"
         }
       },
       "settings": {

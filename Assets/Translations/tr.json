@@ -1591,10 +1591,6 @@
         "transition-type": {
           "description": "Duvar kağıtları arasında geçiş yaparken animasyon türü.",
           "label": "Geçiş türü"
-        },
-        "startup-transition-type": {
-          "description": "Noctalia başlatıldığında kullanılan duvar kağıdı geçiş animasyonu türü.",
-          "label": "Başlangıç geçiş türü"
         }
       },
       "settings": {

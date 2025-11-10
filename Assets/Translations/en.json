@@ -1591,10 +1591,6 @@
         "transition-type": {
           "description": "Animation type when switching between wallpapers.",
           "label": "Transition type"
-        },
-        "startup-transition-type": {
-          "description": "Wallpaper transition animation type used when Noctalia starts.",
-          "label": "Startup transition type"
         }
       },
       "settings": {

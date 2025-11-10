@@ -1589,12 +1589,8 @@
           "label": "Durée de la transition"
         },
         "transition-type": {
-          "description": "Type d'animation lors du changement de fonds d'écran.",
+          "description": "Type d'animation lors du changement de fond d'écran.",
           "label": "Type de transition"
-        },
-        "startup-transition-type": {
-          "description": "Type d'animation de transition de papier peint utilisée au démarrage de Noctalia.",
-          "label": "Type de transition au démarrage"
         }
       },
       "settings": {

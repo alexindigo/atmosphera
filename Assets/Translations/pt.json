@@ -1591,10 +1591,6 @@
         "transition-type": {
           "description": "Tipo de animação ao alternar entre papéis de parede.",
           "label": "Tipo de transição"
-        },
-        "startup-transition-type": {
-          "description": "Tipo de animação de transição de papel de parede usado quando o Noctalia é iniciado.",
-          "label": "Tipo de transição na inicialização"
         }
       },
       "settings": {
