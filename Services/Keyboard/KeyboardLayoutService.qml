@@ -5,10 +5,13 @@ import Quickshell
 import Quickshell.Io
 import qs.Commons
 import qs.Services.Compositor
+import qs.Services.UI
 
 Singleton {
   id: root
   property string currentLayout: I18n.tr("system.unknown-layout")
+  property string previousLayout: ""
+  property bool isInitialized: false
   property int updateInterval: 1000 // Update every second
 
   // Timer to periodically update the layout
@@ -34,7 +37,7 @@ Singleton {
           const layoutName = data.names[data.current_idx]
           root.currentLayout = extractLayoutCode(layoutName)
         } catch (e) {
-          root.currentLayout = "Unknown"
+          root.currentLayout = I18n.tr("system.unknown-layout")
         }
       }
     }
@@ -54,10 +57,10 @@ Singleton {
           if (mainKeyboard && mainKeyboard.active_keymap) {
             root.currentLayout = extractLayoutCode(mainKeyboard.active_keymap)
           } else {
-            root.currentLayout = "Unknown"
+            root.currentLayout = I18n.tr("system.unknown-layout")
           }
         } catch (e) {
-          root.currentLayout = "Unknown"
+          root.currentLayout = I18n.tr("system.unknown-layout")
         }
       }
     }
@@ -79,9 +82,9 @@ Singleton {
               return
             }
           }
-          root.currentLayout = "Unknown"
+          root.currentLayout = I18n.tr("system.unknown-layout")
         } catch (e) {
-          root.currentLayout = "Unknown"
+          root.currentLayout = I18n.tr("system.unknown-layout")
         }
       }
     }
@@ -112,9 +115,9 @@ Singleton {
               }
             }
           }
-          root.currentLayout = "Unknown"
+          root.currentLayout = I18n.tr("system.unknown-layout")
         } catch (e) {
-          root.currentLayout = "Unknown"
+          root.currentLayout = I18n.tr("system.unknown-layout")
         }
       }
     }
@@ -170,7 +173,7 @@ Singleton {
   // Extract layout code from various format strings using Commons data
   function extractLayoutCode(layoutString) {
     if (!layoutString)
-      return "Unknown"
+      return I18n.tr("system.unknown-layout")
 
     const str = layoutString.toLowerCase()
 
@@ -197,12 +200,43 @@ Singleton {
 
     // If nothing matches, try first 2-3 characters if they look like a code
     const codeMatch = str.match(/^([a-z]{2,3})/)
-    return codeMatch ? codeMatch[1] : "unknown"
+    return codeMatch ? codeMatch[1] : I18n.tr("system.unknown-layout")
+  }
+
+  // Watch for layout changes and show toast
+  onCurrentLayoutChanged: {
+    // Update previousLayout after checking for changes
+    const layoutChanged = isInitialized && currentLayout !== previousLayout && currentLayout !== I18n.tr("system.unknown-layout") && previousLayout !== "" && previousLayout !== I18n.tr("system.unknown-layout")
+
+    if (layoutChanged) {
+      const message = I18n.tr("toast.keyboard-layout.changed", {
+                                "layout": currentLayout.toUpperCase()
+                              })
+      ToastService.showNotice(message, "", "", 2000)
+      Logger.d("KeyboardLayout", "Layout changed from", previousLayout, "to", currentLayout)
+    }
+
+    // Update previousLayout for next comparison
+    previousLayout = currentLayout
   }
 
   Component.onCompleted: {
     Logger.i("KeyboardLayout", "Service started")
     updateLayout()
+    // Mark as initialized after a delay to allow first layout update to complete
+    // This prevents showing a toast on the initial load
+    initializationTimer.start()
+  }
+
+  Timer {
+    id: initializationTimer
+    interval: 2000 // Wait 2 seconds for first layout update to complete
+    onTriggered: {
+      isInitialized = true
+      // Set previousLayout to current value after initialization
+      previousLayout = currentLayout
+      Logger.d("KeyboardLayout", "Service initialized, current layout:", currentLayout)
+    }
   }
 
   function updateLayout() {
@@ -225,7 +259,7 @@ Singleton {
           gsettingsProcess.running = true
         }
       } else {
-        currentLayout = "Unknown"
+        currentLayout = I18n.tr("system.unknown-layout")
       }
     }
   }

@@ -1736,6 +1736,9 @@
       "disabled": "Desativado",
       "enabled": "Ativado"
     },
+    "keyboard-layout": {
+      "changed": "Layout de teclado alterado para {layout}"
+    },
     "kofi": {
       "opened": "Página do Ko-fi aberta no seu navegador"
     },
