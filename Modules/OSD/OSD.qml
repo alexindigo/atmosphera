@@ -139,10 +139,10 @@ Variants {
       readonly property bool isRight: (location.indexOf("_right") >= 0) || (location === "right")
       readonly property bool isCentered: (location === "top" || location === "bottom")
       readonly property bool verticalMode: (location === "left" || location === "right")
-      readonly property int hWidth: Math.round(420 * Style.uiScaleRatio)
+      readonly property int hWidth: Math.round(320 * Style.uiScaleRatio)
       readonly property int hHeight: Math.round(72 * Style.uiScaleRatio)
-      readonly property int vWidth: Math.round(84 * Style.uiScaleRatio)
-      readonly property int vHeight: Math.round(380 * Style.uiScaleRatio)
+      readonly property int vWidth: Math.round(72 * Style.uiScaleRatio)
+      readonly property int vHeight: Math.round(280 * Style.uiScaleRatio)
 
       // Ensure an even width to keep the vertical bar perfectly centered
       readonly property int barThickness: {
