@@ -378,7 +378,7 @@ Variants {
         }
 
         const wallpaperPath = WallpaperService.getWallpaper(modelData.name)
-        
+
         futureWallpaper = wallpaperPath
         performStartupTransition()
       }

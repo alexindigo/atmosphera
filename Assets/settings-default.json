@@ -262,6 +262,7 @@
     "vicinae": false,
     "walker": false,
     "code": false,
+    "spicetify": false,
     "enableUserTemplates": false,
     "discord_vesktop": false,
     "discord_webcord": false,
