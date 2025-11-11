@@ -169,6 +169,13 @@ Rectangle {
     }
   }
 
+  function onLoaded() {
+    // When the widget is fully initialized with its props set the screen for the trayMenu
+    if (trayMenu.item) {
+      trayMenu.item.screen = screen
+    }
+  }
+
   Connections {
     target: SystemTray.items
     function onValuesChanged() {
@@ -285,54 +292,57 @@ Rectangle {
 
                          if (mouse.button === Qt.LeftButton) {
                            // Close any open menu first
-                           PanelService.getPanel("trayMenuPanel", root.screen)?.close()
+                           trayMenuWindow.close()
 
                            if (!modelData.onlyMenu) {
                              modelData.activate()
                            }
                          } else if (mouse.button === Qt.MiddleButton) {
-                           // Close any open menu first
-                           PanelService.getPanel("trayMenuPanel", root.screen)?.close()
 
-                           modelData.secondaryActivate && modelData.secondaryActivate()
+                           // Close any open menu first
+
+                           // TODO RESTORE LATER
+                           //  trayMenuWindow.close()
+                           //  modelData.secondaryActivate && modelData.secondaryActivate()
                          } else if (mouse.button === Qt.RightButton) {
                            TooltipService.hideImmediately()
 
                            // Close the menu if it was visible
-                           const menuPanel = PanelService.getPanel("trayMenuPanel", root.screen)
-                           if (menuPanel && menuPanel.visible) {
-                             menuPanel.close()
+                           if (trayMenuWindow && trayMenuWindow.visible) {
+                             trayMenuWindow.close()
                              return
                            }
 
-                           if (modelData.hasMenu && modelData.menu) {
-                             const panel = PanelService.getPanel("trayMenuPanel", root.screen)
-                             if (panel) {
-                               panel.menu = modelData.menu
-                               panel.trayItem = modelData
-                               panel.widgetSection = root.section
-                               panel.widgetIndex = root.sectionWidgetIndex
-                               panel.openAt(parent)
-                               // Prevent onEntered from immediately closing the panel
-                               trayIcon.menuJustOpened = true
+                           if (modelData.hasMenu && modelData.menu && trayMenu.item) {
+                             trayMenuWindow.open()
+
+                             // Position menu based on bar position
+                             let menuX, menuY
+                             if (barPosition === "left") {
+                               // For left bar: position menu to the right of the bar
+                               menuX = width + Style.marginM
+                               menuY = 0
+                             } else if (barPosition === "right") {
+                               // For right bar: position menu to the left of the bar
+                               menuX = -trayMenu.item.width - Style.marginM
+                               menuY = 0
                              } else {
-                               Logger.i("Tray", "TrayMenu not available")
+                               // For horizontal bars: center horizontally and position below
+                               menuX = (width / 2) - (trayMenu.item.width / 2)
+                               menuY = Style.barHeight
                              }
+                             trayMenu.item.menu = modelData.menu
+                             trayMenu.item.trayItem = modelData
+                             trayMenu.item.widgetSection = root.section
+                             trayMenu.item.widgetIndex = root.sectionWidgetIndex
+                             trayMenu.item.showAt(parent, menuX, menuY)
                            } else {
-                             Logger.i("Tray", "No menu available for", modelData.id, "or trayMenu not set")
+                             Logger.d("Tray", "No menu available for", modelData.id, "or trayMenu not set")
                            }
                          }
                        }
             onEntered: {
-              // Don't close menu immediately after opening it
-              if (!trayIcon.menuJustOpened) {
-                // Only close the menu if we're hovering over a DIFFERENT tray icon
-                const menuPanel = PanelService.getPanel("trayMenuPanel", root.screen)
-                if (menuPanel && menuPanel.trayItem !== modelData) {
-                  menuPanel.close()
-                }
-              }
-              trayIcon.menuJustOpened = false
+              trayMenuWindow.close()
               TooltipService.show(Screen, trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection())
             }
             onExited: TooltipService.hide()
@@ -369,6 +379,40 @@ Rectangle {
       }
       onClicked: toggleDrawer(this)
       onRightClicked: toggleDrawer(this)
+    }
+  }
+
+  // --------------------------
+  PanelWindow {
+    id: trayMenuWindow
+    anchors.top: true
+    anchors.left: true
+    anchors.right: true
+    anchors.bottom: true
+    visible: false
+    color: Color.transparent
+    screen: screen
+
+    function open() {
+      visible = true
+    }
+
+    function close() {
+      visible = false
+      if (trayMenu.item) {
+        trayMenu.item.hideMenu()
+      }
+    }
+
+    // Clicking outside of the rectangle to close
+    MouseArea {
+      anchors.fill: parent
+      onClicked: trayMenuWindow.close()
+    }
+
+    Loader {
+      id: trayMenu
+      source: "../Extras/TrayMenu.qml"
     }
   }
 }
