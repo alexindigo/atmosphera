@@ -17,7 +17,6 @@ Loader {
 
       required property ShellScreen modelData
       property string wallpaper: ""
-      property bool overviewIsSeen: false
 
       Component.onCompleted: {
         if (modelData) {
@@ -40,27 +39,6 @@ Loader {
           if (screenName === modelData.name) {
             wallpaper = path
           }
-        }
-      }
-
-      Connections {
-        target: CompositorService.backend
-        function onOverviewActiveChanged() {
-          if (CompositorService.backend.overviewActive) {
-            overviewIsSeen = true
-            timerDisableFx.stop()
-          } else {
-            timerDisableFx.restart()
-          }
-        }
-      }
-
-      // Use to disable effects when overview is no longer necessary.
-      Timer {
-        id: timerDisableFx
-        interval: 2000
-        onTriggered: {
-          overviewIsSeen = false
         }
       }
 
@@ -97,12 +75,11 @@ Loader {
         mipmap: false
         cache: false
         asynchronous: true
-        visible: overviewIsSeen
 
         // Image is heavily blurred, so use low resolution to save memory
         sourceSize: Qt.size(1280, 720)
 
-        layer.enabled: overviewIsSeen
+        layer.enabled: true
         layer.smooth: false
         layer.effect: MultiEffect {
           blurEnabled: true
