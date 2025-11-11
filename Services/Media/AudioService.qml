@@ -56,12 +56,19 @@ Singleton {
       if (isNaN(vol)) {
         return
       }
-      root._volume = vol
+      // Only update if the value actually changed to prevent spurious signals
+      if (Math.abs(root._volume - vol) > 0.001) {
+        root._volume = vol
+      }
     }
 
     function onMutedChanged() {
-      root._muted = (sink?.audio.muted ?? true)
-      Logger.i("AudioService", "OnMuteChanged:", root._muted)
+      var newMuted = (sink?.audio.muted ?? true)
+      // Only update if the value actually changed
+      if (root._muted !== newMuted) {
+        root._muted = newMuted
+        Logger.i("AudioService", "OnMuteChanged:", root._muted)
+      }
     }
   }
 
@@ -73,12 +80,19 @@ Singleton {
       if (isNaN(vol)) {
         return
       }
-      root._inputVolume = vol
+      // Only update if the value actually changed to prevent spurious signals
+      if (Math.abs(root._inputVolume - vol) > 0.001) {
+        root._inputVolume = vol
+      }
     }
 
     function onMutedChanged() {
-      root._inputMuted = (source?.audio.muted ?? true)
-      Logger.i("AudioService", "OnInputMuteChanged:", root._inputMuted)
+      var newMuted = (source?.audio.muted ?? true)
+      // Only update if the value actually changed
+      if (root._inputMuted !== newMuted) {
+        root._inputMuted = newMuted
+        Logger.i("AudioService", "OnInputMuteChanged:", root._inputMuted)
+      }
     }
   }
 
