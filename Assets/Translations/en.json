@@ -1555,8 +1555,8 @@
         "label": "Appearance"
       },
       "settings-panel-attached-to-bar": {
-        "description": "Keep the Settings window aligned with the bar for a unified look.",
-        "label": "Snap Settings window to bar"
+        "description": "Keep the settings window aligned with the bar for a unified look.",
+        "label": "Snap settings window to bar"
       },
       "shadows": {
         "description": "Enables drop shadows under bars and panels.",
