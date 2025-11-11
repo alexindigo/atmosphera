@@ -15,17 +15,26 @@ Rectangle {
 
   property ShellScreen screen
 
-  // Get shared tray menu window from MainScreen (via screen's parent MainScreen)
+  // Trigger re-evaluation when window is registered
+  property int trayMenuUpdateTrigger: 0
+
+  // Get shared tray menu window from PanelService (reactive to trigger changes)
   readonly property var trayMenuWindow: {
-    // Access via PanelService to get the MainScreen that contains the trayMenuWindow
-    if (!screen)
-      return null
-    // Get any panel from this screen to access its parent MainScreen
-    const drawerPanel = PanelService.getPanel("trayDrawerPanel", screen)
-    return drawerPanel?.trayMenuWindow || null
+    // Reference trigger to force re-evaluation
+    var _ = trayMenuUpdateTrigger
+    return PanelService.getTrayMenuWindow(screen)
   }
 
   readonly property var trayMenu: trayMenuWindow ? trayMenuWindow.trayMenuLoader : null
+
+  Connections {
+    target: PanelService
+    function onTrayMenuWindowRegistered(registeredScreen) {
+      if (registeredScreen === screen) {
+        root.trayMenuUpdateTrigger++
+      }
+    }
+  }
 
   // Widget properties passed from Bar.qml for per-instance settings
   property string widgetId: ""
@@ -310,7 +319,9 @@ Rectangle {
 
                          if (mouse.button === Qt.LeftButton) {
                            // Close any open menu first
-                           trayMenuWindow.close()
+                           if (trayMenuWindow) {
+                             trayMenuWindow.close()
+                           }
 
                            if (!modelData.onlyMenu) {
                              modelData.activate()
@@ -337,7 +348,7 @@ Rectangle {
                              drawerPanel.close()
                            }
 
-                           if (modelData.hasMenu && modelData.menu && trayMenu.item) {
+                           if (modelData.hasMenu && modelData.menu && trayMenuWindow && trayMenu && trayMenu.item) {
                              trayMenuWindow.open()
 
                              // Position menu based on bar position
@@ -365,7 +376,9 @@ Rectangle {
                          }
                        }
             onEntered: {
-              trayMenuWindow.close()
+              if (trayMenuWindow) {
+                trayMenuWindow.close()
+              }
               TooltipService.show(Screen, trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection())
             }
             onExited: TooltipService.hide()

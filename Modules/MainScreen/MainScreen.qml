@@ -44,7 +44,6 @@ PanelWindow {
   readonly property alias trayDrawerPanel: trayDrawerPanel
   readonly property alias wallpaperPanel: wallpaperPanel
   readonly property alias wifiPanel: wifiPanel
-  readonly property alias trayMenuWindow: trayMenuWindow
 
   Component.onCompleted: {
     Logger.d("MainScreen", "Initialized for screen:", screen?.name, "- Dimensions:", screen?.width, "x", screen?.height, "- Position:", screen?.x, ",", screen?.y)
@@ -286,7 +285,6 @@ PanelWindow {
     TrayDrawerPanel {
       id: trayDrawerPanel
       screen: root.screen
-      trayMenuWindow: root.trayMenuWindow
       z: 50
 
       Component.onCompleted: {
@@ -314,49 +312,6 @@ PanelWindow {
       Component.onCompleted: {
         objectName = "wifiPanel-" + (screen?.name || "unknown")
         PanelService.registerPanel(wifiPanel)
-      }
-    }
-
-    // ----------------------------------------------
-    // Shared TrayMenu window for context menus (used by both Tray widget and TrayDrawerPanel)
-    PanelWindow {
-      id: trayMenuWindow
-      anchors.top: true
-      anchors.left: true
-      anchors.right: true
-      anchors.bottom: true
-      visible: false
-      color: Color.transparent
-      screen: root.screen
-
-      // Expose the trayMenu Loader directly
-      readonly property alias trayMenuLoader: trayMenu
-
-      function open() {
-        visible = true
-      }
-
-      function close() {
-        visible = false
-        if (trayMenu.item) {
-          trayMenu.item.hideMenu()
-        }
-      }
-
-      MouseArea {
-        anchors.fill: parent
-        acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
-        onClicked: trayMenuWindow.close()
-      }
-
-      Loader {
-        id: trayMenu
-        source: "../Bar/Extras/TrayMenu.qml"
-        onLoaded: {
-          if (item) {
-            item.screen = root.screen
-          }
-        }
       }
     }
 

@@ -16,10 +16,31 @@ Singleton {
   signal willOpen
   signal didClose
 
+  // Tray menu windows (one per screen)
+  property var trayMenuWindows: ({})
+  signal trayMenuWindowRegistered(var screen)
+
   // Register this panel (called after panel is loaded)
   function registerPanel(panel) {
     registeredPanels[panel.objectName] = panel
     Logger.d("PanelService", "Registered panel:", panel.objectName)
+  }
+
+  // Register tray menu window for a screen
+  function registerTrayMenuWindow(screen, window) {
+    if (!screen || !window)
+      return
+    var key = screen.name
+    trayMenuWindows[key] = window
+    Logger.d("PanelService", "Registered tray menu window for screen:", key)
+    trayMenuWindowRegistered(screen)
+  }
+
+  // Get tray menu window for a screen
+  function getTrayMenuWindow(screen) {
+    if (!screen)
+      return null
+    return trayMenuWindows[screen.name] || null
   }
 
   // Returns a panel (loads it on-demand if not yet loaded)

@@ -12,9 +12,6 @@ import qs.Modules.MainScreen
 SmartPanel {
   id: root
 
-  // Shared tray menu window (set by MainScreen)
-  property var trayMenuWindow: null
-
   // Widget info for menu functionality
   property string widgetSection: ""
   property int widgetIndex: -1
@@ -99,8 +96,26 @@ SmartPanel {
     }
   }
 
-  // Get the trayMenu Loader from the shared window
+  // Trigger re-evaluation when window is registered
+  property int trayMenuUpdateTrigger: 0
+
+  // Get the trayMenu window and loader from PanelService (reactive to trigger changes)
+  readonly property var trayMenuWindow: {
+    // Reference trigger to force re-evaluation
+    var _ = trayMenuUpdateTrigger
+    return PanelService.getTrayMenuWindow(screen)
+  }
+
   readonly property var trayMenu: trayMenuWindow ? trayMenuWindow.trayMenuLoader : null
+
+  Connections {
+    target: PanelService
+    function onTrayMenuWindowRegistered(registeredScreen) {
+      if (registeredScreen === screen) {
+        root.trayMenuUpdateTrigger++
+      }
+    }
+  }
 
   panelContent: Item {
     id: content
@@ -176,7 +191,7 @@ SmartPanel {
                                return
                              }
 
-                             if (modelData.hasMenu && modelData.menu && trayMenu.item) {
+                             if (modelData.hasMenu && modelData.menu && trayMenuWindow && trayMenu && trayMenu.item) {
                                trayMenuWindow.open()
 
                                // Position menu at the tray icon
@@ -211,7 +226,9 @@ SmartPanel {
                        }
 
               onEntered: {
-                trayMenuWindow.close()
+                if (trayMenuWindow) {
+                  trayMenuWindow.close()
+                }
                 TooltipService.show(Screen, trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection())
               }
               onExited: TooltipService.hide()
