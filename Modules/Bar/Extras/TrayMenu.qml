@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import qs.Commons
+import qs.Services.UI
 import qs.Widgets
 
 PopupWindow {
@@ -379,6 +380,13 @@ PopupWindow {
     widgets[widgetIndex] = newSettings
     Settings.data.bar.widgets[widgetSection] = widgets
     Settings.saveImmediate()
+
+    // Close drawer when pinning (drawer needs to resize)
+    if (screen) {
+      const panel = PanelService.getPanel("trayDrawerPanel", screen)
+      if (panel)
+        panel.close()
+    }
   }
 
   function removeFromPinned() {
