@@ -108,7 +108,7 @@ PopupWindow {
   }
 
   // Function to show tooltip
-  function show(screen, target, tipText, customDirection, showDelay) {
+  function show(screen, target, tipText, customDirection, showDelay, fontFamily) {
     if (!screen || !target || !tipText || tipText === "")
       return
 
@@ -138,6 +138,8 @@ PopupWindow {
     } else {
       direction = "auto"
     }
+
+    tooltipText.family = fontFamily ? fontFamily : Settings.data.ui.fontDefault
 
     // Start show timer
     showTimer.start()
@@ -404,6 +406,7 @@ PopupWindow {
         anchors.margins: root.padding
         text: root.text
         pointSize: Style.fontSizeS
+        family: Settings.data.ui.fontFixed
         color: Color.mOnSurfaceVariant
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
