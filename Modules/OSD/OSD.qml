@@ -511,11 +511,17 @@ Variants {
         if (!inputAudioInitialized) {
           return
         }
+        if (!AudioService.hasInput) {
+          return
+        }
         showOSD("inputVolume")
       }
 
       function onInputMutedChanged() {
         if (!inputAudioInitialized) {
+          return
+        }
+        if (!AudioService.hasInput) {
           return
         }
         showOSD("inputVolume")

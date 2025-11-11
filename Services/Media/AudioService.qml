@@ -24,7 +24,11 @@ Singleton {
                                                             })
 
   readonly property PwNode sink: Pipewire.defaultAudioSink
-  readonly property PwNode source: Pipewire.defaultAudioSource
+  readonly property PwNode rawSource: Pipewire.defaultAudioSource
+  readonly property PwNode source: (rawSource && !rawSource.isSink && (!rawSource.mediaClass || rawSource.mediaClass.startsWith("Audio/Source"))) ? rawSource : null
+  readonly property bool hasInput: !!source
+  Component.onCompleted: updateInputVolume()
+
   readonly property list<PwNode> sinks: nodes.sinks
   readonly property list<PwNode> sources: nodes.sources
 
@@ -37,12 +41,32 @@ Singleton {
 
   // Input volume [0..1] is readonly from outside
   readonly property alias inputVolume: root._inputVolume
-  property real _inputVolume: source?.audio?.volume ?? 0
+  property real _inputVolume: 0
 
   readonly property alias inputMuted: root._inputMuted
   property bool _inputMuted: !!source?.audio?.muted
 
   readonly property real stepVolume: Settings.data.audio.volumeStep / 100.0
+
+  function updateInputVolume() {
+    if (source && source.audio) {
+      var vol = source.audio.volume
+      if (vol !== undefined && !isNaN(vol)) {
+        root._inputVolume = vol
+      } else {
+        root._inputVolume = 0
+      }
+      root._inputMuted = !!source.audio.muted
+    } else {
+      root._inputVolume = 0
+      root._inputMuted = true
+    }
+  }
+
+  // Update input volume when source property changes
+  onSourceChanged: {
+    updateInputVolume()
+  }
 
   PwObjectTracker {
     objects: [...root.sinks, ...root.sources]
@@ -76,8 +100,9 @@ Singleton {
     target: source?.audio ? source?.audio : null
 
     function onVolumeChanged() {
-      var vol = (source?.audio.volume ?? 0)
-      if (isNaN(vol)) {
+      var vol = source?.audio?.volume
+      if (vol === undefined || isNaN(vol)) {
+        root._inputVolume = 0
         return
       }
       // Only update if the value actually changed to prevent spurious signals
@@ -91,8 +116,16 @@ Singleton {
       // Only update if the value actually changed
       if (root._inputMuted !== newMuted) {
         root._inputMuted = newMuted
-        Logger.i("AudioService", "OnInputMuteChanged:", root._inputMuted)
       }
+    }
+  }
+  Connections {
+    target: Pipewire
+
+    function onDefaultAudioSinkChanged() {}
+
+    function onDefaultAudioSourceChanged() {
+      updateInputVolume()
     }
   }
 
@@ -158,9 +191,8 @@ Singleton {
 
   function setAudioSource(newSource: PwNode): void {
     Pipewire.preferredDefaultAudioSource = newSource
-    // Volume is changed by the source change
-    root._inputVolume = newSource?.audio?.volume ?? 0
-    root._inputMuted = !!newSource?.audio?.muted
+    // The source property will update automatically, which triggers onSourceChanged
+    // which calls updateInputVolume()
   }
 
   function getOutputIcon() {
