@@ -341,7 +341,7 @@ Item {
     }
 
     function seekRelative(offset: string) {
-      var offsetVal = parseFloat(position)
+      var offsetVal = parseFloat(offset)
       if (Number.isNaN(offsetVal)) {
         Logger.w("Media", "Argument to ipc call 'media seekRelative' must be a number")
         return

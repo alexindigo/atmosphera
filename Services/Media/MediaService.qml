@@ -250,6 +250,15 @@ Singleton {
     }
   }
 
+  function seekRelative(offset) {
+    let target = currentPlayer ? (currentPlayer._controlTarget || currentPlayer) : null
+    if (target && target.canSeek && target.length > 0) {
+      let seekPosition = target.position + offset
+      target.position = seekPosition
+      currentPosition = seekPosition
+    }
+  }
+
   // Seek to position based on ratio (0.0 to 1.0)
   function seekByRatio(ratio) {
     let target = currentPlayer ? (currentPlayer._controlTarget || currentPlayer) : null
