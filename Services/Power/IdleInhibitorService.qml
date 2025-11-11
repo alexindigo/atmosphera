@@ -187,25 +187,25 @@ Singleton {
   function changeTimeout(delta) {
     if (timeout == null && delta < 0) {
       // no inhibitor, ignored
-      return;
+      return
     }
 
     if (timeout == null && delta > 0) {
       // enable manual inhibitor and set timeout
-      addManualInhibitor(timeout + delta);
-      return;
+      addManualInhibitor(timeout + delta)
+      return
     }
 
     if (timeout + delta <= 0) {
       // disable manual inhibitor
-      removeManualInhibitor();
-      return;
+      removeManualInhibitor()
+      return
     }
 
     if (timeout + delta > 0) {
       // change timeout
-      addManualInhibitor(timeout + delta);
-      return;
+      addManualInhibitor(timeout + delta)
+      return
     }
   }
 
@@ -219,11 +219,7 @@ Singleton {
 
     if (activeInhibitors.includes("manual")) {
       removeInhibitor("manual")
-      ToastService.showNotice(
-        I18n.tr("tooltips.keep-awake"),
-        I18n.tr("toast.keep-awake.disabled"),
-        "keep-awake-off"
-      )
+      ToastService.showNotice(I18n.tr("tooltips.keep-awake"), I18n.tr("toast.keep-awake.disabled"), "keep-awake-off")
       Logger.i("IdleInhibitor", "Manual inhibition disabled")
     }
   }
@@ -231,11 +227,7 @@ Singleton {
   function addManualInhibitor(timeoutSec) {
     if (!activeInhibitors.includes("manual")) {
       addInhibitor("manual", "Manually activated by user")
-      ToastService.showNotice(
-        I18n.tr("tooltips.keep-awake"),
-        I18n.tr("toast.keep-awake.enabled"),
-        "keep-awake-on"
-      )
+      ToastService.showNotice(I18n.tr("tooltips.keep-awake"), I18n.tr("toast.keep-awake.enabled"), "keep-awake-on")
     }
 
     if (timeoutSec === null && timeout === null) {
@@ -257,8 +249,6 @@ Singleton {
       return
     }
   }
-
-
 
   // Clean up on shutdown
   Component.onDestruction: {

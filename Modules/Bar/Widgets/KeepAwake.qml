@@ -37,15 +37,12 @@ Item {
   BarPill {
     id: pill
 
-    text: IdleInhibitorService.timeout == null ? "" :
-      Time.formatVagueHumanReadableDuration(IdleInhibitorService.timeout)
+    text: IdleInhibitorService.timeout == null ? "" : Time.formatVagueHumanReadableDuration(IdleInhibitorService.timeout)
 
     density: Settings.data.bar.density
     oppositeDirection: BarService.getPillDirection(root)
     icon: IdleInhibitorService.isInhibited ? "keep-awake-on" : "keep-awake-off"
-    tooltipText: IdleInhibitorService.isInhibited ?
-      I18n.tr("tooltips.disable-keep-awake") :
-      I18n.tr("tooltips.enable-keep-awake")
+    tooltipText: IdleInhibitorService.isInhibited ? I18n.tr("tooltips.disable-keep-awake") : I18n.tr("tooltips.enable-keep-awake")
     onClicked: IdleInhibitorService.manualToggle()
     forceOpen: IdleInhibitorService.timeout !== null
     forceClose: IdleInhibitorService.timeout == null
@@ -54,7 +51,7 @@ Item {
       // the offset makes scrolling down feel symmetrical to scrolling up
       var timeout = IdleInhibitorService.timeout - (delta < 0 ? 60 : 0)
       if (timeout == null || timeout < 600) {
-        delta = 60  // <= 10m, increment at 1m interval
+        delta = 60 // <= 10m, increment at 1m interval
       } else if (timeout >= 600 && timeout < 1800) {
         delta = 300 // >= 10m, increment at 5m interval
       } else if (timeout >= 1800 && timeout < 3600) {
