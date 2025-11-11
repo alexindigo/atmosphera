@@ -84,6 +84,21 @@ PanelWindow {
     }
   }
 
+  // Check if bar should be visible on this screen
+  readonly property bool barShouldShow: {
+    // Check global bar visibility
+    if (!BarService.isVisible)
+      return false
+
+    // Check screen-specific configuration
+    var monitors = Settings.data.bar.monitors || []
+    var screenName = screen?.name || ""
+
+    // If no monitors specified, show on all screens
+    // If monitors specified, only show if this screen is in the list
+    return monitors.length === 0 || monitors.includes(screenName)
+  }
+
   // Fully reactive mask system, make everything click-through except bar and open panels
   mask: Region {
     id: clickableMask
@@ -95,17 +110,19 @@ PanelWindow {
     height: root.height
     intersection: Intersection.Xor
 
-    // Direct binding to Variants.instances plus additional regions
-    regions: panelRegions.instances.concat([barMaskRegion, backgroundMaskRegion])
+    // Only include regions that are actually needed
+    // panelRegions is handled by PanelService, bar is local to this screen
+    regions: [barMaskRegion, backgroundMaskRegion]
 
-    // Bar region - subtract bar area from mask
+    // Bar region - subtract bar area from mask (only if bar should be shown on this screen)
     Region {
       id: barMaskRegion
 
       x: barPlaceholder.x
       y: barPlaceholder.y
-      width: barPlaceholder.width
-      height: barPlaceholder.height
+      // Set width/height to 0 if bar shouldn't show on this screen (makes region empty)
+      width: root.barShouldShow ? barPlaceholder.width : 0
+      height: root.barShouldShow ? barPlaceholder.height : 0
       intersection: Intersection.Subtract
     }
 
@@ -120,6 +137,7 @@ PanelWindow {
     }
   }
 
+  // --------------------------------------
   // Container for all UI elements
   Item {
     id: container
