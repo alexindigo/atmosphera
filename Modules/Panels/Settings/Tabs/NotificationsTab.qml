@@ -137,6 +137,11 @@ ColumnLayout {
         description: I18n.tr("settings.notifications.duration.low-urgency.description")
       }
 
+      RowLayout {
+        spacing: Style.marginL
+	Layout.fillWidth: true
+
+
       NValueSlider {
         Layout.fillWidth: true
         from: 1
@@ -146,7 +151,22 @@ ColumnLayout {
         onMoved: value => Settings.data.notifications.lowUrgencyDuration = value
         text: Settings.data.notifications.lowUrgencyDuration + "s"
       }
-    }
+	// Reset button container
+        Item {
+          Layout.preferredWidth: 30 * Style.uiScaleRatio
+          Layout.preferredHeight: 30 * Style.uiScaleRatio
+
+          NIconButton {
+            icon: "refresh"
+            baseSize: Style.baseWidgetSize * 0.8
+            tooltipText: I18n.tr("settings.notifications.duration.reset")
+            onClicked: Settings.data.notifications.lowUrgencyDuration = 3
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+          }
+        }
+      }
+    }    
 
     // Normal Urgency Duration
     ColumnLayout {
@@ -158,6 +178,10 @@ ColumnLayout {
         description: I18n.tr("settings.notifications.duration.normal-urgency.description")
       }
 
+      RowLayout {
+        spacing: Style.marginL
+	Layout.fillWidth: true
+
       NValueSlider {
         Layout.fillWidth: true
         from: 1
@@ -167,6 +191,22 @@ ColumnLayout {
         onMoved: value => Settings.data.notifications.normalUrgencyDuration = value
         text: Settings.data.notifications.normalUrgencyDuration + "s"
       }
+	
+	// Reset button container
+        Item {
+          Layout.preferredWidth: 30 * Style.uiScaleRatio
+          Layout.preferredHeight: 30 * Style.uiScaleRatio
+
+          NIconButton {
+            icon: "refresh"
+            baseSize: Style.baseWidgetSize * 0.8
+            tooltipText: I18n.tr("settings.notifications.duration.reset")
+            onClicked: Settings.data.notifications.normalUrgencyDuration = 8
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+          }
+        }
+      }   
     }
 
     // Critical Urgency Duration
@@ -179,6 +219,10 @@ ColumnLayout {
         description: I18n.tr("settings.notifications.duration.critical-urgency.description")
       }
 
+      RowLayout {
+        spacing: Style.marginL
+	Layout.fillWidth: true
+
       NValueSlider {
         Layout.fillWidth: true
         from: 1
@@ -188,8 +232,23 @@ ColumnLayout {
         onMoved: value => Settings.data.notifications.criticalUrgencyDuration = value
         text: Settings.data.notifications.criticalUrgencyDuration + "s"
       }
-    }
+        // Reset button container
+        Item {
+          Layout.preferredWidth: 30 * Style.uiScaleRatio
+          Layout.preferredHeight: 30 * Style.uiScaleRatio
 
+          NIconButton {
+            icon: "refresh"
+            baseSize: Style.baseWidgetSize * 0.8
+            tooltipText: I18n.tr("settings.notifications.duration.reset")
+            onClicked: Settings.data.notifications.criticalUrgencyDuration = 15
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+          }
+        }
+      }
+    }
+    
     NDivider {
       Layout.fillWidth: true
       Layout.topMargin: Style.marginL

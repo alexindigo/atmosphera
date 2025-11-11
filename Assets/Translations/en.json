@@ -1378,6 +1378,7 @@
           "description": "Use the expire timeout set in the notification.",
           "label": "Respect expire timeout"
         },
+	"reset": "Reset timeout duration",
         "section": {
           "description": "Configure how long notifications stay visible based on their urgency level.",
           "label": "Notification duration"
