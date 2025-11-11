@@ -39,23 +39,15 @@ SmartPanel {
     }
   }
 
-  // Debounce timers to avoid forcing PipeWire volume on startup
+  // Timer to debounce volume changes
   Timer {
-    id: outputDebounceTimer
     interval: 100
-    repeat: false
+    running: true
+    repeat: true
     onTriggered: {
       if (Math.abs(localOutputVolume - AudioService.volume) >= 0.01) {
         AudioService.setVolume(localOutputVolume)
       }
-    }
-  }
-
-  Timer {
-    id: inputDebounceTimer
-    interval: 100
-    repeat: false
-    onTriggered: {
       if (Math.abs(localInputVolume - AudioService.inputVolume) >= 0.01) {
         AudioService.setInputVolume(localInputVolume)
       }
@@ -172,16 +164,8 @@ SmartPanel {
                 value: localOutputVolume
                 stepSize: 0.01
                 heightRatio: 0.5
-                onMoved: value => {
-                           localOutputVolume = value
-                           outputDebounceTimer.restart()
-                         }
-                onPressedChanged: (pressed, value) => {
-                                    localOutputVolumeChanging = pressed
-                                    if (!pressed) {
-                                      outputDebounceTimer.restart()
-                                    }
-                                  }
+                onMoved: value => localOutputVolume = value
+                onPressedChanged: (pressed, value) => localOutputVolumeChanging = pressed
                 text: Math.round(localOutputVolume * 100) + "%"
                 Layout.bottomMargin: Style.marginM
               }
@@ -237,16 +221,8 @@ SmartPanel {
                 value: localInputVolume
                 stepSize: 0.01
                 heightRatio: 0.5
-                onMoved: value => {
-                           localInputVolume = value
-                           inputDebounceTimer.restart()
-                         }
-                onPressedChanged: (pressed, value) => {
-                                    localInputVolumeChanging = pressed
-                                    if (!pressed) {
-                                      inputDebounceTimer.restart()
-                                    }
-                                  }
+                onMoved: value => localInputVolume = value
+                onPressedChanged: (pressed, value) => localInputVolumeChanging = pressed
                 text: Math.round(localInputVolume * 100) + "%"
                 Layout.bottomMargin: Style.marginM
               }
