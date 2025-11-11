@@ -52,6 +52,14 @@ Rectangle {
   readonly property int memTextWidth: Math.ceil(memMetrics.boundingRect.width + 3)
   readonly property color textColor: usePrimaryColor ? Color.mPrimary : Color.mOnSurface
 
+  // Warning threshold calculation properties
+  readonly property bool cpuWarning: showCpuUsage && SystemStatService.cpuUsage > 80
+  readonly property bool cpuCritical: showCpuUsage && SystemStatService.cpuUsage > 90
+  readonly property bool tempWarning: showCpuTemp && SystemStatService.cpuTemp > 80
+  readonly property bool tempCritical: showCpuTemp && SystemStatService.cpuTemp > 90
+  readonly property bool memWarning: showMemoryUsage && SystemStatService.memPercent > 80
+  readonly property bool memCritical: showMemoryUsage && SystemStatService.memPercent > 90
+
   TextMetrics {
     id: percentMetrics
     font.family: Settings.data.ui.fontFixed
@@ -82,6 +90,38 @@ Rectangle {
   radius: Style.radiusM
   color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
 
+  // Status indicator component definition
+  Component {
+    id: statusIndicatorComponent
+
+    Rectangle {
+      id: statusIndicator
+      property bool warning: false
+      property bool critical: false
+      property int indicatorWidth: Style.capsuleHeight
+      
+      width: isVertical ? Math.max(0, indicatorWidth - Style.marginS * 2) : Math.max(0, indicatorWidth + Style.marginXS * 2)
+      height: isVertical ? Math.max(0, Style.capsuleHeight + Style.marginXS * 2) : Math.max(0, Style.capsuleHeight - Style.marginS * 2)
+      radius: Math.min(width, height) / 2
+      color: critical ? Color.mError : Color.mPrimary
+      scale: (warning || critical) ? 1.0 : 0.0
+      opacity: (warning || critical) ? 1.0 : 0.0
+
+      // Smooth appearance/disappearance animation
+      Behavior on scale {
+        NumberAnimation { duration: Style.animationNormal; easing.type: Easing.OutCubic }
+      }
+
+      Behavior on opacity {
+        NumberAnimation { duration: Style.animationNormal; easing.type: Easing.OutCubic }
+      }
+
+      Behavior on color {
+        ColorAnimation { duration: Style.animationNormal; easing.type: Easing.OutCubic }
+      }
+    }
+  }
+
   GridLayout {
     id: mainGrid
     anchors.centerIn: parent
@@ -93,10 +133,23 @@ Rectangle {
 
     // CPU Usage Component
     Item {
+      id: cpuUsageContainer
       Layout.preferredWidth: isVertical ? root.width : iconSize + percentTextWidth + (Style.marginXXS)
       Layout.preferredHeight: Style.capsuleHeight
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
       visible: showCpuUsage
+
+      // Status indicator covering the entire component
+      Loader {
+        sourceComponent: statusIndicatorComponent
+        anchors.centerIn: parent
+
+        onLoaded: {
+          item.warning = Qt.binding(() => cpuWarning)
+          item.critical = Qt.binding(() => cpuCritical)
+          item.indicatorWidth = Qt.binding(() => cpuUsageContainer.width)
+        }
+      }
 
       GridLayout {
         id: cpuUsageContent
@@ -107,13 +160,21 @@ Rectangle {
         rowSpacing: Style.marginXXS
         columnSpacing: Style.marginXXS
 
-        NIcon {
-          icon: "cpu-usage"
-          pointSize: iconSize
-          applyUiScale: false
+        Item {
           Layout.alignment: Qt.AlignCenter
           Layout.row: isVertical ? 1 : 0
           Layout.column: 0
+          implicitWidth: iconSize
+          implicitHeight: iconSize
+
+          NIcon {
+            icon: "cpu-usage"
+            pointSize: iconSize
+            applyUiScale: false
+            anchors.centerIn: parent
+            // Invert color to bar background when indicator active
+            color: (cpuWarning || cpuCritical) ? Color.mSurfaceVariant : textColor
+          }
         }
 
         NText {
@@ -133,7 +194,8 @@ Rectangle {
           Layout.preferredWidth: isVertical ? -1 : percentTextWidth
           horizontalAlignment: isVertical ? Text.AlignHCenter : Text.AlignRight
           verticalAlignment: Text.AlignVCenter
-          color: textColor
+          // Invert text color to bar background when indicator active
+          color: (cpuWarning || cpuCritical) ? Color.mSurfaceVariant : textColor
           Layout.row: isVertical ? 0 : 0
           Layout.column: isVertical ? 0 : 1
           scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
@@ -143,10 +205,23 @@ Rectangle {
 
     // CPU Temperature Component
     Item {
+      id: cpuTempContainer
       Layout.preferredWidth: isVertical ? root.width : (iconSize + tempTextWidth) + (Style.marginXXS)
       Layout.preferredHeight: Style.capsuleHeight
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
       visible: showCpuTemp
+
+      // Status indicator covering the entire component
+      Loader {
+        sourceComponent: statusIndicatorComponent
+        anchors.centerIn: parent
+
+        onLoaded: {
+          item.warning = Qt.binding(() => tempWarning)
+          item.critical = Qt.binding(() => tempCritical)
+          item.indicatorWidth = Qt.binding(() => cpuTempContainer.width)
+        }
+      }
 
       GridLayout {
         id: cpuTempContent
@@ -157,13 +232,21 @@ Rectangle {
         rowSpacing: Style.marginXXS
         columnSpacing: Style.marginXXS
 
-        NIcon {
-          icon: "cpu-temperature"
-          pointSize: iconSize
-          applyUiScale: false
+        Item {
           Layout.alignment: Qt.AlignCenter
           Layout.row: isVertical ? 1 : 0
           Layout.column: 0
+          implicitWidth: iconSize
+          implicitHeight: iconSize
+
+          NIcon {
+            icon: "cpu-temperature"
+            pointSize: iconSize
+            applyUiScale: false
+            anchors.centerIn: parent
+            // Invert color when temp indicator active
+            color: (tempWarning || tempCritical) ? Color.mSurfaceVariant : textColor
+          }
         }
 
         NText {
@@ -176,7 +259,8 @@ Rectangle {
           Layout.preferredWidth: isVertical ? -1 : tempTextWidth
           horizontalAlignment: isVertical ? Text.AlignHCenter : Text.AlignRight
           verticalAlignment: Text.AlignVCenter
-          color: textColor
+          // Invert text color to bar background when temp indicator active
+          color: (tempWarning || tempCritical) ? Color.mSurfaceVariant : textColor
           Layout.row: isVertical ? 0 : 0
           Layout.column: isVertical ? 0 : 1
           scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
@@ -186,10 +270,23 @@ Rectangle {
 
     // Memory Usage Component
     Item {
+      id: memoryContainer
       Layout.preferredWidth: isVertical ? root.width : iconSize + (showMemoryAsPercent ? percentTextWidth : memTextWidth) + (Style.marginXXS)
       Layout.preferredHeight: Style.capsuleHeight
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
       visible: showMemoryUsage
+
+      // Status indicator covering the entire component
+      Loader {
+        sourceComponent: statusIndicatorComponent
+        anchors.centerIn: parent
+
+        onLoaded: {
+          item.warning = Qt.binding(() => memWarning)
+          item.critical = Qt.binding(() => memCritical)
+          item.indicatorWidth = Qt.binding(() => memoryContainer.width)
+        }
+      }
 
       GridLayout {
         id: memoryContent
@@ -200,13 +297,23 @@ Rectangle {
         rowSpacing: Style.marginXXS
         columnSpacing: Style.marginXXS
 
-        NIcon {
-          icon: "memory"
-          pointSize: iconSize
-          applyUiScale: false
+        Item {
           Layout.alignment: Qt.AlignCenter
           Layout.row: isVertical ? 1 : 0
           Layout.column: 0
+          implicitWidth: iconSize
+          implicitHeight: iconSize
+
+          NIcon {
+            icon: "memory"
+            pointSize: iconSize
+            applyUiScale: false
+            anchors.centerIn: parent
+            // Invert color when memory indicator active
+            color: (memWarning || memCritical) ? Color.mSurfaceVariant : textColor
+          }
+
+
         }
 
         NText {
@@ -219,7 +326,8 @@ Rectangle {
           Layout.preferredWidth: isVertical ? -1 : (showMemoryAsPercent ? percentTextWidth : memTextWidth)
           horizontalAlignment: isVertical ? Text.AlignHCenter : Text.AlignRight
           verticalAlignment: Text.AlignVCenter
-          color: textColor
+          // Invert text color to bar background when memory indicator active
+          color: (memWarning || memCritical) ? Color.mSurfaceVariant : textColor
           Layout.row: isVertical ? 0 : 0
           Layout.column: isVertical ? 0 : 1
           scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
