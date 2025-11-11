@@ -423,10 +423,23 @@ Rectangle {
 
     // Disk Usage Component (primary drive)
     Item {
+      id: diskContainer
       Layout.preferredWidth: isVertical ? root.width : iconSize + percentTextWidth + (Style.marginXXS)
       Layout.preferredHeight: Style.capsuleHeight
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
       visible: showDiskUsage
+
+      // Status indicator covering the entire component
+      Loader {
+        sourceComponent: statusIndicatorComponent
+        anchors.centerIn: parent
+
+        onLoaded: {
+          item.warning = Qt.binding(() => diskWarning)
+          item.critical = Qt.binding(() => diskCritical)
+          item.indicatorWidth = Qt.binding(() => diskContainer.width)
+        }
+      }
 
       GridLayout {
         id: diskContent
@@ -444,6 +457,8 @@ Rectangle {
           Layout.alignment: Qt.AlignCenter
           Layout.row: isVertical ? 1 : 0
           Layout.column: 0
+          // Invert color when disk indicator active
+          color: (diskWarning || diskCritical) ? Color.mSurfaceVariant : textColor
         }
 
         NText {
@@ -456,7 +471,8 @@ Rectangle {
           Layout.preferredWidth: isVertical ? -1 : percentTextWidth
           horizontalAlignment: isVertical ? Text.AlignHCenter : Text.AlignRight
           verticalAlignment: Text.AlignVCenter
-          color: textColor
+          // Invert text color to bar background when disk indicator active
+          color: (diskWarning || diskCritical) ? Color.mSurfaceVariant : textColor
           Layout.row: isVertical ? 0 : 0
           Layout.column: isVertical ? 0 : 1
           scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
