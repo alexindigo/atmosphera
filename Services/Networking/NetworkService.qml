@@ -18,8 +18,6 @@ Singleton {
   property bool ethernetConnected: false
   property string disconnectingFrom: ""
   property string forgettingNetwork: ""
-  property string internetConnectivity: "unknown"
-
   property bool ignoreScanResults: false
   property bool scanPending: false
 
@@ -98,16 +96,6 @@ Singleton {
     running: true
     repeat: true
     onTriggered: ethernetStateProcess.running = true
-  }
-
-  // Internet connectivity check timer
-  // Always running every 10s
-  Timer {
-    id: connectivityCheckTimer
-    interval: 10000
-    running: true
-    repeat: true
-    onTriggered: connectivityCheckProcess.running = true
   }
 
   // Core functions
@@ -223,8 +211,6 @@ Singleton {
 
   // Helper functions
   function signalIcon(signal, isConnected = false) {
-    if (isConnected && (root.internetConnectivity === "limited" || root.internetConnectivity === "portal"))
-      return "world-off"
     if (signal >= 80)
       return "wifi"
     if (signal >= 50)
@@ -294,37 +280,6 @@ Singleton {
       onStreamFinished: {
         if (text.trim()) {
           Logger.w("Network", "Error changing Wi-Fi state: " + text)
-        }
-      }
-    }
-  }
-
-  // Process to check the internet connectivity
-  Process {
-    id: connectivityCheckProcess
-    running: false
-    command: ["nmcli", "networking", "connectivity"]
-
-    stdout: StdioCollector {
-      onStreamFinished: {
-        const result = text.trim()
-        if (result && result !== root.internetConnectivity) {
-          root.internetConnectivity = result
-          Logger.i("Network", "Internet connectivity:", result)
-
-          if (result === "limited" || result === "portal") {
-            ToastService.showWarning(cachedLastConnected, I18n.tr("toast.internet.limited"))
-          } else {
-            scan()
-          }
-        }
-      }
-    }
-
-    stderr: StdioCollector {
-      onStreamFinished: {
-        if (text.trim()) {
-          Logger.w("Network", "Connectivity check error: " + text)
         }
       }
     }
