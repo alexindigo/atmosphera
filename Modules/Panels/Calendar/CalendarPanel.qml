@@ -30,6 +30,14 @@ SmartPanel {
     return weekNumber
   }
 
+  // Helper function to check if an event is all-day
+  function isAllDayEvent(event) {
+    const duration = event.end - event.start
+    const startDate = new Date(event.start * 1000)
+    const isAtMidnight = startDate.getHours() === 0 && startDate.getMinutes() === 0
+    return duration === 86400 && isAtMidnight
+  }
+
   panelContent: Item {
     anchors.fill: parent
 
@@ -362,14 +370,6 @@ SmartPanel {
                                                    })
             }
 
-            // Helper function to check if an event is all-day
-            function isAllDayEvent(event) {
-              const duration = event.end - event.start
-              const startDate = new Date(event.start * 1000)
-              const isAtMidnight = startDate.getHours() === 0 && startDate.getMinutes() === 0
-              return duration === 86400 && isAtMidnight
-            }
-
             // Helper function to check if an event is multi-day
             function isMultiDayEvent(event) {
               if (isAllDayEvent(event)) {
@@ -603,7 +603,17 @@ SmartPanel {
                       onEntered: {
                         const events = parent.parent.parent.parent.getEventsForDate(modelData.year, modelData.month, modelData.day)
                         if (events.length > 0) {
-                          const summaries = events.map(e => e.summary).join('\n')
+                          const summaries = events.map(event => {
+                            if (isAllDayEvent(event)) {
+                              return event.summary
+                            } else {
+                              const start = new Date(event.start * 1000)
+                              const startFormatted = I18n.locale.toString(start, "HH:mm").split("\\n")
+                              const end = new Date(event.end * 1000)
+                              const endFormatted = I18n.locale.toString(end, "HH:mm").split("\\n")
+                              return `${startFormatted}-${endFormatted} ${event.summary}`
+                            }
+                          }).join('\n')
                           TooltipService.show(Screen, parent, summaries)
                           TooltipService.updateText(summaries)
                         }
