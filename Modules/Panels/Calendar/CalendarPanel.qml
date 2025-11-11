@@ -608,9 +608,9 @@ SmartPanel {
                               return event.summary
                             } else {
                               const start = new Date(event.start * 1000)
-                              const startFormatted = I18n.locale.toString(start, "HH:mm").split("\\n")
+                              const startFormatted = start.toLocaleTimeString(I18n.locale, Locale.ShortFormat)
                               const end = new Date(event.end * 1000)
-                              const endFormatted = I18n.locale.toString(end, "HH:mm").split("\\n")
+                              const endFormatted = end.toLocaleTimeString(I18n.locale, Locale.ShortFormat)
                               return `${startFormatted}-${endFormatted} ${event.summary}`
                             }
                           }).join('\n')
