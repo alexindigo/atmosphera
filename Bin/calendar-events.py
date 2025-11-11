@@ -3,12 +3,13 @@ import gi
 
 gi.require_version('EDataServer', '1.2')
 gi.require_version('ECal', '2.0')
+gi.require_version('ICalGLib', "3.0")
 import json
 import sys
 import time
 from datetime import datetime, timezone
 
-from gi.repository import ECal, EDataServer
+from gi.repository import ECal, EDataServer, ICalGLib
 
 start_time = int(sys.argv[1])
 end_time = int(sys.argv[2])
@@ -23,6 +24,10 @@ def safe_get_time(ical_time):
         return None
 
     try:
+        # Later we use `tzinfo=timezone.utc`, so we set all calendar events to UTC
+        if not ical_time.is_utc():
+            ical_time = ical_time.convert_to_zone(ICalGLib.Timezone.get_utc_timezone())
+
         year = ical_time.get_year()
         month = ical_time.get_month()
         day = ical_time.get_day()
