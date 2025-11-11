@@ -2,7 +2,9 @@ import QtQuick
 import QtQuick.Effects
 import Quickshell
 import Quickshell.Wayland
+
 import qs.Commons
+import qs.Services.Compositor
 import qs.Services.UI
 import "Backgrounds" as Backgrounds
 
@@ -50,13 +52,20 @@ PanelWindow {
   }
 
   // Wayland
-  // Always use Exclusive keyboard focus when a panel is open
-  // This ensures all keyboard shortcuts work reliably (Escape, etc.)
-  // The centralized shortcuts in this window handle delegation to panels
-  WlrLayershell.keyboardFocus: root.isPanelOpen ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
   WlrLayershell.layer: WlrLayer.Top
   WlrLayershell.namespace: "noctalia-screen-" + (screen?.name || "unknown")
   WlrLayershell.exclusionMode: ExclusionMode.Ignore // Don't reserve space - BarExclusionZone handles that
+
+  // Different compositor handle the keyboard focus differently (inc. mouse)
+  // This ensures all keyboard shortcuts work reliably (Escape, etc.)
+  // Also ensures that the launcher get proper focus on launch.
+  WlrLayershell.keyboardFocus: {
+    if (CompositorService.isNiri) {
+      return root.isPanelOpen ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
+    } else {
+      return root.isPanelOpen ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
+    }
+  }
 
   anchors {
     top: true

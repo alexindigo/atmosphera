@@ -20,7 +20,7 @@ NIconButton {
   colorFg: Color.mOnSurface
   colorBorder: Color.transparent
   colorBorderHover: Color.transparent
-    onClicked: {
+  onClicked: {
     var wallpaperPanel = PanelService.getPanel("wallpaperPanel", screen)
     if (Settings.data.wallpaper.panelPosition === "follow_bar") {
       wallpaperPanel?.toggle(this)
