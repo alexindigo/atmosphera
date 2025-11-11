@@ -15,15 +15,23 @@ NBox {
   property real localInputVolume: AudioService.inputVolume || 0
   property bool localInputVolumeChanging: false
 
-  // Timer to debounce volume changes
+  // Debounce timers to avoid spamming PipeWire on startup/idle
   Timer {
+    id: outputDebounceTimer
     interval: 100
-    running: true
-    repeat: true
+    repeat: false
     onTriggered: {
       if (Math.abs(localOutputVolume - AudioService.volume) >= 0.01) {
         AudioService.setVolume(localOutputVolume)
       }
+    }
+  }
+
+  Timer {
+    id: inputDebounceTimer
+    interval: 100
+    repeat: false
+    onTriggered: {
       if (Math.abs(localInputVolume - AudioService.inputVolume) >= 0.01) {
         AudioService.setInputVolume(localInputVolume)
       }
@@ -99,8 +107,16 @@ NBox {
         value: localOutputVolume
         stepSize: 0.01
         heightRatio: 0.5
-        onMoved: localOutputVolume = value
-        onPressedChanged: localOutputVolumeChanging = pressed
+        onMoved: {
+          localOutputVolume = value
+          outputDebounceTimer.restart()
+        }
+        onPressedChanged: {
+          localOutputVolumeChanging = pressed
+          if (!pressed) {
+            outputDebounceTimer.restart()
+          }
+        }
         tooltipText: `${Math.round(localOutputVolume * 100)}%`
         tooltipDirection: "bottom"
       }
@@ -147,8 +163,16 @@ NBox {
         value: localInputVolume
         stepSize: 0.01
         heightRatio: 0.5
-        onMoved: localInputVolume = value
-        onPressedChanged: localInputVolumeChanging = pressed
+        onMoved: {
+          localInputVolume = value
+          inputDebounceTimer.restart()
+        }
+        onPressedChanged: {
+          localInputVolumeChanging = pressed
+          if (!pressed) {
+            inputDebounceTimer.restart()
+          }
+        }
         tooltipText: `${Math.round(localInputVolume * 100)}%`
         tooltipDirection: "bottom"
       }
