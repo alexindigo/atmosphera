@@ -4,6 +4,7 @@ import Quickshell.I3
 import Quickshell.Wayland
 import Quickshell.Io
 import qs.Commons
+import qs.Services.Keyboard
 
 Item {
   id: root
@@ -37,10 +38,12 @@ Item {
 
     try {
       I3.refreshWorkspaces()
+      I3.dispatch('(["input"])')
       Qt.callLater(() => {
                      safeUpdateWorkspaces()
                      safeUpdateWindows()
                      queryDisplayScales()
+                     queryKeyboardLayout()
                    })
       initialized = true
       Logger.i("SwayService", "Service started")
@@ -102,6 +105,60 @@ Item {
         }
       } catch (e) {
         Logger.e("SwayService", "Failed to parse outputs:", e)
+      } finally {
+        // Clear accumulated output for next query
+        accumulatedOutput = ""
+      }
+    }
+  }
+
+  Timer {
+    id: keyboardLayoutUpdateTimer
+    interval: 1000
+    running: true
+    repeat: true
+    onTriggered: {
+      queryKeyboardLayout()
+    }
+  }
+
+  function queryKeyboardLayout() {
+    swayInputsProcess.running = true
+  }
+  // Sway inputs process for keyboard layout detection
+  Process {
+    id: swayInputsProcess
+    running: false
+    command: ["swaymsg", "-t", "get_inputs", "-r"]
+
+    property string accumulatedOutput: ""
+
+    stdout: SplitParser {
+      onRead: function (line) {
+        // Accumulate lines instead of parsing each one
+        swayInputsProcess.accumulatedOutput += line
+      }
+    }
+
+    onExited: function (exitCode) {
+      if (exitCode !== 0 || !accumulatedOutput) {
+        Logger.e("SwayService", "Failed to query inputs, exit code:", exitCode)
+        accumulatedOutput = ""
+        return
+      }
+
+      try {
+        const inputsData = JSON.parse(accumulatedOutput)
+        for (const input of inputsData) {
+          if (input.type == "keyboard") {
+            const layoutName = input.xkb_active_layout_name
+            KeyboardLayoutService.setCurrentLayout(layoutName)
+            Logger.d("SwayService", "Keyboard layout switched:", layoutName)
+            break
+          }
+        }
+      } catch (e) {
+        Logger.e("SwayService", "Failed to parse inputs:", e)
       } finally {
         // Clear accumulated output for next query
         accumulatedOutput = ""
@@ -234,6 +291,27 @@ Item {
     return defaultValue
   }
 
+  function handleInputEvent(ev) {
+    try {
+      let beforeParenthesis
+      const parenthesisPos = ev.lastIndexOf('(')
+
+      if (parenthesisPos === -1) {
+        beforeParenthesis = ev
+      } else {
+        beforeParenthesis = ev.substring(0, parenthesisPos)
+      }
+
+      const layoutNameStart = beforeParenthesis.lastIndexOf(',') + 1
+      const layoutName = ev.substring(layoutNameStart)
+
+      KeyboardLayoutService.setCurrentLayout(layoutName)
+      Logger.d("HyprlandService", "Keyboard layout switched:", layoutName)
+    } catch (e) {
+      Logger.e("HyprlandService", "Error handling activelayout:", e)
+    }
+  }
+
   // Connections to I3
   Connections {
     target: I3.workspaces
@@ -262,6 +340,10 @@ Item {
 
       if (event.type === "output") {
         Qt.callLater(queryDisplayScales)
+      }
+
+      if (event.type == "get_inputs") {
+        handleInputEvent(event.data)
       }
     }
   }
